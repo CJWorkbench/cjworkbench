@@ -6,12 +6,12 @@ help_url: modules/add-data/join-tabs
 description: Join data using shared columns between two tabs.
 param_schema:
   right_tab: { type: tab }
+  type: { type: enum, choices: [ left, inner, right ], default: left }
   join_columns:
     type: dict
     properties:
-      'on': { type: multicolumn }
-      right: { type: multicolumn, tab_parameter: right_tab }
-  type: { type: integer }
+      'on': { type: multicolumn, deprecated_string_storage: false }
+      right: { type: multicolumn, tab_parameter: right_tab, deprecated_string_storage: false }
 parameters:
   - id_name: right_tab
     type: tab
@@ -23,4 +23,8 @@ parameters:
   - id_name: type
     type: menu
     name: Join type
-    menu_items: 'Left|Inner|Right'
+    default: left
+    options:
+    - { value: left, label: Left }
+    - { value: inner, label: Inner }
+    - { value: right, label: Right }

@@ -84,12 +84,9 @@ tabs:
     </li>
     <li
       data-test="
-        if (workflow.tabs[1].wfModuleSlugs[2] !== 'selectcolumns')
-         return false
-
-        const want_cols = 'Annual,Year'
-        const have_cols = workflow.tabs[1].wfModules[2].params.colnames
-        return have_cols.split(',').sort().join(',') === want_cols"
+        if (workflow.tabs[1].wfModuleSlugs[2] !== 'selectcolumns') return false
+        const colnames = workflow.tabs[1].wfModules[2].params.colnames
+        return colnames.split(',').sort().join('|') === 'Annual|Year'"
       >Still in that tab, add <kbd>Select Columns</kbd> and only keep the columns <kbd>Year</kbd> and <kbd>Annual</kbd>
     </li>
     <li
@@ -146,11 +143,15 @@ tabs:
       >Switch back to the <kbd>Salaries</kbd> tab and add a <kbd>Join tab</kbd> step
     </li>
     <li
-      data-test="return workflow.tabs[0].wfModules[3].params.right_tab === 'tab-2' &&
-                        workflow.tabs[0].wfModules[3].params.join_columns.on === 'Year'"
-      >Select the <kbd>CPI data</kbd> tab to join with, and the <kbd>Year</kbd> column to join on
+      data-test="
+        const params = workflow.tabs[0].wfModules[3].params
+        return (
+          params.right_tab === 'tab-2'
+          && params.join_columns.on.join('|') === 'Year'
+        )
+      ">Select the <kbd>CPI data</kbd> tab to join with, and the <kbd>Year</kbd> column to join on
     <li
-      data-test="return workflow.tabs[0].wfModules[3].params.join_columns.right === 'Annual'"
+      data-test="return workflow.tabs[0].wfModules[3].params.join_columns.right.includes('Annual')"
       >The final step is to choose which columns to bring in from the CPI tab. Select <kbd>Annual</kbd>
       <p class=instruction-detail>
         We now have one table containing all the information we need for our analysis

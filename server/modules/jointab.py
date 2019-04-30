@@ -1,9 +1,9 @@
 from pandas.api.types import union_categoricals
-from typing import Set
+from typing import List, Set
 
 
-def _parse_colnames(s: str, valid: Set[str]):
-    return [c for c in s.split(',') if c in valid]
+def _parse_colnames(val: List[str], valid: Set[str]):
+    return [c for c in val if c in valid]
 
 
 def render(table, params, *, input_columns):
@@ -22,13 +22,13 @@ def render(table, params, *, input_columns):
     )
     right_columns_set = set(_parse_colnames(
         params['join_columns']['right'],
-        set(right_dataframe.columns)
+        set(right_dataframe.columns).difference(set(on_columns))
     ))
     # order right_columns as they're ordered in right_dataframe
     right_columns = [c for c in right_dataframe.columns
                      if c in right_columns_set]
 
-    join_type = ['left', 'inner', 'right'][params['type']]
+    join_type = params['type']
 
     # Ensure all "on" types match
     for colname in on_columns:
@@ -101,3 +101,29 @@ def render(table, params, *, input_columns):
         'column_formats': {c: right_tab.columns[c].format
                            for c in right_columns}
     }
+
+
+def _migrate_params_v0_to_v1(params):
+    """
+    v0: 'type' is index into ['left', 'inner', 'right']; 'join_columns' are
+    comma-separated strs.
+
+    v1: 'type' is one of {'left', 'inner', 'right'}; 'join_columns' are
+    List[str].
+    """
+    return {
+        **params,
+        'join_columns': {
+            'on': [c for c in params['join_columns']['on'].split(',') if c],
+            'right': [c
+                      for c in params['join_columns']['right'].split(',')
+                      if c],
+        },
+        'type': ['left', 'inner', 'right'][params['type']]
+    }
+
+
+def migrate_params(params):
+    if isinstance(params['type'], int):
+        params = _migrate_params_v0_to_v1(params)
+    return params

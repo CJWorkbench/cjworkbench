@@ -10,8 +10,8 @@ export default class JoinColumns extends React.PureComponent {
     name: PropTypes.string.isRequired, // <input name=...>
     label: PropTypes.string.isRequired,
     value: PropTypes.shape({
-      on: PropTypes.string.isRequired, // column list
-      right: PropTypes.string.isRequired // column list
+      on: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired, // column list
+      right: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired // column list
     }).isRequired,
     inputColumns: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string.isRequired,

@@ -3,7 +3,42 @@ import numpy as np
 import pandas as pd
 from pandas.testing import assert_frame_equal
 from cjworkbench.types import RenderColumn, TabOutput
-from server.modules.jointab import render
+from server.modules.jointab import migrate_params, render
+
+
+class MigrateTests(unittest.TestCase):
+    def test_v0(self):
+        self.assertEqual(migrate_params({
+            'right_tab': 'tab-1',
+            'join_columns': {'on': 'A,B', 'right': 'C,D'},
+            'type': 0,
+        }), {
+            'right_tab': 'tab-1',
+            'join_columns': {'on': ['A', 'B'], 'right': ['C', 'D']},
+            'type': 'left',
+        })
+
+    def test_v0_empty_multicolumns(self):
+        self.assertEqual(migrate_params({
+            'right_tab': 'tab-1',
+            'join_columns': {'on': '', 'right': ''},
+            'type': 0,
+        }), {
+            'right_tab': 'tab-1',
+            'join_columns': {'on': [], 'right': []},
+            'type': 'left',
+        })
+
+    def test_v1(self):
+        self.assertEqual(migrate_params({
+            'right_tab': 'tab-1',
+            'join_columns': {'on': ['A', 'B'], 'right': ['C', 'D']},
+            'type': 'inner',
+        }), {
+            'right_tab': 'tab-1',
+            'join_columns': {'on': ['A', 'B'], 'right': ['C', 'D']},
+            'type': 'inner',
+        })
 
 
 class JoinTabTests(unittest.TestCase):
@@ -19,10 +54,10 @@ class JoinTabTests(unittest.TestCase):
                  'D': RenderColumn('D', 'number', '{:,}')},
                 right),
             'join_columns': {
-                'on': 'A',
-                'right': 'C,D',
+                'on': ['A'],
+                'right': ['C', 'D'],
             },
-            'type': 0,
+            'type': 'left',
         }, input_columns={
             'A': RenderColumn('A', 'number', '{:d}'),
             'B': RenderColumn('B', 'text', None),
@@ -46,10 +81,10 @@ class JoinTabTests(unittest.TestCase):
                  'C': RenderColumn('C', 'text', None)},
                 right),
             'join_columns': {
-                'on': 'A',
-                'right': 'C',
+                'on': ['A'],
+                'right': ['C'],
             },
-            'type': 0,
+            'type': 'left',
         }, input_columns={
             'A': RenderColumn('A', 'number', '{}'),
             'B': RenderColumn('B', 'text', None),
@@ -72,10 +107,10 @@ class JoinTabTests(unittest.TestCase):
                 right
             ),
             'join_columns': {
-                'on': 'A',
-                'right': 'B',
+                'on': ['A'],
+                'right': ['B'],
             },
-            'type': 0,
+            'type': 'left',
         }, input_columns={
             'A': RenderColumn('A', 'number', '{}'),
             'B': RenderColumn('B', 'text', None),
@@ -101,8 +136,8 @@ class JoinTabTests(unittest.TestCase):
                  'B': RenderColumn('B', 'text', None)},
                 right
             ),
-            'join_columns': {'on': 'A', 'right': 'B'},
-            'type': 0,
+            'join_columns': {'on': ['A'], 'right': ['B']},
+            'type': 'left',
         }, input_columns={
             'A': RenderColumn('A', 'text', None),
         })
@@ -130,8 +165,8 @@ class JoinTabTests(unittest.TestCase):
                  'C': RenderColumn('C', 'text', None)},
                 right
             ),
-            'join_columns': {'on': 'A', 'right': 'C'},
-            'type': 2,
+            'join_columns': {'on': ['A'], 'right': ['C']},
+            'type': 'right',
         }, input_columns={
             'A': RenderColumn('A', 'text', None),
             'B': RenderColumn('B', 'text', None),
@@ -161,8 +196,8 @@ class JoinTabTests(unittest.TestCase):
                  'C': RenderColumn('C', 'text', None)},
                 right
             ),
-            'join_columns': {'on': 'A', 'right': 'C'},
-            'type': 1,
+            'join_columns': {'on': ['A'], 'right': ['C']},
+            'type': 'inner',
         }, input_columns={
             'A': RenderColumn('A', 'text', None),
             'B': RenderColumn('B', 'text', None),
