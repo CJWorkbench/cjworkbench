@@ -204,19 +204,6 @@ definitions:
                 default:
                     type: string
                     description: "Value to set on the user's behalf (default items[0].value)"
-        deprecated_radio:
-            <<: *common_param_spec
-            required: [ id_name, type, radio_items ]
-            properties:
-                <<: *common_param_spec_properties
-                type: { const: radio }
-                placeholder: { $ref: '#/definitions/param_specs/_lib/placeholder' }
-                radio_items:
-                    type: string
-                    description: "Radio entries, separated by '|'"
-                default:
-                    type: integer
-                    description: "Value to set on the user's behalf (default 0)"
         radio:
             <<: *common_param_spec
             required: [ id_name, type, options ]
@@ -329,7 +316,6 @@ definitions:
                 { $ref: '#/definitions/param_specs/checkbox' },
                 { $ref: '#/definitions/param_specs/deprecated_menu' },
                 { $ref: '#/definitions/param_specs/menu' },
-                { $ref: '#/definitions/param_specs/deprecated_radio' },
                 { $ref: '#/definitions/param_specs/radio' },
                 { $ref: '#/definitions/param_specs/button' },
                 { $ref: '#/definitions/param_specs/column' },

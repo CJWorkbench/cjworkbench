@@ -468,15 +468,9 @@ class ParamSpecRadio(_HasName, ParamSpec):
 
     # override
     @classmethod
-    def _from_kwargs(cls, *, options: List[Dict[str, str]] = None,
-                     radio_items: str = None, default: Any = None, **kwargs):
-        # Parses `options` ... or converts DEPRECATED `radio_items` parameter
-        # to `options`.
-        if radio_items:
-            options = [EnumOption(s, i)
-                       for i, s in enumerate(radio_items.split('|'))]
-        else:
-            options = [EnumOption(**option) for option in options]
+    def _from_kwargs(cls, *, options: List[Dict[str, str]],
+                     default: Any = None, **kwargs):
+        options = [EnumOption(**option) for option in options]
         if default is None:
             default = options[0].value
         return cls(options=options, default=default, **kwargs)

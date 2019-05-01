@@ -95,21 +95,6 @@ class ParamSpecTest(unittest.TestCase):
                      ParamSpec.Menu.Option.Value('f', False)]
         ))
 
-    def test_parse_radio_deprecated_items(self):
-        param_spec = ParamSpec.from_dict(dict(
-            type='radio',
-            id_name='id',
-            name='name',
-            radio_items='keep|delete'
-        ))
-        self.assertEqual(param_spec, ParamSpec.Radio(
-            id_name='id',
-            name='name',
-            options=[ParamSpec.Radio.Option('keep', 0),
-                     ParamSpec.Radio.Option('delete', 1)],
-            default=0
-        ))
-
     def test_parse_radio_options(self):
         param_spec = ParamSpec.from_dict(dict(
             type='radio',

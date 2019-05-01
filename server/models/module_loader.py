@@ -107,7 +107,6 @@ def validate_module_spec(spec):
         if (
             'options' in ref_param
             or 'menu_items' in ref_param
-            or 'radio_items' in ref_param
         ):
             if_values = visible_if['value']
             if isinstance(if_values, list):
@@ -122,11 +121,6 @@ def validate_module_spec(spec):
                 options = (  # deprecated: allow indexes and labels
                     set(range(len(ref_param['menu_items'].split('|'))))
                     | set(ref_param['menu_items'].split('|'))
-                )
-            elif 'radio_items' in ref_param:
-                options = (  # deprecated: allow indexes and labels
-                    set(range(len(ref_param['radio_items'].split('|'))))
-                    | set(ref_param['radio_items'].split('|'))
                 )
 
             missing = if_values - options

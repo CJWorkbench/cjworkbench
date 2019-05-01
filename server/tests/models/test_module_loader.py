@@ -50,7 +50,7 @@ class ValidateModuleSpecTest(unittest.TestCase):
                 ],
             })
 
-    def test_missing_radio_items(self):
+    def test_missing_radio_options(self):
         with self.assertRaises(ValueError):
             validate_module_spec({
                 'id_name': 'id',
