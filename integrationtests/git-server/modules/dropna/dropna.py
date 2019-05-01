@@ -1,20 +1,16 @@
+import numpy as np
 import pandas as pd
 
 
 def dropna(table, colnames):
-    # convert empty strings to none, because dropna says '' is not na
-    try:
-        test_table = table[colnames]
-    except KeyError as err:
-        return 'You chose a missing column'
+    test_table = table[colnames]
 
     # Find rows where any selected column is '' or np.nan
-    rows_with_empty = ((test_table == '') | test_table.isna()).any(axis=1)
+    # TODO consider letting users remove np.nan and not ''.
+    rows_with_empty = table[colnames].isin([np.nan, pd.NaT, None, '']).any(axis=1)
 
     table = table[~rows_with_empty]
-
-    # reset index
-    table.index = pd.RangeIndex(len(table.index))
+    table.reset_index(drop=True, inplace=True)
 
     # We may now have unused categories in our category columns. The ''
     # category is an obvious one, and we must certainly remove it from any
@@ -29,8 +25,21 @@ def dropna(table, colnames):
 
 
 def render(table, params):
-    colnames = list([c for c in params['colnames'].split(',') if c])
-    if not colnames:
+    if not params['colnames']:
         return table
 
-    return dropna(table, colnames)
+    return dropna(table, params['colnames'])
+
+
+def _migrate_params_v0_to_v1(params):
+    """Convert 'colnames' from str to list."""
+    # https://www.pivotaltracker.com/story/show/160463316
+    return {
+        'colnames': [c for c in params['colnames'].split(',') if c]
+    }
+
+
+def migrate_params(params):
+    if isinstance(params['colnames'], str):
+        params = _migrate_params_v0_to_v1(params)
+    return params
