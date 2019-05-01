@@ -119,16 +119,14 @@ function buildSelectColumnsParams (oldParams, params) {
     return {}
   }
 
-  const colnames = oldParams ? oldParams.colnames.split(',').filter(s => !!s) : []
-  const keep = params ? params.drop_or_keep == 1 : true
-  const oldKeep = oldParams ? oldParams.drop_or_keep == 1 : keep
-  const keepIdx = keep ? 1 : 0
-  const oldKeepIdx = oldKeep ? 1 : 0
+  const colnames = oldParams ? oldParams.colnames : []
+  const keep = params ? params.keep : true
+  const oldKeep = oldParams ? oldParams.keep : true
   const colname = params.columnKey // may be undefined
 
   if (colnames.length === 0) {
     // Adding a new module, or resetting an empty one
-    return { colnames: colname, drop_or_keep: keepIdx }
+    return { colnames: [ colname ], keep }
   } else {
     const idx = colnames.indexOf(colname)
 
@@ -143,7 +141,7 @@ function buildSelectColumnsParams (oldParams, params) {
           return null // the keep module doesn't include colname: it's already dropped
         } else {
           colnames.splice(idx, 1)
-          return { colnames: colnames.join(','), drop_or_keep: oldKeepIdx }
+          return { colnames: colnames, keep: oldKeep }
         }
       }
     } else {
@@ -155,24 +153,11 @@ function buildSelectColumnsParams (oldParams, params) {
         // We want to drop another one
         if (idx === -1) {
           colnames.push(colname)
-          return { colnames: colnames.join(','), drop_or_keep: oldKeepIdx }
+          return { colnames: colnames, keep: oldKeep }
         } else {
           return null // the drop module is already dropping colname
         }
       }
-    }
-
-    if (keep === oldKeep) {
-      if (keep && idx === -1) {
-        colnames.push(params.columnKey)
-        return { colnames, drop_or_keep: keepIdx }
-      } else if (!keep && idx !== -1) {
-      } else {
-        return null
-      }
-    } else {
-      console.warn('Unimplemented drop/keep logic', oldKeep, keep, colnames, colname)
-      return null
     }
   }
 }

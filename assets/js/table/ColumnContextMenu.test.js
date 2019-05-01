@@ -29,7 +29,7 @@ describe('ColumnContextMenu', () => {
 
     wrapper.find('button').simulate('click') // open dropdown
     wrapper.find('DropdownItem.drop-column').simulate('click')
-    expect(onClickAction).toHaveBeenCalledWith('selectcolumns', false, { drop_or_keep: 0 })
+    expect(onClickAction).toHaveBeenCalledWith('selectcolumns', false, { keep: false })
 
     wrapper.find('button').simulate('click') // open dropdown
     wrapper.find('DropdownItem.rename-column-header').simulate('click')

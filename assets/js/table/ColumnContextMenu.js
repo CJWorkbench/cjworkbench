@@ -30,7 +30,7 @@ export default class ColumnContextMenu extends React.Component {
   addNewFilter = () => this.create('filter')
   extractNumbers = () => this.createOrUpdate('converttexttonumber')
   cleanText = () => this.createOrUpdate('clean-text')
-  dropColumn = () => this.createOrUpdate('selectcolumns', { drop_or_keep: 0 })
+  dropColumn = () => this.createOrUpdate('selectcolumns', { keep: false })
   convertDate = () => this.createOrUpdate('convert-date')
   convertText = () => this.createOrUpdate('converttotext')
   formatNumbers = () => this.create('formatnumbers', { format: '{:,}' })

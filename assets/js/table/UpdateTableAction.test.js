@@ -63,15 +63,15 @@ describe("UpdateTableAction actions", () => {
       },
       wfModules: {
         10: {},
-        11: { tab_slug: 'tab-2', module: 'clean-text', params: { column: 'A' }}
+        11: { tab_slug: 'tab-2', module: 'converttotext', params: { column: 'A' }}
       },
       modules: {
         loadurl: {},
-        'clean-text': {}
+        converttotext: {}
       }
     })
     const dispatch = jest.fn()
-    updateTableAction(11, 'clean-text', false, { columnKey: 'B' })(dispatch, getState)
+    updateTableAction(11, 'converttotext', false, { columnKey: 'B' })(dispatch, getState)
     expect(dispatch).toHaveBeenCalledWith([ 'setWfModuleParamsAction', 11, { colnames: 'B' } ])
     expect(dispatch).toHaveBeenCalledTimes(1) // no 'select' call
   })
@@ -94,7 +94,7 @@ describe("UpdateTableAction actions", () => {
     })
     const dispatch = jest.fn()
     updateTableAction(11, 'clean-text', false, { columnKey: 'B' })(dispatch, getState)
-    expect(dispatch).toHaveBeenCalledWith([ 'addModuleAction', 'clean-text', { afterWfModuleId: 11 }, { colnames: 'B' } ])
+    expect(dispatch).toHaveBeenCalledWith([ 'addModuleAction', 'clean-text', { afterWfModuleId: 11 }, { colnames: [ 'B' ] } ])
     expect(dispatch).toHaveBeenCalledTimes(1) // no 'select' call
   })
 
