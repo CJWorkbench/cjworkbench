@@ -103,7 +103,8 @@ Smaller numbers give higher throughput on the database. There are no known
 increase this number so they don't block other requests.
 """
 # (Any block of Workbench code with a "cooperative_lock" consumes a database
-# transaction until finish.)
+# transaction until finish. Currently, we lock during S3 transfers. TODO make
+# cooperative_lock() use PgLocker instead.)
 #
 # (PgLocker connections do not count against SYNC_DATABASE_CONNECTIONS.)
 
