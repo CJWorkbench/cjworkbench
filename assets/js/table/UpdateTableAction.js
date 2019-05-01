@@ -24,10 +24,10 @@ export const moduleParamsBuilders = {
   'reordercolumns': buildReorderColumnsParams,
   'sort': buildSortColumnsParams,
   'converttexttonumber': genericAddColumn('colnames', false),
-  'clean-text': genericAddColumn('colnames', true),
+  'clean-text': genericAddColumn('colnames', false),
   'convert-date': genericAddColumn('colnames', false),
   'converttotext': genericAddColumn('colnames', true),
-  'formatnumbers': genericAddColumn('colnames', true)
+  'formatnumbers': genericAddColumn('colnames', false)
 }
 
 /**
