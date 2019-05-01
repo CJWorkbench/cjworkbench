@@ -10,6 +10,7 @@
       "name": "",
       "id_name": "colnames",
       "type": "multicolumn",
+      "deprecated_string_storage": false,
       "visible_if": {
         "id_name": "select_range",
         "value": false,
@@ -35,10 +36,13 @@
     },
     {
       "name" : "",
-      "id_name" : "drop_or_keep",
+      "id_name" : "keep",
       "type" : "radio",
-      "radio_items" : "Delete|Keep",
-      "default": 1
+      "default": true,
+      "options": [
+          { "value": false, "label": "Delete" },
+          { "value": true, "label": "Keep" }
+      ]
     }
   ]
 }
