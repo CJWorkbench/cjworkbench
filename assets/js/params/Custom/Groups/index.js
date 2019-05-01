@@ -9,7 +9,7 @@ export default class Groups extends React.PureComponent {
     name: PropTypes.string.isRequired, // for <input> names
     fieldId: PropTypes.string.isRequired, // <input id="...">
     value: PropTypes.shape({
-      colnames: PropTypes.string.isRequired,
+      colnames: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
       group_dates: PropTypes.bool.isRequired,
       date_granularities: PropTypes.object.isRequired
     }).isRequired,
@@ -73,7 +73,7 @@ export default class Groups extends React.PureComponent {
             name={`${name}[date_granularities]`}
             fieldId={`${fieldId}_date_granularities`}
             value={value.date_granularities}
-            colnames={value.colnames.split(',').filter(s => !!s)}
+            colnames={value.colnames}
             dateColnames={dateColnames}
             onChange={this.onChangeDateGranularities}
             addConvertToDateModule={this.addConvertToDateModule}
