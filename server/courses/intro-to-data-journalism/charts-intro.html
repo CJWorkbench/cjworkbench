@@ -78,10 +78,13 @@ tabs:
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-test="return (workflow.tabs[0].wfModuleNames[1] === 'Select columns') &&
-                        (workflow.tabs[0].wfModules[1].params.colnames==='Continent') &&
-                        (workflow.tabs[0].wfModules[1].params.drop_or_keep===0)"
-      >Click the<kbd>Continent</kbd>column menu
+      data-test="
+        return (
+          workflow.tabs[0].wfModuleNames[1] === 'Select columns'
+          && workflow.tabs[0].wfModules[1].params.colnames.join('|') === 'Continent'
+          && !workflow.tabs[0].wfModules[1].params.keep
+        )
+      ">Click the<kbd>Continent</kbd>column menu
       <span>
         <img class="icon-insert" src="images/lesson-icons/menu.svg">
       </span>

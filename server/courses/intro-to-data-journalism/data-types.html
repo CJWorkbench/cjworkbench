@@ -66,7 +66,7 @@ tabs:
     <li
       data-test="
         return workflow.tabs[0].wfModuleSlugs[1] === 'selectcolumns' &&
-               workflow.tabs[0].wfModules[1].params.colnames === 'boro_nm,cmplnt_fr_dt'"
+               workflow.tabs[0].wfModules[1].params.colnames.sort().join('|') === 'boro_nm|cmplnt_fr_dt'"
     >Add <kbd>Select columns</kbd>, and keep only <kbd>boro_nm</kbd> and <kbd>cmplnt_fr_dt</kbd>
     </li>
     <li

@@ -26,7 +26,7 @@ tabs:
     note: "Source: City of New York."
   - module: selectcolumns
     params:
-      colnames: "boro_nm,cmplnt_fr_dt"
+      colnames: [ boro_nm, cmplnt_fr_dt ]
     collapsed: true
   - module: renamecolumns
     params:
@@ -62,7 +62,7 @@ tabs:
         // Ensure 'Complaint date' is in the colnames, but allow other cols too, so that
         // the 'add Borough' step in the last section doesn't undo this test.
         // (Every test for the entire lesson is evaluated in order)
-        return workflow.tabs[0].wfModules[4].params.groups.colnames.split(',').includes('Complaint date')
+        return workflow.tabs[0].wfModules[4].params.groups.colnames.includes('Complaint date')
       ">Add <kbd>Group</kbd> and select the column <kbd>Complaint date</kbd>
     </li>
     <li
@@ -117,7 +117,7 @@ tabs:
           // We test for day granularity ... _BUT_ later in the lesson we'll ask the
           // user to switch back to month; so we'll need to test: either the user
           // chose 'D', or the user is further along in the lesson
-          || params.groups.colnames.split(',').includes('Borough')
+          || params.groups.colnames.includes('Borough')
         )
       ">In the Group in step 5, change the granularity to <kbd>by day</kbd>
       <p class="instruction-detail">
@@ -137,7 +137,7 @@ tabs:
       data-test="
         const want_cols = 'Borough,Complaint date'
         const have_cols = workflow.tabs[0].wfModules[4].params.groups.colnames
-        return have_cols.split(',').sort().join(',') === want_cols"
+        return have_cols.sort().join(',') === want_cols"
       >In the Group in step 5, add the column <kbd>Borough</kbd> next to <kbd>Complaint date</kbd> using the same column selector.
       <p class="instruction-detail">
         The table now displays a more detailed count of incidents. It shows how many felonies were reported in each Neighborhood on each day.

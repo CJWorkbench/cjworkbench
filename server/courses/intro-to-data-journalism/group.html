@@ -29,7 +29,7 @@ tabs:
     note: "Source: City of San Francisco."
   - module: selectcolumns
     params:
-      colnames: "Project Status,Planning Neighborhood,Project Units,Affordable Units,% Affordable"
+      colnames: [ "Project Status", "Planning Neighborhood", "Project Units", "Affordable Units", "% Affordable" ]
     collapsed: true
   - module: filter
     params:
@@ -65,7 +65,7 @@ tabs:
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-test="return workflow.tabs[0].wfModuleSlugs[3] === 'groupby' && workflow.tabs[0].wfModules[3].params.groups.colnames === 'Planning Neighborhood'"
+      data-test="return workflow.tabs[0].wfModuleSlugs[3] === 'groupby' && workflow.tabs[0].wfModules[3].params.groups.colnames.join('|') === 'Planning Neighborhood'"
       >Add 'Group' in position 4 and select the column <kbd>Planning Neighborhood</kbd>
     </li>
     <li

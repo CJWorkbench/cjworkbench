@@ -81,12 +81,12 @@ tabs:
     </li>
     <li
       data-test="
-        if ((workflow.tabs[0].wfModuleSlugs[1] !== 'selectcolumns') || (workflow.tabs[0].wfModules[1].params.drop_or_keep===0)) return false
+        if (workflow.tabs[0].wfModuleSlugs[1] !== 'selectcolumns' || !workflow.tabs[0].wfModules[1].params.keep) return false
 
         const want_cols = '% Affordable,Affordable Units,Planning Neighborhood,Project Status,Project Units'
         const have_cols = workflow.tabs[0].wfModules[1].params.colnames
 
-        return have_cols.split(',').sort().join(',') === want_cols"
+        return have_cols.sort().join(',') === want_cols"
     >Add a <kbd>Select columns</kbd> step and keep the following columns (Start typing column names to pick them faster)
       <p>
         <kbd>Planning Neighborhood</kbd><br>

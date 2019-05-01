@@ -40,7 +40,7 @@
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Drop empty rows"}]'
-      data-test="const colnames = workflow.tabs[0].wfModules[2].params.colnames; return colnames === 'MetroArea,Population' || colnames === 'Population,MetroArea'"
+      data-test="const colnames = workflow.tabs[0].wfModules[2].params.colnames.sort().join('|'); return colnames === 'MetroArea|Population'"
       >In Drop empty rows, select columns <kbd>MetroArea</kbd> and <kbd>Population</kbd>. The rows missing values in those columns will be deleted.
     </li>
   </ol>
@@ -63,7 +63,7 @@
         const wfModule = workflow.tabs[0].wfModules[4] || {}
         const params = wfModule.params || {}
         const colnames = params.colnames || []
-        return wfModule.moduleSlug === 'converttexttonumber' && colnames.length === 1 && colnames[0] === 'Population'
+        return wfModule.moduleSlug === 'converttexttonumber' && colnames.join('|') === 'Population'
       ">Likewise, use the menu <span>
         <img class="icon-insert" src="images/lesson-icons/menu.svg">
       </span> of the column <kbd>Population</kbd> to select <kbd>Convert to number</kbd>.

@@ -76,12 +76,9 @@ tabs:
   <ol class="steps">
     <li
       data-test="
-        if ((workflow.tabs[0].wfModuleSlugs[1] !== 'selectcolumns') || (workflow.tabs[0].wfModules[1].params.drop_or_keep===0)) return false
-
-        const want_cols = 'Amt,Contributor'
-        const have_cols = workflow.tabs[0].wfModules[1].params.colnames
-
-        return have_cols.split(',').sort().join(',') === want_cols"
+        if (workflow.tabs[0].wfModuleSlugs[1] !== 'selectcolumns' || !workflow.tabs[0].wfModules[1].params.keep) return false
+        const colnames = workflow.tabs[0].wfModules[1].params.colnames
+        return colnames.sort().join('|') === 'Amt|Contributor"
     >Add a <kbd>Select columns</kbd> step and keep only the columns <kbd>Contributor</kbd> and <kbd>Amt</kbd>
     </li>
     <li
@@ -115,7 +112,7 @@ tabs:
   <ol class="steps">
     <li
       data-test="return workflow.tabs[0].wfModuleSlugs[3] === 'clean-text' &&
-                        workflow.tabs[0].wfModules[3].params.colnames === 'Contributor 2'"
+                        workflow.tabs[0].wfModules[3].params.colnames.join('|') === 'Contributor 2'"
       >Add <kbd>Clean text</kbd>, and apply it to the <kbd>Contributor 2</kbd> column
     </li>
     <li
@@ -143,7 +140,7 @@ tabs:
   <ol class="steps">
     <li
       data-test="return workflow.tabs[0].wfModuleSlugs[5] === 'groupby' &&
-                        workflow.tabs[0].wfModules[5].params.groups.colnames.toLowerCase() === 'state'"
+                        workflow.tabs[0].wfModules[5].params.groups.colnames.toLowerCase().join('|') === 'state'"
       >Add a <kbd>Group</kbd> step and apply it to <kbd>State</kbd>
     </li>
     <li

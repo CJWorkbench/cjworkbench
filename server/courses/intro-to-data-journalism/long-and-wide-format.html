@@ -59,12 +59,12 @@ tabs:
     <li
       data-test="
         return workflow.tabs[0].wfModuleSlugs[2] === 'reshape' &&
-               workflow.tabs[0].wfModules[2].params.direction== 'longtowide'"
+               workflow.tabs[0].wfModules[2].params.direction === 'longtowide'"
       >Add a <kbd>Reshape</kbd> step and select <kbd>Long to wide</kbd>
     </li>
     <li
       data-test="
-        return workflow.tabs[0].wfModules[2].params.colnames == 'Complaint date'"
+        return workflow.tabs[0].wfModules[2].params.colnames.join('|') === 'Complaint date'"
       >Select <kbd>Complaint date</kbd> as the <kbd>Row variable</kbd>
     </li>
     <li
