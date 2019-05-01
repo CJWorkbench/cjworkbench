@@ -17,17 +17,17 @@ import { addModuleAction, setWfModuleParamsAction, setSelectedWfModuleAction } f
  */
 export const moduleParamsBuilders = {
   'selectcolumns': buildSelectColumnsParams,
-  'duplicatecolumns': genericAddColumn('colnames', false),
+  'duplicatecolumns': genericAddColumn('colnames'),
   'filter': buildFilterParams,
   'editcells': buildEditCellsParams,
   'renamecolumns': buildRenameColumnsParams,
   'reordercolumns': buildReorderColumnsParams,
   'sort': buildSortColumnsParams,
-  'converttexttonumber': genericAddColumn('colnames', false),
-  'clean-text': genericAddColumn('colnames', false),
-  'convert-date': genericAddColumn('colnames', false),
-  'converttotext': genericAddColumn('colnames', true),
-  'formatnumbers': genericAddColumn('colnames', false)
+  'converttexttonumber': genericAddColumn('colnames'),
+  'clean-text': genericAddColumn('colnames'),
+  'convert-date': genericAddColumn('colnames'),
+  'converttotext': genericAddColumn('colnames'),
+  'formatnumbers': genericAddColumn('colnames')
 }
 
 /**
@@ -223,14 +223,9 @@ function newParamsUnlessNoChange (oldParams, newParams) {
   return null
 }
 
-function genericAddColumn (key, deprecatedStringStorage) {
+function genericAddColumn (key) {
   return (oldParams, params) => {
-    let colnames
-    if (deprecatedStringStorage) {
-      colnames = oldParams ? (oldParams[key] || '').split(',').filter(s => !!s) : []
-    } else {
-      colnames = oldParams ? (oldParams[key] || []) : []
-    }
+    const colnames = oldParams ? (oldParams[key] || []) : []
     if (!params.hasOwnProperty('columnKey'))  throw new Error('Expected "columnKey" column to add')
     const colname = params.columnKey
 
@@ -242,8 +237,7 @@ function genericAddColumn (key, deprecatedStringStorage) {
       const newParams = { ...params }
       const colname = newParams.columnKey
       delete newParams.columnKey
-      const newColnames = [ ...colnames, colname ]
-      newParams[key] = deprecatedStringStorage ? newColnames.join(',') : newColnames
+      newParams[key] = [ ...colnames, colname ]
 
       return newParamsUnlessNoChange(oldParams, newParams)
     }

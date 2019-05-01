@@ -56,26 +56,6 @@ describe("UpdateTableAction actions", () => {
     expect(dispatch).toHaveBeenCalledWith([ 'setWfModuleParamsAction', 11, { colnames: ['A', 'B'] } ])
   })
 
-  it('should update an existing, selected module with deprecatedStringStorage', () => {
-    const getState = () => ({
-      tabs: {
-        'tab-2': { wf_module_ids: [ 10, 11 ], selected_wf_module_position: 1 }
-      },
-      wfModules: {
-        10: {},
-        11: { tab_slug: 'tab-2', module: 'converttotext', params: { column: 'A' }}
-      },
-      modules: {
-        loadurl: {},
-        converttotext: {}
-      }
-    })
-    const dispatch = jest.fn()
-    updateTableAction(11, 'converttotext', false, { columnKey: 'B' })(dispatch, getState)
-    expect(dispatch).toHaveBeenCalledWith([ 'setWfModuleParamsAction', 11, { colnames: 'B' } ])
-    expect(dispatch).toHaveBeenCalledTimes(1) // no 'select' call
-  })
-
   it('should insert a new module when the current+next have the wrong id_name', () => {
     const getState = () => ({
       tabs: {
