@@ -71,7 +71,7 @@ class ParamSpecTest(unittest.TestCase):
             name='name',
             default=0,
             options=[ParamSpec.Menu.Option.Value('keep', 0),
-                     ParamSpec.Menu.Option.Separator(),
+                     ParamSpec.Menu.Option.Separator,
                      ParamSpec.Menu.Option.Value('delete', 2)]
         ))
 
@@ -91,7 +91,7 @@ class ParamSpecTest(unittest.TestCase):
             name='name',
             default=True,  # Menu value can't be null. TODO reconsider?
             options=[ParamSpec.Menu.Option.Value('t', True),
-                     ParamSpec.Menu.Option.Separator(),
+                     ParamSpec.Menu.Option.Separator,
                      ParamSpec.Menu.Option.Value('f', False)]
         ))
 
@@ -156,6 +156,35 @@ class ParamSpecTest(unittest.TestCase):
         # Just to make sure our unit-test is sane: verify from_dict(to_json)
         # returns the original.
         self.assertEqual(ParamSpec.from_dict(param_dict), param_spec)
+
+    def test_to_dict_menu_separator(self):
+        param_spec = ParamSpec.Menu(
+            id_name='m',
+            default='v',
+            options=[
+                ParamSpec.Menu.Option.Value(value='v', label='l'),
+                ParamSpec.Menu.Option.Separator,
+                ParamSpec.Menu.Option.Value(value='v2', label='l2'),
+            ],
+        )
+        param_dict = param_spec.to_dict()
+        self.assertEqual(param_dict, {
+            'type': 'menu',
+            'id_name': 'm',
+            'default': 'v',
+            'placeholder': '',
+            'name': '',
+            'visible_if': None,
+            'options': [
+                {'value': 'v', 'label': 'l'},
+                'separator',
+                {'value': 'v2', 'label': 'l2'},
+            ],
+        })
+        # Just to make sure our unit-test is sane: verify from_dict(to_json)
+        # returns the original.
+        self.assertEqual(ParamSpec.from_dict(param_dict), param_spec)
+
 
     def test_to_dict_dict_factory(self):
         def upcasedict(tuples):

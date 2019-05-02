@@ -380,7 +380,7 @@ class MenuOption(ABC):
     @classmethod
     def _from_dict(cls, json_value) -> MenuOption:
         if json_value == 'separator':
-            return cls.Separator()
+            return cls.Separator
         else:
             return cls.Value(**json_value)
 
@@ -390,16 +390,24 @@ class MenuOption(ABC):
             # Tricksy names here. Good thing this syntax is deprecated ;)
             return cls.Value(value=index, label=value)
         else:
-            return cls.Separator()
+            return cls.Separator
 
 
 class MenuOptionEnum(EnumOption, MenuOption):
     pass
 
 
-@dataclass(frozen=True)  # for its equality operator
-class MenuOptionSeparator(MenuOption):
-    pass
+class _MenuOptionSeparator(MenuOption):
+    def __deepcopy__(self, _memo):
+        # Used by dataclasses.asdict() when serializing
+        #
+        # This breaks deep-copy ... but deep-copy isn't really our style in
+        # Workbench: we prefer immutable variables, and shallow-copy is the way
+        # to copy those.
+        return 'separator'
+
+
+MenuOptionSeparator = _MenuOptionSeparator()  # singleton
 
 
 @dataclass(frozen=True)
@@ -442,9 +450,9 @@ class ParamSpecMenu(_HasPlaceholder, _HasName, ParamSpec):
         return cls(options=options, default=default, **kwargs)
 
 
-ParamSpecMenu.Option = MenuOption
-ParamSpecMenu.Option.Value = MenuOptionEnum
-ParamSpecMenu.Option.Separator = MenuOptionSeparator
+ParamSpecMenu.Option = MenuOption  # type
+ParamSpecMenu.Option.Value = MenuOptionEnum  # class
+ParamSpecMenu.Option.Separator = MenuOptionSeparator  # singleton
 
 
 @dataclass(frozen=True)
