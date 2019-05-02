@@ -7,23 +7,23 @@ exports[`Menu matches snapshot 1`] = `
     disabled={false}
     name="somename"
     onChange={[Function]}
-    value="1"
+    value="kittens"
   >
     <option
-      key="0"
-      value="0"
+      key="apple"
+      value="apple"
     >
       Apple
     </option>
     <option
-      key="1"
-      value="1"
+      key="kittens"
+      value="kittens"
     >
       Kittens
     </option>
     <option
-      key="2"
-      value="2"
+      key="banana"
+      value="banana"
     >
       Banana
     </option>

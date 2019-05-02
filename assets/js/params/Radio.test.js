@@ -29,12 +29,6 @@ describe('Radio', () => {
     expect(w.find('input[type="radio"]')).toHaveLength(3)
   })
 
-  it('render and handle click of deprecated "items" (as opposed to "enumOptions")', () => {
-    const w = wrapper({ items: 'first|second' })
-    w.find('input[value="1"]').simulate('change', { target: { value: '1' } })
-    expect(w.prop('onChange')).toHaveBeenCalledWith(1)
-  })
-
   it('render and handle click of non-String values', () => {
     const w = wrapper({
       enumOptions: [

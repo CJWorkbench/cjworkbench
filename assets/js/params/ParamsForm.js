@@ -21,10 +21,15 @@ export default class ParamsForm extends React.PureComponent {
       idName: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired, // or null or ''
       type: PropTypes.string.isRequired,
-      enumOptions: PropTypes.arrayOf(PropTypes.shape({
-        value: PropTypes.any.isRequired,
-        label: PropTypes.string.isRequired
-      }).isRequired), // for menu/radio
+      enumOptions: PropTypes.arrayOf(
+        PropTypes.oneOfType([
+          PropTypes.oneOf(['separator']), // menu only
+          PropTypes.shape({
+            value: PropTypes.any.isRequired,
+            label: PropTypes.string.isRequired
+          }).isRequired // menu or radio
+        ]).isRequired
+      ), // only set on menu/radio
       multiline: PropTypes.bool, // required for String
       placeholder: PropTypes.string, // required for many
       visibleIf: PropTypes.object, // JSON spec or null,
