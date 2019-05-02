@@ -11,7 +11,7 @@ from .util import MockParams
 
 
 P = MockParams.factory(url='https://app.workbenchdata.com/workflows/2/',
-                       source_columns=([], []), type=0)
+                       add_source_column=False, columns_from='input')
 
 
 def PR(error, *args, **kwargs):
@@ -58,7 +58,7 @@ class ConcatURLTest(unittest.TestCase):
     def test_concat_only_left_columns(self):
         result = render(
             table,
-            P(type=0, source_columns=False),
+            P(columns_from='input', add_source_column=False),
             ProcessResult(ext_workflow)
         )
         assert_frame_equal(result, pd.DataFrame({
@@ -66,20 +66,20 @@ class ConcatURLTest(unittest.TestCase):
             'key': ['b', 'c', 'b', 'd'],
         }))
 
-    def test_concat_all_columns(self):
+    def test_concat_intersect_columns(self):
         result = render(
             table,
-            P(type=1, source_columns=False),
+            P(columns_from='intersection', add_source_column=False),
             ProcessResult(ext_workflow)
         )
         assert_frame_equal(result, pd.DataFrame({
             'key': ['b', 'c', 'b', 'd'],
         }))
 
-    def test_concat_matching_columns(self):
+    def test_concat_union_columns(self):
         result = render(
             table,
-            P(type=2, source_columns=False),
+            P(columns_from='union', add_source_column=False),
             ProcessResult(ext_workflow)
         )
         assert_frame_equal(result, pd.DataFrame({
@@ -91,7 +91,7 @@ class ConcatURLTest(unittest.TestCase):
     def test_concat_with_source(self):
         result = render(
             table,
-            P(type=1, source_columns=True),
+            P(columns_from='intersection', add_source_column=True),
             ProcessResult(ext_workflow)
         )
         assert_frame_equal(result, pd.DataFrame({
@@ -121,3 +121,31 @@ class ConcatURLTest(unittest.TestCase):
         self.assertEqual(result, ProcessResult(
             error='Not a valid Workbench workflow URL'
         ))
+
+
+class MigrateParamsTest(unittest.TestCase):
+    def test_v0(self):
+        self.assertEqual(concaturl.migrate_params({
+            'url': 'https://app.workbenchdata.com/workflows/123',
+            'type': 2,
+            'source_columns': False,
+            'version_select': ''
+        }), {
+            'url': 'https://app.workbenchdata.com/workflows/123',
+            'columns_from': 'union',
+            'add_source_column': False,
+            'version_select': ''
+        })
+
+    def test_v1(self):
+        self.assertEqual(concaturl.migrate_params({
+            'url': 'https://app.workbenchdata.com/workflows/123',
+            'columns_from': 'intersection',
+            'source_columns': False,
+            'version_select': ''
+        }), {
+            'url': 'https://app.workbenchdata.com/workflows/123',
+            'columns_from': 'intersection',
+            'source_columns': False,
+            'version_select': ''
+        })

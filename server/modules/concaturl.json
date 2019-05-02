@@ -19,12 +19,17 @@
     },
     {
       "name": "Include",
-      "id_name": "type",
+      "id_name": "columns_from",
       "type": "menu",
-      "menu_items": "Only this workflow's columns|Only matching columns|Columns from both workflows"
+      "default": "input",
+      "options": [
+        { "value": "input", "label": "Only this tab's columns" },
+        { "value": "intersection", "label": "Only matching columns" },
+        { "value": "union", "label": "Columns from both workflows" }
+      ]
     },
     {
-      "name": "Include source column",
+      "name": "Add source column",
       "id_name": "source_columns",
       "type": "checkbox",
       "default": true
