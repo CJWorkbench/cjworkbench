@@ -59,22 +59,6 @@ class ParamSpecTest(unittest.TestCase):
         # effectively do a deep compare with repr
         self.assertEqual(repr(dtype), repr(expected_dtype))
 
-    def test_parse_menu_deprecated_items(self):
-        param_spec = ParamSpec.from_dict(dict(
-            type='menu',
-            id_name='id',
-            name='name',
-            menu_items='keep||delete'
-        ))
-        self.assertEqual(param_spec, ParamSpec.Menu(
-            id_name='id',
-            name='name',
-            default=0,
-            options=[ParamSpec.Menu.Option.Value('keep', 0),
-                     ParamSpec.Menu.Option.Separator,
-                     ParamSpec.Menu.Option.Value('delete', 2)]
-        ))
-
     def test_parse_menu_options(self):
         param_spec = ParamSpec.from_dict(dict(
             type='menu',

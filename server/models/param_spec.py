@@ -384,14 +384,6 @@ class MenuOption(ABC):
         else:
             return cls.Value(**json_value)
 
-    @classmethod
-    def _from_deprecated_str(cls, index: int, value: str) -> MenuOption:
-        if value:
-            # Tricksy names here. Good thing this syntax is deprecated ;)
-            return cls.Value(value=index, label=value)
-        else:
-            return cls.Separator
-
 
 class MenuOptionEnum(EnumOption, MenuOption):
     pass
@@ -435,14 +427,8 @@ class ParamSpecMenu(_HasPlaceholder, _HasName, ParamSpec):
     # override
     @classmethod
     def _from_kwargs(cls, *, options: List[Dict[str, str]] = None,
-                     menu_items: str = None, default: Any = None, **kwargs):
-        # Parses `options` ... or converts DEPRECATED `menu_items` parameter to
-        # `options`.
-        if menu_items:
-            options = [MenuOption._from_deprecated_str(i, s)
-                       for i, s in enumerate(menu_items.split('|'))]
-        else:
-            options = [MenuOption._from_dict(option) for option in options]
+                     default: Any = None, **kwargs):
+        options = [MenuOption._from_dict(option) for option in options]
         if default is None:
             # TODO consider allowing None instead of forcing a default? Menus
             # could have a "placeholder"

@@ -27,14 +27,17 @@ class ModuleVersionTest(DbTestCase):
             'parameters': [
                 {'id_name': 'foo', 'type': 'string', 'default': 'X'},
                 {'id_name': 'bar', 'type': 'secret', 'name': 'Secret'},
-                {'id_name': 'baz', 'type': 'menu', 'menu_items': 'a|b|c',
-                 'default': 2},
+                {'id_name': 'baz', 'type': 'menu', 'options': [
+                    {'value': 'a', 'label': 'A'},
+                    'separator',
+                    {'value': 'c', 'label': 'C'},
+                 ], 'default': 'c'},
             ]
         }, source_version_hash='1.0')
 
         self.assertEqual(repr(mv.param_schema), repr(ParamDType.Dict({
             'foo': ParamDType.String(default='X'),
-            'baz': ParamDType.Enum(choices=frozenset({0, 1, 2}), default=2),
+            'baz': ParamDType.Enum(choices=frozenset({'a', 'c'}), default='c'),
         })))
 
     def test_param_schema_explicit(self):
@@ -67,12 +70,10 @@ class ModuleVersionTest(DbTestCase):
             'parameters': [
                 {'id_name': 'foo', 'type': 'string', 'default': 'X'},
                 {'id_name': 'bar', 'type': 'secret', 'name': 'Secret'},
-                {'id_name': 'baz', 'type': 'menu', 'menu_items': 'a|b|c',
-                 'default': 2},
             ]
         }, source_version_hash='1.0')
 
-        self.assertEqual(mv.default_params, {'foo': 'X', 'baz': 2})
+        self.assertEqual(mv.default_params, {'foo': 'X'})
 
     def test_create_new_version(self):
         mv1 = ModuleVersion.create_or_replace_from_spec({

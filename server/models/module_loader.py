@@ -104,24 +104,15 @@ def validate_module_spec(spec):
                 "has options."
             )
 
-        if (
-            'options' in ref_param
-            or 'menu_items' in ref_param
-        ):
+        if 'options' in ref_param:
             if_values = visible_if['value']
             if isinstance(if_values, list):
                 if_values = set(if_values)
             else:
                 if_values = set(if_values.split('|'))
 
-            if 'options' in ref_param:
-                options = set(o['value'] for o in ref_param['options']
-                              if isinstance(o, dict))  # skip 'separator'
-            elif 'menu_items' in ref_param:
-                options = (  # deprecated: allow indexes and labels
-                    set(range(len(ref_param['menu_items'].split('|'))))
-                    | set(ref_param['menu_items'].split('|'))
-                )
+            options = set(o['value'] for o in ref_param['options']
+                          if isinstance(o, dict))  # skip 'separator'
 
             missing = if_values - options
             if missing:

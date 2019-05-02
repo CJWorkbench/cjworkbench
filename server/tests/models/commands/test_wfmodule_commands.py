@@ -127,8 +127,6 @@ class AddDeleteModuleCommandTests(DbTestCase):
             'category': 'Clean',
             'parameters': [
                 {'id_name': 'a', 'type': 'string', 'default': 'x'},
-                {'id_name': 'b', 'type': 'menu', 'menu_items': 'a|b|c',
-                 'default': 2},
                 {'id_name': 'c', 'type': 'checkbox', 'name': 'C',
                  'default': True},
             ],
@@ -141,11 +139,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
             position=0,
             param_values={}
         ))
-        self.assertEqual(cmd.wf_module.params, {
-            'a': 'x',
-            'b': 2,
-            'c': True,
-        })
+        self.assertEqual(cmd.wf_module.params, {'a': 'x', 'c': True})
 
     def test_add_module_raise_module_version_does_not_exist(self):
         workflow = Workflow.create_and_init()

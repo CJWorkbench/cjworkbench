@@ -154,28 +154,6 @@ definitions:
                 default:
                     type: boolean
                     description: "Value to set on the user's behalf (default False)"
-        deprecated_menu:
-            # Old-school "menu": its values are integers, which causes hassle.
-            #
-            # Deprecated in favor of the _real_ "menu" because:
-            #
-            # * "menu" makes module code more legible
-            # * "menu" lets us reorder values
-            #
-            # Nix this when no more modules use it. (grep for `menu_items` to find it.)
-            <<: *common_param_spec
-            required: [ id_name, type, menu_items ]
-            properties:
-                <<: *common_param_spec_properties
-                type: { const: menu }
-                name: { $ref: '#/definitions/param_specs/_lib/name' }
-                placeholder: { $ref: '#/definitions/param_specs/_lib/placeholder' }
-                menu_items:
-                    type: string
-                    description: "Menu entries, separated by '|'"
-                default:
-                    type: integer
-                    description: "Value to set on the user's behalf (default 0)"
         menu:
             <<: *common_param_spec
             required: [ id_name, type, options ]
@@ -314,7 +292,6 @@ definitions:
                 { $ref: '#/definitions/param_specs/integer' },
                 { $ref: '#/definitions/param_specs/float' },
                 { $ref: '#/definitions/param_specs/checkbox' },
-                { $ref: '#/definitions/param_specs/deprecated_menu' },
                 { $ref: '#/definitions/param_specs/menu' },
                 { $ref: '#/definitions/param_specs/radio' },
                 { $ref: '#/definitions/param_specs/button' },

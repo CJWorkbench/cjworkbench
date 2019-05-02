@@ -103,20 +103,6 @@ describe('ParamsForm', () => {
 
   describe('conditional parameter visibility', () => {
     // These tests depend on there being a WfParameter id named menu_select that is set to "Banana"
-    it('should show conditional parameter matching deprecated_menu value', () => {
-      const w = wrapper({
-        fields: [
-          field('menu_select', 'menu', { items: 'Mango|Banana' }),
-          field('testme', 'string', { visibleIf: { idName: 'menu_select', value: 'Banana|Orange' } })
-        ],
-        value: {
-          menu_select: 1,
-          testme: ''
-        }
-      })
-      expect(w.find('Param[name="testme"]')).toHaveLength(1)
-    })
-
     it('should show conditional parameter matching menu value', () => {
       const w = wrapper({
         fields: [
@@ -135,20 +121,6 @@ describe('ParamsForm', () => {
       expect(w.find('Param[name="testme"]')).toHaveLength(1)
     })
 
-    it('should hide conditional parameter not-matching deprecated_menu value', () => {
-      const w = wrapper({
-        fields: [
-          field('menu_select', 'menu', { items: 'Mango|Banana' }),
-          field('testme', 'string', { visibleIf: { idName: 'menu_select', value: 'Banana|Orange' } })
-        ],
-        value: {
-          menu_select: 0,
-          testme: ''
-        }
-      })
-      expect(w.find('Param[name="testme"]')).toHaveLength(0)
-    })
-
     it('should hide conditional parameter not-matching menu value', () => {
       const w = wrapper({
         fields: [
@@ -165,34 +137,6 @@ describe('ParamsForm', () => {
         }
       })
       expect(w.find('Param[name="testme"]')).toHaveLength(0)
-    })
-
-    it('should hide conditional parameter matching inverted deprecated_menu value', () => {
-      const w = wrapper({
-        fields: [
-          field('menu_select', 'menu', { items: 'Mango|Banana' }),
-          field('testme', 'string', { visibleIf: { idName: 'menu_select', value: 'Banana|Orange', invert: true } })
-        ],
-        value: {
-          menu_select: 1,
-          testme: ''
-        }
-      })
-      expect(w.find('Param[name="testme"]')).toHaveLength(0)
-    })
-
-    it('should show conditional parameter not-matching inverted deprecated_menu value', () => {
-      const w = wrapper({
-        fields: [
-          field('menu_select', 'menu', { items: 'Mango|Banana' }),
-          field('testme', 'string', { visibleIf: { idName: 'menu_select', value: 'Banana|Orange', invert: true } })
-        ],
-        value: {
-          menu_select: 0,
-          testme: ''
-        }
-      })
-      expect(w.find('Param[name="testme"]')).toHaveLength(1)
     })
 
     it('should hide conditional parameter matching inverted menu value', () => {

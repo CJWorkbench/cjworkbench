@@ -21,16 +21,10 @@ export default class ParamsForm extends React.PureComponent {
       idName: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired, // or null or ''
       type: PropTypes.string.isRequired,
-      items: PropTypes.string, // "option0|option1|option2", null except when type=menu/radio
-      enumOptions: PropTypes.arrayOf(
-        PropTypes.oneOfType([
-          PropTypes.oneOf([ 'separator' ]),
-          PropTypes.shape({
-            value: PropTypes.any.isRequired,
-            label: PropTypes.string.isRequired
-          }).isRequired
-        ]).isRequired
-      ), // new-style menu/radio -- once we nix "items" ("menu_items" in spec), add .isRequired here
+      enumOptions: PropTypes.arrayOf(PropTypes.shape({
+        value: PropTypes.any.isRequired,
+        label: PropTypes.string.isRequired
+      }).isRequired), // for menu/radio
       multiline: PropTypes.bool, // required for String
       placeholder: PropTypes.string, // required for many
       visibleIf: PropTypes.object, // JSON spec or null,
@@ -161,25 +155,11 @@ export default class ParamsForm extends React.PureComponent {
         return invert !== match
       }
 
-      // Otherwise, if it's a deprecated_menu item:
-      const condField = this.props.fields.find(f => f.idName === condition.idName)
-      if (condField.items) {
-        // deprecated_menu field
-        const condValues = condition.value.split('|').map(cond => cond.trim())
-        const deprecatedMenuItems = condField.items.split('|').map(item => item.trim())
-        if (deprecatedMenuItems.length > value) {
-          const selection = deprecatedMenuItems[value]
-          const selectionInCondition = (condValues.indexOf(selection) !== -1)
-          return invert !== selectionInCondition
-        }
-      }
-
       // If it's a menu entry...
       if (Array.isArray(condition.value)) {
         return invert !== condition.value.includes(value)
       }
 
-      // Menu entry (_not_ deprecated_menu), String...
       // ... the ideal is for this to be the _only_ code path. But there are
       // exceptions because the feature was implemented piecemeal
       return invert !== (condition.value === value)

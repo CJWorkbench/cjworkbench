@@ -33,16 +33,10 @@ export default class Param extends React.PureComponent {
     secretName: PropTypes.string, // or null: name of user logged in (if there is a secretParamName)
     label: PropTypes.string.isRequired, // or ''
     type: PropTypes.string.isRequired,
-    items: PropTypes.string, // "option0|option1|option2", null except when type=menu/radio
-    enumOptions: PropTypes.arrayOf(
-      PropTypes.oneOfType([
-        PropTypes.oneOf([ 'separator' ]),
-        PropTypes.shape({
-          value: PropTypes.any.isRequired,
-          label: PropTypes.string.isRequired
-        }).isRequired
-      ]).isRequired
-    ), // new-style menu -- once we nix "items" ("menu_items" in spec), add .isRequired here
+    enumOptions: PropTypes.arrayOf(PropTypes.shape({
+      value: PropTypes.any.isRequired,
+      label: PropTypes.string.isRequired
+    }).isRequired), // for menu/radio
     isMultiline: PropTypes.bool.isRequired,
     placeholder: PropTypes.string.isRequired, // may be ''
     visibleIf: PropTypes.object, // JSON spec or null

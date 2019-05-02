@@ -39,7 +39,7 @@ class ValidateModuleSpecTest(unittest.TestCase):
                 ],
             })
 
-    def test_missing_menu_items(self):
+    def test_missing_menu_options(self):
         with self.assertRaises(ValueError):
             validate_module_spec({
                 'id_name': 'id',
@@ -119,27 +119,6 @@ class ValidateModuleSpecTest(unittest.TestCase):
                         {'value': 'b', 'label': 'B'},
                         {'value': 'c', 'label': 'C'},
                     ],
-                }
-            ],
-        })
-
-    def test_valid_deprecated_visible_if_menu_options(self):
-        # does not raise
-        validate_module_spec({
-            'id_name': 'id',
-            'name': 'Name',
-            'category': 'Clean',
-            'parameters': [
-                {
-                    'id_name': 'a',
-                    'type': 'string',
-                    # deprecated: use '|' to show valid options
-                    'visible_if': {'id_name': 'b', 'value': 'a|b'},
-                },
-                {
-                    'id_name': 'b',
-                    'type': 'menu',
-                    'menu_items': 'a||b|c',
                 }
             ],
         })
@@ -225,22 +204,6 @@ class ValidateModuleSpecTest(unittest.TestCase):
                 {
                     'id_name': 'b',
                     'type': 'tab',
-                },
-            ],
-        })
-
-    def test_validate_deprecated_menu(self):
-        # does not raise
-        validate_module_spec({
-            'id_name': 'id',
-            'name': 'Name',
-            'category': 'Clean',
-            'parameters': [
-                {
-                    'id_name': 'a',
-                    'type': 'menu',
-                    'menu_items': 'x||y|z',
-                    'default': 0,
                 },
             ],
         })
