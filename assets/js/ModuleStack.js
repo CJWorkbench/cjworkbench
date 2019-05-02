@@ -95,8 +95,7 @@ class ModuleStackInsertSpot extends React.PureComponent {
     isReadOnly: PropTypes.bool.isRequired,
     isLessonHighlight: PropTypes.bool.isRequired,
     isDraggingModuleAtIndex: PropTypes.number, // or null if not dragging
-    moveModuleByIndex: PropTypes.func.isRequired, // func(oldIndex, newIndex) => undefined
-    isReadOnly: PropTypes.bool.isRequired
+    moveModuleByIndex: PropTypes.func.isRequired // func(oldIndex, newIndex) => undefined
   }
 
   renderReadOnly() {
@@ -130,23 +129,30 @@ class ModuleStackInsertSpot extends React.PureComponent {
   }
 }
 
-class ModuleStack extends React.Component {
+function EmptyReadOnlyModuleStack () {
+  return (
+    <div className="empty-read-only">
+      This Tab has no Steps.
+    </div>
+  )
+}
+
+export class ModuleStack extends React.Component {
   static propTypes = {
     api: PropTypes.object.isRequired,
-    workflow: PropTypes.object,
     tabSlug: PropTypes.string,
     selected_wf_module_position: PropTypes.number,
     wfModules: PropTypes.arrayOf(PropTypes.object).isRequired,
     moveModuleByIndex: PropTypes.func.isRequired, // func(tabSlug, oldIndex, newIndex) => undefined
     removeModule: PropTypes.func.isRequired,
     testLessonHighlightIndex: PropTypes.func.isRequired, // func(int) => boolean
-    isReadOnly: PropTypes.bool.isRequired,
+    isReadOnly: PropTypes.bool.isRequired
   }
 
   // Track state of where we last auto-scrolled.
   // Don't store it in this.state because we never want it to lead to a render
   scrollRef = React.createRef()
-  lastScrolledWfModuleIndex = null
+  lastScrolledWfModule = { tabSlug: null, index: null } // or { tabSlug, index } pair
 
   state = {
     isDraggingModuleAtIndex: null,
@@ -154,9 +160,15 @@ class ModuleStack extends React.Component {
   }
 
   componentDidUpdate () {
+    const tabSlug = this.props.tabSlug
     const index = this.props.selected_wf_module_position
-    if (index !== this.lastScrolledWfModuleIndex) {
-      this.lastScrolledWfModuleIndex = index
+
+    if (
+      tabSlug != this.lastScrolledWfModule.tabSlug
+      || index !== this.lastScrolledWfModule.index
+    ) {
+      // We selected a different module. Scroll to it.
+      this.lastScrolledWfModule = { tabSlug, index }
 
       const containerEl = this.scrollRef.current
       const moduleEl = containerEl.querySelectorAll('.wf-module')[index]
@@ -212,7 +224,7 @@ class ModuleStack extends React.Component {
   }
 
   render() {
-    const { tabSlug, wfModules } = this.props
+    const { isReadOnly, tabSlug, wfModules } = this.props
 
     const spotsAndItems = wfModules.map((item, i) => {
       // If this item is replacing a placeholder, disable the enter animations
@@ -249,7 +261,7 @@ class ModuleStack extends React.Component {
               isLessonHighlight={this.props.testLessonHighlightIndex(i)}
             />
             <WfModule
-              isReadOnly={this.props.workflow.read_only}
+              isReadOnly={isReadOnly}
               isZenMode={this.state.zenModeWfModuleId === item.id}
               wfModule={item}
               removeModule={this.props.removeModule}
@@ -273,16 +285,20 @@ class ModuleStack extends React.Component {
     return (
       <div className={className} ref={this.scrollRef}>
         {spotsAndItems}
-        <ModuleStackInsertSpot
-          key="last"
-          index={wfModules.length}
-          tabSlug={tabSlug}
-          isLast
-          isDraggingModuleAtIndex={this.state.isDraggingModuleAtIndex}
-          moveModuleByIndex={this.moveModuleByIndex}
-          isLessonHighlight={this.props.testLessonHighlightIndex(wfModules.length)}
-          isReadOnly={this.props.isReadOnly}
-        />
+        {isReadOnly && wfModules.length == 0 ? (
+          <EmptyReadOnlyModuleStack />
+        ) : (
+          <ModuleStackInsertSpot
+            key="last"
+            index={wfModules.length}
+            tabSlug={tabSlug}
+            isLast
+            isDraggingModuleAtIndex={this.state.isDraggingModuleAtIndex}
+            moveModuleByIndex={this.moveModuleByIndex}
+            isLessonHighlight={this.props.testLessonHighlightIndex(wfModules.length)}
+            isReadOnly={this.props.isReadOnly}
+          />
+        )}
       </div>
     )
   }

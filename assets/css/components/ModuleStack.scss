@@ -69,6 +69,15 @@
     }
   }
 
+  .empty-read-only {
+    // "This Tab has no Steps.", sorta in the middle of the pane where modules normally go
+    width: $module-width;
+    margin: 0 $module-margin-right 0 $module-margin-left;
+    text-align: center;
+    @include content-1;
+    margin-top: 45%;
+  }
+
   // Button to call the module search between modules
   .module-search-in-between {
     width: $module-width;

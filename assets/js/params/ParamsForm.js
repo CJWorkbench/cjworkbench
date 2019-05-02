@@ -222,7 +222,6 @@ export default class ParamsForm extends React.PureComponent {
               api={api}
               isReadOnly={isReadOnly}
               isZenMode={isZenMode}
-              api={api}
               key={field.idName}
               {...paramFieldToParamProps(field)}
               upstreamValue={upstreamValue ? upstreamValue[field.idName] : null}
