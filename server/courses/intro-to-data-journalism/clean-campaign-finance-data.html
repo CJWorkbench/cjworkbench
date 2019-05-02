@@ -140,7 +140,7 @@ tabs:
   <ol class="steps">
     <li
       data-test="return workflow.tabs[0].wfModuleSlugs[5] === 'groupby' &&
-                        workflow.tabs[0].wfModules[5].params.groups.colnames.toLowerCase().join('|') === 'state'"
+                        workflow.tabs[0].wfModules[5].params.groups.colnames.join('|').toLowerCase() === 'state'"
       >Add a <kbd>Group</kbd> step and apply it to <kbd>State</kbd>
     </li>
     <li

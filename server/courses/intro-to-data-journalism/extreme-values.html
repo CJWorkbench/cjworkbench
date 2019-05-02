@@ -69,14 +69,12 @@ tabs:
   <ol class="steps">
     <li
       data-test="
-        if (workflow.tabs[0].wfModuleSlugs[2] !== 'selectcolumns')
-         return false
-
-        const want_cols = 'continent,country,maximum 2000-2016'
-        const have_cols = workflow.tabs[0].wfModules[2].params.colnames.toLowerCase()
-
-        return have_cols.split(',').sort().join(',') === want_cols"
-      >Add <kbd>Select columns</kbd>. Keep the columns <kbd>Country</kbd>, <kbd>Continent</kbd> and <kbd>Maximum 2000-2016</kbd>
+        const tab = workflow.tabs[0]
+        return (
+          tab.wfModuleSlugs[2] === 'selectcolumns'
+          && tab.wfModules[2].params.colnames.sort().join('|').toLowerCase() === 'continent|country|maximum 2000-2016'
+        )
+      ">Add <kbd>Select columns</kbd>. Keep the columns <kbd>Country</kbd>, <kbd>Continent</kbd> and <kbd>Maximum 2000-2016</kbd>
     </li>
     <li
       data-test="
