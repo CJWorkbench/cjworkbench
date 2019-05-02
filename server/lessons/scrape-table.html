@@ -22,11 +22,12 @@
       data-test="const url = workflow.tabs[0].wfModules[0].params.url; return url === 'https://en.wikipedia.org/wiki/Global_Gender_Gap_Report' || url === 'https://en.wikipedia.org/wiki/List_of_countries_by_GDP_(nominal)'"
       >Paste in the URL of the webpage where the table is published:
       <div class="copy-txt">https://en.wikipedia.org/wiki/Global_Gender_Gap_Report</div>
+      <p class="instruction-detail">There are multiple columns on the page. The table we want to srape is the third displayed from the top.</p>
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Scrape table"}]'
       data-test="return workflow.tabs[0].wfModules[0].selectedVersion"
-      >Click <kbd>Scrape</kbd> to load the data
+      >Set the table's position on the page to <code>3</code>, and click <kbd>Scrape</kbd>
       <p class="instruction-detail">Once loaded, the data is saved as a version in the scraper. It will stay accessible even if the webpage with the original table goes offline.</p>
     </li>
   </ol>

@@ -71,7 +71,7 @@
         && subfilter.value.toLowerCase() === 'science'
       )
     "
-    >Select the column <kbd>text</kbd> to filter by. Choose <kbd>Text contains</kbd> as a condition, and search for 'science'.
+    >Select the column <kbd>text</kbd> to filter by. Choose <kbd>Text contains</kbd> as a condition, and search for <code>science</code>.
     <p class="instruction-detail">
       Now let's group the resulting tweets by date.
     </p>
@@ -83,8 +83,16 @@
   </li>
   <li
     data-highlight='[{"type":"WfModule","moduleName":"Group"}]'
+<<<<<<< HEAD
     data-test="const params = workflow.tabs[0].wfModules[2].params; return params.groups.colnames.join('|') === 'created_at' && params.groups.group_dates && params.groups.date_granularities.created_at === 'Y' && params.aggregations.length === 1 && params.aggregations[0].operation === 'size' && params.aggregations[0].outname.toLowerCase() === 'number of tweets'"
     >Choose <kbd>created_at</kbd> as the date column. Check <kbd>Group dates</kbd> and group rows <kbd>by year</kbd>. Set the "Count" output column name to <kbd>Number of tweets</kbd>
+||||||| merged common ancestors
+    data-test="const params = workflow.tabs[0].wfModules[2].params; return params.groups.colnames === 'created_at' && params.groups.group_dates && params.groups.date_granularities.created_at === 'Y' && params.aggregations.length === 1 && params.aggregations[0].operation === 'size' && params.aggregations[0].outname.toLowerCase() === 'number of tweets'"
+    >Choose <kbd>created_at</kbd> as the date column. Check <kbd>Group dates</kbd> and group rows <kbd>by year</kbd>. Set the "Count" output column name to <kbd>Number of tweets</kbd>
+=======
+    data-test="const params = workflow.tabs[0].wfModules[2].params; return params.groups.colnames === 'created_at' && params.groups.group_dates && params.groups.date_granularities.created_at === 'Y' && params.aggregations.length === 1 && params.aggregations[0].operation === 'size' && params.aggregations[0].outname.toLowerCase() === 'number of tweets'"
+    >Choose <kbd>created_at</kbd> as the date column. Check <kbd>Group dates</kbd> and set the granularity to <kbd>by year</kbd>. Name the output column <code>Number of tweets</code>
+>>>>>>> Edit Tutorial twitter and scrape table (broken because of wikipedia edit)
   </li>
 </ol>
 </section>
