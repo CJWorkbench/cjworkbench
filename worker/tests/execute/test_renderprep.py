@@ -289,6 +289,25 @@ class CleanValueTests(DbTestCase):
         # result['tab'] is not what we're testing here
         self.assertEqual(result['columns'], ['A-from-tab-2'])
 
+    def test_clean_multicolumn_from_other_tab_that_does_not_exist(self):
+        # The other tab would not exist if the user selected and then deleted
+        # it.
+        workflow = Workflow.create_and_init()
+        tab = workflow.tabs.first()
+
+        schema = ParamDType.Dict({
+            'tab': ParamDType.Tab(),
+            'columns': ParamDType.Multicolumn(tab_parameter='tab'),
+        })
+        param_values = {'tab': 'tab-missing', 'columns': ['A-from-tab']}
+        params = Params(schema, param_values, {})
+        context = RenderContext(workflow.id, TableShape(3, [
+            Column('A-from-tab-1', ColumnType.NUMBER()),
+        ]), {}, params)
+        result = clean_value(schema, param_values, context)
+        # result['tab'] is not what we're testing here
+        self.assertEqual(result['columns'], [])
+
     def test_clean_tab_no_tab_selected_gives_none(self):
         context = RenderContext(None, None, {}, None)
         result = clean_value(ParamDType.Tab(), '', context)

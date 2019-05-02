@@ -73,10 +73,10 @@ class RenderContext:
             tab = self.tab_shapes[tab_slug]
         except KeyError:
             # Tab does not exist
-            return ''
+            return {}
         if tab is None or tab.status != 'ok':
             # Tab has a cycle or other error
-            return ''
+            return {}
 
         return {c.name: c for c in tab.table_shape.columns}
 
