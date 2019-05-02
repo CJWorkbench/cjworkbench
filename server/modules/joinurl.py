@@ -9,8 +9,6 @@ from .utils import parse_multicolumn_param
 
 #------ For now, only load workbench urls
 
-_join_type_map = 'Left|Inner|Right'.lower().split('|')
-
 # Prefixes for column matches (and not keys)
 lsuffix = '_source'
 rsuffix = '_imported'
@@ -76,8 +74,7 @@ def render(table, params, *, fetch_result, **kwargs):
     if errs:
         return ('Key columns not in target workflow: ' + ', '.join(errs))
 
-    join_type_idx: int = params['type']
-    join_type = _join_type_map[join_type_idx]
+    join_type = params['type']
     select_columns: bool = params['select_columns']
 
     if select_columns:
@@ -126,3 +123,19 @@ async def fetch(params: Params, *, workflow_id: int,
         await get_workflow_owner(),
         other_workflow_id
     )
+
+
+def _migrate_params_v0_to_v1(params):
+    """
+    v0: 'type' is index into left|inner|right. v1: 'type' is value.
+    """
+    return {
+        **params,
+        'type': ['left', 'inner', 'right'][params['type']],
+    }
+
+
+def migrate_params(params):
+    if isinstance(params['type'], int):
+        params = _migrate_params_v0_to_v1(params)
+    return params

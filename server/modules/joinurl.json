@@ -26,7 +26,12 @@
       "name": "Join type",
       "id_name": "type",
       "type": "menu",
-      "menu_items": "Left|Inner|Right"
+      "default": "left",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "inner", "label": "Inner" },
+        { "value": "right", "label": "Right" }
+      ]
     },
     {
       "name": "Select columns to import",
