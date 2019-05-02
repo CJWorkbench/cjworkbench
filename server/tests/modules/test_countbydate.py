@@ -1,14 +1,15 @@
+import unittest
 import dateutil
 from django.test import override_settings, SimpleTestCase
 import numpy as np
 import pandas
 from pandas.testing import assert_frame_equal
-from server.modules.countbydate import render
+from server.modules.countbydate import migrate_params, render
 from .util import MockParams
 
 
-P = MockParams.factory(column='', groupby=0, operation=0, targetcolumn='',
-                       include_missing_dates=False)
+P = MockParams.factory(column='', groupby='second', operation='size',
+                       targetcolumn='', include_missing_dates=False)
 
 
 def dt(s):
@@ -65,7 +66,7 @@ class CountByDateTests(SimpleTestCase):
     def test_count_by_date(self):
         self._assertRendersTable(
             count_table,
-            P(column='Date', groupby=3),  # 3 = group by days
+            P(column='Date', groupby='day'),
             pandas.DataFrame({
                 'Date': [dt('2011-01-10'), dt('2011-01-15'), dt('2016-07-25')],
                 'count': [5, 1, 1],
@@ -75,7 +76,7 @@ class CountByDateTests(SimpleTestCase):
     def test_count_by_seconds(self):
         self._assertRendersTable(
             count_table,
-            P(column='Date', groupby=0),  # 0 = group by second
+            P(column='Date', groupby='second'),
             pandas.DataFrame({
                 'Date': [
                     dt('2011-01-10T00:00:00Z'),
@@ -92,7 +93,7 @@ class CountByDateTests(SimpleTestCase):
     def test_count_by_minutes(self):
         self._assertRendersTable(
             count_table,
-            P(column='Date', groupby=1),  # 1 = group by minute
+            P(column='Date', groupby='minute'),
             pandas.DataFrame({
                 'Date': [dt('2011-01-10T00:00Z'), dt('2011-01-10T00:01Z'),
                          dt('2011-01-10T01:00Z'), dt('2011-01-15T00:00Z'),
@@ -104,7 +105,7 @@ class CountByDateTests(SimpleTestCase):
     def test_count_by_hours(self):
         self._assertRendersTable(
             count_table,
-            P(column='Date', groupby=2),  # 2 = group by hour
+            P(column='Date', groupby='hour'),
             pandas.DataFrame({
                 'Date': [dt('2011-01-10T00:00Z'), dt('2011-01-10T01:00Z'),
                          dt('2011-01-15T00:00Z'), dt('2016-07-25T00:00Z')],
@@ -115,7 +116,7 @@ class CountByDateTests(SimpleTestCase):
     def test_count_by_months(self):
         self._assertRendersTable(
             count_table,
-            P(column='Date', groupby=4),  # 4 = group by month
+            P(column='Date', groupby='month'),
             pandas.DataFrame({
                 'Date': [dt('2011-01-01'), dt('2016-07-01')],
                 'count': [6, 1],
@@ -125,7 +126,7 @@ class CountByDateTests(SimpleTestCase):
     def test_count_by_quarters(self):
         self._assertRendersTable(
             count_table,
-            P(column='Date', groupby=5),  # 5 = group by quarter
+            P(column='Date', groupby='quarter'),
             pandas.DataFrame({
                 'Date': ['2011 Q1', '2016 Q3'],
                 'count': [6, 1]
@@ -135,7 +136,7 @@ class CountByDateTests(SimpleTestCase):
     def test_count_by_years(self):
         self._assertRendersTable(
             count_table,
-            P(column='Date', groupby=6),  # 6 = group by year
+            P(column='Date', groupby='year'),
             pandas.DataFrame({
                 'Date': [dt('2011-01-01'), dt('2016-01-01')],
                 'count': [6, 1],
@@ -145,7 +146,7 @@ class CountByDateTests(SimpleTestCase):
     def test_count_by_second_of_day(self):
         self._assertRendersTable(
             count_table,
-            P(column='Date', groupby=7),  # 7 = second of day
+            P(column='Date', groupby='second_of_day'),
             pandas.DataFrame({
                 'Date': ['00:00:00', '00:00:01', '00:01:00', '01:00:00'],
                 'count': [3, 2, 1, 1],
@@ -155,7 +156,7 @@ class CountByDateTests(SimpleTestCase):
     def test_count_by_minute_of_day(self):
         self._assertRendersTable(
             count_table,
-            P(column='Date', groupby=8),  # 8 = minute of day
+            P(column='Date', groupby='minute_of_day'),
             pandas.DataFrame({
                 'Date': ['00:00', '00:01', '01:00'],
                 'count': [5, 1, 1],
@@ -165,7 +166,7 @@ class CountByDateTests(SimpleTestCase):
     def test_count_by_hour_of_day(self):
         self._assertRendersTable(
             count_table,
-            P(column='Date', groupby=9),  # 9 = hour of day
+            P(column='Date', groupby='hour_of_day'),
             pandas.DataFrame({
                 'Date': ['00:00', '01:00'],
                 'count': [6, 1],
@@ -176,16 +177,16 @@ class CountByDateTests(SimpleTestCase):
         result = render(count_table.copy(), P(column=''))
         assert_frame_equal(result, count_table)
 
-    def test_average_no_error_when_missing_target(self):
-        # 1 = mean
-        params = P(column='Date', operation=1, targetcolumn='')
+    def test_mean_no_error_when_missing_target(self):
+        params = P(column='Date', operation='mean', targetcolumn='')
         result = render(count_table, params)
         assert_frame_equal(result, count_table)
 
-    def test_average_by_date(self):
+    def test_mean_by_date(self):
         self._assertRendersTable(
             agg_table,
-            P(column='Date', groupby=3, operation=1, targetcolumn='Amount'),
+            P(column='Date', groupby='day', operation='mean',
+              targetcolumn='Amount'),
             pandas.DataFrame({
                 # NaN for 2018-01-04 omitted; NaN for 2018-01-05 omitted
                 'Date': [dt('2018-01-01'), dt('2018-01-03'), dt('2018-01-05')],
@@ -194,10 +195,10 @@ class CountByDateTests(SimpleTestCase):
         )
 
     def test_sum_by_date(self):
-        # 2 = sum
         self._assertRendersTable(
             agg_table,
-            P(column='Date', groupby=3, operation=2, targetcolumn='Amount'),
+            P(column='Date', groupby='day', operation='sum',
+              targetcolumn='Amount'),
             pandas.DataFrame({
                 # NaN for 2018-01-04 omitted; NaN for 2018-01-05 omitted
                 'Date': [dt('2018-01-01'), dt('2018-01-03'), dt('2018-01-05')],
@@ -209,7 +210,8 @@ class CountByDateTests(SimpleTestCase):
         self._assertRendersTable(
             agg_table,
             # 3 = min
-            P(column='Date', groupby=3, operation=3, targetcolumn='Amount'),
+            P(column='Date', groupby='day', operation='min',
+              targetcolumn='Amount'),
             pandas.DataFrame({
                 # NaN for 2018-01-04 omitted; NaN for 2018-01-05 omitted
                 'Date': [dt('2018-01-01'), dt('2018-01-03'), dt('2018-01-05')],
@@ -221,7 +223,8 @@ class CountByDateTests(SimpleTestCase):
         self._assertRendersTable(
             agg_table,
             # 4 = max
-            P(column='Date', groupby=3, operation=4, targetcolumn='Amount'),
+            P(column='Date', groupby='day', operation='max',
+              targetcolumn='Amount'),
             pandas.DataFrame({
                 # NaN for 2018-01-04 omitted; NaN for 2018-01-05 omitted
                 'Date': [dt('2018-01-01'), dt('2018-01-03'), dt('2018-01-05')],
@@ -233,8 +236,8 @@ class CountByDateTests(SimpleTestCase):
         self._assertRendersTable(
             agg_table,
             # 0 = count
-            P(column='Date', include_missing_dates=True, groupby=3,
-              operation=0),
+            P(column='Date', include_missing_dates=True, groupby='day',
+              operation='size'),
             # Output should be integers
             pandas.DataFrame({
                 'Date': [dt('2018-01-01'), dt('2018-01-02'), dt('2018-01-03'),
@@ -246,9 +249,8 @@ class CountByDateTests(SimpleTestCase):
     def test_include_missing_dates_with_int_sum(self):
         self._assertRendersTable(
             agg_int_table,
-            # 2 = sum
-            P(column='Date', include_missing_dates=True, groupby=3,
-              operation=2, targetcolumn='Amount'),
+            P(column='Date', include_missing_dates=True, groupby='day',
+              operation='sum', targetcolumn='Amount'),
             # Output should be integers
             pandas.DataFrame({
                 'Date': [dt('2018-01-01'), dt('2018-01-02'), dt('2018-01-03'),
@@ -260,14 +262,14 @@ class CountByDateTests(SimpleTestCase):
     def test_include_missing_dates_with_1_date(self):
         self._assertRendersTable(
             pandas.DataFrame({'Date': [dt('2018-01-01'), dt('2018-01-01')]}),
-            P(column='Date', include_missing_dates=True, groupby=3),
+            P(column='Date', include_missing_dates=True, groupby='day'),
             pandas.DataFrame({'Date': [dt('2018-01-01')], 'count': [2]})
         )
 
     def test_include_missing_dates_with_0_date(self):
         self._assertRendersTable(
             pandas.DataFrame({'Date': [pandas.NaT, pandas.NaT]}),
-            P(column='Date', include_missing_dates=True, groupby=3),
+            P(column='Date', include_missing_dates=True, groupby='day'),
             pandas.DataFrame({'Date': pandas.DatetimeIndex([]),
                               'count': pandas.Int64Index([])})
         )
@@ -275,9 +277,8 @@ class CountByDateTests(SimpleTestCase):
     def test_include_missing_dates_with_float_sum(self):
         self._assertRendersTable(
             agg_table,
-            # 2 = sum
-            P(column='Date', include_missing_dates=True, groupby=3,
-              operation=2, targetcolumn='Amount'),
+            P(column='Date', include_missing_dates=True, groupby='day',
+              operation='sum', targetcolumn='Amount'),
             # Output should be integers
             pandas.DataFrame({
                 'Date': [dt('2018-01-01'), dt('2018-01-02'), dt('2018-01-03'),
@@ -289,9 +290,8 @@ class CountByDateTests(SimpleTestCase):
     def test_include_missing_dates_with_float_min(self):
         self._assertRendersTable(
             agg_table,
-            # 3 = min
-            P(column='Date', include_missing_dates=True, groupby=3,
-              operation=3, targetcolumn='Amount'),
+            P(column='Date', include_missing_dates=True, groupby='day',
+              operation='min', targetcolumn='Amount'),
             # Output should be integers
             pandas.DataFrame({
                 'Date': [dt('2018-01-01'), dt('2018-01-02'), dt('2018-01-03'),
@@ -304,9 +304,8 @@ class CountByDateTests(SimpleTestCase):
         # Same as float_min: missing values are NaN
         self._assertRendersTable(
             agg_int_table,
-            # 3 = min
-            P(column='Date', include_missing_dates=True, groupby=3,
-              operation=3, targetcolumn='Amount'),
+            P(column='Date', include_missing_dates=True, groupby='day',
+              operation='min', targetcolumn='Amount'),
             # Output should be integers
             pandas.DataFrame({
                 'Date': [dt('2018-01-01'), dt('2018-01-02'), dt('2018-01-03'),
@@ -322,17 +321,50 @@ class CountByDateTests(SimpleTestCase):
                 'Date': [dt('2018-01-01'), None, dt('2018-01-02')],
                 'Amount': [np.nan, 2, 3],
             }),
-            P(column='Date', groupby=3, operation=3, targetcolumn='Amount'),
+            P(column='Date', groupby='day', operation='min',
+              targetcolumn='Amount'),
             pandas.DataFrame({'Date': [dt('2018-01-02')], 'Amount': 3.0})
         )
 
     @override_settings(MAX_ROWS_PER_TABLE=100)
     def test_include_too_many_missing_dates(self):
         # 0 - group by seconds
-        params = P(column='Date', groupby=0, include_missing_dates=True)
+        params = P(column='Date', groupby='second', include_missing_dates=True)
         result = render(count_table, params)
         self.assertEqual(
             result,
             ('Including missing dates would create 174787201 rows, '
              'but the maximum allowed is 100')
         )
+
+
+class MigrateParamsTest(unittest.TestCase):
+    def test_v0(self):
+        self.assertEqual(migrate_params({
+            'column': 'OCCUPANCY_DATE',
+            'groupby': 3,
+            'operation': 2,
+            'targetcolumn': 'OCCUPANCY',
+            'include_missing_dates': False,
+        }), {
+            'column': 'OCCUPANCY_DATE',
+            'groupby': 'day',
+            'operation': 'sum',
+            'targetcolumn': 'OCCUPANCY',
+            'include_missing_dates': False,
+        })
+
+    def test_v1(self):
+        self.assertEqual(migrate_params({
+            'column': 'OCCUPANCY_DATE',
+            'groupby': 'day',
+            'operation': 'sum',
+            'targetcolumn': 'OCCUPANCY',
+            'include_missing_dates': False,
+        }), {
+            'column': 'OCCUPANCY_DATE',
+            'groupby': 'day',
+            'operation': 'sum',
+            'targetcolumn': 'OCCUPANCY',
+            'include_missing_dates': False,
+        })

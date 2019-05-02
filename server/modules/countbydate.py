@@ -9,23 +9,17 @@ from pandas.api.types import is_numeric_dtype
 # group column by unique value, discard all other columns
 
 
-class InputTimeType(enum.Enum):
-    DATE = 1
-    DATETIME = 2
-    TIME_OF_DAY = 3
-
-
 class Period(enum.Enum):
-    SECOND = 0
-    MINUTE = 1
-    HOUR = 2
-    DAY = 3
-    MONTH = 4
-    QUARTER = 5
-    YEAR = 6
-    SECOND_OF_DAY = 7
-    MINUTE_OF_DAY = 8
-    HOUR_OF_DAY = 9
+    SECOND = 'second'
+    MINUTE = 'minute'
+    HOUR = 'hour'
+    DAY = 'day'
+    MONTH = 'month'
+    QUARTER = 'quarter'
+    YEAR = 'year'
+    SECOND_OF_DAY = 'second_of_day'
+    MINUTE_OF_DAY = 'minute_of_day'
+    HOUR_OF_DAY = 'hour_of_day'
 
     @property
     def is_time_of_day(self):
@@ -37,60 +31,57 @@ class Period(enum.Enum):
 
     @property
     def pandas_freq(self):
-        return 'STHDMQYSTH'[self.value]
+        return {
+            Period.SECOND: 'S',
+            Period.MINUTE: 'T',
+            Period.HOUR: 'H',
+            Period.DAY: 'D',
+            Period.MONTH: 'M',
+            Period.QUARTER: 'Q',
+            Period.YEAR: 'Y',
+            Period.SECOND_OF_DAY: 'S',
+            Period.MINUTE_OF_DAY: 'T',
+            Period.HOUR_OF_DAY: 'H',
+        }[self]
 
     @property
     def strftime_format(self):
         """If set, output must be cast to str using this format."""
-        return [
-            None,
-            None,
-            None,
-            None,
-            None,
-            '%Y Q%q',
-            None,
-            '%H:%M:%S',
-            '%H:%M',
-            '%H:00',
-        ][self.value]
+        return {
+            Period.QUARTER: '%Y Q%q',
+            Period.SECOND_OF_DAY: '%H:%M:%S',
+            Period.MINUTE_OF_DAY: '%H:%M',
+            Period.HOUR_OF_DAY: '%H:00',
+        }.get(self)  # usually `None`
 
 
 class Operation(enum.Enum):
-    COUNT = 0
-    AVERAGE = 1
-    SUM = 2
-    MIN = 3
-    MAX = 4
+    # values are Python .agg() function names
+    SIZE = 'size'
+    MEAN = 'mean'
+    SUM = 'sum'
+    MIN = 'min'
+    MAX = 'max'
 
     @property
     def only_numeric(self):
         return (
-            self == Operation.AVERAGE
+            self == Operation.MEAN
             or self == Operation.SUM
         )
 
     @property
     def agg_function_name(self):
         """Pandas agg() function name."""
-        return [
-            'size',
-            'mean',
-            'sum',
-            'min',
-            'max',
-        ][self.value]
+        return self.value
 
     @property
     def zero_value(self):
         """Value to impute when there are no inputs to agg_function_name."""
-        return [
-            0,
-            np.NaN,
-            0,
-            np.NaN,
-            np.NaN,
-        ][self.value]
+        if self in (Operation.SIZE, Operation.SUM):
+            return 0
+        else:
+            return np.nan
 
 
 class ValidatedForm:
@@ -195,7 +186,7 @@ class Form:
         operation = Operation(d['operation'])
         include_missing_dates = bool(d['include_missing_dates'])
 
-        if operation != Operation.COUNT and not value_column:
+        if operation != Operation.SIZE and not value_column:
             return None  # waiting for user to finish filling out the form....
 
         return Form(date_column, period, operation, value_column,
@@ -232,7 +223,7 @@ class Form:
                 + np.datetime64('1970-01-01')  # and put 1970-01-01 instead
             )
 
-        if self.operation != Operation.COUNT:
+        if self.operation != Operation.SIZE:
             output_value_column = self.value_column
             value_series = table[self.value_column]
 
@@ -273,3 +264,27 @@ def render(table, params, **kwargs):
         return validated_form.run()
     except ValueError as err:
         return str(err)
+
+
+def _migrate_params_v0_to_v1(params):
+    """
+    v0: 'groupby' indexes into second|minute|hour|day|month|quarter|year
+                               |second_of_day|minute_of_day|hour_of_day
+    and 'operation' indexes into 'size|mean|sum|min|max'
+
+    v1: the values are the values.
+    """
+    return {
+        **params,
+        'groupby': ['second', 'minute', 'hour', 'day', 'month', 'quarter',
+                    'year', 'second_of_day', 'minute_of_day',
+                    'hour_of_day'][params['groupby']],
+        'operation': ['size', 'mean', 'sum', 'min',
+                      'max'][params['operation']],
+    }
+
+
+def migrate_params(params):
+    if isinstance(params['groupby'], int):
+        params = _migrate_params_v0_to_v1(params)
+    return params

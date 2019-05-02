@@ -17,15 +17,32 @@
       "name": "Group by",
       "id_name" : "groupby",
       "type" : "menu",
-      "menu_items" : "Second|Minute|Hour|Day|Month|Quarter - Calendar|Year|Second (time-of-day)|Minute (time-of-day)|Hour (time-of-day)",
-      "default": 3
+      "default": "day",
+      "options": [
+        { "value": "second", "label": "Second" },
+        { "value": "minute", "label": "Minute" },
+        { "value": "hour", "label": "Hour" },
+        { "value": "day", "label": "Day" },
+        { "value": "month", "label": "Month" },
+        { "value": "quarter", "label": "Quarter - Calendar" },
+        { "value": "year", "label": "Year" },
+        { "value": "second_of_day", "label": "Second (time-of-day)" },
+        { "value": "minute_of_day", "label": "Minute (time-of-day)" },
+        { "value": "hour_of_day", "label": "Hour (time-of-day)" }
+      ]
     },
     {
       "name": "Operation",
       "id_name" : "operation",
       "type" : "menu",
-      "menu_items" : "Count|Average|Sum|Min|Max",
-      "default": 0
+      "default": "size",
+      "options": [
+        { "value": "size", "label": "Count" },
+        { "value": "mean", "label": "Average" },
+        { "value": "sum", "label": "Sum" },
+        { "value": "min", "label": "Minimum" },
+        { "value": "max", "label": "Maximum" }
+      ]
     },
     {
       "name": "",
@@ -33,9 +50,9 @@
       "type": "column",
       "column_types": [ "number" ],
       "visible_if": {
-        "invert":true,
+        "invert": true,
         "id_name": "operation",
-        "value": "Count"
+        "value": [ "size" ]
       }
     },
     {
