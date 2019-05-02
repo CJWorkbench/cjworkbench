@@ -121,6 +121,9 @@ definitions:
                 type: { const: string }
                 name: { $ref: '#/definitions/param_specs/_lib/name' }
                 placeholder: { $ref: '#/definitions/param_specs/_lib/placeholder' }
+                multiline:
+                  type: boolean
+                  description: "If True, appear as a multiline <textarea>. (default: False)"
                 default:
                     type: string
                     description: "Value to set on the user's behalf (default null)"
