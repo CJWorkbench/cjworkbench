@@ -247,7 +247,6 @@ definitions:
                 placeholder: { $ref: '#/definitions/param_specs/_lib/placeholder' }
                 column_types: { $ref: '#/definitions/param_specs/_lib/column_types' }
                 tab_parameter: { type: string }  # optional
-                deprecated_string_storage: { type: boolean }  # optional, ignored. TODO disallow
         tab:
             <<: *common_param_spec
             properties:

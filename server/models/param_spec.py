@@ -295,17 +295,6 @@ class ParamSpecMulticolumn(_HasPlaceholder, _HasName, ParamSpec):
             tab_parameter=self.tab_parameter
         )
 
-    # override
-    @classmethod
-    def _from_kwargs(cls, *, deprecated_string_storage: bool = False,
-                     **kwargs):
-        """
-        Ignore deprecated_string_storage.
-
-        TODO nix this method, after all modules nix the string.
-        """
-        return cls(**kwargs)
-
 
 @dataclass(frozen=True)
 class ParamSpecMultichartseries(_HasPlaceholder, _HasName, ParamSpec):
