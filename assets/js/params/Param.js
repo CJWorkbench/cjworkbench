@@ -18,6 +18,11 @@ import String_ from './String'
 import Tab from './Tab'
 import List from './List'
 
+function onDragStartPreventDrag (dragEvent) {
+  dragEvent.preventDefault()
+  dragEvent.stopPropagation()
+}
+
 export default class Param extends React.PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired,
@@ -123,7 +128,7 @@ export default class Param extends React.PureComponent {
     if (!deepEqual(value, upstreamValue)) className += ' editing'
 
     return (
-      <div data-name={name} className={className}>
+      <div data-name={name} className={className} draggable onDragStart={onDragStartPreventDrag}>
         <this.innerComponent
           {...this.props}
           fieldId={safeFieldId}

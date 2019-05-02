@@ -126,18 +126,6 @@ export class WfModule extends React.PureComponent {
   }
 
   onDragStart = (ev) => {
-    if (ev.target.tagName in {
-      'button': null,
-      'input': null,
-      'select': null,
-      'textarea': null,
-      'label': null
-    }) {
-      // Don't drag when user selects text
-      ev.preventDefault()
-      return
-    }
-
     const dragObject = {
       type: 'WfModule',
       index: this.props.index,
