@@ -10,8 +10,8 @@ param_schema:
   join_columns:
     type: dict
     properties:
-      'on': { type: multicolumn, deprecated_string_storage: false }
-      right: { type: multicolumn, tab_parameter: right_tab, deprecated_string_storage: false }
+      'on': { type: multicolumn }
+      right: { type: multicolumn, tab_parameter: right_tab }
 parameters:
   - id_name: right_tab
     type: tab

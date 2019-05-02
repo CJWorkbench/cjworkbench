@@ -3,7 +3,9 @@ from pathlib import Path
 import os
 import shutil
 import tempfile
+import numpy as np
 import pandas as pd
+from pandas.testing import assert_frame_equal
 from cjworkbench.types import ProcessResult
 from server.importmodulefromgithub import import_module_from_directory
 from server.models import LoadedModule, ModuleVersion, Workflow
@@ -76,32 +78,32 @@ class ImportFromGitHubTest(DbTestCase):
             wfm = tab.wf_modules.create(
                 order=0,
                 module_id_name=module_version.id_name,
-                params=module_version.default_params
+                params={
+                    **module_version.default_params,
+                    'test_column': 'M',  # double this
+                    'test_multicolumn': ['F', 'Other']  # triple these
+                }
             )
 
             # Does it render right?
-            test_csv = 'Class,M,F,Other\n' \
-                       'math,10,12,100\n' \
-                       'english,,7,200\n' \
-                       'history,11,13,\n' \
-                       'economics,20,20,20'
-            test_table = pd.read_csv(io.StringIO(test_csv), header=0,
-                                     skipinitialspace=True)
-            test_table_out = test_table.copy()
-            test_table_out['M'] *= 2
-            test_table_out[['F', 'Other']] *= 3
-
-            wfm.params = {
-                **wfm.params,
-                'test_column': 'M',  # double this
-                'test_multicolumn': 'F,Other'  # triple these
-            }
-            wfm.save(update_fields=['params'])
+            test_table = pd.DataFrame({
+                'Class': ['math', 'english', 'history', 'economics'],
+                'M': [10, np.nan, 11, 20],
+                'F': [12, 7, 13, 20],
+                'Other': [100, 100, 13, 20],
+            })
+            expected = pd.DataFrame({
+                'Class': ['math', 'english', 'history', 'economics'],
+                'M': [20, np.nan, 22, 40],
+                'F': [36, 21, 39, 60],
+                'Other': [300, 300, 39, 60],
+            })
 
             with self.assertLogs():
                 lm = LoadedModule.for_module_version_sync(module_version)
                 result = lm.render(ProcessResult(test_table), wfm.get_params(),
                                    'x', None)
-            self.assertEqual(result, ProcessResult(test_table_out))
+            self.assertEqual(result.error, '')
+            assert_frame_equal(result.dataframe, expected)
         finally:
             server.models.loaded_module.load_external_module.cache_clear()

@@ -10,7 +10,6 @@
       "name": "",
       "id_name": "colnames",
       "type": "multicolumn",
-      "deprecated_string_storage": false,
       "visible_if": {
         "id_name": "select_range",
         "value": false,

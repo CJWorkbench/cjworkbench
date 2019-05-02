@@ -14,23 +14,13 @@ export default class MenuParam extends React.PureComponent {
         }).isRequired
       ]).isRequired
     ).isRequired,
-    value: PropTypes.oneOfType([
-      PropTypes.number.isRequired, // DEPRECATED
-      PropTypes.string.isRequired // new-style menu
-    ]).isRequired,
+    value: PropTypes.string.isRequired,
     isReadOnly: PropTypes.bool.isRequired,
     onChange: PropTypes.func.isRequired // onChange(newIndex) => undefined
   }
 
   onChange = (ev) => {
-    const { enumOptions, onChange } = this.props
-
-    // HTML <option> value is always String; find the _real_ value from
-    // the String.
-    const strValue = ev.target.value
-    const value = enumOptions.find(({ value }) => String(value) === strValue).value
-
-    onChange(value)
+    this.props.onChange(ev.target.value)
   }
 
   render() {
@@ -51,7 +41,7 @@ export default class MenuParam extends React.PureComponent {
         <select
           name={name}
           id={fieldId}
-          value={String(value)}
+          value={value}
           onChange={this.onChange}
           disabled={isReadOnly}
         >

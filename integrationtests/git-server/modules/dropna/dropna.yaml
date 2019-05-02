@@ -8,4 +8,3 @@ parameters:
 - id_name: colnames
   type: multicolumn
   name: Drop row if any of these columns is empty
-  deprecated_string_storage: false

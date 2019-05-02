@@ -202,25 +202,15 @@ def _(dtype: ParamDType.Column, value: str, context: RenderContext) -> str:
 @clean_value.register(ParamDType.Multicolumn)
 def _(
     dtype: ParamDType.Multicolumn,
-    value: str,
+    value: List[str],
     context: RenderContext
 ) -> str:
     valid_columns = context.output_columns_for_tab_parameter(
         dtype.tab_parameter
     )
-    # `value` is a comma-separated list
-    #
-    # Don't worry about split-empty-string generating an empty-string colname:
-    # it isn't in `valid_columns` so it'll get filtered out.
-    if not value:
-        return ''
 
     error_agg = PromptErrorAggregator()
-
-    if dtype.deprecated_string_storage:
-        requested_colnames = set(c for c in value.split(',') if c)
-    else:
-        requested_colnames = set(value)
+    requested_colnames = set(value)
 
     valid_colnames = []
     # ignore colnames not in valid_columns
@@ -238,10 +228,7 @@ def _(
 
     error_agg.raise_if_nonempty()
 
-    if dtype.deprecated_string_storage:
-        return ','.join(valid_colnames)
-    else:
-        return valid_colnames
+    return valid_colnames
 
 
 @clean_value.register(ParamDType.Multichartseries)

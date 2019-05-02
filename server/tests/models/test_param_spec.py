@@ -233,12 +233,3 @@ class ParamSpecTest(unittest.TestCase):
         self.assertEqual(param_spec.column_types, ['text', 'number'])
         self.assertEqual(param_spec.dtype.column_types,
                          frozenset(['text', 'number']))
-
-    def test_multicolumn_default_string_storage(self):
-        param_spec = ParamSpec.from_dict(dict(
-            id_name='c',
-            type='multicolumn',
-            column_types=['text', 'number'],
-        ))
-        self.assertTrue(param_spec.deprecated_string_storage)
-        self.assertTrue(param_spec.dtype.deprecated_string_storage)

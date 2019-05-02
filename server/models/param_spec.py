@@ -268,10 +268,8 @@ class ParamSpecColumn(_HasPlaceholder, _HasName, ParamSpec):
 class ParamSpecMulticolumn(_HasPlaceholder, _HasName, ParamSpec):
     """
     Multicolumn selector. Selects FrozenSet of str.
-
-    If `deprecated_string_storage` is set (DEPRECATED), value is str and the
-    client and module must split it by `","`.
     """
+
     column_types: Optional[List[str]] = None
     """
     Column-type restrictions for the underlying ParamDType.Multicolumn.
@@ -287,11 +285,6 @@ class ParamSpecMulticolumn(_HasPlaceholder, _HasName, ParamSpec):
     The default `None` means, "this tab."
     """
 
-    deprecated_string_storage: bool = True
-    """
-    Passed to ParamDType.Multicolumn; if True, values are str not List.
-    """
-
     # override
     @property
     def dtype(self) -> Optional[ParamDType]:
@@ -299,9 +292,19 @@ class ParamSpecMulticolumn(_HasPlaceholder, _HasName, ParamSpec):
             column_types=(
                 frozenset(self.column_types) if self.column_types else None
             ),
-            tab_parameter=self.tab_parameter,
-            deprecated_string_storage=self.deprecated_string_storage
+            tab_parameter=self.tab_parameter
         )
+
+    # override
+    @classmethod
+    def _from_kwargs(cls, *, deprecated_string_storage: bool = False,
+                     **kwargs):
+        """
+        Ignore deprecated_string_storage.
+
+        TODO nix this method, after all modules nix the string.
+        """
+        return cls(**kwargs)
 
 
 @dataclass(frozen=True)

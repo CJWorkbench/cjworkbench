@@ -156,25 +156,13 @@ class CleanValueTests(DbTestCase):
         result = clean_value(ParamDType.Column(), 'B', context)
         self.assertEqual(result, '')
 
-    def test_clean_deprecated_multicolumn_valid(self):
-        context = RenderContext(None, TableShape(3, [
-            Column('A', ColumnType.NUMBER()),
-            Column('B', ColumnType.NUMBER()),
-        ]), None, None)
-        result = clean_value(
-            ParamDType.Multicolumn(deprecated_string_storage=True),
-            'A,B',
-            context
-        )
-        self.assertEqual(result, 'A,B')
-
     def test_clean_multicolumn_valid(self):
         context = RenderContext(None, TableShape(3, [
             Column('A', ColumnType.NUMBER()),
             Column('B', ColumnType.NUMBER()),
         ]), None, None)
         result = clean_value(
-            ParamDType.Multicolumn(deprecated_string_storage=False),
+            ParamDType.Multicolumn(),
             ['A', 'B'],
             context
         )
@@ -186,7 +174,7 @@ class CleanValueTests(DbTestCase):
             Column('A', ColumnType.NUMBER()),
         ]), None, None)
         result = clean_value(
-            ParamDType.Multicolumn(deprecated_string_storage=False),
+            ParamDType.Multicolumn(),
             ['A', 'B'],
             context
         )
@@ -217,7 +205,7 @@ class CleanValueTests(DbTestCase):
             Column('B', ColumnType.NUMBER()),
         ]), None, None)
         result = clean_value(
-            ParamDType.Multicolumn(deprecated_string_storage=False),
+            ParamDType.Multicolumn(),
             ['A', 'X', 'B'],
             context
         )
@@ -287,8 +275,7 @@ class CleanValueTests(DbTestCase):
 
         schema = ParamDType.Dict({
             'tab': ParamDType.Tab(),
-            'columns': ParamDType.Multicolumn(tab_parameter='tab',
-                                              deprecated_string_storage=False),
+            'columns': ParamDType.Multicolumn(tab_parameter='tab'),
         })
         param_values = {'tab': tab.slug,
                         'columns': ['A-from-tab-1', 'A-from-tab-2']}

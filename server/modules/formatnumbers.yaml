@@ -8,7 +8,6 @@ parameters:
 - id_name: colnames
   type: multicolumn
   column_types: [ number ]
-  deprecated_string_storage: false
 - id_name: format
   type: numberformat
   name: Display As
