@@ -30,7 +30,7 @@
     },
     {
       "name": "Add source column",
-      "id_name": "source_columns",
+      "id_name": "add_source_column",
       "type": "checkbox",
       "default": true
     },
