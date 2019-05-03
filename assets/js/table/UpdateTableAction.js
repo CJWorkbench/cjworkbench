@@ -3,10 +3,13 @@ import { addModuleAction, setWfModuleParamsAction, setSelectedWfModuleAction } f
 /**
  * Module param-building functions per id_name.
  *
- * Each function has the signature (oldParams, params), and it should
+ * Each function has the signature (oldParams, params, isNext), and it should
  * return new params or null.
  *
  * `oldParams` will be `null` if this is a new module.
+ *
+ * `isNext` will be `true` iff the found module is the one _after_ the selected
+ * module.
  *
  * Watch out: these param builders are NOT all used in the same way! For
  * example, editcells' "params" is used to add an _edit_, not overwrite an
@@ -16,18 +19,18 @@ import { addModuleAction, setWfModuleParamsAction, setSelectedWfModuleAction } f
  * elsewhere.
  */
 export const moduleParamsBuilders = {
-  'selectcolumns': buildSelectColumnsParams,
-  'duplicatecolumns': genericAddColumn('colnames'),
-  'filter': buildFilterParams,
-  'editcells': buildEditCellsParams,
-  'renamecolumns': buildRenameColumnsParams,
-  'reordercolumns': buildReorderColumnsParams,
-  'sort': buildSortColumnsParams,
-  'converttexttonumber': genericAddColumn('colnames'),
+  selectcolumns: buildSelectColumnsParams,
+  duplicatecolumns: genericAddColumn('colnames'),
+  filter: buildFilterParams,
+  editcells: buildEditCellsParams,
+  renamecolumns: buildRenameColumnsParams,
+  reordercolumns: buildReorderColumnsParams,
+  sort: buildSortColumnsParams,
+  converttexttonumber: genericAddColumn('colnames'),
   'clean-text': genericAddColumn('colnames'),
   'convert-date': genericAddColumn('colnames'),
-  'converttotext': genericAddColumn('colnames'),
-  'formatnumbers': genericAddColumn('colnames')
+  converttotext: genericAddColumn('colnames'),
+  formatnumbers: genericAddColumn('colnames')
 }
 
 /**
@@ -97,7 +100,11 @@ export function updateTableAction (wfModuleId, idName, forceNewModule, params) {
     }
 
     const existingWfModule = forceNewModule ? null : findWfModuleWithIds(state, wfModuleId, idName)
-    const newParams = moduleParamsBuilders[idName](existingWfModule ? existingWfModule.params : null, params)
+    const newParams = moduleParamsBuilders[idName](
+      existingWfModule ? existingWfModule.params : null,
+      params,
+      existingWfModule ? existingWfModule.isNext : false
+    )
 
     if (existingWfModule && !forceNewModule) {
       if (existingWfModule.id !== wfModuleId) {
@@ -244,21 +251,27 @@ function genericAddColumn (key) {
   }
 }
 
-function buildRenameColumnsParams (oldParams, params) {
+function buildRenameColumnsParams (oldParams, params, isNext) {
   // renameInfo format: {prevName: <current column name in table>, newName: <new name>}
-  const renames = oldParams && oldParams.renames || {}
+  const renames = {...(oldParams && oldParams.renames || {})} // we'll mutate it
   const { prevName, newName } = params
 
-  if (renames[prevName] === newName) {
-    return null
+  if (renames[prevName] === newName) return null // no-op
+
+  // conflictPrevName: if we're renaming B=>C and renames has A=>C, delete A=>C.
+  const conflictPrevName = Object.keys(renames).find(k => renames[k] === newName) || null
+  delete renames[conflictPrevName]
+
+  if (isNext) {
+    renames[prevName] = newName
   } else {
-    return {
-      renames: {
-        ...renames,
-        [prevName]: newName
-      }
-    }
+    // originalPrevName, realPrevName: if we're renaming B=>C and original has A=>B, return A=>C.
+    const originalPrevName = Object.keys(renames).find(k => renames[k] == prevName)
+    const realPrevName = originalPrevName || prevName
+    renames[realPrevName] = newName
   }
+
+  return { renames }
 }
 
 function buildReorderColumnsParams (oldParams, params) {
