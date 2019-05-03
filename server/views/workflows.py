@@ -64,7 +64,7 @@ def make_init_state(request, workflow=None, modules=None):
         ret['modules'] = dict([(str(m['id_name']), m)
                                for m in modules_data_list])
 
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         ret['loggedInUser'] = UserSerializer(request.user).data
 
     return ret
