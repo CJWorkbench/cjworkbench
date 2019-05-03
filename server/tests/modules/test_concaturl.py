@@ -141,11 +141,11 @@ class MigrateParamsTest(unittest.TestCase):
         self.assertEqual(concaturl.migrate_params({
             'url': 'https://app.workbenchdata.com/workflows/123',
             'columns_from': 'intersection',
-            'source_columns': False,
+            'add_source_column': False,
             'version_select': ''
         }), {
             'url': 'https://app.workbenchdata.com/workflows/123',
             'columns_from': 'intersection',
-            'source_columns': False,
+            'add_source_column': False,
             'version_select': ''
         })
