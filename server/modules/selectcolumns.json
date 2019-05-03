@@ -39,8 +39,8 @@
       "type" : "radio",
       "default": true,
       "options": [
-          { "value": false, "label": "Delete" },
-          { "value": true, "label": "Keep" }
+          { "value": true, "label": "Keep" },
+          { "value": false, "label": "Delete" }
       ]
     }
   ]
