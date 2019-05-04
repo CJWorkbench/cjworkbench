@@ -412,6 +412,11 @@
     background-color: $brand-workspace--light;
     color: $brand-workspace;
     margin-bottom: 1.5rem;
+
+    a {
+      color: $brand-workspace;
+      text-decoration: underline;
+    }
   }
 
   .wf-module-error-msg  {

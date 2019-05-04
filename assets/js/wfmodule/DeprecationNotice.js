@@ -8,7 +8,7 @@ export default function DeprecationMessage ({ helpUrl, message }) {
   return (
     <div className='module-deprecated'>
       <p>{message}</p>
-      <a target='_blank' href={helpUrl}>Learn how to replace this module</a>
+      <a target='_blank' href={helpUrl}>Learn how to replace this step</a>
     </div>
   )
 }
