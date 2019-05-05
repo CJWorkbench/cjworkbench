@@ -22,7 +22,7 @@
       data-test="const url = workflow.tabs[0].wfModules[0].params.url; return url === 'https://en.wikipedia.org/wiki/Global_Gender_Gap_Report' || url === 'https://en.wikipedia.org/wiki/List_of_countries_by_GDP_(nominal)'"
       >Paste in the URL of the webpage where the table is published:
       <div class="copy-txt">https://en.wikipedia.org/wiki/Global_Gender_Gap_Report</div>
-      <p class="instruction-detail">There are multiple columns on the page. The table we want to srape is the third displayed from the top.</p>
+      <p class="instruction-detail">There are multiple tables displayed on the page. The one we want to scrape is <code>WEF Global Gender Gap Index rankings</code>, which is the third one from the top.</p>
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Scrape table"}]'
@@ -46,35 +46,7 @@
       data-highlight='[]'
       data-test="return workflow.tabs[0].wfModuleNames[1] === 'Rename columns'"
       >Click one column name in the header of the table to give it a legible name.
-      <p>For example: Edit <code>Year[note 1] - 2015[11]</code> into <code>2015</code>.</p>
-    </li>
-  </ol>
-</section>
-<section>
-  <h2>3. Table's position on the page</h2>
-  <p>There are often more than one table on a page. For example there are 3 tables visible on this <a href="https://en.wikipedia.org/wiki/List_of_countries_by_GDP_(nominal)" class="highlight" target="_blank">page</a>.</p>
-  <p>Let't scrape the World Bank data table, displayed between the two others.</p>
-  <h3 class="instructions">Instructions</h3>
-  <ol class="steps">
-    <li
-    data-test="return workflow.tabs[1].wfModuleNames[0] === 'Scrape table'"
-      >Create a new tab using the
-      <span>
-        <img class="icon-insert" src="images/lesson-icons/add.svg">
-      </span>button at the bottom of the page, and add the data source<kbd>Scrape table</kbd> to it.
-    </li>
-    <li
-      data-highlight='[{"type":"WfModule","moduleName":"Scrape table"}]'
-      data-test="const url = workflow.tabs[1].wfModules[0].params.url; return url === 'https://en.wikipedia.org/wiki/List_of_countries_by_GDP_(nominal)'"
-      >Paste in the URL of the new page we want to scrape:
-      <div class="copy-txt">https://en.wikipedia.org/wiki/List_of_countries_by_GDP_(nominal)</div>
-    </li>
-    <li
-      data-highlight='[{"type":"WfModule","moduleName":"Scrape table"}]'
-      data-test="return workflow.tabs[1].wfModules[0].params.tablenum === 4"
-      >Set the table's position on the page to <code>4</code>, and click <kbd>Scrape</kbd>
-      <p class="instruction-detail">Why <code>4</code>, and not <code>2</code>? Because there are other tables in the HTML of this page that are coded to not 'look' like tables.</p>
-      <p class="instruction-detail">Try scraping positions <code>1</code> to <code>5</code>, and check the original page to understand where other HTML tables are located.</p>
+      <p>For example: Edit <code>Year[note 1] - 2006</code> into <code>2006</code>.</p>
     </li>
   </ol>
 </section>
