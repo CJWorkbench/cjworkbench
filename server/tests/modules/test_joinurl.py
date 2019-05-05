@@ -9,7 +9,7 @@ from cjworkbench.types import ProcessResult
 from server.modules import joinurl
 
 
-def P(url='https://app.workbenchdata.com/workflows/2/', colnames='',
+def P(url='https://app.workbenchdata.com/workflows/2/', colnames=[],
       importcols='', type='left', select_columns=False) -> Dict[str, Any]:
     return {
         'url': url,
@@ -67,7 +67,7 @@ class JoinURLTests(unittest.TestCase):
     def test_join(self):
         # Nothing too technical, do not need to test pandas functions
         result = render(pd.DataFrame({'col1': ['a', 'a'], 'key': ['b', 'c']}),
-                        P(type='inner', colnames='key'),
+                        P(type='inner', colnames=['key']),
                         PR('', {
                             'key': ['b', 'd'],
                             'col2': ['c', 'a'],
@@ -82,7 +82,7 @@ class JoinURLTests(unittest.TestCase):
 
     def test_importcols(self):
         result = render(pd.DataFrame({'col1': ['a', 'a'], 'key': ['b', 'c']}),
-                        P(type='inner', colnames='key', select_columns=True,
+                        P(type='inner', colnames=['key'], select_columns=True,
                           importcols='col2'),
                         PR('', {
                             'key': ['b', 'd'],
@@ -94,21 +94,21 @@ class JoinURLTests(unittest.TestCase):
 
     def test_colnames_not_in_right(self):
         result = render(pd.DataFrame({'A': [1], 'B': [2]}),
-                        P(colnames='A', select_columns=True,
+                        P(colnames=['A'], select_columns=True,
                           importcols='B'),
                         PR('', {'A': [1], 'C': [2]}))
         self.assertEqual(result, "Selected columns not in target workflow: B")
 
     def test_cast_int_to_float(self):
         result = render(pd.DataFrame({'A': [1, 2, 3]}),
-                        P(type='inner', colnames='A'),
+                        P(type='inner', colnames=['A']),
                         PR('', {'A': [1.0, 2.0, 4.0]}))
         expected = pd.DataFrame({'A': [1.0, 2.0]})
         assert_frame_equal(result, expected)
 
     def test_type_mismatch(self):
         result = render(pd.DataFrame({'A': [1, 2, 3]}),
-                        P(type='inner', colnames='A'),
+                        P(type='inner', colnames=['A']),
                         PR('', {'A': ['1', '2', '3']}))
         self.assertEqual(result, (
             'Types do not match for key column "A" (number and text). '
@@ -152,7 +152,7 @@ class MigrateParamsTest(unittest.TestCase):
         }), {
             'url': 'https://app.workbenchdata.com/workflows/5146/',
             'type': 'left',
-            'colnames': 'JOIN ID',
+            'colnames': ['JOIN ID'],
             'importcols': '',
             'select_columns': False,
             'version_select': ''
@@ -162,14 +162,31 @@ class MigrateParamsTest(unittest.TestCase):
         self.assertEqual(joinurl.migrate_params({
             'url': 'https://app.workbenchdata.com/workflows/5146/',
             'type': 'left',
-            'colnames': 'JOIN ID',
+            'colnames': 'A,B',
             'importcols': '',
             'select_columns': False,
             'version_select': ''
         }), {
             'url': 'https://app.workbenchdata.com/workflows/5146/',
             'type': 'left',
-            'colnames': 'JOIN ID',
+            'colnames': ['A', 'B'],
+            'importcols': '',
+            'select_columns': False,
+            'version_select': ''
+        })
+
+    def test_v2(self):
+        self.assertEqual(joinurl.migrate_params({
+            'url': 'https://app.workbenchdata.com/workflows/5146/',
+            'type': 'left',
+            'colnames': ['A', 'B'],
+            'importcols': '',
+            'select_columns': False,
+            'version_select': ''
+        }), {
+            'url': 'https://app.workbenchdata.com/workflows/5146/',
+            'type': 'left',
+            'colnames': ['A', 'B'],
             'importcols': '',
             'select_columns': False,
             'version_select': ''

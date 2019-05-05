@@ -1,7 +1,6 @@
 import re
 from typing import Tuple
 import pandas as pd
-from .utils import parse_multicolumn_param
 
 
 commas = re.compile(r'\s*,\s*')

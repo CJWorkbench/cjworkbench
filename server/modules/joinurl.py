@@ -5,13 +5,36 @@ from pandas.api.types import is_numeric_dtype
 from cjworkbench.types import ColumnType, ProcessResult
 from server.models import Params
 from server.modules import utils
-from .utils import parse_multicolumn_param
 
 #------ For now, only load workbench urls
 
 # Prefixes for column matches (and not keys)
 lsuffix = '_source'
 rsuffix = '_imported'
+
+
+def parse_multicolumn_param(value, table):
+    """
+    Get (valid_colnames, invalid_colnames) lists in `table`.
+
+    It's easy for a user to select a missing column: just add a rename
+    or column-select before the module that selected a valid column.
+
+    Columns will be ordered as they are ordered in `table`.
+
+    XXX this function is _weird_. By the time a module can call it, Workbench
+    has _already_ nixed missing columns. So `invalid_colnames` will be empty
+    unless `table` isn't the module's input table.
+    """
+    cols = value.split(',')
+    cols = [c.strip() for c in cols if c.strip()]
+
+    table_columns = list(table.columns)
+
+    valid = [c for c in table.columns if c in cols]
+    invalid = [c for c in cols if c not in table_columns]
+
+    return (valid, invalid)
 
 
 def check_key_types(left_dtypes, right_dtypes):
@@ -62,17 +85,16 @@ def render(table, params, *, fetch_result, **kwargs):
 
     right_table = fetch_result.dataframe
 
-    key_cols, errs = parse_multicolumn_param(params['colnames'], table)
-
-    if errs:
-        return ('Key columns not in this workflow: ' + ', '.join(errs))
-
+    key_cols = params['colnames']
     if not key_cols:
         return table
 
-    _, errs = parse_multicolumn_param(params['colnames'], right_table)
-    if errs:
-        return ('Key columns not in target workflow: ' + ', '.join(errs))
+    missing_in_right_table = [c for c in params['colnames']
+                              if c not in right_table.columns]
+
+    if missing_in_right_table:
+        return ('Key columns not in target workflow: '
+                + ', '.join(missing_in_right_table))
 
     join_type = params['type']
     select_columns: bool = params['select_columns']
@@ -135,7 +157,19 @@ def _migrate_params_v0_to_v1(params):
     }
 
 
+def _migrate_params_v1_to_v2(params):
+    """
+    v1: 'colnames' is comma-separated str. v2: 'colnames' is List[str].
+    """
+    return {
+        **params,
+        'colnames': [c for c in params['colnames'].split(',') if c],
+    }
+
+
 def migrate_params(params):
     if isinstance(params['type'], int):
         params = _migrate_params_v0_to_v1(params)
+    if isinstance(params['colnames'], str):
+        params = _migrate_params_v1_to_v2(params)
     return params
