@@ -256,6 +256,7 @@ function buildRenameColumnsParams (oldParams, params, isNext) {
   const renames = {...(oldParams && oldParams.renames || {})} // we'll mutate it
   const { prevName, newName } = params
 
+  if (!newName) return null // no-op -- we do not allow empty column names
   if (renames[prevName] === newName) return null // no-op
 
   // conflictPrevName: if we're renaming B=>C and renames has A=>C, delete A=>C.
