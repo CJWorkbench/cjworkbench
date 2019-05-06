@@ -32,6 +32,8 @@ def _parse_renames(renames: Dict[str, str], table_colnames: List[str]):
     """
     Convert `renames` into a valid mapping for `table_colnames`.
 
+    Ignore any renames to "". That column name is not allowed.
+
     Return a minimal and valid dict from old colname to new colname.
 
     `renames` is a dict mapping old colname to new colname. It may contain
@@ -41,7 +43,11 @@ def _parse_renames(renames: Dict[str, str], table_colnames: List[str]):
     extra renames are handled left-to-right (the order of `table_colnames`
     matters).
     """
-    new_colnames = _uniquify([renames.get(c, c) for c in table_colnames])
+    # "renames.get(c) or c" means:
+    # * If renames[c] exists and is "", return c
+    # * If renames[c] does not exist, return c
+    # * If renames[c] exists and is _not_ "", return renames[c]
+    new_colnames = _uniquify([(renames.get(c) or c) for c in table_colnames])
     return {o: n for o, n in zip(table_colnames, new_colnames) if o != n}
 
 

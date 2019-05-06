@@ -65,7 +65,7 @@ class MigrateParamsTests(unittest.TestCase):
         })
 
 
-class RenameFromTableTests(unittest.TestCase):
+class RenderTests(unittest.TestCase):
     def test_parse_renames_ignore_missing_columns(self):
         self.assertEqual(
             _parse_renames({'A': 'B', 'C': 'D'}, ['A', 'X']),
@@ -193,3 +193,17 @@ class RenameFromTableTests(unittest.TestCase):
         assert_frame_equal(result['dataframe'],
                            pd.DataFrame({'X': ['x'], 'Y': [1]}))
         self.assertEqual(result['column_formats'], {'Y': '{:,d}', 'X': None})
+
+    def test_dict_disallow_rename_to_null(self):
+        table = pd.DataFrame({'A': [1]})
+        result = render(table, P(renames={'A': ''}),
+                        input_columns={'A': Column()})
+        assert_frame_equal(result, pd.DataFrame({'A': [1]}))
+
+    def test_custom_list_disallow_rename_to_null(self):
+        table = pd.DataFrame({'A': [1], 'B': [2], 'C': [3]})
+        result = render(table, P(custom_list=True, list_string='D\n\nF'),
+                        input_columns={'A': Column(), 'B': Column(), 'C':
+                                       Column()})
+        assert_frame_equal(result['dataframe'],
+                           pd.DataFrame({'D': [1], 'B': [2], 'F': [3]}))
