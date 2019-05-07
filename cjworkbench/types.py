@@ -99,6 +99,7 @@ def validate_dataframe(df: pd.DataFrame) -> None:
 
     * All column names are str
     * All column names are unique
+    * No column names are ""
     * If a column is `object` or `categorical`, all values are `str`, `np.nan`
       or `None`
     * Otherwise, a column must be numeric (but not "nullable integer") or
@@ -117,6 +118,9 @@ def validate_dataframe(df: pd.DataFrame) -> None:
     if dup_column_indexes.any():
         colname = df.columns[dup_column_indexes][0]
         raise ValueError('duplicate column name "%s"' % colname)
+
+    if (df.columns == '').any():
+        raise ValueError('empty column name "" not allowed')
 
     for column in df.columns:
         validate_series(df[column])
