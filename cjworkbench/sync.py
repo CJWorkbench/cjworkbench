@@ -28,7 +28,7 @@ class WorkbenchDatabaseSyncToAsync(DatabaseSyncToAsync):
 
     # override
     async def __call__(self, *args, **kwargs):
-        # re-implementation of async_to_sync
+        # re-implementation of sync_to_async
         loop = asyncio.get_event_loop()
         context = contextvars.copy_context()
         child = functools.partial(self.func, *args, **kwargs)
