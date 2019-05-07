@@ -269,3 +269,22 @@ class ScrapeTableTest(unittest.TestCase):
                            pd.DataFrame({'Category - A': ['a'],
                                          'Category - B': ['b'],
                                          'Category - A 2': ['c']}))
+
+    @patch('server.modules.utils.spooled_data_from_url',
+           fake_spooled_data_from_url(
+               b'<table><thead>'
+               b'  <tr><th></th><th>Column 1</th></tr>'
+               b'</thead><tbody>'
+               b'  <tr><td>a</td><td>b</td><td>c</td></tr>'
+               b'</tbody></table>'
+           ))
+    def test_prevent_empty_colname(self):
+        # https://www.pivotaltracker.com/story/show/162648330
+        fetch_result = fetch(url='http://example.org')
+        assert_frame_equal(fetch_result.dataframe, pd.DataFrame({
+            # We'd prefer 'Column 1 1', but pd.read_html() doesn't give us that
+            # choice.
+            'Unnamed: 0': ['a'],
+            'Column 1': ['b'],
+            'Unnamed: 2': ['c'],
+        }))

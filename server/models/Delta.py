@@ -29,11 +29,6 @@ def _prepare_json(data: Any) -> Any:
 # When creating a Delta, the two commands will be called in the same atomic
 # transaction.
 class Delta(PolymorphicModel):
-    class Meta:
-        # OMG this bug ate so many hours...
-        # https://github.com/django-polymorphic/django-polymorphic/issues/229
-        base_manager_name = 'base_objects'
-
     # These fields must be set by any child classes, when instantiating
     workflow = models.ForeignKey('Workflow', related_name='deltas',
                                  on_delete=models.CASCADE)

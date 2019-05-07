@@ -269,6 +269,11 @@ class ProcessResultTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'duplicate column name'):
             ProcessResult.coerce(dataframe)
 
+    def test_coerce_validate_empty_colname(self):
+        dataframe = pd.DataFrame({'': [1], 'B': [2]})
+        with self.assertRaisesRegex(ValueError, 'empty column name'):
+            ProcessResult.coerce(dataframe)
+
     def test_coerce_validate_numpy_dtype(self):
         # Numpy dtypes should be treated just like pandas dtypes.
         dataframe = pd.DataFrame({'A': np.array([1, 2, 3])})
