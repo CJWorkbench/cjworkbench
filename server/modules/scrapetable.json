@@ -9,20 +9,20 @@
   "parameters": [
     {
       "name": "",
-      "id_name" : "url",
+      "id_name": "url",
       "type": "string",
-      "placeholder":"http://"
+      "placeholder": "http://"
     },
     {
       "name": "Table's position on the page",
-      "id_name" : "tablenum",
+      "id_name": "tablenum",
       "type": "integer",
       "default": 1,
       "placeholder": "1"
     },
     {
       "name": "Scrape",
-      "id_name" : "version_select",
+      "id_name": "version_select",
       "type": "custom"
     },
     {
