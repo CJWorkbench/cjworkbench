@@ -4,6 +4,7 @@ from django.db import models
 from django.db.models import Q
 from server.models import Tab, WfModule
 from server.models.workflow import DependencyGraph
+from server.serializers import WfModuleSerializer
 
 
 class ChangesWfModuleOutputs:
@@ -12,7 +13,7 @@ class ChangesWfModuleOutputs:
 
     Usage:
 
-        class MyCommand(Delta, ChangesWfModuleOutputs):
+        class MyCommand(ChangesWfModuleOutputs, Delta):  # order matters!
             wf_module_delta_ids = ChangesWfModuleOutputs.wf_module_delta_ids
 
             # override
@@ -159,3 +160,43 @@ class ChangesWfModuleOutputs:
 
         # for ws_notify()
         self._changed_wf_module_versions = prev_ids
+
+    # override Delta
+    def load_ws_data(self):
+        data = {
+            'updateWorkflow': self._load_workflow_ws_data(),
+            'updateWfModules': {
+                str(wfm_id): {
+                    'last_relevant_delta_id': delta_id,
+                    'quick_fixes': [],
+                    'output_columns': [],
+                    'output_error': '',
+                    'output_status': 'busy',
+                    'output_n_rows': 0,
+                } for wfm_id, delta_id in self._changed_wf_module_versions
+            }
+        }
+
+        if hasattr(self, 'wf_module'):
+            if self.wf_module.is_deleted or self.wf_module.tab.is_deleted:
+                # When we did or undid this command, we removed the
+                # WfModule from the Workflow.
+                data['clearWfModuleIds'] = [self.wf_module_id]
+            else:
+                # Serialize _everything_, including params
+                #
+                # TODO consider serializing only what's changed, so when Alice
+                # changes 'has_header' it doesn't overwrite Bob's 'url' while
+                # he's editing it.
+                step_data = WfModuleSerializer(self.wf_module).data
+                data['updateWfModules'][str(self.wf_module_id)] = step_data
+
+        return data
+
+    # override Delta
+    async def schedule_execute_if_needed(self) -> None:
+        """
+        If any WfModule output may change, schedule a render over RabbitMQ.
+        """
+        if len(self._changed_wf_module_versions):
+            await self._schedule_execute()

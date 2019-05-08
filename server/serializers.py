@@ -16,6 +16,16 @@ User = get_user_model()
 _NeedCamelRegex = re.compile('_(\w)')
 
 
+def isoformat(dt_or_none) -> str:
+    if dt_or_none is None:
+        return None
+    else:
+        # StoredObject IDs are actually their timestamps with
+        # microsecond precision, encoded as ISO-8601 with 'Z' as the time zone
+        # specifier. Anything else and IDs won't match up!
+        return dt_or_none.isoformat().replace('+00:00', 'Z')
+
+
 def _camelize(s: str) -> str:
     """
     Convert snake-case to camel-case.
@@ -120,6 +130,7 @@ class WfModuleSerializer(serializers.ModelSerializer):
     versions = serializers.SerializerMethodField()
     quick_fixes = serializers.SerializerMethodField()
     module = serializers.SerializerMethodField()
+    last_update_check = serializers.DateTimeField(format='iso-8601')
 
     # update interval handling is a little tricky as we need to convert seconds
     # to count+units
@@ -136,8 +147,12 @@ class WfModuleSerializer(serializers.ModelSerializer):
             return False
 
     def get_versions(self, wfm):
-        versions = wfm.list_fetched_data_versions()
-        current_version = wfm.stored_data_version
+        versions = [
+            # XXX nonsense: Arrays instead of JSON objects.
+            [isoformat(stored_at), read]
+            for stored_at, read in wfm.list_fetched_data_versions()
+        ]
+        current_version = isoformat(wfm.stored_data_version)
         return {'versions': versions, 'selected': current_version}
 
     def get_module(self, wfm):
@@ -171,7 +186,6 @@ class WfModuleSerializer(serializers.ModelSerializer):
 
     def get_params(self, wfm):
         """WfModule.params, _plus secret metadata_"""
-        wfm.get_params()
         return wfm.get_params().as_dict()
 
     class Meta:

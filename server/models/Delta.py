@@ -2,20 +2,12 @@
 # A single change to state of a workflow
 # You can also think of this as a "command." Contains a specification of what
 # actually happened.
-import json
-from typing import Any, Optional
-from django.core.serializers.json import DjangoJSONEncoder
+from typing import Optional
 from django.db import connection, models
 import django.utils
 from polymorphic.models import PolymorphicModel
 from cjworkbench.sync import database_sync_to_async
 from server import rabbitmq, websockets
-from server.serializers import WfModuleSerializer
-
-
-def _prepare_json(data: Any) -> Any:
-    """Convert `data` into a simple, JSON-ready dict."""
-    return json.loads(json.dumps(data, cls=DjangoJSONEncoder))
 
 
 # Base class of a single undoable/redoable action
@@ -86,54 +78,40 @@ class Delta(PolymorphicModel):
         """
         await websockets.ws_client_send_delta_async(self.workflow_id, ws_data)
 
-    def load_ws_data(self):
+    def _load_workflow_ws_data(self):
+        """
+        Load the 'updateWorkflow' component of any WebSockets message.
+        """
         workflow = self.workflow
-        data = {
-            'updateWorkflow': {
-                'name': workflow.name,
-                'public': workflow.public,
-                'last_update': workflow.last_update().isoformat(),
-            },
-            'updateWfModules': {}
+        return {
+            'name': workflow.name,
+            'public': workflow.public,
+            'last_update': workflow.last_update().isoformat(),
         }
 
-        if hasattr(self, '_changed_wf_module_versions'):
-            for id, delta_id in self._changed_wf_module_versions:
-                data['updateWfModules'][str(id)] = {
-                    'last_relevant_delta_id': delta_id,
-                    'quick_fixes': [],
-                    'output_columns': [],
-                    'output_error': '',
-                    'output_status': 'busy',
-                    'output_n_rows': 0,
-                }
+    def load_ws_data(self):
+        """
+        Create a dict to send over WebSockets so the client gets new state.
 
-        if hasattr(self, 'wf_module'):
-            if self.wf_module.is_deleted or self.wf_module.tab.is_deleted:
-                # When we did or undid this command, we removed the
-                # WfModule from the Workflow.
-                data['clearWfModuleIds'] = [self.wf_module_id]
-            else:
-                # Serialize _everything_, including params
-                #
-                # TODO consider serializing only what's changed, so when Alice
-                # changes 'has_header' it doesn't overwrite Bob's 'url' while
-                # he's editing it.
-                wf_module_data = WfModuleSerializer(self.wf_module).data
+        This is called synchronously. It may access the database. It should
+        return `{'updateWorkflow': self._load_workflow_ws_data()}` at the very
+        least, because that holds metadata about the delta itself.
+        """
+        return {
+            'updateWorkflow': self._load_workflow_ws_data(),
+        }
 
-                data['updateWfModules'][str(self.wf_module_id)] = \
-                    _prepare_json(wf_module_data)
-
-        return data
+    async def _schedule_execute(self) -> None:
+        """
+        Force a render.
+        """
+        await rabbitmq.queue_render(self.workflow.id,
+                                    self.workflow.last_delta_id)
 
     async def schedule_execute_if_needed(self) -> None:
         """
         If any WfModule output may change, schedule a render over RabbitMQ.
         """
-        if hasattr(self, '_changed_wf_module_versions'):
-            if len(self._changed_wf_module_versions):
-                await rabbitmq.queue_render(self.workflow.id,
-                                            self.workflow.last_delta_id)
 
     @classmethod
     async def create(cls, *, workflow, **kwargs) -> None:

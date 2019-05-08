@@ -4,7 +4,7 @@ from server.models import Delta, WfModule
 from .util import ChangesWfModuleOutputs
 
 
-class DeleteModuleCommand(Delta, ChangesWfModuleOutputs):
+class DeleteModuleCommand(ChangesWfModuleOutputs, Delta):
     """
     Remove `wf_module` from its Workflow.
 

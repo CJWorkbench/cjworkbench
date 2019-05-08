@@ -9,7 +9,7 @@ from .util import ChangesWfModuleOutputs
 logger = logging.getLogger(__name__)
 
 
-class ChangeParametersCommand(Delta, ChangesWfModuleOutputs):
+class ChangeParametersCommand(ChangesWfModuleOutputs, Delta):
     wf_module = models.ForeignKey(WfModule, on_delete=models.PROTECT)
     old_values = JSONField('old_values')  # _all_ params
     new_values = JSONField('new_values')  # only _changed_ params

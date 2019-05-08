@@ -1,11 +1,10 @@
 from django.db import models
 from django.db.models import F
 from server.models import Delta, ModuleVersion, WfModule
-from server import rabbitmq
 from .util import ChangesWfModuleOutputs
 
 
-class AddModuleCommand(Delta, ChangesWfModuleOutputs):
+class AddModuleCommand(ChangesWfModuleOutputs, Delta):
     """
     Create a `WfModule` and insert it into the Workflow.
 
@@ -110,9 +109,7 @@ class AddModuleCommand(Delta, ChangesWfModuleOutputs):
         know this delta's ID until after we save it to the database, yet we
         need to save its own ID in self._changed_wf_module_versions.
         """
-        await rabbitmq.queue_render(self.workflow.id,
-                                    self.workflow.last_delta_id)
-
+        await self._schedule_execute()
 
     @classmethod
     def amend_create_kwargs(cls, *, workflow, tab, module_id_name,

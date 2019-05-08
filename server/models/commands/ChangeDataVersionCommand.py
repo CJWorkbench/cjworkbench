@@ -12,7 +12,7 @@ def _workflow_has_notifications(workflow):
         .filter(notifications=True).exists()
 
 
-class ChangeDataVersionCommand(Delta, ChangesWfModuleOutputs):
+class ChangeDataVersionCommand(ChangesWfModuleOutputs, Delta):
     wf_module = models.ForeignKey(WfModule, on_delete=models.PROTECT)
     # may not have had a previous version
     old_version = models.DateTimeField('old_version', null=True)

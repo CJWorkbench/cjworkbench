@@ -15,6 +15,16 @@ class ChangeWfModuleNotesCommand(Delta):
         self.wf_module.notes = self.old_value
         self.wf_module.save(update_fields=['notes'])
 
+    # override
+    def load_ws_data(self):
+        wf_module = self.wf_module
+        return {
+            'updateWorkflow': self._load_workflow_ws_data(),
+            'updateWfModules': {
+                str(wf_module.id): {'notes': wf_module.notes}
+            }
+        }
+
     @classmethod
     def amend_create_kwargs(cls, *, wf_module, new_value, **kwargs):
         wf_module.refresh_from_db()  # now that we're atomic

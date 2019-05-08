@@ -4,7 +4,7 @@ from server.models import Delta
 from .util import ChangesWfModuleOutputs
 
 
-class ReorderModulesCommand(Delta, ChangesWfModuleOutputs):
+class ReorderModulesCommand(ChangesWfModuleOutputs, Delta):
     """Overwrite wf_module.order for all wf_modules in a tab."""
 
     tab = models.ForeignKey('Tab', on_delete=models.PROTECT)

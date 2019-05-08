@@ -6,7 +6,7 @@ from server.models.workflow import DependencyGraph
 from .util import ChangesWfModuleOutputs
 
 
-class ReorderTabsCommand(Delta, ChangesWfModuleOutputs):
+class ReorderTabsCommand(ChangesWfModuleOutputs, Delta):
     """Overwrite tab.position for all tabs in a workflow."""
 
     old_order = ArrayField(models.IntegerField())

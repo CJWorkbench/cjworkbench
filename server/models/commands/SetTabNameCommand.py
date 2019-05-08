@@ -3,7 +3,7 @@ from server.models import Delta, Tab
 from .util import ChangesWfModuleOutputs
 
 
-class SetTabNameCommand(Delta, ChangesWfModuleOutputs):
+class SetTabNameCommand(ChangesWfModuleOutputs, Delta):
     """
     Set a tab name.
 
