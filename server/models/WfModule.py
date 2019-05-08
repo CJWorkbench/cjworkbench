@@ -302,7 +302,7 @@ class WfModule(models.Model):
             # Not using `new_wfm.cache_render_result(cached_result.result)`
             # because that would involve reading the whole thing.
             new_wfm.cached_render_result_delta_id = \
-                to_workflow.last_delta_id
+                new_wfm.last_relevant_delta_id
             for attr in ('status', 'error', 'json', 'quick_fixes', 'columns',
                          'nrows'):
                 full_attr = f'cached_render_result_{attr}'
@@ -330,8 +330,8 @@ class WfModule(models.Model):
                 # such cases gracefully. So `new_result` will behave exactly
                 # like `cached_result`.
                 pass
-
-        new_wfm.save()
+        else:
+            new_wfm.save()
 
         # Duplicate the current stored data only, not the history
         if self.stored_data_version is not None:
