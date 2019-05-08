@@ -2,8 +2,6 @@
 
 set -e
 
-echo 'RUN' > /tmp/x
-
 IMAGE=$(docker build -q "$(dirname "$0")")
 
 # Assumes we're in ~/src/cjworkbench/cjworkbench (and other plugins we may edit
