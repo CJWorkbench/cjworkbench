@@ -89,7 +89,7 @@ export function create () {
       type: TAB_CREATE,
       payload: {
         promise: api.createTab(slug, name).then(() => ({ slug, name })),
-        data: { slug, name }
+        data: { slug, name, position: workflow.tab_slugs.length } // append
       }
     })
   }
@@ -120,21 +120,32 @@ export function duplicate (oldSlug) {
       type: TAB_DUPLICATE,
       payload: {
         promise: api.duplicateTab(oldSlug, slug, name).then(() => ({ slug, name })),
-        data: { slug, name }
+        data: {
+          slug,
+          name,
+          // Insert after oldTab.
+          //
+          // This is what the server will do; we must mimic it or the user will
+          // see the tab change position once the server responds with its
+          // authoritative order.
+          position: workflow.tab_slugs.indexOf(oldSlug) + 1
+        }
       }
     })
   }
 }
 
 function reduceCreatePending (state, action) {
-  const { pendingTabs, workflow } = state
-  const { slug, name } = action.payload
+  const { workflow, pendingTabs } = state
+  const { position, slug, name } = action.payload
+  const tabSlugs = workflow.tab_slugs.slice() // shallow copy
+  tabSlugs.splice(position, 0, slug)
 
   return {
     ...state,
     workflow: {
       ...workflow,
-      tab_slugs: [ ...workflow.tab_slugs, slug ]
+      tab_slugs: tabSlugs
     },
     pendingTabs: {
       ...pendingTabs,
