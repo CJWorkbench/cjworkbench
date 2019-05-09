@@ -45,6 +45,11 @@ class ParseBytesIoTest(SimpleTestCase):
         )
         self.assertEqual(result, expected)
 
+    def test_parse_empty_csv(self):
+        result = parse_bytesio(io.BytesIO(b''), 'text/csv', 'utf-8')
+        expected = ProcessResult.coerce(pd.DataFrame().reset_index(drop=True))
+        self.assertEqual(result, expected)
+
     def test_replace_invalid_utf8(self):
         # \xe9 is ISO-8859-1 and we select 'utf-8' to test Workbench's recovery
         result = parse_bytesio(io.BytesIO(b'A\ncaf\xe9'),
@@ -199,6 +204,12 @@ class ParseBytesIoTest(SimpleTestCase):
             "decoding 'null')"
         ))
         self.assertEqual(result, expected)
+
+    def test_json_empty(self):
+        result = parse_bytesio(io.BytesIO(b'{}'), 'application/json', 'utf-8')
+        self.assertEqual(result.error, '')
+        assert_frame_equal(result.dataframe,
+                           pd.DataFrame().reset_index(drop=True))
 
     def test_txt_detect_separator_semicolon(self):
         result = parse_bytesio(io.BytesIO(b'A;C\nB;D'),

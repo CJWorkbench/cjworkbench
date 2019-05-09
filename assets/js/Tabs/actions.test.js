@@ -366,7 +366,7 @@ describe('Tabs.actions', () => {
   })
 
   describe('duplicate', () => {
-    it('should update workflow.pendingTabs', async () => {
+    it('should update workflow.tab_slugs and workflow.pendingTabs', async () => {
       let endDelay
       const delay = new Promise((resolve, reject) => {
         endDelay = resolve
@@ -377,17 +377,18 @@ describe('Tabs.actions', () => {
       }
       const store = mockStore({
         workflow: {
-          tab_slugs: [ 't1' ],
+          tab_slugs: [ 't1', 't2' ], // and we'll "duplicate" in between
         },
         tabs: {
-          't1': { name: 'A' }
+          't1': { name: 'A' },
+          't2': { name: 'B' }
         }
       }, api)
 
       generateSlug.mockImplementationOnce(prefix => prefix + 'X')
       await store.dispatch(actions.duplicate('t1'))
       expect(api.duplicateTab).toHaveBeenCalledWith('t1', 'tab-X', 'A (1)')
-      expect(store.getState().workflow.tab_slugs).toEqual([ 't1', 'tab-X' ])
+      expect(store.getState().workflow.tab_slugs).toEqual([ 't1', 'tab-X', 't2' ])
       expect(store.getState().pendingTabs).toEqual({
         'tab-X': {
           slug: 'tab-X',

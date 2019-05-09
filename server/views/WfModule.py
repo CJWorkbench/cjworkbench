@@ -2,6 +2,7 @@ from datetime import timedelta
 import json
 import re
 import pandas as pd
+from asgiref.sync import async_to_sync
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.http import HttpRequest, HttpResponse, \
@@ -9,12 +10,13 @@ from django.http import HttpRequest, HttpResponse, \
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.views.decorators.clickjacking import xframe_options_exempt
-import numpy as np
 from rest_framework import status
 from rest_framework.decorators import api_view, renderer_classes
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
+from cjworkbench.types import ProcessResult
 from server.models import WfModule
+from server import rabbitmq
 import server.utils
 from server.utils import units_to_seconds
 from server.models.loaded_module import module_get_html_bytes
@@ -350,14 +352,20 @@ def wfmodule_tile(request, pk, delta_id, tile_row, tile_column):
 @renderer_classes((JSONRenderer,))
 def wfmodule_public_output(request, pk, type, format=None):
     wf_module = _lookup_wf_module_for_read(pk, request)
+    workflow = wf_module.workflow
 
-    with wf_module.workflow.cooperative_lock():
+    with workflow.cooperative_lock():
         wf_module.refresh_from_db()
         cached_result = wf_module.cached_render_result
-        if cached_result is None:
-            # assume we'll get another request after execute finishes
-            return JsonResponse({})
-        result = cached_result.result  # slow
+        if cached_result:
+            result = cached_result.result  # slow! Reads from S3
+        else:
+            # We don't have a cached result, and we don't know how long it'll
+            # take to get one.
+            async_to_sync(rabbitmq.queue_render)(workflow.id,
+                                                 workflow.last_delta_id)
+            # The user will simply need to try again....
+            result = ProcessResult()
 
     if type == 'json':
         d = result.dataframe.to_json(orient='records')
