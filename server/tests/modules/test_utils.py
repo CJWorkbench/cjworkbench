@@ -200,6 +200,12 @@ class ParseBytesIoTest(SimpleTestCase):
         ))
         self.assertEqual(result, expected)
 
+    def test_json_empty(self):
+        result = parse_bytesio(io.BytesIO(b'{}'), 'application/json', 'utf-8')
+        self.assertEqual(result.error, '')
+        assert_frame_equal(result.dataframe,
+                           pd.DataFrame().reset_index(drop=True))
+
     def test_txt_detect_separator_semicolon(self):
         result = parse_bytesio(io.BytesIO(b'A;C\nB;D'),
                                'text/plain', 'utf-8')

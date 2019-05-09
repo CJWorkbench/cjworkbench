@@ -223,7 +223,7 @@ def _parse_table(bytesio: io.BytesIO, sep: Optional[str],
         # the cost is an extra 1GB.
         data = pd.read_csv(textio, dtype='category', sep=sep,
                            na_filter=False, low_memory=False)
-
+        data.reset_index(drop=True, inplace=True)  # empty => RangeIndex
         autocast_dtypes_in_place(data)
         return data
 
@@ -284,6 +284,17 @@ def _parse_json(bytesio: io.BytesIO,
                 )
             else:
                 raise BadInput('Invalid JSON (%s)' % str(err))
+
+        # pd.read_json(io.StringIO('{}')).colnames.index is a Float64Index for
+        # some reason.
+        #
+        # There's no other reason to convert to str -- JSON keys are all str.
+        if not len(data.columns):
+            data.columns = data.columns.astype(str)
+
+        # pd.read_json(io.StringIO('{}')) has a Float64Index instead of a
+        # RangeIndex. No harm in setting RangeIndex always.
+        data.reset_index(drop=True, inplace=True)
 
         # do not autocast_dtypes_in_place(): we want an str of ints to stay
         # str. But _do_ make sure all the types are valid.
