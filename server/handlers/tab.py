@@ -3,7 +3,7 @@ from typing import Any, Dict, List
 from cjworkbench.sync import database_sync_to_async
 from server.models import ModuleVersion, Workflow, Tab
 from server.models.commands import AddModuleCommand, ReorderModulesCommand, \
-    AddTabCommand, DeleteTabCommand, SetTabNameCommand
+    AddTabCommand, DeleteTabCommand, DuplicateTabCommand, SetTabNameCommand
 from .types import HandlerError
 from .decorators import register_websockets_handler, websockets_handler
 import server.utils
@@ -94,6 +94,18 @@ async def create(workflow: Workflow, slug: str, name: str, **kwargs):
     slug = str(slug)  # JSON values can't lead to error
     name = str(name)  # JSON values can't lead to error
     await AddTabCommand.create(workflow=workflow, slug=slug, name=name)
+
+
+@register_websockets_handler
+@websockets_handler('write')
+@_loading_tab
+async def duplicate(workflow: Workflow, tab: Tab, slug: str, name: str,
+                    **kwargs):
+    try:
+        await DuplicateTabCommand.create(workflow=workflow, from_tab=tab,
+                                         slug=slug, name=name)
+    except ValueError as err:
+        raise HandlerError('BadRequest: %s' % str(err))
 
 
 @register_websockets_handler

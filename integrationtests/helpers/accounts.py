@@ -119,6 +119,7 @@ class AccountAdmin:
             'server_changeworkflowtitlecommand',
             'server_deletemodulecommand',
             'server_deletetabcommand',
+            'server_duplicatetabcommand',
             'server_reordermodulescommand',
             'server_reordertabscommand',
             'server_settabnamecommand',

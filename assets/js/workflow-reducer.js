@@ -96,10 +96,16 @@ registerReducerFunc(APPLY_DELTA, (state, action) => {
 
     for (const tabSlug in (data.updateTabs || {})) {
       const update = data.updateTabs[tabSlug]
-      delete update.selected_wf_module_position
+      const oldPosition = tabs[tabSlug] ? tabs[tabSlug].selected_wf_module_position : null
       tabs[tabSlug] = {
         ...tabs[tabSlug],
         ...update
+      }
+      if (oldPosition !== null) {
+        // Server updates shouldn't overwrite selected_wf_module_position ...
+        // _except_ if the client doesn't actually have a position set (such as
+        // when duplicate succeeds and the new tab is one we haven't seen).
+        tabs[tabSlug].selected_wf_module_position = oldPosition
       }
       delete pendingTabs[tabSlug] // if it's a pendingTab
     }

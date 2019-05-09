@@ -1,7 +1,7 @@
 from unittest.mock import patch
 from django.contrib.auth.models import User
 from server.handlers.tab import add_module, reorder_modules, create, delete, \
-    set_name
+    duplicate, set_name
 from server.models import ModuleVersion, Workflow
 from server.models.commands import AddModuleCommand, ReorderModulesCommand
 from .util import HandlerTestCase
@@ -265,6 +265,48 @@ class TabTest(HandlerTestCase):
         # No-op
         self.assertResponse(response, data=None)
         self.assertEqual(workflow.live_tabs.count(), 1)
+
+    @patch('server.websockets.ws_client_send_delta_async', async_noop)
+    @patch('server.rabbitmq.queue_render', async_noop)
+    def test_duplicate(self):
+        user = User.objects.create(username='a', email='a@example.org')
+        workflow = Workflow.create_and_init(owner=user)
+        response = self.run_handler(duplicate, user=user, workflow=workflow,
+                                    tabSlug='tab-1', slug='tab-2',
+                                    name='Tab 2')
+        self.assertResponse(response, data=None)
+        self.assertEqual(workflow.live_tabs.count(), 2)
+        tab2 = workflow.live_tabs.last()
+        self.assertEqual(tab2.slug, 'tab-2')
+
+    def test_duplicate_viewer_access_denied(self):
+        workflow = Workflow.create_and_init(public=True)
+        workflow.tabs.create(position=1, slug='tab-2')
+        response = self.run_handler(duplicate, workflow=workflow,
+                                    tabSlug='tab-1', slug='tab-2', name='Tab 2')
+        self.assertResponse(response,
+                            error='AuthError: no write access to workflow')
+
+    def test_duplicate_missing_tab(self):
+        user = User.objects.create(username='a', email='a@example.org')
+        workflow = Workflow.create_and_init(owner=user)
+        response = self.run_handler(duplicate, user=user, workflow=workflow,
+                                    tabSlug='tab-missing', slug='tab-2',
+                                    name='Tab 2')
+        self.assertResponse(response, error='DoesNotExist: Tab not found')
+
+    def test_duplicate_tab_slug_conflict(self):
+        user = User.objects.create(username='a', email='a@example.org')
+        workflow = Workflow.create_and_init(owner=user)
+        tab = workflow.tabs.first()
+        workflow.tabs.create(position=1, slug='tab-2', name='Tab 2')
+        response = self.run_handler(duplicate, user=user, workflow=workflow,
+                                    tabSlug=tab.slug, slug='tab-2',
+                                    name='Tab 2')
+        self.assertResponse(
+            response,
+            error='BadRequest: tab slug "tab-2" is already used'
+        )
 
     @patch('server.websockets.ws_client_send_delta_async', async_noop)
     def test_set_name(self):

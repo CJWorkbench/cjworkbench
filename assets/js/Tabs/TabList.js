@@ -13,6 +13,7 @@ export default class TabList extends React.PureComponent {
     selectedTabPosition: PropTypes.number.isRequired,
     setName: PropTypes.func.isRequired, // func(tabSlug, name) => undefined
     destroy: PropTypes.func.isRequired, // func(tabSlug) => undefined
+    duplicate: PropTypes.func.isRequired, // func(tabSlug) => undefined
     select: PropTypes.func.isRequired, // func(tabSlug) => undefined
     setOrder: PropTypes.func.isRequired, // func(tabSlugs) => undefined
   }
@@ -75,7 +76,7 @@ export default class TabList extends React.PureComponent {
   }
 
   render () {
-    const { tabs, selectedTabPosition, isReadOnly, setName, select, destroy } = this.props
+    const { tabs, selectedTabPosition, isReadOnly, setName, select, destroy, duplicate } = this.props
     const { dragging } = this.state
 
     return (
@@ -94,6 +95,7 @@ export default class TabList extends React.PureComponent {
             name={name}
             setName={setName}
             destroy={destroy}
+            duplicate={duplicate}
             select={select}
             dragging={dragging}
             onDragStart={this.onDragStart}

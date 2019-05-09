@@ -21,6 +21,7 @@ export default class Tab extends React.PureComponent {
     onDrop: PropTypes.func.isRequired, // func() => undefined -- from dest Tab after drop
     setName: PropTypes.func.isRequired, // func(slug, name) => undefined
     destroy: PropTypes.func.isRequired, // func(slug) => undefined
+    duplicate: PropTypes.func.isRequired, // func(slug) => undefined
     select: PropTypes.func.isRequired, // func(slug) => undefined
   }
 
@@ -42,6 +43,11 @@ export default class Tab extends React.PureComponent {
   destroy = () => {
     const { destroy, slug } = this.props
     destroy(slug)
+  }
+
+  duplicate = () => {
+    const { duplicate, slug } = this.props
+    duplicate(slug)
   }
 
   get isDragMode () {
@@ -170,6 +176,7 @@ export default class Tab extends React.PureComponent {
           <TabDropdown
             onClickRename={this.startEditingTabName}
             onClickDelete={this.destroy}
+            onClickDuplicate={this.duplicate}
           />
         </div>
       </li>

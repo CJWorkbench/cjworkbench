@@ -4,6 +4,7 @@ from .AddTabCommand import AddTabCommand
 from .AddModuleCommand import AddModuleCommand
 from .DeleteModuleCommand import DeleteModuleCommand
 from .DeleteTabCommand import DeleteTabCommand
+from .DuplicateTabCommand import DuplicateTabCommand
 from .ReorderModulesCommand import ReorderModulesCommand
 from .ReorderTabsCommand import ReorderTabsCommand
 from .SetTabNameCommand import SetTabNameCommand

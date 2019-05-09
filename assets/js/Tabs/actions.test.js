@@ -364,4 +364,96 @@ describe('Tabs.actions', () => {
       expect(api.createTab).toHaveBeenCalledWith('tab-X', 'Tab 15')
     })
   })
+
+  describe('duplicate', () => {
+    it('should update workflow.pendingTabs', async () => {
+      let endDelay
+      const delay = new Promise((resolve, reject) => {
+        endDelay = resolve
+      })
+      const api = {
+        // duplicateTab(): takes one tick to fulfil
+        duplicateTab: jest.fn(() => delay)
+      }
+      const store = mockStore({
+        workflow: {
+          tab_slugs: [ 't1' ],
+        },
+        tabs: {
+          't1': { name: 'A' }
+        }
+      }, api)
+
+      generateSlug.mockImplementationOnce(prefix => prefix + 'X')
+      await store.dispatch(actions.duplicate('t1'))
+      expect(api.duplicateTab).toHaveBeenCalledWith('t1', 'tab-X', 'A (1)')
+      expect(store.getState().workflow.tab_slugs).toEqual([ 't1', 'tab-X' ])
+      expect(store.getState().pendingTabs).toEqual({
+        'tab-X': {
+          slug: 'tab-X',
+          name: 'A (1)',
+          wf_module_ids: [],
+          selected_wf_module_position: null
+        }
+      })
+      endDelay()
+      await delay
+      await tick()
+      // pendingTabs can't change. Only _after_ the action finishes will we
+      // receive a new delta from the server with the new tab ID. That new
+      // _delta_ is where we should be deleting from pendingTabs.
+      expect(store.getState().pendingTabs).toEqual({
+        'tab-X': {
+          slug: 'tab-X',
+          name: 'A (1)',
+          wf_module_ids: [],
+          selected_wf_module_position: null
+        }
+      })
+    })
+
+    it('should pick a new tab name based on current tab names', async () => {
+      const api = {
+        // duplicateTab(): takes one tick to fulfil
+        duplicateTab: jest.fn(() => Promise.resolve(null))
+      }
+      const store = mockStore({
+        workflow: {
+          tab_slugs: [ 't1', 't3', 't4' ]
+        },
+        tabs: {
+          't1': { name: 'A' },
+          't2': { name: 'A (1)' },
+        }
+      }, api)
+
+      generateSlug.mockImplementationOnce(prefix => prefix + 'X')
+      await store.dispatch(actions.duplicate('t2'))
+      expect(api.duplicateTab).toHaveBeenCalledWith('t2', 'tab-X', 'A (2)')
+    })
+
+    it('should consider pendingTabs when deciding new tab names', async () => {
+      const api = {
+        // duplicateTab(): takes one tick to fulfil
+        duplicateTab: jest.fn(() => Promise.resolve(null))
+      }
+      const store = mockStore({
+        workflow: {
+          tab_slugs: [ 't1', 't3', 't4' ]
+        },
+        pendingTabs: {
+          't14': { name: 'A (14)' },
+        },
+        tabs: {
+          't1': { name: 'Tab 1' },
+          't3': { name: 'A' },
+          't4': { name: 'Tab 3' }
+        }
+      }, api)
+
+      generateSlug.mockImplementationOnce(prefix => prefix + 'X')
+      await store.dispatch(actions.duplicate('t3'))
+      expect(api.duplicateTab).toHaveBeenCalledWith('t3', 'tab-X', 'A (15)')
+    })
+  })
 })

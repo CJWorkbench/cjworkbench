@@ -130,6 +130,13 @@ export default class WorkbenchAPI {
     return this._callExpectingNull('tab.create', { slug, name })
   }
 
+  /**
+   * Ask server to duplicate the tab `tabSlug`, creating new `slug` and `name`.
+   */
+  duplicateTab (tabSlug, slug, name) {
+    return this._callExpectingNull('tab.duplicate', { tabSlug, slug, name })
+  }
+
   deleteModule(wfModuleId) {
     return this._callExpectingNull('wf_module.delete', {
       wfModuleId

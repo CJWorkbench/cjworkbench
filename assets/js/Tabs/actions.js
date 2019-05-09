@@ -4,6 +4,7 @@ import { generateSlug } from '../utils'
 const TAB_SET_NAME = 'TAB_SET_NAME'
 const TAB_DESTROY = 'TAB_DESTROY'
 const TAB_CREATE = 'TAB_CREATE'
+const TAB_DUPLICATE = 'TAB_DUPLICATE'
 const TAB_SELECT = 'TAB_SELECT'
 const TAB_SET_ORDER = 'TAB_SET_ORDER'
 
@@ -94,6 +95,37 @@ export function create () {
   }
 }
 
+export function duplicate (oldSlug) {
+  return (dispatch, getState, api) => {
+    const state = getState()
+    const { workflow, tabs } = state
+    const pendingTabs = state.pendingTabs || {}
+
+    const tabNames = []
+    for (const k in tabs) {
+      tabNames.push(tabs[k].name)
+    }
+    for (const k in pendingTabs) {
+      tabNames.push(pendingTabs[k].name)
+    }
+
+    const oldTab = tabs[oldSlug]
+    const oldNameBase = oldTab.name.replace(/ \((\d+)\)$/, '')
+    const slug = generateSlug('tab-')
+    const nameRegex = new RegExp(util.escapeRegExp(oldNameBase) + ' \\((\\d+)\\)')
+    const namePattern = oldNameBase + ' (%d)'
+    const name = util.generateTabName(nameRegex, namePattern, tabNames)
+
+    dispatch({
+      type: TAB_DUPLICATE,
+      payload: {
+        promise: api.duplicateTab(oldSlug, slug, name).then(() => ({ slug, name })),
+        data: { slug, name }
+      }
+    })
+  }
+}
+
 function reduceCreatePending (state, action) {
   const { pendingTabs, workflow } = state
   const { slug, name } = action.payload
@@ -115,6 +147,8 @@ function reduceCreatePending (state, action) {
     }
   }
 }
+
+const reduceDuplicatePending = reduceCreatePending
 
 function reduceDestroyPending (state, action) {
   const { slug } = action.payload
@@ -196,6 +230,7 @@ function reduceSetOrderPending (state, action) {
 
 export var reducerFunctions = {
   [TAB_CREATE + '_PENDING']: reduceCreatePending,
+  [TAB_DUPLICATE + '_PENDING']: reduceDuplicatePending,
   [TAB_DESTROY + '_PENDING']: reduceDestroyPending,
   [TAB_SET_NAME + '_PENDING']: reduceSetNamePending,
   [TAB_SELECT + '_PENDING']: reduceSelectPending,

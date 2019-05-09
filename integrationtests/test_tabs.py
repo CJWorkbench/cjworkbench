@@ -131,3 +131,23 @@ class TestTabs(WorkbenchBase):
         b.assert_element('.wf-module-error-msg',
                          text='The chosen tab has no output',
                          wait=True)  # wait for render
+
+    def test_duplicate_tab(self):
+        b = self.browser
+        accounts.login(b, 'a@example.org', 'a@example.org')
+        self._create_workflow()
+
+        self.add_wf_module('Paste data')
+        b.fill_in('csv', 'foo,bar\n1,2', wait=True)
+        self.submit_wf_module()
+
+        # duplicate tab
+        b.click_whatever('.tabs>ul>li.selected button.toggle')
+        with b.scope('.dropdown-menu'):
+            b.click_button('Duplicate')
+        # wait for server to add it
+        b.assert_no_element('.tabs>ul>li.pending', wait=True)
+
+        self._select_tab('Tab 1 (1)')  # assume this is how it's named
+        # Make sure everything's there.
+        b.assert_element('.wf-module[data-module-name="Paste data"]')

@@ -324,6 +324,7 @@ describe('Reducer actions', () => {
     // have a sane way of doing that.
     const oldTab = { slug: 'tab-1', name: 'Old' }
     const newTab = { slug: 'tab-NEW', name: 'New', wf_module_ids: [], selected_wf_module_position: null }
+    const realNewTab = { slug: 'tab-NEW', name: 'New', wf_module_ids: [1, 2], selected_wf_module_position: 1} // e.g., from 'duplicate'
 
     const state = wfr.workflowReducer({
       workflow: {
@@ -332,12 +333,12 @@ describe('Reducer actions', () => {
       tabs: { 'tab-1': oldTab },
       pendingTabs: { 'tab-NEW': newTab }
     }, wfr.applyDeltaAction({
-      updateTabs: { 'tab-NEW': newTab }
+      updateTabs: { 'tab-NEW': realNewTab }
     }))
 
     expect(state.tabs).toEqual({
       'tab-1': oldTab,
-      'tab-NEW': newTab
+      'tab-NEW': realNewTab
     })
 
     expect(state.pendingTabs).toEqual({})

@@ -15,6 +15,7 @@ export default class Tabs extends React.PureComponent {
     create: PropTypes.func.isRequired, // func(position, name) => undefined
     setName: PropTypes.func.isRequired, // func(slug, name) => undefined
     destroy: PropTypes.func.isRequired, // func(slug) => undefined
+    duplicate: PropTypes.func.isRequired, // func(slug) => undefined
     select: PropTypes.func.isRequired, // func(slug) => undefined
     setOrder: PropTypes.func.isRequired, // func(slug) => undefined
   }
@@ -24,7 +25,7 @@ export default class Tabs extends React.PureComponent {
   }
 
   render () {
-    const { tabs, isReadOnly, selectedTabPosition, setName, select, destroy, setOrder } = this.props
+    const { tabs, isReadOnly, selectedTabPosition, setName, select, destroy, duplicate, setOrder } = this.props
 
     return (
       <div className='tabs'>
@@ -34,6 +35,7 @@ export default class Tabs extends React.PureComponent {
           selectedTabPosition={selectedTabPosition}
           setName={setName}
           destroy={destroy}
+          duplicate={duplicate}
           select={select}
           setOrder={setOrder}
         />
