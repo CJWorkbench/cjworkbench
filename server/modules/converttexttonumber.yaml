@@ -9,27 +9,34 @@ parameters:
   type: multicolumn
   name: ''
   column_types: [ text, number ]  # we also convert numbers to numbers
+- id_name: error_means_null
+  name: 'Convert non-numbers to null'
+  type: checkbox
+  default: true
 - id_name: extract
   type: checkbox
   name: Extract numbers
+  default: false
 - id_name: input_number_type
   type: menu
   default: any
+  visible_if:
+    id_name: extract
+    value: [ true ]
+  name: Format and style of numbers to extract
   options:
   - { value: any, label: Any number }
   - { value: int, label: Any integer }
   - { value: float, label: Any decimal }
 - id_name: input_locale
-  name: Input style
+  visible_if:
+    id_name: extract
+    value: [ true ]
   type: menu
   default: us
   options:
   - { value: us, label: 'United States: 1,500.00' }
   - { value: eu, label: 'Europe: 1.500,00' }
-- id_name: error_means_null
-  name: 'Convert non-numbers to null'
-  type: checkbox
-  default: true
 - id_name: output_format
   type: numberformat
   name: Display as
