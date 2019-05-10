@@ -82,9 +82,11 @@ def are_params_empty(params, input_table):
     if urlsource == 'list':
         urllist: str = params['urllist']
         return not urllist
-    else:
+    elif urlsource == 'column':
         urlcol: str = params['urlcol']
         return urlcol is None
+    else: # urlsource == 'paged'
+        return not params['pagedurl']
 
 
 def render(table, params, *, fetch_result):
@@ -133,6 +135,21 @@ async def fetch(params, *, get_input_dataframe):
             urls = prev_table[urlcol].tolist()
         else:
             urls = []
+    elif urlsource == 'paged':
+        # Count through a list of page numbers, appending each to the URL
+        if are_params_empty(params, None):
+            return None
+
+        pagedurl: str = params['pagedurl']
+        # Fix in case user adds an URL without http(s) prefix
+        if not re.match('^https?://.*', pagedurl):
+            pagedurl = 'http://' +  pagedurl
+
+        # limit the number of pages we can scrape with this method
+        maxpages = 10
+        pagenums = range(params['startpage'], params['endpage']+1)[:maxpages]
+        urls = [pagedurl + str(num) for num in pagenums]
+
     else:
         raise ValueError('Unrecognized urlsource %r' % urlsource)
 
@@ -168,8 +185,21 @@ def _migrate_params_v0_to_v1(params):
         'urlsource': ['list', 'column'][params['urlsource']],
     }
 
+def _migrate_params_v1_to_v2(params):
+    """
+    v2 adds "paged" option to urlsource menu and related parameters
+    """
+    return {
+        **params,
+        'pagedurl': '',
+        'startpage': 0,  # defaults, from json file
+        'endpage': 9
+    }
+
 
 def migrate_params(params):
     if isinstance(params['urlsource'], int):
         params = _migrate_params_v0_to_v1(params)
+    if 'pagedurl' not in params:
+        params = _migrate_params_v1_to_v2(params)
     return params

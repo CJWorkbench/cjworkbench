@@ -14,7 +14,8 @@
       "default": "list",
       "options": [
         { "value": "list", "label": "List" },
-        { "value": "column", "label": "Input column" }
+        { "value": "column", "label": "Input column" },
+        { "value": "paged", "label": "Numbered pages" }
       ]
     },
     {
@@ -35,6 +36,42 @@
       "visible_if": {
         "id_name": "urlsource",
         "value": [ "list" ]
+      }
+    },
+    {
+      "name": "",
+      "id_name": "pagedurl",
+      "type": "string",
+      "placeholder": "URL without page number at end",
+      "visible_if": {
+        "id_name": "urlsource",
+        "value": [
+          "paged"
+        ]
+      }
+    },
+    {
+      "name": "First page number",
+      "id_name": "startpage",
+      "type": "integer",
+      "default": 0,
+      "visible_if": {
+        "id_name": "urlsource",
+        "value": [
+          "paged"
+        ]
+      }
+    },
+    {
+      "name": "Last page number",
+      "id_name": "endpage",
+      "type": "integer",
+      "default": 9,
+      "visible_if": {
+        "id_name": "urlsource",
+        "value": [
+          "paged"
+        ]
       }
     },
     {
