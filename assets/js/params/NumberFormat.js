@@ -12,10 +12,11 @@ export default function NumberFormat (props) {
   // TODO implement something legit. For now we just offer a few common options.
   const enumOptions = [
     { label: 'Decimal, fixed precision: 1,500.00', value: '{:,.2f}' },
-    { label: 'Integer: 1,500', value: '{:,d}' },
     { label: 'Decimal: 1,500.0012', value: '{:,}' },
-    { label: 'Integer, no commas: 1500', value: '{:d}' },
     { label: 'Decimal, no commas: 1500.0012', value: '{:}' },
+    'separator',
+    { label: 'Integer: 1,500', value: '{:,d}' },
+    { label: 'Integer, no commas: 1500', value: '{:d}' },
     'separator',
     { label: 'Currency: $1,500.00', value: '${:,.2f}' },
     { label: 'Percentage: 15.0%', value: '{:,.1%}' }
