@@ -3,7 +3,7 @@ id_name: formatnumbers
 category: Clean
 icon: number
 help_url: modules/clean/formatnumbers
-description: "Change the way Workbench displays some columns (without changing their data)."
+description: "Change the way Workbench displays some columns, while keeping the data intact."
 parameters:
 - id_name: colnames
   type: multicolumn
