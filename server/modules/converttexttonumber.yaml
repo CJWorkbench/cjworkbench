@@ -2,7 +2,7 @@ id_name: converttexttonumber
 name: Convert to numbers
 category: Clean
 icon: number
-help_url: modules/clean/convert-to-numbers
+help_url: steps/clean/convert-to-numbers
 description: Convert text to numbers.
 parameters:
 - id_name: colnames

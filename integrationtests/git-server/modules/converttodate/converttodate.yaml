@@ -1,7 +1,7 @@
 id_name: 'convert-date'
 name: 'Convert to date & time'
 category: Clean
-help_url: modules/convert-to-date-time
+help_url: steps/convert-to-date-time
 icon: calendar
 description: 'Convert Text columns to Date & time.'
 parameters:

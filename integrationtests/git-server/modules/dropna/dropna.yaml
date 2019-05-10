@@ -3,7 +3,7 @@ name: Drop empty rows
 category: Clean
 description: Drop row if specified columns are empty
 icon: filter
-help_url: modules/clean/drop-empty-rows
+help_url: steps/clean/drop-empty-rows
 parameters:
 - id_name: colnames
   type: multicolumn
