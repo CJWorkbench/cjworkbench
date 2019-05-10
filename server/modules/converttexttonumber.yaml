@@ -24,8 +24,8 @@ parameters:
   type: menu
   default: us
   options:
-  - { value: us, label: 'United States' }
-  - { value: eu, label: 'Europe ("," is decimal separator)' }
+  - { value: us, label: 'United States: 1,500.00' }
+  - { value: eu, label: 'Europe: 1.500,00' }
 - id_name: error_means_null
   name: 'Convert non-numbers to null'
   type: checkbox
