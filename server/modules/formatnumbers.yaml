@@ -2,7 +2,7 @@ name: Format numbers
 id_name: formatnumbers
 category: Clean
 icon: number
-help_url: modules/clean/formatnumbers
+help_url: steps/clean/format-numbers
 description: "Change the way Workbench displays some columns, while keeping the data intact."
 parameters:
 - id_name: colnames
