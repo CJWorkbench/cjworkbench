@@ -2,11 +2,9 @@
 
 import React from 'react'
 import WorkflowNavBar from './WorkflowNavBar'
-import OutputPane from './OutputPane'
 import Lesson from './lessons/Lesson'
 import PropTypes from 'prop-types'
-import ModuleStack from './ModuleStack'
-import Tabs from './Tabs'
+import WorkflowEditor from './WorkflowEditor'
 import { connect } from 'react-redux'
 
 export function MaybeNotYourWorkflow(props) {
@@ -76,7 +74,7 @@ export class Workflow extends React.PureComponent {
     }
 
     return (
-      <div className={className}>
+      <main className={className}>
         { lesson ? <Lesson {...lesson} /> : null }
 
         <div className="workflow-container">
@@ -88,12 +86,9 @@ export class Workflow extends React.PureComponent {
             loggedInUser={this.props.loggedInUser}
           />
 
-          <div className='workflow-columns'>
-            <ModuleStack api={this.props.api} />
-            <OutputPane api={this.props.api} />
-          </div>
-
-          <Tabs />
+          <WorkflowEditor
+            api={this.props.api}
+          />
 
           <MaybeNotYourWorkflow
             workflowId={this.props.workflow.url_id}
@@ -102,7 +97,7 @@ export class Workflow extends React.PureComponent {
             isAnonymous={this.props.isAnonymous}
             />
         </div>
-      </div>
+      </main>
     )
   }
 }
