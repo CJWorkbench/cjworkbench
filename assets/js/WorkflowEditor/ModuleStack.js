@@ -3,10 +3,10 @@ import PropTypes from 'prop-types'
 import ModuleSearch from './ModuleSearch'
 import WfModule from './wfmodule/WfModule'
 import WfModuleHeader from './wfmodule/WfModuleHeader'
-import { addModuleAction, deleteModuleAction, moveModuleAction } from './workflow-reducer'
-import { scrollTo } from './utils'
+import { addModuleAction, deleteModuleAction, moveModuleAction } from '../workflow-reducer'
+import { scrollTo } from '../utils'
 import { connect } from 'react-redux';
-import lessonSelector from './lessons/lessonSelector'
+import lessonSelector from '../lessons/lessonSelector'
 
 
 class ModuleDropSpot extends React.PureComponent {

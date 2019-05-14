@@ -2,8 +2,8 @@
 
 import React from 'react'
 import PropTypes from 'prop-types'
-import DelayedTableSwitcher from './table/DelayedTableSwitcher'
-import OutputIframe from './OutputIframe'
+import DelayedTableSwitcher from '../table/DelayedTableSwitcher'
+import OutputIframe from '../OutputIframe'
 import { connect } from 'react-redux'
 
 export class OutputPane extends React.Component {

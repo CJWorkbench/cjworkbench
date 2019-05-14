@@ -1,7 +1,8 @@
 // Reducer for Workflow page.
 // That is, provides all the state transition functions that are executed on user command
 import { createStore, applyMiddleware } from 'redux'
-import { reducerFunctions as TabReducerFunctions } from './Tabs/actions'
+import { reducerFunctions as TabReducerFunctions } from './WorkflowEditor/Tabs/actions'
+import { reducerFunctions as WorkflowEditorReducerFunctions } from './WorkflowEditor/actions'
 
 // Workflow
 const SET_WORKFLOW_NAME = 'SET_WORKFLOW_NAME'
@@ -30,9 +31,10 @@ const CLEAR_NOTIFICATIONS = 'CLEAR_NOTIFICATIONS'
 // ---- Our Store ----
 // Master state for the workflow.
 
-const reducerFunc = {}
-
-Object.assign(reducerFunc, TabReducerFunctions)
+const reducerFunc = {
+  ...TabReducerFunctions,
+  ...WorkflowEditorReducerFunctions
+}
 
 const registerReducerFunc = (key, func) => {
   reducerFunc[key] = func
@@ -62,11 +64,9 @@ registerReducerFunc(APPLY_DELTA, (state, action) => {
   let { workflow, wfModules, tabs, pendingTabs } = state
 
   if (data.updateWorkflow) {
-    const update = data.updateWorkflow
-    delete update.selected_tab_position
     workflow = {
       ...workflow,
-      ...update
+      ...data.updateWorkflow
     }
   }
 
@@ -432,9 +432,13 @@ registerReducerFunc(SET_SELECTED_MODULE, (state, action) => {
 
   return {
     ...state,
+    selectedPane: { // so we navigate to the WfModule
+      pane: 'tab',
+      tabSlug
+    },
     workflow: {
       ...workflow,
-      selected_tab_position: tabPosition
+      selected_tab_position: tabPosition // so we don't POST spurious updates
     },
     tabs: {
       ...tabs,

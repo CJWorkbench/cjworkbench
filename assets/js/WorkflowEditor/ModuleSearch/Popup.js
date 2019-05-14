@@ -4,11 +4,11 @@ import PropTypes from 'prop-types'
 import PopperUtils from 'popper.js/dist/umd/popper-utils'
 import { Popper } from 'react-popper'
 import { connect } from 'react-redux'
-import lessonSelector from '../lessons/lessonSelector'
+import lessonSelector from '../../lessons/lessonSelector'
 import { ModulePropType } from './PropTypes'
 import Prompt from './Prompt'
 import SearchResults from './SearchResults'
-import { addModuleAction } from '../workflow-reducer'
+import { addModuleAction } from '../../workflow-reducer'
 
 const KeyCodes = {
   Tab: 9

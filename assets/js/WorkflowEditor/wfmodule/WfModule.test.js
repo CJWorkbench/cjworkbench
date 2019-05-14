@@ -6,11 +6,11 @@ import { shallow, mount } from 'enzyme'
 import deepEqual from 'fast-deep-equal'
 import { createStore } from 'redux'
 import { Provider } from 'react-redux'
-import { mockStore } from '../test-utils'
-import lessonSelector from '../lessons/lessonSelector'
+import { mockStore } from '../../test-utils'
+import lessonSelector from '../../lessons/lessonSelector'
 
 
-jest.mock('../lessons/lessonSelector', () => jest.fn()) // same mock in every test :( ... we'll live
+jest.mock('../../lessons/lessonSelector', () => jest.fn()) // same mock in every test :( ... we'll live
 
 describe('WfModule, not read-only mode', () => {
   let mockApi

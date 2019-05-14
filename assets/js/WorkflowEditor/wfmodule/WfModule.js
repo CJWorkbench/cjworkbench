@@ -2,10 +2,10 @@
 
 import React from 'react'
 import DataVersionModal from '../DataVersionModal'
-import ErrorBoundary from '../ErrorBoundary'
+import ErrorBoundary from '../../ErrorBoundary'
 import WfModuleContextMenu from './WfModuleContextMenu'
-import ParamsForm from '../params/ParamsForm'
-import EditableNotes from '../EditableNotes'
+import ParamsForm from '../../params/ParamsForm'
+import EditableNotes from '../../EditableNotes'
 import DeprecationNotice from './DeprecationNotice'
 import StatusLine from './StatusLine'
 import {
@@ -18,10 +18,10 @@ import {
   setWfModuleParamsAction,
   setWfModuleCollapsedAction,
   setWfModuleNotesAction
-} from '../workflow-reducer'
+} from '../../workflow-reducer'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import lessonSelector from '../lessons/lessonSelector'
+import lessonSelector from '../../lessons/lessonSelector'
 import { createSelector } from 'reselect'
 
 const numberFormat = new Intl.NumberFormat()

@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import Tab from './Tab'
+import * as propTypes from '../propTypes'
 
 export default class TabList extends React.PureComponent {
   static propTypes = {
@@ -9,8 +10,8 @@ export default class TabList extends React.PureComponent {
       name: PropTypes.string.isRequired,
       isPending: PropTypes.bool // or undefined
     }).isRequired).isRequired,
+    selectedPane: propTypes.selectedPane.isRequired,
     isReadOnly: PropTypes.bool.isRequired,
-    selectedTabPosition: PropTypes.number.isRequired,
     setName: PropTypes.func.isRequired, // func(tabSlug, name) => undefined
     destroy: PropTypes.func.isRequired, // func(tabSlug) => undefined
     duplicate: PropTypes.func.isRequired, // func(tabSlug) => undefined
@@ -76,7 +77,7 @@ export default class TabList extends React.PureComponent {
   }
 
   render () {
-    const { tabs, selectedTabPosition, isReadOnly, setName, select, destroy, duplicate } = this.props
+    const { tabs, selectedPane, isReadOnly, setName, select, destroy, duplicate } = this.props
     const { dragging } = this.state
 
     return (
@@ -91,7 +92,7 @@ export default class TabList extends React.PureComponent {
             slug={slug}
             isPending={isPending}
             isReadOnly={isReadOnly}
-            isSelected={selectedTabPosition === index}
+            isSelected={selectedPane.pane === 'tab' && selectedPane.tabSlug === slug}
             name={name}
             setName={setName}
             destroy={destroy}

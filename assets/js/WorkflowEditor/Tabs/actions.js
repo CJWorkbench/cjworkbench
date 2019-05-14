@@ -1,5 +1,5 @@
 import * as util from './util'
-import { generateSlug } from '../utils'
+import { generateSlug } from '../../utils'
 
 const TAB_SET_NAME = 'TAB_SET_NAME'
 const TAB_DESTROY = 'TAB_DESTROY'
@@ -176,15 +176,24 @@ function reduceDestroyPending (state, action) {
   const deleteIndex = workflow.tab_slugs.indexOf(slug)
   newTabSlugs.splice(deleteIndex, 1)
 
-  const oldPosition = workflow.selected_tab_position
-  const newPosition = (oldPosition < deleteIndex || oldPosition === 0) ? oldPosition : (oldPosition - 1)
+  // If we're deleting the current tab, select the tab to its left; or if
+  // there are none to the left, select the tab to the right. (Assume we never
+  // delete the last tab.)
+  let selectedPane = state.selectedPane
+  if (selectedPane.pane === 'tab' && selectedPane.tabSlug === slug) {
+    selectedPane = {
+      pane: 'tab',
+      tabSlug: deleteIndex === 0 ? newTabSlugs[0] : newTabSlugs[deleteIndex - 1]
+    }
+  }
 
   return {
     ...state,
+    selectedPane,
     workflow: {
       ...workflow,
       tab_slugs: newTabSlugs,
-      selected_tab_position: newPosition
+      selected_tab_position: newTabSlugs.indexOf(selectedPane.tabSlug)
     },
     pendingTabs: newPendingTabs,
     tabs: newTabs
@@ -209,11 +218,12 @@ function reduceSetNamePending (state, action) {
 }
 
 function reduceSelectPending (state, action) {
-  const { slug } = action.payload
   const { workflow } = state
+  const { slug } = action.payload
 
   return {
     ...state,
+    selectedPane: { pane: 'tab', tabSlug: slug },
     workflow: {
       ...workflow,
       selected_tab_position: workflow.tab_slugs.indexOf(slug)
@@ -223,27 +233,28 @@ function reduceSelectPending (state, action) {
 
 function reduceSetOrderPending (state, action) {
   const { tabSlugs } = action.payload
-  const { workflow } = state
+  const { workflow, selectedPane } = state
 
-  const oldPosition = workflow.selected_tab_position
-  const selectedTabSlug = workflow.tab_slugs[oldPosition]
-  const newPosition = tabSlugs.indexOf(selectedTabSlug)
+  // find new selected_tab_position. Ignore selectedPane: we aren't trying to
+  // cause user-visible stuff here, we're only trying to predict what the
+  // server will do.
+  const tabSlug = workflow.tab_slugs[workflow.selected_tab_position]
 
   return {
     ...state,
     workflow: {
       ...workflow,
       tab_slugs: tabSlugs,
-      selected_tab_position: newPosition
+      selected_tab_position: tabSlugs.indexOf(tabSlug)
     }
   }
 }
 
-export var reducerFunctions = {
+export const reducerFunctions = {
   [TAB_CREATE + '_PENDING']: reduceCreatePending,
   [TAB_DUPLICATE + '_PENDING']: reduceDuplicatePending,
   [TAB_DESTROY + '_PENDING']: reduceDestroyPending,
   [TAB_SET_NAME + '_PENDING']: reduceSetNamePending,
   [TAB_SELECT + '_PENDING']: reduceSelectPending,
-  [TAB_SET_ORDER + '_PENDING']: reduceSetOrderPending,
+  [TAB_SET_ORDER + '_PENDING']: reduceSetOrderPending
 }
