@@ -231,7 +231,7 @@ def workflow_detail(request, workflow_id, format=None):
             return JsonResponse({
                 'message': 'Unknown fields: %r' % request.data,
                 'status_code': 400,
-            }, status=HTTP_400_BAD_REQUEST)
+            }, status=status.HTTP_400_BAD_REQUEST)
         if 'public' in request.data:
             workflow.public = bool(request.data['public'])
             workflow.save(update_fields=['public'])
