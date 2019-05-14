@@ -1,0 +1,191 @@
+<header>
+  <h1>VII. Work with data from the Stanford Open Policing Project</h1>
+  <p>Load data from over 800,000 traffic stops that took place in Oklahoma City, OK and make a chart of stops by race.</p>
+  <img src="./banner.svg" alt="">
+</header>
+
+<script id="initialWorkflow">
+tabs:
+- name: Lesson
+  wfModules:
+  - module: loadurl
+    params:
+      url: './ok_oklahoma_city_2019_02_25.csv'
+    collapse: false
+</script>
+
+<section>
+  <h2>Overview</h2>
+    <p>In this tutorial you will work with data curated by the
+        <a href="https://openpolicing.stanford.edu/">Stanford Open Policing Project</a>
+        that contains all traffic stops in Oklahoma City, OK between 2007 and 2017.
+    </p>
+  <p>You will filter down the data, find the number of traffic stops per year by race and create an embeddable line chart.</p>
+</section>
+<section>
+  <h2>1. Select necessary columns</h2>
+  <p>
+      The data is already loaded for us, and as you can see there are nearly 900,000 traffic stops.
+      Let's start by selecting only the columns we do need to create our chart.
+  </p>
+  <h3 class="instructions">Instructions</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"Module","index":1,"name":"Select columns"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[1] === 'Select columns'"
+      >Add the step ‘Select columns’ using the search</li>
+    <li
+      data-highlight='[{"type":"WfModule","moduleName":"Drop empty rows"}]'
+      data-test="const colnames = workflow.tabs[0].wfModules[1].params.colnames.sort().join('|'); return colnames === 'date|subject_race'"
+      >Select columns <kbd>date</kbd> and <kbd>subject_race</kbd>.
+    </li>
+  </ol>
+</section>
+<section>
+  <h2>2. Finding the date range</h2>
+  <p>
+      Let’s see what time period the data covers. We'll first need to convert the <kbd>date</kbd> column to the 'date & time'
+      format, then sort the data to see what the maximum and minimum values are.
+  </p>
+  <h3 class="instructions">Instructions</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type": "WfModule","moduleName": "Convert to date & time"},{"type":"Module","index":2,"name":"Convert to date & time"}]'
+      data-test="const wfModule = workflow.tabs[0].wfModules[2] || {};
+      return wfModule.moduleSlug === 'convert-date' && wfModule.params.colnames.join('|') === 'date'"
+      > In the table header, click open the menu <span>
+        <img class="icon-insert" src="images/lesson-icons/menu.svg">
+      </span> of the column <kbd>date</kbd> and select <kbd>Convert to date & time</kbd>.
+    </li>
+    <li
+      data-highlight='[{"type": "WfModule", "moduleName": "Sort"},{"type":"Module","index":3,"name":"Sort"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[3] === 'Sort'
+      ">Again, use the menu <span>
+        <img class="icon-insert" src="images/lesson-icons/menu.svg">
+      </span> of the column <kbd>date</kbd> to select <kbd>Sort ascending</kbd>. The earliest date should be '2007-07-01'.
+    <li
+      data-highlight='[{"type": "WfModule", "moduleName": "Sort"}]'
+      data-test="const wfModule = workflow.tabs[0].wfModules[3] || {}
+        const params = wfModule.params || {}
+        const sort_columns = params.sort_columns || []
+        const is_ascending = sort_columns[0].is_ascending || false
+        return is_ascending === false"
+      >Now in the 'sort' module, select <kbd>descending</kbd>. The latest date should be '2017-10-18'.</li>
+  </ol>
+</section>
+<section>
+  <h2>3. Filtering incomplete years</h2>
+  <p>
+      Since both 2007 and 2017 contain only partial data we cannot compare those years to the rest of the data since they are incomplete.
+      We need to filter any stops that took place during these years.
+  </p>
+  <h3 class="instructions">Instructions</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"Module","index":4,"name":"Filter by condition"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[4] === 'Filter by condition'"
+      >Add the step ‘Filter by condition’.</li>
+    <li
+      data-highlight='[{"type": "WfModule", "moduleName": "Filter by condition"}]'
+      data-test="
+        const p = workflow.tabs[0].wfModules[4].params;
+        if (!p.filters.filters[0] || !p.filters.filters[0].subfilters[0]) return false;
+        const sf1 = p.filters.filters[0].subfilters[0];
+        return sf1.colname === 'date' && sf1.condition === 'date_is_after' && sf1.value === '2007-12-31' && p.keep"
+      >Select the column <kbd>date</kbd>, choose the condition <kbd>Date is after</kbd><br/> and enter the value <kbd>2007-12-31</kbd>.
+    </li>
+    <li
+      data-highlight='[{"type": "WfModule", "moduleName": "Filter by condition"}]'
+      data-test="
+        const p = workflow.tabs[0].wfModules[4].params;
+        if (!p.filters.filters[0] || !p.filters.filters[0].subfilters[0]) return false;
+        const sf2 = p.filters.filters[0].subfilters[1];
+        return sf2.colname === 'date' && sf2.condition === 'date_is_before' && sf2.value === '2017-01-01' && p.keep"
+      >
+        Now click <kbd>AND</kbd> directly under the input text box of the first condition to add another.
+        Select the column <kbd>date</kbd>, choose the condition <kbd>Date is before</kbd><br/> and enter the value <kbd>2017-01-01</kbd>.
+    </li>
+  </ol>
+</section>
+<section>
+  <h2>4. Finding stops per year by race</h2>
+  <p>
+      Now we are ready to group by <kbd>date</kbd> and <kbd>subject_race</kbd> to determine how many stops took place each year by race.
+  </p>
+  <h3 class="instructions">Instructions</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"Module","index":5,"name":"Group"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[5] === 'Group'"
+      >Add the step ‘Group’.</li>
+    <li
+      data-highlight='[{"type": "WfModule", "moduleName": "Group"}]'
+      data-test="return workflow.tabs[0].wfModules[5].params.groups.colnames.join('|') === 'date|subject_race'"
+      >Select the columns <kbd>date</kbd> and <kbd>subject_race</kbd>.
+    </li>
+    <li
+      data-highlight='[{"type": "WfModule", "moduleName": "Group"}]'
+      data-test="
+        const groups = workflow.tabs[0].wfModules[5].params.groups
+        return groups.group_dates &&
+        ['Y'].includes(groups.date_granularities['date'])"
+      >Check <kbd>Group dates</kbd> and under <kbd>Granularity of "date"</kbd> select <kbd>by year</kbd>.
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":6,"name":"Reshape"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[6] === 'Reshape'"
+      >Add the step ‘Reshape’.</li>
+    <li
+      data-highlight='[{"type": "WfModule", "moduleName": "Reshape"}]'
+      data-test="
+        const params = workflow.tabs[0].wfModules[6].params
+        return params.direction === 'longtowide' && params.colnames === 'date' && params.varcol === 'subject_race'"
+      >
+        Select <kbd>Long to wide</kbd>, set the <kbd>Row variable</kbd> to the column <kbd>date</kbd>
+        and the <kbd>Column variable</kbd> to <kbd>subject_race</kbd>.
+    </li>
+  </ol>
+</section>
+<section>
+  <h2>5. Making a line chart</h2>
+  <p>Finally, let’s add a line chart to visualize this data.</p>
+  <h3 class="instructions">Instructions</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"Module","index":7,"name":"Line Chart"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[7] === 'Line Chart'"
+      >Add the step ‘Line Chart’.</li>
+    <li
+      data-highlight='[{"type":"WfModule","moduleName":"Line Chart"}]'
+      data-test="
+        const wfModule = workflow.tabs[0].wfModules[7]; const p = wfModule.params;
+        if (p.x_column !== 'date') return false;
+        const lines = []
+        p.y_columns.forEach(obj => lines.push(obj.column))
+        return p.y_columns.length === 5 && lines.sort().join('|') === 'NA|asian/pacific islander|black|other/unknown|white'"
+      >
+      Select <kbd>date</kbd> for the X axis and add the rest of the columns as lines on the Y axis.</li>
+    <li
+      data-highlight='[{"type":"WfModule","moduleName":"Line Chart"}]'
+      data-test="const p = workflow.tabs[0].wfModules[7].params; return !!p.title && !!p.x_axis_label && !!p.y_axis_label"
+      >Add a title, X-axis label and Y-axis label to the chart.</li>
+  </ol>
+</section>
+<footer>
+  <h2>Lesson complete!</h2>
+  <div class="completed">
+      <p class="summary"></p>
+  </div>
+  <div class="next">
+    <h4>Next</h4>
+    <p>
+      Get the embed code to publish the chart by clicking on the
+      <img class="icon-insert" src="./embed_button.svg" />
+      button at the top right of the chart panel.
+    </p>
+    <h4>Check out this story recipe that dives deeper into the Stanford Open Policing Project data:</h4>
+    <ol>
+      <li><a href="/link-to-eventual-recipe">Advanced analysis</a></li>
+    </ol>
+  </div>
+</footer>
