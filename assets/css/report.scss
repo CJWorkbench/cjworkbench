@@ -1,0 +1,72 @@
+@import 'variables';
+@import 'fonts';
+@import './Icons.scss';
+
+$font-family-sans-serif: 'Nunito Sans', sans-serif; // for Bootstrap; imported in _fonts.scss
+
+// Bootstrap
+@import '~bootstrap/scss/functions';
+@import '~bootstrap/scss/variables';
+@import '~bootstrap/scss/mixins';
+@import '~bootstrap/scss/root';
+@import '~bootstrap/scss/reboot';
+
+/*
+ * Unlike other stylesheets, this one does _not_ import import 'reset.scss'.
+ * That means the font-size doesn't get reset; so font sizes are different
+ * than in other stylesheets. (The practical reason: we don't want reports to
+ * have body { height: 100vh }.)
+ *
+ * TODO make every _other_ stylesheet behave like _this_ one.
+ */
+
+body {
+  width: 100%;
+  max-width: 50rem;
+  margin: 2rem auto;
+  background: white;
+  @include font-nunito-regular;
+  color: $brand-text--darker;
+}
+
+h1, h2 {
+  @include font-nunito-bold;
+}
+
+h1 {
+  font-size: 1.2rem;
+}
+
+h2 {
+  font-size: 1rem;
+  margin-top: 2rem;
+}
+
+header {
+  .metadata {
+    font-size: .9rem;
+    color: $brand-text--medium;
+
+    span::after {
+      content: '-';
+      padding: 0 .3rem;
+      color: $Vlight-gray;
+    }
+  }
+}
+
+figure {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 0;
+  padding-bottom: 2/3 * 100%; // 3:2 aspect ratio
+  position: relative; // so we can position iframe
+
+  iframe {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+}

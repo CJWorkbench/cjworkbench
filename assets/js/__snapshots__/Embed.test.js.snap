@@ -41,14 +41,12 @@ exports[`Embed Available workflow Renders the embed widget with the correct info
           </a>
         </div>
         <div
-          className="wf-meta--id"
+          className="metadata"
         >
           <ul
             className="WF-meta"
           >
-            <div
-              className="WF-meta--item content-1 t-m-gray"
-            >
+            <li>
               <a
                 href="/workflows/1"
                 target="_blank"
@@ -56,15 +54,8 @@ exports[`Embed Available workflow Renders the embed widget with the correct info
                 by 
                 Workflow Owner Name
               </a>
-            </div>
-            <li
-              className="separator"
-            >
-              -
             </li>
-            <li
-              className="WF-meta--item content-1 t-m-gray"
-            >
+            <li>
               <a
                 href="/workflows/1"
                 target="_blank"
@@ -73,21 +64,19 @@ exports[`Embed Available workflow Renders the embed widget with the correct info
                 now
               </a>
             </li>
-            <li
-              className="WF-meta--item content-1 t-m-gray"
-            />
           </ul>
         </div>
       </div>
     </div>
-    <div
+    <button
       className="embed-footer-button"
       onClick={[Function]}
+      type="button"
     >
       <i
         className="icon icon-code"
       />
-    </div>
+    </button>
   </div>
   <div
     className="embed-overlay"

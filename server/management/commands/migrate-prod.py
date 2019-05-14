@@ -4,7 +4,7 @@ from django.core.management.base import BaseCommand
 from server import minio
 
 
-BUCKET_POLICY = """{
+STATIC_FILES_BUCKET_POLICY = """{
     "Version":"2012-10-17",
     "Statement":[
         {
@@ -31,6 +31,15 @@ BUCKET_POLICY = """{
     ]
 }""".replace('BUCKET', minio.StaticFilesBucket)
 
+STATIC_FILES_CORS_CONFIGURATION = {
+    'CORSRules': [{
+        'AllowedMethods': ['GET'],
+        'AllowedOrigins': ['*'],
+        'ExposeHeaders': ['GET', 'PUT'],
+        'MaxAgeSeconds': 3000
+    }]
+}
+
 
 class Command(BaseCommand):
     # We bundle all these commands into one so we don't have to wait for django
@@ -55,7 +64,9 @@ class Command(BaseCommand):
         if settings.MINIO_BUCKET_PREFIX == 'integrationtest':
             minio.ensure_bucket_exists(minio.StaticFilesBucket)
             minio.client.put_bucket_policy(Bucket=minio.StaticFilesBucket,
-                                           Policy=BUCKET_POLICY)
+                                           Policy=STATIC_FILES_BUCKET_POLICY)
+            minio.client.put_bucket_cors(minio.StaticFilesBucket,
+                                         STATIC_FILES_CORS_CONFIGURATION)
 
         # Migrate comes last: during deploy, in some cases, migration can make
         # the site unusable until it's completed. So don't add any instructions

@@ -1,3 +1,7 @@
+from __future__ import annotations
+from dataclasses import dataclass
+import datetime
+from typing import List
 from asgiref.sync import async_to_sync
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -14,13 +18,14 @@ from rest_framework.decorators import renderer_classes
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from server import minio, rabbitmq
-from server.models import ModuleVersion, Workflow, WfModule
+from server.models import ModuleVersion, Workflow, WfModule, Tab
 from server.models.course import CourseLookup
 from server.models.lesson import LessonLookup
 from server.serializers import WorkflowSerializer, ModuleSerializer, \
         TabSerializer, WorkflowSerializerLite, WfModuleSerializer, \
         UserSerializer
 import server.utils
+from server.settingsutils import workbench_user_display
 from .auth import lookup_workflow_for_write, loads_workflow_for_read
 
 
@@ -276,3 +281,72 @@ class Duplicate(View):
                                              workflow2.last_delta_id)
 
         return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class Report(View):
+    """Render all the charts in a workflow."""
+    @dataclass
+    class WfModuleWithIframe:
+        id: int
+        delta_id: int
+
+        @classmethod
+        def from_wf_module(cls,
+                           wf_module: WfModule) -> Report.WfModuleWithIframe:
+            return cls(
+                id=wf_module.id,
+                delta_id=wf_module.last_relevant_delta_id
+            )
+
+    @dataclass
+    class TabWithIframes:
+        slug: str
+        name: str
+        wf_modules: List[Report.WfModuleWithIframe]
+
+        @classmethod
+        def from_tab(cls, tab: Tab) -> Report.TabWithIframes:
+            all_wf_modules = (
+                tab.live_wf_modules
+                .only('id', 'last_relevant_delta_id', 'module_id_name')
+            )
+
+            wf_modules = [Report.WfModuleWithIframe.from_wf_module(wf_module)
+                          for wf_module in all_wf_modules
+                          if wf_module.module_version.html_output]
+            return cls(
+                slug=tab.slug,
+                name=tab.name,
+                wf_modules=wf_modules
+            )
+
+    @dataclass
+    class ReportWorkflow:
+        id: int
+        name: str
+        owner_name: str
+        updated_at: datetime.datetime
+        tabs: List[Report.TabWithIframes]
+
+        @classmethod
+        def from_workflow(cls, workflow: Workflow) -> Report.ReportWorkflow:
+            # prefetch would be nice, but it's tricky because A) we need to
+            # filter out is_deleted; and B) we need to filter out
+            # ModuleVersions without .html_output.
+            all_tabs = [Report.TabWithIframes.from_tab(tab)
+                        for tab in workflow.live_tabs]
+            tabs = [tab for tab in all_tabs if tab.wf_modules]
+            return cls(
+                id=workflow.id,
+                name=workflow.name,
+                owner_name=workbench_user_display(workflow.owner),
+                updated_at=workflow.last_update(),
+                tabs=tabs
+            )
+
+
+    @method_decorator(loads_workflow_for_read)
+    def get(self, request: HttpRequest, workflow: Workflow):
+        report_workflow = Report.ReportWorkflow.from_workflow(workflow)
+        return TemplateResponse(request, 'report.html',
+                                {'workflow': report_workflow})

@@ -61,6 +61,9 @@ gsutil acl ch -u production-minio@cj-workbench.iam.gserviceaccount.com:W gs://pr
 gsutil acl ch -u production-minio@cj-workbench.iam.gserviceaccount.com:W gs://production-stored-objects.workbenchdata.com
 gsutil acl ch -u production-minio@cj-workbench.iam.gserviceaccount.com:W gs://production-external-modules.workbenchdata.com
 gsutil acl ch -u production-minio@cj-workbench.iam.gserviceaccount.com:W gs://production-cached-render-results.workbenchdata.com
+echo '[{"origin":"*","method":"GET","maxAgeSeconds":3000}]' > static-cors.json \
+  && gsutil cors set static-cors.json gs://production-static.workbenchdata.com \
+  && rm -f static-cors.json
 gcloud dns record-sets transaction start --zone=workbenchdata-com
 gcloud dns record-sets transaction add --zone workbenchdata-com --name production-static.workbenchdata.com. --ttl 7200 --type CNAME c.storage.googleapis.com.
 gcloud dns record-sets transaction execute --zone workbenchdata-com

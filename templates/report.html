@@ -1,0 +1,36 @@
+{% extends 'minimum.html' %}
+{% load render_bundle from webpack_loader %}
+
+{% block title %}
+  {{ workflow.name }} | Workbench
+{% endblock %}
+
+{% block stylesheets %}
+  {% render_bundle 'report-styles' 'css' %}
+{% endblock %}
+
+{% block body %}
+  <article class="report">
+    <header>
+      <h1>{{workflow.name}}</h1>
+      <div class="metadata">
+        <span class="author"><a rel="author">By {{workflow.owner_name}}</a></span>
+        <span class="updated-at">Updated <time datetime="{{workflow.updated_at|date:"c"}}">{{workflow.updated_at|timesince}}</time> ago</span>
+        <!-- target=_parent in case this report is displayed within an iframe -->
+        <a target="_parent" href="/workflows/{{workflow.id}}/">Jump to Workflow</a>
+      </div>
+    </header>
+    {% for tab in workflow.tabs %}
+      <section>
+        <h2>{{tab.name}}</h2>
+        {% for wf_module in tab.wf_modules %}
+          <figure>
+            <iframe
+              src="/api/wfmodules/{{wf_module.id}}/output#revision={{wf_module.delta_id}}"
+            ></iframe>
+          </figure>
+        {% endfor %}
+      </section>
+    {% endfor %}
+  </article>
+{% endblock %}

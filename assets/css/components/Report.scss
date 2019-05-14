@@ -1,8 +1,23 @@
 article.report {
   flex: 1 1 auto;
+  overflow-y: auto; // allow scrolling
 
-  figure {
-    width: 50rem;
-    height: 30rem;
+  padding: 2rem;
+
+  .iframe-container {
+    // margin: 0 auto on an <iframe> doesn't seem to center it
+    // horizontally (Chrome 74 on Linux). Create a sizing container
+    // and center that.
+    width: 100%;
+    max-width: 100rem;
+    margin: 0 auto; // center horizontally
+  }
+
+  iframe {
+    width: 100%;
+    max-width: 100rem;
+    border: 0;
+    border-radius: .5rem;
+    overflow: hidden;
   }
 }
