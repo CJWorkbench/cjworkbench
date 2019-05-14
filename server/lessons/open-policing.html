@@ -1,6 +1,6 @@
 <header>
   <h1>VII. Work with data from the Stanford Open Policing Project</h1>
-  <p>Load data from over 800,000 traffic stops that took place in Oklahoma City, OK and make a chart of stops by race.</p>
+  <p>Load data from over 300,000 traffic stops that took place in Oklahoma City, OK and make a chart of stops by race.</p>
   <img src="./banner.svg" alt="">
 </header>
 
@@ -10,7 +10,7 @@ tabs:
   wfModules:
   - module: loadurl
     params:
-      url: './ok_oklahoma_city_2019_02_25.csv'
+      url: 'https://app.workbenchdata.com/public/moduledata/live/76723.csv'
     collapse: false
 </script>
 
@@ -18,14 +18,14 @@ tabs:
   <h2>Overview</h2>
     <p>In this tutorial you will work with data curated by the
         <a href="https://openpolicing.stanford.edu/">Stanford Open Policing Project</a>
-        that contains all traffic stops in Oklahoma City, OK between 2007 and 2017.
+        that contains traffic stops in Oklahoma City, OK between 2013 and 2015.
     </p>
-  <p>You will filter down the data, find the number of traffic stops per year by race and create an embeddable line chart.</p>
+  <p>You will filter down the data, find the number of traffic stops per month by race and create an embeddable line chart.</p>
 </section>
 <section>
   <h2>1. Select necessary columns</h2>
   <p>
-      The data is already loaded for us, and as you can see there are nearly 900,000 traffic stops.
+      The data is already loaded for us, and as you can see there are over 300,000 traffic stops.
       Let's start by selecting only the columns we do need to create our chart.
   </p>
   <h3 class="instructions">Instructions</h3>
@@ -62,7 +62,7 @@ tabs:
       data-test="return workflow.tabs[0].wfModuleNames[3] === 'Sort'
       ">Again, use the menu <span>
         <img class="icon-insert" src="images/lesson-icons/menu.svg">
-      </span> of the column <kbd>date</kbd> to select <kbd>Sort ascending</kbd>. The earliest date should be '2007-07-01'.
+    </span> of the column <kbd>date</kbd> to select <kbd>Sort ascending</kbd>. The earliest date should be <kbd>2010-05-16</kbd>.
     <li
       data-highlight='[{"type": "WfModule", "moduleName": "Sort"}]'
       data-test="const wfModule = workflow.tabs[0].wfModules[3] || {}
@@ -70,14 +70,14 @@ tabs:
         const sort_columns = params.sort_columns || []
         const is_ascending = sort_columns[0].is_ascending || false
         return is_ascending === false"
-      >Now in the 'sort' module, select <kbd>descending</kbd>. The latest date should be '2017-10-18'.</li>
+  >Now in the 'sort' module, select <kbd>Descending</kbd>. The latest date should be <kbd>2013-11-04</kbd>.</li>
   </ol>
 </section>
 <section>
-  <h2>3. Filtering incomplete years</h2>
+  <h2>3. Filtering incomplete months</h2>
   <p>
-      Since both 2007 and 2017 contain only partial data we cannot compare those years to the rest of the data since they are incomplete.
-      We need to filter any stops that took place during these years.
+      Since both May 2010 and November 2013 contain only partial data we cannot compare those months to the rest of the data since they are incomplete.
+      We need to filter any stops that took place during these months.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
@@ -91,8 +91,8 @@ tabs:
         const p = workflow.tabs[0].wfModules[4].params;
         if (!p.filters.filters[0] || !p.filters.filters[0].subfilters[0]) return false;
         const sf1 = p.filters.filters[0].subfilters[0];
-        return sf1.colname === 'date' && sf1.condition === 'date_is_after' && sf1.value === '2007-12-31' && p.keep"
-      >Select the column <kbd>date</kbd>, choose the condition <kbd>Date is after</kbd><br/> and enter the value <kbd>2007-12-31</kbd>.
+        return sf1.colname === 'date' && sf1.condition === 'date_is_after' && sf1.value === '2010-05-31' && p.keep"
+      >Select the column <kbd>date</kbd>, choose the condition <kbd>Date is after</kbd><br/> and enter the value <kbd>2010-05-31</kbd>.
     </li>
     <li
       data-highlight='[{"type": "WfModule", "moduleName": "Filter by condition"}]'
@@ -100,17 +100,17 @@ tabs:
         const p = workflow.tabs[0].wfModules[4].params;
         if (!p.filters.filters[0] || !p.filters.filters[0].subfilters[0]) return false;
         const sf2 = p.filters.filters[0].subfilters[1];
-        return sf2.colname === 'date' && sf2.condition === 'date_is_before' && sf2.value === '2017-01-01' && p.keep"
+        return sf2.colname === 'date' && sf2.condition === 'date_is_before' && sf2.value === '2013-11-01' && p.keep"
       >
         Now click <kbd>AND</kbd> directly under the input text box of the first condition to add another.
-        Select the column <kbd>date</kbd>, choose the condition <kbd>Date is before</kbd><br/> and enter the value <kbd>2017-01-01</kbd>.
+        Select the column <kbd>date</kbd>, choose the condition <kbd>Date is before</kbd><br/> and enter the value <kbd>2013-11-01</kbd>.
     </li>
   </ol>
 </section>
 <section>
-  <h2>4. Finding stops per year by race</h2>
+  <h2>4. Finding stops per month by race</h2>
   <p>
-      Now we are ready to group by <kbd>date</kbd> and <kbd>subject_race</kbd> to determine how many stops took place each year by race.
+      Now we are ready to group by <kbd>date</kbd> and <kbd>subject_race</kbd> to determine how many stops took place each month by race.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
@@ -128,8 +128,8 @@ tabs:
       data-test="
         const groups = workflow.tabs[0].wfModules[5].params.groups
         return groups.group_dates &&
-        ['Y'].includes(groups.date_granularities['date'])"
-      >Check <kbd>Group dates</kbd> and under <kbd>Granularity of "date"</kbd> select <kbd>by year</kbd>.
+        ['M'].includes(groups.date_granularities['date'])"
+      >Check <kbd>Group dates</kbd> and under <kbd>Granularity of "date"</kbd> select <kbd>by month</kbd>.
     </li>
     <li
       data-highlight='[{"type":"Module","index":6,"name":"Reshape"}]'
@@ -185,7 +185,7 @@ tabs:
     </p>
     <h4>Check out this story recipe that dives deeper into the Stanford Open Policing Project data:</h4>
     <ol>
-      <li><a href="/link-to-eventual-recipe">Advanced analysis</a></li>
+      <li><a href="https://app.workbenchdata.com/workflows/18232/">Advanced analysis</a></li>
     </ol>
   </div>
 </footer>
