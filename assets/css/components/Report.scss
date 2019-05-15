@@ -1,10 +1,42 @@
 article.report {
   flex: 1 1 auto;
-  overflow-y: auto; // allow scrolling
+  display: flex; // share-card on left, report-iframe-container on right
+  align-items: flex-start;
+  overflow-y: auto; // allow scrolling (report-iframe-container is variable height)
 
   padding: 2rem;
 
-  .iframe-container {
+  .share-card {
+    flex: 0 0 auto;
+    width: 30rem;
+    padding: 2rem;
+    margin-right: 2rem;
+    border: 1px solid $brand-orange;
+    background: $brand-orange--light;
+    border-radius: .5rem;
+    @include content-1;
+
+    button {
+      @include action-button;
+      @include button-orange--fill;
+    }
+
+    h4 {
+      margin-top: 2rem;
+      @include title-3;
+    }
+
+    .url {
+      .copy {
+        border: 1px solid $brand-orange;
+        background: white;
+        padding: .5rem;
+        word-break: break-all;
+      }
+    }
+  }
+
+  .report-iframe-container {
     // margin: 0 auto on an <iframe> doesn't seem to center it
     // horizontally (Chrome 74 on Linux). Create a sizing container
     // and center that.

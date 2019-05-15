@@ -22,7 +22,6 @@
     </header>
     {% for tab in workflow.tabs %}
       <section>
-        <h2>{{tab.name}}</h2>
         {% for wf_module in tab.wf_modules %}
           <figure>
             <iframe

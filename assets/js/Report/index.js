@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import Report from './Report'
+import Dashboard from './Dashboard'
 import { connect } from 'react-redux'
 
 function mapStateToProps (state) {
@@ -30,4 +30,4 @@ function mapStateToProps (state) {
   }
 }
 
-export default connect(mapStateToProps)(Report)
+export default connect(mapStateToProps)(Dashboard)

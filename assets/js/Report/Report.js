@@ -1,18 +1,5 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import * as propTypes from './propTypes'
-import Tab from './Tab'
-
-function EmptyReport () {
-  return (
-    <article className='report'>
-      <p className='empty-report'>
-        There are no charts in this Workflow. Add charts to tabs, and they'll appear here.
-      </p>
-    </article>
-  )
-}
-
 
 const Report = React.memo(function Report ({ workflowId }) {
   const [ height, setHeight ] = React.useState(0)
@@ -40,16 +27,14 @@ const Report = React.memo(function Report ({ workflowId }) {
   }, [ iframeRef.current ])
 
   return (
-    <article className='report'>
-      <div className='iframe-container'>
-        <iframe
-          ref={iframeRef}
-          src={`/workflows/${workflowId}/report`}
-          height={height}
-          onLoad={watchHeight}
-        />
-      </div>
-    </article>
+    <div className='report-iframe-container'>
+      <iframe
+        ref={iframeRef}
+        src={`/workflows/${workflowId}/report`}
+        height={height}
+        onLoad={watchHeight}
+      />
+    </div>
   )
 })
 Report.propTypes = {
