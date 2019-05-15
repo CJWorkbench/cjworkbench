@@ -11,7 +11,7 @@ tabs:
   - module: loadurl
     params:
       url: 'https://app.workbenchdata.com/public/moduledata/live/76723.csv'
-    collapse: false
+    collapse: true
 </script>
 
 <section>
@@ -19,16 +19,18 @@ tabs:
     <p>In this tutorial you will work with data curated by the
         <a href="https://openpolicing.stanford.edu/">Stanford Open Policing Project</a>
         that contains traffic stops in Oklahoma City, OK between 2013 and 2015.
-    </p>
-  <p>You will filter down the data, find the number of traffic stops per month by race and create an embeddable line chart.</p>
-  <p>There is lots more you can do with this data! To see other analyses, and how we cleaned and prepared the data
-    for this lesson, go to <a href="https://app.workbenchdata.com/workflows/18232/">this workflow</a>.</p>
+  <p>In this lesson you'll do a basic analysis, cleaning the data a little and then finding the number of traffic stops per
+    month by race, to create an embeddable line chart.</p>
+  <p>There is lots more you can do with this data! For other analyses, see <a href="https://app.workbenchdata.com/workflows/18232/">this workflow</a>.</p>
 </section>
 <section>
-  <h2>1. Select necessary columns</h2>
+  <h2>1. Select columns</h2>
   <p>
       The data is already loaded for us, and as you can see there are over 300,000 traffic stops.
-      Let's start by selecting only the columns we do need to create our chart.
+      We have information on the age, race, and sex of each driver, and when and why they were stopped.
+  </p>
+  <p>
+      Let's start by selecting only the columns we need to create our chart.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
@@ -78,7 +80,7 @@ tabs:
 <section>
   <h2>3. Filtering incomplete months</h2>
   <p>
-      Since the first and last months of May 2010 and November 2013 contain only partial data we cannot compare these
+      Since the first month of May 2010 and the last month of November 2013 contain only partial data we cannot compare these
       months to the rest of the data. We need to filter out all stops that took place during these months.
   </p>
   <h3 class="instructions">Instructions</h3>
@@ -160,7 +162,7 @@ tabs:
   <h2>5. Making a line chart</h2>
   <p>Finally, let’s add a line chart to visualize this data.</p>
   <p>Because all charts plot columns of data, first we need to get the data for each race in its own column. We
-  can use the <kbd>Reshape</kbd> step to do this.</p>
+  can use a <kbd>Reshape</kbd> step to do this.</p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
