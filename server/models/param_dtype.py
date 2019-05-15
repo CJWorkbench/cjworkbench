@@ -1,3 +1,4 @@
+import re
 from typing import Any, Dict, FrozenSet, List, Optional, Set
 
 
@@ -117,6 +118,15 @@ class ParamDType:
 
 
 class ParamDTypeString(ParamDType):
+    """
+    Valid Unicode text.
+
+    This is stricter than Python `str`. In particular, `"\\ud8002"` is invalid
+    (because a lone surrogate isn't valid Unicode text) and `"\x00"` is invalid
+    (because Postgres doesn't allow null bytes).
+    """
+    InvalidCodePoints = re.compile('[\u0000\ud800-\udfff]')
+
     def __init__(self, default=''):
         super().__init__()
         self.default = default
@@ -127,12 +137,31 @@ class ParamDTypeString(ParamDType):
     def coerce(self, value):
         if value is None:
             return self.default
-        else:
-            return str(value)
+        elif not isinstance(value, str):
+            try:
+                value = str(value)
+            except Exception:  # __str__() has 1,000 ways to fail....
+                return self.default
+
+        # `value` may still be invalid Unicode. In particular, if we received a
+        # value from json.parse() it can have invalid surrogates, because
+        # invalid surrogates are valid in JSON Strings (!).
+        return ParamDTypeString.InvalidCodePoints.sub('\ufffd', value)
 
     def validate(self, value):
         if not isinstance(value, str):
             raise ValueError('Value %r is not a string' % value)
+        if ParamDTypeString.InvalidCodePoints.search(value) is not None:
+            if '\x00' in value:
+                raise ValueError(
+                    'Value %r is not valid text: zero byte not allowed'
+                    % value
+                )
+            else:
+                raise ValueError(
+                    'Value %r is not valid Unicode: surrogates not allowed'
+                    % value
+                )
 
 
 class ParamDTypeInteger(ParamDType):
