@@ -21,6 +21,8 @@ tabs:
         that contains traffic stops in Oklahoma City, OK between 2013 and 2015.
     </p>
   <p>You will filter down the data, find the number of traffic stops per month by race and create an embeddable line chart.</p>
+  <p>There is lots more you can do with this data! To see other analyses, and how we cleaned and prepared the data
+    for this lesson, go to <a href="https://app.workbenchdata.com/workflows/18232/">this workflow</a>.</p>
 </section>
 <section>
   <h2>1. Select necessary columns</h2>
@@ -44,8 +46,8 @@ tabs:
 <section>
   <h2>2. Finding the date range</h2>
   <p>
-      Let’s see what time period the data covers. We'll first need to convert the <kbd>date</kbd> column to the 'date & time'
-      format, then sort the data to see what the maximum and minimum values are.
+      Let’s see what time period the data covers. The <kbd>date</kbd> column has been imported as <kbd>text</kbd>, so first we'll
+      need to convert it to 'date & time' format. Then we can sort the data to see what the earliest and latest dates are.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
@@ -60,7 +62,7 @@ tabs:
     <li
       data-highlight='[{"type": "WfModule", "moduleName": "Sort"},{"type":"Module","index":3,"name":"Sort"}]'
       data-test="return workflow.tabs[0].wfModuleNames[3] === 'Sort'
-      ">Again, use the menu <span>
+      ">Let's see the earliest date. Use the menu <span>
         <img class="icon-insert" src="images/lesson-icons/menu.svg">
     </span> of the column <kbd>date</kbd> to select <kbd>Sort ascending</kbd>. The earliest date should be <kbd>2010-05-16</kbd>.
     <li
@@ -70,14 +72,14 @@ tabs:
         const sort_columns = params.sort_columns || []
         const is_ascending = sort_columns[0].is_ascending || false
         return is_ascending === false"
-  >Now in the 'sort' module, select <kbd>Descending</kbd>. The latest date should be <kbd>2013-11-04</kbd>.</li>
+  >To see the last date, select <kbd>Descending</kbd> in the <kbd>sort</kbd> step. It should be <kbd>2013-11-04</kbd>.</li>
   </ol>
 </section>
 <section>
   <h2>3. Filtering incomplete months</h2>
   <p>
-      Since both May 2010 and November 2013 contain only partial data we cannot compare those months to the rest of the data since they are incomplete.
-      We need to filter any stops that took place during these months.
+      Since the first and last months of May 2010 and November 2013 contain only partial data we cannot compare these
+      months to the rest of the data. We need to filter out all stops that took place during these months.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
@@ -97,10 +99,31 @@ tabs:
     <li
       data-highlight='[{"type": "WfModule", "moduleName": "Filter by condition"}]'
       data-test="
-        const p = workflow.tabs[0].wfModules[4].params;
-        if (!p.filters.filters[0] || !p.filters.filters[0].subfilters[0]) return false;
-        const sf2 = p.filters.filters[0].subfilters[1];
-        return sf2.colname === 'date' && sf2.condition === 'date_is_before' && sf2.value === '2013-11-01' && p.keep"
+        const p = workflow.tabs[0].wfModules[4].params
+        if (!p.keep) return false
+        const filters = p.filters.filters
+
+        return (
+          (
+            // Added at subfilter level
+            filters.length === 1
+            && filters[0].operator == 'and'
+            && filters[0].subfilters.length === 2
+            && filters[0].subfilters[1].colname === 'date'
+            && filters[0].subfilters[1].condition === 'date_is_before'
+            && filters[0].subfilters[1].value === '2013-11-01'
+          )
+          || (
+            // Added at outer filter level
+            p.filters.operator === 'and'
+            && filters.length === 2
+            && filters[0].subfilters.length === 1
+            && filters[1].subfilters.length === 1
+            && filters[1].subfilters[0].colname === 'date'
+            && filters[1].subfilters[0].condition === 'date_is_before'
+            && filters[1].subfilters[0].value === '2013-11-01'
+          )
+        )"
       >
         Now click <kbd>AND</kbd> directly under the input text box of the first condition to add another.
         Select the column <kbd>date</kbd>, choose the condition <kbd>Date is before</kbd><br/> and enter the value <kbd>2013-11-01</kbd>.
@@ -131,10 +154,19 @@ tabs:
         ['M'].includes(groups.date_granularities['date'])"
       >Check <kbd>Group dates</kbd> and under <kbd>Granularity of "date"</kbd> select <kbd>by month</kbd>.
     </li>
+  </ol>
+</section>
+<section>
+  <h2>5. Making a line chart</h2>
+  <p>Finally, let’s add a line chart to visualize this data.</p>
+  <p>Because all charts plot columns of data, first we need to get the data for each race in its own column. We
+  can use the <kbd>Reshape</kbd> step to do this.</p>
+  <h3 class="instructions">Instructions</h3>
+  <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":6,"name":"Reshape"}]'
       data-test="return workflow.tabs[0].wfModuleNames[6] === 'Reshape'"
-      >Add the step ‘Reshape’.</li>
+      >Add the step <kbd>Reshape</kbd>.</li>
     <li
       data-highlight='[{"type": "WfModule", "moduleName": "Reshape"}]'
       data-test="
@@ -144,17 +176,10 @@ tabs:
         Select <kbd>Long to wide</kbd>, set the <kbd>Row variable</kbd> to the column <kbd>date</kbd>
         and the <kbd>Column variable</kbd> to <kbd>subject_race</kbd>.
     </li>
-  </ol>
-</section>
-<section>
-  <h2>5. Making a line chart</h2>
-  <p>Finally, let’s add a line chart to visualize this data.</p>
-  <h3 class="instructions">Instructions</h3>
-  <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":7,"name":"Line Chart"}]'
       data-test="return workflow.tabs[0].wfModuleNames[7] === 'Line Chart'"
-      >Add the step ‘Line Chart’.</li>
+      >Now add the step <kbd>Line Chart</kbd>.</li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Line Chart"}]'
       data-test="
@@ -177,13 +202,14 @@ tabs:
       <p class="summary"></p>
   </div>
   <div class="next">
-    <h4>Next</h4>
+    <h4>Congratulations!</h4>
+    <p>You have completed a first analysis with Open Policing Project data.</p>
     <p>
       Get the embed code to publish the chart by clicking on the
       <img class="icon-insert" src="./embed_button.svg" />
       button at the top right of the chart panel.
     </p>
-    <h4>Check out this story recipe that dives deeper into the Stanford Open Policing Project data:</h4>
+    <h4>To learn how to dive deeper into this data, check out this story recipe:</h4>
     <ol>
       <li><a href="https://app.workbenchdata.com/workflows/18232/">Advanced analysis</a></li>
     </ol>
