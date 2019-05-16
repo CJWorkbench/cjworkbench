@@ -21,12 +21,12 @@ function getTab(slug, tabs, pendingTabs) {
 
 
 function mapStateToProps (state) {
-  const { workflow, tabs } = state
+  const { selectedPane, workflow, tabs } = state
   const pendingTabs = state.pendingTabs ? state.pendingTabs : {}
 
   return {
     tabs: workflow.tab_slugs.map(slug => getTab(slug, tabs, pendingTabs)),
-    selectedTabPosition: workflow.selected_tab_position,
+    selectedPane,
     isReadOnly: workflow.read_only,
   }
 }

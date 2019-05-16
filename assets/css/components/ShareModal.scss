@@ -1,12 +1,9 @@
 .share-modal {
-  cursor: default;
-
   h6 {
     @include font-nunito-regular;
     font-weight: normal;
     font-size: 1.6rem;
     margin-bottom: 1rem;
-    cursor: default;
 
     &:not(:first-child) {
       margin-top: 2.5rem;
@@ -24,18 +21,15 @@
   .public-private {
     span {
       @include content-1;
-      cursor: pointer;
     }
 
     label {
       margin-bottom: 0;
       margin-left: 2rem;
-      cursor: pointer;
     }
 
     label input {
       top: 3px; // align checkbox with text
-      cursor: pointer;
     }
   }
 
@@ -106,7 +100,6 @@
       input {
         @include module-parameter;
         z-index: 1;
-        cursor: text;
 
         &.form-control:hover {
           border-color: $dark-accent--medium!important;
@@ -143,7 +136,6 @@
     @include content-1;
     color: $brand-orange;
     position: relative; // to position copied-flash
-    cursor: text;
 
     .url {
       flex: 1 1 auto;

@@ -1,10 +1,7 @@
 {% extends 'base.html' %}
 {% load render_bundle from webpack_loader %}
 
-{% block title %}Workbench{% endblock %}
-
 {% block body %}
-  <div id="root">
-  </div>
+  <div id="root"></div>
   {% render_bundle 'workflows' 'js' %}
 {% endblock %}

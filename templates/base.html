@@ -1,96 +1,15 @@
-{% load analytics_tags %}
+{% extends 'minimum.html' %}
 {% load json_filters %}
 {% load static %}
 {% load render_bundle from webpack_loader %}
 
-<!DOCTYPE html>
-<html lang="en" {% block html_tag_attrs %}{% endblock %}>
+{% block headscripts %}
+  <script>
+    window.initState = {{initState|json_in_script_tag}}
+    window.STATIC_URL = '{% get_static_prefix %}'
+  </script>
+{% endblock %}
 
-  <head>
-
-    <meta charset="utf-8">
-    <title>{% block title %}{% endblock %}</title>
-    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/app-icons/apple-touch-icon.png' %}">
-    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/app-icons/favicon-32x32.png' %}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/app-icons/favicon-16x16.png' %}">
-    <link rel="manifest" href="{% static 'images/app-icons/manifest.json' %}">
-    <link rel="mask-icon" href="{% static 'images/app-icons/safari-pinned-tab.svg' %}" color="#5bbad5">
-    <link rel="shortcut icon" href="{% static 'images/app-icons/favicon.ico' %}">
-    <meta name="msapplication-config" content="{% static 'images/app-icons/browserconfig.xml' %}">
-    <meta name="theme-color" content="$white">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script>window.STATIC_URL = '{% get_static_prefix %}'</script>
-
-    {%  google_analytics_id  as google_analytics_id_var %}
-    {% if google_analytics_id_var %}
-      <script async src="https://www.googletagmanager.com/gtag/js?id={% google_analytics_id %}"></script>
-    {% endif %}
-
-    <script type="text/javascript">
-      window.initState = {{initState|json_in_script_tag}};
-
-      {% if google_analytics_id_var %}
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', '{% google_analytics_id %}');
-      {% endif %}
-
-      {% intercom_id as intercom_id_var %}
-      {% if intercom_id_var %}
-        var APP_ID = '{% intercom_id %}';
-        (function(){var w=window;var ic=w.Intercom;if(typeof ic==="function"){ic('reattach_activator');ic('update',intercomSettings);}else{var d=document;var i=function(){i.c(arguments)};i.q=[];i.c=function(args){i.q.push(args)};w.Intercom=i;function l(){var s=d.createElement('script');s.type='text/javascript';s.async=true; s.src='https://widget.intercom.io/widget/' + APP_ID; var x=d.getElementsByTagName('script')[0];x.parentNode.insertBefore(s,x);}if(w.attachEvent){w.attachEvent('onload',l);}else{w.addEventListener('load',l,false);}}})()
-      {% endif %}
-
-      {% heap_analytics_id as heap_analytics_id_var %}
-      {% if heap_analytics_id_var  %}
-
-        window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
-        heap.load("{% heap_analytics_id %}");
-        if  (window.initState && window.initState.loggedInUser) {
-          heap.identify(window.initState.loggedInUser.email, 'email')
-        }
-      {% endif %}
-
-    </script>
-
-
-    {% render_bundle 'style' 'css' %}
-  </head>
-
-  <body {% block body_tag_attrs %}{% endblock %}>
-
-    {% block body %}{% endblock %}
-
-  </body>
-  <div class="not-enough-px-warning">
-    <div class="banner">
-      <div class="video-container">
-        <iframe data-src="https://player.vimeo.com/video/295956416" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-      </div>
-      <script>
-        "use strict";
-
-        window.addEventListener('load', function() {
-          const warning = document.querySelector('.not-enough-px-warning');
-
-          function onResize () {
-            if (warning.offsetHeight) {
-              window.removeEventListener('resize', onResize);
-              const iframe = warning.querySelector('iframe');
-              iframe.src = iframe.getAttribute('data-src');
-            }
-          }
-
-          window.addEventListener('resize', onResize);
-          onResize(); // initial check
-        })
-      </script>
-      <div class="warning">You need a wider screen to enjoy Workbench</div>
-      <div class="detail">Min 650px wide</div>
-      <div class="detail">Experience optimized for web browsers</div>
-      <a href="{% url "account_login" %}" class="button-white--fill action-button mx-auto">Signup</a>
-    </div>
-    <div class="background"></div>
-  </div>
-</html>
+{% block stylesheets %}
+  {% render_bundle 'style' 'css' %}
+{% endblock %}

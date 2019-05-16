@@ -4,7 +4,37 @@
 {% block title %}Workbench{% endblock %}
 
 {% block body %}
-  <div id="root">
-  </div>
+  <div id="root"></div>
   {% render_bundle 'workflow' 'js' %}
+
+  <div class="not-enough-px-warning">
+    <div class="banner">
+      <div class="video-container">
+        <iframe data-src="https://player.vimeo.com/video/295956416" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+      </div>
+      <script>
+        "use strict";
+
+        window.addEventListener('load', function() {
+          const warning = document.querySelector('.not-enough-px-warning');
+
+          function onResize () {
+            if (warning.offsetHeight) {
+              window.removeEventListener('resize', onResize);
+              const iframe = warning.querySelector('iframe');
+              iframe.src = iframe.getAttribute('data-src');
+            }
+          }
+
+          window.addEventListener('resize', onResize);
+          onResize(); // initial check
+        })
+      </script>
+      <div class="warning">You need a wider screen to enjoy Workbench</div>
+      <div class="detail">Min 650px wide</div>
+      <div class="detail">Experience optimized for web browsers</div>
+      <a href="{% url "account_login" %}" class="button-white--fill action-button mx-auto">Signup</a>
+    </div>
+    <div class="background"></div>
+  </div>
 {% endblock %}

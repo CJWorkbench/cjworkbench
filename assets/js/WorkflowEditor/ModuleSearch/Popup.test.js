@@ -2,7 +2,7 @@ import React from 'react'
 import ConnectedPopup, { Popup } from './Popup'
 import { mount } from 'enzyme'
 import { Provider } from 'react-redux'
-import { mockStore } from '../test-utils'
+import { mockStore } from '../../test-utils'
 
 describe('ModuleSearch Popup', () => {
   const ModuleDefaults = {

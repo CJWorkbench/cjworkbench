@@ -46,17 +46,10 @@ def _camel_case_dict_factory(tuples: Tuple[str, Any]) -> Dict[str, Any]:
     return dict((_camelize(k), v) for k, v in tuples)
 
 
-class AclEntrySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = AclEntry
-        fields = ('workflow_id', 'email', 'created_at', 'can_edit')
-
-
 class StoredObjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = StoredObject
         fields = '__all__'
-
 
 
 class ModuleSerializer(serializers.ModelSerializer):
@@ -201,11 +194,18 @@ class WfModuleSerializer(serializers.ModelSerializer):
 # Lite Workflow: Don't include any of the modules, just name and ID.
 # For /workflows page
 class WorkflowSerializerLite(serializers.ModelSerializer):
+    acl = serializers.SerializerMethodField()
     read_only = serializers.SerializerMethodField()
     last_update = serializers.SerializerMethodField()
     owner_name = serializers.SerializerMethodField()
     owner_email = serializers.SerializerMethodField()
     is_owner = serializers.SerializerMethodField()
+
+    def get_acl(self, obj):
+        return [
+            {'email': entry.email, 'canEdit': entry.can_edit}
+            for entry in obj.acl.all()
+        ]
 
     def get_owner_name(self, obj):
         if obj.example:
@@ -233,7 +233,7 @@ class WorkflowSerializerLite(serializers.ModelSerializer):
     class Meta:
         model = Workflow
         fields = ('id', 'name', 'public', 'read_only', 'is_owner',
-                  'last_update', 'owner_email', 'owner_name')
+                  'last_update', 'owner_email', 'owner_name', 'acl')
 
 
 class WorkflowSerializer(WorkflowSerializerLite):
@@ -246,7 +246,7 @@ class WorkflowSerializer(WorkflowSerializerLite):
         model = Workflow
         fields = ('id', 'url_id', 'name', 'tab_slugs', 'public', 'read_only',
                   'last_update', 'is_owner', 'owner_email', 'owner_name',
-                  'selected_tab_position', 'is_anonymous')
+                  'selected_tab_position', 'is_anonymous', 'acl')
 
 
 class LessonSerializer(serializers.BaseSerializer):

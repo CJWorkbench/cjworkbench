@@ -1,16 +1,24 @@
 from django import template
-from server.utils import get_intercom_app_id, get_google_analytics_id, get_heap_analytics_id
+import os
 
 register = template.Library()
 
-@register.simple_tag
-def intercom_id():
-    return get_intercom_app_id()
+# return analytics IDs if they are set
+# TODO move these env-variable handlers to settings.py
 
 @register.simple_tag
-def google_analytics_id():
-    return get_google_analytics_id()
+def load_analytics_ids():
+    """
+    Return analytics IDs as a dict.
 
-@register.simple_tag
-def heap_analytics_id():
-    return get_heap_analytics_id()
+    Keys:
+
+    * `intercom_id`
+    * `google_analytics_id`
+    * `heap_analytics_id`
+    """
+    return {
+        'intercom_id': os.environ.get('CJW_INTERCOM_APP_ID'),
+        'google_analytics_id': os.environ.get('CJW_GOOGLE_ANALYTICS'),
+        'heap_analytics_id': os.environ.get('CJW_HEAP_ANALYTICS_ID'),
+    }

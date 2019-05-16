@@ -27,7 +27,13 @@ const middlewares = [ promiseMiddleware, thunk.withExtraArgument(api) ]
 
 const store = createStore(
   workflowReducer,
-  window.initState,
+  {
+    ...window.initState,
+    selectedPane: {
+      pane: 'tab',
+      tabSlug: window.initState.workflow.tab_slugs[window.initState.workflow.selected_tab_position]
+    }
+  },
   composeEnhancers(applyMiddleware(...middlewares))
 )
 

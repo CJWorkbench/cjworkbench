@@ -3,9 +3,11 @@ import { mount } from 'enzyme'
 import NewAclEntry from './NewAclEntry'
 
 describe('NewAclEntry', () => {
-  const wrapper = () => mount(
+  const wrapper = (extraProps={}) => mount(
     <NewAclEntry
-      onCreate={jest.fn()}
+      ownerEmail='owner@example.org'
+      updateAclEntry={jest.fn()}
+      {...extraProps}
     />
   )
 
@@ -14,7 +16,19 @@ describe('NewAclEntry', () => {
     w.find('input[name="email"]').instance().value = 'a@example.com'
     w.find('form').simulate('submit')
 
-    expect(w.prop('onCreate')).toHaveBeenCalledWith('a@example.com', false)
+    expect(w.prop('updateAclEntry')).toHaveBeenCalledWith('a@example.com', false)
+    expect(w.find('input[name="email"]').instance().value).toEqual('')
+  })
+
+  it('should no-op on ownerEmail', () => {
+    const w = wrapper({ ownerEmail: 'a@example.com' })
+    w.find('input[name="email"]').instance().value = 'a@example.com'
+    w.find('form').simulate('submit')
+
+    expect(w.prop('updateAclEntry')).not.toHaveBeenCalled()
+    // We still want to clear the text field, though. (The owner appears in the
+    // ACL display, so the user does see email he/she entered -- just once, not
+    // twice.)
     expect(w.find('input[name="email"]').instance().value).toEqual('')
   })
 

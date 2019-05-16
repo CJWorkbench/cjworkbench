@@ -9,6 +9,8 @@ module.exports = {
   // Each page gets its own bundle
   entry: {
     style: './assets/css/style.scss',
+    'report-styles': './assets/css/report.scss',
+    'embed-styles': './assets/css/embed.scss',
     lessons: './assets/js/pages/lessons.page',
     login: './assets/js/pages/login',
     workflows: './assets/js/pages/workflows.page',

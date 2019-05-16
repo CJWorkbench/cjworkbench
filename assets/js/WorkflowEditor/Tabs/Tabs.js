@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import TabList from './TabList'
 import NewTabPrompt from './NewTabPrompt'
+import * as propTypes from '../propTypes'
 
 export default class Tabs extends React.PureComponent {
   static propTypes = {
@@ -10,8 +11,8 @@ export default class Tabs extends React.PureComponent {
       name: PropTypes.string.isRequired,
       isPending: PropTypes.bool // or undefined
     }).isRequired).isRequired,
+    selectedPane: propTypes.selectedPane.isRequired,
     isReadOnly: PropTypes.bool.isRequired,
-    selectedTabPosition: PropTypes.number.isRequired,
     create: PropTypes.func.isRequired, // func(position, name) => undefined
     setName: PropTypes.func.isRequired, // func(slug, name) => undefined
     destroy: PropTypes.func.isRequired, // func(slug) => undefined
@@ -25,14 +26,14 @@ export default class Tabs extends React.PureComponent {
   }
 
   render () {
-    const { tabs, isReadOnly, selectedTabPosition, setName, select, destroy, duplicate, setOrder } = this.props
+    const { tabs, isReadOnly, selectedPane, setName, select, destroy, duplicate, setOrder } = this.props
 
     return (
       <div className='tabs'>
         <TabList
           tabs={tabs}
           isReadOnly={isReadOnly}
-          selectedTabPosition={selectedTabPosition}
+          selectedPane={selectedPane}
           setName={setName}
           destroy={destroy}
           duplicate={duplicate}

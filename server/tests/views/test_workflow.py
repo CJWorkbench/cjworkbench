@@ -176,7 +176,6 @@ class WorkflowViewTests(LoggedInTestCase):
         self.assertEqual(len(workflows['owned']), 1)
 
     def test_index_post(self):
-        start_count = Workflow.objects.count()
         response = self.client.post('/workflows/', user=self.user)
         workflow = Workflow.objects.get(name='Untitled Workflow')  # or crash
         self.assertRedirects(response, '/workflows/%d/' % workflow.id)
@@ -241,21 +240,26 @@ class WorkflowViewTests(LoggedInTestCase):
         response = self.client.get('/workflows/%d/' % self.workflow1.id)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+    @patch.dict('os.environ', {
+        'CJW_INTERCOM_APP_ID': 'myIntercomId',
+        'CJW_GOOGLE_ANALYTICS': 'myGaId',
+        'CJW_HEAP_ANALYTICS_ID': 'myHeapId',
+    })
     def test_workflow_init_state(self):
         # checks to make sure the right initial data is embedded in the HTML (username etc.)
-        with patch.dict('os.environ', { 'CJW_INTERCOM_APP_ID':'myIntercomId', 'CJW_GOOGLE_ANALYTICS':'myGaId'}):
-            response = self.client.get('/workflows/%d/' % self.workflow1.id)  # need trailing slash or 301
-            self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response = self.client.get('/workflows/%d/' % self.workflow1.id)  # need trailing slash or 301
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-            self.assertContains(response, '"loggedInUser"')
-            self.assertContains(response, user_display(self.user))
-            self.assertContains(response, self.user.email)
+        self.assertContains(response, '"loggedInUser"')
+        self.assertContains(response, user_display(self.user))
+        self.assertContains(response, self.user.email)
 
-            self.assertContains(response, '"workflow"')
-            self.assertContains(response, '"modules"')
+        self.assertContains(response, '"workflow"')
+        self.assertContains(response, '"modules"')
 
-            self.assertContains(response, 'myIntercomId')
-            self.assertContains(response, 'myGaId')
+        self.assertContains(response, 'myIntercomId')
+        self.assertContains(response, 'myGaId')
+        self.assertContains(response, 'myHeapId')
 
     def test_workflow_acl_reader_reads_but_does_not_write(self):
         self.workflow1.acl.create(email='user2@users.com', can_edit=False)

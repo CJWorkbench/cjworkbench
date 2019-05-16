@@ -1,0 +1,23 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>{% block title %}Workbench{% endblock %}</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/app-icons/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/app-icons/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/app-icons/favicon-16x16.png' %}">
+    <link rel="manifest" href="{% static 'images/app-icons/manifest.json' %}">
+    <link rel="mask-icon" href="{% static 'images/app-icons/safari-pinned-tab.svg' %}" color="#5bbad5">
+    <link rel="shortcut icon" href="{% static 'images/app-icons/favicon.ico' %}">
+    <meta name="msapplication-config" content="{% static 'images/app-icons/browserconfig.xml' %}">
+    <meta name="theme-color" content="white">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% block headscripts %}{% endblock %}
+    {% include 'tracking.html' %}
+    {% block stylesheets %}{% endblock %}
+  </head>
+  <body>
+    {% block body %}{% endblock %}
+  </body>
+</html>

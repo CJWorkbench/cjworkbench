@@ -4,7 +4,7 @@ from django.core.management.base import BaseCommand
 from server import minio
 
 
-BUCKET_POLICY = """{
+STATIC_FILES_BUCKET_POLICY = """{
     "Version":"2012-10-17",
     "Statement":[
         {
@@ -55,7 +55,10 @@ class Command(BaseCommand):
         if settings.MINIO_BUCKET_PREFIX == 'integrationtest':
             minio.ensure_bucket_exists(minio.StaticFilesBucket)
             minio.client.put_bucket_policy(Bucket=minio.StaticFilesBucket,
-                                           Policy=BUCKET_POLICY)
+                                           Policy=STATIC_FILES_BUCKET_POLICY)
+            # No need to enable CORS for minio-served buckets:
+            # "Minio enables CORS by default on all buckets for all HTTP verbs"
+            # https://docs.min.io/docs/minio-server-limits-per-tenant.html
 
         # Migrate comes last: during deploy, in some cases, migration can make
         # the site unusable until it's completed. So don't add any instructions

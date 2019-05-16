@@ -7,18 +7,18 @@ export default class AclEntry extends React.PureComponent {
     isReadOnly: PropTypes.bool.isRequired,
     email: PropTypes.string.isRequired,
     canEdit: PropTypes.bool.isRequired,
-    onChange: PropTypes.func.isRequired, // func(email, canEdit) => undefined
-    onClickDelete: PropTypes.func.isRequired // func(email) => undefined
+    updateAclEntry: PropTypes.func.isRequired, // func(email, canEdit) => undefined
+    deleteAclEntry: PropTypes.func.isRequired // func(email) => undefined
   }
 
   onChangeCanEdit = (canEdit) => {
-    const { onChange, email } = this.props
-    onChange(email, canEdit)
+    const { updateAclEntry, email } = this.props
+    updateAclEntry(email, canEdit)
   }
 
   onClickDelete = () => {
-    const { onClickDelete, email } = this.props
-    onClickDelete(email)
+    const { deleteAclEntry, email } = this.props
+    deleteAclEntry(email)
   }
 
   render () {

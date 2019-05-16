@@ -29,8 +29,7 @@ class TestExampleWorkflow(WorkbenchBase):
         b.click_button('Share')
 
         with b.scope('.share-modal', wait=True):  # wait for dialog
-            # wait for collaborators to load
-            b.fill_in('email', 'b@example.org', wait=True)
+            b.fill_in('email', 'b@example.org')
             b.click_button('Grant access')
             url = b.text('.url')
 
@@ -71,8 +70,7 @@ class TestExampleWorkflow(WorkbenchBase):
         # We can view collaborators, read-only
         b.click_button('Share')
         with b.scope('.share-modal', wait=True):  # wait for dialog
-            b.assert_element('.acl-entry.owner', text='a@example.org',
-                             wait=True)  # wait for collaborator list
+            b.assert_element('.acl-entry.owner', text='a@example.org')
             b.assert_element('.acl-entry .email', text='b@example.org')
             b.assert_no_element('button.delete')  # can't edit collaborators
 
@@ -100,7 +98,6 @@ class TestExampleWorkflow(WorkbenchBase):
         # We can view collaborators, read-only
         b.click_button('Share')
         with b.scope('.share-modal', wait=True):  # wait for dialog
-            b.assert_element('.acl-entry.owner', text='a@example.org',
-                             wait=True)  # wait for collaborator list
+            b.assert_element('.acl-entry.owner', text='a@example.org')
             b.assert_element('.acl-entry .email', text='b@example.org')
             b.assert_no_element('button.delete')  # can't edit collaborators

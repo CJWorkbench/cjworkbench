@@ -1,8 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Modal, ModalHeader, ModalBody, ModalFooter } from './components/Modal'
+import { Modal, ModalHeader, ModalBody, ModalFooter } from '../components/Modal'
 import memoize from 'memoize-one'
-import { setDataVersionAction, updateWfModuleAction } from './workflow-reducer'
+import { setDataVersionAction, updateWfModuleAction } from '../workflow-reducer'
 import { connect } from 'react-redux'
 import { createSelector } from 'reselect'
 

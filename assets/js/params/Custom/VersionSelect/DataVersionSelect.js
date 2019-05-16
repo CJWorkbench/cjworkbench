@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import DataVersionModal from '../../../DataVersionModal'
-import { connect } from 'react-redux';
+import DataVersionModal from '../../../WorkflowEditor/DataVersionModal'
+import { connect } from 'react-redux'
 
 export class DataVersionSelect extends React.PureComponent {
   static propTypes = {

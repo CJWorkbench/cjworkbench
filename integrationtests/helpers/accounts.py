@@ -48,6 +48,12 @@ def login(browser: Browser, email: str, password: str) -> None:
     browser.wait_for_element('a', text='MY WORKFLOWS', wait=True)
 
 
+def logout(browser: Browser) -> None:
+    """Log out through `/account/logout` as the given user."""
+    browser.visit('/account/logout')
+    browser.click_button('Log out')
+
+
 def _close_connection(conn):
     """Close the given subprocess which is a Python shell.
     """

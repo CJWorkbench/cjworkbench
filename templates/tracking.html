@@ -1,0 +1,31 @@
+{% load analytics_tags %}
+{# behaves differently if window.initState exists; so be sure to set that first #}
+
+{% load_analytics_ids as ids %}
+
+{% if ids.google_analytics_id %}
+  <script async src="https://www.googletagmanager.com/gtag/js?id={{ ids.google_analytics_id }}"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', '{{ ids.google_analytics_id }}');
+  </script>
+{% endif %}
+
+{% if ids.intercom_id %}
+  <script>
+    var APP_ID = '{{ ids.intercom_id }}';
+    (function(){var w=window;var ic=w.Intercom;if(typeof ic==="function"){ic('reattach_activator');ic('update',intercomSettings);}else{var d=document;var i=function(){i.c(arguments)};i.q=[];i.c=function(args){i.q.push(args)};w.Intercom=i;function l(){var s=d.createElement('script');s.type='text/javascript';s.async=true; s.src='https://widget.intercom.io/widget/' + APP_ID; var x=d.getElementsByTagName('script')[0];x.parentNode.insertBefore(s,x);}if(w.attachEvent){w.attachEvent('onload',l);}else{w.addEventListener('load',l,false);}}})()
+  </script>
+{% endif %}
+
+{% if ids.heap_analytics_id %}
+  <script>
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("{{ ids.heap_analytics_id }}");
+    if (window.initState && window.initState.loggedInUser) {
+      heap.identify(window.initState.loggedInUser.email, 'email')
+    }
+  </script>
+{% endif %}

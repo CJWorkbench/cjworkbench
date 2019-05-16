@@ -11,7 +11,7 @@ class TestNewWorkflow(LoggedInIntegrationTest):
         b.wait_for_element('.module-stack', wait=True)
 
         # nav bar
-        with b.scope('nav'):
+        with b.scope('.navbar'):
             b.assert_element('button', text='Duplicate')
             b.assert_element('button', text='Share')
 

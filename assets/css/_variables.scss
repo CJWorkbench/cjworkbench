@@ -21,7 +21,7 @@ $medium-gray: #a2a2a2;
 $dark-gray: #8b8b8b;
 $Vlight-gray: lighten($dark-gray,39%);
 
-$font-family-sans-serif: 'Nunito Sans', sans-serif;
+$font-family-sans-serif: 'Nunito Sans', sans-serif; // override Bootstrap
 
 $modal-footer: #F5F7F8;
 $table-border: #D7E4E7;
@@ -69,8 +69,6 @@ $light-accent--strong: rgba(255,255,255,.2); // DO NOT USE: rgba is bad
 $light-accent--Vstrong: rgba(255,255,255,0.5); // DO NOT USE: rgba is bad
 $light-accent--Extrastrong: rgba(255,255,255,0.9); // DO NOT USE: rgba is bad
 
-$table-header--light: lighten($table-header,18%);
-
 $brand-workspace--Vlight: lighten($brand-workspace,41%);
 $brand-workspace--light: lighten($brand-workspace,39%);
 $brand-workspace--medium: lighten($brand-workspace,15%);
@@ -81,14 +79,14 @@ $brand-background--action:rgba($brand-workspace--medium, .60); // DO NOT USE
 $brand-orange--light: lighten($brand-orange,26%);
 $brand-orange--medium: lighten($brand-orange,12%);
 $brand-orange--medium-dark: lighten($brand-orange,9%);
-$brand-orange--darker: darken($brand-orange,10%);
+$brand-orange--darker: darken($brand-orange, 10%);
 
-$brand-learn--Vlight:lighten($brand-learn,15%);
-$brand-learn--light:lighten($brand-learn,13%);
-$brand-learn--med-light:lighten($brand-learn,10%);
-$brand-learn--medium:lighten($brand-learn,5%);
+$brand-learn--Vlight: lighten($brand-learn, 15%);
+$brand-learn--light: lighten($brand-learn, 13%);
+$brand-learn--med-light: lighten($brand-learn, 10%);
+$brand-learn--medium: lighten($brand-learn, 5%);
 
-$table-header--light:lighten($table-header,13%);
+$table-header--light: lighten($table-header, 13%);
 
 // Overlays
 
@@ -114,7 +112,7 @@ $module-width: 28rem;
 $module-margin-right: 2rem;
 $module-margin-left: 4rem;
 $module-color-ok: $brand-workspace--medium;
-$module-color-unreachable: lighten($light-gray,5%);
+$module-color-unreachable: lighten($light-gray, 5%);
 $module-color-selected: $module-action;
 $module-color-busy: $brand-orange;
 $module-color-error: $error-prompt;
@@ -125,7 +123,3 @@ $param-margin: .8rem;
 // Helper ⊂(◉‿◉)つ
 
 $module-popover-border-width: 2px;
-
-// Animations
-
-$buttons-anim: all 0.1s;

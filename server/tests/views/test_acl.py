@@ -1,18 +1,9 @@
-import json
-from django.contrib.auth.models import AnonymousUser, User
 from django.utils import timezone
-from server.models import AclEntry, User, Workflow
-from server.views import acl
+from server.models import User, Workflow
 from server.tests.utils import DbTestCase
 
 
 class AclTest(DbTestCase):
-    def _get_list(self, workflow, user):
-        if user:
-            self.client.force_login(user)
-
-        return self.client.get(f'/api/workflows/{workflow.id}/acl')
-
     def _put_entry(self, workflow, user, email, data):
         if user:
             self.client.force_login(user)
@@ -26,67 +17,11 @@ class AclTest(DbTestCase):
 
         return self.client.delete(f'/api/workflows/{workflow.id}/acl/{email}')
 
-    def test_get_list_empty(self):
-        user = User.objects.create()
-        workflow = Workflow.objects.create(owner=user)
-        response = self._get_list(workflow, user)
-        self.assertEqual(response.status_code, 200)
-        data = json.loads(response.content)
-        self.assertEqual(data, [])
-
-    def test_get_list(self):
-        user = User.objects.create()
-        workflow = Workflow.objects.create(owner=user)
-
-        dt = timezone.datetime(2018, 10, 3, 19, 28, 1, tzinfo=timezone.utc)
-
-        workflow.acl.create(email='a@example.org', can_edit=False,
-                            created_at=dt)
-        workflow.acl.create(email='b@example.org', can_edit=True,
-                            created_at=dt)
-
-        response = self._get_list(workflow, user)
-        self.assertEqual(response.status_code, 200)
-        data = json.loads(response.content)
-        self.assertEqual(data, [
-            {'workflow_id': workflow.pk, 'email': 'a@example.org',
-             'created_at': '2018-10-03T19:28:01Z', 'can_edit': False},
-            {'workflow_id': workflow.pk, 'email': 'b@example.org',
-             'created_at': '2018-10-03T19:28:01Z', 'can_edit': True},
-        ])
-
-    def test_get_list_as_unauthorized(self):
-        user = User.objects.create()
-        workflow = Workflow.objects.create(owner=user)
-        user2 = User.objects.create(username='other@example.org')
-        response = self._get_list(workflow, user2)
-        self.assertEqual(response.status_code, 403)
-
-    def test_get_list_as_reader(self):
-        user = User.objects.create()
-        workflow = Workflow.objects.create(owner=user)
-        workflow.acl.create(email='other@example.org', can_edit=True)
-        user2 = User.objects.create(username='other@example.org',
-                                    email='other@example.org')
-        response = self._get_list(workflow, user2)
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual([e['email'] for e in json.loads(response.content)],
-                         ['other@example.org'])
-
-    def test_get_list_anonymous(self):
-        # Anonyous workflows can't be shared: they must be duplicated first.
-        workflow = Workflow.objects.create(
-            owner=None,
-            anonymous_owner_session_key=self.client.session.session_key
-        )
-        response = self._get_list(workflow, None)
-        self.assertEqual(response.status_code, 404)
-
     def test_put_entry(self):
         user = User.objects.create()
         workflow = Workflow.objects.create(owner=user)
         response = self._put_entry(workflow, user, 'a@example.org',
-                                   '{"can_edit": true}')
+                                   '{"canEdit": true}')
         self.assertEqual(response.status_code, 204)
 
         entry = workflow.acl.first()
@@ -99,7 +34,7 @@ class AclTest(DbTestCase):
             anonymous_owner_session_key=self.client.session.session_key
         )
         response = self._put_entry(workflow, None, 'a@example.org',
-                                   '{"can_edit": true}')
+                                   '{"canEdit": true}')
         self.assertEqual(response.status_code, 404)
 
     def test_put_entry_as_non_owner(self):
@@ -111,21 +46,21 @@ class AclTest(DbTestCase):
         workflow.acl.create(email='other@example.org', can_edit=True)
 
         response = self._put_entry(workflow, user2, 'a@example.org',
-                                   '{"can_edit": true}')
+                                   '{"canEdit": true}')
         self.assertEqual(response.status_code, 403)
 
     def test_put_entry_invalid_email(self):
         user = User.objects.create()
         workflow = Workflow.objects.create(owner=user)
         response = self._put_entry(workflow, user, 'a@example@org',
-                                   '{"can_edit": true}')
+                                   '{"canEdit": true}')
         self.assertEqual(response.status_code, 400)
 
     def test_put_entry_owner(self):
         user = User.objects.create(email='a@example.org')
         workflow = Workflow.objects.create(owner=user)
         response = self._put_entry(workflow, user, 'a@example.org',
-                                   '{"can_edit": true}')
+                                   '{"canEdit": true}')
         self.assertEqual(response.status_code, 400)
 
     def test_put_entry_dup(self):
@@ -138,7 +73,7 @@ class AclTest(DbTestCase):
         workflow.acl.create(email='a@example.org', can_edit=False,
                             created_at=dt)
         response = self._put_entry(workflow, user, 'a@example.org',
-                                   '{"can_edit": true}')
+                                   '{"canEdit": true}')
         self.assertEqual(response.status_code, 204)
 
         # No new entry added

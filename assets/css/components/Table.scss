@@ -18,49 +18,6 @@
     border-color: $module-color-busy;
   }
 
-  // iframe for charts
-  .outputpane-iframe {
-    flex: 0 0 auto;
-    width:100%;
-    height: 100%; // OutputIframe.js will override this ...
-    position:relative;
-
-    iframe {
-      border:none;
-      position: absolute;
-      top: 0;
-      left: 0;
-      height: 100%;
-      width: 100%;
-    }
-
-    .outputpane-iframe-control-overlay {
-      position: absolute;
-      margin-top: 1.6rem;
-      right:7.5rem;
-      width: 4rem;
-      height: 4rem;
-      background-color: transparent;
-      i {color:$brand-text--dark;}
-    }
-
-    .outputpane-iframe-control-overlay .btn {
-      position: absolute;
-      width: 3.5rem;
-      height: 3.5rem;
-      border-radius: 50px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border: 2px solid $Vlight-gray;
-      font-size: 1.6rem;
-    }
-
-    .outputpane-iframe-control-overlay .btn:hover{
-      border:2px solid $light-gray;
-    }
-  }
-
   .table-switcher {
     height: 100%;
     position: relative;

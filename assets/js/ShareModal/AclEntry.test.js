@@ -9,8 +9,8 @@ describe('AclEntry', () => {
       isReadOnly={false}
       email='user@example.org'
       canEdit={false}
-      onChange={jest.fn()}
-      onClickDelete={jest.fn()}
+      updateAclEntry={jest.fn()}
+      deleteAclEntry={jest.fn()}
       {...props}
     />
   )
@@ -25,34 +25,34 @@ describe('AclEntry', () => {
     const w = wrapper({ email: 'a@example.com', canEdit: true })
     w.find('button.dropdown-toggle').simulate('click')
     w.find('button.can-edit-false').simulate('click')
-    expect(w.prop('onChange')).toHaveBeenCalledWith('a@example.com', false)
+    expect(w.prop('updateAclEntry')).toHaveBeenCalledWith('a@example.com', false)
   })
 
   it('should change viewer to editor', () => {
     const w = wrapper({ email: 'a@example.com', canEdit: false })
     w.find('button.dropdown-toggle').simulate('click')
     w.find('button.can-edit-true').simulate('click')
-    expect(w.prop('onChange')).toHaveBeenCalledWith('a@example.com', true)
+    expect(w.prop('updateAclEntry')).toHaveBeenCalledWith('a@example.com', true)
   })
 
   it('should no-op when trying to change viewer to viewer', () => {
     const w = wrapper({ email: 'a@example.com', canEdit: false })
     w.find('button.dropdown-toggle').simulate('click')
     w.find('button.can-edit-false').simulate('click')
-    expect(w.prop('onChange')).not.toHaveBeenCalled()
+    expect(w.prop('updateAclEntry')).not.toHaveBeenCalled()
   })
 
   it('should no-op when trying to change editor to editor', () => {
     const w = wrapper({ email: 'a@example.com', canEdit: true })
     w.find('button.dropdown-toggle').simulate('click')
     w.find('button.can-edit-true').simulate('click')
-    expect(w.prop('onChange')).not.toHaveBeenCalled()
+    expect(w.prop('updateAclEntry')).not.toHaveBeenCalled()
   })
 
   it('should delete', () => {
     const w = wrapper({ email: 'a@example.com' })
     w.find('button.delete').simulate('click')
-    expect(w.prop('onClickDelete')).toHaveBeenCalledWith('a@example.com')
+    expect(w.prop('deleteAclEntry')).toHaveBeenCalledWith('a@example.com')
   })
 
   it('should render read-only', () => {

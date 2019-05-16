@@ -1,15 +1,9 @@
 .tabs {
-  $tabs-background: darken($WF-background,5%);
+  // Beware: these values must be edited both here and in _PaneSelect.scss
   $tabs-border: $table-header;
+  $tab-button-padding: .8rem .5rem .6rem .1rem;
+  $tab-name-padding: .8rem .5rem .6rem 1.5rem;
   $overlap-width: 3px;
-
-  line-height: 0; // there are some `display: inline-block` elements and we want them to line up
-  border-top: 2px solid $tabs-border;
-  background: $tabs-background;
-  color: $brand-text--dark;
-  padding-bottom: .5rem;
-  padding-left: 1.5rem;
-  padding-right: 9rem;
 
   // list of tabs
   &>ul {
@@ -21,7 +15,6 @@
     &>li {
       display: inline-block;
       position: relative; // for .dropping-left and .dropping-right
-      margin-top: -2px; // make border overlap with border-top of entire .tabs bar
       margin-left: -$overlap-width; // tabs are overlapping and masking "::after" separators
     }
 
@@ -32,10 +25,7 @@
       border: 2px solid transparent;
       border-bottom-left-radius: 5px;
       border-bottom-right-radius: 5px;
-      border-top: 0;
-
-      $tab-name-padding: .8rem .5rem .6rem 1.5rem;
-      $tab-button-padding: .8rem .5rem .6rem .1rem;
+      margin-top: -2px; // make border overlap with border-top of entire .tabs bar
 
       .tab-name {
         font-size: 1.4rem;
@@ -119,18 +109,6 @@
             color: $brand-text--darker;
             background-color: $dark-accent--soft;
             opacity: 1;
-          }
-        }
-
-        .dropdown-menu {
-          border: 2px solid $brand-workspace;
-          background-color: $white;
-          border-radius: .5rem;
-          box-shadow: $menu-shadow;
-          padding: .5rem 0;
-          margin-bottom: 1rem;
-          .dropdown-item:active {
-            color: $brand-text--darker;
           }
         }
       }

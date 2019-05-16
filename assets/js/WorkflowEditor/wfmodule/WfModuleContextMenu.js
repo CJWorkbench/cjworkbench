@@ -2,8 +2,8 @@
 
 import React from 'react'
 import PropTypes from 'prop-types'
-import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from '../components/Dropdown'
-import ExportModal from '../ExportModal'
+import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from '../../components/Dropdown'
+import ExportModal from '../../ExportModal'
 
 
 export default class WfModuleContextMenu extends React.Component {

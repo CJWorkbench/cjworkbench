@@ -2,16 +2,11 @@ import React from 'react'
 import {escapeHtml, timeDifference} from './utils'
 
 export default class Embed extends React.Component {
-  constructor(props) {
-    super(props);
-    this.toggleOverlay = this.toggleOverlay.bind(this);
-    this.renderNotAvailable = this.renderNotAvailable.bind(this);
-    this.state = {
-      overlayOpen: false
-    }
+  state = {
+    overlayOpen: false
   }
 
-  toggleOverlay(e) {
+  toggleOverlay = (e) => {
     this.setState({
       overlayOpen: !this.state.overlayOpen
     })
@@ -60,28 +55,25 @@ export default class Embed extends React.Component {
                   {this.props.workflow.name}
                 </a>
               </div>
-              <div className="wf-meta--id">
+              <div className='metadata'>
                 <ul className="WF-meta">
-                  <div className="WF-meta--item content-1 t-m-gray">
+                  <li>
                     <a href={"/workflows/" + this.props.workflow.id } target="_blank">
                     by {this.props.workflow.owner_name}
                     </a>
-                  </div>
-                  <li className="separator">-</li>
-                  <li className="WF-meta--item content-1 t-m-gray">
+                  </li>
+                  <li>
                     <a href={"/workflows/" + this.props.workflow.id } target="_blank">
                     Updated {timeDifference(this.props.workflow.last_update, new Date())}
                     </a>
-                  </li>
-                  <li className="WF-meta--item content-1 t-m-gray">
                   </li>
                 </ul>
               </div>
             </div>
           </div>
-          <div onClick={this.toggleOverlay} className="embed-footer-button">
+          <button type='button' onClick={this.toggleOverlay} className="embed-footer-button">
             <i className="icon icon-code"/>
-          </div>
+          </button>
         </div>
         <div className={"embed-overlay" + (this.state.overlayOpen ? ' open' : '')} onClick={this.toggleOverlay}>
           <div className="embed-share-links" onClick={(e) => {e.stopPropagation()}}>

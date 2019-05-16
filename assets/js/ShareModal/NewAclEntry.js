@@ -3,7 +3,8 @@ import PropTypes from 'prop-types'
 
 export default class NewAclEntry extends React.PureComponent {
   static propTypes = {
-    onCreate: PropTypes.func.isRequired, // func(email, canEdit) => undefined
+    ownerEmail: PropTypes.string.isRequired,
+    updateAclEntry: PropTypes.func.isRequired, // func(email, canEdit) => undefined
   }
 
   emailRef = React.createRef()
@@ -18,7 +19,9 @@ export default class NewAclEntry extends React.PureComponent {
     // email address is valid
     const email = this.emailRef.current.value
 
-    this.props.onCreate(email, false)
+    if (email !== this.props.ownerEmail) {
+      this.props.updateAclEntry(email, false)
+    }
 
     // Reset the input, so the user can enter another email. (It should retain
     // focus.)

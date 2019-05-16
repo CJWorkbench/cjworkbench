@@ -7,11 +7,16 @@
   padding-left: 0;
   list-style: none;
   cursor: pointer;
-  @extend .content-1;
+  @include content-1;
 
   .separator {
     margin:0 0.5rem 0 0.5rem;
     text-align: center;
+  }
+
+  .WF-meta--item {
+    margin-right: 0;
+    display: flex;
   }
 }
 
@@ -24,7 +29,6 @@ button.public-private {
   background: transparent;
   cursor: pointer;
   text-decoration: none;
-  color: inherit;
   color: $brand-workspace;
 
   nav .metadata-container & {
@@ -34,11 +38,6 @@ button.public-private {
       text-decoration: underline;
     }
   }
-}
-
-.WF-meta--item {
-  margin-right: 0px;
-  display: flex;
 }
 
 .workflow-root.in-lesson {

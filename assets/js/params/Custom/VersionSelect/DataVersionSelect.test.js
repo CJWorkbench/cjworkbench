@@ -1,6 +1,6 @@
 import React from 'react'
 import ConnectedDataVersionSelect, { DataVersionSelect }  from './DataVersionSelect'
-import DataVersionModal from '../../../DataVersionModal' // to check it's rendered in shallow()
+import DataVersionModal from '../../../WorkflowEditor/DataVersionModal' // to check it's rendered in shallow()
 import { shallow, mount } from 'enzyme'
 import { Provider } from 'react-redux'
 import configureMockStore from 'redux-mock-store'

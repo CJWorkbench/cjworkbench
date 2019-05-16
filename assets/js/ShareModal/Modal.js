@@ -10,22 +10,21 @@ export default class _Modal extends React.PureComponent {
     isReadOnly: PropTypes.bool.isRequired, // are we owner? Otherwise, we can't edit the ACL
     url: PropTypes.string.isRequired,
     isPublic: PropTypes.bool.isRequired,
-    onChangeIsPublic: PropTypes.func.isRequired, // func(isPublic) => undefined
     logShare: PropTypes.func.isRequired, // func('Facebook'|'Twitter'|'URL copied') => undefined
     ownerEmail: PropTypes.string.isRequired,
     acl: PropTypes.arrayOf(PropTypes.shape({
       email: PropTypes.string.isRequired,
       canEdit: PropTypes.bool.isRequired
     }).isRequired), // or null if loading
-    onChangeAclEntry: PropTypes.func.isRequired, // func(email, canEdit) => undefined
-    onCreateAclEntry: PropTypes.func.isRequired, // func(email, canEdit) => undefined
-    onClickDeleteAclEntry: PropTypes.func.isRequired, // func(email) => undefined
+    setIsPublic: PropTypes.func.isRequired, // func(isPublic) => undefined
+    updateAclEntry: PropTypes.func.isRequired, // func(email, canEdit) => undefined
+    deleteAclEntry: PropTypes.func.isRequired, // func(email) => undefined
     onClickClose: PropTypes.func.isRequired // func() => undefined
   }
 
   render () {
-    const { url, isReadOnly, isPublic, onChangeIsPublic, logShare, ownerEmail, acl,
-      onChangeAclEntry, onCreateAclEntry, onClickDeleteAclEntry, onClickClose } = this.props
+    const { url, isReadOnly, isPublic, setIsPublic, logShare, ownerEmail, acl,
+      updateAclEntry, deleteAclEntry, onClickClose } = this.props
 
     return (
       <Modal className='share-modal' isOpen toggle={onClickClose}>
@@ -35,22 +34,17 @@ export default class _Modal extends React.PureComponent {
           <PublicPrivate
             isReadOnly={isReadOnly}
             isPublic={isPublic}
-            onChangeIsPublic={onChangeIsPublic}
+            setIsPublic={setIsPublic}
           />
 
           <h6>Collaborators</h6>
-          {acl ? (
-            <Acl
-              isReadOnly={isReadOnly}
-              ownerEmail={ownerEmail}
-              acl={acl}
-              onChange={onChangeAclEntry}
-              onCreate={onCreateAclEntry}
-              onClickDelete={onClickDeleteAclEntry}
-            />
-          ) : (
-            <div className='loading'>Loading collaborators…</div>
-          )}
+          <Acl
+            isReadOnly={isReadOnly}
+            ownerEmail={ownerEmail}
+            acl={acl}
+            updateAclEntry={updateAclEntry}
+            deleteAclEntry={deleteAclEntry}
+          />
 
           <Url
             url={url}

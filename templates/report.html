@@ -1,0 +1,38 @@
+{% extends 'minimum.html' %}
+{% load render_bundle from webpack_loader %}
+
+{% block title %}
+  {{ workflow.name }} | Workbench
+{% endblock %}
+
+{% block stylesheets %}
+  {% render_bundle 'report-styles' 'css' %}
+{% endblock %}
+
+{% block body %}
+  <article class="report">
+    <header>
+      <h1><i class="icon icon-chart"></i>{{workflow.name}}</h1>
+      <p class="metadata">
+        <span class="author"><a rel="author">By {{workflow.owner_name}}</a></span>
+        <span class="updated-at">Updated <time datetime="{{workflow.updated_at|date:"c"}}">{{workflow.updated_at|timesince}}</time> ago</span>
+        <!-- target=_parent in case this report is displayed within an iframe -->
+        <a target="_parent" href="/workflows/{{workflow.id}}/">Browse to Workflow</a>
+      </div>
+    </header>
+    {% for tab in workflow.tabs %}
+      <section>
+        {% for wf_module in tab.wf_modules %}
+          <figure>
+            <iframe
+              src="/api/wfmodules/{{wf_module.id}}/output#revision={{wf_module.delta_id}}"
+            ></iframe>
+          </figure>
+        {% endfor %}
+      </section>
+    {% endfor %}
+    {% if not workflow.tabs %}
+      <p class="empty">There are no charts in this Workflow.</p>
+    {% endif %}
+  </article>
+{% endblock %}

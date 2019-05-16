@@ -84,8 +84,9 @@ urlpatterns = [
 
     url(r'^api/workflows/(?P<workflow_id>[0-9]+)/duplicate/?$',
         workflows.Duplicate.as_view()),
+    url(r'^workflows/(?P<workflow_id>[0-9]+)/report$',
+        workflows.Report.as_view()),
 
-    url(r'^api/workflows/(?P<workflow_id>[0-9]+)/acl$', acl.List.as_view()),
     url(r'^api/workflows/(?P<workflow_id>[0-9]+)/acl/(?P<email>[0-9a-zA-Z-_@+.]+)$',
         acl.Entry.as_view()),
 

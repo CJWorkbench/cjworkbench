@@ -1,0 +1,116 @@
+@import 'variables';
+@import 'fonts';
+@import './Icons.scss';
+
+$font-family-sans-serif: 'Nunito Sans', sans-serif; // for Bootstrap; imported in _fonts.scss
+
+// margin-horiz will be added to textual elements only (not the whole page --
+// we don't want it on charts)
+$margin-horiz: 1rem;
+
+// Bootstrap
+@import '~bootstrap/scss/functions';
+@import '~bootstrap/scss/variables';
+@import '~bootstrap/scss/mixins';
+@import '~bootstrap/scss/root';
+@import '~bootstrap/scss/reboot';
+
+/*
+ * Unlike other stylesheets, this one does _not_ import import 'reset.scss'.
+ * That means the font-size doesn't get reset; so font sizes are different
+ * than in other stylesheets. (The practical reason: we don't want reports to
+ * have body { height: 100vh }.)
+ *
+ * TODO make every _other_ stylesheet behave like _this_ one.
+ */
+
+body {
+  padding: 2rem 0;
+  background: white;
+  @include font-nunito-regular;
+  color: $brand-text--darker;
+}
+
+article {
+  width: 100%;
+  /*
+   * On Linux/Chrome74 and Linux/Firefox66, setting a width higher than ~42rem
+   * made "print" unusable. We can't choose a different print scaling in the
+   * `@media print` section because charts are iframes; iframes don't resize
+   * the way we want during print.
+   *
+   * Long-term, we'll make this report wider by rendering PNGs and/or SVGs.
+   *
+   * Short-term, we're stuck with a somewhat-thin page.
+   */
+  max-width: 42rem;
+  margin: 0 auto;
+}
+
+h1, h2, p {
+  margin-left: $margin-horiz;
+  margin-right: $margin-horiz;
+}
+
+h1, h2 {
+  @include font-nunito-bold;
+}
+
+h1 {
+  font-size: 1.2rem;
+
+  .icon {
+    vertical-align: -.15em; // icon doesn't line up with baseline
+    margin-right: .75em;
+  }
+}
+
+h2 {
+  font-size: 1rem;
+  margin-top: 2rem;
+}
+
+p {
+  // overwrite margins from reboot.scss
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+header {
+  .metadata {
+    font-size: .9rem;
+    color: $brand-text--medium;
+
+    span::after {
+      content: '-';
+      padding: 0 .3rem;
+      color: $Vlight-gray;
+    }
+  }
+}
+
+figure {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 0;
+  padding-bottom: 2/3 * 100%; // 3:2 aspect ratio
+  position: relative; // so we can position iframe
+
+  iframe {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+}
+
+@media print {
+  body {
+    padding: 0;
+  }
+
+  figure {
+    page-break-inside: avoid; // for printing
+  }
+}

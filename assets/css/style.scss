@@ -31,7 +31,6 @@
 @import './bootstrap-overrides.scss';
 @import './custom-select.scss';
 
-@import 'components/Embed.scss';
 @import 'components/data_version.scss';
 @import 'components/dropdown-menu.scss';
 @import 'components/Buttons.scss';
@@ -39,22 +38,20 @@
 @import 'components/Spinner.scss';
 @import 'components/Navbar.scss';
 @import 'components/WorkflowList.scss';
-@import 'components/WorkflowPage.scss';
 @import 'components/Lesson.scss';
 @import 'components/LessonList.scss';
 @import 'components/Metadata.scss';
-@import 'components/ModuleSearch.scss';
-@import 'components/ModuleStack.scss';
-@import 'components/Modules.scss';
 @import 'components/Table.scss';
 @import 'components/Modals.scss';
 @import 'components/Alerts.scss';
 @import 'components/mobilePrompt.scss';
+@import 'components/OutputPane.scss';
 @import 'components/Outputpane-header.scss';
+@import 'components/Report.scss';
 @import 'components/ShareModal.scss';
 @import 'components/right-pane-messages.scss';
-@import 'components/Tabs.scss';
 
 @import 'ImportModuleFromGitHub';
 
 @import 'params/index';
+@import 'WorkflowEditor/index';

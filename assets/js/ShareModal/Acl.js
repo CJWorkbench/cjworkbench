@@ -12,13 +12,12 @@ export default class Acl extends React.PureComponent {
       email: PropTypes.string.isRequired,
       canEdit: PropTypes.bool.isRequired
     }).isRequired).isRequired,
-    onChange: PropTypes.func.isRequired, // func(email, canEdit) => undefined
-    onCreate: PropTypes.func.isRequired, // func(email, canEdit) => undefined
-    onClickDelete: PropTypes.func.isRequired, // func(email) => undefined
+    updateAclEntry: PropTypes.func.isRequired, // func(email, canEdit) => undefined
+    deleteAclEntry: PropTypes.func.isRequired, // func(email) => undefined
   }
 
   render () {
-    const { acl, isReadOnly, onChange, onCreate, onClickDelete, ownerEmail } = this.props
+    const { acl, isReadOnly, updateAclEntry, deleteAclEntry, ownerEmail } = this.props
 
     return (
       <ul className='acl'>
@@ -27,12 +26,12 @@ export default class Acl extends React.PureComponent {
         </li>
         {acl.map(entry => (
           <li key={entry.email}>
-            <AclEntry {...entry} isReadOnly={isReadOnly} onChange={onChange} onClickDelete={onClickDelete} />
+            <AclEntry {...entry} isReadOnly={isReadOnly} updateAclEntry={updateAclEntry} deleteAclEntry={deleteAclEntry} />
           </li>
         ))}
         {isReadOnly ? null : (
           <li key='new'>
-            <NewAclEntry onCreate={onCreate} />
+            <NewAclEntry ownerEmail={ownerEmail} updateAclEntry={updateAclEntry} />
           </li>
         )}
       </ul>

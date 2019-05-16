@@ -1,8 +1,8 @@
-import { mockStore, tick } from '../test-utils'
-import { generateSlug } from '../utils'
+import { mockStore, tick } from '../../test-utils'
+import { generateSlug } from '../../utils'
 import * as actions from './actions'
 
-jest.mock('../utils')
+jest.mock('../../utils')
 
 describe('Tabs.actions', () => {
   describe('setName', () => {
@@ -32,6 +32,7 @@ describe('Tabs.actions', () => {
         setTabOrder: jest.fn(() => Promise.resolve(null))
       }
       const store = mockStore({
+        selectedPane: { pane: 'tab', tabSlug: 't1' },
         workflow: {
           tab_slugs: [ 't1', 't2' ],
           selected_tab_position: 0
@@ -71,6 +72,10 @@ describe('Tabs.actions', () => {
           tab_slugs: [ 't1', 't2' ],
           selected_tab_position: 0,
         },
+        selectedPane: {
+          pane: 'tab',
+          tabSlug: 't1'
+        },
         tabs: {
           't1': { slug: 't1' },
           't2': { slug: 't2' }
@@ -92,6 +97,10 @@ describe('Tabs.actions', () => {
         workflow: {
           tab_slugs: [ 't1', 't2' ],
           selected_tab_position: 0,
+        },
+        selectedPane: {
+          pane: 'tab',
+          tabSlug: 't1'
         },
         pendingTabs: {
           't2': { slug: 't2' }
@@ -134,11 +143,15 @@ describe('Tabs.actions', () => {
       expect(Object.keys(state.tabs)).toEqual([ 't1' ])
     })
 
-    it('should move selected_tab_position when destroying selected', async () => {
+    it('should move selected_tab_position and selectedPane when destroying selected', async () => {
       const api = {
         deleteTab: jest.fn(() => Promise.resolve(null))
       }
       const store = mockStore({
+        selectedPane: {
+          pane: 'tab',
+          tabSlug: 't2'
+        },
         workflow: {
           tab_slugs: [ 't1', 't2', 't3' ],
           selected_tab_position: 1, // tab t2
@@ -152,6 +165,7 @@ describe('Tabs.actions', () => {
 
       await store.dispatch(actions.destroy('t2'))
       expect(store.getState().workflow.selected_tab_position).toEqual(0)
+      expect(store.getState().selectedPane).toEqual({ pane: 'tab', tabSlug: 't1' })
     })
 
     it('should move selected_tab_position if selected is _after_ deleted', async () => {
@@ -163,6 +177,10 @@ describe('Tabs.actions', () => {
           tab_slugs: [ 't1', 't2', 't3' ],
           selected_tab_position: 2, // tab t3
         },
+        selectedPane: {
+          pane: 'tab',
+          tabSlug: 't3'
+        },
         tabs: {
           't1': {},
           't2': {},
@@ -172,9 +190,10 @@ describe('Tabs.actions', () => {
 
       await store.dispatch(actions.destroy('t2'))
       expect(store.getState().workflow.selected_tab_position).toEqual(1)
+      expect(store.getState().selectedPane).toEqual({ pane: 'tab', tabSlug: 't3' })
     })
 
-    it('should leave selected_tab_position if selected is _before_ deleted', async () => {
+    it('should leave selected_tab_position and selectedPane if selected is _before_ deleted', async () => {
       const api = {
         deleteTab: jest.fn(() => Promise.resolve(null))
       }
@@ -182,6 +201,10 @@ describe('Tabs.actions', () => {
         workflow: {
           tab_slugs: [ 't1', 't2', 't3' ],
           selected_tab_position: 1, // tab t2
+        },
+        selectedPane: {
+          pane: 'tab',
+          tabSlug: 't2'
         },
         tabs: {
           't1': {},
@@ -192,6 +215,7 @@ describe('Tabs.actions', () => {
 
       await store.dispatch(actions.destroy('t3'))
       expect(store.getState().workflow.selected_tab_position).toEqual(1)
+      expect(store.getState().selectedPane).toEqual({ pane: 'tab', tabSlug: 't2' })
     })
 
     it('should move selected_tab_position if we deleted the last, selected tab', async () => {
@@ -203,6 +227,10 @@ describe('Tabs.actions', () => {
           tab_slugs: [ 't1', 't2', 't3' ],
           selected_tab_position: 2, // tab t3
         },
+        selectedPane: {
+          pane: 'tab',
+          tabSlug: 't3'
+        },
         tabs: {
           't1': {},
           't2': {},
@@ -212,6 +240,7 @@ describe('Tabs.actions', () => {
 
       await store.dispatch(actions.destroy('t3'))
       expect(store.getState().workflow.selected_tab_position).toEqual(1)
+      expect(store.getState().selectedPane).toEqual({ pane: 'tab', tabSlug: 't2' })
     })
 
     it('should move selected_tab_position if we deleted the first, selected tab', async () => {
@@ -223,6 +252,10 @@ describe('Tabs.actions', () => {
           tab_slugs: [ 't1', 't2' ],
           selected_tab_position: 0, // tab 1
         },
+        selectedPane: {
+          pane: 'tab',
+          tabSlug: 't1'
+        },
         tabs: {
           't1': {},
           't2': {}
@@ -231,11 +264,12 @@ describe('Tabs.actions', () => {
 
       await store.dispatch(actions.destroy('t1'))
       expect(store.getState().workflow.selected_tab_position).toEqual(0) // tab t2
+      expect(store.getState().selectedPane).toEqual({ pane: 'tab', tabSlug: 't2' })
     })
   })
 
   describe('select', () => {
-    it('should set selected_tab_position', async () => {
+    it('should set selected_tab_position (to new server value) and selectedPane', async () => {
       const api = {
         setSelectedTab: jest.fn(() => Promise.resolve(null))
       }
@@ -248,6 +282,7 @@ describe('Tabs.actions', () => {
 
       await store.dispatch(actions.select('t2'))
       expect(api.setSelectedTab).toHaveBeenCalledWith('t2')
+      expect(store.getState().selectedPane).toEqual({ pane: 'tab', tabSlug: 't2' })
       expect(store.getState().workflow.selected_tab_position).toEqual(1)
     })
 

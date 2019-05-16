@@ -2,8 +2,8 @@
 import React from 'react'
 import { shallow } from 'enzyme'
 import { OutputPane } from './OutputPane'
-import OutputIframe from './OutputIframe'
-import DelayedTableSwitcher from './table/DelayedTableSwitcher'
+import OutputIframe from '../OutputIframe'
+import DelayedTableSwitcher from '../table/DelayedTableSwitcher'
 
 describe('OutputPane', () => {
   const wrapper = function (extraProps = {}) {
