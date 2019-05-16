@@ -31,15 +31,6 @@ STATIC_FILES_BUCKET_POLICY = """{
     ]
 }""".replace('BUCKET', minio.StaticFilesBucket)
 
-STATIC_FILES_CORS_CONFIGURATION = {
-    'CORSRules': [{
-        'AllowedMethods': ['GET'],
-        'AllowedOrigins': ['*'],
-        'ExposeHeaders': ['GET', 'PUT'],
-        'MaxAgeSeconds': 3000
-    }]
-}
-
 
 class Command(BaseCommand):
     # We bundle all these commands into one so we don't have to wait for django
@@ -65,8 +56,9 @@ class Command(BaseCommand):
             minio.ensure_bucket_exists(minio.StaticFilesBucket)
             minio.client.put_bucket_policy(Bucket=minio.StaticFilesBucket,
                                            Policy=STATIC_FILES_BUCKET_POLICY)
-            minio.client.put_bucket_cors(minio.StaticFilesBucket,
-                                         STATIC_FILES_CORS_CONFIGURATION)
+            # No need to enable CORS for minio-served buckets:
+            # "Minio enables CORS by default on all buckets for all HTTP verbs"
+            # https://docs.min.io/docs/minio-server-limits-per-tenant.html
 
         # Migrate comes last: during deploy, in some cases, migration can make
         # the site unusable until it's completed. So don't add any instructions
