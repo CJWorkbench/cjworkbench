@@ -31,7 +31,13 @@ class DTypeStringTest(unittest.TestCase):
             DT.String().validate('A\x00B')
 
 
+class DTypeFloatTest(unittest.TestCase):
+    def test_float_validates_int(self):
+        DT.Float().validate(10) # should not raise
+
+
 class DTypeCoerceTest(unittest.TestCase):
+
     def test_coerce_none_to_str(self):
         self.assertEqual(DT.String().coerce(None), '')
 

@@ -184,6 +184,9 @@ class ParamDTypeInteger(ParamDType):
 
 
 class ParamDTypeFloat(ParamDType):
+    """
+    Accepts floats or integers. Akin to JSON 'number' type.
+    """
     def __init__(self, default=0.0):
         super().__init__()
         self.default = default
@@ -198,7 +201,7 @@ class ParamDTypeFloat(ParamDType):
             return self.default
 
     def validate(self, value):
-        if not isinstance(value, float):
+        if not (isinstance(value, float) or isinstance(value, int)):
             raise ValueError('Value %r is not a float' % value)
 
     @classmethod
