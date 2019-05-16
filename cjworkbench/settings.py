@@ -152,11 +152,6 @@ else:
         'account/email/password_reset_key': os.environ['CJW_SENDGRID_PASSWORD_RESET_ID'],
     }
 
-try:
-    GOOGLE_ANALYTICS_PROPERTY_ID = os.environ['CJW_GOOGLE_ANALYTICS']
-except KeyError:
-    pass
-
 if 'HTTPS' in os.environ and os.environ['HTTPS'] == 'on':
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True

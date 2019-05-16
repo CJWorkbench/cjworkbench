@@ -52,32 +52,6 @@ def seconds_to_count_and_units(seconds):
 
 
 # --- Logging ---
-
-
-
-# returns analytics IDs if they are set
-# TODO move these env-variable handlers to settings.py
-def get_intercom_app_id():
-    try:
-        return os.environ['CJW_INTERCOM_APP_ID']
-    except KeyError:
-        return None
-
-
-def get_google_analytics_id():
-    try:
-        return os.environ['CJW_GOOGLE_ANALYTICS']
-    except KeyError:
-        return None
-
-
-def get_heap_analytics_id():
-    try:
-        return os.environ['CJW_HEAP_ANALYTICS_ID']
-    except KeyError:
-        return None
-
-
 class NullIntercomClient:
     class Events:
         def create(self, **kwargs):

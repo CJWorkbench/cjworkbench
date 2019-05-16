@@ -3,6 +3,8 @@
 {% load render_bundle from webpack_loader %}
 {% load static %}
 
+{% load_analytics_ids as analytics_ids %}
+
 <!DOCTYPE html>
 <html lang="en" {% block html_tag_attrs %}{% endblock %}>
 
@@ -17,25 +19,22 @@
     <link rel="mask-icon" href="{% static 'images/app-icons/safari-pinned-tab.svg' %}" color="#5bbad5">
     <link rel="shortcut icon" href="{% static 'images/app-icons/favicon.ico' %}">
     <meta name="msapplication-config" content="{% static 'images/app-icons/browserconfig.xml' %}">
-    <meta name="theme-color" content="$white">
+    <meta name="theme-color" content="white">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script>window.STATIC_URL = '{% get_static_prefix %}'</script>
 
-    {%  google_analytics_id  as google_analytics_id_var %}
-    {% if google_analytics_id_var %}
-      <script async src="https://www.googletagmanager.com/gtag/js?id={% google_analytics_id %}"></script>
+    {% if analytics_ids.google_analytics_id %}
+      <script async src="https://www.googletagmanager.com/gtag/js?id={{ analytics_ids.google_analytics_id }}"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', '{{ analytics_ids.google_analytics_id }}');
+      </script>
     {% endif %}
 
     <script type="text/javascript">
       window.initState = {{initState|json_in_script_tag}};
-
-      {% if google_analytics_id_var %}
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', '{% google_analytics_id %}');
-      {% endif %}
-
     </script>
 
     {% render_bundle 'style' 'css' %}
