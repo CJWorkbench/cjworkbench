@@ -4,7 +4,7 @@ category: Clean
 icon: clean
 description: 'Clean inconsistencies and typos across values in seconds using algorithms, or standardize facets manually.'
 has_zen_mode: true
-help_url: modules/clean/refine
+help_url: steps/clean/refine
 param_schema: # we have a custom param, "refine"
   column: { type: column, column_types: [ text ] }
   refine:

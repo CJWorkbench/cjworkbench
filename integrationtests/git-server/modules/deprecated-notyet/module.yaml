@@ -3,6 +3,6 @@ name: Deprecation-test module
 category: Add data
 icon: twitter
 description: Do nothing -- soon
-help_url: modules/add-data/deprecatetest
+help_url: steps/add-data/deprecatetest
 loads_data: true
 parameters: []

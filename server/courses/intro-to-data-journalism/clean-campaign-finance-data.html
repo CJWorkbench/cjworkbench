@@ -1,8 +1,19 @@
 <header>
   <h1>Story: Cleaning and analyzing campaign finance data</h1>
   <p>How much money came from out of state in New York governor Andrew Cuomo’s 2014 re-election campaign?</p>
-  <img src="./banner.svg">
+  <img src="./banner.svg" alt="" />
 </header>
+
+<script id="initialWorkflow">
+tabs:
+- name: Lesson
+  wfModules:
+  - module: loadurl
+    params:
+      url: ./cuomo-contributions.csv
+    collapsed: true
+    note: "Source: Board of Election of the State of New York. Amounts are in U.S. Dollars"
+</script>
 
 <section class="fullscreen">
   <h2>Introduction</h2>
@@ -16,17 +27,6 @@
     use many times.
   </p>
 </section>
-
-<script id="initialWorkflow">
-tabs:
-- name: Lesson
-  wfModules:
-  - module: loadurl
-    params:
-      url: ./cuomo-contributions.csv
-    collapsed: true
-    note: "Source: Board of Election of the State of New York. Amounts are in U.S. Dollars"
-</script>
 
 <section>
   <h2>Data</h2>
@@ -78,8 +78,8 @@ tabs:
       data-test="
         if (workflow.tabs[0].wfModuleSlugs[1] !== 'selectcolumns' || !workflow.tabs[0].wfModules[1].params.keep) return false
         const colnames = workflow.tabs[0].wfModules[1].params.colnames
-        return colnames.sort().join('|') === 'Amt|Contributor"
-    >Add a <kbd>Select columns</kbd> step and keep only the columns <kbd>Contributor</kbd> and <kbd>Amt</kbd>
+        return colnames.sort().join('|') === 'Amt|Contributor'
+    ">Add a <kbd>Select columns</kbd> step and keep only the columns <kbd>Contributor</kbd> and <kbd>Amt</kbd>
     </li>
     <li
       data-test="return workflow.tabs[0].wfModuleSlugs[2] === 'splitcolumn' &&

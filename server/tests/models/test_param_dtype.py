@@ -5,9 +5,38 @@ from server.models.param_spec import ParamDType
 DT = ParamDType
 
 
-class DTypeCoerceTest(unittest.TestCase):
-    def test_coerce_str_to_str(self):
+class DTypeStringTest(unittest.TestCase):
+    def test_coerce_to_str(self):
         self.assertEqual(DT.String().coerce('blah'), 'blah')
+
+    def test_coerce_invalid_unicode(self):
+        self.assertEqual(DT.String().coerce('A💩\ud802B'), 'A💩\ufffdB')
+
+    def test_coerce_zero_byte(self):
+        self.assertEqual(DT.String().coerce('A\x00B'), 'A\ufffdB')
+
+    def test_validate_emoji(self):
+        DT.String().validate('💩')  # do not raise
+
+    def test_validate_non_str(self):
+        with self.assertRaisesRegex(ValueError, 'not a string'):
+            DT.String().validate(23)
+
+    def test_validate_lone_surrogate(self):
+        with self.assertRaisesRegex(ValueError, 'surrogates not allowed'):
+            DT.String().validate('A\ud802B')
+
+    def test_validate_zero_byte(self):
+        with self.assertRaisesRegex(ValueError, 'zero byte'):
+            DT.String().validate('A\x00B')
+
+
+class DTypeFloatTest(unittest.TestCase):
+    def test_float_validates_int(self):
+        DT.Float().validate(10) # should not raise
+
+
+class DTypeCoerceTest(unittest.TestCase):
 
     def test_coerce_none_to_str(self):
         self.assertEqual(DT.String().coerce(None), '')
