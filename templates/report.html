@@ -12,12 +12,12 @@
 {% block body %}
   <article class="report">
     <header>
-      <h1>{{workflow.name}}</h1>
+      <h1><i class="icon icon-chart"></i>{{workflow.name}}</h1>
       <p class="metadata">
         <span class="author"><a rel="author">By {{workflow.owner_name}}</a></span>
         <span class="updated-at">Updated <time datetime="{{workflow.updated_at|date:"c"}}">{{workflow.updated_at|timesince}}</time> ago</span>
         <!-- target=_parent in case this report is displayed within an iframe -->
-        <a target="_parent" href="/workflows/{{workflow.id}}/">Jump to Workflow</a>
+        <a target="_parent" href="/workflows/{{workflow.id}}/">Browse to Workflow</a>
       </div>
     </header>
     {% for tab in workflow.tabs %}
@@ -31,7 +31,7 @@
         {% endfor %}
       </section>
     {% endfor %}
-    {% if not tabs %}
+    {% if not workflow.tabs %}
       <p class="empty">There are no charts in this Workflow.</p>
     {% endif %}
   </article>

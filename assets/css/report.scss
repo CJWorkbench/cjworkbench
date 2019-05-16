@@ -33,7 +33,17 @@ body {
 
 article {
   width: 100%;
-  max-width: 50rem;
+  /*
+   * On Linux/Chrome74 and Linux/Firefox66, setting a width higher than ~42rem
+   * made "print" unusable. We can't choose a different print scaling in the
+   * `@media print` section because charts are iframes; iframes don't resize
+   * the way we want during print.
+   *
+   * Long-term, we'll make this report wider by rendering PNGs and/or SVGs.
+   *
+   * Short-term, we're stuck with a somewhat-thin page.
+   */
+  max-width: 42rem;
   margin: 0 auto;
 }
 
@@ -48,6 +58,11 @@ h1, h2 {
 
 h1 {
   font-size: 1.2rem;
+
+  .icon {
+    vertical-align: -.15em; // icon doesn't line up with baseline
+    margin-right: .75em;
+  }
 }
 
 h2 {
@@ -87,5 +102,15 @@ figure {
     width: 100%;
     height: 100%;
     border: 0;
+  }
+}
+
+@media print {
+  body {
+    padding: 0;
+  }
+
+  figure {
+    page-break-inside: avoid; // for printing
   }
 }

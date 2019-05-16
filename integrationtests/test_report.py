@@ -70,15 +70,15 @@ class TestReport(LoggedInIntegrationTest):
         b = self.browser
         b.click_button('Report')  # switch to report
         with b.scope('.share-card'):
-            # TODO 'EDIT PRIVACY'
-            b.click_button('Change Workflow sharing', wait=True)
+            b.click_button('Edit Privacy', wait=True)
         with b.scope('.share-modal', wait=True):  # wait for dialog
             b.fill_in('email', user1.email)
             b.click_button('Grant access')
             # This fires and forgets an AJAX request. Wait for it to finish.
             time.sleep(2)
             b.click_button('Close')
-        b.assert_element('.share-card .status', text='Only collaborators')
+        b.assert_element('.share-card .accessible-to',
+                         text='Only collaborators')
         url = b.text('.share-card .url .copy', wait=True)
 
         # user1 can view the report
@@ -103,14 +103,13 @@ class TestReport(LoggedInIntegrationTest):
         b = self.browser
         b.click_button('Report')  # switch to report
         with b.scope('.share-card'):
-            # TODO 'EDIT PRIVACY'
-            b.click_button('Change Workflow sharing', wait=True)
+            b.click_button('Edit Privacy', wait=True)
         with b.scope('.share-modal', wait=True):  # wait for dialog
             b.check('Anyone can view')
             # This fires and forgets an AJAX request. Wait for it to finish.
             time.sleep(2)
             b.click_button('Close')
-        b.assert_element('.share-card .status', text='Anyone can view')
+        b.assert_element('.share-card .accessible-to', text='Anyone can view')
         url = b.text('.share-card .url .copy', wait=True)
 
         # user1 can view the report

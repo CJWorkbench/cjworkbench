@@ -12,18 +12,25 @@ export default function ShareCard ({ workflowId, isPublic }) {
       <div className='prompt'>
         <span className='status'>
           {isPublic ? (
-            'Anyone can view this report.'
+            'This workflow is public'
           ) : (
-            'Only collaborators can view this report.'
+            'This workflow is private'
           )}
         </span>
-        <ShareButton>Change Workflow sharing</ShareButton>
+        <ShareButton>Edit Privacy</ShareButton>
       </div>
       <div className='url'>
         <h4>Report URL</h4>
         <div className='copy'>
           {window.location.origin}/workflows/{workflowId}/report
         </div>
+        <p className='accessible-to'>
+          {isPublic ? (
+            'Anyone can view this report'
+          ) : (
+            'Only collaborators can view this report'
+          )}
+        </p>
       </div>
     </aside>
   )

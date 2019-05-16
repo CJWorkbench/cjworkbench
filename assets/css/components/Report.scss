@@ -2,13 +2,14 @@ article.report {
   flex: 1 1 auto;
   display: flex; // share-card on left, report-iframe-container on right
   align-items: flex-start;
+  justify-content: center; // on big page, show everything in the middle horizontally
   overflow-y: auto; // allow scrolling (report-iframe-container is variable height)
 
   padding: 2rem;
 
   .share-card {
     flex: 0 0 auto;
-    width: 40rem;
+    width: 35rem;
     padding: 2rem;
     margin-right: 2rem;
     border-radius: .5rem;
@@ -17,9 +18,20 @@ article.report {
     font-size: 1.4rem;
     line-height: 1.8rem;
 
-    button {
-      @include action-button;
-      @include button-orange--fill;
+    .prompt {
+      display: flex;
+      align-items: center;
+
+      .status {
+        flex: 1 1 auto; // take up most space
+      }
+
+      button {
+        @include action-button;
+        @include button-orange--fill;
+        @include font-nunito-bold;
+        text-transform: uppercase;
+      }
     }
 
     h4 {
@@ -32,27 +44,28 @@ article.report {
         @include font-nunito-regular;
         border-radius: .3rem;
         background: white;
-        padding: .5rem .8rem;
+        padding: .8rem 1rem;
         word-break: break-all;
       }
+    }
+
+    .accessible-to {
+      @include content-1;
+      margin-top: .5rem;
     }
   }
 
   .report-iframe-container {
-    // margin: 0 auto on an <iframe> doesn't seem to center it
-    // horizontally (Chrome 74 on Linux). Create a sizing container
-    // and center that.
-    width: 100%;
-    max-width: 100rem;
-    margin: 0 auto; // center horizontally
+    flex: 1 1 auto;
+    max-width: 80rem;
     border: 1px solid $brand-workspace;
     border-radius: .5rem;
     overflow: hidden;
+    line-height: 0; // take no space at all
   }
 
   iframe {
     width: 100%;
-    max-width: 100rem;
     border: 0;
   }
 }
