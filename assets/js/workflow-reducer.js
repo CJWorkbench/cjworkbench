@@ -3,6 +3,7 @@
 import { createStore, applyMiddleware } from 'redux'
 import { reducerFunctions as TabReducerFunctions } from './WorkflowEditor/Tabs/actions'
 import { reducerFunctions as WorkflowEditorReducerFunctions } from './WorkflowEditor/actions'
+import { reducerFunctions as ShareReducerFunctions } from './ShareModal/actions'
 
 // Workflow
 const SET_WORKFLOW_NAME = 'SET_WORKFLOW_NAME'
@@ -10,7 +11,6 @@ const UPDATE_MODULE = 'UPDATE_MODULE'
 const ADD_MODULE = 'ADD_MODULE'
 const DELETE_MODULE = 'DELETE_MODULE'
 const SET_SELECTED_MODULE = 'SET_SELECTED_MODULE'
-const SET_WORKFLOW_PUBLIC = 'SET_WORKFLOW_PUBLIC'
 const MOVE_MODULE = 'MOVE_MODULE'
 
 // Delta: workflow+wfmodule changes
@@ -33,7 +33,8 @@ const CLEAR_NOTIFICATIONS = 'CLEAR_NOTIFICATIONS'
 
 const reducerFunc = {
   ...TabReducerFunctions,
-  ...WorkflowEditorReducerFunctions
+  ...WorkflowEditorReducerFunctions,
+  ...ShareReducerFunctions
 }
 
 const registerReducerFunc = (key, func) => {
@@ -166,30 +167,6 @@ registerReducerFunc(UPDATE_MODULE, (state, action) => {
   }
 
   return { ...state, modules }
-})
-
-// SET_WORKFLOW_PUBLIC
-// Set the workflow to public or private
-export function setWorkflowPublicAction (workflowId, isPublic) {
-  return (dispatch, getState, api) => {
-    return dispatch({
-      type: SET_WORKFLOW_PUBLIC,
-      payload: {
-        promise: api.setWorkflowPublic(workflowId, isPublic),
-        data: { isPublic }
-      }
-    })
-  }
-}
-registerReducerFunc(SET_WORKFLOW_PUBLIC + '_PENDING', (state, action) => {
-  const { isPublic } = action.payload
-  return {
-    ...state,
-    workflow: {
-      ...state.workflow,
-      public: isPublic
-    }
-  }
 })
 
 // MOVE_MODULE

@@ -8,6 +8,7 @@ class AclEntry(models.Model):
     """
 
     class Meta:
+        ordering = ['email']
         unique_together = ('workflow', 'email')
 
     workflow = models.ForeignKey('server.Workflow',

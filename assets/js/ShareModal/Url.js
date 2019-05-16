@@ -57,7 +57,7 @@ export default class Url extends React.PureComponent {
     const { isPublic, url } = this.props
     const { nTimesCopied } = this.state
 
-    const heading = isPublic ? 'Public link (accessible to anyone with the link)' : 'Private link (only accessible to collaborators)'
+    const heading = isPublic ? 'Public link (accessible to anyone)' : 'Private link (only accessible to collaborators)'
 
     return (
       <React.Fragment>

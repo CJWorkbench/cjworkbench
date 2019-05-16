@@ -3,7 +3,7 @@
 import React from 'react'
 import Navbar from './Navbar'
 import PropTypes from 'prop-types'
-import ShareModal from '../ShareModal/ModalLoader' // _not_ the Redux-connected component, 'ShareModal'
+import ShareModal from '../ShareModal/Modal' // _not_ the Redux-connected component, 'ShareModal'
 import { logUserEvent } from '../utils'
 import CreateWorkflowButton from './CreateWorkflowButton'
 import WorkflowLists from './WorkflowLists'
@@ -66,13 +66,15 @@ export default class Workflows extends React.Component {
 
     return (
       <ShareModal
-        api={api}
         url={url}
+        acl={workflow.acl}
         ownerEmail={workflow.owner_email}
         workflowId={workflow.id}
         isReadOnly={!workflow.is_owner}
         isPublic={workflow.public}
-        onChangeIsPublic={this.setIsPublicFromShareModal}
+        setIsPublic={this.setIsPublicFromShareModal}
+        updateAclEntry={(email, canEdit) => api.updateAclEntry(shareModalWorkflowId, email, canEdit)}
+        deleteAclEntry={(email) => api.deleteAclEntry(shareModalWorkflowId, email)}
         logShare={this.logShare}
         onClickClose={this.closeShareModal}
       />

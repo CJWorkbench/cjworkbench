@@ -58,7 +58,6 @@ class StoredObjectSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-
 class ModuleSerializer(serializers.ModelSerializer):
     param_fields = serializers.SerializerMethodField()
     help_url = serializers.SerializerMethodField()
@@ -233,7 +232,7 @@ class WorkflowSerializerLite(serializers.ModelSerializer):
     class Meta:
         model = Workflow
         fields = ('id', 'name', 'public', 'read_only', 'is_owner',
-                  'last_update', 'owner_email', 'owner_name')
+                  'last_update', 'owner_email', 'owner_name', 'acl')
 
 
 class WorkflowSerializer(WorkflowSerializerLite):
@@ -246,7 +245,7 @@ class WorkflowSerializer(WorkflowSerializerLite):
         model = Workflow
         fields = ('id', 'url_id', 'name', 'tab_slugs', 'public', 'read_only',
                   'last_update', 'is_owner', 'owner_email', 'owner_name',
-                  'selected_tab_position', 'is_anonymous')
+                  'selected_tab_position', 'is_anonymous', 'acl')
 
 
 class LessonSerializer(serializers.BaseSerializer):

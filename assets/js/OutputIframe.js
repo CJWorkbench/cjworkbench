@@ -1,10 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from './components/Modal'
-import {
-  setWorkflowPublicAction,
-  setWfModuleParamsAction
-} from './workflow-reducer'
+import { setWfModuleParamsAction } from './workflow-reducer'
+import { setWorkflowPublicAction } from './ShareModal/actions'
 import { connect } from 'react-redux'
 import { escapeHtml } from './utils'
 
@@ -179,7 +177,7 @@ const mapStateToProps = (state) => ({})
 const mapDispatchToProps = (dispatch, ownProps) => {
   return {
     setWorkflowPublic: () => {
-      dispatch(setWorkflowPublicAction(ownProps.workflowId, true))
+      dispatch(setWorkflowPublicAction(true))
     },
     setWfModuleParams: (wfModuleId, params) => {
       dispatch(setWfModuleParamsAction(wfModuleId, params))

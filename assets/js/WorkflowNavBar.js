@@ -4,7 +4,7 @@ import WfHamburgerMenu from './WfHamburgerMenu'
 import UndoRedoButtons from './UndoRedoButtons'
 import ConnectedEditableWorkflowName, { EditableWorkflowName } from './EditableWorkflowName'
 import WorkflowMetadata from './WorkflowMetadata'
-import { goToUrl, logUserEvent } from './utils'
+import { goToUrl } from './utils'
 import ShareModal from './ShareModal'
 
 
@@ -146,10 +146,6 @@ export default class WorkflowNavBar extends React.Component {
     this.setState({ isShareModalOpen: true })
   }
 
-  logShare = (type) => {
-    logUserEvent('Share workflow ' + type)
-  }
-
   render() {
     const { api, isReadOnly, loggedInUser, lesson, workflow } = this.props
 
@@ -181,11 +177,7 @@ export default class WorkflowNavBar extends React.Component {
     ) : null
 
     const shareModal = this.state.isShareModalOpen ? (
-      <ShareModal
-        api={api}
-        logShare={this.logShare}
-        onClickClose={this.closeShareModal}
-      />
+      <ShareModal onClickClose={this.closeShareModal} />
     ) : null
 
     return (

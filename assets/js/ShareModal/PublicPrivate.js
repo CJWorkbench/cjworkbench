@@ -22,13 +22,13 @@ export default class PublicPrivate extends React.PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired, // are we owner? Otherwise, we can't edit the ACL
     isPublic: PropTypes.bool.isRequired,
-    onChangeIsPublic: PropTypes.func.isRequired, // func(isPublic) => undefined
+    setIsPublic: PropTypes.func.isRequired, // func(isPublic) => undefined
   }
 
-  onChangeIsPublic = (ev) => {
-    const { isReadOnly, onChangeIsPublic } = this.props
+  setIsPublic = (ev) => {
+    const { isReadOnly, setIsPublic } = this.props
     if (isReadOnly) return // should be redundant
-    onChangeIsPublic(ev.target.checked)
+    setIsPublic(ev.target.checked)
   }
 
   render () {
@@ -40,7 +40,7 @@ export default class PublicPrivate extends React.PureComponent {
         {isReadOnly ? (
           <Description isPublic={isPublic} />
         ) : (
-          <DescriptionWithToggle isPublic={isPublic} onChange={this.onChangeIsPublic} />
+          <DescriptionWithToggle isPublic={isPublic} onChange={this.setIsPublic} />
         )}
       </div>
     )
