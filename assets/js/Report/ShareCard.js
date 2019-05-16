@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import ShareButton from '../ShareModal/ShareButton'
 
 export default function ShareCard ({ workflowId, isPublic }) {
   const [ isModalOpen, setModalOpen ] = React.useState(false)
@@ -11,15 +12,12 @@ export default function ShareCard ({ workflowId, isPublic }) {
       <div className='prompt'>
         <span className='status'>
           {isPublic ? (
-            "Anyone can view this report."
+            'Anyone can view this report.'
           ) : (
-            "Only collaborators can view this report."
+            'Only collaborators can view this report.'
           )}
         </span>
-        <button
-          type='button'
-          onClick={openModal}
-        >Change Workflow sharing</button>
+        <ShareButton>Change Workflow sharing</ShareButton>
       </div>
       <div className='url'>
         <h4>Report URL</h4>

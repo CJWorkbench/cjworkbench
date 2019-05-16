@@ -5,7 +5,7 @@ import UndoRedoButtons from './UndoRedoButtons'
 import ConnectedEditableWorkflowName, { EditableWorkflowName } from './EditableWorkflowName'
 import WorkflowMetadata from './WorkflowMetadata'
 import { goToUrl } from './utils'
-import ShareModal from './ShareModal'
+import ShareButton from './ShareModal/ShareButton'
 
 
 function NoOp () {}
@@ -176,10 +176,6 @@ export default class WorkflowNavBar extends React.Component {
       </div>
     ) : null
 
-    const shareModal = this.state.isShareModalOpen ? (
-      <ShareModal onClickClose={this.closeShareModal} />
-    ) : null
-
     return (
       <React.Fragment>
         {spinner}
@@ -200,13 +196,12 @@ export default class WorkflowNavBar extends React.Component {
               )}
               <button name='duplicate' onClick={this.handleDuplicate}>Duplicate</button>
               {lesson ? null : ( /* We haven't yet designed what it means to share a lesson workflow. */
-                <button name='share' onClick={this.openShareModal}>Share</button>
+                <ShareButton>Share</ShareButton>
               )}
               {contextMenu}
             </div>
           </div>
         </nav>
-        {shareModal}
       </React.Fragment>
     )
   }
