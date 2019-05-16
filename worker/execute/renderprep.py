@@ -1,5 +1,5 @@
 from functools import partial, singledispatch
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 from cjworkbench.types import RenderColumn, StepResultShape, TabOutput
 from server.models import Params, Tab
 from server.models.param_spec import ParamDType
@@ -129,6 +129,15 @@ def clean_value(dtype: ParamDType, value: Any, context: RenderContext) -> Any:
     calling render(). (Recursive implementations must concatenate these.)
     """
     return value  # fallback method
+
+
+@clean_value.register(ParamDType.Float)
+def _(dtype: ParamDType.Float, value: Union[int,float],
+      context: RenderContext) -> float:
+    # ParamDType.Float can have `int` values (because values come from
+    # json.parse(), which only gives Numbers so can give "3" instead of
+    # "3.0". We want to pass that as `float` in the `params` dict.
+    return float(value)
 
 
 @clean_value.register(ParamDType.Tab)

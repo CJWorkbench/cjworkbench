@@ -11,6 +11,19 @@ from worker.execute.types import TabCycleError, TabOutputUnreachableError, \
 
 
 class CleanValueTests(DbTestCase):
+    def test_clean_float(self):
+        result = clean_value(ParamDType.Float(), 3.0, None)
+        self.assertEqual(result, 3.0)
+        self.assertIsInstance(result, float)
+
+    def test_clean_float_with_int_value(self):
+        # ParamDType.Float can have `int` values (because values come from
+        # json.parse(), which only gives Numbers so can give "3" instead of
+        # "3.0". We want to pass that as `float` in the `params` dict.
+        result = clean_value(ParamDType.Float(), 3, None)
+        self.assertEqual(result, 3.0)
+        self.assertIsInstance(result, float)
+
     def test_clean_normal_dict(self):
         context = RenderContext(None, None, None, None)
         schema = ParamDType.Dict({
