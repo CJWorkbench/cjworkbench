@@ -46,12 +46,6 @@ def _camel_case_dict_factory(tuples: Tuple[str, Any]) -> Dict[str, Any]:
     return dict((_camelize(k), v) for k, v in tuples)
 
 
-class AclEntrySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = AclEntry
-        fields = ('workflow_id', 'email', 'created_at', 'can_edit')
-
-
 class StoredObjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = StoredObject
@@ -200,11 +194,18 @@ class WfModuleSerializer(serializers.ModelSerializer):
 # Lite Workflow: Don't include any of the modules, just name and ID.
 # For /workflows page
 class WorkflowSerializerLite(serializers.ModelSerializer):
+    acl = serializers.SerializerMethodField()
     read_only = serializers.SerializerMethodField()
     last_update = serializers.SerializerMethodField()
     owner_name = serializers.SerializerMethodField()
     owner_email = serializers.SerializerMethodField()
     is_owner = serializers.SerializerMethodField()
+
+    def get_acl(self, obj):
+        return [
+            {'email': entry.email, 'canEdit': entry.can_edit}
+            for entry in obj.acl.all()
+        ]
 
     def get_owner_name(self, obj):
         if obj.example:

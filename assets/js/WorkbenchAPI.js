@@ -88,16 +88,8 @@ export default class WorkbenchAPI {
     return this._delete(`/api/workflows/${workflowId}`)
   }
 
-  getAcl (workflowId) {
-    return this._fetch(`/api/workflows/${workflowId}/acl`)
-      .then(json => {
-        // rename can_edit => canEdit
-        return json.map(({ email, can_edit }) => ({ email, canEdit: can_edit }))
-      })
-  }
-
   updateAclEntry (workflowId, email, canEdit) {
-    return this._put(`/api/workflows/${workflowId}/acl/${encodeURIComponent(email)}`, { can_edit: canEdit })
+    return this._put(`/api/workflows/${workflowId}/acl/${encodeURIComponent(email)}`, { canEdit })
   }
 
   deleteAclEntry (workflowId, email) {

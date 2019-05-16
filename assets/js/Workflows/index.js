@@ -72,9 +72,9 @@ export default class Workflows extends React.Component {
         workflowId={workflow.id}
         isReadOnly={!workflow.is_owner}
         isPublic={workflow.public}
-        setIsPublic={this.setIsPublicFromShareModal}
-        updateAclEntry={(email, canEdit) => api.updateAclEntry(shareModalWorkflowId, email, canEdit)}
-        deleteAclEntry={(email) => api.deleteAclEntry(shareModalWorkflowId, email)}
+        setIsPublic={this.setIsPublic}
+        updateAclEntry={this.updateAclEntry}
+        deleteAclEntry={this.deleteAclEntry}
         logShare={this.logShare}
         onClickClose={this.closeShareModal}
       />
@@ -108,22 +108,68 @@ export default class Workflows extends React.Component {
       })
   }
 
-  setIsPublicFromShareModal = (isPublic) => {
-    const workflowId = this.state.shareModalWorkflowId
-
+  /**
+   * Change properties of a Workflow in this.state.
+   *
+   * Calls setState().
+   */
+  _updateStateWorkflow = (workflowId, assignValues) => {
     const { workflows } = this.state
-
+    // Find workflow category
     const category = Object.keys(workflows)
       .find(k => workflows[k].findIndex(w => w.id === workflowId) !== -1)
+    // Copy its workflows, assigning `assignValues` to the one with ID `workflowId`
+    const categoryWorkflows = workflows[category]
+      .map(w => w.id === workflowId ? { ...w, ...assignValues } : w)
 
     const newWorkflows = {
       ...workflows,
-      [category]: workflows[category].map(w => w.id === workflowId ? { ...w, public: isPublic } : w)
+      [category]: categoryWorkflows
     }
-
     this.setState({ workflows: newWorkflows })
+  }
 
-    this.props.api.setWorkflowPublic(workflowId, isPublic)
+  setIsPublic = (isPublic) => {
+    // Logic copied from ShareModal/actions
+    const workflowId = this.state.shareModalWorkflowId
+    this._updateStateWorkflow(workflowId, { public: isPublic })
+    this.props.api.setWorkflowPublic(workflowId, isPublic) // ignoring whether it works
+  }
+
+  updateAclEntry = (email, canEdit) => {
+    // Logic copied from ShareModal/actions
+    const { workflows } = this.state
+    const workflowId = this.state.shareModalWorkflowId
+    // Find workflow
+    const workflow = Object.keys(workflows)
+      .flatMap(k => workflows[k])
+      .find(w => w.id === workflowId)
+    const acl = workflow.acl.slice() // shallow copy
+
+    let index = acl.findIndex(entry => entry.email === email)
+    if (index === -1) index = acl.length
+
+    // overwrite or append the specified ACL entry
+    acl[index] = { email, canEdit }
+
+    acl.sort((a, b) => a.email.localeCompare(b.email))
+
+    this._updateStateWorkflow(workflowId, { acl })
+    this.props.api.updateAclEntry(workflowId, email, canEdit) // ignoring whether it works
+  }
+
+  deleteAclEntry = (email) => {
+    // Logic copied from ShareModal/actions
+    const { workflows } = this.state
+    const workflowId = this.state.shareModalWorkflowId
+    // Find workflow
+    const workflow = Object.keys(workflows)
+      .flatMap(k => workflows[k])
+      .find(w => w.id === workflowId)
+    const acl = workflow.acl.filter(entry => entry.email !== email)
+
+    this._updateStateWorkflow(workflowId, { acl })
+    this.props.api.deleteAclEntry(workflowId, email) // ignoring whether it works
   }
 
   render () {
