@@ -8,7 +8,15 @@ const PaneSelect = React.memo(function PaneSelect ({ selectedPane, selectReportP
     <nav className={`pane-select selected-${selectedPane.pane}`}>
       <Tabs />
       <div className='report'>
-        <button type='button' title='Report' onClick={selectReportPane} disabled={selectedPane.pane === 'report'}>Report</button>
+        <button
+          type='button'
+          title='Report'
+          onClick={selectReportPane}
+          disabled={selectedPane.pane === 'report'}
+        >
+          <i className='icon icon-chart' />
+          Report
+        </button>
       </div>
     </nav>
   )

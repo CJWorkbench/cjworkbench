@@ -13,15 +13,14 @@ function EmptyReport () {
   )
 }
 
-export default function Dashboard ({ workflowId, tabs }) {
-
+export default function Dashboard ({ workflowId, isPublic, tabs }) {
   return (
     <article className='report'>
       {tabs.length === 0 ? (
         <EmptyReport />
       ) : (
         <>
-          <ShareCard workflowId={workflowId} />
+          <ShareCard workflowId={workflowId} isPublic={isPublic} />
           <Report workflowId={workflowId} />
         </>
       )}

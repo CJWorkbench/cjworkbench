@@ -4,6 +4,10 @@
 
 $font-family-sans-serif: 'Nunito Sans', sans-serif; // for Bootstrap; imported in _fonts.scss
 
+// margin-horiz will be added to textual elements only (not the whole page --
+// we don't want it on charts)
+$margin-horiz: 1rem;
+
 // Bootstrap
 @import '~bootstrap/scss/functions';
 @import '~bootstrap/scss/variables';
@@ -21,12 +25,21 @@ $font-family-sans-serif: 'Nunito Sans', sans-serif; // for Bootstrap; imported i
  */
 
 body {
-  width: 100%;
-  max-width: 50rem;
-  margin: 2rem auto;
+  padding: 2rem 0;
   background: white;
   @include font-nunito-regular;
   color: $brand-text--darker;
+}
+
+article {
+  width: 100%;
+  max-width: 50rem;
+  margin: 0 auto;
+}
+
+h1, h2, p {
+  margin-left: $margin-horiz;
+  margin-right: $margin-horiz;
 }
 
 h1, h2 {
@@ -40,6 +53,12 @@ h1 {
 h2 {
   font-size: 1rem;
   margin-top: 2rem;
+}
+
+p {
+  // overwrite margins from reboot.scss
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 header {

@@ -34,6 +34,11 @@ nav.pane-select {
       padding: $report-button-padding;
       background: transparent;
 
+      i {
+        margin-right: .5rem;
+        vertical-align: -.2rem; // aargh, chart icon doesn't line up with baseline
+      }
+
       &:disabled {
         border-color: $tabs-border;
         border-top-color: white;

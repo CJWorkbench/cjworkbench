@@ -13,7 +13,7 @@
   <article class="report">
     <header>
       <h1>{{workflow.name}}</h1>
-      <div class="metadata">
+      <p class="metadata">
         <span class="author"><a rel="author">By {{workflow.owner_name}}</a></span>
         <span class="updated-at">Updated <time datetime="{{workflow.updated_at|date:"c"}}">{{workflow.updated_at|timesince}}</time> ago</span>
         <!-- target=_parent in case this report is displayed within an iframe -->
@@ -31,5 +31,8 @@
         {% endfor %}
       </section>
     {% endfor %}
+    {% if not tabs %}
+      <p class="empty">There are no charts in this Workflow.</p>
+    {% endif %}
   </article>
 {% endblock %}
