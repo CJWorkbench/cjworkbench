@@ -89,6 +89,27 @@ class ScrapeTableTest(unittest.TestCase):
                                     fetch_result=fetch_result)
         assert_frame_equal(result, pd.DataFrame({'A': [], 'B': []}))
 
+    def test_first_row_is_header_autocast_dtypes(self):
+        # TODO make fetch_result _not_ a pd.DataFrame
+        fetch_result = ProcessResult(pd.DataFrame({'A': ['nums', '3']}))
+        result = scrapetable.render(pd.DataFrame(),
+                                    P(first_row_is_header=True),
+                                    fetch_result=fetch_result)
+        assert_frame_equal(result, pd.DataFrame({'nums': [3]}))
+
+    def test_first_row_is_header_empty_values(self):
+        # TODO make fetch_result _not_ a pd.DataFrame
+        fetch_result = ProcessResult(
+            pd.DataFrame({'A': ['', 'x'], 'B': [2, 3]})
+        )
+        result = scrapetable.render(pd.DataFrame(),
+                                    P(first_row_is_header=True),
+                                    fetch_result=fetch_result)
+        assert_frame_equal(result, pd.DataFrame({
+            'Column 1': ['x'],
+            '2': [3],
+        }))
+
     def test_table_index_under(self):
         url = 'http:INVALID:URL'  # we should never even validate the URL
         fetch_result = fetch(url=url, tablenum=0)

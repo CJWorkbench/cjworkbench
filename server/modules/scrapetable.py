@@ -53,10 +53,12 @@ def render(table, params, *, fetch_result):
     has_header: bool = params['first_row_is_header']
     if has_header and len(table) >= 1:  # if len == 0, no-op
         table.columns = list(utils.uniquize_colnames(
-            str(c) for c in list(table.iloc[0, :])
+            str(c) or ('Column %d' % (i + 1))
+            for i, c in enumerate(table.iloc[0, :])
         ))
-        table = table[1:]
+        table.drop(index=0, inplace=True)
         table.reset_index(drop=True, inplace=True)
+        utils.autocast_dtypes_in_place(table)
 
     if fetch_result.error:
         return (table, fetch_result.error)
