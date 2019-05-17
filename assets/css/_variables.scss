@@ -88,6 +88,14 @@ $brand-learn--medium: lighten($brand-learn, 5%);
 
 $document-blue--light: lighten($document-blue, 13%);
 
+$pane-select-bg: #719aae;
+$pane-select-tab-bg: #64889b;
+$pane-select-tab-fg: white;
+$pane-select-selected-tab-bg: $WF-background;
+$pane-select-selected-tab-fg: $brand-text--dark;
+$pane-select-new-tab-button-bg: #8aabbc;
+$pane-select-new-tab-button-fg: white;
+
 // Overlays
 
 $light-overlay: rgba(255,255,255,.5); // DO NOT USE: rgba is bad (see comment elsewhere)

@@ -1,16 +1,14 @@
 nav.pane-select {
   // values Copy/pasted from _Tabs.scss....
-  $tabs-background: darken($WF-background,5%);
   $tabs-border: $document-blue;
-  $report-button-padding: .8rem 1.5rem;
+  $report-button-padding: .8rem 1.5rem .6rem;
   $overlap-width: 3px;
 
   display: flex;
   line-height: 0; // there are some `display: inline-block` elements and we want them to line up
   border-top: 2px solid $tabs-border;
-  background: $tabs-background;
-  color: $brand-text--dark;
-  padding: 0 1.5rem .5rem;
+  background: $pane-select-bg;
+  padding: .5rem 1.5rem 0;
 
   .tabs {
     flex: 1 1 auto; // consume all the space
@@ -20,19 +18,18 @@ nav.pane-select {
     flex: 0 0 auto;
     white-space: nowrap;
     margin-left: 1rem;
-    margin-top: -2px; // make border overlap with border-top of entire .tabs bar
 
     button {
       // Sorta copy/pasted from _Tabs.scss
       font: inherit;
-      color: inherit;
       font-size: 1.4rem;
       line-height: 1.5;
-      border: 2px solid transparent;
-      border-bottom-left-radius: 5px;
-      border-bottom-right-radius: 5px;
+      border: 0;
+      border-top-left-radius: 5px;
+      border-top-right-radius: 5px;
       padding: $report-button-padding;
-      background: transparent;
+      background: $pane-select-tab-bg;
+      color: $pane-select-tab-fg;
 
       i {
         margin-right: .5rem;
@@ -40,9 +37,8 @@ nav.pane-select {
       }
 
       &:disabled {
-        border-color: $tabs-border;
-        border-top-color: white;
-        background: white;
+        background: $pane-select-selected-tab-bg;
+        color: $pane-select-selected-tab-fg;
       }
     }
   }

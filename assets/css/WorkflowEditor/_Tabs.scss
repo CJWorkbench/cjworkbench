@@ -1,6 +1,5 @@
 .tabs {
   // Beware: these values must be edited both here and in _PaneSelect.scss
-  $tabs-border: $document-blue;
   $tab-button-padding: .8rem .5rem .6rem .1rem;
   $tab-name-padding: .8rem .5rem .6rem 1.5rem;
   $overlap-width: 3px;
@@ -15,126 +14,120 @@
     &>li {
       display: inline-block;
       position: relative; // for .dropping-left and .dropping-right
-      margin-left: -$overlap-width; // tabs are overlapping and masking "::after" separators
     }
 
     // single tab
-    &>li .tab {
-      display: inline-flex; // editor + dropdown-menu + "::after" separator
-      white-space: nowrap;
-      border: 2px solid transparent;
-      border-bottom-left-radius: 5px;
-      border-bottom-right-radius: 5px;
-      margin-top: -2px; // make border overlap with border-top of entire .tabs bar
-
-      .tab-name {
-        font-size: 1.4rem;
-        line-height: 1.5;
-        white-space: pre; // do not collapse whitespace
-        cursor: pointer;
-        padding: $tab-name-padding;
-        // Contains a <span> (styled like .tab-name) and a <input>.
-        // Make the <input> position:absolute so the width is auto-calculated
-        // by the <span>.
-        display: block;
-        position: relative;
-
-        span.size-calculator {
-          opacity: 0;
-          display: block; // so it has the same height even when it contains no text
-
-          &:empty::before {
-            // Never let size-calculator be empty: that will change the height
-            // of the <span>, which will affect the height of the <input>
-            content: '…';
-          }
-        }
-
-        input {
-          display: block;
-          font: inherit;
-          line-height: inherit;
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          padding: $tab-name-padding;
-          // Instead of width:100%, use right:-1px. Some widths are fractional,
-          // and if we round the wrong way the <input> will be drag-to-scroll.
-          padding-right: nth($tab-name-padding, 2) - .1rem;
-          background: transparent;
-          border: 0;
-          outline: 0;
-
-          &:disabled {
-            // Every unselected tab's input is :disabled. That lets the user
-            // drag by the _parent_.
-            color: inherit;
-            background: inherit;
-            pointer-events: none;
-          }
-        }
-      }
-
-      .dropdown {
-        button.toggle {
-          cursor: pointer;
-          border: 0;
-          padding: $tab-button-padding;
-          background: transparent; // override bootstrap
-          height: 100%;
-
-          i {
-            display: inline-block;
-            // icon font's caret is hard to size and position...:
-            font-size: .6rem;
-            width: 2rem;
-            height: 2rem;
-            padding-top: .6rem;
-            padding-left: .1rem;
-            line-height: 1;
-            color: $dark-gray;
-            border-radius: 50%;
-            opacity: .6;
-            outline: 0; // even when :focusing in Webkit
-          }
-
-          &:hover i {
-            color: $brand-text--dark;
-            opacity: 1;
-          }
-
-          &:focus i {
-            color: $brand-text--darker;
-            background-color: $dark-accent--soft;
-            opacity: 1;
-          }
-        }
-      }
-
-      &::after {
-        content: '';
-        display: block;
-        position: absolute;
-        right: 0;
-        top: .8rem;
-        bottom: .6rem;
-        width: 1px;
-        background: $dark-accent--strong;
-        pointer-events: none;
-      }
-    }
-
-    &>li.selected {
+    &>li {
       .tab {
-        border-color: $tabs-border;
-        background: $white;
-        color: $brand-text--darker;
-        border-top: 2px solid $module-background;
+        display: inline-flex; // editor + dropdown-menu
+        white-space: nowrap;
+        background: $pane-select-tab-bg;
+        color: $pane-select-tab-fg;
+        border-top-left-radius: .5rem;
+        border-top-right-radius: .5rem;
+        margin-right: 1px; // 1px more than when we're li.selected....
+        margin-left: 0; // 1px more than when we're li.selected...
 
-        &::after {
-          display: none;
+        .tab-name {
+          font-size: 1.4rem;
+          line-height: 1.5;
+          white-space: pre; // do not collapse whitespace
+          cursor: pointer;
+          padding: $tab-name-padding;
+          // Contains a <span> (styled like .tab-name) and a <input>.
+          // Make the <input> position:absolute so the width is auto-calculated
+          // by the <span>.
+          display: block;
+          position: relative;
+
+          span.size-calculator {
+            opacity: 0;
+            display: block; // so it has the same height even when it contains no text
+
+            &:empty::before {
+              // Never let size-calculator be empty: that will change the height
+              // of the <span>, which will affect the height of the <input>
+              content: '…';
+            }
+          }
+
+          input {
+            display: block;
+            font: inherit;
+            line-height: inherit;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: $tab-name-padding;
+            // Instead of width:100%, use right:-1px. Some widths are fractional,
+            // and if we round the wrong way the <input> will be drag-to-scroll.
+            padding-right: nth($tab-name-padding, 2) - .1rem;
+            background: transparent;
+            border: 0;
+            outline: 0;
+
+            &:disabled {
+              // Every unselected tab's input is :disabled. That lets the user
+              // drag by the _parent_.
+              color: inherit;
+              background: inherit;
+              pointer-events: none;
+            }
+          }
+        }
+
+        .dropdown {
+          button.toggle {
+            cursor: pointer;
+            border: 0;
+            padding: $tab-button-padding;
+            background: transparent; // override bootstrap
+            height: 100%;
+
+            i {
+              display: inline-block;
+              // icon font's caret is hard to size and position...:
+              font-size: .6rem;
+              width: 2rem;
+              height: 2rem;
+              padding-top: .6rem;
+              padding-left: .1rem;
+              line-height: 1;
+              color: $dark-gray;
+              border-radius: 50%;
+              opacity: .6;
+              outline: 0; // even when :focusing in Webkit
+            }
+
+            &:hover i {
+              color: $brand-text--dark;
+              opacity: 1;
+            }
+
+            &:focus i {
+              color: $brand-text--darker;
+              background-color: $dark-accent--soft;
+              opacity: 1;
+            }
+          }
+        }
+      }
+
+      &.selected {
+        // Nix margins -- we don't want 1px between the selected tab and the
+        // next/previous ones. We also don't want tab to change width when the
+        // user selects it.
+        //
+        // In sum: nix margins, and make tab wider by the same amount.
+        .tab {
+          background: $pane-select-selected-tab-bg;
+          color: $pane-select-selected-tab-fg;
+          margin-left: -1px; // instead of 0
+          margin-right: 0; // instead of 1px
+          padding-left: 1px;
+          padding-right: 1px;
         }
       }
     }
@@ -144,7 +137,7 @@
     $dragSpace: 2rem;
 
     li.dragging .tab {
-      border-color: $brand-orange;
+      background: $brand-orange;
       will-change: transform; // https://bugs.chromium.org/p/chromium/issues/detail?id=916801
     }
 
@@ -153,7 +146,6 @@
       display: block;
       position: absolute;
       top: 0;
-      border-top: 2px solid $tabs-border;
       bottom: 0;
       background-color: $brand-orange;
       width: 3px;
@@ -173,19 +165,17 @@
   button.new-tab {
     font-size: 1.2rem;
     margin-left: .8rem;
+    border: 0;
     border-radius: 50%;
     width: 2.4rem;
     height: 2.4rem;
-    background: $light-accent--Vstrong;
-    border: 1px solid $tabs-border;
+    background: $pane-select-new-tab-button-bg;
+    color: $pane-select-new-tab-button-fg;
     padding: 0;
-    color: $tabs-border;
     cursor: pointer;
-    position: relative;
-    top: .2rem;
 
     &:hover {
-      background-color: $white;
+      background-color: $pane-select-tab-bg;
     }
   }
 }

@@ -10,19 +10,19 @@ import Report from '../Report'
 const WorkflowEditor = React.memo(function WorkflowEditor ({ api, selectedPane, selectReportPane }) {
   return (
     <>
-      {selectedPane.pane === 'tab' ? (
-        <div className='workflow-columns'>
-          <ModuleStack api={api} />
-          <OutputPane api={api} />
-        </div>
-      ) : (
-        <Report />
-      )}
-
       <PaneSelect
         selectedPane={selectedPane}
         selectReportPane={selectReportPane}
       />
+
+      {selectedPane.pane === 'tab' ? (
+        <div className='workflow-columns'>
+          <ModuleStack api={api} />
+          <OutputPane />
+        </div>
+      ) : (
+        <Report />
+      )}
     </>
   )
 })
