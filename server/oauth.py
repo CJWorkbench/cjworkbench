@@ -197,8 +197,17 @@ class OAuth1a(OAuthService):
         session.parse_authorization_response('http://foo?' + urlencode(GET))
 
         try:
+            # raises:
+            #
+            # * requests_oauthlib.oauth1_session.TokenRequestDenied
+            #   (child of ValueError) on server error response
+            # * ValueError on badly-encoded server response
+            # * TokenMissing (child of ValueError) on server response
+            #   missing data
+            #
+            # These are all ValueError
             offline_token = session.fetch_access_token(self.access_token_url)
-        except (OAuth1Error, OAuth2Error) as err:
+        except ValueError as err:
             return str(err)
 
         return offline_token
