@@ -43,7 +43,7 @@ article {
    *
    * Short-term, we're stuck with a somewhat-thin page.
    */
-  max-width: 46rem;
+  max-width: 48rem;
   margin: 0 auto;
 }
 
@@ -107,7 +107,7 @@ figure {
   padding: 0;
   width: 100%;
   height: 0;
-  padding-bottom: 9/16 * 100%; // 3:2 aspect ratio
+  padding-bottom: 2/3 * 100%; // 3:2 aspect ratio
   position: relative; // so we can position iframe
 
   iframe {
