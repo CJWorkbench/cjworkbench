@@ -16,18 +16,17 @@ class TestWfModule(LoggedInIntegrationTest):
 
         self.add_csv_data_module()
 
-        # Wait for wfmodule to appear
-        b.hover_over_element('.module-card-header', wait=True)
-
+        b.hover_over_element('.module-card-header')
         b.assert_element('.icon-caret-down')  # should be uncollapsed
         b.assert_element('.icon-help')
         b.assert_element('.icon-note')
         b.assert_element('button[title=more]')
 
     def test_export(self):
+        b = self.browser
+
         self.add_csv_data_module()
 
-        b = self.browser
         b.hover_over_element('.module-card-header', wait=True)
         b.click_button('more')
         b.click_button('Export')

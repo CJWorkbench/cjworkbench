@@ -1,6 +1,7 @@
 from integrationtests.utils import LoggedInIntegrationTest
 import re
 
+
 # WfModule expand/collapse, notes, context menu, export, delete
 class TestEmbed(LoggedInIntegrationTest):
     def setUp(self):
@@ -12,9 +13,7 @@ class TestEmbed(LoggedInIntegrationTest):
         # wait for page load
         b.assert_element('input[name="name"][value="Untitled Workflow"]', wait=True)
 
-
     def test_embed(self):
-
         b = self.browser
 
         # Create workflow with chart

@@ -43,9 +43,7 @@ exports[`Embed Available workflow Renders the embed widget with the correct info
         <div
           className="metadata"
         >
-          <ul
-            className="WF-meta"
-          >
+          <ul>
             <li>
               <a
                 href="/workflows/1"

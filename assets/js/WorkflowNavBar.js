@@ -49,7 +49,7 @@ function OwnedWorkflowTitleAndMetadata ({ isReadOnly, workflow }) {
     <div className='title-metadata-stack'>
       <ConnectedEditableWorkflowName isReadOnly={isReadOnly} />
       <ul className='metadata-container'>
-        {workflow.is_anonymous ? (
+        {!workflow.is_anonymous ? (
           <li className='attribution'>
             <span className='metadata'>by {workflow.owner_name.trim()}</span>
             <span className='separator'>-</span>

@@ -122,10 +122,7 @@ class WorkbenchBase(unittest.TestCase):
 
         # wait for wfmodule to appear
         self.browser.fill_in('csv', csv, wait=True)
-        # blur, to begin saving result to server
-        self.browser.click_whatever('ul.metadata-container', text='by')
-        # and for some reason, that doesn't do the trick! Focus again?
-        self.browser.click_whatever('textarea[name="csv"]')
+        self.submit_wf_module()
 
     # TODO move to a helper .py file
     def select_column(self, module_name: str, name: str, text: str,

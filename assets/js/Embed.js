@@ -56,7 +56,7 @@ export default class Embed extends React.Component {
                 </a>
               </div>
               <div className='metadata'>
-                <ul className="WF-meta">
+                <ul>
                   <li>
                     <a href={"/workflows/" + this.props.workflow.id } target="_blank">
                     by {this.props.workflow.owner_name}

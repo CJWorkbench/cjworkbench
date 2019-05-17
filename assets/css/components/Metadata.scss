@@ -6,17 +6,11 @@
   display: flex;
   padding-left: 0;
   list-style: none;
-  cursor: pointer;
   @include content-1;
 
   .separator {
     margin:0 0.5rem 0 0.5rem;
     text-align: center;
-  }
-
-  .WF-meta--item {
-    margin-right: 0;
-    display: flex;
   }
 }
 
@@ -36,14 +30,6 @@ button.public-private, button.share-button {
 
     &:hover {
       text-decoration: underline;
-    }
-  }
-}
-
-.workflow-root.in-lesson {
-  .metadata-container {
-    .public-private, .separator {
-      display: none
     }
   }
 }

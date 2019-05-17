@@ -189,20 +189,6 @@
           background-color: $light-accent--strong;
         }
       }
-
-      .WF-meta {
-        position: relative;
-        top: -.1rem;
-
-        li, span {
-          line-height: 1.3rem;
-          height: 1rem;
-        }
-
-        .publicPrivate:hover {
-          text-decoration: underline;
-        }
-      }
     }
   }
 
@@ -210,14 +196,6 @@
 
   .workflow-root.in-lesson & {
     background-color: $brand-learn;
-
-    .WF-meta {
-      display: none;
-    }
-
-    .attribution {
-      display: none;
-    }
 
     button[name=duplicate] {
       display: none;
