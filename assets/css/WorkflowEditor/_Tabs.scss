@@ -83,6 +83,7 @@
             cursor: pointer;
             border: 0;
             padding: $tab-button-padding;
+            color: inherit;
             background: transparent; // override bootstrap
             height: 100%;
 
@@ -92,17 +93,15 @@
               font-size: .6rem;
               width: 2rem;
               height: 2rem;
-              padding-top: .6rem;
+              padding-top: .8rem;
               padding-left: .1rem;
               line-height: 1;
-              color: $dark-gray;
               border-radius: 50%;
-              opacity: .6;
+              opacity: .5;
               outline: 0; // even when :focusing in Webkit
             }
 
             &:hover i {
-              color: $brand-text--dark;
               opacity: 1;
             }
 
