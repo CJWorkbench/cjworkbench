@@ -546,6 +546,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                   className="public-private"
                                   onClick={[Function]}
                                   title="Change privacy"
+                                  type="button"
                                 >
                                   private
                                 </button>
@@ -669,6 +670,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                   className="public-private"
                                   onClick={[Function]}
                                   title="Change privacy"
+                                  type="button"
                                 >
                                   public
                                 </button>
@@ -792,6 +794,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                   className="public-private"
                                   onClick={[Function]}
                                   title="Change privacy"
+                                  type="button"
                                 >
                                   private
                                 </button>
@@ -986,6 +989,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                   className="public-private"
                                   onClick={[Function]}
                                   title="Change privacy"
+                                  type="button"
                                 >
                                   public
                                 </button>
@@ -1109,6 +1113,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                   className="public-private"
                                   onClick={[Function]}
                                   title="Change privacy"
+                                  type="button"
                                 >
                                   private
                                 </button>
@@ -1287,6 +1292,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                   className="public-private"
                                   onClick={[Function]}
                                   title="Change privacy"
+                                  type="button"
                                 >
                                   private
                                 </button>

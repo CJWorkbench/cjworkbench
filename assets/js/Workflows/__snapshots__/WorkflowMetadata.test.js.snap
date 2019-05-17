@@ -33,6 +33,7 @@ exports[`WorkflowMetadata renders private workflow correctly 1`] = `
       className="public-private"
       onClick={[Function]}
       title="Change privacy"
+      type="button"
     >
       private
     </button>

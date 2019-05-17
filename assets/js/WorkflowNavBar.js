@@ -3,8 +3,7 @@ import PropTypes from 'prop-types'
 import WfHamburgerMenu from './WfHamburgerMenu'
 import UndoRedoButtons from './UndoRedoButtons'
 import ConnectedEditableWorkflowName, { EditableWorkflowName } from './EditableWorkflowName'
-import WorkflowMetadata from './WorkflowMetadata'
-import { goToUrl } from './utils'
+import { goToUrl, timeDifference } from './utils'
 import ShareButton from './ShareModal/ShareButton'
 
 
@@ -45,17 +44,35 @@ function LessonWorkflowTitle ({ lesson }) {
 }
 
 
-function OwnedWorkflowTitleAndMetadata ({ isReadOnly, workflow, openShareModal }) {
+function OwnedWorkflowTitleAndMetadata ({ isReadOnly, workflow }) {
   return (
     <div className='title-metadata-stack'>
       <ConnectedEditableWorkflowName isReadOnly={isReadOnly} />
-      <WorkflowMetadata workflow={workflow} openShareModal={openShareModal} />
+      <ul className='metadata-container'>
+        {workflow.is_anonymous ? (
+          <li className='attribution'>
+            <span className='metadata'>by {workflow.owner_name.trim()}</span>
+            <span className='separator'>-</span>
+          </li>
+        ) : null}
+        <li>
+          Updated {timeDifference(workflow.last_update, new Date())}
+        </li>
+        {(!isReadOnly && !workflow.is_anonymous) ? (
+          <li>
+            <span className='separator'>-</span>
+            <ShareButton>
+              {workflow.public ? 'public' : 'private'}
+            </ShareButton>
+          </li>
+        ) : null}
+      </ul>
     </div>
   )
 }
 
 
-function WorkflowTitleAndMetadata ({ lesson, isReadOnly, workflow, openShareModal }) {
+function WorkflowTitleAndMetadata ({ lesson, isReadOnly, workflow }) {
   if (lesson) {
     return (
       <LessonWorkflowTitle
@@ -67,7 +84,6 @@ function WorkflowTitleAndMetadata ({ lesson, isReadOnly, workflow, openShareModa
       <OwnedWorkflowTitleAndMetadata
         isReadOnly={isReadOnly}
         workflow={workflow}
-        openShareModal={openShareModal}
       />
     )
   }
@@ -138,14 +154,6 @@ export default class WorkflowNavBar extends React.Component {
     }
   }
 
-  closeShareModal = () => {
-    this.setState({ isShareModalOpen: false })
-  }
-
-  openShareModal = () => {
-    this.setState({ isShareModalOpen: true })
-  }
-
   render() {
     const { api, isReadOnly, loggedInUser, lesson, workflow } = this.props
 
@@ -188,7 +196,6 @@ export default class WorkflowNavBar extends React.Component {
               lesson={lesson}
               isReadOnly={isReadOnly}
               workflow={workflow}
-              openShareModal={this.openShareModal}
             />
             <div className='nav-buttons'>
               {isReadOnly ? null : (

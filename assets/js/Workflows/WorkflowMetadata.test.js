@@ -1,7 +1,7 @@
 import React from 'react'
 import WorkflowMetadata from './WorkflowMetadata'
 import { shallow, ReactWrapper } from 'enzyme'
-import { okResponseMock } from './test-utils'
+import { okResponseMock } from '../test-utils'
 
 
 describe('WorkflowMetadata', () => {

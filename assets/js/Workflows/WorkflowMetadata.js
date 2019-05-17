@@ -3,7 +3,7 @@
 
 import React from 'react'
 import PropTypes from 'prop-types'
-import { timeDifference } from './utils'
+import { timeDifference } from '../utils'
 
 export default class WorkflowMetadata extends React.Component {
   static propTypes = {
@@ -37,7 +37,7 @@ export default class WorkflowMetadata extends React.Component {
     const modalLink = !(this.props.workflow.read_only || this.props.workflow.is_anonymous) ? (
       <li>
         <span className='separator'>-</span>
-        <button className="public-private" title="Change privacy" onClick={this.openShareModal}>
+        <button type='button' className="public-private" title="Change privacy" onClick={this.openShareModal}>
           {this.props.workflow.public ? 'public' : 'private'}
         </button>
       </li>

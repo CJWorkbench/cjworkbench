@@ -19,7 +19,6 @@ exports[`WorkflowNavBar should duplicate the workflow when user is logged in and
       </a>
       <WorkflowTitleAndMetadata
         isReadOnly={false}
-        openShareModal={[Function]}
         workflow={
           Object {
             "id": 12,
@@ -84,7 +83,6 @@ exports[`WorkflowNavBar should redirect to sign-in page when user clicks duplica
       </a>
       <WorkflowTitleAndMetadata
         isReadOnly={false}
-        openShareModal={[Function]}
         workflow={
           Object {
             "id": 303,

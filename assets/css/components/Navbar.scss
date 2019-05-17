@@ -16,247 +16,246 @@
     justify-content: space-between;
     align-items: center;
   }
-}
 
-.nav-buttons {
-  display: flex;
-  align-items: center;
-
-  &>button, .group--undo-redo>button { // '>' because dropdown may contain other buttons
-    @extend .action-button;
-    @extend .button-white;
-    white-space: nowrap;
-
-    &[name=duplicate] {
-      @extend .button-white--fill;
-    }
-  }
-
-  &>button, &>.group--undo-redo {
-    margin-right: 3rem;
-  }
-
-  // undo redo buttons
-  .group--undo-redo {
+  .nav-buttons {
     display: flex;
+    align-items: center;
 
-    button {
-      font-size: 1.9rem;
-      min-width: 0;
-      width: 3.5rem;
-      height: 3.5rem;
-      padding: 0;
-      border:1px solid $white;
-      opacity: .8;
-      &:hover {
-        border-color: $white;
-        opacity: 1;
+    &>button, .group--undo-redo>button { // '>' because dropdown may contain other buttons
+      @extend .action-button;
+      @extend .button-white;
+      white-space: nowrap;
+
+      &[name=duplicate] {
+        @extend .button-white--fill;
       }
     }
-    button:first-child {
-      margin-right: 1rem;
+
+    &>button, &>.group--undo-redo {
+      margin-right: 3rem;
+    }
+
+    // undo redo buttons
+    .group--undo-redo {
+      display: flex;
+
+      button {
+        font-size: 1.9rem;
+        min-width: 0;
+        width: 3.5rem;
+        height: 3.5rem;
+        padding: 0;
+        border:1px solid $white;
+        opacity: .8;
+        &:hover {
+          border-color: $white;
+          opacity: 1;
+        }
+      }
+      button:first-child {
+        margin-right: 1rem;
+      }
+    }
+
+    &>.dropdown {
+      display: inline-block;
     }
   }
 
-  &>.dropdown {
-    display: inline-block;
+  // Brand logo
+
+  .logo {
+
+    display: flex;
+    align-items: center;
+
+    img.logo {
+      vertical-align: middle;
+      margin-right: 0.4rem;
+      width: 2.5rem;
+    }
+
+    img.logo-text {
+      position: relative;
+      top:0;
+      width: 13.5rem;
+    }
   }
-}
 
-// Brand logo
-
-.logo {
-
-  display: flex;
-  align-items: center;
-
-  img.logo {
-    vertical-align: middle;
-    margin-right: 0.4rem;
-    width: 2.5rem;
-  }
-
-  img.logo-text {
-    position: relative;
-    top:0;
-    width: 13.5rem;
-  }
-}
-
-
-.workflow-container .navbar .action-link {
-  color:white;
-  text-decoration: underline;
-}
-
-.workflow-container .navbar {
-  color:white;
-}
-
-.navbar .links {
-  @include title-3;
-  display: flex;
-  align-items: center;
-  font-weight: bold;
-  letter-spacing: 0.04rem;
-  font-size: 1.5rem;
-  position: relative;
-  left: -7.7rem;
-  height: 100%;
-  top: .8rem;
-  cursor: pointer;
-
-  a {
-    display: block;
-    position: relative; // for '::after' positioning
+  .workflow-container & .action-link {
     color: white;
-    text-decoration: none;
-    margin: 0 2rem;
-    padding-top: .9rem;
-    height: 4.5rem;
+    text-decoration: underline;
+  }
 
-    &::after {
-      content: '';
-      position: absolute;
-      bottom: 1px;
-      left: 2px;
-      right: 2px;
-      height: 4px;
-      background-color: white;
-    }
+  .workflow-container & {
+    color: white;
+  }
 
-    &.inactive {
-      opacity: .7;
+  .links {
+    @include title-3;
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+    letter-spacing: 0.04rem;
+    font-size: 1.5rem;
+    position: relative;
+    left: -7.7rem;
+    height: 100%;
+    top: .8rem;
+    cursor: pointer;
+
+    a {
+      display: block;
+      position: relative; // for '::after' positioning
+      color: white;
+      text-decoration: none;
+      margin: 0 2rem;
+      padding-top: .9rem;
+      height: 4.5rem;
+
       &::after {
-        opacity: 0;
+        content: '';
+        position: absolute;
+        bottom: 1px;
+        left: 2px;
+        right: 2px;
+        height: 4px;
+        background-color: white;
       }
 
-      &:hover {
-        opacity: 1;
+      &.inactive {
+        opacity: .7;
         &::after {
-          opacity: .7;
+          opacity: 0;
+        }
+
+        &:hover {
+          opacity: 1;
+          &::after {
+            opacity: .7;
+          }
         }
       }
     }
   }
-}
 
-//// navbar in WF
+  //// navbar in WF
 
-.workflow-container .navbar {
-  padding: .8rem 2.5rem 1rem 1.2rem;
+  .workflow-container & {
+    padding: .8rem 2.5rem 1rem 1.2rem;
 
-  .logo-navbar {
-    margin-right: 1.5rem;
+    .logo-navbar {
+      margin-right: 1.5rem;
 
-    img {
-      width:3.7rem;
-      margin-top: 0rem;
+      img {
+        width:3.7rem;
+        margin-top: 0rem;
+      }
+    }
+
+    .editable-title--container{
+      margin-right: 3.5rem;
+      min-width: 90%;
+    }
+    .title-metadata-stack {
+      flex-grow: 1;
+
+      .course {
+        @include title-3;
+        margin-top: .2rem;
+        margin-bottom: .4rem;
+
+        a {
+          color: white;
+        }
+      }
+
+      .editable-title--field {
+        @include title-2;
+        position: relative;
+        top:.1rem;
+        min-width: 100%;
+        border: none;
+        outline: none;
+        padding: 0;
+        resize: none;
+        background: none;
+        line-height: 1.8rem;
+        color: #FFFFFF;
+        padding-right:1.5rem;
+        text-overflow: ellipsis;
+
+        &:hover {
+          background-color: $light-accent--strong;
+        }
+      }
+
+      .WF-meta {
+        position: relative;
+        top: -.1rem;
+
+        li, span {
+          line-height: 1.3rem;
+          height: 1rem;
+        }
+
+        .publicPrivate:hover {
+          text-decoration: underline;
+        }
+      }
     }
   }
 
-  .editable-title--container{
-    margin-right: 3.5rem;
-    min-width: 90%;
-  }
-  .title-metadata-stack {
-    flex-grow: 1;
+  ////navbar in lesson
 
-    .course {
-      @include title-3;
-      margin-top: .2rem;
-      margin-bottom: .4rem;
+  .workflow-root.in-lesson & {
+    background-color: $brand-learn;
 
-      a {
-        color: white;
-      }
+    .WF-meta {
+      display: none;
+    }
+
+    .attribution {
+      display: none;
+    }
+
+    button[name=duplicate] {
+      display: none;
     }
 
     .editable-title--field {
-      @include title-2;
-      position: relative;
-      top:.1rem;
-      min-width: 100%;
-      border: none;
-      outline: none;
-      padding: 0;
-      resize: none;
-      background: none;
-    	line-height: 1.8rem;
-      color: #FFFFFF;
-      padding-right:1.5rem;
-      text-overflow: ellipsis;
+      cursor: default;
 
       &:hover {
-        background-color: $light-accent--strong;
+        background-color: transparent; // FIXME The title should no be editable in lesson
       }
     }
 
-    .WF-meta {
-      position: relative;
-      top: -.1rem;
-
-      li, span {
-        line-height: 1.3rem;
-        height: 1rem;
-      }
-
-      .publicPrivate:hover {
-        text-decoration: underline;
-      }
+    .metadata-container {
+      cursor: default;
     }
   }
-}
 
-////navbar in lesson
+  //No navbar at login / signup
 
-.workflow-root.in-lesson .navbar {
-  background-color: $brand-learn;
-
-  .WF-meta {
-    display: none;
+  .navbar-login {
+    display:none;
   }
 
-  .attribution, .test-duplicate-button, .test-share-button {
-    display: none;
-  }
 
-  button[name=duplicate] {
-    display: none;
-  }
+  //// Readonly signout navbar
 
-  .editable-title--field {
-    cursor: default;
+  .nav--link {
+    @include content-1;
+    text-transform: uppercase;
+    font-size: 1.4rem;
+    cursor: pointer;
+    margin-right: 5rem;
+    color:$white;
 
     &:hover {
-      background-color: transparent; // FIXME The title should no be editable in lesson
+      text-decoration: underline;
+      color: #fff;
     }
-  }
-
-  .metadata-container {
-    cursor: default;
-  }
-}
-
-//No navbar at login / signup
-
-.navbar-login {
-  display:none;
-}
-
-
-//// Readonly signout navbar
-
-.nav--link {
-  @include content-1;
-  text-transform: uppercase;
-  font-size: 1.4rem;
-  cursor: pointer;
-  margin-right: 5rem;
-  color:$white;
-
-  &:hover {
-    text-decoration: underline;
-    color: #fff;
   }
 }

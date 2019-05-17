@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import WorkflowContextMenu from './WorkflowContextMenu'
-import WorkflowMetadata from '../WorkflowMetadata'
+import WorkflowMetadata from './WorkflowMetadata'
 
 function Workflow ({ workflow, deleteWorkflow, duplicateWorkflow, openShareModal }) {
   return (
