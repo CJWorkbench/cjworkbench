@@ -125,7 +125,8 @@ class UploadFileTests(DbTestCase):  # DbTestCase clears minio
 
     def test_invalid_xlsx_gives_error(self):
         minio.put_bytes(minio.UserFilesBucket,
-                        'eb785452-f0f2-4ebe-97ce-e225e346148e', b'not an xlsx')
+                        'eb785452-f0f2-4ebe-97ce-e225e346148e.xlsx',
+                        b'not an xlsx')
         self._test_upload(
             uuid='eb785452-f0f2-4ebe-97ce-e225e346148e',
             filename='test.xlsx',

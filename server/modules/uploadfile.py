@@ -25,8 +25,8 @@ def _load_uploaded_file(bucket, key, mime_type) -> ProcessResult:
     """BLOCKING: download from S3 and load with parse_bytesio()."""
     try:
         # Download, don't stream: it's faster because it's concurrent
-        with minio.temporarily_download(bucket, key) as tf:
-            with open(tf.name, 'rb') as f:
+        with minio.temporarily_download(bucket, key) as path:
+            with path.open('rb') as f:
                 result = parse_bytesio(f, mime_type, None)
 
     except minio.error.ClientError as err:

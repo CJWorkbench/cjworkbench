@@ -269,22 +269,34 @@ def get_object_with_data(bucket: str, key: str, **kwargs) -> Dict[str, Any]:
     raise last_exception
 
 
-
-
 @contextmanager
 def temporarily_download(bucket: str, key: str) -> None:
     """
-    Open a file on S3 as a NamedTemporaryFile.
+    Copy a file from S3 to a pathlib.Path; yield; and delete.
+
+    Raise FileNotFound if the key is not on S3.
 
     Usage:
 
-        with minio.temporarily_download('bucket', 'key') as tf:
-            print(repr(tf.name))  # a path on the filesystem
-            tf.read()
+        with minio.temporarily_download('bucket', 'key') as path:
+            print(str(path))  # a path on the filesystem
+            path.read_bytes()  # returns file contents
+        # when you exit the block, the pathlib.Path is deleted
     """
     with tempfile.NamedTemporaryFile(prefix='minio_download') as tf:
-        transfer.download_file(bucket, key, tf.name)
-        yield tf  # really, only tf.name is useful
+        try:
+            transfer.download_file(bucket, key, tf.name)
+        # transfer.download_file() seems to raise ClientError instead of a
+        # wrapped error.
+        # except error.NoSuchKey:
+        #     raise FileNotFoundError(errno.ENOENT, f'No file at {bucket}/{key}')
+        except error.ClientError as err:
+            if err.response.get('Error', {}).get('Code') == '404':
+                raise FileNotFoundError(errno.ENOENT,
+                                        f'No file at {bucket}/{key}')
+            else:
+                raise
+        yield pathlib.Path(tf.name)
 
 
 class RandomReadMinioFile(io.RawIOBase):
@@ -421,18 +433,12 @@ class FullReadMinioFile(io.RawIOBase):
         self.bucket = bucket
         self.key = key
 
-        with tempfile.NamedTemporaryFile(prefix='FullReadMinioFile') as tf:
-            try:
-                transfer.download_file(self.bucket, self.key, tf.name)
-            except error.NoSuchKey:
-                raise FileNotFoundError(
-                    errno.ENOENT,
-                    f'No file at {self.bucket}/{self.key}'
-                )
-
+        with temporarily_download(bucket, key) as path:
             # POSIX-specific: reopen the file, then delete it from the
-            # filesystem
-            self.tempfile = open(tf.name, 'rb')
+            # filesystem (by leaving the context manager).
+            #
+            # We'll use Python's default buffering settings.
+            self.tempfile = path.open('rb')
 
     # override io.IOBase
     def tell(self) -> int:

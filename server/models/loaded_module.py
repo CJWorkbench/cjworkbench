@@ -357,12 +357,12 @@ def _load_external_module_uncached(module_id_name: str,
     python_code_key = next(k for k in all_keys
                            if _is_basename_python_code(k[len(prefix):]))
 
+    # Now we can load the code into memory.
+    name = '%s.%s' % (module_id_name, version_sha1)
     with minio.temporarily_download(minio.ExternalModulesBucket,
-                                    python_code_key) as tf:
-        # Now we can load the code into memory.
-        name = '%s.%s' % (module_id_name, version_sha1)
-        logger.info(f'Loading {name} from {tf.name}')
-        return module_loader.load_python_module(name, Path(tf.name))
+                                    python_code_key) as path:
+        logger.info(f'Loading {name} from {path}')
+        return module_loader.load_python_module(name, path)
 
 
 def load_external_module(module_id_name: str, version_sha1: str,
