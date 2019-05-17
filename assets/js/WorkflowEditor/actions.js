@@ -7,7 +7,6 @@ export function selectReportPaneAction () {
 }
 
 function reduceSelectReportPanePending (state) {
-  console.log('Reducing')
   return {
     ...state,
     selectedPane: { pane: 'report' }
