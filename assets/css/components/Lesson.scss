@@ -18,7 +18,7 @@ article.lesson {
 
   .sections {
     flex-grow: 1;
-    background-color: $table-header;
+    background-color: $document-blue;
   }
 
   img {
@@ -263,7 +263,7 @@ article.lesson {
   }
 
   footer {
-    background-color: $table-header;
+    background-color: $document-blue;
     border-top: 1px solid $dark-accent--medium;
     height: 6rem;
     flex: 0 0 auto;

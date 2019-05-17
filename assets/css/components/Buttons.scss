@@ -408,15 +408,15 @@ button:focus { outline:0 !important; }
 }
 
 .button-dark-blue {
-  color: $table-header;
-  border-color: $table-header ;
+  color: $document-blue;
+  border-color: $document-blue ;
   background-color: transparent;
   &:hover {
-    background-color: $table-header--light;
-    color: darken($table-header,10%);
+    background-color: $document-blue--light;
+    color: darken($document-blue,10%);
   }
   &:active {
-    background: $table-header;
+    background: $document-blue;
     color: $white;
   }
 }

@@ -43,13 +43,14 @@ article {
    *
    * Short-term, we're stuck with a somewhat-thin page.
    */
-  max-width: 42rem;
+  max-width: 46rem;
   margin: 0 auto;
 }
 
 h1, h2, p {
   margin-left: $margin-horiz;
   margin-right: $margin-horiz;
+  color: $brand-text--darker;
 }
 
 h1, h2 {
@@ -58,6 +59,7 @@ h1, h2 {
 
 h1 {
   font-size: 1.2rem;
+  margin-bottom: .2rem;
 
   .icon {
     vertical-align: -.15em; // icon doesn't line up with baseline
@@ -78,15 +80,26 @@ p {
 
 header {
   .metadata {
-    font-size: .9rem;
+    font-size: .8rem;
     color: $brand-text--medium;
+    margin-bottom: 1rem;
 
     span::after {
       content: '-';
-      padding: 0 .3rem;
-      color: $Vlight-gray;
+      padding: 0 .15rem 0 .3rem;
+      color: $brand-text--medium;
+    }
+
+    a {
+      color: $brand-workspace;
     }
   }
+}
+
+section:not(:last-child) {
+  border-bottom: 1px solid $Vlight-gray;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
 }
 
 figure {
@@ -94,7 +107,7 @@ figure {
   padding: 0;
   width: 100%;
   height: 0;
-  padding-bottom: 2/3 * 100%; // 3:2 aspect ratio
+  padding-bottom: 9/16 * 100%; // 3:2 aspect ratio
   position: relative; // so we can position iframe
 
   iframe {
@@ -103,6 +116,7 @@ figure {
     height: 100%;
     border: 0;
   }
+
 }
 
 @media print {

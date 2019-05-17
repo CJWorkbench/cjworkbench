@@ -34,6 +34,8 @@ article.report {
       }
     }
 
+
+
     h4 {
       margin-top: 2rem;
       font: inherit;
@@ -58,7 +60,7 @@ article.report {
   .report-iframe-container {
     flex: 1 1 auto;
     max-width: 80rem;
-    border: 1px solid $brand-workspace;
+    border: 1px solid $document-blue;
     border-radius: .5rem;
     overflow: hidden;
     line-height: 0; // take no space at all

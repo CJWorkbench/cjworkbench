@@ -10,7 +10,7 @@ $module-background:#f8f8f8;
 $page-background: #f2f2f2;
 $table-background: #f4f4f4;
 $modal-color: $brand-workspace;
-$table-header: #719BB0;
+$document-blue: #719BB0;
 $hover-background: #F5F5F5;
 
 // Secondary Colors (づ ￣ ³￣)づ
@@ -86,7 +86,7 @@ $brand-learn--light: lighten($brand-learn, 13%);
 $brand-learn--med-light: lighten($brand-learn, 10%);
 $brand-learn--medium: lighten($brand-learn, 5%);
 
-$table-header--light: lighten($table-header, 13%);
+$document-blue--light: lighten($document-blue, 13%);
 
 // Overlays
 
@@ -107,7 +107,7 @@ $overlay-shadow:-0.5rem 0.5rem 2.5rem 0 rgba(0,0,0,0.15);
 
 // Modules (ᵔᴥᵔ)
 
-$module-action: lighten($table-header,20%);
+$module-action: lighten($document-blue,20%);
 $module-width: 28rem;
 $module-margin-right: 2rem;
 $module-margin-left: 4rem;

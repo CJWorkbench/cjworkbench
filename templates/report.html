@@ -14,10 +14,10 @@
     <header>
       <h1><i class="icon icon-chart"></i>{{workflow.name}}</h1>
       <p class="metadata">
-        <span class="author"><a rel="author">By {{workflow.owner_name}}</a></span>
+        <span class="author"><a rel="author">by {{workflow.owner_name}}</a></span>
         <span class="updated-at">Updated <time datetime="{{workflow.updated_at|date:"c"}}">{{workflow.updated_at|timesince}}</time> ago</span>
         <!-- target=_parent in case this report is displayed within an iframe -->
-        <a target="_parent" href="/workflows/{{workflow.id}}/">Browse to Workflow</a>
+        <a target="_parent" href="/workflows/{{workflow.id}}/">Source data</a>
       </div>
     </header>
     {% for tab in workflow.tabs %}

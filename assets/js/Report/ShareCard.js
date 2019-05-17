@@ -21,9 +21,6 @@ export default function ShareCard ({ workflowId, isPublic }) {
       </div>
       <div className='url'>
         <h4>Report URL</h4>
-        <div className='copy'>
-          {window.location.origin}/workflows/{workflowId}/report
-        </div>
         <p className='accessible-to'>
           {isPublic ? (
             'Anyone can view this report'
@@ -31,6 +28,9 @@ export default function ShareCard ({ workflowId, isPublic }) {
             'Only collaborators can view this report'
           )}
         </p>
+        <div className='copy'>
+          {window.location.origin}/workflows/{workflowId}/report
+        </div>
       </div>
     </aside>
   )
