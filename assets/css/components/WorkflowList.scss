@@ -195,18 +195,15 @@
 
         &>button {
           @include context-button;
+          @include button-blue;
           height: 3rem;
           font-weight: bold;
           width: auto;
           border: 1px solid transparent;
           opacity: 1;
           padding: 0 1rem;
-          color: $brand-workspace;
           &:hover {
-            background-color: $brand-workspace--light;
             border: 1px solid $brand-workspace;
-            color: $brand-workspace;
-
           }
 
           &:after {

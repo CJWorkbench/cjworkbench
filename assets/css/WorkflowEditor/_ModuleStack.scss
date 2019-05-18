@@ -31,8 +31,6 @@
     justify-content: center;
     width: 100%;
     text-transform: uppercase;
-    background: $brand-background;
-    color: $brand-workspace;
     cursor: pointer;
   }
 
@@ -45,10 +43,8 @@
     position: relative;
 
     button.search {
-      border-radius: 2rem;
-      border: 1px solid $brand-workspace;
-      height: 3.5rem;
-      opacity: .85;
+      @include action-button;
+      @include button-blue;
 
       i {
         font-size: 1.5rem;
@@ -61,10 +57,6 @@
 
       &:not(:hover):not(.active):not(.lesson-highlight) {
         background: transparent;
-      }
-
-      &:hover, &.active {
-        opacity: 1;
       }
     }
   }

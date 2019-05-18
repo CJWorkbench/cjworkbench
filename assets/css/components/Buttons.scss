@@ -298,11 +298,12 @@ button:focus { outline:0 !important; }
 
 
 @mixin button-blue {
-  color: $brand-workspace;
-  border-color: $brand-workspace ;
+  color: $workspace-action;
+  border-color: $workspace-action ;
   background-color: transparent;
   &:hover, &:hover .spinner::after {
-    background-color: $brand-workspace--light
+    background-color: $brand-workspace--Vlight;
+    color: $brand-workspace;
   }
   &:active, &:active .spinner::after {
     background-color: $brand-workspace;
@@ -311,6 +312,25 @@ button:focus { outline:0 !important; }
 }
 .button-blue {
   @include button-blue;
+}
+
+@mixin button-blue--fill {
+  background-color: $workspace-action;
+  color: white;
+  border-color:transparent;
+  &:hover {
+    background-color: $brand-workspace--Vlight;
+    border-color: $workspace-action;
+    color:$brand-workspace;
+  }
+  &:active {
+    background-color: $brand-workspace;
+    color: white;
+  }
+}
+
+.button-blue--fill {
+  @include button-blue--fill;
 }
 
 %button-red {
@@ -347,28 +367,6 @@ button:focus { outline:0 !important; }
 .button-pink-fill {
   @include button-pink-fill;
 }
-
-
-
-@mixin button-blue--fill {
-  background-color: $brand-workspace;
-  color: white;
-  border-color:transparent;
-  &:hover {
-    background-color: $brand-workspace--light;
-    border-color: $brand-workspace;
-    color:$brand-workspace;
-  }
-  &:active {
-    background-color: $brand-workspace;
-    color: white;
-  }
-}
-
-.button-blue--fill {
-  @include button-blue--fill;
-}
-
 
 
 

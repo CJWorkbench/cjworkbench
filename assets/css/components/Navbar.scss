@@ -124,7 +124,7 @@
         left: 2px;
         right: 2px;
         height: 4px;
-        background-color: $brand-workspace;
+        background-color: $workspace-action;
       }
 
       &.inactive {
@@ -137,7 +137,7 @@
         &:hover {
           opacity: 1;
           &::after {
-            opacity: .7;
+            opacity: 1;
           }
         }
       }
@@ -202,7 +202,7 @@
   ////navbar in lesson
 
   .workflow-root.in-lesson & {
-    
+
 
     button[name=duplicate] {
       display: none;
