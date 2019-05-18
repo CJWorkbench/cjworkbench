@@ -100,17 +100,17 @@
   .export-table {
 
     @extend .action-button;
+    @extend .button-blue;
     display: flex;
     align-items: center;
     margin-right: 2.25rem;
     margin-left: 2.5rem;
     border-color: transparent;
-    color: $document-blue;
     background-color: white;
     cursor: pointer;
 
     &:hover{
-      background-color: $dark-accent--soft;
+      border: 1px solid;
     }
     font-size: 1.4rem;
 

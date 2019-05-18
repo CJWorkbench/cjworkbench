@@ -542,8 +542,10 @@
 
       .export-table {
 
-        color:$document-blue;
-        &:hover {background-color: $dark-accent--soft;}
+        color:$brand-workspace;
+        &:hover {
+          background-color: $brand-workspace--light;
+        }
       }
     }
   }
