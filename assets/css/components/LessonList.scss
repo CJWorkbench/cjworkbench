@@ -70,7 +70,7 @@
 
   div.course {
     margin-bottom: 8rem;
-    background-color: white;
+    background-color: $page-background;
     padding: 2rem;
     border-radius: .5rem;
 
@@ -79,14 +79,16 @@
       margin-top: 0;
       &:empty { display: none; }
       @include content-3;
+      padding: 2rem 3rem;
+      border-radius: 10px;
+      margin-bottom: 2rem;
+
+      p {
+        margin-bottom: 0;
+      }
 
       h3 {
         margin:1rem 0 1.5rem 2rem;
-      }
-      //Line of text to describe the list
-      p {
-        margin: 0 0 3rem 0;
-        padding: 0 2rem;
       }
     }
 
