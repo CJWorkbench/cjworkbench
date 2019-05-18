@@ -6,7 +6,7 @@
     position: static; // override Bootstrap's position: absolute
     display: block; // always -- if it weren't visible, it wouldn't be in the React tree
     min-width: 12rem; // or wider, if the content is wider
-    border: 2px solid $brand-workspace--medium;
+    border: 2px solid $brand-workspace;
     border-radius: 5px;
     box-shadow: $overlay-shadow;
     padding: .5rem 0;

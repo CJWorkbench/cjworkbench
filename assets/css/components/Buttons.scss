@@ -136,6 +136,8 @@ button:focus { outline:0 !important; }
 //* - Action button - */
 
 @mixin action-button {
+  font-weight: bold!important;
+  text-transform: uppercase;
   cursor: pointer;
   border: 1px solid $brand-workspace;
   min-width: 7rem;
@@ -329,13 +331,13 @@ button:focus { outline:0 !important; }
   @extend %button-red;
 }
 
-%button-pink-fill {
+@mixin button-pink-fill {
   color: white;
   background-color: $brand-learn;
   display: inline-flex;
   border:1px solid $brand-learn;
   &:hover {
-    background-color: $light-accent--strong;
+    background-color: $brand-learn--light;
     border: 1px solid $brand-learn;
   }
   &:active {
@@ -344,12 +346,12 @@ button:focus { outline:0 !important; }
 }
 
 .button-pink-fill {
-  @extend %button-pink-fill;
+  @include button-pink-fill;
 }
 
 
 
-.button-blue--fill {
+@mixin button-blue--fill {
   background-color: $brand-workspace;
   color: white;
   border-color:transparent;
@@ -364,6 +366,9 @@ button:focus { outline:0 !important; }
   }
 }
 
+.button-blue--fill {
+  @include button-blue--fill;
+}
 
 
 

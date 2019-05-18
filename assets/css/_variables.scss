@@ -1,16 +1,16 @@
 
 // Main colors  (*・‿・)ノ⌒*:･ﾟ✧
 
-$brand-workspace: #48C8D7;
-$brand-learn: #ffaad3;
-$brand-orange: #FBAA6D;
+$brand-workspace: #009FC7;
+$brand-learn: #FF8BC2;
+$brand-orange: #FF9748;
 $brand-red: #E24F4A;
 $WF-background: #E9EBEE;
 $module-background:#f8f8f8;
 $page-background: #f2f2f2;
 $table-background: #f4f4f4;
-$modal-color: $brand-workspace;
-$document-blue: #719BB0;
+$modal-color: $brand-orange;
+$document-blue: #386E8E;
 $hover-background: #F5F5F5;
 
 // Secondary Colors (づ ￣ ³￣)づ
@@ -26,10 +26,10 @@ $font-family-sans-serif: 'Nunito Sans', sans-serif; // override Bootstrap
 $modal-footer: #F5F7F8;
 $table-border: #D7E4E7;
 
-$dark-blue: #577485;
+
 $dark-orange:#F88630;
 
-$heading-bg: #7a9bb0;
+$heading-bg: $document-blue;
 $header-hover: #8AABC0;
 $input-alt-bg: #96afc3;
 $input-alt: white;
@@ -38,6 +38,11 @@ $input-alt-placeholder: $SuperLightGray;
 $error-prompt: lighten($brand-red,18%);
 $error-prompt--light: lighten($brand-red,35%);
 $error-prompt--Vlight: lighten($brand-red,37%);
+
+//Navbars and headers
+$navbar-background: white;
+$wf-header: $brand-workspace;
+$lesson-header: $brand-learn;
 
 // menus
 $data-action--border: lighten($brand-orange,7%);
@@ -88,13 +93,13 @@ $brand-learn--medium: lighten($brand-learn, 5%);
 
 $document-blue--light: lighten($document-blue, 13%);
 
-$pane-select-bg: #719aae;
-$pane-select-tab-bg: #64889b;
+$pane-select-tab-bg: #108FAF;
+$lesson-pane-select-tab-bg: #E54791;
 $pane-select-tab-fg: white;
 $pane-select-selected-tab-bg: $WF-background;
 $pane-select-selected-tab-fg: $brand-text--dark;
-$pane-select-new-tab-button-bg: #8aabbc;
-$pane-select-new-tab-button-fg: white;
+$pane-select-new-tab-button-bg: white;
+$pane-select-new-tab-button-fg: #108FAF;
 
 // Overlays
 
@@ -119,7 +124,7 @@ $module-action: lighten($document-blue,20%);
 $module-width: 28rem;
 $module-margin-right: 2rem;
 $module-margin-left: 4rem;
-$module-color-ok: $brand-workspace--medium;
+$module-color-ok: $brand-workspace;
 $module-color-unreachable: lighten($light-gray, 5%);
 $module-color-selected: $module-action;
 $module-color-busy: $brand-orange;

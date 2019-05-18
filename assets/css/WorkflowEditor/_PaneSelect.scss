@@ -6,9 +6,9 @@ nav.pane-select {
 
   display: flex;
   line-height: 0; // there are some `display: inline-block` elements and we want them to line up
-  border-top: 2px solid $tabs-border;
-  background: $pane-select-bg;
-  padding: .5rem 1.5rem 0;
+  //border-top: 2px solid $tabs-border;
+  background: $wf-header;
+  padding: 0 1.5rem 0;
 
   .tabs {
     flex: 1 1 auto; // consume all the space

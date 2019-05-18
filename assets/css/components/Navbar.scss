@@ -2,12 +2,13 @@
 
 .navbar {
   flex: 0 0 auto; // fixed height
-  background-color: $brand-workspace;
+  background-color: $navbar-background;
   color: #FFFFFF;
   padding: 1.1rem 4rem 1.1rem 4rem;
-  height:6rem;
+  height: 5.5rem;
   position: relative;
   z-index: 1;
+  border-bottom: 2px solid $Vlight-gray;
 
   .navbar-elements {
     width: 100%;
@@ -107,26 +108,30 @@
     a {
       display: block;
       position: relative; // for '::after' positioning
-      color: white;
+      color: $brand-text--dark;
       text-decoration: none;
       margin: 0 2rem;
       padding-top: .9rem;
       height: 4.5rem;
+      &:hover {
+        color: $brand-text--dark;
+      }
 
       &::after {
         content: '';
         position: absolute;
-        bottom: 1px;
+        bottom: 3px;
         left: 2px;
         right: 2px;
         height: 4px;
-        background-color: white;
+        background-color: $brand-workspace;
       }
 
       &.inactive {
         opacity: .7;
         &::after {
           opacity: 0;
+          background-color: $brand-learn;
         }
 
         &:hover {
@@ -142,7 +147,9 @@
   //// navbar in WF
 
   .workflow-container & {
-    padding: .8rem 2.5rem 1rem 1.2rem;
+    padding: .5rem 2.5rem .5rem 1.2rem;
+    background-color: $wf-header;
+    border-bottom: 0;
 
     .logo-navbar {
       margin-right: 1.5rem;
@@ -195,7 +202,7 @@
   ////navbar in lesson
 
   .workflow-root.in-lesson & {
-    background-color: $brand-learn;
+    
 
     button[name=duplicate] {
       display: none;

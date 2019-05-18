@@ -279,12 +279,7 @@ article.lesson {
         width: 9rem;
 
         &.lesson-highlight {
-          background-color: $brand-learn;
-          border: $brand-learn;
-          &:hover {
-            background-color: $light-accent--strong;
-            border: 1px solid $brand-learn;
-          }
+          @include button-pink-fill
         }
 
         &:disabled {
@@ -377,7 +372,7 @@ article.lesson {
     a.start {
       margin-top: 3rem;
       @extend %action-button;
-      @extend %button-pink-fill;
+      @include button-pink-fill;
     }
 
     section.lesson-footer.current {

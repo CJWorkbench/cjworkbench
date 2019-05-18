@@ -28,7 +28,7 @@ export default class Navbar extends React.Component {
         <nav className='navbar'>
           <div className='logo'>
             <img src={`${window.STATIC_URL}images/logo.svg`} className='logo'/>
-            <img src={`${window.STATIC_URL}images/logo-text.svg`} className='logo-text'/>
+            <img src={`${window.STATIC_URL}images/logo-text-dark.svg`} className='logo-text'/>
           </div>
           <div className='links'>
             <a {...propsForLink(activeSection, 'workflows')}>WORKFLOWS</a>

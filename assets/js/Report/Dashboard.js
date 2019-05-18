@@ -7,7 +7,7 @@ function EmptyReport () {
   return (
     <article className='report'>
       <p className='empty-report'>
-        There are no charts in this Workflow. Add charts to tabs, and they'll appear here.
+        Add charts to tabs, and they'll appear here.
       </p>
     </article>
   )

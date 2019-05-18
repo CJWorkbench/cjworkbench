@@ -166,15 +166,16 @@
     margin-left: .8rem;
     border: 0;
     border-radius: 50%;
-    width: 2.4rem;
-    height: 2.4rem;
+    width: 1.8rem;
+    height: 1.8rem;
     background: $pane-select-new-tab-button-bg;
-    color: $pane-select-new-tab-button-fg;
+    color: $wf-header;
     padding: 0;
     cursor: pointer;
+    opacity: .8;
 
     &:hover {
-      background-color: $pane-select-tab-bg;
+      opacity: 1;
     }
   }
 }

@@ -7,13 +7,18 @@
   }
 
   nav.navbar {
-    background-color: $brand-learn;
+    background-color: $navbar-background;
     margin-bottom: 5rem;
 
 
     a {
-      color: white;
       decoration: none;
+      &::after {
+        background-color: $brand-learn;
+      }
+      &.inactive::after {
+        background-color: $brand-workspace;
+      }
     }
     .dropdown-item {
       color: $brand-text--dark;
