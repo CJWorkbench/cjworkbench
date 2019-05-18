@@ -49,14 +49,14 @@ class TestReport(LoggedInIntegrationTest):
         b = self.browser
         b.click_button('Report')  # switch to report
 
-        b.assert_element('.empty-report', text='There are no charts', wait=True)
+        b.assert_element('.empty-report', text='Add charts to tabs', wait=True)
         b.assert_no_element('.share-card .url .copy')
 
         # ... but the link must work, even though we don't expose it: the link
         # might have been shared before all the charts were removed.
         b.visit(b.get_url() + 'report')  # /workflows/:id/report
         b.assert_element('h1', text='Example Workflow', wait=True)
-        b.assert_element('p', text='There are no charts')
+        b.assert_element('p', text='Add charts to tabs')
         b.assert_no_element('iframe')
 
     def test_report_share_with_collaborators(self):

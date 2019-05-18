@@ -24,7 +24,7 @@
 .title-2 { @include title-2; }
 
 @mixin title-3 { // used in lists - of modules (stack), wf list
-	@include font-nunito-regular;
+	@include font-nunito-bold;
 	font-size: 1.3rem;
 	line-height: 1.3rem;
 }
