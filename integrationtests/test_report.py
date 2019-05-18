@@ -56,7 +56,7 @@ class TestReport(LoggedInIntegrationTest):
         # might have been shared before all the charts were removed.
         b.visit(b.get_url() + 'report')  # /workflows/:id/report
         b.assert_element('h1', text='Example Workflow', wait=True)
-        b.assert_element('p', text='There are no charts in this Workflow.')
+        b.assert_element('p', text='Add charts to tabs')
         b.assert_no_element('iframe')
 
     def test_report_share_with_collaborators(self):
