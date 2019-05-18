@@ -95,7 +95,7 @@ exports[`Workflow list page renders correctly 1`] = `
             />
             <img
               className="logo-text"
-              src="undefinedimages/logo-text.svg"
+              src="undefinedimages/logo-text-dark.svg"
             />
           </div>
           <div
