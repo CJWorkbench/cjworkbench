@@ -49,7 +49,7 @@ class TestReport(LoggedInIntegrationTest):
         b = self.browser
         b.click_button('Report')  # switch to report
 
-        b.assert_element('.empty-report', text='There are no charts in this Workflow.', wait=True)
+        b.assert_element('.empty-report', text='Add charts to tabs', wait=True)
         b.assert_no_element('.share-card .url .copy')
 
         # ... but the link must work, even though we don't expose it: the link
