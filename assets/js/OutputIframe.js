@@ -116,7 +116,7 @@ export class OutputIframe extends React.PureComponent {
         </ModalBody>
         <ModalFooter>
           <div onClick={this.closeModal} className='button-gray action-button mr-4'>Cancel</div>
-          <div onClick={this.props.setWorkflowPublic} className='button-blue action-button test-public-button'>Set Public</div>
+          <div onClick={this.props.setWorkflowPublic} className='button-blue action-button test-public-button'>Set public</div>
         </ModalFooter>
       </Modal>
     )
