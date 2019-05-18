@@ -137,7 +137,6 @@ button:focus { outline:0 !important; }
 
 @mixin action-button {
   font-weight: bold!important;
-  text-transform: uppercase;
   cursor: pointer;
   border: 1px solid $brand-workspace;
   min-width: 7rem;
