@@ -186,7 +186,7 @@
 
     .sort-menu {
       @include content-1;
-      margin-right: 1.6rem;
+      margin-right: 2rem;
 
       .dropdown {
         position: relative;
@@ -195,10 +195,12 @@
 
         &>button {
           @include context-button;
-          padding: 0 1rem;
           height: 3rem;
           width: auto;
-
+          border: 1px solid $brand-workspace;
+          opacity: 1;
+          padding: 0 1rem;
+          color: $brand-workspace;
           &:hover {
             background-color: $dark-accent--soft;
           }

@@ -26,7 +26,7 @@
 @mixin title-3 { // used in lists - of modules (stack), wf list
 	@include font-nunito-regular;
 	font-size: 1.3rem;
-	line-height: 1.4rem;
+	line-height: 1.3rem;
 }
 .title-3 { @include title-3; }
 
@@ -65,7 +65,7 @@
 .content-3 { @include content-3; }
 
 @mixin table-content { // Only for content in the table -- do not use anywhere else
-	font-size: 1.4rem;
+	font-size: 1.3rem;
 	line-height: 2rem;
 	font-weight: normal;
 }
@@ -87,8 +87,8 @@
 
 @mixin info-2 {
   @include font-nunito-extra-light;
-	font-size: 1.4rem;
-	line-height: 1.4rem;
+	font-size: 1.3rem;
+	line-height: 1.3rem;
 	letter-spacing: .3px;
 }
 %info-2 {
@@ -96,7 +96,7 @@
 }
 
 @mixin info-3 { // use in blocks of texts such as prompts or info popups
-	font-size: 1.4rem;
+	font-size: 1.3rem;
 	line-height: 2rem;
   @include font-nunito-extra-light;
 }

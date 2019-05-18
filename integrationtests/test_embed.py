@@ -27,7 +27,7 @@ class TestEmbed(LoggedInIntegrationTest):
         # Open embed dialog, set public and get code
         b.click_button('embed')
         b.assert_element('div', text='This workflow is currently private', wait=True)
-        b.click_whatever('.action-button', text='Set Public', wait=True)
+        b.click_whatever('.action-button', text='SET PUBLIC', wait=True)
         embed_text = b.text('.modal-body code', wait=True)
 
         url = re.search('<iframe src="(http://.*/embed/\d+)" .*>', embed_text).group(1)
