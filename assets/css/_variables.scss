@@ -53,7 +53,7 @@ $brand-text--dark: #555555;
 $brand-text--medium: #7D7D7D;
 $labels: #A0A0A0;
 $link-hover-success: #2D9DAA;
-$brand-text--learn: #FFB5D8; // for lesson panel
+$brand-text--learn: $brand-learn; // for lesson panel
 
 $text-muted: $medium-gray;
 
