@@ -23,7 +23,7 @@ button.public-private, button.share-button {
   background: transparent;
   cursor: pointer;
   text-decoration: none;
-  color: $brand-workspace;
+  color: $workspace-action;
 
   nav .metadata-container & {
     color: white;

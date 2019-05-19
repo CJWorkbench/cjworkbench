@@ -2,7 +2,7 @@
 // Main colors  (*・‿・)ノ⌒*:･ﾟ✧
 
 $brand-workspace: #009FC7;
-$workspace-action: #48C8D7;
+$workspace-action: #37C8D9;
 $brand-learn: #FF8BC2;
 $brand-orange: #FBAA6D;
 $brand-red: #E24F4A;
@@ -75,7 +75,7 @@ $light-accent--strong: rgba(255,255,255,.2); // DO NOT USE: rgba is bad
 $light-accent--Vstrong: rgba(255,255,255,0.5); // DO NOT USE: rgba is bad
 $light-accent--Extrastrong: rgba(255,255,255,0.9); // DO NOT USE: rgba is bad
 
-$brand-workspace--Vlight: lighten($workspace-action,30%);
+$brand-workspace--Vlight: lighten($workspace-action,40%);
 $brand-workspace--light: lighten($workspace-action,39%);
 $brand-workspace--medium: lighten($workspace-action,15%);
 

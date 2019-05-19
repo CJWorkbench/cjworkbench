@@ -196,7 +196,7 @@
         &>button {
           @include context-button;
           @include button-blue;
-          color: $brand-workspace;
+          color: $workspace-action;
           height: 3rem;
           font-weight: bold;
           width: auto;
@@ -204,7 +204,7 @@
           opacity: 1;
           padding: 0 1rem;
           &:hover {
-            border: 1px solid $brand-workspace;
+            border: 1px solid $workspace-action;
           }
 
           &:after {

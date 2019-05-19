@@ -299,7 +299,7 @@ button:focus { outline:0 !important; }
 
 @mixin button-blue {
   color: $workspace-action;
-  border-color: $workspace-action ;
+  border-color: $workspace-action;
   background-color: transparent;
   &:hover, &:hover .spinner::after {
     background-color: $brand-workspace--Vlight;
