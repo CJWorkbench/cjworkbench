@@ -31,7 +31,7 @@ $table-border: #D7E4E7;
 $dark-orange:#F88630;
 
 $heading-bg: #466577;
-$header-hover: #8AABC0;
+$header-hover: darken($heading-bg,8%);
 $input-alt-bg: #96afc3;
 $input-alt: white;
 $input-alt-placeholder: $SuperLightGray;
@@ -52,7 +52,7 @@ $data-action--border: lighten($brand-orange,7%);
 $brand-text--darker: #2B2A2A;
 $brand-text--dark: #555555;
 $brand-text--medium: #7D7D7D;
-$labels: #A0A0A0;
+$labels: $medium-gray;
 $link-hover-success: #2D9DAA;
 $brand-text--learn: $brand-learn; // for lesson panel
 

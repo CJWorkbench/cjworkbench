@@ -89,8 +89,8 @@
       cursor: pointer;
       border: 0;
       opacity: 0;
-      background: $brand-background--action;
-      color: darken($brand-workspace, 5%);
+      background: lighten($brand-orange,9%);
+      color: white;
       font-size: 1rem;
       border-radius: 1rem;
       transition-property: opacity;

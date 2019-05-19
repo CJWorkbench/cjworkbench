@@ -92,7 +92,7 @@
 
       .nav-item {
         position: relative;
-        color: darken($medium-gray,13%);
+        color: darken($medium-gray,7%);
         float: left;
         border-radius: 1rem 1rem 0 0;
         background-color: darken($page-background,3%);
@@ -110,7 +110,7 @@
         &.active {
           background-color: $white;
           z-index: 3;
-          color: $brand-text--dark;
+          color: lighten($brand-text--dark,13%);
         }
 
         // Need pseudo to create round corner, for both nav-item and nav-link in order to get 4 of them per tab.
@@ -258,7 +258,7 @@
 
       // WF list
       .workflow {
-        height: 7rem;
+        height: 6.5rem;
         margin-bottom: 1px;
         border: 0;
         border-radius: 0;
@@ -299,7 +299,8 @@
 
         .workflow-title {
           @include content-1;
-          margin-bottom: .5rem;
+          font-weight: bold;
+          margin-bottom: .2rem;
           color: $brand-text--dark;
         }
 

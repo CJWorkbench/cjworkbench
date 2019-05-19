@@ -306,7 +306,7 @@ button:focus { outline:0 !important; }
     color: $brand-workspace;
   }
   &:active, &:active .spinner::after {
-    background-color: $brand-workspace;
+    background-color: $workspace-action;
     color: white;
   }
 }
