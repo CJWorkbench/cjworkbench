@@ -2,7 +2,7 @@
 // Main colors  (*・‿・)ノ⌒*:･ﾟ✧
 
 $brand-workspace: #009FC7;
-$workspace-action: #1DCBE0;
+$workspace-action: #1CC8DC;
 $brand-learn: #FF8BC2;
 $brand-orange: #FBAA6D;
 $brand-red: #E24F4A;
@@ -123,7 +123,7 @@ $overlay-shadow:-0.5rem 0.5rem 2.5rem 0 rgba(0,0,0,0.15);
 $module-width: 28rem;
 $module-margin-right: 2rem;
 $module-margin-left: 4rem;
-$module-color-ok: $workspace-action;
+$module-color-ok: #1CC8DC;
 $module-color-unreachable: lighten($light-gray, 5%);
 $module-color-busy: $brand-orange;
 $module-color-error: $error-prompt;
