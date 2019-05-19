@@ -34,7 +34,7 @@
 
 @mixin content-1 {
 	@include font-nunito-regular;
-	font-size: 1.3rem;
+	font-size: 1.4rem;
 	line-height: 2rem;
 	font-weight: normal;
 }
@@ -65,7 +65,7 @@
 .content-3 { @include content-3; }
 
 @mixin table-content { // Only for content in the table -- do not use anywhere else
-	font-size: 1.3rem;
+	font-size: 1.4rem;
 	line-height: 2rem;
 	font-weight: normal;
 }

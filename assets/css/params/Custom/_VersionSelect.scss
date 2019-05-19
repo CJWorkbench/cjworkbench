@@ -123,10 +123,6 @@
     cursor: default;
     @extend .action-button;
     @extend .button-blue--fill;
-    &:hover {
-      background-color: $brand-workspace;
-      color: $white;
-    }
   }
   .big-radio-unchecked>label .radio {
     cursor: pointer;

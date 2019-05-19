@@ -104,13 +104,14 @@
       border: 2px solid transparent;
 
       &:focus {
-        border-color: $brand-workspace;
+        border-color: $workspace-action;
       }
 
       //search placeholder when empty
       &::placeholder {
         // TODO white+opacity is not white. Do not use opacity: figure out the correct color and write it opaquely.
         color: $placeholder;
+        font-weight: bold;
         opacity: .9;
       }
     }
@@ -123,8 +124,9 @@
       left: 2.4rem;
       font-size: 1.4rem;
       font-family: 'Workbench';
-      color: $brand-workspace;
+      color: $workspace-action;
       content: '\e91a'; // .icon-search
+      opacity: 1;
     }
 
     button.close {

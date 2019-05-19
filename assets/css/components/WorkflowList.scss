@@ -196,6 +196,7 @@
         &>button {
           @include context-button;
           @include button-blue;
+          color: $brand-workspace;
           height: 3rem;
           font-weight: bold;
           width: auto;
@@ -278,6 +279,10 @@
 
         .metadata-container {
           color: $dark-gray;
+          button {
+            font-weight: bold;
+
+          }
         }
 
         &:hover {

@@ -101,6 +101,7 @@
 
     @extend .action-button;
     @extend .button-blue;
+    color: $brand-workspace; 
     display: flex;
     align-items: center;
     margin-right: 2.25rem;
