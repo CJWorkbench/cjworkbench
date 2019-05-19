@@ -2,7 +2,7 @@
 // Main colors  (*・‿・)ノ⌒*:･ﾟ✧
 
 $brand-workspace: #009FC7;
-$workspace-action: #00BFF0;
+$workspace-action: $brand-workspace;
 $brand-learn: #FF8BC2;
 $brand-orange: #FBAA6D;
 $brand-red: #E24F4A;
@@ -94,7 +94,7 @@ $brand-learn--medium: lighten($brand-learn, 5%);
 
 $document-blue--light: lighten($document-blue, 13%);
 
-$pane-select-tab-bg: #018BAD;
+$pane-select-tab-bg: #008EB1;
 $lesson-pane-select-tab-bg: #E54791;
 $pane-select-tab-fg: white;
 $pane-select-selected-tab-bg: $WF-background;

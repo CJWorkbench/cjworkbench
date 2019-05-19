@@ -12,9 +12,18 @@
     }
   }
 
+  .navbar .dropdown button.context-button {
+    color: white;
+    &:hover {
+      background-color: $light-accent--medium;
+    }
+  }
+
   .workflows-page {
     background-color: $Vlight-gray;
     padding-bottom: 20em;
+
+
   }
 
   /* Contains Navbar, Modulestack, and Outputpane */
