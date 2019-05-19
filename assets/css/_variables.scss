@@ -2,7 +2,7 @@
 // Main colors  (*・‿・)ノ⌒*:･ﾟ✧
 
 $brand-workspace: #009FC7;
-$workspace-action: #1CC8DC;
+$workspace-action: #1FBBCE;
 $brand-learn: #FF8BC2;
 $brand-orange: #FBAA6D;
 $brand-red: #E24F4A;
@@ -14,6 +14,7 @@ $modal-color: $workspace-action;
 $document-blue: #466577;
 $hover-background: #F5F5F5;
 
+
 // Secondary Colors (づ ￣ ³￣)づ
 
 $SuperLightGray: #f9f9f9;
@@ -23,11 +24,8 @@ $dark-gray: #8b8b8b;
 $Vlight-gray: lighten($dark-gray,39%);
 
 $font-family-sans-serif: 'Nunito Sans', sans-serif; // override Bootstrap
-
 $modal-footer: #F5F7F8;
 $table-border: #D7E4E7;
-
-
 $dark-orange:#F88630;
 
 $heading-bg: #466577;
@@ -40,14 +38,6 @@ $error-prompt: lighten($brand-red,18%);
 $error-prompt--light: lighten($brand-red,35%);
 $error-prompt--Vlight: lighten($brand-red,37%);
 
-//Navbars and headers
-$navbar-background: white;
-$wf-header: $brand-workspace;
-$lesson-header: $brand-learn;
-
-// menus
-$data-action--border: lighten($brand-orange,7%);
-
 // Text colors ＼(＾O＾)／
 $brand-text--darker: #2B2A2A;
 $brand-text--dark: #555555;
@@ -55,8 +45,22 @@ $brand-text--medium: #7D7D7D;
 $labels: $medium-gray;
 $link-hover-success: #2D9DAA;
 $brand-text--learn: $brand-learn; // for lesson panel
-
 $text-muted: $medium-gray;
+
+//Navbars and headers
+$navbar-background: white;
+$wf-header: $brand-workspace;
+$lesson-header: $brand-learn;
+$pane-select-tab-bg: #008EB1;
+$pane-select-tab-fg: white;
+$pane-select-selected-tab-bg: $WF-background;
+$pane-select-selected-tab-fg: $brand-text--dark;
+$pane-select-new-tab-button-bg: white;
+$pane-select-new-tab-button-fg: #108FAF;
+
+// menus
+$data-action--border: lighten($brand-orange,7%);
+
 
 // Accent: transparent light or dark color use on top of backgrounds
 // [adamhooper, 2019-01-09] DO NOT USE: transparent borders lead to one of two
@@ -94,13 +98,6 @@ $brand-learn--medium: lighten($brand-learn, 5%);
 
 $document-blue--light: lighten($document-blue, 13%);
 
-$pane-select-tab-bg: #008EB1;
-$lesson-pane-select-tab-bg: #E54791;
-$pane-select-tab-fg: white;
-$pane-select-selected-tab-bg: $WF-background;
-$pane-select-selected-tab-fg: $brand-text--dark;
-$pane-select-new-tab-button-bg: white;
-$pane-select-new-tab-button-fg: #108FAF;
 
 // Overlays
 
