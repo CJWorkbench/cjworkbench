@@ -102,12 +102,12 @@ button:focus { outline:0 !important; }
   .context-button {
     width: 3rem;
     height: 3rem;
-    color:$white;
+    color:$brand-text--dark;
     opacity:.8;
     &:hover {
-      background-color: $light-accent--medium;
+      background-color: $dark-accent--soft;
       opacity: 1;
-      color:$white;
+      color:$brand-text--darker;
     }
   }
 
