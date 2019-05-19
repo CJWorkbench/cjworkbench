@@ -358,6 +358,7 @@ button:focus { outline:0 !important; }
   &:hover {
     background-color: $brand-learn--light;
     border: 1px solid $brand-learn;
+    color: $brand-learn;
   }
   &:active {
     background-color: $brand-learn;
