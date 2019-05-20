@@ -24,8 +24,12 @@ export class Group {
 
 /**
  * Return `Group`s: outputs, and their input
+ *
+ * @param valueCounts Object Mapping from value to count.
+ * @param renames Object Mapping from input name to renamed name.
+ * @param sort Object { by ('value'|'count'), isAscending } spec
  */
-export function buildGroupsForValueCounts (valueCounts, renames) {
+export function buildGroupsForValueCounts (valueCounts, renames, sort) {
   if (!valueCounts) return []
 
   const groups = []
@@ -45,8 +49,15 @@ export function buildGroupsForValueCounts (valueCounts, renames) {
     }
   }
 
-  // Sort groups alphabetically
-  groups.sort((a, b) => ValueCollator.compare(a.name, b.name))
+  // Sort groups
+  if (sort.by === 'value') {
+    groups.sort((a, b) => ValueCollator.compare(a.name, b.name))
+  } else {
+    groups.sort((a, b) => a.count - b.count || ValueCollator.compare(a.name, b.name))
+  }
+  if (!sort.isAscending) {
+    groups.reverse()
+  }
 
   return groups
 }

@@ -7,6 +7,7 @@ import RefineModal from './RefineModal'
 import { withFetchedData } from '../FetchedData'
 import AllNoneButtons from '../../common/AllNoneButtons'
 import FacetSearch from '../../common/FacetSearch'
+import ValueSortSelect from '../../common/ValueSortSelect'
 
 const NumberFormatter = new Intl.NumberFormat()
 
@@ -342,10 +343,6 @@ class GroupList extends React.PureComponent {
     outerRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }) // ref so caller can detect size
   }
 
-  state = {
-    sort: { key: 'name', ascending: true } // options: 'name' or 'count'.
-  }
-
   listRef = React.createRef()
 
   groupHeight (group) {
@@ -369,20 +366,11 @@ class GroupList extends React.PureComponent {
    * Return data that requires re-render on change.
    */
   get _itemData () {
-    return this._buildItemData(this.props.valueCounts, this.props.groups, this.state.sort)
+    return this._buildItemData(this.props.valueCounts, this.props.groups)
   }
 
-  _buildItemData = memoize((valueCounts, groups, sort) => {
-    let sortedGroups = groups // default case: no need to sort
-    if (sort.key !== 'name' || !sort.ascending) {
-      if (sort.key === 'count') {
-        sortedGroups.sort((a, b) => b.count - a.count || util.ValueCollator.compare(a.name, b.name))
-      }
-      if (!sort.ascending) {
-        sortedGroups.reverse()
-      }
-    }
-    return { valueCounts, groups: sortedGroups }
+  _buildItemData = memoize((valueCounts, groups) => {
+    return { valueCounts, groups }
   })
 
   _renderRow = ({ index, style, data }) => {
@@ -635,7 +623,8 @@ export class Refine extends React.PureComponent {
     searchInput: '',
     selectedGroupNames: new Set(),
     expandedGroupNames: new Set(),
-    focusGroupName: null
+    focusGroupName: null,
+    sort: { by: 'value', isAscending: true } // options: 'value' or 'count'.
   }
 
   /**
@@ -648,12 +637,13 @@ export class Refine extends React.PureComponent {
    */
   get groups () {
     const { valueCounts, value: { renames } } = this.props
-    return this._buildGroups(valueCounts, renames)
+    const { sort } = this.state
+    return this._buildGroups(valueCounts, renames, sort)
   }
 
-  _buildGroups = memoize((valueCounts, renames) => {
+  _buildGroups = memoize((valueCounts, renames, sort) => {
     if (!valueCounts) return []
-    return new util.buildGroupsForValueCounts(valueCounts, renames)
+    return new util.buildGroupsForValueCounts(valueCounts, renames, sort)
   })
 
   onChangeSearch = (searchInput) => {
@@ -751,6 +741,10 @@ export class Refine extends React.PureComponent {
     this.setState({ selectedGroupNames: new Set(), focusGroupName: toGroup.name })
   }
 
+  setSort = (sort) => {
+    this.setState({ sort })
+  }
+
   setGroupName = (groupName, newGroupName) => {
     buildSpecModifier(this, 'rename')(groupName, newGroupName)
     // The user just renamed a group or value. Scroll+focus the new group.
@@ -774,7 +768,7 @@ export class Refine extends React.PureComponent {
 
   render () {
     const { valueCounts, loading } = this.props
-    const { searchInput, selectedGroupNames, expandedGroupNames, focusGroupName } = this.state
+    const { searchInput, selectedGroupNames, expandedGroupNames, focusGroupName, sort } = this.state
     const isSearching = (searchInput !== '')
     const groups = this.matchingGroups
       .map(g => new GroupForRender(
@@ -792,30 +786,36 @@ export class Refine extends React.PureComponent {
 
     return (
       <div className='refine-parameter'>
-        { !canSearch ? null : (
-          <React.Fragment>
-            <FacetSearch
-              value={searchInput}
-              onChange={this.onChangeSearch}
-              onReset={this.onReset}
-            />
+        {canSearch ? (
+          <FacetSearch
+            value={searchInput}
+            onChange={this.onChangeSearch}
+            onReset={this.onReset}
+          />
+        ) : null}
+        <div className='group-list-and-chrome'>
+          <ValueSortSelect
+            value={sort}
+            onChange={this.setSort}
+          />
+          <div className='group-list-container'>
             <AllNoneButtons
               isReadOnly={false}
               onClickNone={this.deselectMatchingGroups}
               onClickAll={this.selectMatchingGroups}
             />
-          </React.Fragment>
-        )}
-        <DynamicallySizedGroupList
-          valueCounts={valueCounts}
-          loading={loading}
-          groups={groups}
-          changeGroupName={this.setGroupName}
-          setIsGroupSelected={this.setIsGroupSelected}
-          setIsGroupExpanded={this.setIsGroupExpanded}
-          resetGroup={this.resetGroup}
-          resetValue={this.resetValue}
-        />
+            <DynamicallySizedGroupList
+              valueCounts={valueCounts}
+              loading={loading}
+              groups={groups}
+              changeGroupName={this.setGroupName}
+              setIsGroupSelected={this.setIsGroupSelected}
+              setIsGroupExpanded={this.setIsGroupExpanded}
+              resetGroup={this.resetGroup}
+              resetValue={this.resetValue}
+            />
+          </div>
+        </div>
         <div className='refine-actions'>
           {maybeMergeButton}
           <RefineModalPrompt groups={this.groups} massRename={this.massRename} />

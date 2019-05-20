@@ -20,7 +20,7 @@ export default function FacetSearch ({ onChange, onReset, value }) {
   const onChangeCallback = React.useCallback(ev => onChange(ev.target.value))
 
   return (
-    <fieldset className='in-module--search' onReset={onReset}>
+    <fieldset className='facet-search' onReset={onReset}>
       <input
         type='search'
         placeholder='Search facets...'
