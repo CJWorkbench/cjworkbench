@@ -12,7 +12,7 @@ const ValueCollator = new Intl.Collator() // in the user's locale
 
 function formatCount (count) {
   let n, suffix
-  if (count >= 1000000) {
+  if (count >= 999500) {
     n = count / 1000000
     suffix = 'M'
   } else if (count >= 1000) {
