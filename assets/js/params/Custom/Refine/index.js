@@ -9,7 +9,24 @@ import AllNoneButtons from '../../common/AllNoneButtons'
 import FacetSearch from '../../common/FacetSearch'
 import ValueSortSelect from '../../common/ValueSortSelect'
 
-const NumberFormatter = new Intl.NumberFormat()
+const NumberFormatter = new Intl.NumberFormat() // user's locale
+
+function formatCount (count) {
+  let n, suffix
+  if (count >= 1000000) {
+    n = count / 1000000
+    suffix = 'M'
+  } else if (count >= 1000) {
+    n = count / 1000
+    suffix = 'k'
+  } else {
+    n = count
+    suffix = ''
+  }
+  const approx = (n === Math.round(n)) ? '' : '~'
+
+  return `${approx}${n.toFixed(0)}${suffix}`
+}
 
 function isObjectEmpty (obj) {
   for (const v in obj) return false
@@ -307,7 +324,7 @@ class RefineGroup extends React.Component { // uses react-window's shouldCompone
           </div>
           <span className='count-and-reset'>
             {maybeResetButton}
-            <span className='count'>{NumberFormatter.format(group.count)}</span>
+            <span className='count' title={NumberFormatter.format(group.count)}>{formatCount(group.count)}</span>
           </span>
         </div>
         {maybeValues}

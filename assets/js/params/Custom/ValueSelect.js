@@ -10,7 +10,22 @@ import memoize from 'memoize-one'
 const NumberFormatter = new Intl.NumberFormat()
 const ValueCollator = new Intl.Collator() // in the user's locale
 
-// TODO: Change class names to move away from Refine and update CSS
+function formatCount (count) {
+  let n, suffix
+  if (count >= 1000000) {
+    n = count / 1000000
+    suffix = 'M'
+  } else if (count >= 1000) {
+    n = count / 1000
+    suffix = 'k'
+  } else {
+    n = count
+    suffix = ''
+  }
+  const approx = (n === Math.round(n)) ? '' : '~'
+
+  return `${approx}${n.toFixed(0)}${suffix}`
+}
 
 /**
  * Displays a list item of check box, name (of item), and count
@@ -40,7 +55,7 @@ class ValueItem extends React.PureComponent {
           onChange={this.onChangeItem}
         />
         <div className='text'>{item}</div>
-        <div className='count'>{NumberFormatter.format(count)}</div>
+        <div className='count' title={NumberFormatter.format(count)}>{formatCount(count)}</div>
       </label>
     )
   }
