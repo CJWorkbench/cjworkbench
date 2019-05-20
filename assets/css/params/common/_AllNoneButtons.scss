@@ -1,0 +1,30 @@
+.all-none-buttons {
+  line-height: 0;
+
+  button {
+    @include content-2;
+    color: $brand-text--dark;
+    background: transparent;
+    cursor: pointer;
+    border: 0;
+    text-transform: uppercase;
+
+    &:first-child {
+      border-right: 1px solid $dark-accent--strong;
+      padding: 0 .6rem 0 0;
+    }
+
+    &:last-child {
+      padding: 0 0 0 .6rem;
+    }
+
+    &:hover {
+      color: $brand-orange;
+    }
+
+    &:disabled {
+      cursor: default;
+      color: $text-muted;
+    }
+  }
+}

@@ -1,6 +1,6 @@
 /* global describe, it, expect, jest */
 import React from 'react'
-import LoadingRefine, { Refine, RefineSpec } from './index'
+import LoadingRefine, { Refine } from './index'
 import { mount } from 'enzyme'
 import { tick } from '../../../test-utils'
 
@@ -21,59 +21,6 @@ describe('Refine', () => {
     return ret
   }
 
-  describe('RefineSpec', () => {
-    // Most of this is untested because it's copy/pasted from our Python code
-    // (which has unit tests). So the only possible errors are transcription
-    // errors.
-
-    describe('massRename', () => {
-      function testMassRename (fromRenames, renames, toRenames) {
-        const fromSpec = new RefineSpec(fromRenames)
-        const result = fromSpec.massRename(renames)
-        const expected = new RefineSpec(toRenames)
-        expect(result.renames).toEqual(expected.renames)
-      }
-
-      it('should work in the simplest case', () => {
-        testMassRename({}, { foo: 'bar' }, { foo: 'bar' })
-      })
-
-      it('should rename an existing rename', () => {
-        testMassRename({ a: 'b' }, { b: 'c' }, { a: 'c', b: 'c' })
-      })
-
-      it('should rename a group that does not have its fromGroup as a member', () => {
-        testMassRename(
-          // Two groups: 'b' (contains original 'a') and 'c' (contains original 'b' and 'c')
-          { a: 'b', b: 'c' },
-          // Rename group 'b'
-          { b: 'd' },
-          // New groups: 'd' (contains original 'a') and 'c' (contains original 'b' and 'c')
-          { a: 'd', b: 'c' }
-        )
-      })
-
-      it('should rename a group that does have its fromGroup as a member', () => {
-        testMassRename(
-          // Two groups: 'b' (contains original 'a') and 'c' (contains original 'b' and 'c')
-          { a: 'b', b: 'c' },
-          // Rename group 'c'
-          { c: 'd' },
-          // New groups: 'b' (contains original 'a') and 'd' (contains original 'b' and 'c')
-          { a: 'b', b: 'd', c: 'd' }
-        )
-      })
-
-      it('should swap two groups', () => {
-        testMassRename(
-          { a: 'x', b: 'x', c: 'y', d: 'y' },
-          { x: 'y', y: 'x' },
-          { a: 'y', b: 'y', x: 'y', c: 'x', d: 'x', y: 'x' }
-        )
-      })
-    })
-  })
-
   it('should render groups counts in order', () => {
     const w = wrapper({
       valueCounts: { 'b': 2, 'a': 1 },
@@ -89,13 +36,15 @@ describe('Refine', () => {
     expect(dt2.find('.count').text()).toEqual('2')
   })
 
-  it('should render commas in value counts', () => {
+  it('should render counts with SI suffixes', () => {
     const w = wrapper({
-      valueCounts: { 'a': 1234 },
+      valueCounts: { a: 1234, b: 234567890, c: 1000 },
       value: DefaultValue
     })
 
-    expect(w.find('.count').text()).toEqual('1,234')
+    expect(w.find('.count').at(0).text()).toEqual('~1k')
+    expect(w.find('.count').at(1).text()).toEqual('~235M')
+    expect(w.find('.count').at(2).text()).toEqual('1k')
   })
 
   it('should render a rename', () => {

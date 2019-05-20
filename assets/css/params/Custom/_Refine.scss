@@ -1,100 +1,4 @@
 .param-refine {
-  .in-module--search {
-    color: $input-alt;
-    position: relative;
-    margin-bottom: 1.5rem;
-
-    input {
-      height: 3.5rem;
-      padding: .6rem 3.4rem .4rem; // left padding for "search" icon; right padding for "close" button
-      display: block;
-      width: 100%;
-      color: $brand-text--dark;
-      background: $Vlight-gray;
-      border-radius: 2rem;
-      border: 2px solid transparent;
-      &:hover {
-        border-color: $brand-orange--medium;
-      }
-
-      &:focus {
-        border-color: $brand-orange;
-      }
-
-      //search placeholder when empty
-      &::-webkit-input-placeholder { /* Chrome/Opera/Safari */
-        color: $brand-text--dark;
-        opacity: .9;
-      }
-      :-ms-input-placeholder { /* IE 10+ */
-        color: $brand-text--dark;
-        opacity: .9;
-      }
-      :-moz-placeholder { /* Firefox 18- */
-        color: $brand-text--dark;
-        opacity: .9;
-      }
-    }
-
-    &::before {
-      // "search" icon
-      display: inline-block;
-      position: absolute;
-      top: .8rem;
-      left: 1.3rem;
-      font-size: 1.4rem;
-      font-family: 'Workbench';
-      content: "\e91a"; // .icon-search
-      color: $brand-text--dark;
-    }
-
-    button.close {
-      border: 0;
-      position: absolute;
-      right: 1.3rem;
-      top: 1rem;
-      font-size: 1.4rem;
-      margin: 0;
-      padding: 0;
-      text-shadow: none;
-      color: $brand-text--medium;
-      &:hover {
-        color: $brand-orange;
-        opacity: 1;
-      }
-    }
-  }
-
-  .all-none-buttons {
-    button {
-      font-weight: normal;
-      @include content-2;
-      color: $brand-text--dark;
-      background-color: transparent;
-      cursor: pointer;
-      border: 0;
-      text-transform: uppercase;
-
-      &:not(:last-child) {
-        border-right: 1px solid $dark-accent--strong;
-        padding: 0 .6rem 0 0;
-      }
-
-      &:last-child {
-        padding: 0 0 0 .6rem;
-      }
-
-      &:hover {
-        color:$brand-orange;
-      }
-
-      &:disabled {
-        cursor: default;
-        color: $text-muted;
-      }
-    }
-  }
-
   .refine-actions {
     display: flex;
     align-items: center;
@@ -103,7 +7,7 @@
 
     // Merge button changes color when at least 2 checkboxes have been selected
     button[name=merge] {
-      @extend %action-button;
+      @include action-button;
       @include button-orange--fill;
       &:disabled {
         color: $text-muted;
@@ -114,11 +18,19 @@
 
     //launches the clustering modal
     button[name=cluster] {
-      @extend .action-button;
-      @extend .button-orange;
+      @include action-button;
+      @include button-orange;
       display: flex;
       margin-left: 1rem;
     }
+  }
+
+  .group-list-container {
+    // Copied in ValueSelect.scss:.group-list-selector
+    margin-top: .3rem;
+    border: 1px solid $brand-orange;
+    border-radius: .5rem;
+    padding: .8rem .6rem .3rem;
   }
 
   .refine-groups { // list of "groups" (each group is a set of renames)
@@ -342,7 +254,7 @@
     margin-top: 2rem;
 
     .no-bins {
-      @extend .title-2;
+      @include title-2;
       font-size: 1.5rem;
       margin-bottom: 2rem;
       color:$brand-orange;
@@ -355,7 +267,7 @@
     }
 
     th {
-      @extend .title-2;
+      @include title-2;
       font-size: 1.5rem;
       white-space: nowrap;
       padding-right: 4.2rem;

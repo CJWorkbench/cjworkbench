@@ -33,13 +33,15 @@ describe('ValueSelect', () => {
     expect(value2.find('.count').text()).toEqual('2')
   })
 
-  it('should render commas in value counts', () => {
+  it('should render counts with SI suffixes', () => {
     const w = wrapper({
-      valueCounts: { 'a': 1234 },
+      valueCounts: { a: 1234, b: 234567890, c: 1000 },
       value: []
     })
 
-    expect(w.find('.count').text()).toEqual('1,234')
+    expect(w.find('.count').at(0).text()).toEqual('~1k')
+    expect(w.find('.count').at(1).text()).toEqual('~235M')
+    expect(w.find('.count').at(2).text()).toEqual('1k')
   })
 
   it('should render when valueCounts have not loaded', () => {

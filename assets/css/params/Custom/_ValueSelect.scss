@@ -1,31 +1,10 @@
 .param-valueselect {
-  .all-none-buttons {
-    button {
-      @include content-2;
-      color: $brand-text--dark;
-      background-color: transparent;
-      cursor: pointer;
-      border: 0;
-      text-transform: uppercase;
-
-      &:first-child {
-        border-right: 1px solid $dark-accent--strong;
-        padding: 0 .6rem 0 0;
-      }
-
-      &:last-child {
-        padding: 0 0 0 .6rem;
-      }
-
-      &:hover {
-        color: $brand-orange;
-      }
-
-      &:disabled {
-        cursor: default;
-        color: $text-muted;
-      }
-    }
+  .value-list-container {
+    // Copied from Refine.scss:.group-list-selector
+    margin-top: .3rem;
+    border: 1px solid $brand-orange;
+    border-radius: .5rem;
+    padding: .8rem .6rem .3rem;
   }
 
   .value-list {

@@ -2,11 +2,31 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { VariableSizeList, shouldComponentUpdate } from 'react-window'
 import memoize from 'memoize-one'
+import * as util from './util'
 import RefineModal from './RefineModal'
 import { withFetchedData } from '../FetchedData'
+import AllNoneButtons from '../../common/AllNoneButtons'
+import FacetSearch from '../../common/FacetSearch'
+import ValueSortSelect from '../../common/ValueSortSelect'
 
-const NumberFormatter = new Intl.NumberFormat()
-const ValueCollator = new Intl.Collator() // in the user's locale
+const NumberFormatter = new Intl.NumberFormat() // user's locale
+
+function formatCount (count) {
+  let n, suffix
+  if (count >= 999500) {
+    n = count / 1000000
+    suffix = 'M'
+  } else if (count >= 1000) {
+    n = count / 1000
+    suffix = 'k'
+  } else {
+    n = count
+    suffix = ''
+  }
+  const approx = (n === Math.round(n)) ? '' : '~'
+
+  return `${approx}${n.toFixed(0)}${suffix}`
+}
 
 function isObjectEmpty (obj) {
   for (const v in obj) return false
@@ -21,28 +41,6 @@ function immutableToggleInSet(set, value, isSet) {
     ret.delete(value)
   }
   return ret
-}
-
-/**
- * A collection of values the user can see and manipulate.
- *
- * It has the following properties:
- *
- * * `name`: (string) the value the Refine module will output
- * * `values`: (Array[string]) input values to rename (length >= 1)
- * * `count`: number of records with a value in `values`
- */
-export class Group {
-  constructor (name, values, count) {
-    this.name = name
-    this.values = values
-    this.count = count
-  }
-
-  get isEdited () {
-    if (!this.values) return undefined // React dev tools
-    return this.values.length > 1 || this.values[0] !== this.name
-  }
 }
 
 /**
@@ -82,110 +80,12 @@ export class GroupForRender {
   }
 }
 
-export class RefineSpec {
-  constructor (renames) {
-    this.renames = renames
-  }
-
-  toJsonObject () {
-    return {
-      renames: this.renames
-    }
-  }
-
-  /**
-   * Return `Group`s: outputs, and their input
-   */
-  buildGroupsForValueCounts (valueCounts) {
-    if (!valueCounts) return []
-
-    const { renames } = this
-
-    const groups = []
-    const groupsByName = {}
-    for (const value in valueCounts) {
-      const count = valueCounts[value]
-      const groupName = value in renames ? renames[value] : value
-
-      if (groupName in groupsByName) {
-        const group = groupsByName[groupName]
-        group.values.push(value)
-        group.count += count
-      } else {
-        const group = new Group(groupName, [ value ], count)
-        groups.push(group)
-        groupsByName[groupName] = group
-      }
-    }
-
-    // Sort groups alphabetically
-    groups.sort((a, b) => ValueCollator.compare(a.name, b.name))
-
-    return groups
-  }
-
-  rename (fromGroup, toGroup) {
-    return this.massRename({ [fromGroup]: toGroup })
-  }
-
-  massRename (groupMap) {
-    const { renames } = this
-    const newRenames = Object.assign({}, renames)
-
-    // Rewrite every value=>fromGroup to be value=>toGroup
-    for (const oldValue in renames) {
-      const oldGroup = renames[oldValue]
-      if (oldGroup in groupMap) {
-        const toGroup = groupMap[oldGroup]
-        newRenames[oldValue] = toGroup
-      }
-    }
-
-    // Now do the simple rewrite of fromGroup=>toGroup
-    for (const fromGroup in groupMap) {
-      if (!(fromGroup in newRenames)) {
-        const toGroup = groupMap[fromGroup]
-        newRenames[fromGroup] = toGroup
-      }
-    }
-
-    // And delete duplicates
-    for (const fromGroup in groupMap) {
-      if (newRenames[fromGroup] === fromGroup) {
-        delete newRenames[fromGroup]
-      }
-    }
-
-    return new RefineSpec(newRenames)
-  }
-
-  resetGroup (group) {
-    const { renames } = this
-
-    const newRenames = { ...renames }
-
-    for (const key in renames) {
-      if (renames[key] === group) {
-        delete newRenames[key]
-      }
-    }
-
-    return new RefineSpec(newRenames)
-  }
-
-  resetValue (value) {
-    const newRenames = { ...this.renames }
-    delete newRenames[value]
-    return new RefineSpec(newRenames)
-  }
-}
-
 /**
  * Displays a <button> prompt that opens a Modal.
  */
 class RefineModalPrompt extends React.PureComponent {
   static propTypes = {
-    groups: PropTypes.arrayOf(PropTypes.instanceOf(Group).isRequired).isRequired,
+    groups: PropTypes.arrayOf(PropTypes.instanceOf(util.Group).isRequired).isRequired,
     massRename: PropTypes.func.isRequired, // func({ oldGroup: newGroup, ... }) => undefined
   }
 
@@ -377,7 +277,7 @@ class RefineGroup extends React.Component { // uses react-window's shouldCompone
 
     const maybeValues = group.isExpanded ? (
       <ul className='values'>
-        {group.values.sort(ValueCollator.compare).map(value => (
+        {group.values.sort(util.ValueCollator.compare).map(value => (
           <li key={value}>
             <span className='value'>{value}</span>
             <span className='count-and-remove'>
@@ -424,7 +324,7 @@ class RefineGroup extends React.Component { // uses react-window's shouldCompone
           </div>
           <span className='count-and-reset'>
             {maybeResetButton}
-            <span className='count'>{NumberFormatter.format(group.count)}</span>
+            <span className='count' title={NumberFormatter.format(group.count)}>{formatCount(group.count)}</span>
           </span>
         </div>
         {maybeValues}
@@ -434,48 +334,12 @@ class RefineGroup extends React.Component { // uses react-window's shouldCompone
 }
 
 const buildSpecModifier = (_this, helperName, shouldSubmit=false) => {
-  const func = RefineSpec.prototype[helperName]
+  const func = util[helperName]
 
   return (...args) => {
-    const oldSpec = new RefineSpec(_this.props.value.renames)
-    const newSpec = func.apply(oldSpec, args)
-    _this.props.onChange(newSpec.toJsonObject())
+    const renames = func(_this.props.value.renames, ...args)
+    _this.props.onChange({ renames })
     if (shouldSubmit) _this.props.onSubmit()
-  }
-}
-
-export class AllNoneButtons extends React.PureComponent {
-  static propTypes = {
-    isReadOnly: PropTypes.bool.isRequired,
-    deselectMatchingGroups: PropTypes.func.isRequired, // func() => undefined
-    selectMatchingGroups: PropTypes.func.isRequired // func() => undefined
-  }
-
-  render() {
-    const { isReadOnly, deselectMatchingGroups, selectMatchingGroups } = this.props
-
-    return (
-      <div className='all-none-buttons'>
-        <button
-          disabled={isReadOnly}
-          type='button'
-          name='refine-select-all'
-          title='Select All'
-          onClick={selectMatchingGroups}
-        >
-          All
-        </button>
-        <button
-          disabled={isReadOnly}
-          type='button'
-          name='refine-select-none'
-          title='Select None'
-          onClick={deselectMatchingGroups}
-        >
-          None
-        </button>
-      </div>
-    )
   }
 }
 
@@ -492,7 +356,8 @@ class GroupList extends React.PureComponent {
     groupHeight: PropTypes.number.isRequired, // height of a closed group
     valueHeight: PropTypes.number.isRequired, // height of a single value within an open group
     expandedGroupHeight: PropTypes.number.isRequired, // height of an open group (minus all its values)
-    maxHeight: PropTypes.number.isRequired
+    maxHeight: PropTypes.number.isRequired,
+    outerRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }) // ref so caller can detect size
   }
 
   listRef = React.createRef()
@@ -598,18 +463,20 @@ class GroupList extends React.PureComponent {
       }
 
       return (
-        <VariableSizeList
-          ref={this.listRef}
-          className='react-list'
-          height={this.height}
-          estimatedItemSize={groupHeight /* most items aren't expanded */}
-          itemSize={this._itemSize}
-          itemKey={this._itemKey}
-          itemCount={groups.length}
-          itemData={this._itemData}
-        >
-          {this._renderRow}
-        </VariableSizeList>
+        <fieldset className='group-list'>
+          <VariableSizeList
+            ref={this.listRef}
+            className='react-list'
+            height={this.height}
+            estimatedItemSize={groupHeight /* most items aren't expanded */}
+            itemSize={this._itemSize}
+            itemKey={this._itemKey}
+            itemCount={groups.length}
+            itemData={this._itemData}
+          >
+            {this._renderRow}
+          </VariableSizeList>
+        </fieldset>
       )
     }
   }
@@ -715,9 +582,9 @@ class DynamicallySizedGroupList extends React.PureComponent {
           valueCounts={{a: 1, b1: 1, c: 1, c2: 1}}
           loading={false}
           groups={[
-            new GroupForRender(new Group('a', ['a'], 1), false, false, false),
-            new GroupForRender(new Group('b', ['b1'], 1), false, false, true),
-            new GroupForRender(new Group('c', ['c', 'c2'], 1), false, false, true)
+            new GroupForRender(new util.Group('a', ['a'], 1), false, false, false),
+            new GroupForRender(new util.Group('b', ['b1'], 1), false, false, true),
+            new GroupForRender(new util.Group('c', ['c', 'c2'], 1), false, false, true)
           ]}
           changeGroupName={() => {}}
           setIsGroupSelected={() => {}}
@@ -773,7 +640,8 @@ export class Refine extends React.PureComponent {
     searchInput: '',
     selectedGroupNames: new Set(),
     expandedGroupNames: new Set(),
-    focusGroupName: null
+    focusGroupName: null,
+    sort: { by: 'value', isAscending: true } // options: 'value' or 'count'.
   }
 
   /**
@@ -786,30 +654,21 @@ export class Refine extends React.PureComponent {
    */
   get groups () {
     const { valueCounts, value: { renames } } = this.props
-    return this._buildGroups(valueCounts, renames)
+    const { sort } = this.state
+    return this._buildGroups(valueCounts, renames, sort)
   }
 
-  _buildGroups = memoize((valueCounts, renames) => {
+  _buildGroups = memoize((valueCounts, renames, sort) => {
     if (!valueCounts) return []
-    return new RefineSpec(renames).buildGroupsForValueCounts(valueCounts)
+    return new util.buildGroupsForValueCounts(valueCounts, renames, sort)
   })
+
+  onChangeSearch = (searchInput) => {
+    this.setState({ searchInput, focusGroupName: null })
+  }
 
   onReset = () => {
     this.setState({ searchInput: '', focusGroupName: null })
-  }
-
-  onKeyDown = (ev) => {
-    switch (ev.key) {
-      case 'Escape':
-        return this.onReset()
-      case 'Enter':
-        ev.preventDefault() // prevent form submit
-    }
-  }
-
-  onInputChange = (ev) => {
-    const searchInput = ev.target.value
-    this.setState({ searchInput, focusGroupName: null })
   }
 
   setIsGroupExpanded = (groupName, isExpanded) => {
@@ -899,6 +758,10 @@ export class Refine extends React.PureComponent {
     this.setState({ selectedGroupNames: new Set(), focusGroupName: toGroup.name })
   }
 
+  setSort = (sort) => {
+    this.setState({ sort })
+  }
+
   setGroupName = (groupName, newGroupName) => {
     buildSpecModifier(this, 'rename')(groupName, newGroupName)
     // The user just renamed a group or value. Scroll+focus the new group.
@@ -922,7 +785,7 @@ export class Refine extends React.PureComponent {
 
   render () {
     const { valueCounts, loading } = this.props
-    const { searchInput, selectedGroupNames, expandedGroupNames, focusGroupName } = this.state
+    const { searchInput, selectedGroupNames, expandedGroupNames, focusGroupName, sort } = this.state
     const isSearching = (searchInput !== '')
     const groups = this.matchingGroups
       .map(g => new GroupForRender(
@@ -939,49 +802,42 @@ export class Refine extends React.PureComponent {
     ) : null
 
     return (
-      <div className='refine-parameter'>
-        { !canSearch ? null : (
-          <React.Fragment>
-            <fieldset className='in-module--search' onSubmit={this.onSubmit} onReset={this.onReset}>
-              <input
-                type='search'
-                placeholder='Search facets...'
-                autoComplete='off'
-                value={searchInput}
-                onChange={this.onInputChange}
-                onKeyDown={this.onKeyDown}
-              />
-              <button
-                type='button'
-                onClick={this.onReset}
-                className='close'
-                title='Clear Search'
-              >
-                <i className='icon-close'></i>
-              </button>
-            </fieldset>
+      <>
+        {canSearch ? (
+          <FacetSearch
+            value={searchInput}
+            onChange={this.onChangeSearch}
+            onReset={this.onReset}
+          />
+        ) : null}
+        <div className='group-list-and-chrome'>
+          <ValueSortSelect
+            value={sort}
+            onChange={this.setSort}
+          />
+          <div className='group-list-container'>
             <AllNoneButtons
               isReadOnly={false}
-              deselectMatchingGroups={this.deselectMatchingGroups}
-              selectMatchingGroups={this.selectMatchingGroups}
+              onClickNone={this.deselectMatchingGroups}
+              onClickAll={this.selectMatchingGroups}
             />
-          </React.Fragment>
-        )}
-        <DynamicallySizedGroupList
-          valueCounts={valueCounts}
-          loading={loading}
-          groups={groups}
-          changeGroupName={this.setGroupName}
-          setIsGroupSelected={this.setIsGroupSelected}
-          setIsGroupExpanded={this.setIsGroupExpanded}
-          resetGroup={this.resetGroup}
-          resetValue={this.resetValue}
-        />
+            <DynamicallySizedGroupList
+              valueCounts={valueCounts}
+              loading={loading}
+              groups={groups}
+              changeGroupName={this.setGroupName}
+              setIsGroupSelected={this.setIsGroupSelected}
+              setIsGroupExpanded={this.setIsGroupExpanded}
+              resetGroup={this.resetGroup}
+              resetValue={this.resetValue}
+            />
+          </div>
+        </div>
         <div className='refine-actions'>
           {maybeMergeButton}
           <RefineModalPrompt groups={this.groups} massRename={this.massRename} />
         </div>
-      </div>
+      </>
     )
   }
 }

@@ -1,0 +1,29 @@
+.value-sort-select {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.3rem;
+
+  button {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    box-shadow: 0;
+    color: inherit;
+    background: inherit;
+    font: inherit;
+
+    &:hover {
+      color: $brand-orange;
+    }
+
+    i {
+      color: $text-muted;
+      &:first-child {
+        margin-right: .5rem;
+      }
+      &:last-child {
+        margin-left: .5rem;
+      }
+    }
+  }
+}
