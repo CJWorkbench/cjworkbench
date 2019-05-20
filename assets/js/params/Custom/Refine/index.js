@@ -338,7 +338,8 @@ class GroupList extends React.PureComponent {
     groupHeight: PropTypes.number.isRequired, // height of a closed group
     valueHeight: PropTypes.number.isRequired, // height of a single value within an open group
     expandedGroupHeight: PropTypes.number.isRequired, // height of an open group (minus all its values)
-    maxHeight: PropTypes.number.isRequired
+    maxHeight: PropTypes.number.isRequired,
+    outerRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }) // ref so caller can detect size
   }
 
   state = {
