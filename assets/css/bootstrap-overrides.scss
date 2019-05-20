@@ -34,3 +34,10 @@ select.form-control {
     padding: 0;
   }
 }
+
+.btn {
+  // override Bootstrap: it transitions colors, and that makes for an ugly
+  // flicker in the Tab bar when changing background color. More generally,
+  // we prefer instantaneous to 0.15s.
+  transition: none;
+}
