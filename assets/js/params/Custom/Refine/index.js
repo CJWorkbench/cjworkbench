@@ -4,6 +4,8 @@ import { VariableSizeList, shouldComponentUpdate } from 'react-window'
 import memoize from 'memoize-one'
 import RefineModal from './RefineModal'
 import { withFetchedData } from '../FetchedData'
+import AllNoneButtons from '../../common/AllNoneButtons'
+import FacetSearch from '../../common/FacetSearch'
 
 const NumberFormatter = new Intl.NumberFormat()
 const ValueCollator = new Intl.Collator() // in the user's locale
@@ -444,41 +446,6 @@ const buildSpecModifier = (_this, helperName, shouldSubmit=false) => {
   }
 }
 
-export class AllNoneButtons extends React.PureComponent {
-  static propTypes = {
-    isReadOnly: PropTypes.bool.isRequired,
-    deselectMatchingGroups: PropTypes.func.isRequired, // func() => undefined
-    selectMatchingGroups: PropTypes.func.isRequired // func() => undefined
-  }
-
-  render() {
-    const { isReadOnly, deselectMatchingGroups, selectMatchingGroups } = this.props
-
-    return (
-      <div className='all-none-buttons'>
-        <button
-          disabled={isReadOnly}
-          type='button'
-          name='refine-select-all'
-          title='Select All'
-          onClick={selectMatchingGroups}
-        >
-          All
-        </button>
-        <button
-          disabled={isReadOnly}
-          type='button'
-          name='refine-select-none'
-          title='Select None'
-          onClick={deselectMatchingGroups}
-        >
-          None
-        </button>
-      </div>
-    )
-  }
-}
-
 class GroupList extends React.PureComponent {
   static propTypes = {
     valueCounts: PropTypes.objectOf(PropTypes.number.isRequired), // value => count, or null if loading or no column selected -- passed to <ListRow>
@@ -493,6 +460,10 @@ class GroupList extends React.PureComponent {
     valueHeight: PropTypes.number.isRequired, // height of a single value within an open group
     expandedGroupHeight: PropTypes.number.isRequired, // height of an open group (minus all its values)
     maxHeight: PropTypes.number.isRequired
+  }
+
+  state = {
+    sort: { key: 'name', ascending: true } // options: 'name' or 'count'.
   }
 
   listRef = React.createRef()
@@ -518,11 +489,20 @@ class GroupList extends React.PureComponent {
    * Return data that requires re-render on change.
    */
   get _itemData () {
-    return this._buildItemData(this.props.valueCounts, this.props.groups)
+    return this._buildItemData(this.props.valueCounts, this.props.groups, this.state.sort)
   }
 
-  _buildItemData = memoize((valueCounts, groups) => {
-    return { valueCounts, groups }
+  _buildItemData = memoize((valueCounts, groups, sort) => {
+    let sortedGroups = groups // default case: no need to sort
+    if (sort.key !== 'name' || !sort.ascending) {
+      if (sort.key === 'count') {
+        sortedGroups.sort((a, b) => b.count - a.count || ValueCollator.compare(a.name, b.name))
+      }
+      if (!sort.ascending) {
+        sortedGroups.reverse()
+      }
+    }
+    return { valueCounts, groups: sortedGroups }
   })
 
   _renderRow = ({ index, style, data }) => {
@@ -598,18 +578,20 @@ class GroupList extends React.PureComponent {
       }
 
       return (
-        <VariableSizeList
-          ref={this.listRef}
-          className='react-list'
-          height={this.height}
-          estimatedItemSize={groupHeight /* most items aren't expanded */}
-          itemSize={this._itemSize}
-          itemKey={this._itemKey}
-          itemCount={groups.length}
-          itemData={this._itemData}
-        >
-          {this._renderRow}
-        </VariableSizeList>
+        <fieldset className='group-list'>
+          <VariableSizeList
+            ref={this.listRef}
+            className='react-list'
+            height={this.height}
+            estimatedItemSize={groupHeight /* most items aren't expanded */}
+            itemSize={this._itemSize}
+            itemKey={this._itemKey}
+            itemCount={groups.length}
+            itemData={this._itemData}
+          >
+            {this._renderRow}
+          </VariableSizeList>
+        </fieldset>
       )
     }
   }
@@ -794,22 +776,12 @@ export class Refine extends React.PureComponent {
     return new RefineSpec(renames).buildGroupsForValueCounts(valueCounts)
   })
 
+  onChangeSearch = (searchInput) => {
+    this.setState({ searchInput, focusGroupName: null })
+  }
+
   onReset = () => {
     this.setState({ searchInput: '', focusGroupName: null })
-  }
-
-  onKeyDown = (ev) => {
-    switch (ev.key) {
-      case 'Escape':
-        return this.onReset()
-      case 'Enter':
-        ev.preventDefault() // prevent form submit
-    }
-  }
-
-  onInputChange = (ev) => {
-    const searchInput = ev.target.value
-    this.setState({ searchInput, focusGroupName: null })
   }
 
   setIsGroupExpanded = (groupName, isExpanded) => {
@@ -942,28 +914,15 @@ export class Refine extends React.PureComponent {
       <div className='refine-parameter'>
         { !canSearch ? null : (
           <React.Fragment>
-            <fieldset className='in-module--search' onSubmit={this.onSubmit} onReset={this.onReset}>
-              <input
-                type='search'
-                placeholder='Search facets...'
-                autoComplete='off'
-                value={searchInput}
-                onChange={this.onInputChange}
-                onKeyDown={this.onKeyDown}
-              />
-              <button
-                type='button'
-                onClick={this.onReset}
-                className='close'
-                title='Clear Search'
-              >
-                <i className='icon-close'></i>
-              </button>
-            </fieldset>
+            <FacetSearch
+              value={searchInput}
+              onChange={this.onChangeSearch}
+              onReset={this.onReset}
+            />
             <AllNoneButtons
               isReadOnly={false}
-              deselectMatchingGroups={this.deselectMatchingGroups}
-              selectMatchingGroups={this.selectMatchingGroups}
+              onClickNone={this.deselectMatchingGroups}
+              onClickAll={this.selectMatchingGroups}
             />
           </React.Fragment>
         )}
