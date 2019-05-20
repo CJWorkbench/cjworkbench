@@ -785,7 +785,7 @@ export class Refine extends React.PureComponent {
     ) : null
 
     return (
-      <div className='refine-parameter'>
+      <>
         {canSearch ? (
           <FacetSearch
             value={searchInput}
@@ -820,7 +820,7 @@ export class Refine extends React.PureComponent {
           {maybeMergeButton}
           <RefineModalPrompt groups={this.groups} massRename={this.massRename} />
         </div>
-      </div>
+      </>
     )
   }
 }

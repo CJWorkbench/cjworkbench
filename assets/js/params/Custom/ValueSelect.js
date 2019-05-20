@@ -2,9 +2,13 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { withFetchedData } from './FetchedData'
 import { FixedSizeList } from 'react-window'
+import AllNoneButtons from '../common/AllNoneButtons'
+import FacetSearch from '../common/FacetSearch'
+import ValueSortSelect from '../common/ValueSortSelect'
 import memoize from 'memoize-one'
 
 const NumberFormatter = new Intl.NumberFormat()
+const ValueCollator = new Intl.Collator() // in the user's locale
 
 // TODO: Change class names to move away from Refine and update CSS
 
@@ -71,43 +75,6 @@ class ListRow extends React.PureComponent {
           isSelected={isSelected}
           onChangeItem={onChangeItem}
         />
-      </div>
-    )
-  }
-}
-
-export class AllNoneButtons extends React.PureComponent {
-  static propTypes = {
-    isReadOnly: PropTypes.bool.isRequired,
-    clearSelectedValues: PropTypes.func.isRequired, // func() => undefined
-    fillSelectedValues: PropTypes.func.isRequired // func() => undefined
-  }
-
-  render() {
-    const { isReadOnly, clearSelectedValues, fillSelectedValues } = this.props
-
-    return (
-      <div className="all-none-buttons">
-        <button
-          disabled={isReadOnly}
-          type='button'
-          name='refine-select-all'
-          title='Select All'
-          onClick={fillSelectedValues}
-          className='mc-select-all'
-        >
-          All
-        </button>
-        <button
-          disabled={isReadOnly}
-          type='button'
-          name='refine-select-none'
-          title='Select None'
-          onClick={clearSelectedValues}
-          className='mc-select-none'
-        >
-          None
-        </button>
       </div>
     )
   }
@@ -238,9 +205,6 @@ class DynamicallySizedValueList extends React.PureComponent {
   }
 }
 
-
-const ItemCollator = new Intl.Collator() // in the user's locale
-
 /**
  * The "value" here is an Array: `["value1", "value2"]`
  *
@@ -256,6 +220,7 @@ export class ValueSelect extends React.PureComponent {
 
   state = {
     searchInput: '', // <input type="search"> string input from the user
+    sort: { by: 'value', isAscending: true } // by can be 'value' | 'count'
   }
 
   /**
@@ -267,27 +232,38 @@ export class ValueSelect extends React.PureComponent {
     return this._buildSelectedValues(this.props.value)
   }
 
-  get sortedItems () {
-    return this._buildSortedValues(this.props.valueCounts)
+  get sortedValues () {
+    return this._buildSortedValues(this.props.valueCounts, this.state.sort)
   }
 
-  get matchingSortedItems () {
-    return this._buildMatchingSortedItems(this.sortedItems, this.state.searchInput)
+  get matchingSortedValues () {
+    return this._buildMatchingSortedValues(this.sortedValues, this.state.searchInput)
   }
 
   _buildSelectedValues = memoize(values => new Set(values))
 
   _buildSortedValues = memoize(valueCounts => {
     if (!valueCounts) return []
-    return [ ...Object.keys(valueCounts).sort(ItemCollator.compare) ]
+    const { by, isAscending } = this.state.sort
+    let values
+    if (by === 'value') {
+      values = Object.keys(valueCounts).sort(ValueCollator.compare)
+    } else {
+      values = Object.keys(valueCounts)
+        .map(v => ({ value: v, count: valueCounts[v] }))
+        .sort((a, b) => a.count - b.count || ValueCollator.compare(a.value, b.value))
+        .map(({ value }) => value)
+    }
+    if (!isAscending) values.reverse()
+    return values
   })
 
-  _buildMatchingSortedItems = memoize((sortedItems, searchInput) => {
+  _buildMatchingSortedValues = memoize((sortedValues, searchInput) => {
     if (searchInput) {
       const searchKey = searchInput.toLowerCase()
-      return sortedItems.filter(v => v.toLowerCase().includes(searchKey))
+      return sortedValues.filter(v => v.toLowerCase().includes(searchKey))
     } else {
-      return sortedItems
+      return sortedValues
     }
   })
 
@@ -295,12 +271,15 @@ export class ValueSelect extends React.PureComponent {
     this.setState({ searchInput: '' })
   }
 
+  setSort = (sort) => {
+    this.setState({ sort })
+  }
+
   onKeyDown = (ev) => {
     if (ev.keyCode === 27) this.onResetSearch() // Esc => reset
   }
 
-  onInputChange = (ev) => {
-    const searchInput = ev.target.value
+  onChangeSearch = (searchInput) => {
     this.setState({ searchInput })
   }
 
@@ -337,45 +316,40 @@ export class ValueSelect extends React.PureComponent {
 
   render () {
     const { itemHeight, loading } = this.props
-    const { searchInput } = this.state
-    const canSearch = this.sortedItems.length > 1
+    const { searchInput, sort } = this.state
+    const canSearch = this.sortedValues.length > 1
     const isSearching = (searchInput !== '')
 
     return (
       <>
-        { !canSearch ? null : (
-          <>
-            <div className="in-module--search" onSubmit={this.onSubmit} onReset={this.onReset}>
-              <input
-                type='search'
-                placeholder='Search values...'
-                autoComplete='off'
-                value={searchInput}
-                onChange={this.onInputChange}
-                onKeyDown={this.onKeyDown}
-              />
-              <button
-                type="button"
-                onClick={this.onResetSearch}
-                className="close"
-                title="Clear Search"
-              ><i className="icon-close" /></button>
-            </div>
+        {canSearch ? (
+          <FacetSearch
+            value={searchInput}
+            onChange={this.onChangeSearch}
+            onReset={this.onResetSearch}
+          />
+        ) : null}
+        <div className='value-list-and-chrome'>
+          <ValueSortSelect
+            value={sort}
+            onChange={this.setSort}
+          />
+          <div className='value-list-container'>
             <AllNoneButtons
               isReadOnly={isSearching}
-              clearSelectedValues={this.clearSelectedValues}
-              fillSelectedValues={this.fillSelectedValues}
+              onClickNone={this.clearSelectedValues}
+              onClickAll={this.fillSelectedValues}
             />
-          </>
-        )}
-        <DynamicallySizedValueList
-          valueCounts={this.props.valueCounts}
-          loading={loading}
-          selection={this.selection}
-          nItemsTotal={this.sortedItems.length}
-          items={this.matchingSortedItems}
-          onChangeItem={this.onChangeItem}
-        />
+            <DynamicallySizedValueList
+              valueCounts={this.props.valueCounts}
+              loading={loading}
+              selection={this.selection}
+              nItemsTotal={this.sortedValues.length}
+              items={this.matchingSortedValues}
+              onChangeItem={this.onChangeItem}
+            />
+          </div>
+        </div>
       </>
     )
   }

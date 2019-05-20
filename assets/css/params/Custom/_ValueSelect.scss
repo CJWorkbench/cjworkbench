@@ -1,4 +1,12 @@
 .param-valueselect {
+  .value-list-container {
+    // Copied from Refine.scss:.group-list-selector
+    margin-top: .3rem;
+    border: 1px solid $brand-orange;
+    border-radius: .5rem;
+    padding: .8rem .6rem .3rem;
+  }
+
   .value-list {
     @include font-nunito-regular;
     font-size: 1.3rem;
