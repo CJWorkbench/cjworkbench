@@ -7,6 +7,7 @@ export function UnhandledErrorReport ({ error }) {
   let helpText
 
   const bugReportText = [
+    `URL: ${String(window.location)}`,
     `Action: ${error.type}`,
     `Message: ${error.message}`,
     `Server message: ${error.serverError}`
