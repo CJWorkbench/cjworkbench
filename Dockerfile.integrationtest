@@ -17,7 +17,7 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Firefox. It's a separate step so it's easier to resume docker build.
-RUN curl -L https://download-installer.cdn.mozilla.net/pub/firefox/releases/66.0.2/linux-x86_64/en-US/firefox-66.0.2.tar.bz2 \
+RUN curl -L https://download-installer.cdn.mozilla.net/pub/firefox/releases/67.0/linux-x86_64/en-US/firefox-67.0.tar.bz2 \
         | tar jx -C /opt \
         && ln -s /opt/firefox/firefox /usr/bin/firefox
 
