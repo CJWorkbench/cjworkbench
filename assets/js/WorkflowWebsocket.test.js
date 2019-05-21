@@ -87,7 +87,7 @@ describe('WorkflowWebsocket', () => {
       err = e
     }
     expect(err).toBeDefined()
-    expect(err.message).toEqual('Server responded with error')
+    expect(err.message).toEqual('Server reported a problem')
     expect(err.serverError).toEqual('bad')
   })
 

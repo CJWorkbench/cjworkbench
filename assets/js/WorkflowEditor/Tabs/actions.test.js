@@ -7,8 +7,10 @@ jest.mock('../../utils')
 describe('Tabs.actions', () => {
   describe('setName', () => {
     it('should setName', async () => {
+      let endDelay
+      const delay = new Promise((resolve, reject) => { endDelay = resolve })
       const api = {
-        setTabName: jest.fn(() => Promise.resolve(null))
+        setTabName: jest.fn(() => delay)
       }
       const store = mockStore({
         tabs: {
@@ -16,13 +18,12 @@ describe('Tabs.actions', () => {
         }
       }, api)
 
-      await store.dispatch(actions.setName('t2', 'bar'))
-
+      const done = store.dispatch(actions.setName('t2', 'bar'))
       expect(api.setTabName).toHaveBeenCalledWith('t2', 'bar')
-
-      await tick()
-
       expect(store.getState().tabs['t2']).toEqual({ name: 'bar', x: 'y' })
+
+      endDelay()
+      await done
     })
   })
 
@@ -310,11 +311,8 @@ describe('Tabs.actions', () => {
   describe('create', () => {
     it('should update workflow.pendingTabs', async () => {
       let endDelay
-      const delay = new Promise((resolve, reject) => {
-        endDelay = resolve
-      })
+      const delay = new Promise((resolve, reject) => { endDelay = resolve })
       const api = {
-        // createTab(): takes one tick to fulfil
         createTab: jest.fn(() => delay)
       }
       const store = mockStore({
@@ -327,7 +325,7 @@ describe('Tabs.actions', () => {
       }, api)
 
       generateSlug.mockImplementationOnce(prefix => prefix + 'X')
-      await store.dispatch(actions.create())
+      const done = store.dispatch(actions.create())
       expect(api.createTab).toHaveBeenCalledWith('tab-X', 'Tab 1')
       expect(store.getState().workflow.tab_slugs).toEqual([ 't1', 'tab-X' ])
       expect(store.getState().pendingTabs).toEqual({
@@ -339,8 +337,7 @@ describe('Tabs.actions', () => {
         }
       })
       endDelay()
-      await delay
-      await tick()
+      await done
       // pendingTabs can't change. Only _after_ the action finishes will we
       // receive a new delta from the server with the new tab ID. That new
       // _delta_ is where we should be deleting from pendingTabs.
@@ -356,7 +353,6 @@ describe('Tabs.actions', () => {
 
     it('should pick a new tab name based on current tab names', async () => {
       const api = {
-        // createTab(): takes one tick to fulfil
         createTab: jest.fn(() => Promise.resolve(null))
       }
       const store = mockStore({
@@ -377,7 +373,6 @@ describe('Tabs.actions', () => {
 
     it('should consider pendingTabs when deciding new tab names', async () => {
       const api = {
-        // createTab(): takes one tick to fulfil
         createTab: jest.fn(() => Promise.resolve(null))
       }
       const store = mockStore({
@@ -403,11 +398,8 @@ describe('Tabs.actions', () => {
   describe('duplicate', () => {
     it('should update workflow.tab_slugs and workflow.pendingTabs', async () => {
       let endDelay
-      const delay = new Promise((resolve, reject) => {
-        endDelay = resolve
-      })
+      const delay = new Promise((resolve, reject) => { endDelay = resolve })
       const api = {
-        // duplicateTab(): takes one tick to fulfil
         duplicateTab: jest.fn(() => delay)
       }
       const store = mockStore({
@@ -421,7 +413,7 @@ describe('Tabs.actions', () => {
       }, api)
 
       generateSlug.mockImplementationOnce(prefix => prefix + 'X')
-      await store.dispatch(actions.duplicate('t1'))
+      const done = store.dispatch(actions.duplicate('t1'))
       expect(api.duplicateTab).toHaveBeenCalledWith('t1', 'tab-X', 'A (1)')
       expect(store.getState().workflow.tab_slugs).toEqual([ 't1', 'tab-X', 't2' ])
       expect(store.getState().pendingTabs).toEqual({
@@ -433,8 +425,7 @@ describe('Tabs.actions', () => {
         }
       })
       endDelay()
-      await delay
-      await tick()
+      await done
       // pendingTabs can't change. Only _after_ the action finishes will we
       // receive a new delta from the server with the new tab ID. That new
       // _delta_ is where we should be deleting from pendingTabs.
@@ -450,7 +441,6 @@ describe('Tabs.actions', () => {
 
     it('should pick a new tab name based on current tab names', async () => {
       const api = {
-        // duplicateTab(): takes one tick to fulfil
         duplicateTab: jest.fn(() => Promise.resolve(null))
       }
       const store = mockStore({
@@ -470,7 +460,6 @@ describe('Tabs.actions', () => {
 
     it('should consider pendingTabs when deciding new tab names', async () => {
       const api = {
-        // duplicateTab(): takes one tick to fulfil
         duplicateTab: jest.fn(() => Promise.resolve(null))
       }
       const store = mockStore({
