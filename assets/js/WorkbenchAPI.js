@@ -1,13 +1,15 @@
 // Wraps all API calls. Useful both to centralize and abstract these calls,
 // also for dependency injection for testing
 
-import {csrfToken} from './utils'
+import { csrfToken } from './utils'
 
 const apiHeaders = {
   'Accept': 'application/json',
   'Content-Type': 'application/json',
   'X-CSRFToken': csrfToken
 }
+
+const ResetSerializer = () => null
 
 // All API calls which fetch data return a promise which returns JSON
 export default class WorkbenchAPI {
@@ -16,18 +18,20 @@ export default class WorkbenchAPI {
   }
 
   // We send at most one data-modification request at a time, to avoid races.
-  // this._serializer always resolves to the last-returned fetch result.
+  // this._serializer resolves to `null` and completes when the last requested
+  // fetch is completed.
   _serializer = Promise.resolve(null)
 
-  _callExpectingNull (...args) {
-    return this.websocket.callServerHandler(...args)
-      .catch(err => {
-        if (err.serverError) {
-          console.error('Message from server: ', err.serverError, err)
-        } else {
-          console.error(err)
-        }
-      })
+  /**
+   * Send a message to the server; wait for a null response.
+   *
+   * @async
+   * @throws ErrorResponse if the server rejects the request or there's a
+   *                       network error. The caller is responsible for
+   *                       handling this error.
+   */
+  _callExpectingNull (handler, ...args) {
+    return this.websocket.callServerHandler(handler, ...args)
   }
 
   /**
@@ -39,11 +43,17 @@ export default class WorkbenchAPI {
    * * TypeError if the response Content-Type is not application/json,
    *   or if security checks (like CORS) prevent the fetch.
    * * SyntaxError if the response is invalid JSON.
+   * * DOMException if there's a network error or malformed response.
    */
   _fetch(url, options) {
     const realOptions = Object.assign({ credentials: 'include' }, options || {})
 
-    return this._serializer = this._serializer.catch(() => null)
+    const ret = this._serializer
+      // fetch() throws:
+      // RangeError (status < 200 || status >= 600)
+      // TypeError (invalid statusText)
+      // "AbortError" DOMException (aborted)
+      // Other DOMExceptions (network error)
       .then(() => fetch(url, realOptions))
       .then(res => {
         if (!res.ok) {
@@ -55,8 +65,14 @@ export default class WorkbenchAPI {
         if (res.headers.get('content-type') && res.headers.get('content-type').toLowerCase().indexOf('application/json') === -1) {
           throw new TypeError("Server response is not JSON", res)
         }
+        // throws:
+        // SyntaxError (not valid JSON)
+        // Other DOMExceptions
         return res.json()
       })
+
+    this._serializer = ret.then(ResetSerializer, ResetSerializer)
+    return ret
   }
 
   _submit(method, url, body, options) {

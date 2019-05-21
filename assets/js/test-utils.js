@@ -1,6 +1,7 @@
 import { createStore, applyMiddleware, compose } from 'redux'
 import thunk from 'redux-thunk'
 import promiseMiddleware from 'redux-promise-middleware'
+import errorMiddleware from './error-middleware'
 import { workflowReducer } from './workflow-reducer'
 
 // Returns new mock function that returns given json. Used for mocking "get" API calls
@@ -46,7 +47,7 @@ export function sleep (ms) {
  *     expect(store.getState().workflow).toEqual(...)
  */
 export function mockStore (initialState, api={}) {
-  const middlewares = [ promiseMiddleware, thunk.withExtraArgument(api) ]
+  const middlewares = [ errorMiddleware(), promiseMiddleware, thunk.withExtraArgument(api) ]
   const store = createStore(workflowReducer, initialState, applyMiddleware(...middlewares))
   return store
 }

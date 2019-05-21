@@ -9,8 +9,10 @@ const MissingInflightHandler = {
 }
 
 export class ErrorResponse extends Error {
+  name = 'ErrorResponse'
+
   constructor(serverError) {
-    super('Server responded with error')
+    super('Server reported a problem')
     this.serverError = serverError
   }
 }

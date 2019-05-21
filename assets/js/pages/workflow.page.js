@@ -4,6 +4,8 @@ __webpack_public_path__ = window.STATIC_URL + 'bundles/'
 import { createStore, applyMiddleware, compose } from 'redux'
 import thunk from 'redux-thunk'
 import promiseMiddleware from 'redux-promise-middleware'
+import errorMiddleware from '../error-middleware'
+import UnhandledErrorReport from '../UnhandledErrorReport'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
@@ -23,7 +25,7 @@ const api = new WorkbenchAPI(websocket)
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
 
-const middlewares = [ promiseMiddleware, thunk.withExtraArgument(api) ]
+const middlewares = [ errorMiddleware(), promiseMiddleware, thunk.withExtraArgument(api) ]
 
 const store = createStore(
   workflowReducer,
@@ -42,6 +44,7 @@ ReactDOM.render(
   (
     <Provider store={store}>
       <Workflow api={api} lesson={window.initState.lessonData} />
+      <UnhandledErrorReport />
     </Provider>
   ),
   document.getElementById('root')

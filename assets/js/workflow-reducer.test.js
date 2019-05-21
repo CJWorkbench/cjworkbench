@@ -1,6 +1,7 @@
 /* global describe, it, expect */
 import * as wfr from './workflow-reducer'
 import { mockStore, tick } from './test-utils'
+import { ErrorResponse } from './WorkflowWebsocket'
 
 describe('Reducer actions', () => {
   const testModules = {
@@ -428,5 +429,71 @@ describe('Reducer actions', () => {
       }
     })
     expect(state.wfModules['10'].has_unseen_notification).toBe(false)
+  })
+
+  it('sets an error with the default error handler', async () => {
+    jest.spyOn(global.console, 'warn').mockImplementation(() => {})
+    const api = {
+      setWorkflowName: async () => {
+        throw new SyntaxError('invalid JSON')
+      }
+    }
+
+    const store = mockStore({
+      workflow: { name: 'foo' }
+    }, api)
+    await store.dispatch(wfr.setWorkflowNameAction('bar'))
+    expect(store.getState().firstUnhandledError).toEqual({
+      type: 'SET_WORKFLOW_NAME',
+      message: 'SyntaxError: invalid JSON',
+      serverError: null
+    })
+    expect(global.console.warn).toHaveBeenCalled()
+  })
+
+  it('sets an ErrorResponse error specially', async () => {
+    jest.spyOn(global.console, 'warn').mockImplementation(() => {})
+    const api = {
+      setWorkflowName: async () => {
+        throw new ErrorResponse('AuthError: bad auth')
+      }
+    }
+
+    const store = mockStore({
+      workflow: { name: 'foo' }
+    }, api)
+    await store.dispatch(wfr.setWorkflowNameAction('bar'))
+    expect(store.getState().firstUnhandledError).toEqual({
+      type: 'SET_WORKFLOW_NAME',
+      message: 'ErrorResponse: Server reported a problem',
+      serverError: 'AuthError: bad auth'
+    })
+    expect(global.console.warn).toHaveBeenCalled()
+  })
+
+  it('does not overwrite the first-reported error in the default error handler', async () => {
+    jest.spyOn(global.console, 'warn').mockImplementation(() => {})
+    let apiCounter = 0
+    const api = {
+      setWorkflowName: async () => {
+        if (apiCounter === 0) {
+          apiCounter = 1
+          throw new SyntaxError('invalid JSON')
+        }
+        throw new RangeError('some other problem that comes after')
+      }
+    }
+
+    const store = mockStore({
+      workflow: { name: 'foo' }
+    }, api)
+    await store.dispatch(wfr.setWorkflowNameAction('bar')) // error
+    await store.dispatch(wfr.setWorkflowNameAction('baz')) // second error -- we will ignore it
+    expect(store.getState().firstUnhandledError).toEqual({
+      type: 'SET_WORKFLOW_NAME',
+      message: 'SyntaxError: invalid JSON',
+      serverError: null
+    })
+    expect(global.console.warn).toHaveBeenCalledTimes(2) // report the second error to the console
   })
 })

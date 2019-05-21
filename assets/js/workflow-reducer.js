@@ -4,6 +4,7 @@ import { createStore, applyMiddleware } from 'redux'
 import { reducerFunctions as TabReducerFunctions } from './WorkflowEditor/Tabs/actions'
 import { reducerFunctions as WorkflowEditorReducerFunctions } from './WorkflowEditor/actions'
 import { reducerFunctions as ShareReducerFunctions } from './ShareModal/actions'
+import { UNHANDLED_ERROR } from './error-middleware'
 
 // Workflow
 const SET_WORKFLOW_NAME = 'SET_WORKFLOW_NAME'
@@ -31,6 +32,32 @@ const CLEAR_NOTIFICATIONS = 'CLEAR_NOTIFICATIONS'
 // ---- Our Store ----
 // Master state for the workflow.
 
+/**
+ * Reduce using an "error" FSA.
+ *
+ * Action is `{ error: true, type: [original action type], payload: <Error>}`
+ *
+ * Ensures `state.firstUnhandledError` looks like `{type, message, serverError}`
+ * (all String).
+ */
+function handleError (state, action) {
+  console.warn('Unhandled error during %s dispatch', action.type, action.payload)
+
+  if (state.firstUnhandledError) {
+    return state
+  } else {
+    const err = action.payload
+    return {
+      ...state,
+      firstUnhandledError: {
+        type: action.type,
+        message: err.toString(),
+        serverError: err.serverError || null
+      }
+    }
+  }
+}
+
 const reducerFunc = {
   ...TabReducerFunctions,
   ...WorkflowEditorReducerFunctions,
@@ -49,8 +76,6 @@ function generateNonce (invalidValues, prefix) {
     }
   }
 }
-
-// ---- Actions ----
 
 // -- Workflow actions --
 
@@ -130,7 +155,7 @@ registerReducerFunc(APPLY_DELTA, (state, action) => {
 // Set name of workflow
 export function setWorkflowNameAction (name) {
   return (dispatch, getState, api) => {
-    dispatch({
+    return dispatch({
       type: SET_WORKFLOW_NAME,
       payload: {
         promise: api.setWorkflowName(name),
@@ -755,9 +780,14 @@ export function quickFixAction(wfModuleId, action, args) {
 // Main dispatch for actions. Each action mutates the state to a new state, in typical Redux fashion
 
 export function workflowReducer (state={}, action) {
-  if (action.type in reducerFunc) {
-    return reducerFunc[action.type](state, action)
-  } else {
-    return state
+  if (action.error === true) {
+    return handleError(state, action)
   }
+
+  if (action.type in reducerFunc) {
+    // Run a registered reducer
+    return reducerFunc[action.type](state, action)
+  }
+
+  return state
 }
