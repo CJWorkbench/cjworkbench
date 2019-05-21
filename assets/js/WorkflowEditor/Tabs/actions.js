@@ -58,7 +58,7 @@ export function select (slug) {
       return
     }
 
-    dispatch({
+    return dispatch({
       type: TAB_SELECT,
       payload: {
         promise: api.setSelectedTab(slug),
@@ -85,7 +85,7 @@ export function create () {
     const slug = generateSlug('tab-')
     const name = util.generateTabName(/Tab (\d+)/, 'Tab %d', tabNames)
 
-    dispatch({
+    return dispatch({
       type: TAB_CREATE,
       payload: {
         promise: api.createTab(slug, name).then(() => ({ slug, name })),
@@ -116,7 +116,7 @@ export function duplicate (oldSlug) {
     const namePattern = oldNameBase + ' (%d)'
     const name = util.generateTabName(nameRegex, namePattern, tabNames)
 
-    dispatch({
+    return dispatch({
       type: TAB_DUPLICATE,
       payload: {
         promise: api.duplicateTab(oldSlug, slug, name).then(() => ({ slug, name })),
