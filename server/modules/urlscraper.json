@@ -8,14 +8,14 @@
   "help_url":"modules/scrape/html-scraper",
   "parameters": [
     {
-      "name": "URLs",
+      "name": "",
       "id_name": "urlsource",
       "type": "menu",
-      "default": "list",
+      "default": "paged",
       "options": [
-        { "value": "list", "label": "List" },
-        { "value": "column", "label": "Input column" },
-        { "value": "paged", "label": "Numbered pages" }
+        { "value": "paged", "label": "URL" },
+        { "value": "list", "label": "List of URLs" },
+        { "value": "column", "label": "Input column" }
       ]
     },
     {
@@ -42,12 +42,33 @@
       "name": "",
       "id_name": "pagedurl",
       "type": "string",
-      "placeholder": "URL without page number at end",
+      "placeholder": "http://...",
       "visible_if": {
         "id_name": "urlsource",
         "value": [
           "paged"
         ]
+      }
+    },
+    {
+      "name": "Scrape numbered pages",
+      "id_name": "addpagenumbers",
+      "type": "checkbox",
+      "default": false,
+      "visible_if": {
+        "id_name": "urlsource",
+        "value": [
+          "paged"
+        ]
+      }
+    },
+    {
+      "name": "Adds page numbers to the end of a URL like http://site.com/info?page=",
+      "id_name": "paged",
+      "type":"statictext",
+      "visible_if": {
+        "id_name": "addpagenumbers",
+        "value": true
       }
     },
     {
@@ -56,10 +77,8 @@
       "type": "integer",
       "default": 0,
       "visible_if": {
-        "id_name": "urlsource",
-        "value": [
-          "paged"
-        ]
+        "id_name": "addpagenumbers",
+        "value": true
       }
     },
     {
@@ -68,10 +87,8 @@
       "type": "integer",
       "default": 9,
       "visible_if": {
-        "id_name": "urlsource",
-        "value": [
-          "paged"
-        ]
+        "id_name": "addpagenumbers",
+        "value": true
       }
     },
     {

@@ -82,7 +82,7 @@ async def mock_async_get(status, text, lag):
     return MockResponse(status, text)
 
 
-P = MockParams.factory(urlsource='list', urllist='', urlcol='', pagedurl='', startpage=0, endpage=9)
+P = MockParams.factory(urlsource='list', urllist='', urlcol='', pagedurl='', addpagenumbers=False, startpage=0, endpage=9)
 
 
 def fetch(params, input_dataframe):
@@ -220,16 +220,35 @@ class ScrapeUrlsTest(SimpleTestCase):
 
 
 class URLScraperTests(unittest.TestCase):
-    # Simple test that .fetch() calls scrape_urls() in the right way
-    # We don't test all the scrape error cases (invalid urls etc.) as they are
-    # tested above
-    def test_scrape_column(self):
-        scraped_table = simple_result_table.copy()
 
+    # Simple case, scrape a single URL
+    def test_scrape_url(self):
+        onescrape = pd.DataFrame(
+            {'url': ['http://a.com/file'],
+             'date': [testdate],
+             'status': ['200'],
+             'html': ['<div>all good</div>']})
+
+        async def mock_scrapeurls(urls, table):
+            table['status'] = onescrape['status']
+            table['html'] = onescrape['html']
+            return
+
+        with patch('django.utils.timezone.now', lambda: testnow):
+            with patch('server.modules.urlscraper.scrape_urls') as scrape:
+                scrape.side_effect = mock_scrapeurls
+
+                result = fetch(P(urlsource='paged',
+                                 pagedurl='http://a.com/file',
+                                 addpagenumbers=False),
+                                None)
+                self.assertEqual(result, ProcessResult(onescrape))
+
+    def test_scrape_column(self):
         # modifies the table in place to add results, just like the real thing
         async def mock_scrapeurls(urls, table):
-            table['status'] = scraped_table['status']
-            table['html'] = scraped_table['html']
+            table['status'] = simple_result_table['status']
+            table['html'] = simple_result_table['html']
             return
 
         urls = list(simple_result_table['url'])
@@ -241,16 +260,14 @@ class URLScraperTests(unittest.TestCase):
 
                 result = fetch(P(urlsource='column', urlcol='x'),
                                pd.DataFrame({'x': urls}))
-                self.assertEqual(result, ProcessResult(scraped_table))
+                self.assertEqual(result, ProcessResult(simple_result_table))
 
     # Tests scraping from a list of URLs
     def test_scrape_list(self):
-        scraped_table = simple_result_table.copy()
-
         # Code below mostly lifted from the column test
         async def mock_scrapeurls(urls, table):
-            table['status'] = scraped_table['status']
-            table['html'] = scraped_table['html']
+            table['status'] = simple_result_table['status']
+            table['html'] = simple_result_table['html']
             return
 
         with patch('django.utils.timezone.now', lambda: testnow):
@@ -262,17 +279,13 @@ class URLScraperTests(unittest.TestCase):
                     'https://b.com/file2',
                     'c.com/file/dir'  # Removed 'http://' to test URL-fixing
                 ])), None)
-                self.assertEqual(result, ProcessResult(scraped_table))
-
+                self.assertEqual(result, ProcessResult(simple_result_table))
 
     # Mostly tests that the correct sequence of URLs with page numbers is generated from the user's input
     def test_scrape_paged(self):
-        scraped_table = paged_result_table.copy()
-
-        # Code below mostly lifted from the column test
         async def mock_scrapeurls(urls, table):
-            table['status'] = scraped_table['status']
-            table['html'] = scraped_table['html']
+            table['status'] = paged_result_table['status']
+            table['html'] = paged_result_table['html']
             return
 
         with patch('django.utils.timezone.now', lambda: testnow):
@@ -281,14 +294,15 @@ class URLScraperTests(unittest.TestCase):
 
                 result = fetch(P(urlsource='paged',
                                  pagedurl='http://foo.com/a?p=',
+                                 addpagenumbers=True,
                                  startpage=1,
                                  endpage=3),
                                 None)
-                self.assertEqual(result, ProcessResult(scraped_table))
+                self.assertEqual(result, ProcessResult(paged_result_table))
 
 
 class MigrateParamsTest(unittest.TestCase):
-    def test_v0(self):
+    def test_v1(self):
         self.assertEqual(urlscraper.migrate_params({
             'urlsource': 0,
             'urlcol': 'A',
@@ -298,11 +312,12 @@ class MigrateParamsTest(unittest.TestCase):
             'urlcol': 'A',
             'urllist': 'http://example.org\n',
             'pagedurl': '',
+            'addpagenumbers': False,
             'startpage': 0,
             'endpage': 9
         })
 
-    def test_v1(self):
+    def test_v2(self):
         self.assertEqual(urlscraper.migrate_params({
             'urlsource': 'list',
             'urlcol': 'A',
@@ -312,7 +327,26 @@ class MigrateParamsTest(unittest.TestCase):
             'urlcol': 'A',
             'urllist': 'http://example.org\n',
             'pagedurl': '',
+            'addpagenumbers': False,
             'startpage': 0,
             'endpage': 9
         })
 
+    def test_v3(self):
+        # test that moving form v2 to v3 sets addpagenumbers to True, as that was what v2 did
+        self.assertEqual(urlscraper.migrate_params({
+            'urlsource': 'paged',
+            'urlcol': 'A',
+            'urllist': '',
+            'pagedurl': 'http://example.org/foo?page=',
+            'startpage': 1,
+            'endpage': 4
+        }), {
+            'urlsource': 'paged',
+            'urlcol': 'A',
+            'urllist': '',
+            'pagedurl': 'http://example.org/foo?page=',
+            'addpagenumbers': True,
+            'startpage': 1,
+            'endpage': 4
+        })
