@@ -51,7 +51,7 @@
       }
     },
     {
-      "name": "Scrape numbered pages",
+      "name": "Series of numbered pages",
       "id_name": "addpagenumbers",
       "type": "checkbox",
       "default": false,
@@ -63,8 +63,17 @@
       }
     },
     {
-      "name": "Adds page numbers to the end of a URL like http://site.com/info?page=",
+      "name": "1/Enter the base URL without numbers, e.g. http://site.com/info?page=",
       "id_name": "paged",
+      "type":"statictext",
+      "visible_if": {
+        "id_name": "addpagenumbers",
+        "value": true
+      }
+    },
+    {
+      "name": "2/Add page numbers below (10 max)",
+      "id_name": "paged-2",
       "type":"statictext",
       "visible_if": {
         "id_name": "addpagenumbers",
