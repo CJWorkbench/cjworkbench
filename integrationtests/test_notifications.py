@@ -19,7 +19,7 @@ class TestNotifications(LoggedInIntegrationTest):
         self.import_module('random20floats')
         self.import_module('filter')
 
-        self.add_wf_module('Random 20 Floats')
+        self.add_data_step('Random 20 Floats')
         b.click_button('Update')
         # Wait for the update to finish
         b.assert_element('button', text='Update', wait=True)

@@ -20,7 +20,7 @@ export const Modal = React.memo(function Modal ({ modules, tabSlug, close, addMo
       <section className='content'>
         <header>
           <h5>CHOOSE A DATA SOURCE</h5>
-          <button type='button' class='close' aria-label='Close' title='Close' onClick={close}>×</button>
+          <button type='button' className='close' aria-label='Close' title='Close' onClick={close}>×</button>
         </header>
         <div className='body'>
           <Search value={search} onChange={setSearch} />

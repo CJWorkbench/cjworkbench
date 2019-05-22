@@ -38,8 +38,8 @@ class TestLesson(LessonTest):
         self.click_next()
 
         # 2. Drop empty rows and columns
-        self.expect_highlight(0, 'button.search')
-        self.add_wf_module('Add from URL')
+        self.expect_highlight(0, 'a[name=loadurl]')
+        self.add_data_step('Add from URL')
 
         # Wait for module to load
         self.expect_highlight(

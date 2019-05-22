@@ -34,7 +34,7 @@ class TestTabs(WorkbenchBase):
         accounts.login(b, 'a@example.org', 'a@example.org')
         self._create_workflow()
 
-        self.add_wf_module('Paste data')
+        self.add_data_step('Paste data')
         b.fill_in('csv', 'A,B\n1,2,\n2,3', wait=True)
 
         b.click_button('Create tab')
@@ -44,7 +44,7 @@ class TestTabs(WorkbenchBase):
         b.assert_no_element('.wf-module[data-module-name="Paste data"]')
 
         # Add a module that should not appear on Tab 1
-        self.add_wf_module('Add from URL')
+        self.add_data_step('Add from URL')
 
         # Switch to Tab 1
         # visible=False again
@@ -57,7 +57,7 @@ class TestTabs(WorkbenchBase):
         accounts.login(b, 'a@example.org', 'a@example.org')
         self._create_workflow()
 
-        self.add_wf_module('Paste data')
+        self.add_data_step('Paste data')
         b.fill_in('csv', 'foo,bar\n1,2', wait=True)
         self.submit_wf_module()
 
@@ -67,7 +67,7 @@ class TestTabs(WorkbenchBase):
         b.assert_no_element('.wf-module[data-module-name="Paste data"]')
 
         # Load data from tab 1
-        self.add_wf_module('Start from tab')
+        self.add_data_step('Start from tab')
         self.select_tab_param('Start from tab', 'tab', 'Tab 1')
         self.submit_wf_module()
         # Wait for data to load from tab 1
@@ -95,13 +95,13 @@ class TestTabs(WorkbenchBase):
         b.assert_no_element('.tabs>ul>li.pending', wait=True)
 
         # make Tab 1 depend on Tab 2
-        self.add_wf_module('Start from tab')
+        self.add_data_step('Start from tab')
         self.select_tab_param('Start from tab', 'tab', 'Tab 2')
         self.submit_wf_module()
 
         # Now make Tab 2 depend on Tab 1
         self._select_tab('Tab 2')
-        self.add_wf_module('Start from tab')
+        self.add_data_step('Start from tab')
         self.select_tab_param('Start from tab', 'tab', 'Tab 1')
         self.submit_wf_module(wait=True)  # wait for previous render to end
 
@@ -124,7 +124,7 @@ class TestTabs(WorkbenchBase):
         b.assert_no_element('.tabs>ul>li.pending', wait=True)
 
         # make Tab 1 depend on Tab 2
-        self.add_wf_module('Start from tab')
+        self.add_data_step('Start from tab')
         self.select_tab_param('Start from tab', 'tab', 'Tab 2')
         self.submit_wf_module()
 
@@ -137,7 +137,7 @@ class TestTabs(WorkbenchBase):
         accounts.login(b, 'a@example.org', 'a@example.org')
         self._create_workflow()
 
-        self.add_wf_module('Paste data')
+        self.add_data_step('Paste data')
         b.fill_in('csv', 'foo,bar\n1,2', wait=True)
         self.submit_wf_module()
 

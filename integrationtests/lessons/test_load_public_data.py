@@ -23,7 +23,7 @@ class TestLesson(LessonTest):
 
         # 2. 1. Load Public Data by URL
         self.expect_highlight(0)
-        self.add_wf_module('Add from URL')
+        self.add_data_step('Add from URL')
 
         self.expect_highlight(
             1,

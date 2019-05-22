@@ -31,7 +31,7 @@ exports[`WorkflowContextMenu renders correctly 1`] = `
                   onClick={[Function]}
                 >
                   <i
-                    className="context-button--icon icon-more"
+                    className="icon-more"
                   />
                 </button>
               </InnerReference>

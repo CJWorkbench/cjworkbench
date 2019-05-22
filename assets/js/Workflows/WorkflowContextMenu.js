@@ -26,7 +26,7 @@ export default class WorkflowContextMenu extends React.Component {
     return (
       <UncontrolledDropdown>
         <DropdownToggle className='context-button'>
-          <i className='context-button--icon icon-more'></i>
+          <i className='icon-more'></i>
         </DropdownToggle>
         <DropdownMenu>
           <DropdownItem onClick={this.onClickDuplicate} className='duplicate-workflow'>

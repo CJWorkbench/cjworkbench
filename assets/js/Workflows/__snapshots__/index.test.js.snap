@@ -148,7 +148,7 @@ exports[`Workflow list page renders correctly 1`] = `
                             title="menu"
                           >
                             <i
-                              className="context-button--icon icon-more"
+                              className="icon-more"
                             />
                           </button>
                         </InnerReference>
@@ -584,7 +584,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                           onClick={[Function]}
                                         >
                                           <i
-                                            className="context-button--icon icon-more"
+                                            className="icon-more"
                                           />
                                         </button>
                                       </InnerReference>
@@ -708,7 +708,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                           onClick={[Function]}
                                         >
                                           <i
-                                            className="context-button--icon icon-more"
+                                            className="icon-more"
                                           />
                                         </button>
                                       </InnerReference>
@@ -832,7 +832,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                           onClick={[Function]}
                                         >
                                           <i
-                                            className="context-button--icon icon-more"
+                                            className="icon-more"
                                           />
                                         </button>
                                       </InnerReference>
@@ -1027,7 +1027,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                           onClick={[Function]}
                                         >
                                           <i
-                                            className="context-button--icon icon-more"
+                                            className="icon-more"
                                           />
                                         </button>
                                       </InnerReference>
@@ -1151,7 +1151,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                           onClick={[Function]}
                                         >
                                           <i
-                                            className="context-button--icon icon-more"
+                                            className="icon-more"
                                           />
                                         </button>
                                       </InnerReference>
@@ -1330,7 +1330,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                           onClick={[Function]}
                                         >
                                           <i
-                                            className="context-button--icon icon-more"
+                                            className="icon-more"
                                           />
                                         </button>
                                       </InnerReference>
