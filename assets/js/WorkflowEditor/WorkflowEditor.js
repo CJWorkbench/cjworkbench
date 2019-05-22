@@ -7,7 +7,22 @@ import PaneSelect from './PaneSelect'
 import * as propTypes from './propTypes'
 import Report from '../Report'
 
+/**
+ * The Workflow editing interface.
+ *
+ * The interface has:
+ *
+ * * A <PaneSelect> -- panes for the user to choose. A pane is a Workflow tab
+ *   or a report.
+ * * The currently-selected pane.
+ *
+ * We pass the pane's ref to its children, so they can open up a Portal within
+ * a pane. (This is for <AddData>: its modal must appear atop the pane but not
+ * atop the <PaneSelect>.)
+ */
 const WorkflowEditor = React.memo(function WorkflowEditor ({ api, selectedPane, selectReportPane }) {
+  const paneRef = React.useRef(null)
+
   return (
     <>
       <PaneSelect
@@ -16,8 +31,8 @@ const WorkflowEditor = React.memo(function WorkflowEditor ({ api, selectedPane, 
       />
 
       {selectedPane.pane === 'tab' ? (
-        <div className='workflow-columns'>
-          <ModuleStack api={api} />
+        <div className='workflow-columns' ref={paneRef}>
+          <ModuleStack api={api} paneRef={paneRef} />
           <OutputPane />
         </div>
       ) : (

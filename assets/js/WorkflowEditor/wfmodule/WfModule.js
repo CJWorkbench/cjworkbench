@@ -68,8 +68,8 @@ export class WfModule extends React.PureComponent {
     setWfModuleParams: PropTypes.func, // func(wfModuleId, { paramidname: newVal }) => undefined
     removeModule: PropTypes.func,
     api: PropTypes.object.isRequired,
-    onDragStart: PropTypes.func.isRequired, // func({ type:'WfModule',id,index }) => undefined
-    onDragEnd: PropTypes.func.isRequired, // func() => undefined
+    onDragStart: PropTypes.func, // func({ type:'WfModule',id,index }) => undefined; null if not draggable
+    onDragEnd: PropTypes.func, // func() => undefined
     isLessonHighlight: PropTypes.bool.isRequired,
     isLessonHighlightNotes: PropTypes.bool.isRequired,
     isLessonHighlightCollapse: PropTypes.bool.isRequired,
@@ -412,8 +412,7 @@ export class WfModule extends React.PureComponent {
         {notes}
         <h3>{numberFormat.format(index + 1)}</h3>
         <div className="module-card-and-link">
-
-          <div className='module-card' draggable={!isReadOnly} onDragStart={this.onDragStart} onDragEnd={this.onDragEnd}>
+          <div className='module-card' draggable={!isReadOnly && !!this.props.onDragStart} onDragStart={this.onDragStart} onDragEnd={this.onDragEnd}>
             <div className='module-card-header'>
               <div className='controls'>
                 <WfModuleCollapseButton

@@ -1,10 +1,40 @@
-import unittest
 from server.models.module_version import ModuleVersion
 from server.models.param_spec import ParamDType
 from server.tests.utils import DbTestCase
 
 
 class ModuleVersionTest(DbTestCase):
+    def test_uses_data_default_true_if_loads_data_false(self):
+        mv = ModuleVersion.create_or_replace_from_spec({
+            'id_name': 'idname',
+            'name': 'Name',
+            'category': 'Add data',
+            'parameters': [],
+            'loads_data': True,
+        })
+        self.assertFalse(mv.uses_data)
+
+    def test_uses_data_default_false_if_loads_data_true(self):
+        mv = ModuleVersion.create_or_replace_from_spec({
+            'id_name': 'idname',
+            'name': 'Name',
+            'category': 'Add data',
+            'parameters': [],
+            'loads_data': False,
+        })
+        self.assertTrue(mv.uses_data)
+
+    def test_uses_data_override(self):
+        mv = ModuleVersion.create_or_replace_from_spec({
+            'id_name': 'idname',
+            'name': 'Name',
+            'category': 'Add data',
+            'parameters': [],
+            'loads_data': True,
+            'uses_data': True,
+        })
+        self.assertTrue(mv.uses_data)
+
     def test_create_module_properties(self):
         mv = ModuleVersion.create_or_replace_from_spec({
             'id_name': 'idname',

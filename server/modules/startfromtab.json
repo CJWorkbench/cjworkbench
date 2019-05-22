@@ -5,7 +5,7 @@
   "icon": "import-tab",
   "help_url": "modules/add-data/startfromtab",
   "description": "Use the output of another tab as the data source for this tab.",
-  "loads_data": false,
+  "loads_data": true,
   "parameters": [
     {
       "name": "",
