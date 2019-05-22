@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "b2e020e0e02324bbde902e3ac294d4304cb16ebb0084913deab3bb2a748f85a4"
+            "sha256": "79dfe065ea7fbf80d30d1ac11ab7eae34645ea0540809784cb3fe897b454bd75"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -347,10 +347,11 @@
         },
         "fastparquet": {
             "hashes": [
-                "sha256:5e35a0aefc8db775397c503b7c2373892c8bc9136d5804d2699a5a68616d7ca0"
+                "sha256:0193e30715a1e70376a796090f5baebbebbe3739204cc83c9937ec1acbb2d767",
+                "sha256:f18f22ba31cb54efff00980f53d4a77b4027bbdb0a5cf1c4644113551196c0f0"
             ],
             "index": "pypi",
-            "version": "==0.2.1"
+            "version": "==0.3.1"
         },
         "fb-re2": {
             "hashes": [
@@ -767,13 +768,6 @@
                 "sha256:16692ee739d42cf5e39cef8d27649a8c1fdb7aa99887098f1460057c5eb75c3a"
             ],
             "version": "==0.15.2"
-        },
-        "pytest-runner": {
-            "hashes": [
-                "sha256:00ad6cd754ce55b01b868a6d00b77161e4d2006b3918bde882376a0a884d0df4",
-                "sha256:e946c7dbdc8c0c2ffa44e7b45450f68e7f08cb133983134fa63a1d1486c2b36b"
-            ],
-            "version": "==4.4"
         },
         "python-dateutil": {
             "hashes": [
