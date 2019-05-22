@@ -10,9 +10,11 @@ describe('ModuleStack', () => {
       tabSlug='tab-1'
       selected_wf_module_position={null}
       wfModules={[]}
+      modules={{}}
       moveModuleByIndex={jest.fn()}
       removeModule={jest.fn()}
       testLessonHighlightIndex={jest.fn((i) => false)}
+      paneRef={{current: null}}
       {...extraProps}
     />
   )

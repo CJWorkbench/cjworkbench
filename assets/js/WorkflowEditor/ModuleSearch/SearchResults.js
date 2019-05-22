@@ -78,10 +78,7 @@ export default class SearchResults extends React.PureComponent {
   _buildResultGroups = memoize((groups, search) => {
     const escapedValue = escapeRegexCharacters(search.trim())
     const regex = new RegExp(escapedValue, 'i')
-    const predicate = (module) => (
-      !module.deprecated
-      && (regex.test(module.name) || regex.test(module.description))
-    )
+    const predicate = (module) => (regex.test(module.name) || regex.test(module.description))
     return groups
       .map(({ name, modules }) => ({ name, modules: modules.filter(predicate) }))
       .filter(({ modules }) => modules.length > 0)
