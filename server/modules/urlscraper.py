@@ -145,10 +145,14 @@ async def fetch(params, *, get_input_dataframe):
         if not re.match('^https?://.*', pagedurl):
             pagedurl = 'http://' +  pagedurl
 
-        # limit the number of pages we can scrape with this method
-        maxpages = 10
-        pagenums = range(params['startpage'], params['endpage']+1)[:maxpages]
-        urls = [pagedurl + str(num) for num in pagenums]
+        # Generate multiple urls by adding page numbers, if user says so
+        if params['addpagenumbers']:
+            # limit the number of pages we can scrape with this method
+            maxpages = 10
+            pagenums = range(params['startpage'], params['endpage']+1)[:maxpages]
+            urls = [pagedurl + str(num) for num in pagenums]
+        else:
+            urls = [ pagedurl ]
 
     else:
         raise ValueError('Unrecognized urlsource %r' % urlsource)
@@ -192,8 +196,18 @@ def _migrate_params_v1_to_v2(params):
     return {
         **params,
         'pagedurl': '',
-        'startpage': 0,  # defaults, from json file
+        'addpagenumbers': False, # defaults, from json file
+        'startpage': 0,
         'endpage': 9
+    }
+
+def _migrate_params_v2_to_v3(params):
+    """
+    v3 adds "addpagenumbers" checkbox
+    """
+    return {
+        **params,
+        'addpagenumbers': True  # match v2 behavior
     }
 
 
@@ -202,4 +216,6 @@ def migrate_params(params):
         params = _migrate_params_v0_to_v1(params)
     if 'pagedurl' not in params:
         params = _migrate_params_v1_to_v2(params)
+    if 'addpagenumbers' not in params:
+        params = _migrate_params_v2_to_v3(params)
     return params
