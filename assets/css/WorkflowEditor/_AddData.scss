@@ -111,13 +111,16 @@
         box-shadow: $overlay-shadow;
       }
 
+      &.lesson-highlight {
+        border: 2px solid $brand-learn;
+      }
+
       h4 {
         @include title-2;
       }
 
       &:hover {
         text-decoration: none;
-        border-color: $dark-orange;
         h4 {
           text-decoration: underline;
         }
