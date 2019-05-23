@@ -106,6 +106,7 @@
       border-radius: .5rem;
       padding: 2rem;
       margin: 2rem;
+      display: flex; // icon to left of title
 
       &:hover {
         box-shadow: $overlay-shadow;
@@ -115,13 +116,19 @@
         border: 2px solid $brand-learn;
       }
 
+      i {
+        font-size: 3.5rem;
+        margin-right: 2rem;
+      }
+
       h4 {
         @include title-2;
+        align-items: center;
       }
 
       &:hover {
         text-decoration: none;
-        h4 {
+        h4 span {
           text-decoration: underline;
         }
       }
