@@ -282,6 +282,12 @@ definitions:
                 name:
                     type: string
                     description: "'Connect' button text"
+        file:
+            <<: *common_param_spec
+            required: [ id_name, type ]
+            properties:
+                <<: *common_param_spec_properties
+                type: { const: file }
         custom:
             <<: *common_param_spec
             properties:
@@ -307,6 +313,7 @@ definitions:
                 { $ref: '#/definitions/param_specs/multichartseries' },
                 { $ref: '#/definitions/param_specs/numberformat' },
                 { $ref: '#/definitions/param_specs/secret' },
+                { $ref: '#/definitions/param_specs/file' },
                 { $ref: '#/definitions/param_specs/custom' },
             ]
 
@@ -412,6 +419,11 @@ definitions:
             properties:
                 type: { const: map }
                 value_dtype: { '$ref': '#/definitions/dtypes/any' }
+        file:
+            type: object
+            required: [ type ]
+            properties:
+                type: { const: file }
         any:
             anyOf: [
                 { $ref: '#/definitions/dtypes/string' },

@@ -32,9 +32,26 @@ class DTypeStringTest(unittest.TestCase):
 
 
 class DTypeFloatTest(unittest.TestCase):
-    def test_float_validates_int(self):
-        DT.Float().validate(10) # should not raise
+    def test_validate_int(self):
+        DT.Float().validate(10)  # do not raise
 
+
+class DTypeFileTest(unittest.TestCase):
+    def test_validate_null(self):
+        DT.File().validate(None)  # do not raise
+
+    def test_validate_uuid(self):
+        DT.File().validate('1e3a5177-ee1a-4832-bfbb-6480b93984ab')  # do not raise
+
+    def test_validate_invalid_str(self):
+        with self.assertRaisesRegex(ValueError,
+                                    'not a UUID string representation'):
+            # one character too many
+            DT.File().validate('f13aa5177-ee1a-4832-bfbb-6480b93984ab')
+
+    def test_validate_non_str(self):
+        with self.assertRaisesRegex(ValueError, 'not a string'):
+            DT.File().validate(0x13a5177)
 
 class DTypeCoerceTest(unittest.TestCase):
 

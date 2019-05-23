@@ -555,6 +555,37 @@ class ParamDTypeMultichartseries(ParamDTypeList):
         return cls(**kwargs)
 
 
+class ParamDTypeFile(ParamDType):
+    """
+    String-encoded UUID pointing to an UploadedFile (and S3).
+
+    The default, value, `null`, means "No file".
+    """
+    UUIDRegex = re.compile(
+        r'\A[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\Z'
+    )
+
+    def __repr__(self):
+        return 'ParamDTypeFile()'
+
+    def coerce(self, value):
+        try:
+            self.validate(value)
+        except ValueError:
+            # If it's not a UUID, we _certainly_ can't repair it
+            return None
+        return value
+
+    def validate(self, value):
+        if value is None:
+            return  # None is the default, and it's valid
+        if not isinstance(value, str):
+            raise ValueError('Value %r is not a string' % value)
+        if not self.UUIDRegex.match(value):
+            raise ValueError('Value %r is not a UUID string representation'
+                             % value)
+
+
 # Aliases to help with import. e.g.:
 # from server.models.param_field import ParamDType
 # dtype = ParamDType.String()
@@ -571,6 +602,7 @@ ParamDType.Multicolumn = ParamDTypeMulticolumn
 ParamDType.Tab = ParamDTypeTab
 ParamDType.Multitab = ParamDTypeMultitab
 ParamDType.Multichartseries = ParamDTypeMultichartseries
+ParamDType.File = ParamDTypeFile
 
 ParamDType.JsonTypeToDType = {
     'string': ParamDTypeString,
@@ -586,4 +618,5 @@ ParamDType.JsonTypeToDType = {
     'column': ParamDTypeColumn,
     'multicolumn': ParamDTypeMulticolumn,
     'multichartseries': ParamDTypeMultichartseries,
+    'file': ParamDTypeFile,
 }

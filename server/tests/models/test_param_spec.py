@@ -169,7 +169,6 @@ class ParamSpecTest(unittest.TestCase):
         # returns the original.
         self.assertEqual(ParamSpec.from_dict(param_dict), param_spec)
 
-
     def test_to_dict_dict_factory(self):
         def upcasedict(tuples):
             return dict((x.upper(), y) for x, y in tuples)

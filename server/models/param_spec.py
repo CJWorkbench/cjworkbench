@@ -1,7 +1,6 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 from dataclasses import asdict, dataclass, field
-from enum import Enum
 from typing import Any, Dict, FrozenSet, List, Optional, Union
 from .param_dtype import ParamDType
 
@@ -479,6 +478,14 @@ class ParamSpecMultitab(_HasPlaceholder, _HasName, ParamSpec):
     @property
     def dtype(self) -> Optional[ParamDType]:
         return ParamDType.Multitab()
+
+
+@dataclass(frozen=True)
+class ParamSpecFile(ParamSpec):
+    # override
+    @property
+    def dtype(self) -> Optional[ParamDType]:
+        return ParamDType.File()
 
 
 @dataclass(frozen=True)
