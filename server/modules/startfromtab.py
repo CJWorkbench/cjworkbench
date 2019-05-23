@@ -4,4 +4,9 @@ def render(table, params):
     if tab is None:
         return None
 
-    return tab.dataframe
+    return {
+        'dataframe': tab.dataframe,
+        'column_formats': {c.name: c.format
+                           for c in tab.columns.values()
+                           if c.format is not None},
+    }
