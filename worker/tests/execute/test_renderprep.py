@@ -193,7 +193,7 @@ class CleanValueTests(DbTestCase):
         )
         self.assertEqual(result, ['B', 'A'])
 
-    def test_clean_column_prompting_error_convert_to_text(self):
+    def test_clean_multicolumn_prompting_error_convert_to_text(self):
         # TODO make this _automatic_ instead of quick-fix?
         # ... but for now: prompt for a Quick Fix.
         context = RenderContext(None, TableShape(3, [
@@ -306,7 +306,7 @@ class CleanValueTests(DbTestCase):
         # The other tab would not exist if the user selected and then deleted
         # it.
         workflow = Workflow.create_and_init()
-        tab = workflow.tabs.first()
+        workflow.tabs.first()
 
         schema = ParamDType.Dict({
             'tab': ParamDType.Tab(),
