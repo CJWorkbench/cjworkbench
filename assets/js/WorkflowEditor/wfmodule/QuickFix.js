@@ -2,9 +2,9 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 export const QuickFixPropTypes = {
-    text: PropTypes.string.isRequired,
-    action: PropTypes.oneOf(['prependModule']).isRequired,
-    args: PropTypes.array.isRequired
+  text: PropTypes.string.isRequired,
+  action: PropTypes.oneOf(['prependModule']).isRequired,
+  args: PropTypes.array.isRequired
 }
 
 export default class QuickFix extends React.PureComponent {

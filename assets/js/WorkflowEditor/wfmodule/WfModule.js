@@ -436,6 +436,7 @@ export class WfModule extends React.PureComponent {
               {/* --- Error message --- */}
               <StatusLine
                 module={module}
+                isReadOnly={isReadOnly}
                 status={this.wfModuleStatus}
                 error={wfModule.output_error || ''}
                 quickFixes={wfModule.quick_fixes || []}

@@ -7,6 +7,7 @@ describe('Status line', () => {
   const wrapper = (extraProps={}) => {
     return mount(
       <StatusLine
+        isReadOnly={false}
         module={{ help_url: 'modules/foo' }}
         status='ok'
         error=''
@@ -38,6 +39,23 @@ describe('Status line', () => {
     expect(w.find('button').text()).toEqual('Fix it')
     w.find('button').simulate('click')
     expect(w.prop('applyQuickFix')).toHaveBeenCalledWith('prependModule', [1, 2])
+  })
+
+  it('shows error but not quick fixes if isReadOnly', () => {
+    const w = wrapper({
+      status: 'error',
+      error: 'Wrong type',
+      isReadOnly: true,
+      quickFixes: [
+        {
+          'text': 'Fix it',
+          'action': 'prependModule',
+          'args': [1, 2]
+        }
+      ]
+    })
+    expect(w.find('p').text()).toEqual('Wrong type')
+    expect(w.find('button')).toHaveLength(0)
   })
 
   it('prevents double-applying a quick fix', () => {

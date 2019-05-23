@@ -96,6 +96,7 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
         <StatusLine
           applyQuickFix={[Function]}
           error=""
+          isReadOnly={false}
           module={
             Object {
               "help_url": "http://help-url",

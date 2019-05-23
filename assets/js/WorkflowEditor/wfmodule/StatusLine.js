@@ -6,8 +6,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import QuickFix, { QuickFixPropTypes } from './QuickFix'
 
-
-const StatusLine = React.memo(function StatusLine ({ status, error, quickFixes, applyQuickFix }) {
+const StatusLine = React.memo(function StatusLine ({ status, error, quickFixes, applyQuickFix, isReadOnly }) {
   const [clickedAnyQuickFix, setClickedQuickFix] = useState(false)
   const doApplyQuickFix = useCallback((...args) => {
     setClickedQuickFix(true)
@@ -25,7 +24,7 @@ const StatusLine = React.memo(function StatusLine ({ status, error, quickFixes, 
       {error ? (
         <p>{error}</p>
       ) : null}
-      {quickFixes.length ? (
+      {quickFixes.length && !isReadOnly ? (
         <ul className='quick-fixes'>
           {quickFixes.map((quickFix, i) => (
             <QuickFix
@@ -42,6 +41,7 @@ const StatusLine = React.memo(function StatusLine ({ status, error, quickFixes, 
 })
 StatusLine.propTypes = {
   status: PropTypes.oneOf(['ok', 'busy', 'error', 'unreachable']).isRequired,
+  isReadOnly: PropTypes.bool.isRequired, // if true, cannot apply quick fixes
   error: PropTypes.string, // may be empty string
   quickFixes: PropTypes.arrayOf(PropTypes.shape(QuickFixPropTypes).isRequired).isRequired,
   applyQuickFix: PropTypes.func.isRequired, // func(action, args) => undefined
