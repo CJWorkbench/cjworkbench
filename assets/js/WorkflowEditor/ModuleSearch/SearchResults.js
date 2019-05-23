@@ -6,12 +6,13 @@ import SearchResultGroup from './SearchResultGroup'
 
 const GroupOrder = {
   // dont use 0 -- we use the "||" operator to detect misses
-  'Add data': 1,
+  'Combine': 1,
   'Scrape': 2,
   'Clean': 3,
   'Analyze': 4,
   'Visualize': 5,
   'Code': 6,
+  'Add data': 1, // TODO nix this category for non-`loads_data` modules
 }
 
 function compareGroups(a, b) {
@@ -78,10 +79,7 @@ export default class SearchResults extends React.PureComponent {
   _buildResultGroups = memoize((groups, search) => {
     const escapedValue = escapeRegexCharacters(search.trim())
     const regex = new RegExp(escapedValue, 'i')
-    const predicate = (module) => (
-      !module.deprecated
-      && (regex.test(module.name) || regex.test(module.description))
-    )
+    const predicate = (module) => (regex.test(module.name) || regex.test(module.description))
     return groups
       .map(({ name, modules }) => ({ name, modules: modules.filter(predicate) }))
       .filter(({ modules }) => modules.length > 0)

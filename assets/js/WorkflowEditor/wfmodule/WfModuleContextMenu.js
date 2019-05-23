@@ -30,7 +30,7 @@ export default class WfModuleContextMenu extends React.Component {
     return (
       <UncontrolledDropdown>
         <DropdownToggle title="more" className='context-button'>
-          <i className='context-button--icon icon-more'></i>
+          <i className='icon-more'></i>
         </DropdownToggle>
         <DropdownMenu>
           <DropdownItem onClick={this.toggleExportModal} className='test-export-button' icon='icon-download'>Export data</DropdownItem>

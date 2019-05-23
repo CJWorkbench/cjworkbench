@@ -42,7 +42,7 @@ export default class Prompt extends React.PureComponent {
           onChange={this.onChange}
           onKeyDown={this.onKeyDown}
         />
-        <button type="reset" className="close" title="Close Search"><i className="icon-close"></i></button>
+        <button type='reset' className='reset' title='Close Search'><i className='icon-close'></i></button>
       </form>
     )
   }

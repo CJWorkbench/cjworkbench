@@ -38,7 +38,7 @@ exports[`WfHamburgerMenu renders logged in, non-read only 1`] = `
                   title="menu"
                 >
                   <i
-                    className="context-button--icon icon-more"
+                    className="icon-more"
                   />
                 </button>
               </InnerReference>
@@ -113,7 +113,7 @@ exports[`WfHamburgerMenu renders logged in, non-read only 1`] = `
                         title="menu"
                       >
                         <i
-                          class="context-button--icon icon-more"
+                          class="icon-more"
                         />
                       </button>
                     }

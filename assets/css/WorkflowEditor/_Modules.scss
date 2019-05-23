@@ -1,5 +1,6 @@
 .wf-module {
   position: relative;
+  z-index: 0; // HACK create a stacking context, so .param-radio can set z-index: 1 without leaping out of the module
 
   // numbers at the left-hand side
   h3 {

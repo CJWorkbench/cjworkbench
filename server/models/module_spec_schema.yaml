@@ -11,7 +11,7 @@ properties:
     category:
         type: string
         description: Category that appears in Module Search
-        enum: [ Add data, Scrape, Clean, Analyze, Code, Visualize, Other ]
+        enum: [ Add data, Combine, Scrape, Clean, Analyze, Code, Visualize, Other ]
     deprecated:
         type: object
         description: "If set, warning to show the user because we want to delete this module."
@@ -36,7 +36,10 @@ properties:
         description: "Description that appears in Module Search (default: '')"
     loads_data:
         type: boolean
-        description: "True if this Step can do 'fetches' that may produce new data each run (default: False)"
+        description: "True if this Step can be used as the first module in a Tab. (default: False)."
+    uses_data:
+        type: boolean
+        description: "True if this Step can be used _after_ the first module in a Tab. (default: !loads_data)."
     html_output:
         type: boolean
         description: "True if this Step outputs an iframe (default: False)"

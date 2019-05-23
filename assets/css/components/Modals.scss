@@ -7,9 +7,44 @@
   display: block;
 }
 
+@mixin modal-backdrop {
+  opacity: .3;
+  background-color: black;
+}
+
 .modal-backdrop {
-  opacity: .2;
-  background-color: $dark-gray;
+  @include modal-backdrop;
+}
+
+@mixin modal-header {
+  border-radius: .5rem .5rem 0 0;
+  height: 6rem;
+  padding: 2rem;
+  background-color: $modal-color;
+  border-bottom: 1px solid $white;
+  display: flex;
+  justify-content: space-between; // h5 on left, close button on right
+  align-items: center;
+  cursor: default;
+
+  h5, .modal-title {
+    @include title-2;
+    font-weight: bold;
+    color: white;
+    opacity: 1;
+    padding: 0;
+    margin: 0;
+  }
+
+  .close {
+    cursor: pointer;
+    font-size: 2.5rem;
+    color: white;
+    opacity: .6; // TODO why white+opacity? Let's pick the color we want.
+    &:hover {
+      opacity: 1;
+    }
+  }
 }
 
 .modal-dialog {
@@ -17,45 +52,19 @@
   max-height: 50rem;
   box-shadow: $menu-shadow;
 
-  .modal-content{
+  .modal-content {
     border: 0;
     border-radius: .5rem;
 
     .modal-header {
-      border-radius: .5rem .5rem 0 0;
-      height: 6rem;
-      padding: 2rem;
-      background-color: $modal-color;
-      border-bottom: 1px solid $white;
-      display: flex;
-      align-items: center;
-      cursor: default;
-
-      .modal-title {
-        @include title-2;
-        font-weight: bold;
-        color: white;
-        opacity: 1;
-      }
-
-      .close {
-        cursor: pointer;
-        font-size: 2.5rem;
-        color: white;
-        opacity: .6; // TODO why white+opacity? Let's pick the color we want.
-        &:hover {
-          opacity: 1;
-        }
-      }
+      @include modal-header;
     }
 
     .modal-body {
-      padding: 0;
       background-color: white;
       padding: 2rem;
-      border: 0;
+      overflow: auto; // scroll vertically if needed
       max-height: 70vh;
-      overflow: auto;
 
       /* from Export Data modal, in WfModuleContextMenu  */
       .url-link {

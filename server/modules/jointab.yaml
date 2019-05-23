@@ -1,6 +1,6 @@
 id_name: jointab
 name: Join tab
-category: Add data
+category: Combine
 icon: join
 help_url: steps/add-data/join-tabs
 description: Join data using shared columns between two tabs.

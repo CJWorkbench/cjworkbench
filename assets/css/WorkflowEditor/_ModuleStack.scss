@@ -22,40 +22,16 @@
     background-color: white;
   }
 
-  button.search {
-    // Button to invoke add-module -- both in-between modules and at bottom of stack
-    @include content-1;
-    font-weight: bold; // [adamhooper, 2019-03-28] TODO move this to fonts.scss instead of extending content-1
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    text-transform: uppercase;
-    cursor: pointer;
-  }
-
   // Big button to call the module search at the bottom of stack
   .module-search-last {
-    width: $module-width;
-    margin: 0 $module-margin-right 0 $module-margin-left;
+    @include add-module-button-container;
+    position: relative; // XXX should probably be margin-top: 1.5rem, but that's hard to fix now because the "ADD STEP" modal would shift by 1.5rem
     top: 1.5rem;
     margin-bottom: 20rem; // so there's always a scrollbar, and clicking "ADD STEP" doesn't add one //FIXME @adam Would be much better to have the scrollbar not pushing the table, and not displayed when there is no need to.
-    position: relative;
 
-    button.search {
-      @include action-button;
-      @include button-blue;
-
-      i {
-        font-size: 1.5rem;
-        margin-right: .7rem;
-      }
-
-      span {
-        margin-top: .1rem;
-      }
-
+    &>button {
       &:not(:hover):not(.active):not(.lesson-highlight) {
+        // Color this one differently from all other buttons on the site
         background: transparent;
       }
     }

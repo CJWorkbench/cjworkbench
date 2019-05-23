@@ -6,6 +6,8 @@
   "description": "Python code editor with console",
   "has_zen_mode": true,
   "html_output": true,
+  "loads_data": true,
+  "uses_data": true,
   "help_url":"modules/code/python-editor",
   "parameters": [
     {

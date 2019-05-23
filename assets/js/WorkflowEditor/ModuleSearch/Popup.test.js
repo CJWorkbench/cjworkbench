@@ -10,6 +10,7 @@ describe('ModuleSearch Popup', () => {
     name: 'Default',
     description: 'Default',
     category: 'Add data',
+    uses_data: true,
     icon: 'url',
     isLessonHighlight: false
   }
@@ -20,6 +21,7 @@ describe('ModuleSearch Popup', () => {
       name: "Load from Enigma",
       description: 'Enigma description',
       category: "Add data",
+      uses_data: true,
       icon: "url",
       isLessonHighlight: true,
     },
@@ -28,6 +30,7 @@ describe('ModuleSearch Popup', () => {
       name: "Filter by Text",
       description: 'Text description',
       category: "Filter",
+      uses_data: true,
       icon: "filter",
       isLessonHighlight: false,
     }
@@ -109,15 +112,6 @@ describe('ModuleSearch Popup', () => {
     expect(w.text()).toMatch(/X.*Y.*Z/)
   })
 
-  it('should hide deprecated modules', () => {
-    const w = wrapper({ modules: [
-      { ...ModuleDefaults, idName: 'a', category: 'CatA', name: 'A' },
-      { ...ModuleDefaults, idName: 'b', category: 'CatB', name: 'B', deprecated: { end_date: '2001-01-01', message: 'Please disappear' } }
-    ]})
-    expect(w.text()).not.toMatch(/CatB/)
-    expect(w.text()).not.toMatch(/B/)
-  })
-
   it('should show a popover description on hover', () => {
     const w = wrapper()
     w.find('button[data-module-name="Load from Enigma"]').simulate('mouseEnter')
@@ -154,12 +148,37 @@ describe('ModuleSearch Popup', () => {
     it('gets modules from the store', () => {
       const store = mockStore({
         modules: {
-          a: { id_name: 'a', name: 'AAA', category: 'Analyze', description: 'A A', icon: 'a' },
-          b: { id_name: 'b', name: 'BBB', category: 'Analyze', description: 'B B', icon: 'b' }
+          a: { id_name: 'a', name: 'AAA', category: 'Analyze', uses_data: true, description: 'A A', icon: 'a' },
+          b: { id_name: 'b', name: 'BBB', category: 'Analyze', uses_data: true, description: 'B B', icon: 'b' }
         }
       })
       const w = wrapper(store)
       expect(w.text()).toMatch(/AAA.*BBB/)
+    })
+
+    it('hides !uses_data modules', () => {
+      const store = mockStore({
+        modules: {
+          a: { id_name: 'a', name: 'AAA', category: 'Analyze', uses_data: false, description: 'A A', icon: 'a' },
+          b: { id_name: 'b', name: 'BBB', category: 'Analyze', uses_data: true, description: 'B B', icon: 'b' }
+        }
+      })
+      const w = wrapper(store)
+      expect(w.text()).not.toMatch(/AAA/)
+      expect(w.text()).toMatch(/BBB/)
+    })
+
+    it('hides deprecated modules', () => {
+      const store = mockStore({
+        modules: {
+          a: { id_name: 'a', name: 'AAA', category: 'Analyze', uses_data: true, description: 'A A', icon: 'a' },
+          b: { id_name: 'b', name: 'BBB', category: 'Analyze', uses_data: true, description: 'B B', icon: 'b',
+               deprecated: { end_date: '2001-01-01', message: 'Please disappear' } }
+        }
+      })
+      const w = wrapper(store)
+      expect(w.text()).toMatch(/AAA/)
+      expect(w.text()).not.toMatch(/BBB/)
     })
 
     it('dispatches addModule', () => {
@@ -175,8 +194,8 @@ describe('ModuleSearch Popup', () => {
           2: {}
         },
         modules: {
-          a: { id_name: 'a', name: 'AAA', category: 'Analyze', description: 'A A', icon: 'a' },
-          b: { id_name: 'b', name: 'BBB', category: 'Analyze', description: 'B B', icon: 'b' }
+          a: { id_name: 'a', name: 'AAA', category: 'Analyze', uses_data: true, description: 'A A', icon: 'a' },
+          b: { id_name: 'b', name: 'BBB', category: 'Analyze', uses_data: true, description: 'B B', icon: 'b' }
         }
       }, api)
       const close = jest.fn()
@@ -208,8 +227,8 @@ describe('ModuleSearch Popup', () => {
           'tab-1': { wf_module_ids: [] }
         },
         modules: {
-          a: { id_name: 'a', name: 'AAA', category: 'Analyze', description: 'A A', icon: 'a' },
-          b: { id_name: 'b', name: 'BBB', category: 'Analyze', description: 'B B', icon: 'b' }
+          a: { id_name: 'a', name: 'AAA', category: 'Analyze', uses_data: true, description: 'A A', icon: 'a' },
+          b: { id_name: 'b', name: 'BBB', category: 'Analyze', uses_data: true, description: 'B B', icon: 'b' }
         }
       })
 

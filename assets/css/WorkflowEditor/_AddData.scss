@@ -1,0 +1,137 @@
+// Relies on @mixin module-search-input from _ModuleSearch.scss
+
+.add-data {
+  // This is the "+ ADD DATA" button or <WfModule>. .add-data-modal isn't
+  // styled here because it's in a portal.
+  .add-data-button {
+    @include add-module-button-container;
+
+    &>button {
+      @include button-orange--fill; // the user _must_ click this button :)
+    }
+  }
+}
+
+.add-data-modal { // renders atop the selected pane
+  // Cover the entire pane
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+
+  // Center contents (no matter their size)
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &::before { // backdrop for modal
+    content: '';
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    @include modal-backdrop; // color
+  }
+
+  .content {
+    // Cover most of the backdrop
+    width: 80%;
+    max-width: 104rem; // 3 columns wide, plus scrollbar
+    height: 80%;
+
+    position: relative; // get stacking context, so we're on top of parent::before
+
+    display: flex; // so .body can auto-size itself and have a scrollbar
+    flex-direction: column;
+
+    box-shadow: $menu-shadow;
+    background: $WF-background;
+    border-radius: .5rem;
+    overflow: hidden; // respect the border-radius
+
+    header {
+      flex: 0 0 auto;
+      @include modal-header;
+    }
+
+    .body {
+      flex: 1 1 auto;
+      display: flex; // to size children -- in particular, to make empty-search-results full-height
+      flex-direction: column;
+      // Scroll vertically on all but the largest screens
+      overflow: auto;
+      padding: 2rem;
+      @include content-1;
+    }
+  }
+
+  .search {
+    max-width: 40rem;
+    flex: 0 0 auto;
+    @include module-search-field;
+
+    input {
+      background: white;
+    }
+  }
+
+  .modules {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch; // all buttons on a flexbox line are same height
+    margin: 0 -2rem -2rem; // contents have margin:2rem
+
+    &.no-results {
+      flex: 1 1 auto; // fill the modal. We don't want this if we _have_ results -- we may want the box shorter
+      align-items: center;
+      justify-content: center;
+
+      p {
+        margin: 0;
+        @include title-2;
+      }
+    }
+
+    a {
+      display: block;
+      width: 30rem;
+      min-height: 15rem; // set min-height, not height: overlong descriptions will grow the flexbox line height
+      font: inherit;
+      background: white;
+      color: inherit;
+      box-shadow: none;
+      border-radius: .5rem;
+      padding: 2rem;
+      margin: 2rem;
+      display: flex; // icon to left of title
+
+      &:hover {
+        box-shadow: $overlay-shadow;
+      }
+
+      &.lesson-highlight {
+        border: 2px solid $brand-learn;
+      }
+
+      i {
+        font-size: 3.5rem;
+        margin-right: 2rem;
+      }
+
+      h4 {
+        @include title-2;
+        align-items: center;
+      }
+
+      &:hover {
+        text-decoration: none;
+        h4 span {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+}

@@ -63,7 +63,8 @@ class WorkbenchBase(unittest.TestCase):
 
     # TODO move to a helper .py file
     def add_wf_module(self, name: str, position=None) -> None:
-        """Adds module with name 'name' to the workflow.
+        """
+        Add module with name 'name' to the workflow.
 
         Keyword arguments:
         position -- if set, add after the 'position'th existing module.
@@ -74,7 +75,8 @@ class WorkbenchBase(unittest.TestCase):
             with b.scope('.in-between-modules:last-child'):
                 b.click_button('ADD STEP')
         else:
-            i = position * 2 + 1
+            assert position > 0  # for 0, use add_data_step().
+            i = position * 2
             with b.scope(f'.in-between-modules:nth-child({i})'):
                 b.click_button('ADD STEP')
 
@@ -89,14 +91,32 @@ class WorkbenchBase(unittest.TestCase):
         )
 
     # TODO move to a helper .py file
+    def add_data_step(self, name: str) -> None:
+        """
+        Add module with name 'name' to the workflow.
+
+        Assumes the 'Add Data' modal is open.
+        """
+        b = self.browser
+        b.fill_in('moduleQ', name)
+        b.click_link(name)
+
+        # Wait for module to appear and render
+        b.assert_element(
+            f'.wf-module[data-module-name="{name}"]:not(.status-busy)',
+            wait=True
+        )
+
+    # TODO move to a helper .py file
     def delete_wf_module(self, position: int) -> None:
-        """Deletes module at index `position` from the workflow.
+        """
+        Delete module at index `position` from the workflow.
 
         The first module has `position == 0`.
         """
         b = self.browser
 
-        with b.scope(f'.wf-module:nth-child({position * 2 + 2})'):
+        with b.scope(f'.wf-module:nth-child({position * 2 + 1})'):
             b.click_button('more', visible='all')
 
         # Dropdown menu is at root of document (in a <Portal>)
@@ -105,7 +125,8 @@ class WorkbenchBase(unittest.TestCase):
 
     # TODO move to a helper .py file
     def add_csv_data_module(self, csv=None):
-        """Adds Paste Data module to the workflow with given data
+        """
+        Adds Paste Data module to the workflow with given data
 
         csv -- Text of csv. If not set, use default data.
         """
@@ -116,12 +137,8 @@ class WorkbenchBase(unittest.TestCase):
                 'Feb,666,Fred Frederson',
             ])
 
-        self.browser.click_button('ADD STEP')
-        self.browser.fill_in('moduleQ', 'Paste data')
-        self.browser.click_whatever('.module-search-result', text='Paste data')
-
-        # wait for wfmodule to appear
-        self.browser.fill_in('csv', csv, wait=True)
+        self.add_data_step('Paste data')
+        self.browser.fill_in('csv', csv)
         self.submit_wf_module()
 
     # TODO move to a helper .py file

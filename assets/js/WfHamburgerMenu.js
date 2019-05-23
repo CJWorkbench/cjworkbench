@@ -34,7 +34,7 @@ export default class WfHamburgerMenu extends React.Component {
       <React.Fragment>
         <UncontrolledDropdown>
           <DropdownToggle title='menu' className='context-button'>
-            <i className='context-button--icon icon-more' />
+            <i className='icon-more' />
           </DropdownToggle>
           <DropdownMenu>
             {loggedIn && workflowId ? (

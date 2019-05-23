@@ -24,7 +24,7 @@ class TestExampleWorkflow(WorkbenchBase):
 
         b.fill_in('name', 'Example Workflow')
 
-        self.add_wf_module('Paste data')
+        self.add_data_step('Paste data')
         b.fill_in('csv', 'foo,bar,baz\n1,2,\n2,3,\n3,4,', wait=True)
         self.submit_wf_module()
 

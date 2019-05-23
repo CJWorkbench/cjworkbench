@@ -1,6 +1,6 @@
 from integrationtests.utils import LoggedInIntegrationTest
 
-class TestNewWorkflow(LoggedInIntegrationTest):
+class TestPythonCode(LoggedInIntegrationTest):
     def setUp(self):
         super().setUp()
 
@@ -9,7 +9,7 @@ class TestNewWorkflow(LoggedInIntegrationTest):
 
         # Empty module stack
         b.wait_for_element('.module-stack', wait=True)
-        self.add_wf_module('Python')
+        self.add_data_step('Python')
 
         # Wait for dynamically-loaded editor component
         b.wait_for_element('.ace-wrapper', wait=True)

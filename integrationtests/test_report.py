@@ -16,7 +16,7 @@ class TestReport(LoggedInIntegrationTest):
             b.fill_in('name', title)
 
     def _build_chart(self):
-        self.add_wf_module('Paste data')
+        self.add_data_step('Paste data')
         b = self.browser
         b.fill_in('csv', 'Category,Number\nA,2,\nB,3', wait=True)
         self.submit_wf_module()

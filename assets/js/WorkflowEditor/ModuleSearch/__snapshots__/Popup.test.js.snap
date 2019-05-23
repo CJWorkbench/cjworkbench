@@ -15,6 +15,7 @@ exports[`ModuleSearch Popup matches snapshot 1`] = `
         "idName": "filter",
         "isLessonHighlight": false,
         "name": "Filter by Text",
+        "uses_data": true,
       },
       Object {
         "category": "Add data",
@@ -23,6 +24,7 @@ exports[`ModuleSearch Popup matches snapshot 1`] = `
         "idName": "enigma",
         "isLessonHighlight": true,
         "name": "Load from Enigma",
+        "uses_data": true,
       },
     ]
   }
@@ -52,7 +54,7 @@ exports[`ModuleSearch Popup matches snapshot 1`] = `
           value=""
         />
         <button
-          className="close"
+          className="reset"
           title="Close Search"
           type="reset"
         >
@@ -72,6 +74,7 @@ exports[`ModuleSearch Popup matches snapshot 1`] = `
             "idName": "filter",
             "isLessonHighlight": false,
             "name": "Filter by Text",
+            "uses_data": true,
           },
           Object {
             "category": "Add data",
@@ -80,6 +83,7 @@ exports[`ModuleSearch Popup matches snapshot 1`] = `
             "idName": "enigma",
             "isLessonHighlight": true,
             "name": "Load from Enigma",
+            "uses_data": true,
           },
         ]
       }
@@ -101,6 +105,7 @@ exports[`ModuleSearch Popup matches snapshot 1`] = `
                 "idName": "enigma",
                 "isLessonHighlight": true,
                 "name": "Load from Enigma",
+                "uses_data": true,
               },
             ]
           }
@@ -129,6 +134,7 @@ exports[`ModuleSearch Popup matches snapshot 1`] = `
                 name="Load from Enigma"
                 onClick={[Function]}
                 onMouseEnter={[Function]}
+                uses_data={true}
               >
                 <Manager>
                   <li>
@@ -173,6 +179,7 @@ exports[`ModuleSearch Popup matches snapshot 1`] = `
                 "idName": "filter",
                 "isLessonHighlight": false,
                 "name": "Filter by Text",
+                "uses_data": true,
               },
             ]
           }
@@ -201,6 +208,7 @@ exports[`ModuleSearch Popup matches snapshot 1`] = `
                 name="Filter by Text"
                 onClick={[Function]}
                 onMouseEnter={[Function]}
+                uses_data={true}
               >
                 <Manager>
                   <li>

@@ -7,12 +7,8 @@ class TestQuickFix(LoggedInIntegrationTest):
         b = self.browser
 
         b.click_button('Create Workflow')
-        b.assert_element('input[name="name"][value="Untitled Workflow"]',
-                         wait=True)  # Wait for page to load
+        b.assert_element('.add-data-modal', wait=True)  # Wait for page to load
 
         self.import_module('deprecated-soon')
-
-        b.click_button('ADD STEP')
         b.fill_in('moduleQ', 'Deprecation-test')
-        b.assert_no_element('button.module-search-result',
-                            text='Deprecation-test module')
+        b.assert_no_element('a[name=deprecated-soon]')

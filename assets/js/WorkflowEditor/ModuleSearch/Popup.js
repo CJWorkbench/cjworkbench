@@ -358,14 +358,19 @@ const mapStateToProps = (state, ownProps) => {
   const { testHighlight } = lessonSelector(state)
   return {
     isLessonHighlight: testHighlight({ type: 'Module', name: null, index: ownProps.index }),
-    modules: Object.keys(state.modules).map(idName => {
-      const module = state.modules[idName]
-      return {
-        idName,
-        ...module,
-        isLessonHighlight: testHighlight({ type: 'Module', name: module.name, index: ownProps.index })
-      }
-    })
+    modules: Object.values(state.modules)
+      .filter(m => m.uses_data)
+      .filter(m => !m.deprecated)
+      .map(module => {
+        return {
+          idName: module.id_name,
+          isLessonHighlight: testHighlight({ type: 'Module', name: module.name, index: ownProps.index }),
+          name: module.name,
+          description: module.description,
+          category: module.category,
+          icon: module.icon
+        }
+      })
   }
 }
 

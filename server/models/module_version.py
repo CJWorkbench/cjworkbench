@@ -167,6 +167,10 @@ class ModuleVersion(models.Model):
         return self.spec.get('loads_data', False)
 
     @property
+    def uses_data(self):
+        return self.spec.get('uses_data', not self.loads_data)
+
+    @property
     def has_zen_mode(self):
         return self.spec.get('has_zen_mode', False)
 

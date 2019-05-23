@@ -62,3 +62,32 @@ $module-parameter-padding: .5rem 1rem;
 %autosize-with-textarea {
   @include autosize-with-textarea;
 }
+
+@mixin add-module-button-container {
+  width: $module-width;
+  margin: 0 $module-margin-right 0 $module-margin-left;
+
+  &>button {
+    @include action-button;
+    @include button-blue;
+
+    // Button to invoke add-module -- both in-between modules and at bottom of stack
+    @include content-1;
+    font-weight: bold; // [adamhooper, 2019-03-28] TODO move this to fonts.scss instead of extending content-1
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    text-transform: uppercase;
+    cursor: pointer;
+
+    i {
+      font-size: 1.5rem;
+      margin-right: .7rem;
+    }
+
+    span {
+      margin-top: .1rem;
+    }
+  }
+}

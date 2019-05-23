@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import AddData from './AddData'
 import ModuleSearch from './ModuleSearch'
 import WfModule from './wfmodule/WfModule'
 import WfModuleHeader from './wfmodule/WfModuleHeader'
@@ -137,16 +138,37 @@ function EmptyReadOnlyModuleStack () {
   )
 }
 
+/**
+ * Returns [ addDataStep (or null), useDataSteps (Array) ].
+ *
+ * The `addDataStep` is guaranteed to have `loads_data: true`. There are no
+ * guarantees about the `useDataSteps`.
+ *
+ * Keep in mind that this distinction is _client-side_. The server does not
+ * differentiate: the user may end up with a Tab that has many `usesDataStep`s
+ * and no `addDataStep`, and the server will actually try and render that.
+ */
+function partitionWfModules (wfModules, modules) {
+  if (wfModules[0] && modules[wfModules[0].module] && modules[wfModules[0].module].loads_data) {
+    return [ wfModules[0], wfModules.slice(1) ]
+  } else {
+    return [ null, wfModules ]
+  }
+}
+
 export class ModuleStack extends React.Component {
   static propTypes = {
     api: PropTypes.object.isRequired,
     tabSlug: PropTypes.string,
     selected_wf_module_position: PropTypes.number,
     wfModules: PropTypes.arrayOf(PropTypes.object).isRequired,
+    modules: PropTypes.objectOf(PropTypes.shape({ loads_data: PropTypes.bool.isRequired })).isRequired,
     moveModuleByIndex: PropTypes.func.isRequired, // func(tabSlug, oldIndex, newIndex) => undefined
     removeModule: PropTypes.func.isRequired,
     testLessonHighlightIndex: PropTypes.func.isRequired, // func(int) => boolean
-    isReadOnly: PropTypes.bool.isRequired
+    isReadOnly: PropTypes.bool.isRequired,
+    /** <WorkflowEditor/Pane> container, where the dialog will open */
+    paneRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }).isRequired
   }
 
   // Track state of where we last auto-scrolled.
@@ -224,9 +246,17 @@ export class ModuleStack extends React.Component {
   }
 
   render() {
-    const { isReadOnly, tabSlug, wfModules } = this.props
+    const { isReadOnly, tabSlug, paneRef, wfModules, modules } = this.props
+    const [ addDataWfModule, useDataWfModules ] = partitionWfModules(wfModules, modules)
 
-    const spotsAndItems = wfModules.map((item, i) => {
+    const spotsAndItems = useDataWfModules.map((item, i) => {
+      if (addDataWfModule) {
+        // We partitioned away wfModules[0] because it'll be an <AddData>
+        // component. So increment `i`, setting up the index correctly for
+        // each _non-first_ wfModule.
+        i += 1
+      }
+
       // If this item is replacing a placeholder, disable the enter animations
       if (!item) {
         return (
@@ -284,20 +314,37 @@ export class ModuleStack extends React.Component {
 
     return (
       <div className={className} ref={this.scrollRef}>
-        {spotsAndItems}
         {isReadOnly && wfModules.length == 0 ? (
           <EmptyReadOnlyModuleStack />
         ) : (
-          <ModuleStackInsertSpot
-            key="last"
-            index={wfModules.length}
-            tabSlug={tabSlug}
-            isLast
-            isDraggingModuleAtIndex={this.state.isDraggingModuleAtIndex}
-            moveModuleByIndex={this.moveModuleByIndex}
-            isLessonHighlight={this.props.testLessonHighlightIndex(wfModules.length)}
-            isReadOnly={this.props.isReadOnly}
-          />
+          <>
+            <AddData
+              key="add-data"
+              tabSlug={tabSlug}
+              isLessonHighlight={this.props.testLessonHighlightIndex(0)}
+              isReadOnly={this.props.isReadOnly}
+              wfModule={addDataWfModule}
+              isSelected={!!addDataWfModule && this.props.selected_wf_module_position === 0}
+              isZenMode={addDataWfModule && this.state.zenModeWfModuleId === addDataWfModule.id}
+              api={this.props.api}
+              removeModule={this.props.removeModule}
+              setZenMode={this.setZenMode}
+              paneRef={paneRef}
+            />
+            {spotsAndItems}
+            {wfModules.length > 0 ? (
+              <ModuleStackInsertSpot
+                key="last"
+                index={wfModules.length}
+                tabSlug={tabSlug}
+                isLast
+                isDraggingModuleAtIndex={this.state.isDraggingModuleAtIndex}
+                moveModuleByIndex={this.moveModuleByIndex}
+                isLessonHighlight={this.props.testLessonHighlightIndex(wfModules.length)}
+                isReadOnly={this.props.isReadOnly}
+              />
+            ) : null}
+          </>
         )}
       </div>
     )
@@ -305,6 +352,7 @@ export class ModuleStack extends React.Component {
 }
 
 const mapStateToProps = (state) => {
+  const { modules } = state
   const { testHighlight } = lessonSelector(state)
   const tabPosition = state.workflow.selected_tab_position
   const tabSlug = state.workflow.tab_slugs[tabPosition]
@@ -315,6 +363,7 @@ const mapStateToProps = (state) => {
     selected_wf_module_position: tab.selected_wf_module_position,
     tabSlug,
     wfModules,
+    modules,
     isReadOnly: state.workflow.read_only,
     testLessonHighlightIndex: (index) => testHighlight({ type: 'Module', name: null, index: index }),
   }

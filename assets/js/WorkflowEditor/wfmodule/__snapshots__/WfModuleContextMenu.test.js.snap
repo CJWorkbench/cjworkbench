@@ -33,7 +33,7 @@ exports[`WfModuleContextMenu should match snapshot 1`] = `
                   title="more"
                 >
                   <i
-                    className="context-button--icon icon-more"
+                    className="icon-more"
                   />
                 </button>
               </InnerReference>

@@ -1,3 +1,71 @@
+/*
+ * Search field for finding a module.
+ *
+ * HTML:
+ *
+ * <form className='this-is-the-module-we-mixin-for'>
+ *   <input type='search' ... />
+ *   <button type='reset' className='reset'><i className='icon-close'/></button>
+ * </div>
+ */
+@mixin module-search-field {
+  position: relative;
+
+  input {
+    // left padding for "search" icon; right padding for "close" button
+    padding: .5rem 3.4rem .5rem;
+    display: block;
+    width: 100%;
+    color: $brand-text--dark;
+    background: $Vlight-gray;
+    border-radius: 2rem;
+    border: 2px solid transparent;
+
+    &:focus {
+      border-color: $workspace-action;
+    }
+
+    //search placeholder when empty
+    &::placeholder {
+      // TODO white+opacity is not white. Do not use opacity: figure out the correct color and write it opaquely.
+      color: $placeholder;
+      font-weight: bold;
+      opacity: .9;
+    }
+  }
+
+  &::before {
+    // "search" icon
+    display: inline-block;
+    position: absolute;
+    top: .7rem;
+    left: 1.4rem;
+    font-size: 1.4rem;
+    font-family: 'Workbench';
+    color: $workspace-action;
+    content: '\e91a'; // .icon-search
+    opacity: 1;
+  }
+
+  button.reset {
+    border: 0;
+    background: transparent;
+    position: absolute;
+    right: 1.4rem;
+    top: .9rem;
+    font-size: 1.4rem;
+    margin: 0;
+    padding: 0;
+    text-shadow: none;
+    color: $placeholder;
+    opacity: .5;
+    &:hover {
+      color: $brand-text--dark;
+      opacity: 1;
+    }
+  }
+}
+
 .module-search-popper {
   z-index: $zindex-popover;
   $row-height: 4rem;
@@ -87,62 +155,22 @@
 
   .module-search-field {
     flex: 0 0 auto;
-    background: White;
+    background: white;
     padding: 1rem;
     color: $input-alt;
-    position: relative;
     box-shadow: $overlay-shadow;
-
-    input {
-      // left padding for "search" icon; right padding for "close" button
-      padding: .5rem 3.4rem .5rem;
-      display: block;
-      width: 100%;
-      color: $brand-text--dark;
-      background: $Vlight-gray;
-      border-radius: 2rem;
-      border: 2px solid transparent;
-
-      &:focus {
-        border-color: $workspace-action;
-      }
-
-      //search placeholder when empty
-      &::placeholder {
-        // TODO white+opacity is not white. Do not use opacity: figure out the correct color and write it opaquely.
-        color: $placeholder;
-        font-weight: bold;
-        opacity: .9;
-      }
-    }
+    @include module-search-field;
 
     &::before {
-      // "search" icon
-      display: inline-block;
-      position: absolute;
-      top: 1.7rem;
-      left: 2.4rem;
-      font-size: 1.4rem;
-      font-family: 'Workbench';
-      color: $workspace-action;
-      content: '\e91a'; // .icon-search
-      opacity: 1;
+      // padding:1rem means we need to move icon-search by 1rem
+      margin-top: 1rem;
+      margin-left: 1rem;
     }
 
-    button.close {
-      border: 0;
-      position: absolute;
-      right: 2.4rem;
-      top: 2rem;
-      font-size: 1.4rem;
-      margin: 0;
-      padding: 0;
-      text-shadow: none;
-      color: $placeholder;
-      &:hover {
-        color: $brand-text--dark;
-        opacity: 1;
-      }
+    button.reset {
+      // padding:1rem means we need to move icon-close by 1rem
+      margin-top: 1rem;
+      margin-right: 1rem;
     }
   }
 
