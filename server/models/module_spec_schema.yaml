@@ -11,7 +11,7 @@ properties:
     category:
         type: string
         description: Category that appears in Module Search
-        enum: [ Add data, Scrape, Clean, Analyze, Code, Visualize, Other ]
+        enum: [ Add data, Combine, Scrape, Clean, Analyze, Code, Visualize, Other ]
     deprecated:
         type: object
         description: "If set, warning to show the user because we want to delete this module."

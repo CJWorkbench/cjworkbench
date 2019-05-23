@@ -6,12 +6,13 @@ import SearchResultGroup from './SearchResultGroup'
 
 const GroupOrder = {
   // dont use 0 -- we use the "||" operator to detect misses
-  'Add data': 1,
+  'Combine': 1,
   'Scrape': 2,
   'Clean': 3,
   'Analyze': 4,
   'Visualize': 5,
   'Code': 6,
+  'Add data': 1, // TODO nix this category for non-`loads_data` modules
 }
 
 function compareGroups(a, b) {
