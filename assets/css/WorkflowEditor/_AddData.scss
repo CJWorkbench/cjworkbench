@@ -63,7 +63,7 @@
       flex-direction: column;
       // Scroll vertically on all but the largest screens
       overflow: auto;
-      padding: 2rem;
+      padding: 2rem 0rem 2rem 2rem;
       @include content-1;
     }
   }
@@ -82,8 +82,7 @@
     display: flex;
     flex-wrap: wrap;
     align-items: stretch; // all buttons on a flexbox line are same height
-    margin: 0 -2rem -2rem; // contents have margin:2rem
-    padding: 1rem;
+    margin: 1rem 0rem 1rem -2rem; // contents have margin:2rem
 
     &.no-results {
       flex: 1 1 auto; // fill the modal. We don't want this if we _have_ results -- we may want the box shorter
@@ -106,7 +105,7 @@
       box-shadow: none;
       border-radius: .5rem;
       padding: 2rem;
-      margin: 1rem;
+      margin: 1rem 0rem 1rem 2rem;
       display: flex; // icon to left of title
 
       &:hover {
@@ -118,7 +117,7 @@
       }
 
       i {
-        font-size: 2rem;
+        font-size: 1.8rem;
         margin-right: 1rem;
       }
 
