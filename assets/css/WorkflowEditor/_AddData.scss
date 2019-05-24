@@ -39,7 +39,7 @@
   .content {
     // Cover most of the backdrop
     width: 80%;
-    max-width: 104rem; // 3 columns wide, plus scrollbar
+    max-width: 105rem; // 3 columns wide, plus scrollbar
     height: 80%;
 
     position: relative; // get stacking context, so we're on top of parent::before
@@ -63,13 +63,14 @@
       flex-direction: column;
       // Scroll vertically on all but the largest screens
       overflow: auto;
-      padding: 2rem 0rem 2rem 2rem;
+      padding: 2rem 0rem 2rem 2.5rem;
       @include content-1;
+      background-color: $WF-background;
     }
   }
 
   .search {
-    max-width: 40rem;
+    max-width: 48rem;
     flex: 0 0 auto;
     @include module-search-field;
 
@@ -98,13 +99,13 @@
     a {
       display: block;
       width: 23.5rem;
-      height: 17rem; // set min-height, not height: overlong descriptions will grow the flexbox line height
+      height: 15rem; // set fixed height to keep constrain design. users will have to fit guide
       font: inherit;
       background: white;
       color: inherit;
       box-shadow: none;
       border-radius: .5rem;
-      padding: 2rem;
+      padding: 1.5rem;
       margin: 1rem 0rem 1rem 2rem;
       display: flex; // icon to left of title
 
@@ -124,8 +125,13 @@
       h4 {
         font-size: 1.6rem;
         font-weight: bold;
-
         align-items: center;
+        margin-bottom: 1rem;
+
+      }
+
+      p {
+        margin-left: -2.5rem;
       }
 
       &:hover {
