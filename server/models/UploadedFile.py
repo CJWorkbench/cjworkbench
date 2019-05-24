@@ -1,7 +1,6 @@
-import os
-from django.conf import settings
 from django.db import models
 from django.dispatch import receiver
+from django.utils import timezone
 from server import minio
 
 
@@ -12,6 +11,15 @@ class UploadedFile(models.Model):
     # delete this object if its WfModule deleted
     wf_module = models.ForeignKey('WfModule', related_name='uploaded_files',
                                   on_delete=models.CASCADE)
+
+    created_at = models.DateTimeField(default=timezone.now, null=True)
+    """
+    Time the file was uploaded.
+
+    null=True is DEPRECATED. Also, `key` ought to be a folder structure, right?
+    Let's solve both at once: rename files on S3 and fill in timestamps as we
+    go.
+    """
 
     name = models.CharField(max_length=255)
     size = models.IntegerField(default=0)

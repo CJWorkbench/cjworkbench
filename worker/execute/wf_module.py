@@ -82,6 +82,7 @@ def _execute_wfmodule_pre(
         fetch_result = safe_wf_module.get_fetch_result()
         render_context = renderprep.RenderContext(
             workflow.id,
+            wf_module.id,
             input_table_shape,
             tab_shapes,
             params  # ugh

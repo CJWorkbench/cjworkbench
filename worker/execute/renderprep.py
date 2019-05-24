@@ -1,10 +1,19 @@
 from functools import partial, singledispatch
+import os
+import re
+import pathlib
+import tempfile
+import weakref
 from typing import Any, Dict, List, Optional, Union
 from cjworkbench.types import RenderColumn, StepResultShape, TabOutput
-from server.models import Params, Tab
+from server import minio
+from server.models import Params, Tab, UploadedFile
 from server.models.param_spec import ParamDType
 from .types import TabCycleError, TabOutputUnreachableError, \
         UnneededExecution, PromptingError
+
+
+FilesystemUnsafeChars = re.compile('[^-_.,()a-zA-Z0-9]')
 
 
 class PromptErrorAggregator:
@@ -40,6 +49,7 @@ class RenderContext:
     def __init__(
         self,
         workflow_id: int,
+        wf_module_id: int,
         input_table_shape: StepResultShape,
         # assume tab_shapes keys are ordered the way the user ordered the tabs.
         tab_shapes: Dict[str, Optional[StepResultShape]],
@@ -54,6 +64,7 @@ class RenderContext:
         params: Params
     ):
         self.workflow_id = workflow_id
+        self.wf_module_id = wf_module_id
         self.input_table_shape = input_table_shape
         self.tab_shapes = tab_shapes
         self.params = params
@@ -138,6 +149,52 @@ def _(dtype: ParamDType.Float, value: Union[int,float],
     # json.parse(), which only gives Numbers so can give "3" instead of
     # "3.0". We want to pass that as `float` in the `params` dict.
     return float(value)
+
+
+class WeakreffablePath(pathlib.PosixPath):
+    """Exactly like pathlib.Path, but weakref.finalize works on it."""
+
+
+@clean_value.register(ParamDType.File)
+def _(dtype: ParamDType.File, value: Optional[str],
+      context: RenderContext) -> Optional[pathlib.Path]:
+    """
+    Convert a `file` String-encoded UUID to a tempfile `pathlib.Path`.
+
+    The return value:
+
+    * Points to a temporary file containing all bytes
+    * Has the same suffix as the originally-uploaded file
+    * Will have its file deleted when it goes out of scope
+    """
+    if value is None:
+        return None
+    try:
+        uploaded_file = UploadedFile.objects.get(
+            uuid=value,
+            wf_module_id=context.wf_module_id,
+        )
+    except UploadedFile.DoesNotExist:
+        return None
+
+    # UploadedFile.name may not be POSIX-compliant. We want the filename to
+    # have the same suffix as the original: that helps with filetype
+    # detection. We also put the UUID in the name so debug messages help
+    # devs find the original file.
+    name = FilesystemUnsafeChars.sub('-', uploaded_file.name)
+    suffix = ''.join(pathlib.PurePath(name).suffixes)
+    fd, filename = tempfile.mkstemp(suffix=suffix, prefix=value)
+    os.close(fd)  # we just want the empty file; no need to have it open
+    # Build our retval: it'll delete the file when it's destroyed
+    path = WeakreffablePath(filename)
+    weakref.finalize(path, os.unlink, filename)
+    try:
+        # Overwrite the file
+        minio.download(uploaded_file.bucket, uploaded_file.key, path)
+    except FileNotFoundError:
+        # tempfile will be deleted by weakref
+        return None
+    return path
 
 
 @clean_value.register(ParamDType.Tab)

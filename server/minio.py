@@ -1,4 +1,4 @@
-from contextlib import closing, contextmanager
+from contextlib import contextmanager
 from dataclasses import dataclass
 import errno
 import hmac
@@ -284,19 +284,29 @@ def temporarily_download(bucket: str, key: str) -> None:
         # when you exit the block, the pathlib.Path is deleted
     """
     with tempfile.NamedTemporaryFile(prefix='minio_download') as tf:
-        try:
-            transfer.download_file(bucket, key, tf.name)
-        # transfer.download_file() seems to raise ClientError instead of a
-        # wrapped error.
-        # except error.NoSuchKey:
-        #     raise FileNotFoundError(errno.ENOENT, f'No file at {bucket}/{key}')
-        except error.ClientError as err:
-            if err.response.get('Error', {}).get('Code') == '404':
-                raise FileNotFoundError(errno.ENOENT,
-                                        f'No file at {bucket}/{key}')
-            else:
-                raise
-        yield pathlib.Path(tf.name)
+        path = pathlib.Path(tf.name)
+        download(bucket, key, path)  # raises FileNotFound
+        yield path
+
+
+def download(bucket: str, key: str, path: pathlib.Path) -> None:
+    """
+    Copy a file from S3 to a pathlib.Path.
+
+    Raise FileNotFound if the key is not on S3.
+    """
+    try:
+        transfer.download_file(bucket, key, str(path))
+    # transfer.download_file() seems to raise ClientError instead of a
+    # wrapped error.
+    # except error.NoSuchKey:
+    #     raise FileNotFoundError(errno.ENOENT, f'No file at {bucket}/{key}')
+    except error.ClientError as err:
+        if err.response.get('Error', {}).get('Code') == '404':
+            raise FileNotFoundError(errno.ENOENT,
+                                    f'No file at {bucket}/{key}')
+        else:
+            raise
 
 
 class RandomReadMinioFile(io.RawIOBase):
