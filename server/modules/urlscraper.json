@@ -64,7 +64,7 @@
       }
     },
     {
-      "name": "1/Enter the base URL without numbers, e.g. http://site.com/info?page=",
+      "name": "Enter the base URL without numbers, e.g. http://site.com/info?page=",
       "id_name": "paged",
       "type":"statictext",
       "visible_if": {
@@ -73,7 +73,7 @@
       }
     },
     {
-      "name": "2/Add page numbers below (10 max)",
+      "name": "Then add page numbers below (10 max)",
       "id_name": "paged-2",
       "type":"statictext",
       "visible_if": {
