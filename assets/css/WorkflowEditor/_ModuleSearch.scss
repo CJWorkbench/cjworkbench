@@ -22,7 +22,7 @@
     border: 2px solid transparent;
 
     &:focus {
-      border-color: $workspace-action;
+      border-color: $brand-orange--medium;
     }
 
     //search placeholder when empty
@@ -42,7 +42,7 @@
     left: 1.4rem;
     font-size: 1.4rem;
     font-family: 'Workbench';
-    color: $workspace-action;
+    color: $brand-orange;
     content: '\e91a'; // .icon-search
     opacity: 1;
   }
@@ -256,7 +256,7 @@
 
   margin-left: 1rem; // don't overlap module-search-popup scrollbar
   border-width: $module-popover-border-width;
-  border-color: $brand-workspace;
+  border-color: $brand-orange;
   border-radius: 5px;
   background: white;
   box-shadow: $menu-shadow;
@@ -286,7 +286,7 @@
     margin-top: -4px; // Bootstrap's calculations assume a much smaller arrow
 
     &::before {
-      border-right-color: $brand-workspace;
+      border-right-color: $brand-orange;
       border-bottom-color: transparent;
       top: -1px;
       left: -1px;

@@ -87,7 +87,7 @@ $brand-background: rgba($brand-workspace--medium, .25); // used for blending in 
 $brand-background--action:rgba($brand-workspace--medium, .60); // DO NOT USE
 
 $brand-orange--light: lighten($brand-orange,26%);
-$brand-orange--medium: lighten($brand-orange,12%);
+$brand-orange--medium: #fcbe90;
 $brand-orange--medium-dark: lighten($brand-orange,9%);
 $brand-orange--darker: darken($brand-orange, 10%);
 

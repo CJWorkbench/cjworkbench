@@ -259,8 +259,10 @@
               color: inherit;
               position: relative;
               opacity: .9;
+              color: $brand-orange--darker;
               &:hover {
-                background-color:$header-hover;
+                background-color:$brand-orange;
+                color: white;
               }
               i {
                 margin-left: 1px;
