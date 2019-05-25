@@ -28,7 +28,7 @@ $modal-footer: #F5F7F8;
 $table-border: #CBE2E7;
 $dark-orange:#F88630;
 
-$heading-bg: white;
+$heading-bg: lighten($document-blue,58%);
 $header-hover: $table-border;
 $input-alt-bg: #96afc3;
 $input-alt: white;
