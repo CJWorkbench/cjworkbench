@@ -25,11 +25,11 @@ $Vlight-gray: lighten($dark-gray,39%);
 
 $font-family-sans-serif: 'Nunito Sans', sans-serif; // override Bootstrap
 $modal-footer: #F5F7F8;
-$table-border: #D7E4E7;
+$table-border: #CBE2E7;
 $dark-orange:#F88630;
 
 $heading-bg: white;
-$header-hover: $WF-background;
+$header-hover: $table-border;
 $input-alt-bg: #96afc3;
 $input-alt: white;
 $input-alt-placeholder: $SuperLightGray;
