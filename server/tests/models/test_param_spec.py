@@ -176,6 +176,8 @@ class ParamSpecTest(unittest.TestCase):
 
         param_spec = ParamSpec.List(
             id_name='l',
+            visible_if=dict(
+                id_name='othermenu', value='showlist'),
             child_parameters=[
                 ParamSpec.String(id_name='s', default='foo'),
                 ParamSpec.Column(id_name='c', visible_if=dict(
@@ -188,7 +190,10 @@ class ParamSpecTest(unittest.TestCase):
             'TYPE': 'list',
             'ID_NAME': 'l',
             'NAME': '',
-            'VISIBLE_IF': None,
+            'VISIBLE_IF': {
+                'ID_NAME': 'othermenu',
+                'VALUE': 'showlist'
+            },
             'CHILD_PARAMETERS': [
                 {
                     'TYPE': 'string',
