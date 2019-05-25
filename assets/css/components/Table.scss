@@ -199,6 +199,7 @@
           padding-top: .6rem;
           color: $medium-gray;
           height: 1.6rem;
+          font-size: 1.2rem;
         }
 
         .data-grid-column-header  {
@@ -329,7 +330,7 @@
         border-right: 0;
         border-bottom: 0;
         border-top: 0;
-        color: $brand-text--dark;
+        color: $brand-text--darker;
 
         .react-grid-Cell__value>* { // .cell-text, .cell-datetime, .cell-number, .cell-null
           @include table-content;
