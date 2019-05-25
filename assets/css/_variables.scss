@@ -28,8 +28,8 @@ $modal-footer: #F5F7F8;
 $table-border: #D7E4E7;
 $dark-orange:#F88630;
 
-$heading-bg: #466577;
-$header-hover: darken($heading-bg,8%);
+$heading-bg: white;
+$header-hover: $WF-background;
 $input-alt-bg: #96afc3;
 $input-alt: white;
 $input-alt-placeholder: $SuperLightGray;

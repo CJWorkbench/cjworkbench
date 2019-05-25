@@ -153,10 +153,11 @@
 
       .react-grid-HeaderCell {
         @extend .content-1;
-        color: white;
+        color: $brand-text--darker;
         background-color: $heading-bg;
-        border-right:1px solid rgba(0,0,0,0.1);
-        border-bottom:0px;
+        border: 1px solid $table-border;
+        border-bottom: 1px solid $table-border;
+        border-left: 0px;
         padding: 0;
         display: flex;
 
@@ -195,11 +196,9 @@
           align-items: center;
           justify-content: center;
           text-align: center;
-          padding-top: .15rem;
-          color: $white;
-          opacity: .7;
+          padding-top: .6rem;
+          color: $medium-gray;
           height: 1.8rem;
-          border-bottom: 1px solid $dark-accent--soft;
         }
 
         .data-grid-column-header  {
@@ -208,18 +207,19 @@
           overflow: hidden;
 
           .column-key {
-            padding: .8rem 1rem; // .8rem dictated by react-data-grid JS
+            padding: .6rem 1rem; // .8rem dictated by react-data-grid JS
             display: block;
             flex: 1 1 auto;
             overflow: hidden;
             height:100%;
             cursor: text;
-            height:5rem;
+            height:4.5rem;
 
             .value {
               text-overflow: ellipsis;
               white-space: nowrap;
               overflow: hidden;
+              margin-bottom: .2rem;
             }
 
             .column-type {
@@ -269,13 +269,16 @@
           }
 
           input[name="new-column-key"] {
-            padding-top: .9rem;
-            padding-bottom: 2.3rem;
-            padding-left: 1rem;
-            padding-right: 1rem;
-            height: 4.9rem;
+            padding-top: .2rem;
+            //padding-bottom: 2.1rem;
+            padding-left: .8rem;
+            padding-right: .8rem;
+            border-radius: 5px;
+            height: 3rem;
+            width: 100%;
             flex: 1 1 auto;
             border: 0;
+            border: 2px solid $brand-orange;
 
             & + .dropdown {
             //  display: none; -- un-comment to hide menu when text field input is selected

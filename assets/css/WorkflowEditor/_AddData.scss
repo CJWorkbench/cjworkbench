@@ -107,6 +107,7 @@
       border-radius: .5rem;
       padding: 1.5rem;
       margin: 1rem 0rem 1rem 2rem;
+      display: flex; // icon to left of title
 
       &:hover {
         box-shadow: $overlay-shadow;
@@ -116,23 +117,21 @@
         border: 2px solid $brand-learn;
       }
 
-      .title {
-        display: flex;
-        i {
-          font-size: 1.8rem;
-          margin-right: .8rem;
-        }
+      i {
+        font-size: 1.8rem;
+        margin-right: 1rem;
+      }
 
-        h4 {
-          font-size: 1.6rem;
-          font-weight: bold;
-          align-items: center;
-          margin-bottom: 1rem;
-        }
+      h4 {
+        font-size: 1.4rem;
+        font-weight: bold;
+        align-items: center;
+        margin-bottom: 1rem;
+
       }
 
       p {
-
+        //margin-left: -2.5rem;
       }
 
       &:hover {
