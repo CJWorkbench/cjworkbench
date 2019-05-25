@@ -39,7 +39,6 @@
   .content {
     // Cover most of the backdrop
     width: 80%;
-    max-width: 105rem; // 3 columns wide, plus scrollbar
     height: 80%;
 
     position: relative; // get stacking context, so we're on top of parent::before
@@ -63,14 +62,15 @@
       flex-direction: column;
       // Scroll vertically on all but the largest screens
       overflow: auto;
-      padding: 2rem 0rem 2rem 2.5rem;
+      padding: 2.5rem;
       @include content-1;
       background-color: $WF-background;
     }
   }
 
   .search {
-    max-width: 48rem;
+    width: 48rem;
+    margin: auto;
     flex: 0 0 auto;
     @include module-search-field;
 
@@ -80,10 +80,12 @@
   }
 
   .modules {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: stretch; // all buttons on a flexbox line are same height
-    margin: 1rem 0rem 1rem -2rem; // contents have margin:2rem
+    display: grid;
+    margin-top: 2.5rem;
+    grid-column-gap: 2rem;
+    grid-row-gap: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(23.5rem, auto));
+    justify-content: center;
 
     &.no-results {
       flex: 1 1 auto; // fill the modal. We don't want this if we _have_ results -- we may want the box shorter
@@ -97,7 +99,8 @@
     }
 
     a {
-      display: block;
+      grid-column-start: auto;
+      grid-row-start: auto;
       width: 23.5rem;
       height: 15rem; // set fixed height to keep constrain design. users will have to fit guide
       font: inherit;
@@ -106,7 +109,6 @@
       box-shadow: none;
       border-radius: .5rem;
       padding: 1.5rem;
-      margin: 1rem 0rem 1rem 2rem;
       display: flex; // icon to left of title
 
       &:hover {
