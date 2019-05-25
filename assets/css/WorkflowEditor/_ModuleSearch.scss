@@ -58,11 +58,15 @@
     padding: 0;
     text-shadow: none;
     color: $placeholder;
-    opacity: .5;
+    opacity: 0;
     &:hover {
       color: $brand-text--dark;
       opacity: 1;
     }
+  }
+
+  &:hover button.reset {
+    opacity: .5;
   }
 }
 
