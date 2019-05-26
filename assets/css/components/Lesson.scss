@@ -10,6 +10,7 @@ article.lesson {
 
   .description, ol.steps {
     @extend .content-3;
+    font-weight: lighter;
   }
 
   h1 { display: none; }
