@@ -153,10 +153,10 @@
 
       .react-grid-HeaderCell {
         @extend .content-1;
-        color: $brand-text--darker;
-        background-color: $heading-bg;
-        border: 1px solid $table-border;
-        border-bottom: 1px solid $table-border;
+        color: white;
+        background-color: $document-blue--light;
+        border-right: 1px solid $document-blue;
+        border-bottom: 0px;
         border-left: 0px;
         padding: 0;
         display: flex;
@@ -197,7 +197,7 @@
           justify-content: center;
           text-align: center;
           padding-top: .6rem;
-          color: $medium-gray;
+          color: white;
           height: 1.6rem;
           font-size: 1.2rem;
         }
