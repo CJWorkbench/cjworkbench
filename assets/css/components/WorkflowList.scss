@@ -295,6 +295,9 @@
           // The only part that isn't <a> is the context menu
           display: block;
           flex: 1 1 auto;
+          height: 100%;
+          width: 100%;
+          padding-top: 1.2rem;
         }
 
         .workflow-title {

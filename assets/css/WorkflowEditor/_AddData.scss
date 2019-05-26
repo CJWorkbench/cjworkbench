@@ -52,8 +52,9 @@
     overflow: hidden; // respect the border-radius
 
     header { // this header is designed to not look like a modal, in order to cover and better integrate the WF
-      display: flex;
+      display: block;
       align-items: center;
+      justify-content: center;
       margin: auto;
       margin-top: 2rem;
       margin-bottom: 2rem;
@@ -61,17 +62,29 @@
       background-color: $WF-background;
       color: $brand-text--dark;
 
-      h5, .modal-title {
-        @include title-2;
-        margin: 0 2rem 0 0;
-      }
+      .title {
+        display: flex;
+        align-items: center;
+        justify-content: center;
 
-      .close {
-        cursor: pointer;
-        font-size: 3rem;
-        color: $document-blue;
-        &:hover {
-          color: $brand-text--dark;
+        .container {
+          display: flex;
+          align-items: center;
+          align-self: auto;
+
+          h5, .modal-title {
+            @include title-2;
+            margin: 0 2rem 0 0;
+          }
+
+          .close {
+            cursor: pointer;
+            font-size: 3rem;
+            color: $document-blue;
+            &:hover {
+              color: $brand-text--dark;
+            }
+          }
         }
       }
     }
