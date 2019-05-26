@@ -28,8 +28,10 @@ $modal-footer: #F5F7F8;
 $table-border: #CBE2E7;
 $dark-orange:#F88630;
 
-$heading-bg: lighten($document-blue,58%);
-$header-hover: $table-border;
+$document-blue--light: lighten($document-blue, 13%);
+
+$heading-bg: $document-blue--light;
+$header-hover: $document-blue;
 $input-alt-bg: #96afc3;
 $input-alt: white;
 $input-alt-placeholder: $SuperLightGray;
@@ -95,8 +97,6 @@ $brand-learn--Vlight: lighten($brand-learn, 15%);
 $brand-learn--light: lighten($brand-learn, 13%);
 $brand-learn--med-light: lighten($brand-learn, 10%);
 $brand-learn--medium: lighten($brand-learn, 5%);
-
-$document-blue--light: lighten($document-blue, 13%);
 
 
 // Overlays

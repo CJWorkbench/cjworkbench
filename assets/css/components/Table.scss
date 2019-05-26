@@ -154,8 +154,8 @@
       .react-grid-HeaderCell {
         @extend .content-1;
         color: white;
-        background-color: $document-blue--light;
-        border-right: 1px solid $document-blue;
+        background-color: $heading-bg;
+        border-right: 1px solid $dark-accent--strong;
         border-bottom: 0px;
         border-left: 0px;
         padding: 0;
@@ -243,7 +243,7 @@
             right:0;
             top:0;
             bottom:0;
-            border-left: 1px solid $dark-accent--soft;
+            border-left: 1px solid $dark-accent--medium;
             background-color:$heading-bg;
 
             &:hover, &.active {
@@ -260,7 +260,7 @@
               color: inherit;
               position: relative;
               opacity: .9;
-              color: $brand-orange--darker;
+              color: $brand-orange;
               &:hover {
                 background-color:$brand-orange;
                 color: white;
