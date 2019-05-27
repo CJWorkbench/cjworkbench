@@ -1,6 +1,5 @@
 from django.template.response import TemplateResponse
 from django.views.decorators.clickjacking import xframe_options_exempt
-import json
 from server.models import WfModule
 from server.serializers import WorkflowSerializerLite, WfModuleSerializer
 
