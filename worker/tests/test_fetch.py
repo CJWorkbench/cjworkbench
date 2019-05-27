@@ -117,6 +117,48 @@ class FetchTests(DbTestCase):
                                                          wf_module, now))
 
     @patch('server.models.loaded_module.LoadedModule.for_module_version_sync')
+    @patch('worker.save.save_result_if_changed')
+    def test_fetch_poll_when_setting_next_update(self, save_result,
+                                                 load_module):
+        """
+        Handle `.auto_update_data` and `.update_interval` changing mid-fetch.
+        """
+        workflow = Workflow.create_and_init()
+        wf_module = workflow.tabs.first().wf_modules.create(
+            order=0,
+            auto_update_data=True,
+            next_update=parser.parse('Aug 28 1999 2:24PM UTC'),
+            update_interval=600
+        )
+
+        async def fake_fetch(*args, **kwargs):
+            return ProcessResult(pd.DataFrame({'A': [1]}))
+        fake_module = Mock(LoadedModule)
+        load_module.return_value = fake_module
+        fake_module.fetch.side_effect = fake_fetch
+
+        # We're testing what happens if wf_module disappears after save, before
+        # update. To mock that, delete after fetch, when saving result.
+        async def fake_save(workflow_id, wf_module, *args, **kwargs):
+            @database_sync_to_async
+            def change_wf_module_during_fetch():
+                WfModule.objects.filter(id=wf_module.id).update(
+                    auto_update_data=False,
+                    next_update=None,
+                )
+            await change_wf_module_during_fetch()
+        save_result.side_effect = fake_save
+
+        now = parser.parse('Aug 28 1999 2:34:02PM UTC')
+
+        with self.assertLogs(fetch.__name__, level='DEBUG'):
+            self.run_with_async_db(fetch.fetch_wf_module(workflow.id,
+                                                         wf_module, now))
+        wf_module.refresh_from_db()
+        self.assertEqual(wf_module.auto_update_data, False)
+        self.assertIsNone(wf_module.next_update)
+
+    @patch('server.models.loaded_module.LoadedModule.for_module_version_sync')
     def test_crashing_module(self, load_module):
         async def fake_fetch(*args, **kwargs):
             raise ValueError('boo')

@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from django.db import DatabaseError, InterfaceError
 from django.utils import timezone
 from cjworkbench.sync import database_sync_to_async
-from server.models import LoadedModule, Params, WfModule
+from server.models import LoadedModule, Params, WfModule, Workflow
 from worker import save
 from .util import benchmark
 
@@ -77,15 +77,23 @@ def _update_next_update_time(wf_module, now):
     """Schedule next update, skipping missed updates if any."""
     tick = timedelta(seconds=max(wf_module.update_interval, MinFetchInterval))
 
-    next_update = wf_module.next_update
-    if next_update:
-        while next_update <= now:
-            next_update += tick
+    try:
+        with wf_module.workflow.cooperative_lock():
+            wf_module.refresh_from_db()
+            next_update = wf_module.next_update
+            if next_update:
+                while next_update <= now:
+                    next_update += tick
 
-    WfModule.objects.filter(id=wf_module.id).update(
-        last_update_check=now,
-        next_update=next_update
-    )
+            WfModule.objects.filter(id=wf_module.id).update(
+                last_update_check=now,
+                next_update=next_update
+            )
+    except Workflow.DoesNotExist:
+        # [2019-05-27] `wf_module.workflow` throws `Workflow.DoesNotExist` if
+        # the WfModule is deleted. This handler is for deleted-Workflow _and_
+        # deleted-WfModule.
+        pass
 
 
 async def fetch_wf_module(workflow_id, wf_module, now):
