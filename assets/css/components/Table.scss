@@ -5,8 +5,7 @@
   position: relative;
   display: flex;
   flex-direction: column;
-
-  border-left: 2px solid $table-border;
+  border-left: 2px solid $module-color-unreachable;
 
   &.module-ok {
     border-color: $module-color-ok!important;

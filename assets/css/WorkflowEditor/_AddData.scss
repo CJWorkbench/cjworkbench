@@ -83,7 +83,7 @@
       }
 
       .search {  //TODO Create a new class of search field that is slightly bigger than the ones in the WF -- this type would be used to search for lessons, content, assets across the platform etc.
-        width: 48rem;
+        width: 45rem;
         margin: 0 auto;
         flex: 0 0 auto;
         @include module-search-field;
@@ -92,12 +92,15 @@
         &::before {
           top:.8rem;
           font-size: 1.9rem;
+          color: $item-border;
+          opacity: 1;
         }
 
         input {
           padding: 1rem 4rem;
           background: white;
           height: 4rem;
+          border-color: $item-border;
         }
 
         button.reset {
