@@ -50,7 +50,9 @@ export function destroy (slug) {
 
 export function select (slug) {
   return (dispatch, getState, api) => {
-    if (!getState().workflow.tab_slugs.includes(slug)) {
+    const { workflow } = getState()
+
+    if (!workflow.tab_slugs.includes(slug)) {
       // This happens if the user clicks a "delete" button on the module:
       // 2. Browser dispatches "delete", which removes the tab
       // 1. Browser dispatches "click", which tries to select it
@@ -58,10 +60,12 @@ export function select (slug) {
       return
     }
 
+    // Only send API request if we're read-write
+    const promise = workflow.read_only ? Promise.resolve(null) : api.setSelectedTab(slug)
     return dispatch({
       type: TAB_SELECT,
       payload: {
-        promise: api.setSelectedTab(slug),
+        promise,
         data: { slug }
       }
     })

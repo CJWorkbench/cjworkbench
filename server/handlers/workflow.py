@@ -50,8 +50,13 @@ async def set_position(workflow: Workflow, wfModuleId: int, **kwargs):
 
     try:
         await _write_wf_module_position(workflow, wfModuleId)
-    except (Workflow.DoesNotExist, Tab.DoesNotExist, WfModule.DoesNotExist):
-        raise HandlerError('Invalid wfModuleId')
+    except WfModule.DoesNotExist:
+        # users are racing, or the request is otherwise invalid.
+        # The information the user sent is hardly important. Ignore it,
+        # rather than report an error nobody cares about.
+        pass
+    except Workflow.DoesNotExist:
+        raise HandlerError('Workflow not found')
 
 
 @database_sync_to_async
