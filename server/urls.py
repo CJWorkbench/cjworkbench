@@ -43,27 +43,6 @@ urlpatterns = [
     # list all workflows
     url(r'^workflows/$', workflows.Index.as_view(), name='workflows'),
 
-    # DELETEME on or after 2019-03-01
-    #
-    # We published some temporary URLs accidentally, in emails. Redirect
-    # until we send out corrected URLs.
-    #
-    # Some were shared with a trailing "/"; others were not
-    _DELETEME_intro_course_redirect('first-story', 'first-story'),
-    _DELETEME_intro_course_redirect('extreme-values', 'extreme-values'),
-    _DELETEME_intro_course_redirect('charts-intro', 'charts-intro'),
-    _DELETEME_intro_course_redirect('filtering', 'filter'),
-    _DELETEME_intro_course_redirect('group', 'group'),
-    _DELETEME_intro_course_redirect('cleaning-campaign-finance-data',
-                                    'clean-campaign-finance-data'),
-    _DELETEME_intro_course_redirect('intro-to-data-types', 'data-types'),
-    _DELETEME_intro_course_redirect('advanced-grouping', 'group-advanced'),
-    _DELETEME_intro_course_redirect('long-and-wide-format',
-                                    'long-and-wide-format'),
-    _DELETEME_intro_course_redirect('per-capita', 'per-capita'),
-    _DELETEME_intro_course_redirect('comparing-numbers', 'compare-numbers'),
-    _DELETEME_intro_course_redirect('adjusting-for-inflation', 'inflation'),
-
     url(r'^lessons$', lessons.render_lesson_list),
     url(r'^lessons/$', redirect('/lessons')),
     url(r'^lessons/(?P<slug>[-a-z0-9]+)$', lessons.render_lesson_detail),
