@@ -25,13 +25,23 @@ SITE_ID = 1
 
 # ----- Configurable Parameters -----
 
-# How many rows in one table?
-MAX_ROWS_PER_TABLE = 1000000
+# How much table can we parse?
+#
+# When parsing a file with a header row, the header row counts towards this
+# total. Since header is the _common_ case, it makes more sense to max out at
+# 1,000,001 rows instead of 1,000,000 -- that way, after we move the header the
+# user will see a table with 1,000,000 rows: a nice, round number.
+MAX_ROWS_PER_TABLE = 1000001
+# How many bytes can we parse? (This is only used by the CSV parser for now.)
+#
+# Our algorithms use this as an estimate -- they may not be accurate.
+MAX_BYTES_PER_TABLE = 4.5 * 1024 * 1024 * 1024  # 4.5GB -- mostly str overhead
+# How many columns do we allow? (This is only used by the CSV parser for now.)
+MAX_COLUMNS_PER_TABLE = 500
 
 # How many columns can the client side display?
-# (Currently there is no limit on the actual number of columns per table -- and
-# there should certainly be one. But we do limit how many the client will
-# display because react-data-grid is terribly slow at >10 columns.)
+# Current, we limit how many the client will display because react-data-grid
+# is terribly slow at >10 columns.
 MAX_COLUMNS_PER_CLIENT_REQUEST = 100
 
 # How much StoredObject space can each module take up?

@@ -1,6 +1,3 @@
-from inspect import iscoroutinefunction
-
-
 class MockParams:
     @staticmethod
     def factory(**kwargs):

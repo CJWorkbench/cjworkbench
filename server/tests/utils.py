@@ -159,6 +159,7 @@ class MockPath(pathlib.PurePosixPath):
 
         * read_bytes()
         * read_text(), including encoding and errors
+        * open()
         * when `data` is None, raise `FileNotFoundError` when expecting a file
     """
 
@@ -187,6 +188,10 @@ class MockPath(pathlib.PurePosixPath):
             raise FileNotFoundError(self.name)
 
         return self.data.decode(encoding, errors)
+
+    def open(self, mode):
+        assert mode == 'rb'
+        return io.BytesIO(self.data)
 
 
 class MockDir(pathlib.PurePosixPath):

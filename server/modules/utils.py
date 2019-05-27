@@ -61,9 +61,7 @@ def uniquize_colnames(colnames: Iterator[str]) -> Iterator[str]:
 
         used_nums = blacklist.setdefault(key, set())
         if num in used_nums:
-            # Theoretically this could raise StopIteration ... but what
-            # _should_ we do when we have so many columns?
-            num = next(n for n in range(1, 9999999) if n not in used_nums)
+            num = max(used_nums) + 1
         used_nums.add(num)
 
         if not match and num == 1:
@@ -389,7 +387,7 @@ def _detect_separator(textio: io.TextIOWrapper) -> str:
     return map[results.index(max(results))]
 
 
-def _detect_encoding(bytesio: io.BytesIO):
+def detect_encoding(bytesio: io.BytesIO):
     """
     Detect charset, as Python-friendly encoding string.
 
@@ -461,11 +459,15 @@ def parse_bytesio(bytesio: io.BytesIO, mime_type: str,
     mime_type -- handled MIME type
     text_encoding -- if set and input is text-based, the suggested charset
                      (which may be incorrect)
+
+    XXX See `upload` module for new-style parsers. New-style parsers operate on
+    _files_, not _bytesio_; and they do not parse the first row as header.
+    Basically, new-style parsers avoid all Pandas features.
     """
     if mime_type in _Parsers:
         parser, need_encoding = _Parsers[mime_type]
         if need_encoding and not text_encoding:
-            text_encoding = _detect_encoding(bytesio)
+            text_encoding = detect_encoding(bytesio)
         return _safe_parse(bytesio, parser, text_encoding)
     else:
         return ProcessResult(error=f'Unhandled MIME type "{mime_type}"')
