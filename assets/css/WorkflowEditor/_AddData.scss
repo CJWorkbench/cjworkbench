@@ -148,11 +148,17 @@
       color: inherit;
       box-shadow: none;
       border-radius: .5rem;
-      padding: 1.5rem;
+      border: 1px solid $item-border;
+      padding: 2rem;
       display: flex; // icon to left of title
+      //box-shadow: $button-area;
+      position: relative;
+      box-shadow: $button-area;
+
 
       &:hover {
-        box-shadow: $overlay-shadow;
+        box-shadow: $button-area--hover;
+        top: -3px;
       }
 
       &.lesson-highlight {

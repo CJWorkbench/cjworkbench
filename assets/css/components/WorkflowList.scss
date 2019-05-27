@@ -12,7 +12,6 @@
     color:$brand-learn;
     background-color: $brand-learn--Vlight;
     border-radius: 15px;
-    display: block;
     margin:4rem;
     padding:1.5rem;
     display: none;
@@ -84,8 +83,10 @@
       list-style: none;
       @include title-3;
       text-transform: uppercase;
+      font-weight: normal;
       margin-left: 2rem;
-
+      position: relative;
+      top: 1px;
       a {
         color: inherit;
       }
@@ -94,10 +95,14 @@
         position: relative;
         color: darken($medium-gray,7%);
         float: left;
-        border-radius: 1rem 1rem 0 0;
-        background-color: darken($page-background,3%);
+        border-radius: .5rem .5rem 0 0;
+        border: 1px solid transparent;
+        border-bottom-color: $item-border;
         &:hover {
           color: $brand-text--dark;
+          background-color: $light-accent--Vstrong;
+          border-color: transparent;
+          border-bottom-color: $item-border;
         }
 
         .nav-link {
@@ -109,8 +114,10 @@
 
         &.active {
           background-color: $white;
+          border-color: $item-border;
+          border-bottom: 1px solid $Vlight-gray;
           z-index: 3;
-          color: lighten($brand-text--dark,13%);
+          color: $brand-text--dark;
         }
 
         // Need pseudo to create round corner, for both nav-item and nav-link in order to get 4 of them per tab.
@@ -127,19 +134,21 @@
         content: "";
         }
 
-        // position all pseudos at bottom
+        // position all pseudos at bottom -- disabled please keep for now //pfc 05/23/2019
         &::before, &::after,
         & .nav-link::before, & .nav-link::after {
           position: absolute;
           bottom: 0;
           z-index: 1;
+          display: none;
         }
 
-        // Squares (on top of circled)
+        // Squares (on top of circled) -- disabled please keep for now //pfc 05/23/2019
         &::before, &::after {
           background-color: pink;
           width: 1rem;
           height: 1rem;
+          display: none;
         }
         // position those squares
         &::before { left: -1rem; }
@@ -238,7 +247,7 @@
         align-items: center;
         cursor: default;
         border-radius: .5rem;
-        margin: 1px;
+        border: 1px solid $item-border;
       }
       form.create-workflow button {
         @include content-1;
@@ -255,7 +264,8 @@
 
     .workflow-list {
       background-color: $page-background; // background of list
-
+      border: 1px solid $item-border;
+      border-radius: 5px;
       // WF list
       .workflow {
         height: 6.5rem;
@@ -266,6 +276,7 @@
         background: white;
         display: flex;
         align-items: center;
+
 
         &:first-child {
           border-top-left-radius: .5rem;

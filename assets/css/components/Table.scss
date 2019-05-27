@@ -6,7 +6,7 @@
   display: flex;
   flex-direction: column;
 
-  border-left: 2px solid transparent;
+  border-left: 2px solid $table-border;
 
   &.module-ok {
     border-color: $module-color-ok!important;
@@ -388,6 +388,7 @@
           text-align: center;
           font-size: 1.2rem;
           line-height: 35px; // 35px is react-data-grid's hard-coded row height
+
         }
 
         // Shrinking font sizes based on number of digits

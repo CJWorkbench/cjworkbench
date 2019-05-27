@@ -119,9 +119,13 @@
           color: $brand-text--dark;
           border-radius: 5px;
           text-decoration: none;
+          border: 1px solid $item-border;
+          box-shadow: $button-area;
+          position: relative;
 
           &:hover {
             box-shadow: $button-area--hover;
+            top: -3px;
           }
 
           h2 {
@@ -141,10 +145,10 @@
             display: block;
             height: auto;
             position: absolute;
-            width: calc(100% - 3rem);
+            width: 100%;
             border-radius: 0 0 5px 5px;
-            left: 1.5rem;
-            bottom: 0;
+            left: 0;
+            bottom: -1px;
           }
         }
       }
