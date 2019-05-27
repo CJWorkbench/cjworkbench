@@ -19,11 +19,14 @@ export const Modal = React.memo(function Modal ({ modules, tabSlug, close, addMo
     <div className='add-data-modal' onClick={closeIfClickIsOnBackdrop}>
       <section className='content'>
         <header>
-          <h5>CHOOSE A DATA SOURCE</h5>
-          <button type='button' className='close' aria-label='Close' title='Close' onClick={close}>×</button>
+          <div className="title">
+            <h5>CHOOSE A DATA SOURCE</h5>
+            <button type='button' className='close' aria-label='Close' title='Close' onClick={close}>×</button>  
+          </div>
+          <Search value={search} onChange={setSearch} />
         </header>
         <div className='body'>
-          <Search value={search} onChange={setSearch} />
+
           <Modules modules={modules} addModule={onSelectModule} search={search} />
         </div>
       </section>

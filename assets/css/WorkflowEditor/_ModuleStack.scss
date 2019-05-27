@@ -51,7 +51,7 @@
     width: $module-width;
     margin-left: $module-margin-left;
     position: relative;
-    height: 1.5rem;
+    height: 2.2rem;
 
     &:hover, &:focus-within {
       z-index: 2; // appear above the next module
@@ -61,12 +61,13 @@
       display: block;
       position: absolute;
       width: $module-width;
-      height: 100%;
+      height: 1.4rem;
       cursor: pointer;
       border: 0;
       opacity: 0;
-      background: lighten($brand-orange,9%);
+      background: lighten($brand-orange,7%);
       color: white;
+      margin-top: .4rem;
       font-size: 1rem;
       border-radius: 1rem;
       transition-property: opacity;
@@ -74,7 +75,7 @@
 
       i.icon-add {
         position: relative;
-        top:-.18rem;
+        top: 0rem;
       }
 
       span {

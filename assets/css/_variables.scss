@@ -1,19 +1,21 @@
 
 // Main colors  (*・‿・)ノ⌒*:･ﾟ✧
 
-$brand-workspace: #009FC7;
+$brand-workspace: #01A9D3;
 $workspace-action: #1CC8DC;
 $brand-learn: #FF8BC2;
 $brand-orange: #FBAA6D;
 $brand-red: #E24F4A;
-$WF-background: #E9EBEE;
+$page-background: #F0F3F8;
+$WF-background: $page-background;
 $module-background:#f8f8f8;
-$page-background: #f2f2f2;
-$table-background: #f4f4f4;
+$table-background: #f3f3f3;
 $modal-color: $workspace-action;
 $document-blue: #466577;
 $hover-background: #F5F5F5;
 
+$item-border: #D6DDE9;
+$table-border: #CBE2E7;
 
 // Secondary Colors (づ ￣ ³￣)づ
 
@@ -25,11 +27,10 @@ $Vlight-gray: lighten($dark-gray,39%);
 
 $font-family-sans-serif: 'Nunito Sans', sans-serif; // override Bootstrap
 $modal-footer: #F5F7F8;
-$table-border: #D7E4E7;
 $dark-orange:#F88630;
-
-$heading-bg: #466577;
-$header-hover: darken($heading-bg,8%);
+$document-blue--light: lighten($document-blue, 13%);
+$heading-bg: $document-blue--light;
+$header-hover: $document-blue;
 $input-alt-bg: #96afc3;
 $input-alt: white;
 $input-alt-placeholder: $SuperLightGray;
@@ -51,7 +52,7 @@ $text-muted: $medium-gray;
 $navbar-background: white;
 $wf-header: $brand-workspace;
 $lesson-header: $brand-learn;
-$pane-select-tab-bg: #008EB1;
+$pane-select-tab-bg: #009CC3;
 $pane-select-tab-fg: white;
 $pane-select-selected-tab-bg: $WF-background;
 $pane-select-selected-tab-fg: $brand-text--dark;
@@ -79,7 +80,7 @@ $light-accent--strong: rgba(255,255,255,.2); // DO NOT USE: rgba is bad
 $light-accent--Vstrong: rgba(255,255,255,0.5); // DO NOT USE: rgba is bad
 $light-accent--Extrastrong: rgba(255,255,255,0.9); // DO NOT USE: rgba is bad
 
-$brand-workspace--Vlight: lighten($workspace-action,40%);
+$brand-workspace--Vlight: lighten($workspace-action,45%);
 $brand-workspace--light: lighten($workspace-action,39%);
 $brand-workspace--medium: lighten($workspace-action,15%);
 
@@ -87,7 +88,7 @@ $brand-background: rgba($brand-workspace--medium, .25); // used for blending in 
 $brand-background--action:rgba($brand-workspace--medium, .60); // DO NOT USE
 
 $brand-orange--light: lighten($brand-orange,26%);
-$brand-orange--medium: lighten($brand-orange,12%);
+$brand-orange--medium: #fcbe90;
 $brand-orange--medium-dark: lighten($brand-orange,9%);
 $brand-orange--darker: darken($brand-orange, 10%);
 
@@ -95,8 +96,6 @@ $brand-learn--Vlight: lighten($brand-learn, 15%);
 $brand-learn--light: lighten($brand-learn, 13%);
 $brand-learn--med-light: lighten($brand-learn, 10%);
 $brand-learn--medium: lighten($brand-learn, 5%);
-
-$document-blue--light: lighten($document-blue, 13%);
 
 
 // Overlays
@@ -110,9 +109,9 @@ $placeholder: #959595;
 
 // box shadows ~~~~ ༼ つ ◕_◕ ༽つ
 
-$menu-shadow: -5px 8px 15px 0px rgba(0,0,0,0.08);
-$button-area: -4px 4px 20px 0px $dark-accent--medium;
-$button-area--hover: -1px 1px 2px 1px $dark-accent--medium;
+$menu-shadow: -5px 8px 15px 0px rgba(0,0,0,.15);
+$button-area: 0px 8px 3px -8px rgba(0,0,0,.15);
+$button-area--hover: -5px 10px 10px -8px rgba(0,0,0,.3);
 $overlay-shadow: -0.5rem 0.5rem 2.5rem 0 rgba(0,0,0,0.15);
 
 // Modules (ᵔᴥᵔ)
@@ -120,7 +119,7 @@ $module-width: 28rem;
 $module-margin-right: 2rem;
 $module-margin-left: 4rem;
 $module-color-ok: #1CC8DC;
-$module-color-unreachable: lighten($light-gray, 5%);
+$module-color-unreachable: $item-border;
 $module-color-busy: $brand-orange;
 $module-color-error: $error-prompt;
 $module-padding: 1rem;

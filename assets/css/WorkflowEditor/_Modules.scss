@@ -85,7 +85,7 @@
 
     .module-card {
       border-radius: 5px;
-      border: 2px solid transparent;
+      border: 2px solid $item-border;
 
       .module-card-details.collapsed {
         display: none;
@@ -160,7 +160,7 @@
       left: 100%;
       margin-top: -1px;
       margin-left: 0px;
-      height: 3px;
+      height: 2px;
       width: $module-margin-right;
       background-color: $module-color-ok;
     }
