@@ -7,7 +7,7 @@
     @include add-module-button-container;
 
     &>button {
-      @include button-blue--fill; // the user _must_ click this button :)
+      @include button-blue; // the user _must_ click this button :)
     }
   }
 }

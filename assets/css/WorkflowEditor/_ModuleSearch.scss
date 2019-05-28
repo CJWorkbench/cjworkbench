@@ -17,7 +17,7 @@
     display: block;
     width: 100%;
     color: $brand-text--dark;
-    background: $Vlight-gray;
+    background: white;
     border-radius: 2rem;
     border: 2px solid transparent;
 
@@ -40,9 +40,9 @@
     position: absolute;
     top: .7rem;
     left: 1.4rem;
-    font-size: 1.4rem;
+    font-size: 1.6rem;
     font-family: 'Workbench';
-    color: $brand-orange;
+    color: $item-border;
     content: '\e91a'; // .icon-search
     opacity: 1;
   }
@@ -102,8 +102,9 @@
     // position: absolute is set by Popper
     @include content-1;
     box-shadow: $overlay-shadow;
-    border: 1px solid #d3d3d3;
+    border: 1px solid $item-border;
     border-radius: .5rem;
+
   }
 
   // Make scrollbar always visible on Mac, as user tests show they don't know there's more menu otherwise
@@ -162,13 +163,20 @@
     background: white;
     padding: 1rem;
     color: $input-alt;
-    box-shadow: $overlay-shadow;
+    box-shadow: $element-shadow;
     @include module-search-field;
+
+    input {
+      border-color: $item-border;
+      background-color: #eeeeee;
+
+    }
 
     &::before {
       // padding:1rem means we need to move icon-search by 1rem
       margin-top: 1rem;
       margin-left: 1rem;
+      color: $light-gray;
     }
 
     button.reset {
