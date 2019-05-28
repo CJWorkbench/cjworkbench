@@ -11,7 +11,7 @@
     text-align: center;
     padding-top: .7rem; // center with collapsed .wf-card
     padding-bottom: .6rem; // so vertical line's distance is same above as below
-    color: $module-color-unreachable;
+    color: darken($module-color-unreachable,15%); // a little darker to be visible when unreachable
     background-color: $WF-background; // appear atop vertical line
   }
 
@@ -110,6 +110,8 @@
     &:not(.after-selected) h3 {
       color: $number-color;
     }
+
+    &.status-unreachable h3 {color:darken($number-color,15%);}
 
     // Color line to the left of the module stack
     &::before, & + .in-between-modules::before {
