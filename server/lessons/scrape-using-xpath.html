@@ -25,12 +25,12 @@
     <li
       data-highlight='[{"type":"Module","index":0,"name":"HTML scraper"}]'
       data-test="return workflow.tabs[0].wfModuleNames[0] === 'HTML scraper'"
-      >Add the Scrape 'HTML scraper'.
+    >Start with the <kbd>HTML scraper</kbd> data source.
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"HTML scraper"}]'
-      data-test="return workflow.tabs[0].wfModules[0].params.urllist.trim() === 'http://www.atlaudit.org/audit-reports.html'"
-      >Paste the following URL, where all the public reports are listed, and press <kbd>Scrape</kbd>
+      data-test="return workflow.tabs[0].wfModules[0].params.pagedurl.trim() === 'http://www.atlaudit.org/audit-reports.html'"
+      >Paste in the following URL, where all the public reports are listed, and press <kbd>Scrape</kbd>
       <div class="copy-txt">http://www.atlaudit.org/audit-reports.html</div>
       <p class="instruction-detail">Next, let's extract our data.</p>
     </li>
@@ -42,14 +42,14 @@
     Now, we need to extract specific data from the HTML we just saved, and store it in a new table so we can work with it.
   </p>
   <p>
-    To do this, we will use the <kbd>HTML to Table</kbd>.
+    To do this, we will use an <kbd>HTML to Table</kbd> step.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":1,"name":"HTML to Table"}]'
       data-test="return workflow.tabs[0].wfModuleNames[1] === 'HTML to Table'"
-      >Add the 'HTML to Table' step.
+    >Add the <kbd>HTML to Table</kbd> step.
     </li>
   </ol>
 </section>
@@ -58,17 +58,32 @@
   <p>XPath is a language for selecting elements within HTML documents. It’s called a “path” because it identifies elements by the 'path' you would take to reach each element from the root of the <a href="http://web.simmons.edu/~grabiner/comm244/weekfour/document-tree.html" class="highlight" target="_blank">HTML tree</a>.
   </p>
   <p>
-    We recommend using the <a href="http://web.simmons.edu/~grabiner/comm244/weekfour/document-tree.html" class="highlight" target="_blank">SelectorGadget</a> Chrome browser extension. It is a point-and-click interface for visually selecting elements on the page and generating XPath selectors.
+    We recommend using the <a href="https://selectorgadget.com/" class="highlight" target="_blank">SelectorGadget</a> Chrome browser extension. It is a point-and-click interface for visually selecting elements on the page and generating XPath selectors.
   </p>
     <ul>
       <li>
-        Install the extension <a href="https://chrome.google.com/webstore/detail/selectorgadget/mhjhnkcfbdhnjickkkdbjoemdmbfginb" class="highlight" target="_blank">here</a>.
+        Install the Chrome extension <a href="https://chrome.google.com/webstore/detail/selectorgadget/mhjhnkcfbdhnjickkkdbjoemdmbfginb" class="highlight" target="_blank">here</a>.
+        You can also install it on other browsers <a href="https://selectorgadget.com/" class="highlight" target="_blank">as a bookmark.</a>
       </li>
       <li>
-        Naviguate to <a href="http://www.atlaudit.org/audit-reports.html" class="highlight" target="_blank">the webpage</a> and generate the XPath selector, as demonstated in the following video:
+        Navigate to <a href="http://www.atlaudit.org/audit-reports.html" class="highlight" target="_blank">the webpage</a>
+        and activate SelectorGadget by clicking on the magnifying glass icon in the upper right (Chrome) or choosing the
+        bookmark (other browsers).
+      </li>
+      <li>
+        Click the first item in the list of publications. You will see all publication titles turn yellow to show they are
+        selected, but also some other links on the page.
+      </li>
+      <li>
+        Click on the red border around the unwanted links to remove them from the selection, until only the publication
+        titles are yellow.
+      </li>
+      <li>
+        Click on the <kbd>Xpath</kbd> button on the bottom toolbar. This will give you an xpath to copy.
       </li>
     </ul>
   <p>
+    This video shows the whole process.
     <iframe src="https://player.vimeo.com/video/331870253" width="640" height="360" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
   </p>
 </section>
@@ -84,9 +99,10 @@
         return (
           cols.length >= 1
           && cols[0].colxpath === '//*[(@id = &quot;wsite-content&quot;)]//li//a'
-          && cols[0].colname === 'Document title'
+          && cols[0].colname.toLowerCase() === 'document title'
         )
-      ">Paste the XPath selector you just copied into the <kbd>Column selector</kbd> field, and enter <code>Document title</code> as a column name. Validate your settings <img class="icon-insert" src="images/lesson-icons/play.svg">.
+      ">Paste the xpath selector you just copied into the <kbd>Column selector</kbd> field, and enter
+      <code>Document title</code> as a column name. Apply your settings <img class="icon-insert" src="images/lesson-icons/play.svg">.
     </li>
   </ol>
 </section>
@@ -100,14 +116,14 @@
      On the webpage, scroll down to the list of all publications released by the City Auditor's Office. Right-click on the first link in that list, and choose <kbd>Inspect</kbd> in the menu to open the Inspector panel.
    </p>
    <figure>
-     <img class="full-width" alt="Inspect element" src="./inspect_list.svg">
+     <img class="half-width" alt="Inspect element" src="./inspect_list.svg">
      <figcaption>Right click to inspect a link in the inspector</figcaption>
    </figure>
    <p>
      Let's look closely at the HTML element in the browser's inspector. In the Inspector panel, the <code>&lt;a&gt;</code> element corresponding to the link you are inspecting is highlighted.
    </p>
    <figure>
-     <img class="full-width" src="./html_element_zoom.svg">
+     <img class="half-width" src="./html_element_zoom.svg">
      <figcaption>In HTML elements are are nested within each others</figcaption>
    </figure>
    <p>
@@ -140,11 +156,12 @@
       data-test="
         const cols = workflow.tabs[0].wfModules[1].params.colselectors;
         return (
-          cols.length >= 1
+          cols.length == 2
           && cols[1].colxpath === '//*[(@id = &quot;wsite-content&quot;)]//li//a/@href'
-          && cols[1].colname === 'URL'
+          && cols[1].colname.toLowerCase() === 'url'
         )
-      ">Use the <kbd>+ADD</kbd> button to create a new column. <br><br>Copy and paste the Xpath you entered in the first <kbd>Column selector</kbd>, paste it into the new one, and append <code>/@href</code> at the end of it in order to target the URL.<br><br>Name this new column <code>URL</code>, and validate your settings <img class="icon-insert" src="images/lesson-icons/play.svg">
+      ">Use the <kbd>+ADD</kbd> button to create a new column. <br><br>Copy and paste the Xpath you entered in the
+      first <kbd>Column selector</kbd>, paste it into the new one, and append <code>/@href</code> at the end of it in order to target the URL.<br><br>Name this new column <code>URL</code>, and validate your settings <img class="icon-insert" src="images/lesson-icons/play.svg">
     </li>
   </ol>
 </section>
@@ -178,16 +195,18 @@
   </div>
   <div class="next">
     <h4>Continue learning:</h4>
-      <ol>
+      <ul>
         <li>
-          <a href="/workflows/15533/">Check this quick recipe to learn how to fix incomplete URLs, such as the one you just scraped</a>
+          The URLs you just scraped are "relative", meaning they need <kbd>https://http://www.atlaudit.org/</kbd> added
+          to the start before they'll work. <a href="/workflows/15533/">Learn how</a>.
         </li>
         <li>
-          <a href="/lessons/clean-and-standardize/">Clean and standardize data</a>
+          Learn how to <a href="/lessons/clean-and-standardize/">clean and standardize data</a>.
         </li>
         <li>
-          <a href="/lessons/custom-alerts/">Set up custom alerts to receive emails if conditions are met</a>
+          Or, learn how to
+          <a href="/lessons/custom-alerts/">set up custom alerts</a> to receive emails if conditions are met.
         </li>
-      </ol>
+      </ul>
   </div>
 </footer>
