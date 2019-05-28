@@ -42,14 +42,14 @@
     Now, we need to extract specific data from the HTML we just saved, and store it in a new table so we can work with it.
   </p>
   <p>
-    To do this, we will use the <kbd>XPath extractor</kbd>.
+    To do this, we will use the <kbd>HTML to Table</kbd>.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"Module","index":1,"name":"XPath extractor"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[1] === 'XPath extractor'"
-      >Add the 'XPath extractor' step.
+      data-highlight='[{"type":"Module","index":1,"name":"HTML to Table"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[1] === 'HTML to Table'"
+      >Add the 'HTML to Table' step.
     </li>
   </ol>
 </section>
@@ -78,7 +78,7 @@
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"WfModule","moduleName":"XPath extractor"}]'
+      data-highlight='[{"type":"WfModule","moduleName":"HTML to Table"}]'
       data-test="
         const cols = workflow.tabs[0].wfModules[1].params.colselectors;
         return (
@@ -136,7 +136,7 @@
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"WfModule","moduleName":"XPath extractor"}]'
+      data-highlight='[{"type":"WfModule","moduleName":"HTML to Table"}]'
       data-test="
         const cols = workflow.tabs[0].wfModules[1].params.colselectors;
         return (
@@ -156,14 +156,14 @@
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"WfModule","moduleName":"XPath extractor"}]'
+      data-highlight='[{"type":"WfModule","moduleName":"HTML to Table"}]'
       data-test="return workflow.tabs[0].wfModules[0].updateInterval !== null"
       >In the HTML scraper, click <kbd>manual</kbd> to open the Workflow Update window. Set the feature to <kbd>Auto</kbd>. Click <kbd>Apply</kbd>.
     </li>
     <li
-      data-highlight='[{"type":"WfModule","moduleName":"XPath extractor"}]'
+      data-highlight='[{"type":"WfModule","moduleName":"HTML to Table"}]'
       data-test="return workflow.tabs[0].wfModules[1].isEmailUpdates"
-      >In the XPath extractor, click the alert icon
+      >In the HTML to Table, click the alert icon
       <span>
         <img class="icon-insert" src="images/lesson-icons/notification.svg">
       </span>
