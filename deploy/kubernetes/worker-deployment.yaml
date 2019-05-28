@@ -36,6 +36,12 @@ spec:
               value: cjworkbench
             - name: CJW_SECRET_KEY
               value: worker-needs-no-secret-key
+            - name: CJW_WORKER_N_RENDERERS
+              value: "1"
+            - name: CJW_WORKER_N_FETCHERS
+              value: "3"
+            - anme: CJW_WORKER_N_UPLOADERS
+              value: "1"
             - name: CJW_SENDGRID_API_KEY
               valueFrom:
                 secretKeyRef:
