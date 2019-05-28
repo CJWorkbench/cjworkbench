@@ -37,6 +37,11 @@ MAX_COLUMNS_PER_CLIENT_REQUEST = 100
 # How much StoredObject space can each module take up?
 MAX_STORAGE_PER_MODULE = 1024*1024*1024
 
+# [2019-05-28] `twitter` deserves its own limit: it's a _common_ module, so
+# in practice we want to restrict its RAM usage way more than a _rare_
+# module like `upload`.
+TWITTER_MAX_ROWS_PER_TABLE = 100000
+
 # configuration for urlscraper
 SCRAPER_NUM_CONNECTIONS = 8
 SCRAPER_TIMEOUT = 30  # seconds

@@ -4,6 +4,7 @@ import unittest
 from unittest.mock import patch
 from asgiref.sync import async_to_sync
 import dateutil
+from django.test import SimpleTestCase, override_settings
 import pandas as pd
 from pandas.testing import assert_frame_equal
 from cjworkbench.types import ProcessResult
@@ -832,10 +833,6 @@ mock_tweet_table2 = pd.DataFrame({
 })
 
 
-def Err(error):
-    return ProcessResult(error=error)
-
-
 class MigrateParamsTest(unittest.TestCase):
     def test_v0_to_v1(self):
         result = twitter.migrate_params({
@@ -868,7 +865,7 @@ class MigrateParamsTest(unittest.TestCase):
         self.assertEqual(result, expected)
 
 
-class TwitterTests(unittest.TestCase):
+class TwitterTests(SimpleTestCase):
     def test_fetch_empty_query_and_secret(self):
         result = fetch(P(querytype='search', query='',
                          twitter_credentials=None))
@@ -876,20 +873,20 @@ class TwitterTests(unittest.TestCase):
 
     def test_fetch_empty_query(self):
         result = fetch(P(querytype='search', query=''))
-        self.assertEqual(result, Err('Please enter a query'))
+        self.assertEqual(result, 'Please enter a query')
 
     def test_fetch_empty_secret(self):
         result = fetch(P(twitter_credentials=None))
-        self.assertEqual(result, Err('Please sign in to Twitter'))
+        self.assertEqual(result, 'Please sign in to Twitter')
 
     def test_fetch_invalid_username(self):
         result = fetch(P(querytype='user_timeline', username='@@batman'))
-        self.assertEqual(result, Err('Not a valid Twitter username'))
+        self.assertEqual(result, 'Not a valid Twitter username')
 
     def test_invalid_list(self):
         result = fetch(P(querytype='lists_statuses',
                          listurl='https://twitter.com/a/lists/@b'))
-        self.assertEqual(result, Err('Not a valid Twitter list URL'))
+        self.assertEqual(result, 'Not a valid Twitter list URL')
 
     @patch('server.oauth.OAuthService.lookup_or_none', mock_auth)
     @patch('aiohttp.ClientSession')
@@ -905,8 +902,7 @@ class TwitterTests(unittest.TestCase):
         result = fetch(params, mock_tweet_table)
         expected = pd.concat([mock_tweet_table2, mock_tweet_table],
                              ignore_index=True, sort=False)
-        self.assertEqual(result.error, '')
-        assert_frame_equal(result.dataframe, expected)
+        assert_frame_equal(result, expected)
 
         # query should start where we left off
         self.assertEqual(
@@ -926,6 +922,27 @@ class TwitterTests(unittest.TestCase):
             )
         )
 
+    @override_settings(TWITTER_MAX_ROWS_PER_TABLE=3)
+    @patch('server.oauth.OAuthService.lookup_or_none', mock_auth)
+    @patch('aiohttp.ClientSession')
+    def test_accumulate_truncate(self, session):
+        session.return_value = mock_session = MockAiohttpSession([
+            mock_statuses2,
+            []
+        ])
+
+        params = P(querytype='user_timeline', username='foouser',
+                   accumulate=True)
+
+        result = fetch(params, mock_tweet_table)
+        expected = pd.concat([
+            mock_tweet_table2.iloc[[0]],
+            mock_tweet_table2.iloc[[1]],
+            mock_tweet_table.iloc[[0]]
+            # The rest is truncated
+        ], ignore_index=True, sort=False)
+        assert_frame_equal(result, expected)
+
     @patch('server.oauth.OAuthService.lookup_or_none', mock_auth)
     @patch('aiohttp.ClientSession')
     def test_fetch_accumulate_from_None(self, session):
@@ -937,8 +954,7 @@ class TwitterTests(unittest.TestCase):
         ])
 
         result = fetch(P(accumulate=True), None)
-        self.assertEqual(result.error, '')
-        assert_frame_equal(result.dataframe, mock_tweet_table)
+        assert_frame_equal(result, mock_tweet_table)
 
     @patch('server.oauth.OAuthService.lookup_or_none', mock_auth)
     @patch('aiohttp.ClientSession')
@@ -951,8 +967,7 @@ class TwitterTests(unittest.TestCase):
         ])
 
         result = fetch(P(accumulate=True), pd.DataFrame())  # missing columns
-        self.assertEqual(result.error, '')
-        assert_frame_equal(result.dataframe, mock_tweet_table)
+        assert_frame_equal(result, mock_tweet_table)
 
     @patch('server.oauth.OAuthService.lookup_or_none', mock_auth)
     @patch('aiohttp.ClientSession')
@@ -964,9 +979,8 @@ class TwitterTests(unittest.TestCase):
         ])
 
         result = fetch(P(accumulate=True), pd.DataFrame())  # missing columns
-        self.assertEqual(result.error, '')
         expected = mock_tweet_table[0:0].reset_index(drop=True)  # empty table
-        assert_frame_equal(result.dataframe, expected)
+        assert_frame_equal(result, expected)
 
     @patch('server.oauth.OAuthService.lookup_or_none', mock_auth)
     @patch('aiohttp.ClientSession')
@@ -978,8 +992,7 @@ class TwitterTests(unittest.TestCase):
         ])
 
         result = fetch(P(accumulate=True), mock_tweet_table)  # missing columns
-        self.assertEqual(result.error, '')
-        assert_frame_equal(result.dataframe, mock_tweet_table)
+        assert_frame_equal(result, mock_tweet_table)
 
     @patch('server.oauth.OAuthService.lookup_or_none', mock_auth)
     @patch('aiohttp.ClientSession')
@@ -1000,8 +1013,7 @@ class TwitterTests(unittest.TestCase):
         bad_table[nulls] = None
 
         result = fetch(P(accumulate=True), bad_table)
-        self.assertEqual(result.error, '')
-        assert_frame_equal(result.dataframe, mock_tweet_table)
+        assert_frame_equal(result, mock_tweet_table)
 
     @patch('server.oauth.OAuthService.lookup_or_none', mock_auth)
     @patch('aiohttp.ClientSession')
@@ -1013,7 +1025,6 @@ class TwitterTests(unittest.TestCase):
 
         # Actually fetch!
         result = fetch(P(querytype='search', query='cat'))
-        self.assertEqual(result.error, '')
         self.assertEqual([str(req.url) for req in mock_session.requests], [
             (
                 'https://api.twitter.com/1.1/search/tweets.json'
@@ -1027,7 +1038,7 @@ class TwitterTests(unittest.TestCase):
         ])
 
         # Check that render output is right
-        assert_frame_equal(result.dataframe, mock_tweet_table)
+        assert_frame_equal(result, mock_tweet_table)
 
     @patch('server.oauth.OAuthService.lookup_or_none', mock_auth)
     @patch('aiohttp.ClientSession')
@@ -1056,8 +1067,7 @@ class TwitterTests(unittest.TestCase):
         ])
 
         # Check that render output is right
-        self.assertEqual(result.error, '')
-        assert_frame_equal(result.dataframe, mock_tweet_table)
+        assert_frame_equal(result, mock_tweet_table)
 
     def test_render_empty_no_query(self):
         # When we haven't fetched, we shouldn't show any columns (for
@@ -1077,6 +1087,16 @@ class TwitterTests(unittest.TestCase):
         assert_frame_equal(result['dataframe'], mock_tweet_table[0:0])
         # column_formats is needed even for empty tables, so we can concat them
         self.assertEqual(result['column_formats'], {'id': '{:d}'})
+
+    @override_settings(TWITTER_MAX_ROWS_PER_TABLE=1)
+    def test_render_truncate_fetch_results(self):
+        # This is an edge case for [2019-05-28] and thereabouts: if we somehow
+        # re-render a fetch that had more than 100k rows, truncate it to save
+        # RAM on subsequent modules.
+        result = twitter.render(pd.DataFrame(),
+                                P(querytype='search', query='cat'),
+                                fetch_result=ProcessResult(mock_tweet_table))
+        assert_frame_equal(result['dataframe'], mock_tweet_table.iloc[[0]])
 
     @patch('server.oauth.OAuthService.lookup_or_none', mock_auth)
     @patch('aiohttp.ClientSession')
@@ -1099,8 +1119,7 @@ class TwitterTests(unittest.TestCase):
         expected = pd.concat([mock_tweet_table2, mock_tweet_table],
                              ignore_index=True, sort=False)
         expected.loc[3:5, 'retweeted_status_screen_name'] = None
-        self.assertEqual(result.error, '')
-        assert_frame_equal(result.dataframe, expected)
+        assert_frame_equal(result, expected)
 
     @patch('server.oauth.OAuthService.lookup_or_none', mock_auth)
     @patch('aiohttp.ClientSession')
@@ -1113,7 +1132,7 @@ class TwitterTests(unittest.TestCase):
         ])
 
         result = fetch(P())
-        self.assertEqual(result.dataframe['text'][0], (
+        self.assertEqual(result['text'][0], (
             "RT @JacopoOttaviani: \u26a1\ufe0f I'm playing with "
             "@workbenchdata: absolutely mindblowing. It's like a fusion "
             "between ScraperWiki, OpenRefine and Datawrapper. All of it "
@@ -1131,6 +1150,6 @@ class TwitterTests(unittest.TestCase):
         ])
 
         result = fetch(P())
-        lang = result.dataframe['lang'][0]
+        lang = result['lang'][0]
         self.assertNotEqual(lang, 'und')
         self.assertTrue(pd.isnull(lang))
