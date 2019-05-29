@@ -51,6 +51,10 @@
             }
           }
 
+          ::placeholder {
+            color: white;
+          }
+
           input {
             display: block;
             font: inherit;
@@ -127,6 +131,10 @@
           margin-right: 0; // instead of 1px
           padding-left: 1px;
           padding-right: 1px;
+
+          ::placeholder {
+            color: $brand-text--dark;
+          }
         }
       }
     }
