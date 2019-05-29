@@ -57,10 +57,11 @@
       align-items: center;
       justify-content: center;
       margin: auto;
-      margin-top: 2rem;
+      margin-top: 1rem;
       padding: 2rem;
       background-color: $WF-background;
       color: $brand-text--dark;
+      border-bottom: 1px solid $item-border;
 
       .title {
         display: flex;
@@ -129,7 +130,7 @@
 
   .modules { // display as columns
     display: grid;
-    margin-top: 3rem;
+    margin-top: 2rem;
     grid-column-gap: 2rem;
     grid-row-gap: 2rem;
     grid-template-columns: repeat(auto-fit, minmax(28rem, auto));
