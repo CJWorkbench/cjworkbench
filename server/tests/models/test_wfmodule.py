@@ -1,5 +1,8 @@
 import io
 import pandas as pd
+import uuid as uuidgen
+from django.utils import timezone
+from server import minio
 from server.models import ModuleVersion, Workflow
 from server.models.commands import InitWorkflowCommand
 from server.tests.utils import DbTestCase, mock_csv_table
@@ -202,3 +205,52 @@ class WfModuleTests(DbTestCase):
             module_id_name='floob'
         )
         self.assertIsNone(wf_module.module_version)
+
+    def test_delete_inprogress_file_upload(self):
+        workflow = Workflow.create_and_init()
+        upload_id = minio.create_multipart_upload(minio.UserFilesBucket, 'key', 'file.csv')
+        wf_module = workflow.tabs.first().wf_modules.create(
+            order=0,
+            inprogress_file_upload_id=upload_id,
+            inprogress_file_upload_key='key',
+            inprogress_file_upload_last_accessed_at=timezone.now(),
+        )
+        wf_module.delete()
+        # Assert the upload is gone
+        with self.assertRaises(minio.error.NoSuchUpload):
+            minio.client.list_parts(Bucket=minio.UserFilesBucket, Key='key',
+                                    UploadId=upload_id)
+
+    def test_delete_ignore_inprogress_file_upload_not_on_s3(self):
+        workflow = Workflow.create_and_init()
+        upload_id = minio.create_multipart_upload(minio.UserFilesBucket, 'key', 'file.csv')
+        wf_module = workflow.tabs.first().wf_modules.create(
+            order=0,
+            inprogress_file_upload_id=upload_id,
+            inprogress_file_upload_key='key',
+            inprogress_file_upload_last_accessed_at=timezone.now(),
+        )
+        # Delete from S3, and then delete.
+        #
+        # This mimics a behavior we want: upload timeouts. We can set up a
+        # S3-side policy to delete old uploaded data; we need to expect that
+        # data might be deleted when we delete the WfModule.
+        minio.abort_multipart_upload(minio.UserFilesBucket, 'key', upload_id)
+        wf_module.delete()  # do not crash
+
+    def test_delete_remove_uploaded_data_by_prefix_in_case_model_missing(self):
+        workflow = Workflow.create_and_init()
+        wf_module = workflow.tabs.first().wf_modules.create(
+            order=0
+        )
+        uuid = str(uuidgen.uuid4())
+        key = wf_module.uploaded_file_prefix + uuid
+        minio.put_bytes(minio.UserFilesBucket, key, b'A\n1')
+        # Don't create the UploadedFile. Simulates races during upload/delete
+        # that could write a file on S3 but not in our database.
+        #wf_module.uploaded_files.create(name='t.csv', size=3, uuid=uuid,
+        #                                bucket=minio.UserFilesBucket, key=key)
+        wf_module.delete()  # do not crash
+        with self.assertRaises(FileNotFoundError):
+            with minio.RandomReadMinioFile(minio.UserFilesBucket, key) as f:
+                f.read()

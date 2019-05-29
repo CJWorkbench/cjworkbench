@@ -1,15 +1,24 @@
+from base64 import b64encode
+import hashlib
 import io
 import unittest
 from unittest.mock import patch
-from server import minio
 from botocore.response import StreamingBody
-from s3transfer.download import DownloadChunkIterator
+import urllib3
 from urllib3.exceptions import ProtocolError
+from server import minio
 
 
 Bucket = minio.CachedRenderResultsBucket
 Key = 'key'
 _original_streaming_read = StreamingBody.read
+
+
+def _base64_md5sum(b: bytes) -> str:
+    h = hashlib.md5()
+    h.update(b)
+    md5sum = h.digest()
+    return b64encode(md5sum).decode('ascii')
 
 
 def _clear() -> None:
@@ -23,23 +32,11 @@ def _put(b: bytes) -> None:
     minio.put_bytes(Bucket, Key, b)
 
 
-class TemporarilyDownloadTest(unittest.TestCase):
-    def setUp(self):
-        minio.ensure_bucket_exists(Bucket)
-        _clear()
+class _MinioTest(unittest.TestCase):
+    """
+    Start and end each test with `Bucket` a valid, empty bucket.
+    """
 
-    def test_allows_reading_file(self):
-        _put(b'1234')
-        with minio.temporarily_download(Bucket, Key) as path:
-            self.assertEqual(path.read_bytes(), b'1234')
-
-    def test_file_not_found(self):
-        with self.assertRaises(FileNotFoundError):
-            with minio.temporarily_download(Bucket, Key) as path:
-                raise NotImplemented
-
-
-class RandomReadMinioFileTest(unittest.TestCase):
     def setUp(self):
         minio.ensure_bucket_exists(Bucket)
         _clear()
@@ -47,6 +44,20 @@ class RandomReadMinioFileTest(unittest.TestCase):
     def tearDown(self):
         _clear()
 
+
+class TemporarilyDownloadTest(_MinioTest):
+    def test_allows_reading_file(self):
+        _put(b'1234')
+        with minio.temporarily_download(Bucket, Key) as path:
+            self.assertEqual(path.read_bytes(), b'1234')
+
+    def test_file_not_found(self):
+        with self.assertRaises(FileNotFoundError):
+            with minio.temporarily_download(Bucket, Key) as _:
+                pass
+
+
+class RandomReadMinioFileTest(_MinioTest):
     def test_raise_file_not_found(self):
         with self.assertRaises(FileNotFoundError):
             minio.RandomReadMinioFile(Bucket, Key)
@@ -124,3 +135,59 @@ class RandomReadMinioFileTest(unittest.TestCase):
             file = minio.RandomReadMinioFile(Bucket, Key)
             self.assertEqual(file.read(), b'123456')
             self.assertRegex(logs.output[0], 'Retrying exception')
+
+
+class UploadTest(_MinioTest):
+    """
+    Test that we help a _client_ upload files directly to minio.
+
+    In these tests, the client is `urllib3`. It receives responses (including
+    "ETag" header) directly from minio. We're testing that the URLs and headers
+    are generated with the correct signature.
+    """
+
+    def test_upload_empty_file(self):
+        md5sum = _base64_md5sum(b'')
+        url, headers = minio.presign_upload(Bucket, 'key', 't.csv', 0, md5sum)
+        http = urllib3.PoolManager()
+        response = http.request('PUT', url, body=b'', headers=headers)
+        self.assertEqual(response.status, 200)
+        self.assertEqual(minio.get_object_with_data(Bucket, 'key')['Body'],
+                         b'')
+
+    def test_upload_by_presigned_request(self):
+        data = b'1234567'
+        md5sum = _base64_md5sum(data)
+        url, headers = minio.presign_upload(Bucket, 'key', 'file.csv',
+                                            len(data), md5sum)
+        http = urllib3.PoolManager()
+        response = http.request('PUT', url, body=data, headers=headers)
+        self.assertEqual(response.status, 200)
+        self.assertEqual(minio.get_object_with_data(Bucket, 'key')['Body'],
+                         data)
+        head = minio.client.head_object(Bucket=Bucket, Key='key')
+        self.assertEqual(head['ContentDisposition'],
+                         "attachment; filename*=UTF-8''file.csv")
+
+    def test_multipart_upload_by_presigned_requests(self):
+        upload_id = minio.create_multipart_upload(Bucket, 'key', 'file.csv')
+        data = b'1234567' * 1024 * 1024  # 7MB => 5MB+2MB parts
+        data1 = data[:5*1024*1024]
+        data2 = data[5*1024*1024:]
+        md5sum1 = _base64_md5sum(data1)
+        md5sum2 = _base64_md5sum(data2)
+        url1, headers1 = minio.presign_upload_part(Bucket, 'key', upload_id,
+                                                   1, len(data1), md5sum1)
+        url2, headers2 = minio.presign_upload_part(Bucket, 'key', upload_id,
+                                                   2, len(data2), md5sum2)
+        http = urllib3.PoolManager()
+        response1 = http.request('PUT', url1, body=data1, headers=headers1)
+        self.assertEqual(response1.status, 200)
+        etag1 = response1.headers['ETag'][1:-1]  # un-wrap quotes
+        response2 = http.request('PUT', url2, body=data2, headers=headers2)
+        self.assertEqual(response2.status, 200)
+        etag2 = response2.headers['ETag'][1:-1]  # un-wrap quotes
+        minio.complete_multipart_upload(Bucket, 'key', upload_id,
+                                        [etag1, etag2])
+        self.assertEqual(minio.get_object_with_data(Bucket, 'key')['Body'],
+                         data)

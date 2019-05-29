@@ -36,6 +36,10 @@ class WfModule(models.Model):
     def tab_slug(self):
         return self.tab.slug
 
+    @property
+    def uploaded_file_prefix(self):
+        return f'wf-{self.workflow_id}/wfm-{self.id}/'
+
     @classmethod
     def live_in_workflow(cls,
                          workflow: Union[int, Workflow]) -> models.QuerySet:
@@ -134,6 +138,38 @@ class WfModule(models.Model):
 
     # Stores things like login information for Twitter and other APIs, must not be copied when duplicating the wf
     secrets = JSONField(default={})
+
+    inprogress_file_upload_id = models.CharField(max_length=255, blank=True,
+                                                 null=True, default=None)
+    """
+    S3 ID used by the client during upload.
+
+    We store it here so we can authorize client requests. Users may only upload
+    using for this WfModule using this UploadID. If the UploadID does not match
+    the key the client sends, then S3 will complain.
+    """
+
+    inprogress_file_upload_key = models.CharField(max_length=100, null=True,
+                                                  blank=True, default=None)
+    """
+    Key (in the minio.UserFilesBucket) matching `inprogress_file_upload_id`.
+
+    We store the key so we can delete it. The Bucket is always
+    minio.UserFilesBucket.
+
+    TODO add constraint: (inprogress_file_upload_id IS NULL) = (key IS NULL).
+    """
+
+    inprogress_file_upload_last_accessed_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        default=None
+    )
+    """
+    When the `upload_id` was created.
+
+    Stale uploads can be deleted.
+    """
 
     @property
     def module_version(self):
@@ -409,5 +445,13 @@ class WfModule(models.Model):
         CachedRenderResult.clear_wf_module(self)
 
     def delete(self, *args, **kwargs):
+        if self.inprogress_file_upload_key:
+            try:
+                minio.abort_multipart_upload(minio.UserFilesBucket,
+                                             self.inprogress_file_upload_key,
+                                             self.inprogress_file_upload_id)
+            except minio.error.NoSuchUpload:
+                pass
+        minio.remove_recursive(minio.UserFilesBucket, self.uploaded_file_prefix)
         CachedRenderResult.clear_wf_module(self)
         super().delete(*args, **kwargs)

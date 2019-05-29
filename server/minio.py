@@ -1,5 +1,7 @@
+from base64 import b64encode
 from contextlib import contextmanager
 from dataclasses import dataclass
+from email.utils import formatdate
 import errno
 import hmac
 import hashlib
@@ -8,7 +10,8 @@ import logging
 import math
 import pathlib
 import tempfile
-from typing import Any, Dict
+from typing import Any, Dict, List, Tuple
+import urllib.parse
 import urllib3
 from django.conf import settings
 
@@ -46,6 +49,14 @@ botocore.awsrequest.AWSConnection._send_request = _send_request
 
 
 logger = logging.getLogger(__name__)
+
+
+def _build_content_disposition(filename: str) -> str:
+    """
+    Build a Content-Disposition header value for the given filename.
+    """
+    enc_filename = urllib.parse.quote(filename, encoding='utf-8')
+    return "attachment; filename*=UTF-8''" + enc_filename
 
 
 session = boto3.session.Session(
@@ -150,9 +161,9 @@ def fput_file(bucket: str, key: str, path: pathlib.Path) -> None:
     transfer.upload_file(str(path.resolve()), bucket, key)
 
 
-def put_bytes(bucket: str, key: str, body: bytes) -> None:
+def put_bytes(bucket: str, key: str, body: bytes, **kwargs) -> None:
     client.put_object(Bucket=bucket, Key=key, Body=body,
-                      ContentLength=len(body))
+                      ContentLength=len(body), **kwargs)
 
 
 def exists(bucket: str, key: str) -> bool:
@@ -166,6 +177,114 @@ def exists(bucket: str, key: str) -> bool:
         if err.response['Error']['Code'] == '404':
             return False
         raise
+
+
+def create_multipart_upload(bucket: str, key: str, filename: str) -> str:
+    """
+    Initiate a multipart upload; return the upload ID.
+
+    To add parts to the upload, call `upload_part()` with `bucket`, `key` and
+    the returned `upload_id`.
+
+    `filename` will be used to set a Content-Disposition header. We use this
+    header to store the original filename in S3. The idea is, S3 stores _all_
+    information about uploaded files.
+    """
+    response = client.create_multipart_upload(
+        Bucket=bucket,
+        Key=key,
+        ContentDisposition=_build_content_disposition(filename)
+    )
+    return response['UploadId']
+
+
+def abort_multipart_upload(bucket: str, key: str, upload_id: str) -> None:
+    """
+    Abort the multipart upload, or raise `error.NoSuchUpload`.
+    """
+    client.abort_multipart_upload(Bucket=bucket, Key=key, UploadId=upload_id)
+
+
+def _build_presigned_headers(http_method: str, resource: str, n_bytes: int,
+                             base64_md5sum: str) -> Dict[str, str]:
+    date = formatdate(timeval=None, localtime=False, usegmt=True)
+    string_to_sign = '\n'.join([
+        http_method,
+        base64_md5sum,  # Content-MD5
+        '',  # Content-Type -- we leave this blank
+        date,
+        # CanonicalizedAmzHeaders is empty -- no newline needed
+        resource
+    ])
+    signature = b64encode(sign(string_to_sign.encode('utf-8'))).decode('ascii')
+    access_key = session.get_credentials().access_key
+    return {
+        'Authorization': f'AWS {access_key}:{signature}',
+        'Content-Length': str(n_bytes),
+        'Content-MD5': base64_md5sum,
+        # no Content-Type
+        'Date': date,
+    }
+
+
+
+def presign_upload(bucket: str, key: str, filename: str, n_bytes: int,
+                   base64_md5sum: str) -> Tuple[str, Dict[str, str]]:
+    """
+    Return (url, headers) tuple for PUTting a file <5MB.
+
+    The request is pre-signed: to use them you must PUT and you must not add or
+    remove headers.
+    """
+    # https://docs.aws.amazon.com/AmazonS3/latest/dev/RESTAuthentication.html
+    resource = f'/{bucket}/{key}'
+    url = settings.MINIO_EXTERNAL_URL + resource
+    headers = _build_presigned_headers('PUT', resource, n_bytes, base64_md5sum)
+    # Content-Disposition header doesn't affect the signature
+    headers['Content-Disposition'] = _build_content_disposition(filename)
+    return url, headers
+
+
+def presign_upload_part(bucket: str, key: str, upload_id: str,
+                        part_number: int, n_bytes: int, base64_md5sum: str
+                       ) -> Tuple[str, Dict[str, str]]:
+    """
+    Return (url, headers) tuple for PUTting a part.
+
+    The request is pre-signed: to use them you must PUT and you must not add or
+    remove headers.
+
+    `part_number` starts at 1.
+    """
+    # https://docs.aws.amazon.com/AmazonS3/latest/dev/RESTAuthentication.html
+    resource = f'/{bucket}/{key}?partNumber={part_number}&uploadId={upload_id}'
+    url = settings.MINIO_EXTERNAL_URL + resource
+    headers = _build_presigned_headers('PUT', resource, n_bytes, base64_md5sum)
+    return url, headers
+
+
+def complete_multipart_upload(bucket: str, key: str, upload_id: str,
+                              etags: List[str]) -> None:
+    """
+    Complete the multipart upload, or raise `error.NoSuchUpload`.
+
+    `etags` must be a list of all ETags for all the parts uploaded, in part
+    order.
+
+    The total file size must be >5MB.
+    """
+    multipart_upload = {
+        'Parts': [
+            {'ETag': etag, 'PartNumber': (i + 1)}
+            for i, etag in enumerate(etags)
+        ]
+    }
+    return client.complete_multipart_upload(
+        Bucket=bucket,
+        Key=key,
+        UploadId=upload_id,
+        MultipartUpload=multipart_upload
+    )
 
 
 @dataclass

@@ -13,7 +13,11 @@ def clear_empty_colnames_from_cache(apps, schema_editor):
         # Lots of escaping here: '\"' gets us double quotes; '%%' gives SQL '%'
         # instead of the DB module's SQL param replacement.
         where=["cached_render_result_columns::text LIKE '%%\"name\": \"\"%%'"]
-    )
+    # also, set ".only" so we don't select columns created in later migrations
+    ).only('id', 'tab_id', 'cached_render_result_delta_id',
+           'cached_render_result_status', 'cached_render_result_error',
+           'cached_render_result_json', 'cached_render_result_quick_fixes',
+           'cached_render_result_columns', 'cached_render_result_nrows')
     for wf_module in qs:
         with wf_module.workflow.cooperative_lock():
             wf_module.clear_cached_render_result()
