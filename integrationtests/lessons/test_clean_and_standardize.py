@@ -25,7 +25,7 @@ class TestLesson(LessonTest):
     def test_lesson(self):
         b = self.browser
         b.visit('/lessons/')
-        b.click_whatever('h2', text='II. Clean and standardize data',
+        b.click_whatever('h2', text='II. Clean dirty data',
                          wait=True)
 
         self.import_module('dropna')
