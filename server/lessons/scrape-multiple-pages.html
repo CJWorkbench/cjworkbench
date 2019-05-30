@@ -1,0 +1,99 @@
+<header>
+  <h1>VII. Scrape multiple pages on one website</h1>
+  <p>Scrape a list or table that spans multiple pages.</p>
+  <img src="./banner.svg" alt="">
+</header>
+<section class="fullscreen">
+  <h2>Overview</h2>
+  <p>
+    Suppose we want to scrape this list of audit reports from the <a href="https://leg.colorado.gov/audit-search" class="highlight" target="_blank">Colorado state government</a>. We've learned in the tutorial <a href="https://app.workbenchdata.com/lessons/scrape-using-xpath" class="highlight">Scrape a webpage to extract or monitor content</a> to isolate the titles, release date and report numbers using Selector Gadget.
+  </p>
+  <p>
+    But there’s a problem:
+  </p>
+  <figure>
+    <img class="full-width" alt="Inspect element" src="./multiple-pages.svg">
+  </figure>
+  <p>
+    This list spans multiple pages, which are accessed using the Next button at the bottom. If we paste <code>https://leg.colorado.gov/audit-search</code> into <b>Scrape HTML</b>, we will get only the first page of results.
+  </p>
+  <p class="instruction-detail">
+    Fortunately, it is possible to scrape multiple pages if the page number appears in the URL.
+  </p>
+</section>
+<section>
+  <h2>Scrape HTML from multiple pages</h2>
+  <p>
+    Naviguate to <a href="https://leg.colorado.gov/audit-search" target="_blank" class="highlight">the page</a> and press <kbd>Next</kbd> at the bottom of the page.
+  </p>
+  <p>
+    Notice that the URL changes to: <br><code>leg.colorado.gov/audit-search?page=1</code>
+  <p>
+    Like many others (but not all) this website counts pages from zero, so when you go to the second page the URL ends with <code>page=1</code>.
+  </p>
+  <h3 class="instructions">Instructions</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"HTML scraper"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'HTML scraper'"
+    >Add <b>HTML Sraper</b>, and paste the URL without the page number into the <kbd>URL</kbd> field.
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"HTML scraper"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'HTML scraper'"
+      >Select the Series of numbered pages checkbox, and scrape page 0 to 9 (For now, the limit is 10 pages).
+    </li>
+    <li
+      data-highlight='[{"type":"WfModule","moduleName":"HTML scraper"}]'
+      data-test="return workflow.tabs[0].wfModules[0].params.pagedurl.trim() === 'http://www.atlaudit.org/audit-reports.html'"
+      >Press <kbd>Scrape</kbd>
+      <figure>
+        <img alt="Inspect element" src="./url-numbers.svg">
+      </figure>
+    </li>
+  </ol>
+</section>
+<section>
+  <h2>Extract data from multiple HTML pages</h2>
+  <p>
+    Workbench has downloaded one HTML file per page (it can take a few minutes), and produced a table with one row for each of them.
+  </p>
+  <ul>
+    <li>
+      <kbd>URL</kbd>: Which URLs were scraped
+    </li>
+    <li>
+      <kbd>Date</kbd> When they were scraped
+    </li>
+    <li>
+      <kbd>URL</kbd>: Which URLs were scraped
+    </li>
+    <li>
+      <kbd>Status</kbd>: Status log. <code>200</code> means “no errors”
+    </li>
+    <li>
+      <kbd>HTML</kbd>: The raw HTML
+    </li>
+  </ul>
+  <p>
+    We still need to extract the information we want from all this source code. We can do so with <b>HTML to Table</b>. It will automatically combine the results from all pages into one table.
+  <p class="instruction-detail">
+    Learn how to use <b>HTML to Table</b> and XPath in this tutorial:<br> <a href="https://app.workbenchdata.com/lessons/scrape-using-xpath" class="highlight">Scrape a webpage to extract or monitor content</a>
+</section>
+<footer>
+  <h2>Your scrape is ready for data extraction!</h2>
+  <div class="next">
+    <h4>Continue learning</h4>
+      <ul>
+        <li>
+          <a class="highlight" href="/lessons/custom-alerts/">Scrape a webpage to extract or monitor content</a>.
+        </li>
+        <li>
+          <a class="highlight" href="/lessons/custom-alerts/">Set up custom alerts</a> to receive emails if conditions are met.
+        </li>
+        <li>
+          <a class="highlight" href="/lessons/clean-and-standardize/">Clean and standardize data</a>.
+        </li>
+      </ul>
+  </div>
+</footer>
