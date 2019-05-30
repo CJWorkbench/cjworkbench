@@ -2,6 +2,7 @@
 // also for dependency injection for testing
 
 import { csrfToken } from './utils'
+import UploadManager from './UploadManager'
 
 const apiHeaders = {
   'Accept': 'application/json',
@@ -374,5 +375,20 @@ export default class WorkbenchAPI {
       wfModuleId,
       param
     })
+  }
+
+  get uploadManager () {
+    if (!this._uploadManager) {
+      this._uploadManager = new UploadManager(this.websocket)
+    }
+    return this._uploadManager
+  }
+
+  uploadFile (wfModuleId, file, onProgress) {
+    return this.uploadManager.upload(wfModuleId, file, onProgress)
+  }
+
+  cancelFileUpload (wfModuleId) {
+    return this.uploadManager.cancel(wfModuleId)
   }
 }

@@ -1,10 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { generateFieldId } from './util'
+import deepEqual from 'fast-deep-equal'
 import Checkbox from './Checkbox'
 import Column from './Column'
 import Custom from './Custom'
-import deepEqual from 'fast-deep-equal'
+import File from './File'
 import Menu from './Menu'
 import Multicolumn from './Multicolumn'
 import Multitab from './Multitab'
@@ -80,6 +81,7 @@ export default class Param extends React.PureComponent {
       case 'column': return Column
       case 'custom': return Custom
       case 'float': return Number_
+      case 'file': return File
       case 'integer': return Number_
       case 'menu': return Menu
       case 'multicolumn': return Multicolumn

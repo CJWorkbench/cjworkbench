@@ -121,6 +121,7 @@ class WfModuleSerializer(serializers.ModelSerializer):
     update_units = serializers.SerializerMethodField()
     html_output = serializers.SerializerMethodField()
     versions = serializers.SerializerMethodField()
+    files = serializers.SerializerMethodField()
     quick_fixes = serializers.SerializerMethodField()
     module = serializers.SerializerMethodField()
     last_update_check = serializers.DateTimeField(format='iso-8601')
@@ -140,6 +141,7 @@ class WfModuleSerializer(serializers.ModelSerializer):
             return False
 
     def get_versions(self, wfm):
+        # DEPRECATED. Use `get_files` now.
         versions = [
             # XXX nonsense: Arrays instead of JSON objects.
             [isoformat(stored_at), read]
@@ -147,6 +149,14 @@ class WfModuleSerializer(serializers.ModelSerializer):
         ]
         current_version = isoformat(wfm.stored_data_version)
         return {'versions': versions, 'selected': current_version}
+
+    def get_files(self, wfm):
+        return [
+            dict(uuid=uuid, name=name, size=size,
+                 createdAt=isoformat(created_at))
+            for uuid, name, size, created_at
+            in wfm.uploaded_files.values_list('uuid', 'name', 'size', 'created_at')
+        ]
 
     def get_module(self, wfm):
         return wfm.module_id_name
@@ -184,7 +194,7 @@ class WfModuleSerializer(serializers.ModelSerializer):
     class Meta:
         model = WfModule
         fields = ('id', 'module', 'tab_slug', 'is_busy',
-                  'output_error', 'output_status', 'fetch_error',
+                  'output_error', 'output_status', 'fetch_error', 'files',
                   'params', 'is_collapsed', 'notes', 'auto_update_data',
                   'update_interval', 'update_units', 'last_update_check',
                   'notifications', 'has_unseen_notification', 'html_output',

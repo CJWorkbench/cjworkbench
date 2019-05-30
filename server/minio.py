@@ -212,8 +212,8 @@ def _build_presigned_headers(http_method: str, resource: str, n_bytes: int,
         http_method,
         base64_md5sum,  # Content-MD5
         '',  # Content-Type -- we leave this blank
-        date,
-        # CanonicalizedAmzHeaders is empty -- no newline needed
+        '',  # we use 'x-amz-date', not 'Date'
+        f'x-amz-date:{date}',
         resource
     ])
     signature = b64encode(sign(string_to_sign.encode('utf-8'))).decode('ascii')
@@ -223,7 +223,7 @@ def _build_presigned_headers(http_method: str, resource: str, n_bytes: int,
         'Content-Length': str(n_bytes),
         'Content-MD5': base64_md5sum,
         # no Content-Type
-        'Date': date,
+        'x-amz-date': date,  # Not 'Date': XMLHttpRequest disallows it
     }
 
 

@@ -33,6 +33,21 @@ export function sleep (ms) {
 }
 
 /**
+ * Return `[ notify, promise ]`; `promise` completes when `notify` is called.
+ *
+ * Usage:
+ *
+ *     const [ notify, condition ] = createConditionVariable
+ *     const done = condition.then(do_something)
+ *     await Promise.all([sleep(0.1).then(notify), done])
+ */
+export function createConditionVariable () {
+  let notify
+  const promise = new Promise(resolve => { notify = resolve })
+  return [ notify, promise ]
+}
+
+/**
  * Mock Redux store with in-production reducers.
  *
  * This is for integration-style tests: they test the reducer _and_ the caller

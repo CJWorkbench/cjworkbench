@@ -4,6 +4,7 @@ import { createStore, applyMiddleware } from 'redux'
 import { reducerFunctions as TabReducerFunctions } from './WorkflowEditor/Tabs/actions'
 import { reducerFunctions as WorkflowEditorReducerFunctions } from './WorkflowEditor/actions'
 import { reducerFunctions as ShareReducerFunctions } from './ShareModal/actions'
+import { reducerFunctions as FileReducerFunctions } from './params/File/actions'
 import { UNHANDLED_ERROR } from './error-middleware'
 
 // Workflow
@@ -59,9 +60,10 @@ function handleError (state, action) {
 }
 
 const reducerFunc = {
+  ...FileReducerFunctions,
+  ...ShareReducerFunctions,
   ...TabReducerFunctions,
-  ...WorkflowEditorReducerFunctions,
-  ...ShareReducerFunctions
+  ...WorkflowEditorReducerFunctions
 }
 
 const registerReducerFunc = (key, func) => {

@@ -459,6 +459,7 @@ export class WfModule extends React.PureComponent {
                     api={this.props.api}
                     fields={this.props.module.param_fields}
                     value={this.props.wfModule ? this.props.wfModule.params : null}
+                    files={this.props.wfModule ? this.props.wfModule.files : null}
                     edits={this.state.edits}
                     wfModuleId={this.props.wfModule ? this.props.wfModule.id : null}
                     wfModuleOutputError={this.props.wfModule ? this.props.wfModule.output_error : null}

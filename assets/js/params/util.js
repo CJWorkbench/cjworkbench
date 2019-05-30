@@ -64,7 +64,7 @@ export function withJsonStringValues(WrappedComponent, defaultValue) {
 export function paramFieldToParamProps (field) {
   return {
     name: field.idName, // NOTE! idName on server is called name here, ala HTML form terminology
-    label: field.name, // similarly, name is called label here
+    label: field.name || '', // similarly, name is called label here
     type: field.type,
     enumOptions: field.options, // may be undefined
     isMultiline: field.multiline || false,

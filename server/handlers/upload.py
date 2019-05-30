@@ -29,6 +29,20 @@ def _loading_wf_module(func):
 
 
 def _loading_wf_module_with_upload(func):
+    """
+    Set `wf_module` and `upload_id`, and guard against incorrect `uploadId`.
+
+    There are some annoying races in this module, because
+    [2019-05-30, adamhooper] I'm lazy. Ideally, we'd lock the workflow so
+    concurrent requests read+write `wf_module.inprogress_file_upload_*` in
+    serial. But that's inconvenient to code: we can't just wrap the whole
+    inner function in a transaction because we need to can only send a delta
+    to Websockets listeners _after_ the transaction is committed.
+
+    TODO Make workflow.cooperative_lock() use a pg_locker. Then we can write
+    to the database without transactions and send deltas while the workflow
+    is still locked; `_loading_wf_module` would lock as a matter of course.
+    """
     @functools.wraps(func)
     async def inner(workflow: Workflow, wfModuleId: int, uploadId: str,
                     **kwargs):
@@ -177,6 +191,32 @@ async def prepare_upload(workflow: Workflow, wf_module: WfModule,
                                     nBytes, base64Md5sum)
 
 
+@register_websockets_handler
+@websockets_handler('write')
+@_loading_wf_module
+async def abort_upload(workflow: Workflow, wf_module: WfModule, key: str,
+                       **kwargs) -> None:
+    """
+    Delete all resources associated with a file upload.
+
+    Set `wf_module.inprogress_file_upload_id`,
+    `wf_module.inprogress_file_upload_key` and
+    `wf_module.inprogress_file_upload_last_accessed_at` to `None`.
+
+    Do nothing if the file upload is not for `wf_module`.
+    """
+    if wf_module.inprogress_file_upload_key is None:
+        return  # no-op
+
+    if wf_module.inprogress_file_upload_key != key:
+        raise HandlerError(
+            'NoSuchUpload: the key you provided is not being uploaded'
+        )
+
+    _delete_partial_uploads_from_s3(wf_module)  # won't raise FileNotFoundError
+    await _clear_inprogress_file_upload(wf_module)
+
+
 @database_sync_to_async
 def _do_complete_upload(
     workflow: Workflow,
@@ -273,7 +313,7 @@ def _clear_inprogress_file_upload(wf_module: WfModule):
 @websockets_handler('write')
 @_loading_wf_module_with_upload
 async def abort_multipart_upload(workflow: Workflow, wf_module: WfModule,
-                                 upload_id: str, **kwargs):
+                                 upload_id: str, **kwargs) -> None:
     """
     Delete all resources associated with a multipart file upload.
 
@@ -283,8 +323,9 @@ async def abort_multipart_upload(workflow: Workflow, wf_module: WfModule,
 
     Do nothing if the multipart file upload is not for `wf_module`.
     """
-    _delete_partial_uploads_from_s3(wf_module)  # won't raise FileNotFoundError
-    return await _clear_inprogress_file_upload(wf_module)
+    # won't raise FileNotFoundError
+    _delete_partial_uploads_from_s3(wf_module)
+    await _clear_inprogress_file_upload(wf_module)
 
 
 @register_websockets_handler

@@ -7,7 +7,7 @@ from django.utils import timezone
 import urllib3
 from server.handlers.upload import create_multipart_upload, \
         abort_multipart_upload, presign_upload_part, prepare_upload, \
-        complete_upload, complete_multipart_upload
+        abort_upload, complete_upload, complete_multipart_upload
 from server.models import Workflow, UploadedFile
 from server import minio
 from .util import HandlerTestCase
@@ -87,6 +87,36 @@ class UploadTest(HandlerTestCase):
         self.assertEqual(uploaded_file.size, 7)
         self.assertEqual(uploaded_file.bucket, minio.UserFilesBucket)
         self.assertEqual(uploaded_file.key, key)
+
+    def test_abort_upload(self):
+        user = User.objects.create(username='a', email='a@example.org')
+        workflow = Workflow.create_and_init(owner=user)
+        uuid = str(uuidgen.uuid4())
+        key = f'wf-123/wfm-234/{uuid}.csv'
+        wf_module = workflow.tabs.first().wf_modules.create(
+            order=0,
+            module_id_name='x',
+            inprogress_file_upload_id=None,
+            inprogress_file_upload_key=key,
+            inprogress_file_upload_last_accessed_at=timezone.now(),
+        )
+        # let's pretend the user has uploaded at least partial data.
+        minio.put_bytes(
+            minio.UserFilesBucket,
+            key,
+            b'1234567',
+            ContentDisposition="attachment; filename*=UTF-8''file.csv",
+        )
+        response = self.run_handler(abort_upload, user=user,
+                                    workflow=workflow, wfModuleId=wf_module.id,
+                                    key=key)
+        self.assertResponse(response, data=None)
+        wf_module.refresh_from_db()
+        self.assertIsNone(wf_module.inprogress_file_upload_id)
+        self.assertIsNone(wf_module.inprogress_file_upload_key)
+        self.assertIsNone(wf_module.inprogress_file_upload_last_accessed_at)
+        # Ensure the file is deleted from S3
+        self.assertFalse(minio.exists(minio.UserFilesBucket, key))
 
     def test_create_multipart_upload_happy_path(self):
         user = User.objects.create(username='a', email='a@example.org')

@@ -19,7 +19,7 @@ export default class ParamsForm extends React.PureComponent {
     }),
     fields: PropTypes.arrayOf(PropTypes.shape({
       idName: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired, // or null or ''
+      name: PropTypes.string, // or null or ''
       type: PropTypes.string.isRequired,
       enumOptions: PropTypes.arrayOf(
         PropTypes.oneOfType([
@@ -35,6 +35,12 @@ export default class ParamsForm extends React.PureComponent {
       visibleIf: PropTypes.object, // JSON spec or null,
       childParameters: PropTypes.array,
       childDefault: PropTypes.object
+    }).isRequired).isRequired,
+    files: PropTypes.arrayOf(PropTypes.shape({
+      uuid: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      size: PropTypes.number.isRequired,
+      createdAt: PropTypes.string.isRequired // ISO-8601
     }).isRequired).isRequired,
     value: PropTypes.object, // upstream value. `null` if the server hasn't been contacted; otherwise, there's a key per field
     edits: PropTypes.object.isRequired, // local edits, same keys as `value`
@@ -177,7 +183,7 @@ export default class ParamsForm extends React.PureComponent {
   render () {
     const { api, isReadOnly, isZenMode, wfModuleId, wfModuleOutputError, isWfModuleBusy,
             inputWfModuleId, inputDeltaId, inputColumns, tabs, currentTab, applyQuickFix,
-            startCreateSecret, deleteSecret, fields } = this.props
+            startCreateSecret, deleteSecret, fields, files } = this.props
     const isEditing = this.isEditing
 
     const upstreamValue = this.props.value
@@ -226,6 +232,7 @@ export default class ParamsForm extends React.PureComponent {
               {...paramFieldToParamProps(field)}
               upstreamValue={upstreamValue ? upstreamValue[field.idName] : null}
               value={value ? value[field.idName] : null}
+              files={files}
               wfModuleId={wfModuleId}
               wfModuleOutputError={wfModuleOutputError}
               isWfModuleBusy={isWfModuleBusy}

@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { MaybeLabel } from './util'
+import { MaybeLabel } from '../util'
 
 /**
  * A file-upload field.
@@ -27,32 +27,44 @@ export default class FileField extends React.PureComponent {
     files: PropTypes.arrayOf(PropTypes.shape({
       uuid: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
+      size: PropTypes.number.isRequired,
       createdAt: PropTypes.string.isRequired // ISO8601-formatted date
     }).isRequired).isRequired,
     wfModuleId: PropTypes.number.isRequired,
+    inProgressUpload: PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      size: PropTypes.number.isRequired,
+      nBytesUploaded: PropTypes.number, // or null when waiting for start/cancel
+    }), // or null/undefined
     fieldId: PropTypes.string.isRequired,
     value: PropTypes.string, // String-encoded UUID or null
     upstreamValue: PropTypes.string, // String-encoded UUID or null
-    startUpload: PropTypes.func.isRequired, // func(wfModuleId, onProgress, cancel) => undefined
+    uploadFile: PropTypes.func.isRequired, // func(wfModuleId, file) => undefined
+    cancelUpload: PropTypes.func.isRequired, // func(wfModuleId) => undefined
   }
 
-  state = {
-    upload: null, // { uuid, name, progress } Object
+  onChangeFileInput = (ev) => {
+    const { uploadFile, wfModuleId } = this.props
+    uploadFile(wfModuleId, ev.target.files[0])
+  }
+
+  cancelUpload = () => {
+    const { wfModuleId, cancelUpload } = this.props
+    cancelUpload(wfModuleId)
   }
 
   render () {
-    const { name, value, files, fieldId, isReadOnly } = this.props
-    const { upload } = this.state
+    const { name, value, files, inProgressUpload, fieldId, isReadOnly } = this.props
     const file = files.find(f => f.uuid === value)
 
     return (
       <React.Fragment>
-        {upload ? (
+        {inProgressUpload ? (
           <div className='uploading-file'>
-            <div className='filename'>{upload.name}</div>
+            <div className='filename'>{inProgressUpload.name}</div>
             <div className='status'>
               <VersionSelect isReadOnly={isReadOnly} value={value} files={files} onClick={this.onChange} />
-              <button type='button' onClick={this.cancel} name='cancel-upload' title='Cancel upload'>
+              <button type='button' onClick={this.cancelUpload} name='cancel-upload' title='Cancel upload'>
                 Cancel Upload
               </button>
             </div>
@@ -69,7 +81,7 @@ export default class FileField extends React.PureComponent {
                   name={name}
                   id={fieldId}
                   readOnly={isReadOnly}
-                  onChange={this.uploadFile}
+                  onChange={this.onChangeFileInput}
                 />
               </p>
             </div>
@@ -84,7 +96,7 @@ export default class FileField extends React.PureComponent {
               name={name}
               id={fieldId}
               readOnly={isReadOnly}
-              onChange={this.uploadFile}
+              onChange={this.onChangeFileInput}
             />
           </div>
         ))}
@@ -92,3 +104,4 @@ export default class FileField extends React.PureComponent {
     )
   }
 }
+
