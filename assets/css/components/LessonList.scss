@@ -71,12 +71,12 @@
   div.course {
     margin-bottom: 8rem;
     background-color: $page-background;
-    padding: 2rem;
+    padding: 0 2rem 2rem 2rem;
     border-radius: .5rem;
 
     .introduction {
       background-color: white;
-      margin-top: 0;
+      margin-top: 2rem;
       &:empty { display: none; }
       @include content-3;
       padding: 2rem 3rem;
