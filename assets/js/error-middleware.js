@@ -35,7 +35,7 @@ export default function errorMiddleware (errorActionFactory) {
   if (!errorActionFactory) errorActionFactory = fluxStandardErrorAction
 
   return ({ dispatch }) => next => action => {
-    if (action.error === true && action.type.endsWith('_REJECTED')) {
+    if (action.error === true && (action.type || '').endsWith('_REJECTED')) {
       // Ignore react-promise-middleware REJECTED actions. This middleware
       // _replaces_ them. (react-promise-middleware will both dispatch a
       // `_REJECTED` action and throw the error; so don't worry, we'll catch
@@ -48,7 +48,7 @@ export default function errorMiddleware (errorActionFactory) {
       done = next(action)
     } catch (err) {
       // Synchronous error
-      return dispatch(errorActionFactory(err, action))
+      return next(errorActionFactory(err, action))
     }
     if (done instanceof Promise) {
       // Asynchronous -- may be an error later
