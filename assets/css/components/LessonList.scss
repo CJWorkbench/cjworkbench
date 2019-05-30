@@ -95,18 +95,22 @@
     ul.lessons {
       list-style: none;
       padding: 0;
-      margin: 0;
-      @include make-row();
+      display: grid;
+      margin-top: 2rem;
+      grid-column-gap: 2rem;
+      grid-row-gap: 2rem;
+      grid-template-columns: repeat(auto-fit, minmax(28rem, auto));
+      justify-content: center;
 
       // each lesson card
       li.lesson {
         @include make-col-ready;
-        @include make-col(6);
-        margin-top: $grid-gutter-width; // we're wrapping: next row should have spacing above it
+        width: 30rem;
+        padding: 0;// we're wrapping: next row should have spacing above it
 
-        &:first-child, &:nth-child(2) { // no margin at top of first line;
-          margin-top: 0;
-        }
+        // &:first-child, &:nth-child(2) { // no margin at top of first line;
+        //   margin-top: 0;
+        // }
 
         a {
           display: flex;
