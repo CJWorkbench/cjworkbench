@@ -33,7 +33,8 @@ describe('WfModule, not read-only mode', () => {
     params: {
       url: 'http://some.URL.me',
       menu_select: 1
-    }
+    },
+    files: []
   }
 
   function pspec (idName, type, extraProps={}) {
@@ -227,7 +228,8 @@ describe('WfModule, not read-only mode', () => {
       params: {
         a: 'A',
         b: 'B'
-      }
+      },
+      files: []
     }
     const aModule = {
       ...module,
@@ -262,7 +264,8 @@ describe('WfModule, not read-only mode', () => {
       params: {
         url: '',
         version_select: 'B'
-      }
+      },
+      files: []
     }
     const aModule = {
       ...module,
@@ -328,7 +331,7 @@ describe('WfModule, not read-only mode', () => {
           isZenMode={false}
           isZenModeAllowed={false}
           index={1}
-          wfModule={{ id: 20, module: 'loadurl', is_collapsed: false, status: 'error', params: {}, error: 'foo', quick_fixes: [{text: 'Fix', action: 'prependModule', args: ['fixtype', {foo: 'bar'}]}] }}
+          wfModule={{ id: 20, module: 'loadurl', is_collapsed: false, status: 'error', params: {}, error: 'foo', files: [], quick_fixes: [{text: 'Fix', action: 'prependModule', args: ['fixtype', {foo: 'bar'}]}] }}
           isSelected={true}
           isAfterSelected={false}
           onDragStart={jest.fn()}
@@ -398,7 +401,7 @@ describe('WfModule, not read-only mode', () => {
             isZenMode={false}
             isZenModeAllowed={false}
             index={1}
-            wfModule={{ id: 20, module: 'loadurl', is_collapsed: false, status: 'error', params: {}, error: 'foo', quick_fixes: [{text: 'Fix', action: 'prependModule', args: ['fixtype', {foo: 'bar'}]}] }}
+            wfModule={{ id: 20, module: 'loadurl', is_collapsed: false, status: 'error', params: {}, error: 'foo', files: [], quick_fixes: [{text: 'Fix', action: 'prependModule', args: ['fixtype', {foo: 'bar'}]}] }}
             isSelected={true}
             isAfterSelected={false}
             onDragStart={jest.fn()}

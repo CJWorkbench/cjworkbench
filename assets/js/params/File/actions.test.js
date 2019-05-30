@@ -4,9 +4,9 @@ import * as actions from './actions'
 describe('File.actions', () => {
   describe('upload', () => {
     it('should set inProgressUpload, update progress, and set done', async () => {
-      const [ setUploadComplete, uploadComplete ] = createConditionVariable()
+      let setUploadComplete
       const api = {
-        uploadFile: jest.fn(() => uploadComplete)
+        uploadFile: jest.fn(() => new Promise(resolve => { setUploadComplete = resolve }))
       }
       const store = mockStore({
         wfModules: {
@@ -35,12 +35,15 @@ describe('File.actions', () => {
       expect(store.getState().wfModules['2'].inProgressUpload.nBytesUploaded).toEqual(3)
 
       // completion
-      setUploadComplete()
-      await done
+      setUploadComplete({ uuid: '1234' })
+      const result = await done
       expect(store.getState().wfModules['2']).toEqual({
         foo: 'baz',
         inProgressUpload: null
       })
+
+      // should return UUID
+      expect(result.value.uuid).toEqual('1234')
     })
   })
 

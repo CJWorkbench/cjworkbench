@@ -8,6 +8,9 @@ from server import minio
 # The uploadfile module ingests these, typically converting them to fetched
 # data StoredObjects and then deleting
 class UploadedFile(models.Model):
+    class Meta:
+        ordering = ['-created_at']
+
     # delete this object if its WfModule deleted
     wf_module = models.ForeignKey('WfModule', related_name='uploaded_files',
                                   on_delete=models.CASCADE)

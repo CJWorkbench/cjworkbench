@@ -9,15 +9,16 @@ const FILE_UPLOAD_PROGRESS = 'FILE_UPLOAD_PROGRESS'
  */
 export function upload (wfModuleId, file) {
   return (dispatch, getState, api) => {
+    const onProgress = (nBytesUploaded) => dispatch(setProgress(wfModuleId, nBytesUploaded))
     return dispatch({
       type: FILE_UPLOAD,
       payload: {
         // `api.uploadFile` will never error. At worst, it will retry indefinitely.
-        promise: api.uploadFile(
-          wfModuleId,
-          file,
-          (nBytesUploaded) => dispatch(setProgress(wfModuleId, nBytesUploaded))
-        ).then(() => ({ wfModuleId })),
+        promise: api.uploadFile(wfModuleId, file, onProgress)
+          .then(result => ({
+            wfModuleId,
+            uuid: result === null ? null : result.uuid
+          })),
         data: { wfModuleId, name: file.name, size: file.size }
       }
     })

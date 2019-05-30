@@ -50,6 +50,7 @@ function startUpload (url, headers, blob, onProgress) {
   let abort
   const done = new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest()
+    xhr.responseType = 'text' // Avoid Firefox "XML Parsing Error: no root element found"
     xhr.upload.addEventListener('progress', (ev) => onProgress(ev.loaded))
     xhr.addEventListener('error', (ev) => {
       onProgress(null)
@@ -58,7 +59,16 @@ function startUpload (url, headers, blob, onProgress) {
     xhr.addEventListener('abort', () => resolve(null))
     xhr.addEventListener('load', () => {
       if (xhr.status === 200) {
-        resolve(xhr.getResponseHeader('ETag').replace('"', ''))
+        // BUG: https://github.com/minio/minio/issues/7492
+        // ETag header won't show up on Firefox (because it doesn't
+        // support Access-Control-Expose-Headers: *, and minio doesn't
+        // write "ETag" specifically).
+        //
+        // For now: handle xhr.getResponseHEader('ETag') === null. Multipart
+        // upload will break entirely; <5MB upload will work. This isn't a
+        // regression -- it hasn't worked for months.
+        const etag = (xhr.getResponseHeader('ETag') || 'minio-firefox-incompatible').replace('"', '')
+        resolve(etag)
       } else {
         reject(new Error(`File server responded ${xhr.status} ${xhr.statusText}: ${xhr.responseText}`))
       }
@@ -134,8 +144,9 @@ export default class UploadManager {
 
     const [ abort, done ] = startUpload(url, headers, buffer, onProgress)
     this.inProgress[String(wfModuleId)] = abort
+    let etag
     try {
-      const etag = await done // may raise Error
+      etag = await done // may raise Error
     } finally {
       delete this.inProgress[String(wfModuleId)]
     }
@@ -285,7 +296,8 @@ export default class UploadManager {
     const cancel = this.inProgress[String(wfModuleId)]
     if (cancel) {
       delete this.inProgress[String(wfModuleId)]
-      return cancel()
+      cancel()
+      return Promise.resolve(null)
     } else {
       return Promise.resolve(null)
     }

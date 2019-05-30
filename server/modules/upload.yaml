@@ -1,5 +1,5 @@
 id_name: upload
-name: Upload2
+name: Upload
 category: Add data
 icon: upload
 description: "Upload CSV, Excel or JSON files from your computer."

@@ -280,7 +280,7 @@ button:focus { outline:0 !important; }
   }
 }
 
-%button-gray {
+@mixin button-gray {
   color: $medium-gray;
   border-color: $medium-gray;
   background-color: transparent;
@@ -291,9 +291,8 @@ button:focus { outline:0 !important; }
     background-color: $dark-accent--soft-M;
   }
 }
-
 .button-gray {
-  @extend %button-gray;
+  @include button-gray;
 }
 
 

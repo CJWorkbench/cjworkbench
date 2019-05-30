@@ -3,6 +3,10 @@
   "id_name": "uploadfile",
   "category" : "Add data",
   "icon": "upload",
+  "deprecated": {
+    "message": "",
+    "end_date": "2019-06-30"
+  },
   "description": "Upload CSV, Excel or JSON files from your computer.",
   "loads_data": true,
   "help_url":"modules/add-data/upload-file",

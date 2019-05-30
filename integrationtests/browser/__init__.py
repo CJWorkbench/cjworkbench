@@ -1,3 +1,4 @@
+from pathlib import Path
 import capybara
 from capybara.session import Session
 from contextlib import contextmanager
@@ -124,9 +125,10 @@ class Browser:
         self.page.find(*selector, **kwargs).set(text)
 
     def send_keys(self, locator: str, *keys: str, **kwargs) -> None:
-        """Press `keys` in field with name/label/id 'locator'.
+        """
+        Press `keys` in field with name/label/id 'locator'.
 
-        Raises ValueError if text is empty. (Empty text is usually an error in
+        Raise ValueError if text is empty. (Empty text is usually an error in
         test code.)
 
         Keyword arguments:
@@ -134,6 +136,16 @@ class Browser:
         """
         self._capybarize_kwargs(kwargs)
         self.page.find('fillable_field', locator, **kwargs).send_keys(*keys)
+
+    def attach_file(self, locator: str, path: Path, **kwargs) -> None:
+        """
+        Choose `path` in file-upload field with name/label/id 'locator'.
+
+        Keyword arguments:
+        wait -- True or number of seconds to wait until element appears
+        """
+        self._capybarize_kwargs(kwargs)
+        self.page.find('file_field', locator, **kwargs).set(str(path))
 
     def check(self, locator: str, **kwargs) -> None:
         """Check the checkbox with name/label/id 'locator'.
