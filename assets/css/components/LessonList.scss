@@ -116,7 +116,7 @@
           display: flex;
           flex-direction: column; // so <img> sticks to bottom
           padding: 2rem;
-          height: 24rem;
+          height: 22rem;
           width: 100%;
           box-shadow: $button-area;
           background: white;
@@ -134,12 +134,15 @@
 
           h2 {
             color: $brand-text--dark;
+            font-size: 1.6rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
           }
 
           .description p {
             @include font-nunito-regular;
             flex: 1 1 auto;
-            color: $brand-text--medium;
+            color: $brand-text--dark;
             font-size: 1.6rem;
             margin-top: .5rem;
             line-height: 2.4rem;
