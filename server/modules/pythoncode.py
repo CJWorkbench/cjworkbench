@@ -208,6 +208,6 @@ def render(
 
     if not code.strip():
         # empty code, NOP
-        return ProcessResult(table)
+        return table
 
     return safe_eval_process(code, table)
