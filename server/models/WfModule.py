@@ -412,6 +412,35 @@ class WfModule(models.Model):
             self.stored_objects.get(stored_at=self.stored_data_version) \
                     .duplicate(new_wfm)
 
+        # Duplicate the "selected" file, if there is one; otherwise, duplicate
+        # the most-recently-uploaded file.
+        #
+        # We special-case the 'upload' module because it's the only one that
+        # has 'file' params right now. (If that ever changes, we'll want to
+        # change a few things: upload paths should include param name, and this
+        # test will need to check module_version to find the param name of the
+        # file.)
+        if self.module_id_name == 'upload':
+            uuid = self.params['file']
+            uploaded_file = self.uploaded_files.filter(uuid=uuid).first()
+            if uploaded_file is not None:
+                new_key = uploaded_file.key.replace(
+                    self.uploaded_file_prefix,
+                    new_wfm.uploaded_file_prefix,
+                )
+                assert new_key != uploaded_file.key
+                # TODO handle file does not exist
+                minio.copy(minio.UserFilesBucket, new_key,
+                           f'{uploaded_file.bucket}/{uploaded_file.key}')
+                new_wfm.uploaded_files.create(
+                    created_at=uploaded_file.created_at,
+                    name=uploaded_file.name,
+                    size=uploaded_file.size,
+                    uuid=uploaded_file.uuid,
+                    bucket=minio.UserFilesBucket,
+                    key=new_key,
+                )
+
         return new_wfm
 
     @property

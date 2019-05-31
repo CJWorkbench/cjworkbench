@@ -182,6 +182,101 @@ class WfModuleTests(DbTestCase):
 
         self.assertEqual(wf_module2.secrets, {})
 
+    def test_wf_module_duplicate_copy_uploaded_file(self):
+        workflow = Workflow.create_and_init()
+        tab = workflow.tabs.first()
+        wf_module = tab.wf_modules.create(
+            order=0,
+            module_id_name='upload',
+        )
+        uuid = str(uuidgen.uuid4())
+        key = f'{wf_module.uploaded_file_prefix}{uuid}.csv'
+        minio.put_bytes(minio.UserFilesBucket, key, b'1234567')
+        # Write the uuid to the old module -- we'll check the new module points
+        # to a valid file
+        wf_module.params = {'file': uuid, 'has_header': True}
+        wf_module.save(update_fields=['params'])
+        uploaded_file = wf_module.uploaded_files.create(
+            name='t.csv',
+            uuid=uuid,
+            bucket=minio.UserFilesBucket,
+            key=key,
+            size=7,
+        )
+
+        workflow2 = Workflow.create_and_init()
+        tab2 = workflow2.tabs.first()
+        wf_module2 = wf_module.duplicate(tab2)
+
+        uploaded_file2 = wf_module2.uploaded_files.first()
+        self.assertIsNotNone(uploaded_file2)
+        # New file gets same uuid -- because it's the same file and we don't
+        # want to edit params during copy
+        self.assertEqual(uploaded_file2.uuid, uuid)
+        self.assertEqual(wf_module2.params['file'], uuid)
+        self.assertTrue(
+            # The new file should be in a different path
+            uploaded_file2.key.startswith(wf_module2.uploaded_file_prefix)
+        )
+        self.assertEqual(uploaded_file2.name, 't.csv')
+        self.assertEqual(uploaded_file2.size, 7)
+        self.assertEqual(uploaded_file2.created_at, uploaded_file.created_at)
+        self.assertEqual(
+            minio.get_object_with_data(uploaded_file2.bucket,
+                                       uploaded_file2.key)['Body'],
+            b'1234567'
+        )
+
+    def test_wf_module_duplicate_copy_only_selected_uploaded_file(self):
+        workflow = Workflow.create_and_init()
+        tab = workflow.tabs.first()
+        wf_module = tab.wf_modules.create(
+            order=0,
+            module_id_name='upload',
+        )
+        uuid1 = str(uuidgen.uuid4())
+        key1 = f'{wf_module.uploaded_file_prefix}{uuid1}.csv'
+        minio.put_bytes(minio.UserFilesBucket, key1, b'1234567')
+        uuid2 = str(uuidgen.uuid4())
+        key2 = f'{wf_module.uploaded_file_prefix}{uuid2}.csv'
+        minio.put_bytes(minio.UserFilesBucket, key2, b'7654321')
+        uuid3 = str(uuidgen.uuid4())
+        key3 = f'{wf_module.uploaded_file_prefix}{uuid3}.csv'
+        minio.put_bytes(minio.UserFilesBucket, key3, b'9999999')
+        uploaded_file1 = wf_module.uploaded_files.create(
+            name='t1.csv',
+            uuid=uuid1,
+            bucket=minio.UserFilesBucket,
+            key=key1,
+            size=7,
+        )
+        uploaded_file2 = wf_module.uploaded_files.create(
+            name='t2.csv',
+            uuid=uuid2,
+            bucket=minio.UserFilesBucket,
+            key=key2,
+            size=7,
+        )
+        uploaded_file3 = wf_module.uploaded_files.create(
+            name='t3.csv',
+            uuid=uuid3,
+            bucket=minio.UserFilesBucket,
+            key=key3,
+            size=7,
+        )
+        # Write the _middle_ uuid to the old module -- proving that we aren't
+        # selecting by ordering
+        wf_module.params = {'file': uuid2, 'has_header': True}
+        wf_module.save(update_fields=['params'])
+
+        workflow2 = Workflow.create_and_init()
+        tab2 = workflow2.tabs.first()
+        wf_module2 = wf_module.duplicate(tab2)
+
+        self.assertEqual(wf_module2.uploaded_files.count(), 1)
+        new_uf = wf_module2.uploaded_files.first()
+        self.assertEqual(new_uf.uuid, uuid2)
+
     def test_module_version_lookup(self):
         workflow = Workflow.create_and_init()
         module_version = ModuleVersion.create_or_replace_from_spec({
