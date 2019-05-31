@@ -9,7 +9,7 @@
 
 @mixin modal-backdrop {
   background: black;
-  opacity: .3;
+  opacity: 0;
 }
 
 .modal-backdrop {
@@ -50,7 +50,8 @@
 .modal-dialog {
   top: 10vh;
   max-height: 50rem;
-  box-shadow: $menu-shadow;
+  box-shadow: $modal-shadow;
+  border-radius: 1rem;
 
   .modal-content {
     border: 0;
