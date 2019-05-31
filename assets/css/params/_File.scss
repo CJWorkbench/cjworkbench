@@ -13,38 +13,6 @@
     &:not(.dragging-over) .drop-here {
       display: none;
     }
-
-    .drop-here {
-      position: absolute;
-      top: 0;
-      left: 0;
-      bottom: 0;
-      right: 0;
-      overflow: hidden;
-      border: 3px dotted $brand-orange;
-
-      // Center contents
-      display: flex;
-      justify-content: center;
-      align-items: center;
-
-      // Style big font
-      @include title-2;
-      background: white;
-      color: $brand-orange;
-
-      * {
-        // drag-and-drop is very finicky....
-        // When the user hovers with a file, we show .drop-here. We want to
-        // _hide_ .drop-here when the user leaves. However, `.drag-leave`
-        // bubbles so 
-        pointer-events: none;
-      }
-
-      p {
-        margin: 0 auto;
-      }
-    }
   }
 
   p.file-select-button {
@@ -87,33 +55,6 @@
     justify-content: space-between; // .upload-progress at left; action at right
     padding-top: .5rem;
 
-    @mixin _texty-button {
-      appearance: none;
-      -moz-appearance: none;
-      -webkit-appearance: none;
-      display: inline-block;
-      padding: 0;
-      margin: 0;
-      border: 0;
-      box-shadow: none;
-      background: transparent;
-      cursor: pointer;
-
-      @include content-1;
-      color: $brand-workspace;
-
-      &:hover {
-        color: $workspace-action;
-      }
-
-      &[disabled] {
-        color: $text-muted;
-      }
-
-      &:not([disabled]) {
-        cursor: pointer;
-      }
-    }
 
     button {
       // .uploaded-file-select and [name=cancel-upload]
@@ -135,6 +76,9 @@
       // in .existing-file
       @include _texty-button;
       color: $brand-orange;
+      &:hover {
+        color: $brand-orange--darker
+      }
     }
   }
 
@@ -146,6 +90,8 @@
     @include title-2;
     color: $brand-orange;
     border: 3px dotted $brand-orange;
+    background-color: $brand-orange--light;
+    border-radius: 5px;
 
     p {
       text-align: center;
@@ -178,48 +124,61 @@
 
 .uploaded-file-select-modal {
   @include content-1;
+  padding: 2rem 0;
 
-  .files {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: block;
-
-    &>li {
+  .modal-dialog .modal-content .modal-body {
+    padding:0;
+    background-color: $WF-background;
+    .files {
+      list-style: none;
       margin: 0;
       padding: 0;
-    }
-
-    a {
       display: block;
-      color: inherit;
-      text-decoration: none;
-      padding: 1rem;
 
-      &.selected {
-        color: white;
-        background: $brand-workspace;
+      &>li {
+        margin: 0;
+        padding: 0;
       }
 
-      .name {
-        font-weight: bold;
-      }
-
-      .metadata {
-        display: flex;
-        justify-content: space-between;
-      }
-
-      &:not(.selected) .metadata {
-        color: $text-muted;
-      }
-
-      abbr {
+      a {
+        display: block;
+        color: inherit;
         text-decoration: none;
-        cursor: inherit;
+        padding: 1rem;
+        margin-bottom: 1px;
+        background: white;
+        &:hover {
+          background: $SuperLightGray;
+        }
+
+        &.selected {
+          color: $brand-text--darker;
+          background: $Vlight-gray;
+        }
+
+        .name {
+          font-weight: bold;
+        }
+
+        .metadata {
+          display: flex;
+          span {
+            margin: 0 .5rem;
+          }
+        }
+
+        &:not(.selected) .metadata {
+          color: $text-muted;
+        }
+
+        abbr {
+          text-decoration: none;
+          cursor: inherit;
+        }
       }
     }
   }
+
 
   .modal-footer {
     button {

@@ -52,7 +52,7 @@ class UploadedFileSelectModal extends React.PureComponent {
 
     return (
       <Modal className='uploaded-file-select-modal' isOpen toggle={close}>
-        <ModalHeader>CHOOSE A FILE YOU UPLOADED TO THIS STEP</ModalHeader>
+        <ModalHeader>VERSION HISTORY</ModalHeader>
         <ModalBody>
           {files.length === 0 ? (
             <p className='no-files'>You have not uploaded any files to this Step</p>
@@ -66,6 +66,7 @@ class UploadedFileSelectModal extends React.PureComponent {
                       <abbr className='size' title={`${numberFormat.format(size)} bytes`}>
                         {formatNBytes(size)}
                       </abbr>
+                      <span>-</span>
                       <time className='created-at' dateTime={createdAt} title={createdAt}>Uploaded {dateFormat.format(new Date(createdAt))}</time>
                     </div>
                   </a>
