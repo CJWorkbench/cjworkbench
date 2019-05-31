@@ -22,7 +22,8 @@
       right: 0;
       overflow: hidden;
       border: 3px dotted $brand-orange;
-
+      border-radius: 5px;
+      background-color: $brand-orange--light;
       // Center contents
       display: flex;
       justify-content: center;
@@ -30,7 +31,6 @@
 
       // Style big font
       @include title-2;
-      background: white;
       color: $brand-orange;
 
       * {
@@ -91,6 +91,7 @@
     button {
       // .uploaded-file-select and [name=cancel-upload]
       @include _texty-button;
+      &:hover: $brand-orange--darker;
     }
 
     button.uploaded-file-select {

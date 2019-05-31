@@ -52,7 +52,7 @@ class UploadedFileSelectModal extends React.PureComponent {
 
     return (
       <Modal className='uploaded-file-select-modal' isOpen toggle={close}>
-        <ModalHeader>VERSION HISTORY</ModalHeader>
+        <ModalHeader>FILE HISTORY</ModalHeader>
         <ModalBody>
           {files.length === 0 ? (
             <p className='no-files'>You have not uploaded any files to this Step</p>
