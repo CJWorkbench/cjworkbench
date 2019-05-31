@@ -4,7 +4,6 @@ import os
 from cjworkbench import rabbitmq
 from .pg_locker import PgLocker
 from .fetch import handle_fetch
-from .upload_DELETEME import handle_upload_DELETEME
 from .render import handle_render
 
 
@@ -32,14 +31,6 @@ NRenderers = int(os.getenv('CJW_WORKER_N_RENDERERS', 1))
 # also some RAM required for bigger tables.
 NFetchers = int(os.getenv('CJW_WORKER_N_FETCHERS', 3))
 
-# NUploaders: number of uploaded files to process at a time. TODO turn these
-# into fetches - https://www.pivotaltracker.com/story/show/161509317. We handle
-# the occasional 1GB+ file, which will consume ~3GB of RAM, so let's keep this
-# number at 1
-#
-# Default is 1: we don't expect many uploads.
-NUploaders = int(os.getenv('CJW_WORKER_N_UPLOADERS', 1))
-
 
 async def main_loop():
     """
@@ -61,11 +52,6 @@ async def main_loop():
             rabbitmq.Fetch,
             NFetchers,
             rabbitmq.acking_callback(handle_fetch)
-        )
-        connection.declare_queue_consume(
-            rabbitmq.DeletemeUpload,
-            NUploaders,
-            rabbitmq.acking_callback(handle_upload_DELETEME)
         )
 
         # Run forever

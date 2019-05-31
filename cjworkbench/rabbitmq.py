@@ -15,7 +15,6 @@ logger = logging.getLogger(__name__)
 
 Render = 'render'
 Fetch = 'fetch'
-DeletemeUpload = 'DELETEME-upload'
 
 
 class DeclaredQueueConsume:
@@ -331,16 +330,6 @@ class RetryingConnection:
     async def queue_fetch(self, wf_module_id: int) -> None:
         await self.publish('fetch', {
             'wf_module_id': wf_module_id,
-        })
-
-    async def queue_handle_upload_DELETEME(self, wf_module_id: int,
-                                           uploaded_file_id: int) -> None:
-        """
-        DELETEME: see https://www.pivotaltracker.com/story/show/161509317
-        """
-        await self.publish('DELETEME-upload', {
-            'wf_module_id': wf_module_id,
-            'uploaded_file_id': uploaded_file_id,
         })
 
 

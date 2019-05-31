@@ -41,15 +41,3 @@ async def queue_fetch(wf_module):
     """
     connection = await get_connection()
     await connection.queue_fetch(wf_module.id)
-
-
-async def queue_handle_upload_DELETEME(uploaded_file):
-    """
-    Queue handle-upload in RabbitMQ.
-
-    DELETEME delete this entire queue. See
-    https://www.pivotaltracker.com/story/show/161509317 for the path forward.
-    """
-    connection = await get_connection()
-    await connection.queue_handle_upload_DELETEME(uploaded_file.wf_module_id,
-                                                  uploaded_file.id)

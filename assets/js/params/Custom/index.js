@@ -5,7 +5,6 @@ import Aggregations from './Aggregations'
 import CellEdits from './CellEdits'
 import ChartSeriesMultiSelect from './ChartSeriesMultiSelect'
 import Code from './Code'
-import File from './File'
 import Filters from './Filters'
 import GoogleFileSelect from './GoogleFileSelect'
 import Groups from './Groups'
@@ -21,7 +20,6 @@ const Components = {
   aggregations: Aggregations,
   celledits: CellEdits,
   code: Code,
-  file: File,
   filters: Filters,
   googlefileselect: GoogleFileSelect,
   groups: Groups,

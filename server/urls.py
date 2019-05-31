@@ -4,8 +4,7 @@ from django.views.generic import TemplateView
 from django.views.generic.base import RedirectView
 from . import views
 from django.contrib.staticfiles import views as staticfiles_views
-from .views import acl, lessons, oauth, uploads, workflows
-from .views.UploadedFileView import get_uploadedfile
+from .views import acl, lessons, oauth, workflows
 
 
 def redirect(url: str):
@@ -17,9 +16,6 @@ urlpatterns = [
     #    url(r'^$', views.index, name='index'),
 
     url(r'^$', redirect('/workflows')),
-
-    url(r'^api/uploadfile/?$', uploads.handle_s3),
-    url(r'^api/uploadfile/([0-9]+)$', get_uploadedfile),
 
     # list all workflows
     url(r'^workflows/$', workflows.Index.as_view(), name='workflows'),
