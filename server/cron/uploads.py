@@ -26,12 +26,12 @@ def delete_stale_inprogress_file_uploads_sync() -> None:
     yesterday = timezone.now() - timezone.timedelta(hours=24)
 
     for wf_module in WfModule.objects.filter(
-        inprogress_file_upload_last_access_at__lt=yesterday
+        inprogress_file_upload_last_accessed_at__lt=yesterday
     ):
         try:
             with wf_module.workflow.cooperative_lock():
                 wf_module.refresh_from_db()
-                if wf_module.inprogress_file_upload_last_access_at >= yesterday:
+                if wf_module.inprogress_file_upload_last_accessed_at >= yesterday:
                     # we're racing with a user who just started another upload
                     continue
                 logger.info('Aborting stale upload on wf-%d/wfm-%d',
