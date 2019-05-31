@@ -65,7 +65,7 @@
     },
     {
       "name": "Enter the base URL without numbers, e.g. http://site.com/info?page=",
-      "id_name": "paged",
+      "id_name": "pagetext1",
       "type":"statictext",
       "visible_if": {
         "id_name": "addpagenumbers",
@@ -74,7 +74,7 @@
     },
     {
       "name": "Then add page numbers below (10 max)",
-      "id_name": "paged-2",
+      "id_name": "pagetext2",
       "type":"statictext",
       "visible_if": {
         "id_name": "addpagenumbers",

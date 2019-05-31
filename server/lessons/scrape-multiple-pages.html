@@ -24,10 +24,10 @@
 <section>
   <h2>Scrape HTML from multiple pages</h2>
   <p>
-    Naviguate to <a href="https://leg.colorado.gov/audit-search" target="_blank" class="highlight">the page</a> and press <kbd>Next</kbd> at the bottom of the page.
+    Navigate to <a href="https://leg.colorado.gov/audit-search" target="_blank" class="highlight">the page</a> and press <kbd>Next</kbd> at the bottom of the page.
   </p>
   <p>
-    Notice that the URL changes to: <br><code>leg.colorado.gov/audit-search?page=1</code>
+    Notice that the URL changes to: <br><code>https://leg.colorado.gov/audit-search?page=1</code>
   <p>
     Like many others (but not all) this website counts pages from zero, so when you go to the second page the URL ends with <code>page=1</code>.
   </p>
@@ -35,17 +35,20 @@
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":0,"name":"HTML scraper"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'HTML scraper'"
-    >Add <b>HTML Sraper</b>, and paste the URL without the page number into the <kbd>URL</kbd> field.
-    </li>
-    <li
-      data-test="return workflow.tabs[0].wfModules[0].params.pagedurl.trim() === 'leg.colorado.gov/audit-search?page='"
-      >Select the Series of numbered pages checkbox, and scrape page 0 to 9 (For now, the limit is 10 pages).
-    </li>
-    <li
-      data-highlight='[{"type":"WfModule","moduleName":"HTML scraper"}]'
-      data-test="return workflow.tabs[0].wfModules[0].params.pagedurl.trim() === 'http://www.atlaudit.org/audit-reports.html'"
-      >Press <kbd>Scrape</kbd>
+      data-test="
+        const wfm = workflow.tabs[0].wfModules[0]
+        return (
+          !!wfm
+          && wfm.moduleSlug === 'urlscraper'
+          && wfm.params.urlsource === 'paged'
+          && wfm.params.pagedurl === 'https://leg.colorado.gov/audit-search?page='
+          && wfm.params.addpagenumbers
+          && wfm.params.startpage === 0
+          && wfm.params.endpage === 9
+        )
+      "
+    >
+      Add <kbd>HTML Sraper</kbd>, and paste the URL without the page number into the <kbd>URL</kbd> field. Check the <kbd>Series of numbered pages</kbd> checkbox, and scrape pages <kbd>0</kbd> to <kbd>9</kbd> (The limit is 10 pages). Press <kbd>Scrape</kbd>.
       <figure>
         <img alt="Inspect element" src="./url-numbers.svg">
       </figure>
