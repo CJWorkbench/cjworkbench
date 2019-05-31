@@ -12,25 +12,6 @@ def redirect(url: str):
     return RedirectView.as_view(url=url)
 
 
-def _DELETEME_intro_course_redirect(lesson_slug: str, good_slug: str):
-    """
-    DELETEME on or after 2019-03-01
-
-    We published some temporary URLs accidentally, in emails. Redirect
-    until we send out corrected URLs.
-
-    Erroneous URLs looked like ("grouping" is `lesson_slug`):
-
-        /lessons/grouping/
-
-    Corrected URL looks like ("group" is `good_slug`):
-
-        /courses/intro-to-data-journalism/group/
-    """
-    return url('lessons/' + lesson_slug + '/?$',
-               redirect('/courses/intro-to-data-journalism/' + good_slug))
-
-
 urlpatterns = [
     # ex: /
     #    url(r'^$', views.index, name='index'),
