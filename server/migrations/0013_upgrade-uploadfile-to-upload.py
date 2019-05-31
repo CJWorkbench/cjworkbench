@@ -93,6 +93,8 @@ def upgrade_wf_module(wf_module):
             logger.info('StoredObject had invalid UUID %s for wfm-%d', uuid,
                         wf_module.id)
             uuid = None  # and fall through
+    else:
+        uuid = None
     if uuid is None:
         # fallback to the latest UploadedFile
         uploaded_file = wf_module.uploaded_files.order_by('-created_at').first()
