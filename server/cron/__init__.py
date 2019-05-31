@@ -7,15 +7,15 @@ from django.conf import settings
 from worker.pg_locker import PgLocker
 from .autoupdate import queue_fetches
 from .sessions import delete_expired_sessions_and_workflows
+from .uploads import delete_stale_inprogress_file_uploads
 
 
 logger = logging.getLogger(__name__)
 
 
 FetchInterval = 60  # seconds
-
-
 ExpiryInterval = 300  # seconds
+StaleUploadInterval = 7200  # seconds
 
 
 async def benchmark(task, message):
@@ -65,6 +65,17 @@ async def delete_expired_sessions_and_workflows_forever():
         await asyncio.sleep(ExpiryInterval)
 
 
+async def delete_stale_inprogress_file_uploads_forever():
+    while True:
+        try:
+            await benchmark(delete_stale_inprogress_file_uploads(),
+                            'delete_stale_inprogress_file_uploads()')
+        except:
+            logger.exception('Error deleting stale inprogress uploads')
+
+        await asyncio.sleep(StaleUploadInterval)
+
+
 async def main():
     """
     Run maintenance tasks in the background.
@@ -74,4 +85,5 @@ async def main():
     await asyncio.wait({
         queue_fetches_forever(),
         delete_expired_sessions_and_workflows_forever(),
+        delete_stale_inprogress_file_uploads_forever(),
     }, return_when=asyncio.FIRST_EXCEPTION)

@@ -56,34 +56,6 @@ def _loading_wf_module_with_upload(func):
     return inner
 
 
-def _delete_partial_uploads_from_s3(wf_module: WfModule) -> None:
-    """
-    Delete data from S3 marked as in-progress uploads by  `wf_module`.
-
-    * Deletes incomplete multi-part upload
-    * Deletes completed upload, multipart or otherwise
-
-    Does not modify `wf_module`. The caller is expected to write new data
-    to `wf_module` and save it to the database.
-    """
-    if wf_module.inprogress_file_upload_id:
-        # If we're uploading a multipart file, delete all parts
-        try:
-            minio.abort_multipart_upload(minio.UserFilesBucket,
-                                         wf_module.inprogress_file_upload_key,
-                                         wf_module.inprogress_file_upload_id)
-        except minio.error.NoSuchUpload:
-            pass
-    if wf_module.inprogress_file_upload_key:
-        # If we _nearly_ completed a multipart upload, or if we wrote data via
-        # regular upload but didn't mark it completed, delete the file
-        try:
-            minio.remove(minio.UserFilesBucket,
-                         wf_module.inprogress_file_upload_key)
-        except FileNotFoundError:
-            pass
-
-
 def _generate_key(wf_module: WfModule, filename: str) -> str:
     """
     Generate a key for where a file belongs on S3.
@@ -153,7 +125,7 @@ def _do_prepare_upload(
     key = _generate_key(wf_module, filename)
     with workflow.cooperative_lock():
         wf_module.refresh_from_db()
-        _delete_partial_uploads_from_s3(wf_module)
+        wf_module.abort_inprogress_upload()
 
         url, headers = minio.presign_upload(minio.UserFilesBucket, key,
                                             filename, n_bytes, base64Md5sum)
@@ -191,6 +163,11 @@ async def prepare_upload(workflow: Workflow, wf_module: WfModule,
                                     nBytes, base64Md5sum)
 
 
+@database_sync_to_async
+def _do_abort_upload(wf_module: WfModule) -> None:
+    wf_module.abort_inprogress_upload()
+
+
 @register_websockets_handler
 @websockets_handler('write')
 @_loading_wf_module
@@ -213,8 +190,7 @@ async def abort_upload(workflow: Workflow, wf_module: WfModule, key: str,
             'NoSuchUpload: the key you provided is not being uploaded'
         )
 
-    _delete_partial_uploads_from_s3(wf_module)  # won't raise FileNotFoundError
-    await _clear_inprogress_file_upload(wf_module)
+    await _do_abort_upload(wf_module)
 
 
 @database_sync_to_async
@@ -266,7 +242,7 @@ def _do_create_multipart_upload(
     key = _generate_key(wf_module, filename)
     with workflow.cooperative_lock():
         wf_module.refresh_from_db()
-        _delete_partial_uploads_from_s3(wf_module)
+        wf_module.abort_inprogress_upload()  # in case there is one already
 
         upload_id = minio.create_multipart_upload(minio.UserFilesBucket, key,
                                                   filename)
@@ -300,15 +276,6 @@ async def create_multipart_upload(workflow: Workflow, wf_module: WfModule,
     return await _do_create_multipart_upload(workflow, wf_module, filename)
 
 
-@database_sync_to_async
-def _clear_inprogress_file_upload(wf_module: WfModule):
-    WfModule.objects.filter(id=wf_module.id).update(
-        inprogress_file_upload_id=None,
-        inprogress_file_upload_key=None,
-        inprogress_file_upload_last_accessed_at=None,
-    )
-
-
 @register_websockets_handler
 @websockets_handler('write')
 @_loading_wf_module_with_upload
@@ -323,9 +290,7 @@ async def abort_multipart_upload(workflow: Workflow, wf_module: WfModule,
 
     Do nothing if the multipart file upload is not for `wf_module`.
     """
-    # won't raise FileNotFoundError
-    _delete_partial_uploads_from_s3(wf_module)
-    await _clear_inprogress_file_upload(wf_module)
+    await _do_abort_upload(wf_module)
 
 
 @register_websockets_handler
