@@ -5,7 +5,6 @@ const MultipartMinimum = 5 * 1024 * 1024 // 5MB
 const MultipartPartSize = 10 * 1024 * 1024 // 10MB
 
 async function uploadUntilSuccess (uploadCallback) {
-  return await uploadCallback() // DELETEME -- just for debugging
   while (true) {
     try {
       return await uploadCallback()
