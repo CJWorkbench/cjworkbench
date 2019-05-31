@@ -1,5 +1,5 @@
 article.lesson {
-  $lesson-sidebar-width: 40rem;
+  $lesson-sidebar-width: 38rem;
   $lesson-fullscreen-width: 80rem;
 
   display: flex;
@@ -32,7 +32,7 @@ article.lesson {
 
   img {
     position: relative;
-    width: 36rem;
+    width: 34rem;
     padding: 0rem;
   }
 
@@ -94,7 +94,7 @@ article.lesson {
 
     .copy-txt, .answer {
       position: relative;
-      width: 32rem;
+      width: 34rem;
       margin: -1rem 0 2rem 0;
       padding: .5rem 1.5rem;
       background-color: $dark-accent--medium;
@@ -136,7 +136,7 @@ article.lesson {
       margin-top: 1.5rem;
       margin-bottom: 1.5rem;
       color: $white;
-      width: 36rem;
+      width: 34rem;
     }
 
     //Q&A in lessons

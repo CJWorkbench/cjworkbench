@@ -320,7 +320,7 @@ export default class DataGrid extends React.PureComponent {
       resizable: true,
       editable: !isReadOnly,
       formatter: columnToCellFormatter(column),
-      width: 160,
+      width: 180,
       // react-data-grid normally won't re-render if we change headerRenderer.
       // So we need to change _other_ props, forcing it to re-render.
       maybeTriggerRenderIfChangeDraggingColumnIndex: draggingColumnIndex,
