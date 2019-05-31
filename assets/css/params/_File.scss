@@ -160,10 +160,6 @@
           font-weight: bold;
         }
 
-        .metadata {
-          display: flex;
-        }
-
         &:not(.selected) .metadata {
           color: $text-muted;
         }
