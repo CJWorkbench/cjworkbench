@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 
 import json
 import logging
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import migrations
 
 
@@ -61,7 +62,15 @@ def upgrade_wf_module(wf_module):
     # Clearing deltas is involved; Django Migrations can't do it. Import the
     # actual Workflow model, not the Migrations-generated model.
     from server.models import Workflow
-    workflow = Workflow.objects.get(id=wf_module.tab.workflow_id)
+    try:
+        workflow = Workflow.objects.get(id=wf_module.tab.workflow_id)
+    except ObjectDoesNotExist:
+        # We deleted this module in a previous `upgrade_wf_module()` loop.
+        # (That is, a workflow had 2+ upload modules and when we were upgrading
+        # another one, we deleted this one.)
+        logger.info('WfModule %d was deleted in another iteration; skipping',
+                    wf_module.id)
+        return
 
     # Clear undo history. ChangeParametersCommand and ChangeDataVersionCommands
     # already written to the database will break once we change the module.
@@ -69,8 +78,8 @@ def upgrade_wf_module(wf_module):
     # Clearing undo history might delete this wf_module! If it does, fail fast.
     try:
         wf_module.refresh_from_db()
-    except type(wf_module).DoesNotExist:
-        logger.info(f'WfModule {wf_module.id} was deleted; skipping')
+    except ObjectDoesNotExist:
+        logger.info('WfModule %d was deleted; skipping', wf_module.id)
         return
 
     # First, housekeeping: tidy uploaded_files filenames in s3
