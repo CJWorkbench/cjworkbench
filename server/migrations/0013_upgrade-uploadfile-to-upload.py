@@ -29,13 +29,27 @@ def move_uploaded_file(workflow, wf_module, uploaded_file):
 
     try:
         minio.copy(bucket, new_key, f'{bucket}/{old_key}')
+        minio.remove(bucket, old_key)
     except minio.error.NoSuchKey:
-        # We might be recovering from a previous failed run of this function.
-        # If the file exists already, that's the case.
-        assert minio.exists(bucket, new_key)
+        # old_key is missing. Two possibilities:
+        #
+        # 1. We're re-running this script after it failed once with
+        #    atomic=True (which used to be set, by accident); the move already
+        #    succeeded but the DB doesn't know it. In that case, continue
+        #    because this error actually means, "all is well."
+        # 2. The file didn't exist to begin with. In that case, write a blank
+        #    file in its stead. That way the user will remark, "hey, Workbench
+        #    ate my file!" instead of undefined behavior (which is worse).
+		#    https://www.pivotaltracker.com/story/show/163336822
+        if minio.exists(bucket, new_key):
+            pass  # "all is well"
+        else:
+            # write an empty file
+            minio.put_bytes(bucket, new_key, b'')
+            uploaded_file.size = 0
+            uploaded_file.save(update_fields=['size'])
     uploaded_file.key = new_key
     uploaded_file.save(update_fields=['key'])
-    minio.remove(bucket, old_key)
 
 
 def upgrade_wf_module(wf_module):
@@ -128,7 +142,8 @@ class Migration(migrations.Migration):
         ('server', '0012_merge_20190531_1440'),
     ]
 
+    atomic = False
+
     operations = [
-        migrations.RunPython(upgrade_uploadfile_steps, atomic=False,
-                             elidable=True),
+        migrations.RunPython(upgrade_uploadfile_steps, elidable=True),
     ]
