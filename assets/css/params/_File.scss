@@ -13,6 +13,38 @@
     &:not(.dragging-over) .drop-here {
       display: none;
     }
+
+    .drop-here {
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      overflow: hidden;
+      border: 3px dotted $brand-orange;
+
+      // Center contents
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      // Style big font
+      @include title-2;
+      background: white;
+      color: $brand-orange;
+
+      * {
+        // drag-and-drop is very finicky....
+        // When the user hovers with a file, we show .drop-here. We want to
+        // _hide_ .drop-here when the user leaves. However, `.drag-leave`
+        // bubbles so
+        pointer-events: none;
+      }
+
+      p {
+        margin: 0 auto;
+      }
+    }
   }
 
   p.file-select-button {
