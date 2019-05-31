@@ -80,6 +80,9 @@
   .filename {
     // Appears in .uploading-file and .existing-file
     @include module-parameter;
+    @include autosize-with-textarea;
+    height: auto;
+
   }
 
   .status {
