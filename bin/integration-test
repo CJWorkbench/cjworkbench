@@ -60,11 +60,13 @@ docker_compose down -v
 echo 'Building…' >&2
 # docker_compose doesn't use buildkit.
 # https://github.com/docker/compose/issues/6440
-# In the meantime, use `docker build` directly
-DOCKER_BUILDKIT=1 docker build --pull .
+# In the meantime, use `docker build` directly, so we can speedily build all
+# the slow bits.
+DOCKER_BUILDKIT=1 docker build --pull . -t migrate  # includes JS unit tests
+DOCKER_BUILDKIT=1 docker build --pull . -t frontend
 DOCKER_BUILDKIT=1 docker build --pull . -f Dockerfile.integrationtest
 # Now make docker-compose _aware_ of these newly-cached, quickly-built images
-docker_compose build --pull --parallel
+docker_compose build
 
 echo 'Migrating (and starting database and RabbitMQ)…' >&2
 docker_compose run migrate
