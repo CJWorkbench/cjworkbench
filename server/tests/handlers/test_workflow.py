@@ -74,15 +74,28 @@ class WorkflowTest(HandlerTestCase):
                             error='AuthError: no write access to workflow')
 
     def test_set_position_ignore_other_workflow(self):
+        # (Also tests "ignore missing WfModule")
         user = User.objects.create(username='a', email='a@example.org')
         workflow = Workflow.create_and_init(owner=user)
 
         workflow2 = Workflow.create_and_init(owner=user)
-        wf_module = workflow2.tabs.first().wf_modules.create(order=2)
+        tab2 = workflow2.tabs.first()
+        tab2.wf_modules.create(order=0)  # dummy first module (selected)
+        wf_module = tab2.wf_modules.create(order=1)  # module we'll "select"
+        tab2.selected_wf_module_position = 0
+        tab2.save(update_fields=['selected_wf_module_position'])
 
         response = self.run_handler(set_position, user=user, workflow=workflow,
                                     wfModuleId=wf_module.id)
-        self.assertResponse(response, error='Invalid wfModuleId')
+        self.assertResponse(response, data=None)  # we ignore missing steps
+        # Nothing should be written to workflow2. Also, there's nothing to
+        # write to workflow. So nothing in the DB should have changed.
+        #
+        # We don't report an error because there's a race: Alice deletes
+        # module, and Bob clicks it as Alice is deleting it. We want to ignore
+        # Bob's action in that case.
+        tab2.refresh_from_db()
+        self.assertEqual(tab2.selected_wf_module_position, 0)
 
     def test_set_selected_tab(self):
         user = User.objects.create(username='a', email='a@example.org')

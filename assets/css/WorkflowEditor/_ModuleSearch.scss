@@ -17,12 +17,12 @@
     display: block;
     width: 100%;
     color: $brand-text--dark;
-    background: $Vlight-gray;
+    background: white;
     border-radius: 2rem;
     border: 2px solid transparent;
 
     &:focus {
-      border-color: $workspace-action;
+      border-color: $brand-orange--medium;
     }
 
     //search placeholder when empty
@@ -40,9 +40,9 @@
     position: absolute;
     top: .7rem;
     left: 1.4rem;
-    font-size: 1.4rem;
+    font-size: 1.6rem;
     font-family: 'Workbench';
-    color: $workspace-action;
+    color: $item-border;
     content: '\e91a'; // .icon-search
     opacity: 1;
   }
@@ -58,11 +58,15 @@
     padding: 0;
     text-shadow: none;
     color: $placeholder;
-    opacity: .5;
+    opacity: 0;
     &:hover {
       color: $brand-text--dark;
       opacity: 1;
     }
+  }
+
+  &:hover button.reset {
+    opacity: .5;
   }
 }
 
@@ -98,8 +102,9 @@
     // position: absolute is set by Popper
     @include content-1;
     box-shadow: $overlay-shadow;
-    border: 1px solid #d3d3d3;
+    border: 1px solid $item-border;
     border-radius: .5rem;
+
   }
 
   // Make scrollbar always visible on Mac, as user tests show they don't know there's more menu otherwise
@@ -158,13 +163,20 @@
     background: white;
     padding: 1rem;
     color: $input-alt;
-    box-shadow: $overlay-shadow;
+    box-shadow: $element-shadow;
     @include module-search-field;
+
+    input {
+      border-color: $item-border;
+      background-color: $dark-accent--soft;;
+
+    }
 
     &::before {
       // padding:1rem means we need to move icon-search by 1rem
       margin-top: 1rem;
       margin-left: 1rem;
+      color: $light-gray;
     }
 
     button.reset {
@@ -256,7 +268,7 @@
 
   margin-left: 1rem; // don't overlap module-search-popup scrollbar
   border-width: $module-popover-border-width;
-  border-color: $brand-workspace;
+  border-color: $brand-orange;
   border-radius: 5px;
   background: white;
   box-shadow: $menu-shadow;
@@ -264,7 +276,7 @@
   padding: 1rem;
 
   //transition-delay: .2s;
-  transition: opacity .5s;
+  transition: opacity .3s;
 
   h3 {
     @include content-1;
@@ -286,7 +298,7 @@
     margin-top: -4px; // Bootstrap's calculations assume a much smaller arrow
 
     &::before {
-      border-right-color: $brand-workspace;
+      border-right-color: $brand-orange;
       border-bottom-color: transparent;
       top: -1px;
       left: -1px;

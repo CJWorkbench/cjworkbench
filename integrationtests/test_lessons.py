@@ -28,7 +28,7 @@ class TestLessons(WorkbenchBase):
         b.assert_element('h2', text='Overview')
         b.assert_element('.current-and-total', text='1 of 4')
         b.click_button('Next')
-        b.assert_element('h2', text='1. Load Public Data by URL')
+        b.assert_element('h2', text='Load Public Data by URL')
 
     def test_lesson_not_logged_in(self):
         # Lessons should work even when the user is not logged in
@@ -42,4 +42,4 @@ class TestLessons(WorkbenchBase):
         b.assert_element('h2', text='Overview')
         b.assert_element('.current-and-total', text='1 of 4')
         b.click_button('Next')
-        b.assert_element('h2', text='1. Load Public Data by URL')
+        b.assert_element('h2', text='Load Public Data by URL')

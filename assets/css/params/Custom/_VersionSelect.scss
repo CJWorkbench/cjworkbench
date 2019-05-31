@@ -7,6 +7,7 @@
     align-items: center;
     position: relative;
 
+
     .version-box-option {
       font-size: 1.3rem;
     }
@@ -18,6 +19,10 @@
 
     .update-option {
       top: 1rem;
+
+      action-link {
+        color: red;
+      }
     }
   }
 
@@ -45,7 +50,8 @@
       display: inline;
       background: inherit;
       font: inherit;
-      color: $brand-workspace;
+      color: $workspace-action;
+      font-weight: bold;
       cursor: pointer;
       margin-left: .5rem;
 

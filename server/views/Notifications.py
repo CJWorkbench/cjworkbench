@@ -15,6 +15,6 @@ def notifications_delete_by_wfmodule(request, pk, format=None):
         return HttpResponseForbidden()
 
     wf_module.has_unseen_notification = False
-    wf_module.save()
+    wf_module.save(update_fields=['has_unseen_notification'])
 
     return JsonResponse({}, status=200)

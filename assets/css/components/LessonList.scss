@@ -71,12 +71,12 @@
   div.course {
     margin-bottom: 8rem;
     background-color: $page-background;
-    padding: 2rem;
+    padding: 0 2rem 2rem 2rem;
     border-radius: .5rem;
 
     .introduction {
       background-color: white;
-      margin-top: 0;
+      margin-top: 2rem;
       &:empty { display: none; }
       @include content-3;
       padding: 2rem 3rem;
@@ -95,56 +95,68 @@
     ul.lessons {
       list-style: none;
       padding: 0;
-      margin: 0;
-      @include make-row();
+      display: grid;
+      margin-top: 2rem;
+      grid-column-gap: 2rem;
+      grid-row-gap: 2rem;
+      grid-template-columns: repeat(auto-fit, minmax(28rem, auto));
+      justify-content: center;
 
       // each lesson card
       li.lesson {
         @include make-col-ready;
-        @include make-col(6);
-        margin-top: $grid-gutter-width; // we're wrapping: next row should have spacing above it
+        width: 30rem;
+        padding: 0;// we're wrapping: next row should have spacing above it
 
-        &:first-child, &:nth-child(2) { // no margin at top of first line;
-          margin-top: 0;
-        }
+        // &:first-child, &:nth-child(2) { // no margin at top of first line;
+        //   margin-top: 0;
+        // }
 
         a {
           display: flex;
           flex-direction: column; // so <img> sticks to bottom
           padding: 2rem;
-          height: 24rem;
+          height: 22rem;
           width: 100%;
           box-shadow: $button-area;
           background: white;
           color: $brand-text--dark;
           border-radius: 5px;
           text-decoration: none;
+          border: 1px solid $item-border;
+          box-shadow: $button-area;
+          position: relative;
 
           &:hover {
             box-shadow: $button-area--hover;
+            top: -3px;
           }
 
           h2 {
             color: $brand-text--dark;
+            font-size: 1.6rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            line-height: 2.2rem;
           }
 
           .description p {
             @include font-nunito-regular;
             flex: 1 1 auto;
-            color: $brand-text--medium;
+            color: $brand-text--dark;
             font-size: 1.6rem;
             margin-top: .5rem;
-            line-height: 2.4rem;
+            line-height: 2.2rem;
           }
 
           img {
             display: block;
             height: auto;
             position: absolute;
-            width: calc(100% - 3rem);
+            width: 100%;
             border-radius: 0 0 5px 5px;
-            left: 1.5rem;
-            bottom: 0;
+            left: 0;
+            bottom: -1px;
           }
         }
       }

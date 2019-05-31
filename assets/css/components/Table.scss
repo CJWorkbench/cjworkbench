@@ -5,8 +5,7 @@
   position: relative;
   display: flex;
   flex-direction: column;
-
-  border-left: 2px solid transparent;
+  border-left: 2px solid $module-color-unreachable;
 
   &.module-ok {
     border-color: $module-color-ok!important;
@@ -155,8 +154,9 @@
         @extend .content-1;
         color: white;
         background-color: $heading-bg;
-        border-right:1px solid rgba(0,0,0,0.1);
-        border-bottom:0px;
+        border-right: 1px solid $dark-accent--strong;
+        border-bottom: 0px;
+        border-left: 0px;
         padding: 0;
         display: flex;
 
@@ -195,11 +195,10 @@
           align-items: center;
           justify-content: center;
           text-align: center;
-          padding-top: .15rem;
-          color: $white;
-          opacity: .7;
-          height: 1.8rem;
-          border-bottom: 1px solid $dark-accent--soft;
+          padding-top: .6rem;
+          color: white;
+          height: 1.6rem;
+          font-size: 1.2rem;
         }
 
         .data-grid-column-header  {
@@ -208,18 +207,19 @@
           overflow: hidden;
 
           .column-key {
-            padding: .8rem 1rem; // .8rem dictated by react-data-grid JS
+            padding: .6rem 1rem; // .8rem dictated by react-data-grid JS
             display: block;
             flex: 1 1 auto;
             overflow: hidden;
             height:100%;
             cursor: text;
-            height:5rem;
+            height:4.5rem;
 
             .value {
               text-overflow: ellipsis;
               white-space: nowrap;
               overflow: hidden;
+              margin-bottom: .2rem;
             }
 
             .column-type {
@@ -242,7 +242,7 @@
             right:0;
             top:0;
             bottom:0;
-            border-left: 1px solid $dark-accent--soft;
+            border-left: 1px solid $dark-accent--medium;
             background-color:$heading-bg;
 
             &:hover, &.active {
@@ -259,8 +259,10 @@
               color: inherit;
               position: relative;
               opacity: .9;
+              color: $brand-orange;
               &:hover {
-                background-color:$header-hover;
+                background-color:$brand-orange;
+                color: white;
               }
               i {
                 margin-left: 1px;
@@ -269,13 +271,16 @@
           }
 
           input[name="new-column-key"] {
-            padding-top: .9rem;
-            padding-bottom: 2.3rem;
-            padding-left: 1rem;
-            padding-right: 1rem;
-            height: 4.9rem;
+            padding: .2rem .3rem;
+            margin: 0 .5rem;
+            // padding-left: .8rem;
+            // padding-right: .8rem;
+            border-radius: 3px;
+            height: 3rem;
+            width: 100%;
             flex: 1 1 auto;
             border: 0;
+            border: 2px solid $brand-orange;
 
             & + .dropdown {
             //  display: none; -- un-comment to hide menu when text field input is selected
@@ -324,7 +329,7 @@
         border-right: 0;
         border-bottom: 0;
         border-top: 0;
-        color: $brand-text--dark;
+        color: $brand-text--darker;
 
         .react-grid-Cell__value>* { // .cell-text, .cell-datetime, .cell-number, .cell-null
           @include table-content;
@@ -382,6 +387,7 @@
           text-align: center;
           font-size: 1.2rem;
           line-height: 35px; // 35px is react-data-grid's hard-coded row height
+
         }
 
         // Shrinking font sizes based on number of digits

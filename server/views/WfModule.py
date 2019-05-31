@@ -76,16 +76,24 @@ def patch_update_settings(wf_module, data, request):
                              or ('update_units' not in data)):
         raise ValueError('missing update_interval and update_units fields')
 
-    # Use current time as base update time. Not the best?
     update_interval = units_to_seconds(int(data['update_interval']),
                                        data['update_units'])
-    next_update = timezone.now() + timedelta(seconds=update_interval)
+    # Use current time as base update time. Not the best?
+    if auto_update_data:
+        next_update = timezone.now() + timedelta(seconds=update_interval)
+    else:
+        next_update = None
 
-    wf_module.auto_update_data = auto_update_data
-    wf_module.next_update = next_update
-    wf_module.update_interval = update_interval
-    wf_module.save(update_fields=['auto_update_data', 'next_update',
-                                  'update_interval'])
+    try:
+        with wf_module.workflow.cooperative_lock():
+            WfModule.objects.filter(id=wf_module.id).update(
+                auto_update_data=auto_update_data,
+                next_update=next_update,
+                update_interval=update_interval,
+            )
+    except Workflow.DoesNotExist:
+        # A race. The WfModule doesn't exist, so we don't care.
+        pass
 
 
 # Main /api/wfmodule/xx call. Can do a lot of different things depending on

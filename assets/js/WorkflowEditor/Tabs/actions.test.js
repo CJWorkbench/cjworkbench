@@ -287,6 +287,24 @@ describe('Tabs.actions', () => {
       expect(store.getState().workflow.selected_tab_position).toEqual(1)
     })
 
+    it('should skip api when read-only', async () => {
+      const api = {
+        setSelectedTab: jest.fn(() => Promise.resolve(null))
+      }
+      const store = mockStore({
+        workflow: {
+          tab_slugs: [ 't1', 't2' ],
+          selected_tab_position: 0,
+          read_only: true
+        }
+      }, api)
+
+      await store.dispatch(actions.select('t2'))
+      expect(api.setSelectedTab).not.toHaveBeenCalled()
+      expect(store.getState().selectedPane).toEqual({ pane: 'tab', tabSlug: 't2' })
+      expect(store.getState().workflow.selected_tab_position).toEqual(1)
+    })
+
     it('should ignore invalid tab slug', async () => {
       // This happens if the user clicks a "delete" button on the module:
       // 2. Browser dispatches "delete", which removes the tab

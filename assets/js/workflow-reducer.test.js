@@ -202,6 +202,25 @@ describe('Reducer actions', () => {
     expect(tabs['tab-91'].selected_wf_module_position).toEqual(1)
   })
 
+  it('sets the selected module without an API request, when read-only', async () => {
+    const api = {
+      setSelectedWfModule: jest.fn().mockImplementation(_ => Promise.resolve(null))
+    }
+    const store = mockStore({
+      ...testState,
+      workflow: {
+        ...testState.workflow,
+        read_only: true
+      }
+    }, api)
+    await store.dispatch(wfr.setSelectedWfModuleAction(20))
+
+    expect(api.setSelectedWfModule).not.toHaveBeenCalled()
+    const { workflow, tabs } = store.getState()
+    expect(workflow.selected_tab_position).toEqual(0)
+    expect(tabs['tab-91'].selected_wf_module_position).toEqual(1)
+  })
+
   it('sets a wfModule notes', async () => {
     const api = {
       setWfModuleNotes: jest.fn().mockImplementation(() => Promise.resolve(null))

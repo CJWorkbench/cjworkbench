@@ -330,7 +330,7 @@ button:focus { outline:0 !important; }
   background-color: transparent;
   &:hover, &:hover .spinner::after {
     background-color: $brand-workspace--Vlight;
-    color: $brand-workspace;
+    color: $workspace-action;
   }
   &:active, &:active .spinner::after {
     background-color: $workspace-action;
@@ -348,7 +348,7 @@ button:focus { outline:0 !important; }
   &:hover {
     background-color: $brand-workspace--Vlight;
     border-color: $workspace-action;
-    color:$brand-workspace;
+    color:$workspace-action;
   }
   &:active {
     background-color: $brand-workspace;
@@ -476,7 +476,8 @@ button:focus { outline:0 !important; }
 
 %action-link {
   cursor: pointer;
-  color: $brand-workspace!important;
+  color: $workspace-action!important;
+  font-weight: bold;
 	&:hover {
 		color: #2D9DAA!important;
 		text-decoration: none;

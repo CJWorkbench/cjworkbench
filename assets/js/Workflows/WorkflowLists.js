@@ -59,7 +59,7 @@ const SharedWorkflowList = React.memo(function SharedWorkflowList ({ workflows, 
       {workflows.length > 0 ? (
         <WorkflowList workflows={workflows} {...props} deleteWorkflow={null} />
       ) : (
-        <div className='placeholder'>No shared workflows ~ ༼ つ ◕_◕ ༽つ</div>
+        <div className='placeholder'>Workflows shared with you as collaborator will appear here ~ ༼ つ ◕_◕ ༽つ</div>
       )}
     </TabPane>
   )
@@ -71,7 +71,7 @@ const TemplatesWorkflowList = React.memo(function TemplatesWorkflowList ({ workf
       {workflows.length > 0 ? (
         <WorkflowList workflows={workflows} {...props} deleteWorkflow={null} />
       ) : (
-        <div className='placeholder'>No template  \_(ツ)_/¯</div>
+        <div className='placeholder'>Publishe new recipes via the Django admin </div>
       )}
     </TabPane>
   )

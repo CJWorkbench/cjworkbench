@@ -102,8 +102,8 @@ def read_header(bucket: str, key: str,
     return fastparquet.ParquetFile(filelike)
 
 
-def read(bucket: str, key: str, to_parquet_args=[],
-         to_parquet_kwargs={}) -> pandas.DataFrame:
+def read(bucket: str, key: str, to_pandas_args=[],
+         to_pandas_kwargs={}) -> pandas.DataFrame:
     """
     Load a Pandas DataFrame from disk or raise FileNotFoundError or
     FastparquetCouldNotHandleFile.
@@ -114,14 +114,14 @@ def read(bucket: str, key: str, to_parquet_args=[],
     pyarrow, and fastparquet fails on some files with large strings. Those
     files are so old we won't attempt to support them.
     """
-    if to_parquet_args or to_parquet_kwargs:
+    if to_pandas_args or to_pandas_kwargs:
         open_with = _minio_open_random
     else:
         open_with = _minio_open_full
 
     try:
         pf = read_header(bucket, key, open_with=open_with)
-        return pf.to_pandas(*to_parquet_args, **to_parquet_kwargs)
+        return pf.to_pandas(*to_pandas_args, **to_pandas_kwargs)
     except snappy.UncompressError as err:
         if str(err) == 'Error while decompressing: invalid input':
             # Assume Fastparquet is reporting the wrong bug.

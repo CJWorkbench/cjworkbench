@@ -21,7 +21,7 @@ class TestLesson(LessonTest):
         self.expect_highlight_next()
         self.click_next()
 
-        # 2. 1. Load Public Data by URL
+        # 2. Load Public Data by URL
         self.expect_highlight(0)
         self.add_data_step('Add from URL')
 

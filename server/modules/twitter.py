@@ -4,12 +4,12 @@ import re
 from typing import Any, Dict, List, Optional, Tuple
 import aiohttp
 from aiohttp.client_exceptions import ClientResponseError
+from django.conf import settings
 import numpy as np
 from oauthlib import oauth1
 from oauthlib.common import urlencode
 import pandas as pd
 import yarl  # expose aiohttp's innards -- ick.
-from cjworkbench.types import ProcessResult
 from server import oauth
 
 
@@ -103,10 +103,6 @@ def parse_tweet_text(tweet_json: Dict[str, Any]) -> str:
         return tweet_json['full_text']
 
 
-def Err(error):
-    return ProcessResult(error=error)
-
-
 Columns = [
     Column('screen_name', ['user', 'screen_name'], np.object, None),
     Column('created_at', ['created_at'], 'datetime64[ns]', None),
@@ -173,6 +169,9 @@ async def get_stored_tweets(get_stored_dataframe):
         table = create_empty_table()
     else:
         _recover_from_160258591(table)
+    # [2019-05-28] We used to support 1M rows; now we only support 100k.
+    # Truncate as early as possible, to release RAM as early as possible.
+    table = table.truncate(after=settings.TWITTER_MAX_ROWS_PER_TABLE - 1)
     return table
 
 
@@ -342,6 +341,8 @@ def merge_tweets(old_table, new_table):
         #
         # sort=False: use the ordering in new_table. (pandas 0.23 corrects the
         # previous unintuitive behavior in DataFrame.append().)
+        free = settings.TWITTER_MAX_ROWS_PER_TABLE - len(new_table)
+        old_table = old_table.iloc[:free]
         return new_table.append(old_table, ignore_index=True, sort=False)
 
 
@@ -360,6 +361,10 @@ def render(table, params, *, fetch_result):
         _recover_from_160258591(fetch_result.dataframe)
         dataframe = fetch_result.dataframe
 
+    # [2019-05-29] Even after fetch, let's save RAM. (This probably won't
+    # aftect much because render result are cached.)
+    dataframe = dataframe.truncate(after=settings.TWITTER_MAX_ROWS_PER_TABLE - 1)
+
     return {
         'dataframe': dataframe,
         'column_formats': {'id': '{:d}'},  # don't add commas to user IDs
@@ -375,10 +380,10 @@ async def fetch(params, *, get_stored_dataframe):
         return None  # Don't create a version
 
     if not query.strip():
-        return Err('Please enter a query')
+        return 'Please enter a query'
 
     if not access_token:
-        return Err('Please sign in to Twitter')
+        return 'Please sign in to Twitter'
 
     try:
         if params['accumulate']:
@@ -389,27 +394,23 @@ async def fetch(params, *, get_stored_dataframe):
         else:
             tweets = await get_new_tweets(access_token, querytype,
                                           query, None)
+        return tweets
 
     except ValueError as err:
-        return Err(str(err))
+        return str(err)
 
     except ClientResponseError as err:
         if err.status:
             if querytype == QueryType.USER_TIMELINE and err.status == 401:
-                return Err("User %s's tweets are private" % query)
+                return "User %s's tweets are private" % query
             elif querytype == QueryType.USER_TIMELINE and err.status == 404:
-                return Err('User %s does not exist' % query)
+                return 'User %s does not exist' % query
             elif err.status == 429:
-                return Err(
+                return (
                     'Twitter API rate limit exceeded. '
                     'Please wait a few minutes and try again.'
                 )
             else:
-                return Err('Error from Twitter: %d %s'
-                           % (err.status, err.message))
+                return 'Error from Twitter: %d %s' % (err.status, err.message)
         else:
-            return Err('Error fetching tweets: %s' % str(err))
-
-    result = ProcessResult(dataframe=tweets)
-    result.truncate_in_place_if_too_big()
-    return result
+            return 'Error fetching tweets: %s' % str(err)

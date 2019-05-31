@@ -421,15 +421,17 @@ export function setSelectedWfModuleAction (wfModuleId) {
 
     // Fire-and-forget: tell the server about this new selection
     // so next time we load the page it will pass it in initState.
-    api.setSelectedWfModule(wfModuleId).catch(console.warn)
-
+    const promise = workflow.read_only ? Promise.resolve(null) : api.setSelectedWfModule(wfModuleId)
     return dispatch({
       type: SET_SELECTED_MODULE,
-      payload: { tabPosition, tabSlug, wfModulePosition }
+      payload: {
+        promise,
+        data: {tabPosition, tabSlug, wfModulePosition }
+      }
     })
   }
 }
-registerReducerFunc(SET_SELECTED_MODULE, (state, action) => {
+registerReducerFunc(SET_SELECTED_MODULE + '_PENDING', (state, action) => {
   const { workflow, tabs } = state
   const { tabPosition, tabSlug, wfModulePosition } = action.payload
   const tab = tabs[tabSlug]

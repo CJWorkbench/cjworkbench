@@ -1,5 +1,5 @@
 article.lesson {
-  $lesson-sidebar-width: 36rem;
+  $lesson-sidebar-width: 38rem;
   $lesson-fullscreen-width: 80rem;
 
   display: flex;
@@ -10,6 +10,7 @@ article.lesson {
 
   .description, ol.steps {
     @extend .content-3;
+    font-weight: lighter;
   }
 
   h1 { display: none; }
@@ -21,12 +22,18 @@ article.lesson {
     background-color: $document-blue;
   }
 
+  ul {
+    list-style-type: none;
+    margin-left: -4rem;
+    li {
+      margin-bottom: 1.5rem;
+    }
+  }
+
   img {
     position: relative;
-    width: 32rem;
-    padding: 1rem;
-    background-color: $dark-accent--medium;
-    border-radius: 5px;
+    width: 34rem;
+    padding: 0rem;
   }
 
   .icon-insert {
@@ -62,6 +69,7 @@ article.lesson {
       text-transform: uppercase;
       text-decoration: none;
       margin-bottom: 1rem;
+      display: none;
       &:hover {
         opacity: 1;
         text-decoration: underline;
@@ -86,7 +94,7 @@ article.lesson {
 
     .copy-txt, .answer {
       position: relative;
-      width: 32rem;
+      width: 34rem;
       margin: -1rem 0 2rem 0;
       padding: .5rem 1.5rem;
       background-color: $dark-accent--medium;
@@ -128,7 +136,7 @@ article.lesson {
       margin-top: 1.5rem;
       margin-bottom: 1.5rem;
       color: $white;
-      width: 32rem;
+      width: 34rem;
     }
 
     //Q&A in lessons
@@ -237,6 +245,11 @@ article.lesson {
 
       h2 {
         margin-top: 2rem;
+      }
+
+      h4 {
+        margin-bottom: 2rem;
+        text-transform: capitalize;
       }
 
       ol {

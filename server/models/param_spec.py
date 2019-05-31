@@ -518,11 +518,14 @@ class ParamSpecList(_HasName, ParamSpec):
         return dict_factory([
             ('type', self.type),
             *asdict(self, dict_factory=dict_factory).items(),
-            # asdict(self) won't encode the "type" of child_parameters, because
+            # asdict(self) won't encode child_parameters, because
             # to_dict() isn't recursive. We don't actually _need_ it to be
             # recursive, since ParamSpecList isn't recursive. (A List can't
             # contain other Lists). So let's simply re-encode the
             # child_parameters, _with_ their type info.
             ('child_parameters', [cp.to_dict(dict_factory=dict_factory)
-                                  for cp in self.child_parameters])
+                                  for cp in self.child_parameters]),
+            # similar problem with visible_if
+            ('visible_if',
+             dict_factory(self.visible_if.items()) if self.visible_if else None)
         ])

@@ -7,7 +7,8 @@
     @include add-module-button-container;
 
     &>button {
-      @include button-orange--fill; // the user _must_ click this button :)
+      @include button-blue; // the user _must_ click this button :)
+
     }
   }
 }
@@ -38,23 +39,81 @@
 
   .content {
     // Cover most of the backdrop
-    width: 80%;
-    max-width: 104rem; // 3 columns wide, plus scrollbar
-    height: 80%;
+    width: 100%;
+    height: 100%;
 
     position: relative; // get stacking context, so we're on top of parent::before
 
     display: flex; // so .body can auto-size itself and have a scrollbar
     flex-direction: column;
 
-    box-shadow: $menu-shadow;
+    //box-shadow: $menu-shadow;
     background: $WF-background;
-    border-radius: .5rem;
+    //border-radius: .5rem;
     overflow: hidden; // respect the border-radius
 
-    header {
-      flex: 0 0 auto;
-      @include modal-header;
+    header { // this header is designed to not look like a modal, in order to cover and better integrate the WF
+      display: block;
+      align-items: center;
+      justify-content: center;
+      margin: auto;
+      margin-top: 1rem;
+      padding: 2rem;
+      background-color: $WF-background;
+      color: $brand-text--dark;
+      border-bottom: 1px solid $item-border;
+
+      .title {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 2rem;
+
+        h5, .modal-title {
+          @include title-2;
+          margin: 0 2rem 0 0;
+        }
+
+        .close {
+          cursor: pointer;
+          font-size: 3rem;
+          color: $document-blue;
+          &:hover {
+            color: $brand-text--dark;
+          }
+        }
+      }
+
+      .search {  //TODO Create a new class of search field that is slightly bigger than the ones in the WF -- this type would be used to search for lessons, content, assets across the platform etc.
+        width: 45rem;
+        margin: 0 auto;
+        flex: 0 0 auto;
+        @include module-search-field;
+        @include content-3;
+
+        &::before {
+          top:.8rem;
+          font-size: 1.9rem;
+          color: $document-blue;
+          opacity: .5;
+        }
+
+        input {
+          padding: 1rem 4rem;
+          background: white;
+          height: 4rem;
+          border-color: $item-border;
+        }
+
+        button.reset {
+          top: 1.1rem;
+          font-size: 1.6rem;
+          color: $document-blue;
+          &:hover {
+            color: darken($document-blue,15%);
+          }
+        }
+      }
     }
 
     .body {
@@ -63,30 +122,23 @@
       flex-direction: column;
       // Scroll vertically on all but the largest screens
       overflow: auto;
-      padding: 2rem;
+      padding:  0 7rem 5rem 7rem;
       @include content-1;
+      background-color: $WF-background;
     }
   }
 
-  .search {
-    max-width: 40rem;
-    flex: 0 0 auto;
-    @include module-search-field;
-
-    input {
-      background: white;
-    }
-  }
-
-  .modules {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: stretch; // all buttons on a flexbox line are same height
-    margin: 0 -2rem -2rem; // contents have margin:2rem
+  .modules { // display as columns
+    display: grid;
+    margin-top: 2rem;
+    grid-column-gap: 2rem;
+    grid-row-gap: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(28rem, auto));
+    justify-content: center;
 
     &.no-results {
       flex: 1 1 auto; // fill the modal. We don't want this if we _have_ results -- we may want the box shorter
-      align-items: center;
+      margin-top: 5rem;
       justify-content: center;
 
       p {
@@ -96,20 +148,26 @@
     }
 
     a {
-      display: block;
-      width: 30rem;
-      min-height: 15rem; // set min-height, not height: overlong descriptions will grow the flexbox line height
+      grid-column-start: auto;
+      grid-row-start: auto;
+      width: 28rem;
+      height: 15rem; // set fixed height to keep constrain design. users will have to fit guide
       font: inherit;
-      background: white;
+      background-color: white;
       color: inherit;
       box-shadow: none;
       border-radius: .5rem;
+      border: 1px solid $item-border;
       padding: 2rem;
-      margin: 2rem;
       display: flex; // icon to left of title
+      //box-shadow: $button-area;
+      position: relative;
+      box-shadow: $button-area;
+
 
       &:hover {
-        box-shadow: $overlay-shadow;
+        box-shadow: $button-area--hover;
+        top: -3px;
       }
 
       &.lesson-highlight {
@@ -117,13 +175,20 @@
       }
 
       i {
-        font-size: 3.5rem;
-        margin-right: 2rem;
+        font-size: 1.8rem;
+        margin-right: 1rem;
       }
 
       h4 {
-        @include title-2;
+        font-size: 1.4rem;
+        font-weight: bold;
         align-items: center;
+        margin-bottom: 1rem;
+
+      }
+
+      p {
+        //margin-left: -2.5rem;
       }
 
       &:hover {
