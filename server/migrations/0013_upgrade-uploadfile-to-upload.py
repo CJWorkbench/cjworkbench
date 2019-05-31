@@ -25,8 +25,7 @@ def move_uploaded_file(workflow, wf_module, uploaded_file):
 
     new_key = f'wf-{workflow.id}/wfm-{wf_module.id}/{old_key}'
 
-    logger.info(f'Move {bucket}/{old_key} to {bucket}/{new_key}')
-
+    logger.info(f'Move %s/%s to %s/%s', bucket, old_key, bucket, new_key)
     try:
         minio.copy(bucket, new_key, f'{bucket}/{old_key}')
         minio.remove(bucket, old_key)
@@ -87,19 +86,23 @@ def upgrade_wf_module(wf_module):
         #
         # I've checked: all `metadata` in production are encoded consistently
         uuid = json.loads(stored_object.metadata)[0]['uuid']
-        assert wf_module.uploaded_files.filter(uuid=uuid).exists()
-        logger.info(f'Found StoredObject uuid {uuid} for wfm-{wf_module.id}')
-    else:
+        if wf_module.uploaded_files.filter(uuid=uuid).exists():
+            logger.info('Found StoredObject UUID %s for wfm-%d', uuid,
+                        wf_module.id)
+        else:
+            logger.info('StoredObject had invalid UUID %s for wfm-%d', uuid,
+                        wf_module.id)
+            uuid = None  # and fall through
+    if uuid is None:
         # fallback to the latest UploadedFile
         uploaded_file = wf_module.uploaded_files.order_by('-created_at').first()
         if uploaded_file:
             uuid = uploaded_file.uuid
-            logger.info(
-                f'Found UploadedFile uuid {uuid} for wfm-{wf_module.id}'
-            )
+            logger.info('Found UploadedFile uuid %s for wfm-%d', uuid,
+                        wf_module.id)
         else:
             # Okay, there's no file.
-            logger.info(f'No UUID for wfm-{wf_module.id}')
+            logger.info('No UUID for wfm-%d', wf_module.id)
             uuid = None
 
     # Update the `module_id_name` and `params`. `params.file` is the UUID of
