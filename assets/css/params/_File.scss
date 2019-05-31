@@ -91,6 +91,7 @@
     button {
       // .uploaded-file-select and [name=cancel-upload]
       @include _texty-button;
+      &:hover: $brand-orange--darker;
     }
 
     button.uploaded-file-select {
