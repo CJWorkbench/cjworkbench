@@ -8,8 +8,8 @@
 }
 
 @mixin modal-backdrop {
-  opacity: .2;
-  background-color: white ;
+  background: black;
+  opacity: .3;
 }
 
 .modal-backdrop {

@@ -23,126 +23,95 @@
 
   // Center contents (no matter their size)
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
 
-  &::before { // backdrop for modal
-    content: '';
+  background: $WF-background;
+
+  header { // this header is designed to not look like a modal, in order to cover and better integrate the WF
     display: block;
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    @include modal-backdrop; // color
-  }
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+    margin-top: 1rem;
+    padding: 2rem;
+    background-color: $WF-background;
+    color: $brand-text--dark;
+    border-bottom: 1px solid $item-border;
 
-  .content {
-    // Cover most of the backdrop
-    width: 100%;
-    height: 100%;
-
-    position: relative; // get stacking context, so we're on top of parent::before
-
-    display: flex; // so .body can auto-size itself and have a scrollbar
-    flex-direction: column;
-
-    //box-shadow: $menu-shadow;
-    background: $WF-background;
-    //border-radius: .5rem;
-    overflow: hidden; // respect the border-radius
-
-    header { // this header is designed to not look like a modal, in order to cover and better integrate the WF
-      display: block;
+    .title {
+      display: flex;
       align-items: center;
       justify-content: center;
-      margin: auto;
-      margin-top: 1rem;
-      padding: 2rem;
-      background-color: $WF-background;
-      color: $brand-text--dark;
-      border-bottom: 1px solid $item-border;
+      margin-bottom: 2rem;
 
-      .title {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 2rem;
-
-        h5, .modal-title {
-          @include title-2;
-          margin: 0 2rem 0 0;
-        }
-
-        .close {
-          cursor: pointer;
-          font-size: 3rem;
-          color: $document-blue;
-          &:hover {
-            color: $brand-text--dark;
-          }
-        }
+      h5, .modal-title {
+        @include title-2;
+        margin: 0 2rem 0 0;
       }
 
-      .search {  //TODO Create a new class of search field that is slightly bigger than the ones in the WF -- this type would be used to search for lessons, content, assets across the platform etc.
-        width: 45rem;
-        margin: 0 auto;
-        flex: 0 0 auto;
-        @include module-search-field;
-        @include content-3;
-
-        &::before {
-          top:.8rem;
-          font-size: 1.9rem;
-          color: $document-blue;
-          opacity: .5;
-        }
-
-        input {
-          padding: 1rem 4rem;
-          background: white;
-          height: 4rem;
-          border-color: $item-border;
-        }
-
-        button.reset {
-          top: 1.1rem;
-          font-size: 1.6rem;
-          color: $document-blue;
-          &:hover {
-            color: darken($document-blue,15%);
-          }
+      .close {
+        cursor: pointer;
+        font-size: 3rem;
+        color: $document-blue;
+        &:hover {
+          color: $brand-text--dark;
         }
       }
     }
 
-    .body {
-      flex: 1 1 auto;
-      display: flex; // to size children -- in particular, to make empty-search-results full-height
-      flex-direction: column;
-      // Scroll vertically on all but the largest screens
-      overflow: auto;
-      padding:  0 7rem 5rem 7rem;
-      @include content-1;
-      background-color: $WF-background;
+    .search {  //TODO Create a new class of search field that is slightly bigger than the ones in the WF -- this type would be used to search for lessons, content, assets across the platform etc.
+      width: 45rem;
+      margin: 0 auto;
+      flex: 0 0 auto;
+      @include module-search-field;
+      @include content-3;
+
+      &::before {
+        top:.8rem;
+        font-size: 1.9rem;
+        color: $document-blue;
+        opacity: .5;
+      }
+
+      input {
+        padding: 1rem 4rem;
+        background: white;
+        height: 4rem;
+        border-color: $item-border;
+      }
+
+      button.reset {
+        top: 1.1rem;
+        font-size: 1.6rem;
+        color: $document-blue;
+        &:hover {
+          color: darken($document-blue,15%);
+        }
+      }
     }
+  }
+
+  .body {
+    @include content-1;
+    width: 100%;
+    flex: 1 1 auto; // take the remaining space
+    overflow: auto; // scrollbar
+    padding:  2rem 7rem 5rem 7rem;
   }
 
   .modules { // display as columns
     display: grid;
-    margin-top: 2rem;
     grid-column-gap: 2rem;
     grid-row-gap: 2rem;
     grid-template-columns: repeat(auto-fit, minmax(28rem, auto));
     justify-content: center;
 
     &.no-results {
-      flex: 1 1 auto; // fill the modal. We don't want this if we _have_ results -- we may want the box shorter
-      margin-top: 5rem;
-      justify-content: center;
-
       p {
-        margin: 0;
+        text-align: center;
+        margin: 5rem;
         @include title-2;
       }
     }
