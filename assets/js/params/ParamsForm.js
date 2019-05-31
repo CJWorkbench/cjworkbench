@@ -15,7 +15,6 @@ export default class ParamsForm extends React.PureComponent {
     api: PropTypes.shape({ // We should nix this. Try to remove its properties, one by one....:
       createOauthAccessToken: PropTypes.func.isRequired, // for secrets
       valueCounts: PropTypes.func.isRequired, // for ValueFilter/Refine
-      _fetch: PropTypes.func.isRequired, // for DropZone
     }),
     fields: PropTypes.arrayOf(PropTypes.shape({
       idName: PropTypes.string.isRequired,

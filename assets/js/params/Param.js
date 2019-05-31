@@ -31,7 +31,6 @@ export default class Param extends React.PureComponent {
     api: PropTypes.shape({ // We should nix this. Try to remove its properties, one by one....:
       createOauthAccessToken: PropTypes.func.isRequired, // for secrets
       valueCounts: PropTypes.func.isRequired, // for ValueFilter/Refine
-      _fetch: PropTypes.func.isRequired, // for DropZone
     }),
     fieldId: PropTypes.string, // if set, we're a sub-param and this is our ID. Otherwise, auto-generate.
     name: PropTypes.string.isRequired,

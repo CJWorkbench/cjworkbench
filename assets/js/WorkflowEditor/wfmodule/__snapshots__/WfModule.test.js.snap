@@ -131,7 +131,6 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
           <ParamsForm
             api={
               Object {
-                "_fetch": [MockFunction],
                 "createOauthAccessToken": [MockFunction],
                 "valueCounts": [MockFunction],
               }

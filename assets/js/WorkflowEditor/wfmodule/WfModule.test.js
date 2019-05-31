@@ -19,7 +19,6 @@ describe('WfModule, not read-only mode', () => {
     mockApi = {
       createOauthAccessToken: jest.fn(),
       valueCounts: jest.fn(),
-      _fetch: jest.fn()
     }
   })
 
