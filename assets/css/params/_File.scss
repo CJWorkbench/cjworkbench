@@ -162,9 +162,6 @@
 
         .metadata {
           display: flex;
-          span {
-            margin: 0 .5rem;
-          }
         }
 
         &:not(.selected) .metadata {
@@ -174,6 +171,15 @@
         abbr {
           text-decoration: none;
           cursor: inherit;
+        }
+
+        time {
+          &::before {
+            // Show " - " between elements
+            content: '-';
+            color: $text-muted;
+            padding: 0 .5rem;
+          }
         }
       }
     }

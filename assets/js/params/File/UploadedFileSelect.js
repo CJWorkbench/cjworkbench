@@ -66,7 +66,6 @@ class UploadedFileSelectModal extends React.PureComponent {
                       <abbr className='size' title={`${numberFormat.format(size)} bytes`}>
                         {formatNBytes(size)}
                       </abbr>
-                      <span>-</span>
                       <time className='created-at' dateTime={createdAt} title={createdAt}>Uploaded {dateFormat.format(new Date(createdAt))}</time>
                     </div>
                   </a>
