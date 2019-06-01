@@ -82,6 +82,10 @@
     @include module-parameter;
     @include autosize-with-textarea;
     height: auto;
+    cursor: default;
+    &:hover {
+      border-color: transparent; // No input possible
+    }
 
   }
 
