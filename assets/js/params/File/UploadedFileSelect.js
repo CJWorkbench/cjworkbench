@@ -81,14 +81,14 @@ class UploadedFileSelectModal extends React.PureComponent {
             onClick={this.onClickSelect}
             disabled={newValue === value}
           >
-            Choose
+            Load
           </button>
           <button
             type='button'
             name='close'
             onClick={close}
           >
-            Close
+            Cancel
           </button>
         </ModalFooter>
       </Modal>
