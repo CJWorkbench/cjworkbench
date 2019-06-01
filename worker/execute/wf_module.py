@@ -159,8 +159,7 @@ async def _render_wfmodule(
         ))
     except TabOutputUnreachableError:
         return ProcessResult(error=(
-            'The chosen tab has no output. '
-            'Please change that tab or choose another.'
+            'The selected tab has no output.'
         ))
     except PromptingError as err:
         return ProcessResult(
