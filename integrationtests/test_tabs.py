@@ -129,7 +129,7 @@ class TestTabs(WorkbenchBase):
         self.submit_wf_module()
 
         b.assert_element('.wf-module-error-msg',
-                         text='The chosen tab has no output',
+                         text='The chosen tab has no output. ',
                          wait=True)  # wait for render
 
     def test_duplicate_tab(self):
