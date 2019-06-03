@@ -3,8 +3,6 @@ from .models import ModuleVersion, WfModule, StoredObject, Delta, Workflow, \
         Tab, WfModule
 
 admin.site.register(ModuleVersion)
-admin.site.register(WfModule)
-admin.site.register(StoredObject)
 admin.site.register(Delta)
 
 
