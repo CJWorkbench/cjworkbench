@@ -309,9 +309,10 @@ class LessonDetailTests(DbTestCase):
             },
         ])
     )})
-    def test_fetch_initial_workflow_with_missing_module_throws_500(self):
+    def test_fetch_initial_workflow_with_missing_module_raises_500(self):
         self.log_in()
-        response = self.client.get('/lessons/a-lesson')
+        with self.assertLogs('django.request'):
+            response = self.client.get('/lessons/a-lesson')
         self.assertEqual(response.status_code, 500)
 
     @patch.dict(LessonLookup, {'a-lesson': Lesson(
@@ -329,11 +330,12 @@ class LessonDetailTests(DbTestCase):
             },
         ])
     )})
-    def test_fetch_initial_workflow_with_invalid_params_throws_500(self):
+    def test_fetch_initial_workflow_with_invalid_params_raises_500(self):
         create_module_version('amodule', [
             {'id_name': 'foo', 'type': 'string'},
         ])
 
         self.log_in()
-        response = self.client.get('/lessons/a-lesson')
+        with self.assertLogs('django.request'):
+            response = self.client.get('/lessons/a-lesson')
         self.assertEqual(response.status_code, 500)

@@ -27,7 +27,7 @@ main_thread_connections = {name: connections[name] for name in connections}
 def _inherit_main_thread_connections():
     for name in main_thread_connections:
         connections[name] = main_thread_connections[name]
-        connections[name].allow_thread_sharing = True
+        connections[name].inc_thread_sharing()
 
 
 class DbTestCase(SimpleTestCase):
