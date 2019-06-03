@@ -45,6 +45,7 @@ FROM pybase AS pydev
 # * python-snappy
 # * fb-re2
 # * watchman (until someone packages binaries)
+# * pysycopg2 (binaries are evil because psycopg2 links SSL -- as does Python)
 #
 # Also:
 # * socat: for our dev environment: worker uses http://localhost:8000 for in-lesson files
@@ -54,6 +55,7 @@ RUN mkdir -p /root/.local/share/virtualenvs \
       build-essential \
       libsnappy-dev \
       libre2-dev \
+      libpq-dev \
       socat \
     && rm -rf /var/lib/apt/lists/*
 
@@ -126,6 +128,7 @@ COPY Pipfile Pipfile.lock /app/
 # * Twisted - https://twistedmatrix.com/trac/ticket/7945
 # * fastparquet
 # * python-snappy
+# * pysycopg2 (binaries are evil because psycopg2 links SSL -- as does Python)
 # ... and we want to keep libsnappy around after the fact, too
 RUN true \
     && apt-get update \
@@ -135,11 +138,13 @@ RUN true \
       libsnappy-dev \
       libre2-3 \
       libre2-dev \
+      libpq-dev \
     && pipenv install --dev --system --deploy \
     && apt-get remove --purge -y \
       build-essential \
       libsnappy-dev \
       libre2-dev \
+      libpq-dev \
     && apt-get autoremove --purge -y \
     && rm -rf /var/lib/apt/lists/*
 
