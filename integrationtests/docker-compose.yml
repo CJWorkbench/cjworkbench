@@ -43,7 +43,7 @@ services:
       MINIO_BUCKET_PREFIX: integrationtest
 
   minio:
-    image: minio/minio:RELEASE.2019-05-02T19-07-09Z
+    image: minio/minio:RELEASE.2019-06-01T03-46-14Z
     environment:
       MINIO_ACCESS_KEY: minio_access
       MINIO_SECRET_KEY: minio_secret
