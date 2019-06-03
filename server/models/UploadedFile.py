@@ -31,7 +31,7 @@ class UploadedFile(models.Model):
     key = models.CharField(max_length=255)
 
 
-@receiver(models.signals.post_delete, sender=UploadedFile)
+@receiver(models.signals.pre_delete, sender=UploadedFile)
 def auto_delete_file_on_delete(sender, instance, **kwargs):
     # Delete S3 data when UploadedFile is deleted
     minio.remove(instance.bucket, instance.key)

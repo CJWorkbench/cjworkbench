@@ -1,6 +1,9 @@
 import unittest
 from unittest.mock import patch
+import uuid
 from django.contrib.auth.models import User
+import pandas as pd
+from server import minio
 from server.models import ModuleVersion
 from server.models.workflow import Workflow, DependencyGraph
 from server.models.commands import InitWorkflowCommand, AddModuleCommand, \
@@ -138,6 +141,43 @@ class WorkflowTests(DbTestCase):
         workflow.delete()
         self.assertTrue(True)  # no crash
 
+    @patch('server.rabbitmq.queue_render', async_noop)
+    @patch('server.websockets.ws_client_send_delta_async', async_noop)
+    @patch('server.models.loaded_module.LoadedModule.for_module_version_sync',
+           lambda *args: LoadedModule('', ''))
+    def test_delete_remove_leaked_stored_objects_and_uploaded_files(self):
+        workflow = Workflow.create_and_init()
+        # If the user deletes a workflow, all data associated with that
+        # workflow should disappear. Postgres handles DB objects; but Django's
+        # ORM doesn't do a great job with StoredObjects and UploadedFiles.
+        #
+        # This test isn't about minutae. It's just: if the user deletes a
+        # Workflow, make sure all data gets deleted.
+        #
+        # TODO fix all other bugs that leak data.
+        wf_module = workflow.tabs.first().wf_modules.create(
+            order=0,
+            module_id_name='x',
+        )
+
+        # Add StoredObject ... and leak it
+        wf_module.store_fetched_table(pd.DataFrame({'A': [1, 2]}))
+        stored_object_key = wf_module.stored_objects.first().key
+        wf_module.stored_objects.all()._raw_delete('default')  # skip S3-delete
+
+        # Add UploadedFile, missing a DB entry. (Even if we fix all bugs that
+        # leak an S3 object after deleting a DB entry [and 2019-06-03 there are
+        # still more] we'll still need to handle missing DB entries from legacy
+        # code.)
+        uploaded_file_key = (
+            f'{wf_module.uploaded_file_prefix}{uuid.uuid4()}.csv'
+        )
+        minio.put_bytes(minio.UserFilesBucket, uploaded_file_key, b'A\nb')
+        workflow.delete()
+        self.assertFalse(minio.exists(minio.StoredObjectsBucket,
+                                      stored_object_key))
+        self.assertFalse(minio.exists(minio.UserFilesBucket,
+                                      uploaded_file_key))
 
 class SimpleDependencyGraphTests(unittest.TestCase):
     Graph = DependencyGraph

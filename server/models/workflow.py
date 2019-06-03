@@ -6,6 +6,7 @@ from django.db import models, transaction
 from django.contrib.auth.models import User
 from django.http import HttpRequest
 from django.urls import reverse
+from server import minio
 
 
 def _find_orphan_soft_deleted_tabs(workflow_id: int) -> models.QuerySet:
@@ -467,6 +468,21 @@ class Workflow(models.Model):
         # clear the deltas, Django may decide to CASCADE to WfModule first and
         # we'll raise a ProtectedError.
         self.clear_deltas()
+
+        # Clear all minio data. We _should_ clear it in pre-delete hooks on
+        # StoredObject, UploadedFile, etc.; but [2019-06-03, adamhooper] the
+        # database is inconsistent and Django is hard to use so new bugs may
+        # crop up anyway.
+        #
+        # [2019-06-03, adamhooper] hooks never work in ORMs. Better would be
+        # to make `delete()` a controller method, not a funky mishmash of
+        # Django-ORM absurdities. TODO nix Django ORM.
+        #
+        # TL;DR we're double-deleting minio data, to be extra-safe. The user
+        # said "delete." We'll delete.
+        if self.id:  # be extra-safe: use if-statement so we don't remove '/'
+            minio.remove_recursive(minio.StoredObjectsBucket, f'{self.id}/')
+            minio.remove_recursive(minio.UserFilesBucket, f'wf-{self.id}/')
 
         super().delete(*args, **kwargs)
 
