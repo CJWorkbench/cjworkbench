@@ -444,6 +444,19 @@ class ProcessResultTests(unittest.TestCase):
                                  quick_fixes=[quick_fix])
         self.assertEqual(result, expected)
 
+    def test_coerce_dict_with_quickfix_tuple_not_json_serializable(self):
+        dataframe = pd.DataFrame({'A': [1, 2]})
+        with self.assertRaisesRegex(ValueError, 'JSON serializable'):
+            ProcessResult.coerce({
+                'dataframe': dataframe,
+                'error': 'an error',
+                'json': {'foo': 'bar'},
+                'quick_fixes': [
+                    ('Hi', 'prependModule', 'texttodate',
+                     {'columns': pd.Index(['created_at'])}),
+                ],
+            })
+
     def test_coerce_dict_with_quickfix_dict(self):
         dataframe = pd.DataFrame({'A': [1, 2]})
         quick_fix = QuickFix('Hi', 'prependModule',
@@ -468,12 +481,26 @@ class ProcessResultTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             ProcessResult.coerce({
                 'error': 'an error',
-                'json': {'foo': 'bar'},
                 'quick_fixes': [
                     {
                         'text': 'Hi',
                         'action': 'prependModule',
                         'arguments': ['texttodate', {'column': 'created_at'}],
+                    },
+                ]
+            })
+
+    def test_coerce_dict_quickfix_dict_has_class_not_json(self):
+        with self.assertRaisesRegex(ValueError, 'JSON serializable'):
+            ProcessResult.coerce({
+                'error': 'an error',
+                'quick_fixes': [
+                    {
+                        'text': 'Hi',
+                        'action': 'prependModule',
+                        'args': ['texttodate', {
+                            'columns': pd.Index(['created_at']),
+                        }],
                     },
                 ]
             })

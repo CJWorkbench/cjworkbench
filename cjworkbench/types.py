@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, asdict, field
+import json
 from string import Formatter
 from typing import Any, Dict, Iterable, List, Optional
 import numpy as np
@@ -490,11 +491,27 @@ class QuickFix:
         """
         if isinstance(value, dict):
             try:
+                # Validate this is a plain JSON object by trying to serialize
+                # it. If there's a value that's meant to be List and we get
+                # pd.Index, this will catch it.
+                json.dumps(value)
+            except TypeError as err:
+                raise ValueError(str(err))
+            try:
                 return QuickFix(**value)
             except TypeError as err:
                 raise ValueError(str(err))
         elif isinstance(value, tuple) or isinstance(value, list):
             text, action, *args = value  # raises ValueError when len too short
+            try:
+                # Validate this is a plain JSON object by trying to serialize
+                # it. If there's a value that's meant to be List and we get
+                # pd.Index, this will catch it.
+                json.dumps(text)
+                json.dumps(action)
+                json.dumps(args)
+            except TypeError as err:
+                raise ValueError(str(err))
             return QuickFix(text, action, args)
         else:
             raise ValueError('Cannot build QuickFix from value: %r' % value)
