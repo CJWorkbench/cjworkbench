@@ -21,7 +21,7 @@
     // if they are non-empty. But we cannot set display:none, because the user
     // may call notesInputRef.current.focus() before they become visible.
     position: relative; // so we can position `.wf-module .module-notes::before`
-    margin-bottom: 1rem;
+    padding-bottom: 1rem; // not margin because first note overrides background to hide line of life
 
     &:not(.visible) {
       overflow: hidden;
@@ -65,7 +65,7 @@
 
   // ... but don't show the vertical line to the left of the first note,
   // which is above the number 1
-  &:nth-child(2) .module-notes::before {
+  &:nth-child(1) .module-notes::before {
     content: '';
     display: block;
     width: 3rem;
