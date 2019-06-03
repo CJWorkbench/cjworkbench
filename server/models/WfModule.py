@@ -42,6 +42,13 @@ class WfModule(models.Model):
                 )
             ), name='inprogress_file_upload_check'),
         ]
+        indexes = [
+            models.Index(
+                fields=['inprogress_file_upload_last_accessed_at'],
+                name='inprogress_file_upload_filter',
+                condition=Q(inprogress_file_upload_last_accessed_at__isnull=False)
+            ),
+        ]
 
     def __str__(self):
         # Don't use DB queries here.
