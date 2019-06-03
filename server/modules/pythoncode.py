@@ -10,6 +10,7 @@ import traceback
 from typing import Any, Dict, Tuple
 import numpy
 import pandas
+from cjworkbench.types import ProcessResult
 from .utils import build_globals_for_eval, PythonFeatureDisabledError
 
 
@@ -42,6 +43,7 @@ def _scrub_globals_for_safety():
         'meta_path',
         'modules',
         'path',
+        'path_hooks',
         'path_importer_cache',
         'platform',
         'ps1',
@@ -80,7 +82,7 @@ def _scrub_globals_for_safety():
     # The modules may use these builtins during reload and that's okay.
     # Disable them now that reload is finished.
     _disable_builtin('compile')
-    _disable_builtin('exec')
+    # _disable_builtin('exec')
 
 
 def inner_eval(code, table, sender):
@@ -107,6 +109,8 @@ def inner_eval(code, table, sender):
     sys.stdout = sys.stderr = sys.__stdout__ = sys.__stderr__ = output
 
     code_globals = build_globals_for_eval()
+    _scrub_globals_for_safety()
+
 
     # Catch errors with the code and display to user
     try:
@@ -197,7 +201,12 @@ def safe_eval_process(code, table, timeout=TIMEOUT):
     subprocess.terminate()  # TODO subprocess.kill() in Python 3.7
     subprocess.join()
 
-    return result
+    # Use ProcessResult.coerce() here (as opposed to _after_ render) so we
+    # catch ValueError and display it to the user instead of emailing us.
+    try:
+        return ProcessResult.coerce(result)
+    except ValueError as err:
+        return 'process() returned invalid data: ' + str(err)
 
 
 def render(

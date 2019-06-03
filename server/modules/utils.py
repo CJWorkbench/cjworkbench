@@ -145,6 +145,7 @@ def build_globals_for_eval() -> Dict[str, Any]:
     import math
     import pandas as pd
     import numpy as np
+    import cjworkbench
 
     return {
         '__builtins__': eval_builtins,
