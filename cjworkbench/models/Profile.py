@@ -11,7 +11,9 @@ User = get_user_model()
 class UserProfile(models.Model):
     user = models.OneToOneField(
         User,
-        related_name="user_profile")
+        related_name="user_profile",
+        on_delete=models.CASCADE,
+    )
     get_newsletter = models.BooleanField(default=False)
 
     def __str__(self):

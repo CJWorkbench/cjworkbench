@@ -134,10 +134,10 @@ class WfModule(models.Model):
     # All current parameter values. This data has been validated at the time of writing
     # using ParamDType.validate() and module_version.param_schema. However it may not match
     # the current module version, and must be migrated when serialized.
-    params = JSONField(default={})
+    params = JSONField(default=dict)
 
     # Stores things like login information for Twitter and other APIs, must not be copied when duplicating the wf
-    secrets = JSONField(default={})
+    secrets = JSONField(default=dict)
 
     inprogress_file_upload_id = models.CharField(max_length=255, blank=True,
                                                  null=True, default=None)
