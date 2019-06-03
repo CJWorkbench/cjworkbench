@@ -1,6 +1,7 @@
 from typing import Optional, Union
 from django.contrib.postgres.fields import JSONField
 from django.db import models
+from django.db.models import F, Q
 from cjworkbench.types import ProcessResult
 from server import minio
 from server.models import loaded_module
@@ -19,6 +20,28 @@ class WfModule(models.Model):
     """An instance of a Module in a Workflow."""
     class Meta:
         ordering = ['order']
+        constraints = [
+            models.CheckConstraint(check=(
+                (
+                    # No in-progress upload
+                    Q(inprogress_file_upload_id__isnull=True)
+                    & Q(inprogress_file_upload_key__isnull=True)
+                    & Q(inprogress_file_upload_last_accessed_at__isnull=True)
+                )
+                | (
+                    # Multipart in-progress upload
+                    Q(inprogress_file_upload_id__isnull=False)
+                    & Q(inprogress_file_upload_key__isnull=False)
+                    & Q(inprogress_file_upload_last_accessed_at__isnull=False)
+                )
+                | (
+                    # Simple in-progress upload
+                    Q(inprogress_file_upload_id__isnull=True)
+                    & Q(inprogress_file_upload_key__isnull=False)
+                    & Q(inprogress_file_upload_last_accessed_at__isnull=False)
+                )
+            ), name='inprogress_file_upload_check'),
+        ]
 
     def __str__(self):
         # Don't use DB queries here.
@@ -140,7 +163,8 @@ class WfModule(models.Model):
     secrets = JSONField(default=dict)
 
     inprogress_file_upload_id = models.CharField(max_length=255, blank=True,
-                                                 null=True, default=None)
+                                                 null=True, default=None,
+                                                 unique=True)
     """
     S3 ID used by the client during upload.
 
@@ -150,14 +174,13 @@ class WfModule(models.Model):
     """
 
     inprogress_file_upload_key = models.CharField(max_length=100, null=True,
-                                                  blank=True, default=None)
+                                                  blank=True, default=None,
+                                                  unique=True)
     """
     Key (in the minio.UserFilesBucket) matching `inprogress_file_upload_id`.
 
     We store the key so we can delete it. The Bucket is always
     minio.UserFilesBucket.
-
-    TODO add constraint: (inprogress_file_upload_id IS NULL) = (key IS NULL).
     """
 
     inprogress_file_upload_last_accessed_at = models.DateTimeField(
