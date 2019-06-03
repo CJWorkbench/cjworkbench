@@ -398,22 +398,16 @@ article.lesson {
     // make sure .workflow-columns stays in the same place it would if the
     // lesson were visible. This assumes the sidebar is always exactly
     // $lesson-sidebar-width, regardless of its content.
-    .workflow-columns {
+    &>:not(nav) {
       margin-left: $lesson-sidebar-width;
-    }
-
-    .pane-select {
-      display: none;
     }
 
     // hide both navbar menu  and undo redo when fullscreen
     nav {
-      display: flex;
-      justify-content: center;
-
       .navbar-elements {
         width: $lesson-fullscreen-width;
         padding: 0 2rem;
+        margin: 0 auto;
 
         .dropdown, .group--undo-redo {
           display: none;
