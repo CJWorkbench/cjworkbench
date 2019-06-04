@@ -126,6 +126,15 @@ class FormulaTests(unittest.TestCase):
             pd.DataFrame({'A': [1, 2], 'result': [2.0, 4.0]})
         )
 
+    def test_excel_all_rows_function_not_implemented(self):
+        self._test(
+            pd.DataFrame({'A': [1, 2, 3]}),
+            {'formula_excel': '=DATE(2019, 6, A1)', 'all_rows': True,
+             'out_column': 'X'},
+            pd.DataFrame(),
+            'DATE: Function not implemented!'
+        )
+
     # --- Formulas which write to all rows ---
     def test_excel_all_rows_single_column(self):
         self._test(
@@ -166,6 +175,15 @@ class FormulaTests(unittest.TestCase):
             pd.DataFrame({'A': [1, 2], 'B': [2, 3]}),
             {'formula_excel': '=A1+B1', 'all_rows': False},
             pd.DataFrame({'A': [1, 2], 'B': [2, 3], 'R': [3, np.nan]})
+        )
+
+    def test_excel_function_not_implemented(self):
+        self._test(
+            pd.DataFrame({'A': [1, 2, 3]}),
+            {'formula_excel': '=DATE(2019, 6, A1)', 'all_rows': False,
+             'out_column': 'X'},
+            pd.DataFrame(),
+            'DATE: Function not implemented!'
         )
 
     def test_excel_sum_column(self):

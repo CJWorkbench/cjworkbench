@@ -1,5 +1,6 @@
 import itertools
 from formulas import Parser
+from schedula import DispatcherError
 import pandas as pd
 import numpy as np
 from .utils import build_globals_for_eval
@@ -39,8 +40,16 @@ def flatten_single_element_lists(x):
 
 
 def eval_excel(code, args):
-    """Return result of running Excel code with args."""
-    ret = code(*args)
+    """
+    Return result of running Excel code with args.
+
+    Raise ValueError if a function is unimplemented.
+    """
+    try:
+        ret = code(*args)
+    except DispatcherError as err:
+        raise ValueError(', '.join(str(arg) for arg in err.args[1:-1])
+                         + ': ' + str(err.args[-1]))
     if isinstance(ret, np.ndarray):
         return ret.item()
     else:
@@ -79,14 +88,8 @@ def eval_excel_one_row(code, table):
         formula_args.append(flatten_single_element_lists(table_part))
 
     # evaluate the formula just once
-    try:
-        val = eval_excel(code, formula_args)
-    except Exception as e:
-        if type(e).__name__ == 'DispatcherError':
-            raise ValueError('Unknown function: {e.args[1]}')
-        else:
-            raise
-    return val
+    # raises ValueError if function isn't implemented
+    return eval_excel(code, formula_args)
 
 
 def eval_excel_all_rows(code, table):
@@ -114,12 +117,12 @@ def eval_excel_all_rows(code, table):
             col_idx.append(list(range(col_first - 1, col_last)))
 
     newcol = []
-    for i, row in enumerate(table.values):
-        args_to_excel = []
-        for col in col_idx:
-            args_to_excel.append(
-                flatten_single_element_lists([row[idx] for idx in col])
-            )
+    for row in table.values:
+        args_to_excel = [
+            flatten_single_element_lists([row[idx] for idx in col])
+            for col in col_idx
+        ]
+        # raises ValueError if function isn't implemented
         newcol.append(eval_excel(code, args_to_excel))
 
     return pd.Series(newcol)
