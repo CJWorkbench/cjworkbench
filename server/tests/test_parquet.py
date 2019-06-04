@@ -1,6 +1,9 @@
 from contextlib import contextmanager
 from pathlib import Path
 import unittest
+import numpy as np
+import pandas as pd
+from pandas.testing import assert_frame_equal
 from server import minio, parquet
 
 
@@ -42,3 +45,15 @@ class ParquetTest(unittest.TestCase):
         with self._file_on_s3('fastparquet-issue-375-snappy.par'):
             with self.assertRaises(parquet.FastparquetIssue375):
                 parquet.read(bucket, key)
+
+    def test_na_only_categorical_has_object_dtype(self):
+        # Start with a Categorical with no values. (In Workbench, all
+        # Categoricals are text.)
+        expected = pd.DataFrame({'A': [np.nan]}, dtype=str).astype('category')
+        assert expected['A'].cat.categories.dtype == object
+        try:
+            parquet.write(bucket, key, expected)
+            result = parquet.read(bucket, key)
+        finally:
+            minio.remove(bucket, key)
+        assert_frame_equal(result, expected)
