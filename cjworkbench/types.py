@@ -120,7 +120,10 @@ def validate_dataframe(df: pd.DataFrame) -> None:
         raise ValueError('column names must all be str')
 
     if not df.index.equals(pd.RangeIndex(0, len(df))):
-        raise ValueError('must use the default RangeIndex')
+        raise ValueError(
+            'must use the default RangeIndex — '
+            'try table.reset_index(drop=True, inplace=True)'
+        )
 
     dup_column_indexes = df.columns.duplicated()
     if dup_column_indexes.any():
