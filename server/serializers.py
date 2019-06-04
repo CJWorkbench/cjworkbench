@@ -189,16 +189,17 @@ class WfModuleSerializer(serializers.ModelSerializer):
 
     def get_params(self, wfm):
         """WfModule.params, _plus secret metadata_"""
-        return wfm.get_params().as_dict()
+        return wfm.get_params().params  # migrated
 
     class Meta:
         model = WfModule
         fields = ('id', 'module', 'tab_slug', 'is_busy',
                   'output_error', 'output_status', 'fetch_error', 'files',
-                  'params', 'is_collapsed', 'notes', 'auto_update_data',
-                  'update_interval', 'update_units', 'last_update_check',
-                  'notifications', 'has_unseen_notification', 'html_output',
-                  'versions', 'last_relevant_delta_id', 'quick_fixes')
+                  'params', 'secrets', 'is_collapsed', 'notes',
+                  'auto_update_data', 'update_interval', 'update_units',
+                  'last_update_check', 'notifications',
+                  'has_unseen_notification', 'html_output', 'versions',
+                  'last_relevant_delta_id', 'quick_fixes')
 
 
 # Lite Workflow: Don't include any of the modules, just name and ID.

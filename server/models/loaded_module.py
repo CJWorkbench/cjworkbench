@@ -40,6 +40,22 @@ async def _default_fetch(params, **kwargs) -> Optional[ProcessResult]:
     return None
 
 
+def _memoize_async_func(f):
+    """
+    Memoize an async function.
+
+    Every call to the retval will return the same Future.
+
+    It is an error to call the returned function from multiple event loops.
+    """
+    future = None
+    def inner():
+        if future is None:
+            future = asyncio.ensure_future(f())
+        return future
+    return inner
+
+
 class DeletedModule:
     def render(self, table: Optional[pd.DataFrame], params: Params,
                tab_name: str,
@@ -152,15 +168,16 @@ class LoadedModule:
 
     async def fetch(
         self,
-        params: Params,
         *,
+        params: Dict[str, Any],
+        secrets: Dict[str, Any],
         workflow_id: int,
         get_input_dataframe: Callable[[], Awaitable[pd.DataFrame]],
         get_stored_dataframe: Callable[[], Awaitable[pd.DataFrame]],
         get_workflow_owner: Callable[[], Awaitable[User]]
     ) -> ProcessResult:
         """
-        Process `params` with module `fetch` method, to build a ProcessResult.
+        Call module `fetch(...)` method to build a `ProcessResult`.
 
         If the `fetch` method raises an exception, this method will return an
         error string. It is always an error for a module to raise an exception.
@@ -169,6 +186,9 @@ class LoadedModule:
         spec = inspect.getfullargspec(self.fetch_impl)
         varkw = bool(spec.varkw)  # if True, function accepts **kwargs
         kwonlyargs = spec.kwonlyargs
+        get_input_dataframe = _memoize_async_func(get_input_dataframe)
+        if varkw or 'secrets' in kwonlyargs:
+            kwargs['secrets'] = secrets
         if varkw or 'workflow_id' in kwonlyargs:
             kwargs['workflow_id'] = workflow_id
         if varkw or 'get_input_dataframe' in kwonlyargs:
@@ -178,28 +198,7 @@ class LoadedModule:
         if varkw or 'get_workflow_owner' in kwonlyargs:
             kwargs['get_workflow_owner'] = get_workflow_owner
 
-        # Pass input to params.to_painful_dict().
-        #
-        # TODO consider ... _not_ doing this. It's only needed if the module
-        # has 'column' params ... which [2019-01-31, adamhooper] is unwise. We
-        # use it in old-style 'join' and 'concat' (which require fetch of
-        # another workflow) and in 'urlscraper' (which seems like a unique
-        # case).
-
-        input_dataframe_future = get_input_dataframe()
-
-        input_dataframe = await input_dataframe_future
-        if input_dataframe is None:
-            input_dataframe = pd.DataFrame()
-        param_values = params.values  # for logging -- no secrets
-        params = params.to_painful_dict(input_dataframe)
-
-        # If we're passing get_input_dataframe via kwargs, short-circuit it
-        # because we already know the result.
-        async def get_input_dataframe_again():
-            return input_dataframe
-        if 'get_input_dataframe' in kwargs:
-            kwargs['get_input_dataframe'] = get_input_dataframe_again
+        params = await fetchprep.clean_params(params, get_input_dataframe)
 
         time1 = time.time()
 

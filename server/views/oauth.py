@@ -176,7 +176,7 @@ def finish_authorize(request: HttpRequest) -> HttpResponse:
             delta_json = {
                 'updateWfModules': {
                     str(scope.wf_module_id): {
-                        'params': wf_module.get_params().as_dict(),
+                        'secrets': secrets,
                     }
                 }
             }

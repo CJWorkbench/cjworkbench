@@ -22,8 +22,8 @@ logger = logging.getLogger(__name__)
 
 
 @database_sync_to_async
-def _get_params(wf_module: WfModule) -> Params:
-    return wf_module.get_params()
+def _get_params(wf_module: WfModule) -> Dict[str, Any]:
+    return wf_module.get_params().values
 
 
 @database_sync_to_async
@@ -102,14 +102,21 @@ async def fetch_wf_module(workflow_id, wf_module, now):
                  workflow_id, wf_module.id,
                  wf_module.update_interval)
     try:
+        get_input_dataframe = partial(_get_input_dataframe,
+                                      wf_module.tab_id, wf_module.order)
         params = await _get_params(wf_module)
 
-        lm = await LoadedModule.for_module_version(wf_module.module_version)
+        module_version = wf_module.module_version
+        lm = await LoadedModule.for_module_version(module_version)
+        # Migrate params, so fetch() gets newest values
+        params = await lm.migrate_params(module_version.schema, params)
+        # Clean params, so they're of the correct type
+        params = fetchprep.get_param_values(params)
         result = await lm.fetch(
-            params,
+            params=params,
+            secrets=secrets,
             workflow_id=workflow_id,
             get_input_dataframe=partial(_get_input_dataframe,
-                                        wf_module.tab_id, wf_module.order),
             get_stored_dataframe=partial(_get_stored_dataframe, wf_module.id),
             get_workflow_owner=partial(_get_workflow_owner, workflow_id),
         )
