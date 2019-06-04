@@ -236,6 +236,12 @@ class ProcessResultTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'must all be str'):
             ProcessResult.coerce(pd.DataFrame({'foo': ['a', 1]}))
 
+    def test_coerce_validate_empty_categories_with_wrong_dtype(self):
+        with self.assertRaisesRegex(ValueError, 'must have dtype=object'):
+            ProcessResult.coerce(
+                pd.DataFrame({'foo': [np.nan]}, dtype=float).astype('category')
+            )
+
     def test_coerce_validate_non_str_categories(self):
         with self.assertRaisesRegex(ValueError, 'must all be str'):
             ProcessResult.coerce(

@@ -60,6 +60,13 @@ def validate_series(series: pd.Series) -> None:
             )
     elif hasattr(series, 'cat'):
         categories = series.cat.categories
+        if categories.dtype != object:
+            raise ValueError(
+                (
+                    'invalid categorical dtype %s in column %r '
+                    '(categories must have dtype=object)'
+                ) % (categories.dtype, series.name)
+            )
         nonstr = (categories.map(type) != str)
         if nonstr.any():
             raise ValueError(
