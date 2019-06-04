@@ -218,6 +218,13 @@ class ScrapeUrlsTest(SimpleTestCase):
                                    fetch_result=None)
         assert_frame_equal(result, table)
 
+    def test_module_nop_with_missing_col_selection(self):
+        table = pd.DataFrame({'A': [1]})
+        result = urlscraper.render(table.copy(),
+                                   P(urlsource='column', urlcol='B'),
+                                   fetch_result=None)
+        assert_frame_equal(result, table)
+
 
 class URLScraperTests(unittest.TestCase):
 
