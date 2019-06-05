@@ -74,28 +74,6 @@ def uniquize_colnames(colnames: Iterator[str]) -> Iterator[str]:
             yield key + ' ' + str(num)
 
 
-def parse_json_param(value) -> Dict[str, Any]:
-    """
-    Parse a JSON param.
-
-    Sometimes, database values are already JSON. Other times, they're
-    stored as ``str``. When given ``str``, we decode here (or raise
-    ValueError on invalid JSON).
-
-    TODO nix the duality. That way, users can store strings....
-    """
-    if isinstance(value, str):
-        if value:
-            return json.loads(value)  # raises ValueError
-        else:
-            # [2018-12-28] `None` seems more appropriate, but `{}` is
-            # backwards-compatibile. TODO migrate database to nix this
-            # ambiguity.
-            return {}
-    else:
-        return value
-
-
 class PythonFeatureDisabledError(Exception):
     def __init__(self, name):
         super().__init__(self)

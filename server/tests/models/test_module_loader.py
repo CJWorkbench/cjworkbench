@@ -1,4 +1,3 @@
-import tempfile
 import textwrap
 import traceback
 import unittest
@@ -252,6 +251,73 @@ class ValidateModuleSpecTest(unittest.TestCase):
                         # Previously, we gave the wrong id_name
                         'id_name': 'not-a',
                         'type': 'string'
+                    },
+                ],
+            })
+
+    def test_validate_gdrivefile_missing_secret(self):
+        with self.assertRaisesRegex(
+            ValueError,
+            "Param 'b' has a 'secret_parameter' that is not a 'secret'"
+        ):
+            validate_module_spec({
+                'id_name': 'id',
+                'name': 'Name',
+                'category': 'Clean',
+                'parameters': [
+                    {
+                        'id_name': 'b',
+                        'type': 'gdrivefile',
+                        'secret_parameter': 'a',
+                    },
+                ],
+            })
+
+    def test_validate_gdrivefile_non_secret_secret(self):
+        with self.assertRaisesRegex(
+            ValueError,
+            "Param 'b' has a 'secret_parameter' that is not a 'secret'"
+        ):
+            validate_module_spec({
+                'id_name': 'id',
+                'name': 'Name',
+                'category': 'Clean',
+                'parameters': [
+                    {
+                        'id_name': 'a',
+                        'type': 'string',
+                    },
+                    {
+                        'id_name': 'b',
+                        'type': 'gdrivefile',
+                        'secret_parameter': 'a',
+                    },
+                ],
+            })
+
+    def test_validate_gdrivefile_invalid_secret(self):
+        with self.assertRaisesRegex(
+            ValueError,
+            "Param 'b' 'secret_parameter' does not refer to a 'google'"
+        ):
+            validate_module_spec({
+                'id_name': 'id',
+                'name': 'Name',
+                'category': 'Clean',
+                'parameters': [
+                    {
+                        'id_name': 'a',
+                        'type': 'secret',
+                        'secret_logic': {
+                            'provider': 'oauth',
+                            'service': 'twitter',
+                            'name': 'Connect',
+                        },
+                    },
+                    {
+                        'id_name': 'b',
+                        'type': 'gdrivefile',
+                        'secret_parameter': 'a',
                     },
                 ],
             })

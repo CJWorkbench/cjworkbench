@@ -53,6 +53,7 @@ export class WfModule extends React.PureComponent {
     index: PropTypes.number.isRequired,
     wfModule: PropTypes.shape({
       params: PropTypes.object.isRequired,
+      secrets: PropTypes.object.isRequired,
     }), // null if loading
     inputWfModule: PropTypes.shape({
       id: PropTypes.number.isRequired,
@@ -147,19 +148,6 @@ export class WfModule extends React.PureComponent {
     this.setState({
       isDragging: false
     })
-  }
-
-  getParameterValue (idName) {
-    const fromState = this.state.edits[idName]
-    const fromProps = this.props.wfModule ? this.props.wfModule.params[idName] : null
-
-    return fromState === undefined ? fromProps : fromState
-  }
-
-  // Allow parameters to access each others value (text params only)
-  // Used e.g. for custom UI elements to save/restore their state from hidden parameters
-  getParamText = (paramIdName) => {
-    return this.getParameterValue(paramIdName)
   }
 
   removeModule = () => {
@@ -459,6 +447,7 @@ export class WfModule extends React.PureComponent {
                     api={this.props.api}
                     fields={this.props.module.param_fields}
                     value={this.props.wfModule ? this.props.wfModule.params : null}
+                    secrets={this.props.wfModule ? this.props.wfModule.secrets : null}
                     files={this.props.wfModule ? this.props.wfModule.files : []}
                     edits={this.state.edits}
                     wfModuleId={this.props.wfModule ? this.props.wfModule.id : null}
@@ -472,7 +461,6 @@ export class WfModule extends React.PureComponent {
                     applyQuickFix={this.applyQuickFix}
                     startCreateSecret={this.startCreateSecret}
                     deleteSecret={this.deleteSecret}
-                    getParamText={this.getParamText}
                     onChange={this.onChange}
                     onSubmit={this.onSubmit}
                   />

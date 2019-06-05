@@ -169,53 +169,31 @@ class ParamSpecTest(unittest.TestCase):
         # returns the original.
         self.assertEqual(ParamSpec.from_dict(param_dict), param_spec)
 
-    def test_to_dict_dict_factory(self):
-        def upcasedict(tuples):
-            return dict((x.upper(), y) for x, y in tuples)
-
-        param_spec = ParamSpec.List(
-            id_name='l',
-            visible_if=dict(
-                id_name='othermenu', value='showlist'),
-            child_parameters=[
-                ParamSpec.String(id_name='s', default='foo'),
-                ParamSpec.Column(id_name='c', visible_if=dict(
-                    id_name='s', value='iddqd'
-                )),
-            ]
+    def test_to_dict_secret_logic(self):
+        param_spec = ParamSpec.Secret(
+            id_name='s',
+            secret_logic=dict(
+                provider='string',
+                label='Label',
+                placeholder='Placeholder',
+                help='Help',
+                help_url='http://help.url',
+                help_url_prompt='Help link',
+            ),
         )
-        param_dict = param_spec.to_dict(dict_factory=upcasedict)
+        param_dict = param_spec.to_dict()
         self.assertEqual(param_dict, {
-            'TYPE': 'list',
-            'ID_NAME': 'l',
-            'NAME': '',
-            'VISIBLE_IF': {
-                'ID_NAME': 'othermenu',
-                'VALUE': 'showlist'
+            'type': 'secret',
+            'id_name': 's',
+            'visible_if': None,
+            'secret_logic': {
+                'provider': 'string',
+                'label': 'Label',
+                'placeholder': 'Placeholder',
+                'help': 'Help',
+                'help_url': 'http://help.url',
+                'help_url_prompt': 'Help link',
             },
-            'CHILD_PARAMETERS': [
-                {
-                    'TYPE': 'string',
-                    'ID_NAME': 's',
-                    'NAME': '',
-                    'DEFAULT': 'foo',
-                    'MULTILINE': False,
-                    'PLACEHOLDER': '',
-                    'VISIBLE_IF': None,
-                },
-                {
-                    'TYPE': 'column',
-                    'ID_NAME': 'c',
-                    'PLACEHOLDER': '',
-                    'NAME': '',
-                    'TAB_PARAMETER': None,
-                    'COLUMN_TYPES': None,
-                    'VISIBLE_IF': {
-                        'ID_NAME': 's',
-                        'VALUE': 'iddqd',
-                    },
-                },
-            ]
         })
 
     def test_column_column_types(self):

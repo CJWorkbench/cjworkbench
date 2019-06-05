@@ -70,6 +70,8 @@ export function paramFieldToParamProps (field) {
     isMultiline: field.multiline || false,
     placeholder: field.placeholder || '',
     visibleIf: field.visibleIf, // may be null
+    secretParameter: field.secretParameter, // may be undefined
+    secretLogic: field.secretLogic, // may be undefined
     childParameters: field.childParameters, // may be undefined
     childDefault: field.childDefault // may be undefined
   }

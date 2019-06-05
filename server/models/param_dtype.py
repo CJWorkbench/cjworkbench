@@ -1,7 +1,10 @@
+from dataclasses import dataclass, field
 import re
-from typing import Any, Dict, FrozenSet, List, Optional
+from typing import Any, ClassVar, Dict, FrozenSet, List, Optional
+import typing.re
 
 
+@dataclass(frozen=True)
 class ParamDType:
     """
     Data type -- that is, storage format -- for a parameter.
@@ -98,6 +101,44 @@ class ParamDType:
         return dtype._from_plain_data(**json_value)  # sans 'type'
 
 
+@dataclass(frozen=True)
+class ParamDTypeOption(ParamDType):
+    """
+    Decorate a dtype such that it may be None.
+    """
+    inner_dtype: ParamDType
+
+    # override
+    def coerce(self, value):
+        if value is None:
+            return None
+        else:
+            return self.inner_dtype.coerce(value)
+
+    # override
+    def validate(self, value):
+        if value is not None:
+            self.inner_dtype.validate(value)
+
+    # override
+    def iter_dfs_dtypes(self):
+        yield from super().iter_dfs_dtypes()
+        yield from self.inner_dtype.iter_dfs_dtypes()
+
+    # override
+    def iter_dfs_dtype_values(self, value: Any):
+        yield from super().iter_dfs_dtype_values(value)
+        if value is not None:
+            yield from self.inner_dtype.iter_dfs_dtype_values(value)
+
+    # override
+    @classmethod
+    def _from_plain_data(cls, *, inner_dtype):
+        inner_dtype = cls.parse(inner_dtype=inner_dtype)
+        return cls(inner_dtype=inner_dtype)
+
+
+@dataclass(frozen=True)
 class ParamDTypeString(ParamDType):
     """
     Valid Unicode text.
@@ -106,14 +147,11 @@ class ParamDTypeString(ParamDType):
     (because a lone surrogate isn't valid Unicode text) and `"\x00"` is invalid
     (because Postgres doesn't allow null bytes).
     """
-    InvalidCodePoints = re.compile('[\u0000\ud800-\udfff]')
+    default: str = ''
 
-    def __init__(self, default=''):
-        super().__init__()
-        self.default = default
-
-    def __repr__(self):
-        return 'ParamDTypeString()'
+    InvalidCodePoints: ClassVar[typing.re.Pattern] = re.compile(
+        '[\u0000\ud800-\udfff]'
+    )
 
     def coerce(self, value):
         if value is None:
@@ -145,13 +183,9 @@ class ParamDTypeString(ParamDType):
                 )
 
 
+@dataclass(frozen=True)
 class ParamDTypeInteger(ParamDType):
-    def __init__(self, default=0):
-        super().__init__()
-        self.default = default
-
-    def __repr__(self):
-        return 'ParamDTypeInteger()'
+    default: int = 0
 
     def coerce(self, value):
         try:
@@ -164,16 +198,12 @@ class ParamDTypeInteger(ParamDType):
             raise ValueError('Value %r is not an integer' % value)
 
 
+@dataclass(frozen=True)
 class ParamDTypeFloat(ParamDType):
     """
     Accepts floats or integers. Akin to JSON 'number' type.
     """
-    def __init__(self, default=0.0):
-        super().__init__()
-        self.default = default
-
-    def __repr__(self):
-        return 'ParamDTypeFloat()'
+    default: float = 0.0
 
     def coerce(self, value):
         try:
@@ -192,13 +222,9 @@ class ParamDTypeFloat(ParamDType):
         return cls(default=default)
 
 
+@dataclass(frozen=True)
 class ParamDTypeBoolean(ParamDType):
-    def __init__(self, default=False):
-        super().__init__()
-        self.default = default
-
-    def __repr__(self):
-        return 'ParamDTypeBoolean()'
+    default: bool = False
 
     def coerce(self, value):
         if value is None:
@@ -216,16 +242,10 @@ class ParamDTypeBoolean(ParamDType):
             raise ValueError('Value %r is not a boolean' % value)
 
 
+@dataclass(frozen=True)
 class ParamDTypeColumn(ParamDTypeString):
-    def __init__(self, column_types: Optional[FrozenSet[str]] = None,
-                 tab_parameter: Optional[str] = None):
-        super().__init__()
-        self.column_types = column_types
-        self.tab_parameter = tab_parameter
-
-    def __repr__(self):
-        return 'ParamDTypeColumn' + repr((self.column_types,
-                                          self.tab_parameter))
+    column_types: Optional[FrozenSet[str]] = None
+    tab_parameter: Optional[str] = None
 
     @classmethod
     def _from_plain_data(cls, *, column_types=None, **kwargs):
@@ -235,16 +255,10 @@ class ParamDTypeColumn(ParamDTypeString):
         return cls(**kwargs)
 
 
+@dataclass(frozen=True)
 class ParamDTypeMulticolumn(ParamDType):
-    def __init__(self, column_types: Optional[FrozenSet[str]] = None,
-                 tab_parameter: Optional[str] = None):
-        super().__init__()
-        self.column_types = column_types
-        self.tab_parameter = tab_parameter
-
-    def __repr__(self):
-        return 'ParamDTypeMulticolumn' + repr((self.column_types,
-                                               self.tab_parameter))
+    column_types: Optional[FrozenSet[str]] = None
+    tab_parameter: Optional[str] = None
 
     def coerce(self, value):
         if value is None:
@@ -269,19 +283,17 @@ class ParamDTypeMulticolumn(ParamDType):
         return cls(**kwargs)
 
 
+@dataclass(frozen=True)
 class ParamDTypeEnum(ParamDType):
-    def __init__(self, choices: FrozenSet[Any], default: Any):
-        super().__init__()
-        if default not in choices:
+    choices: FrozenSet[Any]
+    default: Any
+
+    def __post_init__(self):
+        if self.default not in self.choices:
             raise ValueError(
                 'Default %(default)r is not in choices %(choices)r'
-                % {'default': default, 'choices': choices}
+                % {'default': self.default, 'choices': self.choices}
             )
-        self.choices = choices
-        self.default = default
-
-    def __repr__(self):
-        return 'ParamDTypeEnum' + repr((self.choices, self.default))
 
     def coerce(self, value):
         if value in self.choices:
@@ -301,15 +313,10 @@ class ParamDTypeEnum(ParamDType):
         return cls(choices=frozenset(choices), **kwargs)
 
 
-class ParamDTypeList(ParamDType):
-    def __init__(self, inner_dtype: ParamDType, default=[]):
-        super().__init__()
-        self.inner_dtype = inner_dtype
-        self.default = default
-
-    def __repr__(self):
-        return 'ParamDTypeList' + repr((self.inner_dtype,))
-
+class _ListMethods:
+    """
+    Methods that use `self.inner_dtype` and expect values to be list.
+    """
     def coerce(self, value):
         if value is None:
             return self.default
@@ -337,12 +344,19 @@ class ParamDTypeList(ParamDType):
         for v in value:
             yield from self.inner_dtype.iter_dfs_dtype_values(v)
 
+
+@dataclass(frozen=True)
+class ParamDTypeList(_ListMethods, ParamDType):
+    inner_dtype: ParamDType
+    default: List[Any] = field(default_factory=list)
+
     @classmethod
     def _from_plain_data(cls, *, inner_dtype, **kwargs):
         inner_dtype = cls.parse(inner_dtype)
         return cls(inner_dtype=inner_dtype, **kwargs)
 
 
+@dataclass(frozen=True)
 class ParamDTypeDict(ParamDType):
     """
     A grouping of properties with a schema defined in the dtype.
@@ -350,16 +364,14 @@ class ParamDTypeDict(ParamDType):
     This is different from ParamDTypeMap, which allows arbitrary keys and
     forces all values to have the same dtype.
     """
-    def __init__(self, properties: Dict[str, ParamDType], default=None):
-        super().__init__()
-        self.properties = properties
-        if default is None:
+    properties: Dict[str, ParamDType]
+    default: Optional[Any] = None  # if None, auto-calculate during init
+
+    def __post_init__(self):
+        if self.default is None:
             default = dict((name, dtype.coerce(None))
                            for name, dtype in self.properties.items())
-        self.default = default
-
-    def __repr__(self):
-        return 'ParamDTypeDict' + repr((self.properties,))
+            object.__setattr__(self, 'default', default)
 
     def coerce(self, value):
         if not isinstance(value, dict):
@@ -400,6 +412,7 @@ class ParamDTypeDict(ParamDType):
         return cls(properties=properties, **kwargs)
 
 
+@dataclass(frozen=True)
 class ParamDTypeMap(ParamDType):
     """
     A key-value store with arbitrary string keys and all-the-same-dtype values.
@@ -407,13 +420,8 @@ class ParamDTypeMap(ParamDType):
     This is different from ParamDTypeDict, which has dtype-defined properties,
     each with its own dtype.
     """
-    def __init__(self, value_dtype: ParamDType, default={}):
-        super().__init__()
-        self.value_dtype = value_dtype
-        self.default = default
-
-    def __repr__(self):
-        return 'ParamDTypeMap' + repr((self.value_dtype, self.default))
+    value_dtype: ParamDType
+    default: Dict[str, Any] = field(default_factory=dict)
 
     def coerce(self, value):
         if not isinstance(value, dict):
@@ -445,78 +453,52 @@ class ParamDTypeMap(ParamDType):
         return cls(value_dtype=value_dtype, **kwargs)
 
 
+@dataclass(frozen=True)
 class ParamDTypeTab(ParamDTypeString):
-    def __repr__(self):
-        return 'ParamDTypeTab()'
+    pass
 
 
-class ParamDTypeMultitab(ParamDTypeList):
+@dataclass(frozen=True)
+class ParamDTypeMultitab(_ListMethods, ParamDType):
     """
     A 'tabs' parameter: a value is a list of tab slugs.
 
     This dtype behaves like a ParamDTypeList full of ParamDTypeTab values.
     We'll visit all child ParamDTypeTab values when walking a `value`.
     """
+    default: List[str] = field(default_factory=list)
 
-    def __init__(self, default=[]):
-        super().__init__(inner_dtype=ParamDTypeTab(), default=default)
-
-    def __repr__(self):
-        return 'ParamDTypeMultitab()'
-
-    # coerce(): ParamDTypeList will do what we want
-    # validate(): ParamDTypeList will do what we want
-    # iter_dfs_dtypes(): ParamDTypeList will do what we want
-    # iter_dfs_dtype_values(): ParamDTypeList will do what we want
-
-    # override
-    @classmethod
-    def _from_plain_data(cls, **kwargs):
-        # don't require inner_dtype like ParamDTypeList does
-        return cls(**kwargs)
+    def __post_init__(self):
+        object.__setattr__(self, 'inner_dtype', ParamDTypeTab())
 
 
-class ParamDTypeMultichartseries(ParamDTypeList):
+@dataclass(frozen=True)
+class ParamDTypeMultichartseries(_ListMethods, ParamDType):
     """
     A 'y_series' parameter: array of columns+colors.
 
     This is like a List[Dict], except when omitting table columns we omit the
     entire Dict if its Column is missing.
     """
+    default: List[Dict[str, str]] = field(default_factory=list)
 
-    def __init__(self, default=[]):
-        super().__init__(inner_dtype=ParamDTypeDict({
+    def __post_init__(self):
+        object.__setattr__(self, 'inner_dtype', ParamDTypeDict({
             'column': ParamDTypeColumn(column_types=frozenset({'number'})),
             'color': ParamDTypeString(),  # TODO enforce '#abc123' pattern
-        }), default=default)
-
-    def __repr__(self):
-        return 'ParamDTypeMultichartseries()'
-
-    # coerce(): ParamDTypeList will do what we want
-    # validate(): ParamDTypeList will do what we want
-    # iter_dfs_dtypes(): ParamDTypeList will do what we want
-    # iter_dfs_dtype_values(): ParamDTypeList will do what we want
-
-    # override
-    @classmethod
-    def _from_plain_data(cls, **kwargs):
-        # don't require inner_dtype like ParamDTypeList does
-        return cls(**kwargs)
+        }))
 
 
+@dataclass(frozen=True)
 class ParamDTypeFile(ParamDType):
     """
     String-encoded UUID pointing to an UploadedFile (and S3).
 
     The default, value, `null`, means "No file".
     """
-    UUIDRegex = re.compile(
+    UUIDRegex: ClassVar[typing.re.Pattern] = re.compile(
         r'\A[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\Z'
     )
-
-    def __repr__(self):
-        return 'ParamDTypeFile()'
 
     def coerce(self, value):
         try:
@@ -544,6 +526,7 @@ ParamDType.Integer = ParamDTypeInteger
 ParamDType.Float = ParamDTypeFloat
 ParamDType.Boolean = ParamDTypeBoolean
 ParamDType.Enum = ParamDTypeEnum
+ParamDType.Option = ParamDTypeOption
 ParamDType.List = ParamDTypeList
 ParamDType.Dict = ParamDTypeDict
 ParamDType.Map = ParamDTypeMap
@@ -560,6 +543,7 @@ ParamDType.JsonTypeToDType = {
     'float': ParamDTypeFloat,
     'boolean': ParamDTypeBoolean,
     'enum': ParamDTypeEnum,
+    'option': ParamDTypeOption,
     'list': ParamDTypeList,
     'dict': ParamDTypeDict,
     'map': ParamDTypeMap,

@@ -1,10 +1,11 @@
 import io
+import json
 from typing import Any, Dict, Optional, Union
 import pandas as pd
 import requests
 from cjworkbench.types import ProcessResult
 from server import oauth
-from .utils import parse_bytesio, turn_header_into_first_row, parse_json_param
+from .utils import parse_bytesio, turn_header_into_first_row
 
 
 _Secret = Dict[str, Any]
@@ -125,7 +126,7 @@ def render(_unused_table, params, *, fetch_result, **kwargs):
 
 
 def fetch(params, *, secrets, **kwargs):  # TODO make async
-    file_meta = parse_json_param(params['googlefileselect'])
+    file_meta = params['file']
     if not file_meta:
         return ProcessResult()
 
@@ -146,3 +147,26 @@ def fetch(params, *, secrets, **kwargs):  # TODO make async
         return result
     else:
         return ProcessResult()
+
+
+def _migrate_params_v0_to_v1(params):
+    """
+    v0: `googlefileselect` was a JSON-encoded String.
+
+    v1: `file` is an Optional[Dict[str, str]]
+    """
+    if params['googlefileselect']:
+        file = json.loads(params['googlefileselect'])
+    else:
+        file = None
+    return {
+        'has_header': params['has_header'],
+        'version_select': params['version_select'],
+        'file': file,
+    }
+
+
+def migrate_params(params):
+    if 'googlefileselect' in params:
+        params = _migrate_params_v0_to_v1(params)
+    return params

@@ -8,14 +8,17 @@
   "loads_data": true,
   "parameters": [
     {
-      "name": "Connect",
       "id_name": "google_credentials",
-      "type": "secret"
+      "type": "secret",
+      "secret_logic": {
+        "provider": "oauth",
+        "service": "google"
+      }
     },
     {
-      "name": "File Select",
-      "id_name": "googlefileselect",
-      "type": "custom"
+      "id_name": "file",
+      "type": "gdrivefile",
+      "secret_parameter": "google_credentials"
     },
     {
       "name": "Has header row",

@@ -56,7 +56,8 @@ class ModuleVersionTest(DbTestCase):
             'id_name': 'x', 'name': 'x', 'category': 'Clean',
             'parameters': [
                 {'id_name': 'foo', 'type': 'string', 'default': 'X'},
-                {'id_name': 'bar', 'type': 'secret', 'name': 'Secret'},
+                {'id_name': 'bar', 'type': 'secret',
+                 'secret_logic': {'provider': 'oauth', 'service': 'google'}},
                 {'id_name': 'baz', 'type': 'menu', 'options': [
                     {'value': 'a', 'label': 'A'},
                     'separator',
@@ -67,6 +68,7 @@ class ModuleVersionTest(DbTestCase):
 
         self.assertEqual(repr(mv.param_schema), repr(ParamDType.Dict({
             'foo': ParamDType.String(default='X'),
+            # secret is not in param_schema
             'baz': ParamDType.Enum(choices=frozenset({'a', 'c'}), default='c'),
         })))
 
@@ -99,7 +101,6 @@ class ModuleVersionTest(DbTestCase):
             'id_name': 'x', 'name': 'x', 'category': 'Clean',
             'parameters': [
                 {'id_name': 'foo', 'type': 'string', 'default': 'X'},
-                {'id_name': 'bar', 'type': 'secret', 'name': 'Secret'},
             ]
         }, source_version_hash='1.0')
 

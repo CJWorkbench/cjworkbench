@@ -402,7 +402,7 @@ class WfModuleTest(HandlerTestCase):
             'category': 'Clean',
             'parameters': [
                 {'id_name': 'google_credentials', 'type': 'secret',
-                 'name': 'Google'},
+                 'secret_logic': {'provider': 'oauth', 'service': 'google'}},
             ],
         })
         wf_module = workflow.tabs.first().wf_modules.create(
@@ -428,7 +428,7 @@ class WfModuleTest(HandlerTestCase):
             'category': 'Clean',
             'parameters': [
                 {'id_name': 'google_credentials', 'type': 'secret',
-                 'name': 'Google'},
+                 'secret_logic': {'provider': 'oauth', 'service': 'google'}},
             ],
         })
         wf_module = workflow.tabs.first().wf_modules.create(
@@ -454,7 +454,7 @@ class WfModuleTest(HandlerTestCase):
             'category': 'Clean',
             'parameters': [
                 {'id_name': 'google_credentials', 'type': 'secret',
-                 'name': 'Google'},
+                 'secret_logic': {'provider': 'oauth', 'service': 'google'}},
             ],
         })
         wf_module = workflow.tabs.first().wf_modules.create(
@@ -479,7 +479,7 @@ class WfModuleTest(HandlerTestCase):
             'category': 'Clean',
             'parameters': [
                 {'id_name': 'google_credentials', 'type': 'secret',
-                 'name': 'Google'},
+                 'secret_logic': {'provider': 'oauth', 'service': 'google'}},
             ],
         })
         wf_module = workflow.tabs.first().wf_modules.create(
@@ -507,7 +507,7 @@ class WfModuleTest(HandlerTestCase):
             'category': 'Clean',
             'parameters': [
                 {'id_name': 'google_credentials', 'type': 'secret',
-                 'name': 'Google'},
+                 'secret_logic': {'provider': 'oauth', 'service': 'google'}},
             ],
         })
         wf_module = workflow.tabs.first().wf_modules.create(
@@ -541,7 +541,7 @@ class WfModuleTest(HandlerTestCase):
             'category': 'Clean',
             'parameters': [
                 {'id_name': 'google_credentials', 'type': 'secret',
-                 'name': 'Google'},
+                 'secret_logic': {'provider': 'oauth', 'service': 'google'}},
             ],
         })
         wf_module = workflow.tabs.first().wf_modules.create(
@@ -575,7 +575,7 @@ class WfModuleTest(HandlerTestCase):
             'category': 'Clean',
             'parameters': [
                 {'id_name': 'google_credentials', 'type': 'secret',
-                 'name': 'Google'},
+                 'secret_logic': {'provider': 'oauth', 'service': 'google'}},
             ],
         })
         wf_module = workflow.tabs.first().wf_modules.create(
@@ -600,7 +600,7 @@ class WfModuleTest(HandlerTestCase):
             'category': 'Clean',
             'parameters': [
                 {'id_name': 'google_credentials', 'type': 'secret',
-                 'name': 'Google'},
+                 'secret_logic': {'provider': 'oauth', 'service': 'google'}},
             ],
         })
         wf_module = workflow.tabs.first().wf_modules.create(
@@ -654,7 +654,7 @@ class WfModuleTest(HandlerTestCase):
             'category': 'Clean',
             'parameters': [
                 {'id_name': 'google_credentials', 'type': 'secret',
-                 'name': 'Google'},
+                 'secret_logic': {'provider': 'oauth', 'service': 'google'}},
             ],
         })
         wf_module = workflow.tabs.first().wf_modules.create(

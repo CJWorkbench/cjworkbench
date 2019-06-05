@@ -6,6 +6,12 @@ DT = ParamDType
 
 
 class DTypeStringTest(unittest.TestCase):
+    def test_coerce_none_to_str(self):
+        self.assertEqual(DT.String().coerce(None), '')
+
+    def test_coerce_non_str_to_str(self):
+        self.assertEqual(DT.String().coerce({'a': 'b'}), "{'a': 'b'}")
+
     def test_coerce_to_str(self):
         self.assertEqual(DT.String().coerce('blah'), 'blah')
 
@@ -53,17 +59,13 @@ class DTypeFileTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'not a string'):
             DT.File().validate(0x13a5177)
 
-class DTypeCoerceTest(unittest.TestCase):
 
-    def test_coerce_none_to_str(self):
-        self.assertEqual(DT.String().coerce(None), '')
-
-    def test_coerce_non_str_to_str(self):
-        self.assertEqual(DT.String().coerce({'a': 'b'}), "{'a': 'b'}")
-
+class DTypeColumnTest(unittest.TestCase):
     def test_coerce_str_to_column(self):
         self.assertEqual(DT.Column().coerce('blah'), 'blah')
 
+
+class DTypeMulticolumnTest(unittest.TestCase):
     def test_multicolumn_default(self):
         self.assertEqual(DT.Multicolumn().coerce(None), [])
 
@@ -84,6 +86,24 @@ class DTypeCoerceTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             DT.Multicolumn().validate('X,Y')
 
+
+class DTypeOptionTest(unittest.TestCase):
+    def test_option_validate_inner_ok(self):
+        DT.Option(DT.String()).validate('foo')
+
+    def test_option_validate_inner_error(self):
+        with self.assertRaises(ValueError):
+            DT.Option(DT.String()).validate(3)
+
+    def test_option_coerce_none(self):
+        # [2019-06-05] We don't support non-None default on Option params
+        self.assertEqual(DT.Option(DT.String(default='x')).coerce(None), None)
+
+    def test_option_coerce_inner(self):
+        self.assertEqual(DT.Option(DT.String(default='x')).coerce(3.2), '3.2')
+
+
+class DTypeMapTest(unittest.TestCase):
     def test_map_validate_ok(self):
         dtype = ParamDType.Map(value_dtype=ParamDType.String())
         value = {'a': 'b', 'c': 'd'}

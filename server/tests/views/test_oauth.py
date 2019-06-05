@@ -17,7 +17,8 @@ class OauthTest(DbTestCase):
             'name': '',
             'category': 'Clean',
             'parameters': [
-                {'id_name': 'auth', 'type': 'secret', 'name': 'Secret'}
+                {'id_name': 'auth', 'type': 'secret',
+                 'secret_logic': {'provider': 'oauth', 'service': 'twitter'}},
             ]
         })
 

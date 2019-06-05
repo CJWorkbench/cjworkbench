@@ -135,7 +135,7 @@ async def fetch_wf_module(workflow_id, wf_module, now):
         # Migrate params, so fetch() gets newest values
         params = lm.migrate_params(wf_module.params)
         # Clean params, so they're of the correct type
-        params = fetchprep.clean_params(lm.param_schema, params, input_shape)
+        params = fetchprep.clean_value(lm.param_schema, params, input_shape)
         result = await lm.fetch(
             params=params,
             secrets=wf_module.secrets,

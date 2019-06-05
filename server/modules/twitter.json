@@ -8,9 +8,12 @@
   "help_url":"modules/add-data/twitter",
   "parameters": [
     {
-      "name": "Connect",
       "id_name": "twitter_credentials",
-      "type": "secret"
+      "type": "secret",
+      "secret_logic": {
+        "provider": "oauth",
+        "service": "twitter"
+      }
     },
     {
       "name" : "Search for",

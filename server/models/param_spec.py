@@ -47,12 +47,6 @@ class ParamSpec(ABC):
     # several subclasses:
 
     @property
-    def type(self) -> str:
-        """
-        The "type" of component to render (passed to JavaScript).
-        """
-
-    @property
     @abstractmethod
     def dtype(self) -> Optional[ParamDType]:
         """
@@ -74,7 +68,7 @@ class ParamSpec(ABC):
         The logic is: look up the subclass by `json_value['type']`, and then
         call its `._from_kwargs()` method with the rest of the JSON dict.
         """
-        json_value = json_value.copy()  # do not alter input
+        json_value = dict(json_value)  # shallow copy
         json_type = json_value.pop('type')
         subcls = _lookup[json_type]
         return subcls._from_kwargs(**json_value)
@@ -83,50 +77,47 @@ class ParamSpec(ABC):
     def _from_kwargs(cls, **kwargs) -> ParamSpec:
         return cls(**kwargs)
 
-    # "Register" all subclasses:
-    # ParamSpec.Column => shorthand for ParamSpecColumn
-    # ParamSpec.lookup['column'] == ParamSpec.Column
-    def __init_subclass__(cls, **kwargs):
-        """
-        Register a subclass by class name (called implicitly).
-
-        For instance, if you write `class ParamSpecFoo(ParamSpec):`, that
-        means:
-
-        * `_lookup['foo'] == ParamSpecFoo`
-        * `ParamSpec.Foo == ParamSpecFoo`
-        """
-        super().__init_subclass__(**kwargs)
-
-        name = cls.__name__
-        assert name.startswith('ParamSpec')
-        subname = name[len('ParamSpec'):]
-
-        # ParamSpecFoo.type = 'foo' (JSON "type")
-        cls.type = subname.lower()
-
-        # _lookup['foo'] = ParamSpecFoo
-        _lookup[cls.type] = cls
-
-        # ParamSpec.Foo = ParamSpecFoo
-        setattr(ParamSpec, subname, cls)
-
-    def to_dict(self, *, dict_factory=dict) -> Dict[str, Any]:
+    def to_dict(self) -> Dict[str, Any]:
         """
         Create a JSON-compatible Dict from this ParamSpec.
 
         This is the inverse of `ParamSpec.from_dict()`. That is, in all cases,
         `ParamSpec.from_dict(param_spec.to_dict()) == param_spec`.
-
-        TODO fix application of dict_factory. We special-case 'visible_if', but
-        in general we don't support nesting.
         """
-        return dict_factory([
-            ('type', self.type),
-            *asdict(self, dict_factory=dict_factory).items(),
-            ('visible_if',
-             dict_factory(self.visible_if.items()) if self.visible_if else None)
-        ])
+        return asdict(self)
+
+
+def _register_param_spec(cls):
+    """
+    Register a subclass by class name (called as a decorator).
+
+    For instance, if you write `class ParamSpecFoo(ParamSpec):`, that
+    means:
+
+    * `_lookup['foo'] == ParamSpecFoo`
+    * `ParamSpec.Foo == ParamSpecFoo`
+    * cls(...).type == 'foo'
+
+    This must be called _before_ the `@dataclass` annotation, as it adds a
+    'type' field (used during serialization).
+    """
+    name = cls.__name__
+    assert name.startswith('ParamSpec')
+    subname = name[len('ParamSpec'):]
+
+    # ParamSpecFoo.type = 'foo' (JSON "type", serialized in to_dict())
+    type_name = subname.lower()
+    setattr(cls, 'type', type_name)
+    cls.__dict__.get('__annotations__', {})['type'] = 'str'
+    print(repr((f'Set type {type_name} on class {name}', cls.__annotations)))
+
+    # _lookup['foo'] = ParamSpecFoo
+    _lookup[type_name] = cls
+
+    # ParamSpec.Foo = ParamSpecFoo
+    setattr(ParamSpec, subname, cls)
+
+    return cls
 
 
 @dataclass(frozen=True)
@@ -148,6 +139,7 @@ class _HasPlaceholder:
     """
 
 @dataclass(frozen=True)
+@_register_param_spec
 class ParamSpecStatictext(_HasName, ParamSpec):
     """
     Text the user sees, with no underlying value.
@@ -158,21 +150,62 @@ class ParamSpecStatictext(_HasName, ParamSpec):
         return None
 
 
+class SecretLogic(ABC):
+    @classmethod
+    def _from_dict(cls, json_value) -> SecretLogic:
+        provider = json_value['provider']
+        if provider == 'oauth':
+            return cls.Oauth(**json_value)
+        elif provider == 'string':
+            return cls.String(**json_value)
+
+
 @dataclass(frozen=True)
-class ParamSpecSecret(_HasName, ParamSpec):
+class SecretLogicOauth:
+    provider: str  # 'oauth', always
+    service: str
+
+
+@dataclass(frozen=True)
+class SecretLogicString:
+    provider: str  # 'string', always
+    label: str
+    placeholder: str
+    help: str
+    help_url_prompt: str
+    help_url: str
+
+
+@dataclass(frozen=True)
+@_register_param_spec
+class ParamSpecSecret(ParamSpec):
     """
     Secret such as an API key the user can set.
 
     Secrets are not stored in undo history (because we only want the owner to
     see them, not readers). So they don't have JSON values.
     """
+    secret_logic: SecretLogic = field(default_factory=NotImplementedError)
+
     # override
     @property
     def dtype(self) -> Optional[ParamDType]:
-        return None
+        return None  # secrets aren't param values -- they're a separate dict
+
+    # override
+    @classmethod
+    def _from_kwargs(cls, *, secret_logic: Dict[str, str], **kwargs):
+        secret_logic = SecretLogic._from_dict(secret_logic)
+        return cls(secret_logic=secret_logic, **kwargs)
+
+
+ParamSpecSecret.Logic = SecretLogic
+SecretLogic.Oauth = SecretLogicOauth
+SecretLogic.String = SecretLogicString
 
 
 @dataclass(frozen=True)
+@_register_param_spec
 class ParamSpecButton(_HasName, ParamSpec):
     """
     Button the user can click to submit data.
@@ -189,6 +222,7 @@ class ParamSpecButton(_HasName, ParamSpec):
 
 
 @dataclass(frozen=True)
+@_register_param_spec
 class ParamSpecString(_HasPlaceholder, _HasName, ParamSpec):
     """
     Text the user can type.
@@ -204,6 +238,7 @@ class ParamSpecString(_HasPlaceholder, _HasName, ParamSpec):
 
 
 @dataclass(frozen=True)
+@_register_param_spec
 class ParamSpecNumberFormat(_HasPlaceholder, _HasName, ParamSpec):
     """
     Textual number-format string, like '${:0,.2f}'
@@ -217,6 +252,7 @@ class ParamSpecNumberFormat(_HasPlaceholder, _HasName, ParamSpec):
 
 
 @dataclass(frozen=True)
+@_register_param_spec
 class ParamSpecCustom(_HasName, ParamSpec):
     """
     Deprecated "custom" value -- behavior depends on id_name.
@@ -233,6 +269,7 @@ class ParamSpecCustom(_HasName, ParamSpec):
 
 
 @dataclass(frozen=True)
+@_register_param_spec
 class ParamSpecColumn(_HasPlaceholder, _HasName, ParamSpec):
     """
     Column selector. Selects a str; default value `""` means "no column".
@@ -264,6 +301,7 @@ class ParamSpecColumn(_HasPlaceholder, _HasName, ParamSpec):
 
 
 @dataclass(frozen=True)
+@_register_param_spec
 class ParamSpecMulticolumn(_HasPlaceholder, _HasName, ParamSpec):
     """
     Multicolumn selector. Selects FrozenSet of str.
@@ -296,6 +334,7 @@ class ParamSpecMulticolumn(_HasPlaceholder, _HasName, ParamSpec):
 
 
 @dataclass(frozen=True)
+@_register_param_spec
 class ParamSpecMultichartseries(_HasPlaceholder, _HasName, ParamSpec):
     """
     Selects { column, color } pairs.
@@ -308,6 +347,7 @@ class ParamSpecMultichartseries(_HasPlaceholder, _HasName, ParamSpec):
 
 
 @dataclass(frozen=True)
+@_register_param_spec
 class ParamSpecInteger(_HasPlaceholder, _HasName, ParamSpec):
     """
     Integer the user can type.
@@ -321,6 +361,7 @@ class ParamSpecInteger(_HasPlaceholder, _HasName, ParamSpec):
 
 
 @dataclass(frozen=True)
+@_register_param_spec
 class ParamSpecFloat(_HasPlaceholder, _HasName, ParamSpec):
     """
     Decimal (stored as floating-point) the user can type.
@@ -334,6 +375,7 @@ class ParamSpecFloat(_HasPlaceholder, _HasName, ParamSpec):
 
 
 @dataclass(frozen=True)
+@_register_param_spec
 class ParamSpecCheckbox(_HasName, ParamSpec):
     """
     Boolean selected by checkbox.
@@ -394,6 +436,7 @@ MenuOptionSeparator = _MenuOptionSeparator()  # singleton
 
 
 @dataclass(frozen=True)
+@_register_param_spec
 class ParamSpecMenu(_HasPlaceholder, _HasName, ParamSpec):
     """
     Enum value selected by drop-down menu.
@@ -433,6 +476,7 @@ ParamSpecMenu.Option.Separator = MenuOptionSeparator  # singleton
 
 
 @dataclass(frozen=True)
+@_register_param_spec
 class ParamSpecRadio(_HasName, ParamSpec):
     """
     Enum values which are all visible at the same time.
@@ -465,6 +509,7 @@ ParamSpecRadio.Option = EnumOption
 
 
 @dataclass(frozen=True)
+@_register_param_spec
 class ParamSpecTab(_HasPlaceholder, _HasName, ParamSpec):
     # override
     @property
@@ -473,6 +518,7 @@ class ParamSpecTab(_HasPlaceholder, _HasName, ParamSpec):
 
 
 @dataclass(frozen=True)
+@_register_param_spec
 class ParamSpecMultitab(_HasPlaceholder, _HasName, ParamSpec):
     # override
     @property
@@ -481,6 +527,7 @@ class ParamSpecMultitab(_HasPlaceholder, _HasName, ParamSpec):
 
 
 @dataclass(frozen=True)
+@_register_param_spec
 class ParamSpecFile(ParamSpec):
     # override
     @property
@@ -489,6 +536,7 @@ class ParamSpecFile(ParamSpec):
 
 
 @dataclass(frozen=True)
+@_register_param_spec
 class ParamSpecList(_HasName, ParamSpec):
     child_parameters: List[ParamSpec] = field(default_factory=list)
 
@@ -507,25 +555,21 @@ class ParamSpecList(_HasName, ParamSpec):
                         for cp in self.child_parameters if cp.dtype}
         return ParamDType.List(ParamDType.Dict(child_dtypes))
 
-    # override
-    def to_dict(self, *, dict_factory=dict) -> Dict[str, Any]:
-        """
-        Create a JSON-compatible Dict from this ParamSpec.
 
-        This is the inverse of `ParamSpec.from_dict()`. That is, in all cases,
-        `ParamSpec.from_dict(param_spec.to_dict()) == param_spec`.
-        """
-        return dict_factory([
-            ('type', self.type),
-            *asdict(self, dict_factory=dict_factory).items(),
-            # asdict(self) won't encode child_parameters, because
-            # to_dict() isn't recursive. We don't actually _need_ it to be
-            # recursive, since ParamSpecList isn't recursive. (A List can't
-            # contain other Lists). So let's simply re-encode the
-            # child_parameters, _with_ their type info.
-            ('child_parameters', [cp.to_dict(dict_factory=dict_factory)
-                                  for cp in self.child_parameters]),
-            # similar problem with visible_if
-            ('visible_if',
-             dict_factory(self.visible_if.items()) if self.visible_if else None)
-        ])
+@dataclass(frozen=True)
+@_register_param_spec
+class ParamSpecGdrivefile(_HasName, ParamSpec):
+    secret_parameter: str = ''
+    """
+    id_name of the `secret` parameter this chooser will use.
+    """
+
+    # override
+    @property
+    def dtype(self) -> Optional[ParamDType]:
+        return ParamDType.Option(ParamDType.Dict({
+            'id': ParamDType.String(),
+            'name': ParamDType.String(),
+            'url': ParamDType.String(),
+            'mimeType': ParamDType.String(),
+        }))

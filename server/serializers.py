@@ -1,5 +1,5 @@
 import re
-from typing import Dict, Any, Optional, Tuple
+from typing import Any, Dict, List, Optional
 from allauth.account.utils import user_display
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
@@ -25,7 +25,7 @@ def isoformat(dt_or_none) -> str:
         return dt_or_none.isoformat().replace('+00:00', 'Z')
 
 
-def _camelize(s: str) -> str:
+def _camelize_str(s: str) -> str:
     """
     Convert snake-case to camel-case.
 
@@ -35,14 +35,38 @@ def _camelize(s: str) -> str:
     return _NeedCamelRegex.sub(lambda s: s.group(1).upper(), s)
 
 
-def _camel_case_dict_factory(tuples: Tuple[str, Any]) -> Dict[str, Any]:
+def _camelize_list(l: List[Any]) -> List[Any]:
     """
-    Given key-val pairs with snake-case keys, construct a camel-case dict.
+    Convert snake-case dicts within `l` to camel-case.
 
-    >>> _camel_case_dict_factory([('id_name', 1), ('child_parameters', 2)])
-    {'idName': 1, 'childParameters': 2}
+    >>> _camelize(['x_y', {'y_z': 'z_a'}])
+    ['x_y', {'yZ': 'z_a'}]
     """
-    return dict((_camelize(k), v) for k, v in tuples)
+    return [_camelize_value(v) for v in l]
+
+
+def _camelize_dict(d: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Convert snake-case keys within `d` to camel-case, recursively.
+
+    >>> _camelize({'a_b': 'b_c', 'c_d': {'e_f': 'f_g'}})
+    {'aB': 'b_c', 'cD': {'eF': 'f_g'}}
+    """
+    return {_camelize_str(k): _camelize_value(v) for k, v in d.items()}
+
+
+def _camelize_value(v: Any) -> Any:
+    """
+    Camelize keys of dicts within `v`, recursively.
+
+    `v` must be a JSON-serializable dict.
+    """
+    if isinstance(v, dict):
+        return _camelize_dict(v)
+    elif isinstance(v, list):
+        return _camelize_list(v)
+    else:
+        return v
 
 
 class StoredObjectSerializer(serializers.ModelSerializer):
@@ -56,7 +80,7 @@ class ModuleSerializer(serializers.ModelSerializer):
     help_url = serializers.SerializerMethodField()
 
     def _serialize_param(self, p):
-        ret = p.to_dict(dict_factory=_camel_case_dict_factory)
+        ret = _camelize_dict(p.to_dict())
         if isinstance(p, ParamSpec.List):
             ret['childDefault'] = p.dtype.inner_dtype.default
 
@@ -116,6 +140,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class WfModuleSerializer(serializers.ModelSerializer):
     params = serializers.SerializerMethodField()
+    secrets = serializers.SerializerMethodField()  # NOT ACTUAL SECRETS
     update_interval = serializers.SerializerMethodField()
     update_units = serializers.SerializerMethodField()
     html_output = serializers.SerializerMethodField()
@@ -187,8 +212,12 @@ class WfModuleSerializer(serializers.ModelSerializer):
         return ret
 
     def get_params(self, wfm):
-        """WfModule.params, _plus secret metadata_"""
+        """WfModule.params, migrated"""
         return wfm.get_params()
+
+    def get_secrets(self, wfm):
+        """Secret *metadata* -- NOT THE ACTUAL SECRETS"""
+        return wfm.secret_metadata
 
     class Meta:
         model = WfModule

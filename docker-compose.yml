@@ -119,7 +119,7 @@ services:
       # Use watchman, not Django autoreload. autoreload crashes when there's a
       # syntax error.
       'sh', '-c',
-      'socat -d TCP-LISTEN:8000,reuseaddr,fork TCP:frontend:8000 & pipenv run bin/watchman-monitor --exclude "**/*.pyc" "**/tests/**/*" --pattern "cjworkbench/**/*.py" "worker/**/*.py" "server/modules/**/*.*" --exec python ./manage.py worker'
+      'socat -d TCP-LISTEN:8000,reuseaddr,fork TCP:frontend:8000 & pipenv run bin/watchman-monitor --exclude "**/*.pyc" "**/tests/**/*" --pattern "cjworkbench/**/*.py" "worker/**/*.py" "server/modules/**/*.*" "server/models/**/*.*" --exec python ./manage.py worker'
     ]
 
 

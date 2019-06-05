@@ -6,7 +6,7 @@ import pandas as pd
 from pandas.testing import assert_frame_equal
 import requests.exceptions
 from server import oauth
-from server.modules.googlesheets import fetch, render
+from server.modules.googlesheets import fetch, render, migrate_params
 from .util import MockParams
 
 # example_csv, example_tsv, example_xls, example_xlsx: same spreadsheet, four
@@ -43,7 +43,7 @@ default_secret = {
         'refresh_token': 'a-refresh-token',
     },
 }
-default_googlefileselect = {
+default_file = {
     "id": "aushwyhtbndh7365YHALsdfsdf987IBHJB98uc9uisdj",
     "name": "Police Data",
     "url": "http://example.org/police-data",
@@ -51,8 +51,7 @@ default_googlefileselect = {
 }
 
 
-P = MockParams.factory(googlefileselect=default_googlefileselect,
-                       has_header=True)
+P = MockParams.factory(file=default_file, has_header=True)
 def secrets(secret: Optional[Dict[str, Any]]) -> Dict[str, Any]:
     if secret:
         return {'google_credentials': secret}
@@ -86,8 +85,7 @@ class GoogleSheetsTests(unittest.TestCase):
         super().tearDown()
 
     def test_render_no_file(self):
-        fetch_result = fetch(P(googlefileselect=''),
-                             secrets=secrets(default_secret))
+        fetch_result = fetch(P(file=None), secrets=secrets(default_secret))
         self.assertEqual(fetch_result.error, '')
         self.assertTrue(fetch_result.dataframe.empty)
 
@@ -102,31 +100,30 @@ class GoogleSheetsTests(unittest.TestCase):
 
     def test_fetch_csv(self):
         self.requests.get.return_value = MockResponse(200, example_csv)
-        fetch_result = fetch(P(googlefileselect={**default_googlefileselect,
-                                                 'mimeType': 'text/csv'}),
+        fetch_result = fetch(P(file={**default_file, 'mimeType': 'text/csv'}),
                              secrets=secrets(default_secret))
         self._assert_happy_path(fetch_result)
 
     def test_fetch_tsv(self):
         self.requests.get.return_value = MockResponse(200, example_tsv)
-        fetch_result = fetch(P(googlefileselect={
-            **default_googlefileselect,
+        fetch_result = fetch(P(file={
+            **default_file,
             'mimeType': 'text/tab-separated-values',
         }), secrets=secrets(default_secret))
         self._assert_happy_path(fetch_result)
 
     def test_fetch_xls(self):
         self.requests.get.return_value = MockResponse(200, example_xls)
-        fetch_result = fetch(P(googlefileselect={
-            **default_googlefileselect,
+        fetch_result = fetch(P(file={
+            **default_file,
             'mimeType': 'application/vnd.ms-excel',
         }), secrets=secrets(default_secret))
         self._assert_happy_path(fetch_result)
 
     def test_fetch_xlsx(self):
         self.requests.get.return_value = MockResponse(200, example_xlsx)
-        fetch_result = fetch(P(googlefileselect={
-            **default_googlefileselect,
+        fetch_result = fetch(P(file={
+            **default_file,
             'mimeType':
             'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         }), secrets=secrets(default_secret))
@@ -135,10 +132,7 @@ class GoogleSheetsTests(unittest.TestCase):
     def test_no_first_row_header(self):
         self.requests.get.return_value = MockResponse(200, example_csv)
         kwargs = {
-            'googlefileselect': {
-                **default_googlefileselect,
-                'mimeType': 'text/csv',
-            },
+            'file': {**default_file, 'mimeType': 'text/csv'},
             'has_header': False,
         }
         fetch_result = fetch(P(**kwargs), secrets=secrets(default_secret))
@@ -171,10 +165,7 @@ class GoogleSheetsTests(unittest.TestCase):
     def test_render(self):
         self.requests.get.return_value = MockResponse(200, example_csv)
         kwargs = {
-            'googlefileselect': {
-                **default_googlefileselect,
-                'mimeType': 'text/csv',
-            }
+            'file': {**default_file, 'mimeType': 'text/csv'}
         }
         fetch_result = fetch(P(**kwargs), secrets=secrets(default_secret))
         result = render(pd.DataFrame(), P(**kwargs), fetch_result=fetch_result)
@@ -183,3 +174,66 @@ class GoogleSheetsTests(unittest.TestCase):
     def test_render_missing_fetch_result_returns_empty(self):
         result = render(pd.DataFrame(), P(), fetch_result=None)
         assert_frame_equal(result, pd.DataFrame())
+
+
+class MigrateParamsTest(unittest.TestCase):
+    def test_v0_with_file(self):
+        self.assertEqual(migrate_params({
+            'has_header': False,
+            'version_select': '',
+            'googlefileselect': (
+                '{"id":"1AR-sdfsdf","name":"Filename","url":"https://docs.goo'
+                'gle.com/a/org/spreadsheets/d/1MJsdfwer/view?usp=drive_web","'
+                'mimeType":"text/csv"}'
+            ),
+        }), {
+            'has_header': False,
+            'version_select': '',
+            'file': {
+                'id': '1AR-sdfsdf',
+                'name': 'Filename',
+                'url': (
+                    'https://docs.google.com/a/org/spreadsheets/'
+                    'd/1MJsdfwer/view?usp=drive_web'
+                ),
+                'mimeType': 'text/csv',
+            },
+        })
+
+    def test_v0_no_file(self):
+        self.assertEqual(migrate_params({
+            'has_header': False,
+            'version_select': '',
+            'googlefileselect': '',
+        }), {
+            'has_header': False,
+            'version_select': '',
+            'file': None,
+        })
+
+    def test_v1(self):
+        self.assertEqual(migrate_params({
+            'has_header': False,
+            'version_select': '',
+            'file': {
+                'id': '1AR-sdfsdf',
+                'name': 'Filename',
+                'url': (
+                    'https://docs.google.com/a/org/spreadsheets/'
+                    'd/1MJsdfwer/view?usp=drive_web'
+                ),
+                'mimeType': 'text/csv',
+            },
+        }), {
+            'has_header': False,
+            'version_select': '',
+            'file': {
+                'id': '1AR-sdfsdf',
+                'name': 'Filename',
+                'url': (
+                    'https://docs.google.com/a/org/spreadsheets/'
+                    'd/1MJsdfwer/view?usp=drive_web'
+                ),
+                'mimeType': 'text/csv',
+            },
+        })

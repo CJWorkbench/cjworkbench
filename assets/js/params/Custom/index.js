@@ -6,7 +6,6 @@ import CellEdits from './CellEdits'
 import ChartSeriesMultiSelect from './ChartSeriesMultiSelect'
 import Code from './Code'
 import Filters from './Filters'
-import GoogleFileSelect from './GoogleFileSelect'
 import Groups from './Groups'
 import JoinColumns from './JoinColumns'
 import Refine from './Refine'
@@ -21,7 +20,6 @@ const Components = {
   celledits: CellEdits,
   code: Code,
   filters: Filters,
-  googlefileselect: GoogleFileSelect,
   groups: Groups,
   join_columns: JoinColumns,
   refine: Refine,

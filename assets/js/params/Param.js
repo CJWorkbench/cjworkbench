@@ -6,6 +6,7 @@ import Checkbox from './Checkbox'
 import Column from './Column'
 import Custom from './Custom'
 import File from './File'
+import Gdrivefile from './Gdrivefile'
 import Menu from './Menu'
 import Multicolumn from './Multicolumn'
 import Multitab from './Multitab'
@@ -34,8 +35,9 @@ export default class Param extends React.PureComponent {
     }),
     fieldId: PropTypes.string, // if set, we're a sub-param and this is our ID. Otherwise, auto-generate.
     name: PropTypes.string.isRequired,
-    secretParamName: PropTypes.string, // or null: name of a 'secret'-typed param
-    secretName: PropTypes.string, // or null: name of user logged in (if there is a secretParamName)
+    secretParameter: PropTypes.string, // undefined unless param has `secretParameter`: name of the 'secret'-typed param associated with us
+    secretMetadata: PropTypes.object, // only defined if `secretParameter` points to a secret the user has entered; "safe" value to display alongside 'secret' (minus the "private", "secret" value)
+    secretLogic: PropTypes.object, // only defined if type == 'secret'
     label: PropTypes.string.isRequired, // or ''
     type: PropTypes.string.isRequired,
     enumOptions: PropTypes.arrayOf(PropTypes.shape({
@@ -81,6 +83,7 @@ export default class Param extends React.PureComponent {
       case 'custom': return Custom
       case 'float': return Number_
       case 'file': return File
+      case 'gdrivefile': return Gdrivefile
       case 'integer': return Number_
       case 'menu': return Menu
       case 'multicolumn': return Multicolumn
@@ -102,8 +105,8 @@ export default class Param extends React.PureComponent {
   }
 
   createOauthAccessToken = () => {
-    const { secretParamName, wfModuleId, api } = this.props
-    return api.createOauthAccessToken(wfModuleId, secretParamName)
+    const { secretParameter, wfModuleId, api } = this.props
+    return api.createOauthAccessToken(wfModuleId, secretParameter)
   }
 
   render () {

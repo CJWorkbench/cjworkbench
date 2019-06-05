@@ -42,6 +42,7 @@ export default class ParamsForm extends React.PureComponent {
       createdAt: PropTypes.string.isRequired // ISO-8601
     }).isRequired).isRequired,
     value: PropTypes.object, // upstream value. `null` if the server hasn't been contacted; otherwise, there's a key per field
+    secrets: PropTypes.object, // upstream secrets. `null` if the server hasn't been contacted; otherwise, keys set only when params are filled in
     edits: PropTypes.object.isRequired, // local edits, same keys as `value`
     wfModuleId: PropTypes.number, // `null` if the server hasn't been contacted; otherwise, ID
     wfModuleOutputError: PropTypes.string, // `null` if no wfModule, '' if no error
@@ -182,21 +183,11 @@ export default class ParamsForm extends React.PureComponent {
   render () {
     const { api, isReadOnly, isZenMode, wfModuleId, wfModuleOutputError, isWfModuleBusy,
             inputWfModuleId, inputDeltaId, inputColumns, tabs, currentTab, applyQuickFix,
-            startCreateSecret, deleteSecret, fields, files } = this.props
+            startCreateSecret, deleteSecret, fields, files, secrets } = this.props
     const isEditing = this.isEditing
 
     const upstreamValue = this.props.value
     const value = this.value
-
-    // TODO make secrets "special" -- not just a param type. Then we'll have something
-    // sensible to pass components that use a secret (such as GoogleFileSelect). The
-    // dream: the client manages wf_modules[id].params and wf_modules[id].secrets (just
-    // like the server).
-    //
-    // In the meantime: find and pass `secretName` to all params if a secret is set.
-    const secretParam = fields.find(f => f.type === 'secret')
-    const secretParamName = secretParam ? secretParam.idName : null
-    const secretName = (secretParamName && value && value[secretParamName]) ? value[secretParamName].name : null
 
     // TODO Revamp Refine and ValueFilter so the select-column and edit-value components
     // are nested together. Until then, we need to pass `selectedColumn` to the edit-value
@@ -229,7 +220,9 @@ export default class ParamsForm extends React.PureComponent {
               isZenMode={isZenMode}
               key={field.idName}
               {...paramFieldToParamProps(field)}
+              secretMetadata={field.secretParameter ? secrets[field.secretParameter] : undefined}
               upstreamValue={upstreamValue ? upstreamValue[field.idName] : null}
+              secret={secrets ? secrets[field.idName] : null}
               value={value ? value[field.idName] : null}
               files={files}
               wfModuleId={wfModuleId}
@@ -241,8 +234,6 @@ export default class ParamsForm extends React.PureComponent {
               tabs={tabs}
               currentTab={currentTab}
               applyQuickFix={applyQuickFix}
-              secretName={secretName}
-              secretParamName={secretParamName}
               startCreateSecret={startCreateSecret}
               deleteSecret={deleteSecret}
               selectedColumn={selectedColumn}

@@ -1,6 +1,5 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { withJsonStringValues } from '../util'
 
 const MimeTypesString = [
   'application/vnd.google-apps.spreadsheet',
@@ -99,7 +98,7 @@ let googleApiLoadedPromise = null
 async function loadDefaultPickerFactory() {
   if (googleApiLoadedPromise === null) {
     googleApiLoadedPromise = new Promise((resolve, reject) => {
-      const callbackName = `GoogleFileSelect_onload_${String(Math.random()).slice(2, 10)}`
+      const callbackName = `Gdrivefile_onload_${String(Math.random()).slice(2, 10)}`
       window[callbackName] = function() {
         delete window[callbackName]
         gapi.load('picker', function() {
@@ -122,11 +121,11 @@ async function loadDefaultPickerFactory() {
 }
 
 
-export class GoogleFileSelect extends React.PureComponent {
+export default class Gdrivefile extends React.PureComponent {
   static propTypes = {
     createOauthAccessToken: PropTypes.func.isRequired, // func() => Promise[str or null]
     isReadOnly: PropTypes.bool.isRequired,
-    secretName: PropTypes.string, // when this changes, call createOauthAccessToken
+    secretMetadata: PropTypes.string, // when this changes, call createOauthAccessToken
     value: PropTypes.shape({
       id: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
@@ -154,9 +153,10 @@ export class GoogleFileSelect extends React.PureComponent {
    * valid.
    */
   fetchAccessToken() {
-    const secretName = this.props.secretName
+    const secretMetadata = this.props.secretMetadata
+    const secretName = secretMetadata.name
 
-    if (secretName === null) {
+    if (!secretMetadata) {
       this.setState({
         loadingAccessToken: false,
         unauthenticated: true,
@@ -171,8 +171,8 @@ export class GoogleFileSelect extends React.PureComponent {
 
     return this.props.createOauthAccessToken()
       .then(accessTokenOrNull => {
-        if (secretName !== this.props.secretName) {
-          // avoid race: another race is happening
+        if (secretName !== (this.props.secretMetadata && this.props.secretMetadata.name)) {
+          // avoid race: another request is happening
           return null
         }
         if (this._isUnmounted) {
@@ -230,7 +230,7 @@ export class GoogleFileSelect extends React.PureComponent {
 
   render() {
     const { pickerFactory, loadingAccessToken, unauthenticated } = this.state
-    const { value, secretName, isReadOnly } = this.props
+    const { value, secretMetadata, isReadOnly } = this.props
 
     const defaultFileName = ''
     const fileId = value ? (value.id || null) : null
@@ -247,7 +247,7 @@ export class GoogleFileSelect extends React.PureComponent {
         button = (
           <p className="sign-in-error">failure: please reconnect</p>
         )
-      } else if (!secretName) {
+      } else if (!secretMetadata) {
         button = (
           <p className="not-signed-in">(not signed in)</p>
         )
@@ -272,5 +272,3 @@ export class GoogleFileSelect extends React.PureComponent {
     )
   }
 }
-
-export default withJsonStringValues(GoogleFileSelect, null)

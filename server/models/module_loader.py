@@ -45,6 +45,7 @@ def validate_module_spec(spec):
     * If `spec.parameters[*].options` and `default` exist, `default` is valid
     * `spec.parameters[*].visible_if[*].value` is/are valid if it's a menu
     * `spec.parameters[*].tab_parameter` point to valid params
+    * `spec.parameters[*].secret` is correct
     """
     # No need to do i18n on these errors: they're only for admins. Good thing,
     # too -- most of the error messages come from jsonschema, and there are
@@ -138,6 +139,37 @@ def validate_module_spec(spec):
                 f"Param '{param['id_name']}' has a 'tab_parameter' "
                 "that is not a 'tab'"
             )
+
+    # Check secret refs
+    for param in spec['parameters']:
+        try:
+            secret_parameter = param['secret_parameter']
+        except KeyError:
+            continue  # we aren't referencing a "secret" parameter
+
+        if secret_parameter not in param_lookup:
+            messages.append(
+                f"Param '{param['id_name']}' has a 'secret_parameter' "
+                "that is not a 'secret'"
+            )
+        else:
+            secret = param_lookup[secret_parameter]
+            if secret['type'] != 'secret':
+                messages.append(
+                    f"Param '{param['id_name']}' has a 'secret_parameter' "
+                    "that is not a 'secret'"
+                )
+            elif (
+                param['type'] == 'gdrivefile'
+                and (
+                    secret['secret_logic']['provider'] != 'oauth'
+                    or secret['secret_logic']['service'] != 'google'
+                )
+            ):
+                messages.append(
+                    f"Param '{param['id_name']}' 'secret_parameter' "
+                    "does not refer to a 'google', 'oauth' secret"
+                )
 
     if messages:
         raise ValueError('; '.join(messages))

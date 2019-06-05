@@ -7,11 +7,6 @@ from worker.execute.renderprep import PromptErrorAggregator
 from worker.execute.types import PromptingError
 
 
-def clean_params(params: Dict[str, Any], schema: ParamDType.Dict,
-                 input_shape: TableShape) -> Dict[str, Any]:
-    return clean_value(schema, params, input_shape)
-
-
 # singledispatch primer: `clean_value(dtype, value, context)` will choose its
 # logic based on the _type_ of `dtype`. (Handily, it'll prefer a specific class
 # to its parent class.)
