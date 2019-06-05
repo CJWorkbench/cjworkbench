@@ -1,4 +1,5 @@
 import asyncio
+from dataclasses import dataclass
 import datetime
 from functools import partial
 import inspect
@@ -77,6 +78,7 @@ class DeletedModule:
         return ProcessResult(error='Cannot fetch: module was deleted')
 
 
+@dataclass(frozen=True)
 class LoadedModule:
     """
     A module with `fetch()`, `migrate_params()` and `render()` methods.
@@ -84,18 +86,17 @@ class LoadedModule:
     This object is stored entirely in memory. It does not hold references to
     database objects.
     """
-    def __init__(self, module_id_name: str, version_sha1: str,
-                 param_schema: ParamDTypeDict,
-                 render_impl: Callable = _default_render,
-                 fetch_impl: Callable = _default_fetch,
-                 migrate_params_impl: Optional[Callable] = None):
-        self.module_id_name = module_id_name
-        self.version_sha1 = version_sha1
-        self.param_schema = param_schema
-        self.name = f'{module_id_name}:{version_sha1}'
-        self.render_impl = render_impl
-        self.fetch_impl = fetch_impl
-        self.migrate_params_impl = migrate_params_impl
+
+    module_id_name: str
+    version_sha1: str
+    param_schema: ParamDTypeDict
+    render_impl: Callable = _default_render
+    fetch_impl: Callable = _default_fetch
+    migrate_params_impl: Optional[Callable] = None
+
+    @property
+    def name(self):
+        return f'{self.module_id_name}:{self.version_sha1}'
 
     def _wrap_exception(self, err) -> ProcessResult:
         """Coerce an Exception (must be on the stack) into a ProcessResult."""

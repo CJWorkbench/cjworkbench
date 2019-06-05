@@ -1,6 +1,7 @@
 import asyncio
-import logging
+from typing import Callable
 from unittest.mock import Mock, patch
+from dataclasses import dataclass
 from dateutil import parser
 from django.contrib.auth.models import User
 from django.utils import timezone
@@ -232,11 +233,14 @@ class FetchTests(DbTestCase):
         except AttributeError:  # No tab/workflow in database
             workflow_id = 1
 
+        @dataclass(frozen=True)
+        class MockLoadedModule:
+            fetch: Callable
+            migrate_params: Callable
+            param_schema: ParamDType.Dict = ParamDType.Dict({})
+
         # Mock the module we load, so it calls fn() directly.
-        load.return_value = LoadedModule('test', '1', param_schema,
-                                         False, fetch_impl=fn,
-                                         migrate_params_impl=migrate_params_fn)
-        load.return_value.fetch = fn
+        load.return_value = MockLoadedModule(fn, migrate_params_fn)
         save.return_value = future_none
 
         self.run_with_async_db(fetch.fetch_wf_module(workflow_id,
