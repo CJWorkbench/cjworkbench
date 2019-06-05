@@ -124,7 +124,7 @@ def render(_unused_table, params, *, fetch_result, **kwargs):
         return table
 
 
-def fetch(params, **kwargs):  # TODO make async
+def fetch(params, *, secrets, **kwargs):  # TODO make async
     file_meta = parse_json_param(params['googlefileselect'])
     if not file_meta:
         return ProcessResult()
@@ -140,7 +140,7 @@ def fetch(params, **kwargs):  # TODO make async
     # an API request.
 
     if sheet_id:
-        secret = (params['google_credentials'] or {}).get('secret')
+        secret = (secrets.get('google_credentials') or {}).get('secret')
         result = download_data_frame(sheet_id, sheet_mime_type, secret)
         result.truncate_in_place_if_too_big()
         return result

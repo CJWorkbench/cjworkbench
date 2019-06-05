@@ -8,6 +8,14 @@ async def async_noop(*args, **kwargs):
     return
 
 
+class MockLoadedModule:
+    def __init__(self, *args, **kwargs):
+        pass
+
+    def migrate_params(self, params):
+        return params  # no-op
+
+
 class SetTabNameCommandTest(DbTestCase):
     @patch('server.websockets.ws_client_send_delta_async', async_noop)
     @patch('server.rabbitmq.queue_render', async_noop)
@@ -35,8 +43,7 @@ class SetTabNameCommandTest(DbTestCase):
 
     @patch('server.websockets.ws_client_send_delta_async', async_noop)
     @patch('server.rabbitmq.queue_render', async_noop)
-    @patch.object(LoadedModule, 'for_module_version_sync',
-                  lambda module_version: LoadedModule('x', '1'))
+    @patch.object(LoadedModule, 'for_module_version_sync', MockLoadedModule)
     def test_change_last_relevant_delta_ids_of_dependent_wf_modules(self):
         workflow = Workflow.create_and_init()
         delta_id = workflow.last_delta_id
@@ -62,8 +69,7 @@ class SetTabNameCommandTest(DbTestCase):
 
     @patch('server.websockets.ws_client_send_delta_async', async_noop)
     @patch('server.rabbitmq.queue_render', async_noop)
-    @patch.object(LoadedModule, 'for_module_version_sync',
-                  lambda module_version: LoadedModule('x', '1'))
+    @patch.object(LoadedModule, 'for_module_version_sync', MockLoadedModule)
     def test_change_last_relevant_delta_ids_of_self_wf_modules(self):
         """
         Module render() accepts a `tab_name` argument: test it sees a new one.

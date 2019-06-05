@@ -1,9 +1,8 @@
-from typing import Awaitable, Callable
+from typing import Any, Dict, Awaitable, Callable
 from django.contrib.auth.models import User
 import numpy as np
 from pandas.api.types import is_numeric_dtype
 from cjworkbench.types import ColumnType, ProcessResult
-from server.models import Params
 from server.modules import utils
 
 #------ For now, only load workbench urls
@@ -127,7 +126,7 @@ def render(table, params, *, fetch_result, **kwargs):
     return new_table
 
 
-async def fetch(params: Params, *, workflow_id: int,
+async def fetch(params: Dict[str, Any], *, workflow_id: int,
                 get_workflow_owner: Callable[[], Awaitable[User]],
                 **kwargs) -> ProcessResult:
     url: str = params['url'].strip()

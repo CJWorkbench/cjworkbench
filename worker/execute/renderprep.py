@@ -7,7 +7,7 @@ import weakref
 from typing import Any, Dict, List, Optional, Union
 from cjworkbench.types import RenderColumn, StepResultShape, TabOutput
 from server import minio
-from server.models import Params, Tab, UploadedFile
+from server.models import Tab, UploadedFile
 from server.models.param_spec import ParamDType
 from .types import TabCycleError, TabOutputUnreachableError, \
         UnneededExecution, PromptingError
@@ -61,7 +61,7 @@ class RenderContext:
         #
         # This is especially ugly because RenderContext only exists for
         # get_param_values(), and get_param_values() also takes `params`. Ugh.
-        params: Params
+        params: Dict[str, Any],
     ):
         self.workflow_id = workflow_id
         self.wf_module_id = wf_module_id
@@ -78,7 +78,7 @@ class RenderContext:
         # selecting from _that_ tab's output columns.
 
         # valid schema means no KeyError
-        tab_slug = self.params.values[tab_parameter]
+        tab_slug = self.params[tab_parameter]
 
         try:
             tab = self.tab_shapes[tab_slug]
@@ -93,7 +93,8 @@ class RenderContext:
 
 
 def get_param_values(
-    params: Params,
+    schema: ParamDType.Dict,
+    params: Dict[str, Any],
     context: RenderContext,
 ) -> Dict[str, Any]:
     """
@@ -112,15 +113,14 @@ def get_param_values(
     This uses database connections, and it's slow! (It needs to load input tab
     data.) Be sure the Workflow is locked while you call it.
     """
-    return {
-        **clean_value(params.schema, params.values, context),
-        **params.secrets
-    }
+    return clean_value(schema, params, context)
 
 
 # singledispatch primer: `clean_value(dtype, value, context)` will choose its
 # logic based on the _type_ of `dtype`. (Handily, it'll prefer a specific class
 # to its parent class.)
+#
+# The recursive logic in fetchprep.py was copy/pasted from renderprep.py.
 #
 # TODO abstract this pattern. The recursion parts seem like they should be
 # written in just one place.

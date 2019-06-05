@@ -16,7 +16,7 @@ future_none.set_result(None)
 
 class MockLoadedModule():
     """Make a valid migrate_params()"""
-    def migrate_params(self, schema, params):
+    def migrate_params(self, params):
         return params
 
 

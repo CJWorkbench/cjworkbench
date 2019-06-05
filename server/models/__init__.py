@@ -4,7 +4,6 @@ from .CachedRenderResult import CachedRenderResult
 from .workflow import Workflow
 from .WfModule import WfModule
 from .Tab import Tab
-from .Params import Params
 from .module_version import ModuleVersion
 from .Delta import Delta
 from .UploadedFile import UploadedFile

@@ -770,23 +770,27 @@ UndefinedLangSample = """[
 ]"""
 
 
+DefaultSecret = {
+    'name': 'x',
+    'secret': {
+        'oauth_token': 'a-token',
+        'oauth_token_secret': 'a-token-secret',
+    },
+}
 P = MockParams.factory(querytype='user_timeline', username='username',
-                       query='query', listurl='listurl', twitter_credentials={
-                           'name': 'x',
-                           'secret': {
-                               'oauth_token': 'a-token',
-                               'oauth_token_secret': 'a-token-secret',
-                           },
-                       }, accumulate=True)
+                       query='query', listurl='listurl', accumulate=True)
 
 
-def fetch(params, stored_dataframe=None):
+def fetch(params, secret, stored_dataframe=None):
     async def get_stored_dataframe():
         return stored_dataframe
 
+    secrets = {'twitter_credentials': secret} if secret else {}
+
     return async_to_sync(twitter.fetch)(
         params,
-        get_stored_dataframe=get_stored_dataframe
+        secrets=secrets,
+        get_stored_dataframe=get_stored_dataframe,
     )
 
 
@@ -867,25 +871,26 @@ class MigrateParamsTest(unittest.TestCase):
 
 class TwitterTests(SimpleTestCase):
     def test_fetch_empty_query_and_secret(self):
-        result = fetch(P(querytype='search', query='',
-                         twitter_credentials=None))
+        result = fetch(P(querytype='search', query=''), None)
         self.assertIsNone(result)
 
     def test_fetch_empty_query(self):
-        result = fetch(P(querytype='search', query=''))
+        result = fetch(P(querytype='search', query=''), DefaultSecret)
         self.assertEqual(result, 'Please enter a query')
 
     def test_fetch_empty_secret(self):
-        result = fetch(P(twitter_credentials=None))
+        result = fetch(P(querytype='search', query='hi'), None)
         self.assertEqual(result, 'Please sign in to Twitter')
 
     def test_fetch_invalid_username(self):
-        result = fetch(P(querytype='user_timeline', username='@@batman'))
+        result = fetch(P(querytype='user_timeline', username='@@batman'),
+                       DefaultSecret)
         self.assertEqual(result, 'Not a valid Twitter username')
 
     def test_invalid_list(self):
         result = fetch(P(querytype='lists_statuses',
-                         listurl='https://twitter.com/a/lists/@b'))
+                         listurl='https://twitter.com/a/lists/@b'),
+                       DefaultSecret)
         self.assertEqual(result, 'Not a valid Twitter list URL')
 
     @patch('server.oauth.OAuthService.lookup_or_none', mock_auth)
@@ -899,7 +904,7 @@ class TwitterTests(SimpleTestCase):
         params = P(querytype='user_timeline', username='foouser',
                    accumulate=True)
 
-        result = fetch(params, mock_tweet_table)
+        result = fetch(params, DefaultSecret, mock_tweet_table)
         expected = pd.concat([mock_tweet_table2, mock_tweet_table],
                              ignore_index=True, sort=False)
         assert_frame_equal(result, expected)
@@ -934,7 +939,7 @@ class TwitterTests(SimpleTestCase):
         params = P(querytype='user_timeline', username='foouser',
                    accumulate=True)
 
-        result = fetch(params, mock_tweet_table)
+        result = fetch(params, DefaultSecret, mock_tweet_table)
         expected = pd.concat([
             mock_tweet_table2.iloc[[0]],
             mock_tweet_table2.iloc[[1]],
@@ -953,7 +958,7 @@ class TwitterTests(SimpleTestCase):
             []
         ])
 
-        result = fetch(P(accumulate=True), None)
+        result = fetch(P(accumulate=True), DefaultSecret, None)
         assert_frame_equal(result, mock_tweet_table)
 
     @patch('server.oauth.OAuthService.lookup_or_none', mock_auth)
@@ -966,7 +971,8 @@ class TwitterTests(SimpleTestCase):
             []
         ])
 
-        result = fetch(P(accumulate=True), pd.DataFrame())  # missing columns
+        # input is missing columns
+        result = fetch(P(accumulate=True), DefaultSecret, pd.DataFrame())
         assert_frame_equal(result, mock_tweet_table)
 
     @patch('server.oauth.OAuthService.lookup_or_none', mock_auth)
@@ -978,7 +984,8 @@ class TwitterTests(SimpleTestCase):
             []
         ])
 
-        result = fetch(P(accumulate=True), pd.DataFrame())  # missing columns
+        # input is missing columns
+        result = fetch(P(accumulate=True), DefaultSecret, pd.DataFrame())
         expected = mock_tweet_table[0:0].reset_index(drop=True)  # empty table
         assert_frame_equal(result, expected)
 
@@ -991,7 +998,8 @@ class TwitterTests(SimpleTestCase):
             []
         ])
 
-        result = fetch(P(accumulate=True), mock_tweet_table)  # missing columns
+        # input is missing columns
+        result = fetch(P(accumulate=True), DefaultSecret, mock_tweet_table)
         assert_frame_equal(result, mock_tweet_table)
 
     @patch('server.oauth.OAuthService.lookup_or_none', mock_auth)
@@ -1012,7 +1020,7 @@ class TwitterTests(SimpleTestCase):
         bad_table = bad_table.astype(str)
         bad_table[nulls] = None
 
-        result = fetch(P(accumulate=True), bad_table)
+        result = fetch(P(accumulate=True), DefaultSecret, bad_table)
         assert_frame_equal(result, mock_tweet_table)
 
     @patch('server.oauth.OAuthService.lookup_or_none', mock_auth)
@@ -1024,7 +1032,7 @@ class TwitterTests(SimpleTestCase):
         ])
 
         # Actually fetch!
-        result = fetch(P(querytype='search', query='cat'))
+        result = fetch(P(querytype='search', query='cat'), DefaultSecret)
         self.assertEqual([str(req.url) for req in mock_session.requests], [
             (
                 'https://api.twitter.com/1.1/search/tweets.json'
@@ -1051,7 +1059,8 @@ class TwitterTests(SimpleTestCase):
         # Actually fetch!
         result = fetch(
             P(querytype='lists_statuses',
-              listurl='https://twitter.com/thatuser/lists/theirlist')
+              listurl='https://twitter.com/thatuser/lists/theirlist'),
+            DefaultSecret,
         )
         self.assertEqual([str(req.url) for req in mock_session.requests], [
             (
@@ -1114,7 +1123,7 @@ class TwitterTests(SimpleTestCase):
         old_format_table = mock_tweet_table.copy(deep=True) \
             .drop('retweeted_status_screen_name', axis=1)
 
-        result = fetch(P(accumulate=True), old_format_table)
+        result = fetch(P(accumulate=True), DefaultSecret, old_format_table)
 
         expected = pd.concat([mock_tweet_table2, mock_tweet_table],
                              ignore_index=True, sort=False)
@@ -1131,7 +1140,7 @@ class TwitterTests(SimpleTestCase):
             []
         ])
 
-        result = fetch(P())
+        result = fetch(P(), DefaultSecret)
         self.assertEqual(result['text'][0], (
             "RT @JacopoOttaviani: \u26a1\ufe0f I'm playing with "
             "@workbenchdata: absolutely mindblowing. It's like a fusion "
@@ -1149,7 +1158,7 @@ class TwitterTests(SimpleTestCase):
             []
         ])
 
-        result = fetch(P())
+        result = fetch(P(), DefaultSecret)
         lang = result['lang'][0]
         self.assertNotEqual(lang, 'und')
         self.assertTrue(pd.isnull(lang))

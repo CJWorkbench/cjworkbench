@@ -1,5 +1,5 @@
 import re
-from typing import Any, Dict, FrozenSet, List, Optional, Set
+from typing import Any, Dict, FrozenSet, List, Optional
 
 
 class ParamDType:
@@ -74,25 +74,6 @@ class ParamDType:
         """
         return frozenset(v for dt, v in self.iter_dfs_dtype_values(value)
                          if isinstance(dt, dtype))
-
-    def omit_missing_table_columns(self, value: Any, columns: Set[str]) -> Any:
-        """
-        Recursively nix `value`'s column references that aren't in `columns`.
-
-        For example: remove any `ParamDTypeColumn` nested within a
-        `ParamDTypeList` if that column value isn't in `columns`.
-
-        Assumes `value` is valid.
-
-        This is almost DEPRECATED because it's a visitor and the visitor
-        pattern is a better fit. We only use it in Params.to_painful_dict(),
-        which itself is almost DEPRECATED. When Params.to_painful_dict() is
-        finally nixed, nix this method. In the meantime, prefer
-        renderprep.clean_value(): the logic is better there because there's
-        clear intent.
-        """
-        # default implementation: no-op. Most dtypes aren't nested or columnar
-        return value
 
     @classmethod
     def _from_plain_data(cls, **kwargs):
@@ -246,12 +227,6 @@ class ParamDTypeColumn(ParamDTypeString):
         return 'ParamDTypeColumn' + repr((self.column_types,
                                           self.tab_parameter))
 
-    def omit_missing_table_columns(self, value, columns):
-        if value not in columns:
-            return ''
-        else:
-            return value
-
     @classmethod
     def _from_plain_data(cls, *, column_types=None, **kwargs):
         if column_types:
@@ -270,9 +245,6 @@ class ParamDTypeMulticolumn(ParamDType):
     def __repr__(self):
         return 'ParamDTypeMulticolumn' + repr((self.column_types,
                                                self.tab_parameter))
-
-    def omit_missing_table_columns(self, value, columns):
-        return [c for c in value if c in columns]
 
     def coerce(self, value):
         if value is None:
@@ -365,10 +337,6 @@ class ParamDTypeList(ParamDType):
         for v in value:
             yield from self.inner_dtype.iter_dfs_dtype_values(v)
 
-    def omit_missing_table_columns(self, value, columns):
-        return [self.inner_dtype.omit_missing_table_columns(v, columns)
-                for v in value]
-
     @classmethod
     def _from_plain_data(cls, *, inner_dtype, **kwargs):
         inner_dtype = cls.parse(inner_dtype)
@@ -426,12 +394,6 @@ class ParamDTypeDict(ParamDType):
         for name, dtype in self.properties.items():
             yield from dtype.iter_dfs_dtype_values(value[name])
 
-    def omit_missing_table_columns(self, value, columns):
-        return dict(
-            (k, self.properties[k].omit_missing_table_columns(v, columns))
-            for k, v in value.items()
-        )
-
     @classmethod
     def _from_plain_data(cls, *, properties, **kwargs):
         properties = dict((k, cls.parse(v)) for k, v in properties.items())
@@ -476,12 +438,6 @@ class ParamDTypeMap(ParamDType):
         yield from super().iter_dfs_dtype_values(value)
         for v in value.values():
             yield from self.value_dtype.iter_dfs_dtype_values(v)
-
-    def omit_missing_table_columns(self, value, columns):
-        return dict(
-            (k, self.value_dtype.omit_missing_table_columns(v, columns))
-            for k, v in value.items()
-        )
 
     @classmethod
     def _from_plain_data(cls, *, value_dtype, **kwargs):
@@ -541,12 +497,6 @@ class ParamDTypeMultichartseries(ParamDTypeList):
     # validate(): ParamDTypeList will do what we want
     # iter_dfs_dtypes(): ParamDTypeList will do what we want
     # iter_dfs_dtype_values(): ParamDTypeList will do what we want
-
-    # override
-    def omit_missing_table_columns(self, value, columns):
-        series = super().omit_missing_table_columns(value, columns)
-        # Omit each dict that has a missing column
-        return [s for s in series if s['column']]
 
     # override
     @classmethod

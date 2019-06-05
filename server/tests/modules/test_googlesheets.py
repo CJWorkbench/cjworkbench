@@ -1,11 +1,12 @@
 import os.path
 import unittest
 from unittest.mock import patch, Mock
+from typing import Any, Dict, Optional
 import pandas as pd
 from pandas.testing import assert_frame_equal
 import requests.exceptions
 from server import oauth
-from server.modules import googlesheets
+from server.modules.googlesheets import fetch, render
 from .util import MockParams
 
 # example_csv, example_tsv, example_xls, example_xlsx: same spreadsheet, four
@@ -50,14 +51,13 @@ default_googlefileselect = {
 }
 
 
-P = MockParams.factory(google_credentials=default_secret,
-                       googlefileselect=default_googlefileselect,
+P = MockParams.factory(googlefileselect=default_googlefileselect,
                        has_header=True)
-
-
-def fetch(**kwargs):
-    params = P(**kwargs)
-    return googlesheets.fetch(params)
+def secrets(secret: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+    if secret:
+        return {'google_credentials': secret}
+    else:
+        return {}
 
 
 class GoogleSheetsTests(unittest.TestCase):
@@ -86,7 +86,8 @@ class GoogleSheetsTests(unittest.TestCase):
         super().tearDown()
 
     def test_render_no_file(self):
-        fetch_result = fetch(googlefileselect='')
+        fetch_result = fetch(P(googlefileselect=''),
+                             secrets=secrets(default_secret))
         self.assertEqual(fetch_result.error, '')
         self.assertTrue(fetch_result.dataframe.empty)
 
@@ -101,33 +102,34 @@ class GoogleSheetsTests(unittest.TestCase):
 
     def test_fetch_csv(self):
         self.requests.get.return_value = MockResponse(200, example_csv)
-        fetch_result = fetch(googlefileselect={**default_googlefileselect,
-                                               'mimeType': 'text/csv'})
+        fetch_result = fetch(P(googlefileselect={**default_googlefileselect,
+                                                 'mimeType': 'text/csv'}),
+                             secrets=secrets(default_secret))
         self._assert_happy_path(fetch_result)
 
     def test_fetch_tsv(self):
         self.requests.get.return_value = MockResponse(200, example_tsv)
-        fetch_result = fetch(googlefileselect={
+        fetch_result = fetch(P(googlefileselect={
             **default_googlefileselect,
             'mimeType': 'text/tab-separated-values',
-        })
+        }), secrets=secrets(default_secret))
         self._assert_happy_path(fetch_result)
 
     def test_fetch_xls(self):
         self.requests.get.return_value = MockResponse(200, example_xls)
-        fetch_result = fetch(googlefileselect={
+        fetch_result = fetch(P(googlefileselect={
             **default_googlefileselect,
             'mimeType': 'application/vnd.ms-excel',
-        })
+        }), secrets=secrets(default_secret))
         self._assert_happy_path(fetch_result)
 
     def test_fetch_xlsx(self):
         self.requests.get.return_value = MockResponse(200, example_xlsx)
-        fetch_result = fetch(googlefileselect={
+        fetch_result = fetch(P(googlefileselect={
             **default_googlefileselect,
             'mimeType':
             'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-        })
+        }), secrets=secrets(default_secret))
         self._assert_happy_path(fetch_result)
 
     def test_no_first_row_header(self):
@@ -139,16 +141,15 @@ class GoogleSheetsTests(unittest.TestCase):
             },
             'has_header': False,
         }
-        fetch_result = fetch(**kwargs)
-        result = googlesheets.render(pd.DataFrame(), P(**kwargs),
-                                     fetch_result=fetch_result)
+        fetch_result = fetch(P(**kwargs), secrets=secrets(default_secret))
+        result = render(pd.DataFrame(), P(**kwargs), fetch_result=fetch_result)
         assert_frame_equal(result, pd.DataFrame({
             '0': ['foo', '1', '2'],
             '1': ['bar', '2', '3'],
         }))
 
     def test_no_table_on_missing_auth(self):
-        fetch_result = fetch(google_credentials=None)
+        fetch_result = fetch(P(), secrets={})
         self.assertTrue(fetch_result.dataframe.empty)
         self.assertEqual(fetch_result.error,
                          'Not authorized. Please connect to Google Drive.')
@@ -156,13 +157,13 @@ class GoogleSheetsTests(unittest.TestCase):
     def test_no_table_on_http_error(self):
         self.requests.get.side_effect = \
             requests.exceptions.ReadTimeout('read timeout')
-        fetch_result = fetch()
+        fetch_result = fetch(P(), secrets=secrets(default_secret))
         self.assertTrue(fetch_result.dataframe.empty)
         self.assertEqual(fetch_result.error, 'read timeout')
 
     def test_no_table_on_missing_table(self):
         self.requests.get.return_value = MockResponse(404, 'not found')
-        fetch_result = fetch()
+        fetch_result = fetch(P(), secrets=secrets(default_secret))
         self.assertTrue(fetch_result.dataframe.empty)
         self.assertEqual(fetch_result.error,
                          'HTTP 404 from Google: not found')
@@ -175,17 +176,10 @@ class GoogleSheetsTests(unittest.TestCase):
                 'mimeType': 'text/csv',
             }
         }
-        fetch_result = fetch(**kwargs)
-        result = googlesheets.render(pd.DataFrame(), P(**kwargs),
-                                     fetch_result=fetch_result)
+        fetch_result = fetch(P(**kwargs), secrets=secrets(default_secret))
+        result = render(pd.DataFrame(), P(**kwargs), fetch_result=fetch_result)
         assert_frame_equal(result, expected_table)
 
     def test_render_missing_fetch_result_returns_empty(self):
-        kwargs = {
-            'googlefileselect': {
-                **default_googlefileselect,
-                'mimeType': 'text/csv',
-            }
-        }
-        result = googlesheets.render(pd.DataFrame(), P(), fetch_result=None)
+        result = render(pd.DataFrame(), P(), fetch_result=None)
         assert_frame_equal(result, pd.DataFrame())

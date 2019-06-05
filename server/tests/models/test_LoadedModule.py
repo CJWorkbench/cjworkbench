@@ -1,7 +1,6 @@
 import asyncio
 from collections import namedtuple
 import inspect
-import io
 import logging
 import unittest
 from unittest.mock import Mock, patch
@@ -17,24 +16,16 @@ from server.tests.utils import clear_minio
 from server.models.param_dtype import ParamDType
 
 
-class MockParams:
-    def __init__(self, **kwargs):
-        self.values = kwargs  # part of Params public API
-        self.secrets = {}
-
-    def to_painful_dict(self, table):
-        return {**self.values, **self.secrets}
-
-
 MockModuleVersion = namedtuple('MockModuleVersion', ('id_name',
                                                      'source_version_hash',
+                                                     'param_schema',
                                                      'last_update_time'))
 
 
-def call_fetch(loaded_module, params, workflow_id=1, input_dataframe=None,
-               stored_dataframe=None, workflow_owner=None,
-               get_input_dataframe=None, get_stored_dataframe=None,
-               get_workflow_owner=None):
+def call_fetch(loaded_module, params, secrets={}, workflow_id=1,
+               input_dataframe=None, stored_dataframe=None,
+               workflow_owner=None, get_input_dataframe=None,
+               get_stored_dataframe=None, get_workflow_owner=None):
     """
     Call loaded_module.fetch, synchronously.
 
@@ -55,13 +46,15 @@ def call_fetch(loaded_module, params, workflow_id=1, input_dataframe=None,
         get_workflow_owner = wrap(workflow_owner)
 
     kwargs = {
+        'params': params,
+        'secrets': secrets,
         'workflow_id': workflow_id,
         'get_input_dataframe': get_input_dataframe,
         'get_stored_dataframe': get_stored_dataframe,
         'get_workflow_owner': get_workflow_owner,
     }
 
-    return async_to_sync(loaded_module.fetch)(params, **kwargs)
+    return async_to_sync(loaded_module.fetch)(**kwargs)
 
 
 def async_mock(*, return_value):
@@ -88,7 +81,8 @@ class LoadedModuleTest(unittest.TestCase):
     def test_load_static(self):
         # Test with a _real_ static module
         lm = LoadedModule.for_module_version_sync(
-            MockModuleVersion('pastecsv', '(ignored)', 'now')
+            MockModuleVersion('pastecsv', '(ignored)',
+                              ParamDType.Dict({}), 'now')
         )
         self.assertEqual(lm.name, 'pastecsv:internal')
         self.assertEqual(lm.render_impl,
@@ -102,7 +96,8 @@ class LoadedModuleTest(unittest.TestCase):
 
         with self.assertLogs('server.models.loaded_module'):
             lm = LoadedModule.for_module_version_sync(
-                MockModuleVersion('imported', 'abcdef', 'now')
+                MockModuleVersion('imported', 'abcdef',
+                                  ParamDType.Dict({}), 'now')
             )
 
         self.assertEqual(lm.name, 'imported:abcdef')
@@ -133,7 +128,8 @@ class LoadedModuleTest(unittest.TestCase):
 
         with self.assertLogs('server.models.loaded_module'):
             lm = LoadedModule.for_module_version_sync(
-                MockModuleVersion('imported', 'abcdef', 'now')
+                MockModuleVersion('imported', 'abcdef',
+                                  ParamDType.Dict({}), 'now')
             )
 
         # We can't test that render_impl is exactly something, because we
@@ -156,12 +152,14 @@ class LoadedModuleTest(unittest.TestCase):
 
         with self.assertLogs('server.models.loaded_module'):
             lm = LoadedModule.for_module_version_sync(
-                MockModuleVersion('imported', 'abcdef', 'now')
+                MockModuleVersion('imported', 'abcdef',
+                                  ParamDType.Dict({}), 'now')
             )
 
         with patch('importlib.util.module_from_spec', None):
             lm2 = LoadedModule.for_module_version_sync(
-                MockModuleVersion('imported', 'abcdef', 'now')
+                MockModuleVersion('imported', 'abcdef',
+                                  ParamDType.Dict({}), 'now')
             )
 
         self.assertIs(lm.render_impl, lm2.render_impl)
@@ -177,7 +175,7 @@ class LoadedModuleTest(unittest.TestCase):
         ))
 
         with self.assertLogs('server.models.loaded_module'):
-            result = call_fetch(lm, MockParams())
+            result = call_fetch(lm, {})
         self.assertEqual(result, ProcessResult(
             error='Cannot fetch: module was deleted'
         ))
@@ -195,7 +193,7 @@ class LoadedModuleTest(unittest.TestCase):
         fetch_result = ProcessResult(pd.DataFrame({'A': [1]}))
         expected = ProcessResult(pd.DataFrame({'A': [2]}))
 
-        lm = LoadedModule('int', '1', render_impl=render)
+        lm = LoadedModule('int', '1', ParamDType.Dict({}), render_impl=render)
         with self.assertLogs():
             result = lm.render(ProcessResult(in_table), params,
                                tab_name='x', fetch_result=fetch_result)
@@ -215,7 +213,7 @@ class LoadedModuleTest(unittest.TestCase):
         in_result = ProcessResult(pd.DataFrame({'A': [0]}))
         params = {'foo': 'bar'}
 
-        lm = LoadedModule('int', '1', render_impl=render)
+        lm = LoadedModule('int', '1', ParamDType.Dict({}), render_impl=render)
         with self.assertLogs():
             lm.render(in_result, params, tab_name='x', fetch_result=None)
 
@@ -232,7 +230,7 @@ class LoadedModuleTest(unittest.TestCase):
 
         in_result = ProcessResult(pd.DataFrame({'A': [0]}))
 
-        lm = LoadedModule('int', '1', render_impl=render)
+        lm = LoadedModule('int', '1', ParamDType.Dict({}), render_impl=render)
         with self.assertLogs():
             lm.render(in_result, {}, 'Tab X', None)
 
@@ -250,7 +248,7 @@ class LoadedModuleTest(unittest.TestCase):
         params = {'foo': 'bar'}
         expected = ProcessResult(pd.DataFrame({'A': [1]}))
 
-        lm = LoadedModule('int', '1', render_impl=render)
+        lm = LoadedModule('int', '1', ParamDType.Dict({}), render_impl=render)
         with self.assertLogs():
             result = lm.render(ProcessResult(in_table), params,
                                tab_name='x', fetch_result=None)
@@ -266,7 +264,7 @@ class LoadedModuleTest(unittest.TestCase):
         def render(table, params, **kwargs):
             raise Ick('Oops')
 
-        lm = LoadedModule('int', '1', render_impl=render)
+        lm = LoadedModule('int', '1', ParamDType.Dict({}), render_impl=render)
         with self.assertLogs(level=logging.ERROR):
             result = lm.render(ProcessResult(), {}, tab_name='x',
                                fetch_result=None)
@@ -281,7 +279,7 @@ class LoadedModuleTest(unittest.TestCase):
         def render(table, params):
             return pd.DataFrame({'A': [True, False]})  # we don't support bool
 
-        lm = LoadedModule('int', '1', render_impl=render)
+        lm = LoadedModule('int', '1', ParamDType.Dict({}), render_impl=render)
         with self.assertLogs(level=logging.ERROR) as cm:
             result = lm.render(ProcessResult(), {}, tab_name='x',
                                fetch_result=None)
@@ -299,7 +297,7 @@ class LoadedModuleTest(unittest.TestCase):
 
 
     def test_render_static_default(self):
-        lm = LoadedModule('int', '1')
+        lm = LoadedModule('int', '1', ParamDType.Dict({}))
         with self.assertLogs():
             result = lm.render(ProcessResult(pd.DataFrame({'A': [1]})), {},
                                tab_name='x', fetch_result=None)
@@ -312,7 +310,8 @@ class LoadedModuleTest(unittest.TestCase):
         retval = ProcessResult(pd.DataFrame({'A': [1]}))
         retval.truncate_in_place_if_too_big = lambda: calls.append('truncate')
 
-        lm = LoadedModule('int', '1', render_impl=lambda _a, _b: retval)
+        lm = LoadedModule('int', '1', ParamDType.Dict({}),
+                          render_impl=lambda _a, _b: retval)
         with self.assertLogs():
             lm.render(ProcessResult(), {}, tab_name='x', fetch_result=None)
         self.assertEqual(calls, ['truncate'])
@@ -322,7 +321,7 @@ class LoadedModuleTest(unittest.TestCase):
         def render(table, params, **kwargs):
             return {'foo': 'bar'}  # not a valid retval
 
-        lm = LoadedModule('int', '1', render_impl=render)
+        lm = LoadedModule('int', '1', ParamDType.Dict({}), render_impl=render)
         with self.assertLogs(level=logging.ERROR):
             result = lm.render(ProcessResult(), {}, tab_name='x',
                                fetch_result=None)
@@ -339,7 +338,7 @@ class LoadedModuleTest(unittest.TestCase):
         def render(table, params):
             return pd.DataFrame({'A': [1]})
 
-        lm = LoadedModule('int', '1', render_impl=render)
+        lm = LoadedModule('int', '1', ParamDType.Dict({}), render_impl=render)
         column = Column('A', ColumnType.NUMBER('{:,d}'))
         with self.assertLogs():
             result = lm.render(
@@ -359,7 +358,7 @@ class LoadedModuleTest(unittest.TestCase):
                 'column_formats': {'A': '{:,d}'},
             }
 
-        lm = LoadedModule('int', '1', render_impl=render)
+        lm = LoadedModule('int', '1', ParamDType.Dict({}), render_impl=render)
         with self.assertLogs():
             result = lm.render(ProcessResult(), {}, tab_name='x',
                                fetch_result=None)
@@ -372,7 +371,7 @@ class LoadedModuleTest(unittest.TestCase):
         def render(table, params):
             return {'table': pd.DataFrame({'A': [1]})}  # should be 'dataframe'
 
-        lm = LoadedModule('int', '1', render_impl=render)
+        lm = LoadedModule('int', '1', ParamDType.Dict({}), render_impl=render)
         with self.assertLogs():
             result = lm.render(ProcessResult(), {}, tab_name='x',
                                fetch_result=None)
@@ -385,7 +384,7 @@ class LoadedModuleTest(unittest.TestCase):
         ))
 
     def test_render_dynamic_default(self):
-        lm = LoadedModule('int', '1')
+        lm = LoadedModule('int', '1', ParamDType.Dict({}))
         with self.assertLogs():
             result = lm.render(ProcessResult(pd.DataFrame({'A': [1]})), {},
                                tab_name='x', fetch_result=None)
@@ -393,11 +392,26 @@ class LoadedModuleTest(unittest.TestCase):
         self.assertEqual(result, ProcessResult(pd.DataFrame({'A': [1]})))
 
     def test_fetch_default_none(self):
-        lm = LoadedModule('int', '1')
+        lm = LoadedModule('int', '1', ParamDType.Dict({}))
         with self.assertLogs():
-            result = call_fetch(lm, MockParams())
+            result = call_fetch(lm, {})
 
         self.assertIsNone(result)
+
+    def test_fetch_secrets(self):
+        # No need to make get_workflow_owner return a User: we're mocking
+        async def fetch(params, *, secrets, **kwargs):
+            return pd.DataFrame({'A': [repr(secrets)]})
+
+        lm = LoadedModule('int', '1', ParamDType.Dict({}), fetch_impl=fetch)
+        secret = {'name': 'n', 'secret': 's'}
+        with self.assertLogs():
+            result = call_fetch(lm, {}, {'x': secret})
+
+        self.assertEqual(
+            result,
+            ProcessResult(pd.DataFrame({'A': [repr({'x': secret})]}))
+        )
 
     def test_fetch_get_workflow_owner(self):
         # No need to make get_workflow_owner return a User: we're mocking
@@ -407,10 +421,9 @@ class LoadedModuleTest(unittest.TestCase):
             table = pd.DataFrame({'X': [await get_workflow_owner()]})
             return ProcessResult(table)
 
-        lm = LoadedModule('int', '1', fetch_impl=fetch)
+        lm = LoadedModule('int', '1', ParamDType.Dict({}), fetch_impl=fetch)
         with self.assertLogs():
-            result = call_fetch(lm, MockParams(),
-                                get_workflow_owner=get_workflow_owner)
+            result = call_fetch(lm, {}, get_workflow_owner=get_workflow_owner)
 
         self.assertEqual(result,
                          ProcessResult(pd.DataFrame({'X': ['Mock User']})))
@@ -421,9 +434,9 @@ class LoadedModuleTest(unittest.TestCase):
         async def fetch(params, *, get_input_dataframe, **kwargs):
             return ProcessResult(await get_input_dataframe())
 
-        lm = LoadedModule('int', '1', fetch_impl=fetch)
+        lm = LoadedModule('int', '1', ParamDType.Dict({}), fetch_impl=fetch)
         with self.assertLogs():
-            result = call_fetch(lm, MockParams(),
+            result = call_fetch(lm, {},
                                 get_input_dataframe=get_input_dataframe)
 
         self.assertEqual(result, ProcessResult(pd.DataFrame({'A': [1]})))
@@ -436,9 +449,9 @@ class LoadedModuleTest(unittest.TestCase):
         async def fetch(params, *, get_stored_dataframe, **kwargs):
             return ProcessResult(await get_stored_dataframe())
 
-        lm = LoadedModule('int', '1', fetch_impl=fetch)
+        lm = LoadedModule('int', '1', ParamDType.Dict({}), fetch_impl=fetch)
         with self.assertLogs():
-            result = call_fetch(lm, MockParams(),
+            result = call_fetch(lm, {},
                                 get_stored_dataframe=get_stored_dataframe)
 
         self.assertEqual(result, ProcessResult(pd.DataFrame({'A': [1]})))
@@ -447,9 +460,9 @@ class LoadedModuleTest(unittest.TestCase):
         async def fetch(params, *, workflow_id, **kwargs):
             return ProcessResult(pd.DataFrame({'A': [workflow_id]}))
 
-        lm = LoadedModule('int', '1', fetch_impl=fetch)
+        lm = LoadedModule('int', '1', ParamDType.Dict({}), fetch_impl=fetch)
         with self.assertLogs():
-            result = call_fetch(lm, MockParams(), workflow_id=123)
+            result = call_fetch(lm, {}, workflow_id=123)
 
         self.assertEqual(result, ProcessResult(pd.DataFrame({'A': [123]})))
 
@@ -462,9 +475,9 @@ class LoadedModuleTest(unittest.TestCase):
             }))
             return ProcessResult(params.items(), columns=['key', 'val'])
 
-        lm = LoadedModule('int', '1', fetch_impl=fetch)
+        lm = LoadedModule('int', '1', ParamDType.Dict({}), fetch_impl=fetch)
         with self.assertLogs():
-            result = call_fetch(lm, MockParams(foo='bar', bar='baz'),
+            result = call_fetch(lm, {'foo': 'bar', 'bar': 'baz'},
                                 workflow_id=123)
 
         self.assertEqual(result.error, '')
@@ -479,9 +492,9 @@ class LoadedModuleTest(unittest.TestCase):
         def fetch(params, **kwargs):
             return table
 
-        lm = LoadedModule('int', 1, fetch_impl=fetch)
+        lm = LoadedModule('int', 1, ParamDType.Dict({}), fetch_impl=fetch)
         with self.assertLogs():
-            result = call_fetch(lm, MockParams())
+            result = call_fetch(lm, {})
 
         self.assertEqual(result.error, '')
         assert_frame_equal(result.dataframe, table)
@@ -492,9 +505,9 @@ class LoadedModuleTest(unittest.TestCase):
         def fetch(params):
             return table
 
-        lm = LoadedModule('int', 1, fetch_impl=fetch)
+        lm = LoadedModule('int', 1, ParamDType.Dict({}), fetch_impl=fetch)
         with self.assertLogs():
-            result = call_fetch(lm, MockParams())
+            result = call_fetch(lm, {})
 
         self.assertEqual(result.error, '')
         assert_frame_equal(result.dataframe, table)
@@ -508,9 +521,9 @@ class LoadedModuleTest(unittest.TestCase):
             }))
             return ProcessResult(params.items(), columns=['key', 'val'])
 
-        lm = LoadedModule('int', '1', fetch_impl=fetch)
+        lm = LoadedModule('int', '1', ParamDType.Dict({}), fetch_impl=fetch)
         with self.assertLogs():
-            result = call_fetch(lm, MockParams(foo='bar', bar='baz'),
+            result = call_fetch(lm, dict(foo='bar', bar='baz'),
                                 workflow_id=123)
 
         self.assertEqual(result.error, '')
@@ -526,9 +539,9 @@ class LoadedModuleTest(unittest.TestCase):
         async def fetch(params, **kwargs):
             raise Ick('Oops')
 
-        lm = LoadedModule('int', '1', fetch_impl=fetch)
+        lm = LoadedModule('int', '1', ParamDType.Dict({}), fetch_impl=fetch)
         with self.assertLogs(level=logging.ERROR):
-            result = call_fetch(lm, MockParams())
+            result = call_fetch(lm, {})
 
         _, lineno = inspect.getsourcelines(fetch)
         self.assertEqual(result, ProcessResult(error=(
@@ -542,9 +555,9 @@ class LoadedModuleTest(unittest.TestCase):
         async def fetch(params, **kwargs):
             raise Ick('Oops')
 
-        lm = LoadedModule('int', '1', fetch_impl=fetch)
+        lm = LoadedModule('int', '1', ParamDType.Dict({}), fetch_impl=fetch)
         with self.assertLogs(level=logging.ERROR):
-            result = call_fetch(lm, MockParams())
+            result = call_fetch(lm, {})
 
         _, lineno = inspect.getsourcelines(fetch)
         self.assertEqual(result, ProcessResult(error=(
@@ -552,26 +565,28 @@ class LoadedModuleTest(unittest.TestCase):
         )))
 
     def test_fetch_invalid_retval_is_error(self):
-        async def fetch(params, **kwargs):
+        async def fetch(params, *, secrets, **kwargs):
             # params passed to fetch() must include secrets
             self.assertEqual(params, {
-                'a-secret': 'DO NOT LOG SECRETS',
                 'url': 'http://example.org',
+            })
+            self.assertEqual(secrets, {
+                'a-secret': {'name': 'DO NOT LOG', 'secret': 'NO NO NO'},
             })
             return pd.DataFrame({'A': [1, '2']})  # mixed types -- invalid
 
-        lm = LoadedModule('int', '1', fetch_impl=fetch)
-        params = MockParams(url='http://example.org')
-        params.secrets = {'a-secret': 'DO NOT LOG SECRETS'}
+        lm = LoadedModule('int', '1', ParamDType.Dict({}), fetch_impl=fetch)
+        params = dict(url='http://example.org')
+        secrets = {'a-secret': {'name': 'DO NOT LOG', 'secret': 'NO NO NO'}}
         with self.assertLogs(level=logging.ERROR) as cm:
-            result = call_fetch(lm, params)
+            result = call_fetch(lm, params, secrets=secrets)
             # Should log an exception, which will email us helpful debugging
             # info
             self.assertRegex(cm.output[0],
                              r'int\.fetch gave invalid output')
             self.assertRegex(cm.output[0], r'workflow=1')
             self.assertRegex(cm.output[0], r'{"url": "http://example.org"}')
-            self.assertNotRegex(cm.output[0], r'DO NOT LOG SECRETS')
+            self.assertNotRegex(cm.output[0], r'DO NOT LOG')
             self.assertRegex(cm.output[0],
                              r"invalid value 1 in column 'A'")
         # Should inform the user, who can follow up with the dev
@@ -581,12 +596,17 @@ class LoadedModuleTest(unittest.TestCase):
         )))
 
     def test_migrate_params_default(self):
-        lm = LoadedModule('x', '1', migrate_params_impl=None)
-        result = lm.migrate_params(ParamDType.Dict({
-            'missing': ParamDType.String(default='x'),
-            'wrong_type': ParamDType.Boolean(),
-            'ok': ParamDType.Integer(),
-        }), {'wrong_type': 'true', 'ok': 3})
+        lm = LoadedModule(
+            'x',
+            '1',
+            ParamDType.Dict({
+                'missing': ParamDType.String(default='x'),
+                'wrong_type': ParamDType.Boolean(),
+                'ok': ParamDType.Integer(),
+            }),
+            migrate_params_impl=None,
+        )
+        result = lm.migrate_params({'wrong_type': 'true', 'ok': 3})
         self.assertEqual(result, {'missing': 'x', 'wrong_type': True, 'ok': 3})
 
     def test_migrate_params_impl(self):
@@ -596,44 +616,52 @@ class LoadedModuleTest(unittest.TestCase):
                 'y': params['b']
             }
 
-        schema = ParamDType.Dict({
-            'x': ParamDType.Integer(),
-            'y': ParamDType.Integer(),
-        })
-
-        lm = LoadedModule('x', '1', migrate_params_impl=migrate_params)
-        result = lm.migrate_params(schema, {'a': 1, 'b': 2})
+        lm = LoadedModule(
+            'x',
+            '1',
+            ParamDType.Dict({
+                'x': ParamDType.Integer(),
+                'y': ParamDType.Integer(),
+            }),
+            migrate_params_impl=migrate_params,
+        )
+        result = lm.migrate_params({'a': 1, 'b': 2})
         self.assertEqual(result, {'x': 1, 'y': 2})
 
     def test_migrate_params_impl_exception(self):
         def migrate_params(params):
             {}['a']
 
-        lm = LoadedModule('x', '1', migrate_params_impl=migrate_params)
+        lm = LoadedModule('x', '1', ParamDType.Dict({}),
+                          migrate_params_impl=migrate_params)
         with self.assertRaisesRegex(ValueError,
                                     r'migrate_params\(\) raised KeyError'):
-            lm.migrate_params([], {})
+            lm.migrate_params({})
 
     def test_migrate_params_impl_missing_output(self):
-        lm = LoadedModule('x', '1', migrate_params_impl=lambda x: x)
+        lm = LoadedModule(
+            'x',
+            '1',
+            ParamDType.Dict({'x': ParamDType.String()}),
+            migrate_params_impl=lambda x: x
+        )
         with self.assertRaises(ValueError):
-            lm.migrate_params(
-                ParamDType.Dict({'x': ParamDType.String()}),
-                {}  # should have 'x' key
-            )
+            # should have 'x' key
+            lm.migrate_params({})
 
     def test_migrate_params_impl_wrong_output_type(self):
-        lm = LoadedModule('x', '1', migrate_params_impl=lambda x: x)
+        lm = LoadedModule(
+            'x',
+            '1',
+            ParamDType.Dict({'x': ParamDType.String()}),
+            migrate_params_impl=lambda x: x
+        )
         with self.assertRaises(ValueError):
-            lm.migrate_params(
-                ParamDType.Dict({'x': ParamDType.String()}),
-                {'x': 2}  # should be str
-            )
+            # should be str
+            lm.migrate_params({'x': 2})
 
     def test_migrate_params_impl_extra_output(self):
-        lm = LoadedModule('x', '1', migrate_params_impl=lambda x: x)
+        lm = LoadedModule('x', '1', ParamDType.Dict({}),
+                          migrate_params_impl=lambda x: x)
         with self.assertRaises(ValueError):
-            lm.migrate_params(
-                ParamDType.Dict({}),
-                {'x': 'should not be here'}
-            )
+            lm.migrate_params({'x': 'should not be here'})

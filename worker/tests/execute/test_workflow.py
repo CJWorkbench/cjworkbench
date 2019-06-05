@@ -276,40 +276,40 @@ class PartitionReadyAndDependentTests(unittest.TestCase):
 
     def test_no_tab_params(self):
         flows = [
-            self.MockTabFlow('t1', set()),
-            self.MockTabFlow('t2', set()),
-            self.MockTabFlow('t3', set()),
+            self.MockTabFlow('t1', frozenset()),
+            self.MockTabFlow('t2', frozenset()),
+            self.MockTabFlow('t3', frozenset()),
         ]
         self.assertEqual((flows, []), partition_ready_and_dependent(flows))
 
     def test_tab_chain(self):
         flows = [
-            self.MockTabFlow('t1', {'t2'}),
-            self.MockTabFlow('t2', {'t3'}),
-            self.MockTabFlow('t3', set()),
+            self.MockTabFlow('t1', frozenset({'t2'})),
+            self.MockTabFlow('t2', frozenset({'t3'})),
+            self.MockTabFlow('t3', frozenset()),
         ]
         self.assertEqual((flows[2:], flows[:2]),
                          partition_ready_and_dependent(flows))
 
     def test_missing_tabs(self):
         flows = [
-            self.MockTabFlow('t1', {'t4'}),
-            self.MockTabFlow('t2', {'t4'}),
-            self.MockTabFlow('t3', set()),
+            self.MockTabFlow('t1', frozenset({'t4'})),
+            self.MockTabFlow('t2', frozenset({'t4'})),
+            self.MockTabFlow('t3', frozenset()),
         ]
         self.assertEqual((flows, []), partition_ready_and_dependent(flows))
 
     def test_cycle(self):
         flows = [
-            self.MockTabFlow('t1', {'t2'}),
-            self.MockTabFlow('t2', {'t1'}),
-            self.MockTabFlow('t3', set()),
+            self.MockTabFlow('t1', frozenset({'t2'})),
+            self.MockTabFlow('t2', frozenset({'t1'})),
+            self.MockTabFlow('t3', frozenset()),
         ]
         self.assertEqual((flows[2:], flows[:2]),
                          partition_ready_and_dependent(flows))
 
     def test_tab_self_reference(self):
         flows = [
-            self.MockTabFlow('t1', {'t1'})
+            self.MockTabFlow('t1', frozenset({'t1'}))
         ]
         self.assertEqual(([], flows), partition_ready_and_dependent(flows))

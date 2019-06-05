@@ -1,11 +1,20 @@
 from unittest.mock import patch
 from server.models import LoadedModule, ModuleVersion, Workflow
 from server.models.commands import InitWorkflowCommand, ChangeParametersCommand
+from server.models.param_dtype import ParamDType
 from server.tests.utils import DbTestCase
 
 
 async def async_noop(*args, **kwargs):
     pass
+
+
+class MockLoadedModule:
+    def __init__(self, *args, **kwargs):
+        pass
+
+    def migrate_params(self, params):
+        return params  # no-op
 
 
 @patch('server.rabbitmq.queue_render', async_noop)
@@ -180,6 +189,10 @@ class ChangeParametersCommandTest(DbTestCase):
         load_module.return_value = LoadedModule(
             'x',
             '2',
+            ParamDType.Dict({
+                'version': ParamDType.String(),
+                'x': ParamDType.Integer(),
+            }),
             migrate_params_impl=lambda params: {**params, 'version': 'v2'}
         )
 
@@ -222,7 +235,9 @@ class ChangeParametersCommandTest(DbTestCase):
                 {'id_name': 'x', 'type': 'integer'},
             ]
         })
-        load_module.return_value = LoadedModule('x', '1')
+        load_module.return_value = LoadedModule('x', '1', ParamDType.Dict({
+            'x': ParamDType.Integer(),
+        }), migrate_params_impl=lambda x: x)
 
         with self.assertRaises(ValueError):
             # Now the user requests to change params, giving an invalid param.
@@ -232,8 +247,9 @@ class ChangeParametersCommandTest(DbTestCase):
                 new_values={'x': 'Threeve'}
             ))
 
-    @patch('server.models.loaded_module.LoadedModule.for_module_version_sync')
-    def test_change_parameters_update_tab_delta_ids(self, load_module):
+    @patch('server.models.loaded_module.LoadedModule.for_module_version_sync',
+           MockLoadedModule)
+    def test_change_parameters_update_tab_delta_ids(self):
         workflow = Workflow.create_and_init()
         # tab1's wfm1 depends on tab2's wfm2
         wfm1 = workflow.tabs.first().wf_modules.create(
@@ -263,7 +279,6 @@ class ChangeParametersCommandTest(DbTestCase):
                 {'id_name': 'tab', 'type': 'tab'},
             ]
         })
-        load_module.return_value = LoadedModule('x', '1')
 
         cmd = self.run_with_async_db(ChangeParametersCommand.create(
             workflow=workflow,

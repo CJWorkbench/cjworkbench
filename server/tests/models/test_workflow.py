@@ -39,6 +39,17 @@ class MockRequest:
         return MockRequest(None, None)
 
 
+# DependencyGraph.load_from_workflow needs to call migrate_params() so
+# it can check for tab values. That means it needs to load the 'tabby'
+# module.
+class MockLoadedModule:
+    def __init__(self, *args, **kwargs):
+        pass
+
+    def migrate_params(self, values):
+        return values
+
+
 class WorkflowTests(DbTestCase):
     def setUp(self):
         super().setUp()
@@ -114,8 +125,7 @@ class WorkflowTests(DbTestCase):
 
     @patch('server.rabbitmq.queue_render', async_noop)
     @patch('server.websockets.ws_client_send_delta_async', async_noop)
-    @patch('server.models.loaded_module.LoadedModule.for_module_version_sync',
-           lambda *args: LoadedModule('', ''))
+    @patch.object(LoadedModule, 'for_module_version_sync', MockLoadedModule)
     def test_delete_deltas_without_init_delta(self):
         workflow = Workflow.objects.create(name='A')
         tab = workflow.tabs.create(position=0)
@@ -143,8 +153,7 @@ class WorkflowTests(DbTestCase):
 
     @patch('server.rabbitmq.queue_render', async_noop)
     @patch('server.websockets.ws_client_send_delta_async', async_noop)
-    @patch('server.models.loaded_module.LoadedModule.for_module_version_sync',
-           lambda *args: LoadedModule('', ''))
+    @patch.object(LoadedModule, 'for_module_version_sync', MockLoadedModule)
     def test_delete_remove_leaked_stored_objects_and_uploaded_files(self):
         workflow = Workflow.create_and_init()
         # If the user deletes a workflow, all data associated with that
@@ -276,8 +285,8 @@ class SimpleDependencyGraphTests(unittest.TestCase):
 
 
 class DependencyGraphTests(DbTestCase):
-    @patch.object(LoadedModule, 'for_module_version_sync')
-    def test_read_graph_happy_path(self, load_module):
+    @patch.object(LoadedModule, 'for_module_version_sync', MockLoadedModule)
+    def test_read_graph_happy_path(self):
         workflow = Workflow.objects.create()
         tab1 = workflow.tabs.create(position=0, slug='tab-1')
         tab2 = workflow.tabs.create(position=1, slug='tab-2')
@@ -315,14 +324,6 @@ class DependencyGraphTests(DbTestCase):
             module_id_name='simple',
             params={'str': 'B'}
         )
-
-        # DependencyGraph.load_from_workflow needs to call migrate_params() so
-        # it can check for tab values. That means it needs to load the 'tabby'
-        # module.
-        class MockLoadedModule:
-            def migrate_params(self, schema, values):
-                return values
-        load_module.return_value = MockLoadedModule()
 
         graph = DependencyGraph.load_from_workflow(workflow)
         self.assertEqual(graph.tabs, [

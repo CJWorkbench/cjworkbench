@@ -125,19 +125,3 @@ class DTypeCoerceTest(unittest.TestCase):
         dtype = ParamDType.Map(value_dtype=ParamDType.String())
         value = dtype.coerce({'a': 1, 'b': None})
         self.assertEqual(value, {'a': '1', 'b': ''})
-
-    def test_map_omit_missing_table_columns(self):
-        # Currently, "omit" means "set empty". There's a valid use case for
-        # actually _removing_ colnames here, but [adamhooper, 2019-01-04] we
-        # haven't defined that case yet.
-        dtype = ParamDType.Map(value_dtype=ParamDType.Column())
-        value = dtype.omit_missing_table_columns({'a': 'X', 'b': 'Y'}, {'X'})
-        self.assertEqual(value, {'a': 'X', 'b': ''})
-
-    def test_multichartseries_omit_missing_table_columns(self):
-        dtype = ParamDType.Multichartseries()
-        value = dtype.omit_missing_table_columns([
-            {'column': 'X', 'color': '#abcdef'},
-            {'column': 'Y', 'color': '#abc123'},
-        ], {'X', 'Z'})
-        self.assertEqual(value, [{'column': 'X', 'color': '#abcdef'}])

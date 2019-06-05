@@ -2,7 +2,8 @@ from typing import Dict, List, Optional, Tuple
 from cjworkbench.sync import database_sync_to_async
 from cjworkbench.types import StepResultShape
 from server.models import Workflow
-from .tab import TabFlow, execute_tab_flow
+from server.models.param_dtype import ParamDType
+from .tab import ExecuteStep, TabFlow, execute_tab_flow
 from .types import UnneededExecution
 
 
@@ -17,8 +18,16 @@ def _load_tab_flows(workflow: Workflow, delta_id: int) -> List[TabFlow]:
             raise UnneededExecution
 
         for tab in workflow.live_tabs.all():
-            steps = [(wfm, wfm.get_params())
-                     for wfm in tab.live_wf_modules.all()]
+            steps = [
+                ExecuteStep(wfm,
+                            (
+                                wfm.module_version.param_schema
+                                if wfm.module_version is not None
+                                else ParamDType.Dict({})
+                            ),
+                            wfm.get_params())
+                for wfm in tab.live_wf_modules.all()
+            ]
             ret.append(TabFlow(tab, steps))
     return ret
 
@@ -39,12 +48,12 @@ def partition_ready_and_dependent(
     cleverly: we don't even need to know the list of already-rendered tabs to
     know whether a TabFlow is ready.)
     """
-    pending_tab_slugs = set(flow.tab_slug for flow in flows)
+    pending_tab_slugs = frozenset(flow.tab_slug for flow in flows)
 
     ready = []
     dependent = []
     for flow in flows:
-        if flow.input_tab_slugs & pending_tab_slugs:
+        if pending_tab_slugs & flow.input_tab_slugs:
             dependent.append(flow)
         else:
             ready.append(flow)

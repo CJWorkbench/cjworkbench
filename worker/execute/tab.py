@@ -1,21 +1,42 @@
-from functools import lru_cache
+from dataclasses import dataclass
 import logging
-from typing import Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, FrozenSet
 from cjworkbench.sync import database_sync_to_async
 from cjworkbench.types import ProcessResult, StepResultShape
-from server.models import Params, WfModule, Workflow, Tab
+from server.models import WfModule, Workflow, Tab
 from server.models.param_spec import ParamDType
 from .wf_module import execute_wfmodule, locked_wf_module
 
 
-_memoize = lru_cache(maxsize=1)
 logger = logging.getLogger(__name__)
 
 
-ExecuteStep = Tuple[WfModule, Params]
+class cached_property:
+    """
+    Memoizes a property by replacing the function with the retval.
+    """
+    def __init__(self, func):
+        self.__doc__ = getattr(func, '__doc__')
+        self._func = func
+
+    def __get__(self, obj, cls):
+        if obj is None:
+            return self
+
+        func = self._func
+        value = func(obj)
+        obj.__dict__[func.__name__] = value
+        return value
 
 
-# @dataclass in python 3.7
+@dataclass(frozen=True)
+class ExecuteStep:
+    wf_module: WfModule
+    schema: ParamDType.Dict
+    params: Dict[str, Any]
+
+
+@dataclass(frozen=True)
 class TabFlow:
     """
     Sequence of steps in a single Tab.
@@ -24,9 +45,9 @@ class TabFlow:
     querying for `.stale_steps` gives the steps that were stale _at the time of
     construction_.
     """
-    def __init__(self, tab: Tab, steps: List[ExecuteStep]):
-        self.tab = tab
-        self.steps = steps
+
+    tab: Tab
+    steps: List[ExecuteStep]
 
     @property
     def tab_slug(self) -> str:
@@ -36,23 +57,22 @@ class TabFlow:
     def tab_name(self) -> str:
         return self.tab.name
 
-    @property
-    @_memoize
+    @cached_property
     def first_stale_index(self) -> int:
         """
         Index into `self.steps` of the first WfModule that needs rendering.
 
         `None` if the entire flow is fresh.
         """
-        cached_results = [step[0].cached_render_result for step in self.steps]
+        cached_results = [step.wf_module.cached_render_result
+                          for step in self.steps]
         try:
             # Stale WfModule means its .cached_render_result is None.
             return cached_results.index(None)
         except ValueError:
             return None
 
-    @property
-    @_memoize
+    @cached_property
     def stale_steps(self) -> List[ExecuteStep]:
         """
         Just the steps of `self.steps` that need rendering.
@@ -65,8 +85,7 @@ class TabFlow:
         else:
             return self.steps[index:]
 
-    @property
-    @_memoize
+    @cached_property
     def last_fresh_wf_module(self) -> Optional[WfModule]:
         """
         The first fresh step.
@@ -77,22 +96,20 @@ class TabFlow:
         fresh_index = stale_index - 1
         if fresh_index < 0:
             return None
-        wf_module, params = self.steps[fresh_index]
-        return wf_module
+        return self.steps[fresh_index].wf_module
 
-    @property
-    @_memoize
-    def input_tab_slugs(self) -> Set[str]:
+    @cached_property
+    def input_tab_slugs(self) -> FrozenSet[str]:
         """
         Slugs of tabs that are used as _input_ into this tab's steps.
         """
         ret = set()
-        for wf_module, params in self.steps:
-            schema = params.schema
+        for step in self.steps:
+            schema = step.schema
             slugs = set(schema.find_leaf_values_with_dtype(ParamDType.Tab,
-                                                           params.values))
+                                                           step.params))
             ret.update(slugs)
-        return ret
+        return frozenset(ret)
 
 
 @database_sync_to_async
@@ -137,8 +154,8 @@ async def execute_tab_flow(
     # time; it might be run multiple times simultaneously (even on
     # different computers); and `await` doesn't work with locks.
     last_result = await _load_input_from_cache(workflow, flow)
-    for wf_module, params in flow.stale_steps:
-        last_result = await execute_wfmodule(workflow, wf_module, params,
-                                             flow.tab_name, last_result,
-                                             tab_shapes)
+    for step in flow.stale_steps:
+        last_result = await execute_wfmodule(workflow, step.wf_module,
+                                             step.params, flow.tab_name,
+                                             last_result, tab_shapes)
     return last_result

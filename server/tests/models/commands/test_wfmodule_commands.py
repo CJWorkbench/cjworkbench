@@ -4,6 +4,7 @@ from server.models import Delta, LoadedModule, ModuleVersion, Workflow, \
         WfModule
 from server.models.commands import AddModuleCommand, DeleteModuleCommand, \
         InitWorkflowCommand
+from server.models.param_dtype import ParamDType
 from server.tests.utils import DbTestCase
 
 
@@ -19,7 +20,7 @@ class MockLoadedModule:
     def __init__(self, *args):
         pass
 
-    def migrate_params(self, specs, values):
+    def migrate_params(self, values):
         return values
 
 
@@ -360,18 +361,14 @@ class AddDeleteModuleCommandTests(DbTestCase):
         self.tab.refresh_from_db()
         self.assertEqual(self.tab.selected_wf_module_position, 0)
 
-    @patch.object(LoadedModule, 'for_module_version_sync')
-    def test_add_to_empty_tab_affects_dependent_tab_wf_modules(self,
-                                                               load_module):
+    @patch.object(LoadedModule, 'for_module_version_sync', MockLoadedModule)
+    def test_add_to_empty_tab_affects_dependent_tab_wf_modules(self):
         ModuleVersion.create_or_replace_from_spec({
             'id_name': 'tabby', 'name': 'Tabby', 'category': 'Clean',
             'parameters': [
                 {'id_name': 'tab', 'type': 'tab'}
             ]
         })
-        # This module doesn't exist, so we'll need to return something from it.
-        # It only needs a no-op migrate_params().
-        load_module.return_value = LoadedModule('x', 1)
 
         wfm1 = self.workflow.tabs.first().wf_modules.create(
             order=0,

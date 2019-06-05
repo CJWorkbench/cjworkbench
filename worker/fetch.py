@@ -3,13 +3,16 @@ from datetime import timedelta
 from functools import partial
 import logging
 import os
-from typing import Tuple
+from typing import Optional, Tuple
 from django.contrib.auth.models import User
 from django.db import DatabaseError, InterfaceError
 from django.utils import timezone
+import pandas as pd
 from cjworkbench.sync import database_sync_to_async
-from server.models import LoadedModule, Params, WfModule, Workflow
+from server.models import LoadedModule, WfModule, Workflow, \
+        CachedRenderResult, ModuleVersion
 from worker import save
+from . import fetchprep
 from .util import benchmark
 
 
@@ -22,12 +25,10 @@ logger = logging.getLogger(__name__)
 
 
 @database_sync_to_async
-def _get_params(wf_module: WfModule) -> Dict[str, Any]:
-    return wf_module.get_params().values
-
-
-@database_sync_to_async
-def _get_input_dataframe(tab_id: int, wf_module_position: int):
+def _get_input_cached_render_result(
+    tab_id: int,
+    wf_module_position: int
+) -> Optional[CachedRenderResult]:
     try:
         # raises WfModule.DoesNotExist
         wf_module = WfModule.objects.get(
@@ -39,11 +40,16 @@ def _get_input_dataframe(tab_id: int, wf_module_position: int):
     except WfModule.DoesNotExist:
         return None
 
-    crr = wf_module.cached_render_result
+    return wf_module.cached_render_result
+
+
+async def _read_input_dataframe(crr: CachedRenderResult) -> pd.DataFrame:
     if crr is None:
         return None
     else:
-        return crr.read_dataframe()  # None on error
+        loop = asyncio.get_event_loop()
+        # crr.read_dataframe() returns None on error
+        return await loop.run_in_executor(None, crr.read_dataframe)
 
 
 @database_sync_to_async
@@ -65,11 +71,27 @@ def _get_workflow_owner(workflow_id: int):
 
 
 @database_sync_to_async
-def _get_wf_module(wf_module_id: int) -> Tuple[int, WfModule]:
-    """Return workflow_id and WfModule, or raise WfModule.DoesNotExist."""
+def _get_wf_module(
+    wf_module_id: int
+) -> Tuple[int, WfModule, Optional[ModuleVersion]]:
+    """
+    Query WfModule info, or raise WfModule.DoesNotExist.
+    """
     wf_module = WfModule.objects.get(id=wf_module_id)
     # wf_module.workflow_id does a database access
     return (wf_module.workflow_id, wf_module)
+
+
+@database_sync_to_async
+def _get_loaded_module(
+    wf_module: WfModule
+) -> Optional[LoadedModule]:
+    """
+    Query WfModule.module_version, then LoadedModule.for_module_version()
+    """
+    module_version = wf_module.module_version  # invokes DB query
+    # .for_module_version() allows null
+    return LoadedModule.for_module_version_sync(module_version)
 
 
 @database_sync_to_async
@@ -98,25 +120,28 @@ def _update_next_update_time(wf_module, now):
 
 async def fetch_wf_module(workflow_id, wf_module, now):
     """Fetch `wf_module` and notify user of changes via email/websockets."""
-    logger.debug('fetch_wf_module(%d, %d) at interval %d',
-                 workflow_id, wf_module.id,
-                 wf_module.update_interval)
     try:
-        get_input_dataframe = partial(_get_input_dataframe,
-                                      wf_module.tab_id, wf_module.order)
-        params = await _get_params(wf_module)
+        lm = await _get_loaded_module(wf_module)
+        # TODO handle `None` here (it's valid)
+        input_cached_render_result = await _get_input_cached_render_result(
+            wf_module.tab_id,
+            wf_module.order,
+        )
+        if input_cached_render_result:
+            input_shape = input_cached_render_result.table_shape
+        else:
+            input_shape = None
 
-        module_version = wf_module.module_version
-        lm = await LoadedModule.for_module_version(module_version)
         # Migrate params, so fetch() gets newest values
-        params = await lm.migrate_params(module_version.schema, params)
+        params = lm.migrate_params(wf_module.params)
         # Clean params, so they're of the correct type
-        params = fetchprep.get_param_values(params)
+        params = fetchprep.clean_params(lm.param_schema, params, input_shape)
         result = await lm.fetch(
             params=params,
-            secrets=secrets,
+            secrets=wf_module.secrets,
             workflow_id=workflow_id,
-            get_input_dataframe=partial(_get_input_dataframe,
+            get_input_dataframe=partial(_read_input_dataframe,
+                                        input_cached_render_result),
             get_stored_dataframe=partial(_get_stored_dataframe, wf_module.id),
             get_workflow_owner=partial(_get_workflow_owner, workflow_id),
         )
@@ -142,8 +167,8 @@ async def fetch(*, wf_module_id: int) -> None:
     # most exceptions caught elsewhere
     try:
         task = fetch_wf_module(workflow_id, wf_module, now)
-        await benchmark(logger, task, 'fetch_wf_module(%d, %d)', workflow_id,
-                        wf_module_id)
+        await benchmark(logger, task, 'fetch_wf_module(%d, %d:%s)',
+                        workflow_id, wf_module_id, wf_module.module_id_name)
     except DatabaseError:
         # Two possibilities:
         #

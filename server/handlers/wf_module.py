@@ -290,7 +290,7 @@ def _wf_module_delete_secret_and_build_delta(
         return {
             'updateWfModules': {
                 str(wf_module.id): {
-                    'params': wf_module.get_params().as_dict()
+                    'secrets': wf_module.secret_metadata,
                 }
             }
         }

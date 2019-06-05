@@ -21,7 +21,7 @@ class MockLoadedModule:
     def __init__(self, *args):
         pass
 
-    def migrate_params(self, specs, values):
+    def migrate_params(self, values):
         return values
 
 
@@ -673,5 +673,4 @@ class WfModuleTest(HandlerTestCase):
         send_delta.assert_called()
         delta = send_delta.call_args[0][1]
         wf_module_delta = delta['updateWfModules'][str(wf_module.id)]
-        self.assertEqual(wf_module_delta['params'],
-                         {'google_credentials': None})
+        self.assertEqual(wf_module_delta['secrets'], {})

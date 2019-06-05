@@ -1,6 +1,7 @@
-from collections import namedtuple
+from __future__ import annotations
 from contextlib import contextmanager
-from typing import List, Optional, Set, Tuple
+from dataclasses import dataclass
+from typing import Dict, List, Optional, Set, Tuple, FrozenSet
 import warnings
 from django.db import models, transaction
 from django.contrib.auth.models import User
@@ -487,14 +488,10 @@ class Workflow(models.Model):
         super().delete(*args, **kwargs)
 
 
+@dataclass(frozen=True)
 class DependencyGraph:
     """
     A graph illustrating which WfModules depend on which WfModules' output.
-
-    Here are the rules:
-
-        * In a Tab, WfModule with order=N+1 depends on WfModule with order=N
-        * A WfModule with a `tab` param depends on that tab's last WfModule
 
     Here are the data structures:
 
@@ -506,12 +503,31 @@ class DependencyGraph:
     code easier to test and debug.
     """
 
-    Tab = namedtuple('DependencyGraphTab', ('slug', 'wf_module_ids'))
-    Step = namedtuple('DependencyGraphStep', ('depends_on_tab_slugs',))
+    @dataclass(frozen=True)
+    class Tab:
+        slug: str
+        wf_module_ids: List[int]
+        """
+        List of WfModules that depend on one another.
 
-    def __init__(self, tabs, steps):
-        self.tabs = tabs
-        self.steps = steps
+        A WfModule with a `tab` param depends on the last value in this list.
+        """
+
+    @dataclass(frozen=True)
+    class Step:
+        """
+        Metadata we track about a single WfModule.
+
+        (This is stored in `steps`, which is keyed by wf_module_id.)
+        """
+
+        depends_on_tab_slugs: FrozenSet[str]
+        """
+        Tabs which must be completed before this Step can run.
+        """
+
+    tabs: List[DependencyGraph.Tab]
+    steps: Dict[int, Step]  # keyed by wf_module_id
 
     @classmethod
     def load_from_workflow(cls, workflow: Workflow) -> 'DependencyGraph':
@@ -541,10 +557,10 @@ class DependencyGraph:
                     continue
 
                 # raises ValueError (and we don't handle that right now)
-                param_values = wf_module.get_params().values
-                tab_slugs = set(
+                params = wf_module.get_params()
+                tab_slugs = frozenset(
                     v
-                    for dtype, v in schema.iter_dfs_dtype_values(param_values)
+                    for dtype, v in schema.iter_dfs_dtype_values(params)
                     if isinstance(dtype, ParamDType.Tab)
                 )
                 steps[wf_module.id] = cls.Step(tab_slugs)

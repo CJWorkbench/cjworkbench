@@ -17,7 +17,6 @@ from cjworkbench.sync import database_sync_to_async
 from cjworkbench.types import ProcessResult, RenderColumn
 from . import module_loader
 from .module_version import ModuleVersion
-from .Params import Params
 from .param_dtype import ParamDTypeDict
 from ..modules import Lookup as InternalModules
 from server import minio
@@ -50,6 +49,7 @@ def _memoize_async_func(f):
     """
     future = None
     def inner():
+        nonlocal future
         if future is None:
             future = asyncio.ensure_future(f())
         return future
@@ -57,7 +57,7 @@ def _memoize_async_func(f):
 
 
 class DeletedModule:
-    def render(self, table: Optional[pd.DataFrame], params: Params,
+    def render(self, table: Optional[pd.DataFrame], params: Dict[str, Any],
                tab_name: str,
                fetch_result: Optional[ProcessResult]) -> ProcessResult:
         logger.info('render() deleted module')
@@ -65,8 +65,9 @@ class DeletedModule:
 
     async def fetch(
         self,
-        params: Params,
         *,
+        params: Dict[str, Any],
+        secrets: Dict[str, Any],
         workflow_id: int,
         get_input_dataframe: Callable[[], Awaitable[pd.DataFrame]],
         get_stored_dataframe: Callable[[], Awaitable[pd.DataFrame]],
@@ -77,14 +78,20 @@ class DeletedModule:
 
 
 class LoadedModule:
-    """A module with `fetch` and `render` methods.
+    """
+    A module with `fetch()`, `migrate_params()` and `render()` methods.
+
+    This object is stored entirely in memory. It does not hold references to
+    database objects.
     """
     def __init__(self, module_id_name: str, version_sha1: str,
+                 param_schema: ParamDTypeDict,
                  render_impl: Callable = _default_render,
                  fetch_impl: Callable = _default_fetch,
                  migrate_params_impl: Optional[Callable] = None):
         self.module_id_name = module_id_name
         self.version_sha1 = version_sha1
+        self.param_schema = param_schema
         self.name = f'{module_id_name}:{version_sha1}'
         self.render_impl = render_impl
         self.fetch_impl = fetch_impl
@@ -198,8 +205,6 @@ class LoadedModule:
         if varkw or 'get_workflow_owner' in kwonlyargs:
             kwargs['get_workflow_owner'] = get_workflow_owner
 
-        params = await fetchprep.clean_params(params, get_input_dataframe)
-
         time1 = time.time()
 
         if inspect.iscoroutinefunction(self.fetch_impl):
@@ -228,7 +233,7 @@ class LoadedModule:
                 logger.exception(
                     '%s.fetch gave invalid output. workflow=%d, params=%s'
                     % (self.module_id_name, workflow_id,
-                       json.dumps(param_values))
+                       json.dumps(params))
                 )
                 out = ProcessResult(error=(
                     'Fetch produced invalid data: %s' % (str(err),)
@@ -263,24 +268,22 @@ class LoadedModule:
         """
         return cls.for_module_version_sync(module_version)
 
-    def migrate_params(self, schema: ParamDTypeDict,
-                       values: Dict[str, Any]) -> Dict[str, Any]:
+    def migrate_params(self, values: Dict[str, Any]) -> Dict[str, Any]:
         if self.migrate_params_impl is not None:
             try:
                 values = self.migrate_params_impl(values)
             except Exception as err:
                 raise ValueError('%s.migrate_params() raised %r'
                                  % (self.module_id_name, err))
-
             try:
-                schema.validate(values)
+                self.param_schema.validate(values)
             except ValueError as err:
                 raise ValueError('%s.migrate_params() gave bad output: %s'
                                  % (self.module_id_name, str(err)))
 
             return values
         else:
-            return schema.coerce(values)
+            return self.param_schema.coerce(values)
 
     @classmethod
     def for_module_version_sync(
@@ -317,11 +320,12 @@ class LoadedModule:
             module = load_external_module(module_id_name, version_sha1,
                                           module_version.last_update_time)
 
+        param_schema = module_version.param_schema
         render_impl = getattr(module, 'render', _default_render)
         fetch_impl = getattr(module, 'fetch', _default_fetch)
         migrate_params_impl = getattr(module, 'migrate_params', None)
 
-        return cls(module_id_name, version_sha1,
+        return cls(module_id_name, version_sha1, param_schema,
                    render_impl=render_impl, fetch_impl=fetch_impl,
                    migrate_params_impl=migrate_params_impl)
 

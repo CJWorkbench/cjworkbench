@@ -8,6 +8,14 @@ async def async_noop(*args, **kwargs):
     pass
 
 
+class MockLoadedModule:
+    def __init__(self, *args, **kwargs):
+        pass
+
+    def migrate_params(self, params):
+        return params  # no-op
+
+
 class ReorderTabsCommandTest(DbTestCase):
     @patch('server.websockets.ws_client_send_delta_async', async_noop)
     @patch('server.rabbitmq.queue_render', async_noop)
@@ -62,8 +70,7 @@ class ReorderTabsCommandTest(DbTestCase):
 
     @patch('server.websockets.ws_client_send_delta_async', async_noop)
     @patch('server.rabbitmq.queue_render', async_noop)
-    @patch.object(LoadedModule, 'for_module_version_sync',
-                  lambda mv: LoadedModule('x', '1'))
+    @patch.object(LoadedModule, 'for_module_version_sync', MockLoadedModule)
     def test_change_dependent_wf_modules(self):
         # tab slug: tab-1
         workflow = Workflow.create_and_init(selected_tab_position=2)

@@ -6,7 +6,7 @@ from pandas.testing import assert_frame_equal
 from cjworkbench.types import Column, ColumnType, ProcessResult, TableShape, \
         RenderColumn, StepResultShape
 from server import minio
-from server.models import Params, Workflow, UploadedFile
+from server.models import Workflow, UploadedFile
 from server.models.param_spec import ParamDType
 from server.tests.utils import DbTestCase
 from worker.execute.renderprep import clean_value, RenderContext
@@ -359,15 +359,13 @@ class CleanValueTests(DbTestCase):
             'tab': ParamDType.Tab(),
             'columns': ParamDType.Multicolumn(tab_parameter='tab'),
         })
-        param_values = {'tab': tab.slug,
-                        'columns': ['A-from-tab-1', 'A-from-tab-2']}
-        params = Params(schema, param_values, {})
+        params = {'tab': tab.slug, 'columns': ['A-from-tab-1', 'A-from-tab-2']}
         context = RenderContext(workflow.id, None, TableShape(3, [
             Column('A-from-tab-1', ColumnType.NUMBER()),
         ]), {
             tab.slug: StepResultShape('ok', tab_output.table_shape),
         }, params)
-        result = clean_value(schema, param_values, context)
+        result = clean_value(schema, params, context)
         # result['tab'] is not what we're testing here
         self.assertEqual(result['columns'], ['A-from-tab-2'])
 
@@ -381,12 +379,11 @@ class CleanValueTests(DbTestCase):
             'tab': ParamDType.Tab(),
             'columns': ParamDType.Multicolumn(tab_parameter='tab'),
         })
-        param_values = {'tab': 'tab-missing', 'columns': ['A-from-tab']}
-        params = Params(schema, param_values, {})
+        params = {'tab': 'tab-missing', 'columns': ['A-from-tab']}
         context = RenderContext(workflow.id, None, TableShape(3, [
             Column('A-from-tab-1', ColumnType.NUMBER()),
         ]), {}, params)
-        result = clean_value(schema, param_values, context)
+        result = clean_value(schema, params, context)
         # result['tab'] is not what we're testing here
         self.assertEqual(result['columns'], [])
 

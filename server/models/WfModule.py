@@ -1,14 +1,11 @@
-from typing import Optional, Union
+from typing import Any, Dict, Optional, Union
 from django.contrib.postgres.fields import JSONField
 from django.db import models
-from django.db.models import F, Q
+from django.db.models import Q
 from cjworkbench.types import ProcessResult
 from server import minio
 from server.models import loaded_module
 from .fields import ColumnsField
-from .Params import Params
-from .param_dtype import ParamDTypeDict
-from .param_spec import ParamSpec
 from .CachedRenderResult import CachedRenderResult
 from .module_version import ModuleVersion
 from .StoredObject import StoredObject
@@ -161,13 +158,23 @@ class WfModule(models.Model):
     # to the WfModule, so we'd be left with a chicken-and-egg problem.
     last_relevant_delta_id = models.IntegerField(default=0, null=False)
 
-    # All current parameter values. This data has been validated at the time of writing
-    # using ParamDType.validate() and module_version.param_schema. However it may not match
-    # the current module version, and must be migrated when serialized.
     params = JSONField(default=dict)
+    """
+    Non-secret parameter values, valid at time of writing.
 
-    # Stores things like login information for Twitter and other APIs, must not be copied when duplicating the wf
+    This may not match the current module version: migrate_params() will make
+    the params match today's Python and JavaScript.
+    """
+
     secrets = JSONField(default=dict)
+    """
+    Dict of {'name': ..., 'secret': ...} values that are private.
+
+    Secret values aren't duplicated, and they're not stored in undo history.
+    They have no schema: they're either set, or they're missing.
+
+    Secrets aren't passed to `render()`: they're only passed to `fetch()`.
+    """
 
     inprogress_file_upload_id = models.CharField(max_length=255, blank=True,
                                                  null=True, default=None,
@@ -327,21 +334,29 @@ class WfModule(models.Model):
                     .order_by('-stored_at')
                     .values_list('stored_at', 'read'))
 
-    def get_params(self) -> Params:
+    @property
+    def secret_metadata(self) -> Dict[str, Any]:
         """
-        Hydrates our params field, plus secrets, into the Params dict which will be passed to
-        the front end, and to the module's render() and fetch().
+        Return dict keyed by secret name, with values {'name': '...'}.
 
-        Also handles migration from parameter sets created by previous versions of the module.
+        Missing secrets are not included in the returned dict. Secrets are not
+        validated against a schema.
+        """
+        return {k: {'name': v['name']} for k, v in self.secrets.items() if v}
 
-        Raise ValueError on _programmer_ error. That's usually the module author's problem
-        (e.g. bad migration) and we'll want to display the error to the user so
-        the user can pester the module author.
+    def get_params(self) -> Dict[str, Any]:
+        """
+        Build the Params dict which will be passed to JS, render(), and fetch().
+
+        Calls LoadedModule.migrate_params() to ensure the params are up-to-date.
+
+        Raise ValueError on _programmer_ error. That's usually the module
+        author's problem (e.g. bad migration) and we'll want to display the
+        error to the user so the user can pester the module author.
         """
         if self.module_version is None:
-            return Params(ParamDTypeDict({}), {}, {})
+            return {}
 
-        schema = self.module_version.param_schema
         lm = (
             # we don't import LoadedModule directly, because we'll mock it
             # out in unit tests.
@@ -349,17 +364,11 @@ class WfModule(models.Model):
                 self.module_version
             )
         )
-        # raises ValueError if there's a problem migrating, which indicates programmer error (probably module author)
-        values = lm.migrate_params(schema, self.params)
 
-        # "migrate" secrets: exactly the id_names specified in module_version
-        # spec, with values maybe None
-        secrets = {}
-        for field in self.module_version.param_fields:
-            if isinstance(field, ParamSpec.Secret):
-                secrets[field.id_name] = self.secrets.get(field.id_name)
+        if lm is None:
+            return {}
 
-        return Params(schema, values, secrets)
+        return lm.migrate_params(self.params)  # raises ValueError
 
     # re-render entire workflow when a module goes ready or error, on the
     # assumption that new output data is available

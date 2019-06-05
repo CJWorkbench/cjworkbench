@@ -371,10 +371,10 @@ def render(table, params, *, fetch_result):
     }
 
 
-async def fetch(params, *, get_stored_dataframe):
+async def fetch(params, *, secrets, get_stored_dataframe):
     querytype = QueryType(params['querytype'])
     query: str = params[querytype.query_param_name]
-    access_token = (params['twitter_credentials'] or {}).get('secret')
+    access_token = (secrets.get('twitter_credentials') or {}).get('secret')
 
     if not query.strip() and not access_token:
         return None  # Don't create a version

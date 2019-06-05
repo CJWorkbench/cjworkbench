@@ -4,8 +4,7 @@ from allauth.account.utils import user_display
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from cjworkbench.settings import KB_ROOT_URL
-from server.models import AclEntry, Workflow, WfModule, \
-        ModuleVersion, StoredObject, Tab
+from server.models import Workflow, WfModule, ModuleVersion, StoredObject, Tab
 from server.utils import seconds_to_count_and_units
 from server.settingsutils import workbench_user_display
 from server.models.param_spec import ParamSpec
@@ -189,7 +188,7 @@ class WfModuleSerializer(serializers.ModelSerializer):
 
     def get_params(self, wfm):
         """WfModule.params, _plus secret metadata_"""
-        return wfm.get_params().params  # migrated
+        return wfm.get_params()
 
     class Meta:
         model = WfModule

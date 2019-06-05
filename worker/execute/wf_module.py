@@ -5,9 +5,10 @@ from typing import Any, Dict, Optional, Tuple
 from cjworkbench.sync import database_sync_to_async
 from cjworkbench.types import ProcessResult, StepResultShape, TableShape
 from server import notifications
-from server.models import LoadedModule, Params, WfModule, Workflow
+from server.models import LoadedModule, WfModule, Workflow
 from server.notifications import OutputDelta
 from server import websockets
+from server.models.param_dtype import ParamDType
 from .types import TabCycleError, TabOutputUnreachableError, \
         UnneededExecution, PromptingError
 from . import renderprep
@@ -52,7 +53,7 @@ def locked_wf_module(workflow, wf_module):
 def _execute_wfmodule_pre(
     workflow: Workflow,
     wf_module: WfModule,
-    params: Params,
+    params: Dict[str, Any],
     input_table_shape: TableShape,
     tab_shapes: Dict[str, Optional[StepResultShape]]
 ) -> Tuple:
@@ -87,7 +88,12 @@ def _execute_wfmodule_pre(
             tab_shapes,
             params  # ugh
         )
-        param_values = renderprep.get_param_values(params, render_context)
+        if module_version is None:
+            param_schema = ParamDType.Dict({})
+        else:
+            param_schema = module_version.param_schema
+        param_values = renderprep.get_param_values(param_schema, params,
+                                                   render_context)
         loaded_module = LoadedModule.for_module_version_sync(module_version)
 
         return (loaded_module, fetch_result, param_values)
@@ -134,7 +140,7 @@ def _execute_wfmodule_save(workflow: Workflow, wf_module: WfModule,
 async def _render_wfmodule(
     workflow: Workflow,
     wf_module: WfModule,
-    params: Params,
+    params: Dict[str, Any],
     tab_name: str,
     input_result: Optional[ProcessResult],  # None for first module in tab
     tab_shapes: Dict[str, Optional[StepResultShape]]
@@ -178,7 +184,7 @@ async def _render_wfmodule(
 async def execute_wfmodule(
     workflow: Workflow,
     wf_module: WfModule,
-    params: Params,
+    params: Dict[str, Any],
     tab_name: str,
     input_result: ProcessResult,
     tab_shapes: Dict[str, Optional[StepResultShape]]

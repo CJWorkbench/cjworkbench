@@ -19,7 +19,7 @@ class MockLoadedModule:
     def __init__(self, *args):
         pass
 
-    def migrate_params(self, specs, values):
+    def migrate_params(self, values):
         return values
 
 
