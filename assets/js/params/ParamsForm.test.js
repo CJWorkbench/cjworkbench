@@ -32,6 +32,7 @@ describe('ParamsForm', () => {
       currentTab='tab-1'
       applyQuickFix={jest.fn()}
       startCreateSecret={jest.fn()}
+      submitSecret={jest.fn()}
       deleteSecret={jest.fn()}
       onChange={jest.fn()}
       onSubmit={jest.fn()}
