@@ -87,37 +87,31 @@ class ParamSpec(ABC):
         return asdict(self)
 
 
-def _register_param_spec(cls):
+def _RegisterType(type_name):
     """
-    Register a subclass by class name (called as a decorator).
+    Add immutable 'type' field for JSON serialization and connect globals.
 
-    For instance, if you write `class ParamSpecFoo(ParamSpec):`, that
-    means:
+    For instance, `class ParamSpecFoo(_RegisterType('foo'), ParamSpec):` means:
 
     * `_lookup['foo'] == ParamSpecFoo`
     * `ParamSpec.Foo == ParamSpecFoo`
-    * cls(...).type == 'foo'
-
-    This must be called _before_ the `@dataclass` annotation, as it adds a
-    'type' field (used during serialization).
+    * ParamSpecFoo(...).type == 'foo'
     """
-    name = cls.__name__
-    assert name.startswith('ParamSpec')
-    subname = name[len('ParamSpec'):]
+    @dataclass(frozen=True)
+    class ParamSpecType(ABC):
+        type: str = field(default=type_name, init=False)
 
-    # ParamSpecFoo.type = 'foo' (JSON "type", serialized in to_dict())
-    type_name = subname.lower()
-    setattr(cls, 'type', type_name)
-    cls.__dict__.get('__annotations__', {})['type'] = 'str'
-    print(repr((f'Set type {type_name} on class {name}', cls.__annotations)))
+        # override for ABC
+        def __init_subclass__(cls, **kwargs):
+            name = cls.__name__
+            assert name.startswith('ParamSpec')
+            subname = name[len('ParamSpec'):]
 
-    # _lookup['foo'] = ParamSpecFoo
-    _lookup[type_name] = cls
+            super().__init_subclass__(**kwargs)
+            _lookup[type_name] = cls
+            setattr(ParamSpec, subname, cls)
 
-    # ParamSpec.Foo = ParamSpecFoo
-    setattr(ParamSpec, subname, cls)
-
-    return cls
+    return ParamSpecType
 
 
 @dataclass(frozen=True)
@@ -139,8 +133,7 @@ class _HasPlaceholder:
     """
 
 @dataclass(frozen=True)
-@_register_param_spec
-class ParamSpecStatictext(_HasName, ParamSpec):
+class ParamSpecStatictext(_RegisterType('statictext'), _HasName, ParamSpec):
     """
     Text the user sees, with no underlying value.
     """
@@ -177,8 +170,7 @@ class SecretLogicString:
 
 
 @dataclass(frozen=True)
-@_register_param_spec
-class ParamSpecSecret(ParamSpec):
+class ParamSpecSecret(_RegisterType('secret'), ParamSpec):
     """
     Secret such as an API key the user can set.
 
@@ -205,8 +197,7 @@ SecretLogic.String = SecretLogicString
 
 
 @dataclass(frozen=True)
-@_register_param_spec
-class ParamSpecButton(_HasName, ParamSpec):
+class ParamSpecButton(_RegisterType('button'), _HasName, ParamSpec):
     """
     Button the user can click to submit data.
 
@@ -222,8 +213,8 @@ class ParamSpecButton(_HasName, ParamSpec):
 
 
 @dataclass(frozen=True)
-@_register_param_spec
-class ParamSpecString(_HasPlaceholder, _HasName, ParamSpec):
+class ParamSpecString(_RegisterType('string'), _HasPlaceholder, _HasName,
+                      ParamSpec):
     """
     Text the user can type.
     """
@@ -238,8 +229,8 @@ class ParamSpecString(_HasPlaceholder, _HasName, ParamSpec):
 
 
 @dataclass(frozen=True)
-@_register_param_spec
-class ParamSpecNumberFormat(_HasPlaceholder, _HasName, ParamSpec):
+class ParamSpecNumberFormat(_RegisterType('numberformat'), _HasPlaceholder,
+                            _HasName, ParamSpec):
     """
     Textual number-format string, like '${:0,.2f}'
     """
@@ -252,8 +243,7 @@ class ParamSpecNumberFormat(_HasPlaceholder, _HasName, ParamSpec):
 
 
 @dataclass(frozen=True)
-@_register_param_spec
-class ParamSpecCustom(_HasName, ParamSpec):
+class ParamSpecCustom(_RegisterType('custom'), _HasName, ParamSpec):
     """
     Deprecated "custom" value -- behavior depends on id_name.
 
@@ -269,8 +259,8 @@ class ParamSpecCustom(_HasName, ParamSpec):
 
 
 @dataclass(frozen=True)
-@_register_param_spec
-class ParamSpecColumn(_HasPlaceholder, _HasName, ParamSpec):
+class ParamSpecColumn(_RegisterType('column'), _HasPlaceholder, _HasName,
+                      ParamSpec):
     """
     Column selector. Selects a str; default value `""` means "no column".
     """
@@ -301,8 +291,8 @@ class ParamSpecColumn(_HasPlaceholder, _HasName, ParamSpec):
 
 
 @dataclass(frozen=True)
-@_register_param_spec
-class ParamSpecMulticolumn(_HasPlaceholder, _HasName, ParamSpec):
+class ParamSpecMulticolumn(_RegisterType('multicolumn'), _HasPlaceholder,
+                           _HasName, ParamSpec):
     """
     Multicolumn selector. Selects FrozenSet of str.
     """
@@ -334,8 +324,8 @@ class ParamSpecMulticolumn(_HasPlaceholder, _HasName, ParamSpec):
 
 
 @dataclass(frozen=True)
-@_register_param_spec
-class ParamSpecMultichartseries(_HasPlaceholder, _HasName, ParamSpec):
+class ParamSpecMultichartseries(_RegisterType('multichartseries'),
+                                _HasPlaceholder, _HasName, ParamSpec):
     """
     Selects { column, color } pairs.
     """
@@ -347,8 +337,8 @@ class ParamSpecMultichartseries(_HasPlaceholder, _HasName, ParamSpec):
 
 
 @dataclass(frozen=True)
-@_register_param_spec
-class ParamSpecInteger(_HasPlaceholder, _HasName, ParamSpec):
+class ParamSpecInteger(_RegisterType('integer'), _HasPlaceholder, _HasName,
+                       ParamSpec):
     """
     Integer the user can type.
     """
@@ -361,8 +351,8 @@ class ParamSpecInteger(_HasPlaceholder, _HasName, ParamSpec):
 
 
 @dataclass(frozen=True)
-@_register_param_spec
-class ParamSpecFloat(_HasPlaceholder, _HasName, ParamSpec):
+class ParamSpecFloat(_RegisterType('float'), _HasPlaceholder, _HasName,
+                     ParamSpec):
     """
     Decimal (stored as floating-point) the user can type.
     """
@@ -375,8 +365,7 @@ class ParamSpecFloat(_HasPlaceholder, _HasName, ParamSpec):
 
 
 @dataclass(frozen=True)
-@_register_param_spec
-class ParamSpecCheckbox(_HasName, ParamSpec):
+class ParamSpecCheckbox(_RegisterType('checkbox'), _HasName, ParamSpec):
     """
     Boolean selected by checkbox.
     """
@@ -436,8 +425,8 @@ MenuOptionSeparator = _MenuOptionSeparator()  # singleton
 
 
 @dataclass(frozen=True)
-@_register_param_spec
-class ParamSpecMenu(_HasPlaceholder, _HasName, ParamSpec):
+class ParamSpecMenu(_RegisterType('menu'), _HasPlaceholder, _HasName,
+                    ParamSpec):
     """
     Enum value selected by drop-down menu.
 
@@ -476,8 +465,7 @@ ParamSpecMenu.Option.Separator = MenuOptionSeparator  # singleton
 
 
 @dataclass(frozen=True)
-@_register_param_spec
-class ParamSpecRadio(_HasName, ParamSpec):
+class ParamSpecRadio(_RegisterType('radio'), _HasName, ParamSpec):
     """
     Enum values which are all visible at the same time.
     """
@@ -509,8 +497,8 @@ ParamSpecRadio.Option = EnumOption
 
 
 @dataclass(frozen=True)
-@_register_param_spec
-class ParamSpecTab(_HasPlaceholder, _HasName, ParamSpec):
+class ParamSpecTab(_RegisterType('tab'), _HasPlaceholder, _HasName,
+                   ParamSpec):
     # override
     @property
     def dtype(self) -> Optional[ParamDType]:
@@ -518,8 +506,8 @@ class ParamSpecTab(_HasPlaceholder, _HasName, ParamSpec):
 
 
 @dataclass(frozen=True)
-@_register_param_spec
-class ParamSpecMultitab(_HasPlaceholder, _HasName, ParamSpec):
+class ParamSpecMultitab(_RegisterType('multitab'), _HasPlaceholder, _HasName,
+                        ParamSpec):
     # override
     @property
     def dtype(self) -> Optional[ParamDType]:
@@ -527,8 +515,7 @@ class ParamSpecMultitab(_HasPlaceholder, _HasName, ParamSpec):
 
 
 @dataclass(frozen=True)
-@_register_param_spec
-class ParamSpecFile(ParamSpec):
+class ParamSpecFile(_RegisterType('file'), ParamSpec):
     # override
     @property
     def dtype(self) -> Optional[ParamDType]:
@@ -536,8 +523,7 @@ class ParamSpecFile(ParamSpec):
 
 
 @dataclass(frozen=True)
-@_register_param_spec
-class ParamSpecList(_HasName, ParamSpec):
+class ParamSpecList(_RegisterType('list'), _HasName, ParamSpec):
     child_parameters: List[ParamSpec] = field(default_factory=list)
 
     # override
@@ -557,8 +543,7 @@ class ParamSpecList(_HasName, ParamSpec):
 
 
 @dataclass(frozen=True)
-@_register_param_spec
-class ParamSpecGdrivefile(_HasName, ParamSpec):
+class ParamSpecGdrivefile(_RegisterType('gdrivefile'), _HasName, ParamSpec):
     secret_parameter: str = ''
     """
     id_name of the `secret` parameter this chooser will use.
