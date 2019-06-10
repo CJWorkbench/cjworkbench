@@ -222,6 +222,7 @@ export default class Gdrivefile extends React.PureComponent {
 
   onPick = (data) => {
     this.props.onChange(data)
+    this.props.onSubmit()
   }
 
   onCancel = () => {

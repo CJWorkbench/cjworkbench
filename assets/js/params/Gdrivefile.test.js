@@ -28,6 +28,7 @@ describe('Gdrivefile', () => {
         secretMetadata={{name: 'user@example.org'}}
         value={aFileMetadataJson}
         onChange={jest.fn()}
+        onSubmit={jest.fn()}
         loadPickerFactory={jest.fn(() => Promise.resolve(pickerFactory))}
         {...extraProps}
       />
@@ -97,6 +98,8 @@ describe('Gdrivefile', () => {
       onPick({
         id: 'newid',
         name: 'new file',
+        url: 'https://example.org/2',
+        mimeType: 'text/csv'
       })
     })
 
@@ -105,7 +108,10 @@ describe('Gdrivefile', () => {
     expect(w.prop('onChange')).toHaveBeenCalledWith({
       id: 'newid',
       name: 'new file',
+      url: 'https://example.org/2',
+      mimeType: 'text/csv'
     })
+    expect(w.prop('onSubmit')).toHaveBeenCalled()
   })
 
   it('works when pick is canceled', async () => {
