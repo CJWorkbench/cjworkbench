@@ -33,6 +33,7 @@ describe('WfModule, not read-only mode', () => {
       url: 'http://some.URL.me',
       menu_select: 1
     },
+    secrets: {},
     files: []
   }
 
@@ -221,6 +222,7 @@ describe('WfModule, not read-only mode', () => {
         a: 'A',
         b: 'B'
       },
+      secrets: {},
       files: []
     }
     const aModule = {
@@ -257,6 +259,7 @@ describe('WfModule, not read-only mode', () => {
         url: '',
         version_select: 'B'
       },
+      secrets: {},
       files: []
     }
     const aModule = {
@@ -323,7 +326,7 @@ describe('WfModule, not read-only mode', () => {
           isZenMode={false}
           isZenModeAllowed={false}
           index={1}
-          wfModule={{ id: 20, module: 'loadurl', is_collapsed: false, status: 'error', params: {}, error: 'foo', files: [], quick_fixes: [{text: 'Fix', action: 'prependModule', args: ['fixtype', {foo: 'bar'}]}] }}
+          wfModule={{ id: 20, module: 'loadurl', is_collapsed: false, status: 'error', params: {}, secrets: {}, error: 'foo', files: [], quick_fixes: [{text: 'Fix', action: 'prependModule', args: ['fixtype', {foo: 'bar'}]}] }}
           isSelected={true}
           isAfterSelected={false}
           onDragStart={jest.fn()}
@@ -369,7 +372,7 @@ describe('WfModule, not read-only mode', () => {
           'tab-11': { slug: 'tab-11', name: 'Tab 1', wf_module_ids: [1, 2, 999] }
         },
         wfModules: {
-          999: { module: 'loadurl', params: {} }
+          999: { module: 'loadurl', params: {}, secrets: {} }
         },
         modules: {
           'loadurl': {
@@ -393,7 +396,7 @@ describe('WfModule, not read-only mode', () => {
             isZenMode={false}
             isZenModeAllowed={false}
             index={1}
-            wfModule={{ id: 20, module: 'loadurl', is_collapsed: false, status: 'error', params: {}, error: 'foo', files: [], quick_fixes: [{text: 'Fix', action: 'prependModule', args: ['fixtype', {foo: 'bar'}]}] }}
+            wfModule={{ id: 20, module: 'loadurl', is_collapsed: false, status: 'error', params: {}, secrets: {}, error: 'foo', files: [], quick_fixes: [{text: 'Fix', action: 'prependModule', args: ['fixtype', {foo: 'bar'}]}] }}
             isSelected={true}
             isAfterSelected={false}
             onDragStart={jest.fn()}

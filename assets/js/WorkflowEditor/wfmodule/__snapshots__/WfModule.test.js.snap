@@ -168,6 +168,7 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
             isZenMode={false}
             onChange={[Function]}
             onSubmit={[Function]}
+            secrets={Object {}}
             startCreateSecret={[Function]}
             tabs={Array []}
             value={
