@@ -130,7 +130,7 @@ export default class ParamsForm extends React.PureComponent {
     return type === 'custom' && (idName === 'version_select' || idName === 'version_select_simpler')
   }
 
-  isFieldVisible = (field) => {
+  isFieldVisible = (field, recurseDetector = []) => {
     // No visibility condition, we are visible
     const condition = field.visibleIf
     if (!condition) return true
@@ -140,12 +140,19 @@ export default class ParamsForm extends React.PureComponent {
     // missing idName, default to visible
     if (!condition.idName) return true
 
-    // We are invisible if our parent is invisible
-    if (condition.idName !== field.idName) { // prevent simple infinite recurse; see droprowsbyposition.json
-      const parentField = this.props.fields.find(f => f.idName === condition.idName)
-      if (parentField && !this.isFieldVisible(parentField)) { // recurse
-        return false
-      }
+    // We are invisible if we depend upon an invisible field
+    if (recurseDetector.indexOf(condition.idName) !== -1) {
+      // Prevent infinite recursion; log to console instead.
+      //
+      // It's easier to _hide_ a broken field than _show_ it: hiding exits the
+      // recursion and showing doesn't.
+      console.warn(`Field ${field.idName} visibleIf depends on the field's own visibility. Please remove this recursive loop.`)
+      return false
+    }
+    const conditionField = this.props.fields.find(f => f.idName === condition.idName)
+    // Recurse to see if we depend on an invisible field
+    if (!this.isFieldVisible(conditionField, [ ...recurseDetector, field.idName ])) {
+      return false
     }
 
     if ('value' in condition) {
@@ -167,13 +174,16 @@ export default class ParamsForm extends React.PureComponent {
       }
 
       // If it's a menu entry...
-      if (Array.isArray(condition.value)) {
+      if (
+        (conditionField.type === 'menu' || conditionField.type === 'radio')
+        && Array.isArray(condition.value)
+      ) {
         return invert !== condition.value.includes(value)
       }
 
       // ... the ideal is for this to be the _only_ code path. But there are
       // exceptions because the feature was implemented piecemeal
-      return invert !== (condition.value === value)
+      return invert !== deepEqual(condition.value, value)
     }
 
     // If the visibility condition is empty or invalid, default to showing the parameter
@@ -203,7 +213,7 @@ export default class ParamsForm extends React.PureComponent {
 
     const visibleFields = fields
       .filter(f => !this.isFieldVersionSelect(f))
-      .filter(this.isFieldVisible)
+      .filter(f => this.isFieldVisible(f))
 
     return (
       <form

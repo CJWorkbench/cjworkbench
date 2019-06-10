@@ -216,28 +216,40 @@ describe('ParamsForm', () => {
       expect(w.find('Param[name="testme"]')).toHaveLength(0)
     })
 
-    it('should hide conditional parameter depending on self', () => {
-      // We do this in droprowsbyposition. TODO do a migrate_params() there
-      // and nix this test.
+    it('should warn and hide on simple recursion', () => {
+      jest.spyOn(global.console, 'warn').mockImplementation(() => {})
       const w = wrapper({
         fields: [
-          field('testme', 'string', { visibleIf: { idName: 'testme', value: true } })
+          field('x', 'string', { visibleIf: { idName: 'x', value: 'x' } }),
         ],
-        value: {
-          testme: ''
-        }
+        value: { x: 'x' }
       })
-      expect(w.find('Param[name="testme"]')).toHaveLength(0)
+      expect(global.console.warn).toHaveBeenCalled()
+      expect(w.find('Param[name="x"]')).toHaveLength(0)
     })
 
-    it('should show conditional parameter depending on self', () => {
-      // We do this in droprowsbyposition. TODO do a migrate_params() there
-      // and nix this test.
+    it('should warn and hide on non-simple recursion', () => {
+      jest.spyOn(global.console, 'warn').mockImplementation(() => {})
       const w = wrapper({
         fields: [
-          field('testme', 'string', { visibleIf: { idName: 'testme', value: true } })
+          field('x', 'string', { visibleIf: { idName: 'y', value: 'y' } }),
+          field('y', 'string', { visibleIf: { idName: 'x', value: 'x' } }),
+        ],
+        value: { x: 'x', y: 'y' }
+      })
+      expect(global.console.warn).toHaveBeenCalledTimes(2)
+      expect(w.find('Param[name="x"]')).toHaveLength(0)
+      expect(w.find('Param[name="y"]')).toHaveLength(0)
+    })
+
+    it('should deep-compare JSON values', () => {
+      const w = wrapper({
+        fields: [
+          field('boo', 'custom'),
+          field('testme', 'statictext', { visibleIf: { idName: 'boo', value: ['x', 'y'] } })
         ],
         value: {
+          boo: ['x', 'y'],
           testme: '1,3-9'
         }
       })

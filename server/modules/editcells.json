@@ -30,8 +30,7 @@
       "type": "statictext",
       "visible_if": {
         "id_name": "celledits",
-        "value": false,
-        "invert": false
+        "value": []
       }
     }
   ]
