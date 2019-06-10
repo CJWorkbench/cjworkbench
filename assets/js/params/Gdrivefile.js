@@ -125,7 +125,7 @@ export default class Gdrivefile extends React.PureComponent {
   static propTypes = {
     createOauthAccessToken: PropTypes.func.isRequired, // func() => Promise[str or null]
     isReadOnly: PropTypes.bool.isRequired,
-    secretMetadata: PropTypes.string, // when this changes, call createOauthAccessToken
+    secretMetadata: PropTypes.object, // when this changes, call createOauthAccessToken
     value: PropTypes.shape({
       id: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
