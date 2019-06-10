@@ -1,8 +1,7 @@
 import logging
 from cjworkbench.sync import database_sync_to_async
 from django.utils import timezone
-from server import minio
-from server.models import WfModule
+from server.models import WfModule, Workflow
 
 
 logger = logging.getLogger(__name__)
@@ -36,7 +35,7 @@ def delete_stale_inprogress_file_uploads_sync() -> None:
                     continue
                 logger.info('Aborting stale upload on wf-%d/wfm-%d',
                             wf_module.workflow_id, wf_module.id)
-                wf_module.abort_inprogress_file_upload()
+                wf_module.abort_inprogress_upload()
         except Workflow.DoesNotExist:
             # The Workflow or WfModule was deleted during our loop
             pass
