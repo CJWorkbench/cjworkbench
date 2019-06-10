@@ -161,7 +161,6 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
               ]
             }
             files={Array []}
-            getParamText={[Function]}
             inputDeltaId={null}
             inputWfModuleId={123}
             isReadOnly={false}

@@ -129,13 +129,6 @@ describe('WfModule, not read-only mode', () => {
     expect(w.hasClass('status-busy')).toBe(true)
   })
 
-  it('supplies getParamText', () => {
-    const w = wrapper({ wfModule: { ...wfModule, params: { 'x': 'y' }}})
-    const instance = w.instance()
-
-    expect(instance.getParamText('x')).toEqual('y')
-  })
-
   it('renders a note', () => {
     const w = wrapper({ wfModule: { ...wfModule, notes: 'some notes' } })
     expect(w.find('EditableNotes').prop('value')).toEqual('some notes')
