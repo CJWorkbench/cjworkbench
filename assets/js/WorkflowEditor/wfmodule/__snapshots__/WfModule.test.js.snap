@@ -170,6 +170,7 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
             onSubmit={[Function]}
             secrets={Object {}}
             startCreateSecret={[Function]}
+            submitSecret={[Function]}
             tabs={Array []}
             value={
               Object {

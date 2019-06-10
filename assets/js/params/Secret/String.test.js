@@ -14,11 +14,12 @@ describe('Secret/String', () => {
         secretLogic={{
           label: 'API key',
           placeholder: 'y',
+          pattern: '\\w\\w\\w\\d\\d\\d', // e.g., abc123
           help: 'Basic instructions',
           helpUrl: 'http://example.org/api',
           helpUrlPrompt: 'go'
         }}
-        secretMetadata={{ createdAt: '2019-06-10T15:40:12.000Z' }}
+        secretMetadata={{ name: '2019-06-10T15:40:12.000Z' }}
         {...extraProps}
       />
     )
@@ -35,6 +36,7 @@ describe('Secret/String', () => {
 
     it('renders a text box', () => {
       expect(w.find('input[data-name="x"][type="text"]')).toHaveLength(1)
+      expect(w.find('input[data-name="x"]').prop('pattern')).toEqual('\\w\\w\\w\\d\\d\\d')
       expect(w.find('input[data-name="x"]').prop('placeholder')).toEqual('y')
     })
 
@@ -45,14 +47,17 @@ describe('Secret/String', () => {
       expect(w.find('p.help a').prop('href')).toEqual('http://example.org/api')
     })
 
+    it('prevents submitting input not matching pattern', () => {
+      w.find('input[data-name="x"]').simulate('change', { target: { value: 'abc', validity: { valid: false } } })
+      expect(w.find('button.set-secret').prop('disabled')).toBe(true)
+    })
+
     it('submits, disabling input and button immediately', () => {
-      w.find('input[data-name="x"]').simulate('change', { target: { value: 'abc123' } })
+      w.find('input[data-name="x"]').simulate('change', { target: { value: 'abc123', validity: { valid: true } } })
+      expect(w.find('button.set-secret').prop('disabled')).toBe(false) // we can click it
       w.find('button.set-secret').simulate('click')
       const submitSecret = w.prop('submitSecret')
-      expect(submitSecret).toHaveBeenCalled()
-      expect(submitSecret.mock.calls[0][0]).toEqual('x')
-      expect(submitSecret.mock.calls[0][1].secret).toEqual('abc123')
-      expect(submitSecret.mock.calls[0][1].createdAt).toMatch(/^\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d\.\d\d\dZ$/)
+      expect(submitSecret).toHaveBeenCalledWith('x', 'abc123')
 
       expect(w.find('input[data-name="x"]').prop('disabled')).toBe(true)
       expect(w.find('button.set-secret').prop('disabled')).toBe(true)
@@ -61,7 +66,7 @@ describe('Secret/String', () => {
 
   describe('with a secret', () => {
     let w
-    beforeEach(() => w = wrapper({ secretMetadata: { createdAt: '2019-06-10T15:40:12.000Z' }}))
+    beforeEach(() => w = wrapper({ secretMetadata: { name: '2019-06-10T15:40:12.000Z' }}))
     afterEach(() => { w.unmount(); w = null })
 
     it('renders the label', () => {
@@ -71,7 +76,7 @@ describe('Secret/String', () => {
     it('renders a timestamp', () => {
       expect(w.find('time')).toHaveLength(1)
       expect(w.find('time').prop('dateTime')).toEqual('2019-06-10T15:40:12.000Z')
-      expect(w.find('time').text()).toMatch(/ ago/)
+      expect(w.find('time').text()).toMatch(/ ago\)/)
     })
 
     it('deletes, disabling the delete button immediately', () => {
