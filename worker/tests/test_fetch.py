@@ -214,7 +214,7 @@ class FetchTests(DbTestCase):
 
     @patch('server.models.loaded_module.LoadedModule.for_module_version_sync')
     @patch('worker.save.save_result_if_changed')
-    @patch('worker.fetchprep.clean_params', lambda _, params, __: params)
+    @patch('worker.fetchprep.clean_value', lambda _, params, __: params)
     def _test_fetch(self, fn, migrate_params_fn, wf_module, param_schema, save,
                     load) -> ProcessResult:
         """
