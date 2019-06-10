@@ -256,7 +256,7 @@ export default class Gdrivefile extends React.PureComponent {
         button = (
           <button
             type='button'
-            className="change-file action-link"
+            className='change-file'
             onClick={this.openPicker}
           >
             {fileId ? 'Change' : 'Choose'}
@@ -267,7 +267,7 @@ export default class Gdrivefile extends React.PureComponent {
 
     return (
       <React.Fragment>
-        <a className="file-info" title={`Open in Google Sheets: ${fileName}`} target='_blank' href={fileUrl}>{fileName}</a>
+        <a className='file-info' title={`Open in Google Sheets: ${fileName}`} target='_blank' href={fileUrl}>{fileName}</a>
         {button}
       </React.Fragment>
     )

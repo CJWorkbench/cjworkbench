@@ -1,9 +1,6 @@
 .param-gdrivefile {
   padding-top: 1rem;
-  display: flex;
-  flex-direction: column;
   font-size: 1.4rem;
-  overflow: hidden;
   align-items: left;
 
   .not-signed-in {
@@ -11,7 +8,7 @@
   }
 
   .change-file {
-    @extend %content-1;
+    @include content-1;
     cursor: pointer;
     border: 0;
     margin-top: -.2rem;
@@ -22,14 +19,20 @@
   }
 
   .file-info {
-    flex: 1 1 auto;
+    @include module-parameter;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    color:$brand-text--dark;
   }
 
-  button {
-    flex: 0 0 auto;
+  button.change-file {
+    display: inline-block;
+    position: relative;
+    @include action-link;
+    color: $brand-orange;
+    &:hover {
+      color: $dark-orange;
+    }
+    margin-bottom: 1rem; // [adamhooper, 2019-06-10] margin should really be on top of the next element, .param-checkbox
   }
 }

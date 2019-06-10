@@ -474,15 +474,16 @@ button:focus { outline:0 !important; }
 
 // Application links
 
-%action-link {
+@mixin action-link {
+  border: 0;
   cursor: pointer;
-  color: $workspace-action!important;
+  color: $workspace-action;
   font-weight: bold;
 	&:hover {
-		color: #2D9DAA!important;
+		color: #2D9DAA;
 		text-decoration: none;
 	}
 }
 .action-link {
-	@extend %action-link;
+	@include action-link;
 }
