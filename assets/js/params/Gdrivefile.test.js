@@ -1,14 +1,15 @@
 import React from 'react'
-import { GoogleFileSelect } from './GoogleFileSelect'
+import Gdrivefile from './Gdrivefile'
 import { mount, shallow } from 'enzyme'
 
 const tick = async() => new Promise(resolve => setTimeout(resolve, 0))
 
-describe('GoogleFileSelect', () => {
+describe('Gdrivefile', () => {
   const aFileMetadataJson = {
     id: 'aushwyhtbndh7365YHALsdfsdf987IBHJB98uc9uisdj',
     name: 'Police Data',
-    url: 'https://example.org'
+    url: 'https://example.org',
+    mimeType: 'text/csv'
   }
 
   let pickerFactory
@@ -21,10 +22,10 @@ describe('GoogleFileSelect', () => {
     }
 
     return mount(
-      <GoogleFileSelect
+      <Gdrivefile
         createOauthAccessToken={jest.fn(() => Promise.resolve('access-token'))}
         isReadOnly={false}
-        secretName='user@example.org'
+        secretMetadata={{name: 'user@example.org'}}
         value={aFileMetadataJson}
         onChange={jest.fn()}
         loadPickerFactory={jest.fn(() => Promise.resolve(pickerFactory))}
@@ -34,7 +35,7 @@ describe('GoogleFileSelect', () => {
   }
 
   it('indicates when not connected', async () => {
-    const w = wrapper({ secretName: null })
+    const w = wrapper({ secretMetadata: null })
     await tick()
     w.update()
     expect(w.find('.not-signed-in')).toHaveLength(1)
@@ -73,7 +74,7 @@ describe('GoogleFileSelect', () => {
 
   it('shows errors when unauthenticated', async () => {
     const w = wrapper({
-      secretName: 'hi',
+      secretMetadata: { name: 'hi' },
       createOauthAccessToken: () => Promise.resolve(null)
     })
     await tick()
