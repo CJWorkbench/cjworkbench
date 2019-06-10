@@ -34,41 +34,24 @@ export function logUserEvent(name, metadata) {
 
 export function timeDifference (start, end) {
   const ms = new Date(end) - new Date(start)
-  const minutes = Math.floor(ms / 1000 / 60)
+  const seconds = Math.floor(ms / 1000)
+  const minutes = Math.floor(seconds / 60)
   const hours = Math.floor(minutes / 60)
   const days = Math.floor(hours / 24)
   const years = Math.floor(days / 365.25)
 
   if (years > 0) {
-    if (years == 1) {
-      return "1y ago";
-    } else {
-      return "" + years + "y ago";
-    }
-  }
-  else if (days > 0) {
-    if (days == 1) {
-      return "1d ago";
-    } else {
-      return "" + days + "d ago";
-    }
-  }
-  else if (hours > 0) {
-    if (hours == 1) {
-      return "1h ago";
-    } else {
-      return "" + hours + "h ago";
-    }
-  }
-  else if (minutes > 0) {
-    if (minutes == 1) {
-      return "1m ago";
-    } else {
-      return "" + minutes + "m ago";
-    }
-  }
-  else {
-    return "now";
+    return years + 'y ago'
+  } else if (days > 0) {
+    return days + 'd ago'
+  } else if (hours > 0) {
+    return hours + 'h ago'
+  } else if (minutes > 0) {
+    return minutes + 'm ago'
+  } else if (seconds > 0) {
+    return seconds + 's ago'
+  } else {
+    return 'just now'
   }
 }
 

@@ -8,7 +8,7 @@ const Components = {
   string: String_,
 }
 
-export default function Secret ({ isReadOnly, name, fieldId, secret, secretLogic, submitSecret, deleteSecret, startCreateSecret }) {
+export default function Secret ({ isReadOnly, name, fieldId, secretMetadata, secretLogic, submitSecret, deleteSecret, startCreateSecret }) {
   const Component = Components[secretLogic.provider]
 
   return (
@@ -16,7 +16,7 @@ export default function Secret ({ isReadOnly, name, fieldId, secret, secretLogic
       isReadOnly={isReadOnly}
       name={name}
       fieldId={fieldId}
-      secret={secret}
+      secretMetadata={secretMetadata}
       secretLogic={secretLogic}
       submitSecret={submitSecret}
       startCreateSecret={startCreateSecret}
@@ -28,8 +28,8 @@ Secret.propTypes = {
   isReadOnly: PropTypes.bool.isRequired,
   name: PropTypes.string.isRequired, // <input name=...>
   fieldId: PropTypes.string.isRequired, // <input id=...>
-  secret: PropTypes.object, // the _only_ value is the upstream one; may be null/undefined
-  submitSecret: PropTypes.func.isRequired, // func(name, value) => undefined
+  secretMetadata: PropTypes.object, // the _only_ value is the upstream one; may be null/undefined
+  submitSecret: PropTypes.func.isRequired, // func(name, secret) => undefined
   startCreateSecret: PropTypes.func.isRequired, // func(name) => undefined
   deleteSecret: PropTypes.func.isRequired, // func(name) => undefined
   secretLogic: PropTypes.shape({

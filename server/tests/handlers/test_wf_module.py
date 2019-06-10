@@ -6,7 +6,7 @@ from django.test import override_settings
 from server import oauth
 from server.handlers.wf_module import set_params, delete, \
         set_stored_data_version, set_notes, set_collapsed, fetch, \
-        generate_secret_access_token, delete_secret
+        generate_secret_access_token, delete_secret, set_secret
 from server.models import ModuleVersion, Workflow
 from server.models.commands import ChangeParametersCommand, \
         ChangeWfModuleNotesCommand, DeleteModuleCommand
@@ -23,6 +23,28 @@ class MockLoadedModule:
 
     def migrate_params(self, values):
         return values
+
+
+TestGoogleSecret = {
+    'id_name': 'google_credentials',
+    'type': 'secret',
+    'secret_logic': {'provider': 'oauth', 'service': 'google'},
+}
+
+
+TestStringSecret = {
+    'id_name': 'string_secret',
+    'type': 'secret',
+    'secret_logic': {
+        'provider': 'string',
+        'label': 'Secret',
+        'pattern': r'\w\w\w',  # 'foo' is invalid; 'wrong' is not
+        'placeholder': 'Secret...',
+        'help': 'Help',
+        'help_url': 'https://example.org',
+        'help_url_prompt': 'Go',
+    }
+}
 
 
 class WfModuleTest(HandlerTestCase):
@@ -400,10 +422,7 @@ class WfModuleTest(HandlerTestCase):
             'id_name': 'g',
             'name': 'g',
             'category': 'Clean',
-            'parameters': [
-                {'id_name': 'google_credentials', 'type': 'secret',
-                 'secret_logic': {'provider': 'oauth', 'service': 'google'}},
-            ],
+            'parameters': [TestGoogleSecret],
         })
         wf_module = workflow.tabs.first().wf_modules.create(
             module_id_name='g',
@@ -426,10 +445,7 @@ class WfModuleTest(HandlerTestCase):
             'id_name': 'g',
             'name': 'g',
             'category': 'Clean',
-            'parameters': [
-                {'id_name': 'google_credentials', 'type': 'secret',
-                 'secret_logic': {'provider': 'oauth', 'service': 'google'}},
-            ],
+            'parameters': [TestGoogleSecret],
         })
         wf_module = workflow.tabs.first().wf_modules.create(
             module_id_name='g',
@@ -452,10 +468,7 @@ class WfModuleTest(HandlerTestCase):
             'id_name': 'g',
             'name': 'g',
             'category': 'Clean',
-            'parameters': [
-                {'id_name': 'google_credentials', 'type': 'secret',
-                 'secret_logic': {'provider': 'oauth', 'service': 'google'}},
-            ],
+            'parameters': [TestGoogleSecret],
         })
         wf_module = workflow.tabs.first().wf_modules.create(
             module_id_name='g',
@@ -477,10 +490,7 @@ class WfModuleTest(HandlerTestCase):
             'id_name': 'g',
             'name': 'g',
             'category': 'Clean',
-            'parameters': [
-                {'id_name': 'google_credentials', 'type': 'secret',
-                 'secret_logic': {'provider': 'oauth', 'service': 'google'}},
-            ],
+            'parameters': [TestGoogleSecret],
         })
         wf_module = workflow.tabs.first().wf_modules.create(
             module_id_name='g',
@@ -505,10 +515,7 @@ class WfModuleTest(HandlerTestCase):
             'id_name': 'g',
             'name': 'g',
             'category': 'Clean',
-            'parameters': [
-                {'id_name': 'google_credentials', 'type': 'secret',
-                 'secret_logic': {'provider': 'oauth', 'service': 'google'}},
-            ],
+            'parameters': [TestGoogleSecret],
         })
         wf_module = workflow.tabs.first().wf_modules.create(
             module_id_name='g',
@@ -539,10 +546,7 @@ class WfModuleTest(HandlerTestCase):
             'id_name': 'g',
             'name': 'g',
             'category': 'Clean',
-            'parameters': [
-                {'id_name': 'google_credentials', 'type': 'secret',
-                 'secret_logic': {'provider': 'oauth', 'service': 'google'}},
-            ],
+            'parameters': [TestGoogleSecret],
         })
         wf_module = workflow.tabs.first().wf_modules.create(
             module_id_name='g',
@@ -573,10 +577,7 @@ class WfModuleTest(HandlerTestCase):
             'id_name': 'g',
             'name': 'g',
             'category': 'Clean',
-            'parameters': [
-                {'id_name': 'google_credentials', 'type': 'secret',
-                 'secret_logic': {'provider': 'oauth', 'service': 'google'}},
-            ],
+            'parameters': [TestGoogleSecret],
         })
         wf_module = workflow.tabs.first().wf_modules.create(
             module_id_name='g',
@@ -598,10 +599,7 @@ class WfModuleTest(HandlerTestCase):
             'id_name': 'g',
             'name': 'g',
             'category': 'Clean',
-            'parameters': [
-                {'id_name': 'google_credentials', 'type': 'secret',
-                 'secret_logic': {'provider': 'oauth', 'service': 'google'}},
-            ],
+            'parameters': [TestGoogleSecret],
         })
         wf_module = workflow.tabs.first().wf_modules.create(
             module_id_name='g',
@@ -623,14 +621,15 @@ class WfModuleTest(HandlerTestCase):
             'name': 'g',
             'category': 'Clean',
             'parameters': [
-                {'id_name': 'google_credentials', 'type': 'string'},
+                TestGoogleSecret,
+                {'id_name': 'foo', 'type': 'string'},
             ],
         })
         wf_module = workflow.tabs.first().wf_modules.create(
             module_id_name='g',
             order=0,
             params={'foo': 'bar'},
-            secrets={}
+            secrets={'google_credentials': {'name': 'a', 'secret': 'hello'}}
         )
 
         response = self.run_handler(delete_secret, user=user,
@@ -639,6 +638,10 @@ class WfModuleTest(HandlerTestCase):
         self.assertResponse(response, data=None)
         wf_module.refresh_from_db()
         self.assertEqual(wf_module.params, {'foo': 'bar'})
+        self.assertEqual(
+            wf_module.secrets,
+            {'google_credentials': {'name': 'a', 'secret': 'hello'}}
+        )
 
     @patch('server.models.loaded_module.LoadedModule.for_module_version_sync',
            MockLoadedModule)
@@ -652,10 +655,7 @@ class WfModuleTest(HandlerTestCase):
             'id_name': 'g',
             'name': 'g',
             'category': 'Clean',
-            'parameters': [
-                {'id_name': 'google_credentials', 'type': 'secret',
-                 'secret_logic': {'provider': 'oauth', 'service': 'google'}},
-            ],
+            'parameters': [TestGoogleSecret],
         })
         wf_module = workflow.tabs.first().wf_modules.create(
             module_id_name='g',
@@ -674,3 +674,86 @@ class WfModuleTest(HandlerTestCase):
         delta = send_delta.call_args[0][1]
         wf_module_delta = delta['updateWfModules'][str(wf_module.id)]
         self.assertEqual(wf_module_delta['secrets'], {})
+
+    def test_set_secret_writer_access_denied(self):
+        user = User.objects.create(email='write@example.org')
+        workflow = Workflow.create_and_init(public=True)
+        workflow.acl.create(email=user.email, can_edit=True)
+        ModuleVersion.create_or_replace_from_spec({
+            'id_name': 'g',
+            'name': 'g',
+            'category': 'Clean',
+            'parameters': [TestStringSecret],
+        })
+        wf_module = workflow.tabs.first().wf_modules.create(module_id_name='g',
+                                                            order=0)
+        response = self.run_handler(set_secret, user=user,
+                                    workflow=workflow, wfModuleId=wf_module.id,
+                                    param='string_secret', secret='foo')
+        self.assertResponse(response,
+                            error='AuthError: no owner access to workflow')
+
+    def test_set_secret_error_not_a_secret(self):
+        user = User.objects.create()
+        workflow = Workflow.create_and_init(owner=user)
+        ModuleVersion.create_or_replace_from_spec({
+            'id_name': 'g',
+            'name': 'g',
+            'category': 'Clean',
+            'parameters': [
+                {'id_name': 'string_secret', 'type': 'string'},
+            ],
+        })
+        wf_module = workflow.tabs.first().wf_modules.create(
+            module_id_name='g',
+            order=0,
+            params={'string_secret': 'bar'},
+            secrets={}
+        )
+
+        response = self.run_handler(set_secret, user=user,
+                                    workflow=workflow, wfModuleId=wf_module.id,
+                                    param='string_secret', secret='foo')
+        self.assertResponse(
+            response,
+            error='BadRequest: param is not a secret string parameter'
+        )
+        wf_module.refresh_from_db()
+        self.assertEqual(wf_module.params, {'string_secret': 'bar'})
+        self.assertEqual(wf_module.secrets, {})
+
+    @patch('server.models.loaded_module.LoadedModule.for_module_version_sync',
+           MockLoadedModule)
+    @patch('server.websockets.ws_client_send_delta_async')
+    def test_set_secret_happy_path(self, send_delta):
+        send_delta.return_value = async_noop()
+
+        user = User.objects.create()
+        workflow = Workflow.create_and_init(owner=user)
+        ModuleVersion.create_or_replace_from_spec({
+            'id_name': 'g',
+            'name': 'g',
+            'category': 'Clean',
+            'parameters': [TestStringSecret],
+        })
+        wf_module = workflow.tabs.first().wf_modules.create(
+            module_id_name='g',
+            order=0,
+        )
+
+        response = self.run_handler(set_secret, user=user,
+                                    workflow=workflow, wfModuleId=wf_module.id,
+                                    param='string_secret', secret='foo')
+        self.assertResponse(response, data=None)
+        wf_module.refresh_from_db()
+        self.assertEqual(wf_module.secrets['string_secret']['secret'], 'foo')
+        self.assertIsInstance(wf_module.secrets['string_secret']['name'], str)
+
+        send_delta.assert_called()
+        delta = send_delta.call_args[0][1]
+        wf_module_delta = delta['updateWfModules'][str(wf_module.id)]
+        self.assertEqual(wf_module_delta['secrets'], {
+            'string_secret': {
+                'name': wf_module.secrets['string_secret']['name'],
+            },
+        })

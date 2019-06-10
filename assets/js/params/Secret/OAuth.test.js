@@ -11,7 +11,7 @@ describe('OAuth', () => {
         name='x'
         startCreateSecret={jest.fn()}
         deleteSecret={jest.fn()}
-        secret={{name: 'a secret'}}
+        secretMetadata={{name: 'a secret'}}
         secretLogic={{service: 'google'}}
         {...extraProps}
         />
@@ -24,14 +24,14 @@ describe('OAuth', () => {
   })
 
   it('renders without a secret', () => {
-    const w = wrapper({ secret: null })
+    const w = wrapper({ secretMetadata: null })
     expect(w.find('button.connect')).toHaveLength(1)
     w.find('button.connect').simulate('click')
     expect(w.prop('startCreateSecret')).toHaveBeenCalledWith('x')
   })
 
   it('disconnects', () => {
-    const w = wrapper({ secret: { name: 'foo@example.org' } })
+    const w = wrapper({ secretMetadata: { name: 'foo@example.org' } })
     w.find('button.disconnect').simulate('click')
     expect(w.prop('deleteSecret')).toHaveBeenCalledWith('x')
   })

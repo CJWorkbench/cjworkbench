@@ -25,6 +25,7 @@ const SET_WF_MODULE_COLLAPSED = 'SET_WF_MODULE_COLLAPSED'
 const REQUEST_WF_MODULE_FETCH = 'REQUEST_WF_MODULE_FETCH'
 const UPDATE_WF_MODULE = 'UPDATE_WF_MODULE'
 const SET_WF_MODULE_PARAMS = 'SET_WF_MODULE_PARAMS'
+const SET_WF_MODULE_SECRET = 'SET_WF_MODULE_SECRET'
 
 // Data versions/notifications
 const SET_DATA_VERSION = 'SET_DATA_VERSION'
@@ -687,6 +688,24 @@ registerReducerFunc(SET_WF_MODULE_PARAMS + '_PENDING', (state, action) => {
     }
   }
 })
+
+export function setWfModuleSecretAction (wfModuleId, param, secret) {
+  return (dispatch, getState, api) => {
+    const { workflow } = getState()
+
+    return dispatch({
+      type: SET_WF_MODULE_SECRET,
+      payload: {
+        promise: api.setSecret(wfModuleId, param, secret),
+        data: {
+          wfModuleId,
+          param
+        }
+      }
+    })
+  }
+}
+
 
 // --- Data Version actions ---
 

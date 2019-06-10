@@ -288,12 +288,15 @@ definitions:
                                     - const: google
                                     - const: twitter
                       - type: object
-                        required: [ provider, label, placeholder, help ]
+                        required: [ provider, pattern, label, placeholder, help, help_url, help_url_prompt ]
                         properties:
                             provider: { const: string }
                             label:
                                 type: string
                                 description: Text above the field
+                            pattern:
+                                type: string
+                                description: "Regex (with re2 syntax) the secret value must match"
                             placeholder:
                                 type: string
                                 description: Text to show when field is empty

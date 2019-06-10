@@ -4,6 +4,7 @@ import functools
 from typing import Any, Dict, List, Optional
 from dateutil.parser import isoparse
 from django.conf import settings
+from django.utils import timezone
 from cjworkbench.sync import database_sync_to_async
 from server import oauth, rabbitmq, websockets
 from server.models import Workflow, WfModule
@@ -275,15 +276,15 @@ def _wf_module_delete_secret_and_build_delta(
     Raise Workflow.DoesNotExist if the Workflow was deleted.
     """
     with workflow.cooperative_lock():  # raises Workflow.DoesNotExist
-        wf_module.refresh_from_db()  # may return None
+        try:
+            wf_module.refresh_from_db()
+        except WfModule.DoesNotExist:
+            return None  # no-op
 
-        if (
-            wf_module is None
-            or wf_module.secrets.get(param) is None
-        ):
-            return None
+        if wf_module.secrets.get(param) is None:
+            return None  # no-op
 
-        wf_module.secrets = dict(wf_module.secrets)
+        wf_module.secrets = dict(wf_module.secrets)  # shallow copy
         del wf_module.secrets[param]
         wf_module.save(update_fields=['secrets'])
 
@@ -303,5 +304,87 @@ async def delete_secret(workflow: Workflow, wf_module: WfModule, param: str,
                         **kwargs):
     delta = await _wf_module_delete_secret_and_build_delta(workflow, wf_module,
                                                            param)
+    if delta:
+        await websockets.ws_client_send_delta_async(workflow.id, delta)
+
+
+@database_sync_to_async
+def _wf_module_set_secret_and_build_delta(
+    workflow: Workflow,
+    wf_module: WfModule,
+    param: str,
+    secret: str
+) -> Optional[Dict[str, Any]]:
+    """
+    Write a new secret to `wf_module`, or raise.
+
+    Return a "delta" for websockets.ws_client_send_delta_async(), or `None` if
+    the database is not modified.
+
+    Raise Workflow.DoesNotExist if the Workflow was deleted.
+    """
+    with workflow.cooperative_lock():  # raises Workflow.DoesNotExist
+        try:
+            wf_module.refresh_from_db()
+        except WfModule.DoesNotExist:
+            return None  # no-op
+
+        if wf_module.secrets.get(param, {}).get('secret') == secret:
+            return None  # no-op
+
+        module_version = wf_module.module_version
+        if module_version is None:
+            raise HandlerError(f'BadRequest: ModuleVersion does not exist')
+        if not any(p.type == 'secret' and p.secret_logic.provider == 'string'
+                   for p in module_version.param_fields):
+            raise HandlerError(
+                f'BadRequest: param is not a secret string parameter'
+            )
+
+        created_at = timezone.now()
+        created_at_str = (
+            created_at.strftime('%Y-%m-%dT%H:%M:%S')
+            + '.'
+            + created_at.strftime('%f')[0:3]  # milliseconds
+            + 'Z'
+        )
+
+        wf_module.secrets = {
+            **wf_module.secrets,
+            param: {
+                'name': created_at_str,
+                'secret': secret,
+            }
+        }
+        wf_module.save(update_fields=['secrets'])
+
+        return {
+            'updateWfModules': {
+                str(wf_module.id): {
+                    'secrets': wf_module.secret_metadata,
+                }
+            }
+        }
+
+
+@register_websockets_handler
+@websockets_handler('owner')
+@_loading_wf_module
+async def set_secret(workflow: Workflow, wf_module: WfModule, param: str,
+                     secret: str, **kwargs):
+    """
+    Set a secret value `secret` on param `param`.
+
+    `param` must point to a `secret` parameter with
+    `secret_logic.provider == 'string'`. The server will set the `name` to
+    the ISO8601-formatted representation of the current time, if `secret` is
+    set to something new.
+    """
+    # Be safe with types
+    param = str(param)
+    secret = str(secret)
+    delta = await _wf_module_set_secret_and_build_delta(workflow, wf_module,
+                                                        param, secret)
+
     if delta:
         await websockets.ws_client_send_delta_async(workflow.id, delta)

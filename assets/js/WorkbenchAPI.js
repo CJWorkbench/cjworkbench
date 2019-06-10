@@ -377,6 +377,14 @@ export default class WorkbenchAPI {
     })
   }
 
+  setSecret (wfModuleId, param, secret) {
+    return this._callExpectingNull('wf_module.set_secret', {
+      wfModuleId,
+      param,
+      secret
+    })
+  }
+
   get uploadManager () {
     if (!this._uploadManager) {
       this._uploadManager = new UploadManager(this.websocket)

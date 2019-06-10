@@ -1,4 +1,5 @@
 from __future__ import annotations
+import re2
 from abc import ABC, abstractmethod
 from dataclasses import asdict, dataclass, field
 from typing import Any, Dict, FrozenSet, List, Optional, Union
@@ -163,10 +164,14 @@ class SecretLogicOauth:
 class SecretLogicString:
     provider: str  # 'string', always
     label: str
+    pattern: str
     placeholder: str
     help: str
     help_url_prompt: str
     help_url: str
+
+    def __post_init__(self):
+        re2.compile(self.pattern)  # raise error if invalid
 
 
 @dataclass(frozen=True)

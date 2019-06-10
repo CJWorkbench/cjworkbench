@@ -65,6 +65,7 @@ export default class ParamsForm extends React.PureComponent {
     applyQuickFix: PropTypes.func.isRequired, // func(action, args) => undefined
     startCreateSecret: PropTypes.func.isRequired, // func(idName) => undefined
     deleteSecret: PropTypes.func.isRequired, // func(idName) => undefined
+    submitSecret: PropTypes.func.isRequired, // func(idName, secretString) => undefined
     onChange: PropTypes.func.isRequired, // func(newValues) => undefined
     onSubmit: PropTypes.func.isRequired, // func() => undefined
   }
@@ -193,7 +194,7 @@ export default class ParamsForm extends React.PureComponent {
   render () {
     const { api, isReadOnly, isZenMode, wfModuleId, wfModuleOutputError, isWfModuleBusy,
             inputWfModuleId, inputDeltaId, inputColumns, tabs, currentTab, applyQuickFix,
-            startCreateSecret, deleteSecret, fields, files, secrets } = this.props
+            startCreateSecret, deleteSecret, submitSecret, fields, files, secrets } = this.props
     const isEditing = this.isEditing
 
     const upstreamValue = this.props.value
@@ -232,7 +233,7 @@ export default class ParamsForm extends React.PureComponent {
               {...paramFieldToParamProps(field)}
               secretMetadata={field.secretParameter ? secrets[field.secretParameter] : undefined}
               upstreamValue={upstreamValue ? upstreamValue[field.idName] : null}
-              secret={secrets ? secrets[field.idName] : null}
+              secretMetadata={secrets ? secrets[field.idName] : null}
               value={value ? value[field.idName] : null}
               files={files}
               wfModuleId={wfModuleId}
@@ -246,6 +247,7 @@ export default class ParamsForm extends React.PureComponent {
               applyQuickFix={applyQuickFix}
               startCreateSecret={startCreateSecret}
               deleteSecret={deleteSecret}
+              submitSecret={submitSecret}
               selectedColumn={selectedColumn}
               selectedTab={selectedTab}
               onChange={this.onChange}

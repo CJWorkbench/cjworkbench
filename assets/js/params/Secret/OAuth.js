@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 export default class OAuth extends React.PureComponent {
   static propTypes = {
     name: PropTypes.string.isRequired,
-    secret: PropTypes.shape({
+    secretMetadata: PropTypes.shape({
       name: PropTypes.string.isRequired,
     }), // null if not set
     startCreateSecret: PropTypes.func.isRequired, // func(name) => undefined
@@ -25,13 +25,13 @@ export default class OAuth extends React.PureComponent {
   }
 
   render () {
-    const { secret, secretLogic } = this.props
+    const { secretMetadata, secretLogic } = this.props
 
     let contents
-    if (secret) {
+    if (secretMetadata) {
       contents = (
         <React.Fragment>
-          <p className="secret-name">{secret.name}</p>
+          <p className='secret-name'>{secretMetadata.name}</p>
           <button type='button' className='disconnect' onClick={this.deleteSecret}>Sign out</button>
         </React.Fragment>
       )

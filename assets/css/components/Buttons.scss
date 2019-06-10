@@ -280,7 +280,7 @@ button:focus { outline:0 !important; }
   }
 }
 
-.button-white {
+@mixin button-white {
   color: white;
   border-color: $white;
   background-color: transparent;
@@ -290,6 +290,9 @@ button:focus { outline:0 !important; }
   &:active, &:active .spinner::after {
     background-color: $light-accent--Vstrong;
   }
+}
+.button-white {
+  @include button-white;
 }
 
 .button-white--fill {
@@ -476,6 +479,8 @@ button:focus { outline:0 !important; }
 
 @mixin action-link {
   border: 0;
+  display: inline;
+  padding: 0;
   cursor: pointer;
   color: $workspace-action;
   font-weight: bold;

@@ -16,6 +16,7 @@ import {
   quickFixAction,
   setSelectedWfModuleAction,
   setWfModuleParamsAction,
+  setWfModuleSecretAction,
   setWfModuleCollapsedAction,
   setWfModuleNotesAction
 } from '../../workflow-reducer'
@@ -67,6 +68,7 @@ export class WfModule extends React.PureComponent {
     isSelected: PropTypes.bool.isRequired,
     isAfterSelected: PropTypes.bool.isRequired,
     setWfModuleParams: PropTypes.func, // func(wfModuleId, { paramidname: newVal }) => undefined
+    setWfModuleSecret: PropTypes.func, // func(wfModuleId, param, secret) => undefined
     removeModule: PropTypes.func,
     api: PropTypes.object.isRequired,
     onDragStart: PropTypes.func, // func({ type:'WfModule',id,index }) => undefined; null if not draggable
@@ -236,6 +238,12 @@ export class WfModule extends React.PureComponent {
 
   onChange = (edits) => {
     this.setState({ edits })
+  }
+
+  submitSecret = (param, secret) => {
+    const { setWfModuleSecret, wfModule } = this.props
+    if (!wfModule) return
+    setWfModuleSecret(wfModule.id, param, secret)
   }
 
   onSubmit = () => {
@@ -460,6 +468,7 @@ export class WfModule extends React.PureComponent {
                     currentTab={currentTab}
                     applyQuickFix={this.applyQuickFix}
                     startCreateSecret={this.startCreateSecret}
+                    submitSecret={this.submitSecret}
                     deleteSecret={this.deleteSecret}
                     onChange={this.onChange}
                     onSubmit={this.onSubmit}
@@ -575,6 +584,7 @@ const mapDispatchToProps = {
   setSelectedWfModule: setSelectedWfModuleAction,
   setWfModuleCollapsed: setWfModuleCollapsedAction,
   setWfModuleParams: setWfModuleParamsAction,
+  setWfModuleSecret: setWfModuleSecretAction,
   maybeRequestFetch: maybeRequestWfModuleFetchAction,
   applyQuickFix: quickFixAction,
   setWfModuleNotes: setWfModuleNotesAction,
