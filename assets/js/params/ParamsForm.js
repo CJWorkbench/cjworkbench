@@ -224,36 +224,44 @@ export default class ParamsForm extends React.PureComponent {
         onKeyDown={this.onKeyDown}
       >
         <div className='params'>
-          {visibleFields.map(field => (
-            <Param
-              api={api}
-              isReadOnly={isReadOnly}
-              isZenMode={isZenMode}
-              key={field.idName}
-              {...paramFieldToParamProps(field)}
-              secretMetadata={field.secretParameter ? secrets[field.secretParameter] : undefined}
-              upstreamValue={upstreamValue ? upstreamValue[field.idName] : null}
-              secretMetadata={secrets ? secrets[field.idName] : null}
-              value={value ? value[field.idName] : null}
-              files={files}
-              wfModuleId={wfModuleId}
-              wfModuleOutputError={wfModuleOutputError}
-              isWfModuleBusy={isWfModuleBusy}
-              inputWfModuleId={inputWfModuleId}
-              inputDeltaId={inputDeltaId}
-              inputColumns={inputColumns}
-              tabs={tabs}
-              currentTab={currentTab}
-              applyQuickFix={applyQuickFix}
-              startCreateSecret={startCreateSecret}
-              deleteSecret={deleteSecret}
-              submitSecret={submitSecret}
-              selectedColumn={selectedColumn}
-              selectedTab={selectedTab}
-              onChange={this.onChange}
-              onSubmit={this.onSubmit}
-            />
-          ))}
+          {visibleFields.map(field => {
+            let secretMetadata = null
+            if (field.type === 'secret' && secrets) {
+              secretMetadata = secrets[field.idName] || null
+            } else if (field.secretParameter && secrets) {
+              secretMetadata = secrets[field.secretParameter] || null
+            }
+
+            return (
+              <Param
+                api={api}
+                isReadOnly={isReadOnly}
+                isZenMode={isZenMode}
+                key={field.idName}
+                {...paramFieldToParamProps(field)}
+                upstreamValue={upstreamValue ? upstreamValue[field.idName] : null}
+                secretMetadata={secretMetadata}
+                value={value ? value[field.idName] : null}
+                files={files}
+                wfModuleId={wfModuleId}
+                wfModuleOutputError={wfModuleOutputError}
+                isWfModuleBusy={isWfModuleBusy}
+                inputWfModuleId={inputWfModuleId}
+                inputDeltaId={inputDeltaId}
+                inputColumns={inputColumns}
+                tabs={tabs}
+                currentTab={currentTab}
+                applyQuickFix={applyQuickFix}
+                startCreateSecret={startCreateSecret}
+                deleteSecret={deleteSecret}
+                submitSecret={submitSecret}
+                selectedColumn={selectedColumn}
+                selectedTab={selectedTab}
+                onChange={this.onChange}
+                onSubmit={this.onSubmit}
+              />
+            )
+          })}
         </div>
         <ParamsFormFooter
           wfModuleId={wfModuleId}

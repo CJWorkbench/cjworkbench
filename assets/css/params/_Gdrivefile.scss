@@ -1,11 +1,6 @@
 .param-gdrivefile {
   padding-top: 1rem;
   font-size: 1.4rem;
-  align-items: left;
-
-  .not-signed-in {
-    display: none
-  }
 
   .change-file {
     @include content-1;
@@ -23,16 +18,21 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    margin-bottom: 2.5rem; // space for the "Change" button
   }
 
   button.change-file {
-    display: inline-block;
-    position: relative;
+    // The "Change" button is not always visible. We'll set it to
+    // position:absolute so it doesn't actually affect flow; we position
+    // it using a negative `margin-top` -- the .file-info above it has a
+    // margin-bottom that makes space for it.
     @include action-link;
+    display: inline-block;
+    position: absolute;
+    margin-top: -2.5rem;
     color: $brand-orange;
     &:hover {
       color: $dark-orange;
     }
-    margin-bottom: 1rem; // [adamhooper, 2019-06-10] margin should really be on top of the next element, .param-checkbox
   }
 }

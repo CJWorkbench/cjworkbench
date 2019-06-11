@@ -101,10 +101,63 @@ describe('ParamsForm', () => {
 
       expect(w.instance().props.onChange).not.toHaveBeenCalled()
     })
+
+    it('should set secretMetadata when the field is of type secret', () => {
+      const w = wrapper({
+        fields: [
+          field('a', 'secret', {
+            secret_logic: { provider: 'oauth', service: 'google' }
+          })
+        ],
+        value: {},
+        secrets: { a: { name: 'a@example.com' } }
+      })
+      expect(w.find('Param[name="a"]').prop('secretMetadata')).toEqual({ name: 'a@example.com' })
+    })
+
+    it('should set secretMetadata=null when the field of type secret has no value', () => {
+      const w = wrapper({
+        fields: [
+          field('a', 'secret', {
+            secret_logic: { provider: 'oauth', service: 'google' }
+          })
+        ],
+        value: {},
+        secrets: {},
+      })
+      expect(w.find('Param[name="a"]').prop('secretMetadata')).toBe(null)
+    })
+
+    it('should set secretMetadata when the field has a secretParameter', () => {
+      const w = wrapper({
+        fields: [
+          field('a', 'secret', {
+            secret_logic: { provider: 'oauth', service: 'google' }
+          }),
+          field('b', 'string', { secretParameter: 'a' })
+        ],
+        value: { b: 'foo' },
+        secrets: { a: { name: 'a@example.com' } }
+      })
+      expect(w.find('Param[name="b"]').prop('secretMetadata')).toEqual({ name: 'a@example.com' })
+    })
+
+    it('should set secretMetadata=null when the field has a secretParameter with no secret set', () => {
+      const w = wrapper({
+        fields: [
+          field('a', 'secret', {
+            secret_logic: { provider: 'oauth', service: 'google' }
+          }),
+          field('b', 'string', { secretParameter: 'a' })
+        ],
+        value: { b: 'foo' },
+        secrets: {}
+      })
+      expect(w.find('Param[name="b"]').prop('secretMetadata')).toBe(null)
+    })
   })
 
-  describe('conditional parameter visibility', () => {
-    // These tests depend on there being a WfParameter id named menu_select that is set to "Banana"
+  describe('visibleIf', () => {
     it('should show conditional parameter matching menu value', () => {
       const w = wrapper({
         fields: [

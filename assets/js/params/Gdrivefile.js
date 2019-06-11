@@ -87,6 +87,19 @@ class PickerFactory {
 }
 
 
+function FileInfo ({ id, name, url }) {
+  if (!id) {
+    return (
+      <a className='file-info empty'>(please choose a file)</a>
+    )
+  } else {
+    return (
+      <a className='file-info' title={`Open in Google Sheets: ${name}`} target='_blank' href={url}>{name}</a>
+    )
+  }
+}
+
+
 let googleApiLoadedPromise = null
 /**
  * Load Google APIs globally (if they haven't been loaded already); return
@@ -233,43 +246,37 @@ export default class Gdrivefile extends React.PureComponent {
     const { pickerFactory, loadingAccessToken, unauthenticated } = this.state
     const { value, secretMetadata, isReadOnly } = this.props
 
-    const defaultFileName = ''
-    const fileId = value ? (value.id || null) : null
-    const fileName = value ? (value.name || defaultFileName) : defaultFileName
-    const fileUrl = value ? (value.url || null) : null
-
-    let button
     if (!isReadOnly) {
       if (loadingAccessToken || !pickerFactory) {
-        button = (
-          <p className="loading">Loading...</p>
+        return (
+          <a className='file-info'><p className="loading">Loading...</p></a>
         )
       } else if (unauthenticated) {
-        button = (
-          <p className="sign-in-error">failure: please reconnect</p>
+        return (
+          <a className='file-info'><p className="sign-in-error">failure: please reconnect</p></a>
         )
       } else if (!secretMetadata) {
-        button = (
-          <p className="not-signed-in">(not signed in)</p>
-        )
-      } else {
-        button = (
-          <button
-            type='button'
-            className='change-file'
-            onClick={this.openPicker}
-          >
-            {fileId ? 'Change' : 'Choose'}
-          </button>
+        return (
+          <a className='file-info'><p className="not-signed-in">(please sign in)</p></a>
         )
       }
     }
 
     return (
-      <React.Fragment>
-        <a className='file-info' title={`Open in Google Sheets: ${fileName}`} target='_blank' href={fileUrl}>{fileName}</a>
-        {button}
-      </React.Fragment>
+      <>
+        <FileInfo
+          {...(value || {})}
+        />
+        {!isReadOnly ? (
+          <button
+            type='button'
+            className='change-file'
+            onClick={this.openPicker}
+          >
+            {value ? 'Change' : 'Choose'}
+          </button>
+        ) : null}
+      </>
     )
   }
 }
