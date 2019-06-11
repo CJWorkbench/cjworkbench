@@ -507,7 +507,7 @@ class WfModuleTest(HandlerTestCase):
     @patch('server.models.loaded_module.LoadedModule.for_module_version_sync',
            MockLoadedModule)
     @patch('server.oauth.OAuthService.lookup_or_none', lambda _: None)
-    @override_settings(PARAMETER_OAUTH_SERVICES={'twitter_credentials': {}})
+    @override_settings(OAUTH_SERVICES={'twitter': {}})
     def test_generate_secret_access_token_no_service_gives_error(self):
         user = User.objects.create()
         workflow = Workflow.create_and_init(owner=user)
@@ -528,7 +528,7 @@ class WfModuleTest(HandlerTestCase):
                                     wfModuleId=wf_module.id,
                                     param='google_credentials')
         self.assertResponse(response, error=(
-            'AuthError: we only support twitter_credentials'
+            'AuthError: we only support twitter'
         ))
 
     @patch('server.models.loaded_module.LoadedModule.for_module_version_sync',

@@ -32,6 +32,7 @@ tmp/
 importedmodules/
 
 client_secret.json
+intercom_secret.json
 socialaccounts_secrets.json
 twitter_secret.json
 

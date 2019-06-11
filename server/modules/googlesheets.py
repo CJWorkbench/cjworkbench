@@ -15,10 +15,10 @@ def _build_requests_session(secret: _Secret) -> Union[requests.Session, str]:
     """Prepare a Requests session, so caller can then call
     `session.get(url)`.
     """
-    service = oauth.OAuthService.lookup_or_none('google_credentials')
+    service = oauth.OAuthService.lookup_or_none('google')
     if not service:
         return (
-            'google_credentials not configured. '
+            'google not configured. '
             'Please restart Workbench with a Google secret.'
         )
 

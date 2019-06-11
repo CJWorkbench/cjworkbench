@@ -52,7 +52,7 @@ class OAuthService:
 
     .. code-block:: python
 
-        service = OAuthService.lookup_or_none('google_analytics')
+        service = OAuthService.lookup_or_none('google')
         url, state = service.generate_redirect_url_and_state()
         request.session['oauth-state'] = state # prevent CSRF
         redirect(url)
@@ -69,7 +69,7 @@ class OAuthService:
     .. code-block:: python
 
         expect_state = request.session['oauth-state'] # _our_ CSRF check
-        service = OAuthService.lookup_or_none('google_analytics')
+        service = OAuthService.lookup_or_none('google')
         token = service.acquire_refresh_token_or_str_error(request.GET, expect_state)
         if isinstance(token, str): return token
         email = service.extract_email_from_token(token)
@@ -82,7 +82,7 @@ class OAuthService:
 
     .. code-block:: python
 
-        service = OAuthService.lookup_or_none('google_analytics')
+        service = OAuthService.lookup_or_none('google')
         token = get_token_we_saved_in_step_2()
         requests = service.requests_or_str_error(token)
         if isinstance(requests, str): return HttpResponseForbidden(requests)
@@ -109,7 +109,8 @@ class OAuthService:
 
     def acquire_refresh_token_or_str_error(self, GET: Dict[str, str],
                                            expect_state: str) -> Union[OfflineToken, str]:
-        """Request a refresh token from the service.
+        """
+        Request a refresh token from the service.
 
         Return a str message on error. Caller should present this error to
         the user.
@@ -118,8 +119,9 @@ class OAuthService:
 
 
     def extract_email_from_token(self, token: OfflineToken) -> str:
-        """Extract the user account name from the token.
-        
+        """
+        Extract the user account name from the token.
+
         This is fast: it not require an HTTP request.
         """
         raise NotImplementedError
@@ -141,9 +143,9 @@ class OAuthService:
     def lookup_or_none(service_id: str) -> Optional['OAuthService']:
         """Return an OAuthService (if service is configured) or None.
         """
-        if service_id not in settings.PARAMETER_OAUTH_SERVICES: return None
+        if service_id not in settings.OAUTH_SERVICES: return None
 
-        service_dict = dict(settings.PARAMETER_OAUTH_SERVICES[service_id])
+        service_dict = dict(settings.OAUTH_SERVICES[service_id])
         class_name = service_dict.pop('class')
         klass = _classes[class_name]
 
@@ -267,26 +269,27 @@ class OAuth2(OAuthService):
                 client_secret=self.client_secret,
                 token_url=self.token_url,
                 code=GET['code'],
-                timeout=30
+                include_client_id=True,  # for Intercom
+                timeout=30,
             )
         except OAuth2Error as err:
             return str(err)
 
-        if not token.get('refresh_token'):
-            return f'{self.service_id} returned a token without refresh_token'
-
-        if not token.get('id_token'):
-            # Is this Google-specific? OpenID-specific? If so, we may need
-            # some other implementation of extract_email_from_token() when we
-            # expand to more services.
-            return f'{self.service_id} returned a token without JWT id_token'
+        # Google secrets are dicts with {'refresh_token':..., 'id_token': ...}
+        # Intercom secrets are dicts with {'access_token': ..., 'token': ...}
+        # (and access_token == token).
 
         return token
 
 
     def extract_username_from_token(self, token: OfflineToken) -> str:
-        data = jwt.decode(token['id_token'], verify=False)
-        return data['email']
+        try:
+            # Google provides a JWT-encoded id_token
+            data = jwt.decode(token['id_token'], verify=False)
+            return data['email']
+        except KeyError:
+            # Intercom provides no information at all about the user
+            return '(connected)'
 
 
     def generate_access_token_or_str_error(self, token: OfflineToken

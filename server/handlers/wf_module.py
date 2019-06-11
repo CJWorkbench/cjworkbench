@@ -11,6 +11,7 @@ from server.models import Workflow, WfModule
 from server.models.commands import ChangeParametersCommand, \
         DeleteModuleCommand, ChangeDataVersionCommand, \
         ChangeWfModuleNotesCommand
+from server.models.param_spec import ParamSpec
 from .types import HandlerError
 from .decorators import register_websockets_handler, websockets_handler
 
@@ -202,6 +203,37 @@ async def fetch(workflow: Workflow, wf_module: WfModule, **kwargs):
         }
     })
 
+@database_sync_to_async
+def _lookup_service(wf_module: WfModule, param: str) -> oauth.OAuthService:
+    """
+    Find the OAuthService that manages `param` on `wf_module`.
+
+    Raise `HandlerError` if we cannot.
+    """
+    module_version = wf_module.module_version
+    if module_version is None:
+        raise HandlerError(
+            'BadRequest: module {wf_module.module_id_name} not found'
+        )
+    for field in module_version.param_fields:
+        if (
+            field.id_name == param
+            and isinstance(field, ParamSpec.Secret)
+            and isinstance(field.secret_logic, ParamSpec.Secret.Logic.Oauth)
+        ):
+            service_name = field.secret_logic.service
+            service = oauth.OAuthService.lookup_or_none(service_name)
+            if not service:
+                allowed_services = ', '.join(settings.OAUTH_SERVICES.keys())
+                raise HandlerError(
+                    f'AuthError: we only support {allowed_services}'
+                )
+            return service
+    else:
+        raise HandlerError(
+            f'Module {wf_module.module_id_name} has no oauth {param} parameter'
+        )
+
 
 @register_websockets_handler
 @websockets_handler('owner')
@@ -240,13 +272,7 @@ async def generate_secret_access_token(workflow: Workflow, wf_module: WfModule,
         # Empty JSON -- no value has been set
         return {'token': None}
 
-    service = oauth.OAuthService.lookup_or_none(param)
-    if not service:
-        allowed_services = settings.PARAMETER_OAUTH_SERVICES.keys()
-        raise HandlerError(
-            f'AuthError: we only support {", ".join(allowed_services)}'
-        )
-
+    service = await _lookup_service(wf_module, param)  # raise HandlerError
     # TODO make oauth async. In the meantime, move these HTTP requests to a
     # background thread.
     loop = asyncio.get_event_loop()

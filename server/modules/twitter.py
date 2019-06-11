@@ -184,7 +184,7 @@ def statuses_to_dataframe(statuses: List[Dict[str, Any]]) -> pd.DataFrame:
 async def fetch_from_twitter(access_token, path, params: List[Tuple[str, str]],
                              since_id: Optional[int], per_page: int,
                              n_pages: int) -> List[Dict[str, Any]]:
-    service = oauth.OAuthService.lookup_or_none('twitter_credentials')
+    service = oauth.OAuthService.lookup_or_none('twitter')
     if not service:
         raise Exception('Twitter connection misconfigured')
 

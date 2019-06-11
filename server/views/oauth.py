@@ -1,5 +1,6 @@
 from collections import namedtuple
 import logging
+from typing import Tuple
 from asgiref.sync import async_to_sync
 from django.http import HttpRequest, HttpResponse, HttpResponseForbidden, \
         HttpResponseNotFound
@@ -22,10 +23,19 @@ Scope = namedtuple('Scope', (
 ))
 
 
-def _load_sane_wf_module_for_param(workflow: Workflow, wf_module_id: int,
-                                   param: str) -> WfModule:
+class OauthServiceNotConfigured(Exception):
+    pass
+
+
+class SecretDoesNotExist(Exception):
+    pass
+
+
+def _load_wf_module_and_service(workflow: Workflow, wf_module_id: int,
+                                param: str
+                               ) -> Tuple[WfModule, oauth.OAuthService]:
     """
-    Load WfModule from the database, or raise.
+    Load WfModule and OAuthService from the database, or raise.
 
     Raise WfModule.DoesNotExist if the WfModule is deleted or missing.
 
@@ -45,13 +55,23 @@ def _load_sane_wf_module_for_param(workflow: Workflow, wf_module_id: int,
     module_version = wf_module.module_version
     if module_version is None:
         raise ModuleVersion.DoesNotExist
-
-    # raises ModuleVersion.DoesNotExist
     for field in module_version.param_fields:
-        if field.id_name == param and isinstance(field, ParamSpec.Secret):
-            return wf_module
+        if (
+            isinstance(field, ParamSpec.Secret)
+            and field.id_name == param
+            and isinstance(field.secret_logic, ParamSpec.Secret.Logic.Oauth)
+        ):
+            service_name = field.secret_logic.service
+            service = oauth.OAuthService.lookup_or_none(service_name)
+            if service is None:
+                raise OauthServiceNotConfigured(
+                    f'OAuth not configured for "{service_name}" service'
+                )
+            return wf_module, service
     else:
-        raise ModuleVersion.DoesNotExist
+        raise SecretDoesNotExist(
+            f'Param {param} does not point to an OAuth secret'
+        )
 
 
 def start_authorize(request: HttpRequest, workflow_id: int, wf_module_id: int,
@@ -60,23 +80,16 @@ def start_authorize(request: HttpRequest, workflow_id: int, wf_module_id: int,
     Redirect to the external service's authentication page and write session.
 
     Return 404 if id_name is not configured (e.g., user asked for
-    'google_credentials' but there are no Google creds and so
-    PARAMETER_OAUTH_SERVICES['google_credentials'] does not exist).
+    'google' but OAUTH_SERVICES['google'] does not exist).
 
     This is not done over Websockets because only an HTTP request can write a
     session cookie. (In general, that is. Let's not marry ourselves to in-DB
-    sessions just to use Websockets here.
+    sessions just to use Websockets here.)
     """
     # Type conversions are guaranteed to work because we used URL regexes
     workflow_id = int(workflow_id)
     wf_module_id = int(wf_module_id)
     param = str(param)
-
-    service = oauth.OAuthService.lookup_or_none(param)
-    if not service:
-        return HttpResponseNotFound(
-            f'Oauth service for {param} not configured'
-        )
 
     # Validate workflow_id, wf_module_id and param, and return
     # HttpResponseForbidden if they do not match up
@@ -88,7 +101,8 @@ def start_authorize(request: HttpRequest, workflow_id: int, wf_module_id: int,
             pk=workflow_id
         ) as workflow:
             # raises WfModule.DoesNotExist, ModuleVersion.DoesNotExist
-            _load_sane_wf_module_for_param(workflow, wf_module_id, param)
+            _, service = _load_wf_module_and_service(workflow, wf_module_id,
+                                                     param)
     except Workflow.DoesNotExist as err:
         # Possibilities:
         # str(err) = 'owner access denied'
@@ -96,6 +110,10 @@ def start_authorize(request: HttpRequest, workflow_id: int, wf_module_id: int,
         return HttpResponseForbidden(str(err))
     except (WfModule.DoesNotExist, ModuleVersion.DoesNotExist):
         return HttpResponseForbidden('Step or parameter was deleted.')
+    except SecretDoesNotExist as err:
+        return HttpResponseForbidden(str(err))
+    except OauthServiceNotConfigured as err:
+        return HttpResponseForbidden(str(err))
 
     try:
         url, state = service.generate_redirect_url_and_state()
@@ -160,23 +178,24 @@ def finish_authorize(request: HttpRequest) -> HttpResponse:
             pk=scope.workflow_id
         ) as workflow:
             # raises WfModule.DoesNotExist, ModuleVersion.DoesNotExist
-            wf_module = _load_sane_wf_module_for_param(workflow,
+            wf_module, _ = _load_wf_module_and_service(workflow,
                                                        scope.wf_module_id,
                                                        scope.param)
-
-            # TODO nix 'or {}' when NOT NULL
-            secrets = dict(wf_module.secrets or {})
-            secrets[scope.param] = {
-                'name': username,
-                'secret': offline_token,
+            wf_module.secrets = {
+                **wf_module.secrets,
+                scope.param: {
+                    'name': username,
+                    'secret': offline_token,
+                }
             }
-            wf_module.secrets = secrets
             wf_module.save(update_fields=['secrets'])
+
+            print(repr((scope, wf_module, wf_module.secret_metadata)))
 
             delta_json = {
                 'updateWfModules': {
-                    str(scope.wf_module_id): {
-                        'secrets': secrets,
+                    str(wf_module.id): {
+                        'secrets': wf_module.secret_metadata,
                     }
                 }
             }
@@ -190,15 +209,20 @@ def finish_authorize(request: HttpRequest) -> HttpResponse:
 
     async_to_sync(websockets.ws_client_send_delta_async)(workflow.id,
                                                          delta_json)
-    return HttpResponse(b"""<!DOCTYPE html>
-        <html lang="en-US">
-            <head>
-                <title>Authorized</title>
-            </head>
-            <body>
-                <p class="success">
-                    You have logged in. You can close this window now.
-                </p>
-            </body>
-        </html>
-    """)
+    response = HttpResponse(
+        b"""<!DOCTYPE html>
+            <html lang="en-US">
+                <head>
+                    <title>Authorized</title>
+                </head>
+                <body>
+                    <p class="success">
+                        You have logged in. You may close this window now.
+                    </p>
+                </body>
+            </html>
+        """,
+        content_type='text/html; charset=utf-8',
+    )
+    response['Cache-Control'] = 'no-cache'
+    return response

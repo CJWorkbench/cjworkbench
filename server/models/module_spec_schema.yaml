@@ -287,6 +287,7 @@ definitions:
                                 oneOf:
                                     - const: google
                                     - const: twitter
+                                    - const: intercom
                       - type: object
                         required: [ provider, pattern, label, placeholder, help, help_url, help_url_prompt ]
                         properties:

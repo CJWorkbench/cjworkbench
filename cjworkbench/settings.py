@@ -367,61 +367,71 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 # Third party services
-PARAMETER_OAUTH_SERVICES = {}  # id_name => parameters. See requests-oauthlib docs
+OAUTH_SERVICES = {}  # service => parameters. See requests-oauthlib docs
 
-# Google, for Google Drive.
 
-CJW_GOOGLE_CLIENT_SECRETS_PATH = os.environ.get('CJW_GOOGLE_CLIENT_SECRETS', False)
-if not CJW_GOOGLE_CLIENT_SECRETS_PATH:
-    CJW_GOOGLE_CLIENT_SECRETS_PATH = 'client_secret.json'
+def _maybe_load_oauth_service(name: str, env_var_name: str,
+                              default_path_name: str, parse):
+    path = os.environ.get(env_var_name)
+    if not path:
+        path = os.path.join(BASE_DIR, default_path_name)
+    try:
+        with open(path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+    except FileNotFoundError:
+        print(f'Missing {path}. {name} auth will not work')
+        return
+    config = parse(data)
+    OAUTH_SERVICES[name] = config
 
-CJW_GOOGLE_CLIENT_SECRETS_PATH = os.path.join(BASE_DIR, CJW_GOOGLE_CLIENT_SECRETS_PATH)
 
-GOOGLE_OAUTH2_CLIENT_SECRETS_JSON = None
-if os.path.isfile(CJW_GOOGLE_CLIENT_SECRETS_PATH):
-    GOOGLE_OAUTH2_CLIENT_SECRETS_JSON = CJW_GOOGLE_CLIENT_SECRETS_PATH
+# Google, for Google Drive module
+def _parse_google_oauth(d):
+    return {
+        'class': 'OAuth2',
+        'client_id': d['web']['client_id'],
+        'client_secret': d['web']['client_secret'],
+        'auth_url': d['web']['auth_uri'],
+        'token_url': d['web']['token_uri'],
+        'refresh_url': d['web']['token_uri'],
+        'redirect_url': d['web']['redirect_uris'][0],
+        'scope': ' '.join([
+            'openid',
+            'https://www.googleapis.com/auth/drive.readonly',
+            'https://www.googleapis.com/auth/userinfo.email',
+        ])
+    }
+_maybe_load_oauth_service('google', 'CJW_GOOGLE_CLIENT_SECRETS',
+                          'client_secret.json', _parse_google_oauth)
 
-    with open(GOOGLE_OAUTH2_CLIENT_SECRETS_JSON) as f:
-        d = json.load(f)
-        PARAMETER_OAUTH_SERVICES['google_credentials'] = {
-            'class': 'OAuth2',
-            'client_id': d['web']['client_id'],
-            'client_secret': d['web']['client_secret'],
-            'auth_url': d['web']['auth_uri'],
-            'token_url': d['web']['token_uri'],
-            'refresh_url': d['web']['token_uri'],
-            'redirect_url': d['web']['redirect_uris'][0],
-            'scope': ' '.join([
-                'openid',
-                'https://www.googleapis.com/auth/drive.readonly',
-                'https://www.googleapis.com/auth/userinfo.email',
-            ])
-        }
-
+# Intercom, for Intercom module
+def _parse_intercom_oauth(d):
+    return {
+        'class': 'OAuth2',
+        'client_id': d['client_id'],
+        'client_secret': d['client_secret'],
+        'auth_url': 'https://app.intercom.com/oauth',
+        'token_url': 'https://api.intercom.io/auth/eagle/token',
+        'refresh_url': None,
+        'redirect_url': d['redirect_url'],
+        'scope': '',  # set on Intercom app, not in our request
+    }
+_maybe_load_oauth_service('intercom', 'CJW_INTERCOM_CLIENT_SECRETS',
+                          'intercom_secret.json', _parse_intercom_oauth)
 
 # Twitter, for Twitter module
-
-CJW_TWITTER_CLIENT_SECRETS_PATH = os.environ.get('CJW_TWITTER_CLIENT_SECRETS', False)
-if not CJW_TWITTER_CLIENT_SECRETS_PATH:
-    CJW_TWITTER_CLIENT_SECRETS_PATH = 'twitter_secret.json'
-CJW_TWITTER_CLIENT_SECRETS_PATH = os.path.join(BASE_DIR, CJW_TWITTER_CLIENT_SECRETS_PATH)
-
-try:
-    with open(CJW_TWITTER_CLIENT_SECRETS_PATH) as f:
-        d = json.load(f)
-        PARAMETER_OAUTH_SERVICES['twitter_credentials'] = {
-            'class': 'OAuth1a',
-            'consumer_key': d['key'],
-            'consumer_secret': d['secret'],
-            'auth_url': 'https://api.twitter.com/oauth/authorize',
-            'request_token_url': 'https://api.twitter.com/oauth/request_token',
-            'access_token_url': 'https://api.twitter.com/oauth/access_token',
-            'redirect_url': d['redirect_url'],
-        }
-except FileNotFoundError:
-    # Cannot print(): integration tests parse stdout/stderr.
-    #print(f'Missing {CJW_TWITTER_CLIENT_SECRETS_PATH}. Twitter auth will not work')
-    pass
+def _parse_twitter_oauth(d):
+    return {
+        'class': 'OAuth1a',
+        'consumer_key': d['key'],
+        'consumer_secret': d['secret'],
+        'auth_url': 'https://api.twitter.com/oauth/authorize',
+        'request_token_url': 'https://api.twitter.com/oauth/request_token',
+        'access_token_url': 'https://api.twitter.com/oauth/access_token',
+        'redirect_url': d['redirect_url'],
+    }
+_maybe_load_oauth_service('twitter', 'CJW_TWITTER_CLIENT_SECRETS',
+                          'twitter_secret.json', _parse_twitter_oauth)
 
 # Various services for django-allauth
 
