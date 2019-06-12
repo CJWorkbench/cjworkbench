@@ -4,7 +4,7 @@ from django.utils import timezone
 from cjworkbench.sync import database_sync_to_async
 from server import rabbitmq, websockets
 from server.models import WfModule
-from worker.pg_locker import PgLocker, WorkflowAlreadyLocked
+from worker.pg_render_locker import PgRenderLocker, WorkflowAlreadyLocked
 
 
 logger = logging.getLogger(__name__)
@@ -33,7 +33,7 @@ def set_wf_module_busy(wf_module):
     wf_module.save(update_fields=['is_busy'])
 
 
-async def queue_fetches(pg_locker: PgLocker):
+async def queue_fetches(pg_render_locker: PgRenderLocker):
     """
     Queue all pending fetches in RabbitMQ.
 
@@ -48,14 +48,14 @@ async def queue_fetches(pg_locker: PgLocker):
         # doesn't solve any races. But it should lower the number of fetches of
         # resource-intensive workflows.
         #
-        # Using pg_locker means we can only queue a fetch _between_ renders.
-        # The render queue may be non-empty (we aren't testing that); but we're
-        # giving the workers a chance to tackle some of the backlog.
+        # Using pg_render_locker means we can only queue a fetch _between_
+        # renders. The render queue may be non-empty (we aren't testing that);
+        # but we're giving the workers a chance to tackle some of the backlog.
         try:
-            async with pg_locker.render_lock(workflow_id):
+            async with pg_render_locker.render_lock(workflow_id) as lock:
                 # At this moment, the workflow isn't rendering. Let's pass
                 # through and queue the fetch.
-                pass
+                await lock.stall_others()  # required by the PgRenderLocker API
 
             logger.info('Queue fetch of wf_module(%d, %d)', workflow_id,
                         wf_module.id)

@@ -1,4 +1,5 @@
 import asyncio
+from contextlib import asynccontextmanager
 import logging
 from unittest.mock import patch
 from dateutil import parser
@@ -11,19 +12,22 @@ future_none = asyncio.Future()
 future_none.set_result(None)
 
 
+class _RenderLock:
+    def __init__(self):
+        self.stalled = False
+
+    async def stall_others(self):
+        self.stalled = True
+
+
 class SuccessfulRenderLock:
-    def __init__(self, workflow_id: int):
-        self.workflow_id = workflow_id
-
-    @classmethod
-    def render_lock(cls, workflow_id: int):
-        return cls(workflow_id)
-
-    async def __aenter__(self):
-        pass
-
-    async def __aexit__(self, exc_type, exc, tb):
-        pass
+    @asynccontextmanager
+    async def render_lock(self, workflow_id: int):
+        lock = _RenderLock()
+        try:
+            yield lock
+        finally:
+            assert lock.stalled
 
 
 class UpdatesTests(DbTestCase):
@@ -62,7 +66,7 @@ class UpdatesTests(DbTestCase):
         # eat log messages
         with self.assertLogs(autoupdate.__name__, logging.INFO):
             self.run_with_async_db(
-                autoupdate.queue_fetches(SuccessfulRenderLock)
+                autoupdate.queue_fetches(SuccessfulRenderLock())
             )
 
         self.assertEqual(mock_queue_fetch.call_count, 1)
@@ -73,7 +77,7 @@ class UpdatesTests(DbTestCase):
 
         # Second call shouldn't fetch again, because it's busy
         self.run_with_async_db(
-            autoupdate.queue_fetches(SuccessfulRenderLock)
+            autoupdate.queue_fetches(SuccessfulRenderLock())
         )
 
         self.assertEqual(mock_queue_fetch.call_count, 1)

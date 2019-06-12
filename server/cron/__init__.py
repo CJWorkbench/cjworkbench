@@ -4,7 +4,7 @@ import math
 import time
 import warnings
 from django.conf import settings
-from worker.pg_locker import PgLocker
+from worker.pg_render_locker import PgRenderLocker
 from .autoupdate import queue_fetches
 from .sessions import delete_expired_sessions_and_workflows
 from .uploads import delete_stale_inprogress_file_uploads
@@ -29,11 +29,11 @@ async def benchmark(task, message):
 
 
 async def queue_fetches_forever():
-    async with PgLocker() as pg_locker:
+    async with PgRenderLocker() as pg_render_locker:
         while True:
             t1 = time.time()
 
-            await benchmark(queue_fetches(pg_locker), 'queue_fetches()')
+            await benchmark(queue_fetches(pg_render_locker), 'queue_fetches()')
 
             # Try to fetch at the beginning of each interval. Canonical example
             # is FetchInterval=60: queue all our fetches as soon as the minute

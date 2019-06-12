@@ -2,7 +2,7 @@ import asyncio
 import logging
 import os
 from cjworkbench import rabbitmq
-from .pg_locker import PgLocker
+from .pg_render_locker import PgRenderLocker
 from .fetch import handle_fetch
 from .render import handle_render
 
@@ -36,10 +36,10 @@ async def main_loop():
     """
     Run fetchers and renderers, forever.
     """
-    async with PgLocker() as pg_locker:
-        @rabbitmq.acking_callback_with_requeue
-        async def render_callback(*args, **kwargs):
-            return await handle_render(pg_locker, *args, **kwargs)
+    async with PgRenderLocker() as pg_render_locker:
+        @rabbitmq.manual_acking_callback
+        async def render_callback(message, ack):
+            return await handle_render(message, ack, pg_render_locker)
 
         connection = rabbitmq.get_connection()
 

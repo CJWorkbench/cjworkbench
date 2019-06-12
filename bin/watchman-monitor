@@ -47,7 +47,11 @@ async def monitor_command(command: List[str]) -> None:
         nonlocal lock, process
 
         async with lock:
-            process.kill()
+            try:
+                process.kill()
+            except ProcessLookupError:
+                # it was already dead
+                pass
             await process.wait()
             process = await start()
 

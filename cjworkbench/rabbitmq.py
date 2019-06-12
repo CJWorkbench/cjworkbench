@@ -48,39 +48,44 @@ def acking_callback(fn):
     return inner
 
 
-def acking_callback_with_requeue(fn):
+def manual_acking_callback(fn):
     """
-    Decorate a callback to ack when finished or close the connection on error.
+    Decode `message` and supply a no-arg `ack()` function to a callback.
 
     Usage:
 
-        @rabbitmq.acking_callback
+        @rabbitmq.manual_acking_callback
         async def handle_render_message(message: Dict[str, Any],
-                                        requeue: Callable):
-            if we_are_ready:
-                do_something()
-            else:
-                await requeue(0.1)  # will idle for 0.1s and then requeue
+                                        ack: Callable[[], Awaitable[None]]):
+            # You _must_ ack. If you do not, a RuntimeError will be raised.
+            await ack()
 
         # Begin consuming
         await connection.consume(rabbitmq.Render, handle_render_message, 3)
     """
     @functools.wraps(fn)
     async def inner(channel, body, envelope, properties):
-        async def requeue(delay: float):
-            # We use asyncio.sleep() to avoid spinning. During the sleep, we
-            # are not rendering! It would be nice to use a RabbitMQ delayed
-            # exchange instead; that would involve a custom RabbitMQ image, and
-            # as of 2018-10-30 the cost (new Docker image) seems to outweigh
-            # the benefit (less CPU wastage).
-            await asyncio.sleep(delay)
-            await channel.publish(body, '', routing_key=envelope.routing_key)
+        acked = False
+        async def ack():
+            nonlocal acked
+            if acked:
+                try:
+                    raise RuntimeError('You called `await ack()` twice')
+                except RuntimeError:
+                    logger.exception()
+            await channel.basic_client_ack(envelope.delivery_tag)
+            acked = True
 
         try:
             message = msgpack.unpackb(body, raw=False)
-            await fn(message, requeue)
+            await fn(message, ack)
         finally:
-            await channel.basic_client_ack(envelope.delivery_tag)
+            if not acked:
+                try:
+                    raise RuntimeError('You did not call ack()')
+                except RuntimeError:
+                    logger.exception()
+                await ack()
 
     return inner
 

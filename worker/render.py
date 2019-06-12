@@ -1,31 +1,18 @@
 import asyncio
+from enum import Enum
 import logging
 import os
 from typing import Any, Awaitable, Callable, Dict
 from django.db import DatabaseError, InterfaceError
+from cjworkbench import rabbitmq
 from cjworkbench.sync import database_sync_to_async
 from server.models import Workflow
-from .pg_locker import PgLocker, WorkflowAlreadyLocked
+from .pg_render_locker import PgRenderLocker, WorkflowAlreadyLocked
 from .util import benchmark
 from . import execute
 
 
 logger = logging.getLogger(__name__)
-
-
-# DupRenderWait: number of seconds to wait before queueing a re-render request.
-# When a service requests a render of an already-rendering workflow, the
-# running render will fail fast and a new render should begin. If we receive
-# the request for a new render before the prior render failed fast, we'll wait
-# a bit before rescheduling so we don't re-queue the render ten times per
-# millisecond.
-#
-# If this is too low, we'll use lots of network traffic and CPU re-queueing a
-# render over and over, if its Workflow is the only one in the queue. If it's
-# too high, Workbench will idle instead of rendering (for half this duration,
-# on average). Either way, the duplicate-render Workflow will be queued _last_
-# so that other pending renders will occur before it.
-DupRenderWait = 0.05  # s
 
 
 @database_sync_to_async
@@ -34,19 +21,67 @@ def _lookup_workflow(workflow_id: int) -> Workflow:
     return Workflow.objects.get(id=workflow_id)
 
 
-async def render_or_requeue(
-    pg_locker: PgLocker,
-    requeue: Callable[[int], Awaitable[None]],
+class RenderResult(Enum):
+    CHECK_TO_REQUEUE = 1
+    MUST_REQUEUE = 2
+    MUST_NOT_REQUEUE = 3
+
+
+async def render_workflow_once(workflow: Workflow, delta_id: int):
+    """
+    Render a workflow, returning `RenderResult`.
+    
+    Considers all conceivable errors:
+
+    * Treat UnneededExecution as success -- it's like a render, only faster!
+      Always requeue, regardless of the workflow's delta: if the user does
+      something and hits undo quickly, the delta ID is the same and yet we want
+      to render again.
+    * Raise asyncio.CancelledError if there was a cancellation. (This is always
+      a bug -- we can't handle cancellation, and it isn't worth our effort.)
+    * Re-raise DatabaseError, InterfaceError -- our caller should die when it
+      sees these.
+    * Catch _every other exception_ (!!!); email us. Return MUST_NOT_REQUEUE:
+      we want to leave the workflow in an indeterminate state rather than cause
+      this error over and over again.
+    """
+    # We don't use `workflow.cooperative_lock()` because `execute` may
+    # take ages (and it locks internally when it needs to).
+    # `execute_workflow()` _anticipates_ that `workflow` data may be
+    # stale.
+    try:
+        task = execute.execute_workflow(workflow, delta_id)
+        await benchmark(logger, task, 'execute_workflow(%d, %d)',
+                        workflow.id, delta_id)
+        return RenderResult.CHECK_TO_REQUEUE
+    except execute.UnneededExecution:
+        logger.info('UnneededExecution in execute_workflow(%d, %d)',
+                    workflow.id, delta_id)
+        return RenderResult.MUST_REQUEUE
+    except asyncio.CancelledError:
+        raise
+    except (DatabaseError, InterfaceError):
+        # handled in outer try (which also handles PgRenderLocker)
+        raise
+    except Exception as err:
+        logger.exception('Error during render of workflow %d', workflow.id)
+        return RenderResult.MUST_NOT_REQUEUE
+
+
+async def render_workflow_and_maybe_requeue(
+    pg_render_locker: PgRenderLocker,
     workflow_id: int,
-    delta_id: int
+    delta_id: int,
+    ack: Callable[[], Awaitable[None]],
+    requeue: Callable[[int, int], Awaitable[None]]
 ) -> None:
     """
     Acquire an advisory lock and render, or re-queue task if the lock is held.
 
     If a render is requested on a Workflow that's already being rendered,
     there's no point in wasting CPU cycles starting from scratch. Wait for the
-    first render to exit (which will happen at the next stale database-write)
-    before trying again.
+    first render to exit (which will happen at the next stale database-write).
+    It should then re-schedule a render.
     """
     # Query for workflow before locking. We don't need a lock for this, and no
     # lock means we can dismiss spurious renders sooner, so they don't fill the
@@ -55,41 +90,51 @@ async def render_or_requeue(
         workflow = await _lookup_workflow(workflow_id)
     except Workflow.DoesNotExist:
         logger.info('Skipping render of deleted Workflow %d', workflow_id)
-        return
-    if workflow.last_delta_id != delta_id:
-        logger.info('Ignoring stale render request %d for Workflow %d',
-                    delta_id, workflow_id)
+        await ack()
         return
 
     try:
-        async with pg_locker.render_lock(workflow_id):
-            # Most exceptions caught elsewhere.
-            #
-            # execute_workflow() will raise UnneededExecution if the workflow
-            # changes while it's being rendered.
-            #
-            # We don't use `workflow.cooperative_lock()` because `execute` may
-            # take ages (and it locks internally when it needs to).
-            # `execute_workflow()` _anticipates_ that `workflow` data may be
-            # stale.
-            task = execute.execute_workflow(workflow, delta_id)
-            await benchmark(logger, task, 'execute_workflow(%d, %d)',
-                            workflow_id, delta_id)
+        async with pg_render_locker.render_lock(workflow_id) as lock:
+            try:
+                result = await render_workflow_once(workflow, delta_id)
+            except (asyncio.CancelledError, DatabaseError, InterfaceError):
+                raise  # all undefined behavior
 
+            # requeue if needed
+            await lock.stall_others()
+            if result == RenderResult.MUST_REQUEUE:
+                want_requeue = True
+            elif result == RenderResult.MUST_NOT_REQUEUE:
+                want_requeue = False
+            else:
+                try:
+                    workflow = await _lookup_workflow(workflow_id)
+                    if workflow.last_delta_id != delta_id:
+                        logger.info('Requeueing render(workflow=%d, delta=%d)',
+                                    workflow_id, workflow.last_delta_id)
+                        want_requeue = True
+                    else:
+                        want_requeue = False
+                except Workflow.DoesNotExist:
+                    logger.info('Skipping requeue of deleted Workflow %d',
+                                workflow_id)
+                    want_requeue = False
+            if want_requeue:
+                await requeue(workflow_id, workflow.last_delta_id)
+                # This is why we used `lock.stall_others()`: after requeue,
+                # another worker may try to lock this workflow and we want that
+                # lock to _succeed_ -- not raise WorkflowAlreadyLocked.
+            # Only ack() _after_ requeue. That preserves our invariant: if we
+            # schedule a render, there is always an un-acked render for that
+            # workflow queued in RabbitMQ until the workflow is up-to-date. (At
+            # this exact moment, there are briefly two un-acked renders.)
+            await ack()
     except WorkflowAlreadyLocked:
-        logger.info('Workflow %d is being rendered elsewhere; rescheduling',
+        logger.info('Workflow %d is being rendered elsewhere; ignoring',
                     workflow_id)
-        await requeue(DupRenderWait)
-
-    except execute.UnneededExecution:
-        logger.info('UnneededExecution in execute_workflow(%d)', workflow_id)
-        # Don't requeue. Assume the process that modified the Workflow has also
-        # scheduled a render. Indeed, that new render request may already have
-        # hit WorkflowAlreadyLocked.
-        return
-
-    except DatabaseError:
-        # Two possibilities:
+        await ack()
+    except (DatabaseError, InterfaceError):
+        # Possibilities:
         #
         # 1. There's a bug in worker.execute. This may leave the event
         # loop's executor thread's database connection in an inconsistent
@@ -98,12 +143,16 @@ async def render_or_requeue(
         # should restart us, and RabbitMQ will give the job to someone
         # else.)
         #
-        # 2. The database connection died (e.g., Postgres went away.) The
+        # 2. The database connection died (e.g., Postgres went away). The
         # best way to clear up the leaked, broken connection is to die.
         # (Our parent process should restart us, and RabbitMQ will give the
         # job to someone else.)
         #
-        # 3. There's some design flaw we haven't thought of, and we
+        # 3. PgRenderLocker's database connection died (e.g., Postgres went
+        # away). We haven't seen this much in practice; so let's die and let
+        # the parent process restart us.
+        #
+        # 4. There's some design flaw we haven't thought of, and we
         # shouldn't ever render this workflow. If this is the case, we're
         # doomed.
         #
@@ -112,31 +161,29 @@ async def render_or_requeue(
         # that cases 1 and 2 are important, too.
         logger.exception('Fatal database error; exiting')
         os._exit(1)
-    except InterfaceError:
-        logger.exception('Fatal database error; exiting')
-        os._exit(1)
 
 
-async def handle_render(pg_locker: PgLocker, message: Dict[str, Any],
-                        requeue: Callable[[int], Awaitable[None]]) -> None:
-        try:
-            workflow_id = int(message['workflow_id'])
-            delta_id = int(message['delta_id'])
-        except asyncio.CancelledError:
-            raise
-        except Exception:
-            logger.info(
-                ('Ignoring invalid render request. '
-                 'Expected {workflow_id:int, delta_id:int}; got %r'),
-                message
-            )
-            return
+async def _queue_render(workflow_id, delta_id):
+    # a separate function for dependency injection
+    connection = rabbitmq.get_connection()
+    await connection.queue_render(workflow_id, delta_id)
 
-        try:
-            task = render_or_requeue(pg_locker, requeue, workflow_id, delta_id)
-            await benchmark(logger, task, 'render_or_requeue(%d, %d)',
-                            workflow_id, delta_id)
-        except asyncio.CancelledError:
-            raise
-        except Exception:
-            logger.exception('Error during render')
+
+async def handle_render(message: Dict[str, Any],
+                        ack: Callable[[], Awaitable[None]],
+                        pg_render_locker: PgRenderLocker) -> None:
+    try:
+        workflow_id = int(message['workflow_id'])
+        delta_id = int(message['delta_id'])
+    except asyncio.CancelledError:
+        raise
+    except Exception:
+        logger.info(
+            ('Ignoring invalid render request. '
+             'Expected {workflow_id:int, delta_id:int}; got %r'),
+            message
+        )
+        return
+
+    await render_workflow_and_maybe_requeue(pg_render_locker, workflow_id,
+                                            delta_id, ack, _queue_render)
