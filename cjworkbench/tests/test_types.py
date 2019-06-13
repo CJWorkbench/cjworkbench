@@ -162,6 +162,14 @@ class ProcessResultTests(unittest.TestCase):
                 'column_formats': {'A': 'x'}
             })
 
+    def test_coerce_infer_columns_wrong_type_format_is_error(self):
+        table = pd.DataFrame({'A': [1, 2]})
+        with self.assertRaisesRegex(ValueError, 'Format must be str'):
+            ProcessResult.coerce({
+                'dataframe': table,
+                'column_formats': {'A': {}}
+            })
+
     def test_coerce_infer_columns_text_format_is_error(self):
         table = pd.DataFrame({'A': [1, 2], 'B': ['x', 'y']})
         with self.assertRaisesRegex(

@@ -224,6 +224,9 @@ class NumberFormatter:
     """
 
     def __init__(self, format_s: str):
+        if not isinstance(format_s, str):
+            raise ValueError('Format must be str')
+
         # parts: a list of (literal_text, field_name, format_spec, conversion)
         #
         # The "literal_text" always comes _before_ the field. So we end up
