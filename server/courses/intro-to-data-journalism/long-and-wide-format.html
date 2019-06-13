@@ -19,15 +19,52 @@ tabs:
   wfModules:
   - module: loadurl
     params:
-      url: './NYC-data-long-format.csv'
+      url: './NYC-incidents-2018-wide.csv'
     collapsed: true
-    note: "Source: City of San Francisco."
+    note: "Source: City of New York"
   - module: convert-date
     params:
       colnames: [ "Complaint date" ]
     collapsed: true
 </script>
-
+<section>
+  <h2>Producing a long format</h2>
+  <p>
+    In order to understand the difference between long and wide formats, let's produce a long table.
+  </p>
+  <p>
+    Let’s break down this data further, to find out how many incidents were reported each day, in each borough.
+  </p>
+  <h3 class="instructions">Instructions</h3>
+  <ol class="steps">
+    <li
+      data-test="
+        const want_cols = 'Borough,Complaint date'
+        const have_cols = workflow.tabs[0].wfModules[2].params.groups.colnames
+        return have_cols.sort().join(',') === want_cols
+        const params = workflow.tabs[0].wfModules[2].params
+        return (
+          params.groups.date_granularities['Complaint date'] === ('by month')
+          || params.groups.colnames.includes('Borough', 'Complaint date')
+          )"
+      >Add Group to step 3, and this time group by both <kbd>Borough</kbd> and <kbd>Complaint date</kbd> in the same column selector.
+    <li data-test="const params = workflow.tabs[0].wfModules[2].params
+      return (
+      params.groups.date_granularities['Complaint date'] === ('by day')
+      || params.groups.colnames.includes('Complaint date', 'Borough')
+      )"
+      >Check the option <kbd>Group dates</kbd> and select <kbd>by month</kbd> as granularity
+      <p class="instruction-detail">
+        The table now displays a more detailed count of incidents.
+      </p>
+      <p class="instruction-detail"> But after being grouped by more than one column the table contains a lot of repeated values in both <kbd>Complaint date</kbd> and <kbd>Borough</kbd>. We also can't access data from a specific borough anymore.
+      </p>
+      <p class="instruction-detail">
+        This table is in 'long' format. Let's learn more about it.
+      </p>
+    </li>
+  </ol>
+</section>
 <section class="fullscreen">
   <h2> </h2>
   <p>
@@ -58,18 +95,18 @@ tabs:
   <ol class="steps">
     <li
       data-test="
-        return workflow.tabs[0].wfModuleSlugs[2] === 'reshape' &&
-               workflow.tabs[0].wfModules[2].params.direction === 'longtowide'"
+        return workflow.tabs[0].wfModuleSlugs[3] === 'reshape' &&
+               workflow.tabs[0].wfModules[3].params.direction === 'longtowide'"
       >Add a <kbd>Reshape</kbd> step and select <kbd>Long to wide</kbd>
     </li>
     <li
       data-test="
-        return workflow.tabs[0].wfModules[2].params.colnames.join('|') === 'Complaint date'"
+        return workflow.tabs[0].wfModules[3].params.colnames.join('|') === 'Complaint date'"
       >Select <kbd>Complaint date</kbd> as the <kbd>Row variable</kbd>
     </li>
     <li
       data-test="
-        return workflow.tabs[0].wfModules[2].params.varcol == 'Borough'"
+        return workflow.tabs[0].wfModules[3].params.varcol == 'Borough'"
       >Select <kbd>Borough</kbd>for the <kbd>Column variable</kbd>
     </li>
   </ol>
@@ -85,16 +122,16 @@ tabs:
   <ol class="steps">
     <li
       data-test="
-      return workflow.tabs[0].wfModuleSlugs[3] === 'linechart' &&
-             workflow.tabs[0].wfModules[3].params.x_column === 'Complaint date'"
+      return workflow.tabs[0].wfModuleSlugs[4] === 'linechart' &&
+             workflow.tabs[0].wfModules[4].params.x_column === 'Complaint date'"
       >Add a line chart, and choose <kbd>Complaint date</kbd> for the X axis
     </li>
     <li
-      data-test="return workflow.tabs[0].wfModules[3].params.y_columns.length >= 1"
+      data-test="return workflow.tabs[0].wfModules[4].params.y_columns.length >= 1"
       >Add any borough for the Y axis, to create the first line on the chart
     </li>
     <li
-      data-test="return workflow.tabs[0].wfModules[3].params.y_columns.length >= 2"
+      data-test="return workflow.tabs[0].wfModules[4].params.y_columns.length >= 2"
       >Click <span>
         <img class="icon-insert" src="images/lesson-icons/add.svg">
       </span>to add one column on the Y axis for each additional borough you want to compare

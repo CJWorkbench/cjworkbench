@@ -1,6 +1,6 @@
 <header>
   <h1>Grouping by dates</h1>
-  <p>How many felonies are reported each month in NYC?</p>
+  <p>Dates can be used to group events in time frames: Per hour, day, month, quarter..</p>
   <img src="./banner.svg">
 </header>
 
@@ -35,6 +35,7 @@ tabs:
   - module: convert-date
     params:
       colnames: [ "Complaint date" ]
+    collapsed: true
 - name: Data dictionary
   wfModules:
   - module: loadurl
@@ -85,7 +86,7 @@ tabs:
           && agg[0].operation === 'size'
           && agg[0].outname.toLowerCase() === 'count of incidents'
         )
-      ">Name the output column <kbd>Count of incidents</kbd>
+      ">Name the output column <code>Count of incidents</code>
     </li>
   </ol>
 </section>
@@ -126,28 +127,6 @@ tabs:
     </li>
   </ol>
 </section>
-<!-- <section>
-  <h2>Grouping by multiple columns</h2>
-  <p>
-    Now let’s break down this data further, by borough.
-  </p>
-  <h3 class="instructions">Instructions</h3>
-  <ol class="steps">
-    <li
-      data-test="
-        const want_cols = 'Borough,Complaint date'
-        const have_cols = workflow.tabs[0].wfModules[4].params.groups.colnames
-        return have_cols.sort().join(',') === want_cols"
-      >In the Group in step 5, add the column <kbd>Borough</kbd> next to <kbd>Complaint date</kbd> using the same column selector.
-      <p class="instruction-detail">
-        The table now displays a more detailed count of incidents. It shows how many felonies were reported in each Neighborhood on each day.
-      </p>
-      <p class="instruction-detail">
-        By looking at this table we can rapidly see if different parts of town have different patterns of crime on any given day - or at least reported incidents. It’s important to remember that data only exists when someone types it in.
-      </p>
-    </li>
-  </ol>
-</section> -->
 <footer>
   <h2>Lesson Complete!</h2>
   <div class="completed">
