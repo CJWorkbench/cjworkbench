@@ -178,8 +178,9 @@ FROM pybuild AS base
 COPY cjworkbench/ /app/cjworkbench/
 # TODO make server/ frontend-specific
 COPY server/ /app/server/
-# fetcher/ and renderer/ are referenced in settings.py, so they must be in all
-# Django apps. TODO make fetcher and renderer _not_ Django apps. (change ORM)
+# cron/, fetcher/ and renderer/ are referenced in settings.py, so they must be
+# in all Django apps. TODO make them _not_ Django apps. (change ORM)
+COPY cron/ /app/cron/
 COPY fetcher/ /app/fetcher/
 COPY renderer/ /app/renderer/
 COPY bin/ /app/bin/

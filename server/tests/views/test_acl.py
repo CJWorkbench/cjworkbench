@@ -1,5 +1,6 @@
+from django.contrib.auth.models import User
 from django.utils import timezone
-from server.models import User, Workflow
+from server.models Workflow
 from server.tests.utils import DbTestCase
 
 

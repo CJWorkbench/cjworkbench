@@ -3,11 +3,11 @@ from collections import namedtuple
 import json
 from unittest.mock import patch
 from allauth.account.utils import user_display
-from django.contrib.auth.models import AnonymousUser
+from django.contrib.auth.models import AnonymousUser, User
 from rest_framework import status
 from rest_framework.test import APIRequestFactory, force_authenticate
 from server import rabbitmq
-from server.models import ModuleVersion, User, Workflow
+from server.models import ModuleVersion, Workflow
 from server.models.commands import InitWorkflowCommand
 from server.tests.utils import LoggedInTestCase
 from server.views.workflows import Index, workflow_detail, render_workflow

@@ -4,9 +4,9 @@ import unittest
 from django.contrib.auth.models import User
 from django.contrib.sessions.models import Session
 from django.utils import timezone
-from server.cron import sessions
 from server.models import Workflow
 from server.tests.utils import clear_db
+from cron import sessions
 
 
 class TestDeleteExpiredAnonymousWorkflows(unittest.TestCase):

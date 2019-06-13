@@ -3,9 +3,9 @@ from contextlib import asynccontextmanager
 import logging
 from unittest.mock import patch
 from dateutil import parser
-from server.cron import autoupdate
 from server.models import Workflow
 from server.tests.utils import DbTestCase
+from cron import autoupdate
 
 
 future_none = asyncio.Future()

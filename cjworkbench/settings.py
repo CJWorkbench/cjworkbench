@@ -192,9 +192,10 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'cjworkbench',
-    'server',
+    'cron',
     'fetcher',
     'renderer',
+    'server',
 ]
 
 MIDDLEWARE = [

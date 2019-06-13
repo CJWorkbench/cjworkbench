@@ -1,6 +1,6 @@
 import asyncio
 from django.core.management.base import BaseCommand
-from server.cron import main
+from cron.main import main
 
 
 class Command(BaseCommand):

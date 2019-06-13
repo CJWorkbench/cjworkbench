@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from typing import Any, Dict, Optional
-from server.models import Workflow
 
 
 @dataclass(frozen=True)
@@ -13,12 +12,13 @@ class HandlerRequest:
     """
     request_id: int
     scope: Dict[str, Any]
-    workflow: Workflow
+    workflow: 'server.models.Workflow'  # import would cause recursion
     path: str
     arguments: Dict[str, Any]
 
     @classmethod
-    def parse_json_data(cls, scope: Dict[str, Any], workflow: Workflow,
+    def parse_json_data(cls, scope: Dict[str, Any],
+                        workflow: 'server.models.Workflow',
                         data: Dict[str, Any]) -> 'HandlerRequest':
         """
         Parse JSON into a Request, or raise ValueError.
