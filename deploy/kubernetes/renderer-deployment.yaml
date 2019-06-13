@@ -1,30 +1,30 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: cron-deployment
+  name: renderer-deployment
 spec:
   selector:
     matchLabels:
-      app: cron-app
-  strategy:
-    type: Recreate
-  replicas: 1
+      app: renderer-app
+  replicas: 2
   revisionHistoryLimit: 20
   template:
     metadata:
       labels:
-        app: cron-app
+        app: renderer-app
     spec:
       containers:
-        - name: cron
-          image: "gcr.io/cj-workbench/cron:latest"
+        - name: renderer
+          image: "gcr.io/cj-workbench/renderer:latest"
           resources:
+            # Request exactly 1 CPU and tons of RAM. render() functions are
+            # synchronous.
             requests:
-              cpu: 0.1
-              memory: 200Mi
+              cpu: 1
+              memory: 5250Mi # basically the max on an n1-standard-2 running fluentd
             limits:
-              cpu: 0.1
-              memory: 200Mi
+              cpu: 1
+              memory: 5250Mi
           env:
             - name: CJW_PRODUCTION
               value: 'True'
@@ -32,12 +32,14 @@ spec:
               value: '1'
             - name: ASGI_THREADS
               value: '2'
+            - name: CJW_N_RENDERERS
+              value: '1'
             - name: CJW_DB_HOST
               value: database-service
             - name: CJW_DB_PASSWORD
               value: cjworkbench
             - name: CJW_SECRET_KEY
-              value: cron-needs-no-secret-key
+              value: renderer-needs-no-secret-key
             - name: CJW_SENDGRID_API_KEY
               valueFrom:
                 secretKeyRef:
@@ -80,4 +82,4 @@ spec:
                   name: rabbitmq-1-rabbitmq-secret
                   key: rabbitmq-pass
             - name: CJW_RABBITMQ_HOST
-              value: "amqp://rabbit:$(_RABBIT_MQPASSWORD)@rabbitmq-1-rabbitmq-svc/"
+              value: "amqp://rabbit:$(_RABBITMQ_PASSWORD)@rabbitmq-1-rabbitmq-svc/"

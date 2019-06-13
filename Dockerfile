@@ -48,7 +48,7 @@ FROM pybase AS pydev
 # * pysycopg2 (binaries are evil because psycopg2 links SSL -- as does Python)
 #
 # Also:
-# * socat: for our dev environment: worker uses http://localhost:8000 for in-lesson files
+# * socat: for our dev environment: fetcher uses http://localhost:8000 for in-lesson files
 RUN mkdir -p /root/.local/share/virtualenvs \
     && apt-get update \
     && apt-get install --no-install-recommends -y \
@@ -178,13 +178,14 @@ FROM pybuild AS base
 COPY cjworkbench/ /app/cjworkbench/
 # TODO make server/ frontend-specific
 COPY server/ /app/server/
-# worker/ is imported in worker+cron; also, it's referenced in settings.py
-# so let's copy it everywhere
-COPY worker/ /app/worker/
+# fetcher/ and renderer/ are referenced in settings.py, so they must be in all
+# Django apps. TODO make fetcher and renderer _not_ Django apps. (change ORM)
+COPY fetcher/ /app/fetcher/
+COPY renderer/ /app/renderer/
 COPY bin/ /app/bin/
 COPY manage.py /app/
-# templates are used in worker for notifications emails, and in frontend for
-# views. TODO move worker templates elsewhere.
+# templates are used in renderer for notifications emails and in frontend for
+# views. TODO move renderer templates elsewhere.
 COPY templates/ /app/templates/
 
 # 3.1. migrate: runs ./manage.py migrate
@@ -194,15 +195,19 @@ COPY assets/ /app/assets/
 COPY --from=jsbuild /app/assets/bundles/ /app/assets/bundles/
 CMD [ "bin/migrate-prod" ]
 
-# 3.2. worker: runs render+fetch
-FROM base AS worker
-CMD [ "./manage.py", "worker" ]
+# 3.2. fetcher: runs fetch
+FROM base AS fetcher
+CMD [ "./manage.py", "fetcher" ]
 
-# 3.2. cron: schedules fetches and runs cleanup SQL
+# 3.3. fetcher: runs fetch
+FROM base AS renderer
+CMD [ "./manage.py", "renderer" ]
+
+# 3.4. cron: schedules fetches and runs cleanup SQL
 FROM base AS cron
 CMD [ "./manage.py", "cron" ]
 
-# 3.3. frontend: serves website
+# 3.5. frontend: serves website
 FROM base AS frontend
 COPY --from=jsbuild /app/webpack-stats.json /app/
 # 8080 is Kubernetes' conventional web-server port

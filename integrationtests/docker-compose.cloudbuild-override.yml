@@ -12,8 +12,11 @@ services:
   git-server:
     image: 'gcr.io/${PROJECT_ID}/git-server:${COMMIT_SHA}'  # we don't publish this one
 
-  worker:
-    image: 'gcr.io/${PROJECT_ID}/worker:${COMMIT_SHA}'
+  fetcher:
+    image: 'gcr.io/${PROJECT_ID}/fetcher:${COMMIT_SHA}'
+
+  renderer:
+    image: 'gcr.io/${PROJECT_ID}/renderer:${COMMIT_SHA}'
 
   cron:
     image: 'gcr.io/${PROJECT_ID}/cron:${COMMIT_SHA}'

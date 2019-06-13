@@ -5,7 +5,7 @@ import pandas as pd
 from cjworkbench.types import ProcessResult
 from server.models import StoredObject, Workflow
 from server.tests.utils import DbTestCase, mock_csv_table
-from worker.save import save_result_if_changed
+from fetcher.save import save_result_if_changed
 
 
 async def async_noop(*args, **kwargs):

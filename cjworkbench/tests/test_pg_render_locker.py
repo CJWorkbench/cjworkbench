@@ -1,6 +1,10 @@
 import asyncio
 import unittest
-from worker.pg_render_locker import PgRenderLocker, WorkflowAlreadyLocked
+from cjworkbench.pg_render_locker import PgRenderLocker, WorkflowAlreadyLocked
+
+
+def _run_async(task):
+    asyncio.get_event_loop().run_until_complete(task)
 
 
 class PgRenderLockerTest(unittest.TestCase):
@@ -14,7 +18,7 @@ class PgRenderLockerTest(unittest.TestCase):
                                 await lock2.stall_others()
                         await lock1.stall_others()
 
-        asyncio.run(inner())
+        _run_async(inner())
 
     def test_release_lock(self):
         async def inner():
@@ -27,7 +31,7 @@ class PgRenderLockerTest(unittest.TestCase):
                     async with locker2.render_lock(1) as lock1:
                         await lock1.stall_others()
 
-        asyncio.run(inner())
+        _run_async(inner())
 
     def test_lock_only_one_workflow(self):
         async def inner():
@@ -40,7 +44,7 @@ class PgRenderLockerTest(unittest.TestCase):
                             await lock2.stall_others()
                         await lock1.stall_others()
 
-        asyncio.run(inner())
+        _run_async(inner())
 
     def test_locker_can_be_reused_in_same_event_loop(self):
         async def inner():
@@ -53,7 +57,7 @@ class PgRenderLockerTest(unittest.TestCase):
                         await lock2.stall_others()
                     await lock1.stall_others()
 
-        asyncio.run(inner())
+        _run_async(inner())
 
     def test_locker_can_try_to_lock_its_own_lock(self):
         async def inner():
@@ -64,7 +68,7 @@ class PgRenderLockerTest(unittest.TestCase):
                             await lock2.stall_others()
                     await lock1.stall_others()
 
-        asyncio.run(inner())
+        _run_async(inner())
 
     def test_concurrent_locks_on_one_connection(self):
         """
@@ -82,7 +86,7 @@ class PgRenderLockerTest(unittest.TestCase):
                 for task in done:
                     task.result()  # throw error, if any
 
-        asyncio.run(inner())
+        _run_async(inner())
 
     def test_acquire_render_lock_after_refused(self):
         async def inner():
@@ -98,7 +102,7 @@ class PgRenderLockerTest(unittest.TestCase):
                     # meaning it can acquire a lock just fine
                     async with locker2.render_lock(1) as lock2:
                         await lock2.stall_others()
-        asyncio.run(inner())
+        _run_async(inner())
 
     def test_stall_others_prevents_raise_remotely(self):
         async def inner():
@@ -120,7 +124,7 @@ class PgRenderLockerTest(unittest.TestCase):
                         self.assertEqual(last_line, 'the initial value')
                     await task
                     self.assertEqual(last_line, 'exited stalling_op')
-        asyncio.run(inner())
+        _run_async(inner())
 
     def test_stall_others_prevents_raise_locally(self):
         async def inner():
@@ -141,4 +145,4 @@ class PgRenderLockerTest(unittest.TestCase):
                     self.assertEqual(last_line, 'the initial value')
                 await task
                 self.assertEqual(last_line, 'exited stalling_op')
-        asyncio.run(inner())
+        _run_async(inner())

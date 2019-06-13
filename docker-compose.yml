@@ -89,7 +89,7 @@ services:
       'python', './manage.py', 'runserver', '--noreload', '--insecure', '0.0.0.0:8080'
     ]
 
-  worker:
+  renderer:
     # It'd be nice to use YAML anchors to copy these parameters ... but
     # PyCharm's YAML parser seems to die when we use YAML anchors.
     build:
@@ -103,7 +103,8 @@ services:
       - virtualenvs:/root/.local/share/virtualenvs/:rw
     environment:
       PYTHONUNBUFFERED: '1'
-      ASGI_THREADS: '5'
+      ASGI_THREADS: '2'
+      CJW_N_RENDERERS: '2'  # >1 so devs can see contention
       CJW_DB_HOST: database
       CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq/
       CJW_DB_PASSWORD: cjworkbench
@@ -115,13 +116,48 @@ services:
     depends_on: [ 'database', 'rabbitmq', 'minio' ]
     networks: [ 'dev' ]
     command: [
-      # Use socat so worker can fetch URLs like http://localhost:8000/static/lessons/a-lesson/file.csv
+      # Use watchman, not Django autoreload. autoreload crashes when there's a
+      # syntax error.
+      'pipenv', 'run', 'bin/watchman-monitor',
+      '--exclude', '**/*.pyc', '**/tests/**/*',
+      '--pattern', 'cjworkbench/**/*.py', 'renderer/**/*.py', 'server/modules/**/*.*', 'server/models/**/*.*',
+      '--exec',
+      'python', './manage.py', 'renderer'
+    ]
+
+  fetcher:
+    # It'd be nice to use YAML anchors to copy these parameters ... but
+    # PyCharm's YAML parser seems to die when we use YAML anchors.
+    build:
+      context: .
+      target: pydev
+    volumes:
+      - type: bind
+        source: ./
+        target: /app/
+        consistency: cached
+      - virtualenvs:/root/.local/share/virtualenvs/:rw
+    environment:
+      PYTHONUNBUFFERED: '1'
+      ASGI_THREADS: '3'
+      CJW_N_FETCHERS: '3'  # >1 so devs can see parallelism
+      CJW_DB_HOST: database
+      CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq/
+      CJW_DB_PASSWORD: cjworkbench
+      CJW_SECRET_KEY: cjw-secret-key
+      MINIO_ACCESS_KEY: minio_access
+      MINIO_SECRET_KEY: minio_secret
+      MINIO_URL: http://minio:9000
+      MINIO_BUCKET_PREFIX: dev
+    depends_on: [ 'database', 'rabbitmq', 'minio' ]
+    networks: [ 'dev' ]
+    command: [
+      # Use socat so fetcher can fetch URLs like http://localhost:8000/static/lessons/a-lesson/file.csv
       # Use watchman, not Django autoreload. autoreload crashes when there's a
       # syntax error.
       'sh', '-c',
-      'socat -d TCP-LISTEN:8000,reuseaddr,fork TCP:frontend:8000 & pipenv run bin/watchman-monitor --exclude "**/*.pyc" "**/tests/**/*" --pattern "cjworkbench/**/*.py" "worker/**/*.py" "server/modules/**/*.*" "server/models/**/*.*" --exec python ./manage.py worker'
+      'socat -d TCP-LISTEN:8000,reuseaddr,fork TCP:frontend:8000 & pipenv run bin/watchman-monitor --exclude "**/*.pyc" "**/tests/**/*" --pattern "cjworkbench/**/*.py" "fetcher/**/*.py" "server/modules/**/*.*" "server/models/**/*.*" --exec python ./manage.py fetcher'
     ]
-
 
   cron:
     # It'd be nice to use YAML anchors to copy these parameters ... but
@@ -151,8 +187,7 @@ services:
     command: [
       # Use watchman, not Django autoreload. autoreload crashes when there's a
       # syntax error.
-      'pipenv', 'run',
-      'bin/watchman-monitor',
+      'pipenv', 'run', 'bin/watchman-monitor',
       '--exclude', '**/*.pyc', '**/tests/**/*',
       '--pattern', 'cjworkbench/**/*.py', 'server/cron/**/*.py', 'server/management/commands/cron.py',
       '--exec', 'python', './manage.py', 'cron'

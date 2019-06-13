@@ -4,7 +4,8 @@ import math
 import time
 import warnings
 from django.conf import settings
-from worker.pg_render_locker import PgRenderLocker
+from cjworkbench.pg_render_locker import PgRenderLocker
+from cjworkbench.util import benchmark
 from .autoupdate import queue_fetches
 from .sessions import delete_expired_sessions_and_workflows
 from .uploads import delete_stale_inprogress_file_uploads
@@ -18,22 +19,13 @@ ExpiryInterval = 300  # seconds
 StaleUploadInterval = 7200  # seconds
 
 
-async def benchmark(task, message):
-    t1 = time.time()
-    logger.info(f'Start {message}')
-    try:
-        return await task
-    finally:
-        t2 = time.time()
-        logger.info(f'End {message} (%dms)', 1000 * (t2 - t1))
-
-
 async def queue_fetches_forever():
     async with PgRenderLocker() as pg_render_locker:
         while True:
             t1 = time.time()
 
-            await benchmark(queue_fetches(pg_render_locker), 'queue_fetches()')
+            await benchmark(logger, queue_fetches(pg_render_locker),
+                            'queue_fetches()')
 
             # Try to fetch at the beginning of each interval. Canonical example
             # is FetchInterval=60: queue all our fetches as soon as the minute
@@ -57,7 +49,7 @@ async def delete_expired_sessions_and_workflows_forever():
 
     while True:
         try:
-            await benchmark(delete_expired_sessions_and_workflows(),
+            await benchmark(logger, delete_expired_sessions_and_workflows(),
                             'delete_expired_sessions_and_workflows()')
         except:
             logger.exception('Error deleting expired sessions and workflows')
@@ -68,7 +60,7 @@ async def delete_expired_sessions_and_workflows_forever():
 async def delete_stale_inprogress_file_uploads_forever():
     while True:
         try:
-            await benchmark(delete_stale_inprogress_file_uploads(),
+            await benchmark(logger, delete_stale_inprogress_file_uploads(),
                             'delete_stale_inprogress_file_uploads()')
         except:
             logger.exception('Error deleting stale inprogress uploads')

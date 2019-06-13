@@ -9,8 +9,8 @@ from server import minio
 from server.models import Workflow, UploadedFile
 from server.models.param_spec import ParamDType
 from server.tests.utils import DbTestCase
-from worker.execute.renderprep import clean_value, RenderContext
-from worker.execute.types import TabCycleError, TabOutputUnreachableError, \
+from renderer.execute.renderprep import clean_value, RenderContext
+from renderer.execute.types import TabCycleError, TabOutputUnreachableError, \
         UnneededExecution, PromptingError
 
 

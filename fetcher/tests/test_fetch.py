@@ -13,7 +13,7 @@ from server.models import LoadedModule, ModuleVersion, WfModule, Workflow
 from server.models.commands import InitWorkflowCommand
 from server.models.param_dtype import ParamDType
 from server.tests.utils import DbTestCase
-from worker import fetch
+from fetcher import fetch
 
 
 future_none = asyncio.Future()
@@ -30,7 +30,7 @@ def DefaultMigrateParams(params):
 
 class FetchTests(DbTestCase):
     @patch('server.models.loaded_module.LoadedModule.for_module_version_sync')
-    @patch('worker.save.save_result_if_changed')
+    @patch('fetcher.save.save_result_if_changed')
     def test_fetch_wf_module(self, save_result, load_module):
         result = ProcessResult(pd.DataFrame({'A': [1]}), error='hi')
 
@@ -88,7 +88,7 @@ class FetchTests(DbTestCase):
         self.assertEqual(wf_module.next_update, due_for_update)
 
     @patch('server.models.loaded_module.LoadedModule.for_module_version_sync')
-    @patch('worker.save.save_result_if_changed')
+    @patch('fetcher.save.save_result_if_changed')
     def test_fetch_ignore_wf_module_deleted_when_updating(self, save_result,
                                                           load_module):
         """
@@ -131,7 +131,7 @@ class FetchTests(DbTestCase):
                                                          wf_module, now))
 
     @patch('server.models.loaded_module.LoadedModule.for_module_version_sync')
-    @patch('worker.save.save_result_if_changed')
+    @patch('fetcher.save.save_result_if_changed')
     def test_fetch_poll_when_setting_next_update(self, save_result,
                                                  load_module):
         """
@@ -213,8 +213,8 @@ class FetchTests(DbTestCase):
         self.assertEqual(wf_module.next_update, due_for_update)
 
     @patch('server.models.loaded_module.LoadedModule.for_module_version_sync')
-    @patch('worker.save.save_result_if_changed')
-    @patch('worker.fetchprep.clean_value', lambda _, params, __: params)
+    @patch('fetcher.save.save_result_if_changed')
+    @patch('fetcher.fetchprep.clean_value', lambda _, params, __: params)
     def _test_fetch(self, fn, migrate_params_fn, wf_module, param_schema, save,
                     load) -> ProcessResult:
         """

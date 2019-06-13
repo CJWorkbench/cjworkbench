@@ -24,7 +24,8 @@ async def queue_render(workflow_id: int, delta_id: int):
     """
     Queue render in RabbitMQ.
 
-    Spurious renders are fine: these messages are tiny.
+    Spurious renders are fine: these messages are tiny, and renderers ignore
+    them gracefully.
     """
     connection = await get_connection()
     await connection.queue_render(workflow_id, delta_id)
@@ -32,12 +33,16 @@ async def queue_render(workflow_id: int, delta_id: int):
 
 async def queue_fetch(wf_module):
     """
-    Write is_busy=True and queue render in RabbitMQ.
+    Queue fetch in RabbitMQ.
 
-    The worker will set is_busy=False when fetch is complete. Spurious fetches
+    The fetcher will set is_busy=False when fetch is complete. Spurious fetches
     may make the is_busy flag flicker, but if the user goes away we're
-    guaranteed that the worker will have the last word and is_busy will be
+    guaranteed that the fetcher will have the last word and is_busy will be
     False.
+
+    Set is_busy=True when calling this. (TODO solve race: can't set is_busy
+    _before_ queue_fetch() or we could leak the message; can't set it _after_
+    or the fetcher could finish first.)
     """
     connection = await get_connection()
     await connection.queue_fetch(wf_module.id)

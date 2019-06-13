@@ -1,17 +1,15 @@
-import asyncio
 from contextlib import asynccontextmanager
 from unittest.mock import Mock, patch
-import msgpack
+from cjworkbench.pg_render_locker import WorkflowAlreadyLocked
 from server.models import Workflow
 from server.models.commands import InitWorkflowCommand
 from server.tests.utils import DbTestCase
-from worker import execute
-from worker.render import handle_render, render_workflow_and_maybe_requeue
-from worker.pg_render_locker import WorkflowAlreadyLocked
+from renderer import execute
+from renderer.render import handle_render, render_workflow_and_maybe_requeue
 
 
-future_none = asyncio.Future()
-future_none.set_result(None)
+async def async_noop(*args, **kwargs):
+    pass
 
 
 class _RenderLock:
@@ -46,19 +44,19 @@ async def async_noop(*args, **kwargs):
 class RenderTest(DbTestCase):
     def test_handle_render_invalid_message(self):
         async def inner():
-            with self.assertLogs('worker', level='INFO') as cm:
+            with self.assertLogs('renderer', level='INFO') as cm:
                 await handle_render({'workflow_id': 123}, None, None)
                 self.assertEqual(cm.output, [
-                    ('INFO:worker.render:Ignoring invalid render '
+                    ('INFO:renderer.render:Ignoring invalid render '
                      'request. Expected {workflow_id:int, delta_id:int}; got '
                      "{'workflow_id': 123}"),
                 ])
 
         self.run_with_async_db(inner())
 
-    @patch('worker.execute.execute_workflow')
+    @patch('renderer.execute.execute_workflow')
     def test_render_happy_path(self, execute):
-        execute.return_value = future_none
+        execute.side_effect = async_noop
         workflow = Workflow.objects.create()
         delta = InitWorkflowCommand.create(workflow)
         ack = Mock(name='ack', side_effect=async_noop)
@@ -77,8 +75,8 @@ class RenderTest(DbTestCase):
         ack.assert_called()
         requeue.assert_not_called()
 
-    @patch('worker.execute.execute_workflow')
-    def test_render_other_worker_rendering_so_skip(self, execute):
+    @patch('renderer.execute.execute_workflow')
+    def test_render_other_renderer_rendering_so_skip(self, execute):
         execute.side_effect = async_noop
         workflow = Workflow.objects.create()
         delta = InitWorkflowCommand.create(workflow)
@@ -86,7 +84,7 @@ class RenderTest(DbTestCase):
         requeue = Mock(name='requeue', side_effect=async_noop)
 
         async def inner():
-            with self.assertLogs('worker', level='INFO') as cm:
+            with self.assertLogs('renderer', level='INFO') as cm:
                 await render_workflow_and_maybe_requeue(
                     FailedRenderLocker(),
                     workflow.id,
@@ -95,7 +93,7 @@ class RenderTest(DbTestCase):
                     requeue,
                 )
                 self.assertEqual(cm.output, [
-                    (f'INFO:worker.render:Workflow {workflow.id} is '
+                    (f'INFO:renderer.render:Workflow {workflow.id} is '
                      'being rendered elsewhere; ignoring'),
                 ])
 
@@ -105,9 +103,9 @@ class RenderTest(DbTestCase):
         ack.assert_called()
         requeue.assert_not_called()
 
-    @patch('worker.execute.execute_workflow')
+    @patch('renderer.execute.execute_workflow')
     def test_render_unknown_error_so_crash(self, execute):
-        # Test what happens when our `worker.execute` module is buggy and
+        # Test what happens when our `renderer.execute` module is buggy and
         # raises something it shouldn't raise.
         execute.side_effect = FileNotFoundError
         workflow = Workflow.objects.create()
@@ -116,7 +114,7 @@ class RenderTest(DbTestCase):
         requeue = Mock(name='requeue', side_effect=async_noop)
 
         async def inner():
-            with self.assertLogs('worker', level='INFO') as cm:
+            with self.assertLogs('renderer', level='INFO') as cm:
                 await render_workflow_and_maybe_requeue(
                     SuccessfulRenderLocker(),
                     workflow.id,
@@ -126,7 +124,7 @@ class RenderTest(DbTestCase):
                 )
                 self.assertRegex(
                     cm.output[0],
-                    '^ERROR:worker.render:Error during render of workflow \d+'
+                    '^ERROR:renderer.render:Error during render of workflow \d'
                 )
 
         self.run_with_async_db(inner())
@@ -134,11 +132,11 @@ class RenderTest(DbTestCase):
         requeue.assert_not_called()
 
     def test_render_workflow_not_found_skip(self):
-        ack = Mock(name='ack', return_value=future_none)
-        requeue = Mock(name='requeue', return_value=future_none)
+        ack = Mock(name='ack', side_effect=async_noop)
+        requeue = Mock(name='requeue', side_effect=async_noop)
 
         async def inner():
-            with self.assertLogs('worker', level='INFO') as cm:
+            with self.assertLogs('renderer', level='INFO') as cm:
                 await render_workflow_and_maybe_requeue(
                     SuccessfulRenderLocker(),
                     12345,
@@ -147,7 +145,7 @@ class RenderTest(DbTestCase):
                     requeue,
                 )
                 self.assertEqual(cm.output, [
-                    ('INFO:worker.render:Skipping render of deleted '
+                    ('INFO:renderer.render:Skipping render of deleted '
                      'Workflow 12345'),
                 ])
 
@@ -155,7 +153,7 @@ class RenderTest(DbTestCase):
         requeue.assert_not_called()
         ack.assert_called()
 
-    @patch('worker.execute.execute_workflow')
+    @patch('renderer.execute.execute_workflow')
     def test_render_unneeded_execution_so_requeue(self, mock_execute):
         mock_execute.side_effect = execute.UnneededExecution
         workflow = Workflow.objects.create()
@@ -164,7 +162,7 @@ class RenderTest(DbTestCase):
         requeue = Mock(name='requeue', side_effect=async_noop)
 
         async def inner():
-            with self.assertLogs('worker', level='INFO') as cm:
+            with self.assertLogs('renderer', level='INFO') as cm:
                 await render_workflow_and_maybe_requeue(
                     SuccessfulRenderLocker(),
                     workflow.id,
@@ -173,7 +171,7 @@ class RenderTest(DbTestCase):
                     requeue,
                 )
                 self.assertEqual(cm.output, [
-                    (f'INFO:worker.render:UnneededExecution in '
+                    (f'INFO:renderer.render:UnneededExecution in '
                      f'execute_workflow({workflow.id}, {delta.id})')
                 ])
 

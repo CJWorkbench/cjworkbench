@@ -9,11 +9,10 @@ from django.db import DatabaseError, InterfaceError
 from django.utils import timezone
 import pandas as pd
 from cjworkbench.sync import database_sync_to_async
+from cjworkbench.util import benchmark
 from server.models import LoadedModule, WfModule, Workflow, \
         CachedRenderResult, ModuleVersion
-from worker import save
-from . import fetchprep
-from .util import benchmark
+from . import fetchprep, save
 
 
 # Minimum amount of time between when a fetch is queued on a workflow and when

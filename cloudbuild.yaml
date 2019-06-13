@@ -14,7 +14,8 @@ steps:
     - |
       # --cache-from doesn't work well with multi-stage builds yet: see
       # https://github.com/moby/moby/issues/32612. We don't win if we pull down
-      # migrate/worker/cron/frontend and try to build using their caches.
+      # migrate/renderer/fetcher/cron/frontend and try to build using their
+      # caches.
       #
       # One alternative win for build speed: author pull requests for each Python
       # library that uses C, so they push bdist with manylinux. That way our
@@ -25,7 +26,7 @@ steps:
       # win because installing Firefox deps is particularly slow.)
 
       # Images for production -- build without cache
-      for target in migrate worker cron frontend; do
+      for target in migrate fetcher renderer cron frontend; do
         docker build \
           --target $$target \
           --tag gcr.io/$PROJECT_ID/$$target:$COMMIT_SHA \
@@ -82,7 +83,7 @@ steps:
     - -e
     - -c
     - |
-      for target in migrate worker cron frontend; do
+      for target in migrate fetcher renderer cron frontend; do
         docker push gcr.io/$PROJECT_ID/$$target:$COMMIT_SHA
         # Push a couple of aliases. We don't strictly need these, but they
         # shouldn't cost much time or disk because the layers are already up.
@@ -138,7 +139,8 @@ steps:
 # manually, so this doesn't actually do anything new.)
 images:
 - 'gcr.io/$PROJECT_ID/migrate:$COMMIT_SHA'
-- 'gcr.io/$PROJECT_ID/worker:$COMMIT_SHA'
+- 'gcr.io/$PROJECT_ID/fetcher:$COMMIT_SHA'
+- 'gcr.io/$PROJECT_ID/renderer:$COMMIT_SHA'
 - 'gcr.io/$PROJECT_ID/cron:$COMMIT_SHA'
 - 'gcr.io/$PROJECT_ID/frontend:$COMMIT_SHA'
 - 'gcr.io/$PROJECT_ID/integration-test:latest' # cache this layer -- we can pull it to speed up future builds

@@ -10,10 +10,15 @@ services:
   git-server:
     build: ./git-server
 
-  worker:
+  fetcher:
     build:
       context: ..
-      target: worker
+      target: fetcher
+
+  renderer:
+    build:
+      context: ..
+      target: renderer
 
   cron:
     build:

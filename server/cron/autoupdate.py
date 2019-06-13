@@ -1,10 +1,10 @@
 import logging
 from typing import List, Tuple
 from django.utils import timezone
+from cjworkbench.pg_render_locker import PgRenderLocker, WorkflowAlreadyLocked
 from cjworkbench.sync import database_sync_to_async
 from server import rabbitmq, websockets
 from server.models import WfModule
-from worker.pg_render_locker import PgRenderLocker, WorkflowAlreadyLocked
 
 
 logger = logging.getLogger(__name__)
@@ -49,8 +49,9 @@ async def queue_fetches(pg_render_locker: PgRenderLocker):
         # resource-intensive workflows.
         #
         # Using pg_render_locker means we can only queue a fetch _between_
-        # renders. The render queue may be non-empty (we aren't testing that);
-        # but we're giving the workers a chance to tackle some of the backlog.
+        # renders. The fetch/render queues may be non-empty (we aren't
+        # checking); but we're giving the renderers a chance to tackle some
+        # backlog.
         try:
             async with pg_render_locker.render_lock(workflow_id) as lock:
                 # At this moment, the workflow isn't rendering. Let's pass

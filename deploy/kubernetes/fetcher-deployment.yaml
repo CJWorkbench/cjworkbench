@@ -1,27 +1,31 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: worker-deployment
+  name: fetcher-deployment
 spec:
   selector:
     matchLabels:
-      app: worker-app
+      app: fetcher-app
   replicas: 2
   revisionHistoryLimit: 20
   template:
     metadata:
       labels:
-        app: worker-app
+        app: fetcher-app
     spec:
       containers:
-        - name: worker
-          image: "gcr.io/cj-workbench/worker:latest"
+        - name: fetcher
+          image: "gcr.io/cj-workbench/fetcher:latest"
           resources:
+            # fetch() functions are usually network-constrained. So it's great
+            # to run several on a single CPU at the same time.
+            #
+            # Assume no fetch consumes >1GB.
             requests:
-              cpu: 1.01 # don't put two workers on a 2-CPU machine
+              cpu: 1
               memory: 5250Mi # basically the max on an n1-standard-2 running fluentd
             limits:
-              cpu: 1.9
+              cpu: 1
               memory: 5250Mi
           env:
             - name: CJW_PRODUCTION
@@ -29,30 +33,25 @@ spec:
             - name: PYTHONUNBUFFERED
               value: '1'
             - name: ASGI_THREADS
-              value: '5'
+              value: '4'
+            - name: CJW_N_FETCHERS
+              value: '4'
             - name: CJW_DB_HOST
               value: database-service
             - name: CJW_DB_PASSWORD
               value: cjworkbench
             - name: CJW_SECRET_KEY
-              value: worker-needs-no-secret-key
-            - name: CJW_WORKER_N_RENDERERS
-              value: "1"
-            - name: CJW_WORKER_N_FETCHERS
-              value: "3"
+              value: fetcher-needs-no-secret-key
             - name: CJW_SENDGRID_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: cjw-sendgrid-api-key
-                  key: value
+              value: fetcher-needs-no-sendgrid-config
             - name: CJW_SENDGRID_INVITATION_ID
-              value: b22cb75d-2673-4efe-88d3-22239eaf403c
+              value: fetcher-needs-no-sendgrid-config
             - name: CJW_SENDGRID_CONFIRMATION_ID
-              value: 86182412-e2bd-4d9f-be7d-a535a9f8e50b
+              value: fetcher-needs-no-sendgrid-config
             - name: CJW_SENDGRID_PASSWORD_CHANGE_ID
-              value: 049f32e5-06ef-42e5-847d-ca30f52bf816
+              value: fetcher-needs-no-sendgrid-config
             - name: CJW_SENDGRID_PASSWORD_RESET_ID
-              value: 0946d35d-5763-4a22-b17d-ed9cb42bf096
+              value: fetcher-needs-no-sendgrid-config
             - name: CJW_GOOGLE_CLIENT_SECRETS
               value: secrets/google-oauth-secret/google-oauth-secret.json
             - name: CJW_SOCIALACCOUNT_SECRETS

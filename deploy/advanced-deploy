@@ -21,14 +21,17 @@ run_migrations() {
 
 run_migrations >&2
 
-echo -n "Setting frontend, worker and cron images to $SHA on $ENV..." >&2
-kubectl -n $ENV set image deployment/worker-deployment worker=gcr.io/cj-workbench/worker:$SHA >/dev/null
+echo -n "Setting frontend, fetcher, renderer and cron images to $SHA on $ENV..." >&2
+kubectl -n $ENV set image deployment/fetcher-deployment fetcher=gcr.io/cj-workbench/fetcher:$SHA >/dev/null
+kubectl -n $ENV set image deployment/renderer-deployment renderer=gcr.io/cj-workbench/renderer:$SHA >/dev/null
 kubectl -n $ENV set image deployment/cron-deployment cron=gcr.io/cj-workbench/cron:$SHA >/dev/null
 kubectl -n $ENV set image deployment/frontend-deployment frontend=gcr.io/cj-workbench/frontend:$SHA >/dev/null
 echo ' done' >&2
 
 echo -n 'Waiting for rollout to finish...' >&2
-kubectl -n $ENV rollout status deployment/worker-deployment >/dev/null
+kubectl -n $ENV rollout status deployment/fetcher-deployment >/dev/null
+echo -n '.' >&2
+kubectl -n $ENV rollout status deployment/renderer-deployment >/dev/null
 echo -n '.' >&2
 kubectl -n $ENV rollout status deployment/frontend-deployment >/dev/null
 echo -n '.' >&2

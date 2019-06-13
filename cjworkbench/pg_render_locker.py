@@ -58,13 +58,13 @@ class PgRenderLocker:
 
     Each state transition is atomic -- and must be shared among all clients.
 
-    * Transition A: unlocked -> rendering. If another worker is requeueing,
-      stall until it's done. If another worker is rendering, raise
-      WorkflowAlreadyLocked. Otherwise: after this returns, other workers will
+    * Transition A: unlocked -> rendering. If another client is requeueing,
+      stall until it's done. If another client is rendering, raise
+      WorkflowAlreadyLocked. Otherwise: after this returns, other clients will
       be prevented from making this transition.
-    * Transition B: rendering -> requeueing. After this, other workers at step
+    * Transition B: rendering -> requeueing. After this, other clients at step
       A will stall rather than raise WorkflowAlreadyLocked.
-    * Transition C: requeueing -> unlocked. After this, other workers at step A
+    * Transition C: requeueing -> unlocked. After this, other clients at step A
       will succed.
 
     Behind the scenes, this uses two Postgres advisory locks: the "stall" lock
@@ -138,9 +138,9 @@ class PgRenderLocker:
         """
         while True:
             await asyncio.sleep(interval)
-            await self._pg_fetchval("SELECT 'worker_heartbeat'",
+            await self._pg_fetchval("SELECT 'locker_heartbeat'",
                                     timeout=interval)
-            # "heartbeat" log can help debug if the worker stalls, as
+            # "heartbeat" log can help debug if the client stalls, as
             # [2019-06-11] it did.
             logger.info(
                 (
@@ -253,13 +253,13 @@ class PgRenderLocker:
         async with self._stall_lock(workflow_id):
             # Acquire the render lock, or raise WorkflowAlreadyLocked
             await self._acquire_render_lock(workflow_id)
-        # Presto! Now other workers aren't stalled (we released _stall_lock);
+        # Presto! Now other clients aren't stalled (we released _stall_lock);
         # so when they run this function they'll raise WorkflowAlreadyLocked
 
     async def _transition_rendering_to_requeueing(self,
                                                   workflow_id: int) -> None:
         """
-        Stall every other worker for this workflow.
+        Stall every other client for this workflow.
 
         When this returns, the workflow is in the "requeueing" state. Calls to
         _transition_unlocked_to_rendering() will stall (and then may succeed).
@@ -267,7 +267,7 @@ class PgRenderLocker:
         """
         await self._acquire_stall_lock(workflow_id)
         await self._release_render_lock(workflow_id)
-        # Presto! At this phase, no other worker is running code in
+        # Presto! At this phase, no other client is running code in
         # _transition_unlocked_to_rendering() -- they will all stall rather
         # than run that code.
 
@@ -287,7 +287,7 @@ class PgRenderLocker:
         """
         Distributed lock manager, ensuring only one render per Workflow.
 
-        This adds no correctness: only speed. We don't want two workers to
+        This adds no correctness: only speed. We don't want two clients to
         render simultaneously because that's a waste of effort. Instead, they
         should both try to acquire the lock. If Worker B wants to render
         something Worker A is already rendering, then Worker B should go away.

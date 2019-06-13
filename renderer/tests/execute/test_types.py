@@ -1,6 +1,6 @@
 import unittest
 from cjworkbench.types import QuickFix
-from worker.execute.types import PromptingError
+from renderer.execute.types import PromptingError
 
 
 class PromptingErrorTest(unittest.TestCase):

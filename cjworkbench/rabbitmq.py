@@ -278,6 +278,7 @@ class RetryingConnection:
         if self.is_closed:
             # Someone else called .close(). Return when that one finishes.
             await self._closed_event.wait()
+            return
 
         self.is_closed = True  # speed up self.connect() if it's waiting
 
@@ -298,7 +299,7 @@ class RetryingConnection:
 
         Call this only during initialization. Do not call it after connect.
 
-        (This is used on the worker.)
+        (This is used on fetcher/renderer.)
         """
         self._declared_queues.append(
             DeclaredQueueConsume(queue, prefetch_count, callback)

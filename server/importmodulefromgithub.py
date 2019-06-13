@@ -50,8 +50,8 @@ def import_module_from_directory(version: str, importdir: Path, force_reload=Fal
     try:
         # If files already exist, delete them so we can overwrite them.
         #
-        # This can race: a worker may be loading the code to execute it. But
-        # races are unlikely to affect anybody because:
+        # This can race: a fetcher/renderer may be loading the code to execute
+        # it. But races are unlikely to affect anybody because:
         #
         # * If force_reload=True we're in dev or test, where we control
         #   everything.

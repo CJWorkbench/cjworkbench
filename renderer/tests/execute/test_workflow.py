@@ -8,8 +8,8 @@ from cjworkbench.types import ProcessResult
 from server.models import LoadedModule, Workflow
 from server.models.commands import InitWorkflowCommand
 from server.tests.utils import DbTestCase
-from worker.execute.types import UnneededExecution
-from worker.execute.workflow import execute_workflow, \
+from renderer.execute.types import UnneededExecution
+from renderer.execute.workflow import execute_workflow, \
         partition_ready_and_dependent
 
 

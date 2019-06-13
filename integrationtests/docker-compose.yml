@@ -53,13 +53,33 @@ services:
     #image:
     #build:
 
-  worker:
+  fetcher:
     #image:
     #build:
     depends_on: [ 'db', 'rabbitmq', 'minio' ]
     environment:
+      CJW_N_FETCHERS: '2'
       PYTHONUNBUFFERED: '1'
-      ASGI_THREADS: '5'
+      ASGI_THREADS: '3'
+      CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq/
+      CJW_PRODUCTION: 'True'
+      CJW_DB_HOST: workbench-db
+      CJW_DB_PASSWORD: cjworkbench
+      CJW_SECRET_KEY: cjw-secret-key
+      CJW_MOCK_EMAIL: 'True'
+      MINIO_ACCESS_KEY: minio_access
+      MINIO_SECRET_KEY: minio_secret
+      MINIO_URL: http://minio:9000
+      MINIO_BUCKET_PREFIX: integrationtest
+
+  renderer:
+    #image:
+    #build:
+    depends_on: [ 'db', 'rabbitmq', 'minio' ]
+    environment:
+      CJW_N_RENDERERS: '2'
+      PYTHONUNBUFFERED: '1'
+      ASGI_THREADS: '2'
       CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq/
       CJW_PRODUCTION: 'True'
       CJW_DB_HOST: workbench-db
@@ -98,7 +118,7 @@ services:
     depends_on: [ 'db', 'rabbitmq', 'minio' ]
     environment:
       PYTHONUNBUFFERED: '1'
-      ASGI_THREADS: '5'
+      ASGI_THREADS: '2'
       CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq/
       CJW_PRODUCTION: 'True'
       CJW_DB_HOST: workbench-db
@@ -116,7 +136,7 @@ services:
   integration-test:
     #image:
     #build:
-    depends_on: [ 'db', 'worker', 'cron', 'frontend', 'git-server' ]
+    depends_on: [ 'db', 'fetcher', 'renderer', 'cron', 'frontend', 'git-server' ]
     command: [ "sh", "-c", "until curl --output /dev/null http://frontend:8080 --silent --head --fail; do sleep 1; done; xvfb-run -a -s '-screen 0 1200x768x24' python -m unittest discover -v integrationtests -f" ]
     shm_size: 2g # prevent Firefox crashing ~5% of startups
     volumes:
@@ -129,7 +149,7 @@ services:
       MINIO_BUCKET_PREFIX: integrationtest
 
 volumes:
-  local_mail: {}  # worker/frontend write emails; integration-test reads them
+  local_mail: {}  # renderer/frontend write emails; integration-test reads them
 
 networks:
   default: {}

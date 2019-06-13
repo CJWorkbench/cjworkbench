@@ -210,9 +210,9 @@ def render_workflow(request: HttpRequest, workflow: Workflow):
 
         if not workflow.are_all_render_results_fresh():
             # We're returning a Workflow that may have stale WfModules. That's
-            # fine, but are we _sure_ the worker is about to render them? Let's
-            # double-check. This will handle edge cases such as "we wiped our
-            # caches" or maybe some bugs we haven't thought of.
+            # fine, but are we _sure_ the renderer is about to render them?
+            # Let's double-check. This will handle edge cases such as "we wiped
+            # our caches" or maybe some bugs we haven't thought of.
             #
             # This isn't just for bug recovery. ChangeDataVersionCommand won't
             # queue_render until a client requests it.

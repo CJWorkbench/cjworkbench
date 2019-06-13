@@ -118,7 +118,8 @@ kubectl -n production create secret generic socialaccount-secrets --from-file=js
 kubectl -n production apply -f migrate.yaml
 
 # 5. Spin up server
-kubectl -n production apply -f worker-deployment.yaml
+kubectl -n production apply -f fetcher-deployment.yaml
+kubectl -n production apply -f renderer-deployment.yaml
 kubectl -n production apply -f cron-deployment.yaml
 kubectl -n production apply -f frontend-service.yaml
 kubectl -n production apply -f frontend-deployment.yaml

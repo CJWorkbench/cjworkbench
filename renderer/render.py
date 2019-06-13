@@ -5,10 +5,10 @@ import os
 from typing import Any, Awaitable, Callable, Dict
 from django.db import DatabaseError, InterfaceError
 from cjworkbench import rabbitmq
+from cjworkbench.pg_render_locker import PgRenderLocker, WorkflowAlreadyLocked
 from cjworkbench.sync import database_sync_to_async
+from cjworkbench.util import benchmark
 from server.models import Workflow
-from .pg_render_locker import PgRenderLocker, WorkflowAlreadyLocked
-from .util import benchmark
 from . import execute
 
 
@@ -122,8 +122,8 @@ async def render_workflow_and_maybe_requeue(
             if want_requeue:
                 await requeue(workflow_id, workflow.last_delta_id)
                 # This is why we used `lock.stall_others()`: after requeue,
-                # another worker may try to lock this workflow and we want that
-                # lock to _succeed_ -- not raise WorkflowAlreadyLocked.
+                # another renderer may try to lock this workflow and we want
+                # that lock to _succeed_ -- not raise WorkflowAlreadyLocked.
             # Only ack() _after_ requeue. That preserves our invariant: if we
             # schedule a render, there is always an un-acked render for that
             # workflow queued in RabbitMQ until the workflow is up-to-date. (At
@@ -136,7 +136,7 @@ async def render_workflow_and_maybe_requeue(
     except (DatabaseError, InterfaceError):
         # Possibilities:
         #
-        # 1. There's a bug in worker.execute. This may leave the event
+        # 1. There's a bug in renderer.execute. This may leave the event
         # loop's executor thread's database connection in an inconsistent
         # state. [2018-11-06 saw this on production.] The best way to clear
         # up the leaked, broken connection is to die. (Our parent process

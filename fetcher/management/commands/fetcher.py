@@ -2,7 +2,7 @@ import asyncio
 import logging
 import os
 from django.core.management.base import BaseCommand
-from worker.main import main_loop
+from ...main import main_loop
 
 
 logger = logging.getLogger(__name__)
@@ -45,7 +45,7 @@ async def main():
 
 
 class Command(BaseCommand):
-    help = 'Continually delete expired anonymous workflows and fetch wfmodules'
+    help = 'Continually run cron- and user-initiated fetches.'
 
     def handle(self, *args, **options):
         asyncio.run(main())

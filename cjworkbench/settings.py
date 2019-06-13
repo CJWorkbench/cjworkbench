@@ -193,7 +193,8 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'cjworkbench',
     'server',
-    'worker',
+    'fetcher',
+    'renderer',
 ]
 
 MIDDLEWARE = [
@@ -290,7 +291,7 @@ STATICFILES_STORAGE = 'server.storage.minio_storage_for_collectstatic.MinioStora
 #
 # We break with Django tradition here and give an absolute URL even when
 # in DEBUG mode. That's good! We need absolute URLs even in DEBUG mode,
-# because lessons include data files the worker must access.
+# because lessons include data files the fetcher must access.
 STATIC_URL = os.environ.get('STATIC_URL', 'http://localhost:8000/static/')
 
 # Webpack loads all our js/css into handy bundles
@@ -379,7 +380,7 @@ def _maybe_load_oauth_service(name: str, env_var_name: str,
         with open(path, 'r', encoding='utf-8') as f:
             data = json.load(f)
     except FileNotFoundError:
-        print(f'Missing {path}. {name} auth will not work')
+        # This is normal: frontend+fetcher get OAuth, but cron+renderer do not
         return
     config = parse(data)
     OAUTH_SERVICES[name] = config

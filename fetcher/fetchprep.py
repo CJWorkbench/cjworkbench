@@ -3,8 +3,8 @@ import pathlib
 from typing import Any, Dict, List, Optional, Union
 from cjworkbench.types import TableShape
 from server.models.param_spec import ParamDType
-from worker.execute.renderprep import PromptErrorAggregator
-from worker.execute.types import PromptingError
+from renderer.execute.renderprep import PromptErrorAggregator
+from renderer.execute.types import PromptingError
 
 
 # singledispatch primer: `clean_value(dtype, value, context)` will choose its

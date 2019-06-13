@@ -1,8 +1,8 @@
 from cjworkbench.types import Column, ColumnType, TableShape
 from server.models.param_spec import ParamDType
 from server.tests.utils import DbTestCase
-from worker.fetchprep import clean_value
-from worker.execute.types import PromptingError
+from fetcher.fetchprep import clean_value
+from renderer.execute.types import PromptingError
 
 
 class CleanValueTests(DbTestCase):
