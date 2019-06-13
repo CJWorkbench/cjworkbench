@@ -132,6 +132,17 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
         await self.send_whole_workflow_to_client()
 
     async def disconnect(self, code):
+        # Double up log messages: one before, one after.
+        # [2019-06-13] there's an error on production when a user has a flaky
+        # Internet connection: "... took too long to shut down and was killed".
+        # According to https://github.com/django/channels/issues/1119, this
+        # method is to blame.
+        #
+        # Our problem is: a frontend server simply stops sending anything over
+        # Websockets. And if we see one message without the other in the logs,
+        # that suggests there's a problem in the channel layer.
+        logger.debug('Starting discard from channel %s',
+                     self.workflow_channel_name)
         await self.channel_layer.group_discard(self.workflow_channel_name,
                                                self.channel_name)
         logger.debug('Discarded from channel %s', self.workflow_channel_name)
