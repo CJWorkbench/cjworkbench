@@ -189,7 +189,7 @@ services:
       # syntax error.
       'pipenv', 'run', 'bin/watchman-monitor',
       '--exclude', '**/*.pyc', '**/tests/**/*',
-      '--pattern', 'cjworkbench/**/*.py', 'server/cron/**/*.py', 'server/management/commands/cron.py',
+      '--pattern', 'cjworkbench/**/*.py', 'cron/**/*.py', 'server/models/**/*.*',
       '--exec', 'python', './manage.py', 'cron'
     ]
 
