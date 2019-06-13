@@ -39,25 +39,19 @@ tabs:
   <ol class="steps">
     <li
       data-test="
-        const want_cols = 'Borough,Complaint date'
-        const have_cols = workflow.tabs[0].wfModules[2].params.groups.colnames
-        return have_cols.sort().join(',') === want_cols
         const params = workflow.tabs[0].wfModules[2].params
         return (
-          params.groups.date_granularities['Complaint date'] === ('by month')
-          || params.groups.colnames.includes('Borough', 'Complaint date')
-          )"
-      >Add Group to step 3, and this time group by both <kbd>Borough</kbd> and <kbd>Complaint date</kbd> in the same column selector.
-    <li data-test="const params = workflow.tabs[0].wfModules[2].params
-      return (
-      params.groups.date_granularities['Complaint date'] === ('by day')
-      || params.groups.colnames.includes('Complaint date', 'Borough')
-      )"
-      >Check the option <kbd>Group dates</kbd> and select <kbd>by day</kbd> as granularity
+          params.groups.colnames.sort().join('|') === 'Borough|Complaint date'
+          && params.aggregations[0]
+          && params.aggregations[0].operation === 'size'
+          && params.aggregations[0].outname === 'Number of incidents'
+        )
+      ">Add a <kbd>Group</kbd> step as Step 3, and this time group by both <kbd>Borough</kbd> and <kbd>Complaint date</kbd> in the same column selector. Choose the <kbd>Sum</kbd> operation and sum <kbd>Number of incidents</kbd>.
       <p class="instruction-detail">
-        The table now displays a more detailed count of incidents.
+        The table now displays a detailed count of incidents.
       </p>
-      <p class="instruction-detail"> But after being grouped by more than one column the table contains a lot of repeated values in both <kbd>Complaint date</kbd> and <kbd>Borough</kbd>. We also can't access data from a specific borough anymore.
+      <p class="instruction-detail">
+        But since it's grouped by two columns, the table contains repeated values in the <kbd>Complaint date</kbd> and <kbd>Borough</kbd> columns. It's hard to read and chart.
       </p>
       <p class="instruction-detail">
         This table is in 'long' format. Let's learn more about it.
@@ -68,14 +62,16 @@ tabs:
 <section class="fullscreen">
   <h2> </h2>
   <p>
-    <b>Long format</b> tables contain only one column with measured values, in this case <kbd>Count of incidents</kbd>. All other columns are variables that describe what is measured. <br>
-    Each row is a unique measurement. In this case, each unique of <kbd>Complaint date</kbd> is combined with each unique <kbd>Borough</kbd>.
+    <strong>Long format</strong> tables contain only one column with measured values, in this case <kbd>Count of incidents</kbd>. All other columns are variables that describe what is measured.
+  </p>
+  <p>
+    Each row is a unique measurement. In this case, each unique <kbd>Complaint date</kbd> is combined with each unique <kbd>Borough</kbd>.
   </p>
   <figure>
     <img class="no-border half-width" alt="Inspect element" src="./long-table.png">
   </figure>
   <p>
-    In a <b>wide format</b> table, the same data is organized differently. There can be one or more columns
+    In a <strong>wide format</strong> table, the same data is organized differently. There can be one or more columns
     of measurements, and what is being measured is described by the column names.
   </p>
   <figure>
@@ -96,12 +92,11 @@ tabs:
     <li
       data-test="
         return workflow.tabs[0].wfModuleSlugs[3] === 'reshape' &&
-               workflow.tabs[0].wfModules[3].params.direction === 'longtowide'"
-      >Add a <kbd>Reshape</kbd> step and select <kbd>Long to wide</kbd>
+               workflow.tabs[0].wfModules[3].params.direction === 'longtowide'
+      ">Add a <kbd>Reshape</kbd> step and select <kbd>Long to wide</kbd>
     </li>
     <li
-      data-test="
-        return workflow.tabs[0].wfModules[3].params.colnames.join('|') === 'Complaint date'"
+      data-test="return workflow.tabs[0].wfModules[3].params.colnames === 'Complaint date'"
       >Select <kbd>Complaint date</kbd> as the <kbd>Row variable</kbd>
     </li>
     <li
@@ -122,19 +117,17 @@ tabs:
   <ol class="steps">
     <li
       data-test="
-      return workflow.tabs[0].wfModuleSlugs[4] === 'linechart' &&
-             workflow.tabs[0].wfModules[4].params.x_column === 'Complaint date'"
-      >Add a line chart, and choose <kbd>Complaint date</kbd> for the X axis
-    </li>
-    <li
-      data-test="return workflow.tabs[0].wfModules[4].params.y_columns.length >= 1"
-      >Add any borough for the Y axis, to create the first line on the chart
+        return (
+          workflow.tabs[0].wfModuleSlugs[4] === 'linechart'
+          && workflow.tabs[0].wfModules[4].params.x_column === 'Complaint date'
+          && workflow.tabs[0].wfModules[4].params.y_columns[0]
+          && workflow.tabs[0].wfModules[4].params.y_columns[0].column
+        )
+      ">Add a <kbd>Line Chart</kbd> step. Choose <kbd>Complaint date</kbd> for the X axis and any borough for the Y axis.
     </li>
     <li
       data-test="return workflow.tabs[0].wfModules[4].params.y_columns.length >= 2"
-      >Click <span>
-        <img class="icon-insert" src="images/lesson-icons/add.svg">
-      </span>to add one column on the Y axis for each additional borough you want to compare
+      >Click <span><img class="icon-insert" src="images/lesson-icons/add.svg" alt="add"></span> to add one column on the Y axis for each additional borough you want to compare
     </li>
   </ol>
 </section>
