@@ -231,7 +231,11 @@ class PgRenderLocker:
 
     async def _acquire_render_lock(self, workflow_id: int) -> None:
         self._acquire_local_render_lock(workflow_id)
-        await self._acquire_remote_render_lock(workflow_id)
+        try:
+            await self._acquire_remote_render_lock(workflow_id)
+        except:
+            self._release_local_render_lock(workflow_id)
+            raise
 
     async def _release_render_lock(self, workflow_id: int) -> None:
         # Release in opposite order of acquiring

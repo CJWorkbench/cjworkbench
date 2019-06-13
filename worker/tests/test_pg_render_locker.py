@@ -84,6 +84,22 @@ class PgRenderLockerTest(unittest.TestCase):
 
         asyncio.run(inner())
 
+    def test_acquire_render_lock_after_refused(self):
+        async def inner():
+            async with PgRenderLocker() as locker1:
+                async with PgRenderLocker() as locker2:
+                    async with locker1.render_lock(1) as lock1:
+                        # "break" locker2: make it raise an exception
+                        with self.assertRaises(WorkflowAlreadyLocked):
+                            async with locker2.render_lock(1) as lock2:
+                                await lock2.stall_others()
+                        await lock1.stall_others()
+                    # now locker2 should be reset to its original state --
+                    # meaning it can acquire a lock just fine
+                    async with locker2.render_lock(1) as lock2:
+                        await lock2.stall_others()
+        asyncio.run(inner())
+
     def test_stall_others_prevents_raise_remotely(self):
         async def inner():
             async with PgRenderLocker() as locker1:
