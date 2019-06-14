@@ -190,8 +190,6 @@ def finish_authorize(request: HttpRequest) -> HttpResponse:
             }
             wf_module.save(update_fields=['secrets'])
 
-            print(repr((scope, wf_module, wf_module.secret_metadata)))
-
             delta_json = {
                 'updateWfModules': {
                     str(wf_module.id): {
