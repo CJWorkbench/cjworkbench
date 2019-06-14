@@ -1,0 +1,61 @@
+#!/bin/sh
+
+set -e
+
+function ask_for_bug_report () {
+  cat >&2 <<EOT
+
+You think you found a bug. You're trying to hide it.
+
+Please file a bug report on GitHub or Pivotal Tracker RIGHT NOW. Include:
+
+* Steps to reproduce, expected results and actual results.
+* A timestamp, accurate to the second if possible, including timezone.
+* An explanation: what do you expect will change when you restart this service?
+
+EOT
+}
+
+function usage () {
+  cat >&2 <<EOT
+Usage: $0 ENVIRONMENT SERVICE
+
+Where:
+* ENVIRONMENT is one of 'staging' or 'production'
+* DEPLOYMENT is one of 'frontend', 'cron', 'fetcher', 'worker'
+EOT
+  ask_for_bug_report
+  exit 1
+}
+
+ENV="$1"
+SERVICE="$2"
+
+[ "$ENV" = staging -o "$ENV" = production ] || usage
+[ "$SERVICE" = cron -o "$SERVICE" = fetcher -o "$SERVICE" = frontend -o "$SERVICE" = renderer ] || usage
+
+echo >&2
+echo >&2
+echo >&2
+echo >&2
+echo 'HALT!' >&2
+ask_for_bug_report
+echo -n 'Have you filed a bug report? (y|n) ' >&2
+read answer
+if [ "$answer" = y -o "$answer" = Y ]; then
+  echo 'Thank you!' >&2
+else
+  echo 'Boooooo. Rehearse your excuses while we restart.' >&2
+fi
+
+echo -n "Triggering rollout of $SERVICE on $ENV..." >&2
+
+kubectl -n $ENV patch deployment $SERVICE-deployment \
+  -p '{"spec":{"template":{"spec":{"containers":[{"name":"'$SERVICE'","env":[{"name":"_RESTART_SEE_K8S_ISSUE_13488","value":"'$(date +%s)'"}]}]}}}}'
+
+echo -n 'Waiting for rollout to finish...' >&2
+kubectl -n $ENV rollout status deployment/$SERVICE-deployment >/dev/null
+echo ' done' >&2
+
+echo >&2
+echo 'Inspect services at https://console.cloud.google.com/kubernetes/workload?project=cj-workbench' >&2
