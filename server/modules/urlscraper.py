@@ -8,6 +8,9 @@ import yarl  # aiohttp innards -- yuck!
 from cjworkbench.types import ProcessResult
 
 
+MaxNUrls = 10
+
+
 async def async_get_url(row, url):
     """
     Return a Future (row, status, text).
@@ -104,6 +107,7 @@ def render(table, params, *, fetch_result):
 async def fetch(params, *, get_input_dataframe):
     urls = []
     urlsource = params['urlsource']
+    error = ''
 
     if urlsource == 'list':
         if are_params_empty(params, None):
@@ -119,6 +123,8 @@ async def fetch(params, *, get_input_dataframe):
                 urls.append('http://{}'.format(s_url))
             else:
                 urls.append(s_url)
+        if not urls:
+            return None
     elif urlsource == 'column':
         # We won't execute here -- there's no need: the user clicked a
         # button so should be pretty clear on what the input is.
@@ -131,10 +137,7 @@ async def fetch(params, *, get_input_dataframe):
 
         # get our list of URLs from a column in the input table
         urlcol: str = params['urlcol']
-        if urlcol in prev_table.columns:
-            urls = prev_table[urlcol].tolist()
-        else:
-            urls = []
+        urls = prev_table[urlcol].tolist()
     elif urlsource == 'paged':
         # Count through a list of page numbers, appending each to the URL
         if are_params_empty(params, None):
@@ -145,37 +148,41 @@ async def fetch(params, *, get_input_dataframe):
         if not re.match('^https?://.*', pagedurl):
             pagedurl = 'http://' +  pagedurl
 
+        begin = params['startpage']
+        end = params['endpage'] + 1
+        if end - begin > MaxNUrls:
+            end = begin + MaxNUrls
+            error = f'We limited your scrape to {MaxNUrls} URLs'
+
         # Generate multiple urls by adding page numbers, if user says so
         if params['addpagenumbers']:
             # limit the number of pages we can scrape with this method
-            maxpages = 10
-            pagenums = range(params['startpage'], params['endpage']+1)[:maxpages]
-            urls = [pagedurl + str(num) for num in pagenums]
+            urls = [pagedurl + str(num) for num in range(begin, end)]
         else:
-            urls = [ pagedurl ]
-
+            urls = [pagedurl]
     else:
-        raise ValueError('Unrecognized urlsource %r' % urlsource)
+        raise RuntimeError('Invalid urlsource')
 
-    if len(urls) > 0:
-        table = pd.DataFrame(
-            {'url': urls, 'status': ''},
-            columns=['url', 'date', 'status', 'html']
-        )
+    if len(urls) > MaxNUrls:
+        urls = urls[:MaxNUrls]
+        error = f'We limited your scrape to {MaxNUrls} URLs'
 
-        await scrape_urls(urls, table)
+    table = pd.DataFrame({
+        'url': urls,
+        # TODO use response date, not current date
+        'date': (
+            timezone.now().isoformat(timespec='seconds') \
+            .replace('+00:00', 'Z')
+        ),
+        'status': '',
+        'html': '',
+    })
 
+    await scrape_urls(urls, table)
+    if error:
+        return table, error
     else:
-        table = pd.DataFrame()
-
-    # TODO make `date` datetime
-    table['date'] = timezone.now().isoformat(timespec='seconds') \
-        .replace('+00:00', 'Z')
-
-    result = ProcessResult(dataframe=table)
-    # No need to truncate: input is already truncated
-    # No need to sanitize: we only added text+date+status
-    return result
+        return table
 
 
 def _migrate_params_v0_to_v1(params):

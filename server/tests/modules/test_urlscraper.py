@@ -249,7 +249,7 @@ class URLScraperTests(unittest.TestCase):
                                  pagedurl='http://a.com/file',
                                  addpagenumbers=False),
                                 None)
-                self.assertEqual(result, ProcessResult(onescrape))
+                assert_frame_equal(result, onescrape)
 
     def test_scrape_column(self):
         # modifies the table in place to add results, just like the real thing
@@ -267,26 +267,34 @@ class URLScraperTests(unittest.TestCase):
 
                 result = fetch(P(urlsource='column', urlcol='x'),
                                pd.DataFrame({'x': urls}))
-                self.assertEqual(result, ProcessResult(simple_result_table))
+                assert_frame_equal(result, simple_result_table)
 
     # Tests scraping from a list of URLs
-    def test_scrape_list(self):
+    def test_scrape_list_truncate(self):
         # Code below mostly lifted from the column test
         async def mock_scrapeurls(urls, table):
-            table['status'] = simple_result_table['status']
-            table['html'] = simple_result_table['html']
+            table['status'] = '200'
+            table['html'] = '<html></html>'
             return
 
-        with patch('django.utils.timezone.now', lambda: testnow):
-            with patch('server.modules.urlscraper.scrape_urls') as scrape:
-                scrape.side_effect = mock_scrapeurls
+        with patch('server.modules.urlscraper.scrape_urls') as scrape:
+            scrape.side_effect = mock_scrapeurls
 
-                result = fetch(P(urlsource='list', urllist='\n'.join([
-                    'http://a.com/file',
-                    'https://b.com/file2',
-                    'c.com/file/dir'  # Removed 'http://' to test URL-fixing
-                ])), None)
-                self.assertEqual(result, ProcessResult(simple_result_table))
+            table, error = fetch(P(urlsource='list', urllist='\n'.join([
+                'http://a.com/file1',
+                'http://a.com/file2',
+                'http://a.com/file3',
+                'http://a.com/file4',
+                'http://a.com/file5',
+                'http://a.com/file6',
+                'http://a.com/file7',
+                'http://a.com/file8',
+                'http://a.com/file9',
+                'http://a.com/file10',
+                'http://a.com/file11',
+            ])), None)
+            self.assertEqual(len(table), 10)
+            self.assertEqual(error, 'We limited your scrape to 10 URLs')
 
     # Mostly tests that the correct sequence of URLs with page numbers is generated from the user's input
     def test_scrape_paged(self):
@@ -305,7 +313,25 @@ class URLScraperTests(unittest.TestCase):
                                  startpage=1,
                                  endpage=3),
                                 None)
-                self.assertEqual(result, ProcessResult(paged_result_table))
+                assert_frame_equal(result, paged_result_table)
+
+    def test_scrape_paged_truncate(self):
+        async def mock_scrapeurls(urls, table):
+            table['status'] = '200'
+            table['html'] = '<html></html>'
+            return
+
+        with patch('server.modules.urlscraper.scrape_urls') as scrape:
+            scrape.side_effect = mock_scrapeurls
+
+            table, error = fetch(P(urlsource='paged',
+                                   pagedurl='http://foo.com/a?p=',
+                                   addpagenumbers=True,
+                                   startpage=1,
+                                   endpage=11),
+                                 None)
+            self.assertEqual(len(table), 10)
+            self.assertEqual(error, 'We limited your scrape to 10 URLs')
 
 
 class MigrateParamsTest(unittest.TestCase):
