@@ -133,7 +133,8 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_rabbitmq.core.RabbitmqChannelLayer',
         'CONFIG': {
-            'host': RABBITMQ_HOST
+            'host': RABBITMQ_HOST,
+            'local_capacity': 2000,
         },
     },
 }
