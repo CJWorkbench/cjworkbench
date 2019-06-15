@@ -64,7 +64,7 @@ export function UnhandledErrorReport ({ error }) {
     <div className='unhandled-error-report'>
       <div className='content'>
         <h2>Oops! Something isn't right.</h2>
-        <p>Please follow these simple steps to help us fix it the issue.</p>
+        <p>Please follow these simple steps to help us fix the issue.</p>
         <p className='help-us-debug'>{helpText}</p>
         <p>THANK YOU! Refresh this page to return to your Workflow.</p>
         <p>Debugging details (please send):</p>
