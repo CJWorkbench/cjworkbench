@@ -16,10 +16,15 @@ export function UnhandledErrorReport ({ error }) {
   if (typeof window.Intercom === 'function') {
     helpText = (
       <>
-        Could you please help us fix it? We opened a messaging window and
-        included clues our developers need to work on a fix. <em>Please
-        send the message</em> and then add extra details about what you
-        were doing before you ran into this bug.
+        <ul>
+          <li>We opened a messaging window and
+        included details for our developers to fix the issue. <em>Please
+        send the message</em>.
+          </li>
+          <li>It helps if you can describe
+          what you were doing before you ran into the bug.
+          </li>
+        </ul>
       </>
     )
     React.useEffect(() => {
@@ -43,10 +48,14 @@ export function UnhandledErrorReport ({ error }) {
       ].join('\n\n'))
     helpText = (
       <>
-        Could you please help us fix it? Please email <a
-        href={url} target='_blank'>hello@workbenchdata.com</a>. (Debugging
-        details will be included in the message.) It helps if you describe
-        what you were doing before you ran into the bug.
+        <ul>
+          <li>Copy the debugging details below and send them to <a
+          href={url} target='_blank'>hello@workbenchdata.com</a>.
+          </li>
+          <li>It helps if you can describe
+          what you were doing before you ran into the bug.
+          </li>
+        </ul>
       </>
     )
   }
@@ -54,11 +63,11 @@ export function UnhandledErrorReport ({ error }) {
   return (
     <div className='unhandled-error-report'>
       <div className='content'>
-        <h2>Oops! Our bad…</h2>
-        <p>Workbench encountered an error. It’s not your fault.</p>
+        <h2>Oops! Something isn't right.</h2>
+        <p>Please follow these simple steps to help us fix it the issue.</p>
         <p className='help-us-debug'>{helpText}</p>
-        <p>You may refresh this page to return to your Workflow.</p>
-        <p>Debugging details (for our developers):</p>
+        <p>THANK YOU! Refresh this page to return to your Workflow.</p>
+        <p>Debugging details (please send):</p>
         <pre>{bugReportText}</pre>
         <div className='actions'>
           <button type='button' onClick={() => window.location.reload()}>

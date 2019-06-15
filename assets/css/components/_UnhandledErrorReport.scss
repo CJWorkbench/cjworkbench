@@ -30,11 +30,27 @@
   .content {
     position: relative; // stacking context, so it's above backdrop
     background: white;
-    padding: 2rem;
-    max-width: 50rem; // wrap text nicely
+    padding: 3rem;
+    max-width: 55rem; // wrap text nicely
+    border-radius: .5rem;
+
+    a {
+      color: $workspace-action;
+    }
 
     h1 {
       color: $brand-red;
+    }
+
+    pre {
+      background-color: $dark-accent--soft;
+      padding: 1rem;
+      border-radius: .5rem;
+      white-space: pre-wrap;       /* Since CSS 2.1 */
+      white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+      white-space: -pre-wrap;      /* Opera 4-6 */
+      white-space: -o-pre-wrap;    /* Opera 7 */
+      word-wrap: break-word;       /* Internet Explorer 5.5+ */
     }
 
     .actions {
