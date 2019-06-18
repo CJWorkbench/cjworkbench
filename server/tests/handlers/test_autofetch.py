@@ -20,6 +20,7 @@ class AutoupdateTest(HandlerTestCase):
                                     workflow=workflow)
         self.assertResponse(response, data={
             'maxFetchesPerDay': 500,
+            'nFetchesPerDay': 0,
             'autofetches': [],
         })
 
@@ -32,6 +33,7 @@ class AutoupdateTest(HandlerTestCase):
                                     workflow=workflow)
         self.assertResponse(response, data={
             'maxFetchesPerDay': 6000,
+            'nFetchesPerDay': 0,
             'autofetches': [],
         })
 
@@ -60,6 +62,7 @@ class AutoupdateTest(HandlerTestCase):
                                     workflow=workflow)
         self.assertResponse(response, data={
             'maxFetchesPerDay': 500,
+            'nFetchesPerDay': 216,
             'autofetches': [
                 {
                     'workflow': {

@@ -65,6 +65,8 @@ SEP_DETECT_CHUNK_SIZE = 1024*1024
 # Use categories if file over this size
 CATEGORY_FILE_SIZE_MIN = 250*1024*1024
 
+MIN_AUTOFETCH_INTERVAL = 300  # seconds between cron autofetches
+
 # ----- App Boilerplate -----
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)

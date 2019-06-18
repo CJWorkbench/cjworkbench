@@ -4,6 +4,7 @@ import functools
 from typing import Any, Dict, List, Optional
 from dateutil.parser import isoparse
 from django.conf import settings
+from django.db import transaction
 from django.utils import timezone
 from cjworkbench.sync import database_sync_to_async
 from server import oauth, rabbitmq, websockets
@@ -13,8 +14,14 @@ from server.models.commands import ChangeParametersCommand, \
         ChangeWfModuleNotesCommand
 from server.models.param_spec import ParamSpec
 import server.utils
+from . import autofetch
 from .types import HandlerError
 from .decorators import register_websockets_handler, websockets_handler
+
+
+class AutofetchQuotaExceeded(Exception):
+    def __init__(self, autofetches):
+        self.autofetches = autofetches
 
 
 def _postgresize_dict_in_place(d: Dict[str, Any]) -> None:
@@ -199,6 +206,53 @@ def set_notifications(workflow: Workflow, wf_module: WfModule,
                 'wfModuleId': wf_module.id
             }
         )
+
+
+@register_websockets_handler
+@websockets_handler('owner')
+@_loading_wf_module
+@database_sync_to_async
+def set_autofetch(wf_module: WfModule, auto_update_data: bool,
+                  update_interval: int, scope, **kwargs):
+    auto_update_data = bool(auto_update_data)
+    update_interval = max(settings.MIN_AUTOFETCH_INTERVAL,
+                          int(update_interval))
+    check_quota = (
+        (
+            auto_update_data
+            and wf_module.auto_update_data
+            and update_interval < wf_module.update_interval
+        ) or (
+            auto_update_data
+            and not wf_module.auto_update_data
+        )
+    )
+
+    try:
+        with transaction.atomic() as trans:
+            wf_module.auto_update_data = auto_update_data
+            wf_module.update_interval = update_interval
+            wf_module.next_update = (
+                timezone.now() + datetime.timedelta(seconds=update_interval)
+            )
+            wf_module.save(update_fields=['auto_update_data',
+                                          'update_interval', 'next_update'])
+
+            # Now before we commit, let's see if we've surpassed the user's limit;
+            # roll back if we have.
+            #
+            # Only rollback if we're _increasing_ our fetch count. If we're
+            # lowering it, allow that -- even if the user is over limit, we still
+            # want to commit because it's an improvement.
+            if check_quota:
+                autofetches = autofetch.list_autofetches_json(scope)
+                if autofetches['nFetchesPerDay'] > autofetches['maxFetchesPerDay']:
+                    raise AutofetchQuotaExceeded(autofetches)
+    except AutofetchQuotaExceeded as err:
+        return {
+            'rejected': 'quotaExceeded',
+            'autofetches': err.autofetches,
+        }
 
 
 @database_sync_to_async

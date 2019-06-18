@@ -1,12 +1,15 @@
 import asyncio
+import datetime
 from unittest.mock import patch, Mock
 from dateutil.parser import isoparse
 from django.contrib.auth.models import User
 from django.test import override_settings
+from django.utils import timezone
 from server import oauth
 from server.handlers.wf_module import set_params, delete, \
         set_stored_data_version, set_notes, set_collapsed, set_notifications, \
-        fetch, generate_secret_access_token, delete_secret, set_secret
+        set_autofetch, fetch, generate_secret_access_token, delete_secret, \
+        set_secret
 from server.models import ModuleVersion, Workflow
 from server.models.commands import ChangeParametersCommand, \
         ChangeWfModuleNotesCommand, DeleteModuleCommand
@@ -395,6 +398,77 @@ class WfModuleTest(HandlerTestCase):
 
         wf_module.refresh_from_db()
         self.assertEqual(wf_module.notifications, False)
+
+    @patch('server.websockets.ws_client_send_delta_async', async_noop)
+    @patch('server.rabbitmq.queue_render', async_noop)
+    def test_set_autofetch_happy_path(self):
+        user = User.objects.create(username='a', email='a@example.org')
+        workflow = Workflow.create_and_init(owner=user)
+        wf_module = workflow.tabs.first().wf_modules.create(order=0)
+
+        response = self.run_handler(set_autofetch, user=user,
+                                    workflow=workflow,
+                                    wfModuleId=wf_module.id,
+                                    auto_update_data=True,
+                                    update_interval=1200)
+        self.assertResponse(response, data=None)
+        wf_module.refresh_from_db()
+        self.assertEqual(wf_module.auto_update_data, True)
+        self.assertEqual(wf_module.update_interval, 1200)
+        self.assertLess(
+            wf_module.next_update,
+            timezone.now() + datetime.timedelta(seconds=1202)
+        )
+        self.assertGreater(
+            wf_module.next_update,
+            timezone.now() + datetime.timedelta(seconds=1198)
+        )
+
+    @patch('server.websockets.ws_client_send_delta_async', async_noop)
+    @patch('server.rabbitmq.queue_render', async_noop)
+    def test_set_autofetch_exceed_quota(self):
+        user = User.objects.create(username='a', email='a@example.org')
+        user.user_profile.max_fetches_per_day = 10
+        user.user_profile.save()
+        workflow = Workflow.create_and_init(owner=user)
+        wf_module = workflow.tabs.first().wf_modules.create(order=0)
+        response = self.run_handler(set_autofetch, user=user,
+                                    workflow=workflow,
+                                    wfModuleId=wf_module.id,
+                                    auto_update_data=True,
+                                    update_interval=300)
+        self.assertEqual(response.error, '')
+        self.assertEqual(response.data['rejected'], 'quotaExceeded')
+        self.assertEqual(response.data['autofetches']['maxFetchesPerDay'], 10)
+        self.assertEqual(response.data['autofetches']['nFetchesPerDay'], 288)
+        self.assertEqual(
+            response.data['autofetches']['autofetches'][0]['workflow']['id'],
+            workflow.id
+        )
+        wf_module.refresh_from_db()
+        self.assertEqual(wf_module.auto_update_data, False)
+
+    @patch('server.websockets.ws_client_send_delta_async', async_noop)
+    @patch('server.rabbitmq.queue_render', async_noop)
+    def test_set_autofetch_allow_exceed_quota_when_reducing(self):
+        user = User.objects.create(username='a', email='a@example.org')
+        user.user_profile.max_fetches_per_day = 10
+        user.user_profile.save()
+        workflow = Workflow.create_and_init(owner=user)
+        wf_module = workflow.tabs.first().wf_modules.create(
+            order=0,
+            auto_update_data=True,
+            update_interval=300,
+            next_update=timezone.now(),
+        )
+        response = self.run_handler(set_autofetch, user=user,
+                                    workflow=workflow,
+                                    wfModuleId=wf_module.id,
+                                    auto_update_data=True,
+                                    update_interval=600)
+        self.assertResponse(response, data=None)
+        wf_module.refresh_from_db()
+        self.assertEqual(wf_module.update_interval, 600)
 
     @patch('server.websockets.ws_client_send_delta_async')
     @patch('server.rabbitmq.queue_fetch')

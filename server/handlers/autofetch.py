@@ -9,10 +9,12 @@ def isoformat(dt) -> str:
     return dt.isoformat()[:-len('000+00:00')] + 'Z'
 
 
-@register_websockets_handler
-@websockets_handler(role='read')  # for logging, error handling
-@database_sync_to_async
-def list_autofetches(scope, **kwargs):
+def list_autofetches_json(scope):
+    """
+    List all the scope's user's autofetches.
+
+    This runs a database query. Use @database_sync_to_async around it.
+    """
     autofetches = list(WfModule.objects.filter(
         auto_update_data=True,
         is_deleted=False,
@@ -36,9 +38,13 @@ def list_autofetches(scope, **kwargs):
         max_fetches_per_day = (
             UserProfile._meta.get_field('max_fetches_per_day').default
         )
+    n_fetches_per_day = sum(
+        [86400.0 / row['update_interval'] for row in autofetches]
+    )
 
     return {
         'maxFetchesPerDay': max_fetches_per_day,
+        'nFetchesPerDay': n_fetches_per_day,
         'autofetches': [
             {
                 'workflow': {
@@ -62,3 +68,10 @@ def list_autofetches(scope, **kwargs):
             } for row in autofetches
         ]
     }
+
+
+@register_websockets_handler
+@websockets_handler(role='read')  # for logging, error handling
+@database_sync_to_async
+def list_autofetches(scope, **kwargs):
+    return list_autofetches_json(scope)

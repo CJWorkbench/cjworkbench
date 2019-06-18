@@ -4,6 +4,7 @@ from functools import partial
 import logging
 import os
 from typing import Optional, Tuple
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import DatabaseError, InterfaceError
 from django.utils import timezone
@@ -13,11 +14,6 @@ from cjworkbench.util import benchmark
 from server.models import LoadedModule, WfModule, Workflow, \
         CachedRenderResult, ModuleVersion
 from . import fetchprep, save
-
-
-# Minimum amount of time between when a fetch is queued on a workflow and when
-# the next fetch is queued on the same workflow.
-MinFetchInterval = 5 * 60  # 5min
 
 
 logger = logging.getLogger(__name__)
@@ -96,7 +92,8 @@ def _get_loaded_module(
 @database_sync_to_async
 def _update_next_update_time(wf_module, now):
     """Schedule next update, skipping missed updates if any."""
-    tick = timedelta(seconds=max(wf_module.update_interval, MinFetchInterval))
+    tick = timedelta(seconds=max(wf_module.update_interval,
+                                 settings.MIN_AUTOFETCH_INTERVAL))
 
     try:
         with wf_module.workflow.cooperative_lock():
