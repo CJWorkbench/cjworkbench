@@ -41,6 +41,7 @@ rfc3987 = "*"  # for jsonschema 'uri' format
 aioamqp = "*"
 pyyaml = "*"
 boto3 = "*"
+yajl-py = "*"
 
 [dev-packages]
 watchdog = "*"

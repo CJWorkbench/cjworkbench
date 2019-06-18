@@ -43,6 +43,7 @@ FROM pybase AS pydev
 # * Twisted - https://twistedmatrix.com/trac/ticket/7945
 # * fastparquet
 # * python-snappy
+# * yajl-py
 # * fb-re2
 # * watchman (until someone packages binaries)
 # * pysycopg2 (binaries are evil because psycopg2 links SSL -- as does Python)
@@ -56,6 +57,7 @@ RUN mkdir -p /root/.local/share/virtualenvs \
       libsnappy-dev \
       libre2-dev \
       libpq-dev \
+      libyajl-dev \
       socat \
     && rm -rf /var/lib/apt/lists/*
 
@@ -128,8 +130,9 @@ COPY Pipfile Pipfile.lock /app/
 # * Twisted - https://twistedmatrix.com/trac/ticket/7945
 # * fastparquet
 # * python-snappy
+# * yajl-py
 # * pysycopg2 (binaries are evil because psycopg2 links SSL -- as does Python)
-# ... and we want to keep libsnappy around after the fact, too
+# ... and we want to keep libsnappy and yajl around after the fact, too
 RUN true \
     && apt-get update \
     && apt-get install --no-install-recommends -y \
@@ -139,6 +142,8 @@ RUN true \
       libre2-3 \
       libre2-dev \
       libpq-dev \
+      libyajl2 \
+      libyajl-dev \
     && pipenv install --dev --system --deploy \
     && apt-get remove --purge -y \
       build-essential \

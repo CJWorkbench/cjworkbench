@@ -1,19 +1,34 @@
+import codecs
+from contextlib import contextmanager
 import csv
+import datetime
 from dataclasses import dataclass
 import io
+import json
+import math
 import pathlib
 import sys
-from typing import List
+from yajl import YajlParser, YajlContentHandler, YajlError
+from typing import Dict, List, Optional, Tuple, Union
 from django.conf import settings
 import pandas as pd
 from .utils import detect_encoding, wrap_text, uniquize_colnames, \
         autocast_series_dtype, turn_header_into_first_row, parse_bytesio
 
 
+CellValue = Union[int, float, str, datetime.datetime]
+
+
+def _utf8(b: bytes) -> str:
+    """Parse bytes we already know are utf-8."""
+    return codecs.utf_8_decode(b, None, True)[0]
+
 
 class ColumnBuilder:
     """
-    Compact accumulator of CSV Strings for a column.
+    Compact accumulator of values for a column.
+
+    It can hold number, text and datetime values. Strings are treated specially.
 
     Similarities to pandas read_csv:
 
@@ -30,7 +45,7 @@ class ColumnBuilder:
       stuff. That means "na" only comes up in one case: this column doesn't
       have a value in every row. We write "-1" to our buffer in that case.
       ("0" means, "empty string.")
-    * We only support str. (Casting comes after parsing.)
+    * We do not cast. (Casting comes after parsing.)
     * We aren't like the Pandas C engine: we parse text, not bytes. (Pandas
       C engine re-encodes the entire file to UTF-8 before parsing.)
     * We aren't C-optimized (yet).
@@ -39,9 +54,10 @@ class ColumnBuilder:
         self._intern = {}  # hash of str to itself
         self.n_bytes = 0
         self.n_values = 0  # number of non-NA values
-        self.values = []  # list of (interned) str or None (None means NA)
+        self.value_types = set()
+        self.values: List[Optional[CellValue]] = []
 
-    def feed(self, row: int, value: str):
+    def feed(self, row: int, value: Optional[CellValue]):
         """
         Feed a new value.
 
@@ -49,19 +65,27 @@ class ColumnBuilder:
 
         Return number of bytes we're costing.
         """
-        interned_value = self._intern.setdefault(value, value)
+        if value is not None:
+            self.value_types.add(type(value))
+        if isinstance(value, str):
+            input_value = value
+            value = self._intern.setdefault(input_value, input_value)
+            interned = (value is not input_value)
+        else:
+            interned = False
+
         n_na_to_prepend = row - len(self.values)
 
         for _ in range(n_na_to_prepend):
             self.values.append(None)
-        self.values.append(interned_value)
+        self.values.append(value)
         self.n_values += 1
 
         return (
             n_na_to_prepend * 8  # newly-added NA values
             + 8                  # pointer in self.values
             + 8                  # hash-table entry
-            + (sys.getsizeof(value) if value is interned_value else 0)
+            + (0 if interned else sys.getsizeof(value))
         )
 
     @property
@@ -75,6 +99,10 @@ class ColumnBuilder:
         dictionary and stores oodles of info in a tiny data structure. We use
         wishy-washy heuristics to decide which case we're in.
         """
+        if self.value_types != set([str]):
+            # all-NA or mixed-type inputs aren't categorical
+            return False
+
         n_unique = len(self._intern)
 
         # for now, magic number: "categorical is <80% the size of list"
@@ -87,10 +115,16 @@ class ParseTableResult:
     error: str
 
 
+@dataclass
+class ParseJsonResult:
+    columns: Dict[str, ColumnBuilder]
+    error: str
+
+
 def parse_table(textio: io.TextIOBase,
                 dialect: csv.Dialect) -> ParseTableResult:
     """
-    Convert CSV to DataFrame.
+    Convert CSV to List[ColumnBuilder].
 
     Rules:
 
@@ -153,8 +187,8 @@ def parse_table(textio: io.TextIOBase,
     return ParseTableResult(columns, '\n'.join(warnings))
 
 
-def _columns_to_dataframe_destructive(columns: List[ColumnBuilder],
-                                      has_header: bool) -> pd.DataFrame:
+def _csv_columns_to_dataframe_destructive(columns: List[ColumnBuilder],
+                                          has_header: bool) -> pd.DataFrame:
     """
     Empty a List[ColumnBuilder] to build a pd.DataFrame.
 
@@ -193,6 +227,268 @@ def _columns_to_dataframe_destructive(columns: List[ColumnBuilder],
     return pd.DataFrame({s.name: s for s in columns})
 
 
+class JsonValidationError(ValueError): pass
+class JsonRootIsNotArray(JsonValidationError): pass
+class JsonRecordIsNotObject(JsonValidationError): pass
+class JsonTooManyRows(JsonValidationError): pass
+class JsonTooManyBytes(JsonValidationError): pass
+
+
+class JsonNumberTooLarge(JsonValidationError):
+    def __init__(self, value_str: str):
+        super().__init__()
+        self.value_str = value_str
+
+
+class JsonContentHandler(YajlContentHandler):
+    def __init__(self):
+        self.in_root_array = False
+        self.in_record = False
+        self.columns: Dict[str, ColumnBuilder] = {}
+        # self.column is None if not self.in_record or if we hit column limit
+        self.column: Optional[ColumnBuilder] = None
+
+        # value_stack is non-empty stack of JSON-serialized Array/Objects
+        # If in array, top of stack is JSON-serialized values
+        # If in object, top of stack is flattened pairs of key and
+        # JSON-serialized value
+        self.value_stack: List[List[str]] = []
+        self.row = 0
+        self.n_bytes = 0
+        self.max_rows = settings.MAX_ROWS_PER_TABLE
+        self.max_cols = settings.MAX_COLUMNS_PER_TABLE
+        self.max_bytes = settings.MAX_BYTES_PER_TABLE
+        self.truncated_columns = False
+
+    def _assert_column(self):
+        if not self.in_root_array:
+            raise JsonRootIsNotArray
+        if not self.in_record:
+            raise JsonRecordIsNotObject
+
+    def _feed_column(self, value: Optional[CellValue]):
+        if self.column is not None:
+            self.n_bytes += self.column.feed(self.row, value)
+            if self.n_bytes > self.max_bytes:
+                raise JsonTooManyBytes
+        self.column = None
+
+    def yajl_null(self, _):
+        self._assert_column()
+        if self.value_stack:
+            self.value_stack[-1].append('null')
+        else:
+            self._feed_column(None)
+
+    def yajl_boolean(self, _, value: int):
+        self._assert_column()
+        # yajl gives us 0/1. We want true/false.
+        # JSON-encode: Workbench does not support boolean
+        value_str = 'true' if value == 1 else 'false'
+        if self.value_stack:
+            self.value_stack[-1].append(value_str)
+        else:
+            self._feed_column(value_str)
+
+    def yajl_number(self, _, value_utf8: bytes):
+        self._assert_column()
+        if self.value_stack:
+            self.value_stack[-1].append(_utf8(value_utf8))
+        else:
+            if b'.' in value_utf8:
+                value = float(value_utf8)
+                if math.isinf(value):
+                    raise JsonNumberTooLarge(_utf8(value_utf8))
+            else:
+                value = int(value_utf8)
+                if value.bit_length() > 64:
+                    raise JsonNumberTooLarge(_utf8(value_utf8))
+            self._feed_column(value)
+
+    def yajl_string(self, _, value_utf8: bytes):
+        self._assert_column()
+        value = _utf8(value_utf8)
+        if self.value_stack:
+            self.value_stack[-1].append(json.dumps(value))
+        else:
+            self._feed_column(value)
+
+    def yajl_start_map(self, _):
+        if not self.in_root_array:
+            raise JsonRootIsNotArray
+        if self.in_record:
+            # Begin accumulating JSON-serialized sub-records
+            self.value_stack.append([])
+        else:
+            if self.row >= self.max_rows:
+                raise JsonTooManyRows
+            self.in_record = True
+
+    def yajl_map_key(self, _, key_utf8: bytes):
+        self._assert_column()
+        key = _utf8(key_utf8)
+        if self.value_stack:
+            self.value_stack[-1].append(key)
+        else:
+            column = self.columns.get(key)
+            if not column:
+                if len(self.columns) < self.max_cols:
+                    column = ColumnBuilder()
+                    self.columns[key] = column
+                else:
+                    self.truncated_columns = True
+            self.column = column  # None if we truncated columns
+
+    def yajl_end_map(self, _):
+        assert self.in_record
+        if self.value_stack:
+            # We're serializing a nested value. `self.value_stack` is full of
+            # JSON-encoded representations of keys and inner values.
+            #
+            # Clever hack: zip() the same iter twice for (key, value) pairs
+            value_iter = iter(self.value_stack.pop())
+            pair_strs = [
+                f'{json.dumps(k)}:{v}'
+                for k, v in zip(value_iter, value_iter)
+            ]
+            value: str = '{' + ','.join(pair_strs) + '}'
+            if self.value_stack:
+                # We're deeply nested
+                self.value_stack[-1].append(value)
+            else:
+                # End of an Object cell (which we serialize to JSON)
+                self._feed_column(value)
+        else:
+            # End of a record
+            self.column = None
+            self.in_record = False
+            self.row += 1
+
+    def yajl_start_array(self, _):
+        if not self.in_root_array:
+            # This is the first token of the whole file
+            self.in_root_array = True
+            return
+
+        if not self.in_record:
+            raise JsonRecordIsNotObject
+        assert self.column is not None
+        # Begin accumulating JSON-serialized sub-values
+        self.value_stack.append([])
+
+    def yajl_end_array(self, _):
+        if self.column is None:
+            # This is the last token of the whole file
+            self.in_root_array = False
+            return
+
+        assert self.value_stack
+        value = '[' + ','.join(self.value_stack.pop()) + ']'
+        if self.value_stack:
+            self.value_stack[-1].append(value)
+        else:
+            # End of an Array cell (which we serialize to JSON)
+            self._feed_column(value)
+
+
+def parse_json_utf8_bytes(bytesio: io.BytesIO) -> ParseJsonResult:
+    """
+    Parse JSON text into a List of columns.
+
+    * Return error text on invalid JSON ... plus all the data parsed up to the
+      error. (Lots of JSON parse errors are "JSON was truncated"; in that case
+      we want all the data.)
+    * Parse str/int/float as-is; for the rest, concatenate JSON tokens as str.
+    * Drop every row starting at MAX_BYTES_PER_TABLE (and warn)
+    * Drop every column after MAX_COLUMNS_PER_TABLE (and warn)
+    * Drop every row starting at MAX_ROWS_PER_TABLE (and warn)
+    """
+    content_handler = JsonContentHandler()  # holds our data
+    parser = YajlParser(content_handler)
+    errors = []
+    try:
+        parser.parse(bytesio)
+    except (JsonRootIsNotArray, JsonRecordIsNotObject):
+        errors.append(
+            'Workbench cannot import this JSON file. The JSON file '
+            'must be an Array of Objects for Workbench to import it.'
+        )
+    except JsonNumberTooLarge as err:
+        errors.append(
+            f'Stopped parsing JSON because the number "{err.value_str}" '
+            'is too large.'
+        )
+    except JsonTooManyRows:
+        errors.append('The input had too many rows, so we removed rows.')
+    except JsonTooManyBytes:
+        errors.append(
+            'The input was too large, so we stopped before reading the whole '
+            'file.'
+        )
+    except YajlError as err:
+        # e.g., 'lexical error: ...\n    blah\n    ^^here'
+        multiline_err = str(err)
+        oneline_err = multiline_err.split('\n')[0]
+        if (
+            content_handler.columns
+            and next(iter(content_handler.columns.values())).values
+        ):
+            errors.append('Stopped parsing after JSON ' + oneline_err)
+        else:
+            errors.append('JSON ' + oneline_err)
+
+    if content_handler.truncated_columns:
+        errors.append('The input had too many columns, so we removed some.')
+
+    return ParseJsonResult(content_handler.columns, '\n'.join(errors))
+
+
+def _json_columns_to_dataframe_destructive(
+    columns: Dict[str, ColumnBuilder]
+) -> Tuple[pd.DataFrame, str]:
+    """
+    Empty a List[ColumnBuilder] to build a pd.DataFrame.
+
+    Why are we destructive (deleting the input list)? Because it saves RAM
+    (assuming we don't hold other handles to this list's ColumnBuilders).
+
+    Logic:
+
+    * Column values are assumed to be List[Union[None, str, float, int]]
+    * All-NA columns are converted to str
+    * All-float/int columns are converted using pd.to_numeric()
+    * After that, any mixed-type column is converted to str with a warning
+    * Now we only have str; they're converted to category if we expect a
+      space savings
+    """
+    warnings = []
+    for name, column in columns.items():
+        if not column.value_types:
+            series = pd.Series([], dtype=str)
+        elif str not in column.value_types:
+            series = pd.to_numeric(column.values)
+        else:  # it's str
+            if len(column.value_types) > 1:
+                warnings.append(
+                    f'Column "{name}" was mixed-type; we converted it to text.'
+                )
+                converted = ColumnBuilder()
+                for row, value in enumerate(column.values):
+                    if value is not None:
+                        value = str(value)
+                    converted.feed(row, str(value))
+                column = converted
+            series = pd.Series(column.values, dtype=str)
+            if column.should_store_as_categorical:
+                series = series.astype('category')
+        # overwrite in input dict: that'll save RAM because previous `column`
+        # can be garbage-collected
+        columns[name] = series
+    retval = pd.DataFrame(columns)
+    retval.reset_index(drop=True, inplace=True)
+    return retval, '\n'.join(warnings)
+
+
 _ExtensionMimeTypes = {
     '.xls': 'application/vnd.ms-excel',
     '.xlsx':
@@ -212,20 +508,101 @@ def _detect_dialect(textio: io.TextIOBase, ext: str):
         return csv.Sniffer().sniff(sample, ',;\t')
 
 
-def parse_text(path, ext, has_header):
+@contextmanager
+def open_path_with_autodetected_charset(path: pathlib.Path):
     with path.open('rb') as bytesio:
         # TODO handle encoding error
         encoding = detect_encoding(bytesio)
         bytesio.seek(0)
         with wrap_text(bytesio, encoding) as textio:
-            dialect = _detect_dialect(textio, ext)
-            parse_table_result = parse_table(textio, dialect)
+            yield textio
+
+
+def parse_text(path, ext, has_header):
+    with open_path_with_autodetected_charset(path) as textio:
+        dialect = _detect_dialect(textio, ext)
+        parse_table_result = parse_table(textio, dialect)
 
     if not len(parse_table_result.columns):
         return 'This file is empty'  # error: this is never the user's intent
-    dataframe = _columns_to_dataframe_destructive(parse_table_result.columns,
-                                                  has_header)
+    dataframe = _csv_columns_to_dataframe_destructive(
+        parse_table_result.columns,
+        has_header
+    )
     error = parse_table_result.error
+    if error:
+        return {'dataframe': dataframe, 'error': error}
+    else:
+        return dataframe
+
+
+class EncodedTextReader(io.RawIOBase):
+    def __init__(self, textio, encoding, buffer_size=io.DEFAULT_BUFFER_SIZE,
+                 errors='strict'):
+        self.textio = textio
+        self.buffer_size = io.DEFAULT_BUFFER_SIZE  # characters
+        self.encoder = codecs.lookup(encoding).incrementalencoder(errors=errors)
+        self.block: bytes = b''
+        self.block_pos: int = 0  # how much of `block` we've already read
+
+    # override io.IOBase
+    def close(self):
+        self.textio.close()
+        super().close()
+
+    # override io.IOBase
+    def readable(self):
+        return True
+
+    # override io.IOBase
+    def writable(self):
+        return False
+
+    # override io.RawIOBase
+    def readinto(self, b: bytes) -> int:
+        if self.block_pos == len(self.block):
+            # Read another block
+            self.block = self.encoder.encode(self.textio.read(self.buffer_size))
+            self.block_pos = 0
+            if not self.block:
+                return 0  # end of file
+        pos = self.block_pos
+        nread = min(len(b), len(self.block) - pos)
+        b[:nread] = self.block[pos:pos + nread]
+        self.block_pos = pos + nread
+        return nread
+
+
+@contextmanager
+def open_path_with_autodetected_charset_as_utf8(path: pathlib.Path):
+    """
+    Opens `path`, yielding a utf-8-encoded BytesIO.
+    """
+    with path.open('rb') as bytesio:
+        # TODO handle encoding error
+        encoding = detect_encoding(bytesio)
+        bytesio.seek(0)
+        if encoding == 'utf-8':
+            yield bytesio
+        else:
+            with wrap_text(bytesio, encoding) as textio:
+                with EncodedTextReader(textio, 'utf-8',
+                                       errors='replace') as encodedio:
+                    yield encodedio
+
+
+def parse_json(path):
+    with open_path_with_autodetected_charset_as_utf8(path) as bytesio:
+        parse_json_result = parse_json_utf8_bytes(bytesio)
+    errors = []
+    if parse_json_result.error:
+        errors.append(parse_json_result.error)
+    dataframe, warnings = _json_columns_to_dataframe_destructive(
+        parse_json_result.columns
+    )
+    if warnings:
+        errors.append(warnings)
+    error = '\n'.join(errors)
     if error:
         return {'dataframe': dataframe, 'error': error}
     else:
@@ -257,9 +634,11 @@ def parse_wrongly(path: pathlib.Path, mime_type: str, has_header: bool):
 
 
 def parse_file(path: pathlib.Path, has_header: bool):
-    ext = ''.join(path.suffixes)
+    ext = ''.join(path.suffixes).lower()
     if ext in ['.csv', '.tsv', '.txt']:
         return parse_text(path, ext, has_header)
+    elif ext == '.json':
+        return parse_json(path)
     mime_type = _ExtensionMimeTypes.get(ext, None)
     if mime_type:
         return parse_wrongly(path, mime_type, has_header)
