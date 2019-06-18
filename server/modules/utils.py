@@ -327,30 +327,6 @@ def _parse_txt(bytesio: io.BytesIO,
     return _parse_table(bytesio, None, text_encoding)
 
 
-def _determine_dtype(bytesio: io.BytesIO):
-    """
-    Either improve read performance time or save memory depending on file size
-
-    Peculiarities:
-
-    * Unittests pass bytesio as io.BytesIO
-    * Django passes as FieldFile.
-    * Both have different methods to determine buffer size
-    """
-
-    if type(bytesio) == FieldFile:
-        size = bytesio.size
-    elif type(bytesio) == io.BytesIO:
-        size = bytesio.getbuffer().nbytes
-    else:
-        return None
-
-    if size > settings.CATEGORY_FILE_SIZE_MIN:
-        return 'category'
-    else:
-        return None
-
-
 def _detect_separator(textio: io.TextIOWrapper) -> str:
     """
     Detect most common char of '\t', ';', ',' in first MB
