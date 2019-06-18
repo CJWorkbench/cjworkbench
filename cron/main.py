@@ -9,6 +9,7 @@ from cjworkbench.util import benchmark
 from .autoupdate import queue_fetches
 from .sessions import delete_expired_sessions_and_workflows
 from .uploads import delete_stale_inprogress_file_uploads
+from . import lessons
 
 
 logger = logging.getLogger(__name__)
@@ -17,6 +18,7 @@ logger = logging.getLogger(__name__)
 FetchInterval = 60  # seconds
 ExpiryInterval = 300  # seconds
 StaleUploadInterval = 7200  # seconds
+StaleLessonAutoUpdateInterval = 3600  # seconds
 
 
 async def queue_fetches_forever():
@@ -53,7 +55,6 @@ async def delete_expired_sessions_and_workflows_forever():
                             'delete_expired_sessions_and_workflows()')
         except:
             logger.exception('Error deleting expired sessions and workflows')
-
         await asyncio.sleep(ExpiryInterval)
 
 
@@ -64,8 +65,17 @@ async def delete_stale_inprogress_file_uploads_forever():
                             'delete_stale_inprogress_file_uploads()')
         except:
             logger.exception('Error deleting stale inprogress uploads')
-
         await asyncio.sleep(StaleUploadInterval)
+
+
+async def disable_stale_lesson_auto_update_forever():
+    while True:
+        try:
+            await benchmark(logger, lessons.disable_stale_auto_update(),
+                            'lessons.disable_stale_auto_update()')
+        except:
+            logger.exception('Error disabling stale lesson auto-updates')
+        await asyncio.sleep(StaleLessonAutoUpdateInterval)
 
 
 async def main():
@@ -78,4 +88,5 @@ async def main():
         queue_fetches_forever(),
         delete_expired_sessions_and_workflows_forever(),
         delete_stale_inprogress_file_uploads_forever(),
+        disable_stale_lesson_auto_update_forever(),
     }, return_when=asyncio.FIRST_EXCEPTION)
