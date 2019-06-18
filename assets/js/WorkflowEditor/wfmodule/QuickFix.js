@@ -23,13 +23,16 @@ export default class QuickFix extends React.PureComponent {
     const { disabled, text } = this.props
 
     return (
-      <button
-        disabled={disabled}
-        className="quick-fix action-button button-orange"
-        onClick={this.onClick}
-      >
+      <div className="quickfix-container">
         {text}
-      </button>
+        <button
+          disabled={disabled}
+          className="quick-fix action-button"
+          onClick={this.onClick}
+        >
+          Convert
+        </button>
+      </div>
     )
   }
 }

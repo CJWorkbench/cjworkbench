@@ -41,7 +41,7 @@ class TestQuickFix(LoggedInIntegrationTest):
         # Wait for error to occur
         b = self.browser
         b.assert_element('.wf-module-error-msg',
-                         text='The chosen columns need to be converted.',
+                         text='Some columns must be converted:',
                          wait=True)
         b.click_button('Convert "A" to Dates & Times')
 
@@ -75,7 +75,7 @@ class TestQuickFix(LoggedInIntegrationTest):
         self.submit_wf_module()
         # Wait for error
         b.assert_element('.wf-module-error-msg',
-                         text='The chosen columns need to be converted.',
+                         text='Some columns must be converted:',
                          wait=True)
 
         # Fix the error by clicking the "Quick Fix" button.

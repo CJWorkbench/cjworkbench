@@ -424,11 +424,12 @@
 
   .wf-module-error-msg  {
     padding: 1.5rem;
-    background-color: $error-prompt--Vlight;
-    color: $brand-red;
+    background-color: $brand-workspace--light;
+    color: $brand-workspace;
     @include content-1;
     text-align: left;
     word-wrap: break-word;
+    font-weight: bold;
     margin-bottom: 1rem;
 
     p {
@@ -442,7 +443,17 @@
       padding: 0;
 
       button {
-        @extend .button-red;
+        @include button-blue;
+        color: $brand-workspace;
+        border-color: $brand-workspace;
+        margin-top: .5rem;
+      }
+
+      .quickfix-container {
+        padding-top: 1rem;
+        &:not(:last-child){
+          margin-bottom: 1rem;
+        }
       }
     }
   }
@@ -451,7 +462,11 @@
   &.status-ok .wf-module-error-msg {
     background-color: $brand-workspace--light;
     color: $brand-workspace;
-    border-color: $brand-workspace--light
+    border-color: $brand-workspace--light;
+
+    button {
+      @extend .button-blue
+    }
   }
 
   //module being dragged (old position)
