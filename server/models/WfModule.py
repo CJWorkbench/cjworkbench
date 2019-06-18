@@ -56,7 +56,7 @@ class WfModule(models.Model):
             models.Index(
                 fields=['next_update'],
                 name='pending_update_queue',
-                condition=Q(next_update__isnull=False)
+                condition=Q(next_update__isnull=False, is_deleted=False)
             ),
         ]
 
