@@ -3,6 +3,7 @@ from contextlib import contextmanager
 import csv
 import datetime
 from dataclasses import dataclass
+from enum import Enum
 import io
 import json
 import math
@@ -13,7 +14,8 @@ from typing import Dict, List, Optional, Tuple, Union
 from django.conf import settings
 import pandas as pd
 from .utils import detect_encoding, wrap_text, uniquize_colnames, \
-        autocast_series_dtype, turn_header_into_first_row, parse_bytesio
+        autocast_series_dtype, turn_header_into_first_row, \
+        parse_bytesio as bad_parse_bytesio
 
 
 CellValue = Union[int, float, str, datetime.datetime]
@@ -489,18 +491,37 @@ def _json_columns_to_dataframe_destructive(
     return retval, '\n'.join(warnings)
 
 
-_ExtensionMimeTypes = {
-    '.xls': 'application/vnd.ms-excel',
-    '.xlsx':
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    '.json': 'application/json',
-}
+class MimeType(Enum):
+    CSV = 'text/csv'
+    TSV = 'text/tab-separated-values'
+    TXT = 'text/plain'
+    JSON = 'application/json'
+    XLS = 'application/vnd.ms-excel'
+    XLSX = (
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+
+    @classmethod
+    def from_extension(cls, ext: str):
+        """
+        Find MIME type by extension (e.g., ".txt").
+
+        Raise KeyError if there is none.
+        """
+        return {
+            '.csv': MimeType.CSV,
+            '.tsv': MimeType.TSV,
+            '.txt': MimeType.TXT,
+            '.xls': MimeType.XLS,
+            '.xlsx': MimeType.XLSX,
+            '.json': MimeType.JSON,
+        }[ext]
 
 
-def _detect_dialect(textio: io.TextIOBase, ext: str):
-    if ext == '.csv':
+def _detect_dialect(textio: io.TextIOBase, mime_type: MimeType):
+    if mime_type == MimeType.CSV:
         return csv.excel
-    elif ext == '.tsv':
+    elif mime_type == MimeType.TSV:
         return csv.excel_tab
     else:
         sample = textio.read(settings.SEP_DETECT_CHUNK_SIZE)
@@ -518,10 +539,9 @@ def open_path_with_autodetected_charset(path: pathlib.Path):
             yield textio
 
 
-def parse_text(path, ext, has_header):
-    with open_path_with_autodetected_charset(path) as textio:
-        dialect = _detect_dialect(textio, ext)
-        parse_table_result = parse_table(textio, dialect)
+def parse_text(textio, ext, has_header):
+    dialect = _detect_dialect(textio, ext)
+    parse_table_result = parse_table(textio, dialect)
 
     if not len(parse_table_result.columns):
         return 'This file is empty'  # error: this is never the user's intent
@@ -534,6 +554,14 @@ def parse_text(path, ext, has_header):
         return {'dataframe': dataframe, 'error': error}
     else:
         return dataframe
+
+
+def parse_text_bytesio(bytesio, encoding: Optional[str], mime_type: MimeType,
+                       has_header: bool):
+    if encoding is None:
+        encoding = detect_encoding(bytesio)
+    with wrap_text(bytesio, encoding) as textio:
+        return parse_text(textio, mime_type, has_header)
 
 
 class EncodedTextReader(io.RawIOBase):
@@ -574,26 +602,25 @@ class EncodedTextReader(io.RawIOBase):
 
 
 @contextmanager
-def open_path_with_autodetected_charset_as_utf8(path: pathlib.Path):
+def bytes_transcoded_to_utf8(bytesio, encoding: Optional[str]):
     """
     Opens `path`, yielding a utf-8-encoded BytesIO.
     """
-    with path.open('rb') as bytesio:
-        # TODO handle encoding error
+    # TODO handle encoding error
+    if encoding is None:
         encoding = detect_encoding(bytesio)
-        bytesio.seek(0)
-        if encoding == 'utf-8':
-            yield bytesio
-        else:
-            with wrap_text(bytesio, encoding) as textio:
-                with EncodedTextReader(textio, 'utf-8',
-                                       errors='replace') as encodedio:
-                    yield encodedio
+    bytesio.seek(0)
+    if encoding == 'utf-8':
+        yield bytesio
+    else:
+        with wrap_text(bytesio, encoding) as textio:
+            with EncodedTextReader(textio, 'utf-8',
+                                   errors='replace') as encodedio:
+                yield encodedio
 
 
-def parse_json(path):
-    with open_path_with_autodetected_charset_as_utf8(path) as bytesio:
-        parse_json_result = parse_json_utf8_bytes(bytesio)
+def parse_utf8_json(bytesio):
+    parse_json_result = parse_json_utf8_bytes(bytesio)
     errors = []
     if parse_json_result.error:
         errors.append(parse_json_result.error)
@@ -609,7 +636,13 @@ def parse_json(path):
         return dataframe
 
 
-def parse_wrongly(path: pathlib.Path, mime_type: str, has_header: bool):
+def parse_json_bytesio(bytesio, encoding: Optional[str]):
+    with bytes_transcoded_to_utf8(bytesio, encoding) as utf8_bytesio:
+        return parse_utf8_json(utf8_bytesio)
+
+
+def parse_wrongly(bytesio, encoding: Optional[str], mime_type: str,
+                  has_header: bool):
     """
     Delegate to modules.utils.parse_bytesio(), which is wrong.
 
@@ -617,8 +650,7 @@ def parse_wrongly(path: pathlib.Path, mime_type: str, has_header: bool):
     break everything by calling turn_header_into_first_row() if `has_header`
     is False.
     """
-    with path.open('rb') as f:
-        result = parse_bytesio(f, mime_type)
+    result = bad_parse_bytesio(bytesio, mime_type, encoding)
     result.truncate_in_place_if_too_big()
     dataframe = result.dataframe
     error = result.error
@@ -635,14 +667,38 @@ def parse_wrongly(path: pathlib.Path, mime_type: str, has_header: bool):
 
 def parse_file(path: pathlib.Path, has_header: bool):
     ext = ''.join(path.suffixes).lower()
-    if ext in ['.csv', '.tsv', '.txt']:
-        return parse_text(path, ext, has_header)
-    elif ext == '.json':
-        return parse_json(path)
-    mime_type = _ExtensionMimeTypes.get(ext, None)
-    if mime_type:
-        return parse_wrongly(path, mime_type, has_header)
-    else:
+    try:
+        mime_type = MimeType.from_extension(ext)
+    except KeyError:
         return (
             'Unknown file extension %r. Please upload a different file.' % ext
         )
+    with path.open('rb') as bytesio:
+        return _do_parse_bytesio(bytesio, None, mime_type, has_header)
+
+
+def parse_bytesio(bytesio: io.BytesIO, encoding: Optional[str],
+                  content_type: str, has_header: bool):
+    """
+    Parse bytes, given a content_type and encoding (e.g., from HTTP headers).
+
+    `bytesio` must be seekable. `encoding` is optional.
+    """
+    try:
+        mime_type = MimeType(content_type)
+    except ValueError:
+        return (
+            'Unknown MIME type %r. Please choose a different file.'
+            % content_type
+        )
+    return _do_parse_bytesio(bytesio, encoding, mime_type, has_header)
+
+
+def _do_parse_bytesio(bytesio: io.BytesIO, encoding: Optional[str],
+                      mime_type: MimeType, has_header: bool):
+    if mime_type in {MimeType.CSV, MimeType.TSV, MimeType.TXT}:
+        return parse_text_bytesio(bytesio, encoding, mime_type, has_header)
+    elif mime_type == MimeType.JSON:
+        return parse_json_bytesio(bytesio, encoding)
+    else:
+        return parse_wrongly(bytesio, encoding, mime_type.value, has_header)

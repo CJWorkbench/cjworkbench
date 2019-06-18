@@ -1,13 +1,10 @@
-from collections import OrderedDict
 import io
-import json
-import os
 import unittest
 from unittest.mock import patch
 import aiohttp
 from asgiref.sync import async_to_sync
-from django.conf import settings
 import pandas as pd
+from pandas.testing import assert_frame_equal
 import requests
 from cjworkbench.types import ProcessResult
 from server.modules import loadurl
@@ -88,58 +85,56 @@ def fetch(**kwargs):
 class LoadUrlTests(unittest.TestCase):
     @patch('server.modules.utils.spooled_data_from_url',
            fake_spooled_data_from_url(mock_csv_raw, 'text/csv'))
-    def test_load_csv(self):
-        fetch_result = fetch(url='http://test.com/the.csv')
-        self.assertEqual(fetch_result, ProcessResult(mock_csv_table))
+    def test_fetch_csv(self):
+        result = fetch(url='http://test.com/the.csv')
+        assert_frame_equal(result, mock_csv_table)
 
     @patch('server.modules.utils.spooled_data_from_url',
-           fake_spooled_data_from_url(b'a,b\n"1', 'text/csv'))
-    def test_load_invalid_csv(self):
-        fetch_result = fetch(url='http://test.com/the.csv')
-        self.assertEqual(fetch_result, ProcessResult(error=(
-            'Error tokenizing data. C error: EOF inside string '
-            'starting at row 1'
-        )))
+           fake_spooled_data_from_url(b'a\n"b', 'text/csv'))
+    def test_fetch_invalid_csv(self):
+        # It would be great to report "warnings" on invalid input. But Python's
+        # `csv` module won't do that: it forces us to choose between mangling
+        # input and raising an exception. Both are awful; mangling input is
+        # slightly preferable, so that's what we do.
+        result = fetch(url='http://test.com/the.csv')
+        assert_frame_equal(result, pd.DataFrame({'a': ['b']}))
 
     @patch('server.modules.utils.spooled_data_from_url',
            fake_spooled_data_from_url(mock_csv_raw, 'text/plain'))
-    def test_load_csv_use_ext_given_bad_content_type(self):
+    def test_fetch_csv_use_ext_given_bad_content_type(self):
         # return text/plain type and rely on filename detection, as
         # https://raw.githubusercontent.com/ does
-        fetch_result = fetch(url='http://test.com/the.csv')
-        self.assertEqual(fetch_result, ProcessResult(mock_csv_table))
+        result = fetch(url='http://test.com/the.csv')
+        assert_frame_equal(result, mock_csv_table)
 
     @patch('server.modules.utils.spooled_data_from_url',
            fake_spooled_data_from_url(mock_csv_raw, 'application/csv'))
-    def test_load_csv_handle_nonstandard_mime_type(self):
+    def test_fetch_csv_handle_nonstandard_mime_type(self):
         """
         Transform 'application/csv' into 'text/csv', etc.
 
         Sysadmins sometimes invent MIME types and we can infer exactly what
         they _mean_, even if they didn't say it.
         """
-        fetch_result = fetch(url='http://test.com/the.data?format=csv&foo=bar')
-        self.assertEqual(fetch_result, ProcessResult(mock_csv_table))
+        result = fetch(url='http://test.com/the.data?format=csv&foo=bar')
+        assert_frame_equal(result, mock_csv_table)
 
-    def test_load_json(self):
-        with patch('server.modules.utils.spooled_data_from_url',
-                   fake_spooled_data_from_url(b'[{"A":1}]', 'application/json',
-                                              'utf-8')):
-            fetch_result = fetch(url='http://test.com/the.json')
-
-        self.assertEqual(fetch_result, ProcessResult(pd.DataFrame({'A': [1]})))
+    @patch(
+        'server.modules.utils.spooled_data_from_url',
+        fake_spooled_data_from_url(b'[{"A":1}]', 'application/json', 'utf-8')
+    )
+    def test_fetch_json(self):
+        result = fetch(url='http://test.com/the.json')
+        assert_frame_equal(result, pd.DataFrame({'A': [1]}))
 
     @patch('server.modules.utils.spooled_data_from_url',
            fake_spooled_data_from_url(b'not json', 'application/json'))
-    def test_load_json_invalid_json(self):
-        # malformed json should put module in error state
-        fetch_result = fetch(url='http://test.com/the.json')
+    def test_fetch_json_invalid_json(self):
+        result = fetch(url='http://test.com/the.json')
+        self.assertEqual(result['error'],
+                         'JSON lexical error: invalid string in json text.')
 
-        self.assertEqual(fetch_result, ProcessResult(error=(
-            'Invalid JSON (Unexpected character found when decoding \'null\')'
-        )))
-
-    def test_load_xlsx(self):
+    def test_fetch_xlsx(self):
         with open(mock_xlsx_path, 'rb') as f:
             xlsx_bytes = f.read()
             xlsx_table = pd.read_excel(mock_xlsx_path)
@@ -147,21 +142,17 @@ class LoadUrlTests(unittest.TestCase):
         with patch('server.modules.utils.spooled_data_from_url',
                    fake_spooled_data_from_url(xlsx_bytes, XLSX_MIME_TYPE,
                                               None)):
-            fetch_result = fetch(url='http://test.com/x.xlsx')
-
-        self.assertEqual(fetch_result, ProcessResult(xlsx_table))
+            result = fetch(url='http://test.com/x.xlsx')
+        assert_frame_equal(result, xlsx_table)
 
     @patch('server.modules.utils.spooled_data_from_url',
            fake_spooled_data_from_url(b'hi', XLSX_MIME_TYPE, None))
-    def test_load_xlsx_bad_content(self):
-        # malformed file  should put module in error state
-        with patch('requests.get', respond(b'hi', XLSX_MIME_TYPE)):
-            fetch_result = fetch(url='http://test.com/x.xlsx')
-
-        self.assertEqual(fetch_result, ProcessResult(error=(
+    def test_fetch_xlsx_bad_content(self):
+        result = fetch(url='http://test.com/x.xlsx')
+        self.assertEqual(result, (
             "Error reading Excel file: Unsupported format, or corrupt "
             "file: Expected BOF record; found b'hi'"
-        )))
+        ))
 
     @patch('server.modules.utils.spooled_data_from_url',
            fake_spooled_data_from_url(

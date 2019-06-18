@@ -2,7 +2,8 @@ import aiohttp
 import asyncio
 from cjworkbench.types import ProcessResult
 from server.modules import utils
-from .utils import parse_bytesio, turn_header_into_first_row
+from .utils import turn_header_into_first_row
+from .parse_util import parse_bytesio
 
 
 ExtensionMimeTypes = {
@@ -71,16 +72,22 @@ async def fetch(params, **kwargs):
     try:
         async with utils.spooled_data_from_url(
             url, headers, timeout
-        ) as (bytes_io, headers, charset):
+        ) as (bytesio, headers, charset):
             content_type = headers.get('Content-Type', '') \
                     .split(';')[0] \
                     .strip()
             mime_type = guess_mime_type_or_none(content_type, url)
 
             if mime_type:
-                result = parse_bytesio(bytes_io, mime_type, charset)
-                result.truncate_in_place_if_too_big()
-                return result
+                # FIXME has_header=True always, because of a stupid decision
+                # ages ago that we can't fix because everything we've stored
+                # was stored with has_header=True (which is lossy).
+                #
+                # In https://www.pivotaltracker.com/story/show/166712967 we'll
+                # store the input file instead of parsed file; then we'll be
+                # able to parse correctly moving forward.
+                return parse_bytesio(bytesio, charset, mime_type,
+                                     has_header=True)
             else:
                 return ProcessResult(error=(
                     f'Error fetching {url}: '
