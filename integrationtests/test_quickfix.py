@@ -43,7 +43,9 @@ class TestQuickFix(LoggedInIntegrationTest):
         b.assert_element('.wf-module-error-msg',
                          text='Some columns must be converted:',
                          wait=True)
-        b.click_button('Convert "A" to Dates & Times')
+        b.assert_element('.quickfix-container',
+                         Text='Convert "A" to Dates & Times',
+                         wait=True)
 
         # Wait for module to appear
         b.assert_element('.module-name', text='Convert to date & time',
