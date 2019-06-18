@@ -36,7 +36,7 @@ describe('Status line', () => {
       ]
     })
 
-    expect(w.find('button').text()).toEqual('Convert')
+    expect(w.find('button').text()).toEqual('Fix it')
     w.find('button').simulate('click')
     expect(w.prop('applyQuickFix')).toHaveBeenCalledWith('prependModule', [1, 2])
   })
