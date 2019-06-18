@@ -155,6 +155,7 @@ class WfModuleTests(DbTestCase):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
         wf_module = tab.wf_modules.create(order=0, auto_update_data=True,
+                                          next_update=timezone.now(),
                                           update_interval=600)
 
         workflow2 = Workflow.create_and_init()
@@ -163,6 +164,7 @@ class WfModuleTests(DbTestCase):
         wf_module2 = wf_module.duplicate(tab2)
 
         self.assertEqual(wf_module2.auto_update_data, False)
+        self.assertIsNone(wf_module2.next_update)
         self.assertEqual(wf_module2.update_interval, 600)
 
     def test_wf_module_duplicate_clear_secrets(self):

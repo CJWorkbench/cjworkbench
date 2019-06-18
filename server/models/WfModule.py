@@ -405,7 +405,7 @@ class WfModule(models.Model):
             notes=self.notes,
             is_collapsed=self.is_collapsed,
             auto_update_data=False,
-            next_update=self.next_update,
+            next_update=None,
             update_interval=self.update_interval,
             last_update_check=self.last_update_check,
             # to_workflow has exactly one delta, and that's the version of all

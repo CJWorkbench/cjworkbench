@@ -48,6 +48,7 @@ class FetchTests(DbTestCase):
         workflow = Workflow.create_and_init()
         wf_module = workflow.tabs.first().wf_modules.create(
             order=0,
+            auto_update_data=True,
             next_update=parser.parse('Aug 28 1999 2:24PM UTC'),
             update_interval=600
         )
@@ -71,6 +72,7 @@ class FetchTests(DbTestCase):
         tab = workflow.tabs.create(position=0)
         wf_module = tab.wf_modules.create(
             order=0,
+            auto_update_data=True,
             next_update=parser.parse('Aug 28 1999 2:24PM UTC'),
             update_interval=600
         )
@@ -97,6 +99,7 @@ class FetchTests(DbTestCase):
         workflow = Workflow.create_and_init()
         wf_module = workflow.tabs.first().wf_modules.create(
             order=0,
+            auto_update_data=True,
             next_update=parser.parse('Aug 28 1999 2:24PM UTC'),
             update_interval=600
         )
@@ -189,6 +192,7 @@ class FetchTests(DbTestCase):
         tab = workflow.tabs.create(position=0)
         wf_module = tab.wf_modules.create(
             order=0,
+            auto_update_data=True,
             next_update=parser.parse('Aug 28 1999 2:24PM UTC'),
             update_interval=600,
             module_id_name='x'
