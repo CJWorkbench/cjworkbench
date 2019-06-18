@@ -86,8 +86,18 @@ async def fetch(params, **kwargs):
                 # In https://www.pivotaltracker.com/story/show/166712967 we'll
                 # store the input file instead of parsed file; then we'll be
                 # able to parse correctly moving forward.
-                return parse_bytesio(bytesio, charset, mime_type,
-                                     has_header=True)
+                #
+                # FIXME move this to render(). In the meantime, we need to
+                # run_in_executor() so we continue to send AMQP heartbeats and
+                # handle other HTTP connections, even when parsing a big file.
+                return await asyncio.get_event_loop().run_in_executor(
+                    None,
+                    parse_bytesio,
+                    bytesio,
+                    charset,
+                    mime_type,
+                    True  # has_header
+                )
             else:
                 return ProcessResult(error=(
                     f'Error fetching {url}: '
