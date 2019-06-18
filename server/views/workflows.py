@@ -10,6 +10,7 @@ from django.db.models import Q
 from django.http import Http404, HttpRequest, JsonResponse
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views import View
 from rest_framework import status
@@ -34,6 +35,8 @@ def make_init_state(request, workflow=None, modules=None):
     Build a dict to embed as JSON in `window.initState` in HTML.
 
     Raise Http404 if the workflow disappeared.
+
+    Side-effect: update workflow.last_viewed_at.
     """
     ret = {}
 
@@ -54,15 +57,10 @@ def make_init_state(request, workflow=None, modules=None):
 
                 ret['wfModules'] = {str(wfm.id): WfModuleSerializer(wfm).data
                                     for wfm in wf_modules}
+                workflow.last_viewed_at = timezone.now()
+                workflow.save(update_fields=['last_viewed_at'])
         except Workflow.DoesNotExist:
             raise Http404('Workflow was recently deleted')
-
-        ret['uploadConfig'] = {
-            'bucket': minio.UserFilesBucket,
-            'accessKey': settings.MINIO_ACCESS_KEY,  # never _SECRET_KEY
-            'server': settings.MINIO_EXTERNAL_URL
-        }
-        ret['user_files_bucket'] = minio.UserFilesBucket
 
     if modules:
         modules_data_list = ModuleSerializer(modules, many=True).data

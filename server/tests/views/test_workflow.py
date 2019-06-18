@@ -188,6 +188,15 @@ class WorkflowViewTests(LoggedInTestCase):
         response = self.client.get('/workflows/%d/' % self.workflow1.id)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    def test_workflow_view_update_last_viewed_at(self):
+        # View own non-public workflow
+        self.client.force_login(self.user)
+        date1 = self.workflow1.last_viewed_at
+        self.client.get('/workflows/%d/' % self.workflow1.id)
+        self.workflow1.refresh_from_db()
+        date2 = self.workflow1.last_viewed_at
+        self.assertGreater(date2, date1)
+
     @patch('server.models.Workflow.cooperative_lock')
     def test_workflow_view_race_delete_after_auth(self, lock):
         # cooperative_lock() is called _after_ auth. (Auth is optimized to be

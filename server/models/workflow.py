@@ -7,6 +7,7 @@ from django.db import models, transaction
 from django.contrib.auth.models import User
 from django.http import HttpRequest
 from django.urls import reverse
+from django.utils import timezone
 from server import minio
 
 
@@ -118,6 +119,13 @@ class Workflow(models.Model):
 
     name = models.CharField('name', max_length=200)
     creation_date = models.DateTimeField(auto_now_add=True)
+    last_viewed_at = models.DateTimeField(default=timezone.now)
+    """
+    Most recent timestamp when _any user_ viewed the workflow.
+
+    This was added 2019-06-18, so that's the minimum last_viewed_at value.
+    """
+
     owner = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
