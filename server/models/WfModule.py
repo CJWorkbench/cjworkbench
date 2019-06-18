@@ -53,6 +53,11 @@ class WfModule(models.Model):
                 name='inprogress_file_upload_filter',
                 condition=Q(inprogress_file_upload_last_accessed_at__isnull=False)
             ),
+            models.Index(
+                fields=['next_update'],
+                name='pending_update_queue',
+                condition=Q(next_update__isnull=False)
+            ),
         ]
 
     def __str__(self):
