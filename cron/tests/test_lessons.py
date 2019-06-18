@@ -1,4 +1,5 @@
 import datetime
+import logging
 from django.utils import timezone
 from server.models import Workflow
 from server.tests.utils import DbTestCase
@@ -22,7 +23,8 @@ class DisableStaleAutoUpdateTests(DbTestCase):
             auto_update_data=True,
             next_update=timezone.now(),
         )
-        self.run_with_async_db(lessons.disable_stale_auto_update())
+        with self.assertLogs(lessons.__name__, logging.INFO):
+            self.run_with_async_db(lessons.disable_stale_auto_update())
         wf_module.refresh_from_db()
         self.assertEqual(wf_module.auto_update_data, False)
         self.assertIsNone(wf_module.next_update)
@@ -39,7 +41,8 @@ class DisableStaleAutoUpdateTests(DbTestCase):
             auto_update_data=False,
             next_update=None,
         )
-        self.run_with_async_db(lessons.disable_stale_auto_update())
+        with self.assertLogs(lessons.__name__, logging.INFO):
+            self.run_with_async_db(lessons.disable_stale_auto_update())
         wf_module.refresh_from_db()
         self.assertEqual(wf_module.auto_update_data, False)
         self.assertIsNone(wf_module.next_update)
@@ -57,7 +60,8 @@ class DisableStaleAutoUpdateTests(DbTestCase):
             next_update=timezone.now(),
             is_deleted=True,
         )
-        self.run_with_async_db(lessons.disable_stale_auto_update())
+        with self.assertLogs(lessons.__name__, logging.INFO):
+            self.run_with_async_db(lessons.disable_stale_auto_update())
         wf_module.refresh_from_db()
         self.assertEqual(wf_module.auto_update_data, True)
         self.assertIsNotNone(wf_module.next_update)
@@ -75,7 +79,8 @@ class DisableStaleAutoUpdateTests(DbTestCase):
             auto_update_data=True,
             next_update=timezone.now(),
         )
-        self.run_with_async_db(lessons.disable_stale_auto_update())
+        with self.assertLogs(lessons.__name__, logging.INFO):
+            self.run_with_async_db(lessons.disable_stale_auto_update())
         wf_module.refresh_from_db()
         self.assertEqual(wf_module.auto_update_data, True)
         self.assertIsNotNone(wf_module.next_update)
@@ -93,7 +98,8 @@ class DisableStaleAutoUpdateTests(DbTestCase):
             next_update=timezone.now(),
             is_deleted=True,
         )
-        self.run_with_async_db(lessons.disable_stale_auto_update())
+        with self.assertLogs(lessons.__name__, logging.INFO):
+            self.run_with_async_db(lessons.disable_stale_auto_update())
         wf_module.refresh_from_db()
         self.assertEqual(wf_module.auto_update_data, True)
         self.assertIsNotNone(wf_module.next_update)
@@ -111,7 +117,8 @@ class DisableStaleAutoUpdateTests(DbTestCase):
             next_update=timezone.now(),
             is_deleted=True,
         )
-        self.run_with_async_db(lessons.disable_stale_auto_update())
+        with self.assertLogs(lessons.__name__, logging.INFO):
+            self.run_with_async_db(lessons.disable_stale_auto_update())
         wf_module.refresh_from_db()
         self.assertEqual(wf_module.auto_update_data, True)
         self.assertIsNotNone(wf_module.next_update)
