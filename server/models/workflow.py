@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from typing import Dict, List, Optional, Set, Tuple, FrozenSet
 import warnings
 from django.db import models, transaction
+from django.db.models import Q
 from django.contrib.auth.models import User
 from django.http import HttpRequest
 from django.urls import reverse
@@ -303,6 +304,23 @@ class Workflow(models.Model):
             or (session and session.session_key
                 and session.session_key == self.anonymous_owner_session_key)
         )
+
+    @classmethod
+    def owned_by_user_session(cls, user, session):
+        # FIXME unit-test (security)
+        ret = cls.objects
+        if user and not user.is_anonymous:
+            if session and session.session_key:
+                mask = (
+                    Q(owner_id=user.id)
+                    | Q(anonymous_owner_session_key=session.session_key)
+                )
+            else:
+                mask = Q(owner_id=user.id)
+        else:
+            assert session and session.session_key
+            mask = Q(anonymous_owner_session_key=session.session_key)
+        return cls.objects.filter(mask)
 
     def read_only(self, user):
         warnings.warn("FIXME read_only() should be request_read_only()")
