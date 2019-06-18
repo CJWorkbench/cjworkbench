@@ -1,7 +1,7 @@
 from typing import Any, Dict, Optional, Union
 from django.contrib.postgres.fields import JSONField
 from django.db import models
-from django.db.models import Q
+from django.db.models import F, Q
 from cjworkbench.types import ProcessResult
 from server import minio
 from server.models import loaded_module
@@ -38,6 +38,14 @@ class WfModule(models.Model):
                     & Q(inprogress_file_upload_last_accessed_at__isnull=False)
                 )
             ), name='inprogress_file_upload_check'),
+            models.CheckConstraint(check=(
+                # No way to negate F expressions. Wow.
+                # https://code.djangoproject.com/ticket/16211
+                #
+                # Instead, use a four-way truth-table approach :)
+                (Q(next_update__isnull=True) & Q(auto_update_data=False))
+                | (Q(next_update__isnull=False) & Q(auto_update_data=True))
+            ), name='auto_update_consistency_check'),
         ]
         indexes = [
             models.Index(
