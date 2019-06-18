@@ -1,6 +1,6 @@
 import account.views
 import cjworkbench.forms.signup
-import cjworkbench.models.Profile
+import cjworkbench.models.userprofile
 
 class SignupView(account.views.SignupView):
     form_class = cjworkbench.forms.signup.SignupForm

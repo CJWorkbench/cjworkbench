@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth import get_user_model
-from cjworkbench.models.Profile import UserProfile
+from cjworkbench.models.userprofile import UserProfile
 
 class WorkbenchSignupForm(forms.ModelForm):
     get_newsletter = forms.BooleanField(required=False, initial=True)
