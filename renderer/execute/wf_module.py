@@ -169,7 +169,7 @@ async def _render_wfmodule(
         ))
     except PromptingError as err:
         return ProcessResult(
-            error='Some columns must be converted:',
+            error='The chosen columns need to be converted.',
             quick_fixes=err.as_quick_fixes()
         )
 

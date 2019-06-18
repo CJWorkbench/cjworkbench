@@ -25,7 +25,6 @@
 
   .date-granularities {
     margin-top: 2.5rem;
-    border-radius: .5rem;
 
     .custom-select {
       @extend %custom-select;
@@ -54,16 +53,9 @@
       padding: 1.5rem;
       background-color: $brand-workspace--light;
       color: $brand-workspace;
-      font-weight: bold;
       @extend .content-1;
       text-align: left;
       word-wrap: break-word;
-      border-radius: .5rem;
-
-      button {
-        color: $brand-workspace;
-        border-color: $brand-workspace;
-      }
     }
   }
 }
