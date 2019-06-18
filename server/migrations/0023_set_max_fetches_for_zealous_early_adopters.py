@@ -16,6 +16,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('cjworkbench', '0002_userprofile_max_fetches_per_day'),
+        ('server', '0022_auto_20190618_1803'),
     ]
 
     operations = [
