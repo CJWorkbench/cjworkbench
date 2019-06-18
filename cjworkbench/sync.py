@@ -46,5 +46,8 @@ class WorkbenchDatabaseSyncToAsync(DatabaseSyncToAsync):
         return await asyncio.wait_for(future, timeout=None)
 
 
-# The class is TitleCased, but we want to encourage use as a callable/decorator
-database_sync_to_async = WorkbenchDatabaseSyncToAsync
+def database_sync_to_async(fn):
+    @functools.wraps(fn)
+    def inner(*args, **kwargs):
+        return WorkbenchDatabaseSyncToAsync(fn)(*args, **kwargs)
+    return inner

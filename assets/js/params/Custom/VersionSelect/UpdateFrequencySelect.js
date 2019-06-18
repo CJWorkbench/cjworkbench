@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import UpdateFrequencySelectModal from './UpdateFrequencySelectModal'
 import { timeDifference } from '../../../utils'
-import { updateWfModuleAction } from '../../../workflow-reducer'
+import { updateWfModuleAction, setWfModuleNotificationsAction } from '../../../workflow-reducer'
 import { connect } from 'react-redux'
 
 export class UpdateFrequencySelect extends React.PureComponent {
@@ -17,7 +17,7 @@ export class UpdateFrequencySelect extends React.PureComponent {
       timeNumber: PropTypes.number.isRequired,
       timeUnit: PropTypes.oneOf([ 'minutes', 'hours', 'days', 'weeks' ]).isRequired,
     }).isRequired,
-    updateSettings: PropTypes.func.isRequired, // func({ isAutoUpdate, isEmailUpdates, timeNumber, timeUnit }) -> undefined
+    updateSettings: PropTypes.func.isRequired, // func({ isAutoUpdate, timeNumber, timeUnit }) -> undefined
   }
 
   constructor(props) {
@@ -63,6 +63,7 @@ export class UpdateFrequencySelect extends React.PureComponent {
     const maybeModal = this.state.isModalOpen ? (
         <UpdateFrequencySelectModal
           {...this.props.settings}
+          setEmailUpdates={this.props.setEmailUpdates}
           onCancel={this.onCancel}
           onSubmit={this.onSubmit}
           />
@@ -109,10 +110,12 @@ const mapDispatchToProps = (dispatch, ownProps) => {
         auto_update_data: settings.isAutoUpdate,
         update_interval: settings.timeNumber,
         update_units: settings.timeUnit,
-        notifications: settings.isEmailUpdates,
       })
       dispatch(action)
     },
+    setEmailUpdates: (wantEmails) => {
+      return dispatch(setWfModuleNotificationsAction(ownProps.wfModuleId, wantEmails))
+    }
   }
 }
 

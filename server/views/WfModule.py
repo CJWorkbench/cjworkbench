@@ -107,11 +107,10 @@ def wfmodule_detail(request, pk, format=None):
     # them
     # TODO: replace all of these with the generic patch method, most of
     # this is unnecessary
-    if not set(request.data.keys()).intersection(
-        {'auto_update_data', 'notifications'}
-    ):
-        return Response({'error': 'Unknown fields: {}'.format(request.data)},
-                        status=status.HTTP_400_BAD_REQUEST)
+    if 'auto_update_data' not in request.data:
+        return Response({
+            'error': 'Unknown fields: {}'.format(request.data.keys())
+        }, status=status.HTTP_400_BAD_REQUEST)
 
     try:
         if 'auto_update_data' in request.data:
@@ -121,20 +120,6 @@ def wfmodule_detail(request, pk, format=None):
                 server.utils.log_user_event_from_request(
                     request,
                     'Enabled auto-update',
-                    {
-                        'wfModuleId': wf_module.id
-                    }
-                )
-
-        if 'notifications' in request.data:
-            notifications = bool(request.data['notifications'])
-            wf_module.notifications = notifications
-            wf_module.save(update_fields=['notifications'])
-
-            if notifications:
-                server.utils.log_user_event_from_request(
-                    request,
-                    'Enabled email notifications',
                     {
                         'wfModuleId': wf_module.id
                     }

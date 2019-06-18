@@ -40,14 +40,12 @@ describe('UpdateFrequencySelectModal', () => {
     const w = wrapper({ isAutoUpdate: true })
     w.find('input[name="timeNumber"]').simulate('change', { target: { value: '10' } })
     w.find('select[name="timeUnit"]').simulate('change', { target: { value: 'hours' } })
-    w.find('input[name="isEmailUpdates"]').simulate('change', { target: { checked: true } })
     w.find('form').simulate('submit')
     expect(w.prop('onCancel')).not.toHaveBeenCalled()
     expect(w.prop('onSubmit')).toHaveBeenCalledWith({
       isAutoUpdate: true,
       timeNumber: 10,
       timeUnit: 'hours',
-      isEmailUpdates: true,
     })
   })
 

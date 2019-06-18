@@ -5,8 +5,8 @@ from django.contrib.auth.models import User
 from django.test import override_settings
 from server import oauth
 from server.handlers.wf_module import set_params, delete, \
-        set_stored_data_version, set_notes, set_collapsed, fetch, \
-        generate_secret_access_token, delete_secret, set_secret
+        set_stored_data_version, set_notes, set_collapsed, set_notifications, \
+        fetch, generate_secret_access_token, delete_secret, set_secret
 from server.models import ModuleVersion, Workflow
 from server.models.commands import ChangeParametersCommand, \
         ChangeWfModuleNotesCommand, DeleteModuleCommand
@@ -378,6 +378,23 @@ class WfModuleTest(HandlerTestCase):
 
         wf_module.refresh_from_db()
         self.assertEqual(wf_module.is_collapsed, True)
+
+    @patch('server.websockets.ws_client_send_delta_async', async_noop)
+    @patch('server.rabbitmq.queue_render', async_noop)
+    def test_set_notifications(self):
+        user = User.objects.create(username='a', email='a@example.org')
+        workflow = Workflow.create_and_init(owner=user)
+        wf_module = workflow.tabs.first().wf_modules.create(order=0,
+                                                            notifications=True)
+
+        response = self.run_handler(set_notifications, user=user,
+                                    workflow=workflow,
+                                    wfModuleId=wf_module.id,
+                                    notifications=False)
+        self.assertResponse(response, data=None)
+
+        wf_module.refresh_from_db()
+        self.assertEqual(wf_module.notifications, False)
 
     @patch('server.websockets.ws_client_send_delta_async')
     @patch('server.rabbitmq.queue_fetch')

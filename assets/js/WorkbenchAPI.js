@@ -162,6 +162,13 @@ export default class WorkbenchAPI {
     return this._post(`/api/workflows/${workflowId}`, { 'public': isPublic })
   }
 
+  setWfModuleNotifications (wfModuleId, notifications) {
+    return this._callExpectingNull('wf_module.set_notifications', {
+      wfModuleId,
+      notifications
+    })
+  }
+
   setWfModuleParams (wfModuleId, values) {
     return this._callExpectingNull('wf_module.set_params', {
       wfModuleId,

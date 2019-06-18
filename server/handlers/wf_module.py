@@ -12,6 +12,7 @@ from server.models.commands import ChangeParametersCommand, \
         DeleteModuleCommand, ChangeDataVersionCommand, \
         ChangeWfModuleNotesCommand
 from server.models.param_spec import ParamSpec
+import server.utils
 from .types import HandlerError
 from .decorators import register_websockets_handler, websockets_handler
 
@@ -170,19 +171,34 @@ async def set_notes(workflow: Workflow, wf_module: WfModule, notes: str,
                                             new_value=notes)
 
 
+@register_websockets_handler
+@websockets_handler('write')
+@_loading_wf_module
 @database_sync_to_async
-def _set_collapsed_in_db(wf_module: WfModule, is_collapsed: bool) -> None:
+def set_collapsed(workflow: Workflow, wf_module: WfModule,
+                  isCollapsed: bool, **kwargs):
+    is_collapsed = bool(isCollapsed)  # cannot error from JSON input
     wf_module.is_collapsed = is_collapsed
     wf_module.save(update_fields=['is_collapsed'])
 
 
 @register_websockets_handler
-@websockets_handler('write')
+@websockets_handler('owner')
 @_loading_wf_module
-async def set_collapsed(workflow: Workflow, wf_module: WfModule,
-                        isCollapsed: bool, **kwargs):
-    is_collapsed = bool(isCollapsed)  # cannot error from JSON input
-    await _set_collapsed_in_db(wf_module, is_collapsed)
+@database_sync_to_async
+def set_notifications(workflow: Workflow, wf_module: WfModule,
+                      notifications: bool, scope, **kwargs):
+    notifications = bool(notifications)  # cannot error from JSON input
+    wf_module.notifications = notifications
+    wf_module.save(update_fields=['notifications'])
+    if notifications:
+        server.utils.log_user_event_from_scope(
+            scope,
+            'Enabled email notifications',
+            {
+                'wfModuleId': wf_module.id
+            }
+        )
 
 
 @database_sync_to_async

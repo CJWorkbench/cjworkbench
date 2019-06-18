@@ -28,6 +28,7 @@ describe('Reducer actions', () => {
           ["2018-02-21T03:09:10.214054Z", false]
         ]
       },
+      notifications: false,
       has_unseen_notification: true
     },
     '20': {
@@ -255,6 +256,23 @@ describe('Reducer actions', () => {
       }
     })
     expect(state.wfModules['20'].notifications).toBe(true)
+  })
+
+  it('does nothing if we setWfModuleNotifications on a nonexistent module', async() => {
+    const api = { setWfModuleNotifications: jest.fn() }
+    const store = mockStore(testState, api)
+    await store.dispatch(wfr.setWfModuleNotificationsAction(40, false))
+    expect(api.setWfModuleNotifications).not.toHaveBeenCalled()
+    expect(store.getState()).toEqual(testState)
+  })
+
+  it('sets wfModule.notifications', async() => {
+    expect(testWfModules['10'].notifications).toBe(false)
+    const api = { setWfModuleNotifications: jest.fn(() => Promise.resolve(null)) }
+    const store = mockStore(testState, api)
+    await store.dispatch(wfr.setWfModuleNotificationsAction(10, true))
+    expect(api.setWfModuleNotifications).toHaveBeenCalledWith(10, true)
+    expect(store.getState().wfModules['10'].notifications).toBe(true)
   })
 
   it('does nothing if we update a nonexistent wfmodule', async () => {

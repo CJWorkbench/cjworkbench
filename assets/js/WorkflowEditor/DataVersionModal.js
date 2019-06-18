@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from '../components/Modal'
 import memoize from 'memoize-one'
-import { setDataVersionAction, updateWfModuleAction } from '../workflow-reducer'
+import { setDataVersionAction, setWfModuleNotificationsAction } from '../workflow-reducer'
 import { connect } from 'react-redux'
 import { createSelector } from 'reselect'
 
@@ -282,16 +282,9 @@ function mapStateToProps(state, { wfModuleId }) {
   }
 }
 
-function mapDispatchToProps(dispatch) {
-  return {
-    onChangeFetchVersionId(wfModuleId, versionId) {
-      dispatch(setDataVersionAction(wfModuleId, versionId))
-    },
-
-    onChangeNotificationsEnabled(wfModuleId, isEnabled) {
-      dispatch(updateWfModuleAction(wfModuleId, { notifications: isEnabled }))
-    },
-  }
+const mapDispatchToProps = {
+  onChangeFetchVersionId: setDataVersionAction,
+  onChangeNotificationsEnabled: setWfModuleNotificationsAction
 }
 
 export default connect(

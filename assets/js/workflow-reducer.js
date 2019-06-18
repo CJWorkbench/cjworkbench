@@ -25,6 +25,7 @@ const SET_WF_MODULE_COLLAPSED = 'SET_WF_MODULE_COLLAPSED'
 const REQUEST_WF_MODULE_FETCH = 'REQUEST_WF_MODULE_FETCH'
 const UPDATE_WF_MODULE = 'UPDATE_WF_MODULE'
 const SET_WF_MODULE_PARAMS = 'SET_WF_MODULE_PARAMS'
+const SET_WF_MODULE_NOTIFICATIONS = 'SET_WF_MODULE_NOTIFICATIONS'
 const SET_WF_MODULE_SECRET = 'SET_WF_MODULE_SECRET'
 
 // Data versions/notifications
@@ -521,6 +522,38 @@ registerReducerFunc(REQUEST_WF_MODULE_FETCH + '_FULFILLED', (state, action) => {
   }
 })
 
+/**
+ * Set whether a WfModule emails the workflow owner on update.
+ */
+export function setWfModuleNotificationsAction (wfModuleId, isNotifications) {
+  return (dispatch, getState, api) => {
+    const { wfModules } = getState()
+    if (!wfModules[String(wfModuleId)]) return Promise.resolve(null)
+
+    return dispatch({
+      type: SET_WF_MODULE_NOTIFICATIONS,
+      payload: {
+        promise: api.setWfModuleNotifications(wfModuleId, isNotifications),
+        data: {
+          wfModuleId,
+          isNotifications,
+        }
+      }
+    })
+  }
+}
+registerReducerFunc(SET_WF_MODULE_NOTIFICATIONS + '_PENDING', (state, action) => {
+  const { wfModuleId, isNotifications } = action.payload
+  const wfModule = state.wfModules[String(wfModuleId)]
+  return { ...state,
+    wfModules: { ...state.wfModules,
+      [String(wfModuleId)]: { ...wfModule,
+        notifications: isNotifications,
+      }
+    }
+  }
+})
+
 
 // UPDATE_WF_MODULE
 // Patch a workflow module with new data
@@ -530,7 +563,7 @@ registerReducerFunc(REQUEST_WF_MODULE_FETCH + '_FULFILLED', (state, action) => {
 // fields, but should we show the user an error?
 export function updateWfModuleAction (wfModuleId, data) {
   return (dispatch, getState, api) => {
-    const { workflow, wfModules } = getState()
+    const { wfModules } = getState()
 
     if (!wfModules[String(wfModuleId)]) return Promise.resolve(null)
 

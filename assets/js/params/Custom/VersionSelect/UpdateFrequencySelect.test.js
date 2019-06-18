@@ -120,7 +120,7 @@ describe('UpdateFrequencySelect', () => {
           <ConnectedUpdateFrequencySelect
             wfModuleId={212}
             lastCheckDate={null}
-            />
+          />
         </Provider>
       )
       expect(wrapper.find('time').prop('time')).toEqual('2018-05-28T19:00:54.154Z')
@@ -160,23 +160,40 @@ describe('UpdateFrequencySelect', () => {
           <ConnectedUpdateFrequencySelect
             wfModuleId={212}
             lastCheckDate={null}
-            />
+          />
         </Provider>
       )
       wrapper.find('a[title="change auto-update settings"]').simulate('click')
       const modal = wrapper.find('UpdateFrequencySelectModal')
       modal.prop('onSubmit')({
         isAutoUpdate: true,
-        isEmailUpdates: true,
         timeNumber: 2,
         timeUnit: 'days',
       })
       expect(api.updateWfModule).toHaveBeenCalledWith(212, {
         auto_update_data: true,
-        notifications: true,
         update_interval: 2,
         update_units: 'days',
       })
+    })
+
+    it('should dispatch setNotifications (and call the API method)', () => {
+      const api = {
+        setWfModuleNotifications: jest.fn(() => Promise.resolve(null))
+      }
+      const store = mockStore(sampleState, api)
+      wrapper = mount(
+        <Provider store={store}>
+          <ConnectedUpdateFrequencySelect
+            wfModuleId={212}
+            lastCheckDate={null}
+          />
+        </Provider>
+      )
+      wrapper.find('a[title="change auto-update settings"]').simulate('click')
+      const modal = wrapper.find('UpdateFrequencySelectModal')
+      modal.prop('setEmailUpdates')(false)
+      expect(api.setWfModuleNotifications).toHaveBeenCalledWith(212, false)
     })
   })
 })

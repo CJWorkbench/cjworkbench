@@ -14,7 +14,6 @@ export default class UpdateFrequencySelectModal extends React.PureComponent {
 
   state = {
     isAutoUpdate: this.props.isAutoUpdate,
-    isEmailUpdates: this.props.isEmailUpdates,
     timeNumber: this.props.timeNumber,
     timeUnit: this.props.timeUnit
   }
@@ -26,9 +25,7 @@ export default class UpdateFrequencySelectModal extends React.PureComponent {
   }
 
   onChangeEmailUpdates = (ev) => {
-    this.setState({
-      isEmailUpdates: ev.target.checked,
-    })
+    this.props.setEmailUpdates(ev.target.checked)
   }
 
   onChangeTimeNumber = (ev) => {
@@ -45,6 +42,7 @@ export default class UpdateFrequencySelectModal extends React.PureComponent {
 
   onSubmit = (ev) => {
     if (ev && ev.preventDefault) ev.preventDefault()
+    if (ev && ev.stopPropagation) ev.stopPropagation()
 
     const s = this.state
     const p = this.props
@@ -53,19 +51,18 @@ export default class UpdateFrequencySelectModal extends React.PureComponent {
       s.isAutoUpdate === p.isAutoUpdate
       && s.timeUnit === p.timeUnit
       && s.timeNumber === p.timeNumber
-      && s.isEmailUpdates === p.isEmailUpdates
     ) return this.props.onCancel()
 
     this.props.onSubmit({
       isAutoUpdate: s.isAutoUpdate,
-      isEmailUpdates: s.isEmailUpdates,
       timeNumber: s.timeNumber,
       timeUnit: s.timeUnit,
     })
   }
 
   render() {
-    const { isAutoUpdate, isEmailUpdates, timeNumber, timeUnit } = this.state
+    const { isEmailUpdates } = this.props
+    const { isAutoUpdate, timeNumber, timeUnit } = this.state
 
     return (
       <Modal isOpen={true} className='update-frequency-modal' toggle={this.props.onCancel}>
