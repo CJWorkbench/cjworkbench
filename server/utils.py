@@ -1,4 +1,3 @@
-# --- Time unit conversion to/from seconds ---
 import os
 import time
 import logging
@@ -16,38 +15,6 @@ logger = logging.getLogger(__name__)
 
 def get_absolute_url(abs_url):
     return 'https://%s%s' % (Site.objects.get_current().domain, abs_url)
-
-
-# --- Time conversion ---
-
-_time_units = {
-    'seconds': 1,
-    'minutes': 60,
-    'hours': 3600,
-    'days': 3600 * 24,
-    'weeks': 3600 * 24 * 7
-}
-
-_time_units_ordered = ['weeks', 'days', 'hours', 'minutes', 'seconds']
-
-
-# Translate a count of time units into seconds
-def units_to_seconds(count, unit):
-    if unit not in _time_units:
-        raise ValueError(
-            'unit must be one of seconds, minutes, hours, days, weeks'
-        )
-    return count * _time_units[unit]
-
-
-# Converts 600 -> (10, 'minutes')
-# Picks largest whole unit.
-def seconds_to_count_and_units(seconds):
-    for unit in _time_units_ordered:
-        unit_len = _time_units[unit]
-        if seconds % unit_len == 0:
-            return {'units': unit, 'count': int(seconds / unit_len)}
-
 
 # --- Logging ---
 class NullIntercomClient:

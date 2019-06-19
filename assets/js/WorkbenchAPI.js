@@ -162,6 +162,14 @@ export default class WorkbenchAPI {
     return this._post(`/api/workflows/${workflowId}`, { 'public': isPublic })
   }
 
+  trySetWfModuleAutofetch (wfModuleId, isAutofetch, fetchInterval) {
+    return this.websocket.callServerHandler('wf_module.try_set_autofetch', {
+      wfModuleId,
+      isAutofetch,
+      fetchInterval
+    })
+  }
+
   setWfModuleNotifications (wfModuleId, notifications) {
     return this._callExpectingNull('wf_module.set_notifications', {
       wfModuleId,

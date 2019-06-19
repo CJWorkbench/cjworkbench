@@ -21,7 +21,7 @@ def list_autofetches_json(scope):
         tab__is_deleted=False,
         tab__workflow_id__in=Workflow.owned_by_user_session(scope['user'],
                                                             scope['session']),
-    ).order_by('tab__workflow__creation_date', 'tab__id', 'id').values(
+    ).order_by('update_interval', 'tab__workflow__creation_date', 'tab__id', 'id').values(
         'tab__workflow_id',
         'tab__workflow__name',
         'tab__workflow__creation_date',
@@ -29,6 +29,7 @@ def list_autofetches_json(scope):
         'tab__slug',
         'tab__name',
         'id',
+        'order',
         'update_interval',
     ))
 
@@ -63,6 +64,7 @@ def list_autofetches_json(scope):
                 },
                 'wfModule': {
                     'id': row['id'],
+                    'order': row['order'],
                     'fetchInterval': row['update_interval'],
                 },
             } for row in autofetches

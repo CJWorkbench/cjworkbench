@@ -2,32 +2,29 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import UpdateFrequencySelectModal from './UpdateFrequencySelectModal'
 import { timeDifference } from '../../../utils'
-import { updateWfModuleAction, setWfModuleNotificationsAction } from '../../../workflow-reducer'
+import { trySetWfModuleAutofetchAction, setWfModuleNotificationsAction } from '../../../workflow-reducer'
 import { connect } from 'react-redux'
 
 export class UpdateFrequencySelect extends React.PureComponent {
   static propTypes = {
+    workflowId: PropTypes.number.isRequired,
     wfModuleId: PropTypes.number.isRequired,
     isAnonymous: PropTypes.bool.isRequired,
     isReadOnly: PropTypes.bool.isRequired,
     lastCheckDate: PropTypes.instanceOf(Date), // null if never updated
-    settings: PropTypes.shape({
-      isAutoUpdate: PropTypes.bool.isRequired,
-      isEmailUpdates: PropTypes.bool.isRequired,
-      timeNumber: PropTypes.number.isRequired,
-      timeUnit: PropTypes.oneOf([ 'minutes', 'hours', 'days', 'weeks' ]).isRequired,
-    }).isRequired,
-    updateSettings: PropTypes.func.isRequired, // func({ isAutoUpdate, timeNumber, timeUnit }) -> undefined
+    isAutofetch: PropTypes.bool.isRequired,
+    fetchInterval: PropTypes.number.isRequired,
+    isEmailUpdates: PropTypes.bool.isRequired,
+    setEmailUpdates: PropTypes.func.isRequired, // func(wfModuleId, isEmailUpdates) => undefined
+    trySetAutofetch: PropTypes.func.isRequired // func(wfModuleId, isAutofetch, fetchInterval) => Promise[response]
   }
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      isModalOpen: false,
-    }
+  state = {
+    isModalOpen: false,
+    quotaExceeded: null, // JSON response -- contains autofetch info iff we exceeded quota
   }
 
-  onOpenModal = (ev) => {
+  openModal = (ev) => {
     if (ev && ev.preventDefault) ev.preventDefault() // <a> => do not change URL
     if (this.props.isReadOnly) return
     if (this.props.isAnonymous) return
@@ -45,38 +42,56 @@ export class UpdateFrequencySelect extends React.PureComponent {
     })
   }
 
-  onCancel = () => {
+  onClose = () => {
     this.setState({
       isModalOpen: false,
     })
   }
 
+  setEmailUpdates = (isEmailUpdates) => {
+    const { setEmailUpdates, wfModuleId } = this.props
+    setEmailUpdates(wfModuleId, isEmailUpdates)
+  }
+
+  trySetAutofetch = (isAutofetch, fetchInterval) => {
+    const { trySetAutofetch, wfModuleId } = this.props
+    return trySetAutofetch(wfModuleId, isAutofetch, fetchInterval)
+  }
+
   render() {
-    const lastChecked = this.props.lastCheckDate ? (
-      <div className="last-checked">
-        Checked <time time={this.props.lastCheckDate.toISOString()}>{timeDifference(this.props.lastCheckDate, Date.now())}</time>
-      </div>
-    ) : null
-
-    const autoOrManual = this.props.settings.isAutoUpdate ? 'Auto' : 'Manual'
-
-    const maybeModal = this.state.isModalOpen ? (
-        <UpdateFrequencySelectModal
-          {...this.props.settings}
-          setEmailUpdates={this.props.setEmailUpdates}
-          onCancel={this.onCancel}
-          onSubmit={this.onSubmit}
-          />
-    ) : null
+    const { lastCheckDate, isAutofetch, fetchInterval, isEmailUpdates, workflowId, wfModuleId } = this.props
+    const { isModalOpen } = this.state
 
     return (
       <div className='update-frequency-select'>
         <div className="update-option">
           <span className='version-box-option'>Update </span>
-          <a href="#" title="change auto-update settings" className='content-1 ml-1 action-link' onClick={this.onOpenModal}>{autoOrManual}</a>
+          <a
+            href='#'
+            title='change auto-update settings'
+            className='content-1 ml-1 action-link'
+            onClick={this.openModal}
+          >
+            {isAutofetch ? 'Auto' : 'Manual'}
+          </a>
         </div>
-        {lastChecked}
-        {maybeModal}
+        {lastCheckDate ? (
+          <div className="last-checked">
+            Checked <time dateTime={this.props.lastCheckDate.toISOString()}>{timeDifference(lastCheckDate, Date.now())}</time>
+          </div>
+        ) : null}
+        {isModalOpen ? (
+          <UpdateFrequencySelectModal
+            workflowId={workflowId}
+            wfModuleId={wfModuleId}
+            isEmailUpdates={isEmailUpdates}
+            isAutofetch={isAutofetch}
+            fetchInterval={fetchInterval}
+            setEmailUpdates={this.setEmailUpdates}
+            trySetAutofetch={this.trySetAutofetch}
+            onClose={this.onClose}
+          />
+        ) : null}
       </div>
     )
   }
@@ -92,31 +107,18 @@ const mapStateToProps = (state, ownProps) => {
 
   return {
     lastCheckDate,
+    workflowId: workflow.id,
     isReadOnly: workflow.read_only,
     isAnonymous: workflow.is_anonymous,
-    settings: {
-      isAutoUpdate: wfModule.auto_update_data || false,
-      isEmailUpdates: wfModule.notifications || false,
-      timeNumber: wfModule.update_interval || 1,
-      timeUnit: wfModule.update_units || 'days',
-    }
+    isEmailUpdates: wfModule.notifications || false,
+    isAutofetch: wfModule.auto_update_data || false,
+    fetchInterval: wfModule.update_interval || 86400
   }
 }
 
-const mapDispatchToProps = (dispatch, ownProps) => {
-  return {
-    updateSettings: (settings) => {
-      const action = updateWfModuleAction(ownProps.wfModuleId, {
-        auto_update_data: settings.isAutoUpdate,
-        update_interval: settings.timeNumber,
-        update_units: settings.timeUnit,
-      })
-      dispatch(action)
-    },
-    setEmailUpdates: (wantEmails) => {
-      return dispatch(setWfModuleNotificationsAction(ownProps.wfModuleId, wantEmails))
-    }
-  }
+const mapDispatchToProps = {
+  trySetAutofetch: trySetWfModuleAutofetchAction,
+  setEmailUpdates: setWfModuleNotificationsAction
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(UpdateFrequencySelect)

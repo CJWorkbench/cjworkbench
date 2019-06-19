@@ -212,11 +212,18 @@ def set_notifications(workflow: Workflow, wf_module: WfModule,
 @websockets_handler('owner')
 @_loading_wf_module
 @database_sync_to_async
-def set_autofetch(wf_module: WfModule, auto_update_data: bool,
-                  update_interval: int, scope, **kwargs):
-    auto_update_data = bool(auto_update_data)
-    update_interval = max(settings.MIN_AUTOFETCH_INTERVAL,
-                          int(update_interval))
+def try_set_autofetch(wf_module: WfModule, isAutofetch: bool,
+                      fetchInterval: int, scope, **kwargs):
+    # We may ROLLBACK; if we do, we need to remember the old values
+    old_auto_update_data = wf_module.auto_update_data
+    old_update_interval = wf_module.update_interval
+    auto_update_data = bool(isAutofetch)
+    try:
+        update_interval = max(settings.MIN_AUTOFETCH_INTERVAL,
+                              int(fetchInterval))
+    except (ValueError, TypeError):
+        return HandlerError('BadRequest: fetchInterval must be an integer')
+
     check_quota = (
         (
             auto_update_data
@@ -228,13 +235,17 @@ def set_autofetch(wf_module: WfModule, auto_update_data: bool,
         )
     )
 
+    quota_exceeded = None
     try:
         with transaction.atomic() as trans:
             wf_module.auto_update_data = auto_update_data
             wf_module.update_interval = update_interval
-            wf_module.next_update = (
-                timezone.now() + datetime.timedelta(seconds=update_interval)
-            )
+            if auto_update_data:
+                wf_module.next_update = (
+                    timezone.now() + datetime.timedelta(seconds=update_interval)
+                )
+            else:
+                wf_module.next_update = None
             wf_module.save(update_fields=['auto_update_data',
                                           'update_interval', 'next_update'])
 
@@ -249,10 +260,17 @@ def set_autofetch(wf_module: WfModule, auto_update_data: bool,
                 if autofetches['nFetchesPerDay'] > autofetches['maxFetchesPerDay']:
                     raise AutofetchQuotaExceeded(autofetches)
     except AutofetchQuotaExceeded as err:
-        return {
-            'rejected': 'quotaExceeded',
-            'autofetches': err.autofetches,
-        }
+        wf_module.auto_update_data = old_auto_update_data
+        wf_module.update_interval = old_update_interval
+        quota_exceeded = err.autofetches
+
+    retval = {
+        'isAutofetch': wf_module.auto_update_data,
+        'fetchInterval': wf_module.update_interval,
+    }
+    if quota_exceeded is not None:
+        retval['quotaExceeded'] = quota_exceeded  # a dict
+    return retval
 
 
 @database_sync_to_async

@@ -75,6 +75,7 @@ class AutoupdateTest(HandlerTestCase):
                     'wfModule': {
                         'id': step1.id,
                         'fetchInterval': 600,
+                        'order': 0,
                     },
                 },
                 {
@@ -88,6 +89,7 @@ class AutoupdateTest(HandlerTestCase):
                     'wfModule': {
                         'id': step2.id,
                         'fetchInterval': 1200,
+                        'order': 0,
                     },
                 },
             ],
@@ -218,4 +220,5 @@ class AutoupdateTest(HandlerTestCase):
                                     session=session, workflow=workflow)
         self.assertEqual(
             [a['workflow']['id'] for a in response.data['autofetches']],
-            [workflow.id, workflow2.id])
+            [workflow2.id, workflow.id]  # ordered by update_interval
+        ) 

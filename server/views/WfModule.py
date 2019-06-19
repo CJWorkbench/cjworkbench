@@ -18,7 +18,6 @@ from cjworkbench.types import ProcessResult
 from server.models import WfModule
 from server import rabbitmq
 import server.utils
-from server.utils import units_to_seconds
 from server.models.loaded_module import module_get_html_bytes
 
 
@@ -67,33 +66,6 @@ def _lookup_wf_module_for_write(pk: int, request: HttpRequest) -> WfModule:
         raise PermissionDenied()
 
     return wf_module
-
-
-def patch_update_settings(wf_module, data, request):
-    auto_update_data = data['auto_update_data']
-
-    if auto_update_data and (('update_interval' not in data)
-                             or ('update_units' not in data)):
-        raise ValueError('missing update_interval and update_units fields')
-
-    update_interval = units_to_seconds(int(data['update_interval']),
-                                       data['update_units'])
-    # Use current time as base update time. Not the best?
-    if auto_update_data:
-        next_update = timezone.now() + timedelta(seconds=update_interval)
-    else:
-        next_update = None
-
-    try:
-        with wf_module.workflow.cooperative_lock():
-            WfModule.objects.filter(id=wf_module.id).update(
-                auto_update_data=auto_update_data,
-                next_update=next_update,
-                update_interval=update_interval,
-            )
-    except Workflow.DoesNotExist:
-        # A race. The WfModule doesn't exist, so we don't care.
-        pass
 
 
 # Main /api/wfmodule/xx call. Can do a lot of different things depending on

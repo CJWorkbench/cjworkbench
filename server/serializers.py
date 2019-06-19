@@ -5,7 +5,6 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from cjworkbench.settings import KB_ROOT_URL
 from server.models import Workflow, WfModule, ModuleVersion, StoredObject, Tab
-from server.utils import seconds_to_count_and_units
 from server.settingsutils import workbench_user_display
 from server.models.param_spec import ParamSpec
 
@@ -141,22 +140,12 @@ class UserSerializer(serializers.ModelSerializer):
 class WfModuleSerializer(serializers.ModelSerializer):
     params = serializers.SerializerMethodField()
     secrets = serializers.SerializerMethodField()  # NOT ACTUAL SECRETS
-    update_interval = serializers.SerializerMethodField()
-    update_units = serializers.SerializerMethodField()
     html_output = serializers.SerializerMethodField()
     versions = serializers.SerializerMethodField()
     files = serializers.SerializerMethodField()
     quick_fixes = serializers.SerializerMethodField()
     module = serializers.SerializerMethodField()
     last_update_check = serializers.DateTimeField(format='iso-8601')
-
-    # update interval handling is a little tricky as we need to convert seconds
-    # to count+units
-    def get_update_interval(self, wfm):
-        return seconds_to_count_and_units(wfm.update_interval)['count']
-
-    def get_update_units(self, wfm):
-        return seconds_to_count_and_units(wfm.update_interval)['units']
 
     def get_html_output(self, wfm):
         if wfm.module_version is not None:
@@ -224,10 +213,9 @@ class WfModuleSerializer(serializers.ModelSerializer):
         fields = ('id', 'module', 'tab_slug', 'is_busy',
                   'output_error', 'output_status', 'fetch_error', 'files',
                   'params', 'secrets', 'is_collapsed', 'notes',
-                  'auto_update_data', 'update_interval', 'update_units',
-                  'last_update_check', 'notifications',
-                  'has_unseen_notification', 'html_output', 'versions',
-                  'last_relevant_delta_id', 'quick_fixes')
+                  'auto_update_data', 'update_interval', 'last_update_check',
+                  'notifications', 'has_unseen_notification', 'html_output',
+                  'versions', 'last_relevant_delta_id', 'quick_fixes')
 
 
 # Lite Workflow: Don't include any of the modules, just name and ID.

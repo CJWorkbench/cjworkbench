@@ -2,12 +2,14 @@
 
 exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
 <UpdateFrequencySelectModal
-  isAutoUpdate={false}
+  fetchInterval={3600}
+  isAutofetch={false}
   isEmailUpdates={false}
-  onCancel={[MockFunction]}
-  onSubmit={[MockFunction]}
-  timeNumber={1}
-  timeUnit="days"
+  onClose={[MockFunction]}
+  setEmailUpdates={[MockFunction]}
+  trySetAutofetch={[MockFunction]}
+  wfModuleId={234}
+  workflowId={123}
 >
   <Modal
     className="update-frequency-modal"
@@ -63,144 +65,153 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                   >
                     <form
                       action="#"
-                      id="updateFrequencySelectModalForm"
+                      class="autofetch"
                       method="post"
                     >
-                      <div
-                        class="big-radio big-radio-auto-update-true big-radio-unchecked"
+                      <fieldset
+                        class="autofetch"
                       >
-                        <label>
-                          <input
-                            name="isAutoUpdate"
-                            type="radio"
-                            value="true"
-                          />
-                          <div
-                            class="radio"
-                          >
-                            Auto
-                          </div>
-                        </label>
                         <div
-                          class="big-radio-details"
+                          class="big-radio big-radio-auto-update-true big-radio-unchecked"
                         >
-                          <p>
-                            Automatically update this workflow with the newest data (old versions will be saved).
-                          </p>
+                          <label>
+                            <input
+                              name="isAutofetch"
+                              type="radio"
+                              value="true"
+                            />
+                            <div
+                              class="radio"
+                            >
+                              Auto
+                            </div>
+                          </label>
                           <div
-                            class="form-group frequency"
+                            class="big-radio-details"
                           >
+                            <p>
+                              Automatically update this workflow with the newest data (old versions will be saved).
+                            </p>
                             <label
-                              for="updateFrequencySelectTimeNumber"
+                              for="updateFrequencySelectTimeUnitCount"
                             >
                               Check for update every
                             </label>
-                            <div
-                              class="input-group"
+                            <fieldset
+                              class="fetch-interval"
+                              disabled=""
                             >
                               <div
-                                class="input-group-prepend"
+                                class="input-group"
                               >
-                                <input
-                                  class="form-control"
-                                  disabled=""
-                                  id="updateFrequencySelectTimeNumber"
-                                  max="60"
-                                  min="1"
-                                  name="timeNumber"
-                                  type="number"
-                                  value="1"
-                                />
+                                <div
+                                  class="input-group-prepend"
+                                >
+                                  <input
+                                    class="form-control"
+                                    id="updateFrequencySelectTimeUnitCount"
+                                    min="1"
+                                    name="timeUnitCount"
+                                    type="number"
+                                    value="1"
+                                  />
+                                </div>
+                                <select
+                                  class="custom-select"
+                                  name="timeUnit"
+                                >
+                                  <option
+                                    value="weeks"
+                                  >
+                                    weeks
+                                  </option>
+                                  <option
+                                    value="days"
+                                  >
+                                    days
+                                  </option>
+                                  <option
+                                    value="hours"
+                                  >
+                                    hours
+                                  </option>
+                                  <option
+                                    value="minutes"
+                                  >
+                                    minutes
+                                  </option>
+                                  <option
+                                    value="seconds"
+                                  >
+                                    seconds
+                                  </option>
+                                </select>
+                                <div
+                                  class="input-group-append"
+                                >
+                                  <button
+                                    class="form-control"
+                                    disabled=""
+                                    name="apply"
+                                    type="submit"
+                                  >
+                                    Apply
+                                  </button>
+                                </div>
                               </div>
-                              <select
-                                class="custom-select"
-                                disabled=""
-                                name="timeUnit"
-                              >
-                                <option
-                                  value="minutes"
-                                >
-                                  minutes
-                                </option>
-                                <option
-                                  value="hours"
-                                >
-                                  hours
-                                </option>
-                                <option
-                                  value="days"
-                                >
-                                  days
-                                </option>
-                                <option
-                                  value="weeks"
-                                >
-                                  weeks
-                                </option>
-                              </select>
-                            </div>
-                          </div>
-                          <div
-                            class="form-check"
-                          >
-                            <input
-                              class="form-check-input"
-                              disabled=""
-                              id="update-frequency-select-modal-is-email-updates-checkbox"
-                              name="isEmailUpdates"
-                              type="checkbox"
-                            />
-                            <label
-                              class="form-check-label"
-                              for="update-frequency-select-modal-is-email-updates-checkbox"
-                            >
-                              Email me when data changes
-                            </label>
+                            </fieldset>
                           </div>
                         </div>
-                      </div>
-                      <div
-                        class="big-radio big-radio-auto-update-false big-radio-checked"
-                      >
-                        <label>
-                          <input
-                            checked=""
-                            name="isAutoUpdate"
-                            type="radio"
-                            value="false"
-                          />
-                          <div
-                            class="radio"
-                          >
-                            Manual
-                          </div>
-                        </label>
                         <div
-                          class="big-radio-details"
+                          class="big-radio big-radio-auto-update-false big-radio-checked"
                         >
-                          <p>
-                            Check for new data manually.
-                          </p>
+                          <label>
+                            <input
+                              checked=""
+                              name="isAutofetch"
+                              type="radio"
+                              value="false"
+                            />
+                            <div
+                              class="radio"
+                            >
+                              Manual
+                            </div>
+                          </label>
+                          <div
+                            class="big-radio-details"
+                          >
+                            <p>
+                              Check for new data manually.
+                            </p>
+                          </div>
                         </div>
-                      </div>
+                      </fieldset>
                     </form>
+                    <div
+                      class="email-updates"
+                    >
+                      <input
+                        id="update-frequency-select-modal-is-email-updates-checkbox"
+                        name="isEmailUpdates"
+                        type="checkbox"
+                      />
+                      <label
+                        for="update-frequency-select-modal-is-email-updates-checkbox"
+                      >
+                        Email me when data changes
+                      </label>
+                    </div>
                   </div>
                   <div
                     class="modal-footer"
                   >
                     <button
-                      class="action-button button-gray"
-                      form="updateFrequencySelectModalForm"
-                      type="reset"
+                      class="close"
+                      title="Close"
+                      type="button"
                     >
-                      Cancel
-                    </button>
-                    <button
-                      class="action-button button-blue"
-                      form="updateFrequencySelectModalForm"
-                      type="submit"
-                    >
-                      Apply
+                      Close
                     </button>
                   </div>
                 </div>
@@ -255,137 +266,153 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                 >
                   <form
                     action="#"
-                    id="updateFrequencySelectModalForm"
+                    className="autofetch"
                     method="post"
-                    onReset={[MockFunction]}
                     onSubmit={[Function]}
                   >
-                    <div
-                      className="big-radio big-radio-auto-update-true big-radio-unchecked"
+                    <fieldset
+                      className="autofetch"
+                      disabled={false}
                     >
-                      <label>
-                        <input
-                          checked={false}
-                          name="isAutoUpdate"
-                          onChange={[Function]}
-                          type="radio"
-                          value="true"
-                        />
-                        <div
-                          className="radio"
-                        >
-                          Auto
-                        </div>
-                      </label>
                       <div
-                        className="big-radio-details"
+                        className="big-radio big-radio-auto-update-true big-radio-unchecked"
                       >
-                        <p>
-                          Automatically update this workflow with the newest data (old versions will be saved).
-                        </p>
+                        <label>
+                          <input
+                            checked={false}
+                            name="isAutofetch"
+                            onChange={[Function]}
+                            type="radio"
+                            value="true"
+                          />
+                          <div
+                            className="radio"
+                          >
+                            Auto
+                          </div>
+                        </label>
                         <div
-                          className="form-group frequency"
+                          className="big-radio-details"
                         >
+                          <p>
+                            Automatically update this workflow with the newest data (old versions will be saved).
+                          </p>
                           <label
-                            htmlFor="updateFrequencySelectTimeNumber"
+                            htmlFor="updateFrequencySelectTimeUnitCount"
                           >
                             Check for update every
                           </label>
-                          <div
-                            className="input-group"
+                          <fieldset
+                            className="fetch-interval"
+                            disabled={true}
                           >
                             <div
-                              className="input-group-prepend"
+                              className="input-group"
                             >
-                              <input
-                                className="form-control"
-                                disabled={true}
-                                id="updateFrequencySelectTimeNumber"
-                                max="60"
-                                min="1"
-                                name="timeNumber"
-                                onChange={[Function]}
-                                type="number"
-                                value={1}
-                              />
-                            </div>
-                            <select
-                              className="custom-select"
-                              disabled={true}
-                              name="timeUnit"
-                              onChange={[Function]}
-                              value="days"
-                            >
-                              <option
-                                value="minutes"
+                              <div
+                                className="input-group-prepend"
                               >
-                                minutes
-                              </option>
-                              <option
+                                <input
+                                  className="form-control"
+                                  id="updateFrequencySelectTimeUnitCount"
+                                  min="1"
+                                  name="timeUnitCount"
+                                  onChange={[Function]}
+                                  type="number"
+                                  value="1"
+                                />
+                              </div>
+                              <select
+                                className="custom-select"
+                                name="timeUnit"
+                                onChange={[Function]}
                                 value="hours"
                               >
-                                hours
-                              </option>
-                              <option
-                                value="days"
+                                <option
+                                  value="weeks"
+                                >
+                                  weeks
+                                </option>
+                                <option
+                                  value="days"
+                                >
+                                  days
+                                </option>
+                                <option
+                                  value="hours"
+                                >
+                                  hours
+                                </option>
+                                <option
+                                  value="minutes"
+                                >
+                                  minutes
+                                </option>
+                                <option
+                                  value="seconds"
+                                >
+                                  seconds
+                                </option>
+                              </select>
+                              <div
+                                className="input-group-append"
                               >
-                                days
-                              </option>
-                              <option
-                                value="weeks"
-                              >
-                                weeks
-                              </option>
-                            </select>
-                          </div>
-                        </div>
-                        <div
-                          className="form-check"
-                        >
-                          <input
-                            checked={false}
-                            className="form-check-input"
-                            disabled={true}
-                            id="update-frequency-select-modal-is-email-updates-checkbox"
-                            name="isEmailUpdates"
-                            onChange={[Function]}
-                            type="checkbox"
-                          />
-                          <label
-                            className="form-check-label"
-                            htmlFor="update-frequency-select-modal-is-email-updates-checkbox"
-                          >
-                            Email me when data changes
-                          </label>
+                                <button
+                                  className="form-control"
+                                  disabled={true}
+                                  name="apply"
+                                  type="submit"
+                                >
+                                  Apply
+                                </button>
+                              </div>
+                            </div>
+                          </fieldset>
                         </div>
                       </div>
-                    </div>
-                    <div
-                      className="big-radio big-radio-auto-update-false big-radio-checked"
-                    >
-                      <label>
-                        <input
-                          checked={true}
-                          name="isAutoUpdate"
-                          onChange={[Function]}
-                          type="radio"
-                          value="false"
-                        />
-                        <div
-                          className="radio"
-                        >
-                          Manual
-                        </div>
-                      </label>
                       <div
-                        className="big-radio-details"
+                        className="big-radio big-radio-auto-update-false big-radio-checked"
                       >
-                        <p>
-                          Check for new data manually.
-                        </p>
+                        <label>
+                          <input
+                            checked={true}
+                            name="isAutofetch"
+                            onChange={[Function]}
+                            type="radio"
+                            value="false"
+                          />
+                          <div
+                            className="radio"
+                          >
+                            Manual
+                          </div>
+                        </label>
+                        <div
+                          className="big-radio-details"
+                        >
+                          <p>
+                            Check for new data manually.
+                          </p>
+                        </div>
                       </div>
-                    </div>
+                    </fieldset>
                   </form>
+                  <div
+                    className="email-updates"
+                  >
+                    <input
+                      checked={false}
+                      id="update-frequency-select-modal-is-email-updates-checkbox"
+                      name="isEmailUpdates"
+                      onChange={[Function]}
+                      type="checkbox"
+                    />
+                    <label
+                      htmlFor="update-frequency-select-modal-is-email-updates-checkbox"
+                    >
+                      Email me when data changes
+                    </label>
+                  </div>
                 </div>
               </ModalBody>
               <ModalFooter>
@@ -393,18 +420,12 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                   className="modal-footer"
                 >
                   <button
-                    className="action-button button-gray"
-                    form="updateFrequencySelectModalForm"
-                    type="reset"
+                    className="close"
+                    onClick={[MockFunction]}
+                    title="Close"
+                    type="button"
                   >
-                    Cancel
-                  </button>
-                  <button
-                    className="action-button button-blue"
-                    form="updateFrequencySelectModalForm"
-                    type="submit"
-                  >
-                    Apply
+                    Close
                   </button>
                 </div>
               </ModalFooter>

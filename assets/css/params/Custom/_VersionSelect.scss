@@ -13,7 +13,7 @@
     }
 
     .last-checked {
-      @extend %content-2;
+      @include content-2;
       color: $text-muted;
     }
 
@@ -61,10 +61,9 @@
     }
   }
 
-
   .version-row>button { // fetch button
-    @extend .action-button;
-    @extend .button-blue;
+    @include action-button;
+    @include button-blue;
 
     &[disabled] {
       @extend .button-orange;
@@ -91,17 +90,6 @@
     flex-direction: row;
     justify-content: flex-start;
 
-    .form-check-input {
-      margin-bottom: -.2rem;
-      &::after {
-       top:-2px;
-      }
-    }
-
-    .form-check-label {
-      @include content-1;
-    }
-
     &>label {
       width: 8rem;
       margin-right: 1rem;
@@ -117,7 +105,6 @@
 
     .big-radio-details {
       margin-left: 1rem;
-      cursor: default;
       label {
         @include content-1;
         color: $brand-text--dark;
@@ -127,13 +114,13 @@
 
   .big-radio-checked>label .radio {
     cursor: default;
-    @extend .action-button;
-    @extend .button-blue--fill;
+    @include action-button;
+    @include button-blue--fill;
   }
   .big-radio-unchecked>label .radio {
     cursor: pointer;
-    @extend .action-button;
-    @extend .button-gray;
+    @include action-button;
+    @include button-gray;
   }
 
   .big-radio-unchecked {
@@ -153,7 +140,7 @@
     padding-top: .75rem; // label padding
   }
 
-  .form-group.frequency {
+  .big-radio-auto-update-true {
     .input-group {
       flex-wrap: nowrap;
     }
@@ -170,5 +157,67 @@
       @include module-parameter;
       font: inherit;
     }
+
+    button {
+      @include action-button;
+      margin-left: 1rem;
+    }
+  }
+
+  .quota-exceeded {
+    margin-top: 1rem;
+
+    h5 {
+      @include title-3;
+    }
+
+    table {
+      margin-top: 1rem;
+      margin-bottom: 1rem;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      vertical-align: top;
+      padding: .5rem;
+    }
+
+    .n-fetches-per-day {
+      padding-left: 0;
+      text-align: right;
+    }
+
+    td.workflow {
+      padding-right: 0;
+
+      ul {
+        color: $text-muted;
+        list-style: none;
+        margin: .5rem 0 0;
+        padding: 0;
+      }
+    }
+  }
+
+  .email-updates {
+    margin-top: 2rem;
+    border-top: 1px solid $table-border;
+    padding-top: 2rem;
+
+    input { // checkbox
+      margin-bottom: -.2rem;
+      &::after {
+       top:-2px;
+      }
+    }
+
+    label {
+      @include content-1;
+      cursor: pointer;
+    }
+  }
+
+  button.close {
+    @include action-button;
   }
 }

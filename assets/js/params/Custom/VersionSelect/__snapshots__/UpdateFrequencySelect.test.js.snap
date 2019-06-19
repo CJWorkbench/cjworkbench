@@ -26,7 +26,7 @@ exports[`UpdateFrequencySelect shallow matches snapshot 1`] = `
   >
     Checked 
     <time
-      time="2018-05-28T19:00:54.154Z"
+      dateTime="2018-05-28T19:00:54.154Z"
     >
       12m ago
     </time>

@@ -7,16 +7,16 @@ import { Provider } from 'react-redux'
 describe('UpdateFrequencySelect', () => {
   describe('shallow', () => {
     const defaultProps = {
+      workflowId: 123,
       wfModuleId: 212,
       isReadOnly: false,
       isAnonymous: false,
       lastCheckDate: new Date(Date.parse('2018-05-28T19:00:54.154Z')),
-      settings: {
-        isAutoUpdate: false, // start in Manual mode
-        isEmailUpdates: false,
-        timeNumber: 5,
-        timeUnit: 'minutes',
-      },
+      isAutofetch: false, // start in Manual mode
+      isEmailUpdates: false,
+      fetchInterval: 300,
+      setEmailUpdates: jest.fn(),
+      trySetAutofetch: jest.fn(),
     }
 
     let dateSpy
@@ -28,15 +28,11 @@ describe('UpdateFrequencySelect', () => {
     let updateSettings
 
     const wrapper = (extraProps) => {
-      updateSettings = jest.fn()
-
-      const oldDateNow = Date.now
       return shallow(
         <UpdateFrequencySelect
           {...defaultProps}
-          updateSettings={updateSettings}
           {...extraProps}
-          />
+        />
       )
     }
 
@@ -46,30 +42,6 @@ describe('UpdateFrequencySelect', () => {
 
     it('does not render modal on first load', () => {
       expect(wrapper().find('UpdateFrequencySelectModal')).toHaveLength(0)
-    })
-
-    it('submits modal', () => {
-      const w = wrapper()
-      const newSettings = {
-        isAutoUpdate: true,
-        isEmailUpdates: false,
-        timeNumber: 10,
-        timeUnit: 'minutes',
-      }
-      w.find('a[title="change auto-update settings"]').simulate('click')
-      w.find('UpdateFrequencySelectModal').prop('onSubmit')(newSettings)
-      expect(updateSettings).toHaveBeenCalledWith(newSettings)
-      w.update()
-      expect(w.find('UpdateFrequencySelectModal')).toHaveLength(0)
-    })
-
-    it('cancels modal', () => {
-      const w = wrapper()
-      w.find('a[title="change auto-update settings"]').simulate('click')
-      w.find('UpdateFrequencySelectModal').prop('onCancel')()
-      expect(updateSettings).not.toHaveBeenCalled()
-      w.update()
-      expect(w.find('UpdateFrequencySelectModal')).toHaveLength(0)
     })
 
     it('does not open modal when not read-only', () => {
@@ -96,6 +68,7 @@ describe('UpdateFrequencySelect', () => {
 
     const sampleState = {
       workflow: {
+        id: 123,
         read_only: false,
         is_anonymous: false,
         tab_slugs: [ 'tab-11', 'tab-12' ]
@@ -105,7 +78,7 @@ describe('UpdateFrequencySelect', () => {
       },
       wfModules: {
         1: { id: 1, tab_slug: 'tab-11', name: 'Ignore this one' },
-        212: { id: 212, tab_slug: 'tab-11', auto_update_data: true, update_interval: 10, update_units: 'days', notifications: false, last_update_check: '2018-05-28T19:00:54.154141Z' }
+        212: { id: 212, tab_slug: 'tab-11', auto_update_data: true, update_interval: 3600, update_units: 'days', notifications: false, last_update_check: '2018-05-28T19:00:54.154141Z' }
       }
     }
 
@@ -123,17 +96,17 @@ describe('UpdateFrequencySelect', () => {
           />
         </Provider>
       )
-      expect(wrapper.find('time').prop('time')).toEqual('2018-05-28T19:00:54.154Z')
+      expect(wrapper.find('time').prop('dateTime')).toEqual('2018-05-28T19:00:54.154Z')
       wrapper.find('a[title="change auto-update settings"]').simulate('click')
       const modal = wrapper.find('UpdateFrequencySelectModal')
-      expect(modal.prop('timeNumber')).toBe(10)
+      expect(modal.prop('fetchInterval')).toBe(3600)
     })
 
     it('should not crash on a placeholder', () => {
       // can this even happen?
       const store = {
         getState: () => ({
-          workflow: { read_only: false, is_anonymous: false, wf_modules: [ 'nonce_212' ] },
+          workflow: { id: 123, read_only: false, is_anonymous: false, wf_modules: [ 'nonce_212' ] },
           wfModules: {}
         }),
         dispatch: jest.fn(),
@@ -150,9 +123,9 @@ describe('UpdateFrequencySelect', () => {
       expect(true).toBe(true)
     })
 
-    it('should dispatch an update (and call the API method)', () => {
+    it('should set autofetch (calling API method)', () => {
       const api = {
-        updateWfModule: jest.fn().mockImplementation(() => Promise.resolve(null))
+        trySetWfModuleAutofetch: jest.fn(() => Promise.resolve({ isAutofetch: true, fetchInterval: 7200 }))
       }
       const store = mockStore(sampleState, api)
       wrapper = mount(
@@ -165,16 +138,8 @@ describe('UpdateFrequencySelect', () => {
       )
       wrapper.find('a[title="change auto-update settings"]').simulate('click')
       const modal = wrapper.find('UpdateFrequencySelectModal')
-      modal.prop('onSubmit')({
-        isAutoUpdate: true,
-        timeNumber: 2,
-        timeUnit: 'days',
-      })
-      expect(api.updateWfModule).toHaveBeenCalledWith(212, {
-        auto_update_data: true,
-        update_interval: 2,
-        update_units: 'days',
-      })
+      modal.prop('trySetAutofetch')(true, 7600)
+      expect(api.trySetWfModuleAutofetch).toHaveBeenCalledWith(212, true, 7600)
     })
 
     it('should dispatch setNotifications (and call the API method)', () => {

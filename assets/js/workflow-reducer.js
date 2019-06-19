@@ -25,6 +25,7 @@ const SET_WF_MODULE_COLLAPSED = 'SET_WF_MODULE_COLLAPSED'
 const REQUEST_WF_MODULE_FETCH = 'REQUEST_WF_MODULE_FETCH'
 const UPDATE_WF_MODULE = 'UPDATE_WF_MODULE'
 const SET_WF_MODULE_PARAMS = 'SET_WF_MODULE_PARAMS'
+const TRY_SET_WF_MODULE_AUTOFETCH = 'TRY_SET_WF_MODULE_AUTOFETCH'
 const SET_WF_MODULE_NOTIFICATIONS = 'SET_WF_MODULE_NOTIFICATIONS'
 const SET_WF_MODULE_SECRET = 'SET_WF_MODULE_SECRET'
 
@@ -549,6 +550,43 @@ registerReducerFunc(SET_WF_MODULE_NOTIFICATIONS + '_PENDING', (state, action) =>
     wfModules: { ...state.wfModules,
       [String(wfModuleId)]: { ...wfModule,
         notifications: isNotifications,
+      }
+    }
+  }
+})
+
+/**
+ * Set whether a WfModule auto-fetches every `interval` seconds.
+ *
+ * `interval` must be provided even if `isAutofetch` is false. (It's visible to
+ * the user either way.)
+ *
+ * dispatching this action returns a Promise that either gives { isAutofetch,
+ * fetchInterval } (the server has the final say); and if the server denies
+ * the request, a `quotaExceeded` object with { maxFetchesPerDay,
+ * nFetchesPerDay, autofetches }.
+ */
+export function trySetWfModuleAutofetchAction (wfModuleId, isAutofetch, fetchInterval) {
+  return (dispatch, _, api) => {
+    return dispatch({
+      type: TRY_SET_WF_MODULE_AUTOFETCH,
+      payload: {
+        promise: (
+          api.trySetWfModuleAutofetch(wfModuleId, isAutofetch, fetchInterval)
+            .then(obj => ({ wfModuleId, ...obj }))
+        ),
+      }
+    })
+  }
+}
+registerReducerFunc(TRY_SET_WF_MODULE_AUTOFETCH + '_FULFILLED', (state, action) => {
+  const { wfModuleId, isAutofetch, fetchInterval } = action.payload
+  const wfModule = state.wfModules[String(wfModuleId)]
+  return { ...state,
+    wfModules: { ...state.wfModules,
+      [String(wfModuleId)]: { ...wfModule,
+        auto_update_data: isAutofetch,
+        update_interval: fetchInterval,
       }
     }
   }

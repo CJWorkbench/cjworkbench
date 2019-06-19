@@ -8,8 +8,8 @@ from django.utils import timezone
 from server import oauth
 from server.handlers.wf_module import set_params, delete, \
         set_stored_data_version, set_notes, set_collapsed, set_notifications, \
-        set_autofetch, fetch, generate_secret_access_token, delete_secret, \
-        set_secret
+        try_set_autofetch, fetch, generate_secret_access_token, \
+        delete_secret, set_secret
 from server.models import ModuleVersion, Workflow
 from server.models.commands import ChangeParametersCommand, \
         ChangeWfModuleNotesCommand, DeleteModuleCommand
@@ -338,8 +338,6 @@ class WfModuleTest(HandlerTestCase):
         wf_module.refresh_from_db()
         self.assertEqual(wf_module.notes, "['a', 'b']")
 
-    @patch('server.websockets.ws_client_send_delta_async', async_noop)
-    @patch('server.rabbitmq.queue_render', async_noop)
     def test_set_collapsed(self):
         user = User.objects.create(username='a', email='a@example.org')
         workflow = Workflow.create_and_init(owner=user)
@@ -364,8 +362,6 @@ class WfModuleTest(HandlerTestCase):
         self.assertResponse(response,
                             error='AuthError: no write access to workflow')
 
-    @patch('server.websockets.ws_client_send_delta_async', async_noop)
-    @patch('server.rabbitmq.queue_render', async_noop)
     def test_set_collapsed_forces_bool(self):
         user = User.objects.create(username='a', email='a@example.org')
         workflow = Workflow.create_and_init(owner=user)
@@ -382,8 +378,6 @@ class WfModuleTest(HandlerTestCase):
         wf_module.refresh_from_db()
         self.assertEqual(wf_module.is_collapsed, True)
 
-    @patch('server.websockets.ws_client_send_delta_async', async_noop)
-    @patch('server.rabbitmq.queue_render', async_noop)
     def test_set_notifications(self):
         user = User.objects.create(username='a', email='a@example.org')
         workflow = Workflow.create_and_init(owner=user)
@@ -399,19 +393,20 @@ class WfModuleTest(HandlerTestCase):
         wf_module.refresh_from_db()
         self.assertEqual(wf_module.notifications, False)
 
-    @patch('server.websockets.ws_client_send_delta_async', async_noop)
-    @patch('server.rabbitmq.queue_render', async_noop)
-    def test_set_autofetch_happy_path(self):
+    def test_try_set_autofetch_happy_path(self):
         user = User.objects.create(username='a', email='a@example.org')
         workflow = Workflow.create_and_init(owner=user)
         wf_module = workflow.tabs.first().wf_modules.create(order=0)
 
-        response = self.run_handler(set_autofetch, user=user,
+        response = self.run_handler(try_set_autofetch, user=user,
                                     workflow=workflow,
                                     wfModuleId=wf_module.id,
-                                    auto_update_data=True,
-                                    update_interval=1200)
-        self.assertResponse(response, data=None)
+                                    isAutofetch=True,
+                                    fetchInterval=1200)
+        self.assertResponse(response, data={
+            'isAutofetch': True,
+            'fetchInterval': 1200,
+        })
         wf_module.refresh_from_db()
         self.assertEqual(wf_module.auto_update_data, True)
         self.assertEqual(wf_module.update_interval, 1200)
@@ -424,33 +419,52 @@ class WfModuleTest(HandlerTestCase):
             timezone.now() + datetime.timedelta(seconds=1198)
         )
 
-    @patch('server.websockets.ws_client_send_delta_async', async_noop)
-    @patch('server.rabbitmq.queue_render', async_noop)
-    def test_set_autofetch_exceed_quota(self):
+    def test_try_set_autofetch_disable_autofetch(self):
+        user = User.objects.create(username='a', email='a@example.org')
+        workflow = Workflow.create_and_init(owner=user)
+        wf_module = workflow.tabs.first().wf_modules.create(
+            order=0,
+            auto_update_data=True,
+            update_interval=1200,
+            next_update=timezone.now(),
+        )
+
+        response = self.run_handler(try_set_autofetch, user=user,
+                                    workflow=workflow,
+                                    wfModuleId=wf_module.id,
+                                    isAutofetch=False,
+                                    fetchInterval=300)
+        self.assertResponse(response, data={
+            'isAutofetch': False,
+            'fetchInterval': 300,
+        })
+        wf_module.refresh_from_db()
+        self.assertEqual(wf_module.auto_update_data, False)
+        self.assertEqual(wf_module.update_interval, 300)
+        self.assertIsNone(wf_module.next_update)
+
+    def test_try_set_autofetch_exceed_quota(self):
         user = User.objects.create(username='a', email='a@example.org')
         user.user_profile.max_fetches_per_day = 10
         user.user_profile.save()
         workflow = Workflow.create_and_init(owner=user)
         wf_module = workflow.tabs.first().wf_modules.create(order=0)
-        response = self.run_handler(set_autofetch, user=user,
+        response = self.run_handler(try_set_autofetch, user=user,
                                     workflow=workflow,
                                     wfModuleId=wf_module.id,
-                                    auto_update_data=True,
-                                    update_interval=300)
+                                    isAutofetch=True,
+                                    fetchInterval=300)
         self.assertEqual(response.error, '')
-        self.assertEqual(response.data['rejected'], 'quotaExceeded')
-        self.assertEqual(response.data['autofetches']['maxFetchesPerDay'], 10)
-        self.assertEqual(response.data['autofetches']['nFetchesPerDay'], 288)
+        self.assertEqual(response.data['quotaExceeded']['maxFetchesPerDay'], 10)
+        self.assertEqual(response.data['quotaExceeded']['nFetchesPerDay'], 288)
         self.assertEqual(
-            response.data['autofetches']['autofetches'][0]['workflow']['id'],
+            response.data['quotaExceeded']['autofetches'][0]['workflow']['id'],
             workflow.id
         )
         wf_module.refresh_from_db()
         self.assertEqual(wf_module.auto_update_data, False)
 
-    @patch('server.websockets.ws_client_send_delta_async', async_noop)
-    @patch('server.rabbitmq.queue_render', async_noop)
-    def test_set_autofetch_allow_exceed_quota_when_reducing(self):
+    def test_try_set_autofetch_allow_exceed_quota_when_reducing(self):
         user = User.objects.create(username='a', email='a@example.org')
         user.user_profile.max_fetches_per_day = 10
         user.user_profile.save()
@@ -461,12 +475,15 @@ class WfModuleTest(HandlerTestCase):
             update_interval=300,
             next_update=timezone.now(),
         )
-        response = self.run_handler(set_autofetch, user=user,
+        response = self.run_handler(try_set_autofetch, user=user,
                                     workflow=workflow,
                                     wfModuleId=wf_module.id,
-                                    auto_update_data=True,
-                                    update_interval=600)
-        self.assertResponse(response, data=None)
+                                    isAutofetch=True,
+                                    fetchInterval=600)
+        self.assertResponse(response, data={
+            'isAutofetch': True,
+            'fetchInterval': 600,
+        })
         wf_module.refresh_from_db()
         self.assertEqual(wf_module.update_interval, 600)
 

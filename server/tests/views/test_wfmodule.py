@@ -179,50 +179,6 @@ class WfModuleTests(LoggedInTestCase):
         )
         self.assertIs(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    # Test set/get update interval
-    def test_wf_module_update_settings(self):
-        settings = {'auto_update_data': True, 'update_interval': 5,
-                    'update_units': 'weeks'}
-
-        request = self._build_patch('/api/wfmodules/%d/' % self.wf_module1.id,
-                                    settings, user=self.user)
-        response = wfmodule_detail(request, pk=self.wf_module1.id)
-        self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
-
-        # see that we set the values
-        self.wf_module1.refresh_from_db()
-        self.assertEqual(self.wf_module1.auto_update_data, True)
-        self.assertEqual(self.wf_module1.update_interval, 3024000)
-
-        # Check we logged the event
-        # #160041803
-        self.log_patch.assert_called_once()
-        self.assertEqual(self.log_patch.call_args[0][1], 'Enabled auto-update')
-
-    # Test set/get update interval
-    def test_wf_module_update_settings_missing_units(self):
-        settings = {'auto_update_data': True, 'update_interval': 5}
-
-        request = self._build_patch('/api/wfmodules/%d' % self.wf_module1.id,
-                                    settings, user=self.user)
-        response = wfmodule_detail(request, pk=self.wf_module1.id)
-        self.assertIs(response.status_code, status.HTTP_400_BAD_REQUEST)
-
-    def test_wf_module_update_settings_missing_interval(self):
-        settings = {'auto_update_data': True, 'update_units': 'days'}
-        request = self._build_patch('/api/wfmodules/%d' % self.wf_module1.id,
-                                    settings, user=self.user)
-        response = wfmodule_detail(request, pk=self.wf_module1.id)
-        self.assertIs(response.status_code, status.HTTP_400_BAD_REQUEST)
-
-    def test_wf_module_update_settings_bad_units(self):
-        settings = {'auto_update_data': True, 'update_interval': 66,
-                    'update_units': 'pajama'}
-        request = self._build_patch('/api/wfmodules/%d' % self.wf_module1.id,
-                                    settings, user=self.user)
-        response = wfmodule_detail(request, pk=self.wf_module1.id)
-        self.assertIs(response.status_code, status.HTTP_400_BAD_REQUEST)
-
     def test_value_counts_str(self):
         self.wf_module2.cache_render_result(2, ProcessResult(
             pd.DataFrame({
