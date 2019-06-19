@@ -15,17 +15,10 @@ export function UnhandledErrorReport ({ error }) {
 
   if (typeof window.Intercom === 'function') {
     helpText = (
-      <>
-        <ul>
-          <li>We opened a messaging window and
-        included details for our developers to fix the issue. <em>Please
-        send the message</em>.
-          </li>
-          <li>It helps if you can describe
-          what you were doing before you ran into the bug.
-          </li>
-        </ul>
-      </>
+      <ol>
+        <li>We opened a messaging window and included details for our developers to fix the issue. <em>Please send the message</em>.</li>
+        <li>It helps if you can describe what you were doing before you ran into the bug.</li>
+      </ol>
     )
     React.useEffect(() => {
       window.Intercom(
@@ -47,16 +40,10 @@ export function UnhandledErrorReport ({ error }) {
         'Debugging details (for Workbench developers):\n' + bugReportText
       ].join('\n\n'))
     helpText = (
-      <>
-        <ul>
-          <li>Copy the debugging details below and send them to <a
-          href={url} target='_blank'>hello@workbenchdata.com</a>.
-          </li>
-          <li>It helps if you can describe
-          what you were doing before you ran into the bug.
-          </li>
-        </ul>
-      </>
+      <ol>
+        <li>Copy the debugging details below and send them to <a href='mailto:hello@workbenchdata.com' target='_blank'>hello@workbenchdata.com</a>.</li>
+        <li>It helps if you can describe what you were doing before you ran into the bug.</li>
+      </ol>
     )
   }
 
@@ -65,7 +52,7 @@ export function UnhandledErrorReport ({ error }) {
       <div className='content'>
         <h2>Oops! Something isn't right.</h2>
         <p>Please follow these simple steps to help us fix the issue.</p>
-        <p className='help-us-debug'>{helpText}</p>
+        <div className='help-us-debug'>{helpText}</div>
         <p>THANK YOU! Refresh this page to return to your Workflow.</p>
         <p>Debugging details (please send):</p>
         <pre>{bugReportText}</pre>
