@@ -70,10 +70,3 @@ def list_autofetches_json(scope):
             } for row in autofetches
         ]
     }
-
-
-@register_websockets_handler
-@websockets_handler(role='read')  # for logging, error handling
-@database_sync_to_async
-def list_autofetches(scope, **kwargs):
-    return list_autofetches_json(scope)
