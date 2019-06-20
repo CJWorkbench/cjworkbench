@@ -13,8 +13,7 @@ from server.models.commands import ChangeDataVersionCommand
 def _maybe_add_version(
     workflow: Workflow,
     wf_module: WfModule,
-    maybe_result: Optional[ProcessResult],
-    stored_object_json: Optional[Dict[str, Any]]=None
+    maybe_result: Optional[ProcessResult]
 ) -> Optional[timezone.datetime]:
     """
     Apply `result` to `wf_module`.
@@ -50,7 +49,6 @@ def _maybe_add_version(
             if maybe_result is not None:
                 version_added = wf_module.store_fetched_table_if_different(
                     maybe_result.dataframe,  # TODO store entire result
-                    metadata=json.dumps(stored_object_json)
                 )
             else:
                 version_added = None
@@ -73,8 +71,7 @@ def get_wf_module_workflow(wf_module: WfModule) -> Workflow:
 async def save_result_if_changed(
     workflow_id: int,
     wf_module: WfModule,
-    new_result: Optional[ProcessResult],
-    stored_object_json: Optional[Dict[str, Any]]=None
+    new_result: Optional[ProcessResult]
 ) -> None:
     """
     Store fetched table, if it is a change from `wf_module`'s existing data.
@@ -101,8 +98,7 @@ async def save_result_if_changed(
     except Workflow.DoesNotExist:
         return  # there's nothing more to do
 
-    version_added = await _maybe_add_version(workflow, wf_module, new_result,
-                                             stored_object_json)
+    version_added = await _maybe_add_version(workflow, wf_module, new_result)
 
     if version_added:
         # Don't send_delta_async. wf_module.last_relevant_delta_id hasn't been

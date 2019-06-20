@@ -18,7 +18,6 @@ class StoredObjectTests(DbTestCase):
         self.workflow = Workflow.objects.create()
         tab = self.workflow.tabs.create(position=0)
         self.wfm1 = tab.wf_modules.create(order=0)
-        self.metadata = 'metadataish'
 
     def file_contents(self, file_obj):
         file_obj.open(mode='rb')
@@ -34,18 +33,12 @@ class StoredObjectTests(DbTestCase):
             'D': pd.Series(['x', np.nan, 'x'], dtype='category'),
             'E': pd.Series([datetime.now(), np.nan, datetime.now()]),
         })
-        so1 = StoredObject.create_table(self.wfm1,
-                                        test_table,
-                                        self.metadata)
-        self.assertEqual(so1.metadata, self.metadata)
+        so1 = StoredObject.create_table(self.wfm1, test_table)
         table2 = so1.get_table()
         self.assertTrue(table2.equals(test_table))
 
     def test_store_empty_table(self):
-        so1 = StoredObject.create_table(self.wfm1,
-                                        pd.DataFrame(),
-                                        metadata=self.metadata)
-        self.assertEqual(so1.metadata, self.metadata)
+        so1 = StoredObject.create_table(self.wfm1, pd.DataFrame())
         table2 = so1.get_table()
         self.assertTrue(table2.empty)
 
@@ -57,7 +50,6 @@ class StoredObjectTests(DbTestCase):
         """
         so1 = StoredObject.objects.create(
             wf_module=self.wfm1,
-            metadata=self.metadata,
             bucket='',
             key='',
             size=0,
@@ -98,10 +90,9 @@ class StoredObjectTests(DbTestCase):
         so1 = StoredObject.create_table(self.wfm1, table)
         so2 = so1.duplicate(self.wfm2)
 
-        # new StoredObject should have same time, same metadata,
+        # new StoredObject should have same time,
         # different file with same contents
         self.assertEqual(so1.stored_at, so2.stored_at)
-        self.assertEqual(so1.metadata, so2.metadata)
         self.assertEqual(so1.size, so2.size)
         self.assertEqual(so1.bucket, so2.bucket)
         self.assertNotEqual(so1.key, so2.key)

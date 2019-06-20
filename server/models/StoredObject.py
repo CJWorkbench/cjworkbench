@@ -28,7 +28,6 @@ class StoredObject(models.Model):
 
     # used only for stored tables
     hash = models.CharField(max_length=32)
-    metadata = models.CharField(default=None, max_length=255, null=True)
     size = models.IntegerField(default=0)  # file size
 
     # keeping track of whether this version of the data has ever been loaded
@@ -36,31 +35,29 @@ class StoredObject(models.Model):
     read = models.BooleanField(default=False)
 
     @staticmethod
-    def create_table(wf_module, table, metadata=None):
+    def create_table(wf_module, table):
         hash = hash_table(table)
-        return StoredObject.__create_table_internal(wf_module, table,
-                                                    metadata, hash)
+        return StoredObject.__create_table_internal(wf_module, table, hash)
 
     # Create a new StoredObject if it's going to store different data than the
     # previous one. Otherwise null Fast; checks hash without loading file
     # contents
     @staticmethod
-    def create_table_if_different(wf_module, old_so, table, metadata=None):
+    def create_table_if_different(wf_module, old_so, table):
         if old_so is None:
-            return StoredObject.create_table(wf_module, table,
-                                             metadata=metadata)
+            return StoredObject.create_table(wf_module, table)
 
         hash = hash_table(table)
         if hash != old_so.hash:
             old_table = old_so.get_table()
             if not old_table.equals(table):
                 return StoredObject.__create_table_internal(wf_module, table,
-                                                            metadata, hash)
+                                                            hash)
 
         return None
 
     @staticmethod
-    def __create_table_internal(wf_module, table, metadata, hash):
+    def __create_table_internal(wf_module, table, hash):
         # Write to minio bucket/key
         bucket = minio.StoredObjectsBucket
         key = _build_key(wf_module.workflow_id, wf_module.id)
@@ -68,7 +65,6 @@ class StoredObject(models.Model):
 
         # Create the object that references the bucket/key
         return wf_module.stored_objects.create(
-            metadata=metadata,
             bucket=minio.StoredObjectsBucket,
             key=key,
             size=size,
@@ -94,7 +90,6 @@ class StoredObject(models.Model):
         return to_wf_module.stored_objects.create(
             stored_at=self.stored_at,
             hash=self.hash,
-            metadata=self.metadata,
             bucket=self.bucket,
             key=key,
             size=self.size
