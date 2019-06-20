@@ -34,34 +34,32 @@ class StoredObject(models.Model):
     # and delivered to the frontend
     read = models.BooleanField(default=False)
 
-    @staticmethod
-    def create_table(wf_module, table):
+    @classmethod
+    def create_table(cls, wf_module, table):
         hash = hash_table(table)
-        return StoredObject.__create_table_internal(wf_module, table, hash)
+        return cls.__create_table_internal(wf_module, table, hash)
 
     # Create a new StoredObject if it's going to store different data than the
     # previous one. Otherwise null Fast; checks hash without loading file
     # contents
-    @staticmethod
-    def create_table_if_different(wf_module, old_so, table):
+    @classmethod
+    def create_table_if_different(cls, wf_module, old_so, table):
         if old_so is None:
-            return StoredObject.create_table(wf_module, table)
+            return cls.create_table(wf_module, table)
 
         hash = hash_table(table)
         if hash != old_so.hash:
             old_table = old_so.get_table()
             if not old_table.equals(table):
-                return StoredObject.__create_table_internal(wf_module, table,
-                                                            hash)
+                return cls.__create_table_internal(wf_module, table, hash)
 
         return None
 
-    @staticmethod
-    def __create_table_internal(wf_module, table, hash):
+    @classmethod
+    def __create_table_internal(cls, wf_module, table, hash):
         # Write to minio bucket/key
-        bucket = minio.StoredObjectsBucket
         key = _build_key(wf_module.workflow_id, wf_module.id)
-        size = parquet.write(bucket, key, table)
+        size = parquet.write(minio.StoredObjectsBucket, key, table)
 
         # Create the object that references the bucket/key
         return wf_module.stored_objects.create(
