@@ -23,7 +23,6 @@ const SET_WF_MODULE_NOTES = 'SET_WF_MODULE_NOTES'
 const SET_WF_MODULE_STATUS = 'SET_WF_MODULE_STATUS'
 const SET_WF_MODULE_COLLAPSED = 'SET_WF_MODULE_COLLAPSED'
 const REQUEST_WF_MODULE_FETCH = 'REQUEST_WF_MODULE_FETCH'
-const UPDATE_WF_MODULE = 'UPDATE_WF_MODULE'
 const SET_WF_MODULE_PARAMS = 'SET_WF_MODULE_PARAMS'
 const TRY_SET_WF_MODULE_AUTOFETCH = 'TRY_SET_WF_MODULE_AUTOFETCH'
 const SET_WF_MODULE_NOTIFICATIONS = 'SET_WF_MODULE_NOTIFICATIONS'
@@ -592,43 +591,6 @@ registerReducerFunc(TRY_SET_WF_MODULE_AUTOFETCH + '_FULFILLED', (state, action) 
   }
 })
 
-
-// UPDATE_WF_MODULE
-// Patch a workflow module with new data
-
-// TODO: We don't validate which fields or types are on
-// a WfModule here. The server will reject nonexistent
-// fields, but should we show the user an error?
-export function updateWfModuleAction (wfModuleId, data) {
-  return (dispatch, getState, api) => {
-    const { wfModules } = getState()
-
-    if (!wfModules[String(wfModuleId)]) return Promise.resolve(null)
-
-    return dispatch({
-      type: UPDATE_WF_MODULE,
-      payload: {
-        promise: api.updateWfModule(wfModuleId, data),
-        data: {
-          wfModuleId,
-          data
-        }
-      }
-    })
-  }
-}
-registerReducerFunc(UPDATE_WF_MODULE + '_PENDING', (state, action) => {
-  const { wfModuleId, data } = action.payload
-  const wfModule = state.wfModules[String(wfModuleId)]
-
-  return { ...state,
-    wfModules: { ...state.wfModules,
-      [String(wfModuleId)]: { ...wfModule,
-        ...data
-      }
-    }
-  }
-})
 
 export function setWfModuleNotesAction (wfModuleId, notes) {
   return (dispatch, getState, api) => {

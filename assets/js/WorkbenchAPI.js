@@ -85,10 +85,6 @@ export default class WorkbenchAPI {
     return this._fetch(url, realOptions)
   }
 
-  _patch(url, body, options) {
-    return this._submit('PATCH', url, body, options)
-  }
-
   _put(url, body, options) {
     return this._submit('PUT', url, body, options)
   }
@@ -184,7 +180,7 @@ export default class WorkbenchAPI {
     })
   }
 
-  render(wfModuleId, startrow, endrow) {
+  render (wfModuleId, startrow, endrow) {
     let url = '/api/wfmodules/' + wfModuleId + '/render';
 
     if (startrow || endrow) {
@@ -278,11 +274,6 @@ export default class WorkbenchAPI {
     return this._callExpectingNull('workflow.set_selected_tab', {
       tabSlug
     })
-  }
-
-  updateWfModule(wfModuleId, params) {
-    // TODO websocket-ize
-    return this._patch(`/api/wfmodules/${wfModuleId}`, params)
   }
 
   undo(workflowId) {

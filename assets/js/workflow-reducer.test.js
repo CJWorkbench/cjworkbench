@@ -245,19 +245,6 @@ describe('Reducer actions', () => {
     })
   })
 
-  it('updates the workflow module with the specified data', () => {
-    const state = wfr.workflowReducer(testState, {
-      type: 'UPDATE_WF_MODULE_PENDING',
-      payload: {
-        wfModuleId: 20,
-        data: {
-          notifications: true
-        }
-      }
-    })
-    expect(state.wfModules['20'].notifications).toBe(true)
-  })
-
   it('does nothing if we setWfModuleNotifications on a nonexistent module', async() => {
     const api = { setWfModuleNotifications: jest.fn() }
     const store = mockStore(testState, api)
@@ -273,15 +260,6 @@ describe('Reducer actions', () => {
     await store.dispatch(wfr.setWfModuleNotificationsAction(10, true))
     expect(api.setWfModuleNotifications).toHaveBeenCalledWith(10, true)
     expect(store.getState().wfModules['10'].notifications).toBe(true)
-  })
-
-  it('does nothing if we update a nonexistent wfmodule', async () => {
-    const api = { updateWfModule: jest.fn() }
-    const store = mockStore(testState, api)
-    await store.dispatch(wfr.updateWfModuleAction(40, { notifications: false }))
-
-    expect(api.updateWfModule).not.toHaveBeenCalled()
-    expect(store.getState()).toEqual(testState)
   })
 
   it('reorders modules', async () => {
