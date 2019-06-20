@@ -383,13 +383,6 @@ class WfModule(models.Model):
 
         return lm.migrate_params(self.params)  # raises ValueError
 
-    # re-render entire workflow when a module goes ready or error, on the
-    # assumption that new output data is available
-    def set_ready(self):
-        self.is_busy = False
-        self.fetch_error = ''
-        self.save(update_fields=['is_busy', 'fetch_error'])
-
     # --- Duplicate ---
     # used when duplicating a whole workflow
     def duplicate(self, to_tab):
