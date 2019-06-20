@@ -151,7 +151,6 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                                 >
                                   <button
                                     class="form-control"
-                                    disabled=""
                                     name="apply"
                                     type="submit"
                                   >
@@ -359,7 +358,7 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                               >
                                 <button
                                   className="form-control"
-                                  disabled={true}
+                                  disabled={false}
                                   name="apply"
                                   type="submit"
                                 >
