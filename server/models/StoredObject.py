@@ -44,16 +44,21 @@ class StoredObject(models.Model):
     # contents
     @classmethod
     def create_table_if_different(cls, wf_module, old_so, table):
-        if old_so is None:
-            return cls.create_table(wf_module, table)
-
         hash = hash_table(table)
-        if hash != old_so.hash:
-            old_table = old_so.get_table()
-            if not old_table.equals(table):
-                return cls.__create_table_internal(wf_module, table, hash)
 
-        return None
+        if (
+            old_so is not None
+            # Fast: hashes differ, so we don't need to read the table
+            and hash == old_so.hash
+            # Slow: compare files. Expensive: reads a file from S3, holds
+            # both DataFrames in RAM, uses lots of CPU.
+            and old_so.get_table().equals(table)
+        ):
+            # `table` is identical to what was in `old_so`.
+            return None
+        else:
+            # `table` is new! Yay!
+            return cls.__create_table_internal(wf_module, table, hash)
 
     @classmethod
     def __create_table_internal(cls, wf_module, table, hash):
