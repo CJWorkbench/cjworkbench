@@ -57,3 +57,13 @@ class ParquetTest(unittest.TestCase):
         finally:
             minio.remove(bucket, key)
         assert_frame_equal(result, expected)
+
+    def test_empty_categorical_has_object_dtype(self):
+        expected = pd.DataFrame({'A': []}, dtype='str').astype('category')
+        assert expected['A'].cat.categories.dtype == object
+        try:
+            parquet.write(bucket, key, expected)
+            result = parquet.read(bucket, key)
+        finally:
+            minio.remove(bucket, key)
+        assert_frame_equal(result, expected)

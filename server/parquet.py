@@ -121,7 +121,7 @@ def read(bucket: str, key: str, to_pandas_args=[],
 
     try:
         pf = read_header(bucket, key, open_with=open_with)
-        return pf.to_pandas(*to_pandas_args, **to_pandas_kwargs)
+        dataframe = pf.to_pandas(*to_pandas_args, **to_pandas_kwargs)
     except snappy.UncompressError as err:
         if str(err) == 'Error while decompressing: invalid input':
             # Assume Fastparquet is reporting the wrong bug.
@@ -132,6 +132,14 @@ def read(bucket: str, key: str, to_pandas_args=[],
         raise
     except AssertionError:
         raise FastparquetIssue375
+
+    # Empty categorical gets read as int64. Convert to str.
+    if dataframe.empty:
+        cat_colnames = dataframe.columns[dataframe.dtypes == 'category']
+        for cat_colname in cat_colnames:
+            dataframe[cat_colname] = \
+                    dataframe[cat_colname].astype(str).astype('category')
+    return dataframe
 
 
 def write(bucket: str, key: str, table: pandas.DataFrame) -> int:
