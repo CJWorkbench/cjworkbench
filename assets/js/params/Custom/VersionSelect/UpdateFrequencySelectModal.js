@@ -63,7 +63,11 @@ export default class UpdateFrequencySelectModal extends React.PureComponent {
     return (
       !this.state.isSettingAutofetch // there's no pending request
       && this.wantFetchInterval // the text box is valid
-      && this.wantFetchInterval !== this.props.fetchInterval // we've edited
+      && (
+        // we've edited
+        this.wantFetchInterval !== this.props.fetchInterval
+        || this.wantAutofetch !== this.props.isAutofetch
+      )
     )
   }
 
