@@ -27,9 +27,9 @@ const QuotaExceeded = React.memo(function QuotaExceeded ({ workflowId, wfModuleI
 
   return (
     <div className='quota-exceeded'>
-      <h5>Not set — too many updates</h5>
+      <h5>AUTO-UPDATE QUOTA EXCEEDED</h5>
       <p>
-        You're a keener! You're requesting{' '}
+        You're requesting{' '}
         <strong className='n-fetches-per-day'>{Math.ceil(numberFormatter.format(nFetchesPerDay))}</strong>{' '}
         updates per day across all your workflows. Your daily limit is{' '}
         <strong className='max-fetches-per-day'>{numberFormatter.format(maxFetchesPerDay)}</strong>.
@@ -82,9 +82,9 @@ const QuotaExceeded = React.memo(function QuotaExceeded ({ workflowId, wfModuleI
           ))}
         </tbody>
       </table>
-      <p>
+      <p class="request-lift">
         Need a higher limit?
-        Please email us at <a href='mailto:hello@workbenchdata.com' target='_blank'>hello@workbenchdata.com</a> and describe what you're working on.
+        Send us a short <a href='mailto:pierre@tablesdata.com' target='_blank'>email</a>.
       </p>
     </div>
   )
