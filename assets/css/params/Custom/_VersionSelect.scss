@@ -66,8 +66,8 @@
     @include button-blue;
 
     &[disabled] {
-      @extend .button-orange;
-      color: transparent!important;
+      @include button-orange;
+      color: transparent; // no text
       background-color: $brand-orange--light;
     }
     &:hover .spinner::after {
