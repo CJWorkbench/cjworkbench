@@ -79,6 +79,10 @@ class StoredObject(models.Model):
 
         try:
             return parquet.read(self.bucket, self.key)
+        except FileNotFoundError:
+            # There was a pre-delete that never got committed; or maybe there's
+            # some other, long-existing DB inconsistency.
+            return pd.DataFrame()
         except parquet.FastparquetCouldNotHandleFile:
             return pd.DataFrame()  # empty table
 

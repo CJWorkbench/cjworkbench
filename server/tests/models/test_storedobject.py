@@ -3,6 +3,7 @@ import io
 import json
 from pathlib import Path
 from django.conf import settings
+from django.db import transaction
 import numpy as np
 import pandas as pd
 from pandas.testing import assert_frame_equal
@@ -55,6 +56,30 @@ class StoredObjectTests(DbTestCase):
             size=0,
             hash=0
         )
+
+        table = so1.get_table()
+        assert_frame_equal(table, pd.DataFrame())
+
+    def test_load_missing_file(self):
+        """
+        An aborted delete leaves a StoredObject without a backing file.
+        """
+        test_table = pd.DataFrame({
+            'A': pd.Series([1, 2, 3], dtype=np.int64),
+            'B': pd.Series([1, 2, 3], dtype=np.float64),
+            'C': pd.Series(['x', np.nan, 'y'], dtype=object),
+            'D': pd.Series(['x', np.nan, 'x'], dtype='category'),
+            'E': pd.Series([datetime.now(), np.nan, datetime.now()]),
+        })
+        so1 = StoredObject.create_table(self.wfm1, test_table)
+        try:
+            with transaction.atomic():
+                # 1. Get Django's pre-delete to delete the file from S3
+                so1.delete()
+                # 2. Rollback
+                raise RuntimeError('not really an error')
+        except RuntimeError:
+            pass
 
         table = so1.get_table()
         assert_frame_equal(table, pd.DataFrame())
