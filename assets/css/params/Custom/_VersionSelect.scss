@@ -109,6 +109,9 @@
         @include content-1;
         color: $brand-text--dark;
       }
+      button {
+        @include button-orange;
+      }
     }
   }
 
@@ -143,6 +146,10 @@
   .big-radio-auto-update-true {
     .input-group {
       flex-wrap: nowrap;
+
+      .custom-select {
+        border-radius: .3rem;
+      }
     }
 
     input.form-control[type=number] {
@@ -201,7 +208,7 @@
 
   .email-updates {
     margin-top: 2rem;
-    border-top: 1px solid $table-border;
+    border-top: 1px solid $page-background;
     padding-top: 2rem;
 
     input { // checkbox
@@ -219,5 +226,13 @@
 
   button.close {
     @include action-button;
+    border: 0;
+  }
+
+  .modal-footer {
+    button.close {
+      border: 1px solid $brand-text--dark;
+      color: $brand-text--dark;
+    }
   }
 }
