@@ -33,12 +33,16 @@ def list_autofetches_json(scope):
         'update_interval',
     ))
 
-    if not scope['user'].is_anonymous and scope['user'].user_profile:
-        max_fetches_per_day = scope['user'].user_profile.max_fetches_per_day
+    default_max_fetches_per_day = (
+        UserProfile._meta.get_field('max_fetches_per_day').default
+    )
+    if not scope['user'].is_anonymous:
+        try:
+            max_fetches_per_day = scope['user'].user_profile.max_fetches_per_day
+        except UserProfile.DoesNotExist:
+            max_fetches_per_day = default_max_fetches_per_day
     else:
-        max_fetches_per_day = (
-            UserProfile._meta.get_field('max_fetches_per_day').default
-        )
+        max_fetches_per_day = default_max_fetches_per_day
     n_fetches_per_day = sum(
         [86400.0 / row['update_interval'] for row in autofetches]
     )

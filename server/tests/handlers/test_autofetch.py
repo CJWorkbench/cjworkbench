@@ -35,6 +35,20 @@ class AutoupdateTest(DbTestCase):
             'autofetches': [],
         })
 
+    def test_list_autofetches_with_deleted_user_profile(self):
+        # There's no good reason for UserProfile to be separate from User. But
+        # it is. So here we are -- sometimes it doesn't exist.
+        user = User.objects.create(username='a', email='a@example.org')
+        workflow = Workflow.create_and_init(owner=user)
+        user.user_profile.delete()
+        user.refresh_from_db()
+        result = list_autofetches_json({'user': user, 'session': None})
+        self.assertEqual(result, {
+            'maxFetchesPerDay': 500,
+            'nFetchesPerDay': 0,
+            'autofetches': [],
+        })
+
     def test_list_autofetches_two_workflows(self):
         user = User.objects.create(username='a', email='a@example.org')
         workflow = Workflow.create_and_init(owner=user, name='W1',
