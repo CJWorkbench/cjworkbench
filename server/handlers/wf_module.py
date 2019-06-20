@@ -194,7 +194,7 @@ async def set_collapsed(workflow: Workflow, wf_module: WfModule,
 
 
 @database_sync_to_async
-def _do_set_notifications(wf_module: WfModule, notifications: bool):
+def _do_set_notifications(scope, wf_module: WfModule, notifications: bool):
     wf_module.notifications = notifications
     wf_module.save(update_fields=['notifications'])
     if notifications:
@@ -213,7 +213,7 @@ def _do_set_notifications(wf_module: WfModule, notifications: bool):
 async def set_notifications(workflow: Workflow, wf_module: WfModule,
                             notifications: bool, scope, **kwargs):
     notifications = bool(notifications)  # cannot error from JSON input
-    await _do_set_notifications(wf_module, notifications)
+    await _do_set_notifications(scope, wf_module, notifications)
 
 
 @database_sync_to_async

@@ -378,7 +378,8 @@ class WfModuleTest(HandlerTestCase):
         wf_module.refresh_from_db()
         self.assertEqual(wf_module.is_collapsed, True)
 
-    def test_set_notifications(self):
+    @patch('server.utils.log_user_event_from_scope')
+    def test_set_notifications_to_false(self, log_event):
         user = User.objects.create(username='a', email='a@example.org')
         workflow = Workflow.create_and_init(owner=user)
         wf_module = workflow.tabs.first().wf_modules.create(order=0,
@@ -392,6 +393,26 @@ class WfModuleTest(HandlerTestCase):
 
         wf_module.refresh_from_db()
         self.assertEqual(wf_module.notifications, False)
+        log_event.assert_not_called()  # only log if setting to true
+
+    @patch('server.utils.log_user_event_from_scope')
+    def test_set_notifications(self, log_event):
+        user = User.objects.create(username='a', email='a@example.org')
+        workflow = Workflow.create_and_init(owner=user)
+        wf_module = workflow.tabs.first().wf_modules.create(
+            order=0,
+            notifications=False
+        )
+
+        response = self.run_handler(set_notifications, user=user,
+                                    workflow=workflow,
+                                    wfModuleId=wf_module.id,
+                                    notifications=True)
+        self.assertResponse(response, data=None)
+
+        wf_module.refresh_from_db()
+        self.assertEqual(wf_module.notifications, True)
+        log_event.assert_called()
 
     def test_try_set_autofetch_happy_path(self):
         user = User.objects.create(username='a', email='a@example.org')

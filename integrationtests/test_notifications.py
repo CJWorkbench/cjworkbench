@@ -42,7 +42,9 @@ class TestNotifications(LoggedInIntegrationTest):
         b.click_whatever('label', text='Turn on', wait=True)  # wait for modal
         b.click_button('×')
 
-        # Now change the fetched data
+        # Now change the fetched data. Since "Turn on" and "Update" both run
+        # over Websockets, we're assured the first finishes before the second
+        # begins -- no need to wait.
         b.click_button('Update')
 
         path = '/' + b.get_url().split('/', 3)[-1]
