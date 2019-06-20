@@ -178,24 +178,23 @@ async def set_notes(workflow: Workflow, wf_module: WfModule, notes: str,
                                             new_value=notes)
 
 
-@register_websockets_handler
-@websockets_handler('write')
-@_loading_wf_module
 @database_sync_to_async
-def set_collapsed(workflow: Workflow, wf_module: WfModule,
-                  isCollapsed: bool, **kwargs):
-    is_collapsed = bool(isCollapsed)  # cannot error from JSON input
+def _do_set_collapsed(wf_module: WfModule, is_collapsed: bool):
     wf_module.is_collapsed = is_collapsed
     wf_module.save(update_fields=['is_collapsed'])
 
 
 @register_websockets_handler
-@websockets_handler('owner')
+@websockets_handler('write')
 @_loading_wf_module
+async def set_collapsed(workflow: Workflow, wf_module: WfModule,
+                        isCollapsed: bool, **kwargs):
+    is_collapsed = bool(isCollapsed)  # cannot error from JSON input
+    await _do_set_collapsed(wf_module, is_collapsed)
+
+
 @database_sync_to_async
-def set_notifications(workflow: Workflow, wf_module: WfModule,
-                      notifications: bool, scope, **kwargs):
-    notifications = bool(notifications)  # cannot error from JSON input
+def _do_set_notifications(wf_module: WfModule, notifications: bool):
     wf_module.notifications = notifications
     wf_module.save(update_fields=['notifications'])
     if notifications:
@@ -211,18 +210,18 @@ def set_notifications(workflow: Workflow, wf_module: WfModule,
 @register_websockets_handler
 @websockets_handler('owner')
 @_loading_wf_module
+async def set_notifications(workflow: Workflow, wf_module: WfModule,
+                            notifications: bool, scope, **kwargs):
+    notifications = bool(notifications)  # cannot error from JSON input
+    await _do_set_notifications(wf_module, notifications)
+
+
 @database_sync_to_async
-def try_set_autofetch(wf_module: WfModule, isAutofetch: bool,
-                      fetchInterval: int, scope, **kwargs):
+def _do_try_set_autofetch(scope, wf_module: WfModule, auto_update_data: bool,
+                          update_interval: int):
     # We may ROLLBACK; if we do, we need to remember the old values
     old_auto_update_data = wf_module.auto_update_data
     old_update_interval = wf_module.update_interval
-    auto_update_data = bool(isAutofetch)
-    try:
-        update_interval = max(settings.MIN_AUTOFETCH_INTERVAL,
-                              int(fetchInterval))
-    except (ValueError, TypeError):
-        return HandlerError('BadRequest: fetchInterval must be an integer')
 
     check_quota = (
         (
@@ -271,6 +270,21 @@ def try_set_autofetch(wf_module: WfModule, isAutofetch: bool,
     if quota_exceeded is not None:
         retval['quotaExceeded'] = quota_exceeded  # a dict
     return retval
+
+
+@register_websockets_handler
+@websockets_handler('owner')
+@_loading_wf_module
+async def try_set_autofetch(wf_module: WfModule, isAutofetch: bool,
+                            fetchInterval: int, scope, **kwargs):
+    auto_update_data = bool(isAutofetch)
+    try:
+        update_interval = max(settings.MIN_AUTOFETCH_INTERVAL,
+                              int(fetchInterval))
+    except (ValueError, TypeError):
+        return HandlerError('BadRequest: fetchInterval must be an integer')
+    return await _do_try_set_autofetch(scope, wf_module, auto_update_data,
+                                       update_interval)
 
 
 @database_sync_to_async
