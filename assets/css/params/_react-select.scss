@@ -70,14 +70,15 @@
       }
 
       .react-select__placeholder {
-        padding: 3px; // react-select default from .react-select__multi-value__label
+        padding:3px 8px; // react-select default from .react-select__multi-value__label
       }
 
       .react-select__input {
         display: flex;
         max-width: 100%;
         overflow: hidden;
-        padding: 3px 0; // react-select default from .react-select__multi-value__label
+        padding: 3px 8px; // react-select default from .react-select__multi-value__label
+        color: $brand-text--dark;
 
         input {
           display: block;

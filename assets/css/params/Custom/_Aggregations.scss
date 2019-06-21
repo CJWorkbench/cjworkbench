@@ -8,11 +8,11 @@
       border-radius: 3px 3px 0 0;
     }
 
-    .column {
+    .single {
       // 2. (optional) colname: has no radius
       .react-select__control {
         // @extend %custom-select;
-        background-color: $table-background;
+        background-color: lighten($Vlight-gray,3%);
         border: 2px solid $Vlight-gray;
         border-top-color: transparent;
         border-bottom-color: transparent;
@@ -59,10 +59,10 @@
       }
       &:nth-child(2) { // change color depending if it's in position 2 or not
         input {
-          background-color: $table-background;
+          background-color: lighten($Vlight-gray,3%);
         }
         span {
-          border-top: $table-background;
+          border-top: lighten($Vlight-gray,3%);
         }
       }
     }
