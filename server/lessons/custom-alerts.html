@@ -27,7 +27,10 @@
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Add from URL"}]'
-      data-test="const wfModule = workflow.tabs[0].wfModules[0]; return wfModule.updateInterval === '5h'"
+      data-test="
+        const wfModule = workflow.tabs[0].wfModules[0]
+        return wfModule.updateInterval === 18000
+      "
       >Click <kbd>manual</kbd> to open the Workflow Update dialog. Set the feature to <kbd>Auto</kbd>, set the frequency to <kbd>5 hours</kbd>, and click <kbd>Apply.</kbd>
     </li>
 

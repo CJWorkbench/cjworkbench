@@ -139,22 +139,14 @@ export class WorkflowModuleWithHelpers {
   }
 
   /**
-   * The update interval in the form "1w", "3h"; null if not auto-update.
+   * The update interval, in seconds. Null if not auto-update.
    */
   get updateInterval () {
     const wfModule = this.wfModule
     if (!wfModule) return null
     if (!wfModule.auto_update_data) return null
 
-    const n = String(wfModule.update_interval)
-    const s = {
-      minutes: 'm',
-      hours: 'h',
-      days: 'd',
-      weeks: 'w'
-    }[wfModule.update_units] || '?'
-
-    return n + s
+    return wfModule.update_interval
   }
 
   /**
