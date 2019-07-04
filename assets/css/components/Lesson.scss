@@ -205,7 +205,7 @@ article.lesson {
         }
 
         &::before {
-          content: "\e938";
+          content: "\e946";
           color: $light-accent--Vstrong;
           font-size: .8rem;
           font-family: Workbench;
@@ -213,11 +213,11 @@ article.lesson {
           margin-left: -2rem;
         }
         &.active::before {
-          content: "\e938";
+          content: "\e946";
           color: $light-accent--Vstrong;
         }
         &.done::before {
-          content: "\e904"; // icon-check
+          content: "\e94a"; // icon-check
           color: $brand-learn;
           font-size: 1.3rem;
         }
