@@ -36,7 +36,10 @@ class DeleteTabCommand(Delta):
             .update(position=F('position') - 1)
 
         if self.workflow.selected_tab_position >= self.tab.position:
-            self.workflow.selected_tab_position -= 1
+            self.workflow.selected_tab_position = max(
+                self.workflow.selected_tab_position - 1,
+                0
+            )
             self.workflow.save(update_fields=['selected_tab_position'])
 
     def backward_impl(self):

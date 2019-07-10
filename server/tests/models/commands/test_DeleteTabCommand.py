@@ -92,6 +92,17 @@ class DeleteTabCommandTest(DbTestCase):
         self.assertEqual(tab2.is_deleted, False)
 
     @patch('server.websockets.ws_client_send_delta_async', async_noop)
+    def test_delete_tab_0(self):
+        workflow = Workflow.create_and_init(selected_tab_position=0)
+        tab1 = workflow.tabs.first()
+        workflow.tabs.create(position=1)
+
+        self.run_with_async_db(DeleteTabCommand.create(workflow=workflow,
+                                                       tab=tab1))
+        workflow.refresh_from_db()
+        self.assertEqual(workflow.selected_tab_position, 0)
+
+    @patch('server.websockets.ws_client_send_delta_async', async_noop)
     def test_delete_last_tab_noop(self):
         workflow = Workflow.create_and_init(selected_tab_position=1)
         tab1 = workflow.tabs.first()
