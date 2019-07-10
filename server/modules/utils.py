@@ -1,5 +1,5 @@
 import builtins
-from contextlib import contextmanager
+from contextlib import contextmanager, asynccontextmanager
 import io
 import json
 import re
@@ -8,7 +8,6 @@ import tempfile
 from typing import Any, Dict, Callable, Iterator, Optional
 import aiohttp
 from asgiref.sync import async_to_sync
-from async_generator import asynccontextmanager  # TODO python 3.7 native
 import cchardet as chardet
 from django.conf import settings
 from django.contrib.auth.models import User
