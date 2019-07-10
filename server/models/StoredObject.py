@@ -10,20 +10,20 @@ from server import minio, parquet
 
 def _build_key(workflow_id: int, wf_module_id: int) -> str:
     """Build a helpful S3 key."""
-    return f'{workflow_id}/{wf_module_id}/{uuid.uuid1()}.dat'
+    return f"{workflow_id}/{wf_module_id}/{uuid.uuid1()}.dat"
 
 
 # StoredObject is our persistence layer.
 # Allows WfModules to store keyed, versioned binary objects
 class StoredObject(models.Model):
     # delete stored data if WfModule deleted
-    wf_module = models.ForeignKey('WfModule', related_name='stored_objects',
-                                  on_delete=models.CASCADE)
+    wf_module = models.ForeignKey(
+        "WfModule", related_name="stored_objects", on_delete=models.CASCADE
+    )
 
     # identification for file backing store
-    bucket = models.CharField(max_length=255, null=False, blank=True,
-                              default='')
-    key = models.CharField(max_length=255, null=False, blank=True, default='')
+    bucket = models.CharField(max_length=255, null=False, blank=True, default="")
+    key = models.CharField(max_length=255, null=False, blank=True, default="")
     stored_at = models.DateTimeField(default=timezone.now)
 
     # used only for stored tables
@@ -68,10 +68,7 @@ class StoredObject(models.Model):
 
         # Create the object that references the bucket/key
         return wf_module.stored_objects.create(
-            bucket=minio.StoredObjectsBucket,
-            key=key,
-            size=size,
-            hash=hash
+            bucket=minio.StoredObjectsBucket, key=key, size=size, hash=hash
         )
 
     def get_table(self):
@@ -92,14 +89,14 @@ class StoredObject(models.Model):
     # make a deep copy for another WfModule
     def duplicate(self, to_wf_module):
         key = _build_key(to_wf_module.workflow_id, to_wf_module.id)
-        minio.copy(self.bucket, key, f'{self.bucket}/{self.key}')
+        minio.copy(self.bucket, key, f"{self.bucket}/{self.key}")
 
         return to_wf_module.stored_objects.create(
             stored_at=self.stored_at,
             hash=self.hash,
             bucket=self.bucket,
             key=key,
-            size=self.size
+            size=self.size,
         )
 
 

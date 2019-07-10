@@ -11,8 +11,13 @@ from django.utils import timezone
 import pandas as pd
 from cjworkbench.sync import database_sync_to_async
 from cjworkbench.util import benchmark
-from server.models import LoadedModule, WfModule, Workflow, \
-        CachedRenderResult, ModuleVersion
+from server.models import (
+    LoadedModule,
+    WfModule,
+    Workflow,
+    CachedRenderResult,
+    ModuleVersion,
+)
 from . import fetchprep, save
 
 
@@ -21,8 +26,7 @@ logger = logging.getLogger(__name__)
 
 @database_sync_to_async
 def _get_input_cached_render_result(
-    tab_id: int,
-    wf_module_position: int
+    tab_id: int, wf_module_position: int
 ) -> Optional[CachedRenderResult]:
     try:
         # raises WfModule.DoesNotExist
@@ -30,7 +34,7 @@ def _get_input_cached_render_result(
             tab_id=tab_id,
             tab__is_deleted=False,
             order=wf_module_position - 1,
-            is_deleted=False
+            is_deleted=False,
         )
     except WfModule.DoesNotExist:
         return None
@@ -66,9 +70,7 @@ def _get_workflow_owner(workflow_id: int):
 
 
 @database_sync_to_async
-def _get_wf_module(
-    wf_module_id: int
-) -> Tuple[int, WfModule, Optional[ModuleVersion]]:
+def _get_wf_module(wf_module_id: int) -> Tuple[int, WfModule, Optional[ModuleVersion]]:
     """
     Query WfModule info, or raise WfModule.DoesNotExist.
     """
@@ -78,9 +80,7 @@ def _get_wf_module(
 
 
 @database_sync_to_async
-def _get_loaded_module(
-    wf_module: WfModule
-) -> Optional[LoadedModule]:
+def _get_loaded_module(wf_module: WfModule) -> Optional[LoadedModule]:
     """
     Query WfModule.module_version, then LoadedModule.for_module_version()
     """
@@ -92,8 +92,9 @@ def _get_loaded_module(
 @database_sync_to_async
 def _update_next_update_time(wf_module, now):
     """Schedule next update, skipping missed updates if any."""
-    tick = timedelta(seconds=max(wf_module.update_interval,
-                                 settings.MIN_AUTOFETCH_INTERVAL))
+    tick = timedelta(
+        seconds=max(wf_module.update_interval, settings.MIN_AUTOFETCH_INTERVAL)
+    )
 
     try:
         with wf_module.workflow.cooperative_lock():
@@ -104,8 +105,7 @@ def _update_next_update_time(wf_module, now):
                     next_update += tick
 
             WfModule.objects.filter(id=wf_module.id).update(
-                last_update_check=now,
-                next_update=next_update
+                last_update_check=now, next_update=next_update
             )
     except Workflow.DoesNotExist:
         # [2019-05-27] `wf_module.workflow` throws `Workflow.DoesNotExist` if
@@ -120,8 +120,7 @@ async def fetch_wf_module(workflow_id, wf_module, now):
         lm = await _get_loaded_module(wf_module)
         # TODO handle `None` here (it's valid)
         input_cached_render_result = await _get_input_cached_render_result(
-            wf_module.tab_id,
-            wf_module.order,
+            wf_module.tab_id, wf_module.order
         )
         if input_cached_render_result:
             input_shape = input_cached_render_result.table_shape
@@ -136,8 +135,9 @@ async def fetch_wf_module(workflow_id, wf_module, now):
             params=params,
             secrets=wf_module.secrets,
             workflow_id=workflow_id,
-            get_input_dataframe=partial(_read_input_dataframe,
-                                        input_cached_render_result),
+            get_input_dataframe=partial(
+                _read_input_dataframe, input_cached_render_result
+            ),
             get_stored_dataframe=partial(_get_stored_dataframe, wf_module.id),
             get_workflow_owner=partial(_get_workflow_owner, workflow_id),
         )
@@ -147,7 +147,7 @@ async def fetch_wf_module(workflow_id, wf_module, now):
         raise
     except Exception:
         # Log exceptions but keep going
-        logger.exception(f'Error fetching {wf_module}')
+        logger.exception(f"Error fetching {wf_module}")
 
     await _update_next_update_time(wf_module, now)
 
@@ -156,15 +156,21 @@ async def fetch(*, wf_module_id: int) -> None:
     try:
         (workflow_id, wf_module) = await _get_wf_module(wf_module_id)
     except WfModule.DoesNotExist:
-        logger.info('Skipping fetch of deleted WfModule %d', wf_module_id)
+        logger.info("Skipping fetch of deleted WfModule %d", wf_module_id)
         return
 
     now = timezone.now()
     # most exceptions caught elsewhere
     try:
         task = fetch_wf_module(workflow_id, wf_module, now)
-        await benchmark(logger, task, 'fetch_wf_module(%d, %d:%s)',
-                        workflow_id, wf_module_id, wf_module.module_id_name)
+        await benchmark(
+            logger,
+            task,
+            "fetch_wf_module(%d, %d:%s)",
+            workflow_id,
+            wf_module_id,
+            wf_module.module_id_name,
+        )
     except DatabaseError:
         # Two possibilities:
         #
@@ -187,10 +193,10 @@ async def fetch(*, wf_module_id: int) -> None:
         # If you're seeing this error that means there's a bug somewhere
         # _else_. If you're staring at a case-3 situation, please remember
         # that cases 1 and 2 are important, too.
-        logger.exception('Fatal database error; exiting')
+        logger.exception("Fatal database error; exiting")
         os._exit(1)
     except InterfaceError:
-        logger.exception('Fatal database error; exiting')
+        logger.exception("Fatal database error; exiting")
         os._exit(1)
 
 
@@ -200,4 +206,4 @@ async def handle_fetch(message):
     except asyncio.CancelledError:
         raise
     except Exception:
-        logger.exception('Error during fetch')
+        logger.exception("Error during fetch")

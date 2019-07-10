@@ -24,9 +24,10 @@ from django.conf import settings
 # s3transfer) reads it. That means this "import s3transfer.utils" has to be the
 # first time anywhere in the app we import boto3 or s3transfer.
 import s3transfer.utils
+
 s3transfer.utils.S3_RETRYABLE_DOWNLOAD_ERRORS = (
     *s3transfer.utils.S3_RETRYABLE_DOWNLOAD_ERRORS,
-    urllib3.exceptions.ProtocolError
+    urllib3.exceptions.ProtocolError,
 )
 
 import boto3  # _after_ our s3transfer.utils monkey-patch!
@@ -39,12 +40,16 @@ from boto3.s3.transfer import S3Transfer, TransferConfig  # _after_ patch!
 #
 # TODO nix when https://github.com/boto/botocore/pull/1328 is merged
 import botocore  # just so we can monkey-patch it
+
 _original_send_request = botocore.awsrequest.AWSConnection._send_request
+
+
 def _send_request(self, method, url, body, headers, *args, **kwargs):
-    if headers.get('Content-Length') == '0':
-        headers.pop('Expect', None)
-    return _original_send_request(self, method, url, body, headers, *args,
-                                  **kwargs)
+    if headers.get("Content-Length") == "0":
+        headers.pop("Expect", None)
+    return _original_send_request(self, method, url, body, headers, *args, **kwargs)
+
+
 botocore.awsrequest.AWSConnection._send_request = _send_request
 
 
@@ -55,17 +60,16 @@ def _build_content_disposition(filename: str) -> str:
     """
     Build a Content-Disposition header value for the given filename.
     """
-    enc_filename = urllib.parse.quote(filename, encoding='utf-8')
+    enc_filename = urllib.parse.quote(filename, encoding="utf-8")
     return "attachment; filename*=UTF-8''" + enc_filename
 
 
 session = boto3.session.Session(
     aws_access_key_id=settings.MINIO_ACCESS_KEY,
-    aws_secret_access_key=settings.MINIO_SECRET_KEY
+    aws_secret_access_key=settings.MINIO_SECRET_KEY,
 )
 client = session.client(
-    's3',
-    endpoint_url=settings.MINIO_URL  # e.g., 'https://localhost:9001/'
+    "s3", endpoint_url=settings.MINIO_URL  # e.g., 'https://localhost:9001/'
 )
 # Create the one transfer manager we'll reuse for all transfers. Otherwise,
 # boto3 default is to create a transfer manager _per upload/download_, which
@@ -90,19 +94,16 @@ Usage:
 
 
 def _build_bucket_name(key: str) -> str:
-    return ''.join([
-        settings.MINIO_BUCKET_PREFIX,
-        '-',
-        key,
-        settings.MINIO_BUCKET_SUFFIX,
-    ])
+    return "".join(
+        [settings.MINIO_BUCKET_PREFIX, "-", key, settings.MINIO_BUCKET_SUFFIX]
+    )
 
 
-UserFilesBucket = _build_bucket_name('user-files')
-StaticFilesBucket = _build_bucket_name('static')
-StoredObjectsBucket = _build_bucket_name('stored-objects')
-ExternalModulesBucket = _build_bucket_name('external-modules')
-CachedRenderResultsBucket = _build_bucket_name('cached-render-results')
+UserFilesBucket = _build_bucket_name("user-files")
+StaticFilesBucket = _build_bucket_name("static")
+StoredObjectsBucket = _build_bucket_name("stored-objects")
+ExternalModulesBucket = _build_bucket_name("external-modules")
+CachedRenderResultsBucket = _build_bucket_name("cached-render-results")
 
 
 def ensure_bucket_exists(bucket_name):
@@ -115,7 +116,7 @@ def ensure_bucket_exists(bucket_name):
         pass
     except error.ClientError as err:
         # Botocore 1.12.130 seems to raise ClientError instead of NoSuchBucket
-        if err.response['Error']['Code'] != '404':
+        if err.response["Error"]["Code"] != "404":
             raise
 
     # 2. Bucket doesn't exist, so attempt to create it
@@ -125,8 +126,8 @@ def ensure_bucket_exists(bucket_name):
         raise RuntimeError(
             f'There is no bucket "{bucket_name}" on the S3 server at '
             f'"{settings.MINIO_URL}", and we do not have permission to create '
-            'it. Please create it manually and then restart Workbench.',
-            cause=err
+            "it. Please create it manually and then restart Workbench.",
+            cause=err,
         )
 
 
@@ -136,8 +137,7 @@ def sign(b: bytes) -> bytes:
 
     The return value proves we know our secret key.
     """
-    return hmac.new(settings.MINIO_SECRET_KEY.encode('ascii'),
-                    b, hashlib.sha1).digest()
+    return hmac.new(settings.MINIO_SECRET_KEY.encode("ascii"), b, hashlib.sha1).digest()
 
 
 def list_file_keys(bucket: str, prefix: str):
@@ -148,13 +148,11 @@ def list_file_keys(bucket: str, prefix: str):
     ['filter/a132b3f/spec.json', 'filter/a132b3f/filter.py']
     """
     response = client.list_objects_v2(
-        Bucket=bucket,
-        Prefix=prefix,
-        Delimiter='/'  # avoid recursive
+        Bucket=bucket, Prefix=prefix, Delimiter="/"  # avoid recursive
     )
-    if 'Contents' not in response:
+    if "Contents" not in response:
         return []
-    return [o['Key'] for o in response['Contents']]
+    return [o["Key"] for o in response["Contents"]]
 
 
 def fput_file(bucket: str, key: str, path: pathlib.Path) -> None:
@@ -162,8 +160,9 @@ def fput_file(bucket: str, key: str, path: pathlib.Path) -> None:
 
 
 def put_bytes(bucket: str, key: str, body: bytes, **kwargs) -> None:
-    client.put_object(Bucket=bucket, Key=key, Body=body,
-                      ContentLength=len(body), **kwargs)
+    client.put_object(
+        Bucket=bucket, Key=key, Body=body, ContentLength=len(body), **kwargs
+    )
 
 
 def exists(bucket: str, key: str) -> bool:
@@ -174,7 +173,7 @@ def exists(bucket: str, key: str) -> bool:
         return False
     except error.ClientError as err:
         # Botocore 1.12.130 seems to raise ClientError instead of NoSuchKey
-        if err.response['Error']['Code'] == '404':
+        if err.response["Error"]["Code"] == "404":
             return False
         raise
 
@@ -191,11 +190,9 @@ def create_multipart_upload(bucket: str, key: str, filename: str) -> str:
     information about uploaded files.
     """
     response = client.create_multipart_upload(
-        Bucket=bucket,
-        Key=key,
-        ContentDisposition=_build_content_disposition(filename)
+        Bucket=bucket, Key=key, ContentDisposition=_build_content_disposition(filename)
     )
-    return response['UploadId']
+    return response["UploadId"]
 
 
 def abort_multipart_upload(bucket: str, key: str, upload_id: str) -> None:
@@ -205,31 +202,34 @@ def abort_multipart_upload(bucket: str, key: str, upload_id: str) -> None:
     client.abort_multipart_upload(Bucket=bucket, Key=key, UploadId=upload_id)
 
 
-def _build_presigned_headers(http_method: str, resource: str, n_bytes: int,
-                             base64_md5sum: str) -> Dict[str, str]:
+def _build_presigned_headers(
+    http_method: str, resource: str, n_bytes: int, base64_md5sum: str
+) -> Dict[str, str]:
     date = formatdate(timeval=None, localtime=False, usegmt=True)
-    string_to_sign = '\n'.join([
-        http_method,
-        base64_md5sum,  # Content-MD5
-        '',  # Content-Type -- we leave this blank
-        '',  # we use 'x-amz-date', not 'Date'
-        f'x-amz-date:{date}',
-        resource
-    ])
-    signature = b64encode(sign(string_to_sign.encode('utf-8'))).decode('ascii')
+    string_to_sign = "\n".join(
+        [
+            http_method,
+            base64_md5sum,  # Content-MD5
+            "",  # Content-Type -- we leave this blank
+            "",  # we use 'x-amz-date', not 'Date'
+            f"x-amz-date:{date}",
+            resource,
+        ]
+    )
+    signature = b64encode(sign(string_to_sign.encode("utf-8"))).decode("ascii")
     access_key = session.get_credentials().access_key
     return {
-        'Authorization': f'AWS {access_key}:{signature}',
-        'Content-Length': str(n_bytes),
-        'Content-MD5': base64_md5sum,
+        "Authorization": f"AWS {access_key}:{signature}",
+        "Content-Length": str(n_bytes),
+        "Content-MD5": base64_md5sum,
         # no Content-Type
-        'x-amz-date': date,  # Not 'Date': XMLHttpRequest disallows it
+        "x-amz-date": date,  # Not 'Date': XMLHttpRequest disallows it
     }
 
 
-
-def presign_upload(bucket: str, key: str, filename: str, n_bytes: int,
-                   base64_md5sum: str) -> Tuple[str, Dict[str, str]]:
+def presign_upload(
+    bucket: str, key: str, filename: str, n_bytes: int, base64_md5sum: str
+) -> Tuple[str, Dict[str, str]]:
     """
     Return (url, headers) tuple for PUTting a file <5MB.
 
@@ -237,17 +237,22 @@ def presign_upload(bucket: str, key: str, filename: str, n_bytes: int,
     remove headers.
     """
     # https://docs.aws.amazon.com/AmazonS3/latest/dev/RESTAuthentication.html
-    resource = f'/{bucket}/{key}'
+    resource = f"/{bucket}/{key}"
     url = settings.MINIO_EXTERNAL_URL + resource
-    headers = _build_presigned_headers('PUT', resource, n_bytes, base64_md5sum)
+    headers = _build_presigned_headers("PUT", resource, n_bytes, base64_md5sum)
     # Content-Disposition header doesn't affect the signature
-    headers['Content-Disposition'] = _build_content_disposition(filename)
+    headers["Content-Disposition"] = _build_content_disposition(filename)
     return url, headers
 
 
-def presign_upload_part(bucket: str, key: str, upload_id: str,
-                        part_number: int, n_bytes: int, base64_md5sum: str
-                       ) -> Tuple[str, Dict[str, str]]:
+def presign_upload_part(
+    bucket: str,
+    key: str,
+    upload_id: str,
+    part_number: int,
+    n_bytes: int,
+    base64_md5sum: str,
+) -> Tuple[str, Dict[str, str]]:
     """
     Return (url, headers) tuple for PUTting a part.
 
@@ -257,14 +262,15 @@ def presign_upload_part(bucket: str, key: str, upload_id: str,
     `part_number` starts at 1.
     """
     # https://docs.aws.amazon.com/AmazonS3/latest/dev/RESTAuthentication.html
-    resource = f'/{bucket}/{key}?partNumber={part_number}&uploadId={upload_id}'
+    resource = f"/{bucket}/{key}?partNumber={part_number}&uploadId={upload_id}"
     url = settings.MINIO_EXTERNAL_URL + resource
-    headers = _build_presigned_headers('PUT', resource, n_bytes, base64_md5sum)
+    headers = _build_presigned_headers("PUT", resource, n_bytes, base64_md5sum)
     return url, headers
 
 
-def complete_multipart_upload(bucket: str, key: str, upload_id: str,
-                              etags: List[str]) -> None:
+def complete_multipart_upload(
+    bucket: str, key: str, upload_id: str, etags: List[str]
+) -> None:
     """
     Complete the multipart upload, or raise `error.NoSuchUpload`.
 
@@ -274,16 +280,10 @@ def complete_multipart_upload(bucket: str, key: str, upload_id: str,
     The total file size must be >5MB.
     """
     multipart_upload = {
-        'Parts': [
-            {'ETag': etag, 'PartNumber': (i + 1)}
-            for i, etag in enumerate(etags)
-        ]
+        "Parts": [{"ETag": etag, "PartNumber": (i + 1)} for i, etag in enumerate(etags)]
     }
     return client.complete_multipart_upload(
-        Bucket=bucket,
-        Key=key,
-        UploadId=upload_id,
-        MultipartUpload=multipart_upload
+        Bucket=bucket, Key=key, UploadId=upload_id, MultipartUpload=multipart_upload
     )
 
 
@@ -295,15 +295,14 @@ class Stat:
 def stat(bucket: str, key: str) -> Stat:
     """Return an object's metadata or raise an error."""
     response = client.head_object(Bucket=bucket, Key=key)
-    return Stat(response['ContentLength'])
+    return Stat(response["ContentLength"])
 
 
-def fput_directory_contents(bucket: str, prefix: str,
-                            dirpath: pathlib.Path) -> None:
-    if not prefix.endswith('/'):
-        prefix = prefix + '/'
+def fput_directory_contents(bucket: str, prefix: str, dirpath: pathlib.Path) -> None:
+    if not prefix.endswith("/"):
+        prefix = prefix + "/"
 
-    paths = dirpath.glob('**/*')
+    paths = dirpath.glob("**/*")
     file_paths = [p for p in paths if p.is_file()]
     for file_path in file_paths:
         key = prefix + str(file_path.relative_to(dirpath))
@@ -330,25 +329,23 @@ def remove_recursive(bucket: str, prefix: str, force=False) -> None:
     up to 1,000 keys -- pass `force=True`. Otherwise, there is a safeguard
     against `prefix=''` specifically.
     """
-    if not prefix.endswith('/'):
-        raise ValueError('`prefix` must end with `/`')
+    if not prefix.endswith("/"):
+        raise ValueError("`prefix` must end with `/`")
 
-    if prefix == '/' and not force:
-        raise ValueError('Refusing to remove prefix=/ when force=False')
+    if prefix == "/" and not force:
+        raise ValueError("Refusing to remove prefix=/ when force=False")
 
     # recursive list_objects_v2
     list_response = client.list_objects_v2(Bucket=bucket, Prefix=prefix)
-    if 'Contents' not in list_response:
+    if "Contents" not in list_response:
         return
     delete_response = client.delete_objects(
         Bucket=bucket,
-        Delete={'Objects': [{'Key': o['Key']}
-                            for o in list_response['Contents']]}
+        Delete={"Objects": [{"Key": o["Key"]} for o in list_response["Contents"]]},
     )
-    if 'Errors' in delete_response:
-        for err in delete_response['Errors']:
-            raise Exception('Error %{Code}s removing %{Key}s: %{Message}'
-                            % err)
+    if "Errors" in delete_response:
+        for err in delete_response["Errors"]:
+            raise Exception("Error %{Code}s removing %{Key}s: %{Message}" % err)
 
 
 def get_object_with_data(bucket: str, key: str, **kwargs) -> Dict[str, Any]:
@@ -370,19 +367,21 @@ def get_object_with_data(bucket: str, key: str, **kwargs) -> Dict[str, Any]:
     for i in range(max_attempts):
         try:
             response = client.get_object(Bucket=bucket, Key=key, **kwargs)
-            body = response['Body']
+            body = response["Body"]
             try:
                 data = body.read()
             finally:
                 body.close()
-            return {
-                **response,
-                'Body': data
-            }
+            return {**response, "Body": data}
         except s3transfer.utils.S3_RETRYABLE_DOWNLOAD_ERRORS as e:
-            logger.info("Retrying exception caught (%s), "
-                        "retrying request, (attempt %d / %d)", e, i,
-                        max_attempts, exc_info=True)
+            logger.info(
+                "Retrying exception caught (%s), "
+                "retrying request, (attempt %d / %d)",
+                e,
+                i,
+                max_attempts,
+                exc_info=True,
+            )
             last_exception = e
             # ... and retry
     raise last_exception
@@ -402,7 +401,7 @@ def temporarily_download(bucket: str, key: str) -> None:
             path.read_bytes()  # returns file contents
         # when you exit the block, the pathlib.Path is deleted
     """
-    with tempfile.NamedTemporaryFile(prefix='minio_download') as tf:
+    with tempfile.NamedTemporaryFile(prefix="minio_download") as tf:
         path = pathlib.Path(tf.name)
         download(bucket, key, path)  # raises FileNotFound
         yield path
@@ -421,9 +420,8 @@ def download(bucket: str, key: str, path: pathlib.Path) -> None:
     # except error.NoSuchKey:
     #     raise FileNotFoundError(errno.ENOENT, f'No file at {bucket}/{key}')
     except error.ClientError as err:
-        if err.response.get('Error', {}).get('Code') == '404':
-            raise FileNotFoundError(errno.ENOENT,
-                                    f'No file at {bucket}/{key}')
+        if err.response.get("Error", {}).get("Code") == "404":
+            raise FileNotFoundError(errno.ENOENT, f"No file at {bucket}/{key}")
         else:
             raise
 
@@ -448,20 +446,21 @@ class RandomReadMinioFile(io.RawIOBase):
             file.seek(-5, io.SEEK_END)
             file.read(5)  # read from end
     """
-    def __init__(self, bucket: str, key: str, block_size=5*1024*1024):
+
+    def __init__(self, bucket: str, key: str, block_size=5 * 1024 * 1024):
         self.bucket = bucket
         self.key = key
         self.block_size = block_size
 
         response = self._request_block(0)
-        self.size = int(response['ContentRange'].split('/')[1])
-        self.tempfile = tempfile.TemporaryFile(prefix='RandomReadMinioFile')
+        self.size = int(response["ContentRange"].split("/")[1])
+        self.tempfile = tempfile.TemporaryFile(prefix="RandomReadMinioFile")
         self.tempfile.truncate(self.size)  # allocate disk space
         nblocks = math.ceil(self.size / self.block_size)
         self.fetched_blocks = [False] * nblocks
 
         # Write first block
-        self.tempfile.write(response['Body'])
+        self.tempfile.write(response["Body"])
         self.tempfile.seek(0, io.SEEK_SET)
         self.fetched_blocks[0] = True
 
@@ -517,14 +516,12 @@ class RandomReadMinioFile(io.RawIOBase):
         Yield a boto3 dict with 'Body' (bytes) and 'ContentRange'.
         """
         offset = block_number * self.block_size
-        http_range = f'bytes={offset}-{offset + self.block_size - 1}'
+        http_range = f"bytes={offset}-{offset + self.block_size - 1}"
         try:
-            return get_object_with_data(self.bucket, self.key,
-                                        Range=http_range)
+            return get_object_with_data(self.bucket, self.key, Range=http_range)
         except error.NoSuchKey:
             raise FileNotFoundError(
-                errno.ENOENT,
-                f'No file at {self.bucket}/{self.key}'
+                errno.ENOENT, f"No file at {self.bucket}/{self.key}"
             )
 
     def _ensure_block_fetched(self, block_number: int) -> None:
@@ -536,7 +533,7 @@ class RandomReadMinioFile(io.RawIOBase):
         # cache `pos`, write the block, then restore `pos`
         pos = self.tempfile.tell()
         self.tempfile.seek(block_number * self.block_size)
-        self.tempfile.write(response['Body'])
+        self.tempfile.write(response["Body"])
         self.tempfile.seek(pos)
 
         self.fetched_blocks[block_number] = True
@@ -558,6 +555,7 @@ class FullReadMinioFile(io.RawIOBase):
             file.seek(-5, io.SEEK_END)
             file.read(5)  # read from end
     """
+
     def __init__(self, bucket: str, key: str):
         self.bucket = bucket
         self.key = key
@@ -567,7 +565,7 @@ class FullReadMinioFile(io.RawIOBase):
             # filesystem (by leaving the context manager).
             #
             # We'll use Python's default buffering settings.
-            self.tempfile = path.open('rb')
+            self.tempfile = path.open("rb")
 
     # override io.IOBase
     def tell(self) -> int:

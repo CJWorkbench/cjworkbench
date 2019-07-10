@@ -7,18 +7,18 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('server', '0004_internalize_converttexttonumber'),
-    ]
+    dependencies = [("server", "0004_internalize_converttexttonumber")]
 
     operations = [
-        migrations.RunSQL([
-            """
+        migrations.RunSQL(
+            [
+                """
             CREATE UNIQUE INDEX unique_workflow_copy_by_session
             ON server_workflow (anonymous_owner_session_key,
                                 original_workflow_id)
             WHERE anonymous_owner_session_key IS NOT NULL
               AND original_workflow_id IS NOT NULL
             """
-        ])
+            ]
+        )
     ]

@@ -16,7 +16,7 @@ StallLockKey = 1
 RenderLockKey = 2
 
 
-_Lock = namedtuple('_Lock', ['stall_others'])
+_Lock = namedtuple("_Lock", ["stall_others"])
 
 
 logger = logging.getLogger(__name__)
@@ -101,21 +101,21 @@ class PgRenderLocker:
     async def __aenter__(self) -> PgRenderLocker:
         # pg_connection: asyncpg, not Django database, because we use its
         # transaction asynchronously. (Async is so much easier than threading.)
-        pg_config = settings.DATABASES['default']
+        pg_config = settings.DATABASES["default"]
         pg_connection = await asyncpg.connect(
-            host=pg_config['HOST'],
-            user=pg_config['USER'],
-            password=pg_config['PASSWORD'],
-            database=pg_config['NAME'],
-            port=pg_config['PORT'],
-            timeout=pg_config['CONN_MAX_AGE'],
-            command_timeout=pg_config['CONN_MAX_AGE']
+            host=pg_config["HOST"],
+            user=pg_config["USER"],
+            password=pg_config["PASSWORD"],
+            database=pg_config["NAME"],
+            port=pg_config["PORT"],
+            timeout=pg_config["CONN_MAX_AGE"],
+            command_timeout=pg_config["CONN_MAX_AGE"],
         )
 
         self.pg_connection = pg_connection
 
         loop = asyncio.get_event_loop()
-        interval = pg_config['CONN_MAX_AGE']
+        interval = pg_config["CONN_MAX_AGE"]
         self.heartbeat_task = loop.create_task(
             self.send_pg_heartbeats_forever(interval)
         )
@@ -138,22 +138,24 @@ class PgRenderLocker:
         """
         while True:
             await asyncio.sleep(interval)
-            await self._pg_fetchval("SELECT 'locker_heartbeat'",
-                                    timeout=interval)
+            await self._pg_fetchval("SELECT 'locker_heartbeat'", timeout=interval)
             # "heartbeat" log can help debug if the client stalls, as
             # [2019-06-11] it did.
             logger.info(
                 (
-                    'heartbeat: local_stalls=%r, remote_stalls=%r, '
-                    'local_renders=%r, remote_renders=%r'
-                ) % (set(self._local_stalls.keys()), self._remote_stalls,
-                     self._local_renders, self._remote_renders)
+                    "heartbeat: local_stalls=%r, remote_stalls=%r, "
+                    "local_renders=%r, remote_renders=%r"
+                )
+                % (
+                    set(self._local_stalls.keys()),
+                    self._remote_stalls,
+                    self._local_renders,
+                    self._remote_renders,
+                )
             )
 
-
     async def _release_remote_lock(self, key: int, workflow_id: int) -> None:
-        await self._pg_fetchval('SELECT pg_advisory_unlock($1, $2)',
-                                key, workflow_id)
+        await self._pg_fetchval("SELECT pg_advisory_unlock($1, $2)", key, workflow_id)
 
     async def _acquire_local_stall_lock(self, workflow_id: int) -> None:
         # while-loop is important! If three _acquire_local_stall_lock() calls
@@ -171,8 +173,9 @@ class PgRenderLocker:
         event.set()
 
     async def _acquire_remote_stall_lock(self, workflow_id: int) -> None:
-        await self._pg_fetchval('SELECT pg_advisory_lock($1, $2)',
-                                StallLockKey, workflow_id)
+        await self._pg_fetchval(
+            "SELECT pg_advisory_lock($1, $2)", StallLockKey, workflow_id
+        )
         self._remote_stalls.add(workflow_id)
 
     async def _release_remote_stall_lock(self, workflow_id: int) -> None:
@@ -188,8 +191,9 @@ class PgRenderLocker:
         self._local_renders.remove(workflow_id)
 
     async def _acquire_remote_render_lock(self, workflow_id: int) -> None:
-        lock = await self._pg_fetchval('SELECT pg_try_advisory_lock($1, $2)',
-                                       RenderLockKey, workflow_id)
+        lock = await self._pg_fetchval(
+            "SELECT pg_try_advisory_lock($1, $2)", RenderLockKey, workflow_id
+        )
         if not lock:
             raise WorkflowAlreadyLocked
         self._remote_renders.add(workflow_id)
@@ -242,8 +246,7 @@ class PgRenderLocker:
         await self._release_remote_render_lock(workflow_id)
         self._release_local_render_lock(workflow_id)
 
-    async def _transition_unlocked_to_rendering(self,
-                                                workflow_id: int) -> None:
+    async def _transition_unlocked_to_rendering(self, workflow_id: int) -> None:
         """
         Stall if needed; raise WorkflowAlreadyLocked if needed; or do nothing.
 
@@ -256,8 +259,7 @@ class PgRenderLocker:
         # Presto! Now other clients aren't stalled (we released _stall_lock);
         # so when they run this function they'll raise WorkflowAlreadyLocked
 
-    async def _transition_rendering_to_requeueing(self,
-                                                  workflow_id: int) -> None:
+    async def _transition_rendering_to_requeueing(self, workflow_id: int) -> None:
         """
         Stall every other client for this workflow.
 
@@ -271,8 +273,7 @@ class PgRenderLocker:
         # _transition_unlocked_to_rendering() -- they will all stall rather
         # than run that code.
 
-    async def _transition_requeueing_to_unlocked(self,
-                                                 workflow_id: int) -> None:
+    async def _transition_requeueing_to_unlocked(self, workflow_id: int) -> None:
         """
         Unlock this workflow.
 
@@ -301,7 +302,7 @@ class PgRenderLocker:
             await self._transition_rendering_to_requeueing(workflow_id)
             nonlocal requeueing
             requeueing = True
-        
+
         lock = _Lock(phase_b)
 
         try:
@@ -311,6 +312,6 @@ class PgRenderLocker:
                 # There's an off chance we can recover from this programmer
                 # error without taking the site down. Make sure we get emailed
                 # about it, at least.
-                logger.error('You must `await lock.stall_others()`')
+                logger.error("You must `await lock.stall_others()`")
                 await lock.stall_others()
             await self._transition_requeueing_to_unlocked(workflow_id)

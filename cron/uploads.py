@@ -33,8 +33,11 @@ def delete_stale_inprogress_file_uploads_sync() -> None:
                 if wf_module.inprogress_file_upload_last_accessed_at >= yesterday:
                     # we're racing with a user who just started another upload
                     continue
-                logger.info('Aborting stale upload on wf-%d/wfm-%d',
-                            wf_module.workflow_id, wf_module.id)
+                logger.info(
+                    "Aborting stale upload on wf-%d/wfm-%d",
+                    wf_module.workflow_id,
+                    wf_module.id,
+                )
                 wf_module.abort_inprogress_upload()
         except Workflow.DoesNotExist:
             # The Workflow or WfModule was deleted during our loop

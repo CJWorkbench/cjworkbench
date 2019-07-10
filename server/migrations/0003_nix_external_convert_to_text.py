@@ -7,13 +7,14 @@ from django.db import migrations
 
 def delete_module_versions(apps, schema_editor):
     from server import minio
+
     # Delete from database
-    ModuleVersion = apps.get_model('server', 'ModuleVersion')
-    ModuleVersion.objects.filter(id_name='convert-text').delete()
+    ModuleVersion = apps.get_model("server", "ModuleVersion")
+    ModuleVersion.objects.filter(id_name="convert-text").delete()
 
     # Delete from S3
     try:
-        minio.remove_recursive(minio.ExternalModulesBucket, 'convert-text/')
+        minio.remove_recursive(minio.ExternalModulesBucket, "convert-text/")
     except minio.error.NoSuchBucket:
         pass  # we're unit-testing and the bucket doesn't exist
 
@@ -23,10 +24,6 @@ class Migration(migrations.Migration):
     Forgot to delete the ModuleVersions in the previous migration.
     """
 
-    dependencies = [
-        ('server', '0002_internalize_converttotext'),
-    ]
+    dependencies = [("server", "0002_internalize_converttotext")]
 
-    operations = [
-        migrations.RunPython(delete_module_versions, elidable=True)
-    ]
+    operations = [migrations.RunPython(delete_module_versions, elidable=True)]

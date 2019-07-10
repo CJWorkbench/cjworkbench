@@ -6,4 +6,4 @@ from server.models.UploadedFile import UploadedFile
 class UploadedFileForm(ModelForm):
     class Meta:
         model = UploadedFile
-        fields = ['wf_module', 'bucket', 'key', 'name', 'uuid']
+        fields = ["wf_module", "bucket", "key", "name", "uuid"]

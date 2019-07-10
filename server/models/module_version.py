@@ -55,9 +55,9 @@ class ModuleVersionManager(models.Manager):
         for spec in InternalModuleSpecs.values():
             module_version = ModuleVersion(
                 id_name=spec.id_name,
-                source_version_hash='internal',
+                source_version_hash="internal",
                 spec=spec,
-                last_update_time=timezone.now()
+                last_update_time=timezone.now(),
             )
             self.internal[spec.id_name] = module_version
 
@@ -67,14 +67,14 @@ class ModuleVersionManager(models.Manager):
         # https://docs.djangoproject.com/en/1.11/ref/models/expressions/#subquery-expressions
         latest = (
             self.get_queryset()
-            .filter(id_name=OuterRef('id_name'))
-            .order_by('-last_update_time')
-            .values('id')
+            .filter(id_name=OuterRef("id_name"))
+            .order_by("-last_update_time")
+            .values("id")
         )[:1]
         all_external = list(
             self.get_queryset()
             .annotate(_latest=Subquery(latest))
-            .filter(id=F('_latest'))
+            .filter(id=F("_latest"))
             .exclude(id_name__in=self.internal.keys())
         )
         all_internal = list(self.internal.values())
@@ -93,7 +93,7 @@ class ModuleVersionManager(models.Manager):
             return (
                 self.get_queryset()
                 .filter(id_name=id_name)
-                .order_by('-last_update_time')
+                .order_by("-last_update_time")
             )[0]
         except IndexError:
             raise ModuleVersion.DoesNotExist
@@ -109,110 +109,109 @@ class ModuleVersion(models.Model):
     """
 
     class Meta:
-        ordering = ['last_update_time']
-        unique_together = ('id_name', 'last_update_time')
+        ordering = ["last_update_time"]
+        unique_together = ("id_name", "last_update_time")
 
     objects = ModuleVersionManager()
 
     id_name = models.CharField(max_length=200)
 
     # which version of this module are we currently at (based on the source)?
-    source_version_hash = models.CharField(max_length=200, default='1.0')
+    source_version_hash = models.CharField(max_length=200, default="1.0")
 
     # time this module was last updated
     last_update_time = models.DateTimeField(auto_now=True)
 
-    spec = JSONField('spec', validators=[_django_validate_module_spec])
+    spec = JSONField("spec", validators=[_django_validate_module_spec])
 
-    js_module = models.TextField('js_module', default='')
+    js_module = models.TextField("js_module", default="")
 
     @staticmethod
-    def create_or_replace_from_spec(spec, *, source_version_hash='',
-                                    js_module='') -> 'ModuleVersion':
+    def create_or_replace_from_spec(
+        spec, *, source_version_hash="", js_module=""
+    ) -> "ModuleVersion":
         validate_module_spec(dict(spec))  # raises ValueError
 
         module_version, _ = ModuleVersion.objects.update_or_create(
-            id_name=spec['id_name'],
+            id_name=spec["id_name"],
             source_version_hash=source_version_hash,
-            defaults={
-                'spec': dict(spec),
-                'js_module': js_module,
-            }
+            defaults={"spec": dict(spec), "js_module": js_module},
         )
 
         return module_version
 
     @property
     def name(self):
-        return self.spec['name']
+        return self.spec["name"]
 
     @property
     def category(self):
-        return self.spec['category']
+        return self.spec["category"]
 
     @property
     def description(self):
-        return self.spec.get('description', '')
+        return self.spec.get("description", "")
 
     @property
     def icon(self):
-        return self.spec.get('icon', 'url')
+        return self.spec.get("icon", "url")
 
     @property
     def deprecated(self) -> Optional[Dict[str, str]]:
-        return self.spec.get('deprecated')
+        return self.spec.get("deprecated")
 
     @property
     def loads_data(self):
-        return self.spec.get('loads_data', False)
+        return self.spec.get("loads_data", False)
 
     @property
     def uses_data(self):
-        return self.spec.get('uses_data', not self.loads_data)
+        return self.spec.get("uses_data", not self.loads_data)
 
     @property
     def has_zen_mode(self):
-        return self.spec.get('has_zen_mode', False)
+        return self.spec.get("has_zen_mode", False)
 
     @property
     def help_url(self):
-        return self.spec.get('help_url', '')
+        return self.spec.get("help_url", "")
 
     @property
     def row_action_menu_entry_title(self):
-        return self.spec.get('row_action_menu_entry_title', '')
+        return self.spec.get("row_action_menu_entry_title", "")
 
     @property
     def html_output(self):
-        return self.spec.get('html_output', False)
+        return self.spec.get("html_output", False)
 
     @property
     def param_fields(self):
-        return [ParamSpec.from_dict(d) for d in self.spec['parameters']]
+        return [ParamSpec.from_dict(d) for d in self.spec["parameters"]]
 
     # Returns a dict of DTypes for all parameters
     @property
     def param_schema(self):
-        if 'param_schema' in self.spec:
+        if "param_schema" in self.spec:
             # Module author wrote a schema in the YAML, to define storage of 'custom' parameters
-            json_schema = self.spec['param_schema']
-            return ParamDType.parse({
-                'type': 'dict',
-                'properties': json_schema
-            })
+            json_schema = self.spec["param_schema"]
+            return ParamDType.parse({"type": "dict", "properties": json_schema})
         else:
             # Usual case: infer schema from module parameter types
             # Use of dict here means schema is not sensitive to parameter ordering, which is good
-            return ParamDType.Dict(dict((f.id_name, f.dtype)
-                                        for f in self.param_fields
-                                        if f.dtype is not None))
+            return ParamDType.Dict(
+                dict(
+                    (f.id_name, f.dtype)
+                    for f in self.param_fields
+                    if f.dtype is not None
+                )
+            )
 
     @property
     def default_params(self):
         return self.param_schema.coerce(None)
 
     def __str__(self):
-        return '%s#%s' % (self.id_name, self.source_version_hash)
+        return "%s#%s" % (self.id_name, self.source_version_hash)
 
 
 @receiver(post_delete, sender=ModuleVersion)
@@ -220,5 +219,5 @@ def _delete_from_s3_post_delete(sender, instance, **kwargs):
     """
     Delete module _code_ from S3, now that ModuleVersion is gone.
     """
-    prefix = '%s/%s/' % (sender.id_name, sender.source_version_hash)
+    prefix = "%s/%s/" % (sender.id_name, sender.source_version_hash)
     minio.remove_recursive(minio.ExternalModulesBucket, prefix)

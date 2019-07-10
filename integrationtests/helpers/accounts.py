@@ -10,17 +10,20 @@ import psycopg2
 from integrationtests.browser import Browser
 
 
-EmailPath = '/app/local_mail'
+EmailPath = "/app/local_mail"
 
 
 def _minio_connect():
     try:
         return _minio_connect._connection
     except AttributeError:
-        protocol, _unused, endpoint = os.environ['MINIO_URL'].split('/')
-        mc = minio.Minio(endpoint, access_key=os.environ['MINIO_ACCESS_KEY'],
-                         secret_key=os.environ['MINIO_SECRET_KEY'],
-                         secure=(protocol == 'https:'))
+        protocol, _unused, endpoint = os.environ["MINIO_URL"].split("/")
+        mc = minio.Minio(
+            endpoint,
+            access_key=os.environ["MINIO_ACCESS_KEY"],
+            secret_key=os.environ["MINIO_SECRET_KEY"],
+            secure=(protocol == "https:"),
+        )
         _minio_connect._connection = mc
         return mc
 
@@ -28,12 +31,18 @@ def _minio_connect():
 def _clear_minio():
     mc = _minio_connect()
 
-    for bucket_name in ('user-files', 'stored-objects',
-                        'external-modules', 'cached-render-results'):
-        bucket = f'integrationtest-{bucket_name}'
-        keys = [o.object_name
-                for o in mc.list_objects_v2(bucket, '', recursive=True)
-                if not o.is_dir]
+    for bucket_name in (
+        "user-files",
+        "stored-objects",
+        "external-modules",
+        "cached-render-results",
+    ):
+        bucket = f"integrationtest-{bucket_name}"
+        keys = [
+            o.object_name
+            for o in mc.list_objects_v2(bucket, "", recursive=True)
+            if not o.is_dir
+        ]
         if keys:
             for err in mc.remove_objects(bucket, keys):
                 raise err
@@ -41,17 +50,17 @@ def _clear_minio():
 
 def login(browser: Browser, email: str, password: str) -> None:
     """Log in through `/account/login` as the given user."""
-    browser.visit('/account/login')
-    browser.fill_in('login', email)
-    browser.fill_in('password', password)
-    browser.click_button('Sign In')
-    browser.wait_for_element('a', text='MY WORKFLOWS', wait=True)
+    browser.visit("/account/login")
+    browser.fill_in("login", email)
+    browser.fill_in("password", password)
+    browser.click_button("Sign In")
+    browser.wait_for_element("a", text="MY WORKFLOWS", wait=True)
 
 
 def logout(browser: Browser) -> None:
     """Log out through `/account/logout` as the given user."""
-    browser.visit('/account/logout')
-    browser.click_button('Log out')
+    browser.visit("/account/logout")
+    browser.click_button("Log out")
 
 
 def _close_connection(conn):
@@ -87,8 +96,7 @@ class AccountAdmin:
         # e.g., `accounts.login(browser, user.email, user.email); ...`
     """
 
-    def __init__(self, live_server_url: str, db_connect_str: str,
-                 data_path: str):
+    def __init__(self, live_server_url: str, db_connect_str: str, data_path: str):
         """
         Connect to services.
 
@@ -100,11 +108,7 @@ class AccountAdmin:
         self.conn = psycopg2.connect(db_connect_str)
         self.conn.autocommit = True
 
-        self._finalizer = weakref.finalize(
-            self,
-            _close_connection,
-            self.conn
-        )
+        self._finalizer = weakref.finalize(self, _close_connection, self.conn)
 
         self.clear_data_from_previous_tests()
 
@@ -116,37 +120,37 @@ class AccountAdmin:
     def clear_data_from_previous_tests(self):
         """Delete all accounts and related data."""
         _Tables = [
-            'server_aclentry',
-            'server_addmodulecommand',
-            'server_addtabcommand',
-            'server_changedataversioncommand',
-            'server_changeparameterscommand',
-            'server_changewfmodulenotescommand',
-            'server_changeworkflowtitlecommand',
-            'server_deletemodulecommand',
-            'server_deletetabcommand',
-            'server_duplicatetabcommand',
-            'server_reordermodulescommand',
-            'server_reordertabscommand',
-            'server_settabnamecommand',
-            'server_initworkflowcommand',
-            'server_delta',
-            'server_storedobject',
-            'server_uploadedfile',
-            'server_wfmodule',
-            'server_tab',
-            'server_workflow',
-            'django_session',
-            'account_emailconfirmation',
-            'account_emailaddress',
-            'auth_group',
-            'auth_group_permissions',
-            'auth_permission',
-            'cjworkbench_userprofile',
-            'django_admin_log',
-            'auth_user',
-            'auth_user_groups',
-            'auth_user_user_permissions',
+            "server_aclentry",
+            "server_addmodulecommand",
+            "server_addtabcommand",
+            "server_changedataversioncommand",
+            "server_changeparameterscommand",
+            "server_changewfmodulenotescommand",
+            "server_changeworkflowtitlecommand",
+            "server_deletemodulecommand",
+            "server_deletetabcommand",
+            "server_duplicatetabcommand",
+            "server_reordermodulescommand",
+            "server_reordertabscommand",
+            "server_settabnamecommand",
+            "server_initworkflowcommand",
+            "server_delta",
+            "server_storedobject",
+            "server_uploadedfile",
+            "server_wfmodule",
+            "server_tab",
+            "server_workflow",
+            "django_session",
+            "account_emailconfirmation",
+            "account_emailaddress",
+            "auth_group",
+            "auth_group_permissions",
+            "auth_permission",
+            "cjworkbench_userprofile",
+            "django_admin_log",
+            "auth_user",
+            "auth_user_groups",
+            "auth_user_user_permissions",
         ]
         _clear_db_sql = f"""
             WITH
@@ -161,9 +165,14 @@ class AccountAdmin:
 
         _clear_minio()
 
-    def create_user(self, email: str, username: str=None,
-                    password: str=None, is_staff: bool=False,
-                    is_superuser: bool=False) -> UserHandle:
+    def create_user(
+        self,
+        email: str,
+        username: str = None,
+        password: str = None,
+        is_staff: bool = False,
+        is_superuser: bool = False,
+    ) -> UserHandle:
         """Add the specified user to the database, with email confirmed.
 
         Keyword arguments:
@@ -173,16 +182,16 @@ class AccountAdmin:
         is_superuser -- bool (default False)
         """
         if not username:
-            username = email.split('@')[0]
+            username = email.split("@")[0]
         if not password:
             password = email
 
-        hmac = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'),
-                                   b'salt', 1)
+        hmac = hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), b"salt", 1)
         hmac_base64 = binascii.b2a_base64(hmac, newline=False)
 
-        password_hash = '$'.join(['pbkdf2_sha256', '1', 'salt',
-                                  hmac_base64.decode('ascii')])
+        password_hash = "$".join(
+            ["pbkdf2_sha256", "1", "salt", hmac_base64.decode("ascii")]
+        )
 
         self._sql(
             """
@@ -208,7 +217,7 @@ class AccountAdmin:
             username=username,
             password_hash=password_hash,
             is_staff=is_staff,
-            is_superuser=is_superuser
+            is_superuser=is_superuser,
         )
 
         return UserHandle(username, password, email)
@@ -222,5 +231,5 @@ class AccountAdmin:
             return None
 
         filenames.sort()
-        with open(os.path.join(EmailPath, filenames[-1]), 'rb') as f:
+        with open(os.path.join(EmailPath, filenames[-1]), "rb") as f:
             return email.message_from_bytes(f.read())

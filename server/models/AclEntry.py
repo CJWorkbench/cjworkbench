@@ -8,15 +8,14 @@ class AclEntry(models.Model):
     """
 
     class Meta:
-        ordering = ['email']
-        unique_together = ('workflow', 'email')
+        ordering = ["email"]
+        unique_together = ("workflow", "email")
 
-    workflow = models.ForeignKey('server.Workflow',
-                                 related_name='acl',
-                                 on_delete=models.CASCADE)
+    workflow = models.ForeignKey(
+        "server.Workflow", related_name="acl", on_delete=models.CASCADE
+    )
 
-    email = models.EmailField('email',
-                              db_index=True)  # so user can list workflows
+    email = models.EmailField("email", db_index=True)  # so user can list workflows
     """
     Email of user who has access.
 

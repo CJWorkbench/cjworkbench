@@ -18,22 +18,19 @@ capybara.default_max_wait_time = 0
 # def init_selenium_driver(app):
 #     from capybara.selenium.driver import Driver
 #     return Driver(app, browser="chrome")
-@capybara.register_driver('selenium')
+@capybara.register_driver("selenium")
 def init_selenium_driver(app):
     from capybara.selenium.driver import Driver
-    from selenium.webdriver.common.desired_capabilities \
-        import DesiredCapabilities
+    from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+
     capabilities = DesiredCapabilities.FIREFOX.copy()
-    capabilities['moz:firefoxOptions'] = {
-        'log': {'level': 'trace'},
-        'args': [],
-    }
+    capabilities["moz:firefoxOptions"] = {"log": {"level": "trace"}, "args": []}
     return Driver(app, browser="firefox", desired_capabilities=capabilities)
 
 
 def _sanitize_base_url(url: str) -> str:
     # self.base_url: always a string, never ending with '/'
-    if url and url[-1] == '/':
+    if url and url[-1] == "/":
         url = url[0:-2]
     return url
 
@@ -60,12 +57,13 @@ class Browser:
     default_wait_timeout -- default timeout for 'wait_for_element()' etc, in s
                             (default 15)
     """
+
     def __init__(self, **kwargs):
         self.page = Session("selenium", None)
-        self.base_url = _sanitize_base_url(kwargs.get('base_url') or '')
+        self.base_url = _sanitize_base_url(kwargs.get("base_url") or "")
 
         # default wait timeout -- None means forever
-        self.default_wait_timeout = kwargs.get('default_wait_timeout', 15)
+        self.default_wait_timeout = kwargs.get("default_wait_timeout", 15)
 
     def _capybarize_kwargs(self, kwargs):
         """Modify kwargs in-place.
@@ -73,12 +71,12 @@ class Browser:
         Conversions:
         - Converts 'wait':True to 'wait':default_wait_timeout.
         """
-        if kwargs.get('wait') is True:
-            kwargs['wait'] = self.default_wait_timeout
+        if kwargs.get("wait") is True:
+            kwargs["wait"] = self.default_wait_timeout
 
     def visit(self, url: str) -> None:
         """Type 'url' into the address bar, press Enter, and await onload."""
-        if url[0] == '/':
+        if url[0] == "/":
             url = self.base_url + url
         self.page.visit(url)
 
@@ -97,7 +95,7 @@ class Browser:
         """
         if not text:
             raise ValueError("fill_in() called without text")
-        kwargs['value'] = text
+        kwargs["value"] = text
         self._capybarize_kwargs(kwargs)
         self.page.fill_in(locator, **kwargs)
 
@@ -118,7 +116,7 @@ class Browser:
         """
         if not text:
             raise ValueError("fill_in() called without text")
-        kwargs['value'] = text
+        kwargs["value"] = text
         self._capybarize_kwargs(kwargs)
         # There's a race here between find() and fill_in(). If we get an error
         # about "missing element", write the exception handler we need.
@@ -135,7 +133,7 @@ class Browser:
         wait -- True or number of seconds to wait until element appears
         """
         self._capybarize_kwargs(kwargs)
-        self.page.find('fillable_field', locator, **kwargs).send_keys(*keys)
+        self.page.find("fillable_field", locator, **kwargs).send_keys(*keys)
 
     def attach_file(self, locator: str, path: Path, **kwargs) -> None:
         """
@@ -145,7 +143,7 @@ class Browser:
         wait -- True or number of seconds to wait until element appears
         """
         self._capybarize_kwargs(kwargs)
-        self.page.find('file_field', locator, **kwargs).set(str(path))
+        self.page.find("file_field", locator, **kwargs).set(str(path))
 
     def check(self, locator: str, **kwargs) -> None:
         """Check the checkbox with name/label/id 'locator'.
@@ -172,7 +170,7 @@ class Browser:
         wait -- True or number of seconds to wait until element appears
         """
         self._capybarize_kwargs(kwargs)
-        kwargs['field'] = locator
+        kwargs["field"] = locator
         self.page.select(text, **kwargs)
 
     def click_button(self, locator: str, **kwargs) -> None:
@@ -303,8 +301,8 @@ class Browser:
         wait -- seconds to poll (default default_wait_timeout)
         text -- text the element must contain
         """
-        if 'wait' not in kwargs:
-            kwargs['wait'] = self.default_wait_timeout
+        if "wait" not in kwargs:
+            kwargs["wait"] = self.default_wait_timeout
         self.assert_element(*selector, **kwargs)
 
     def text(self, *selector, **kwargs) -> str:

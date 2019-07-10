@@ -13,8 +13,8 @@ _loop_to_connection = {}
 logger = logging.getLogger(__name__)
 
 
-Render = 'render'
-Fetch = 'fetch'
+Render = "render"
+Fetch = "fetch"
 
 
 class DeclaredQueueConsume:
@@ -37,6 +37,7 @@ def acking_callback(fn):
         # Begin consuming
         await connection.consume(rabbitmq.Render, handle_render_message, 3)
     """
+
     @functools.wraps(fn)
     async def inner(channel, body, envelope, properties):
         try:
@@ -63,14 +64,16 @@ def manual_acking_callback(fn):
         # Begin consuming
         await connection.consume(rabbitmq.Render, handle_render_message, 3)
     """
+
     @functools.wraps(fn)
     async def inner(channel, body, envelope, properties):
         acked = False
+
         async def ack():
             nonlocal acked
             if acked:
                 try:
-                    raise RuntimeError('You called `await ack()` twice')
+                    raise RuntimeError("You called `await ack()` twice")
                 except RuntimeError:
                     logger.exception()
             await channel.basic_client_ack(envelope.delivery_tag)
@@ -82,7 +85,7 @@ def manual_acking_callback(fn):
         finally:
             if not acked:
                 try:
-                    raise RuntimeError('You did not call ack()')
+                    raise RuntimeError("You did not call ack()")
                 except RuntimeError:
                     logger.exception()
                 await ack()
@@ -177,23 +180,20 @@ class RetryingConnection:
         for attempt in range(self.attempts):
             try:
                 return await self._attempt_connect()
-            except (
-                AmqpClosedConnection,
-                ConnectionError,
-                OSError,
-            ) as err:
+            except (AmqpClosedConnection, ConnectionError, OSError) as err:
                 if self.is_closed or attempt >= self.attempts - 1:
                     raise
                 else:
                     logger.info(
-                        'Connection to RabbitMQ failed: %s; will retry in %fs',
-                        str(err), self.delay_s
+                        "Connection to RabbitMQ failed: %s; will retry in %fs",
+                        str(err),
+                        self.delay_s,
                     )
                     await asyncio.sleep(self.delay_s)
             except asyncio.CancelledError:
                 raise
             except Exception:
-                logger.exception('Unhandled exception from _attempt_connect()')
+                logger.exception("Unhandled exception from _attempt_connect()")
                 raise
 
     def _make_callback_not_block(self, callback) -> Callable:
@@ -233,11 +233,11 @@ class RetryingConnection:
             ConnectionError: connection error
             TODO auth errors?
         """
-        logger.info('Connecting to RabbitMQ at %s', self.url)
+        logger.info("Connecting to RabbitMQ at %s", self.url)
         self._transport, self._protocol = await aioamqp.from_url(self.url)
         self._channel = await self._protocol.channel()
 
-        logger.info('Negotiating with RabbitMQ')
+        logger.info("Negotiating with RabbitMQ")
 
         # Set publisher confirms -- for requeue()
         await self._channel.confirm_select()
@@ -247,7 +247,7 @@ class RetryingConnection:
         for queue in self._declared_queues:
             await self._channel.queue_declare(queue.name, durable=True)
 
-        logger.info('Starting RabbitMQ consumers')
+        logger.info("Starting RabbitMQ consumers")
 
         # Start consuming `self._declared_queues`
         for queue in self._declared_queues:
@@ -263,11 +263,10 @@ class RetryingConnection:
 
             # call (and await) `callback` for every message.
             await self._channel.basic_consume(
-                self._make_callback_not_block(queue.callback),
-                queue_name=queue.name
+                self._make_callback_not_block(queue.callback), queue_name=queue.name
             )
 
-        logger.info('Connected to RabbitMQ')
+        logger.info("Connected to RabbitMQ")
 
     async def close(self) -> None:
         """
@@ -292,8 +291,9 @@ class RetryingConnection:
             await asyncio.wait(self._processing_messages)
         self._closed_event.set()  # we're finished closing.
 
-    def declare_queue_consume(self, queue: str, prefetch_count: int,
-                              callback: Callable) -> None:
+    def declare_queue_consume(
+        self, queue: str, prefetch_count: int, callback: Callable
+    ) -> None:
         """
         Declare a queue to be consumed after connect.
 
@@ -322,21 +322,16 @@ class RetryingConnection:
         packed_message = msgpack.packb(message, use_bin_type=True)
 
         await self._connected
-        await self._channel.publish(packed_message, '', routing_key=queue)
+        await self._channel.publish(packed_message, "", routing_key=queue)
         # On error, we'll set self.
 
     # Workbench-specific methods follow:
 
     async def queue_render(self, workflow_id: int, delta_id: int) -> None:
-        await self.publish('render', {
-            'workflow_id': workflow_id,
-            'delta_id': delta_id,
-        })
+        await self.publish("render", {"workflow_id": workflow_id, "delta_id": delta_id})
 
     async def queue_fetch(self, wf_module_id: int) -> None:
-        await self.publish('fetch', {
-            'wf_module_id': wf_module_id,
-        })
+        await self.publish("fetch", {"wf_module_id": wf_module_id})
 
 
 def get_connection(loop=None):
@@ -369,8 +364,7 @@ def get_connection(loop=None):
 
         host = settings.RABBITMQ_HOST
         connection = RetryingConnection(host, 10, 2)
-        monitor = asyncio.ensure_future(connection.connect_forever(),
-                                        loop=loop)
+        monitor = asyncio.ensure_future(connection.connect_forever(), loop=loop)
 
         def _wrap_event_loop(self, *args, **kwargs):  # self = loop
             global _loop_to_connection

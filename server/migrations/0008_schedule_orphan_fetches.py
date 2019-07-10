@@ -21,21 +21,22 @@ class Migration(migrations.Migration):
     3. [TODO] nix .auto_update_data -- no more inconsistent records!
     """
 
-    dependencies = [
-        ('server', '0007_auto_20190508_1752'),
-    ]
+    dependencies = [("server", "0007_auto_20190508_1752")]
 
     operations = [
-        migrations.RunSQL([
-            """
+        migrations.RunSQL(
+            [
+                """
             UPDATE server_wfmodule
             SET next_update = NULL
             WHERE NOT auto_update_data
             """,
-            """
+                """
             UPDATE server_wfmodule
             SET next_update = NOW()
             WHERE auto_update_data AND next_update IS NULL
-            """
-        ], elidable=True),
+            """,
+            ],
+            elidable=True,
+        )
     ]

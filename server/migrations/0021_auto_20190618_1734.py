@@ -5,13 +5,15 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('server', '0020_auto_20190618_1731'),
-    ]
+    dependencies = [("server", "0020_auto_20190618_1731")]
 
     operations = [
         migrations.AddIndex(
-            model_name='wfmodule',
-            index=models.Index(condition=models.Q(next_update__isnull=False), fields=['next_update'], name='pending_update_queue'),
-        ),
+            model_name="wfmodule",
+            index=models.Index(
+                condition=models.Q(next_update__isnull=False),
+                fields=["next_update"],
+                name="pending_update_queue",
+            ),
+        )
     ]

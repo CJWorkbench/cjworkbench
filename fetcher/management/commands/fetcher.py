@@ -9,11 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 def exit_on_exception(loop, context):
-    if (
-        'client_session' in context
-        or 'connector' in context
-        or 'transport' in context
-    ):
+    if "client_session" in context or "connector" in context or "transport" in context:
         # [2018-11-07] aiohttp raises spurious exceptions.
         # https://github.com/aio-libs/aiohttp/issues/2039
         #
@@ -29,12 +25,15 @@ def exit_on_exception(loop, context):
         #             'message': 'Unclosed client session'}
         # * context: {'transport': <...>,
         #             'message': 'SSL handshake failed...'}
-        logger.warn('Ignoring warning from aiohttp: %s', context['message'])
+        logger.warn("Ignoring warning from aiohttp: %s", context["message"])
         return
 
-    logger.error('Exiting because of unhandled error: %s\nContext: %r',
-                 context['message'], context,
-                 exc_info=context.get('exception'))
+    logger.error(
+        "Exiting because of unhandled error: %s\nContext: %r",
+        context["message"],
+        context,
+        exc_info=context.get("exception"),
+    )
     os._exit(1)
 
 
@@ -45,7 +44,7 @@ async def main():
 
 
 class Command(BaseCommand):
-    help = 'Continually run cron- and user-initiated fetches.'
+    help = "Continually run cron- and user-initiated fetches."
 
     def handle(self, *args, **options):
         asyncio.run(main())

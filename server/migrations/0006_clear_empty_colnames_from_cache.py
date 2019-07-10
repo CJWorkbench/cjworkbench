@@ -9,15 +9,23 @@ def clear_empty_colnames_from_cache(apps, schema_editor):
     # Can't grab WfModule from 'apps' because we need our migration to write to
     # S3 -- which 'apps' models don't.
     from server.models import WfModule
+
     qs = WfModule.objects.extra(
         # Lots of escaping here: '\"' gets us double quotes; '%%' gives SQL '%'
         # instead of the DB module's SQL param replacement.
-        where=["cached_render_result_columns::text LIKE '%%\"name\": \"\"%%'"]
-    # also, set ".only" so we don't select columns created in later migrations
-    ).only('id', 'tab_id', 'cached_render_result_delta_id',
-           'cached_render_result_status', 'cached_render_result_error',
-           'cached_render_result_json', 'cached_render_result_quick_fixes',
-           'cached_render_result_columns', 'cached_render_result_nrows')
+        where=['cached_render_result_columns::text LIKE \'%%"name": ""%%\'']
+        # also, set ".only" so we don't select columns created in later migrations
+    ).only(
+        "id",
+        "tab_id",
+        "cached_render_result_delta_id",
+        "cached_render_result_status",
+        "cached_render_result_error",
+        "cached_render_result_json",
+        "cached_render_result_quick_fixes",
+        "cached_render_result_columns",
+        "cached_render_result_nrows",
+    )
     for wf_module in qs:
         with wf_module.workflow.cooperative_lock():
             wf_module.clear_cached_render_result()
@@ -38,10 +46,6 @@ class Migration(migrations.Migration):
     Clear all cache results with empty column names.
     """
 
-    dependencies = [
-        ('server', '0005_unique_implicit_duplicate_workflows'),
-    ]
+    dependencies = [("server", "0005_unique_implicit_duplicate_workflows")]
 
-    operations = [
-        migrations.RunPython(clear_empty_colnames_from_cache, elidable=True),
-    ]
+    operations = [migrations.RunPython(clear_empty_colnames_from_cache, elidable=True)]

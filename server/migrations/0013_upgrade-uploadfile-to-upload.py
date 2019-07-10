@@ -21,14 +21,14 @@ def move_uploaded_file(workflow, wf_module, uploaded_file):
 
     bucket = uploaded_file.bucket
     old_key = uploaded_file.key
-    if '/' in old_key:
+    if "/" in old_key:
         return
 
-    new_key = f'wf-{workflow.id}/wfm-{wf_module.id}/{old_key}'
+    new_key = f"wf-{workflow.id}/wfm-{wf_module.id}/{old_key}"
 
-    logger.info(f'Move %s/%s to %s/%s', bucket, old_key, bucket, new_key)
+    logger.info(f"Move %s/%s to %s/%s", bucket, old_key, bucket, new_key)
     try:
-        minio.copy(bucket, new_key, f'{bucket}/{old_key}')
+        minio.copy(bucket, new_key, f"{bucket}/{old_key}")
         minio.remove(bucket, old_key)
     except minio.error.NoSuchKey:
         # old_key is missing. Two possibilities:
@@ -40,16 +40,16 @@ def move_uploaded_file(workflow, wf_module, uploaded_file):
         # 2. The file didn't exist to begin with. In that case, write a blank
         #    file in its stead. That way the user will remark, "hey, Workbench
         #    ate my file!" instead of undefined behavior (which is worse).
-		#    https://www.pivotaltracker.com/story/show/163336822
+        #    https://www.pivotaltracker.com/story/show/163336822
         if minio.exists(bucket, new_key):
             pass  # "all is well"
         else:
             # write an empty file
-            minio.put_bytes(bucket, new_key, b'')
+            minio.put_bytes(bucket, new_key, b"")
             uploaded_file.size = 0
-            uploaded_file.save(update_fields=['size'])
+            uploaded_file.save(update_fields=["size"])
     uploaded_file.key = new_key
-    uploaded_file.save(update_fields=['key'])
+    uploaded_file.save(update_fields=["key"])
 
 
 def upgrade_wf_module(wf_module):
@@ -62,14 +62,16 @@ def upgrade_wf_module(wf_module):
     # Clearing deltas is involved; Django Migrations can't do it. Import the
     # actual Workflow model, not the Migrations-generated model.
     from server.models import Workflow
+
     try:
         workflow = Workflow.objects.get(id=wf_module.tab.workflow_id)
     except ObjectDoesNotExist:
         # We deleted this module in a previous `upgrade_wf_module()` loop.
         # (That is, a workflow had 2+ upload modules and when we were upgrading
         # another one, we deleted this one.)
-        logger.info('WfModule %d was deleted in another iteration; skipping',
-                    wf_module.id)
+        logger.info(
+            "WfModule %d was deleted in another iteration; skipping", wf_module.id
+        )
         return
 
     # Clear undo history. ChangeParametersCommand and ChangeDataVersionCommands
@@ -79,7 +81,7 @@ def upgrade_wf_module(wf_module):
     try:
         wf_module.refresh_from_db()
     except ObjectDoesNotExist:
-        logger.info('WfModule %d was deleted; skipping', wf_module.id)
+        logger.info("WfModule %d was deleted; skipping", wf_module.id)
         return
 
     # First, housekeeping: tidy uploaded_files filenames in s3
@@ -94,41 +96,40 @@ def upgrade_wf_module(wf_module):
         # field looks like `[{"uuid":...,"name":...}]`.)
         #
         # I've checked: all `metadata` in production are encoded consistently
-        uuid = json.loads(stored_object.metadata)[0]['uuid']
+        uuid = json.loads(stored_object.metadata)[0]["uuid"]
         if wf_module.uploaded_files.filter(uuid=uuid).exists():
-            logger.info('Found StoredObject UUID %s for wfm-%d', uuid,
-                        wf_module.id)
+            logger.info("Found StoredObject UUID %s for wfm-%d", uuid, wf_module.id)
         else:
-            logger.info('StoredObject had invalid UUID %s for wfm-%d', uuid,
-                        wf_module.id)
+            logger.info(
+                "StoredObject had invalid UUID %s for wfm-%d", uuid, wf_module.id
+            )
             uuid = None  # and fall through
     else:
         uuid = None
     if uuid is None:
         # fallback to the latest UploadedFile
-        uploaded_file = wf_module.uploaded_files.order_by('-created_at').first()
+        uploaded_file = wf_module.uploaded_files.order_by("-created_at").first()
         if uploaded_file:
             uuid = uploaded_file.uuid
-            logger.info('Found UploadedFile uuid %s for wfm-%d', uuid,
-                        wf_module.id)
+            logger.info("Found UploadedFile uuid %s for wfm-%d", uuid, wf_module.id)
         else:
             # Okay, there's no file.
-            logger.info('No UUID for wfm-%d', wf_module.id)
+            logger.info("No UUID for wfm-%d", wf_module.id)
             uuid = None
 
     # Update the `module_id_name` and `params`. `params.file` is the UUID of
     # the uploaded_file in question.
-    wf_module.module_id_name = 'upload'  # NEW module
+    wf_module.module_id_name = "upload"  # NEW module
     wf_module.params = {
-        'file': uuid,  # may be None
-        'has_header': wf_module.params['has_header'],
+        "file": uuid,  # may be None
+        "has_header": wf_module.params["has_header"],
     }
-    wf_module.save(update_fields=['module_id_name', 'params'])
+    wf_module.save(update_fields=["module_id_name", "params"])
 
 
 def upgrade_uploadfile_steps(apps, schema_editor):
-    WfModule = apps.get_model('server', 'WfModule')
-    for wf_module in WfModule.objects.filter(module_id_name='uploadfile'):
+    WfModule = apps.get_model("server", "WfModule")
+    for wf_module in WfModule.objects.filter(module_id_name="uploadfile"):
         upgrade_wf_module(wf_module)
 
 
@@ -152,12 +153,8 @@ class Migration(migrations.Migration):
     `uploadfile` module.
     """
 
-    dependencies = [
-        ('server', '0012_merge_20190531_1440'),
-    ]
+    dependencies = [("server", "0012_merge_20190531_1440")]
 
     atomic = False
 
-    operations = [
-        migrations.RunPython(upgrade_uploadfile_steps, elidable=True),
-    ]
+    operations = [migrations.RunPython(upgrade_uploadfile_steps, elidable=True)]

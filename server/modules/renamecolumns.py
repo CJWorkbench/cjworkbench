@@ -18,7 +18,7 @@ def _uniquify(colnames: List[str]):
         if colname in seen:
             # Modify `colname` by adding a number to it.
             for n in itertools.count():
-                try_colname = f'{colname} {n + 1}'
+                try_colname = f"{colname} {n + 1}"
                 if try_colname not in seen:
                     colname = try_colname
                     break
@@ -70,10 +70,10 @@ def _parse_custom_list(custom_list: str, table_columns: List[str]):
     custom_list = custom_list.rstrip()
 
     # Split by newline (preferred) or comma (if the user wants that)
-    if '\n' in custom_list:
-        split_char = '\n'
+    if "\n" in custom_list:
+        split_char = "\n"
     else:
-        split_char = ','
+        split_char = ","
     rename_list = [s.strip() for s in custom_list.split(split_char)]
 
     # Convert to dict
@@ -81,8 +81,8 @@ def _parse_custom_list(custom_list: str, table_columns: List[str]):
         renames = {table_columns[i]: s for i, s in enumerate(rename_list) if s}
     except IndexError:
         raise ValueError(
-            f'You supplied {len(rename_list)} column names, '
-            f'but the table has {len(table_columns)} columns.'
+            f"You supplied {len(rename_list)} column names, "
+            f"but the table has {len(table_columns)} columns."
         )
 
     # Use _parse_renames() logic to consider missing columns and uniquify
@@ -93,22 +93,23 @@ def _do_renames(table, input_columns, renames):
     # Edit in-place
     table.rename(columns=renames, inplace=True)
     return {
-        'dataframe': table,
+        "dataframe": table,
         # Every new (or overwritten) column name gets a format
-        'column_formats': {new: input_columns[old].format
-                           for old, new in renames.items()}
+        "column_formats": {
+            new: input_columns[old].format for old, new in renames.items()
+        },
     }
 
 
 def render(table, params, *, input_columns):
     columns = list(table.columns)
-    if params['custom_list']:
+    if params["custom_list"]:
         try:
-            renames = _parse_custom_list(params['list_string'], columns)
+            renames = _parse_custom_list(params["list_string"], columns)
         except ValueError as err:
             return str(err)
     else:
-        renames = _parse_renames(params['renames'], columns)
+        renames = _parse_renames(params["renames"], columns)
 
     if not renames:
         return table  # no-op
@@ -124,15 +125,15 @@ def _migrate_params_v0_to_v1(params):
     """
     ret = dict(params)  # copy
     try:
-        ret['renames'] = json.loads(ret['rename-entries'])
+        ret["renames"] = json.loads(ret["rename-entries"])
     except ValueError:
-        ret['renames'] = {}
-    del ret['rename-entries']
+        ret["renames"] = {}
+    del ret["rename-entries"]
     return ret
 
 
 def migrate_params(params):
-    if 'rename-entries' in params:
+    if "rename-entries" in params:
         params = _migrate_params_v0_to_v1(params)
 
     return params

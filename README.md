@@ -3,24 +3,23 @@
 </div>
 
 <table>
-<tr>
-  <td>License</td>
-  <td>
-    <a href="https://github.com/cjworkbench/cjworkbench/blob/master/LICENSE">
-      <img src="https://img.shields.io/badge/license-AGPL-blue.svg" alt="license" />
-    </a>
-  </td>
-</tr>
-<tr>
-  <td>Gitter</td>
+  <tr>
+    <td>License</td>
+    <td>
+      <a href="https://github.com/cjworkbench/cjworkbench/blob/master/LICENSE">
+        <img src="https://img.shields.io/badge/license-AGPL-blue.svg" alt="license" />
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td>Gitter</td>
     <td>
        <a href="https://gitter.im/workbenchdata/Lobby">
         <img src="https://badges.gitter.im/Join%20Chat.svg" />
       </a>
-  </td>
-</tr>
+    </td>
+  </tr>
 </table>
-
 
 #  Data workspaces, made simple.
 

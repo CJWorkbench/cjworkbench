@@ -3,7 +3,7 @@ import time
 import json
 
 
-Iso8601DateFormat = '%Y-%m-%dT%H:%M:%S'
+Iso8601DateFormat = "%Y-%m-%dT%H:%M:%S"
 
 
 class JsonFormatter(logging.Formatter):
@@ -26,21 +26,22 @@ class JsonFormatter(logging.Formatter):
     # override
     def format(self, record):
         time_struct = time.gmtime(record.created)
-        timestamp = (
-            time.strftime(Iso8601DateFormat, time_struct)
-            + ('.%03dZ' % record.msecs)
+        timestamp = time.strftime(Iso8601DateFormat, time_struct) + (
+            ".%03dZ" % record.msecs
         )
 
-        return json.dumps({
-            'severity': record.levelname,
-            'timestamp': timestamp,
-            'sourceLocation': {
-                'file': record.pathname,
-                'line': record.lineno,
-                'function': record.funcName,
-            },
-            'processId': record.process,
-            'threadId': record.thread,
-            'module': record.module,
-            'message': super().format(record),
-        })
+        return json.dumps(
+            {
+                "severity": record.levelname,
+                "timestamp": timestamp,
+                "sourceLocation": {
+                    "file": record.pathname,
+                    "line": record.lineno,
+                    "function": record.funcName,
+                },
+                "processId": record.process,
+                "threadId": record.thread,
+                "module": record.module,
+                "message": super().format(record),
+            }
+        )

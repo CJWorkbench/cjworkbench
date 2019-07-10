@@ -14,11 +14,10 @@ import pandas as pd
 
 # --- Test data ----
 
-mock_csv_text = 'Month,Amount\nJan,10\nFeb,20'
+mock_csv_text = "Month,Amount\nJan,10\nFeb,20"
 mock_csv_table = pd.read_csv(io.StringIO(mock_csv_text))
 
-mock_xlsx_path = os.path.join(settings.BASE_DIR,
-                              'server/tests/test_data/test.xlsx')
+mock_xlsx_path = os.path.join(settings.BASE_DIR, "server/tests/test_data/test.xlsx")
 
 # Connect to the database, on the main thread, and remember that connection
 main_thread_connections = {name: connections[name] for name in connections}
@@ -40,8 +39,8 @@ class DbTestCase(SimpleTestCase):
     # will make DB calls at a time.)
     async_executor = ThreadPoolExecutor(
         max_workers=1,
-        thread_name_prefix='run_with_async_db_thread',
-        initializer=_inherit_main_thread_connections
+        thread_name_prefix="run_with_async_db_thread",
+        initializer=_inherit_main_thread_connections,
     )
 
     def setUp(self):
@@ -86,48 +85,47 @@ class LoggedInTestCase(DbTestCase):
         self.client.force_login(self.user)
 
 
-def create_test_user(username='username', email='user@example.org',
-                     password='password'):
-    return User.objects.create(username=username, email=email,
-                               password=password)
+def create_test_user(
+    username="username", email="user@example.org", password="password"
+):
+    return User.objects.create(username=username, email=email, password=password)
 
 
 _Tables = [
-    'server_aclentry',
-    'server_addmodulecommand',
-    'server_addtabcommand',
-    'server_changedataversioncommand',
-    'server_changeparameterscommand',
-    'server_changewfmodulenotescommand',
-    'server_changeworkflowtitlecommand',
-    'server_deletemodulecommand',
-    'server_deletetabcommand',
-    'server_duplicatetabcommand',
-    'server_reordermodulescommand',
-    'server_reordertabscommand',
-    'server_settabnamecommand',
-    'server_initworkflowcommand',
-    'server_delta',
-    'server_moduleversion',
-    'server_storedobject',
-    'server_uploadedfile',
-    'server_wfmodule',
-    'server_tab',
-    'server_workflow',
-    'django_session',
-    'auth_group',
-    'auth_group_permissions',
-    'auth_permission',
-    'cjworkbench_userprofile',
-    'auth_user',
-    'auth_user_groups',
-    'auth_user_user_permissions',
+    "server_aclentry",
+    "server_addmodulecommand",
+    "server_addtabcommand",
+    "server_changedataversioncommand",
+    "server_changeparameterscommand",
+    "server_changewfmodulenotescommand",
+    "server_changeworkflowtitlecommand",
+    "server_deletemodulecommand",
+    "server_deletetabcommand",
+    "server_duplicatetabcommand",
+    "server_reordermodulescommand",
+    "server_reordertabscommand",
+    "server_settabnamecommand",
+    "server_initworkflowcommand",
+    "server_delta",
+    "server_moduleversion",
+    "server_storedobject",
+    "server_uploadedfile",
+    "server_wfmodule",
+    "server_tab",
+    "server_workflow",
+    "django_session",
+    "auth_group",
+    "auth_group_permissions",
+    "auth_permission",
+    "cjworkbench_userprofile",
+    "auth_user",
+    "auth_user_groups",
+    "auth_user_user_permissions",
 ]
 
 
 def clear_db():
-    deletes = [f't{i} AS (DELETE FROM {table})'
-               for i, table in enumerate(_Tables)]
+    deletes = [f"t{i} AS (DELETE FROM {table})" for i, table in enumerate(_Tables)]
     sql = f"WITH {', '.join(deletes)} SELECT 1"
     with connection.cursor() as c:
         c.execute(sql)
@@ -141,14 +139,14 @@ def clear_minio():
         minio.CachedRenderResultsBucket,
     )
 
-    if not hasattr(clear_minio, '_initialized'):
+    if not hasattr(clear_minio, "_initialized"):
         # Ensure buckets exist -- only on first call
         for bucket in buckets:
             minio.ensure_bucket_exists(bucket)
         clear_minio._initialized = True
 
     for bucket in buckets:
-        minio.remove_recursive(bucket, '/', force=True)
+        minio.remove_recursive(bucket, "/", force=True)
 
 
 class MockPath(pathlib.PurePosixPath):
@@ -163,8 +161,12 @@ class MockPath(pathlib.PurePosixPath):
         * when `data` is None, raise `FileNotFoundError` when expecting a file
     """
 
-    def __new__(cls, parts: List[str], data: Optional[bytes],
-                parent: Optional[pathlib.PurePosixPath] = None):
+    def __new__(
+        cls,
+        parts: List[str],
+        data: Optional[bytes],
+        parent: Optional[pathlib.PurePosixPath] = None,
+    ):
         ret = super().__new__(cls, *parts)
         ret.data = data
         ret._parent = parent
@@ -183,14 +185,14 @@ class MockPath(pathlib.PurePosixPath):
         return self.data
 
     # Path interface
-    def read_text(self, encoding='utf-8', errors='strict'):
+    def read_text(self, encoding="utf-8", errors="strict"):
         if self.data is None:
             raise FileNotFoundError(self.name)
 
         return self.data.decode(encoding, errors)
 
     def open(self, mode):
-        assert mode == 'rb'
+        assert mode == "rb"
         return io.BytesIO(self.data)
 
 
@@ -209,18 +211,18 @@ class MockDir(pathlib.PurePosixPath):
     """
 
     def __new__(cls, filedata: Dict[str, bytes]):  # filename => bytes
-        ret = super().__new__(cls, pathlib.PurePath('root'))
+        ret = super().__new__(cls, pathlib.PurePath("root"))
         ret.filedata = filedata
         return ret
 
     # override
     def __truediv__(self, filename: str) -> MockPath:
         data = self.filedata.get(filename)  # None if file does not exist
-        return MockPath(['root', filename], data, parent=self)
+        return MockPath(["root", filename], data, parent=self)
         try:
             return self.files[filename]
         except KeyError:
-            return MockPath(['root', filename], None)
+            return MockPath(["root", filename], None)
 
     def glob(self, pattern: str) -> Iterable[MockPath]:
         for key in self.filedata.keys():

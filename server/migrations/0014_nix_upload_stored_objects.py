@@ -7,11 +7,10 @@ from django.db import migrations
 
 def delete_upload_stored_objects(apps, _):
     from server import minio
-    StoredObject = apps.get_model('server', 'StoredObject')
 
-    for obj in (
-        StoredObject.objects.filter(wf_module__module_id_name='upload').all()
-    ):
+    StoredObject = apps.get_model("server", "StoredObject")
+
+    for obj in StoredObject.objects.filter(wf_module__module_id_name="upload").all():
         try:
             minio.remove(obj.bucket, obj.key)
         except FileNotFoundError:
@@ -40,12 +39,9 @@ class Migration(migrations.Migration):
     every user who has seen that bug is aware there's a problem, so we're not
     going to invest resources into mitigation.
     """
+
     atomic = False
 
-    dependencies = [
-        ('server', '0013_upgrade-uploadfile-to-upload'),
-    ]
+    dependencies = [("server", "0013_upgrade-uploadfile-to-upload")]
 
-    operations = [
-        migrations.RunPython(delete_upload_stored_objects, elidable=True),
-    ]
+    operations = [migrations.RunPython(delete_upload_stored_objects, elidable=True)]

@@ -14,6 +14,7 @@ _lookup = {}  # dict of e.g., {'column': ParamSpecColumn}
 
 # See also: param_dtype, which is the JSON storage format of params.
 
+
 @dataclass(frozen=True)
 class ParamSpec(ABC):
     """
@@ -32,6 +33,7 @@ class ParamSpec(ABC):
     `WfModule.params`. The ParamSpec is what the module author writes in the
     module specification, and it describes the JavaScript component.
     """
+
     id_name: str
     """The JSON Object key (or HTML field "name") of this field."""
 
@@ -70,7 +72,7 @@ class ParamSpec(ABC):
         call its `._from_kwargs()` method with the rest of the JSON dict.
         """
         json_value = dict(json_value)  # shallow copy
-        json_type = json_value.pop('type')
+        json_type = json_value.pop("type")
         subcls = _lookup[json_type]
         return subcls._from_kwargs(**json_value)
 
@@ -98,6 +100,7 @@ def _RegisterType(type_name):
     * `ParamSpec.Foo == ParamSpecFoo`
     * ParamSpecFoo(...).type == 'foo'
     """
+
     @dataclass(frozen=True)
     class ParamSpecType(ABC):
         type: str = field(default=type_name, init=False)
@@ -105,8 +108,8 @@ def _RegisterType(type_name):
         # override for ABC
         def __init_subclass__(cls, **kwargs):
             name = cls.__name__
-            assert name.startswith('ParamSpec')
-            subname = name[len('ParamSpec'):]
+            assert name.startswith("ParamSpec")
+            subname = name[len("ParamSpec") :]
 
             super().__init_subclass__(**kwargs)
             _lookup[type_name] = cls
@@ -117,27 +120,30 @@ def _RegisterType(type_name):
 
 @dataclass(frozen=True)
 class _HasName:
-    name: str = ''
+    name: str = ""
     """
     The _label_ of this field. (Beware this misleading property name!)
 
     The default is `""`, meaning: no label.
     """
 
+
 @dataclass(frozen=True)
 class _HasPlaceholder:
-    placeholder: str = ''
+    placeholder: str = ""
     """
     The text appearing in this field when there is no value.
 
     The default is '', which means: "component-specific default behavior."
     """
 
+
 @dataclass(frozen=True)
-class ParamSpecStatictext(_RegisterType('statictext'), _HasName, ParamSpec):
+class ParamSpecStatictext(_RegisterType("statictext"), _HasName, ParamSpec):
     """
     Text the user sees, with no underlying value.
     """
+
     # override
     @property
     def dtype(self) -> Optional[ParamDType]:
@@ -147,10 +153,10 @@ class ParamSpecStatictext(_RegisterType('statictext'), _HasName, ParamSpec):
 class SecretLogic(ABC):
     @classmethod
     def _from_dict(cls, json_value) -> SecretLogic:
-        provider = json_value['provider']
-        if provider == 'oauth':
+        provider = json_value["provider"]
+        if provider == "oauth":
             return cls.Oauth(**json_value)
-        elif provider == 'string':
+        elif provider == "string":
             return cls.String(**json_value)
 
 
@@ -175,13 +181,14 @@ class SecretLogicString:
 
 
 @dataclass(frozen=True)
-class ParamSpecSecret(_RegisterType('secret'), ParamSpec):
+class ParamSpecSecret(_RegisterType("secret"), ParamSpec):
     """
     Secret such as an API key the user can set.
 
     Secrets are not stored in undo history (because we only want the owner to
     see them, not readers). So they don't have JSON values.
     """
+
     secret_logic: SecretLogic = field(default_factory=NotImplementedError)
 
     # override
@@ -202,7 +209,7 @@ SecretLogic.String = SecretLogicString
 
 
 @dataclass(frozen=True)
-class ParamSpecButton(_RegisterType('button'), _HasName, ParamSpec):
+class ParamSpecButton(_RegisterType("button"), _HasName, ParamSpec):
     """
     Button the user can click to submit data.
 
@@ -211,6 +218,7 @@ class ParamSpecButton(_RegisterType('button'), _HasName, ParamSpec):
 
     The "name" is what appears _inside_ the button, not outside it.
     """
+
     # override
     @property
     def dtype(self) -> Optional[ParamDType]:
@@ -218,12 +226,12 @@ class ParamSpecButton(_RegisterType('button'), _HasName, ParamSpec):
 
 
 @dataclass(frozen=True)
-class ParamSpecString(_RegisterType('string'), _HasPlaceholder, _HasName,
-                      ParamSpec):
+class ParamSpecString(_RegisterType("string"), _HasPlaceholder, _HasName, ParamSpec):
     """
     Text the user can type.
     """
-    default: str = ''
+
+    default: str = ""
     multiline: bool = False
     """If True, newlines are permitted in data."""
 
@@ -234,12 +242,14 @@ class ParamSpecString(_RegisterType('string'), _HasPlaceholder, _HasName,
 
 
 @dataclass(frozen=True)
-class ParamSpecNumberFormat(_RegisterType('numberformat'), _HasPlaceholder,
-                            _HasName, ParamSpec):
+class ParamSpecNumberFormat(
+    _RegisterType("numberformat"), _HasPlaceholder, _HasName, ParamSpec
+):
     """
     Textual number-format string, like '${:0,.2f}'
     """
-    default: str = '{:,}'
+
+    default: str = "{:,}"
 
     # override
     @property
@@ -248,14 +258,15 @@ class ParamSpecNumberFormat(_RegisterType('numberformat'), _HasPlaceholder,
 
 
 @dataclass(frozen=True)
-class ParamSpecCustom(_RegisterType('custom'), _HasName, ParamSpec):
+class ParamSpecCustom(_RegisterType("custom"), _HasName, ParamSpec):
     """
     Deprecated "custom" value -- behavior depends on id_name.
 
     Tread very carefully here. Don't add functionality: remove it. Nobody knows
     how this works.
     """
-    default: Any = ''  # for version_select
+
+    default: Any = ""  # for version_select
 
     # override
     @property
@@ -264,11 +275,11 @@ class ParamSpecCustom(_RegisterType('custom'), _HasName, ParamSpec):
 
 
 @dataclass(frozen=True)
-class ParamSpecColumn(_RegisterType('column'), _HasPlaceholder, _HasName,
-                      ParamSpec):
+class ParamSpecColumn(_RegisterType("column"), _HasPlaceholder, _HasName, ParamSpec):
     """
     Column selector. Selects a str; default value `""` means "no column".
     """
+
     column_types: Optional[List[str]] = None
     """
     Column-type restrictions for the underlying ParamDType.Column.
@@ -288,16 +299,15 @@ class ParamSpecColumn(_RegisterType('column'), _HasPlaceholder, _HasName,
     @property
     def dtype(self) -> Optional[ParamDType]:
         return ParamDType.Column(
-            column_types=(
-                frozenset(self.column_types) if self.column_types else None
-            ),
-            tab_parameter=self.tab_parameter
+            column_types=(frozenset(self.column_types) if self.column_types else None),
+            tab_parameter=self.tab_parameter,
         )
 
 
 @dataclass(frozen=True)
-class ParamSpecMulticolumn(_RegisterType('multicolumn'), _HasPlaceholder,
-                           _HasName, ParamSpec):
+class ParamSpecMulticolumn(
+    _RegisterType("multicolumn"), _HasPlaceholder, _HasName, ParamSpec
+):
     """
     Multicolumn selector. Selects FrozenSet of str.
     """
@@ -321,16 +331,15 @@ class ParamSpecMulticolumn(_RegisterType('multicolumn'), _HasPlaceholder,
     @property
     def dtype(self) -> Optional[ParamDType]:
         return ParamDType.Multicolumn(
-            column_types=(
-                frozenset(self.column_types) if self.column_types else None
-            ),
-            tab_parameter=self.tab_parameter
+            column_types=(frozenset(self.column_types) if self.column_types else None),
+            tab_parameter=self.tab_parameter,
         )
 
 
 @dataclass(frozen=True)
-class ParamSpecMultichartseries(_RegisterType('multichartseries'),
-                                _HasPlaceholder, _HasName, ParamSpec):
+class ParamSpecMultichartseries(
+    _RegisterType("multichartseries"), _HasPlaceholder, _HasName, ParamSpec
+):
     """
     Selects { column, color } pairs.
     """
@@ -342,11 +351,11 @@ class ParamSpecMultichartseries(_RegisterType('multichartseries'),
 
 
 @dataclass(frozen=True)
-class ParamSpecInteger(_RegisterType('integer'), _HasPlaceholder, _HasName,
-                       ParamSpec):
+class ParamSpecInteger(_RegisterType("integer"), _HasPlaceholder, _HasName, ParamSpec):
     """
     Integer the user can type.
     """
+
     default: int = 0
 
     # override
@@ -356,11 +365,11 @@ class ParamSpecInteger(_RegisterType('integer'), _HasPlaceholder, _HasName,
 
 
 @dataclass(frozen=True)
-class ParamSpecFloat(_RegisterType('float'), _HasPlaceholder, _HasName,
-                     ParamSpec):
+class ParamSpecFloat(_RegisterType("float"), _HasPlaceholder, _HasName, ParamSpec):
     """
     Decimal (stored as floating-point) the user can type.
     """
+
     default: float = 0.0
 
     # override
@@ -370,10 +379,11 @@ class ParamSpecFloat(_RegisterType('float'), _HasPlaceholder, _HasName,
 
 
 @dataclass(frozen=True)
-class ParamSpecCheckbox(_RegisterType('checkbox'), _HasName, ParamSpec):
+class ParamSpecCheckbox(_RegisterType("checkbox"), _HasName, ParamSpec):
     """
     Boolean selected by checkbox.
     """
+
     default: bool = False
 
     # override
@@ -406,7 +416,7 @@ class MenuOption(ABC):
 
     @classmethod
     def _from_dict(cls, json_value) -> MenuOption:
-        if json_value == 'separator':
+        if json_value == "separator":
             return cls.Separator
         else:
             return cls.Value(**json_value)
@@ -423,20 +433,20 @@ class _MenuOptionSeparator(MenuOption):
         # This breaks deep-copy ... but deep-copy isn't really our style in
         # Workbench: we prefer immutable variables, and shallow-copy is the way
         # to copy those.
-        return 'separator'
+        return "separator"
 
 
 MenuOptionSeparator = _MenuOptionSeparator()  # singleton
 
 
 @dataclass(frozen=True)
-class ParamSpecMenu(_RegisterType('menu'), _HasPlaceholder, _HasName,
-                    ParamSpec):
+class ParamSpecMenu(_RegisterType("menu"), _HasPlaceholder, _HasName, ParamSpec):
     """
     Enum value selected by drop-down menu.
 
     `options` may contain `"separator"` to improve styling.
     """
+
     default: Any = None  # None is invalid ... reconsider?
     options: List[MenuOption] = field(default_factory=list)  # mustn't be empty
     """
@@ -449,13 +459,14 @@ class ParamSpecMenu(_RegisterType('menu'), _HasPlaceholder, _HasName,
     def dtype(self) -> Optional[ParamDType]:
         return ParamDType.Enum(
             choices=frozenset.union(*[o.dtype_choices for o in self.options]),
-            default=self.default
+            default=self.default,
         )
 
     # override
     @classmethod
-    def _from_kwargs(cls, *, options: List[Dict[str, str]] = None,
-                     default: Any = None, **kwargs):
+    def _from_kwargs(
+        cls, *, options: List[Dict[str, str]] = None, default: Any = None, **kwargs
+    ):
         options = [MenuOption._from_dict(option) for option in options]
         if default is None:
             # TODO consider allowing None instead of forcing a default? Menus
@@ -470,10 +481,11 @@ ParamSpecMenu.Option.Separator = MenuOptionSeparator  # singleton
 
 
 @dataclass(frozen=True)
-class ParamSpecRadio(_RegisterType('radio'), _HasName, ParamSpec):
+class ParamSpecRadio(_RegisterType("radio"), _HasName, ParamSpec):
     """
     Enum values which are all visible at the same time.
     """
+
     default: Any = None  # None is an invalid default -- this is a radio
     options: List[EnumOption] = field(default_factory=list)
     """
@@ -485,13 +497,14 @@ class ParamSpecRadio(_RegisterType('radio'), _HasName, ParamSpec):
     def dtype(self) -> Optional[ParamDType]:
         return ParamDType.Enum(
             choices=frozenset.union(*[o.dtype_choices for o in self.options]),
-            default=self.default
+            default=self.default,
         )
 
     # override
     @classmethod
-    def _from_kwargs(cls, *, options: List[Dict[str, str]],
-                     default: Any = None, **kwargs):
+    def _from_kwargs(
+        cls, *, options: List[Dict[str, str]], default: Any = None, **kwargs
+    ):
         options = [EnumOption(**option) for option in options]
         if default is None:
             default = options[0].value
@@ -502,8 +515,7 @@ ParamSpecRadio.Option = EnumOption
 
 
 @dataclass(frozen=True)
-class ParamSpecTab(_RegisterType('tab'), _HasPlaceholder, _HasName,
-                   ParamSpec):
+class ParamSpecTab(_RegisterType("tab"), _HasPlaceholder, _HasName, ParamSpec):
     # override
     @property
     def dtype(self) -> Optional[ParamDType]:
@@ -511,8 +523,9 @@ class ParamSpecTab(_RegisterType('tab'), _HasPlaceholder, _HasName,
 
 
 @dataclass(frozen=True)
-class ParamSpecMultitab(_RegisterType('multitab'), _HasPlaceholder, _HasName,
-                        ParamSpec):
+class ParamSpecMultitab(
+    _RegisterType("multitab"), _HasPlaceholder, _HasName, ParamSpec
+):
     # override
     @property
     def dtype(self) -> Optional[ParamDType]:
@@ -520,7 +533,7 @@ class ParamSpecMultitab(_RegisterType('multitab'), _HasPlaceholder, _HasName,
 
 
 @dataclass(frozen=True)
-class ParamSpecFile(_RegisterType('file'), ParamSpec):
+class ParamSpecFile(_RegisterType("file"), ParamSpec):
     # override
     @property
     def dtype(self) -> Optional[ParamDType]:
@@ -528,13 +541,14 @@ class ParamSpecFile(_RegisterType('file'), ParamSpec):
 
 
 @dataclass(frozen=True)
-class ParamSpecList(_RegisterType('list'), _HasName, ParamSpec):
+class ParamSpecList(_RegisterType("list"), _HasName, ParamSpec):
     child_parameters: List[ParamSpec] = field(default_factory=list)
 
     # override
     @classmethod
-    def _from_kwargs(cls, *, child_parameters: List[Dict[str, Any]],
-                     **kwargs) -> ParamSpecList:
+    def _from_kwargs(
+        cls, *, child_parameters: List[Dict[str, Any]], **kwargs
+    ) -> ParamSpecList:
         # Parse child parameters recursively
         child_parameters = [ParamSpec.from_dict(cp) for cp in child_parameters]
         return cls(child_parameters=child_parameters, **kwargs)
@@ -542,14 +556,15 @@ class ParamSpecList(_RegisterType('list'), _HasName, ParamSpec):
     # override
     @property
     def dtype(self) -> Optional[ParamDType]:
-        child_dtypes = {cp.id_name: cp.dtype
-                        for cp in self.child_parameters if cp.dtype}
+        child_dtypes = {
+            cp.id_name: cp.dtype for cp in self.child_parameters if cp.dtype
+        }
         return ParamDType.List(ParamDType.Dict(child_dtypes))
 
 
 @dataclass(frozen=True)
-class ParamSpecGdrivefile(_RegisterType('gdrivefile'), _HasName, ParamSpec):
-    secret_parameter: str = ''
+class ParamSpecGdrivefile(_RegisterType("gdrivefile"), _HasName, ParamSpec):
+    secret_parameter: str = ""
     """
     id_name of the `secret` parameter this chooser will use.
     """
@@ -557,9 +572,13 @@ class ParamSpecGdrivefile(_RegisterType('gdrivefile'), _HasName, ParamSpec):
     # override
     @property
     def dtype(self) -> Optional[ParamDType]:
-        return ParamDType.Option(ParamDType.Dict({
-            'id': ParamDType.String(),
-            'name': ParamDType.String(),
-            'url': ParamDType.String(),
-            'mimeType': ParamDType.String(),
-        }))
+        return ParamDType.Option(
+            ParamDType.Dict(
+                {
+                    "id": ParamDType.String(),
+                    "name": ParamDType.String(),
+                    "url": ParamDType.String(),
+                    "mimeType": ParamDType.String(),
+                }
+            )
+        )

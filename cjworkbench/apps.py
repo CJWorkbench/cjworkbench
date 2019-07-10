@@ -3,7 +3,7 @@ from django.apps import AppConfig
 
 
 class ServerConfig(AppConfig):
-    name = 'cjworkbench'
+    name = "cjworkbench"
 
     def ready(self):
         pass

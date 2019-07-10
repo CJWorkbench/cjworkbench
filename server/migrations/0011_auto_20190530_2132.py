@@ -7,13 +7,10 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('server', '0010_auto_20190528_1352'),
-    ]
+    dependencies = [("server", "0010_auto_20190528_1352")]
 
     operations = [
         migrations.AlterModelOptions(
-            name='uploadedfile',
-            options={'ordering': ['-created_at']},
-        ),
+            name="uploadedfile", options={"ordering": ["-created_at"]}
+        )
     ]

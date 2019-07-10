@@ -38,8 +38,9 @@ def clean_value(dtype: ParamDType, value: Any, input_shape: TableShape) -> Any:
 
 
 @clean_value.register(ParamDType.Float)
-def _(dtype: ParamDType.Float, value: Union[int,float],
-      input_shape: TableShape) -> float:
+def _(
+    dtype: ParamDType.Float, value: Union[int, float], input_shape: TableShape
+) -> float:
     # ParamDType.Float can have `int` values (because values come from
     # json.parse(), which only gives Numbers so can give "3" instead of
     # "3.0". We want to pass that as `float` in the `params` dict.
@@ -47,46 +48,46 @@ def _(dtype: ParamDType.Float, value: Union[int,float],
 
 
 @clean_value.register(ParamDType.File)
-def _(dtype: ParamDType.File, value: Optional[str],
-      input_shape: TableShape) -> Optional[pathlib.Path]:
-    raise RuntimeError('Unsupported: fetch file')
+def _(
+    dtype: ParamDType.File, value: Optional[str], input_shape: TableShape
+) -> Optional[pathlib.Path]:
+    raise RuntimeError("Unsupported: fetch file")
 
 
 @clean_value.register(ParamDType.Tab)
 def _(dtype: ParamDType.Tab, value: str, input_shape: TableShape) -> None:
-    raise RuntimeError('Unsupported: fetch tab')
+    raise RuntimeError("Unsupported: fetch tab")
 
 
 @clean_value.register(ParamDType.Column)
 def _(dtype: ParamDType.Column, value: str, input_shape: TableShape) -> str:
     if dtype.tab_parameter:
-        raise RuntimeError('Unsupported: fetch column with tab_parameter')
+        raise RuntimeError("Unsupported: fetch column with tab_parameter")
 
     if input_shape is None:
-        return ''
+        return ""
 
     valid_columns = {c.name: c for c in input_shape.columns}
     if value not in valid_columns:
-        return ''  # Null column
+        return ""  # Null column
 
     column = valid_columns[value]
     if dtype.column_types and column.type.name not in dtype.column_types:
-        raise PromptingError([
-            PromptingError.WrongColumnType([value], column.type.name,
-                                           dtype.column_types)
-        ])
+        raise PromptingError(
+            [
+                PromptingError.WrongColumnType(
+                    [value], column.type.name, dtype.column_types
+                )
+            ]
+        )
 
     return value
 
 
 @clean_value.register(ParamDType.Multicolumn)
-def _(
-    dtype: ParamDType.Multicolumn,
-    value: List[str],
-    input_shape: TableShape
-) -> str:
+def _(dtype: ParamDType.Multicolumn, value: List[str], input_shape: TableShape) -> str:
     if dtype.tab_parameter:
-        raise RuntimeError('Unsupported: fetch multicolumn with tab_parameter')
+        raise RuntimeError("Unsupported: fetch multicolumn with tab_parameter")
 
     if input_shape is None:
         return []
@@ -102,9 +103,11 @@ def _(
             continue
 
         if dtype.column_types and column.type.name not in dtype.column_types:
-            error_agg.add(PromptingError.WrongColumnType([column.name],
-                                                         column.type.name,
-                                                         dtype.column_types))
+            error_agg.add(
+                PromptingError.WrongColumnType(
+                    [column.name], column.type.name, dtype.column_types
+                )
+            )
         else:
             valid_colnames.append(column.name)
 
@@ -117,17 +120,15 @@ def _(
 def _(
     dtype: ParamDType.Multichartseries,
     value: List[Dict[str, str]],
-    input_shape: TableShape
+    input_shape: TableShape,
 ) -> List[Dict[str, str]]:
-    raise RuntimeError('Unsupported: fetch multichartseries')
+    raise RuntimeError("Unsupported: fetch multichartseries")
 
 
 # ... and then the methods for recursing
 @clean_value.register(ParamDType.List)
 def clean_value_list(
-    dtype: ParamDType.List,
-    value: List[Any],
-    input_shape: TableShape
+    dtype: ParamDType.List, value: List[Any], input_shape: TableShape
 ) -> List[Any]:
     inner_clean = partial(clean_value, dtype.inner_dtype)
     ret = []
@@ -143,18 +144,14 @@ def clean_value_list(
 
 @clean_value.register(ParamDType.Multitab)
 def _(
-    dtype: ParamDType.Multitab,
-    value: List[str],
-    input_shape: TableShape
+    dtype: ParamDType.Multitab, value: List[str], input_shape: TableShape
 ) -> List[Any]:
-    raise RuntimeError('Unsupported: fetch multitab')
+    raise RuntimeError("Unsupported: fetch multitab")
 
 
 @clean_value.register(ParamDType.Dict)
 def _(
-    dtype: ParamDType.Dict,
-    value: Dict[str, Any],
-    input_shape: TableShape
+    dtype: ParamDType.Dict, value: Dict[str, Any], input_shape: TableShape
 ) -> Dict[str, Any]:
     ret = {}
     error_agg = PromptErrorAggregator()
@@ -171,13 +168,8 @@ def _(
 
 @clean_value.register(ParamDType.Map)
 def _(
-    dtype: ParamDType.Map,
-    value: Dict[str, Any],
-    input_shape: TableShape
+    dtype: ParamDType.Map, value: Dict[str, Any], input_shape: TableShape
 ) -> Dict[str, Any]:
     value_dtype = dtype.value_dtype
     value_clean = partial(clean_value, value_dtype)
-    return dict(
-        (k, value_clean(v, input_shape))
-        for k, v in value.items()
-    )
+    return dict((k, value_clean(v, input_shape)) for k, v in value.items())

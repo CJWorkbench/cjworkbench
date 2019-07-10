@@ -10,16 +10,20 @@ class HandlerRequest:
     This is akin to an HTTP request: a `request_id` ties a response to the
     request. The server must respond to every request.
     """
+
     request_id: int
     scope: Dict[str, Any]
-    workflow: 'server.models.Workflow'  # import would cause recursion
+    workflow: "server.models.Workflow"  # import would cause recursion
     path: str
     arguments: Dict[str, Any]
 
     @classmethod
-    def parse_json_data(cls, scope: Dict[str, Any],
-                        workflow: 'server.models.Workflow',
-                        data: Dict[str, Any]) -> 'HandlerRequest':
+    def parse_json_data(
+        cls,
+        scope: Dict[str, Any],
+        workflow: "server.models.Workflow",
+        data: Dict[str, Any],
+    ) -> "HandlerRequest":
         """
         Parse JSON into a Request, or raise ValueError.
 
@@ -32,24 +36,24 @@ class HandlerRequest:
             }
         """
         if not isinstance(data, dict):
-            raise ValueError('request must be a JSON Object')
+            raise ValueError("request must be a JSON Object")
 
         try:
-            request_id = int(data['requestId'])
+            request_id = int(data["requestId"])
         except (KeyError, TypeError, ValueError):
-            raise ValueError('request.requestId must be an integer')
+            raise ValueError("request.requestId must be an integer")
 
         try:
-            path = str(data['path'])
+            path = str(data["path"])
         except (KeyError, TypeError, ValueError):
-            raise ValueError('request.path must be a string')
+            raise ValueError("request.path must be a string")
 
         try:
-            arguments = data['arguments']
+            arguments = data["arguments"]
         except KeyError:
             arguments = {}
         if not isinstance(arguments, dict):
-            raise ValueError('request.arguments must be an Object')
+            raise ValueError("request.arguments must be an Object")
 
         return cls(request_id, scope, workflow, path, arguments)
 
@@ -62,25 +66,20 @@ class HandlerResponse:
 
     request_id: int
     data: Optional[Dict[str, Any]] = None
-    error: str = ''
+    error: str = ""
 
     def to_dict(self):
         if self.error:
-            return {
-                'requestId': self.request_id,
-                'error': self.error,
-            }
+            return {"requestId": self.request_id, "error": self.error}
         else:
-            return {
-                'requestId': self.request_id,
-                'data': self.data,
-            }
+            return {"requestId": self.request_id, "data": self.data}
 
 
 class HandlerError(Exception):
     """
     An error a handler can raise that is _not_ a bug in the handler.
     """
+
     pass
 
 

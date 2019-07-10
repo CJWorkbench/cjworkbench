@@ -8,9 +8,8 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('server', '0008_schedule_orphan_fetches'),
-        ('server', '0011_auto_20190530_2132'),
+        ("server", "0008_schedule_orphan_fetches"),
+        ("server", "0011_auto_20190530_2132"),
     ]
 
-    operations = [
-    ]
+    operations = []

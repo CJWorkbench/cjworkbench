@@ -18,20 +18,18 @@ class SetTabNameCommand(ChangesWfModuleOutputs, Delta):
 
     def load_ws_data(self):
         data = super().load_ws_data()
-        data['updateTabs'] = {
-            self.tab.slug: {'name': self.tab.name}
-        }
+        data["updateTabs"] = {self.tab.slug: {"name": self.tab.name}}
         return data
 
     def forward_impl(self):
         self.tab.name = self.new_name
-        self.tab.save(update_fields=['name'])
+        self.tab.save(update_fields=["name"])
         self.forward_affected_delta_ids()
 
     def backward_impl(self):
         self.backward_affected_delta_ids()
         self.tab.name = self.old_name
-        self.tab.save(update_fields=['name'])
+        self.tab.save(update_fields=["name"])
 
     @classmethod
     def amend_create_kwargs(cls, *, workflow, tab, new_name):
@@ -48,9 +46,9 @@ class SetTabNameCommand(ChangesWfModuleOutputs, Delta):
         wf_module_delta_ids = cls.q_to_wf_module_delta_ids(q)
 
         return {
-            'workflow': workflow,
-            'tab': tab,
-            'new_name': new_name,
-            'old_name': tab.name,
-            'wf_module_delta_ids': wf_module_delta_ids,
+            "workflow": workflow,
+            "tab": tab,
+            "new_name": new_name,
+            "old_name": tab.name,
+            "wf_module_delta_ids": wf_module_delta_ids,
         }

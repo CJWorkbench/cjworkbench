@@ -7,22 +7,18 @@ from .parse_util import parse_bytesio
 
 
 ExtensionMimeTypes = {
-    '.xls': 'application/vnd.ms-excel',
-    '.xlsx': (
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    ),
-    '.csv': 'text/csv',
-    '.tsv': 'text/tab-separated-values',
-    '.json': 'application/json',
+    ".xls": "application/vnd.ms-excel",
+    ".xlsx": ("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
+    ".csv": "text/csv",
+    ".tsv": "text/tab-separated-values",
+    ".json": "application/json",
 }
 
 
 AllowedMimeTypes = list(ExtensionMimeTypes.values())
 
 
-NonstandardMimeTypes = {
-    'application/csv': 'text/csv',
-}
+NonstandardMimeTypes = {"application/csv": "text/csv"}
 
 
 def guess_mime_type_or_none(content_type: str, url: str) -> str:
@@ -55,7 +51,7 @@ def render(table, params, *, fetch_result, **kwargs):
     table = fetch_result.dataframe
     error = fetch_result.error
 
-    has_header: bool = params['has_header']
+    has_header: bool = params["has_header"]
     if not has_header:
         table = turn_header_into_first_row(table)
 
@@ -63,19 +59,19 @@ def render(table, params, *, fetch_result, **kwargs):
 
 
 async def fetch(params, **kwargs):
-    url: str = params['url'].strip()
+    url: str = params["url"].strip()
 
-    mimetypes = ','.join(AllowedMimeTypes)
-    headers = {'Accept': mimetypes}
-    timeout = aiohttp.ClientTimeout(total=5*60, connect=30)
+    mimetypes = ",".join(AllowedMimeTypes)
+    headers = {"Accept": mimetypes}
+    timeout = aiohttp.ClientTimeout(total=5 * 60, connect=30)
 
     try:
-        async with utils.spooled_data_from_url(
-            url, headers, timeout
-        ) as (bytesio, headers, charset):
-            content_type = headers.get('Content-Type', '') \
-                    .split(';')[0] \
-                    .strip()
+        async with utils.spooled_data_from_url(url, headers, timeout) as (
+            bytesio,
+            headers,
+            charset,
+        ):
+            content_type = headers.get("Content-Type", "").split(";")[0].strip()
             mime_type = guess_mime_type_or_none(content_type, url)
 
             if mime_type:
@@ -91,24 +87,21 @@ async def fetch(params, **kwargs):
                 # run_in_executor() so we continue to send AMQP heartbeats and
                 # handle other HTTP connections, even when parsing a big file.
                 return await asyncio.get_event_loop().run_in_executor(
-                    None,
-                    parse_bytesio,
-                    bytesio,
-                    charset,
-                    mime_type,
-                    True  # has_header
+                    None, parse_bytesio, bytesio, charset, mime_type, True  # has_header
                 )
             else:
-                return ProcessResult(error=(
-                    f'Error fetching {url}: '
-                    f'unknown content type {content_type}'
-                ))
+                return ProcessResult(
+                    error=(
+                        f"Error fetching {url}: " f"unknown content type {content_type}"
+                    )
+                )
     except asyncio.TimeoutError:
-        return ProcessResult(error=f'Timeout fetching {url}')
+        return ProcessResult(error=f"Timeout fetching {url}")
     except aiohttp.InvalidURL:
-        return ProcessResult(error=f'Invalid URL')
+        return ProcessResult(error=f"Invalid URL")
     except aiohttp.ClientResponseError as err:
-        return ProcessResult(error=('Error from server: %d %s'
-                                    % (err.status, err.message)))
+        return ProcessResult(
+            error=("Error from server: %d %s" % (err.status, err.message))
+        )
     except aiohttp.ClientError as err:
         return ProcessResult(error=str(err))

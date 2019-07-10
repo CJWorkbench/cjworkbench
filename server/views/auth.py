@@ -71,6 +71,7 @@ def loads_workflow_for_read(f):
     Raise Http404 if the Workflow does not exist and PermissionDenied if the
     workflow _does_ exist but the user does not have read access.
     """
+
     @wraps(f)
     def wrapper(request: HttpRequest, *args, workflow_id: int, **kwargs):
         workflow = lookup_workflow_for_read(workflow_id, request)  # or raise
@@ -97,6 +98,7 @@ def loads_workflow_for_write(f):
     Raise Http404 if the Workflow does not exist and PermissionDenied if the
     workflow _does_ exist but the user does not have write access.
     """
+
     @wraps(f)
     def wrapper(request: HttpRequest, *args, workflow_id: int, **kwargs):
         workflow = lookup_workflow_for_write(workflow_id, request)  # or raise
@@ -123,6 +125,7 @@ def loads_workflow_for_owner(f):
     Raise Http404 if the Workflow does not exist and PermissionDenied if the
     workflow _does_ exist but the user is not its owner.
     """
+
     @wraps(f)
     def wrapper(request: HttpRequest, *args, workflow_id: int, **kwargs):
         workflow = lookup_workflow_for_owner(workflow_id, request)  # or raise
@@ -149,6 +152,7 @@ def loads_workflow_for_owner(f):
     Raise Http404 if the Workflow does not exist and PermissionDenied if the
     workflow _does_ exist but the user is not its owner.
     """
+
     @wraps(f)
     def wrapper(request: HttpRequest, *args, workflow_id: int, **kwargs):
         workflow = lookup_workflow_for_owner(workflow_id, request)  # or raise
@@ -175,12 +179,13 @@ def loads_wf_module_for_read(f):
     workflow _does_ exist but the user does not have read access. Raise
     Http404 if the WfModule is deleted or not part of the Workflow.
     """
+
     @wraps(f)
-    def wrapper(request: HttpRequest, *args, workflow_id: int,
-                wf_module_id: int, **kwargs):
+    def wrapper(
+        request: HttpRequest, *args, workflow_id: int, wf_module_id: int, **kwargs
+    ):
         workflow = lookup_workflow_for_read(workflow_id, request)  # or raise
-        wf_module = get_object_or_404(WfModule.live_in_workflow,
-                                      pk=wf_module_id)
+        wf_module = get_object_or_404(WfModule.live_in_workflow, pk=wf_module_id)
         return f(request, workflow, tab, *args, **kwargs)
 
     return wrapper
@@ -205,12 +210,13 @@ def loads_wf_module_for_write(f):
     workflow _does_ exist but the user does not have write access. Raise
     Http404 if the WfModule is deleted or not part of the Workflow.
     """
+
     @wraps(f)
-    def wrapper(request: HttpRequest, *args, workflow_id: int,
-                wf_module_id: int, **kwargs):
+    def wrapper(
+        request: HttpRequest, *args, workflow_id: int, wf_module_id: int, **kwargs
+    ):
         workflow = lookup_workflow_for_write(workflow_id, request)  # or raise
-        wf_module = get_object_or_404(WfModule.live_in_workflow,
-                                      pk=wf_module_id)
+        wf_module = get_object_or_404(WfModule.live_in_workflow, pk=wf_module_id)
         return f(request, workflow, tab, *args, **kwargs)
 
     return wrapper
@@ -235,9 +241,9 @@ def loads_tab_for_write(f):
     workflow _does_ exist but the user does not have write access. Raise
     Http404 if the Tab is deleted or not part of the Workflow.
     """
+
     @wraps(f)
-    def wrapper(request: HttpRequest, *args, workflow_id: int, tab_id: int,
-                **kwargs):
+    def wrapper(request: HttpRequest, *args, workflow_id: int, tab_id: int, **kwargs):
         workflow = lookup_workflow_for_write(workflow_id, request)  # or raise
         tab = get_object_or_404(workflow.live_tabs, pk=tab_id)
         return f(request, workflow, tab, *args, **kwargs)

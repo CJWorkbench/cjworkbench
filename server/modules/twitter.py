@@ -15,21 +15,21 @@ from server import oauth
 
 class QueryType(Enum):
     # Named after Twitter API endpoints
-    USER_TIMELINE = 'user_timeline'
+    USER_TIMELINE = "user_timeline"
     """
     List a user's tweets.
 
     https://developer.twitter.com/en/docs/tweets/timelines/api-reference/get-statuses-user_timeline.html
     """
 
-    SEARCH = 'search'
+    SEARCH = "search"
     """
     Search all tweets.
 
     https://developer.twitter.com/en/docs/tweets/search/overview/standard
     """
 
-    LISTS_STATUSES = 'lists_statuses'
+    LISTS_STATUSES = "lists_statuses"
     """
     List the tweets of all members of a list.
 
@@ -44,9 +44,9 @@ class QueryType(Enum):
         For instance: 'search' has param_name 'query'
         """
         return {
-            self.USER_TIMELINE: 'username',
-            self.SEARCH: 'query',
-            self.LISTS_STATUSES: 'listurl',
+            self.USER_TIMELINE: "username",
+            self.SEARCH: "query",
+            self.LISTS_STATUSES: "listurl",
         }[self]
 
 
@@ -57,66 +57,67 @@ def _migrate_params_v0_to_v1(params):
     v1: 'querytype' is 'user_timeline', 'search', 'lists_statuses'
     """
     params = dict(params)  # copy
-    params['querytype'] = [
-        'user_timeline',
-        'search',
-        'lists_statuses',
-    ][params['querytype']]
+    params["querytype"] = ["user_timeline", "search", "lists_statuses"][
+        params["querytype"]
+    ]
 
     return params
 
 
 def migrate_params(params):
-    if isinstance(params['querytype'], int):
+    if isinstance(params["querytype"], int):
         params = _migrate_params_v0_to_v1(params)
 
     return params
 
 
-Column = namedtuple('Column', ['name', 'path', 'dtype', 'parse'])
+Column = namedtuple("Column", ["name", "path", "dtype", "parse"])
 
 
-HTML_TAG_RE = re.compile('<[^>]*>')
+HTML_TAG_RE = re.compile("<[^>]*>")
 
 
 def parse_source(source: str) -> str:
     """Parse a Twitter Status 'source', to remove HTML tag."""
-    return HTML_TAG_RE.sub('', source)
+    return HTML_TAG_RE.sub("", source)
 
 
 def parse_lang(lang: str) -> Optional[str]:
     """Parse a Twitter Status 'lang', to set 'und' to None."""
-    return None if lang == 'und' else lang
+    return None if lang == "und" else lang
 
 
 def parse_tweet_text(tweet_json: Dict[str, Any]) -> str:
-    if 'retweeted_status' in tweet_json:
-        status = tweet_json['retweeted_status']
-        screen_name = status['user']['screen_name']
+    if "retweeted_status" in tweet_json:
+        status = tweet_json["retweeted_status"]
+        screen_name = status["user"]["screen_name"]
         try:
-            text = status['full_text']
+            text = status["full_text"]
         except KeyError:
             # Some retweeted statuses don't have full_text.
-            text = status['text']
-        return 'RT @%s: %s' % (screen_name, text)
+            text = status["text"]
+        return "RT @%s: %s" % (screen_name, text)
     else:
-        return tweet_json['full_text']
+        return tweet_json["full_text"]
 
 
 Columns = [
-    Column('screen_name', ['user', 'screen_name'], np.object, None),
-    Column('created_at', ['created_at'], 'datetime64[ns]', None),
-    Column('text', [], np.object, parse_tweet_text),
-    Column('retweet_count', ['retweet_count'], np.int64, None),
-    Column('favorite_count', ['favorite_count'], np.int64, None),
-    Column('in_reply_to_screen_name', ['in_reply_to_screen_name'], np.object,
-           None),
-    Column('retweeted_status_screen_name',
-           ['retweeted_status', 'user', 'screen_name'], np.object, None),
-    Column('user_description', ['user', 'description'], np.object, None),
-    Column('source', ['source'], np.object, parse_source),
-    Column('lang', ['lang'], np.object, parse_lang),
-    Column('id', ['id'], np.int64, None),
+    Column("screen_name", ["user", "screen_name"], np.object, None),
+    Column("created_at", ["created_at"], "datetime64[ns]", None),
+    Column("text", [], np.object, parse_tweet_text),
+    Column("retweet_count", ["retweet_count"], np.int64, None),
+    Column("favorite_count", ["favorite_count"], np.int64, None),
+    Column("in_reply_to_screen_name", ["in_reply_to_screen_name"], np.object, None),
+    Column(
+        "retweeted_status_screen_name",
+        ["retweeted_status", "user", "screen_name"],
+        np.object,
+        None,
+    ),
+    Column("user_description", ["user", "description"], np.object, None),
+    Column("source", ["source"], np.object, parse_source),
+    Column("lang", ["lang"], np.object, parse_lang),
+    Column("id", ["id"], np.int64, None),
 ]
 
 
@@ -176,23 +177,28 @@ async def get_stored_tweets(get_stored_dataframe):
 
 
 def statuses_to_dataframe(statuses: List[Dict[str, Any]]) -> pd.DataFrame:
-    return pd.DataFrame(dict(
-        [(column.name, read_column(statuses, column)) for column in Columns]
-    ))
+    return pd.DataFrame(
+        dict([(column.name, read_column(statuses, column)) for column in Columns])
+    )
 
 
-async def fetch_from_twitter(access_token, path, params: List[Tuple[str, str]],
-                             since_id: Optional[int], per_page: int,
-                             n_pages: int) -> List[Dict[str, Any]]:
-    service = oauth.OAuthService.lookup_or_none('twitter')
+async def fetch_from_twitter(
+    access_token,
+    path,
+    params: List[Tuple[str, str]],
+    since_id: Optional[int],
+    per_page: int,
+    n_pages: int,
+) -> List[Dict[str, Any]]:
+    service = oauth.OAuthService.lookup_or_none("twitter")
     if not service:
-        raise Exception('Twitter connection misconfigured')
+        raise Exception("Twitter connection misconfigured")
 
     oauth_client = oauth1.Client(
         client_key=service.consumer_key,
         client_secret=service.consumer_secret,
-        resource_owner_key=access_token['oauth_token'],
-        resource_owner_secret=access_token['oauth_token_secret']
+        resource_owner_key=access_token["oauth_token"],
+        resource_owner_secret=access_token["oauth_token_secret"],
     )
 
     page_dataframes = [create_empty_table()]
@@ -203,21 +209,18 @@ async def fetch_from_twitter(access_token, path, params: List[Tuple[str, str]],
             # Assume {path} contains '?' already
             page_params = [
                 *params,
-                ('tweet_mode', 'extended'),
-                ('count', str(per_page)),
+                ("tweet_mode", "extended"),
+                ("count", str(per_page)),
             ]
             if since_id:
-                page_params.append(('since_id', str(since_id)))
+                page_params.append(("since_id", str(since_id)))
             if max_id:
-                page_params.append(('max_id', str(max_id)))
+                page_params.append(("max_id", str(max_id)))
 
-            page_url = (
-                f'https://api.twitter.com/1.1/{path}?{urlencode(page_params)}'
-            )
+            page_url = f"https://api.twitter.com/1.1/{path}?{urlencode(page_params)}"
 
             page_url, headers, body = oauth_client.sign(
-                page_url,
-                headers={'Accept': 'application/json'}
+                page_url, headers={"Accept": "application/json"}
             )
 
             # aiohttp internally performs URL canonization before sending
@@ -230,9 +233,9 @@ async def fetch_from_twitter(access_token, path, params: List[Tuple[str, str]],
             response.raise_for_status()
             page_statuses = await response.json()
 
-            if isinstance(page_statuses, dict) and 'statuses' in page_statuses:
+            if isinstance(page_statuses, dict) and "statuses" in page_statuses:
                 # /search wraps result in {}
-                page_statuses = page_statuses['statuses']
+                page_statuses = page_statuses["statuses"]
 
             if not page_statuses:
                 break
@@ -241,71 +244,77 @@ async def fetch_from_twitter(access_token, path, params: List[Tuple[str, str]],
             # Should save a bit of memory and make a smaller CPU-blip in our
             # event loop.
             page_dataframes.append(statuses_to_dataframe(page_statuses))
-            max_id = page_statuses[-1]['id'] - 1
+            max_id = page_statuses[-1]["id"] - 1
 
     return pd.concat(page_dataframes, ignore_index=True, sort=False)
 
 
-async def twitter_user_timeline(access_token, screen_name,
-                                since_id: Optional[int]
-                                ) -> List[Dict[str, Any]]:
+async def twitter_user_timeline(
+    access_token, screen_name, since_id: Optional[int]
+) -> List[Dict[str, Any]]:
     # 3200 tweets, aribitrarily
-    return await fetch_from_twitter(access_token,
-                                    'statuses/user_timeline.json',
-                                    [('screen_name', screen_name)], since_id,
-                                    200, 16)
+    return await fetch_from_twitter(
+        access_token,
+        "statuses/user_timeline.json",
+        [("screen_name", screen_name)],
+        since_id,
+        200,
+        16,
+    )
 
 
-async def twitter_search(access_token, q,
-                         since_id: Optional[int]) -> List[Dict[str, Any]]:
+async def twitter_search(
+    access_token, q, since_id: Optional[int]
+) -> List[Dict[str, Any]]:
     # 1000 tweets, aribitrarily, to try to go easy on rate limits
     # (this is still 10 calls)
-    return await fetch_from_twitter(access_token, 'search/tweets.json',
-                                    [('q', q), ('result_type', 'recent')],
-                                    since_id, 100, 10)
+    return await fetch_from_twitter(
+        access_token,
+        "search/tweets.json",
+        [("q", q), ("result_type", "recent")],
+        since_id,
+        100,
+        10,
+    )
 
 
-async def twitter_list_timeline(access_token, owner_screen_name, slug,
-                                since_id: Optional[int]
-                                ) -> List[Dict[str, Any]]:
+async def twitter_list_timeline(
+    access_token, owner_screen_name, slug, since_id: Optional[int]
+) -> List[Dict[str, Any]]:
     # 2000 tweets, aribitrarily, to try to go easy on rate limits
     # (this is still 10 calls)
     return await fetch_from_twitter(
         access_token,
-        'lists/statuses.json',
-        [
-            ('owner_screen_name', owner_screen_name),
-            ('slug', slug),
-        ],
+        "lists/statuses.json",
+        [("owner_screen_name", owner_screen_name), ("slug", slug)],
         since_id,
         200,
-        5
+        5,
     )
 
 
 # Inspired by https://github.com/twitter/twitter-text
-USERNAME_REGEX_PART = r'@?([a-zA-Z0-9_]{1,15})'
-LIST_REGEX_PART = r'([a-z][-_a-z0-9]{0,24})'
+USERNAME_REGEX_PART = r"@?([a-zA-Z0-9_]{1,15})"
+LIST_REGEX_PART = r"([a-z][-_a-z0-9]{0,24})"
 
-USERNAME_REGEX = re.compile(f'^{USERNAME_REGEX_PART}$')
+USERNAME_REGEX = re.compile(f"^{USERNAME_REGEX_PART}$")
 LIST_URL_REGEX = re.compile(
-    f'^(?:https?://)twitter.com/{USERNAME_REGEX_PART}'
-    f'/lists/{LIST_REGEX_PART}$'
+    f"^(?:https?://)twitter.com/{USERNAME_REGEX_PART}" f"/lists/{LIST_REGEX_PART}$"
 )
-LIST_REGEX = re.compile(f'^{USERNAME_REGEX_PART}/{LIST_REGEX_PART}$')
+LIST_REGEX = re.compile(f"^{USERNAME_REGEX_PART}/{LIST_REGEX_PART}$")
 
 
 # Get from Twitter, return as dataframe
 async def get_new_tweets(access_token, querytype, query, old_tweets):
     if old_tweets is not None and not old_tweets.empty:
-        last_id = old_tweets['id'].max()
+        last_id = old_tweets["id"].max()
     else:
         last_id = None
 
     if querytype == QueryType.USER_TIMELINE:
         match = USERNAME_REGEX.match(query)
         if not match:
-            raise ValueError('Not a valid Twitter username')
+            raise ValueError("Not a valid Twitter username")
         username = match.group(1)
 
         # 16 pages of 200 each is Twitter's current maximum archived
@@ -319,10 +328,11 @@ async def get_new_tweets(access_token, querytype, query, old_tweets):
         if not match:
             match = LIST_REGEX.match(query)
         if not match:
-            raise ValueError('Not a valid Twitter list URL')
+            raise ValueError("Not a valid Twitter list URL")
 
-        return await twitter_list_timeline(access_token, match.group(1),
-                                           match.group(2), last_id)
+        return await twitter_list_timeline(
+            access_token, match.group(1), match.group(2), last_id
+        )
 
 
 # Combine this set of tweets with previous set of tweets
@@ -351,7 +361,7 @@ def render(table, params, *, fetch_result):
     if fetch_result is None:
         return table
 
-    if fetch_result.status == 'error':
+    if fetch_result.status == "error":
         return fetch_result
 
     if fetch_result.dataframe.empty:
@@ -366,34 +376,32 @@ def render(table, params, *, fetch_result):
     dataframe = dataframe.truncate(after=settings.TWITTER_MAX_ROWS_PER_TABLE - 1)
 
     return {
-        'dataframe': dataframe,
-        'column_formats': {'id': '{:d}'},  # don't add commas to user IDs
+        "dataframe": dataframe,
+        "column_formats": {"id": "{:d}"},  # don't add commas to user IDs
     }
 
 
 async def fetch(params, *, secrets, get_stored_dataframe):
-    querytype = QueryType(params['querytype'])
+    querytype = QueryType(params["querytype"])
     query: str = params[querytype.query_param_name]
-    access_token = (secrets.get('twitter_credentials') or {}).get('secret')
+    access_token = (secrets.get("twitter_credentials") or {}).get("secret")
 
     if not query.strip() and not access_token:
         return None  # Don't create a version
 
     if not query.strip():
-        return 'Please enter a query'
+        return "Please enter a query"
 
     if not access_token:
-        return 'Please sign in to Twitter'
+        return "Please sign in to Twitter"
 
     try:
-        if params['accumulate']:
+        if params["accumulate"]:
             old_tweets = await get_stored_tweets(get_stored_dataframe)
-            tweets = await get_new_tweets(access_token, querytype, query,
-                                          old_tweets)
+            tweets = await get_new_tweets(access_token, querytype, query, old_tweets)
             tweets = merge_tweets(old_tweets, tweets)
         else:
-            tweets = await get_new_tweets(access_token, querytype,
-                                          query, None)
+            tweets = await get_new_tweets(access_token, querytype, query, None)
         return tweets
 
     except ValueError as err:
@@ -404,13 +412,13 @@ async def fetch(params, *, secrets, get_stored_dataframe):
             if querytype == QueryType.USER_TIMELINE and err.status == 401:
                 return "User %s's tweets are private" % query
             elif querytype == QueryType.USER_TIMELINE and err.status == 404:
-                return 'User %s does not exist' % query
+                return "User %s does not exist" % query
             elif err.status == 429:
                 return (
-                    'Twitter API rate limit exceeded. '
-                    'Please wait a few minutes and try again.'
+                    "Twitter API rate limit exceeded. "
+                    "Please wait a few minutes and try again."
                 )
             else:
-                return 'Error from Twitter: %d %s' % (err.status, err.message)
+                return "Error from Twitter: %d %s" % (err.status, err.message)
         else:
-            return 'Error fetching tweets: %s' % str(err)
+            return "Error fetching tweets: %s" % str(err)

@@ -19,13 +19,15 @@ def _load_tab_flows(workflow: Workflow, delta_id: int) -> List[TabFlow]:
 
         for tab in workflow.live_tabs.all():
             steps = [
-                ExecuteStep(wfm,
-                            (
-                                wfm.module_version.param_schema
-                                if wfm.module_version is not None
-                                else ParamDType.Dict({})
-                            ),
-                            wfm.get_params())
+                ExecuteStep(
+                    wfm,
+                    (
+                        wfm.module_version.param_schema
+                        if wfm.module_version is not None
+                        else ParamDType.Dict({})
+                    ),
+                    wfm.get_params(),
+                )
                 for wfm in tab.live_wf_modules.all()
             ]
             ret.append(TabFlow(tab, steps))
@@ -82,8 +84,7 @@ async def execute_workflow(workflow: Workflow, delta_id: int) -> None:
     # `tab_shapes.keys()` returns tab slugs in the Workflow's tab order -- that
     # is, the order the user determines.
     tab_shapes: Dict[str, Optional[StepResultShape]] = dict(
-        (flow.tab_slug, None)
-        for flow in pending_tab_flows
+        (flow.tab_slug, None) for flow in pending_tab_flows
     )
 
     # Execute one tab_flow at a time.
@@ -93,9 +94,7 @@ async def execute_workflow(workflow: Workflow, delta_id: int) -> None:
     # computers); and `await` doesn't work with locks.
 
     while pending_tab_flows:
-        ready_flows, dependent_flows = partition_ready_and_dependent(
-            pending_tab_flows
-        )
+        ready_flows, dependent_flows = partition_ready_and_dependent(pending_tab_flows)
 
         if not ready_flows:
             # All flows are dependent -- meaning they all have cycles. Execute

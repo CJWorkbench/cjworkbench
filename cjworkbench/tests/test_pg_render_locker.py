@@ -74,15 +74,14 @@ class PgRenderLockerTest(unittest.TestCase):
         """
         Avoid InterfaceError: "another operation is in progress"
         """
+
         async def use_lock(locker, workflow_id):
             async with locker.render_lock(workflow_id) as lock1:
                 await lock1.stall_others()
 
         async def inner():
             async with PgRenderLocker() as locker:
-                done, _ = await asyncio.wait(
-                    {use_lock(locker, i) for i in range(5)}
-                )
+                done, _ = await asyncio.wait({use_lock(locker, i) for i in range(5)})
                 for task in done:
                     task.result()  # throw error, if any
 
@@ -102,47 +101,54 @@ class PgRenderLockerTest(unittest.TestCase):
                     # meaning it can acquire a lock just fine
                     async with locker2.render_lock(1) as lock2:
                         await lock2.stall_others()
+
         _run_async(inner())
 
     def test_stall_others_prevents_raise_remotely(self):
         async def inner():
             async with PgRenderLocker() as locker1:
                 async with PgRenderLocker() as locker2:
-                    last_line = 'the initial value'
+                    last_line = "the initial value"
                     async with locker1.render_lock(1) as lock1:
                         await lock1.stall_others()
+
                         async def stalling_op():
                             nonlocal last_line
                             async with locker2.render_lock(1) as lock2:
-                                last_line = 'entered stalling_op'
+                                last_line = "entered stalling_op"
                                 await lock2.stall_others()
-                            last_line = 'exited stalling_op'
+                            last_line = "exited stalling_op"
+
                         task = asyncio.create_task(stalling_op())
                         await asyncio.sleep(0)
                         # Even though we started stalling_op(), it will stall
                         # rather than acquire a lock.
-                        self.assertEqual(last_line, 'the initial value')
+                        self.assertEqual(last_line, "the initial value")
                     await task
-                    self.assertEqual(last_line, 'exited stalling_op')
+                    self.assertEqual(last_line, "exited stalling_op")
+
         _run_async(inner())
 
     def test_stall_others_prevents_raise_locally(self):
         async def inner():
             async with PgRenderLocker() as locker:
-                last_line = 'the initial value'
+                last_line = "the initial value"
                 async with locker.render_lock(1) as lock1:
                     await lock1.stall_others()
+
                     async def stalling_op():
                         nonlocal last_line
                         async with locker.render_lock(1) as lock2:
-                            last_line = 'entered stalling_op'
+                            last_line = "entered stalling_op"
                             await lock2.stall_others()
-                        last_line = 'exited stalling_op'
+                        last_line = "exited stalling_op"
+
                     task = asyncio.create_task(stalling_op())
                     await asyncio.sleep(0)
                     # Even though we started stalling_op(), it will stall
                     # rather than acquire a lock.
-                    self.assertEqual(last_line, 'the initial value')
+                    self.assertEqual(last_line, "the initial value")
                 await task
-                self.assertEqual(last_line, 'exited stalling_op')
+                self.assertEqual(last_line, "exited stalling_op")
+
         _run_async(inner())

@@ -7,13 +7,8 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('server', '0008_auto_20190523_2128'),
-    ]
+    dependencies = [("server", "0008_auto_20190523_2128")]
 
     operations = [
-        migrations.AlterModelOptions(
-            name='aclentry',
-            options={'ordering': ['email']},
-        ),
+        migrations.AlterModelOptions(name="aclentry", options={"ordering": ["email"]})
     ]

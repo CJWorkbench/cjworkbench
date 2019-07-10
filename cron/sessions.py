@@ -30,18 +30,16 @@ def delete_expired_sessions_and_workflows_sync() -> None:
     """
     SessionStore.clear_expired()
 
-    active_session_keys = Session.objects.all().values_list('session_key',
-                                                            flat=True)
+    active_session_keys = Session.objects.all().values_list("session_key", flat=True)
     # TODO fix race here: new workflows created right now will be deleted
     # immediately. (DB Transactions don't prevent this race.)
     workflows = list(
-            Workflow.objects
-            .filter(owner__isnull=True)
-            .exclude(anonymous_owner_session_key__in=active_session_keys)
+        Workflow.objects.filter(owner__isnull=True).exclude(
+            anonymous_owner_session_key__in=active_session_keys
+        )
     )
 
     for workflow in workflows:
         with workflow.cooperative_lock():
-            logger.info('Deleting workflow %d ("%s")', workflow.id,
-                        workflow.name)
+            logger.info('Deleting workflow %d ("%s")', workflow.id, workflow.name)
             workflow.delete()

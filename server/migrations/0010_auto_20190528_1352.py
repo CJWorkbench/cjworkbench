@@ -7,24 +7,22 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('server', '0009_auto_20190528_1337'),
-    ]
+    dependencies = [("server", "0009_auto_20190528_1337")]
 
     operations = [
         migrations.AddField(
-            model_name='wfmodule',
-            name='inprogress_file_upload_id',
+            model_name="wfmodule",
+            name="inprogress_file_upload_id",
             field=models.CharField(blank=True, default=None, max_length=255, null=True),
         ),
         migrations.AddField(
-            model_name='wfmodule',
-            name='inprogress_file_upload_key',
+            model_name="wfmodule",
+            name="inprogress_file_upload_key",
             field=models.CharField(blank=True, default=None, max_length=100, null=True),
         ),
         migrations.AddField(
-            model_name='wfmodule',
-            name='inprogress_file_upload_last_accessed_at',
+            model_name="wfmodule",
+            name="inprogress_file_upload_last_accessed_at",
             field=models.DateTimeField(blank=True, default=None, null=True),
         ),
     ]

@@ -17,19 +17,21 @@ class DeleteModuleCommand(ChangesWfModuleOutputs, Delta):
 
     def load_ws_data(self):
         data = super().load_ws_data()
-        data['updateTabs'] = {
+        data["updateTabs"] = {
             self.wf_module.tab.slug: {
-                'wf_module_ids': list(self.wf_module.tab.live_wf_modules
-                                      .values_list('id', flat=True)),
-            },
+                "wf_module_ids": list(
+                    self.wf_module.tab.live_wf_modules.values_list("id", flat=True)
+                )
+            }
         }
         return data
 
     @classmethod
     def affected_wf_modules_in_tab(cls, wf_module) -> models.Q:
         # We don't need to change self.wf_module's delta_id: just the others.
-        return models.Q(tab_id=wf_module.tab_id, order__gt=wf_module.order,
-                        is_deleted=False)
+        return models.Q(
+            tab_id=wf_module.tab_id, order__gt=wf_module.order, is_deleted=False
+        )
 
     def forward_impl(self):
         # If we are deleting the selected module, then set the previous module
@@ -42,13 +44,14 @@ class DeleteModuleCommand(ChangesWfModuleOutputs, Delta):
                 tab.selected_wf_module_position = selected
             else:
                 tab.selected_wf_module_position = None
-            tab.save(update_fields=['selected_wf_module_position'])
+            tab.save(update_fields=["selected_wf_module_position"])
 
         self.wf_module.is_deleted = True
-        self.wf_module.save(update_fields=['is_deleted'])
+        self.wf_module.save(update_fields=["is_deleted"])
 
-        tab.live_wf_modules.filter(order__gt=self.wf_module.order) \
-            .update(order=F('order') - 1)
+        tab.live_wf_modules.filter(order__gt=self.wf_module.order).update(
+            order=F("order") - 1
+        )
 
         self.forward_affected_delta_ids()
 
@@ -56,12 +59,12 @@ class DeleteModuleCommand(ChangesWfModuleOutputs, Delta):
         tab = self.wf_module.tab
 
         # Move subsequent modules over to make way for this one.
-        tab.live_wf_modules \
-            .filter(order__gte=self.wf_module.order) \
-            .update(order=F('order') + 1)
+        tab.live_wf_modules.filter(order__gte=self.wf_module.order).update(
+            order=F("order") + 1
+        )
 
         self.wf_module.is_deleted = False
-        self.wf_module.save(update_fields=['is_deleted'])
+        self.wf_module.save(update_fields=["is_deleted"])
 
         # Don't set tab.selected_wf_module_position. We can't restore it, and
         # this operation can't invalidate any value that was there previously.
@@ -82,13 +85,14 @@ class DeleteModuleCommand(ChangesWfModuleOutputs, Delta):
 
         return {
             **kwargs,
-            'wf_module': wf_module,
-            'wf_module_delta_ids': cls.affected_wf_module_delta_ids(wf_module),
+            "wf_module": wf_module,
+            "wf_module_delta_ids": cls.affected_wf_module_delta_ids(wf_module),
         }
 
     @property
     def command_description(self):
-        return f'Delete WfModule {self.wf_module}'
+        return f"Delete WfModule {self.wf_module}"
+
 
 # You may be wondering why there's no @receiver(pre_delete, ...) here. That's
 # because if we're deleting a DeleteModuleCommand, then that means _previous_

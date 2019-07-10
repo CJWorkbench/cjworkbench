@@ -1,6 +1,13 @@
 from django.contrib import admin
-from .models import ModuleVersion, WfModule, StoredObject, Delta, Workflow, \
-        Tab, WfModule
+from .models import (
+    ModuleVersion,
+    WfModule,
+    StoredObject,
+    Delta,
+    Workflow,
+    Tab,
+    WfModule,
+)
 
 admin.site.register(ModuleVersion)
 admin.site.register(Delta)
@@ -14,8 +21,8 @@ class WorkflowAdmin(admin.ModelAdmin):
     # don't load load every delta ever on the workflow object page
     raw_id_fields = ("last_delta",)
 
-    search_fields = ('name', 'owner__username', 'owner__email')
-    list_filter = ('owner',)
+    search_fields = ("name", "owner__username", "owner__email")
+    list_filter = ("owner",)
 
     def get_deleted_objects(self, objs, request):
         """
@@ -29,22 +36,19 @@ class WorkflowAdmin(admin.ModelAdmin):
         """
         assert len(objs) == 1  # we don't bulk-delete
         tabs = (
-            objs[0].tabs
-            .only('id', 'slug', 'name', 'is_deleted')
-            .prefetch_related('wf_modules')
+            objs[0]
+            .tabs.only("id", "slug", "name", "is_deleted")
+            .prefetch_related("wf_modules")
         )
         to_delete = []
         step_count = 0
         for tab in tabs:
-            tab_to_delete = f'Tab {tab.id} [{tab.slug}: {tab.name}]'
+            tab_to_delete = f"Tab {tab.id} [{tab.slug}: {tab.name}]"
             steps_to_delete = [
-                f'Step {tab.slug}-{step.order} [{step.module_id_name}]'
+                f"Step {tab.slug}-{step.order} [{step.module_id_name}]"
                 for step in tab.wf_modules.all()
             ]
-            to_delete.append([
-                tab_to_delete,
-                steps_to_delete,
-            ])
+            to_delete.append([tab_to_delete, steps_to_delete])
             step_count += len(steps_to_delete)
 
         return (

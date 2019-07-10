@@ -7,16 +7,19 @@ from cjworkbench.types import QuickFix
 
 class UnneededExecution(Exception):
     """A render would produce useless results."""
+
     pass
 
 
 class TabCycleError(Exception):
     """The chosen tab exists, and it depends on the output of this tab."""
+
     pass
 
 
 class TabOutputUnreachableError(Exception):
     """The chosen tab exists, and it is empty or has an error."""
+
     pass
 
 
@@ -35,6 +38,7 @@ class PromptingError(Exception):
     @dataclass(frozen=True)
     class WrongColumnType:
         """The chosen columns exist, but they have the wrong types."""
+
         column_names: List[str]
         found_type: str
         wanted_types: FrozenSet[str]
@@ -49,28 +53,33 @@ class PromptingError(Exception):
             # our converters are split by input type.
 
             # 'names': user-visible colnames
-            names = ', '.join([f'"{c}"' for c in self.column_names])
+            names = ", ".join([f'"{c}"' for c in self.column_names])
             # 'colnames': param value for the module
-            params = {'colnames': self.column_names}
+            params = {"colnames": self.column_names}
 
-            if 'text' in self.wanted_types:
-                return QuickFix(f'Convert {names} to Text',
-                                'prependModule', ['converttotext', params])
-            elif 'number' in self.wanted_types:
-                return QuickFix(f'Convert {names} to Numbers',
-                                'prependModule',
-                                ['converttexttonumber', params])
-            elif 'datetime' in self.wanted_types:
-                return QuickFix(f'Convert {names} to Dates & Times',
-                                'prependModule', ['convert-date', params])
-            else:
-                raise RuntimeError(
-                    f'Unhandled wanted_types: {self.wanted_types}'
+            if "text" in self.wanted_types:
+                return QuickFix(
+                    f"Convert {names} to Text",
+                    "prependModule",
+                    ["converttotext", params],
                 )
-
+            elif "number" in self.wanted_types:
+                return QuickFix(
+                    f"Convert {names} to Numbers",
+                    "prependModule",
+                    ["converttexttonumber", params],
+                )
+            elif "datetime" in self.wanted_types:
+                return QuickFix(
+                    f"Convert {names} to Dates & Times",
+                    "prependModule",
+                    ["convert-date", params],
+                )
+            else:
+                raise RuntimeError(f"Unhandled wanted_types: {self.wanted_types}")
 
     def __init__(self, errors: List[PromptDontRender.WrongColumnType]):
-        super().__init__('user must change something before we render')
+        super().__init__("user must change something before we render")
         self.errors = errors
 
     def __eq__(self, other):

@@ -5,14 +5,15 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('cjworkbench', '0001_squashed_0009_auto_20180608_1556'),
-    ]
+    dependencies = [("cjworkbench", "0001_squashed_0009_auto_20180608_1556")]
 
     operations = [
         migrations.AddField(
-            model_name='userprofile',
-            name='max_fetches_per_day',
-            field=models.IntegerField(default=500, help_text="Applies to the sum of all this user's Workflows. One fetch every 5min = 288 fetches per day."),
-        ),
+            model_name="userprofile",
+            name="max_fetches_per_day",
+            field=models.IntegerField(
+                default=500,
+                help_text="Applies to the sum of all this user's Workflows. One fetch every 5min = 288 fetches per day.",
+            ),
+        )
     ]

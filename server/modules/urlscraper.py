@@ -39,15 +39,15 @@ async def async_get_url(row, url):
 
         return (row, str(response.status), text)
     except asyncio.TimeoutError:
-        return (row, 'Timed out', '')
+        return (row, "Timed out", "")
     except aiohttp.InvalidURL:
-        return (row, 'Invalid URL', '')
+        return (row, "Invalid URL", "")
     except aiohttp.ClientError as err:
-        return (row, f"Can't connect: {err}", '')
+        return (row, f"Can't connect: {err}", "")
     except asyncio.CancelledError as err:
         raise
     except Exception as err:
-        return (row, f'Unknown error: {err}', '')
+        return (row, f"Unknown error: {err}", "")
 
 
 # Asynchronously scrape many urls, and store the results in the table
@@ -69,27 +69,28 @@ async def scrape_urls(urls, result_table):
         assert fetching
 
         # finish one or more tasks, then loop
-        done, pending = await asyncio.wait(fetching,
-                                           return_when=asyncio.FIRST_COMPLETED)
+        done, pending = await asyncio.wait(
+            fetching, return_when=asyncio.FIRST_COMPLETED
+        )
 
         for task in done:
             row, status, text = await task
-            result_table.loc[row, 'status'] = status
-            result_table.loc[row, 'html'] = text
+            result_table.loc[row, "status"] = status
+            result_table.loc[row, "html"] = text
 
         fetching = pending  # delete done tasks
 
 
 def are_params_empty(params, input_table):
-    urlsource: int = params['urlsource']
-    if urlsource == 'list':
-        urllist: str = params['urllist']
+    urlsource: int = params["urlsource"]
+    if urlsource == "list":
+        urllist: str = params["urllist"]
         return not urllist
-    elif urlsource == 'column':
-        urlcol: str = params['urlcol']
+    elif urlsource == "column":
+        urlcol: str = params["urlcol"]
         return urlcol is None
-    else: # urlsource == 'paged'
-        return not params['pagedurl']
+    else:  # urlsource == 'paged'
+        return not params["pagedurl"]
 
 
 def render(table, params, *, fetch_result):
@@ -106,26 +107,26 @@ def render(table, params, *, fetch_result):
 
 async def fetch(params, *, get_input_dataframe):
     urls = []
-    urlsource = params['urlsource']
-    error = ''
+    urlsource = params["urlsource"]
+    error = ""
 
-    if urlsource == 'list':
+    if urlsource == "list":
         if are_params_empty(params, None):
             return None
-        urllist_text: str = params['urllist']
-        urllist_raw = urllist_text.split('\n')
+        urllist_text: str = params["urllist"]
+        urllist_raw = urllist_text.split("\n")
         for url in urllist_raw:
             s_url = url.strip()
             if len(s_url) == 0:
                 continue
             # Fix in case user adds an URL without http(s) prefix
-            if not re.match('^https?://.*', s_url):
-                urls.append('http://{}'.format(s_url))
+            if not re.match("^https?://.*", s_url):
+                urls.append("http://{}".format(s_url))
             else:
                 urls.append(s_url)
         if not urls:
             return None
-    elif urlsource == 'column':
+    elif urlsource == "column":
         # We won't execute here -- there's no need: the user clicked a
         # button so should be pretty clear on what the input is.
         prev_table = await get_input_dataframe()
@@ -136,47 +137,48 @@ async def fetch(params, *, get_input_dataframe):
             return None
 
         # get our list of URLs from a column in the input table
-        urlcol: str = params['urlcol']
+        urlcol: str = params["urlcol"]
         urls = prev_table[urlcol].tolist()
-    elif urlsource == 'paged':
+    elif urlsource == "paged":
         # Count through a list of page numbers, appending each to the URL
         if are_params_empty(params, None):
             return None
 
-        pagedurl: str = params['pagedurl']
+        pagedurl: str = params["pagedurl"]
         # Fix in case user adds an URL without http(s) prefix
-        if not re.match('^https?://.*', pagedurl):
-            pagedurl = 'http://' +  pagedurl
+        if not re.match("^https?://.*", pagedurl):
+            pagedurl = "http://" + pagedurl
 
-        begin = params['startpage']
-        end = params['endpage'] + 1
+        begin = params["startpage"]
+        end = params["endpage"] + 1
         if end - begin > MaxNUrls:
             end = begin + MaxNUrls
-            error = f'We limited your scrape to {MaxNUrls} URLs'
+            error = f"We limited your scrape to {MaxNUrls} URLs"
 
         # Generate multiple urls by adding page numbers, if user says so
-        if params['addpagenumbers']:
+        if params["addpagenumbers"]:
             # limit the number of pages we can scrape with this method
             urls = [pagedurl + str(num) for num in range(begin, end)]
         else:
             urls = [pagedurl]
     else:
-        raise RuntimeError('Invalid urlsource')
+        raise RuntimeError("Invalid urlsource")
 
     if len(urls) > MaxNUrls:
         urls = urls[:MaxNUrls]
-        error = f'We limited your scrape to {MaxNUrls} URLs'
+        error = f"We limited your scrape to {MaxNUrls} URLs"
 
-    table = pd.DataFrame({
-        'url': urls,
-        # TODO use response date, not current date
-        'date': (
-            timezone.now().isoformat(timespec='seconds') \
-            .replace('+00:00', 'Z')
-        ),
-        'status': '',
-        'html': '',
-    })
+    table = pd.DataFrame(
+        {
+            "url": urls,
+            # TODO use response date, not current date
+            "date": (
+                timezone.now().isoformat(timespec="seconds").replace("+00:00", "Z")
+            ),
+            "status": "",
+            "html": "",
+        }
+    )
 
     await scrape_urls(urls, table)
     if error:
@@ -191,10 +193,8 @@ def _migrate_params_v0_to_v1(params):
 
     v1: urlsource is "list" or "column".
     """
-    return {
-        **params,
-        'urlsource': ['list', 'column'][params['urlsource']],
-    }
+    return {**params, "urlsource": ["list", "column"][params["urlsource"]]}
+
 
 def _migrate_params_v1_to_v2(params):
     """
@@ -202,27 +202,25 @@ def _migrate_params_v1_to_v2(params):
     """
     return {
         **params,
-        'pagedurl': '',
-        'addpagenumbers': False, # defaults, from json file
-        'startpage': 0,
-        'endpage': 9
+        "pagedurl": "",
+        "addpagenumbers": False,  # defaults, from json file
+        "startpage": 0,
+        "endpage": 9,
     }
+
 
 def _migrate_params_v2_to_v3(params):
     """
     v3 adds "addpagenumbers" checkbox
     """
-    return {
-        **params,
-        'addpagenumbers': True  # match v2 behavior
-    }
+    return {**params, "addpagenumbers": True}  # match v2 behavior
 
 
 def migrate_params(params):
-    if isinstance(params['urlsource'], int):
+    if isinstance(params["urlsource"], int):
         params = _migrate_params_v0_to_v1(params)
-    if 'pagedurl' not in params:
+    if "pagedurl" not in params:
         params = _migrate_params_v1_to_v2(params)
-    if 'addpagenumbers' not in params:
+    if "addpagenumbers" not in params:
         params = _migrate_params_v2_to_v3(params)
     return params

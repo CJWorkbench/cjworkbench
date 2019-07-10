@@ -9,7 +9,7 @@ from integrationtests.helpers import accounts
 from integrationtests.helpers.modules import import_workbench_module
 
 
-_url_regex = re.compile('https?://[^\\s]+')
+_url_regex = re.compile("https?://[^\\s]+")
 
 
 def find_url_in_email(message: email.message.Message) -> Optional[str]:
@@ -24,11 +24,10 @@ def find_url_in_email(message: email.message.Message) -> Optional[str]:
 
 class WorkbenchBase(unittest.TestCase):
     serve_static = True
-    live_server_url = 'http://frontend:8080'
-    db_connect_str = 'user=cjworkbench host=workbench-db password=cjworkbench'
-    data_path = '/app'
-    account_admin = accounts.AccountAdmin(live_server_url, db_connect_str,
-                                          data_path)
+    live_server_url = "http://frontend:8080"
+    db_connect_str = "user=cjworkbench host=workbench-db password=cjworkbench"
+    data_path = "/app"
+    account_admin = accounts.AccountAdmin(live_server_url, db_connect_str, data_path)
 
     def setUp(self):
         super().setUp()
@@ -72,22 +71,21 @@ class WorkbenchBase(unittest.TestCase):
         b = self.browser
 
         if position is None:
-            with b.scope('.in-between-modules:last-child'):
-                b.click_button('ADD STEP')
+            with b.scope(".in-between-modules:last-child"):
+                b.click_button("ADD STEP")
         else:
             assert position > 0  # for 0, use add_data_step().
             i = position * 2
-            with b.scope(f'.in-between-modules:nth-child({i})'):
-                b.click_button('ADD STEP')
+            with b.scope(f".in-between-modules:nth-child({i})"):
+                b.click_button("ADD STEP")
 
         # Search. That way, we won't need to worry about overflow:auto
-        b.fill_in('moduleQ', name)
+        b.fill_in("moduleQ", name)
 
-        b.click_whatever('button.module-search-result', text=name)
+        b.click_whatever("button.module-search-result", text=name)
 
         b.assert_element(
-            f'.wf-module[data-module-name="{name}"]:not(.status-busy)',
-            wait=True
+            f'.wf-module[data-module-name="{name}"]:not(.status-busy)', wait=True
         )
 
     # TODO move to a helper .py file
@@ -98,13 +96,12 @@ class WorkbenchBase(unittest.TestCase):
         Assumes the 'Add Data' modal is open.
         """
         b = self.browser
-        b.fill_in('moduleQ', name)
+        b.fill_in("moduleQ", name)
         b.click_link(name)
 
         # Wait for module to appear and render
         b.assert_element(
-            f'.wf-module[data-module-name="{name}"]:not(.status-busy)',
-            wait=True
+            f'.wf-module[data-module-name="{name}"]:not(.status-busy)', wait=True
         )
 
     # TODO move to a helper .py file
@@ -116,12 +113,12 @@ class WorkbenchBase(unittest.TestCase):
         """
         b = self.browser
 
-        with b.scope(f'.wf-module:nth-child({position * 2 + 1})'):
-            b.click_button('more', visible='all')
+        with b.scope(f".wf-module:nth-child({position * 2 + 1})"):
+            b.click_button("more", visible="all")
 
         # Dropdown menu is at root of document (in a <Portal>)
-        with b.scope('.dropdown-menu'):
-            b.click_button('Delete')
+        with b.scope(".dropdown-menu"):
+            b.click_button("Delete")
 
     # TODO move to a helper .py file
     def add_csv_data_module(self, csv=None):
@@ -131,19 +128,20 @@ class WorkbenchBase(unittest.TestCase):
         csv -- Text of csv. If not set, use default data.
         """
         if csv is None:
-            csv = '\n'.join([
-                'Month,Amount,Name',
-                'Jan,10,Alicia Aliciason',
-                'Feb,666,Fred Frederson',
-            ])
+            csv = "\n".join(
+                [
+                    "Month,Amount,Name",
+                    "Jan,10,Alicia Aliciason",
+                    "Feb,666,Fred Frederson",
+                ]
+            )
 
-        self.add_data_step('Paste data')
-        self.browser.fill_in('csv', csv)
+        self.add_data_step("Paste data")
+        self.browser.fill_in("csv", csv)
         self.submit_wf_module()
 
     # TODO move to a helper .py file
-    def select_column(self, module_name: str, name: str, text: str,
-                      **kwargs) -> None:
+    def select_column(self, module_name: str, name: str, text: str, **kwargs) -> None:
         """Selects 'text' in the ColumnSelect box with name 'name'.
 
         Waits for '.loading' to disappear before filling in the text.
@@ -159,19 +157,17 @@ class WorkbenchBase(unittest.TestCase):
                 f'.wf-module[data-module-name="{module_name}"] '
                 f'.param[data-name="{name}"]'
             ),
-            **kwargs
+            **kwargs,
         ):
-            self.browser.assert_element(
-                f'.react-select:not(.loading)',
-                wait=True
-            )
-            self.browser.click_whatever('.react-select__dropdown-indicator')
+            self.browser.assert_element(f".react-select:not(.loading)", wait=True)
+            self.browser.click_whatever(".react-select__dropdown-indicator")
 
-        self.browser.click_whatever('.react-select__option', text=text)
+        self.browser.click_whatever(".react-select__option", text=text)
 
     # TODO move to a helper .py file
-    def select_tab_param(self, module_name: str, name: str, text: str,
-                         **kwargs) -> None:
+    def select_tab_param(
+        self, module_name: str, name: str, text: str, **kwargs
+    ) -> None:
         """
         Select 'text' in the TabParam box with name 'name'.
 
@@ -186,11 +182,11 @@ class WorkbenchBase(unittest.TestCase):
                 f'.wf-module[data-module-name="{module_name}"] '
                 f'.param[data-name="{name}"]'
             ),
-            **kwargs
+            **kwargs,
         ):
-            self.browser.click_whatever('.react-select__dropdown-indicator')
+            self.browser.click_whatever(".react-select__dropdown-indicator")
 
-        self.browser.click_whatever('.react-select__option', text=text)
+        self.browser.click_whatever(".react-select__option", text=text)
 
     def submit_wf_module(self, **kwargs):
         """
@@ -200,8 +196,7 @@ class WorkbenchBase(unittest.TestCase):
         wait -- True or number of seconds to wait until element is ready
         """
         self.browser.click_whatever(
-            'form.module-card-params button[name=submit]:not(:disabled)',
-            **kwargs
+            "form.module-card-params button[name=submit]:not(:disabled)", **kwargs
         )
 
 
@@ -211,7 +206,6 @@ class LoggedInIntegrationTest(WorkbenchBase):
         super().setUp()
 
         # is_staff=True so user can import modules to use in e.g. lesson tests
-        self.user = self.account_admin.create_user('user@example.org',
-                                                   is_staff=True)
+        self.user = self.account_admin.create_user("user@example.org", is_staff=True)
 
         accounts.login(self.browser, self.user.email, self.user.email)

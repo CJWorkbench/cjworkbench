@@ -15,27 +15,27 @@ logger = logging.getLogger(__name__)
 
 def main(directory):
     def reload():
-        logger.info(f'Reloading...')
+        logger.info(f"Reloading...")
 
         with tempfile.TemporaryDirectory() as tmpdir:
-            importdir = os.path.join(tmpdir, 'importme')
+            importdir = os.path.join(tmpdir, "importme")
             shutil.copytree(directory, importdir)
-            shutil.rmtree(os.path.join(importdir, '.git'), ignore_errors=True)
-            shutil.rmtree(os.path.join(importdir, '.eggs'), ignore_errors=True)
-            shutil.rmtree(os.path.join(importdir, 'node_modules'), ignore_errors=True)
+            shutil.rmtree(os.path.join(importdir, ".git"), ignore_errors=True)
+            shutil.rmtree(os.path.join(importdir, ".eggs"), ignore_errors=True)
+            shutil.rmtree(os.path.join(importdir, "node_modules"), ignore_errors=True)
 
             try:
-                import_module_from_directory('develop',
-                                             pathlib.Path(importdir),
-                                             force_reload=True)
+                import_module_from_directory(
+                    "develop", pathlib.Path(importdir), force_reload=True
+                )
             except Exception:
-                logger.exception('Error loading module')
+                logger.exception("Error loading module")
 
     class ReloadEventHandler(RegexMatchingEventHandler):
         def on_any_event(self, ev):
             reload()
 
-    regexes = ['.*\\.(py|json|yaml|html)']
+    regexes = [".*\\.(py|json|yaml|html)"]
 
     event_handler = ReloadEventHandler(regexes=regexes)
     observer = Observer()
@@ -53,10 +53,10 @@ def main(directory):
 
 
 class Command(BaseCommand):
-    help = 'Watch a directory and auto-import its module.'
+    help = "Watch a directory and auto-import its module."
 
     def add_arguments(self, parser):
-        parser.add_argument('directory')
+        parser.add_argument("directory")
 
     def handle(self, *args, **options):
-        main(options['directory'])
+        main(options["directory"])

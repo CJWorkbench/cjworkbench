@@ -16,7 +16,7 @@ class InitWorkflowCommand(Delta):
     async def forward(self):
         """Crash. There is no way to undo, so forward() can't be called."""
         raise RuntimeError(
-            'InitWorkflowCommand cannot be undone, so forward() cannot happen'
+            "InitWorkflowCommand cannot be undone, so forward() cannot happen"
         )
 
     async def backward(self):
@@ -35,10 +35,10 @@ class InitWorkflowCommand(Delta):
         delta = cls.objects.create(workflow=workflow)
 
         workflow.last_delta = delta
-        workflow.save(update_fields=['last_delta_id'])
+        workflow.save(update_fields=["last_delta_id"])
 
         return delta
 
     @property
     def command_description(self):
-        return f'Create Workflow'
+        return f"Create Workflow"

@@ -8,6 +8,7 @@ from .auth import loads_workflow_for_owner
 
 # access-control lists
 
+
 class AclEntryForm(forms.Form):
     email = forms.EmailField()
     # Django: where every bool needs required=False
@@ -21,27 +22,28 @@ class Entry(View):
     def put(self, request: HttpRequest, workflow: Workflow, *, email: str):
         """Set a user's access to a Workflow."""
         if workflow.is_anonymous:
-            return JsonResponse({'error': 'cannot-share-anonymous'},
-                                status=404)
+            return JsonResponse({"error": "cannot-share-anonymous"}, status=404)
 
         try:
-            data = json.loads(request.body, encoding='utf-8')
+            data = json.loads(request.body, encoding="utf-8")
         except ValueError:
-            return JsonResponse({'error': 'invalid JSON'}, status=400)
+            return JsonResponse({"error": "invalid JSON"}, status=400)
 
-        form = self.form_class({**data, 'email': email})
+        form = self.form_class({**data, "email": email})
         if not form.is_valid():
-            return HttpResponse('{"errors":' + form.errors.as_json() + '}',
-                                content_type='application/json', status=400)
+            return HttpResponse(
+                '{"errors":' + form.errors.as_json() + "}",
+                content_type="application/json",
+                status=400,
+            )
 
-        if form.cleaned_data['email'] == workflow.owner.email:
-            return JsonResponse({'errors': ['cannot-share-with-owner']},
-                                status=400)
+        if form.cleaned_data["email"] == workflow.owner.email:
+            return JsonResponse({"errors": ["cannot-share-with-owner"]}, status=400)
 
         AclEntry.objects.update_or_create(
             workflow=workflow,
-            email=form.cleaned_data['email'],
-            defaults={'can_edit': form.cleaned_data['canEdit']}
+            email=form.cleaned_data["email"],
+            defaults={"can_edit": form.cleaned_data["canEdit"]},
         )
 
         return HttpResponse(status=204)
@@ -50,18 +52,19 @@ class Entry(View):
     def delete(self, request: HttpRequest, workflow: Workflow, *, email: str):
         """Remove a user's access to a Workflow."""
         if workflow.is_anonymous:
-            return JsonResponse({'error': 'cannot-share-anonymous'},
-                                status=404)
+            return JsonResponse({"error": "cannot-share-anonymous"}, status=404)
 
         # validate email
-        form = self.form_class({'can_edit': False, 'email': email})
+        form = self.form_class({"can_edit": False, "email": email})
         if not form.is_valid():
-            return HttpResponse('{"errors":' + form.errors.as_json() + '}',
-                                content_type='application/json', status=400)
+            return HttpResponse(
+                '{"errors":' + form.errors.as_json() + "}",
+                content_type="application/json",
+                status=400,
+            )
 
-        if form.cleaned_data['email'] == workflow.owner.email:
-            return JsonResponse({'errors': 'cannot-share-with-owner'},
-                                status=400)
+        if form.cleaned_data["email"] == workflow.owner.email:
+            return JsonResponse({"errors": "cannot-share-with-owner"}, status=400)
 
         AclEntry.objects.filter(workflow=workflow, email=email).delete()
         return HttpResponse(status=204)

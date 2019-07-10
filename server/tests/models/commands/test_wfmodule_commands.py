@@ -1,9 +1,11 @@
 import asyncio
 from unittest.mock import patch
-from server.models import Delta, LoadedModule, ModuleVersion, Workflow, \
-        WfModule
-from server.models.commands import AddModuleCommand, DeleteModuleCommand, \
-        InitWorkflowCommand
+from server.models import Delta, LoadedModule, ModuleVersion, Workflow, WfModule
+from server.models.commands import (
+    AddModuleCommand,
+    DeleteModuleCommand,
+    InitWorkflowCommand,
+)
 from server.models.param_dtype import ParamDType
 from server.tests.utils import DbTestCase
 
@@ -24,18 +26,15 @@ class MockLoadedModule:
         return values
 
 
-@patch('server.rabbitmq.queue_render', async_noop)
-@patch('server.models.Delta.ws_notify', async_noop)
+@patch("server.rabbitmq.queue_render", async_noop)
+@patch("server.models.Delta.ws_notify", async_noop)
 class AddDeleteModuleCommandTests(DbTestCase):
     def assertWfModuleVersions(self, expected_versions):
-        positions = list(
-            self.tab.live_wf_modules.values_list('order', flat=True)
-        )
+        positions = list(self.tab.live_wf_modules.values_list("order", flat=True))
         self.assertEqual(positions, list(range(0, len(expected_versions))))
 
         versions = list(
-            self.tab.live_wf_modules.values_list('last_relevant_delta_id',
-                                                 flat=True)
+            self.tab.live_wf_modules.values_list("last_relevant_delta_id", flat=True)
         )
         self.assertEqual(versions, expected_versions)
 
@@ -44,23 +43,22 @@ class AddDeleteModuleCommandTests(DbTestCase):
 
         self.workflow = Workflow.objects.create()
         self.tab = self.workflow.tabs.create(position=0)
-        self.module_version = ModuleVersion.create_or_replace_from_spec({
-            'id_name': 'loadurl',
-            'name': 'Load URL',
-            'category': 'Clean',
-            'parameters': [
-                {'id_name': 'url', 'type': 'string'},
-            ],
-        }, source_version_hash='1.0')
+        self.module_version = ModuleVersion.create_or_replace_from_spec(
+            {
+                "id_name": "loadurl",
+                "name": "Load URL",
+                "category": "Clean",
+                "parameters": [{"id_name": "url", "type": "string"}],
+            },
+            source_version_hash="1.0",
+        )
 
         self.delta = InitWorkflowCommand.create(self.workflow)
 
     # Add another module, then undo, redo
     def test_add_module(self):
         existing_module = self.tab.wf_modules.create(
-            order=0,
-            last_relevant_delta_id=self.delta.id,
-            params={'url': ''}
+            order=0, last_relevant_delta_id=self.delta.id, params={"url": ""}
         )
 
         all_modules = self.tab.live_wf_modules
@@ -70,18 +68,20 @@ class AddDeleteModuleCommandTests(DbTestCase):
 
         # Add a module, insert before the existing one, check to make sure it
         # went there and old one is after
-        cmd = self.run_with_async_db(AddModuleCommand.create(
-            workflow=self.workflow,
-            tab=self.workflow.tabs.first(),
-            module_id_name=self.module_version.id_name,
-            position=0,
-            param_values={'url': 'https://x.com'}
-        ))
+        cmd = self.run_with_async_db(
+            AddModuleCommand.create(
+                workflow=self.workflow,
+                tab=self.workflow.tabs.first(),
+                module_id_name=self.module_version.id_name,
+                position=0,
+                param_values={"url": "https://x.com"},
+            )
+        )
         self.assertEqual(all_modules.count(), 2)
         added_module = all_modules.get(order=0)
         self.assertNotEqual(added_module, existing_module)
         # Test that supplied param is written
-        self.assertEqual(added_module.params['url'], 'https://x.com')
+        self.assertEqual(added_module.params["url"], "https://x.com")
         bumped_module = all_modules.get(order=1)
         self.assertEqual(bumped_module, existing_module)
 
@@ -118,68 +118,77 @@ class AddDeleteModuleCommandTests(DbTestCase):
         with self.assertRaises(WfModule.DoesNotExist):
             all_modules.get(pk=added_module.id)  # should be gone
 
-    @patch('server.models.loaded_module.LoadedModule.for_module_version_sync',
-           MockLoadedModule)
+    @patch(
+        "server.models.loaded_module.LoadedModule.for_module_version_sync",
+        MockLoadedModule,
+    )
     def test_add_module_default_params(self):
         workflow = Workflow.create_and_init()
-        module_version = ModuleVersion.create_or_replace_from_spec({
-            'id_name': 'blah',
-            'name': 'Blah',
-            'category': 'Clean',
-            'parameters': [
-                {'id_name': 'a', 'type': 'string', 'default': 'x'},
-                {'id_name': 'c', 'type': 'checkbox', 'name': 'C',
-                 'default': True},
-            ],
-        }, source_version_hash='1.0')
+        module_version = ModuleVersion.create_or_replace_from_spec(
+            {
+                "id_name": "blah",
+                "name": "Blah",
+                "category": "Clean",
+                "parameters": [
+                    {"id_name": "a", "type": "string", "default": "x"},
+                    {"id_name": "c", "type": "checkbox", "name": "C", "default": True},
+                ],
+            },
+            source_version_hash="1.0",
+        )
 
-        cmd = self.run_with_async_db(AddModuleCommand.create(
-            workflow=workflow,
-            tab=workflow.tabs.first(),
-            module_id_name=module_version.id_name,
-            position=0,
-            param_values={}
-        ))
-        self.assertEqual(cmd.wf_module.params, {'a': 'x', 'c': True})
-
-    def test_add_module_raise_module_version_does_not_exist(self):
-        workflow = Workflow.create_and_init()
-        with self.assertRaises(ModuleVersion.DoesNotExist):
-            self.run_with_async_db(AddModuleCommand.create(
-                workflow=workflow,
-                tab=workflow.tabs.first(),
-                module_id_name='doesnotexist',
-                position=0,
-                param_values={}
-            ))
-
-    def test_add_module_validate_params(self):
-        workflow = Workflow.create_and_init()
-        module_version = ModuleVersion.create_or_replace_from_spec({
-            'id_name': 'blah',
-            'name': 'Blah',
-            'category': 'Clean',
-            'parameters': [
-                {'id_name': 'a', 'type': 'string'}
-            ]
-        }, source_version_hash='1.0')
-
-        with self.assertRaises(ValueError):
-            self.run_with_async_db(AddModuleCommand.create(
+        cmd = self.run_with_async_db(
+            AddModuleCommand.create(
                 workflow=workflow,
                 tab=workflow.tabs.first(),
                 module_id_name=module_version.id_name,
                 position=0,
-                param_values={'a': 3}
-            ))
+                param_values={},
+            )
+        )
+        self.assertEqual(cmd.wf_module.params, {"a": "x", "c": True})
+
+    def test_add_module_raise_module_version_does_not_exist(self):
+        workflow = Workflow.create_and_init()
+        with self.assertRaises(ModuleVersion.DoesNotExist):
+            self.run_with_async_db(
+                AddModuleCommand.create(
+                    workflow=workflow,
+                    tab=workflow.tabs.first(),
+                    module_id_name="doesnotexist",
+                    position=0,
+                    param_values={},
+                )
+            )
+
+    def test_add_module_validate_params(self):
+        workflow = Workflow.create_and_init()
+        module_version = ModuleVersion.create_or_replace_from_spec(
+            {
+                "id_name": "blah",
+                "name": "Blah",
+                "category": "Clean",
+                "parameters": [{"id_name": "a", "type": "string"}],
+            },
+            source_version_hash="1.0",
+        )
+
+        with self.assertRaises(ValueError):
+            self.run_with_async_db(
+                AddModuleCommand.create(
+                    workflow=workflow,
+                    tab=workflow.tabs.first(),
+                    module_id_name=module_version.id_name,
+                    position=0,
+                    param_values={"a": 3},
+                )
+            )
 
     # Try inserting at various positions to make sure the renumbering works
     # right Then undo multiple times
     def test_add_many_modules(self):
         existing_module = self.tab.wf_modules.create(
-            order=0,
-            last_relevant_delta_id=self.delta.id,
-            params={'url': ''}
+            order=0, last_relevant_delta_id=self.delta.id, params={"url": ""}
         )
 
         self.workflow.refresh_from_db()
@@ -189,13 +198,15 @@ class AddDeleteModuleCommandTests(DbTestCase):
         all_modules = self.tab.live_wf_modules
 
         # Insert at beginning
-        cmd1 = self.run_with_async_db(AddModuleCommand.create(
-            workflow=self.workflow,
-            tab=self.workflow.tabs.first(),
-            module_id_name=self.module_version.id_name,
-            position=0,
-            param_values={}
-        ))
+        cmd1 = self.run_with_async_db(
+            AddModuleCommand.create(
+                workflow=self.workflow,
+                tab=self.workflow.tabs.first(),
+                module_id_name=self.module_version.id_name,
+                position=0,
+                param_values={},
+            )
+        )
         v2 = cmd1.id
         self.assertEqual(all_modules.count(), 2)
         self.assertEqual(cmd1.wf_module.order, 0)
@@ -204,26 +215,30 @@ class AddDeleteModuleCommandTests(DbTestCase):
         self.assertWfModuleVersions([v2, v2])
 
         # Insert at end
-        cmd2 = self.run_with_async_db(AddModuleCommand.create(
-            workflow=self.workflow,
-            tab=self.workflow.tabs.first(),
-            module_id_name=self.module_version.id_name,
-            position=2,
-            param_values={}
-        ))
+        cmd2 = self.run_with_async_db(
+            AddModuleCommand.create(
+                workflow=self.workflow,
+                tab=self.workflow.tabs.first(),
+                module_id_name=self.module_version.id_name,
+                position=2,
+                param_values={},
+            )
+        )
         v3 = cmd2.id
         self.assertEqual(all_modules.count(), 3)
         self.assertEqual(cmd2.wf_module.order, 2)
         self.assertWfModuleVersions([v2, v2, v3])
 
         # Insert in between two modules
-        cmd3 = self.run_with_async_db(AddModuleCommand.create(
-            workflow=self.workflow,
-            tab=self.workflow.tabs.first(),
-            module_id_name=self.module_version.id_name,
-            position=2,
-            param_values={}
-        ))
+        cmd3 = self.run_with_async_db(
+            AddModuleCommand.create(
+                workflow=self.workflow,
+                tab=self.workflow.tabs.first(),
+                module_id_name=self.module_version.id_name,
+                position=2,
+                param_values={},
+            )
+        )
         v4 = cmd3.id
         self.assertEqual(all_modules.count(), 4)
         self.assertEqual(cmd3.wf_module.order, 2)
@@ -248,15 +263,14 @@ class AddDeleteModuleCommandTests(DbTestCase):
         self.assertWfModuleVersions([v2, v2])
         self.run_with_async_db(cmd1.backward())
         self.assertWfModuleVersions([v1])
-        self.assertEqual(list(all_modules.values_list('id', flat=True)),
-                         [existing_module.id])
+        self.assertEqual(
+            list(all_modules.values_list("id", flat=True)), [existing_module.id]
+        )
 
     # Delete module, then undo, redo
     def test_delete_module(self):
         existing_module = self.tab.wf_modules.create(
-            order=0,
-            last_relevant_delta_id=self.delta.id,
-            params={'url': ''}
+            order=0, last_relevant_delta_id=self.delta.id, params={"url": ""}
         )
 
         all_modules = self.tab.live_wf_modules
@@ -266,10 +280,11 @@ class AddDeleteModuleCommandTests(DbTestCase):
         self.assertWfModuleVersions([v1])
 
         # Delete it. Yeah, you better run.
-        cmd = self.run_with_async_db(DeleteModuleCommand.create(
-            workflow=self.workflow,
-            wf_module=existing_module
-        ))
+        cmd = self.run_with_async_db(
+            DeleteModuleCommand.create(
+                workflow=self.workflow, wf_module=existing_module
+            )
+        )
         self.assertEqual(all_modules.count(), 0)
         self.assertWfModuleVersions([])
 
@@ -295,17 +310,14 @@ class AddDeleteModuleCommandTests(DbTestCase):
     # null, and is undoable
     def test_delete_selected(self):
         wf_module = self.tab.wf_modules.create(
-            order=0,
-            last_relevant_delta_id=self.delta.id,
-            params={'url': ''}
+            order=0, last_relevant_delta_id=self.delta.id, params={"url": ""}
         )
         self.tab.selected_wf_module_position = 0
-        self.tab.save(update_fields=['selected_wf_module_position'])
+        self.tab.save(update_fields=["selected_wf_module_position"])
 
-        cmd = self.run_with_async_db(DeleteModuleCommand.create(
-            workflow=self.workflow,
-            wf_module=wf_module
-        ))
+        cmd = self.run_with_async_db(
+            DeleteModuleCommand.create(workflow=self.workflow, wf_module=wf_module)
+        )
 
         self.tab.refresh_from_db()
         self.assertIsNone(self.tab.selected_wf_module_position)
@@ -314,16 +326,18 @@ class AddDeleteModuleCommandTests(DbTestCase):
 
     def test_undo_add_only_selected(self):
         """Undoing the only add sets selection to None."""
-        cmd = self.run_with_async_db(AddModuleCommand.create(
-            workflow=self.workflow,
-            tab=self.workflow.tabs.first(),
-            module_id_name=self.module_version.id_name,
-            position=0,
-            param_values={}
-        ))
+        cmd = self.run_with_async_db(
+            AddModuleCommand.create(
+                workflow=self.workflow,
+                tab=self.workflow.tabs.first(),
+                module_id_name=self.module_version.id_name,
+                position=0,
+                param_values={},
+            )
+        )
 
         self.tab.selected_wf_module_position = 0
-        self.tab.save(update_fields=['selected_wf_module_position'])
+        self.tab.save(update_fields=["selected_wf_module_position"])
 
         self.run_with_async_db(cmd.backward())
 
@@ -336,60 +350,61 @@ class AddDeleteModuleCommandTests(DbTestCase):
     def test_add_undo_selected(self):
         """Undoing an add sets selection."""
         self.tab.wf_modules.create(
-            order=0,
-            last_relevant_delta_id=self.delta.id,
-            params={'url': ''}
+            order=0, last_relevant_delta_id=self.delta.id, params={"url": ""}
         )
 
         # beginning state: one WfModule
         all_modules = self.tab.live_wf_modules
         self.assertEqual(all_modules.count(), 1)
 
-        cmd = self.run_with_async_db(AddModuleCommand.create(
-            workflow=self.workflow,
-            tab=self.workflow.tabs.first(),
-            module_id_name=self.module_version.id_name,
-            position=1,
-            param_values={}
-        ))
+        cmd = self.run_with_async_db(
+            AddModuleCommand.create(
+                workflow=self.workflow,
+                tab=self.workflow.tabs.first(),
+                module_id_name=self.module_version.id_name,
+                position=1,
+                param_values={},
+            )
+        )
 
         self.tab.selected_wf_module_position = 1
-        self.tab.save(update_fields=['selected_wf_module_position'])
+        self.tab.save(update_fields=["selected_wf_module_position"])
 
         self.run_with_async_db(cmd.backward())
 
         self.tab.refresh_from_db()
         self.assertEqual(self.tab.selected_wf_module_position, 0)
 
-    @patch.object(LoadedModule, 'for_module_version_sync', MockLoadedModule)
+    @patch.object(LoadedModule, "for_module_version_sync", MockLoadedModule)
     def test_add_to_empty_tab_affects_dependent_tab_wf_modules(self):
-        ModuleVersion.create_or_replace_from_spec({
-            'id_name': 'tabby', 'name': 'Tabby', 'category': 'Clean',
-            'parameters': [
-                {'id_name': 'tab', 'type': 'tab'}
-            ]
-        })
+        ModuleVersion.create_or_replace_from_spec(
+            {
+                "id_name": "tabby",
+                "name": "Tabby",
+                "category": "Clean",
+                "parameters": [{"id_name": "tab", "type": "tab"}],
+            }
+        )
 
         wfm1 = self.workflow.tabs.first().wf_modules.create(
             order=0,
-            module_id_name='tabby',
+            module_id_name="tabby",
             last_relevant_delta_id=self.workflow.last_delta_id,
-            params={'tab': 'tab-2'}
+            params={"tab": "tab-2"},
         )
 
-        tab2 = self.workflow.tabs.create(
-            position=1,
-            slug='tab-2'
-        )
+        tab2 = self.workflow.tabs.create(position=1, slug="tab-2")
 
         # Now add a module to tab2.
-        cmd = self.run_with_async_db(AddModuleCommand.create(
-            workflow=self.workflow,
-            tab=tab2,
-            module_id_name=self.module_version.id_name,
-            position=0,
-            param_values={'url': 'https://x.com'}
-        ))
+        cmd = self.run_with_async_db(
+            AddModuleCommand.create(
+                workflow=self.workflow,
+                tab=tab2,
+                module_id_name=self.module_version.id_name,
+                position=0,
+                param_values={"url": "https://x.com"},
+            )
+        )
 
         # Tab1's "tabby" module depends on tab2, so it should update.
         wfm1.refresh_from_db()
@@ -398,52 +413,59 @@ class AddDeleteModuleCommandTests(DbTestCase):
     # We had a bug where add then delete caused an error when deleting
     # workflow, since both commands tried to delete the WfModule
     def test_add_delete(self):
-        cmda = self.run_with_async_db(AddModuleCommand.create(
-            workflow=self.workflow,
-            tab=self.workflow.tabs.first(),
-            module_id_name=self.module_version.id_name,
-            position=0,
-            param_values={}
-        ))
-        self.run_with_async_db(DeleteModuleCommand.create(
-            workflow=self.workflow,
-            wf_module=cmda.wf_module
-        ))
+        cmda = self.run_with_async_db(
+            AddModuleCommand.create(
+                workflow=self.workflow,
+                tab=self.workflow.tabs.first(),
+                module_id_name=self.module_version.id_name,
+                position=0,
+                param_values={},
+            )
+        )
+        self.run_with_async_db(
+            DeleteModuleCommand.create(workflow=self.workflow, wf_module=cmda.wf_module)
+        )
         self.workflow.delete()
         self.assertTrue(True)  # we didn't crash! Yay, we pass
 
     def test_delete_if_workflow_delete_cascaded_to_wf_module_first(self):
-        self.run_with_async_db(AddModuleCommand.create(
-            workflow=self.workflow,
-            tab=self.workflow.tabs.first(),
-            module_id_name=self.module_version.id_name,
-            position=0,
-            param_values={}
-        ))
+        self.run_with_async_db(
+            AddModuleCommand.create(
+                workflow=self.workflow,
+                tab=self.workflow.tabs.first(),
+                module_id_name=self.module_version.id_name,
+                position=0,
+                param_values={},
+            )
+        )
         # Add a second command -- so we test what happens when deleting
         # multiple deltas while deleting the workflow.
-        self.run_with_async_db(AddModuleCommand.create(
-            workflow=self.workflow,
-            tab=self.workflow.tabs.first(),
-            module_id_name=self.module_version.id_name,
-            position=0,
-            param_values={}
-        ))
+        self.run_with_async_db(
+            AddModuleCommand.create(
+                workflow=self.workflow,
+                tab=self.workflow.tabs.first(),
+                module_id_name=self.module_version.id_name,
+                position=0,
+                param_values={},
+            )
+        )
         self.workflow.delete()
         self.assertTrue(True)  # we didn't crash! Yay, we pass
 
     def test_delete_if_workflow_missing_init(self):
         self.workflow.last_delta_id = None
-        self.workflow.save(update_fields=['last_delta_id'])
+        self.workflow.save(update_fields=["last_delta_id"])
 
         self.delta.delete()
-        self.run_with_async_db(AddModuleCommand.create(
-            workflow=self.workflow,
-            tab=self.workflow.tabs.first(),
-            module_id_name=self.module_version.id_name,
-            position=0,
-            param_values={}
-        ))
+        self.run_with_async_db(
+            AddModuleCommand.create(
+                workflow=self.workflow,
+                tab=self.workflow.tabs.first(),
+                module_id_name=self.module_version.id_name,
+                position=0,
+                param_values={},
+            )
+        )
 
         self.workflow.delete()
         self.assertTrue(True)  # we didn't crash! Yay, we pass

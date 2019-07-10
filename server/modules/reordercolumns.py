@@ -27,7 +27,7 @@ def parse_json_param(value) -> Dict[str, Any]:
 def render(table, params):
     # Entries should appear in chronological order as new
     # operations are appended to the end of the stack
-    history_entries = parse_json_param(params['reorder-history'])
+    history_entries = parse_json_param(params["reorder-history"])
 
     if not history_entries:
         return table  # no reorders
@@ -35,8 +35,8 @@ def render(table, params):
     columns = table.columns.tolist()
 
     for entry in history_entries:
-        from_idx = int(entry['from'])
-        to_idx = int(entry['to'])
+        from_idx = int(entry["from"])
+        to_idx = int(entry["to"])
 
         # Our original input columns can get moved or deleted, but we'll
         # give it a shot if indices are in range

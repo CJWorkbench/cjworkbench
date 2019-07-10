@@ -1,6 +1,7 @@
 from django import forms
 import account.forms
 
+
 class LoginEmailForm(account.forms.LoginEmailForm):
     def __init__(self, *args, **kwargs):
         super(LoginEmailForm, self).__init__(*args, **kwargs)

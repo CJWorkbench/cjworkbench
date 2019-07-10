@@ -19,7 +19,7 @@ from os.path import abspath, dirname, join, normpath
 from server.settingsutils import workbench_user_display
 
 if sys.version_info[0] < 3:
-    raise RuntimeError('CJ Workbench requires Python 3')
+    raise RuntimeError("CJ Workbench requires Python 3")
 
 SITE_ID = 1
 
@@ -31,7 +31,7 @@ SITE_ID = 1
 # total. Since header is the _common_ case, it makes more sense to max out at
 # 1,000,001 rows instead of 1,000,000 -- that way, after we move the header the
 # user will see a table with 1,000,000 rows: a nice, round number.
-MAX_ROWS_PER_TABLE = 1000001
+MAX_ROWS_PER_TABLE = 1_000_001
 # How many bytes can we parse? (This is only used by the CSV parser for now.)
 #
 # Our algorithms use this as an estimate -- they may not be accurate.
@@ -45,25 +45,25 @@ MAX_COLUMNS_PER_TABLE = 500
 MAX_COLUMNS_PER_CLIENT_REQUEST = 100
 
 # How much StoredObject space can each module take up?
-MAX_STORAGE_PER_MODULE = 1024*1024*1024
+MAX_STORAGE_PER_MODULE = 1024 * 1024 * 1024
 
 # [2019-05-28] `twitter` deserves its own limit: it's a _common_ module, so
 # in practice we want to restrict its RAM usage way more than a _rare_
 # module like `upload`.
-TWITTER_MAX_ROWS_PER_TABLE = 100000
+TWITTER_MAX_ROWS_PER_TABLE = 100_000
 
 # configuration for urlscraper
 SCRAPER_NUM_CONNECTIONS = 8
 SCRAPER_TIMEOUT = 30  # seconds
 
 # Chunk size for chardet file encoding detection
-CHARDET_CHUNK_SIZE = 1024*1024
+CHARDET_CHUNK_SIZE = 1024 * 1024
 
 # Chunk size for separator detection
-SEP_DETECT_CHUNK_SIZE = 1024*1024
+SEP_DETECT_CHUNK_SIZE = 1024 * 1024
 
 # Use categories if file over this size
-CATEGORY_FILE_SIZE_MIN = 250*1024*1024
+CATEGORY_FILE_SIZE_MIN = 250 * 1024 * 1024
 
 MIN_AUTOFETCH_INTERVAL = 300  # seconds between cron autofetches
 
@@ -79,37 +79,35 @@ DJANGO_ROOT = dirname(dirname(abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
 # SECURITY WARNING: don't run with debug turned on in production!
-if 'CJW_PRODUCTION' in os.environ:
-    DEBUG = not os.environ['CJW_PRODUCTION']
+if "CJW_PRODUCTION" in os.environ:
+    DEBUG = not os.environ["CJW_PRODUCTION"]
 else:
     DEBUG = True
 
-DEFAULT_FROM_EMAIL = 'Workbench <hello@accounts.workbenchdata.com>'
+DEFAULT_FROM_EMAIL = "Workbench <hello@accounts.workbenchdata.com>"
 
 # SECRET_KEY
 try:
-    SECRET_KEY = os.environ['CJW_SECRET_KEY']
+    SECRET_KEY = os.environ["CJW_SECRET_KEY"]
 except KeyError:
-    sys.exit('Must set CJW_SECRET_KEY')
+    sys.exit("Must set CJW_SECRET_KEY")
 
 # DATABASES
 try:
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': 'cjworkbench',
-            'USER': 'cjworkbench',
-            'HOST': os.environ['CJW_DB_HOST'],
-            'PASSWORD': os.environ['CJW_DB_PASSWORD'],
-            'PORT': '5432',
-            'CONN_MAX_AGE': 30,
-            'TEST': {
-                'SERIALIZE': False,
-            }
+        "default": {
+            "ENGINE": "django.db.backends.postgresql_psycopg2",
+            "NAME": "cjworkbench",
+            "USER": "cjworkbench",
+            "HOST": os.environ["CJW_DB_HOST"],
+            "PASSWORD": os.environ["CJW_DB_PASSWORD"],
+            "PORT": "5432",
+            "CONN_MAX_AGE": 30,
+            "TEST": {"SERIALIZE": False},
         }
     }
 except KeyError:
-    sys.exit('Must set CJW_DB_HOST and CJW_DB_PASSWORD')
+    sys.exit("Must set CJW_DB_HOST and CJW_DB_PASSWORD")
 
 N_SYNC_DATABASE_CONNECTIONS = 2
 """
@@ -127,119 +125,124 @@ increase this number so they don't block other requests.
 
 # RabbitMQ
 try:
-    RABBITMQ_HOST = os.environ['CJW_RABBITMQ_HOST']
+    RABBITMQ_HOST = os.environ["CJW_RABBITMQ_HOST"]
 except KeyError:
-    sys.exit('Must set CJW_RABBITMQ_HOST')
+    sys.exit("Must set CJW_RABBITMQ_HOST")
 
 CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_rabbitmq.core.RabbitmqChannelLayer',
-        'CONFIG': {
-            'host': RABBITMQ_HOST,
-            'local_capacity': 2000,
-        },
-    },
+    "default": {
+        "BACKEND": "channels_rabbitmq.core.RabbitmqChannelLayer",
+        "CONFIG": {"host": RABBITMQ_HOST, "local_capacity": 2000},
+    }
 }
 
 # EMAIL_BACKEND
 #
 # In Production, sets ACCOUNT_ADAPTER, SENDGRID_TEMPLATE_IDS
-if DEBUG or os.environ.get('CJW_MOCK_EMAIL'):
-    EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
-    EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'local_mail')
+if DEBUG or os.environ.get("CJW_MOCK_EMAIL"):
+    EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
+    EMAIL_FILE_PATH = os.path.join(BASE_DIR, "local_mail")
 else:
-    EMAIL_BACKEND = 'sgbackend.SendGridBackend'
+    EMAIL_BACKEND = "sgbackend.SendGridBackend"
     # ACCOUNT_ADAPTER is specifically for sendgrid and nothing else
-    ACCOUNT_ADAPTER = 'cjworkbench.views.account_adapter.WorkbenchAccountAdapter'
+    ACCOUNT_ADAPTER = "cjworkbench.views.account_adapter.WorkbenchAccountAdapter"
 
-    if 'CJW_SENDGRID_API_KEY' not in os.environ:
-        sys.exit('Must set CJW_SENDGRID_API_KEY in production')
+    if "CJW_SENDGRID_API_KEY" not in os.environ:
+        sys.exit("Must set CJW_SENDGRID_API_KEY in production")
 
-    if not all(x in os.environ for x in [
-                'CJW_SENDGRID_INVITATION_ID',
-                'CJW_SENDGRID_CONFIRMATION_ID',
-                'CJW_SENDGRID_PASSWORD_CHANGE_ID',
-                'CJW_SENDGRID_PASSWORD_RESET_ID']):
-        sys.exit('Must set Sendgrid template IDs for all system emails')
+    if not all(
+        x in os.environ
+        for x in [
+            "CJW_SENDGRID_INVITATION_ID",
+            "CJW_SENDGRID_CONFIRMATION_ID",
+            "CJW_SENDGRID_PASSWORD_CHANGE_ID",
+            "CJW_SENDGRID_PASSWORD_RESET_ID",
+        ]
+    ):
+        sys.exit("Must set Sendgrid template IDs for all system emails")
 
-    SENDGRID_API_KEY = os.environ['CJW_SENDGRID_API_KEY']
+    SENDGRID_API_KEY = os.environ["CJW_SENDGRID_API_KEY"]
 
     SENDGRID_TEMPLATE_IDS = {
-        'account/email/email_confirmation': os.environ['CJW_SENDGRID_CONFIRMATION_ID'],
-        'account/email/email_confirmation_signup': os.environ['CJW_SENDGRID_CONFIRMATION_ID'],
-        'account/email/password_reset_key': os.environ['CJW_SENDGRID_PASSWORD_RESET_ID'],
+        "account/email/email_confirmation": os.environ["CJW_SENDGRID_CONFIRMATION_ID"],
+        "account/email/email_confirmation_signup": os.environ[
+            "CJW_SENDGRID_CONFIRMATION_ID"
+        ],
+        "account/email/password_reset_key": os.environ[
+            "CJW_SENDGRID_PASSWORD_RESET_ID"
+        ],
     }
 
-if 'HTTPS' in os.environ and os.environ['HTTPS'] == 'on':
+if "HTTPS" in os.environ and os.environ["HTTPS"] == "on":
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     USE_X_FORWARDED_HOST = True
-    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ["*"]
 
 # Application definition
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'django.contrib.sites',
-    'channels',
-    'webpack_loader',
-    'rest_framework',
-    'polymorphic',
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'cjworkbench',
-    'cron',
-    'fetcher',
-    'renderer',
-    'server',
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "django.contrib.sites",
+    "channels",
+    "webpack_loader",
+    "rest_framework",
+    "polymorphic",
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "cjworkbench",
+    "cron",
+    "fetcher",
+    "renderer",
+    "server",
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware'
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-SESSION_ENGINE='django.contrib.sessions.backends.db'
+SESSION_ENGINE = "django.contrib.sessions.backends.db"
 
-ROOT_URLCONF = 'cjworkbench.urls'
+ROOT_URLCONF = "cjworkbench.urls"
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
         # 'DIRS': [os.path.join(BASE_DIR, 'templates')],
-        'DIRS': ['templates'],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages'
-            ],
+        "DIRS": ["templates"],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
+            ]
         },
-    },
+    }
 ]
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.SessionAuthentication',
-    ),
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework.authentication.SessionAuthentication",
+    )
 }
 
-WSGI_APPLICATION = 'cjworkbench.wsgi.application'
-ASGI_APPLICATION = 'cjworkbench.asgi.application'
+WSGI_APPLICATION = "cjworkbench.wsgi.application"
+ASGI_APPLICATION = "cjworkbench.asgi.application"
 
 
 # Password validation
@@ -247,27 +250,21 @@ ASGI_APPLICATION = 'cjworkbench.asgi.application'
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"
     },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
+    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
+    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
-LOGIN_URL = '/account/login'
-LOGIN_REDIRECT_URL = '/workflows'
+LOGIN_URL = "/account/login"
+LOGIN_REDIRECT_URL = "/workflows"
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
+LANGUAGE_CODE = "en-us"
+TIME_ZONE = "UTC"
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
@@ -276,19 +273,19 @@ USE_TZ = True
 # Static files. CSS, JavaScript are bundled by webpack, but fonts, test data,
 # images, etc. are not
 STATICFILES_FINDERS = [
-    'django.contrib.staticfiles.finders.FileSystemFinder',
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    'server.staticfiles.LessonSupportDataFinder',
+    "django.contrib.staticfiles.finders.FileSystemFinder",
+    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+    "server.staticfiles.LessonSupportDataFinder",
     # 'django.contrib.staticfiles.finders.DefaultStorageFinder',
 ]
-STATIC_ROOT = normpath(join(DJANGO_ROOT, 'static'))
+STATIC_ROOT = normpath(join(DJANGO_ROOT, "static"))
 STATICFILES_DIRS = (
-    ('bundles', os.path.join(BASE_DIR, 'assets', 'bundles')),
-    ('fonts', os.path.join(BASE_DIR, 'assets', 'fonts')),
-    ('images', os.path.join(BASE_DIR, 'assets', 'images')),
+    ("bundles", os.path.join(BASE_DIR, "assets", "bundles")),
+    ("fonts", os.path.join(BASE_DIR, "assets", "fonts")),
+    ("images", os.path.join(BASE_DIR, "assets", "images")),
 )
 # Make `collectstatic` command upload to the right place
-STATICFILES_STORAGE = 'server.storage.minio_storage_for_collectstatic.MinioStorage'
+STATICFILES_STORAGE = "server.storage.minio_storage_for_collectstatic.MinioStorage"
 
 # In dev mode, we'll serve local files. But in prod we can overwrite STATIC_URL
 # to serve from S3
@@ -296,92 +293,83 @@ STATICFILES_STORAGE = 'server.storage.minio_storage_for_collectstatic.MinioStora
 # We break with Django tradition here and give an absolute URL even when
 # in DEBUG mode. That's good! We need absolute URLs even in DEBUG mode,
 # because lessons include data files the fetcher must access.
-STATIC_URL = os.environ.get('STATIC_URL', 'http://localhost:8000/static/')
+STATIC_URL = os.environ.get("STATIC_URL", "http://localhost:8000/static/")
 
 # Webpack loads all our js/css into handy bundles
 WEBPACK_LOADER = {
-    'DEFAULT': {
-        'BUNDLE_DIR_NAME': 'bundles/',
-        'STATS_FILE': os.path.join(BASE_DIR, 'webpack-stats.json'),
+    "DEFAULT": {
+        "BUNDLE_DIR_NAME": "bundles/",
+        "STATS_FILE": os.path.join(BASE_DIR, "webpack-stats.json"),
     }
 }
 
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'plaintext': {
-            'format': (
-                '%(levelname)s %(asctime)s %(name)s %(thread)d %(message)s'
-            ),
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "plaintext": {
+            "format": ("%(levelname)s %(asctime)s %(name)s %(thread)d %(message)s")
         },
-        'json': {
-            'class': 'server.logging.json.JsonFormatter',
-        },
+        "json": {"class": "server.logging.json.JsonFormatter"},
     },
-    'handlers': {
-        'console': {
-            'level': 'DEBUG',
-            'class': 'logging.StreamHandler',
-            'formatter': 'plaintext' if DEBUG else 'json',
-        },
+    "handlers": {
+        "console": {
+            "level": "DEBUG",
+            "class": "logging.StreamHandler",
+            "formatter": "plaintext" if DEBUG else "json",
+        }
     },
-    'loggers': {
-        '': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
-            'propagate': True,
-        },
+    "loggers": {
+        "": {"handlers": ["console"], "level": "DEBUG", "propagate": True},
         # It's nice to have level=DEBUG, but we have experience with lots of
         # modules that we think are now better off as INFO.
-        'aioamqp': {'level': 'INFO'},
-        'asyncio': {'level': 'INFO'},
-        'botocore': {'level': 'INFO'},
-        'channels_rabbitmq': {'level': 'INFO'},
-        'daphne': {'level': 'INFO'},
-        'intercom': {'level': 'INFO'},
-        'oauthlib': {'level': 'INFO'},
-        'urllib3': {'level': 'INFO'},
-        'requests_oauthlib': {'level': 'INFO'},
-        's3transfer': {'level': 'INFO'},
-        'django.request': {
+        "aioamqp": {"level": "INFO"},
+        "asyncio": {"level": "INFO"},
+        "botocore": {"level": "INFO"},
+        "channels_rabbitmq": {"level": "INFO"},
+        "daphne": {"level": "INFO"},
+        "intercom": {"level": "INFO"},
+        "oauthlib": {"level": "INFO"},
+        "urllib3": {"level": "INFO"},
+        "requests_oauthlib": {"level": "INFO"},
+        "s3transfer": {"level": "INFO"},
+        "django.request": {
             # Django prints WARNINGs for 400-level HTTP responses. That's
             # wrong: our code is _meant_ to output 400-level HTTP responses in
             # some cases -- that's exactly why 400-level HTTP responses exist!
             # Ignore those WARNINGs and only log ERRORs.
-            'level': 'ERROR',
+            "level": "ERROR"
         },
-        'django.channels.server': {'level': 'ERROR'},  # ditto djano.request
+        "django.channels.server": {"level": "ERROR"},  # ditto djano.request
         # DEBUG only gets messages when settings.DEBUG==True
-        'django.db.backends': {'level': 'INFO'},
-    }
+        "django.db.backends": {"level": "INFO"},
+    },
 }
 
 # User accounts
 
-ACCOUNT_USER_MODEL_USERNAME_FIELD = 'username'
+ACCOUNT_USER_MODEL_USERNAME_FIELD = "username"
 ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 ACCOUNT_USERNAME_REQUIRED = False
-ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_AUTHENTICATION_METHOD = "email"
 ACCOUNT_USER_DISPLAY = workbench_user_display
-ACCOUNT_SIGNUP_FORM_CLASS = 'cjworkbench.forms.signup.WorkbenchSignupForm'
+ACCOUNT_SIGNUP_FORM_CLASS = "cjworkbench.forms.signup.WorkbenchSignupForm"
 
-AUTHENTICATION_BACKENDS = [
-    'allauth.account.auth_backends.AuthenticationBackend',
-]
+AUTHENTICATION_BACKENDS = ["allauth.account.auth_backends.AuthenticationBackend"]
 
 # Third party services
 OAUTH_SERVICES = {}  # service => parameters. See requests-oauthlib docs
 
 
-def _maybe_load_oauth_service(name: str, env_var_name: str,
-                              default_path_name: str, parse):
+def _maybe_load_oauth_service(
+    name: str, env_var_name: str, default_path_name: str, parse
+):
     path = os.environ.get(env_var_name)
     if not path:
         path = os.path.join(BASE_DIR, default_path_name)
     try:
-        with open(path, 'r', encoding='utf-8') as f:
+        with open(path, "r", encoding="utf-8") as f:
             data = json.load(f)
     except FileNotFoundError:
         # This is normal: frontend+fetcher get OAuth, but cron+renderer do not
@@ -393,104 +381,122 @@ def _maybe_load_oauth_service(name: str, env_var_name: str,
 # Google, for Google Drive module
 def _parse_google_oauth(d):
     return {
-        'class': 'OAuth2',
-        'client_id': d['web']['client_id'],
-        'client_secret': d['web']['client_secret'],
-        'auth_url': d['web']['auth_uri'],
-        'token_url': d['web']['token_uri'],
-        'refresh_url': d['web']['token_uri'],
-        'redirect_url': d['web']['redirect_uris'][0],
-        'scope': ' '.join([
-            'openid',
-            'https://www.googleapis.com/auth/drive.readonly',
-            'https://www.googleapis.com/auth/userinfo.email',
-        ])
+        "class": "OAuth2",
+        "client_id": d["web"]["client_id"],
+        "client_secret": d["web"]["client_secret"],
+        "auth_url": d["web"]["auth_uri"],
+        "token_url": d["web"]["token_uri"],
+        "refresh_url": d["web"]["token_uri"],
+        "redirect_url": d["web"]["redirect_uris"][0],
+        "scope": " ".join(
+            [
+                "openid",
+                "https://www.googleapis.com/auth/drive.readonly",
+                "https://www.googleapis.com/auth/userinfo.email",
+            ]
+        ),
     }
-_maybe_load_oauth_service('google', 'CJW_GOOGLE_CLIENT_SECRETS',
-                          'client_secret.json', _parse_google_oauth)
+
+
+_maybe_load_oauth_service(
+    "google", "CJW_GOOGLE_CLIENT_SECRETS", "client_secret.json", _parse_google_oauth
+)
 
 # Intercom, for Intercom module
 def _parse_intercom_oauth(d):
     return {
-        'class': 'OAuth2',
-        'client_id': d['client_id'],
-        'client_secret': d['client_secret'],
-        'auth_url': 'https://app.intercom.com/oauth',
-        'token_url': 'https://api.intercom.io/auth/eagle/token',
-        'refresh_url': None,
-        'redirect_url': d['redirect_url'],
-        'scope': '',  # set on Intercom app, not in our request
+        "class": "OAuth2",
+        "client_id": d["client_id"],
+        "client_secret": d["client_secret"],
+        "auth_url": "https://app.intercom.com/oauth",
+        "token_url": "https://api.intercom.io/auth/eagle/token",
+        "refresh_url": None,
+        "redirect_url": d["redirect_url"],
+        "scope": "",  # set on Intercom app, not in our request
     }
-_maybe_load_oauth_service('intercom', 'CJW_INTERCOM_CLIENT_SECRETS',
-                          'intercom_secret.json', _parse_intercom_oauth)
+
+
+_maybe_load_oauth_service(
+    "intercom",
+    "CJW_INTERCOM_CLIENT_SECRETS",
+    "intercom_secret.json",
+    _parse_intercom_oauth,
+)
 
 # Twitter, for Twitter module
 def _parse_twitter_oauth(d):
     return {
-        'class': 'OAuth1a',
-        'consumer_key': d['key'],
-        'consumer_secret': d['secret'],
-        'auth_url': 'https://api.twitter.com/oauth/authorize',
-        'request_token_url': 'https://api.twitter.com/oauth/request_token',
-        'access_token_url': 'https://api.twitter.com/oauth/access_token',
-        'redirect_url': d['redirect_url'],
+        "class": "OAuth1a",
+        "consumer_key": d["key"],
+        "consumer_secret": d["secret"],
+        "auth_url": "https://api.twitter.com/oauth/authorize",
+        "request_token_url": "https://api.twitter.com/oauth/request_token",
+        "access_token_url": "https://api.twitter.com/oauth/access_token",
+        "redirect_url": d["redirect_url"],
     }
-_maybe_load_oauth_service('twitter', 'CJW_TWITTER_CLIENT_SECRETS',
-                          'twitter_secret.json', _parse_twitter_oauth)
+
+
+_maybe_load_oauth_service(
+    "twitter", "CJW_TWITTER_CLIENT_SECRETS", "twitter_secret.json", _parse_twitter_oauth
+)
 
 # Various services for django-allauth
 
-CJW_SOCIALACCOUNT_SECRETS_PATH = os.environ.get('CJW_SOCIALACCOUNT_SECRETS', False)
+CJW_SOCIALACCOUNT_SECRETS_PATH = os.environ.get("CJW_SOCIALACCOUNT_SECRETS", False)
 if not CJW_SOCIALACCOUNT_SECRETS_PATH:
-    CJW_SOCIALACCOUNT_SECRETS_PATH = 'socialaccounts_secrets.json'
+    CJW_SOCIALACCOUNT_SECRETS_PATH = "socialaccounts_secrets.json"
 
 CJW_SOCIALACCOUNT_SECRETS_PATH = os.path.join(BASE_DIR, CJW_SOCIALACCOUNT_SECRETS_PATH)
 
 if os.path.isfile(CJW_SOCIALACCOUNT_SECRETS_PATH):
     try:
-        CJW_SOCIALACCOUNT_SECRETS = json.loads(open(CJW_SOCIALACCOUNT_SECRETS_PATH, 'r').read())
+        CJW_SOCIALACCOUNT_SECRETS = json.loads(
+            open(CJW_SOCIALACCOUNT_SECRETS_PATH, "r").read()
+        )
     except JSONDecodeError:
         CJW_SOCIALACCOUNT_SECRETS = []
 
     for provider in CJW_SOCIALACCOUNT_SECRETS:
 
-
-        INSTALLED_APPS.append('allauth.socialaccount.providers.' + provider['provider'])
+        INSTALLED_APPS.append("allauth.socialaccount.providers." + provider["provider"])
 else:
 
     CJW_SOCIALACCOUNT_SECRETS = []
 
 
 # Knowledge base root url, used as a default for missing help links
-KB_ROOT_URL = 'http://help.workbenchdata.com/'
+KB_ROOT_URL = "http://help.workbenchdata.com/"
 
-I_AM_TESTING = 'test' in sys.argv
+I_AM_TESTING = "test" in sys.argv
 if I_AM_TESTING:
-    for provider in ['allauth.socialaccount.providers.facebook',
-                     'allauth.socialaccount.providers.google']:
+    for provider in [
+        "allauth.socialaccount.providers.facebook",
+        "allauth.socialaccount.providers.google",
+    ]:
         if provider not in INSTALLED_APPS:
             INSTALLED_APPS.append(provider)
 
-TEST_RUNNER = 'server.tests.runner.TimeLoggingDiscoverRunner'
+TEST_RUNNER = "server.tests.runner.TimeLoggingDiscoverRunner"
 
-if 'MINIO_URL' not in os.environ:
-    sys.exit('Must set MINIO_URL')
-if 'MINIO_ACCESS_KEY' not in os.environ:
-    sys.exit('Must set MINIO_ACCESS_KEY')
-if 'MINIO_SECRET_KEY' not in os.environ:
-    sys.exit('Must set MINIO_SECRET_KEY')
-if 'MINIO_BUCKET_PREFIX' not in os.environ:
-    sys.exit('Must set MINIO_BUCKET_PREFIX')
-MINIO_URL = os.environ['MINIO_URL']
-MINIO_EXTERNAL_URL = os.environ.get('MINIO_EXTERNAL_URL', MINIO_URL)
-MINIO_ACCESS_KEY = os.environ['MINIO_ACCESS_KEY']
-MINIO_SECRET_KEY = os.environ['MINIO_SECRET_KEY']
-MINIO_BUCKET_PREFIX = os.environ['MINIO_BUCKET_PREFIX']
-MINIO_BUCKET_SUFFIX = os.environ.get('MINIO_BUCKET_SUFFIX', '')
+if "MINIO_URL" not in os.environ:
+    sys.exit("Must set MINIO_URL")
+if "MINIO_ACCESS_KEY" not in os.environ:
+    sys.exit("Must set MINIO_ACCESS_KEY")
+if "MINIO_SECRET_KEY" not in os.environ:
+    sys.exit("Must set MINIO_SECRET_KEY")
+if "MINIO_BUCKET_PREFIX" not in os.environ:
+    sys.exit("Must set MINIO_BUCKET_PREFIX")
+MINIO_URL = os.environ["MINIO_URL"]
+MINIO_EXTERNAL_URL = os.environ.get("MINIO_EXTERNAL_URL", MINIO_URL)
+MINIO_ACCESS_KEY = os.environ["MINIO_ACCESS_KEY"]
+MINIO_SECRET_KEY = os.environ["MINIO_SECRET_KEY"]
+MINIO_BUCKET_PREFIX = os.environ["MINIO_BUCKET_PREFIX"]
+MINIO_BUCKET_SUFFIX = os.environ.get("MINIO_BUCKET_SUFFIX", "")
 MINIO_MAX_FILE_SIZE = 2 * 1024 * 1024 * 1024  # 2GB
-if 'MINIO_STATIC_URL_PATTERN' in os.environ:
-    STATIC_URL = os.environ['MINIO_STATIC_URL_PATTERN'] \
-        .replace('{MINIO_BUCKET_PREFIX}', MINIO_BUCKET_PREFIX)
+if "MINIO_STATIC_URL_PATTERN" in os.environ:
+    STATIC_URL = os.environ["MINIO_STATIC_URL_PATTERN"].replace(
+        "{MINIO_BUCKET_PREFIX}", MINIO_BUCKET_PREFIX
+    )
 
-if STATIC_URL != 'http://localhost:8000/static/':
-    print(f'Serving static files from {STATIC_URL}')
+if STATIC_URL != "http://localhost:8000/static/":
+    print(f"Serving static files from {STATIC_URL}")

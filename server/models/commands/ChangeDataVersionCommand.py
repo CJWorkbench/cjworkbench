@@ -8,25 +8,24 @@ from .util import ChangesWfModuleOutputs
 @database_sync_to_async
 def _workflow_has_notifications(workflow):
     """Detect whether a workflow sends email on changes."""
-    return WfModule.live_in_workflow(workflow) \
-        .filter(notifications=True).exists()
+    return WfModule.live_in_workflow(workflow).filter(notifications=True).exists()
 
 
 class ChangeDataVersionCommand(ChangesWfModuleOutputs, Delta):
     wf_module = models.ForeignKey(WfModule, on_delete=models.PROTECT)
     # may not have had a previous version
-    old_version = models.DateTimeField('old_version', null=True)
-    new_version = models.DateTimeField('new_version')
+    old_version = models.DateTimeField("old_version", null=True)
+    new_version = models.DateTimeField("new_version")
     wf_module_delta_ids = ChangesWfModuleOutputs.wf_module_delta_ids
 
     def forward_impl(self):
         self.wf_module.stored_data_version = self.new_version
-        self.wf_module.save(update_fields=['stored_data_version'])
+        self.wf_module.save(update_fields=["stored_data_version"])
         self.forward_affected_delta_ids()
 
     def backward_impl(self):
         self.wf_module.stored_data_version = self.old_version
-        self.wf_module.save(update_fields=['stored_data_version'])
+        self.wf_module.save(update_fields=["stored_data_version"])
         self.backward_affected_delta_ids()
 
     # override
@@ -64,26 +63,24 @@ class ChangeDataVersionCommand(ChangesWfModuleOutputs, Delta):
             * The Django page-load view queues a render when needed.
         """
         if await _workflow_has_notifications(self.workflow):
-            await rabbitmq.queue_render(self.workflow.id,
-                                        self.workflow.last_delta_id)
+            await rabbitmq.queue_render(self.workflow.id, self.workflow.last_delta_id)
         else:
             await websockets.queue_render_if_listening(
-                self.workflow.id,
-                self.workflow.last_delta_id
+                self.workflow.id, self.workflow.last_delta_id
             )
 
     @classmethod
     def amend_create_kwargs(cls, *, wf_module, **kwargs):
         return {
             **kwargs,
-            'wf_module': wf_module,
-            'old_version': wf_module.stored_data_version,
-            'wf_module_delta_ids': cls.affected_wf_module_delta_ids(wf_module),
+            "wf_module": wf_module,
+            "old_version": wf_module.stored_data_version,
+            "wf_module_delta_ids": cls.affected_wf_module_delta_ids(wf_module),
         }
 
     @property
     def command_description(self):
         return (
-            f'Change WfModule[{self.wf_module_id}] data version to '
-            f'{self.new_version}'
+            f"Change WfModule[{self.wf_module_id}] data version to "
+            f"{self.new_version}"
         )

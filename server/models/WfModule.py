@@ -15,54 +15,61 @@ from .workflow import Workflow
 
 class WfModule(models.Model):
     """An instance of a Module in a Workflow."""
+
     class Meta:
-        ordering = ['order']
+        ordering = ["order"]
         constraints = [
-            models.CheckConstraint(check=(
-                (
-                    # No in-progress upload
-                    Q(inprogress_file_upload_id__isnull=True)
-                    & Q(inprogress_file_upload_key__isnull=True)
-                    & Q(inprogress_file_upload_last_accessed_at__isnull=True)
-                )
-                | (
-                    # Multipart in-progress upload
-                    Q(inprogress_file_upload_id__isnull=False)
-                    & Q(inprogress_file_upload_key__isnull=False)
-                    & Q(inprogress_file_upload_last_accessed_at__isnull=False)
-                )
-                | (
-                    # Simple in-progress upload
-                    Q(inprogress_file_upload_id__isnull=True)
-                    & Q(inprogress_file_upload_key__isnull=False)
-                    & Q(inprogress_file_upload_last_accessed_at__isnull=False)
-                )
-            ), name='inprogress_file_upload_check'),
-            models.CheckConstraint(check=(
-                # No way to negate F expressions. Wow.
-                # https://code.djangoproject.com/ticket/16211
-                #
-                # Instead, use a four-way truth-table approach :)
-                (Q(next_update__isnull=True) & Q(auto_update_data=False))
-                | (Q(next_update__isnull=False) & Q(auto_update_data=True))
-            ), name='auto_update_consistency_check'),
+            models.CheckConstraint(
+                check=(
+                    (
+                        # No in-progress upload
+                        Q(inprogress_file_upload_id__isnull=True)
+                        & Q(inprogress_file_upload_key__isnull=True)
+                        & Q(inprogress_file_upload_last_accessed_at__isnull=True)
+                    )
+                    | (
+                        # Multipart in-progress upload
+                        Q(inprogress_file_upload_id__isnull=False)
+                        & Q(inprogress_file_upload_key__isnull=False)
+                        & Q(inprogress_file_upload_last_accessed_at__isnull=False)
+                    )
+                    | (
+                        # Simple in-progress upload
+                        Q(inprogress_file_upload_id__isnull=True)
+                        & Q(inprogress_file_upload_key__isnull=False)
+                        & Q(inprogress_file_upload_last_accessed_at__isnull=False)
+                    )
+                ),
+                name="inprogress_file_upload_check",
+            ),
+            models.CheckConstraint(
+                check=(
+                    # No way to negate F expressions. Wow.
+                    # https://code.djangoproject.com/ticket/16211
+                    #
+                    # Instead, use a four-way truth-table approach :)
+                    (Q(next_update__isnull=True) & Q(auto_update_data=False))
+                    | (Q(next_update__isnull=False) & Q(auto_update_data=True))
+                ),
+                name="auto_update_consistency_check",
+            ),
         ]
         indexes = [
             models.Index(
-                fields=['inprogress_file_upload_last_accessed_at'],
-                name='inprogress_file_upload_filter',
-                condition=Q(inprogress_file_upload_last_accessed_at__isnull=False)
+                fields=["inprogress_file_upload_last_accessed_at"],
+                name="inprogress_file_upload_filter",
+                condition=Q(inprogress_file_upload_last_accessed_at__isnull=False),
             ),
             models.Index(
-                fields=['next_update'],
-                name='pending_update_queue',
-                condition=Q(next_update__isnull=False, is_deleted=False)
+                fields=["next_update"],
+                name="pending_update_queue",
+                condition=Q(next_update__isnull=False, is_deleted=False),
             ),
         ]
 
     def __str__(self):
         # Don't use DB queries here.
-        return 'wf_module[%d] at position %d' % (self.id, self.order)
+        return "wf_module[%d] at position %d" % (self.id, self.order)
 
     @property
     def workflow(self):
@@ -78,11 +85,10 @@ class WfModule(models.Model):
 
     @property
     def uploaded_file_prefix(self):
-        return f'wf-{self.workflow_id}/wfm-{self.id}/'
+        return f"wf-{self.workflow_id}/wfm-{self.id}/"
 
     @classmethod
-    def live_in_workflow(cls,
-                         workflow: Union[int, Workflow]) -> models.QuerySet:
+    def live_in_workflow(cls, workflow: Union[int, Workflow]) -> models.QuerySet:
         """
         QuerySet of not-deleted WfModules in `workflow`.
 
@@ -96,35 +102,23 @@ class WfModule(models.Model):
             workflow_id = workflow.pk
 
         return cls.objects.filter(
-            tab__workflow_id=workflow_id,
-            tab__is_deleted=False,
-            is_deleted=False
+            tab__workflow_id=workflow_id, tab__is_deleted=False, is_deleted=False
         )
 
-    tab = models.ForeignKey(
-        Tab,
-        related_name='wf_modules',
-        on_delete=models.CASCADE
-    )
+    tab = models.ForeignKey(Tab, related_name="wf_modules", on_delete=models.CASCADE)
 
-    module_id_name = models.CharField(max_length=200, default='')
+    module_id_name = models.CharField(max_length=200, default="")
 
     order = models.IntegerField()
 
-    notes = models.TextField(
-        null=True,
-        blank=True)
+    notes = models.TextField(null=True, blank=True)
 
     stored_data_version = models.DateTimeField(
-        null=True,
-        blank=True)                      # we may not have stored data
+        null=True, blank=True
+    )  # we may not have stored data
 
     # drives whether the module is expanded or collapsed on the front-end.
-    is_collapsed = models.BooleanField(
-        default=False,
-        blank=False,
-        null=False
-    )
+    is_collapsed = models.BooleanField(default=False, blank=False, null=False)
 
     is_deleted = models.BooleanField(default=False, null=False)
 
@@ -148,9 +142,8 @@ class WfModule(models.Model):
     cached_render_result_status = models.CharField(
         null=True,
         blank=True,
-        choices=[('ok', 'ok'), ('error', 'error'),
-                 ('unreachable', 'unreachable')],
-        max_length=20
+        choices=[("ok", "ok"), ("error", "error"), ("unreachable", "unreachable")],
+        max_length=20,
     )
     cached_render_result_error = models.TextField(blank=True)
     # should be JSONField but we need backwards-compatibility
@@ -164,7 +157,7 @@ class WfModule(models.Model):
     is_busy = models.BooleanField(default=False, null=False)
 
     # There's fetch_error and there's cached_render_result_error.
-    fetch_error = models.CharField('fetch_error', max_length=2000, blank=True)
+    fetch_error = models.CharField("fetch_error", max_length=2000, blank=True)
 
     # Most-recent delta that may possibly affect the output of this module.
     # This isn't a ForeignKey because many deltas have a foreign key pointing
@@ -189,9 +182,9 @@ class WfModule(models.Model):
     Secrets aren't passed to `render()`: they're only passed to `fetch()`.
     """
 
-    inprogress_file_upload_id = models.CharField(max_length=255, blank=True,
-                                                 null=True, default=None,
-                                                 unique=True)
+    inprogress_file_upload_id = models.CharField(
+        max_length=255, blank=True, null=True, default=None, unique=True
+    )
     """
     S3 ID used by the client during upload.
 
@@ -200,9 +193,9 @@ class WfModule(models.Model):
     the key the client sends, then S3 will complain.
     """
 
-    inprogress_file_upload_key = models.CharField(max_length=100, null=True,
-                                                  blank=True, default=None,
-                                                  unique=True)
+    inprogress_file_upload_key = models.CharField(
+        max_length=100, null=True, blank=True, default=None, unique=True
+    )
     """
     Key (in the minio.UserFilesBucket) matching `inprogress_file_upload_id`.
 
@@ -211,9 +204,7 @@ class WfModule(models.Model):
     """
 
     inprogress_file_upload_last_accessed_at = models.DateTimeField(
-        null=True,
-        blank=True,
-        default=None
+        null=True, blank=True, default=None
     )
     """
     When the `upload_id` was created.
@@ -223,11 +214,9 @@ class WfModule(models.Model):
 
     @property
     def module_version(self):
-        if not hasattr(self, '_module_version'):
+        if not hasattr(self, "_module_version"):
             try:
-                self._module_version = ModuleVersion.objects.latest(
-                    self.module_id_name
-                )
+                self._module_version = ModuleVersion.objects.latest(self.module_id_name)
             except ModuleVersion.DoesNotExist:
                 self._module_version = None
 
@@ -245,7 +234,7 @@ class WfModule(models.Model):
         """
         crr = self.cached_render_result
         if crr is None:
-            return 'busy'
+            return "busy"
         else:
             return crr.status
 
@@ -253,7 +242,7 @@ class WfModule(models.Model):
     def output_error(self):
         crr = self.cached_render_result
         if crr is None:
-            return ''
+            return ""
         else:
             return crr.error
 
@@ -277,13 +266,11 @@ class WfModule(models.Model):
     # Compares against latest version (which may not be current version)
     # Note: does not switch to new version automatically
     def store_fetched_table_if_different(self, table):
-        reference_so = StoredObject.objects.filter(
-            wf_module=self
-        ).order_by('-stored_at').first()
+        reference_so = (
+            StoredObject.objects.filter(wf_module=self).order_by("-stored_at").first()
+        )
 
-        new_version = StoredObject.create_table_if_different(self,
-                                                             reference_so,
-                                                             table)
+        new_version = StoredObject.create_table_if_different(self, reference_so, table)
         return new_version.stored_at if new_version else None
 
     def retrieve_fetched_table(self):
@@ -304,34 +291,36 @@ class WfModule(models.Model):
         * Set `.inprogress_file_upload_*` to `None` (and save those fields)
         * Never raise `NoSuchUpload` or `FileNotFoundError`.
         """
-        if (
-            not self.inprogress_file_upload_id
-            and not self.inprogress_file_upload_key
-        ):
+        if not self.inprogress_file_upload_id and not self.inprogress_file_upload_key:
             return
 
         if self.inprogress_file_upload_id:
             # If we're uploading a multipart file, delete all parts
             try:
-                minio.abort_multipart_upload(minio.UserFilesBucket,
-                                             self.inprogress_file_upload_key,
-                                             self.inprogress_file_upload_id)
+                minio.abort_multipart_upload(
+                    minio.UserFilesBucket,
+                    self.inprogress_file_upload_key,
+                    self.inprogress_file_upload_id,
+                )
             except minio.error.NoSuchUpload:
                 pass
         if self.inprogress_file_upload_key:
             # If we _nearly_ completed a multipart upload, or if we wrote data via
             # regular upload but didn't mark it completed, delete the file
             try:
-                minio.remove(minio.UserFilesBucket,
-                             self.inprogress_file_upload_key)
+                minio.remove(minio.UserFilesBucket, self.inprogress_file_upload_key)
             except FileNotFoundError:
                 pass
         self.inprogress_file_upload_id = None
         self.inprogress_file_upload_key = None
         self.inprogress_file_upload_last_accessed_at = None
-        self.save(update_fields=['inprogress_file_upload_id',
-                                 'inprogress_file_upload_key',
-                                 'inprogress_file_upload_last_accessed_at'])
+        self.save(
+            update_fields=[
+                "inprogress_file_upload_id",
+                "inprogress_file_upload_key",
+                "inprogress_file_upload_last_accessed_at",
+            ]
+        )
 
     def get_fetch_result(self) -> Optional[ProcessResult]:
         """Load the result of a Fetch, if there was one."""
@@ -342,9 +331,9 @@ class WfModule(models.Model):
         return ProcessResult(table, self.fetch_error)
 
     def list_fetched_data_versions(self):
-        return list(self.stored_objects
-                    .order_by('-stored_at')
-                    .values_list('stored_at', 'read'))
+        return list(
+            self.stored_objects.order_by("-stored_at").values_list("stored_at", "read")
+        )
 
     @property
     def secret_metadata(self) -> Dict[str, Any]:
@@ -354,7 +343,7 @@ class WfModule(models.Model):
         Missing secrets are not included in the returned dict. Secrets are not
         validated against a schema.
         """
-        return {k: {'name': v['name']} for k, v in self.secrets.items() if v}
+        return {k: {"name": v["name"]} for k, v in self.secrets.items() if v}
 
     def get_params(self) -> Dict[str, Any]:
         """
@@ -372,9 +361,7 @@ class WfModule(models.Model):
         lm = (
             # we don't import LoadedModule directly, because we'll mock it
             # out in unit tests.
-            loaded_module.LoadedModule.for_module_version_sync(
-                self.module_version
-            )
+            loaded_module.LoadedModule.for_module_version_sync(self.module_version)
         )
 
         if lm is None:
@@ -405,7 +392,7 @@ class WfModule(models.Model):
             # render results require a delta ID.)
             last_relevant_delta_id=to_workflow.last_delta_id,
             params=self.params,
-            secrets={}  # DO NOT COPY SECRETS
+            secrets={},  # DO NOT COPY SECRETS
         )
 
         # Copy cached render result, if there is one.
@@ -419,11 +406,9 @@ class WfModule(models.Model):
             # assuming file-copy succeeds, copy cached results.
             # Not using `new_wfm.cache_render_result(cached_result.result)`
             # because that would involve reading the whole thing.
-            new_wfm.cached_render_result_delta_id = \
-                new_wfm.last_relevant_delta_id
-            for attr in ('status', 'error', 'json', 'quick_fixes', 'columns',
-                         'nrows'):
-                full_attr = f'cached_render_result_{attr}'
+            new_wfm.cached_render_result_delta_id = new_wfm.last_relevant_delta_id
+            for attr in ("status", "error", "json", "quick_fixes", "columns", "nrows"):
+                full_attr = f"cached_render_result_{attr}"
                 setattr(new_wfm, full_attr, getattr(self, full_attr))
 
             new_wfm.save()  # so there is a new_wfm.id for parquet_key
@@ -438,10 +423,11 @@ class WfModule(models.Model):
                 minio.copy(
                     minio.CachedRenderResultsBucket,
                     parquet_key,
-                    '%(Bucket)s/%(Key)s' % {
-                        'Bucket': minio.CachedRenderResultsBucket,
-                        'Key': cached_result.parquet_key,
-                    }
+                    "%(Bucket)s/%(Key)s"
+                    % {
+                        "Bucket": minio.CachedRenderResultsBucket,
+                        "Key": cached_result.parquet_key,
+                    },
                 )
             except minio.error.NoSuchKey:
                 # DB and filesystem are out of sync. CachedRenderResult handles
@@ -453,8 +439,9 @@ class WfModule(models.Model):
 
         # Duplicate the current stored data only, not the history
         if self.stored_data_version is not None:
-            self.stored_objects.get(stored_at=self.stored_data_version) \
-                    .duplicate(new_wfm)
+            self.stored_objects.get(stored_at=self.stored_data_version).duplicate(
+                new_wfm
+            )
 
         # Duplicate the "selected" file, if there is one; otherwise, duplicate
         # the most-recently-uploaded file.
@@ -464,18 +451,20 @@ class WfModule(models.Model):
         # change a few things: upload paths should include param name, and this
         # test will need to check module_version to find the param name of the
         # file.)
-        if self.module_id_name == 'upload':
-            uuid = self.params['file']
+        if self.module_id_name == "upload":
+            uuid = self.params["file"]
             uploaded_file = self.uploaded_files.filter(uuid=uuid).first()
             if uploaded_file is not None:
                 new_key = uploaded_file.key.replace(
-                    self.uploaded_file_prefix,
-                    new_wfm.uploaded_file_prefix,
+                    self.uploaded_file_prefix, new_wfm.uploaded_file_prefix
                 )
                 assert new_key != uploaded_file.key
                 # TODO handle file does not exist
-                minio.copy(minio.UserFilesBucket, new_key,
-                           f'{uploaded_file.bucket}/{uploaded_file.key}')
+                minio.copy(
+                    minio.UserFilesBucket,
+                    new_key,
+                    f"{uploaded_file.bucket}/{uploaded_file.key}",
+                )
                 new_wfm.uploaded_files.create(
                     created_at=uploaded_file.created_at,
                     name=uploaded_file.name,
@@ -522,8 +511,9 @@ class WfModule(models.Model):
             return None
         return result
 
-    def cache_render_result(self, delta_id: int,
-                            result: ProcessResult) -> CachedRenderResult:
+    def cache_render_result(
+        self, delta_id: int, result: ProcessResult
+    ) -> CachedRenderResult:
         """
         Save the given ProcessResult for later viewing.
 
@@ -558,9 +548,11 @@ class WfModule(models.Model):
     def delete(self, *args, **kwargs):
         if self.inprogress_file_upload_key:
             try:
-                minio.abort_multipart_upload(minio.UserFilesBucket,
-                                             self.inprogress_file_upload_key,
-                                             self.inprogress_file_upload_id)
+                minio.abort_multipart_upload(
+                    minio.UserFilesBucket,
+                    self.inprogress_file_upload_key,
+                    self.inprogress_file_upload_id,
+                )
             except minio.error.NoSuchUpload:
                 pass
         minio.remove_recursive(minio.UserFilesBucket, self.uploaded_file_prefix)

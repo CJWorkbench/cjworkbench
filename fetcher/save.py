@@ -11,9 +11,7 @@ from server.models.commands import ChangeDataVersionCommand
 
 @database_sync_to_async
 def _maybe_add_version(
-    workflow: Workflow,
-    wf_module: WfModule,
-    maybe_result: Optional[ProcessResult]
+    workflow: Workflow, wf_module: WfModule, maybe_result: Optional[ProcessResult]
 ) -> Optional[timezone.datetime]:
     """
     Apply `result` to `wf_module`.
@@ -30,25 +28,23 @@ def _maybe_add_version(
     # Use Django `update_fields` to only write the fields we're
     # editing.  That's because every value in `wf_module` might be
     # stale, so we must ignore those stale values.
-    fields = {
-        'is_busy': False,
-        'last_update_check': timezone.now(),
-    }
+    fields = {"is_busy": False, "last_update_check": timezone.now()}
     if maybe_result is not None:
-        fields['fetch_error'] = maybe_result.error
+        fields["fetch_error"] = maybe_result.error
 
     for k, v in fields.items():
         setattr(wf_module, k, v)
 
     try:
         with wf_module.workflow.cooperative_lock():
-            if not WfModule.objects.filter(pk=wf_module.id, is_deleted=False,
-                                           tab__is_deleted=False).exists():
+            if not WfModule.objects.filter(
+                pk=wf_module.id, is_deleted=False, tab__is_deleted=False
+            ).exists():
                 return None
 
             if maybe_result is not None:
                 version_added = wf_module.store_fetched_table_if_different(
-                    maybe_result.dataframe,  # TODO store entire result
+                    maybe_result.dataframe  # TODO store entire result
                 )
             else:
                 version_added = None
@@ -69,9 +65,7 @@ def get_wf_module_workflow(wf_module: WfModule) -> Workflow:
 
 
 async def save_result_if_changed(
-    workflow_id: int,
-    wf_module: WfModule,
-    new_result: Optional[ProcessResult]
+    workflow_id: int, wf_module: WfModule, new_result: Optional[ProcessResult]
 ) -> None:
     """
     Store fetched table, if it is a change from `wf_module`'s existing data.
@@ -113,23 +107,26 @@ async def save_result_if_changed(
         # * After the next line of code, the user _still_sees "busy"
         #   (is_busy=False, cache=stale)
         # * Later, the user will see "ok" (is_busy=False, cache=fresh)
-        await ChangeDataVersionCommand.create(workflow=workflow,
-                                              wf_module=wf_module,
-                                              new_version=version_added)
+        await ChangeDataVersionCommand.create(
+            workflow=workflow, wf_module=wf_module, new_version=version_added
+        )
     else:
         last_update_check = wf_module.last_update_check
         if last_update_check:
             last_update_check = last_update_check.isoformat()
 
-        await websockets.ws_client_send_delta_async(workflow_id, {
-            'updateWfModules': {
-                str(wf_module.id): {
-                    'is_busy': wf_module.is_busy,
-                    'fetch_error': wf_module.fetch_error,
-                    'last_update_check': last_update_check,
+        await websockets.ws_client_send_delta_async(
+            workflow_id,
+            {
+                "updateWfModules": {
+                    str(wf_module.id): {
+                        "is_busy": wf_module.is_busy,
+                        "fetch_error": wf_module.fetch_error,
+                        "last_update_check": last_update_check,
+                    }
                 }
-            }
-        })
+            },
+        )
 
 
 def enforce_storage_limits(wf_module: WfModule) -> None:
@@ -144,7 +141,7 @@ def enforce_storage_limits(wf_module: WfModule) -> None:
 
     # walk over this WfM's StoredObjects from newest to oldest, deleting all
     # that are over the limit
-    sos = wf_module.stored_objects.order_by('-stored_at')
+    sos = wf_module.stored_objects.order_by("-stored_at")
     cumulative = 0
     first = True
 

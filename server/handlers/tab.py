@@ -2,8 +2,14 @@ import functools
 from typing import Any, Dict, List
 from cjworkbench.sync import database_sync_to_async
 from server.models import ModuleVersion, Workflow, Tab
-from server.models.commands import AddModuleCommand, ReorderModulesCommand, \
-    AddTabCommand, DeleteTabCommand, DuplicateTabCommand, SetTabNameCommand
+from server.models.commands import (
+    AddModuleCommand,
+    ReorderModulesCommand,
+    AddTabCommand,
+    DeleteTabCommand,
+    DuplicateTabCommand,
+    SetTabNameCommand,
+)
 from .types import HandlerError
 from .decorators import register_websockets_handler, websockets_handler
 import server.utils
@@ -15,7 +21,7 @@ def _load_tab(workflow: Workflow, tab_slug: int) -> Tab:
     try:
         return workflow.live_tabs.get(slug=tab_slug)
     except Tab.DoesNotExist:
-        raise HandlerError('DoesNotExist: Tab not found')
+        raise HandlerError("DoesNotExist: Tab not found")
 
 
 @database_sync_to_async
@@ -24,7 +30,7 @@ def _load_module_version(module_id_name: str) -> Tab:
     try:
         return ModuleVersion.objects.latest(module_id_name)
     except ModuleVersion.DoesNotExist:
-        raise HandlerError('DoesNotExist: ModuleVersion not found')
+        raise HandlerError("DoesNotExist: ModuleVersion not found")
 
 
 def _loading_tab(func):
@@ -33,63 +39,73 @@ def _loading_tab(func):
         tabSlug = str(tabSlug)  # never raises anything
         tab = await _load_tab(workflow, tabSlug)
         return await func(workflow=workflow, tab=tab, **kwargs)
+
     return inner
 
 
 @register_websockets_handler
-@websockets_handler('write')
+@websockets_handler("write")
 @_loading_tab
-async def add_module(scope, workflow: Workflow, tab: Tab, moduleIdName: str,
-                     position: int, paramValues: Dict[str, Any], **kwargs):
+async def add_module(
+    scope,
+    workflow: Workflow,
+    tab: Tab,
+    moduleIdName: str,
+    position: int,
+    paramValues: Dict[str, Any],
+    **kwargs,
+):
     if not isinstance(paramValues, dict):
-        raise HandlerError('BadRequest: paramValues must be an Object')
+        raise HandlerError("BadRequest: paramValues must be an Object")
 
     if not isinstance(position, int):
-        raise HandlerError('BadRequest: position must be a Number')
+        raise HandlerError("BadRequest: position must be a Number")
 
     moduleIdName = str(moduleIdName)
 
     # don't allow python code module in anonymous workflow
-    if moduleIdName == 'pythoncode' and workflow.is_anonymous:
+    if moduleIdName == "pythoncode" and workflow.is_anonymous:
         return None
 
     try:
-        await AddModuleCommand.create(workflow=workflow, tab=tab,
-                                      module_id_name=moduleIdName,
-                                      position=position,
-                                      param_values=paramValues)
+        await AddModuleCommand.create(
+            workflow=workflow,
+            tab=tab,
+            module_id_name=moduleIdName,
+            position=position,
+            param_values=paramValues,
+        )
     except ModuleVersion.DoesNotExist:
-        raise HandlerError('BadRequest: module does not exist')
+        raise HandlerError("BadRequest: module does not exist")
     except ValueError as err:
-        raise HandlerError('BadRequest: param validation failed: %s'
-                           % str(err))
+        raise HandlerError("BadRequest: param validation failed: %s" % str(err))
 
     # TODO switch Intercom around and log by moduleIdName, not module name
     # (Currently, we end up with two events every time we change names)
     module_version = await _load_module_version(moduleIdName)
     server.utils.log_user_event_from_scope(
         scope,
-        f'ADD STEP {module_version.name}', {
-            'name': module_version.name,
-            'id_name': moduleIdName
-        }
+        f"ADD STEP {module_version.name}",
+        {"name": module_version.name, "id_name": moduleIdName},
     )
 
 
 @register_websockets_handler
-@websockets_handler('write')
+@websockets_handler("write")
 @_loading_tab
-async def reorder_modules(workflow: Workflow, tab: Tab,
-                          wfModuleIds: List[int], **kwargs):
+async def reorder_modules(
+    workflow: Workflow, tab: Tab, wfModuleIds: List[int], **kwargs
+):
     try:
-        await ReorderModulesCommand.create(workflow=workflow, tab=tab,
-                                           new_order=wfModuleIds)
+        await ReorderModulesCommand.create(
+            workflow=workflow, tab=tab, new_order=wfModuleIds
+        )
     except ValueError as err:
         raise HandlerError(str(err))
 
 
 @register_websockets_handler
-@websockets_handler('write')
+@websockets_handler("write")
 async def create(workflow: Workflow, slug: str, name: str, **kwargs):
     slug = str(slug)  # JSON values can't lead to error
     name = str(name)  # JSON values can't lead to error
@@ -97,26 +113,26 @@ async def create(workflow: Workflow, slug: str, name: str, **kwargs):
 
 
 @register_websockets_handler
-@websockets_handler('write')
+@websockets_handler("write")
 @_loading_tab
-async def duplicate(workflow: Workflow, tab: Tab, slug: str, name: str,
-                    **kwargs):
+async def duplicate(workflow: Workflow, tab: Tab, slug: str, name: str, **kwargs):
     try:
-        await DuplicateTabCommand.create(workflow=workflow, from_tab=tab,
-                                         slug=slug, name=name)
+        await DuplicateTabCommand.create(
+            workflow=workflow, from_tab=tab, slug=slug, name=name
+        )
     except ValueError as err:
-        raise HandlerError('BadRequest: %s' % str(err))
+        raise HandlerError("BadRequest: %s" % str(err))
 
 
 @register_websockets_handler
-@websockets_handler('write')
+@websockets_handler("write")
 @_loading_tab
 async def delete(workflow: Workflow, tab: Tab, **kwargs):
     await DeleteTabCommand.create(workflow=workflow, tab=tab)
 
 
 @register_websockets_handler
-@websockets_handler('write')
+@websockets_handler("write")
 @_loading_tab
 async def set_name(workflow: Workflow, tab: Tab, name: str, **kwargs):
     name = str(name)  # JSON values can't lead to error

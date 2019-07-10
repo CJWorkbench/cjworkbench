@@ -29,10 +29,10 @@ def DefaultMigrateParams(params):
 
 
 class FetchTests(DbTestCase):
-    @patch('server.models.loaded_module.LoadedModule.for_module_version_sync')
-    @patch('fetcher.save.save_result_if_changed')
+    @patch("server.models.loaded_module.LoadedModule.for_module_version_sync")
+    @patch("fetcher.save.save_result_if_changed")
     def test_fetch_wf_module(self, save_result, load_module):
-        result = ProcessResult(pd.DataFrame({'A': [1]}), error='hi')
+        result = ProcessResult(pd.DataFrame({"A": [1]}), error="hi")
 
         async def fake_fetch(*args, **kwargs):
             return result
@@ -49,16 +49,15 @@ class FetchTests(DbTestCase):
         wf_module = workflow.tabs.first().wf_modules.create(
             order=0,
             auto_update_data=True,
-            next_update=parser.parse('Aug 28 1999 2:24PM UTC'),
-            update_interval=600
+            next_update=parser.parse("Aug 28 1999 2:24PM UTC"),
+            update_interval=600,
         )
-        wf_module._module_version = ModuleVersion(spec={'parameters': []})
+        wf_module._module_version = ModuleVersion(spec={"parameters": []})
 
-        now = parser.parse('Aug 28 1999 2:24:02PM UTC')
-        due_for_update = parser.parse('Aug 28 1999 2:34PM UTC')
+        now = parser.parse("Aug 28 1999 2:24:02PM UTC")
+        due_for_update = parser.parse("Aug 28 1999 2:34PM UTC")
 
-        self.run_with_async_db(fetch.fetch_wf_module(workflow.id,
-                                                     wf_module, now))
+        self.run_with_async_db(fetch.fetch_wf_module(workflow.id, wf_module, now))
 
         save_result.assert_called_with(workflow.id, wf_module, result)
 
@@ -66,33 +65,33 @@ class FetchTests(DbTestCase):
         self.assertEqual(wf_module.last_update_check, now)
         self.assertEqual(wf_module.next_update, due_for_update)
 
-    @patch('server.models.loaded_module.LoadedModule.for_module_version_sync')
+    @patch("server.models.loaded_module.LoadedModule.for_module_version_sync")
     def test_fetch_wf_module_skip_missed_update(self, load_module):
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
         wf_module = tab.wf_modules.create(
             order=0,
             auto_update_data=True,
-            next_update=parser.parse('Aug 28 1999 2:24PM UTC'),
-            update_interval=600
+            next_update=parser.parse("Aug 28 1999 2:24PM UTC"),
+            update_interval=600,
         )
 
-        load_module.side_effect = Exception('caught')  # least-code test case
+        load_module.side_effect = Exception("caught")  # least-code test case
 
-        now = parser.parse('Aug 28 1999 2:34:02PM UTC')
-        due_for_update = parser.parse('Aug 28 1999 2:44PM UTC')
+        now = parser.parse("Aug 28 1999 2:34:02PM UTC")
+        due_for_update = parser.parse("Aug 28 1999 2:44PM UTC")
 
         with self.assertLogs(fetch.__name__):
-            self.run_with_async_db(fetch.fetch_wf_module(workflow.id,
-                                                         wf_module, now))
+            self.run_with_async_db(fetch.fetch_wf_module(workflow.id, wf_module, now))
 
         wf_module.refresh_from_db()
         self.assertEqual(wf_module.next_update, due_for_update)
 
-    @patch('server.models.loaded_module.LoadedModule.for_module_version_sync')
-    @patch('fetcher.save.save_result_if_changed')
-    def test_fetch_ignore_wf_module_deleted_when_updating(self, save_result,
-                                                          load_module):
+    @patch("server.models.loaded_module.LoadedModule.for_module_version_sync")
+    @patch("fetcher.save.save_result_if_changed")
+    def test_fetch_ignore_wf_module_deleted_when_updating(
+        self, save_result, load_module
+    ):
         """
         It's okay if wf_module is gone when updating wf_module.next_update.
         """
@@ -100,12 +99,13 @@ class FetchTests(DbTestCase):
         wf_module = workflow.tabs.first().wf_modules.create(
             order=0,
             auto_update_data=True,
-            next_update=parser.parse('Aug 28 1999 2:24PM UTC'),
-            update_interval=600
+            next_update=parser.parse("Aug 28 1999 2:24PM UTC"),
+            update_interval=600,
         )
 
         async def fake_fetch(*args, **kwargs):
-            return ProcessResult(pd.DataFrame({'A': [1]}))
+            return ProcessResult(pd.DataFrame({"A": [1]}))
+
         fake_module = Mock(LoadedModule)
         load_module.return_value = fake_module
         fake_module.migrate_params.side_effect = lambda x: x
@@ -122,21 +122,21 @@ class FetchTests(DbTestCase):
                 # and the value is not in the DB. Solution: look up a copy and
                 # delete the copy.
                 WfModule.objects.get(id=wf_module.id).delete()
+
             await do_delete()
+
         save_result.side_effect = fake_save
 
-        now = parser.parse('Aug 28 1999 2:34:02PM UTC')
+        now = parser.parse("Aug 28 1999 2:34:02PM UTC")
 
         # Assert fetch does not crash with
         # DatabaseError: Save with update_fields did not affect any rows
-        with self.assertLogs(fetch.__name__, level='DEBUG'):
-            self.run_with_async_db(fetch.fetch_wf_module(workflow.id,
-                                                         wf_module, now))
+        with self.assertLogs(fetch.__name__, level="DEBUG"):
+            self.run_with_async_db(fetch.fetch_wf_module(workflow.id, wf_module, now))
 
-    @patch('server.models.loaded_module.LoadedModule.for_module_version_sync')
-    @patch('fetcher.save.save_result_if_changed')
-    def test_fetch_poll_when_setting_next_update(self, save_result,
-                                                 load_module):
+    @patch("server.models.loaded_module.LoadedModule.for_module_version_sync")
+    @patch("fetcher.save.save_result_if_changed")
+    def test_fetch_poll_when_setting_next_update(self, save_result, load_module):
         """
         Handle `.auto_update_data` and `.update_interval` changing mid-fetch.
         """
@@ -144,13 +144,14 @@ class FetchTests(DbTestCase):
         wf_module = workflow.tabs.first().wf_modules.create(
             order=0,
             auto_update_data=True,
-            next_update=parser.parse('Aug 28 1999 2:24PM UTC'),
-            update_interval=600
+            next_update=parser.parse("Aug 28 1999 2:24PM UTC"),
+            update_interval=600,
         )
-        wf_module._module_version = ModuleVersion(spec={'parameters': []})
+        wf_module._module_version = ModuleVersion(spec={"parameters": []})
 
         async def fake_fetch(*args, **kwargs):
-            return ProcessResult(pd.DataFrame({'A': [1]}))
+            return ProcessResult(pd.DataFrame({"A": [1]}))
+
         fake_module = Mock(LoadedModule)
         load_module.return_value = fake_module
         fake_module.param_schema = ParamDType.Dict({})
@@ -163,24 +164,24 @@ class FetchTests(DbTestCase):
             @database_sync_to_async
             def change_wf_module_during_fetch():
                 WfModule.objects.filter(id=wf_module.id).update(
-                    auto_update_data=False,
-                    next_update=None,
+                    auto_update_data=False, next_update=None
                 )
+
             await change_wf_module_during_fetch()
+
         save_result.side_effect = fake_save
 
-        now = parser.parse('Aug 28 1999 2:34:02PM UTC')
+        now = parser.parse("Aug 28 1999 2:34:02PM UTC")
 
-        self.run_with_async_db(fetch.fetch_wf_module(workflow.id, wf_module,
-                                                     now))
+        self.run_with_async_db(fetch.fetch_wf_module(workflow.id, wf_module, now))
         wf_module.refresh_from_db()
         self.assertEqual(wf_module.auto_update_data, False)
         self.assertIsNone(wf_module.next_update)
 
-    @patch('server.models.loaded_module.LoadedModule.for_module_version_sync')
+    @patch("server.models.loaded_module.LoadedModule.for_module_version_sync")
     def test_crashing_fetch(self, load_module):
         async def fake_fetch(*args, **kwargs):
-            raise ValueError('boo')
+            raise ValueError("boo")
 
         fake_module = Mock(LoadedModule)
         load_module.return_value = fake_module
@@ -193,19 +194,18 @@ class FetchTests(DbTestCase):
         wf_module = tab.wf_modules.create(
             order=0,
             auto_update_data=True,
-            next_update=parser.parse('Aug 28 1999 2:24PM UTC'),
+            next_update=parser.parse("Aug 28 1999 2:24PM UTC"),
             update_interval=600,
-            module_id_name='x'
+            module_id_name="x",
         )
-        wf_module._module_version = ModuleVersion(spec={'parameters': []}),
+        wf_module._module_version = (ModuleVersion(spec={"parameters": []}),)
 
-        now = parser.parse('Aug 28 1999 2:34:02PM UTC')
-        due_for_update = parser.parse('Aug 28 1999 2:44PM UTC')
+        now = parser.parse("Aug 28 1999 2:34:02PM UTC")
+        due_for_update = parser.parse("Aug 28 1999 2:44PM UTC")
 
-        with self.assertLogs(fetch.__name__, level='ERROR') as cm:
+        with self.assertLogs(fetch.__name__, level="ERROR") as cm:
             # We should log the actual error
-            self.run_with_async_db(fetch.fetch_wf_module(workflow.id,
-                                                         wf_module, now))
+            self.run_with_async_db(fetch.fetch_wf_module(workflow.id, wf_module, now))
             self.assertEqual(cm.records[0].exc_info[0], ValueError)
 
         wf_module.refresh_from_db()
@@ -216,11 +216,12 @@ class FetchTests(DbTestCase):
         self.assertEqual(wf_module.last_update_check, now)
         self.assertEqual(wf_module.next_update, due_for_update)
 
-    @patch('server.models.loaded_module.LoadedModule.for_module_version_sync')
-    @patch('fetcher.save.save_result_if_changed')
-    @patch('fetcher.fetchprep.clean_value', lambda _, params, __: params)
-    def _test_fetch(self, fn, migrate_params_fn, wf_module, param_schema, save,
-                    load) -> ProcessResult:
+    @patch("server.models.loaded_module.LoadedModule.for_module_version_sync")
+    @patch("fetcher.save.save_result_if_changed")
+    @patch("fetcher.fetchprep.clean_value", lambda _, params, __: params)
+    def _test_fetch(
+        self, fn, migrate_params_fn, wf_module, param_schema, save, load
+    ) -> ProcessResult:
         """
         Stub out a `fetch` method for `wf_module`.
 
@@ -230,7 +231,7 @@ class FetchTests(DbTestCase):
             # White-box: we aren't testing what happens in the (valid) case
             # that a ModuleVersion has been deleted while in use. Pretend it's
             # there.
-            wf_module._module_version = ModuleVersion(spec={'parameters': []})
+            wf_module._module_version = ModuleVersion(spec={"parameters": []})
 
         try:
             workflow_id = wf_module.workflow_id
@@ -247,9 +248,9 @@ class FetchTests(DbTestCase):
         load.return_value = MockLoadedModule(fn, migrate_params_fn)
         save.return_value = future_none
 
-        self.run_with_async_db(fetch.fetch_wf_module(workflow_id,
-                                                     wf_module,
-                                                     timezone.now()))
+        self.run_with_async_db(
+            fetch.fetch_wf_module(workflow_id, wf_module, timezone.now())
+        )
 
         save.assert_called_once()
         self.assertEqual(save.call_args[0][0], workflow_id)
@@ -261,32 +262,33 @@ class FetchTests(DbTestCase):
     def test_fetch_get_params(self):
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
-        wf_module = tab.wf_modules.create(order=0, params={'foo': 'bar'})
+        wf_module = tab.wf_modules.create(order=0, params={"foo": "bar"})
 
         async def fetch(params, **kwargs):
-            self.assertEqual(params, {'foo': 'bar'})
+            self.assertEqual(params, {"foo": "bar"})
 
-        self._test_fetch(fetch, DefaultMigrateParams, wf_module,
-                         ParamDType.Dict({'foo': ParamDType.String()}))
+        self._test_fetch(
+            fetch,
+            DefaultMigrateParams,
+            wf_module,
+            ParamDType.Dict({"foo": ParamDType.String()}),
+        )
 
     def test_fetch_secrets(self):
-        owner = User.objects.create(username='o', email='o@example.org')
+        owner = User.objects.create(username="o", email="o@example.org")
         workflow = Workflow.objects.create(owner=owner)
         tab = workflow.tabs.create(position=0)
-        wf_module = tab.wf_modules.create(order=0, secrets={
-            'X': {'name': 'name', 'secret': 'secret'},
-        })
+        wf_module = tab.wf_modules.create(
+            order=0, secrets={"X": {"name": "name", "secret": "secret"}}
+        )
 
         async def fetch(params, *, secrets, **kwargs):
-            self.assertEqual(secrets, {
-                'X': {'name': 'name', 'secret': 'secret'},
-            })
+            self.assertEqual(secrets, {"X": {"name": "name", "secret": "secret"}})
 
-        self._test_fetch(fetch, DefaultMigrateParams, wf_module,
-                         ParamDType.Dict({}))
+        self._test_fetch(fetch, DefaultMigrateParams, wf_module, ParamDType.Dict({}))
 
     def test_fetch_get_workflow_owner(self):
-        owner = User.objects.create(username='o', email='o@example.org')
+        owner = User.objects.create(username="o", email="o@example.org")
         workflow = Workflow.objects.create(owner=owner)
         tab = workflow.tabs.create(position=0)
         wf_module = tab.wf_modules.create(order=0)
@@ -294,8 +296,7 @@ class FetchTests(DbTestCase):
         async def fetch(params, *, get_workflow_owner, **kwargs):
             self.assertEqual(await get_workflow_owner(), owner)
 
-        self._test_fetch(fetch, DefaultMigrateParams, wf_module,
-                         ParamDType.Dict({}))
+        self._test_fetch(fetch, DefaultMigrateParams, wf_module, ParamDType.Dict({}))
 
     def test_fetch_get_workflow_owner_anonymous(self):
         workflow = Workflow.objects.create(owner=None)
@@ -305,17 +306,15 @@ class FetchTests(DbTestCase):
         async def fetch(params, *, get_workflow_owner, **kwargs):
             self.assertIsNone(await get_workflow_owner())
 
-        self._test_fetch(fetch, DefaultMigrateParams, wf_module,
-                         ParamDType.Dict({}))
+        self._test_fetch(fetch, DefaultMigrateParams, wf_module, ParamDType.Dict({}))
 
     def test_fetch_get_input_dataframe_happy_path(self):
-        table = pd.DataFrame({'A': [1]})
+        table = pd.DataFrame({"A": [1]})
 
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
         delta = InitWorkflowCommand.create(workflow)
-        wfm1 = tab.wf_modules.create(order=0,
-                                     last_relevant_delta_id=delta.id)
+        wfm1 = tab.wf_modules.create(order=0, last_relevant_delta_id=delta.id)
         wfm1.cache_render_result(delta.id, ProcessResult(table))
         wfm1.save()
         wfm2 = tab.wf_modules.create(order=1)
@@ -323,12 +322,11 @@ class FetchTests(DbTestCase):
         async def fetch(params, *, get_input_dataframe, **kwargs):
             assert_frame_equal(await get_input_dataframe(), table)
 
-        self._test_fetch(fetch, DefaultMigrateParams, wfm2,
-                         ParamDType.Dict({}))
+        self._test_fetch(fetch, DefaultMigrateParams, wfm2, ParamDType.Dict({}))
 
     def test_fetch_get_input_dataframe_two_tabs(self):
-        table = pd.DataFrame({'A': [1]})
-        wrong_table = pd.DataFrame({'B': [1]})
+        table = pd.DataFrame({"A": [1]})
+        wrong_table = pd.DataFrame({"B": [1]})
 
         workflow = Workflow.create_and_init()
         delta_id = workflow.last_delta_id
@@ -344,8 +342,7 @@ class FetchTests(DbTestCase):
         async def fetch(params, *, get_input_dataframe, **kwargs):
             assert_frame_equal(await get_input_dataframe(), table)
 
-        self._test_fetch(fetch, DefaultMigrateParams, wfm2,
-                         ParamDType.Dict({}))
+        self._test_fetch(fetch, DefaultMigrateParams, wfm2, ParamDType.Dict({}))
 
     def test_fetch_get_input_dataframe_empty_cache(self):
         workflow = Workflow.objects.create()
@@ -357,11 +354,10 @@ class FetchTests(DbTestCase):
         async def fetch(params, *, get_input_dataframe, **kwargs):
             self.assertIsNone(await get_input_dataframe())
 
-        self._test_fetch(fetch, DefaultMigrateParams, wfm2,
-                         ParamDType.Dict({}))
+        self._test_fetch(fetch, DefaultMigrateParams, wfm2, ParamDType.Dict({}))
 
     def test_fetch_get_input_dataframe_stale_cache(self):
-        table = pd.DataFrame({'A': [1]})
+        table = pd.DataFrame({"A": [1]})
 
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
@@ -372,18 +368,17 @@ class FetchTests(DbTestCase):
         # Now make wfm1's output stale
         delta2 = InitWorkflowCommand.create(workflow)
         wfm1.last_relevant_delta_id = delta2.id
-        wfm1.save(update_fields=['last_relevant_delta_id'])
+        wfm1.save(update_fields=["last_relevant_delta_id"])
 
         wfm2 = tab.wf_modules.create(order=1)
 
         async def fetch(params, *, get_input_dataframe, **kwargs):
             self.assertIsNone(await get_input_dataframe())
 
-        self._test_fetch(fetch, DefaultMigrateParams, wfm2,
-                         ParamDType.Dict({}))
+        self._test_fetch(fetch, DefaultMigrateParams, wfm2, ParamDType.Dict({}))
 
     def test_fetch_get_input_dataframe_race_delete_prior_wf_module(self):
-        table = pd.DataFrame({'A': [1]})
+        table = pd.DataFrame({"A": [1]})
 
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
@@ -401,11 +396,10 @@ class FetchTests(DbTestCase):
         async def fetch(params, *, get_input_dataframe, **kwargs):
             self.assertIsNone(await get_input_dataframe())
 
-        self._test_fetch(fetch, DefaultMigrateParams, wfm2,
-                         ParamDType.Dict({}))
+        self._test_fetch(fetch, DefaultMigrateParams, wfm2, ParamDType.Dict({}))
 
     def test_fetch_get_input_dataframe_race_delete_workflow(self):
-        table = pd.DataFrame({'A': [1]})
+        table = pd.DataFrame({"A": [1]})
 
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
@@ -423,11 +417,10 @@ class FetchTests(DbTestCase):
         async def fetch(params, *, get_input_dataframe, **kwargs):
             self.assertIsNone(await get_input_dataframe())
 
-        self._test_fetch(fetch, DefaultMigrateParams, wfm2,
-                         ParamDType.Dict({}))
+        self._test_fetch(fetch, DefaultMigrateParams, wfm2, ParamDType.Dict({}))
 
     def test_fetch_get_stored_dataframe_happy_path(self):
-        table = pd.DataFrame({'A': [1]})
+        table = pd.DataFrame({"A": [1]})
 
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
@@ -438,8 +431,7 @@ class FetchTests(DbTestCase):
         async def fetch(params, *, get_stored_dataframe, **kwargs):
             assert_frame_equal(await get_stored_dataframe(), table)
 
-        self._test_fetch(fetch, DefaultMigrateParams, wf_module,
-                         ParamDType.Dict({}))
+        self._test_fetch(fetch, DefaultMigrateParams, wf_module, ParamDType.Dict({}))
 
     def test_fetch_get_stored_dataframe_no_stored_data_frame(self):
         workflow = Workflow.objects.create()
@@ -449,11 +441,10 @@ class FetchTests(DbTestCase):
         async def fetch(params, *, get_stored_dataframe, **kwargs):
             self.assertIsNone(await get_stored_dataframe())
 
-        self._test_fetch(fetch, DefaultMigrateParams, wf_module,
-                         ParamDType.Dict({}))
+        self._test_fetch(fetch, DefaultMigrateParams, wf_module, ParamDType.Dict({}))
 
     def test_fetch_get_stored_dataframe_race_delete_wf_module(self):
-        table = pd.DataFrame({'A': [1]})
+        table = pd.DataFrame({"A": [1]})
 
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
@@ -470,8 +461,7 @@ class FetchTests(DbTestCase):
         async def fetch(params, *, get_stored_dataframe, **kwargs):
             self.assertIsNone(await get_stored_dataframe())
 
-        self._test_fetch(fetch, DefaultMigrateParams, wf_module,
-                         ParamDType.Dict({}))
+        self._test_fetch(fetch, DefaultMigrateParams, wf_module, ParamDType.Dict({}))
 
     def test_fetch_workflow_id(self):
         workflow = Workflow.objects.create()
@@ -481,5 +471,4 @@ class FetchTests(DbTestCase):
         async def fetch(params, *, workflow_id, **kwargs):
             self.assertEqual(workflow_id, workflow.id)
 
-        self._test_fetch(fetch, DefaultMigrateParams, wf_module,
-                         ParamDType.Dict({}))
+        self._test_fetch(fetch, DefaultMigrateParams, wf_module, ParamDType.Dict({}))

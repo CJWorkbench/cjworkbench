@@ -23,7 +23,7 @@ class WorkbenchDatabaseSyncToAsync(DatabaseSyncToAsync):
 
     executor = ThreadPoolExecutor(
         max_workers=settings.N_SYNC_DATABASE_CONNECTIONS,
-        thread_name_prefix='workbench-database-sync-to-async-',
+        thread_name_prefix="workbench-database-sync-to-async-",
     )
 
     # override
@@ -36,11 +36,7 @@ class WorkbenchDatabaseSyncToAsync(DatabaseSyncToAsync):
         future = loop.run_in_executor(
             self.executor,
             functools.partial(
-                self.thread_handler,
-                loop,
-                self.get_current_task(),
-                context.run,
-                child
+                self.thread_handler, loop, self.get_current_task(), context.run, child
             ),
         )
         return await asyncio.wait_for(future, timeout=None)

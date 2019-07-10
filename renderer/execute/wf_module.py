@@ -9,8 +9,12 @@ from server.models import LoadedModule, WfModule, Workflow
 from server.notifications import OutputDelta
 from server import websockets
 from server.models.param_dtype import ParamDType
-from .types import TabCycleError, TabOutputUnreachableError, \
-        UnneededExecution, PromptingError
+from .types import (
+    TabCycleError,
+    TabOutputUnreachableError,
+    UnneededExecution,
+    PromptingError,
+)
 from . import renderprep
 
 
@@ -32,9 +36,7 @@ def locked_wf_module(workflow, wf_module):
             delta_id = wf_module.last_relevant_delta_id
             try:
                 safe_wf_module = WfModule.objects.get(
-                    pk=wf_module.pk,
-                    is_deleted=False,
-                    last_relevant_delta_id=delta_id
+                    pk=wf_module.pk, is_deleted=False, last_relevant_delta_id=delta_id
                 )
             except WfModule.DoesNotExist:
                 # Module was deleted or changed input/params _after_ we
@@ -55,7 +57,7 @@ def _execute_wfmodule_pre(
     wf_module: WfModule,
     params: Dict[str, Any],
     input_table_shape: TableShape,
-    tab_shapes: Dict[str, Optional[StepResultShape]]
+    tab_shapes: Dict[str, Optional[StepResultShape]],
 ) -> Tuple:
     """
     First step of execute_wfmodule().
@@ -82,26 +84,22 @@ def _execute_wfmodule_pre(
         module_version = safe_wf_module.module_version
         fetch_result = safe_wf_module.get_fetch_result()
         render_context = renderprep.RenderContext(
-            workflow.id,
-            wf_module.id,
-            input_table_shape,
-            tab_shapes,
-            params  # ugh
+            workflow.id, wf_module.id, input_table_shape, tab_shapes, params  # ugh
         )
         if module_version is None:
             param_schema = ParamDType.Dict({})
         else:
             param_schema = module_version.param_schema
-        param_values = renderprep.get_param_values(param_schema, params,
-                                                   render_context)
+        param_values = renderprep.get_param_values(param_schema, params, render_context)
         loaded_module = LoadedModule.for_module_version_sync(module_version)
 
         return (loaded_module, fetch_result, param_values)
 
 
 @database_sync_to_async
-def _execute_wfmodule_save(workflow: Workflow, wf_module: WfModule,
-                           result: ProcessResult) -> OutputDelta:
+def _execute_wfmodule_save(
+    workflow: Workflow, wf_module: WfModule, result: ProcessResult
+) -> OutputDelta:
     """
     Call wf_module.cache_render_result() and build OutputDelta.
 
@@ -124,15 +122,13 @@ def _execute_wfmodule_save(workflow: Workflow, wf_module: WfModule,
             stale_result = None
 
         safe_wf_module.cache_render_result(
-            safe_wf_module.last_relevant_delta_id,
-            result
+            safe_wf_module.last_relevant_delta_id, result
         )
 
         if safe_wf_module.notifications and result != stale_result:
             safe_wf_module.has_unseen_notification = True
-            safe_wf_module.save(update_fields=['has_unseen_notification'])
-            return notifications.OutputDelta(safe_wf_module,
-                                             stale_result, result)
+            safe_wf_module.save(update_fields=["has_unseen_notification"])
+            return notifications.OutputDelta(safe_wf_module, stale_result, result)
         else:
             return None  # nothing to email
 
@@ -143,7 +139,7 @@ async def _render_wfmodule(
     params: Dict[str, Any],
     tab_name: str,
     input_result: Optional[ProcessResult],  # None for first module in tab
-    tab_shapes: Dict[str, Optional[StepResultShape]]
+    tab_shapes: Dict[str, Optional[StepResultShape]],
 ) -> ProcessResult:
     """
     Prepare and call `wf_module`'s `render()`; return a ProcessResult.
@@ -151,34 +147,33 @@ async def _render_wfmodule(
     The actual render runs in a background thread so the event loop can process
     other events.
     """
-    if wf_module.order > 0 and input_result.status != 'ok':
+    if wf_module.order > 0 and input_result.status != "ok":
         return ProcessResult()  # 'unreachable'
 
     try:
-        loaded_module, fetch_result, param_values = (
-            await _execute_wfmodule_pre(workflow, wf_module, params,
-                                        input_result.table_shape, tab_shapes)
+        loaded_module, fetch_result, param_values = await _execute_wfmodule_pre(
+            workflow, wf_module, params, input_result.table_shape, tab_shapes
         )
     except TabCycleError:
-        return ProcessResult(error=(
-            'The chosen tab depends on this one. Please choose another tab.'
-        ))
+        return ProcessResult(
+            error=("The chosen tab depends on this one. Please choose another tab.")
+        )
     except TabOutputUnreachableError:
-        return ProcessResult(error=(
-            'The chosen tab has no output. ''Select another one.'
-        ))
+        return ProcessResult(
+            error=("The chosen tab has no output. " "Select another one.")
+        )
     except PromptingError as err:
         return ProcessResult(
-            error='The chosen columns need to be converted.',
-            quick_fixes=err.as_quick_fixes()
+            error="The chosen columns need to be converted.",
+            quick_fixes=err.as_quick_fixes(),
         )
 
     # Render may take a while. run_in_executor to push that slowdown to a
     # thread and keep our event loop responsive.
     loop = asyncio.get_event_loop()
-    return await loop.run_in_executor(None, loaded_module.render,
-                                      input_result, param_values, tab_name,
-                                      fetch_result)
+    return await loop.run_in_executor(
+        None, loaded_module.render, input_result, param_values, tab_name, fetch_result
+    )
 
 
 async def execute_wfmodule(
@@ -187,7 +182,7 @@ async def execute_wfmodule(
     params: Dict[str, Any],
     tab_name: str,
     input_result: ProcessResult,
-    tab_shapes: Dict[str, Optional[StepResultShape]]
+    tab_shapes: Dict[str, Optional[StepResultShape]],
 ) -> ProcessResult:
     """
     Render a single WfModule; cache, broadcast and return output.
@@ -221,25 +216,29 @@ async def execute_wfmodule(
     delta_id = wf_module.last_relevant_delta_id
 
     # may raise UnneededExecution
-    result = await _render_wfmodule(workflow, wf_module, params, tab_name,
-                                    input_result, tab_shapes)
+    result = await _render_wfmodule(
+        workflow, wf_module, params, tab_name, input_result, tab_shapes
+    )
 
     # may raise UnneededExecution
     output_delta = await _execute_wfmodule_save(workflow, wf_module, result)
 
-    await websockets.ws_client_send_delta_async(workflow.id, {
-        'updateWfModules': {
-            str(wf_module.id): build_status_dict(result, delta_id)
-        }
-    })
+    await websockets.ws_client_send_delta_async(
+        workflow.id,
+        {"updateWfModules": {str(wf_module.id): build_status_dict(result, delta_id)}},
+    )
 
     # Email notification if data has changed. Do this outside of the database
     # lock, because SMTP can be slow, and Django's email backend is
     # synchronous.
     if output_delta:
         loop = asyncio.get_event_loop()
-        await loop.run_in_executor(None, notifications.email_output_delta,
-                                   output_delta, datetime.datetime.now())
+        await loop.run_in_executor(
+            None,
+            notifications.email_output_delta,
+            output_delta,
+            datetime.datetime.now(),
+        )
 
     # TODO if there's no change, is it possible for us to skip the render
     # of future modules, setting their cached_render_result_delta_id =
@@ -251,10 +250,10 @@ def build_status_dict(result: ProcessResult, delta_id: int) -> Dict[str, Any]:
     quick_fixes = [qf.to_dict() for qf in result.quick_fixes]
 
     return {
-        'quick_fixes': quick_fixes,
-        'output_columns': [c.to_dict() for c in result.columns],
-        'output_error': result.error,
-        'output_status': result.status,
-        'output_n_rows': len(result.dataframe),
-        'cached_render_result_delta_id': delta_id,
+        "quick_fixes": quick_fixes,
+        "output_columns": [c.to_dict() for c in result.columns],
+        "output_error": result.error,
+        "output_status": result.status,
+        "output_n_rows": len(result.dataframe),
+        "cached_render_result_delta_id": delta_id,
     }

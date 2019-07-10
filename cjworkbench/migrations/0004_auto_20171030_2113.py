@@ -9,14 +9,18 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('cjworkbench', '0003_googlecredentials'),
-    ]
+    dependencies = [("cjworkbench", "0003_googlecredentials")]
 
     operations = [
         migrations.AlterField(
-            model_name='googlecredentials',
-            name='id',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, primary_key=True, related_name='google_credentials', serialize=False, to=settings.AUTH_USER_MODEL),
-        ),
+            model_name="googlecredentials",
+            name="id",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                primary_key=True,
+                related_name="google_credentials",
+                serialize=False,
+                to=settings.AUTH_USER_MODEL,
+            ),
+        )
     ]

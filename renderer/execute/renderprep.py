@@ -9,11 +9,15 @@ from cjworkbench.types import RenderColumn, StepResultShape, TabOutput
 from server import minio
 from server.models import Tab, UploadedFile
 from server.models.param_spec import ParamDType
-from .types import TabCycleError, TabOutputUnreachableError, \
-        UnneededExecution, PromptingError
+from .types import (
+    TabCycleError,
+    TabOutputUnreachableError,
+    UnneededExecution,
+    PromptingError,
+)
 
 
-FilesystemUnsafeChars = re.compile('[^-_.,()a-zA-Z0-9]')
+FilesystemUnsafeChars = re.compile("[^-_.,()a-zA-Z0-9]")
 
 
 class PromptErrorAggregator:
@@ -40,10 +44,13 @@ class PromptErrorAggregator:
         errors = []
         for found_type, group in self.groups.items():
             for wanted_types, column_names in group.items():
-                errors.append(PromptingError.WrongColumnType(column_names,
-                                                             found_type,
-                                                             wanted_types))
+                errors.append(
+                    PromptingError.WrongColumnType(
+                        column_names, found_type, wanted_types
+                    )
+                )
         raise PromptingError(errors)
+
 
 class RenderContext:
     def __init__(
@@ -85,7 +92,7 @@ class RenderContext:
         except KeyError:
             # Tab does not exist
             return {}
-        if tab is None or tab.status != 'ok':
+        if tab is None or tab.status != "ok":
             # Tab has a cycle or other error
             return {}
 
@@ -93,9 +100,7 @@ class RenderContext:
 
 
 def get_param_values(
-    schema: ParamDType.Dict,
-    params: Dict[str, Any],
-    context: RenderContext,
+    schema: ParamDType.Dict, params: Dict[str, Any], context: RenderContext
 ) -> Dict[str, Any]:
     """
     Convert `params` to a dict we'll pass to a module `render()` function.
@@ -143,8 +148,9 @@ def clean_value(dtype: ParamDType, value: Any, context: RenderContext) -> Any:
 
 
 @clean_value.register(ParamDType.Float)
-def _(dtype: ParamDType.Float, value: Union[int,float],
-      context: RenderContext) -> float:
+def _(
+    dtype: ParamDType.Float, value: Union[int, float], context: RenderContext
+) -> float:
     # ParamDType.Float can have `int` values (because values come from
     # json.parse(), which only gives Numbers so can give "3" instead of
     # "3.0". We want to pass that as `float` in the `params` dict.
@@ -156,8 +162,9 @@ class WeakreffablePath(pathlib.PosixPath):
 
 
 @clean_value.register(ParamDType.File)
-def _(dtype: ParamDType.File, value: Optional[str],
-      context: RenderContext) -> Optional[pathlib.Path]:
+def _(
+    dtype: ParamDType.File, value: Optional[str], context: RenderContext
+) -> Optional[pathlib.Path]:
     """
     Convert a `file` String-encoded UUID to a tempfile `pathlib.Path`.
 
@@ -171,8 +178,7 @@ def _(dtype: ParamDType.File, value: Optional[str],
         return None
     try:
         uploaded_file = UploadedFile.objects.get(
-            uuid=value,
-            wf_module_id=context.wf_module_id,
+            uuid=value, wf_module_id=context.wf_module_id
         )
     except UploadedFile.DoesNotExist:
         return None
@@ -181,8 +187,8 @@ def _(dtype: ParamDType.File, value: Optional[str],
     # have the same suffix as the original: that helps with filetype
     # detection. We also put the UUID in the name so debug messages help
     # devs find the original file.
-    name = FilesystemUnsafeChars.sub('-', uploaded_file.name)
-    suffix = ''.join(pathlib.PurePath(name).suffixes)
+    name = FilesystemUnsafeChars.sub("-", uploaded_file.name)
+    suffix = "".join(pathlib.PurePath(name).suffixes)
     fd, filename = tempfile.mkstemp(suffix=suffix, prefix=value)
     os.close(fd)  # we just want the empty file; no need to have it open
     # Build our retval: it'll delete the file when it's destroyed
@@ -209,15 +215,13 @@ def _(dtype: ParamDType.Tab, value: str, context: RenderContext) -> TabOutput:
         # It's an un-rendered tab. Or at least, the executor _tells_ us it's
         # un-rendered. That means there's a tab-cycle.
         raise TabCycleError
-    if shape.status != 'ok':
+    if shape.status != "ok":
         raise TabOutputUnreachableError
 
     # Load Tab output from database. Assumes we've locked the workflow.
     try:
         tab = Tab.objects.get(
-            workflow_id=context.workflow_id,
-            is_deleted=False,
-            slug=tab_slug
+            workflow_id=context.workflow_id, is_deleted=False, slug=tab_slug
         )
     except Tab.DoesNotExist:
         # If the Tab doesn't exist, someone deleted it mid-render. (We already
@@ -240,40 +244,36 @@ def _(dtype: ParamDType.Tab, value: str, context: RenderContext) -> TabOutput:
     return TabOutput(
         tab_slug,
         tab.name,
-        dict((c.name, RenderColumn(c.name, c.type.name,
-                                   getattr(c.type, 'format', None)))
-             for c in result.columns),
-        result.dataframe
+        dict(
+            (c.name, RenderColumn(c.name, c.type.name, getattr(c.type, "format", None)))
+            for c in result.columns
+        ),
+        result.dataframe,
     )
 
 
 @clean_value.register(ParamDType.Column)
 def _(dtype: ParamDType.Column, value: str, context: RenderContext) -> str:
-    valid_columns = context.output_columns_for_tab_parameter(
-        dtype.tab_parameter
-    )
+    valid_columns = context.output_columns_for_tab_parameter(dtype.tab_parameter)
     if value not in valid_columns:
-        return ''  # Null column
+        return ""  # Null column
 
     column = valid_columns[value]
     if dtype.column_types and column.type.name not in dtype.column_types:
-        raise PromptingError([
-            PromptingError.WrongColumnType([value], column.type.name,
-                                           dtype.column_types)
-        ])
+        raise PromptingError(
+            [
+                PromptingError.WrongColumnType(
+                    [value], column.type.name, dtype.column_types
+                )
+            ]
+        )
 
     return value
 
 
 @clean_value.register(ParamDType.Multicolumn)
-def _(
-    dtype: ParamDType.Multicolumn,
-    value: List[str],
-    context: RenderContext
-) -> str:
-    valid_columns = context.output_columns_for_tab_parameter(
-        dtype.tab_parameter
-    )
+def _(dtype: ParamDType.Multicolumn, value: List[str], context: RenderContext) -> str:
+    valid_columns = context.output_columns_for_tab_parameter(dtype.tab_parameter)
 
     error_agg = PromptErrorAggregator()
     requested_colnames = set(value)
@@ -286,9 +286,11 @@ def _(
             continue
 
         if dtype.column_types and column.type.name not in dtype.column_types:
-            error_agg.add(PromptingError.WrongColumnType([column.name],
-                                                         column.type.name,
-                                                         dtype.column_types))
+            error_agg.add(
+                PromptingError.WrongColumnType(
+                    [column.name], column.type.name, dtype.column_types
+                )
+            )
         else:
             valid_colnames.append(column.name)
 
@@ -301,7 +303,7 @@ def _(
 def _(
     dtype: ParamDType.Multichartseries,
     value: List[Dict[str, str]],
-    context: RenderContext
+    context: RenderContext,
 ) -> List[Dict[str, str]]:
     # Recurse to clean_value(ParamDType.Column) to clear missing columns
     inner_clean = partial(clean_value, dtype.inner_dtype)
@@ -312,7 +314,7 @@ def _(
     for v in value:
         try:
             clean_v = inner_clean(v, context)
-            if clean_v['column']:  # it's a valid column
+            if clean_v["column"]:  # it's a valid column
                 ret.append(clean_v)
         except PromptingError as err:
             error_agg.extend(err.errors)
@@ -324,9 +326,7 @@ def _(
 # ... and then the methods for recursing
 @clean_value.register(ParamDType.List)
 def clean_value_list(
-    dtype: ParamDType.List,
-    value: List[Any],
-    context: RenderContext
+    dtype: ParamDType.List, value: List[Any], context: RenderContext
 ) -> List[Any]:
     inner_clean = partial(clean_value, dtype.inner_dtype)
     ret = []
@@ -342,9 +342,7 @@ def clean_value_list(
 
 @clean_value.register(ParamDType.Multitab)
 def _(
-    dtype: ParamDType.Multitab,
-    value: List[str],
-    context: RenderContext
+    dtype: ParamDType.Multitab, value: List[str], context: RenderContext
 ) -> List[Any]:
     # First, recurse -- the same way we clean a list.
     unordered = clean_value_list(dtype, value, context)
@@ -357,16 +355,12 @@ def _(
         for tab_output in unordered
         if tab_output is not None
     )
-    return [lookup[slug]
-            for slug in context.tab_shapes.keys()
-            if slug in lookup]
+    return [lookup[slug] for slug in context.tab_shapes.keys() if slug in lookup]
 
 
 @clean_value.register(ParamDType.Dict)
 def _(
-    dtype: ParamDType.Dict,
-    value: Dict[str, Any],
-    context: RenderContext
+    dtype: ParamDType.Dict, value: Dict[str, Any], context: RenderContext
 ) -> Dict[str, Any]:
     ret = {}
     error_agg = PromptErrorAggregator()
@@ -383,13 +377,8 @@ def _(
 
 @clean_value.register(ParamDType.Map)
 def _(
-    dtype: ParamDType.Map,
-    value: Dict[str, Any],
-    context: RenderContext
+    dtype: ParamDType.Map, value: Dict[str, Any], context: RenderContext
 ) -> Dict[str, Any]:
     value_dtype = dtype.value_dtype
     value_clean = partial(clean_value, value_dtype)
-    return dict(
-        (k, value_clean(v, context))
-        for k, v in value.items()
-    )
+    return dict((k, value_clean(v, context)) for k, v in value.items())

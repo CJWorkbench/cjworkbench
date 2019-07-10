@@ -15,8 +15,8 @@ class ReorderTabsCommand(ChangesWfModuleOutputs, Delta):
 
     def load_ws_data(self):
         data = super().load_ws_data()
-        data['updateWorkflow']['tab_slugs'] = list(
-            self.workflow.live_tabs.values_list('slug', flat=True)
+        data["updateWorkflow"]["tab_slugs"] = list(
+            self.workflow.live_tabs.values_list("slug", flat=True)
         )
         return data
 
@@ -24,9 +24,7 @@ class ReorderTabsCommand(ChangesWfModuleOutputs, Delta):
         """Write `tab.position` for all tabs so they are in the given order."""
         # We validated the IDs back in `.amend_create_args()`
         for position, tab_id in enumerate(tab_ids):
-            self.workflow.tabs \
-                .filter(pk=tab_id) \
-                .update(position=position)
+            self.workflow.tabs.filter(pk=tab_id).update(position=position)
 
     def _update_selected_position(self, from_order, to_order):
         """
@@ -42,7 +40,7 @@ class ReorderTabsCommand(ChangesWfModuleOutputs, Delta):
 
         if new_position != old_position:
             self.workflow.selected_tab_position = new_position
-            self.workflow.save(update_fields=['selected_tab_position'])
+            self.workflow.save(update_fields=["selected_tab_position"])
 
     def forward_impl(self):
         self._write_order(self.new_order)
@@ -56,10 +54,7 @@ class ReorderTabsCommand(ChangesWfModuleOutputs, Delta):
 
     @classmethod
     def affected_wf_module_delta_ids(
-        cls,
-        workflow: Workflow,
-        old_slugs: List[str],
-        new_slugs: List[str]
+        cls, workflow: Workflow, old_slugs: List[str], new_slugs: List[str]
     ) -> List[Tuple[int, int]]:
         """
         Find WfModule+Delta IDs whose output may change with this reordering.
@@ -86,9 +81,7 @@ class ReorderTabsCommand(ChangesWfModuleOutputs, Delta):
                 if first_change_index is None:
                     first_change_index = i
                 last_change_index = i
-        moved_slugs = set(
-            old_slugs[first_change_index:last_change_index + 1]
-        )
+        moved_slugs = set(old_slugs[first_change_index : last_change_index + 1])
 
         # Figure out which params depend on those.
         graph = DependencyGraph.load_from_workflow(workflow)
@@ -98,33 +91,33 @@ class ReorderTabsCommand(ChangesWfModuleOutputs, Delta):
 
     @classmethod
     def amend_create_kwargs(cls, *, workflow, new_order):
-        tab_slugs_and_ids = list(workflow.live_tabs.values_list('slug', 'id'))
+        tab_slugs_and_ids = list(workflow.live_tabs.values_list("slug", "id"))
         tab_ids_by_slug = dict((t[0], t[1]) for t in tab_slugs_and_ids)
         tab_slugs_by_id = dict((t[1], t[0]) for t in tab_slugs_and_ids)
 
-        old_order = list(workflow.live_tabs.values_list('id', flat=True))
+        old_order = list(workflow.live_tabs.values_list("id", flat=True))
 
         try:
             new_order = [tab_ids_by_slug[slug] for slug in new_order]
         except KeyError:
-            raise ValueError('wrong tab slugs')
+            raise ValueError("wrong tab slugs")
         # Need same number of elements, same elements. Don't compare sets
         # because that doesn't test number of elements.
         if sorted(new_order) != sorted(old_order):
-            raise ValueError('wrong tab slugs')
+            raise ValueError("wrong tab slugs")
 
         if new_order == old_order:
             return None
 
         old_slugs = [tab_slugs_by_id[id] for id in old_order]
         new_slugs = [tab_slugs_by_id[id] for id in new_order]
-        wf_module_delta_ids = cls.affected_wf_module_delta_ids(workflow,
-                                                               old_slugs,
-                                                               new_slugs)
+        wf_module_delta_ids = cls.affected_wf_module_delta_ids(
+            workflow, old_slugs, new_slugs
+        )
 
         return {
-            'workflow': workflow,
-            'new_order': new_order,
-            'old_order': old_order,
-            'wf_module_delta_ids': wf_module_delta_ids
+            "workflow": workflow,
+            "new_order": new_order,
+            "old_order": old_order,
+            "wf_module_delta_ids": wf_module_delta_ids,
         }

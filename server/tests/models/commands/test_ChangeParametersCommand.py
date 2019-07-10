@@ -17,8 +17,8 @@ class MockLoadedModule:
         return params  # no-op
 
 
-@patch('server.rabbitmq.queue_render', async_noop)
-@patch('server.models.Delta.ws_notify', async_noop)
+@patch("server.rabbitmq.queue_render", async_noop)
+@patch("server.models.Delta.ws_notify", async_noop)
 class ChangeParametersCommandTest(DbTestCase):
     def test_change_parameters(self):
         # Setup: workflow with loadurl module
@@ -27,45 +27,46 @@ class ChangeParametersCommandTest(DbTestCase):
         # which are useful.
         workflow = Workflow.create_and_init()
 
-        ModuleVersion.create_or_replace_from_spec({
-            'id_name': 'loadurl',
-            'name': 'loadurl',
-            'category': 'Clean',
-            'parameters': [
-                {'id_name': 'url', 'type': 'string'},
-                {'id_name': 'has_header', 'type': 'checkbox', 'name': 'HH'},
-                {'id_name': 'version_select', 'type': 'custom'},
-            ]
-        })
+        ModuleVersion.create_or_replace_from_spec(
+            {
+                "id_name": "loadurl",
+                "name": "loadurl",
+                "category": "Clean",
+                "parameters": [
+                    {"id_name": "url", "type": "string"},
+                    {"id_name": "has_header", "type": "checkbox", "name": "HH"},
+                    {"id_name": "version_select", "type": "custom"},
+                ],
+            }
+        )
 
         params1 = {
-            'url': 'http://example.org',
-            'has_header': True,
-            'version_select': '',
+            "url": "http://example.org",
+            "has_header": True,
+            "version_select": "",
         }
 
         wf_module = workflow.tabs.first().wf_modules.create(
-            module_id_name='loadurl',
+            module_id_name="loadurl",
             order=0,
             last_relevant_delta_id=workflow.last_delta_id,
-            params=params1
+            params=params1,
         )
 
         # Create and apply delta. It should change params.
-        cmd = self.run_with_async_db(ChangeParametersCommand.create(
-            workflow=workflow,
-            wf_module=wf_module,
-            new_values={
-                'url': 'http://example.com/foo',
-                'has_header': False,
-            }
-        ))
+        cmd = self.run_with_async_db(
+            ChangeParametersCommand.create(
+                workflow=workflow,
+                wf_module=wf_module,
+                new_values={"url": "http://example.com/foo", "has_header": False},
+            )
+        )
         wf_module.refresh_from_db()
 
         params2 = {
-            'url': 'http://example.com/foo',
-            'has_header': False,
-            'version_select': '',
+            "url": "http://example.com/foo",
+            "has_header": False,
+            "version_select": "",
         }
         self.assertEqual(wf_module.params, params2)
 
@@ -82,28 +83,30 @@ class ChangeParametersCommandTest(DbTestCase):
     def test_change_parameters_on_soft_deleted_wf_module(self):
         workflow = Workflow.create_and_init()
 
-        ModuleVersion.create_or_replace_from_spec({
-            'id_name': 'loadurl',
-            'name': 'loadurl',
-            'category': 'Clean',
-            'parameters': [
-                {'id_name': 'url', 'type': 'string'},
-            ]
-        })
+        ModuleVersion.create_or_replace_from_spec(
+            {
+                "id_name": "loadurl",
+                "name": "loadurl",
+                "category": "Clean",
+                "parameters": [{"id_name": "url", "type": "string"}],
+            }
+        )
 
         wf_module = workflow.tabs.first().wf_modules.create(
             order=0,
-            module_id_name='loadurl',
+            module_id_name="loadurl",
             last_relevant_delta_id=workflow.last_delta_id,
             is_deleted=True,
-            params={'url': ''}
+            params={"url": ""},
         )
 
-        cmd = self.run_with_async_db(ChangeParametersCommand.create(
-            workflow=workflow,
-            wf_module=wf_module,
-            new_values={'url': 'https://example.com'}
-        ))
+        cmd = self.run_with_async_db(
+            ChangeParametersCommand.create(
+                workflow=workflow,
+                wf_module=wf_module,
+                new_values={"url": "https://example.com"},
+            )
+        )
         self.assertIsNone(cmd)
 
     def test_change_parameters_on_soft_deleted_tab(self):
@@ -111,57 +114,61 @@ class ChangeParametersCommandTest(DbTestCase):
         delta = InitWorkflowCommand.create(workflow)
         tab = workflow.tabs.create(position=0, is_deleted=True)
 
-        ModuleVersion.create_or_replace_from_spec({
-            'id_name': 'loadurl',
-            'name': 'loadurl',
-            'category': 'Clean',
-            'parameters': [
-                {'id_name': 'url', 'type': 'string'},
-            ]
-        })
+        ModuleVersion.create_or_replace_from_spec(
+            {
+                "id_name": "loadurl",
+                "name": "loadurl",
+                "category": "Clean",
+                "parameters": [{"id_name": "url", "type": "string"}],
+            }
+        )
 
         wf_module = tab.wf_modules.create(
             order=0,
-            module_id_name='loadurl',
+            module_id_name="loadurl",
             last_relevant_delta_id=delta.id,
-            params={'url': ''}
+            params={"url": ""},
         )
 
-        cmd = self.run_with_async_db(ChangeParametersCommand.create(
-            workflow=workflow,
-            wf_module=wf_module,
-            new_values={'url': 'https://example.com'}
-        ))
+        cmd = self.run_with_async_db(
+            ChangeParametersCommand.create(
+                workflow=workflow,
+                wf_module=wf_module,
+                new_values={"url": "https://example.com"},
+            )
+        )
         self.assertIsNone(cmd)
 
     def test_change_parameters_on_hard_deleted_wf_module(self):
         workflow = Workflow.create_and_init()
 
-        ModuleVersion.create_or_replace_from_spec({
-            'id_name': 'loadurl',
-            'name': 'loadurl',
-            'category': 'Clean',
-            'parameters': [
-                {'id_name': 'url', 'type': 'string'},
-            ]
-        })
+        ModuleVersion.create_or_replace_from_spec(
+            {
+                "id_name": "loadurl",
+                "name": "loadurl",
+                "category": "Clean",
+                "parameters": [{"id_name": "url", "type": "string"}],
+            }
+        )
 
         wf_module = workflow.tabs.first().wf_modules.create(
             order=0,
-            module_id_name='loadurl',
+            module_id_name="loadurl",
             last_relevant_delta_id=workflow.last_delta_id,
-            params={'url': ''}
+            params={"url": ""},
         )
         wf_module.delete()
 
-        cmd = self.run_with_async_db(ChangeParametersCommand.create(
-            workflow=workflow,
-            wf_module=wf_module,
-            new_values={'url': 'https://example.com'}
-        ))
+        cmd = self.run_with_async_db(
+            ChangeParametersCommand.create(
+                workflow=workflow,
+                wf_module=wf_module,
+                new_values={"url": "https://example.com"},
+            )
+        )
         self.assertIsNone(cmd)
 
-    @patch('server.models.loaded_module.LoadedModule.for_module_version_sync')
+    @patch("server.models.loaded_module.LoadedModule.for_module_version_sync")
     def test_change_parameters_across_module_versions(self, load_module):
         workflow = Workflow.create_and_init()
 
@@ -170,30 +177,34 @@ class ChangeParametersCommandTest(DbTestCase):
         # gone when ChangeParametersCommand is called.
         wf_module = workflow.tabs.first().wf_modules.create(
             order=0,
-            module_id_name='x',
+            module_id_name="x",
             last_relevant_delta_id=workflow.last_delta_id,
-            params={'version': 'v1', 'x': 1}  # version-'1' params
+            params={"version": "v1", "x": 1},  # version-'1' params
         )
 
         # Now install version '2' of module 'x'.
         #
         # Version '2''s migrate_params() could do anything; in this test, it
         # simply changes 'version' from 'v1' to 'v2'
-        ModuleVersion.create_or_replace_from_spec({
-            'id_name': 'x', 'name': 'x', 'category': 'Clean',
-            'parameters': [
-                {'id_name': 'version', 'type': 'string'},
-                {'id_name': 'x', 'type': 'integer'},
-            ]
-        }, source_version_hash='2')
+        ModuleVersion.create_or_replace_from_spec(
+            {
+                "id_name": "x",
+                "name": "x",
+                "category": "Clean",
+                "parameters": [
+                    {"id_name": "version", "type": "string"},
+                    {"id_name": "x", "type": "integer"},
+                ],
+            },
+            source_version_hash="2",
+        )
         load_module.return_value = LoadedModule(
-            'x',
-            '2',
-            ParamDType.Dict({
-                'version': ParamDType.String(),
-                'x': ParamDType.Integer(),
-            }),
-            migrate_params_impl=lambda params: {**params, 'version': 'v2'}
+            "x",
+            "2",
+            ParamDType.Dict(
+                {"version": ParamDType.String(), "x": ParamDType.Integer()}
+            ),
+            migrate_params_impl=lambda params: {**params, "version": "v2"},
         )
 
         # Now the user requests to change params.
@@ -203,88 +214,101 @@ class ChangeParametersCommandTest(DbTestCase):
         # `migrate_params()` without saving the result when it
         # presented `params` to the user.) So the changes should apply atop
         # _migrated_ params.
-        cmd = self.run_with_async_db(ChangeParametersCommand.create(
-            workflow=workflow,
-            wf_module=wf_module,
-            new_values={'x': 2}
-        ))
-        self.assertEqual(wf_module.params, {
-            'version': 'v2',  # migrate_params() ran
-            'x': 2,  # and we applied changes on top of its output
-        })
+        cmd = self.run_with_async_db(
+            ChangeParametersCommand.create(
+                workflow=workflow, wf_module=wf_module, new_values={"x": 2}
+            )
+        )
+        self.assertEqual(
+            wf_module.params,
+            {
+                "version": "v2",  # migrate_params() ran
+                "x": 2,  # and we applied changes on top of its output
+            },
+        )
 
         self.run_with_async_db(cmd.backward())
-        self.assertEqual(wf_module.params, {
-            'version': 'v1',  # exactly what we had before
-            'x': 1,
-        })
+        self.assertEqual(
+            wf_module.params, {"version": "v1", "x": 1}  # exactly what we had before
+        )
 
-    @patch('server.models.loaded_module.LoadedModule.for_module_version_sync')
+    @patch("server.models.loaded_module.LoadedModule.for_module_version_sync")
     def test_change_parameters_deny_invalid_params(self, load_module):
         workflow = Workflow.create_and_init()
         wf_module = workflow.tabs.first().wf_modules.create(
             order=0,
-            module_id_name='x',
+            module_id_name="x",
             last_relevant_delta_id=workflow.last_delta_id,
-            params={'x': 1}
+            params={"x": 1},
         )
 
-        ModuleVersion.create_or_replace_from_spec({
-            'id_name': 'x', 'name': 'x', 'category': 'Clean',
-            'parameters': [
-                {'id_name': 'x', 'type': 'integer'},
-            ]
-        })
-        load_module.return_value = LoadedModule('x', '1', ParamDType.Dict({
-            'x': ParamDType.Integer(),
-        }), migrate_params_impl=lambda x: x)
+        ModuleVersion.create_or_replace_from_spec(
+            {
+                "id_name": "x",
+                "name": "x",
+                "category": "Clean",
+                "parameters": [{"id_name": "x", "type": "integer"}],
+            }
+        )
+        load_module.return_value = LoadedModule(
+            "x",
+            "1",
+            ParamDType.Dict({"x": ParamDType.Integer()}),
+            migrate_params_impl=lambda x: x,
+        )
 
         with self.assertRaises(ValueError):
             # Now the user requests to change params, giving an invalid param.
-            self.run_with_async_db(ChangeParametersCommand.create(
-                workflow=workflow,
-                wf_module=wf_module,
-                new_values={'x': 'Threeve'}
-            ))
+            self.run_with_async_db(
+                ChangeParametersCommand.create(
+                    workflow=workflow, wf_module=wf_module, new_values={"x": "Threeve"}
+                )
+            )
 
-    @patch('server.models.loaded_module.LoadedModule.for_module_version_sync',
-           MockLoadedModule)
+    @patch(
+        "server.models.loaded_module.LoadedModule.for_module_version_sync",
+        MockLoadedModule,
+    )
     def test_change_parameters_update_tab_delta_ids(self):
         workflow = Workflow.create_and_init()
         # tab1's wfm1 depends on tab2's wfm2
         wfm1 = workflow.tabs.first().wf_modules.create(
             order=0,
-            module_id_name='tabby',
+            module_id_name="tabby",
             last_relevant_delta_id=workflow.last_delta_id,
-            params={'tab': 'tab-2'}
+            params={"tab": "tab-2"},
         )
-        tab2 = workflow.tabs.create(position=1, slug='tab-2')
+        tab2 = workflow.tabs.create(position=1, slug="tab-2")
         wfm2 = tab2.wf_modules.create(
             order=0,
-            module_id_name='x',
+            module_id_name="x",
             last_relevant_delta_id=workflow.last_delta_id,
-            params={'x': 1}
+            params={"x": 1},
         )
 
         # Build the modules
-        ModuleVersion.create_or_replace_from_spec({
-            'id_name': 'x', 'name': 'x', 'category': 'Clean',
-            'parameters': [
-                {'id_name': 'x', 'type': 'integer'},
-            ]
-        })
-        ModuleVersion.create_or_replace_from_spec({
-            'id_name': 'tabby', 'name': 'tabby', 'category': 'Clean',
-            'parameters': [
-                {'id_name': 'tab', 'type': 'tab'},
-            ]
-        })
+        ModuleVersion.create_or_replace_from_spec(
+            {
+                "id_name": "x",
+                "name": "x",
+                "category": "Clean",
+                "parameters": [{"id_name": "x", "type": "integer"}],
+            }
+        )
+        ModuleVersion.create_or_replace_from_spec(
+            {
+                "id_name": "tabby",
+                "name": "tabby",
+                "category": "Clean",
+                "parameters": [{"id_name": "tab", "type": "tab"}],
+            }
+        )
 
-        cmd = self.run_with_async_db(ChangeParametersCommand.create(
-            workflow=workflow,
-            wf_module=wfm2,
-            new_values={'x': 2}
-        ))
+        cmd = self.run_with_async_db(
+            ChangeParametersCommand.create(
+                workflow=workflow, wf_module=wfm2, new_values={"x": 2}
+            )
+        )
 
         wfm1.refresh_from_db()
         wfm2.refresh_from_db()

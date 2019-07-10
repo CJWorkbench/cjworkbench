@@ -11,22 +11,22 @@ def _chars_to_pattern(chars: Set[str]) -> str:
     if len(chars) == 1:
         return re.escape(next(iter(chars)))
     else:
-        return '[' + ''.join([re.escape(c) for c in chars]) + ']'
+        return "[" + "".join([re.escape(c) for c in chars]) + "]"
 
 
-NEGATIVE_CHARS = set('−-')  # One is Unicode!
+NEGATIVE_CHARS = set("−-")  # One is Unicode!
 
 
 class InputNumberType(Enum):
     """Option to restrict the input."""
 
-    ANY = 'any'
+    ANY = "any"
     """Match something that looks like a number: integer or float."""
 
-    INTEGER = 'int'
+    INTEGER = "int"
     """Match something that looks like an integer."""
 
-    FLOAT = 'float'
+    FLOAT = "float"
     """Match something that looks like a number with a decimal."""
 
     @property
@@ -46,36 +46,36 @@ class InputNumberType(Enum):
         # _after_ the match with the commas. Also, make the part with commas
         # _require_ commas. r'...(,\d{3})*' always succeeds, because it matches the
         # empty string. Use r'+' instead of r'*'.
-        if self.value == 'any':
-            return r'(N?(?:\d{1,3}(?:T\d{3})+|\d+)(?:D\d+)?)'
-        elif self.value == 'int':
-            return r'(N?(?:\d{1,3}(?:T\d{3})+|\d+))'
+        if self.value == "any":
+            return r"(N?(?:\d{1,3}(?:T\d{3})+|\d+)(?:D\d+)?)"
+        elif self.value == "int":
+            return r"(N?(?:\d{1,3}(?:T\d{3})+|\d+))"
         else:
-            return r'(N?(?:\d{1,3}(?:T\d{3})+|\d+)D\d+)'
+            return r"(N?(?:\d{1,3}(?:T\d{3})+|\d+)D\d+)"
 
 
 class InputLocale(Enum):
     """Thousands separators and decimal points the user wants."""
 
-    US = 'us'
+    US = "us"
     """United States: 1,000.00"""
 
-    EU = 'eu'
+    EU = "eu"
     """Europe: 1 000,00 or 1.000,00"""
 
     @property
     def thousands_separator_chars(self):
-        if self.value == 'us':
-            return set(',_')
+        if self.value == "us":
+            return set(",_")
         else:
-            return set('   ._')  # Unicode thin spaces
+            return set("   ._")  # Unicode thin spaces
 
     @property
     def decimal_chars(self):
-        if self.value == 'us':
-            return set('.')
+        if self.value == "us":
+            return set(".")
         else:
-            return set(',')
+            return set(",")
 
 
 @dataclass(frozen=True)
@@ -93,24 +93,27 @@ class ErrorCount:
     total: int = 0
     n_columns: int = 0
 
-    def __add__(self, rhs: 'ErrorCount') -> 'ErrorCount':
+    def __add__(self, rhs: "ErrorCount") -> "ErrorCount":
         """Add more errors to this ErrorCount."""
         if not self:
             return rhs
         else:
-            return replace(self, total=(self.total + rhs.total),
-                           n_columns=(self.n_columns + rhs.n_columns))
+            return replace(
+                self,
+                total=(self.total + rhs.total),
+                n_columns=(self.n_columns + rhs.n_columns),
+            )
 
     def __str__(self):
         if self.total == 1:
-            n_errors_str = 'is 1 error'
+            n_errors_str = "is 1 error"
         else:
-            n_errors_str = f'are {self.total} errors'
+            n_errors_str = f"are {self.total} errors"
 
         if self.n_columns == 1:
-            n_columns_str = '1 column'
+            n_columns_str = "1 column"
         else:
-            n_columns_str = f'{self.n_columns} columns'
+            n_columns_str = f"{self.n_columns} columns"
 
         return (
             f"'{self.a_value}' in row {self.a_row + 1} of "
@@ -126,8 +129,7 @@ class ErrorCount:
         return self.total
 
     @classmethod
-    def from_diff(cls, in_series: pd.Series,
-                  out_series: pd.Series) -> 'ErrorCount':
+    def from_diff(cls, in_series: pd.Series, out_series: pd.Series) -> "ErrorCount":
         in_na = in_series.isna()
         out_na = out_series.isna()
         out_errors = out_na.index[out_na & ~in_na]
@@ -149,7 +151,7 @@ class Form:
     input_number_type: InputNumberType = InputNumberType.ANY
     input_locale: InputLocale = InputLocale.US
     error_means_null: bool = False
-    output_format: str = '{:,}'
+    output_format: str = "{:,}"
 
     @classmethod
     def parse(cls, input_number_type: str, input_locale: str, **kwargs):
@@ -161,7 +163,7 @@ class Form:
         return cls(
             input_number_type=InputNumberType(input_number_type),
             input_locale=InputLocale(input_locale),
-            **kwargs
+            **kwargs,
         )
 
     @property
@@ -183,29 +185,27 @@ class Form:
         """
         regex_pattern = self.input_number_type.regex_pattern
         regex_str = (
-            regex_pattern
-            .replace(r'N', _chars_to_pattern(NEGATIVE_CHARS))
-            .replace(r'D', _chars_to_pattern(self.input_locale.decimal_chars))
+            regex_pattern.replace(r"N", _chars_to_pattern(NEGATIVE_CHARS))
+            .replace(r"D", _chars_to_pattern(self.input_locale.decimal_chars))
             .replace(
-                r'T',
-                _chars_to_pattern(self.input_locale.thousands_separator_chars)
+                r"T", _chars_to_pattern(self.input_locale.thousands_separator_chars)
             )
         )
         if not self.extract:
-            regex_str = r'\A' + regex_str + r'\Z'
+            regex_str = r"\A" + regex_str + r"\Z"
         return re.compile(regex_str)
 
     def unformat_number_text(self, series: pd.Series) -> pd.Series:
         """Remove locale-specific stuff: -1.234,56 becomes 1234.56."""
         mapping = {}
         for c in NEGATIVE_CHARS:
-            if c != '-':
-                mapping[ord(c)] = '-'
+            if c != "-":
+                mapping[ord(c)] = "-"
         for c in self.input_locale.thousands_separator_chars:
             mapping[ord(c)] = None
         for c in self.input_locale.decimal_chars:
-            if c != '.':
-                mapping[ord(c)] = '.'
+            if c != ".":
+                mapping[ord(c)] = "."
         return series.str.translate(mapping)
 
     def convert_table(self, table) -> Union[pd.DataFrame, str]:
@@ -226,7 +226,7 @@ class Form:
     def convert_series(self, series) -> Tuple[pd.Series, ErrorCount]:
         number_texts = series.str.extract(self.regex, expand=False)
         number_texts = self.unformat_number_text(number_texts)
-        numbers = pd.to_numeric(number_texts, errors='coerce')
+        numbers = pd.to_numeric(number_texts, errors="coerce")
 
         return numbers, ErrorCount.from_diff(series, numbers)
 
@@ -234,7 +234,7 @@ class Form:
 # Extracts all non-negative numbers for now
 def render(table, params):
     # if no column has been selected, return table
-    if not params['colnames']:
+    if not params["colnames"]:
         return table
 
     form = Form.parse(**params)
@@ -243,9 +243,8 @@ def render(table, params):
         return table_or_error  # it's an error
     else:
         return {
-            'dataframe': table_or_error,  # it's a DataFrame
-            'column_formats': {c: form.output_format
-                               for c in params['colnames']}
+            "dataframe": table_or_error,  # it's a DataFrame
+            "column_formats": {c: form.output_format for c in params["colnames"]},
         }
 
 
@@ -263,35 +262,35 @@ def _migrate_params_v0_to_v1(params: Dict[str, Any]) -> Dict[str, Any]:
     * output_format: new parameter; always {:,}.
     """
 
-    if params['extract']:
-        input_number_type = ['any', 'int', 'float'][params['type_extract']]
+    if params["extract"]:
+        input_number_type = ["any", "int", "float"][params["type_extract"]]
     else:
-        input_number_type = 'any'
+        input_number_type = "any"
 
     return {
-        'colnames': params['colnames'],
-        'extract': params['extract'],
-        'input_number_type': input_number_type,
-        'input_locale': ['us', 'eu'][params['type_format']],
-        'error_means_null': True,
-        'output_format': '{:,}',
+        "colnames": params["colnames"],
+        "extract": params["extract"],
+        "input_number_type": input_number_type,
+        "input_locale": ["us", "eu"][params["type_format"]],
+        "error_means_null": True,
+        "output_format": "{:,}",
     }
 
 
 def _migrate_params_v1_to_v2(params: Dict[str, Any]) -> Dict[str, Any]:
     """Convert 'colnames' from str to list."""
     # https://www.pivotaltracker.com/story/show/160463316
-    if params['colnames']:
-        return {**params, 'colnames': params['colnames'].split(',')}
+    if params["colnames"]:
+        return {**params, "colnames": params["colnames"].split(",")}
     else:
-        return {**params, 'colnames': []}
+        return {**params, "colnames": []}
 
 
 def migrate_params(params: Dict[str, Any]) -> Dict[str, Any]:
-    if 'type_format' in params:
+    if "type_format" in params:
         # Params v0: had 'type_format' instead of 'input_locale'
         params = _migrate_params_v0_to_v1(params)
-    if isinstance(params['colnames'], str):
+    if isinstance(params["colnames"], str):
         # Params v1: 'colnames' was stored as comma-separated str
         # (see https://www.pivotaltracker.com/story/show/160463316)
         params = _migrate_params_v1_to_v2(params)

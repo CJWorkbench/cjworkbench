@@ -41,12 +41,7 @@ class ChangesWfModuleOutputs:
     """
 
     # List of (id, last_relevant_delta_id) for WfModules, pre-`forward()`.
-    wf_module_delta_ids = ArrayField(
-        ArrayField(
-            models.IntegerField(),
-            size=2
-        )
-    )
+    wf_module_delta_ids = ArrayField(ArrayField(models.IntegerField(), size=2))
 
     @classmethod
     def affected_wf_modules_in_tab(cls, wf_module) -> Q:
@@ -55,8 +50,7 @@ class ChangesWfModuleOutputs:
 
         The default implementation _includes_ the passed `wf_module`.
         """
-        return Q(tab_id=wf_module.tab_id, order__gte=wf_module.order,
-                 is_deleted=False)
+        return Q(tab_id=wf_module.tab_id, order__gte=wf_module.order, is_deleted=False)
 
     @classmethod
     def affected_wf_modules_from_tab(cls, tab: Tab) -> Q:
@@ -87,17 +81,11 @@ class ChangesWfModuleOutputs:
     @classmethod
     def q_to_wf_module_delta_ids(cls, q: Q) -> List[Tuple[int, int]]:
         return list(
-            WfModule.objects
-            .filter(q)
-            .values_list('id', 'last_relevant_delta_id')
+            WfModule.objects.filter(q).values_list("id", "last_relevant_delta_id")
         )
 
-
     @classmethod
-    def affected_wf_module_delta_ids(
-        cls,
-        wf_module: WfModule
-    ) -> List[Tuple[int, int]]:
+    def affected_wf_module_delta_ids(cls, wf_module: WfModule) -> List[Tuple[int, int]]:
         """
         List [(wf_module_id, previous_delta_id)] for `wf_module` and deps.
 
@@ -133,16 +121,16 @@ class ChangesWfModuleOutputs:
 
         affected_ids = [pi[0] for pi in prev_ids]
 
-        WfModule.objects.filter(pk__in=affected_ids) \
-                .update(last_relevant_delta_id=self.id)
+        WfModule.objects.filter(pk__in=affected_ids).update(
+            last_relevant_delta_id=self.id
+        )
 
         # If we have a wf_module in memory, update it.
-        if hasattr(self, 'wf_module_id') and self.wf_module_id in affected_ids:
+        if hasattr(self, "wf_module_id") and self.wf_module_id in affected_ids:
             self.wf_module.last_relevant_delta_id = self.id
 
         # for ws_notify()
-        self._changed_wf_module_versions = [(pi[0], self.id)
-                                            for pi in prev_ids]
+        self._changed_wf_module_versions = [(pi[0], self.id) for pi in prev_ids]
 
     def backward_affected_delta_ids(self):
         """
@@ -151,10 +139,9 @@ class ChangesWfModuleOutputs:
         prev_ids = self.wf_module_delta_ids
 
         for wfm_id, delta_id in prev_ids:
-            WfModule.objects.filter(id=wfm_id) \
-                 .update(last_relevant_delta_id=delta_id)
+            WfModule.objects.filter(id=wfm_id).update(last_relevant_delta_id=delta_id)
 
-            if hasattr(self, 'wf_module_id') and wfm_id == self.wf_module_id:
+            if hasattr(self, "wf_module_id") and wfm_id == self.wf_module_id:
                 # If we have a wf_module in memory, update it
                 self.wf_module.last_relevant_delta_id = delta_id
 
@@ -164,24 +151,25 @@ class ChangesWfModuleOutputs:
     # override Delta
     def load_ws_data(self):
         data = {
-            'updateWorkflow': self._load_workflow_ws_data(),
-            'updateWfModules': {
+            "updateWorkflow": self._load_workflow_ws_data(),
+            "updateWfModules": {
                 str(wfm_id): {
-                    'last_relevant_delta_id': delta_id,
-                    'quick_fixes': [],
-                    'output_columns': [],
-                    'output_error': '',
-                    'output_status': 'busy',
-                    'output_n_rows': 0,
-                } for wfm_id, delta_id in self._changed_wf_module_versions
-            }
+                    "last_relevant_delta_id": delta_id,
+                    "quick_fixes": [],
+                    "output_columns": [],
+                    "output_error": "",
+                    "output_status": "busy",
+                    "output_n_rows": 0,
+                }
+                for wfm_id, delta_id in self._changed_wf_module_versions
+            },
         }
 
-        if hasattr(self, 'wf_module'):
+        if hasattr(self, "wf_module"):
             if self.wf_module.is_deleted or self.wf_module.tab.is_deleted:
                 # When we did or undid this command, we removed the
                 # WfModule from the Workflow.
-                data['clearWfModuleIds'] = [self.wf_module_id]
+                data["clearWfModuleIds"] = [self.wf_module_id]
             else:
                 # Serialize _everything_, including params
                 #
@@ -189,7 +177,7 @@ class ChangesWfModuleOutputs:
                 # changes 'has_header' it doesn't overwrite Bob's 'url' while
                 # he's editing it.
                 step_data = WfModuleSerializer(self.wf_module).data
-                data['updateWfModules'][str(self.wf_module_id)] = step_data
+                data["updateWfModules"][str(self.wf_module_id)] = step_data
 
         return data
 

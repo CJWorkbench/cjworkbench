@@ -1,10 +1,10 @@
 # Uncomment when drag-and-drop testing is fixed (Firefox upgrade?)
-#import json
-#import re
+# import json
+# import re
 #
-#from integrationtests.utils import LoggedInIntegrationTest
+# from integrationtests.utils import LoggedInIntegrationTest
 #
-#class TestReorderColumns(LoggedInIntegrationTest):
+# class TestReorderColumns(LoggedInIntegrationTest):
 #    def setUp(self):
 #        super().setUp()
 #

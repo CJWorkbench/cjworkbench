@@ -15,16 +15,17 @@ class Migration(migrations.Migration):
     it_ because internal modules can't have hyphens in their module names.
     """
 
-    dependencies = [
-        ('server', '0001_squashed_0048_auto_20190218_2115'),
-    ]
+    dependencies = [("server", "0001_squashed_0048_auto_20190218_2115")]
 
     operations = [
-        migrations.RunSQL([
-            """
+        migrations.RunSQL(
+            [
+                """
             UPDATE server_wfmodule
             SET module_id_name = 'converttotext'
             WHERE module_id_name = 'convert-text'
             """
-        ], elidable=True)
+            ],
+            elidable=True,
+        )
     ]

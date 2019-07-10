@@ -15,8 +15,9 @@ class cached_property:
     """
     Memoizes a property by replacing the function with the retval.
     """
+
     def __init__(self, func):
-        self.__doc__ = getattr(func, '__doc__')
+        self.__doc__ = getattr(func, "__doc__")
         self._func = func
 
     def __get__(self, obj, cls):
@@ -64,8 +65,7 @@ class TabFlow:
 
         `None` if the entire flow is fresh.
         """
-        cached_results = [step.wf_module.cached_render_result
-                          for step in self.steps]
+        cached_results = [step.wf_module.cached_render_result for step in self.steps]
         try:
             # Stale WfModule means its .cached_render_result is None.
             return cached_results.index(None)
@@ -106,15 +106,13 @@ class TabFlow:
         ret = set()
         for step in self.steps:
             schema = step.schema
-            slugs = set(schema.find_leaf_values_with_dtype(ParamDType.Tab,
-                                                           step.params))
+            slugs = set(schema.find_leaf_values_with_dtype(ParamDType.Tab, step.params))
             ret.update(slugs)
         return frozenset(ret)
 
 
 @database_sync_to_async
-def _load_input_from_cache(workflow: Workflow,
-                           flow: TabFlow) -> ProcessResult:
+def _load_input_from_cache(workflow: Workflow, flow: TabFlow) -> ProcessResult:
     last_fresh_wfm = flow.last_fresh_wf_module
     if last_fresh_wfm is None:
         return ProcessResult()
@@ -129,9 +127,7 @@ def _load_input_from_cache(workflow: Workflow,
 
 
 async def execute_tab_flow(
-    workflow: Workflow,
-    flow: TabFlow,
-    tab_shapes: Dict[str, Optional[StepResultShape]]
+    workflow: Workflow, flow: TabFlow, tab_shapes: Dict[str, Optional[StepResultShape]]
 ) -> ProcessResult:
     """
     Ensure `flow.tab.live_wf_modules` all cache fresh render results.
@@ -145,8 +141,9 @@ async def execute_tab_flow(
     WEBSOCKET NOTES: each wf_module is executed in turn. After each execution,
     we notify clients of its new columns and status.
     """
-    logger.debug('Rendering Tab(%d, %s - %s)', workflow.id, flow.tab_slug,
-                 flow.tab.name)
+    logger.debug(
+        "Rendering Tab(%d, %s - %s)", workflow.id, flow.tab_slug, flow.tab.name
+    )
 
     # Execute one module at a time.
     #
@@ -155,7 +152,12 @@ async def execute_tab_flow(
     # different computers); and `await` doesn't work with locks.
     last_result = await _load_input_from_cache(workflow, flow)
     for step in flow.stale_steps:
-        last_result = await execute_wfmodule(workflow, step.wf_module,
-                                             step.params, flow.tab_name,
-                                             last_result, tab_shapes)
+        last_result = await execute_wfmodule(
+            workflow,
+            step.wf_module,
+            step.params,
+            flow.tab_name,
+            last_result,
+            tab_shapes,
+        )
     return last_result

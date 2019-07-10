@@ -39,7 +39,7 @@ def apply_edits(series: pd.Series, edits: List[Edit]) -> pd.Series:
             # convert numbers to string, replacing NaN with ''
             pass  # don't return: we'll handle this in the default case below
 
-    if hasattr(series, 'cat'):
+    if hasattr(series, "cat"):
         str_values_set = set(str_values)
         old_values_set = set(series.cat.categories)
         if str_values_set != old_values_set:
@@ -67,22 +67,20 @@ def migrate_params_v0_to_v1(params):
 
     v1: celledits is an Array of { row, col, value }
     """
-    if not params['celledits']:  # empty str
+    if not params["celledits"]:  # empty str
         celledits = []
     else:
-        celledits = json.loads(params['celledits'])
+        celledits = json.loads(params["celledits"])
         # [adamhooper, 2019-03-13] seen on production: Numeric values. No idea
         # how they got there. v1 is str-only.
         for celledit in celledits:
-            celledit['value'] = str(celledit['value'])
+            celledit["value"] = str(celledit["value"])
 
-    return {
-        'celledits': celledits
-    }
+    return {"celledits": celledits}
 
 
 def migrate_params(params):
-    if isinstance(params['celledits'], str):
+    if isinstance(params["celledits"], str):
         params = migrate_params_v0_to_v1(params)
 
     return params
@@ -95,13 +93,16 @@ def migrate_params(params):
 #    ...
 #  ]
 def render(table, params, **kwargs):
-    edits = [Edit(**item) for item in params['celledits']]
+    edits = [Edit(**item) for item in params["celledits"]]
 
     # Ignore missing columns and rows: delete them from the Array of edits
     colnames = set(table.columns)
     nrows = len(table)
-    edits = [edit for edit in edits
-             if edit.col in colnames and edit.row >= 0 and edit.row < nrows]
+    edits = [
+        edit
+        for edit in edits
+        if edit.col in colnames and edit.row >= 0 and edit.row < nrows
+    ]
 
     for column, column_edits in groupby(edits, lambda e: e.col):
         series = table[column]

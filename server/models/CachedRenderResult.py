@@ -6,13 +6,13 @@ from server import minio, parquet
 
 
 WfModuleFields = [
-    'cached_render_result_delta_id',
-    'cached_render_result_error',
-    'cached_render_result_json',
-    'cached_render_result_quick_fixes',
-    'cached_render_result_columns',
-    'cached_render_result_status',
-    'cached_render_result_nrows',
+    "cached_render_result_delta_id",
+    "cached_render_result_error",
+    "cached_render_result_json",
+    "cached_render_result_quick_fixes",
+    "cached_render_result_columns",
+    "cached_render_result_status",
+    "cached_render_result_nrows",
 ]
 
 
@@ -23,7 +23,7 @@ def parquet_prefix(workflow_id: int, wf_module_id: int) -> str:
     The name ends with '/'. _All_ cached data for the specified WfModule is
     stored under that prefix.
     """
-    return 'wf-%d/wfm-%d/' % (workflow_id, wf_module_id)
+    return "wf-%d/wfm-%d/" % (workflow_id, wf_module_id)
 
 
 class CachedRenderResult:
@@ -43,9 +43,17 @@ class CachedRenderResult:
         * CachedRenderResult.result and .read_dataframe() are expensive.
     """
 
-    def __init__(self, workflow_id: int, wf_module_id: int, delta_id: int,
-                 status: str, error: str, json: Optional[Dict[str, Any]],
-                 quick_fixes: List[QuickFix], table_shape: TableShape):
+    def __init__(
+        self,
+        workflow_id: int,
+        wf_module_id: int,
+        delta_id: int,
+        status: str,
+        error: str,
+        json: Optional[Dict[str, Any]],
+        quick_fixes: List[QuickFix],
+        table_shape: TableShape,
+    ):
         self.workflow_id = workflow_id
         self.wf_module_id = wf_module_id
         self.delta_id = delta_id
@@ -68,9 +76,9 @@ class CachedRenderResult:
         """
         Path to a file, used by the `parquet` module.
         """
-        return '%sdelta-%d.dat' % (
+        return "%sdelta-%d.dat" % (
             parquet_prefix(self.workflow_id, self.wf_module_id),
-            self.delta_id
+            self.delta_id,
         )
 
     def read_dataframe(self, *args, **kwargs):
@@ -84,9 +92,7 @@ class CachedRenderResult:
         """
         try:
             return parquet.read(
-                minio.CachedRenderResultsBucket,
-                self.parquet_key,
-                args, kwargs
+                minio.CachedRenderResultsBucket, self.parquet_key, args, kwargs
             )
         except OSError:
             # Two possibilities:
@@ -112,11 +118,15 @@ class CachedRenderResult:
         TODO make this _not_ a @property -- since it's so expensive (it makes a
         big network request).
         """
-        if not hasattr(self, '_result'):
+        if not hasattr(self, "_result"):
             dataframe = self.read_dataframe()
-            self._result = ProcessResult(dataframe, self.error, json=self.json,
-                                         quick_fixes=self.quick_fixes,
-                                         columns=self.columns)
+            self._result = ProcessResult(
+                dataframe,
+                self.error,
+                json=self.json,
+                quick_fixes=self.quick_fixes,
+                columns=self.columns,
+            )
 
         return self._result
 
@@ -134,7 +144,7 @@ class CachedRenderResult:
         return self.nrows
 
     @staticmethod
-    def from_wf_module(wf_module: 'WfModule') -> 'CachedRenderResult':
+    def from_wf_module(wf_module: "WfModule") -> "CachedRenderResult":
         """
         Read the CachedRenderResult or None from a WfModule.
 
@@ -181,17 +191,22 @@ class CachedRenderResult:
         # Coerce from dict to QuickFixes
         quick_fixes = [QuickFix(**qf) for qf in quick_fixes]
 
-        ret = CachedRenderResult(workflow_id=wf_module.workflow_id,
-                                 wf_module_id=wf_module.id, delta_id=delta_id,
-                                 status=status, error=error, json=json_dict,
-                                 quick_fixes=quick_fixes,
-                                 table_shape=TableShape(nrows, columns))
+        ret = CachedRenderResult(
+            workflow_id=wf_module.workflow_id,
+            wf_module_id=wf_module.id,
+            delta_id=delta_id,
+            status=status,
+            error=error,
+            json=json_dict,
+            quick_fixes=quick_fixes,
+            table_shape=TableShape(nrows, columns),
+        )
         # Keep in mind: ret.result has not been loaded yet. It might not exist
         # when we do try reading it.
         return ret
 
     @staticmethod
-    def delete_parquet_files_for_wf_module(wf_module: 'WfModule') -> None:
+    def delete_parquet_files_for_wf_module(wf_module: "WfModule") -> None:
         """
         Ensures there are no Parquet files cached for `wf_module`.
 
@@ -202,12 +217,13 @@ class CachedRenderResult:
         to exist in the database, but callers who try to read from it will
         see `FileNotFoundError.
         """
-        minio.remove_recursive(minio.CachedRenderResultsBucket,
-                               parquet_prefix(wf_module.workflow_id,
-                                              wf_module.id))
+        minio.remove_recursive(
+            minio.CachedRenderResultsBucket,
+            parquet_prefix(wf_module.workflow_id, wf_module.id),
+        )
 
     @staticmethod
-    def clear_wf_module(wf_module: 'WfModule') -> None:
+    def clear_wf_module(wf_module: "WfModule") -> None:
         """
         Delete our CachedRenderResult, if it exists.
 
@@ -217,8 +233,8 @@ class CachedRenderResult:
         CachedRenderResult.delete_parquet_files_for_wf_module(wf_module)
 
         wf_module.cached_render_result_delta_id = None
-        wf_module.cached_render_result_error = ''
-        wf_module.cached_render_result_json = b'null'
+        wf_module.cached_render_result_error = ""
+        wf_module.cached_render_result_json = b"null"
         wf_module.cached_render_result_quick_fixes = []
         wf_module.cached_render_result_status = None
         wf_module.cached_render_result_columns = None
@@ -227,23 +243,25 @@ class CachedRenderResult:
         wf_module.save(update_fields=WfModuleFields)
 
     @staticmethod
-    def assign_wf_module(wf_module: 'WfModule', delta_id: int,
-                         result: ProcessResult) -> 'CachedRenderResult':
+    def assign_wf_module(
+        wf_module: "WfModule", delta_id: int, result: ProcessResult
+    ) -> "CachedRenderResult":
         """
         Write `result` to `wf_module`'s fields and to disk.
         """
         assert delta_id == wf_module.last_relevant_delta_id
         assert result is not None
 
-        json_bytes = json.dumps(result.json).encode('utf-8')
+        json_bytes = json.dumps(result.json).encode("utf-8")
         quick_fixes = result.quick_fixes
 
         wf_module.cached_render_result_delta_id = delta_id
         wf_module.cached_render_result_error = result.error
         wf_module.cached_render_result_status = result.status
         wf_module.cached_render_result_json = json_bytes
-        wf_module.cached_render_result_quick_fixes = [qf.to_dict()
-                                                      for qf in quick_fixes]
+        wf_module.cached_render_result_quick_fixes = [
+            qf.to_dict() for qf in quick_fixes
+        ]
         wf_module.cached_render_result_columns = result.columns
         wf_module.cached_render_result_nrows = len(result.dataframe)
 
@@ -251,8 +269,9 @@ class CachedRenderResult:
 
         ret = CachedRenderResult.from_wf_module(wf_module)
         ret._result = result  # no need to read from disk
-        parquet.write(minio.CachedRenderResultsBucket, ret.parquet_key,
-                      result.dataframe)
+        parquet.write(
+            minio.CachedRenderResultsBucket, ret.parquet_key, result.dataframe
+        )
 
         wf_module.save(update_fields=WfModuleFields)
 

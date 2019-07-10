@@ -8,14 +8,12 @@ import django.utils.timezone
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('server', '0007_auto_20190508_1752'),
-    ]
+    dependencies = [("server", "0007_auto_20190508_1752")]
 
     operations = [
         migrations.AddField(
-            model_name='uploadedfile',
-            name='created_at',
+            model_name="uploadedfile",
+            name="created_at",
             field=models.DateTimeField(default=django.utils.timezone.now, null=True),
-        ),
+        )
     ]

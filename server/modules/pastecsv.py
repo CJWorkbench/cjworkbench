@@ -5,35 +5,43 @@ from .utils import autocast_dtypes_in_place
 
 
 def render(table, params):
-    tablestr: str = params['csv']
-    has_header_row: bool = params['has_header_row']
+    tablestr: str = params["csv"]
+    has_header_row: bool = params["has_header_row"]
 
     # Guess at format by counting commas and tabs
-    n_commas = tablestr.count(',')
-    n_tabs = tablestr.count('\t')
+    n_commas = tablestr.count(",")
+    n_tabs = tablestr.count("\t")
     if n_commas > n_tabs:
-        sep = ','
+        sep = ","
     else:
-        sep = '\t'
+        sep = "\t"
 
     try:
-        table = pd.read_csv(io.StringIO(tablestr), header=None,
-                            skipinitialspace=True, sep=sep,
-                            na_filter=False, dtype='category',
-                            index_col=False, engine='python')
+        table = pd.read_csv(
+            io.StringIO(tablestr),
+            header=None,
+            skipinitialspace=True,
+            sep=sep,
+            na_filter=False,
+            dtype="category",
+            index_col=False,
+            engine="python",
+        )
     except EmptyDataError:
         return pd.DataFrame()
     except ParserError as err:
         return str(err)
 
     # Set default column names: "Column 1", "Column 2", etc.
-    table.columns = [f'Column {i + 1}' for i in range(len(table.columns))]
+    table.columns = [f"Column {i + 1}" for i in range(len(table.columns))]
 
-    if params['has_header_row']:
+    if params["has_header_row"]:
         # Use first row as column names, whenever they're not ''
         header = table.iloc[[0]].T[0].tolist()  # all str, maybe empty
-        header = [given or default  # default when given == ''
-                  for given, default in zip(header, table.columns)]
+        header = [
+            given or default  # default when given == ''
+            for given, default in zip(header, table.columns)
+        ]
         table.columns = header
         # Test for duplicates
         duplicated = table.columns.duplicated()
@@ -41,7 +49,7 @@ def render(table, params):
             name = table.columns[duplicated][0]
             return (
                 f'Duplicate column name "{name}". Please edit the first '
-                'line so there are no repeated column names.'
+                "line so there are no repeated column names."
             )
         # Remove header row from content
         table.drop(0, axis=0, inplace=True)

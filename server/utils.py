@@ -14,15 +14,16 @@ logger = logging.getLogger(__name__)
 
 
 def get_absolute_url(abs_url):
-    return 'https://%s%s' % (Site.objects.get_current().domain, abs_url)
+    return "https://%s%s" % (Site.objects.get_current().domain, abs_url)
+
 
 # --- Logging ---
 class NullIntercomClient:
     class Events:
         def create(self, **kwargs):
             logger.info(
-                'Error logging Intercom event: client not initialized '
-                '(bad CJW_INTERCOM_ACCESS_TOKEN?)'
+                "Error logging Intercom event: client not initialized "
+                "(bad CJW_INTERCOM_ACCESS_TOKEN?)"
             )
 
     def __init__(self):
@@ -31,12 +32,12 @@ class NullIntercomClient:
 
 def _setup_intercom_client():
     try:
-        token = os.environ['CJW_INTERCOM_ACCESS_TOKEN']
+        token = os.environ["CJW_INTERCOM_ACCESS_TOKEN"]
         return Client(personal_access_token=token)
     except KeyError:
         return NullIntercomClient()
     except Exception as e:
-        logger.info('Error creating Intercom client: ' + str(e))
+        logger.info("Error creating Intercom client: " + str(e))
         return NullIntercomClient()
 
 
@@ -70,17 +71,17 @@ class Headers:
 
 
         """
-        data = dict((k.decode('latin1').upper().replace('-', '_'),
-                     v.decode('latin1'))
-                    for k, v in http_headers)
+        data = dict(
+            (k.decode("latin1").upper().replace("-", "_"), v.decode("latin1"))
+            for k, v in http_headers
+        )
         return cls(data)
 
     @classmethod
     def from_META(cls, meta: Dict[str, str]):
         """Parse Headers from a wsgi environ."""
-        data = dict((k, v[5:])
-                    for k, v in meta.items() if k.startswith('HTTP_'))
-        for wsgi_special_case in ['CONTENT_TYPE', 'CONTENT_LENGTH']:
+        data = dict((k, v[5:]) for k, v in meta.items() if k.startswith("HTTP_"))
+        for wsgi_special_case in ["CONTENT_TYPE", "CONTENT_LENGTH"]:
             try:
                 data[wsgi_special_case] = meta[wsgi_special_case]
             except KeyError:
@@ -89,20 +90,20 @@ class Headers:
         return cls(data)
 
 
-def _log_user_event(user: User, headers: Headers, event: str,
-                    metadata: Optional[Dict[str, Any]]=None) -> None:
-    if headers.get('DNT', '0') == '1':
+def _log_user_event(
+    user: User, headers: Headers, event: str, metadata: Optional[Dict[str, Any]] = None
+) -> None:
+    if headers.get("DNT", "0") == "1":
         # Don't be evil. The user has specifically asked to _not_ be tracked.
         #
         # That should maybe include logs? Let's obfuscate and not show the
         # event or user name.
-        logger.debug('Not logging an event because of DNT header')
+        logger.debug("Not logging an event because of DNT header")
         return
 
-    if '/lessons/' in headers.get('REFERER', ''):
+    if "/lessons/" in headers.get("REFERER", ""):
         # https://www.pivotaltracker.com/story/show/160041803
-        logger.debug("Not logging event '%s' because it is from a lesson",
-                     event)
+        logger.debug("Not logging event '%s' because it is from a lesson", event)
         return
 
     if not user.is_authenticated:
@@ -119,8 +120,7 @@ def _log_user_event(user: User, headers: Headers, event: str,
         logger.debug("Not logging event '%s' for anonymous user", event)
         return
 
-    logger.debug("Logging Intercom event '%s' with metadata %r", event,
-                 metadata)
+    logger.debug("Logging Intercom event '%s' with metadata %r", event, metadata)
 
     email = user.email
     user_id = user.id
@@ -134,7 +134,7 @@ def _log_user_event(user: User, headers: Headers, event: str,
             email=email,
             user_id=user_id,
             created_at=int(time.time()),
-            metadata=metadata
+            metadata=metadata,
         )
     except (
         intercom.errors.ServiceUnavailableError,
@@ -153,21 +153,23 @@ def _log_user_event(user: User, headers: Headers, event: str,
         #
         # _log_ the problem, but don't logger.exception(): we don't want to
         # receive an email about it.
-        logger.info("(known) error logging Intercom event '%s': %r", event,
-                    err)
+        logger.info("(known) error logging Intercom event '%s': %r", event, err)
         pass
     except Exception:
         logger.exception("Error logging Intercom event '%s'", event)
 
 
-def log_user_event_from_request(request: HttpRequest, event: str,
-                                metadata: Optional[Dict[str, Any]]=None
-                                ) -> None:
-    return _log_user_event(request.user, Headers.from_META(request.META),
-                           event, metadata)
+def log_user_event_from_request(
+    request: HttpRequest, event: str, metadata: Optional[Dict[str, Any]] = None
+) -> None:
+    return _log_user_event(
+        request.user, Headers.from_META(request.META), event, metadata
+    )
 
 
-def log_user_event_from_scope(scope: Dict[str, Any], event: str,
-                              metadata: Optional[Dict[str, Any]]=None) -> None:
-    return _log_user_event(scope['user'], Headers.from_http(scope['headers']),
-                           event, metadata)
+def log_user_event_from_scope(
+    scope: Dict[str, Any], event: str, metadata: Optional[Dict[str, Any]] = None
+) -> None:
+    return _log_user_event(
+        scope["user"], Headers.from_http(scope["headers"]), event, metadata
+    )

@@ -11,12 +11,13 @@ def _load_last_delta(workflow: Workflow) -> Delta:
     delta = workflow.last_delta
 
     if delta is None:
-        raise RuntimeError('Workflow %d has no deltas', workflow.id)
+        raise RuntimeError("Workflow %d has no deltas", workflow.id)
 
     # Deltas write to their `self.workflow`. Make them read/write the Workflow
     # _we_ see instead of querying their own `workflow` from the database.
     delta.workflow = workflow
     return delta
+
 
 @database_sync_to_async
 def _load_next_delta(workflow: Workflow) -> Optional[Delta]:
@@ -26,7 +27,7 @@ def _load_next_delta(workflow: Workflow) -> Optional[Delta]:
     prev_delta = workflow.last_delta
 
     if not prev_delta:
-        raise RuntimeError('Workflow %d has no deltas', workflow.id)
+        raise RuntimeError("Workflow %d has no deltas", workflow.id)
 
     try:
         delta = prev_delta.next_delta

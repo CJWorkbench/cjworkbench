@@ -6,14 +6,12 @@ import django.utils.timezone
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('server', '0018_fix_upload_stored_data_version'),
-    ]
+    dependencies = [("server", "0018_fix_upload_stored_data_version")]
 
     operations = [
         migrations.AddField(
-            model_name='workflow',
-            name='last_viewed_at',
+            model_name="workflow",
+            name="last_viewed_at",
             field=models.DateTimeField(default=django.utils.timezone.now),
-        ),
+        )
     ]

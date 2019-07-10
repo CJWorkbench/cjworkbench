@@ -12,9 +12,10 @@ class MinioStorage(Storage):
         ensure_bucket_exists(StaticFilesBucket)
 
     """Dumb class for uploading straight to S3."""
+
     def _save(self, name, file) -> None:
         # TODO django 2.0: with file.open('wb') as f:
-        file.open('rb')
+        file.open("rb")
         try:
             data = file.read()
         finally:
@@ -24,12 +25,13 @@ class MinioStorage(Storage):
         content_type = content_type or "application/octet-stream"
 
         kwargs = {}
-        if (
-            content_type.startswith('text')
-            or content_type.split('/')[1] in ('xml', 'json', 'javascript')
+        if content_type.startswith("text") or content_type.split("/")[1] in (
+            "xml",
+            "json",
+            "javascript",
         ):
             data = gzip.compress(data)
-            kwargs['ContentEncoding'] = 'gzip'
+            kwargs["ContentEncoding"] = "gzip"
 
         client.put_object(
             Body=data,
@@ -41,7 +43,7 @@ class MinioStorage(Storage):
             # hashed filenames. Logos and whatnot don't. So let's tell the
             # browser to cache for one day, to time-bound the damage when we
             # deploy a new version of our logo and users keep the old one.
-            CacheControl='public, max-age=86400',
+            CacheControl="public, max-age=86400",
             **kwargs
         )
 

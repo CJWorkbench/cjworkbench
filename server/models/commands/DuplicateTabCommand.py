@@ -36,52 +36,50 @@ class DuplicateTabCommand(Delta):
     def load_ws_data(self):
         workflow_data = {
             **self._load_workflow_ws_data(),
-            'tab_slugs': list(
-                self.workflow.live_tabs.values_list('slug', flat=True)
-            )
+            "tab_slugs": list(self.workflow.live_tabs.values_list("slug", flat=True)),
         }
         if self.tab.is_deleted:
             wfm_ids = list(
                 # tab.live_wf_modules can be nonempty even when tab.is_deleted
-                self.tab.live_wf_modules.values_list('id', flat=True)
+                self.tab.live_wf_modules.values_list("id", flat=True)
             )
             return {
-                'updateWorkflow': workflow_data,
-                'clearTabSlugs': [self.tab.slug],
-                'clearWfModuleIds': [str(wfm_id) for wfm_id in wfm_ids],
+                "updateWorkflow": workflow_data,
+                "clearTabSlugs": [self.tab.slug],
+                "clearWfModuleIds": [str(wfm_id) for wfm_id in wfm_ids],
             }
         else:
             return {
-                'updateWorkflow': workflow_data,
-                'updateTabs': {self.tab.slug: TabSerializer(self.tab).data},
-                'updateWfModules': {
+                "updateWorkflow": workflow_data,
+                "updateTabs": {self.tab.slug: TabSerializer(self.tab).data},
+                "updateWfModules": {
                     str(wfm.id): WfModuleSerializer(wfm).data
                     for wfm in self.tab.live_wf_modules
                 },
             }
 
     def forward_impl(self):
-        self.workflow.live_tabs \
-            .filter(position__gte=self.tab.position) \
-            .update(position=F('position') + 1)
+        self.workflow.live_tabs.filter(position__gte=self.tab.position).update(
+            position=F("position") + 1
+        )
 
         self.tab.is_deleted = False
-        self.tab.save(update_fields=['is_deleted'])
+        self.tab.save(update_fields=["is_deleted"])
 
         self.workflow.selected_tab_position = self.tab.position
-        self.workflow.save(update_fields=['selected_tab_position'])
+        self.workflow.save(update_fields=["selected_tab_position"])
 
     def backward_impl(self):
         self.tab.is_deleted = True
-        self.tab.save(update_fields=['is_deleted'])
+        self.tab.save(update_fields=["is_deleted"])
 
-        self.workflow.live_tabs \
-            .filter(position__gt=self.tab.position) \
-            .update(position=F('position') - 1)
+        self.workflow.live_tabs.filter(position__gt=self.tab.position).update(
+            position=F("position") - 1
+        )
 
         # We know old_selected_tab_position is valid, always
         self.workflow.selected_tab_position = self.old_selected_tab_position
-        self.workflow.save(update_fields=['selected_tab_position'])
+        self.workflow.save(update_fields=["selected_tab_position"])
 
     # override
     async def schedule_execute_if_needed(self) -> None:
@@ -102,8 +100,9 @@ class DuplicateTabCommand(Delta):
             await self._schedule_execute()
 
     @classmethod
-    def amend_create_kwargs(cls, *, workflow: Workflow, from_tab: Tab,
-                            slug: str, name: str):
+    def amend_create_kwargs(
+        cls, *, workflow: Workflow, from_tab: Tab, slug: str, name: str
+    ):
         """
         Create a duplicate of `from_tab`.
         """
@@ -141,7 +140,7 @@ class DuplicateTabCommand(Delta):
         # TL;DR do nothing. Undo/redo will sort itself out.
 
         return {
-            'workflow': workflow,
-            'tab': tab,
-            'old_selected_tab_position': workflow.selected_tab_position,
+            "workflow": workflow,
+            "tab": tab,
+            "old_selected_tab_position": workflow.selected_tab_position,
         }

@@ -5,8 +5,13 @@ import pandas as pd
 from asgiref.sync import async_to_sync
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
-from django.http import HttpRequest, HttpResponse, \
-        Http404, HttpResponseNotFound, JsonResponse
+from django.http import (
+    HttpRequest,
+    HttpResponse,
+    Http404,
+    HttpResponseNotFound,
+    JsonResponse,
+)
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.views.decorators.clickjacking import xframe_options_exempt
@@ -70,7 +75,7 @@ def _lookup_wf_module_for_write(pk: int, request: HttpRequest) -> WfModule:
 
 # Main /api/wfmodule/xx call. Can do a lot of different things depending on
 # request type
-@api_view(['PATCH'])
+@api_view(["PATCH"])
 @renderer_classes((JSONRenderer,))
 def wfmodule_detail(request, pk, format=None):
     wf_module = _lookup_wf_module_for_write(pk, request)
@@ -79,27 +84,25 @@ def wfmodule_detail(request, pk, format=None):
     # them
     # TODO: replace all of these with the generic patch method, most of
     # this is unnecessary
-    if 'auto_update_data' not in request.data:
-        return Response({
-            'error': 'Unknown fields: {}'.format(request.data.keys())
-        }, status=status.HTTP_400_BAD_REQUEST)
+    if "auto_update_data" not in request.data:
+        return Response(
+            {"error": "Unknown fields: {}".format(request.data.keys())},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     try:
-        if 'auto_update_data' in request.data:
+        if "auto_update_data" in request.data:
             patch_update_settings(wf_module, request.data, request)
 
-            if bool(request.data['auto_update_data']):
+            if bool(request.data["auto_update_data"]):
                 server.utils.log_user_event_from_request(
-                    request,
-                    'Enabled auto-update',
-                    {
-                        'wfModuleId': wf_module.id
-                    }
+                    request, "Enabled auto-update", {"wfModuleId": wf_module.id}
                 )
 
     except ValueError as e:  # TODO make this less generic
-        return Response({'message': str(e), 'status_code': 400},
-                        status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {"message": str(e), "status_code": 400}, status=status.HTTP_400_BAD_REQUEST
+        )
 
     return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -118,7 +121,7 @@ def _make_render_tuple(cached_result, startrow=None, endrow=None):
         columns = cached_result.columns[
             # Return one row more than configured, so the client knows there
             # are "too many rows".
-            :(settings.MAX_COLUMNS_PER_CLIENT_REQUEST + 1)
+            : (settings.MAX_COLUMNS_PER_CLIENT_REQUEST + 1)
         ]
         column_names = [c.name for c in columns]
         dataframe = cached_result.read_dataframe(column_names)
@@ -136,7 +139,7 @@ def _make_render_tuple(cached_result, startrow=None, endrow=None):
 
     # table.to_json() renders a JSON string. It can't render a dict that we
     # encode later, so let's not even try. Just return the string.
-    rows = table.to_json(orient="records", date_format='iso')
+    rows = table.to_json(orient="records", date_format="iso")
     return (startrow, endrow, rows)
 
 
@@ -145,7 +148,7 @@ def int_or_none(x):
 
 
 # /render: return output table of this module
-@api_view(['GET'])
+@api_view(["GET"])
 @renderer_classes((JSONRenderer,))
 def wfmodule_render(request, pk, format=None):
     wf_module = _lookup_wf_module_for_read(pk, request)
@@ -153,32 +156,44 @@ def wfmodule_render(request, pk, format=None):
     # Get first and last row from query parameters, or default to all if not
     # specified
     try:
-        startrow = int_or_none(request.GET.get('startrow'))
-        endrow = int_or_none(request.GET.get('endrow'))
+        startrow = int_or_none(request.GET.get("startrow"))
+        endrow = int_or_none(request.GET.get("endrow"))
     except ValueError:
-        return Response({'message': 'bad row number', 'status_code': 400},
-                        status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {"message": "bad row number", "status_code": 400},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     with wf_module.workflow.cooperative_lock():
         wf_module.refresh_from_db()
         cached_result = wf_module.cached_render_result
         if cached_result is None:
             # assume we'll get another request after execute finishes
-            return JsonResponse({'start_row': 0, 'end_row': 0, 'rows': []})
+            return JsonResponse({"start_row": 0, "end_row": 0, "rows": []})
 
-        startrow, endrow, rows_string = _make_render_tuple(cached_result,
-                                                           startrow, endrow)
+        startrow, endrow, rows_string = _make_render_tuple(
+            cached_result, startrow, endrow
+        )
         return HttpResponse(
-            ''.join(['{"start_row":', str(startrow), ',"end_row":',
-                     str(endrow), ',"rows":', rows_string, '}']),
-            content_type='application/json'
+            "".join(
+                [
+                    '{"start_row":',
+                    str(startrow),
+                    ',"end_row":',
+                    str(endrow),
+                    ',"rows":',
+                    rows_string,
+                    "}",
+                ]
+            ),
+            content_type="application/json",
         )
 
 
-_html_head_start_re = re.compile(rb'<\s*head[^>]*>', re.IGNORECASE)
+_html_head_start_re = re.compile(rb"<\s*head[^>]*>", re.IGNORECASE)
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 @xframe_options_exempt
 def wfmodule_output(request, pk, format=None):
     wf_module = _lookup_wf_module_for_read(pk, request)
@@ -188,7 +203,7 @@ def wfmodule_output(request, pk, format=None):
     return HttpResponse(content=html)
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 @renderer_classes((JSONRenderer,))
 def wfmodule_embeddata(request, pk):
     wf_module = _lookup_wf_module_for_read(pk, request)
@@ -197,44 +212,40 @@ def wfmodule_embeddata(request, pk):
     # because we assume the client will re-request when it gets a new
     # cached_render_result_delta_id.
     try:
-        result_json = json.loads(bytes(wf_module.cached_render_result_json),
-                                 encoding='utf-8')
+        result_json = json.loads(
+            bytes(wf_module.cached_render_result_json), encoding="utf-8"
+        )
     except ValueError:
         result_json = None
 
     return JsonResponse(result_json, safe=False)
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 @renderer_classes((JSONRenderer,))
 def wfmodule_value_counts(request, pk):
     wf_module = _lookup_wf_module_for_read(pk, request)
 
     try:
-        colname = request.GET['column']
+        colname = request.GET["column"]
     except KeyError:
-        return JsonResponse(
-            {'error': 'Missing a "column" parameter'},
-            status=400
-        )
+        return JsonResponse({"error": 'Missing a "column" parameter'}, status=400)
 
     if not colname:
         # User has not yet chosen a column. Empty response.
-        return JsonResponse({'values': {}})
+        return JsonResponse({"values": {}})
 
     with wf_module.workflow.cooperative_lock():
         wf_module.refresh_from_db()
         cached_result = wf_module.cached_render_result
         if cached_result is None:
             # assume we'll get another request after execute finishes
-            return JsonResponse({'values': {}})
+            return JsonResponse({"values": {}})
 
         try:
-            column = next(c for c in cached_result.columns
-                          if c.name == colname)
+            column = next(c for c in cached_result.columns if c.name == colname)
         except StopIteration:
-            return JsonResponse({'error': f'column "{colname}" not found'},
-                                status=404)
+            return JsonResponse({"error": f'column "{colname}" not found'}, status=404)
 
         # Only load the one column
         dataframe = cached_result.read_dataframe([colname])
@@ -244,8 +255,7 @@ def wfmodule_value_counts(request, pk):
             # Cache has disappeared. (read_dataframe() returns empty DataFrame
             # instead of throwing, as it maybe ought to.) We're probably going
             # to make another request soon.
-            return JsonResponse({'error': f'column "{colname}" not found'},
-                                status=404)
+            return JsonResponse({"error": f'column "{colname}" not found'}, status=404)
 
     # We only handle string. If it's not string, convert to string. (Rationale:
     # this is used in Refine and Filter by Value, which are both solely
@@ -255,24 +265,24 @@ def wfmodule_value_counts(request, pk):
     series = column.type.format_series(series)
     value_counts = series.value_counts().to_dict()
 
-    return JsonResponse({'values': value_counts})
+    return JsonResponse({"values": value_counts})
 
 
 N_ROWS_PER_TILE = 200
 N_COLUMNS_PER_TILE = 50
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 def wfmodule_tile(request, pk, delta_id, tile_row, tile_column):
     wf_module = _lookup_wf_module_for_read(pk, request)
 
     if str(wf_module.last_relevant_delta_id) != delta_id:
         return HttpResponseNotFound(
-            f'Requested delta {delta_id} but wf_module is '
-            f'at delta {wf_module.last_relevant_delta_id}'
+            f"Requested delta {delta_id} but wf_module is "
+            f"at delta {wf_module.last_relevant_delta_id}"
         )
 
-    if wf_module.status != 'ok':
+    if wf_module.status != "ok":
         return HttpResponseNotFound(
             f'Requested wf_module has status "{wf_module.status}" but '
             'we only render "ok" modules'
@@ -283,12 +293,12 @@ def wfmodule_tile(request, pk, delta_id, tile_row, tile_column):
     cached_result = wf_module.cached_render_result
 
     if cached_result is None:
-        return HttpResponseNotFound(f'This module has no cached result')
+        return HttpResponseNotFound(f"This module has no cached result")
 
     if str(cached_result.delta_id) != delta_id:
         return HttpResponseNotFound(
-            f'Requested delta {delta_id} but cached render result is '
-            f'at delta {cached_result.delta_id}'
+            f"Requested delta {delta_id} but cached render result is "
+            f"at delta {cached_result.delta_id}"
         )
 
     # cbegin/cend: column indexes
@@ -296,24 +306,22 @@ def wfmodule_tile(request, pk, delta_id, tile_row, tile_column):
     cend = N_COLUMNS_PER_TILE * (int(tile_column) + 1)
 
     # TODO handle races in the following file reads....
-    df = cached_result.read_dataframe(
-        columns=cached_result.column_names[cbegin:cend]
-    )
+    df = cached_result.read_dataframe(columns=cached_result.column_names[cbegin:cend])
 
     rbegin = N_ROWS_PER_TILE * int(tile_row)
     rend = N_ROWS_PER_TILE * (int(tile_row) + 1)
 
     df = df.iloc[rbegin:rend]
 
-    json_string = df.to_json(orient='values', date_format='iso')
+    json_string = df.to_json(orient="values", date_format="iso")
 
-    return HttpResponse(json_string, content_type='application/json')
+    return HttpResponse(json_string, content_type="application/json")
 
 
 # Public access to wfmodule output. Basically just /render with different auth
 # and output format
 # NOTE: does not support startrow/endrow at the moment
-@api_view(['GET'])
+@api_view(["GET"])
 @renderer_classes((JSONRenderer,))
 def wfmodule_public_output(request, pk, type, format=None):
     wf_module = _lookup_wf_module_for_read(pk, request)
@@ -327,15 +335,14 @@ def wfmodule_public_output(request, pk, type, format=None):
         else:
             # We don't have a cached result, and we don't know how long it'll
             # take to get one.
-            async_to_sync(rabbitmq.queue_render)(workflow.id,
-                                                 workflow.last_delta_id)
+            async_to_sync(rabbitmq.queue_render)(workflow.id, workflow.last_delta_id)
             # The user will simply need to try again....
             result = ProcessResult()
 
-    if type == 'json':
-        d = result.dataframe.to_json(orient='records')
+    if type == "json":
+        d = result.dataframe.to_json(orient="records")
         return HttpResponse(d, content_type="application/json")
-    elif type == 'csv':
+    elif type == "csv":
         d = result.dataframe.to_csv(index=False)
         return HttpResponse(d, content_type="text/csv")
     else:

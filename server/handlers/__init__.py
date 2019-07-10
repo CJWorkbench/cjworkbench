@@ -52,8 +52,12 @@ the database directly. Instead, make them await methods decorated with
 @database_sync_to_async.
 """
 
-from .types import AuthError, HandlerRequest, HandlerResponse, \
-        HandlerError  # noqa: F401 -- for callers to import
+from .types import (
+    AuthError,
+    HandlerRequest,
+    HandlerResponse,
+    HandlerError,
+)  # noqa: F401 -- for callers to import
 from .decorators import Handlers
 
 
@@ -80,7 +84,8 @@ async def handle(request: HandlerRequest) -> HandlerResponse:
     try:
         handler = Handlers[request.path]
     except KeyError:
-        return HandlerResponse(request.request_id,
-                               error=f'invalid path: {request.path}')
+        return HandlerResponse(
+            request.request_id, error=f"invalid path: {request.path}"
+        )
 
     return await handler(request)

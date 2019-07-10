@@ -7,9 +7,10 @@ from django.db import migrations
 
 def nix_code_from_minio(apps, schema_editor):
     from server import minio
+
     # Delete from S3
     try:
-        minio.remove_recursive(minio.ExternalModulesBucket, 'extract-numbers/')
+        minio.remove_recursive(minio.ExternalModulesBucket, "extract-numbers/")
     except minio.error.NoSuchBucket:
         pass  # we're unit-testing and the bucket doesn't exist
 
@@ -27,21 +28,22 @@ class Migration(migrations.Migration):
     it so it would be compatible with the internal-module system.
     """
 
-    dependencies = [
-        ('server', '0003_nix_external_convert_to_text'),
-    ]
+    dependencies = [("server", "0003_nix_external_convert_to_text")]
 
     operations = [
-        migrations.RunSQL([
-            """
+        migrations.RunSQL(
+            [
+                """
             UPDATE server_wfmodule
             SET module_id_name = 'converttexttonumber'
             WHERE module_id_name = 'extract-numbers'
             """,
-            """
+                """
             DELETE FROM server_moduleversion
             WHERE id_name = 'extract-numbers'
-            """
-        ], elidable=True),
+            """,
+            ],
+            elidable=True,
+        ),
         migrations.RunPython(nix_code_from_minio, elidable=True),
     ]

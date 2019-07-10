@@ -35,9 +35,9 @@ def _find_orphan_soft_deleted_tabs(workflow_id: int) -> models.QuerySet:
         for r in relations
     ]
 
-    return Tab.objects \
-        .filter(workflow_id=workflow_id, is_deleted=True) \
-        .extra(where=conditions)
+    return Tab.objects.filter(workflow_id=workflow_id, is_deleted=True).extra(
+        where=conditions
+    )
 
 
 def _find_orphan_soft_deleted_wf_modules(workflow_id: int) -> models.QuerySet:
@@ -63,9 +63,9 @@ def _find_orphan_soft_deleted_wf_modules(workflow_id: int) -> models.QuerySet:
         for r in relations
     ]
 
-    return WfModule.objects \
-        .filter(tab__workflow_id=workflow_id, is_deleted=True) \
-        .extra(where=conditions)
+    return WfModule.objects.filter(tab__workflow_id=workflow_id, is_deleted=True).extra(
+        where=conditions
+    )
 
 
 class Workflow(models.Model):
@@ -118,7 +118,7 @@ class Workflow(models.Model):
     #                                 ),
     #    ]
 
-    name = models.CharField('name', max_length=200)
+    name = models.CharField("name", max_length=200)
     creation_date = models.DateTimeField(auto_now_add=True)
     last_viewed_at = models.DateTimeField(default=timezone.now)
     """
@@ -128,16 +128,11 @@ class Workflow(models.Model):
     """
 
     owner = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        null=True,
-        related_name='owned_workflows'
+        User, on_delete=models.CASCADE, null=True, related_name="owned_workflows"
     )
 
     anonymous_owner_session_key = models.CharField(
-        'anonymous_owner_session_key',
-        max_length=40,
-        null=True, blank=True
+        "anonymous_owner_session_key", max_length=40, null=True, blank=True
     )
     """
     Non-NULL when this is a copy of a of an example workflow.
@@ -159,8 +154,6 @@ class Workflow(models.Model):
     TODO add last_delta_id? Currently, we only use this field for `url_id`.
     """
 
-
-
     public = models.BooleanField(default=False)
 
     example = models.BooleanField(default=False)
@@ -169,8 +162,7 @@ class Workflow(models.Model):
     in_all_users_workflow_lists = models.BooleanField(default=False)
     """If true, all users will see this (you may also want example=True)."""
 
-    lesson_slug = models.CharField('lesson_slug', max_length=100,
-                                   null=True, blank=True)
+    lesson_slug = models.CharField("lesson_slug", max_length=100, null=True, blank=True)
     """
     A string like 'a-lesson' or 'a-course/a-lesson', or NULL.
 
@@ -182,12 +174,12 @@ class Workflow(models.Model):
     selected_tab_position = models.IntegerField(default=0)
 
     last_delta = models.ForeignKey(
-        'server.Delta',  # string, not model -- avoids circular import
-        related_name='+',  # + means no backward link
+        "server.Delta",  # string, not model -- avoids circular import
+        related_name="+",  # + means no backward link
         blank=True,
         null=True,  # if null, no Commands applied yet
         default=None,
-        on_delete=models.SET_DEFAULT
+        on_delete=models.SET_DEFAULT,
     )
 
     @contextmanager
@@ -245,22 +237,20 @@ class Workflow(models.Model):
 
     def request_authorized_read(self, request: HttpRequest) -> bool:
         """True if the Django request may read workflow data."""
-        return self.user_session_authorized_read(request.user,
-                                                 request.session)
+        return self.user_session_authorized_read(request.user, request.session)
 
     def request_authorized_write(self, request: HttpRequest) -> bool:
         """True if the Django request may write workflow data."""
-        return self.user_session_authorized_write(request.user,
-                                                  request.session)
+        return self.user_session_authorized_write(request.user, request.session)
 
     def request_authorized_owner(self, request: HttpRequest) -> bool:
         """True if the Django request may write workflow data."""
-        return self.user_session_authorized_owner(request.user,
-                                                  request.session)
+        return self.user_session_authorized_owner(request.user, request.session)
 
     def request_read_only(self, request: HttpRequest) -> bool:
-        return self.request_authorized_read(request) \
-                and not self.request_authorized_write(request)
+        return self.request_authorized_read(
+            request
+        ) and not self.request_authorized_write(request)
 
     @property
     def is_anonymous(self) -> bool:
@@ -283,26 +273,38 @@ class Workflow(models.Model):
         return (
             self.public
             or (user and user == self.owner)
-            or (session and session.session_key
-                and session.session_key == self.anonymous_owner_session_key)
-            or (user and not user.is_anonymous
-                and self.acl.filter(email=user.email).exists())
+            or (
+                session
+                and session.session_key
+                and session.session_key == self.anonymous_owner_session_key
+            )
+            or (
+                user
+                and not user.is_anonymous
+                and self.acl.filter(email=user.email).exists()
+            )
         )
 
     def user_session_authorized_write(self, user, session):
         return (
             (user and user == self.owner)
-            or (session and session.session_key
-                and session.session_key == self.anonymous_owner_session_key)
-            or (user and not user.is_anonymous
-                and self.acl.filter(email=user.email, can_edit=True).exists())
+            or (
+                session
+                and session.session_key
+                and session.session_key == self.anonymous_owner_session_key
+            )
+            or (
+                user
+                and not user.is_anonymous
+                and self.acl.filter(email=user.email, can_edit=True).exists()
+            )
         )
 
     def user_session_authorized_owner(self, user, session):
-        return (
-            (user and user == self.owner)
-            or (session and session.session_key
-                and session.session_key == self.anonymous_owner_session_key)
+        return (user and user == self.owner) or (
+            session
+            and session.session_key
+            and session.session_key == self.anonymous_owner_session_key
         )
 
     @classmethod
@@ -311,9 +313,8 @@ class Workflow(models.Model):
         ret = cls.objects
         if user and not user.is_anonymous:
             if session and session.session_key:
-                mask = (
-                    Q(owner_id=user.id)
-                    | Q(anonymous_owner_session_key=session.session_key)
+                mask = Q(owner_id=user.id) | Q(
+                    anonymous_owner_session_key=session.session_key
                 )
             else:
                 mask = Q(owner_id=user.id)
@@ -357,8 +358,7 @@ class Workflow(models.Model):
 
     @classmethod
     @contextmanager
-    def authorized_lookup_and_cooperative_lock(cls, level, user, session,
-                                               **kwargs):
+    def authorized_lookup_and_cooperative_lock(cls, level, user, session, **kwargs):
         """
         Efficiently lookup and lock a Workflow in one operation.
 
@@ -373,9 +373,9 @@ class Workflow(models.Model):
         err.args[0].endswith('access denied'). TODO revisit this oddity.)
         """
         with cls.lookup_and_cooperative_lock(**kwargs) as workflow:
-            access = getattr(workflow, 'user_session_authorized_%s' % level)
+            access = getattr(workflow, "user_session_authorized_%s" % level)
             if not access(user, session):
-                raise cls.DoesNotExist('%s access denied' % level)
+                raise cls.DoesNotExist("%s access denied" % level)
 
             yield workflow
 
@@ -383,14 +383,16 @@ class Workflow(models.Model):
     def create_and_init(**kwargs):
         """Create and return a _valid_ Workflow: one with a Tab and a Delta."""
         from server.models.commands import InitWorkflowCommand
+
         with transaction.atomic():
             workflow = Workflow.objects.create(**kwargs)
             InitWorkflowCommand.create(workflow)
-            workflow.tabs.create(position=0, slug='tab-1', name='Tab 1')
+            workflow.tabs.create(position=0, slug="tab-1", name="Tab 1")
             return workflow
 
-    def _duplicate(self, name: str, owner: Optional[User],
-                   session_key: Optional[str]) -> 'Workflow':
+    def _duplicate(
+        self, name: str, owner: Optional[User], session_key: Optional[str]
+    ) -> "Workflow":
         with self.cooperative_lock():
             wf = Workflow.objects.create(
                 name=name,
@@ -399,12 +401,13 @@ class Workflow(models.Model):
                 anonymous_owner_session_key=session_key,
                 selected_tab_position=self.selected_tab_position,
                 public=False,
-                last_delta=None
+                last_delta=None,
             )
 
             # Set wf.last_delta and wf.last_delta_id, so we can render.
             # Import here to avoid circular deps
             from server.models.commands import InitWorkflowCommand
+
             InitWorkflowCommand.create(wf)
 
             tabs = list(self.live_tabs)
@@ -413,16 +416,16 @@ class Workflow(models.Model):
 
         return wf
 
-    def duplicate(self, owner: User) -> 'Workflow':
+    def duplicate(self, owner: User) -> "Workflow":
         """
         Save and return a duplicate Workflow owned by `user`.
 
         The duplicate will have no undo history.
         """
-        new_name = f'Copy of {self.name}'
+        new_name = f"Copy of {self.name}"
         return self._duplicate(new_name, owner=owner, session_key=None)
 
-    def duplicate_anonymous(self, session_key: str) -> 'Workflow':
+    def duplicate_anonymous(self, session_key: str) -> "Workflow":
         """
         Save and return a new Workflow with the same contents as this one.
 
@@ -431,14 +434,15 @@ class Workflow(models.Model):
         return self._duplicate(self.name, owner=None, session_key=session_key)
 
     def get_absolute_url(self):
-        return reverse('workflow', args=[str(self.pk)])
+        return reverse("workflow", args=[str(self.pk)])
 
     def __str__(self):
-        return self.name + ' - id: ' + str(self.id)
+        return self.name + " - id: " + str(self.id)
 
     def are_all_render_results_fresh(self):
         """Query whether all live WfModules are rendered."""
         from .WfModule import WfModule
+
         for wf_module in WfModule.live_in_workflow(self):
             if wf_module.cached_render_result is None:
                 return False
@@ -450,6 +454,7 @@ class Workflow(models.Model):
 
         try:
             from server.models import Delta
+
             first_delta = self.deltas.get(prev_delta_id=None)
         except Delta.DoesNotExist:
             # Invariant failed. Defensive programming: recover.
@@ -463,7 +468,7 @@ class Workflow(models.Model):
             first_delta = InitWorkflowCommand.create(self)
         else:
             self.last_delta_id = first_delta.id
-            self.save(update_fields=['last_delta_id'])
+            self.save(update_fields=["last_delta_id"])
 
         try:
             # Select the _second_ delta.
@@ -508,8 +513,8 @@ class Workflow(models.Model):
         # TL;DR we're double-deleting minio data, to be extra-safe. The user
         # said "delete." We'll delete.
         if self.id:  # be extra-safe: use if-statement so we don't remove '/'
-            minio.remove_recursive(minio.StoredObjectsBucket, f'{self.id}/')
-            minio.remove_recursive(minio.UserFilesBucket, f'wf-{self.id}/')
+            minio.remove_recursive(minio.StoredObjectsBucket, f"{self.id}/")
+            minio.remove_recursive(minio.UserFilesBucket, f"wf-{self.id}/")
 
         super().delete(*args, **kwargs)
 
@@ -556,7 +561,7 @@ class DependencyGraph:
     steps: Dict[int, Step]  # keyed by wf_module_id
 
     @classmethod
-    def load_from_workflow(cls, workflow: Workflow) -> 'DependencyGraph':
+    def load_from_workflow(cls, workflow: Workflow) -> "DependencyGraph":
         from server.models.param_spec import ParamDType
 
         tabs = []
@@ -574,9 +579,13 @@ class DependencyGraph:
 
                 schema = module_version.param_schema
                 if all(
-                    ((not isinstance(dtype, ParamDType.Tab)
-                      and not isinstance(dtype, ParamDType.Multitab))
-                     for dtype in schema.iter_dfs_dtypes())
+                    (
+                        (
+                            not isinstance(dtype, ParamDType.Tab)
+                            and not isinstance(dtype, ParamDType.Multitab)
+                        )
+                        for dtype in schema.iter_dfs_dtypes()
+                    )
                 ):
                     # There are no tab params.
                     steps[wf_module.id] = cls.Step(set())
@@ -595,10 +604,7 @@ class DependencyGraph:
 
         return cls(tabs, steps)
 
-    def _get_dependent_ids_step(
-        self,
-        tab_slugs: Set[str]
-    ) -> Tuple[Set[int], Set[str]]:
+    def _get_dependent_ids_step(self, tab_slugs: Set[str]) -> Tuple[Set[int], Set[str]]:
         """
         Find `(set(new_wf_module_ids), set(tab_slugs_of_new_wf_module_ids))`.
         """
@@ -621,15 +627,12 @@ class DependencyGraph:
     def get_step_ids_depending_on_tab_slug(self, tab_slug: str) -> List[int]:
         return self.get_step_ids_depending_on_tab_slugs(set([tab_slug]))
 
-    def get_step_ids_depending_on_tab_slugs(self,
-                                            tab_slugs: Set[str]) -> List[int]:
+    def get_step_ids_depending_on_tab_slugs(self, tab_slugs: Set[str]) -> List[int]:
         wf_module_ids = set()
         tab_slugs = set(tab_slugs)  # don't mutate input
 
         while True:
-            new_wf_module_ids, new_tab_slugs = self._get_dependent_ids_step(
-                tab_slugs
-            )
+            new_wf_module_ids, new_tab_slugs = self._get_dependent_ids_step(tab_slugs)
             wf_module_ids = wf_module_ids | new_wf_module_ids
             # Every step, we must add new tabs to inspect. If we don't have any
             # new tabs to inspect, that's because we've inspected all the tabs;

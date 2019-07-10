@@ -15,11 +15,10 @@ def _build_requests_session(secret: _Secret) -> Union[requests.Session, str]:
     """Prepare a Requests session, so caller can then call
     `session.get(url)`.
     """
-    service = oauth.OAuthService.lookup_or_none('google')
+    service = oauth.OAuthService.lookup_or_none("google")
     if not service:
         return (
-            'google not configured. '
-            'Please restart Workbench with a Google secret.'
+            "google not configured. " "Please restart Workbench with a Google secret."
         )
 
     session = service.requests_or_str_error(secret)
@@ -36,15 +35,16 @@ def _download_bytes(session: requests.Session, url: str) -> Union[bytes, str]:
         response = session.get(url)
 
         if response.status_code < 200 or response.status_code > 299:
-            return f'HTTP {response.status_code} from Google: {response.text}'
+            return f"HTTP {response.status_code} from Google: {response.text}"
 
         return response.content
     except requests.RequestException as err:
         return str(err)
 
 
-def _download_google_sheet(session: requests.Session,
-                           sheet_id: str) -> Union[bytes, str]:
+def _download_google_sheet(
+    session: requests.Session, sheet_id: str
+) -> Union[bytes, str]:
     """Download a Google Sheet as utf-8 CSV, or return a str error message.
 
     This uses the GDrive "export" API.
@@ -56,25 +56,27 @@ def _download_google_sheet(session: requests.Session,
     #
     # So we ignore the content-type.
     url = (
-        f'https://www.googleapis.com/drive/v3/files/'
-        f'{sheet_id}/export?mimeType=text%2Fcsv'
+        f"https://www.googleapis.com/drive/v3/files/"
+        f"{sheet_id}/export?mimeType=text%2Fcsv"
     )
     return _download_bytes(session, url)
 
 
-def _download_gdrive_file(session: requests.Session,
-                          sheet_id: str) -> Union[bytes, str]:
+def _download_gdrive_file(
+    session: requests.Session, sheet_id: str
+) -> Union[bytes, str]:
     """Download bytes from Google Drive, or return a str error message.
 
     This discards Content-Type, including charset. GDrive doesn't know the
     charset anyway.
     """
-    url = f'https://www.googleapis.com/drive/v3/files/{sheet_id}?alt=media'
+    url = f"https://www.googleapis.com/drive/v3/files/{sheet_id}?alt=media"
     return _download_bytes(session, url)
 
 
-def download_data_frame(sheet_id: str, sheet_mime_type: str,
-                        secret: Optional[_Secret]) -> ProcessResult:
+def download_data_frame(
+    sheet_id: str, sheet_mime_type: str, secret: Optional[_Secret]
+) -> ProcessResult:
     """Download spreadsheet from Google, or return a str error message.
 
     Arguments decide how the download and parse will occur:
@@ -85,17 +87,15 @@ def download_data_frame(sheet_id: str, sheet_mime_type: str,
       API to _download_ the file, and parse it according to its mime type.
     """
     if not secret:
-        return ProcessResult(
-            error='Not authorized. Please connect to Google Drive.'
-        )
+        return ProcessResult(error="Not authorized. Please connect to Google Drive.")
 
     session = _build_requests_session(secret)
     if isinstance(session, str):
         return ProcessResult(error=session)
 
-    if sheet_mime_type == 'application/vnd.google-apps.spreadsheet':
+    if sheet_mime_type == "application/vnd.google-apps.spreadsheet":
         blob = _download_google_sheet(session, sheet_id)
-        sheet_mime_type = 'text/csv'
+        sheet_mime_type = "text/csv"
     else:
         blob = _download_gdrive_file(session, sheet_id)
     if isinstance(blob, str):
@@ -110,12 +110,12 @@ def render(_unused_table, params, *, fetch_result, **kwargs):
     if not fetch_result:
         return pd.DataFrame()  # user hasn't fetched yet
 
-    if fetch_result.status == 'error':
+    if fetch_result.status == "error":
         return fetch_result.error
 
     table = fetch_result.dataframe
 
-    has_header: bool = params['has_header']
+    has_header: bool = params["has_header"]
     if not has_header:
         table = turn_header_into_first_row(table)
 
@@ -126,22 +126,21 @@ def render(_unused_table, params, *, fetch_result, **kwargs):
 
 
 def fetch(params, *, secrets, **kwargs):  # TODO make async
-    file_meta = params['file']
+    file_meta = params["file"]
     if not file_meta:
         return ProcessResult()
 
-    sheet_id = file_meta['id']
+    sheet_id = file_meta["id"]
     # backwards-compat for old entries without 'mimeType', 2018-06-13
     sheet_mime_type = file_meta.get(
-        'mimeType',
-        'application/vnd.google-apps.spreadsheet'
+        "mimeType", "application/vnd.google-apps.spreadsheet"
     )
 
     # Ignore file_meta['url']. That's for the client's web browser, not for
     # an API request.
 
     if sheet_id:
-        secret = (secrets.get('google_credentials') or {}).get('secret')
+        secret = (secrets.get("google_credentials") or {}).get("secret")
         result = download_data_frame(sheet_id, sheet_mime_type, secret)
         result.truncate_in_place_if_too_big()
         return result
@@ -155,18 +154,18 @@ def _migrate_params_v0_to_v1(params):
 
     v1: `file` is an Optional[Dict[str, str]]
     """
-    if params['googlefileselect']:
-        file = json.loads(params['googlefileselect'])
+    if params["googlefileselect"]:
+        file = json.loads(params["googlefileselect"])
     else:
         file = None
     return {
-        'has_header': params['has_header'],
-        'version_select': params['version_select'],
-        'file': file,
+        "has_header": params["has_header"],
+        "version_select": params["version_select"],
+        "file": file,
     }
 
 
 def migrate_params(params):
-    if 'googlefileselect' in params:
+    if "googlefileselect" in params:
         params = _migrate_params_v0_to_v1(params)
     return params

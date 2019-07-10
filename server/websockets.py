@@ -12,11 +12,10 @@ from channels.exceptions import DenyConnection
 from cjworkbench.sync import database_sync_to_async
 from server import handlers, rabbitmq
 from server.models import WfModule, Workflow
-from server.serializers import WorkflowSerializer, TabSerializer, \
-        WfModuleSerializer
+from server.serializers import WorkflowSerializer, TabSerializer, WfModuleSerializer
 
 logger = logging.getLogger(__name__)
-RequestWrapper = namedtuple('RequestWrapper', ('user', 'session'))
+RequestWrapper = namedtuple("RequestWrapper", ("user", "session"))
 
 
 def _workflow_channel_name(workflow_id: int) -> str:
@@ -36,7 +35,7 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
 
     @property
     def workflow_id(self):
-        return int(self.scope['url_route']['kwargs']['workflow_id'])
+        return int(self.scope["url_route"]["kwargs"]["workflow_id"])
 
     @property
     def workflow_channel_name(self):
@@ -49,8 +48,9 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
         except Workflow.DoesNotExist:
             return None
 
-        if not ret.user_session_authorized_read(self.scope['user'],
-                                                self.scope['session']):
+        if not ret.user_session_authorized_read(
+            self.scope["user"], self.scope["session"]
+        ):
             # failed auth. Don't leak any info: behave exactly as we would if
             # the workflow didn't exist
             return None
@@ -66,10 +66,7 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
     def authorize(self, level):
         try:
             with Workflow.authorized_lookup_and_cooperative_lock(
-                level,
-                self.scope['user'],
-                self.scope['session'],
-                pk=self.workflow_id
+                level, self.scope["user"], self.scope["session"], pk=self.workflow_id
             ):
                 return True
         except Workflow.DoesNotExist:
@@ -83,27 +80,23 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
         needs_render is a (workflow_id, delta_id) pair.
         """
         with Workflow.authorized_lookup_and_cooperative_lock(
-            'read',
-            self.scope['user'],
-            self.scope['session'],
-            pk=self.workflow_id
+            "read", self.scope["user"], self.scope["session"], pk=self.workflow_id
         ) as workflow:
-            request = RequestWrapper(self.scope['user'],
-                                     self.scope['session'])
+            request = RequestWrapper(self.scope["user"], self.scope["session"])
             ret = {
-                'updateWorkflow': (
-                    WorkflowSerializer(workflow,
-                                       context={'request': request}).data
-                ),
+                "updateWorkflow": (
+                    WorkflowSerializer(workflow, context={"request": request}).data
+                )
             }
 
             tabs = list(workflow.live_tabs)
-            ret['updateTabs'] = dict((tab.slug, TabSerializer(tab).data)
-                                     for tab in tabs)
+            ret["updateTabs"] = dict(
+                (tab.slug, TabSerializer(tab).data) for tab in tabs
+            )
             wf_modules = list(WfModule.live_in_workflow(workflow.id))
-            ret['updateWfModules'] = dict((str(wfm.id),
-                                           WfModuleSerializer(wfm).data)
-                                          for wfm in wf_modules)
+            ret["updateWfModules"] = dict(
+                (str(wfm.id), WfModuleSerializer(wfm).data) for wfm in wf_modules
+            )
 
             if workflow.are_all_render_results_fresh():
                 needs_render = None
@@ -113,12 +106,13 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
             return (ret, needs_render)
 
     async def connect(self):
-        if not await self.authorize('read'):
+        if not await self.authorize("read"):
             raise DenyConnection()
 
-        await self.channel_layer.group_add(self.workflow_channel_name,
-                                           self.channel_name)
-        logger.debug('Added to channel %s', self.workflow_channel_name)
+        await self.channel_layer.group_add(
+            self.workflow_channel_name, self.channel_name
+        )
+        logger.debug("Added to channel %s", self.workflow_channel_name)
         await self.accept()
 
         # Solve a race:
@@ -141,22 +135,23 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
         # Our problem is: a frontend server simply stops sending anything over
         # Websockets. And if we see one message without the other in the logs,
         # that suggests there's a problem in the channel layer.
-        logger.debug('Starting discard from channel %s',
-                     self.workflow_channel_name)
-        await self.channel_layer.group_discard(self.workflow_channel_name,
-                                               self.channel_name)
-        logger.debug('Discarded from channel %s', self.workflow_channel_name)
+        logger.debug("Starting discard from channel %s", self.workflow_channel_name)
+        await self.channel_layer.group_discard(
+            self.workflow_channel_name, self.channel_name
+        )
+        logger.debug("Discarded from channel %s", self.workflow_channel_name)
 
     async def send_whole_workflow_to_client(self):
         try:
-            delta, needs_render = \
-                    await self.get_workflow_as_delta_and_needs_render()
-            await self.send_data_to_workflow_client({
-                'data': {  # TODO why the nesting?
-                    'type': 'apply-delta',
-                    'data': delta,
+            delta, needs_render = await self.get_workflow_as_delta_and_needs_render()
+            await self.send_data_to_workflow_client(
+                {
+                    "data": {  # TODO why the nesting?
+                        "type": "apply-delta",
+                        "data": delta,
+                    }
                 }
-            })
+            )
             if needs_render:
                 # Solve a problem: what if, when the user reconnects, the
                 # workflow isn't rendered?
@@ -167,16 +162,16 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
                 # every workflow's cache invalid. In those cases, we should
                 # cause a render just by dint of a user reconnecting.
                 workflow_id, delta_id = needs_render
-                logger.debug('Queue render of Workflow %d v%d',
-                             workflow_id, delta_id)
+                logger.debug("Queue render of Workflow %d v%d", workflow_id, delta_id)
                 await rabbitmq.queue_render(workflow_id, delta_id)
         except Workflow.DoesNotExist:
             pass
 
     async def send_data_to_workflow_client(self, message):
-        logger.debug('Send %s to Workflow %d', message['data']['type'],
-                     self.workflow_id)
-        await self.send_json(message['data'])
+        logger.debug(
+            "Send %s to Workflow %d", message["data"]["type"], self.workflow_id
+        )
+        await self.send_json(message["data"])
 
     async def queue_render(self, message):
         """
@@ -186,16 +181,17 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
         somebody wants to see the render." Well, `self` is here representing a
         user who has the workflow open and wants to see the render.
         """
-        data = message['data']
-        workflow_id = data['workflow_id']
-        delta_id = data['delta_id']
-        logger.debug('Queue render of Workflow %d v%d', workflow_id, delta_id)
+        data = message["data"]
+        workflow_id = data["workflow_id"]
+        delta_id = data["delta_id"]
+        logger.debug("Queue render of Workflow %d v%d", workflow_id, delta_id)
         await rabbitmq.queue_render(workflow_id, delta_id)
 
     async def receive_json(self, content):
         """
         Handle a query from the client.
         """
+
         async def send_early_error(message):
             """
             Respond that the request is invalid.
@@ -204,53 +200,45 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
             `null` in that case.
             """
             try:
-                request_id = int(content['requestId'])
+                request_id = int(content["requestId"])
             except (KeyError, TypeError, ValueError):
                 request_id = None
 
-            return await self.send_json({
-                'response': {
-                    'requestId': request_id,
-                    'error': message
-                }
-            })
+            return await self.send_json(
+                {"response": {"requestId": request_id, "error": message}}
+            )
 
         workflow = await self.get_workflow()  # and release lock
         if workflow is None:
-            return await send_early_error('Workflow was deleted')
+            return await send_early_error("Workflow was deleted")
 
         try:
-            request = handlers.HandlerRequest.parse_json_data(self.scope,
-                                                              workflow,
-                                                              content)
+            request = handlers.HandlerRequest.parse_json_data(
+                self.scope, workflow, content
+            )
         except ValueError as err:
             return await send_early_error(str(err))
 
-        logger.info('handlers.handle(%s, %s)', request.workflow.id,
-                    request.path)
+        logger.info("handlers.handle(%s, %s)", request.workflow.id, request.path)
 
         response = await handlers.handle(request)
 
-        await self.send_json({'response': response.to_dict()})
+        await self.send_json({"response": response.to_dict()})
 
 
-async def _workflow_group_send(workflow_id: int,
-                               message_dict: Dict[str, Any]) -> None:
+async def _workflow_group_send(workflow_id: int, message_dict: Dict[str, Any]) -> None:
     """Send message_dict as JSON to all clients connected to the workflow."""
     channel_name = _workflow_channel_name(workflow_id)
     channel_layer = get_channel_layer()
-    logger.debug('Queue %s to Workflow %d', message_dict['type'],
-                 workflow_id)
-    await channel_layer.group_send(channel_name, {
-        'type': 'send_data_to_workflow_client',
-        'data': message_dict,
-    })
+    logger.debug("Queue %s to Workflow %d", message_dict["type"], workflow_id)
+    await channel_layer.group_send(
+        channel_name, {"type": "send_data_to_workflow_client", "data": message_dict}
+    )
 
 
-async def ws_client_send_delta_async(workflow_id: int,
-                                     delta: Dict[str, Any]) -> None:
+async def ws_client_send_delta_async(workflow_id: int, delta: Dict[str, Any]) -> None:
     """Tell clients how to modify their `workflow` and `wfModules` state."""
-    message = {'type': 'apply-delta', 'data': delta}
+    message = {"type": "apply-delta", "data": delta}
     await _workflow_group_send(workflow_id, message)
 
 
@@ -263,11 +251,11 @@ async def queue_render_if_listening(workflow_id: int, delta_id: int):
     """
     channel_name = _workflow_channel_name(workflow_id)
     channel_layer = get_channel_layer()
-    logger.debug('Suggest render of Workflow %d v%d', workflow_id, delta_id)
-    await channel_layer.group_send(channel_name, {
-        'type': 'queue_render',
-        'data': {
-            'workflow_id': workflow_id,
-            'delta_id': delta_id,
-        }
-    })
+    logger.debug("Suggest render of Workflow %d v%d", workflow_id, delta_id)
+    await channel_layer.group_send(
+        channel_name,
+        {
+            "type": "queue_render",
+            "data": {"workflow_id": workflow_id, "delta_id": delta_id},
+        },
+    )

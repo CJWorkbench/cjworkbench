@@ -9,6 +9,7 @@ import re2
 
 class UserVisibleError(Exception):
     """A message for the user. Use str(err) to see it."""
+
     pass
 
 
@@ -29,14 +30,14 @@ def str_to_regex(s: str, case_sensitive: bool):
             msg = err.pattern
         else:
             msg = str(err)
-        raise UserVisibleError('Regex parse error: %s' % msg)
+        raise UserVisibleError("Regex parse error: %s" % msg)
 
     if not case_sensitive:
         # case-insensitive: compile _again_ (fb-re2 doesn't support
         # case-insensitive flag; we want the error message to apply to the
         # original pattern because any valid original pattern should be valid
         # here -- otherwise it's a dev error.)
-        r = re2.compile(f'(?i:{s})')
+        r = re2.compile(f"(?i:{s})")
 
     return r
 
@@ -50,6 +51,7 @@ def series_map_predicate(series: pd.Series, pred: Callable[[str], bool]):
             return pred(s)
         else:
             return False
+
     return series.map(safe_pred)
 
 
@@ -59,10 +61,10 @@ def series_to_text(series, strict=False):
 
     TODO [adamhooper, 2018-12-19] nix this and quick-fix coltypes
     """
-    if hasattr(series, 'cat') or series.dtype == object:
+    if hasattr(series, "cat") or series.dtype == object:
         return series
     else:
-        raise UserVisibleError('Column is not text. Please convert to text.')
+        raise UserVisibleError("Column is not text. Please convert to text.")
 
 
 def series_to_number(series):
@@ -72,11 +74,9 @@ def series_to_number(series):
     TODO [adamhooper, 2018-12-19] nix this and quick-fix coltypes
     """
     try:
-        return pd.to_numeric(series, errors='raise')
+        return pd.to_numeric(series, errors="raise")
     except ValueError:
-        raise UserVisibleError(
-            'Column is not numbers. Please convert to numbers.'
-        )
+        raise UserVisibleError("Column is not numbers. Please convert to numbers.")
 
 
 def value_to_number(value):
@@ -84,11 +84,9 @@ def value_to_number(value):
     Convert to number, or raise UserVisibleError.
     """
     try:
-        return pd.to_numeric(value, errors='raise')
+        return pd.to_numeric(value, errors="raise")
     except ValueError:
-        raise UserVisibleError(
-            'Value is not a number. Please enter a valid number.'
-        )
+        raise UserVisibleError("Value is not a number. Please enter a valid number.")
 
 
 def series_to_datetime(series):
@@ -101,13 +99,11 @@ def series_to_datetime(series):
         if is_numeric_dtype(series):
             # numeric columns, just... no. Never really want to interpret as
             # seconds since 1970
-            raise ValueError('Refusing to convert numbers to dates')
+            raise ValueError("Refusing to convert numbers to dates")
 
         return pd.to_datetime(series)
     except ValueError:
-        raise UserVisibleError(
-            'Column is not dates. Please convert to dates.'
-        )
+        raise UserVisibleError("Column is not dates. Please convert to dates.")
 
 
 def value_to_datetime(value):
@@ -117,9 +113,7 @@ def value_to_datetime(value):
     try:
         return pd.to_datetime(value)
     except ValueError:
-        raise UserVisibleError(
-            'Value is not a date. Please enter a date and time.'
-        )
+        raise UserVisibleError("Value is not a date. Please enter a date and time.")
 
 
 def type_text(f, strict=False):
@@ -127,6 +121,7 @@ def type_text(f, strict=False):
     def inner(series, value, *args, **kwargs):
         series = series_to_text(series)  # raises UserVisibleError
         return f(series, value, *args, **kwargs)
+
     return inner
 
 
@@ -136,6 +131,7 @@ def type_number(f):
         series = series_to_number(series)  # raises UserVisibleError
         value = value_to_number(value)  # raises UserVisibleError
         return f(series, value, *args, **kwargs)
+
     return inner
 
 
@@ -145,6 +141,7 @@ def type_date(f):
         series = series_to_datetime(series)  # raises UserVisibleError
         value = value_to_datetime(value)  # raises UserVisibleError
         return f(series, value, *args, **kwargs)
+
     return inner
 
 
@@ -173,7 +170,7 @@ def mask_text_does_not_contain(series, text, case_sensitive):
 def mask_text_does_not_contain_regex(series, text, case_sensitive):
     # keeprows = not matching, allow NaN
     r = str_to_regex(text, case_sensitive)
-    contains = series.map(r.test_search, na_action='ignore')
+    contains = series.map(r.test_search, na_action="ignore")
     contains = series_map_predicate(series, r.test_search)
     return contains != True  # noqa: E712
 
@@ -242,28 +239,28 @@ def mask_date_is_after(series, date, case_sensitive):
 
 
 MaskFunctions = {
-    'text_contains': mask_text_contains,
-    'text_does_not_contain': mask_text_does_not_contain,
-    'text_is_exactly': mask_text_is_exactly,
-    'text_contains_regex': mask_text_contains_regex,
-    'text_does_not_contain_regex': mask_text_does_not_contain_regex,
-    'text_is_exactly_regex': mask_text_is_exactly_regex,
-    'cell_is_empty': mask_cell_is_empty,
-    'cell_is_not_empty': mask_cell_is_not_empty,
-    'number_equals': mask_number_equals,
-    'number_is_greater_than': mask_number_is_greater_than,
-    'number_is_greater_than_or_equals': mask_number_is_greater_than_or_equals,
-    'number_is_less_than': mask_number_is_less_than,
-    'number_is_less_than_or_equals': mask_number_is_less_than_or_equals,
-    'date_is': mask_date_is,
-    'date_is_before': mask_date_is_before,
-    'date_is_after': mask_date_is_after
+    "text_contains": mask_text_contains,
+    "text_does_not_contain": mask_text_does_not_contain,
+    "text_is_exactly": mask_text_is_exactly,
+    "text_contains_regex": mask_text_contains_regex,
+    "text_does_not_contain_regex": mask_text_does_not_contain_regex,
+    "text_is_exactly_regex": mask_text_is_exactly_regex,
+    "cell_is_empty": mask_cell_is_empty,
+    "cell_is_not_empty": mask_cell_is_not_empty,
+    "number_equals": mask_number_equals,
+    "number_is_greater_than": mask_number_is_greater_than,
+    "number_is_greater_than_or_equals": mask_number_is_greater_than_or_equals,
+    "number_is_less_than": mask_number_is_less_than,
+    "number_is_less_than_or_equals": mask_number_is_less_than_or_equals,
+    "date_is": mask_date_is,
+    "date_is_before": mask_date_is_before,
+    "date_is_after": mask_date_is_after,
 }
 
 
 def _migrate_params_v0_to_v1(params: Dict[str, Any]) -> Dict[str, Any]:
-    is_regex = params['regex']
-    condition = params['condition']
+    is_regex = params["regex"]
+    condition = params["condition"]
 
     # v0:
     # Select|| (0,1)
@@ -289,8 +286,8 @@ def _migrate_params_v0_to_v1(params: Dict[str, Any]) -> Dict[str, Any]:
         condition += 4
 
     ret = dict(params)
-    del ret['regex']
-    ret['condition'] = condition
+    del ret["regex"]
+    ret["condition"] = condition
     return ret
 
 
@@ -306,51 +303,50 @@ def _migrate_params_v1_to_v2(params: Dict[str, Any]) -> Dict[str, Any]:
     # Date is|Date is before|Date is after (19, 20, 21)
     try:
         condition = [
-            '',
-            '',
-            'text_contains',
-            'text_does_not_contain',
-            'text_is_exactly',
-            '',
-            'text_contains_regex',
-            'text_does_not_contain_regex',
-            'text_is_exactly_regex',
-            '',
-            'cell_is_empty',
-            'cell_is_not_empty',
-            '',
-            'number_equals',
-            'number_is_greater_than',
-            'number_is_greater_than_or_equals',
-            'number_is_less_than',
-            'number_is_less_than_or_equals',
-            '',
-            'date_is',
-            'date_is_before',
-            'date_is_after',
-        ][params.get('condition', 0)]
+            "",
+            "",
+            "text_contains",
+            "text_does_not_contain",
+            "text_is_exactly",
+            "",
+            "text_contains_regex",
+            "text_does_not_contain_regex",
+            "text_is_exactly_regex",
+            "",
+            "cell_is_empty",
+            "cell_is_not_empty",
+            "",
+            "number_equals",
+            "number_is_greater_than",
+            "number_is_greater_than_or_equals",
+            "number_is_less_than",
+            "number_is_less_than_or_equals",
+            "",
+            "date_is",
+            "date_is_before",
+            "date_is_after",
+        ][params.get("condition", 0)]
     except IndexError:
-        condition = ''
+        condition = ""
 
     return {
-        'keep': params.get('keep', 0),
-        'filters': {
-            'operator': 'and',
-            'filters': [
+        "keep": params.get("keep", 0),
+        "filters": {
+            "operator": "and",
+            "filters": [
                 {
-                    'operator': 'and',
-                    'subfilters': [
+                    "operator": "and",
+                    "subfilters": [
                         {
-                            'colname': params['column'],
-                            'condition': condition,
-                            'value': params.get('value', ''),
-                            'case_sensitive': params.get('casesensitive',
-                                                         False),
+                            "colname": params["column"],
+                            "condition": condition,
+                            "value": params.get("value", ""),
+                            "case_sensitive": params.get("casesensitive", False),
                         }
-                    ]
+                    ],
                 }
-            ]
-        }
+            ],
+        },
     }
 
 
@@ -358,34 +354,30 @@ def _migrate_params_v2_to_v3(params):
     # v2: params['keep'] is 0 (True) or 1 (False)
     #
     # v3: params['keep'] is bool
-    return {
-        **params,
-        'keep': params['keep'] == 0,
-    }
+    return {**params, "keep": params["keep"] == 0}
 
 
 def migrate_params(params: Dict[str, Any]):
     # v0: 'regex' is a checkbox. Migrate it to a menu entry.
-    if 'regex' in params:
+    if "regex" in params:
         params = _migrate_params_v0_to_v1(params)
 
     # v1: just one condition. v2: op+filters, each containing op+subfilters
-    if 'column' in params:
+    if "column" in params:
         params = _migrate_params_v1_to_v2(params)
 
     # v2: 'keep' is an integer (not a boolean)
     # Don't use `isinstance(params['keep'], int)` because bool is a subclass of
     # int (!)
-    if not isinstance(params['keep'], bool):
+    if not isinstance(params["keep"], bool):
         params = _migrate_params_v2_to_v3(params)
 
     return params
 
 
-Filters = namedtuple('Filters', ('operator', 'filters'))
-Filter = namedtuple('Filter', ('operator', 'subfilters'))
-Subfilter = namedtuple('Subfilter',
-                       ('colname', 'condition', 'value', 'case_sensitive'))
+Filters = namedtuple("Filters", ("operator", "filters"))
+Filter = namedtuple("Filter", ("operator", "subfilters"))
+Subfilter = namedtuple("Subfilter", ("colname", "condition", "value", "case_sensitive"))
 
 
 def parse_filters(operator: str, filters: list) -> Optional[Filters]:
@@ -416,17 +408,20 @@ def _parse_filter(operator: str, subfilters: list) -> Optional[Filter]:
         return None
 
 
-def _parse_subfilter(colname: str, condition: str, value: str,
-                     case_sensitive: bool) -> Optional[Subfilter]:
+def _parse_subfilter(
+    colname: str, condition: str, value: str, case_sensitive: bool
+) -> Optional[Subfilter]:
     """
     Subfilter from input, or None if invalid.
     """
     if (
         not colname
         or condition not in MaskFunctions
-        or (condition != 'cell_is_empty'
-            and condition != 'cell_is_not_empty'
-            and not value)
+        or (
+            condition != "cell_is_empty"
+            and condition != "cell_is_not_empty"
+            and not value
+        )
     ):
         return None
     else:
@@ -436,7 +431,7 @@ def _parse_subfilter(colname: str, condition: str, value: str,
 def _merge_masks_mask1_none_is_ok(mask1: np.array, mask2: np.array, op: str):
     if mask1 is None:
         return mask2
-    elif op == 'and':
+    elif op == "and":
         return mask1 & mask2
     else:
         return mask1 | mask2
@@ -454,7 +449,7 @@ def _mask_filters(table: pd.DataFrame, filters: Filters) -> np.array:
             mask = _mask_filter(table, f)
         else:
             mask2 = _mask_filter(table, f)
-            if operator == 'and':
+            if operator == "and":
                 mask = mask & mask2
             else:
                 mask = mask | mask2
@@ -487,7 +482,7 @@ def _mask_subfilter(table: pd.DataFrame, subfilter: Subfilter) -> np.array:
 
 
 def render(table, params):
-    filters = parse_filters(**params['filters'])
+    filters = parse_filters(**params["filters"])
 
     if filters is None:
         return table
@@ -497,7 +492,7 @@ def render(table, params):
     except UserVisibleError as err:
         return str(err)
 
-    if not params['keep']:
+    if not params["keep"]:
         mask = ~mask
 
     ret = table[mask]
@@ -505,7 +500,7 @@ def render(table, params):
 
     for column in ret.columns:
         series = ret[column]
-        if hasattr(series, 'cat'):
+        if hasattr(series, "cat"):
             series.cat.remove_unused_categories(inplace=True)
 
     return ret

@@ -3,8 +3,8 @@ from typing import Tuple
 import pandas as pd
 
 
-commas = re.compile(r'\s*,\s*')
-numbers = re.compile(r'(?P<first>[1-9]\d*)(?:-(?P<last>[1-9]\d*))?')
+commas = re.compile(r"\s*,\s*")
+numbers = re.compile(r"(?P<first>[1-9]\d*)(?:-(?P<last>[1-9]\d*))?")
 
 
 def select_columns_by_number(table, str_col_nums):
@@ -18,7 +18,7 @@ def select_columns_by_number(table, str_col_nums):
     try:
         mask = index.get_indexer(table_col_nums) != -1
     except KeyError:
-        raise ValueError('There are overlapping numbers in input range')
+        raise ValueError("There are overlapping numbers in input range")
 
     return list(table.columns[mask])
 
@@ -43,8 +43,8 @@ def parse_interval(s: str) -> Tuple[int, int]:
             f'Column numbers must look like "1-2", "5" or "1-2, 5"; got "{s}"'
         )
 
-    first = int(match.group('first'))
-    last = int(match.group('last') or first)
+    first = int(match.group("first"))
+    last = int(match.group("last") or first)
     return (first - 1, last - 1)
 
 
@@ -57,25 +57,24 @@ def parse_interval_index(column_numbers: str) -> pd.IntervalIndex:
 
     Raise ValueError on invalid string.
     """
-    tuples = [parse_interval(s)
-              for s in commas.split(column_numbers.strip())]
-    return pd.IntervalIndex.from_tuples(tuples, closed='both')
+    tuples = [parse_interval(s) for s in commas.split(column_numbers.strip())]
+    return pd.IntervalIndex.from_tuples(tuples, closed="both")
 
 
 def render(table, params, **kwargs):
-    if params['select_range']:
+    if params["select_range"]:
         try:
-            columns = select_columns_by_number(table, params['column_numbers'])
+            columns = select_columns_by_number(table, params["column_numbers"])
         except ValueError as err:
             return str(err)
     else:
-        columns = params['colnames']
+        columns = params["colnames"]
 
     # if no column has been selected, keep the columns
     if not columns:
         return table
 
-    if not params['keep']:
+    if not params["keep"]:
         # Invert "columns", maintaining the order from the input table.
         drop_columns = set(columns)
         columns = [c for c in table.columns if c not in drop_columns]
@@ -90,14 +89,14 @@ def _migrate_params_v0_to_v1(params):
     v1: colnames are List[str]; keep is bool.
     """
     return {
-        'colnames': [c for c in params['colnames'].split(',') if c],
-        'select_range': params['select_range'],
-        'column_numbers': params['column_numbers'],
-        'keep': params['drop_or_keep'] != 0,
+        "colnames": [c for c in params["colnames"].split(",") if c],
+        "select_range": params["select_range"],
+        "column_numbers": params["column_numbers"],
+        "keep": params["drop_or_keep"] != 0,
     }
 
 
 def migrate_params(params):
-    if 'drop_or_keep' in params:
+    if "drop_or_keep" in params:
         params = _migrate_params_v0_to_v1(params)
     return params

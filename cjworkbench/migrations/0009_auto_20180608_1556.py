@@ -7,16 +7,9 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('cjworkbench', '0008_auto_20180607_1602'),
-    ]
+    dependencies = [("cjworkbench", "0008_auto_20180607_1602")]
 
     operations = [
-        migrations.RemoveField(
-            model_name='googlecredentials',
-            name='user',
-        ),
-        migrations.DeleteModel(
-            name='GoogleCredentials',
-        ),
+        migrations.RemoveField(model_name="googlecredentials", name="user"),
+        migrations.DeleteModel(name="GoogleCredentials"),
     ]

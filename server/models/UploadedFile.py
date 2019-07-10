@@ -9,11 +9,12 @@ from server import minio
 # data StoredObjects and then deleting
 class UploadedFile(models.Model):
     class Meta:
-        ordering = ['-created_at']
+        ordering = ["-created_at"]
 
     # delete this object if its WfModule deleted
-    wf_module = models.ForeignKey('WfModule', related_name='uploaded_files',
-                                  on_delete=models.CASCADE)
+    wf_module = models.ForeignKey(
+        "WfModule", related_name="uploaded_files", on_delete=models.CASCADE
+    )
 
     created_at = models.DateTimeField(default=timezone.now, null=True)
     """

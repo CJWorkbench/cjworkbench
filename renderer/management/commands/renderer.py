@@ -9,9 +9,12 @@ logger = logging.getLogger(__name__)
 
 
 def exit_on_exception(loop, context):
-    logger.error('Exiting because of unhandled error: %s\nContext: %r',
-                 context['message'], context,
-                 exc_info=context.get('exception'))
+    logger.error(
+        "Exiting because of unhandled error: %s\nContext: %r",
+        context["message"],
+        context,
+        exc_info=context.get("exception"),
+    )
     os._exit(1)
 
 
@@ -22,7 +25,7 @@ async def main():
 
 
 class Command(BaseCommand):
-    help = 'Continually render stale workflows'
+    help = "Continually render stale workflows"
 
     def handle(self, *args, **options):
         asyncio.run(main())

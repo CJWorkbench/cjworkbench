@@ -32,7 +32,7 @@ from requests_oauthlib.oauth1_session import TokenRequestDenied
 import json
 from urllib.parse import urlencode
 
-__all__ = [ 'TokenRequestDenied', 'OAuthService', 'OAuth1a', 'Oauth2' ]
+__all__ = ["TokenRequestDenied", "OAuthService", "OAuth1a", "Oauth2"]
 
 
 OfflineToken = Dict[str, str]
@@ -106,9 +106,9 @@ class OAuthService:
         """
         raise NotImplementedError
 
-
-    def acquire_refresh_token_or_str_error(self, GET: Dict[str, str],
-                                           expect_state: str) -> Union[OfflineToken, str]:
+    def acquire_refresh_token_or_str_error(
+        self, GET: Dict[str, str], expect_state: str
+    ) -> Union[OfflineToken, str]:
         """
         Request a refresh token from the service.
 
@@ -116,7 +116,6 @@ class OAuthService:
         the user.
         """
         raise NotImplementedError
-
 
     def extract_email_from_token(self, token: OfflineToken) -> str:
         """
@@ -126,9 +125,9 @@ class OAuthService:
         """
         raise NotImplementedError
 
-
-    def requests_or_str_error(self, token: OfflineToken
-                             ) -> Union[requests.Session, str]:
+    def requests_or_str_error(
+        self, token: OfflineToken
+    ) -> Union[requests.Session, str]:
         """Build a requests.Session logged in as the user, or return an error
         if not possible.
 
@@ -138,24 +137,32 @@ class OAuthService:
         """
         raise NotImplementedError
 
-
     @staticmethod
-    def lookup_or_none(service_id: str) -> Optional['OAuthService']:
+    def lookup_or_none(service_id: str) -> Optional["OAuthService"]:
         """Return an OAuthService (if service is configured) or None.
         """
-        if service_id not in settings.OAUTH_SERVICES: return None
+        if service_id not in settings.OAUTH_SERVICES:
+            return None
 
         service_dict = dict(settings.OAUTH_SERVICES[service_id])
-        class_name = service_dict.pop('class')
+        class_name = service_dict.pop("class")
         klass = _classes[class_name]
 
         return klass(service_id, **service_dict)
 
 
 class OAuth1a(OAuthService):
-    def __init__(self, service_id: str, *, consumer_key: str,
-                 consumer_secret: str, auth_url: str, request_token_url: str,
-                 access_token_url: str, redirect_url: str):
+    def __init__(
+        self,
+        service_id: str,
+        *,
+        consumer_key: str,
+        consumer_secret: str,
+        auth_url: str,
+        request_token_url: str,
+        access_token_url: str,
+        redirect_url: str
+    ):
         self.service_id = service_id
         self.consumer_key = consumer_key
         self.consumer_secret = consumer_secret
@@ -164,14 +171,12 @@ class OAuth1a(OAuthService):
         self.access_token_url = access_token_url
         self.redirect_url = redirect_url
 
-
     def _session(self, **kwargs) -> requests_oauthlib.OAuth1Session:
         return requests_oauthlib.OAuth1Session(
             client_key=self.consumer_key,
             client_secret=self.consumer_secret,
-            callback_uri=self.redirect_url
+            callback_uri=self.redirect_url,
         )
-
 
     def generate_redirect_url_and_state(self) -> Tuple[str, str]:
         session = self._session()
@@ -183,20 +188,20 @@ class OAuth1a(OAuthService):
 
         return (url, json.dumps(request_token))
 
-
-    def acquire_refresh_token_or_str_error(self, GET: Dict[str, str],
-                                           expect_state: str) -> Union[OfflineToken, str]:
-        if 'oauth_token' not in GET or 'oauth_verifier' not in GET:
-            return 'Missing oauth_token or oauth_verifier in URL'
+    def acquire_refresh_token_or_str_error(
+        self, GET: Dict[str, str], expect_state: str
+    ) -> Union[OfflineToken, str]:
+        if "oauth_token" not in GET or "oauth_verifier" not in GET:
+            return "Missing oauth_token or oauth_verifier in URL"
 
         try:
             request_token = json.loads(expect_state)
         except json.JSONDecodeError:
-            return 'Could not parse state'
+            return "Could not parse state"
 
         session = self._session()
         session.token = request_token
-        session.parse_authorization_response('http://foo?' + urlencode(GET))
+        session.parse_authorization_response("http://foo?" + urlencode(GET))
 
         try:
             # raises:
@@ -214,15 +219,23 @@ class OAuth1a(OAuthService):
 
         return offline_token
 
-
     def extract_username_from_token(self, token: OfflineToken) -> str:
-        return '@' + token['screen_name']  # Twitter-specific...
+        return "@" + token["screen_name"]  # Twitter-specific...
 
 
 class OAuth2(OAuthService):
-    def __init__(self, service_id: str, *, client_id: str, client_secret: str,
-                 auth_url: str, token_url: str, refresh_url: str, scope: str,
-                 redirect_url: str):
+    def __init__(
+        self,
+        service_id: str,
+        *,
+        client_id: str,
+        client_secret: str,
+        auth_url: str,
+        token_url: str,
+        refresh_url: str,
+        scope: str,
+        redirect_url: str
+    ):
         self.service_id = service_id
         self.client_id = client_id
         self.client_secret = client_secret
@@ -232,15 +245,13 @@ class OAuth2(OAuthService):
         self.redirect_url = redirect_url
         self.scope = scope
 
-
-    def _session(self, token: OfflineToken=None) -> requests_oauthlib.OAuth2Session:
+    def _session(self, token: OfflineToken = None) -> requests_oauthlib.OAuth2Session:
         return requests_oauthlib.OAuth2Session(
             client_id=self.client_id,
             scope=self.scope,
             redirect_uri=self.redirect_url,
-            token=token
+            token=token,
         )
-
 
     def generate_redirect_url_and_state(self) -> Tuple[str, str]:
         session = self._session()
@@ -250,17 +261,18 @@ class OAuth2(OAuthService):
             # Google return a refresh_token (which we need). If approval_prompt
             # isn't set, Google will return a refresh_token on _first_ request
             # but no refresh_token on _subsequent_ requests.
-            access_type='offline', approval_prompt='force'
+            access_type="offline",
+            approval_prompt="force",
         )
         return (url, state)
 
-
-    def acquire_refresh_token_or_str_error(self, GET: Dict[str, str],
-                                           expect_state: str) -> Union[OfflineToken, str]:
-        if 'code' not in GET:
+    def acquire_refresh_token_or_str_error(
+        self, GET: Dict[str, str], expect_state: str
+    ) -> Union[OfflineToken, str]:
+        if "code" not in GET:
             return 'Expected auth request to include a "code" parameter.'
 
-        if 'state' not in GET:
+        if "state" not in GET:
             return 'Expected auth request to include a "state" parameter.'
 
         session = self._session()
@@ -268,7 +280,7 @@ class OAuth2(OAuthService):
             token = session.fetch_token(
                 client_secret=self.client_secret,
                 token_url=self.token_url,
-                code=GET['code'],
+                code=GET["code"],
                 include_client_id=True,  # for Intercom
                 timeout=30,
             )
@@ -281,19 +293,18 @@ class OAuth2(OAuthService):
 
         return token
 
-
     def extract_username_from_token(self, token: OfflineToken) -> str:
         try:
             # Google provides a JWT-encoded id_token
-            data = jwt.decode(token['id_token'], verify=False)
-            return data['email']
+            data = jwt.decode(token["id_token"], verify=False)
+            return data["email"]
         except KeyError:
             # Intercom provides no information at all about the user
-            return '(connected)'
+            return "(connected)"
 
-
-    def generate_access_token_or_str_error(self, token: OfflineToken
-                                          ) -> Tuple[AccessToken, str]:
+    def generate_access_token_or_str_error(
+        self, token: OfflineToken
+    ) -> Tuple[AccessToken, str]:
         """(OAuth2-only) Generate a temporary access token for the client.
 
         The client can use the token to make API requests. It will expire after
@@ -301,21 +312,17 @@ class OAuth2(OAuthService):
         """
         permanent_session = self._session(token=token)
         access_token = permanent_session.refresh_token(
-            self.refresh_url,
-            client_id=self.client_id,
-            client_secret=self.client_secret
-        ) # TODO handle errors: HTTP error, access-revoked error
+            self.refresh_url, client_id=self.client_id, client_secret=self.client_secret
+        )  # TODO handle errors: HTTP error, access-revoked error
         return access_token
 
-
-    def requests_or_str_error(self, token: OfflineToken
-                             ) -> Union[requests.Session, str]:
+    def requests_or_str_error(
+        self, token: OfflineToken
+    ) -> Union[requests.Session, str]:
         access_token = self.generate_access_token_or_str_error(token)
-        if isinstance(access_token, str): return access_token
+        if isinstance(access_token, str):
+            return access_token
         return self._session(token=access_token)
 
 
-_classes = {
-    'OAuth2': OAuth2,
-    'OAuth1a': OAuth1a,
-}
+_classes = {"OAuth2": OAuth2, "OAuth1a": OAuth1a}

@@ -11,19 +11,21 @@ from pandas.api.types import is_numeric_dtype, is_datetime64_dtype
 from server import sanitizedataframe  # TODO nix this dependency
 
 
-SupportedNumberDtypes = frozenset({
-    np.dtype('float16'),
-    np.dtype('float32'),
-    np.dtype('float64'),
-    np.dtype('int8'),
-    np.dtype('int16'),
-    np.dtype('int32'),
-    np.dtype('int64'),
-    np.dtype('uint8'),
-    np.dtype('uint16'),
-    np.dtype('uint32'),
-    np.dtype('uint64'),
-})
+SupportedNumberDtypes = frozenset(
+    {
+        np.dtype("float16"),
+        np.dtype("float32"),
+        np.dtype("float64"),
+        np.dtype("int8"),
+        np.dtype("int16"),
+        np.dtype("int32"),
+        np.dtype("int64"),
+        np.dtype("uint8"),
+        np.dtype("uint16"),
+        np.dtype("uint32"),
+        np.dtype("uint64"),
+    }
+)
 
 
 def validate_series(series: pd.Series) -> None:
@@ -43,31 +45,30 @@ def validate_series(series: pd.Series) -> None:
         if infinities.any():
             idx = series[infinities].index[0]
             raise ValueError(
-                (
-                    "invalid value %r in column %r, row %r "
-                    "(infinity is not supported)"
-                ) % (series[idx], series.name, idx)
+                ("invalid value %r in column %r, row %r " "(infinity is not supported)")
+                % (series[idx], series.name, idx)
             )
         return
     elif is_datetime64_dtype(dtype):  # rejects datetime64ns
         return
     elif dtype == object:
-        nonstr = (series[~series.isnull()].map(type) != str)
+        nonstr = series[~series.isnull()].map(type) != str
         if nonstr.any():
             raise ValueError(
                 "invalid value %r in column %r (object values must all be str)"
                 % (series.iloc[nonstr[nonstr == True].index[0]], series.name)
             )
-    elif hasattr(series, 'cat'):
+    elif hasattr(series, "cat"):
         categories = series.cat.categories
         if categories.dtype != object:
             raise ValueError(
                 (
-                    'invalid categorical dtype %s in column %r '
-                    '(categories must have dtype=object)'
-                ) % (categories.dtype, series.name)
+                    "invalid categorical dtype %s in column %r "
+                    "(categories must have dtype=object)"
+                )
+                % (categories.dtype, series.name)
             )
-        nonstr = (categories.map(type) != str)
+        nonstr = categories.map(type) != str
         if nonstr.any():
             raise ValueError(
                 "invalid value %r in column %r (categories must all be str)"
@@ -89,14 +90,15 @@ def validate_series(series: pd.Series) -> None:
             for i, category in enumerate(categories):
                 if i >= len(codes) or codes[i] != i:
                     raise ValueError(
-                        ('unused category %r in column %r '
-                         '(all categories must be used)')
+                        (
+                            "unused category %r in column %r "
+                            "(all categories must be used)"
+                        )
                         % (category, series.name)
                     )
             assert False  # the for-loop is guaranteed to raise, in theory
     else:
-        raise ValueError('unsupported dtype %r in column %r'
-                         % (dtype, series.name))
+        raise ValueError("unsupported dtype %r in column %r" % (dtype, series.name))
 
 
 def validate_dataframe(df: pd.DataFrame) -> None:
@@ -113,16 +115,13 @@ def validate_dataframe(df: pd.DataFrame) -> None:
     * Otherwise, a column must be numeric (but not "nullable integer") or
       datetime (without timezone).
     """
-    if (
-        df.columns.dtype != object
-        or not (df.columns.map(type) == str).all()
-    ):
-        raise ValueError('column names must all be str')
+    if df.columns.dtype != object or not (df.columns.map(type) == str).all():
+        raise ValueError("column names must all be str")
 
     if not df.index.equals(pd.RangeIndex(0, len(df))):
         raise ValueError(
-            'must use the default RangeIndex — '
-            'try table.reset_index(drop=True, inplace=True)'
+            "must use the default RangeIndex — "
+            "try table.reset_index(drop=True, inplace=True)"
         )
 
     dup_column_indexes = df.columns.duplicated()
@@ -130,7 +129,7 @@ def validate_dataframe(df: pd.DataFrame) -> None:
         colname = df.columns[dup_column_indexes][0]
         raise ValueError('duplicate column name "%s"' % colname)
 
-    if (df.columns == '').any():
+    if (df.columns == "").any():
         raise ValueError('empty column name "" not allowed')
 
     for column in df.columns:
@@ -168,10 +167,10 @@ class ColumnType(ABC):
             return ColumnType.NUMBER
         elif is_datetime64_dtype(dtype):
             return ColumnType.DATETIME
-        elif dtype == object or dtype == 'category':
+        elif dtype == object or dtype == "category":
             return ColumnType.TEXT
         else:
-            raise ValueError(f'Unknown dtype: {dtype}')
+            raise ValueError(f"Unknown dtype: {dtype}")
 
     @staticmethod
     def from_dtype(dtype) -> ColumnType:
@@ -193,7 +192,7 @@ class ColumnTypeText(ColumnType):
     # override
     @property
     def name(self) -> str:
-        return 'text'
+        return "text"
 
 
 class NumberFormatter:
@@ -214,7 +213,7 @@ class NumberFormatter:
     * Its `.format()` method always succeeds
     """
 
-    _IntTypeSpecifiers = set('bcdoxXn')
+    _IntTypeSpecifiers = set("bcdoxXn")
     """
     Type names that operate on integer (as opposed to float).
 
@@ -225,7 +224,7 @@ class NumberFormatter:
 
     def __init__(self, format_s: str):
         if not isinstance(format_s, str):
-            raise ValueError('Format must be str')
+            raise ValueError("Format must be str")
 
         # parts: a list of (literal_text, field_name, format_spec, conversion)
         #
@@ -237,30 +236,26 @@ class NumberFormatter:
         #    "{}suffix": [("", "", "", ""), (suffix, None...)]
         parts = list(Formatter().parse(format_s))
 
-        if (
-            len(parts) > 2
-            or len(parts) == 2 and parts[1][1] is not None
-        ):
-            raise ValueError('Can only format one number')
+        if len(parts) > 2 or len(parts) == 2 and parts[1][1] is not None:
+            raise ValueError("Can only format one number")
 
         if not parts or parts[0][1] is None:
             raise ValueError('Format must look like "{:...}"')
 
-        if parts[0][1] != '':
-            raise ValueError('Field names or numbers are not allowed')
+        if parts[0][1] != "":
+            raise ValueError("Field names or numbers are not allowed")
 
         if parts[0][3] is not None:
-            raise ValueError('Field converters are not allowed')
+            raise ValueError("Field converters are not allowed")
 
         self._prefix = parts[0][0]
         self._format_spec = parts[0][2]
         if len(parts) == 2:
             self._suffix = parts[1][0]
         else:
-            self._suffix = ''
+            self._suffix = ""
         self._need_int = (
-            self._format_spec
-            and self._format_spec[-1] in self._IntTypeSpecifiers
+            self._format_spec and self._format_spec[-1] in self._IntTypeSpecifiers
         )
 
         # Test it!
@@ -298,18 +293,18 @@ class NumberFormatter:
 @dataclass(frozen=True)
 class ColumnTypeNumber(ColumnType):
     # https://docs.python.org/3/library/string.html#format-specification-mini-language
-    format: str = '{:,}'  # Python format() string -- default adds commas
+    format: str = "{:,}"  # Python format() string -- default adds commas
     # TODO handle locale, too: format depends on it. Python will make this
     # difficult because it can't format a string in an arbitrary locale: it can
     # only do it using global variables, which we can't use.
 
     def __post_init__(self):
         formatter = NumberFormatter(self.format)  # raises ValueError
-        object.__setattr__(self, '_formatter', formatter)
+        object.__setattr__(self, "_formatter", formatter)
 
     # override
     def format_series(self, series: pd.Series) -> pd.Series:
-        ret = series.map(self._formatter.format, na_action='ignore')
+        ret = series.map(self._formatter.format, na_action="ignore")
         # Pandas will still think all-NA is number.
         if is_numeric_dtype(ret):
             ret = ret.astype(object)
@@ -318,7 +313,7 @@ class ColumnTypeNumber(ColumnType):
     # override
     @property
     def name(self) -> str:
-        return 'number'
+        return "number"
 
 
 @dataclass(frozen=True)
@@ -332,12 +327,12 @@ class ColumnTypeDatetime(ColumnType):
 
     # override
     def format_series(self, series: pd.Series) -> pd.Series:
-        return series.dt.strftime('%FT%T.%fZ').replace('NaT', np.nan)
+        return series.dt.strftime("%FT%T.%fZ").replace("NaT", np.nan)
 
     # override
     @property
     def name(self) -> str:
-        return 'datetime'
+        return "datetime"
 
 
 # Aliases to help with import. e.g.:
@@ -348,9 +343,9 @@ ColumnType.NUMBER = ColumnTypeNumber
 ColumnType.DATETIME = ColumnTypeDatetime
 
 ColumnType.TypeLookup = {
-    'text': ColumnType.TEXT,
-    'number': ColumnType.NUMBER,
-    'datetime': ColumnType.DATETIME,
+    "text": ColumnType.TEXT,
+    "number": ColumnType.NUMBER,
+    "datetime": ColumnType.DATETIME,
 }
 
 
@@ -364,11 +359,7 @@ class Column:
     type: ColumnType  # How it's displayed
 
     def to_dict(self):
-        return {
-            'name': self.name,
-            'type': self.type.name,
-            **asdict(self.type),
-        }
+        return {"name": self.name, "type": self.type.name, **asdict(self.type)}
 
     @classmethod
     def from_dict(cls, d: Dict[str, str]) -> Column:
@@ -527,11 +518,12 @@ class QuickFix:
                 raise ValueError(str(err))
             return QuickFix(text, action, args)
         else:
-            raise ValueError('Cannot build QuickFix from value: %r' % value)
+            raise ValueError("Cannot build QuickFix from value: %r" % value)
 
 
-def _infer_column(series: pd.Series, given_format: Optional[str],
-                  try_fallback: Optional[Column]) -> Column:
+def _infer_column(
+    series: pd.Series, given_format: Optional[str], try_fallback: Optional[Column]
+) -> Column:
     """
     Build a valid `Column` for the given Series, or raise `ValueError`.
 
@@ -554,10 +546,7 @@ def _infer_column(series: pd.Series, given_format: Optional[str],
             '"format" not allowed for column "%s" because it is of type "%s"'
             % (series.name, type_class().name)
         )
-    elif (
-        try_fallback is not None
-        and isinstance(try_fallback.type, type_class)
-    ):
+    elif try_fallback is not None and isinstance(try_fallback.type, type_class):
         return try_fallback
     else:
         type = type_class()
@@ -565,8 +554,11 @@ def _infer_column(series: pd.Series, given_format: Optional[str],
     return Column(series.name, type)
 
 
-def _infer_columns(dataframe: pd.DataFrame, column_formats: Dict[str, str],
-                   try_fallback_columns: Iterable[Column] = []) -> List[Column]:
+def _infer_columns(
+    dataframe: pd.DataFrame,
+    column_formats: Dict[str, str],
+    try_fallback_columns: Iterable[Column] = [],
+) -> List[Column]:
     """
     Build valid `Column`s for the given DataFrame, or raise `ValueError`.
 
@@ -582,9 +574,10 @@ def _infer_columns(dataframe: pd.DataFrame, column_formats: Dict[str, str],
     Otherwise, construct `Column` with default format.
     """
     try_fallback_columns = {c.name: c for c in try_fallback_columns}
-    return [_infer_column(dataframe[c], column_formats.get(c),
-                          try_fallback_columns.get(c))
-            for c in dataframe.columns]
+    return [
+        _infer_column(dataframe[c], column_formats.get(c), try_fallback_columns.get(c))
+        for c in dataframe.columns
+    ]
 
 
 @dataclass
@@ -615,7 +608,7 @@ class ProcessResult:
     modules are unreachable. Usually that means `error` should be set.
     """
 
-    error: str = ''
+    error: str = ""
     """Error (if `dataframe` is zero) or warning text."""
 
     json: Dict[str, Any] = field(default_factory=dict)
@@ -653,20 +646,22 @@ class ProcessResult:
             and self.columns == other.columns
         )
 
-    def truncate_in_place_if_too_big(self) -> 'ProcessResult':
+    def truncate_in_place_if_too_big(self) -> "ProcessResult":
         """Truncate dataframe in-place and add to self.error if truncated."""
         len_before = len(self.dataframe)
         if sanitizedataframe.truncate_table_if_too_big(self.dataframe):
-            warning = ('Truncated output from %d rows to %d'
-                       % (len_before, len(self.dataframe)))
+            warning = "Truncated output from %d rows to %d" % (
+                len_before,
+                len(self.dataframe),
+            )
             if self.error:
-                self.error = f'{self.error}\n{warning}'
+                self.error = f"{self.error}\n{warning}"
             else:
                 self.error = warning
             # Nix unused categories
             for column in self.dataframe:
                 series = self.dataframe[column]
-                if hasattr(series, 'cat'):
+                if hasattr(series, "cat"):
                     series.cat.remove_unused_categories(inplace=True)
 
     @property
@@ -680,11 +675,11 @@ class ProcessResult:
         """
         if self.dataframe.columns.empty:
             if self.error:
-                return 'error'
+                return "error"
             else:
-                return 'unreachable'
+                return "unreachable"
         else:
-            return 'ok'
+            return "ok"
 
     @property
     def column_names(self):
@@ -695,8 +690,9 @@ class ProcessResult:
         return TableShape(len(self.dataframe), self.columns)
 
     @classmethod
-    def coerce(cls, value: Any,
-               try_fallback_columns: Iterable[Column] = []) -> ProcessResult:
+    def coerce(
+        cls, value: Any, try_fallback_columns: Iterable[Column] = []
+    ) -> ProcessResult:
         """
         Convert any value to a ProcessResult.
 
@@ -739,18 +735,20 @@ class ProcessResult:
             value = dict(value)  # shallow copy
             # Coerce quick_fixes, if it's there
             try:
-                value['quick_fixes'] = [QuickFix.coerce(v)
-                                        for v in value['quick_fixes']]
+                value["quick_fixes"] = [
+                    QuickFix.coerce(v) for v in value["quick_fixes"]
+                ]
             except KeyError:
                 pass
 
-            dataframe = value.pop('dataframe', pd.DataFrame())
+            dataframe = value.pop("dataframe", pd.DataFrame())
             validate_dataframe(dataframe)
 
             try:
-                column_formats = value.pop('column_formats')
-                value['columns'] = _infer_columns(dataframe, column_formats,
-                                                  try_fallback_columns)
+                column_formats = value.pop("column_formats")
+                value["columns"] = _infer_columns(
+                    dataframe, column_formats, try_fallback_columns
+                )
             except KeyError:
                 pass
 
@@ -758,8 +756,10 @@ class ProcessResult:
                 return cls(dataframe=dataframe, **value)
             except TypeError as err:
                 raise ValueError(
-                    ('ProcessResult input must only contain {dataframe, '
-                     'error, json, quick_fixes, column_formats} keys'),
+                    (
+                        "ProcessResult input must only contain {dataframe, "
+                        "error, json, quick_fixes, column_formats} keys"
+                    )
                 ) from err
         elif isinstance(value, tuple):
             if len(value) == 2:
@@ -767,14 +767,19 @@ class ProcessResult:
                 if dataframe is None:
                     dataframe = pd.DataFrame()
                 if error is None:
-                    error = ''
-                if not isinstance(dataframe, pd.DataFrame) \
-                   or not isinstance(error, str):
-                    return cls(error=(
-                        ('There is a bug in this module: expected '
-                         '(DataFrame, str) return type, got (%s,%s)') %
-                        (type(dataframe).__name__, type(error).__name__)
-                    ))
+                    error = ""
+                if not isinstance(dataframe, pd.DataFrame) or not isinstance(
+                    error, str
+                ):
+                    return cls(
+                        error=(
+                            (
+                                "There is a bug in this module: expected "
+                                "(DataFrame, str) return type, got (%s,%s)"
+                            )
+                            % (type(dataframe).__name__, type(error).__name__)
+                        )
+                    )
                 validate_dataframe(dataframe)
                 columns = _infer_columns(dataframe, {}, try_fallback_columns)
                 return cls(dataframe=dataframe, error=error)
@@ -783,29 +788,44 @@ class ProcessResult:
                 if dataframe is None:
                     dataframe = pd.DataFrame()
                 if error is None:
-                    error = ''
+                    error = ""
                 if json is None:
                     json = {}
-                if not isinstance(dataframe, pd.DataFrame) \
-                   or not isinstance(error, str) \
-                   or not isinstance(json, dict):
-                    return cls(error=(
-                        ('There is a bug in this module: expected '
-                         '(DataFrame, str, dict) return value, got '
-                         '(%s, %s, %s)') %
-                        (type(dataframe).__name__, type(error).__name__,
-                         type(json).__name__)
-                    ))
+                if (
+                    not isinstance(dataframe, pd.DataFrame)
+                    or not isinstance(error, str)
+                    or not isinstance(json, dict)
+                ):
+                    return cls(
+                        error=(
+                            (
+                                "There is a bug in this module: expected "
+                                "(DataFrame, str, dict) return value, got "
+                                "(%s, %s, %s)"
+                            )
+                            % (
+                                type(dataframe).__name__,
+                                type(error).__name__,
+                                type(json).__name__,
+                            )
+                        )
+                    )
                 validate_dataframe(dataframe)
                 columns = _infer_columns(dataframe, {}, try_fallback_columns)
-                return cls(dataframe=dataframe, error=error, json=json,
-                           columns=columns)
-            return cls(error=(
-                ('There is a bug in this module: expected 2-tuple or 3-tuple '
-                 'return value; got %d-tuple ') % len(value)
-            ))
+                return cls(dataframe=dataframe, error=error, json=json, columns=columns)
+            return cls(
+                error=(
+                    (
+                        "There is a bug in this module: expected 2-tuple or 3-tuple "
+                        "return value; got %d-tuple "
+                    )
+                    % len(value)
+                )
+            )
 
-        return cls(error=(
-            'There is a bug in this module: invalid return type %s'
-            % type(value).__name__
-        ))
+        return cls(
+            error=(
+                "There is a bug in this module: invalid return type %s"
+                % type(value).__name__
+            )
+        )

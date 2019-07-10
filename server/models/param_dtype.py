@@ -75,8 +75,9 @@ class ParamDType:
         ... })
         {'tab-123', 'tab-234'}
         """
-        return frozenset(v for dt, v in self.iter_dfs_dtype_values(value)
-                         if isinstance(dt, dtype))
+        return frozenset(
+            v for dt, v in self.iter_dfs_dtype_values(value) if isinstance(dt, dtype)
+        )
 
     @classmethod
     def _from_plain_data(cls, **kwargs):
@@ -96,7 +97,7 @@ class ParamDType:
         have explicit `param_schema`. That's rare.
         """
         json_value = json_value.copy()  # don't alter input
-        json_type = json_value.pop('type')
+        json_type = json_value.pop("type")
         dtype = cls.JsonTypeToDType[json_type]
         return dtype._from_plain_data(**json_value)  # sans 'type'
 
@@ -106,6 +107,7 @@ class ParamDTypeOption(ParamDType):
     """
     Decorate a dtype such that it may be None.
     """
+
     inner_dtype: ParamDType
 
     # override
@@ -147,11 +149,10 @@ class ParamDTypeString(ParamDType):
     (because a lone surrogate isn't valid Unicode text) and `"\x00"` is invalid
     (because Postgres doesn't allow null bytes).
     """
-    default: str = ''
 
-    InvalidCodePoints: ClassVar[typing.re.Pattern] = re.compile(
-        '[\u0000\ud800-\udfff]'
-    )
+    default: str = ""
+
+    InvalidCodePoints: ClassVar[typing.re.Pattern] = re.compile("[\u0000\ud800-\udfff]")
 
     def coerce(self, value):
         if value is None:
@@ -165,21 +166,19 @@ class ParamDTypeString(ParamDType):
         # `value` may still be invalid Unicode. In particular, if we received a
         # value from json.parse() it can have invalid surrogates, because
         # invalid surrogates are valid in JSON Strings (!).
-        return ParamDTypeString.InvalidCodePoints.sub('\ufffd', value)
+        return ParamDTypeString.InvalidCodePoints.sub("\ufffd", value)
 
     def validate(self, value):
         if not isinstance(value, str):
-            raise ValueError('Value %r is not a string' % value)
+            raise ValueError("Value %r is not a string" % value)
         if ParamDTypeString.InvalidCodePoints.search(value) is not None:
-            if '\x00' in value:
+            if "\x00" in value:
                 raise ValueError(
-                    'Value %r is not valid text: zero byte not allowed'
-                    % value
+                    "Value %r is not valid text: zero byte not allowed" % value
                 )
             else:
                 raise ValueError(
-                    'Value %r is not valid Unicode: surrogates not allowed'
-                    % value
+                    "Value %r is not valid Unicode: surrogates not allowed" % value
                 )
 
 
@@ -195,7 +194,7 @@ class ParamDTypeInteger(ParamDType):
 
     def validate(self, value):
         if not isinstance(value, int):
-            raise ValueError('Value %r is not an integer' % value)
+            raise ValueError("Value %r is not an integer" % value)
 
 
 @dataclass(frozen=True)
@@ -203,6 +202,7 @@ class ParamDTypeFloat(ParamDType):
     """
     Accepts floats or integers. Akin to JSON 'number' type.
     """
+
     default: float = 0.0
 
     def coerce(self, value):
@@ -213,7 +213,7 @@ class ParamDTypeFloat(ParamDType):
 
     def validate(self, value):
         if not (isinstance(value, float) or isinstance(value, int)):
-            raise ValueError('Value %r is not a float' % value)
+            raise ValueError("Value %r is not a float" % value)
 
     @classmethod
     def _from_plain_data(cls, default=0.0):
@@ -230,7 +230,7 @@ class ParamDTypeBoolean(ParamDType):
         if value is None:
             return self.default
         elif isinstance(value, str):
-            return value.lower() == 'true'
+            return value.lower() == "true"
         else:
             try:
                 return bool(value)
@@ -239,7 +239,7 @@ class ParamDTypeBoolean(ParamDType):
 
     def validate(self, value):
         if not isinstance(value, bool):
-            raise ValueError('Value %r is not a boolean' % value)
+            raise ValueError("Value %r is not a boolean" % value)
 
 
 @dataclass(frozen=True)
@@ -251,7 +251,7 @@ class ParamDTypeColumn(ParamDTypeString):
     def _from_plain_data(cls, *, column_types=None, **kwargs):
         if column_types:
             # column_types comes from JSON as a list. We need a set.
-            kwargs['column_types'] = frozenset(column_types)
+            kwargs["column_types"] = frozenset(column_types)
         return cls(**kwargs)
 
 
@@ -269,17 +269,16 @@ class ParamDTypeMulticolumn(ParamDType):
 
     def validate(self, value):
         if not isinstance(value, list):
-            raise ValueError('Value %r is not a list' % value)
+            raise ValueError("Value %r is not a list" % value)
         for i, v in enumerate(value):
             if not isinstance(v, str):
-                raise ValueError('Item %d of value %r is not a string'
-                                 % (i, value))
+                raise ValueError("Item %d of value %r is not a string" % (i, value))
 
     @classmethod
     def _from_plain_data(cls, *, column_types=None, **kwargs):
         if column_types:
             # column_types comes from JSON as a list. We need a set.
-            kwargs['column_types'] = frozenset(column_types)
+            kwargs["column_types"] = frozenset(column_types)
         return cls(**kwargs)
 
 
@@ -291,8 +290,8 @@ class ParamDTypeEnum(ParamDType):
     def __post_init__(self):
         if self.default not in self.choices:
             raise ValueError(
-                'Default %(default)r is not in choices %(choices)r'
-                % {'default': self.default, 'choices': self.choices}
+                "Default %(default)r is not in choices %(choices)r"
+                % {"default": self.default, "choices": self.choices}
             )
 
     def coerce(self, value):
@@ -304,8 +303,8 @@ class ParamDTypeEnum(ParamDType):
     def validate(self, value):
         if value not in self.choices:
             raise ValueError(
-                'Value %(value)r is not in choices %(choices)r'
-                % {'value': value, 'choices': self.choices}
+                "Value %(value)r is not in choices %(choices)r"
+                % {"value": value, "choices": self.choices}
             )
 
     @classmethod
@@ -317,18 +316,19 @@ class _ListMethods:
     """
     Methods that use `self.inner_dtype` and expect values to be list.
     """
+
     def coerce(self, value):
         if value is None:
             return self.default
 
-        if not hasattr(value, '__iter__'):
+        if not hasattr(value, "__iter__"):
             value = [value]
 
         return [self.inner_dtype.coerce(v) for v in value]
 
     def validate(self, value):
         if not isinstance(value, list):
-            raise ValueError('Value %r is not a list' % value)
+            raise ValueError("Value %r is not a list" % value)
 
         for v in value:
             self.inner_dtype.validate(v)
@@ -364,32 +364,36 @@ class ParamDTypeDict(ParamDType):
     This is different from ParamDTypeMap, which allows arbitrary keys and
     forces all values to have the same dtype.
     """
+
     properties: Dict[str, ParamDType]
     default: Optional[Any] = None  # if None, auto-calculate during init
 
     def __post_init__(self):
         if self.default is None:
-            default = dict((name, dtype.coerce(None))
-                           for name, dtype in self.properties.items())
-            object.__setattr__(self, 'default', default)
+            default = dict(
+                (name, dtype.coerce(None)) for name, dtype in self.properties.items()
+            )
+            object.__setattr__(self, "default", default)
 
     def coerce(self, value):
         if not isinstance(value, dict):
             return self.default
 
-        return dict((name, dtype.coerce(value.get(name)))
-                    for name, dtype in self.properties.items())
+        return dict(
+            (name, dtype.coerce(value.get(name)))
+            for name, dtype in self.properties.items()
+        )
 
     def validate(self, value):
         if not isinstance(value, dict):
-            raise ValueError('Value %r is not a dict' % value)
+            raise ValueError("Value %r is not a dict" % value)
 
         expect_keys = set(self.properties.keys())
         actual_keys = set(value.keys())
         if expect_keys != actual_keys:
             raise ValueError(
-                'Value %(value)r has wrong names: expected names %(names)r'
-                % {'value': value, 'names': expect_keys}
+                "Value %(value)r has wrong names: expected names %(names)r"
+                % {"value": value, "names": expect_keys}
             )
 
         for name, dtype in self.properties.items():
@@ -420,6 +424,7 @@ class ParamDTypeMap(ParamDType):
     This is different from ParamDTypeDict, which has dtype-defined properties,
     each with its own dtype.
     """
+
     value_dtype: ParamDType
     default: Dict[str, Any] = field(default_factory=dict)
 
@@ -431,7 +436,7 @@ class ParamDTypeMap(ParamDType):
 
     def validate(self, value):
         if not isinstance(value, dict):
-            raise ValueError('Value %r is not a dict' % value)
+            raise ValueError("Value %r is not a dict" % value)
 
         for _, v in value.items():
             self.value_dtype.validate(v)
@@ -466,10 +471,11 @@ class ParamDTypeMultitab(_ListMethods, ParamDType):
     This dtype behaves like a ParamDTypeList full of ParamDTypeTab values.
     We'll visit all child ParamDTypeTab values when walking a `value`.
     """
+
     default: List[str] = field(default_factory=list)
 
     def __post_init__(self):
-        object.__setattr__(self, 'inner_dtype', ParamDTypeTab())
+        object.__setattr__(self, "inner_dtype", ParamDTypeTab())
 
 
 @dataclass(frozen=True)
@@ -480,13 +486,20 @@ class ParamDTypeMultichartseries(_ListMethods, ParamDType):
     This is like a List[Dict], except when omitting table columns we omit the
     entire Dict if its Column is missing.
     """
+
     default: List[Dict[str, str]] = field(default_factory=list)
 
     def __post_init__(self):
-        object.__setattr__(self, 'inner_dtype', ParamDTypeDict({
-            'column': ParamDTypeColumn(column_types=frozenset({'number'})),
-            'color': ParamDTypeString(),  # TODO enforce '#abc123' pattern
-        }))
+        object.__setattr__(
+            self,
+            "inner_dtype",
+            ParamDTypeDict(
+                {
+                    "column": ParamDTypeColumn(column_types=frozenset({"number"})),
+                    "color": ParamDTypeString(),  # TODO enforce '#abc123' pattern
+                }
+            ),
+        )
 
 
 @dataclass(frozen=True)
@@ -496,8 +509,9 @@ class ParamDTypeFile(ParamDType):
 
     The default, value, `null`, means "No file".
     """
+
     UUIDRegex: ClassVar[typing.re.Pattern] = re.compile(
-        r'\A[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\Z'
+        r"\A[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\Z"
     )
 
     def coerce(self, value):
@@ -512,10 +526,9 @@ class ParamDTypeFile(ParamDType):
         if value is None:
             return  # None is the default, and it's valid
         if not isinstance(value, str):
-            raise ValueError('Value %r is not a string' % value)
+            raise ValueError("Value %r is not a string" % value)
         if not self.UUIDRegex.match(value):
-            raise ValueError('Value %r is not a UUID string representation'
-                             % value)
+            raise ValueError("Value %r is not a UUID string representation" % value)
 
 
 # Aliases to help with import. e.g.:
@@ -538,19 +551,19 @@ ParamDType.Multichartseries = ParamDTypeMultichartseries
 ParamDType.File = ParamDTypeFile
 
 ParamDType.JsonTypeToDType = {
-    'string': ParamDTypeString,
-    'integer': ParamDTypeInteger,
-    'float': ParamDTypeFloat,
-    'boolean': ParamDTypeBoolean,
-    'enum': ParamDTypeEnum,
-    'option': ParamDTypeOption,
-    'list': ParamDTypeList,
-    'dict': ParamDTypeDict,
-    'map': ParamDTypeMap,
-    'tab': ParamDTypeTab,
-    'tabs': ParamDTypeMultitab,
-    'column': ParamDTypeColumn,
-    'multicolumn': ParamDTypeMulticolumn,
-    'multichartseries': ParamDTypeMultichartseries,
-    'file': ParamDTypeFile,
+    "string": ParamDTypeString,
+    "integer": ParamDTypeInteger,
+    "float": ParamDTypeFloat,
+    "boolean": ParamDTypeBoolean,
+    "enum": ParamDTypeEnum,
+    "option": ParamDTypeOption,
+    "list": ParamDTypeList,
+    "dict": ParamDTypeDict,
+    "map": ParamDTypeMap,
+    "tab": ParamDTypeTab,
+    "tabs": ParamDTypeMultitab,
+    "column": ParamDTypeColumn,
+    "multicolumn": ParamDTypeMulticolumn,
+    "multichartseries": ParamDTypeMultichartseries,
+    "file": ParamDTypeFile,
 }

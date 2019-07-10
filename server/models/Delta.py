@@ -22,16 +22,20 @@ from server import rabbitmq, websockets
 # transaction.
 class Delta(PolymorphicModel):
     # These fields must be set by any child classes, when instantiating
-    workflow = models.ForeignKey('Workflow', related_name='deltas',
-                                 on_delete=models.CASCADE)
+    workflow = models.ForeignKey(
+        "Workflow", related_name="deltas", on_delete=models.CASCADE
+    )
 
     # Next and previous Deltas on this workflow, a linked list.
-    prev_delta = models.OneToOneField('self', related_name='next_delta',
-                                      null=True, default=None,
-                                      on_delete=models.CASCADE)
+    prev_delta = models.OneToOneField(
+        "self",
+        related_name="next_delta",
+        null=True,
+        default=None,
+        on_delete=models.CASCADE,
+    )
 
-    datetime = models.DateTimeField('datetime',
-                                    default=django.utils.timezone.now)
+    datetime = models.DateTimeField("datetime", default=django.utils.timezone.now)
 
     @database_sync_to_async
     def _call_forward_and_load_ws_data(self):
@@ -40,7 +44,7 @@ class Delta(PolymorphicModel):
 
             # Point workflow to us
             self.workflow.last_delta = self
-            self.workflow.save(update_fields=['last_delta_id'])
+            self.workflow.save(update_fields=["last_delta_id"])
 
             return self.load_ws_data()
 
@@ -53,7 +57,7 @@ class Delta(PolymorphicModel):
             # Only update prev_delta_id: other columns may have been edited in
             # backward_impl().
             self.workflow.last_delta = self.prev_delta
-            self.workflow.save(update_fields=['last_delta_id'])
+            self.workflow.save(update_fields=["last_delta_id"])
 
             return self.load_ws_data()
 
@@ -84,9 +88,9 @@ class Delta(PolymorphicModel):
         """
         workflow = self.workflow
         return {
-            'name': workflow.name,
-            'public': workflow.public,
-            'last_update': workflow.last_update().isoformat(),
+            "name": workflow.name,
+            "public": workflow.public,
+            "last_update": workflow.last_update().isoformat(),
         }
 
     def load_ws_data(self):
@@ -97,16 +101,13 @@ class Delta(PolymorphicModel):
         return `{'updateWorkflow': self._load_workflow_ws_data()}` at the very
         least, because that holds metadata about the delta itself.
         """
-        return {
-            'updateWorkflow': self._load_workflow_ws_data(),
-        }
+        return {"updateWorkflow": self._load_workflow_ws_data()}
 
     async def _schedule_execute(self) -> None:
         """
         Force a render.
         """
-        await rabbitmq.queue_render(self.workflow.id,
-                                    self.workflow.last_delta_id)
+        await rabbitmq.queue_render(self.workflow.id, self.workflow.last_delta_id)
 
     async def schedule_execute_if_needed(self) -> None:
         """
@@ -131,8 +132,7 @@ class Delta(PolymorphicModel):
             # websockets users have been notified.
         """
         delta, ws_data = await cls._first_forward_and_save_returning_ws_data(
-            workflow=workflow,
-            **kwargs
+            workflow=workflow, **kwargs
         )
 
         if delta:
@@ -169,7 +169,7 @@ class Delta(PolymorphicModel):
 
         All this, in a cooperative lock.
         """
-        workflow = kwargs['workflow']
+        workflow = kwargs["workflow"]
         with workflow.cooperative_lock():
             create_kwargs = cls.amend_create_kwargs(**kwargs)
             if not create_kwargs:
@@ -177,14 +177,15 @@ class Delta(PolymorphicModel):
 
             # Lookup unapplied deltas to delete. That's the head of the linked
             # list that comes _after_ `workflow.last_delta`.
-            orphan_delta: Optional[Delta] = Delta.objects \
-                .filter(prev_delta_id=workflow.last_delta_id) \
-                .first()
+            orphan_delta: Optional[Delta] = Delta.objects.filter(
+                prev_delta_id=workflow.last_delta_id
+            ).first()
             if orphan_delta:
                 orphan_delta.delete_with_successors()
 
-            delta = cls.objects.create(prev_delta_id=workflow.last_delta_id,
-                                       **create_kwargs)
+            delta = cls.objects.create(
+                prev_delta_id=workflow.last_delta_id, **create_kwargs
+            )
             delta.forward_impl()
 
             if orphan_delta:
@@ -196,7 +197,7 @@ class Delta(PolymorphicModel):
 
             # Point workflow to us
             workflow.last_delta = delta
-            workflow.save(update_fields=['last_delta_id'])
+            workflow.save(update_fields=["last_delta_id"])
 
             return (delta, delta.load_ws_data())
 
@@ -217,9 +218,7 @@ class Delta(PolymorphicModel):
         # Oh, Did You Know: django-polymorphic does not have a "delete"
         # feature?
         command_relations = [
-            rel
-            for rel in Delta._meta.related_objects
-            if rel.parent_link
+            rel for rel in Delta._meta.related_objects if rel.parent_link
         ]
         with_clauses = [
             f"""
@@ -233,7 +232,8 @@ class Delta(PolymorphicModel):
             for i, rel in enumerate(command_relations)
         ]
         with connection.cursor() as cursor:
-            cursor.execute(f"""
+            cursor.execute(
+                f"""
             WITH
             to_delete AS (
                 SELECT id
@@ -244,7 +244,8 @@ class Delta(PolymorphicModel):
             {', '.join(with_clauses)}
             DELETE FROM {Delta._meta.db_table}
             WHERE id IN (SELECT id FROM to_delete)
-            """)
+            """
+            )
 
     @property
     def command_description(self):
@@ -252,4 +253,4 @@ class Delta(PolymorphicModel):
         return "Base Delta object"
 
     def __str__(self):
-        return str(self.datetime) + ' ' + self.command_description
+        return str(self.datetime) + " " + self.command_description

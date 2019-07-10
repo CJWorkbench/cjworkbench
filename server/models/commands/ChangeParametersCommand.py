@@ -11,18 +11,18 @@ logger = logging.getLogger(__name__)
 
 class ChangeParametersCommand(ChangesWfModuleOutputs, Delta):
     wf_module = models.ForeignKey(WfModule, on_delete=models.PROTECT)
-    old_values = JSONField('old_values')  # _all_ params
-    new_values = JSONField('new_values')  # only _changed_ params
+    old_values = JSONField("old_values")  # _all_ params
+    new_values = JSONField("new_values")  # only _changed_ params
     wf_module_delta_ids = ChangesWfModuleOutputs.wf_module_delta_ids
 
     def forward_impl(self):
         self.wf_module.params = self.new_values
-        self.wf_module.save(update_fields=['params'])
+        self.wf_module.save(update_fields=["params"])
         self.forward_affected_delta_ids()
 
     def backward_impl(self):
         self.wf_module.params = self.old_values
-        self.wf_module.save(update_fields=['params'])
+        self.wf_module.save(update_fields=["params"])
         self.backward_affected_delta_ids()
 
     @classmethod
@@ -55,8 +55,7 @@ class ChangeParametersCommand(ChangesWfModuleOutputs, Delta):
 
         module_version = wf_module.module_version
         if module_version is None:
-            raise ValueError('Module %s does not exist'
-                             % wf_module.module_id_name)
+            raise ValueError("Module %s does not exist" % wf_module.module_id_name)
 
         # Old values: store exactly what we had
         old_values = wf_module.params
@@ -65,21 +64,18 @@ class ChangeParametersCommand(ChangesWfModuleOutputs, Delta):
         # top
         lm = loaded_module.LoadedModule.for_module_version_sync(module_version)
         migrated_old_values = lm.migrate_params(old_values)
-        new_values = {
-            **migrated_old_values,
-            **new_values,
-        }
+        new_values = {**migrated_old_values, **new_values}
 
         module_version.param_schema.validate(new_values)  # raises ValueError
 
         return {
             **kwargs,
-            'wf_module': wf_module,
-            'new_values': new_values,
-            'old_values': old_values,
-            'wf_module_delta_ids': cls.affected_wf_module_delta_ids(wf_module),
+            "wf_module": wf_module,
+            "new_values": new_values,
+            "old_values": old_values,
+            "wf_module_delta_ids": cls.affected_wf_module_delta_ids(wf_module),
         }
 
     @property
     def command_description(self):
-        return 'Change params'
+        return "Change params"

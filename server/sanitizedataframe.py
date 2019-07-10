@@ -13,7 +13,7 @@ def _colname_to_str(c: Any) -> str:
     zeros possible.
     """
     if isinstance(c, float):
-        return '%g' % c
+        return "%g" % c
     else:
         # need to strip col names to stay in sync with column selection modules
         return str(c).strip()
@@ -42,7 +42,7 @@ def _normalize_colnames(colnames: List[Any]) -> None:
 
         count = counts[ideal_name]
         counts[ideal_name] += 1
-        backup_name = f'{ideal_name}_{count}'
+        backup_name = f"{ideal_name}_{count}"
         return unique_name(backup_name)
 
     return [unique_name(_colname_to_str(c)) for c in colnames]
@@ -63,7 +63,7 @@ def sanitize_series(series: pd.Series) -> pd.Series:
     * Reindex so row numbers are contiguous.
     """
     series.reset_index(drop=True, inplace=True)
-    if hasattr(series, 'cat'):
+    if hasattr(series, "cat"):
         series.cat.remove_unused_categories(inplace=True)
 
         categories = series.cat.categories
@@ -72,8 +72,7 @@ def sanitize_series(series: pd.Series) -> pd.Series:
             return pd.to_numeric(series)
         elif (
             categories.dtype != object
-            or pd.api.types.infer_dtype(categories.values,
-                                        skipna=True) != 'string'
+            or pd.api.types.infer_dtype(categories.values, skipna=True) != "string"
         ):
             # Map from non-Strings to Strings
             #

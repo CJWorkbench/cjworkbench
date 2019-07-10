@@ -3,15 +3,25 @@ import pathlib
 import uuid
 import pandas as pd
 from pandas.testing import assert_frame_equal
-from cjworkbench.types import Column, ColumnType, ProcessResult, TableShape, \
-        RenderColumn, StepResultShape
+from cjworkbench.types import (
+    Column,
+    ColumnType,
+    ProcessResult,
+    TableShape,
+    RenderColumn,
+    StepResultShape,
+)
 from server import minio
 from server.models import Workflow, UploadedFile
 from server.models.param_spec import ParamDType
 from server.tests.utils import DbTestCase
 from renderer.execute.renderprep import clean_value, RenderContext
-from renderer.execute.types import TabCycleError, TabOutputUnreachableError, \
-        UnneededExecution, PromptingError
+from renderer.execute.types import (
+    TabCycleError,
+    TabOutputUnreachableError,
+    UnneededExecution,
+    PromptingError,
+)
 
 
 class CleanValueTests(DbTestCase):
@@ -35,18 +45,23 @@ class CleanValueTests(DbTestCase):
     def test_clean_file_happy_path(self):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
-        wfm = tab.wf_modules.create(module_id_name='uploadfile', order=0)
+        wfm = tab.wf_modules.create(module_id_name="uploadfile", order=0)
         id = str(uuid.uuid4())
-        key = f'wf-${workflow.id}/wfm-${wfm.id}/${id}'
-        minio.put_bytes(minio.UserFilesBucket, key, b'1234')
-        UploadedFile.objects.create(wf_module=wfm, name='x.csv.gz', size=4,
-                                    uuid=id, bucket=minio.UserFilesBucket,
-                                    key=key)
+        key = f"wf-${workflow.id}/wfm-${wfm.id}/${id}"
+        minio.put_bytes(minio.UserFilesBucket, key, b"1234")
+        UploadedFile.objects.create(
+            wf_module=wfm,
+            name="x.csv.gz",
+            size=4,
+            uuid=id,
+            bucket=minio.UserFilesBucket,
+            key=key,
+        )
         context = RenderContext(workflow.id, wfm.id, None, None, None)
         result = clean_value(ParamDType.File(), id, context)
         self.assertIsInstance(result, pathlib.Path)
-        self.assertEqual(result.read_bytes(), b'1234')
-        self.assertEqual(result.suffixes, ['.csv', '.gz'])
+        self.assertEqual(result.read_bytes(), b"1234")
+        self.assertEqual(result.suffixes, [".csv", ".gz"])
 
         # Assert that once `path` goes out of scope, it's deleted
         str_path = str(result)  # get the filesystem path
@@ -57,7 +72,7 @@ class CleanValueTests(DbTestCase):
     def test_clean_file_no_uploaded_file(self):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
-        wfm = tab.wf_modules.create(module_id_name='uploadfile', order=0)
+        wfm = tab.wf_modules.create(module_id_name="uploadfile", order=0)
         context = RenderContext(workflow.id, wfm.id, None, None, None)
         result = clean_value(ParamDType.File(), str(uuid.uuid4()), context)
         self.assertIsNone(result)
@@ -65,15 +80,20 @@ class CleanValueTests(DbTestCase):
     def test_clean_file_no_minio_file(self):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
-        wfm = tab.wf_modules.create(module_id_name='uploadfile', order=0)
-        wfm2 = tab.wf_modules.create(module_id_name='uploadfile', order=1)
+        wfm = tab.wf_modules.create(module_id_name="uploadfile", order=0)
+        wfm2 = tab.wf_modules.create(module_id_name="uploadfile", order=1)
         id = str(uuid.uuid4())
-        key = f'wf-${workflow.id}/wfm-${wfm.id}/${id}'
+        key = f"wf-${workflow.id}/wfm-${wfm.id}/${id}"
         # Oops -- let's _not_ put the file!
-        #minio.put_bytes(minio.UserFilesBucket, key, b'1234')
-        UploadedFile.objects.create(wf_module=wfm2, name='x.csv.gz', size=4,
-                                    uuid=id, bucket=minio.UserFilesBucket,
-                                    key=key)
+        # minio.put_bytes(minio.UserFilesBucket, key, b'1234')
+        UploadedFile.objects.create(
+            wf_module=wfm2,
+            name="x.csv.gz",
+            size=4,
+            uuid=id,
+            bucket=minio.UserFilesBucket,
+            key=key,
+        )
         context = RenderContext(workflow.id, wfm.id, None, None, None)
         result = clean_value(ParamDType.File(), id, context)
         self.assertIsNone(result)
@@ -81,35 +101,39 @@ class CleanValueTests(DbTestCase):
     def test_clean_file_wrong_wf_module(self):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
-        wfm = tab.wf_modules.create(module_id_name='uploadfile', order=0)
-        wfm2 = tab.wf_modules.create(module_id_name='uploadfile', order=1)
+        wfm = tab.wf_modules.create(module_id_name="uploadfile", order=0)
+        wfm2 = tab.wf_modules.create(module_id_name="uploadfile", order=1)
         id = str(uuid.uuid4())
-        key = f'wf-${workflow.id}/wfm-${wfm.id}/${id}'
-        minio.put_bytes(minio.UserFilesBucket, key, b'1234')
-        UploadedFile.objects.create(wf_module=wfm2, name='x.csv.gz', size=4,
-                                    uuid=id, bucket=minio.UserFilesBucket,
-                                    key=key)
+        key = f"wf-${workflow.id}/wfm-${wfm.id}/${id}"
+        minio.put_bytes(minio.UserFilesBucket, key, b"1234")
+        UploadedFile.objects.create(
+            wf_module=wfm2,
+            name="x.csv.gz",
+            size=4,
+            uuid=id,
+            bucket=minio.UserFilesBucket,
+            key=key,
+        )
         context = RenderContext(workflow.id, wfm.id, None, None, None)
         result = clean_value(ParamDType.File(), id, context)
         self.assertIsNone(result)
 
     def test_clean_normal_dict(self):
         context = RenderContext(None, None, None, None, None)
-        schema = ParamDType.Dict({
-            'str': ParamDType.String(),
-            'int': ParamDType.Integer(),
-        })
-        value = {'str': 'foo', 'int': 3}
+        schema = ParamDType.Dict(
+            {"str": ParamDType.String(), "int": ParamDType.Integer()}
+        )
+        value = {"str": "foo", "int": 3}
         expected = dict(value)  # no-op
         result = clean_value(schema, value, context)
         self.assertEqual(result, expected)
 
     def test_clean_column_valid(self):
-        context = RenderContext(None, None, TableShape(3, [
-            Column('A', ColumnType.NUMBER()),
-        ]), None, None)
-        result = clean_value(ParamDType.Column(), 'A', context)
-        self.assertEqual(result, 'A')
+        context = RenderContext(
+            None, None, TableShape(3, [Column("A", ColumnType.NUMBER())]), None, None
+        )
+        result = clean_value(ParamDType.Column(), "A", context)
+        self.assertEqual(result, "A")
 
     def test_clean_column_prompting_error_convert_to_text(self):
         # TODO make this _automatic_ instead of quick-fix?
@@ -118,256 +142,326 @@ class CleanValueTests(DbTestCase):
         # a new Text column but preserve its input column's data type.
         #
         # ... but for now: prompt for a Quick Fix.
-        context = RenderContext(None, None, TableShape(3, [
-            Column('A', ColumnType.NUMBER()),
-        ]), None, None)
+        context = RenderContext(
+            None, None, TableShape(3, [Column("A", ColumnType.NUMBER())]), None, None
+        )
         with self.assertRaises(PromptingError) as cm:
-            clean_value(ParamDType.Column(column_types=frozenset({'text'})),
-                        'A', context)
+            clean_value(
+                ParamDType.Column(column_types=frozenset({"text"})), "A", context
+            )
 
-        self.assertEqual(cm.exception.errors, [
-            PromptingError.WrongColumnType(['A'], 'number',
-                                           frozenset({'text'})),
-        ])
+        self.assertEqual(
+            cm.exception.errors,
+            [PromptingError.WrongColumnType(["A"], "number", frozenset({"text"}))],
+        )
 
     def test_clean_column_prompting_error_convert_to_number(self):
-        context = RenderContext(None, None, TableShape(3, [
-            Column('A', ColumnType.TEXT()),
-        ]), None, None)
+        context = RenderContext(
+            None, None, TableShape(3, [Column("A", ColumnType.TEXT())]), None, None
+        )
         with self.assertRaises(PromptingError) as cm:
-            clean_value(ParamDType.Column(column_types=frozenset({'number'})),
-                                          'A', context)
-        self.assertEqual(cm.exception.errors, [
-            PromptingError.WrongColumnType(['A'], 'text',
-                                           frozenset({'number'})),
-        ])
+            clean_value(
+                ParamDType.Column(column_types=frozenset({"number"})), "A", context
+            )
+        self.assertEqual(
+            cm.exception.errors,
+            [PromptingError.WrongColumnType(["A"], "text", frozenset({"number"}))],
+        )
 
     def test_list_prompting_error_concatenate_same_type(self):
-        context = RenderContext(None, None, TableShape(3, [
-            Column('A', ColumnType.TEXT()),
-            Column('B', ColumnType.TEXT()),
-        ]), None, None)
+        context = RenderContext(
+            None,
+            None,
+            TableShape(
+                3, [Column("A", ColumnType.TEXT()), Column("B", ColumnType.TEXT())]
+            ),
+            None,
+            None,
+        )
         schema = ParamDType.List(
-            inner_dtype=ParamDType.Column(column_types=frozenset({'number'}))
+            inner_dtype=ParamDType.Column(column_types=frozenset({"number"}))
         )
         with self.assertRaises(PromptingError) as cm:
-            clean_value(schema, ['A', 'B'], context)
+            clean_value(schema, ["A", "B"], context)
 
-        self.assertEqual(cm.exception.errors, [
-            PromptingError.WrongColumnType(['A', 'B'], 'text',
-                                           frozenset({'number'})),
-        ])
+        self.assertEqual(
+            cm.exception.errors,
+            [PromptingError.WrongColumnType(["A", "B"], "text", frozenset({"number"}))],
+        )
 
     def test_list_prompting_error_concatenate_different_type(self):
-        context = RenderContext(None, None, TableShape(3, [
-            Column('A', ColumnType.TEXT()),
-            Column('B', ColumnType.DATETIME()),
-        ]), None, None)
+        context = RenderContext(
+            None,
+            None,
+            TableShape(
+                3, [Column("A", ColumnType.TEXT()), Column("B", ColumnType.DATETIME())]
+            ),
+            None,
+            None,
+        )
         schema = ParamDType.List(
-            inner_dtype=ParamDType.Column(column_types=frozenset({'number'}))
+            inner_dtype=ParamDType.Column(column_types=frozenset({"number"}))
         )
         with self.assertRaises(PromptingError) as cm:
-            clean_value(schema, ['A', 'B'], context)
+            clean_value(schema, ["A", "B"], context)
 
-        self.assertEqual(cm.exception.errors, [
-            PromptingError.WrongColumnType(['A'], 'text',
-                                           frozenset({'number'})),
-            PromptingError.WrongColumnType(['B'], 'datetime',
-                                           frozenset({'number'})),
-        ])
+        self.assertEqual(
+            cm.exception.errors,
+            [
+                PromptingError.WrongColumnType(["A"], "text", frozenset({"number"})),
+                PromptingError.WrongColumnType(
+                    ["B"], "datetime", frozenset({"number"})
+                ),
+            ],
+        )
 
     def test_dict_prompting_error(self):
-        context = RenderContext(None, None, TableShape(3, [
-            Column('A', ColumnType.TEXT()),
-            Column('B', ColumnType.TEXT()),
-        ]), None, None)
-        schema = ParamDType.Dict({
-            'col1': ParamDType.Column(column_types=frozenset({'number'})),
-            'col2': ParamDType.Column(column_types=frozenset({'datetime'})),
-        })
+        context = RenderContext(
+            None,
+            None,
+            TableShape(
+                3, [Column("A", ColumnType.TEXT()), Column("B", ColumnType.TEXT())]
+            ),
+            None,
+            None,
+        )
+        schema = ParamDType.Dict(
+            {
+                "col1": ParamDType.Column(column_types=frozenset({"number"})),
+                "col2": ParamDType.Column(column_types=frozenset({"datetime"})),
+            }
+        )
         with self.assertRaises(PromptingError) as cm:
-            clean_value(schema, {'col1': 'A', 'col2': 'B'}, context)
+            clean_value(schema, {"col1": "A", "col2": "B"}, context)
 
-        self.assertEqual(cm.exception.errors, [
-            PromptingError.WrongColumnType(['A'], 'text',
-                                           frozenset({'number'})),
-            PromptingError.WrongColumnType(['B'], 'text',
-                                           frozenset({'datetime'})),
-        ])
+        self.assertEqual(
+            cm.exception.errors,
+            [
+                PromptingError.WrongColumnType(["A"], "text", frozenset({"number"})),
+                PromptingError.WrongColumnType(["B"], "text", frozenset({"datetime"})),
+            ],
+        )
 
     def test_dict_prompting_error_concatenate_same_type(self):
-        context = RenderContext(None, None, TableShape(3, [
-            Column('A', ColumnType.TEXT()),
-            Column('B', ColumnType.TEXT()),
-        ]), None, None)
-        schema = ParamDType.Dict({
-            'x': ParamDType.Column(column_types=frozenset({'number'})),
-            'y': ParamDType.Column(column_types=frozenset({'number'})),
-        })
+        context = RenderContext(
+            None,
+            None,
+            TableShape(
+                3, [Column("A", ColumnType.TEXT()), Column("B", ColumnType.TEXT())]
+            ),
+            None,
+            None,
+        )
+        schema = ParamDType.Dict(
+            {
+                "x": ParamDType.Column(column_types=frozenset({"number"})),
+                "y": ParamDType.Column(column_types=frozenset({"number"})),
+            }
+        )
         with self.assertRaises(PromptingError) as cm:
-            clean_value(schema, {'x': 'A', 'y': 'B'}, context)
+            clean_value(schema, {"x": "A", "y": "B"}, context)
 
-        self.assertEqual(cm.exception.errors, [
-            PromptingError.WrongColumnType(['A', 'B'], 'text',
-                                           frozenset({'number'})),
-        ])
+        self.assertEqual(
+            cm.exception.errors,
+            [PromptingError.WrongColumnType(["A", "B"], "text", frozenset({"number"}))],
+        )
 
     def test_dict_prompting_error_concatenate_different_types(self):
-        context = RenderContext(None, None, TableShape(3, [
-            Column('A', ColumnType.TEXT()),
-            Column('B', ColumnType.DATETIME()),
-        ]), None, None)
-        schema = ParamDType.Dict({
-            'x': ParamDType.Column(column_types=frozenset({'number'})),
-            'y': ParamDType.Column(column_types=frozenset({'number'})),
-        })
+        context = RenderContext(
+            None,
+            None,
+            TableShape(
+                3, [Column("A", ColumnType.TEXT()), Column("B", ColumnType.DATETIME())]
+            ),
+            None,
+            None,
+        )
+        schema = ParamDType.Dict(
+            {
+                "x": ParamDType.Column(column_types=frozenset({"number"})),
+                "y": ParamDType.Column(column_types=frozenset({"number"})),
+            }
+        )
         with self.assertRaises(PromptingError) as cm:
-            clean_value(schema, {'x': 'A', 'y': 'B'}, context)
+            clean_value(schema, {"x": "A", "y": "B"}, context)
 
-        self.assertEqual(cm.exception.errors, [
-            PromptingError.WrongColumnType(['A'], 'text',
-                                           frozenset({'number'})),
-            PromptingError.WrongColumnType(['B'], 'datetime',
-                                           frozenset({'number'})),
-        ])
+        self.assertEqual(
+            cm.exception.errors,
+            [
+                PromptingError.WrongColumnType(["A"], "text", frozenset({"number"})),
+                PromptingError.WrongColumnType(
+                    ["B"], "datetime", frozenset({"number"})
+                ),
+            ],
+        )
 
     def test_clean_column_missing_becomes_empty_string(self):
-        context = RenderContext(None, None, TableShape(3, [
-            Column('A', ColumnType.NUMBER()),
-        ]), None, None)
-        result = clean_value(ParamDType.Column(), 'B', context)
-        self.assertEqual(result, '')
+        context = RenderContext(
+            None, None, TableShape(3, [Column("A", ColumnType.NUMBER())]), None, None
+        )
+        result = clean_value(ParamDType.Column(), "B", context)
+        self.assertEqual(result, "")
 
     def test_clean_multicolumn_valid(self):
-        context = RenderContext(None, None, TableShape(3, [
-            Column('A', ColumnType.NUMBER()),
-            Column('B', ColumnType.NUMBER()),
-        ]), None, None)
-        result = clean_value(
-            ParamDType.Multicolumn(),
-            ['A', 'B'],
-            context
+        context = RenderContext(
+            None,
+            None,
+            TableShape(
+                3, [Column("A", ColumnType.NUMBER()), Column("B", ColumnType.NUMBER())]
+            ),
+            None,
+            None,
         )
-        self.assertEqual(result, ['A', 'B'])
+        result = clean_value(ParamDType.Multicolumn(), ["A", "B"], context)
+        self.assertEqual(result, ["A", "B"])
 
     def test_clean_multicolumn_sort_in_table_order(self):
-        context = RenderContext(None, None, TableShape(3, [
-            Column('B', ColumnType.NUMBER()),
-            Column('A', ColumnType.NUMBER()),
-        ]), None, None)
-        result = clean_value(
-            ParamDType.Multicolumn(),
-            ['A', 'B'],
-            context
+        context = RenderContext(
+            None,
+            None,
+            TableShape(
+                3, [Column("B", ColumnType.NUMBER()), Column("A", ColumnType.NUMBER())]
+            ),
+            None,
+            None,
         )
-        self.assertEqual(result, ['B', 'A'])
+        result = clean_value(ParamDType.Multicolumn(), ["A", "B"], context)
+        self.assertEqual(result, ["B", "A"])
 
     def test_clean_multicolumn_prompting_error_convert_to_text(self):
         # TODO make this _automatic_ instead of quick-fix?
         # ... but for now: prompt for a Quick Fix.
-        context = RenderContext(None, None, TableShape(3, [
-            Column('A', ColumnType.NUMBER()),
-            Column('B', ColumnType.DATETIME()),
-            Column('C', ColumnType.TEXT()),
-        ]), None, None)
+        context = RenderContext(
+            None,
+            None,
+            TableShape(
+                3,
+                [
+                    Column("A", ColumnType.NUMBER()),
+                    Column("B", ColumnType.DATETIME()),
+                    Column("C", ColumnType.TEXT()),
+                ],
+            ),
+            None,
+            None,
+        )
         with self.assertRaises(PromptingError) as cm:
-            schema = ParamDType.Multicolumn(column_types=frozenset({'text'}))
-            clean_value(schema, 'A,B', context)
+            schema = ParamDType.Multicolumn(column_types=frozenset({"text"}))
+            clean_value(schema, "A,B", context)
 
-        self.assertEqual(cm.exception.errors, [
-            PromptingError.WrongColumnType(['A'], 'number',
-                                           frozenset({'text'})),
-            PromptingError.WrongColumnType(['B'], 'datetime',
-                                           frozenset({'text'})),
-        ])
+        self.assertEqual(
+            cm.exception.errors,
+            [
+                PromptingError.WrongColumnType(["A"], "number", frozenset({"text"})),
+                PromptingError.WrongColumnType(["B"], "datetime", frozenset({"text"})),
+            ],
+        )
 
     def test_clean_multicolumn_missing_is_removed(self):
-        context = RenderContext(None, None, TableShape(3, [
-            Column('A', ColumnType.NUMBER()),
-            Column('B', ColumnType.NUMBER()),
-        ]), None, None)
-        result = clean_value(
-            ParamDType.Multicolumn(),
-            ['A', 'X', 'B'],
-            context
+        context = RenderContext(
+            None,
+            None,
+            TableShape(
+                3, [Column("A", ColumnType.NUMBER()), Column("B", ColumnType.NUMBER())]
+            ),
+            None,
+            None,
         )
-        self.assertEqual(result, ['A', 'B'])
+        result = clean_value(ParamDType.Multicolumn(), ["A", "X", "B"], context)
+        self.assertEqual(result, ["A", "B"])
 
     def test_clean_multichartseries_missing_is_removed(self):
-        context = RenderContext(None, None, TableShape(3, [
-            Column('A', ColumnType.NUMBER()),
-            Column('B', ColumnType.NUMBER()),
-        ]), None, None)
+        context = RenderContext(
+            None,
+            None,
+            TableShape(
+                3, [Column("A", ColumnType.NUMBER()), Column("B", ColumnType.NUMBER())]
+            ),
+            None,
+            None,
+        )
         value = [
-            {'column': 'A', 'color': '#aaaaaa'},
-            {'column': 'C', 'color': '#cccccc'},
+            {"column": "A", "color": "#aaaaaa"},
+            {"column": "C", "color": "#cccccc"},
         ]
         result = clean_value(ParamDType.Multichartseries(), value, context)
-        self.assertEqual(result, [{'column': 'A', 'color': '#aaaaaa'}])
+        self.assertEqual(result, [{"column": "A", "color": "#aaaaaa"}])
 
     def test_clean_multichartseries_non_number_is_prompting_error(self):
-        context = RenderContext(None, None, TableShape(3, [
-            Column('A', ColumnType.TEXT()),
-            Column('B', ColumnType.DATETIME()),
-        ]), None, None)
+        context = RenderContext(
+            None,
+            None,
+            TableShape(
+                3, [Column("A", ColumnType.TEXT()), Column("B", ColumnType.DATETIME())]
+            ),
+            None,
+            None,
+        )
         value = [
-            {'column': 'A', 'color': '#aaaaaa'},
-            {'column': 'B', 'color': '#cccccc'},
+            {"column": "A", "color": "#aaaaaa"},
+            {"column": "B", "color": "#cccccc"},
         ]
         with self.assertRaises(PromptingError) as cm:
             clean_value(ParamDType.Multichartseries(), value, context)
 
-        self.assertEqual(cm.exception.errors, [
-            PromptingError.WrongColumnType(['A'], 'text',
-                                           frozenset({'number'})),
-            PromptingError.WrongColumnType(['B'], 'datetime',
-                                           frozenset({'number'})),
-        ])
+        self.assertEqual(
+            cm.exception.errors,
+            [
+                PromptingError.WrongColumnType(["A"], "text", frozenset({"number"})),
+                PromptingError.WrongColumnType(
+                    ["B"], "datetime", frozenset({"number"})
+                ),
+            ],
+        )
 
     def test_clean_tab_happy_path(self):
-        tab_output = ProcessResult(pd.DataFrame({'A': [1, 2]}))
+        tab_output = ProcessResult(pd.DataFrame({"A": [1, 2]}))
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
         wfm = tab.wf_modules.create(
-            order=0,
-            last_relevant_delta_id=workflow.last_delta_id
+            order=0, last_relevant_delta_id=workflow.last_delta_id
         )
         wfm.cache_render_result(workflow.last_delta_id, tab_output)
 
-        context = RenderContext(workflow.id, None, None, {
-            tab.slug: StepResultShape('ok', tab_output.table_shape),
-        }, None)
+        context = RenderContext(
+            workflow.id,
+            None,
+            None,
+            {tab.slug: StepResultShape("ok", tab_output.table_shape)},
+            None,
+        )
         result = clean_value(ParamDType.Tab(), tab.slug, context)
         self.assertEqual(result.slug, tab.slug)
         self.assertEqual(result.name, tab.name)
-        self.assertEqual(result.columns, {
-            'A': RenderColumn('A', 'number', '{:,}'),
-        })
-        assert_frame_equal(result.dataframe, pd.DataFrame({'A': [1, 2]}))
+        self.assertEqual(result.columns, {"A": RenderColumn("A", "number", "{:,}")})
+        assert_frame_equal(result.dataframe, pd.DataFrame({"A": [1, 2]}))
 
     def test_clean_multicolumn_from_other_tab(self):
-        tab_output = ProcessResult(pd.DataFrame({'A-from-tab-2': [1, 2]}))
+        tab_output = ProcessResult(pd.DataFrame({"A-from-tab-2": [1, 2]}))
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
         wfm = tab.wf_modules.create(
-            order=0,
-            last_relevant_delta_id=workflow.last_delta_id
+            order=0, last_relevant_delta_id=workflow.last_delta_id
         )
         wfm.cache_render_result(workflow.last_delta_id, tab_output)
 
-        schema = ParamDType.Dict({
-            'tab': ParamDType.Tab(),
-            'columns': ParamDType.Multicolumn(tab_parameter='tab'),
-        })
-        params = {'tab': tab.slug, 'columns': ['A-from-tab-1', 'A-from-tab-2']}
-        context = RenderContext(workflow.id, None, TableShape(3, [
-            Column('A-from-tab-1', ColumnType.NUMBER()),
-        ]), {
-            tab.slug: StepResultShape('ok', tab_output.table_shape),
-        }, params)
+        schema = ParamDType.Dict(
+            {
+                "tab": ParamDType.Tab(),
+                "columns": ParamDType.Multicolumn(tab_parameter="tab"),
+            }
+        )
+        params = {"tab": tab.slug, "columns": ["A-from-tab-1", "A-from-tab-2"]}
+        context = RenderContext(
+            workflow.id,
+            None,
+            TableShape(3, [Column("A-from-tab-1", ColumnType.NUMBER())]),
+            {tab.slug: StepResultShape("ok", tab_output.table_shape)},
+            params,
+        )
         result = clean_value(schema, params, context)
         # result['tab'] is not what we're testing here
-        self.assertEqual(result['columns'], ['A-from-tab-2'])
+        self.assertEqual(result["columns"], ["A-from-tab-2"])
 
     def test_clean_multicolumn_from_other_tab_that_does_not_exist(self):
         # The other tab would not exist if the user selected and then deleted
@@ -375,21 +469,27 @@ class CleanValueTests(DbTestCase):
         workflow = Workflow.create_and_init()
         workflow.tabs.first()
 
-        schema = ParamDType.Dict({
-            'tab': ParamDType.Tab(),
-            'columns': ParamDType.Multicolumn(tab_parameter='tab'),
-        })
-        params = {'tab': 'tab-missing', 'columns': ['A-from-tab']}
-        context = RenderContext(workflow.id, None, TableShape(3, [
-            Column('A-from-tab-1', ColumnType.NUMBER()),
-        ]), {}, params)
+        schema = ParamDType.Dict(
+            {
+                "tab": ParamDType.Tab(),
+                "columns": ParamDType.Multicolumn(tab_parameter="tab"),
+            }
+        )
+        params = {"tab": "tab-missing", "columns": ["A-from-tab"]}
+        context = RenderContext(
+            workflow.id,
+            None,
+            TableShape(3, [Column("A-from-tab-1", ColumnType.NUMBER())]),
+            {},
+            params,
+        )
         result = clean_value(schema, params, context)
         # result['tab'] is not what we're testing here
-        self.assertEqual(result['columns'], [])
+        self.assertEqual(result["columns"], [])
 
     def test_clean_tab_no_tab_selected_gives_none(self):
         context = RenderContext(None, None, None, {}, None)
-        result = clean_value(ParamDType.Tab(), '', context)
+        result = clean_value(ParamDType.Tab(), "", context)
         self.assertEqual(result, None)
 
     def test_clean_tab_missing_tab_selected_gives_none(self):
@@ -399,19 +499,19 @@ class CleanValueTests(DbTestCase):
         The JS side of things will see the nonexistent tab, but not render().
         """
         context = RenderContext(None, None, None, {}, None)
-        result = clean_value(ParamDType.Tab(), 'tab-XXX', context)
+        result = clean_value(ParamDType.Tab(), "tab-XXX", context)
         self.assertEqual(result, None)
 
     def test_clean_tab_no_tab_output_raises_cycle(self):
-        context = RenderContext(None, None, None, {'tab-1': None}, None)
+        context = RenderContext(None, None, None, {"tab-1": None}, None)
         with self.assertRaises(TabCycleError):
-            clean_value(ParamDType.Tab(), 'tab-1', context)
+            clean_value(ParamDType.Tab(), "tab-1", context)
 
     def test_clean_tab_tab_error_raises_cycle(self):
-        shape = StepResultShape('error', TableShape(0, []))
-        context = RenderContext(None, None, None, {'tab-1': shape}, None)
+        shape = StepResultShape("error", TableShape(0, []))
+        context = RenderContext(None, None, None, {"tab-1": shape}, None)
         with self.assertRaises(TabOutputUnreachableError):
-            clean_value(ParamDType.Tab(), 'tab-1', context)
+            clean_value(ParamDType.Tab(), "tab-1", context)
 
     def test_clean_tab_tab_delete_race_raises_unneededexecution(self):
         """
@@ -424,24 +524,27 @@ class CleanValueTests(DbTestCase):
         `Tab.DoesNotExist`.
         """
         # tab_output is what 'render' _thinks_ the output should be
-        tab_output = ProcessResult(pd.DataFrame({'A': [1, 2]}))
+        tab_output = ProcessResult(pd.DataFrame({"A": [1, 2]}))
 
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
         wfm = tab.wf_modules.create(
-            order=0,
-            last_relevant_delta_id=workflow.last_delta_id
+            order=0, last_relevant_delta_id=workflow.last_delta_id
         )
         wfm.cache_render_result(workflow.last_delta_id, tab_output)
         tab.is_deleted = True
-        tab.save(update_fields=['is_deleted'])
+        tab.save(update_fields=["is_deleted"])
         # Simulate reality: wfm.last_relevant_delta_id will change
         wfm.last_relevant_delta_id += 1
-        wfm.save(update_fields=['last_relevant_delta_id'])
+        wfm.save(update_fields=["last_relevant_delta_id"])
 
-        context = RenderContext(workflow.id, None, None, {
-            tab.slug: StepResultShape('ok', tab_output.table_shape),
-        }, None)
+        context = RenderContext(
+            workflow.id,
+            None,
+            None,
+            {tab.slug: StepResultShape("ok", tab_output.table_shape)},
+            None,
+        )
         with self.assertRaises(UnneededExecution):
             clean_value(ParamDType.Tab(), tab.slug, context)
 
@@ -454,94 +557,97 @@ class CleanValueTests(DbTestCase):
         UnneededExecution seems like the simplest contract to enforce.
         """
         # tab_output is what 'render' _thinks_ the output should be
-        tab_output = ProcessResult(pd.DataFrame({'A': [1, 2]}))
+        tab_output = ProcessResult(pd.DataFrame({"A": [1, 2]}))
 
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
         wfm = tab.wf_modules.create(
-            order=0,
-            last_relevant_delta_id=workflow.last_delta_id
+            order=0, last_relevant_delta_id=workflow.last_delta_id
         )
         wfm.cache_render_result(workflow.last_delta_id, tab_output)
         # Simulate reality: wfm.last_relevant_delta_id will change
         wfm.last_relevant_delta_id += 1
-        wfm.save(update_fields=['last_relevant_delta_id'])
+        wfm.save(update_fields=["last_relevant_delta_id"])
 
-        context = RenderContext(workflow.id, None, None, {
-            tab.slug: StepResultShape('ok', tab_output.table_shape),
-        }, None)
+        context = RenderContext(
+            workflow.id,
+            None,
+            None,
+            {tab.slug: StepResultShape("ok", tab_output.table_shape)},
+            None,
+        )
         with self.assertRaises(UnneededExecution):
             clean_value(ParamDType.Tab(), tab.slug, context)
 
     def test_clean_tabs_happy_path(self):
-        tab1_output = ProcessResult(pd.DataFrame({'A': [1, 2]}))
+        tab1_output = ProcessResult(pd.DataFrame({"A": [1, 2]}))
         workflow = Workflow.create_and_init()
         tab1 = workflow.tabs.first()
         wfm = tab1.wf_modules.create(
-            order=0,
-            last_relevant_delta_id=workflow.last_delta_id
+            order=0, last_relevant_delta_id=workflow.last_delta_id
         )
         wfm.cache_render_result(workflow.last_delta_id, tab1_output)
 
-        context = RenderContext(workflow.id, None, None, {
-            tab1.slug: StepResultShape('ok', tab1_output.table_shape),
-        }, None)
+        context = RenderContext(
+            workflow.id,
+            None,
+            None,
+            {tab1.slug: StepResultShape("ok", tab1_output.table_shape)},
+            None,
+        )
         result = clean_value(ParamDType.Multitab(), [tab1.slug], context)
         self.assertEqual(result[0].slug, tab1.slug)
         self.assertEqual(result[0].name, tab1.name)
-        self.assertEqual(result[0].columns, {
-            'A': RenderColumn('A', 'number', '{:,}'),
-        })
-        assert_frame_equal(result[0].dataframe, pd.DataFrame({'A': [1, 2]}))
+        self.assertEqual(result[0].columns, {"A": RenderColumn("A", "number", "{:,}")})
+        assert_frame_equal(result[0].dataframe, pd.DataFrame({"A": [1, 2]}))
 
     def test_clean_tabs_preserve_ordering(self):
-        tab2_output = ProcessResult(pd.DataFrame({'A': [1, 2]}))
-        tab3_output = ProcessResult(pd.DataFrame({'B': [2, 3]}))
+        tab2_output = ProcessResult(pd.DataFrame({"A": [1, 2]}))
+        tab3_output = ProcessResult(pd.DataFrame({"B": [2, 3]}))
         workflow = Workflow.create_and_init()
         tab1 = workflow.tabs.first()
-        tab2 = workflow.tabs.create(position=1, slug='tab-2', name='Tab 2')
-        tab3 = workflow.tabs.create(position=1, slug='tab-3', name='Tab 3')
+        tab2 = workflow.tabs.create(position=1, slug="tab-2", name="Tab 2")
+        tab3 = workflow.tabs.create(position=1, slug="tab-3", name="Tab 3")
         wfm2 = tab2.wf_modules.create(
-            order=0,
-            last_relevant_delta_id=workflow.last_delta_id
+            order=0, last_relevant_delta_id=workflow.last_delta_id
         )
         wfm2.cache_render_result(workflow.last_delta_id, tab2_output)
         wfm3 = tab3.wf_modules.create(
-            order=0,
-            last_relevant_delta_id=workflow.last_delta_id
+            order=0, last_relevant_delta_id=workflow.last_delta_id
         )
         wfm3.cache_render_result(workflow.last_delta_id, tab3_output)
 
         # RenderContext's dict ordering determines desired tab order. (Python
         # 3.7 spec: dict is ordered in insertion order. CPython 3.6 and PyPy 7
         # do this, too.)
-        context = RenderContext(workflow.id, None, None, {
-            tab1.slug: None,
-            tab2.slug: StepResultShape('ok', tab2_output.table_shape),
-            tab3.slug: StepResultShape('ok', tab3_output.table_shape),
-        }, None)
+        context = RenderContext(
+            workflow.id,
+            None,
+            None,
+            {
+                tab1.slug: None,
+                tab2.slug: StepResultShape("ok", tab2_output.table_shape),
+                tab3.slug: StepResultShape("ok", tab3_output.table_shape),
+            },
+            None,
+        )
         # Supply wrongly-ordered tabs. Cleaned, they should be in order.
-        result = clean_value(ParamDType.Multitab(),
-                             [tab3.slug, tab2.slug], context)
+        result = clean_value(ParamDType.Multitab(), [tab3.slug, tab2.slug], context)
         self.assertEqual(result[0].slug, tab2.slug)
         self.assertEqual(result[0].name, tab2.name)
-        self.assertEqual(result[0].columns, {
-            'A': RenderColumn('A', 'number', '{:,}'),
-        })
-        assert_frame_equal(result[0].dataframe, pd.DataFrame({'A': [1, 2]}))
+        self.assertEqual(result[0].columns, {"A": RenderColumn("A", "number", "{:,}")})
+        assert_frame_equal(result[0].dataframe, pd.DataFrame({"A": [1, 2]}))
         self.assertEqual(result[1].slug, tab3.slug)
         self.assertEqual(result[1].name, tab3.name)
-        self.assertEqual(result[1].columns, {
-            'B': RenderColumn('B', 'number', '{:,}'),
-        })
-        assert_frame_equal(result[1].dataframe, pd.DataFrame({'B': [2, 3]}))
+        self.assertEqual(result[1].columns, {"B": RenderColumn("B", "number", "{:,}")})
+        assert_frame_equal(result[1].dataframe, pd.DataFrame({"B": [2, 3]}))
 
     def test_clean_tabs_nix_missing_tab(self):
         context = RenderContext(None, None, None, {}, None)
-        result = clean_value(ParamDType.Multitab(), ['tab-missing'], context)
+        result = clean_value(ParamDType.Multitab(), ["tab-missing"], context)
         self.assertEqual(result, [])
 
     def test_clean_tabs_tab_error_raises_cycle(self):
-        context = RenderContext(None, None, None, {'tab-1': None}, None)
+        context = RenderContext(None, None, None, {"tab-1": None}, None)
         with self.assertRaises(TabCycleError):
-            clean_value(ParamDType.Multitab(), ['tab-1'], context)
+            clean_value(ParamDType.Multitab(), ["tab-1"], context)

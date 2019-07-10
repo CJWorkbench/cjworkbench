@@ -13,9 +13,14 @@ from yajl import YajlParser, YajlContentHandler, YajlError
 from typing import Dict, List, Optional, Tuple, Union
 from django.conf import settings
 import pandas as pd
-from .utils import detect_encoding, wrap_text, uniquize_colnames, \
-        autocast_series_dtype, turn_header_into_first_row, \
-        parse_bytesio as bad_parse_bytesio
+from .utils import (
+    detect_encoding,
+    wrap_text,
+    uniquize_colnames,
+    autocast_series_dtype,
+    turn_header_into_first_row,
+    parse_bytesio as bad_parse_bytesio,
+)
 
 
 CellValue = Union[int, float, str, datetime.datetime]
@@ -52,6 +57,7 @@ class ColumnBuilder:
       C engine re-encodes the entire file to UTF-8 before parsing.)
     * We aren't C-optimized (yet).
     """
+
     def __init__(self):
         self._intern = {}  # hash of str to itself
         self.n_bytes = 0
@@ -72,7 +78,7 @@ class ColumnBuilder:
         if isinstance(value, str):
             input_value = value
             value = self._intern.setdefault(input_value, input_value)
-            interned = (value is not input_value)
+            interned = value is not input_value
         else:
             interned = False
 
@@ -85,8 +91,8 @@ class ColumnBuilder:
 
         return (
             n_na_to_prepend * 8  # newly-added NA values
-            + 8                  # pointer in self.values
-            + 8                  # hash-table entry
+            + 8  # pointer in self.values
+            + 8  # hash-table entry
             + (0 if interned else sys.getsizeof(value))
         )
 
@@ -123,8 +129,7 @@ class ParseJsonResult:
     error: str
 
 
-def parse_table(textio: io.TextIOBase,
-                dialect: csv.Dialect) -> ParseTableResult:
+def parse_table(textio: io.TextIOBase, dialect: csv.Dialect) -> ParseTableResult:
     """
     Convert CSV to List[ColumnBuilder].
 
@@ -177,20 +182,21 @@ def parse_table(textio: io.TextIOBase,
     warnings = []
     if n_bytes > MAX_BYTES or n_input_rows > MAX_ROWS:
         warnings.append(
-            'The input was too large, so we removed %d rows'
+            "The input was too large, so we removed %d rows"
             % (n_input_rows - len(columns[0].values))
         )
     if n_input_columns is not None:
         warnings.append(
-            'The input had too many columns, so we removed %d columns'
+            "The input had too many columns, so we removed %d columns"
             % (n_input_columns - MAX_COLUMNS)
         )
 
-    return ParseTableResult(columns, '\n'.join(warnings))
+    return ParseTableResult(columns, "\n".join(warnings))
 
 
-def _csv_columns_to_dataframe_destructive(columns: List[ColumnBuilder],
-                                          has_header: bool) -> pd.DataFrame:
+def _csv_columns_to_dataframe_destructive(
+    columns: List[ColumnBuilder], has_header: bool
+) -> pd.DataFrame:
     """
     Empty a List[ColumnBuilder] to build a pd.DataFrame.
 
@@ -210,10 +216,12 @@ def _csv_columns_to_dataframe_destructive(columns: List[ColumnBuilder],
     #   each column)
     # * Default to 'Column 1', 'Column 2', etc. (if header is '' or None.)
     # * Use naive uniquize algorithm.
-    colnames = list(uniquize_colnames(
-        c.values[0] if has_header and c.values[0] else f'Column {i + 1}'
-        for i, c in enumerate(columns)
-    ))
+    colnames = list(
+        uniquize_colnames(
+            c.values[0] if has_header and c.values[0] else f"Column {i + 1}"
+            for i, c in enumerate(columns)
+        )
+    )
 
     for i, colname in enumerate(colnames):
         column = columns[i]
@@ -222,18 +230,31 @@ def _csv_columns_to_dataframe_destructive(columns: List[ColumnBuilder],
             values = values[1:]
         series = autocast_series_dtype(pd.Series(values, name=colname))
         if series.dtype == object and column.should_store_as_categorical:
-            series = series.astype('category')
+            series = series.astype("category")
         # modify `columns` in-place: frees RAM `columns[i]` RAM
         columns[i] = series
 
     return pd.DataFrame({s.name: s for s in columns})
 
 
-class JsonValidationError(ValueError): pass
-class JsonRootIsNotArray(JsonValidationError): pass
-class JsonRecordIsNotObject(JsonValidationError): pass
-class JsonTooManyRows(JsonValidationError): pass
-class JsonTooManyBytes(JsonValidationError): pass
+class JsonValidationError(ValueError):
+    pass
+
+
+class JsonRootIsNotArray(JsonValidationError):
+    pass
+
+
+class JsonRecordIsNotObject(JsonValidationError):
+    pass
+
+
+class JsonTooManyRows(JsonValidationError):
+    pass
+
+
+class JsonTooManyBytes(JsonValidationError):
+    pass
 
 
 class JsonNumberTooLarge(JsonValidationError):
@@ -278,7 +299,7 @@ class JsonContentHandler(YajlContentHandler):
     def yajl_null(self, _):
         self._assert_column()
         if self.value_stack:
-            self.value_stack[-1].append('null')
+            self.value_stack[-1].append("null")
         else:
             self._feed_column(None)
 
@@ -286,7 +307,7 @@ class JsonContentHandler(YajlContentHandler):
         self._assert_column()
         # yajl gives us 0/1. We want true/false.
         # JSON-encode: Workbench does not support boolean
-        value_str = 'true' if value == 1 else 'false'
+        value_str = "true" if value == 1 else "false"
         if self.value_stack:
             self.value_stack[-1].append(value_str)
         else:
@@ -297,7 +318,7 @@ class JsonContentHandler(YajlContentHandler):
         if self.value_stack:
             self.value_stack[-1].append(_utf8(value_utf8))
         else:
-            if b'.' in value_utf8:
+            if b"." in value_utf8:
                 value = float(value_utf8)
                 if math.isinf(value):
                     raise JsonNumberTooLarge(_utf8(value_utf8))
@@ -349,11 +370,8 @@ class JsonContentHandler(YajlContentHandler):
             #
             # Clever hack: zip() the same iter twice for (key, value) pairs
             value_iter = iter(self.value_stack.pop())
-            pair_strs = [
-                f'{json.dumps(k)}:{v}'
-                for k, v in zip(value_iter, value_iter)
-            ]
-            value: str = '{' + ','.join(pair_strs) + '}'
+            pair_strs = [f"{json.dumps(k)}:{v}" for k, v in zip(value_iter, value_iter)]
+            value: str = "{" + ",".join(pair_strs) + "}"
             if self.value_stack:
                 # We're deeply nested
                 self.value_stack[-1].append(value)
@@ -385,7 +403,7 @@ class JsonContentHandler(YajlContentHandler):
             return
 
         assert self.value_stack
-        value = '[' + ','.join(self.value_stack.pop()) + ']'
+        value = "[" + ",".join(self.value_stack.pop()) + "]"
         if self.value_stack:
             self.value_stack[-1].append(value)
         else:
@@ -412,37 +430,36 @@ def parse_json_utf8_bytes(bytesio: io.BytesIO) -> ParseJsonResult:
         parser.parse(bytesio)
     except (JsonRootIsNotArray, JsonRecordIsNotObject):
         errors.append(
-            'Workbench cannot import this JSON file. The JSON file '
-            'must be an Array of Objects for Workbench to import it.'
+            "Workbench cannot import this JSON file. The JSON file "
+            "must be an Array of Objects for Workbench to import it."
         )
     except JsonNumberTooLarge as err:
         errors.append(
             f'Stopped parsing JSON because the number "{err.value_str}" '
-            'is too large.'
+            "is too large."
         )
     except JsonTooManyRows:
-        errors.append('The input had too many rows, so we removed rows.')
+        errors.append("The input had too many rows, so we removed rows.")
     except JsonTooManyBytes:
         errors.append(
-            'The input was too large, so we stopped before reading the whole '
-            'file.'
+            "The input was too large, so we stopped before reading the whole " "file."
         )
     except YajlError as err:
         # e.g., 'lexical error: ...\n    blah\n    ^^here'
         multiline_err = str(err)
-        oneline_err = multiline_err.split('\n')[0]
+        oneline_err = multiline_err.split("\n")[0]
         if (
             content_handler.columns
             and next(iter(content_handler.columns.values())).values
         ):
-            errors.append('Stopped parsing after JSON ' + oneline_err)
+            errors.append("Stopped parsing after JSON " + oneline_err)
         else:
-            errors.append('JSON ' + oneline_err)
+            errors.append("JSON " + oneline_err)
 
     if content_handler.truncated_columns:
-        errors.append('The input had too many columns, so we removed some.')
+        errors.append("The input had too many columns, so we removed some.")
 
-    return ParseJsonResult(content_handler.columns, '\n'.join(errors))
+    return ParseJsonResult(content_handler.columns, "\n".join(errors))
 
 
 def _json_columns_to_dataframe_destructive(
@@ -482,24 +499,22 @@ def _json_columns_to_dataframe_destructive(
                 column = converted
             series = pd.Series(column.values, dtype=str)
             if column.should_store_as_categorical:
-                series = series.astype('category')
+                series = series.astype("category")
         # overwrite in input dict: that'll save RAM because previous `column`
         # can be garbage-collected
         columns[name] = series
     retval = pd.DataFrame(columns)
     retval.reset_index(drop=True, inplace=True)
-    return retval, '\n'.join(warnings)
+    return retval, "\n".join(warnings)
 
 
 class MimeType(Enum):
-    CSV = 'text/csv'
-    TSV = 'text/tab-separated-values'
-    TXT = 'text/plain'
-    JSON = 'application/json'
-    XLS = 'application/vnd.ms-excel'
-    XLSX = (
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    )
+    CSV = "text/csv"
+    TSV = "text/tab-separated-values"
+    TXT = "text/plain"
+    JSON = "application/json"
+    XLS = "application/vnd.ms-excel"
+    XLSX = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 
     @classmethod
     def from_extension(cls, ext: str):
@@ -509,12 +524,12 @@ class MimeType(Enum):
         Raise KeyError if there is none.
         """
         return {
-            '.csv': MimeType.CSV,
-            '.tsv': MimeType.TSV,
-            '.txt': MimeType.TXT,
-            '.xls': MimeType.XLS,
-            '.xlsx': MimeType.XLSX,
-            '.json': MimeType.JSON,
+            ".csv": MimeType.CSV,
+            ".tsv": MimeType.TSV,
+            ".txt": MimeType.TXT,
+            ".xls": MimeType.XLS,
+            ".xlsx": MimeType.XLSX,
+            ".json": MimeType.JSON,
         }[ext]
 
 
@@ -526,12 +541,12 @@ def _detect_dialect(textio: io.TextIOBase, mime_type: MimeType):
     else:
         sample = textio.read(settings.SEP_DETECT_CHUNK_SIZE)
         textio.seek(0)
-        return csv.Sniffer().sniff(sample, ',;\t')
+        return csv.Sniffer().sniff(sample, ",;\t")
 
 
 @contextmanager
 def open_path_with_autodetected_charset(path: pathlib.Path):
-    with path.open('rb') as bytesio:
+    with path.open("rb") as bytesio:
         # TODO handle encoding error
         encoding = detect_encoding(bytesio)
         bytesio.seek(0)
@@ -544,20 +559,20 @@ def parse_text(textio, ext, has_header):
     parse_table_result = parse_table(textio, dialect)
 
     if not len(parse_table_result.columns):
-        return 'This file is empty'  # error: this is never the user's intent
+        return "This file is empty"  # error: this is never the user's intent
     dataframe = _csv_columns_to_dataframe_destructive(
-        parse_table_result.columns,
-        has_header
+        parse_table_result.columns, has_header
     )
     error = parse_table_result.error
     if error:
-        return {'dataframe': dataframe, 'error': error}
+        return {"dataframe": dataframe, "error": error}
     else:
         return dataframe
 
 
-def parse_text_bytesio(bytesio, encoding: Optional[str], mime_type: MimeType,
-                       has_header: bool):
+def parse_text_bytesio(
+    bytesio, encoding: Optional[str], mime_type: MimeType, has_header: bool
+):
     if encoding is None:
         encoding = detect_encoding(bytesio)
     with wrap_text(bytesio, encoding) as textio:
@@ -565,12 +580,13 @@ def parse_text_bytesio(bytesio, encoding: Optional[str], mime_type: MimeType,
 
 
 class EncodedTextReader(io.RawIOBase):
-    def __init__(self, textio, encoding, buffer_size=io.DEFAULT_BUFFER_SIZE,
-                 errors='strict'):
+    def __init__(
+        self, textio, encoding, buffer_size=io.DEFAULT_BUFFER_SIZE, errors="strict"
+    ):
         self.textio = textio
         self.buffer_size = io.DEFAULT_BUFFER_SIZE  # characters
         self.encoder = codecs.lookup(encoding).incrementalencoder(errors=errors)
-        self.block: bytes = b''
+        self.block: bytes = b""
         self.block_pos: int = 0  # how much of `block` we've already read
 
     # override io.IOBase
@@ -596,7 +612,7 @@ class EncodedTextReader(io.RawIOBase):
                 return 0  # end of file
         pos = self.block_pos
         nread = min(len(b), len(self.block) - pos)
-        b[:nread] = self.block[pos:pos + nread]
+        b[:nread] = self.block[pos : pos + nread]
         self.block_pos = pos + nread
         return nread
 
@@ -610,12 +626,11 @@ def bytes_transcoded_to_utf8(bytesio, encoding: Optional[str]):
     if encoding is None:
         encoding = detect_encoding(bytesio)
     bytesio.seek(0)
-    if encoding == 'utf-8':
+    if encoding == "utf-8":
         yield bytesio
     else:
         with wrap_text(bytesio, encoding) as textio:
-            with EncodedTextReader(textio, 'utf-8',
-                                   errors='replace') as encodedio:
+            with EncodedTextReader(textio, "utf-8", errors="replace") as encodedio:
                 yield encodedio
 
 
@@ -629,9 +644,9 @@ def parse_utf8_json(bytesio):
     )
     if warnings:
         errors.append(warnings)
-    error = '\n'.join(errors)
+    error = "\n".join(errors)
     if error:
-        return {'dataframe': dataframe, 'error': error}
+        return {"dataframe": dataframe, "error": error}
     else:
         return dataframe
 
@@ -641,8 +656,7 @@ def parse_json_bytesio(bytesio, encoding: Optional[str]):
         return parse_utf8_json(utf8_bytesio)
 
 
-def parse_wrongly(bytesio, encoding: Optional[str], mime_type: str,
-                  has_header: bool):
+def parse_wrongly(bytesio, encoding: Optional[str], mime_type: str, has_header: bool):
     """
     Delegate to modules.utils.parse_bytesio(), which is wrong.
 
@@ -660,25 +674,24 @@ def parse_wrongly(bytesio, encoding: Optional[str], mime_type: str,
         if dataframe.empty:
             return error
         else:
-            return {'dataframe': dataframe, 'error': error}
+            return {"dataframe": dataframe, "error": error}
     else:
         return dataframe
 
 
 def parse_file(path: pathlib.Path, has_header: bool):
-    ext = ''.join(path.suffixes).lower()
+    ext = "".join(path.suffixes).lower()
     try:
         mime_type = MimeType.from_extension(ext)
     except KeyError:
-        return (
-            'Unknown file extension %r. Please upload a different file.' % ext
-        )
-    with path.open('rb') as bytesio:
+        return "Unknown file extension %r. Please upload a different file." % ext
+    with path.open("rb") as bytesio:
         return _do_parse_bytesio(bytesio, None, mime_type, has_header)
 
 
-def parse_bytesio(bytesio: io.BytesIO, encoding: Optional[str],
-                  content_type: str, has_header: bool):
+def parse_bytesio(
+    bytesio: io.BytesIO, encoding: Optional[str], content_type: str, has_header: bool
+):
     """
     Parse bytes, given a content_type and encoding (e.g., from HTTP headers).
 
@@ -687,15 +700,13 @@ def parse_bytesio(bytesio: io.BytesIO, encoding: Optional[str],
     try:
         mime_type = MimeType(content_type)
     except ValueError:
-        return (
-            'Unknown MIME type %r. Please choose a different file.'
-            % content_type
-        )
+        return "Unknown MIME type %r. Please choose a different file." % content_type
     return _do_parse_bytesio(bytesio, encoding, mime_type, has_header)
 
 
-def _do_parse_bytesio(bytesio: io.BytesIO, encoding: Optional[str],
-                      mime_type: MimeType, has_header: bool):
+def _do_parse_bytesio(
+    bytesio: io.BytesIO, encoding: Optional[str], mime_type: MimeType, has_header: bool
+):
     if mime_type in {MimeType.CSV, MimeType.TSV, MimeType.TXT}:
         return parse_text_bytesio(bytesio, encoding, mime_type, has_header)
     elif mime_type == MimeType.JSON:

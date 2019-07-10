@@ -51,12 +51,12 @@ async def render_workflow_once(workflow: Workflow, delta_id: int):
     # stale.
     try:
         task = execute.execute_workflow(workflow, delta_id)
-        await benchmark(logger, task, 'execute_workflow(%d, %d)',
-                        workflow.id, delta_id)
+        await benchmark(logger, task, "execute_workflow(%d, %d)", workflow.id, delta_id)
         return RenderResult.CHECK_TO_REQUEUE
     except execute.UnneededExecution:
-        logger.info('UnneededExecution in execute_workflow(%d, %d)',
-                    workflow.id, delta_id)
+        logger.info(
+            "UnneededExecution in execute_workflow(%d, %d)", workflow.id, delta_id
+        )
         return RenderResult.MUST_REQUEUE
     except asyncio.CancelledError:
         raise
@@ -64,7 +64,7 @@ async def render_workflow_once(workflow: Workflow, delta_id: int):
         # handled in outer try (which also handles PgRenderLocker)
         raise
     except Exception as err:
-        logger.exception('Error during render of workflow %d', workflow.id)
+        logger.exception("Error during render of workflow %d", workflow.id)
         return RenderResult.MUST_NOT_REQUEUE
 
 
@@ -73,7 +73,7 @@ async def render_workflow_and_maybe_requeue(
     workflow_id: int,
     delta_id: int,
     ack: Callable[[], Awaitable[None]],
-    requeue: Callable[[int, int], Awaitable[None]]
+    requeue: Callable[[int, int], Awaitable[None]],
 ) -> None:
     """
     Acquire an advisory lock and render, or re-queue task if the lock is held.
@@ -89,7 +89,7 @@ async def render_workflow_and_maybe_requeue(
     try:
         workflow = await _lookup_workflow(workflow_id)
     except Workflow.DoesNotExist:
-        logger.info('Skipping render of deleted Workflow %d', workflow_id)
+        logger.info("Skipping render of deleted Workflow %d", workflow_id)
         await ack()
         return
 
@@ -110,14 +110,16 @@ async def render_workflow_and_maybe_requeue(
                 try:
                     workflow = await _lookup_workflow(workflow_id)
                     if workflow.last_delta_id != delta_id:
-                        logger.info('Requeueing render(workflow=%d, delta=%d)',
-                                    workflow_id, workflow.last_delta_id)
+                        logger.info(
+                            "Requeueing render(workflow=%d, delta=%d)",
+                            workflow_id,
+                            workflow.last_delta_id,
+                        )
                         want_requeue = True
                     else:
                         want_requeue = False
                 except Workflow.DoesNotExist:
-                    logger.info('Skipping requeue of deleted Workflow %d',
-                                workflow_id)
+                    logger.info("Skipping requeue of deleted Workflow %d", workflow_id)
                     want_requeue = False
             if want_requeue:
                 await requeue(workflow_id, workflow.last_delta_id)
@@ -130,8 +132,7 @@ async def render_workflow_and_maybe_requeue(
             # this exact moment, there are briefly two un-acked renders.)
             await ack()
     except WorkflowAlreadyLocked:
-        logger.info('Workflow %d is being rendered elsewhere; ignoring',
-                    workflow_id)
+        logger.info("Workflow %d is being rendered elsewhere; ignoring", workflow_id)
         await ack()
     except (DatabaseError, InterfaceError):
         # Possibilities:
@@ -159,7 +160,7 @@ async def render_workflow_and_maybe_requeue(
         # If you're seeing this error that means there's a bug somewhere
         # _else_. If you're staring at a case-3 situation, please remember
         # that cases 1 and 2 are important, too.
-        logger.exception('Fatal database error; exiting')
+        logger.exception("Fatal database error; exiting")
         os._exit(1)
 
 
@@ -169,21 +170,26 @@ async def _queue_render(workflow_id, delta_id):
     await connection.queue_render(workflow_id, delta_id)
 
 
-async def handle_render(message: Dict[str, Any],
-                        ack: Callable[[], Awaitable[None]],
-                        pg_render_locker: PgRenderLocker) -> None:
+async def handle_render(
+    message: Dict[str, Any],
+    ack: Callable[[], Awaitable[None]],
+    pg_render_locker: PgRenderLocker,
+) -> None:
     try:
-        workflow_id = int(message['workflow_id'])
-        delta_id = int(message['delta_id'])
+        workflow_id = int(message["workflow_id"])
+        delta_id = int(message["delta_id"])
     except asyncio.CancelledError:
         raise
     except Exception:
         logger.info(
-            ('Ignoring invalid render request. '
-             'Expected {workflow_id:int, delta_id:int}; got %r'),
-            message
+            (
+                "Ignoring invalid render request. "
+                "Expected {workflow_id:int, delta_id:int}; got %r"
+            ),
+            message,
         )
         return
 
-    await render_workflow_and_maybe_requeue(pg_render_locker, workflow_id,
-                                            delta_id, ack, _queue_render)
+    await render_workflow_and_maybe_requeue(
+        pg_render_locker, workflow_id, delta_id, ack, _queue_render
+    )

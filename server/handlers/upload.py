@@ -17,7 +17,7 @@ def _load_wf_module(workflow: Workflow, wf_module_id: int) -> WfModule:
     try:
         return WfModule.live_in_workflow(workflow).get(id=wf_module_id)
     except WfModule.DoesNotExist:
-        raise HandlerError('DoesNotExist: WfModule not found')
+        raise HandlerError("DoesNotExist: WfModule not found")
 
 
 def _loading_wf_module(func):
@@ -25,6 +25,7 @@ def _loading_wf_module(func):
     async def inner(workflow: Workflow, wfModuleId: int, **kwargs):
         wf_module = await _load_wf_module(workflow, wfModuleId)
         return await func(workflow=workflow, wf_module=wf_module, **kwargs)
+
     return inner
 
 
@@ -43,16 +44,18 @@ def _loading_wf_module_with_upload(func):
     to the database without transactions and send deltas while the workflow
     is still locked; `_loading_wf_module` would lock as a matter of course.
     """
+
     @functools.wraps(func)
-    async def inner(workflow: Workflow, wfModuleId: int, uploadId: str,
-                    **kwargs):
+    async def inner(workflow: Workflow, wfModuleId: int, uploadId: str, **kwargs):
         uploadId = str(uploadId)  # ensure type
         wf_module = await _load_wf_module(workflow, wfModuleId)
         # security: only allow modifying _this_ WfModule's upload.
         if wf_module.inprogress_file_upload_id != uploadId:
-            raise HandlerError('NoSuchUpload: uploadId is invalid')
-        return await func(workflow=workflow, wf_module=wf_module,
-                          upload_id=uploadId, **kwargs)
+            raise HandlerError("NoSuchUpload: uploadId is invalid")
+        return await func(
+            workflow=workflow, wf_module=wf_module, upload_id=uploadId, **kwargs
+        )
+
     return inner
 
 
@@ -66,11 +69,9 @@ def _generate_key(wf_module: WfModule, filename: str) -> str:
     Assumes we're in a database transaction.
     """
     uuid = uuidgen.uuid4()
-    return ''.join([
-        wf_module.uploaded_file_prefix,
-        str(uuid),
-        PurePath(filename).suffix,
-    ])
+    return "".join(
+        [wf_module.uploaded_file_prefix, str(uuid), PurePath(filename).suffix]
+    )
 
 
 def _write_uploaded_file_and_clear_inprogress_file_upload(
@@ -89,27 +90,25 @@ def _write_uploaded_file_and_clear_inprogress_file_upload(
       filename, not crash.)
     """
     key = wf_module.inprogress_file_upload_key
-    uuid: str = key.split('/')[-1].split('.')[0]
+    uuid: str = key.split("/")[-1].split(".")[0]
     # TODO raise FileNotFoundError
     head = minio.client.head_object(Bucket=minio.UserFilesBucket, Key=key)
-    size = int(head['ContentLength'])
-    name = urllib.parse.unquote(head['ContentDisposition'].split("UTF-8''")[-1])
+    size = int(head["ContentLength"])
+    name = urllib.parse.unquote(head["ContentDisposition"].split("UTF-8''")[-1])
 
     uploaded_file = wf_module.uploaded_files.create(
-        name=name,
-        size=size,
-        uuid=uuid,
-        bucket=minio.UserFilesBucket,
-        key=key,
+        name=name, size=size, uuid=uuid, bucket=minio.UserFilesBucket, key=key
     )
 
     wf_module.inprogress_file_upload_id = None
     wf_module.inprogress_file_upload_key = None
     wf_module.inprogress_file_upload_last_accessed_at = None
     wf_module.save(
-        update_fields=['inprogress_file_upload_id',
-                       'inprogress_file_upload_key',
-                       'inprogress_file_upload_last_accessed_at']
+        update_fields=[
+            "inprogress_file_upload_id",
+            "inprogress_file_upload_key",
+            "inprogress_file_upload_last_accessed_at",
+        ]
     )
     return uploaded_file
 
@@ -127,26 +126,34 @@ def _do_prepare_upload(
         wf_module.refresh_from_db()
         wf_module.abort_inprogress_upload()
 
-        url, headers = minio.presign_upload(minio.UserFilesBucket, key,
-                                            filename, n_bytes, base64Md5sum)
+        url, headers = minio.presign_upload(
+            minio.UserFilesBucket, key, filename, n_bytes, base64Md5sum
+        )
         wf_module.inprogress_file_upload_id = None
         wf_module.inprogress_file_upload_key = key
         wf_module.inprogress_file_upload_last_accessed_at = timezone.now()
         wf_module.save(
-            update_fields=['inprogress_file_upload_id',
-                           'inprogress_file_upload_key',
-                           'inprogress_file_upload_last_accessed_at']
+            update_fields=[
+                "inprogress_file_upload_id",
+                "inprogress_file_upload_key",
+                "inprogress_file_upload_last_accessed_at",
+            ]
         )
 
-    return {'key': key, 'url': url, 'headers': headers}
+    return {"key": key, "url": url, "headers": headers}
 
 
 @register_websockets_handler
-@websockets_handler('write')
+@websockets_handler("write")
 @_loading_wf_module
-async def prepare_upload(workflow: Workflow, wf_module: WfModule,
-                         filename: str, nBytes: int, base64Md5sum: str,
-                         **kwargs) -> Dict[str, Union[str, Dict[str, str]]]:
+async def prepare_upload(
+    workflow: Workflow,
+    wf_module: WfModule,
+    filename: str,
+    nBytes: int,
+    base64Md5sum: str,
+    **kwargs
+) -> Dict[str, Union[str, Dict[str, str]]]:
     """
     Build {key, url, headers} for the client.
 
@@ -154,13 +161,12 @@ async def prepare_upload(workflow: Workflow, wf_module: WfModule,
     on S3. Upon success, the client should `complete_upload(key)`.
     """
     if not isinstance(filename, str):
-        raise HandlerError('BadRequest: filename must be str')
+        raise HandlerError("BadRequest: filename must be str")
     if not isinstance(nBytes, int) or nBytes < 0:
-        raise HandlerError('BadRequest: nBytes must be positive int')
+        raise HandlerError("BadRequest: nBytes must be positive int")
     if not isinstance(base64Md5sum, str):
-        raise HandlerError('BadRequest: base64Md5sum must be str')
-    return await _do_prepare_upload(workflow, wf_module, filename,
-                                    nBytes, base64Md5sum)
+        raise HandlerError("BadRequest: base64Md5sum must be str")
+    return await _do_prepare_upload(workflow, wf_module, filename, nBytes, base64Md5sum)
 
 
 @database_sync_to_async
@@ -169,10 +175,11 @@ def _do_abort_upload(wf_module: WfModule) -> None:
 
 
 @register_websockets_handler
-@websockets_handler('write')
+@websockets_handler("write")
 @_loading_wf_module
-async def abort_upload(workflow: Workflow, wf_module: WfModule, key: str,
-                       **kwargs) -> None:
+async def abort_upload(
+    workflow: Workflow, wf_module: WfModule, key: str, **kwargs
+) -> None:
     """
     Delete all resources associated with a file upload.
 
@@ -186,18 +193,14 @@ async def abort_upload(workflow: Workflow, wf_module: WfModule, key: str,
         return  # no-op
 
     if wf_module.inprogress_file_upload_key != key:
-        raise HandlerError(
-            'NoSuchUpload: the key you provided is not being uploaded'
-        )
+        raise HandlerError("NoSuchUpload: the key you provided is not being uploaded")
 
     await _do_abort_upload(wf_module)
 
 
 @database_sync_to_async
 def _do_complete_upload(
-    workflow: Workflow,
-    wf_module: WfModule,
-    key: str
+    workflow: Workflow, wf_module: WfModule, key: str
 ) -> Tuple[UploadedFile, Dict[str, Any]]:
     with workflow.cooperative_lock():
         wf_module.refresh_from_db()
@@ -205,64 +208,54 @@ def _do_complete_upload(
             wf_module.inprogress_file_upload_id is not None
             or wf_module.inprogress_file_upload_key != key
         ):
-            raise HandlerError(
-                'DoesNotExist: key must point to an incomplete upload'
-            )
-        uploaded_file = (
-            _write_uploaded_file_and_clear_inprogress_file_upload(wf_module)
-        )
-        return (
-            uploaded_file.uuid,
-            serializers.WfModuleSerializer(wf_module).data,
-        )
+            raise HandlerError("DoesNotExist: key must point to an incomplete upload")
+        uploaded_file = _write_uploaded_file_and_clear_inprogress_file_upload(wf_module)
+        return (uploaded_file.uuid, serializers.WfModuleSerializer(wf_module).data)
 
 
 @register_websockets_handler
-@websockets_handler('write')
+@websockets_handler("write")
 @_loading_wf_module
-async def complete_upload(workflow: Workflow, wf_module: WfModule, key: str,
-                          **kwargs):
+async def complete_upload(workflow: Workflow, wf_module: WfModule, key: str, **kwargs):
     if not isinstance(key, str):
-        raise HandlerError('BadRequest: key must be str')
+        raise HandlerError("BadRequest: key must be str")
     uuid, wf_module_data = await _do_complete_upload(workflow, wf_module, key)
-    await websockets.ws_client_send_delta_async(workflow.id, {
-        'updateWfModules': {
-            str(wf_module.id): wf_module_data
-        }
-    })
-    return {'uuid': uuid}
+    await websockets.ws_client_send_delta_async(
+        workflow.id, {"updateWfModules": {str(wf_module.id): wf_module_data}}
+    )
+    return {"uuid": uuid}
 
 
 @database_sync_to_async
 def _do_create_multipart_upload(
-    workflow: Workflow,
-    wf_module: WfModule,
-    filename: str
+    workflow: Workflow, wf_module: WfModule, filename: str
 ) -> Dict[str, str]:
     key = _generate_key(wf_module, filename)
     with workflow.cooperative_lock():
         wf_module.refresh_from_db()
         wf_module.abort_inprogress_upload()  # in case there is one already
 
-        upload_id = minio.create_multipart_upload(minio.UserFilesBucket, key,
-                                                  filename)
+        upload_id = minio.create_multipart_upload(minio.UserFilesBucket, key, filename)
         wf_module.inprogress_file_upload_id = upload_id
         wf_module.inprogress_file_upload_key = key
         wf_module.inprogress_file_upload_last_accessed_at = timezone.now()
         wf_module.save(
-            update_fields=['inprogress_file_upload_id',
-                           'inprogress_file_upload_key',
-                           'inprogress_file_upload_last_accessed_at']
+            update_fields=[
+                "inprogress_file_upload_id",
+                "inprogress_file_upload_key",
+                "inprogress_file_upload_last_accessed_at",
+            ]
         )
 
-    return {'key': key, 'uploadId': upload_id}
+    return {"key": key, "uploadId": upload_id}
 
 
 @register_websockets_handler
-@websockets_handler('write')
+@websockets_handler("write")
 @_loading_wf_module
-async def create_multipart_upload(workflow: Workflow, wf_module: WfModule,
-                                  filename: str, **kwargs):
+async def create_multipart_upload(
+    workflow: Workflow, wf_module: WfModule, filename: str, **kwargs
+):
     """
     Initiate a multipart file upload for `wf_module`.
 
@@ -272,15 +265,16 @@ async def create_multipart_upload(workflow: Workflow, wf_module: WfModule,
     `{ key, uploadId }` for the client.
     """
     if not isinstance(filename, str):
-        raise HandlerError('BadRequest: filename must be str')
+        raise HandlerError("BadRequest: filename must be str")
     return await _do_create_multipart_upload(workflow, wf_module, filename)
 
 
 @register_websockets_handler
-@websockets_handler('write')
+@websockets_handler("write")
 @_loading_wf_module_with_upload
-async def abort_multipart_upload(workflow: Workflow, wf_module: WfModule,
-                                 upload_id: str, **kwargs) -> None:
+async def abort_multipart_upload(
+    workflow: Workflow, wf_module: WfModule, upload_id: str, **kwargs
+) -> None:
     """
     Delete all resources associated with a multipart file upload.
 
@@ -294,11 +288,17 @@ async def abort_multipart_upload(workflow: Workflow, wf_module: WfModule,
 
 
 @register_websockets_handler
-@websockets_handler('write')
+@websockets_handler("write")
 @_loading_wf_module_with_upload
-async def presign_upload_part(workflow: Workflow, wf_module: WfModule,
-                              upload_id: str, partNumber: int, nBytes: int,
-                              base64Md5sum: str, **kwargs):
+async def presign_upload_part(
+    workflow: Workflow,
+    wf_module: WfModule,
+    upload_id: str,
+    partNumber: int,
+    nBytes: int,
+    base64Md5sum: str,
+    **kwargs
+):
     """
     Build { url, headers } Object for caller to PUT bytes to.
 
@@ -311,11 +311,11 @@ async def presign_upload_part(workflow: Workflow, wf_module: WfModule,
     quotes. (ETags are needed by `complete_multipart_upload()`.)
     """
     if not isinstance(partNumber, int) or partNumber < 1:
-        raise HandlerError('BadRequest: partNumber must be int >= 1')
+        raise HandlerError("BadRequest: partNumber must be int >= 1")
     if not isinstance(nBytes, int) or nBytes < 0:
-        raise HandlerError('BadRequest: nBytes must be positive integer')
+        raise HandlerError("BadRequest: nBytes must be positive integer")
     if not isinstance(base64Md5sum, str):
-        raise HandlerError('BadRequest: base64Md5sum must be str')
+        raise HandlerError("BadRequest: base64Md5sum must be str")
     url, headers = minio.presign_upload_part(
         minio.UserFilesBucket,
         wf_module.inprogress_file_upload_key,
@@ -329,25 +329,20 @@ async def presign_upload_part(workflow: Workflow, wf_module: WfModule,
 
 @database_sync_to_async
 def _do_complete_multipart_upload(
-    workflow: Workflow,
-    wf_module: WfModule,
+    workflow: Workflow, wf_module: WfModule
 ) -> Tuple[UploadedFile, Dict[str, Any]]:
     with workflow.cooperative_lock():
         wf_module.refresh_from_db()
-        uploaded_file = (
-            _write_uploaded_file_and_clear_inprogress_file_upload(wf_module)
-        )
-        return (
-            uploaded_file.uuid,
-            serializers.WfModuleSerializer(wf_module).data,
-        )
+        uploaded_file = _write_uploaded_file_and_clear_inprogress_file_upload(wf_module)
+        return (uploaded_file.uuid, serializers.WfModuleSerializer(wf_module).data)
 
 
 @register_websockets_handler
-@websockets_handler('write')
+@websockets_handler("write")
 @_loading_wf_module_with_upload
-async def complete_multipart_upload(workflow: Workflow, wf_module: WfModule,
-                                    upload_id: str, etags: List[str], **kwargs):
+async def complete_multipart_upload(
+    workflow: Workflow, wf_module: WfModule, upload_id: str, etags: List[str], **kwargs
+):
     """
     Complete a multipart upload; create an UploadedFile; send a Delta.
 
@@ -355,23 +350,15 @@ async def complete_multipart_upload(workflow: Workflow, wf_module: WfModule,
     `wf_module.inprogress_file_upload_key` and
     `wf_module.inprogress_file_upload_last_accessed_at` to `None`.
     """
-    if (
-        not isinstance(etags, list)
-        or any(not isinstance(etag, str) for etag in etags)
-    ):
-        raise HandlerError('BadRequest: etags must be List[str]')
+    if not isinstance(etags, list) or any(not isinstance(etag, str) for etag in etags):
+        raise HandlerError("BadRequest: etags must be List[str]")
     key = wf_module.inprogress_file_upload_key
-    minio.complete_multipart_upload(minio.UserFilesBucket, key, upload_id,
-                                    etags)
+    minio.complete_multipart_upload(minio.UserFilesBucket, key, upload_id, etags)
 
-    uuid, wf_module_data = (
-        await _do_complete_multipart_upload(workflow, wf_module)
+    uuid, wf_module_data = await _do_complete_multipart_upload(workflow, wf_module)
+
+    await websockets.ws_client_send_delta_async(
+        workflow.id, {"updateWfModules": {str(wf_module.id): wf_module_data}}
     )
 
-    await websockets.ws_client_send_delta_async(workflow.id, {
-        'updateWfModules': {
-            str(wf_module.id): wf_module_data
-        }
-    })
-
-    return {'uuid': uuid}
+    return {"uuid": uuid}

@@ -36,48 +36,47 @@ class AddTabCommand(Delta):
     def load_ws_data(self):
         data = super().load_ws_data()
         if self.tab.is_deleted:
-            data['clearTabSlugs'] = [self.tab.slug]
+            data["clearTabSlugs"] = [self.tab.slug]
         else:
-            data['updateTabs'] = {
-                self.tab.slug: TabSerializer(self.tab).data,
-            }
-        data['updateWorkflow']['tab_slugs'] = list(
-            self.workflow.live_tabs.values_list('slug', flat=True)
+            data["updateTabs"] = {self.tab.slug: TabSerializer(self.tab).data}
+        data["updateWorkflow"]["tab_slugs"] = list(
+            self.workflow.live_tabs.values_list("slug", flat=True)
         )
         return data
 
     def forward_impl(self):
-        self.workflow.live_tabs \
-            .filter(position__gte=self.tab.position) \
-            .update(position=F('position') + 1)
+        self.workflow.live_tabs.filter(position__gte=self.tab.position).update(
+            position=F("position") + 1
+        )
 
         self.tab.is_deleted = False
-        self.tab.save(update_fields=['is_deleted'])
+        self.tab.save(update_fields=["is_deleted"])
 
         self.workflow.selected_tab_position = self.tab.position
-        self.workflow.save(update_fields=['selected_tab_position'])
+        self.workflow.save(update_fields=["selected_tab_position"])
 
     def backward_impl(self):
         self.tab.is_deleted = True
-        self.tab.save(update_fields=['is_deleted'])
+        self.tab.save(update_fields=["is_deleted"])
 
-        self.workflow.live_tabs \
-            .filter(position__gt=self.tab.position) \
-            .update(position=F('position') - 1)
+        self.workflow.live_tabs.filter(position__gt=self.tab.position).update(
+            position=F("position") - 1
+        )
 
         # We know old_selected_tab_position is valid, always
         self.workflow.selected_tab_position = self.old_selected_tab_position
-        self.workflow.save(update_fields=['selected_tab_position'])
+        self.workflow.save(update_fields=["selected_tab_position"])
 
     @classmethod
     def amend_create_kwargs(cls, *, workflow: Workflow, slug: str, name: str):
         # tab starts off "deleted" and appears at end of tabs list; we
         # un-delete in forward().
-        tab = workflow.tabs.create(position=workflow.live_tabs.count(),
-                                   is_deleted=True, slug=slug, name=name)
+        tab = workflow.tabs.create(
+            position=workflow.live_tabs.count(), is_deleted=True, slug=slug, name=name
+        )
 
         return {
-            'workflow': workflow,
-            'tab': tab,
-            'old_selected_tab_position': workflow.selected_tab_position,
+            "workflow": workflow,
+            "tab": tab,
+            "old_selected_tab_position": workflow.selected_tab_position,
         }

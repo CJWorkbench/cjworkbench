@@ -9,22 +9,47 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    replaces = [('cjworkbench', '0001_initial'), ('cjworkbench', '0002_auto_20170803_0036'), ('cjworkbench', '0003_googlecredentials'), ('cjworkbench', '0004_auto_20171030_2113'), ('cjworkbench', '0005_googlecredentials_flow'), ('cjworkbench', '0006_auto_20180109_0007'), ('cjworkbench', '0007_auto_20180109_0014'), ('cjworkbench', '0008_auto_20180607_1602'), ('cjworkbench', '0009_auto_20180608_1556')]
+    replaces = [
+        ("cjworkbench", "0001_initial"),
+        ("cjworkbench", "0002_auto_20170803_0036"),
+        ("cjworkbench", "0003_googlecredentials"),
+        ("cjworkbench", "0004_auto_20171030_2113"),
+        ("cjworkbench", "0005_googlecredentials_flow"),
+        ("cjworkbench", "0006_auto_20180109_0007"),
+        ("cjworkbench", "0007_auto_20180109_0014"),
+        ("cjworkbench", "0008_auto_20180607_1602"),
+        ("cjworkbench", "0009_auto_20180608_1556"),
+    ]
 
     initial = True
 
     dependencies = [
-        ('auth', '0008_alter_user_username_max_length'),
+        ("auth", "0008_alter_user_username_max_length"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='UserProfile',
+            name="UserProfile",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('get_newsletter', models.BooleanField(default=False)),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='user_profile', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("get_newsletter", models.BooleanField(default=False)),
+                (
+                    "user",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="user_profile",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
-        ),
+        )
     ]

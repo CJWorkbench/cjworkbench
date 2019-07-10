@@ -26,8 +26,7 @@ async def queue_fetches_forever():
         while True:
             t1 = time.time()
 
-            await benchmark(logger, queue_fetches(pg_render_locker),
-                            'queue_fetches()')
+            await benchmark(logger, queue_fetches(pg_render_locker), "queue_fetches()")
 
             # Try to fetch at the beginning of each interval. Canonical example
             # is FetchInterval=60: queue all our fetches as soon as the minute
@@ -39,11 +38,11 @@ async def queue_fetches_forever():
 
 
 async def delete_expired_sessions_and_workflows_forever():
-    if settings.SESSION_ENGINE != 'django.contrib.sessions.backends.db':
+    if settings.SESSION_ENGINE != "django.contrib.sessions.backends.db":
         warnings.warn(
-            'WARNING: not deleting anonymous workflows because we do not know '
-            'which sessions are expired. Rewrite '
-            'delete_expired_sessions_and_workflows() to fix this problem.'
+            "WARNING: not deleting anonymous workflows because we do not know "
+            "which sessions are expired. Rewrite "
+            "delete_expired_sessions_and_workflows() to fix this problem."
         )
         # Run forever
         while True:
@@ -51,30 +50,39 @@ async def delete_expired_sessions_and_workflows_forever():
 
     while True:
         try:
-            await benchmark(logger, delete_expired_sessions_and_workflows(),
-                            'delete_expired_sessions_and_workflows()')
+            await benchmark(
+                logger,
+                delete_expired_sessions_and_workflows(),
+                "delete_expired_sessions_and_workflows()",
+            )
         except:
-            logger.exception('Error deleting expired sessions and workflows')
+            logger.exception("Error deleting expired sessions and workflows")
         await asyncio.sleep(ExpiryInterval)
 
 
 async def delete_stale_inprogress_file_uploads_forever():
     while True:
         try:
-            await benchmark(logger, delete_stale_inprogress_file_uploads(),
-                            'delete_stale_inprogress_file_uploads()')
+            await benchmark(
+                logger,
+                delete_stale_inprogress_file_uploads(),
+                "delete_stale_inprogress_file_uploads()",
+            )
         except:
-            logger.exception('Error deleting stale inprogress uploads')
+            logger.exception("Error deleting stale inprogress uploads")
         await asyncio.sleep(StaleUploadInterval)
 
 
 async def disable_stale_lesson_auto_update_forever():
     while True:
         try:
-            await benchmark(logger, lessons.disable_stale_auto_update(),
-                            'lessons.disable_stale_auto_update()')
+            await benchmark(
+                logger,
+                lessons.disable_stale_auto_update(),
+                "lessons.disable_stale_auto_update()",
+            )
         except:
-            logger.exception('Error disabling stale lesson auto-updates')
+            logger.exception("Error disabling stale lesson auto-updates")
         await asyncio.sleep(StaleLessonAutoUpdateInterval)
 
 
@@ -84,9 +92,12 @@ async def main():
 
     This should run forever, as a singleton daemon.
     """
-    await asyncio.wait({
-        queue_fetches_forever(),
-        delete_expired_sessions_and_workflows_forever(),
-        delete_stale_inprogress_file_uploads_forever(),
-        disable_stale_lesson_auto_update_forever(),
-    }, return_when=asyncio.FIRST_EXCEPTION)
+    await asyncio.wait(
+        {
+            queue_fetches_forever(),
+            delete_expired_sessions_and_workflows_forever(),
+            delete_stale_inprogress_file_uploads_forever(),
+            disable_stale_lesson_auto_update_forever(),
+        },
+        return_when=asyncio.FIRST_EXCEPTION,
+    )

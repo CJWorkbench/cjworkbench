@@ -15,13 +15,14 @@ class Migration(migrations.Migration):
     """
 
     dependencies = [
-        ('cjworkbench', '0002_userprofile_max_fetches_per_day'),
-        ('server', '0022_auto_20190618_1803'),
+        ("cjworkbench", "0002_userprofile_max_fetches_per_day"),
+        ("server", "0022_auto_20190618_1803"),
     ]
 
     operations = [
-        migrations.RunSQL([
-            """
+        migrations.RunSQL(
+            [
+                """
             UPDATE cjworkbench_userprofile
             SET max_fetches_per_day = (
                 SELECT GREATEST(
@@ -39,5 +40,7 @@ class Migration(migrations.Migration):
                   AND server_workflow.owner_id = cjworkbench_userprofile.user_id
             )
             """
-        ], elidable=True)
+            ],
+            elidable=True,
+        )
     ]

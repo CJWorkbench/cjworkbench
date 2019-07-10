@@ -6,7 +6,7 @@ from rest_framework.renderers import JSONRenderer
 
 
 # Return current user
-@api_view(['GET'])
+@api_view(["GET"])
 @renderer_classes((JSONRenderer,))
 def current_user(request, format=None):
     user_data = UserSerializer(request.user)

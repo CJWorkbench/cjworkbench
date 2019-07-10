@@ -5,13 +5,17 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('server', '0016_auto_20190603_1628'),
-    ]
+    dependencies = [("server", "0016_auto_20190603_1628")]
 
     operations = [
         migrations.AddIndex(
-            model_name='wfmodule',
-            index=models.Index(condition=models.Q(inprogress_file_upload_last_accessed_at__isnull=False), fields=['inprogress_file_upload_last_accessed_at'], name='inprogress_file_upload_filter'),
-        ),
+            model_name="wfmodule",
+            index=models.Index(
+                condition=models.Q(
+                    inprogress_file_upload_last_accessed_at__isnull=False
+                ),
+                fields=["inprogress_file_upload_last_accessed_at"],
+                name="inprogress_file_upload_filter",
+            ),
+        )
     ]

@@ -21,11 +21,12 @@ class RefineSpec:
         old_categories = set(series.cat.categories)
         # filter self.renames: ignore renames of categories that don't exist.
         # (They can happen if the input changes after the user sets params.)
-        renames = {k: v for k, v in self.renames.items()
-                   if k in old_categories}
-        new_categories = set(series.cat.categories) \
-            .difference(renames.keys()) \
+        renames = {k: v for k, v in self.renames.items() if k in old_categories}
+        new_categories = (
+            set(series.cat.categories)
+            .difference(renames.keys())
             .union(renames.values())
+        )
         # Sort categories, simply to make unit tests pass. (They can't predict
         # category order otherwise, and assert_frame_equal() treats different
         # orders as different data frames.)
@@ -47,8 +48,8 @@ class RefineSpec:
             idx = new_categories.searchsorted(new_category)
             assert new_categories[idx] == new_category
             return idx
-        code_map = [old_category_str_to_new_code(c)
-                    for c in series.cat.categories]
+
+        code_map = [old_category_str_to_new_code(c) for c in series.cat.categories]
         # old_codes[x] == -1 means np.nan. code_map[-1] must give -1 so that
         # new_codes[x] == -1, too.
         code_map.append(-1)
@@ -60,14 +61,14 @@ class RefineSpec:
         old_codes = series.cat.codes.values  # np.array
         # "wrap" means when looking up -1, the result is the last element in
         # code_map -- which is -1 because we set that above.
-        new_codes = code_map.take(old_codes, mode='wrap')
+        new_codes = code_map.take(old_codes, mode="wrap")
 
         # 4. Cast to a Series.
         return pd.Series(pd.Categorical.from_codes(new_codes, new_categories))
 
     def apply(self, table, column):
         # Always operate on categories
-        series = table[column].astype('category')
+        series = table[column].astype("category")
         series = self.apply_renames(series)
         table[column] = series
 
@@ -106,33 +107,32 @@ def migrate_params_v0_to_v1(column: str, refine: str) -> Dict[str, Any]:
 
     for item in refine:
         if not isinstance(item, dict):
-            raise ValueError('Not a dict')
+            raise ValueError("Not a dict")
 
         try:
-            item_column = str(item['column'])
+            item_column = str(item["column"])
         except KeyError:
             raise ValueError('Change is missing "column" key')
         if item_column != column:
             continue
 
         try:
-            item_type = str(item['type'])
+            item_type = str(item["type"])
         except KeyError:
             raise ValueError('Change is missing "type" key')
 
         try:
             # raise ValueError on non-dict
-            item_content = dict(item['content'])
+            item_content = dict(item["content"])
         except KeyError:
             raise ValueError('Change is missing "content" key')
 
-        if item_type == 'change':
+        if item_type == "change":
             try:
-                from_val = str(item_content['fromVal'])
-                to_val = str(item_content['toVal'])
+                from_val = str(item_content["fromVal"])
+                to_val = str(item_content["toVal"])
             except KeyError:
-                raise ValueError('Missing "content.fromVal" or '
-                                 '"content.toVal"')
+                raise ValueError('Missing "content.fromVal" or ' '"content.toVal"')
 
             renames2 = dict(renames)  # shallow copy
             # Edit every previous rename (x => y, y => z becomes x => z)
@@ -160,9 +160,9 @@ def migrate_params_v0_to_v1(column: str, refine: str) -> Dict[str, Any]:
             # blacklisted, keep it blacklisted; otherwise don't.'
             blacklist.discard(from_val)  # adopt to_val's state
 
-        elif item_type == 'select':
+        elif item_type == "select":
             try:
-                value = str(item_content['value'])
+                value = str(item_content["value"])
             except KeyError:
                 raise ValueError('Missing "content.value"')
 
@@ -176,38 +176,27 @@ def migrate_params_v0_to_v1(column: str, refine: str) -> Dict[str, Any]:
             raise ValueError(f'Invalid "type": {item_type}')
 
     return {
-        'column': column,
-        'refine': json.dumps({
-            'renames': renames,
-            'blacklist': list(blacklist),
-        }),
+        "column": column,
+        "refine": json.dumps({"renames": renames, "blacklist": list(blacklist)}),
     }
 
 
-def migrate_params_v1_to_v2(column: str,
-                            refine: Dict[str, Any]) -> Dict[str, Any]:
+def migrate_params_v1_to_v2(column: str, refine: Dict[str, Any]) -> Dict[str, Any]:
     """JSON-decode `refine`."""
-    return {
-        'column': column,
-        'refine': refine,
-    }
+    return {"column": column, "refine": refine}
 
 
-def migrate_params_v2_to_v3(column: str,
-                            refine: Dict[str, Any]) -> Dict[str, Any]:
+def migrate_params_v2_to_v3(column: str, refine: Dict[str, Any]) -> Dict[str, Any]:
     """v3 of `refine` does not filter, so blacklist can be ignored"""
-    new_refine = {'renames': refine['renames']}
-    return {
-        'column': column,
-        'refine': new_refine,
-    }
+    new_refine = {"renames": refine["renames"]}
+    return {"column": column, "refine": new_refine}
 
 
 def migrate_params(params: Dict[str, Any]) -> Dict[str, Any]:
     # v0: 'column' (Column), 'refine' (JSON-encoded array of ops)
     try:
-        column = params['column']
-        refine = params['refine']
+        column = params["column"]
+        refine = params["refine"]
         refine_decoded = json.loads(refine)
         refine_decoded[0]
         is_v0 = True
@@ -223,14 +212,14 @@ def migrate_params(params: Dict[str, Any]) -> Dict[str, Any]:
 
     # v1: 'column' (Column), 'refine' (JSON-encoded {renames, blacklist})
     try:
-        column = params['column']
-        refine = params['refine']
-        if refine == '':
-            refine_decoded = {'renames': {}, 'blacklist': []}
+        column = params["column"]
+        refine = params["refine"]
+        if refine == "":
+            refine_decoded = {"renames": {}, "blacklist": []}
         else:
             refine_decoded = json.loads(refine)
-        refine_decoded['renames']
-        refine_decoded['blacklist']
+        refine_decoded["renames"]
+        refine_decoded["blacklist"]
         is_v1 = True
     except (ValueError, TypeError):
         # These all mean `params` aren't v0, so we should continue:
@@ -243,8 +232,8 @@ def migrate_params(params: Dict[str, Any]) -> Dict[str, Any]:
 
     # v2: 'column' (Column), 'refine' ({renames, blacklist} dict)
     try:
-        refine = params['refine']
-        refine['blacklist']
+        refine = params["refine"]
+        refine["blacklist"]
         is_v2 = True
     except (KeyError):
         # These all mean `params` aren't v2, so we should continue:
@@ -260,13 +249,13 @@ def migrate_params(params: Dict[str, Any]) -> Dict[str, Any]:
 
 def render(table, params, **kwargs):
     # 'refine' holds the edits
-    column: str = params['column']
+    column: str = params["column"]
     if not column:
         # No user input yet
         return table
 
-    refine = params['refine']
-    spec = RefineSpec(refine.get('renames', {}))
+    refine = params["refine"]
+    spec = RefineSpec(refine.get("renames", {}))
     table = spec.apply(table, column)
 
     return table

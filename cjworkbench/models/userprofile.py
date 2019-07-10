@@ -10,9 +10,7 @@ User = get_user_model()
 
 class UserProfile(models.Model):
     user = models.OneToOneField(
-        User,
-        related_name="user_profile",
-        on_delete=models.CASCADE,
+        User, related_name="user_profile", on_delete=models.CASCADE
     )
 
     get_newsletter = models.BooleanField(default=False)
@@ -20,12 +18,12 @@ class UserProfile(models.Model):
         default=500,
         help_text=(
             "Applies to the sum of all this user's Workflows. "
-            'One fetch every 5min = 288 fetches per day.'
-        )
+            "One fetch every 5min = 288 fetches per day."
+        ),
     )
 
     def __str__(self):
-        return user_display(self.user) + ' (' + self.user.email + ')'
+        return user_display(self.user) + " (" + self.user.email + ")"
 
     @receiver(post_save, sender=User)
     def handle_user_save(sender, instance, created, **kwargs):

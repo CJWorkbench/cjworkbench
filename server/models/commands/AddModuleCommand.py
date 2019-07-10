@@ -32,11 +32,12 @@ class AddModuleCommand(ChangesWfModuleOutputs, Delta):
 
     def load_ws_data(self):
         data = super().load_ws_data()
-        data['updateTabs'] = {
+        data["updateTabs"] = {
             self.wf_module.tab.slug: {
-                'wf_module_ids': list(self.wf_module.tab.live_wf_modules
-                                      .values_list('id', flat=True)),
-            },
+                "wf_module_ids": list(
+                    self.wf_module.tab.live_wf_modules.values_list("id", flat=True)
+                )
+            }
         }
         return data
 
@@ -46,8 +47,9 @@ class AddModuleCommand(ChangesWfModuleOutputs, Delta):
         #
         # At the time this method is called, `wf_module` is "deleted" (well,
         # not yet created).
-        return models.Q(tab_id=wf_module.tab_id, order__gte=wf_module.order,
-                        is_deleted=False)
+        return models.Q(
+            tab_id=wf_module.tab_id, order__gte=wf_module.order, is_deleted=False
+        )
 
     def forward_impl(self):
         if not self.wf_module.last_relevant_delta_id:
@@ -56,29 +58,31 @@ class AddModuleCommand(ChangesWfModuleOutputs, Delta):
             # Set it now, before .forward_affected_delta_ids(). After this
             # first write, this Delta should never modify it.
             self.wf_module.last_relevant_delta_id = self.id
-            self.wf_module.save(update_fields=['last_relevant_delta_id'])
+            self.wf_module.save(update_fields=["last_relevant_delta_id"])
 
         # Move subsequent modules over to make way for this one.
         tab = self.wf_module.tab
-        tab.live_wf_modules.filter(order__gte=self.wf_module.order) \
-            .update(order=F('order') + 1)
+        tab.live_wf_modules.filter(order__gte=self.wf_module.order).update(
+            order=F("order") + 1
+        )
 
         self.wf_module.is_deleted = False
-        self.wf_module.save(update_fields=['is_deleted'])
+        self.wf_module.save(update_fields=["is_deleted"])
 
         tab.selected_wf_module_position = self.wf_module.order
-        tab.save(update_fields=['selected_wf_module_position'])
+        tab.save(update_fields=["selected_wf_module_position"])
 
         self.forward_affected_delta_ids()
 
     def backward_impl(self):
         self.wf_module.is_deleted = True
-        self.wf_module.save(update_fields=['is_deleted'])
+        self.wf_module.save(update_fields=["is_deleted"])
 
         # Move subsequent modules back to fill the gap created by deleting
         tab = self.wf_module.tab
-        tab.live_wf_modules.filter(order__gt=self.wf_module.order) \
-            .update(order=F('order') - 1)
+        tab.live_wf_modules.filter(order__gt=self.wf_module.order).update(
+            order=F("order") - 1
+        )
 
         # Prevent tab.selected_wf_module_position from becoming invalid
         #
@@ -93,7 +97,7 @@ class AddModuleCommand(ChangesWfModuleOutputs, Delta):
                 tab.selected_wf_module_position = None
             else:
                 tab.selected_wf_module_position = n_modules - 1
-            tab.save(update_fields=['selected_wf_module_position'])
+            tab.save(update_fields=["selected_wf_module_position"])
 
         self.backward_affected_delta_ids()
 
@@ -112,8 +116,9 @@ class AddModuleCommand(ChangesWfModuleOutputs, Delta):
         await self._schedule_execute()
 
     @classmethod
-    def amend_create_kwargs(cls, *, workflow, tab, module_id_name,
-                            position, param_values, **kwargs):
+    def amend_create_kwargs(
+        cls, *, workflow, tab, module_id_name, position, param_values, **kwargs
+    ):
         """
         Add a step to the tab.
 
@@ -126,25 +131,26 @@ class AddModuleCommand(ChangesWfModuleOutputs, Delta):
         # Set _all_ params (not just the user-specified ones). Our
         # dropdown-menu actions only specify the relevant params and expect us
         # to set the others to defaults.
-        params = {
-            **module_version.default_params,
-            **param_values,
-        }
+        params = {**module_version.default_params, **param_values}
 
         module_version.param_schema.validate(params)  # raises ValueError
 
         # wf_module starts off "deleted" and gets un-deleted in forward().
-        wf_module = tab.wf_modules.create(module_id_name=module_id_name,
-                                          order=position, is_deleted=True,
-                                          params=params, secrets={})
+        wf_module = tab.wf_modules.create(
+            module_id_name=module_id_name,
+            order=position,
+            is_deleted=True,
+            params=params,
+            secrets={},
+        )
 
         return {
             **kwargs,
-            'workflow': workflow,
-            'wf_module': wf_module,
-            'wf_module_delta_ids': cls.affected_wf_module_delta_ids(wf_module),
+            "workflow": workflow,
+            "wf_module": wf_module,
+            "wf_module_delta_ids": cls.affected_wf_module_delta_ids(wf_module),
         }
 
     @property
     def command_description(self):
-        return f'Add WfModule {self.wf_module}'
+        return f"Add WfModule {self.wf_module}"

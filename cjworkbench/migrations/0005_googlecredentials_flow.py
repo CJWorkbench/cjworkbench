@@ -7,14 +7,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('cjworkbench', '0004_auto_20171030_2113'),
-    ]
+    dependencies = [("cjworkbench", "0004_auto_20171030_2113")]
 
     operations = [
         migrations.AddField(
-            model_name='googlecredentials',
-            name='flow',
+            model_name="googlecredentials",
+            name="flow",
             field=models.CharField(max_length=255, null=True),
-        ),
+        )
     ]

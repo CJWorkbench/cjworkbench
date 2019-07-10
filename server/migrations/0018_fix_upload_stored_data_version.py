@@ -8,16 +8,17 @@ class Migration(migrations.Migration):
     Whoops. 0014_nix_upload_stored_objects left WfModules with dangling refs.
     """
 
-    dependencies = [
-        ('server', '0017_auto_20190603_1637'),
-    ]
+    dependencies = [("server", "0017_auto_20190603_1637")]
 
     operations = [
-        migrations.RunSQL([
-            """
+        migrations.RunSQL(
+            [
+                """
             UPDATE server_wfmodule
             SET stored_data_version = NULL
             WHERE module_id_name = 'upload'
             """
-        ], elidable=True),
+            ],
+            elidable=True,
+        )
     ]

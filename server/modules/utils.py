@@ -47,7 +47,7 @@ def uniquize_colnames(colnames: Iterator[str]) -> Iterator[str]:
     the columns and no column names are "important" or "to-keep-unchanged".
     """
     blacklist = {}  # key => set of numbers
-    regex = re.compile(r'\A(.*?) (\d+)\Z')
+    regex = re.compile(r"\A(.*?) (\d+)\Z")
     for colname in colnames:
         # Find key and num
         match = regex.fullmatch(colname)
@@ -70,14 +70,14 @@ def uniquize_colnames(colnames: Iterator[str]) -> Iterator[str]:
             # Yield a unique name
             # The original colname had a number; the one we _output_ must also
             # have a number.
-            yield key + ' ' + str(num)
+            yield key + " " + str(num)
 
 
 class PythonFeatureDisabledError(Exception):
     def __init__(self, name):
         super().__init__(self)
         self.name = name
-        self.message = f'builtins.{name} is disabled'
+        self.message = f"builtins.{name} is disabled"
 
     def __str__(self):
         return self.message
@@ -98,15 +98,10 @@ def build_builtins_for_eval() -> Dict[str, Any]:
     def disable_func(name):
         def _disabled(*args, **kwargs):
             raise PythonFeatureDisabledError(name)
+
         return _disabled
-    to_disable = [
-        '__import__',
-        'breakpoint',
-        'compile',
-        'eval',
-        'exec',
-        'open',
-    ]
+
+    to_disable = ["__import__", "breakpoint", "compile", "eval", "exec", "open"]
     for name in to_disable:
         eval_builtins[name] = disable_func(name)
 
@@ -124,16 +119,14 @@ def build_globals_for_eval() -> Dict[str, Any]:
     import numpy as np
     import cjworkbench
 
-    return {
-        '__builtins__': eval_builtins,
-        'math': math,
-        'np': np,
-        'pd': pd,
-    }
+    return {"__builtins__": eval_builtins, "math": math, "np": np, "pd": pd}
 
 
-def _safe_parse(bytesio: io.BytesIO, parser: Callable[[bytes], pd.DataFrame],
-                text_encoding: _TextEncoding) -> ProcessResult:
+def _safe_parse(
+    bytesio: io.BytesIO,
+    parser: Callable[[bytes], pd.DataFrame],
+    text_encoding: _TextEncoding,
+) -> ProcessResult:
     """Run the given parser, or return the error as a string.
 
     Empty dataset is not an error: it is just an empty dataset.
@@ -159,14 +152,14 @@ def wrap_text(bytesio: io.BytesIO, text_encoding: _TextEncoding):
     * The file encoding defaults to UTF-8.
     * Encoding errors are converted to unicode replacement characters.
     """
-    encoding = text_encoding or 'utf-8'
-    with io.TextIOWrapper(bytesio, encoding=encoding,
-                          errors='replace') as textio:
+    encoding = text_encoding or "utf-8"
+    with io.TextIOWrapper(bytesio, encoding=encoding, errors="replace") as textio:
         yield textio
 
 
-def _parse_table(bytesio: io.BytesIO, sep: Optional[str],
-                 text_encoding: _TextEncoding) -> pd.DataFrame:
+def _parse_table(
+    bytesio: io.BytesIO, sep: Optional[str], text_encoding: _TextEncoding
+) -> pd.DataFrame:
     with wrap_text(bytesio, text_encoding) as textio:
         if not sep:
             sep = _detect_separator(textio)
@@ -197,15 +190,15 @@ def _parse_table(bytesio: io.BytesIO, sep: Optional[str],
         # `O(N * Co * Ca lg Ca)`, where Co is the number of columns. Memory
         # usage grows by the number of cells. In the case of `general.csv`,
         # the cost is an extra 1GB.
-        data = pd.read_csv(textio, dtype='category', sep=sep,
-                           na_filter=False, low_memory=False)
+        data = pd.read_csv(
+            textio, dtype="category", sep=sep, na_filter=False, low_memory=False
+        )
         data.reset_index(drop=True, inplace=True)  # empty => RangeIndex
         autocast_dtypes_in_place(data)
         return data
 
 
-def _parse_csv(bytesio: io.BytesIO,
-               text_encoding: _TextEncoding) -> pd.DataFrame:
+def _parse_csv(bytesio: io.BytesIO, text_encoding: _TextEncoding) -> pd.DataFrame:
     """Build a pd.DataFrame or raise parse error.
 
     Peculiarities:
@@ -220,8 +213,7 @@ def _parse_csv(bytesio: io.BytesIO,
         return _parse_table(bytesio, sep, text_encoding)
 
 
-def _parse_tsv(bytesio: io.BytesIO,
-               text_encoding: _TextEncoding) -> pd.DataFrame:
+def _parse_tsv(bytesio: io.BytesIO, text_encoding: _TextEncoding) -> pd.DataFrame:
     """Build a pd.DataFrame or raise parse error.
 
     Peculiarities:
@@ -230,11 +222,10 @@ def _parse_tsv(bytesio: io.BytesIO,
     * Data types. This is a CSV, so every value is a string ... _but_ we do the
       pandas default auto-detection.
     """
-    return _parse_table(bytesio, '\t', text_encoding)
+    return _parse_table(bytesio, "\t", text_encoding)
 
 
-def _parse_json(bytesio: io.BytesIO,
-                text_encoding: _TextEncoding) -> pd.DataFrame:
+def _parse_json(bytesio: io.BytesIO, text_encoding: _TextEncoding) -> pd.DataFrame:
     """Build a pd.DataFrame or raise parse error.
 
     Peculiarities:
@@ -247,19 +238,19 @@ def _parse_json(bytesio: io.BytesIO,
     """
     with wrap_text(bytesio, text_encoding) as textio:
         try:
-            data = pd.read_json(textio, orient='records', dtype=False,
-                                convert_dates=False)
+            data = pd.read_json(
+                textio, orient="records", dtype=False, convert_dates=False
+            )
         except ValueError as err:
-            if (
-                'Mixing dicts with non-Series' in str(err)
-                or 'If using all scalar values' in str(err)
-            ):
+            if "Mixing dicts with non-Series" in str(
+                err
+            ) or "If using all scalar values" in str(err):
                 raise BadInput(
-                    'Workbench cannot import this JSON file. The JSON file '
-                    'must be an Array of Objects for Workbench to import it.'
+                    "Workbench cannot import this JSON file. The JSON file "
+                    "must be an Array of Objects for Workbench to import it."
                 )
             else:
-                raise BadInput('Invalid JSON (%s)' % str(err))
+                raise BadInput("Invalid JSON (%s)" % str(err))
 
         # pd.read_json(io.StringIO('{}')).colnames.index is a Float64Index for
         # some reason.
@@ -276,9 +267,11 @@ def _parse_json(bytesio: io.BytesIO,
         # str. But _do_ make sure all the types are valid.
         #
         # We allow str and numbers.
-        colnames = [colname
-                    for colname, dtype in zip(data.columns, data.dtypes)
-                    if dtype == object]
+        colnames = [
+            colname
+            for colname, dtype in zip(data.columns, data.dtypes)
+            if dtype == object
+        ]
         strs = data[colnames].astype(str)
         strs[data[colnames].isna()] = np.nan
         data[colnames] = strs
@@ -304,17 +297,16 @@ def _parse_xlsx(bytesio: io.BytesIO, _unused: _TextEncoding) -> pd.DataFrame:
             temp.flush()
             temp.seek(0)
             workbook = xlrd.open_workbook(temp.name)
-            data = pd.read_excel(workbook, engine='xlrd', dtype=object)
+            data = pd.read_excel(workbook, engine="xlrd", dtype=object)
     except xlrd.XLRDError as err:
-        return ProcessResult(error=f'Error reading Excel file: {str(err)}')
+        return ProcessResult(error=f"Error reading Excel file: {str(err)}")
 
     data.columns = [str(c) for c in data.columns]
     autocast_dtypes_in_place(data)
     return data
 
 
-def _parse_txt(bytesio: io.BytesIO,
-               text_encoding: _TextEncoding) -> pd.DataFrame:
+def _parse_txt(bytesio: io.BytesIO, text_encoding: _TextEncoding) -> pd.DataFrame:
     """
     Build a pd.DataFrame from txt bytes or raise parse error.
 
@@ -333,7 +325,7 @@ def _detect_separator(textio: io.TextIOWrapper) -> str:
     TODO: Could be a tie or no counts at all, keep going until you find a
     winner.
     """
-    map = [',', ';', '\t']
+    map = [",", ";", "\t"]
     chunk = textio.read(settings.SEP_DETECT_CHUNK_SIZE)
     textio.seek(0)
     results = [chunk.count(x) for x in map]
@@ -360,7 +352,7 @@ def detect_encoding(bytesio: io.BytesIO):
 
     detector.close()
     bytesio.seek(0)
-    return detector.result['encoding']
+    return detector.result["encoding"]
 
 
 # Move dataframe column names into the first row of data, and replace column
@@ -391,18 +383,21 @@ _parse_xls = _parse_xlsx
 
 
 _Parsers = {
-    'text/csv': (_parse_csv, True),
-    'text/tab-separated-values': (_parse_tsv, True),
-    'application/vnd.ms-excel': (_parse_xls, False),
-    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
-        (_parse_xlsx, False),
-    'application/json': (_parse_json, True),
-    'text/plain': (_parse_txt, True),
+    "text/csv": (_parse_csv, True),
+    "text/tab-separated-values": (_parse_tsv, True),
+    "application/vnd.ms-excel": (_parse_xls, False),
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": (
+        _parse_xlsx,
+        False,
+    ),
+    "application/json": (_parse_json, True),
+    "text/plain": (_parse_txt, True),
 }
 
 
-def parse_bytesio(bytesio: io.BytesIO, mime_type: str,
-                  text_encoding: _TextEncoding = None) -> ProcessResult:
+def parse_bytesio(
+    bytesio: io.BytesIO, mime_type: str, text_encoding: _TextEncoding = None
+) -> ProcessResult:
     """Parse bytes to produce a ProcessResult.
 
     This will produce a _sane_ ProcessResult (see `types.validate_dataframe`).
@@ -427,9 +422,7 @@ def parse_bytesio(bytesio: io.BytesIO, mime_type: str,
         return ProcessResult(error=f'Unhandled MIME type "{mime_type}"')
 
 
-_WORKFLOW_REGEX = re.compile(
-    r'^\s*(?:https?://)?[-_a-z0-9A-Z.]+/workflows/(\d+)/?\s*$'
-)
+_WORKFLOW_REGEX = re.compile(r"^\s*(?:https?://)?[-_a-z0-9A-Z.]+/workflows/(\d+)/?\s*$")
 
 
 def workflow_url_to_id(url):
@@ -440,15 +433,15 @@ def workflow_url_to_id(url):
     """
     match = _WORKFLOW_REGEX.match(url)
     if not match:
-        raise ValueError('Not a valid Workbench workflow URL')
+        raise ValueError("Not a valid Workbench workflow URL")
 
     return int(match.group(1))
 
 
 @database_sync_to_async
-def fetch_external_workflow(calling_workflow_id: int,
-                            workflow_owner: User,
-                            other_workflow_id: int) -> ProcessResult:
+def fetch_external_workflow(
+    calling_workflow_id: int, workflow_owner: User, other_workflow_id: int
+) -> ProcessResult:
     """
     Lookup up a workflow's final ProcessResult.
 
@@ -458,29 +451,26 @@ def fetch_external_workflow(calling_workflow_id: int,
     have permission.
     """
     if calling_workflow_id == other_workflow_id:
-        return ProcessResult(error='Cannot import the current workflow')
+        return ProcessResult(error="Cannot import the current workflow")
 
     with transaction.atomic():
         # Mimic cooperative_lock() on right_workflow, with less overhead. It's
         # transaction.atomic() and select_for_update().
         try:
-            other_workflow = Workflow.objects \
-                .select_for_update() \
-                .get(id=other_workflow_id)
+            other_workflow = Workflow.objects.select_for_update().get(
+                id=other_workflow_id
+            )
         except Workflow.DoesNotExist:
-            return ProcessResult(error='Target workflow does not exist')
+            return ProcessResult(error="Target workflow does not exist")
 
         # Make sure _this_ workflow's owner has access permissions to the
         # _other_ workflow
-        if not other_workflow.user_session_authorized_read(workflow_owner,
-                                                           None):
-            return ProcessResult(error='Access denied to the target workflow')
+        if not other_workflow.user_session_authorized_read(workflow_owner, None):
+            return ProcessResult(error="Access denied to the target workflow")
 
-        other_wf_module = other_workflow \
-            .live_tabs.first() \
-            .live_wf_modules.last()
+        other_wf_module = other_workflow.live_tabs.first().live_wf_modules.last()
         if other_wf_module is None:
-            return ProcessResult(error='Target workflow is empty')
+            return ProcessResult(error="Target workflow is empty")
 
         # Always pull the cached result, so we can't execute() an infinite loop
         crr = other_wf_module.cached_render_result
@@ -491,10 +481,11 @@ def fetch_external_workflow(calling_workflow_id: int,
             # (e.g., when cron fetches a new version, no render is queued.)
             # Queue a render and tell the user to try again. If the render is
             # spurious, that isn't a big deal.
-            async_to_sync(rabbitmq.queue_render)(other_workflow.id,
-                                                 other_workflow.last_delta_id)
+            async_to_sync(rabbitmq.queue_render)(
+                other_workflow.id, other_workflow.last_delta_id
+            )
             return ProcessResult(
-                error='Target workflow is rendering. Please try again.'
+                error="Target workflow is rendering. Please try again."
             )
 
         result = crr.result
@@ -503,8 +494,9 @@ def fetch_external_workflow(calling_workflow_id: int,
 
 
 @asynccontextmanager
-async def spooled_data_from_url(url: str, headers: Dict[str, str] = {},
-                                timeout: aiohttp.ClientTimeout = None):
+async def spooled_data_from_url(
+    url: str, headers: Dict[str, str] = {}, timeout: aiohttp.ClientTimeout = None
+):
     """
     Download `url` to a tempfile and yield `(bytesio, headers, charset)`.
 
@@ -520,14 +512,14 @@ async def spooled_data_from_url(url: str, headers: Dict[str, str] = {},
     #
     # https://github.com/aio-libs/aiohttp/issues/3424
     url = yarl.URL(url, encoded=True)  # prevent magic
-    if url.scheme not in ('http', 'https'):
-        raise aiohttp.InvalidURL('URL must start with http:// or https://')
+    if url.scheme not in ("http", "https"):
+        raise aiohttp.InvalidURL("URL must start with http:// or https://")
 
-    with tempfile.TemporaryFile(prefix='loadurl') as spool:
+    with tempfile.TemporaryFile(prefix="loadurl") as spool:
         async with aiohttp.ClientSession() as session:
-            async with session.get(url, headers=headers,
-                                   timeout=timeout,
-                                   raise_for_status=True) as response:
+            async with session.get(
+                url, headers=headers, timeout=timeout, raise_for_status=True
+            ) as response:
                 response.raise_for_status()
 
                 async for blob in response.content.iter_chunked(_ChunkSize):
@@ -560,7 +552,7 @@ def autocast_series_dtype(series: pd.Series) -> pd.Series:
     """
     if series.dtype == object:
         nulls = series.isnull()
-        if (nulls | (series == '')).all():
+        if (nulls | (series == "")).all():
             return series
         try:
             # If it all looks like numbers (like in a CSV), cast to number.
@@ -575,12 +567,12 @@ def autocast_series_dtype(series: pd.Series) -> pd.Series:
                 series = series.astype(str)
                 series[nulls] = None
             return series
-    elif hasattr(series, 'cat'):
+    elif hasattr(series, "cat"):
         # Categorical series. Try to infer type of series.
         #
         # Assume categories are all str: after all, we're assuming the input is
         # "sane" and "sane" means only str categories are valid.
-        if (series.isnull() | (series == '')).all():
+        if (series.isnull() | (series == "")).all():
             return series
         try:
             return pd.to_numeric(series)
