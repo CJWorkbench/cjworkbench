@@ -10,14 +10,14 @@
     position: relative;
     margin: 0;
     &:last-child {
-      height:1rem;
+      height: 1rem;
     }
   }
 
   .caught-error { // when a module does not load
     text-align: center;
     color: $error-prompt;
-    @extend %content-1;
+    @include content-1;
     padding: 1rem;
     background-color: white;
   }
