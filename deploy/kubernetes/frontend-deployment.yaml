@@ -71,6 +71,8 @@ spec:
               value: 'on'
             - name: CJW_GOOGLE_CLIENT_SECRETS
               value: secrets/google-oauth-secret/google-oauth-secret.json
+            - name: CJW_INTERCOM_CLIENT_SECRETS
+              value: secrets/intercom-oauth-secret/intercom-oauth-secret.json
             - name: CJW_SOCIALACCOUNT_SECRETS
               value: secrets/socialaccount-secrets/socialaccount-secrets.json
             - name: CJW_TWITTER_CLIENT_SECRETS
@@ -111,6 +113,9 @@ spec:
             - mountPath: /app/secrets/google-oauth-secret
               name: google-oauth-secret
               readOnly: true
+            - mountPath: /app/secrets/intercom-oauth-secret
+              name: intercom-oauth-secret
+              readOnly: true
             - mountPath: /app/secrets/socialaccount-secrets
               name: socialaccount-secrets
               readOnly: true
@@ -124,6 +129,12 @@ spec:
             items:
               - key: json
                 path: google-oauth-secret.json
+        - name: intercom-oauth-secret
+          secret:
+            secretName: intercom-oauth-secret
+            items:
+              - key: json
+                path: intercom-oauth-secret.json
         - name: socialaccount-secrets
           secret:
             secretName: socialaccount-secrets

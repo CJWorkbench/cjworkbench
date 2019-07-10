@@ -108,6 +108,9 @@ kubectl -n production create secret generic cjw-sendgrid-api-key \
 [ -f google-oauth-secret.json ] # we're set -e, so this will exit if missing
 kubectl -n production create secret generic google-oauth-secret --from-file=json=google-oauth-secret.json
 
+[ -f intercom-oauth-secret.json ] # we're set -e, so this will exit if missing
+kubectl -n production create secret generic intercom-oauth-secret --from-file=json=intercom-oauth-secret.json
+
 [ -f twitter-oauth-secret.json ] # we're set -e, so this will exit if missing
 kubectl -n production create secret generic twitter-oauth-secret --from-file=json=twitter-oauth-secret.json
 
