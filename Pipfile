@@ -46,6 +46,7 @@ yajl-py = "*"
 [dev-packages]
 watchdog = "*"
 http-process-proxy = ">=0.0.9"
+black = "==19.3b0"
 
 [requires]
 python_version = "3.7"
