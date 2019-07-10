@@ -13,6 +13,7 @@
     padding-bottom: .6rem; // so vertical line's distance is same above as below
     color: darken($module-color-unreachable,15%); // a little darker to be visible when unreachable
     background-color: $WF-background; // appear atop vertical line
+    z-index: 1;
   }
 
   // notes above module
@@ -49,8 +50,10 @@
   }
 
   // Show a vertical line to the left of the module stack
-  &.status-ok:not(.selected):not(.after-selected) {
-    &::before, & + .in-between-modules::before {
+  &.status-ok:not(.after-selected) {
+    &:not(.selected) .module-card-and-link::before,
+    &:not(.selected) + .in-between-modules::before,
+    &:not(:first-child) .module-notes::before {
       content: '';
       display: block;
       width: 2px;
@@ -60,6 +63,10 @@
       background-color: $module-color-ok;
       left: 2rem;
       margin-left: -1px;
+    }
+
+    &:not(.selected) .module-card-and-link::before {
+      left: -2rem;
     }
   }
 
