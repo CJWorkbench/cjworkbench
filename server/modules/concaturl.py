@@ -54,7 +54,7 @@ async def fetch(
     *,
     workflow_id: int,
     get_workflow_owner: Callable[[], Awaitable[User]],
-    **kwargs
+    **kwargs,
 ) -> Union[pd.DataFrame, str]:
     url: str = params["url"]
 

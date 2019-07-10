@@ -44,7 +44,7 @@ class MinioStorage(Storage):
             # browser to cache for one day, to time-bound the damage when we
             # deploy a new version of our logo and users keep the old one.
             CacheControl="public, max-age=86400",
-            **kwargs
+            **kwargs,
         )
 
     def delete(self, name):

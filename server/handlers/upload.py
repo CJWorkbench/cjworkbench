@@ -152,7 +152,7 @@ async def prepare_upload(
     filename: str,
     nBytes: int,
     base64Md5sum: str,
-    **kwargs
+    **kwargs,
 ) -> Dict[str, Union[str, Dict[str, str]]]:
     """
     Build {key, url, headers} for the client.
@@ -297,7 +297,7 @@ async def presign_upload_part(
     partNumber: int,
     nBytes: int,
     base64Md5sum: str,
-    **kwargs
+    **kwargs,
 ):
     """
     Build { url, headers } Object for caller to PUT bytes to.

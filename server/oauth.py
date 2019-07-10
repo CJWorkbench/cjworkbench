@@ -161,7 +161,7 @@ class OAuth1a(OAuthService):
         auth_url: str,
         request_token_url: str,
         access_token_url: str,
-        redirect_url: str
+        redirect_url: str,
     ):
         self.service_id = service_id
         self.consumer_key = consumer_key
@@ -234,7 +234,7 @@ class OAuth2(OAuthService):
         token_url: str,
         refresh_url: str,
         scope: str,
-        redirect_url: str
+        redirect_url: str,
     ):
         self.service_id = service_id
         self.client_id = client_id
