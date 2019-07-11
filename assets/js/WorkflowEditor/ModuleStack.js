@@ -1,10 +1,11 @@
+/* globals HTMLElement */
 import React from 'react'
 import PropTypes from 'prop-types'
 import AddData from './AddData'
 import ModuleSearch from './ModuleSearch'
 import WfModule from './wfmodule/WfModule'
 import WfModuleHeader from './wfmodule/WfModuleHeader'
-import { addModuleAction, deleteModuleAction, moveModuleAction } from '../workflow-reducer'
+import { deleteModuleAction, moveModuleAction } from '../workflow-reducer'
 import { scrollTo } from '../utils'
 import { connect } from 'react-redux'
 import lessonSelector from '../lessons/lessonSelector'
@@ -120,8 +121,8 @@ class ModuleStackInsertSpot extends React.PureComponent {
         />
         <ModuleDropSpot
           index={index}
-          isDraggingModuleAtIndex={this.props.isDraggingModuleAtIndex}
-          moveModuleByIndex={this.props.moveModuleByIndex}
+          isDraggingModuleAtIndex={isDraggingModuleAtIndex}
+          moveModuleByIndex={moveModuleByIndex}
         />
       </div>
     )
@@ -166,7 +167,7 @@ export class ModuleStack extends React.Component {
     testLessonHighlightIndex: PropTypes.func.isRequired, // func(int) => boolean
     isReadOnly: PropTypes.bool.isRequired,
     /** <WorkflowEditor/Pane> container, where the dialog will open */
-    paneRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }).isRequired
+    paneRef: PropTypes.shape({ current: PropTypes.instanceOf(HTMLElement) }).isRequired
   }
 
   // Track state of where we last auto-scrolled.
@@ -184,7 +185,7 @@ export class ModuleStack extends React.Component {
     const index = this.props.selected_wf_module_position
 
     if (
-      tabSlug != this.lastScrolledWfModule.tabSlug ||
+      tabSlug !== this.lastScrolledWfModule.tabSlug ||
       index !== this.lastScrolledWfModule.index
     ) {
       // We selected a different module. Scroll to it.
@@ -312,7 +313,7 @@ export class ModuleStack extends React.Component {
 
     return (
       <div className={className} ref={this.scrollRef}>
-        {isReadOnly && wfModules.length == 0 ? (
+        {isReadOnly && wfModules.length === 0 ? (
           <EmptyReadOnlyModuleStack />
         ) : (
           <>

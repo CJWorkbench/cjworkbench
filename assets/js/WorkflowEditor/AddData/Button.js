@@ -1,3 +1,4 @@
+/* globals HTMLElement */
 import React from 'react'
 import ReactDOM from 'react-dom'
 import PropTypes from 'prop-types'
@@ -35,6 +36,6 @@ Button.propTypes = {
   tabSlug: PropTypes.string.isRequired,
   isLessonHighlight: PropTypes.bool.isRequired,
   /** <WorkflowEditor/Pane> container, where the dialog will open */
-  paneRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }).isRequired
+  paneRef: PropTypes.shape({ current: PropTypes.instanceOf(HTMLElement) }).isRequired
 }
 export default Button

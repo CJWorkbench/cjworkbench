@@ -29,7 +29,7 @@ export default class ExportModal extends React.Component {
   csvUrlString () {
     var path = '/public/moduledata/live/' + this.props.wfModuleId + '.csv'
     // allowing an out for testing (there is no window.location.href during test)
-    if (window.location.href == 'about:blank') {
+    if (window.location.href === 'about:blank') {
       return path
     } else {
       return new URL(path, window.location.href).href
@@ -39,7 +39,7 @@ export default class ExportModal extends React.Component {
   jsonUrlString () {
     var path = '/public/moduledata/live/' + this.props.wfModuleId + '.json'
     // allowing an out for testing (there is no window.location.href during test)
-    if (window.location.href == 'about:blank') {
+    if (window.location.href === 'about:blank') {
       return path
     } else {
       return new URL(path, window.location.href).href

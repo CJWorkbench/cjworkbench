@@ -1,3 +1,4 @@
+/* globals afterEach, describe, expect, it */
 import React from 'react'
 import WfHamburgerMenu from './WfHamburgerMenu'
 import { mount } from 'enzyme'

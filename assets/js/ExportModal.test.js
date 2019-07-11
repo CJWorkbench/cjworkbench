@@ -1,3 +1,4 @@
+/* globals afterEach, beforeEach, describe, expect, it, jest */
 import React from 'react'
 import { mount } from 'enzyme'
 import ExportModal from './ExportModal'

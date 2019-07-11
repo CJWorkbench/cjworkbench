@@ -144,7 +144,6 @@ class NotificationsForm extends React.PureComponent {
 export class DataVersionModal extends React.PureComponent {
   static propTypes = {
     fetchWfModuleId: PropTypes.number.isRequired,
-    fetchWfModuleName: PropTypes.string.isRequired,
     fetchVersions: PropTypes.arrayOf(PropTypes.shape({
       id: PropTypes.string.isRequired,
       date: PropTypes.instanceOf(Date).isRequired,
@@ -183,7 +182,6 @@ export class DataVersionModal extends React.PureComponent {
 
   render () {
     const {
-      fetchWfModuleName,
       fetchVersions,
       onClose,
       isAnonymous,
@@ -195,7 +193,6 @@ export class DataVersionModal extends React.PureComponent {
         <ModalHeader toggle={onClose}>Data Versions</ModalHeader>
         <ModalBody>
           <form onSubmit={this.onSubmit} onCancel={this.onClose}>
-            {/* <p className="introduction">These are the versions of “{fetchWfModuleName}” that we have stored:</p> */}
             <ol>
               {fetchVersions.map(v => <li key={v.id}><FetchVersion
                 onSelect={this.setSelectedFetchVersionId}
@@ -242,11 +239,11 @@ const getFetchWfModule = createSelector([ getSelectedTabWfModules, getModules ],
   for (const wfModule of wfModules) {
     const module = modules[wfModule.module] || {}
     if (module.loads_data) {
-      return { fetchWfModule: wfModule, fetchModule: module }
+      return wfModule
     }
   }
 
-  return { fetchWfModule: null, fetchModule: null }
+  return null
 })
 
 /**
@@ -267,14 +264,12 @@ const getFetchVersions = memoize(versions => {
 })
 
 function mapStateToProps (state, { wfModuleId }) {
-  const { fetchWfModule, fetchModule } = getFetchWfModule(state)
-
+  const fetchWfModule = getFetchWfModule(state)
   const wfModule = state.wfModules[String(wfModuleId)]
   const notificationsEnabled = wfModule ? wfModule.notifications : false
 
   return {
     fetchWfModuleId: fetchWfModule ? fetchWfModule.id : null,
-    fetchWfModuleName: fetchModule ? fetchModule.name : null,
     fetchVersions: fetchWfModule ? getFetchVersions(fetchWfModule.versions.versions || []) : null,
     selectedFetchVersionId: fetchWfModule ? fetchWfModule.versions.selected : null,
     isAnonymous: state.workflow.is_anonymous,

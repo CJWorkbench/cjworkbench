@@ -58,7 +58,7 @@ export default class SearchResult extends React.PureComponent {
   }
 
   render () {
-    const { idName, isActive, isLessonHighlight, isMatch, name, icon, description } = this.props
+    const { idName, isActive, isLessonHighlight, name, icon, description } = this.props
 
     const className = [ 'module-search-result' ]
     if (isLessonHighlight) className.push('lesson-highlight')

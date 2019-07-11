@@ -162,7 +162,7 @@ const PopperModifiers = {
       // Place the prompt below the "Add Step" button
       // (visually, place the prompt where the to-be-added module will go.)
       const { placement, instance, offsets: { popper, reference } } = data
-      const promptHeight = data.instance.popper.querySelector('form').getBoundingClientRect().height
+      const promptHeight = instance.popper.querySelector('form').getBoundingClientRect().height
 
       if (placement === 'top') {
         const shift = reference.height + promptHeight
@@ -231,7 +231,7 @@ const PopperModifiersLastButton = {
     fn: (data) => {
       // Vertically center the prompt over the "Add Step" button
       const { placement, instance, offsets: { popper, reference } } = data
-      const promptHeight = data.instance.popper.querySelector('form').getBoundingClientRect().height
+      const promptHeight = instance.popper.querySelector('form').getBoundingClientRect().height
       const refHeight = reference.height
       const offset = (promptHeight + refHeight) / 2
       const mult = placement === 'bottom' ? -1 : 1

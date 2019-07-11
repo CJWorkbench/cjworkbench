@@ -1,3 +1,4 @@
+/* globals describe, expect, it */
 import React from 'react'
 import { mount } from 'enzyme'
 import Button from './Button'

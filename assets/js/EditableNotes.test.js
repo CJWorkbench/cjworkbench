@@ -1,7 +1,7 @@
+/* globals beforeEach, describe, expect, it, jest */
 import React from 'react'
 import { shallow } from 'enzyme'
 import EditableNotes from './EditableNotes'
-import { okResponseMock } from './test-utils'
 
 describe('EditableNotes', () => {
   let wrapper
@@ -9,14 +9,17 @@ describe('EditableNotes', () => {
   // Can't test "startsFocused" with shallow(), because there's no DOM element to focus
 
   describe('read-only', () => {
-    beforeEach(() => wrapper = shallow(
-      <EditableNotes
-        isReadOnly
-        placeholder='placeholder'
-        value='This is the best module'
-        onCancel={jest.fn()}
-      />
-    ))
+    beforeEach(() => {
+      wrapper = shallow(
+        <EditableNotes
+          isReadOnly
+          placeholder='placeholder'
+          value='This is the best module'
+          onCancel={jest.fn()}
+        />
+      )
+      return wrapper
+    })
 
     it('matches snapshot', () => {
       expect(wrapper).toMatchSnapshot()

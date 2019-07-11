@@ -41,7 +41,7 @@ export function UnhandledErrorReport ({ error }) {
     ].join('\n\n'))
     helpText = (
       <ol>
-        <li>Copy the debugging details below and send them to <a href='mailto:hello@workbenchdata.com' target='_blank'>hello@workbenchdata.com</a>.</li>
+        <li>Copy the debugging details below and send them to <a href={url} target='_blank'>hello@workbenchdata.com</a>.</li>
         <li>It helps if you can describe what you were doing before you ran into the bug.</li>
       </ol>
     )

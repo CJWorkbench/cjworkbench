@@ -90,7 +90,7 @@ export default class SearchResults extends React.PureComponent {
   }
 
   render () {
-    const { modules, onClickModule } = this.props
+    const { onClickModule } = this.props
     const { activeModule } = this.state
 
     return (

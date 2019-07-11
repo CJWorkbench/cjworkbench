@@ -1,3 +1,4 @@
+/* globals describe, expect, it, jest */
 import React from 'react'
 import ConnectedImportModuleFromGitHub from './ImportModuleFromGitHub'
 import { mount } from 'enzyme'

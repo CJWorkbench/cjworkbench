@@ -1,3 +1,4 @@
+/* globals beforeEach, describe, expect, it */
 import React from 'react'
 import Embed from './Embed'
 import { shallow } from 'enzyme'

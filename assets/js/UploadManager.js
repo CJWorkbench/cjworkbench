@@ -1,3 +1,5 @@
+/* eslint no-unmodified-loop-condition: 0 */
+/* globals FileReader, XMLHttpRequest */
 import md5 from 'js-md5'
 import { encode as base64encode } from 'base64-arraybuffer'
 
@@ -16,7 +18,7 @@ async function uploadUntilSuccess (uploadCallback) {
 }
 
 async function readBlobAsArrayBuffer (blob) {
-  return await new Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     const reader = new FileReader()
     reader.onload = () => resolve(reader.result)
     reader.onError = () => reject(reader.error)
@@ -127,7 +129,7 @@ export default class UploadManager {
    */
   async upload (wfModuleId, file, onProgress) {
     const method = file.size <= MultipartMinimum ? '_uploadSmall' : '_uploadMultipart'
-    return await uploadUntilSuccess(() => this[method](wfModuleId, file, onProgress))
+    return uploadUntilSuccess(() => this[method](wfModuleId, file, onProgress))
   }
 
   async _uploadSmall (wfModuleId, file, onProgress) {
@@ -169,9 +171,19 @@ export default class UploadManager {
       aborted = true
       Object.values(aborts).forEach(f => f())
     }
+
+    const nParts = Math.ceil(file.size / MultipartPartSize) // also this is the last valid partNumber
+    const etags = new Array(nParts) // partNumber-1 => etag
+    const partProgress = new Uint32Array(nParts) // partNumber-1 => nBytesUploaded, starting at 0
+    function setPartProgress (partNumber, nBytesUploaded) {
+      partProgress[partNumber - 1] = nBytesUploaded
+      const nBytesTotal = partProgress.reduce((acc, v) => acc + v, 0)
+      onProgress(nBytesTotal)
+    }
+
     this.inProgress[String(wfModuleId)] = abort
     try {
-      const { key, uploadId } = await this.websocket.callServerHandler(
+      const { uploadId } = await this.websocket.callServerHandler(
         'upload.create_multipart_upload', {
           wfModuleId,
           filename: file.name
@@ -179,17 +191,6 @@ export default class UploadManager {
       )
       if (aborted) return null
 
-      const nParts = Math.ceil(file.size / MultipartPartSize) // also this is the last valid partNumber
-
-      const partProgress = new Uint32Array(nParts) // partNumber-1 => nBytesUploaded, starting at 0
-      function setPartProgress (partNumber, nBytesUploaded) {
-        partProgress[partNumber - 1] = nBytesUploaded
-        const nBytesTotal = partProgress.reduce((acc, v) => acc + v, 0)
-        onProgress(nBytesTotal)
-      }
-      if (aborted) return null
-
-      const etags = new Array(nParts) // partNumber-1 => etag
       let nextPartNumber = 1
       /**
        * Worker: upload parts until `nextPartNumber > nParts`.

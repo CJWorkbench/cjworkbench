@@ -1,3 +1,4 @@
+/* globals HTMLElement */
 import React from 'react'
 import PropTypes from 'prop-types'
 import Button from './Button'
@@ -39,6 +40,6 @@ AddData.propTypes = {
   isReadOnly: PropTypes.bool.isRequired,
   wfModule: PropTypes.object, // or null if no WfModule
   /** <WorkflowEditor/Pane> container, where the dialog will open */
-  paneRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }).isRequired
+  paneRef: PropTypes.shape({ current: PropTypes.instanceOf(HTMLElement) }).isRequired
 }
 export default AddData

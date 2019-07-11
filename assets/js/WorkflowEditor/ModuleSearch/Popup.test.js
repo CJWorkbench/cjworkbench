@@ -1,3 +1,4 @@
+/* globals describe, expect, it, jest */
 import React from 'react'
 import ConnectedPopup, { Popup } from './Popup'
 import { mount } from 'enzyme'

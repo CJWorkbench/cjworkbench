@@ -1,3 +1,4 @@
+/* globals afterEach, describe, expect, it, jest */
 import React from 'react'
 import { mount } from 'enzyme'
 import ConnectedDataVersionModal, { DataVersionModal, formatDateUTCForTesting } from './DataVersionModal'
@@ -23,7 +24,7 @@ describe('DataVersionModal', () => {
   })
 
   const wrapper = (extraProps) => {
-    return _wrapper = mount(
+    _wrapper = mount(
       <DataVersionModal
         fetchWfModuleId={123}
         fetchWfModuleName={'fetch'}
@@ -38,6 +39,7 @@ describe('DataVersionModal', () => {
         {...extraProps}
       />
     )
+    return _wrapper
   }
 
   it('matches snapshot', () => {
@@ -131,7 +133,7 @@ describe('DataVersionModal', () => {
 
     const connectedWrapper = (state) => {
       const store = configureMockStore([])(state)
-      return _wrapper = mount(
+      _wrapper = mount(
         <Provider store={store}>
           <ConnectedDataVersionModal
             wfModuleId={124}
@@ -139,6 +141,7 @@ describe('DataVersionModal', () => {
           />
         </Provider>
       )
+      return _wrapper
     }
 
     it('should find notificationsEnabled', () => {
@@ -146,10 +149,10 @@ describe('DataVersionModal', () => {
       expect(w.find('input[name="notifications-enabled"]').prop('checked')).toBe(true)
     })
 
-    it('should set fetchModuleName', () => {
-      const w = connectedWrapper(IdealState)
-      // expect(w.find('p.introduction').text()).toMatch(/“Fetch Stuff”/) No introduction test for now (Pierre)
-    })
+    // it('should set fetchModuleName', () => {
+    //  const w = connectedWrapper(IdealState)
+    //  // expect(w.find('p.introduction').text()).toMatch(/“Fetch Stuff”/) No introduction test for now (Pierre)
+    // })
 
     it('should set fetchVersions', () => {
       const w = connectedWrapper(IdealState)

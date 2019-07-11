@@ -18,7 +18,7 @@ export default class ModuleSearchResultGroup extends React.PureComponent {
   }
 
   render () {
-    const { name, modules, hasMatch, activeModule } = this.props
+    const { name, modules, activeModule } = this.props
 
     const children = modules.map(module => (
       <SearchResult

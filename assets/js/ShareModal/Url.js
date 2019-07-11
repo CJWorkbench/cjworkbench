@@ -17,7 +17,7 @@ export default class Url extends React.PureComponent {
   }
 
   onClickCopy = () => {
-    const { logShare, url, isPublic } = this.props
+    const { logShare, url } = this.props
 
     logShare('URL copied')
 

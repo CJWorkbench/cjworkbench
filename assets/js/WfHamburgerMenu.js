@@ -53,7 +53,7 @@ export default class WfHamburgerMenu extends React.Component {
         {this.state.importModalOpen ? (
           <ImportModuleFromGitHub
             closeModal={this.closeImportModal}
-            api={this.props.api}
+            api={api}
           />
         ) : null}
       </React.Fragment>

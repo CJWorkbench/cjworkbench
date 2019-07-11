@@ -3,10 +3,6 @@ import PropTypes from 'prop-types'
 import ShareButton from '../ShareModal/ShareButton'
 
 export default function ShareCard ({ workflowId, isPublic }) {
-  const [ isModalOpen, setModalOpen ] = React.useState(false)
-  const openModal = React.useCallback(() => setModalOpen(true))
-  const closeModal = React.useCallback(() => setModalOpen(false))
-
   return (
     <aside className='share-card'>
       <div className='prompt'>

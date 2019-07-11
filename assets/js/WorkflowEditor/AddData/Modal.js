@@ -11,9 +11,6 @@ import Search from './Search'
 export const Modal = React.memo(function Modal ({ modules, tabSlug, close, addModule }) {
   const onSelectModule = React.useCallback(moduleIdName => addModule(tabSlug, moduleIdName))
   const [ search, setSearch ] = React.useState('')
-  const closeIfClickIsOnBackdrop = React.useCallback(ev => {
-    if (ev.target.className === 'add-data-modal') close()
-  })
 
   return (
     <section className='add-data-modal'>
