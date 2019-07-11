@@ -70,6 +70,7 @@
     "test": "jest",
     "watchjs": "webpack --mode development --watch",
     "compilejs": "webpack --mode production",
+    "lint": "standard",
     "reformat-code": "standard --fix"
   },
   "standard": {

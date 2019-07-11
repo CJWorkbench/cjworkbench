@@ -174,6 +174,7 @@ COPY assets/ /app/assets/
 # This catches mistakes that would otherwise foil us in bin/integration-test;
 # and currently we rely on this line in our CI scripts (cloudbuild.yaml).
 RUN npm test
+RUN npm run lint
 RUN node_modules/.bin/webpack -p
 
 
