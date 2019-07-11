@@ -55,6 +55,21 @@ services:
     networks: [ 'dev' ]
     depends_on: [ 'database', 'rabbitmq', 'minio' ]
 
+  pydev:
+    # Run Python commands without depending on other services
+    build:
+      context: .
+      target: pydev
+    volumes:
+      - type: bind
+        source: ./
+        target: /app/
+        consistency: cached
+      - virtualenvs:/root/.local/share/virtualenvs/:rw
+    environment:
+      PYTHONUNBUFFERED: '1'
+    networks: [ 'dev' ]
+
   unittest:
     # It'd be nice to use YAML anchors to copy these parameters ... but
     # PyCharm's YAML parser seems to die when we use YAML anchors.
