@@ -1,9 +1,10 @@
+/* globals it, jest, expect, describe, beforeEach, afterEach */
 import { updateTableAction } from './UpdateTableAction'
 import { addModuleAction, setWfModuleParamsAction, setSelectedWfModuleAction } from '../workflow-reducer'
 
 jest.mock('../workflow-reducer')
 
-describe("UpdateTableAction actions", () => {
+describe('UpdateTableAction actions', () => {
   beforeEach(() => {
     addModuleAction.mockImplementation((...args) => [ 'addModuleAction', ...args ])
     setWfModuleParamsAction.mockImplementation((...args) => [ 'setWfModuleParamsAction', ...args ])
@@ -23,7 +24,7 @@ describe("UpdateTableAction actions", () => {
     const dispatch = jest.fn()
     const getState = () => ({
       wfModules: {
-        17: { module: 'loadurl' },
+        17: { module: 'loadurl' }
       },
       modules: {
         loadurl: {}
@@ -43,7 +44,7 @@ describe("UpdateTableAction actions", () => {
       },
       wfModules: {
         10: { tab_slug: 'tab-2' },
-        11: { tab_slug: 'tab-2', module: 'duplicatecolumns', params: { colnames: ['A'] }}
+        11: { tab_slug: 'tab-2', module: 'duplicatecolumns', params: { colnames: ['A'] } }
       },
       modules: {
         loadurl: {},
@@ -85,7 +86,7 @@ describe("UpdateTableAction actions", () => {
       },
       wfModules: {
         10: {},
-        11: { tab_slug: 'tab-2', module: 'duplicatecolumns', params: { colnames: ['A'] }}
+        11: { tab_slug: 'tab-2', module: 'duplicatecolumns', params: { colnames: ['A'] } }
       },
       modules: {
         loadurl: {},
@@ -144,7 +145,7 @@ describe("UpdateTableAction actions", () => {
         11: { tab_slug: 'tab-2', module: 'sort' }
       },
       modules: {
-        filter: {},
+        filter: {}
       }
     })
     const dispatch = jest.fn()

@@ -5,7 +5,7 @@ import String_ from './String'
 
 const Components = {
   oauth: OAuth,
-  string: String_,
+  string: String_
 }
 
 export default function Secret ({ isReadOnly, name, fieldId, secretMetadata, secretLogic, submitSecret, deleteSecret, startCreateSecret }) {
@@ -33,7 +33,7 @@ Secret.propTypes = {
   startCreateSecret: PropTypes.func.isRequired, // func(name) => undefined
   deleteSecret: PropTypes.func.isRequired, // func(name) => undefined
   secretLogic: PropTypes.shape({
-    provider: PropTypes.oneOf([ 'oauth', 'string' ]),
+    provider: PropTypes.oneOf([ 'oauth', 'string' ])
     // Plus provider-specific stuff
   }).isRequired
 }

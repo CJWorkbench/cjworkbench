@@ -31,18 +31,18 @@ export default class WorkbenchAceEditor extends React.PureComponent {
 
   wrapperRef = React.createRef()
 
-  componentDidMount() {
+  componentDidMount () {
     this.updateSize()
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate (prevProps) {
     // ignore state changes, since we _cause_ them
     if (prevProps === this.props) return
 
     this.updateSize()
   }
 
-  updateSize() {
+  updateSize () {
     const div = this.wrapperRef.current
     if (!div) return
 
@@ -77,9 +77,9 @@ export default class WorkbenchAceEditor extends React.PureComponent {
           Define a <kbd>render</kbd> function that accepts
           a <kbd>pd.DataFrame</kbd> and returns
           a <kbd>pd.DataFrame</kbd>. You may use
-          the <a target="_blank" href="https://docs.python.org/3/library/math.html"><kbd>math</kbd></a
-          >, <kbd>pd</kbd> (<a target="_blank" href="https://pandas.pydata.org/pandas-docs/stable/api.html#dataframe"
-          >Pandas</a>) and <kbd>np</kbd> (<a target="_blank" href="https://docs.scipy.org/doc/numpy/reference/routines.html"
+          the <a target='_blank' href='https://docs.python.org/3/library/math.html'><kbd>math</kbd></a
+          >, <kbd>pd</kbd> (<a target='_blank' href='https://pandas.pydata.org/pandas-docs/stable/api.html#dataframe'
+          >Pandas</a>) and <kbd>np</kbd> (<a target='_blank' href='https://docs.scipy.org/doc/numpy/reference/routines.html'
           >Numpy</a>) modules; <kbd>import</kbd> is disabled.
         </div>
         <div className='ace-aspect-ratio-container'>
@@ -90,7 +90,7 @@ export default class WorkbenchAceEditor extends React.PureComponent {
               height={this.state.height}
               mode='python'
               theme='xcode'
-              wrapEnabled={true}
+              wrapEnabled
               annotations={this.getAnnotations(wfModuleError)}
               showGutter={isZenMode}
               name='code-editor'

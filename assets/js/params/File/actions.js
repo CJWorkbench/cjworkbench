@@ -90,7 +90,7 @@ function reduceCancelFulfilled (state, action) {
 export function setProgress (wfModuleId, nBytesUploaded) {
   return {
     type: FILE_UPLOAD_PROGRESS,
-    payload: { wfModuleId, nBytesUploaded },
+    payload: { wfModuleId, nBytesUploaded }
   }
 }
 
@@ -104,5 +104,5 @@ export const reducerFunctions = {
   [FILE_UPLOAD + '_FULFILLED']: reduceUploadFulfilled,
   [FILE_UPLOAD_CANCEL + '_PENDING']: reduceCancelPending,
   [FILE_UPLOAD_CANCEL + '_FULFILLED']: reduceCancelFulfilled,
-  [FILE_UPLOAD_PROGRESS]: reduceSetProgress,
+  [FILE_UPLOAD_PROGRESS]: reduceSetProgress
 }

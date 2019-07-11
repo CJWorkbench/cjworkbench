@@ -1,12 +1,12 @@
 import React from 'react'
-import ConnectedDataVersionSelect, { DataVersionSelect }  from './DataVersionSelect'
+import ConnectedDataVersionSelect, { DataVersionSelect } from './DataVersionSelect'
 import DataVersionModal from '../../../WorkflowEditor/DataVersionModal' // to check it's rendered in shallow()
 import { shallow, mount } from 'enzyme'
 import { Provider } from 'react-redux'
 import configureMockStore from 'redux-mock-store'
 
 describe('DataVersionSelect', () => {
-  const wrapper = (extraProps={}) => {
+  const wrapper = (extraProps = {}) => {
     return shallow(
       <DataVersionSelect
         wfModuleId={123}
@@ -14,7 +14,7 @@ describe('DataVersionSelect', () => {
         nVersions={7}
         isReadOnly={false}
         {...extraProps}
-        />
+      />
     )
   }
 
@@ -59,13 +59,13 @@ describe('DataVersionSelect', () => {
           versions: {
             versions: [
               [ '2018-06-23T20:09:41.649Z', false ],
-              [ '2018-06-22T20:09:41.649Z', true ],
+              [ '2018-06-22T20:09:41.649Z', true ]
             ],
-            selected: '2018-06-22T20:09:41.649Z',
+            selected: '2018-06-22T20:09:41.649Z'
           }
         },
         124: {
-          id: 124,
+          id: 124
         }
       }
     }

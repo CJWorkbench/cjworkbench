@@ -14,7 +14,7 @@ export default class ParamsForm extends React.PureComponent {
     isZenMode: PropTypes.bool.isRequired,
     api: PropTypes.shape({ // We should nix this. Try to remove its properties, one by one....:
       createOauthAccessToken: PropTypes.func.isRequired, // for secrets
-      valueCounts: PropTypes.func.isRequired, // for ValueFilter/Refine
+      valueCounts: PropTypes.func.isRequired // for ValueFilter/Refine
     }),
     fields: PropTypes.arrayOf(PropTypes.shape({
       idName: PropTypes.string.isRequired,
@@ -67,7 +67,7 @@ export default class ParamsForm extends React.PureComponent {
     deleteSecret: PropTypes.func.isRequired, // func(idName) => undefined
     submitSecret: PropTypes.func.isRequired, // func(idName, secretString) => undefined
     onChange: PropTypes.func.isRequired, // func(newValues) => undefined
-    onSubmit: PropTypes.func.isRequired, // func() => undefined
+    onSubmit: PropTypes.func.isRequired // func() => undefined
   }
 
   onKeyDown = (ev) => {
@@ -176,8 +176,8 @@ export default class ParamsForm extends React.PureComponent {
 
       // If it's a menu entry...
       if (
-        (conditionField.type === 'menu' || conditionField.type === 'radio')
-        && Array.isArray(condition.value)
+        (conditionField.type === 'menu' || conditionField.type === 'radio') &&
+        Array.isArray(condition.value)
       ) {
         return invert !== condition.value.includes(value)
       }
@@ -193,8 +193,8 @@ export default class ParamsForm extends React.PureComponent {
 
   render () {
     const { api, isReadOnly, isZenMode, wfModuleId, wfModuleOutputError, isWfModuleBusy,
-            inputWfModuleId, inputDeltaId, inputColumns, tabs, currentTab, applyQuickFix,
-            startCreateSecret, deleteSecret, submitSecret, fields, files, secrets } = this.props
+      inputWfModuleId, inputDeltaId, inputColumns, tabs, currentTab, applyQuickFix,
+      startCreateSecret, deleteSecret, submitSecret, fields, files, secrets } = this.props
     const isEditing = this.isEditing
 
     const upstreamValue = this.props.value
@@ -204,10 +204,10 @@ export default class ParamsForm extends React.PureComponent {
     // are nested together. Until then, we need to pass `selectedColumn` to the edit-value
     // components so they can load data.
     const columnParam = fields.find(f => f.type === 'column')
-    const selectedColumn = columnParam && value && value[columnParam.idName] || null
+    const selectedColumn = (columnParam && value && value[columnParam.idName]) || null
     // TODO ditto JoinColumns
     const tabParam = fields.find(f => f.type === 'tab')
-    const selectedTab = tabParam && value && value[tabParam.idName] || null
+    const selectedTab = (tabParam && value && value[tabParam.idName]) || null
 
     let className = 'module-card-params'
     if (isEditing) className += ' editing'

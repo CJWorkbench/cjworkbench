@@ -16,11 +16,11 @@ export default class ChartSeriesSelect extends React.PureComponent {
     availableColumns: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string.isRequired
     })), // or null if not loaded
-    onChange: PropTypes.func.isRequired, // func({ index, column, color }) => undefined
+    onChange: PropTypes.func.isRequired // func({ index, column, color }) => undefined
   }
 
   state = {
-    color: null, // when this.props.column is null, we can't call props.onChange()
+    color: null // when this.props.column is null, we can't call props.onChange()
   }
 
   onPickColor = (color) => {
@@ -48,7 +48,7 @@ export default class ChartSeriesSelect extends React.PureComponent {
     })
   }
 
-  render() {
+  render () {
     const { availableColumns, column, color, index, placeholder, isReadOnly, name, fieldId } = this.props
     const safeColor = color || this.state.color || getColor(index)
 

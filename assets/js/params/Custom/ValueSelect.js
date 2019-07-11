@@ -70,7 +70,7 @@ class ListRow extends React.PureComponent {
       valueCounts: PropTypes.object.isRequired, // { 'item': <Number> count, ... }
       items: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
       selection: PropTypes.instanceOf(Set).isRequired,
-      onChangeItem: PropTypes.func.isRequired, // func(item, isSelected) => undefined
+      onChangeItem: PropTypes.func.isRequired // func(item, isSelected) => undefined
     }),
     style: PropTypes.object.isRequired,
     index: PropTypes.number.isRequired
@@ -104,7 +104,7 @@ class ValueList extends React.PureComponent {
     nItemsTotal: PropTypes.number.isRequired, // even when not searching
     itemHeight: PropTypes.number.isRequired, // height of a single value, in px
     maxHeight: PropTypes.number.isRequired, // max height of whole div
-    onChangeItem: PropTypes.func.isRequired, // func(item, isSelected) => undefined -- passed to <ListRow>
+    onChangeItem: PropTypes.func.isRequired // func(item, isSelected) => undefined -- passed to <ListRow>
   }
 
   _itemKey = (index, data) => data.items[index]
@@ -160,7 +160,7 @@ class DynamicallySizedValueList extends React.PureComponent {
     selection: PropTypes.instanceOf(Set).isRequired, // selected values -- passed to <ListRow>
     items: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired, // filtered search results -- passed to <ListRow>
     nItemsTotal: PropTypes.number.isRequired, // even when not searching
-    onChangeItem: PropTypes.func.isRequired, // func(item, isSelected) => undefined -- passed to <ListRow>
+    onChangeItem: PropTypes.func.isRequired // func(item, isSelected) => undefined -- passed to <ListRow>
   }
 
   sizerRef = React.createRef()
@@ -205,7 +205,7 @@ class DynamicallySizedValueList extends React.PureComponent {
       // to the DOM that we can calculate the _correct_ heights.
       return (
         <ValueList
-          valueCounts={{'A': 1}}
+          valueCounts={{ 'A': 1 }}
           loading={false}
           selection={new Set()}
           items={['A']}

@@ -5,13 +5,13 @@ import { tick } from '../../../test-utils'
 import RefineClusterer from './RefineClusterer'
 
 describe('RefineClusterer', () => {
-  const wrapper = (extraProps={}) => mount(
+  const wrapper = (extraProps = {}) => mount(
     <RefineClusterer
       bucket={{ a: 1, b: 1, aaaaa: 2 }}
       onProgress={jest.fn()}
       onComplete={jest.fn()}
       {...extraProps}
-      />
+    />
   )
 
   it('should default to "fingerprint" algorithm', () => {

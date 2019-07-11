@@ -16,26 +16,26 @@ class ReorderColumnDropZone extends React.PureComponent {
     leftOrRight: PropTypes.oneOf([ 'left', 'right' ]).isRequired,
     fromIndex: PropTypes.number.isRequired,
     toIndex: PropTypes.number.isRequired,
-    onDropColumnIndexAtIndex: PropTypes.func.isRequired, // func(fromIndex, toIndex) => undefined
+    onDropColumnIndexAtIndex: PropTypes.func.isRequired // func(fromIndex, toIndex) => undefined
   }
 
-  constructor(props) {
+  constructor (props) {
     super(props)
 
     this.state = {
-      isDragHover: false,
+      isDragHover: false
     }
   }
 
   onDragEnter = (ev) => {
     this.setState({
-      isDragHover: true,
+      isDragHover: true
     })
   }
 
   onDragLeave = (ev) => {
     this.setState({
-      isDragHover: false,
+      isDragHover: false
     })
   }
 
@@ -48,7 +48,7 @@ class ReorderColumnDropZone extends React.PureComponent {
     onDropColumnIndexAtIndex(fromIndex, toIndex)
   }
 
-  render() {
+  render () {
     let className = 'column-reorder-drop-zone'
     className += ' align-' + this.props.leftOrRight
     if (this.state.isDragHover) className += ' drag-hover'
@@ -60,8 +60,7 @@ class ReorderColumnDropZone extends React.PureComponent {
         onDragLeave={this.onDragLeave}
         onDragOver={this.onDragOver}
         onDrop={this.onDrop}
-        >
-      </div>
+      />
     )
   }
 }
@@ -74,51 +73,51 @@ export class EditableColumnName extends React.Component {
     isReadOnly: PropTypes.bool.isRequired
   }
 
-  constructor(props) {
-    super(props);
+  constructor (props) {
+    super(props)
 
     this.state = {
       newName: props.columnKey,
-      editMode: false,
+      editMode: false
     }
 
-    this.inputRef = React.createRef();
+    this.inputRef = React.createRef()
 
-    this.enterEditMode = this.enterEditMode.bind(this);
-    this.handleInputChange = this.handleInputChange.bind(this);
-    this.handleInputBlur = this.handleInputBlur.bind(this);
-    this.handleInputKeyDown = this.handleInputKeyDown.bind(this);
+    this.enterEditMode = this.enterEditMode.bind(this)
+    this.handleInputChange = this.handleInputChange.bind(this)
+    this.handleInputBlur = this.handleInputBlur.bind(this)
+    this.handleInputKeyDown = this.handleInputKeyDown.bind(this)
   }
 
-  componentDidUpdate(_, prevState) {
+  componentDidUpdate (_, prevState) {
     if (!prevState.editMode && this.state.editMode) {
-      const input = this.inputRef.current;
+      const input = this.inputRef.current
       if (input) {
-        input.focus();
-        input.select();
+        input.focus()
+        input.select()
       }
     }
   }
 
-  enterEditMode() {
-    if(!this.props.isReadOnly) {
-      this.setState({editMode: true});
+  enterEditMode () {
+    if (!this.props.isReadOnly) {
+      this.setState({ editMode: true })
     }
   }
 
-  exitEditMode() {
-    this.setState({editMode: false});
+  exitEditMode () {
+    this.setState({ editMode: false })
   }
 
-  handleInputChange(event) {
-    this.setState({newName: event.target.value});
+  handleInputChange (event) {
+    this.setState({ newName: event.target.value })
   }
 
-  handleInputCommit() {
+  handleInputCommit () {
     this.setState({
-        editMode: false
+      editMode: false
     })
-    if(this.state.newName != this.props.columnKey) {
+    if (this.state.newName !== this.props.columnKey) {
       this.props.onRename({
         prevName: this.props.columnKey,
         newName: this.state.newName
@@ -126,22 +125,22 @@ export class EditableColumnName extends React.Component {
     }
   }
 
-  handleInputBlur() {
-    this.handleInputCommit();
+  handleInputBlur () {
+    this.handleInputCommit()
   }
 
-  handleInputKeyDown(event) {
+  handleInputKeyDown (event) {
     // Changed to keyDown as esc does not fire keyPress
-    if(event.key == 'Enter') {
-      this.handleInputCommit();
-    } else if (event.key == 'Escape') {
-      this.setState({newName: this.props.columnKey});
-      this.exitEditMode();
+    if (event.key === 'Enter') {
+      this.handleInputCommit()
+    } else if (event.key === 'Escape') {
+      this.setState({ newName: this.props.columnKey })
+      this.exitEditMode()
     }
   }
 
-  render() {
-    if(this.state.editMode) {
+  render () {
+    if (this.state.editMode) {
       // The class name 'column-key-input' is used in
       // the code to prevent dragging while editing,
       // please keep it as-is.
@@ -186,7 +185,7 @@ export class ColumnHeader extends React.PureComponent {
     onDragEnd: PropTypes.func.isRequired, // func() => undefined
     onDropColumnIndexAtIndex: PropTypes.func.isRequired, // func(from, to) => undefined
     draggingColumnIndex: PropTypes.number, // if set, we are dragging
-    dispatchTableAction: PropTypes.func.isRequired, // func(wfModuleId, moduleIdName, forceNewModule, params)
+    dispatchTableAction: PropTypes.func.isRequired // func(wfModuleId, moduleIdName, forceNewModule, params)
   }
 
   inputRef = React.createRef()
@@ -214,22 +213,22 @@ export class ColumnHeader extends React.PureComponent {
   }
 
   onMouseEnter = () => {
-    this.setState({isHovered: true});
+    this.setState({ isHovered: true })
   }
 
   onMouseLeave = () => {
-    this.setState({isHovered: false});
+    this.setState({ isHovered: false })
   }
 
   onDragStart = (ev) => {
-    if(this.props.isReadOnly) {
-      ev.preventDefault();
-      return;
+    if (this.props.isReadOnly) {
+      ev.preventDefault()
+      return
     }
 
-    if(ev.target.classList.contains('column-key-input')) {
-      ev.preventDefault();
-      return;
+    if (ev.target.classList.contains('column-key-input')) {
+      ev.preventDefault()
+      return
     }
 
     this.props.onDragStartColumnIndex(this.props.index)
@@ -243,9 +242,9 @@ export class ColumnHeader extends React.PureComponent {
     this.props.onDragEnd()
   }
 
-  renderColumnMenu() {
-    if(this.props.isReadOnly) {
-      return null;
+  renderColumnMenu () {
+    if (this.props.isReadOnly) {
+      return null
     }
 
     return (
@@ -257,28 +256,28 @@ export class ColumnHeader extends React.PureComponent {
     )
   }
 
-  renderLetter() {
+  renderLetter () {
     return (
       // The 'column-letter' class name is used in the test so please be careful with it
       <div className='column-letter'>
         {idxToLetter(this.props.index)}
       </div>
-    );
+    )
   }
 
-  render() {
+  render () {
     const {
       columnKey,
       columnType,
       index,
       onDropColumnIndexAtIndex,
-      draggingColumnIndex,
+      draggingColumnIndex
     } = this.props
 
-    const columnMenuSection = this.renderColumnMenu();
-    const letterSection = this.renderLetter();
+    const columnMenuSection = this.renderColumnMenu()
+    const letterSection = this.renderLetter()
 
-    function maybeDropZone(leftOrRight, toIndex) {
+    function maybeDropZone (leftOrRight, toIndex) {
       if (draggingColumnIndex === null || draggingColumnIndex === undefined) return null
       if (draggingColumnIndex === toIndex) return null
 
@@ -304,10 +303,10 @@ export class ColumnHeader extends React.PureComponent {
           className={`data-grid-column-header ${draggingClass}`}
           onMouseEnter={this.onMouseEnter}
           onMouseLeave={this.onMouseLeave}
-          draggable={true}
+          draggable
           onDragStart={this.onDragStart}
           onDragEnd={this.onDragEnd}
-          >
+        >
           {maybeDropZone('left', index)}
           <EditableColumnName
             columnKey={columnKey}

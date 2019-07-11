@@ -20,7 +20,7 @@ export default class UncontrolledDropdown extends React.PureComponent {
     const { isOpen } = this.state
 
     return (
-      // this.props includes .children, 
+      // this.props includes .children,
       <Dropdown isOpen={isOpen} toggle={this.toggleIsOpen} {...this.props} />
     )
   }

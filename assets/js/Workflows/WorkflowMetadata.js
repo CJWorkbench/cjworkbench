@@ -9,7 +9,7 @@ export default class WorkflowMetadata extends React.Component {
   static propTypes = {
     workflow: PropTypes.object.isRequired,
     openShareModal: PropTypes.func.isRequired, // func(workflowId) => undefined
-    test_now: PropTypes.object  // optional injection for testing, avoid time zone issues for Last Update time
+    test_now: PropTypes.object // optional injection for testing, avoid time zone issues for Last Update time
   }
 
   openShareModal = (ev) => {
@@ -28,23 +28,23 @@ export default class WorkflowMetadata extends React.Component {
 
     // don't show author if this workflow is anonymous
     const attribution = !this.props.workflow.is_anonymous ? (
-      <li className="attribution">
-        <span className="metadata">by {this.props.workflow.owner_name.trim()}</span>
-        <span className="separator">-</span>
+      <li className='attribution'>
+        <span className='metadata'>by {this.props.workflow.owner_name.trim()}</span>
+        <span className='separator'>-</span>
       </li>
     ) : null
 
     const modalLink = !(this.props.workflow.read_only || this.props.workflow.is_anonymous) ? (
       <li>
         <span className='separator'>-</span>
-        <button type='button' className="public-private" title="Change privacy" onClick={this.openShareModal}>
+        <button type='button' className='public-private' title='Change privacy' onClick={this.openShareModal}>
           {this.props.workflow.public ? 'public' : 'private'}
         </button>
       </li>
     ) : null
 
     return (
-      <ul className="metadata-container">
+      <ul className='metadata-container'>
         {attribution}
         <li>
           Updated {timeDifference(this.props.workflow.last_update, now)}

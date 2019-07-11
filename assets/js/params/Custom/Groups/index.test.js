@@ -3,13 +3,13 @@ import Groups from './index'
 import { mount } from 'enzyme'
 
 describe('Groups', () => {
-  const wrapper = (extraProps={}) => mount(
+  const wrapper = (extraProps = {}) => mount(
     <Groups
       isReadOnly={false}
       name='groups'
       fieldId='groups'
-      value={{colnames: [], group_dates: false, date_granularities: {}}}
-      inputColumns={[{name: 'A', type: 'text'}, {name: 'B', type: 'datetime'}]}
+      value={{ colnames: [], group_dates: false, date_granularities: {} }}
+      inputColumns={[{ name: 'A', type: 'text' }, { name: 'B', type: 'datetime' }]}
       onChange={jest.fn()}
       applyQuickFix={jest.fn()}
       {...extraProps}
@@ -19,8 +19,8 @@ describe('Groups', () => {
   it('should show pseudo-quick-fix when group_dates:true and there are no date columns', () => {
     const w = wrapper({
       name: 'w',
-      value: {colnames: [], group_dates: true, date_granularities: {}},
-      inputColumns: [{name: 'A', type: 'text'}]
+      value: { colnames: [], group_dates: true, date_granularities: {} },
+      inputColumns: [{ name: 'A', type: 'text' }]
     })
 
     w.find('button[name="w[date_granularities][add-module]"]').simulate('click')
@@ -30,8 +30,8 @@ describe('Groups', () => {
   it('should show message when group_dates:true and there are unselected date columns', () => {
     const w = wrapper({
       name: 'w',
-      value: {colnames: [ 'A' ], group_dates: true, date_granularities: {}},
-      inputColumns: [{name: 'A', type: 'text'}, {name: 'B', type: 'datetime'}]
+      value: { colnames: [ 'A' ], group_dates: true, date_granularities: {} },
+      inputColumns: [{ name: 'A', type: 'text' }, { name: 'B', type: 'datetime' }]
     })
 
     expect(w.find('.no-date-selected')).toHaveLength(1)
@@ -41,8 +41,8 @@ describe('Groups', () => {
   it('should show dropdown only for selected dates', () => {
     const w = wrapper({
       name: 'w',
-      value: {colnames: [ 'A' ], group_dates: true, date_granularities: {A: 'H', B: 'H'}},
-      inputColumns: [{name: 'A', type: 'datetime'}, {name: 'B', type: 'datetime'}]
+      value: { colnames: [ 'A' ], group_dates: true, date_granularities: { A: 'H', B: 'H' } },
+      inputColumns: [{ name: 'A', type: 'datetime' }, { name: 'B', type: 'datetime' }]
     })
 
     expect(w.find('.no-date-selected')).toHaveLength(0)
@@ -53,19 +53,19 @@ describe('Groups', () => {
   it('should set date granularity when there is no value', () => {
     const w = wrapper({
       name: 'w',
-      value: {colnames: [ 'A' ], group_dates: true, date_granularities: {}},
-      inputColumns: [{name: 'A', type: 'datetime'}, {name: 'B', type: 'text'}]
+      value: { colnames: [ 'A' ], group_dates: true, date_granularities: {} },
+      inputColumns: [{ name: 'A', type: 'datetime' }, { name: 'B', type: 'text' }]
     })
 
     w.find('select[name="w[date_granularities][A]"]').simulate('change', { target: { value: 'H' } })
-    expect(w.prop('onChange')).toHaveBeenCalledWith({ colnames: [ 'A' ], group_dates: true, date_granularities: { A: 'H' }})
+    expect(w.prop('onChange')).toHaveBeenCalledWith({ colnames: [ 'A' ], group_dates: true, date_granularities: { A: 'H' } })
   })
 
   it('should show current date granularity', () => {
     const w = wrapper({
       name: 'w',
-      value: {colnames: [ 'A' ], group_dates: true, date_granularities: {A: 'H'}},
-      inputColumns: [{name: 'A', type: 'datetime'}, {name: 'B', type: 'text'}]
+      value: { colnames: [ 'A' ], group_dates: true, date_granularities: { A: 'H' } },
+      inputColumns: [{ name: 'A', type: 'datetime' }, { name: 'B', type: 'text' }]
     })
 
     expect(w.find('select[name="w[date_granularities][A]"]').prop('value')).toEqual('H')

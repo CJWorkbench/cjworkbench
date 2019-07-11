@@ -31,7 +31,7 @@ export default class Param extends React.PureComponent {
     isZenMode: PropTypes.bool.isRequired,
     api: PropTypes.shape({ // We should nix this. Try to remove its properties, one by one....:
       createOauthAccessToken: PropTypes.func.isRequired, // for secrets
-      valueCounts: PropTypes.func.isRequired, // for ValueFilter/Refine
+      valueCounts: PropTypes.func.isRequired // for ValueFilter/Refine
     }),
     fieldId: PropTypes.string, // if set, we're a sub-param and this is our ID. Otherwise, auto-generate.
     name: PropTypes.string.isRequired,
@@ -72,12 +72,11 @@ export default class Param extends React.PureComponent {
     startCreateSecret: PropTypes.func.isRequired, // func(idName) => undefined
     deleteSecret: PropTypes.func.isRequired, // func(idName) => undefined
     onChange: PropTypes.func.isRequired, // func(idName, value) => undefined -- will set `value` in parent
-    onSubmit: PropTypes.func.isRequired, // func() => undefined
+    onSubmit: PropTypes.func.isRequired // func() => undefined
   }
 
   get innerComponent () {
-    const { type, isMultiline } = this.props
-    switch (type) {
+    switch (this.props.type) {
       case 'checkbox': return Checkbox
       case 'column': return Column
       case 'custom': return Custom
@@ -110,10 +109,10 @@ export default class Param extends React.PureComponent {
   }
 
   render () {
-    const { wfModuleId, name, type, fieldId, label, value, upstreamValue } = this.props
+    const { wfModuleId, name, type, fieldId, value, upstreamValue } = this.props
 
     // If we aren't a list-item param, we don't have a fieldId. Generate one.
-    const safeFieldId = fieldId ? fieldId : generateFieldId(wfModuleId, name)
+    const safeFieldId = fieldId || generateFieldId(wfModuleId, name)
 
     let className = `param param-${type}`
     // "custom" is a type that we should probably nix. Basically,

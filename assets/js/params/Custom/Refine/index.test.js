@@ -7,7 +7,7 @@ import { tick } from '../../../test-utils'
 const DefaultValue = { renames: {} }
 
 describe('Refine', () => {
-  const wrapper = (props={}) => {
+  const wrapper = (props = {}) => {
     const ret = mount(
       <Refine
         valueCounts={{}}
@@ -167,13 +167,13 @@ describe('Refine', () => {
 
   it('should find search results within both group names and members', () => {
     const w = wrapper({
-      valueCounts: { 'a': 1, 'b': 1, 'c': 1, 'bb': 1, 'd': 1},
+      valueCounts: { 'a': 1, 'b': 1, 'c': 1, 'bb': 1, 'd': 1 },
       value: { renames: { 'c': 'b', 'bb': 'a' } }
     })
     // Ensure 3 groups initially rendered
     expect(w.find('.refine-group')).toHaveLength(3)
 
-    w.find('input[type="search"]').simulate('change', {target: {value: 'b'}})
+    w.find('input[type="search"]').simulate('change', { target: { value: 'b' } })
     w.update()
     expect(w.find('.refine-group')).toHaveLength(2)
   })
@@ -188,11 +188,11 @@ describe('Refine', () => {
     })
 
     expect(w.find('input[checked=true]')).toHaveLength(5)
-    w.find('input[type="search"]').simulate('change', {target: {value: 'b'}})
+    w.find('input[type="search"]').simulate('change', { target: { value: 'b' } })
     w.update()
 
     w.find('button[title="Select None"]').simulate('click')
-    w.find('input[type="search"]').simulate('change', {target: {value: ''}})
+    w.find('input[type="search"]').simulate('change', { target: { value: '' } })
     expect(w.find('input[checked=true]')).toHaveLength(3)
   })
 
@@ -217,11 +217,11 @@ describe('Refine', () => {
     })
 
     expect(w.find('input[checked=true]')).toHaveLength(0)
-    w.find('input[type="search"]').simulate('change', {target: {value: 'b'}})
+    w.find('input[type="search"]').simulate('change', { target: { value: 'b' } })
     w.update()
 
     w.find('button[title="Select All"]').simulate('click')
-    w.find('input[type="search"]').simulate('change', {target: {value: ''}})
+    w.find('input[type="search"]').simulate('change', { target: { value: '' } })
     expect(w.find('input[checked=true]')).toHaveLength(2)
   })
 
@@ -238,18 +238,18 @@ describe('Refine', () => {
 
   it('should disable merge button when less than 2 values selected', () => {
     const w = wrapper({
-      valueCounts: { 'a': 1, 'b': 1, 'c': 1, 'bb': 1, 'd': 1},
+      valueCounts: { 'a': 1, 'b': 1, 'c': 1, 'bb': 1, 'd': 1 },
       value: { renames: { } }
     })
     expect(w.find('button[name="merge"]').prop('disabled')).toEqual(true)
-    w.find('.summary').at(0).find('input[type="checkbox"]').simulate('change',{ target: { checked: true } })
-    w.find('.summary').at(1).find('input[type="checkbox"]').simulate('change',{ target: { checked: true } })
+    w.find('.summary').at(0).find('input[type="checkbox"]').simulate('change', { target: { checked: true } })
+    w.find('.summary').at(1).find('input[type="checkbox"]').simulate('change', { target: { checked: true } })
     expect(w.find('button[name="merge"]').prop('disabled')).toEqual(false)
   })
 
   it('should merge values into one group when checked and merge button pressed', () => {
     const w = wrapper({
-      valueCounts: { a: 1, b: 1, c: 1, bb: 2, d: 1},
+      valueCounts: { a: 1, b: 1, c: 1, bb: 2, d: 1 },
       value: { renames: { } }
     })
     w.find('input[name="select[b]"]').simulate('change', { target: { checked: true } })
@@ -263,7 +263,7 @@ describe('Refine', () => {
   it('should choose group name by count when merging', () => {
     const w = wrapper({
       valueCounts: { a: 4, b: 1, c: 2 },
-      value: { renames: { b: 'c' } }  // a: 4, c: 3 (in 2 groups)
+      value: { renames: { b: 'c' } } // a: 4, c: 3 (in 2 groups)
     })
     // Group 'value' count
     w.find('input[name="select[a]"]').simulate('change', { target: { checked: true } })

@@ -86,14 +86,14 @@ export default class Workflows extends React.Component {
     const tabName = this.workflowIdToTabName(workflowId)
     if (!tabName) return
 
-    if (!confirm("Permanently delete this workflow?")) return
+    if (!confirm('Permanently delete this workflow?')) return
 
     this.props.api.deleteWorkflow(workflowId)
       .then(() => {
         this.setState({ workflows: {
           ...this.state.workflows,
           [tabName]: this.state.workflows[tabName].filter(w => w.id !== workflowId)
-        }})
+        } })
       })
   }
 
@@ -104,7 +104,7 @@ export default class Workflows extends React.Component {
         this.setState({ workflows: {
           ...this.state.workflows,
           owned: [ json, ...this.state.workflows.owned ]
-        }})
+        } })
       })
   }
 
@@ -183,7 +183,7 @@ export default class Workflows extends React.Component {
           <div>
             <div className='content-1'>NEW</div>
             <div className='d-flex'>
-              <span className='icon-star'></span>
+              <span className='icon-star' />
               <div className=' title-1 '>TRAINING</div>
             </div>
           </div>

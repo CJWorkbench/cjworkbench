@@ -22,11 +22,11 @@ import { withJsonStringValues } from '../util'
  *         **params,
  *         'y_columns': y_columns
  *     }
- *     
+ *
  *     def migrate_params(params):
  *         if isinstance(params['y_columns'], str):
  *             params = _migrate_params_v0_to_v1(params)
- *     
+ *
  *         return params
  *
  * This Custom component may output columns that don't exist, so Python module

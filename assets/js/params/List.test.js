@@ -39,9 +39,9 @@ describe('List', () => {
           placeholder: ''
         }
       ]}
-      childDefault={{x: ''}}
-      value={[{x: 'foo'}, {x: 'bar'}]}
-      upstreamValue={[{x: 'foo'}, {x: 'bar'}]}
+      childDefault={{ x: '' }}
+      value={[{ x: 'foo' }, { x: 'bar' }]}
+      upstreamValue={[{ x: 'foo' }, { x: 'bar' }]}
       // The rest are props we just can't avoid....
       applyQuickFix={jest.fn()}
       startCreateSecret={jest.fn()}

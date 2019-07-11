@@ -4,8 +4,8 @@
  * Copy-pasted from:
  * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#Escaping
  */
-export function escapeRegExp(string) {
-  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+export function escapeRegExp (string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') // $& means the whole matched string
 }
 
 /**
@@ -23,7 +23,7 @@ export function escapeRegExp(string) {
 export function generateTabName (parseFormat, generateFormat, existingTabNames) {
   const parseNumber = (tabName) => {
     const match = parseFormat.exec(tabName)
-    return match? +match[1] : null
+    return match ? +match[1] : null
   }
 
   const numbers = existingTabNames.map(parseNumber).filter(n => n !== null)

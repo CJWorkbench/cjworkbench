@@ -4,7 +4,7 @@ import { Modal, ModalHeader, ModalBody, ModalFooter } from '../../components/Mod
 import filesize from 'filesize'
 
 const FilesizeOptions = { standard: 'iec', round: 1 }
-function formatNBytes(nBytes) {
+function formatNBytes (nBytes) {
   return filesize(nBytes, FilesizeOptions)
 }
 
@@ -47,7 +47,7 @@ class UploadedFileSelectModal extends React.PureComponent {
       minute: 'numeric',
       month: 'long',
       day: 'numeric',
-      year: 'numeric',
+      year: 'numeric'
     })
 
     return (

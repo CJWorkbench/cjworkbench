@@ -46,7 +46,7 @@ export default class SearchResult extends React.PureComponent {
     description: PropTypes.string.isRequired,
     icon: PropTypes.string.isRequired,
     onClick: PropTypes.func.isRequired, // func(idName) => undefined
-    onMouseEnter: PropTypes.func.isRequired, // func(idName) => undefined
+    onMouseEnter: PropTypes.func.isRequired // func(idName) => undefined
   }
 
   onClick = () => {
@@ -57,7 +57,7 @@ export default class SearchResult extends React.PureComponent {
     this.props.onMouseEnter(this.props.idName)
   }
 
-  render() {
+  render () {
     const { idName, isActive, isLessonHighlight, isMatch, name, icon, description } = this.props
 
     const className = [ 'module-search-result' ]

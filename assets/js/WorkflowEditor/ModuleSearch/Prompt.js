@@ -5,12 +5,12 @@ export default class Prompt extends React.PureComponent {
   static propTypes = {
     value: PropTypes.string.isRequired, // may be empty
     cancel: PropTypes.func.isRequired, // func() => undefined -- should close this prompt
-    onChange: PropTypes.func.isRequired, // func(value) => undefined
+    onChange: PropTypes.func.isRequired // func(value) => undefined
   }
 
   inputRef = React.createRef()
 
-  componentDidMount() {
+  componentDidMount () {
     // auto-focus
     this.inputRef.current.focus()
   }
@@ -42,7 +42,7 @@ export default class Prompt extends React.PureComponent {
           onChange={this.onChange}
           onKeyDown={this.onKeyDown}
         />
-        <button type='reset' className='reset' title='Close Search'><i className='icon-close'></i></button>
+        <button type='reset' className='reset' title='Close Search'><i className='icon-close' /></button>
       </form>
     )
   }

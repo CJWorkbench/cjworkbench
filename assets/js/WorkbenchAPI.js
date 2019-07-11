@@ -46,7 +46,7 @@ export default class WorkbenchAPI {
    * * SyntaxError if the response is invalid JSON.
    * * DOMException if there's a network error or malformed response.
    */
-  _fetch(url, options) {
+  _fetch (url, options) {
     const realOptions = Object.assign({ credentials: 'include' }, options || {})
 
     const ret = this._serializer
@@ -64,7 +64,7 @@ export default class WorkbenchAPI {
           return null // No content
         }
         if (res.headers.get('content-type') && res.headers.get('content-type').toLowerCase().indexOf('application/json') === -1) {
-          throw new TypeError("Server response is not JSON", res)
+          throw new TypeError('Server response is not JSON', res)
         }
         // throws:
         // SyntaxError (not valid JSON)
@@ -76,7 +76,7 @@ export default class WorkbenchAPI {
     return ret
   }
 
-  _submit(method, url, body, options) {
+  _submit (method, url, body, options) {
     const realOptions = Object.assign(
       { method: method, headers: apiHeaders },
       { body: JSON.stringify(body) },
@@ -85,19 +85,19 @@ export default class WorkbenchAPI {
     return this._fetch(url, realOptions)
   }
 
-  _put(url, body, options) {
+  _put (url, body, options) {
     return this._submit('PUT', url, body, options)
   }
 
-  _post(url, body, options) {
+  _post (url, body, options) {
     return this._submit('POST', url, body, options)
   }
 
-  _delete(url, options) {
+  _delete (url, options) {
     return this._submit('delete', url, null, { body: '' })
   }
 
-  deleteWorkflow(workflowId) {
+  deleteWorkflow (workflowId) {
     return this._delete(`/api/workflows/${workflowId}`)
   }
 
@@ -122,7 +122,7 @@ export default class WorkbenchAPI {
     })
   }
 
-  addModule (tabSlug, moduleIdName, index, values={}) {
+  addModule (tabSlug, moduleIdName, index, values = {}) {
     return this._callExpectingNull('tab.add_module', {
       tabSlug,
       moduleIdName,
@@ -142,7 +142,7 @@ export default class WorkbenchAPI {
     return this._callExpectingNull('tab.duplicate', { tabSlug, slug, name })
   }
 
-  deleteModule(wfModuleId) {
+  deleteModule (wfModuleId) {
     return this._callExpectingNull('wf_module.delete', {
       wfModuleId
     })
@@ -154,7 +154,7 @@ export default class WorkbenchAPI {
     })
   }
 
-  setWorkflowPublic(workflowId, isPublic) {
+  setWorkflowPublic (workflowId, isPublic) {
     return this._post(`/api/workflows/${workflowId}`, { 'public': isPublic })
   }
 
@@ -181,24 +181,23 @@ export default class WorkbenchAPI {
   }
 
   render (wfModuleId, startrow, endrow) {
-    let url = '/api/wfmodules/' + wfModuleId + '/render';
+    let url = '/api/wfmodules/' + wfModuleId + '/render'
 
     if (startrow || endrow) {
-      url += "?";
+      url += '?'
       if (startrow) {
-        url += "startrow=" + startrow;
+        url += 'startrow=' + startrow
       }
       if (endrow) {
-        if (startrow)
-          url += "&";
-        url += "endrow=" + endrow;
+        if (startrow) { url += '&' }
+        url += 'endrow=' + endrow
       }
     }
 
     return this._fetch(url)
   }
 
-  valueCounts(wfModuleId, column) {
+  valueCounts (wfModuleId, column) {
     return this._fetch(`/api/wfmodules/${wfModuleId}/value-counts?column=${encodeURIComponent(column)}`)
       .catch(err => {
         if (err instanceof RangeError) {
@@ -210,11 +209,11 @@ export default class WorkbenchAPI {
       .then(json => json.values)
   }
 
-  output(wfModuleId) {
+  output (wfModuleId) {
     return this._fetch(`/api/wfmodules/${wfModuleId}/output`)
   }
 
-  getTile(wfModuleId, deltaId, tileRow, tileColumn) {
+  getTile (wfModuleId, deltaId, tileRow, tileColumn) {
     return this._fetch(`/api/wfmodules/${wfModuleId}/v${deltaId}/r${tileRow}/c${tileColumn}.json`)
   }
 
@@ -257,7 +256,7 @@ export default class WorkbenchAPI {
    * other shenanigans that prevent the selection from happening, as it doesn't
    * affect any data.
    */
-  setSelectedWfModule (wfModuleId ) {
+  setSelectedWfModule (wfModuleId) {
     return this._callExpectingNull('workflow.set_position', {
       wfModuleId
     })
@@ -276,24 +275,24 @@ export default class WorkbenchAPI {
     })
   }
 
-  undo(workflowId) {
+  undo (workflowId) {
     return this._callExpectingNull('workflow.undo', {})
   }
 
-  redo(workflowId) {
+  redo (workflowId) {
     return this._callExpectingNull('workflow.redo', {})
   }
 
-  duplicateWorkflow(workflowId) {
+  duplicateWorkflow (workflowId) {
     return this._post(`/api/workflows/${workflowId}/duplicate`, null)
   }
 
-  deleteWfModuleNotifications(wfModuleId) {
+  deleteWfModuleNotifications (wfModuleId) {
     // TODO websocket-ize
     return this._delete(`/api/wfmodules/${wfModuleId}/notifications`)
   }
 
-  importModuleFromGitHub(url) {
+  importModuleFromGitHub (url) {
     return this._post('/api/importfromgithub/', { url })
       .then(json => {
         // Turn OK {'error': 'no can do'} into a Promise Error
@@ -319,7 +318,7 @@ export default class WorkbenchAPI {
       param
     })
       .then(
-        (({ token }) => token), // token may be null
+        ({ token }) => token, // token may be null
         (err) => {
           console.warn('Server did not generate OAuth token:', err)
           return null
@@ -371,7 +370,7 @@ export default class WorkbenchAPI {
     const interval = window.setInterval(() => {
       if (!popup || popup.closed || isOauthFinished(popup)) {
         if (popup && !popup.closed) popup.close()
-        window.clearInterval(interval);
+        window.clearInterval(interval)
       }
     }, 100)
   }

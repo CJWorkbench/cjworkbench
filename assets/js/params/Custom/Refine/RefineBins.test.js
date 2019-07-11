@@ -9,7 +9,7 @@ describe('RefineBins', () => {
     { name: 'x', isSelected: false, count: 2, bucket: { x: 1, y: 1 } }
   ]
 
-  const wrapper = (extraProps={}) => mount(
+  const wrapper = (extraProps = {}) => mount(
     <RefineBins
       bins={testBins}
       onChange={jest.fn()}

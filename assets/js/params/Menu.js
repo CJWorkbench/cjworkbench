@@ -23,7 +23,7 @@ export default class MenuParam extends React.PureComponent {
     this.props.onChange(ev.target.value)
   }
 
-  render() {
+  render () {
     const { items, name, fieldId, label, enumOptions, isReadOnly, value } = this.props
 
     const options = enumOptions.map((option, i) => {

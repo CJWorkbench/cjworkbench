@@ -2,14 +2,14 @@ import { createSelector } from 'reselect'
 import { StateWithHelpers } from '../lessons/DoneHelpers'
 import { matchLessonHighlight } from '../util/LessonHighlight'
 
-function isStepDone(sectionTitle, stepIndex, stateWithHelpers, step) {
+function isStepDone (sectionTitle, stepIndex, stateWithHelpers, step) {
   // Canonical example testJs:
   // `return workflow.selectedWfModule.moduleName === 'Add from URL'`
   const fn = new Function('state', 'workflow', '"use strict"; ' + step.testJs)
   // Give our function a name: makes it easy to debug crashes
   Object.defineProperty(fn, 'name', {
     value: `LessonSection "${sectionTitle}" Step ${stepIndex + 1}`,
-    writable: false,
+    writable: false
   })
 
   try {
@@ -21,7 +21,7 @@ function isStepDone(sectionTitle, stepIndex, stateWithHelpers, step) {
   }
 }
 
-function calculateActiveStep(stateWithHelpers, sections) {
+function calculateActiveStep (stateWithHelpers, sections) {
   // Run each testJs function until one returns false
   for (let sectionIndex = 0; sectionIndex < sections.length; sectionIndex++) {
     const section = sections[sectionIndex]
@@ -32,7 +32,7 @@ function calculateActiveStep(stateWithHelpers, sections) {
         return {
           activeSectionIndex: sectionIndex,
           activeStepIndex: stepIndex,
-          activeStep: step,
+          activeStep: step
         }
       }
     }
@@ -42,7 +42,7 @@ function calculateActiveStep(stateWithHelpers, sections) {
   return {
     activeSectionIndex: null,
     activeStepIndex: null,
-    activeStep: null,
+    activeStep: null
   }
 }
 
@@ -50,7 +50,7 @@ function calculateActiveStep(stateWithHelpers, sections) {
  * Return `false` always, so no component gets lesson-highlighted when there
  * is no lesson.
  */
-function testLessonHighlightButThereIsNoLesson(test) { return false }
+function testLessonHighlightButThereIsNoLesson (test) { return false }
 
 const getWorkflow = ({ workflow }) => workflow
 const getTabs = ({ tabs }) => tabs

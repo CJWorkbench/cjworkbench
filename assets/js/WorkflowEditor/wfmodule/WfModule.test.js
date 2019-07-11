@@ -9,7 +9,6 @@ import { Provider } from 'react-redux'
 import { mockStore } from '../../test-utils'
 import lessonSelector from '../../lessons/lessonSelector'
 
-
 jest.mock('../../lessons/lessonSelector', () => jest.fn()) // same mock in every test :( ... we'll live
 
 describe('WfModule, not read-only mode', () => {
@@ -18,7 +17,7 @@ describe('WfModule, not read-only mode', () => {
   beforeEach(() => {
     mockApi = {
       createOauthAccessToken: jest.fn(),
-      valueCounts: jest.fn(),
+      valueCounts: jest.fn()
     }
   })
 
@@ -37,7 +36,7 @@ describe('WfModule, not read-only mode', () => {
     files: []
   }
 
-  function pspec (idName, type, extraProps={}) {
+  function pspec (idName, type, extraProps = {}) {
     return {
       idName,
       name: '',
@@ -56,11 +55,11 @@ describe('WfModule, not read-only mode', () => {
     help_url: 'http://help-url',
     param_fields: [
       pspec('url', 'string'),
-      pspec('menu_select', 'menu', { items: 'Mango|Banana' }),
+      pspec('menu_select', 'menu', { items: 'Mango|Banana' })
     ]
   }
 
-  const wrapper = (extraProps={}) => {
+  const wrapper = (extraProps = {}) => {
     return shallow(
       <WfModule
         isReadOnly={false}
@@ -183,7 +182,7 @@ describe('WfModule, not read-only mode', () => {
   })
 
   it('adds a note', () => {
-    const w = wrapper({ wfModule: { ...wfModule, notes: '' }})
+    const w = wrapper({ wfModule: { ...wfModule, notes: '' } })
 
     expect(w.find('.module-notes.visible')).toHaveLength(0)
 
@@ -195,7 +194,7 @@ describe('WfModule, not read-only mode', () => {
   })
 
   it('deletes a note', () => {
-    const w = wrapper({ wfModule: { ...wfModule, notes: 'some notes' }})
+    const w = wrapper({ wfModule: { ...wfModule, notes: 'some notes' } })
 
     expect(w.find('.module-notes.visible')).toHaveLength(1)
 
@@ -207,7 +206,7 @@ describe('WfModule, not read-only mode', () => {
 
   it('does not show old value during edit when editing ""', () => {
     // https://www.pivotaltracker.com/story/show/163005781
-    const w = wrapper({ wfModule: { ...wfModule, notes: 'some notes' }})
+    const w = wrapper({ wfModule: { ...wfModule, notes: 'some notes' } })
 
     w.find('EditableNotes').simulate('change', { target: { value: '' } })
     expect(w.find('EditableNotes').prop('value')).toEqual('')
@@ -276,7 +275,7 @@ describe('WfModule, not read-only mode', () => {
   })
 
   it('overrides status to busy when a fetch is pending', () => {
-    const w = wrapper({ wfModule: { ...wfModule, nClientRequests: 1 }})
+    const w = wrapper({ wfModule: { ...wfModule, nClientRequests: 1 } })
     expect(w.find('ParamsForm').prop('isWfModuleBusy')).toBe(true)
     expect(w.find('StatusLine').prop('status')).toEqual('busy')
     expect(w.prop('className')).toMatch(/\bstatus-busy\b/)
@@ -326,8 +325,8 @@ describe('WfModule, not read-only mode', () => {
           isZenMode={false}
           isZenModeAllowed={false}
           index={1}
-          wfModule={{ id: 20, module: 'loadurl', is_collapsed: false, status: 'error', params: {}, secrets: {}, error: 'foo', files: [], quick_fixes: [{text: 'Fix', action: 'prependModule', args: ['fixtype', {foo: 'bar'}]}] }}
-          isSelected={true}
+          wfModule={{ id: 20, module: 'loadurl', is_collapsed: false, status: 'error', params: {}, secrets: {}, error: 'foo', files: [], quick_fixes: [{ text: 'Fix', action: 'prependModule', args: ['fixtype', { foo: 'bar' }] }] }}
+          isSelected
           isAfterSelected={false}
           onDragStart={jest.fn()}
           onDragEnd={jest.fn()}
@@ -338,7 +337,7 @@ describe('WfModule, not read-only mode', () => {
     )
 
     w.find('button.quick-fix').simulate('click')
-    expect(mockApi.addModule).toHaveBeenCalledWith('tab-11', 'fixtype', 1, {foo: 'bar'})
+    expect(mockApi.addModule).toHaveBeenCalledWith('tab-11', 'fixtype', 1, { foo: 'bar' })
   })
 
   describe('lesson highlights', () => {
@@ -396,8 +395,8 @@ describe('WfModule, not read-only mode', () => {
             isZenMode={false}
             isZenModeAllowed={false}
             index={1}
-            wfModule={{ id: 20, module: 'loadurl', is_collapsed: false, status: 'error', params: {}, secrets: {}, error: 'foo', files: [], quick_fixes: [{text: 'Fix', action: 'prependModule', args: ['fixtype', {foo: 'bar'}]}] }}
-            isSelected={true}
+            wfModule={{ id: 20, module: 'loadurl', is_collapsed: false, status: 'error', params: {}, secrets: {}, error: 'foo', files: [], quick_fixes: [{ text: 'Fix', action: 'prependModule', args: ['fixtype', { foo: 'bar' }] }] }}
+            isSelected
             isAfterSelected={false}
             onDragStart={jest.fn()}
             onDragEnd={jest.fn()}

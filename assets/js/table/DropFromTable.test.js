@@ -1,8 +1,9 @@
+/* globals describe, expect, it */
 import { moduleParamsBuilders } from './UpdateTableAction'
 
 const func = moduleParamsBuilders.selectcolumns
 
-describe("DropFromTable actions", () => {
+describe('DropFromTable actions', () => {
   it('adds new select module after the given module and sets column parameter', () => {
     const ret = func(null, { columnKey: 'A', keep: false })
     expect(ret).toEqual({ colnames: [ 'A' ], keep: false })

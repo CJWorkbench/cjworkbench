@@ -33,7 +33,7 @@ export default class RefineClusterer extends React.PureComponent {
   static propTypes = {
     bucket: PropTypes.object.isRequired, // { "str": Number(count), ... }
     onProgress: PropTypes.func.isRequired, // onProgress(0.2) => undefined (means 20% clustered)
-    onComplete: PropTypes.func.isRequired, // onComplete(bins) => undefined (bins is [ { name, count, bucket }, ... ])
+    onComplete: PropTypes.func.isRequired // onComplete(bins) => undefined (bins is [ { name, count, bucket }, ... ])
   }
 
   // define _buildSortedBucket before using it in `state = { ... }`
@@ -155,11 +155,11 @@ export default class RefineClusterer extends React.PureComponent {
     if (!algorithm.optionFields) return null
 
     const handlers = {
-      onChange: this.onChangeOption,
+      onChange: this.onChangeOption
     }
 
     return (
-      <div className="method-options form-inline">
+      <div className='method-options form-inline'>
         {algorithm.optionFields(handlers, clustererOptions)}
       </div>
     )
@@ -169,14 +169,14 @@ export default class RefineClusterer extends React.PureComponent {
     const { algorithm } = this.state
 
     return (
-      <div className="refine-clusterer">
+      <div className='refine-clusterer'>
         <legend>Method</legend>
-        <div className="method">
-          <div className="method-select">
+        <div className='method'>
+          <div className='method-select'>
             {this.renderSelect()}
           </div>
-          <div className="method-form">
-            <div className="method-description">
+          <div className='method-form'>
+            <div className='method-description'>
               {algorithm.description}
             </div>
             {this.renderOptions()}

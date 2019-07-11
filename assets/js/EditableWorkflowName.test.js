@@ -5,7 +5,7 @@ import { Provider } from 'react-redux'
 import ConnectedEditableWorkflowName, { EditableWorkflowName } from './EditableWorkflowName'
 
 describe('EditableWorkflowName', () => {
-  const wrapper = (extraProps={}) => {
+  const wrapper = (extraProps = {}) => {
     return shallow(
       <EditableWorkflowName
         value='A'

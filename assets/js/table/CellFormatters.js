@@ -1,5 +1,4 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import { formatLocale as d3FormatLocale } from 'd3-format'
 import EnUsLocale from 'd3-format/locale/en-US.json'
 
@@ -7,10 +6,6 @@ import EnUsLocale from 'd3-format/locale/en-US.json'
 // switching to another version of a table that has the same column with a
 // different type. So all formatters need to support all types. (We don't care
 // about their output. though.)
-const ReactDataGridValuePropType = PropTypes.oneOfType([
-  PropTypes.string.isRequired,
-  PropTypes.number.isRequired
-])
 
 // Line breaks: https://www.unicode.org/reports/tr14/tr14-32.html#BK
 const UnicodeWhitespace = /(?:\r\n|[\r\n\f\v\u0085\u2028\u2029])/sg
@@ -22,10 +17,10 @@ const UnicodeWhitespaceReplacements = {
   '\u2028': '↵',
   '\u2029': '¶',
   '\f': '↡',
-  '\v': '⭿',
+  '\v': '⭿'
 }
 
-export function TextCellFormatter ({value}) {
+export function TextCellFormatter ({ value }) {
   if (value === null) {
     return <div className='cell-null cell-text' />
   }
@@ -48,7 +43,7 @@ export function TextCellFormatter ({value}) {
  */
 function parseFormat (format) {
   try {
-    let [ _, prefix, specifierString, suffix ] = /(.*?)\{:?(.*)\}(.*)/.exec(format)
+    const [ , prefix, specifierString, suffix ] = /(.*?)\{:?(.*)\}(.*)/.exec(format)
     return { prefix, suffix, specifierString }
   } catch (e) {
     if (e instanceof TypeError) {
@@ -74,7 +69,7 @@ export function NumberCellFormatter (format) {
     f = d3Format
   }
 
-  return ({value}) => {
+  return ({ value }) => {
     if (value === null) {
       return <div className='cell-null cell-number' />
     }
@@ -88,7 +83,7 @@ export function NumberCellFormatter (format) {
 }
 
 const ZeroEndOfDate = /(?:(?:T00:00)?:00)?\.000Z$/
-export function DatetimeCellFormatter ({value}) {
+export function DatetimeCellFormatter ({ value }) {
   // value is a string: -- ISO8601-formatted date
   if (value === null) {
     return <div className='cell-null cell-datetime' />
@@ -113,7 +108,7 @@ export function DatetimeCellFormatter ({value}) {
 const TypeToCellFormatter = {
   'text': () => TextCellFormatter,
   'datetime': () => DatetimeCellFormatter,
-  'number': ({ format }) => NumberCellFormatter(format),
+  'number': ({ format }) => NumberCellFormatter(format)
 }
 
 export function columnToCellFormatter (column) {

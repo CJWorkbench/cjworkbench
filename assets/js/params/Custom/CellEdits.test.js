@@ -7,10 +7,10 @@ describe('CellEdits', () => {
     const wrapper = mount(
       <CellEdits
         value={[
-          { row: 3, col: 'foo', value:'bar' },
-          { row: 6, col: 'food', value:'sandwich' },
-          { row: 5, col: 'foo', value:'gak' },
-          { row: 17,  col: 'food', value:'pizza' }
+          { row: 3, col: 'foo', value: 'bar' },
+          { row: 6, col: 'food', value: 'sandwich' },
+          { row: 5, col: 'foo', value: 'gak' },
+          { row: 17, col: 'food', value: 'pizza' }
         ]}
       />
     )
@@ -22,14 +22,13 @@ describe('CellEdits', () => {
   })
 
   it('renders empty data', () => {
-     const wrapper = mount(
+    const wrapper = mount(
       <CellEdits value={[]} />
-     )
+    )
 
     expect(wrapper.find('.cell-edits--column')).toHaveLength(0)
     expect(wrapper.find('.cell-edits--row')).toHaveLength(0)
 
     expect(wrapper).toMatchSnapshot()
   })
-
 })

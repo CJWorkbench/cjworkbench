@@ -38,7 +38,7 @@ export class WfModule extends React.PureComponent {
       id_name: PropTypes.string.isRequired,
       help_url: PropTypes.string.isRequired,
       deprecated: PropTypes.shape({
-        message: PropTypes.string.isRequired,
+        message: PropTypes.string.isRequired
       }), // undefined by default
       name: PropTypes.string.isRequired,
       icon: PropTypes.string.isRequired,
@@ -54,7 +54,7 @@ export class WfModule extends React.PureComponent {
     index: PropTypes.number.isRequired,
     wfModule: PropTypes.shape({
       params: PropTypes.object.isRequired,
-      secrets: PropTypes.object.isRequired,
+      secrets: PropTypes.object.isRequired
     }), // null if loading
     inputWfModule: PropTypes.shape({
       id: PropTypes.number.isRequired,
@@ -407,7 +407,7 @@ export class WfModule extends React.PureComponent {
       >
         {notes}
         <h3>{numberFormat.format(index + 1)}</h3>
-        <div className="module-card-and-link">
+        <div className='module-card-and-link'>
           <div className='module-card' draggable={!isReadOnly && !!this.props.onDragStart} onDragStart={this.onDragStart} onDragEnd={this.onDragEnd}>
             <div className='module-card-header'>
               <div className='controls'>
@@ -589,7 +589,7 @@ const mapDispatchToProps = {
   applyQuickFix: quickFixAction,
   setWfModuleNotes: setWfModuleNotesAction,
   deleteSecret: deleteSecretAction,
-  startCreateSecret: startCreateSecretAction,
+  startCreateSecret: startCreateSecretAction
 }
 
 export default connect(

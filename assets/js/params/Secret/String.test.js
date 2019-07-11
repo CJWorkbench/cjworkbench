@@ -1,9 +1,10 @@
+/* globals afterEach, beforeEach, describe, expect, it, jest */
 import React from 'react'
 import String_ from './String'
 import { mount } from 'enzyme'
 
 describe('Secret/String', () => {
-  const wrapper = (extraProps={}) => {
+  const wrapper = (extraProps = {}) => {
     return mount(
       <String_
         isReadOnly={false}
@@ -27,7 +28,7 @@ describe('Secret/String', () => {
 
   describe('without a secret', () => {
     let w
-    beforeEach(() => w = wrapper({ secretMetadata: null }))
+    beforeEach(() => { w = wrapper({ secretMetadata: null }) })
     afterEach(() => { w.unmount(); w = null })
 
     it('renders a label', () => {
@@ -66,7 +67,7 @@ describe('Secret/String', () => {
 
   describe('with a secret', () => {
     let w
-    beforeEach(() => w = wrapper({ secretMetadata: { name: '2019-06-10T15:40:12.000Z' }}))
+    beforeEach(() => { w = wrapper({ secretMetadata: { name: '2019-06-10T15:40:12.000Z' } }) })
     afterEach(() => { w.unmount(); w = null })
 
     it('renders the label', () => {

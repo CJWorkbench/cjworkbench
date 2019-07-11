@@ -10,16 +10,16 @@ describe('LessonSection', () => {
     steps: [
       { html: 'Step One-Ay' },
       { html: 'Step One-<strong>Bee</strong>' },
-      { html: 'Step One-<strong>See?</strong>' },
+      { html: 'Step One-<strong>See?</strong>' }
     ],
     setLessonHighlight: jest.fn(),
     index: 1,
     isCurrent: true,
     activeStepIndex: 2,
-    activeSectionIndex: 1,
+    activeSectionIndex: 1
   }
 
-  function wrapper(extraProps) {
+  function wrapper (extraProps) {
     return shallow(<LessonSection {...commonProps} {...(extraProps || {})} />)
   }
 

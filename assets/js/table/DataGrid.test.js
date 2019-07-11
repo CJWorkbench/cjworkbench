@@ -1,8 +1,9 @@
+/* globals describe, expect, it, jest */
 import React from 'react'
 import { Provider } from 'react-redux'
 import { mount } from 'enzyme'
 import { mockStore, tick } from '../test-utils'
-import DataGrid, { ColumnHeader, EditableColumnName } from './DataGrid'
+import DataGrid from './DataGrid'
 
 describe('DataGrid', () => {
   // Column names are chosen to trigger
@@ -37,7 +38,7 @@ describe('DataGrid', () => {
   }
 
   // mount() so we get componentDidMount, componentWillUnmount()
-  const wrapper = async (extraProps={}, httpResponses=[ testRows ]) => {
+  const wrapper = async (extraProps = {}, httpResponses = [ testRows ]) => {
     const defaultLoadRows = jest.fn()
     for (const httpResponse of httpResponses) {
       defaultLoadRows.mockReturnValueOnce(Promise.resolve(httpResponse))
@@ -46,7 +47,7 @@ describe('DataGrid', () => {
     // mock store for <ColumnHeader>, a descendent
     const store = mockStore({ modules: {} })
 
-    const nRows = httpResponses.reduce(((s, j) => s + j.rows.length), 0)
+    const nRows = httpResponses.reduce((s, j) => s + j.rows.length, 0)
 
     const ret = mount(
       <Provider store={store}>
@@ -77,7 +78,7 @@ describe('DataGrid', () => {
   it('Renders the grid', async () => {
     const loadRows = jest.fn()
     let resolveHttpRequest
-    loadRows.mockReturnValueOnce(new Promise(resolve => resolveHttpRequest = resolve))
+    loadRows.mockReturnValueOnce(new Promise(resolve => { resolveHttpRequest = resolve }))
 
     const tree = await wrapper({ loadRows, nRows: 2 })
 
@@ -145,7 +146,7 @@ describe('DataGrid', () => {
     expect(tree.find('.column-letter').at(1).text()).toEqual('B')
     expect(tree.find('.column-letter').at(2).text()).toEqual('C')
     expect(tree.find('.column-letter').at(3).text()).toEqual('D')
-	})
+  })
 
   it('should respect isReadOnly for rename columns', async () => {
     const tree = await wrapper({ isReadOnly: true })
@@ -195,14 +196,14 @@ describe('DataGrid', () => {
   })
 
   it('should lazily load rows as needed', async () => {
-    function result (start=0) {
+    function result (start = 0) {
       const arr = []
       for (let i = 0; i < 200; i++) {
         arr[i] = {
           'aaa': null,
           'bbbb': String(start + i),
           'getCell': null,
-          'select-row': null,
+          'select-row': null
         }
       }
       return {

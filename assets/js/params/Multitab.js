@@ -26,7 +26,6 @@ export default class MultitabParam extends React.PureComponent {
     const tabOptions = tabs
       .filter(({ slug }) => slug !== currentTab)
       .map(({ slug, name }) => ({ label: name, value: slug }))
-    const selectedOptions = tabOptions.filter(t => value.includes(t.value))
 
     return (
       <React.Fragment>

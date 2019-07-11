@@ -39,11 +39,11 @@ describe('Lesson', () => {
 
   const navProps = {
     activeSectionIndex: 0,
-    activeStepIndex: 0,
+    activeStepIndex: 0
   }
 
   describe('shallow', () => {
-    function wrapper(extraProps) {
+    function wrapper (extraProps) {
       return shallow(
         <Lesson {...lesson} {...navProps} {...(extraProps || {})} />
       )
@@ -109,7 +109,7 @@ describe('Lesson', () => {
 
   describe('navigation', () => {
     // integration-test-y: this tests that Lesson and LessonNav play nice
-    function wrapper(extraProps) {
+    function wrapper (extraProps) {
       return mount(
         <Lesson {...lesson} {...navProps} {...(extraProps || {})} />
       )

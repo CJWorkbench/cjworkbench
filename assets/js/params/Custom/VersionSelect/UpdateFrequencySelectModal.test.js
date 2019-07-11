@@ -4,7 +4,7 @@ import { mount } from 'enzyme'
 import { tick } from '../../../test-utils'
 
 describe('UpdateFrequencySelectModal', () => {
-  const wrapper = (props={}) => {
+  const wrapper = (props = {}) => {
     return mount(
       <UpdateFrequencySelectModal
         workflowId={123}
@@ -39,7 +39,7 @@ describe('UpdateFrequencySelectModal', () => {
     // retry, and ultimately end up happy
     const w = wrapper({
       isAutofetch: false,
-      trySetAutofetch: jest.fn(() => Promise.resolve({ value: { isAutofetch: false, fetchInterval: 3600, quotaExceeded: { maxFetchesPerDay: 500, nFetchesPerDay: 600, autofetches: [] }}}))
+      trySetAutofetch: jest.fn(() => Promise.resolve({ value: { isAutofetch: false, fetchInterval: 3600, quotaExceeded: { maxFetchesPerDay: 500, nFetchesPerDay: 600, autofetches: [] } } }))
     })
     w.find('input[name="isAutofetch"][value="true"]').simulate('change', { target: { checked: true, value: 'true' } })
     expect(w.find('fieldset.autofetch').prop('disabled')).toBe(true) // we're submitting

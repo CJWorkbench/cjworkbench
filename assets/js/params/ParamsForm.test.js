@@ -1,9 +1,9 @@
+/* globals describe, expect, it, jest */
 import React from 'react'
 import ParamsForm from './ParamsForm'
-import Param from './Param'
 import { shallow } from 'enzyme'
 
-const field = (idName, type, extra={}) => ({
+const field = (idName, type, extra = {}) => ({
   idName,
   name: '',
   type: type,
@@ -13,7 +13,7 @@ const field = (idName, type, extra={}) => ({
 })
 
 describe('ParamsForm', () => {
-  const wrapper = (extraProps={}) => shallow(
+  const wrapper = (extraProps = {}) => shallow(
     <ParamsForm
       isReadOnly={false}
       isZenMode={false}
@@ -46,7 +46,7 @@ describe('ParamsForm', () => {
         fields: [
           field('a', 'string'),
           field('b', 'string'),
-          field('c', 'string'),
+          field('c', 'string')
         ],
         value: {
           a: 'A',
@@ -69,11 +69,11 @@ describe('ParamsForm', () => {
       const w = wrapper({
         fields: [
           field('a', 'string'),
-          field('b', 'string'),
+          field('b', 'string')
         ],
         value: {
           a: 'A',
-          b: 'B',
+          b: 'B'
         },
         edits: {
           a: 'x',
@@ -88,13 +88,13 @@ describe('ParamsForm', () => {
     it('should not call onChange on no-op change', () => {
       const w = wrapper({
         fields: [
-          field('a', 'string'),
+          field('a', 'string')
         ],
         value: {
-          a: 'A',
+          a: 'A'
         },
         edits: {
-          a: 'x',
+          a: 'x'
         }
       })
       w.find('Param[name="a"]').prop('onChange')('a', 'x')
@@ -123,7 +123,7 @@ describe('ParamsForm', () => {
           })
         ],
         value: {},
-        secrets: {},
+        secrets: {}
       })
       expect(w.find('Param[name="a"]').prop('secretMetadata')).toBe(null)
     })
@@ -165,7 +165,7 @@ describe('ParamsForm', () => {
             { value: 'mango', label: 'Mango' },
             'separator',
             { value: 'banana', label: 'Banana' }
-          ]}),
+          ] }),
           field('testme', 'string', { visibleIf: { idName: 'menu_select', value: ['banana', 'orange'] } })
         ],
         value: {
@@ -183,7 +183,7 @@ describe('ParamsForm', () => {
             { value: 'mango', label: 'Mango' },
             'separator',
             { value: 'banana', label: 'Banana' }
-          ]}),
+          ] }),
           field('testme', 'string', { visibleIf: { idName: 'menu_select', value: ['banana', 'orange'] } })
         ],
         value: {
@@ -201,7 +201,7 @@ describe('ParamsForm', () => {
             { value: 'mango', label: 'Mango' },
             'separator',
             { value: 'banana', label: 'Banana' }
-          ]}),
+          ] }),
           field('testme', 'string', { visibleIf: { idName: 'menu_select', value: [ 'banana', 'orange' ], invert: true } })
         ],
         value: {
@@ -274,7 +274,7 @@ describe('ParamsForm', () => {
       jest.spyOn(global.console, 'warn').mockImplementation(() => {})
       const w = wrapper({
         fields: [
-          field('x', 'string', { visibleIf: { idName: 'x', value: 'x' } }),
+          field('x', 'string', { visibleIf: { idName: 'x', value: 'x' } })
         ],
         value: { x: 'x' }
       })
@@ -287,7 +287,7 @@ describe('ParamsForm', () => {
       const w = wrapper({
         fields: [
           field('x', 'string', { visibleIf: { idName: 'y', value: 'y' } }),
-          field('y', 'string', { visibleIf: { idName: 'x', value: 'x' } }),
+          field('y', 'string', { visibleIf: { idName: 'x', value: 'x' } })
         ],
         value: { x: 'x', y: 'y' }
       })

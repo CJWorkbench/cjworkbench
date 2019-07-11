@@ -96,7 +96,7 @@ function startUpload (url, headers, blob, onProgress) {
 export default class UploadManager {
   constructor (websocket) {
     this.websocket = websocket
-    this.inProgress = {}  // wfModuleId => cancel callback
+    this.inProgress = {} // wfModuleId => cancel callback
   }
 
   /**
@@ -182,9 +182,9 @@ export default class UploadManager {
       const nParts = Math.ceil(file.size / MultipartPartSize) // also this is the last valid partNumber
 
       const partProgress = new Uint32Array(nParts) // partNumber-1 => nBytesUploaded, starting at 0
-      function setPartProgress(partNumber, nBytesUploaded) {
+      function setPartProgress (partNumber, nBytesUploaded) {
         partProgress[partNumber - 1] = nBytesUploaded
-        const nBytesTotal = partProgress.reduce(((acc, v) => acc + v), 0)
+        const nBytesTotal = partProgress.reduce((acc, v) => acc + v, 0)
         onProgress(nBytesTotal)
       }
       if (aborted) return null

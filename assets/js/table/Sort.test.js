@@ -1,8 +1,9 @@
+/* globals describe, expect, it */
 import { moduleParamsBuilders } from './UpdateTableAction'
 
 const func = moduleParamsBuilders['sort']
 
-describe("Sort actions", () => {
+describe('Sort actions', () => {
   it('adds new sort module', () => {
     const ret = func(null, { columnKey: 'A', is_ascending: true })
     expect(ret).toEqual({ sort_columns: [{ colname: 'A', is_ascending: true }], keep_top: '' })

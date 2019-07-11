@@ -96,7 +96,6 @@ class OpenModal extends React.PureComponent {
         ev.preventDefault()
         ev.stopPropagation()
         this.props.toggle(ev)
-        return
     }
   }
 
@@ -112,7 +111,7 @@ class OpenModal extends React.PureComponent {
 
     return ReactDOM.createPortal((
       <ModalContext.Provider value={modalContext}>
-        <div className='modal-backdrop'/>
+        <div className='modal-backdrop' />
         <div
           className={classNames.join(' ')}
           ref={this.modalRef}
@@ -122,7 +121,7 @@ class OpenModal extends React.PureComponent {
           role='dialog'
         >
           <div className={dialogClassNames.join(' ')} role='document'>
-            <div className='modal-content' children={children}/>
+            <div className='modal-content' children={children} />
           </div>
         </div>
       </ModalContext.Provider>

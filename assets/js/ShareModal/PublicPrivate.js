@@ -22,7 +22,7 @@ export default class PublicPrivate extends React.PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired, // are we owner? Otherwise, we can't edit the ACL
     isPublic: PropTypes.bool.isRequired,
-    setIsPublic: PropTypes.func.isRequired, // func(isPublic) => undefined
+    setIsPublic: PropTypes.func.isRequired // func(isPublic) => undefined
   }
 
   setIsPublic = (ev) => {

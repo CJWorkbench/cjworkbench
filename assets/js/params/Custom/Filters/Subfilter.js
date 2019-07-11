@@ -11,7 +11,7 @@ const CaseSensitiveOperations = [
   'text_is_exactly',
   'text_contains_regex',
   'text_does_not_contain_regex',
-  'text_is_exactly_regex',
+  'text_is_exactly_regex'
 ]
 
 export default class Subfilter extends React.PureComponent {

@@ -10,13 +10,13 @@ export default class RefineModal extends React.PureComponent {
   static propTypes = {
     bucket: PropTypes.object.isRequired, // { "str": Number(count), ... }
     onClose: PropTypes.func.isRequired, // onClose() => undefined
-    onSubmit: PropTypes.func.isRequired, // onSubmit({ value1: newName1, value2: newName1, ... }) => undefined
+    onSubmit: PropTypes.func.isRequired // onSubmit({ value1: newName1, value2: newName1, ... }) => undefined
   }
 
   state = {
     // One of clustererProgress or bins is always set; the other is always null
     clustererProgress: 0, // Number from 0 to 1 while clustering
-    bins: null, // array of { name, isSelected, count, bucket } objects after clustering
+    bins: null // array of { name, isSelected, count, bucket } objects after clustering
   }
 
   onClustererProgress = (clustererProgress) => {
@@ -56,7 +56,7 @@ export default class RefineModal extends React.PureComponent {
     const canSubmit = nBinsSelected > 0
 
     return (
-      <Modal className="refine-modal" size='lg' isOpen fade={false} toggle={onClose}>
+      <Modal className='refine-modal' size='lg' isOpen fade={false} toggle={onClose}>
         <ModalHeader toggle={onClose}>CLUSTER</ModalHeader>
         <ModalBody>
           <RefineClusterer
@@ -68,20 +68,20 @@ export default class RefineModal extends React.PureComponent {
         </ModalBody>
         <ModalFooter>
           <RefineStatus clustererProgress={clustererProgress} nBinsTotal={nBinsTotal} />
-          <div className="actions">
+          <div className='actions'>
             <button
               type='button'
               name='close'
               className='action-button button-gray'
               onClick={onClose}
-              >Cancel</button>
+            >Cancel</button>
             <button
               name='submit'
               type='button'
               className='action-button button-blue'
               onClick={this.submit}
               disabled={!canSubmit}
-              >Merge selected</button>
+            >Merge selected</button>
           </div>
         </ModalFooter>
       </Modal>

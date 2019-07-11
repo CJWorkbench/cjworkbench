@@ -16,7 +16,7 @@ describe('UpdateFrequencySelect', () => {
       isEmailUpdates: false,
       fetchInterval: 300,
       setEmailUpdates: jest.fn(),
-      trySetAutofetch: jest.fn(),
+      trySetAutofetch: jest.fn()
     }
 
     let dateSpy
@@ -86,7 +86,7 @@ describe('UpdateFrequencySelect', () => {
       const store = {
         getState: () => sampleState,
         dispatch: jest.fn(),
-        subscribe: jest.fn(),
+        subscribe: jest.fn()
       }
       wrapper = mount(
         <Provider store={store}>
@@ -110,13 +110,13 @@ describe('UpdateFrequencySelect', () => {
           wfModules: {}
         }),
         dispatch: jest.fn(),
-        subscribe: jest.fn(),
+        subscribe: jest.fn()
       }
       wrapper = mount(
         <Provider store={store}>
           <ConnectedUpdateFrequencySelect
             wfModuleId={212}
-            />
+          />
         </Provider>
       )
       wrapper.find('a[title="change auto-update settings"]').simulate('click')

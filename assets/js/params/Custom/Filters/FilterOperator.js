@@ -7,7 +7,7 @@ class OneOperator extends React.PureComponent {
     name: PropTypes.string.isRequired,
     operator: OperatorPropType.isRequired,
     checked: PropTypes.bool.isRequired,
-    onClick: PropTypes.func.isRequired,
+    onClick: PropTypes.func.isRequired
   }
 
   onClick = () => {
@@ -36,7 +36,7 @@ export default class FilterOperator extends React.PureComponent {
     isReadOnly: PropTypes.bool.isRequired,
     name: PropTypes.string.isRequired,
     value: OperatorPropType.isRequired,
-    onChange: PropTypes.func.isRequired, // onChange('add' or 'or') => undefined
+    onChange: PropTypes.func.isRequired // onChange('add' or 'or') => undefined
   }
 
   render () {

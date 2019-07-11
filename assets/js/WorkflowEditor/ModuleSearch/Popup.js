@@ -120,18 +120,18 @@ const PopperModifiers = {
       let maxHeight
       if (data.placement === 'bottom') {
         maxHeight = Math.floor(
-          window.innerHeight
-          - padding
-          - refBottom
+          window.innerHeight -
+          padding -
+          refBottom
         )
       } else {
         // since prompt is below and we're placing above, promptHeight doesn't
         // actually cost any space and doesn't factor in to maxHeight.
         const promptHeight = data.instance.popper.querySelector('form').getBoundingClientRect().height
         maxHeight = Math.floor(
-          refBottom
-          - padding
-          + promptHeight
+          refBottom -
+          padding +
+          promptHeight
         )
       }
 
@@ -196,14 +196,14 @@ const PopperModifiersLastButton = {
       let maxHeight
       if (data.placement === 'bottom') {
         maxHeight = (
-          window.innerHeight
-          - padding
-          - Math.floor(refCenterY - promptHeight / 2)
+          window.innerHeight -
+          padding -
+          Math.floor(refCenterY - promptHeight / 2)
         )
       } else {
         maxHeight = (
-          Math.floor(refCenterY + promptHeight / 2)
-          - padding
+          Math.floor(refCenterY + promptHeight / 2) -
+          padding
         )
       }
 
@@ -238,7 +238,7 @@ const PopperModifiersLastButton = {
       popper.top += mult * offset
       return data
     }
-  },
+  }
 }
 
 export class Popup extends React.PureComponent {
@@ -263,7 +263,7 @@ export class Popup extends React.PureComponent {
   componentDidUpdate () {
     // Resize Popper.
     //
-    // Another place this might make sense is componentDidUpdate(). But 
+    // Another place this might make sense is componentDidUpdate(). But
     this.props.onUpdate()
   }
 
@@ -376,7 +376,7 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    addModule(tabSlug, index, moduleIdName) {
+    addModule (tabSlug, index, moduleIdName) {
       const action = addModuleAction(moduleIdName, { tabSlug, index }, {})
       dispatch(action)
     }

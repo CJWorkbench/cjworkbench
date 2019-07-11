@@ -31,12 +31,12 @@ export default class DropdownItem extends React.PureComponent {
 
   static contextType = DropdownContext
 
-  onClick = this.props.onClick ? (
-    (ev) => {
+  onClick = this.props.onClick
+    ? (ev) => {
       this.props.onClick(ev)
       this.context.toggle()
     }
-  ) : undefined
+    : undefined
 
   render () {
     const { children, href, className, icon, active, disabled, ...rest } = this.props

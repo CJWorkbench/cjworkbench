@@ -11,7 +11,7 @@ describe('Renames', () => {
   const columnNames = ['name', 'build_year', 'narrative', 'cornerstone']
   const inputColumns = columnNames.map(name => ({ name }))
 
-  const wrapper = (extraProps={}) => mount(
+  const wrapper = (extraProps = {}) => mount(
     <Renames
       inputColumns={inputColumns}
       wfModuleId={1}
@@ -49,11 +49,11 @@ describe('Renames', () => {
   it('updates when receiving data from elsewhere', () => {
     // related: https://www.pivotaltracker.com/story/show/160661659
     const tree = wrapper({
-      inputColumns: [{name: 'A'}, {name: 'B'}],
+      inputColumns: [{ name: 'A' }, { name: 'B' }],
       value: {}
     })
 
-    tree.setProps({ value: { A: 'C' }})
+    tree.setProps({ value: { A: 'C' } })
     expect(tree.find('.rename-input').get(0).props.value).toEqual('C')
   })
 

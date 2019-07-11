@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 
 const P = PropTypes
 
-function Shape(type, propTypes) {
+function Shape (type, propTypes) {
   return P.shape(Object.assign(
     { type: P.oneOf([ type ]).isRequired }, // hack: only allow the exact given type
     propTypes

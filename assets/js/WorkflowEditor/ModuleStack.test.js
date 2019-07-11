@@ -14,7 +14,7 @@ describe('ModuleStack', () => {
       moveModuleByIndex={jest.fn()}
       removeModule={jest.fn()}
       testLessonHighlightIndex={jest.fn((i) => false)}
-      paneRef={{current: null}}
+      paneRef={{ current: null }}
       {...extraProps}
     />
   )

@@ -12,17 +12,17 @@ const GroupOrder = {
   'Analyze': 4,
   'Visualize': 5,
   'Code': 6,
-  'Add data': 1, // TODO nix this category for non-`loads_data` modules
+  'Add data': 1 // TODO nix this category for non-`loads_data` modules
 }
 
-function compareGroups(a, b) {
-  const ai = GroupOrder[a.name] || 99;
-  const bi = GroupOrder[b.name] || 99;
-  return ai - bi;
+function compareGroups (a, b) {
+  const ai = GroupOrder[a.name] || 99
+  const bi = GroupOrder[b.name] || 99
+  return ai - bi
 }
 
 // Function to sort modules in alphabetical order
-function compareModules(a, b) {
+function compareModules (a, b) {
   if (a.name.toLowerCase() < b.name.toLowerCase()) return -1
   else if (a.name.toLowerCase() > b.name.toLowerCase()) return 1
   else return 0
@@ -31,7 +31,7 @@ function compareModules(a, b) {
 /**
  * Return [ { name: 'Clean', modules: [ ... ] }, ... ]
  */
-function groupModules(items) {
+function groupModules (items) {
   const ret = []
   const temp = {}
   items.sort(compareModules)
@@ -52,14 +52,14 @@ function groupModules(items) {
 }
 
 const escapeRegexCharacters = (str) => {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 
 export default class SearchResults extends React.PureComponent {
   static propTypes = {
     search: PropTypes.string.isRequired, // search string, to filter modules
     modules: PropTypes.arrayOf(ModulePropType.isRequired).isRequired,
-    onClickModule: PropTypes.func.isRequired, // func(moduleIdName) => undefined
+    onClickModule: PropTypes.func.isRequired // func(moduleIdName) => undefined
   }
 
   state = {

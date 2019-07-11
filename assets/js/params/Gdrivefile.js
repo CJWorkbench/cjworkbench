@@ -6,12 +6,11 @@ const MimeTypesString = [
   'text/csv',
   'text/tab-separated-values',
   'application/vnd.ms-excel',
-  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 ].join(',')
 
-
 class PickerFactory {
-  constructor() {
+  constructor () {
     this.picker = null
   }
 
@@ -30,7 +29,7 @@ class PickerFactory {
    *
    * If the singleton Picker is already open, this is a no-op.
    */
-  open(accessToken, onPick, onCancel) {
+  open (accessToken, onPick, onCancel) {
     if (this.picker !== null) return
 
     const onEvent = (data) => {
@@ -78,14 +77,13 @@ class PickerFactory {
   /**
    * Close the singleton picker, if it is open.
    */
-  close() {
+  close () {
     if (this.picker !== null) {
       this.picker.dispose()
       this.picker = null
     }
   }
 }
-
 
 function FileInfo ({ id, name, url }) {
   if (!id) {
@@ -99,7 +97,6 @@ function FileInfo ({ id, name, url }) {
   }
 }
 
-
 let googleApiLoadedPromise = null
 /**
  * Load Google APIs globally (if they haven't been loaded already); return
@@ -108,13 +105,13 @@ let googleApiLoadedPromise = null
  * This returns a new PickerFactory each call, but it only loads the global
  * `google` and `gapi` variables once.
  */
-async function loadDefaultPickerFactory() {
+async function loadDefaultPickerFactory () {
   if (googleApiLoadedPromise === null) {
     googleApiLoadedPromise = new Promise((resolve, reject) => {
       const callbackName = `Gdrivefile_onload_${String(Math.random()).slice(2, 10)}`
-      window[callbackName] = function() {
+      window[callbackName] = function () {
         delete window[callbackName]
-        gapi.load('picker', function() {
+        gapi.load('picker', function () {
           resolve()
         })
       }
@@ -133,7 +130,6 @@ async function loadDefaultPickerFactory() {
   return new PickerFactory()
 }
 
-
 export default class Gdrivefile extends React.PureComponent {
   static propTypes = {
     createOauthAccessToken: PropTypes.func.isRequired, // func() => Promise[str or null]
@@ -145,13 +141,13 @@ export default class Gdrivefile extends React.PureComponent {
       url: PropTypes.string.isRequired
     }), // may be empty/null
     onChange: PropTypes.func.isRequired, // func({ id, name, url }) => undefined
-    loadPickerFactory: PropTypes.func, // func() => Promise[PickerFactory], default uses Google APIs
+    loadPickerFactory: PropTypes.func // func() => Promise[PickerFactory], default uses Google APIs
   }
 
   state = {
     pickerFactory: null,
     loadingAccessToken: false,
-    unauthenticated: false, // true after the server says we're unauthenticated
+    unauthenticated: false // true after the server says we're unauthenticated
   }
 
   /**
@@ -165,21 +161,21 @@ export default class Gdrivefile extends React.PureComponent {
    * Each call returns a new token. Only the most-recent returned token is
    * valid.
    */
-  fetchAccessToken() {
+  fetchAccessToken () {
     const secretMetadata = this.props.secretMetadata
     const secretName = secretMetadata.name
 
     if (!secretMetadata) {
       this.setState({
         loadingAccessToken: false,
-        unauthenticated: true,
+        unauthenticated: true
       })
       return Promise.resolve(null)
     }
 
     this.setState({
       loadingAccessToken: true,
-      unauthenticated: false,
+      unauthenticated: false
     })
 
     return this.props.createOauthAccessToken()
@@ -195,13 +191,13 @@ export default class Gdrivefile extends React.PureComponent {
 
         this.setState({
           loadingAccessToken: false,
-          unauthenticated: accessTokenOrNull === null,
+          unauthenticated: accessTokenOrNull === null
         })
         return accessTokenOrNull
       })
   }
 
-  loadPickerFactory() {
+  loadPickerFactory () {
     const loadPickerFactory = this.props.loadPickerFactory || loadDefaultPickerFactory
     loadPickerFactory().then(pf => {
       if (this._isUnmounted) return
@@ -209,11 +205,11 @@ export default class Gdrivefile extends React.PureComponent {
     })
   }
 
-  componentDidMount() {
+  componentDidMount () {
     this.loadPickerFactory()
   }
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     if (this.state.pickerFactory) {
       this.state.pickerFactory.close()
       // we leak window.gapi, but that's probably fine
@@ -242,22 +238,22 @@ export default class Gdrivefile extends React.PureComponent {
     // do nothing
   }
 
-  render() {
+  render () {
     const { pickerFactory, loadingAccessToken, unauthenticated } = this.state
     const { value, secretMetadata, isReadOnly } = this.props
 
     if (!isReadOnly) {
       if (loadingAccessToken || !pickerFactory) {
         return (
-          <a className='file-info'><p className="loading">Loading...</p></a>
+          <a className='file-info'><p className='loading'>Loading...</p></a>
         )
       } else if (unauthenticated) {
         return (
-          <a className='file-info'><p className="sign-in-error">failure: please reconnect</p></a>
+          <a className='file-info'><p className='sign-in-error'>failure: please reconnect</p></a>
         )
       } else if (!secretMetadata) {
         return (
-          <a className='file-info'><p className="not-signed-in">(please sign in)</p></a>
+          <a className='file-info'><p className='not-signed-in'>(please sign in)</p></a>
         )
       }
     }

@@ -30,11 +30,11 @@ export const SubfilterPropType = PropTypes.shape({
 export const OperatorPropType = PropTypes.oneOf([ 'and', 'or' ])
 
 export const FilterPropType = PropTypes.shape({
-    operator: OperatorPropType.isRequired,
-    subfilters: PropTypes.arrayOf(SubfilterPropType.isRequired).isRequired
+  operator: OperatorPropType.isRequired,
+  subfilters: PropTypes.arrayOf(SubfilterPropType.isRequired).isRequired
 })
 
 export const FiltersPropType = PropTypes.shape({
-    operator: OperatorPropType.isRequired,
-    filters: PropTypes.arrayOf(FilterPropType.isRequired).isRequired
+  operator: OperatorPropType.isRequired,
+  filters: PropTypes.arrayOf(FilterPropType.isRequired).isRequired
 })

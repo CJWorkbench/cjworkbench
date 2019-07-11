@@ -3,13 +3,13 @@ import Aggregations from './index'
 import { mount } from 'enzyme'
 
 describe('Aggregations', () => {
-  const wrapper = (extraProps={}) => mount(
+  const wrapper = (extraProps = {}) => mount(
     <Aggregations
       isReadOnly={false}
       name='aggregations'
       fieldId='aggregations'
       value={[]}
-      allColumns={[{name: 'A'}, {name: 'B'}, {name: 'C'}]}
+      allColumns={[{ name: 'A' }, { name: 'B' }, { name: 'C' }]}
       onChange={jest.fn()}
       {...extraProps}
     />
@@ -25,7 +25,7 @@ describe('Aggregations', () => {
     w.find('button[name="aggregations[add]"]').simulate('click')
     expect(w.prop('onChange')).toHaveBeenCalledWith([
       { operation: 'size', colname: '', outname: '' },
-      { operation: 'sum', colname: '', outname: '' },
+      { operation: 'sum', colname: '', outname: '' }
     ])
   })
 })

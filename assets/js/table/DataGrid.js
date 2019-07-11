@@ -5,7 +5,6 @@
 
 import React from 'react'
 import PropTypes from 'prop-types'
-import ReactDOM from 'react-dom'
 import ReactDataGrid from 'react-data-grid'
 import debounce from 'debounce'
 import memoize from 'memoize-one'
@@ -49,7 +48,7 @@ function renderNull () {
 
 function mergeSortedArrays (a, b) {
   const c = []
-  for (let i = 0, j = 0; i < a.length || j < b.length; ) {
+  for (let i = 0, j = 0; i < a.length || j < b.length;) {
     if (i === a.length) {
       c.push(b[j])
       j += 1
@@ -90,7 +89,6 @@ class ReactDataGridWithThinnerActionsColumn extends ReactDataGrid {
   }
 }
 
-
 // --- Main component  ---
 
 export default class DataGrid extends React.PureComponent {
@@ -121,7 +119,7 @@ export default class DataGrid extends React.PureComponent {
     //    before rendering the ReactDataGrid. (ReactDataGrid render can take
     //    >1s when there are many columns.)
     gridWidth: null,
-    gridHeight : null,
+    gridHeight: null,
     spinning: false,
     draggingColumnIndex: null,
     loadedRows: []
@@ -342,7 +340,7 @@ export default class DataGrid extends React.PureComponent {
 
   renderGrid () {
     const { gridWidth, gridHeight } = this.state
-    const { selectedRowIndexes, columns, nRows } = this.props
+    const { selectedRowIndexes, nRows } = this.props
 
     const formattedColumns = this.makeFormattedCols(this.state.draggingColumnIndex)
     const rowSelection = getRowSelection(selectedRowIndexes, this.onRowsSelected, this.onRowsDeselected)
@@ -357,10 +355,10 @@ export default class DataGrid extends React.PureComponent {
         minHeight={gridHeight}
         headerRowHeight={68}
         enableCellAutoFocus={false}
-        enableCellSelect={true}
+        enableCellSelect
         selectAllRenderer={renderNull}
         onGridRowsUpdated={this.onGridRowsUpdated}
-        enableRowSelect={true}
+        enableRowSelect
         rowRenderer={Row}
         rowSelection={rowSelection}
       />

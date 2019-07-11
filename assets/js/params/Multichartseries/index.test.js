@@ -75,7 +75,7 @@ describe('Multichartseries', () => {
   it('should not allow removing last column', () => {
     const w = wrapper({ value: [
       { column: 'A', color: '#aaaaaa' }
-    ]})
+    ] })
     expect(w.find('button[title="remove last column"]')).toHaveLength(0)
   })
 

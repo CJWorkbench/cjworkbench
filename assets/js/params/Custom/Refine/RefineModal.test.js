@@ -8,9 +8,9 @@ describe('RefineModal', () => {
   // These are kinda integration-test-y. See RefineClusterer.test.js and
   // RefineBins.test.js for unit tests.
 
-  const wrapper = (extraProps={}) => mount(
+  const wrapper = (extraProps = {}) => mount(
     <RefineModal
-      bucket={{ a: 1, b: 1 } }
+      bucket={{ a: 1, b: 1 }}
       onClose={jest.fn()}
       onSubmit={jest.fn()}
       {...extraProps}

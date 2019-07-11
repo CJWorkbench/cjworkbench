@@ -7,15 +7,15 @@ export default class LessonSection extends React.PureComponent {
     title: PropTypes.string.isRequired,
     html: PropTypes.string.isRequired,
     steps: PropTypes.arrayOf(PropTypes.shape({
-      html: PropTypes.string.isRequired,
+      html: PropTypes.string.isRequired
     })).isRequired,
     isCurrent: PropTypes.bool.isRequired,
     index: PropTypes.number.isRequired, // to compare with activeSectionIndex
     activeSectionIndex: PropTypes.number, // or null
-    activeStepIndex: PropTypes.number, // or null
+    activeStepIndex: PropTypes.number // or null
   }
 
-  _stepStatus(stepIndex) {
+  _stepStatus (stepIndex) {
     const { activeSectionIndex, activeStepIndex } = this.props
     const sectionIndex = this.props.index
 
@@ -39,7 +39,7 @@ export default class LessonSection extends React.PureComponent {
     }
   }
 
-  renderStep(step, index) {
+  renderStep (step, index) {
     const status = this._stepStatus(index)
 
     return (
@@ -47,13 +47,13 @@ export default class LessonSection extends React.PureComponent {
     )
   }
 
-  renderSteps(steps) {
+  renderSteps (steps) {
     if (steps.length === 0) {
       return null
     } else {
       return (
-        <div className="instructions">
-          <ol className="steps lesson-content--1">
+        <div className='instructions'>
+          <ol className='steps lesson-content--1'>
             {steps.map((s, i) => this.renderStep(s, i))}
           </ol>
         </div>
@@ -61,14 +61,14 @@ export default class LessonSection extends React.PureComponent {
     }
   }
 
-  render() {
+  render () {
     const { isCurrent, title, html, steps } = this.props
 
     return (
-      <section className={ isCurrent ? 'current' : 'not-current' }>
-        <a href='/lessons/' className="backToLessons">Training</a>
+      <section className={isCurrent ? 'current' : 'not-current'}>
+        <a href='/lessons/' className='backToLessons'>Training</a>
         <h2>{title}</h2>
-        <div className='description' dangerouslySetInnerHTML={({__html: html})}></div>
+        <div className='description' dangerouslySetInnerHTML={({ __html: html })} />
         { this.renderSteps(steps) }
       </section>
     )

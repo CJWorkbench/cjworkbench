@@ -13,7 +13,7 @@ export default class Tab extends React.PureComponent {
     index: PropTypes.number.isRequired,
     dragging: PropTypes.shape({
       fromIndex: PropTypes.number.isRequired,
-      toIndex: PropTypes.number.isRequired,
+      toIndex: PropTypes.number.isRequired
     }), // or null if not dragging
     onDragStart: PropTypes.func.isRequired, // func(index) => undefined
     onDragHoverIndex: PropTypes.func.isRequired, // func(index) => undefined
@@ -22,7 +22,7 @@ export default class Tab extends React.PureComponent {
     setName: PropTypes.func.isRequired, // func(slug, name) => undefined
     destroy: PropTypes.func.isRequired, // func(slug) => undefined
     duplicate: PropTypes.func.isRequired, // func(slug) => undefined
-    select: PropTypes.func.isRequired, // func(slug) => undefined
+    select: PropTypes.func.isRequired // func(slug) => undefined
   }
 
   inputRef = React.createRef()

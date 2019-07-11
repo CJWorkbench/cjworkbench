@@ -3,7 +3,7 @@ import { mount } from 'enzyme'
 import Button from './Button'
 
 describe('Button', () => {
-  const wrapper = (extraProps={}) => mount(
+  const wrapper = (extraProps = {}) => mount(
     <Button
       tabSlug='tab-1'
       index={2}

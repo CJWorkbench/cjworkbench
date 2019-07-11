@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 export default class RefineStatus extends React.PureComponent {
   static propTypes = {
     clustererProgress: PropTypes.number, // or null when clustered
-    nBinsTotal: PropTypes.number, // or null when clustering
+    nBinsTotal: PropTypes.number // or null when clustering
   }
 
   render () {
@@ -20,7 +20,7 @@ export default class RefineStatus extends React.PureComponent {
     }
 
     return (
-      <div className="refine-status">{statusText}</div>
+      <div className='refine-status'>{statusText}</div>
     )
   }
 }

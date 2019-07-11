@@ -2,12 +2,12 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import TableSwitcher from './TableSwitcher'
 
-function areSameTable(props1, props2) {
+function areSameTable (props1, props2) {
   if (props1 === null && props2 === null) return true // both null => true
   if ((props1 === null) !== (props2 === null)) return false // one null => false
 
-  return props1.wfModuleId === props2.wfModuleId
-    && props1.deltaId === props2.deltaId
+  return props1.wfModuleId === props2.wfModuleId &&
+    props1.deltaId === props2.deltaId
 }
 
 /**
@@ -16,7 +16,7 @@ function areSameTable(props1, props2) {
  * This forces React to re-render new tables and saves React from re-rendering
  * when switching from "loading" to "loaded".
  */
-function tableKey({ wfModuleId, deltaId }) {
+function tableKey ({ wfModuleId, deltaId }) {
   return `table-${wfModuleId}-${deltaId}`
 }
 
@@ -26,8 +26,6 @@ function tableKey({ wfModuleId, deltaId }) {
 function tableProps ({ wfModuleId, deltaId, columns, nRows, status }) {
   return { wfModuleId, deltaId, columns, nRows, status }
 }
-
-const noop = () => null
 
 /**
  * Shows a <TableSwitcher> for the given wfModule+deltaId -- and transitions
@@ -120,9 +118,9 @@ export default class DelayedTableSwitcher extends React.PureComponent {
     return this.props.loadRows(wfModuleId, deltaId, startRow, endRow)
       .finally(() => {
         if (
-          wfModuleId === this.props.wfModuleId
-          && deltaId === this.props.deltaId
-          && !areSameTable(this.props, this.state.loaded)
+          wfModuleId === this.props.wfModuleId &&
+          deltaId === this.props.deltaId &&
+          !areSameTable(this.props, this.state.loaded)
         ) {
           // We have data for our currently-loading table. Mark it "loaded".
           this.setState({ loaded: tableProps(this.props) })
@@ -135,7 +133,6 @@ export default class DelayedTableSwitcher extends React.PureComponent {
     const { loaded } = this.state
 
     let className = 'table-switcher'
-    const tables = []
 
     // Show the last table that has data visible (from state)
     //

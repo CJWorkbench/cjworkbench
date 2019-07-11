@@ -7,7 +7,7 @@ export default class Checkbox extends React.PureComponent {
     label: PropTypes.string.isRequired,
     isReadOnly: PropTypes.bool.isRequired,
     value: PropTypes.bool, // or `null` if server has not given a value
-    onChange: PropTypes.func.isRequired, // func(value) => undefined
+    onChange: PropTypes.func.isRequired // func(value) => undefined
   }
 
   onChange = (ev) => {
@@ -19,7 +19,7 @@ export default class Checkbox extends React.PureComponent {
     const { name, fieldId, label, isReadOnly, value } = this.props
     return (
       <React.Fragment>
-        <div className="checkbox-container">
+        <div className='checkbox-container'>
           <input
             type='checkbox'
             readOnly={isReadOnly}

@@ -43,5 +43,4 @@ describe('Number', () => {
     w.find('input').simulate('change', { target: { value: '' } })
     expect(w.prop('onChange')).toHaveBeenCalledWith(null)
   })
-
 })

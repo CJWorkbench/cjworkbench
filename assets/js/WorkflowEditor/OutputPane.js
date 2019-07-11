@@ -32,7 +32,7 @@ export class OutputPane extends React.Component {
       nRows: PropTypes.number // or null
     }), // or null if no selection
     isPublic: PropTypes.bool.isRequired,
-    isReadOnly: PropTypes.bool.isRequired,
+    isReadOnly: PropTypes.bool.isRequired
   }
 
   /**
@@ -127,7 +127,7 @@ export class OutputPane extends React.Component {
   }
 }
 
-function wfModuleStatus(wfModule) {
+function wfModuleStatus (wfModule) {
   // TODO don't copy/paste from OutputPane.js
   if (wfModule.nClientRequests > 0) {
     // When we've just sent an HTTP request and not received a response,
@@ -200,7 +200,7 @@ function mapStateToProps (state) {
     } : null,
     wfModuleBeforeError,
     isPublic: workflow.public,
-    isReadOnly: workflow.read_only,
+    isReadOnly: workflow.read_only
   }
 }
 

@@ -7,7 +7,7 @@ export default class TabName extends React.PureComponent {
     isReadOnly: PropTypes.bool.isRequired,
     isSelected: PropTypes.bool.isRequired,
     value: PropTypes.string.isRequired,
-    onSubmit: PropTypes.func.isRequired, // func(value) => undefined
+    onSubmit: PropTypes.func.isRequired // func(value) => undefined
   }
 
   state = {
@@ -28,7 +28,6 @@ export default class TabName extends React.PureComponent {
       case 'Escape':
         this.setState({ value: null }) // for onBlur()
         this.props.inputRef.current.blur()
-        return
     }
   }
 

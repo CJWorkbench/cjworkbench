@@ -21,7 +21,7 @@ export class UpdateFrequencySelect extends React.PureComponent {
 
   state = {
     isModalOpen: false,
-    quotaExceeded: null, // JSON response -- contains autofetch info iff we exceeded quota
+    quotaExceeded: null // JSON response -- contains autofetch info iff we exceeded quota
   }
 
   openModal = (ev) => {
@@ -30,7 +30,7 @@ export class UpdateFrequencySelect extends React.PureComponent {
     if (this.props.isAnonymous) return
 
     this.setState({
-      isModalOpen: true,
+      isModalOpen: true
     })
   }
 
@@ -38,13 +38,13 @@ export class UpdateFrequencySelect extends React.PureComponent {
     this.props.updateSettings(settings)
     // TODO keep modal open until server responds with OK?
     this.setState({
-      isModalOpen: false,
+      isModalOpen: false
     })
   }
 
   onClose = () => {
     this.setState({
-      isModalOpen: false,
+      isModalOpen: false
     })
   }
 
@@ -58,13 +58,13 @@ export class UpdateFrequencySelect extends React.PureComponent {
     return trySetAutofetch(wfModuleId, isAutofetch, fetchInterval)
   }
 
-  render() {
+  render () {
     const { lastCheckDate, isAutofetch, fetchInterval, isEmailUpdates, workflowId, wfModuleId } = this.props
     const { isModalOpen } = this.state
 
     return (
       <div className='update-frequency-select'>
-        <div className="update-option">
+        <div className='update-option'>
           <span className='version-box-option'>Update </span>
           <a
             href='#'
@@ -76,7 +76,7 @@ export class UpdateFrequencySelect extends React.PureComponent {
           </a>
         </div>
         {lastCheckDate ? (
-          <div className="last-checked">
+          <div className='last-checked'>
             Checked <time dateTime={this.props.lastCheckDate.toISOString()}>{timeDifference(lastCheckDate, Date.now())}</time>
           </div>
         ) : null}

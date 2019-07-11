@@ -18,7 +18,7 @@ export const Modal = React.memo(function Modal ({ modules, tabSlug, close, addMo
   return (
     <section className='add-data-modal'>
       <header>
-        <div className="title">
+        <div className='title'>
           <h5>CHOOSE A DATA SOURCE</h5>
           <button type='button' className='close' aria-label='Close' title='Close' onClick={close}>×</button>
         </div>

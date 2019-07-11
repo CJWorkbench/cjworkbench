@@ -7,7 +7,7 @@ function SortIndicator ({ isActive, isAscending }) {
   const icon = isAscending ? 'icon-sort-up' : 'icon-sort-down'
 
   return (
-    <i className={`icon ${icon}`}/>
+    <i className={`icon ${icon}`} />
   )
 }
 

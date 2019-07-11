@@ -45,13 +45,13 @@ export default class File extends React.PureComponent {
     inProgressUpload: PropTypes.shape({
       name: PropTypes.string.isRequired,
       size: PropTypes.number.isRequired,
-      nBytesUploaded: PropTypes.number, // or null when waiting for start/cancel
+      nBytesUploaded: PropTypes.number // or null when waiting for start/cancel
     }), // or null/undefined
     fieldId: PropTypes.string.isRequired,
     value: PropTypes.string, // String-encoded UUID or null
     upstreamValue: PropTypes.string, // String-encoded UUID or null
     uploadFile: PropTypes.func.isRequired, // func(wfModuleId, file) => Promise(<{uuid: ...}, or null if aborted>)
-    cancelUpload: PropTypes.func.isRequired, // func(wfModuleId) => undefined
+    cancelUpload: PropTypes.func.isRequired // func(wfModuleId) => undefined
   }
 
   _upload = (file) => {
@@ -99,8 +99,8 @@ export default class File extends React.PureComponent {
 
   onDragLeave = (ev) => {
     if (
-      ev.currentTarget.classList.contains('dragging-over')
-      && ev.target !== ev.currentTarget
+      ev.currentTarget.classList.contains('dragging-over') &&
+      ev.target !== ev.currentTarget
     ) {
       // We got a drag-leave event on a _child_ element. That ought to be
       // impossible because we set pointer-events:none on children. But it can
@@ -211,4 +211,3 @@ export default class File extends React.PureComponent {
     )
   }
 }
-

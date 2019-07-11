@@ -1,3 +1,5 @@
+/* eslint no-template-curly-in-string: 0 */
+/* globals describe, expect, it */
 import React from 'react'
 import { shallow } from 'enzyme'
 import { columnToCellFormatter } from './CellFormatters'

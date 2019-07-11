@@ -26,7 +26,7 @@ describe('Column', () => {
   })
 
   it('renders loading', () => {
-    const w = wrapper({value: 'A', placeholder: 'Prompt!', inputColumns: null})
+    const w = wrapper({ value: 'A', placeholder: 'Prompt!', inputColumns: null })
 
     // dropdown has 1 option, prompt as placeholder
     const select = w.find('Select')
@@ -54,18 +54,18 @@ describe('Column', () => {
   })
 
   // react-select should take care of this, but saving test in case there's an issue
-  //it('highlights prompt when value is invalid', async () => {
+  // it('highlights prompt when value is invalid', async () => {
   //  const w = wrapper({ value: 'non-existent column' })
   //  await tick() // load columns
   //  w.update()
 
-    // The browser will highlight the current value, even if it's disabled.
+  // The browser will highlight the current value, even if it's disabled.
   //  expect(w.find('option.prompt').prop('value')).toEqual('non-existent column')
-  //})
+  // })
 
   it('should retain double spaces in value', async () => {
     const w = wrapper({ value: 'column  with  double  spaces',
-      inputColumns: [{ name: 'column  with  double  spaces' }]})
+      inputColumns: [{ name: 'column  with  double  spaces' }] })
     await tick() // load columns
     w.update()
 

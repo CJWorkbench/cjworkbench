@@ -1,3 +1,4 @@
+/* globals describe, expect, it, jest */
 import React from 'react'
 import { mount } from 'enzyme'
 
@@ -17,7 +18,7 @@ describe('Radio', () => {
 
   it('renders correctly', () => {
     const w = wrapper({ enumOptions: [ { value: 'x', label: 'X' } ] })
-    expect(wrapper).toMatchSnapshot()
+    expect(w).toMatchSnapshot()
   })
 
   it('renders number of buttons correctly', () => {
@@ -25,7 +26,7 @@ describe('Radio', () => {
       { value: 'x', label: 'X' },
       { value: 'y', label: 'Y' },
       { value: 'z', label: 'Z' }
-    ]})
+    ] })
     expect(w.find('input[type="radio"]')).toHaveLength(3)
   })
 
@@ -47,7 +48,7 @@ describe('Radio', () => {
       name: 'foo',
       enumOptions: [
         { value: 'x', label: 'off' },
-        { value: 'y', label: 'on' },
+        { value: 'y', label: 'on' }
       ]
     })
     expect(w.find('input[value="x"]').prop('disabled')).toBe(true)

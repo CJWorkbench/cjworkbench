@@ -75,12 +75,12 @@ describe('DoneHelpers', () => {
         selected_tab_position: 0
       }, {
         tabs: {
-          'tab-21': { wf_module_ids: [ 1, 2, "3_nonce" ] },
+          'tab-21': { wf_module_ids: [ 1, 2, '3_nonce' ] },
           'tab-22': { wf_module_ids: [] }
         },
         wfModules: {
           1: { module: 'blah' }, // not a real module
-          2: {}, // no module
+          2: {} // no module
         },
         modules: {}
       })
@@ -153,7 +153,7 @@ describe('DoneHelpers', () => {
     it('should return updateInterval in seconds', () => {
       const go = (interval) => new WorkflowModuleWithHelpers({
         auto_update_data: true,
-        update_interval: interval,
+        update_interval: interval
       }).updateInterval
 
       expect(go(10)).toEqual(10)
@@ -195,7 +195,7 @@ describe('DoneHelpers', () => {
         },
         tabs: {
           'tab-21': { wf_module_ids: [] },
-          'tab-22': { wf_module_ids: [ 1, 2 ] },
+          'tab-22': { wf_module_ids: [ 1, 2 ] }
         },
         wfModules: {
           1: { module: 'foo' },
@@ -214,7 +214,7 @@ describe('DoneHelpers', () => {
       const state = new StateWithHelpers({
         workflow: {
           tab_slugs: [ 'tab-11', 'tab-12' ],
-          selected_tab_position: 1,
+          selected_tab_position: 1
         },
         tabs: {
           'tab-11': { wf_module_ids: [] },
@@ -227,7 +227,7 @@ describe('DoneHelpers', () => {
         modules: {
           foo: { name: 'Foo' },
           bar: { name: 'Bar' }
-        },
+        }
       })
 
       expect(state.selectedWfModule.moduleName).toEqual('Bar')

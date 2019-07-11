@@ -8,7 +8,7 @@ export default class RadioParam extends React.PureComponent {
     fieldId: PropTypes.string.isRequired, // <input id=...>
     enumOptions: PropTypes.arrayOf(PropTypes.shape({
       value: PropTypes.any.isRequired,
-      label: PropTypes.string.isRequired,
+      label: PropTypes.string.isRequired
     }).isRequired).isRequired,
     value: PropTypes.any.isRequired,
     isReadOnly: PropTypes.bool.isRequired,
@@ -24,7 +24,7 @@ export default class RadioParam extends React.PureComponent {
     onChange(option.value)
   }
 
-  render() {
+  render () {
     const { enumOptions, name, fieldId, isReadOnly, value } = this.props
     const selectedValue = value
     const optionComponents = enumOptions.map(({ value, label }, i) => (
@@ -37,9 +37,9 @@ export default class RadioParam extends React.PureComponent {
           value={String(value)}
           checked={String(value) === String(selectedValue)}
           onChange={this.onChange}
-          disabled={this.props.isReadOnly}
+          disabled={isReadOnly}
         />
-        <span className="button"></span>
+        <span className='button' />
         {label}
       </label>
     ))

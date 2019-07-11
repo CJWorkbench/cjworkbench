@@ -5,7 +5,7 @@ export default class OAuth extends React.PureComponent {
   static propTypes = {
     name: PropTypes.string.isRequired,
     secretMetadata: PropTypes.shape({
-      name: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired
     }), // null if not set
     startCreateSecret: PropTypes.func.isRequired, // func(name) => undefined
     deleteSecret: PropTypes.func.isRequired, // func(name) => undefined
@@ -25,7 +25,7 @@ export default class OAuth extends React.PureComponent {
   }
 
   render () {
-    const { secretMetadata, secretLogic } = this.props
+    const { secretMetadata } = this.props
 
     let contents
     if (secretMetadata) {
@@ -41,8 +41,8 @@ export default class OAuth extends React.PureComponent {
       )
     }
 
-    return(
-      <div className="oauth-connect-parameter">
+    return (
+      <div className='oauth-connect-parameter'>
         {contents}
       </div>
     )

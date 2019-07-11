@@ -7,7 +7,7 @@ import PropTypes from 'prop-types'
 import WorkflowEditor from './WorkflowEditor'
 import { connect } from 'react-redux'
 
-export function MaybeNotYourWorkflow(props) {
+export function MaybeNotYourWorkflow (props) {
   if (!props.isReadOnly && !props.isAnonymous) {
     return null // it's your workflow
   }
@@ -16,9 +16,9 @@ export function MaybeNotYourWorkflow(props) {
 
   let suggestion = null
   if (props.isLoggedIn) {
-    suggestion = <h3 className="suggestion">Duplicate it to save your changes</h3>
+    suggestion = <h3 className='suggestion'>Duplicate it to save your changes</h3>
   } else {
-    suggestion = <h3 className="suggestion"><a href={`/account/login/?next=/workflows/${props.workflowId}`} className="action-button ">Sign in</a> to save your changes</h3>
+    suggestion = <h3 className='suggestion'><a href={`/account/login/?next=/workflows/${props.workflowId}`} className='action-button '>Sign in</a> to save your changes</h3>
   }
 
   let inner, className
@@ -27,7 +27,7 @@ export function MaybeNotYourWorkflow(props) {
     inner = (
       <F>
         <h3>Demo workflow -</h3>
-        <p className="message"></p>
+        <p className='message' />
         {suggestion}
       </F>
     )
@@ -36,7 +36,7 @@ export function MaybeNotYourWorkflow(props) {
     inner = (
       <F>
         <h3>You are viewing a shared workflow</h3>
-        <p className="message"></p>
+        <p className='message' />
         {suggestion}
       </F>
     )
@@ -51,15 +51,15 @@ export function MaybeNotYourWorkflow(props) {
 
 export class Workflow extends React.PureComponent {
   static propTypes = {
-    api:                PropTypes.object.isRequired,
-    isReadOnly:         PropTypes.bool.isRequired,
-    isAnonymous:        PropTypes.bool.isRequired,
-    workflow:           PropTypes.object.isRequired,
-    lesson:             PropTypes.object, // or undefined
-    loggedInUser:       PropTypes.object,             // undefined if no one logged in (viewing public wf)
+    api: PropTypes.object.isRequired,
+    isReadOnly: PropTypes.bool.isRequired,
+    isAnonymous: PropTypes.bool.isRequired,
+    workflow: PropTypes.object.isRequired,
+    lesson: PropTypes.object, // or undefined
+    loggedInUser: PropTypes.object // undefined if no one logged in (viewing public wf)
   }
 
-  render() {
+  render () {
     const { lesson } = this.props
 
     let className = 'workflow-root'
@@ -77,7 +77,7 @@ export class Workflow extends React.PureComponent {
       <main className={className}>
         { lesson ? <Lesson {...lesson} /> : null }
 
-        <div className="workflow-container">
+        <div className='workflow-container'>
           <WorkflowNavBar
             workflow={this.props.workflow}
             lesson={lesson}
@@ -95,7 +95,7 @@ export class Workflow extends React.PureComponent {
             isLoggedIn={!!this.props.loggedInUser}
             isReadOnly={this.props.isReadOnly}
             isAnonymous={this.props.isAnonymous}
-            />
+          />
         </div>
       </main>
     )

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from '../components/Dropdown'
 
 const ReadOnlyRole = ({ canEdit }) => (
-  <p className="role">
+  <p className='role'>
     {canEdit ? 'Can edit' : 'Can view'}
   </p>
 )
@@ -23,7 +23,7 @@ const EditableRole = ({ canEdit, setCanEdit, unsetCanEdit }) => (
 export default class Role extends React.PureComponent {
   static propTypes = {
     canEdit: PropTypes.bool.isRequired,
-    onChange: PropTypes.func.isRequired, // func(canEdit) => undefined
+    onChange: PropTypes.func.isRequired // func(canEdit) => undefined
   }
 
   setCanEdit = () => {

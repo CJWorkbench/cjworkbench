@@ -12,7 +12,7 @@ export class ReorderHistory extends React.Component {
     }).isRequired).isRequired
   }
 
-  render() {
+  render () {
     const { value } = this.props
 
     return (

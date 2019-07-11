@@ -23,12 +23,12 @@ export class TableView extends React.PureComponent {
     nRows: PropTypes.number, // immutable; null for placeholder table
     isReadOnly: PropTypes.bool.isRequired,
     ensureSelectColumnsModule: PropTypes.func.isRequired, // func(wfModuleId) => undefined
-    reorderColumn: PropTypes.func.isRequired, // func(wfModuleId, colname, fromIndex, toIndex) => undefined
+    reorderColumn: PropTypes.func.isRequired // func(wfModuleId, colname, fromIndex, toIndex) => undefined
   }
 
   // componentDidMount will trigger first load
   state = {
-    selectedRowIndexes: [],
+    selectedRowIndexes: []
   }
 
   setSelectedRowIndexes = (selectedRowIndexes) => {
@@ -48,7 +48,7 @@ export class TableView extends React.PureComponent {
     this.props.reorderColumn(this.props.wfModuleId, column, fromIndex, toIndex)
   }
 
-  render() {
+  render () {
     // Make a table component if we have the data
     const { selectedRowIndexes } = this.state
     const { loadRows, wfModuleId, deltaId, isReadOnly, columns, nRows } = this.props
@@ -58,12 +58,12 @@ export class TableView extends React.PureComponent {
     if (tooWide) {
       // TODO nix all the <div>s
       gridView = (
-        <div className="overlay">
+        <div className='overlay'>
           <div>
-            <div className="text">
+            <div className='text'>
               A maximum of 100 columns can be displayed
             </div>
-            <button className="add-select-module" onClick={this.ensureSelectColumnsModule}>Select columns</button>
+            <button className='add-select-module' onClick={this.ensureSelectColumnsModule}>Select columns</button>
           </div>
         </div>
       )
@@ -78,7 +78,6 @@ export class TableView extends React.PureComponent {
           nRows={nRows}
           editCell={this.editCell}
           reorderColumn={this.reorderColumn}
-          isReadOnly={isReadOnly}
           selectedRowIndexes={selectedRowIndexes}
           onSetSelectedRowIndexes={this.setSelectedRowIndexes}
           key={wfModuleId + '-' + deltaId}
@@ -87,7 +86,7 @@ export class TableView extends React.PureComponent {
     }
 
     return (
-      <div className="outputpane-table">
+      <div className='outputpane-table'>
         <TableInfo
           isReadOnly={isReadOnly}
           wfModuleId={wfModuleId}
@@ -95,7 +94,7 @@ export class TableView extends React.PureComponent {
           nColumns={(wfModuleId && columns) ? columns.length : null}
           selectedRowIndexes={selectedRowIndexes}
         />
-        <div className="outputpane-data">
+        <div className='outputpane-data'>
           {gridView}
         </div>
       </div>

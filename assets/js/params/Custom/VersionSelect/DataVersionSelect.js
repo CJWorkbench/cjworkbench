@@ -8,17 +8,17 @@ export class DataVersionSelect extends React.PureComponent {
     wfModuleId: PropTypes.number.isRequired,
     currentVersionIndex: PropTypes.number, // or null for no selected version
     nVersions: PropTypes.number.isRequired, // may be 0
-    isReadOnly: PropTypes.bool.isRequired,
+    isReadOnly: PropTypes.bool.isRequired
   }
 
   state = {
-    isDataVersionModalOpen: false,
+    isDataVersionModalOpen: false
   }
 
   openModal = () => this.setState({ isDataVersionModalOpen: true })
   closeModal = () => this.setState({ isDataVersionModalOpen: false })
 
-  render() {
+  render () {
     const { wfModuleId, currentVersionIndex, nVersions, isReadOnly } = this.props
     const { isDataVersionModalOpen } = this.state
 
@@ -27,24 +27,24 @@ export class DataVersionSelect extends React.PureComponent {
     if (nVersions === 0) {
       inner = (
         <React.Fragment>
-          <div className="label">Version</div>
-          <div className="no-versions">–</div>
+          <div className='label'>Version</div>
+          <div className='no-versions'>–</div>
         </React.Fragment>
       )
     } else if (isReadOnly) {
       inner = (
-        <div className="read-only">Version {nVersions - currentVersionIndex} of {nVersions}</div>
+        <div className='read-only'>Version {nVersions - currentVersionIndex} of {nVersions}</div>
       )
     } else {
       inner = (
         <React.Fragment>
-          <div className="label">Version</div>
-          <button type='button' title="Select version" onClick={this.openModal}>{nVersions - currentVersionIndex} of {nVersions}</button>
+          <div className='label'>Version</div>
+          <button type='button' title='Select version' onClick={this.openModal}>{nVersions - currentVersionIndex} of {nVersions}</button>
           { isDataVersionModalOpen ? (
             <DataVersionModal
               wfModuleId={wfModuleId}
               onClose={this.closeModal}
-              />
+            />
           ) : null}
         </React.Fragment>
       )
@@ -58,7 +58,7 @@ export class DataVersionSelect extends React.PureComponent {
   }
 }
 
-function mapStateToProps(state, { wfModuleId }) {
+function mapStateToProps (state, { wfModuleId }) {
   const isReadOnly = state.workflow.read_only
 
   const wfModule = state.wfModules[String(wfModuleId)]
@@ -66,7 +66,7 @@ function mapStateToProps(state, { wfModuleId }) {
     return {
       currentVersionIndex: null,
       nVersions: 0,
-      isReadOnly,
+      isReadOnly
     }
   }
 
@@ -76,7 +76,7 @@ function mapStateToProps(state, { wfModuleId }) {
   return {
     currentVersionIndex: index,
     nVersions: versions.length,
-    isReadOnly,
+    isReadOnly
   }
 }
 

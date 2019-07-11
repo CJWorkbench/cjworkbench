@@ -36,7 +36,7 @@ describe('DataVersionModal', () => {
         onChangeFetchVersionId={jest.fn()}
         onChangeNotificationsEnabled={jest.fn()}
         {...extraProps}
-        />
+      />
     )
   }
 
@@ -101,7 +101,7 @@ describe('DataVersionModal', () => {
         selected_tab_position: 0
       },
       tabs: {
-        'tab-11': { wf_module_ids: [ 123, 124 ] },
+        'tab-11': { wf_module_ids: [ 123, 124 ] }
       },
       modules: {
         fetch: { name: 'Fetch Stuff', loads_data: true },
@@ -115,16 +115,16 @@ describe('DataVersionModal', () => {
           versions: {
             versions: [
               [ '2018-06-22T20:09:41.649Z', true ],
-              [ '2018-06-23T20:09:41.649Z', false ],
+              [ '2018-06-23T20:09:41.649Z', false ]
             ],
-            selected: '2018-06-22T20:09:41.649Z',
+            selected: '2018-06-22T20:09:41.649Z'
           }
         },
         124: {
           id: 124,
           module: 'filter',
           name: 'Filter Stuff',
-          notifications: true,
+          notifications: true
         }
       }
     }
@@ -136,7 +136,7 @@ describe('DataVersionModal', () => {
           <ConnectedDataVersionModal
             wfModuleId={124}
             onClose={jest.fn()}
-            />
+          />
         </Provider>
       )
     }
@@ -148,7 +148,7 @@ describe('DataVersionModal', () => {
 
     it('should set fetchModuleName', () => {
       const w = connectedWrapper(IdealState)
-      //expect(w.find('p.introduction').text()).toMatch(/“Fetch Stuff”/) No introduction test for now (Pierre)
+      // expect(w.find('p.introduction').text()).toMatch(/“Fetch Stuff”/) No introduction test for now (Pierre)
     })
 
     it('should set fetchVersions', () => {

@@ -28,7 +28,7 @@ export function MaybeLabel ({ fieldId, label }) {
  *
  * This will JSON-parse `value` and JSON-stringify in `onChange`.
  */
-export function withJsonStringValues(WrappedComponent, defaultValue) {
+export function withJsonStringValues (WrappedComponent, defaultValue) {
   return (props) => {
     const { value, upstreamValue, onChange } = props
     let realValue, realUpstreamValue
@@ -57,7 +57,6 @@ export function withJsonStringValues(WrappedComponent, defaultValue) {
     )
   }
 }
-
 
 // Takes the server-generated param_field spec, which is basically just the module YAML, and turns it into
 // props for Param, which have been sanitized/transformed

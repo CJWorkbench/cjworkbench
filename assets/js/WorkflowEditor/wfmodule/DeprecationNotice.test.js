@@ -4,7 +4,7 @@ import DeprecationNotice from './DeprecationNotice'
 import { mount } from 'enzyme'
 
 describe('DeprecationNotice', () => {
-  const wrapper = (extraProps={}) => {
+  const wrapper = (extraProps = {}) => {
     return mount(
       <DeprecationNotice
         helpUrl={'https://example.org'}

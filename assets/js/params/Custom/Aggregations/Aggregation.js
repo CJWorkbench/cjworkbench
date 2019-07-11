@@ -87,7 +87,7 @@ export default class Aggregation extends React.PureComponent {
         <label className='outname'>
           <span className='name'>Name</span>
           <input
-            className='outname' 
+            className='outname'
             name={`${name}[outname]`}
             id={`${fieldId}_outname`}
             value={outname}

@@ -37,14 +37,14 @@ export default class LessonFooter extends React.PureComponent {
 
     const classNames = [
       'lesson-footer',
-      isCurrent ? 'current' : 'not-current',
+      isCurrent ? 'current' : 'not-current'
     ]
 
     return (
       <section className={`lesson-footer ${isCurrent ? 'current' : 'not-current'}`}>
         <a href='/lessons/' className='backToLessons'>Training</a>
         <h2>{title}</h2>
-        <div className='description' dangerouslySetInnerHTML={({__html: html})}></div>
+        <div className='description' dangerouslySetInnerHTML={({ __html: html })} />
         <Confetti active={isFinished} config={ConfettiConfig} className='confetti' />
       </section>
     )

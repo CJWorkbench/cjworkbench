@@ -89,7 +89,7 @@ export default class Aggregations extends React.PureComponent {
             name={`${name}[add]`}
             onClick={this.onAdd}
           >
-            <i className='icon-add'/> Add
+            <i className='icon-add' /> Add
           </button>
         )}
       </React.Fragment>

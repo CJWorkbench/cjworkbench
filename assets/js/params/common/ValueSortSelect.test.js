@@ -1,9 +1,10 @@
+/* globals describe, expect, it, jest */
 import React from 'react'
 import { mount } from 'enzyme'
 import ValueSortSelect from './ValueSortSelect'
 
 describe('ValueSortSelect', () => {
-  const wrapper = (extraProps={}) => mount(
+  const wrapper = (extraProps = {}) => mount(
     <ValueSortSelect
       value={{ by: 'value', isAscending: false }}
       onChange={jest.fn()}

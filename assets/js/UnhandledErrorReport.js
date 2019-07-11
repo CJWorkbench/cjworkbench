@@ -31,14 +31,14 @@ export function UnhandledErrorReport ({ error }) {
       )
     }, [])
   } else {
-    const url = 'mailto:hello@workbenchdata.com'
-      + '?subject=' + encodeURIComponent('I encountered an error')
-      + '&body=' + encodeURIComponent([
-        'Hi there,',
-        'I encountered an error while I was using Workbench.',
-        '[PLEASE DESCRIBE WHAT YOU WERE DOING HERE]',
-        'Debugging details (for Workbench developers):\n' + bugReportText
-      ].join('\n\n'))
+    const url = 'mailto:hello@workbenchdata.com' +
+      '?subject=' + encodeURIComponent('I encountered an error') +
+      '&body=' + encodeURIComponent([
+      'Hi there,',
+      'I encountered an error while I was using Workbench.',
+      '[PLEASE DESCRIBE WHAT YOU WERE DOING HERE]',
+      'Debugging details (for Workbench developers):\n' + bugReportText
+    ].join('\n\n'))
     helpText = (
       <ol>
         <li>Copy the debugging details below and send them to <a href='mailto:hello@workbenchdata.com' target='_blank'>hello@workbenchdata.com</a>.</li>
@@ -69,7 +69,7 @@ UnhandledErrorReport.propTypes = {
   error: PropTypes.shape({
     type: PropTypes.string.isRequired, // Redux action name
     message: PropTypes.string.isRequired, // Error.toString() retval
-    serverError: PropTypes.string, // error from server, if there is one
+    serverError: PropTypes.string // error from server, if there is one
   }) // null unless there's an error
 }
 

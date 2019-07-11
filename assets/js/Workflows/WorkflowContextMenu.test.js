@@ -1,9 +1,9 @@
 import React from 'react'
-import WorkflowContextMenu  from './WorkflowContextMenu'
+import WorkflowContextMenu from './WorkflowContextMenu'
 import { mount } from 'enzyme'
 
 describe('WorkflowContextMenu', () => {
-  const wrapper = (extraProps={}) => mount(
+  const wrapper = (extraProps = {}) => mount(
     <WorkflowContextMenu
       workflowId={3}
       deleteWorkflow={jest.fn()}

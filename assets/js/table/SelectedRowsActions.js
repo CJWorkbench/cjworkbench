@@ -1,3 +1,4 @@
+/* eslint no-new-func: 0 */
 import React from 'react'
 import PropTypes from 'prop-types'
 import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from '../components/Dropdown'
@@ -11,7 +12,7 @@ class Action extends React.PureComponent {
   static propTypes = {
     idName: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
-    onClick: PropTypes.func.isRequired, // onClick(idName) => undefined
+    onClick: PropTypes.func.isRequired // onClick(idName) => undefined
   }
 
   onClick = () => {
@@ -34,7 +35,7 @@ export class SelectedRowsActions extends React.PureComponent {
       idName: PropTypes.string.isRequired,
       title: PropTypes.string.isRequired
     }).isRequired).isRequired,
-    onClickRowsAction: PropTypes.func.isRequired, // func(wfModuleId, moduleIdName, rowString) => undefined
+    onClickRowsAction: PropTypes.func.isRequired // func(wfModuleId, moduleIdName, rowString) => undefined
   }
 
   get rowString () {
@@ -61,7 +62,7 @@ export class SelectedRowsActions extends React.PureComponent {
       if (curStart === null && bool) {
         curStart = i
       } else if (curStart !== null && !bool) {
-        parts.push([ curStart, i - 1])
+        parts.push([ curStart, i - 1 ])
         curStart = null
       }
     }

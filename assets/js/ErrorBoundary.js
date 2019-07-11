@@ -17,7 +17,7 @@ export default class ErrorBoundary extends React.PureComponent {
     if (this.state.error) {
       return (
         <div className='caught-error'>
-          Something is wrong. <br></br> Please refresh the page.
+          Something is wrong. <br /> Please refresh the page.
         </div>
       )
     } else {

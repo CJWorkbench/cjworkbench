@@ -3,7 +3,6 @@ import { shallow } from 'enzyme'
 import EditableNotes from './EditableNotes'
 import { okResponseMock } from './test-utils'
 
-
 describe('EditableNotes', () => {
   let wrapper
 
@@ -12,17 +11,17 @@ describe('EditableNotes', () => {
   describe('read-only', () => {
     beforeEach(() => wrapper = shallow(
       <EditableNotes
-        isReadOnly={true}
+        isReadOnly
         placeholder='placeholder'
         value='This is the best module'
         onCancel={jest.fn()}
-        />
+      />
     ))
 
     it('matches snapshot', () => {
       expect(wrapper).toMatchSnapshot()
     })
-  
+
     it('renders plain note', () => {
       expect(wrapper.find('div.editable-notes-read-only').text()).toEqual('This is the best module')
     })
@@ -43,14 +42,14 @@ describe('EditableNotes', () => {
           onChange={jest.fn()}
           onBlur={jest.fn()}
           onCancel={jest.fn()}
-          />
+        />
       )
     })
 
     it('matches snapshot', () => {
       expect(wrapper).toMatchSnapshot()
     })
-  
+
     it('renders note in edit state', () => {
       expect(wrapper.find('TextareaAutosize').prop('value')).toEqual('This is the best module')
     })

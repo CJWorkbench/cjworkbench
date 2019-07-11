@@ -1,7 +1,6 @@
 import React from 'react'
-import WfHamburgerMenu  from './WfHamburgerMenu'
+import WfHamburgerMenu from './WfHamburgerMenu'
 import { mount } from 'enzyme'
-
 
 describe('WfHamburgerMenu', () => {
   let wrapper // all tests must mount one
@@ -12,7 +11,7 @@ describe('WfHamburgerMenu', () => {
       workflowId={1}
       api={{}}
       isReadOnly={false}
-      user={{id: 100}}
+      user={{ id: 100 }}
     />)
 
     wrapper.find('button.context-button').simulate('click')
@@ -27,8 +26,8 @@ describe('WfHamburgerMenu', () => {
     wrapper = mount(<WfHamburgerMenu
       workflowId={1}
       api={{}}
-      isReadOnly={true}
-      user={{id: 100}}
+      isReadOnly
+      user={{ id: 100 }}
     />)
 
     wrapper.find('button.context-button').simulate('click')
@@ -41,7 +40,7 @@ describe('WfHamburgerMenu', () => {
     wrapper = mount(<WfHamburgerMenu
       workflowId={1}
       api={{}}
-      isReadOnly={true}
+      isReadOnly
       user={undefined}
     />)
 
@@ -51,13 +50,12 @@ describe('WfHamburgerMenu', () => {
     expect(wrapper.find('DropdownItem[children="Log out"]')).toHaveLength(0)
   })
 
-
   it('renders without a workflowId', () => {
     // this happens on Workflow list page
     wrapper = mount(<WfHamburgerMenu
       api={{}}
-      isReadOnly={true}
-      user={{id:100}}
+      isReadOnly
+      user={{ id: 100 }}
     />)
 
     wrapper.find('button.context-button').simulate('click')

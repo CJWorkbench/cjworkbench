@@ -71,7 +71,7 @@ describe('Tabs.actions', () => {
       const store = mockStore({
         workflow: {
           tab_slugs: [ 't1', 't2' ],
-          selected_tab_position: 0,
+          selected_tab_position: 0
         },
         selectedPane: {
           pane: 'tab',
@@ -97,7 +97,7 @@ describe('Tabs.actions', () => {
       const store = mockStore({
         workflow: {
           tab_slugs: [ 't1', 't2' ],
-          selected_tab_position: 0,
+          selected_tab_position: 0
         },
         selectedPane: {
           pane: 'tab',
@@ -122,7 +122,6 @@ describe('Tabs.actions', () => {
       expect(state.pendingTabs).toEqual({})
     })
 
-
     it('should not destroy the only remaining tab', async () => {
       const api = {
         deleteTab: jest.fn()
@@ -130,10 +129,10 @@ describe('Tabs.actions', () => {
       const store = mockStore({
         workflow: {
           tab_slugs: [ 't1' ],
-          selected_tab_position: 0,
+          selected_tab_position: 0
         },
         tabs: {
-          't1': {},
+          't1': {}
         }
       }, api)
 
@@ -155,7 +154,7 @@ describe('Tabs.actions', () => {
         },
         workflow: {
           tab_slugs: [ 't1', 't2', 't3' ],
-          selected_tab_position: 1, // tab t2
+          selected_tab_position: 1 // tab t2
         },
         tabs: {
           't1': {},
@@ -176,7 +175,7 @@ describe('Tabs.actions', () => {
       const store = mockStore({
         workflow: {
           tab_slugs: [ 't1', 't2', 't3' ],
-          selected_tab_position: 2, // tab t3
+          selected_tab_position: 2 // tab t3
         },
         selectedPane: {
           pane: 'tab',
@@ -201,7 +200,7 @@ describe('Tabs.actions', () => {
       const store = mockStore({
         workflow: {
           tab_slugs: [ 't1', 't2', 't3' ],
-          selected_tab_position: 1, // tab t2
+          selected_tab_position: 1 // tab t2
         },
         selectedPane: {
           pane: 'tab',
@@ -226,7 +225,7 @@ describe('Tabs.actions', () => {
       const store = mockStore({
         workflow: {
           tab_slugs: [ 't1', 't2', 't3' ],
-          selected_tab_position: 2, // tab t3
+          selected_tab_position: 2 // tab t3
         },
         selectedPane: {
           pane: 'tab',
@@ -251,7 +250,7 @@ describe('Tabs.actions', () => {
       const store = mockStore({
         workflow: {
           tab_slugs: [ 't1', 't2' ],
-          selected_tab_position: 0, // tab 1
+          selected_tab_position: 0 // tab 1
         },
         selectedPane: {
           pane: 'tab',
@@ -335,7 +334,7 @@ describe('Tabs.actions', () => {
       }
       const store = mockStore({
         workflow: {
-          tab_slugs: [ 't1' ],
+          tab_slugs: [ 't1' ]
         },
         tabs: {
           't1': { name: 'A' }
@@ -398,7 +397,7 @@ describe('Tabs.actions', () => {
           tab_slugs: [ 't1', 't3', 't4' ]
         },
         pendingTabs: {
-          't14': { name: 'Tab 14' },
+          't14': { name: 'Tab 14' }
         },
         tabs: {
           't1': { name: 'Tab 1' },
@@ -422,7 +421,7 @@ describe('Tabs.actions', () => {
       }
       const store = mockStore({
         workflow: {
-          tab_slugs: [ 't1', 't2' ], // and we'll "duplicate" in between
+          tab_slugs: [ 't1', 't2' ] // and we'll "duplicate" in between
         },
         tabs: {
           't1': { name: 'A' },
@@ -467,7 +466,7 @@ describe('Tabs.actions', () => {
         },
         tabs: {
           't1': { name: 'A' },
-          't2': { name: 'A (1)' },
+          't2': { name: 'A (1)' }
         }
       }, api)
 
@@ -485,7 +484,7 @@ describe('Tabs.actions', () => {
           tab_slugs: [ 't1', 't3', 't4' ]
         },
         pendingTabs: {
-          't14': { name: 'A (14)' },
+          't14': { name: 'A (14)' }
         },
         tabs: {
           't1': { name: 'Tab 1' },

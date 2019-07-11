@@ -11,7 +11,7 @@ describe('File.actions', () => {
       const store = mockStore({
         wfModules: {
           '1': { foo: 'bar' },
-          '2': { foo: 'baz' },
+          '2': { foo: 'baz' }
         }
       }, api)
       const file = new File(['A\nab'], 't.csv')
@@ -64,7 +64,7 @@ describe('File.actions', () => {
       const store = mockStore({
         wfModules: {
           '1': { foo: 'bar' },
-          '2': { foo: 'baz', inProgressUpload: { name: 't.csv', size: 4, nBytesUploaded: 3 } },
+          '2': { foo: 'baz', inProgressUpload: { name: 't.csv', size: 4, nBytesUploaded: 3 } }
         }
       }, api)
 

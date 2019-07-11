@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import ColumnParam from '../../Column'
 import RadioParam from '../../Radio.js'
 
-
 const AscendingParamOptions = [
   { value: true, label: 'Ascending' },
   { value: false, label: 'Descending' }
@@ -26,8 +25,6 @@ AscendingParam.propTypes = {
   onChange: PropTypes.func.isRequired, // func(index, value) => undefined
   value: PropTypes.bool.isRequired
 }
-
-
 
 export default class SortColumn extends React.PureComponent {
   static propTypes = {

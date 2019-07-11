@@ -1,16 +1,16 @@
 import React from 'react'
-import ConnectedImportModuleFromGitHub  from './ImportModuleFromGitHub'
+import ConnectedImportModuleFromGitHub from './ImportModuleFromGitHub'
 import { mount } from 'enzyme'
 import { Provider } from 'react-redux'
 import { mockStore, tick } from './test-utils'
 
 describe('ImportModuleFromGitHub', () => {
-  const wrapper = (store, extraProps={}) => {
+  const wrapper = (store, extraProps = {}) => {
     return mount(
       <Provider store={store}>
         <ConnectedImportModuleFromGitHub
           closeModal={jest.fn()}
-          api={{importModuleFromGitHub: () => {}}}
+          api={{ importModuleFromGitHub: () => {} }}
           {...extraProps}
         />
       </Provider>
@@ -28,7 +28,7 @@ describe('ImportModuleFromGitHub', () => {
     }
     const store = mockStore({
       modules: {
-        a: {foo: 'bar'}
+        a: { foo: 'bar' }
       },
       loggedInUser: { is_staff: true }
     }, null)

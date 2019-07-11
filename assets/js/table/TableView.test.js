@@ -2,9 +2,8 @@
 import React from 'react'
 import { mount } from 'enzyme'
 import { Provider } from 'react-redux'
-import { mockStore, sleep, tick } from '../test-utils'
-import TableView, { NRowsPerPage, FetchTimeout, NMaxColumns } from './TableView'
-import DataGrid from './DataGrid'
+import { mockStore, tick } from '../test-utils'
+import TableView from './TableView'
 
 // Ugly hack - let us setProps() on the mounted component
 // See https://github.com/airbnb/enzyme/issues/947
@@ -32,7 +31,7 @@ function ConnectedTableView (props) {
 }
 
 describe('TableView', () => {
-  const wrapper = (store, extraProps={}) => {
+  const wrapper = (store, extraProps = {}) => {
     // mock store for <SelectedRowsActions>, a descendent
     if (store === null) {
       store = mockStore({
@@ -83,7 +82,7 @@ describe('TableView', () => {
         selected_tab_position: 0
       },
       tabs: {
-        'tab-1': { wf_module_ids: [ 2, 3 ], selected_wf_module_position: 0 },
+        'tab-1': { wf_module_ids: [ 2, 3 ], selected_wf_module_position: 0 }
       },
       wfModules: {
         2: { tab_slug: 'tab-1' },
@@ -116,7 +115,7 @@ describe('TableView', () => {
         selected_tab_position: 0
       },
       tabs: {
-        'tab-1': { wf_module_ids: [ 2, 3 ], selected_wf_module_position: 0 },
+        'tab-1': { wf_module_ids: [ 2, 3 ], selected_wf_module_position: 0 }
       },
       wfModules: {
         2: { tab_slug: 'tab-1' },
@@ -152,7 +151,7 @@ describe('TableView', () => {
   })
 
   // TODO move this to TableSwitcher.js/DelayedTableSwitcher.js:
-  //it('shows a spinner on initial load', async () => {
+  // it('shows a spinner on initial load', async () => {
   //  const testData = {
   //    start_row: 0,
   //    end_row: 2,
@@ -168,7 +167,7 @@ describe('TableView', () => {
   //  await tick()
   //  tree.update()
   //  expect(tree.find('#spinner-container-transparent')).toHaveLength(0)
-  //})
+  // })
 
   it('renders a message (and no table) when >100 columns', async () => {
     // This is because react-data-grid is so darned slow to render columns

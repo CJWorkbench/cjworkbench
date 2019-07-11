@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { setWorkflowNameAction } from './workflow-reducer'
@@ -45,11 +45,11 @@ export class EditableWorkflowName extends React.Component {
     })
   }
 
-  render() {
+  render () {
     return (
       <div className='editable-title--container'>
         {this.props.isReadOnly
-          ? ( <span className='editable-title--field'>{this.props.value}</span> )
+          ? (<span className='editable-title--field'>{this.props.value}</span>)
           : (
             <input
               type='text'
@@ -70,7 +70,7 @@ export class EditableWorkflowName extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    value: state.workflow.name,
+    value: state.workflow.name
   }
 }
 

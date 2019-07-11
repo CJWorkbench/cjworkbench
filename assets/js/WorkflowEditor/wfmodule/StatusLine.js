@@ -44,7 +44,7 @@ StatusLine.propTypes = {
   isReadOnly: PropTypes.bool.isRequired, // if true, cannot apply quick fixes
   error: PropTypes.string, // may be empty string
   quickFixes: PropTypes.arrayOf(PropTypes.shape(QuickFixPropTypes).isRequired).isRequired,
-  applyQuickFix: PropTypes.func.isRequired, // func(action, args) => undefined
+  applyQuickFix: PropTypes.func.isRequired // func(action, args) => undefined
 }
 
 export default StatusLine

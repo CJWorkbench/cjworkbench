@@ -19,7 +19,7 @@ const Button = React.memo(function Button ({ tabSlug, isLessonHighlight, paneRef
   return (
     <div className='add-data-button'>
       <button type='button' onClick={open}>
-        <i className='icon-add'></i>{' '}
+        <i className='icon-add' />{' '}
         <span>ADD DATA</span>
       </button>
       {isOpen && paneRef.current ? ReactDOM.createPortal((

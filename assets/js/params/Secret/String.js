@@ -130,7 +130,7 @@ String_.propTypes = {
   name: PropTypes.string.isRequired, // <input name=...>
   fieldId: PropTypes.string.isRequired, // <input id=...>
   secretMetadata: PropTypes.shape({
-    name: PropTypes.string.isRequired, // ISO8601-formatted date
+    name: PropTypes.string.isRequired // ISO8601-formatted date
   }), // or null
   submitSecret: PropTypes.func.isRequired, // func(name, secret) => undefined
   deleteSecret: PropTypes.func.isRequired, // func(name) => undefined
@@ -140,7 +140,7 @@ String_.propTypes = {
     pattern: PropTypes.string.isRequired,
     help: PropTypes.string.isRequired,
     helpUrl: PropTypes.string.isRequired,
-    helpUrlPrompt: PropTypes.string.isRequired,
+    helpUrlPrompt: PropTypes.string.isRequired
   })
 }
 export default String_

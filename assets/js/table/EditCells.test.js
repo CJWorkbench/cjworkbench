@@ -1,3 +1,4 @@
+/* globals describe, expect, it */
 import { moduleParamsBuilders } from './UpdateTableAction'
 
 const func = moduleParamsBuilders.editcells

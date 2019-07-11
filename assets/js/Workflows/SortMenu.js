@@ -24,7 +24,7 @@ export default class SortMenu extends React.Component {
       <div className='sort-menu'>
         <UncontrolledDropdown>
           <DropdownToggle>
-            Sort <i className={this.icon}></i>
+            Sort <i className={this.icon} />
           </DropdownToggle>
           <DropdownMenu>
             <DropdownItem data-comparator='last_update|descending' onClick={this.onClickComparator}>Last modified</DropdownItem>

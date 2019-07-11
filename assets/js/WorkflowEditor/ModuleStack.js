@@ -6,22 +6,21 @@ import WfModule from './wfmodule/WfModule'
 import WfModuleHeader from './wfmodule/WfModuleHeader'
 import { addModuleAction, deleteModuleAction, moveModuleAction } from '../workflow-reducer'
 import { scrollTo } from '../utils'
-import { connect } from 'react-redux';
+import { connect } from 'react-redux'
 import lessonSelector from '../lessons/lessonSelector'
-
 
 class ModuleDropSpot extends React.PureComponent {
   static propTypes = {
     index: PropTypes.number.isRequired,
     isDraggingModuleAtIndex: PropTypes.number,
-    moveModuleByIndex: PropTypes.func.isRequired, // func(oldIndex, newIndex) => undefined
+    moveModuleByIndex: PropTypes.func.isRequired // func(oldIndex, newIndex) => undefined
   }
 
   state = {
     isDragHovering: false
   }
 
-  canDrop() {
+  canDrop () {
     const { index, isDraggingModuleAtIndex } = this.props
     if (isDraggingModuleAtIndex === null) return false
 
@@ -39,7 +38,7 @@ class ModuleDropSpot extends React.PureComponent {
     if (!this.canDrop(ev)) return
 
     this.setState({
-      isDragHovering: true,
+      isDragHovering: true
     })
   }
 
@@ -47,7 +46,7 @@ class ModuleDropSpot extends React.PureComponent {
     if (!this.canDrop(ev)) return
 
     this.setState({
-      isDragHovering: false,
+      isDragHovering: false
     })
   }
 
@@ -59,11 +58,11 @@ class ModuleDropSpot extends React.PureComponent {
     this.props.moveModuleByIndex(this.props.isDraggingModuleAtIndex, this.props.index)
 
     this.setState({
-      isDragHovering: false, // otherwise, will stay hovering next drag
+      isDragHovering: false // otherwise, will stay hovering next drag
     })
   }
 
-  render() {
+  render () {
     if (this.canDrop()) {
       let className = 'module-drop-zone'
       if (this.state.isDragHovering) className += ' is-drag-hovering'
@@ -74,10 +73,10 @@ class ModuleDropSpot extends React.PureComponent {
           onDragEnter={this.onDragEnter}
           onDragLeave={this.onDragLeave}
           onDrop={this.onDrop}
-          >
-            <div className="highlight">
-              <i className="icon-add"></i>
-            </div>
+        >
+          <div className='highlight'>
+            <i className='icon-add' />
+          </div>
         </div>
 
       )
@@ -86,7 +85,6 @@ class ModuleDropSpot extends React.PureComponent {
     }
   }
 }
-
 
 class ModuleStackInsertSpot extends React.PureComponent {
   static propTypes = {
@@ -99,15 +97,15 @@ class ModuleStackInsertSpot extends React.PureComponent {
     moveModuleByIndex: PropTypes.func.isRequired // func(oldIndex, newIndex) => undefined
   }
 
-  renderReadOnly() {
+  renderReadOnly () {
     return (
-      <div className='in-between-modules read-only'/>
+      <div className='in-between-modules read-only' />
     )
   }
 
-  render() {
+  render () {
     const { index, tabSlug, isReadOnly, isLessonHighlight, isLast,
-            isDraggingModuleAtIndex, moveModuleByIndex } = this.props
+      isDraggingModuleAtIndex, moveModuleByIndex } = this.props
 
     if (isReadOnly) return this.renderReadOnly()
 
@@ -132,7 +130,7 @@ class ModuleStackInsertSpot extends React.PureComponent {
 
 function EmptyReadOnlyModuleStack () {
   return (
-    <div className="empty-read-only">
+    <div className='empty-read-only'>
       This Tab has no Steps.
     </div>
   )
@@ -186,8 +184,8 @@ export class ModuleStack extends React.Component {
     const index = this.props.selected_wf_module_position
 
     if (
-      tabSlug != this.lastScrolledWfModule.tabSlug
-      || index !== this.lastScrolledWfModule.index
+      tabSlug != this.lastScrolledWfModule.tabSlug ||
+      index !== this.lastScrolledWfModule.index
     ) {
       // We selected a different module. Scroll to it.
       this.lastScrolledWfModule = { tabSlug, index }
@@ -219,7 +217,7 @@ export class ModuleStack extends React.Component {
     }
   }
 
-  static getDerivedStateFromProps(props, state) {
+  static getDerivedStateFromProps (props, state) {
     // If we delete a zen-mode while in zen mode, exit zen mode
     const zenId = state.zenModeWfModuleId
     if (zenId && !props.wfModules.find(wfm => wfm.id === zenId)) {
@@ -231,13 +229,13 @@ export class ModuleStack extends React.Component {
 
   onDragStart = (obj) => {
     this.setState({
-      isDraggingModuleAtIndex: obj.index,
+      isDraggingModuleAtIndex: obj.index
     })
   }
 
   onDragEnd = () => {
     this.setState({
-      isDraggingModuleAtIndex: null,
+      isDraggingModuleAtIndex: null
     })
   }
 
@@ -245,7 +243,7 @@ export class ModuleStack extends React.Component {
     this.props.moveModuleByIndex(this.props.tabSlug, oldIndex, newIndex)
   }
 
-  render() {
+  render () {
     const { isReadOnly, tabSlug, paneRef, wfModules, modules } = this.props
     const [ addDataWfModule, useDataWfModules ] = partitionWfModules(wfModules, modules)
 
@@ -272,8 +270,8 @@ export class ModuleStack extends React.Component {
             />
             <WfModuleHeader
               tabSlug={this.props.tabSlug}
-              moduleName={''/*item.name*/}
-              moduleIcon={''/*item.icon*/}
+              moduleName={''/* item.name */}
+              moduleIcon={''/* item.icon */}
               isSelected={false}
             />
           </React.Fragment>
@@ -319,7 +317,7 @@ export class ModuleStack extends React.Component {
         ) : (
           <>
             <AddData
-              key="add-data"
+              key='add-data'
               tabSlug={tabSlug}
               isLessonHighlight={this.props.testLessonHighlightIndex(0)}
               isReadOnly={this.props.isReadOnly}
@@ -334,7 +332,7 @@ export class ModuleStack extends React.Component {
             {spotsAndItems}
             {wfModules.length > 0 ? (
               <ModuleStackInsertSpot
-                key="last"
+                key='last'
                 index={wfModules.length}
                 tabSlug={tabSlug}
                 isLast
@@ -365,18 +363,18 @@ const mapStateToProps = (state) => {
     wfModules,
     modules,
     isReadOnly: state.workflow.read_only,
-    testLessonHighlightIndex: (index) => testHighlight({ type: 'Module', name: null, index: index }),
+    testLessonHighlightIndex: (index) => testHighlight({ type: 'Module', name: null, index: index })
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    moveModuleByIndex(tabSlug, oldIndex, newIndex) {
+    moveModuleByIndex (tabSlug, oldIndex, newIndex) {
       const action = moveModuleAction(tabSlug, oldIndex, newIndex)
       dispatch(action)
     },
 
-    removeModule(wfModuleId) {
+    removeModule (wfModuleId) {
       const action = deleteModuleAction(wfModuleId)
       dispatch(action)
     }
@@ -386,4 +384,4 @@ const mapDispatchToProps = (dispatch) => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(ModuleStack);
+)(ModuleStack)

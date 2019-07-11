@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 
 export default function ModalBody ({ children }) {
   return (
-    <div className='modal-body' children={children}/>
+    <div className='modal-body' children={children} />
   )
 }
 ModalBody.propTypes = {

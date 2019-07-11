@@ -2,15 +2,15 @@ import React from 'react'
 import { mount } from 'enzyme'
 import { act } from 'react-dom/test-utils'
 import Workflows from './index'
-const Utils = require('../utils');
 import { tick, okResponseMock, jsonResponseMock } from '../test-utils'
+const Utils = require('../utils')
 
 describe('Workflow list page', () => {
   const testWorkflows = {
     owned: [
       {
         id: 1,
-        name: "Cleaning",
+        name: 'Cleaning',
         owner_name: 'Fred Frederson',
         public: true,
         is_owner: true,
@@ -18,7 +18,7 @@ describe('Workflow list page', () => {
       },
       {
         id: 2,
-        name: "Charting",
+        name: 'Charting',
         owner_name: 'Fred Frederson',
         public: false,
         is_owner: true,
@@ -26,7 +26,7 @@ describe('Workflow list page', () => {
       },
       {
         id: 3,
-        name: "Analysis",
+        name: 'Analysis',
         owner_name: 'Fred Frederson',
         public: false,
         is_owner: true,
@@ -36,7 +36,7 @@ describe('Workflow list page', () => {
     shared: [
       {
         id: 7,
-        name: "Messy data cleanup",
+        name: 'Messy data cleanup',
         owner_name: 'John Johnson',
         public: false,
         is_owner: false,
@@ -44,7 +44,7 @@ describe('Workflow list page', () => {
       },
       {
         id: 8,
-        name: "Document search",
+        name: 'Document search',
         owner_name: 'Sally Sallerson',
         public: true,
         is_owner: false,
@@ -54,7 +54,7 @@ describe('Workflow list page', () => {
     templates: [
       {
         id: 10,
-        name: "Demo 1",
+        name: 'Demo 1',
         owner_name: 'Workbench',
         public: false,
         is_owner: false,
@@ -67,7 +67,7 @@ describe('Workflow list page', () => {
     id: 543,
     name: 'Untitled Workflow',
     owner_name: 'Sally Sallerson',
-    public: false,
+    public: false
   }
 
   const api = {
@@ -77,7 +77,7 @@ describe('Workflow list page', () => {
   const wrapper = (props) => mount(
     <Workflows
       api={api}
-      user={{id: 1}}
+      user={{ id: 1 }}
       {...props}
     />
   )
@@ -113,7 +113,7 @@ describe('Workflow list page', () => {
   })
 
   it('delete a workflow', (done) => {
-    const w = wrapper({workflows: testWorkflows })
+    const w = wrapper({ workflows: testWorkflows })
     global.confirm.mockReturnValue(true) // pretend the user clicked OK
     // We've clicked delete and now we have to wait for everything to update.
     // see https://facebook.github.io/jest/docs/asynchronous.html
@@ -145,7 +145,7 @@ describe('Workflow list page', () => {
             id: 666,
             name: 'Copy of Visualization',
             owner_name: 'Paul Plagarizer',
-            public: false,
+            public: false
           })))
         }))
       }
@@ -183,8 +183,8 @@ describe('Workflow list page', () => {
       owned: testWorkflows.owned,
       shared: [],
       templates: []
-    }})
-    setImmediate( () => {
+    } })
+    setImmediate(() => {
       w.update()
       w.find('.nav-link').findWhere(node => node.props().children === 'Shared with me').simulate('click')
       expect(w.find('.tab-pane.active Workflow')).toHaveLength(0)
@@ -197,7 +197,7 @@ describe('Workflow list page', () => {
   })
 
   it('should sort properly by date and name', () => {
-    const w = wrapper({workflows: testWorkflows})
+    const w = wrapper({ workflows: testWorkflows })
 
     // sort by date ascending
     w.find('.sort-menu DropdownToggle button').simulate('click')

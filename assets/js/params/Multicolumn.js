@@ -101,7 +101,7 @@ export default class Multicolumn extends React.PureComponent {
     this.props.onChange(value)
   }
 
-  render() {
+  render () {
     const { inputColumns, isReadOnly, fieldId, name, placeholder, label, addMenuListClassName, noOptionsMessage } = this.props
 
     const columnOptions = (inputColumns || []).map(column => (

@@ -16,7 +16,7 @@ export default class TabList extends React.PureComponent {
     destroy: PropTypes.func.isRequired, // func(tabSlug) => undefined
     duplicate: PropTypes.func.isRequired, // func(tabSlug) => undefined
     select: PropTypes.func.isRequired, // func(tabSlug) => undefined
-    setOrder: PropTypes.func.isRequired, // func(tabSlugs) => undefined
+    setOrder: PropTypes.func.isRequired // func(tabSlugs) => undefined
   }
 
   state = {

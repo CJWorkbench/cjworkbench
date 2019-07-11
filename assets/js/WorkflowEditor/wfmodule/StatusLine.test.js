@@ -4,7 +4,7 @@ import StatusLine from './StatusLine'
 import { mount } from 'enzyme'
 
 describe('Status line', () => {
-  const wrapper = (extraProps={}) => {
+  const wrapper = (extraProps = {}) => {
     return mount(
       <StatusLine
         isReadOnly={false}

@@ -1,8 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import Spinner from '../Spinner'
-import TableView, {NMaxColumns} from './TableView'
-
+import TableView from './TableView'
 
 // NoStepTable: shown when no Step is selected
 // Do not render zero-row tables: render a placeholder instead
@@ -58,11 +57,11 @@ const OkStepTable = React.memo(function OkStepTable ({ isLoaded, isReadOnly, wfM
   )
 })
 
-const TableSwitcherContents = React.memo(function TableSwitcherContents({ status, nRows, ...props }) {
+const TableSwitcherContents = React.memo(function TableSwitcherContents ({ status, nRows, ...props }) {
   if (status === null) {
     return <NoStepTable />
   } else if (status === 'busy') {
-    return <Spinner />
+    return <BusyStepTable />
   } else if (status === 'unreachable') {
     return <UnreachableStepTable />
   } else {

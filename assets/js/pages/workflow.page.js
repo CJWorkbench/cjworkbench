@@ -1,6 +1,4 @@
 // workflow.page.js - the master JavaScript for /workflows/:id
-__webpack_public_path__ = window.STATIC_URL + 'bundles/'
-
 import { createStore, applyMiddleware, compose } from 'redux'
 import thunk from 'redux-thunk'
 import promiseMiddleware from 'redux-promise-middleware'
@@ -13,6 +11,8 @@ import { workflowReducer, applyDeltaAction } from '../workflow-reducer'
 import Workflow from '../Workflow'
 import WorkflowWebsocket from '../WorkflowWebsocket'
 import WorkbenchAPI from '../WorkbenchAPI'
+
+__webpack_public_path__ = window.STATIC_URL + 'bundles/'
 
 // --- Main ----
 const websocket = new WorkflowWebsocket(

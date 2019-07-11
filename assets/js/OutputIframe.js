@@ -12,15 +12,15 @@ export class OutputIframe extends React.PureComponent {
     deltaId: PropTypes.number, // null if added to empty workflow
     wfModuleId: PropTypes.number, // null if no wfmodule
     isPublic: PropTypes.bool.isRequired,
-    workflowId: PropTypes.number.isRequired,
+    workflowId: PropTypes.number.isRequired
   }
 
   state = {
     heightFromIframe: null, // if set, the iframe told us how tall it wants to be
-    isModalOpen: false,
+    isModalOpen: false
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate (prevProps, prevState) {
     if (prevProps.wfModuleId !== this.props.wfModuleId) {
       this.setState({
         heightFromIframe: null
@@ -34,11 +34,11 @@ export class OutputIframe extends React.PureComponent {
     }
   }
 
-  componentDidMount() {
+  componentDidMount () {
     window.addEventListener('message', this.onMessage)
   }
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     window.removeEventListener('message', this.onMessage)
   }
 

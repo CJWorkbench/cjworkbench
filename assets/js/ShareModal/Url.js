@@ -21,7 +21,7 @@ export default class Url extends React.PureComponent {
 
     logShare('URL copied')
 
-    this.setState(state => ({ nTimesCopied: state.nTimesCopied + 1}))
+    this.setState(state => ({ nTimesCopied: state.nTimesCopied + 1 }))
     navigator.clipboard.writeText(url)
   }
 

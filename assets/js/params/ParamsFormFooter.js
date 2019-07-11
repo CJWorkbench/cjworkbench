@@ -51,8 +51,7 @@ ParamsFormFooter.propTypes = {
   isReadOnly: PropTypes.bool.isRequired,
   fields: PropTypes.arrayOf(PropTypes.shape({
     type: PropTypes.string.isRequired,
-    idName: PropTypes.string.isRequired,
+    idName: PropTypes.string.isRequired
   }).isRequired).isRequired,
-  isEditing: PropTypes.bool.isRequired,
+  isEditing: PropTypes.bool.isRequired
 }
-

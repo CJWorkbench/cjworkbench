@@ -141,7 +141,6 @@ function buildSelectColumnsParams (oldParams, params) {
       // Existing module is "keep"
       if (keep) {
         throw new Error('Unhandled case: trying to keep in a keep module')
-        return null
       } else {
         // We want to drop
         if (idx === -1) {
@@ -155,7 +154,6 @@ function buildSelectColumnsParams (oldParams, params) {
       // Existing module is "drop"
       if (keep) {
         throw new Error('Unhandled case: trying to keep in a remove module')
-        return null
       } else {
         // We want to drop another one
         if (idx === -1) {
@@ -208,18 +206,6 @@ function buildFilterParams (_oldParams, params) {
   }
 }
 
-function genericSetColumn (key) {
-  return (oldParams, params) => {
-    const newParams = { ...params }
-    const colname = newParams.columnKey
-    if (newParams.hasOwnProperty('columnKey')) {
-      delete newParams.columnKey
-      newParams[key] = colname
-    }
-    return newParamsUnlessNoChange(oldParams, newParams)
-  }
-}
-
 function newParamsUnlessNoChange (oldParams, newParams) {
   if (!oldParams) return newParams
   for (const key in oldParams) {
@@ -233,7 +219,7 @@ function newParamsUnlessNoChange (oldParams, newParams) {
 function genericAddColumn (key) {
   return (oldParams, params) => {
     const colnames = oldParams ? (oldParams[key] || []) : []
-    if (!params.hasOwnProperty('columnKey'))  throw new Error('Expected "columnKey" column to add')
+    if (!params.hasOwnProperty('columnKey')) throw new Error('Expected "columnKey" column to add')
     const colname = params.columnKey
 
     if (!colname) throw new Error('Unexpected params: ' + JSON.stringify(params))
@@ -253,7 +239,7 @@ function genericAddColumn (key) {
 
 function buildRenameColumnsParams (oldParams, params, isNext) {
   // renameInfo format: {prevName: <current column name in table>, newName: <new name>}
-  const renames = {...(oldParams && oldParams.renames || {})} // we'll mutate it
+  const renames = { ...((oldParams && oldParams.renames) || {}) } // we'll mutate it
   const { prevName, newName } = params
 
   if (!newName) return null // no-op -- we do not allow empty column names
@@ -267,7 +253,7 @@ function buildRenameColumnsParams (oldParams, params, isNext) {
     renames[prevName] = newName
   } else {
     // originalPrevName, realPrevName: if we're renaming B=>C and original has A=>B, return A=>C.
-    const originalPrevName = Object.keys(renames).find(k => renames[k] == prevName)
+    const originalPrevName = Object.keys(renames).find(k => renames[k] === prevName)
     const realPrevName = originalPrevName || prevName
     renames[realPrevName] = newName
   }
@@ -307,10 +293,10 @@ function buildSortColumnsParams (oldParams, params) {
     return null
   }
 
-  const sort_columns = columns.filter( column => column.colname !== params.columnKey)
-  sort_columns.unshift(newColumn)
+  const sortColumns = columns.filter(column => column.colname !== params.columnKey)
+  sortColumns.unshift(newColumn)
 
-  const newParams = { sort_columns: sort_columns, keep_top: oldParams.keep_top }
+  const newParams = { sort_columns: sortColumns, keep_top: oldParams.keep_top }
 
   return newParams
 }

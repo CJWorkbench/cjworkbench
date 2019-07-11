@@ -13,7 +13,7 @@ export default class Acl extends React.PureComponent {
       canEdit: PropTypes.bool.isRequired
     }).isRequired).isRequired,
     updateAclEntry: PropTypes.func.isRequired, // func(email, canEdit) => undefined
-    deleteAclEntry: PropTypes.func.isRequired, // func(email) => undefined
+    deleteAclEntry: PropTypes.func.isRequired // func(email) => undefined
   }
 
   render () {

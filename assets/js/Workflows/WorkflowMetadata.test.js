@@ -3,7 +3,6 @@ import WorkflowMetadata from './WorkflowMetadata'
 import { shallow, ReactWrapper } from 'enzyme'
 import { okResponseMock } from '../test-utils'
 
-
 describe('WorkflowMetadata', () => {
   const today = new Date('Fri Sep 22 2017 17:03:52 GMT-0400 (EDT)')
   const dayBefore = today.setDate(today.getDate() - 2)
@@ -11,12 +10,12 @@ describe('WorkflowMetadata', () => {
   const defaultWorkflow = {
     id: 100,
     public: false,
-    owner_name: "Harry Harrison",
+    owner_name: 'Harry Harrison',
     last_update: dayBefore,
     read_only: false
   }
 
-  const wrapper = (extraProps={}, workflowExtraProps={}) => {
+  const wrapper = (extraProps = {}, workflowExtraProps = {}) => {
     const workflow = { ...defaultWorkflow, ...workflowExtraProps }
     return shallow(
       <WorkflowMetadata

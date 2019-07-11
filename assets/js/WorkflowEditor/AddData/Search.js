@@ -17,12 +17,12 @@ const Search = React.memo(function Search ({ value, onChange }) {
         onChange={handleChange}
         value={value}
       />
-      <button type='reset' className='reset' title='Clear Search'><i className='icon-close'></i></button>
+      <button type='reset' className='reset' title='Clear Search'><i className='icon-close' /></button>
     </form>
   )
 })
 Search.propTypes = {
   value: PropTypes.string.isRequired, // may be empty
-  onChange: PropTypes.func.isRequired, // func(value) => undefined
+  onChange: PropTypes.func.isRequired // func(value) => undefined
 }
 export default Search

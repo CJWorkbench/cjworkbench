@@ -6,9 +6,8 @@ import Utils from './utils'
 import { jsonResponseMock } from './test-utils'
 
 jest.mock('./utils', () => ({
-  goToUrl: jest.fn(),
+  goToUrl: jest.fn()
 }))
-
 
 describe('WorkflowNavBar', () => {
   beforeEach(() => {
@@ -114,7 +113,7 @@ describe('WorkflowNavBar', () => {
     // user isn't redirected yet
     expect(Utils.goToUrl).not.toHaveBeenCalled()
 
-    await tick(); // wait for promise to resolve
+    await tick() // wait for promise to resolve
 
     expect(Utils.goToUrl).toHaveBeenCalledWith('/workflows/77')
   })

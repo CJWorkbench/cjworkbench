@@ -17,7 +17,7 @@ export default class ModuleSearchResultGroup extends React.PureComponent {
     onMouseEnterModule: PropTypes.func.isRequired // func(moduleIdName) => undefined
   }
 
-  render() {
+  render () {
     const { name, modules, hasMatch, activeModule } = this.props
 
     const children = modules.map(module => (
@@ -31,9 +31,9 @@ export default class ModuleSearchResultGroup extends React.PureComponent {
     ))
 
     return (
-      <li className="module-search-result-group" data-name={name}>
+      <li className='module-search-result-group' data-name={name}>
         <h4>{name}</h4>
-        <ul className="module-search-results">{children}</ul>
+        <ul className='module-search-results'>{children}</ul>
       </li>
     )
   }

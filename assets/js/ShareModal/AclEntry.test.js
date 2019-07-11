@@ -4,7 +4,7 @@ import AclEntry from './AclEntry'
 
 describe('AclEntry', () => {
   // We mount() because we're testing both Role and AclEntry together.
-  const wrapper = (props={}) => mount(
+  const wrapper = (props = {}) => mount(
     <AclEntry
       isReadOnly={false}
       email='user@example.org'

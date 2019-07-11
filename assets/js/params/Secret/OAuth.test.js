@@ -1,8 +1,7 @@
+/* globals describe, expect, it, jest */
 import React from 'react'
-import OAuth  from './OAuth'
+import OAuth from './OAuth'
 import { mount } from 'enzyme'
-import { store,  getCurrentUserAction, disconnectCurrentUserAction } from '../../workflow-reducer';
-jest.mock('../../workflow-reducer');
 
 describe('OAuth', () => {
   const wrapper = (extraProps) => {
@@ -11,10 +10,10 @@ describe('OAuth', () => {
         name='x'
         startCreateSecret={jest.fn()}
         deleteSecret={jest.fn()}
-        secretMetadata={{name: 'a secret'}}
-        secretLogic={{service: 'google'}}
+        secretMetadata={{ name: 'a secret' }}
+        secretLogic={{ service: 'google' }}
         {...extraProps}
-        />
+      />
     )
   }
 

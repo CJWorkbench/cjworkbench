@@ -1,16 +1,17 @@
+/* globals describe, expect, it, jest */
 import React from 'react'
 import Multicolumn from './Multicolumn'
 import { mount } from 'enzyme'
 
 describe('Multicolumn', () => {
-  const wrapper = (extraProps={}) => mount(
+  const wrapper = (extraProps = {}) => mount(
     <Multicolumn
       onChange={jest.fn()}
       name='columns'
       fieldId='columns'
       isReadOnly={false}
       value={[ 'A', 'C' ]}
-      inputColumns={[{name: 'A'}, {name: 'B'}, {name: 'C'}, {name: 'D'}]}
+      inputColumns={[{ name: 'A' }, { name: 'B' }, { name: 'C' }, { name: 'D' }]}
       {...extraProps}
     />
   )
@@ -30,7 +31,7 @@ describe('Multicolumn', () => {
       const w = wrapper()
       expect(w.find('Select[name="columns"]').prop('options')).toHaveLength(4)
       expect(w.find('Select[name="columns"]').prop('options')).toEqual([{
-        "label": "A", "value": "A"}, {"label": "B", "value": "B"}, {"label": "C", "value": "C"}, {"label": "D", "value": "D"
+        'label': 'A', 'value': 'A' }, { 'label': 'B', 'value': 'B' }, { 'label': 'C', 'value': 'C' }, { 'label': 'D', 'value': 'D'
       }])
     })
 
@@ -63,13 +64,13 @@ describe('Multicolumn', () => {
           fieldId='column'
           isReadOnly={false}
           value={[ 'C', 'A', 'D' ]}
-          inputColumns={[{name: 'D'}, {name: 'A'}, {name: 'C'}, {name: 'B'}]}
+          inputColumns={[{ name: 'D' }, { name: 'A' }, { name: 'C' }, { name: 'B' }]}
         />
       )
       const expected = [
-        {label: 'D', value: 'D'},
-        {label: 'A', value: 'A'},
-        {label: 'C', value: 'C'}
+        { label: 'D', value: 'D' },
+        { label: 'A', value: 'A' },
+        { label: 'C', value: 'C' }
       ]
       expect(w.find('Select').prop('value')).toEqual(expected)
     })
@@ -77,7 +78,7 @@ describe('Multicolumn', () => {
     it('should call onChange when columns are added', () => {
       const w = wrapper({
         value: [ 'A' ],
-        inputColumns: [{name: 'A'}, {name: 'B'}, {name: 'C'}]
+        inputColumns: [{ name: 'A' }, { name: 'B' }, { name: 'C' }]
       })
       w.find('.react-select__dropdown-indicator')
         .simulate('mousedown', { type: 'mousedown', button: 0 }) // open menu
@@ -88,7 +89,7 @@ describe('Multicolumn', () => {
     it('should handle DEPRECATED values of type String', () => {
       const w = wrapper({
         value: 'A,B',
-        inputColumns: [{name: 'A'}, {name: 'B'}, {name: 'C'}]
+        inputColumns: [{ name: 'A' }, { name: 'B' }, { name: 'C' }]
       })
       w.find('.react-select__dropdown-indicator')
         .simulate('mousedown', { type: 'mousedown', button: 0 }) // open menu

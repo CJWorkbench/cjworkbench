@@ -18,7 +18,7 @@ export default class Groups extends React.PureComponent {
       type: PropTypes.oneOf(['text', 'number', 'datetime']).isRequired
     })), // or null if unknown
     onChange: PropTypes.func.isRequired, // func(value) => undefined
-    applyQuickFix: PropTypes.func.isRequired, // func(action, args) => undefined
+    applyQuickFix: PropTypes.func.isRequired // func(action, args) => undefined
   }
 
   onChangeColnames = (colnames) => {
@@ -59,7 +59,7 @@ export default class Groups extends React.PureComponent {
           <div className='group-dates'>
             <label>
               <input
-                type="checkbox"
+                type='checkbox'
                 name={`${name}[group_dates]`}
                 checked={value.group_dates}
                 onChange={this.onChangeGroupDates}

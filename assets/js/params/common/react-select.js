@@ -4,7 +4,6 @@ import PropTypes from 'prop-types'
 import Select from 'react-select'
 import { Popper } from 'react-popper'
 
-
 // react-select includes a funky CSS engine we don't want. Disable
 // _all_ its styles using its 'styles' parameter.
 //
@@ -36,7 +35,6 @@ export const NoStyles = {
   singleValue: () => NoStyle,
   valueContainer: () => NoStyle
 }
-
 
 const PopperModifiers = {
   autoPopperWidth: {
@@ -92,11 +90,9 @@ function PopperMenuPortal (props) {
   ), props.appendTo)
 }
 
-
 const DefaultOverrideComponents = {
   MenuPortal: PopperMenuPortal
 }
-
 
 export default class ReactSelect extends React.PureComponent {
   static propTypes = {
@@ -106,12 +102,12 @@ export default class ReactSelect extends React.PureComponent {
     placeholder: PropTypes.string.isRequired,
     options: PropTypes.arrayOf(PropTypes.shape({
       label: PropTypes.string.isRequired,
-      value: PropTypes.any.isRequired,
+      value: PropTypes.any.isRequired
     }).isRequired).isRequired,
     value: PropTypes.oneOfType([
       // either selected === options[X].value or selected[a] === options[X].value
       PropTypes.arrayOf(PropTypes.any.isRequired).isRequired,
-      PropTypes.any.isRequired,
+      PropTypes.any.isRequired
     ]), // or null|undefined
     isLoading: PropTypes.bool, // default null
     isMulti: PropTypes.bool, // default false
@@ -142,7 +138,7 @@ export default class ReactSelect extends React.PureComponent {
   }
 
   render () {
-    const { name, inputId, placeholder, options, selected, isLoading, isMulti, isReadOnly, addMenuListClassName, value } = this.props
+    const { name, inputId, placeholder, options, isLoading, isMulti, isReadOnly, addMenuListClassName, value } = this.props
 
     let reactSelectValue
     if (isMulti) {

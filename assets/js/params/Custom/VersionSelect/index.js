@@ -29,7 +29,7 @@ export default class VersionSelect extends React.PureComponent {
         type='submit'
         disabled={isWfModuleBusy}
       >
-        {isWfModuleBusy ? <i className="spinner" /> : null}
+        {isWfModuleBusy ? <i className='spinner' /> : null}
         {label}
       </button>
     )

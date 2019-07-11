@@ -4,15 +4,15 @@ import Cell from './Cell'
 
 export default class RowWithoutCellGarbageOrCellKeyConflicts extends Row {
   static defaultProps = {
-    ...Row.defaultProps,
+    ...Row.defaultProps
   }
 
   actionCellRef = React.createRef()
 
   getCell = (column, i, selectedColumn) => {
     // work around https://github.com/adazzle/react-data-grid/issues/1269
-    const { colVisibleStart, colVisibleEnd, idx, cellMetaData, row, isSelected, isScrolling } = this.props
-    const { key, formatter, locked } = column
+    const { idx, cellMetaData, row, isSelected, isScrolling } = this.props
+    const { key, formatter } = column
     // another fix for 1269 is the new value={this.getCellValue(key, i)}
     return (
       <Cell
@@ -36,7 +36,7 @@ export default class RowWithoutCellGarbageOrCellKeyConflicts extends Row {
   getCellValue = (key, columnIndex) => {
     // Another fix for https://github.com/adazzle/react-data-grid/issues/1269
     if (columnIndex === 0 && key === 'select-row') {
-			// ... assumes row-select is always enabled
+      // ... assumes row-select is always enabled
       return this.props.isSelected
     } else {
       return this.props.row[key]
@@ -51,7 +51,7 @@ export default class RowWithoutCellGarbageOrCellKeyConflicts extends Row {
   render () {
     const { idx, isSelected } = this.props
 
-    const className = `react-grid-Row react-grid-Row--${idx % 2 === 0 ? 'even' : 'odd'} ${this.props.isSelected ? 'row-selected' : ''}`
+    const className = `react-grid-Row react-grid-Row--${idx % 2 === 0 ? 'even' : 'odd'} ${isSelected ? 'row-selected' : ''}`
     const cells = this.getCells()
     return (
       <div className={className}>

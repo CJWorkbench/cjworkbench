@@ -1,7 +1,6 @@
-const path = require('path');
-const webpack = require('webpack');
-const BundleTracker = require('webpack-bundle-tracker');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const path = require('path')
+const BundleTracker = require('webpack-bundle-tracker')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
 module.exports = {
   context: __dirname,
@@ -26,16 +25,16 @@ module.exports = {
 
   output: {
     path: path.resolve('./assets/bundles/'),
-    filename: '[name]-[contenthash].js',
+    filename: '[name]-[contenthash].js'
   },
 
   devtool: 'source-map',
 
   plugins: [
-    new BundleTracker({filename: './webpack-stats.json'}),
+    new BundleTracker({ filename: './webpack-stats.json' }),
     new MiniCssExtractPlugin({
-      filename: "[name]-[contenthash].css",
-    }),
+      filename: '[name]-[contenthash].css'
+    })
   ],
 
   module: {
@@ -45,23 +44,23 @@ module.exports = {
         exclude: /node_modules/,
         loader: 'babel-loader', // config is in package.json
         options: {
-          cacheDirectory: true,
-        },
+          cacheDirectory: true
+        }
       },
       {
         test: /\.css$/,
         use: [
           MiniCssExtractPlugin.loader,
-          'css-loader',
-        ],
+          'css-loader'
+        ]
       },
       {
         test: /\.scss$/,
         use: [
           MiniCssExtractPlugin.loader,
           'css-loader',
-          'sass-loader',
-        ],
+          'sass-loader'
+        ]
       },
       {
         // static files
@@ -69,14 +68,14 @@ module.exports = {
         loader: 'url-loader',
         options: {
           limit: 40000,
-          name: '[name]-[contenthash].[ext]',
-        },
-      },
+          name: '[name]-[contenthash].[ext]'
+        }
+      }
     ]
   },
 
   resolve: {
     modules: ['node_modules'],
     extensions: ['.js', '.jsx']
-  },
+  }
 }

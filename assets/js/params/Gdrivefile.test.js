@@ -2,7 +2,7 @@ import React from 'react'
 import Gdrivefile from './Gdrivefile'
 import { mount, shallow } from 'enzyme'
 
-const tick = async() => new Promise(resolve => setTimeout(resolve, 0))
+const tick = async () => new Promise(resolve => setTimeout(resolve, 0))
 
 describe('Gdrivefile', () => {
   const aFileMetadataJson = {
@@ -15,7 +15,7 @@ describe('Gdrivefile', () => {
   let pickerFactory
 
   // Mount is necessary to invoke componentDidMount()
-  const wrapper = (extraProps={}) => {
+  const wrapper = (extraProps = {}) => {
     pickerFactory = {
       open: jest.fn(),
       close: jest.fn()
@@ -25,7 +25,7 @@ describe('Gdrivefile', () => {
       <Gdrivefile
         createOauthAccessToken={jest.fn(() => Promise.resolve('access-token'))}
         isReadOnly={false}
-        secretMetadata={{name: 'user@example.org'}}
+        secretMetadata={{ name: 'user@example.org' }}
         value={aFileMetadataJson}
         onChange={jest.fn()}
         onSubmit={jest.fn()}
@@ -143,4 +143,4 @@ describe('Gdrivefile', () => {
     w.unmount()
     expect(pickerFactory.close).toHaveBeenCalled()
   })
-});
+})

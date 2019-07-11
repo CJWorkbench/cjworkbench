@@ -3,12 +3,12 @@ import PropTypes from 'prop-types'
 import { LessonHighlightsType } from '../util/LessonHighlight'
 
 export default class LessonStep extends React.PureComponent {
-  render() {
+  render () {
     const { html, status } = this.props
 
     return (
       <li className={status}>
-        <div className="description" dangerouslySetInnerHTML={({__html: html})}></div>
+        <div className='description' dangerouslySetInnerHTML={({ __html: html })} />
       </li>
     )
   }
@@ -17,7 +17,7 @@ export default class LessonStep extends React.PureComponent {
 LessonStep.Status = {
   FUTURE: 'future',
   ACTIVE: 'active',
-  DONE: 'done',
+  DONE: 'done'
 }
 
 LessonStep.propTypes = {
@@ -25,6 +25,6 @@ LessonStep.propTypes = {
   status: PropTypes.oneOf([
     LessonStep.Status.FUTURE,
     LessonStep.Status.ACTIVE,
-    LessonStep.Status.DONE,
-  ]).isRequired,
+    LessonStep.Status.DONE
+  ]).isRequired
 }

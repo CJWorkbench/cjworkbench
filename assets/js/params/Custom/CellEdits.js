@@ -8,7 +8,7 @@ export default class CellEdits extends React.Component {
       row: PropTypes.number.isRequired,
       col: PropTypes.string.isRequired,
       value: PropTypes.string.isRequired
-    }).isRequired).isRequired,
+    }).isRequired).isRequired
   }
 
   // Starting from a JSON array like this
@@ -29,7 +29,7 @@ export default class CellEdits extends React.Component {
     for (const edit of value) {
       const colName = edit.col
       const colEdits = edits[colName] || []
-      colEdits.push({ row: edit['row'], value: edit['value']})
+      colEdits.push({ row: edit['row'], value: edit['value'] })
       edits[colName] = colEdits
     }
 
@@ -45,9 +45,8 @@ export default class CellEdits extends React.Component {
     return editsArray
   }
 
-
-  render() {
-    return  (
+  render () {
+    return (
       <React.Fragment>
         {this.editList.map(({ col, edits }) => (
           <div className='cell-edits--column' key={col}>

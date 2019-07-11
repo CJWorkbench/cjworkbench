@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 export default class NewAclEntry extends React.PureComponent {
   static propTypes = {
     ownerEmail: PropTypes.string.isRequired,
-    updateAclEntry: PropTypes.func.isRequired, // func(email, canEdit) => undefined
+    updateAclEntry: PropTypes.func.isRequired // func(email, canEdit) => undefined
   }
 
   emailRef = React.createRef()

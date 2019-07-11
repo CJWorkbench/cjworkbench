@@ -24,10 +24,10 @@ function Workflow ({ workflow, deleteWorkflow, duplicateWorkflow, openShareModal
 Workflow.propTypes = {
   workflow: PropTypes.shape({
     id: PropTypes.number.isRequired,
-    name: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired
   }).isRequired,
   deleteWorkflow: PropTypes.func, // func(id) => undefined, or null if not allowed to delete
   duplicateWorkflow: PropTypes.func.isRequired, // func(id) => undefined
-  openShareModal: PropTypes.func, // func(id) => undefined
+  openShareModal: PropTypes.func // func(id) => undefined
 }
 export default React.memo(Workflow)

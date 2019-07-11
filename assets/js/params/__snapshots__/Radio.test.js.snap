@@ -1,3 +1,43 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Radio renders correctly 1`] = `[Function]`;
+exports[`Radio renders correctly 1`] = `
+<RadioParam
+  enumOptions={
+    Array [
+      Object {
+        "label": "X",
+        "value": "x",
+      },
+    ]
+  }
+  fieldId="radio"
+  isReadOnly={false}
+  name="radio"
+  onChange={[MockFunction]}
+  value={0}
+>
+  <div
+    className="radio-options"
+  >
+    <label
+      className="t-d-gray content-1"
+      key="0"
+    >
+      <input
+        checked={false}
+        className="radio-button"
+        disabled={false}
+        id="radio"
+        name="radio"
+        onChange={[Function]}
+        type="radio"
+        value="x"
+      />
+      <span
+        className="button"
+      />
+      X
+    </label>
+  </div>
+</RadioParam>
+`;

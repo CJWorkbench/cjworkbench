@@ -46,7 +46,7 @@ export default class Dropdown extends React.PureComponent {
     return (
       <PopperManager tag={false}>
         <DropdownContext.Provider value={dropdownContext}>
-          <div className='dropdown' children={children}/>
+          <div className='dropdown' children={children} />
         </DropdownContext.Provider>
       </PopperManager>
     )

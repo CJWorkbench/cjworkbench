@@ -12,11 +12,11 @@ export default class ColumnContextMenu extends React.Component {
     renameColumn: PropTypes.func.isRequired
   }
 
-  createOrUpdate (idName, extraParams={}) {
+  createOrUpdate (idName, extraParams = {}) {
     this.props.onClickAction(idName, false, extraParams)
   }
 
-  create (idName, extraParams={}) {
+  create (idName, extraParams = {}) {
     this.props.onClickAction(idName, true, extraParams)
   }
 
@@ -35,7 +35,7 @@ export default class ColumnContextMenu extends React.Component {
   convertText = () => this.createOrUpdate('converttotext')
   formatNumbers = () => this.create('formatnumbers', { format: '{:,}' })
 
-  render() {
+  render () {
     const { columnType } = this.props
 
     return (

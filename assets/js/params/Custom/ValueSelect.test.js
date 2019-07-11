@@ -4,7 +4,7 @@ import { mount } from 'enzyme'
 import { ValueSelect } from './ValueSelect'
 
 describe('ValueSelect', () => {
-  const wrapper = (props={}) => {
+  const wrapper = (props = {}) => {
     const ret = mount(
       <ValueSelect
         valueCounts={{}}
@@ -91,14 +91,14 @@ describe('ValueSelect', () => {
 
     expect(w.find('.value')).toHaveLength(5)
 
-    w.find('input[type="search"]').simulate('change', { target: { value: 'b' }})
+    w.find('input[type="search"]').simulate('change', { target: { value: 'b' } })
     w.update()
     expect(w.find('.value')).toHaveLength(2)
   })
 
   it('should set the value to [] when "None" pressed', () => {
     const w = wrapper({
-      valueCounts: { 'a': 1, 'b': 1, 'c': 1, 'bb': 1, 'd': 1},
+      valueCounts: { 'a': 1, 'b': 1, 'c': 1, 'bb': 1, 'd': 1 },
       value: []
     })
     w.find('button[title="Select None"]').simulate('click')
@@ -109,7 +109,7 @@ describe('ValueSelect', () => {
 
   it('should clear the blacklist when "All" pressed', () => {
     const w = wrapper({
-      valueCounts: {'a': 1, 'b': 1, 'c': 1, 'bb': 1, 'd': 1},
+      valueCounts: { 'a': 1, 'b': 1, 'c': 1, 'bb': 1, 'd': 1 },
       value: ['a', 'b', 'd']
     })
 
@@ -121,11 +121,11 @@ describe('ValueSelect', () => {
 
   it('should disable All and None buttons when a search has taken place', () => {
     const w = wrapper({
-      valueCounts: {'a': 1, 'b': 1, 'c': 1, 'BB': 1, 'd': 1},
+      valueCounts: { 'a': 1, 'b': 1, 'c': 1, 'BB': 1, 'd': 1 },
       value: ['a']
     })
 
-    w.find('input[type="search"]').simulate('change', {target: {value: 'a'}})
+    w.find('input[type="search"]').simulate('change', { target: { value: 'a' } })
     w.update()
     expect(w.find('button[name="refine-select-all"]').prop('disabled')).toBe(true)
     expect(w.find('button[name="refine-select-none"]').prop('disabled')).toBe(true)
@@ -149,6 +149,6 @@ describe('ValueSelect', () => {
       value: []
     })
     // Used to throw TypeError
-    w.setProps({value: ['a']})
+    w.setProps({ value: ['a'] })
   })
 })

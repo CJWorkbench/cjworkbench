@@ -8,7 +8,7 @@ const WorkbenchAceEditor = lazy(() => import('./AceEditor'))
  * Include LazyAceEditor instead of AceEditor to move all that JavaScript to a
  * separate file (code splitting).
  */
-export default function LazyAceEditor(props) {
+export default function LazyAceEditor (props) {
   return (
     <ErrorBoundary>
       <Suspense fallback={<div className='loading-ace-editor'>Loading editor...</div>}>

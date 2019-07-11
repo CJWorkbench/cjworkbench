@@ -1,29 +1,29 @@
 // ---- Utilities ---
-import * as Cookies from "js-cookie"
+import * as Cookies from 'js-cookie'
 import { fromByteArray as base64Encode } from 'base64-js'
 
-export function goToUrl(url) {
-  window.location.href = url;
+export function goToUrl (url) {
+  window.location.href = url
 }
 
 // Current CSRF token
-export const csrfToken = Cookies.get('csrftoken');
+export const csrfToken = Cookies.get('csrftoken')
 
 // Gets the letter coordinate of a column from its index within the column names array
-export function idxToLetter(idx) {
-  var letters = '';
-  var cidx = parseInt(idx);
-  cidx += 1;
+export function idxToLetter (idx) {
+  var letters = ''
+  var cidx = parseInt(idx)
+  cidx += 1
   do {
-    cidx -= 1;
-    letters = String.fromCharCode(cidx % 26 + 65) + letters;
-    cidx = Math.floor(cidx / 26);
-  } while(cidx > 0)
-  return letters;
+    cidx -= 1
+    letters = String.fromCharCode(cidx % 26 + 65) + letters
+    cidx = Math.floor(cidx / 26)
+  } while (cidx > 0)
+  return letters
 }
 
 // Log to Intercom, if installed
-export function logUserEvent(name, metadata) {
+export function logUserEvent (name, metadata) {
   if (!window.APP_ID) return
 
   // If we're in a lesson, drop the event.
@@ -55,15 +55,15 @@ export function timeDifference (start, end) {
   }
 }
 
-export function escapeHtml(str) {
+export function escapeHtml (str) {
   str
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;')
 
-  return str;
+  return str
 }
 
 /**
@@ -78,7 +78,7 @@ export function escapeHtml(str) {
  * @param marginTop Minimum number of pixels between containerEl.top and el.top
  * @param marginBottom Minimum number of pixels between containerEl.bottom and el.bottom
  */
-export function scrollTo(el, containerEl, marginTop, marginBottom) {
+export function scrollTo (el, containerEl, marginTop, marginBottom) {
   if (marginTop === undefined) marginTop = 10
   if (marginBottom === undefined) marginBottom = 10
 

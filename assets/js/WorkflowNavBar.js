@@ -6,9 +6,7 @@ import ConnectedEditableWorkflowName, { EditableWorkflowName } from './EditableW
 import { goToUrl, timeDifference } from './utils'
 import ShareButton from './ShareModal/ShareButton'
 
-
 function NoOp () {}
-
 
 function LessonCourse ({ course }) {
   let path
@@ -29,7 +27,6 @@ function LessonCourse ({ course }) {
   )
 }
 
-
 function LessonWorkflowTitle ({ lesson }) {
   return (
     <div className='title-metadata-stack'>
@@ -42,7 +39,6 @@ function LessonWorkflowTitle ({ lesson }) {
     </div>
   )
 }
-
 
 function OwnedWorkflowTitleAndMetadata ({ isReadOnly, workflow }) {
   return (
@@ -71,7 +67,6 @@ function OwnedWorkflowTitleAndMetadata ({ isReadOnly, workflow }) {
   )
 }
 
-
 function WorkflowTitleAndMetadata ({ lesson, isReadOnly, workflow }) {
   if (lesson) {
     return (
@@ -89,7 +84,6 @@ function WorkflowTitleAndMetadata ({ lesson, isReadOnly, workflow }) {
   }
 }
 
-
 export default class WorkflowNavBar extends React.Component {
   static propTypes = {
     api: PropTypes.object.isRequired,
@@ -97,7 +91,7 @@ export default class WorkflowNavBar extends React.Component {
     lesson: PropTypes.shape({
       course: PropTypes.shape({
         slug: PropTypes.string.isRequired,
-        title: PropTypes.string.isRequired,
+        title: PropTypes.string.isRequired
       }), // optional -- no course means plain lesson
       header: PropTypes.shape({
         title: PropTypes.string.isRequired
@@ -154,7 +148,7 @@ export default class WorkflowNavBar extends React.Component {
     }
   }
 
-  render() {
+  render () {
     const { api, isReadOnly, loggedInUser, lesson, workflow } = this.props
 
     // menu only if there is a logged-in user
@@ -170,15 +164,15 @@ export default class WorkflowNavBar extends React.Component {
       )
     } else {
       contextMenu = (
-        <a href="/account/login" className='nav--link'>Sign in</a>
+        <a href='/account/login' className='nav--link'>Sign in</a>
       )
     }
 
     const spinner = this.state.spinnerVisible ? (
-      <div className="spinner-container">
-        <div className="spinner-l1">
-          <div className="spinner-l2">
-            <div className="spinner-l3"></div>
+      <div className='spinner-container'>
+        <div className='spinner-l1'>
+          <div className='spinner-l2'>
+            <div className='spinner-l3' />
           </div>
         </div>
       </div>
@@ -188,9 +182,9 @@ export default class WorkflowNavBar extends React.Component {
       <React.Fragment>
         {spinner}
         <nav className='navbar'>
-          <div className="navbar-elements">
+          <div className='navbar-elements'>
             <a href='/workflows/' className='logo-navbar'>
-              <img className='image' src={`${window.STATIC_URL}images/logo.svg`}/>
+              <img className='image' src={`${window.STATIC_URL}images/logo.svg`} />
             </a>
             <WorkflowTitleAndMetadata
               lesson={lesson}
@@ -202,7 +196,7 @@ export default class WorkflowNavBar extends React.Component {
                 <UndoRedoButtons undo={this.undo} redo={this.redo} />
               )}
               <button name='duplicate' onClick={this.handleDuplicate}>Duplicate</button>
-              {lesson ? null : ( /* We haven't yet designed what it means to share a lesson workflow. */
+              {lesson ? null : (/* We haven't yet designed what it means to share a lesson workflow. */
                 <ShareButton>Share</ShareButton>
               )}
               {contextMenu}

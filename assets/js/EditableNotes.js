@@ -1,5 +1,5 @@
-import React from 'react';
-import TextareaAutosize from 'react-textarea-autosize';
+import React from 'react'
+import TextareaAutosize from 'react-textarea-autosize'
 import PropTypes from 'prop-types'
 
 export default class EditableNotes extends React.PureComponent {
@@ -10,7 +10,7 @@ export default class EditableNotes extends React.PureComponent {
     inputRef: PropTypes.object,
     onChange: PropTypes.func,
     onBlur: PropTypes.func,
-    onCancel: PropTypes.func.isRequired,
+    onCancel: PropTypes.func.isRequired
   }
 
   // Make Enter key blur by default, instead of adding newline.
@@ -28,20 +28,20 @@ export default class EditableNotes extends React.PureComponent {
 
   hackAroundTextareaAutosizeObsoleteInputRef = (ref) => {
     if (this.props.inputRef) {
-      this.props.inputRef.current = ref;
+      this.props.inputRef.current = ref
     }
   }
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     // see hackAroundTextareaAutosizeObsoleteInputRef()
     if (this.props.inputRef) {
-      this.props.inputRef.current = null;
+      this.props.inputRef.current = null
     }
   }
 
-  render() {
+  render () {
     // We pass most props to the <TextareaAutosize>.
-    const subprops = Object.assign({}, this.props);
+    const subprops = Object.assign({}, this.props)
     delete subprops.isReadOnly
     delete subprops.onKeyDown
     subprops.inputRef = this.hackAroundTextareaAutosizeObsoleteInputRef

@@ -6,7 +6,7 @@ export default function TabDropdown ({ onClickRename, onClickDelete, onClickDupl
   return (
     <UncontrolledDropdown>
       <DropdownToggle className='toggle'>
-        <i className='icon-caret-down'/>
+        <i className='icon-caret-down' />
       </DropdownToggle>
       <DropdownMenu>
         <DropdownItem onClick={onClickRename} icon='icon-edit'>Rename</DropdownItem>

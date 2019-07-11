@@ -19,13 +19,13 @@ const Months = [
   'Sept.',
   'Oct.',
   'Nov.',
-  'Dec.',
+  'Dec.'
 ]
 
 // Always print as if our time zone is UTC, when testing
 // (all other solutions are worse, including env vars and pre-adjusted test data)
 let _formatDateUTCforTesting = false
-export function formatDateUTCForTesting() {
+export function formatDateUTCForTesting () {
   _formatDateUTCforTesting = true
 }
 
@@ -35,7 +35,7 @@ export function formatDateUTCForTesting() {
  *
  * For instance: "June 22, 2018 – 10:35 a.m."
  */
-function formatDate(date) {
+function formatDate (date) {
   let mon, dd, yyyy, hh, mm
   if (_formatDateUTCforTesting) {
     mon = Months[date.getUTCMonth()]
@@ -73,7 +73,7 @@ class FetchVersion extends React.PureComponent {
     date: PropTypes.instanceOf(Date).isRequired, // version date
     isSelected: PropTypes.bool.isRequired,
     isSeen: PropTypes.bool.isRequired, // has user selected this version ever
-    onSelect: PropTypes.func.isRequired, // func(versionId) => undefined
+    onSelect: PropTypes.func.isRequired // func(versionId) => undefined
   }
 
   onChange = (ev) => {
@@ -82,7 +82,7 @@ class FetchVersion extends React.PureComponent {
     }
   }
 
-  render() {
+  render () {
     const { id, date, isSeen, isSelected } = this.props
 
     let className = isSeen ? 'seen' : 'unseen'
@@ -90,7 +90,7 @@ class FetchVersion extends React.PureComponent {
 
     return (
       <label className={className}>
-        <input type="radio" name="data-version" value={id} checked={isSelected} onChange={this.onChange} />
+        <input type='radio' name='data-version' value={id} checked={isSelected} onChange={this.onChange} />
         <time time={date.toISOString()}>{formatDate(date)}</time>
       </label>
     )
@@ -106,14 +106,14 @@ class FetchVersion extends React.PureComponent {
 class NotificationsForm extends React.PureComponent {
   static propTypes = {
     notificationsEnabled: PropTypes.bool.isRequired,
-    onSubmit: PropTypes.func.isRequired, // func(bool) => undefined
+    onSubmit: PropTypes.func.isRequired // func(bool) => undefined
   }
 
   onChange = (ev) => {
     this.props.onSubmit(ev.target.checked) // should change the state
   }
 
-  render() {
+  render () {
     const checked = this.props.notificationsEnabled
 
     const className = checked ? 'notifications-enabled' : 'notifications-disabled'
@@ -122,18 +122,18 @@ class NotificationsForm extends React.PureComponent {
 
     return (
       <form onSubmit={this.onSubmit} className={`notifications ${className}`}>
-        <div className="text">
-          <p className="status"><i className={`icon ${iconAlert}`}/> Alerts are <strong>{checked ? ' on' : ' off'}</strong></p>
-          <p className="description">{ checked ? (
+        <div className='text'>
+          <p className='status'><i className={`icon ${iconAlert}`} /> Alerts are <strong>{checked ? ' on' : ' off'}</strong></p>
+          <p className='description'>{ checked ? (
             'You will receive and email if the output of this module changes'
           ) : (
             'Turn alerts ON to receive an email if the output of this module changes'
           )}</p>
         </div>
-        <div className="options">
+        <div className='options'>
           <label>
-            <input name="notifications-enabled" type="checkbox" checked={checked} onChange={this.onChange}/>
-            <span className="action">{checked ? 'Turn off' : 'Turn on'}</span>
+            <input name='notifications-enabled' type='checkbox' checked={checked} onChange={this.onChange} />
+            <span className='action'>{checked ? 'Turn off' : 'Turn on'}</span>
           </label>
         </div>
       </form>
@@ -148,7 +148,7 @@ export class DataVersionModal extends React.PureComponent {
     fetchVersions: PropTypes.arrayOf(PropTypes.shape({
       id: PropTypes.string.isRequired,
       date: PropTypes.instanceOf(Date).isRequired,
-      isSeen: PropTypes.bool.isRequired,
+      isSeen: PropTypes.bool.isRequired
     })).isRequired,
     selectedFetchVersionId: PropTypes.string, // null for no selection
     wfModuleId: PropTypes.number.isRequired,
@@ -156,7 +156,7 @@ export class DataVersionModal extends React.PureComponent {
     notificationsEnabled: PropTypes.bool.isRequired, // whether enabled on selectedWfModule
     onClose: PropTypes.func.isRequired, // func() => undefined
     onChangeFetchVersionId: PropTypes.func.isRequired, // func(wfModuleId, versionId) => undefined
-    onChangeNotificationsEnabled: PropTypes.func.isRequired, // func(wfModuleId, isEnabled) => undefined
+    onChangeNotificationsEnabled: PropTypes.func.isRequired // func(wfModuleId, isEnabled) => undefined
   }
 
   state = {
@@ -181,17 +181,17 @@ export class DataVersionModal extends React.PureComponent {
     this.props.onClose()
   }
 
-  render() {
+  render () {
     const {
       fetchWfModuleName,
       fetchVersions,
       onClose,
       isAnonymous,
-      notificationsEnabled,
+      notificationsEnabled
     } = this.props
 
     return (
-      <Modal className="data-versions-modal" isOpen={true} fade={false} toggle={onClose}>
+      <Modal className='data-versions-modal' isOpen fade={false} toggle={onClose}>
         <ModalHeader toggle={onClose}>Data Versions</ModalHeader>
         <ModalBody>
           <form onSubmit={this.onSubmit} onCancel={this.onClose}>
@@ -201,7 +201,7 @@ export class DataVersionModal extends React.PureComponent {
                 onSelect={this.setSelectedFetchVersionId}
                 isSelected={this.state.selectedFetchVersionId === v.id}
                 {...v}
-                /></li>)}
+              /></li>)}
             </ol>
           </form>
         </ModalBody>
@@ -210,14 +210,14 @@ export class DataVersionModal extends React.PureComponent {
             <NotificationsForm
               notificationsEnabled={notificationsEnabled}
               onSubmit={this.onChangeNotificationsEnabled}
-              />
+            />
           )}
-          <div className="actions">
+          <div className='actions'>
             <button
-              name="load"
+              name='load'
               disabled={this.state.selectedFetchVersionId === this.props.selectedFetchVersionId}
               onClick={this.onSubmit}
-              >Load</button>
+            >Load</button>
           </div>
         </ModalFooter>
       </Modal>
@@ -261,12 +261,12 @@ const getFetchVersions = memoize(versions => {
     return {
       id,
       isSeen,
-      date: new Date(id),
+      date: new Date(id)
     }
   })
 })
 
-function mapStateToProps(state, { wfModuleId }) {
+function mapStateToProps (state, { wfModuleId }) {
   const { fetchWfModule, fetchModule } = getFetchWfModule(state)
 
   const wfModule = state.wfModules[String(wfModuleId)]
@@ -278,7 +278,7 @@ function mapStateToProps(state, { wfModuleId }) {
     fetchVersions: fetchWfModule ? getFetchVersions(fetchWfModule.versions.versions || []) : null,
     selectedFetchVersionId: fetchWfModule ? fetchWfModule.versions.selected : null,
     isAnonymous: state.workflow.is_anonymous,
-    notificationsEnabled,
+    notificationsEnabled
   }
 }
 

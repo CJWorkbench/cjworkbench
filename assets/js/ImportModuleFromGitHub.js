@@ -4,14 +4,13 @@ import { Modal, ModalHeader, ModalBody, ModalFooter } from './components/Modal'
 import { updateModuleAction } from './workflow-reducer'
 import { connect } from 'react-redux'
 
-
 class StaffImportModuleFromGitHub extends React.PureComponent {
   static propTypes = {
     closeModal: PropTypes.func.isRequired,
     api: PropTypes.shape({
       importModuleFromGitHub: PropTypes.func.isRequired // func(url) => Promise[moduleObject or Error]
     }).isRequired,
-    addModuleToState: PropTypes.func.isRequired, // func(moduleObject) => undefined
+    addModuleToState: PropTypes.func.isRequired // func(moduleObject) => undefined
   }
 
   state = {
@@ -49,11 +48,11 @@ class StaffImportModuleFromGitHub extends React.PureComponent {
     })
   }
 
-  render() {
+  render () {
     const { status } = this.state
 
     return (
-      <Modal isOpen={true} toggle={this.props.closeModal}>
+      <Modal isOpen toggle={this.props.closeModal}>
         <ModalHeader toggle={this.props.closeModal}>Import Custom Module</ModalHeader>
         <ModalBody>
           <form id='import-from-github-form' onSubmit={this.handleSubmit}>
@@ -86,10 +85,9 @@ class StaffImportModuleFromGitHub extends React.PureComponent {
   }
 }
 
-
 function PublicImportModuleFromGitHub ({ closeModal }) {
   return (
-    <Modal isOpen={true} toggle={closeModal}>
+    <Modal isOpen toggle={closeModal}>
       <ModalHeader toggle={closeModal}>Import Custom Module</ModalHeader>
       <ModalBody>
         <div className='label-margin t-m-gray info-1'>
@@ -104,9 +102,8 @@ function PublicImportModuleFromGitHub ({ closeModal }) {
   )
 }
 
-
 export function ImportModuleFromGitHub ({ isStaff, ...innerProps }) {
-  const Component = isStaff ? StaffImportModuleFromGitHub : PublicImportModuleFromGitHub;
+  const Component = isStaff ? StaffImportModuleFromGitHub : PublicImportModuleFromGitHub
   return <Component {...innerProps} />
 }
 ImportModuleFromGitHub.propTypes = {
@@ -115,7 +112,7 @@ ImportModuleFromGitHub.propTypes = {
   api: PropTypes.shape({
     importModuleFromGitHub: PropTypes.func.isRequired // func(url) => Promise[moduleObject or Error]
   }).isRequired,
-  addModuleToState: PropTypes.func.isRequired, // func(moduleObject) => undefined
+  addModuleToState: PropTypes.func.isRequired // func(moduleObject) => undefined
 }
 
 const mapStateToProps = (state) => ({

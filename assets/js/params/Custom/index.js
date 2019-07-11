@@ -29,7 +29,7 @@ const Components = {
   valueselect: ValueSelect,
   version_select_simpler: VersionSelectSimpler,
   version_select: VersionSelect,
-  y_columns: ChartSeriesMultiSelect,
+  y_columns: ChartSeriesMultiSelect
 }
 
 const ComponentNotFound = ({ name }) => (

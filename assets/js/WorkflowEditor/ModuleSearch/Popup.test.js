@@ -18,26 +18,26 @@ describe('ModuleSearch Popup', () => {
   const modules = {
     enigma: {
       idName: 'enigma',
-      name: "Load from Enigma",
+      name: 'Load from Enigma',
       description: 'Enigma description',
-      category: "Add data",
+      category: 'Add data',
       uses_data: true,
-      icon: "url",
-      isLessonHighlight: true,
+      icon: 'url',
+      isLessonHighlight: true
     },
     filter: {
       idName: 'filter',
-      name: "Filter by Text",
+      name: 'Filter by Text',
       description: 'Text description',
-      category: "Filter",
+      category: 'Filter',
       uses_data: true,
-      icon: "filter",
-      isLessonHighlight: false,
+      icon: 'filter',
+      isLessonHighlight: false
     }
   }
   const modulesArray = [ modules.enigma, modules.filter ]
 
-  const wrapper = (extraProps={}) => mount(
+  const wrapper = (extraProps = {}) => mount(
     <Popup
       tabSlug='tab-1'
       index={2}
@@ -50,7 +50,7 @@ describe('ModuleSearch Popup', () => {
     />
   )
 
-  it('matches snapshot', () => { 
+  it('matches snapshot', () => {
     expect(wrapper()).toMatchSnapshot()
   })
 
@@ -60,28 +60,28 @@ describe('ModuleSearch Popup', () => {
     expect(w.text()).toMatch(/Filter by Text/)
   })
 
-  it('searches by module name', () => { 
+  it('searches by module name', () => {
     const w = wrapper()
 
-    w.find('input[type="search"]').simulate('change', {target: {value: 'a'}})
+    w.find('input[type="search"]').simulate('change', { target: { value: 'a' } })
     expect(w.text()).toMatch(/Load from Enigma/)
     expect(w.text()).not.toMatch(/Filter by Text/)
   })
 
   it('searches by module description', () => {
     const w = wrapper()
-    w.find('input[type="search"]').simulate('change', {target: {value: 'description'}})
+    w.find('input[type="search"]').simulate('change', { target: { value: 'description' } })
     expect(w.text()).toMatch(/Load from Enigma/)
     expect(w.text()).toMatch(/Filter by Text/)
   })
 
   it('schedules Popper resize when search results change', () => {
     const w = wrapper()
-    w.find('input[type="search"]').simulate('change', {target: {value: 'description'}})
+    w.find('input[type="search"]').simulate('change', { target: { value: 'description' } })
     expect(w.prop('onUpdate')).toHaveBeenCalled()
   })
 
-  it('calls close on form reset (e.g., clicking button.close)', () => { 
+  it('calls close on form reset (e.g., clicking button.close)', () => {
     // search field should be empty at start
     const w = wrapper()
     w.find('form').simulate('reset')
@@ -108,7 +108,7 @@ describe('ModuleSearch Popup', () => {
       { ...ModuleDefaults, idName: 'a', name: 'Z' },
       { ...ModuleDefaults, idName: 'b', name: 'X' },
       { ...ModuleDefaults, idName: 'c', name: 'Y' }
-    ]})
+    ] })
     expect(w.text()).toMatch(/X.*Y.*Z/)
   })
 
@@ -133,7 +133,7 @@ describe('ModuleSearch Popup', () => {
   })
 
   describe('connected component', () => {
-    const wrapper = (store, extraProps={}) => mount(
+    const wrapper = (store, extraProps = {}) => mount(
       <Provider store={store}>
         <ConnectedPopup
           tabSlug='tab-1'
@@ -172,8 +172,13 @@ describe('ModuleSearch Popup', () => {
       const store = mockStore({
         modules: {
           a: { id_name: 'a', name: 'AAA', category: 'Analyze', uses_data: true, description: 'A A', icon: 'a' },
-          b: { id_name: 'b', name: 'BBB', category: 'Analyze', uses_data: true, description: 'B B', icon: 'b',
-               deprecated: { end_date: '2001-01-01', message: 'Please disappear' } }
+          b: { id_name: 'b',
+            name: 'BBB',
+            category: 'Analyze',
+            uses_data: true,
+            description: 'B B',
+            icon: 'b',
+            deprecated: { end_date: '2001-01-01', message: 'Please disappear' } }
         }
       })
       const w = wrapper(store)

@@ -59,19 +59,19 @@ export default class Multichartseries extends React.PureComponent {
       return null
     } else {
       const addButton = !showAddButton ? null : (
-        <button type='button' title="add another column" onClick={this.onClickAddPlaceholder}>
-          <i className="icon-addc" />
+        <button type='button' title='add another column' onClick={this.onClickAddPlaceholder}>
+          <i className='icon-addc' />
         </button>
       )
 
       const removeButton = !showRemoveButton ? null : (
-        <button type='button' title="remove last column" onClick={this.onClickRemoveLast}>
-          <i className="icon-removec" />
+        <button type='button' title='remove last column' onClick={this.onClickRemoveLast}>
+          <i className='icon-removec' />
         </button>
       )
 
       return (
-        <div className="buttons">
+        <div className='buttons'>
           {removeButton}
           {addButton}
         </div>
@@ -83,7 +83,7 @@ export default class Multichartseries extends React.PureComponent {
     const { inputColumns, value, placeholder, isReadOnly, name, fieldId } = this.props
 
     if (inputColumns === null) {
-      return <p className="loading">Loading…</p>
+      return <p className='loading'>Loading…</p>
     }
 
     const pickedColumns = value.map(x => x.column)

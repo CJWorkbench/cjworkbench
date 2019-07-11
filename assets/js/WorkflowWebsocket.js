@@ -11,14 +11,14 @@ const MissingInflightHandler = {
 export class ErrorResponse extends Error {
   name = 'ErrorResponse'
 
-  constructor(serverError) {
+  constructor (serverError) {
     super('Server reported a problem')
     this.serverError = serverError
   }
 }
 
 export default class WorkflowWebsocket {
-  constructor(workflowId, onDelta, createSocket=null) {
+  constructor (workflowId, onDelta, createSocket = null) {
     if (!createSocket) {
       const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
       const url = `${protocol}//${window.location.host}/workflows/${workflowId}`

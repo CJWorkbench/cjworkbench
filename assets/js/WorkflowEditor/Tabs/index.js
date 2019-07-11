@@ -2,8 +2,7 @@ import Tabs from './Tabs'
 import { connect } from 'react-redux'
 import * as mapDispatchToProps from './actions'
 
-
-function getTab(slug, tabs, pendingTabs) {
+function getTab (slug, tabs, pendingTabs) {
   if (slug in tabs) {
     return tabs[slug]
   } else {
@@ -19,7 +18,6 @@ function getTab(slug, tabs, pendingTabs) {
   }
 }
 
-
 function mapStateToProps (state) {
   const { selectedPane, workflow, tabs } = state
   const pendingTabs = state.pendingTabs ? state.pendingTabs : {}
@@ -27,7 +25,7 @@ function mapStateToProps (state) {
   return {
     tabs: workflow.tab_slugs.map(slug => getTab(slug, tabs, pendingTabs)),
     selectedPane,
-    isReadOnly: workflow.read_only,
+    isReadOnly: workflow.read_only
   }
 }
 

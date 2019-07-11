@@ -1,11 +1,9 @@
 // Reducer for Workflow page.
 // That is, provides all the state transition functions that are executed on user command
-import { createStore, applyMiddleware } from 'redux'
 import { reducerFunctions as TabReducerFunctions } from './WorkflowEditor/Tabs/actions'
 import { reducerFunctions as WorkflowEditorReducerFunctions } from './WorkflowEditor/actions'
 import { reducerFunctions as ShareReducerFunctions } from './ShareModal/actions'
 import { reducerFunctions as FileReducerFunctions } from './params/File/actions'
-import { UNHANDLED_ERROR } from './error-middleware'
 
 // Workflow
 const SET_WORKFLOW_NAME = 'SET_WORKFLOW_NAME'
@@ -20,7 +18,6 @@ const APPLY_DELTA = 'APPLY_DELTA'
 
 // WfModule
 const SET_WF_MODULE_NOTES = 'SET_WF_MODULE_NOTES'
-const SET_WF_MODULE_STATUS = 'SET_WF_MODULE_STATUS'
 const SET_WF_MODULE_COLLAPSED = 'SET_WF_MODULE_COLLAPSED'
 const REQUEST_WF_MODULE_FETCH = 'REQUEST_WF_MODULE_FETCH'
 const SET_WF_MODULE_PARAMS = 'SET_WF_MODULE_PARAMS'
@@ -206,7 +203,7 @@ export function moveModuleAction (tabSlug, oldIndex, newIndex) {
       newIndex -= 1
     }
 
-    const { workflow, tabs } = getState()
+    const { tabs } = getState()
     const tab = tabs[tabSlug]
 
     const newIds = tab.wf_module_ids.slice()
@@ -262,7 +259,7 @@ registerReducerFunc(MOVE_MODULE + '_PENDING', (state, action) => {
  */
 export function addModuleAction (moduleIdName, position, parameterValues) {
   return (dispatch, getState, api) => {
-    const { modules, tabs, wfModules, workflow } = getState()
+    const { tabs, wfModules } = getState()
     const nonce = generateNonce(wfModules, moduleIdName)
 
     let tabSlug, index
@@ -318,7 +315,7 @@ export function addModuleAction (moduleIdName, position, parameterValues) {
 }
 
 registerReducerFunc(ADD_MODULE + '_PENDING', (state, action) => {
-  const { tabs, workflow } = state
+  const { tabs } = state
   const { tabSlug, index, nonce } = action.payload
   const tab = tabs[tabSlug]
   const wfModuleIds = tab.wf_module_ids.slice()
@@ -344,8 +341,6 @@ registerReducerFunc(ADD_MODULE + '_PENDING', (state, action) => {
 // Call delete API, then dispatch a reload
 export function deleteModuleAction (wfModuleId) {
   return (dispatch, getState, api) => {
-    const { workflow } = getState()
-
     return dispatch({
       type: DELETE_MODULE,
       payload: {
@@ -368,7 +363,7 @@ registerReducerFunc(DELETE_MODULE + '_PENDING', (state, action) => {
 
   wfModuleIds.splice(index, 1)
 
-  const newWfModules = { ... state.wfModules }
+  const newWfModules = { ...state.wfModules }
   delete newWfModules[String(wfModuleId)]
 
   // If we are deleting the selected module, then set the previous module
@@ -414,8 +409,8 @@ export function setSelectedWfModuleAction (wfModuleId) {
     const wfModulePosition = tab.wf_module_ids.indexOf(wfModuleId)
 
     if (
-      workflow.selected_tab_position === tabPosition
-      && tab.selected_wf_module_position === wfModulePosition
+      workflow.selected_tab_position === tabPosition &&
+      tab.selected_wf_module_position === wfModulePosition
     ) {
       // avoid spurious HTTP requests and state changes
       return
@@ -428,7 +423,7 @@ export function setSelectedWfModuleAction (wfModuleId) {
       type: SET_SELECTED_MODULE,
       payload: {
         promise,
-        data: {tabPosition, tabSlug, wfModulePosition }
+        data: { tabPosition, tabSlug, wfModulePosition }
       }
     })
   }
@@ -467,7 +462,7 @@ registerReducerFunc(SET_SELECTED_MODULE + '_PENDING', (state, action) => {
  */
 export function maybeRequestWfModuleFetchAction (wfModuleId) {
   return (dispatch, getState, api) => {
-    const { workflow, wfModules, modules } = getState()
+    const { wfModules, modules } = getState()
     const wfModule = wfModules[String(wfModuleId)]
     const module = wfModule.module ? modules[wfModule.module] : null
     const hasVersionSelect = module ? !!module.param_fields.find(ps => ps.idName === 'version_select') : null
@@ -536,7 +531,7 @@ export function setWfModuleNotificationsAction (wfModuleId, isNotifications) {
         promise: api.setWfModuleNotifications(wfModuleId, isNotifications),
         data: {
           wfModuleId,
-          isNotifications,
+          isNotifications
         }
       }
     })
@@ -548,7 +543,7 @@ registerReducerFunc(SET_WF_MODULE_NOTIFICATIONS + '_PENDING', (state, action) =>
   return { ...state,
     wfModules: { ...state.wfModules,
       [String(wfModuleId)]: { ...wfModule,
-        notifications: isNotifications,
+        notifications: isNotifications
       }
     }
   }
@@ -573,7 +568,7 @@ export function trySetWfModuleAutofetchAction (wfModuleId, isAutofetch, fetchInt
         promise: (
           api.trySetWfModuleAutofetch(wfModuleId, isAutofetch, fetchInterval)
             .then(obj => ({ wfModuleId, ...obj }))
-        ),
+        )
       }
     })
   }
@@ -585,12 +580,11 @@ registerReducerFunc(TRY_SET_WF_MODULE_AUTOFETCH + '_FULFILLED', (state, action) 
     wfModules: { ...state.wfModules,
       [String(wfModuleId)]: { ...wfModule,
         auto_update_data: isAutofetch,
-        update_interval: fetchInterval,
+        update_interval: fetchInterval
       }
     }
   }
 })
-
 
 export function setWfModuleNotesAction (wfModuleId, notes) {
   return (dispatch, getState, api) => {
@@ -622,44 +616,12 @@ registerReducerFunc(SET_WF_MODULE_NOTES + '_PENDING', (state, action) => {
   }
 })
 
-// SET_WF_MODULE_STATUS
-// Change the workflow status (OK, pending, error)
-//
-// TODO nix this. It's always wrong. The _server_ decides when a module is busy.
-export function setWfModuleBusyAction (wfModuleId) {
-  return {
-    type: SET_WF_MODULE_STATUS,
-    payload: {
-      wfModuleId,
-    }
-  }
-}
-registerReducerFunc(SET_WF_MODULE_STATUS, (state, action) => {
-  const { wfModuleId } = action.payload
-  const wfModule = state.wfModules[String(wfModuleId)]
-  if (!wfModule) return state
-
-  if (wfModule.is_busy) {
-    return state
-  }
-
-  return { ...state,
-    wfModules: { ...state.wfModules,
-      [String(wfModuleId)]: { ...wfModule,
-        is_busy: True,
-        fetch_error: ''
-      }
-    }
-  }
-})
-
 export function setWfModuleCollapsedAction (wfModuleId, isCollapsed, isReadOnly) {
   return (dispatch, getState, api) => {
     let promise
     if (isReadOnly) {
       promise = Promise.resolve(null)
     } else {
-      const { workflow } = getState()
       promise = api.setWfModuleCollapsed(wfModuleId, isCollapsed)
     }
 
@@ -691,8 +653,6 @@ registerReducerFunc(SET_WF_MODULE_COLLAPSED + '_PENDING', (state, action) => {
 
 export function setWfModuleParamsAction (wfModuleId, params) {
   return (dispatch, getState, api) => {
-    const { workflow } = getState()
-
     return dispatch({
       type: SET_WF_MODULE_PARAMS,
       payload: {
@@ -724,8 +684,6 @@ registerReducerFunc(SET_WF_MODULE_PARAMS + '_PENDING', (state, action) => {
 
 export function setWfModuleSecretAction (wfModuleId, param, secret) {
   return (dispatch, getState, api) => {
-    const { workflow } = getState()
-
     return dispatch({
       type: SET_WF_MODULE_SECRET,
       payload: {
@@ -739,14 +697,11 @@ export function setWfModuleSecretAction (wfModuleId, param, secret) {
   }
 }
 
-
 // --- Data Version actions ---
 
 // SET_DATA_VERSION
 export function setDataVersionAction (wfModuleId, selectedVersion) {
   return (dispatch, getState, api) => {
-    const { workflow } = getState()
-
     return dispatch({
       type: SET_DATA_VERSION,
       payload: {
@@ -777,8 +732,6 @@ registerReducerFunc(SET_DATA_VERSION + '_PENDING', (state, action) => {
 
 export function clearNotificationsAction (wfModuleId) {
   return (dispatch, getState, api) => {
-    const { workflow } = getState()
-
     return dispatch({
       type: CLEAR_NOTIFICATIONS,
       payload: {
@@ -822,11 +775,11 @@ export function deleteSecretAction (wfModuleId, param) {
   }
 }
 
-function quickFixPrependModule(wfModuleId, moduleIdName, parameterValues) {
+function quickFixPrependModule (wfModuleId, moduleIdName, parameterValues) {
   return addModuleAction(moduleIdName, { beforeWfModuleId: wfModuleId }, parameterValues)
 }
 
-export function quickFixAction(wfModuleId, action, args) {
+export function quickFixAction (wfModuleId, action, args) {
   return {
     prependModule: quickFixPrependModule
   }[action](wfModuleId, ...args)
@@ -835,7 +788,7 @@ export function quickFixAction(wfModuleId, action, args) {
 // ---- Reducer ----
 // Main dispatch for actions. Each action mutates the state to a new state, in typical Redux fashion
 
-export function workflowReducer (state={}, action) {
+export function workflowReducer (state = {}, action) {
   if (action.error === true) {
     return handleError(state, action)
   }

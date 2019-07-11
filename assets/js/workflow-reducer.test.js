@@ -1,6 +1,6 @@
-/* global describe, it, expect */
+/* global describe, it, expect, jest */
 import * as wfr from './workflow-reducer'
-import { mockStore, tick } from './test-utils'
+import { mockStore } from './test-utils'
 import { ErrorResponse } from './WorkflowWebsocket'
 
 describe('Reducer actions', () => {
@@ -21,11 +21,11 @@ describe('Reducer actions', () => {
       tab_slug: 'tab-91',
       params: { 'data': 'Some Data', 'version_select': null },
       versions: {
-        selected: "2018-02-21T03:09:20.214054Z",
+        selected: '2018-02-21T03:09:20.214054Z',
         versions: [
-          ["2018-02-21T03:09:20.214054Z", true],
-          ["2018-02-21T03:09:15.214054Z", false],
-          ["2018-02-21T03:09:10.214054Z", false]
+          ['2018-02-21T03:09:20.214054Z', true],
+          ['2018-02-21T03:09:15.214054Z', false],
+          ['2018-02-21T03:09:10.214054Z', false]
         ]
       },
       notifications: false,
@@ -60,7 +60,7 @@ describe('Reducer actions', () => {
     workflow: testWorkflow,
     tabs: testTabs,
     wfModules: testWfModules,
-    modules: testModules,
+    modules: testModules
   }
 
   it('sets the workflow name', async () => {
@@ -78,7 +78,7 @@ describe('Reducer actions', () => {
   })
 
   it('returns the state if we feed garbage to the reducer', () => {
-    const initialState = {'x': 'y'}
+    const initialState = { 'x': 'y' }
     const state = wfr.workflowReducer(initialState, {
       type: 'An ill-advised request',
       payload: {
@@ -245,7 +245,7 @@ describe('Reducer actions', () => {
     })
   })
 
-  it('does nothing if we setWfModuleNotifications on a nonexistent module', async() => {
+  it('does nothing if we setWfModuleNotifications on a nonexistent module', async () => {
     const api = { setWfModuleNotifications: jest.fn() }
     const store = mockStore(testState, api)
     await store.dispatch(wfr.setWfModuleNotificationsAction(40, false))
@@ -253,7 +253,7 @@ describe('Reducer actions', () => {
     expect(store.getState()).toEqual(testState)
   })
 
-  it('sets wfModule.notifications', async() => {
+  it('sets wfModule.notifications', async () => {
     expect(testWfModules['10'].notifications).toBe(false)
     const api = { setWfModuleNotifications: jest.fn(() => Promise.resolve(null)) }
     const store = mockStore(testState, api)
@@ -280,7 +280,7 @@ describe('Reducer actions', () => {
     await store.dispatch(wfr.moveModuleAction('tab-1', 2, 0))
 
     // Change happens synchronously. No need to even await the promise :)
-    expect(api.reorderWfModules).toHaveBeenCalledWith('tab-1', [ 6, 2, 4])
+    expect(api.reorderWfModules).toHaveBeenCalledWith('tab-1', [ 6, 2, 4 ])
     expect(store.getState().tabs['tab-1'].wf_module_ids).toEqual([ 6, 2, 4 ])
     expect(store.getState().tabs['tab-1'].selected_wf_module_position).toEqual(0)
   })
@@ -328,7 +328,7 @@ describe('Reducer actions', () => {
 
   it('applies delta to clearing a Tab', () => {
     const state = wfr.workflowReducer(testState, wfr.applyDeltaAction({
-      clearTabSlugs: [ 'tab-91' ],
+      clearTabSlugs: [ 'tab-91' ]
     }))
     expect(state.tabs).toEqual({})
   })
@@ -340,11 +340,11 @@ describe('Reducer actions', () => {
     // have a sane way of doing that.
     const oldTab = { slug: 'tab-1', name: 'Old' }
     const newTab = { slug: 'tab-NEW', name: 'New', wf_module_ids: [], selected_wf_module_position: null }
-    const realNewTab = { slug: 'tab-NEW', name: 'New', wf_module_ids: [1, 2], selected_wf_module_position: 1} // e.g., from 'duplicate'
+    const realNewTab = { slug: 'tab-NEW', name: 'New', wf_module_ids: [1, 2], selected_wf_module_position: 1 } // e.g., from 'duplicate'
 
     const state = wfr.workflowReducer({
       workflow: {
-        tab_slugs: [ 'tab-1', 'tab-NEW' ],
+        tab_slugs: [ 'tab-1', 'tab-NEW' ]
       },
       tabs: { 'tab-1': oldTab },
       pendingTabs: { 'tab-NEW': newTab }
@@ -430,10 +430,10 @@ describe('Reducer actions', () => {
       type: 'SET_DATA_VERSION_PENDING',
       payload: {
         wfModuleId: 10,
-        selectedVersion: "2018-02-21T03:09:10.214054Z"
+        selectedVersion: '2018-02-21T03:09:10.214054Z'
       }
     })
-    expect(state.wfModules['10'].versions.selected).toBe("2018-02-21T03:09:10.214054Z")
+    expect(state.wfModules['10'].versions.selected).toBe('2018-02-21T03:09:10.214054Z')
   })
 
   it('clears the notification count', () => {

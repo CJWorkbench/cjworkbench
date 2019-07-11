@@ -58,7 +58,7 @@ export default class _Modal extends React.PureComponent {
               name='close'
               className='action-button button-gray'
               onClick={onClickClose}
-              >Close</button>
+            >Close</button>
           </div>
         </ModalFooter>
       </Modal>

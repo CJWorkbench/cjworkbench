@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import DateGranularity from './DateGranularity'
 
-function DateGranularityList({ isReadOnly, name, colnames, value, onChange }) {
+function DateGranularityList ({ isReadOnly, name, colnames, value, onChange }) {
   return (
     <ul>
       {colnames.map(colname => (

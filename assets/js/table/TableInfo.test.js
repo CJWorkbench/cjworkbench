@@ -1,3 +1,4 @@
+/* globals describe, expect, it, jest */
 import React from 'react'
 import { mount } from 'enzyme'
 import configureStore from 'redux-mock-store'
@@ -7,7 +8,7 @@ import TableInfo from './TableInfo'
 describe('TableInfo', () => {
   const mockStore = configureStore()
 
-  const wrapper = (extraProps={}) => {
+  const wrapper = (extraProps = {}) => {
     // mock store for <SelectedRowsActions>, a descendent
     const store = mockStore({ modules: {} })
 

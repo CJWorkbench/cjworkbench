@@ -9,7 +9,7 @@ const Tab = React.memo(function Tab ({ name, isActive, setIsActive, children }) 
     <li className={`nav-item${isActive ? ' active' : ''}`}>
       <a
         id={`workflow-tab-link-${name}`}
-        className={`nav-link${isActive ? ' active' : '' /* redundant */}`}
+        className={`nav-link${isActive ? ' active' : ''}`}
         aria-controls={`workflow-tab-${name}`}
         aria-selected={isActive}
         href={`#${name}`}
@@ -95,7 +95,7 @@ function WorkflowLists ({ workflows, deleteWorkflow, duplicateWorkflow, openShar
     duplicateWorkflow: (workflowId) => {
       // HACK for now: support fake promise -- https://github.com/facebook/react/issues/14769#issuecomment-462528230
       // This is what we want:
-      //duplicateWorkflow(workflowId).then(() => setActiveTab('owned'))
+      // duplicateWorkflow(workflowId).then(() => setActiveTab('owned'))
       // ... but we're left with this for now. (It switches tabs before the
       // workflow is created, which looks glitchy.)
       setActiveTab('owned')

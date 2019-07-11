@@ -6,7 +6,7 @@ import { Popper } from 'react-popper'
 class ColorChoice extends React.PureComponent {
   static propTypes = {
     color: PropTypes.string.isRequired, // like '#abcdef'
-    onClick: PropTypes.func.isRequired, // onClick('#abcdef') => undefined
+    onClick: PropTypes.func.isRequired // onClick('#abcdef') => undefined
   }
 
   onClick = () => {
@@ -23,12 +23,11 @@ class ColorChoice extends React.PureComponent {
         name={name}
         onClick={this.onClick}
         className='color-choice'
-        style={{ backgroundColor: color}}
-      ></button>
+        style={{ backgroundColor: color }}
+      />
     )
   }
 }
-
 
 /**
  * a <button> and <input> that let the user write a color.
@@ -37,11 +36,11 @@ class CustomColorChoice extends React.PureComponent {
   static propTypes = {
     defaultValue: PropTypes.string.isRequired, // '#abcdef'-style string
     onChange: PropTypes.func.isRequired, // onChange('#abcdef') => undefined
-    onClose: PropTypes.func.isRequired, // onClose() => undefined -- if Escape is pressed
+    onClose: PropTypes.func.isRequired // onClose() => undefined -- if Escape is pressed
   }
 
   state = {
-    value: this.props.defaultValue,
+    value: this.props.defaultValue
   }
 
   get effectiveColor () {
@@ -105,7 +104,6 @@ class CustomColorChoice extends React.PureComponent {
   }
 }
 
-
 /**
  * Re-implement react-popper/src/Manager.js/ManagerContext, so we can
  * access `referenceNode` from within our event handlers.
@@ -127,7 +125,7 @@ class CustomColorChoice extends React.PureComponent {
 const ColorPickerContext = React.createContext()
 ColorPickerContext.Provider.propTypes = {
   value: PropTypes.shape({
-    referenceElement: PropTypes.instanceOf(HTMLElement), // or undefined -- which is the case during load
+    referenceElement: PropTypes.instanceOf(HTMLElement) // or undefined -- which is the case during load
   })
 }
 
@@ -200,7 +198,6 @@ class ColorPickerPopover extends React.PureComponent {
   }
 }
 
-
 /**
  * A simulation for `<input type="color" list=...`, which has lousy
  * cross-browser support in 2018.
@@ -209,11 +206,11 @@ export default class ColorPicker extends React.PureComponent {
   static propTypes = {
     value: PropTypes.string.isRequired, // Like '#abcdef'
     choices: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
-    onChange: PropTypes.func.isRequired, // onChange('#abcdef') => undefined
+    onChange: PropTypes.func.isRequired // onChange('#abcdef') => undefined
   }
 
   setReferenceElement = (referenceElement) => {
-    this.setState({ context: { referenceElement }})
+    this.setState({ context: { referenceElement } })
   }
 
   state = {

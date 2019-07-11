@@ -61,7 +61,7 @@ const QuotaExceeded = React.memo(function QuotaExceeded ({ workflowId, wfModuleI
                     <div className='other-workflow'>
                       {workflow.name}{' '}
                       <a className='edit' target='_blank' href={`/workflows/${workflow.id}/`}>
-                        Edit workflow <i className='icon-edit'></i>
+                        Edit workflow <i className='icon-edit' />
                       </a>
                     </div>
                   )}
@@ -82,7 +82,7 @@ const QuotaExceeded = React.memo(function QuotaExceeded ({ workflowId, wfModuleI
           ))}
         </tbody>
       </table>
-      <p class="request-lift">
+      <p className='request-lift'>
         Need a higher limit?
         Send us a short <a href='mailto:pierre@tablesdata.com' target='_blank'>email</a>.
       </p>
@@ -98,11 +98,11 @@ QuotaExceeded.propTypes = {
       name: PropTypes.string.isRequired
     }).isRequired,
     tab: PropTypes.shape({
-      name: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired
     }).isRequired,
     wfModule: PropTypes.shape({
       id: PropTypes.number.isRequired,
-      fetchInterval: PropTypes.number.isRequired,
+      fetchInterval: PropTypes.number.isRequired
     })
   }).isRequired).isRequired
 }

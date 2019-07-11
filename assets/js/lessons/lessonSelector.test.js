@@ -79,7 +79,7 @@ describe('lessonSelector', () => {
       },
       workflow: {
         tab_slugs: [ 'tab-1' ],
-        selected_tab_position: 0,
+        selected_tab_position: 0
       },
       tabs: {
         'tab-1': { wf_module_ids: [] }
@@ -104,7 +104,7 @@ describe('lessonSelector', () => {
               {
                 ...lessonFixture.sections[0].steps[1],
                 testJs: 'return true'
-              },
+              }
             ]
           },
           ...lessonFixture.sections.slice(1)
@@ -112,7 +112,7 @@ describe('lessonSelector', () => {
       },
       workflow: {
         tab_slugs: [ 'tab-1' ],
-        selected_tab_position: 0,
+        selected_tab_position: 0
       },
       tabs: {
         'tab-1': { wf_module_ids: [] }
@@ -152,7 +152,7 @@ describe('lessonSelector', () => {
         ...lessonFixture,
         sections: [
           { steps: [ { testJs: 'return true' }, { testJs: 'return true' } ] },
-          { steps: [ { testJs: 'return true' }, { testJs: 'return true' } ] },
+          { steps: [ { testJs: 'return true' }, { testJs: 'return true' } ] }
         ]
       }
     }
@@ -169,7 +169,7 @@ describe('lessonSelector', () => {
           {
             steps: [
               { testJs: 'return workflow.selectedTab.wfModuleNames[0] === "Foo"' },
-              { testJs: 'return workflow.selectedTab.wfModuleNames[1] === "Foo"' },
+              { testJs: 'return workflow.selectedTab.wfModuleNames[1] === "Foo"' }
             ]
           },
           ...lessonFixture.sections.slice(1)
@@ -203,7 +203,7 @@ describe('lessonSelector', () => {
           {
             steps: [
               { testJs: 'return state.selectedTab.wfModuleNames[0] === "Foo"' },
-              { testJs: 'return state.selectedTab.wfModuleNames[1] === "Foo"' },
+              { testJs: 'return state.selectedTab.wfModuleNames[1] === "Foo"' }
             ]
           },
           ...lessonFixture.sections.slice(1)
@@ -219,7 +219,7 @@ describe('lessonSelector', () => {
       },
       wfModules: {
         3: { module: 'foo' },
-        4: { module: 'bar' },
+        4: { module: 'bar' }
       },
       modules: {
         foo: { name: 'Foo' },
@@ -246,7 +246,7 @@ describe('lessonSelector', () => {
             {
               steps: [
                 { testJs: 'return state.selectedWfModule.moduleName === "foo"' }
-              ],
+              ]
             }
           ]
         },

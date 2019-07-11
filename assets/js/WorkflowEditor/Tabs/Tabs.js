@@ -18,7 +18,7 @@ export default class Tabs extends React.PureComponent {
     destroy: PropTypes.func.isRequired, // func(slug) => undefined
     duplicate: PropTypes.func.isRequired, // func(slug) => undefined
     select: PropTypes.func.isRequired, // func(slug) => undefined
-    setOrder: PropTypes.func.isRequired, // func(slug) => undefined
+    setOrder: PropTypes.func.isRequired // func(slug) => undefined
   }
 
   create = () => {

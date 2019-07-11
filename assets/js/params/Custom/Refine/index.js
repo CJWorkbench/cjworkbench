@@ -33,7 +33,7 @@ function isObjectEmpty (obj) {
   return true
 }
 
-function immutableToggleInSet(set, value, isSet) {
+function immutableToggleInSet (set, value, isSet) {
   const ret = new Set(set)
   if (isSet) {
     ret.add(value)
@@ -86,7 +86,7 @@ export class GroupForRender {
 class RefineModalPrompt extends React.PureComponent {
   static propTypes = {
     groups: PropTypes.arrayOf(PropTypes.instanceOf(util.Group).isRequired).isRequired,
-    massRename: PropTypes.func.isRequired, // func({ oldGroup: newGroup, ... }) => undefined
+    massRename: PropTypes.func.isRequired // func({ oldGroup: newGroup, ... }) => undefined
   }
 
   get bucket () {
@@ -125,7 +125,7 @@ class RefineModalPrompt extends React.PureComponent {
     return (
       <div className='refine-modal-prompt'>
         <button type='button' name='cluster' onClick={this.openModal}>Find clusters...</button>
-        <span className='instructions'></span>
+        <span className='instructions' />
         { !isModalOpen ? null : (
           <RefineModal
             bucket={this.bucket}
@@ -231,7 +231,7 @@ class RefineGroup extends React.Component { // uses react-window's shouldCompone
         // We need to do two things: blur the <input> and submit the change.
         // DOM blur event does both.
         this.textInput.current.blur()
-        return
+
       // else do nothing special
     }
   }
@@ -249,7 +249,7 @@ class RefineGroup extends React.Component { // uses react-window's shouldCompone
     const { style, group, valueCounts } = this.props
     // isEdited is from _props_, not state.
     // If user is _editing_, that doesn't mean the group is _edited_.
-    const className=`refine-group ${group.isEdited ? 'edited' : 'original'}`
+    const className = `refine-group ${group.isEdited ? 'edited' : 'original'}`
 
     const maybeExpandCheckbox = group.isEdited ? (
       <label className='expand'>
@@ -288,8 +288,7 @@ class RefineGroup extends React.Component { // uses react-window's shouldCompone
                   data-value={value}
                   onClick={this.onClickRemove}
                   className='icon-close'
-                >
-                </button>
+                />
               )}
               <span className='count'>{valueCounts[value]}</span>
             </span>
@@ -333,7 +332,7 @@ class RefineGroup extends React.Component { // uses react-window's shouldCompone
   }
 }
 
-const buildSpecModifier = (_this, helperName, shouldSubmit=false) => {
+const buildSpecModifier = (_this, helperName, shouldSubmit = false) => {
   const func = util[helperName]
 
   return (...args) => {
@@ -579,7 +578,7 @@ class DynamicallySizedGroupList extends React.PureComponent {
       return (
         <GroupList
           key='placeholder'
-          valueCounts={{a: 1, b1: 1, c: 1, c2: 1}}
+          valueCounts={{ a: 1, b1: 1, c: 1, c2: 1 }}
           loading={false}
           groups={[
             new GroupForRender(new util.Group('a', ['a'], 1), false, false, false),
@@ -633,7 +632,7 @@ export class Refine extends React.PureComponent {
     value: PropTypes.shape({
       renames: PropTypes.object.isRequired
     }).isRequired,
-    onChange: PropTypes.func.isRequired, // fn(newValue) => undefined
+    onChange: PropTypes.func.isRequired // fn(newValue) => undefined
   }
 
   state = {
@@ -744,7 +743,7 @@ export class Refine extends React.PureComponent {
     // 1. Group with largest 'values' count (number of records)
     // 2. if tied, Group with largest 'count' (number of unique values)
     // 3. if tied, Group with earliest alphabetical name
-    function comparePriority(a, b) {
+    function comparePriority (a, b) {
       if (b.count !== a.count) return b.count - a.count
       if (b.values.length !== a.values.length) return b.values.length - a.values.length
       return a.name.localeCompare(b.name)

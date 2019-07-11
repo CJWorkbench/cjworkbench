@@ -43,7 +43,7 @@ export default class SingleLineString extends React.PureComponent {
   }
 
   render () {
-    const { name, fieldId, label, upstreamValue, value, placeholder, isReadOnly } = this.props
+    const { name, fieldId, label, value, placeholder, isReadOnly } = this.props
 
     return (
       <React.Fragment>

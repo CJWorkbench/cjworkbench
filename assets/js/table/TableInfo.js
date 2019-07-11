@@ -34,8 +34,8 @@ export default class TableInfo extends React.PureComponent {
     const nColumnsString = nColumns === null ? '' : numberFormat.format(nColumns)
 
     return (
-      <div className="outputpane-header">
-        <div className="table-info-container">
+      <div className='outputpane-header'>
+        <div className='table-info-container'>
           <div className='table-info'>
             <div className='data'>Rows</div>
             <div className='value'>{nRowsString}</div>
@@ -54,8 +54,8 @@ export default class TableInfo extends React.PureComponent {
 
         {!wfModuleId ? null : (
           <>
-            <div className="export-table" onClick={this.openExportModal}>
-              <i className="icon-download" />
+            <div className='export-table' onClick={this.openExportModal}>
+              <i className='icon-download' />
               <span>EXPORT</span>
             </div>
             <ExportModal

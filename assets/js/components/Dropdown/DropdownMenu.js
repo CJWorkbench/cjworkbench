@@ -4,7 +4,6 @@ import PropTypes from 'prop-types'
 import { Popper } from 'react-popper'
 import { DropdownContext } from './Dropdown'
 
-
 const KeyCodes = {
   Tab: 9
 }
@@ -23,7 +22,7 @@ const PopperModifiers = {
  */
 class OpenDropdownMenu extends React.PureComponent {
   static propTypes = {
-    children: PropTypes.node.isRequired,
+    children: PropTypes.node.isRequired
   }
   static contextType = DropdownContext
 
@@ -110,7 +109,6 @@ class OpenDropdownMenu extends React.PureComponent {
       case 'Ctrl+n':
         this.moveFocus(1)
         ev.preventDefault() // Ctrl+n shoudn't open new browser window
-        return
     }
   }
 
@@ -126,7 +124,7 @@ class OpenDropdownMenu extends React.PureComponent {
             style={style}
             data-placement={placement}
           >
-            <div ref={this.ref} className='dropdown-menu' role='menu' children={children}/>
+            <div ref={this.ref} className='dropdown-menu' role='menu' children={children} />
           </div>
         )}
       </Popper>
@@ -143,7 +141,7 @@ class OpenDropdownMenu extends React.PureComponent {
  */
 export default class DropdownMenu extends React.PureComponent {
   static propTypes = {
-    children: PropTypes.node.isRequired,
+    children: PropTypes.node.isRequired
   }
   static contextType = DropdownContext
 

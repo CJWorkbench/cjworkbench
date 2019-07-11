@@ -39,7 +39,7 @@ export class Lesson extends React.PureComponent {
      *    to switch sections -- not navigate automatically.
      */
     activeSectionIndex: PropTypes.number, // or null
-    activeStepIndex: PropTypes.number, // or null
+    activeStepIndex: PropTypes.number // or null
   }
 
   state = {
@@ -51,7 +51,7 @@ export class Lesson extends React.PureComponent {
     this.setState({ currentSectionIndex: index })
   }
 
-  render() {
+  render () {
     const { slug, header, footer, sections, activeSectionIndex, activeStepIndex } = this.props
     const { currentSectionIndex } = this.state
 
@@ -74,9 +74,9 @@ export class Lesson extends React.PureComponent {
     return (
       <article className={classNames.join(' ')}>
         <h1>{header.title}</h1>
-        <div className="description" dangerouslySetInnerHTML={({__html: header.html})}></div>
-        <div className="sections">
-          <div className="content">
+        <div className='description' dangerouslySetInnerHTML={({ __html: header.html })} />
+        <div className='sections'>
+          <div className='content'>
             {sectionComponents}
           </div>
           <LessonFooter

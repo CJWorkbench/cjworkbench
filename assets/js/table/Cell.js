@@ -21,12 +21,12 @@ export default class CellWithoutGarbage extends Cell {
     )
   }
 
-  storeRef = (node) => this.node = node
+  storeRef = (node) => { this.node = node }
 
   render () {
     const { value, column, rowIdx } = this.props
 
-    // Mostly a copy/paste job to nix drag-handle. See 
+    // Mostly a copy/paste job to nix drag-handle. See
     // https://github.com/adazzle/react-data-grid/issues/822
     const style = {
       width: column.width,

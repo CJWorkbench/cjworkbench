@@ -69,7 +69,8 @@
   "scripts": {
     "test": "jest",
     "watchjs": "webpack --mode development --watch",
-    "compilejs": "webpack --mode production"
+    "compilejs": "webpack --mode production",
+    "reformat-code": "standard --fix"
   },
   "standard": {
     "parser": "babel-eslint"

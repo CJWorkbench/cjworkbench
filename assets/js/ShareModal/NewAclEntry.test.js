@@ -3,7 +3,7 @@ import { mount } from 'enzyme'
 import NewAclEntry from './NewAclEntry'
 
 describe('NewAclEntry', () => {
-  const wrapper = (extraProps={}) => mount(
+  const wrapper = (extraProps = {}) => mount(
     <NewAclEntry
       ownerEmail='owner@example.org'
       updateAclEntry={jest.fn()}

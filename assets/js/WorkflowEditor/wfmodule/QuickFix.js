@@ -11,7 +11,7 @@ export default class QuickFix extends React.PureComponent {
   static propTypes = {
     ...QuickFixPropTypes,
     disabled: PropTypes.bool.isRequired,
-    applyQuickFix: PropTypes.func.isRequired, // func(action, args) => undefined
+    applyQuickFix: PropTypes.func.isRequired // func(action, args) => undefined
   }
 
   onClick = () => {
@@ -25,7 +25,7 @@ export default class QuickFix extends React.PureComponent {
     return (
       <button
         disabled={disabled}
-        className="quick-fix action-button button-orange"
+        className='quick-fix action-button button-orange'
         onClick={this.onClick}
       >
         {text}

@@ -35,7 +35,7 @@ export default class NumberField extends React.PureComponent {
         return this.props.onChange(this.props.upstreamValue)
       case 'Enter':
         // The default is to submit the form -- which is what we want
-        return
+
       // else handle the key as usual
     }
   }

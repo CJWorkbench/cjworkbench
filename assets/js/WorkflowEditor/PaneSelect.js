@@ -23,6 +23,6 @@ const PaneSelect = React.memo(function PaneSelect ({ selectedPane, selectReportP
 })
 PaneSelect.propTypes = {
   selectedPane: propTypes.selectedPane.isRequired,
-  selectReportPane: PropTypes.func.isRequired, // func() => undefined
+  selectReportPane: PropTypes.func.isRequired // func() => undefined
 }
 export default PaneSelect

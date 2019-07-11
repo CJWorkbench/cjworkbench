@@ -1,3 +1,4 @@
+/* globals beforeEach, describe, expect, it, jest */
 import React from 'react'
 import { mount } from 'enzyme'
 import { Provider } from 'react-redux'
@@ -6,7 +7,7 @@ import ConnectedSelectedRowsActions, { SelectedRowsActions } from './SelectedRow
 
 describe('SelectedRowsActions', () => {
   describe('standalone', () => {
-    const wrapper = (extraProps={}) => {
+    const wrapper = (extraProps = {}) => {
       return mount(
         <SelectedRowsActions
           selectedRowIndexes={[3, 1, 4]}
@@ -45,7 +46,7 @@ describe('SelectedRowsActions', () => {
       }
     })
 
-    const wrapper = (state, extraProps={}) => {
+    const wrapper = (state, extraProps = {}) => {
       const store = mockStore(state, api)
       return mount(
         <Provider store={store}>

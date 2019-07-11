@@ -20,7 +20,7 @@ function findBestTimeUnitForNSeconds (nSeconds) {
   return 'seconds'
 }
 
-function calculateFetchInterval ({ wantTimeUnitCount, timeUnit}) {
+function calculateFetchInterval ({ wantTimeUnitCount, timeUnit }) {
   const value = parseFloat(wantTimeUnitCount) // may be NaN
   if (value > 0) {
     return Math.max(1, TimeUnits[timeUnit] * value)
@@ -61,19 +61,19 @@ export default class UpdateFrequencySelectModal extends React.PureComponent {
 
   get isFetchIntervalSubmittable () {
     return (
-      !this.state.isSettingAutofetch // there's no pending request
-      && this.wantFetchInterval // the text box is valid
-      && (
+      !this.state.isSettingAutofetch && // there's no pending request
+      this.wantFetchInterval && // the text box is valid
+      (
         // we've edited
-        this.wantFetchInterval !== this.props.fetchInterval
-        || this.wantAutofetch !== this.props.isAutofetch
+        this.wantFetchInterval !== this.props.fetchInterval ||
+        this.wantAutofetch !== this.props.isAutofetch
       )
     )
   }
 
   onChangeAutofetch = (ev) => {
     this.setState({
-      wantAutofetch: ev.target.value === 'true',
+      wantAutofetch: ev.target.value === 'true'
     }, this.onSubmit)
   }
 
@@ -87,7 +87,7 @@ export default class UpdateFrequencySelectModal extends React.PureComponent {
 
   onChangeTimeUnit = (ev) => {
     this.setState({
-      timeUnit: ev.target.value,
+      timeUnit: ev.target.value
     })
   }
 
@@ -106,11 +106,11 @@ export default class UpdateFrequencySelectModal extends React.PureComponent {
       // "Lock" state against future submits (isSettingAutofetch); then submit
       // and handle the response asynchronously.
       trySetAutofetch(wantAutofetch, wantFetchInterval)
-        .then(({ value: { quotaExceeded, fetchInterval }}) => {
+        .then(({ value: { quotaExceeded, fetchInterval } }) => {
           this.setState(state => {
             const nextState = {
               isSettingAutofetch: false,
-              quotaExceeded: quotaExceeded || null,
+              quotaExceeded: quotaExceeded || null
             }
             if (!quotaExceeded) {
               // If user asked for "5"s, replace with server-supplied "300"s.
@@ -124,12 +124,12 @@ export default class UpdateFrequencySelectModal extends React.PureComponent {
     })
   }
 
-  render() {
+  render () {
     const { isEmailUpdates, onClose, workflowId, wfModuleId } = this.props
     const { wantAutofetch, wantTimeUnitCount, isSettingAutofetch, quotaExceeded, wantFetchInterval, timeUnit } = this.state
 
     return (
-      <Modal isOpen={true} className='update-frequency-modal' toggle={onClose}>
+      <Modal isOpen className='update-frequency-modal' toggle={onClose}>
         <ModalHeader>WORKFLOW UPDATE</ModalHeader>
         <ModalBody>
           <form

@@ -1,17 +1,16 @@
 import React from 'react'
-import Embed  from './Embed'
+import Embed from './Embed'
 import { shallow } from 'enzyme'
 
 describe('Embed', () => {
-  let wrapper;
+  let wrapper
 
   describe('Available workflow', () => {
-
     beforeEach(() => {
       wrapper = shallow(
         <Embed
           wf_module={{
-            id: 1,
+            id: 1
           }}
           workflow={{
             name: 'Workflow Title',
@@ -20,22 +19,20 @@ describe('Embed', () => {
           }}
         />
       )
-    });
-
-    it('Renders the embed widget with the correct information', () => {
-      expect(wrapper).toMatchSnapshot();
-      expect(wrapper.find('.embed-footer-meta .title').text()).toBe('Workflow Title');
-    });
-
-    it('Displays the sharing overlay', () => {
-      wrapper.find('.embed-footer-button').simulate('click');
-      expect(wrapper.find('.embed-overlay').hasClass('open')).toBe(true);
     })
 
-  });
+    it('Renders the embed widget with the correct information', () => {
+      expect(wrapper).toMatchSnapshot()
+      expect(wrapper.find('.embed-footer-meta .title').text()).toBe('Workflow Title')
+    })
+
+    it('Displays the sharing overlay', () => {
+      wrapper.find('.embed-footer-button').simulate('click')
+      expect(wrapper.find('.embed-overlay').hasClass('open')).toBe(true)
+    })
+  })
 
   describe('Unavailable workflow', () => {
-
     beforeEach(() => {
       wrapper = shallow(
         <Embed
@@ -43,11 +40,11 @@ describe('Embed', () => {
           workflow={null}
         />
       )
-    });
+    })
 
     it('Renders the embed widget with the correct information', () => {
-      expect(wrapper).toMatchSnapshot();
-      expect(wrapper.find('.embed-not-available').length).toBe(1);
-    });
+      expect(wrapper).toMatchSnapshot()
+      expect(wrapper.find('.embed-not-available').length).toBe(1)
+    })
   })
 })

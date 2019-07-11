@@ -14,7 +14,7 @@ const DefaultFilter = {
 
 const DefaultFilters = {
   operator: 'and',
-  filters: [ DefaultFilter ],
+  filters: [ DefaultFilter ]
 }
 
 export default class Filters extends React.PureComponent {

@@ -9,7 +9,7 @@ export default function Module ({ isLessonHighlight, idName, name, description, 
 
   return (
     <a href='#' name={idName} onClick={handleClick} className={className}>
-      <i className={`icon-${icon}`}/>
+      <i className={`icon-${icon}`} />
       <div className='text'>
         <h4>{name}</h4>
         <p>{description}</p>

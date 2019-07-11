@@ -1,10 +1,10 @@
 import PopperJs from 'popper.js'
 
 export default class Popper {
-  constructor() {
+  constructor () {
     return {
       destroy: () => {},
-      scheduleUpdate: () => {},
+      scheduleUpdate: () => {}
     }
   }
 }

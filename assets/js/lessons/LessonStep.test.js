@@ -5,7 +5,7 @@ import { mount, shallow } from 'enzyme'
 describe('LessonStep', () => {
   const step = {
     html: '<p>This is</p><p>a <em>step</em></p>',
-    status: 'done',
+    status: 'done'
   }
 
   it('renders the description HTML', () => {

@@ -12,9 +12,9 @@ class RefineBin extends React.PureComponent {
       name: PropTypes.string.isRequired, // editable by user
       isSelected: PropTypes.bool.isRequired,
       count: PropTypes.number.isRequired,
-      bucket: PropTypes.object.isRequired, // { "str": Number(count), ... }
+      bucket: PropTypes.object.isRequired // { "str": Number(count), ... }
     }).isRequired,
-    onChange: PropTypes.func.isRequired, // onChange(index, { name?, isSelected? }) => undefined
+    onChange: PropTypes.func.isRequired // onChange(index, { name?, isSelected? }) => undefined
   }
 
   get bucketList () {
@@ -43,16 +43,16 @@ class RefineBin extends React.PureComponent {
 
     return (
       <React.Fragment>
-        <tr className="bin">
-          <td rowSpan={values.length} className="is-selected">
-            <input type="checkbox" name={`selected-${index}`} checked={isSelected} onChange={this.onChangeIsSelected} placeholder='New Value' />
+        <tr className='bin'>
+          <td rowSpan={values.length} className='is-selected'>
+            <input type='checkbox' name={`selected-${index}`} checked={isSelected} onChange={this.onChangeIsSelected} placeholder='New Value' />
           </td>
-          <td rowSpan={values.length} className="cluster-size">{numberFormat.format(count)}</td>
-          <td className="value">{values[0].value}</td>
-          <td className="count">{numberFormat.format(values[0].count)}</td>
-          <td className="new-value">
-            <div className="autosize-cluster-input">
-              <span className="autosize-cluster-text">{name}</span>
+          <td rowSpan={values.length} className='cluster-size'>{numberFormat.format(count)}</td>
+          <td className='value'>{values[0].value}</td>
+          <td className='count'>{numberFormat.format(values[0].count)}</td>
+          <td className='new-value'>
+            <div className='autosize-cluster-input'>
+              <span className='autosize-cluster-text'>{name}</span>
               <textarea
                 name={`value-${index}`}
                 placeholder='New Value'
@@ -63,9 +63,9 @@ class RefineBin extends React.PureComponent {
           </td>
         </tr>
         {values.slice(1).map(({ value, count }, i) => (
-          <tr key={i} className="value">
-            <td className="value">{value}</td>
-            <td className="count">{numberFormat.format(count)}</td>
+          <tr key={i} className='value'>
+            <td className='value'>{value}</td>
+            <td className='count'>{numberFormat.format(count)}</td>
           </tr>
         ))}
       </React.Fragment>
@@ -81,7 +81,7 @@ export default class RefineBins extends React.PureComponent {
       count: PropTypes.number.isRequired,
       bucket: PropTypes.object.isRequired // { "str": Number(count), ... }
     })),
-    onChange: PropTypes.func.isRequired, // func(newBins) => undefined
+    onChange: PropTypes.func.isRequired // func(newBins) => undefined
   }
 
   onChange = (index, attrs) => {
@@ -100,22 +100,22 @@ export default class RefineBins extends React.PureComponent {
 
     if (bins.length === 0) {
       return (
-        <div className="refine-bins">
-          <div className="no-bins">No clusters found. Try different settings.</div>
+        <div className='refine-bins'>
+          <div className='no-bins'>No clusters found. Try different settings.</div>
         </div>
       )
     }
 
     return (
-      <div className="refine-bins">
+      <div className='refine-bins'>
         <table>
           <thead>
             <tr>
-              <th className="is-selected"></th>
-              <th className="cluster-size">Cluster size</th>
-              <th className="value">Values</th>
-              <th className="count"># rows</th>
-              <th className="new-value">New value</th>
+              <th className='is-selected' />
+              <th className='cluster-size'>Cluster size</th>
+              <th className='value'>Values</th>
+              <th className='count'># rows</th>
+              <th className='new-value'>New value</th>
             </tr>
           </thead>
           <tbody>

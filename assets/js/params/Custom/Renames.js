@@ -51,7 +51,7 @@ export class RenameEntry extends React.PureComponent {
             className='rename-delete icon-close'
             onClick={this.handleDelete}
             disabled={isReadOnly}
-          ></button>
+          />
         </div>
       </div>
     )
@@ -68,7 +68,7 @@ export default class RenameEntries extends React.PureComponent {
     isReadOnly: PropTypes.bool.isRequired
   }
 
-  get saneValue() {
+  get saneValue () {
     const { inputColumns, value } = this.props
 
     if (!inputColumns || !value) {
@@ -107,7 +107,7 @@ export default class RenameEntries extends React.PureComponent {
     this.props.onChange(newEntries)
   }
 
-  renderEntries() {
+  renderEntries () {
     const entries = this.saneValue
     const fieldName = this.props.name
     const { wfModuleId, isReadOnly } = this.props
@@ -128,7 +128,7 @@ export default class RenameEntries extends React.PureComponent {
       ))
   }
 
-  render() {
+  render () {
     const entries = this.renderEntries()
     return (
       <React.Fragment>

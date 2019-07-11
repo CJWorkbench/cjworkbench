@@ -16,7 +16,7 @@ export default class ColumnParam extends React.PureComponent {
     onChange: PropTypes.func.isRequired // func(colnameOrNull) => undefined
   }
 
-  render() {
+  render () {
     const { inputColumns, isReadOnly, placeholder, fieldId, label, name, value, onChange } = this.props
     const isLoading = (inputColumns === null)
 

@@ -35,7 +35,7 @@ export default function FacetSearch ({ onChange, onReset, value }) {
         className='close'
         title='Clear Search'
       >
-        <i className='icon-close'></i>
+        <i className='icon-close' />
       </button>
     </fieldset>
   )
