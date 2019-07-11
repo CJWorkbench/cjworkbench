@@ -1,4 +1,5 @@
-import { mockStore, tick } from '../../test-utils'
+/* globals describe, expect, it, jest */
+import { mockStore } from '../../test-utils'
 import { generateSlug } from '../../utils'
 import * as actions from './actions'
 

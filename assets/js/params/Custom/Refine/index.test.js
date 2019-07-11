@@ -1,8 +1,7 @@
 /* global describe, it, expect, jest */
 import React from 'react'
-import LoadingRefine, { Refine } from './index'
+import { Refine } from './index'
 import { mount } from 'enzyme'
-import { tick } from '../../../test-utils'
 
 const DefaultValue = { renames: {} }
 

@@ -56,7 +56,7 @@ export default class Subfilter extends React.PureComponent {
   }
 
   render () {
-    const { isReadOnly, inputColumns, name, fieldId, index, value, onDelete, onSubmit } = this.props
+    const { isReadOnly, inputColumns, name, fieldId, value, onDelete, onSubmit } = this.props
     const column = (inputColumns || []).find(c => c.name === value.colname) || null
     const needValue = column !== null && (
       value.condition !== 'cell_is_empty' && value.condition !== 'cell_is_not_empty'

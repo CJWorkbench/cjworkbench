@@ -1,3 +1,4 @@
+/* globals describe, expect, it */
 import { generateTabName } from './util'
 
 describe('generateTabName', () => {

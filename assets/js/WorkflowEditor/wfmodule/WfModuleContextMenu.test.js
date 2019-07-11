@@ -1,3 +1,4 @@
+/* globals afterEach, beforeEach, describe, expect, it, jest */
 import React from 'react'
 import WfModuleContextMenu from './WfModuleContextMenu'
 import { mount } from 'enzyme'
@@ -36,8 +37,6 @@ describe('WfModuleContextMenu', () => {
   })
 
   it('should open and close the export modal', () => {
-    let modal
-
     // open the context menu
     wrapper.find('button.context-button').simulate('click')
 

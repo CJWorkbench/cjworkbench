@@ -18,7 +18,7 @@ export class RenameEntry extends React.PureComponent {
   }
 
   handleBlur = () => {
-    if (this.state.value != this.props.defaultValue) {
+    if (this.state.value !== this.props.defaultValue) {
       this.props.onEntryRename(this.props.colname, this.state.value)
     }
   }

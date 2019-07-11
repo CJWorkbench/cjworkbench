@@ -12,7 +12,7 @@ import Workflow from '../Workflow'
 import WorkflowWebsocket from '../WorkflowWebsocket'
 import WorkbenchAPI from '../WorkbenchAPI'
 
-__webpack_public_path__ = window.STATIC_URL + 'bundles/'
+__webpack_public_path__ = window.STATIC_URL + 'bundles/' // eslint-disable-line
 
 // --- Main ----
 const websocket = new WorkflowWebsocket(

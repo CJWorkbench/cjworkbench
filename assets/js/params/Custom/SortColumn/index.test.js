@@ -1,3 +1,4 @@
+/* globals describe, expect, it, jest */
 import React from 'react'
 import SortColumns from './index'
 import { mount } from 'enzyme'

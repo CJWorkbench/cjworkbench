@@ -17,7 +17,6 @@ describe('Multichartseries', () => {
         placeholder='placeholder'
         inputColumns={[ { name: 'A' }, { name: 'B' }, { name: 'C' } ]}
         onChange={jest.fn()}
-        name='y_columns'
         {...props}
       />
     )

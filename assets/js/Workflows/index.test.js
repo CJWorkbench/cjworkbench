@@ -1,9 +1,9 @@
+/* globals afterEach, beforeEach, describe, expect, it, jest */
 import React from 'react'
 import { mount } from 'enzyme'
 import { act } from 'react-dom/test-utils'
 import Workflows from './index'
-import { tick, okResponseMock, jsonResponseMock } from '../test-utils'
-const Utils = require('../utils')
+import { tick, okResponseMock } from '../test-utils'
 
 describe('Workflow list page', () => {
   const testWorkflows = {
@@ -61,13 +61,6 @@ describe('Workflow list page', () => {
         last_update: '2010-10-18T00:30:00'
       }
     ]
-  }
-
-  const addResponse = {
-    id: 543,
-    name: 'Untitled Workflow',
-    owner_name: 'Sally Sallerson',
-    public: false
   }
 
   const api = {
@@ -140,8 +133,9 @@ describe('Workflow list page', () => {
       workflows: testWorkflows,
       api: {
         ...api,
-        duplicateWorkflow: jest.fn(() => ({ // HACK for now: return fake promise -- https://github.com/facebook/react/issues/14769#issuecomment-462528230
-          then: jest.fn(callback => act(() => callback({
+        duplicateWorkflow: jest.fn(() => ({
+          // HACK for now: return fake promise -- https://github.com/facebook/react/issues/14769#issuecomment-462528230
+          then: jest.fn(done => act(() => done({
             id: 666,
             name: 'Copy of Visualization',
             owner_name: 'Paul Plagarizer',

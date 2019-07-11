@@ -1,3 +1,4 @@
+/* globals afterEach, beforeEach, describe, expect, it, jest */
 import { mockStore } from '../../../test-utils'
 import React from 'react'
 import ConnectedUpdateFrequencySelect, { UpdateFrequencySelect } from './UpdateFrequencySelect'
@@ -24,8 +25,6 @@ describe('UpdateFrequencySelect', () => {
       dateSpy = jest.spyOn(Date, 'now').mockImplementation(() => 1527534812631)
     })
     afterEach(() => dateSpy.mockRestore())
-
-    let updateSettings
 
     const wrapper = (extraProps) => {
       return shallow(

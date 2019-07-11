@@ -35,11 +35,6 @@ export default class LessonFooter extends React.PureComponent {
     const { isCurrent, title, html } = this.props
     const { isFinished } = this.state
 
-    const classNames = [
-      'lesson-footer',
-      isCurrent ? 'current' : 'not-current'
-    ]
-
     return (
       <section className={`lesson-footer ${isCurrent ? 'current' : 'not-current'}`}>
         <a href='/lessons/' className='backToLessons'>Training</a>

@@ -1,3 +1,4 @@
+/* globals HTMLElement */
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Manager as PopperManager } from 'react-popper'
@@ -8,7 +9,7 @@ DropdownContext.Provider.propTypes = {
     disabled: PropTypes.bool.isRequired,
     isOpen: PropTypes.bool.isRequired,
     toggle: PropTypes.func.isRequired,
-    toggleRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }).isRequired
+    toggleRef: PropTypes.shape({ current: PropTypes.instanceOf(HTMLElement) }).isRequired
   }).isRequired
 }
 

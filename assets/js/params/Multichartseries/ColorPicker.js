@@ -1,3 +1,4 @@
+/* globals HTMLElement */
 import React from 'react'
 import ReactDOM from 'react-dom'
 import PropTypes from 'prop-types'
@@ -65,7 +66,6 @@ class CustomColorChoice extends React.PureComponent {
   onKeyDown = (ev) => {
     switch (ev.key) {
       case 'Enter':
-        const el = ev.target
         if (this.isValid) {
           this.props.onChange(this.effectiveColor)
           return this.props.onClose()
@@ -79,7 +79,6 @@ class CustomColorChoice extends React.PureComponent {
 
   render () {
     const { value } = this.state
-    const safeValue = value || '#000000'
 
     return (
       <div className={`input-group ${this.isValid ? 'valid' : 'invalid'}`}>
@@ -161,7 +160,7 @@ class ColorPickerPopover extends React.PureComponent {
 
     const container = this.containerRef.current
 
-    if (this.containerRef.current && !this.containerRef.current.contains(ev.target)) {
+    if (container && !container.contains(ev.target)) {
       this.props.onClose()
     }
   }

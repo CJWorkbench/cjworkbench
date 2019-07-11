@@ -85,8 +85,6 @@ function WorkflowLists ({ workflows, deleteWorkflow, duplicateWorkflow, openShar
     isActive: activeTab === name,
     setIsActive: (ev) => { ev.preventDefault(); setActiveTab(name) }
   })
-  const duplicateWorkflowAndSwitchTab = (workflowId) => {
-  }
   const tabContentProps = (name) => ({
     isActive: activeTab === name,
     workflows: workflows[name],

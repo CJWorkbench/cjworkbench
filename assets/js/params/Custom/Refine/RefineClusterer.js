@@ -86,7 +86,7 @@ export default class RefineClusterer extends React.PureComponent {
         }
         this.props.onComplete(bins)
       })
-      .catch(err => {
+      .catch(_ => {
         // only error is "canceled". Ignore it.
       })
     return clusterer // so it can be canceled

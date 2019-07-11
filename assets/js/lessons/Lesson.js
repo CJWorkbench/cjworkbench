@@ -5,7 +5,6 @@ import LessonSection from './LessonSection'
 import LessonNav from './LessonNav'
 import lessonSelector from './lessonSelector'
 import { connect } from 'react-redux'
-import { LessonHighlightsType } from '../util/LessonHighlight'
 
 export class Lesson extends React.PureComponent {
   static propTypes = {
@@ -52,16 +51,16 @@ export class Lesson extends React.PureComponent {
   }
 
   render () {
-    const { slug, header, footer, sections, activeSectionIndex, activeStepIndex } = this.props
+    const { header, footer, sections, activeSectionIndex, activeStepIndex } = this.props
     const { currentSectionIndex } = this.state
 
     const sectionComponents = sections.map((s, i) => {
       return <LessonSection
         key={i}
         index={i}
-        isCurrent={this.state.currentSectionIndex === i}
-        activeSectionIndex={this.props.activeSectionIndex}
-        activeStepIndex={this.props.activeStepIndex}
+        isCurrent={currentSectionIndex === i}
+        activeSectionIndex={activeSectionIndex}
+        activeStepIndex={activeStepIndex}
         {...s}
       />
     })

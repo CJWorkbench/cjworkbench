@@ -1,3 +1,4 @@
+/* globals confirm */
 // Elements of /workflows. Navbar plus a list
 
 import React from 'react'
@@ -54,7 +55,6 @@ export default class Workflows extends React.Component {
   }
 
   renderShareModal = () => {
-    const { api } = this.props
     const { shareModalWorkflowId } = this.state
 
     if (shareModalWorkflowId === null) return null
@@ -173,7 +173,7 @@ export default class Workflows extends React.Component {
   }
 
   render () {
-    const { activeTab, comparator, workflows } = this.state
+    const { workflows } = this.state
     const { user } = this.props
 
     return (

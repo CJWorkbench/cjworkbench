@@ -1,6 +1,7 @@
+/* globals describe, expect, it, jest */
 import React from 'react'
 import Gdrivefile from './Gdrivefile'
-import { mount, shallow } from 'enzyme'
+import { mount } from 'enzyme'
 
 const tick = async () => new Promise(resolve => setTimeout(resolve, 0))
 
@@ -46,7 +47,7 @@ describe('Gdrivefile', () => {
 
   it('shows loading when google API has not loaded', async () => {
     const w = wrapper({
-      loadPickerFactory: () => new Promise(_ => 'never resolves')
+      loadPickerFactory: () => new Promise(resolve => { /* never resolve */ })
     })
     await tick()
     w.update()
@@ -65,7 +66,7 @@ describe('Gdrivefile', () => {
 
   it('shows loading when fetching access token', async () => {
     const w = wrapper({
-      createOauthAccessToken: () => new Promise(_ => 'never resolves')
+      createOauthAccessToken: () => new Promise(resolve => { /* never resolve */ })
     })
     await tick()
     w.update()

@@ -1,9 +1,9 @@
+/* globals beforeEach, describe, expect, it, jest */
 import React from 'react'
 import WorkflowNavBar from './WorkflowNavBar'
 import { shallow, mount } from 'enzyme'
 import { tick } from './test-utils'
 import Utils from './utils'
-import { jsonResponseMock } from './test-utils'
 
 jest.mock('./utils', () => ({
   goToUrl: jest.fn()

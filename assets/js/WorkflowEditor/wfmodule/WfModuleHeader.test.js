@@ -1,4 +1,4 @@
-/* globals describe, it, expect, jest */
+/* globals describe, it, expect */
 import React from 'react'
 import WfModuleHeader from './WfModuleHeader'
 import { mount } from 'enzyme'

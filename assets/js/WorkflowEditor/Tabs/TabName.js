@@ -1,9 +1,10 @@
+/* globals HTMLElement */
 import React from 'react'
 import PropTypes from 'prop-types'
 
 export default class TabName extends React.PureComponent {
   static propTypes = {
-    inputRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }).isRequired,
+    inputRef: PropTypes.shape({ current: PropTypes.instanceOf(HTMLElement) }).isRequired,
     isReadOnly: PropTypes.bool.isRequired,
     isSelected: PropTypes.bool.isRequired,
     value: PropTypes.string.isRequired,

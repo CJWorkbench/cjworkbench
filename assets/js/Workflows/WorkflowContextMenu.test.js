@@ -1,3 +1,4 @@
+/* globals describe, expect, it, jest */
 import React from 'react'
 import WorkflowContextMenu from './WorkflowContextMenu'
 import { mount } from 'enzyme'

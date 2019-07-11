@@ -1,4 +1,5 @@
-import * as util from './util'
+/* globals describe, expect, it */
+import { massRename } from './util'
 
 describe('util', () => {
   // Most of this is untested because it's copy/pasted from our Python code
@@ -6,15 +7,15 @@ describe('util', () => {
   // errors.
   describe('massRename', () => {
     it('should work in the simplest case', () => {
-      expect(util.massRename({}, { foo: 'bar' })).toEqual({ foo: 'bar' })
+      expect(massRename({}, { foo: 'bar' })).toEqual({ foo: 'bar' })
     })
 
     it('should rename an existing rename', () => {
-      expect(util.massRename({ a: 'b' }, { b: 'c' })).toEqual({ a: 'c', b: 'c' })
+      expect(massRename({ a: 'b' }, { b: 'c' })).toEqual({ a: 'c', b: 'c' })
     })
 
     it('should rename a group that does not have its fromGroup as a member', () => {
-      expect(util.massRename(
+      expect(massRename(
         // Two groups: 'b' (contains original 'a') and 'c' (contains original 'b' and 'c')
         { a: 'b', b: 'c' },
         // Rename group 'b'
@@ -24,7 +25,7 @@ describe('util', () => {
     })
 
     it('should rename a group that does have its fromGroup as a member', () => {
-      expect(util.massRename(
+      expect(massRename(
         // Two groups: 'b' (contains original 'a') and 'c' (contains original 'b' and 'c')
         { a: 'b', b: 'c' },
         // Rename group 'c'
@@ -34,7 +35,7 @@ describe('util', () => {
     })
 
     it('should swap two groups', () => {
-      expect(util.massRename(
+      expect(massRename(
         { a: 'x', b: 'x', c: 'y', d: 'y' },
         { x: 'y', y: 'x' }
       )).toEqual({ a: 'y', b: 'y', x: 'y', c: 'x', d: 'x', y: 'x' })

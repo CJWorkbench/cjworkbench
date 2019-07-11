@@ -330,7 +330,7 @@ export class ValueSelect extends React.PureComponent {
   }
 
   render () {
-    const { itemHeight, loading } = this.props
+    const { loading } = this.props
     const { searchInput, sort } = this.state
     const canSearch = this.sortedValues.length > 1
     const isSearching = (searchInput !== '')

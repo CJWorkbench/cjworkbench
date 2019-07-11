@@ -1,6 +1,7 @@
+/* globals describe, expect, it, jest */
 import React from 'react'
 import LessonSection from './LessonSection'
-import { mount, shallow } from 'enzyme'
+import { shallow } from 'enzyme'
 
 describe('LessonSection', () => {
   const commonProps = {

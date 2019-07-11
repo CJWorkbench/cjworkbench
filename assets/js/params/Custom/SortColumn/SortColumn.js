@@ -49,8 +49,8 @@ export default class SortColumn extends React.PureComponent {
   }
 
   onChangeColname = (colnameOrNull) => {
-    const { index, value: { is_ascending }, onChange } = this.props
-    onChange(index, { is_ascending, colname: (colnameOrNull || '') })
+    const { index, value, onChange } = this.props
+    onChange(index, { is_ascending: value.is_ascending, colname: (colnameOrNull || '') })
   }
 
   onClickDelete = (ev) => {
@@ -68,7 +68,7 @@ export default class SortColumn extends React.PureComponent {
           label={label}
           key={index}
           name={`${name}[colname]`}
-          fieldId={`${name}_colname`}
+          fieldId={`${fieldId}_colname`}
           value={value.colname}
           prompt='Select a column'
           isReadOnly={isReadOnly}
@@ -77,7 +77,7 @@ export default class SortColumn extends React.PureComponent {
         />
         <AscendingParam
           name={`${name}[is_ascending]`}
-          fieldId={`${name}_is_ascending`}
+          fieldId={`${fieldId}_is_ascending`}
           value={value.is_ascending}
           isReadOnly={isReadOnly}
           onChange={this.onChangeIsAscending}

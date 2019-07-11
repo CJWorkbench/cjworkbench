@@ -24,7 +24,7 @@ export default class MenuParam extends React.PureComponent {
   }
 
   render () {
-    const { items, name, fieldId, label, enumOptions, isReadOnly, value } = this.props
+    const { name, fieldId, label, enumOptions, isReadOnly, value } = this.props
 
     const options = enumOptions.map((option, i) => {
       if (option === 'separator') {

@@ -1,3 +1,4 @@
+/* globals afterEach, describe, expect, it */
 import React from 'react'
 import ConnectedDataVersionSelect, { DataVersionSelect } from './DataVersionSelect'
 import DataVersionModal from '../../../WorkflowEditor/DataVersionModal' // to check it's rendered in shallow()
@@ -80,11 +81,12 @@ describe('DataVersionSelect', () => {
 
     const connectedWrapper = (state) => {
       const store = configureMockStore([])(state)
-      return _wrapper = mount(
+      _wrapper = mount(
         <Provider store={store}>
           <ConnectedDataVersionSelect wfModuleId={123} />
         </Provider>
       )
+      return _wrapper
     }
 
     it('finds versions', () => {

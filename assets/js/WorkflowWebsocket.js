@@ -1,3 +1,4 @@
+/* globals WebSocket */
 const MissingInflightHandler = {
   resolve: (result) => {
     console.warn('Unhandled result from server', result)

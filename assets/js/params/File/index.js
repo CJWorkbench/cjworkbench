@@ -1,5 +1,3 @@
-import React from 'react'
-import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import File from './File'
 import { setWfModuleParamsAction } from '../../workflow-reducer'

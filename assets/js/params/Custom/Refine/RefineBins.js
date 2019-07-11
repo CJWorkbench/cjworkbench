@@ -3,8 +3,6 @@ import PropTypes from 'prop-types'
 
 const numberFormat = new Intl.NumberFormat()
 
-const no_op = () => {}
-
 class RefineBin extends React.PureComponent {
   static propTypes = {
     index: PropTypes.number.isRequired,

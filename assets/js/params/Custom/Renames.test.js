@@ -1,5 +1,6 @@
+/* globals describe, expect, it, jest */
 import React from 'react'
-import Renames, { RenameEntry } from './Renames'
+import Renames from './Renames'
 import { mount } from 'enzyme'
 
 describe('Renames', () => {

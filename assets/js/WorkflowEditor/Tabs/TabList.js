@@ -28,7 +28,6 @@ export default class TabList extends React.PureComponent {
   }
 
   onDragHoverIndex = (index) => {
-    const { tabs } = this.props
     const { dragging } = this.state
     if (dragging === null) return
 
@@ -52,7 +51,7 @@ export default class TabList extends React.PureComponent {
     const { dragging } = this.state
     if (dragging === null) return
 
-    const { fromIndex, toIndex } = dragging
+    const { fromIndex } = dragging
     this.setState({
       dragging: {
         fromIndex,
@@ -72,7 +71,7 @@ export default class TabList extends React.PureComponent {
       const fromId = tabSlugs[fromIndex]
       tabSlugs.splice(fromIndex, 1)
       tabSlugs.splice(toIndex > fromIndex ? toIndex - 1 : toIndex, 0, fromId)
-      this.props.setOrder(tabSlugs)
+      setOrder(tabSlugs)
     }
   }
 

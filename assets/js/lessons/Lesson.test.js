@@ -1,3 +1,4 @@
+/* globals describe, expect, it */
 import React from 'react'
 import { Lesson } from './Lesson'
 import LessonSection from './LessonSection'
@@ -61,10 +62,10 @@ describe('Lesson', () => {
       expect(wrapper().find(LessonSection)).toHaveLength(2)
     })
 
-    it('sets LessonNav activeSectionIndex', () => {
-      const w = wrapper({ activeSectionIndex: 1 })
-      const nav = w.find('LessonNav')
-    })
+    // it('sets LessonNav activeSectionIndex', () => {
+    //  const w = wrapper({ activeSectionIndex: 1 })
+    //  const nav = w.find('LessonNav')
+    // })
 
     it('sets LessonSection activeSectionIndex and activeStepIndex', () => {
       const w1 = wrapper({ activeSectionIndex: 1, activeStepIndex: 2 })

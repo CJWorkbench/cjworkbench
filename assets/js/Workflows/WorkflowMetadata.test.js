@@ -1,7 +1,7 @@
+/* globals describe, expect, it, jest */
 import React from 'react'
 import WorkflowMetadata from './WorkflowMetadata'
-import { shallow, ReactWrapper } from 'enzyme'
-import { okResponseMock } from '../test-utils'
+import { shallow } from 'enzyme'
 
 describe('WorkflowMetadata', () => {
   const today = new Date('Fri Sep 22 2017 17:03:52 GMT-0400 (EDT)')

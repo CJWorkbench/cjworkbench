@@ -1,3 +1,4 @@
+/* eslint no-new-func: 0 */
 import { createSelector } from 'reselect'
 import { StateWithHelpers } from '../lessons/DoneHelpers'
 import { matchLessonHighlight } from '../util/LessonHighlight'
@@ -56,7 +57,7 @@ const getWorkflow = ({ workflow }) => workflow
 const getTabs = ({ tabs }) => tabs
 const getWfModules = ({ wfModules }) => wfModules
 const getModules = ({ modules }) => modules
-const getSelectedWfModule = ({ selected_wf_module }) => selected_wf_module
+const getSelectedWfModule = (state) => state.selected_wf_module
 const getLessonData = ({ lessonData }) => lessonData || null
 
 /**

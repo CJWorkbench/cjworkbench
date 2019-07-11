@@ -1,3 +1,4 @@
+/* globals gapi, google */
 import React from 'react'
 import PropTypes from 'prop-types'
 

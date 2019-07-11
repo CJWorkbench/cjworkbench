@@ -1,6 +1,5 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { LessonHighlightsType } from '../util/LessonHighlight'
 
 export default class LessonStep extends React.PureComponent {
   render () {

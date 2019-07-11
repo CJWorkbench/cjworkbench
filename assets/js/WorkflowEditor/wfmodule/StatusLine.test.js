@@ -1,4 +1,4 @@
-/* globals describe, it, expect */
+/* globals describe, expect, it, jest */
 import React from 'react'
 import StatusLine from './StatusLine'
 import { mount } from 'enzyme'

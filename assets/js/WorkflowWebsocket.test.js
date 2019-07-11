@@ -1,5 +1,5 @@
+/* globals describe, expect, it, jest, WebSocket */
 import WorkflowWebsocket from './WorkflowWebsocket'
-import * as Actions from './workflow-reducer'
 import { tick } from './test-utils'
 
 /**
@@ -93,7 +93,7 @@ describe('WorkflowWebsocket', () => {
 
   it('should queue callServerHandler() when sent before connect starts', async () => {
     let socket
-    const buildSocket = () => { return socket = new MockSocket() }
+    const buildSocket = () => { socket = new MockSocket(); return socket }
     const api = new WorkflowWebsocket(1, jest.fn(), buildSocket)
     const future = api.callServerHandler('foo.bar', { x: 'y' })
     api.connect()
@@ -107,7 +107,7 @@ describe('WorkflowWebsocket', () => {
 
   it('should queue callServerHandler() when sent before connect completes', async () => {
     let socket
-    const buildSocket = () => { return socket = new MockSocket() }
+    const buildSocket = () => { socket = new MockSocket(); return socket }
     const api = new WorkflowWebsocket(1, jest.fn(), buildSocket)
     api.connect()
     const future = api.callServerHandler('foo.bar', { x: 'y' }) // onopen not called yet

@@ -221,7 +221,7 @@ export class WfModule extends React.PureComponent {
   }
 
   renderZenModeButton () {
-    const { wfModule, module, isZenMode, isZenModeAllowed } = this.props
+    const { isZenMode, isZenModeAllowed } = this.props
 
     if (!isZenModeAllowed) return null
 
@@ -248,7 +248,6 @@ export class WfModule extends React.PureComponent {
 
   onSubmit = () => {
     const { wfModule, setWfModuleParams, maybeRequestFetch } = this.props
-    const { edits } = this.state
 
     // We sometimes call onSubmit() _immediately_ after onChange(). onChange()
     // sets this.state.edits, and then onSubmit() should submit them. To make
@@ -292,7 +291,6 @@ export class WfModule extends React.PureComponent {
 
   render () {
     const { isReadOnly, index, wfModule, module, inputWfModule, tabs, currentTab } = this.props
-    const { edits } = this.state
 
     const moduleSlug = module ? module.id_name : '_undefined'
     const moduleName = module ? module.name : '_undefined'

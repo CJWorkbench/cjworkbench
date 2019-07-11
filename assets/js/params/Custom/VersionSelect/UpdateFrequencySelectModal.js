@@ -126,7 +126,7 @@ export default class UpdateFrequencySelectModal extends React.PureComponent {
 
   render () {
     const { isEmailUpdates, onClose, workflowId, wfModuleId } = this.props
-    const { wantAutofetch, wantTimeUnitCount, isSettingAutofetch, quotaExceeded, wantFetchInterval, timeUnit } = this.state
+    const { wantAutofetch, wantTimeUnitCount, isSettingAutofetch, quotaExceeded, timeUnit } = this.state
 
     return (
       <Modal isOpen className='update-frequency-modal' toggle={onClose}>

@@ -45,13 +45,13 @@ export default class JoinColumns extends React.PureComponent {
   }
 
   render () {
-    const { isReadOnly, name, label, value, inputColumns, fieldId, tabs, selectedTab } = this.props
+    const { isReadOnly, name, value, inputColumns, fieldId, tabs, selectedTab } = this.props
     const rightTab = tabs.find(({ slug }) => selectedTab === slug)
 
     const inputColnames = (inputColumns || []).map(({ name }) => name)
 
     // Empty/rendering tab? Empty options
-    const rightColumns = rightTab && rightTab.outputColumns || []
+    const rightColumns = (rightTab && rightTab.outputColumns) || []
     const bothColumns = rightColumns.filter(({ name }) => inputColnames.includes(name))
     const rightColumnsNotInOn = rightColumns.filter(({ name }) => !value.on.includes(name))
 

@@ -1,3 +1,4 @@
+/* globals describe, expect, it, jest, File */
 import { mockStore, createConditionVariable } from '../../test-utils'
 import * as actions from './actions'
 

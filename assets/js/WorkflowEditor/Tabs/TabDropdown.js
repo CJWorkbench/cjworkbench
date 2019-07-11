@@ -16,3 +16,8 @@ export default function TabDropdown ({ onClickRename, onClickDelete, onClickDupl
     </UncontrolledDropdown>
   )
 }
+TabDropdown.propTypes = {
+  onClickRename: PropTypes.func.isRequired, // func() => undefined
+  onClickDuplicate: PropTypes.func.isRequired, // func() => undefined
+  onClickDelete: PropTypes.func.isRequired // func() => undefined
+}

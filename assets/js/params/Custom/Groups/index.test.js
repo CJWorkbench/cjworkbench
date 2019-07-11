@@ -1,3 +1,4 @@
+/* globals describe, expect, it, jest */
 import React from 'react'
 import Groups from './index'
 import { mount } from 'enzyme'

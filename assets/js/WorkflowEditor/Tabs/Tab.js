@@ -143,7 +143,7 @@ export default class Tab extends React.PureComponent {
   }
 
   render () {
-    const { isPending, isReadOnly, isSelected, name, index } = this.props
+    const { isPending, isReadOnly, isSelected, name } = this.props
     const droppingClassName = this.droppingClassName
 
     const classNames = []

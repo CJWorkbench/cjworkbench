@@ -1,3 +1,4 @@
+/* globals describe, expect, it, jest */
 import React from 'react'
 import { mount } from 'enzyme' // mount, not shallow, because we test integration a bit
 import List from './List'

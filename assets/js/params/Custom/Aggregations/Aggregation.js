@@ -62,7 +62,7 @@ export default class Aggregation extends React.PureComponent {
   }
 
   render () {
-    const { name, fieldId, index, onDelete, operation, colname, outname, inputColumns, isReadOnly } = this.props
+    const { name, fieldId, onDelete, operation, colname, outname, inputColumns, isReadOnly } = this.props
 
     return (
       <li className='aggregation'>

@@ -1,6 +1,5 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { selectPaneAction } from './actions'
 import ModuleStack from './ModuleStack'
 import OutputPane from './OutputPane'
 import PaneSelect from './PaneSelect'

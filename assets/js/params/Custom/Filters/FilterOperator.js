@@ -24,6 +24,7 @@ class OneOperator extends React.PureComponent {
     ) : (
       <button
         type='button'
+        name={name}
         className='unselected-operator'
         onClick={this.onClick}
       >{text}</button>
@@ -52,7 +53,7 @@ export default class FilterOperator extends React.PureComponent {
             onClick={onChange}
           />
         ) : null}
-        {(!isReadOnly || value == 'or') ? (
+        {(!isReadOnly || value === 'or') ? (
           <OneOperator
             name={`${name}[or]`}
             operator='or'

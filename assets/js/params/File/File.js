@@ -1,6 +1,5 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { MaybeLabel } from '../util'
 import UploadedFileSelect from './UploadedFileSelect'
 
 const UploadProgress = React.memo(function UploadProgress ({ nBytesTotal, nBytesUploaded }) {

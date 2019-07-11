@@ -1,3 +1,4 @@
+/* globals HTMLElement */
 import React from 'react'
 import PropTypes from 'prop-types'
 import { VariableSizeList, shouldComponentUpdate } from 'react-window'
@@ -245,7 +246,6 @@ class RefineGroup extends React.Component { // uses react-window's shouldCompone
   }
 
   render () {
-    const { name } = this.state
     const { style, group, valueCounts } = this.props
     // isEdited is from _props_, not state.
     // If user is _editing_, that doesn't mean the group is _edited_.
@@ -356,7 +356,7 @@ class GroupList extends React.PureComponent {
     valueHeight: PropTypes.number.isRequired, // height of a single value within an open group
     expandedGroupHeight: PropTypes.number.isRequired, // height of an open group (minus all its values)
     maxHeight: PropTypes.number.isRequired,
-    outerRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }) // ref so caller can detect size
+    outerRef: PropTypes.shape({ current: PropTypes.instanceOf(HTMLElement) }) // ref so caller can detect size
   }
 
   listRef = React.createRef()
@@ -373,7 +373,7 @@ class GroupList extends React.PureComponent {
   _itemKey = (index, data) => data.groups[index].name
 
   _itemSize = (index) => {
-    const { groups, groupHeight, valueHeight, expandedGroupHeight } = this.props
+    const { groups } = this.props
     const group = groups[index]
     return this.groupHeight(group)
   }
@@ -439,7 +439,7 @@ class GroupList extends React.PureComponent {
   }
 
   innerRender () {
-    const { valueCounts, loading, groups, groupHeight, changeGroupName, setIsGroupSelected, resetGroup, resetValue } = this.props
+    const { valueCounts, loading, groups, groupHeight } = this.props
 
     if (!valueCounts && !loading) {
       // Waiting for user to select a column
@@ -659,7 +659,7 @@ export class Refine extends React.PureComponent {
 
   _buildGroups = memoize((valueCounts, renames, sort) => {
     if (!valueCounts) return []
-    return new util.buildGroupsForValueCounts(valueCounts, renames, sort)
+    return util.buildGroupsForValueCounts(valueCounts, renames, sort)
   })
 
   onChangeSearch = (searchInput) => {
@@ -752,7 +752,9 @@ export class Refine extends React.PureComponent {
 
     const toGroup = selectedGroups[0]
     const groupMap = {}
-    selectedGroups.slice(1).forEach((fromGroup) => groupMap[fromGroup.name] = toGroup.name)
+    for (const fromGroup of selectedGroups.slice(1)) {
+      groupMap[fromGroup.name] = toGroup.name
+    }
     this.massRename(groupMap)
     this.setState({ selectedGroupNames: new Set(), focusGroupName: toGroup.name })
   }
@@ -785,7 +787,6 @@ export class Refine extends React.PureComponent {
   render () {
     const { valueCounts, loading } = this.props
     const { searchInput, selectedGroupNames, expandedGroupNames, focusGroupName, sort } = this.state
-    const isSearching = (searchInput !== '')
     const groups = this.matchingGroups
       .map(g => new GroupForRender(
         g,

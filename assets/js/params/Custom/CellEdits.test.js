@@ -1,3 +1,4 @@
+/* globals describe, expect, it */
 import React from 'react'
 import CellEdits from './CellEdits'
 import { mount } from 'enzyme'

@@ -1,5 +1,4 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 
 // https://reactjs.org/docs/higher-order-components.html
 export function withFetchedData (WrappedComponent, dataName, fetchData, fetchDataCacheId) {

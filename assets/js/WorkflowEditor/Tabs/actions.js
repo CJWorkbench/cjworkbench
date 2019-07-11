@@ -237,7 +237,7 @@ function reduceSelectPending (state, action) {
 
 function reduceSetOrderPending (state, action) {
   const { tabSlugs } = action.payload
-  const { workflow, selectedPane } = state
+  const { workflow } = state
 
   // find new selected_tab_position. Ignore selectedPane: we aren't trying to
   // cause user-visible stuff here, we're only trying to predict what the

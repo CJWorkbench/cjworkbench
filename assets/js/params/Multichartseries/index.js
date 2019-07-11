@@ -19,7 +19,7 @@ export default class Multichartseries extends React.PureComponent {
   }
 
   state = {
-    isAddingPlaceholder: this.props.value.length == 0
+    isAddingPlaceholder: this.props.value.length === 0
   }
 
   onChange = ({ index, column, color }) => {
@@ -53,7 +53,7 @@ export default class Multichartseries extends React.PureComponent {
     const { inputColumns, value, isReadOnly } = this.props
 
     const showAddButton = !isReadOnly && !isAddingPlaceholder && value.length < (inputColumns || []).length
-    const showRemoveButton = !isReadOnly && (value.length > 1 || value.length === 1 && isAddingPlaceholder)
+    const showRemoveButton = !isReadOnly && (value.length > 1 || (value.length === 1 && isAddingPlaceholder))
 
     if (!showAddButton && !showRemoveButton) {
       return null

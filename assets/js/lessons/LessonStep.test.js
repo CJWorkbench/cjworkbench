@@ -1,6 +1,7 @@
+/* globals describe, expect, it */
 import React from 'react'
 import LessonStep from './LessonStep'
-import { mount, shallow } from 'enzyme'
+import { shallow } from 'enzyme'
 
 describe('LessonStep', () => {
   const step = {

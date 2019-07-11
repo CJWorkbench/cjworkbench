@@ -1,6 +1,5 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { withJsonStringValues } from '../util'
 
 export default class CellEdits extends React.Component {
   static propTypes = {
