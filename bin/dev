@@ -113,6 +113,7 @@ case "$COMMAND" in
 
   "reformat-code")
     docker_compose run --rm renderer pipenv run black .
+    docker_compose run --rm webpack npm run reformat-code
     ;;
 
   "start")
