@@ -193,6 +193,10 @@ COPY manage.py /app/
 # templates are used in renderer for notifications emails and in frontend for
 # views. TODO move renderer templates elsewhere.
 COPY templates/ /app/templates/
+# Inject code-style tests into our continuous integration.
+# This catches style errors that accidentally got past somebody's
+# pre-commit hook.
+RUN black --check /app
 
 # 3.1. migrate: runs ./manage.py migrate
 FROM base AS migrate
