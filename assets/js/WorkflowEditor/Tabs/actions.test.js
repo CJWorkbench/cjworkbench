@@ -15,7 +15,7 @@ describe('Tabs.actions', () => {
       }
       const store = mockStore({
         tabs: {
-          't2': { name: 'foo', x: 'y' }
+          t2: { name: 'foo', x: 'y' }
         }
       }, api)
 
@@ -36,16 +36,16 @@ describe('Tabs.actions', () => {
       const store = mockStore({
         selectedPane: { pane: 'tab', tabSlug: 't1' },
         workflow: {
-          tab_slugs: [ 't1', 't2' ],
+          tab_slugs: ['t1', 't2'],
           selected_tab_position: 0
         }
       }, api)
 
-      await store.dispatch(actions.setOrder([ 't2', 't1' ]))
+      await store.dispatch(actions.setOrder(['t2', 't1']))
 
-      expect(api.setTabOrder).toHaveBeenCalledWith([ 't2', 't1' ])
+      expect(api.setTabOrder).toHaveBeenCalledWith(['t2', 't1'])
 
-      expect(store.getState().workflow.tab_slugs).toEqual([ 't2', 't1' ])
+      expect(store.getState().workflow.tab_slugs).toEqual(['t2', 't1'])
     })
 
     it('should update selected_tab_position', async () => {
@@ -54,12 +54,12 @@ describe('Tabs.actions', () => {
       }
       const store = mockStore({
         workflow: {
-          tab_slugs: [ 't1', 't2', 't3' ],
+          tab_slugs: ['t1', 't2', 't3'],
           selected_tab_position: 1 // tabSlug=t2
         }
       }, api)
 
-      await store.dispatch(actions.setOrder([ 't3', 't1', 't2' ]))
+      await store.dispatch(actions.setOrder(['t3', 't1', 't2']))
       expect(store.getState().workflow.selected_tab_position).toEqual(2)
     })
   })
@@ -71,7 +71,7 @@ describe('Tabs.actions', () => {
       }
       const store = mockStore({
         workflow: {
-          tab_slugs: [ 't1', 't2' ],
+          tab_slugs: ['t1', 't2'],
           selected_tab_position: 0
         },
         selectedPane: {
@@ -79,16 +79,16 @@ describe('Tabs.actions', () => {
           tabSlug: 't1'
         },
         tabs: {
-          't1': { slug: 't1' },
-          't2': { slug: 't2' }
+          t1: { slug: 't1' },
+          t2: { slug: 't2' }
         }
       }, api)
 
       await store.dispatch(actions.destroy('t2'))
       expect(api.deleteTab).toHaveBeenCalledWith('t2')
       const state = store.getState()
-      expect(state.workflow.tab_slugs).toEqual([ 't1' ])
-      expect(Object.keys(state.tabs)).toEqual([ 't1' ])
+      expect(state.workflow.tab_slugs).toEqual(['t1'])
+      expect(Object.keys(state.tabs)).toEqual(['t1'])
     })
 
     it('should destroy a pending tab', async () => {
@@ -97,7 +97,7 @@ describe('Tabs.actions', () => {
       }
       const store = mockStore({
         workflow: {
-          tab_slugs: [ 't1', 't2' ],
+          tab_slugs: ['t1', 't2'],
           selected_tab_position: 0
         },
         selectedPane: {
@@ -105,10 +105,10 @@ describe('Tabs.actions', () => {
           tabSlug: 't1'
         },
         pendingTabs: {
-          't2': { slug: 't2' }
+          t2: { slug: 't2' }
         },
         tabs: {
-          't1': { slug: 't1' }
+          t1: { slug: 't1' }
         }
       }, api)
 
@@ -118,8 +118,8 @@ describe('Tabs.actions', () => {
       // on the server at the time `api.deleteTab()` will be called.
       expect(api.deleteTab).toHaveBeenCalledWith('t2')
       const state = store.getState()
-      expect(state.workflow.tab_slugs).toEqual([ 't1' ])
-      expect(Object.keys(state.tabs)).toEqual([ 't1' ])
+      expect(state.workflow.tab_slugs).toEqual(['t1'])
+      expect(Object.keys(state.tabs)).toEqual(['t1'])
       expect(state.pendingTabs).toEqual({})
     })
 
@@ -129,19 +129,19 @@ describe('Tabs.actions', () => {
       }
       const store = mockStore({
         workflow: {
-          tab_slugs: [ 't1' ],
+          tab_slugs: ['t1'],
           selected_tab_position: 0
         },
         tabs: {
-          't1': {}
+          t1: {}
         }
       }, api)
 
       await store.dispatch(actions.destroy('t1'))
       expect(api.deleteTab).not.toHaveBeenCalled()
       const state = store.getState()
-      expect(state.workflow.tab_slugs).toEqual([ 't1' ])
-      expect(Object.keys(state.tabs)).toEqual([ 't1' ])
+      expect(state.workflow.tab_slugs).toEqual(['t1'])
+      expect(Object.keys(state.tabs)).toEqual(['t1'])
     })
 
     it('should move selected_tab_position and selectedPane when destroying selected', async () => {
@@ -154,13 +154,13 @@ describe('Tabs.actions', () => {
           tabSlug: 't2'
         },
         workflow: {
-          tab_slugs: [ 't1', 't2', 't3' ],
+          tab_slugs: ['t1', 't2', 't3'],
           selected_tab_position: 1 // tab t2
         },
         tabs: {
-          't1': {},
-          't2': {},
-          't3': {}
+          t1: {},
+          t2: {},
+          t3: {}
         }
       }, api)
 
@@ -175,7 +175,7 @@ describe('Tabs.actions', () => {
       }
       const store = mockStore({
         workflow: {
-          tab_slugs: [ 't1', 't2', 't3' ],
+          tab_slugs: ['t1', 't2', 't3'],
           selected_tab_position: 2 // tab t3
         },
         selectedPane: {
@@ -183,9 +183,9 @@ describe('Tabs.actions', () => {
           tabSlug: 't3'
         },
         tabs: {
-          't1': {},
-          't2': {},
-          't3': {}
+          t1: {},
+          t2: {},
+          t3: {}
         }
       }, api)
 
@@ -200,7 +200,7 @@ describe('Tabs.actions', () => {
       }
       const store = mockStore({
         workflow: {
-          tab_slugs: [ 't1', 't2', 't3' ],
+          tab_slugs: ['t1', 't2', 't3'],
           selected_tab_position: 1 // tab t2
         },
         selectedPane: {
@@ -208,9 +208,9 @@ describe('Tabs.actions', () => {
           tabSlug: 't2'
         },
         tabs: {
-          't1': {},
-          't2': {},
-          't3': {}
+          t1: {},
+          t2: {},
+          t3: {}
         }
       }, api)
 
@@ -225,7 +225,7 @@ describe('Tabs.actions', () => {
       }
       const store = mockStore({
         workflow: {
-          tab_slugs: [ 't1', 't2', 't3' ],
+          tab_slugs: ['t1', 't2', 't3'],
           selected_tab_position: 2 // tab t3
         },
         selectedPane: {
@@ -233,9 +233,9 @@ describe('Tabs.actions', () => {
           tabSlug: 't3'
         },
         tabs: {
-          't1': {},
-          't2': {},
-          't3': {}
+          t1: {},
+          t2: {},
+          t3: {}
         }
       }, api)
 
@@ -250,7 +250,7 @@ describe('Tabs.actions', () => {
       }
       const store = mockStore({
         workflow: {
-          tab_slugs: [ 't1', 't2' ],
+          tab_slugs: ['t1', 't2'],
           selected_tab_position: 0 // tab 1
         },
         selectedPane: {
@@ -258,8 +258,8 @@ describe('Tabs.actions', () => {
           tabSlug: 't1'
         },
         tabs: {
-          't1': {},
-          't2': {}
+          t1: {},
+          t2: {}
         }
       }, api)
 
@@ -276,7 +276,7 @@ describe('Tabs.actions', () => {
       }
       const store = mockStore({
         workflow: {
-          tab_slugs: [ 't1', 't2' ],
+          tab_slugs: ['t1', 't2'],
           selected_tab_position: 0
         }
       }, api)
@@ -293,7 +293,7 @@ describe('Tabs.actions', () => {
       }
       const store = mockStore({
         workflow: {
-          tab_slugs: [ 't1', 't2' ],
+          tab_slugs: ['t1', 't2'],
           selected_tab_position: 0,
           read_only: true
         }
@@ -315,7 +315,7 @@ describe('Tabs.actions', () => {
       }
       const store = mockStore({
         workflow: {
-          tab_slugs: [ 't1', 't2' ],
+          tab_slugs: ['t1', 't2'],
           selected_tab_position: 0
         }
       }, api)
@@ -335,17 +335,17 @@ describe('Tabs.actions', () => {
       }
       const store = mockStore({
         workflow: {
-          tab_slugs: [ 't1' ]
+          tab_slugs: ['t1']
         },
         tabs: {
-          't1': { name: 'A' }
+          t1: { name: 'A' }
         }
       }, api)
 
       generateSlug.mockImplementationOnce(prefix => prefix + 'X')
       const done = store.dispatch(actions.create())
       expect(api.createTab).toHaveBeenCalledWith('tab-X', 'Tab 1')
-      expect(store.getState().workflow.tab_slugs).toEqual([ 't1', 'tab-X' ])
+      expect(store.getState().workflow.tab_slugs).toEqual(['t1', 'tab-X'])
       expect(store.getState().pendingTabs).toEqual({
         'tab-X': {
           slug: 'tab-X',
@@ -375,12 +375,12 @@ describe('Tabs.actions', () => {
       }
       const store = mockStore({
         workflow: {
-          tab_slugs: [ 't1', 't3', 't4' ]
+          tab_slugs: ['t1', 't3', 't4']
         },
         tabs: {
-          't1': { name: 'Tab 1' },
-          't3': { name: 'A' },
-          't4': { name: 'Tab 3' }
+          t1: { name: 'Tab 1' },
+          t3: { name: 'A' },
+          t4: { name: 'Tab 3' }
         }
       }, api)
 
@@ -395,15 +395,15 @@ describe('Tabs.actions', () => {
       }
       const store = mockStore({
         workflow: {
-          tab_slugs: [ 't1', 't3', 't4' ]
+          tab_slugs: ['t1', 't3', 't4']
         },
         pendingTabs: {
-          't14': { name: 'Tab 14' }
+          t14: { name: 'Tab 14' }
         },
         tabs: {
-          't1': { name: 'Tab 1' },
-          't3': { name: 'A' },
-          't4': { name: 'Tab 3' }
+          t1: { name: 'Tab 1' },
+          t3: { name: 'A' },
+          t4: { name: 'Tab 3' }
         }
       }, api)
 
@@ -422,18 +422,18 @@ describe('Tabs.actions', () => {
       }
       const store = mockStore({
         workflow: {
-          tab_slugs: [ 't1', 't2' ] // and we'll "duplicate" in between
+          tab_slugs: ['t1', 't2'] // and we'll "duplicate" in between
         },
         tabs: {
-          't1': { name: 'A' },
-          't2': { name: 'B' }
+          t1: { name: 'A' },
+          t2: { name: 'B' }
         }
       }, api)
 
       generateSlug.mockImplementationOnce(prefix => prefix + 'X')
       const done = store.dispatch(actions.duplicate('t1'))
       expect(api.duplicateTab).toHaveBeenCalledWith('t1', 'tab-X', 'A (1)')
-      expect(store.getState().workflow.tab_slugs).toEqual([ 't1', 'tab-X', 't2' ])
+      expect(store.getState().workflow.tab_slugs).toEqual(['t1', 'tab-X', 't2'])
       expect(store.getState().pendingTabs).toEqual({
         'tab-X': {
           slug: 'tab-X',
@@ -463,11 +463,11 @@ describe('Tabs.actions', () => {
       }
       const store = mockStore({
         workflow: {
-          tab_slugs: [ 't1', 't3', 't4' ]
+          tab_slugs: ['t1', 't3', 't4']
         },
         tabs: {
-          't1': { name: 'A' },
-          't2': { name: 'A (1)' }
+          t1: { name: 'A' },
+          t2: { name: 'A (1)' }
         }
       }, api)
 
@@ -482,15 +482,15 @@ describe('Tabs.actions', () => {
       }
       const store = mockStore({
         workflow: {
-          tab_slugs: [ 't1', 't3', 't4' ]
+          tab_slugs: ['t1', 't3', 't4']
         },
         pendingTabs: {
-          't14': { name: 'A (14)' }
+          t14: { name: 'A (14)' }
         },
         tabs: {
-          't1': { name: 'Tab 1' },
-          't3': { name: 'A' },
-          't4': { name: 'Tab 3' }
+          t1: { name: 'Tab 1' },
+          t3: { name: 'A' },
+          t4: { name: 'Tab 3' }
         }
       }, api)
 

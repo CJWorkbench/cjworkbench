@@ -23,22 +23,22 @@ describe('DataGrid', () => {
     end_row: 2,
     rows: [
       {
-        'aaa': 9,
-        'bbbb': 'foo',
-        'getCell': '9',
+        aaa: 9,
+        bbbb: 'foo',
+        getCell: '9',
         'select-row': 'someval'
       },
       {
-        'aaa': 9,
-        'bbbb': '',
-        'getCell': 'baz',
+        aaa: 9,
+        bbbb: '',
+        getCell: 'baz',
         'select-row': 'someotherval'
       }
     ]
   }
 
   // mount() so we get componentDidMount, componentWillUnmount()
-  const wrapper = async (extraProps = {}, httpResponses = [ testRows ]) => {
+  const wrapper = async (extraProps = {}, httpResponses = [testRows]) => {
     const defaultLoadRows = jest.fn()
     for (const httpResponse of httpResponses) {
       defaultLoadRows.mockReturnValueOnce(Promise.resolve(httpResponse))
@@ -168,9 +168,9 @@ describe('DataGrid', () => {
       end_row: 1,
       rows: [
         {
-          'aaa': null,
-          'bbbb': null,
-          'getCell': null,
+          aaa: null,
+          bbbb: null,
+          getCell: null,
           'select-row': null
         }
       ]
@@ -188,7 +188,7 @@ describe('DataGrid', () => {
   })
 
   it('should deselect a row', async () => {
-    const tree = await wrapper({ selectedRowIndexes: [ 1 ] })
+    const tree = await wrapper({ selectedRowIndexes: [1] })
     await tick(); tree.update() // load data
     expect(tree.find('input[type="checkbox"]').at(1).prop('checked')).toBe(true)
     tree.find('input[type="checkbox"]').at(1).simulate('change', { target: { checked: false } })
@@ -200,9 +200,9 @@ describe('DataGrid', () => {
       const arr = []
       for (let i = 0; i < 200; i++) {
         arr[i] = {
-          'aaa': null,
-          'bbbb': String(start + i),
-          'getCell': null,
+          aaa: null,
+          bbbb: String(start + i),
+          getCell: null,
           'select-row': null
         }
       }
@@ -213,7 +213,7 @@ describe('DataGrid', () => {
       }
     }
 
-    const tree = await wrapper({ nRows: 801 }, [ result(0), result(200), result(600) ])
+    const tree = await wrapper({ nRows: 801 }, [result(0), result(200), result(600)])
     const loadRows = tree.find('DataGrid').prop('loadRows')
 
     // Should load 0..initialRows at first

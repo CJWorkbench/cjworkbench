@@ -70,10 +70,10 @@ describe('UpdateFrequencySelect', () => {
         id: 123,
         read_only: false,
         is_anonymous: false,
-        tab_slugs: [ 'tab-11', 'tab-12' ]
+        tab_slugs: ['tab-11', 'tab-12']
       },
       tabs: {
-        'tab-11': { wf_modules: [ 1, 212 ] }
+        'tab-11': { wf_modules: [1, 212] }
       },
       wfModules: {
         1: { id: 1, tab_slug: 'tab-11', name: 'Ignore this one' },
@@ -105,7 +105,7 @@ describe('UpdateFrequencySelect', () => {
       // can this even happen?
       const store = {
         getState: () => ({
-          workflow: { id: 123, read_only: false, is_anonymous: false, wf_modules: [ 'nonce_212' ] },
+          workflow: { id: 123, read_only: false, is_anonymous: false, wf_modules: ['nonce_212'] },
           wfModules: {}
         }),
         dispatch: jest.fn(),

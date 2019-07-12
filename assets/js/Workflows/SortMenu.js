@@ -6,7 +6,7 @@ import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem, Dropd
 
 export default class SortMenu extends React.Component {
   static propTypes = {
-    comparator: PropTypes.oneOf([ 'last_update|ascending', 'last_update|descending', 'name|ascending', 'name|descending' ]).isRequired,
+    comparator: PropTypes.oneOf(['last_update|ascending', 'last_update|descending', 'name|ascending', 'name|descending']).isRequired,
     setComparator: PropTypes.func.isRequired // func(comparator) => undefined
   }
 

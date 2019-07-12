@@ -205,7 +205,7 @@ class DynamicallySizedValueList extends React.PureComponent {
       // to the DOM that we can calculate the _correct_ heights.
       return (
         <ValueList
-          valueCounts={{ 'A': 1 }}
+          valueCounts={{ A: 1 }}
           loading={false}
           selection={new Set()}
           items={['A']}
@@ -302,7 +302,7 @@ export class ValueSelect extends React.PureComponent {
     const { value, onChange } = this.props
     if (isSelected) {
       if (!value.includes(item)) {
-        onChange([ ...value, item ])
+        onChange([...value, item])
       } else {
         // no-op: adding an already-present element
       }
@@ -326,7 +326,7 @@ export class ValueSelect extends React.PureComponent {
   fillSelectedValues = () => {
     const { onChange, valueCounts } = this.props
     if (!valueCounts) return // surely the user didn't mean to clear selection?
-    onChange([ ...Object.keys(valueCounts) ])
+    onChange([...Object.keys(valueCounts)])
   }
 
   render () {

@@ -42,7 +42,7 @@ export default class DropdownItem extends React.PureComponent {
     const { children, href, className, icon, active, disabled, ...rest } = this.props
     const Tag = href ? 'a' : 'button'
 
-    const classNames = [ 'dropdown-item' ]
+    const classNames = ['dropdown-item']
     if (className) classNames.push(className)
     if (active) classNames.push('active')
 

@@ -4,7 +4,7 @@ const P = PropTypes
 
 function Shape (type, propTypes) {
   return P.shape(Object.assign(
-    { type: P.oneOf([ type ]).isRequired }, // hack: only allow the exact given type
+    { type: P.oneOf([type]).isRequired }, // hack: only allow the exact given type
     propTypes
   )).isRequired
 }
@@ -20,7 +20,7 @@ const LessonHighlightType = P.oneOfType([
   }),
   Shape('WfModuleContextButton', {
     moduleName: P.string.isRequired,
-    button: P.oneOf([ 'notes', 'collapse' ]).isRequired,
+    button: P.oneOf(['notes', 'collapse']).isRequired,
     index: P.number
   }),
   Shape('EditableNotes', {

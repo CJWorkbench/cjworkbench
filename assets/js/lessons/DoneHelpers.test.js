@@ -5,11 +5,11 @@ describe('DoneHelpers', () => {
   describe('WorkflowWithHelpers', () => {
     it('should give wfModules', () => {
       const workflow = new WorkflowWithHelpers({
-        tab_slugs: [ 'tab-21', 'tab-22' ],
+        tab_slugs: ['tab-21', 'tab-22'],
         selected_tab_position: 0
       }, {
         tabs: {
-          'tab-21': { wf_module_ids: [ 1, 2 ] },
+          'tab-21': { wf_module_ids: [1, 2] },
           'tab-22': { wf_module_ids: [] }
         },
         wfModules: {
@@ -22,16 +22,16 @@ describe('DoneHelpers', () => {
         }
       })
 
-      expect(workflow.selectedTab.wfModules.map(wfm => wfm.moduleName)).toEqual([ 'Foo', 'Bar' ])
+      expect(workflow.selectedTab.wfModules.map(wfm => wfm.moduleName)).toEqual(['Foo', 'Bar'])
     })
 
     it('should give wfModuleNames', () => {
       const workflow = new WorkflowWithHelpers({
-        tab_slugs: [ 'tab-21', 'tab-22' ],
+        tab_slugs: ['tab-21', 'tab-22'],
         selected_tab_position: 0
       }, {
         tabs: {
-          'tab-21': { wf_module_ids: [ 1, 2 ] },
+          'tab-21': { wf_module_ids: [1, 2] },
           'tab-22': { wf_module_ids: [] }
         },
         wfModules: {
@@ -44,16 +44,16 @@ describe('DoneHelpers', () => {
         }
       })
 
-      expect(workflow.selectedTab.wfModuleNames).toEqual([ 'Foo', 'Bar' ])
+      expect(workflow.selectedTab.wfModuleNames).toEqual(['Foo', 'Bar'])
     })
 
     it('should give wfModuleSlugs', () => {
       const workflow = new WorkflowWithHelpers({
-        tab_slugs: [ 'tab-21', 'tab-22' ],
+        tab_slugs: ['tab-21', 'tab-22'],
         selected_tab_position: 0
       }, {
         tabs: {
-          'tab-21': { wf_module_ids: [ 1, 2 ] },
+          'tab-21': { wf_module_ids: [1, 2] },
           'tab-22': { wf_module_ids: [] }
         },
         wfModules: {
@@ -66,16 +66,16 @@ describe('DoneHelpers', () => {
         }
       })
 
-      expect(workflow.selectedTab.wfModuleSlugs).toEqual([ 'foo', 'bar' ])
+      expect(workflow.selectedTab.wfModuleSlugs).toEqual(['foo', 'bar'])
     })
 
     it('should give wfModuleName=null when there is no module', () => {
       const workflow = new WorkflowWithHelpers({
-        tab_slugs: [ 'tab-21', 'tab-22' ],
+        tab_slugs: ['tab-21', 'tab-22'],
         selected_tab_position: 0
       }, {
         tabs: {
-          'tab-21': { wf_module_ids: [ 1, 2, '3_nonce' ] },
+          'tab-21': { wf_module_ids: [1, 2, '3_nonce'] },
           'tab-22': { wf_module_ids: [] }
         },
         wfModules: {
@@ -85,7 +85,7 @@ describe('DoneHelpers', () => {
         modules: {}
       })
 
-      expect(workflow.selectedTab.wfModuleNames).toEqual([ null, null, null ])
+      expect(workflow.selectedTab.wfModuleNames).toEqual([null, null, null])
     })
   })
 
@@ -127,7 +127,7 @@ describe('DoneHelpers', () => {
     it('should have selectedVersion', () => {
       const wfModule = new WorkflowModuleWithHelpers({
         versions: {
-          versions: [ [ 'some-sort-of-id', 'why is this an Array?' ] ],
+          versions: [['some-sort-of-id', 'why is this an Array?']],
           selected: 'some-sort-of-id'
         }
       })
@@ -190,12 +190,12 @@ describe('DoneHelpers', () => {
       // when we test the same thing in a StateWithHelpers({ workflow: ... }).
       const state = new StateWithHelpers({
         workflow: {
-          tab_slugs: [ 'tab-21', 'tab-22' ],
+          tab_slugs: ['tab-21', 'tab-22'],
           selected_tab_position: 1
         },
         tabs: {
           'tab-21': { wf_module_ids: [] },
-          'tab-22': { wf_module_ids: [ 1, 2 ] }
+          'tab-22': { wf_module_ids: [1, 2] }
         },
         wfModules: {
           1: { module: 'foo' },
@@ -207,18 +207,18 @@ describe('DoneHelpers', () => {
         }
       })
 
-      expect(state.selectedTab.wfModuleNames).toEqual([ 'Foo', 'Bar' ])
+      expect(state.selectedTab.wfModuleNames).toEqual(['Foo', 'Bar'])
     })
 
     it('should have a .selectedWfModule', () => {
       const state = new StateWithHelpers({
         workflow: {
-          tab_slugs: [ 'tab-11', 'tab-12' ],
+          tab_slugs: ['tab-11', 'tab-12'],
           selected_tab_position: 1
         },
         tabs: {
           'tab-11': { wf_module_ids: [] },
-          'tab-12': { wf_module_ids: [ 2, 3 ], selected_wf_module_position: 1 }
+          'tab-12': { wf_module_ids: [2, 3], selected_wf_module_position: 1 }
         },
         wfModules: {
           2: { module: 'foo' },

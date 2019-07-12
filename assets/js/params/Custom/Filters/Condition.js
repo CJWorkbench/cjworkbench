@@ -34,7 +34,7 @@ export default class Condition extends React.PureComponent {
     isReadOnly: PropTypes.bool.isRequired,
     name: PropTypes.string.isRequired,
     value: ConditionPropType.isRequired, // may be ''
-    dtype: PropTypes.oneOf([ 'text', 'datetime', 'number' ]).isRequired,
+    dtype: PropTypes.oneOf(['text', 'datetime', 'number']).isRequired,
     onChange: PropTypes.func.isRequired // func('text_is_exactly' or other) => undefined
   }
 

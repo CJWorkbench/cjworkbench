@@ -13,24 +13,24 @@ describe('lessonSelector', () => {
         title: 'Section One',
         html: '<p>Section One HTML</p>',
         steps: [
-          { html: 'Step One-Ay', highlight: [ { type: 'EditableNotes' } ], testJs: 'return false' },
-          { html: 'Step One-<strong>Bee</strong>', highlight: [ { type: 'WfModule', moduleName: 'Foo' } ], testJs: 'return false' }
+          { html: 'Step One-Ay', highlight: [{ type: 'EditableNotes' }], testJs: 'return false' },
+          { html: 'Step One-<strong>Bee</strong>', highlight: [{ type: 'WfModule', moduleName: 'Foo' }], testJs: 'return false' }
         ]
       },
       {
         title: 'Section Two',
         html: '<p>Section Two HTML</p>',
         steps: [
-          { html: 'Step Two-Ay', highlight: [ { type: 'EditableNotes' } ], testJs: 'return false' },
-          { html: 'Step Two-<strong>Bee</strong>', highlight: [ { type: 'WfModule', moduleName: 'Foo' } ], testJs: 'return false' }
+          { html: 'Step Two-Ay', highlight: [{ type: 'EditableNotes' }], testJs: 'return false' },
+          { html: 'Step Two-<strong>Bee</strong>', highlight: [{ type: 'WfModule', moduleName: 'Foo' }], testJs: 'return false' }
         ]
       },
       {
         title: 'Last Section',
         html: '<p>Section Three HTML</p>',
         steps: [
-          { html: 'Step Three-Ay', highlight: [ { type: 'EditableNotes' } ], testJs: 'return false' },
-          { html: 'Step Three-<strong>Bee</strong>', highlight: [ { type: 'WfModule', moduleName: 'Foo' } ], testJs: 'return false' }
+          { html: 'Step Three-Ay', highlight: [{ type: 'EditableNotes' }], testJs: 'return false' },
+          { html: 'Step Three-<strong>Bee</strong>', highlight: [{ type: 'WfModule', moduleName: 'Foo' }], testJs: 'return false' }
         ]
       }
     ]
@@ -49,7 +49,7 @@ describe('lessonSelector', () => {
     const state = {
       lessonData: lessonFixture,
       workflow: {
-        tab_slugs: [ 'tab-1' ],
+        tab_slugs: ['tab-1'],
         selected_tab_position: 0
       },
       tabs: {
@@ -71,14 +71,14 @@ describe('lessonSelector', () => {
             steps: [
               {
                 ...lessonFixture.sections[0].steps[0],
-                highlight: [ { type: 'ModuleSearch' } ]
+                highlight: [{ type: 'ModuleSearch' }]
               }
             ]
           }
         ]
       },
       workflow: {
-        tab_slugs: [ 'tab-1' ],
+        tab_slugs: ['tab-1'],
         selected_tab_position: 0
       },
       tabs: {
@@ -111,7 +111,7 @@ describe('lessonSelector', () => {
         ]
       },
       workflow: {
-        tab_slugs: [ 'tab-1' ],
+        tab_slugs: ['tab-1'],
         selected_tab_position: 0
       },
       tabs: {
@@ -151,8 +151,8 @@ describe('lessonSelector', () => {
       lessonData: {
         ...lessonFixture,
         sections: [
-          { steps: [ { testJs: 'return true' }, { testJs: 'return true' } ] },
-          { steps: [ { testJs: 'return true' }, { testJs: 'return true' } ] }
+          { steps: [{ testJs: 'return true' }, { testJs: 'return true' }] },
+          { steps: [{ testJs: 'return true' }, { testJs: 'return true' }] }
         ]
       }
     }
@@ -176,11 +176,11 @@ describe('lessonSelector', () => {
         ]
       },
       workflow: {
-        tab_slugs: [ 'tab-1', 'tab-2' ],
+        tab_slugs: ['tab-1', 'tab-2'],
         selected_tab_position: 0
       },
       tabs: {
-        'tab-1': { wf_module_ids: [ 3, 4 ] },
+        'tab-1': { wf_module_ids: [3, 4] },
         'tab-2': { wf_module_ids: [] }
       },
       wfModules: {
@@ -210,11 +210,11 @@ describe('lessonSelector', () => {
         ]
       },
       workflow: {
-        tab_slugs: [ 'tab-1', 'tab-2' ],
+        tab_slugs: ['tab-1', 'tab-2'],
         selected_tab_position: 0
       },
       tabs: {
-        'tab-1': { wf_module_ids: [ 3, 4 ], selected_wf_module_position: 1 },
+        'tab-1': { wf_module_ids: [3, 4], selected_wf_module_position: 1 },
         'tab-2': { wf_module_ids: [] }
       },
       wfModules: {
@@ -251,7 +251,7 @@ describe('lessonSelector', () => {
           ]
         },
         workflow: {
-          tab_slugs: [ 'tab-1' ],
+          tab_slugs: ['tab-1'],
           selected_tab_position: 0
         },
         tabs: {

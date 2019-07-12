@@ -149,9 +149,9 @@ function EmptyReadOnlyModuleStack () {
  */
 function partitionWfModules (wfModules, modules) {
   if (wfModules[0] && modules[wfModules[0].module] && modules[wfModules[0].module].loads_data) {
-    return [ wfModules[0], wfModules.slice(1) ]
+    return [wfModules[0], wfModules.slice(1)]
   } else {
-    return [ null, wfModules ]
+    return [null, wfModules]
   }
 }
 
@@ -173,6 +173,7 @@ export class ModuleStack extends React.Component {
   // Track state of where we last auto-scrolled.
   // Don't store it in this.state because we never want it to lead to a render
   scrollRef = React.createRef()
+
   lastScrolledWfModule = { tabSlug: null, index: null } // or { tabSlug, index } pair
 
   state = {
@@ -246,7 +247,7 @@ export class ModuleStack extends React.Component {
 
   render () {
     const { isReadOnly, tabSlug, paneRef, wfModules, modules } = this.props
-    const [ addDataWfModule, useDataWfModules ] = partitionWfModules(wfModules, modules)
+    const [addDataWfModule, useDataWfModules] = partitionWfModules(wfModules, modules)
 
     const spotsAndItems = useDataWfModules.map((item, i) => {
       if (addDataWfModule) {

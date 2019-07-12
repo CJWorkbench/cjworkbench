@@ -103,7 +103,7 @@ export default class Workflows extends React.Component {
         // Add to beginning of owned list then set activeTab to owned
         this.setState({ workflows: {
           ...this.state.workflows,
-          owned: [ json, ...this.state.workflows.owned ]
+          owned: [json, ...this.state.workflows.owned]
         } })
       })
   }

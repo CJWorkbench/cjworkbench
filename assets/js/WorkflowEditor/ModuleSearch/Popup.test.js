@@ -36,7 +36,7 @@ describe('ModuleSearch Popup', () => {
       isLessonHighlight: false
     }
   }
-  const modulesArray = [ modules.enigma, modules.filter ]
+  const modulesArray = [modules.enigma, modules.filter]
 
   const wrapper = (extraProps = {}) => mount(
     <Popup
@@ -192,7 +192,7 @@ describe('ModuleSearch Popup', () => {
       const store = mockStore({
         tabs: {
           'tab-1': {
-            wf_module_ids: [ 1, 2 ]
+            wf_module_ids: [1, 2]
           }
         },
         wfModules: {
@@ -218,7 +218,7 @@ describe('ModuleSearch Popup', () => {
             {
               steps: [
                 {
-                  highlight: [ { type: 'Module', name: 'AAA', index: 0 } ],
+                  highlight: [{ type: 'Module', name: 'AAA', index: 0 }],
                   testJs: 'return false'
                 }
               ]
@@ -226,7 +226,7 @@ describe('ModuleSearch Popup', () => {
           ]
         },
         workflow: {
-          tab_slugs: [ 'tab-1' ],
+          tab_slugs: ['tab-1'],
           selected_tab_position: 0
         },
         tabs: {

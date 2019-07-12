@@ -6,9 +6,9 @@ jest.mock('../workflow-reducer')
 
 describe('UpdateTableAction actions', () => {
   beforeEach(() => {
-    addModuleAction.mockImplementation((...args) => [ 'addModuleAction', ...args ])
-    setWfModuleParamsAction.mockImplementation((...args) => [ 'setWfModuleParamsAction', ...args ])
-    setSelectedWfModuleAction.mockImplementation((...args) => [ 'setSelectedWfModuleAction', ...args ])
+    addModuleAction.mockImplementation((...args) => ['addModuleAction', ...args])
+    setWfModuleParamsAction.mockImplementation((...args) => ['setWfModuleParamsAction', ...args])
+    setSelectedWfModuleAction.mockImplementation((...args) => ['setSelectedWfModuleAction', ...args])
   })
 
   let _alert
@@ -40,7 +40,7 @@ describe('UpdateTableAction actions', () => {
   it('should select and update an existing module after the selected one', () => {
     const getState = () => ({
       tabs: {
-        'tab-2': { wf_module_ids: [ 10, 11 ], selected_wf_module_position: 0 }
+        'tab-2': { wf_module_ids: [10, 11], selected_wf_module_position: 0 }
       },
       wfModules: {
         10: { tab_slug: 'tab-2' },
@@ -53,14 +53,14 @@ describe('UpdateTableAction actions', () => {
     })
     const dispatch = jest.fn()
     updateTableAction(10, 'duplicatecolumns', false, { columnKey: 'B' })(dispatch, getState)
-    expect(dispatch).toHaveBeenCalledWith([ 'setSelectedWfModuleAction', 11 ])
-    expect(dispatch).toHaveBeenCalledWith([ 'setWfModuleParamsAction', 11, { colnames: ['A', 'B'] } ])
+    expect(dispatch).toHaveBeenCalledWith(['setSelectedWfModuleAction', 11])
+    expect(dispatch).toHaveBeenCalledWith(['setWfModuleParamsAction', 11, { colnames: ['A', 'B'] }])
   })
 
   it('should insert a new module when the current+next have the wrong id_name', () => {
     const getState = () => ({
       tabs: {
-        'tab-2': { wf_module_ids: [ 10, 11, 12, 13 ] }
+        'tab-2': { wf_module_ids: [10, 11, 12, 13] }
       },
       wfModules: {
         10: { module: 'clean-text' },
@@ -75,14 +75,14 @@ describe('UpdateTableAction actions', () => {
     })
     const dispatch = jest.fn()
     updateTableAction(11, 'clean-text', false, { columnKey: 'B' })(dispatch, getState)
-    expect(dispatch).toHaveBeenCalledWith([ 'addModuleAction', 'clean-text', { afterWfModuleId: 11 }, { colnames: [ 'B' ] } ])
+    expect(dispatch).toHaveBeenCalledWith(['addModuleAction', 'clean-text', { afterWfModuleId: 11 }, { colnames: ['B'] }])
     expect(dispatch).toHaveBeenCalledTimes(1) // no 'select' call
   })
 
   it('should update an existing, selected module', () => {
     const getState = () => ({
       tabs: {
-        'tab-2': { wf_module_ids: [ 10, 11 ], selected_wf_module_position: 1 }
+        'tab-2': { wf_module_ids: [10, 11], selected_wf_module_position: 1 }
       },
       wfModules: {
         10: {},
@@ -95,14 +95,14 @@ describe('UpdateTableAction actions', () => {
     })
     const dispatch = jest.fn()
     updateTableAction(11, 'duplicatecolumns', false, { columnKey: 'B' })(dispatch, getState)
-    expect(dispatch).toHaveBeenCalledWith([ 'setWfModuleParamsAction', 11, { colnames: ['A', 'B'] } ])
+    expect(dispatch).toHaveBeenCalledWith(['setWfModuleParamsAction', 11, { colnames: ['A', 'B'] }])
     expect(dispatch).toHaveBeenCalledTimes(1) // no 'select' call
   })
 
   it('should insert a new module when forceNewModule', () => {
     const getState = () => ({
       tabs: {
-        'tab-2': { wf_module_ids: [ 10, 11 ] }
+        'tab-2': { wf_module_ids: [10, 11] }
       },
       wfModules: {
         10: { tab_slug: 'tab-2', module: 'filter' },
@@ -114,7 +114,7 @@ describe('UpdateTableAction actions', () => {
     })
     const dispatch = jest.fn()
     updateTableAction(10, 'filter', true, { columnKey: 'B' })(dispatch, getState)
-    expect(dispatch).toHaveBeenCalledWith([ 'addModuleAction', 'filter', { afterWfModuleId: 10 }, {
+    expect(dispatch).toHaveBeenCalledWith(['addModuleAction', 'filter', { afterWfModuleId: 10 }, {
       filters: {
         operator: 'and',
         filters: [
@@ -138,7 +138,7 @@ describe('UpdateTableAction actions', () => {
   it('should append a new module to the end of the tab', () => {
     const getState = () => ({
       tabs: {
-        'tab-2': { wf_module_ids: [ 10, 11 ] }
+        'tab-2': { wf_module_ids: [10, 11] }
       },
       wfModules: {
         10: { module: 'fetch' },
@@ -150,7 +150,7 @@ describe('UpdateTableAction actions', () => {
     })
     const dispatch = jest.fn()
     updateTableAction(11, 'filter', false, { columnKey: 'B' })(dispatch, getState)
-    expect(dispatch).toHaveBeenCalledWith([ 'addModuleAction', 'filter', { afterWfModuleId: 11 }, {
+    expect(dispatch).toHaveBeenCalledWith(['addModuleAction', 'filter', { afterWfModuleId: 11 }, {
       filters: {
         operator: 'and',
         filters: [

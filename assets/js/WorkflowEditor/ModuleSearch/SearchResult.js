@@ -60,7 +60,7 @@ export default class SearchResult extends React.PureComponent {
   render () {
     const { idName, isActive, isLessonHighlight, name, icon, description } = this.props
 
-    const className = [ 'module-search-result' ]
+    const className = ['module-search-result']
     if (isLessonHighlight) className.push('lesson-highlight')
 
     // We need to use Popper here to position SearchResultDescription. We can't

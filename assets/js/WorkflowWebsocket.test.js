@@ -28,9 +28,13 @@ class MockSocket {
 
   // Caller should overwrite these methods
   onopen (ev) {}
+
   onclose (ev) {}
+
   onmessage (ev) {}
+
   onerror (ev) {}
+
   send (data) { this.sends.push(data) }
 }
 
@@ -66,7 +70,7 @@ describe('WorkflowWebsocket', () => {
     const api = new WorkflowWebsocket(1, jest.fn(), () => socket)
     api.connect() // set api.socket
     const future = api.callServerHandler('foo.bar', { x: 'y' })
-    expect(socket.sends.map(JSON.parse)).toEqual([ { requestId: 1, path: 'foo.bar', 'arguments': { x: 'y' } } ])
+    expect(socket.sends.map(JSON.parse)).toEqual([{ requestId: 1, path: 'foo.bar', arguments: { x: 'y' } }])
     socket.onmessage({ data: JSON.stringify({ response: { requestId: 1, data: 'ok' } }) })
     const data = await future
     expect(data).toEqual('ok')
@@ -78,7 +82,7 @@ describe('WorkflowWebsocket', () => {
     const api = new WorkflowWebsocket(1, jest.fn(), () => socket)
     api.connect() // set api.socket
     const future = api.callServerHandler('foo/bar', { x: 'y' })
-    expect(socket.sends.map(JSON.parse)).toEqual([ { requestId: 1, path: 'foo/bar', 'arguments': { x: 'y' } } ])
+    expect(socket.sends.map(JSON.parse)).toEqual([{ requestId: 1, path: 'foo/bar', arguments: { x: 'y' } }])
     socket.onmessage({ data: JSON.stringify({ response: { requestId: 1, error: 'bad' } }) })
     let err = null
     try {
@@ -99,7 +103,7 @@ describe('WorkflowWebsocket', () => {
     api.connect()
     expect(socket.sends.length).toEqual(0) // not connected yet
     await tick()
-    expect(socket.sends.map(JSON.parse)).toEqual([ { requestId: 1, path: 'foo.bar', 'arguments': { x: 'y' } } ])
+    expect(socket.sends.map(JSON.parse)).toEqual([{ requestId: 1, path: 'foo.bar', arguments: { x: 'y' } }])
     socket.onmessage({ data: JSON.stringify({ response: { requestId: 1, data: 'ok' } }) })
     const data = await future
     expect(data).toEqual('ok')
@@ -113,7 +117,7 @@ describe('WorkflowWebsocket', () => {
     const future = api.callServerHandler('foo.bar', { x: 'y' }) // onopen not called yet
     expect(socket.sends.length).toEqual(0) // not connected yet
     await tick()
-    expect(socket.sends.map(JSON.parse)).toEqual([ { requestId: 1, path: 'foo.bar', 'arguments': { x: 'y' } } ])
+    expect(socket.sends.map(JSON.parse)).toEqual([{ requestId: 1, path: 'foo.bar', arguments: { x: 'y' } }])
     socket.onmessage({ data: JSON.stringify({ response: { requestId: 1, data: 'ok' } }) })
     const data = await future
     expect(data).toEqual('ok')

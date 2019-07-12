@@ -7,7 +7,7 @@ export default class MenuParam extends React.PureComponent {
     name: PropTypes.string.isRequired,
     enumOptions: PropTypes.arrayOf(
       PropTypes.oneOfType([
-        PropTypes.oneOf([ 'separator' ]),
+        PropTypes.oneOf(['separator']),
         PropTypes.shape({
           value: PropTypes.any.isRequired,
           label: PropTypes.string.isRequired

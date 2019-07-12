@@ -5,7 +5,7 @@ import PropTypes from 'prop-types'
 import Modal from './Modal'
 
 const Button = React.memo(function Button ({ tabSlug, isLessonHighlight, paneRef }) {
-  const [ isOpen, setOpen ] = React.useState(false)
+  const [isOpen, setOpen] = React.useState(false)
   const open = React.useCallback(() => setOpen(true))
   const close = React.useCallback(() => setOpen(false))
   // When opening a new workflow or switching to a tab, a new Button will

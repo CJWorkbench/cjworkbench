@@ -17,14 +17,14 @@ describe('ReorderHistory', () => {
   it('renders history properly', () => {
     const history = [
       {
-        'column': 'maze',
-        'from': 0, // A
-        'to': 2 // C
+        column: 'maze',
+        from: 0, // A
+        to: 2 // C
       },
       {
-        'column': 'door',
-        'from': 26, // AA
-        'to': 1 // B
+        column: 'door',
+        from: 26, // AA
+        to: 1 // B
       }
     ]
     const tree = shallow(<ReorderHistory value={history} />)

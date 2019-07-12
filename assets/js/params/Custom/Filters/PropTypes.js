@@ -27,7 +27,7 @@ export const SubfilterPropType = PropTypes.shape({
   case_sensitive: PropTypes.bool.isRequired // default false
 })
 
-export const OperatorPropType = PropTypes.oneOf([ 'and', 'or' ])
+export const OperatorPropType = PropTypes.oneOf(['and', 'or'])
 
 export const FilterPropType = PropTypes.shape({
   operator: OperatorPropType.isRequired,

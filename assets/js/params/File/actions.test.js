@@ -11,8 +11,8 @@ describe('File.actions', () => {
       }
       const store = mockStore({
         wfModules: {
-          '1': { foo: 'bar' },
-          '2': { foo: 'baz' }
+          1: { foo: 'bar' },
+          2: { foo: 'baz' }
         }
       }, api)
       const file = new File(['A\nab'], 't.csv')
@@ -51,21 +51,21 @@ describe('File.actions', () => {
   describe('cancel', () => {
     it('should no-op when there is no upload', async () => {
       const api = { cancel: jest.fn() }
-      const store = mockStore({ wfModules: { '1': {} } }, api)
+      const store = mockStore({ wfModules: { 1: {} } }, api)
       await store.dispatch(actions.cancel(1))
       expect(api.cancel).not.toHaveBeenCalled()
       expect(store.getState().wfModules['1'].inProgressUpload).toBe(null)
     })
 
     it('should cancel an upload through the API', async () => {
-      const [ setCancelled, cancelled ] = createConditionVariable()
+      const [setCancelled, cancelled] = createConditionVariable()
       const api = {
         cancelFileUpload: jest.fn(() => cancelled)
       }
       const store = mockStore({
         wfModules: {
-          '1': { foo: 'bar' },
-          '2': { foo: 'baz', inProgressUpload: { name: 't.csv', size: 4, nBytesUploaded: 3 } }
+          1: { foo: 'bar' },
+          2: { foo: 'baz', inProgressUpload: { name: 't.csv', size: 4, nBytesUploaded: 3 } }
         }
       }, api)
 

@@ -45,11 +45,12 @@ export default class Filter extends React.PureComponent {
     onChange(index, {
       ...value,
       operator,
-      subfilters: [ ...value.subfilters, DefaultSubfilter ]
+      subfilters: [...value.subfilters, DefaultSubfilter]
     })
   }
 
   onClickAddAnd = () => this.addSubfilter('and')
+
   onClickAddOr = () => this.addSubfilter('or')
 
   onDeleteSubfilter = (subfilterIndex) => {

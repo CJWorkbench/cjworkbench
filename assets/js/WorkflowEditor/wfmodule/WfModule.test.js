@@ -226,7 +226,7 @@ describe('WfModule, not read-only mode', () => {
     }
     const aModule = {
       ...module,
-      param_fields: [ pspec('a', 'string'), pspec('b', 'string') ]
+      param_fields: [pspec('a', 'string'), pspec('b', 'string')]
     }
     const w = wrapper({ wfModule, module: aModule })
 
@@ -263,7 +263,7 @@ describe('WfModule, not read-only mode', () => {
     }
     const aModule = {
       ...module,
-      param_fields: [ pspec('url', 'string'), pspec('version_select', 'custom') ]
+      param_fields: [pspec('url', 'string'), pspec('version_select', 'custom')]
     }
     const w = wrapper({ wfModule, module: aModule })
 
@@ -288,13 +288,13 @@ describe('WfModule, not read-only mode', () => {
     const store = mockStore({
       workflow: {
         id: 99,
-        tab_slugs: [ 'tab-11', 'tab-12' ],
+        tab_slugs: ['tab-11', 'tab-12'],
         read_only: false,
         is_anonymous: false,
         selected_tab_position: 0
       },
       tabs: {
-        'tab-11': { slug: 'tab-11', name: 'Tab 1', wf_module_ids: [ 10, 20 ] },
+        'tab-11': { slug: 'tab-11', name: 'Tab 1', wf_module_ids: [10, 20] },
         'tab-12': { slug: 'tab-12', name: 'Tab 2', wf_module_ids: [] }
       },
       wfModules: {
@@ -374,12 +374,12 @@ describe('WfModule, not read-only mode', () => {
           999: { module: 'loadurl', params: {}, secrets: {} }
         },
         modules: {
-          'loadurl': {
+          loadurl: {
             id_name: 'loadurl',
             name: 'Load from URL',
             help_url: '',
             icon: 'icon',
-            param_fields: [ pspec('url', 'string') ]
+            param_fields: [pspec('url', 'string')]
           }
         },
         ...action.payload

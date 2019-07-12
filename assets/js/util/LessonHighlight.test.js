@@ -26,31 +26,31 @@ const isValid = (obj) => {
 describe('LessonHighlight', () => {
   it('should allow Module', () => {
     const valid = { type: 'Module', name: 'Foo', index: 1 }
-    expect(isValid([ valid ])).toBe(true)
-    expect(isValid([ { type: 'Module', foo: 'bar', index: 1 } ])).toBe(false)
+    expect(isValid([valid])).toBe(true)
+    expect(isValid([{ type: 'Module', foo: 'bar', index: 1 }])).toBe(false)
   })
 
   it('should allow WfModule', () => {
     const valid = { type: 'WfModule', moduleName: 'Foo' }
-    expect(isValid([ valid ])).toBe(true)
-    expect(isValid([ { ...valid, index: 2 } ])).toBe(true)
-    expect(isValid([ { type: 'WfModule', foo: 'bar' } ])).toBe(false)
+    expect(isValid([valid])).toBe(true)
+    expect(isValid([{ ...valid, index: 2 }])).toBe(true)
+    expect(isValid([{ type: 'WfModule', foo: 'bar' }])).toBe(false)
   })
 
   it('should allow WfModuleContextButton', () => {
     const valid = { type: 'WfModuleContextButton', moduleName: 'Foo', button: 'notes' }
-    expect(isValid([ valid ])).toBe(true)
-    expect(isValid([ { type: 'WfModuleContextButton', moduleName: 'Foo', button: 'x' } ])).toBe(false)
-    expect(isValid([ { type: 'WfModuleContextButton', xoduleName: 'Foo', button: 'notes' } ])).toBe(false)
+    expect(isValid([valid])).toBe(true)
+    expect(isValid([{ type: 'WfModuleContextButton', moduleName: 'Foo', button: 'x' }])).toBe(false)
+    expect(isValid([{ type: 'WfModuleContextButton', xoduleName: 'Foo', button: 'notes' }])).toBe(false)
   })
 
   it('should allow EditableNotes', () => {
     const valid = { type: 'EditableNotes' }
-    expect(isValid([ valid ])).toBe(true)
+    expect(isValid([valid])).toBe(true)
   })
 
   it('should match using deepEqual on array elements', () => {
-    const valid = [ { type: 'Module', name: 'Foo', index: 2 }, { type: 'EditableNotes' } ]
+    const valid = [{ type: 'Module', name: 'Foo', index: 2 }, { type: 'EditableNotes' }]
     expect(matchLessonHighlight(valid, { type: 'Module', name: 'Foo', index: 2 })).toBe(true)
     expect(matchLessonHighlight(valid, { type: 'Module', name: 'Bar', index: 2 })).toBe(false)
     expect(matchLessonHighlight(valid, { type: 'EditableNotes' })).toBe(true)
@@ -58,12 +58,12 @@ describe('LessonHighlight', () => {
   })
 
   it('should partial-match', () => {
-    const lessonHighlight = [ { type: 'Module', name: 'Foo' }, { type: 'EditableNotes' } ]
+    const lessonHighlight = [{ type: 'Module', name: 'Foo' }, { type: 'EditableNotes' }]
     expect(matchLessonHighlight(lessonHighlight, { type: 'Module', name: 'Foo', index: 2 })).toBe(true)
   })
 
   it('should allow `null` as a "wildcard"', () => {
-    const lessonHighlight = [ { type: 'Module', name: 'Foo', index: 2 }, { type: 'EditableNotes' } ]
+    const lessonHighlight = [{ type: 'Module', name: 'Foo', index: 2 }, { type: 'EditableNotes' }]
     expect(matchLessonHighlight(lessonHighlight, { type: 'Module', name: null, index: 2 })).toBe(true)
   })
 })

@@ -84,7 +84,7 @@ export default class List extends React.PureComponent {
   get value () {
     const actual = this.props.value
     if (actual.length === 0) {
-      return [ this.props.childDefault ]
+      return [this.props.childDefault]
     } else {
       return actual
     }
@@ -109,7 +109,7 @@ export default class List extends React.PureComponent {
   onAdd = () => {
     const { onChange, isReadOnly, childDefault } = this.props
     if (isReadOnly) return
-    const newValue = [ ...this.value, childDefault ]
+    const newValue = [...this.value, childDefault]
     onChange(newValue)
   }
 

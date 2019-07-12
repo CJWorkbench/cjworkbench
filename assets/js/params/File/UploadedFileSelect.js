@@ -97,7 +97,7 @@ class UploadedFileSelectModal extends React.PureComponent {
 }
 
 const UploadedFileSelect = React.memo(function UploadedFileSelect ({ value, files, onChange }) {
-  const [ isOpen, setOpen ] = React.useState(false)
+  const [isOpen, setOpen] = React.useState(false)
   const open = React.useCallback(() => setOpen(true))
   const close = React.useCallback(() => setOpen(false))
 

@@ -43,7 +43,7 @@ export function buildGroupsForValueCounts (valueCounts, renames, sort) {
       group.values.push(value)
       group.count += count
     } else {
-      const group = new Group(groupName, [ value ], count)
+      const group = new Group(groupName, [value], count)
       groups.push(group)
       groupsByName[groupName] = group
     }

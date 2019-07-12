@@ -6,6 +6,7 @@ export default class ModalHeader extends React.PureComponent {
   static propTyes = {
     children: PropTypes.node.isRequired
   }
+
   static contextType = ModalContext
 
   render () {

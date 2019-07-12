@@ -16,6 +16,7 @@ export class DataVersionSelect extends React.PureComponent {
   }
 
   openModal = () => this.setState({ isDataVersionModalOpen: true })
+
   closeModal = () => this.setState({ isDataVersionModalOpen: false })
 
   render () {

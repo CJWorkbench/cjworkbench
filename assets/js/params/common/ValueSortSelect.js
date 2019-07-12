@@ -47,7 +47,7 @@ export default function ValueSortSelect ({ value, onChange }) {
 }
 ValueSortSelect.propTypes = {
   value: PropTypes.shape({
-    by: PropTypes.oneOf([ 'value', 'count' ]).isRequired,
+    by: PropTypes.oneOf(['value', 'count']).isRequired,
     isAscending: PropTypes.bool.isRequired
   }).isRequired,
   onChange: PropTypes.func.isRequired // func({ by, isAscending }) => undefined

@@ -17,7 +17,7 @@ describe('Radio', () => {
   )
 
   it('renders correctly', () => {
-    const w = wrapper({ enumOptions: [ { value: 'x', label: 'X' } ] })
+    const w = wrapper({ enumOptions: [{ value: 'x', label: 'X' }] })
     expect(w).toMatchSnapshot()
   })
 

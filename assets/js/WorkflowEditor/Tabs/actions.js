@@ -176,7 +176,7 @@ function reduceDestroyPending (state, action) {
   const newPendingTabs = { ...pendingTabs }
   delete newPendingTabs[slug]
 
-  const newTabSlugs = [ ...workflow.tab_slugs ]
+  const newTabSlugs = [...workflow.tab_slugs]
   const deleteIndex = workflow.tab_slugs.indexOf(slug)
   newTabSlugs.splice(deleteIndex, 1)
 

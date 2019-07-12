@@ -24,6 +24,6 @@ describe('AceEditor', () => {
       <WorkbenchAceEditor {...defaultProps} save={jest.fn()} wfModuleError='Line 1: Foo happened' />
     )
     expect(wrapper.find(AceEditor).prop('annotations'))
-      .toEqual([ { row: 0, type: 'error', text: 'Foo happened' } ])
+      .toEqual([{ row: 0, type: 'error', text: 'Foo happened' }])
   })
 })

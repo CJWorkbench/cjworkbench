@@ -62,15 +62,15 @@ export class SelectedRowsActions extends React.PureComponent {
       if (curStart === null && bool) {
         curStart = i
       } else if (curStart !== null && !bool) {
-        parts.push([ curStart, i - 1 ])
+        parts.push([curStart, i - 1])
         curStart = null
       }
     }
     if (curStart !== null) {
-      parts.push([ curStart, maxIndex ])
+      parts.push([curStart, maxIndex])
     }
 
-    const partStrings = parts.map(([ start, end ]) => {
+    const partStrings = parts.map(([start, end]) => {
       if (start === end) {
         return String(start + 1)
       } else {
@@ -114,7 +114,7 @@ export class SelectedRowsActions extends React.PureComponent {
 }
 
 const getModules = ({ modules }) => modules
-const getRowActionModules = createSelector([ getModules ], (modules) => {
+const getRowActionModules = createSelector([getModules], (modules) => {
   const rowActionModules = []
   for (const moduleIdName in modules) {
     const module = modules[moduleIdName]

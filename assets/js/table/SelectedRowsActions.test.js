@@ -23,12 +23,12 @@ describe('SelectedRowsActions', () => {
     }
 
     it('should render number of selected columns', () => {
-      const w = wrapper({ selectedRowIndexes: [ 2, 5, 6 ] })
+      const w = wrapper({ selectedRowIndexes: [2, 5, 6] })
       expect(w.text()).toMatch(/3 rows selected/)
     })
 
     it('should invoke an action with rows as a string, 1-based', () => {
-      const w = wrapper({ selectedRowIndexes: [ 2, 3, 4, 5, 8000, 8001, 8002, 9 ] })
+      const w = wrapper({ selectedRowIndexes: [2, 3, 4, 5, 8000, 8001, 8002, 9] })
       w.find('button.table-action').simulate('click') // open the menu
       w.find('button').at(1).simulate('click')
       expect(w.prop('onClickRowsAction')).toHaveBeenCalledWith(99, 'dofoo', '3-6, 10, 8001-8003')
@@ -110,7 +110,7 @@ describe('SelectedRowsActions', () => {
 
     it('should use setWfModuleParams action, fromInput', async () => {
       const w = wrapper({
-        workflow: { tab_slugs: [ 'tab-1' ] },
+        workflow: { tab_slugs: ['tab-1'] },
         tabs: { 'tab-1': { wf_module_ids: [2, 3] } },
         wfModules: {
           2: { module: 'dofoo', tab_slug: 'tab-1' },
@@ -141,7 +141,7 @@ describe('SelectedRowsActions', () => {
 
     it('should use setWfModuleParams action, fromInput=false (from output)', async () => {
       const w = wrapper({
-        workflow: { tab_slugs: [ 'tab-1' ] },
+        workflow: { tab_slugs: ['tab-1'] },
         tabs: { 'tab-1': { wf_module_ids: [2, 3] } },
         wfModules: {
           2: { module: 'dobaz', tab_slug: 'tab-1', params: { foo10: 'bar10' } },

@@ -15,7 +15,7 @@ describe('Multichartseries', () => {
         ]}
         isReadOnly={false}
         placeholder='placeholder'
-        inputColumns={[ { name: 'A' }, { name: 'B' }, { name: 'C' } ]}
+        inputColumns={[{ name: 'A' }, { name: 'B' }, { name: 'C' }]}
         onChange={jest.fn()}
         {...props}
       />

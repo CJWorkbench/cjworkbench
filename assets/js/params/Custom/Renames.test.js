@@ -5,8 +5,8 @@ import { mount } from 'enzyme'
 
 describe('Renames', () => {
   const testEntries = {
-    'name': 'host_name',
-    'narrative': 'nrtv'
+    name: 'host_name',
+    narrative: 'nrtv'
   }
 
   const columnNames = ['name', 'build_year', 'narrative', 'cornerstone']

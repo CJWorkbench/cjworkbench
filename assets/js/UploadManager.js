@@ -89,7 +89,7 @@ function startUpload (url, headers, blob, onProgress) {
 
   // Don't worry: Promise ctor runs synchronously. `abort` is set.
 
-  return [ abort, done ]
+  return [abort, done]
 }
 
 /**
@@ -143,7 +143,7 @@ export default class UploadManager {
       base64Md5sum: base64Md5sum
     })
 
-    const [ abort, done ] = startUpload(url, headers, buffer, onProgress)
+    const [abort, done] = startUpload(url, headers, buffer, onProgress)
     this.inProgress[String(wfModuleId)] = abort
     let etag
     try {
@@ -242,7 +242,7 @@ export default class UploadManager {
               }
             )
             if (aborted) return
-            const [ abort, done ] = startUpload(url, headers, buffer, (n) => setPartProgress(partNumber, n))
+            const [abort, done] = startUpload(url, headers, buffer, (n) => setPartProgress(partNumber, n))
             aborts[String(partNumber)] = abort
             try {
               etag = await done // may raise Error

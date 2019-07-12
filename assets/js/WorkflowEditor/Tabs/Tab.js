@@ -26,6 +26,7 @@ export default class Tab extends React.PureComponent {
   }
 
   inputRef = React.createRef()
+
   liRef = React.createRef()
 
   startEditingTabName = () => {

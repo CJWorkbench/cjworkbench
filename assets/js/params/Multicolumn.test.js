@@ -10,7 +10,7 @@ describe('Multicolumn', () => {
       name='columns'
       fieldId='columns'
       isReadOnly={false}
-      value={[ 'A', 'C' ]}
+      value={['A', 'C']}
       inputColumns={[{ name: 'A' }, { name: 'B' }, { name: 'C' }, { name: 'D' }]}
       {...extraProps}
     />
@@ -31,7 +31,7 @@ describe('Multicolumn', () => {
       const w = wrapper()
       expect(w.find('Select[name="columns"]').prop('options')).toHaveLength(4)
       expect(w.find('Select[name="columns"]').prop('options')).toEqual([{
-        'label': 'A', 'value': 'A' }, { 'label': 'B', 'value': 'B' }, { 'label': 'C', 'value': 'C' }, { 'label': 'D', 'value': 'D'
+        label: 'A', value: 'A' }, { label: 'B', value: 'B' }, { label: 'C', value: 'C' }, { label: 'D', value: 'D'
       }])
     })
 
@@ -63,7 +63,7 @@ describe('Multicolumn', () => {
           name='column'
           fieldId='column'
           isReadOnly={false}
-          value={[ 'C', 'A', 'D' ]}
+          value={['C', 'A', 'D']}
           inputColumns={[{ name: 'D' }, { name: 'A' }, { name: 'C' }, { name: 'B' }]}
         />
       )
@@ -77,13 +77,13 @@ describe('Multicolumn', () => {
 
     it('should call onChange when columns are added', () => {
       const w = wrapper({
-        value: [ 'A' ],
+        value: ['A'],
         inputColumns: [{ name: 'A' }, { name: 'B' }, { name: 'C' }]
       })
       w.find('.react-select__dropdown-indicator')
         .simulate('mousedown', { type: 'mousedown', button: 0 }) // open menu
       w.find('.react-select__option').at(0).simulate('click')
-      expect(w.prop('onChange')).toHaveBeenCalledWith([ 'A', 'B' ])
+      expect(w.prop('onChange')).toHaveBeenCalledWith(['A', 'B'])
     })
 
     it('should handle DEPRECATED values of type String', () => {

@@ -91,7 +91,7 @@ const getLessonData = ({ lessonData }) => lessonData || null
  * suggested.
  */
 const getLesson = createSelector(
-  [ getWorkflow, getTabs, getWfModules, getModules, getSelectedWfModule, getLessonData ],
+  [getWorkflow, getTabs, getWfModules, getModules, getSelectedWfModule, getLessonData],
   (workflow, tabs, wfModules, modules, selectedWfModule, lessonData) => {
     if (lessonData === null) {
       return {

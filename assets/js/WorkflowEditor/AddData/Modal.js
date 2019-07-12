@@ -10,7 +10,7 @@ import Search from './Search'
 
 export const Modal = React.memo(function Modal ({ modules, tabSlug, close, addModule }) {
   const onSelectModule = React.useCallback(moduleIdName => addModule(tabSlug, moduleIdName))
-  const [ search, setSearch ] = React.useState('')
+  const [search, setSearch] = React.useState('')
 
   return (
     <section className='add-data-modal'>
@@ -35,7 +35,7 @@ Modal.propTypes = {
 
 const NameCollator = new Intl.Collator()
 const getModules = ({ modules }) => modules
-const getLoadDataModules = createSelector([ getModules, lessonSelector ], (modules, { testHighlight }) => {
+const getLoadDataModules = createSelector([getModules, lessonSelector], (modules, { testHighlight }) => {
   return Object.values(modules)
     .filter(m => m.loads_data && !m.deprecated)
     .sort((a, b) => NameCollator.compare(a.name, b.name))

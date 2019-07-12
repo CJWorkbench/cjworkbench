@@ -25,14 +25,23 @@ export default class ColumnContextMenu extends React.Component {
   }
 
   duplicateColumn = () => this.createOrUpdate('duplicatecolumns')
+
   sortAscending = () => this.createOrUpdate('sort', { is_ascending: true })
+
   sortDescending = () => this.createOrUpdate('sort', { is_ascending: false })
+
   addNewFilter = () => this.create('filter')
+
   extractNumbers = () => this.createOrUpdate('converttexttonumber')
+
   cleanText = () => this.createOrUpdate('clean-text')
+
   dropColumn = () => this.createOrUpdate('selectcolumns', { keep: false })
+
   convertDate = () => this.createOrUpdate('convert-date')
+
   convertText = () => this.createOrUpdate('converttotext')
+
   formatNumbers = () => this.create('formatnumbers', { format: '{:,}' })
 
   render () {

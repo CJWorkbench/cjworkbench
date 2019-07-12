@@ -5,21 +5,21 @@ import { ErrorResponse } from './WorkflowWebsocket'
 
 describe('Reducer actions', () => {
   const testModules = {
-    '1': {
+    1: {
       id: 1,
       id_name: 'module1'
     },
-    '2': {
+    2: {
       id: 2,
       id_name: 'module2'
     }
   }
 
   const testWfModules = {
-    '10': {
+    10: {
       id: 10,
       tab_slug: 'tab-91',
-      params: { 'data': 'Some Data', 'version_select': null },
+      params: { data: 'Some Data', version_select: null },
       versions: {
         selected: '2018-02-21T03:09:20.214054Z',
         versions: [
@@ -31,11 +31,11 @@ describe('Reducer actions', () => {
       notifications: false,
       has_unseen_notification: true
     },
-    '20': {
+    20: {
       id: 20,
       tab_slug: 'tab-91'
     },
-    '30': {
+    30: {
       id: 30,
       tab_slug: 'tab-91'
     }
@@ -44,7 +44,7 @@ describe('Reducer actions', () => {
   const testTabs = {
     'tab-91': {
       slug: 'tab-91',
-      wf_module_ids: [ 10, 20, 30 ],
+      wf_module_ids: [10, 20, 30],
       selected_wf_module_position: 1
     }
   }
@@ -52,7 +52,7 @@ describe('Reducer actions', () => {
   // Stripped down workflow object, only what we need for testing actions
   const testWorkflow = {
     id: 999,
-    tab_slugs: [ 'tab-91' ]
+    tab_slugs: ['tab-91']
   }
 
   // test state has second module selected
@@ -78,7 +78,7 @@ describe('Reducer actions', () => {
   })
 
   it('returns the state if we feed garbage to the reducer', () => {
-    const initialState = { 'x': 'y' }
+    const initialState = { x: 'y' }
     const state = wfr.workflowReducer(initialState, {
       type: 'An ill-advised request',
       payload: {
@@ -96,7 +96,7 @@ describe('Reducer actions', () => {
 
     const store = mockStore({
       workflow: {
-        tab_slugs: [ 'tab-1' ]
+        tab_slugs: ['tab-1']
       },
       tabs: {
         'tab-1': {
@@ -109,7 +109,7 @@ describe('Reducer actions', () => {
         3: {}
       },
       modules: {
-        'module2': {}
+        module2: {}
       }
     }, api)
 
@@ -128,7 +128,7 @@ describe('Reducer actions', () => {
 
     const store = mockStore({
       workflow: {
-        tab_slugs: [ 'tab-1' ]
+        tab_slugs: ['tab-1']
       },
       tabs: {
         'tab-1': {
@@ -141,7 +141,7 @@ describe('Reducer actions', () => {
         3: { tab_slug: 'tab-1' }
       },
       modules: {
-        'module2': {}
+        module2: {}
       }
     }, api)
 
@@ -156,7 +156,7 @@ describe('Reducer actions', () => {
 
     const store = mockStore({
       workflow: {
-        tab_slugs: [ 'tab-1' ]
+        tab_slugs: ['tab-1']
       },
       tabs: {
         'tab-1': {
@@ -169,7 +169,7 @@ describe('Reducer actions', () => {
         3: {}
       },
       modules: {
-        'module2': {}
+        module2: {}
       }
     }, api)
 
@@ -186,7 +186,7 @@ describe('Reducer actions', () => {
 
     expect(api.deleteModule).toHaveBeenCalledWith(20)
     const state = store.getState()
-    expect(state.tabs['tab-91'].wf_module_ids).toEqual([ 10, 30 ])
+    expect(state.tabs['tab-91'].wf_module_ids).toEqual([10, 30])
     expect(state.wfModules['20']).not.toBeDefined()
   })
 
@@ -272,7 +272,7 @@ describe('Reducer actions', () => {
       },
       tabs: {
         'tab-1': {
-          wf_module_ids: [ 2, 4, 6 ],
+          wf_module_ids: [2, 4, 6],
           selected_wf_module_position: 2
         }
       }
@@ -280,8 +280,8 @@ describe('Reducer actions', () => {
     await store.dispatch(wfr.moveModuleAction('tab-1', 2, 0))
 
     // Change happens synchronously. No need to even await the promise :)
-    expect(api.reorderWfModules).toHaveBeenCalledWith('tab-1', [ 6, 2, 4 ])
-    expect(store.getState().tabs['tab-1'].wf_module_ids).toEqual([ 6, 2, 4 ])
+    expect(api.reorderWfModules).toHaveBeenCalledWith('tab-1', [6, 2, 4])
+    expect(store.getState().tabs['tab-1'].wf_module_ids).toEqual([6, 2, 4])
     expect(store.getState().tabs['tab-1'].selected_wf_module_position).toEqual(0)
   })
 
@@ -295,7 +295,7 @@ describe('Reducer actions', () => {
 
   it('applies delta to a WfModule', () => {
     const state = wfr.workflowReducer(testState, wfr.applyDeltaAction({
-      updateWfModules: { '10': { foo: 'bar' } }
+      updateWfModules: { 10: { foo: 'bar' } }
     }))
     expect(state.wfModules['10'].foo).toEqual('bar') // new property
     expect(state.wfModules['10'].params).toBe(testState.wfModules['10'].params) // old property
@@ -305,8 +305,8 @@ describe('Reducer actions', () => {
 
   it('applies delta to clearing a WfModule', () => {
     const state = wfr.workflowReducer(testState, wfr.applyDeltaAction({
-      updateWorkflow: { wf_modules: [ 10, 30 ] },
-      clearWfModuleIds: [ 20 ]
+      updateWorkflow: { wf_modules: [10, 30] },
+      clearWfModuleIds: [20]
     }))
     expect(state.wfModules).not.toBe(testState.wfModules) // immutable
     expect(state.wfModules['10']).toBe(testState.wfModules['10']) // leave uncleared modules unchanged
@@ -322,13 +322,13 @@ describe('Reducer actions', () => {
     }))
     expect(state.tabs['tab-91'].foo).toEqual('bar') // new property
     expect(state.tabs['tab-92'].foo).toEqual('baz')
-    expect(state.tabs['tab-91'].wf_module_ids).toEqual([ 10, 20, 30 ]) // old property
+    expect(state.tabs['tab-91'].wf_module_ids).toEqual([10, 20, 30]) // old property
     expect(state.tabs['tab-91'].selected_wf_module_position).toEqual(1) // immutable
   })
 
   it('applies delta to clearing a Tab', () => {
     const state = wfr.workflowReducer(testState, wfr.applyDeltaAction({
-      clearTabSlugs: [ 'tab-91' ]
+      clearTabSlugs: ['tab-91']
     }))
     expect(state.tabs).toEqual({})
   })
@@ -344,7 +344,7 @@ describe('Reducer actions', () => {
 
     const state = wfr.workflowReducer({
       workflow: {
-        tab_slugs: [ 'tab-1', 'tab-NEW' ]
+        tab_slugs: ['tab-1', 'tab-NEW']
       },
       tabs: { 'tab-1': oldTab },
       pendingTabs: { 'tab-NEW': newTab }
@@ -380,20 +380,20 @@ describe('Reducer actions', () => {
       wfModules: {
         10: {
           params: {
-            'a': 'x',
-            'b': 'y'
+            a: 'x',
+            b: 'y'
           }
         }
       }
     }, api)
-    const done = store.dispatch(wfr.setWfModuleParamsAction(10, { 'a': 'z' }))
+    const done = store.dispatch(wfr.setWfModuleParamsAction(10, { a: 'z' }))
 
     // should set value immediately
-    expect(store.getState().wfModules['10'].params).toEqual({ 'a': 'z', 'b': 'y' })
+    expect(store.getState().wfModules['10'].params).toEqual({ a: 'z', b: 'y' })
 
     // should send HTTP request
     await done
-    expect(api.setWfModuleParams).toHaveBeenCalledWith(10, { 'a': 'z' })
+    expect(api.setWfModuleParams).toHaveBeenCalledWith(10, { a: 'z' })
   })
 
   it('requests fetch in maybeRequestWfModuleFetchAction', async () => {

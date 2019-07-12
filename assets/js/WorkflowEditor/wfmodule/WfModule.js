@@ -508,14 +508,14 @@ class WfModuleCollapseButton extends React.PureComponent {
 const getWorkflow = ({ workflow }) => workflow
 const getReadyTabs = ({ tabs }) => tabs
 const getPendingTabs = ({ pendingTabs }) => pendingTabs || {}
-const getReadyAndPendingTabs = createSelector([ getReadyTabs, getPendingTabs ], (readyTabs, pendingTabs) => {
+const getReadyAndPendingTabs = createSelector([getReadyTabs, getPendingTabs], (readyTabs, pendingTabs) => {
   return {
     ...pendingTabs,
     ...readyTabs
   }
 })
 const getWfModules = ({ wfModules }) => wfModules
-const getTabs = createSelector([ getWorkflow, getReadyAndPendingTabs, getWfModules ], (workflow, tabs, wfModules) => {
+const getTabs = createSelector([getWorkflow, getReadyAndPendingTabs, getWfModules], (workflow, tabs, wfModules) => {
   return workflow.tab_slugs.map(slug => {
     const tab = tabs[slug]
     let outputColumns = null
@@ -536,7 +536,7 @@ const getTabs = createSelector([ getWorkflow, getReadyAndPendingTabs, getWfModul
     }
   })
 })
-const getCurrentTab = createSelector([ getWorkflow, getReadyAndPendingTabs ], (workflow, tabs) => {
+const getCurrentTab = createSelector([getWorkflow, getReadyAndPendingTabs], (workflow, tabs) => {
   const tabSlug = workflow.tab_slugs[workflow.selected_tab_position]
   return tabs[tabSlug]
 })
@@ -545,7 +545,7 @@ const getModules = ({ modules }) => modules
 /**
  * Find first WfModule index that has a `.loads_data` ModuleVersion, or `null`
  */
-const firstFetchIndex = createSelector([ getCurrentTab, getWfModules, getModules ], (tab, wfModules, modules) => {
+const firstFetchIndex = createSelector([getCurrentTab, getWfModules, getModules], (tab, wfModules, modules) => {
   const index = tab.wf_module_ids.findIndex(id => {
     const wfModule = wfModules[String(id)]
     if (!wfModule) return false // add-module not yet loaded

@@ -9,7 +9,7 @@ import ShareModal from './index'
  * the modal, and then the <button> becomes clickable again.
  */
 export default function ShareButton ({ className, children }) {
-  const [ isOpen, setIsOpen ] = React.useState(false)
+  const [isOpen, setIsOpen] = React.useState(false)
   const open = React.useCallback(() => setIsOpen(true))
   const close = React.useCallback(() => setIsOpen(false))
 

@@ -51,14 +51,14 @@ export default class ParamsForm extends React.PureComponent {
     inputDeltaId: PropTypes.number, // or `null` ... TODO nix by making 0 fields depend on it
     inputColumns: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string.isRequired,
-      type: PropTypes.oneOf([ 'text', 'number', 'datetime' ]).isRequired
+      type: PropTypes.oneOf(['text', 'number', 'datetime']).isRequired
     }).isRequired),
     tabs: PropTypes.arrayOf(PropTypes.shape({
       slug: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
       outputColumns: PropTypes.arrayOf(PropTypes.shape({
         name: PropTypes.string.isRequired,
-        type: PropTypes.oneOf([ 'text', 'number', 'datetime' ]).isRequired
+        type: PropTypes.oneOf(['text', 'number', 'datetime']).isRequired
       }).isRequired) // null while rendering
     }).isRequired).isRequired,
     currentTab: PropTypes.string.isRequired, // "tab-slug", never null
@@ -152,7 +152,7 @@ export default class ParamsForm extends React.PureComponent {
     }
     const conditionField = this.props.fields.find(f => f.idName === condition.idName)
     // Recurse to see if we depend on an invisible field
-    if (!this.isFieldVisible(conditionField, [ ...recurseDetector, field.idName ])) {
+    if (!this.isFieldVisible(conditionField, [...recurseDetector, field.idName])) {
       return false
     }
 

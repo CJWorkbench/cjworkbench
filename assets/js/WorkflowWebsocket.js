@@ -59,9 +59,8 @@ export default class WorkflowWebsocket {
     if (data.response) {
       const response = data.response
 
-      let inflight
       const requestId = response.requestId
-      inflight = this.inflight[requestId] || MissingInflightHandler
+      const inflight = this.inflight[requestId] || MissingInflightHandler
       delete this.inflight[requestId]
 
       if (response.error) {
@@ -128,7 +127,7 @@ export default class WorkflowWebsocket {
    */
   callServerHandler (path, args) {
     const requestId = ++this.lastRequestId
-    const message = JSON.stringify({ path, requestId, 'arguments': args })
+    const message = JSON.stringify({ path, requestId, arguments: args })
 
     this._sendOrQueue(message)
 

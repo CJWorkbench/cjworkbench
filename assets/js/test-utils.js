@@ -45,7 +45,7 @@ export function sleep (ms) {
 export function createConditionVariable () {
   let notify
   const promise = new Promise(resolve => { notify = resolve })
-  return [ notify, promise ]
+  return [notify, promise]
 }
 
 /**
@@ -63,7 +63,7 @@ export function createConditionVariable () {
  *     expect(store.getState().workflow).toEqual(...)
  */
 export function mockStore (initialState, api = {}) {
-  const middlewares = [ errorMiddleware(), promiseMiddleware, thunk.withExtraArgument(api) ]
+  const middlewares = [errorMiddleware(), promiseMiddleware, thunk.withExtraArgument(api)]
   const store = createStore(workflowReducer, initialState, applyMiddleware(...middlewares))
   return store
 }

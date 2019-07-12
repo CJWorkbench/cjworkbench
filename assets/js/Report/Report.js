@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 const Report = React.memo(function Report ({ workflowId }) {
-  const [ height, setHeight ] = React.useState(0)
+  const [height, setHeight] = React.useState(0)
   const iframeRef = React.useRef(null)
   const watchHeight = React.useCallback(() => {
     const iframe = iframeRef.current
@@ -24,7 +24,7 @@ const Report = React.memo(function Report ({ workflowId }) {
 
     // No need to register destructors: if the iframe goes away, its event
     // listeners will go away, too.
-  }, [ iframeRef.current ])
+  }, [iframeRef.current])
 
   return (
     <div className='report-iframe-container'>

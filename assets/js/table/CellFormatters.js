@@ -43,7 +43,7 @@ export function TextCellFormatter ({ value }) {
  */
 function parseFormat (format) {
   try {
-    const [ , prefix, specifierString, suffix ] = /(.*?)\{:?(.*)\}(.*)/.exec(format)
+    const [, prefix, specifierString, suffix] = /(.*?)\{:?(.*)\}(.*)/.exec(format)
     return { prefix, suffix, specifierString }
   } catch (e) {
     if (e instanceof TypeError) {
@@ -106,9 +106,9 @@ export function DatetimeCellFormatter ({ value }) {
 }
 
 const TypeToCellFormatter = {
-  'text': () => TextCellFormatter,
-  'datetime': () => DatetimeCellFormatter,
-  'number': ({ format }) => NumberCellFormatter(format)
+  text: () => TextCellFormatter,
+  datetime: () => DatetimeCellFormatter,
+  number: ({ format }) => NumberCellFormatter(format)
 }
 
 export function columnToCellFormatter (column) {

@@ -9,9 +9,9 @@ import { timeDifference } from '../../utils'
  * When the user clicks "submit", the state of this container will change irreversibly.
  */
 function StringPrompt ({ isReadOnly, label, name, fieldId, placeholder, pattern, help, helpUrl, helpUrlPrompt, submit }) {
-  const [ value, setValue ] = React.useState('')
-  const [ isValid, setValid ] = React.useState(false)
-  const [ isSubmitted, setSubmitted ] = React.useState(false)
+  const [value, setValue] = React.useState('')
+  const [isValid, setValid] = React.useState(false)
+  const [isSubmitted, setSubmitted] = React.useState(false)
   const handleChange = React.useCallback(ev => {
     setValue(ev.target.value)
     setValid(ev.target.validity.valid)
@@ -68,7 +68,7 @@ function StringPrompt ({ isReadOnly, label, name, fieldId, placeholder, pattern,
 }
 
 function StringDisplay ({ isReadOnly, secretMetadata, label, name, fieldId, deleteSecret }) {
-  const [ isSubmitted, setSubmitted ] = React.useState(false)
+  const [isSubmitted, setSubmitted] = React.useState(false)
   const handleSubmit = React.useCallback(() => {
     deleteSecret(name)
     setSubmitted(true)

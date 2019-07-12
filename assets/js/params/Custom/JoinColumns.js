@@ -15,14 +15,14 @@ export default class JoinColumns extends React.PureComponent {
     }).isRequired,
     inputColumns: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string.isRequired,
-      type: PropTypes.oneOf([ 'text', 'number', 'datetime' ]).isRequired
+      type: PropTypes.oneOf(['text', 'number', 'datetime']).isRequired
     }).isRequired),
     tabs: PropTypes.arrayOf(PropTypes.shape({
       slug: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
       outputColumns: PropTypes.arrayOf(PropTypes.shape({
         name: PropTypes.string.isRequired,
-        type: PropTypes.oneOf([ 'text', 'number', 'datetime' ]).isRequired
+        type: PropTypes.oneOf(['text', 'number', 'datetime']).isRequired
       }).isRequired) // null while rendering
     }).isRequired).isRequired,
     selectedTab: PropTypes.string // slug, may be null

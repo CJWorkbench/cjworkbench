@@ -10,12 +10,13 @@ export default class DropdownToggle extends React.PureComponent {
     className: PropTypes.string, // adds to `btn btn-secondary (dropdown-toggle?)`
     title: PropTypes.string
   }
+
   static contextType = DropdownContext
 
   render () {
     const { children, caret, title, className } = this.props
     const { isOpen, disabled, toggle } = this.context
-    const classNames = [ 'btn btn-secondary' ]
+    const classNames = ['btn btn-secondary']
     if (caret) classNames.push('dropdown-toggle')
     if (className) classNames.push(className)
 

@@ -67,7 +67,7 @@ export class Lesson extends React.PureComponent {
 
     const currentSectionOrFooter = sections[currentSectionIndex] || footer
     const isFullScreen = currentSectionOrFooter.isFullScreen
-    const classNames = [ 'lesson' ]
+    const classNames = ['lesson']
     if (isFullScreen) classNames.push('fullscreen')
 
     return (

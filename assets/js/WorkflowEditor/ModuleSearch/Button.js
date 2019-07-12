@@ -28,7 +28,7 @@ export default class Button extends React.PureComponent {
     const { className, index, tabSlug, isLessonHighlight, isLastAddButton } = this.props
     const { isOpen } = this.state
 
-    const buttonClassNames = [ 'search' ]
+    const buttonClassNames = ['search']
     if (isOpen) buttonClassNames.push('active')
     if (isLessonHighlight) buttonClassNames.push('lesson-highlight')
 

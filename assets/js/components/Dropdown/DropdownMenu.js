@@ -24,6 +24,7 @@ class OpenDropdownMenu extends React.PureComponent {
   static propTypes = {
     children: PropTypes.node.isRequired
   }
+
   static contextType = DropdownContext
 
   ref = React.createRef()
@@ -68,7 +69,7 @@ class OpenDropdownMenu extends React.PureComponent {
     const container = this.ref.current
     if (!container) return
 
-    const menuItems = [ ...container.querySelectorAll('[role=menuitem]') ]
+    const menuItems = [...container.querySelectorAll('[role=menuitem]')]
     console.log(menuItems)
     if (!menuItems.length) return
 
@@ -143,6 +144,7 @@ export default class DropdownMenu extends React.PureComponent {
   static propTypes = {
     children: PropTypes.node.isRequired
   }
+
   static contextType = DropdownContext
 
   render () {

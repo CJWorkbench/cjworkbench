@@ -44,22 +44,22 @@ describe('LessonSection', () => {
 
   it('renders steps as FUTURE when index<activeStepIndex', () => {
     const w = wrapper({ index: 1, activeSectionIndex: 0, activeStepIndex: 1 })
-    expect(w.find('LessonStep').map(s => s.prop('status'))).toEqual([ 'future', 'future', 'future' ])
+    expect(w.find('LessonStep').map(s => s.prop('status'))).toEqual(['future', 'future', 'future'])
   })
 
   it('renders steps as DONE when index>activeStepIndex', () => {
     const w = wrapper({ index: 1, activeSectionIndex: 2, activeStepIndex: 1 })
-    expect(w.find('LessonStep').map(s => s.prop('status'))).toEqual([ 'done', 'done', 'done' ])
+    expect(w.find('LessonStep').map(s => s.prop('status'))).toEqual(['done', 'done', 'done'])
   })
 
   it('renders steps as FUTURE, ACTIVE and DONE when index==activeStepIndex', () => {
     const w = wrapper({ index: 1, activeSectionIndex: 1, activeStepIndex: 1 })
-    expect(w.find('LessonStep').map(s => s.prop('status'))).toEqual([ 'done', 'active', 'future' ])
+    expect(w.find('LessonStep').map(s => s.prop('status'))).toEqual(['done', 'active', 'future'])
   })
 
   it('renders steps as DONE when activeSectionIndex === null', () => {
     const w = wrapper({ index: 1, activeSectionIndex: null, activeStepIndex: null })
-    expect(w.find('LessonStep').map(s => s.prop('status'))).toEqual([ 'done', 'done', 'done' ])
+    expect(w.find('LessonStep').map(s => s.prop('status'))).toEqual(['done', 'done', 'done'])
   })
 
   it('does not render zero steps', () => {

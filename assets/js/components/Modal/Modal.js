@@ -29,7 +29,7 @@ class OpenModal extends React.PureComponent {
     children: PropTypes.node.isRequired,
     toggle: PropTypes.func.isRequired, // func() => undefined; should close the modal
     className: PropTypes.string, // will be added to 'modal'
-    size: PropTypes.oneOf([ 'lg', 'sm' ]) // if set, .modal-dialog becomes .modal-dialog.modal-lg
+    size: PropTypes.oneOf(['lg', 'sm']) // if set, .modal-dialog becomes .modal-dialog.modal-lg
   }
 
   modalRef = React.createRef()
@@ -46,7 +46,7 @@ class OpenModal extends React.PureComponent {
     const oldActiveElement = document.activeElement
 
     // els should never be zero-length: the "close" button is tab-indexable
-    const els = [ ...this.modalRef.current.querySelectorAll(FocusableElementsSelector) ]
+    const els = [...this.modalRef.current.querySelectorAll(FocusableElementsSelector)]
     const index = els.indexOf(oldActiveElement) // may be -1
 
     let nextIndex = index
@@ -103,10 +103,10 @@ class OpenModal extends React.PureComponent {
     const { children, toggle, className, size } = this.props
     const modalContext = { toggle }
 
-    const classNames = [ 'modal' ]
+    const classNames = ['modal']
     if (className) classNames.push(className)
 
-    const dialogClassNames = [ 'modal-dialog' ]
+    const dialogClassNames = ['modal-dialog']
     if (size) dialogClassNames.push(`modal-${size}`)
 
     return ReactDOM.createPortal((
@@ -145,7 +145,7 @@ export default class Modal extends React.PureComponent {
     toggle: PropTypes.func.isRequired, // func() => undefined; should close the modal
     className: PropTypes.string, // will be added to 'modal'
     isOpen: PropTypes.bool.isRequired, // if false, render null
-    size: PropTypes.oneOf([ 'lg', 'sm' ]) // if set, .modal-dialog becomes .modal-dialog.modal-lg
+    size: PropTypes.oneOf(['lg', 'sm']) // if set, .modal-dialog becomes .modal-dialog.modal-lg
   }
 
   render () {

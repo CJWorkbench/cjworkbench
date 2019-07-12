@@ -12,7 +12,7 @@ const TimeUnits = {
 }
 
 function findBestTimeUnitForNSeconds (nSeconds) {
-  for (const timeUnit of [ 'weeks', 'days', 'hours', 'minutes' ]) {
+  for (const timeUnit of ['weeks', 'days', 'hours', 'minutes']) {
     if (nSeconds % TimeUnits[timeUnit] === 0) {
       return timeUnit
     }

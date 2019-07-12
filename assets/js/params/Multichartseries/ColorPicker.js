@@ -135,6 +135,7 @@ class ColorPickerPopover extends React.PureComponent {
     onChange: PropTypes.func.isRequired, // onChange('#abcdef') => undefined
     onClose: PropTypes.func.isRequired // onClose() => undefined
   }
+
   static contextType = ColorPickerContext // this.context.referenceElement is the button that opened the menu
 
   containerRef = React.createRef()

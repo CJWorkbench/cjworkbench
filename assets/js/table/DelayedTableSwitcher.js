@@ -68,7 +68,7 @@ export default class DelayedTableSwitcher extends React.PureComponent {
     status: PropTypes.oneOf(['ok', 'busy', 'unreachable']), // null if no selection
     columns: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string.isRequired,
-      type: PropTypes.oneOf([ 'text', 'datetime', 'number' ]).isRequired
+      type: PropTypes.oneOf(['text', 'datetime', 'number']).isRequired
     }).isRequired), // or null, if status!=ok
     nRows: PropTypes.number // or null, if status!=ok
   }

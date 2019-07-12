@@ -277,7 +277,7 @@ export class Popup extends React.PureComponent {
     const { modules, isLessonHighlight, close } = this.props
     const { search } = this.state
 
-    const classNames = [ 'module-search-popup' ]
+    const classNames = ['module-search-popup']
     if (isLessonHighlight) classNames.push('lesson-highlight')
 
     return (

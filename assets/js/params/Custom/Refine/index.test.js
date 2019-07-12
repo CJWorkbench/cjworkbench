@@ -22,7 +22,7 @@ describe('Refine', () => {
 
   it('should render groups counts in order', () => {
     const w = wrapper({
-      valueCounts: { 'b': 2, 'a': 1 },
+      valueCounts: { b: 2, a: 1 },
       value: DefaultValue
     })
 
@@ -48,7 +48,7 @@ describe('Refine', () => {
 
   it('should render a rename', () => {
     const w = wrapper({
-      valueCounts: { 'a': 1, 'b': 2 },
+      valueCounts: { a: 1, b: 2 },
       value: { renames: { a: 'c' } }
     })
 
@@ -58,7 +58,7 @@ describe('Refine', () => {
   it('should render when valueCounts have not loaded', () => {
     const w = wrapper({
       valueCounts: null,
-      value: { renames: { 'a': 'b' } }
+      value: { renames: { a: 'b' } }
     })
 
     expect(w.find('input')).toHaveLength(0)
@@ -66,32 +66,32 @@ describe('Refine', () => {
 
   it('should rename a value', () => {
     const w = wrapper({
-      valueCounts: { 'a': 1, 'b': 1 },
+      valueCounts: { a: 1, b: 1 },
       value: { renames: {} }
     })
 
     w.find('input[value="a"]').simulate('change', { target: { value: 'b' } }).simulate('blur')
     const changeCalls = w.prop('onChange').mock.calls
     expect(changeCalls).toHaveLength(1)
-    expect(changeCalls[0][0].renames).toEqual({ 'a': 'b' })
+    expect(changeCalls[0][0].renames).toEqual({ a: 'b' })
   })
 
   it('should re-rename a group', () => {
     const w = wrapper({
-      valueCounts: { 'a': 1, 'b': 1, 'c': 1 },
-      value: { renames: { 'a': 'b' } }
+      valueCounts: { a: 1, b: 1, c: 1 },
+      value: { renames: { a: 'b' } }
     })
 
     w.find('input[value="b"]').simulate('change', { target: { value: 'd' } }).simulate('blur')
     const changeCalls = w.prop('onChange').mock.calls
     expect(changeCalls).toHaveLength(1)
-    expect(changeCalls[0][0].renames).toEqual({ 'a': 'd', 'b': 'd' })
+    expect(changeCalls[0][0].renames).toEqual({ a: 'd', b: 'd' })
   })
 
   it('should show group values', () => {
     const w = wrapper({
-      valueCounts: { 'a': 1, 'b': 1, 'c': 1 },
-      value: { renames: { 'a': 'b' } }
+      valueCounts: { a: 1, b: 1, c: 1 },
+      value: { renames: { a: 'b' } }
     })
 
     expect(w.find('.values')).toHaveLength(0) // collapsed to begin with
@@ -166,8 +166,8 @@ describe('Refine', () => {
 
   it('should find search results within both group names and members', () => {
     const w = wrapper({
-      valueCounts: { 'a': 1, 'b': 1, 'c': 1, 'bb': 1, 'd': 1 },
-      value: { renames: { 'c': 'b', 'bb': 'a' } }
+      valueCounts: { a: 1, b: 1, c: 1, bb: 1, d: 1 },
+      value: { renames: { c: 'b', bb: 'a' } }
     })
     // Ensure 3 groups initially rendered
     expect(w.find('.refine-group')).toHaveLength(3)
@@ -179,7 +179,7 @@ describe('Refine', () => {
 
   it('should uncheck all _search results_ when "None" pressed', () => {
     const w = wrapper({
-      valueCounts: { 'a': 1, 'b': 1, 'c': 1, 'bb': 1, 'd': 1 },
+      valueCounts: { a: 1, b: 1, c: 1, bb: 1, d: 1 },
       value: { renames: {} }
     })
     w.find('input[type="checkbox"]').forEach(obj => {
@@ -197,7 +197,7 @@ describe('Refine', () => {
 
   it('should uncheck everything when "None" pressed with no search', () => {
     const w = wrapper({
-      valueCounts: { 'a': 1, 'b': 1, 'c': 1 },
+      valueCounts: { a: 1, b: 1, c: 1 },
       value: { renames: {} }
     })
     w.find('input[type="checkbox"]').forEach(obj => {
@@ -211,7 +211,7 @@ describe('Refine', () => {
 
   it('should check all _search results_ when "All" pressed', () => {
     const w = wrapper({
-      valueCounts: { 'a': 1, 'b': 1, 'c': 1, 'bb': 1, 'd': 1 },
+      valueCounts: { a: 1, b: 1, c: 1, bb: 1, d: 1 },
       value: { renames: {} }
     })
 
@@ -226,7 +226,7 @@ describe('Refine', () => {
 
   it('should check everything when "All" pressed with no search', () => {
     const w = wrapper({
-      valueCounts: { 'a': 1, 'b': 1, 'c': 1 },
+      valueCounts: { a: 1, b: 1, c: 1 },
       value: { renames: {} }
     })
 
@@ -237,7 +237,7 @@ describe('Refine', () => {
 
   it('should disable merge button when less than 2 values selected', () => {
     const w = wrapper({
-      valueCounts: { 'a': 1, 'b': 1, 'c': 1, 'bb': 1, 'd': 1 },
+      valueCounts: { a: 1, b: 1, c: 1, bb: 1, d: 1 },
       value: { renames: { } }
     })
     expect(w.find('button[name="merge"]').prop('disabled')).toEqual(true)
@@ -297,8 +297,8 @@ describe('Refine', () => {
 
   it('should focus the new group text for editing after merge', () => {
     const w = wrapper({
-      valueCounts: { 'a': 1, 'b': 1, 'c': 1 },
-      value: { renames: { 'b': 'a' } }
+      valueCounts: { a: 1, b: 1, c: 1 },
+      value: { renames: { b: 'a' } }
     })
 
     w.find('input[name="select[a]"]').simulate('change', { target: { checked: true } })

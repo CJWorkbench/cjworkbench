@@ -126,6 +126,7 @@ export default class DataGrid extends React.PureComponent {
   }
 
   emptyRow = buildEmptyRow(this.props.columns)
+
   sizerRef = React.createRef()
 
   // Cache some data that isn't props or state.
@@ -140,7 +141,9 @@ export default class DataGrid extends React.PureComponent {
   // These values are all set before the initial render(). We want the initial
   // render() to _not_ schedule a load, because we already load in
   // componentDidMount().
-  firstMissingRowIndex = 0 // initial value, for initial load()
+  firstMissingRowIndex = 0
+
+  // initial value, for initial load()
   scheduleLoadTimeout = 'init' // initial load() doesn't take a timeout
 
   // After the component mounts, and on any change, set the height to parent div height
@@ -274,7 +277,7 @@ export default class DataGrid extends React.PureComponent {
     }
 
     const selectedRowIndexes = this.props.selectedRowIndexes
-      .filter(i => !nix.hasOwnProperty(String(i)))
+      .filter(i => !Object.prototype.hasOwnProperty.call(nix, String(i)))
     this.props.onSetSelectedRowIndexes(selectedRowIndexes)
   }
 

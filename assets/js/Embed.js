@@ -37,7 +37,7 @@ export default class Embed extends React.Component {
     if (!this.props.workflow && !this.props.wf_module) {
       return this.renderNotAvailable()
     }
-    let iframeCode = escapeHtml('<iframe src="' + window.location.protocol + '//' + window.location.host + '/embed/' + this.props.wf_module.id + '" width="560" height="315" frameborder="0" />')
+    const iframeCode = escapeHtml('<iframe src="' + window.location.protocol + '//' + window.location.host + '/embed/' + this.props.wf_module.id + '" width="560" height="315" frameborder="0" />')
 
     return (
       <div className='embed-wrapper'>

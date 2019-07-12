@@ -224,18 +224,18 @@ export class DataVersionModal extends React.PureComponent {
 
 const getWorkflow = ({ workflow }) => workflow
 const getTabs = ({ tabs }) => tabs
-const getSelectedTab = createSelector([ getWorkflow, getTabs ], (workflow, tabs) => {
+const getSelectedTab = createSelector([getWorkflow, getTabs], (workflow, tabs) => {
   return tabs[workflow.tab_slugs[workflow.selected_tab_position]]
 })
 const getWfModules = ({ wfModules }) => wfModules
-const getSelectedTabWfModules = createSelector([ getSelectedTab, getWfModules ], (tab, wfModules) => {
+const getSelectedTabWfModules = createSelector([getSelectedTab, getWfModules], (tab, wfModules) => {
   return tab.wf_module_ids.map(id => wfModules[String(id)] || null)
 })
 const getModules = ({ modules }) => modules
 /**
  * Find first (WfModule, Module) that has a `.loads_data` ModuleVersion.
  */
-const getFetchWfModule = createSelector([ getSelectedTabWfModules, getModules ], (wfModules, modules) => {
+const getFetchWfModule = createSelector([getSelectedTabWfModules, getModules], (wfModules, modules) => {
   for (const wfModule of wfModules) {
     const module = modules[wfModule.module] || {}
     if (module.loads_data) {
@@ -254,7 +254,7 @@ const getFetchWfModule = createSelector([ getSelectedTabWfModules, getModules ],
  */
 const getFetchVersions = memoize(versions => {
   return versions.map(version => {
-    const [ id, isSeen ] = version
+    const [id, isSeen] = version
     return {
       id,
       isSeen,

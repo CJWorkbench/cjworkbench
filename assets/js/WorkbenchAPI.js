@@ -6,7 +6,7 @@ import { csrfToken } from './utils'
 import UploadManager from './UploadManager'
 
 const apiHeaders = {
-  'Accept': 'application/json',
+  Accept: 'application/json',
   'Content-Type': 'application/json',
   'X-CSRFToken': csrfToken
 }
@@ -156,7 +156,7 @@ export default class WorkbenchAPI {
   }
 
   setWorkflowPublic (workflowId, isPublic) {
-    return this._post(`/api/workflows/${workflowId}`, { 'public': isPublic })
+    return this._post(`/api/workflows/${workflowId}`, { public: isPublic })
   }
 
   trySetWfModuleAutofetch (wfModuleId, isAutofetch, fetchInterval) {

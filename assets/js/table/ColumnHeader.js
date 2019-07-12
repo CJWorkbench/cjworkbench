@@ -6,14 +6,14 @@ import { idxToLetter } from '../utils'
 import { updateTableAction } from './UpdateTableAction'
 
 const columnTypeDisplay = {
-  'text': 'text',
-  'number': 'number',
-  'datetime': 'date & time'
+  text: 'text',
+  number: 'number',
+  datetime: 'date & time'
 }
 
 class ReorderColumnDropZone extends React.PureComponent {
   static propTypes = {
-    leftOrRight: PropTypes.oneOf([ 'left', 'right' ]).isRequired,
+    leftOrRight: PropTypes.oneOf(['left', 'right']).isRequired,
     fromIndex: PropTypes.number.isRequired,
     toIndex: PropTypes.number.isRequired,
     onDropColumnIndexAtIndex: PropTypes.func.isRequired // func(fromIndex, toIndex) => undefined
@@ -233,7 +233,7 @@ export class ColumnHeader extends React.PureComponent {
 
     this.props.onDragStartColumnIndex(this.props.index)
 
-    ev.dataTransfer.effectAllowed = [ 'move' ]
+    ev.dataTransfer.effectAllowed = ['move']
     ev.dataTransfer.dropEffect = 'move'
     ev.dataTransfer.setData('text/plain', this.props.columnKey)
   }

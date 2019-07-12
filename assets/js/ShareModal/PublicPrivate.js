@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 const Description = ({ isPublic }) => {
-  let message = isPublic
+  const message = isPublic
     ? 'Anyone on the Internet may view and duplicate this Workflow.'
     : 'Only collaborators can view this Workflow.'
 

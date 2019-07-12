@@ -29,9 +29,9 @@ describe('Status line', () => {
       error: 'Wrong type',
       quickFixes: [
         {
-          'text': 'Fix it',
-          'action': 'prependModule',
-          'args': [1, 2]
+          text: 'Fix it',
+          action: 'prependModule',
+          args: [1, 2]
         }
       ]
     })
@@ -48,9 +48,9 @@ describe('Status line', () => {
       isReadOnly: true,
       quickFixes: [
         {
-          'text': 'Fix it',
-          'action': 'prependModule',
-          'args': [1, 2]
+          text: 'Fix it',
+          action: 'prependModule',
+          args: [1, 2]
         }
       ]
     })
@@ -64,14 +64,14 @@ describe('Status line', () => {
       error: 'Wrong type',
       quickFixes: [
         {
-          'text': 'Fix it',
-          'action': 'prependModule',
-          'args': [1, 2]
+          text: 'Fix it',
+          action: 'prependModule',
+          args: [1, 2]
         },
         {
-          'text': 'Fix it more',
-          'action': 'prependModule',
-          'args': [2, 3]
+          text: 'Fix it more',
+          action: 'prependModule',
+          args: [2, 3]
         }
       ]
     })
@@ -97,9 +97,9 @@ describe('Status line', () => {
       error: 'Wrong type',
       quickFixes: [
         {
-          'text': 'Fix it',
-          'action': 'prependModule',
-          'args': [1, 2]
+          text: 'Fix it',
+          action: 'prependModule',
+          args: [1, 2]
         }
       ]
     }

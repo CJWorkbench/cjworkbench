@@ -69,8 +69,8 @@ describe('Lesson', () => {
 
     it('sets LessonSection activeSectionIndex and activeStepIndex', () => {
       const w1 = wrapper({ activeSectionIndex: 1, activeStepIndex: 2 })
-      expect(w1.find(LessonSection).map(s => s.prop('activeSectionIndex'))).toEqual([ 1, 1 ])
-      expect(w1.find(LessonSection).map(s => s.prop('activeStepIndex'))).toEqual([ 2, 2 ])
+      expect(w1.find(LessonSection).map(s => s.prop('activeSectionIndex'))).toEqual([1, 1])
+      expect(w1.find(LessonSection).map(s => s.prop('activeStepIndex'))).toEqual([2, 2])
     })
 
     it('defaults to currentSectionIndex=0', () => {
@@ -120,7 +120,7 @@ describe('Lesson', () => {
       const w = wrapper()
       expect(w.find('footer button[name="Previous"][disabled=true]')).toHaveLength(1)
       expect(w.find('footer .current-and-total').text()).toEqual('1 of 2')
-      expect(w.find('section').map(n => n.prop('className'))).toEqual([ 'current', 'not-current', 'lesson-footer not-current' ])
+      expect(w.find('section').map(n => n.prop('className'))).toEqual(['current', 'not-current', 'lesson-footer not-current'])
       expect(w.find('footer button[name="Next"][disabled=true]')).toHaveLength(0)
     })
 
@@ -129,7 +129,7 @@ describe('Lesson', () => {
       w.find('footer button[name="Next"]').simulate('click')
       expect(w.find('footer button[name="Previous"][disabled=true]')).toHaveLength(0)
       expect(w.find('footer .current-and-total').text()).toEqual('2 of 2')
-      expect(w.find('section').map(n => n.prop('className'))).toEqual([ 'not-current', 'current', 'lesson-footer not-current' ])
+      expect(w.find('section').map(n => n.prop('className'))).toEqual(['not-current', 'current', 'lesson-footer not-current'])
       expect(w.find('footer button[name="Next"][disabled=true]')).toHaveLength(0)
     })
 
@@ -139,7 +139,7 @@ describe('Lesson', () => {
       w.find('footer button[name="Next"]').simulate('click').simulate('click').simulate('click')
       expect(w.find('footer button[name="Previous"][disabled=true]')).toHaveLength(0)
       expect(w.find('footer .current-and-total')).toHaveLength(0)
-      expect(w.find('section').map(n => n.prop('className'))).toEqual([ 'not-current', 'not-current', 'lesson-footer current' ])
+      expect(w.find('section').map(n => n.prop('className'))).toEqual(['not-current', 'not-current', 'lesson-footer current'])
       expect(w.find('footer button[name="Next"][disabled=true]')).toHaveLength(1)
     })
   })

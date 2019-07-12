@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { csrfToken } from '../utils'
 
 function CreateWorkflowButton ({ children }) {
-  const [ isSubmitted, setSubmitted ] = useState(false)
+  const [isSubmitted, setSubmitted] = useState(false)
 
   return (
     <form className='create-workflow' method='post' action='/workflows/' onSubmit={() => setSubmitted(true)}>

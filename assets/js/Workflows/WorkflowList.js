@@ -34,7 +34,7 @@ function WorkflowList ({ workflows, comparator, deleteWorkflow, duplicateWorkflo
 }
 WorkflowList.propTypes = {
   workflows: WorkflowListPropType.isRequired,
-  comparator: PropTypes.oneOf([ 'last_update|ascending', 'last_update|descending', 'name|ascending', 'name|descending' ]),
+  comparator: PropTypes.oneOf(['last_update|ascending', 'last_update|descending', 'name|ascending', 'name|descending']),
   deleteWorkflow: PropTypes.func, // func(id) => undefined, or null if not allowed to delete
   duplicateWorkflow: PropTypes.func.isRequired, // func(id) => undefined
   openShareModal: PropTypes.func.isRequired // func(id) => undefined

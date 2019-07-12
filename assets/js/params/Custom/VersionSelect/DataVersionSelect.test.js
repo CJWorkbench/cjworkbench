@@ -52,15 +52,15 @@ describe('DataVersionSelect', () => {
     const IdealState = {
       workflow: {
         read_only: false,
-        wf_modules: [ 123, 124 ]
+        wf_modules: [123, 124]
       },
       wfModules: {
         123: {
           id: 123,
           versions: {
             versions: [
-              [ '2018-06-23T20:09:41.649Z', false ],
-              [ '2018-06-22T20:09:41.649Z', true ]
+              ['2018-06-23T20:09:41.649Z', false],
+              ['2018-06-22T20:09:41.649Z', true]
             ],
             selected: '2018-06-22T20:09:41.649Z'
           }

@@ -20,7 +20,7 @@ describe('ValueSelect', () => {
 
   it('should render value texts in order', () => {
     const w = wrapper({
-      valueCounts: { 'a': 1, 'b': 2 },
+      valueCounts: { a: 1, b: 2 },
       value: []
     })
 
@@ -56,8 +56,8 @@ describe('ValueSelect', () => {
 
   it('should show appropriate state (TODO rename this test)', () => {
     const w = wrapper({
-      valueCounts: { 'a': 2, 'b': 1 },
-      value: [ 'a' ]
+      valueCounts: { a: 2, b: 1 },
+      value: ['a']
     })
 
     // 'a': selected value ("shown" checkbox is checked)
@@ -70,14 +70,14 @@ describe('ValueSelect', () => {
     // Add 'b' to selected values
     w.find('.value').at(1).find('input[type="checkbox"]').simulate('change', { target: { checked: true } })
     expect(changeCalls).toHaveLength(1)
-    expect(changeCalls[0][0]).toEqual([ 'a', 'b' ])
+    expect(changeCalls[0][0]).toEqual(['a', 'b'])
 
     // The change is only applied _after_ we change the prop; outside of the
     // test environment, this is the Redux state.
     // Cannot figure out how to test react-virtualized as per docs it requires a real DOM.
     // so remounting with return values
     const w2 = wrapper({
-      valueCounts: { 'a': 2, 'b': 1 },
+      valueCounts: { a: 2, b: 1 },
       value: changeCalls[0][0]
     })
     expect(w2.find('.value').at(1).find('input[type="checkbox"]').prop('checked')).toBe(true)
@@ -85,7 +85,7 @@ describe('ValueSelect', () => {
 
   it('should find search results', () => {
     const w = wrapper({
-      valueCounts: { 'a': 1, 'b': 1, 'c': 1, 'bb': 1, 'd': 1 },
+      valueCounts: { a: 1, b: 1, c: 1, bb: 1, d: 1 },
       value: []
     })
 
@@ -98,7 +98,7 @@ describe('ValueSelect', () => {
 
   it('should set the value to [] when "None" pressed', () => {
     const w = wrapper({
-      valueCounts: { 'a': 1, 'b': 1, 'c': 1, 'bb': 1, 'd': 1 },
+      valueCounts: { a: 1, b: 1, c: 1, bb: 1, d: 1 },
       value: []
     })
     w.find('button[title="Select None"]').simulate('click')
@@ -109,7 +109,7 @@ describe('ValueSelect', () => {
 
   it('should clear the blacklist when "All" pressed', () => {
     const w = wrapper({
-      valueCounts: { 'a': 1, 'b': 1, 'c': 1, 'bb': 1, 'd': 1 },
+      valueCounts: { a: 1, b: 1, c: 1, bb: 1, d: 1 },
       value: ['a', 'b', 'd']
     })
 
@@ -121,7 +121,7 @@ describe('ValueSelect', () => {
 
   it('should disable All and None buttons when a search has taken place', () => {
     const w = wrapper({
-      valueCounts: { 'a': 1, 'b': 1, 'c': 1, 'BB': 1, 'd': 1 },
+      valueCounts: { a: 1, b: 1, c: 1, BB: 1, d: 1 },
       value: ['a']
     })
 

@@ -202,7 +202,7 @@ describe('ParamsForm', () => {
             'separator',
             { value: 'banana', label: 'Banana' }
           ] }),
-          field('testme', 'string', { visibleIf: { idName: 'menu_select', value: [ 'banana', 'orange' ], invert: true } })
+          field('testme', 'string', { visibleIf: { idName: 'menu_select', value: ['banana', 'orange'], invert: true } })
         ],
         value: {
           menu_select: 'banana',

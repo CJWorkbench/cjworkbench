@@ -21,7 +21,7 @@ const Tab = React.memo(function Tab ({ name, isActive, setIsActive, children }) 
   )
 })
 Tab.propTypes = {
-  name: PropTypes.oneOf([ 'owned', 'shared', 'templates' ]).isRequired,
+  name: PropTypes.oneOf(['owned', 'shared', 'templates']).isRequired,
   isActive: PropTypes.bool.isRequired,
   setIsActive: PropTypes.func.isRequired // func() => undefined
 }
@@ -78,8 +78,8 @@ const TemplatesWorkflowList = React.memo(function TemplatesWorkflowList ({ workf
 })
 
 function WorkflowLists ({ workflows, deleteWorkflow, duplicateWorkflow, openShareModal }) {
-  const [ activeTab, setActiveTab ] = useState(workflows.owned.length ? 'owned' : 'templates')
-  const [ comparator, setComparator ] = useState('last_update|descending')
+  const [activeTab, setActiveTab] = useState(workflows.owned.length ? 'owned' : 'templates')
+  const [comparator, setComparator] = useState('last_update|descending')
   const tabProps = (name) => ({
     name,
     isActive: activeTab === name,

@@ -99,11 +99,11 @@ describe('DataVersionModal', () => {
     const IdealState = {
       workflow: {
         is_anonymous: false,
-        tab_slugs: [ 'tab-11' ],
+        tab_slugs: ['tab-11'],
         selected_tab_position: 0
       },
       tabs: {
-        'tab-11': { wf_module_ids: [ 123, 124 ] }
+        'tab-11': { wf_module_ids: [123, 124] }
       },
       modules: {
         fetch: { name: 'Fetch Stuff', loads_data: true },
@@ -116,8 +116,8 @@ describe('DataVersionModal', () => {
           module: 'fetch',
           versions: {
             versions: [
-              [ '2018-06-22T20:09:41.649Z', true ],
-              [ '2018-06-23T20:09:41.649Z', false ]
+              ['2018-06-22T20:09:41.649Z', true],
+              ['2018-06-23T20:09:41.649Z', false]
             ],
             selected: '2018-06-22T20:09:41.649Z'
           }

@@ -66,8 +66,11 @@ export class GroupForRender {
   }
 
   get name () { return this.group ? this.group.name : undefined }
+
   get values () { return this.group ? this.group.values : undefined }
+
   get count () { return this.group ? this.group.count : undefined }
+
   get isEdited () { return this.group ? this.group.isEdited : undefined }
 
   /**
@@ -781,7 +784,9 @@ export class Refine extends React.PureComponent {
   }
 
   massRename = buildSpecModifier(this, 'massRename')
+
   resetGroup = buildSpecModifier(this, 'resetGroup')
+
   resetValue = buildSpecModifier(this, 'resetValue')
 
   render () {
