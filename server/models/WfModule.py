@@ -1,7 +1,7 @@
 from typing import Any, Dict, Optional, Union
 from django.contrib.postgres.fields import JSONField
 from django.db import models
-from django.db.models import F, Q
+from django.db.models import Q
 from cjworkbench.types import ProcessResult
 from server import minio
 from server.models import loaded_module
@@ -210,6 +210,19 @@ class WfModule(models.Model):
     When the `upload_id` was created.
 
     Stale uploads can be deleted.
+    """
+
+    file_upload_api_token = models.CharField(
+        max_length=100, null=True, blank=True, default=None
+    )
+    """
+    "Authorization" header bearer token for programs to use "uploadfile".
+
+    This may optionally be set on 'uploadfile' modules and no others. Workbench
+    will allow HTTP requests with the header
+    `Authorization: bearer {file_upload_api_token}` to file-upload APIs.
+
+    Never expose this API token to readers. Only owner and writers may see it.
     """
 
     @property
