@@ -5,14 +5,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('server', '0024_remove_storedobject_metadata'),
-    ]
+    dependencies = [("server", "0024_remove_storedobject_metadata")]
 
     operations = [
         migrations.AddField(
-            model_name='wfmodule',
-            name='file_upload_api_token',
+            model_name="wfmodule",
+            name="file_upload_api_token",
             field=models.CharField(blank=True, default=None, max_length=100, null=True),
-        ),
+        )
     ]

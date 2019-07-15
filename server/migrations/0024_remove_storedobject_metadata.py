@@ -5,13 +5,6 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('server', '0023_set_max_fetches_for_zealous_early_adopters'),
-    ]
+    dependencies = [("server", "0023_set_max_fetches_for_zealous_early_adopters")]
 
-    operations = [
-        migrations.RemoveField(
-            model_name='storedobject',
-            name='metadata',
-        ),
-    ]
+    operations = [migrations.RemoveField(model_name="storedobject", name="metadata")]
