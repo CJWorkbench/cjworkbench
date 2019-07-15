@@ -256,15 +256,6 @@ export class ColumnHeader extends React.PureComponent {
     )
   }
 
-  renderLetter () {
-    return (
-      // The 'column-letter' class name is used in the test so please be careful with it
-      <div className='column-letter'>
-        {idxToLetter(this.props.index)}
-      </div>
-    )
-  }
-
   render () {
     const {
       columnKey,
@@ -275,7 +266,6 @@ export class ColumnHeader extends React.PureComponent {
     } = this.props
 
     const columnMenuSection = this.renderColumnMenu()
-    const letterSection = this.renderLetter()
 
     function maybeDropZone (leftOrRight, toIndex) {
       if (draggingColumnIndex === null || draggingColumnIndex === undefined) return null
@@ -298,14 +288,18 @@ export class ColumnHeader extends React.PureComponent {
 
     return (
       <React.Fragment>
-        {letterSection}
+        <div
+          className='column-letter'
+          draggable
+          onDragStart={this.onDragStart}
+          onDragEnd={this.onDragEnd}
+        >
+          {idxToLetter(this.props.index)}
+        </div>
         <div
           className={`data-grid-column-header ${draggingClass}`}
           onMouseEnter={this.onMouseEnter}
           onMouseLeave={this.onMouseLeave}
-          draggable
-          onDragStart={this.onDragStart}
-          onDragEnd={this.onDragEnd}
         >
           {maybeDropZone('left', index)}
           <EditableColumnName

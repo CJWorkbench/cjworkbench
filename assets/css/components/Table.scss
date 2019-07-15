@@ -191,14 +191,12 @@
         }
 
         .column-letter {
-          display: flex;
-          align-items: center;
-          justify-content: center;
           text-align: center;
           padding-top: .6rem;
           color: white;
           height: 1.6rem;
           font-size: 1.2rem;
+          cursor: grab;
         }
 
         .data-grid-column-header  {
