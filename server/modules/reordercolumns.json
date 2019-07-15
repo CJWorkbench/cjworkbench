@@ -9,12 +9,7 @@
     {
       "name": "",
       "id_name": "reorder-history",
-      "type": "custom",
-      "visible_if": {
-        "id_name": "reorder-history",
-        "value": true,
-        "invert": false
-      }
+      "type": "custom"
     },
     {
       "name": "Drag column headers to reorder columns",
