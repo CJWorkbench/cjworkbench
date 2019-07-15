@@ -129,7 +129,7 @@ class WfModuleTests(DbTestCase):
         wfm1 = workflow.tabs.first().wf_modules.create(order=0)
 
         # store data to test that it is duplicated
-        s1 = wfm1.store_fetched_table(mock_csv_table)
+        wfm1.store_fetched_table(mock_csv_table)
         s2 = wfm1.store_fetched_table(mock_csv_table2)
         wfm1.secrets = {"do not copy": {"name": "evil", "secret": "evil"}}
         wfm1.stored_data_version = s2
@@ -250,13 +250,13 @@ class WfModuleTests(DbTestCase):
         uuid3 = str(uuidgen.uuid4())
         key3 = f"{wf_module.uploaded_file_prefix}{uuid3}.csv"
         minio.put_bytes(minio.UserFilesBucket, key3, b"9999999")
-        uploaded_file1 = wf_module.uploaded_files.create(
+        wf_module.uploaded_files.create(
             name="t1.csv", uuid=uuid1, bucket=minio.UserFilesBucket, key=key1, size=7
         )
-        uploaded_file2 = wf_module.uploaded_files.create(
+        wf_module.uploaded_files.create(
             name="t2.csv", uuid=uuid2, bucket=minio.UserFilesBucket, key=key2, size=7
         )
-        uploaded_file3 = wf_module.uploaded_files.create(
+        wf_module.uploaded_files.create(
             name="t3.csv", uuid=uuid3, bucket=minio.UserFilesBucket, key=key3, size=7
         )
         # Write the _middle_ uuid to the old module -- proving that we aren't
@@ -283,6 +283,13 @@ class WfModuleTests(DbTestCase):
         self.assertEqual(wf_module.module_version, module_version)
         # white-box testing: test that we work even from cache
         self.assertEqual(wf_module.module_version, module_version)
+
+    def test_get_params_on_deleted_module(self):
+        workflow = Workflow.create_and_init()
+        wf_module = workflow.tabs.first().wf_modules.create(
+            order=0, module_id_name="deleted_module", params={"a": "b"}
+        )
+        self.assertEqual(wf_module.get_params(), {})
 
     def test_module_version_missing(self):
         workflow = Workflow.create_and_init()

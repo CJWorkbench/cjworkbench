@@ -11,7 +11,6 @@ from rest_framework.test import force_authenticate
 from cjworkbench.types import Column, ColumnType, ProcessResult
 from server import minio
 from server.models import Workflow
-from server.views.WfModule import wfmodule_detail
 from server.tests.utils import LoggedInTestCase
 
 

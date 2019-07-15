@@ -58,7 +58,7 @@ def _execute_wfmodule_pre(
     params: Dict[str, Any],
     input_table_shape: TableShape,
     tab_shapes: Dict[str, Optional[StepResultShape]],
-) -> Tuple:
+) -> Tuple[Optional[LoadedModule], Optional[ProcessResult], Dict[str, Any]]:
     """
     First step of execute_wfmodule().
 
@@ -82,6 +82,11 @@ def _execute_wfmodule_pre(
     # raises UnneededExecution
     with locked_wf_module(workflow, wf_module) as safe_wf_module:
         module_version = safe_wf_module.module_version
+        loaded_module = LoadedModule.for_module_version_sync(module_version)
+        if loaded_module is None:
+            # module was deleted. Skip other fetches.
+            return (None, None, {})
+
         fetch_result = safe_wf_module.get_fetch_result()
         render_context = renderprep.RenderContext(
             workflow.id, wf_module.id, input_table_shape, tab_shapes, params  # ugh
@@ -91,7 +96,6 @@ def _execute_wfmodule_pre(
         else:
             param_schema = module_version.param_schema
         param_values = renderprep.get_param_values(param_schema, params, render_context)
-        loaded_module = LoadedModule.for_module_version_sync(module_version)
 
         return (loaded_module, fetch_result, param_values)
 
@@ -166,6 +170,11 @@ async def _render_wfmodule(
         return ProcessResult(
             error="The chosen columns need to be converted.",
             quick_fixes=err.as_quick_fixes(),
+        )
+
+    if loaded_module is None:
+        return ProcessResult(
+            error="Please delete this step: an administrator uninstalled its code."
         )
 
     # Render may take a while. run_in_executor to push that slowdown to a

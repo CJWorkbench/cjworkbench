@@ -1,3 +1,4 @@
+from __future__ import annotations
 import asyncio
 from dataclasses import dataclass
 import datetime
@@ -271,9 +272,13 @@ class LoadedModule:
 
     @classmethod
     @database_sync_to_async
-    def for_module_version(cls, module_version: ModuleVersion) -> "LoadedModule":
+    def for_module_version(
+        cls, module_version: Optional[ModuleVersion]
+    ) -> Optional[LoadedModule]:
         """
         Return module referenced by `module_version` (asynchronously).
+
+        If `module_version is None`, return `None`.
 
         We assume:
 
@@ -312,7 +317,7 @@ class LoadedModule:
     @classmethod
     def for_module_version_sync(
         cls, module_version: Optional[ModuleVersion]
-    ) -> "LoadedModule":
+    ) -> Optional[LoadedModule]:
         """
         Return module referenced by `module_version`.
 
@@ -331,7 +336,7 @@ class LoadedModule:
         connection. Use `for_module_version` instead.
         """
         if module_version is None:
-            return DeletedModule()
+            return None
 
         module_id_name = module_version.id_name
         version_sha1 = module_version.source_version_hash

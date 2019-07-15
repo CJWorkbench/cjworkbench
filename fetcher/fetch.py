@@ -11,6 +11,7 @@ from django.utils import timezone
 import pandas as pd
 from cjworkbench.sync import database_sync_to_async
 from cjworkbench.util import benchmark
+from cjworkbench.types import ProcessResult
 from server.models import (
     LoadedModule,
     WfModule,
@@ -118,29 +119,32 @@ async def fetch_wf_module(workflow_id, wf_module, now):
     """Fetch `wf_module` and notify user of changes via email/websockets."""
     try:
         lm = await _get_loaded_module(wf_module)
-        # TODO handle `None` here (it's valid)
-        input_cached_render_result = await _get_input_cached_render_result(
-            wf_module.tab_id, wf_module.order
-        )
-        if input_cached_render_result:
-            input_shape = input_cached_render_result.table_shape
+        if lm is None:
+            logger.info("fetch() deleted module '%s'", wf_module.module_id_name)
+            result = ProcessResult(error="Cannot fetch: module was deleted")
         else:
-            input_shape = None
+            input_cached_render_result = await _get_input_cached_render_result(
+                wf_module.tab_id, wf_module.order
+            )
+            if input_cached_render_result:
+                input_shape = input_cached_render_result.table_shape
+            else:
+                input_shape = None
 
-        # Migrate params, so fetch() gets newest values
-        params = lm.migrate_params(wf_module.params)
-        # Clean params, so they're of the correct type
-        params = fetchprep.clean_value(lm.param_schema, params, input_shape)
-        result = await lm.fetch(
-            params=params,
-            secrets=wf_module.secrets,
-            workflow_id=workflow_id,
-            get_input_dataframe=partial(
-                _read_input_dataframe, input_cached_render_result
-            ),
-            get_stored_dataframe=partial(_get_stored_dataframe, wf_module.id),
-            get_workflow_owner=partial(_get_workflow_owner, workflow_id),
-        )
+            # Migrate params, so fetch() gets newest values
+            params = lm.migrate_params(wf_module.params)
+            # Clean params, so they're of the correct type
+            params = fetchprep.clean_value(lm.param_schema, params, input_shape)
+            result = await lm.fetch(
+                params=params,
+                secrets=wf_module.secrets,
+                workflow_id=workflow_id,
+                get_input_dataframe=partial(
+                    _read_input_dataframe, input_cached_render_result
+                ),
+                get_stored_dataframe=partial(_get_stored_dataframe, wf_module.id),
+                get_workflow_owner=partial(_get_workflow_owner, workflow_id),
+            )
 
         await save.save_result_if_changed(workflow_id, wf_module, result)
     except asyncio.CancelledError:

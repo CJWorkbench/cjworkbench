@@ -65,6 +65,26 @@ class FetchTests(DbTestCase):
         self.assertEqual(wf_module.last_update_check, now)
         self.assertEqual(wf_module.next_update, due_for_update)
 
+    @patch("fetcher.save.save_result_if_changed")
+    def test_fetch_deleted_wf_module(self, save_result):
+        save_result.side_effect = async_noop
+
+        workflow = Workflow.create_and_init()
+        wf_module = workflow.tabs.first().wf_modules.create(
+            order=0, module_id_name="deleted_module"
+        )
+
+        now = parser.parse("Aug 28 1999 2:24:02PM UTC")
+        with self.assertLogs(fetch.__name__, level="INFO") as cm:
+            self.run_with_async_db(fetch.fetch_wf_module(workflow.id, wf_module, now))
+            self.assertRegex(cm.output[0], r"fetch\(\) deleted module 'deleted_module'")
+
+        save_result.assert_called_with(
+            workflow.id,
+            wf_module,
+            ProcessResult(error="Cannot fetch: module was deleted"),
+        )
+
     @patch("server.models.loaded_module.LoadedModule.for_module_version_sync")
     def test_fetch_wf_module_skip_missed_update(self, load_module):
         workflow = Workflow.objects.create()
