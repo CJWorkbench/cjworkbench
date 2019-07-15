@@ -68,6 +68,15 @@ services:
       - virtualenvs:/root/.local/share/virtualenvs/:rw
     environment:
       PYTHONUNBUFFERED: '1'
+      ASGI_THREADS: '2'
+      CJW_DB_HOST: database
+      CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq
+      CJW_DB_PASSWORD: cjworkbench
+      CJW_SECRET_KEY: cjw-secret-key
+      MINIO_ACCESS_KEY: minio_access
+      MINIO_SECRET_KEY: minio_secret
+      MINIO_URL: http://minio:9000
+      MINIO_BUCKET_PREFIX: dev
     networks: [ 'dev' ]
 
   unittest:
