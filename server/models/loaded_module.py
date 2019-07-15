@@ -13,7 +13,6 @@ import time
 import traceback
 from types import ModuleType
 from typing import Any, Awaitable, Callable, Dict, Optional
-from django.contrib.auth.models import User
 import pandas as pd
 from cjworkbench.sync import database_sync_to_async
 from cjworkbench.types import ProcessResult, RenderColumn
@@ -78,7 +77,6 @@ class DeletedModule:
         workflow_id: int,
         get_input_dataframe: Callable[[], Awaitable[pd.DataFrame]],
         get_stored_dataframe: Callable[[], Awaitable[pd.DataFrame]],
-        get_workflow_owner: Callable[[], Awaitable[User]],
     ) -> ProcessResult:
         logger.info("fetch() deleted module")
         return ProcessResult(error="Cannot fetch: module was deleted")
@@ -201,7 +199,6 @@ class LoadedModule:
         workflow_id: int,
         get_input_dataframe: Callable[[], Awaitable[pd.DataFrame]],
         get_stored_dataframe: Callable[[], Awaitable[pd.DataFrame]],
-        get_workflow_owner: Callable[[], Awaitable[User]],
     ) -> ProcessResult:
         """
         Call module `fetch(...)` method to build a `ProcessResult`.
@@ -222,8 +219,6 @@ class LoadedModule:
             kwargs["get_input_dataframe"] = get_input_dataframe
         if varkw or "get_stored_dataframe" in kwonlyargs:
             kwargs["get_stored_dataframe"] = get_stored_dataframe
-        if varkw or "get_workflow_owner" in kwonlyargs:
-            kwargs["get_workflow_owner"] = get_workflow_owner
 
         time1 = time.time()
 

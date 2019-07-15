@@ -1,23 +1,16 @@
 import aiohttp
-import asyncio
 import io
 from pathlib import Path
 import unittest
-from unittest.mock import patch
 import numpy as np
 import pandas as pd
-from django.contrib.auth.models import User
 from django.test import SimpleTestCase, override_settings
 from pandas.testing import assert_frame_equal
 from cjworkbench.types import ProcessResult
-from server.models import Workflow
-from server.models.commands import InitWorkflowCommand
 from server.modules.utils import (
     build_globals_for_eval,
     parse_bytesio,
     turn_header_into_first_row,
-    workflow_url_to_id,
-    fetch_external_workflow,
     spooled_data_from_url,
     autocast_dtypes_in_place,
 )
@@ -328,22 +321,6 @@ class OtherUtilsTests(SimpleTestCase):
         # Function should return None when a table has not been uploaded yet
         self.assertIsNone(turn_header_into_first_row(None))
 
-    def test_workflow_url_to_id(self):
-        result_map = {
-            "www.google.com": False,
-            "https://app.workbenchdata.com/workflows/4370/": 4370,
-            "https://staging.workbenchdata.com/workflows/18": 18,
-            "not a url": False,
-            "https://staging.workbenchdata.com/workflows/": False,
-        }
-
-        for url, expected_result in result_map.items():
-            if not expected_result:
-                with self.assertRaises(Exception):
-                    workflow_url_to_id(url)
-            else:
-                self.assertEqual(workflow_url_to_id(url), expected_result)
-
 
 class SpooledDataFromUrlTest(DbTestCase):
     def test_relative_url_raises_invalid_url(self):
@@ -369,88 +346,6 @@ class SpooledDataFromUrlTest(DbTestCase):
 
         with self.assertRaises(aiohttp.InvalidURL):
             self.run_with_async_db(inner())
-
-
-class FetchExternalWorkflowTest(DbTestCase):
-    def setUp(self):
-        super().setUp()
-
-        self.user = User.objects.create(username="a", email="a@example.org")
-        self.workflow = Workflow.objects.create(owner=self.user)
-        self.tab = self.workflow.tabs.create(position=0)
-        self.delta = InitWorkflowCommand.create(self.workflow)
-        self.wf_module = self.tab.wf_modules.create(
-            order=0, last_relevant_delta_id=self.delta.id
-        )
-
-    def _fetch(self, *args):
-        return self.run_with_async_db(fetch_external_workflow(*args))
-
-    def test_workflow_access_denied(self):
-        wrong_user = User(username="b", email="b@example.org")
-        result = self._fetch(self.workflow.id + 1, wrong_user, self.workflow.id)
-        self.assertEqual(
-            result, ProcessResult(error="Access denied to the target workflow")
-        )
-
-    def test_deny_import_from_same_workflow(self):
-        result = self._fetch(self.workflow.id, self.user, self.workflow.id)
-        self.assertEqual(
-            result, ProcessResult(error="Cannot import the current workflow")
-        )
-
-    def test_workflow_does_not_exist(self):
-        result = self._fetch(self.workflow.id + 1, self.user, self.workflow.id + 2)
-        self.assertEqual(result, ProcessResult(error="Target workflow does not exist"))
-
-    @patch("server.rabbitmq.queue_render")
-    def test_workflow_has_no_cached_result(self, queue_render):
-        future_none = asyncio.Future()
-        future_none.set_result(None)
-        queue_render.return_value = future_none
-
-        result = self._fetch(self.workflow.id + 1, self.user, self.workflow.id)
-        self.assertEqual(
-            result,
-            ProcessResult(error="Target workflow is rendering. Please try again."),
-        )
-        queue_render.assert_called_with(self.workflow.id, self.delta.id)
-
-    @patch("server.rabbitmq.queue_render")
-    def test_workflow_has_wrong_cached_result(self, queue_render):
-        future_none = asyncio.Future()
-        future_none.set_result(None)
-        queue_render.return_value = future_none
-
-        self.wf_module.last_relevant_delta_id = self.delta.id - 1
-        self.wf_module.cache_render_result(
-            self.delta.id - 1, ProcessResult(pd.DataFrame({"A": [1]}))
-        )
-        self.wf_module.last_relevant_delta_id = self.delta.id
-        self.wf_module.save(update_fields=["last_relevant_delta_id"])
-
-        result = self._fetch(self.workflow.id + 1, self.user, self.workflow.id)
-        self.assertEqual(
-            result,
-            ProcessResult(error="Target workflow is rendering. Please try again."),
-        )
-        queue_render.assert_called_with(self.workflow.id, self.delta.id)
-
-    def test_workflow_has_no_modules(self):
-        self.wf_module.delete()
-        result = self._fetch(self.workflow.id + 1, self.user, self.workflow.id)
-        self.assertEqual(result, ProcessResult(error="Target workflow is empty"))
-
-    @patch("server.rabbitmq.queue_render")
-    def test_happy_path(self, queue_render):
-        self.wf_module.cache_render_result(
-            self.delta.id, ProcessResult(pd.DataFrame({"A": [1]}))
-        )
-        self.wf_module.save()
-
-        result = self._fetch(self.workflow.id + 1, self.user, self.workflow.id)
-        self.assertEqual(result, ProcessResult(pd.DataFrame({"A": [1]})))
-        queue_render.assert_not_called()
 
 
 class AutocastDtypesTest(unittest.TestCase):

@@ -7,21 +7,14 @@ import shutil
 import tempfile
 from typing import Any, Dict, Callable, Iterator, Optional
 import aiohttp
-from asgiref.sync import async_to_sync
 import cchardet as chardet
 from django.conf import settings
-from django.contrib.auth.models import User
-from django.db.models.fields.files import FieldFile
-from django.db import transaction
 import numpy as np
 import pandas as pd
 from pandas.api.types import is_numeric_dtype, is_datetime64_dtype
 import xlrd
 import yarl  # aiohttp innards -- yuck!
-from cjworkbench.sync import database_sync_to_async
 from cjworkbench.types import ProcessResult
-from server import rabbitmq
-from server.models import Workflow
 
 
 _TextEncoding = Optional[str]
@@ -117,7 +110,6 @@ def build_globals_for_eval() -> Dict[str, Any]:
     import math
     import pandas as pd
     import numpy as np
-    import cjworkbench
 
     return {"__builtins__": eval_builtins, "math": math, "np": np, "pd": pd}
 
@@ -420,77 +412,6 @@ def parse_bytesio(
         return _safe_parse(bytesio, parser, text_encoding)
     else:
         return ProcessResult(error=f'Unhandled MIME type "{mime_type}"')
-
-
-_WORKFLOW_REGEX = re.compile(r"^\s*(?:https?://)?[-_a-z0-9A-Z.]+/workflows/(\d+)/?\s*$")
-
-
-def workflow_url_to_id(url):
-    """
-    Turn a URL into a Workflow ID.
-
-    Raise ValueError if it is not a valid Workflow ID.
-    """
-    match = _WORKFLOW_REGEX.match(url)
-    if not match:
-        raise ValueError("Not a valid Workbench workflow URL")
-
-    return int(match.group(1))
-
-
-@database_sync_to_async
-def fetch_external_workflow(
-    calling_workflow_id: int, workflow_owner: User, other_workflow_id: int
-) -> ProcessResult:
-    """
-    Lookup up a workflow's final ProcessResult.
-
-    `calling_workflow_id` is to raise an error if we try to import ourselves.
-
-    `calling_workflow_owner` is to give access to non-public workflows if we
-    have permission.
-    """
-    if calling_workflow_id == other_workflow_id:
-        return ProcessResult(error="Cannot import the current workflow")
-
-    with transaction.atomic():
-        # Mimic cooperative_lock() on right_workflow, with less overhead. It's
-        # transaction.atomic() and select_for_update().
-        try:
-            other_workflow = Workflow.objects.select_for_update().get(
-                id=other_workflow_id
-            )
-        except Workflow.DoesNotExist:
-            return ProcessResult(error="Target workflow does not exist")
-
-        # Make sure _this_ workflow's owner has access permissions to the
-        # _other_ workflow
-        if not other_workflow.user_session_authorized_read(workflow_owner, None):
-            return ProcessResult(error="Access denied to the target workflow")
-
-        other_wf_module = other_workflow.live_tabs.first().live_wf_modules.last()
-        if other_wf_module is None:
-            return ProcessResult(error="Target workflow is empty")
-
-        # Always pull the cached result, so we can't execute() an infinite loop
-        crr = other_wf_module.cached_render_result
-
-        if not crr:
-            # Workflow has not been rendered completely. This is either because
-            # a render is queued/running, or because a render was never queued.
-            # (e.g., when cron fetches a new version, no render is queued.)
-            # Queue a render and tell the user to try again. If the render is
-            # spurious, that isn't a big deal.
-            async_to_sync(rabbitmq.queue_render)(
-                other_workflow.id, other_workflow.last_delta_id
-            )
-            return ProcessResult(
-                error="Target workflow is rendering. Please try again."
-            )
-
-        result = crr.result
-
-    return ProcessResult(dataframe=result.dataframe)
 
 
 @asynccontextmanager

@@ -32,7 +32,6 @@ def call_fetch(
     workflow_owner=None,
     get_input_dataframe=None,
     get_stored_dataframe=None,
-    get_workflow_owner=None,
 ):
     """
     Call loaded_module.fetch, synchronously.
@@ -52,16 +51,12 @@ def call_fetch(
     if get_stored_dataframe is None:
         get_stored_dataframe = wrap(stored_dataframe)
 
-    if get_workflow_owner is None:
-        get_workflow_owner = wrap(workflow_owner)
-
     kwargs = {
         "params": params,
         "secrets": secrets,
         "workflow_id": workflow_id,
         "get_input_dataframe": get_input_dataframe,
         "get_stored_dataframe": get_stored_dataframe,
-        "get_workflow_owner": get_workflow_owner,
     }
 
     return async_to_sync(loaded_module.fetch)(**kwargs)
@@ -428,7 +423,6 @@ class LoadedModuleTest(unittest.TestCase):
         self.assertIsNone(result)
 
     def test_fetch_secrets(self):
-        # No need to make get_workflow_owner return a User: we're mocking
         async def fetch(params, *, secrets, **kwargs):
             return pd.DataFrame({"A": [repr(secrets)]})
 
@@ -440,20 +434,6 @@ class LoadedModuleTest(unittest.TestCase):
         self.assertEqual(
             result, ProcessResult(pd.DataFrame({"A": [repr({"x": secret})]}))
         )
-
-    def test_fetch_get_workflow_owner(self):
-        # No need to make get_workflow_owner return a User: we're mocking
-        get_workflow_owner = async_mock(return_value="Mock User")
-
-        async def fetch(params, *, get_workflow_owner, **kwargs):
-            table = pd.DataFrame({"X": [await get_workflow_owner()]})
-            return ProcessResult(table)
-
-        lm = LoadedModule("int", "1", ParamDType.Dict({}), fetch_impl=fetch)
-        with self.assertLogs():
-            result = call_fetch(lm, {}, get_workflow_owner=get_workflow_owner)
-
-        self.assertEqual(result, ProcessResult(pd.DataFrame({"X": ["Mock User"]})))
 
     def test_fetch_get_input_dataframe(self):
         get_input_dataframe = async_mock(return_value=pd.DataFrame({"A": [1]}))

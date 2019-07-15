@@ -32,7 +32,6 @@ Each module may define one or both (preferably one) of the following functions:
         # - workflow_id: int
         # - get_input_dataframe: Callable[[], Awaitable[pd.DataFrame]]
         # - get_stored_dataframe: Callable[[], Awaitable[pd.DataFrame]]
-        # - get_workflow_owner: Callable[[], Awaitable[User]]
     ) -> ProcessResult:
 
 Looking up modules

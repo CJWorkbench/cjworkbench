@@ -307,27 +307,6 @@ class FetchTests(DbTestCase):
 
         self._test_fetch(fetch, DefaultMigrateParams, wf_module, ParamDType.Dict({}))
 
-    def test_fetch_get_workflow_owner(self):
-        owner = User.objects.create(username="o", email="o@example.org")
-        workflow = Workflow.objects.create(owner=owner)
-        tab = workflow.tabs.create(position=0)
-        wf_module = tab.wf_modules.create(order=0)
-
-        async def fetch(params, *, get_workflow_owner, **kwargs):
-            self.assertEqual(await get_workflow_owner(), owner)
-
-        self._test_fetch(fetch, DefaultMigrateParams, wf_module, ParamDType.Dict({}))
-
-    def test_fetch_get_workflow_owner_anonymous(self):
-        workflow = Workflow.objects.create(owner=None)
-        tab = workflow.tabs.create(position=0)
-        wf_module = tab.wf_modules.create(order=0)
-
-        async def fetch(params, *, get_workflow_owner, **kwargs):
-            self.assertIsNone(await get_workflow_owner())
-
-        self._test_fetch(fetch, DefaultMigrateParams, wf_module, ParamDType.Dict({}))
-
     def test_fetch_get_input_dataframe_happy_path(self):
         table = pd.DataFrame({"A": [1]})
 

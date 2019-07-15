@@ -63,14 +63,6 @@ def _get_stored_dataframe(wf_module_id: int):
 
 
 @database_sync_to_async
-def _get_workflow_owner(workflow_id: int):
-    try:
-        return User.objects.get(owned_workflows__id=workflow_id)
-    except User.DoesNotExist:
-        return None
-
-
-@database_sync_to_async
 def _get_wf_module(wf_module_id: int) -> Tuple[int, WfModule, Optional[ModuleVersion]]:
     """
     Query WfModule info, or raise WfModule.DoesNotExist.
@@ -143,7 +135,6 @@ async def fetch_wf_module(workflow_id, wf_module, now):
                     _read_input_dataframe, input_cached_render_result
                 ),
                 get_stored_dataframe=partial(_get_stored_dataframe, wf_module.id),
-                get_workflow_owner=partial(_get_workflow_owner, workflow_id),
             )
 
         await save.save_result_if_changed(workflow_id, wf_module, result)
