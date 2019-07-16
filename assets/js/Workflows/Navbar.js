@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import WfHamburgerMenu from '../WfHamburgerMenu'
+import { Trans } from '@lingui/macro'
 
 function getActiveSection () {
   return window.location.pathname.startsWith('/workflows') ? 'workflows' : 'lessons'
@@ -31,8 +32,8 @@ export default class Navbar extends React.Component {
             <img src={`${window.STATIC_URL}images/logo-text-dark.svg`} className='logo-text' />
           </div>
           <div className='links'>
-            <a {...propsForLink(activeSection, 'workflows')}>WORKFLOWS</a>
-            <a {...propsForLink(activeSection, 'lessons')}>TRAINING</a>
+            <a {...propsForLink(activeSection, 'workflows')}><Trans>WORKFLOWS</Trans></a>
+            <a {...propsForLink(activeSection, 'lessons')}><Trans>TRAINING</Trans></a>
           </div>
           <WfHamburgerMenu user={user} />
         </nav>

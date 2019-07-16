@@ -1,0 +1,1 @@
+/* eslint-disable */module.exports={languageData:{"plurals":function(n,ord){if(ord)return"other";return n==1?"one":"other"}},messages:{"TRAINING":"\u0395\u039A\u03A0\u0391\u0399\u0394\u0395\u03A5\u03A3\u0397","WORKFLOWS":"WORKFLOWS"}};

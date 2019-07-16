@@ -3,16 +3,22 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import Workflows from '../Workflows'
 import WorkbenchAPI from '../WorkbenchAPI'
+import { I18nProvider } from '@lingui/react'
+import catalogEl from '../locales/el/messages.js'
 
 const api = new WorkbenchAPI(null) // no websocket
 const { workflows, loggedInUser } = window.initState
 
+const catalogs = { el: catalogEl };
+
 ReactDOM.render((
-  <Workflows
-    api={api}
-    workflows={workflows}
-    user={loggedInUser}
-  />
+    <I18nProvider language="el" catalogs={catalogs}>
+      <Workflows
+        api={api}
+        workflows={workflows}
+        user={loggedInUser}
+      />
+    </I18nProvider>
 ), document.getElementById('root'))
 
 // Start Intercom, if we're that sort of installation
