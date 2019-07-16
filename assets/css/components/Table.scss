@@ -325,7 +325,7 @@
         padding-right: 0;
         padding-left: 0;
         color: $brand-text--darker;
-        border: 2px solid transparent;
+        border: 0px solid transparent;
 
         .react-grid-Cell__value>* { // .cell-text, .cell-datetime, .cell-number, .cell-null
           @include table-content;
@@ -444,6 +444,10 @@
           border: 2px solid $brand-orange;
           border-radius: 5px;
           background-color: white!important;
+
+          .react-grid-Cell__value>* {
+            margin: 0 .6rem;
+          }
         }
 
         &:last-child:focus {
@@ -451,11 +455,13 @@
         }
 
         input {
+          position: relative;
           background-color: white;
           border-radius: 5px;
           outline: none;
           border-color: $brand-orange;
-          margin: 0!important;
+          margin: 0;
+          left: 0;
         }
       }
 
@@ -518,6 +524,13 @@
       // Cells in last row have a bottom border to form the table's bottom border
       .react-grid-Row:last-of-type .react-grid-Cell {
         border-bottom: 1px solid $table-border;
+
+        &:focus {
+          border: 2px solid $brand-orange;
+          .react-grid-Cell__value>* {
+            margin-bottom: .1rem; // to compensate for 1px border in parent
+          }
+        }
       }
       // Last row selected has orange border at the bottom -- not working as intended, what we want is the last row *selected* not the last row *if selected *
       .row-selected:last-of-type .react-grid-Cell {
@@ -527,6 +540,14 @@
       // Last cells in any row have a right border to form the table's right border
       .react-grid-Row .react-grid-Cell:nth-last-child(2) {
         border-right: 1px solid $table-border;
+
+        &:focus {
+          border: 2px solid $brand-orange;
+
+          .react-grid-Cell__value>* {
+            margin-right: .7rem; // to compensate for 1px border in parent
+          }
+        }
       }
       .react-grid-Row.row-selected .react-grid-Cell:nth-last-child(2) {
         border-right: 1px solid $brand-orange;
