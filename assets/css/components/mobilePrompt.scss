@@ -2,10 +2,9 @@
 
 .not-enough-px-warning { display: none; }
 
-@media screen and (max-width: 770px) {
+@media screen and (max-width: 890px) {
 
   .navbar {
-    padding: 1.1rem 2rem 1.1rem 2rem!important;
 
     .links {
       margin-left: 3rem;
@@ -30,12 +29,29 @@
       width: 12.2rem!important;
     }
 
+    .editable-title--container input {
+      font-size: 1.7rem!important;
+      top: .2rem!important;
+    }
+    .metadata-container {
+      font-size: 1.3rem;
+    }
+
   }
 
   .nav-tabs .tab-group .nav-item .nav-link {
       padding: 1.4rem 2rem 1rem!important;
       font-size: 1.2rem!important;
   }
+}
+
+@media screen and (max-width: 710px) {
+    .navbar {
+        padding: .5rem .5rem .5rem 1rem!important;
+    }
+    .metadata-container {
+      font-size: 1.2rem;
+    }
 }
 
 @media screen and (max-width: 650px) {

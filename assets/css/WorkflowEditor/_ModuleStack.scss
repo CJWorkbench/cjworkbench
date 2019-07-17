@@ -142,7 +142,11 @@
       // No need to collapse the epxanded python module - this is solo module display
       .context-collapse-button {display: none;}
 
-      .module-card-header {height: 4.5rem;}
+      .module-card-header {
+        height: 5.5rem;
+        padding-top: 1rem;
+
+      }
 
       // Notes are the same width as module-stack
 
