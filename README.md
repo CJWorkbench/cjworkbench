@@ -21,9 +21,9 @@
   </tr>
 </table>
 
-#  Data workspaces, made simple.
+#  Spreadsheet, meet automation.
 
-Welcome to Workbench! (CJ for computational journalism)
+Welcome to Workbench!
 
 - Our [public server](http://workbenchdata.com), now in beta.
 
