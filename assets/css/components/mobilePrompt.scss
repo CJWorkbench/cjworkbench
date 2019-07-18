@@ -47,23 +47,11 @@
 
 @media screen and (max-width: 710px) {
     .navbar {
-<<<<<<< HEAD
         padding: .5rem .5rem .5rem 1rem!important;
     }
     .metadata-container {
       font-size: 1.2rem;
     }
-=======
-      padding: .5rem .5rem .5rem 1rem!important;
-      a {
-        margin-right: 1rem!important;
-      }
-    }
-    .metadata-container {
-      font-size: 1.2rem!important;
-    }
-
->>>>>>> Safer Media queries for header
 }
 
 @media screen and (max-width: 650px) {
