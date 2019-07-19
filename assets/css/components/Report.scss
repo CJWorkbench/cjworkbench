@@ -13,18 +13,21 @@ article.report {
 
   .share-card {
     flex: 0 0 auto;
-    width: 35rem;
+    width: 30rem;
     padding: 2rem;
     margin-right: 2rem;
     border-radius: .5rem;
-    background: $dark-accent--soft-M; // FIXME use a non-RGBA color
+    background: $item-border;
     @include font-nunito-bold;
     font-size: 1.4rem;
     line-height: 1.8rem;
 
     .prompt {
-      display: flex;
+      //display: flex;
       align-items: center;
+      padding-bottom: 1.5rem;
+
+      p {margin-bottom: 1rem;}
 
       .status {
         flex: 1 1 auto; // take up most space
@@ -34,7 +37,6 @@ article.report {
         @include action-button;
         @include button-orange--fill;
         @include font-nunito-bold;
-        text-transform: uppercase;
       }
     }
 
@@ -63,8 +65,8 @@ article.report {
 
   .report-iframe-container {
     flex: 1 1 auto;
-    max-width: 80rem;
-    border: 1px solid $document-blue;
+    max-width: 90rem;
+    border: 1px solid $item-border;
     border-radius: .5rem;
     overflow: hidden;
     line-height: 0; // take no space at all
