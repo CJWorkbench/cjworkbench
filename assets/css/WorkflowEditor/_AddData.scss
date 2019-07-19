@@ -34,7 +34,6 @@
     align-items: center;
     justify-content: center;
     margin: auto;
-    margin-top: 1rem;
     padding: 2rem;
     background-color: $WF-background;
     color: $brand-text--dark;
@@ -44,7 +43,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 2rem;
+      margin-bottom: 1.5rem;
 
       h5, .modal-title {
         @include title-2;
@@ -69,8 +68,8 @@
       @include content-3;
 
       &::before {
-        top:.8rem;
-        font-size: 1.9rem;
+        top:.7rem;
+        font-size: 1.7rem;
         color: $document-blue;
         opacity: .5;
       }
@@ -78,12 +77,13 @@
       input {
         padding: 1rem 4rem;
         background: white;
-        height: 4rem;
+        height: 3.5rem;
         border-color: $item-border;
       }
 
       button.reset {
-        top: 1.1rem;
+        top: .9rem;
+        margin-right: .5rem;
         font-size: 1.6rem;
         color: $document-blue;
         &:hover {
