@@ -329,7 +329,6 @@
 
         .react-grid-Cell__value>* { // .cell-text, .cell-datetime, .cell-number, .cell-null
           @include table-content;
-          margin: 0 .8rem;
           overflow: hidden;
           white-space: nowrap;
           text-overflow: ellipsis;
@@ -337,6 +336,7 @@
 
         .cell-number {
           text-align: right;
+          padding: 0 1rem;
 
           .number-prefix, .number-suffix {
             @include font-nunito-extra-light;
@@ -355,6 +355,7 @@
           // The value is already mangled to take only one line. Now, preserve
           // the whitespace within that one line.
           white-space: pre;
+          padding: 0 .2rem 0 1rem;
         }
 
         // when a cell value cannot be rendered
@@ -446,7 +447,7 @@
           background-color: white!important;
 
           .react-grid-Cell__value>* {
-            margin: 0 .6rem;
+            padding: 0 .2rem 0 .8rem;
           }
         }
 
@@ -460,7 +461,7 @@
           border-radius: 5px;
           outline: none;
           border-color: $brand-orange;
-          margin: 0;
+          padding: 0 .8rem;
           left: 0;
         }
       }
