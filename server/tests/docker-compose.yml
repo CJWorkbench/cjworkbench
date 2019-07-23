@@ -35,14 +35,24 @@ services:
       - type: tmpfs
         target: /data
     environment:
-      MINIO_ACCESS_KEY: minio_access
-      MINIO_SECRET_KEY: minio_secret
+      # The "mc" command will create the minio_access/minio_secret user
+      MINIO_ACCESS_KEY: minio_root_access
+      MINIO_SECRET_KEY: minio_root_secret
     command: server /data
+
+  # RACE! Let's add a minio user as quickly as we can, and _hope_ we add the
+  # user before unit tests start.
+  addminiouser:
+    image: minio/mc:RELEASE.2019-07-17T22-13-42Z
+    depends_on: [ 'testminio' ]
+    entrypoint: ''
+    command: [ 'sh', '-c', 'while ! nc -z testminio 9000; do sleep 0.1; done; mc config host add workbench http://testminio:9000 minio_root_access minio_root_secret && mc admin user add workbench minio_access minio_secret readwrite && sleep 999999' ]
 
   unittest:
     image: 'gcr.io/${PROJECT_ID}/frontend:${COMMIT_SHA}'
-    command: [ './manage.py', 'test', '-v2' ]
-    depends_on: [ 'testdb', 'testrabbitmq', 'testminio' ]
+    # RACE! Sleep 10 so that `addminiouser` can finish
+    command: [ 'sh', '-c', 'sleep 10 && ./manage.py test -v2' ]
+    depends_on: [ 'testdb', 'testrabbitmq', 'testminio', 'addminiouser' ]
     environment:
       PYTHONUNBUFFERED: '1'
       ASGI_THREADS: '5'

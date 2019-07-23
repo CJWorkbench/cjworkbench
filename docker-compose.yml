@@ -32,8 +32,12 @@ services:
     networks: [ 'dev' ]
     ports: [ '8001:9000' ]
     environment:
-      MINIO_ACCESS_KEY: minio_access
-      MINIO_SECRET_KEY: minio_secret
+      # Workbench creates a regular user, minio_access/minio_secret ... but
+      # to do that it needs a root user. The regular user is essential because
+      # STS doesn't work with the root user. (On production, there is no
+      # root user.)
+      MINIO_ACCESS_KEY: minio_root_access
+      MINIO_SECRET_KEY: minio_root_secret
     volumes:
       - minio_data:/data
     command: [ 'server', '/data' ]
@@ -229,8 +233,12 @@ services:
       - type: tmpfs
         target: /data
     environment:
-      MINIO_ACCESS_KEY: minio_access
-      MINIO_SECRET_KEY: minio_secret
+      # Workbench creates a regular user, minio_access/minio_secret ... but
+      # to do that it needs a root user. The regular user is essential because
+      # STS doesn't work with the root user. (On production, there is no
+      # root user.)
+      MINIO_ACCESS_KEY: minio_root_access
+      MINIO_SECRET_KEY: minio_root_secret
     command: server /data
 
 networks:
