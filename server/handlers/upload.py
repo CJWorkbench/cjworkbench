@@ -74,6 +74,19 @@ def _generate_key(wf_module: WfModule, filename: str) -> str:
     )
 
 
+def _generate_upload_key(wf_module: WfModule) -> str:
+    """
+    Generate a key for where an upload belongs on S3, before Workbench sees it.
+
+    The key includes all the info we need to derive the UUID later. It looks like
+    'wf-123/wfm-234/upload_UUID'
+
+    Assumes we're in a database transaction.
+    """
+    uuid = uuidgen.uuid4()
+    return wf_module.uploaded_file_prefix + "upload_" + str(uuid)
+
+
 def _write_uploaded_file_and_clear_inprogress_file_upload(
     wf_module: WfModule
 ) -> UploadedFile:
@@ -362,3 +375,91 @@ async def complete_multipart_upload(
     )
 
     return {"uuid": uuid}
+
+
+@database_sync_to_async
+def _do_create_upload(workflow: Workflow, wf_module: WfModule) -> Dict[str, Any]:
+    with workflow.cooperative_lock():
+        wf_module.refresh_from_db()
+        key = _generate_upload_key(wf_module)
+        credentials = minio.assume_role_to_write(minio.UserFilesBucket, key)
+        wf_module.abort_inprogress_upload()
+        wf_module.inprogress_file_upload_id = "notused"
+        wf_module.inprogress_file_upload_key = key
+        wf_module.inprogress_file_upload_last_accessed_at = timezone.now()
+        wf_module.save(
+            update_fields=[
+                "inprogress_file_upload_id",
+                "inprogress_file_upload_key",
+                "inprogress_file_upload_last_accessed_at",
+            ]
+        )
+        return {"bucket": minio.UserFilesBucket, "key": key, "credentials": credentials}
+
+
+@register_websockets_handler
+@websockets_handler("write")
+@_loading_wf_module
+async def create_upload(workflow: Workflow, wf_module: WfModule, **kwargs):
+    """
+    Prepare credentials for the caller to upload a file.
+
+    Beware: the credentials let the caller upload to S3 to the returned
+    key for the next few hours. We can't trust callers to not upload even when
+    they aren't supposed to. TODO track these keys in the database, so we
+    force-abort (and force-delete) spurious uploads after 5h.
+    """
+    return await _do_create_upload(workflow, wf_module)
+
+
+@database_sync_to_async
+def _do_finish_upload(workflow: Workflow, wf_module: WfModule, key: str, filename: str):
+    suffix = PurePath(filename).suffix
+    with workflow.cooperative_lock():
+        wf_module.refresh_from_db()
+        if key != wf_module.inprogress_file_upload_key:
+            raise HandlerError(
+                "BadRequest: key is not being uploaded for this WfModule right now. "
+                "(Even a valid key becomes invalid after you create, finish or abort "
+                "an upload on its WfModule.)"
+            )
+        prefix, uuid = key.split("upload_")
+        final_key = prefix + uuid + suffix
+        try:
+            minio.copy(
+                minio.UserFilesBucket,
+                final_key,
+                f"{minio.UserFilesBucket}/{key}",
+                ACL="private",
+                MetadataDirective="REPLACE",
+                ContentDisposition=minio.encode_content_disposition(filename),
+                ContentType="application/octet-stream",
+            )
+        except minio.error.NoSuchKey:
+            raise HandlerError(
+                "BadRequest: file not found. "
+                "You must upload the file before calling finish_upload."
+            )
+        size = minio.stat(minio.UserFilesBucket, final_key).size
+        # Point to the new file
+        wf_module.uploaded_files.create(
+            name=filename,
+            size=size,
+            uuid=uuid,
+            bucket=minio.UserFilesBucket,
+            key=final_key,
+        )
+        wf_module.abort_inprogress_upload()  # clear all tempfiles and temp DB fields
+        return serializers.WfModuleSerializer(wf_module).data
+
+
+@register_websockets_handler
+@websockets_handler("write")
+@_loading_wf_module
+async def finish_upload(
+    workflow: Workflow, wf_module: WfModule, key: str, filename: str, **kwargs
+):
+    wf_module_data = await _do_finish_upload(workflow, wf_module, key, filename)
+    await websockets.ws_client_send_delta_async(
+        workflow.id, {"updateWfModules": {str(wf_module.id): wf_module_data}}
+    )

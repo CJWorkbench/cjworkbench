@@ -60,7 +60,7 @@ StsDurationSeconds = 3600 * 5  # any upload must take max 5hrs
 logger = logging.getLogger(__name__)
 
 
-def _build_content_disposition(filename: str) -> str:
+def encode_content_disposition(filename: str) -> str:
     """
     Build a Content-Disposition header value for the given filename.
     """
@@ -196,7 +196,7 @@ def create_multipart_upload(bucket: str, key: str, filename: str) -> str:
     information about uploaded files.
     """
     response = client.create_multipart_upload(
-        Bucket=bucket, Key=key, ContentDisposition=_build_content_disposition(filename)
+        Bucket=bucket, Key=key, ContentDisposition=encode_content_disposition(filename)
     )
     return response["UploadId"]
 
@@ -279,7 +279,7 @@ def presign_upload(
     url = settings.MINIO_EXTERNAL_URL + resource
     headers = _build_presigned_headers("PUT", resource, n_bytes, base64_md5sum)
     # Content-Disposition header doesn't affect the signature
-    headers["Content-Disposition"] = _build_content_disposition(filename)
+    headers["Content-Disposition"] = encode_content_disposition(filename)
     return url, headers
 
 
@@ -355,8 +355,8 @@ def remove(bucket: str, key: str) -> None:
         pass
 
 
-def copy(bucket: str, key: str, copy_source: str) -> None:
-    client.copy_object(Bucket=bucket, Key=key, CopySource=copy_source)
+def copy(bucket: str, key: str, copy_source: str, **kwargs) -> None:
+    client.copy_object(Bucket=bucket, Key=key, CopySource=copy_source, **kwargs)
 
 
 def remove_recursive(bucket: str, prefix: str, force=False) -> None:

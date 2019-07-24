@@ -186,11 +186,10 @@ class WfModule(models.Model):
         max_length=255, blank=True, null=True, default=None, unique=True
     )
     """
-    S3 ID used by the client during upload.
+    DEPRECATED: S3 ID used by the client during upload. TODO DELETEME
 
-    We store it here so we can authorize client requests. Users may only upload
-    using for this WfModule using this UploadID. If the UploadID does not match
-    the key the client sends, then S3 will complain.
+    We used to store it here so we could authorize client requests. Now we let
+    the client manage its own uploads. Set to "notused" or empty string.
     """
 
     inprogress_file_upload_key = models.CharField(
