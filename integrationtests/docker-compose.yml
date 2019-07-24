@@ -45,9 +45,15 @@ services:
   minio:
     image: minio/minio:RELEASE.2019-07-17T22-54-12Z
     environment:
-      MINIO_ACCESS_KEY: minio_access
-      MINIO_SECRET_KEY: minio_secret
+      MINIO_ACCESS_KEY: minio_root_access
+      MINIO_SECRET_KEY: minio_root_secret
     command: server /data
+
+  addminiouser:
+    image: minio/mc:RELEASE.2019-07-17T22-13-42Z
+    depends_on: [ 'minio' ]
+    entrypoint: ''
+    command: [ 'sh', '-c', 'while ! nc -z minio 9000; do sleep 0.1; done; mc config host add workbench http://minio:9000 minio_root_access minio_root_secret && mc admin user add workbench minio_access minio_secret readwrite' ]
 
   git-server:
     #image:
