@@ -39,6 +39,7 @@ tabs:
   <ol class="steps">
     <li
       data-test="
+        if (workflow.tabs[0].wfModuleSlugs[2] !== 'groupby') return false
         const params = workflow.tabs[0].wfModules[2].params
         return (
           params.groups.colnames.sort().join('|') === 'Borough|Complaint date'
@@ -46,7 +47,7 @@ tabs:
           && params.aggregations[0].operation === 'size'
           && params.aggregations[0].outname === 'Number of incidents'
         )
-      ">Add a <kbd>Group</kbd> step as Step 3, and this time group by both <kbd>Borough</kbd> and <kbd>Complaint date</kbd> in the same column selector. Choose the <kbd>Sum</kbd> operation and sum <kbd>Number of incidents</kbd>.
+      ">Add a <kbd>Group</kbd> step as Step 3, and this time group by both <kbd>Borough</kbd> and <kbd>Complaint date</kbd> in the same column selector. Choose the <kbd>Count</kbd> operation and name the output column, <kbd>Number of incidents</kbd>.
       <p class="instruction-detail">
         The table now displays a detailed count of incidents.
       </p>
