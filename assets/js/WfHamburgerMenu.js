@@ -4,6 +4,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from './components/Dropdown'
 import ImportModuleFromGitHub from './ImportModuleFromGitHub'
+import LocaleSwitcher from './Internationalization/LocaleSwitcher'
 
 export default class WfHamburgerMenu extends React.Component {
   static propTypes = {
@@ -32,6 +33,7 @@ export default class WfHamburgerMenu extends React.Component {
 
     return (
       <React.Fragment>
+        <LocaleSwitcher />
         <UncontrolledDropdown>
           <DropdownToggle title='menu' className='context-button'>
             <i className='icon-more' />

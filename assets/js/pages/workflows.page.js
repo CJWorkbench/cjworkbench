@@ -4,15 +4,14 @@ import ReactDOM from 'react-dom'
 import Workflows from '../Workflows'
 import WorkbenchAPI from '../WorkbenchAPI'
 import { I18nProvider } from '@lingui/react'
-import catalogEl from '../locales/el/messages.js'
+import { catalogs } from '../Internationalization/catalogs'
+import { defaultLocale } from '../Internationalization/locales'
 
 const api = new WorkbenchAPI(null) // no websocket
 const { workflows, loggedInUser } = window.initState
 
-const catalogs = { el: catalogEl };
-
 ReactDOM.render((
-    <I18nProvider language="el" catalogs={catalogs}>
+    <I18nProvider language={defaultLocale} catalogs={catalogs}>
       <Workflows
         api={api}
         workflows={workflows}
