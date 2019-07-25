@@ -3,7 +3,6 @@ from pathlib import PurePath
 from typing import Any, Dict, List, Tuple, Union
 import uuid as uuidgen
 import urllib.parse
-from django.conf import settings
 from django.utils import timezone
 from cjworkbench.sync import database_sync_to_async
 from server.models import UploadedFile, Workflow, WfModule
@@ -395,13 +394,7 @@ def _do_create_upload(workflow: Workflow, wf_module: WfModule) -> Dict[str, Any]
                 "inprogress_file_upload_last_accessed_at",
             ]
         )
-        return {
-            "endpoint": settings.MINIO_EXTERNAL_URL,
-            "region": "us-east-1",
-            "bucket": minio.UserFilesBucket,
-            "key": key,
-            "credentials": credentials,
-        }
+        return {"bucket": minio.UserFilesBucket, "key": key, "credentials": credentials}
 
 
 @register_websockets_handler
@@ -457,7 +450,7 @@ def _do_finish_upload(workflow: Workflow, wf_module: WfModule, key: str, filenam
             key=final_key,
         )
         wf_module.abort_inprogress_upload()  # clear all tempfiles and temp DB fields
-        return uuid, serializers.WfModuleSerializer(wf_module).data
+        return serializers.WfModuleSerializer(wf_module).data
 
 
 @register_websockets_handler
@@ -466,8 +459,7 @@ def _do_finish_upload(workflow: Workflow, wf_module: WfModule, key: str, filenam
 async def finish_upload(
     workflow: Workflow, wf_module: WfModule, key: str, filename: str, **kwargs
 ):
-    uuid, wf_module_data = await _do_finish_upload(workflow, wf_module, key, filename)
+    wf_module_data = await _do_finish_upload(workflow, wf_module, key, filename)
     await websockets.ws_client_send_delta_async(
         workflow.id, {"updateWfModules": {str(wf_module.id): wf_module_data}}
     )
-    return {"uuid": uuid}

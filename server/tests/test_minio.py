@@ -154,9 +154,9 @@ class UploadTest(_MinioTest):
         import boto3
 
         session = boto3.session.Session(
-            aws_access_key_id=credentials["accessKeyId"],
-            aws_secret_access_key=credentials["secretAccessKey"],
-            aws_session_token=credentials["sessionToken"],
+            aws_access_key_id=credentials["AccessKeyId"],
+            aws_secret_access_key=credentials["SecretAccessKey"],
+            aws_session_token=credentials["SessionToken"],
         )
         client = session.client("s3", endpoint_url=settings.MINIO_URL)
         return client
