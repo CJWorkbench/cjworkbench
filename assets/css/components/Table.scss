@@ -192,7 +192,7 @@
 
         .column-letter {
           text-align: center;
-          padding-top: .6rem;
+          padding-top: .3rem;
           color: white;
           height: 1.6rem;
           font-size: 1.2rem;
@@ -270,11 +270,11 @@
 
           input[name="new-column-key"] {
             padding: .2rem .8rem;
-            //margin: 0 .5rem;
+            margin-top: .5rem;
             // padding-left: .8rem;
             // padding-right: .8rem;
             border-radius: 5px;
-            height: 3.5rem;
+            height: 3rem;
             width: 100%;
             flex: 1 1 auto;
             border: 0;
@@ -356,6 +356,11 @@
           // the whitespace within that one line.
           white-space: pre;
           padding: 0 .2rem 0 1rem;
+        }
+
+        .cell-datetime {
+          text-align: left;
+          padding: 0 1rem;
         }
 
         // when a cell value cannot be rendered
@@ -447,7 +452,7 @@
           background-color: white!important;
 
           .react-grid-Cell__value>* {
-            padding: 0 .2rem 0 .8rem;
+            padding: 0 .8rem;
           }
         }
 
