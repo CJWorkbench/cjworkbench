@@ -14,7 +14,7 @@ class DeleteTabCommandTest(DbTestCase):
     def test_delete_tab(self):
         workflow = Workflow.create_and_init()  # tab-1
         tab2 = workflow.tabs.create(position=1, slug="tab-2")
-        tab3 = workflow.tabs.create(position=2, slug="tab-3")
+        workflow.tabs.create(position=2, slug="tab-3")
 
         cmd = self.run_with_async_db(
             DeleteTabCommand.create(workflow=workflow, tab=tab2)
@@ -62,8 +62,8 @@ class DeleteTabCommandTest(DbTestCase):
     @patch("server.websockets.ws_client_send_delta_async", async_noop)
     def test_delete_tab_after_selected_position_ignores_position(self):
         workflow = Workflow.create_and_init(selected_tab_position=1)
-        workflow.tabs.create(position=1)
-        tab3 = workflow.tabs.create(position=2)
+        workflow.tabs.create(position=1, slug="tab-2")
+        tab3 = workflow.tabs.create(position=2, slug="tab-3")
 
         cmd = self.run_with_async_db(
             DeleteTabCommand.create(workflow=workflow, tab=tab3)

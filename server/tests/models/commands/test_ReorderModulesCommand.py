@@ -16,7 +16,7 @@ class ReorderModulesCommandTest(DbTestCase):
 
         self.workflow = Workflow.objects.create()
         self.delta = InitWorkflowCommand.create(self.workflow)
-        self.tab = self.workflow.tabs.create(position=0)
+        self.tab = self.workflow.tabs.create(position=0, slug="tab-1")
 
     def assertWfModuleVersions(self, expected_versions):
         positions = list(self.tab.live_wf_modules.values_list("order", flat=True))
@@ -80,7 +80,7 @@ class ReorderModulesCommandTest(DbTestCase):
         wfm1 = self.tab.wf_modules.create(last_relevant_delta_id=v1, order=0)
         wfm2 = self.tab.wf_modules.create(last_relevant_delta_id=v1, order=1)
 
-        tab2 = self.workflow.tabs.create(position=1)
+        tab2 = self.workflow.tabs.create(position=1, slug="tab-2")
         wfm3 = tab2.wf_modules.create(last_relevant_delta_id=v1, order=2)
 
         with self.assertRaises(ValueError):
