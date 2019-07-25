@@ -1,12 +1,18 @@
-import catalogEl from '../locales/el/messages.js'
-import catalogEn from '../locales/en/messages.js'
-
-const catalogs = { el: catalogEl, en: catalogEn };
-
-//TODO: load catalogs dynamically
-export default function fetchCatalog(language){
-    //const catalog = await import(
-      ///* webpackMode: "lazy", webpackChunkName: "i18n-[index]" */
-      //`@lingui/loader!locales/${language}/messages.po`)
-    return catalogs[language];
+export default async function fetchCatalog(language){
+    let catalog;
+    if (process.env.NODE_ENV !== 'production') {
+        // prettier-ignore
+        catalog = await import(
+          /* webpackMode: "lazy", webpackChunkName: "i18n-[index]" */
+            `@lingui/loader!../locales/${language}/messages.po`
+        )
+    } else {
+        // prettier-ignore
+        catalog = await import(
+          /* webpackMode: "lazy", webpackChunkName: "i18n-[index]" */
+          `../locales/${language}/messages.js`
+        )
+    }
+    
+    return catalog;
 }

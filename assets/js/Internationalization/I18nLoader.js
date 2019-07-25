@@ -10,12 +10,15 @@ class I18nLoaderClass extends React.Component {
   }
   
   loadCatalog = (language) => {
-    this.setState(state => ({
-      catalogs: {
-        ...state.catalogs,
-        [language]: fetchCatalog(language)
-      }
-    }))
+      fetchCatalog(language)
+      .then((catalog) => {
+        this.setState(state => ({
+          catalogs: {
+            ...state.catalogs,
+            [language]: catalog
+          }
+        }))
+      })
   }
   
   componentDidMount() {
