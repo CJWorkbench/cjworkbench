@@ -59,7 +59,7 @@ function OwnedWorkflowTitleAndMetadata ({ isReadOnly, workflow }) {
           <li>
             <span className='separator'>-</span>
             <ShareButton>
-              {workflow.public ? <Trans>public</Trans> : <Trans>private</Trans>}
+              {workflow.public ? <Trans>Public</Trans> : <Trans>Private</Trans>}
             </ShareButton>
           </li>
         ) : null}

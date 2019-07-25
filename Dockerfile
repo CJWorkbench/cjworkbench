@@ -91,6 +91,11 @@ RUN cd /tmp \
     && apt-get autoremove --purge -y \
     && rm -rf /var/lib/apt/lists/*
 
+# Add "mc" command, so we can create a non-root user in minio (for STS).
+RUN true \
+    && curl https://dl.min.io/client/mc/release/linux-amd64/archive/mc.RELEASE.2019-07-17T22-13-42Z -o /usr/bin/mc \
+    && chmod +x /usr/bin/mc
+
 # Add a Python wrapper that will help PyCharm cooperate with pipenv
 # See https://blog.jetbrains.com/pycharm/2015/12/using-docker-in-pycharm/ for
 # PyCharm's expectations. Just set "Python interpreter path" to

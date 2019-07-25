@@ -28,12 +28,16 @@ services:
       RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: '+S 1:1 +stbt ts +A 12'
 
   minio:
-    image: minio/minio:RELEASE.2019-06-01T03-46-14Z
+    image: minio/minio:RELEASE.2019-07-17T22-54-12Z
     networks: [ 'dev' ]
     ports: [ '8001:9000' ]
     environment:
-      MINIO_ACCESS_KEY: minio_access
-      MINIO_SECRET_KEY: minio_secret
+      # Workbench creates a regular user, minio_access/minio_secret ... but
+      # to do that it needs a root user. The regular user is essential because
+      # STS doesn't work with the root user. (On production, there is no
+      # root user.)
+      MINIO_ACCESS_KEY: minio_root_access
+      MINIO_SECRET_KEY: minio_root_secret
     volumes:
       - minio_data:/data
     command: [ 'server', '/data' ]
@@ -223,14 +227,18 @@ services:
       RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: '+S 1:1 +stbt ts +A 12'
 
   testminio:
-    image: minio/minio:RELEASE.2019-06-01T03-46-14Z
+    image: minio/minio:RELEASE.2019-07-17T22-54-12Z
     networks: [ 'test' ]
     volumes:
       - type: tmpfs
         target: /data
     environment:
-      MINIO_ACCESS_KEY: minio_access
-      MINIO_SECRET_KEY: minio_secret
+      # Workbench creates a regular user, minio_access/minio_secret ... but
+      # to do that it needs a root user. The regular user is essential because
+      # STS doesn't work with the root user. (On production, there is no
+      # root user.)
+      MINIO_ACCESS_KEY: minio_root_access
+      MINIO_SECRET_KEY: minio_root_secret
     command: server /data
 
 networks:

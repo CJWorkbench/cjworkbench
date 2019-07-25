@@ -37,5 +37,5 @@ class TestUpload(LoggedInIntegrationTest):
 
         self.browser.wait_for_element(
             ".react-grid-Row:nth-child(1) .react-grid-Cell:nth-child(1)",
-            text="This file is >5MB",
+            text="This file is >8MB",
         )

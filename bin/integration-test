@@ -68,6 +68,9 @@ DOCKER_BUILDKIT=1 docker build --pull . -f Dockerfile.integrationtest
 # Now make docker-compose _aware_ of these newly-cached, quickly-built images
 docker_compose build
 
+echo 'Creating minio user…' >&2
+docker_compose run addminiouser
+
 echo 'Migrating (and starting database and RabbitMQ)…' >&2
 docker_compose run migrate
 

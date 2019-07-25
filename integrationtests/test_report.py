@@ -69,7 +69,7 @@ class TestReport(LoggedInIntegrationTest):
         b = self.browser
         b.click_button("Report")  # switch to report
         with b.scope(".share-card"):
-            b.click_button("Edit Privacy", wait=True)
+            b.click_button("Edit privacy", wait=True)
         with b.scope(".share-modal", wait=True):  # wait for dialog
             b.fill_in("email", user1.email)
             b.click_button("Grant access")
@@ -101,7 +101,7 @@ class TestReport(LoggedInIntegrationTest):
         b = self.browser
         b.click_button("Report")  # switch to report
         with b.scope(".share-card"):
-            b.click_button("Edit Privacy", wait=True)
+            b.click_button("Edit privacy", wait=True)
         with b.scope(".share-modal", wait=True):  # wait for dialog
             b.check("Anyone can view")
             # This fires and forgets an AJAX request. Wait for it to finish.

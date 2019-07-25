@@ -77,7 +77,7 @@
         display: flex;
         max-width: 100%;
         overflow: hidden;
-        padding: 3px 8px; // react-select default from .react-select__multi-value__label
+        padding: 3px 0 3px 3px; // react-select default from .react-select__multi-value__label
         color: $brand-text--dark;
 
         input {

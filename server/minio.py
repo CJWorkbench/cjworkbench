@@ -6,6 +6,7 @@ import errno
 import hmac
 import hashlib
 import io
+import json
 import logging
 import math
 import pathlib
@@ -53,10 +54,13 @@ def _send_request(self, method, url, body, headers, *args, **kwargs):
 botocore.awsrequest.AWSConnection._send_request = _send_request
 
 
+StsDurationSeconds = 3600 * 5  # any upload must take max 5hrs
+
+
 logger = logging.getLogger(__name__)
 
 
-def _build_content_disposition(filename: str) -> str:
+def encode_content_disposition(filename: str) -> str:
     """
     Build a Content-Disposition header value for the given filename.
     """
@@ -67,10 +71,12 @@ def _build_content_disposition(filename: str) -> str:
 session = boto3.session.Session(
     aws_access_key_id=settings.MINIO_ACCESS_KEY,
     aws_secret_access_key=settings.MINIO_SECRET_KEY,
+    region_name="us-east-1",
 )
 client = session.client(
     "s3", endpoint_url=settings.MINIO_URL  # e.g., 'https://localhost:9001/'
 )
+sts_client = session.client("sts", endpoint_url=settings.MINIO_URL)
 # Create the one transfer manager we'll reuse for all transfers. Otherwise,
 # boto3 default is to create a transfer manager _per upload/download_, which
 # means 10 threads per operation. (Primer: upload/download split over multiple
@@ -190,9 +196,41 @@ def create_multipart_upload(bucket: str, key: str, filename: str) -> str:
     information about uploaded files.
     """
     response = client.create_multipart_upload(
-        Bucket=bucket, Key=key, ContentDisposition=_build_content_disposition(filename)
+        Bucket=bucket, Key=key, ContentDisposition=encode_content_disposition(filename)
     )
     return response["UploadId"]
+
+
+def assume_role_to_write(bucket: str, key: str) -> str:
+    """
+    Build temporary S3 credentials to let an external client write bucket/key.
+
+    Return a dict of SecretAccessKey, SessionToken, Expiration, AccessKeyId.
+    """
+    response = sts_client.assume_role(
+        RoleArn="minio-notused-notused",
+        RoleSessionName="minio-notused-notused",
+        DurationSeconds=StsDurationSeconds,
+        Policy=json.dumps(
+            {
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+                        "Effect": "Allow",
+                        "Action": [
+                            "s3:PutObject",
+                            "s3:AbortMultipartUpload",
+                            "s3:ListMultipartUploadParts",
+                        ],
+                        "Resource": [f"arn:aws:s3:::{bucket}/{key}"],
+                        # Don't worry about uploads having the wrong ACL: [2019-07-23] minio
+                        # does not support object ACLs.
+                    }
+                ],
+            }
+        ),
+    )
+    return response["Credentials"]
 
 
 def abort_multipart_upload(bucket: str, key: str, upload_id: str) -> None:
@@ -241,7 +279,7 @@ def presign_upload(
     url = settings.MINIO_EXTERNAL_URL + resource
     headers = _build_presigned_headers("PUT", resource, n_bytes, base64_md5sum)
     # Content-Disposition header doesn't affect the signature
-    headers["Content-Disposition"] = _build_content_disposition(filename)
+    headers["Content-Disposition"] = encode_content_disposition(filename)
     return url, headers
 
 
@@ -317,8 +355,8 @@ def remove(bucket: str, key: str) -> None:
         pass
 
 
-def copy(bucket: str, key: str, copy_source: str) -> None:
-    client.copy_object(Bucket=bucket, Key=key, CopySource=copy_source)
+def copy(bucket: str, key: str, copy_source: str, **kwargs) -> None:
+    client.copy_object(Bucket=bucket, Key=key, CopySource=copy_source, **kwargs)
 
 
 def remove_recursive(bucket: str, prefix: str, force=False) -> None:

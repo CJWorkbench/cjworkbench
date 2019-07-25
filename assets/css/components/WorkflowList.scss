@@ -199,7 +199,7 @@
 
       .dropdown {
         position: relative;
-        bottom: -.2rem;
+        bottom: -.6rem;
         cursor: pointer;
 
         &>button {
@@ -324,11 +324,11 @@
           &:hover {
             background-color: #f0f0f0;
           }
-          &.context-button.context-button.btn-secondary.active{
-            background-color: $Vlight-gray;
+          &:active i {
+              color: black;
+            }
           }
         }
-      }
     }
   }
 }
