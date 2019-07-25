@@ -1,0 +1,18 @@
+{
+  "English": {
+    "origin": [
+      [
+        "assets/js/Internationalization/locales.js",
+        4
+      ]
+    ]
+  },
+  "Greek": {
+    "origin": [
+      [
+        "assets/js/Internationalization/locales.js",
+        5
+      ]
+    ]
+  }
+}

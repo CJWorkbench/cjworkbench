@@ -5,6 +5,7 @@ import UndoRedoButtons from './UndoRedoButtons'
 import ConnectedEditableWorkflowName, { EditableWorkflowName } from './EditableWorkflowName'
 import { goToUrl, timeDifference } from './utils'
 import ShareButton from './ShareModal/ShareButton'
+import { Trans } from '@lingui/macro'
 
 function NoOp () {}
 
@@ -58,7 +59,7 @@ function OwnedWorkflowTitleAndMetadata ({ isReadOnly, workflow }) {
           <li>
             <span className='separator'>-</span>
             <ShareButton>
-              {workflow.public ? 'public' : 'private'}
+              {workflow.public ? <Trans>public</Trans> : <Trans>private</Trans>}
             </ShareButton>
           </li>
         ) : null}

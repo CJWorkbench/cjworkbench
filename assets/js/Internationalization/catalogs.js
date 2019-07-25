@@ -3,4 +3,10 @@ import catalogEn from '../locales/en/messages.js'
 
 const catalogs = { el: catalogEl, en: catalogEn };
 
-export { catalogs }
+//TODO: load catalogs dynamically
+export default function fetchCatalog(language){
+    //const catalog = await import(
+      ///* webpackMode: "lazy", webpackChunkName: "i18n-[index]" */
+      //`@lingui/loader!locales/${language}/messages.po`)
+    return catalogs[language];
+}

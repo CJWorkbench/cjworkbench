@@ -5,4 +5,6 @@ const supportedLocales = {
     'el': t`Greek`
 };
 
-export { supportedLocales }
+const defaultLocale = 'en';
+
+export { supportedLocales, defaultLocale }

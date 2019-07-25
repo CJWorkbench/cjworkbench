@@ -1,23 +1,30 @@
 // workflow.page.js - the master JavaScript for /workflows
 import React from 'react'
 import ReactDOM from 'react-dom'
+import { Provider } from 'react-redux'
 import Workflows from '../Workflows'
 import WorkbenchAPI from '../WorkbenchAPI'
-import { I18nProvider } from '@lingui/react'
-import { catalogs } from '../Internationalization/catalogs'
-import { defaultLocale } from '../Internationalization/locales'
+import { createStore } from 'redux'
+import { I18nLoader } from '../Internationalization/I18nLoader'
+import { localeReducer } from '../Internationalization/actions'
+import InternationalizedPage from '../Internationalization/InternationalizedPage'
 
 const api = new WorkbenchAPI(null) // no websocket
 const { workflows, loggedInUser } = window.initState
 
+const store = createStore(
+  localeReducer,
+  {...window.initState}
+)
+
 ReactDOM.render((
-    <I18nProvider language={defaultLocale} catalogs={catalogs}>
+  <InternationalizedPage store={store}>
       <Workflows
         api={api}
         workflows={workflows}
         user={loggedInUser}
       />
-    </I18nProvider>
+  </InternationalizedPage>
 ), document.getElementById('root'))
 
 // Start Intercom, if we're that sort of installation
