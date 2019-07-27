@@ -54,30 +54,39 @@ export default class UploadManager {
       credentials
     })
 
-    const uploadResult = await new Promise((resolve, reject) => {
-      const request = s3.putObject({
-        Body: file,
-        Bucket: bucket,
-        Key: key,
-        ContentLength: file.size
-      }, (err, data) => {
-        if (err) {
-          return reject(err)
-        } else {
-          return resolve(data)
-        }
-      })
-      request.on('httpUploadProgress', ({ loaded }) => onProgress(loaded))
-      this.inProgress[String(wfModuleId)] = async () => {
-        request.abort()
-        try {
-          await uploadResult
-        } catch {
-          // ignore -- we know there's an error
-        }
-        await this.websocket.callServerHandler('upload.abort_upload', { wfModuleId, key })
+    const upload = s3.upload({
+      Body: file,
+      Bucket: bucket,
+      Key: key,
+      ContentLength: file.size
+    }, (err, data) => {
+      if (err) {
+        return reject(err)
+      } else {
+        return resolve(data)
       }
     })
+    upload.on('httpUploadProgress', ({ loaded }) => onProgress(loaded))
+
+    this.inProgress[String(wfModuleId)] = async () => {
+      upload.abort()
+      try {
+        await uploadResult
+      } catch {
+        // ignore -- we know there's an error
+      }
+      await this.websocket.callServerHandler('upload.abort_upload', { wfModuleId, key })
+    }
+
+    try {
+      await upload.promise() // or throw error
+    } catch (err) {
+      if (err.code === 'RequestAbortedError') {
+        return null // this isn't an error
+      } else {
+        throw err // present a pop-up to the user with this error we haven't yet figured out
+      }
+    }
 
     delete this.inProgress[String(wfModuleId)]
 
@@ -86,7 +95,6 @@ export default class UploadManager {
       key,
       filename
     })
-    console.log(finishResult)
     return finishResult // { uuid }
   }
 
