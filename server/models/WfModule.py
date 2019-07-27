@@ -23,20 +23,12 @@ class WfModule(models.Model):
                 check=(
                     (
                         # No in-progress upload
-                        Q(inprogress_file_upload_id__isnull=True)
-                        & Q(inprogress_file_upload_key__isnull=True)
+                        Q(inprogress_file_upload_key__isnull=True)
                         & Q(inprogress_file_upload_last_accessed_at__isnull=True)
                     )
                     | (
-                        # Multipart in-progress upload
-                        Q(inprogress_file_upload_id__isnull=False)
-                        & Q(inprogress_file_upload_key__isnull=False)
-                        & Q(inprogress_file_upload_last_accessed_at__isnull=False)
-                    )
-                    | (
-                        # Simple in-progress upload
-                        Q(inprogress_file_upload_id__isnull=True)
-                        & Q(inprogress_file_upload_key__isnull=False)
+                        # In-progress upload
+                        Q(inprogress_file_upload_key__isnull=False)
                         & Q(inprogress_file_upload_last_accessed_at__isnull=False)
                     )
                 ),
@@ -158,24 +150,16 @@ class WfModule(models.Model):
     Secrets aren't passed to `render()`: they're only passed to `fetch()`.
     """
 
-    inprogress_file_upload_id = models.CharField(
-        max_length=255, blank=True, null=True, default=None
-    )
-    """
-    DEPRECATED: S3 ID used by the client during upload. TODO DELETEME
-
-    We used to store it here so we could authorize client requests. Now we let
-    the client manage its own uploads. Set to "notused" or empty string.
-    """
-
     inprogress_file_upload_key = models.CharField(
         max_length=100, null=True, blank=True, default=None, unique=True
     )
     """
-    Key (in the minio.UserFilesBucket) matching `inprogress_file_upload_id`.
+    Key (in the minio.UserFilesBucket) user is uploading.
 
     We store the key so we can delete it. The Bucket is always
     minio.UserFilesBucket.
+
+    TODO put this info in a separate table.
     """
 
     inprogress_file_upload_last_accessed_at = models.DateTimeField(
@@ -218,6 +202,11 @@ class WfModule(models.Model):
 
     @property
     def uploaded_file_prefix(self):
+        """
+        "Folder" on S3 where uploads go.
+
+        This ends in "/", so it can be used as a prefix in s3 operations.
+        """
         return f"wf-{self.workflow_id}/wfm-{self.id}/"
 
     @classmethod
@@ -317,32 +306,21 @@ class WfModule(models.Model):
         * Set `.inprogress_file_upload_*` to `None` (and save those fields)
         * Never raise `NoSuchUpload` or `FileNotFoundError`.
         """
-        if not self.inprogress_file_upload_id and not self.inprogress_file_upload_key:
-            return
-
-        if self.inprogress_file_upload_id:
-            # If we're uploading a multipart file, delete all parts
-            try:
-                minio.abort_multipart_upload(
-                    minio.UserFilesBucket,
-                    self.inprogress_file_upload_key,
-                    self.inprogress_file_upload_id,
-                )
-            except minio.error.NoSuchUpload:
-                pass
+        # If we're uploading a multipart file, delete all parts
         if self.inprogress_file_upload_key:
+            minio.abort_multipart_uploads_by_prefix(
+                minio.UserFilesBucket, self.inprogress_file_upload_key
+            )
             # If we _nearly_ completed a multipart upload, or if we wrote data via
             # regular upload but didn't mark it completed, delete the file
             try:
                 minio.remove(minio.UserFilesBucket, self.inprogress_file_upload_key)
             except FileNotFoundError:
                 pass
-        self.inprogress_file_upload_id = None
         self.inprogress_file_upload_key = None
         self.inprogress_file_upload_last_accessed_at = None
         self.save(
             update_fields=[
-                "inprogress_file_upload_id",
                 "inprogress_file_upload_key",
                 "inprogress_file_upload_last_accessed_at",
             ]
@@ -574,10 +552,8 @@ class WfModule(models.Model):
     def delete(self, *args, **kwargs):
         if self.inprogress_file_upload_key:
             try:
-                minio.abort_multipart_upload(
-                    minio.UserFilesBucket,
-                    self.inprogress_file_upload_key,
-                    self.inprogress_file_upload_id,
+                minio.abort_multipart_uploads_by_prefix(
+                    minio.UserFilesBucket, self.inprogress_file_upload_key
                 )
             except minio.error.NoSuchUpload:
                 pass
