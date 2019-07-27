@@ -84,7 +84,7 @@ if "CJW_PRODUCTION" in os.environ:
 else:
     DEBUG = True
 
-DEFAULT_FROM_EMAIL = "Workbench <hello@accounts.workbenchdata.com>"
+DEFAULT_FROM_EMAIL = "Workbench <hello@workbenchdata.com>"
 
 # SECRET_KEY
 try:
@@ -152,12 +152,7 @@ else:
 
     if not all(
         x in os.environ
-        for x in [
-            "CJW_SENDGRID_INVITATION_ID",
-            "CJW_SENDGRID_CONFIRMATION_ID",
-            "CJW_SENDGRID_PASSWORD_CHANGE_ID",
-            "CJW_SENDGRID_PASSWORD_RESET_ID",
-        ]
+        for x in ["CJW_SENDGRID_CONFIRMATION_ID", "CJW_SENDGRID_PASSWORD_RESET_ID"]
     ):
         sys.exit("Must set Sendgrid template IDs for all system emails")
 
