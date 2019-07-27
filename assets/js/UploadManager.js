@@ -59,21 +59,15 @@ export default class UploadManager {
       Bucket: bucket,
       Key: key,
       ContentLength: file.size
-    }, (err, data) => {
-      if (err) {
-        return reject(err)
-      } else {
-        return resolve(data)
-      }
     })
     upload.on('httpUploadProgress', ({ loaded }) => onProgress(loaded))
 
     this.inProgress[String(wfModuleId)] = async () => {
-      upload.abort()
+      upload.abort() // synchronous -- kicks off more requests
       try {
-        await uploadResult
+        await upload.promise()
       } catch {
-        // ignore -- we know there's an error
+        // it's caught elsewhere
       }
       await this.websocket.callServerHandler('upload.abort_upload', { wfModuleId, key })
     }
