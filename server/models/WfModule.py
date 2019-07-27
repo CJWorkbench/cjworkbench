@@ -159,7 +159,7 @@ class WfModule(models.Model):
     """
 
     inprogress_file_upload_id = models.CharField(
-        max_length=255, blank=True, null=True, default=None, unique=True
+        max_length=255, blank=True, null=True, default=None
     )
     """
     DEPRECATED: S3 ID used by the client during upload. TODO DELETEME
