@@ -44,11 +44,7 @@ spec:
               value: fetcher-needs-no-secret-key
             - name: CJW_SENDGRID_API_KEY
               value: fetcher-needs-no-sendgrid-config
-            - name: CJW_SENDGRID_INVITATION_ID
-              value: fetcher-needs-no-sendgrid-config
             - name: CJW_SENDGRID_CONFIRMATION_ID
-              value: fetcher-needs-no-sendgrid-config
-            - name: CJW_SENDGRID_PASSWORD_CHANGE_ID
               value: fetcher-needs-no-sendgrid-config
             - name: CJW_SENDGRID_PASSWORD_RESET_ID
               value: fetcher-needs-no-sendgrid-config
