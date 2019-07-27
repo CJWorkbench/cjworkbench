@@ -205,7 +205,7 @@ def assume_role_to_write(bucket: str, key: str) -> str:
     """
     Build temporary S3 credentials to let an external client write bucket/key.
 
-    Return a dict of SecretAccessKey, SessionToken, Expiration, AccessKeyId.
+    Return a dict of secretAccessKey, sessionToken, expiration, accessKeyId.
     """
     response = sts_client.assume_role(
         RoleArn="minio-notused-notused",
@@ -230,7 +230,13 @@ def assume_role_to_write(bucket: str, key: str) -> str:
             }
         ),
     )
-    return response["Credentials"]
+    credentials = response["Credentials"]
+    return {
+        "accessKeyId": credentials["AccessKeyId"],
+        "secretAccessKey": credentials["SecretAccessKey"],
+        "sessionToken": credentials["SessionToken"],
+        "expiration": credentials["Expiration"],
+    }
 
 
 def abort_multipart_upload(bucket: str, key: str, upload_id: str) -> None:

@@ -77,7 +77,9 @@ class UploadTest(HandlerTestCase):
             key=key,
             filename="test sheet.csv",
         )
-        self.assertResponse(response, data=None)
+        self.assertResponse(
+            response, data={"uuid": "147a9f5d-5b3e-41c3-a968-a84a5a9d587f"}
+        )
         # The uploaded file is deleted
         self.assertFalse(minio.exists(minio.UserFilesBucket, key))
         # A new upload is created
