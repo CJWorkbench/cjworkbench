@@ -9,6 +9,7 @@ metadata:
     # Stream requests straight into minio -- no buffering or limiting
     nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
     nginx.ingress.kubernetes.io/proxy-body-size: "0"
+    nginx.ingress.kubernetes.io/ignore-invalid-headers: "false"
 spec:
   tls:
     - hosts:
