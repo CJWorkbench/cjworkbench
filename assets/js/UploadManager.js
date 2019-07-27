@@ -19,19 +19,6 @@ export default class UploadManager {
    * 3. Client starts uploading to S3 -- and registers a cancel callback in this.inProgress.
    * 4. Client finishes uploading
    *
-   * There are two main upload paths:
-   *
-   * A. For files smaller than or equal to 5MB:
-   *     a. `upload.prepare_upload()` to generate presigned url+headers
-   *     b. upload to S3 with url+headers
-   *     c. `upload.complete_upload()` to notify server of new file
-   * B. For files over 5MB:
-   *     a. `upload.prepare_multipart_upload()` to start an upload session
-   *     b. `upload.presign_upload_part()` and PUT each chunk of the file
-   *     c. `upload.complete_multipart_upload()` to notify server and build file
-   *
-   * Both these paths share some traits:
-   *
    * * The server only tracks one file upload per WfModule -- there's no way
    *   for two users to upload concurrently. That makes `cancel()`
    *   straightforward.
@@ -39,8 +26,8 @@ export default class UploadManager {
    *   the WfModule.
    * * The Promise returned will resolve to `{uuid: uuid}`; if the user aborts,
    *   it will resolve to `null`.
-   * * The Promise returned will never be rejected. It'll retry forever.
    * * `onProgress(nBytesUploaded)` will be called periodically.
+   * * The Promise returned may be rejected on network error.
    */
   async upload (wfModuleId, file, onProgress) {
     const filename = file.name
