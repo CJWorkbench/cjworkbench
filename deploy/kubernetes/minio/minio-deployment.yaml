@@ -16,17 +16,13 @@ spec:
         # Label is used as selector in the service.
         app: minio-app
     spec:
-      # Refer to the secret created earlier
-      volumes:
-      - name: minio-gcs-credentials
-        secret:
-          # Name of the Secret created earlier
-          secretName: minio-gcs-credentials
       containers:
       - name: minio
         # Pulls the default Minio image from Docker Hub
         image: minio/minio:RELEASE.2019-07-17T22-54-12Z
         args:
+        - --certs-dir
+        - /etc/minio/etcd-ssl
         - gateway
         - gcs
         resources:
@@ -37,23 +33,41 @@ spec:
             cpu: 0.25
             memory: 150Mi
         env:
+        - name: MY_NAMESPACE
+          valueFrom:
+            fieldRef:
+              # 'staging' or 'production'
+              fieldPath: metadata.namespace
         # Minio access key and secret key determine which clients have access
         # to minio (and thus all uploaded files). For us, the correct answer is
         # "frontend, fetcher, renderer". So we'll set the secret here _and_ in
         # frontend/fetcher/renderer.
         #
-        # The secret is called "minio-access-key" and its paths are "access_key"
-        # and "secret_key".
+        # The secret that frontend/fetcher/renderer use is called
+        # "minio-access-key" and its paths are "access_key" and "secret_key".
+        #
+        # HOWEVER, minio can't create STS tokens for the root user. So we use a
+        # special "minio-root-access-key" ... and then as soon as the server is
+        # up we use the "minio-root-access-key" to create the user referenced
+        # by "minio-access-key".
         - name: MINIO_ACCESS_KEY
           valueFrom:
             secretKeyRef:
-              name: minio-access-key
+              name: minio-root-access-key
+              #name: minio-access-key
               key: access_key
         - name: MINIO_SECRET_KEY
           valueFrom:
             secretKeyRef:
-              name: minio-access-key
+              name: minio-root-access-key
+              #name: minio-access-key
               key: secret_key
+        - name: MINIO_ETCD_ENDPOINTS
+          value: "https://minio-etcd.$(MY_NAMESPACE).svc.cluster.local:2379"
+        - name: MINIO_ETCD_CLIENT_CERT
+          value: /etc/minio/etcd-ssl/client.crt
+        - name: MINIO_ETCD_CLIENT_CERT_KEY
+          value: /etc/minio/etcd-ssl/client.key
         # Google Cloud Service uses this variable
         - name: GOOGLE_APPLICATION_CREDENTIALS
           value: "/etc/credentials/application_default_credentials.json"
@@ -66,3 +80,22 @@ spec:
         - name: minio-gcs-credentials
           mountPath: "/etc/credentials"
           readOnly: true
+        - name: etcd-certs
+          mountPath: /etc/minio/etcd-ssl
+          readOnly: true
+      volumes:
+      - name: minio-gcs-credentials
+        secret:
+          secretName: minio-gcs-credentials
+      - name: etcd-certs
+        secret:
+          secretName: minio-etcd-client-certs
+          items:
+            # minio expects CAs in a "CAs/" subdir -- there's no way to specify
+            # the etcd CA explicitly. So we need to project all keys.
+            - key: ca.crt
+              path: CAs/minio-etcd-ca.crt
+            - key: client.crt
+              path: client.crt
+            - key: client.key
+              path: client.key
