@@ -67,6 +67,7 @@ export default class UploadManager {
           return resolve(data)
         }
       })
+      request.on('httpUploadProgress', ({ loaded }) => onProgress(loaded))
       this.inProgress[String(wfModuleId)] = async () => {
         request.abort()
         try {
