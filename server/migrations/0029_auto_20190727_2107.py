@@ -5,21 +5,28 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('server', '0028_auto_20190727_2043'),
-    ]
+    dependencies = [("server", "0028_auto_20190727_2043")]
 
     operations = [
         migrations.RemoveConstraint(
-            model_name='wfmodule',
-            name='inprogress_file_upload_check',
+            model_name="wfmodule", name="inprogress_file_upload_check"
         ),
-        migrations.RemoveField(
-            model_name='wfmodule',
-            name='inprogress_file_upload_id',
-        ),
+        migrations.RemoveField(model_name="wfmodule", name="inprogress_file_upload_id"),
         migrations.AddConstraint(
-            model_name='wfmodule',
-            constraint=models.CheckConstraint(check=models.Q(models.Q(('inprogress_file_upload_key__isnull', True), ('inprogress_file_upload_last_accessed_at__isnull', True)), models.Q(('inprogress_file_upload_key__isnull', False), ('inprogress_file_upload_last_accessed_at__isnull', False)), _connector='OR'), name='inprogress_file_upload_check'),
+            model_name="wfmodule",
+            constraint=models.CheckConstraint(
+                check=models.Q(
+                    models.Q(
+                        ("inprogress_file_upload_key__isnull", True),
+                        ("inprogress_file_upload_last_accessed_at__isnull", True),
+                    ),
+                    models.Q(
+                        ("inprogress_file_upload_key__isnull", False),
+                        ("inprogress_file_upload_last_accessed_at__isnull", False),
+                    ),
+                    _connector="OR",
+                ),
+                name="inprogress_file_upload_check",
+            ),
         ),
     ]
