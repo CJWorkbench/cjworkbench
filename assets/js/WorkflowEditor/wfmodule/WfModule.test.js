@@ -7,8 +7,10 @@ import deepEqual from 'fast-deep-equal'
 import { createStore } from 'redux'
 import { Provider } from 'react-redux'
 import { mockStore } from '../../test-utils'
+import { generateSlug } from '../../utils'
 import lessonSelector from '../../lessons/lessonSelector'
 
+jest.mock('../../utils')
 jest.mock('../../lessons/lessonSelector', () => jest.fn()) // same mock in every test :( ... we'll live
 
 describe('WfModule, not read-only mode', () => {
@@ -285,6 +287,7 @@ describe('WfModule, not read-only mode', () => {
     // Scenario: user is on linechart and chose non-numeric Y axis
     mockApi.setSelectedWfModule = jest.fn(() => Promise.resolve(null))
     mockApi.addModule = jest.fn(() => Promise.resolve(null))
+    generateSlug.mockImplementation(prefix => prefix + 'X')
     const store = mockStore({
       workflow: {
         id: 99,
@@ -337,7 +340,7 @@ describe('WfModule, not read-only mode', () => {
     )
 
     w.find('button.quick-fix').simulate('click')
-    expect(mockApi.addModule).toHaveBeenCalledWith('tab-11', 'fixtype', 1, { foo: 'bar' })
+    expect(mockApi.addModule).toHaveBeenCalledWith('tab-11', 'step-X', 'fixtype', 1, { foo: 'bar' })
   })
 
   describe('lesson highlights', () => {

@@ -3,7 +3,10 @@ import React from 'react'
 import { mount } from 'enzyme'
 import { Provider } from 'react-redux'
 import { mockStore, tick } from '../test-utils'
+import { generateSlug } from '../utils'
 import ConnectedSelectedRowsActions, { SelectedRowsActions } from './SelectedRowsActions'
+
+jest.mock('../utils')
 
 describe('SelectedRowsActions', () => {
   describe('standalone', () => {
@@ -85,6 +88,8 @@ describe('SelectedRowsActions', () => {
     })
 
     it('should use addModuleAction', async () => {
+      generateSlug.mockImplementation(prefix => prefix + 'X')
+
       const w = wrapper({
         tabs: { 'tab-1': { wf_module_ids: [2] } },
         wfModules: {
@@ -105,7 +110,7 @@ describe('SelectedRowsActions', () => {
       // Check that the reducer did its stuff. We don't test that store.state
       // is changed because the fact these methods were called implies the
       // reducer was invoked correctly.
-      expect(api.addModule).toHaveBeenCalledWith('tab-1', 'dobar', 1, { rows: '2, 4-5' })
+      expect(api.addModule).toHaveBeenCalledWith('tab-1', 'step-X', 'dobar', 1, { rows: '2, 4-5' })
     })
 
     it('should use setWfModuleParams action, fromInput', async () => {

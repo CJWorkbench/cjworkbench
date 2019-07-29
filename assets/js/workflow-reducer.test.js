@@ -1,7 +1,10 @@
 /* global describe, it, expect, jest */
 import * as wfr from './workflow-reducer'
 import { mockStore } from './test-utils'
+import { generateSlug } from './utils'
 import { ErrorResponse } from './WorkflowWebsocket'
+
+jest.mock('./utils')
 
 describe('Reducer actions', () => {
   const testModules = {
@@ -93,6 +96,7 @@ describe('Reducer actions', () => {
     const api = {
       addModule: jest.fn(() => Promise.resolve(null))
     }
+    generateSlug.mockImplementationOnce(prefix => prefix + 'X')
 
     const store = mockStore({
       workflow: {
@@ -115,7 +119,7 @@ describe('Reducer actions', () => {
 
     await store.dispatch(wfr.addModuleAction('module2', { tabSlug: 'tab-1', index: 0 }, { x: 'y' }))
 
-    expect(api.addModule).toHaveBeenCalledWith('tab-1', 'module2', 0, { x: 'y' })
+    expect(api.addModule).toHaveBeenCalledWith('tab-1', 'step-X', 'module2', 0, { x: 'y' })
     const state = store.getState()
     expect(state.tabs['tab-1'].selected_wf_module_position).toEqual(0)
     expect(state.tabs['tab-1'].wf_module_ids).toEqual(['nonce-module2-0', 2, 3])
@@ -125,6 +129,7 @@ describe('Reducer actions', () => {
     const api = {
       addModule: jest.fn(() => Promise.resolve(null))
     }
+    generateSlug.mockImplementation(prefix => prefix + 'X')
 
     const store = mockStore({
       workflow: {
@@ -146,13 +151,14 @@ describe('Reducer actions', () => {
     }, api)
 
     await store.dispatch(wfr.addModuleAction('mod', { beforeWfModuleId: 3 }, { x: 'y' }))
-    expect(api.addModule).toHaveBeenCalledWith('tab-1', 'mod', 1, { x: 'y' })
+    expect(api.addModule).toHaveBeenCalledWith('tab-1', 'step-X', 'mod', 1, { x: 'y' })
   })
 
   it('adds a module after another', async () => {
     const api = {
       addModule: jest.fn(() => Promise.resolve(null))
     }
+    generateSlug.mockImplementation(prefix => prefix + 'X')
 
     const store = mockStore({
       workflow: {
@@ -174,7 +180,7 @@ describe('Reducer actions', () => {
     }, api)
 
     await store.dispatch(wfr.addModuleAction('mod', { afterWfModuleId: 2 }, { x: 'y' }))
-    expect(api.addModule).toHaveBeenCalledWith('tab-1', 'mod', 1, { x: 'y' })
+    expect(api.addModule).toHaveBeenCalledWith('tab-1', 'step-X', 'mod', 1, { x: 'y' })
   })
 
   it('deletes a module', async () => {

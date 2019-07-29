@@ -1,5 +1,6 @@
 // Reducer for Workflow page.
 // That is, provides all the state transition functions that are executed on user command
+import { generateSlug } from './utils'
 import { reducerFunctions as TabReducerFunctions } from './WorkflowEditor/Tabs/actions'
 import { reducerFunctions as WorkflowEditorReducerFunctions } from './WorkflowEditor/actions'
 import { reducerFunctions as ShareReducerFunctions } from './ShareModal/actions'
@@ -261,6 +262,7 @@ export function addModuleAction (moduleIdName, position, parameterValues) {
   return (dispatch, getState, api) => {
     const { tabs, wfModules } = getState()
     const nonce = generateNonce(wfModules, moduleIdName)
+    const slug = generateSlug('step-')
 
     let tabSlug, index
 
@@ -295,10 +297,11 @@ export function addModuleAction (moduleIdName, position, parameterValues) {
       type: ADD_MODULE,
       payload: {
         promise: (
-          api.addModule(tabSlug, moduleIdName, index, parameterValues || {})
+          api.addModule(tabSlug, slug, moduleIdName, index, parameterValues || {})
             .then(response => {
               return {
                 tabSlug,
+                slug,
                 nonce: nonce,
                 data: response
               }
@@ -306,6 +309,7 @@ export function addModuleAction (moduleIdName, position, parameterValues) {
         ),
         data: {
           tabSlug,
+          slug,
           index,
           nonce
         }
