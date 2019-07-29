@@ -1,6 +1,3 @@
-import asyncio
-from concurrent.futures import ThreadPoolExecutor
-import django.db
 from unittest.mock import patch
 from server.models import Delta, ModuleVersion, Workflow
 from server.models.commands import (
@@ -64,6 +61,7 @@ class UndoRedoTests(DbTestCase):
             AddModuleCommand.create(
                 workflow=workflow,
                 tab=tab,
+                slug="step-1",
                 module_id_name="pastecsv",
                 position=0,
                 param_values={},

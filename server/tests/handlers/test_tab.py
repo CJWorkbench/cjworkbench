@@ -54,6 +54,7 @@ class TabTest(HandlerTestCase):
             user=user,
             workflow=workflow,
             tabSlug="tab-1",
+            slug="slug-1",
             position=3,
             moduleIdName="amodule",
             paramValues={"foo": "bar"},
@@ -81,6 +82,7 @@ class TabTest(HandlerTestCase):
             add_module,
             workflow=workflow,
             tabSlug="tab-1",
+            slug="step-1",
             position=3,
             moduleIdName="amodule",
             paramValues={"foo": "bar"},
@@ -105,6 +107,7 @@ class TabTest(HandlerTestCase):
             user=user,
             workflow=workflow,
             tabSlug="tab-1",
+            slug="step-1",
             position=3,
             moduleIdName="amodule",
             paramValues="foobar",
@@ -128,6 +131,7 @@ class TabTest(HandlerTestCase):
             user=user,
             workflow=workflow,
             tabSlug="tab-1",
+            slug="step-1",
             position=3,
             moduleIdName="amodule",
             paramValues={"foo": 3},
@@ -154,6 +158,7 @@ class TabTest(HandlerTestCase):
             user=user,
             workflow=workflow,
             tabSlug="tab-1",
+            slug="step-1",
             position="foo",
             moduleIdName="amodule",
             paramValues={"foo": "bar"},
@@ -181,6 +186,7 @@ class TabTest(HandlerTestCase):
             user=user,
             workflow=workflow,
             tabSlug="tab-2",
+            slug="step-1",
             position=3,
             moduleIdName="amodule",
             paramValues={"foo": "bar"},
@@ -196,6 +202,7 @@ class TabTest(HandlerTestCase):
             user=user,
             workflow=workflow,
             tabSlug="tab-1",
+            slug="step-1",
             position=3,
             moduleIdName="notamodule",
             paramValues={"foo": "bar"},
@@ -208,8 +215,8 @@ class TabTest(HandlerTestCase):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)  # tab-1
         tab = workflow.tabs.first()  # tab-1
-        wfm1 = tab.wf_modules.create(order=0)
-        wfm2 = tab.wf_modules.create(order=1)
+        wfm1 = tab.wf_modules.create(order=0, slug="step-1")
+        wfm2 = tab.wf_modules.create(order=1, slug="step-2")
 
         response = self.run_handler(
             reorder_modules,
@@ -227,8 +234,8 @@ class TabTest(HandlerTestCase):
     def test_reorder_modules_viewer_denied_access(self):
         workflow = Workflow.create_and_init(public=True)
         tab = workflow.tabs.first()  # tab-1
-        wfm1 = tab.wf_modules.create(order=0)
-        wfm2 = tab.wf_modules.create(order=1)
+        wfm1 = tab.wf_modules.create(order=0, slug="step-1")
+        wfm2 = tab.wf_modules.create(order=1, slug="step-2")
 
         response = self.run_handler(
             reorder_modules,
@@ -242,8 +249,8 @@ class TabTest(HandlerTestCase):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
         tab = workflow.tabs.first()  # tab-1
-        wfm1 = tab.wf_modules.create(order=0)
-        wfm2 = tab.wf_modules.create(order=1)
+        wfm1 = tab.wf_modules.create(order=0, slug="step-1")
+        wfm2 = tab.wf_modules.create(order=1, slug="step-2")
 
         response = self.run_handler(
             reorder_modules,

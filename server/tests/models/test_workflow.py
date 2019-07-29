@@ -145,6 +145,7 @@ class WorkflowTests(DbTestCase):
             AddModuleCommand.create(
                 workflow=workflow,
                 tab=tab,
+                slug="step-1",
                 module_id_name="x",
                 position=0,
                 param_values={},

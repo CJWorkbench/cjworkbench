@@ -117,7 +117,7 @@ class AddModuleCommand(ChangesWfModuleOutputs, Delta):
 
     @classmethod
     def amend_create_kwargs(
-        cls, *, workflow, tab, module_id_name, position, param_values, **kwargs
+        cls, *, workflow, tab, slug, module_id_name, position, param_values, **kwargs
     ):
         """
         Add a step to the tab.
@@ -125,6 +125,10 @@ class AddModuleCommand(ChangesWfModuleOutputs, Delta):
         Raise ModuleVersion.DoesNotExist if `module_id_name` is invalid.
         Raise ValueError if `param_values` do not match the module's spec.
         """
+        # ensure slug is unique, or raise ValueError
+        if WfModule.objects.filter(tab__workflow_id=workflow.id, slug=slug).count() > 0:
+            raise ValueError("slug is not unique. Please pass a unique slug.")
+
         # raises ModuleVersion.DoesNotExist
         module_version = ModuleVersion.objects.latest(module_id_name)
 
