@@ -73,4 +73,4 @@ spec:
                   name: rabbitmq-1-rabbitmq-secret
                   key: rabbitmq-pass
             - name: CJW_RABBITMQ_HOST
-              value: "amqp://rabbit:$(_RABBIT_MQPASSWORD)@rabbitmq-1-rabbitmq-svc/"
+              value: "amqp://rabbit:$(_RABBITMQ_PASSWORD)@rabbitmq-1-rabbitmq-svc/"
