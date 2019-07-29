@@ -68,7 +68,7 @@ class InProgressUpload(models.Model):
         "WfModule", related_name="in_progress_uploads", on_delete=models.CASCADE
     )
 
-    updated_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(default=timezone.now, db_index=True)
     """
     The last time the user interacted with this upload.
 
