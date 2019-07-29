@@ -76,16 +76,13 @@ async def create_upload(workflow: Workflow, wf_module: WfModule, **kwargs):
     Prepare a key and credentials for the caller to upload a file.
     """
     retval = await _do_create_upload(workflow, wf_module)
-    # TODO add minio issue number
-    # A race in minio means even after generating upload parameters, they
-    # still might not work on all minio servers. This race only affects
-    # production, where there are multiple minio servers. The workaround
-    # "ought" to be in in_progress_upload.generate_upload_parameters(), but
-    # we place it here so fewer unit tests are affected by it (and so it's
-    # async).
+
+    # Workaround for https://github.com/minio/minio/issues/7991
     #
+    # A race in minio means these credentials might not be valid yet.
     # Workaround: give the minio+etcd machines an extra 2s to synchronize.
     await asyncio.sleep(2)  # DELETEME when minio is fixed
+
     return retval
 
 
