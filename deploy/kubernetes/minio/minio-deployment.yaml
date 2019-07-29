@@ -54,13 +54,11 @@ spec:
           valueFrom:
             secretKeyRef:
               name: minio-root-access-key
-              #name: minio-access-key
               key: access_key
         - name: MINIO_SECRET_KEY
           valueFrom:
             secretKeyRef:
               name: minio-root-access-key
-              #name: minio-access-key
               key: secret_key
         - name: MINIO_ETCD_ENDPOINTS
           value: "https://minio-etcd.$(MY_NAMESPACE).svc.cluster.local:2379"

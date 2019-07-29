@@ -42,6 +42,9 @@ CLUSTER_NAME="workbench"
 # Enable "Application" resources (we use one for RabbitMQ)
 kubectl apply -f "https://raw.githubusercontent.com/GoogleCloudPlatform/marketplace-k8s-app-tools/master/crd/app-crd.yaml"
 
+# Enable SSD storage class
+kubectl apply -f ssd-storageclass.yaml
+
 # 1 Prepare Google Cloud Storage and Minio
 # 1.1 GCS account, so minio can create buckets/objects
 gcloud iam service-accounts create production-minio --display-name production-minio
@@ -73,21 +76,13 @@ gcloud iam service-accounts keys create application_default_credentials.json \
 kubectl -n production create secret generic minio-gcs-credentials \
   --from-file=./application_default_credentials.json
 rm application_default_credentials.json
-# 1.2 minio access key and secret key
-#docker run --name minio-genkey --rm minio/minio server /nodata and after it prints info, Ctrl+C
-kubectl -n production create secret generic minio-access-key \
-  --from-literal=access_key="$MINIO_ACCESS_KEY" \
-  --from-literal=secret_key="$MINIO_SECRET_KEY" \
-  --from-literal=external_url="https://production-user-files.workbenchdata.com" \
-  --from-literal=bucket_prefix=""
 
 # 2. Start database+rabbitmq+minio
 kubectl -n production apply -f dbdata-pvc.yaml
 kubectl -n production apply -f database-service.yaml
 kubectl -n production apply -f database-deployment.yaml
 rabbitmq/init.sh production
-kubectl -n production apply -f minio-service.yaml
-kubectl -n production apply -f minio-deployment.yaml
+minio/init.sh production
 
 # 3. Create secrets! You'll need to be very careful here....
 : ${CJW_SECRET_KEY:?"Must set CJW_SECRET_KEY"}

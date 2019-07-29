@@ -300,36 +300,14 @@ class WfModuleTests(DbTestCase):
 
     def test_delete_inprogress_file_upload(self):
         workflow = Workflow.create_and_init()
-        upload_response = minio.client.create_multipart_upload(
-            Bucket=minio.UserFilesBucket, Key="key"
-        )
-        wf_module = workflow.tabs.first().wf_modules.create(
-            order=0,
-            inprogress_file_upload_key="key",
-            inprogress_file_upload_last_accessed_at=timezone.now(),
-        )
+        wf_module = workflow.tabs.first().wf_modules.create(order=0, module_id_name="x")
+        ipu = wf_module.in_progress_uploads.create()
+        key = ipu.get_upload_key()
+        minio.client.create_multipart_upload(Bucket=ipu.Bucket, Key=key)
         wf_module.delete()
         # Assert the upload is gone
-        with self.assertRaises(minio.error.NoSuchUpload):
-            minio.client.list_parts(
-                Bucket=minio.UserFilesBucket,
-                Key="key",
-                UploadId=upload_response["UploadId"],
-            )
-
-    def test_delete_ignore_inprogress_file_upload_not_on_s3(self):
-        workflow = Workflow.create_and_init()
-        wf_module = workflow.tabs.first().wf_modules.create(
-            order=0,
-            inprogress_file_upload_key="key",
-            inprogress_file_upload_last_accessed_at=timezone.now(),
-        )
-        # "Delete" multipart upload from S3 (just don't add, really), then delete WfModule.
-        #
-        # This mimics a behavior we want: upload timeouts. We can set up a
-        # S3-side policy to delete old uploaded data; we need to expect that
-        # data might be deleted when we delete the WfModule.
-        wf_module.delete()  # do not crash
+        response = minio.client.list_multipart_uploads(Bucket=ipu.Bucket, Prefix=key)
+        self.assertNotIn("Uploads", response)
 
     def test_delete_remove_uploaded_data_by_prefix_in_case_model_missing(self):
         workflow = Workflow.create_and_init()

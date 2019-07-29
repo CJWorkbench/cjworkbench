@@ -21,21 +21,6 @@ class WfModule(models.Model):
         constraints = [
             models.CheckConstraint(
                 check=(
-                    (
-                        # No in-progress upload
-                        Q(inprogress_file_upload_key__isnull=True)
-                        & Q(inprogress_file_upload_last_accessed_at__isnull=True)
-                    )
-                    | (
-                        # In-progress upload
-                        Q(inprogress_file_upload_key__isnull=False)
-                        & Q(inprogress_file_upload_last_accessed_at__isnull=False)
-                    )
-                ),
-                name="inprogress_file_upload_check",
-            ),
-            models.CheckConstraint(
-                check=(
                     # No way to negate F expressions. Wow.
                     # https://code.djangoproject.com/ticket/16211
                     #
@@ -44,19 +29,14 @@ class WfModule(models.Model):
                     | (Q(next_update__isnull=False) & Q(auto_update_data=True))
                 ),
                 name="auto_update_consistency_check",
-            ),
+            )
         ]
         indexes = [
-            models.Index(
-                fields=["inprogress_file_upload_last_accessed_at"],
-                name="inprogress_file_upload_filter",
-                condition=Q(inprogress_file_upload_last_accessed_at__isnull=False),
-            ),
             models.Index(
                 fields=["next_update"],
                 name="pending_update_queue",
                 condition=Q(next_update__isnull=False, is_deleted=False),
-            ),
+            )
         ]
 
     slug = models.SlugField(db_index=True, null=True)  # TODO nix null=True
@@ -297,35 +277,6 @@ class WfModule(models.Model):
             # Either self.stored_data_version is None or it has been deleted.
             return None
 
-    def abort_inprogress_upload(self):
-        """
-        Delete data from S3 marked as in-progress uploads by  `wf_module`.
-
-        * Delete incomplete multi-part upload
-        * Delete completed upload, multipart or otherwise
-        * Set `.inprogress_file_upload_*` to `None` (and save those fields)
-        * Never raise `NoSuchUpload` or `FileNotFoundError`.
-        """
-        # If we're uploading a multipart file, delete all parts
-        if self.inprogress_file_upload_key:
-            minio.abort_multipart_uploads_by_prefix(
-                minio.UserFilesBucket, self.inprogress_file_upload_key
-            )
-            # If we _nearly_ completed a multipart upload, or if we wrote data via
-            # regular upload but didn't mark it completed, delete the file
-            try:
-                minio.remove(minio.UserFilesBucket, self.inprogress_file_upload_key)
-            except FileNotFoundError:
-                pass
-        self.inprogress_file_upload_key = None
-        self.inprogress_file_upload_last_accessed_at = None
-        self.save(
-            update_fields=[
-                "inprogress_file_upload_key",
-                "inprogress_file_upload_last_accessed_at",
-            ]
-        )
-
     def get_fetch_result(self) -> Optional[ProcessResult]:
         """Load the result of a Fetch, if there was one."""
         table = self.retrieve_fetched_table()
@@ -550,13 +501,8 @@ class WfModule(models.Model):
         CachedRenderResult.clear_wf_module(self)
 
     def delete(self, *args, **kwargs):
-        if self.inprogress_file_upload_key:
-            try:
-                minio.abort_multipart_uploads_by_prefix(
-                    minio.UserFilesBucket, self.inprogress_file_upload_key
-                )
-            except minio.error.NoSuchUpload:
-                pass
+        for in_progress_upload in self.in_progress_uploads.all():
+            in_progress_upload.delete_s3_data()
         minio.remove_recursive(minio.UserFilesBucket, self.uploaded_file_prefix)
         CachedRenderResult.clear_wf_module(self)
         super().delete(*args, **kwargs)

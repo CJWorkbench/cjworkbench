@@ -113,7 +113,8 @@ spec:
     - metadata:
         name: data
       spec:
+        storageClassName: ssd
         accessModes: [ "ReadWriteOnce" ]
         resources:
           requests:
-            storage: 1Gi
+            storage: 10Gi  # 300 IOPS

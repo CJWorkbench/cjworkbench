@@ -5,7 +5,6 @@ import unittest
 from unittest.mock import patch
 from botocore.response import StreamingBody
 from django.conf import settings
-import urllib3
 from urllib3.exceptions import ProtocolError
 from server import minio
 

@@ -50,9 +50,6 @@ def _send_request(self, method, url, body, headers, *args, **kwargs):
 botocore.awsrequest.AWSConnection._send_request = _send_request
 
 
-StsDurationSeconds = 3600 * 5  # any upload must take max 5hrs
-
-
 logger = logging.getLogger(__name__)
 
 
@@ -171,7 +168,7 @@ def exists(bucket: str, key: str) -> bool:
         raise
 
 
-def assume_role_to_write(bucket: str, key: str) -> str:
+def assume_role_to_write(bucket: str, key: str, duration_seconds: int = 18000) -> str:
     """
     Build temporary S3 credentials to let an external client write bucket/key.
 
@@ -180,7 +177,7 @@ def assume_role_to_write(bucket: str, key: str) -> str:
     response = sts_client.assume_role(
         RoleArn="minio-notused-notused",
         RoleSessionName="minio-notused-notused",
-        DurationSeconds=StsDurationSeconds,
+        DurationSeconds=duration_seconds,
         Policy=json.dumps(
             {
                 "Version": "2012-10-17",
@@ -260,18 +257,18 @@ def copy(bucket: str, key: str, copy_source: str, **kwargs) -> None:
     client.copy_object(Bucket=bucket, Key=key, CopySource=copy_source, **kwargs)
 
 
-def remove_recursive(bucket: str, prefix: str, force=False) -> None:
+def remove_by_prefix(bucket: str, prefix: str, force=False) -> None:
     """
     Remove all objects in `bucket` whose keys begin with `prefix`.
+
+    If you mean to use a directory-style `prefix` -- that is, one that ends in
+    `"/"` -- then use `remove_recursive()` to signal your intent.
 
     If you really mean to use `prefix=''` -- which will wipe the entire bucket,
     up to 1,000 keys -- pass `force=True`. Otherwise, there is a safeguard
     against `prefix=''` specifically.
     """
-    if not prefix.endswith("/"):
-        raise ValueError("`prefix` must end with `/`")
-
-    if prefix == "/" and not force:
+    if prefix in ("/", "") and not force:
         raise ValueError("Refusing to remove prefix=/ when force=False")
 
     # recursive list_objects_v2
@@ -285,6 +282,22 @@ def remove_recursive(bucket: str, prefix: str, force=False) -> None:
     if "Errors" in delete_response:
         for err in delete_response["Errors"]:
             raise Exception("Error %{Code}s removing %{Key}s: %{Message}" % err)
+
+
+def remove_recursive(bucket: str, prefix: str, force=False) -> None:
+    """
+    Remove all objects in `bucket` whose keys begin with `prefix`.
+
+    `prefix` must appear to be a directory -- that is, it must end with a slash.
+
+    If you really mean to use `prefix='/'` -- which will wipe the entire bucket,
+    up to 1,000 keys -- pass `force=True`. Otherwise, there is a safeguard
+    against `prefix=''` specifically.
+    """
+    if not prefix.endswith("/"):
+        raise ValueError("`prefix` must end with `/`")
+
+    return remove_by_prefix(bucket, prefix, force)
 
 
 def get_object_with_data(bucket: str, key: str, **kwargs) -> Dict[str, Any]:
