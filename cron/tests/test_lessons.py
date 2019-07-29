@@ -19,6 +19,7 @@ class DisableStaleAutoUpdateTests(DbTestCase):
         tab = workflow.tabs.first()
         wf_module = tab.wf_modules.create(
             order=0,
+            slug="step-1",
             module_id_name="fetcher",
             auto_update_data=True,
             next_update=timezone.now(),
@@ -36,7 +37,11 @@ class DisableStaleAutoUpdateTests(DbTestCase):
         )
         tab = workflow.tabs.first()
         wf_module = tab.wf_modules.create(
-            order=0, module_id_name="fetcher", auto_update_data=False, next_update=None
+            order=0,
+            slug="step-1",
+            module_id_name="fetcher",
+            auto_update_data=False,
+            next_update=None,
         )
         with self.assertLogs(lessons.__name__, logging.INFO):
             self.run_with_async_db(lessons.disable_stale_auto_update())
@@ -52,6 +57,7 @@ class DisableStaleAutoUpdateTests(DbTestCase):
         tab = workflow.tabs.first()
         wf_module = tab.wf_modules.create(
             order=0,
+            slug="step-1",
             module_id_name="fetcher",
             auto_update_data=True,
             next_update=timezone.now(),
@@ -71,6 +77,7 @@ class DisableStaleAutoUpdateTests(DbTestCase):
         tab = workflow.tabs.create(position=1, slug="tab-deleted", is_deleted=True)
         wf_module = tab.wf_modules.create(
             order=0,
+            slug="step-1",
             module_id_name="fetcher",
             auto_update_data=True,
             next_update=timezone.now(),
@@ -89,6 +96,7 @@ class DisableStaleAutoUpdateTests(DbTestCase):
         tab = workflow.tabs.first()
         wf_module = tab.wf_modules.create(
             order=0,
+            slug="step-1",
             module_id_name="fetcher",
             auto_update_data=True,
             next_update=timezone.now(),
@@ -107,6 +115,7 @@ class DisableStaleAutoUpdateTests(DbTestCase):
         tab = workflow.tabs.first()
         wf_module = tab.wf_modules.create(
             order=0,
+            slug="step-1",
             module_id_name="fetcher",
             auto_update_data=True,
             next_update=timezone.now(),

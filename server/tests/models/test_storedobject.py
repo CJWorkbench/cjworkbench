@@ -1,8 +1,5 @@
 from datetime import datetime
-import io
-import json
 from pathlib import Path
-from django.conf import settings
 from django.db import transaction
 import numpy as np
 import pandas as pd
@@ -16,9 +13,8 @@ class StoredObjectTests(DbTestCase):
     def setUp(self):
         super().setUp()
 
-        self.workflow = Workflow.objects.create()
-        tab = self.workflow.tabs.create(position=0)
-        self.wfm1 = tab.wf_modules.create(order=0)
+        self.workflow = Workflow.create_and_init()
+        self.wfm1 = self.workflow.tabs.first().wf_modules.create(order=0, slug="step-1")
 
     def file_contents(self, file_obj):
         file_obj.open(mode="rb")
@@ -109,7 +105,7 @@ class StoredObjectTests(DbTestCase):
     def test_duplicate_table(self):
         table = pd.DataFrame({"A": [1]})
 
-        self.wfm2 = self.wfm1.tab.wf_modules.create(order=1)
+        self.wfm2 = self.wfm1.tab.wf_modules.create(order=1, slug="step-2")
         so1 = StoredObject.create_table(self.wfm1, table)
         so2 = so1.duplicate(self.wfm2)
 
@@ -140,9 +136,8 @@ class StoredObjectTests(DbTestCase):
 
     def test_delete_workflow_deletes_from_s3(self):
         minio.put_bytes(minio.StoredObjectsBucket, "test.dat", b"abcd")
-        workflow = Workflow.objects.create()
-        tab = workflow.tabs.create(position=0)
-        wf_module = tab.wf_modules.create(order=0)
+        workflow = Workflow.create_and_init()
+        wf_module = workflow.tabs.first().wf_modules.create(order=0, slug="step-1")
         wf_module.stored_objects.create(
             size=4, bucket=minio.StoredObjectsBucket, key="test.dat", hash="123"
         )
@@ -151,9 +146,9 @@ class StoredObjectTests(DbTestCase):
 
     def test_delete_tab_deletes_from_s3(self):
         minio.put_bytes(minio.StoredObjectsBucket, "test.dat", b"abcd")
-        workflow = Workflow.objects.create()
-        tab = workflow.tabs.create(position=0)
-        wf_module = tab.wf_modules.create(order=0)
+        workflow = Workflow.create_and_init()
+        tab = workflow.tabs.create(position=1)
+        wf_module = tab.wf_modules.create(order=0, slug="step-1")
         wf_module.stored_objects.create(
             size=4, bucket=minio.StoredObjectsBucket, key="test.dat", hash="123"
         )
@@ -162,9 +157,8 @@ class StoredObjectTests(DbTestCase):
 
     def test_delete_wf_module_deletes_from_s3(self):
         minio.put_bytes(minio.StoredObjectsBucket, "test.dat", b"abcd")
-        workflow = Workflow.objects.create()
-        tab = workflow.tabs.create(position=0)
-        wf_module = tab.wf_modules.create(order=0)
+        workflow = Workflow.create_and_init()
+        wf_module = workflow.tabs.first().wf_modules.create(order=0, slug="step-1")
         wf_module.stored_objects.create(
             size=4, bucket=minio.StoredObjectsBucket, key="test.dat", hash="123"
         )
@@ -173,9 +167,8 @@ class StoredObjectTests(DbTestCase):
 
     def test_delete_deletes_from_s3(self):
         minio.put_bytes(minio.StoredObjectsBucket, "test.dat", b"abcd")
-        workflow = Workflow.objects.create()
-        tab = workflow.tabs.create(position=0)
-        wf_module = tab.wf_modules.create(order=0)
+        workflow = Workflow.create_and_init()
+        wf_module = workflow.tabs.first().wf_modules.create(order=0, slug="step-1")
         so = wf_module.stored_objects.create(
             size=4, bucket=minio.StoredObjectsBucket, key="test.dat", hash="123"
         )
@@ -186,9 +179,8 @@ class StoredObjectTests(DbTestCase):
         """
         First delete fails after S3 remove_object? Recover.
         """
-        workflow = Workflow.objects.create()
-        tab = workflow.tabs.create(position=0)
-        wf_module = tab.wf_modules.create(order=0)
+        workflow = Workflow.create_and_init()
+        wf_module = workflow.tabs.first().wf_modules.create(order=0, slug="step-1")
         so = wf_module.stored_objects.create(
             size=4, bucket=minio.StoredObjectsBucket, key="missing-key", hash="123"
         )

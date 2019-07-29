@@ -18,7 +18,7 @@ class SaveTests(DbTestCase):
     def test_store_if_changed(self):
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
-        wf_module = tab.wf_modules.create(order=0)
+        wf_module = tab.wf_modules.create(order=0, slug="step-1")
 
         table = mock_csv_table.copy()
         self.run_with_async_db(
@@ -43,7 +43,7 @@ class SaveTests(DbTestCase):
     def test_storage_limits(self):
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
-        wf_module = tab.wf_modules.create(order=0)
+        wf_module = tab.wf_modules.create(order=0, slug="step-1")
 
         table = mock_csv_table
         stored_objects = wf_module.stored_objects  # not queried yet
@@ -70,7 +70,7 @@ class SaveTests(DbTestCase):
 
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
-        wf_module = tab.wf_modules.create(order=0)
+        wf_module = tab.wf_modules.create(order=0, slug="step-1")
 
         workflow.delete()
 
@@ -83,7 +83,7 @@ class SaveTests(DbTestCase):
 
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
-        wf_module = tab.wf_modules.create(order=0, is_deleted=True)
+        wf_module = tab.wf_modules.create(order=0, slug="step-1", is_deleted=True)
 
         # Don't crash
         self.run_with_async_db(save_result_if_changed(workflow.id, wf_module, result))
@@ -94,7 +94,7 @@ class SaveTests(DbTestCase):
 
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
-        wf_module = tab.wf_modules.create(order=0)
+        wf_module = tab.wf_modules.create(order=0, slug="step-1")
 
         wf_module.delete()
 

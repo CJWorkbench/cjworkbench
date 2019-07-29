@@ -219,6 +219,7 @@ class WorkflowViewTests(LoggedInTestCase):
     def test_workflow_view_triggers_render_if_stale_cache(self):
         self.tab1.wf_modules.create(
             order=0,
+            slug="step-1",
             last_relevant_delta_id=self.delta.id,
             cached_render_result_delta_id=-1,  # stale
         )
@@ -229,6 +230,7 @@ class WorkflowViewTests(LoggedInTestCase):
     def test_workflow_view_triggers_render_if_no_cache(self):
         self.tab1.wf_modules.create(
             order=0,
+            slug="step-1",
             last_relevant_delta_id=self.delta.id,
             cached_render_result_delta_id=None,
         )

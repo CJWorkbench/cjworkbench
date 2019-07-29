@@ -327,6 +327,7 @@ class ChannelTests(DbTestCase):
         # Make it so the workflow needs a render
         self.workflow.tabs.first().wf_modules.create(
             order=0,
+            slug="step-1",
             module_id_name="whatever",
             last_relevant_delta_id=self.workflow.last_delta_id,
             cached_render_result_delta_id=None,

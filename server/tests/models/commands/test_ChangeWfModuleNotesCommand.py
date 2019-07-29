@@ -14,7 +14,10 @@ class ChangeWfModuleNotesCommandTests(DbTestCase):
     def test_change_notes(self):
         workflow = Workflow.create_and_init()
         wf_module = workflow.tabs.first().wf_modules.create(
-            order=0, notes="text1", last_relevant_delta_id=workflow.last_delta_id
+            order=0,
+            slug="step-1",
+            notes="text1",
+            last_relevant_delta_id=workflow.last_delta_id,
         )
 
         # do

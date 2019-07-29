@@ -18,11 +18,13 @@ tabs:
 - name: Lesson
   wfModules:
   - module: loadurl
+    slug: step-loadurl
     params:
       url: './NYC-incidents-2018-wide.csv'
     collapsed: true
     note: "Source: City of New York"
   - module: convert-date
+    slug: step-convert-date
     params:
       colnames: [ "Complaint date" ]
     collapsed: true

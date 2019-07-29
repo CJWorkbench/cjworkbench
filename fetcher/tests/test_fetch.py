@@ -48,6 +48,7 @@ class FetchTests(DbTestCase):
         workflow = Workflow.create_and_init()
         wf_module = workflow.tabs.first().wf_modules.create(
             order=0,
+            slug="step-1",
             auto_update_data=True,
             next_update=parser.parse("Aug 28 1999 2:24PM UTC"),
             update_interval=600,
@@ -71,7 +72,7 @@ class FetchTests(DbTestCase):
 
         workflow = Workflow.create_and_init()
         wf_module = workflow.tabs.first().wf_modules.create(
-            order=0, module_id_name="deleted_module"
+            order=0, slug="step-1", module_id_name="deleted_module"
         )
 
         now = parser.parse("Aug 28 1999 2:24:02PM UTC")
@@ -91,6 +92,7 @@ class FetchTests(DbTestCase):
         tab = workflow.tabs.create(position=0)
         wf_module = tab.wf_modules.create(
             order=0,
+            slug="step-1",
             auto_update_data=True,
             next_update=parser.parse("Aug 28 1999 2:24PM UTC"),
             update_interval=600,
@@ -118,6 +120,7 @@ class FetchTests(DbTestCase):
         workflow = Workflow.create_and_init()
         wf_module = workflow.tabs.first().wf_modules.create(
             order=0,
+            slug="step-1",
             auto_update_data=True,
             next_update=parser.parse("Aug 28 1999 2:24PM UTC"),
             update_interval=600,
@@ -163,6 +166,7 @@ class FetchTests(DbTestCase):
         workflow = Workflow.create_and_init()
         wf_module = workflow.tabs.first().wf_modules.create(
             order=0,
+            slug="step-1",
             auto_update_data=True,
             next_update=parser.parse("Aug 28 1999 2:24PM UTC"),
             update_interval=600,
@@ -213,6 +217,7 @@ class FetchTests(DbTestCase):
         tab = workflow.tabs.create(position=0)
         wf_module = tab.wf_modules.create(
             order=0,
+            slug="step-1",
             auto_update_data=True,
             next_update=parser.parse("Aug 28 1999 2:24PM UTC"),
             update_interval=600,
@@ -282,7 +287,7 @@ class FetchTests(DbTestCase):
     def test_fetch_get_params(self):
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
-        wf_module = tab.wf_modules.create(order=0, params={"foo": "bar"})
+        wf_module = tab.wf_modules.create(order=0, slug="step-1", params={"foo": "bar"})
 
         async def fetch(params, **kwargs):
             self.assertEqual(params, {"foo": "bar"})
@@ -299,7 +304,7 @@ class FetchTests(DbTestCase):
         workflow = Workflow.objects.create(owner=owner)
         tab = workflow.tabs.create(position=0)
         wf_module = tab.wf_modules.create(
-            order=0, secrets={"X": {"name": "name", "secret": "secret"}}
+            order=0, slug="step-1", secrets={"X": {"name": "name", "secret": "secret"}}
         )
 
         async def fetch(params, *, secrets, **kwargs):
@@ -313,10 +318,12 @@ class FetchTests(DbTestCase):
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
         delta = InitWorkflowCommand.create(workflow)
-        wfm1 = tab.wf_modules.create(order=0, last_relevant_delta_id=delta.id)
+        wfm1 = tab.wf_modules.create(
+            order=0, slug="step-1", last_relevant_delta_id=delta.id
+        )
         wfm1.cache_render_result(delta.id, ProcessResult(table))
         wfm1.save()
-        wfm2 = tab.wf_modules.create(order=1)
+        wfm2 = tab.wf_modules.create(order=1, slug="step-2")
 
         async def fetch(params, *, get_input_dataframe, **kwargs):
             assert_frame_equal(await get_input_dataframe(), table)
@@ -330,12 +337,16 @@ class FetchTests(DbTestCase):
         workflow = Workflow.create_and_init()
         delta_id = workflow.last_delta_id
         tab = workflow.tabs.first()
-        wfm1 = tab.wf_modules.create(order=0, last_relevant_delta_id=delta_id)
+        wfm1 = tab.wf_modules.create(
+            order=0, slug="step-1", last_relevant_delta_id=delta_id
+        )
         wfm1.cache_render_result(delta_id, ProcessResult(table))
-        wfm2 = tab.wf_modules.create(order=1)
+        wfm2 = tab.wf_modules.create(order=1, slug="step-2")
 
         tab2 = workflow.tabs.create(position=1)
-        wfm3 = tab2.wf_modules.create(order=0, last_relevant_delta_id=delta_id)
+        wfm3 = tab2.wf_modules.create(
+            order=0, slug="step-3", last_relevant_delta_id=delta_id
+        )
         wfm3.cache_render_result(delta_id, ProcessResult(wrong_table))
 
         async def fetch(params, *, get_input_dataframe, **kwargs):
@@ -347,8 +358,8 @@ class FetchTests(DbTestCase):
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
         delta = InitWorkflowCommand.create(workflow)
-        tab.wf_modules.create(order=0, last_relevant_delta_id=delta.id)
-        wfm2 = tab.wf_modules.create(order=1)
+        tab.wf_modules.create(order=0, slug="step-1", last_relevant_delta_id=delta.id)
+        wfm2 = tab.wf_modules.create(order=1, slug="step-2")
 
         async def fetch(params, *, get_input_dataframe, **kwargs):
             self.assertIsNone(await get_input_dataframe())
@@ -361,7 +372,9 @@ class FetchTests(DbTestCase):
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
         delta1 = InitWorkflowCommand.create(workflow)
-        wfm1 = tab.wf_modules.create(order=0, last_relevant_delta_id=delta1.id)
+        wfm1 = tab.wf_modules.create(
+            order=0, slug="step-1", last_relevant_delta_id=delta1.id
+        )
         wfm1.cache_render_result(delta1.id, ProcessResult(table))
 
         # Now make wfm1's output stale
@@ -369,7 +382,7 @@ class FetchTests(DbTestCase):
         wfm1.last_relevant_delta_id = delta2.id
         wfm1.save(update_fields=["last_relevant_delta_id"])
 
-        wfm2 = tab.wf_modules.create(order=1)
+        wfm2 = tab.wf_modules.create(order=1, slug="step-2")
 
         async def fetch(params, *, get_input_dataframe, **kwargs):
             self.assertIsNone(await get_input_dataframe())
@@ -382,10 +395,12 @@ class FetchTests(DbTestCase):
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
         delta = InitWorkflowCommand.create(workflow)
-        wfm1 = tab.wf_modules.create(order=0, last_relevant_delta_id=delta.id)
+        wfm1 = tab.wf_modules.create(
+            order=0, slug="step-1", last_relevant_delta_id=delta.id
+        )
         wfm1.cache_render_result(delta.id, ProcessResult(table))
         wfm1.save()
-        wfm2 = tab.wf_modules.create(order=1)
+        wfm2 = tab.wf_modules.create(order=1, slug="step-2")
 
         # Delete from the database. They're still in memory. This deletion can
         # happen on production: we aren't locking the workflow during fetch
@@ -403,10 +418,12 @@ class FetchTests(DbTestCase):
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
         delta = InitWorkflowCommand.create(workflow)
-        wfm1 = tab.wf_modules.create(order=0, last_relevant_delta_id=delta.id)
+        wfm1 = tab.wf_modules.create(
+            order=0, slug="step-1", last_relevant_delta_id=delta.id
+        )
         wfm1.cache_render_result(delta.id, ProcessResult(table))
         wfm1.save()
-        wfm2 = tab.wf_modules.create(order=1)
+        wfm2 = tab.wf_modules.create(order=1, slug="step-2")
 
         # Delete from the database. They're still in memory. This deletion can
         # happen on production: we aren't locking the workflow during fetch
@@ -423,7 +440,7 @@ class FetchTests(DbTestCase):
 
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
-        wf_module = tab.wf_modules.create(order=0)
+        wf_module = tab.wf_modules.create(order=0, slug="step-1")
         wf_module.stored_data_version = wf_module.store_fetched_table(table)
         wf_module.save()
 
@@ -435,7 +452,7 @@ class FetchTests(DbTestCase):
     def test_fetch_get_stored_dataframe_no_stored_data_frame(self):
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
-        wf_module = tab.wf_modules.create(order=0)
+        wf_module = tab.wf_modules.create(order=0, slug="step-1")
 
         async def fetch(params, *, get_stored_dataframe, **kwargs):
             self.assertIsNone(await get_stored_dataframe())
@@ -447,7 +464,7 @@ class FetchTests(DbTestCase):
 
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
-        wf_module = tab.wf_modules.create(order=0)
+        wf_module = tab.wf_modules.create(order=0, slug="step-1")
         wf_module.stored_data_version = wf_module.store_fetched_table(table)
         wf_module.save()
 
@@ -465,7 +482,7 @@ class FetchTests(DbTestCase):
     def test_fetch_workflow_id(self):
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
-        wf_module = tab.wf_modules.create(order=0)
+        wf_module = tab.wf_modules.create(order=0, slug="step-1")
 
         async def fetch(params, *, workflow_id, **kwargs):
             self.assertEqual(workflow_id, workflow.id)

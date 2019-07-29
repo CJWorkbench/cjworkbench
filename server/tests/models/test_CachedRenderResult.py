@@ -14,7 +14,7 @@ class CachedRenderResultTests(DbTestCase):
         self.delta = InitWorkflowCommand.create(self.workflow)
         self.tab = self.workflow.tabs.create(position=0)
         self.wf_module = self.tab.wf_modules.create(
-            order=0, last_relevant_delta_id=self.delta.id
+            order=0, slug="step-1", last_relevant_delta_id=self.delta.id
         )
 
     def test_none(self):

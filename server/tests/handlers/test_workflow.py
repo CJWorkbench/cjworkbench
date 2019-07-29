@@ -54,9 +54,9 @@ class WorkflowTest(HandlerTestCase):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
         tab2 = workflow.tabs.create(position=1)
-        tab2.wf_modules.create(order=0)
-        tab2.wf_modules.create(order=1)
-        wf_module = tab2.wf_modules.create(order=2)
+        tab2.wf_modules.create(order=0, slug="step-1")
+        tab2.wf_modules.create(order=1, slug="step-2")
+        wf_module = tab2.wf_modules.create(order=2, slug="step-3")
 
         response = self.run_handler(
             set_position, user=user, workflow=workflow, wfModuleId=wf_module.id
@@ -70,7 +70,7 @@ class WorkflowTest(HandlerTestCase):
 
     def test_set_position_viewer_access_denied(self):
         workflow = Workflow.create_and_init(public=True)
-        wf_module = workflow.tabs.first().wf_modules.create(order=0)
+        wf_module = workflow.tabs.first().wf_modules.create(order=0, slug="step-1")
 
         response = self.run_handler(
             set_position, workflow=workflow, wfModuleId=wf_module.id
@@ -84,8 +84,10 @@ class WorkflowTest(HandlerTestCase):
 
         workflow2 = Workflow.create_and_init(owner=user)
         tab2 = workflow2.tabs.first()
-        tab2.wf_modules.create(order=0)  # dummy first module (selected)
-        wf_module = tab2.wf_modules.create(order=1)  # module we'll "select"
+        tab2.wf_modules.create(order=0, slug="step-1")  # dummy first module (selected)
+        wf_module = tab2.wf_modules.create(
+            order=1, slug="step-2"
+        )  # module we'll "select"
         tab2.selected_wf_module_position = 0
         tab2.save(update_fields=["selected_wf_module_position"])
 

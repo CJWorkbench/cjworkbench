@@ -54,8 +54,12 @@ class WfModuleTests(LoggedInTestCase):
 
         self.workflow = Workflow.objects.create(name="test", owner=self.user)
         self.tab = self.workflow.tabs.create(position=0)
-        self.wf_module1 = self.tab.wf_modules.create(order=0, last_relevant_delta_id=1)
-        self.wf_module2 = self.tab.wf_modules.create(order=1, last_relevant_delta_id=2)
+        self.wf_module1 = self.tab.wf_modules.create(
+            order=0, slug="step-1", last_relevant_delta_id=1
+        )
+        self.wf_module2 = self.tab.wf_modules.create(
+            order=1, slug="step-2", last_relevant_delta_id=2
+        )
 
         self.log_patcher = patch("server.utils.log_user_event_from_request")
         self.log_patch = self.log_patcher.start()

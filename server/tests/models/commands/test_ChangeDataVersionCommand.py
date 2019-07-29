@@ -21,7 +21,7 @@ class ChangeDataVersionCommandTests(DbTestCase):
 
         self.workflow = Workflow.create_and_init()
         self.wf_module = self.workflow.tabs.first().wf_modules.create(
-            order=0, last_relevant_delta_id=self.workflow.last_delta_id
+            order=0, slug="step-1", last_relevant_delta_id=self.workflow.last_delta_id
         )
 
     @patch("server.websockets.queue_render_if_listening", async_noop)

@@ -43,7 +43,9 @@ class WorkflowTests(DbTestCase):
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
         delta1 = InitWorkflowCommand.create(workflow)
-        wf_module = tab.wf_modules.create(order=0, last_relevant_delta_id=delta1.id)
+        wf_module = tab.wf_modules.create(
+            order=0, slug="step-1", last_relevant_delta_id=delta1.id
+        )
 
         result1 = ProcessResult(pd.DataFrame({"A": [1]}))
         wf_module.cache_render_result(delta1.id, result1)
@@ -67,8 +69,8 @@ class WorkflowTests(DbTestCase):
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
         delta = InitWorkflowCommand.create(workflow)
-        tab.wf_modules.create(order=0, last_relevant_delta_id=delta.id)
-        tab.wf_modules.create(order=1, last_relevant_delta_id=delta.id)
+        tab.wf_modules.create(order=0, slug="step-1", last_relevant_delta_id=delta.id)
+        tab.wf_modules.create(order=1, slug="step-2", last_relevant_delta_id=delta.id)
 
         def load_module_and_delete(module_version):
             workflow.delete()
@@ -90,9 +92,15 @@ class WorkflowTests(DbTestCase):
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
         delta = InitWorkflowCommand.create(workflow)
-        wf_module1 = tab.wf_modules.create(order=0, last_relevant_delta_id=delta.id)
-        wf_module2 = tab.wf_modules.create(order=1, last_relevant_delta_id=delta.id)
-        wf_module3 = tab.wf_modules.create(order=2, last_relevant_delta_id=delta.id)
+        wf_module1 = tab.wf_modules.create(
+            order=0, slug="step-1", last_relevant_delta_id=delta.id
+        )
+        wf_module2 = tab.wf_modules.create(
+            order=1, slug="step-2", last_relevant_delta_id=delta.id
+        )
+        wf_module3 = tab.wf_modules.create(
+            order=2, slug="step-3", last_relevant_delta_id=delta.id
+        )
 
         fake_module = Mock(LoadedModule)
         fake_load_module.return_value = fake_module
@@ -136,10 +144,14 @@ class WorkflowTests(DbTestCase):
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
         delta = InitWorkflowCommand.create(workflow)
-        wf_module1 = tab.wf_modules.create(order=0, last_relevant_delta_id=delta.id)
+        wf_module1 = tab.wf_modules.create(
+            order=0, slug="step-1", last_relevant_delta_id=delta.id
+        )
         result1 = ProcessResult(pd.DataFrame({"A": [1]}))
         wf_module1.cache_render_result(delta.id, result1)
-        wf_module2 = tab.wf_modules.create(order=1, last_relevant_delta_id=delta.id)
+        wf_module2 = tab.wf_modules.create(
+            order=1, slug="step-2", last_relevant_delta_id=delta.id
+        )
         result2 = ProcessResult(pd.DataFrame({"B": [2]}))
         wf_module2.cache_render_result(delta.id, result2)
 
@@ -153,12 +165,16 @@ class WorkflowTests(DbTestCase):
         delta_id = workflow.last_delta_id
 
         # wf_module1: has a valid, cached result
-        wf_module1 = tab.wf_modules.create(order=0, last_relevant_delta_id=delta_id)
+        wf_module1 = tab.wf_modules.create(
+            order=0, slug="step-1", last_relevant_delta_id=delta_id
+        )
         result1 = ProcessResult(pd.DataFrame({"A": [1]}))
         wf_module1.cache_render_result(delta_id, result1)
 
         # wf_module2: has no cached result (must be rendered)
-        wf_module2 = tab.wf_modules.create(order=1, last_relevant_delta_id=delta_id)
+        wf_module2 = tab.wf_modules.create(
+            order=1, slug="step-2", last_relevant_delta_id=delta_id
+        )
 
         fake_loaded_module = Mock(LoadedModule)
         fake_load_module.return_value = fake_loaded_module
@@ -180,7 +196,7 @@ class WorkflowTests(DbTestCase):
         tab = workflow.tabs.create(position=0)
         delta1 = InitWorkflowCommand.create(workflow)
         wf_module = tab.wf_modules.create(
-            order=0, last_relevant_delta_id=delta1.id, notifications=True
+            order=0, slug="step-1", last_relevant_delta_id=delta1.id, notifications=True
         )
         wf_module.cache_render_result(
             delta1.id, ProcessResult(pd.DataFrame({"A": [1]}))
@@ -209,7 +225,7 @@ class WorkflowTests(DbTestCase):
         tab = workflow.tabs.create(position=0)
         delta1 = InitWorkflowCommand.create(workflow)
         wf_module = tab.wf_modules.create(
-            order=0, last_relevant_delta_id=delta1.id, notifications=True
+            order=0, slug="step-1", last_relevant_delta_id=delta1.id, notifications=True
         )
         wf_module.cache_render_result(
             delta1.id, ProcessResult(pd.DataFrame({"A": [1]}))

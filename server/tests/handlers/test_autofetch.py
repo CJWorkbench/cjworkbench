@@ -15,7 +15,7 @@ class AutoupdateTest(DbTestCase):
 
     def test_list_autofetches_empty(self):
         user = User.objects.create(username="a", email="a@example.org")
-        workflow = Workflow.create_and_init(owner=user)
+        Workflow.create_and_init(owner=user)
         result = list_autofetches_json({"user": user, "session": None})
         self.assertEqual(
             result, {"maxFetchesPerDay": 500, "nFetchesPerDay": 0, "autofetches": []}
@@ -25,7 +25,7 @@ class AutoupdateTest(DbTestCase):
         user = User.objects.create(username="a", email="a@example.org")
         user.user_profile.max_fetches_per_day = 6000
         user.user_profile.save(update_fields=["max_fetches_per_day"])
-        workflow = Workflow.create_and_init(owner=user)
+        Workflow.create_and_init(owner=user)
         result = list_autofetches_json({"user": user, "session": None})
         self.assertEqual(
             result, {"maxFetchesPerDay": 6000, "nFetchesPerDay": 0, "autofetches": []}
@@ -35,7 +35,7 @@ class AutoupdateTest(DbTestCase):
         # There's no good reason for UserProfile to be separate from User. But
         # it is. So here we are -- sometimes it doesn't exist.
         user = User.objects.create(username="a", email="a@example.org")
-        workflow = Workflow.create_and_init(owner=user)
+        Workflow.create_and_init(owner=user)
         user.user_profile.delete()
         user.refresh_from_db()
         result = list_autofetches_json({"user": user, "session": None})
@@ -50,6 +50,7 @@ class AutoupdateTest(DbTestCase):
         )
         step1 = workflow.tabs.first().wf_modules.create(
             order=0,
+            slug="step-1",
             module_id_name="loadurl",
             auto_update_data=True,
             next_update=timezone.now(),
@@ -60,6 +61,7 @@ class AutoupdateTest(DbTestCase):
         )
         step2 = workflow2.tabs.first().wf_modules.create(
             order=0,
+            slug="step-1",
             module_id_name="loadurl",
             auto_update_data=True,
             next_update=timezone.now(),
@@ -102,6 +104,7 @@ class AutoupdateTest(DbTestCase):
         workflow = Workflow.create_and_init(owner=user, name="W1")
         workflow.tabs.first().wf_modules.create(
             order=0,
+            slug="step-1",
             module_id_name="loadurl",
             auto_update_data=False,
             update_interval=600,
@@ -114,6 +117,7 @@ class AutoupdateTest(DbTestCase):
         workflow = Workflow.create_and_init(owner=user, name="W1")
         workflow.tabs.first().wf_modules.create(
             order=0,
+            slug="step-1",
             module_id_name="loadurl",
             auto_update_data=True,
             next_update=timezone.now(),
@@ -129,6 +133,7 @@ class AutoupdateTest(DbTestCase):
         tab = workflow.tabs.create(position=1, slug="tab-deleted", is_deleted=True)
         tab.wf_modules.create(
             order=0,
+            slug="step-1",
             module_id_name="loadurl",
             auto_update_data=True,
             next_update=timezone.now(),
@@ -139,12 +144,13 @@ class AutoupdateTest(DbTestCase):
 
     def test_list_autofetches_ignore_wrong_user(self):
         user = User.objects.create(username="a", email="a@example.org")
-        workflow = Workflow.create_and_init(owner=user)
+        Workflow.create_and_init(owner=user)
 
         user2 = User.objects.create(username="b", email="b@example.org")
         workflow2 = Workflow.create_and_init(owner=user2)
         workflow2.tabs.first().wf_modules.create(
             order=0,
+            slug="step-1",
             module_id_name="loadurl",
             auto_update_data=True,
             next_update=timezone.now(),
@@ -160,6 +166,7 @@ class AutoupdateTest(DbTestCase):
         workflow = Workflow.create_and_init(anonymous_owner_session_key="foo")
         workflow.tabs.first().wf_modules.create(
             order=0,
+            slug="step-1",
             module_id_name="loadurl",
             auto_update_data=True,
             next_update=timezone.now(),
@@ -171,17 +178,18 @@ class AutoupdateTest(DbTestCase):
     def test_list_autofetches_session_gets_default_max_fetches_per_day(self):
         user = AnonymousUser()
         session = Session(session_key="foo")
-        workflow = Workflow.create_and_init(anonymous_owner_session_key="foo")
+        Workflow.create_and_init(anonymous_owner_session_key="foo")
         result = list_autofetches_json({"user": user, "session": session})
         self.assertEqual(result["maxFetchesPerDay"], 500)
 
     def test_list_autofetches_ignore_other_session(self):
         user = AnonymousUser()
         session = Session(session_key="foo")
-        workflow = Workflow.create_and_init(anonymous_owner_session_key="foo")
+        Workflow.create_and_init(anonymous_owner_session_key="foo")
         workflow2 = Workflow.create_and_init(anonymous_owner_session_key="bar")
         workflow2.tabs.first().wf_modules.create(
             order=0,
+            slug="step-1",
             module_id_name="loadurl",
             auto_update_data=True,
             next_update=timezone.now(),
@@ -196,6 +204,7 @@ class AutoupdateTest(DbTestCase):
         workflow = Workflow.create_and_init(owner_id=user.id)
         workflow.tabs.first().wf_modules.create(
             order=0,
+            slug="step-1",
             module_id_name="loadurl",
             auto_update_data=True,
             next_update=timezone.now(),
@@ -204,6 +213,7 @@ class AutoupdateTest(DbTestCase):
         workflow2 = Workflow.create_and_init(anonymous_owner_session_key="foo")
         workflow2.tabs.first().wf_modules.create(
             order=0,
+            slug="step-1",
             module_id_name="loadurl",
             auto_update_data=True,
             next_update=timezone.now(),

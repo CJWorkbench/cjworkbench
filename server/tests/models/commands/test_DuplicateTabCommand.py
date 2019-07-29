@@ -108,12 +108,14 @@ class DuplicateTabCommandTest(DbTestCase):
         # duplicate them, we need to queue a render.)
         wfm1 = tab.wf_modules.create(
             order=0,
+            slug="step-1",
             module_id_name="x",
             params={"p": "s1"},
             last_relevant_delta_id=init_delta_id,
         )
         tab.wf_modules.create(
             order=1,
+            slug="step-2",
             module_id_name="y",
             params={"p": "s2"},
             last_relevant_delta_id=init_delta_id,
@@ -197,6 +199,7 @@ class DuplicateTabCommandTest(DbTestCase):
         # duplicate them, we need to queue a render.)
         wfm1 = tab.wf_modules.create(
             order=0,
+            slug="step-1",
             module_id_name="x",
             params={"p": "s1"},
             last_relevant_delta_id=init_delta_id,

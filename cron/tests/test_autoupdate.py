@@ -39,11 +39,14 @@ class UpdatesTests(DbTestCase):
         tab = workflow.tabs.create(position=0)
 
         # wfm1 does not auto-update
-        self.wfm1 = tab.wf_modules.create(order=0, auto_update_data=False)
+        self.wfm1 = tab.wf_modules.create(
+            order=0, slug="step-1", auto_update_data=False
+        )
 
         # wfm2 is ready to update
         self.wfm2 = tab.wf_modules.create(
             order=1,
+            slug="step-2",
             auto_update_data=True,
             last_update_check=parser.parse("Aug 28 1999 2:24PM UTC"),
             next_update=parser.parse("Aug 28 1999 2:34PM UTC"),
@@ -53,6 +56,7 @@ class UpdatesTests(DbTestCase):
         # wfm3 has a few more minutes before it should update
         self.wfm3 = tab.wf_modules.create(
             order=2,
+            slug="step-3",
             auto_update_data=True,
             last_update_check=parser.parse("Aug 28 1999 2:20PM UTC"),
             next_update=parser.parse("Aug 28 1999 2:40PM UTC"),

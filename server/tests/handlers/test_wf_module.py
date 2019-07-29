@@ -72,7 +72,9 @@ class WfModuleTest(HandlerTestCase):
     def test_set_params(self):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
-        wf_module = workflow.tabs.first().wf_modules.create(order=0, module_id_name="x")
+        wf_module = workflow.tabs.first().wf_modules.create(
+            order=0, slug="step-1", module_id_name="x"
+        )
 
         ModuleVersion.create_or_replace_from_spec(
             {
@@ -107,7 +109,9 @@ class WfModuleTest(HandlerTestCase):
     def test_set_params_invalid_params(self):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
-        wf_module = workflow.tabs.first().wf_modules.create(order=0, module_id_name="x")
+        wf_module = workflow.tabs.first().wf_modules.create(
+            order=0, slug="step-1", module_id_name="x"
+        )
 
         ModuleVersion.create_or_replace_from_spec(
             {
@@ -142,7 +146,9 @@ class WfModuleTest(HandlerTestCase):
     def test_set_params_null_byte_in_json(self):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
-        wf_module = workflow.tabs.first().wf_modules.create(order=0, module_id_name="x")
+        wf_module = workflow.tabs.first().wf_modules.create(
+            order=0, slug="step-1", module_id_name="x"
+        )
 
         ModuleVersion.create_or_replace_from_spec(
             {
@@ -169,7 +175,9 @@ class WfModuleTest(HandlerTestCase):
     def test_set_params_no_module(self):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
-        wf_module = workflow.tabs.first().wf_modules.create(order=0, module_id_name="x")
+        wf_module = workflow.tabs.first().wf_modules.create(
+            order=0, slug="step-1", module_id_name="x"
+        )
 
         response = self.run_handler(
             set_params,
@@ -182,7 +190,7 @@ class WfModuleTest(HandlerTestCase):
 
     def test_set_params_viewer_access_denied(self):
         workflow = Workflow.create_and_init(public=True)
-        wf_module = workflow.tabs.first().wf_modules.create(order=0)
+        wf_module = workflow.tabs.first().wf_modules.create(order=0, slug="step-1")
 
         response = self.run_handler(
             set_params,
@@ -195,7 +203,7 @@ class WfModuleTest(HandlerTestCase):
     def test_set_params_invalid_values(self):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
-        wf_module = workflow.tabs.first().wf_modules.create(order=0)
+        wf_module = workflow.tabs.first().wf_modules.create(order=0, slug="step-1")
 
         response = self.run_handler(
             set_params,
@@ -210,7 +218,9 @@ class WfModuleTest(HandlerTestCase):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
         other_workflow = Workflow.create_and_init(owner=user)
-        wf_module = other_workflow.tabs.first().wf_modules.create(order=0)
+        wf_module = other_workflow.tabs.first().wf_modules.create(
+            order=0, slug="step-1"
+        )
 
         response = self.run_handler(
             set_params,
@@ -226,7 +236,7 @@ class WfModuleTest(HandlerTestCase):
     def test_delete(self):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
-        wf_module = workflow.tabs.first().wf_modules.create(order=0)
+        wf_module = workflow.tabs.first().wf_modules.create(order=0, slug="step-1")
 
         response = self.run_handler(
             delete, user=user, workflow=workflow, wfModuleId=wf_module.id
@@ -240,7 +250,7 @@ class WfModuleTest(HandlerTestCase):
 
     def test_delete_viewer_access_denied(self):
         workflow = Workflow.create_and_init(public=True)
-        wf_module = workflow.tabs.first().wf_modules.create(order=0)
+        wf_module = workflow.tabs.first().wf_modules.create(order=0, slug="step-1")
 
         response = self.run_handler(delete, workflow=workflow, wfModuleId=wf_module.id)
         self.assertResponse(response, error="AuthError: no write access to workflow")
@@ -249,7 +259,9 @@ class WfModuleTest(HandlerTestCase):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
         other_workflow = Workflow.create_and_init(owner=user)
-        wf_module = other_workflow.tabs.first().wf_modules.create(order=0)
+        wf_module = other_workflow.tabs.first().wf_modules.create(
+            order=0, slug="step-1"
+        )
 
         response = self.run_handler(
             delete, user=user, workflow=workflow, wfModuleId=wf_module.id
@@ -262,7 +274,7 @@ class WfModuleTest(HandlerTestCase):
         version = "2018-12-12T21:30:00.000Z"
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
-        wf_module = workflow.tabs.first().wf_modules.create(order=0)
+        wf_module = workflow.tabs.first().wf_modules.create(order=0, slug="step-1")
         wf_module.stored_objects.create(stored_at=isoparse(version), size=0)
 
         response = self.run_handler(
@@ -282,7 +294,7 @@ class WfModuleTest(HandlerTestCase):
         version = "2018-12-12T21:30:00.000Z"
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
-        wf_module = workflow.tabs.first().wf_modules.create(order=0)
+        wf_module = workflow.tabs.first().wf_modules.create(order=0, slug="step-1")
         so = wf_module.stored_objects.create(
             stored_at=isoparse(version), size=0, read=False
         )
@@ -305,7 +317,7 @@ class WfModuleTest(HandlerTestCase):
         version_js = "2018-12-12T21:30:00.000Z"
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
-        wf_module = workflow.tabs.first().wf_modules.create(order=0)
+        wf_module = workflow.tabs.first().wf_modules.create(order=0, slug="step-1")
         # Postgres will store this with microsecond precision
         wf_module.stored_objects.create(stored_at=isoparse(version_precise), size=0)
 
@@ -324,7 +336,7 @@ class WfModuleTest(HandlerTestCase):
     def test_set_stored_data_version_invalid_date(self):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
-        wf_module = workflow.tabs.first().wf_modules.create(order=0)
+        wf_module = workflow.tabs.first().wf_modules.create(order=0, slug="step-1")
 
         response = self.run_handler(
             set_stored_data_version,
@@ -340,7 +352,7 @@ class WfModuleTest(HandlerTestCase):
     def test_set_stored_data_version_viewer_access_denied(self):
         version = "2018-12-12T21:30:00.000Z"
         workflow = Workflow.create_and_init(public=True)
-        wf_module = workflow.tabs.first().wf_modules.create(order=0)
+        wf_module = workflow.tabs.first().wf_modules.create(order=0, slug="step-1")
         wf_module.stored_objects.create(stored_at=isoparse(version), size=0)
 
         response = self.run_handler(
@@ -356,7 +368,9 @@ class WfModuleTest(HandlerTestCase):
     def test_set_notes(self):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
-        wf_module = workflow.tabs.first().wf_modules.create(order=0, notes="A")
+        wf_module = workflow.tabs.first().wf_modules.create(
+            order=0, slug="step-1", notes="A"
+        )
 
         response = self.run_handler(
             set_notes, user=user, workflow=workflow, wfModuleId=wf_module.id, notes="B"
@@ -374,7 +388,9 @@ class WfModuleTest(HandlerTestCase):
 
     def test_set_notes_viewer_acces_denied(self):
         workflow = Workflow.create_and_init(public=True)
-        wf_module = workflow.tabs.first().wf_modules.create(order=0, notes="A")
+        wf_module = workflow.tabs.first().wf_modules.create(
+            order=0, slug="step-1", notes="A"
+        )
 
         response = self.run_handler(
             set_notes, workflow=workflow, wfModuleId=wf_module.id, notes="B"
@@ -386,7 +402,9 @@ class WfModuleTest(HandlerTestCase):
     def test_set_notes_forces_str(self):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
-        wf_module = workflow.tabs.first().wf_modules.create(order=0, notes="A")
+        wf_module = workflow.tabs.first().wf_modules.create(
+            order=0, slug="step-1", notes="A"
+        )
 
         response = self.run_handler(
             set_notes,
@@ -403,7 +421,9 @@ class WfModuleTest(HandlerTestCase):
     def test_set_collapsed(self):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
-        wf_module = workflow.tabs.first().wf_modules.create(order=0, is_collapsed=False)
+        wf_module = workflow.tabs.first().wf_modules.create(
+            order=0, slug="step-1", is_collapsed=False
+        )
 
         response = self.run_handler(
             set_collapsed,
@@ -419,7 +439,9 @@ class WfModuleTest(HandlerTestCase):
 
     def test_set_collapsed_viewer_acces_denied(self):
         workflow = Workflow.create_and_init(public=True)
-        wf_module = workflow.tabs.first().wf_modules.create(order=0, is_collapsed=False)
+        wf_module = workflow.tabs.first().wf_modules.create(
+            order=0, slug="step-1", is_collapsed=False
+        )
 
         response = self.run_handler(
             set_collapsed, workflow=workflow, wfModuleId=wf_module.id, isCollapsed=True
@@ -429,7 +451,9 @@ class WfModuleTest(HandlerTestCase):
     def test_set_collapsed_forces_bool(self):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
-        wf_module = workflow.tabs.first().wf_modules.create(order=0, is_collapsed=False)
+        wf_module = workflow.tabs.first().wf_modules.create(
+            order=0, slug="step-1", is_collapsed=False
+        )
 
         # bool('False') is true
         response = self.run_handler(
@@ -448,7 +472,9 @@ class WfModuleTest(HandlerTestCase):
     def test_set_notifications_to_false(self, log_event):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
-        wf_module = workflow.tabs.first().wf_modules.create(order=0, notifications=True)
+        wf_module = workflow.tabs.first().wf_modules.create(
+            order=0, slug="step-1", notifications=True
+        )
 
         response = self.run_handler(
             set_notifications,
@@ -468,7 +494,7 @@ class WfModuleTest(HandlerTestCase):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
         wf_module = workflow.tabs.first().wf_modules.create(
-            order=0, notifications=False
+            order=0, slug="step-1", notifications=False
         )
 
         response = self.run_handler(
@@ -487,7 +513,7 @@ class WfModuleTest(HandlerTestCase):
     def test_try_set_autofetch_happy_path(self):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
-        wf_module = workflow.tabs.first().wf_modules.create(order=0)
+        wf_module = workflow.tabs.first().wf_modules.create(order=0, slug="step-1")
 
         response = self.run_handler(
             try_set_autofetch,
@@ -513,6 +539,7 @@ class WfModuleTest(HandlerTestCase):
         workflow = Workflow.create_and_init(owner=user)
         wf_module = workflow.tabs.first().wf_modules.create(
             order=0,
+            slug="step-1",
             auto_update_data=True,
             update_interval=1200,
             next_update=timezone.now(),
@@ -537,7 +564,7 @@ class WfModuleTest(HandlerTestCase):
         user.user_profile.max_fetches_per_day = 10
         user.user_profile.save()
         workflow = Workflow.create_and_init(owner=user)
-        wf_module = workflow.tabs.first().wf_modules.create(order=0)
+        wf_module = workflow.tabs.first().wf_modules.create(order=0, slug="step-1")
         response = self.run_handler(
             try_set_autofetch,
             user=user,
@@ -563,6 +590,7 @@ class WfModuleTest(HandlerTestCase):
         workflow = Workflow.create_and_init(owner=user)
         wf_module = workflow.tabs.first().wf_modules.create(
             order=0,
+            slug="step-1",
             auto_update_data=True,
             update_interval=300,
             next_update=timezone.now(),
@@ -590,7 +618,7 @@ class WfModuleTest(HandlerTestCase):
 
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
-        wf_module = workflow.tabs.first().wf_modules.create(order=0)
+        wf_module = workflow.tabs.first().wf_modules.create(order=0, slug="step-1")
 
         response = self.run_handler(
             fetch, user=user, workflow=workflow, wfModuleId=wf_module.id
@@ -611,7 +639,7 @@ class WfModuleTest(HandlerTestCase):
 
     def test_fetch_viewer_access_denied(self):
         workflow = Workflow.create_and_init(public=True)
-        wf_module = workflow.tabs.first().wf_modules.create(order=0)
+        wf_module = workflow.tabs.first().wf_modules.create(order=0, slug="step-1")
 
         response = self.run_handler(fetch, workflow=workflow, wfModuleId=wf_module.id)
         self.assertResponse(response, error="AuthError: no write access to workflow")
@@ -628,7 +656,9 @@ class WfModuleTest(HandlerTestCase):
                 "parameters": [TestGoogleSecret],
             }
         )
-        wf_module = workflow.tabs.first().wf_modules.create(module_id_name="g", order=0)
+        wf_module = workflow.tabs.first().wf_modules.create(
+            module_id_name="g", order=0, slug="step-1"
+        )
 
         response = self.run_handler(
             generate_secret_access_token,
@@ -655,7 +685,10 @@ class WfModuleTest(HandlerTestCase):
             }
         )
         wf_module = workflow.tabs.first().wf_modules.create(
-            module_id_name="g", order=0, secrets={"google_credentials": None}
+            module_id_name="g",
+            slug="step-1",
+            order=0,
+            secrets={"google_credentials": None},
         )
 
         response = self.run_handler(
@@ -683,7 +716,10 @@ class WfModuleTest(HandlerTestCase):
             }
         )
         wf_module = workflow.tabs.first().wf_modules.create(
-            module_id_name="g", order=0, params={"s": '{"name":"a","secret":"hello"}'}
+            module_id_name="g",
+            order=0,
+            slug="step-1",
+            params={"s": '{"name":"a","secret":"hello"}'},
         )
 
         response = self.run_handler(
@@ -713,6 +749,7 @@ class WfModuleTest(HandlerTestCase):
         wf_module = workflow.tabs.first().wf_modules.create(
             module_id_name="g",
             order=0,
+            slug="step-1",
             secrets={"google_credentials": {"name": "a", "secret": "hello"}},
         )
 
@@ -745,6 +782,7 @@ class WfModuleTest(HandlerTestCase):
         wf_module = workflow.tabs.first().wf_modules.create(
             module_id_name="g",
             order=0,
+            slug="step-1",
             secrets={"google_credentials": {"name": "a", "secret": "hello"}},
         )
 
@@ -780,6 +818,7 @@ class WfModuleTest(HandlerTestCase):
         wf_module = workflow.tabs.first().wf_modules.create(
             module_id_name="g",
             order=0,
+            slug="step-1",
             secrets={"google_credentials": {"name": "a", "secret": "hello"}},
         )
 
@@ -818,6 +857,7 @@ class WfModuleTest(HandlerTestCase):
         wf_module = workflow.tabs.first().wf_modules.create(
             module_id_name="g",
             order=0,
+            slug="step-1",
             secrets={"google_credentials": {"name": "a", "secret": "hello"}},
         )
 
@@ -845,6 +885,7 @@ class WfModuleTest(HandlerTestCase):
         wf_module = workflow.tabs.first().wf_modules.create(
             module_id_name="g",
             order=0,
+            slug="step-1",
             secrets={"google_credentials": {"name": "a", "secret": "hello"}},
         )
 
@@ -871,6 +912,7 @@ class WfModuleTest(HandlerTestCase):
         wf_module = workflow.tabs.first().wf_modules.create(
             module_id_name="g",
             order=0,
+            slug="step-1",
             params={"foo": "bar"},
             secrets={"google_credentials": {"name": "a", "secret": "hello"}},
         )
@@ -910,6 +952,7 @@ class WfModuleTest(HandlerTestCase):
         wf_module = workflow.tabs.first().wf_modules.create(
             module_id_name="g",
             order=0,
+            slug="step-1",
             secrets={"google_credentials": {"name": "a", "secret": "hello"}},
         )
 
@@ -941,7 +984,9 @@ class WfModuleTest(HandlerTestCase):
                 "parameters": [TestStringSecret],
             }
         )
-        wf_module = workflow.tabs.first().wf_modules.create(module_id_name="g", order=0)
+        wf_module = workflow.tabs.first().wf_modules.create(
+            module_id_name="g", order=0, slug="step-1"
+        )
         response = self.run_handler(
             set_secret,
             user=user,
@@ -964,7 +1009,11 @@ class WfModuleTest(HandlerTestCase):
             }
         )
         wf_module = workflow.tabs.first().wf_modules.create(
-            module_id_name="g", order=0, params={"string_secret": "bar"}, secrets={}
+            module_id_name="g",
+            order=0,
+            slug="step-1",
+            params={"string_secret": "bar"},
+            secrets={},
         )
 
         response = self.run_handler(
@@ -1000,7 +1049,9 @@ class WfModuleTest(HandlerTestCase):
                 "parameters": [TestStringSecret],
             }
         )
-        wf_module = workflow.tabs.first().wf_modules.create(module_id_name="g", order=0)
+        wf_module = workflow.tabs.first().wf_modules.create(
+            module_id_name="g", order=0, slug="step-1"
+        )
 
         response = self.run_handler(
             set_secret,

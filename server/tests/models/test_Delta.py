@@ -95,7 +95,7 @@ class DeltaTest(DbTestCase):
         workflow = Workflow.create_and_init()
         # Here's a soft-deleted module
         wf_module = workflow.tabs.first().wf_modules.create(
-            order=0, module_id_name="foo", is_deleted=True
+            order=0, slug="step-1", module_id_name="foo", is_deleted=True
         )
 
         delta = self.run_with_async_db(
@@ -113,7 +113,7 @@ class DeltaTest(DbTestCase):
         tab = workflow.tabs.create(position=1, is_deleted=True)
         # create a wf_module -- it needs to be deleted, too!
         wf_module = tab.wf_modules.create(
-            order=0, module_id_name="foo", is_deleted=True
+            order=0, slug="step-1", module_id_name="foo", is_deleted=True
         )
 
         delta = self.run_with_async_db(
@@ -132,7 +132,7 @@ class DeltaTest(DbTestCase):
         workflow = Workflow.create_and_init()
         # Here's a soft-deleted module
         wf_module = workflow.tabs.first().wf_modules.create(
-            order=0, module_id_name="foo", is_deleted=False
+            order=0, slug="step-1", module_id_name="foo", is_deleted=False
         )
 
         # delete a delta
@@ -149,7 +149,7 @@ class DeltaTest(DbTestCase):
         workflow = Workflow.create_and_init()
         # Here's a soft-deleted module
         wf_module = workflow.tabs.first().wf_modules.create(
-            order=0, module_id_name="foo", is_deleted=True
+            order=0, slug="step-1", module_id_name="foo", is_deleted=True
         )
 
         # "protect" it: here's a delta we _aren't_ deleting
@@ -175,7 +175,7 @@ class DeltaTest(DbTestCase):
         # Here's a soft-deleted module on workflow2. Nothing references it. It
         # "shouldn't" exist.
         wf_module = workflow2.tabs.first().wf_modules.create(
-            order=0, module_id_name="foo", is_deleted=True
+            order=0, slug="step-1", module_id_name="foo", is_deleted=True
         )
 
         # now delete a delta on workflow1

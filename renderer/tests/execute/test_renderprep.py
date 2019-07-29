@@ -45,7 +45,7 @@ class CleanValueTests(DbTestCase):
     def test_clean_file_happy_path(self):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
-        wfm = tab.wf_modules.create(module_id_name="uploadfile", order=0)
+        wfm = tab.wf_modules.create(module_id_name="uploadfile", order=0, slug="step-1")
         id = str(uuid.uuid4())
         key = f"wf-${workflow.id}/wfm-${wfm.id}/${id}"
         minio.put_bytes(minio.UserFilesBucket, key, b"1234")
@@ -72,7 +72,7 @@ class CleanValueTests(DbTestCase):
     def test_clean_file_no_uploaded_file(self):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
-        wfm = tab.wf_modules.create(module_id_name="uploadfile", order=0)
+        wfm = tab.wf_modules.create(module_id_name="uploadfile", order=0, slug="step-1")
         context = RenderContext(workflow.id, wfm.id, None, None, None)
         result = clean_value(ParamDType.File(), str(uuid.uuid4()), context)
         self.assertIsNone(result)
@@ -80,8 +80,10 @@ class CleanValueTests(DbTestCase):
     def test_clean_file_no_minio_file(self):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
-        wfm = tab.wf_modules.create(module_id_name="uploadfile", order=0)
-        wfm2 = tab.wf_modules.create(module_id_name="uploadfile", order=1)
+        wfm = tab.wf_modules.create(module_id_name="uploadfile", order=0, slug="step-1")
+        wfm2 = tab.wf_modules.create(
+            module_id_name="uploadfile", order=1, slug="step-2"
+        )
         id = str(uuid.uuid4())
         key = f"wf-${workflow.id}/wfm-${wfm.id}/${id}"
         # Oops -- let's _not_ put the file!
@@ -101,8 +103,10 @@ class CleanValueTests(DbTestCase):
     def test_clean_file_wrong_wf_module(self):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
-        wfm = tab.wf_modules.create(module_id_name="uploadfile", order=0)
-        wfm2 = tab.wf_modules.create(module_id_name="uploadfile", order=1)
+        wfm = tab.wf_modules.create(module_id_name="uploadfile", order=0, slug="step-1")
+        wfm2 = tab.wf_modules.create(
+            module_id_name="uploadfile", order=1, slug="step-2"
+        )
         id = str(uuid.uuid4())
         key = f"wf-${workflow.id}/wfm-${wfm.id}/${id}"
         minio.put_bytes(minio.UserFilesBucket, key, b"1234")
@@ -419,7 +423,7 @@ class CleanValueTests(DbTestCase):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
         wfm = tab.wf_modules.create(
-            order=0, last_relevant_delta_id=workflow.last_delta_id
+            order=0, slug="step-1", last_relevant_delta_id=workflow.last_delta_id
         )
         wfm.cache_render_result(workflow.last_delta_id, tab_output)
 
@@ -441,7 +445,7 @@ class CleanValueTests(DbTestCase):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
         wfm = tab.wf_modules.create(
-            order=0, last_relevant_delta_id=workflow.last_delta_id
+            order=0, slug="step-1", last_relevant_delta_id=workflow.last_delta_id
         )
         wfm.cache_render_result(workflow.last_delta_id, tab_output)
 
@@ -529,7 +533,7 @@ class CleanValueTests(DbTestCase):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
         wfm = tab.wf_modules.create(
-            order=0, last_relevant_delta_id=workflow.last_delta_id
+            order=0, slug="step-1", last_relevant_delta_id=workflow.last_delta_id
         )
         wfm.cache_render_result(workflow.last_delta_id, tab_output)
         tab.is_deleted = True
@@ -562,7 +566,7 @@ class CleanValueTests(DbTestCase):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
         wfm = tab.wf_modules.create(
-            order=0, last_relevant_delta_id=workflow.last_delta_id
+            order=0, slug="step-1", last_relevant_delta_id=workflow.last_delta_id
         )
         wfm.cache_render_result(workflow.last_delta_id, tab_output)
         # Simulate reality: wfm.last_relevant_delta_id will change
@@ -584,7 +588,7 @@ class CleanValueTests(DbTestCase):
         workflow = Workflow.create_and_init()
         tab1 = workflow.tabs.first()
         wfm = tab1.wf_modules.create(
-            order=0, last_relevant_delta_id=workflow.last_delta_id
+            order=0, slug="step-1", last_relevant_delta_id=workflow.last_delta_id
         )
         wfm.cache_render_result(workflow.last_delta_id, tab1_output)
 
@@ -609,11 +613,11 @@ class CleanValueTests(DbTestCase):
         tab2 = workflow.tabs.create(position=1, slug="tab-2", name="Tab 2")
         tab3 = workflow.tabs.create(position=1, slug="tab-3", name="Tab 3")
         wfm2 = tab2.wf_modules.create(
-            order=0, last_relevant_delta_id=workflow.last_delta_id
+            order=0, slug="step-1", last_relevant_delta_id=workflow.last_delta_id
         )
         wfm2.cache_render_result(workflow.last_delta_id, tab2_output)
         wfm3 = tab3.wf_modules.create(
-            order=0, last_relevant_delta_id=workflow.last_delta_id
+            order=0, slug="step-2", last_relevant_delta_id=workflow.last_delta_id
         )
         wfm3.cache_render_result(workflow.last_delta_id, tab3_output)
 
