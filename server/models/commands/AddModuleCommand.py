@@ -143,7 +143,7 @@ class AddModuleCommand(ChangesWfModuleOutputs, Delta):
         wf_module = tab.wf_modules.create(
             module_id_name=module_id_name,
             order=position,
-            slug="step-1",
+            slug=slug,
             is_deleted=True,
             params=params,
             secrets={},
