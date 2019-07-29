@@ -1,3 +1,4 @@
+import asyncio
 import functools
 from typing import Any, Dict
 import uuid as uuidgen
@@ -74,7 +75,18 @@ async def create_upload(workflow: Workflow, wf_module: WfModule, **kwargs):
     """
     Prepare a key and credentials for the caller to upload a file.
     """
-    return await _do_create_upload(workflow, wf_module)
+    retval = await _do_create_upload(workflow, wf_module)
+    # TODO add minio issue number
+    # A race in minio means even after generating upload parameters, they
+    # still might not work on all minio servers. This race only affects
+    # production, where there are multiple minio servers. The workaround
+    # "ought" to be in in_progress_upload.generate_upload_parameters(), but
+    # we place it here so fewer unit tests are affected by it (and so it's
+    # async).
+    #
+    # Workaround: give the minio+etcd machines an extra 0.5s to synchronize.
+    await asyncio.sleep(0.5)  # DELETEME when minio is fixed
+    return retval
 
 
 @database_sync_to_async
