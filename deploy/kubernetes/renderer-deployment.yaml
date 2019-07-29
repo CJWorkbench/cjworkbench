@@ -21,10 +21,10 @@ spec:
             # synchronous.
             requests:
               cpu: 1
-              memory: 5250Mi # basically the max on an n1-standard-2 running fluentd
+              memory: 8Gi
             limits:
               cpu: 1
-              memory: 5250Mi
+              memory: 8Gi
           env:
             - name: CJW_PRODUCTION
               value: 'True'
