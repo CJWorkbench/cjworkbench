@@ -95,7 +95,7 @@ async def add_module(
     )
 
 
-SlugRegex = re.compile("\A[-a-zA-Z0-9_]+\Z")
+SlugRegex = re.compile(r"\A[-a-zA-Z0-9_]+\Z")
 
 
 def _parse_slug(slug: str):
