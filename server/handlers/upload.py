@@ -84,8 +84,8 @@ async def create_upload(workflow: Workflow, wf_module: WfModule, **kwargs):
     # we place it here so fewer unit tests are affected by it (and so it's
     # async).
     #
-    # Workaround: give the minio+etcd machines an extra 0.5s to synchronize.
-    await asyncio.sleep(0.5)  # DELETEME when minio is fixed
+    # Workaround: give the minio+etcd machines an extra 2s to synchronize.
+    await asyncio.sleep(2)  # DELETEME when minio is fixed
     return retval
 
 
