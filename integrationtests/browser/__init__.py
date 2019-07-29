@@ -63,7 +63,7 @@ class Browser:
         self.base_url = _sanitize_base_url(kwargs.get("base_url") or "")
 
         # default wait timeout -- None means forever
-        self.default_wait_timeout = kwargs.get("default_wait_timeout", 15)
+        self.default_wait_timeout = kwargs.get("default_wait_timeout", 20)
 
     def _capybarize_kwargs(self, kwargs):
         """Modify kwargs in-place.
