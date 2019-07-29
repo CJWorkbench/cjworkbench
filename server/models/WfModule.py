@@ -130,27 +130,6 @@ class WfModule(models.Model):
     Secrets aren't passed to `render()`: they're only passed to `fetch()`.
     """
 
-    inprogress_file_upload_key = models.CharField(
-        max_length=100, null=True, blank=True, default=None, unique=True
-    )
-    """
-    Key (in the minio.UserFilesBucket) user is uploading.
-
-    We store the key so we can delete it. The Bucket is always
-    minio.UserFilesBucket.
-
-    TODO put this info in a separate table.
-    """
-
-    inprogress_file_upload_last_accessed_at = models.DateTimeField(
-        null=True, blank=True, default=None
-    )
-    """
-    When the `upload_id` was created.
-
-    Stale uploads can be deleted.
-    """
-
     file_upload_api_token = models.CharField(
         max_length=100, null=True, blank=True, default=None
     )
