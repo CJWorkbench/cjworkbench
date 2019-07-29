@@ -125,7 +125,7 @@ export function generateSlug (prefix) {
   window.crypto.getRandomValues(bytes)
   return prefix + (
     base64Encode(bytes)
-      .replace('+', '-')
-      .replace('/', '_')
+      .replace(/\+/g, '-')
+      .replace(new RegExp("/", "g"), '_')
   )
 }
