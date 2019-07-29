@@ -5,9 +5,9 @@ import { Provider } from 'react-redux'
 import Workflows from '../Workflows'
 import WorkbenchAPI from '../WorkbenchAPI'
 import { createStore } from 'redux'
-import { I18nLoader } from '../Internationalization/I18nLoader'
-import { localeReducer } from '../Internationalization/actions'
-import InternationalizedPage from '../Internationalization/InternationalizedPage'
+import { I18nLoader } from '../i18n/I18nLoader'
+import { localeReducer } from '../i18n/actions'
+import InternationalizedPage from '../i18n/InternationalizedPage'
 
 const api = new WorkbenchAPI(null) // no websocket
 const { workflows, loggedInUser } = window.initState
