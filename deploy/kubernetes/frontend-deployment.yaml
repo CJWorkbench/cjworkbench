@@ -59,14 +59,10 @@ spec:
                 secretKeyRef:
                   name: cjw-sendgrid-api-key
                   key: value
-            - name: CJW_SENDGRID_INVITATION_ID
-              value: b22cb75d-2673-4efe-88d3-22239eaf403c
             - name: CJW_SENDGRID_CONFIRMATION_ID
-              value: 86182412-e2bd-4d9f-be7d-a535a9f8e50b
-            - name: CJW_SENDGRID_PASSWORD_CHANGE_ID
-              value: 049f32e5-06ef-42e5-847d-ca30f52bf816
+              value: d-cf03717d432e46d38e0b6b5b19f80b57
             - name: CJW_SENDGRID_PASSWORD_RESET_ID
-              value: 0946d35d-5763-4a22-b17d-ed9cb42bf096
+              value: d-7cc8e91286bb4c87a9484f331407568a
             - name: HTTPS
               value: 'on'
             - name: CJW_GOOGLE_CLIENT_SECRETS

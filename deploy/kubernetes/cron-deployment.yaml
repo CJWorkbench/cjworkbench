@@ -39,18 +39,11 @@ spec:
             - name: CJW_SECRET_KEY
               value: cron-needs-no-secret-key
             - name: CJW_SENDGRID_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: cjw-sendgrid-api-key
-                  key: value
-            - name: CJW_SENDGRID_INVITATION_ID
-              value: b22cb75d-2673-4efe-88d3-22239eaf403c
+              value: cron-needs-no-sendgrid-config
             - name: CJW_SENDGRID_CONFIRMATION_ID
-              value: 86182412-e2bd-4d9f-be7d-a535a9f8e50b
-            - name: CJW_SENDGRID_PASSWORD_CHANGE_ID
-              value: 049f32e5-06ef-42e5-847d-ca30f52bf816
+              value: cron-needs-no-sendgrid-config
             - name: CJW_SENDGRID_PASSWORD_RESET_ID
-              value: 0946d35d-5763-4a22-b17d-ed9cb42bf096
+              value: cron-needs-no-sendgrid-config
             - name: MINIO_ACCESS_KEY
               valueFrom:
                 secretKeyRef:

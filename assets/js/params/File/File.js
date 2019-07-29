@@ -61,7 +61,7 @@ export default class File extends React.PureComponent {
         // the user won't need to click the Go button after upload.
         //
         // Assumes ChangeParametersCommand allows partial params.
-        if (result.value.uuid) { // ignore abort, which wouldn't set uuid
+        if (result.value && result.value.uuid) { // ignore abort, which wouldn't set value/uuid
           setWfModuleParams(wfModuleId, { [name]: result.value.uuid })
         }
       })

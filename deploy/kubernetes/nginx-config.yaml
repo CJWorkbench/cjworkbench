@@ -6,5 +6,6 @@ metadata:
   labels:
     app: ingress-nginx
 data:
+  ignore-invalid-headers: "false" # minio needs this for file upload
   log-format-escape-json: "true"
   log-format-upstream: '{"proxy_protocol_addr": "$proxy_protocol_addr","remote_addr": "$remote_addr", "proxy_add_x_forwarded_for": "$proxy_add_x_forwarded_for", "remote_user": "$remote_user", "time_local": "$time_local", "request": "$request", "status": $status, "body_bytes_sent": $body_bytes_sent, "http_referer": "$http_referer", "http_user_agent": "$http_user_agent", "request_length" : $request_length, "request_time": $request_time, "proxy_upstream_name": "$proxy_upstream_name", "upstream_addr": "$upstream_addr",  "upstream_response_length": $upstream_response_length, "upstream_response_time": $upstream_response_time, "upstream_status": $upstream_status}'

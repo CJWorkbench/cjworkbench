@@ -1,0 +1,120 @@
+# We need a non-root minio user so we can provide STS in gateway mode.
+# https://docs.min.io/docs/minio-multi-user-quickstart-guide.html
+#
+# We'll run a cluster of three minio servers.
+apiVersion: v1
+kind: Service
+metadata:
+  name: minio-etcd
+  labels:
+    app: minio-etcd
+spec:
+  ports:
+    - port: 2379
+      protocol: TCP
+  selector:
+    app: minio-etcd
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: minio-etcd-peer
+  labels:
+    app: minio-etcd
+spec:
+  ports:
+    - port: 2380
+      protocol: TCP
+  selector:
+    app: minio-etcd
+  clusterIP: None  # Headless service. It auto-creates pod DNS A records that we'll use.
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: minio-etcd
+spec:
+  selector:
+    matchLabels:
+      app: minio-etcd
+  serviceName: minio-etcd-peer
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: minio-etcd
+    spec:
+      subdomain: minio-etcd  # so each pod gets a DNS name, which we'll use for static clustering
+      containers:
+        - name: minio-etcd
+          image: gcr.io/etcd-development/etcd:v3.3.12
+          env:
+            - name: MY_POD_NAME
+              valueFrom:
+                fieldRef:
+                  # 'minio-etcd-0', 'minio-etcd-1', 'minio-etcd-2'
+                  # based on StatefulSet metadata
+                  fieldPath: metadata.name
+            - name: MY_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  # 'staging' or 'production'
+                  fieldPath: metadata.namespace
+            - name: ETCD_PEER_CLIENT_CERT_AUTH
+              value: "true"
+            - name: ETCD_PEER_TRUSTED_CA_FILE
+              value: /etc/etcd/ssl/ca.crt
+            - name: ETCD_PEER_CERT_FILE
+              value: "/etc/etcd/ssl/$(MY_POD_NAME)-peer.crt"
+            - name: ETCD_PEER_KEY_FILE
+              value: "/etc/etcd/ssl/$(MY_POD_NAME)-peer.key"
+            - name: ETCD_CLIENT_CERT_AUTH
+              value: "true"
+            - name: ETCD_TRUSTED_CA_FILE
+              value: /etc/etcd/ssl/ca.crt
+            - name: ETCD_CERT_FILE
+              value: "/etc/etcd/ssl/server.crt"
+            - name: ETCD_KEY_FILE
+              value: "/etc/etcd/ssl/server.key"
+            # We list peers statically, instead of DNS Discovery -- this is simple
+            - name: ETCD_INITIAL_CLUSTER
+              value: "minio-etcd-0=https://minio-etcd-0.minio-etcd-peer.$(MY_NAMESPACE).svc.cluster.local:2380,minio-etcd-1=https://minio-etcd-1.minio-etcd-peer.$(MY_NAMESPACE).svc.cluster.local:2380,minio-etcd-2=https://minio-etcd-2.minio-etcd-peer.$(MY_NAMESPACE).svc.cluster.local:2380"
+            - name: ETCD_INITIAL_CLUSTER_STATE
+              value: new
+            - name: ETCD_INITIAL_CLUSTER_TOKEN
+              value: "minio-etcd-cluster-token-1"
+            - name: ETCD_INITIAL_ADVERTISE_PEER_URLS
+              value: "https://$(MY_POD_NAME).minio-etcd-peer.$(MY_NAMESPACE).svc.cluster.local:2380"
+            - name: ETCD_LISTEN_PEER_URLS
+              value: https://0.0.0.0:2380
+            - name: ETCD_LISTEN_CLIENT_URLS
+              value: https://0.0.0.0:2379
+            - name: ETCD_ADVERTISE_CLIENT_URLS
+              value: "https://minio-etcd.$(MY_NAMESPACE).svc.cluster.local:2379"
+            - name: ETCD_NAME
+              value: "$(MY_POD_NAME)"
+            - name: ETCD_DATA_DIR
+              value: /mnt/etcd-data/data
+          ports:
+            - containerPort: 2379
+              name: server
+            - containerPort: 2380
+              name: peer
+          volumeMounts:
+            - name: data
+              mountPath: /mnt/etcd-data
+            - name: certs
+              mountPath: /etc/etcd/ssl
+      volumes:
+        - name: certs
+          secret:
+            secretName: minio-etcd-server-certs
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        storageClassName: ssd
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 10Gi  # 300 IOPS

@@ -7,5 +7,6 @@ from .module_version import ModuleVersion
 from .Delta import Delta
 from .UploadedFile import UploadedFile
 from .StoredObject import StoredObject
+from .in_progress_upload import InProgressUpload
 from .loaded_module import LoadedModule
 from . import commands

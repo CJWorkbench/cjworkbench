@@ -6,7 +6,7 @@ metadata:
   name: ingress-nginx
 ---
 
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: default-http-backend
@@ -221,7 +221,7 @@ subjects:
     namespace: ingress-nginx
 ---
 
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: nginx-ingress-controller
@@ -239,7 +239,7 @@ spec:
       serviceAccountName: nginx-ingress-serviceaccount
       containers:
         - name: nginx-ingress-controller
-          image: quay.io/kubernetes-ingress-controller/nginx-ingress-controller:0.16.2
+          image: quay.io/kubernetes-ingress-controller/nginx-ingress-controller:0.25.0
           args:
             - /nginx-ingress-controller
             - --default-backend-service=$(POD_NAMESPACE)/default-http-backend

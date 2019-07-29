@@ -137,6 +137,7 @@ class AccountAdmin:
             "server_delta",
             "server_storedobject",
             "server_uploadedfile",
+            "server_inprogressupload",
             "server_wfmodule",
             "server_tab",
             "server_workflow",

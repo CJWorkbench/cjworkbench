@@ -84,7 +84,7 @@ if "CJW_PRODUCTION" in os.environ:
 else:
     DEBUG = True
 
-DEFAULT_FROM_EMAIL = "Workbench <hello@accounts.workbenchdata.com>"
+DEFAULT_FROM_EMAIL = "Workbench <hello@workbenchdata.com>"
 
 # SECRET_KEY
 try:
@@ -143,35 +143,36 @@ if DEBUG or os.environ.get("CJW_MOCK_EMAIL"):
     EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
     EMAIL_FILE_PATH = os.path.join(BASE_DIR, "local_mail")
 else:
-    EMAIL_BACKEND = "sgbackend.SendGridBackend"
-    # ACCOUNT_ADAPTER is specifically for sendgrid and nothing else
-    ACCOUNT_ADAPTER = "cjworkbench.views.account_adapter.WorkbenchAccountAdapter"
-
     if "CJW_SENDGRID_API_KEY" not in os.environ:
         sys.exit("Must set CJW_SENDGRID_API_KEY in production")
 
-    if not all(
-        x in os.environ
-        for x in [
-            "CJW_SENDGRID_INVITATION_ID",
-            "CJW_SENDGRID_CONFIRMATION_ID",
-            "CJW_SENDGRID_PASSWORD_CHANGE_ID",
-            "CJW_SENDGRID_PASSWORD_RESET_ID",
-        ]
-    ):
-        sys.exit("Must set Sendgrid template IDs for all system emails")
+    EMAIL_HOST = "smtp.sendgrid.net"
+    EMAIL_HOST_USER = "apikey"
+    EMAIL_HOST_PASSWORD = os.environ["CJW_SENDGRID_API_KEY"]
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
 
-    SENDGRID_API_KEY = os.environ["CJW_SENDGRID_API_KEY"]
+    # EMAIL_BACKEND = "sgbackend.SendGridBackend"
+    # # ACCOUNT_ADAPTER is specifically for sendgrid and nothing else
+    # ACCOUNT_ADAPTER = "cjworkbench.views.account_adapter.WorkbenchAccountAdapter"
 
-    SENDGRID_TEMPLATE_IDS = {
-        "account/email/email_confirmation": os.environ["CJW_SENDGRID_CONFIRMATION_ID"],
-        "account/email/email_confirmation_signup": os.environ[
-            "CJW_SENDGRID_CONFIRMATION_ID"
-        ],
-        "account/email/password_reset_key": os.environ[
-            "CJW_SENDGRID_PASSWORD_RESET_ID"
-        ],
-    }
+    # if not all(
+    #     x in os.environ
+    #     for x in ["CJW_SENDGRID_CONFIRMATION_ID", "CJW_SENDGRID_PASSWORD_RESET_ID"]
+    # ):
+    #     sys.exit("Must set Sendgrid template IDs for all system emails")
+
+    # SENDGRID_API_KEY = os.environ["CJW_SENDGRID_API_KEY"]
+
+    # SENDGRID_TEMPLATE_IDS = {
+    #     "account/email/email_confirmation": os.environ["CJW_SENDGRID_CONFIRMATION_ID"],
+    #     "account/email/email_confirmation_signup": os.environ[
+    #         "CJW_SENDGRID_CONFIRMATION_ID"
+    #     ],
+    #     "account/email/password_reset_key": os.environ[
+    #         "CJW_SENDGRID_PASSWORD_RESET_ID"
+    #     ],
+    # }
 
 if "HTTPS" in os.environ and os.environ["HTTPS"] == "on":
     SESSION_COOKIE_SECURE = True
