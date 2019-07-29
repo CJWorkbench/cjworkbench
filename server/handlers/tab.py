@@ -104,7 +104,9 @@ def _parse_slug(slug: str):
     """
     slug = str(slug)  # cannot error from JSON params
     if not SlugRegex.match(slug):
-        raise HandlerError('BadRequest: slug must match regex "[-a-zA-Z0-9_]+"')
+        raise HandlerError(
+            f'BadRequest: slug must match regex "[-a-zA-Z0-9_]+"; got "{slug}"'
+        )
     return slug
 
 
