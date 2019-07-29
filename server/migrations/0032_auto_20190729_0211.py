@@ -5,25 +5,19 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('server', '0031_auto_20190729_0208'),
-    ]
+    dependencies = [("server", "0031_auto_20190729_0208")]
 
     operations = [
         migrations.RemoveConstraint(
-            model_name='wfmodule',
-            name='inprogress_file_upload_check',
+            model_name="wfmodule", name="inprogress_file_upload_check"
         ),
         migrations.RemoveIndex(
-            model_name='wfmodule',
-            name='inprogress_file_upload_filter',
+            model_name="wfmodule", name="inprogress_file_upload_filter"
         ),
         migrations.RemoveField(
-            model_name='wfmodule',
-            name='inprogress_file_upload_key',
+            model_name="wfmodule", name="inprogress_file_upload_key"
         ),
         migrations.RemoveField(
-            model_name='wfmodule',
-            name='inprogress_file_upload_last_accessed_at',
+            model_name="wfmodule", name="inprogress_file_upload_last_accessed_at"
         ),
     ]
