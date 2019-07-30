@@ -142,7 +142,6 @@ class WfModuleTests(DbTestCase):
         wfm1d = wfm1.duplicate(tab2)
         wfm1d.refresh_from_db()  # test what we actually have in the db
 
-        self.assertEqual(wfm1d.slug, "step-1")
         self.assertEqual(wfm1d.workflow, workflow2)
         self.assertEqual(wfm1d.module_version, wfm1.module_version)
         self.assertEqual(wfm1d.order, wfm1.order)
