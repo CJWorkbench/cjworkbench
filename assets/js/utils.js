@@ -126,6 +126,6 @@ export function generateSlug (prefix) {
   return prefix + (
     base64Encode(bytes)
       .replace(/\+/g, '-')
-      .replace(new RegExp("/", "g"), '_')
+      .replace(new RegExp('/', 'g'), '_')
   )
 }
