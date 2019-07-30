@@ -139,9 +139,10 @@ class WfModuleTests(DbTestCase):
         # duplicate into another workflow, as we would do when duplicating a workflow
         workflow2 = Workflow.create_and_init()
         tab2 = workflow2.tabs.first()
-        wfm1d = wfm1.duplicate(tab2)
+        wfm1d = wfm1.duplicate_into_new_workflow(tab2)
         wfm1d.refresh_from_db()  # test what we actually have in the db
 
+        self.assertEqual(wfm1d.slug, "step-1")
         self.assertEqual(wfm1d.workflow, workflow2)
         self.assertEqual(wfm1d.module_version, wfm1.module_version)
         self.assertEqual(wfm1d.order, wfm1.order)
@@ -177,7 +178,7 @@ class WfModuleTests(DbTestCase):
         workflow2 = Workflow.create_and_init()
         InitWorkflowCommand.create(workflow2)
         tab2 = workflow2.tabs.create(position=0)
-        wf_module2 = wf_module.duplicate(tab2)
+        wf_module2 = wf_module.duplicate_into_new_workflow(tab2)
 
         self.assertEqual(wf_module2.auto_update_data, False)
         self.assertIsNone(wf_module2.next_update)
@@ -195,7 +196,7 @@ class WfModuleTests(DbTestCase):
 
         workflow2 = Workflow.create_and_init()
         tab2 = workflow2.tabs.first()
-        wf_module2 = wf_module.duplicate(tab2)
+        wf_module2 = wf_module.duplicate_into_new_workflow(tab2)
 
         self.assertEqual(wf_module2.secrets, {})
 
@@ -218,7 +219,7 @@ class WfModuleTests(DbTestCase):
 
         workflow2 = Workflow.create_and_init()
         tab2 = workflow2.tabs.first()
-        wf_module2 = wf_module.duplicate(tab2)
+        wf_module2 = wf_module.duplicate_into_new_workflow(tab2)
 
         uploaded_file2 = wf_module2.uploaded_files.first()
         self.assertIsNotNone(uploaded_file2)
@@ -271,7 +272,7 @@ class WfModuleTests(DbTestCase):
 
         workflow2 = Workflow.create_and_init()
         tab2 = workflow2.tabs.first()
-        wf_module2 = wf_module.duplicate(tab2)
+        wf_module2 = wf_module.duplicate_into_new_workflow(tab2)
 
         self.assertEqual(wf_module2.uploaded_files.count(), 1)
         new_uf = wf_module2.uploaded_files.first()

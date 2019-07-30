@@ -119,13 +119,13 @@ class DuplicateTabCommand(Delta):
         except IntegrityError:
             raise ValueError('tab slug "%s" is already used' % slug)
         for wf_module in from_tab.live_wf_modules:
-            wf_module.duplicate(tab)
+            wf_module.duplicate_into_same_workflow(tab)
 
         # A note on the last_relevant_delta_id of the new WfModules:
         #
-        # WfModule.duplicate() will set all the `last_relevant_delta_id` to
-        # `self.workflow.last_delta_id`, which is the delta _before_ this
-        # DuplicateTabCommand. That's "incorrect", but it doesn't really
+        # WfModule.duplicate_into_same_workflow() will set all
+        # `last_relevant_delta_id` to `wf_module.last_delta_id`, which doesn't
+        # consider this DuplicateTabCommand. That's "incorrect", but it doesn't
         # matter: `last_relevant_delta_id` is really a "cache ID", not "Delta
         # ID" (it isn't even a foreign key), and workflow.last_delta_id is fine
         # for that use.

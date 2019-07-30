@@ -1,3 +1,4 @@
+import secrets
 from typing import Any, Dict, Optional, Union
 from django.contrib.postgres.fields import JSONField
 from django.db import models
@@ -313,12 +314,47 @@ class WfModule(models.Model):
 
     # --- Duplicate ---
     # used when duplicating a whole workflow
-    def duplicate(self, to_tab):
+    def duplicate_into_new_workflow(self, to_tab):
         to_workflow = to_tab.workflow
 
+        # Slug must be unique across the entire workflow; therefore, the
+        # duplicate WfModule must be on a different workflow. (If we need
+        # to duplicate within the same workflow, we'll need to change the
+        # slug -- different method, please.)
+        assert to_tab.workflow_id != self.workflow_id
+        slug = self.slug
+
+        # to_workflow has exactly one delta, and that's the version of all
+        # its modules. This is so we can cache render results. (Cached
+        # render results require a delta ID.)
+        last_relevant_delta_id = to_workflow.last_delta_id
+
+        return self._duplicate_with_slug_and_delta_id(
+            to_tab, slug, last_relevant_delta_id
+        )
+
+    def duplicate_into_same_workflow(self, to_tab):
+        # Make sure we're calling this correctly
+        assert to_tab.workflow_id == self.workflow_id
+
+        # Generate a new slug: 9 bytes, base64-encoded, + and / becoming - and _.
+        # Mimics assets/js/utils.js:generateSlug()
+        slug = "step-" + secrets.token_urlsafe(9)
+
+        # last_relevant_delta_id is _wrong_, but we need to set it to
+        # something. See DuplicateTabCommand to understand the chicken-and-egg
+        # dilemma.
+        last_relevant_delta_id = self.last_relevant_delta_id
+
+        return self._duplicate_with_slug_and_delta_id(
+            to_tab, slug, last_relevant_delta_id
+        )
+
+    def _duplicate_with_slug_and_delta_id(self, to_tab, slug, last_relevant_delta_id):
         # Initialize but don't save
         new_wfm = WfModule(
             tab=to_tab,
+            slug=slug,
             module_id_name=self.module_id_name,
             fetch_error=self.fetch_error,
             stored_data_version=self.stored_data_version,
@@ -329,10 +365,7 @@ class WfModule(models.Model):
             next_update=None,
             update_interval=self.update_interval,
             last_update_check=self.last_update_check,
-            # to_workflow has exactly one delta, and that's the version of all
-            # its modules. This is so we can cache render results. (Cached
-            # render results require a delta ID.)
-            last_relevant_delta_id=to_workflow.last_delta_id,
+            last_relevant_delta_id=last_relevant_delta_id,
             params=self.params,
             secrets={},  # DO NOT COPY SECRETS
         )

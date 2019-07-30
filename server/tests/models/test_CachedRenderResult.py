@@ -151,7 +151,7 @@ class CachedRenderResultTests(DbTestCase):
         workflow2 = Workflow.objects.create()
         tab2 = workflow2.tabs.create(position=0)
         InitWorkflowCommand.create(workflow2)
-        dup = self.wf_module.duplicate(tab2)
+        dup = self.wf_module.duplicate_into_new_workflow(tab2)
 
         dup_cached_result = dup.cached_render_result
         self.assertIsNotNone(dup_cached_result)
@@ -169,7 +169,7 @@ class CachedRenderResultTests(DbTestCase):
         workflow2 = Workflow.objects.create()
         tab2 = workflow2.tabs.create(position=0)
         InitWorkflowCommand.create(workflow2)
-        dup = self.wf_module.duplicate(tab2)
+        dup = self.wf_module.duplicate_into_new_workflow(tab2)
 
         dup_cached_result = dup.cached_render_result
         self.assertIsNone(dup_cached_result)
