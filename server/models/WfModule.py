@@ -316,9 +316,16 @@ class WfModule(models.Model):
     def duplicate(self, to_tab):
         to_workflow = to_tab.workflow
 
+        # Slug must be unique across the entire workflow; therefore, the
+        # duplicate WfModule must be on a different workflow. (If we need
+        # to duplicate within the same workflow, we'll need to change the
+        # slug -- different method, please.)
+        assert to_tab.workflow_id != self.workflow_id
+
         # Initialize but don't save
         new_wfm = WfModule(
             tab=to_tab,
+            slug=self.slug,
             module_id_name=self.module_id_name,
             fetch_error=self.fetch_error,
             stored_data_version=self.stored_data_version,
