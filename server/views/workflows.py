@@ -3,7 +3,6 @@ from dataclasses import dataclass
 import datetime
 from typing import List
 from asgiref.sync import async_to_sync
-from django.conf import settings
 from django.contrib.auth.decorators import login_required
 import django.db
 from django.db.models import Q
@@ -18,7 +17,7 @@ from rest_framework.decorators import api_view
 from rest_framework.decorators import renderer_classes
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
-from server import minio, rabbitmq
+from server import rabbitmq
 from server.models import ModuleVersion, Workflow, WfModule, Tab
 from server.models.course import CourseLookup
 from server.models.lesson import LessonLookup
