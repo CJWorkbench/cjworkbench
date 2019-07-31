@@ -28,7 +28,7 @@ def loads_wf_module_for_api_upload(f):
     The HTTP Authorization header must look like:
 
         Authorization: Bearer <WF_MODULE_FILE_UPLOAD_API_TOKEN>
-    
+
     The inner function is wrapped in `workflow.cooperative_lock()`.
 
     Return 400 Bad Request if the Authorization header looks wrong.
