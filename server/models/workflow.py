@@ -310,7 +310,6 @@ class Workflow(models.Model):
     @classmethod
     def owned_by_user_session(cls, user, session):
         # FIXME unit-test (security)
-        ret = cls.objects
         if user and not user.is_anonymous:
             if session and session.session_key:
                 mask = Q(owner_id=user.id) | Q(
