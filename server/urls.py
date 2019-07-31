@@ -6,7 +6,6 @@ from . import views
 from django.contrib.staticfiles import views as staticfiles_views
 from .views import acl, lessons, oauth, workflows
 
-
 def redirect(url: str):
     return RedirectView.as_view(url=url)
 

@@ -4,21 +4,13 @@ import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
 import Workflows from '../Workflows'
 import WorkbenchAPI from '../WorkbenchAPI'
-import { createStore } from 'redux'
-import { I18nLoader } from '../i18n/I18nLoader'
-import { localeReducer } from '../i18n/actions'
-import InternationalizedPage from '../i18n/InternationalizedPage'
+import { InternationalizedPage } from '../i18n/InternationalizedPage'
 
 const api = new WorkbenchAPI(null) // no websocket
 const { workflows, loggedInUser } = window.initState
 
-const store = createStore(
-  localeReducer,
-  {...window.initState}
-)
-
 ReactDOM.render((
-  <InternationalizedPage store={store}>
+  <InternationalizedPage>
       <Workflows
         api={api}
         workflows={workflows}

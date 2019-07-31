@@ -1,10 +1,8 @@
 import React from 'react'
-import { connect } from 'react-redux'
 import { I18nProvider } from '@lingui/react'
 import fetchCatalog from './catalogs'
-import { defaultLocale } from './locales'
 
-class I18nLoaderClass extends React.Component {
+export class I18nLoader extends React.Component {
   state = {
     catalogs: {},
   }
@@ -53,9 +51,3 @@ class I18nLoaderClass extends React.Component {
     )
   }
 }
-
-const mapStateToProps = (state) => {
-    return {language: state && state.locale ? state.locale : defaultLocale}
-}
-
-export const I18nLoader = connect(mapStateToProps)(I18nLoaderClass)

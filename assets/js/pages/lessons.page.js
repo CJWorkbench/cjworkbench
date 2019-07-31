@@ -1,17 +1,11 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { createStore } from 'redux'
 import Navbar from '../Workflows/Navbar'
-import { localeReducer } from '../i18n/actions'
-import InternationalizedPage from '../i18n/InternationalizedPage'
-
-const store = createStore(
-  localeReducer
-)
+import { InternationalizedPage } from '../i18n/InternationalizedPage'
 
 ReactDOM.render(
   (
-    <InternationalizedPage store={store}>
+    <InternationalizedPage>
       <Navbar />
     </InternationalizedPage>
   ),

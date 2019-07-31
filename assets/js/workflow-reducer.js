@@ -4,7 +4,6 @@ import { reducerFunctions as TabReducerFunctions } from './WorkflowEditor/Tabs/a
 import { reducerFunctions as WorkflowEditorReducerFunctions } from './WorkflowEditor/actions'
 import { reducerFunctions as ShareReducerFunctions } from './ShareModal/actions'
 import { reducerFunctions as FileReducerFunctions } from './params/File/actions'
-import { reducerFunctions as LocaleReducerFunctions } from './i18n/actions'
 
 // Workflow
 const SET_WORKFLOW_NAME = 'SET_WORKFLOW_NAME'
@@ -63,8 +62,7 @@ const reducerFunc = {
   ...FileReducerFunctions,
   ...ShareReducerFunctions,
   ...TabReducerFunctions,
-  ...WorkflowEditorReducerFunctions,
-  ...LocaleReducerFunctions
+  ...WorkflowEditorReducerFunctions
 }
 
 const registerReducerFunc = (key, func) => {
