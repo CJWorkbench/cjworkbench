@@ -2,9 +2,10 @@ from django.conf import settings
 from django.conf.urls import url
 from django.views.generic import TemplateView
 from django.views.generic.base import RedirectView
+from django.urls import path
 from . import views
 from django.contrib.staticfiles import views as staticfiles_views
-from .views import acl, lessons, oauth, workflows
+from .views import acl, lessons, oauth, workflows, uploads
 
 
 def redirect(url: str):
@@ -40,6 +41,18 @@ urlpatterns = [
         workflows.render_workflow,
         name="workflow",
     ),
+    # API
+    path(
+        "api/v1/workflows/<int:workflow_id>/steps/<slug:wf_module_slug>/uploads",
+        uploads.UploadList.as_view(),
+    ),
+    path(
+        "api/v1/workflows/<int:workflow_id>/steps/<slug:wf_module_slug>/uploads/<uuid:uuid>",
+        uploads.Upload.as_view(),
+    ),
+    # Not-really-an-API API endpoints
+    # TODO rename all these so they don't start with `/api`. (The only way to
+    # use them is as a logged-in user.)
     url(r"^api/workflows/(?P<workflow_id>[0-9]+)/?$", workflows.workflow_detail),
     url(
         r"^api/workflows/(?P<workflow_id>[0-9]+)/duplicate/?$",
