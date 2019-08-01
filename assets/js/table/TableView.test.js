@@ -3,7 +3,10 @@ import React from 'react'
 import { mount } from 'enzyme'
 import { Provider } from 'react-redux'
 import { mockStore, tick } from '../test-utils'
+import { generateSlug } from '../utils'
 import TableView from './TableView'
+
+jest.mock('../utils')
 
 // Ugly hack - let us setProps() on the mounted component
 // See https://github.com/airbnb/enzyme/issues/947
@@ -76,6 +79,7 @@ describe('TableView', () => {
     // integration-test style -- these moving parts tend to rely on one another
     // lots: ignoring workflow-reducer means tests miss bugs.
     const api = { addModule: jest.fn(() => Promise.resolve(null)) }
+    generateSlug.mockImplementationOnce(prefix => prefix + 'X')
     const store = mockStore({
       workflow: {
         tab_slugs: ['tab-1'],
@@ -98,7 +102,7 @@ describe('TableView', () => {
 
     await tick()
 
-    expect(api.addModule).toHaveBeenCalledWith('tab-1', 'reordercolumns', 1, {
+    expect(api.addModule).toHaveBeenCalledWith('tab-1', 'step-X', 'reordercolumns', 1, {
       'reorder-history': JSON.stringify([{ column: 'a', to: 1, from: 0 }])
     })
 
@@ -109,6 +113,7 @@ describe('TableView', () => {
     // integration-test style -- these moving parts tend to rely on one another
     // lots: ignoring workflow-reducer means tests miss bugs.
     const api = { addModule: jest.fn().mockImplementation(() => Promise.resolve(null)) }
+    generateSlug.mockImplementationOnce(prefix => prefix + 'X')
     const store = mockStore({
       workflow: {
         tab_slugs: ['tab-1'],
@@ -136,7 +141,7 @@ describe('TableView', () => {
       updated: { b: 'b2' }
     })
 
-    expect(api.addModule).toHaveBeenCalledWith('tab-1', 'editcells', 1, {
+    expect(api.addModule).toHaveBeenCalledWith('tab-1', 'step-X', 'editcells', 1, {
       celledits: [{ row: 0, col: 'b', value: 'b2' }]
     })
 

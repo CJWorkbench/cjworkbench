@@ -95,6 +95,7 @@ def _add_wf_module_to_tab(wfm_dict, order, tab, delta_id, lesson):
     Deserialize a WfModule from lesson initial_workflow
     """
     id_name = wfm_dict["module"]
+    slug = wfm_dict["slug"]
 
     # 500 error if bad module id name
     module_version = ModuleVersion.objects.latest(id_name)
@@ -127,6 +128,7 @@ def _add_wf_module_to_tab(wfm_dict, order, tab, delta_id, lesson):
 
     return tab.wf_modules.create(
         order=order,
+        slug=slug,
         module_id_name=id_name,
         is_busy=module_version.loads_data,  # assume we'll send a fetch
         last_relevant_delta_id=delta_id,

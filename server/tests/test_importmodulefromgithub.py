@@ -84,6 +84,7 @@ class ImportFromGitHubTest(DbTestCase):
             tab = workflow.tabs.create(position=0)
             wfm = tab.wf_modules.create(
                 order=0,
+                slug="step-1",
                 module_id_name=module_version.id_name,
                 params={
                     **module_version.default_params,

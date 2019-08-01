@@ -64,7 +64,7 @@ class WorkflowTests(DbTestCase):
         # Create workflow with two WfModules
         wf1 = Workflow.create_and_init(name="Foo")
         tab = wf1.tabs.first()
-        tab.wf_modules.create(order=0, module_id_name="x")
+        tab.wf_modules.create(order=0, slug="step-1", module_id_name="x")
 
         wf2 = wf1.duplicate(self.bob)
 
@@ -145,6 +145,7 @@ class WorkflowTests(DbTestCase):
             AddModuleCommand.create(
                 workflow=workflow,
                 tab=tab,
+                slug="step-1",
                 module_id_name="x",
                 position=0,
                 param_values={},
@@ -169,7 +170,9 @@ class WorkflowTests(DbTestCase):
         # Workflow, make sure all data gets deleted.
         #
         # TODO fix all other bugs that leak data.
-        wf_module = workflow.tabs.first().wf_modules.create(order=0, module_id_name="x")
+        wf_module = workflow.tabs.first().wf_modules.create(
+            order=0, slug="step-1", module_id_name="x"
+        )
 
         # Add StoredObject ... and leak it
         wf_module.store_fetched_table(pd.DataFrame({"A": [1, 2]}))
@@ -275,13 +278,13 @@ class DependencyGraphTests(DbTestCase):
         )
 
         wfm1 = tab1.wf_modules.create(
-            order=0, module_id_name="simple", params={"str": "A"}
+            order=0, slug="step-1", module_id_name="simple", params={"str": "A"}
         )
         wfm2 = tab1.wf_modules.create(
-            order=1, module_id_name="tabby", params={"tab": "tab-2"}
+            order=1, slug="step-2", module_id_name="tabby", params={"tab": "tab-2"}
         )
         wfm3 = tab2.wf_modules.create(
-            order=0, module_id_name="simple", params={"str": "B"}
+            order=0, slug="step-3", module_id_name="simple", params={"str": "B"}
         )
 
         graph = DependencyGraph.load_from_workflow(workflow)

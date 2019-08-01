@@ -222,6 +222,7 @@ class WfModuleSerializer(serializers.ModelSerializer):
         model = WfModule
         fields = (
             "id",
+            "slug",
             "module",
             "tab_slug",
             "is_busy",

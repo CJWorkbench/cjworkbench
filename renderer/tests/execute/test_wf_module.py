@@ -16,6 +16,7 @@ class WfModuleTests(DbTestCase):
         tab = workflow.tabs.first()
         wf_module = tab.wf_modules.create(
             order=0,
+            slug="step-1",
             module_id_name="deleted_module",
             last_relevant_delta_id=workflow.last_delta_id,
         )

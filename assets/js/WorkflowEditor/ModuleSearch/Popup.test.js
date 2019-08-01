@@ -4,6 +4,9 @@ import ConnectedPopup, { Popup } from './Popup'
 import { mount } from 'enzyme'
 import { Provider } from 'react-redux'
 import { mockStore } from '../../test-utils'
+import { generateSlug } from '../../utils'
+
+jest.mock('../../utils')
 
 describe('ModuleSearch Popup', () => {
   const ModuleDefaults = {
@@ -189,6 +192,7 @@ describe('ModuleSearch Popup', () => {
 
     it('dispatches addModule', () => {
       const api = { addModule: jest.fn(() => new Promise(() => {})) } // never resolves
+      generateSlug.mockImplementation(prefix => prefix + 'X')
       const store = mockStore({
         tabs: {
           'tab-1': {
@@ -207,7 +211,7 @@ describe('ModuleSearch Popup', () => {
       const close = jest.fn()
       const w = wrapper(store, { tabSlug: 'tab-1', index: 2, close })
       w.find('button[data-module-slug="a"]').simulate('click')
-      expect(api.addModule).toHaveBeenCalledWith('tab-1', 'a', 2, {})
+      expect(api.addModule).toHaveBeenCalledWith('tab-1', 'step-X', 'a', 2, {})
       expect(close).toHaveBeenCalled()
     })
 

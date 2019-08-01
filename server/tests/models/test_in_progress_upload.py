@@ -7,7 +7,9 @@ from server.tests.utils import DbTestCase
 class InProgressUploadTest(DbTestCase):
     def test_delete_s3_data_multipart_upload(self):
         workflow = Workflow.create_and_init()
-        wf_module = workflow.tabs.first().wf_modules.create(order=0, module_id_name="x")
+        wf_module = workflow.tabs.first().wf_modules.create(
+            order=0, slug="step-1", module_id_name="x"
+        )
         ipu = wf_module.in_progress_uploads.create()
         minio.client.create_multipart_upload(
             Bucket=ipu.Bucket, Key=ipu.get_upload_key()
@@ -32,7 +34,9 @@ class InProgressUploadTest(DbTestCase):
     def test_delete_s3_data_leaked_file(self):
         # Delete a file with our UUID but without an UploadedFile.
         workflow = Workflow.create_and_init()
-        wf_module = workflow.tabs.first().wf_modules.create(order=0, module_id_name="x")
+        wf_module = workflow.tabs.first().wf_modules.create(
+            order=0, slug="step-1", module_id_name="x"
+        )
         ipu = wf_module.in_progress_uploads.create()
         key = wf_module.uploaded_file_prefix + str(ipu.id) + ".xlsx"
         minio.put_bytes(minio.UserFilesBucket, key, b"1234567")
@@ -41,7 +45,9 @@ class InProgressUploadTest(DbTestCase):
 
     def test_delete_s3_data_ignore_non_leaked_file(self):
         workflow = Workflow.create_and_init()
-        wf_module = workflow.tabs.first().wf_modules.create(order=0, module_id_name="x")
+        wf_module = workflow.tabs.first().wf_modules.create(
+            order=0, slug="step-1", module_id_name="x"
+        )
         ipu = wf_module.in_progress_uploads.create()
         key = wf_module.uploaded_file_prefix + str(ipu.id) + ".xlsx"
         minio.put_bytes(minio.UserFilesBucket, key, b"1234567")
@@ -57,14 +63,18 @@ class InProgressUploadTest(DbTestCase):
 
     def test_convert_to_uploaded_file_file_not_found_error(self):
         workflow = Workflow.create_and_init()
-        wf_module = workflow.tabs.first().wf_modules.create(order=0, module_id_name="x")
+        wf_module = workflow.tabs.first().wf_modules.create(
+            order=0, slug="step-1", module_id_name="x"
+        )
         ipu = wf_module.in_progress_uploads.create()
         with self.assertRaises(FileNotFoundError):
             ipu.convert_to_uploaded_file("test.csv")
 
     def test_convert_to_uploaded_file_happy_path(self):
         workflow = Workflow.create_and_init()
-        wf_module = workflow.tabs.first().wf_modules.create(order=0, module_id_name="x")
+        wf_module = workflow.tabs.first().wf_modules.create(
+            order=0, slug="step-1", module_id_name="x"
+        )
         ipu = wf_module.in_progress_uploads.create()
         minio.put_bytes(ipu.Bucket, ipu.get_upload_key(), b"1234567")
         uploaded_file = ipu.convert_to_uploaded_file("test sheet.xlsx")
@@ -90,7 +100,9 @@ class InProgressUploadTest(DbTestCase):
 
     def test_integration_happy_path(self):
         workflow = Workflow.create_and_init()
-        wf_module = workflow.tabs.first().wf_modules.create(order=0, module_id_name="x")
+        wf_module = workflow.tabs.first().wf_modules.create(
+            order=0, slug="step-1", module_id_name="x"
+        )
         ipu = wf_module.in_progress_uploads.create()
         updated_at1 = ipu.updated_at
         time.sleep(0.000001)  # so updated_at changes

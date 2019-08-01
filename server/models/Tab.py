@@ -35,8 +35,9 @@ class Tab(models.Model):
     def live_wf_modules(self):
         return self.wf_modules.filter(is_deleted=False)
 
-    def duplicate(self, to_workflow: Workflow) -> None:
+    def duplicate_into_new_workflow(self, to_workflow: Workflow) -> None:
         """Deep-copy this Tab to a new Tab in `to_workflow`."""
+        assert to_workflow.id != self.workflow_id
 
         new_tab = to_workflow.tabs.create(
             slug=self.slug,
@@ -46,4 +47,4 @@ class Tab(models.Model):
         )
         wf_modules = list(self.live_wf_modules)
         for wf_module in wf_modules:
-            wf_module.duplicate(new_tab)
+            wf_module.duplicate_into_new_workflow(new_tab)

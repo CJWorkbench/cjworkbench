@@ -412,7 +412,7 @@ class Workflow(models.Model):
 
             tabs = list(self.live_tabs)
             for tab in tabs:
-                tab.duplicate(wf)
+                tab.duplicate_into_new_workflow(wf)
 
         return wf
 

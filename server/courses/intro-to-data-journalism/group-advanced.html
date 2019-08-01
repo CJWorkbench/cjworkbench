@@ -20,25 +20,30 @@ tabs:
 - name: Lesson
   wfModules:
   - module: loadurl
+    slug: step-loadurl
     params:
       url: ./NYC-incidents-2018.csv
     collapsed: true
     note: "Source: City of New York."
   - module: selectcolumns
+    slug: step-selectcolumns
     params:
       colnames: [ boro_nm, cmplnt_fr_dt ]
     collapsed: true
   - module: renamecolumns
+    slug: step-renamecolumns
     params:
       renames: { "boro_nm": "Borough", "cmplnt_fr_dt": "Complaint date" }
     collapsed: true
   - module: convert-date
+    slug: step-convert-date
     params:
       colnames: [ "Complaint date" ]
     collapsed: true
 - name: Data dictionary
   wfModules:
   - module: loadurl
+    slug: step-loaddictionary
     params:
       url: './nypd-complaint-ytd-data-dictionary.csv'
     collapsed: true

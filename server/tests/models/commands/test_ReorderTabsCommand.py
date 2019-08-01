@@ -90,6 +90,7 @@ class ReorderTabsCommandTest(DbTestCase):
         )
         wf_module = workflow.tabs.first().wf_modules.create(
             order=0,
+            slug="step-1",
             module_id_name="x",
             params={"tabs": ["tab-2", "tab-3"]},
             last_relevant_delta_id=workflow.last_delta_id,

@@ -95,13 +95,13 @@ class LessonDetailTests(DbTestCase):
         self.assertTemplateUsed("workflow.html")
 
     def test_get_without_login(self):
-        response = self.client.get("/lessons/load-public-data")
+        self.client.get("/lessons/load-public-data")
         self.assertEqual(Workflow.objects.count(), 1)
 
     def test_get_with_existing(self):
         self.log_in()
         Workflow.objects.create(owner=self.user, lesson_slug="load-public-data")
-        response = self.client.get("/lessons/load-public-data")
+        self.client.get("/lessons/load-public-data")
         self.assertEqual(Workflow.objects.count(), 1)  # don't create duplicate
 
     def test_get_without_existing(self):
@@ -114,7 +114,7 @@ class LessonDetailTests(DbTestCase):
             owner=self.other_user, lesson_slug="load-public-data", public=True
         )
 
-        response = self.client.post("/lessons/load-public-data")
+        self.client.post("/lessons/load-public-data")
         self.assertEqual(Workflow.objects.count(), 4)  # create Workflow
         self.assertEqual(
             Workflow.objects.filter(lesson_slug="load-public-data").count(), 2
@@ -194,6 +194,7 @@ class LessonDetailTests(DbTestCase):
                             "wfModules": [
                                 {
                                     "module": "amodule",
+                                    "slug": "step-X",
                                     "params": {"foo": "bar"},
                                     "collapsed": True,
                                     "note": "You're gonna love this data!",
@@ -222,6 +223,7 @@ class LessonDetailTests(DbTestCase):
         wf_modules = state["wfModules"]
         wfm1 = list(wf_modules.values())[0]
         self.assertEqual(wfm1["module"], "amodule")
+        self.assertEqual(wfm1["slug"], "step-X")
         self.assertEqual(wfm1["params"], {"foo": "bar"})
         self.assertEqual(wfm1["notes"], "You're gonna love this data!")
         self.assertEqual(wfm1["is_collapsed"], True)
@@ -244,7 +246,11 @@ class LessonDetailTests(DbTestCase):
                         {
                             "name": "Tab X",
                             "wfModules": [
-                                {"module": "amodule", "params": {"url": "./foo.txt"}}
+                                {
+                                    "module": "amodule",
+                                    "slug": "step-X",
+                                    "params": {"url": "./foo.txt"},
+                                }
                             ],
                         }
                     ]
@@ -281,7 +287,11 @@ class LessonDetailTests(DbTestCase):
                         {
                             "name": "Tab X",
                             "wfModules": [
-                                {"module": "amodule", "params": {"foo": "bar"}}
+                                {
+                                    "module": "amodule",
+                                    "slug": "step-X",
+                                    "params": {"foo": "bar"},
+                                }
                             ],
                         }
                     ]
@@ -321,6 +331,7 @@ class LessonDetailTests(DbTestCase):
                             "wfModules": [
                                 {
                                     "module": "amodule",  # does not exist
+                                    "slug": "step-X",
                                     "params": {"foo": "bar"},
                                 }
                             ],
@@ -348,6 +359,7 @@ class LessonDetailTests(DbTestCase):
                             "name": "Tab X",
                             "wfModules": [
                                 {
+                                    "slug": "step-X",
                                     "module": "amodule",
                                     "params": {"fooTYPO": "bar"},  # typo
                                 }

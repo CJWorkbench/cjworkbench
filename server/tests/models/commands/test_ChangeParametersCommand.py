@@ -49,6 +49,7 @@ class ChangeParametersCommandTest(DbTestCase):
         wf_module = workflow.tabs.first().wf_modules.create(
             module_id_name="loadurl",
             order=0,
+            slug="step-1",
             last_relevant_delta_id=workflow.last_delta_id,
             params=params1,
         )
@@ -94,6 +95,7 @@ class ChangeParametersCommandTest(DbTestCase):
 
         wf_module = workflow.tabs.first().wf_modules.create(
             order=0,
+            slug="step-1",
             module_id_name="loadurl",
             last_relevant_delta_id=workflow.last_delta_id,
             is_deleted=True,
@@ -125,6 +127,7 @@ class ChangeParametersCommandTest(DbTestCase):
 
         wf_module = tab.wf_modules.create(
             order=0,
+            slug="step-1",
             module_id_name="loadurl",
             last_relevant_delta_id=delta.id,
             params={"url": ""},
@@ -153,6 +156,7 @@ class ChangeParametersCommandTest(DbTestCase):
 
         wf_module = workflow.tabs.first().wf_modules.create(
             order=0,
+            slug="step-1",
             module_id_name="loadurl",
             last_relevant_delta_id=workflow.last_delta_id,
             params={"url": ""},
@@ -177,6 +181,7 @@ class ChangeParametersCommandTest(DbTestCase):
         # gone when ChangeParametersCommand is called.
         wf_module = workflow.tabs.first().wf_modules.create(
             order=0,
+            slug="step-1",
             module_id_name="x",
             last_relevant_delta_id=workflow.last_delta_id,
             params={"version": "v1", "x": 1},  # version-'1' params
@@ -237,6 +242,7 @@ class ChangeParametersCommandTest(DbTestCase):
         workflow = Workflow.create_and_init()
         wf_module = workflow.tabs.first().wf_modules.create(
             order=0,
+            slug="step-1",
             module_id_name="x",
             last_relevant_delta_id=workflow.last_delta_id,
             params={"x": 1},
@@ -274,6 +280,7 @@ class ChangeParametersCommandTest(DbTestCase):
         # tab1's wfm1 depends on tab2's wfm2
         wfm1 = workflow.tabs.first().wf_modules.create(
             order=0,
+            slug="step-1",
             module_id_name="tabby",
             last_relevant_delta_id=workflow.last_delta_id,
             params={"tab": "tab-2"},
@@ -281,6 +288,7 @@ class ChangeParametersCommandTest(DbTestCase):
         tab2 = workflow.tabs.create(position=1, slug="tab-2")
         wfm2 = tab2.wf_modules.create(
             order=0,
+            slug="step-1",
             module_id_name="x",
             last_relevant_delta_id=workflow.last_delta_id,
             params={"x": 1},

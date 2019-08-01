@@ -59,6 +59,7 @@ class SetTabNameCommandTest(DbTestCase):
         )
         wf_module = tab2.wf_modules.create(
             order=0,
+            slug="step-1",
             module_id_name="x",
             params={"tab": tab1.slug},
             last_relevant_delta_id=delta_id,
@@ -88,7 +89,7 @@ class SetTabNameCommandTest(DbTestCase):
             {"id_name": "x", "name": "x", "category": "Clean", "parameters": []}
         )
         wf_module = tab.wf_modules.create(
-            order=0, module_id_name="x", last_relevant_delta_id=delta_id
+            order=0, slug="step-1", module_id_name="x", last_relevant_delta_id=delta_id
         )
 
         cmd = self.run_with_async_db(

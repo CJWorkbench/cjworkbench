@@ -27,7 +27,7 @@ class WfModuleTests(DbTestCase):
         wf_module.stored_data_version? The two values would be inconsistent.
         """
         workflow = Workflow.create_and_init()
-        wf_module = workflow.tabs.first().wf_modules.create(order=0)
+        wf_module = workflow.tabs.first().wf_modules.create(order=0, slug="step-1")
         table1 = pd.DataFrame({"A": [1]})
         table2 = pd.DataFrame({"B": [2]})
         stored_object1 = wf_module.store_fetched_table(table1)
@@ -41,7 +41,7 @@ class WfModuleTests(DbTestCase):
     # test stored versions of data: create, retrieve, set, list, and views
     def test_wf_module_data_versions(self):
         workflow = Workflow.create_and_init()
-        wf_module = workflow.tabs.first().wf_modules.create(order=0)
+        wf_module = workflow.tabs.first().wf_modules.create(order=0, slug="step-1")
         table1 = mock_csv_table
         table2 = mock_csv_table2
 
@@ -88,7 +88,7 @@ class WfModuleTests(DbTestCase):
 
     def test_wf_module_store_table_if_different(self):
         workflow = Workflow.create_and_init()
-        wf_module = workflow.tabs.first().wf_modules.create(order=0)
+        wf_module = workflow.tabs.first().wf_modules.create(order=0, slug="step-1")
         table1 = mock_csv_table
         table2 = mock_csv_table2
 
@@ -126,7 +126,7 @@ class WfModuleTests(DbTestCase):
 
     def test_wf_module_duplicate(self):
         workflow = Workflow.create_and_init()
-        wfm1 = workflow.tabs.first().wf_modules.create(order=0)
+        wfm1 = workflow.tabs.first().wf_modules.create(order=0, slug="step-1")
 
         # store data to test that it is duplicated
         wfm1.store_fetched_table(mock_csv_table)
@@ -139,9 +139,10 @@ class WfModuleTests(DbTestCase):
         # duplicate into another workflow, as we would do when duplicating a workflow
         workflow2 = Workflow.create_and_init()
         tab2 = workflow2.tabs.first()
-        wfm1d = wfm1.duplicate(tab2)
+        wfm1d = wfm1.duplicate_into_new_workflow(tab2)
         wfm1d.refresh_from_db()  # test what we actually have in the db
 
+        self.assertEqual(wfm1d.slug, "step-1")
         self.assertEqual(wfm1d.workflow, workflow2)
         self.assertEqual(wfm1d.module_version, wfm1.module_version)
         self.assertEqual(wfm1d.order, wfm1.order)
@@ -168,6 +169,7 @@ class WfModuleTests(DbTestCase):
         tab = workflow.tabs.first()
         wf_module = tab.wf_modules.create(
             order=0,
+            slug="step-1",
             auto_update_data=True,
             next_update=timezone.now(),
             update_interval=600,
@@ -176,7 +178,7 @@ class WfModuleTests(DbTestCase):
         workflow2 = Workflow.create_and_init()
         InitWorkflowCommand.create(workflow2)
         tab2 = workflow2.tabs.create(position=0)
-        wf_module2 = wf_module.duplicate(tab2)
+        wf_module2 = wf_module.duplicate_into_new_workflow(tab2)
 
         self.assertEqual(wf_module2.auto_update_data, False)
         self.assertIsNone(wf_module2.next_update)
@@ -189,19 +191,21 @@ class WfModuleTests(DbTestCase):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
         wf_module = tab.wf_modules.create(
-            order=0, secrets={"auth": {"name": "x", "secret": "y"}}
+            order=0, slug="step-1", secrets={"auth": {"name": "x", "secret": "y"}}
         )
 
         workflow2 = Workflow.create_and_init()
         tab2 = workflow2.tabs.first()
-        wf_module2 = wf_module.duplicate(tab2)
+        wf_module2 = wf_module.duplicate_into_new_workflow(tab2)
 
         self.assertEqual(wf_module2.secrets, {})
 
     def test_wf_module_duplicate_copy_uploaded_file(self):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
-        wf_module = tab.wf_modules.create(order=0, module_id_name="upload")
+        wf_module = tab.wf_modules.create(
+            order=0, slug="step-1", module_id_name="upload"
+        )
         uuid = str(uuidgen.uuid4())
         key = f"{wf_module.uploaded_file_prefix}{uuid}.csv"
         minio.put_bytes(minio.UserFilesBucket, key, b"1234567")
@@ -215,7 +219,7 @@ class WfModuleTests(DbTestCase):
 
         workflow2 = Workflow.create_and_init()
         tab2 = workflow2.tabs.first()
-        wf_module2 = wf_module.duplicate(tab2)
+        wf_module2 = wf_module.duplicate_into_new_workflow(tab2)
 
         uploaded_file2 = wf_module2.uploaded_files.first()
         self.assertIsNotNone(uploaded_file2)
@@ -240,7 +244,9 @@ class WfModuleTests(DbTestCase):
     def test_wf_module_duplicate_copy_only_selected_uploaded_file(self):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
-        wf_module = tab.wf_modules.create(order=0, module_id_name="upload")
+        wf_module = tab.wf_modules.create(
+            order=0, slug="step-1", module_id_name="upload"
+        )
         uuid1 = str(uuidgen.uuid4())
         key1 = f"{wf_module.uploaded_file_prefix}{uuid1}.csv"
         minio.put_bytes(minio.UserFilesBucket, key1, b"1234567")
@@ -266,7 +272,7 @@ class WfModuleTests(DbTestCase):
 
         workflow2 = Workflow.create_and_init()
         tab2 = workflow2.tabs.first()
-        wf_module2 = wf_module.duplicate(tab2)
+        wf_module2 = wf_module.duplicate_into_new_workflow(tab2)
 
         self.assertEqual(wf_module2.uploaded_files.count(), 1)
         new_uf = wf_module2.uploaded_files.first()
@@ -278,7 +284,7 @@ class WfModuleTests(DbTestCase):
             {"id_name": "floob", "name": "Floob", "category": "Clean", "parameters": []}
         )
         wf_module = workflow.tabs.first().wf_modules.create(
-            order=0, module_id_name="floob"
+            order=0, slug="step-1", module_id_name="floob"
         )
         self.assertEqual(wf_module.module_version, module_version)
         # white-box testing: test that we work even from cache
@@ -287,20 +293,22 @@ class WfModuleTests(DbTestCase):
     def test_get_params_on_deleted_module(self):
         workflow = Workflow.create_and_init()
         wf_module = workflow.tabs.first().wf_modules.create(
-            order=0, module_id_name="deleted_module", params={"a": "b"}
+            order=0, slug="step-1", module_id_name="deleted_module", params={"a": "b"}
         )
         self.assertEqual(wf_module.get_params(), {})
 
     def test_module_version_missing(self):
         workflow = Workflow.create_and_init()
         wf_module = workflow.tabs.first().wf_modules.create(
-            order=0, module_id_name="floob"
+            order=0, slug="step-1", module_id_name="floob"
         )
         self.assertIsNone(wf_module.module_version)
 
     def test_delete_inprogress_file_upload(self):
         workflow = Workflow.create_and_init()
-        wf_module = workflow.tabs.first().wf_modules.create(order=0, module_id_name="x")
+        wf_module = workflow.tabs.first().wf_modules.create(
+            order=0, slug="step-1", module_id_name="x"
+        )
         ipu = wf_module.in_progress_uploads.create()
         key = ipu.get_upload_key()
         minio.client.create_multipart_upload(Bucket=ipu.Bucket, Key=key)
@@ -311,7 +319,7 @@ class WfModuleTests(DbTestCase):
 
     def test_delete_remove_uploaded_data_by_prefix_in_case_model_missing(self):
         workflow = Workflow.create_and_init()
-        wf_module = workflow.tabs.first().wf_modules.create(order=0)
+        wf_module = workflow.tabs.first().wf_modules.create(order=0, slug="step-1")
         uuid = str(uuidgen.uuid4())
         key = wf_module.uploaded_file_prefix + uuid
         minio.put_bytes(minio.UserFilesBucket, key, b"A\n1")

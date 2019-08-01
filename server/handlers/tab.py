@@ -1,4 +1,5 @@
 import functools
+import re
 from typing import Any, Dict, List
 from cjworkbench.sync import database_sync_to_async
 from server.models import ModuleVersion, Workflow, Tab
@@ -50,11 +51,14 @@ async def add_module(
     scope,
     workflow: Workflow,
     tab: Tab,
+    slug: str,
     moduleIdName: str,
     position: int,
     paramValues: Dict[str, Any],
     **kwargs,
 ):
+    slug = _parse_slug(slug)
+
     if not isinstance(paramValues, dict):
         raise HandlerError("BadRequest: paramValues must be an Object")
 
@@ -71,6 +75,7 @@ async def add_module(
         await AddModuleCommand.create(
             workflow=workflow,
             tab=tab,
+            slug=slug,
             module_id_name=moduleIdName,
             position=position,
             param_values=paramValues,
@@ -90,6 +95,21 @@ async def add_module(
     )
 
 
+SlugRegex = re.compile(r"\A[-a-zA-Z0-9_]+\Z")
+
+
+def _parse_slug(slug: str):
+    """
+    Return `slug` or raise ValueError.
+    """
+    slug = str(slug)  # cannot error from JSON params
+    if not SlugRegex.match(slug):
+        raise HandlerError(
+            f'BadRequest: slug must match regex "[-a-zA-Z0-9_]+"; got "{slug}"'
+        )
+    return slug
+
+
 @register_websockets_handler
 @websockets_handler("write")
 @_loading_tab
@@ -107,7 +127,7 @@ async def reorder_modules(
 @register_websockets_handler
 @websockets_handler("write")
 async def create(workflow: Workflow, slug: str, name: str, **kwargs):
-    slug = str(slug)  # JSON values can't lead to error
+    slug = _parse_slug(slug)
     name = str(name)  # JSON values can't lead to error
     await AddTabCommand.create(workflow=workflow, slug=slug, name=name)
 

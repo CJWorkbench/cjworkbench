@@ -6,7 +6,6 @@ from server.models.commands import (
     DeleteModuleCommand,
     InitWorkflowCommand,
 )
-from server.models.param_dtype import ParamDType
 from server.tests.utils import DbTestCase
 
 
@@ -58,7 +57,10 @@ class AddDeleteModuleCommandTests(DbTestCase):
     # Add another module, then undo, redo
     def test_add_module(self):
         existing_module = self.tab.wf_modules.create(
-            order=0, last_relevant_delta_id=self.delta.id, params={"url": ""}
+            order=0,
+            slug="step-1",
+            last_relevant_delta_id=self.delta.id,
+            params={"url": ""},
         )
 
         all_modules = self.tab.live_wf_modules
@@ -72,6 +74,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
             AddModuleCommand.create(
                 workflow=self.workflow,
                 tab=self.workflow.tabs.first(),
+                slug="step-2",
                 module_id_name=self.module_version.id_name,
                 position=0,
                 param_values={"url": "https://x.com"},
@@ -141,12 +144,31 @@ class AddDeleteModuleCommandTests(DbTestCase):
             AddModuleCommand.create(
                 workflow=workflow,
                 tab=workflow.tabs.first(),
+                slug="step-1",
                 module_id_name=module_version.id_name,
                 position=0,
                 param_values={},
             )
         )
         self.assertEqual(cmd.wf_module.params, {"a": "x", "c": True})
+
+    def test_add_module_raise_slug_not_unique(self):
+        workflow = Workflow.create_and_init()
+        tab = workflow.tabs.first()
+        tab.wf_modules.create(order=0, slug="step-1", module_id_name="x")
+        # module_id_name doesn't exist either, but we'll white-box test and
+        # assume the uniqueness check comes first
+        with self.assertRaisesRegex(ValueError, "unique"):
+            self.run_with_async_db(
+                AddModuleCommand.create(
+                    workflow=workflow,
+                    tab=tab,
+                    slug="step-1",
+                    module_id_name="x",
+                    position=0,
+                    param_values={},
+                )
+            )
 
     def test_add_module_raise_module_version_does_not_exist(self):
         workflow = Workflow.create_and_init()
@@ -155,6 +177,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
                 AddModuleCommand.create(
                     workflow=workflow,
                     tab=workflow.tabs.first(),
+                    slug="step-1",
                     module_id_name="doesnotexist",
                     position=0,
                     param_values={},
@@ -178,6 +201,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
                 AddModuleCommand.create(
                     workflow=workflow,
                     tab=workflow.tabs.first(),
+                    slug="step-1",
                     module_id_name=module_version.id_name,
                     position=0,
                     param_values={"a": 3},
@@ -188,7 +212,10 @@ class AddDeleteModuleCommandTests(DbTestCase):
     # right Then undo multiple times
     def test_add_many_modules(self):
         existing_module = self.tab.wf_modules.create(
-            order=0, last_relevant_delta_id=self.delta.id, params={"url": ""}
+            order=0,
+            slug="step-1",
+            last_relevant_delta_id=self.delta.id,
+            params={"url": ""},
         )
 
         self.workflow.refresh_from_db()
@@ -202,6 +229,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
             AddModuleCommand.create(
                 workflow=self.workflow,
                 tab=self.workflow.tabs.first(),
+                slug="step-2",
                 module_id_name=self.module_version.id_name,
                 position=0,
                 param_values={},
@@ -219,6 +247,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
             AddModuleCommand.create(
                 workflow=self.workflow,
                 tab=self.workflow.tabs.first(),
+                slug="step-3",
                 module_id_name=self.module_version.id_name,
                 position=2,
                 param_values={},
@@ -234,6 +263,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
             AddModuleCommand.create(
                 workflow=self.workflow,
                 tab=self.workflow.tabs.first(),
+                slug="step-4",
                 module_id_name=self.module_version.id_name,
                 position=2,
                 param_values={},
@@ -270,7 +300,10 @@ class AddDeleteModuleCommandTests(DbTestCase):
     # Delete module, then undo, redo
     def test_delete_module(self):
         existing_module = self.tab.wf_modules.create(
-            order=0, last_relevant_delta_id=self.delta.id, params={"url": ""}
+            order=0,
+            slug="step-1",
+            last_relevant_delta_id=self.delta.id,
+            params={"url": ""},
         )
 
         all_modules = self.tab.live_wf_modules
@@ -310,7 +343,10 @@ class AddDeleteModuleCommandTests(DbTestCase):
     # null, and is undoable
     def test_delete_selected(self):
         wf_module = self.tab.wf_modules.create(
-            order=0, last_relevant_delta_id=self.delta.id, params={"url": ""}
+            order=0,
+            slug="step-1",
+            last_relevant_delta_id=self.delta.id,
+            params={"url": ""},
         )
         self.tab.selected_wf_module_position = 0
         self.tab.save(update_fields=["selected_wf_module_position"])
@@ -330,6 +366,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
             AddModuleCommand.create(
                 workflow=self.workflow,
                 tab=self.workflow.tabs.first(),
+                slug="step-1",
                 module_id_name=self.module_version.id_name,
                 position=0,
                 param_values={},
@@ -350,7 +387,10 @@ class AddDeleteModuleCommandTests(DbTestCase):
     def test_add_undo_selected(self):
         """Undoing an add sets selection."""
         self.tab.wf_modules.create(
-            order=0, last_relevant_delta_id=self.delta.id, params={"url": ""}
+            order=0,
+            slug="step-1",
+            last_relevant_delta_id=self.delta.id,
+            params={"url": ""},
         )
 
         # beginning state: one WfModule
@@ -361,6 +401,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
             AddModuleCommand.create(
                 workflow=self.workflow,
                 tab=self.workflow.tabs.first(),
+                slug="step-2",
                 module_id_name=self.module_version.id_name,
                 position=1,
                 param_values={},
@@ -388,6 +429,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
 
         wfm1 = self.workflow.tabs.first().wf_modules.create(
             order=0,
+            slug="step-1",
             module_id_name="tabby",
             last_relevant_delta_id=self.workflow.last_delta_id,
             params={"tab": "tab-2"},
@@ -400,6 +442,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
             AddModuleCommand.create(
                 workflow=self.workflow,
                 tab=tab2,
+                slug="step-2",
                 module_id_name=self.module_version.id_name,
                 position=0,
                 param_values={"url": "https://x.com"},
@@ -417,6 +460,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
             AddModuleCommand.create(
                 workflow=self.workflow,
                 tab=self.workflow.tabs.first(),
+                slug="step-1",
                 module_id_name=self.module_version.id_name,
                 position=0,
                 param_values={},
@@ -433,6 +477,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
             AddModuleCommand.create(
                 workflow=self.workflow,
                 tab=self.workflow.tabs.first(),
+                slug="step-1",
                 module_id_name=self.module_version.id_name,
                 position=0,
                 param_values={},
@@ -444,6 +489,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
             AddModuleCommand.create(
                 workflow=self.workflow,
                 tab=self.workflow.tabs.first(),
+                slug="step-2",
                 module_id_name=self.module_version.id_name,
                 position=0,
                 param_values={},
@@ -461,6 +507,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
             AddModuleCommand.create(
                 workflow=self.workflow,
                 tab=self.workflow.tabs.first(),
+                slug="step-1",
                 module_id_name=self.module_version.id_name,
                 position=0,
                 param_values={},

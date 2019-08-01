@@ -123,9 +123,10 @@ export default class WorkbenchAPI {
     })
   }
 
-  addModule (tabSlug, moduleIdName, index, values = {}) {
+  addModule (tabSlug, slug, moduleIdName, index, values = {}) {
     return this._callExpectingNull('tab.add_module', {
       tabSlug,
+      slug,
       moduleIdName,
       position: index,
       paramValues: values

@@ -23,15 +23,18 @@ tabs:
 - name: Lesson
   wfModules:
   - module: loadurl
+    slug: step-loadurl
     params:
       url: ./affordable-housing-pipeline.csv
     collapsed: true
     note: "Source: City of San Francisco."
   - module: selectcolumns
+    slug: step-selectcolumns
     params:
       colnames: [ "Project Status", "Planning Neighborhood", "Project Units", "Affordable Units", "% Affordable" ]
     collapsed: true
   - module: filter
+    slug: step-filter
     params:
       filters:
         operator: 'and'
@@ -50,6 +53,7 @@ tabs:
 - name: Data dictionary
   wfModules:
   - module: loadurl
+    slug: step-loaddictionary
     params:
       url: ./dataDictionary-affordable-housing-pipeline.csv
     collapsed: true

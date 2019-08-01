@@ -24,7 +24,9 @@ class UploadTest(HandlerTestCase):
     def test_create_upload(self):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
-        wf_module = workflow.tabs.first().wf_modules.create(order=0, module_id_name="x")
+        wf_module = workflow.tabs.first().wf_modules.create(
+            order=0, slug="step-1", module_id_name="x"
+        )
         response = self.run_handler(
             create_upload, user=user, workflow=workflow, wfModuleId=wf_module.id
         )
@@ -46,7 +48,9 @@ class UploadTest(HandlerTestCase):
     def test_finish_upload_happy_path(self, send_delta):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
-        wf_module = workflow.tabs.first().wf_modules.create(order=0, module_id_name="x")
+        wf_module = workflow.tabs.first().wf_modules.create(
+            order=0, slug="step-1", module_id_name="x"
+        )
         in_progress_upload = wf_module.in_progress_uploads.create(
             id="147a9f5d-5b3e-41c3-a968-a84a5a9d587f"
         )
@@ -91,7 +95,9 @@ class UploadTest(HandlerTestCase):
     def test_finish_upload_error_not_started(self):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
-        wf_module = workflow.tabs.first().wf_modules.create(order=0, module_id_name="x")
+        wf_module = workflow.tabs.first().wf_modules.create(
+            order=0, slug="step-1", module_id_name="x"
+        )
         in_progress_upload = wf_module.in_progress_uploads.create(
             id="147a9f5d-5b3e-41c3-a968-a84a5a9d587f", is_completed=True
         )
@@ -117,7 +123,9 @@ class UploadTest(HandlerTestCase):
         # Appears to the user just like "not started"
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
-        wf_module = workflow.tabs.first().wf_modules.create(order=0, module_id_name="x")
+        wf_module = workflow.tabs.first().wf_modules.create(
+            order=0, slug="step-1", module_id_name="x"
+        )
         key = f"wf-{workflow.id}/wfm-{wf_module.id}/upload_147a9f5d-5b3e-41c3-a968-a84a5a9d587f"
         response = self.run_handler(
             finish_upload,
@@ -139,7 +147,9 @@ class UploadTest(HandlerTestCase):
     def test_finish_upload_error_file_missing(self):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
-        wf_module = workflow.tabs.first().wf_modules.create(order=0, module_id_name="x")
+        wf_module = workflow.tabs.first().wf_modules.create(
+            order=0, slug="step-1", module_id_name="x"
+        )
         in_progress_upload = wf_module.in_progress_uploads.create(
             id="147a9f5d-5b3e-41c3-a968-a84a5a9d587f"
         )
@@ -163,7 +173,9 @@ class UploadTest(HandlerTestCase):
     def test_abort_upload_happy_path_before_complete(self):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
-        wf_module = workflow.tabs.first().wf_modules.create(order=0, module_id_name="x")
+        wf_module = workflow.tabs.first().wf_modules.create(
+            order=0, slug="step-1", module_id_name="x"
+        )
         in_progress_upload = wf_module.in_progress_uploads.create(
             id="147a9f5d-5b3e-41c3-a968-a84a5a9d587f"
         )
@@ -193,7 +205,9 @@ class UploadTest(HandlerTestCase):
     def test_abort_upload_happy_path_after_complete(self):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
-        wf_module = workflow.tabs.first().wf_modules.create(order=0, module_id_name="x")
+        wf_module = workflow.tabs.first().wf_modules.create(
+            order=0, slug="step-1", module_id_name="x"
+        )
         in_progress_upload = wf_module.in_progress_uploads.create(
             id="147a9f5d-5b3e-41c3-a968-a84a5a9d587f"
         )
