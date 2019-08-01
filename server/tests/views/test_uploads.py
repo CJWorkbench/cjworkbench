@@ -1,7 +1,20 @@
 import json
+from unittest.mock import patch
 from server import minio
 from server.models import ModuleVersion, Workflow
 from server.tests.utils import DbTestCase
+
+
+async def async_noop(*args, **kwargs):
+    pass
+
+
+class MockLoadedModule:
+    def __init__(self, *args):
+        pass
+
+    def migrate_params(self, values):
+        return values
 
 
 def _init_module(id_name, param_id_name="file", param_type="file"):
@@ -299,7 +312,15 @@ class UploadTest(DbTestCase):
         error = json.loads(response.content)["error"]
         self.assertEqual(error["code"], "file-not-uploaded")
 
-    def test_complete_happy_path(self):
+    @patch("server.websockets.ws_client_send_delta_async")
+    @patch("server.rabbitmq.queue_render")
+    @patch(
+        "server.models.loaded_module.LoadedModule.for_module_version_sync",
+        MockLoadedModule,
+    )
+    def test_complete_happy_path(self, queue_render, send_delta):
+        send_delta.return_value = async_noop()
+        queue_render.return_value = async_noop()
         _init_module("x")
         workflow = Workflow.create_and_init()
         wf_module = workflow.tabs.first().wf_modules.create(
@@ -337,3 +358,6 @@ class UploadTest(DbTestCase):
         self.assertEqual(data["uuid"], uuid)
         self.assertEqual(data["name"], "test.csv")
         self.assertEqual(data["size"], 7)
+        # Send deltas
+        send_delta.assert_called()
+        queue_render.assert_called()

@@ -1,7 +1,7 @@
 from __future__ import annotations
 from contextlib import contextmanager
 from dataclasses import dataclass
-from typing import Dict, List, Optional, Set, Tuple, FrozenSet
+from typing import Callable, Dict, List, Optional, Set, Tuple, FrozenSet
 import warnings
 from django.db import models, transaction
 from django.db.models import Q
@@ -10,6 +10,52 @@ from django.http import HttpRequest
 from django.urls import reverse
 from django.utils import timezone
 from server import minio
+
+
+class WorkflowCooperativeLock:
+    def __init__(self, workflow):
+        self.workflow = workflow
+        self._after_commit_callbacks = []
+
+    def after_commit(self, fn: Callable[[], None]):
+        """
+        Register `fn` to be called after database commit.
+
+        Specifically, in the following example:
+
+            def x():
+                # Timing 1
+                with Workflow.lookup_and_cooperative_lock(id=123) as workflow_lock:
+                    # Timing 2
+                    workflow = workflow_lock.workflow
+                    workflow.name = "Changed"
+                    workflow.save(update_fields=["name"])
+                    new_json = serializers.WorkflowSerializer(workflow).data
+                    def notify_websockets():
+                        async_to_sync(async_notify_websockets)(workflow.id, new_json)
+                    workflow_lock.after_commit(notify_websockets)
+                    return True  # Timing 3
+            success = x()  # Timing 4
+
+        * Timing 1: there is no database transaction.
+        * Timing 2: a transaction is open, and `workflow` is selected for update.
+                    If an exception was raised during lookup, the call to `x()`
+                    will raise it and no database modifications will occur.
+        * Timing 3: a value is returned. If an exception was raised in the code
+                    block, the call to `x()` will raise it and the database
+                    transaction will be rolled back. `workflow_lock.workflow`
+                    may be in an inconsistent state.
+        * Timing 4: `notify_websockets()` has been called. If an exception was
+                    raised within it, the call to `x()` will raise it. The
+                    database transaction will NOT be rolled back (since the
+                    exception happened after commit). `workflow_lock.workflow`
+                    may be in an inconsistent state.
+        """
+        self._after_commit_callbacks.append(fn)
+
+    def _invoke_after_commit_callbacks(self):
+        for fn in self._after_commit_callbacks:
+            fn()
 
 
 def _find_orphan_soft_deleted_tabs(workflow_id: int) -> models.QuerySet:
@@ -66,26 +112,6 @@ def _find_orphan_soft_deleted_wf_modules(workflow_id: int) -> models.QuerySet:
     return WfModule.objects.filter(tab__workflow_id=workflow_id, is_deleted=True).extra(
         where=conditions
     )
-
-
-class AfterCooperativeLock:
-    """
-    Callback to invoke after a cooperative lock is finished.
-
-    Usage:
-
-        with Workflow.lookup_and_cooperative_lock(...) as workflow:
-            workflow.name = ...
-            workflow.save(...)
-            return AfterCooperativeLock(lambda: notify_client(workflow))
-
-    The lambda function SHOULD NOT perform database operations (because there
-    is no lock). It MAY refer to variables that were initialized within the
-    code block.
-    """
-
-    def __init__(self, callback):
-        self.callback = callback
 
 
 class Workflow(models.Model):
@@ -236,13 +262,12 @@ class Workflow(models.Model):
             # versions.
             # https://code.djangoproject.com/ticket/28344#comment:10
             self.refresh_from_db()
+            workflow_lock = WorkflowCooperativeLock(self)
+            yield workflow_lock
 
-            ret = yield
-
-        if isinstance(ret, AfterCooperativeLock):
-            return ret.fn()
-        else:
-            return ret
+        # If we reach here, COMMIT was called and we're returning whatever
+        # the `yield` block returned.
+        workflow_lock._invoke_after_commit_callbacks()
 
     @property
     def live_tabs(self):
@@ -364,13 +389,16 @@ class Workflow(models.Model):
 
         Usage:
 
-            with Workflow.lookup_and_cooperative_lock(pk=123) as workflow:
+            with Workflow.lookup_and_cooperative_lock(pk=123) as workflow_lock:
+                workflow = workflow_lock.workflow
                 # ... do stuff
+                workflow.after_commit(lambda: print("called after commit, before True is returned"))
+                return True
 
         This is equivalent to:
 
             workflow = Workflow.objects.get(pk=123)
-            with workflow.cooperative_lock():
+            with workflow.cooperative_lock() as workflow_lock:
                 # ... do stuff
 
         But the latter runs three SQL queries, and this method uses just one.
@@ -378,12 +406,13 @@ class Workflow(models.Model):
         Raises Workflow.DoesNotExist.
         """
         with transaction.atomic():
-            ret = yield cls.objects.select_for_update().get(**kwargs)
+            workflow = cls.objects.select_for_update().get(**kwargs)
+            workflow_lock = WorkflowCooperativeLock(workflow)
+            yield workflow_lock
 
-        if isinstance(ret, AfterCooperativeLock):
-            return ret.fn()
-        else:
-            return ret
+        # If we reach here, COMMIT was called and we're returning whatever
+        # the `yield` block returned.
+        workflow_lock._invoke_after_commit_callbacks()
 
     @classmethod
     @contextmanager
@@ -393,20 +422,21 @@ class Workflow(models.Model):
 
         Usage:
 
-            with Workflow.lookup_and_cooperative_lock('read', request.user,
-                                                      request.session,
-                                                      pk=123) as workflow:
-                # ... do stuff
+            with Workflow.authorized_lookup_and_cooperative_lock('read', request.user,
+                                                                 request.session,
+                                                                 pk=123) as workflow_lock:
+                # ... do stuff with workflow_lock.workflow
 
-        Raises Workflow.DoesNotExist. (To check if access was denied, check
-        err.args[0].endswith('access denied'). TODO revisit this oddity.)
+        Raise Workflow.DoesNotExist when it does not exist. (To check if access was
+        denied, check `err.args[0].endswith('access denied')`. TODO revisit this oddity.)
         """
-        with cls.lookup_and_cooperative_lock(**kwargs) as workflow:
+        with cls.lookup_and_cooperative_lock(**kwargs) as workflow_lock:
+            workflow = workflow_lock.workflow
             access = getattr(workflow, "user_session_authorized_%s" % level)
             if not access(user, session):
                 raise cls.DoesNotExist("%s access denied" % level)
 
-            yield workflow
+            yield workflow_lock
 
     @staticmethod
     def create_and_init(**kwargs):

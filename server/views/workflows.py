@@ -243,7 +243,8 @@ def workflow_detail(request, workflow_id, format=None):
         try:
             with Workflow.authorized_lookup_and_cooperative_lock(
                 "owner", request.user, request.session, pk=workflow_id
-            ) as workflow:
+            ) as workflow_lock:
+                workflow = workflow_lock.workflow
                 workflow.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         except Workflow.DoesNotExist as err:

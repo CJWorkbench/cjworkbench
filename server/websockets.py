@@ -81,7 +81,8 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
         """
         with Workflow.authorized_lookup_and_cooperative_lock(
             "read", self.scope["user"], self.scope["session"], pk=self.workflow_id
-        ) as workflow:
+        ) as workflow_lock:
+            workflow = workflow_lock.workflow
             request = RequestWrapper(self.scope["user"], self.scope["session"])
             ret = {
                 "updateWorkflow": (

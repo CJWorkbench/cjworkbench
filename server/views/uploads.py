@@ -5,11 +5,14 @@ import re
 import time
 from typing import Any, Dict
 from uuid import UUID
+from asgiref.sync import async_to_sync
 from django import forms
 from django.http import HttpRequest, JsonResponse
 from django.utils.decorators import method_decorator
 from django.views import View
 from server.models import InProgressUpload, Workflow, WfModule
+from server.models.commands import ChangeParametersCommand
+from server.models.workflow import WorkflowCooperativeLock
 
 
 AuthTokenHeaderRegex = re.compile(r"\ABearer ([-a-zA-Z0-9_]+)\Z", re.IGNORECASE)
@@ -25,7 +28,7 @@ def loads_wf_module_for_api_upload(f):
     """
     Provide `wf_module` to a Django view if HTTP Authorization header matches.
 
-    Calls `f(request, wf_module, file_param_id_name, *args, **kwargs)`
+    Calls `f(request, workflow_lock, wf_module, file_param_id_name, *args, **kwargs)`
 
     The HTTP Authorization header must look like:
 
@@ -55,7 +58,8 @@ def loads_wf_module_for_api_upload(f):
         bearer_token = auth_header_match.group(1)
 
         try:
-            with Workflow.lookup_and_cooperative_lock(id=workflow_id) as workflow:
+            with Workflow.lookup_and_cooperative_lock(id=workflow_id) as workflow_lock:
+                workflow = workflow_lock.workflow
                 try:
                     wf_module = WfModule.live_in_workflow(workflow).get(
                         slug=wf_module_slug
@@ -89,7 +93,14 @@ def loads_wf_module_for_api_upload(f):
                 if bearer_token_hash != api_token_hash or bearer_token != api_token:
                     return ErrorResponse(403, "authorization-bearer-token-invalid")
 
-                return f(request, wf_module, file_param_id_name, *args, **kwargs)
+                return f(
+                    request,
+                    workflow_lock,
+                    wf_module,
+                    file_param_id_name,
+                    *args,
+                    **kwargs,
+                )
         except Workflow.DoesNotExist:
             return ErrorResponse(404, "workflow-not-found")
 
@@ -98,7 +109,13 @@ def loads_wf_module_for_api_upload(f):
 
 class UploadList(View):
     @method_decorator(loads_wf_module_for_api_upload)
-    def post(self, request: HttpRequest, wf_module: WfModule, file_param_id_name: str):
+    def post(
+        self,
+        request: HttpRequest,
+        workflow_lock: WorkflowCooperativeLock,
+        wf_module: WfModule,
+        file_param_id_name: str,
+    ):
         """
         Create a new InProgressUpload for the given WfModule.
 
@@ -125,6 +142,7 @@ class Upload(View):
     def delete(
         self,
         request: HttpRequest,
+        workflow_lock: WorkflowCooperativeLock,
         wf_module: WfModule,
         file_param_id_name: str,
         uuid: UUID,
@@ -150,6 +168,7 @@ class Upload(View):
     def post(
         self,
         request: HttpRequest,
+        workflow_lock: WorkflowCooperativeLock,
         wf_module: WfModule,
         file_param_id_name: str,
         uuid: UUID,
@@ -188,7 +207,19 @@ class Upload(View):
         except FileNotFoundError:
             return ErrorResponse(409, "file-not-uploaded")
 
-        response = JsonResponse(
+        # After the cooperative lock ends, update the WfModule.
+        want_params = {**wf_module.get_params(), file_param_id_name: uploaded_file.uuid}
+
+        def create_change_parameters_command():
+            workflow = workflow_lock.workflow
+            # sends delta to Websockets clients and queues render.
+            async_to_sync(ChangeParametersCommand.create)(
+                workflow=workflow, wf_module=wf_module, new_values=want_params
+            )
+
+        workflow_lock.after_commit(create_change_parameters_command)
+
+        return JsonResponse(
             {
                 "uuid": uploaded_file.uuid,
                 "name": uploaded_file.name,
@@ -196,5 +227,3 @@ class Upload(View):
                 "createdAt": uploaded_file.created_at,
             }
         )
-
-        return response
