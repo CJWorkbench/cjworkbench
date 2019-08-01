@@ -68,6 +68,26 @@ def _find_orphan_soft_deleted_wf_modules(workflow_id: int) -> models.QuerySet:
     )
 
 
+class AfterCooperativeLock:
+    """
+    Callback to invoke after a cooperative lock is finished.
+
+    Usage:
+
+        with Workflow.lookup_and_cooperative_lock(...) as workflow:
+            workflow.name = ...
+            workflow.save(...)
+            return AfterCooperativeLock(lambda: notify_client(workflow))
+
+    The lambda function SHOULD NOT perform database operations (because there
+    is no lock). It MAY refer to variables that were initialized within the
+    code block.
+    """
+
+    def __init__(self, callback):
+        self.callback = callback
+
+
 class Workflow(models.Model):
     # TODO when we upgrade to Django 2.2, uncomment this and figure out
     # how to migrate our previous RunSQL(CREATE UNIQUE INDEX) code to use it.
@@ -217,7 +237,12 @@ class Workflow(models.Model):
             # https://code.djangoproject.com/ticket/28344#comment:10
             self.refresh_from_db()
 
-            yield
+            ret = yield
+
+        if isinstance(ret, AfterCooperativeLock):
+            return ret.fn()
+        else:
+            return ret
 
     @property
     def live_tabs(self):
@@ -353,7 +378,12 @@ class Workflow(models.Model):
         Raises Workflow.DoesNotExist.
         """
         with transaction.atomic():
-            yield cls.objects.select_for_update().get(**kwargs)
+            ret = yield cls.objects.select_for_update().get(**kwargs)
+
+        if isinstance(ret, AfterCooperativeLock):
+            return ret.fn()
+        else:
+            return ret
 
     @classmethod
     @contextmanager

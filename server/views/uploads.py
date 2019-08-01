@@ -25,6 +25,8 @@ def loads_wf_module_for_api_upload(f):
     """
     Provide `wf_module` to a Django view if HTTP Authorization header matches.
 
+    Calls `f(request, wf_module, file_param_id_name, *args, **kwargs)`
+
     The HTTP Authorization header must look like:
 
         Authorization: Bearer <WF_MODULE_FILE_UPLOAD_API_TOKEN>
@@ -61,6 +63,21 @@ def loads_wf_module_for_api_upload(f):
                 except WfModule.DoesNotExist:
                     return ErrorResponse(404, "step-not-found")
 
+                module_version = wf_module.module_version
+                if module_version is None:
+                    return ErrorResponse(400, "step-module-deleted")
+
+                try:
+                    file_param_id_name = next(
+                        iter(
+                            pf.id_name
+                            for pf in module_version.param_fields
+                            if pf.type == "file"
+                        )
+                    )
+                except StopIteration:
+                    return ErrorResponse(400, "step-has-no-file-param")
+
                 api_token = wf_module.file_upload_api_token
                 if not api_token:
                     return ErrorResponse(403, "step-has-no-api-token")
@@ -72,7 +89,7 @@ def loads_wf_module_for_api_upload(f):
                 if bearer_token_hash != api_token_hash or bearer_token != api_token:
                     return ErrorResponse(403, "authorization-bearer-token-invalid")
 
-                return f(request, wf_module, *args, **kwargs)
+                return f(request, wf_module, file_param_id_name, *args, **kwargs)
         except Workflow.DoesNotExist:
             return ErrorResponse(404, "workflow-not-found")
 
@@ -81,7 +98,7 @@ def loads_wf_module_for_api_upload(f):
 
 class UploadList(View):
     @method_decorator(loads_wf_module_for_api_upload)
-    def post(self, request: HttpRequest, wf_module: WfModule):
+    def post(self, request: HttpRequest, wf_module: WfModule, file_param_id_name: str):
         """
         Create a new InProgressUpload for the given WfModule.
 
@@ -105,7 +122,13 @@ class CompleteUploadForm(forms.Form):
 
 class Upload(View):
     @method_decorator(loads_wf_module_for_api_upload)
-    def delete(self, request: HttpRequest, wf_module: WfModule, uuid: UUID):
+    def delete(
+        self,
+        request: HttpRequest,
+        wf_module: WfModule,
+        file_param_id_name: str,
+        uuid: UUID,
+    ):
         """
         Abort an upload, or no-op if there is no upload with the given UUID.
 
@@ -124,7 +147,13 @@ class Upload(View):
         return JsonResponse({})
 
     @method_decorator(loads_wf_module_for_api_upload)
-    def post(self, request: HttpRequest, wf_module: WfModule, uuid: UUID):
+    def post(
+        self,
+        request: HttpRequest,
+        wf_module: WfModule,
+        file_param_id_name: str,
+        uuid: UUID,
+    ):
         """
         Create an UploadedFile and delete the InProgressUpload.
 
@@ -158,7 +187,8 @@ class Upload(View):
             uploaded_file = in_progress_upload.convert_to_uploaded_file(filename)
         except FileNotFoundError:
             return ErrorResponse(409, "file-not-uploaded")
-        return JsonResponse(
+
+        response = JsonResponse(
             {
                 "uuid": uploaded_file.uuid,
                 "name": uploaded_file.name,
@@ -166,3 +196,5 @@ class Upload(View):
                 "createdAt": uploaded_file.created_at,
             }
         )
+
+        return response
