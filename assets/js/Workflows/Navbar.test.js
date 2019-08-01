@@ -1,7 +1,7 @@
 /* globals describe, expect, it */
 import React from 'react'
 import Navbar from './Navbar'
-import { shallow } from 'enzyme'
+import { shallowWithIntl as shallow } from '../test-utils'
 
 describe('Navbar', () => {
   it('Renders correctly', () => {

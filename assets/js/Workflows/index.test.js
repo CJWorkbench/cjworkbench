@@ -1,6 +1,6 @@
 /* globals afterEach, beforeEach, describe, expect, it, jest */
 import React from 'react'
-import { mount } from 'enzyme'
+import { mountWithIntl as mount } from '../test-utils'
 import { act } from 'react-dom/test-utils'
 import Workflows from './index'
 import { tick, okResponseMock } from '../test-utils'

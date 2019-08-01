@@ -8,6 +8,32 @@ exports[`Workflow list page renders correctly 1`] = `
       "duplicateWorkflow": [MockFunction],
     }
   }
+  i18n={
+    Object {
+      "_": [Function],
+      "_activeLanguageData": Object {
+        "plurals": [Function],
+      },
+      "_activeMessages": Object {},
+      "_catalogs": Object {
+        "en": Object {
+          "languageData": Object {},
+          "messages": Object {},
+        },
+      },
+      "_dev": Object {
+        "compile": [Function],
+        "loadLanguageData": [Function],
+      },
+      "_language": "en",
+      "_locales": undefined,
+      "_missing": undefined,
+      "plural": [Function],
+      "select": [Function],
+      "selectOrdinal": [Function],
+      "t": [Function],
+    }
+  }
   user={
     Object {
       "id": 1,
@@ -105,13 +131,99 @@ exports[`Workflow list page renders correctly 1`] = `
               className="inactive"
               href="/workflows"
             >
-              WORKFLOWS
+              <WithI18n
+                id="WORKFLOWS"
+              >
+                <I18n
+                  update={true}
+                  withHash={true}
+                >
+                  <Trans
+                    i18n={
+                      Object {
+                        "_": [Function],
+                        "_activeLanguageData": Object {
+                          "plurals": [Function],
+                        },
+                        "_activeMessages": Object {},
+                        "_catalogs": Object {
+                          "en": Object {
+                            "languageData": Object {},
+                            "messages": Object {},
+                          },
+                        },
+                        "_dev": Object {
+                          "compile": [Function],
+                          "loadLanguageData": [Function],
+                        },
+                        "_language": "en",
+                        "_locales": undefined,
+                        "_missing": undefined,
+                        "plural": [Function],
+                        "select": [Function],
+                        "selectOrdinal": [Function],
+                        "t": [Function],
+                      }
+                    }
+                    id="WORKFLOWS"
+                  >
+                    <Render
+                      value="WORKFLOWS"
+                    >
+                      WORKFLOWS
+                    </Render>
+                  </Trans>
+                </I18n>
+              </WithI18n>
             </a>
             <a
               className="active"
               href={null}
             >
-              TRAINING
+              <WithI18n
+                id="TRAINING"
+              >
+                <I18n
+                  update={true}
+                  withHash={true}
+                >
+                  <Trans
+                    i18n={
+                      Object {
+                        "_": [Function],
+                        "_activeLanguageData": Object {
+                          "plurals": [Function],
+                        },
+                        "_activeMessages": Object {},
+                        "_catalogs": Object {
+                          "en": Object {
+                            "languageData": Object {},
+                            "messages": Object {},
+                          },
+                        },
+                        "_dev": Object {
+                          "compile": [Function],
+                          "loadLanguageData": [Function],
+                        },
+                        "_language": "en",
+                        "_locales": undefined,
+                        "_missing": undefined,
+                        "plural": [Function],
+                        "select": [Function],
+                        "selectOrdinal": [Function],
+                        "t": [Function],
+                      }
+                    }
+                    id="TRAINING"
+                  >
+                    <Render
+                      value="TRAINING"
+                    >
+                      TRAINING
+                    </Render>
+                  </Trans>
+                </I18n>
+              </WithI18n>
             </a>
           </div>
           <WfHamburgerMenu
@@ -121,6 +233,41 @@ exports[`Workflow list page renders correctly 1`] = `
               }
             }
           >
+            <WithI18n>
+              <I18n
+                update={true}
+                withHash={true}
+              >
+                <LocaleSwitcher
+                  i18n={
+                    Object {
+                      "_": [Function],
+                      "_activeLanguageData": Object {
+                        "plurals": [Function],
+                      },
+                      "_activeMessages": Object {},
+                      "_catalogs": Object {
+                        "en": Object {
+                          "languageData": Object {},
+                          "messages": Object {},
+                        },
+                      },
+                      "_dev": Object {
+                        "compile": [Function],
+                        "loadLanguageData": [Function],
+                      },
+                      "_language": "en",
+                      "_locales": undefined,
+                      "_missing": undefined,
+                      "plural": [Function],
+                      "select": [Function],
+                      "selectOrdinal": [Function],
+                      "t": [Function],
+                    }
+                  }
+                />
+              </I18n>
+            </WithI18n>
             <UncontrolledDropdown>
               <Dropdown
                 isOpen={false}

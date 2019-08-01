@@ -8,7 +8,7 @@ const supportedLocales = {
 
 const defaultLocale = 'en';
 
-const currentLocale = isSupported(window.i18n.locale) ? window.i18n.locale : defaultLocale;
+const currentLocale = window.i18n && window.i18n.locale && isSupported(window.i18n.locale) ? window.i18n.locale : defaultLocale;
 
 function isSupported(locale){
     return supportedLocales.hasOwnProperty(locale)

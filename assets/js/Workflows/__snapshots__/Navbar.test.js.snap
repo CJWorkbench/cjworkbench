@@ -24,13 +24,17 @@ exports[`Navbar Renders correctly 1`] = `
         className="inactive"
         href="/workflows"
       >
-        WORKFLOWS
+        <WithI18n
+          id="WORKFLOWS"
+        />
       </a>
       <a
         className="active"
         href={null}
       >
-        TRAINING
+        <WithI18n
+          id="TRAINING"
+        />
       </a>
     </div>
     <WfHamburgerMenu />

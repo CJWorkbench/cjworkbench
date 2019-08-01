@@ -1,7 +1,7 @@
 /* globals beforeEach, describe, expect, it, jest */
 import React from 'react'
 import WorkflowNavBar from './WorkflowNavBar'
-import { shallow, mount } from 'enzyme'
+import { shallowWithIntl as shallow, mountWithIntl as mount } from './test-utils'
 import { tick } from './test-utils'
 import Utils from './utils'
 

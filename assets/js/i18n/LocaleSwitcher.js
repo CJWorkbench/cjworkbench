@@ -5,7 +5,7 @@ import { supportedLocales, setLocale } from './locales'
 import { Trans } from "@lingui/macro"
 
 const LocaleSwitcher = ({ i18n }) => {
-    if(window.i18n.showSwitcher){
+    if(window.i18n && window.i18n.showSwitcher){
         return (
           <select defaultValue={i18n.language}>
             {Object.keys(supportedLocales).map((locale) => (
