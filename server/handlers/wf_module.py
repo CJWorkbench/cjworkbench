@@ -235,7 +235,7 @@ def _do_try_set_autofetch(
 
     quota_exceeded = None
     try:
-        with transaction.atomic() as trans:
+        with transaction.atomic():
             wf_module.auto_update_data = auto_update_data
             wf_module.update_interval = update_interval
             if auto_update_data:
