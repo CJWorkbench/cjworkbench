@@ -1,7 +1,6 @@
 // workflow.page.js - the master JavaScript for /workflows
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { Provider } from 'react-redux'
 import Workflows from '../Workflows'
 import WorkbenchAPI from '../WorkbenchAPI'
 import { InternationalizedPage } from '../i18n/InternationalizedPage'
