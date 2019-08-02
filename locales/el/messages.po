@@ -13,13 +13,21 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: assets/js/Internationalization/locales.js:4
+#: assets/js/i18n/locales.js:5
 msgid "English"
 msgstr "Αγγλικά"
 
-#: assets/js/Internationalization/locales.js:5
+#: assets/js/i18n/locales.js:6
 msgid "Greek"
 msgstr "Ελληνικά"
+
+#: assets/js/WorkflowNavBar.js:62
+msgid "Private"
+msgstr "Ιδιωτικό"
+
+#: assets/js/WorkflowNavBar.js:62
+msgid "Public"
+msgstr "Δημόσιο"
 
 #: assets/js/Workflows/Navbar.js:36
 msgid "TRAINING"
@@ -30,9 +38,9 @@ msgid "WORKFLOWS"
 msgstr ""
 
 #: assets/js/WorkflowNavBar.js:62
-msgid "private"
-msgstr "ιδιωτικό"
+#~ msgid "private"
+#~ msgstr "ιδιωτικό"
 
 #: assets/js/WorkflowNavBar.js:62
-msgid "public"
-msgstr "δημόσιο"
+#~ msgid "public"
+#~ msgstr "δημόσιο"
