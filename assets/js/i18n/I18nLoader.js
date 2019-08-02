@@ -8,15 +8,12 @@ export class I18nLoader extends React.Component {
   }
   
   loadCatalog = (language) => {
-      fetchCatalog(language)
-      .then((catalog) => {
-        this.setState(state => ({
+      this.setState(state => ({
           catalogs: {
             ...state.catalogs,
-            [language]: catalog
+            [language]: fetchCatalog(language)
           }
-        }))
-      })
+      }))
   }
   
   componentDidMount() {
