@@ -401,11 +401,11 @@ export default class WorkbenchAPI {
 
   async uploadFile (wfModuleId, file, onProgress) {
     const uploadManager = await this._getUploadManagerPromise()
-    return await uploadManager.upload(wfModuleId, file, onProgress)
+    return uploadManager.upload(wfModuleId, file, onProgress)
   }
 
   async cancelFileUpload (wfModuleId) {
     const uploadManager = await this._getUploadManagerPromise()
-    return await uploadManager.cancel(wfModuleId)
+    return uploadManager.cancel(wfModuleId)
   }
 }
