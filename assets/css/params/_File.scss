@@ -223,7 +223,6 @@
     }
   }
 
-
   .modal-footer {
     button {
       @include action-button;
@@ -236,5 +235,37 @@
         @include button-blue;
       }
     }
+  }
+}
+
+.upload-api-modal {
+  font-size: 1.4rem;
+
+  .state-ok {
+    p {
+      margin: 0;
+    }
+
+    code {
+      padding: 0 1rem;
+    }
+  }
+
+  h5 {
+    font-size: 1.2em;
+    font-weight: bold;
+    padding-top: 2rem;
+  }
+
+  h6 {
+    font-size: 1em;
+    font-weight: bold;
+    padding-top: 2rem;
+  }
+
+  pre {
+    background: black;
+    color: white;
+    padding: 1rem;
   }
 }

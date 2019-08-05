@@ -10,6 +10,7 @@ from django import forms
 from django.http import HttpRequest, JsonResponse
 from django.utils.decorators import method_decorator
 from django.views import View
+from django.views.decorators.csrf import csrf_exempt
 from server.models import InProgressUpload, Workflow, WfModule
 from server.models.commands import ChangeParametersCommand
 from server.models.workflow import WorkflowCooperativeLock
@@ -107,6 +108,7 @@ def loads_wf_module_for_api_upload(f):
     return wrapper
 
 
+@method_decorator(csrf_exempt, name="dispatch")
 class UploadList(View):
     @method_decorator(loads_wf_module_for_api_upload)
     def post(
@@ -130,13 +132,21 @@ class UploadList(View):
         # A race in minio means these credentials might not be valid yet.
         # Workaround: give the minio+etcd machines an extra 2s to synchronize.
         time.sleep(2)  # DELETEME when minio is fixed.
-        return JsonResponse(params)
+        return JsonResponse(
+            {
+                **params,
+                "finishUrl": request.build_absolute_uri(
+                    "./uploads/" + str(in_progress_upload.id)
+                ),
+            }
+        )
 
 
 class CompleteUploadForm(forms.Form):
     filename = forms.CharField(min_length=1, max_length=100)
 
 
+@method_decorator(csrf_exempt, name="dispatch")
 class Upload(View):
     @method_decorator(loads_wf_module_for_api_upload)
     def delete(

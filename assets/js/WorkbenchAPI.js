@@ -408,4 +408,16 @@ export default class WorkbenchAPI {
     const uploadManager = await this._getUploadManagerPromise()
     return uploadManager.cancel(wfModuleId)
   }
+
+  async getWfModuleFileUploadApiToken (wfModuleId) {
+    return this.websocket.callServerHandler('wf_module.get_file_upload_api_token', { wfModuleId }).then(({ apiToken }) => apiToken)
+  }
+
+  async resetWfModuleFileUploadApiToken (wfModuleId) {
+    return this.websocket.callServerHandler('wf_module.reset_file_upload_api_token', { wfModuleId }).then(({ apiToken }) => apiToken)
+  }
+
+  async clearWfModuleFileUploadApiToken (wfModuleId) {
+    return this._callExpectingNull('wf_module.clear_file_upload_api_token', { wfModuleId })
+  }
 }

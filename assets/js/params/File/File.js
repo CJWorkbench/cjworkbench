@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import UploadApiModal from './UploadApiModal'
 import UploadedFileSelect from './UploadedFileSelect'
 
 const UploadProgress = React.memo(function UploadProgress ({ nBytesTotal, nBytesUploaded }) {
@@ -11,6 +12,8 @@ const UploadProgress = React.memo(function UploadProgress ({ nBytesTotal, nBytes
     </div>
   )
 })
+
+const FeatureFlagUploadApi = /(^#|;)feature:uploadapi($|;)/.test(window.location.hash)
 
 /**
  * A file-upload field.
@@ -40,7 +43,9 @@ export default class File extends React.PureComponent {
       size: PropTypes.number.isRequired,
       createdAt: PropTypes.string.isRequired // ISO8601-formatted date
     }).isRequired).isRequired,
+    workflowId: PropTypes.number.isRequired,
     wfModuleId: PropTypes.number.isRequired,
+    wfModuleSlug: PropTypes.string.isRequired,
     inProgressUpload: PropTypes.shape({
       name: PropTypes.string.isRequired,
       size: PropTypes.number.isRequired,
@@ -52,6 +57,13 @@ export default class File extends React.PureComponent {
     uploadFile: PropTypes.func.isRequired, // func(wfModuleId, file) => Promise(<{uuid: ...}, or null if aborted>)
     cancelUpload: PropTypes.func.isRequired // func(wfModuleId) => undefined
   }
+
+  state = {
+    isUploadApiModalOpen: false
+  }
+
+  openUploadApiModal = () => this.setState({ isUploadApiModalOpen: true })
+  closeUploadApiModal = () => this.setState({ isUploadApiModalOpen: false })
 
   _upload = (file) => {
     const { name, uploadFile, setWfModuleParams, wfModuleId } = this.props
@@ -140,39 +152,78 @@ export default class File extends React.PureComponent {
   }
 
   render () {
-    const { name, value, files, inProgressUpload, fieldId, isReadOnly } = this.props
+    const { workflowId, wfModuleId, wfModuleSlug, name, value, files, inProgressUpload, fieldId, isReadOnly } = this.props
+    const { isUploadApiModalOpen } = this.state
     const file = files.find(f => f.uuid === value)
 
     return (
-      <div
-        className='drop-zone'
-        onDrop={this.onDrop}
-        onDragOver={this.onDragOver}
-        onDragEnter={this.onDragEnter}
-        onDragLeave={this.onDragLeave}
-      >
-        {inProgressUpload ? (
-          <div className='uploading-file'>
-            <div className='filename'>{inProgressUpload.name}</div>
-            <div className='status'>
-              <UploadedFileSelect isReadOnly value={value} files={files} onChange={this.onChange} />
-              <button type='button' onClick={this.cancelUpload} name='cancel-upload' title='Cancel upload'>
-                Cancel Upload
-              </button>
+      <>
+        {isUploadApiModalOpen ? (
+          <UploadApiModal
+            workflowId={workflowId}
+            wfModuleId={wfModuleId}
+            wfModuleSlug={wfModuleSlug}
+            onClickClose={this.closeUploadApiModal}
+          />
+        ) : null}
+        <div
+          className='drop-zone'
+          onDrop={this.onDrop}
+          onDragOver={this.onDragOver}
+          onDragEnter={this.onDragEnter}
+          onDragLeave={this.onDragLeave}
+        >
+          {inProgressUpload ? (
+            <div className='uploading-file'>
+              <div className='filename'>{inProgressUpload.name}</div>
+              <div className='status'>
+                <UploadedFileSelect isReadOnly value={value} files={files} onChange={this.onChange} />
+                <button type='button' onClick={this.cancelUpload} name='cancel-upload' title='Cancel upload'>
+                  Cancel Upload
+                </button>
+              </div>
+              <UploadProgress
+                nBytesTotal={inProgressUpload.size}
+                nBytesUploaded={inProgressUpload.nBytesUploaded}
+              />
             </div>
-            <UploadProgress
-              nBytesTotal={inProgressUpload.size}
-              nBytesUploaded={inProgressUpload.nBytesUploaded}
-            />
-          </div>
-        ) : (file ? (
-          <div className='existing-file'>
-            <div className='filename'>{file.name}</div>
-            <div className='status'>
-              <UploadedFileSelect isReadOnly={isReadOnly} value={value} files={files} onChange={this.onChange} />
+          ) : (file ? (
+            <div className='existing-file'>
+              <div className='filename'>{file.name}</div>
+              <div className='status'>
+                <UploadedFileSelect isReadOnly={isReadOnly} value={value} files={files} onChange={this.onChange} />
+                <p className='file-select-button'>
+                  {FeatureFlagUploadApi ? (
+                    <button type='button' onClick={this.openUploadApiModal} name='open-upload-api' title='Open upload API instructions'>
+                      API
+                    </button>
+                  ) : null}
+                  <label htmlFor={fieldId}>
+                    Replace
+                  </label>
+                  <input
+                    name={name}
+                    type='file'
+                    id={fieldId}
+                    readOnly={isReadOnly}
+                    onChange={this.onChangeFileInput}
+                  />
+                </p>
+              </div>
+              <hr />
+            </div>
+          ) : (
+            <div className='no-file'>
+              <p>Drag file here</p>
+              <p>or</p>
               <p className='file-select-button'>
+                {FeatureFlagUploadApi ? (
+                  <button type='button' onClick={this.openUploadApiModal} name='open-upload-api' title='Open upload API instructions'>
+                    API
+                  </button>
+                ) : null}
                 <label htmlFor={fieldId}>
-                  Replace
+                  Browse
                 </label>
                 <input
                   name={name}
@@ -183,30 +234,12 @@ export default class File extends React.PureComponent {
                 />
               </p>
             </div>
-            <hr />
+          ))}
+          <div className='drop-here'>
+            <p>Drop file here</p>
           </div>
-        ) : (
-          <div className='no-file'>
-            <p>Drag file here</p>
-            <p>or</p>
-            <p className='file-select-button'>
-              <label htmlFor={fieldId}>
-                Browse
-              </label>
-              <input
-                name={name}
-                type='file'
-                id={fieldId}
-                readOnly={isReadOnly}
-                onChange={this.onChangeFileInput}
-              />
-            </p>
-          </div>
-        ))}
-        <div className='drop-here'>
-          <p>Drop file here</p>
         </div>
-      </div>
+      </>
     )
   }
 }

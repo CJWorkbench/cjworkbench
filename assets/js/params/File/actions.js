@@ -1,6 +1,7 @@
 const FILE_UPLOAD = 'FILE_UPLOAD'
 const FILE_UPLOAD_CANCEL = 'FILE_UPLOAD_CANCEL'
 const FILE_UPLOAD_PROGRESS = 'FILE_UPLOAD_PROGRESS'
+const API_TOKEN_NO_OP = 'API_TOKEN_NO_OP'
 
 /**
  * Begin uploading the File in question.
@@ -99,10 +100,66 @@ function reduceSetProgress (state, action) {
   return updateWfModuleInProgressFileUpload(state, wfModuleId, { nBytesUploaded })
 }
 
+/**
+ * Call API method to get API token.
+ *
+ * API token is not stored in Redux state because Redux state is the same for
+ * all users, even users without write permission.
+ *
+ * Return a url-safe string.
+ */
+export function getApiToken (wfModuleId) {
+  return (dispatch, getState, api) => {
+    return dispatch({
+      type: API_TOKEN_NO_OP,
+      payload: {
+        promise: api.getWfModuleFileUploadApiToken(wfModuleId)
+      }
+    })
+  }
+}
+
+/**
+ * Call API method to set a new API token.
+ *
+ * API token is not stored in Redux state because Redux state is the same for
+ * all users, even users without write permission.
+ *
+ * Return a url-safe string.
+ */
+export function resetApiToken (wfModuleId) {
+  return (dispatch, getState, api) => {
+    return dispatch({
+      type: API_TOKEN_NO_OP,
+      payload: {
+        promise: api.resetWfModuleFileUploadApiToken(wfModuleId)
+      }
+    })
+  }
+}
+
+/**
+ * Call API method to disallow API file uploads.
+ *
+ * API token is not stored in Redux state because Redux state is the same for
+ * all users, even users without write permission.
+ */
+export function clearApiToken (wfModuleId) {
+  return (dispatch, getState, api) => {
+    return dispatch({
+      type: API_TOKEN_NO_OP,
+      payload: {
+        promise: api.clearWfModuleFileUploadApiToken(wfModuleId)
+      }
+    })
+  }
+}
+
 export const reducerFunctions = {
   [FILE_UPLOAD + '_PENDING']: reduceUploadPending,
   [FILE_UPLOAD + '_FULFILLED']: reduceUploadFulfilled,
   [FILE_UPLOAD_CANCEL + '_PENDING']: reduceCancelPending,
   [FILE_UPLOAD_CANCEL + '_FULFILLED']: reduceCancelFulfilled,
   [FILE_UPLOAD_PROGRESS]: reduceSetProgress
+  // No reducers for API_TOKEN_NO_OP -- state doesn't change.
 }

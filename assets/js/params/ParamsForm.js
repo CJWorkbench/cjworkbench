@@ -44,7 +44,9 @@ export default class ParamsForm extends React.PureComponent {
     value: PropTypes.object, // upstream value. `null` if the server hasn't been contacted; otherwise, there's a key per field
     secrets: PropTypes.object, // upstream secrets. `null` if the server hasn't been contacted; otherwise, keys set only when params are filled in
     edits: PropTypes.object.isRequired, // local edits, same keys as `value`
+    workflowId: PropTypes.number.isRequired,
     wfModuleId: PropTypes.number, // `null` if the server hasn't been contacted; otherwise, ID
+    wfModuleSlug: PropTypes.string, // should be .isRequired but WfModule.js does not handle placeholders yet
     wfModuleOutputError: PropTypes.string, // `null` if no wfModule, '' if no error
     isWfModuleBusy: PropTypes.bool.isRequired,
     inputWfModuleId: PropTypes.number, // or `null`
@@ -192,7 +194,7 @@ export default class ParamsForm extends React.PureComponent {
   }
 
   render () {
-    const { api, isReadOnly, isZenMode, wfModuleId, wfModuleOutputError, isWfModuleBusy,
+    const { api, isReadOnly, isZenMode, workflowId, wfModuleId, wfModuleSlug, wfModuleOutputError, isWfModuleBusy,
       inputWfModuleId, inputDeltaId, inputColumns, tabs, currentTab, applyQuickFix,
       startCreateSecret, deleteSecret, submitSecret, fields, files, secrets } = this.props
     const isEditing = this.isEditing
@@ -243,7 +245,9 @@ export default class ParamsForm extends React.PureComponent {
                 secretMetadata={secretMetadata}
                 value={value ? value[field.idName] : null}
                 files={files}
+                workflowId={workflowId}
                 wfModuleId={wfModuleId}
+                wfModuleSlug={wfModuleSlug}
                 wfModuleOutputError={wfModuleOutputError}
                 isWfModuleBusy={isWfModuleBusy}
                 inputWfModuleId={inputWfModuleId}
