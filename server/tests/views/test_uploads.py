@@ -150,7 +150,7 @@ class UploadListTest(DbTestCase):
         # Useful information is returned
         data = json.loads(response.content)
         self.assertRegexpMatches(data["key"], str(upload.id) + "$")
-        self.assertEqual(data["uploadId"], str(upload.id))
+        self.assertRegexpMatches(data["finishUrl"], str(upload.id) + "$")
 
 
 class UploadTest(DbTestCase):
