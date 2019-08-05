@@ -63,6 +63,7 @@ export default class File extends React.PureComponent {
   }
 
   openUploadApiModal = () => this.setState({ isUploadApiModalOpen: true })
+
   closeUploadApiModal = () => this.setState({ isUploadApiModalOpen: false })
 
   _upload = (file) => {
