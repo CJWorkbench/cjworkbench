@@ -2,7 +2,6 @@ from functools import wraps
 import hashlib
 import json
 import re
-import time
 from typing import Any, Dict
 from uuid import UUID
 from asgiref.sync import async_to_sync
@@ -126,12 +125,6 @@ class UploadList(View):
         """
         in_progress_upload = wf_module.in_progress_uploads.create()
         params = in_progress_upload.generate_upload_parameters()
-
-        # Workaround for https://github.com/minio/minio/issues/7991
-        #
-        # A race in minio means these credentials might not be valid yet.
-        # Workaround: give the minio+etcd machines an extra 2s to synchronize.
-        time.sleep(2)  # DELETEME when minio is fixed.
         return JsonResponse(
             {
                 **params,
