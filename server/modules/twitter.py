@@ -159,8 +159,7 @@ def _recover_from_160258591(table):
         try:
             table[column.name] = table[column.name].astype(column.dtype)
         except KeyError:
-            table[column.name] = None
-            table[column.name] = table[column.name].astype(column.dtype)
+            table[column.name] = pd.Series([], dtype=column.dtype)
 
 
 # Get dataframe of last tweets fron our storage,
