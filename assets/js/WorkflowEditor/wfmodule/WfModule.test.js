@@ -26,7 +26,7 @@ describe('WfModule, not read-only mode', () => {
   // A mock module that looks like LoadURL
   const wfModule = {
     id: 999,
-    slug: "step-1",
+    slug: 'step-1',
     notes: '',
     is_collapsed: false, // false because we render more, so better test
     is_busy: false,
@@ -377,7 +377,7 @@ describe('WfModule, not read-only mode', () => {
           'tab-11': { slug: 'tab-11', name: 'Tab 1', wf_module_ids: [1, 2, 999] }
         },
         wfModules: {
-          999: { slug: "step-99", module: 'loadurl', params: {}, secrets: {} }
+          999: { slug: 'step-99', module: 'loadurl', params: {}, secrets: {} }
         },
         modules: {
           loadurl: {
