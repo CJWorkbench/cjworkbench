@@ -1,8 +1,6 @@
 import * as React from 'react'
-import { connect } from 'react-redux'
 import { withI18n } from '@lingui/react'
 import { supportedLocales, setLocale } from './locales'
-import { Trans } from '@lingui/macro'
 
 const LocaleSwitcher = ({ i18n }) => {
   if (window.i18n && window.i18n.showSwitcher) {

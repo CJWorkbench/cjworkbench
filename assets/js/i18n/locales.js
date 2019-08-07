@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro'
-import { csrfToken } from '../utils'
+// import { csrfToken } from '../utils'
 
 const supportedLocales = {
   en: t`English`,
@@ -11,7 +11,7 @@ const defaultLocale = 'en'
 const currentLocale = window.i18n && window.i18n.locale && isSupported(window.i18n.locale) ? window.i18n.locale : defaultLocale
 
 function isSupported (locale) {
-  return supportedLocales.hasOwnProperty(locale)
+  return Object.prototype.hasOwnProperty.call(supportedLocales, locale)
 }
 
 /**
@@ -26,20 +26,20 @@ function setLocaleWithQueryParameter (locale) {
 /**
  * This function tries to change locale by sending a POST request to the server, in Django fashion
  */
-function setLocaleWithPostRequest (locale) {
-  if (isSupported(locale)) {
-    fetch('/i18n/setlang/', {
-      method: 'POST',
-      body: JSON.stringify({
-        language: locale
-      }),
-      redirect: 'follow',
-      headers: {
-        'X-CSRFToken': csrfToken,
-        'Content-Type': 'application/json'
-      }
-    })
-  }
-}
+// function setLocaleWithPostRequest (locale) {
+// if (isSupported(locale)) {
+// fetch('/i18n/setlang/', {//We will need a polyfill for fetch, if we decide to use it
+// method: 'POST',
+// body: JSON.stringify({
+// language: locale
+// }),
+// redirect: 'follow',
+// headers: {
+// 'X-CSRFToken': csrfToken,
+// 'Content-Type': 'application/json'
+// }
+// })
+// }
+// }
 
 export { supportedLocales, defaultLocale, currentLocale, setLocaleWithQueryParameter as setLocale, isSupported as isSupportedLocale }
