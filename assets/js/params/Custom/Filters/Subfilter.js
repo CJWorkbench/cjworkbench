@@ -9,6 +9,7 @@ const CaseSensitiveOperations = [
   'text_contains',
   'text_does_not_contain',
   'text_is_exactly',
+  'text_is_not_exactly',
   'text_contains_regex',
   'text_does_not_contain_regex',
   'text_is_exactly_regex'
