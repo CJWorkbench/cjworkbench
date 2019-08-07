@@ -10,11 +10,11 @@ const { workflows, loggedInUser } = window.initState
 
 ReactDOM.render((
   <InternationalizedPage>
-      <Workflows
-        api={api}
-        workflows={workflows}
-        user={loggedInUser}
-      />
+    <Workflows
+      api={api}
+      workflows={workflows}
+      user={loggedInUser}
+    />
   </InternationalizedPage>
 ), document.getElementById('root'))
 

@@ -208,12 +208,12 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
-    #"django.middleware.locale.LocaleMiddleware",#we may or may not use this in the future
+    # "django.middleware.locale.LocaleMiddleware",#we may or may not use this in the future
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
-    "cjworkbench.middleware.i18n.SetCurrentLocaleMiddleware",#temporary solution
+    "cjworkbench.middleware.i18n.SetCurrentLocaleMiddleware",  # temporary solution
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
@@ -272,14 +272,9 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
-LANGUAGES = [
-    ('el', 'Greek'),
-    ('en', 'English'),
-]
+LANGUAGES = [("el", "Greek"), ("en", "English")]
 
-LOCALE_PATHS = (
-    os.path.join(BASE_DIR, 'locales'),
-)
+LOCALE_PATHS = (os.path.join(BASE_DIR, "locales"),)
 
 # Static files. CSS, JavaScript are bundled by webpack, but fonts, test data,
 # images, etc. are not
@@ -512,6 +507,4 @@ if "MINIO_STATIC_URL_PATTERN" in os.environ:
 if STATIC_URL != "http://localhost:8000/static/":
     print(f"Serving static files from {STATIC_URL}")
 
-TEMPLATE_CONTEXT_PROCESSORS = [
-    'django.core.context_processors.request',
-]
+TEMPLATE_CONTEXT_PROCESSORS = ["django.core.context_processors.request"]

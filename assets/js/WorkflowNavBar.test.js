@@ -1,8 +1,8 @@
 /* globals beforeEach, describe, expect, it, jest */
 import React from 'react'
 import WorkflowNavBar from './WorkflowNavBar'
-import { shallowWithIntl as shallow, mountWithIntl as mount } from './test-utils'
-import { tick } from './test-utils'
+import { shallowWithIntl as shallow, mountWithIntl as mount, tick } from './test-utils'
+
 import Utils from './utils'
 
 jest.mock('./utils', () => ({

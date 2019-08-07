@@ -4,23 +4,23 @@ import fetchCatalog from './catalogs'
 
 export class I18nLoader extends React.Component {
   state = {
-    catalogs: {},
+    catalogs: {}
   }
-  
+
   loadCatalog = (language) => {
-      this.setState(state => ({
-          catalogs: {
-            ...state.catalogs,
-            [language]: fetchCatalog(language)
-          }
-      }))
+    this.setState(state => ({
+      catalogs: {
+        ...state.catalogs,
+        [language]: fetchCatalog(language)
+      }
+    }))
   }
-  
-  componentDidMount() {
+
+  componentDidMount () {
     this.loadCatalog(this.props.language)
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
+  shouldComponentUpdate (nextProps, nextState) {
     const { language } = nextProps
     const { catalogs } = nextState
 
@@ -38,7 +38,7 @@ export class I18nLoader extends React.Component {
 
     // Skip rendering when catalog isn't loaded.
     if (!catalogs[language]) {
-        return null
+      return null
     }
 
     return (

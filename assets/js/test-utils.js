@@ -73,7 +73,7 @@ export function mockStore (initialState, api = {}) {
 }
 
 /*
- * Below lie utils for testing with i18n (see https://lingui.js.org/guides/testing.html) 
+ * Below lie utils for testing with i18n (see https://lingui.js.org/guides/testing.html)
  */
 // Create the I18nProvider to retrieve context for wrapping around.
 const language = 'en'
@@ -99,14 +99,14 @@ const i18n = {
 /**
  * When using Lingui `withI18n` on components, props.i18n is required.
  */
-function nodeWithI18nProp(node) {
+function nodeWithI18nProp (node) {
   return React.cloneElement(node, { i18n })
 }
 
 /*
  * Methods to use
  */
-export function shallowWithIntl(node, { context } = {}) {
+export function shallowWithIntl (node, { context } = {}) {
   return shallow(
     nodeWithI18nProp(node),
     {
@@ -115,7 +115,7 @@ export function shallowWithIntl(node, { context } = {}) {
   )
 }
 
-export function mountWithIntl(node, { context, childContextTypes } = {}) {
+export function mountWithIntl (node, { context, childContextTypes } = {}) {
   const newContext = Object.assign({}, context, { linguiPublisher: { i18n } })
   /*
    * I18nProvider sets the linguiPublisher in the context for withI18n to get
