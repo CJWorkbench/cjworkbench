@@ -1,5 +1,5 @@
 {
-   "localeDir": "locales/",
+   "localeDir": "assets/locales/",
    "srcPathDirs": ["assets/js"],
    "format": "po"
 }

@@ -1,5 +1,5 @@
-import enCatalog from '../locales/en/messages.js'
-import elCatalog from '../locales/el/messages.js'
+import enCatalog from '../../locales/en/messages'
+import elCatalog from '../../locales/el/messages'
 
 const catalogs = {
   en: enCatalog,
@@ -21,13 +21,13 @@ export default function fetchCatalog (language) {
 /// / prettier-ignore
 // catalog = await import(
 /// * webpackMode: "lazy", webpackChunkName: "i18n-[index]" */
-// `@lingui/loader!../locales/${language}/messages.po`
+// `@lingui/loader!../../locales/${language}/messages.po`
 // )
 // } else {
 /// / prettier-ignore
 // catalog = await import(
 /// * webpackMode: "lazy", webpackChunkName: "i18n-[index]" */
-// `../locales/${language}/messages.js`
+// `../../locales/${language}/messages.js`
 // )
 // }
 
