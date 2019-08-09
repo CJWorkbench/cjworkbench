@@ -25,8 +25,7 @@ module.exports = {
 
   output: {
     path: path.resolve('./assets/bundles/'),
-    filename: '[name]-[contenthash].js',
-    publicPath: '/static/bundles/'
+    filename: '[name]-[contenthash].js'
   },
 
   devtool: 'source-map',

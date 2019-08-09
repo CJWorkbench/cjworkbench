@@ -12,7 +12,6 @@ import WorkflowWebsocket from '../WorkflowWebsocket'
 import WorkbenchAPI from '../WorkbenchAPI'
 import { InternationalizedPage } from '../i18n/InternationalizedPage'
 
-// TODO: is this line needed? we have the info in webpack config, since it is nedded in dynamically fetching localization files
 __webpack_public_path__ = window.STATIC_URL + 'bundles/' // eslint-disable-line
 
 // --- Main ----
