@@ -2,8 +2,8 @@
 import { supportedLocales } from './locales'
 import fetchCatalog from './catalogs'
 
-describe('Translation catalogs', () => {
-  it.each(Object.keys(supportedLocales))('fetches a valid catalog for all supported locales', (locale) => {
+describe('i18n helpers', () => {
+  it.each(Object.keys(supportedLocales))('all supported locales have a valid catalog', (locale) => {
     const catalog = fetchCatalog(locale)
     expect(catalog).toBeDefined()
     expect(catalog.messages).toBeDefined()
