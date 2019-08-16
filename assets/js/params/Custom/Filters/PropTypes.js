@@ -2,22 +2,26 @@ import PropTypes from 'prop-types'
 
 export const ConditionPropType = PropTypes.oneOf([
   '',
-  'text_contains',
-  'text_does_not_contain',
-  'text_is_exactly',
-  'text_contains_regex',
-  'text_does_not_contain_regex',
-  'text_is_exactly_regex',
   'cell_is_empty',
+  'cell_is_empty_str_or_null',
   'cell_is_not_empty',
+  'cell_is_not_empty_str_or_null',
+  'date_is',
+  'date_is_after',
+  'date_is_before',
+  'date_is_not',
+  'number_does_not_equal',
   'number_equals',
   'number_is_greater_than',
   'number_is_greater_than_or_equals',
   'number_is_less_than',
   'number_is_less_than_or_equals',
-  'date_is',
-  'date_is_before',
-  'date_is_after'
+  'text_contains',
+  'text_contains_regex',
+  'text_does_not_contain',
+  'text_does_not_contain_regex',
+  'text_is_exactly',
+  'text_is_exactly_regex'
 ])
 
 export const SubfilterPropType = PropTypes.shape({
