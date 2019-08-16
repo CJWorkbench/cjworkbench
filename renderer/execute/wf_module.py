@@ -164,13 +164,10 @@ async def _render_wfmodule(
         )
     except TabOutputUnreachableError:
         return ProcessResult(
-            error=("The chosen tab has no output. " "Select another one.")
+            error=("The chosen tab has no output. Please select another one.")
         )
     except PromptingError as err:
-        return ProcessResult(
-            error="The chosen columns need to be converted.",
-            quick_fixes=err.as_quick_fixes(),
-        )
+        return ProcessResult(error=err.as_error_str(), quick_fixes=err.as_quick_fixes())
 
     if loaded_module is None:
         return ProcessResult(

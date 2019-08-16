@@ -27,12 +27,13 @@ const StatusLine = React.memo(function StatusLine ({ status, error, quickFixes, 
       {quickFixes.length && !isReadOnly ? (
         <ul className='quick-fixes'>
           {quickFixes.map((quickFix, i) => (
-            <QuickFix
-              key={i}
-              disabled={clickedAnyQuickFix}
-              applyQuickFix={doApplyQuickFix}
-              {...quickFix}
-            />
+            <li key={i}>
+              <QuickFix
+                disabled={clickedAnyQuickFix}
+                applyQuickFix={doApplyQuickFix}
+                {...quickFix}
+              />
+            </li>
           ))}
         </ul>
       ) : null}

@@ -363,7 +363,7 @@ button:focus { outline:0 !important; }
   @include button-blue--fill;
 }
 
-%button-red {
+@mixin button-red {
   color: $brand-red;
   border-color: $brand-red ;
   background-color: transparent;
@@ -374,10 +374,6 @@ button:focus { outline:0 !important; }
     background-color: $error-prompt;
     color: white;
   }
-}
-
-.button-red {
-  @extend %button-red;
 }
 
 @mixin button-pink-fill {

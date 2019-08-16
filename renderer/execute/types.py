@@ -5,6 +5,9 @@ from typing import FrozenSet, List
 from cjworkbench.types import QuickFix
 
 
+TypeNames = {"text": "Text", "number": "Numbers", "datetime": "Date & Time"}
+
+
 class UnneededExecution(Exception):
     """A render would produce useless results."""
 
@@ -39,44 +42,76 @@ class PromptingError(Exception):
     class WrongColumnType:
         """The chosen columns exist, but they have the wrong types."""
 
+        # Even if there are multiple wanted_types, let's only show the user
+        # a single QuickFix. It's less noisy that way. (Revisit later if
+        # this becomes an issue.)
+
         column_names: List[str]
         found_type: str
         wanted_types: FrozenSet[str]
 
+        @property
+        def best_wanted_type_id(self):
+            if "text" in self.wanted_types:
+                return "text"
+            elif "number" in self.wanted_types:
+                return "number"
+            elif "datetime" in self.wanted_type:
+                return "datetime"
+            else:
+                raise RuntimeError(f"Unhandled wanted_types: {self.wanted_types}")
+
+        @property
+        def found_type_name(self):
+            return TypeNames[self.found_type]
+
+        @property
+        def best_wanted_type_name(self):
+            return TypeNames[self.best_wanted_type_id]
+
+        def as_error_str(self):
+            """Build a message to prompt the user to use a quick fix."""
+            # TODO make each quick fix get its own paragraph. (For now, quick
+            # fixes are nothing but buttons.)
+
+            names = [f"“{c}”" for c in self.column_names]
+            if len(names) > 3:
+                # "x", "y", "z", "a" => "x", "y", "2 others" (always more than
+                # 1 other -- if there were 1 other, we might as well have
+                # written the name itself)
+                names[2:] = [f"{len(names) - 2} others"]
+
+            if len(names) == 1:
+                return (
+                    f"The column {names[0]} must be converted "
+                    f"from {self.found_type_name} to {self.best_wanted_type_name}."
+                )
+            else:
+                # English-style:
+                # 2: "A" and "B"
+                # 3: "A", "B" and "C"
+                # 4+: "A", "B" and 2 others
+                names_str = ", ".join(names[:-1]) + " and " + names[-1]
+                return (
+                    f"The columns {names_str} must be converted "
+                    f"from {self.found_type_name} to {self.best_wanted_type_name}."
+                )
+
         def as_quick_fix(self):
             """Build a QuickFix that would resolve this error."""
-            # Even if there are multiple wanted_types, let's only show the user
-            # a single QuickFix. It's less noisy that way. (Revisit later if
-            # this becomes an issue.)
-            #
-            # ... ignore self.found_type for now because [2019-04-10] none of
-            # our converters are split by input type.
-
-            # 'names': user-visible colnames
-            names = ", ".join([f'"{c}"' for c in self.column_names])
-            # 'colnames': param value for the module
+            prompt = f"Convert {self.found_type_name} to {self.best_wanted_type_name}"
             params = {"colnames": self.column_names}
 
             if "text" in self.wanted_types:
-                return QuickFix(
-                    f"Convert {names} to Text",
-                    "prependModule",
-                    ["converttotext", params],
-                )
+                module_id = "converttotext"
             elif "number" in self.wanted_types:
-                return QuickFix(
-                    f"Convert {names} to Numbers",
-                    "prependModule",
-                    ["converttexttonumber", params],
-                )
+                module_id = "converttexttonumber"
             elif "datetime" in self.wanted_types:
-                return QuickFix(
-                    f"Convert {names} to Dates & Times",
-                    "prependModule",
-                    ["convert-date", params],
-                )
+                module_id = "convert-date"
             else:
                 raise RuntimeError(f"Unhandled wanted_types: {self.wanted_types}")
+
+            return QuickFix(prompt, "prependModule", [module_id, params])
 
     def __init__(self, errors: List[PromptDontRender.WrongColumnType]):
         super().__init__("user must change something before we render")
@@ -84,6 +119,9 @@ class PromptingError(Exception):
 
     def __eq__(self, other):
         return isinstance(other, self.type) and other.errors == self.errors
+
+    def as_error_str(self) -> str:
+        return "\n\n".join(err.as_error_str() for err in self.errors)
 
     def as_quick_fixes(self) -> List[QuickFix]:
         """Build a List of QuickFix: one per error."""
