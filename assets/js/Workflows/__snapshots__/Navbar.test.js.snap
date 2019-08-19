@@ -25,7 +25,9 @@ exports[`Navbar Renders correctly 1`] = `
         href="/workflows"
       >
         <WithI18n
-          id="WORKFLOWS"
+          defaults="WORKFLOWS"
+          description="This is used in navigation bar. It should be all-caps for styling reasons."
+          id="workflows.navbar.workflows"
         />
       </a>
       <a
@@ -33,7 +35,9 @@ exports[`Navbar Renders correctly 1`] = `
         href={null}
       >
         <WithI18n
-          id="TRAINING"
+          defaults="TRAINING"
+          description="This is used in navigation bar. It should be all-caps for styling reasons."
+          id="workflows.navbar.training"
         />
       </a>
     </div>
