@@ -1,7 +1,7 @@
 /* globals beforeEach, describe, expect, it, jest */
 import React from 'react'
 import WorkflowNavBar from './WorkflowNavBar'
-import { shallowWithIntl as shallow, mountWithIntl as mount, tick } from './test-utils'
+import { shallowWithI18n, mountWithI18n, tick } from './test-utils'
 
 import Utils from './utils'
 
@@ -29,7 +29,7 @@ describe('WorkflowNavBar', () => {
 
     const api = { duplicateWorkflow: jest.fn() }
 
-    const wrapper = mount(
+    const wrapper = mountWithI18n(
       <WorkflowNavBar
         workflow={workflow}
         api={api}
@@ -61,7 +61,7 @@ describe('WorkflowNavBar', () => {
 
     const api = { duplicateWorkflow: jest.fn() }
 
-    const wrapper = mount(
+    const wrapper = mountWithI18n(
       <WorkflowNavBar
         workflow={workflow}
         api={api}
@@ -92,7 +92,7 @@ describe('WorkflowNavBar', () => {
       }))
     }
 
-    const wrapper = shallow(
+    const wrapper = shallowWithI18n(
       <WorkflowNavBar
         workflow={workflow}
         api={api}
@@ -128,7 +128,7 @@ describe('WorkflowNavBar', () => {
 
     const api = { duplicateWorkflow: jest.fn() }
 
-    const wrapper = shallow(
+    const wrapper = shallowWithI18n(
       <WorkflowNavBar
         workflow={workflow}
         api={api}

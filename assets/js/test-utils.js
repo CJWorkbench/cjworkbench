@@ -106,7 +106,7 @@ function nodeWithI18nProp (node) {
 /*
  * Methods to use
  */
-export function shallowWithIntl (node, { context } = {}) {
+export function shallowWithI18n (node, { context } = {}) {
   return shallow(
     nodeWithI18nProp(node),
     {
@@ -115,7 +115,7 @@ export function shallowWithIntl (node, { context } = {}) {
   )
 }
 
-export function mountWithIntl (node, { context, childContextTypes } = {}) {
+export function mountWithI18n (node, { context, childContextTypes } = {}) {
   const newContext = Object.assign({}, context, { linguiPublisher: { i18n } })
   /*
    * I18nProvider sets the linguiPublisher in the context for withI18n to get

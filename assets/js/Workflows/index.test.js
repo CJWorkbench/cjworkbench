@@ -1,6 +1,6 @@
 /* globals afterEach, beforeEach, describe, expect, it, jest */
 import React from 'react'
-import { mountWithIntl as mount, tick, okResponseMock } from '../test-utils'
+import { mountWithI18n, tick, okResponseMock } from '../test-utils'
 import { act } from 'react-dom/test-utils'
 import Workflows from './index'
 
@@ -66,7 +66,7 @@ describe('Workflow list page', () => {
     duplicateWorkflow: jest.fn(),
     deleteWorkflow: okResponseMock()
   }
-  const wrapper = (props) => mount(
+  const wrapper = (props) => mountWithI18n(
     <Workflows
       api={api}
       user={{ id: 1 }}

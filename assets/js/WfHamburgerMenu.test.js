@@ -1,14 +1,14 @@
 /* globals afterEach, describe, expect, it */
 import React from 'react'
 import WfHamburgerMenu from './WfHamburgerMenu'
-import { mountWithIntl as mount } from './test-utils'
+import { mountWithI18n } from './test-utils'
 
 describe('WfHamburgerMenu', () => {
   let wrapper // all tests must mount one
   afterEach(() => wrapper.unmount())
 
   it('renders logged in, non-read only', () => {
-    wrapper = mount(<WfHamburgerMenu
+    wrapper = mountWithI18n(<WfHamburgerMenu
       workflowId={1}
       api={{}}
       isReadOnly={false}
@@ -24,7 +24,7 @@ describe('WfHamburgerMenu', () => {
   })
 
   it('renders logged in, read only', () => {
-    wrapper = mount(<WfHamburgerMenu
+    wrapper = mountWithI18n(<WfHamburgerMenu
       workflowId={1}
       api={{}}
       isReadOnly
@@ -38,7 +38,7 @@ describe('WfHamburgerMenu', () => {
   })
 
   it('renders logged out, read only', () => {
-    wrapper = mount(<WfHamburgerMenu
+    wrapper = mountWithI18n(<WfHamburgerMenu
       workflowId={1}
       api={{}}
       isReadOnly
@@ -53,7 +53,7 @@ describe('WfHamburgerMenu', () => {
 
   it('renders without a workflowId', () => {
     // this happens on Workflow list page
-    wrapper = mount(<WfHamburgerMenu
+    wrapper = mountWithI18n(<WfHamburgerMenu
       api={{}}
       isReadOnly
       user={{ id: 100 }}
