@@ -65,7 +65,6 @@ urlpatterns = [
     ),
     url(r"^api/importfromgithub/?$", views.import_from_github),
     # WfModules (Modules applied in a workflow)
-    url(r"^api/wfmodules/(?P<pk>[0-9]+)/?$", views.wfmodule_detail),
     url(
         r"^api/wfmodules/(?P<pk>[0-9]+)/tiles/v(?P<delta_id>[0-9]+)/r(?P<tile_row>[0-9]+)/c(?P<tile_column>[0-9]+).json$",
         views.wfmodule_tile,

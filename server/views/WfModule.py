@@ -73,40 +73,6 @@ def _lookup_wf_module_for_write(pk: int, request: HttpRequest) -> WfModule:
     return wf_module
 
 
-# Main /api/wfmodule/xx call. Can do a lot of different things depending on
-# request type
-@api_view(["PATCH"])
-@renderer_classes((JSONRenderer,))
-def wfmodule_detail(request, pk, format=None):
-    wf_module = _lookup_wf_module_for_write(pk, request)
-
-    # For patch, we check which fields are set in data, and process all of
-    # them
-    # TODO: replace all of these with the generic patch method, most of
-    # this is unnecessary
-    if "auto_update_data" not in request.data:
-        return Response(
-            {"error": "Unknown fields: {}".format(request.data.keys())},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-
-    try:
-        if "auto_update_data" in request.data:
-            patch_update_settings(wf_module, request.data, request)
-
-            if bool(request.data["auto_update_data"]):
-                server.utils.log_user_event_from_request(
-                    request, "Enabled auto-update", {"wfModuleId": wf_module.id}
-                )
-
-    except ValueError as e:  # TODO make this less generic
-        return Response(
-            {"message": str(e), "status_code": 400}, status=status.HTTP_400_BAD_REQUEST
-        )
-
-    return Response(status=status.HTTP_204_NO_CONTENT)
-
-
 # ---- render / input / livedata ----
 # These endpoints return actual table data
 
