@@ -156,7 +156,7 @@ class CleanValueTests(DbTestCase):
 
         self.assertEqual(
             cm.exception.errors,
-            [PromptingError.WrongColumnType(["A"], "number", frozenset({"text"}))],
+            [PromptingError.WrongColumnType(["A"], None, frozenset({"text"}))],
         )
 
     def test_clean_column_prompting_error_convert_to_number(self):
@@ -217,6 +217,28 @@ class CleanValueTests(DbTestCase):
                     ["B"], "datetime", frozenset({"number"})
                 ),
             ],
+        )
+
+    def test_list_prompting_error_concatenate_different_type_to_text(self):
+        context = RenderContext(
+            None,
+            None,
+            TableShape(
+                3,
+                [Column("A", ColumnType.NUMBER()), Column("B", ColumnType.DATETIME())],
+            ),
+            None,
+            None,
+        )
+        schema = ParamDType.List(
+            inner_dtype=ParamDType.Column(column_types=frozenset({"text"}))
+        )
+        with self.assertRaises(PromptingError) as cm:
+            clean_value(schema, ["A", "B"], context)
+
+        self.assertEqual(
+            cm.exception.errors,
+            [PromptingError.WrongColumnType(["A", "B"], None, frozenset({"text"}))],
         )
 
     def test_dict_prompting_error(self):
@@ -355,10 +377,7 @@ class CleanValueTests(DbTestCase):
 
         self.assertEqual(
             cm.exception.errors,
-            [
-                PromptingError.WrongColumnType(["A"], "number", frozenset({"text"})),
-                PromptingError.WrongColumnType(["B"], "datetime", frozenset({"text"})),
-            ],
+            [PromptingError.WrongColumnType(["A", "B"], None, frozenset({"text"}))],
         )
 
     def test_clean_multicolumn_missing_is_removed(self):

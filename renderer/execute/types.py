@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import FrozenSet, List
+from typing import FrozenSet, List, Optional
 from cjworkbench.types import QuickFix
 
 
@@ -47,8 +47,24 @@ class PromptingError(Exception):
         # this becomes an issue.)
 
         column_names: List[str]
-        found_type: str
+
+        found_type: Optional[str]
+        """
+        (Wrong) type of columns.
+
+        Iff `wanted_types` contains "text", `found_type is None`. That's
+        because we allow converting from _multiple_ column types to "text" all
+        at the same time. (Converting to text is a special case: it has no
+        options, because all options are in the input columns' formats.)
+        """
+
         wanted_types: FrozenSet[str]
+        """
+        Required types of columns.
+        """
+
+        def __post_init__(self):
+            assert (self.found_type is None) == ("text" in self.wanted_types)
 
         @property
         def best_wanted_type_id(self):
@@ -63,7 +79,12 @@ class PromptingError(Exception):
 
         @property
         def found_type_name(self):
+            assert not self.should_be_text
             return TypeNames[self.found_type]
+
+        @property
+        def should_be_text(self):
+            return self.found_type is None
 
         @property
         def best_wanted_type_name(self):
@@ -80,26 +101,33 @@ class PromptingError(Exception):
                 # 1 other -- if there were 1 other, we might as well have
                 # written the name itself)
                 names[2:] = [f"{len(names) - 2} others"]
-
             if len(names) == 1:
-                return (
-                    f"The column {names[0]} must be converted "
-                    f"from {self.found_type_name} to {self.best_wanted_type_name}."
-                )
+                columns_str = f"The column {names[0]}"
             else:
                 # English-style:
                 # 2: "A" and "B"
                 # 3: "A", "B" and "C"
                 # 4+: "A", "B" and 2 others
                 names_str = ", ".join(names[:-1]) + " and " + names[-1]
+                columns_str = f"The columns {names_str}"
+
+            if self.should_be_text:
+                # Convert to Text
+                return f"{columns_str} must be converted to Text."
+            else:
                 return (
-                    f"The columns {names_str} must be converted "
+                    f"{columns_str} must be converted "
                     f"from {self.found_type_name} to {self.best_wanted_type_name}."
                 )
 
         def as_quick_fix(self):
             """Build a QuickFix that would resolve this error."""
-            prompt = f"Convert {self.found_type_name} to {self.best_wanted_type_name}"
+            if self.should_be_text:
+                prompt = f"Convert to {self.best_wanted_type_name}"
+            else:
+                prompt = (
+                    f"Convert {self.found_type_name} to {self.best_wanted_type_name}"
+                )
             params = {"colnames": self.column_names}
 
             if "text" in self.wanted_types:
