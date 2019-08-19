@@ -57,7 +57,7 @@ class TestQuickFix(LoggedInIntegrationTest):
         # Wait for table render
         b.assert_element(".column-key", text="count number", wait=True)
 
-    def test_quick_fix_convert_to_text(self):
+    def test_quick_fix_convert_to_numbers(self):
         """
         Tests that a module's `column_types` gets users to click "Convert".
         """
