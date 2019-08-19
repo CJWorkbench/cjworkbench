@@ -2,8 +2,8 @@ import { t } from '@lingui/macro'
 // import { csrfToken } from '../utils'
 
 const supportedLocales = {
-  en: t`English`,
-  el: t`Greek`
+  en: t('locales.en')`English`,
+  el: t('locales.el')`Greek`
 }
 
 const defaultLocale = 'en'

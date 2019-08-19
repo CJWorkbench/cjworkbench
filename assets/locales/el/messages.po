@@ -13,34 +13,28 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: assets/js/i18n/locales.js:5
-msgid "English"
-msgstr "Αγγλικά"
-
 #: assets/js/i18n/locales.js:6
-msgid "Greek"
+msgid "locales.el"
 msgstr "Ελληνικά"
 
+#: assets/js/i18n/locales.js:5
+msgid "locales.en"
+msgstr "Αγγλικά"
+
 #: assets/js/WorkflowNavBar.js:62
-msgid "Private"
+msgid "workflow.visibility.private"
 msgstr "Ιδιωτικό"
 
 #: assets/js/WorkflowNavBar.js:62
-msgid "Public"
+msgid "workflow.visibility.public"
 msgstr "Δημόσιο"
 
-#: assets/js/Workflows/Navbar.js:36
-msgid "TRAINING"
+#. This is used in navigation bar. It should be all-caps for styling reasons.
+#: assets/js/Workflows/Navbar.js:39
+msgid "workflows.navbar.training"
 msgstr "ΕΚΠΑΙΔΕΥΣΗ"
 
-#: assets/js/Workflows/Navbar.js:35
-msgid "WORKFLOWS"
-msgstr ""
-
-#: assets/js/WorkflowNavBar.js:62
-#~ msgid "private"
-#~ msgstr "ιδιωτικό"
-
-#: assets/js/WorkflowNavBar.js:62
-#~ msgid "public"
-#~ msgstr "δημόσιο"
+#. This is used in navigation bar. It should be all-caps for styling reasons.
+#: assets/js/Workflows/Navbar.js:36
+msgid "workflows.navbar.workflows"
+msgstr "WORKFLOWS"

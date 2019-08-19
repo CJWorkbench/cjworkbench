@@ -32,8 +32,12 @@ export default class Navbar extends React.Component {
             <img src={`${window.STATIC_URL}images/logo-text-dark.svg`} className='logo-text' />
           </div>
           <div className='links'>
-            <a {...propsForLink(activeSection, 'workflows')}><Trans>WORKFLOWS</Trans></a>
-            <a {...propsForLink(activeSection, 'lessons')}><Trans>TRAINING</Trans></a>
+            <a {...propsForLink(activeSection, 'workflows')}>
+                <Trans id="workflows.navbar.workflows" description="This is used in navigation bar. It should be all-caps for styling reasons.">WORKFLOWS</Trans>
+            </a>
+            <a {...propsForLink(activeSection, 'lessons')}>
+                <Trans id="workflows.navbar.training" description="This is used in navigation bar. It should be all-caps for styling reasons.">TRAINING</Trans>
+            </a>
           </div>
           <WfHamburgerMenu user={user} />
         </nav>
