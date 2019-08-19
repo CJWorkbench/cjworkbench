@@ -42,10 +42,10 @@ class TestQuickFix(LoggedInIntegrationTest):
         b = self.browser
         b.assert_element(
             ".wf-module-error-msg",
-            text="The chosen columns need to be converted.",
+            text="The column “A” must be converted from Text to Dates & Times.",
             wait=True,
         )
-        b.click_button('Convert "A" to Dates & Times')
+        b.click_button("Convert Text to Dates & Times")
 
         # Wait for module to appear
         b.assert_element(".module-name", text="Convert to date & time", wait=True)
@@ -76,12 +76,12 @@ class TestQuickFix(LoggedInIntegrationTest):
         # Wait for error
         b.assert_element(
             ".wf-module-error-msg",
-            text="The chosen columns need to be converted.",
+            text="The column “Num” must be converted from Text to Numbers.",
             wait=True,
         )
 
         # Fix the error by clicking the "Quick Fix" button.
-        b.click_button('Convert "Num" to Numbers')
+        b.click_button("Convert Text to Numbers")
         # Wait for module to appear
         b.assert_element(".module-name", text="Convert to numbers", wait=True)
         # The conversion won't work until we check an option.
