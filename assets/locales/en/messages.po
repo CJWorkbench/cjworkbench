@@ -15,26 +15,26 @@ msgstr ""
 
 #: assets/js/i18n/locales.js:6
 msgid "locales.el"
-msgstr ""
+msgstr "Greek"
 
 #: assets/js/i18n/locales.js:5
 msgid "locales.en"
-msgstr ""
+msgstr "English"
 
 #: assets/js/WorkflowNavBar.js:62
 msgid "workflow.visibility.private"
-msgstr ""
+msgstr "Private"
 
 #: assets/js/WorkflowNavBar.js:62
 msgid "workflow.visibility.public"
-msgstr ""
+msgstr "Public"
 
 #. This is used in navigation bar. It should be all-caps for styling reasons.
 #: assets/js/Workflows/Navbar.js:39
 msgid "workflows.navbar.training"
-msgstr ""
+msgstr "TRAINING"
 
 #. This is used in navigation bar. It should be all-caps for styling reasons.
 #: assets/js/Workflows/Navbar.js:36
 msgid "workflows.navbar.workflows"
-msgstr ""
+msgstr "WORKFLOWS"
