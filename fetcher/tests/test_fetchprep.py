@@ -71,7 +71,7 @@ class CleanValueTests(DbTestCase):
 
         self.assertEqual(
             cm.exception.errors,
-            [PromptingError.WrongColumnType(["A"], "number", frozenset({"text"}))],
+            [PromptingError.WrongColumnType(["A"], None, frozenset({"text"}))],
         )
 
     def test_clean_column_prompting_error_convert_to_number(self):
@@ -141,10 +141,7 @@ class CleanValueTests(DbTestCase):
 
         self.assertEqual(
             cm.exception.errors,
-            [
-                PromptingError.WrongColumnType(["A"], "number", frozenset({"text"})),
-                PromptingError.WrongColumnType(["B"], "datetime", frozenset({"text"})),
-            ],
+            [PromptingError.WrongColumnType(["A", "B"], None, frozenset({"text"}))],
         )
 
     def test_clean_multicolumn_missing_is_removed(self):

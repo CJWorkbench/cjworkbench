@@ -73,12 +73,12 @@ def _(dtype: ParamDType.Column, value: str, input_shape: TableShape) -> str:
 
     column = valid_columns[value]
     if dtype.column_types and column.type.name not in dtype.column_types:
+        if "text" in dtype.column_types:
+            found_type = None
+        else:
+            found_type = column.type.name
         raise PromptingError(
-            [
-                PromptingError.WrongColumnType(
-                    [value], column.type.name, dtype.column_types
-                )
-            ]
+            [PromptingError.WrongColumnType([value], found_type, dtype.column_types)]
         )
 
     return value
@@ -103,9 +103,13 @@ def _(dtype: ParamDType.Multicolumn, value: List[str], input_shape: TableShape) 
             continue
 
         if dtype.column_types and column.type.name not in dtype.column_types:
+            if "text" in dtype.column_types:
+                found_type = None
+            else:
+                found_type = column.type.name
             error_agg.add(
                 PromptingError.WrongColumnType(
-                    [column.name], column.type.name, dtype.column_types
+                    [column.name], found_type, dtype.column_types
                 )
             )
         else:
