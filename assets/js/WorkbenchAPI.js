@@ -288,9 +288,8 @@ export default class WorkbenchAPI {
     return this._post(`/api/workflows/${workflowId}/duplicate`, null)
   }
 
-  deleteWfModuleNotifications (wfModuleId) {
-    // TODO websocket-ize
-    return this._delete(`/api/wfmodules/${wfModuleId}/notifications`)
+  clearWfModuleUnseenNotifications (wfModuleId) {
+    return this._callExpectingNull('wf_module.clear_unseen_notifications', { wfModuleId })
   }
 
   importModuleFromGitHub (url) {

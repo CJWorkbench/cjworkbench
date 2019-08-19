@@ -221,6 +221,19 @@ async def set_notifications(
 
 
 @database_sync_to_async
+def _do_clear_unseen_notification(wf_module: WfModule):
+    wf_module.has_unseen_notification = False
+    wf_module.save(update_fields=["has_unseen_notification"])
+
+
+@register_websockets_handler
+@websockets_handler("write")
+@_loading_wf_module
+async def clear_unseen_notifications(wf_module: WfModule, **kwargs):
+    await _do_clear_unseen_notification(wf_module)
+
+
+@database_sync_to_async
 def _do_try_set_autofetch(
     scope, wf_module: WfModule, auto_update_data: bool, update_interval: int
 ):
