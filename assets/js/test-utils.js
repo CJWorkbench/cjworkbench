@@ -76,11 +76,10 @@ export function mockStore (initialState, api = {}) {
  * Below lie utils for testing with i18n (see https://lingui.js.org/guides/testing.html)
  */
 // Create the I18nProvider to retrieve context for wrapping around.
-const language = 'en'
 const intlProvider = new I18nProvider({
-  language,
+  language: 'en',
   catalogs: {
-    [language]: {}
+    en: {}
   }
 }, {})
 
