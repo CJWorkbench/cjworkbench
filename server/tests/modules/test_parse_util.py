@@ -93,6 +93,14 @@ class ParseTableTests(SimpleTestCase):
         result = parse_file(MockPath(["x.txt"], b"A;B\na,b;c"), True)
         assert_frame_equal(result, pd.DataFrame({"A": ["a,b"], "B": ["c"]}))
 
+    def test_parse_txt_sniff_delimiter_not_found(self):
+        result = parse_file(MockPath(["x.txt"], b"A B\na b c"), True)
+        assert_frame_equal(result, pd.DataFrame({"A B": ["a b c"]}))
+
+    def test_parse_txt_sniff_delimiter_empty_file(self):
+        result = parse_file(MockPath(["x.txt"], b""), False)
+        self.assertEqual(result, "This file is empty")
+
     def test_parse_autocast_numbers(self):
         result = parse_file(MockPath(["x.csv"], b"A,B\n1,2.0\n3,4.1"), True)
         assert_frame_equal(result, pd.DataFrame({"A": [1, 3], "B": [2.0, 4.1]}))

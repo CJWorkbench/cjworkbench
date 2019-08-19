@@ -541,7 +541,11 @@ def _detect_dialect(textio: io.TextIOBase, mime_type: MimeType):
     else:
         sample = textio.read(settings.SEP_DETECT_CHUNK_SIZE)
         textio.seek(0)
-        return csv.Sniffer().sniff(sample, ",;\t")
+        try:
+            return csv.Sniffer().sniff(sample, ",;\t")
+        except csv.Error:
+            # When in doubt, CSV. (We have no logic to handle an exception.)
+            return csv.excel
 
 
 @contextmanager
