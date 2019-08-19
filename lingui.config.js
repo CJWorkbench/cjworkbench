@@ -1,5 +1,5 @@
 module.exports = {
-  localeDir: 'assets/locales/',
+  localeDir: 'assets/locale/',
   srcPathDirs: ['assets/js'],
   format: 'po',
   sourceLocale: 'en'

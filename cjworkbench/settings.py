@@ -274,7 +274,7 @@ USE_TZ = True
 
 LANGUAGES = [("el", "Greek"), ("en", "English")]
 
-LOCALE_PATHS = (os.path.join(BASE_DIR, "assets", "locales"),)
+LOCALE_PATHS = (os.path.join(BASE_DIR, "assets", "locale"),)
 
 # Static files. CSS, JavaScript are bundled by webpack, but fonts, test data,
 # images, etc. are not
