@@ -1,7 +1,7 @@
 from django.conf import settings
 
 
-class SetCurrentLocaleMiddleware(object):
+class SetCurrentLocaleMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
         # One-time configuration and initialization.
@@ -9,15 +9,12 @@ class SetCurrentLocaleMiddleware(object):
     def __call__(self, request):
         # Code to be executed for each request before
         # the view (and later middleware) are called.
-        locale = None
+        locale = request.GET.get("locale")
 
-        if request.user.is_staff:
-            locale = request.GET.get("locale")
-
-        if not (locale in map(lambda p: p[0], settings.LANGUAGES)):
+        if locale not in (tup[0] for tup in settings.LANGUAGES):
             locale = settings.LANGUAGE_CODE
 
-        request.currentLocale = locale
+        request.locale_id = locale
 
         response = self.get_response(request)
 
