@@ -14,7 +14,7 @@ function isSupported (locale) {
 }
 
 /**
- * Change locale by reloading the page and adding a locale query parameter
+ * Reload the page, adding a "locale" query parameter to the URL
  */
 export function setLocale (locale) {
   if (isSupported(locale)) {
