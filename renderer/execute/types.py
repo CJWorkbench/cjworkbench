@@ -5,7 +5,7 @@ from typing import FrozenSet, List
 from cjworkbench.types import QuickFix
 
 
-TypeNames = {"text": "Text", "number": "Numbers", "datetime": "Date & Time"}
+TypeNames = {"text": "Text", "number": "Numbers", "datetime": "Dates & Times"}
 
 
 class UnneededExecution(Exception):
@@ -56,7 +56,7 @@ class PromptingError(Exception):
                 return "text"
             elif "number" in self.wanted_types:
                 return "number"
-            elif "datetime" in self.wanted_type:
+            elif "datetime" in self.wanted_types:
                 return "datetime"
             else:
                 raise RuntimeError(f"Unhandled wanted_types: {self.wanted_types}")

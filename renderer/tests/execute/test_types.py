@@ -23,7 +23,7 @@ class PromptingErrorTest(unittest.TestCase):
                     ["converttexttonumber", {"colnames": ["A"]}],
                 ),
                 QuickFix(
-                    "Convert Date & Time to Numbers",
+                    "Convert Dates & Times to Numbers",
                     "prependModule",
                     ["converttexttonumber", {"colnames": ["B", "C"]}],
                 ),
@@ -35,6 +35,6 @@ class PromptingErrorTest(unittest.TestCase):
             error_result,
             (
                 "The column “A” must be converted from Text to Numbers.\n\n"
-                "The columns “B” and “C” must be converted from Date & Time to Numbers."
+                "The columns “B” and “C” must be converted from Dates & Times to Numbers."
             ),
         )
