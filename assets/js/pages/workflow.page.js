@@ -10,6 +10,7 @@ import { workflowReducer, applyDeltaAction } from '../workflow-reducer'
 import Workflow from '../Workflow'
 import WorkflowWebsocket from '../WorkflowWebsocket'
 import WorkbenchAPI from '../WorkbenchAPI'
+import { Provider } from 'react-redux'
 import { InternationalizedPage } from '../i18n/InternationalizedPage'
 
 __webpack_public_path__ = window.STATIC_URL + 'bundles/' // eslint-disable-line
@@ -42,9 +43,11 @@ const store = createStore(
 // Render with Provider to root so all objects in the React DOM can access state
 ReactDOM.render(
   (
-    <InternationalizedPage store={store}>
-      <Workflow api={api} lesson={window.initState.lessonData} />
-      <UnhandledErrorReport />
+    <InternationalizedPage>
+      <Provider store={store}>
+        <Workflow api={api} lesson={window.initState.lessonData} />
+        <UnhandledErrorReport />
+      </Provider>
     </InternationalizedPage>
   ),
   document.getElementById('root')
