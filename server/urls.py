@@ -2,7 +2,8 @@ from django.conf import settings
 from django.conf.urls import url
 from django.views.generic import TemplateView
 from django.views.generic.base import RedirectView
-from django.urls import path
+from django.urls import path, register_converter
+from django.urls.converters import StringConverter
 from . import views
 from django.contrib.staticfiles import views as staticfiles_views
 from .views import acl, lessons, oauth, workflows, uploads
@@ -10,6 +11,13 @@ from .views import acl, lessons, oauth, workflows, uploads
 
 def redirect(url: str):
     return RedirectView.as_view(url=url)
+
+
+class ExportTypeConverter(StringConverter):
+    regex = r"(csv|json)"
+
+
+register_converter(ExportTypeConverter, "export_type")
 
 
 urlpatterns = [
@@ -66,22 +74,22 @@ urlpatterns = [
     url(r"^api/importfromgithub/?$", views.import_from_github),
     # WfModules (Modules applied in a workflow)
     url(
-        r"^api/wfmodules/(?P<pk>[0-9]+)/tiles/v(?P<delta_id>[0-9]+)/r(?P<tile_row>[0-9]+)/c(?P<tile_column>[0-9]+).json$",
+        r"^api/wfmodules/<int:wf_module_id>/tiles/v<int:delta_id>/r<int:tile_row>/c<int:tile_column>.json$",
         views.wfmodule_tile,
     ),
     # TODO: "render" and "output" are bad names. Differentiate them.
-    url(r"^api/wfmodules/(?P<pk>[0-9]+)/render$", views.wfmodule_render),
-    url(r"^api/wfmodules/(?P<pk>[0-9]+)/output$", views.wfmodule_output),
-    url(r"^api/wfmodules/(?P<pk>[0-9]+)/embeddata$", views.wfmodule_embeddata),
-    url(r"^api/wfmodules/(?P<pk>[0-9]+)/value-counts$", views.wfmodule_value_counts),
+    path("api/wfmodules/<int:wf_module_id>/render", views.wfmodule_render),
+    path("api/wfmodules/<int:wf_module_id>/output", views.wfmodule_output),
+    path("api/wfmodules/<int:wf_module_id>/embeddata", views.wfmodule_embeddata),
+    path("api/wfmodules/<int:wf_module_id>/value-counts", views.wfmodule_value_counts),
+    path(
+        "public/moduledata/live/<int:wf_module_id>.<export_type:export_type>",
+        views.wfmodule_public_output,
+    ),
     url(
         r"^api/wfmodules/(?P<pk>[0-9]+)/notifications",
         views.notifications_delete_by_wfmodule,
-    ),
-    url(
-        r"^public/moduledata/live/(?P<pk>[0-9]+)\.(?P<type>(csv|json))?$",
-        views.wfmodule_public_output,
-    ),
+    ),  # DELETEME
     # Parameters
     url(
         r"^oauth/create-secret/(?P<workflow_id>[0-9]+)/(?P<wf_module_id>[0-9]+)/(?P<param>[-_a-zA-Z0-9]+)/",
