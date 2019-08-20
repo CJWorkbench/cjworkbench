@@ -19,7 +19,7 @@ export default class WfHamburgerMenu extends React.Component {
     importModalOpen: false
   }
 
-  openImportModal = () => {
+  handleClickOpenImportModal = () => {
     this.setState({ importModalOpen: true })
   }
 
@@ -42,7 +42,7 @@ export default class WfHamburgerMenu extends React.Component {
             {loggedIn && workflowId ? (
               <>
                 <DropdownItem href='/workflows/'>My Workflows</DropdownItem>
-                <DropdownItem onClick={this.openImportModal}>Import Module</DropdownItem>
+                <DropdownItem onClick={this.handleClickOpenImportModal}>Import Module</DropdownItem>
               </>
             ) : (
               <DropdownItem href='//workbenchdata.com'>Home</DropdownItem>

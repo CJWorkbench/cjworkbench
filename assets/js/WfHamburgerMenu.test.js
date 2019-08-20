@@ -8,12 +8,14 @@ describe('WfHamburgerMenu', () => {
   afterEach(() => wrapper.unmount())
 
   it('renders logged in, non-read only', () => {
-    wrapper = mountWithI18n(<WfHamburgerMenu
-      workflowId={1}
-      api={{}}
-      isReadOnly={false}
-      user={{ id: 100 }}
-    />)
+    wrapper = mountWithI18n(
+      <WfHamburgerMenu
+        workflowId={1}
+        api={{}}
+        isReadOnly={false}
+        user={{ id: 100 }}
+      />
+    )
 
     wrapper.find('button.context-button').simulate('click')
     expect(wrapper).toMatchSnapshot() // one snapshot only, in most common case
@@ -24,12 +26,14 @@ describe('WfHamburgerMenu', () => {
   })
 
   it('renders logged in, read only', () => {
-    wrapper = mountWithI18n(<WfHamburgerMenu
-      workflowId={1}
-      api={{}}
-      isReadOnly
-      user={{ id: 100 }}
-    />)
+    wrapper = mountWithI18n(
+      <WfHamburgerMenu
+        workflowId={1}
+        api={{}}
+        isReadOnly
+        user={{ id: 100 }}
+      />
+    )
 
     wrapper.find('button.context-button').simulate('click')
     expect(wrapper.find('a[href="/workflows/"]')).toHaveLength(1)
@@ -38,12 +42,14 @@ describe('WfHamburgerMenu', () => {
   })
 
   it('renders logged out, read only', () => {
-    wrapper = mountWithI18n(<WfHamburgerMenu
-      workflowId={1}
-      api={{}}
-      isReadOnly
-      user={undefined}
-    />)
+    wrapper = mountWithI18n(
+      <WfHamburgerMenu
+        workflowId={1}
+        api={{}}
+        isReadOnly
+        user={undefined}
+      />
+    )
 
     wrapper.find('button.context-button').simulate('click')
     expect(wrapper.find('a[href="//workbenchdata.com"]')).toHaveLength(1)
@@ -53,11 +59,13 @@ describe('WfHamburgerMenu', () => {
 
   it('renders without a workflowId', () => {
     // this happens on Workflow list page
-    wrapper = mountWithI18n(<WfHamburgerMenu
-      api={{}}
-      isReadOnly
-      user={{ id: 100 }}
-    />)
+    wrapper = mountWithI18n(
+      <WfHamburgerMenu
+        api={{}}
+        isReadOnly
+        user={{ id: 100 }}
+      />
+    )
 
     wrapper.find('button.context-button').simulate('click')
     expect(wrapper.find('a[href="//workbenchdata.com"]')).toHaveLength(1)
