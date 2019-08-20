@@ -18,6 +18,7 @@ client_secret.json
 /assets/bundles/
 /server/modules/dynamic
 /media/
+/assets/locale/_build
 
 #pycharm
 .idea/
