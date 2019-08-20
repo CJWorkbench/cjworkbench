@@ -26,6 +26,7 @@ describe('WfModule, not read-only mode', () => {
   // A mock module that looks like LoadURL
   const wfModule = {
     id: 999,
+    slug: 'step-1',
     notes: '',
     is_collapsed: false, // false because we render more, so better test
     is_busy: false,
@@ -69,6 +70,7 @@ describe('WfModule, not read-only mode', () => {
         isZenMode={false}
         isZenModeAllowed={false}
         module={module}
+        workflowId={99}
         wfModule={wfModule}
         removeModule={jest.fn()}
         inputWfModule={{ id: 123, last_relevant_delta_id: 707 }}
@@ -301,8 +303,8 @@ describe('WfModule, not read-only mode', () => {
         'tab-12': { slug: 'tab-12', name: 'Tab 2', wf_module_ids: [] }
       },
       wfModules: {
-        10: { id: 10, tab_slug: 'tab-11' },
-        20: { id: 20, tab_slug: 'tab-11' }
+        10: { id: 10, slug: 'step-10', tab_slug: 'tab-11' },
+        20: { id: 20, slug: 'step-20', tab_slug: 'tab-11' }
       },
       modules: {
         loadurl: {
@@ -365,6 +367,7 @@ describe('WfModule, not read-only mode', () => {
 
       store = createStore((_, action) => ({
         workflow: {
+          id: 99,
           read_only: false,
           is_anonymous: false,
           tab_slugs: ['tab-11'],
@@ -374,7 +377,7 @@ describe('WfModule, not read-only mode', () => {
           'tab-11': { slug: 'tab-11', name: 'Tab 1', wf_module_ids: [1, 2, 999] }
         },
         wfModules: {
-          999: { module: 'loadurl', params: {}, secrets: {} }
+          999: { slug: 'step-99', module: 'loadurl', params: {}, secrets: {} }
         },
         modules: {
           loadurl: {

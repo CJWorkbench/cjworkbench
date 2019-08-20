@@ -3,7 +3,6 @@
 // also for dependency injection for testing
 
 import { csrfToken } from './utils'
-import UploadManager from './UploadManager'
 
 const apiHeaders = {
   Accept: 'application/json',
@@ -289,9 +288,8 @@ export default class WorkbenchAPI {
     return this._post(`/api/workflows/${workflowId}/duplicate`, null)
   }
 
-  deleteWfModuleNotifications (wfModuleId) {
-    // TODO websocket-ize
-    return this._delete(`/api/wfmodules/${wfModuleId}/notifications`)
+  clearWfModuleUnseenNotifications (wfModuleId) {
+    return this._callExpectingNull('wf_module.clear_unseen_notifications', { wfModuleId })
   }
 
   importModuleFromGitHub (url) {
@@ -392,18 +390,33 @@ export default class WorkbenchAPI {
     })
   }
 
-  get uploadManager () {
-    if (!this._uploadManager) {
-      this._uploadManager = new UploadManager(this.websocket)
+  async _getUploadManagerPromise () {
+    if (!this._uploadManagerPromise) {
+      const { default: UploadManager } = await import(/* webpackChunkName: "upload-manager" */ './UploadManager')
+      this._uploadManagerPromise = new UploadManager(this.websocket)
     }
-    return this._uploadManager
+    return this._uploadManagerPromise
   }
 
-  uploadFile (wfModuleId, file, onProgress) {
-    return this.uploadManager.upload(wfModuleId, file, onProgress)
+  async uploadFile (wfModuleId, file, onProgress) {
+    const uploadManager = await this._getUploadManagerPromise()
+    return uploadManager.upload(wfModuleId, file, onProgress)
   }
 
-  cancelFileUpload (wfModuleId) {
-    return this.uploadManager.cancel(wfModuleId)
+  async cancelFileUpload (wfModuleId) {
+    const uploadManager = await this._getUploadManagerPromise()
+    return uploadManager.cancel(wfModuleId)
+  }
+
+  async getWfModuleFileUploadApiToken (wfModuleId) {
+    return this.websocket.callServerHandler('wf_module.get_file_upload_api_token', { wfModuleId }).then(({ apiToken }) => apiToken)
+  }
+
+  async resetWfModuleFileUploadApiToken (wfModuleId) {
+    return this.websocket.callServerHandler('wf_module.reset_file_upload_api_token', { wfModuleId }).then(({ apiToken }) => apiToken)
+  }
+
+  async clearWfModuleFileUploadApiToken (wfModuleId) {
+    return this._callExpectingNull('wf_module.clear_file_upload_api_token', { wfModuleId })
   }
 }

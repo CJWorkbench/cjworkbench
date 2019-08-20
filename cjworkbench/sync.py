@@ -1,5 +1,5 @@
 import asyncio
-from concurrent.futures import Future, ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor
 import contextvars
 import functools
 from channels.db import DatabaseSyncToAsync

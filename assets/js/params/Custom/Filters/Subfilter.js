@@ -9,9 +9,17 @@ const CaseSensitiveOperations = [
   'text_contains',
   'text_does_not_contain',
   'text_is_exactly',
+  'text_is_not_exactly',
   'text_contains_regex',
   'text_does_not_contain_regex',
   'text_is_exactly_regex'
+]
+
+const ConditionsNeedingNoValue = [
+  'cell_is_empty',
+  'cell_is_not_empty',
+  'cell_is_empty_str_or_null',
+  'cell_is_not_empty_str_or_null'
 ]
 
 export default class Subfilter extends React.PureComponent {
@@ -58,9 +66,7 @@ export default class Subfilter extends React.PureComponent {
   render () {
     const { isReadOnly, inputColumns, name, fieldId, value, onDelete, onSubmit } = this.props
     const column = (inputColumns || []).find(c => c.name === value.colname) || null
-    const needValue = column !== null && (
-      value.condition !== 'cell_is_empty' && value.condition !== 'cell_is_not_empty'
-    )
+    const needValue = column !== null && !ConditionsNeedingNoValue.includes(value.condition)
 
     return (
       <div className='subfilter'>

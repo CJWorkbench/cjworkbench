@@ -440,6 +440,7 @@
     p {
       margin: 0;
       margin-bottom: .5rem;
+      white-space: pre-wrap; // double-newlines in HTML should make "paragraph" for https://www.pivotaltracker.com/story/show/165588183
     }
 
     ul.quick-fixes {
@@ -447,8 +448,12 @@
       margin: 0;
       padding: 0;
 
+      li {
+        margin-top: 1rem;
+      }
+
       button {
-        @extend .button-red;
+        @include button-red;
       }
     }
   }

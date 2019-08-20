@@ -739,7 +739,7 @@ export function clearNotificationsAction (wfModuleId) {
     return dispatch({
       type: CLEAR_NOTIFICATIONS,
       payload: {
-        promise: api.deleteWfModuleNotifications(wfModuleId),
+        promise: api.clearWfModuleUnseenNotifications(wfModuleId),
         data: {
           wfModuleId
         }

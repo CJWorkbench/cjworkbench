@@ -2,14 +2,17 @@ from functools import wraps
 import hashlib
 import json
 import re
-import time
 from typing import Any, Dict
 from uuid import UUID
+from asgiref.sync import async_to_sync
 from django import forms
 from django.http import HttpRequest, JsonResponse
 from django.utils.decorators import method_decorator
 from django.views import View
+from django.views.decorators.csrf import csrf_exempt
 from server.models import InProgressUpload, Workflow, WfModule
+from server.models.commands import ChangeParametersCommand
+from server.models.workflow import WorkflowCooperativeLock
 
 
 AuthTokenHeaderRegex = re.compile(r"\ABearer ([-a-zA-Z0-9_]+)\Z", re.IGNORECASE)
@@ -24,6 +27,8 @@ def ErrorResponse(status_code: int, error_code: str, extra_data: Dict[str, Any] 
 def loads_wf_module_for_api_upload(f):
     """
     Provide `wf_module` to a Django view if HTTP Authorization header matches.
+
+    Calls `f(request, workflow_lock, wf_module, file_param_id_name, *args, **kwargs)`
 
     The HTTP Authorization header must look like:
 
@@ -53,13 +58,29 @@ def loads_wf_module_for_api_upload(f):
         bearer_token = auth_header_match.group(1)
 
         try:
-            with Workflow.lookup_and_cooperative_lock(id=workflow_id) as workflow:
+            with Workflow.lookup_and_cooperative_lock(id=workflow_id) as workflow_lock:
+                workflow = workflow_lock.workflow
                 try:
                     wf_module = WfModule.live_in_workflow(workflow).get(
                         slug=wf_module_slug
                     )
                 except WfModule.DoesNotExist:
                     return ErrorResponse(404, "step-not-found")
+
+                module_version = wf_module.module_version
+                if module_version is None:
+                    return ErrorResponse(400, "step-module-deleted")
+
+                try:
+                    file_param_id_name = next(
+                        iter(
+                            pf.id_name
+                            for pf in module_version.param_fields
+                            if pf.type == "file"
+                        )
+                    )
+                except StopIteration:
+                    return ErrorResponse(400, "step-has-no-file-param")
 
                 api_token = wf_module.file_upload_api_token
                 if not api_token:
@@ -72,16 +93,30 @@ def loads_wf_module_for_api_upload(f):
                 if bearer_token_hash != api_token_hash or bearer_token != api_token:
                     return ErrorResponse(403, "authorization-bearer-token-invalid")
 
-                return f(request, wf_module, *args, **kwargs)
+                return f(
+                    request,
+                    workflow_lock,
+                    wf_module,
+                    file_param_id_name,
+                    *args,
+                    **kwargs,
+                )
         except Workflow.DoesNotExist:
             return ErrorResponse(404, "workflow-not-found")
 
     return wrapper
 
 
+@method_decorator(csrf_exempt, name="dispatch")
 class UploadList(View):
     @method_decorator(loads_wf_module_for_api_upload)
-    def post(self, request: HttpRequest, wf_module: WfModule):
+    def post(
+        self,
+        request: HttpRequest,
+        workflow_lock: WorkflowCooperativeLock,
+        wf_module: WfModule,
+        file_param_id_name: str,
+    ):
         """
         Create a new InProgressUpload for the given WfModule.
 
@@ -90,22 +125,31 @@ class UploadList(View):
         """
         in_progress_upload = wf_module.in_progress_uploads.create()
         params = in_progress_upload.generate_upload_parameters()
-
-        # Workaround for https://github.com/minio/minio/issues/7991
-        #
-        # A race in minio means these credentials might not be valid yet.
-        # Workaround: give the minio+etcd machines an extra 2s to synchronize.
-        time.sleep(2)  # DELETEME when minio is fixed.
-        return JsonResponse(params)
+        return JsonResponse(
+            {
+                **params,
+                "finishUrl": request.build_absolute_uri(
+                    "./uploads/" + str(in_progress_upload.id)
+                ),
+            }
+        )
 
 
 class CompleteUploadForm(forms.Form):
     filename = forms.CharField(min_length=1, max_length=100)
 
 
+@method_decorator(csrf_exempt, name="dispatch")
 class Upload(View):
     @method_decorator(loads_wf_module_for_api_upload)
-    def delete(self, request: HttpRequest, wf_module: WfModule, uuid: UUID):
+    def delete(
+        self,
+        request: HttpRequest,
+        workflow_lock: WorkflowCooperativeLock,
+        wf_module: WfModule,
+        file_param_id_name: str,
+        uuid: UUID,
+    ):
         """
         Abort an upload, or no-op if there is no upload with the given UUID.
 
@@ -124,7 +168,14 @@ class Upload(View):
         return JsonResponse({})
 
     @method_decorator(loads_wf_module_for_api_upload)
-    def post(self, request: HttpRequest, wf_module: WfModule, uuid: UUID):
+    def post(
+        self,
+        request: HttpRequest,
+        workflow_lock: WorkflowCooperativeLock,
+        wf_module: WfModule,
+        file_param_id_name: str,
+        uuid: UUID,
+    ):
         """
         Create an UploadedFile and delete the InProgressUpload.
 
@@ -158,6 +209,19 @@ class Upload(View):
             uploaded_file = in_progress_upload.convert_to_uploaded_file(filename)
         except FileNotFoundError:
             return ErrorResponse(409, "file-not-uploaded")
+
+        # After the cooperative lock ends, update the WfModule.
+        want_params = {**wf_module.get_params(), file_param_id_name: uploaded_file.uuid}
+
+        def create_change_parameters_command():
+            workflow = workflow_lock.workflow
+            # sends delta to Websockets clients and queues render.
+            async_to_sync(ChangeParametersCommand.create)(
+                workflow=workflow, wf_module=wf_module, new_values=want_params
+            )
+
+        workflow_lock.after_commit(create_change_parameters_command)
+
         return JsonResponse(
             {
                 "uuid": uploaded_file.uuid,

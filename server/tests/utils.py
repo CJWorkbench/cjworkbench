@@ -47,9 +47,18 @@ class DbTestCase(SimpleTestCase):
         clear_db()
         clear_minio()
 
-    # Don't bother clearing data in tearDown(). The next test that needs the
-    # database will be running setUp() anyway, so extra clearing will only cost
-    # time.
+        # Set WorkbenchDatabaseSyncToAsync's executor on _all_ tests. This
+        # supports testing sync functions that call async_to_sync().
+        #
+        # https://github.com/django/channels/issues/1091#issuecomment-436067763.
+        self._old_executor = WorkbenchDatabaseSyncToAsync.executor
+        WorkbenchDatabaseSyncToAsync.executor = self.async_executor
+
+    def tearDown(self):
+        # Don't bother clearing data in tearDown(). The next test that needs the
+        # database will be running setUp() anyway, so extra clearing will only cost
+        # time.
+        WorkbenchDatabaseSyncToAsync.executor = self._old_executor
 
     def run_with_async_db(self, task):
         """
@@ -66,13 +75,10 @@ class DbTestCase(SimpleTestCase):
         # "delete the entire database" call, and we want it to succeed; that
         # means there need to be no other connections using the database.
         old_loop = asyncio.get_event_loop()
-        old_executor = WorkbenchDatabaseSyncToAsync.executor
         asyncio.set_event_loop(None)
         try:
-            WorkbenchDatabaseSyncToAsync.executor = self.async_executor
             return asyncio.run(task)
         finally:
-            WorkbenchDatabaseSyncToAsync.executor = old_executor
             asyncio.set_event_loop(old_loop)
 
 

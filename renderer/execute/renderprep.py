@@ -31,7 +31,11 @@ class PromptErrorAggregator:
             self.add(error)
 
     def add(self, error: PromptingError.WrongColumnType) -> None:
-        group = self.groups.setdefault(error.found_type, {})
+        if "text" in error.wanted_types:
+            found_type = None
+        else:
+            found_type = error.found_type
+        group = self.groups.setdefault(found_type, {})
         names = group.setdefault(error.wanted_types, [])
         for name in error.column_names:
             if name not in names:
@@ -260,12 +264,12 @@ def _(dtype: ParamDType.Column, value: str, context: RenderContext) -> str:
 
     column = valid_columns[value]
     if dtype.column_types and column.type.name not in dtype.column_types:
+        if "text" in dtype.column_types:
+            found_type = None
+        else:
+            found_type = column.type.name
         raise PromptingError(
-            [
-                PromptingError.WrongColumnType(
-                    [value], column.type.name, dtype.column_types
-                )
-            ]
+            [PromptingError.WrongColumnType([value], found_type, dtype.column_types)]
         )
 
     return value
@@ -286,9 +290,13 @@ def _(dtype: ParamDType.Multicolumn, value: List[str], context: RenderContext) -
             continue
 
         if dtype.column_types and column.type.name not in dtype.column_types:
+            if "text" in dtype.column_types:
+                found_type = None
+            else:
+                found_type = column.type.name
             error_agg.add(
                 PromptingError.WrongColumnType(
-                    [column.name], column.type.name, dtype.column_types
+                    [column.name], found_type, dtype.column_types
                 )
             )
         else:

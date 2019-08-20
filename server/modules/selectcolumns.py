@@ -1,6 +1,7 @@
 import re
 from typing import Tuple
 import pandas as pd
+from pandas.core.indexes.base import InvalidIndexError
 
 
 commas = re.compile(r"\s*,\s*")
@@ -17,7 +18,7 @@ def select_columns_by_number(table, str_col_nums):
 
     try:
         mask = index.get_indexer(table_col_nums) != -1
-    except KeyError:
+    except InvalidIndexError:
         raise ValueError("There are overlapping numbers in input range")
 
     return list(table.columns[mask])

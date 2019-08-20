@@ -18,6 +18,9 @@ from server.handlers.wf_module import (
     generate_secret_access_token,
     delete_secret,
     set_secret,
+    get_file_upload_api_token,
+    reset_file_upload_api_token,
+    clear_file_upload_api_token,
 )
 from server.models import ModuleVersion, Workflow
 from server.models.commands import (
@@ -1073,3 +1076,73 @@ class WfModuleTest(HandlerTestCase):
             wf_module_delta["secrets"],
             {"string_secret": {"name": wf_module.secrets["string_secret"]["name"]}},
         )
+
+    def test_get_file_upload_api_token(self):
+        # Currently, we don't restrict this API to just "upload" modules. We do
+        # restrict the actual _uploads_, so this oversight isn't a big deal.
+        user = User.objects.create()
+        workflow = Workflow.create_and_init(owner=user)
+        wf_module = workflow.tabs.first().wf_modules.create(
+            module_id_name="x", order=0, slug="step-1", file_upload_api_token="abcd1234"
+        )
+        response = self.run_handler(
+            get_file_upload_api_token,
+            user=user,
+            workflow=workflow,
+            wfModuleId=wf_module.id,
+        )
+        self.assertResponse(response, data={"apiToken": "abcd1234"})
+
+    def test_get_file_upload_api_token_null(self):
+        user = User.objects.create()
+        workflow = Workflow.create_and_init(owner=user)
+        wf_module = workflow.tabs.first().wf_modules.create(
+            module_id_name="x", order=0, slug="step-1", file_upload_api_token=None
+        )
+        response = self.run_handler(
+            get_file_upload_api_token,
+            user=user,
+            workflow=workflow,
+            wfModuleId=wf_module.id,
+        )
+        self.assertResponse(response, data={"apiToken": None})
+
+    def test_reset_file_upload_api_token(self):
+        # Currently, we don't restrict this API to just "upload" modules. We do
+        # restrict the actual _uploads_, so this oversight isn't a big deal.
+        user = User.objects.create()
+        workflow = Workflow.create_and_init(owner=user)
+        wf_module = workflow.tabs.first().wf_modules.create(
+            module_id_name="x", order=0, slug="step-1"
+        )
+        response = self.run_handler(
+            reset_file_upload_api_token,
+            user=user,
+            workflow=workflow,
+            wfModuleId=wf_module.id,
+        )
+        wf_module.refresh_from_db()
+        self.assertEqual(
+            len(wf_module.file_upload_api_token), 43
+        )  # 32 bytes, base64-encoded
+        self.assertResponse(
+            response, data={"apiToken": wf_module.file_upload_api_token}
+        )
+
+    def test_clear_file_upload_api_token(self):
+        # Currently, we don't restrict this API to just "upload" modules. We do
+        # restrict the actual _uploads_, so this oversight isn't a big deal.
+        user = User.objects.create()
+        workflow = Workflow.create_and_init(owner=user)
+        wf_module = workflow.tabs.first().wf_modules.create(
+            module_id_name="x", order=0, slug="step-1", file_upload_api_token="abcd1234"
+        )
+        response = self.run_handler(
+            clear_file_upload_api_token,
+            user=user,
+            workflow=workflow,
+            wfModuleId=wf_module.id,
+        )
+        wf_module.refresh_from_db()
+        self.assertResponse(response, data=None)
+        self.assertIsNone(wf_module.file_upload_api_token)

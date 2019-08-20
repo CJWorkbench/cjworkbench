@@ -1,7 +1,31 @@
 import json
+from unittest.mock import patch
 from server import minio
-from server.models import Workflow
+from server.models import ModuleVersion, Workflow
 from server.tests.utils import DbTestCase
+
+
+async def async_noop(*args, **kwargs):
+    pass
+
+
+class MockLoadedModule:
+    def __init__(self, *args):
+        pass
+
+    def migrate_params(self, values):
+        return values
+
+
+def _init_module(id_name, param_id_name="file", param_type="file"):
+    ModuleVersion.create_or_replace_from_spec(
+        {
+            "id_name": id_name,
+            "name": id_name,
+            "category": "Clean",
+            "parameters": [{"id_name": param_id_name, "type": param_type}],
+        }
+    )
 
 
 class LoadsWfModuleForApiTest(DbTestCase):
@@ -48,6 +72,7 @@ class LoadsWfModuleForApiTest(DbTestCase):
         )
 
     def test_step_has_no_api_token(self):
+        _init_module("x")
         workflow = Workflow.create_and_init()
         workflow.tabs.first().wf_modules.create(
             order=0, slug="step-123", module_id_name="x"
@@ -61,7 +86,37 @@ class LoadsWfModuleForApiTest(DbTestCase):
             json.loads(response.content)["error"]["code"], "step-has-no-api-token"
         )
 
+    def test_step_has_no_module_version(self):
+        workflow = Workflow.create_and_init()
+        workflow.tabs.first().wf_modules.create(
+            order=0, slug="step-123", module_id_name="x", file_upload_api_token="abc123"
+        )
+        response = self.client.post(
+            f"/api/v1/workflows/{workflow.id}/steps/step-123/uploads",
+            HTTP_AUTHORIZATION="Bearer abc123",
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(
+            json.loads(response.content)["error"]["code"], "step-module-deleted"
+        )
+
+    def test_step_module_has_no_file_param(self):
+        _init_module("x", param_type="string")
+        workflow = Workflow.create_and_init()
+        workflow.tabs.first().wf_modules.create(
+            order=0, slug="step-123", module_id_name="x", file_upload_api_token="abc123"
+        )
+        response = self.client.post(
+            f"/api/v1/workflows/{workflow.id}/steps/step-123/uploads",
+            HTTP_AUTHORIZATION="Bearer abc123",
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(
+            json.loads(response.content)["error"]["code"], "step-has-no-file-param"
+        )
+
     def test_authorization_bearer_token_invalid(self):
+        _init_module("x")
         workflow = Workflow.create_and_init()
         workflow.tabs.first().wf_modules.create(
             order=0, slug="step-123", module_id_name="x", file_upload_api_token="abc123"
@@ -80,6 +135,7 @@ class LoadsWfModuleForApiTest(DbTestCase):
 class UploadListTest(DbTestCase):
     def test_create_in_progress_upload(self):
         workflow = Workflow.create_and_init()
+        _init_module("x")
         wf_module = workflow.tabs.first().wf_modules.create(
             order=0, slug="step-123", module_id_name="x", file_upload_api_token="abc123"
         )
@@ -94,10 +150,12 @@ class UploadListTest(DbTestCase):
         # Useful information is returned
         data = json.loads(response.content)
         self.assertRegexpMatches(data["key"], str(upload.id) + "$")
+        self.assertRegexpMatches(data["finishUrl"], str(upload.id) + "$")
 
 
 class UploadTest(DbTestCase):
     def test_abort_missing_upload_is_404(self):
+        _init_module("x")
         workflow = Workflow.create_and_init()
         wf_module = workflow.tabs.first().wf_modules.create(
             order=0, slug="step-123", module_id_name="x", file_upload_api_token="abc123"
@@ -115,6 +173,7 @@ class UploadTest(DbTestCase):
         )
 
     def test_abort_completed_upload_is_404(self):
+        _init_module("x")
         workflow = Workflow.create_and_init()
         wf_module = workflow.tabs.first().wf_modules.create(
             order=0, slug="step-123", module_id_name="x", file_upload_api_token="abc123"
@@ -130,6 +189,7 @@ class UploadTest(DbTestCase):
         )
 
     def test_abort(self):
+        _init_module("x")
         workflow = Workflow.create_and_init()
         wf_module = workflow.tabs.first().wf_modules.create(
             order=0, slug="step-123", module_id_name="x", file_upload_api_token="abc123"
@@ -148,6 +208,7 @@ class UploadTest(DbTestCase):
         self.assertTrue(upload.is_completed)
 
     def test_complete_invalid_utf8(self):
+        _init_module("x")
         workflow = Workflow.create_and_init()
         wf_module = workflow.tabs.first().wf_modules.create(
             order=0, slug="step-123", module_id_name="x", file_upload_api_token="abc123"
@@ -164,6 +225,7 @@ class UploadTest(DbTestCase):
         self.assertEqual(error["code"], "body-not-utf8")
 
     def test_complete_invalid_json(self):
+        _init_module("x")
         workflow = Workflow.create_and_init()
         wf_module = workflow.tabs.first().wf_modules.create(
             order=0, slug="step-123", module_id_name="x", file_upload_api_token="abc123"
@@ -180,6 +242,7 @@ class UploadTest(DbTestCase):
         self.assertEqual(error["code"], "body-not-json")
 
     def test_complete_json_form_error(self):
+        _init_module("x")
         workflow = Workflow.create_and_init()
         wf_module = workflow.tabs.first().wf_modules.create(
             order=0, slug="step-123", module_id_name="x", file_upload_api_token="abc123"
@@ -199,6 +262,7 @@ class UploadTest(DbTestCase):
         self.assertIn("filename", error["errors"])
 
     def test_complete_upload_not_found(self):
+        _init_module("x")
         workflow = Workflow.create_and_init()
         workflow.tabs.first().wf_modules.create(
             order=0, slug="step-123", module_id_name="x", file_upload_api_token="abc123"
@@ -215,6 +279,7 @@ class UploadTest(DbTestCase):
         )
 
     def test_complete_completed_upload(self):
+        _init_module("x")
         workflow = Workflow.create_and_init()
         wf_module = workflow.tabs.first().wf_modules.create(
             order=0, slug="step-123", module_id_name="x", file_upload_api_token="abc123"
@@ -232,6 +297,7 @@ class UploadTest(DbTestCase):
         )
 
     def test_complete_file_not_found(self):
+        _init_module("x")
         workflow = Workflow.create_and_init()
         wf_module = workflow.tabs.first().wf_modules.create(
             order=0, slug="step-123", module_id_name="x", file_upload_api_token="abc123"
@@ -247,7 +313,16 @@ class UploadTest(DbTestCase):
         error = json.loads(response.content)["error"]
         self.assertEqual(error["code"], "file-not-uploaded")
 
-    def test_complete_happy_path(self):
+    @patch("server.websockets.ws_client_send_delta_async")
+    @patch("server.rabbitmq.queue_render")
+    @patch(
+        "server.models.loaded_module.LoadedModule.for_module_version_sync",
+        MockLoadedModule,
+    )
+    def test_complete_happy_path(self, queue_render, send_delta):
+        send_delta.return_value = async_noop()
+        queue_render.return_value = async_noop()
+        _init_module("x")
         workflow = Workflow.create_and_init()
         wf_module = workflow.tabs.first().wf_modules.create(
             order=0, slug="step-123", module_id_name="x", file_upload_api_token="abc123"
@@ -284,3 +359,6 @@ class UploadTest(DbTestCase):
         self.assertEqual(data["uuid"], uuid)
         self.assertEqual(data["name"], "test.csv")
         self.assertEqual(data["size"], 7)
+        # Send deltas
+        send_delta.assert_called()
+        queue_render.assert_called()

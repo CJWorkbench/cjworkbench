@@ -1,6 +1,7 @@
 import asyncio
 import datetime
 import functools
+import secrets
 from typing import Any, Dict, List, Optional
 from dateutil.parser import isoparse
 from django.conf import settings
@@ -220,6 +221,19 @@ async def set_notifications(
 
 
 @database_sync_to_async
+def _do_clear_unseen_notification(wf_module: WfModule):
+    wf_module.has_unseen_notification = False
+    wf_module.save(update_fields=["has_unseen_notification"])
+
+
+@register_websockets_handler
+@websockets_handler("write")
+@_loading_wf_module
+async def clear_unseen_notifications(wf_module: WfModule, **kwargs):
+    await _do_clear_unseen_notification(wf_module)
+
+
+@database_sync_to_async
 def _do_try_set_autofetch(
     scope, wf_module: WfModule, auto_update_data: bool, update_interval: int
 ):
@@ -235,7 +249,7 @@ def _do_try_set_autofetch(
 
     quota_exceeded = None
     try:
-        with transaction.atomic() as trans:
+        with transaction.atomic():
             wf_module.auto_update_data = auto_update_data
             wf_module.update_interval = update_interval
             if auto_update_data:
@@ -501,3 +515,42 @@ async def set_secret(
 
     if delta:
         await websockets.ws_client_send_delta_async(workflow.id, delta)
+
+
+@database_sync_to_async
+def _do_set_file_upload_api_token(wf_module: WfModule, api_token: Optional[str]):
+    wf_module.file_upload_api_token = api_token
+    wf_module.save(update_fields=["file_upload_api_token"])
+
+
+@register_websockets_handler
+@websockets_handler("write")
+@_loading_wf_module
+async def get_file_upload_api_token(workflow: Workflow, wf_module: WfModule, **kwargs):
+    """
+    Query the file-upload API token.
+
+    We do not pass this token in Deltas, since only writers can see it. (As of
+    [2019-08-05], Deltas aren't tailored to individual listeners' permissions.)
+    """
+    return {"apiToken": wf_module.file_upload_api_token}
+
+
+@register_websockets_handler
+@websockets_handler("write")
+@_loading_wf_module
+async def reset_file_upload_api_token(
+    workflow: Workflow, wf_module: WfModule, **kwargs
+):
+    api_token = secrets.token_urlsafe()
+    await _do_set_file_upload_api_token(wf_module, api_token)
+    return {"apiToken": api_token}
+
+
+@register_websockets_handler
+@websockets_handler("write")
+@_loading_wf_module
+async def clear_file_upload_api_token(
+    workflow: Workflow, wf_module: WfModule, **kwargs
+):
+    await _do_set_file_upload_api_token(wf_module, None)

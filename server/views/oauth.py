@@ -94,7 +94,8 @@ def start_authorize(
             request.user,
             request.session,
             pk=workflow_id,
-        ) as workflow:
+        ) as workflow_lock:
+            workflow = workflow_lock.workflow
             # raises WfModule.DoesNotExist, ModuleVersion.DoesNotExist
             _, service = _load_wf_module_and_service(workflow, wf_module_id, param)
     except Workflow.DoesNotExist as err:
@@ -168,7 +169,8 @@ def finish_authorize(request: HttpRequest) -> HttpResponse:
             request.user,
             request.session,
             pk=scope.workflow_id,
-        ) as workflow:
+        ) as workflow_lock:
+            workflow = workflow_lock.workflow
             # raises WfModule.DoesNotExist, ModuleVersion.DoesNotExist
             wf_module, _ = _load_wf_module_and_service(
                 workflow, scope.wf_module_id, scope.param

@@ -52,7 +52,9 @@ export class WfModule extends React.PureComponent {
       }).isRequired).isRequired
     }), // or null for no module
     index: PropTypes.number.isRequired,
+    workflowId: PropTypes.number.isRequired,
     wfModule: PropTypes.shape({
+      id: PropTypes.number.isRequired,
       params: PropTypes.object.isRequired,
       secrets: PropTypes.object.isRequired
     }), // null if loading
@@ -456,7 +458,9 @@ export class WfModule extends React.PureComponent {
                     secrets={this.props.wfModule ? this.props.wfModule.secrets : null}
                     files={this.props.wfModule ? this.props.wfModule.files : []}
                     edits={this.state.edits}
+                    workflowId={this.props.workflowId}
                     wfModuleId={this.props.wfModule ? this.props.wfModule.id : null}
+                    wfModuleSlug={this.props.wfModule ? this.props.wfModule.slug : null}
                     wfModuleOutputError={this.props.wfModule ? this.props.wfModule.output_error : null}
                     isWfModuleBusy={this.wfModuleStatus === 'busy'}
                     inputWfModuleId={inputWfModule ? inputWfModule.id : null}
@@ -573,6 +577,7 @@ function mapStateToProps (state, ownProps) {
     isLessonHighlightNotes: testHighlight({ type: 'WfModuleContextButton', button: 'notes', index, moduleName }),
     isReadOnly: state.workflow.read_only,
     isAnonymous: state.workflow.is_anonymous,
+    workflowId: state.workflow.id,
     fetchModuleExists: fetchIndex !== null && fetchIndex <= index
   }
 }
