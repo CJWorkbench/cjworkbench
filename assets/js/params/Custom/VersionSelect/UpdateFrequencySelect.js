@@ -24,7 +24,7 @@ export class UpdateFrequencySelect extends React.PureComponent {
     quotaExceeded: null // JSON response -- contains autofetch info iff we exceeded quota
   }
 
-  openModal = (ev) => {
+  handleClickOpenModal = (ev) => {
     if (ev && ev.preventDefault) ev.preventDefault() // <a> => do not change URL
     if (this.props.isReadOnly) return
     if (this.props.isAnonymous) return
@@ -34,15 +34,7 @@ export class UpdateFrequencySelect extends React.PureComponent {
     })
   }
 
-  onSubmit = (settings) => {
-    this.props.updateSettings(settings)
-    // TODO keep modal open until server responds with OK?
-    this.setState({
-      isModalOpen: false
-    })
-  }
-
-  onClose = () => {
+  handleCloseModal = () => {
     this.setState({
       isModalOpen: false
     })
@@ -70,7 +62,7 @@ export class UpdateFrequencySelect extends React.PureComponent {
             href='#'
             title='change auto-update settings'
             className='content-1 ml-1 action-link'
-            onClick={this.openModal}
+            onClick={this.handleClickOpenModal}
           >
             {isAutofetch ? 'Auto' : 'Manual'}
           </a>
@@ -89,7 +81,7 @@ export class UpdateFrequencySelect extends React.PureComponent {
             fetchInterval={fetchInterval}
             setEmailUpdates={this.setEmailUpdates}
             trySetAutofetch={this.trySetAutofetch}
-            onClose={this.onClose}
+            onClose={this.handleCloseModal}
           />
         ) : null}
       </div>

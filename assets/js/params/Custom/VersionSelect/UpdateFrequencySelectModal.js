@@ -71,27 +71,27 @@ export default class UpdateFrequencySelectModal extends React.PureComponent {
     )
   }
 
-  onChangeAutofetch = (ev) => {
+  handleChangeAutofetch = (ev) => {
     this.setState({
       wantAutofetch: ev.target.value === 'true'
-    }, this.onSubmit)
+    }, this.handleSubmit)
   }
 
-  onChangeEmailUpdates = (ev) => {
+  handleChangeEmailUpdates = (ev) => {
     this.props.setEmailUpdates(ev.target.checked)
   }
 
-  onChangeTimeUnitCount = (ev) => {
+  handleChangeTimeUnitCount = (ev) => {
     this.setState({ wantTimeUnitCount: ev.target.value })
   }
 
-  onChangeTimeUnit = (ev) => {
+  handleChangeTimeUnit = (ev) => {
     this.setState({
       timeUnit: ev.target.value
     })
   }
 
-  onSubmit = (ev) => {
+  handleSubmit = (ev) => {
     if (ev && ev.preventDefault) ev.preventDefault()
     if (ev && ev.stopPropagation) ev.stopPropagation()
 
@@ -136,7 +136,7 @@ export default class UpdateFrequencySelectModal extends React.PureComponent {
             className='autofetch'
             method='post'
             action='#'
-            onSubmit={this.onSubmit}
+            onSubmit={this.handleSubmit}
           >
             {/* disable fieldset if we're submitting -- the user can't submit during apply, and the user shouldn't be allowed to edit fields because that would be confusing. */}
             <fieldset className='autofetch' disabled={isSettingAutofetch}>
@@ -147,7 +147,7 @@ export default class UpdateFrequencySelectModal extends React.PureComponent {
                     name='isAutofetch'
                     value='true'
                     checked={wantAutofetch}
-                    onChange={this.onChangeAutofetch}
+                    onChange={this.handleChangeAutofetch}
                   />
                   <div className='radio'>Auto</div>
                 </label>
@@ -162,7 +162,7 @@ export default class UpdateFrequencySelectModal extends React.PureComponent {
                           type='number'
                           name='timeUnitCount'
                           value={wantTimeUnitCount}
-                          onChange={this.onChangeTimeUnitCount}
+                          onChange={this.handleChangeTimeUnitCount}
                           min='1'
                           id='updateFrequencySelectTimeUnitCount'
                         />
@@ -171,7 +171,7 @@ export default class UpdateFrequencySelectModal extends React.PureComponent {
                         className='custom-select'
                         name='timeUnit'
                         value={timeUnit}
-                        onChange={this.onChangeTimeUnit}
+                        onChange={this.handleChangeTimeUnit}
                       >
                         <option value='weeks'>weeks</option>
                         <option value='days'>days</option>
@@ -209,7 +209,7 @@ export default class UpdateFrequencySelectModal extends React.PureComponent {
                     name='isAutofetch'
                     value='false'
                     checked={!wantAutofetch}
-                    onChange={this.onChangeAutofetch}
+                    onChange={this.handleChangeAutofetch}
                   />
                   <div className='radio'>Manual</div>
                 </label>
@@ -226,7 +226,7 @@ export default class UpdateFrequencySelectModal extends React.PureComponent {
               id='update-frequency-select-modal-is-email-updates-checkbox'
               name='isEmailUpdates'
               checked={isEmailUpdates}
-              onChange={this.onChangeEmailUpdates}
+              onChange={this.handleChangeEmailUpdates}
             />
             <label
               htmlFor='update-frequency-select-modal-is-email-updates-checkbox'

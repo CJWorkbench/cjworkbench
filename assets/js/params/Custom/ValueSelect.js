@@ -38,7 +38,7 @@ class ValueItem extends React.PureComponent {
     onChangeItem: PropTypes.func.isRequired // func(item, isSelected) => undefined
   }
 
-  onChangeItem = (ev) => {
+  handleChangeItem = (ev) => {
     this.props.onChangeItem(this.props.item, ev.target.checked)
   }
 
@@ -52,7 +52,7 @@ class ValueItem extends React.PureComponent {
           type='checkbox'
           title='Include these rows'
           checked={isSelected}
-          onChange={this.onChangeItem}
+          onChange={this.handleChangeItem}
         />
         <div className='text'>{item}</div>
         <div className='count' title={NumberFormatter.format(count)}>{formatCount(count)}</div>
@@ -282,23 +282,23 @@ export class ValueSelect extends React.PureComponent {
     }
   })
 
-  onResetSearch = () => {
+  handleResetSearch = () => {
     this.setState({ searchInput: '' })
   }
 
-  setSort = (sort) => {
+  handleChangeSort = (sort) => {
     this.setState({ sort })
   }
 
   onKeyDown = (ev) => {
-    if (ev.keyCode === 27) this.onResetSearch() // Esc => reset
+    if (ev.keyCode === 27) this.handleResetSearch() // Esc => reset
   }
 
-  onChangeSearch = (searchInput) => {
+  handleChangeSearch = (searchInput) => {
     this.setState({ searchInput })
   }
 
-  onChangeItem = (item, isSelected) => {
+  handleChangeItem = (item, isSelected) => {
     const { value, onChange } = this.props
     if (isSelected) {
       if (!value.includes(item)) {
@@ -319,11 +319,11 @@ export class ValueSelect extends React.PureComponent {
     }
   }
 
-  clearSelectedValues = () => {
+  handleClickNone = () => {
     this.props.onChange([])
   }
 
-  fillSelectedValues = () => {
+  handleClickAll = () => {
     const { onChange, valueCounts } = this.props
     if (!valueCounts) return // surely the user didn't mean to clear selection?
     onChange([...Object.keys(valueCounts)])
@@ -340,20 +340,20 @@ export class ValueSelect extends React.PureComponent {
         {canSearch ? (
           <FacetSearch
             value={searchInput}
-            onChange={this.onChangeSearch}
-            onReset={this.onResetSearch}
+            onChange={this.handleChangeSearch}
+            onReset={this.handleResetSearch}
           />
         ) : null}
         <div className='value-list-and-chrome'>
           <ValueSortSelect
             value={sort}
-            onChange={this.setSort}
+            onChange={this.handleChangeSort}
           />
           <div className='value-list-container'>
             <AllNoneButtons
               isReadOnly={isSearching}
-              onClickNone={this.clearSelectedValues}
-              onClickAll={this.fillSelectedValues}
+              onClickNone={this.handleClickNone}
+              onClickAll={this.handleClickAll}
             />
             <DynamicallySizedValueList
               valueCounts={this.props.valueCounts}
@@ -361,7 +361,7 @@ export class ValueSelect extends React.PureComponent {
               selection={this.selection}
               nItemsTotal={this.sortedValues.length}
               items={this.matchingSortedValues}
-              onChangeItem={this.onChangeItem}
+              onChangeItem={this.handleChangeItem}
             />
           </div>
         </div>

@@ -15,9 +15,8 @@ export class DataVersionSelect extends React.PureComponent {
     isDataVersionModalOpen: false
   }
 
-  openModal = () => this.setState({ isDataVersionModalOpen: true })
-
-  closeModal = () => this.setState({ isDataVersionModalOpen: false })
+  handleClickOpenModal = () => this.setState({ isDataVersionModalOpen: true })
+  handleCloseModal = () => this.setState({ isDataVersionModalOpen: false })
 
   render () {
     const { wfModuleId, currentVersionIndex, nVersions, isReadOnly } = this.props
@@ -40,11 +39,11 @@ export class DataVersionSelect extends React.PureComponent {
       inner = (
         <>
           <div className='label'>Version</div>
-          <button type='button' title='Select version' onClick={this.openModal}>{nVersions - currentVersionIndex} of {nVersions}</button>
+          <button type='button' title='Select version' onClick={this.handleClickOpenModal}>{nVersions - currentVersionIndex} of {nVersions}</button>
           {isDataVersionModalOpen ? (
             <DataVersionModal
               wfModuleId={wfModuleId}
-              onClose={this.closeModal}
+              onClose={this.handleCloseModal}
             />
           ) : null}
         </>
