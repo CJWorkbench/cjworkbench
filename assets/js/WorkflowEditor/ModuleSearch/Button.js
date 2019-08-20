@@ -49,7 +49,7 @@ export default class Button extends React.PureComponent {
             isLastAddButton={isLastAddButton}
             index={index}
             tabSlug={tabSlug}
-            close={this.handleClosePopup}
+            onClose={this.handleClosePopup}
           />
         ) : null}
       </Manager>

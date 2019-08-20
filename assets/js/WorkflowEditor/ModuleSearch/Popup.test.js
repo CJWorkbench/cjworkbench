@@ -47,7 +47,7 @@ describe('ModuleSearch Popup', () => {
       index={2}
       isLessonHighlight={false}
       modules={modulesArray}
-      close={jest.fn()}
+      onClose={jest.fn()}
       addModule={jest.fn()}
       onUpdate={jest.fn()}
       {...extraProps}
@@ -85,18 +85,18 @@ describe('ModuleSearch Popup', () => {
     expect(w.prop('onUpdate')).toHaveBeenCalled()
   })
 
-  it('calls close on form reset (e.g., clicking button.close)', () => {
+  it('calls onClose on form reset (e.g., clicking button.close)', () => {
     // search field should be empty at start
     const w = wrapper()
     w.find('form').simulate('reset')
-    expect(w.prop('close')).toHaveBeenCalled()
+    expect(w.prop('onClose')).toHaveBeenCalled()
     expect(w.prop('addModule')).not.toHaveBeenCalled()
   })
 
   it('calls onCancel on pressing Escape', () => {
     const w = wrapper()
     w.find('input[type="search"]').simulate('keyDown', { keyCode: 27 })
-    expect(w.prop('close')).toHaveBeenCalled()
+    expect(w.prop('onClose')).toHaveBeenCalled()
     expect(w.prop('addModule')).not.toHaveBeenCalled()
   })
 
@@ -104,7 +104,7 @@ describe('ModuleSearch Popup', () => {
     const w = wrapper()
     w.find('button[data-module-slug="enigma"]').simulate('click')
     expect(w.prop('addModule')).toHaveBeenCalledWith('tab-1', 2, 'enigma')
-    expect(w.prop('close')).toHaveBeenCalled()
+    expect(w.prop('onClose')).toHaveBeenCalled()
   })
 
   it('should sort modules by name', () => {
@@ -144,7 +144,7 @@ describe('ModuleSearch Popup', () => {
         <ConnectedPopup
           tabSlug='tab-1'
           index={2}
-          close={jest.fn()}
+          onClose={jest.fn()}
           isLastAddButton={false}
           {...extraProps}
         />
@@ -212,11 +212,11 @@ describe('ModuleSearch Popup', () => {
           b: { id_name: 'b', name: 'BBB', category: 'Analyze', uses_data: true, description: 'B B', icon: 'b' }
         }
       }, api)
-      const close = jest.fn()
-      const w = wrapper(store, { tabSlug: 'tab-1', index: 2, close })
+      const onClose = jest.fn()
+      const w = wrapper(store, { tabSlug: 'tab-1', index: 2, onClose })
       w.find('button[data-module-slug="a"]').simulate('click')
       expect(api.addModule).toHaveBeenCalledWith('tab-1', 'step-X', 'a', 2, {})
-      expect(close).toHaveBeenCalled()
+      expect(onClose).toHaveBeenCalled()
     })
 
     describe('in a typical lesson', () => {

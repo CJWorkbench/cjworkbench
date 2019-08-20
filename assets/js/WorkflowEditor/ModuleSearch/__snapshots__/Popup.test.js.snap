@@ -3,7 +3,6 @@
 exports[`ModuleSearch Popup matches snapshot 1`] = `
 <Popup
   addModule={[MockFunction]}
-  close={[MockFunction]}
   index={2}
   isLessonHighlight={false}
   modules={
@@ -28,6 +27,7 @@ exports[`ModuleSearch Popup matches snapshot 1`] = `
       },
     ]
   }
+  onClose={[MockFunction]}
   onUpdate={[MockFunction]}
   tabSlug="tab-1"
 >

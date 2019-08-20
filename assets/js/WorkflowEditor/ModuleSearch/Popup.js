@@ -247,7 +247,7 @@ export class Popup extends React.PureComponent {
     index: PropTypes.number.isRequired,
     isLessonHighlight: PropTypes.bool.isRequired,
     modules: PropTypes.arrayOf(ModulePropType.isRequired).isRequired,
-    close: PropTypes.func.isRequired, // func() => undefined
+    onClose: PropTypes.func.isRequired, // func() => undefined
     addModule: PropTypes.func.isRequired, // func(tabSlug, index, moduleIdName) => undefined
     onUpdate: PropTypes.func // func() => undefined -- for Popper.scheduleUpdate()
   }
@@ -268,13 +268,13 @@ export class Popup extends React.PureComponent {
   }
 
   handleClickModule = (moduleIdName) => {
-    const { tabSlug, index, addModule, close } = this.props
+    const { tabSlug, index, addModule, onClose } = this.props
     addModule(tabSlug, index, moduleIdName)
-    close()
+    onClose()
   }
 
   render () {
-    const { modules, isLessonHighlight, close } = this.props
+    const { modules, isLessonHighlight, onClose } = this.props
     const { search } = this.state
 
     const classNames = ['module-search-popup']
@@ -282,7 +282,7 @@ export class Popup extends React.PureComponent {
 
     return (
       <div className={classNames.join(' ')}>
-        <Prompt cancel={close} onChange={this.handleChangeSearchInput} value={search} />
+        <Prompt cancel={onClose} onChange={this.handleChangeSearchInput} value={search} />
         <SearchResults search={search} modules={modules} onClickModule={this.handleClickModule} />
       </div>
     )
@@ -296,7 +296,7 @@ export class PopperPopup extends React.PureComponent {
     isLastAddButton: PropTypes.bool.isRequired,
     isLessonHighlight: PropTypes.bool.isRequired,
     modules: PropTypes.arrayOf(ModulePropType.isRequired).isRequired,
-    close: PropTypes.func.isRequired, // func() => undefined
+    onClose: PropTypes.func.isRequired, // func() => undefined
     addModule: PropTypes.func.isRequired // func(tabSlug, index, moduleIdName) => undefined
   }
 
@@ -325,7 +325,7 @@ export class PopperPopup extends React.PureComponent {
       return
     }
 
-    this.props.close()
+    this.props.onClose()
   }
 
   render () {
