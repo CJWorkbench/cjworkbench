@@ -1,5 +1,5 @@
 /* global describe, it, expect */
-import { currentLocale, supportedLocales } from './locales'
+import { currentLocale, supportedLocaleIds } from './locales'
 
 describe('i18n helpers', () => {
   describe('currentLocale', () => {
@@ -8,7 +8,7 @@ describe('i18n helpers', () => {
     })
 
     it('should be supported', () => {
-      expect(Object.keys(supportedLocales)).toContain(currentLocale)
+      expect(supportedLocaleIds).toContain(currentLocale)
     })
   })
 })

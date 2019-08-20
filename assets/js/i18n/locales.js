@@ -5,6 +5,8 @@ export const supportedLocales = {
   el: t('locales.el')`Greek`
 }
 
+export const supportedLocaleIds = Object.keys(supportedLocales)
+
 const defaultLocale = 'en'
 
 export const currentLocale = window.i18nConfig && window.i18nConfig.locale && isSupported(window.i18nConfig.locale) ? window.i18nConfig.locale : defaultLocale
