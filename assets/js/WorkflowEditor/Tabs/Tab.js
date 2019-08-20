@@ -29,24 +29,24 @@ export default class Tab extends React.PureComponent {
 
   liRef = React.createRef()
 
-  startEditingTabName = () => {
+  handleClickRename = () => {
     if (this.props.isReadOnly) return
 
     this.inputRef.current.focus()
     this.inputRef.current.select()
   }
 
-  submitName = (name) => {
+  handleSubmitName = (name) => {
     const { setName, slug } = this.props
     setName(slug, name)
   }
 
-  destroy = () => {
+  handleClickDelete = () => {
     const { destroy, slug } = this.props
     destroy(slug)
   }
 
-  duplicate = () => {
+  handleClickDuplicate = () => {
     const { duplicate, slug } = this.props
     duplicate(slug)
   }
@@ -55,7 +55,7 @@ export default class Tab extends React.PureComponent {
     return this.props.dragging !== null
   }
 
-  onDragStart = (ev) => {
+  handleDragStart = (ev) => {
     const { isReadOnly, isSelected, onDragStart, index, name } = this.props
     if (isReadOnly) return
 
@@ -75,7 +75,7 @@ export default class Tab extends React.PureComponent {
     onDragStart(index)
   }
 
-  onDragOver = (ev) => {
+  handleDragOver = (ev) => {
     if (!this.isDragMode) return // we aren't dragging a tab
     ev.preventDefault() // drop is ok
 
@@ -88,13 +88,13 @@ export default class Tab extends React.PureComponent {
     onDragHoverIndex(index + (isLeft ? 0 : 1))
   }
 
-  onDragEnd = () => {
+  handleDragEnd = () => {
     if (!this.isDragMode) return // we aren't dragging a tab
 
     this.props.onDragEnd()
   }
 
-  onDrop = (ev) => {
+  handleDrop = (ev) => {
     if (!this.isDragMode) return // we aren't dragging a tab
     ev.preventDefault() // we want no browser defaults
     this.props.onDrop()
@@ -120,7 +120,7 @@ export default class Tab extends React.PureComponent {
     return null
   }
 
-  select = () => {
+  handleClick = () => {
     const { slug, select, isPending } = this.props
 
     if (isPending) {
@@ -161,23 +161,23 @@ export default class Tab extends React.PureComponent {
         <div
           className='tab'
           draggable={!isReadOnly}
-          onClick={this.select}
-          onDragStart={this.onDragStart}
-          onDragOver={this.onDragOver}
-          onDragEnd={this.onDragEnd}
-          onDrop={this.onDrop}
+          onClick={this.handleClick}
+          onDragStart={this.handleDragStart}
+          onDragOver={this.handleDragOver}
+          onDragEnd={this.handleDragEnd}
+          onDrop={this.handleDrop}
         >
           <TabName
             value={name}
             inputRef={this.inputRef}
             isReadOnly={isReadOnly}
             isSelected={isSelected}
-            onSubmit={this.submitName}
+            onSubmit={this.handleSubmitName}
           />
           <TabDropdown
-            onClickRename={this.startEditingTabName}
-            onClickDelete={this.destroy}
-            onClickDuplicate={this.duplicate}
+            onClickRename={this.handleClickRename}
+            onClickDelete={this.handleClickDelete}
+            onClickDuplicate={this.handleClickDuplicate}
           />
         </div>
       </li>

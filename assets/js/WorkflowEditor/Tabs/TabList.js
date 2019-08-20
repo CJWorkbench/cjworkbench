@@ -23,11 +23,11 @@ export default class TabList extends React.PureComponent {
     dragging: null // { fromIndex, toIndex } of dragging state, or `null` if not dragging
   }
 
-  onDragStart = (index) => {
+  handleDragStart = (index) => {
     this.setState({ dragging: { fromIndex: index, toIndex: index } })
   }
 
-  onDragHoverIndex = (index) => {
+  handleDragHoverIndex = (index) => {
     const { dragging } = this.state
     if (dragging === null) return
 
@@ -43,11 +43,11 @@ export default class TabList extends React.PureComponent {
     }
   }
 
-  onDragEnd = () => {
+  handleDragEnd = () => {
     this.setState({ dragging: null })
   }
 
-  onDragLeave = () => {
+  handleDragLeave = () => {
     const { dragging } = this.state
     if (dragging === null) return
 
@@ -60,7 +60,7 @@ export default class TabList extends React.PureComponent {
     })
   }
 
-  onDrop = () => {
+  handleDrop = () => {
     const { setOrder, tabs } = this.props
     const { dragging } = this.state
     if (!dragging) return
@@ -82,7 +82,7 @@ export default class TabList extends React.PureComponent {
     return (
       <ul
         className={dragging ? 'dragging' : ''}
-        onDragLeave={this.onDragLeave}
+        onDragLeave={this.handleDragLeave}
       >
         {tabs.map(({ slug, name, isPending }, index) => (
           <Tab
@@ -98,10 +98,10 @@ export default class TabList extends React.PureComponent {
             duplicate={duplicate}
             select={select}
             dragging={dragging}
-            onDragStart={this.onDragStart}
-            onDragEnd={this.onDragEnd}
-            onDragHoverIndex={this.onDragHoverIndex}
-            onDrop={this.onDrop}
+            onDragStart={this.handleDragStart}
+            onDragEnd={this.handleDragEnd}
+            onDragHoverIndex={this.handleDragHoverIndex}
+            onDrop={this.handleDrop}
           />
         ))}
       </ul>

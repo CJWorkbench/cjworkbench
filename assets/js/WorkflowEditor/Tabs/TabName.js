@@ -15,29 +15,29 @@ export default class TabName extends React.PureComponent {
     value: null
   }
 
-  onChange = (ev) => {
+  handleChange = (ev) => {
     this.setState({ value: ev.target.value })
   }
 
-  onKeyDown = (ev) => {
+  handleKeyDown = (ev) => {
     switch (ev.key) {
       case 'Enter':
         this.props.onSubmit(this.state.value)
-        this.setState({ value: null }) // for onBlur()
+        this.setState({ value: null }) // for handleBlur()
         this.props.inputRef.current.blur()
         return
       case 'Escape':
-        this.setState({ value: null }) // for onBlur()
+        this.setState({ value: null }) // for handleBlur()
         this.props.inputRef.current.blur()
     }
   }
 
-  onBlur = () => {
-    // onKeyDown may have set value=null. If it did, we'll only detect that
+  handleBlur = () => {
+    // handleKeyDown may have set value=null. If it did, we'll only detect that
     // within the setState() _callback_.
     this.setState(({ value }) => {
       if (value === null) {
-        // onKeyDown already handled this (or there was no edit)
+        // handleKeyDown already handled this (or there was no edit)
       } else {
         this.props.onSubmit(this.state.value)
       }
@@ -65,9 +65,9 @@ export default class TabName extends React.PureComponent {
           ref={inputRef}
           value={value}
           disabled={isReadOnly || !isSelected}
-          onChange={this.onChange}
-          onKeyDown={this.onKeyDown}
-          onBlur={this.onBlur}
+          onChange={this.handleChange}
+          onKeyDown={this.handleKeyDown}
+          onBlur={this.handleBlur}
         />
       </div>
     )
