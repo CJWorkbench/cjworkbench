@@ -35,14 +35,14 @@ export class OutputIframe extends React.PureComponent {
   }
 
   componentDidMount () {
-    window.addEventListener('message', this.onMessage)
+    window.addEventListener('message', this.handleMessage)
   }
 
   componentWillUnmount () {
-    window.removeEventListener('message', this.onMessage)
+    window.removeEventListener('message', this.handleMessage)
   }
 
-  onMessage = (ev) => {
+  handleMessage = (ev) => {
     const data = ev.data
     if (data && data.from === 'outputIframe') {
       if (data.wfModuleId !== this.props.wfModuleId) {
@@ -75,19 +75,7 @@ export class OutputIframe extends React.PureComponent {
     }
   }
 
-  toggleSetPublicModal = () => {
-    this.setState({
-      setPublicModalOpen: !this.state.setPublicModalOpen
-    })
-  }
-
-  toggleEmbedIframeModal () {
-    this.setState({
-      embedIframeModalOpen: !this.state.embedIframeModalOpen
-    })
-  }
-
-  openModal = () => {
+  handleClickOpenEmbedModal = () => {
     this.setState({ isModalOpen: true })
   }
 
@@ -163,7 +151,7 @@ export class OutputIframe extends React.PureComponent {
           <>
             <iframe src={src} />
             <div className='outputpane-iframe-control-overlay'>
-              <button name='embed' className='btn' title='Get an embeddable URL' onClick={this.openModal}>
+              <button name='embed' className='btn' title='Get an embeddable URL' onClick={this.handleClickOpenEmbedModal}>
                 <i className='icon icon-code' />
               </button>
             </div>

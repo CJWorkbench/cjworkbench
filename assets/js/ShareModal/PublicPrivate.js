@@ -25,7 +25,7 @@ export default class PublicPrivate extends React.PureComponent {
     setIsPublic: PropTypes.func.isRequired // func(isPublic) => undefined
   }
 
-  setIsPublic = (ev) => {
+  handleChangeIsPublic = (ev) => {
     const { isReadOnly, setIsPublic } = this.props
     if (isReadOnly) return // should be redundant
     setIsPublic(ev.target.checked)
@@ -40,7 +40,7 @@ export default class PublicPrivate extends React.PureComponent {
         {isReadOnly ? (
           <Description isPublic={isPublic} />
         ) : (
-          <DescriptionWithToggle isPublic={isPublic} onChange={this.setIsPublic} />
+          <DescriptionWithToggle isPublic={isPublic} onChange={this.handleChangeIsPublic} />
         )}
       </div>
     )

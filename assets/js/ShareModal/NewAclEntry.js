@@ -14,7 +14,7 @@ export default class NewAclEntry extends React.PureComponent {
   // components.
   // https://reactjs.org/docs/uncontrolled-components.html
 
-  onSubmit = (ev) => {
+  handleSubmit = (ev) => {
     // onSubmit() is only called after <form> passes validation -- meaning
     // email address is valid
     const email = this.emailRef.current.value
@@ -35,7 +35,7 @@ export default class NewAclEntry extends React.PureComponent {
     // Uncontrolled form -- we'll use HTML5 validation, with its :valid and
     // :invalid classes.
     return (
-      <form className='new-acl-entry input-group' onSubmit={this.onSubmit}>
+      <form className='new-acl-entry input-group' onSubmit={this.handleSubmit}>
         <input className='form-control' type='email' name='email' ref={this.emailRef} required placeholder='user@example.org' />
         <div className='input-group-append'>
           <button type='submit' className='btn btn-outline-secondary'>Grant access</button>

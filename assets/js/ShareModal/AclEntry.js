@@ -11,12 +11,12 @@ export default class AclEntry extends React.PureComponent {
     deleteAclEntry: PropTypes.func.isRequired // func(email) => undefined
   }
 
-  onChangeCanEdit = (canEdit) => {
+  handleChangeCanEdit = (canEdit) => {
     const { updateAclEntry, email } = this.props
     updateAclEntry(email, canEdit)
   }
 
-  onClickDelete = () => {
+  handleClickDelete = () => {
     const { deleteAclEntry, email } = this.props
     deleteAclEntry(email)
   }
@@ -27,9 +27,9 @@ export default class AclEntry extends React.PureComponent {
     return (
       <div className='acl-entry'>
         <div className='email'>{email}</div>
-        <Role canEdit={canEdit} isReadOnly={isReadOnly} onChange={this.onChangeCanEdit} />
+        <Role canEdit={canEdit} isReadOnly={isReadOnly} onChange={this.handleChangeCanEdit} />
         {isReadOnly ? null : (
-          <button className='btn btn-danger delete' onClick={this.onClickDelete}>✖</button>
+          <button className='btn btn-danger delete' onClick={this.handleClickDelete}>✖</button>
         )}
       </div>
     )

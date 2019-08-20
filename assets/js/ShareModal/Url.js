@@ -16,7 +16,7 @@ export default class Url extends React.PureComponent {
     nTimesCopied: 0
   }
 
-  onClickCopy = () => {
+  handleClickCopy = () => {
     const { logShare, url } = this.props
 
     logShare('URL copied')
@@ -25,11 +25,11 @@ export default class Url extends React.PureComponent {
     navigator.clipboard.writeText(url)
   }
 
-  onClickTwitter = () => {
+  handleClickTwitter = () => {
     this.props.logShare('Twitter')
   }
 
-  onClickFacebook = () => {
+  handleClickFacebook = () => {
     this.props.logShare('Facebook')
   }
 
@@ -40,12 +40,12 @@ export default class Url extends React.PureComponent {
 
     return (
       <div key='share' className='share-links'>
-        <a href={twitterUrl} onClick={this.onClickTwitter} className='twitter-share' target='_blank'>
+        <a href={twitterUrl} onClick={this.handleClickTwitter} className='twitter-share' target='_blank' rel='noopener noreferrer'>
           <i className='icon-twitter' />
           Share
         </a>
 
-        <a href={facebookUrl} onClick={this.onClickFacebook} className='facebook-share' target='_blank'>
+        <a href={facebookUrl} onClick={this.handleClickFacebook} className='facebook-share' target='_blank' rel='noopener noreferrer'>
           <i className='icon-facebook' />
           Share
         </a>
@@ -64,7 +64,7 @@ export default class Url extends React.PureComponent {
         <h6 key='heading'>{heading}</h6>
         <div key='url' className='copy-url'>
           <div className='url'>{url}</div>
-          <button name='copy' onClick={this.onClickCopy}>Copy to clipboard</button>
+          <button name='copy' onClick={this.handleClickCopy}>Copy to clipboard</button>
           {nTimesCopied > 0 ? <div className='copied-flash' key={nTimesCopied} /> : null}
         </div>
         {isPublic ? this.renderSocialLinks() : null}
