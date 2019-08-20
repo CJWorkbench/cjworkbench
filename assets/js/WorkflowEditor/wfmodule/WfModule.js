@@ -105,7 +105,7 @@ export class WfModule extends React.PureComponent {
     return Object.keys(this.state.edits).length > 0
   }
 
-  onClickNotification = () => {
+  handleClickNotification = () => {
     this.props.clearNotifications(this.props.wfModule.id)
 
     this.setState({
@@ -114,7 +114,7 @@ export class WfModule extends React.PureComponent {
   }
 
   // We become the selected module on any click
-  onMouseDown = () => {
+  handleMouseDown = () => {
     if (!this.props.isSelected) {
       this.props.setSelectedWfModule(this.props.wfModule.id)
     }
@@ -130,7 +130,7 @@ export class WfModule extends React.PureComponent {
     return deleteSecret(wfModule.id, paramIdName)
   }
 
-  onDragStart = (ev) => {
+  handleDragStart = (ev) => {
     const dragObject = {
       type: 'WfModule',
       index: this.props.index,
@@ -146,7 +146,7 @@ export class WfModule extends React.PureComponent {
     })
   }
 
-  onDragEnd = (ev) => {
+  handleDragEnd = (ev) => {
     this.props.onDragEnd()
 
     this.setState({
@@ -164,36 +164,36 @@ export class WfModule extends React.PureComponent {
     this.props.setWfModuleCollapsed(this.props.wfModule.id, isCollapsed, this.props.isReadOnly)
   }
 
-  collapse = () => {
+  handleClickCollapse = () => {
     this.setCollapsed(true)
   }
 
-  expand = () => {
+  handleClickExpand = () => {
     this.setCollapsed(false)
   }
 
   // when Notes icon is clicked, show notes and start in editable state if not read-only
-  focusNote = () => {
+  handleClickNoteButton = () => {
     const ref = this.notesInputRef.current
     if (ref) { // only if not read-only
-      ref.focus() // calls this.onFocusNote()
+      ref.focus() // calls this.handleFocusNote()
     }
   }
 
-  onChangeNote = (ev) => {
+  handleChangeNote = (ev) => {
     this.setState({ editedNotes: ev.target.value })
   }
 
-  onFocusNote = () => {
+  handleFocusNote = () => {
     if (this.state.editedNotes === null) {
       this.setState({ editedNotes: this.props.wfModule.notes || '' })
     }
   }
 
-  onBlurNote = () => {
+  handleBlurNote = () => {
     // Blur may come _immediately_ after cancel -- and before cancel's
     // setState() is processed. Use the callback approach to setState() to
-    // make sure we're reading the value written by onCancelNote()
+    // make sure we're reading the value written by handleCancelNote()
     this.setState((state, props) => {
       if (state.editedNotes === null) {
         // we canceled
@@ -204,11 +204,11 @@ export class WfModule extends React.PureComponent {
     })
   }
 
-  onCancelNote = () => {
+  handleCancelNote = () => {
     this.setState({ editedNotes: null })
   }
 
-  onCloseDataVersionModal = () => {
+  handleCloseDataVersionModal = () => {
     this.setState({
       isDataVersionModalOpen: false
     })
@@ -218,7 +218,7 @@ export class WfModule extends React.PureComponent {
     this.props.applyQuickFix(this.props.wfModule.id, ...args)
   }
 
-  onChangeIsZenMode = (ev) => {
+  handleChangeIsZenMode = (ev) => {
     this.props.setZenMode(this.props.wfModule.id, ev.target.checked)
   }
 
@@ -232,13 +232,13 @@ export class WfModule extends React.PureComponent {
 
     return (
       <label className={className} title={title}>
-        <input type='checkbox' name='zen-mode' checked={isZenMode} onChange={this.onChangeIsZenMode} />
+        <input type='checkbox' name='zen-mode' checked={isZenMode} onChange={this.handleChangeIsZenMode} />
         <i className='icon-full-screen' />
       </label>
     )
   }
 
-  onChange = (edits) => {
+  handleChangeParams = (edits) => {
     this.setState({ edits })
   }
 
@@ -248,7 +248,7 @@ export class WfModule extends React.PureComponent {
     setWfModuleSecret(wfModule.id, param, secret)
   }
 
-  onSubmit = () => {
+  handleSubmitParams = () => {
     const { wfModule, setWfModuleParams, maybeRequestFetch } = this.props
 
     // We sometimes call onSubmit() _immediately_ after onChange(). onChange()
@@ -308,10 +308,10 @@ export class WfModule extends React.PureComponent {
           inputRef={this.notesInputRef}
           placeholder='Type a note...'
           value={this.state.editedNotes === null ? (this.props.wfModule.notes || '') : this.state.editedNotes}
-          onChange={this.onChangeNote}
-          onFocus={this.onFocusNote}
-          onBlur={this.onBlurNote}
-          onCancel={this.onCancelNote}
+          onChange={this.handleChangeNote}
+          onFocus={this.handleFocusNote}
+          onBlur={this.handleBlurNote}
+          onCancel={this.handleCancelNote}
         />
       </div>
     )
@@ -326,7 +326,7 @@ export class WfModule extends React.PureComponent {
       const title = notifications ? 'Email alerts enabled' : 'Email alerts disabled'
 
       alertButton = (
-        <button title={title} className={className} onClick={this.onClickNotification}>
+        <button title={title} className={className} onClick={this.handleClickNotification}>
           <i className={` ${hasUnseen ? 'icon-notification-filled' : 'icon-notification'}`} />
         </button>
       )
@@ -335,7 +335,7 @@ export class WfModule extends React.PureComponent {
     let helpIcon = null
     if (!this.props.isReadOnly) {
       helpIcon = (
-        <a title='Help for this module' className='help-button' href={moduleHelpUrl} target='_blank'>
+        <a title='Help for this module' className='help-button' href={moduleHelpUrl} target='_blank' rel='noopener noreferrer'>
           <i className='icon-help' />
         </a>
       )
@@ -347,7 +347,7 @@ export class WfModule extends React.PureComponent {
         <button
           title='Edit Note'
           className={'btn edit-note' + (this.props.isLessonHighlightNotes ? ' lesson-highlight' : '')}
-          onClick={this.focusNote}
+          onClick={this.handleClickNoteButton}
         >
           <i className='icon-note' />
         </button>
@@ -384,7 +384,7 @@ export class WfModule extends React.PureComponent {
       maybeDataVersionModal = (
         <DataVersionModal
           wfModuleId={wfModule.id}
-          onClose={this.onCloseDataVersionModal}
+          onClose={this.handleCloseDataVersionModal}
         />
       )
     }
@@ -403,19 +403,19 @@ export class WfModule extends React.PureComponent {
         className={className}
         data-module-slug={moduleSlug}
         data-module-name={moduleName}
-        onMouseDown={this.onMouseDown}
+        onMouseDown={this.handleMouseDown}
       >
         {notes}
         <h3>{numberFormat.format(index + 1)}</h3>
         <div className='module-card-and-link'>
-          <div className='module-card' draggable={!isReadOnly && !!this.props.onDragStart} onDragStart={this.onDragStart} onDragEnd={this.onDragEnd}>
+          <div className='module-card' draggable={!isReadOnly && !!this.props.onDragStart} onDragStart={this.handleDragStart} onDragEnd={this.handleDragEnd}>
             <div className='module-card-header'>
               <div className='controls'>
                 <WfModuleCollapseButton
                   isCollapsed={wfModule.is_collapsed}
                   isLessonHighlight={this.props.isLessonHighlightCollapse}
-                  onCollapse={this.collapse}
-                  onExpand={this.expand}
+                  onCollapse={this.handleClickCollapse}
+                  onExpand={this.handleClickExpand}
                 />
                 <i className={moduleIconClassName} />
                 <div className='module-name'>{moduleName}</div>
@@ -472,8 +472,8 @@ export class WfModule extends React.PureComponent {
                     startCreateSecret={this.startCreateSecret}
                     submitSecret={this.submitSecret}
                     deleteSecret={this.deleteSecret}
-                    onChange={this.onChange}
-                    onSubmit={this.onSubmit}
+                    onChange={this.handleChangeParams}
+                    onSubmit={this.handleSubmitParams}
                   />
                 </ErrorBoundary>
               ) : null}

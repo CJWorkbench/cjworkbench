@@ -63,6 +63,7 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
             <a
               className="help-button"
               href="http://help-url"
+              rel="noopener noreferrer"
               target="_blank"
               title="Help for this module"
             >
