@@ -19,7 +19,8 @@ function isSupported (locale) {
  * Reload the page, adding a "locale" query parameter to the URL
  */
 export function setLocale (locale) {
-  if (isSupported(locale)) {
-    window.location += (window.location.search ? '&' : '?') + `locale=${locale}` // very quick and dirty solution for reloading with added parameter
-  }
+  // very quick and dirty solution for reloading with added parameter
+  const q = new URLSearchParams(window.location.search)
+  q.set('locale', locale)
+  window.location.search = '?' + q.toString()
 }
