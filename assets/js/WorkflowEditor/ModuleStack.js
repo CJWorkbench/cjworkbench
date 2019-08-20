@@ -29,13 +29,13 @@ class ModuleDropSpot extends React.PureComponent {
     return !(index === isDraggingModuleAtIndex || index === isDraggingModuleAtIndex + 1)
   }
 
-  onDragOver = (ev) => {
+  handleDragOver = (ev) => {
     if (!this.canDrop()) return
 
     ev.preventDefault() // unlike default, this is a valid drop target
   }
 
-  onDragEnter = (ev) => {
+  handleDragEnter = (ev) => {
     if (!this.canDrop(ev)) return
 
     this.setState({
@@ -43,7 +43,7 @@ class ModuleDropSpot extends React.PureComponent {
     })
   }
 
-  onDragLeave = (ev) => {
+  handleDragLeave = (ev) => {
     if (!this.canDrop(ev)) return
 
     this.setState({
@@ -51,7 +51,7 @@ class ModuleDropSpot extends React.PureComponent {
     })
   }
 
-  onDrop = (ev) => {
+  handleDrop = (ev) => {
     if (!this.canDrop(ev)) return
 
     ev.preventDefault() // we want no browser defaults
@@ -70,10 +70,10 @@ class ModuleDropSpot extends React.PureComponent {
       return (
         <div
           className={className}
-          onDragOver={this.onDragOver}
-          onDragEnter={this.onDragEnter}
-          onDragLeave={this.onDragLeave}
-          onDrop={this.onDrop}
+          onDragOver={this.handleDragOver}
+          onDragEnter={this.handleDragEnter}
+          onDragLeave={this.handleDragLeave}
+          onDrop={this.handleDrop}
         >
           <div className='highlight'>
             <i className='icon-add' />
@@ -231,13 +231,13 @@ export class ModuleStack extends React.Component {
     }
   }
 
-  onDragStart = (obj) => {
+  handleDragStart = (obj) => {
     this.setState({
       isDraggingModuleAtIndex: obj.index
     })
   }
 
-  onDragEnd = () => {
+  handleDragEnd = () => {
     this.setState({
       isDraggingModuleAtIndex: null
     })
@@ -303,8 +303,8 @@ export class ModuleStack extends React.Component {
               api={this.props.api}
               index={i}
               setZenMode={this.setZenMode}
-              onDragStart={this.onDragStart}
-              onDragEnd={this.onDragEnd}
+              onDragStart={this.handleDragStart}
+              onDragEnd={this.handleDragEnd}
             />
           </React.Fragment>
         )
