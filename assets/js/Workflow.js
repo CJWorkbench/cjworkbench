@@ -12,8 +12,6 @@ export function MaybeNotYourWorkflow (props) {
     return null // it's your workflow
   }
 
-  const F = React.Fragment
-
   let suggestion = null
   if (props.isLoggedIn) {
     suggestion = <h3 className='suggestion'>Duplicate it to save your changes</h3>
