@@ -15,14 +15,14 @@ class Action extends React.PureComponent {
     onClick: PropTypes.func.isRequired // onClick(idName) => undefined
   }
 
-  onClick = () => {
+  handleClick = () => {
     const { idName, onClick } = this.props
     onClick(idName)
   }
 
   render () {
     return (
-      <DropdownItem onClick={this.onClick}>{this.props.title}</DropdownItem>
+      <DropdownItem onClick={this.handleClick}>{this.props.title}</DropdownItem>
     )
   }
 }
@@ -81,7 +81,7 @@ export class SelectedRowsActions extends React.PureComponent {
     return partStrings.join(', ')
   }
 
-  onClickAction = (idName) => {
+  handleClickAction = (idName) => {
     const { wfModuleId } = this.props
 
     this.props.onClickRowsAction(wfModuleId, idName, this.rowString)
@@ -91,7 +91,7 @@ export class SelectedRowsActions extends React.PureComponent {
     const { selectedRowIndexes, wfModuleId, rowActionModules } = this.props
 
     const actions = rowActionModules.map(({ idName, title }) => (
-      <Action key={idName} idName={idName} title={title} onClick={this.onClickAction} />
+      <Action key={idName} idName={idName} title={title} onClick={this.handleClickAction} />
     ))
 
     const disabled = !wfModuleId || selectedRowIndexes.length === 0

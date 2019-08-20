@@ -27,23 +27,23 @@ class ReorderColumnDropZone extends React.PureComponent {
     }
   }
 
-  onDragEnter = (ev) => {
+  handleDragEnter = (ev) => {
     this.setState({
       isDragHover: true
     })
   }
 
-  onDragLeave = (ev) => {
+  handleDragLeave = (ev) => {
     this.setState({
       isDragHover: false
     })
   }
 
-  onDragOver = (ev) => {
+  handleDragOver = (ev) => {
     ev.preventDefault() // allow drop by preventing the default, which is "no drop"
   }
 
-  onDrop = (ev) => {
+  handleDrop = (ev) => {
     const { fromIndex, toIndex, onDropColumnIndexAtIndex } = this.props
     onDropColumnIndexAtIndex(fromIndex, toIndex)
   }
@@ -56,10 +56,10 @@ class ReorderColumnDropZone extends React.PureComponent {
     return (
       <div
         className={className}
-        onDragEnter={this.onDragEnter}
-        onDragLeave={this.onDragLeave}
-        onDragOver={this.onDragOver}
-        onDrop={this.onDrop}
+        onDragEnter={this.handleDragEnter}
+        onDragLeave={this.handleDragLeave}
+        onDragOver={this.handleDragOver}
+        onDrop={this.handleDrop}
       />
     )
   }
@@ -73,21 +73,12 @@ export class EditableColumnName extends React.Component {
     isReadOnly: PropTypes.bool.isRequired
   }
 
-  constructor (props) {
-    super(props)
-
-    this.state = {
-      newName: props.columnKey,
-      editMode: false
-    }
-
-    this.inputRef = React.createRef()
-
-    this.enterEditMode = this.enterEditMode.bind(this)
-    this.handleInputChange = this.handleInputChange.bind(this)
-    this.handleInputBlur = this.handleInputBlur.bind(this)
-    this.handleInputKeyDown = this.handleInputKeyDown.bind(this)
+  state = {
+    newName: this.props.columnKey,
+    editMode: false
   }
+
+  inputRef = React.createRef()
 
   componentDidUpdate (_, prevState) {
     if (!prevState.editMode && this.state.editMode) {
@@ -99,7 +90,7 @@ export class EditableColumnName extends React.Component {
     }
   }
 
-  enterEditMode () {
+  handleEnterEditMode = () => {
     if (!this.props.isReadOnly) {
       this.setState({ editMode: true })
     }
@@ -109,11 +100,11 @@ export class EditableColumnName extends React.Component {
     this.setState({ editMode: false })
   }
 
-  handleInputChange (event) {
-    this.setState({ newName: event.target.value })
+  handleInputChange = (ev) => {
+    this.setState({ newName: ev.target.value })
   }
 
-  handleInputCommit () {
+  handleInputCommit = () => {
     this.setState({
       editMode: false
     })
@@ -125,15 +116,15 @@ export class EditableColumnName extends React.Component {
     }
   }
 
-  handleInputBlur () {
+  handleInputBlur = () => {
     this.handleInputCommit()
   }
 
-  handleInputKeyDown (event) {
+  handleInputKeyDown = (ev) => {
     // Changed to keyDown as esc does not fire keyPress
-    if (event.key === 'Enter') {
+    if (ev.key === 'Enter') {
       this.handleInputCommit()
-    } else if (event.key === 'Escape') {
+    } else if (ev.key === 'Escape') {
       this.setState({ newName: this.props.columnKey })
       this.exitEditMode()
     }
@@ -159,7 +150,7 @@ export class EditableColumnName extends React.Component {
       return (
         <span
           className='column-key'
-          onClick={this.enterEditMode}
+          onClick={this.handleEnterEditMode}
         >
           <div className='value'>
             {this.state.newName}
@@ -195,7 +186,7 @@ export class ColumnHeader extends React.PureComponent {
     newName: this.props.columnKey
   }
 
-  onClickAction = (idName, forceNewModule, params) => {
+  handleClickAction = (idName, forceNewModule, params) => {
     params = {
       ...params,
       columnKey: this.props.columnKey
@@ -205,22 +196,22 @@ export class ColumnHeader extends React.PureComponent {
   }
 
   startRename = () => {
-    this.inputRef.current.enterEditMode()
+    this.inputRef.current.handleEnterEditMode()
   }
 
-  completeRename = ({ prevName, newName }) => {
+  handleRename = ({ prevName, newName }) => {
     this.props.dispatchTableAction(this.props.wfModuleId, 'renamecolumns', false, { prevName, newName })
   }
 
-  onMouseEnter = () => {
+  handleMouseEnter = () => {
     this.setState({ isHovered: true })
   }
 
-  onMouseLeave = () => {
+  handleMouseLeave = () => {
     this.setState({ isHovered: false })
   }
 
-  onDragStart = (ev) => {
+  handleDragStart = (ev) => {
     if (this.props.isReadOnly) {
       ev.preventDefault()
       return
@@ -238,10 +229,6 @@ export class ColumnHeader extends React.PureComponent {
     ev.dataTransfer.setData('text/plain', this.props.columnKey)
   }
 
-  onDragEnd = () => {
-    this.props.onDragEnd()
-  }
-
   renderColumnMenu () {
     if (this.props.isReadOnly) {
       return null
@@ -251,7 +238,7 @@ export class ColumnHeader extends React.PureComponent {
       <ColumnContextMenu
         columnType={this.props.columnType}
         renameColumn={this.startRename}
-        onClickAction={this.onClickAction}
+        onClickAction={this.handleClickAction}
       />
     )
   }
@@ -261,7 +248,6 @@ export class ColumnHeader extends React.PureComponent {
       columnKey,
       columnType,
       index,
-      onDropColumnIndexAtIndex,
       draggingColumnIndex
     } = this.props
 
@@ -279,7 +265,7 @@ export class ColumnHeader extends React.PureComponent {
           leftOrRight={leftOrRight}
           fromIndex={draggingColumnIndex}
           toIndex={toIndex}
-          onDropColumnIndexAtIndex={onDropColumnIndexAtIndex}
+          onDropColumnIndexAtIndex={this.props.onDropColumnIndexAtIndex}
         />
       )
     }
@@ -291,21 +277,21 @@ export class ColumnHeader extends React.PureComponent {
         <div
           className='column-letter'
           draggable
-          onDragStart={this.onDragStart}
-          onDragEnd={this.onDragEnd}
+          onDragStart={this.handleDragStart}
+          onDragEnd={this.props.onDragEnd}
         >
           {idxToLetter(this.props.index)}
         </div>
         <div
           className={`data-grid-column-header ${draggingClass}`}
-          onMouseEnter={this.onMouseEnter}
-          onMouseLeave={this.onMouseLeave}
+          onMouseEnter={this.handleMouseEnter}
+          onMouseLeave={this.handleMouseLeave}
         >
           {maybeDropZone('left', index)}
           <EditableColumnName
             columnKey={columnKey}
             columnType={columnType}
-            onRename={this.completeRename}
+            onRename={this.handleRename}
             isReadOnly={this.props.isReadOnly}
             ref={this.inputRef}
           />

@@ -98,7 +98,7 @@ describe('TableView', () => {
     }, api)
 
     const tree = wrapper(store, { wfModuleId: 2 })
-    tree.find('DataGrid').instance().onDropColumnIndexAtIndex(0, 2)
+    tree.find('DataGrid').instance().handleDropColumnIndexAtIndex(0, 2)
 
     await tick()
 
@@ -133,7 +133,7 @@ describe('TableView', () => {
 
     const tree = wrapper(store, { wfModuleId: 2 })
     await tick() // load data
-    tree.find('DataGrid').instance().onGridRowsUpdated({
+    tree.find('DataGrid').instance().handleGridRowsUpdated({
       fromRow: 0,
       fromRowData: { a: 'a1', b: 'b1', c: 'c1' },
       toRow: 0,

@@ -276,7 +276,7 @@ exports[`ExportModal should match snapshot 1`] = `
                 >
                   <button
                     className="button-blue action-button test-done-button"
-                    onClick={[MockFunction]}
+                    onClick={[Function]}
                     type="button"
                   >
                     Done

@@ -5,7 +5,7 @@ exports[`Embed Available workflow Renders the embed widget with the correct info
   className="embed-wrapper"
 >
   <iframe
-    frameborder="0"
+    frameBorder={0}
     src="/api/wfmodules/1/output"
   />
   <div
@@ -19,6 +19,7 @@ exports[`Embed Available workflow Renders the embed widget with the correct info
       >
         <a
           href="http://workbenchdata.com"
+          rel="noopener noreferrer"
           target="_blank"
         >
           <img
@@ -35,6 +36,7 @@ exports[`Embed Available workflow Renders the embed widget with the correct info
         >
           <a
             href="/workflows/1"
+            rel="noopener noreferrer"
             target="_blank"
           >
             Workflow Title
@@ -47,6 +49,7 @@ exports[`Embed Available workflow Renders the embed widget with the correct info
             <li>
               <a
                 href="/workflows/1"
+                rel="noopener noreferrer"
                 target="_blank"
               >
                 by 
@@ -56,6 +59,7 @@ exports[`Embed Available workflow Renders the embed widget with the correct info
             <li>
               <a
                 href="/workflows/1"
+                rel="noopener noreferrer"
                 target="_blank"
               >
                 Updated 

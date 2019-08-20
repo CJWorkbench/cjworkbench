@@ -220,7 +220,7 @@ export default class DataGrid extends React.PureComponent {
     this.unmounted = true
   }
 
-  onGridRowsUpdated = (data) => {
+  handleGridRowsUpdated = (data) => {
     const { fromRow, fromRowData, toRow, cellKey, updated } = data
 
     if (fromRow !== toRow) {
@@ -244,18 +244,18 @@ export default class DataGrid extends React.PureComponent {
     }
   }
 
-  onDropColumnIndexAtIndex = (fromIndex, toIndex) => {
+  handleDropColumnIndexAtIndex = (fromIndex, toIndex) => {
     const colname = this.props.columns[fromIndex].name
     this.props.reorderColumn(colname, fromIndex, toIndex)
   }
 
-  onDragStartColumnIndex = (index) => {
+  handleDragStartColumnIndex = (index) => {
     this.setState({
       draggingColumnIndex: index
     })
   }
 
-  onDragEnd = () => {
+  handleDragEnd = () => {
     this.setState({
       draggingColumnIndex: null
     })
@@ -331,10 +331,10 @@ export default class DataGrid extends React.PureComponent {
           columnKey={column.name}
           columnType={column.type}
           index={index}
-          onDragStartColumnIndex={this.onDragStartColumnIndex}
-          onDragEnd={this.onDragEnd}
+          onDragStartColumnIndex={this.handleDragStartColumnIndex}
+          onDragEnd={this.handleDragEnd}
           draggingColumnIndex={draggingColumnIndex}
-          onDropColumnIndexAtIndex={this.onDropColumnIndexAtIndex}
+          onDropColumnIndexAtIndex={this.handleDropColumnIndexAtIndex}
           isReadOnly={isReadOnly}
         />
       )
@@ -360,7 +360,7 @@ export default class DataGrid extends React.PureComponent {
         enableCellAutoFocus={false}
         enableCellSelect
         selectAllRenderer={renderNull}
-        onGridRowsUpdated={this.onGridRowsUpdated}
+        onGridRowsUpdated={this.handleGridRowsUpdated}
         enableRowSelect
         rowRenderer={Row}
         rowSelection={rowSelection}
