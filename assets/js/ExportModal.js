@@ -13,7 +13,7 @@ export default class ExportModal extends React.PureComponent {
 
   state = {
     csvCopied: false,
-    jsonCopied: false,
+    jsonCopied: false
   }
 
   buildUrlString (ext) {
@@ -82,6 +82,8 @@ export default class ExportModal extends React.PureComponent {
     }
   }
 
+  handleClickClose = () => this.props.toggle()
+
   render () {
     const csvCopyLink = this.renderCsvCopyLink()
     const jsonCopyLink = this.renderJsonCopyLink()
@@ -118,7 +120,7 @@ export default class ExportModal extends React.PureComponent {
           </div>
         </ModalBody>
         <ModalFooter>
-          <button type='button' onClick={this.props.toggle} className='button-blue action-button test-done-button'>Done</button>
+          <button type='button' onClick={this.handleClickClose} className='button-blue action-button test-done-button'>Done</button>
         </ModalFooter>
       </Modal>
     )

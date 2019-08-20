@@ -95,6 +95,9 @@ export class OutputIframe extends React.PureComponent {
     this.setState({ isModalOpen: false })
   }
 
+  handleClickModalClose = closeModal
+  handleClickSetWorkflowPublic = () => { this.props.setWorkflowPublic() }
+
   isModalOpen (name) {
     if (!this.state.isModalOpen) return false
     if (this.props.isPublic) {
@@ -115,8 +118,8 @@ export class OutputIframe extends React.PureComponent {
           <div className='info-3 t-d-gray'>Set this workflow to Public in order to share it? Anyone with the URL will be able to access and duplicate it.</div>
         </ModalBody>
         <ModalFooter>
-          <div onClick={this.closeModal} className='button-gray action-button mr-4'>Cancel</div>
-          <div onClick={this.props.setWorkflowPublic} className='button-blue action-button test-public-button'>Set public</div>
+          <div onClick={this.handleClickModalClose} className='button-gray action-button mr-4'>Cancel</div>
+          <div onClick={this.handleClickSetWorkflowPublic} className='button-blue action-button test-public-button'>Set public</div>
         </ModalFooter>
       </Modal>
     )
@@ -139,7 +142,7 @@ export class OutputIframe extends React.PureComponent {
           </div>
         </ModalBody>
         <div className='modal-footer'>
-          <div onClick={this.closeModal} className='button-gray action-button'>OK</div>
+          <div onClick={this.handleClickModalClose} className='button-gray action-button'>OK</div>
         </div>
       </Modal>
     )
