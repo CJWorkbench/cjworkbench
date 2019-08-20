@@ -28,12 +28,12 @@ export default class Filter extends React.PureComponent {
     onDelete: PropTypes.func // (null if can't be deleted) func(index) => undefined
   }
 
-  onChangeOperator = (operator) => {
+  handleChangeOperator = (operator) => {
     const { value, onChange, index } = this.props
     onChange(index, { ...value, operator })
   }
 
-  onChangeSubfilter = (subfilterIndex, subfilter) => {
+  handleChangeSubfilter = (subfilterIndex, subfilter) => {
     const { value, onChange, index } = this.props
     const newSubfilters = value.subfilters.slice()
     newSubfilters[subfilterIndex] = subfilter
@@ -49,18 +49,17 @@ export default class Filter extends React.PureComponent {
     })
   }
 
-  onClickAddAnd = () => this.addSubfilter('and')
+  handleClickAddAnd = () => this.addSubfilter('and')
+  handleClickAddOr = () => this.addSubfilter('or')
 
-  onClickAddOr = () => this.addSubfilter('or')
-
-  onDeleteSubfilter = (subfilterIndex) => {
+  handleDeleteSubfilter = (subfilterIndex) => {
     const { value, onChange, index } = this.props
     const newSubfilters = value.subfilters.slice()
     newSubfilters.splice(subfilterIndex, 1)
     onChange(index, { ...value, subfilters: newSubfilters })
   }
 
-  onDelete = () => {
+  handleDelete = () => {
     const { onDelete, index } = this.props
     onDelete(index)
   }
@@ -77,7 +76,7 @@ export default class Filter extends React.PureComponent {
             <button
               type='button'
               className='delete'
-              onClick={this.onDelete}
+              onClick={this.handleDelete}
             >
               <i className='icon-close' />
             </button>
@@ -92,9 +91,9 @@ export default class Filter extends React.PureComponent {
               index={index}
               value={subfilter}
               inputColumns={inputColumns}
-              onChange={this.onChangeSubfilter}
+              onChange={this.handleChangeSubfilter}
               onSubmit={onSubmit}
-              onDelete={subfilters.length > 1 ? this.onDeleteSubfilter : null}
+              onDelete={subfilters.length > 1 ? this.handleDeleteSubfilter : null}
             />
             {index < subfilters.length - 1 ? (
               <FilterOperator
@@ -102,7 +101,7 @@ export default class Filter extends React.PureComponent {
                 name={`${name}[${index}][operator]`}
                 fieldId={`${fieldId}_${index}_operator`}
                 value={operator}
-                onChange={this.onChangeOperator}
+                onChange={this.handleChangeOperator}
               />
             ) : (
               <AddFilter
@@ -111,8 +110,8 @@ export default class Filter extends React.PureComponent {
                 fieldId={`${fieldId}_operator`}
                 operator={operator}
                 nFilters={subfilters.length}
-                onClickAddAnd={this.onClickAddAnd}
-                onClickAddOr={this.onClickAddOr}
+                onClickAddAnd={this.handleClickAddAnd}
+                onClickAddOr={this.handleClickAddOr}
               />
             )}
           </React.Fragment>

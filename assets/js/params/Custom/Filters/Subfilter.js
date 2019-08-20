@@ -38,27 +38,27 @@ export default class Subfilter extends React.PureComponent {
     onDelete: PropTypes.func // (null if can't be deleted) func(index) => undefined
   }
 
-  onDelete = () => {
+  handleDelete = () => {
     const { onDelete, index } = this.props
     onDelete(index)
   }
 
-  onChangeColname = (colname) => {
+  handleChangeColname = (colname) => {
     const { onChange, index, value } = this.props
     onChange(index, { ...value, colname })
   }
 
-  onChangeCondition = (condition) => {
+  handleChangeCondition = (condition) => {
     const { onChange, index, value } = this.props
     onChange(index, { ...value, condition })
   }
 
-  onChangeValue = (value) => {
+  handleChangeValue = (value) => {
     const { onChange, index } = this.props
     onChange(index, { ...this.props.value, value })
   }
 
-  onChangeCaseSensitive = (ev) => {
+  handleChangeCaseSensitive = (ev) => {
     const { onChange, index, value } = this.props
     onChange(index, { ...value, case_sensitive: ev.target.checked })
   }
@@ -77,7 +77,7 @@ export default class Subfilter extends React.PureComponent {
           value={value.colname}
           placeholder='Select column'
           inputColumns={inputColumns}
-          onChange={this.onChangeColname}
+          onChange={this.handleChangeColname}
         />
         {column ? (
           <Condition
@@ -86,7 +86,7 @@ export default class Subfilter extends React.PureComponent {
             fieldId={`${fieldId}_condition`}
             value={value.condition}
             dtype={column.type}
-            onChange={this.onChangeCondition}
+            onChange={this.handleChangeCondition}
           />
         ) : null}
         {needValue ? (
@@ -99,7 +99,7 @@ export default class Subfilter extends React.PureComponent {
               placeholder='Value'
               value={value.value}
               upstreamValue={value.value}
-              onChange={this.onChangeValue}
+              onChange={this.handleChangeValue}
               onSubmit={onSubmit}
             />
           </div>
@@ -114,7 +114,7 @@ export default class Subfilter extends React.PureComponent {
               name={`${name}[case_sensitive]`}
               id={`${fieldId}_case_sensitive`}
               checked={value.case_sensitive}
-              onChange={this.onChangeCaseSensitive}
+              onChange={this.handleChangeCaseSensitive}
             />
             Match case
           </label>
@@ -123,7 +123,7 @@ export default class Subfilter extends React.PureComponent {
           <button
             type='button'
             className='delete'
-            onClick={this.onDelete}
+            onClick={this.handleDelete}
           >
             <i className='icon-close' />
           </button>

@@ -21,17 +21,17 @@ export default class Groups extends React.PureComponent {
     applyQuickFix: PropTypes.func.isRequired // func(action, args) => undefined
   }
 
-  onChangeColnames = (colnames) => {
+  handleChangeColnames = (colnames) => {
     const { value, onChange } = this.props
     onChange({ ...value, colnames })
   }
 
-  onChangeGroupDates = (ev) => {
+  handleChangeGroupDates = (ev) => {
     const { value, onChange } = this.props
     onChange({ ...value, group_dates: ev.target.checked })
   }
 
-  onChangeDateGranularities = (newValue) => {
+  handleChangeDateGranularities = (newValue) => {
     const { value, onChange } = this.props
     onChange({ ...value, date_granularities: newValue })
   }
@@ -53,7 +53,7 @@ export default class Groups extends React.PureComponent {
           upstreamValue={value.colnames}
           value={value.colnames}
           inputColumns={inputColumns}
-          onChange={this.onChangeColnames}
+          onChange={this.handleChangeColnames}
         />
         {isReadOnly ? null : (
           <div className='group-dates'>
@@ -62,7 +62,7 @@ export default class Groups extends React.PureComponent {
                 type='checkbox'
                 name={`${name}[group_dates]`}
                 checked={value.group_dates}
-                onChange={this.onChangeGroupDates}
+                onChange={this.handleChangeGroupDates}
               /> Group dates
             </label>
           </div>
@@ -75,7 +75,7 @@ export default class Groups extends React.PureComponent {
             value={value.date_granularities}
             colnames={value.colnames}
             dateColnames={dateColnames}
-            onChange={this.onChangeDateGranularities}
+            onChange={this.handleChangeDateGranularities}
             addConvertToDateModule={this.addConvertToDateModule}
           />
         ) : null}

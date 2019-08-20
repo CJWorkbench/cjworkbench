@@ -10,7 +10,7 @@ export default class DateGranularity extends React.PureComponent {
     onChange: PropTypes.func.isRequired // func(colname, value) => undefined
   }
 
-  onChange = (ev) => {
+  handleChange = (ev) => {
     const { colname, onChange } = this.props
     onChange(colname, ev.target.value || null)
   }
@@ -29,7 +29,7 @@ export default class DateGranularity extends React.PureComponent {
           className='custom-select'
           name={name}
           value={value || ''}
-          onChange={this.onChange}
+          onChange={this.handleChange}
           readOnly={isReadOnly}
         >
           <option value=''>as is</option>

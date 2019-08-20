@@ -28,7 +28,7 @@ export default class JoinColumns extends React.PureComponent {
     selectedTab: PropTypes.string // slug, may be null
   }
 
-  onChangeOn = (colnames) => {
+  handleChangeOn = (colnames) => {
     const { onChange, value } = this.props
     onChange({
       ...value,
@@ -36,7 +36,7 @@ export default class JoinColumns extends React.PureComponent {
     })
   }
 
-  onChangeRight = (colnames) => {
+  handleChangeRight = (colnames) => {
     const { onChange, value } = this.props
     onChange({
       ...value,
@@ -61,7 +61,7 @@ export default class JoinColumns extends React.PureComponent {
           isReadOnly={isReadOnly}
           name={`${name}[on]`}
           fieldId={`${fieldId}_on`}
-          onChange={this.onChangeOn}
+          onChange={this.handleChangeOn}
           label='Join on'
           inputColumns={bothColumns}
           addMenuListClassName='join-on'
@@ -72,7 +72,7 @@ export default class JoinColumns extends React.PureComponent {
           isReadOnly={isReadOnly}
           name={`${name}[right]`}
           fieldId={`${fieldId}_right`}
-          onChange={this.onChangeRight}
+          onChange={this.handleChangeRight}
           label='Add columns'
           inputColumns={rightColumnsNotInOn}
           value={value.right}

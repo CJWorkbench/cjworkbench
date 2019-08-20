@@ -31,7 +31,7 @@ export default class DateGranularities extends React.PureComponent {
     addConvertToDateModule: PropTypes.func.isRequired // func() => undefined
   }
 
-  onChangeDateGranularity = (colname, granularity) => {
+  handleChangeDateGranularity = (colname, granularity) => {
     const { value, onChange } = this.props
     const newValue = { ...value }
     if (granularity) {
@@ -55,7 +55,7 @@ export default class DateGranularities extends React.PureComponent {
             name={name}
             colnames={focusColnames}
             value={value}
-            onChange={this.onChangeDateGranularity}
+            onChange={this.handleChangeDateGranularity}
           />
         ) : (
           <div className='no-date-selected'>

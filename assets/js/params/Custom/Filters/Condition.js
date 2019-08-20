@@ -43,7 +43,7 @@ export default class Condition extends React.PureComponent {
     onChange: PropTypes.func.isRequired // func('text_is_exactly' or other) => undefined
   }
 
-  onChange = (ev) => {
+  handleChange = (ev) => {
     this.props.onChange(ev.target.value || null)
   }
 
@@ -56,7 +56,7 @@ export default class Condition extends React.PureComponent {
         name={name}
         disabled={isReadOnly}
         value={value}
-        onChange={this.onChange}
+        onChange={this.handleChange}
       >
         <option value=''>Select condition</option>
         {options.map(({ name, label }) => (

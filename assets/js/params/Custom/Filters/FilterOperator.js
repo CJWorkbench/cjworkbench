@@ -10,7 +10,7 @@ class OneOperator extends React.PureComponent {
     onClick: PropTypes.func.isRequired
   }
 
-  onClick = () => {
+  handleClick = () => {
     const { onClick, operator } = this.props
     onClick(operator)
   }
@@ -26,7 +26,7 @@ class OneOperator extends React.PureComponent {
         type='button'
         name={name}
         className='unselected-operator'
-        onClick={this.onClick}
+        onClick={this.handleClick}
       >{text}
       </button>
     )

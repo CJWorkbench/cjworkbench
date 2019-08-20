@@ -51,11 +51,10 @@ export default class Filters extends React.PureComponent {
     this.props.onChange(newValue)
   }
 
-  onClickAddAnd = () => this.addOperator('and')
+  handleClickAddAnd = () => this.addOperator('and')
+  handleClickAddOr = () => this.addOperator('or')
 
-  onClickAddOr = () => this.addOperator('or')
-
-  onDeleteFilter = (index) => {
+  handleDeleteFilter = (index) => {
     const value = this.value
     const newFilters = value.filters.slice()
     newFilters.splice(index, 1)
@@ -66,7 +65,7 @@ export default class Filters extends React.PureComponent {
     this.props.onChange(newValue)
   }
 
-  onChangeFilter = (index, filter) => {
+  handleChangeFilter = (index, filter) => {
     const value = this.value
     const newFilters = value.filters.slice()
     newFilters[index] = filter
@@ -77,7 +76,7 @@ export default class Filters extends React.PureComponent {
     this.props.onChange(newValue)
   }
 
-  onChangeOperator = (operator) => {
+  handleChangeOperator = (operator) => {
     const value = this.value
     const newValue = {
       ...value,
@@ -101,9 +100,9 @@ export default class Filters extends React.PureComponent {
               index={index}
               value={filter}
               inputColumns={inputColumns}
-              onChange={this.onChangeFilter}
+              onChange={this.handleChangeFilter}
               onSubmit={onSubmit}
-              onDelete={filters.length > 1 ? this.onDeleteFilter : null}
+              onDelete={filters.length > 1 ? this.handleDeleteFilter : null}
             />
             {index < filters.length - 1 ? (
               <FilterOperator
@@ -111,7 +110,7 @@ export default class Filters extends React.PureComponent {
                 name={`${name}[${index}][operator]`}
                 fieldId={`${fieldId}_${index}_operator`}
                 value={operator}
-                onChange={this.onChangeOperator}
+                onChange={this.handleChangeOperator}
               />
             ) : (
               <AddFilter
@@ -120,8 +119,8 @@ export default class Filters extends React.PureComponent {
                 fieldId={`${fieldId}_operator`}
                 operator={operator}
                 nFilters={filters.length}
-                onClickAddAnd={this.onClickAddAnd}
-                onClickAddOr={this.onClickAddOr}
+                onClickAddAnd={this.handleClickAddAnd}
+                onClickAddOr={this.handleClickAddOr}
               />
             )}
           </React.Fragment>
