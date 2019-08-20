@@ -20,35 +20,45 @@ exports[`AceEditor matches snapshot 1`] = `
     . You may use the 
     <a
       href="https://docs.python.org/3/library/math.html"
+      rel="noopener noreferrer"
       target="_blank"
     >
       <kbd>
         math
       </kbd>
     </a>
-    , 
+    ,
+     
     <kbd>
       pd
     </kbd>
-     (
+     
+    (
     <a
       href="https://pandas.pydata.org/pandas-docs/stable/api.html#dataframe"
+      rel="noopener noreferrer"
       target="_blank"
     >
       Pandas
     </a>
-    ) and 
+    )
+     
+    and 
     <kbd>
       np
     </kbd>
-     (
+     
+    (
     <a
       href="https://docs.scipy.org/doc/numpy/reference/routines.html"
+      rel="noopener noreferrer"
       target="_blank"
     >
       Numpy
     </a>
-    ) modules; 
+    )
+     
+    modules; 
     <kbd>
       import
     </kbd>
