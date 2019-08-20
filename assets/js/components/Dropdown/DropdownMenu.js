@@ -31,19 +31,19 @@ class OpenDropdownMenu extends React.PureComponent {
 
   componentDidMount () {
     ['click', 'touchstart', 'keyup'].forEach(eventName =>
-      document.addEventListener(eventName, this.onClickDocument, true)
+      document.addEventListener(eventName, this.handleClickDocument, true)
     )
-    document.addEventListener('keydown', this.onKeyDown, true)
+    document.addEventListener('keydown', this.handleKeyDown, true)
   }
 
   componentWillUnmount () {
     ['click', 'touchstart', 'keyup'].forEach(eventName =>
-      document.removeEventListener(eventName, this.onClickDocument, true)
+      document.removeEventListener(eventName, this.handleClickDocument, true)
     )
-    document.removeEventListener('keydown', this.onKeyDown, true)
+    document.removeEventListener('keydown', this.handleKeyDown, true)
   }
 
-  onClickDocument = (ev) => {
+  handleClickDocument = (ev) => {
     const container = this.ref.current
     if (!this.ref.current) {
       // we're in the process of mounting -- the click handler was added mid-click
@@ -89,16 +89,17 @@ class OpenDropdownMenu extends React.PureComponent {
    *              trigger the menu item's onClick() instead.
    * Escape/Tab: close menu and focus trigger element.
    */
-  onKeyDown = (ev) => {
+  handleKeyDown = (ev) => {
     const keystroke = (ev.ctrlKey ? 'Ctrl+' : '') + ev.key // 'Ctrl+n', 'ArrowUp', 'Tab', ...
     switch (keystroke) {
       case 'Escape':
-      case 'Tab':
+      case 'Tab': {
         const { toggle, toggleRef } = this.context
         toggle(ev)
         if (toggleRef.current) toggleRef.current.focus()
         ev.preventDefault()
         return
+      }
 
       case 'ArrowUp':
       case 'Ctrl+p':

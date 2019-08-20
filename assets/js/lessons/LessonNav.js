@@ -9,11 +9,11 @@ export default class LessonNav extends React.PureComponent {
     setCurrentSectionIndex: PropTypes.func.isRequired
   }
 
-  onClickPrevious = () => {
+  handleClickPrevious = () => {
     this.props.setCurrentSectionIndex(Math.max(0, this.props.currentSectionIndex - 1))
   }
 
-  onClickNext = () => {
+  handleClickNext = () => {
     this.props.setCurrentSectionIndex(Math.min(this.props.currentSectionIndex + 1, this.props.nSections))
   }
 
@@ -33,7 +33,7 @@ export default class LessonNav extends React.PureComponent {
             name='Previous'
             className={`previous action-button button-white ${a < c ? 'lesson-highlight' : ''}`}
             disabled={c <= 0}
-            onClick={this.onClickPrevious}
+            onClick={this.handleClickPrevious}
           >
             Previous
           </button>
@@ -48,7 +48,7 @@ export default class LessonNav extends React.PureComponent {
             name='Next'
             className={`next action-button button-white ${a > c ? 'lesson-highlight' : ''}`}
             disabled={c + 1 > n}
-            onClick={this.onClickNext}
+            onClick={this.handleClickNext}
           >
             Next
           </button>

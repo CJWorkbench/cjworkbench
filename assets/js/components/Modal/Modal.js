@@ -72,7 +72,7 @@ class OpenModal extends React.PureComponent {
     if (this.previouslyFocusedElement) this.previouslyFocusedElement.focus()
   }
 
-  onMouseDown = (ev) => {
+  handleMouseDown = (ev) => {
     if (ev.target === this.modalRef.current) {
       this.props.toggle(ev)
     }
@@ -84,7 +84,7 @@ class OpenModal extends React.PureComponent {
    * * "Escape" -> close dialog
    * * "Tab" / "Shift-Tab" -> select next/previous element
    */
-  onKeyDown = (ev) => {
+  handleKeyDown = (ev) => {
     switch (ev.key) {
       case 'Tab':
         ev.preventDefault()
@@ -115,8 +115,8 @@ class OpenModal extends React.PureComponent {
         <div
           className={classNames.join(' ')}
           ref={this.modalRef}
-          onMouseDown={this.onMouseDown}
-          onKeyDown={this.onKeyDown}
+          onMouseDown={this.handleMouseDown}
+          onKeyDown={this.handleKeyDown}
           tabIndex='-1'
           role='dialog'
         >

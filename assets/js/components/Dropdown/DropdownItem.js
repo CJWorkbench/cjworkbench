@@ -31,7 +31,7 @@ export default class DropdownItem extends React.PureComponent {
 
   static contextType = DropdownContext
 
-  onClick = this.props.onClick
+  handleClick = this.props.onClick
     ? (ev) => {
       this.props.onClick(ev)
       this.context.toggle()
@@ -51,7 +51,7 @@ export default class DropdownItem extends React.PureComponent {
         {...rest /* pass through all other options -- _first_, so e.g. we'll overwrite onClick+className */}
         className={classNames.join(' ')}
         href={href}
-        onClick={this.onClick}
+        onClick={this.handleClick}
         tabIndex={0}
         role='menuitem'
         disabled={disabled}
