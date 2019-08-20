@@ -23,12 +23,12 @@ export default class NumberField extends React.PureComponent {
     placeholder: PropTypes.string // maybe empty
   }
 
-  onChange = (ev) => {
+  handleChange = (ev) => {
     const value = ev.target.value === '' ? null : Number(ev.target.value)
     this.props.onChange(value)
   }
 
-  onKeyDown = (ev) => {
+  handleKeyDown = (ev) => {
     switch (ev.key) {
       case 'Escape':
         ev.preventDefault()
@@ -52,8 +52,8 @@ export default class NumberField extends React.PureComponent {
           id={fieldId}
           placeholder={placeholder}
           readOnly={isReadOnly}
-          onChange={this.onChange}
-          onKeyDown={this.onKeyDown}
+          onChange={this.handleChange}
+          onKeyDown={this.handleKeyDown}
           value={value}
         />
       </>

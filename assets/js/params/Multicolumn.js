@@ -6,13 +6,13 @@ import { components } from 'react-select'
 import { MaybeLabel } from './util'
 
 class MenuList extends React.PureComponent {
-  onClickSelectAll = () => {
+  handleClickSelectAll = () => {
     const { setValue, selectProps } = this.props
     const { options } = selectProps
     setValue(options)
   }
 
-  onClickSelectNone = () => {
+  handleClickSelectNone = () => {
     const { clearValue } = this.props
     clearValue()
   }
@@ -29,7 +29,7 @@ class MenuList extends React.PureComponent {
           <button
             name={`${name}-select-all`}
             type='button'
-            onClick={this.onClickSelectAll}
+            onClick={this.handleClickSelectAll}
             className='multicolumn-select-all'
           >
             Select all
@@ -37,7 +37,7 @@ class MenuList extends React.PureComponent {
           <button
             name={`${name}-select-none`}
             type='button'
-            onClick={this.onClickSelectNone}
+            onClick={this.handleClickSelectNone}
             className='multicolumn-select-none'
           >
             clear
@@ -86,17 +86,7 @@ export default class Multicolumn extends React.PureComponent {
     }
   }
 
-  onClickSelectAll = () => {
-    const { inputColumns } = this.props
-    const names = (inputColumns || []).map(x => x.name)
-    this.onChangeColumns(names)
-  }
-
-  onClickSelectNone = () => {
-    this.onChangeColumns([])
-  }
-
-  onChangeColumns = (columns) => {
+  handleChangeColumns = (columns) => {
     const value = this.isDeprecatedMulticolumnParam ? columns.join(',') : columns
     this.props.onChange(value)
   }
@@ -122,7 +112,7 @@ export default class Multicolumn extends React.PureComponent {
           inputId={fieldId}
           options={columnOptions}
           isLoading={inputColumns === null}
-          onChange={this.onChangeColumns}
+          onChange={this.handleChangeColumns}
           addMenuListClassName={addMenuListClassName}
           noOptionsMessage={noOptionsMessage}
           components={Components}

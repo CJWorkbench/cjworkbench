@@ -72,14 +72,14 @@ export default class ParamsForm extends React.PureComponent {
     onSubmit: PropTypes.func.isRequired // func() => undefined
   }
 
-  onKeyDown = (ev) => {
+  handleKeyDown = (ev) => {
     if (ev.key === 'Enter' && (ev.metaKey || ev.ctrlKey)) {
       ev.preventDefault() // in case it was already going to submit
       this.onSubmit()
     }
   }
 
-  onSubmit = (maybeEv) => {
+  handleSubmit = (maybeEv) => {
     if (maybeEv) {
       // it's an HTML submit event: don't spawn the default HTTP request
       maybeEv.preventDefault()
@@ -88,7 +88,7 @@ export default class ParamsForm extends React.PureComponent {
     this.props.onSubmit()
   }
 
-  onChange = (fieldName, fieldValue) => {
+  handleChange = (fieldName, fieldValue) => {
     const { value, edits, onChange } = this.props
 
     if (deepEqual(fieldValue, edits[fieldName])) {
@@ -224,8 +224,8 @@ export default class ParamsForm extends React.PureComponent {
       <form
         className={className}
         action=''
-        onSubmit={this.onSubmit}
-        onKeyDown={this.onKeyDown}
+        onSubmit={this.handleSubmit}
+        onKeyDown={this.handleKeyDown}
       >
         <div className='params'>
           {visibleFields.map(field => {
@@ -263,8 +263,8 @@ export default class ParamsForm extends React.PureComponent {
                 submitSecret={submitSecret}
                 selectedColumn={selectedColumn}
                 selectedTab={selectedTab}
-                onChange={this.onChange}
-                onSubmit={this.onSubmit}
+                onChange={this.handleChange}
+                onSubmit={this.handleSubmit}
               />
             )
           })}

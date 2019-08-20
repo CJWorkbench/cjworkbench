@@ -98,7 +98,7 @@ export default class Param extends React.PureComponent {
     }
   }
 
-  onChange = (value) => {
+  handleChange = (value) => {
     const { name, onChange } = this.props
     onChange(name, value)
   }
@@ -136,7 +136,7 @@ export default class Param extends React.PureComponent {
           {...this.props}
           fieldId={safeFieldId}
           createOauthAccessToken={this.createOauthAccessToken}
-          onChange={this.onChange}
+          onChange={this.handleChange}
         />
       </div>
     )

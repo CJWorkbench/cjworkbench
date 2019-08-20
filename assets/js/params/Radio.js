@@ -15,7 +15,7 @@ export default class RadioParam extends React.PureComponent {
     onChange: PropTypes.func.isRequired // onChange(newIndex) => undefined
   }
 
-  onChange = (ev) => {
+  handleChange = (ev) => {
     // <input value=...> is always a String. Our enumOptions values aren't.
     // Find the option matching the string, and return it.
     const { onChange, enumOptions } = this.props
@@ -36,7 +36,7 @@ export default class RadioParam extends React.PureComponent {
           className='radio-button'
           value={String(value)}
           checked={String(value) === String(selectedValue)}
-          onChange={this.onChange}
+          onChange={this.handleChange}
           disabled={isReadOnly}
         />
         <span className='button' />

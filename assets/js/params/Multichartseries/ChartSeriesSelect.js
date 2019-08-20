@@ -23,7 +23,7 @@ export default class ChartSeriesSelect extends React.PureComponent {
     color: null // when this.props.column is null, we can't call props.onChange()
   }
 
-  onPickColor = (color) => {
+  handlePickColor = (color) => {
     if (this.props.column) {
       this.props.onChange({
         index: this.props.index,
@@ -35,7 +35,7 @@ export default class ChartSeriesSelect extends React.PureComponent {
     }
   }
 
-  onSelectColumn = (column) => {
+  handleSelectColumn = (column) => {
     const { index, color } = this.props
     const safeColor = color || this.state.color || getColor(index)
 
@@ -59,7 +59,7 @@ export default class ChartSeriesSelect extends React.PureComponent {
           fieldId={`${fieldId}_color`}
           value={safeColor}
           choices={defaultColors}
-          onChange={this.onPickColor}
+          onChange={this.handlePickColor}
         />
         <Column
           name={`${name}[column]`}
@@ -68,7 +68,7 @@ export default class ChartSeriesSelect extends React.PureComponent {
           placeholder={placeholder}
           isReadOnly={isReadOnly}
           inputColumns={availableColumns}
-          onChange={this.onSelectColumn}
+          onChange={this.handleSelectColumn}
         />
       </div>
     )

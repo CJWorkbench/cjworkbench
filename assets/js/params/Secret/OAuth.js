@@ -14,12 +14,12 @@ export default class OAuth extends React.PureComponent {
     })
   }
 
-  startCreateSecret = () => {
+  handleClickConnect = () => {
     const { name, startCreateSecret } = this.props
     startCreateSecret(name)
   }
 
-  deleteSecret = () => {
+  handleClickDisconnect = () => {
     const { name, deleteSecret } = this.props
     deleteSecret(name)
   }
@@ -32,12 +32,12 @@ export default class OAuth extends React.PureComponent {
       contents = (
         <>
           <p className='secret-name'>{secretMetadata.name}</p>
-          <button type='button' className='disconnect' onClick={this.deleteSecret}>Sign out</button>
+          <button type='button' className='disconnect' onClick={this.handleClickDisconnect}>Sign out</button>
         </>
       )
     } else {
       contents = (
-        <button type='button' className='connect' onClick={this.startCreateSecret}>Connect account</button>
+        <button type='button' className='connect' onClick={this.handleClickConnect}>Connect account</button>
       )
     }
 

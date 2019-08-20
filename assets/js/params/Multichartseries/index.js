@@ -22,7 +22,7 @@ export default class Multichartseries extends React.PureComponent {
     isAddingPlaceholder: this.props.value.length === 0
   }
 
-  onChange = ({ index, column, color }) => {
+  handleChange = ({ index, column, color }) => {
     const value = this.props.value.slice() // shallow copy
 
     if (index === value.length) {
@@ -34,11 +34,11 @@ export default class Multichartseries extends React.PureComponent {
     this.props.onChange(value)
   }
 
-  onClickAddPlaceholder = () => {
+  handleClickAddPlaceholder = () => {
     this.setState({ isAddingPlaceholder: true })
   }
 
-  onClickRemoveLast = () => {
+  handleClickRemoveLast = () => {
     if (this.state.isAddingPlaceholder) {
       this.setState({ isAddingPlaceholder: false })
     } else {
@@ -59,13 +59,13 @@ export default class Multichartseries extends React.PureComponent {
       return null
     } else {
       const addButton = !showAddButton ? null : (
-        <button type='button' title='add another column' onClick={this.onClickAddPlaceholder}>
+        <button type='button' title='add another column' onClick={this.handleClickAddPlaceholder}>
           <i className='icon-addc' />
         </button>
       )
 
       const removeButton = !showRemoveButton ? null : (
-        <button type='button' title='remove last column' onClick={this.onClickRemoveLast}>
+        <button type='button' title='remove last column' onClick={this.handleClickRemoveLast}>
           <i className='icon-removec' />
         </button>
       )
@@ -103,7 +103,7 @@ export default class Multichartseries extends React.PureComponent {
           column={column}
           color={color}
           availableColumns={availableColumns}
-          onChange={this.onChange}
+          onChange={this.handleChange}
         />
       )
     })
@@ -123,7 +123,7 @@ export default class Multichartseries extends React.PureComponent {
           column={null}
           color={null}
           availableColumns={availableColumns}
-          onChange={this.onChange}
+          onChange={this.handleChange}
         />
       )
     }

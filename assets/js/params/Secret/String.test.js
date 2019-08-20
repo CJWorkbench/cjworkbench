@@ -1,12 +1,12 @@
 /* globals afterEach, beforeEach, describe, expect, it, jest */
 import React from 'react'
-import String_ from './String'
+import StringParam from './String'
 import { mount } from 'enzyme'
 
 describe('Secret/String', () => {
   const wrapper = (extraProps = {}) => {
     return mount(
-      <String_
+      <StringParam
         isReadOnly={false}
         name='x'
         fieldId='form123[x]'

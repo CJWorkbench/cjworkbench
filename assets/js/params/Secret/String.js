@@ -60,7 +60,7 @@ function StringPrompt ({ isReadOnly, label, name, fieldId, placeholder, pattern,
       {!isReadOnly ? (
         <p className='help'>
           <span className='text'>{help}</span>
-          <a target='_blank' href={helpUrl}>{helpUrlPrompt}</a>
+          <a target='_blank' rel='noopener noreferrer' href={helpUrl}>{helpUrlPrompt}</a>
         </p>
       ) : null}
     </>

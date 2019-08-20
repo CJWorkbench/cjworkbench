@@ -10,7 +10,7 @@ class ColorChoice extends React.PureComponent {
     onClick: PropTypes.func.isRequired // onClick('#abcdef') => undefined
   }
 
-  onClick = () => {
+  handleClick = () => {
     this.props.onClick(this.props.color)
   }
 
@@ -22,7 +22,7 @@ class ColorChoice extends React.PureComponent {
       <button
         type='button'
         name={name}
-        onClick={this.onClick}
+        onClick={this.handleClick}
         className='color-choice'
         style={{ backgroundColor: color }}
       />
@@ -55,15 +55,15 @@ class CustomColorChoice extends React.PureComponent {
     return /^#?[0-9a-fA-F]{6}$/.test(this.state.value)
   }
 
-  onClickButton = () => {
+  handleClickButton = () => {
     this.props.onChange(this.effectiveColor)
   }
 
-  onChange = (ev) => {
+  handleChange = (ev) => {
     this.setState({ value: ev.target.value })
   }
 
-  onKeyDown = (ev) => {
+  handleKeyDown = (ev) => {
     switch (ev.key) {
       case 'Enter':
         if (this.isValid) {
@@ -87,7 +87,7 @@ class CustomColorChoice extends React.PureComponent {
             type='button'
             name='choose-custom-color'
             className='btn choose-custom-color'
-            onClick={this.onClickButton}
+            onClick={this.handleClickButton}
             style={{ background: this.effectiveColor }}
           />
         </div>
@@ -95,8 +95,8 @@ class CustomColorChoice extends React.PureComponent {
           className='form-control'
           placeholder='#000000'
           value={value}
-          onChange={this.onChange}
-          onKeyDown={this.onKeyDown}
+          onChange={this.handleChange}
+          onKeyDown={this.handleKeyDown}
         />
       </div>
     )
@@ -141,17 +141,17 @@ class ColorPickerPopover extends React.PureComponent {
   containerRef = React.createRef()
 
   componentDidMount () {
-    document.addEventListener('mousedown', this.onMouseDown, true)
+    document.addEventListener('mousedown', this.handleMouseDown, true)
   }
 
   componentWillUnmount () {
-    document.removeEventListener('mousedown', this.onMouseDown, true)
+    document.removeEventListener('mousedown', this.handleMouseDown, true)
   }
 
   /**
    * Close the popover if we click outside it.
    */
-  onMouseDown = (ev) => {
+  handleMouseDown = (ev) => {
     const { referenceElement } = this.context
     if (referenceElement && (referenceElement === ev.target || referenceElement.contains(ev.target))) {
       // The user clicked the "toggle" button. Don't do anything -- the toggle-button
@@ -167,7 +167,7 @@ class ColorPickerPopover extends React.PureComponent {
   }
 
   render () {
-    const { safeValue, choices, onChange, onClose } = this.props
+    const { safeValue, choices } = this.props
     const { referenceElement } = this.context
 
     return ReactDOM.createPortal((
@@ -182,13 +182,13 @@ class ColorPickerPopover extends React.PureComponent {
             <div className='arrow' {...arrowProps} />
             <div ref={this.containerRef} className='popover-body'>
               {choices.map(color => (
-                <ColorChoice key={'choice-' + color} color={color} onClick={onChange} />
+                <ColorChoice key={'choice-' + color} color={color} onClick={this.props.onChange} />
               ))}
               <CustomColorChoice
                 key={'custom-choice-' + safeValue}
                 defaultValue={safeValue}
-                onChange={onChange}
-                onClose={onClose}
+                onChange={this.props.onChange}
+                onClose={this.props.onClose}
               />
             </div>
           </div>
@@ -220,15 +220,15 @@ export default class ColorPicker extends React.PureComponent {
     }
   }
 
-  toggleOpen = () => {
+  handleClickButton = () => {
     this.setState({ isOpen: !this.state.isOpen })
   }
 
-  close = () => {
+  handleClickClose = () => {
     this.setState({ isOpen: false })
   }
 
-  onChange = (color) => {
+  handleChange = (color) => {
     this.props.onChange(color)
     this.setState({ isOpen: false })
   }
@@ -243,7 +243,7 @@ export default class ColorPicker extends React.PureComponent {
         <button
           type='button'
           title='Pick color'
-          onClick={this.toggleOpen}
+          onClick={this.handleClickButton}
           className='btn color-picker'
           style={{ background: safeValue }}
           ref={this.setReferenceElement}
@@ -254,8 +254,8 @@ export default class ColorPicker extends React.PureComponent {
           <ColorPickerPopover
             safeValue={safeValue}
             choices={choices}
-            onChange={this.onChange}
-            onClose={this.close}
+            onChange={this.handleChange}
+            onClose={this.handleClickClose}
           />
         ) : null}
       </ColorPickerContext.Provider>
