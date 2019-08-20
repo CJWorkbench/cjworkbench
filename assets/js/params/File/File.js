@@ -62,9 +62,8 @@ export default class File extends React.PureComponent {
     isUploadApiModalOpen: false
   }
 
-  openUploadApiModal = () => this.setState({ isUploadApiModalOpen: true })
-
-  closeUploadApiModal = () => this.setState({ isUploadApiModalOpen: false })
+  handleClickOpenUploadApiModal = () => this.setState({ isUploadApiModalOpen: true })
+  handleClickCloseUploadApiModal = () => this.setState({ isUploadApiModalOpen: false })
 
   _upload = (file) => {
     const { name, uploadFile, setWfModuleParams, wfModuleId } = this.props
@@ -80,7 +79,7 @@ export default class File extends React.PureComponent {
       })
   }
 
-  onDragOver = (ev) => {
+  handleDragOver = (ev) => {
     const items = ev.dataTransfer.items
     if (items && items.length === 1 && items[0].kind === 'file') {
       // allow dropping
@@ -90,7 +89,7 @@ export default class File extends React.PureComponent {
     }
   }
 
-  onDragEnter = (ev) => {
+  handleDragEnter = (ev) => {
     // DO NOT use `this.state`!
     //
     // https://stackoverflow.com/questions/7110353/html5-dragleave-fired-when-hovering-a-child-element
@@ -109,7 +108,7 @@ export default class File extends React.PureComponent {
     ev.currentTarget.classList.add('dragging-over')
   }
 
-  onDragLeave = (ev) => {
+  handleDragLeave = (ev) => {
     if (
       ev.currentTarget.classList.contains('dragging-over') &&
       ev.target !== ev.currentTarget
@@ -129,7 +128,7 @@ export default class File extends React.PureComponent {
     ev.currentTarget.classList.remove('dragging-over')
   }
 
-  onDrop = (ev) => {
+  handleDrop = (ev) => {
     const file = ev.dataTransfer.files[0]
     ev.preventDefault() // don't open the file with the web browser
     ev.stopPropagation() // don't open the file with the web browser
@@ -137,17 +136,17 @@ export default class File extends React.PureComponent {
     ev.currentTarget.classList.remove('dragging-over')
   }
 
-  onChange = (value) => {
+  handleChange = (value) => {
     const { setWfModuleParams, wfModuleId, name } = this.props
     setWfModuleParams(wfModuleId, { [name]: value })
   }
 
-  onChangeFileInput = (ev) => {
+  handleChangeFileInput = (ev) => {
     const file = ev.target.files[0]
     this._upload(file)
   }
 
-  cancelUpload = () => {
+  handleClickCancelUpload = () => {
     const { wfModuleId, cancelUpload } = this.props
     cancelUpload(wfModuleId)
   }
@@ -164,22 +163,22 @@ export default class File extends React.PureComponent {
             workflowId={workflowId}
             wfModuleId={wfModuleId}
             wfModuleSlug={wfModuleSlug}
-            onClickClose={this.closeUploadApiModal}
+            onClickClose={this.handleClickCloseUploadApiModal}
           />
         ) : null}
         <div
           className='drop-zone'
-          onDrop={this.onDrop}
-          onDragOver={this.onDragOver}
-          onDragEnter={this.onDragEnter}
-          onDragLeave={this.onDragLeave}
+          onDrop={this.handleDrop}
+          onDragOver={this.handleDragOver}
+          onDragEnter={this.handleDragEnter}
+          onDragLeave={this.handleDragLeave}
         >
           {inProgressUpload ? (
             <div className='uploading-file'>
               <div className='filename'>{inProgressUpload.name}</div>
               <div className='status'>
-                <UploadedFileSelect isReadOnly value={value} files={files} onChange={this.onChange} />
-                <button type='button' onClick={this.cancelUpload} name='cancel-upload' title='Cancel upload'>
+                <UploadedFileSelect isReadOnly value={value} files={files} onChange={this.handleChange} />
+                <button type='button' onClick={this.handleClickCancelUpload} name='cancel-upload' title='Cancel upload'>
                   Cancel Upload
                 </button>
               </div>
@@ -192,10 +191,10 @@ export default class File extends React.PureComponent {
             <div className='existing-file'>
               <div className='filename'>{file.name}</div>
               <div className='status'>
-                <UploadedFileSelect isReadOnly={isReadOnly} value={value} files={files} onChange={this.onChange} />
+                <UploadedFileSelect isReadOnly={isReadOnly} value={value} files={files} onChange={this.handleChange} />
                 <p className='file-select-button'>
                   {FeatureFlagUploadApi ? (
-                    <button type='button' onClick={this.openUploadApiModal} name='open-upload-api' title='Open upload API instructions'>
+                    <button type='button' onClick={this.handleClickOpenUploadApiModal} name='open-upload-api' title='Open upload API instructions'>
                       API
                     </button>
                   ) : null}
@@ -207,7 +206,7 @@ export default class File extends React.PureComponent {
                     type='file'
                     id={fieldId}
                     readOnly={isReadOnly}
-                    onChange={this.onChangeFileInput}
+                    onChange={this.handleChangeFileInput}
                   />
                 </p>
               </div>
@@ -219,7 +218,7 @@ export default class File extends React.PureComponent {
               <p>or</p>
               <p className='file-select-button'>
                 {FeatureFlagUploadApi ? (
-                  <button type='button' onClick={this.openUploadApiModal} name='open-upload-api' title='Open upload API instructions'>
+                  <button type='button' onClick={this.handleClickOpenUploadApiModal} name='open-upload-api' title='Open upload API instructions'>
                     API
                   </button>
                 ) : null}
@@ -231,7 +230,7 @@ export default class File extends React.PureComponent {
                   type='file'
                   id={fieldId}
                   readOnly={isReadOnly}
-                  onChange={this.onChangeFileInput}
+                  onChange={this.handleChangeFileInput}
                 />
               </p>
             </div>

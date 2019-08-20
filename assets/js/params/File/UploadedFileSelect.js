@@ -25,12 +25,12 @@ class UploadedFileSelectModal extends React.PureComponent {
     newValue: this.props.value
   }
 
-  onClickFile = (ev) => {
+  handleClickFile = (ev) => {
     const uuid = ev.currentTarget.getAttribute('data-uuid')
     this.setState({ newValue: uuid })
   }
 
-  onClickSelect = () => {
+  handleClickSelect = () => {
     const { onChange, value, close } = this.props
     const { newValue } = this.state
     if (newValue !== value) onChange(newValue)
@@ -60,7 +60,7 @@ class UploadedFileSelectModal extends React.PureComponent {
             <ol className='files'>
               {files.map(({ uuid, size, name, createdAt }) => (
                 <li key={uuid}>
-                  <a data-uuid={uuid} href='#' onClick={this.onClickFile} className={uuid === newValue ? 'selected' : ''}>
+                  <a data-uuid={uuid} href='#' onClick={this.handleClickFile} className={uuid === newValue ? 'selected' : ''}>
                     <div className='name'>{name}</div>
                     <div className='metadata'>
                       <abbr className='size' title={`${numberFormat.format(size)} bytes`}>
@@ -78,7 +78,7 @@ class UploadedFileSelectModal extends React.PureComponent {
           <button
             type='button'
             name='select'
-            onClick={this.onClickSelect}
+            onClick={this.handleClickSelect}
             disabled={newValue === value}
           >
             Load

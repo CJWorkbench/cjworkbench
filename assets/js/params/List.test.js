@@ -25,34 +25,36 @@ describe('List', () => {
      * should prevent us from regressing and trying to fix the `name` while
      * we still depend on it in event handlers.
      */
-    const w = mount(<List
-      isReadOnly={false}
-      label='List'
-      fieldId='list'
-      name='list'
-      onChange={jest.fn()}
-      onSubmit={jest.fn()}
-      childParameters={[
-        {
-          idName: 'x',
-          type: 'string',
-          name: 'X', // html name
-          placeholder: ''
-        }
-      ]}
-      childDefault={{ x: '' }}
-      value={[{ x: 'foo' }, { x: 'bar' }]}
-      upstreamValue={[{ x: 'foo' }, { x: 'bar' }]}
-      // The rest are props we just can't avoid....
-      applyQuickFix={jest.fn()}
-      startCreateSecret={jest.fn()}
-      deleteSecret={jest.fn()}
-      currentTab=''
-      tabs={[]}
-      isWfModuleBusy={false}
-      isZenMode={false}
-      onDelete={jest.fn()}
-    />)
+    const w = mount(
+      <List
+        isReadOnly={false}
+        label='List'
+        fieldId='list'
+        name='list'
+        onChange={jest.fn()}
+        onSubmit={jest.fn()}
+        childParameters={[
+          {
+            idName: 'x',
+            type: 'string',
+            name: 'X', // html name
+            placeholder: ''
+          }
+        ]}
+        childDefault={{ x: '' }}
+        value={[{ x: 'foo' }, { x: 'bar' }]}
+        upstreamValue={[{ x: 'foo' }, { x: 'bar' }]}
+        // The rest are props we just can't avoid....
+        applyQuickFix={jest.fn()}
+        startCreateSecret={jest.fn()}
+        deleteSecret={jest.fn()}
+        currentTab=''
+        tabs={[]}
+        isWfModuleBusy={false}
+        isZenMode={false}
+        onDelete={jest.fn()}
+      />
+    )
 
     const el = w.find('#list_1_x')
     el.simulate('change', { target: { name: el.prop('name'), value: 'baz' } })

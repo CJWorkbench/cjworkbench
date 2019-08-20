@@ -19,7 +19,7 @@ export default class MenuParam extends React.PureComponent {
     onChange: PropTypes.func.isRequired // onChange(newIndex) => undefined
   }
 
-  onChange = (ev) => {
+  handleChange = (ev) => {
     this.props.onChange(ev.target.value)
   }
 
@@ -42,7 +42,7 @@ export default class MenuParam extends React.PureComponent {
           name={name}
           id={fieldId}
           value={value}
-          onChange={this.onChange}
+          onChange={this.handleChange}
           disabled={isReadOnly}
         >
           {options}

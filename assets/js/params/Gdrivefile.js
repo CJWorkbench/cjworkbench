@@ -38,11 +38,12 @@ class PickerFactory {
         case 'loaded':
           break
 
-        case 'picked':
+        case 'picked': {
           const { id, name, url, mimeType } = data.docs[0]
           onPick({ id, name, url, mimeType })
           this.close()
           break
+        }
 
         case 'cancel':
           onCancel()
@@ -93,7 +94,14 @@ function FileInfo ({ id, name, url }) {
     )
   } else {
     return (
-      <a className='file-info' title={`Open in Google Sheets: ${name}`} target='_blank' href={url}>{name}</a>
+      <a
+        className='file-info'
+        title={`Open in Google Sheets: ${name}`}
+        target='_blank'
+        rel='noopener noreferrer'
+        href={url}
+      >{name}
+      </a>
     )
   }
 }
@@ -219,18 +227,20 @@ export default class Gdrivefile extends React.PureComponent {
     this._isUnmounted = true
   }
 
-  openPicker = () => {
+  openPicker () {
     const { pickerFactory } = this.state
     this.fetchAccessToken()
       .then(accessTokenOrNull => {
         if (accessTokenOrNull) {
-          pickerFactory.open(accessTokenOrNull, this.onPick, this.onCancel)
+          pickerFactory.open(accessTokenOrNull, this.handlePick, this.onCancel)
         }
         // otherwise, we've set this.state.unauthenticated
       })
   }
 
-  onPick = (data) => {
+  handleClickOpenPicker = () => this.openPicker()
+
+  handlePick = (data) => {
     this.props.onChange(data)
     this.props.onSubmit()
   }
@@ -268,7 +278,7 @@ export default class Gdrivefile extends React.PureComponent {
           <button
             type='button'
             className='change-file'
-            onClick={this.openPicker}
+            onClick={this.handleClickOpenPicker}
           >
             {value ? 'Change' : 'Choose'}
           </button>

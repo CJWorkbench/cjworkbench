@@ -16,7 +16,7 @@ class ChildParamsForm extends React.PureComponent {
     onDelete: PropTypes.func // func(index) => undefined, or null if isReadOnly
   }
 
-  onChangeParam = (idName, childParamValue) => {
+  handleChangeParam = (idName, childParamValue) => {
     const { value, index, onChange } = this.props
     onChange(index, {
       ...value,
@@ -24,7 +24,7 @@ class ChildParamsForm extends React.PureComponent {
     })
   }
 
-  onClickDelete = (ev) => {
+  handleClickDelete = (ev) => {
     this.props.onDelete(this.props.index)
   }
 
@@ -41,7 +41,7 @@ class ChildParamsForm extends React.PureComponent {
             fieldId={`${fieldId}_${childParameter.idName}`}
             value={value[childParameter.idName]}
             upstreamValue={upstreamValue[childParameter.idName]}
-            onChange={this.onChangeParam}
+            onChange={this.handleChangeParam}
           />
         ))}
         {onDelete ? (
@@ -50,7 +50,7 @@ class ChildParamsForm extends React.PureComponent {
               type='button'
               className='delete'
               name={`${name}[delete]`}
-              onClick={this.onClickDelete}
+              onClick={this.handleClickDelete}
             >
               <i className='icon-close' />
             </button>
@@ -90,7 +90,7 @@ export default class List extends React.PureComponent {
     }
   }
 
-  onChangeChildFormValue = (index, childFormValue) => {
+  handleChangeChildFormValue = (index, childFormValue) => {
     const { onChange, isReadOnly } = this.props
     if (isReadOnly) return
     const newValue = this.value.slice()
@@ -98,7 +98,7 @@ export default class List extends React.PureComponent {
     onChange(newValue)
   }
 
-  onDeleteChildForm= (index) => {
+  handleDeleteChildForm = (index) => {
     const { onChange, isReadOnly } = this.props
     if (isReadOnly) return
     const newValue = this.value.slice()
@@ -106,7 +106,7 @@ export default class List extends React.PureComponent {
     onChange(newValue)
   }
 
-  onAdd = () => {
+  handleAdd = () => {
     const { onChange, isReadOnly, childDefault } = this.props
     if (isReadOnly) return
     const newValue = [...this.value, childDefault]
@@ -130,8 +130,8 @@ export default class List extends React.PureComponent {
                 fieldId={`${fieldId}_${index}`}
                 commonProps={this.props}
                 upstreamValue={upstreamValue[index] || childDefault}
-                onChange={this.onChangeChildFormValue}
-                onDelete={isReadOnly ? null : this.onDeleteChildForm}
+                onChange={this.handleChangeChildFormValue}
+                onDelete={isReadOnly ? null : this.handleDeleteChildForm}
                 index={index}
               />
             </li>
@@ -142,7 +142,7 @@ export default class List extends React.PureComponent {
             type='button'
             className='add'
             name={`${name}[add]`}
-            onClick={this.onAdd}
+            onClick={this.handleAdd}
           >
             <i className='icon-add' /> Add
           </button>
