@@ -45,8 +45,8 @@ describe('WfModuleContextMenu', () => {
     exportButton.simulate('click')
     expect(wrapper.find('div.modal-dialog')).toHaveLength(1)
 
-    // close it (via callback)
-    wrapper.instance().toggleExportModal()
+    // close it
+    wrapper.find('div.modal-dialog button.close').simulate('click')
     wrapper.update()
     expect(wrapper.find('div.modal-dialog')).toHaveLength(0)
   })
