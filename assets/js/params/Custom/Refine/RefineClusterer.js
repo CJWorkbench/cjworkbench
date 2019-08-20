@@ -117,7 +117,7 @@ export default class RefineClusterer extends React.PureComponent {
     })
   }
 
-  selectClusterer = (ev) => {
+  handleChangeAlgorithm = (ev) => {
     const name = ev.target.value
     const algorithm = Algorithms.find(a => a.name === name)
     this.setClusterer(algorithm, algorithm.defaultOptions || null)
@@ -144,7 +144,7 @@ export default class RefineClusterer extends React.PureComponent {
     const options = Algorithms.map(({ name, selectName }) => <option key={name} value={name}>{selectName}</option>)
 
     return (
-      <select name='algorithm' className='custom-select' value={algorithm.name} onChange={this.selectClusterer}>
+      <select name='algorithm' className='custom-select' value={algorithm.name} onChange={this.handleChangeAlgorithm}>
         {options}
       </select>
     )

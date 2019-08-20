@@ -8,11 +8,11 @@ export class RenameEntry extends React.PureComponent {
     colname: PropTypes.string.isRequired,
     value: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired, // func(colname, newValue) => undefined
-    onEntryDelete: PropTypes.func.isRequired,
+    onDelete: PropTypes.func.isRequired,
     isReadOnly: PropTypes.bool.isRequired
   }
 
-  onChange = (ev) => {
+  handleChange = (ev) => {
     const { onChange, colname } = this.props
     onChange(colname, ev.target.value)
   }
@@ -24,7 +24,7 @@ export class RenameEntry extends React.PureComponent {
   }
 
   handleDelete = () => {
-    this.props.onEntryDelete(this.props.colname)
+    this.props.onDelete(this.props.colname)
   }
 
   render () {
@@ -43,7 +43,7 @@ export class RenameEntry extends React.PureComponent {
             type='text'
             value={value}
             id={fieldId}
-            onChange={this.onChange}
+            onChange={this.handleChange}
             readOnly={isReadOnly}
           />
           <button
@@ -86,7 +86,7 @@ export default class RenameEntries extends React.PureComponent {
     }
   }
 
-  onEntryRename = (prevName, nextName) => {
+  handleChangeEntry = (prevName, nextName) => {
     const oldEntries = this.saneValue
     if (oldEntries[prevName] === nextName) return // no-op
 
@@ -97,7 +97,7 @@ export default class RenameEntries extends React.PureComponent {
     this.props.onChange(newEntries)
   }
 
-  onEntryDelete = (prevName) => {
+  handleDeleteEntry = (prevName) => {
     const oldEntries = { ...this.saneValue }
     if (!(prevName in oldEntries)) return // no-op
 
@@ -121,8 +121,8 @@ export default class RenameEntries extends React.PureComponent {
           name={`${fieldName}[${name}]`}
           colname={name}
           value={entries[name]}
-          onChange={this.onEntryRename}
-          onEntryDelete={this.onEntryDelete}
+          onChange={this.handleChangeEntry}
+          onDelete={this.handleDeleteEntry}
           isReadOnly={isReadOnly}
         />
       ))

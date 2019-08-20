@@ -106,16 +106,16 @@ class RefineModalPrompt extends React.PureComponent {
     isModalOpen: false
   }
 
-  openModal = () => {
+  handleClickOpenModal = () => {
     this.setState({ isModalOpen: true })
   }
 
-  closeModal = () => {
+  handleCloseModal = () => {
     this.setState({ isModalOpen: false })
   }
 
-  onSubmit = (renames) => {
-    this.closeModal()
+  handleSubmit = (renames) => {
+    this.handleCloseModal()
     this.props.massRename(renames)
   }
 
@@ -128,13 +128,13 @@ class RefineModalPrompt extends React.PureComponent {
 
     return (
       <div className='refine-modal-prompt'>
-        <button type='button' name='cluster' onClick={this.openModal}>Find clusters...</button>
+        <button type='button' name='cluster' onClick={this.handleClickOpenModal}>Find clusters...</button>
         <span className='instructions' />
         {!isModalOpen ? null : (
           <RefineModal
             bucket={this.bucket}
-            onClose={this.closeModal}
-            onSubmit={this.onSubmit}
+            onClose={this.handleCloseModal}
+            onSubmit={this.handleSubmit}
           />
         )}
       </div>
@@ -164,11 +164,11 @@ class RefineGroup extends React.Component { // uses react-window's shouldCompone
     name: this.props.group.name
   }
 
-  onChangeName = (ev) => {
+  handleChangeName = (ev) => {
     this.setState({ name: ev.target.value })
   }
 
-  onBlurName = () => {
+  handleBlurName = () => {
     const { group, changeGroupName } = this.props
 
     if (group.name !== this.state.name) {
@@ -212,15 +212,15 @@ class RefineGroup extends React.Component { // uses react-window's shouldCompone
     }
   }
 
-  onChangeIsSelected = (ev) => {
+  handleChangeIsSelected = (ev) => {
     this.props.setIsGroupSelected(this.props.group.name, ev.target.checked)
   }
 
-  onChangeIsExpanded = (ev) => {
+  handleChangeIsExpanded = (ev) => {
     this.props.setIsGroupExpanded(this.props.group.name, ev.target.checked)
   }
 
-  onKeyDown = (ev) => {
+  handleKeyDown = (ev) => {
     switch (ev.keyCode) {
       case 27: // Escape
         // We need to do two things: blur the <input> and reset self.state.
@@ -240,11 +240,11 @@ class RefineGroup extends React.Component { // uses react-window's shouldCompone
     }
   }
 
-  onClickRemove = (ev) => {
+  handleClickRemove = (ev) => {
     this.props.resetValue(ev.target.getAttribute('data-value'))
   }
 
-  onClickReset = (ev) => {
+  handleClickReset = (ev) => {
     this.props.resetGroup(this.props.group.name)
   }
 
@@ -261,7 +261,7 @@ class RefineGroup extends React.Component { // uses react-window's shouldCompone
           name='expand'
           title={group.isExpanded ? 'Hide original values' : 'Show original values'}
           checked={group.isExpanded}
-          onChange={this.onChangeIsExpanded}
+          onChange={this.handleChangeIsExpanded}
         />
         <i className={group.isExpanded ? 'icon-caret-down' : 'icon-caret-right'} />
       </label>
@@ -272,7 +272,7 @@ class RefineGroup extends React.Component { // uses react-window's shouldCompone
         name='reset'
         type='button'
         title='Cancel edits of these values'
-        onClick={this.onClickReset}
+        onClick={this.handleClickReset}
       >
         <i className='icon-undo' />
       </button>
@@ -289,7 +289,7 @@ class RefineGroup extends React.Component { // uses react-window's shouldCompone
                   type='button'
                   name={`remove[${group.name}]`}
                   data-value={value}
-                  onClick={this.onClickRemove}
+                  onClick={this.handleClickRemove}
                   className='icon-close'
                 />
               )}
@@ -309,7 +309,7 @@ class RefineGroup extends React.Component { // uses react-window's shouldCompone
             type='checkbox'
             title='Select these rows'
             checked={group.isSelected}
-            onChange={this.onChangeIsSelected}
+            onChange={this.handleChangeIsSelected}
           />
           {maybeExpandCheckbox}
           <div className='rename-sizer'>
@@ -319,9 +319,9 @@ class RefineGroup extends React.Component { // uses react-window's shouldCompone
               name={`rename[${group.name}]`}
               value={this.state.name}
               ref={this.textInput}
-              onChange={this.onChangeName}
-              onBlur={this.onBlurName}
-              onKeyDown={this.onKeyDown}
+              onChange={this.handleChangeName}
+              onBlur={this.handleBlurName}
+              onKeyDown={this.handleKeyDown}
             />
           </div>
           <span className='count-and-reset'>
@@ -550,10 +550,10 @@ class DynamicallySizedGroupList extends React.PureComponent {
 
     // Resize when user turns Zen Mode on and off; and in Zen Mode, resize
     // when resizing the browser window.
-    window.addEventListener('resize', this.onResize)
+    window.addEventListener('resize', this.handleResize)
   }
 
-  onResize = () => {
+  handleResize = () => {
     const sizer = this.sizerRef.current
 
     const sizerStyle = window.getComputedStyle(sizer)
@@ -568,11 +568,11 @@ class DynamicallySizedGroupList extends React.PureComponent {
   }
 
   componentWillUnmount () {
-    window.removeEventListener('resize', this.onResize)
+    window.removeEventListener('resize', this.handleResize)
   }
 
   componentDidUpdate () {
-    this.onResize()
+    this.handleResize()
   }
 
   render () {
@@ -665,11 +665,11 @@ export class Refine extends React.PureComponent {
     return util.buildGroupsForValueCounts(valueCounts, renames, sort)
   })
 
-  onChangeSearch = (searchInput) => {
+  handleChangeSearch = (searchInput) => {
     this.setState({ searchInput, focusGroupName: null })
   }
 
-  onReset = () => {
+  handleReset = () => {
     this.setState({ searchInput: '', focusGroupName: null })
   }
 
@@ -687,7 +687,7 @@ export class Refine extends React.PureComponent {
     this.setState({ selectedGroupNames: newSelectedGroupNames, focusGroupName: null })
   }
 
-  deselectMatchingGroups = () => {
+  handleClickNone = () => {
     const selectedGroupNames = new Set(this.state.selectedGroupNames)
 
     for (const group of this.matchingGroups) {
@@ -699,7 +699,7 @@ export class Refine extends React.PureComponent {
     }
   }
 
-  selectMatchingGroups = () => {
+  handleClickAll = () => {
     const selectedGroupNames = new Set(this.state.selectedGroupNames)
 
     for (const group of this.matchingGroups) {
@@ -735,7 +735,7 @@ export class Refine extends React.PureComponent {
     })
   })
 
-  mergeSelectedValues = () => {
+  handleClickMergeSelected = () => {
     const { selectedGroupNames } = this.state
     const selectedGroups = this.groups.filter(g => selectedGroupNames.has(g.name))
 
@@ -762,7 +762,7 @@ export class Refine extends React.PureComponent {
     this.setState({ selectedGroupNames: new Set(), focusGroupName: toGroup.name })
   }
 
-  setSort = (sort) => {
+  handleChangeSort = (sort) => {
     this.setState({ sort })
   }
 
@@ -803,7 +803,7 @@ export class Refine extends React.PureComponent {
     const canSearch = this.groups.length > 1
 
     const maybeMergeButton = groups.length > 0 ? (
-      <button type='button' name='merge' onClick={this.mergeSelectedValues} disabled={selectedGroupNames.size < 2}>Merge facets</button>
+      <button type='button' name='merge' onClick={this.handleClickMergeSelected} disabled={selectedGroupNames.size < 2}>Merge facets</button>
     ) : null
 
     return (
@@ -811,20 +811,20 @@ export class Refine extends React.PureComponent {
         {canSearch ? (
           <FacetSearch
             value={searchInput}
-            onChange={this.onChangeSearch}
-            onReset={this.onReset}
+            onChange={this.handleChangeSearch}
+            onReset={this.handleReset}
           />
         ) : null}
         <div className='group-list-and-chrome'>
           <ValueSortSelect
             value={sort}
-            onChange={this.setSort}
+            onChange={this.handleChangeSort}
           />
           <div className='group-list-container'>
             <AllNoneButtons
               isReadOnly={false}
-              onClickNone={this.deselectMatchingGroups}
-              onClickAll={this.selectMatchingGroups}
+              onClickNone={this.handleClickNone}
+              onClickAll={this.handleClickAll}
             />
             <DynamicallySizedGroupList
               valueCounts={valueCounts}

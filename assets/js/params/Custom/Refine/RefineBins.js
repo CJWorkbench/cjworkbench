@@ -22,13 +22,13 @@ class RefineBin extends React.PureComponent {
     return values
   }
 
-  onChangeIsSelected = (ev) => {
+  handleChangeIsSelected = (ev) => {
     this.props.onChange(this.props.index, {
       isSelected: ev.target.checked
     })
   }
 
-  onChangeName = (ev) => {
+  handleChangeName = (ev) => {
     this.props.onChange(this.props.index, {
       name: ev.target.value
     })
@@ -43,7 +43,7 @@ class RefineBin extends React.PureComponent {
       <>
         <tr className='bin'>
           <td rowSpan={values.length} className='is-selected'>
-            <input type='checkbox' name={`selected-${index}`} checked={isSelected} onChange={this.onChangeIsSelected} placeholder='New Value' />
+            <input type='checkbox' name={`selected-${index}`} checked={isSelected} onChange={this.handleChangeIsSelected} placeholder='New Value' />
           </td>
           <td rowSpan={values.length} className='cluster-size'>{numberFormat.format(count)}</td>
           <td className='value'>{values[0].value}</td>
@@ -55,7 +55,7 @@ class RefineBin extends React.PureComponent {
                 name={`value-${index}`}
                 placeholder='New Value'
                 value={name}
-                onChange={this.onChangeName}
+                onChange={this.handleChangeName}
               />
             </div>
           </td>
@@ -82,7 +82,7 @@ export default class RefineBins extends React.PureComponent {
     onChange: PropTypes.func.isRequired // func(newBins) => undefined
   }
 
-  onChange = (index, attrs) => {
+  handleChange = (index, attrs) => {
     const oldBins = this.props.bins
     const newBins = oldBins.slice()
     newBins[index] = {
@@ -117,7 +117,7 @@ export default class RefineBins extends React.PureComponent {
             </tr>
           </thead>
           <tbody>
-            {bins.map((bin, i) => <RefineBin key={i} index={i} onChange={this.onChange} bin={bin} />)}
+            {bins.map((bin, i) => <RefineBin key={i} index={i} onChange={this.handleChange} bin={bin} />)}
           </tbody>
         </table>
       </div>

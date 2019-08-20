@@ -19,11 +19,11 @@ export default class RefineModal extends React.PureComponent {
     bins: null // array of { name, isSelected, count, bucket } objects after clustering
   }
 
-  onClustererProgress = (clustererProgress) => {
+  handleClustererProgress = (clustererProgress) => {
     this.setState({ clustererProgress, bins: null })
   }
 
-  onClustererComplete = (bins) => {
+  handleClustererComplete = (bins) => {
     bins = bins.map(bin => ({
       ...bin,
       isSelected: true
@@ -31,11 +31,11 @@ export default class RefineModal extends React.PureComponent {
     this.setState({ clustererProgress: null, bins })
   }
 
-  setBins = (bins) => {
+  handleChangeBins = (bins) => {
     this.setState({ clustererProgress: null, bins })
   }
 
-  submit = () => {
+  handleSubmit = () => {
     const renames = {}
     for (const bin of this.state.bins) {
       if (bin.isSelected) {
@@ -61,10 +61,10 @@ export default class RefineModal extends React.PureComponent {
         <ModalBody>
           <RefineClusterer
             bucket={bucket}
-            onProgress={this.onClustererProgress}
-            onComplete={this.onClustererComplete}
+            onProgress={this.handleClustererProgress}
+            onComplete={this.handleClustererComplete}
           />
-          {bins ? <RefineBins bins={bins} onChange={this.setBins} /> : <RefineClustererProgress progress={clustererProgress} />}
+          {bins ? <RefineBins bins={bins} onChange={this.handleChangeBins} /> : <RefineClustererProgress progress={clustererProgress} />}
         </ModalBody>
         <ModalFooter>
           <RefineStatus clustererProgress={clustererProgress} nBinsTotal={nBinsTotal} />
@@ -80,7 +80,7 @@ export default class RefineModal extends React.PureComponent {
               name='submit'
               type='button'
               className='action-button button-blue'
-              onClick={this.submit}
+              onClick={this.handleSubmit}
               disabled={!canSubmit}
             >Merge selected
             </button>

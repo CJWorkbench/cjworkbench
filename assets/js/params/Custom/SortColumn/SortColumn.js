@@ -43,17 +43,17 @@ export default class SortColumn extends React.PureComponent {
     }).isRequired
   }
 
-  onChangeIsAscending = (isAscending) => {
+  handleChangeIsAscending = (isAscending) => {
     const { index, value: { colname }, onChange } = this.props
     onChange(index, { colname, is_ascending: isAscending })
   }
 
-  onChangeColname = (colnameOrNull) => {
+  handleChangeColname = (colnameOrNull) => {
     const { index, value, onChange } = this.props
     onChange(index, { is_ascending: value.is_ascending, colname: (colnameOrNull || '') })
   }
 
-  onClickDelete = (ev) => {
+  handleClickDelete = (ev) => {
     const { index, onDelete } = this.props
     onDelete(index)
   }
@@ -73,21 +73,21 @@ export default class SortColumn extends React.PureComponent {
           prompt='Select a column'
           isReadOnly={isReadOnly}
           inputColumns={inputColumns}
-          onChange={this.onChangeColname}
+          onChange={this.handleChangeColname}
         />
         <AscendingParam
           name={`${name}[is_ascending]`}
           fieldId={`${fieldId}_is_ascending`}
           value={value.is_ascending}
           isReadOnly={isReadOnly}
-          onChange={this.onChangeIsAscending}
+          onChange={this.handleChangeIsAscending}
         />
         {(onDelete && !isReadOnly) ? (
           <div className='delete'>
             <button
               className='delete'
               name={`${name}[delete]`}
-              onClick={this.onClickDelete}
+              onClick={this.handleClickDelete}
             >
               <i className='icon-close' />
             </button>

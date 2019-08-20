@@ -19,7 +19,7 @@ export default class SortColumns extends React.PureComponent {
     }).isRequired).isRequired
   }
 
-  onChangeSortColumn = (index, sortColumn) => {
+  handleChangeSortColumn = (index, sortColumn) => {
     const { value, onChange, isReadOnly } = this.props
     if (isReadOnly) return
     const newValue = value.slice()
@@ -27,7 +27,7 @@ export default class SortColumns extends React.PureComponent {
     onChange(newValue)
   }
 
-  onDeleteSortColumn = (index) => {
+  handleDeleteSortColumn = (index) => {
     const { onChange, isReadOnly } = this.props
     if (isReadOnly) return
     const newValue = this.value.slice()
@@ -35,7 +35,7 @@ export default class SortColumns extends React.PureComponent {
     onChange(newValue)
   }
 
-  onAdd = () => {
+  handleClickAdd = () => {
     const { onChange, isReadOnly } = this.props
     if (isReadOnly) return
     const newValue = this.value.slice()
@@ -60,7 +60,7 @@ export default class SortColumns extends React.PureComponent {
   render () {
     const { name, fieldId, isReadOnly, inputColumns } = this.props
     const value = this.value
-    const onDelete = value.length <= 1 ? null : this.onDeleteSortColumn
+    const handleDelete = value.length <= 1 ? null : this.handleDeleteSortColumn
 
     return (
       <>
@@ -74,8 +74,8 @@ export default class SortColumns extends React.PureComponent {
               value={itemValue}
               name={`${name}[${index}]`}
               fieldId={`${fieldId}_${index}`}
-              onChange={this.onChangeSortColumn}
-              onDelete={onDelete}
+              onChange={this.handleChangeSortColumn}
+              onDelete={handleDelete}
             />
           ))}
         </ul>
@@ -84,7 +84,7 @@ export default class SortColumns extends React.PureComponent {
             type='button'
             className='add'
             name={`${name}[add]`}
-            onClick={this.onAdd}
+            onClick={this.handleClickAdd}
           >
             <i className='icon-add' /> Add
           </button>
