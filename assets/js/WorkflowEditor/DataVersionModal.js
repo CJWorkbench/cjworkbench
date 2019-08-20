@@ -76,7 +76,7 @@ class FetchVersion extends React.PureComponent {
     onSelect: PropTypes.func.isRequired // func(versionId) => undefined
   }
 
-  onChange = (ev) => {
+  handleChange = (ev) => {
     if (ev.target.checked) {
       this.props.onSelect(this.props.id)
     }
@@ -90,7 +90,7 @@ class FetchVersion extends React.PureComponent {
 
     return (
       <label className={className}>
-        <input type='radio' name='data-version' value={id} checked={isSelected} onChange={this.onChange} />
+        <input type='radio' name='data-version' value={id} checked={isSelected} onChange={this.handleChange} />
         <time time={date.toISOString()}>{formatDate(date)}</time>
       </label>
     )
@@ -109,19 +109,22 @@ class NotificationsForm extends React.PureComponent {
     onSubmit: PropTypes.func.isRequired // func(bool) => undefined
   }
 
-  onChange = (ev) => {
+  handleChange = (ev) => {
     this.props.onSubmit(ev.target.checked) // should change the state
+  }
+
+  handleSubmit = (ev) => {
+    ev.preventDefault()
+    ev.stopPropagation()
   }
 
   render () {
     const checked = this.props.notificationsEnabled
-
     const className = checked ? 'notifications-enabled' : 'notifications-disabled'
-
     const iconAlert = checked ? 'icon-notification' : 'icon-no-notification'
 
     return (
-      <form onSubmit={this.onSubmit} className={`notifications ${className}`}>
+      <form onSubmit={this.handleSubmit} className={`notifications ${className}`}>
         <div className='text'>
           <p className='status'><i className={`icon ${iconAlert}`} /> Alerts are <strong>{checked ? ' on' : ' off'}</strong></p>
           <p className='description'>{checked ? (
@@ -133,7 +136,7 @@ class NotificationsForm extends React.PureComponent {
         </div>
         <div className='options'>
           <label>
-            <input name='notifications-enabled' type='checkbox' checked={checked} onChange={this.onChange} />
+            <input name='notifications-enabled' type='checkbox' checked={checked} onChange={this.handleChange} />
             <span className='action'>{checked ? 'Turn off' : 'Turn on'}</span>
           </label>
         </div>
@@ -163,16 +166,16 @@ export class DataVersionModal extends React.PureComponent {
     selectedFetchVersionId: this.props.selectedFetchVersionId
   }
 
-  onChangeNotificationsEnabled = (isEnabled) => {
+  handleChangeNotificationsEnabled = (isEnabled) => {
     const { onChangeNotificationsEnabled, wfModuleId } = this.props
     onChangeNotificationsEnabled(wfModuleId, isEnabled)
   }
 
-  setSelectedFetchVersionId = (selectedFetchVersionId) => {
+  handleSelectSelectedFetchVersionId = (selectedFetchVersionId) => {
     this.setState({ selectedFetchVersionId })
   }
 
-  onSubmit = () => {
+  handleSubmit = () => {
     if (this.state.selectedFetchVersionId !== this.props.selectedFetchVersionId) {
       const { fetchWfModuleId, onChangeFetchVersionId } = this.props
       onChangeFetchVersionId(fetchWfModuleId, this.state.selectedFetchVersionId)
@@ -193,14 +196,15 @@ export class DataVersionModal extends React.PureComponent {
       <Modal className='data-versions-modal' isOpen fade={false} toggle={onClose}>
         <ModalHeader toggle={onClose}>Data Versions</ModalHeader>
         <ModalBody>
-          <form onSubmit={this.onSubmit} onCancel={this.onClose}>
+          <form onSubmit={this.handleSubmit} onCancel={onClose}>
             <ol>
               {fetchVersions.map(v => (
-                <li key={v.id}><FetchVersion
-                  onSelect={this.setSelectedFetchVersionId}
-                  isSelected={this.state.selectedFetchVersionId === v.id}
-                  {...v}
-                />
+                <li key={v.id}>
+                  <FetchVersion
+                    onSelect={this.handleSelectSelectedFetchVersionId}
+                    isSelected={this.state.selectedFetchVersionId === v.id}
+                    {...v}
+                  />
                 </li>
               ))}
             </ol>
@@ -210,14 +214,14 @@ export class DataVersionModal extends React.PureComponent {
           {isAnonymous ? null : (
             <NotificationsForm
               notificationsEnabled={notificationsEnabled}
-              onSubmit={this.onChangeNotificationsEnabled}
+              onSubmit={this.handleChangeNotificationsEnabled}
             />
           )}
           <div className='actions'>
             <button
               name='load'
               disabled={this.state.selectedFetchVersionId === this.props.selectedFetchVersionId}
-              onClick={this.onSubmit}
+              onClick={this.handleSubmit}
             >Load
             </button>
           </div>

@@ -224,6 +224,7 @@ exports[`DataVersionModal matches snapshot 1`] = `
                   className="modal-body"
                 >
                   <form
+                    onCancel={[MockFunction]}
                     onSubmit={[Function]}
                   >
                     <ol>
@@ -297,6 +298,7 @@ exports[`DataVersionModal matches snapshot 1`] = `
                   >
                     <form
                       className="notifications notifications-disabled"
+                      onSubmit={[Function]}
                     >
                       <div
                         className="text"
