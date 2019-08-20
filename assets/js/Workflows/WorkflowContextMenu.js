@@ -12,12 +12,12 @@ export default class WorkflowContextMenu extends React.Component {
     duplicateWorkflow: PropTypes.func.isRequired
   }
 
-  onClickDelete = () => {
+  handleClickDelete = () => {
     const { workflowId, deleteWorkflow } = this.props
     if (deleteWorkflow) deleteWorkflow(workflowId)
   }
 
-  onClickDuplicate = () => {
+  handleClickDuplicate = () => {
     const { workflowId, duplicateWorkflow } = this.props
     duplicateWorkflow(workflowId)
   }
@@ -29,12 +29,12 @@ export default class WorkflowContextMenu extends React.Component {
           <i className='icon-more' />
         </DropdownToggle>
         <DropdownMenu>
-          <DropdownItem onClick={this.onClickDuplicate} className='duplicate-workflow'>
+          <DropdownItem onClick={this.handleClickDuplicate} className='duplicate-workflow'>
             <i className='icon-duplicate' />
             <span>Duplicate</span>
           </DropdownItem>
           {this.props.deleteWorkflow ? (
-            <DropdownItem onClick={this.onClickDelete} className='delete-workflow'>
+            <DropdownItem onClick={this.handleClickDelete} className='delete-workflow'>
               <i className='icon-bin' />
               <span>Delete</span>
             </DropdownItem>

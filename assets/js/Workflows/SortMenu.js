@@ -10,7 +10,7 @@ export default class SortMenu extends React.Component {
     setComparator: PropTypes.func.isRequired // func(comparator) => undefined
   }
 
-  onClickComparator = (ev) => {
+  handleClickComparator = (ev) => {
     const comparator = ev.target.getAttribute('data-comparator')
     this.props.setComparator(comparator)
   }
@@ -27,11 +27,11 @@ export default class SortMenu extends React.Component {
             Sort <i className={this.icon} />
           </DropdownToggle>
           <DropdownMenu>
-            <DropdownItem data-comparator='last_update|descending' onClick={this.onClickComparator}>Last modified</DropdownItem>
-            <DropdownItem data-comparator='last_update|ascending' onClick={this.onClickComparator}>Oldest modified</DropdownItem>
+            <DropdownItem data-comparator='last_update|descending' onClick={this.handleClickComparator}>Last modified</DropdownItem>
+            <DropdownItem data-comparator='last_update|ascending' onClick={this.handleClickComparator}>Oldest modified</DropdownItem>
             <DropdownDivider />
-            <DropdownItem data-comparator='name|ascending' onClick={this.onClickComparator}>Alphabetical</DropdownItem>
-            <DropdownItem data-comparator='name|descending' onClick={this.onClickComparator}>Reverse alphabetical</DropdownItem>
+            <DropdownItem data-comparator='name|ascending' onClick={this.handleClickComparator}>Alphabetical</DropdownItem>
+            <DropdownItem data-comparator='name|descending' onClick={this.handleClickComparator}>Reverse alphabetical</DropdownItem>
           </DropdownMenu>
         </UncontrolledDropdown>
       </div>

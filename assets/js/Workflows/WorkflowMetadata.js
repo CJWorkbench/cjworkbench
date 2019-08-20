@@ -12,7 +12,7 @@ export default class WorkflowMetadata extends React.Component {
     test_now: PropTypes.object // optional injection for testing, avoid time zone issues for Last Update time
   }
 
-  openShareModal = (ev) => {
+  handleClickOpenShareModal = (ev) => {
     // On the Workflows page, this button is rendered within an <a>. Make sure
     // the browser's usual <a> handling doesn't happen.
     ev.preventDefault()
@@ -37,7 +37,7 @@ export default class WorkflowMetadata extends React.Component {
     const modalLink = !(this.props.workflow.read_only || this.props.workflow.is_anonymous) ? (
       <li>
         <span className='separator'>-</span>
-        <button type='button' className='public-private' title='Change privacy' onClick={this.openShareModal}>
+        <button type='button' className='public-private' title='Change privacy' onClick={this.handleClickOpenShareModal}>
           {this.props.workflow.public ? 'public' : 'private'}
         </button>
       </li>

@@ -46,7 +46,7 @@ export default class Workflows extends React.Component {
     this.setState({ shareModalWorkflowId: workflowId })
   }
 
-  closeShareModal = () => {
+  handleCloseShareModal = () => {
     this.setState({ shareModalWorkflowId: null })
   }
 
@@ -76,7 +76,7 @@ export default class Workflows extends React.Component {
         updateAclEntry={this.updateAclEntry}
         deleteAclEntry={this.deleteAclEntry}
         logShare={this.logShare}
-        onClickClose={this.closeShareModal}
+        onClickClose={this.handleCloseShareModal}
       />
     )
   }
