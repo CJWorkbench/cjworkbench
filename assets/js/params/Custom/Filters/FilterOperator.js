@@ -27,7 +27,8 @@ class OneOperator extends React.PureComponent {
         name={name}
         className='unselected-operator'
         onClick={this.onClick}
-      >{text}</button>
+      >{text}
+      </button>
     )
   }
 }

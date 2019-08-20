@@ -172,11 +172,13 @@ describe('Workflow list page', () => {
   })
 
   it('shared and template panes should have a placeholder when no workflows', (done) => {
-    const w = wrapper({ workflows: {
-      owned: testWorkflows.owned,
-      shared: [],
-      templates: []
-    } })
+    const w = wrapper({
+      workflows: {
+        owned: testWorkflows.owned,
+        shared: [],
+        templates: []
+      }
+    })
     setImmediate(() => {
       w.update()
       w.find('.nav-link').findWhere(node => node.props().children === 'Shared with me').simulate('click')

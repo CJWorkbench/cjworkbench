@@ -26,8 +26,10 @@ describe('SortColumns', () => {
     w.find('button[name="sort_columns[add]"]').simulate('click') // add new param
     expect(w.prop('onChange')).toHaveBeenCalledWith([{ colname: '', is_ascending: true },
       { colname: '', is_ascending: true }, { colname: '', is_ascending: true }])
-    w.setProps({ value: [{ colname: '', is_ascending: true },
-      { colname: '', is_ascending: true }, { colname: '', is_ascending: true }] })
+    w.setProps({
+      value: [{ colname: '', is_ascending: true },
+        { colname: '', is_ascending: true }, { colname: '', is_ascending: true }]
+    })
 
     expect(w.find('button[name="sort_columns[add]"]')).toHaveLength(0)
   })

@@ -24,7 +24,7 @@ export default class MultiLineString extends React.PureComponent {
     const { fieldId, label, value, placeholder, isReadOnly, name } = this.props
 
     return (
-      <React.Fragment>
+      <>
         <MaybeLabel fieldId={fieldId} label={label} />
         <textarea
           onChange={this.onChange}
@@ -35,7 +35,7 @@ export default class MultiLineString extends React.PureComponent {
           value={value}
           placeholder={placeholder || ''}
         />
-      </React.Fragment>
+      </>
     )
   }
 }

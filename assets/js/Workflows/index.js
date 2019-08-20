@@ -90,10 +90,12 @@ export default class Workflows extends React.Component {
 
     this.props.api.deleteWorkflow(workflowId)
       .then(() => {
-        this.setState({ workflows: {
-          ...this.state.workflows,
-          [tabName]: this.state.workflows[tabName].filter(w => w.id !== workflowId)
-        } })
+        this.setState({
+          workflows: {
+            ...this.state.workflows,
+            [tabName]: this.state.workflows[tabName].filter(w => w.id !== workflowId)
+          }
+        })
       })
   }
 
@@ -101,10 +103,12 @@ export default class Workflows extends React.Component {
     return this.props.api.duplicateWorkflow(id)
       .then(json => {
         // Add to beginning of owned list then set activeTab to owned
-        this.setState({ workflows: {
-          ...this.state.workflows,
-          owned: [json, ...this.state.workflows.owned]
-        } })
+        this.setState({
+          workflows: {
+            ...this.state.workflows,
+            owned: [json, ...this.state.workflows.owned]
+          }
+        })
       })
   }
 

@@ -64,8 +64,10 @@ describe('Column', () => {
   // })
 
   it('should retain double spaces in value', async () => {
-    const w = wrapper({ value: 'column  with  double  spaces',
-      inputColumns: [{ name: 'column  with  double  spaces' }] })
+    const w = wrapper({
+      value: 'column  with  double  spaces',
+      inputColumns: [{ name: 'column  with  double  spaces' }]
+    })
     await tick() // load columns
     w.update()
 

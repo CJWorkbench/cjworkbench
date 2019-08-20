@@ -163,11 +163,13 @@ describe('ParamsForm', () => {
     it('should show conditional parameter matching menu value', () => {
       const w = wrapper({
         fields: [
-          field('menu_select', 'menu', { enumOptions: [
-            { value: 'mango', label: 'Mango' },
-            'separator',
-            { value: 'banana', label: 'Banana' }
-          ] }),
+          field('menu_select', 'menu', {
+            enumOptions: [
+              { value: 'mango', label: 'Mango' },
+              'separator',
+              { value: 'banana', label: 'Banana' }
+            ]
+          }),
           field('testme', 'string', { visibleIf: { idName: 'menu_select', value: ['banana', 'orange'] } })
         ],
         value: {
@@ -181,11 +183,13 @@ describe('ParamsForm', () => {
     it('should hide conditional parameter not-matching menu value', () => {
       const w = wrapper({
         fields: [
-          field('menu_select', 'menu', { enumOptions: [
-            { value: 'mango', label: 'Mango' },
-            'separator',
-            { value: 'banana', label: 'Banana' }
-          ] }),
+          field('menu_select', 'menu', {
+            enumOptions: [
+              { value: 'mango', label: 'Mango' },
+              'separator',
+              { value: 'banana', label: 'Banana' }
+            ]
+          }),
           field('testme', 'string', { visibleIf: { idName: 'menu_select', value: ['banana', 'orange'] } })
         ],
         value: {
@@ -199,11 +203,13 @@ describe('ParamsForm', () => {
     it('should hide conditional parameter matching inverted menu value', () => {
       const w = wrapper({
         fields: [
-          field('menu_select', 'menu', { enumOptions: [
-            { value: 'mango', label: 'Mango' },
-            'separator',
-            { value: 'banana', label: 'Banana' }
-          ] }),
+          field('menu_select', 'menu', {
+            enumOptions: [
+              { value: 'mango', label: 'Mango' },
+              'separator',
+              { value: 'banana', label: 'Banana' }
+            ]
+          }),
           field('testme', 'string', { visibleIf: { idName: 'menu_select', value: ['banana', 'orange'], invert: true } })
         ],
         value: {

@@ -28,7 +28,7 @@ export default class CellEdits extends React.Component {
     for (const edit of value) {
       const colName = edit.col
       const colEdits = edits[colName] || []
-      colEdits.push({ row: edit['row'], value: edit['value'] })
+      colEdits.push({ row: edit.row, value: edit.value })
       edits[colName] = colEdits
     }
 
@@ -46,7 +46,7 @@ export default class CellEdits extends React.Component {
 
   render () {
     return (
-      <React.Fragment>
+      <>
         {this.editList.map(({ col, edits }) => (
           <div className='cell-edits--column' key={col}>
             <div className='edited-column'>{col}</div>
@@ -60,7 +60,7 @@ export default class CellEdits extends React.Component {
             </div>
           </div>
         ))}
-      </React.Fragment>
+      </>
     )
   }
 }

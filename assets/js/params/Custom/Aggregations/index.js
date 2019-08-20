@@ -65,7 +65,7 @@ export default class Aggregations extends React.PureComponent {
     const onDelete = value.length <= 1 ? null : this.onDeleteAggregation
 
     return (
-      <React.Fragment>
+      <>
         <label>Operations</label>
         <ul>
           {value.map((aggregation, index) => (
@@ -92,7 +92,7 @@ export default class Aggregations extends React.PureComponent {
             <i className='icon-add' /> Add
           </button>
         )}
-      </React.Fragment>
+      </>
     )
   }
 }

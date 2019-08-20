@@ -158,13 +158,13 @@ export class EditableColumnName extends React.Component {
     } else {
       return (
         <span
-          className={'column-key'}
+          className='column-key'
           onClick={this.enterEditMode}
         >
           <div className='value'>
             {this.state.newName}
           </div>
-          <div className={'column-type'}>
+          <div className='column-type'>
             {columnTypeDisplay[this.props.columnType]}
           </div>
         </span>
@@ -287,7 +287,7 @@ export class ColumnHeader extends React.PureComponent {
     const draggingClass = (draggingColumnIndex === index) ? 'dragging' : ''
 
     return (
-      <React.Fragment>
+      <>
         <div
           className='column-letter'
           draggable
@@ -312,7 +312,7 @@ export class ColumnHeader extends React.PureComponent {
           {columnMenuSection}
           {maybeDropZone('right', index + 1)}
         </div>
-      </React.Fragment>
+      </>
     )
   }
 }

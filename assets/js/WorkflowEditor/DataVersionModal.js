@@ -124,11 +124,12 @@ class NotificationsForm extends React.PureComponent {
       <form onSubmit={this.onSubmit} className={`notifications ${className}`}>
         <div className='text'>
           <p className='status'><i className={`icon ${iconAlert}`} /> Alerts are <strong>{checked ? ' on' : ' off'}</strong></p>
-          <p className='description'>{ checked ? (
+          <p className='description'>{checked ? (
             'You will receive and email if the output of this module changes'
           ) : (
             'Turn alerts ON to receive an email if the output of this module changes'
-          )}</p>
+          )}
+          </p>
         </div>
         <div className='options'>
           <label>
@@ -194,16 +195,19 @@ export class DataVersionModal extends React.PureComponent {
         <ModalBody>
           <form onSubmit={this.onSubmit} onCancel={this.onClose}>
             <ol>
-              {fetchVersions.map(v => <li key={v.id}><FetchVersion
-                onSelect={this.setSelectedFetchVersionId}
-                isSelected={this.state.selectedFetchVersionId === v.id}
-                {...v}
-              /></li>)}
+              {fetchVersions.map(v => (
+                <li key={v.id}><FetchVersion
+                  onSelect={this.setSelectedFetchVersionId}
+                  isSelected={this.state.selectedFetchVersionId === v.id}
+                  {...v}
+                />
+                </li>
+              ))}
             </ol>
           </form>
         </ModalBody>
         <ModalFooter>
-          { isAnonymous ? null : (
+          {isAnonymous ? null : (
             <NotificationsForm
               notificationsEnabled={notificationsEnabled}
               onSubmit={this.onChangeNotificationsEnabled}
@@ -214,7 +218,8 @@ export class DataVersionModal extends React.PureComponent {
               name='load'
               disabled={this.state.selectedFetchVersionId === this.props.selectedFetchVersionId}
               onClick={this.onSubmit}
-            >Load</button>
+            >Load
+            </button>
           </div>
         </ModalFooter>
       </Modal>

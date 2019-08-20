@@ -36,7 +36,7 @@ export default class MenuParam extends React.PureComponent {
     })
 
     return (
-      <React.Fragment>
+      <>
         <MaybeLabel fieldId={fieldId} label={label} />
         <select
           name={name}
@@ -47,7 +47,7 @@ export default class MenuParam extends React.PureComponent {
         >
           {options}
         </select>
-      </React.Fragment>
+      </>
     )
   }
 }

@@ -25,20 +25,20 @@ export function MaybeNotYourWorkflow (props) {
   if (props.isAnonymous) {
     className = 'is-anonymous'
     inner = (
-      <F>
+      <>
         <h3>Demo workflow -</h3>
         <p className='message' />
         {suggestion}
-      </F>
+      </>
     )
   } else if (props.isReadOnly) {
     className = 'is-read-only'
     inner = (
-      <F>
+      <>
         <h3>You are viewing a shared workflow</h3>
         <p className='message' />
         {suggestion}
-      </F>
+      </>
     )
   }
 
@@ -75,7 +75,7 @@ export class Workflow extends React.PureComponent {
 
     return (
       <main className={className}>
-        { lesson ? <Lesson {...lesson} /> : null }
+        {lesson ? <Lesson {...lesson} /> : null}
 
         <div className='workflow-container'>
           <WorkflowNavBar

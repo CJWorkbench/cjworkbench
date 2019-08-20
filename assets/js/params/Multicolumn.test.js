@@ -30,9 +30,7 @@ describe('Multicolumn', () => {
     it('renders column names', () => {
       const w = wrapper()
       expect(w.find('Select[name="columns"]').prop('options')).toHaveLength(4)
-      expect(w.find('Select[name="columns"]').prop('options')).toEqual([{
-        label: 'A', value: 'A' }, { label: 'B', value: 'B' }, { label: 'C', value: 'C' }, { label: 'D', value: 'D'
-      }])
+      expect(w.find('Select[name="columns"]').prop('options')).toEqual([{ label: 'A', value: 'A' }, { label: 'B', value: 'B' }, { label: 'C', value: 'C' }, { label: 'D', value: 'D' }])
     })
 
     it('selects all columns when "select all" is clicked', () => {

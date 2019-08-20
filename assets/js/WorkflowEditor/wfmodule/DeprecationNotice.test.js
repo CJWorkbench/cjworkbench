@@ -7,8 +7,8 @@ describe('DeprecationNotice', () => {
   const wrapper = (extraProps = {}) => {
     return mount(
       <DeprecationNotice
-        helpUrl={'https://example.org'}
-        message={'Message'}
+        helpUrl='https://example.org'
+        message='Message'
         {...extraProps}
       />
     )

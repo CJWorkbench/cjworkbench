@@ -44,7 +44,7 @@ export default class NumberField extends React.PureComponent {
     const { name, value, label, fieldId, placeholder, isReadOnly } = this.props
 
     return (
-      <React.Fragment>
+      <>
         <MaybeLabel label={label} fieldId={fieldId} />
         <input
           type='number'
@@ -56,7 +56,7 @@ export default class NumberField extends React.PureComponent {
           onKeyDown={this.onKeyDown}
           value={value}
         />
-      </React.Fragment>
+      </>
     )
   }
 }

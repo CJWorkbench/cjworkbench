@@ -60,7 +60,7 @@ export default class Url extends React.PureComponent {
     const heading = isPublic ? 'Public link (accessible to anyone)' : 'Private link (only accessible to collaborators)'
 
     return (
-      <React.Fragment>
+      <>
         <h6 key='heading'>{heading}</h6>
         <div key='url' className='copy-url'>
           <div className='url'>{url}</div>
@@ -68,7 +68,7 @@ export default class Url extends React.PureComponent {
           {nTimesCopied > 0 ? <div className='copied-flash' key={nTimesCopied} /> : null}
         </div>
         {isPublic ? this.renderSocialLinks() : null}
-      </React.Fragment>
+      </>
     )
   }
 }

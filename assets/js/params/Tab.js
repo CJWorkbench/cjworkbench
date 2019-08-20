@@ -32,7 +32,7 @@ export default class TabParam extends React.PureComponent {
       .map(({ slug, name }) => ({ label: name, value: slug }))
 
     return (
-      <React.Fragment>
+      <>
         <MaybeLabel fieldId={fieldId} label={label} />
         <ReactSelect
           name={name}
@@ -44,7 +44,7 @@ export default class TabParam extends React.PureComponent {
           isReadOnly={isReadOnly}
           placeholder={placeholder || 'Select Tab'}
         />
-      </React.Fragment>
+      </>
     )
   }
 }

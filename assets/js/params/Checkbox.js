@@ -18,7 +18,7 @@ export default class Checkbox extends React.PureComponent {
   render () {
     const { name, fieldId, label, isReadOnly, value } = this.props
     return (
-      <React.Fragment>
+      <>
         <div className='checkbox-container'>
           <input
             type='checkbox'
@@ -32,7 +32,7 @@ export default class Checkbox extends React.PureComponent {
             {' '}{label}
           </label>
         </div>
-      </React.Fragment>
+      </>
     )
   }
 }

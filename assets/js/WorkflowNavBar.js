@@ -180,7 +180,7 @@ export default class WorkflowNavBar extends React.Component {
     ) : null
 
     return (
-      <React.Fragment>
+      <>
         {spinner}
         <nav className='navbar'>
           <div className='navbar-elements'>
@@ -204,7 +204,7 @@ export default class WorkflowNavBar extends React.Component {
             </div>
           </div>
         </nav>
-      </React.Fragment>
+      </>
     )
   }
 }

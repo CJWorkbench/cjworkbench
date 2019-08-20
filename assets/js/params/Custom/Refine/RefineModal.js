@@ -64,7 +64,7 @@ export default class RefineModal extends React.PureComponent {
             onProgress={this.onClustererProgress}
             onComplete={this.onClustererComplete}
           />
-          { bins ? <RefineBins bins={bins} onChange={this.setBins} /> : <RefineClustererProgress progress={clustererProgress} /> }
+          {bins ? <RefineBins bins={bins} onChange={this.setBins} /> : <RefineClustererProgress progress={clustererProgress} />}
         </ModalBody>
         <ModalFooter>
           <RefineStatus clustererProgress={clustererProgress} nBinsTotal={nBinsTotal} />
@@ -74,14 +74,16 @@ export default class RefineModal extends React.PureComponent {
               name='close'
               className='action-button button-gray'
               onClick={onClose}
-            >Cancel</button>
+            >Cancel
+            </button>
             <button
               name='submit'
               type='button'
               className='action-button button-blue'
               onClick={this.submit}
               disabled={!canSubmit}
-            >Merge selected</button>
+            >Merge selected
+            </button>
           </div>
         </ModalFooter>
       </Modal>

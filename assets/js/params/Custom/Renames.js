@@ -131,9 +131,9 @@ export default class RenameEntries extends React.PureComponent {
   render () {
     const entries = this.renderEntries()
     return (
-      <React.Fragment>
+      <>
         {entries}
-      </React.Fragment>
+      </>
     )
   }
 }

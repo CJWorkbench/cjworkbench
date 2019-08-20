@@ -43,7 +43,7 @@ const UnreachableStepTable = () => (
 
 const OkStepTable = React.memo(function OkStepTable ({ isLoaded, isReadOnly, wfModuleId, deltaId, columns, nRows, loadRows }) {
   return (
-    <React.Fragment>
+    <>
       <TableView
         isReadOnly={isReadOnly}
         loadRows={loadRows}
@@ -53,7 +53,7 @@ const OkStepTable = React.memo(function OkStepTable ({ isLoaded, isReadOnly, wfM
         nRows={nRows}
       />
       {isLoaded ? null : <Spinner />}
-    </React.Fragment>
+    </>
   )
 })
 

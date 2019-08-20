@@ -28,7 +28,7 @@ export default class MultitabParam extends React.PureComponent {
       .map(({ slug, name }) => ({ label: name, value: slug }))
 
     return (
-      <React.Fragment>
+      <>
         <MaybeLabel fieldId={fieldId} label={label} />
         <ReactSelect
           name={name}
@@ -41,7 +41,7 @@ export default class MultitabParam extends React.PureComponent {
           placeholder={placeholder || 'Select Tabs'}
           isMulti
         />
-      </React.Fragment>
+      </>
     )
   }
 }

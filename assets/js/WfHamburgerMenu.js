@@ -32,7 +32,7 @@ export default class WfHamburgerMenu extends React.Component {
     const loggedIn = !!user
 
     return (
-      <React.Fragment>
+      <>
         <LocaleSwitcher />
         <UncontrolledDropdown>
           <DropdownToggle title='menu' className='context-button'>
@@ -58,7 +58,7 @@ export default class WfHamburgerMenu extends React.Component {
             api={api}
           />
         ) : null}
-      </React.Fragment>
+      </>
     )
   }
 }

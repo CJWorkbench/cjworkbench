@@ -113,7 +113,7 @@ export default class Multicolumn extends React.PureComponent {
 
     return (
       // The name attributes in the buttons are used for selection in tests. Do not change them.
-      <React.Fragment>
+      <>
         <MaybeLabel fieldId={fieldId} label={label} />
         <ReactSelect
           isMulti
@@ -129,7 +129,7 @@ export default class Multicolumn extends React.PureComponent {
           value={this.value}
           placeholder={placeholder || 'Select columns'}
         />
-      </React.Fragment>
+      </>
     )
   }
 }

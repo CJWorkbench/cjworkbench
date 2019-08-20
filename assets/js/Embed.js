@@ -6,7 +6,7 @@ export default class Embed extends React.Component {
     overlayOpen: false
   }
 
-  toggleOverlay = (e) => {
+  handleToggleOverlay = (e) => {
     this.setState({
       overlayOpen: !this.state.overlayOpen
     })
@@ -41,29 +41,29 @@ export default class Embed extends React.Component {
 
     return (
       <div className='embed-wrapper'>
-        <iframe src={'/api/wfmodules/' + this.props.wf_module.id + '/output'} frameborder='0' />
+        <iframe src={'/api/wfmodules/' + this.props.wf_module.id + '/output'} frameBorder={0} />
         <div className='embed-footer'>
           <div className='metadata-stack'>
             <div className='embed-footer-logo'>
-              <a href='http://workbenchdata.com' target='_blank'>
+              <a href='http://workbenchdata.com' target='_blank' rel='noopener noreferrer'>
                 <img src={`${window.STATIC_URL}images/logo.png`} width='35' />
               </a>
             </div>
             <div className='embed-footer-meta'>
               <div className='title'>
-                <a href={'/workflows/' + this.props.workflow.id} target='_blank'>
+                <a href={'/workflows/' + this.props.workflow.id} target='_blank' rel='noopener noreferrer'>
                   {this.props.workflow.name}
                 </a>
               </div>
               <div className='metadata'>
                 <ul>
                   <li>
-                    <a href={'/workflows/' + this.props.workflow.id} target='_blank'>
+                    <a href={'/workflows/' + this.props.workflow.id} target='_blank' rel='noopener noreferrer'>
                     by {this.props.workflow.owner_name}
                     </a>
                   </li>
                   <li>
-                    <a href={'/workflows/' + this.props.workflow.id} target='_blank'>
+                    <a href={'/workflows/' + this.props.workflow.id} target='_blank' rel='noopener noreferrer'>
                     Updated {timeDifference(this.props.workflow.last_update, new Date())}
                     </a>
                   </li>
@@ -71,11 +71,11 @@ export default class Embed extends React.Component {
               </div>
             </div>
           </div>
-          <button type='button' onClick={this.toggleOverlay} className='embed-footer-button'>
+          <button type='button' onClick={this.handleToggleOverlay} className='embed-footer-button'>
             <i className='icon icon-code' />
           </button>
         </div>
-        <div className={'embed-overlay' + (this.state.overlayOpen ? ' open' : '')} onClick={this.toggleOverlay}>
+        <div className={'embed-overlay' + (this.state.overlayOpen ? ' open' : '')} onClick={this.handleToggleOverlay}>
           <div className='embed-share-links' onClick={(e) => { e.stopPropagation() }}>
             <h1>EMBED THIS CHART</h1>
             <h2>Paste this code into any webpage HTML</h2>

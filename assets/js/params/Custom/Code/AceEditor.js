@@ -72,15 +72,19 @@ export default class WorkbenchAceEditor extends React.PureComponent {
     const { value, onChange, isZenMode, wfModuleError } = this.props
 
     return (
-      <React.Fragment>
+      <>
         <div className='help'>
           Define a <kbd>render</kbd> function that accepts
           a <kbd>pd.DataFrame</kbd> and returns
           a <kbd>pd.DataFrame</kbd>. You may use
           the <a target='_blank' href='https://docs.python.org/3/library/math.html'><kbd>math</kbd></a
-          >, <kbd>pd</kbd> (<a target='_blank' href='https://pandas.pydata.org/pandas-docs/stable/api.html#dataframe'
-          >Pandas</a>) and <kbd>np</kbd> (<a target='_blank' href='https://docs.scipy.org/doc/numpy/reference/routines.html'
-          >Numpy</a>) modules; <kbd>import</kbd> is disabled.
+          >, <kbd>pd</kbd> (<a
+            target='_blank' href='https://pandas.pydata.org/pandas-docs/stable/api.html#dataframe'
+          >Pandas
+                            </a>) and <kbd>np</kbd> (<a
+            target='_blank' href='https://docs.scipy.org/doc/numpy/reference/routines.html'
+                                   >Numpy
+                                   </a>) modules; <kbd>import</kbd> is disabled.
         </div>
         <div className='ace-aspect-ratio-container'>
           <div className='ace-wrapper' ref={this.wrapperRef}>
@@ -99,7 +103,7 @@ export default class WorkbenchAceEditor extends React.PureComponent {
             />
           </div>
         </div>
-      </React.Fragment>
+      </>
     )
   }
 }

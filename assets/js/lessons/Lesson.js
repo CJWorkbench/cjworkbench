@@ -55,14 +55,16 @@ export class Lesson extends React.PureComponent {
     const { currentSectionIndex } = this.state
 
     const sectionComponents = sections.map((s, i) => {
-      return <LessonSection
-        key={i}
-        index={i}
-        isCurrent={currentSectionIndex === i}
-        activeSectionIndex={activeSectionIndex}
-        activeStepIndex={activeStepIndex}
-        {...s}
-      />
+      return (
+        <LessonSection
+          key={i}
+          index={i}
+          isCurrent={currentSectionIndex === i}
+          activeSectionIndex={activeSectionIndex}
+          activeStepIndex={activeStepIndex}
+          {...s}
+        />
+      )
     })
 
     const currentSectionOrFooter = sections[currentSectionIndex] || footer

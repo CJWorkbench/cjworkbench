@@ -46,7 +46,7 @@ export default class SingleLineString extends React.PureComponent {
     const { name, fieldId, label, value, placeholder, isReadOnly } = this.props
 
     return (
-      <React.Fragment>
+      <>
         <MaybeLabel fieldId={fieldId} label={label} />
         <div className='autosize'>
           <div className='invisible-size-setter'>{value}</div>
@@ -60,7 +60,7 @@ export default class SingleLineString extends React.PureComponent {
             value={value}
           />
         </div>
-      </React.Fragment>
+      </>
     )
   }
 }

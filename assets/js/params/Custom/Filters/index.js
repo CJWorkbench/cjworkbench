@@ -91,7 +91,7 @@ export default class Filters extends React.PureComponent {
     const { operator, filters } = this.value
 
     return (
-      <React.Fragment>
+      <>
         {filters.map((filter, index) => (
           <React.Fragment key={index}>
             <Filter
@@ -126,7 +126,7 @@ export default class Filters extends React.PureComponent {
             )}
           </React.Fragment>
         ))}
-      </React.Fragment>
+      </>
     )
   }
 }

@@ -60,7 +60,7 @@ export default class DateGranularities extends React.PureComponent {
         ) : (
           <div className='no-date-selected'>
             {(dateColnames !== null && dateColnames.length === 0) ? (
-              <React.Fragment>
+              <>
                 <p>There are no Date and Time columns to group by date</p>
                 <button
                   type='button'
@@ -70,7 +70,7 @@ export default class DateGranularities extends React.PureComponent {
                 >
                   Convert columns
                 </button>
-              </React.Fragment>
+              </>
             ) : (
               <p>Select a Date and Time column to group it by date</p>
             )}

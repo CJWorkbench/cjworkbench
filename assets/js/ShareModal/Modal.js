@@ -23,8 +23,10 @@ export default class _Modal extends React.PureComponent {
   }
 
   render () {
-    const { url, isReadOnly, isPublic, setIsPublic, logShare, ownerEmail, acl,
-      updateAclEntry, deleteAclEntry, onClickClose } = this.props
+    const {
+      url, isReadOnly, isPublic, setIsPublic, logShare, ownerEmail, acl,
+      updateAclEntry, deleteAclEntry, onClickClose
+    } = this.props
 
     return (
       <Modal className='share-modal' isOpen toggle={onClickClose}>
@@ -58,7 +60,8 @@ export default class _Modal extends React.PureComponent {
               name='close'
               className='action-button button-gray'
               onClick={onClickClose}
-            >Close</button>
+            >Close
+            </button>
           </div>
         </ModalFooter>
       </Modal>

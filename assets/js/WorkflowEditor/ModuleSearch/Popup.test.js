@@ -108,11 +108,13 @@ describe('ModuleSearch Popup', () => {
   })
 
   it('should sort modules by name', () => {
-    const w = wrapper({ modules: [
-      { ...ModuleDefaults, idName: 'a', name: 'Z' },
-      { ...ModuleDefaults, idName: 'b', name: 'X' },
-      { ...ModuleDefaults, idName: 'c', name: 'Y' }
-    ] })
+    const w = wrapper({
+      modules: [
+        { ...ModuleDefaults, idName: 'a', name: 'Z' },
+        { ...ModuleDefaults, idName: 'b', name: 'X' },
+        { ...ModuleDefaults, idName: 'c', name: 'Y' }
+      ]
+    })
     expect(w.text()).toMatch(/X.*Y.*Z/)
   })
 
@@ -176,13 +178,15 @@ describe('ModuleSearch Popup', () => {
       const store = mockStore({
         modules: {
           a: { id_name: 'a', name: 'AAA', category: 'Analyze', uses_data: true, description: 'A A', icon: 'a' },
-          b: { id_name: 'b',
+          b: {
+            id_name: 'b',
             name: 'BBB',
             category: 'Analyze',
             uses_data: true,
             description: 'B B',
             icon: 'b',
-            deprecated: { end_date: '2001-01-01', message: 'Please disappear' } }
+            deprecated: { end_date: '2001-01-01', message: 'Please disappear' }
+          }
         }
       })
       const w = wrapper(store)

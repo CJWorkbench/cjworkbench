@@ -27,10 +27,10 @@ export class DataVersionSelect extends React.PureComponent {
 
     if (nVersions === 0) {
       inner = (
-        <React.Fragment>
+        <>
           <div className='label'>Version</div>
           <div className='no-versions'>–</div>
-        </React.Fragment>
+        </>
       )
     } else if (isReadOnly) {
       inner = (
@@ -38,16 +38,16 @@ export class DataVersionSelect extends React.PureComponent {
       )
     } else {
       inner = (
-        <React.Fragment>
+        <>
           <div className='label'>Version</div>
           <button type='button' title='Select version' onClick={this.openModal}>{nVersions - currentVersionIndex} of {nVersions}</button>
-          { isDataVersionModalOpen ? (
+          {isDataVersionModalOpen ? (
             <DataVersionModal
               wfModuleId={wfModuleId}
               onClose={this.closeModal}
             />
           ) : null}
-        </React.Fragment>
+        </>
       )
     }
 

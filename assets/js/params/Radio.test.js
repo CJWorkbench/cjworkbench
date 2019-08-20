@@ -22,11 +22,13 @@ describe('Radio', () => {
   })
 
   it('renders number of buttons correctly', () => {
-    const w = wrapper({ enumOptions: [
-      { value: 'x', label: 'X' },
-      { value: 'y', label: 'Y' },
-      { value: 'z', label: 'Z' }
-    ] })
+    const w = wrapper({
+      enumOptions: [
+        { value: 'x', label: 'X' },
+        { value: 'y', label: 'Y' },
+        { value: 'z', label: 'Z' }
+      ]
+    })
     expect(w.find('input[type="radio"]')).toHaveLength(3)
   })
 

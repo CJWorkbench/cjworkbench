@@ -74,11 +74,13 @@ export function NumberCellFormatter (format) {
       return <div className='cell-null cell-number' />
     }
 
-    return <div className='cell-number'>
-      {prefix ? <span className='number-prefix'>{prefix}</span> : null}
-      <span className='number-value'>{f(value)}</span>
-      {suffix ? <span className='number-suffix'>{suffix}</span> : null}
-    </div>
+    return (
+      <div className='cell-number'>
+        {prefix ? <span className='number-prefix'>{prefix}</span> : null}
+        <span className='number-value'>{f(value)}</span>
+        {suffix ? <span className='number-suffix'>{suffix}</span> : null}
+      </div>
+    )
   }
 }
 

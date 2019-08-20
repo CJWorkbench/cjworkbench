@@ -1,7 +1,7 @@
 /* globals describe, expect, it */
 import { moduleParamsBuilders } from './UpdateTableAction'
 
-const func = moduleParamsBuilders['sort']
+const func = moduleParamsBuilders.sort
 
 describe('Sort actions', () => {
   it('adds new sort module', () => {

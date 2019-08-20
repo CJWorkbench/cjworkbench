@@ -69,7 +69,7 @@ export default class LessonSection extends React.PureComponent {
         <a href='/lessons/' className='backToLessons'>Training</a>
         <h2>{title}</h2>
         <div className='description' dangerouslySetInnerHTML={({ __html: html })} />
-        { this.renderSteps(steps) }
+        {this.renderSteps(steps)}
       </section>
     )
   }

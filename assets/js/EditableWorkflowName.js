@@ -16,11 +16,11 @@ export class EditableWorkflowName extends React.Component {
     value: null // non-null only when editing
   }
 
-  onChange = (ev) => {
+  handleChange = (ev) => {
     this.setState({ value: ev.target.value })
   }
 
-  onKeyDown = (ev) => {
+  handleKeyDown = (ev) => {
     if (ev.key === 'Enter') {
       ev.preventDefault() // [2018-12-13, adamhooper] why?
       this.inputRef.current.blur() // Blur event will trigger save
@@ -30,7 +30,7 @@ export class EditableWorkflowName extends React.Component {
     }
   }
 
-  onBlur = () => {
+  handleBlur = () => {
     // If we got here by pressing Escape, we don't want to save the new value;
     // but the `value: null` we just wrote with this.setState() hasn't been
     // committed yet (because we're in the same event handler). So use the
@@ -57,12 +57,11 @@ export class EditableWorkflowName extends React.Component {
               ref={this.inputRef}
               className='editable-title--field'
               value={this.state.value === null ? this.props.value : this.state.value}
-              onChange={this.onChange}
-              onBlur={this.onBlur}
-              onKeyDown={this.onKeyDown}
+              onChange={this.handleChange}
+              onBlur={this.handleBlur}
+              onKeyDown={this.handleKeyDown}
             />
-          )
-        }
+          )}
       </div>
     )
   }

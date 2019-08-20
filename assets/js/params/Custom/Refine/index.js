@@ -130,7 +130,7 @@ class RefineModalPrompt extends React.PureComponent {
       <div className='refine-modal-prompt'>
         <button type='button' name='cluster' onClick={this.openModal}>Find clusters...</button>
         <span className='instructions' />
-        { !isModalOpen ? null : (
+        {!isModalOpen ? null : (
           <RefineModal
             bucket={this.bucket}
             onClose={this.closeModal}
@@ -284,7 +284,7 @@ class RefineGroup extends React.Component { // uses react-window's shouldCompone
           <li key={value}>
             <span className='value'>{value}</span>
             <span className='count-and-remove'>
-              { group.name === value ? null : (
+              {group.name === value ? null : (
                 <button
                   type='button'
                   name={`remove[${group.name}]`}

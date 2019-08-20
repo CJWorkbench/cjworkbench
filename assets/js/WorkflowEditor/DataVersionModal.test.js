@@ -27,9 +27,9 @@ describe('DataVersionModal', () => {
     _wrapper = mount(
       <DataVersionModal
         fetchWfModuleId={123}
-        fetchWfModuleName={'fetch'}
+        fetchWfModuleName='fetch'
         fetchVersions={Versions}
-        selectedFetchVersionId={'1000'}
+        selectedFetchVersionId='1000'
         wfModuleId={124}
         isAnonymous={false}
         notificationsEnabled={false}

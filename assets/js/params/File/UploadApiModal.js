@@ -65,8 +65,8 @@ function Instructions ({ workflowId, wfModuleSlug, apiToken }) {
     `WorkflowId = "${workflowId}"`,
     `StepId = "${wfModuleSlug}"`,
     `ApiToken = "${apiToken}"`,
-    `FileToUpload = "/path/to/test.csv"`,
-    `Filename = "test.csv"  # name that appears in Workbench`
+    'FileToUpload = "/path/to/test.csv"',
+    'Filename = "test.csv"  # name that appears in Workbench'
   ].join('\n')
 
   const importsCode = [
@@ -79,34 +79,34 @@ function Instructions ({ workflowId, wfModuleSlug, apiToken }) {
 
   const postCode = [
     `credentials_url = f"${postUrl}"`,
-    `credentials_response = requests.post(`,
-    `    credentials_url,`,
-    `    headers={"Authorization": f"Bearer {ApiToken}"}`,
-    `)`,
-    `credentials_response.raise_for_status()  # expect 200 OK`,
-    `s3_config = credentials_response.json()`
+    'credentials_response = requests.post(',
+    '    credentials_url,',
+    '    headers={"Authorization": f"Bearer {ApiToken}"}',
+    ')',
+    'credentials_response.raise_for_status()  # expect 200 OK',
+    's3_config = credentials_response.json()'
   ].join('\n')
 
   const uploadCode = [
-    `s3_client = boto3.client(`,
-    `    's3',`,
-    `    aws_access_key_id=s3_config["credentials"]["accessKeyId"],`,
-    `    aws_secret_access_key=s3_config["credentials"]["secretAccessKey"],`,
-    `    aws_session_token=s3_config["credentials"]["sessionToken"],`,
-    `    region_name=s3_config["region"],`,
-    `    endpoint_url=s3_config["endpoint"],`,
-    `    config=botocore.client.Config(s3={"addressing_style": "path"}),`,
-    `)`,
-    `s3_client.upload_file(FileToUpload, s3_config["bucket"], s3_config["key"])`
+    's3_client = boto3.client(',
+    '    \'s3\',',
+    '    aws_access_key_id=s3_config["credentials"]["accessKeyId"],',
+    '    aws_secret_access_key=s3_config["credentials"]["secretAccessKey"],',
+    '    aws_session_token=s3_config["credentials"]["sessionToken"],',
+    '    region_name=s3_config["region"],',
+    '    endpoint_url=s3_config["endpoint"],',
+    '    config=botocore.client.Config(s3={"addressing_style": "path"}),',
+    ')',
+    's3_client.upload_file(FileToUpload, s3_config["bucket"], s3_config["key"])'
   ].join('\n')
 
   const finishCode = [
-    `finish_response = requests.post(`,
-    `    s3_config["finishUrl"],`,
-    `    headers={"Authorization": f"Bearer {ApiToken}"},`,
-    `    json={"filename": Filename},`,
-    `)`,
-    `finish_response.raise_for_status()  # expect 200 OK`
+    'finish_response = requests.post(',
+    '    s3_config["finishUrl"],',
+    '    headers={"Authorization": f"Bearer {ApiToken}"},',
+    '    json={"filename": Filename},',
+    ')',
+    'finish_response.raise_for_status()  # expect 200 OK'
   ].join('\n')
 
   return (
@@ -189,7 +189,8 @@ export const UploadApiModal = React.memo(function UploadApiModal ({ wfModuleId, 
             name='close'
             className='action-button button-gray'
             onClick={onClickClose}
-          >Close</button>
+          >Close
+          </button>
         </div>
       </ModalFooter>
     </Modal>

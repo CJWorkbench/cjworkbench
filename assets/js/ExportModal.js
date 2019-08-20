@@ -4,61 +4,49 @@ import CopyToClipboard from 'react-copy-to-clipboard'
 import { logUserEvent } from './utils'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from './components/Modal'
 
-export default class ExportModal extends React.Component {
+export default class ExportModal extends React.PureComponent {
   static propTypes = {
     open: PropTypes.bool.isRequired,
     wfModuleId: PropTypes.number.isRequired, // to build download URLs
     toggle: PropTypes.func.isRequired
-  };
-
-  constructor (props) {
-    super(props)
-
-    this.onCsvCopy = this.onCsvCopy.bind(this)
-    this.onCsvLeave = this.onCsvLeave.bind(this)
-    this.onJsonCopy = this.onJsonCopy.bind(this)
-    this.onJsonLeave = this.onJsonLeave.bind(this)
-    this.logExport = this.logExport.bind(this)
-
-    this.state = {
-      csvCopied: false,
-      jsonCopied: false
-    }
   }
 
-  csvUrlString () {
-    var path = '/public/moduledata/live/' + this.props.wfModuleId + '.csv'
-    // allowing an out for testing (there is no window.location.href during test)
+  state = {
+    csvCopied: false,
+    jsonCopied: false,
+  }
+
+  buildUrlString (ext) {
+    const path = `/public/moduledata/live/${this.props.wfModuleId}.${ext}`
     if (window.location.href === 'about:blank') {
+      // allowing an out for testing (there is no window.location.href during test)
       return path
     } else {
       return new URL(path, window.location.href).href
     }
   }
 
-  jsonUrlString () {
-    var path = '/public/moduledata/live/' + this.props.wfModuleId + '.json'
-    // allowing an out for testing (there is no window.location.href during test)
-    if (window.location.href === 'about:blank') {
-      return path
-    } else {
-      return new URL(path, window.location.href).href
-    }
+  get csvUrlString () {
+    return this.buildUrlString('csv')
   }
 
-  onCsvCopy () {
+  get jsonUrlString () {
+    return this.buildUrlString('json')
+  }
+
+  handleCopyCsv = () => {
     this.setState({ csvCopied: true })
   }
 
-  onCsvLeave () {
+  handleLeaveCsv = () => {
     this.setState({ csvCopied: false })
   }
 
-  onJsonCopy () {
+  handleCopyJson = () => {
     this.setState({ jsonCopied: true })
   }
 
-  onJsonLeave () {
+  handleLeaveJson = () => {
     this.setState({ jsonCopied: false })
   }
 
@@ -67,15 +55,13 @@ export default class ExportModal extends React.Component {
   }
 
   renderCsvCopyLink () {
-    var csvString = this.csvUrlString(this.props.wfModuleId)
-
     if (this.state.csvCopied) {
       return (
-        <div className='clipboard copied' onMouseLeave={this.onCsvLeave}>CSV LINK COPIED TO CLIPBOARD</div>
+        <div className='clipboard copied' onMouseLeave={this.handleLeaveCsv}>CSV LINK COPIED TO CLIPBOARD</div>
       )
     } else {
       return (
-        <CopyToClipboard text={csvString} onCopy={this.onCsvCopy} className='clipboard test-csv-copy'>
+        <CopyToClipboard text={this.csvUrlString} onCopy={this.handleCopyCsv} className='clipboard test-csv-copy'>
           <div>COPY LIVE LINK</div>
         </CopyToClipboard>
       )
@@ -83,15 +69,13 @@ export default class ExportModal extends React.Component {
   }
 
   renderJsonCopyLink () {
-    var jsonString = this.jsonUrlString(this.props.wfModuleId)
-
     if (this.state.jsonCopied) {
       return (
-        <div className='clipboard copied' onMouseLeave={this.onJsonLeave}>JSON FEED LINK COPIED TO CLIPBOARD</div>
+        <div className='clipboard copied' onMouseLeave={this.handleLeaveJson}>JSON FEED LINK COPIED TO CLIPBOARD</div>
       )
     } else {
       return (
-        <CopyToClipboard text={jsonString} onCopy={this.onJsonCopy} className='clipboard test-json-copy'>
+        <CopyToClipboard text={this.jsonUrlString} onCopy={this.handleCopyJson} className='clipboard test-json-copy'>
           <div>COPY LIVE LINK</div>
         </CopyToClipboard>
       )
@@ -99,8 +83,6 @@ export default class ExportModal extends React.Component {
   }
 
   render () {
-    const csvString = this.csvUrlString(this.props.wfModuleId)
-    const jsonString = this.jsonUrlString(this.props.wfModuleId)
     const csvCopyLink = this.renderCsvCopyLink()
     const jsonCopyLink = this.renderJsonCopyLink()
 
@@ -113,10 +95,12 @@ export default class ExportModal extends React.Component {
             {csvCopyLink}
           </div>
           <div className='d-flex justify-content-between flex-row mb-3'>
-            <input type='url' className='url-link test-csv-field' value={csvString} readOnly />
+            <input type='url' className='url-link test-csv-field' value={this.csvUrlString} readOnly />
             <div className='download-icon-box'>
-              <a href={csvString} onClick={() => this.logExport('CSV')}
-                className='icon-download t-d-gray button-icon test-csv-download' download />
+              <a
+                href={this.csvUrlString} onClick={() => this.logExport('CSV')}
+                className='icon-download t-d-gray button-icon test-csv-download' download
+              />
             </div>
           </div>
           <div className='d-flex justify-content-between flex-row'>
@@ -124,10 +108,12 @@ export default class ExportModal extends React.Component {
             {jsonCopyLink}
           </div>
           <div className='d-flex justify-content-between flex-row'>
-            <input type='url' className='url-link test-json-field' value={jsonString} readOnly />
+            <input type='url' className='url-link test-json-field' value={this.jsonUrlString} readOnly />
             <div className='download-icon-box'>
-              <a href={jsonString} onClick={() => this.logExport('JSON')}
-                className='icon-download t-d-gray button-icon test-json-download' download />
+              <a
+                href={this.jsonUrlString} onClick={() => this.logExport('JSON')}
+                className='icon-download t-d-gray button-icon test-json-download' download
+              />
             </div>
           </div>
         </ModalBody>

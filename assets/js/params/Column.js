@@ -30,7 +30,7 @@ export default class ColumnParam extends React.PureComponent {
 
     // Keeping classNamePrefix since CSS definitions already exist
     return (
-      <React.Fragment>
+      <>
         <MaybeLabel fieldId={fieldId} label={label} />
         <ReactSelect
           name={name}
@@ -43,7 +43,7 @@ export default class ColumnParam extends React.PureComponent {
           isReadOnly={isReadOnly}
           placeholder={placeholder || 'Select'}
         />
-      </React.Fragment>
+      </>
     )
   }
 }

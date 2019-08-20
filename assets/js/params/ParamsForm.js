@@ -194,9 +194,11 @@ export default class ParamsForm extends React.PureComponent {
   }
 
   render () {
-    const { api, isReadOnly, isZenMode, workflowId, wfModuleId, wfModuleSlug, wfModuleOutputError, isWfModuleBusy,
+    const {
+      api, isReadOnly, isZenMode, workflowId, wfModuleId, wfModuleSlug, wfModuleOutputError, isWfModuleBusy,
       inputWfModuleId, inputDeltaId, inputColumns, tabs, currentTab, applyQuickFix,
-      startCreateSecret, deleteSecret, submitSecret, fields, files, secrets } = this.props
+      startCreateSecret, deleteSecret, submitSecret, fields, files, secrets
+    } = this.props
     const isEditing = this.isEditing
 
     const upstreamValue = this.props.value

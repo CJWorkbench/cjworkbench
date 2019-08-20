@@ -155,8 +155,8 @@ export class OutputIframe extends React.PureComponent {
 
     return (
       <div className='outputpane-iframe' style={{ height }}>
-        { !visible ? null : (
-          <React.Fragment>
+        {!visible ? null : (
+          <>
             <iframe src={src} />
             <div className='outputpane-iframe-control-overlay'>
               <button name='embed' className='btn' title='Get an embeddable URL' onClick={this.openModal}>
@@ -165,7 +165,7 @@ export class OutputIframe extends React.PureComponent {
             </div>
             {this.renderPublicModal()}
             {this.renderEmbedModal()}
-          </React.Fragment>
+          </>
         )}
       </div>
     )

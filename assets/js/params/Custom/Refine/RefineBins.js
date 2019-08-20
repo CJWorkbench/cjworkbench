@@ -40,7 +40,7 @@ class RefineBin extends React.PureComponent {
     const values = this.bucketList
 
     return (
-      <React.Fragment>
+      <>
         <tr className='bin'>
           <td rowSpan={values.length} className='is-selected'>
             <input type='checkbox' name={`selected-${index}`} checked={isSelected} onChange={this.onChangeIsSelected} placeholder='New Value' />
@@ -66,7 +66,7 @@ class RefineBin extends React.PureComponent {
             <td className='count'>{numberFormat.format(count)}</td>
           </tr>
         ))}
-      </React.Fragment>
+      </>
     )
   }
 }
@@ -117,7 +117,7 @@ export default class RefineBins extends React.PureComponent {
             </tr>
           </thead>
           <tbody>
-            { bins.map((bin, i) => <RefineBin key={i} index={i} onChange={this.onChange} bin={bin} />) }
+            {bins.map((bin, i) => <RefineBin key={i} index={i} onChange={this.onChange} bin={bin} />)}
           </tbody>
         </table>
       </div>

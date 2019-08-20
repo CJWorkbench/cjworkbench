@@ -491,9 +491,12 @@ registerReducerFunc(REQUEST_WF_MODULE_FETCH + '_PENDING', (state, action) => {
   // Set the WfModule to 'busy' on the client side.
   //
   // Don't conflict with the server side: use a client-specific variable.
-  return { ...state,
-    wfModules: { ...state.wfModules,
-      [String(wfModuleId)]: { ...wfModule,
+  return {
+    ...state,
+    wfModules: {
+      ...state.wfModules,
+      [String(wfModuleId)]: {
+        ...wfModule,
         nClientRequests: (wfModule.nClientRequests || 0) + 1
       }
     }
@@ -512,9 +515,12 @@ registerReducerFunc(REQUEST_WF_MODULE_FETCH + '_FULFILLED', (state, action) => {
   // kicks off a ChangeDataVersionCommand. If it doesn't, the other WfModules
   // will stay as they are. Let's not pre-emptively update those _other_
   // WfModule statuses, lest the server never tell us they won't change.
-  return { ...state,
-    wfModules: { ...state.wfModules,
-      [String(wfModuleId)]: { ...wfModule,
+  return {
+    ...state,
+    wfModules: {
+      ...state.wfModules,
+      [String(wfModuleId)]: {
+        ...wfModule,
         nClientRequests: (wfModule.nClientRequests || 1) - 1
       }
     }
@@ -544,9 +550,12 @@ export function setWfModuleNotificationsAction (wfModuleId, isNotifications) {
 registerReducerFunc(SET_WF_MODULE_NOTIFICATIONS + '_PENDING', (state, action) => {
   const { wfModuleId, isNotifications } = action.payload
   const wfModule = state.wfModules[String(wfModuleId)]
-  return { ...state,
-    wfModules: { ...state.wfModules,
-      [String(wfModuleId)]: { ...wfModule,
+  return {
+    ...state,
+    wfModules: {
+      ...state.wfModules,
+      [String(wfModuleId)]: {
+        ...wfModule,
         notifications: isNotifications
       }
     }
@@ -580,9 +589,12 @@ export function trySetWfModuleAutofetchAction (wfModuleId, isAutofetch, fetchInt
 registerReducerFunc(TRY_SET_WF_MODULE_AUTOFETCH + '_FULFILLED', (state, action) => {
   const { wfModuleId, isAutofetch, fetchInterval } = action.payload
   const wfModule = state.wfModules[String(wfModuleId)]
-  return { ...state,
-    wfModules: { ...state.wfModules,
-      [String(wfModuleId)]: { ...wfModule,
+  return {
+    ...state,
+    wfModules: {
+      ...state.wfModules,
+      [String(wfModuleId)]: {
+        ...wfModule,
         auto_update_data: isAutofetch,
         update_interval: fetchInterval
       }
@@ -646,9 +658,12 @@ registerReducerFunc(SET_WF_MODULE_COLLAPSED + '_PENDING', (state, action) => {
   const wfModule = state.wfModules[wfModuleId]
   if (!wfModule) return state
 
-  return { ...state,
-    wfModules: { ...state.wfModules,
-      [String(wfModuleId)]: { ...wfModule,
+  return {
+    ...state,
+    wfModules: {
+      ...state.wfModules,
+      [String(wfModuleId)]: {
+        ...wfModule,
         is_collapsed: isCollapsed
       }
     }
@@ -674,9 +689,12 @@ registerReducerFunc(SET_WF_MODULE_PARAMS + '_PENDING', (state, action) => {
   const { wfModuleId, params } = action.payload
   const wfModule = state.wfModules[String(wfModuleId)]
 
-  return { ...state,
-    wfModules: { ...state.wfModules,
-      [String(wfModuleId)]: { ...wfModule,
+  return {
+    ...state,
+    wfModules: {
+      ...state.wfModules,
+      [String(wfModuleId)]: {
+        ...wfModule,
         params: {
           ...wfModule.params,
           ...params
@@ -723,10 +741,14 @@ registerReducerFunc(SET_DATA_VERSION + '_PENDING', (state, action) => {
   const wfModule = state.wfModules[String(wfModuleId)]
   if (!wfModule) return state
 
-  return { ...state,
-    wfModules: { ...state.wfModules,
-      [String(wfModuleId)]: { ...wfModule,
-        versions: { ...wfModule.versions,
+  return {
+    ...state,
+    wfModules: {
+      ...state.wfModules,
+      [String(wfModuleId)]: {
+        ...wfModule,
+        versions: {
+          ...wfModule.versions,
           selected: selectedVersion
         }
       }
@@ -752,9 +774,12 @@ registerReducerFunc(CLEAR_NOTIFICATIONS + '_PENDING', (state, action) => {
   const wfModule = state.wfModules[String(wfModuleId)]
   if (!wfModule) return state
 
-  return { ...state,
-    wfModules: { ...state.wfModules,
-      [String(wfModuleId)]: { ...wfModule,
+  return {
+    ...state,
+    wfModules: {
+      ...state.wfModules,
+      [String(wfModuleId)]: {
+        ...wfModule,
         has_unseen_notification: false
       }
     }

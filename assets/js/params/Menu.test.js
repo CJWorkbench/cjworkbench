@@ -9,7 +9,7 @@ describe('Menu', () => {
       <Menu
         enumOptions={[{ label: 'Apple', value: 'apple' }, { label: 'Kittens', value: 'kittens' }, { label: 'Banana', value: 'banana' }]}
         name='somename'
-        value={'kittens'}
+        value='kittens'
         onChange={jest.fn()}
         isReadOnly={false}
       />

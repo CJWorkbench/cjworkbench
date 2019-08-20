@@ -105,8 +105,10 @@ class ModuleStackInsertSpot extends React.PureComponent {
   }
 
   render () {
-    const { index, tabSlug, isReadOnly, isLessonHighlight, isLast,
-      isDraggingModuleAtIndex, moveModuleByIndex } = this.props
+    const {
+      index, tabSlug, isReadOnly, isLessonHighlight, isLast,
+      isDraggingModuleAtIndex, moveModuleByIndex
+    } = this.props
 
     if (isReadOnly) return this.renderReadOnly()
 
@@ -272,8 +274,8 @@ export class ModuleStack extends React.Component {
             />
             <WfModuleHeader
               tabSlug={this.props.tabSlug}
-              moduleName={''/* item.name */}
-              moduleIcon={''/* item.icon */}
+              moduleName=''
+              moduleIcon=''
               isSelected={false}
             />
           </React.Fragment>

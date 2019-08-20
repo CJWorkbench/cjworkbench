@@ -305,6 +305,6 @@ describe('Refine', () => {
     // focus 'c'
     w.find('input[name="select[c]"]').simulate('change', { target: { checked: true } })
     w.find('button[name="merge"]').simulate('click')
-    expect(document.activeElement['value']).toBe('a')
+    expect(document.activeElement.value).toBe('a')
   })
 })

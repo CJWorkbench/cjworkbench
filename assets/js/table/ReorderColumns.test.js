@@ -1,7 +1,7 @@
 /* globals describe, expect, it */
 import { moduleParamsBuilders } from './UpdateTableAction'
 
-const func = moduleParamsBuilders['reordercolumns']
+const func = moduleParamsBuilders.reordercolumns
 
 describe('ReorderColumns actions', () => {
   it('adds a new reorder module', () => {

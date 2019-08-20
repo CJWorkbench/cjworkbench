@@ -56,7 +56,7 @@ export default class JoinColumns extends React.PureComponent {
     const rightColumnsNotInOn = rightColumns.filter(({ name }) => !value.on.includes(name))
 
     return (
-      <React.Fragment>
+      <>
         <Multicolumn
           isReadOnly={isReadOnly}
           name={`${name}[on]`}
@@ -77,7 +77,7 @@ export default class JoinColumns extends React.PureComponent {
           inputColumns={rightColumnsNotInOn}
           value={value.right}
         />
-      </React.Fragment>
+      </>
     )
   }
 }

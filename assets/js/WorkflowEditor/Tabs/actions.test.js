@@ -21,7 +21,7 @@ describe('Tabs.actions', () => {
 
       const done = store.dispatch(actions.setName('t2', 'bar'))
       expect(api.setTabName).toHaveBeenCalledWith('t2', 'bar')
-      expect(store.getState().tabs['t2']).toEqual({ name: 'bar', x: 'y' })
+      expect(store.getState().tabs.t2).toEqual({ name: 'bar', x: 'y' })
 
       endDelay()
       await done

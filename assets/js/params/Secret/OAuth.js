@@ -30,10 +30,10 @@ export default class OAuth extends React.PureComponent {
     let contents
     if (secretMetadata) {
       contents = (
-        <React.Fragment>
+        <>
           <p className='secret-name'>{secretMetadata.name}</p>
           <button type='button' className='disconnect' onClick={this.deleteSecret}>Sign out</button>
-        </React.Fragment>
+        </>
       )
     } else {
       contents = (
