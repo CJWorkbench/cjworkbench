@@ -31,7 +31,7 @@ export class TableView extends React.PureComponent {
     selectedRowIndexes: []
   }
 
-  setSelectedRowIndexes = (selectedRowIndexes) => {
+  handleSetSelectedRowIndexes = (selectedRowIndexes) => {
     this.setState({ selectedRowIndexes })
   }
 
@@ -40,7 +40,7 @@ export class TableView extends React.PureComponent {
     this.props.editCell(this.props.wfModuleId, rowIndex, colname, newValue)
   }
 
-  ensureSelectColumnsModule = () => {
+  handleClickSelectColumns = () => {
     this.props.ensureSelectColumnsModule(this.props.wfModuleId)
   }
 
@@ -63,7 +63,7 @@ export class TableView extends React.PureComponent {
             <div className='text'>
               A maximum of 100 columns can be displayed
             </div>
-            <button className='add-select-module' onClick={this.ensureSelectColumnsModule}>Select columns</button>
+            <button className='add-select-module' onClick={this.handleClickSelectColumns}>Select columns</button>
           </div>
         </div>
       )
@@ -79,7 +79,7 @@ export class TableView extends React.PureComponent {
           editCell={this.editCell}
           reorderColumn={this.reorderColumn}
           selectedRowIndexes={selectedRowIndexes}
-          onSetSelectedRowIndexes={this.setSelectedRowIndexes}
+          onSetSelectedRowIndexes={this.handleSetSelectedRowIndexes}
           key={wfModuleId + '-' + deltaId}
         />
       )

@@ -95,7 +95,7 @@ export class OutputIframe extends React.PureComponent {
     this.setState({ isModalOpen: false })
   }
 
-  handleClickModalClose = closeModal
+  handleClickModalClose = this.closeModal
   handleClickSetWorkflowPublic = () => { this.props.setWorkflowPublic() }
 
   isModalOpen (name) {
