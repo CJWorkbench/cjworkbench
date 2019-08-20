@@ -7,7 +7,7 @@ export const supportedLocales = {
 
 const defaultLocale = 'en'
 
-export const currentLocale = window.i18n && window.i18n.locale && isSupported(window.i18n.locale) ? window.i18n.locale : defaultLocale
+export const currentLocale = window.i18nConfig && window.i18nConfig.locale && isSupported(window.i18nConfig.locale) ? window.i18nConfig.locale : defaultLocale
 
 function isSupported (locale) {
   return Object.prototype.hasOwnProperty.call(supportedLocales, locale)

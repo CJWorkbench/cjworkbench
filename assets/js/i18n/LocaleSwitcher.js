@@ -3,7 +3,7 @@ import { withI18n } from '@lingui/react'
 import { supportedLocales, setLocale } from './locales'
 
 const LocaleSwitcher = ({ i18n }) => {
-  if (window.i18n && window.i18n.showSwitcher) {
+  if (window.i18nConfig && window.i18nConfig.showSwitcher) {
     return (
       <select defaultValue={i18n.language}>
         {Object.keys(supportedLocales).map((locale) => (
