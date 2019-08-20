@@ -16,7 +16,7 @@ export default class MultiLineString extends React.PureComponent {
     placeholder: PropTypes.string // sometimes empty string
   }
 
-  onChange = (ev) => {
+  handleChange = (ev) => {
     this.props.onChange(ev.target.value)
   }
 
@@ -27,7 +27,7 @@ export default class MultiLineString extends React.PureComponent {
       <>
         <MaybeLabel fieldId={fieldId} label={label} />
         <textarea
-          onChange={this.onChange}
+          onChange={this.handleChange}
           readOnly={isReadOnly}
           id={fieldId}
           name={name}

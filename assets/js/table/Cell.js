@@ -41,15 +41,20 @@ export default class CellWithoutGarbage extends Cell {
       rowIdx: rowIdx
     })
 
+    const handleClick = this.onCellClick
+    const handleFocus = this.onCellFocus
+    const handleDoubleClick = this.onCellDoubleClick
+    const handleContextMenu = this.onCellContextMenu
+
     return (
       <div
         className={className}
         tabIndex='0'
         style={style}
-        onClick={this.onCellClick}
-        onFocus={this.onCellFocus}
-        onDoubleClick={this.onCellDoubleClick}
-        onContextMenu={this.onCellContextMenu}
+        onClick={handleClick}
+        onFocus={handleFocus}
+        onDoubleClick={handleDoubleClick}
+        onContextMenu={handleContextMenu}
         ref={this.storeRef}
       >
         {cellContent}

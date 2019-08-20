@@ -82,8 +82,8 @@ export default class WorkbenchAceEditor extends React.PureComponent {
             target='_blank' href='https://pandas.pydata.org/pandas-docs/stable/api.html#dataframe'
           >Pandas
           </a>) and <kbd>np</kbd> (<a
-            target='_blank' href='https://docs.scipy.org/doc/numpy/reference/routines.html'
-          >Numpy
+                              target='_blank' href='https://docs.scipy.org/doc/numpy/reference/routines.html'
+                                                     >Numpy
           </a>) modules; <kbd>import</kbd> is disabled.
         </div>
         <div className='ace-aspect-ratio-container'>

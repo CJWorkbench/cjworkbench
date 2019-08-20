@@ -24,13 +24,13 @@ export default class SingleLineString extends React.PureComponent {
     placeholder: PropTypes.string // sometimes empty string
   }
 
-  onChange = (ev) => {
+  handleChange = (ev) => {
     // Remove newlines. We simply won't let this input produce one.
     const value = ev.target.value.replace(/[\r\n]/g, '')
     this.props.onChange(value)
   }
 
-  onKeyDown = (ev) => {
+  handleKeyDown = (ev) => {
     switch (ev.key) {
       case 'Escape':
         ev.preventDefault()
@@ -55,8 +55,8 @@ export default class SingleLineString extends React.PureComponent {
             name={name}
             id={fieldId}
             placeholder={placeholder}
-            onChange={this.onChange}
-            onKeyDown={this.onKeyDown}
+            onChange={this.handleChange}
+            onKeyDown={this.handleKeyDown}
             value={value}
           />
         </div>

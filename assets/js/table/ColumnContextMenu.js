@@ -20,29 +20,17 @@ export default class ColumnContextMenu extends React.Component {
     this.props.onClickAction(idName, true, extraParams)
   }
 
-  renameColumn = (...args) => {
-    this.props.renameColumn(...args)
-  }
-
-  duplicateColumn = () => this.createOrUpdate('duplicatecolumns')
-
-  sortAscending = () => this.createOrUpdate('sort', { is_ascending: true })
-
-  sortDescending = () => this.createOrUpdate('sort', { is_ascending: false })
-
-  addNewFilter = () => this.create('filter')
-
-  extractNumbers = () => this.createOrUpdate('converttexttonumber')
-
-  cleanText = () => this.createOrUpdate('clean-text')
-
-  dropColumn = () => this.createOrUpdate('selectcolumns', { keep: false })
-
-  convertDate = () => this.createOrUpdate('convert-date')
-
-  convertText = () => this.createOrUpdate('converttotext')
-
-  formatNumbers = () => this.create('formatnumbers', { format: '{:,}' })
+  handleRenameColumn = (...args) => { this.props.renameColumn(...args) }
+  handleDuplicateColumn = () => this.createOrUpdate('duplicatecolumns')
+  handleSortAscending = () => this.createOrUpdate('sort', { is_ascending: true })
+  handleSortDescending = () => this.createOrUpdate('sort', { is_ascending: false })
+  handleAddNewFilter = () => this.create('filter')
+  handleExtractNumbers = () => this.createOrUpdate('converttexttonumber')
+  handleCleanText = () => this.createOrUpdate('clean-text')
+  handleDropColumn = () => this.createOrUpdate('selectcolumns', { keep: false })
+  handleConvertDate = () => this.createOrUpdate('convert-date')
+  handleConvertText = () => this.createOrUpdate('converttotext')
+  handleFormatNumbers = () => this.create('formatnumbers', { format: '{:,}' })
 
   render () {
     const { columnType } = this.props
@@ -53,22 +41,22 @@ export default class ColumnContextMenu extends React.Component {
           <i className='icon-caret-down' />
         </DropdownToggle>
         <DropdownMenu>
-          <DropdownItem onClick={this.renameColumn} className='rename-column-header' icon='icon-edit'>Rename</DropdownItem>
-          <DropdownItem onClick={this.duplicateColumn} className='duplicatecolumns' icon='icon-duplicate'>Duplicate</DropdownItem>
+          <DropdownItem onClick={this.handleRenameColumn} className='rename-column-header' icon='icon-edit'>Rename</DropdownItem>
+          <DropdownItem onClick={this.handleDuplicateColumn} className='duplicatecolumns' icon='icon-duplicate'>Duplicate</DropdownItem>
           <DropdownDivider />
-          <DropdownItem onClick={this.sortAscending} className='sort-ascending' icon='icon-sort-up'>Sort ascending</DropdownItem>
-          <DropdownItem onClick={this.sortDescending} className='sort-descending' icon='icon-sort-down'>Sort descending</DropdownItem>
+          <DropdownItem onClick={this.handleSortAscending} className='sort-ascending' icon='icon-sort-up'>Sort ascending</DropdownItem>
+          <DropdownItem onClick={this.handleSortDescending} className='sort-descending' icon='icon-sort-down'>Sort descending</DropdownItem>
           <DropdownDivider />
-          <DropdownItem onClick={this.addNewFilter} className='filter-column' icon='icon-filter'>Filter</DropdownItem>
-          <DropdownItem onClick={this.cleanText} className='clean-text' icon='icon-clean'>Clean Text</DropdownItem>
+          <DropdownItem onClick={this.handleAddNewFilter} className='filter-column' icon='icon-filter'>Filter</DropdownItem>
+          <DropdownItem onClick={this.handleCleanText} className='clean-text' icon='icon-clean'>Clean Text</DropdownItem>
           <DropdownDivider />
-          <DropdownItem onClick={this.convertDate} className='convert-date' icon='icon-calendar'>Convert to date & time</DropdownItem>
-          <DropdownItem onClick={this.extractNumbers} className='converttexttonumber' icon='icon-number'>Convert to numbers</DropdownItem>
-          <DropdownItem onClick={this.convertText} className='converttotext' icon='icon-text'>Convert to text</DropdownItem>
+          <DropdownItem onClick={this.handleConvertDate} className='convert-date' icon='icon-calendar'>Convert to date & time</DropdownItem>
+          <DropdownItem onClick={this.handleExtractNumbers} className='converttexttonumber' icon='icon-number'>Convert to numbers</DropdownItem>
+          <DropdownItem onClick={this.handleConvertText} className='converttotext' icon='icon-text'>Convert to text</DropdownItem>
           <DropdownDivider />
-          <DropdownItem onClick={this.formatNumbers} className='formatnumbers' icon='icon-number' disabled={columnType !== 'number'}>Format numbers</DropdownItem>
+          <DropdownItem onClick={this.handleFormatNumbers} className='formatnumbers' icon='icon-number' disabled={columnType !== 'number'}>Format numbers</DropdownItem>
           <DropdownDivider />
-          <DropdownItem onClick={this.dropColumn} className='drop-column' icon='icon-removec'>Delete column</DropdownItem>
+          <DropdownItem onClick={this.handleDropColumn} className='drop-column' icon='icon-removec'>Delete column</DropdownItem>
         </DropdownMenu>
       </UncontrolledDropdown>
     )

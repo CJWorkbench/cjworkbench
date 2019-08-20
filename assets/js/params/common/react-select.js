@@ -124,7 +124,7 @@ export default class ReactSelect extends React.PureComponent {
 
   noOptionsMessage = () => this.props.noOptionsMessage || 'No options'
 
-  onChange = (reactSelectValue) => {
+  handleChange = (reactSelectValue) => {
     const { isMulti, onChange } = this.props
 
     let value
@@ -168,7 +168,7 @@ export default class ReactSelect extends React.PureComponent {
         styles={NoStyles}
         components={this.components}
         noOptionsMessage={this.noOptionsMessage}
-        onChange={this.onChange}
+        onChange={this.handleChange}
         isClearable={false}
         isDisabled={isReadOnly}
         placeholder={placeholder}
