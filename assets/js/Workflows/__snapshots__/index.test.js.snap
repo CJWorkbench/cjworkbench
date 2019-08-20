@@ -246,7 +246,7 @@ exports[`Workflow list page renders correctly 1`] = `
                 update={true}
                 withHash={true}
               >
-                <LocaleSwitcher
+                <Memo(LocaleSwitcher)
                   i18n={
                     Object {
                       "_": [Function],
@@ -364,7 +364,7 @@ exports[`Workflow list page renders correctly 1`] = `
         </button>
       </form>
     </CreateWorkflowButton>
-    <WorkflowLists
+    <Memo(WorkflowLists)
       deleteWorkflow={[Function]}
       duplicateWorkflow={[Function]}
       openShareModal={[Function]}
@@ -438,7 +438,7 @@ exports[`Workflow list page renders correctly 1`] = `
             id="workflow-tabs"
             role="tablist"
           >
-            <Tab
+            <Memo(Tab)
               isActive={true}
               name="owned"
               setIsActive={[Function]}
@@ -457,8 +457,8 @@ exports[`Workflow list page renders correctly 1`] = `
                   My workflows
                 </a>
               </li>
-            </Tab>
-            <Tab
+            </Memo(Tab)>
+            <Memo(Tab)
               isActive={false}
               name="shared"
               setIsActive={[Function]}
@@ -477,8 +477,8 @@ exports[`Workflow list page renders correctly 1`] = `
                   Shared with me
                 </a>
               </li>
-            </Tab>
-            <Tab
+            </Memo(Tab)>
+            <Memo(Tab)
               isActive={false}
               name="templates"
               setIsActive={[Function]}
@@ -497,7 +497,7 @@ exports[`Workflow list page renders correctly 1`] = `
                   Recipes
                 </a>
               </li>
-            </Tab>
+            </Memo(Tab)>
           </ul>
           <SortMenu
             comparator="last_update|descending"
@@ -547,7 +547,7 @@ exports[`Workflow list page renders correctly 1`] = `
         <div
           className="tab-content"
         >
-          <OwnedWorkflowList
+          <Memo(OwnedWorkflowList)
             comparator="last_update|descending"
             deleteWorkflow={[Function]}
             duplicateWorkflow={[Function]}
@@ -582,7 +582,7 @@ exports[`Workflow list page renders correctly 1`] = `
               ]
             }
           >
-            <TabPane
+            <Memo(TabPane)
               isActive={true}
               name="owned"
             >
@@ -592,7 +592,7 @@ exports[`Workflow list page renders correctly 1`] = `
                 id="workflow-tab-owned"
                 role="tabpanel"
               >
-                <WorkflowList
+                <Memo(WorkflowList)
                   comparator="last_update|descending"
                   deleteWorkflow={[Function]}
                   duplicateWorkflow={[Function]}
@@ -629,7 +629,7 @@ exports[`Workflow list page renders correctly 1`] = `
                   <div
                     className="workflow-list"
                   >
-                    <Workflow
+                    <Memo(Workflow)
                       deleteWorkflow={[Function]}
                       duplicateWorkflow={[Function]}
                       key="3"
@@ -752,8 +752,8 @@ exports[`Workflow list page renders correctly 1`] = `
                           </UncontrolledDropdown>
                         </WorkflowContextMenu>
                       </div>
-                    </Workflow>
-                    <Workflow
+                    </Memo(Workflow)>
+                    <Memo(Workflow)
                       deleteWorkflow={[Function]}
                       duplicateWorkflow={[Function]}
                       key="1"
@@ -876,8 +876,8 @@ exports[`Workflow list page renders correctly 1`] = `
                           </UncontrolledDropdown>
                         </WorkflowContextMenu>
                       </div>
-                    </Workflow>
-                    <Workflow
+                    </Memo(Workflow)>
+                    <Memo(Workflow)
                       deleteWorkflow={[Function]}
                       duplicateWorkflow={[Function]}
                       key="2"
@@ -1000,13 +1000,13 @@ exports[`Workflow list page renders correctly 1`] = `
                           </UncontrolledDropdown>
                         </WorkflowContextMenu>
                       </div>
-                    </Workflow>
+                    </Memo(Workflow)>
                   </div>
-                </WorkflowList>
+                </Memo(WorkflowList)>
               </div>
-            </TabPane>
-          </OwnedWorkflowList>
-          <SharedWorkflowList
+            </Memo(TabPane)>
+          </Memo(OwnedWorkflowList)>
+          <Memo(SharedWorkflowList)
             comparator="last_update|descending"
             deleteWorkflow={[Function]}
             duplicateWorkflow={[Function]}
@@ -1033,7 +1033,7 @@ exports[`Workflow list page renders correctly 1`] = `
               ]
             }
           >
-            <TabPane
+            <Memo(TabPane)
               isActive={false}
               name="shared"
             >
@@ -1043,7 +1043,7 @@ exports[`Workflow list page renders correctly 1`] = `
                 id="workflow-tab-shared"
                 role="tabpanel"
               >
-                <WorkflowList
+                <Memo(WorkflowList)
                   comparator="last_update|descending"
                   deleteWorkflow={null}
                   duplicateWorkflow={[Function]}
@@ -1072,7 +1072,7 @@ exports[`Workflow list page renders correctly 1`] = `
                   <div
                     className="workflow-list"
                   >
-                    <Workflow
+                    <Memo(Workflow)
                       deleteWorkflow={null}
                       duplicateWorkflow={[Function]}
                       key="8"
@@ -1195,8 +1195,8 @@ exports[`Workflow list page renders correctly 1`] = `
                           </UncontrolledDropdown>
                         </WorkflowContextMenu>
                       </div>
-                    </Workflow>
-                    <Workflow
+                    </Memo(Workflow)>
+                    <Memo(Workflow)
                       deleteWorkflow={null}
                       duplicateWorkflow={[Function]}
                       key="7"
@@ -1319,13 +1319,13 @@ exports[`Workflow list page renders correctly 1`] = `
                           </UncontrolledDropdown>
                         </WorkflowContextMenu>
                       </div>
-                    </Workflow>
+                    </Memo(Workflow)>
                   </div>
-                </WorkflowList>
+                </Memo(WorkflowList)>
               </div>
-            </TabPane>
-          </SharedWorkflowList>
-          <TemplatesWorkflowList
+            </Memo(TabPane)>
+          </Memo(SharedWorkflowList)>
+          <Memo(TemplatesWorkflowList)
             comparator="last_update|descending"
             deleteWorkflow={[Function]}
             duplicateWorkflow={[Function]}
@@ -1344,7 +1344,7 @@ exports[`Workflow list page renders correctly 1`] = `
               ]
             }
           >
-            <TabPane
+            <Memo(TabPane)
               isActive={false}
               name="templates"
             >
@@ -1354,7 +1354,7 @@ exports[`Workflow list page renders correctly 1`] = `
                 id="workflow-tab-templates"
                 role="tabpanel"
               >
-                <WorkflowList
+                <Memo(WorkflowList)
                   comparator="last_update|descending"
                   deleteWorkflow={null}
                   duplicateWorkflow={[Function]}
@@ -1375,7 +1375,7 @@ exports[`Workflow list page renders correctly 1`] = `
                   <div
                     className="workflow-list"
                   >
-                    <Workflow
+                    <Memo(Workflow)
                       deleteWorkflow={null}
                       duplicateWorkflow={[Function]}
                       key="10"
@@ -1498,15 +1498,15 @@ exports[`Workflow list page renders correctly 1`] = `
                           </UncontrolledDropdown>
                         </WorkflowContextMenu>
                       </div>
-                    </Workflow>
+                    </Memo(Workflow)>
                   </div>
-                </WorkflowList>
+                </Memo(WorkflowList)>
               </div>
-            </TabPane>
-          </TemplatesWorkflowList>
+            </Memo(TabPane)>
+          </Memo(TemplatesWorkflowList)>
         </div>
       </div>
-    </WorkflowLists>
+    </Memo(WorkflowLists)>
   </div>
 </Workflows>
 `;

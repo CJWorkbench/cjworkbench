@@ -80,6 +80,7 @@ exports[`AceEditor matches snapshot 1`] = `
         }
         enableBasicAutocompletion={false}
         enableLiveAutocompletion={false}
+        enableSnippets={false}
         focus={false}
         fontSize={12}
         height="100%"

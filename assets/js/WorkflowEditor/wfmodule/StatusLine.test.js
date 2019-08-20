@@ -77,8 +77,6 @@ describe('Status line', () => {
     })
 
     w.find('button').at(0).simulate('click')
-
-    w.update()
     expect(w.find('button').at(0).prop('disabled')).toBe(true)
     expect(w.find('button').at(1).prop('disabled')).toBe(true)
 

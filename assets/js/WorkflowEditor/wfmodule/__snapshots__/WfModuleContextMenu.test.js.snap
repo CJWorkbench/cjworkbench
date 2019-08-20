@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`WfModuleContextMenu should match snapshot 1`] = `
-<WfModuleContextMenu
+<Memo(WfModuleContextMenu)
   className="menu-test-class"
   id={415}
   removeModule={[MockFunction]}
@@ -54,5 +54,5 @@ exports[`WfModuleContextMenu should match snapshot 1`] = `
       </Manager>
     </Dropdown>
   </UncontrolledDropdown>
-</WfModuleContextMenu>
+</Memo(WfModuleContextMenu)>
 `;

@@ -9,6 +9,7 @@ import { Provider } from 'react-redux'
 import { mockStore } from '../../test-utils'
 import { generateSlug } from '../../utils'
 import lessonSelector from '../../lessons/lessonSelector'
+import StatusLine from './StatusLine'
 
 jest.mock('../../utils')
 jest.mock('../../lessons/lessonSelector', () => jest.fn()) // same mock in every test :( ... we'll live
@@ -107,7 +108,7 @@ describe('WfModule, not read-only mode', () => {
     const w = wrapper({ wfModule: { ...wfModule, output_status: 'busy' } })
     expect(w.hasClass('status-busy')).toBe(true)
     expect(w.find('ParamsForm').prop('isWfModuleBusy')).toBe(true)
-    expect(w.find('StatusLine').prop('status')).toEqual('busy')
+    expect(w.find(StatusLine).prop('status')).toEqual('busy')
 
     w.setProps({ wfModule: { ...wfModule, output_status: 'ok' } })
     w.update()
@@ -115,7 +116,7 @@ describe('WfModule, not read-only mode', () => {
     expect(w.hasClass('status-ok')).toBe(true)
 
     expect(w.find('ParamsForm').prop('isWfModuleBusy')).toBe(false)
-    expect(w.find('StatusLine').prop('status')).toEqual('ok')
+    expect(w.find(StatusLine).prop('status')).toEqual('ok')
     expect(w.hasClass('status-ok')).toBe(true)
     expect(w.hasClass('status-busy')).toBe(false)
   })
@@ -281,7 +282,7 @@ describe('WfModule, not read-only mode', () => {
   it('overrides status to busy when a fetch is pending', () => {
     const w = wrapper({ wfModule: { ...wfModule, nClientRequests: 1 } })
     expect(w.find('ParamsForm').prop('isWfModuleBusy')).toBe(true)
-    expect(w.find('StatusLine').prop('status')).toEqual('busy')
+    expect(w.find(StatusLine).prop('status')).toEqual('busy')
     expect(w.prop('className')).toMatch(/\bstatus-busy\b/)
   })
 

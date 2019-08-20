@@ -15,7 +15,7 @@ const StatusLine = React.memo(function StatusLine ({ status, error, quickFixes, 
 
   // after props change (remember: we're in React.memo), assume the quick fix
   // suggestions are not-yet-clicked.
-  useEffect(() => setClickedQuickFix(false))
+  useEffect(() => setClickedQuickFix(false), [status, error, quickFixes])
 
   if (!error && !quickFixes.length) return null
 

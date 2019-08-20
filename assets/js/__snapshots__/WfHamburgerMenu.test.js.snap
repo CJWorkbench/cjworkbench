@@ -42,7 +42,7 @@ exports[`WfHamburgerMenu renders logged in, non-read only 1`] = `
       update={true}
       withHash={true}
     >
-      <LocaleSwitcher
+      <Memo(LocaleSwitcher)
         i18n={
           Object {
             "_": [Function],
