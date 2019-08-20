@@ -16,11 +16,11 @@ export default class Button extends React.PureComponent {
     isOpen: false
   }
 
-  openSearch = () => {
+  handleClick = () => {
     this.setState({ isOpen: true })
   }
 
-  closeSearch = () => {
+  handleClosePopup = () => {
     this.setState({ isOpen: false })
   }
 
@@ -37,7 +37,7 @@ export default class Button extends React.PureComponent {
         <Reference>
           {({ ref }) => (
             <div ref={ref} className={className}>
-              <button type='button' className={buttonClassNames.join(' ')} onClick={this.openSearch}>
+              <button type='button' className={buttonClassNames.join(' ')} onClick={this.handleClick}>
                 <i className='icon-add' />{' '}
                 <span>ADD STEP</span>
               </button>
@@ -49,7 +49,7 @@ export default class Button extends React.PureComponent {
             isLastAddButton={isLastAddButton}
             index={index}
             tabSlug={tabSlug}
-            close={this.closeSearch}
+            close={this.handleClosePopup}
           />
         ) : null}
       </Manager>

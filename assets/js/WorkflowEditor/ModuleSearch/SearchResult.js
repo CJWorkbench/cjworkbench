@@ -49,11 +49,11 @@ export default class SearchResult extends React.PureComponent {
     onMouseEnter: PropTypes.func.isRequired // func(idName) => undefined
   }
 
-  onClick = () => {
+  handleClick = () => {
     this.props.onClick(this.props.idName)
   }
 
-  onMouseEnter = () => {
+  handleMouseEnter = () => {
     this.props.onMouseEnter(this.props.idName)
   }
 
@@ -80,8 +80,8 @@ export default class SearchResult extends React.PureComponent {
                 id={`module-search-result-${idName}`}
                 data-module-slug={idName}
                 data-module-name={name}
-                onClick={this.onClick}
-                onMouseEnter={this.onMouseEnter}
+                onClick={this.handleClick}
+                onMouseEnter={this.handleMouseEnter}
               >
                 <i className={`icon-${icon}`} />
                 <span className='name'>{name}</span>

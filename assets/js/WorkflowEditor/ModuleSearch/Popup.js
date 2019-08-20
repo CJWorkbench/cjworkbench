@@ -256,7 +256,7 @@ export class Popup extends React.PureComponent {
     search: ''
   }
 
-  onSearchInputChange = (value) => {
+  handleChangeSearchInput = (value) => {
     this.setState({ search: value })
   }
 
@@ -267,7 +267,7 @@ export class Popup extends React.PureComponent {
     this.props.onUpdate()
   }
 
-  onClickModule = (moduleIdName) => {
+  handleClickModule = (moduleIdName) => {
     const { tabSlug, index, addModule, close } = this.props
     addModule(tabSlug, index, moduleIdName)
     close()
@@ -282,8 +282,8 @@ export class Popup extends React.PureComponent {
 
     return (
       <div className={classNames.join(' ')}>
-        <Prompt cancel={close} onChange={this.onSearchInputChange} value={search} />
-        <SearchResults search={search} modules={modules} onClickModule={this.onClickModule} />
+        <Prompt cancel={close} onChange={this.handleChangeSearchInput} value={search} />
+        <SearchResults search={search} modules={modules} onClickModule={this.handleClickModule} />
       </div>
     )
   }

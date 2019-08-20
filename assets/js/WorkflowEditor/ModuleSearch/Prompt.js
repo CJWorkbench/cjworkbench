@@ -15,15 +15,15 @@ export default class Prompt extends React.PureComponent {
     this.inputRef.current.focus()
   }
 
-  onChange = (ev) => {
+  handleChange = (ev) => {
     this.props.onChange(ev.target.value)
   }
 
-  onKeyDown = (ev) => {
+  handleKeyDown = (ev) => {
     if (ev.keyCode === 27) this.props.cancel() // Esc => cancel
   }
 
-  onSubmit = (ev) => {
+  handleSubmit = (ev) => {
     ev.preventDefault()
   }
 
@@ -31,7 +31,7 @@ export default class Prompt extends React.PureComponent {
     const { value, cancel } = this.props
 
     return (
-      <form className='module-search-field' onSubmit={this.onSubmit} onReset={cancel}>
+      <form className='module-search-field' onSubmit={this.handleSubmit} onReset={cancel}>
         <input
           type='search'
           name='moduleQ'
@@ -39,8 +39,8 @@ export default class Prompt extends React.PureComponent {
           autoComplete='off'
           ref={this.inputRef}
           value={value}
-          onChange={this.onChange}
-          onKeyDown={this.onKeyDown}
+          onChange={this.handleChange}
+          onKeyDown={this.handleKeyDown}
         />
         <button type='reset' className='reset' title='Close Search'><i className='icon-close' /></button>
       </form>

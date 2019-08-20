@@ -85,7 +85,7 @@ export default class SearchResults extends React.PureComponent {
       .filter(({ modules }) => modules.length > 0)
   })
 
-  onMouseEnterModule = (moduleIdName) => {
+  handleMouseEnterModule = (moduleIdName) => {
     this.setState({ activeModule: moduleIdName })
   }
 
@@ -102,7 +102,7 @@ export default class SearchResults extends React.PureComponent {
             modules={rg.modules}
             activeModule={activeModule}
             onClickModule={onClickModule}
-            onMouseEnterModule={this.onMouseEnterModule}
+            onMouseEnterModule={this.handleMouseEnterModule}
           />
         ))}
       </ul>
