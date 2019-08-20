@@ -19,22 +19,22 @@ export default class Aggregation extends React.PureComponent {
     outname: PropTypes.string.isRequired // may be empty
   }
 
-  onChangeOperation = (ev) => {
+  handleChangeOperation = (ev) => {
     const { colname, index, outname, onChange } = this.props
     onChange(index, { colname, outname, operation: ev.target.value })
   }
 
-  onChangeColname = (colnameOrNull) => {
+  handleChangeColname = (colnameOrNull) => {
     const { outname, operation, index, onChange } = this.props
     onChange(index, { outname, operation, colname: (colnameOrNull || '') })
   }
 
-  onChangeOutname = (ev) => {
+  handleChangeOutname = (ev) => {
     const { colname, operation, index, onChange } = this.props
     onChange(index, { colname, operation, outname: ev.target.value })
   }
 
-  onClickDelete = (ev) => {
+  handleClickDelete = (ev) => {
     const { index, onDelete } = this.props
     onDelete(index)
   }
@@ -71,7 +71,7 @@ export default class Aggregation extends React.PureComponent {
           name={`${name}[operation]`}
           fieldId={`${fieldId}_operation`}
           value={operation}
-          onChange={this.onChangeOperation}
+          onChange={this.handleChangeOperation}
         />
         {operation === 'size' ? null : (
           <ColumnParam
@@ -81,7 +81,7 @@ export default class Aggregation extends React.PureComponent {
             prompt='Select a column'
             isReadOnly={isReadOnly}
             inputColumns={inputColumns}
-            onChange={this.onChangeColname}
+            onChange={this.handleChangeColname}
           />
         )}
         <label className='outname'>
@@ -91,7 +91,7 @@ export default class Aggregation extends React.PureComponent {
             name={`${name}[outname]`}
             id={`${fieldId}_outname`}
             value={outname}
-            onChange={this.onChangeOutname}
+            onChange={this.handleChangeOutname}
             placeholder={this.placeholder}
           />
         </label>
@@ -101,7 +101,7 @@ export default class Aggregation extends React.PureComponent {
               type='button'
               className='delete'
               name={`${name}[delete]`}
-              onClick={this.onClickDelete}
+              onClick={this.handleClickDelete}
             >
               <i className='icon-close' />
             </button>

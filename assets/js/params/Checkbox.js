@@ -10,7 +10,7 @@ export default class Checkbox extends React.PureComponent {
     onChange: PropTypes.func.isRequired // func(value) => undefined
   }
 
-  onChange = (ev) => {
+  handleChange = (ev) => {
     const { onChange } = this.props
     onChange(ev.target.checked)
   }
@@ -26,7 +26,7 @@ export default class Checkbox extends React.PureComponent {
             checked={value || false}
             name={name}
             id={fieldId}
-            onChange={this.onChange}
+            onChange={this.handleChange}
           />
           <label htmlFor={fieldId}>
             {' '}{label}

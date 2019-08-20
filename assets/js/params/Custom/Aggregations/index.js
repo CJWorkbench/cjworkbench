@@ -21,7 +21,7 @@ export default class Aggregations extends React.PureComponent {
     onChange: PropTypes.func.isRequired // func([aggregations]) => undefined
   }
 
-  onChangeAggregation = (index, aggregation) => {
+  handleChangeAggregation = (index, aggregation) => {
     const { onChange, isReadOnly } = this.props
     if (isReadOnly) return
     const newValue = this.value.slice()
@@ -29,7 +29,7 @@ export default class Aggregations extends React.PureComponent {
     onChange(newValue)
   }
 
-  onDeleteAggregation = (index) => {
+  handleDeleteAggregation = (index) => {
     const { onChange, isReadOnly } = this.props
     if (isReadOnly) return
     const newValue = this.value.slice()
@@ -37,7 +37,7 @@ export default class Aggregations extends React.PureComponent {
     onChange(newValue)
   }
 
-  onAdd = () => {
+  handleClickAdd = () => {
     const { onChange, isReadOnly } = this.props
     if (isReadOnly) return
     const newValue = this.value.slice()
@@ -62,7 +62,7 @@ export default class Aggregations extends React.PureComponent {
   render () {
     const { name, fieldId, inputColumns, isReadOnly } = this.props
     const value = this.value
-    const onDelete = value.length <= 1 ? null : this.onDeleteAggregation
+    const handleDelete = value.length <= 1 ? null : this.handleDeleteAggregation
 
     return (
       <>
@@ -77,8 +77,8 @@ export default class Aggregations extends React.PureComponent {
               index={index}
               inputColumns={inputColumns}
               {...aggregation}
-              onChange={this.onChangeAggregation}
-              onDelete={onDelete}
+              onChange={this.handleChangeAggregation}
+              onDelete={handleDelete}
             />
           ))}
         </ul>
@@ -87,7 +87,7 @@ export default class Aggregations extends React.PureComponent {
             type='button'
             className='add'
             name={`${name}[add]`}
-            onClick={this.onAdd}
+            onClick={this.handleClickAdd}
           >
             <i className='icon-add' /> Add
           </button>
