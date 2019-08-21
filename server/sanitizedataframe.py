@@ -5,49 +5,6 @@ import pandas as pd
 from pandas.api.types import is_numeric_dtype, is_datetime64_dtype
 
 
-def _colname_to_str(c: Any) -> str:
-    """
-    Cast a column name to str.
-
-    In the case of a float column name, this method optimizes for the fewest
-    zeros possible.
-    """
-    if isinstance(c, float):
-        return "%g" % c
-    else:
-        # need to strip col names to stay in sync with column selection modules
-        return str(c).strip()
-
-
-def _normalize_colnames(colnames: List[Any]) -> None:
-    """
-    Modify column names so they are all unique and str.
-    """
-    counts = {}
-
-    def unique_name(ideal_name: str) -> str:
-        """
-        Generate a guaranteed-unique column name, using `counts` as state.
-
-        Strategy for making 'A' unique:
-
-        * If 'A' has never been seen before, return it.
-        * If 'A' has been seen before, try 'A_1' or 'A_2' (where 1 and 2 are
-          the number of times 'A' has been seen).
-        * If there is a conflict on 'A_1', recurse.
-        """
-        if ideal_name not in counts:
-            counts[ideal_name] = 1
-            return ideal_name
-
-        count = counts[ideal_name]
-        counts[ideal_name] += 1
-        backup_name = f"{ideal_name}_{count}"
-        return unique_name(backup_name)
-
-    return [unique_name(_colname_to_str(c)) for c in colnames]
-
-
 def sanitize_series(series: pd.Series) -> pd.Series:
     """
     Enforce type rules on input pandas `Series.values`.
