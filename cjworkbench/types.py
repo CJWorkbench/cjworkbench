@@ -647,13 +647,19 @@ class ProcessResult:
         )
 
     def truncate_in_place_if_too_big(self) -> "ProcessResult":
-        """Truncate dataframe in-place and add to self.error if truncated."""
-        len_before = len(self.dataframe)
-        if sanitizedataframe.truncate_table_if_too_big(self.dataframe):
-            warning = "Truncated output from %d rows to %d" % (
-                len_before,
-                len(self.dataframe),
+        """
+        Truncate dataframe in-place and add to self.error if truncated.
+        """
+        # import after app startup. [2019-08-21, adamhooper] may not be needed
+        from django.conf import settings
+
+        old_len = len(self.dataframe)
+        new_len = min(old_len, settings.MAX_ROWS_PER_TABLE)
+        if new_len != old_len:
+            self.dataframe.drop(
+                range(settings.MAX_ROWS_PER_TABLE, old_len), inplace=True
             )
+            warning = "Truncated output from %d rows to %d" % (old_len, new_len)
             if self.error:
                 self.error = f"{self.error}\n{warning}"
             else:

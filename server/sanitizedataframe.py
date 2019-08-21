@@ -50,20 +50,3 @@ def sanitize_series(series: pd.Series) -> pd.Series:
         ret = series.astype(str)
         ret[pd.isna(series)] = np.nan
         return ret
-
-
-def truncate_table_if_too_big(df):
-    """
-    Limit table size to max allowed number of rows.
-
-    Return whether we modified the table.
-    """
-    # Import here, so that the pythoncode module does not need to import django
-    from django.conf import settings
-
-    nrows = len(df)
-    if nrows > settings.MAX_ROWS_PER_TABLE:
-        df.drop(range(settings.MAX_ROWS_PER_TABLE, nrows), inplace=True)
-        return True
-    else:
-        return False
