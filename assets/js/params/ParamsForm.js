@@ -75,7 +75,7 @@ export default class ParamsForm extends React.PureComponent {
   handleKeyDown = (ev) => {
     if (ev.key === 'Enter' && (ev.metaKey || ev.ctrlKey)) {
       ev.preventDefault() // in case it was already going to submit
-      this.onSubmit()
+      this.handleSubmit()
     }
   }
 
