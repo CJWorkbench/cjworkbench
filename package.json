@@ -113,7 +113,12 @@
   "babel": {
     "presets": [
       "@babel/react",
-      "@babel/env"
+      [
+        "@babel/env",
+        {
+          "targets": ">1%, not dead, not IE > 0"
+        }
+      ]
     ],
     "plugins": [
       "@babel/plugin-transform-runtime",
