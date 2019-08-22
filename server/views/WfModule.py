@@ -1,6 +1,7 @@
+import datetime
 import json
 import re
-import pandas as pd
+from typing import List
 from asgiref.sync import async_to_sync
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
@@ -13,13 +14,15 @@ from django.http import (
 )
 from django.shortcuts import get_object_or_404
 from django.views.decorators.clickjacking import xframe_options_exempt
+import pyarrow as pyarrow
+import pyarrow.lib
 from rest_framework import status
 from rest_framework.decorators import api_view, renderer_classes
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from cjworkbench.types import ProcessResult
 from server.models import Tab, WfModule, Workflow
-from server import rabbitmq
+from server import minio, parquet, rabbitmq
 from server.models.loaded_module import module_get_html_bytes
 
 
@@ -66,13 +69,34 @@ def _with_wf_module_for_read(fn):
 # ---- render / input / livedata ----
 # These endpoints return actual table data
 
+
+TimestampUnits = {"us": 1000000, "s": 1, "ms": 1000, "ns": 1000000000}  # most common
+
+
+def _arrow_array_to_json_list(array) -> List:
+    """
+    Convert `array` to a JSON-encodable List.
+
+    Strings become Strings; Numbers become int/float; Datetimes become
+    ISO8601-encoded Strings.
+    """
+    if isinstance(array.type, pyarrow.lib.TimestampType):
+        multiplier = 1.0 / TimestampUnits[array.type.unit]
+        return [
+            datetime.datetime.utcfromtimestamp(v.value * multiplier).isoformat() + "Z"
+            for v in array
+        ]
+    else:
+        return array.to_pylist()
+
+
 # Helper method that produces json output for a table + start/end row
 # Also silently clips row indices
 # Now reading a maximum of 101 columns directly from cache parquet
 def _make_render_tuple(cached_result, startrow=None, endrow=None):
     """Build (startrow, endrow, json_rows) data."""
     if not cached_result:
-        dataframe = pd.DataFrame()
+        table = pyarrow.Table()
     else:
         columns = cached_result.columns[
             # Return one row more than configured, so the client knows there
@@ -80,23 +104,30 @@ def _make_render_tuple(cached_result, startrow=None, endrow=None):
             : (settings.MAX_COLUMNS_PER_CLIENT_REQUEST + 1)
         ]
         column_names = [c.name for c in columns]
-        dataframe = cached_result.read_dataframe(column_names)
+        table = parquet.read_arrow_table(
+            minio.CachedRenderResultsBucket,
+            cached_result.parquet_key,
+            only_columns=column_names,
+        )
 
-    nrows = len(dataframe)
     if startrow is None:
         startrow = 0
     if endrow is None:
         endrow = startrow + _MaxNRowsPerRequest
 
     startrow = max(0, startrow)
-    endrow = min(nrows, endrow, startrow + _MaxNRowsPerRequest)
+    endrow = min(table.num_rows, endrow, startrow + _MaxNRowsPerRequest)
+    num_rows = endrow - startrow
 
-    table = dataframe[startrow:endrow]
+    # Select the values we want -- columnar, so memory accesses are contiguous
+    values = {
+        column.name: _arrow_array_to_json_list(column[startrow:endrow])
+        for column in table.itercolumns()
+    }
+    # Transpose into JSON records
+    records = [{k: v[row] for k, v in values.items()} for row in range(num_rows)]
 
-    # table.to_json() renders a JSON string. It can't render a dict that we
-    # encode later, so let's not even try. Just return the string.
-    rows = table.to_json(orient="records", date_format="iso")
-    return (startrow, endrow, rows)
+    return (startrow, endrow, records)
 
 
 def int_or_none(x):
@@ -126,23 +157,15 @@ def wfmodule_render(request: HttpRequest, wf_module: WfModule, format=None):
             # assume we'll get another request after execute finishes
             return JsonResponse({"start_row": 0, "end_row": 0, "rows": []})
 
-        startrow, endrow, rows_string = _make_render_tuple(
-            cached_result, startrow, endrow
-        )
-        return HttpResponse(
-            "".join(
-                [
-                    '{"start_row":',
-                    str(startrow),
-                    ',"end_row":',
-                    str(endrow),
-                    ',"rows":',
-                    rows_string,
-                    "}",
-                ]
-            ),
-            content_type="application/json",
-        )
+        try:
+            startrow, endrow, records = _make_render_tuple(
+                cached_result, startrow, endrow
+            )
+        except FileNotFoundError:
+            # assume we'll get another request after execute finishes
+            return JsonResponse({"start_row": 0, "end_row": 0, "rows": []})
+
+        return JsonResponse({"start_row": startrow, "end_row": endrow, "rows": records})
 
 
 _html_head_start_re = re.compile(rb"<\s*head[^>]*>", re.IGNORECASE)

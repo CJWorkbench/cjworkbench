@@ -2,9 +2,12 @@ import functools
 import io
 from pathlib import Path
 import tempfile
+from typing import List, Optional
 from urllib3.exceptions import ProtocolError
 import fastparquet
 from typing import Any, Callable
+import pyarrow as pa
+import pyarrow.parquet
 from fastparquet import ParquetFile
 import pandas
 import snappy
@@ -143,6 +146,18 @@ def read(
                 dataframe[cat_colname].astype(str).astype("category")
             )
     return dataframe
+
+
+def read_arrow_table(
+    bucket: str, key: str, only_columns: Optional[List[str]] = None
+) -> pa.Table:
+    """
+    Return data from minio, as an Apache Arrow Table.
+
+    The table is stored entirely in RAM.
+    """
+    with minio.temporarily_download(bucket, key) as path:
+        return pyarrow.parquet.read_table(path, use_threads=False, columns=only_columns)
 
 
 def write(bucket: str, key: str, table: pandas.DataFrame) -> int:

@@ -42,6 +42,7 @@ aioamqp = "*"
 pyyaml = "*"
 boto3 = "*"
 yajl-py = "*"
+pyarrow = "*"
 
 [dev-packages]
 watchdog = "*"
