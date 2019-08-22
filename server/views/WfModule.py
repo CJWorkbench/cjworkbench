@@ -1,7 +1,7 @@
 import datetime
 import json
 import re
-from typing import List
+from typing import Any, Dict, List
 from asgiref.sync import async_to_sync
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
@@ -14,8 +14,7 @@ from django.http import (
 )
 from django.shortcuts import get_object_or_404
 from django.views.decorators.clickjacking import xframe_options_exempt
-import pyarrow as pyarrow
-import pyarrow.lib
+import pyarrow
 from rest_framework import status
 from rest_framework.decorators import api_view, renderer_classes
 from rest_framework.renderers import JSONRenderer
@@ -73,14 +72,14 @@ def _with_wf_module_for_read(fn):
 TimestampUnits = {"us": 1000000, "s": 1, "ms": 1000, "ns": 1000000000}  # most common
 
 
-def _arrow_array_to_json_list(array) -> List:
+def _arrow_array_to_json_list(array: pyarrow.ChunkedArray) -> List[Any]:
     """
     Convert `array` to a JSON-encodable List.
 
     Strings become Strings; Numbers become int/float; Datetimes become
     ISO8601-encoded Strings.
     """
-    if isinstance(array.type, pyarrow.lib.TimestampType):
+    if isinstance(array.type, pyarrow.TimestampType):
         multiplier = 1.0 / TimestampUnits[array.type.unit]
         return [
             datetime.datetime.utcfromtimestamp(v.value * multiplier).isoformat() + "Z"
@@ -90,25 +89,42 @@ def _arrow_array_to_json_list(array) -> List:
         return array.to_pylist()
 
 
+def _arrow_table_to_json_records(
+    table: pyarrow.Table, begin: int, end: int
+) -> List[Dict[str, Any]]:
+    """
+    Convert `table` to JSON records.
+
+    Slice from `begin` (inclusive, first is 0) to `end` (exclusive).
+
+    String values become Strings; Number values become int/float; Datetime
+    values become ISO8601-encoded Strings.
+    """
+    # Select the values we want -- columnar, so memory accesses are contiguous
+    values = {
+        column.name: _arrow_array_to_json_list(column[begin:end])
+        for column in table.itercolumns()
+    }
+    # Transpose into JSON records
+    return [{k: v[i] for k, v in values.items()} for i in range(end - begin)]
+
+
 # Helper method that produces json output for a table + start/end row
 # Also silently clips row indices
 # Now reading a maximum of 101 columns directly from cache parquet
 def _make_render_tuple(cached_result, startrow=None, endrow=None):
     """Build (startrow, endrow, json_rows) data."""
-    if not cached_result:
-        table = pyarrow.Table()
-    else:
-        columns = cached_result.columns[
-            # Return one row more than configured, so the client knows there
-            # are "too many rows".
-            : (settings.MAX_COLUMNS_PER_CLIENT_REQUEST + 1)
-        ]
-        column_names = [c.name for c in columns]
-        table = parquet.read_arrow_table(
-            minio.CachedRenderResultsBucket,
-            cached_result.parquet_key,
-            only_columns=column_names,
-        )
+    columns = cached_result.columns[
+        # Return one row more than configured, so the client knows there
+        # are "too many rows".
+        : (settings.MAX_COLUMNS_PER_CLIENT_REQUEST + 1)
+    ]
+    column_names = [c.name for c in columns]
+    table = parquet.read_arrow_table(
+        minio.CachedRenderResultsBucket,
+        cached_result.parquet_key,
+        only_columns=column_names,
+    )
 
     if startrow is None:
         startrow = 0
@@ -117,15 +133,7 @@ def _make_render_tuple(cached_result, startrow=None, endrow=None):
 
     startrow = max(0, startrow)
     endrow = min(table.num_rows, endrow, startrow + _MaxNRowsPerRequest)
-    num_rows = endrow - startrow
-
-    # Select the values we want -- columnar, so memory accesses are contiguous
-    values = {
-        column.name: _arrow_array_to_json_list(column[startrow:endrow])
-        for column in table.itercolumns()
-    }
-    # Transpose into JSON records
-    records = [{k: v[row] for k, v in values.items()} for row in range(num_rows)]
+    records = _arrow_table_to_json_records(table, startrow, endrow)
 
     return (startrow, endrow, records)
 
@@ -219,15 +227,19 @@ def wfmodule_value_counts(request: HttpRequest, wf_module: WfModule):
     except StopIteration:
         return JsonResponse({"error": f'column "{colname}" not found'}, status=404)
 
-    # Only load the one column
-    dataframe = cached_result.read_dataframe([colname])
     try:
-        series = dataframe[colname]
-    except KeyError:
-        # Cache has disappeared. (read_dataframe() returns empty DataFrame
-        # instead of throwing, as it maybe ought to.) We're probably going
-        # to make another request soon.
+        table: pyarrow.Table = parquet.read_arrow_table(
+            minio.CachedRenderResultsBucket,
+            cached_result.parquet_key,
+            only_columns=[column.name],
+        )
+    except FileNotFoundError:
+        # We _could_ return an empty result set; but our only goal here is
+        # "don't crash" and this 404 seems to be the simplest implementation.
+        # (We assume that if the data is deleted, the user has moved elsewhere
+        # and this response is going to be ignored.)
         return JsonResponse({"error": f'column "{colname}" not found'}, status=404)
+    series = table[0].to_pandas()
 
     # We only handle string. If it's not string, convert to string. (Rationale:
     # this is used in Refine and Filter by Value, which are both solely
@@ -279,17 +291,22 @@ def wfmodule_tile(
     # cbegin/cend: column indexes
     cbegin = N_COLUMNS_PER_TILE * tile_column
     cend = N_COLUMNS_PER_TILE * (tile_column + 1)
-
-    df = cached_result.read_dataframe(columns=cached_result.column_names[cbegin:cend])
-
     rbegin = N_ROWS_PER_TILE * tile_row
     rend = N_ROWS_PER_TILE * (tile_row + 1)
 
-    df = df.iloc[rbegin:rend]
+    only_columns = cached_result.column_names[cbegin:cend]
+    try:
+        table = parquet.read_arrow_table(
+            minio.CachedRenderResultsBucket,
+            cached_result.parquet_key,
+            only_columns=only_columns,
+        )
+    except FileNotFoundError:
+        raise RuntimeError("FIXME: what happens when file is gone?")
 
-    json_string = df.to_json(orient="values", date_format="iso")
+    records = _arrow_table_to_json_records(table, rbegin, rend)
 
-    return HttpResponse(json_string, content_type="application/json")
+    return JsonResponse(records)
 
 
 # Public access to wfmodule output. Basically just /render with different auth
