@@ -154,10 +154,33 @@ def read_arrow_table(
     """
     Return data from minio, as an Apache Arrow Table.
 
-    The table is stored entirely in RAM.
+    The table is stored entirely in RAM. TODO stream it to an mmapped file.
     """
     with minio.temporarily_download(bucket, key) as path:
-        return pyarrow.parquet.read_table(path, use_threads=False, columns=only_columns)
+        table = pyarrow.parquet.read_table(
+            path, use_threads=False, columns=only_columns
+        )
+
+        # Avoid a problem calling .to_pandas() with fastparquet-dumped files.
+        #
+        #   File "pyarrow/array.pxi", line 441, in pyarrow.lib._PandasConvertible.to_pandas
+        #   File "pyarrow/table.pxi", line 1367, in pyarrow.lib.Table._to_pandas
+        #   File "/root/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.7/site-packages/pyarrow/pandas_compat.py", line 644, in table_to_blockmanager
+        #     table = _add_any_metadata(table, pandas_metadata)
+        #   File "/root/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.7/site-packages/pyarrow/pandas_compat.py", line 967, in _add_any_metadata
+        #     idx = schema.get_field_index(raw_name)
+        #   File "pyarrow/types.pxi", line 902, in pyarrow.lib.Schema.get_field_index
+        #   File "stringsource", line 15, in string.from_py.__pyx_convert_string_from_py_std__in_string
+        # TypeError: expected bytes, dict found
+        #
+        # [2019-08-22] fastparquet-dumped files will be around for a long time.
+        #
+        # We don't care about schema metadata, anyway. Workbench has its own
+        # restrictive schema; we don't need extra Pandas-specific data because
+        # we don't support everything Pandas supports.
+        table = table.replace_schema_metadata(None)  # FIXME unit-test this!
+
+        return table
 
 
 def write(bucket: str, key: str, table: pandas.DataFrame) -> int:

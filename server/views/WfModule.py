@@ -120,7 +120,7 @@ def _make_render_tuple(cached_result, startrow=None, endrow=None):
         : (settings.MAX_COLUMNS_PER_CLIENT_REQUEST + 1)
     ]
     column_names = [c.name for c in columns]
-    table = parquet.read_arrow_table(
+    table = parquet.read_arrow_table(  # raise FileNotFoundError
         minio.CachedRenderResultsBucket,
         cached_result.parquet_key,
         only_columns=column_names,
@@ -320,20 +320,26 @@ def wfmodule_public_output(
 ):
     cached_result = wf_module.cached_render_result
     if cached_result:
-        result = cached_result.result  # slow! Reads from S3
+        try:
+            table = parquet.read_arrow_table(
+                minio.CachedRenderResultsBucket, cached_result.parquet_key
+            )
+        except FileNotFoundError:
+            table = pyarrow.Table()
     else:
         # We don't have a cached result, and we don't know how long it'll
         # take to get one.
         workflow = wf_module.workflow
         async_to_sync(rabbitmq.queue_render)(workflow.id, workflow.last_delta_id)
         # The user will simply need to try again....
-        result = ProcessResult()
+        table = pyarrow.Table()
 
     if export_type == "json":
-        d = result.dataframe.to_json(orient="records")
-        return HttpResponse(d, content_type="application/json")
+        records = _arrow_table_to_json_records(table, 0, table.num_rows)
+        return JsonResponse(records, safe=False)
     elif export_type == "csv":
-        d = result.dataframe.to_csv(index=False)
+        df = table.to_pandas()
+        d = df.to_csv(index=False)
         return HttpResponse(d, content_type="text/csv")
     else:
         raise RuntimeError("Undefined export_type" + export_type)
