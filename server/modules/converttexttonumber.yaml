@@ -19,19 +19,13 @@ parameters:
   default: false
 - id_name: input_number_type
   type: menu
-  default: any
-  visible_if:
-    id_name: extract
-    value: [ true ]
   name: Format and style of numbers to extract
+  default: any
   options:
   - { value: any, label: Any number }
   - { value: int, label: Any integer }
   - { value: float, label: Any decimal }
 - id_name: input_locale
-  visible_if:
-    id_name: extract
-    value: [ true ]
   type: menu
   default: us
   options:
