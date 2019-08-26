@@ -13,13 +13,17 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: assets/js/i18n/locales.js:6
+#: assets/js/i18n/locales.js:5
 msgid "locales.el"
 msgstr "Ελληνικά"
 
-#: assets/js/i18n/locales.js:5
+#: assets/js/i18n/locales.js:4
 msgid "locales.en"
 msgstr "Αγγλικά"
+
+#: assets/js/table/SelectedRowsActions.js:101
+msgid "selectedRow.numberOfRows"
+msgstr ""
 
 #: assets/js/WorkflowNavBar.js:62
 msgid "workflow.visibility.private"

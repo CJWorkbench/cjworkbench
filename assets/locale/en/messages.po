@@ -13,13 +13,17 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: assets/js/i18n/locales.js:6
+#: assets/js/i18n/locales.js:5
 msgid "locales.el"
 msgstr "Greek"
 
-#: assets/js/i18n/locales.js:5
+#: assets/js/i18n/locales.js:4
 msgid "locales.en"
 msgstr "English"
+
+#: assets/js/table/SelectedRowsActions.js:101
+msgid "selectedRow.numberOfRows"
+msgstr "{0, plural, =0 {No rows selected} one {# row selected} other {# rows selected}}"
 
 #: assets/js/WorkflowNavBar.js:62
 msgid "workflow.visibility.private"
