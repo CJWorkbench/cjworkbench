@@ -1,5 +1,5 @@
 # 0. The barest Python: used in dev and prod
-FROM python:3.7.2-slim-stretch AS pybase
+FROM python:3.7.4-slim-buster AS pybase
 
 # We probably don't want these, long-term.
 # nano: because we edit files on production
@@ -47,6 +47,7 @@ FROM pybase AS pydev
 # * fb-re2
 # * watchman (until someone packages binaries)
 # * pysycopg2 (binaries are evil because psycopg2 links SSL -- as does Python)
+# * thrift-compiler (to generate kernel/thrift/...)
 #
 # Also:
 # * socat: for our dev environment: fetcher uses http://localhost:8000 for in-lesson files
@@ -59,6 +60,7 @@ RUN mkdir -p /root/.local/share/virtualenvs \
       libpq-dev \
       libyajl-dev \
       socat \
+      thrift-compiler \
     && rm -rf /var/lib/apt/lists/*
 
 # build watchman. Someday let's hope someone publishes binaries
@@ -76,7 +78,7 @@ RUN cd /tmp \
       libpcre3-dev \
       pkg-config \
     && ./autogen.sh \
-    && ./configure --prefix=/usr \
+    && ./configure --prefix=/usr --enable-lenient \
     && make -j4 \
     && make install \
     && cd /tmp \
@@ -144,7 +146,7 @@ RUN true \
       build-essential \
       libsnappy1v5 \
       libsnappy-dev \
-      libre2-3 \
+      libre2-5 \
       libre2-dev \
       libpq-dev \
       libyajl2 \
@@ -161,7 +163,7 @@ RUN true \
 
 # 2. Node deps -- completely independent
 # 2.1 jsbase: what we use in dev-in-docker
-FROM node:11.14.0-slim as jsbase
+FROM node:12.9.0-buster-slim as jsbase
 
 RUN mkdir /app
 WORKDIR /app
