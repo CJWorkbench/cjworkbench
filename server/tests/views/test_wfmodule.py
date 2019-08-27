@@ -8,7 +8,7 @@ import pandas as pd
 from rest_framework.test import APIRequestFactory
 from rest_framework import status
 from rest_framework.test import force_authenticate
-from kernel.pandas.types import Column, ColumnType, ProcessResult
+from cjwkernel.pandas.types import Column, ColumnType, ProcessResult
 from server import minio
 from server.models import Workflow
 from server.tests.utils import LoggedInTestCase

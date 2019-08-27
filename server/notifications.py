@@ -4,7 +4,7 @@ from allauth.account.utils import user_display
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.conf import settings
-from kernel.pandas.types import ProcessResult
+from cjwkernel.pandas.types import ProcessResult
 from server.utils import get_absolute_url
 
 

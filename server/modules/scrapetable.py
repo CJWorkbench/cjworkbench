@@ -1,7 +1,7 @@
 import asyncio
 import aiohttp
 import pandas as pd
-from kernel.pandas.types import ProcessResult
+from cjwkernel.pandas.types import ProcessResult
 from server.modules import utils
 
 

@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 import pandas as pd
-from kernel.pandas.validate import validate_dataframe
+from cjwkernel.pandas.validate import validate_dataframe
 
 
 class ValidateDataframeTest(unittest.TestCase):

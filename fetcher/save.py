@@ -2,7 +2,7 @@ from typing import Optional
 from django.conf import settings
 from django.utils import timezone
 from cjworkbench.sync import database_sync_to_async
-from kernel.pandas.types import ProcessResult
+from cjwkernel.pandas.types import ProcessResult
 from server import websockets
 from server.models import WfModule, Workflow
 from server.models.commands import ChangeDataVersionCommand

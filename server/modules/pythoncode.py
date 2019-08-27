@@ -10,7 +10,7 @@ import traceback
 from typing import Any, Dict, Tuple
 import numpy
 import pandas
-from kernel.pandas.types import ProcessResult
+from cjwkernel.pandas.types import ProcessResult
 from .utils import build_globals_for_eval, PythonFeatureDisabledError
 
 
@@ -129,7 +129,7 @@ def inner_eval(code, table, sender):
             )
 
         out_table = process(table)
-    except PythonFeatureDisabledError as err:
+    except PythonFeatureDisabledError:
         # This is an error _we_ throw. Hide our internals.
         etype, value, tb = sys.exc_info()
         tb = tb.tb_next  # omit _this_ method from the stack trace
@@ -143,7 +143,7 @@ def inner_eval(code, table, sender):
         print(f"{etype.__name__}: {value}")
 
         return sending_return(error=(f"Line {tb.tb_lineno}: {etype.__name__}: {value}"))
-    except Exception as err:
+    except Exception:
         # An error in the code
         etype, value, tb = sys.exc_info()
         tb = tb.tb_next  # omit this method from the stack trace

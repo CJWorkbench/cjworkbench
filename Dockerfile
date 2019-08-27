@@ -47,7 +47,7 @@ FROM pybase AS pydev
 # * fb-re2
 # * watchman (until someone packages binaries)
 # * pysycopg2 (binaries are evil because psycopg2 links SSL -- as does Python)
-# * thrift-compiler (to generate kernel/thrift/...)
+# * thrift-compiler (to generate cjwkernel/thrift/...)
 #
 # Also:
 # * socat: for our dev environment: fetcher uses http://localhost:8000 for in-lesson files
@@ -191,7 +191,7 @@ FROM pybuild AS base
 # Configure Black
 COPY pyproject.toml pyproject.toml
 
-COPY kernel/ /app/kernel/
+COPY cjwkernel/ /app/cjwkernel/
 COPY cjworkbench/ /app/cjworkbench/
 # TODO make server/ frontend-specific
 COPY server/ /app/server/

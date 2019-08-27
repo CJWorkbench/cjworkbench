@@ -2,7 +2,7 @@ import unittest
 import numpy as np
 import pandas as pd
 from pandas.testing import assert_frame_equal
-from kernel.pandas.types import RenderColumn, TabOutput
+from cjwkernel.pandas.types import RenderColumn, TabOutput
 from server.modules.jointab import migrate_params, render
 
 

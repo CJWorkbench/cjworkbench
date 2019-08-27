@@ -4,7 +4,13 @@ from unittest import mock
 import numpy as np
 import pandas as pd
 from pandas.testing import assert_series_equal, assert_frame_equal
-from kernel.pandas.types import Column, ColumnType, ProcessResult, QuickFix, TableShape
+from cjwkernel.pandas.types import (
+    Column,
+    ColumnType,
+    ProcessResult,
+    QuickFix,
+    TableShape,
+)
 
 
 class ColumnTypeTextTests(unittest.TestCase):

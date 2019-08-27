@@ -6,7 +6,7 @@
  * type hierarchy that can be converted to and from these low-level types.
  */
 
-namespace py kernel.thrift
+namespace py cjwkernel.thrift
 
 /**
  * The module's code is invalid, as per its programming language.

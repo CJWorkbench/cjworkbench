@@ -3,7 +3,7 @@ import json
 from typing import Any, Dict, Optional, Union
 import pandas as pd
 import requests
-from kernel.pandas.types import ProcessResult
+from cjwkernel.pandas.types import ProcessResult
 from server import oauth
 from .utils import parse_bytesio, turn_header_into_first_row
 

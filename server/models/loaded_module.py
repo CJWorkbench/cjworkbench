@@ -15,7 +15,7 @@ from types import ModuleType
 from typing import Any, Awaitable, Callable, Dict, Optional
 import pandas as pd
 from cjworkbench.sync import database_sync_to_async
-from kernel.pandas.types import ProcessResult, RenderColumn
+from cjwkernel.pandas.types import ProcessResult, RenderColumn
 from . import module_loader
 from .module_version import ModuleVersion
 from .param_dtype import ParamDTypeDict

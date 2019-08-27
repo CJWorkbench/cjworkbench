@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 from pandas.api.types import is_numeric_dtype
-from kernel.pandas.types import NumberFormatter  # internal API
+from cjwkernel.pandas.types import NumberFormatter  # internal API
 
 
 def _format_number(series: pd.Series, format: str) -> pd.Series:

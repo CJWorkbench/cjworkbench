@@ -1,6 +1,6 @@
 import aiohttp
 import asyncio
-from kernel.pandas.types import ProcessResult
+from cjwkernel.pandas.types import ProcessResult
 from server.modules import utils
 from .utils import turn_header_into_first_row
 from .parse_util import parse_bytesio

@@ -2,7 +2,7 @@ from dataclasses import dataclass
 import logging
 from typing import Any, Dict, List, Optional, FrozenSet
 from cjworkbench.sync import database_sync_to_async
-from kernel.pandas.types import ProcessResult, StepResultShape
+from cjwkernel.pandas.types import ProcessResult, StepResultShape
 from server.models import WfModule, Workflow, Tab
 from server.models.param_spec import ParamDType
 from .wf_module import execute_wfmodule, locked_wf_module

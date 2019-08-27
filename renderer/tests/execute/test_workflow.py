@@ -4,7 +4,7 @@ import logging
 import unittest
 from unittest.mock import Mock, patch
 import pandas as pd
-from kernel.pandas.types import ProcessResult
+from cjwkernel.pandas.types import ProcessResult
 from server.models import LoadedModule, Workflow
 from server.models.commands import InitWorkflowCommand
 from server.tests.utils import DbTestCase

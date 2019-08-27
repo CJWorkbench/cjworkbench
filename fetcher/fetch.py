@@ -10,7 +10,7 @@ from django.utils import timezone
 import pandas as pd
 from cjworkbench.sync import database_sync_to_async
 from cjworkbench.util import benchmark
-from kernel.pandas.types import ProcessResult
+from cjwkernel.pandas.types import ProcessResult
 from server.models import (
     LoadedModule,
     WfModule,

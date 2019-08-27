@@ -16,8 +16,8 @@ else:
 from thrift.transport import TTransport, TSocket, TSSLSocket, THttpClient
 from thrift.protocol.TBinaryProtocol import TBinaryProtocol
 
-from kernel.thrift import KernelModule
-from kernel.thrift.ttypes import *
+from cjwkernel.thrift import KernelModule
+from cjwkernel.thrift.ttypes import *
 
 if len(sys.argv) <= 1 or sys.argv[1] == '--help':
     print('')

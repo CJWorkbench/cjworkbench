@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 from django.test import SimpleTestCase, override_settings
 from pandas.testing import assert_frame_equal
-from kernel.pandas.types import ProcessResult
+from cjwkernel.pandas.types import ProcessResult
 from server.modules.utils import (
     build_globals_for_eval,
     parse_bytesio,

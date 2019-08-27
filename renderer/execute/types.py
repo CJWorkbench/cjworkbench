@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import FrozenSet, List, Optional
-from kernel.pandas.types import QuickFix
+from cjwkernel.pandas.types import QuickFix
 
 
 TypeNames = {"text": "Text", "number": "Numbers", "datetime": "Dates & Times"}

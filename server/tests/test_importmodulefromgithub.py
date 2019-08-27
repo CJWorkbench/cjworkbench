@@ -4,7 +4,7 @@ import os
 import numpy as np
 import pandas as pd
 from pandas.testing import assert_frame_equal
-from kernel.pandas.types import ProcessResult
+from cjwkernel.pandas.types import ProcessResult
 from server.importmodulefromgithub import import_module_from_directory
 from server.models import LoadedModule, ModuleVersion, Workflow
 from server.models.module_loader import validate_python_functions
