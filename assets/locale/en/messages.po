@@ -21,7 +21,7 @@ msgstr "Greek"
 msgid "locales.en"
 msgstr "English"
 
-#: assets/js/table/SelectedRowsActions.js:101
+#: assets/js/table/SelectedRowsActions.js:105
 msgid "selectedRow.numberOfRows"
 msgstr "{0, plural, =0 {No rows selected} one {# row selected} other {# rows selected}}"
 

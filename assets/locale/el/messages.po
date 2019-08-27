@@ -21,7 +21,7 @@ msgstr "Ελληνικά"
 msgid "locales.en"
 msgstr "Αγγλικά"
 
-#: assets/js/table/SelectedRowsActions.js:101
+#: assets/js/table/SelectedRowsActions.js:105
 msgid "selectedRow.numberOfRows"
 msgstr ""
 
