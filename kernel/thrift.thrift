@@ -173,21 +173,18 @@ struct Tab {
  * Already-computed output of a tab.
  *
  * During workflow execute, the output from one tab can be used as the input to
- * another.
+ * another. This only happens if the output was a `RenderResultOk` with a
+ * non-zero-column `table`. (The executor won't run a Step whose inputs aren't
+ * valid.)
  */
-struct TabResult {
+struct TabOutput {
   /** Tab that was processed. */
   1: Tab tab,
 
   /**
    * Output from the final Step in `tab`.
-   *
-   * RenderResultOk may indicate a user-facing error in the other tab.
-   *
-   * If the other tab's result was a RenderResultError, that will be wrapped
-   * to become a RenderResultOk here.
    */
-  2: RenderResultOk result
+  2: ArrowTable table
 }
 
 /** Argument to a translatable string. */
@@ -355,6 +352,6 @@ service KernelModule {
      * tabs: it's only the tabs the user selected in this Step's `tab` and
      * `multitab` parameters.
      */
-    4: map<string, TabResult> input_tabs
+    4: map<string, TabOutput> input_tabs
   )
 }

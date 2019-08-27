@@ -591,7 +591,7 @@ class render_args(object):
                     (_ktype29, _vtype30, _size28) = iprot.readMapBegin()
                     for _i32 in range(_size28):
                         _key33 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
-                        _val34 = TabResult()
+                        _val34 = TabOutput()
                         _val34.read(iprot)
                         self.input_tabs[_key33] = _val34
                     iprot.readMapEnd()
@@ -656,7 +656,7 @@ render_args.thrift_spec = (
     (1, TType.STRUCT, 'input_table', [ArrowTable, None], None, ),  # 1
     (2, TType.STRUCT, 'params', [Params, None], None, ),  # 2
     (3, TType.STRUCT, 'tab', [Tab, None], None, ),  # 3
-    (4, TType.MAP, 'input_tabs', (TType.STRING, 'UTF8', TType.STRUCT, [TabResult, None], False), None, ),  # 4
+    (4, TType.MAP, 'input_tabs', (TType.STRING, 'UTF8', TType.STRUCT, [TabOutput, None], False), None, ),  # 4
 )
 
 

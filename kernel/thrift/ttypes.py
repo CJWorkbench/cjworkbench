@@ -1109,32 +1109,29 @@ class Tab(object):
         return not (self == other)
 
 
-class TabResult(object):
+class TabOutput(object):
     """
     Already-computed output of a tab.
 
     During workflow execute, the output from one tab can be used as the input to
-    another.
+    another. This only happens if the output was a `RenderResultOk` with a
+    non-zero-column `table`. (The executor won't run a Step whose inputs aren't
+    valid.)
 
     Attributes:
      - tab: Tab that was processed.
-     - result: Output from the final Step in `tab`.
-
-    RenderResultOk may indicate a user-facing error in the other tab.
-
-    If the other tab's result was a RenderResultError, that will be wrapped
-    to become a RenderResultOk here.
+     - table: Output from the final Step in `tab`.
     """
 
     __slots__ = (
         'tab',
-        'result',
+        'table',
     )
 
 
-    def __init__(self, tab=None, result=None,):
+    def __init__(self, tab=None, table=None,):
         self.tab = tab
-        self.result = result
+        self.table = table
 
     def read(self, iprot):
         if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
@@ -1153,8 +1150,8 @@ class TabResult(object):
                     iprot.skip(ftype)
             elif fid == 2:
                 if ftype == TType.STRUCT:
-                    self.result = RenderResultOk()
-                    self.result.read(iprot)
+                    self.table = ArrowTable()
+                    self.table.read(iprot)
                 else:
                     iprot.skip(ftype)
             else:
@@ -1166,14 +1163,14 @@ class TabResult(object):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
             oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
             return
-        oprot.writeStructBegin('TabResult')
+        oprot.writeStructBegin('TabOutput')
         if self.tab is not None:
             oprot.writeFieldBegin('tab', TType.STRUCT, 1)
             self.tab.write(oprot)
             oprot.writeFieldEnd()
-        if self.result is not None:
-            oprot.writeFieldBegin('result', TType.STRUCT, 2)
-            self.result.write(oprot)
+        if self.table is not None:
+            oprot.writeFieldBegin('table', TType.STRUCT, 2)
+            self.table.write(oprot)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -2160,11 +2157,11 @@ Tab.thrift_spec = (
     (1, TType.STRING, 'slug', 'UTF8', None, ),  # 1
     (2, TType.STRING, 'name', 'UTF8', None, ),  # 2
 )
-all_structs.append(TabResult)
-TabResult.thrift_spec = (
+all_structs.append(TabOutput)
+TabOutput.thrift_spec = (
     None,  # 0
     (1, TType.STRUCT, 'tab', [Tab, None], None, ),  # 1
-    (2, TType.STRUCT, 'result', [RenderResultOk, None], None, ),  # 2
+    (2, TType.STRUCT, 'table', [ArrowTable, None], None, ),  # 2
 )
 all_structs.append(I18nArgument)
 I18nArgument.thrift_spec = (
