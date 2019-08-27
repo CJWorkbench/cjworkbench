@@ -43,6 +43,7 @@ pyyaml = "*"
 boto3 = "*"
 yajl-py = "*"
 pyarrow = "*"
+thrift = "~=0.11.0"
 
 [dev-packages]
 watchdog = "*"

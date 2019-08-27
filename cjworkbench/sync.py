@@ -2,6 +2,7 @@ import asyncio
 from concurrent.futures import ThreadPoolExecutor
 import contextvars
 import functools
+import sys
 from channels.db import DatabaseSyncToAsync
 from django.conf import settings
 
@@ -36,7 +37,12 @@ class WorkbenchDatabaseSyncToAsync(DatabaseSyncToAsync):
         future = loop.run_in_executor(
             self.executor,
             functools.partial(
-                self.thread_handler, loop, self.get_current_task(), context.run, child
+                self.thread_handler,
+                loop,
+                self.get_current_task(),
+                sys.exc_info(),
+                context.run,
+                child,
             ),
         )
         return await asyncio.wait_for(future, timeout=None)
