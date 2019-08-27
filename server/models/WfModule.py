@@ -3,7 +3,7 @@ from typing import Any, Dict, Optional, Union
 from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.db.models import Q
-from cjworkbench.types import ProcessResult
+from kernel.pandas.types import ProcessResult
 from server import minio
 from server.models import loaded_module
 from .fields import ColumnsField

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import FrozenSet, List, Optional
-from cjworkbench.types import QuickFix
+from kernel.pandas.types import QuickFix
 
 
 TypeNames = {"text": "Text", "number": "Numbers", "datetime": "Dates & Times"}
@@ -141,7 +141,7 @@ class PromptingError(Exception):
 
             return QuickFix(prompt, "prependModule", [module_id, params])
 
-    def __init__(self, errors: List[PromptDontRender.WrongColumnType]):
+    def __init__(self, errors: List[PromptingError.WrongColumnType]):
         super().__init__("user must change something before we render")
         self.errors = errors
 

@@ -7,7 +7,7 @@ import dateutil
 from django.test import SimpleTestCase, override_settings
 import pandas as pd
 from pandas.testing import assert_frame_equal
-from cjworkbench.types import ProcessResult
+from kernel.pandas.types import ProcessResult
 from server.modules import twitter
 from .util import MockParams
 
@@ -939,7 +939,7 @@ class TwitterTests(SimpleTestCase):
     @patch("server.oauth.OAuthService.lookup_or_none", mock_auth)
     @patch("aiohttp.ClientSession")
     def test_accumulate_truncate(self, session):
-        session.return_value = mock_session = MockAiohttpSession([mock_statuses2, []])
+        session.return_value = MockAiohttpSession([mock_statuses2, []])
 
         params = P(querytype="user_timeline", username="foouser", accumulate=True)
 

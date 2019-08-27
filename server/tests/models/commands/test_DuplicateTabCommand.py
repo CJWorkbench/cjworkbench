@@ -1,5 +1,5 @@
 from unittest.mock import patch
-from cjworkbench.types import ProcessResult
+from kernel.pandas.types import ProcessResult
 from server.models import Workflow
 from server.models.commands import DuplicateTabCommand
 from server.tests.utils import DbTestCase

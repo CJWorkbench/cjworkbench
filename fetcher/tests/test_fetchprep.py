@@ -1,4 +1,4 @@
-from cjworkbench.types import Column, ColumnType, TableShape
+from kernel.pandas.types import Column, ColumnType, TableShape
 from server.models.param_spec import ParamDType
 from server.tests.utils import DbTestCase
 from fetcher.fetchprep import clean_value

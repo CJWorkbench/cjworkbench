@@ -188,6 +188,10 @@ RUN node_modules/.bin/webpack -p
 # 3. Three prod servers will all be based on the same stuff:
 FROM pybuild AS base
 
+# Configure Black
+COPY pyproject.toml pyproject.toml
+
+COPY kernel/ /app/kernel/
 COPY cjworkbench/ /app/cjworkbench/
 # TODO make server/ frontend-specific
 COPY server/ /app/server/

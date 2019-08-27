@@ -1,7 +1,7 @@
 import json
 from typing import Any, Dict, List, Optional
 import pandas as pd
-from cjworkbench.types import ProcessResult, QuickFix, TableShape
+from kernel.pandas.types import ProcessResult, QuickFix, TableShape
 from server import minio, parquet
 
 

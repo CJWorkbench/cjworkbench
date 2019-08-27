@@ -5,13 +5,12 @@ import logging
 import os
 from typing import Optional, Tuple
 from django.conf import settings
-from django.contrib.auth.models import User
 from django.db import DatabaseError, InterfaceError
 from django.utils import timezone
 import pandas as pd
 from cjworkbench.sync import database_sync_to_async
 from cjworkbench.util import benchmark
-from cjworkbench.types import ProcessResult
+from kernel.pandas.types import ProcessResult
 from server.models import (
     LoadedModule,
     WfModule,

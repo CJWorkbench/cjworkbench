@@ -1,5 +1,5 @@
 from unittest.mock import patch
-from cjworkbench.types import ProcessResult
+from kernel.pandas.types import ProcessResult
 from server.models import Workflow
 from server.tests.utils import DbTestCase
 from renderer.execute.wf_module import execute_wfmodule

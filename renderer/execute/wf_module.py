@@ -3,7 +3,7 @@ import contextlib
 import datetime
 from typing import Any, Dict, Optional, Tuple
 from cjworkbench.sync import database_sync_to_async
-from cjworkbench.types import ProcessResult, StepResultShape, TableShape
+from kernel.pandas.types import ProcessResult, StepResultShape, TableShape
 from server import notifications
 from server.models import LoadedModule, WfModule, Workflow
 from server.notifications import OutputDelta

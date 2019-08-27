@@ -4,7 +4,7 @@ from unittest import mock
 import numpy as np
 import pandas as pd
 from pandas.testing import assert_series_equal, assert_frame_equal
-from cjworkbench.types import Column, ColumnType, ProcessResult, QuickFix, TableShape
+from kernel.pandas.types import Column, ColumnType, ProcessResult, QuickFix, TableShape
 
 
 class ColumnTypeTextTests(unittest.TestCase):
@@ -210,16 +210,13 @@ class ProcessResultTests(unittest.TestCase):
     def test_coerce_infer_columns_format_supercedes_try_fallback_columns(self):
         table = pd.DataFrame({"A": [1, 2]})
         result = ProcessResult.coerce(
-            {
-                "dataframe": pd.DataFrame({"A": [1, 2]}),
-                "column_formats": {"A": "{:,d}"},
-            },
+            {"dataframe": table, "column_formats": {"A": "{:,d}"}},
             try_fallback_columns=[Column("A", ColumnType.NUMBER("{:,.2f}"))],
         )
         self.assertEqual(result.columns, [Column("A", ColumnType.NUMBER("{:,d}"))])
 
     def test_coerce_validate_dataframe(self):
-        # Just one test, to ensure pandas_util.validate_dataframe() is used
+        # Just one test, to ensure validate_dataframe() is used
         with self.assertRaisesRegex(ValueError, "must use the default RangeIndex"):
             ProcessResult.coerce(pd.DataFrame({"A": [1, 2]})[1:])
 

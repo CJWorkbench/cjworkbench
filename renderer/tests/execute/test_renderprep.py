@@ -3,7 +3,7 @@ import pathlib
 import uuid
 import pandas as pd
 from pandas.testing import assert_frame_equal
-from cjworkbench.types import (
+from kernel.pandas.types import (
     Column,
     ColumnType,
     ProcessResult,

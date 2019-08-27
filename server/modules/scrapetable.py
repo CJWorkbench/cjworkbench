@@ -1,8 +1,7 @@
-from collections import defaultdict
 import asyncio
 import aiohttp
 import pandas as pd
-from cjworkbench.types import ProcessResult
+from kernel.pandas.types import ProcessResult
 from server.modules import utils
 
 

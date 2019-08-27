@@ -1,5 +1,5 @@
 import unittest
-from cjworkbench.types import QuickFix
+from kernel.pandas.types import QuickFix
 from renderer.execute.types import PromptingError
 
 

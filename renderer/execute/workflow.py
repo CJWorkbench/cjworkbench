@@ -1,6 +1,6 @@
 from typing import Dict, List, Optional, Tuple
 from cjworkbench.sync import database_sync_to_async
-from cjworkbench.types import StepResultShape
+from kernel.pandas.types import StepResultShape
 from server.models import Workflow
 from server.models.param_dtype import ParamDType
 from .tab import ExecuteStep, TabFlow, execute_tab_flow

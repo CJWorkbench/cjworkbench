@@ -19,7 +19,6 @@ from rest_framework import status
 from rest_framework.decorators import api_view, renderer_classes
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
-from cjworkbench.types import ProcessResult
 from server.models import Tab, WfModule, Workflow
 from server import minio, parquet, rabbitmq
 from server.models.loaded_module import module_get_html_bytes

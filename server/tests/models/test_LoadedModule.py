@@ -7,7 +7,7 @@ from unittest.mock import Mock, patch
 from asgiref.sync import async_to_sync
 import pandas as pd
 from pandas.testing import assert_frame_equal
-from cjworkbench.types import ProcessResult, Column, ColumnType
+from kernel.pandas.types import ProcessResult, Column, ColumnType
 from server import minio
 from server.models import LoadedModule
 import server.models.loaded_module

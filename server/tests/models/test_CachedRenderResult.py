@@ -1,6 +1,6 @@
 import datetime
 import pandas
-from cjworkbench.types import Column, ColumnType, ProcessResult, QuickFix
+from kernel.pandas.types import Column, ColumnType, ProcessResult, QuickFix
 from server import minio
 from server.models import Workflow, WfModule
 from server.models.commands import InitWorkflowCommand

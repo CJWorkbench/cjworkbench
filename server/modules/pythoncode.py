@@ -10,7 +10,7 @@ import traceback
 from typing import Any, Dict, Tuple
 import numpy
 import pandas
-from cjworkbench.types import ProcessResult
+from kernel.pandas.types import ProcessResult
 from .utils import build_globals_for_eval, PythonFeatureDisabledError
 
 
@@ -104,7 +104,7 @@ def inner_eval(code, table, sender):
         compiled_code = compile(code, "user input", "exec")
     except SyntaxError as err:
         return sending_return(error=f"Line {err.lineno}: {err}")
-    except ValueError as err:
+    except ValueError:
         # Apparently this is another thing that compile() can raise
         return sending_return(error=f"User input contains null bytes")
 

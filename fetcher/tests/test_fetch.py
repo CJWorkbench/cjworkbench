@@ -8,7 +8,7 @@ from django.utils import timezone
 import pandas as pd
 from pandas.testing import assert_frame_equal
 from cjworkbench.sync import database_sync_to_async
-from cjworkbench.types import ProcessResult
+from kernel.pandas.types import ProcessResult
 from server.models import LoadedModule, ModuleVersion, WfModule, Workflow
 from server.models.commands import InitWorkflowCommand
 from server.models.param_dtype import ParamDType

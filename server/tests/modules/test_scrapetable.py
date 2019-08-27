@@ -4,10 +4,9 @@ from unittest import mock
 from unittest.mock import patch
 import aiohttp
 from asgiref.sync import async_to_sync
-import numpy as np
 import pandas as pd
 from pandas.testing import assert_frame_equal
-from cjworkbench.types import ProcessResult
+from kernel.pandas.types import ProcessResult
 from server.modules import scrapetable
 from .util import MockParams
 
@@ -246,7 +245,6 @@ class ScrapeTableTest(unittest.TestCase):
     )
     def test_header_only_table(self):
         fetch_result = fetch(url="http://example.org")
-        table = fetch_result.dataframe
         assert_frame_equal(fetch_result.dataframe, pd.DataFrame({"A": []}, dtype=str))
 
     @patch(
@@ -311,7 +309,7 @@ class ScrapeTableTest(unittest.TestCase):
             b"</tbody></table>"
         ),
     )
-    def test_merge_thead_colnames(self):
+    def test_merge_thead_colnames_conflict(self):
         fetch_result = fetch(url="http://example.org")
         assert_frame_equal(
             fetch_result.dataframe,

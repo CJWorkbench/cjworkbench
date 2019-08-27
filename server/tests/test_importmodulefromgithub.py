@@ -1,18 +1,15 @@
-import io
 import json
 from pathlib import Path
 import os
-import shutil
-import tempfile
 import numpy as np
 import pandas as pd
 from pandas.testing import assert_frame_equal
-from cjworkbench.types import ProcessResult
+from kernel.pandas.types import ProcessResult
 from server.importmodulefromgithub import import_module_from_directory
 from server.models import LoadedModule, ModuleVersion, Workflow
 from server.models.module_loader import validate_python_functions
 import server.models.loaded_module
-from server.tests.utils import DbTestCase, MockDir, MockPath
+from server.tests.utils import DbTestCase, MockDir
 
 
 class ImportFromGitHubTest(DbTestCase):

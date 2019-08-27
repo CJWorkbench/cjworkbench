@@ -14,7 +14,7 @@ import pandas as pd
 from pandas.api.types import is_numeric_dtype, is_datetime64_dtype
 import xlrd
 import yarl  # aiohttp innards -- yuck!
-from cjworkbench.types import ProcessResult
+from kernel.pandas.types import ProcessResult
 
 
 _TextEncoding = Optional[str]

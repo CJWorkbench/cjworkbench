@@ -8,7 +8,7 @@ from typing import Any, Dict, Iterable, List, Optional, Union
 import numpy as np
 import pandas as pd
 from pandas.api.types import is_numeric_dtype, is_datetime64_dtype
-from .pandas_util import validate_dataframe
+from .validate import validate_dataframe
 
 
 class ColumnType(ABC):
@@ -211,7 +211,7 @@ class ColumnTypeDatetime(ColumnType):
 
 
 # Aliases to help with import. e.g.:
-# from cjworkbench.types import Column, ColumnType
+# from kernel.pandas.types import Column, ColumnType
 # column = Column('A', ColumnType.NUMBER('{:,.2f}'))
 ColumnType.TEXT = ColumnTypeText
 ColumnType.NUMBER = ColumnTypeNumber

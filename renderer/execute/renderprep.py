@@ -5,7 +5,7 @@ import pathlib
 import tempfile
 import weakref
 from typing import Any, Dict, List, Optional, Union
-from cjworkbench.types import RenderColumn, StepResultShape, TabOutput
+from kernel.pandas.types import RenderColumn, StepResultShape, TabOutput
 from server import minio
 from server.models import Tab, UploadedFile
 from server.models.param_spec import ParamDType
