@@ -1,3 +1,5 @@
+# LEGACY types. TODO rebuild these on top of cjwkernel.types.
+
 from __future__ import annotations
 
 from abc import ABC, abstractmethod

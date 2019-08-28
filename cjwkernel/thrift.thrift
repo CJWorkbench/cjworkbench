@@ -130,24 +130,33 @@ struct Column {
 }
 
 /**
+ * Table data that will be cached for easy access.
+ */
+struct TableMetadata {
+  /** Number of rows in the table. */
+  1: i32 n_rows,
+
+  /** Columns -- the user-visible aspects of them, at least. */
+  2: list<Column> columns
+}
+
+/**
  * Table stored on disk, ready to be mmapped.
  *
- * The file on disk is `{tab_slug}.arrow`, in a directory agreed upon by the
- * processes passing this data around.
+ * The file on disk is in a directory agreed upon by the processes passing this
+ * data around.
  */
 struct ArrowTable {
-  /** Unique tab identifier.
-   *
-   * There must be a valid Arrow file on disk named after `tab_slug`.
-   */
-  1: string tab_slug,
-
   /**
-   * Columns in the table.
+   * Name of file on disk that contains data.
    *
-   * The Arrow file's columns must agree with these columns.
+   * For a zero-column table, filename may be the empty string -- meaning there
+   * is no file on disk. In all other cases, the file on disk must exist.
    */
-  2: list<Column> columns,
+  1: string filename,
+
+  /** Metadata; must agree with the file on disk. */
+  2: TableMetadata metadata
 }
 
 /** Module `render()` and `fetch()` parameters. */
@@ -253,7 +262,7 @@ struct RenderResultOk {
    *
    * If the Step output is "error, then the table must have zero columns.
    */
-  1: ArrowTable table, // zero columns if error/undefined
+  1: ArrowTable table,
 
   /**
    * User-facing errors or warnings reported by the module.
@@ -306,7 +315,7 @@ union RenderResult {
   /**
    * The module did not crash.
    *
-   * (This could be an error message for the user.)
+   * (This could still be an error message for the user.)
    */
   1: RenderResultOk ok,
 

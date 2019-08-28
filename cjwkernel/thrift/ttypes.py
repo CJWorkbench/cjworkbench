@@ -860,30 +860,23 @@ class Column(object):
         return not (self == other)
 
 
-class ArrowTable(object):
+class TableMetadata(object):
     """
-    Table stored on disk, ready to be mmapped.
-
-    The file on disk is `{tab_slug}.arrow`, in a directory agreed upon by the
-    processes passing this data around.
+    Table data that will be cached for easy access.
 
     Attributes:
-     - tab_slug: Unique tab identifier.
-
-    There must be a valid Arrow file on disk named after `tab_slug`.
-     - columns: Columns in the table.
-
-    The Arrow file's columns must agree with these columns.
+     - n_rows: Number of rows in the table.
+     - columns: Columns -- the user-visible aspects of them, at least.
     """
 
     __slots__ = (
-        'tab_slug',
+        'n_rows',
         'columns',
     )
 
 
-    def __init__(self, tab_slug=None, columns=None,):
-        self.tab_slug = tab_slug
+    def __init__(self, n_rows=None, columns=None,):
+        self.n_rows = n_rows
         self.columns = columns
 
     def read(self, iprot):
@@ -896,8 +889,8 @@ class ArrowTable(object):
             if ftype == TType.STOP:
                 break
             if fid == 1:
-                if ftype == TType.STRING:
-                    self.tab_slug = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                if ftype == TType.I32:
+                    self.n_rows = iprot.readI32()
                 else:
                     iprot.skip(ftype)
             elif fid == 2:
@@ -920,10 +913,10 @@ class ArrowTable(object):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
             oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
             return
-        oprot.writeStructBegin('ArrowTable')
-        if self.tab_slug is not None:
-            oprot.writeFieldBegin('tab_slug', TType.STRING, 1)
-            oprot.writeString(self.tab_slug.encode('utf-8') if sys.version_info[0] == 2 else self.tab_slug)
+        oprot.writeStructBegin('TableMetadata')
+        if self.n_rows is not None:
+            oprot.writeFieldBegin('n_rows', TType.I32, 1)
+            oprot.writeI32(self.n_rows)
             oprot.writeFieldEnd()
         if self.columns is not None:
             oprot.writeFieldBegin('columns', TType.LIST, 2)
@@ -931,6 +924,91 @@ class ArrowTable(object):
             for iter6 in self.columns:
                 iter6.write(oprot)
             oprot.writeListEnd()
+            oprot.writeFieldEnd()
+        oprot.writeFieldStop()
+        oprot.writeStructEnd()
+
+    def validate(self):
+        return
+
+    def __repr__(self):
+        L = ['%s=%r' % (key, getattr(self, key))
+             for key in self.__slots__]
+        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+    def __eq__(self, other):
+        if not isinstance(other, self.__class__):
+            return False
+        for attr in self.__slots__:
+            my_val = getattr(self, attr)
+            other_val = getattr(other, attr)
+            if my_val != other_val:
+                return False
+        return True
+
+    def __ne__(self, other):
+        return not (self == other)
+
+
+class ArrowTable(object):
+    """
+    Table stored on disk, ready to be mmapped.
+
+    The file on disk is in a directory agreed upon by the processes passing this
+    data around.
+
+    Attributes:
+     - filename: Name of file on disk that contains data. The file must exist.
+     - metadata: Metadata; must agree with the file on disk.
+    """
+
+    __slots__ = (
+        'filename',
+        'metadata',
+    )
+
+
+    def __init__(self, filename=None, metadata=None,):
+        self.filename = filename
+        self.metadata = metadata
+
+    def read(self, iprot):
+        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
+            return
+        iprot.readStructBegin()
+        while True:
+            (fname, ftype, fid) = iprot.readFieldBegin()
+            if ftype == TType.STOP:
+                break
+            if fid == 1:
+                if ftype == TType.STRING:
+                    self.filename = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                else:
+                    iprot.skip(ftype)
+            elif fid == 2:
+                if ftype == TType.STRUCT:
+                    self.metadata = TableMetadata()
+                    self.metadata.read(iprot)
+                else:
+                    iprot.skip(ftype)
+            else:
+                iprot.skip(ftype)
+            iprot.readFieldEnd()
+        iprot.readStructEnd()
+
+    def write(self, oprot):
+        if oprot._fast_encode is not None and self.thrift_spec is not None:
+            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
+            return
+        oprot.writeStructBegin('ArrowTable')
+        if self.filename is not None:
+            oprot.writeFieldBegin('filename', TType.STRING, 1)
+            oprot.writeString(self.filename.encode('utf-8') if sys.version_info[0] == 2 else self.filename)
+            oprot.writeFieldEnd()
+        if self.metadata is not None:
+            oprot.writeFieldBegin('metadata', TType.STRUCT, 2)
+            self.metadata.write(oprot)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -2140,11 +2218,17 @@ Column.thrift_spec = (
     (1, TType.STRING, 'name', 'UTF8', None, ),  # 1
     (2, TType.STRUCT, 'type', [ColumnType, None], None, ),  # 2
 )
+all_structs.append(TableMetadata)
+TableMetadata.thrift_spec = (
+    None,  # 0
+    (1, TType.I32, 'n_rows', None, None, ),  # 1
+    (2, TType.LIST, 'columns', (TType.STRUCT, [Column, None], False), None, ),  # 2
+)
 all_structs.append(ArrowTable)
 ArrowTable.thrift_spec = (
     None,  # 0
-    (1, TType.STRING, 'tab_slug', 'UTF8', None, ),  # 1
-    (2, TType.LIST, 'columns', (TType.STRUCT, [Column, None], False), None, ),  # 2
+    (1, TType.STRING, 'filename', 'UTF8', None, ),  # 1
+    (2, TType.STRUCT, 'metadata', [TableMetadata, None], None, ),  # 2
 )
 all_structs.append(Params)
 Params.thrift_spec = (
