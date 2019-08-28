@@ -1,11 +1,45 @@
 from typing import Optional
+import uuid
 from django.conf import settings
 from django.utils import timezone
+import pandas as pd
 from cjworkbench.sync import database_sync_to_async
 from cjwkernel.pandas.types import ProcessResult
-from server import websockets
+from server import minio, parquet, websockets
 from server.models import WfModule, Workflow
 from server.models.commands import ChangeDataVersionCommand
+from server.pandas_util import hash_table
+
+
+def _build_key(workflow_id: int, wf_module_id: int) -> str:
+    """Build a helpful S3 key."""
+    return f"{workflow_id}/{wf_module_id}/{uuid.uuid1()}.dat"
+
+
+def _store_fetched_table_if_different(
+    workflow: Workflow, wf_module: WfModule, table: pd.DataFrame
+) -> Optional[timezone.datetime]:
+    hash = hash_table(table)
+    # Called within _maybe_add_version()
+    old_so = wf_module.stored_objects.order_by("-stored_at").first()
+    if (
+        old_so is not None
+        # Fast: hashes differ, so we don't need to read the table
+        and hash == old_so.hash
+        # Slow: compare files. Expensive: reads a file from S3, holds
+        # both DataFrames in RAM, uses lots of CPU.
+        and old_so.get_table().equals(table)
+    ):
+        # `table` is identical to what was in `old_so`.
+        return None
+
+    key = _build_key(workflow.id, wf_module.id)
+    size = parquet.write(minio.StoredObjectsBucket, key, table)
+    stored_object = wf_module.stored_objects.create(
+        bucket=minio.StoredObjectsBucket, key=key, size=size, hash=hash
+    )
+    _enforce_storage_limits(wf_module)
+    return stored_object.stored_at
 
 
 @database_sync_to_async
@@ -42,14 +76,13 @@ def _maybe_add_version(
                 return None
 
             if maybe_result is not None:
-                version_added = wf_module.store_fetched_table_if_different(
-                    maybe_result.dataframe  # TODO store entire result
+                # TODO store result error, too. Actually, nix StoredObject
+                # entirely and let fetch methods return arbitrary blobs.
+                version_added = _store_fetched_table_if_different(
+                    workflow, wf_module, maybe_result.dataframe
                 )
             else:
                 version_added = None
-
-            if version_added:
-                enforce_storage_limits(wf_module)
 
             wf_module.save(update_fields=fields.keys())
 
@@ -128,7 +161,7 @@ async def save_result_if_changed(
         )
 
 
-def enforce_storage_limits(wf_module: WfModule) -> None:
+def _enforce_storage_limits(wf_module: WfModule) -> None:
     """
     Delete old versions that bring us past MAX_STORAGE_PER_MODULE.
 

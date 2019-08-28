@@ -86,44 +86,6 @@ class WfModuleTests(DbTestCase):
         correct_verlist = [secondver, firstver]  # sorted by creation date, latest first
         self.assertListEqual([ver[0] for ver in verlist], correct_verlist)
 
-    def test_wf_module_store_table_if_different(self):
-        workflow = Workflow.create_and_init()
-        wf_module = workflow.tabs.first().wf_modules.create(order=0, slug="step-1")
-        table1 = mock_csv_table
-        table2 = mock_csv_table2
-
-        # nothing ever stored
-        nothing = wf_module.retrieve_fetched_table()
-        self.assertIsNone(nothing)
-
-        # save a table
-        ver1 = wf_module.store_fetched_table(table1)
-        wf_module.save()
-        wf_module.refresh_from_db()
-        self.assertNotEqual(
-            wf_module.stored_data_version, ver1
-        )  # should not switch versions by itself
-        self.assertEqual(len(wf_module.list_fetched_data_versions()), 1)
-
-        # try saving it again, should be NOP
-        verdup = wf_module.store_fetched_table_if_different(table1)
-        self.assertIsNone(verdup)
-        self.assertEqual(len(wf_module.list_fetched_data_versions()), 1)
-
-        # save something different now, should create new version
-        ver2 = wf_module.store_fetched_table_if_different(table2)
-        wf_module.save()
-        wf_module.refresh_from_db()
-        self.assertNotEqual(ver2, ver1)
-        self.assertNotEqual(
-            wf_module.stored_data_version, ver2
-        )  # should not switch versions by itself
-        self.assertEqual(len(wf_module.list_fetched_data_versions()), 2)
-        wf_module.stored_data_version = ver2
-        wf_module.save()
-        tableout2 = wf_module.retrieve_fetched_table()
-        self.assertTrue(tableout2.equals(table2))
-
     def test_wf_module_duplicate(self):
         workflow = Workflow.create_and_init()
         wfm1 = workflow.tabs.first().wf_modules.create(order=0, slug="step-1")

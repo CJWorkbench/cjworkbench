@@ -87,21 +87,6 @@ class StoredObjectTests(DbTestCase):
         so = StoredObject.create_table(self.wfm1, table)
         assert_frame_equal(so.get_table(), table)
 
-    def test_create_table_if_different(self):
-        df1 = pd.DataFrame({"A": [1]})
-        df2 = pd.DataFrame({"A": [2]})
-
-        so1 = StoredObject.create_table(self.wfm1, df1)
-
-        so2 = StoredObject.create_table_if_different(self.wfm1, so1, df1)
-        self.assertIsNone(so2)
-
-        so3 = StoredObject.create_table_if_different(self.wfm1, so1, df2)
-        self.assertIsNotNone(so3)
-
-        table3 = so3.get_table()
-        assert_frame_equal(table3, df2)
-
     def test_duplicate_table(self):
         table = pd.DataFrame({"A": [1]})
 

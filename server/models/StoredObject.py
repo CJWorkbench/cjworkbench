@@ -37,31 +37,6 @@ class StoredObject(models.Model):
     @classmethod
     def create_table(cls, wf_module, table):
         hash = hash_table(table)
-        return cls.__create_table_internal(wf_module, table, hash)
-
-    # Create a new StoredObject if it's going to store different data than the
-    # previous one. Otherwise null Fast; checks hash without loading file
-    # contents
-    @classmethod
-    def create_table_if_different(cls, wf_module, old_so, table):
-        hash = hash_table(table)
-
-        if (
-            old_so is not None
-            # Fast: hashes differ, so we don't need to read the table
-            and hash == old_so.hash
-            # Slow: compare files. Expensive: reads a file from S3, holds
-            # both DataFrames in RAM, uses lots of CPU.
-            and old_so.get_table().equals(table)
-        ):
-            # `table` is identical to what was in `old_so`.
-            return None
-        else:
-            # `table` is new! Yay!
-            return cls.__create_table_internal(wf_module, table, hash)
-
-    @classmethod
-    def __create_table_internal(cls, wf_module, table, hash):
         # Write to minio bucket/key
         key = _build_key(wf_module.workflow_id, wf_module.id)
         size = parquet.write(minio.StoredObjectsBucket, key, table)
