@@ -1,21 +1,24 @@
-import uuid
 from django.db import models
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from django.utils import timezone
 import pandas as pd
-from server.pandas_util import hash_table
 from server import minio, parquet
-
-
-def _build_key(workflow_id: int, wf_module_id: int) -> str:
-    """Build a helpful S3 key."""
-    return f"{workflow_id}/{wf_module_id}/{uuid.uuid1()}.dat"
 
 
 # StoredObject is our persistence layer.
 # Allows WfModules to store keyed, versioned binary objects
 class StoredObject(models.Model):
+    """
+    EVIL way of storing fetch results.
+
+    Ideally, a module's fetch() would store whatever it wants. Currently, we
+    only allow storing data frames.
+
+    StoredObject links to an S3 bucket+key. The key must adhere to the format:
+    "{workflow_id}/{wf_module_id}/{uuidv1()}"
+    """
+
     # delete stored data if WfModule deleted
     wf_module = models.ForeignKey(
         "WfModule", related_name="stored_objects", on_delete=models.CASCADE
@@ -34,18 +37,6 @@ class StoredObject(models.Model):
     # and delivered to the frontend
     read = models.BooleanField(default=False)
 
-    @classmethod
-    def create_table(cls, wf_module, table):
-        hash = hash_table(table)
-        # Write to minio bucket/key
-        key = _build_key(wf_module.workflow_id, wf_module.id)
-        size = parquet.write(minio.StoredObjectsBucket, key, table)
-
-        # Create the object that references the bucket/key
-        return wf_module.stored_objects.create(
-            bucket=minio.StoredObjectsBucket, key=key, size=size, hash=hash
-        )
-
     def get_table(self):
         if not self.bucket or not self.key:
             # Old (obsolete) objects have no bucket/key, usually because
@@ -63,7 +54,8 @@ class StoredObject(models.Model):
 
     # make a deep copy for another WfModule
     def duplicate(self, to_wf_module):
-        key = _build_key(to_wf_module.workflow_id, to_wf_module.id)
+        basename = self.key.split("/")[-1]
+        key = f"{to_wf_module.workflow_id}/{to_wf_module.id}/{basename}"
         minio.copy(self.bucket, key, f"{self.bucket}/{self.key}")
 
         return to_wf_module.stored_objects.create(

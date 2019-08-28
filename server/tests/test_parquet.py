@@ -1,4 +1,5 @@
 from contextlib import contextmanager
+from datetime import datetime
 from pathlib import Path
 import unittest
 import numpy as np
@@ -45,6 +46,32 @@ class ParquetTest(unittest.TestCase):
         with self._file_on_s3("fastparquet-issue-375-snappy.par"):
             with self.assertRaises(parquet.FastparquetIssue375):
                 parquet.read(bucket, key)
+
+    def _test_read_write_table(self, table):
+        parquet.write(bucket, key, table)
+        result = parquet.read(bucket, key)
+        assert_frame_equal(result, table)
+
+    def test_read_write_int64(self):
+        self._test_read_write_table(pd.DataFrame({"A": [1, 2, 3]}, dtype=np.int64))
+
+    def test_read_write_float64(self):
+        self._test_read_write_table(
+            pd.DataFrame({"A": [1, 2, 3, np.nan]}, dtype=np.float64)
+        )
+
+    def test_read_write_text(self):
+        self._test_read_write_table(pd.DataFrame({"A": ["x", np.nan, "y"]}))
+
+    def test_read_write_text_categorical(self):
+        self._test_read_write_table(
+            pd.DataFrame({"A": ["x", np.nan, "y"]}, dtype="category")
+        )
+
+    def test_read_write_datetime(self):
+        self._test_read_write_table(
+            pd.DataFrame({"A": [datetime.now(), np.nan, datetime.now()]})
+        )
 
     def test_na_only_categorical_has_object_dtype(self):
         # Start with a Categorical with no values. (In Workbench, all

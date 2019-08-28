@@ -1,7 +1,5 @@
-from datetime import datetime
 from pathlib import Path
-from django.db import transaction
-import numpy as np
+from uuid import uuid1
 import pandas as pd
 from pandas.testing import assert_frame_equal
 from server import minio
@@ -15,31 +13,6 @@ class StoredObjectTests(DbTestCase):
 
         self.workflow = Workflow.create_and_init()
         self.wfm1 = self.workflow.tabs.first().wf_modules.create(order=0, slug="step-1")
-
-    def file_contents(self, file_obj):
-        file_obj.open(mode="rb")
-        data = file_obj.read()
-        file_obj.close()
-        return data
-
-    def test_store_some_random_table(self):
-        test_table = pd.DataFrame(
-            {
-                "A": pd.Series([1, 2, 3], dtype=np.int64),
-                "B": pd.Series([1, 2, 3], dtype=np.float64),
-                "C": pd.Series(["x", np.nan, "y"], dtype=object),
-                "D": pd.Series(["x", np.nan, "x"], dtype="category"),
-                "E": pd.Series([datetime.now(), np.nan, datetime.now()]),
-            }
-        )
-        so1 = StoredObject.create_table(self.wfm1, test_table)
-        table2 = so1.get_table()
-        self.assertTrue(table2.equals(test_table))
-
-    def test_store_empty_table(self):
-        so1 = StoredObject.create_table(self.wfm1, pd.DataFrame())
-        table2 = so1.get_table()
-        self.assertTrue(table2.empty)
 
     def test_load_obsolete_stored_empty_table(self):
         """
@@ -58,40 +31,23 @@ class StoredObjectTests(DbTestCase):
         """
         An aborted delete leaves a StoredObject without a backing file.
         """
-        test_table = pd.DataFrame(
-            {
-                "A": pd.Series([1, 2, 3], dtype=np.int64),
-                "B": pd.Series([1, 2, 3], dtype=np.float64),
-                "C": pd.Series(["x", np.nan, "y"], dtype=object),
-                "D": pd.Series(["x", np.nan, "x"], dtype="category"),
-                "E": pd.Series([datetime.now(), np.nan, datetime.now()]),
-            }
+        so1 = StoredObject.objects.create(
+            wf_module=self.wfm1,
+            bucket=minio.StoredObjectsBucket,
+            key=f"{self.workflow.id}/{self.wfm1.id}/{uuid1()}",
+            size=0,
+            hash=0,
         )
-        so1 = StoredObject.create_table(self.wfm1, test_table)
-        try:
-            with transaction.atomic():
-                # 1. Get Django's pre-delete to delete the file from S3
-                so1.delete()
-                # 2. Rollback
-                raise RuntimeError("not really an error")
-        except RuntimeError:
-            pass
-
         table = so1.get_table()
         assert_frame_equal(table, pd.DataFrame())
 
-    def test_nan_storage(self):
-        # have previously run into problems serializing/deserializing NaN
-        table = pd.DataFrame({"M": [10, np.nan, 11, 20]}, dtype=np.float64)
-
-        so = StoredObject.create_table(self.wfm1, table)
-        assert_frame_equal(so.get_table(), table)
-
-    def test_duplicate_table(self):
-        table = pd.DataFrame({"A": [1]})
-
+    def test_duplicate_bytes(self):
+        key = f"{self.workflow.id}/{self.wfm1.id}/{uuid1()}"
+        minio.put_bytes(minio.StoredObjectsBucket, key, b"12345")
         self.wfm2 = self.wfm1.tab.wf_modules.create(order=1, slug="step-2")
-        so1 = StoredObject.create_table(self.wfm1, table)
+        so1 = self.wfm1.stored_objects.create(
+            bucket=minio.StoredObjectsBucket, key=key, size=5, hash="hashhashhash"
+        )
         so2 = so1.duplicate(self.wfm2)
 
         # new StoredObject should have same time,
@@ -100,7 +56,9 @@ class StoredObjectTests(DbTestCase):
         self.assertEqual(so1.size, so2.size)
         self.assertEqual(so1.bucket, so2.bucket)
         self.assertNotEqual(so1.key, so2.key)
-        assert_frame_equal(so2.get_table(), table)
+        self.assertEqual(
+            minio.get_object_with_data(so2.bucket, so2.key)["Body"], b"12345"
+        )
 
     def test_read_file_fastparquet_issue_375(self):
         path = (

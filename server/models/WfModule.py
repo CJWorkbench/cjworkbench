@@ -241,11 +241,6 @@ class WfModule(models.Model):
     # Modules that fetch data, like Load URL or Twitter or scrapers, store
     # versions of all previously fetched data
 
-    # Note: does not switch to new version automatically
-    def store_fetched_table(self, table):
-        stored_object = StoredObject.create_table(self, table)
-        return stored_object.stored_at
-
     def retrieve_fetched_table(self):
         try:
             return self.stored_objects.get(

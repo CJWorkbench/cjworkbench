@@ -2,7 +2,6 @@ import unittest
 from unittest.mock import patch
 import uuid
 from django.contrib.auth.models import User
-import pandas as pd
 from server import minio
 from server.models import ModuleVersion
 from server.models.workflow import Workflow, DependencyGraph
@@ -174,10 +173,10 @@ class WorkflowTests(DbTestCase):
             order=0, slug="step-1", module_id_name="x"
         )
 
-        # Add StoredObject ... and leak it
-        wf_module.store_fetched_table(pd.DataFrame({"A": [1, 2]}))
-        stored_object_key = wf_module.stored_objects.first().key
-        wf_module.stored_objects.all()._raw_delete("default")  # skip S3-delete
+        # "Leak" a StoredObject by writing its file to S3 but neglecting to
+        # write an accompanying StoredObject record.
+        stored_object_key = f"{workflow.id}/{wf_module.id}/1234.dat"
+        minio.put_bytes(minio.StoredObjectsBucket, stored_object_key, b"1234")
 
         # Add UploadedFile, missing a DB entry. (Even if we fix all bugs that
         # leak an S3 object after deleting a DB entry [and 2019-06-03 there are

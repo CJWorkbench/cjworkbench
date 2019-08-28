@@ -2,10 +2,10 @@ import io
 import pandas as pd
 import uuid as uuidgen
 from django.utils import timezone
-from server import minio
-from server.models import ModuleVersion, Workflow
+from server import minio, parquet
+from server.models import ModuleVersion, Workflow, WfModule
 from server.models.commands import InitWorkflowCommand
-from server.tests.utils import DbTestCase, mock_csv_table
+from server.tests.utils import DbTestCase
 
 
 mock_csv_text2 = """Month,Amount,Name
@@ -17,6 +17,18 @@ mock_csv_table2 = pd.read_csv(io.StringIO(mock_csv_text2))
 
 # Set up a simple pipeline on test data
 class WfModuleTests(DbTestCase):
+    def _store_fetched_table(
+        self, wf_module: WfModule, table: pd.DataFrame
+    ) -> timezone.datetime:
+        key = str(uuidgen.uuid1())
+        size = parquet.write(minio.StoredObjectsBucket, key, table)
+        return wf_module.stored_objects.create(
+            bucket=minio.StoredObjectsBucket,
+            key=key,
+            size=size,
+            hash="this test ignores hashes",
+        )
+
     def test_retrieve_table_error_missing_version(self):
         """
         If user selects a version and then the version disappers, no version is
@@ -28,13 +40,10 @@ class WfModuleTests(DbTestCase):
         """
         workflow = Workflow.create_and_init()
         wf_module = workflow.tabs.first().wf_modules.create(order=0, slug="step-1")
-        table1 = pd.DataFrame({"A": [1]})
-        table2 = pd.DataFrame({"B": [2]})
-        stored_object1 = wf_module.store_fetched_table(table1)
-        wf_module.store_fetched_table(table2)
-        wf_module.stored_data_version = stored_object1
+        stored_object = self._store_fetched_table(wf_module, pd.DataFrame({"A": [1]}))
+        wf_module.stored_data_version = stored_object.stored_at
         wf_module.save()
-        wf_module.stored_objects.get(stored_at=stored_object1).delete()
+        stored_object.delete()
         wf_module.refresh_from_db()
         self.assertIsNone(wf_module.retrieve_fetched_table())
 
@@ -42,15 +51,15 @@ class WfModuleTests(DbTestCase):
     def test_wf_module_data_versions(self):
         workflow = Workflow.create_and_init()
         wf_module = workflow.tabs.first().wf_modules.create(order=0, slug="step-1")
-        table1 = mock_csv_table
-        table2 = mock_csv_table2
+        table1 = pd.DataFrame({"A": [1, 2]})
+        table2 = pd.DataFrame({"B": [2, 3]})
 
         # nothing ever stored
         nothing = wf_module.retrieve_fetched_table()
         self.assertIsNone(nothing)
 
         # save and recover data
-        firstver = wf_module.store_fetched_table(table1)
+        firstver = self._store_fetched_table(wf_module, table1).stored_at
         wf_module.save()
         wf_module.refresh_from_db()
         self.assertNotEqual(
@@ -65,7 +74,7 @@ class WfModuleTests(DbTestCase):
         self.assertTrue(tableout1.equals(table1))
 
         # create another version
-        secondver = wf_module.store_fetched_table(table2)
+        secondver = self._store_fetched_table(wf_module, table2).stored_at
         self.assertNotEqual(
             wf_module.stored_data_version, secondver
         )  # should not switch versions by itself
@@ -91,10 +100,10 @@ class WfModuleTests(DbTestCase):
         wfm1 = workflow.tabs.first().wf_modules.create(order=0, slug="step-1")
 
         # store data to test that it is duplicated
-        wfm1.store_fetched_table(mock_csv_table)
-        s2 = wfm1.store_fetched_table(mock_csv_table2)
+        self._store_fetched_table(wfm1, pd.DataFrame({"A": [1, 2]}))
+        s2 = self._store_fetched_table(wfm1, pd.DataFrame({"B": [2, 3]}))
         wfm1.secrets = {"do not copy": {"name": "evil", "secret": "evil"}}
-        wfm1.stored_data_version = s2
+        wfm1.stored_data_version = s2.stored_at
         wfm1.save()
         self.assertEqual(len(wfm1.list_fetched_data_versions()), 2)
 
@@ -111,17 +120,16 @@ class WfModuleTests(DbTestCase):
         self.assertEqual(wfm1d.notes, wfm1.notes)
         self.assertEqual(wfm1d.last_update_check, wfm1.last_update_check)
         self.assertEqual(wfm1d.is_collapsed, wfm1.is_collapsed)
-        self.assertEqual(wfm1d.stored_data_version, wfm1.stored_data_version)
         self.assertEqual(wfm1d.params, wfm1.params)
         self.assertEqual(wfm1d.secrets, {})
 
         # Stored data should contain a clone of content only, not complete version history
         self.assertIsNotNone(wfm1d.stored_data_version)
         self.assertEqual(wfm1d.stored_data_version, wfm1.stored_data_version)
-        self.assertTrue(
-            wfm1d.retrieve_fetched_table().equals(wfm1.retrieve_fetched_table())
-        )
         self.assertEqual(len(wfm1d.list_fetched_data_versions()), 1)
+        self.assertTrue(
+            wfm1d.retrieve_fetched_table().equals(pd.DataFrame({"B": [2, 3]}))
+        )
 
     def test_wf_module_duplicate_disable_auto_update(self):
         """

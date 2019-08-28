@@ -1,6 +1,7 @@
 import asyncio
 from typing import Callable
 from unittest.mock import Mock, patch
+import uuid
 from dataclasses import dataclass
 from dateutil import parser
 from django.contrib.auth.models import User
@@ -9,6 +10,7 @@ import pandas as pd
 from pandas.testing import assert_frame_equal
 from cjworkbench.sync import database_sync_to_async
 from cjwkernel.pandas.types import ProcessResult
+from server import minio, parquet
 from server.models import LoadedModule, ModuleVersion, WfModule, Workflow
 from server.models.commands import InitWorkflowCommand
 from server.models.param_dtype import ParamDType
@@ -29,6 +31,18 @@ def DefaultMigrateParams(params):
 
 
 class FetchTests(DbTestCase):
+    def _store_fetched_table(
+        self, wf_module: WfModule, table: pd.DataFrame
+    ) -> timezone.datetime:
+        key = f"{wf_module.workflow_id}/{wf_module.id}/{uuid.uuid1()}"
+        size = parquet.write(minio.StoredObjectsBucket, key, table)
+        return wf_module.stored_objects.create(
+            bucket=minio.StoredObjectsBucket,
+            key=key,
+            size=size,
+            hash="this test ignores hashes",
+        ).stored_at
+
     @patch("server.models.loaded_module.LoadedModule.for_module_version_sync")
     @patch("fetcher.save.save_result_if_changed")
     def test_fetch_wf_module(self, save_result, load_module):
@@ -441,7 +455,7 @@ class FetchTests(DbTestCase):
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
         wf_module = tab.wf_modules.create(order=0, slug="step-1")
-        wf_module.stored_data_version = wf_module.store_fetched_table(table)
+        wf_module.stored_data_version = self._store_fetched_table(wf_module, table)
         wf_module.save()
 
         async def fetch(params, *, get_stored_dataframe, **kwargs):
@@ -465,12 +479,12 @@ class FetchTests(DbTestCase):
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
         wf_module = tab.wf_modules.create(order=0, slug="step-1")
-        wf_module.stored_data_version = wf_module.store_fetched_table(table)
+        wf_module.stored_data_version = self._store_fetched_table(wf_module, table)
         wf_module.save()
 
         # Delete from the database. They're still in memory. This deletion can
         # happen on production: we aren't locking the workflow during fetch
-        # (because it's far too slow).
+        # (because fetch is far too slow).
         wf_module.delete()
         wf_module.id = 3  # simulate race: id is non-empty
 

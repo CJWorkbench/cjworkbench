@@ -1,6 +1,7 @@
 import asyncio
 from unittest.mock import patch
-import pandas as pd
+from django.utils import timezone
+from server import minio
 from server.models import Workflow
 from server.models.commands import ChangeDataVersionCommand
 from server.tests.utils import DbTestCase
@@ -24,11 +25,16 @@ class ChangeDataVersionCommandTests(DbTestCase):
             order=0, slug="step-1", last_relevant_delta_id=self.workflow.last_delta_id
         )
 
+    def _store_fetched_table(self) -> timezone.datetime:
+        return self.wf_module.stored_objects.create(
+            key="fake", bucket=minio.StoredObjectsBucket, size=10
+        ).stored_at
+
     @patch("server.websockets.queue_render_if_listening", async_noop)
     def test_change_data_version(self):
         # Create two data versions, use the second
-        date1 = self.wf_module.store_fetched_table(pd.DataFrame({"A": [1]}))
-        date2 = self.wf_module.store_fetched_table(pd.DataFrame({"A": [2]}))
+        date1 = self._store_fetched_table()
+        date2 = self._store_fetched_table()
 
         self.wf_module.stored_data_version = date2
         self.wf_module.save()
@@ -63,10 +69,8 @@ class ChangeDataVersionCommandTests(DbTestCase):
     def test_change_version_queue_render_if_notifying(self, queue_render):
         queue_render.return_value = future_none
 
-        df1 = pd.DataFrame({"A": [1]})
-        df2 = pd.DataFrame({"B": [2]})
-        date1 = self.wf_module.store_fetched_table(df1)
-        date2 = self.wf_module.store_fetched_table(df2)
+        date1 = self._store_fetched_table()
+        date2 = self._store_fetched_table()
 
         self.wf_module.notifications = True
         self.wf_module.stored_data_version = date1
@@ -89,10 +93,8 @@ class ChangeDataVersionCommandTests(DbTestCase):
 
         The errors will be user-visible ... _later_.
         """
-        df1 = pd.DataFrame({"A": [1]})
-        df2 = pd.DataFrame({"B": [2]})
-        date1 = self.wf_module.store_fetched_table(df1)
-        date2 = self.wf_module.store_fetched_table(df2)
+        date1 = self._store_fetched_table()
+        date2 = self._store_fetched_table()
 
         self.wf_module.notifications = False
         self.wf_module.stored_data_version = date1
@@ -121,10 +123,8 @@ class ChangeDataVersionCommandTests(DbTestCase):
     ):
         queue_render_if_listening.return_value = future_none
 
-        df1 = pd.DataFrame({"A": [1]})
-        df2 = pd.DataFrame({"B": [2]})
-        date1 = self.wf_module.store_fetched_table(df1)
-        date2 = self.wf_module.store_fetched_table(df2)
+        date1 = self._store_fetched_table()
+        date2 = self._store_fetched_table()
 
         self.wf_module.notifications = False
         self.wf_module.stored_data_version = date1
