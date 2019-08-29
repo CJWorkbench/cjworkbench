@@ -6,6 +6,7 @@ from cjwkernel.pandas.types import ProcessResult, StepResultShape
 from server.models import WfModule, Workflow, Tab
 from server.models.param_spec import ParamDType
 from .wf_module import execute_wfmodule, locked_wf_module
+from .util import read_cached_render_result
 
 
 logger = logging.getLogger(__name__)
@@ -123,7 +124,7 @@ def _load_input_from_cache(workflow: Workflow, flow: TabFlow) -> ProcessResult:
             assert crr is not None  # otherwise it's not fresh, see?
 
             # Read the entire input Parquet file.
-            return crr.result
+            return read_cached_render_result(crr)
 
 
 async def execute_tab_flow(

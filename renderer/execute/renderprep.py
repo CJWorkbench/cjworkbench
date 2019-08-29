@@ -15,6 +15,7 @@ from .types import (
     UnneededExecution,
     PromptingError,
 )
+from .util import read_cached_render_result
 
 
 FilesystemUnsafeChars = re.compile("[^-_.,()a-zA-Z0-9]")
@@ -244,7 +245,7 @@ def _(dtype: ParamDType.Tab, value: str, context: RenderContext) -> TabOutput:
         # looks like that version must be stale.
         raise UnneededExecution
 
-    result = crr.result  # read Parquet file from disk (slow)
+    result = read_cached_render_result(crr)  # read Parquet from disk (slow)
     return TabOutput(
         tab_slug,
         tab.name,

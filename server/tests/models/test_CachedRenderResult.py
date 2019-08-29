@@ -5,6 +5,7 @@ from server import minio
 from server.models import Workflow, WfModule
 from server.models.commands import InitWorkflowCommand
 from server.tests.utils import DbTestCase
+from renderer.execute.util import read_cached_render_result  # DELETEME
 
 
 class CachedRenderResultTests(DbTestCase):
@@ -33,7 +34,7 @@ class CachedRenderResultTests(DbTestCase):
         cached = self.wf_module.cached_render_result
         self.assertEqual(cached.wf_module_id, self.wf_module.id)
         self.assertEqual(cached.delta_id, self.delta.id)
-        self.assertEqual(cached.result, result)
+        self.assertEqual(read_cached_render_result(cached), result)
 
         self.assertEqual(
             cached.parquet_key,
@@ -47,7 +48,7 @@ class CachedRenderResultTests(DbTestCase):
         from_db = db_wf_module.cached_render_result
         self.assertEqual(from_db.wf_module_id, self.wf_module.id)
         self.assertEqual(cached.delta_id, self.delta.id)
-        self.assertEqual(from_db.result, result)
+        self.assertEqual(read_cached_render_result(from_db), result)
 
     def test_set_to_empty(self):
         result = ProcessResult(pandas.DataFrame({"a": [1]}))
@@ -62,35 +63,6 @@ class CachedRenderResultTests(DbTestCase):
         self.assertIsNone(db_wf_module.cached_render_result)
 
         self.assertFalse(minio.exists(minio.CachedRenderResultsBucket, parquet_key))
-
-    def test_result_and_metadata_come_from_memory_when_available(self):
-        columns = [
-            Column("A", ColumnType.NUMBER(format="{:,d}")),
-            Column("B", ColumnType.DATETIME()),
-            Column("C", ColumnType.TEXT()),
-            Column("D", ColumnType.TEXT()),
-        ]
-        result = ProcessResult(
-            dataframe=pandas.DataFrame(
-                {
-                    "A": [1],  # int64
-                    "B": [datetime.datetime(2018, 8, 20)],  # datetime64[ns]
-                    "C": ["foo"],  # str
-                    "D": pandas.Series(["cat"], dtype="category"),
-                }
-            ),
-            columns=columns,
-        )
-        cached_result = self.wf_module.cache_render_result(self.delta.id, result)
-
-        # cache_render_result() keeps its `result` parameter in memory, so we
-        # can avoid disk entirely. Prove it by deleting from disk.
-        minio.remove(minio.CachedRenderResultsBucket, cached_result.parquet_key)
-        self.assertFalse(cached_result._result is None)
-
-        self.assertEqual(cached_result.result, result)
-        self.assertEqual(cached_result.nrows, 1)
-        self.assertEqual(cached_result.columns, columns)
 
     def test_metadata_comes_from_db_columns(self):
         columns = [
@@ -119,7 +91,6 @@ class CachedRenderResultTests(DbTestCase):
         # Load _new_ CachedRenderResult -- from DB columns, not memory
         fresh_wf_module = WfModule.objects.get(id=self.wf_module.id)
         cached_result = fresh_wf_module.cached_render_result
-        self.assertFalse(hasattr(cached_result, "_result"))
 
         self.assertEqual(cached_result.nrows, 1)
         self.assertEqual(cached_result.columns, columns)
@@ -155,7 +126,7 @@ class CachedRenderResultTests(DbTestCase):
 
         dup_cached_result = dup.cached_render_result
         self.assertIsNotNone(dup_cached_result)
-        self.assertEqual(dup_cached_result.result, result)
+        self.assertEqual(read_cached_render_result(dup_cached_result), result)
 
     def test_duplicate_ignores_stale_cache(self):
         # The cache's filename depends on workflow_id and wf_module_id.

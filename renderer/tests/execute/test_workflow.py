@@ -10,6 +10,7 @@ from server.models.commands import InitWorkflowCommand
 from server.tests.utils import DbTestCase
 from renderer.execute.types import UnneededExecution
 from renderer.execute.workflow import execute_workflow, partition_ready_and_dependent
+from renderer.execute.util import read_cached_render_result
 
 
 table_csv = "A,B\n1,2\n3,4"
@@ -62,7 +63,9 @@ class WorkflowTests(DbTestCase):
         self._execute(workflow)
 
         wf_module.refresh_from_db()
-        self.assertEqual(wf_module.cached_render_result.result, result2)
+        self.assertEqual(
+            read_cached_render_result(wf_module.cached_render_result), result2
+        )
 
     @patch("server.models.loaded_module.LoadedModule.for_module_version_sync")
     def test_execute_race_delete_workflow(self, fake_load_module):
@@ -111,16 +114,21 @@ class WorkflowTests(DbTestCase):
         wf_module1.refresh_from_db()
         self.assertEqual(wf_module1.cached_render_result.status, "error")
         self.assertEqual(
-            wf_module1.cached_render_result.result, ProcessResult(error="foo")
+            read_cached_render_result(wf_module1.cached_render_result),
+            ProcessResult(error="foo"),
         )
 
         wf_module2.refresh_from_db()
         self.assertEqual(wf_module2.cached_render_result.status, "unreachable")
-        self.assertEqual(wf_module2.cached_render_result.result, ProcessResult())
+        self.assertEqual(
+            read_cached_render_result(wf_module2.cached_render_result), ProcessResult()
+        )
 
         wf_module3.refresh_from_db()
         self.assertEqual(wf_module3.cached_render_result.status, "unreachable")
-        self.assertEqual(wf_module3.cached_render_result.result, ProcessResult())
+        self.assertEqual(
+            read_cached_render_result(wf_module3.cached_render_result), ProcessResult()
+        )
 
         send_delta_async.assert_called_with(
             workflow.id,
@@ -184,7 +192,7 @@ class WorkflowTests(DbTestCase):
         self._execute(workflow)
 
         wf_module2.refresh_from_db()
-        actual = wf_module2.cached_render_result.result
+        actual = read_cached_render_result(wf_module2.cached_render_result)
         self.assertEqual(actual, result2)
         fake_loaded_module.render.assert_called_once()  # only with module2
 

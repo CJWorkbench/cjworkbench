@@ -15,6 +15,7 @@ from .types import (
     UnneededExecution,
     PromptingError,
 )
+from .util import read_cached_render_result
 from . import renderprep
 
 
@@ -156,7 +157,7 @@ def _execute_wfmodule_save(
                 stale_result = None
             else:
                 # Read entire old Parquet file, blocking
-                stale_result = stale_crr.result
+                stale_result = read_cached_render_result(stale_crr)
         else:
             stale_result = None
 

@@ -31,16 +31,16 @@ class CachedRenderResult:
     Result of a module render() call.
 
     This is stored in the database as `wf_module.cached_render_result_*`,
-    and you select it by selecting `wf_module.get_cached_render_result()`.
-    (This is unconventional. The convention is to use OneToOneField, but that
-    has no pros, only cons.)
+    and you select it by selecting `wf_module.cached_render_result`.
+    (This is unconventional. Many DB designers would leap to use OneToOneField;
+    but that has no pros, only cons.)
 
-    Part of this result is also stored on disk. Read it with read_dataframe().
+    Part of this result is also stored on disk.
 
     Use this heuristic to decide when to use CachedRenderResult:
 
         * CachedRenderResult is cheap: low RAM, low CPU, low I/O.
-        * CachedRenderResult.result and .read_dataframe() are expensive.
+        * If you need the actual DataFrame, read it from S3.
     """
 
     def __init__(
@@ -80,55 +80,6 @@ class CachedRenderResult:
             parquet_prefix(self.workflow_id, self.wf_module_id),
             self.delta_id,
         )
-
-    def read_dataframe(self, *args, **kwargs):
-        """
-        Read Parquet file as a dataframe (costing network requests).
-
-        Pass *args and **kwargs to `fastparquet.ParquetFile.to_pandas()`.
-
-        TODO make this raise OSError/FastparquetCouldNotHandleFile. (Currently
-        we return an empty dataframe on error.)
-        """
-        try:
-            return parquet.read(
-                minio.CachedRenderResultsBucket, self.parquet_key, args, kwargs
-            )
-        except OSError:
-            # Two possibilities:
-            #
-            # 1. The file is missing.
-            # 2. The file is empty. (We used to write empty files in
-            #    assign_wf_module.)
-            #
-            # Either way, our cached DataFrame is "empty", and we represent
-            # that as None.
-            return pd.DataFrame()
-        except parquet.FastparquetCouldNotHandleFile:
-            # Treat bugs as "empty file"
-            return pd.DataFrame()
-
-    @property
-    def result(self):
-        """
-        Convert to ProcessResult -- which means reading the parquet file.
-
-        It's best to avoid this operation when possible.
-
-        TODO make this _not_ a @property -- since it's so expensive (it makes a
-        big network request).
-        """
-        if not hasattr(self, "_result"):
-            dataframe = self.read_dataframe()
-            self._result = ProcessResult(
-                dataframe,
-                self.error,
-                json=self.json,
-                quick_fixes=self.quick_fixes,
-                columns=self.columns,
-            )
-
-        return self._result
 
     def __bool__(self):
         return True
@@ -268,7 +219,6 @@ class CachedRenderResult:
         CachedRenderResult.delete_parquet_files_for_wf_module(wf_module)
 
         ret = CachedRenderResult.from_wf_module(wf_module)
-        ret._result = result  # no need to read from disk
         parquet.write(
             minio.CachedRenderResultsBucket, ret.parquet_key, result.dataframe
         )
