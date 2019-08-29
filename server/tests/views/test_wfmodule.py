@@ -9,7 +9,10 @@ from rest_framework.test import APIRequestFactory
 from rest_framework import status
 from rest_framework.test import force_authenticate
 from cjwkernel.pandas.types import Column, ColumnType, ProcessResult
-from server import minio
+from cjwstate.rendercache.io import (
+    cache_render_result,
+    delete_parquet_files_for_wf_module,
+)
 from server.models import Workflow
 from server.tests.utils import LoggedInTestCase
 
@@ -93,8 +96,11 @@ class WfModuleTests(LoggedInTestCase):
         # simple test case where Pandas produces int64 column type, and json
         # conversion throws ValueError
         # https://github.com/pandas-dev/pandas/issues/13258#issuecomment-326671257
-        self.wf_module2.cache_render_result(
-            2, ProcessResult(pd.DataFrame({"A": [1, 2]}, dtype="int64"))
+        cache_render_result(
+            self.workflow,
+            self.wf_module2,
+            self.wf_module2.last_relevant_delta_id,
+            ProcessResult(pd.DataFrame({"A": [1, 2]}, dtype="int64")),
         )
         self.wf_module2.save()
 
@@ -107,7 +113,12 @@ class WfModuleTests(LoggedInTestCase):
         # since we do not display more than that. (This is a funky hack that
         # assumes the client will behave differently when it has >MAX columns.)
         dataframe = pd.DataFrame({"A": [1], "B": [2], "C": [3], "D": [4]})
-        self.wf_module2.cache_render_result(2, ProcessResult(dataframe))
+        cache_render_result(
+            self.workflow,
+            self.wf_module2,
+            self.wf_module2.last_relevant_delta_id,
+            ProcessResult(dataframe),
+        )
 
         response = self.client.get("/api/wfmodules/%d/render" % self.wf_module2.id)
         self.assertEqual(response.status_code, 200)
@@ -116,8 +127,12 @@ class WfModuleTests(LoggedInTestCase):
         self.assertEqual(len(json.loads(response.content)["rows"][0]), 3)
 
     def test_wf_module_render(self):
-        self.wf_module2.cache_render_result(2, ProcessResult(test_data))
-        self.wf_module2.save()
+        cache_render_result(
+            self.workflow,
+            self.wf_module2,
+            self.wf_module2.last_relevant_delta_id,
+            ProcessResult(test_data),
+        )
 
         response = self.client.get("/api/wfmodules/%d/render" % self.wf_module2.id)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -125,12 +140,16 @@ class WfModuleTests(LoggedInTestCase):
 
     def test_wf_module_render_missing_parquet_file(self):
         # https://www.pivotaltracker.com/story/show/161988744
-        crr = self.wf_module2.cache_render_result(2, ProcessResult(test_data))
-        self.wf_module2.save()
+        cache_render_result(
+            self.workflow,
+            self.wf_module2,
+            self.wf_module2.last_relevant_delta_id,
+            ProcessResult(test_data),
+        )
 
         # Simulate a race: we're overwriting the cache or deleting the WfModule
         # or some-such.
-        minio.remove(minio.CachedRenderResultsBucket, crr.parquet_key)
+        delete_parquet_files_for_wf_module(self.workflow.id, self.wf_module2.id)
 
         response = self.client.get("/api/wfmodules/%d/render" % self.wf_module2.id)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -139,8 +158,12 @@ class WfModuleTests(LoggedInTestCase):
         )
 
     def test_wf_module_render_only_rows(self):
-        self.wf_module2.cache_render_result(2, ProcessResult(test_data))
-        self.wf_module2.save()
+        cache_render_result(
+            self.workflow,
+            self.wf_module2,
+            self.wf_module2.last_relevant_delta_id,
+            ProcessResult(test_data),
+        )
 
         response = self.client.get(
             "/api/wfmodules/%d/render?startrow=1&endrow=3" % self.wf_module2.id
@@ -152,8 +175,12 @@ class WfModuleTests(LoggedInTestCase):
         self.assertEqual(body["end_row"], 3)
 
     def test_wf_module_render_clip_out_of_bounds(self):
-        self.wf_module2.cache_render_result(2, ProcessResult(test_data))
-        self.wf_module2.save()
+        cache_render_result(
+            self.workflow,
+            self.wf_module2,
+            self.wf_module2.last_relevant_delta_id,
+            ProcessResult(test_data),
+        )
 
         # index out of bounds should clip
         response = self.client.get(
@@ -170,8 +197,10 @@ class WfModuleTests(LoggedInTestCase):
         self.assertIs(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_value_counts_str(self):
-        self.wf_module2.cache_render_result(
-            2,
+        cache_render_result(
+            self.workflow,
+            self.wf_module2,
+            self.wf_module2.last_relevant_delta_id,
             ProcessResult(
                 pd.DataFrame(
                     {
@@ -181,7 +210,6 @@ class WfModuleTests(LoggedInTestCase):
                 )
             ),
         )
-        self.wf_module2.save()
 
         response = self.client.get(
             f"/api/wfmodules/{self.wf_module2.id}/value-counts?column=A"
@@ -194,8 +222,10 @@ class WfModuleTests(LoggedInTestCase):
 
     def test_value_counts_missing_parquet_file(self):
         # https://www.pivotaltracker.com/story/show/161988744
-        crr = self.wf_module2.cache_render_result(
-            2,
+        cache_render_result(
+            self.workflow,
+            self.wf_module2,
+            self.wf_module2.last_relevant_delta_id,
             ProcessResult(
                 pd.DataFrame(
                     {
@@ -205,11 +235,9 @@ class WfModuleTests(LoggedInTestCase):
                 )
             ),
         )
-        self.wf_module2.save()
-
         # Simulate a race: we're overwriting the cache or deleting the WfModule
         # or some-such.
-        minio.remove(minio.CachedRenderResultsBucket, crr.parquet_key)
+        delete_parquet_files_for_wf_module(self.workflow.id, self.wf_module2.id)
 
         response = self.client.get(
             f"/api/wfmodules/{self.wf_module2.id}/value-counts?column=A"
@@ -225,14 +253,15 @@ class WfModuleTests(LoggedInTestCase):
         )
 
     def test_value_counts_convert_to_text(self):
-        self.wf_module2.cache_render_result(
-            2,
+        cache_render_result(
+            self.workflow,
+            self.wf_module2,
+            self.wf_module2.last_relevant_delta_id,
             ProcessResult(
                 pd.DataFrame({"A": [1, 2, 3, 2, 1]}),
                 columns=[Column("A", ColumnType.NUMBER(format="{:.2f}"))],
             ),
         )
-        self.wf_module2.save()
 
         response = self.client.get(
             f"/api/wfmodules/{self.wf_module2.id}/value-counts?column=A"
@@ -252,8 +281,10 @@ class WfModuleTests(LoggedInTestCase):
         )
 
     def test_value_counts_missing_column(self):
-        self.wf_module2.cache_render_result(
-            2,
+        cache_render_result(
+            self.workflow,
+            self.wf_module2,
+            self.wf_module2.last_relevant_delta_id,
             ProcessResult(
                 pd.DataFrame(
                     {
@@ -263,7 +294,6 @@ class WfModuleTests(LoggedInTestCase):
                 )
             ),
         )
-        self.wf_module2.save()
 
         response = self.client.get(
             f"/api/wfmodules/{self.wf_module2.id}/value-counts?column=C"

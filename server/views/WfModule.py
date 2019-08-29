@@ -19,6 +19,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view, renderer_classes
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
+from cjwstate.rendercache import CorruptCacheError, read_cached_render_result_as_arrow
 from server.models import Tab, WfModule, Workflow
 from server import minio, parquet, rabbitmq
 from server.models.loaded_module import module_get_html_bytes
@@ -119,11 +120,8 @@ def _make_render_tuple(cached_result, startrow=None, endrow=None):
         : (settings.MAX_COLUMNS_PER_CLIENT_REQUEST + 1)
     ]
     column_names = [c.name for c in columns]
-    table = parquet.read_arrow_table(  # raise FileNotFoundError
-        minio.CachedRenderResultsBucket,
-        cached_result.parquet_key,
-        only_columns=column_names,
-    )
+    # raise CorruptCacheError
+    table = read_cached_render_result_as_arrow(cached_result, only_columns=column_names)
 
     if startrow is None:
         startrow = 0
@@ -168,7 +166,7 @@ def wfmodule_render(request: HttpRequest, wf_module: WfModule, format=None):
             startrow, endrow, records = _make_render_tuple(
                 cached_result, startrow, endrow
             )
-        except FileNotFoundError:
+        except CorruptCacheError:
             # assume we'll get another request after execute finishes
             return JsonResponse({"start_row": 0, "end_row": 0, "rows": []})
 
@@ -227,12 +225,11 @@ def wfmodule_value_counts(request: HttpRequest, wf_module: WfModule):
         return JsonResponse({"error": f'column "{colname}" not found'}, status=404)
 
     try:
-        table: pyarrow.Table = parquet.read_arrow_table(
-            minio.CachedRenderResultsBucket,
-            cached_result.parquet_key,
-            only_columns=[column.name],
+        # raise CorruptCacheError
+        table = read_cached_render_result_as_arrow(
+            cached_result, only_columns=[column.name]
         )
-    except FileNotFoundError:
+    except CorruptCacheError:
         # We _could_ return an empty result set; but our only goal here is
         # "don't crash" and this 404 seems to be the simplest implementation.
         # (We assume that if the data is deleted, the user has moved elsewhere
@@ -295,13 +292,11 @@ def wfmodule_tile(
 
     only_columns = cached_result.column_names[cbegin:cend]
     try:
-        table = parquet.read_arrow_table(
-            minio.CachedRenderResultsBucket,
-            cached_result.parquet_key,
-            only_columns=only_columns,
+        table = read_cached_render_result_as_arrow(
+            cached_result, only_columns=only_columns
         )
-    except FileNotFoundError:
-        raise RuntimeError("FIXME: what happens when file is gone?")
+    except CorruptCacheError:
+        raise  # TODO handle this case!
 
     records = _arrow_table_to_json_records(table, rbegin, rend)
 

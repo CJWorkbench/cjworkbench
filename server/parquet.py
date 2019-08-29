@@ -147,7 +147,7 @@ def read(
 
 
 def read_arrow_table(
-    bucket: str, key: str, only_columns: Optional[List[str]] = None
+    bucket: str, key: str, *, only_columns: Optional[List[str]] = None
 ) -> pa.Table:
     """
     Return data from minio, as an Apache Arrow Table.

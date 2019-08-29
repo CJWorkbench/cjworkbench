@@ -1,5 +1,6 @@
 from unittest.mock import patch
 from cjwkernel.pandas.types import ProcessResult
+from cjwstate.rendercache.io import cache_render_result, read_cached_render_result
 from server.models import Workflow
 from server.models.commands import DuplicateTabCommand
 from server.tests.utils import DbTestCase
@@ -204,15 +205,25 @@ class DuplicateTabCommandTest(DbTestCase):
             params={"p": "s1"},
             last_relevant_delta_id=init_delta_id,
         )
-        wfm1.cache_render_result(init_delta_id, ProcessResult(error="simplest ctor"))
+        cache_render_result(
+            workflow, wfm1, init_delta_id, ProcessResult(error="simplest ctor")
+        )
 
         self.run_with_async_db(
             DuplicateTabCommand.create(
                 workflow=workflow, from_tab=tab, slug="tab-2", name="Tab 2"
             )
         )
+        tab2 = workflow.tabs.last()
+        self.assertNotEqual(tab2.id, tab.id)
+        wfm2 = tab2.wf_modules.last()
+        self.assertEqual(
+            read_cached_render_result(wfm2.cached_render_result),
+            read_cached_render_result(wfm1.cached_render_result),
+        )
         # No need to render: the result is already cached
         queue_render.assert_not_called()
+        # ... and the rendered value is identical
 
     def test_tab_name_conflict_is_valueerror(self):
         workflow = Workflow.create_and_init()

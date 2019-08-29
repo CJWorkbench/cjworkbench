@@ -1,9 +1,10 @@
+import json
 import secrets
-from typing import Any, Dict, Union
+from typing import Any, Dict, Optional, Union
 from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.db.models import Q
-from cjwkernel.pandas.types import ProcessResult
+from cjwkernel.pandas.types import QuickFix, TableShape
 from server import minio
 from server.models import loaded_module
 from .fields import ColumnsField
@@ -353,17 +354,16 @@ class WfModule(models.Model):
             # CachedRenderResult, because all the DB values are set. It'll have
             # a .parquet_key ... but there won't be a file there (because we
             # never wrote it).
-            parquet_key = new_wfm.cached_render_result.parquet_key
+            from cjwstate.rendercache.io import BUCKET, crr_parquet_key
+
+            old_parquet_key = crr_parquet_key(cached_result)
+            new_parquet_key = crr_parquet_key(new_wfm.cached_render_result)
 
             try:
                 minio.copy(
                     minio.CachedRenderResultsBucket,
-                    parquet_key,
-                    "%(Bucket)s/%(Key)s"
-                    % {
-                        "Bucket": minio.CachedRenderResultsBucket,
-                        "Key": cached_result.parquet_key,
-                    },
+                    new_parquet_key,
+                    "%(Bucket)s/%(Key)s" % {"Bucket": BUCKET, "Key": old_parquet_key},
                 )
             except minio.error.NoSuchKey:
                 # DB and filesystem are out of sync. CachedRenderResult handles
@@ -419,19 +419,18 @@ class WfModule(models.Model):
 
         Return `None` if there is a cached result but it is not fresh.
 
-        Beware we build a CachedRenderResult without reading the actual Parquet
-        file from disk. The _correct_ way of reading the Parquet file is:
+        This does not read the dataframe from disk. If you want a "snapshot in
+        time" of the `render()` output, you need a lock, like this:
 
-            with wf_module.workflow.cooperative_lock():
-                wf_module.refresh_from_db()  # re-read DB data
-                crr = wf_module.cached_render_result  # uses DB columns
-                dataframe = parquet.read(minio.CachedRenderResultsBucket, crr.parquet_key)
-
-        Without a lock and the refresh_from_db() within it, `parquet.read()`
-        will often raise `FileNotFoundError` (if it's called while a render is
-        happening, for instance).
+            # Lock the workflow, making sure we don't overwrite data
+            with workflow.cooperative_lock():
+                wf_module.refresh_from_db()
+                # Read from disk
+                result = cjwstate.rendercache.io.read_cached_render_result(
+                    wf_module.get_stale_cached_render_result()
+                )
         """
-        result = CachedRenderResult.from_wf_module(self)
+        result = self._build_cached_render_result_fresh_or_not()
         if result and result.delta_id != self.last_relevant_delta_id:
             return None
         return result
@@ -441,30 +440,83 @@ class WfModule(models.Model):
         Build a CachedRenderResult with this WfModule's stale rendered output.
 
         Return `None` if there is a cached result but it is fresh.
+
+        This does not read the dataframe from disk. If you want a "snapshot in
+        time" of the `render()` output, you need a lock, like this:
+
+            # Lock the workflow, making sure we don't overwrite data
+            with workflow.cooperative_lock():
+                wf_module.refresh_from_db()
+                # Read from disk
+                result = cjwstate.rendercache.io.read_cached_render_result(
+                    wf_module.get_stale_cached_render_result()
+                )
         """
-        result = CachedRenderResult.from_wf_module(self)
+        result = self._build_cached_render_result_fresh_or_not()
         if result and result.delta_id == self.last_relevant_delta_id:
             return None
         return result
 
-    def cache_render_result(
-        self, delta_id: int, result: ProcessResult
-    ) -> CachedRenderResult:
+    def _build_cached_render_result_fresh_or_not(self) -> Optional[CachedRenderResult]:
         """
-        Save the given ProcessResult for later viewing.
+        Build a CachedRenderResult with this WfModule's renderd output.
 
-        Raise AssertionError if `delta_id` is not what we expect.
+        If the output is stale, return it anyway. (The return value's .delta_id
+        will not match this WfModule's .delta_id.)
 
-        Since this alters data, be sure to call it within a lock:
+        This does not read the dataframe from disk. If you want a "snapshot in
+        time" of the `render()` output, you need a lock, like this:
 
-            with wf_module.workflow.cooperative_lock():
+            # Lock the workflow, making sure we don't overwrite data
+            with workflow.cooperative_lock():
                 wf_module.refresh_from_db()
-                wf_module.cache_render_result(delta_id, result)
+                # Read from disk
+                result = cjwstate.rendercache.io.read_cached_render_result(
+                    wf_module._build_cached_render_result_fresh_or_not()
+                )
         """
-        assert delta_id == self.last_relevant_delta_id
-        assert result is not None
+        if self.cached_render_result_delta_id is None:
+            return None
 
-        return CachedRenderResult.assign_wf_module(self, delta_id, result)
+        delta_id = self.cached_render_result_delta_id
+        status = self.cached_render_result_status
+        error = self.cached_render_result_error
+        columns = self.cached_render_result_columns
+        nrows = self.cached_render_result_nrows
+
+        # TODO [2019-01-24] once we've deployed and wiped all caches, nix this
+        # 'columns' check and assume 'columns' is always set when we get here
+        if columns is None:
+            # this cached value is stale because _Workbench_ has been updated
+            # and doesn't support it any more
+            return None
+
+        # cached_render_result_json is sometimes a memoryview
+        json_bytes = bytes(self.cached_render_result_json)
+        if json_bytes:
+            json_dict = json.loads(json_bytes)
+        else:
+            json_dict = None
+
+        quick_fixes = self.cached_render_result_quick_fixes
+        if not quick_fixes:
+            quick_fixes = []
+        # Coerce from dict to QuickFixes
+        quick_fixes = [QuickFix(**qf) for qf in quick_fixes]
+
+        ret = CachedRenderResult(
+            workflow_id=self.workflow_id,
+            wf_module_id=self.id,
+            delta_id=delta_id,
+            status=status,
+            error=error,
+            json=json_dict,
+            quick_fixes=quick_fixes,
+            table_shape=TableShape(nrows, columns),
+        )
+        # Keep in mind: ret.result has not been loaded yet. It might not exist
+        # when we do try reading it.
+        return ret
 
     def clear_cached_render_result(self) -> None:
         """
@@ -482,8 +534,12 @@ class WfModule(models.Model):
         CachedRenderResult.clear_wf_module(self)
 
     def delete(self, *args, **kwargs):
+        # TODO make DB _not_ depend upon minio.
         for in_progress_upload in self.in_progress_uploads.all():
             in_progress_upload.delete_s3_data()
         minio.remove_recursive(minio.UserFilesBucket, self.uploaded_file_prefix)
-        CachedRenderResult.clear_wf_module(self)
+        minio.remove_recursive(
+            minio.CachedRenderResultsBucket,
+            "wf-%d/wfm-%d/" % (self.workflow_id, self.id),
+        )
         super().delete(*args, **kwargs)

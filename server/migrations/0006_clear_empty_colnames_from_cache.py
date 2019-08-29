@@ -8,6 +8,7 @@ from django.db import migrations
 def clear_empty_colnames_from_cache(apps, schema_editor):
     # Can't grab WfModule from 'apps' because we need our migration to write to
     # S3 -- which 'apps' models don't.
+    from cjwstate.rendercache.io import clear_cached_render_result_for_wf_module
     from server.models import WfModule
 
     qs = WfModule.objects.extra(
@@ -28,7 +29,7 @@ def clear_empty_colnames_from_cache(apps, schema_editor):
     )
     for wf_module in qs:
         with wf_module.workflow.cooperative_lock():
-            wf_module.clear_cached_render_result()
+            clear_cached_render_result_for_wf_module(wf_module)
 
 
 class Migration(migrations.Migration):

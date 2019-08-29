@@ -192,6 +192,7 @@ FROM pybuild AS base
 COPY pyproject.toml pyproject.toml
 
 COPY cjwkernel/ /app/cjwkernel/
+COPY cjwstate/ /app/cjwstate/
 COPY cjworkbench/ /app/cjworkbench/
 # TODO make server/ frontend-specific
 COPY server/ /app/server/

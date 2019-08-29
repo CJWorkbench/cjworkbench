@@ -1,6 +1,7 @@
 from typing import Optional
 import pandas as pd
-from server import minio, parquet
+from cjwstate.rendercache import read_cached_render_result, CorruptCacheError
+from server import parquet
 from server.models import CachedRenderResult, StoredObject, WfModule
 
 
@@ -68,4 +69,8 @@ def read_dataframe_from_cached_render_result(
         * there is no file on minio
         * the file on minio cannot be read
     """
-    return _read_dataframe_from_minio(minio.CachedRenderResultsBucket, crr.parquet_key)
+    try:
+        result = read_cached_render_result(crr)
+    except CorruptCacheError:
+        return None
+    return result.dataframe

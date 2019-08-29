@@ -15,7 +15,7 @@ from .types import (
     UnneededExecution,
     PromptingError,
 )
-from .util import read_cached_render_result
+from cjwstate.rendercache import read_cached_render_result
 
 
 FilesystemUnsafeChars = re.compile("[^-_.,()a-zA-Z0-9]")
