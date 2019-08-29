@@ -1,9 +1,6 @@
-from pathlib import Path
 from uuid import uuid1
-import pandas as pd
-from pandas.testing import assert_frame_equal
 from server import minio
-from server.models import StoredObject, Workflow
+from server.models import Workflow
 from server.tests.utils import DbTestCase
 
 
@@ -13,33 +10,6 @@ class StoredObjectTests(DbTestCase):
 
         self.workflow = Workflow.create_and_init()
         self.wfm1 = self.workflow.tabs.first().wf_modules.create(order=0, slug="step-1")
-
-    def test_load_obsolete_stored_empty_table(self):
-        """
-        Load a table from before 2018-11-09.
-
-        Previously, we'd special-case "empty" DataFrames. No more.
-        """
-        so1 = StoredObject.objects.create(
-            wf_module=self.wfm1, bucket="", key="", size=0, hash=0
-        )
-
-        table = so1.get_table()
-        assert_frame_equal(table, pd.DataFrame())
-
-    def test_load_missing_file(self):
-        """
-        An aborted delete leaves a StoredObject without a backing file.
-        """
-        so1 = StoredObject.objects.create(
-            wf_module=self.wfm1,
-            bucket=minio.StoredObjectsBucket,
-            key=f"{self.workflow.id}/{self.wfm1.id}/{uuid1()}",
-            size=0,
-            hash=0,
-        )
-        table = so1.get_table()
-        assert_frame_equal(table, pd.DataFrame())
 
     def test_duplicate_bytes(self):
         key = f"{self.workflow.id}/{self.wfm1.id}/{uuid1()}"
@@ -59,23 +29,6 @@ class StoredObjectTests(DbTestCase):
         self.assertEqual(
             minio.get_object_with_data(so2.bucket, so2.key)["Body"], b"12345"
         )
-
-    def test_read_file_fastparquet_issue_375(self):
-        path = (
-            Path(__file__).parent.parent
-            / "test_data"
-            / "fastparquet-issue-375-snappy.par"
-        )
-        minio.fput_file(
-            minio.StoredObjectsBucket, "fastparquet-issue-375-snappy.par", path
-        )
-
-        so = StoredObject(
-            size=10,
-            bucket=minio.StoredObjectsBucket,
-            key="fastparquet-issue-375-snappy.par",
-        )
-        assert_frame_equal(so.get_table(), pd.DataFrame())
 
     def test_delete_workflow_deletes_from_s3(self):
         minio.put_bytes(minio.StoredObjectsBucket, "test.dat", b"abcd")

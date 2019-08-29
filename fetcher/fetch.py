@@ -21,6 +21,7 @@ from server.models import (
     ModuleVersion,
 )
 from . import fetchprep, save
+from .util import read_fetched_dataframe_from_wf_module
 
 
 logger = logging.getLogger(__name__)
@@ -57,19 +58,9 @@ async def _read_input_dataframe(crr: CachedRenderResult) -> pd.DataFrame:
 def _get_stored_dataframe(wf_module_id: int) -> pd.DataFrame:
     try:
         wf_module = WfModule.objects.get(pk=wf_module_id)
-        stored_object = wf_module.stored_objects.get(
-            stored_at=wf_module.stored_data_version
-        )
-        if stored_object.size == 0:  # ages-old objects with bucket='', key=''
-            return pd.DataFrame()
-        return parquet.read(stored_object.bucket, stored_object.key)
-    except (
-        WfModule.DoesNotExist,
-        StoredObject.DoesNotExist,
-        FileNotFoundError,
-        parquet.FastparquetCouldNotHandleFile,
-    ):
+    except WfModule.DoesNotExist:
         return None
+    return read_fetched_dataframe_from_wf_module(wf_module)
 
 
 @database_sync_to_async

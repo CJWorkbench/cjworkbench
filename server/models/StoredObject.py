@@ -2,8 +2,7 @@ from django.db import models
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from django.utils import timezone
-import pandas as pd
-from server import minio, parquet
+from server import minio
 
 
 # StoredObject is our persistence layer.
@@ -36,21 +35,6 @@ class StoredObject(models.Model):
     # keeping track of whether this version of the data has ever been loaded
     # and delivered to the frontend
     read = models.BooleanField(default=False)
-
-    def get_table(self):
-        if not self.bucket or not self.key:
-            # Old (obsolete) objects have no bucket/key, usually because
-            # empty tables weren't being written.
-            return pd.DataFrame()
-
-        try:
-            return parquet.read(self.bucket, self.key)
-        except FileNotFoundError:
-            # There was a pre-delete that never got committed; or maybe there's
-            # some other, long-existing DB inconsistency.
-            return pd.DataFrame()
-        except parquet.FastparquetCouldNotHandleFile:
-            return pd.DataFrame()  # empty table
 
     # make a deep copy for another WfModule
     def duplicate(self, to_wf_module):

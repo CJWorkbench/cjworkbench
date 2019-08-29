@@ -9,6 +9,7 @@ from server import minio, parquet, websockets
 from server.models import WfModule, Workflow
 from server.models.commands import ChangeDataVersionCommand
 from server.pandas_util import hash_table
+from .util import read_dataframe_from_stored_object
 
 
 def _build_key(workflow_id: int, wf_module_id: int) -> str:
@@ -28,7 +29,7 @@ def _store_fetched_table_if_different(
         and hash == old_so.hash
         # Slow: compare files. Expensive: reads a file from S3, holds
         # both DataFrames in RAM, uses lots of CPU.
-        and old_so.get_table().equals(table)
+        and table.equals(read_dataframe_from_stored_object(old_so))
     ):
         # `table` is identical to what was in `old_so`.
         return None
