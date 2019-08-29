@@ -11,17 +11,18 @@ import pandas as pd
 from cjworkbench.sync import database_sync_to_async
 from cjworkbench.util import benchmark
 from cjwkernel.pandas.types import ProcessResult
-from server import parquet
 from server.models import (
     LoadedModule,
-    StoredObject,
     WfModule,
     Workflow,
     CachedRenderResult,
     ModuleVersion,
 )
 from . import fetchprep, save
-from .util import read_fetched_dataframe_from_wf_module
+from .util import (
+    read_fetched_dataframe_from_wf_module,
+    read_dataframe_from_cached_render_result,
+)
 
 
 logger = logging.getLogger(__name__)
@@ -45,13 +46,14 @@ def _get_input_cached_render_result(
     return wf_module.cached_render_result
 
 
-async def _read_input_dataframe(crr: CachedRenderResult) -> pd.DataFrame:
+async def _read_input_dataframe(crr: CachedRenderResult) -> Optional[pd.DataFrame]:
     if crr is None:
         return None
     else:
         loop = asyncio.get_event_loop()
-        # crr.read_dataframe() returns None on error
-        return await loop.run_in_executor(None, crr.read_dataframe)
+        return await loop.run_in_executor(
+            None, read_dataframe_from_cached_render_result, crr
+        )
 
 
 @database_sync_to_async

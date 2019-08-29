@@ -342,8 +342,6 @@ class WfModule(models.Model):
         cached_result = self.cached_render_result
         if cached_result is not None:
             # assuming file-copy succeeds, copy cached results.
-            # Not using `new_wfm.cache_render_result(cached_result.result)`
-            # because that would involve reading the whole thing.
             new_wfm.cached_render_result_delta_id = new_wfm.last_relevant_delta_id
             for attr in ("status", "error", "json", "quick_fixes", "columns", "nrows"):
                 full_attr = f"cached_render_result_{attr}"
@@ -427,11 +425,11 @@ class WfModule(models.Model):
             with wf_module.workflow.cooperative_lock():
                 wf_module.refresh_from_db()  # re-read DB data
                 crr = wf_module.cached_render_result  # uses DB columns
-                dataframe = crr.read_dataframe()
+                dataframe = parquet.read(minio.CachedRenderResultsBucket, crr.parquet_key)
 
-        Without a lock and the refresh_from_db() within it, a
-        CachedRenderResult's `.read_dataframe()` function will typically raise
-        FileNotFoundError if called while a render is happening.
+        Without a lock and the refresh_from_db() within it, `parquet.read()`
+        will often raise `FileNotFoundError` (if it's called while a render is
+        happening, for instance).
         """
         result = CachedRenderResult.from_wf_module(self)
         if result and result.delta_id != self.last_relevant_delta_id:
