@@ -1,4 +1,5 @@
 import asyncio
+from pathlib import Path
 from typing import Callable
 from unittest.mock import Mock, patch
 import uuid
@@ -11,7 +12,7 @@ from pandas.testing import assert_frame_equal
 from cjworkbench.sync import database_sync_to_async
 from cjwkernel.pandas.types import ProcessResult
 from server import minio, parquet
-from server.models import LoadedModule, ModuleVersion, WfModule, Workflow
+from server.models import LoadedModule, ModuleVersion, StoredObject, WfModule, Workflow
 from server.models.commands import InitWorkflowCommand
 from server.models.param_dtype import ParamDType
 from server.tests.utils import DbTestCase
@@ -33,7 +34,7 @@ def DefaultMigrateParams(params):
 class FetchTests(DbTestCase):
     def _store_fetched_table(
         self, wf_module: WfModule, table: pd.DataFrame
-    ) -> timezone.datetime:
+    ) -> StoredObject:
         key = f"{wf_module.workflow_id}/{wf_module.id}/{uuid.uuid1()}"
         size = parquet.write(minio.StoredObjectsBucket, key, table)
         return wf_module.stored_objects.create(
@@ -41,7 +42,7 @@ class FetchTests(DbTestCase):
             key=key,
             size=size,
             hash="this test ignores hashes",
-        ).stored_at
+        )
 
     @patch("server.models.loaded_module.LoadedModule.for_module_version_sync")
     @patch("fetcher.save.save_result_if_changed")
@@ -455,11 +456,53 @@ class FetchTests(DbTestCase):
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
         wf_module = tab.wf_modules.create(order=0, slug="step-1")
-        wf_module.stored_data_version = self._store_fetched_table(wf_module, table)
+        wf_module.stored_data_version = self._store_fetched_table(
+            wf_module, table
+        ).stored_at
         wf_module.save()
 
         async def fetch(params, *, get_stored_dataframe, **kwargs):
             assert_frame_equal(await get_stored_dataframe(), table)
+
+        self._test_fetch(fetch, DefaultMigrateParams, wf_module, ParamDType.Dict({}))
+
+    def test_fetch_get_stored_dataframe_unhandled_parquet_is_none(self):
+        workflow = Workflow.objects.create()
+        tab = workflow.tabs.create(position=0)
+        wf_module = tab.wf_modules.create(order=0, slug="step-1")
+        stored_object = self._store_fetched_table(wf_module, pd.DataFrame())
+        wf_module.stored_data_version = stored_object.stored_at
+        wf_module.save()
+        # Overwrite with invalid Parquet data
+        minio.fput_file(
+            stored_object.bucket,
+            stored_object.key,
+            (
+                Path(__file__).parent.parent.parent
+                / "server"
+                / "tests"
+                / "test_data"
+                / "fastparquet-issue-375.par"
+            ),
+        )
+
+        async def fetch(params, *, get_stored_dataframe, **kwargs):
+            self.assertIsNone(await get_stored_dataframe())
+
+        self._test_fetch(fetch, DefaultMigrateParams, wf_module, ParamDType.Dict({}))
+
+    def test_fetch_get_stored_dataframe_missing_file_is_none(self):
+        workflow = Workflow.objects.create()
+        tab = workflow.tabs.create(position=0)
+        wf_module = tab.wf_modules.create(order=0, slug="step-1")
+        stored_object = self._store_fetched_table(wf_module, pd.DataFrame())
+        wf_module.stored_data_version = stored_object.stored_at
+        wf_module.save()
+        # Delete file -- making DB and S3 inconsistent
+        minio.remove(stored_object.bucket, stored_object.key)
+
+        async def fetch(params, *, get_stored_dataframe, **kwargs):
+            self.assertIsNone(await get_stored_dataframe())
 
         self._test_fetch(fetch, DefaultMigrateParams, wf_module, ParamDType.Dict({}))
 
@@ -479,7 +522,9 @@ class FetchTests(DbTestCase):
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
         wf_module = tab.wf_modules.create(order=0, slug="step-1")
-        wf_module.stored_data_version = self._store_fetched_table(wf_module, table)
+        wf_module.stored_data_version = self._store_fetched_table(
+            wf_module, table
+        ).stored_at
         wf_module.save()
 
         # Delete from the database. They're still in memory. This deletion can
@@ -490,15 +535,5 @@ class FetchTests(DbTestCase):
 
         async def fetch(params, *, get_stored_dataframe, **kwargs):
             self.assertIsNone(await get_stored_dataframe())
-
-        self._test_fetch(fetch, DefaultMigrateParams, wf_module, ParamDType.Dict({}))
-
-    def test_fetch_workflow_id(self):
-        workflow = Workflow.objects.create()
-        tab = workflow.tabs.create(position=0)
-        wf_module = tab.wf_modules.create(order=0, slug="step-1")
-
-        async def fetch(params, *, workflow_id, **kwargs):
-            self.assertEqual(workflow_id, workflow.id)
 
         self._test_fetch(fetch, DefaultMigrateParams, wf_module, ParamDType.Dict({}))

@@ -4,8 +4,8 @@ import datetime
 from typing import Any, Dict, Optional, Tuple
 from cjworkbench.sync import database_sync_to_async
 from cjwkernel.pandas.types import ProcessResult, StepResultShape, TableShape
-from server import notifications
-from server.models import LoadedModule, WfModule, Workflow
+from server import notifications, parquet
+from server.models import LoadedModule, StoredObject, WfModule, Workflow
 from server.notifications import OutputDelta
 from server import websockets
 from server.models.param_dtype import ParamDType
@@ -51,6 +51,41 @@ def locked_wf_module(workflow, wf_module):
     return retval
 
 
+def _load_fetch_result(wf_module: WfModule) -> Optional[ProcessResult]:
+    """
+    Load user-selected StoredObject as a kinda-ProcessResult.
+
+    Edge cases:
+
+    * Return None if there is no user-selected StoredObject.
+    * Return None if the user-selected StoredObject has no Parquet file.
+    * Return None if the user-selected Parquet file is invalid.
+
+    TODO nix StoredObjects, then nix this. Modules should get a different
+    abstraction than ProcessResult: one that can handle non-DataFrame data.
+    """
+    try:
+        stored_object = wf_module.stored_objects.get(
+            stored_at=wf_module.stored_data_version
+        )
+    except StoredObject.DoesNotExist:
+        return None
+
+    error = wf_module.fetch_error
+
+    if not stored_object.bucket:
+        # special case: .bucket and .key can be "" when .size == 0, in age-old
+        # StoredObjects.
+        return ProcessResult(error=error)
+
+    try:
+        table = parquet.read(stored_object.bucket, stored_object.key)
+    except (FileNotFoundError, parquet.FastparquetCouldNotHandleFile):
+        return None
+
+    return ProcessResult(table, error)
+
+
 @database_sync_to_async
 def _execute_wfmodule_pre(
     workflow: Workflow,
@@ -87,7 +122,7 @@ def _execute_wfmodule_pre(
             # module was deleted. Skip other fetches.
             return (None, None, {})
 
-        fetch_result = safe_wf_module.get_fetch_result()
+        fetch_result = _load_fetch_result(safe_wf_module)
         render_context = renderprep.RenderContext(
             workflow.id, wf_module.id, input_table_shape, tab_shapes, params  # ugh
         )

@@ -29,7 +29,6 @@ Each module may define one or both (preferably one) of the following functions:
         **kwargs
     ) -> ProcessResult:
         # kwargs is optional and may include:
-        # - workflow_id: int
         # - get_input_dataframe: Callable[[], Awaitable[pd.DataFrame]]
         # - get_stored_dataframe: Callable[[], Awaitable[pd.DataFrame]]
     ) -> ProcessResult:

@@ -1,5 +1,5 @@
 import secrets
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, Union
 from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.db.models import Q
@@ -9,7 +9,6 @@ from server.models import loaded_module
 from .fields import ColumnsField
 from .CachedRenderResult import CachedRenderResult
 from .module_version import ModuleVersion
-from .StoredObject import StoredObject
 from .Tab import Tab
 from .workflow import Workflow
 
@@ -236,27 +235,6 @@ class WfModule(models.Model):
 
     def request_authorized_write(self, request):
         return self.workflow.request_authorized_write(request)
-
-    # ---- Data versions ----
-    # Modules that fetch data, like Load URL or Twitter or scrapers, store
-    # versions of all previously fetched data
-
-    def retrieve_fetched_table(self):
-        try:
-            return self.stored_objects.get(
-                stored_at=self.stored_data_version
-            ).get_table()
-        except StoredObject.DoesNotExist:
-            # Either self.stored_data_version is None or it has been deleted.
-            return None
-
-    def get_fetch_result(self) -> Optional[ProcessResult]:
-        """Load the result of a Fetch, if there was one."""
-        table = self.retrieve_fetched_table()
-        if table is None:
-            return None
-
-        return ProcessResult(table, self.fetch_error)
 
     def list_fetched_data_versions(self):
         return list(

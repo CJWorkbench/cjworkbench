@@ -29,71 +29,14 @@ class WfModuleTests(DbTestCase):
             hash="this test ignores hashes",
         )
 
-    def test_retrieve_table_error_missing_version(self):
-        """
-        If user selects a version and then the version disappers, no version is
-        selected; return `None`.
-
-        Returning `None` is kinda arbitrary. Another option is to return the
-        latest version; but then, what if the caller also looks at
-        wf_module.stored_data_version? The two values would be inconsistent.
-        """
+    def test_list_data_versions(self):
         workflow = Workflow.create_and_init()
         wf_module = workflow.tabs.first().wf_modules.create(order=0, slug="step-1")
-        stored_object = self._store_fetched_table(wf_module, pd.DataFrame({"A": [1]}))
-        wf_module.stored_data_version = stored_object.stored_at
-        wf_module.save()
-        stored_object.delete()
-        wf_module.refresh_from_db()
-        self.assertIsNone(wf_module.retrieve_fetched_table())
+        so1 = wf_module.stored_objects.create(read=False)
+        so2 = wf_module.stored_objects.create(read=True)
 
-    # test stored versions of data: create, retrieve, set, list, and views
-    def test_wf_module_data_versions(self):
-        workflow = Workflow.create_and_init()
-        wf_module = workflow.tabs.first().wf_modules.create(order=0, slug="step-1")
-        table1 = pd.DataFrame({"A": [1, 2]})
-        table2 = pd.DataFrame({"B": [2, 3]})
-
-        # nothing ever stored
-        nothing = wf_module.retrieve_fetched_table()
-        self.assertIsNone(nothing)
-
-        # save and recover data
-        firstver = self._store_fetched_table(wf_module, table1).stored_at
-        wf_module.save()
-        wf_module.refresh_from_db()
-        self.assertNotEqual(
-            wf_module.stored_data_version, firstver
-        )  # should not switch versions by itself
-        self.assertIsNone(
-            wf_module.retrieve_fetched_table()
-        )  # no stored version, no table
-        wf_module.stored_data_version = firstver
-        wf_module.save()
-        tableout1 = wf_module.retrieve_fetched_table()
-        self.assertTrue(tableout1.equals(table1))
-
-        # create another version
-        secondver = self._store_fetched_table(wf_module, table2).stored_at
-        self.assertNotEqual(
-            wf_module.stored_data_version, secondver
-        )  # should not switch versions by itself
-        self.assertNotEqual(firstver, secondver)
-        wf_module.stored_data_version = secondver
-        wf_module.save()
-        tableout2 = wf_module.retrieve_fetched_table()
-        self.assertTrue(tableout2.equals(table2))
-
-        # change the version back
-        wf_module.stored_data_version = firstver
-        wf_module.save()
-        tableout1 = wf_module.retrieve_fetched_table()
-        self.assertTrue(tableout1.equals(table1))
-
-        # list versions
-        verlist = wf_module.list_fetched_data_versions()
-        correct_verlist = [secondver, firstver]  # sorted by creation date, latest first
-        self.assertListEqual([ver[0] for ver in verlist], correct_verlist)
+        result = wf_module.list_fetched_data_versions()
+        self.assertEqual(result, [(so2.stored_at, True), (so1.stored_at, False)])
 
     def test_wf_module_duplicate(self):
         workflow = Workflow.create_and_init()
@@ -101,11 +44,10 @@ class WfModuleTests(DbTestCase):
 
         # store data to test that it is duplicated
         self._store_fetched_table(wfm1, pd.DataFrame({"A": [1, 2]}))
-        s2 = self._store_fetched_table(wfm1, pd.DataFrame({"B": [2, 3]}))
+        so2 = self._store_fetched_table(wfm1, pd.DataFrame({"B": [2, 3]}))
         wfm1.secrets = {"do not copy": {"name": "evil", "secret": "evil"}}
-        wfm1.stored_data_version = s2.stored_at
-        wfm1.save()
-        self.assertEqual(len(wfm1.list_fetched_data_versions()), 2)
+        wfm1.stored_data_version = so2.stored_at
+        wfm1.save(update_fields=["stored_data_version"])
 
         # duplicate into another workflow, as we would do when duplicating a workflow
         workflow2 = Workflow.create_and_init()
@@ -124,11 +66,14 @@ class WfModuleTests(DbTestCase):
         self.assertEqual(wfm1d.secrets, {})
 
         # Stored data should contain a clone of content only, not complete version history
-        self.assertIsNotNone(wfm1d.stored_data_version)
+        self.assertEqual(wfm1d.stored_objects.count(), 1)
         self.assertEqual(wfm1d.stored_data_version, wfm1.stored_data_version)
-        self.assertEqual(len(wfm1d.list_fetched_data_versions()), 1)
-        self.assertTrue(
-            wfm1d.retrieve_fetched_table().equals(pd.DataFrame({"B": [2, 3]}))
+        so2d = wfm1d.stored_objects.first()
+        # The StoredObject was copied byte for byte into a different file
+        self.assertNotEqual(so2d.key, so2.key)
+        self.assertEqual(
+            minio.get_object_with_data(so2d.bucket, so2d.key)["Body"],
+            minio.get_object_with_data(so2.bucket, so2.key)["Body"],
         )
 
     def test_wf_module_duplicate_disable_auto_update(self):

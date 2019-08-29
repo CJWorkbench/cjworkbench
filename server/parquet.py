@@ -1,9 +1,7 @@
-import functools
 import io
 from pathlib import Path
 import tempfile
 from typing import List, Optional
-from urllib3.exceptions import ProtocolError
 import fastparquet
 from typing import Any, Callable
 import pyarrow as pa

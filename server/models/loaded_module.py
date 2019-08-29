@@ -213,8 +213,6 @@ class LoadedModule:
         get_input_dataframe = _memoize_async_func(get_input_dataframe)
         if varkw or "secrets" in kwonlyargs:
             kwargs["secrets"] = secrets
-        if varkw or "workflow_id" in kwonlyargs:
-            kwargs["workflow_id"] = workflow_id
         if varkw or "get_input_dataframe" in kwonlyargs:
             kwargs["get_input_dataframe"] = get_input_dataframe
         if varkw or "get_stored_dataframe" in kwonlyargs:

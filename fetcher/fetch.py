@@ -11,8 +11,10 @@ import pandas as pd
 from cjworkbench.sync import database_sync_to_async
 from cjworkbench.util import benchmark
 from cjwkernel.pandas.types import ProcessResult
+from server import parquet
 from server.models import (
     LoadedModule,
+    StoredObject,
     WfModule,
     Workflow,
     CachedRenderResult,
@@ -52,13 +54,22 @@ async def _read_input_dataframe(crr: CachedRenderResult) -> pd.DataFrame:
 
 
 @database_sync_to_async
-def _get_stored_dataframe(wf_module_id: int):
+def _get_stored_dataframe(wf_module_id: int) -> pd.DataFrame:
     try:
         wf_module = WfModule.objects.get(pk=wf_module_id)
-    except WfModule.DoesNotExist:
+        stored_object = wf_module.stored_objects.get(
+            stored_at=wf_module.stored_data_version
+        )
+        if stored_object.size == 0:  # ages-old objects with bucket='', key=''
+            return pd.DataFrame()
+        return parquet.read(stored_object.bucket, stored_object.key)
+    except (
+        WfModule.DoesNotExist,
+        StoredObject.DoesNotExist,
+        FileNotFoundError,
+        parquet.FastparquetCouldNotHandleFile,
+    ):
         return None
-
-    return wf_module.retrieve_fetched_table()
 
 
 @database_sync_to_async

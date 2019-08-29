@@ -459,18 +459,8 @@ class LoadedModuleTest(unittest.TestCase):
 
         self.assertEqual(result, ProcessResult(pd.DataFrame({"A": [1]})))
 
-    def test_fetch_workflow_id(self):
-        async def fetch(params, *, workflow_id, **kwargs):
-            return ProcessResult(pd.DataFrame({"A": [workflow_id]}))
-
-        lm = LoadedModule("int", "1", ParamDType.Dict({}), fetch_impl=fetch)
-        with self.assertLogs():
-            result = call_fetch(lm, {}, workflow_id=123)
-
-        self.assertEqual(result, ProcessResult(pd.DataFrame({"A": [123]})))
-
     def test_fetch_static_params(self):
-        async def fetch(params, *, workflow_id, **kwargs):
+        async def fetch(params, *args, **kwargs):
             # Params are a Params object
             return ProcessResult(
                 pd.DataFrame({"foo": [params["foo"]], "bar": [params["bar"]]})
@@ -479,7 +469,7 @@ class LoadedModuleTest(unittest.TestCase):
 
         lm = LoadedModule("int", "1", ParamDType.Dict({}), fetch_impl=fetch)
         with self.assertLogs():
-            result = call_fetch(lm, {"foo": "bar", "bar": "baz"}, workflow_id=123)
+            result = call_fetch(lm, {"foo": "bar", "bar": "baz"})
 
         self.assertEqual(result.error, "")
         self.assertEqual(
@@ -513,7 +503,7 @@ class LoadedModuleTest(unittest.TestCase):
         assert_frame_equal(result.dataframe, table)
 
     def test_fetch_dynamic_params(self):
-        async def fetch(params, *, workflow_id, **kwargs):
+        async def fetch(params, *args, **kwargs):
             # Params are a dict
             return ProcessResult(
                 pd.DataFrame({"foo": [params["foo"]], "bar": [params["bar"]]})
@@ -522,7 +512,7 @@ class LoadedModuleTest(unittest.TestCase):
 
         lm = LoadedModule("int", "1", ParamDType.Dict({}), fetch_impl=fetch)
         with self.assertLogs():
-            result = call_fetch(lm, dict(foo="bar", bar="baz"), workflow_id=123)
+            result = call_fetch(lm, dict(foo="bar", bar="baz"))
 
         self.assertEqual(result.error, "")
         self.assertEqual(
