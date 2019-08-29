@@ -198,7 +198,7 @@ class WorkflowTests(DbTestCase):
 
     @patch("server.models.loaded_module.LoadedModule.for_module_version_sync")
     @patch("server.websockets.ws_client_send_delta_async", fake_send)
-    @patch("server.notifications.email_output_delta")
+    @patch("renderer.notifications.email_output_delta")
     def test_email_delta(self, email, fake_load_module):
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
@@ -227,7 +227,7 @@ class WorkflowTests(DbTestCase):
 
     @patch("server.models.loaded_module.LoadedModule.for_module_version_sync")
     @patch("server.websockets.ws_client_send_delta_async", fake_send)
-    @patch("server.notifications.email_output_delta")
+    @patch("renderer.notifications.email_output_delta")
     def test_email_no_delta_when_not_changed(self, email, fake_load_module):
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)

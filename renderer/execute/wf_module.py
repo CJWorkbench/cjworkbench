@@ -4,9 +4,9 @@ import datetime
 from typing import Any, Dict, Optional, Tuple
 from cjworkbench.sync import database_sync_to_async
 from cjwkernel.pandas.types import ProcessResult, StepResultShape, TableShape
-from server import notifications, parquet
+from server import parquet
 from server.models import LoadedModule, StoredObject, WfModule, Workflow
-from server.notifications import OutputDelta
+from renderer import notifications
 from server import websockets
 from server.models.param_dtype import ParamDType
 from .types import (
@@ -139,9 +139,9 @@ def _execute_wfmodule_pre(
 @database_sync_to_async
 def _execute_wfmodule_save(
     workflow: Workflow, wf_module: WfModule, result: ProcessResult
-) -> OutputDelta:
+) -> notifications.OutputDelta:
     """
-    Call wf_module.cache_render_result() and build OutputDelta.
+    Call wf_module.cache_render_result() and build notifications.OutputDelta.
 
     All this runs synchronously within a database lock. (It's a separate
     function so that when we're done awaiting it, we can continue executing in
