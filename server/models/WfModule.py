@@ -340,8 +340,12 @@ class WfModule(models.Model):
         # not have any useful data. But that's okay: just kick off a new
         # render. The common case (all-rendered Workflow) will produce a
         # fully-rendered duplicate Workflow.
+        #
+        # We cannot copy the cached result if the destination Tab has a
+        # different name than this one: tab_name is passed to render(), so even
+        # an exactly-duplicated WfModule can have a different output.
         cached_result = self.cached_render_result
-        if cached_result is not None:
+        if cached_result is not None and self.tab.name == to_tab.name:
             # assuming file-copy succeeds, copy cached results.
             new_wfm.cached_render_result_delta_id = new_wfm.last_relevant_delta_id
             for attr in ("status", "error", "json", "quick_fixes", "columns", "nrows"):

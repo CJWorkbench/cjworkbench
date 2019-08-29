@@ -192,6 +192,7 @@ class DuplicateTabCommandTest(DbTestCase):
     @patch("server.models.Delta.ws_notify")
     def test_duplicate_nonempty_rendered_tab(self, ws_notify, queue_render):
         ws_notify.side_effect = async_noop
+        queue_render.side_effect = async_noop
         workflow = Workflow.create_and_init()
         init_delta_id = workflow.last_delta_id
         tab = workflow.tabs.first()
@@ -209,7 +210,7 @@ class DuplicateTabCommandTest(DbTestCase):
             workflow, wfm1, init_delta_id, ProcessResult(error="simplest ctor")
         )
 
-        self.run_with_async_db(
+        cmd = self.run_with_async_db(
             DuplicateTabCommand.create(
                 workflow=workflow, from_tab=tab, slug="tab-2", name="Tab 2"
             )
@@ -217,13 +218,11 @@ class DuplicateTabCommandTest(DbTestCase):
         tab2 = workflow.tabs.last()
         self.assertNotEqual(tab2.id, tab.id)
         wfm2 = tab2.wf_modules.last()
-        self.assertEqual(
-            read_cached_render_result(wfm2.cached_render_result),
-            read_cached_render_result(wfm1.cached_render_result),
-        )
-        # No need to render: the result is already cached
-        queue_render.assert_not_called()
-        # ... and the rendered value is identical
+        # We need to render: render() in Steps in the second Tab will be called
+        # with different `tab_name` than in the first Tab, meaning their output
+        # may be different.
+        self.assertIsNone(wfm2.cached_render_result)
+        queue_render.assert_called_with(workflow.id, cmd.id)
 
     def test_tab_name_conflict_is_valueerror(self):
         workflow = Workflow.create_and_init()

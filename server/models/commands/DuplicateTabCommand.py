@@ -124,7 +124,7 @@ class DuplicateTabCommand(Delta):
         # A note on the last_relevant_delta_id of the new WfModules:
         #
         # WfModule.duplicate_into_same_workflow() will set all
-        # `last_relevant_delta_id` to `wf_module.last_delta_id`, which doesn't
+        # `last_relevant_delta_id` to `workflow.last_delta_id`, which doesn't
         # consider this DuplicateTabCommand. That's "incorrect", but it doesn't
         # matter: `last_relevant_delta_id` is really a "cache ID", not "Delta
         # ID" (it isn't even a foreign key), and workflow.last_delta_id is fine
@@ -132,7 +132,7 @@ class DuplicateTabCommand(Delta):
         #
         # After duplicate, we don't need to invalidate any WfModules in any
         # other Tabs. (They can't depend on the steps this Command creates,
-        # since te steps don't exist yet.) And during undo, likewise, we don't
+        # since the steps don't exist yet.) And during undo, likewise, we don't
         # need to re-render because no other Tabs can depend on this one at the
         # time we Undo (since after .forward(), no other Tabs depend on this
         # one).
