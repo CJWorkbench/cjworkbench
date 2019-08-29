@@ -4,8 +4,7 @@ import datetime
 from typing import Any, Dict, Optional, Tuple
 from cjworkbench.sync import database_sync_to_async
 from cjwkernel.pandas.types import ProcessResult, StepResultShape, TableShape
-from cjwstate import rendercache
-from server import parquet
+from cjwstate import parquet, rendercache
 from server.models import LoadedModule, StoredObject, WfModule, Workflow
 from renderer import notifications
 from server import websockets

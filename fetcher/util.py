@@ -1,7 +1,7 @@
 from typing import Optional
 import pandas as pd
+from cjwstate import parquet
 from cjwstate.rendercache import read_cached_render_result, CorruptCacheError
-from server import parquet
 from server.models import CachedRenderResult, StoredObject, WfModule
 
 

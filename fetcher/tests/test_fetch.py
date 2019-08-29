@@ -11,8 +11,9 @@ import pandas as pd
 from pandas.testing import assert_frame_equal
 from cjworkbench.sync import database_sync_to_async
 from cjwkernel.pandas.types import ProcessResult
+from cjwstate import parquet
 from cjwstate.rendercache import cache_render_result
-from server import minio, parquet
+from server import minio
 from server.models import LoadedModule, ModuleVersion, StoredObject, WfModule, Workflow
 from server.models.commands import InitWorkflowCommand
 from server.models.param_dtype import ParamDType
@@ -477,7 +478,7 @@ class FetchTests(DbTestCase):
             stored_object.key,
             (
                 Path(__file__).parent.parent.parent
-                / "server"
+                / "cjwstate"
                 / "tests"
                 / "test_data"
                 / "fastparquet-issue-375.par"

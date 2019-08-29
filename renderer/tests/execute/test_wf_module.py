@@ -6,7 +6,8 @@ from django.utils import timezone
 import pandas as pd
 from pandas.testing import assert_frame_equal
 from cjwkernel.pandas.types import ProcessResult
-from server import minio, parquet
+from cjwstate import parquet
+from server import minio
 from server.models import LoadedModule, Workflow, WfModule, StoredObject
 from server.models.param_dtype import ParamDType
 from server.tests.utils import DbTestCase
@@ -121,7 +122,7 @@ class WfModuleTests(DbTestCase):
             stored_object.key,
             (
                 Path(__file__).parent.parent.parent.parent
-                / "server"
+                / "cjwstate"
                 / "tests"
                 / "test_data"
                 / "fastparquet-issue-375.par"

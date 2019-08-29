@@ -2,7 +2,8 @@ import io
 import pandas as pd
 import uuid as uuidgen
 from django.utils import timezone
-from server import minio, parquet
+from cjwstate import parquet
+from server import minio
 from server.models import ModuleVersion, Workflow, WfModule
 from server.models.commands import InitWorkflowCommand
 from server.tests.utils import DbTestCase

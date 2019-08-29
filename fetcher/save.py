@@ -5,7 +5,8 @@ from django.utils import timezone
 import pandas as pd
 from cjworkbench.sync import database_sync_to_async
 from cjwkernel.pandas.types import ProcessResult
-from server import minio, parquet, websockets
+from cjwstate import parquet
+from server import minio, websockets
 from server.models import WfModule, Workflow
 from server.models.commands import ChangeDataVersionCommand
 from server.pandas_util import hash_table

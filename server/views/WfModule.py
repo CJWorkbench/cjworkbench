@@ -21,7 +21,7 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from cjwstate.rendercache import CorruptCacheError, read_cached_render_result_as_arrow
 from server.models import Tab, WfModule, Workflow
-from server import minio, parquet, rabbitmq
+from server import rabbitmq
 from server.models.loaded_module import module_get_html_bytes
 
 
@@ -315,10 +315,8 @@ def wfmodule_public_output(
     cached_result = wf_module.cached_render_result
     if cached_result:
         try:
-            table = parquet.read_arrow_table(
-                minio.CachedRenderResultsBucket, cached_result.parquet_key
-            )
-        except FileNotFoundError:
+            table = read_cached_render_result_as_arrow(cached_result)
+        except CorruptCacheError:
             table = pyarrow.Table()
     else:
         # We don't have a cached result, and we don't know how long it'll
