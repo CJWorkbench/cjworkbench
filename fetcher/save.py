@@ -1,28 +1,19 @@
 from typing import Optional
-import uuid
-from django.conf import settings
 from django.utils import timezone
 import pandas as pd
 from cjworkbench.sync import database_sync_to_async
 from cjwkernel.pandas.types import ProcessResult
-from cjwstate import parquet
-from server import minio, websockets
+from cjwstate import storedobjects
+from server import websockets
 from server.models import WfModule, Workflow
 from server.models.commands import ChangeDataVersionCommand
-from server.pandas_util import hash_table
-from .util import read_dataframe_from_stored_object
-
-
-def _build_key(workflow_id: int, wf_module_id: int) -> str:
-    """Build a helpful S3 key."""
-    return f"{workflow_id}/{wf_module_id}/{uuid.uuid1()}.dat"
 
 
 def _store_fetched_table_if_different(
     workflow: Workflow, wf_module: WfModule, table: pd.DataFrame
 ) -> Optional[timezone.datetime]:
-    hash = hash_table(table)
     # Called within _maybe_add_version()
+    hash = storedobjects.hash_table(table)
     old_so = wf_module.stored_objects.order_by("-stored_at").first()
     if (
         old_so is not None
@@ -30,17 +21,13 @@ def _store_fetched_table_if_different(
         and hash == old_so.hash
         # Slow: compare files. Expensive: reads a file from S3, holds
         # both DataFrames in RAM, uses lots of CPU.
-        and table.equals(read_dataframe_from_stored_object(old_so))
+        and table.equals(storedobjects.read_dataframe_from_stored_object(old_so))
     ):
         # `table` is identical to what was in `old_so`.
         return None
 
-    key = _build_key(workflow.id, wf_module.id)
-    size = parquet.write(minio.StoredObjectsBucket, key, table)
-    stored_object = wf_module.stored_objects.create(
-        bucket=minio.StoredObjectsBucket, key=key, size=size, hash=hash
-    )
-    _enforce_storage_limits(wf_module)
+    stored_object = storedobjects.create_stored_object(workflow, wf_module, table, hash)
+    storedobjects.enforce_storage_limits(wf_module)
     return stored_object.stored_at
 
 
@@ -161,28 +148,3 @@ async def save_result_if_changed(
                 }
             },
         )
-
-
-def _enforce_storage_limits(wf_module: WfModule) -> None:
-    """
-    Delete old versions that bring us past MAX_STORAGE_PER_MODULE.
-
-    This is important on frequently-updating modules that add to the previous
-    table, such as Twitter search, because every version we store is an entire
-    table. Without deleting old versions, we'd grow too quickly.
-    """
-    limit = settings.MAX_STORAGE_PER_MODULE
-
-    # walk over this WfM's StoredObjects from newest to oldest, deleting all
-    # that are over the limit
-    sos = wf_module.stored_objects.order_by("-stored_at")
-    cumulative = 0
-    first = True
-
-    for so in sos:
-        cumulative += so.size
-        if cumulative > limit and not first:
-            # allow most recent version to be stored even if it is itself over
-            # limit
-            so.delete()
-        first = False

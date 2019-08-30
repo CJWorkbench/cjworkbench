@@ -1,4 +1,4 @@
-Render cache
+Render Cache
 ============
 
 Stores computations whose results we already know.
@@ -11,4 +11,5 @@ user request.
 Really, we cache the output. Metadata is cached in the database (in `WfModule`
 fields); and tabular data is cached in Parquet files in minio.
 
-This module depends on `cjwstate.models` and `cjwstate.minio`.
+This module depends on `cjwstate.models`, `cjwstate.minio` and
+`cjwstate.parquet`.

@@ -4,8 +4,8 @@ import datetime
 from typing import Any, Dict, Optional, Tuple
 from cjworkbench.sync import database_sync_to_async
 from cjwkernel.pandas.types import ProcessResult, StepResultShape, TableShape
-from cjwstate import parquet, rendercache
-from server.models import LoadedModule, StoredObject, WfModule, Workflow
+from cjwstate import rendercache, storedobjects
+from server.models import LoadedModule, WfModule, Workflow
 from renderer import notifications
 from server import websockets
 from server.models.param_dtype import ParamDType
@@ -64,24 +64,18 @@ def _load_fetch_result(wf_module: WfModule) -> Optional[ProcessResult]:
     TODO nix StoredObjects, then nix this. Modules should get a different
     abstraction than ProcessResult: one that can handle non-DataFrame data.
     """
-    try:
-        stored_object = wf_module.stored_objects.get(
-            stored_at=wf_module.stored_data_version
-        )
-    except StoredObject.DoesNotExist:
+    table = storedobjects.read_fetched_dataframe_from_wf_module(wf_module)
+    if table is None:
+        # One of:
+        # * there is no user-selected StoredObject
+        # * the user-selected StoredObject does not exist (the selection isn't a foreign key)
+        # * there is no file on minio
+        # * the file on minio cannot be read
+        #
+        # ... in all these cases, the module should see `None`.
         return None
 
     error = wf_module.fetch_error
-
-    if not stored_object.bucket:
-        # special case: .bucket and .key can be "" when .size == 0, in age-old
-        # StoredObjects.
-        return ProcessResult(error=error)
-
-    try:
-        table = parquet.read(stored_object.bucket, stored_object.key)
-    except (FileNotFoundError, parquet.FastparquetCouldNotHandleFile):
-        return None
 
     return ProcessResult(table, error)
 
