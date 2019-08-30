@@ -61,7 +61,7 @@ def upgrade_wf_module(wf_module):
     """
     # Clearing deltas is involved; Django Migrations can't do it. Import the
     # actual Workflow model, not the Migrations-generated model.
-    from server.models import Workflow
+    from cjwstate.models import Workflow
 
     try:
         workflow = Workflow.objects.get(id=wf_module.tab.workflow_id)

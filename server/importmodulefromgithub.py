@@ -6,8 +6,8 @@ import tempfile
 import git
 from git.exc import GitCommandError
 from cjwstate import minio
-from server.models import ModuleVersion
-from server.models.module_loader import (
+from cjwstate.models import ModuleVersion
+from cjwstate.models.module_loader import (
     ModuleFiles,
     ModuleSpec,
     validate_python_functions,

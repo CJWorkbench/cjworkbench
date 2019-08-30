@@ -4,9 +4,9 @@ from allauth.account.utils import user_display
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from cjworkbench.settings import KB_ROOT_URL
-from server.models import Workflow, WfModule, ModuleVersion, StoredObject, Tab
+from cjwstate.models import Workflow, WfModule, ModuleVersion, StoredObject, Tab
 from server.settingsutils import workbench_user_display
-from server.models.param_spec import ParamSpec
+from cjwstate.models.param_spec import ParamSpec
 
 User = get_user_model()
 

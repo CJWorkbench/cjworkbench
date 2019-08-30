@@ -5,8 +5,8 @@ from cjworkbench.sync import database_sync_to_async
 from cjwkernel.pandas.types import ProcessResult
 from cjwstate import storedobjects
 from server import websockets
-from server.models import WfModule, Workflow
-from server.models.commands import ChangeDataVersionCommand
+from cjwstate.models import WfModule, Workflow
+from cjwstate.models.commands import ChangeDataVersionCommand
 
 
 def _store_fetched_table_if_different(

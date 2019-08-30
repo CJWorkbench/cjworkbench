@@ -8,7 +8,7 @@ from cjworkbench import rabbitmq
 from cjworkbench.pg_render_locker import PgRenderLocker, WorkflowAlreadyLocked
 from cjworkbench.sync import database_sync_to_async
 from cjworkbench.util import benchmark
-from server.models import Workflow
+from cjwstate.models import Workflow
 from . import execute
 
 
@@ -63,7 +63,7 @@ async def render_workflow_once(workflow: Workflow, delta_id: int):
     except (DatabaseError, InterfaceError):
         # handled in outer try (which also handles PgRenderLocker)
         raise
-    except Exception as err:
+    except Exception:
         logger.exception("Error during render of workflow %d", workflow.id)
         return RenderResult.MUST_NOT_REQUEUE
 

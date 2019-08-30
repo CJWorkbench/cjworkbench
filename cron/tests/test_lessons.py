@@ -1,8 +1,8 @@
 import datetime
 import logging
 from django.utils import timezone
-from server.models import Workflow
-from server.tests.utils import DbTestCase
+from cjwstate.models import Workflow
+from cjwstate.tests.utils import DbTestCase
 from cron import lessons
 
 

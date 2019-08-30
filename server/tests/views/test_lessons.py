@@ -1,9 +1,10 @@
 import asyncio
 from typing import Any, Dict, List
 from unittest.mock import patch
-from server.models import Workflow, ModuleVersion, LoadedModule
+from cjwstate.models import Workflow, ModuleVersion
+from cjwstate.models.loaded_module import LoadedModule
 from server.models.lesson import Lesson, LessonLookup, LessonInitialWorkflow
-from server.tests.utils import DbTestCase, create_test_user
+from cjwstate.tests.utils import DbTestCase, create_test_user
 
 
 async def async_noop(*args, **kwargs):

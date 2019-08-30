@@ -10,9 +10,9 @@ from django.http import HttpRequest, JsonResponse
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
-from server.models import InProgressUpload, Workflow, WfModule
-from server.models.commands import ChangeParametersCommand
-from server.models.workflow import WorkflowCooperativeLock
+from cjwstate.models import InProgressUpload, Workflow, WfModule
+from cjwstate.models.commands import ChangeParametersCommand
+from cjwstate.models.workflow import WorkflowCooperativeLock
 
 
 AuthTokenHeaderRegex = re.compile(r"\ABearer ([-a-zA-Z0-9_]+)\Z", re.IGNORECASE)

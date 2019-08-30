@@ -9,7 +9,7 @@ def clear_empty_colnames_from_cache(apps, schema_editor):
     # Can't grab WfModule from 'apps' because we need our migration to write to
     # S3 -- which 'apps' models don't.
     from cjwstate.rendercache.io import clear_cached_render_result_for_wf_module
-    from server.models import WfModule
+    from cjwstate.models import WfModule
 
     qs = WfModule.objects.extra(
         # Lots of escaping here: '\"' gets us double quotes; '%%' gives SQL '%'

@@ -8,8 +8,8 @@ from server.handlers.tab import (
     duplicate,
     set_name,
 )
-from server.models import ModuleVersion, Workflow
-from server.models.commands import AddModuleCommand, ReorderModulesCommand
+from cjwstate.models import ModuleVersion, Workflow
+from cjwstate.models.commands import AddModuleCommand, ReorderModulesCommand
 from .util import HandlerTestCase
 
 
@@ -31,7 +31,7 @@ class MockLoadedModule:
 
 class TabTest(HandlerTestCase):
     @patch(
-        "server.models.loaded_module.LoadedModule.for_module_version_sync",
+        "cjwstate.models.loaded_module.LoadedModule.for_module_version_sync",
         MockLoadedModule,
     )
     @patch("server.websockets.ws_client_send_delta_async", async_noop)

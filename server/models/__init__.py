@@ -1,12 +1,16 @@
-from .AclEntry import AclEntry
-from .CachedRenderResult import CachedRenderResult
-from .workflow import Workflow
-from .WfModule import WfModule
-from .Tab import Tab
-from .module_version import ModuleVersion
-from .Delta import Delta
-from .UploadedFile import UploadedFile
-from .StoredObject import StoredObject
-from .in_progress_upload import InProgressUpload
-from .loaded_module import LoadedModule
-from . import commands
+# DO NOT USE
+#
+# HACK: way back when, our Django models were declared in the "server" app.
+# So that's where migrations are wired to find them.
+#
+# We moved state-modifying code into `cjwstate`, and that meant moving Django
+# models to `cjwstate.models`. `cjwstate` isn't a Django app, so migrations
+# won't happen there.
+#
+# Long-term, we're going to nix Django ORM (because Active Record is complex)
+# and nix Django migrations (because they're hard to maintain).
+#
+# In the meantime, this import statement makes a "fake" `server.models`
+# module for Django to find, with all the models in `cjwstate.models`.
+
+from cjwstate.models import *  # DO NOT USE

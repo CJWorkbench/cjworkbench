@@ -1,6 +1,6 @@
 from cjwkernel.pandas.types import Column, ColumnType, TableShape
-from server.models.param_spec import ParamDType
-from server.tests.utils import DbTestCase
+from cjwstate.models.param_spec import ParamDType
+from cjwstate.tests.utils import DbTestCase
 from fetcher.fetchprep import clean_value
 from renderer.execute.types import PromptingError
 

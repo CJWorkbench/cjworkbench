@@ -13,7 +13,7 @@ class HandlerRequest:
 
     request_id: int
     scope: Dict[str, Any]
-    workflow: "server.models.Workflow"  # import would cause recursion
+    workflow: "cjwstate.models.Workflow"  # import would cause recursion
     path: str
     arguments: Dict[str, Any]
 
@@ -21,7 +21,7 @@ class HandlerRequest:
     def parse_json_data(
         cls,
         scope: Dict[str, Any],
-        workflow: "server.models.Workflow",
+        workflow: "cjwstate.models.Workflow",
         data: Dict[str, Any],
     ) -> "HandlerRequest":
         """

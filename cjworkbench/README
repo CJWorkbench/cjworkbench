@@ -15,7 +15,7 @@ Dependencies: (captured in package.json? should I be using virtualenv?)
 
 To work with models in the shell
     python manage.py shell
-    from server.models import Workflow (etc)
+    from cjwstate.models import Workflow (etc)
 
 To completely wipe db:
     python manage.py flush

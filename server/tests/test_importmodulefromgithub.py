@@ -6,10 +6,11 @@ import pandas as pd
 from pandas.testing import assert_frame_equal
 from cjwkernel.pandas.types import ProcessResult
 from server.importmodulefromgithub import import_module_from_directory
-from server.models import LoadedModule, ModuleVersion, Workflow
-from server.models.module_loader import validate_python_functions
-import server.models.loaded_module
-from server.tests.utils import DbTestCase, MockDir
+from cjwstate.models import ModuleVersion, Workflow
+from cjwstate.models.loaded_module import LoadedModule
+from cjwstate.models.module_loader import validate_python_functions
+import cjwstate.models.loaded_module
+from cjwstate.tests.utils import DbTestCase, MockDir
 
 
 class ImportFromGitHubTest(DbTestCase):
@@ -116,4 +117,4 @@ class ImportFromGitHubTest(DbTestCase):
             self.assertEqual(result.error, "")
             assert_frame_equal(result.dataframe, expected)
         finally:
-            server.models.loaded_module.load_external_module.cache_clear()
+            cjwstate.models.loaded_module.load_external_module.cache_clear()

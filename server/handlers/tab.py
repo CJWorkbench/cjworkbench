@@ -2,8 +2,8 @@ import functools
 import re
 from typing import Any, Dict, List
 from cjworkbench.sync import database_sync_to_async
-from server.models import ModuleVersion, Workflow, Tab
-from server.models.commands import (
+from cjwstate.models import ModuleVersion, Workflow, Tab
+from cjwstate.models.commands import (
     AddModuleCommand,
     ReorderModulesCommand,
     AddTabCommand,

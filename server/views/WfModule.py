@@ -20,9 +20,9 @@ from rest_framework.decorators import api_view, renderer_classes
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from cjwstate.rendercache import CorruptCacheError, read_cached_render_result_as_arrow
-from server.models import Tab, WfModule, Workflow
+from cjwstate.models import Tab, WfModule, Workflow
+from cjwstate.models.loaded_module import module_get_html_bytes
 from server import rabbitmq
-from server.models.loaded_module import module_get_html_bytes
 
 
 _MaxNRowsPerRequest = 300

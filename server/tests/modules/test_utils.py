@@ -14,7 +14,7 @@ from server.modules.utils import (
     spooled_data_from_url,
     autocast_dtypes_in_place,
 )
-from server.tests.utils import DbTestCase
+from cjwstate.tests.utils import DbTestCase
 
 
 TestDataPath = Path(__file__).parent.parent / "test_data"

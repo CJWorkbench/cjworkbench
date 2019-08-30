@@ -7,9 +7,10 @@ from pandas.testing import assert_frame_equal
 from cjwkernel.pandas.types import ProcessResult
 from cjwstate import minio
 from cjwstate.storedobjects import create_stored_object
-from server.models import LoadedModule, Workflow
-from server.models.param_dtype import ParamDType
-from server.tests.utils import DbTestCase
+from cjwstate.models import Workflow
+from cjwstate.models.loaded_module import LoadedModule
+from cjwstate.models.param_dtype import ParamDType
+from cjwstate.tests.utils import DbTestCase
 from renderer.execute.wf_module import execute_wfmodule
 
 

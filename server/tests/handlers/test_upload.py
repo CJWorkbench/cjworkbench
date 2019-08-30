@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from cjwstate import minio
 from server.handlers.upload import create_upload, finish_upload, abort_upload
-from server.models import Workflow
+from cjwstate.models import Workflow
 from .util import HandlerTestCase
 
 

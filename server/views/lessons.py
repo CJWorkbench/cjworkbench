@@ -9,8 +9,8 @@ from django.template.response import TemplateResponse
 from django.utils.translation import gettext as _
 from server import rabbitmq
 import server.utils
-from server.models.commands import InitWorkflowCommand
-from server.models import Workflow, ModuleVersion
+from cjwstate.models.commands import InitWorkflowCommand
+from cjwstate.models import Workflow, ModuleVersion
 from server.models.course import Course, CourseLookup, AllCourses
 from server.models.lesson import Lesson, AllLessons, LessonLookup
 from server.serializers import LessonSerializer, UserSerializer

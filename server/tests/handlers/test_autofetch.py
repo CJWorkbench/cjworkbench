@@ -2,8 +2,8 @@ from django.contrib.auth.models import AnonymousUser, User
 from django.contrib.sessions.models import Session
 from django.utils import timezone
 from server.handlers.autofetch import list_autofetches_json, isoformat
-from server.models import Workflow
-from ..utils import DbTestCase
+from cjwstate.models import Workflow
+from cjwstate.tests.utils import DbTestCase
 
 
 IsoDate1 = "2019-06-18T19:35:57.123Z"

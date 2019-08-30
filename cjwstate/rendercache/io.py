@@ -4,7 +4,7 @@ import pandas as pd
 import pyarrow
 from cjwkernel.pandas.types import ProcessResult
 from cjwstate import minio, parquet
-from server.models import WfModule, Workflow, CachedRenderResult
+from cjwstate.models import WfModule, Workflow, CachedRenderResult
 
 
 BUCKET = minio.CachedRenderResultsBucket

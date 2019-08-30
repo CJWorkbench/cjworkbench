@@ -1,12 +1,12 @@
 from unittest.mock import patch
-from server.models import Delta, ModuleVersion, Workflow
-from server.models.commands import (
+from cjwstate.models import Delta, ModuleVersion, Workflow
+from cjwstate.models.commands import (
     AddModuleCommand,
     ChangeParametersCommand,
     ChangeWorkflowTitleCommand,
     ChangeWfModuleNotesCommand,
 )
-from server.tests.utils import DbTestCase
+from cjwstate.tests.utils import DbTestCase
 from server.versions import WorkflowUndo, WorkflowRedo
 
 
@@ -15,7 +15,7 @@ async def async_noop(*args, **kwargs):
 
 
 @patch("server.rabbitmq.queue_render", async_noop)
-@patch("server.models.Delta.ws_notify", async_noop)
+@patch("cjwstate.models.Delta.ws_notify", async_noop)
 class UndoRedoTests(DbTestCase):
     # Be careful, in these tests, not to run database queries in async blocks.
 

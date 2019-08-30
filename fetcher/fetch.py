@@ -11,13 +11,13 @@ import pandas as pd
 from cjworkbench.sync import database_sync_to_async
 from cjworkbench.util import benchmark
 from cjwkernel.pandas.types import ProcessResult
-from server.models import (
-    LoadedModule,
+from cjwstate.models import (
     WfModule,
     Workflow,
     CachedRenderResult,
     ModuleVersion,
 )
+from cjwstate.models.loaded_module import LoadedModule
 from . import fetchprep, save
 from .util import (
     read_fetched_dataframe_from_wf_module,

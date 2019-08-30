@@ -13,8 +13,8 @@ from cjwstate.rendercache.io import (
     cache_render_result,
     delete_parquet_files_for_wf_module,
 )
-from server.models import Workflow
-from server.tests.utils import LoggedInTestCase
+from cjwstate.models import Workflow
+from cjwstate.tests.utils import LoggedInTestCase
 
 
 FakeSession = namedtuple("FakeSession", ["session_key"])
@@ -49,7 +49,7 @@ empty_data_json = {"start_row": 0, "end_row": 0, "rows": []}
 
 
 @patch("server.rabbitmq.queue_render", async_noop)
-@patch("server.models.Delta.ws_notify", async_noop)
+@patch("cjwstate.models.Delta.ws_notify", async_noop)
 class WfModuleTests(LoggedInTestCase):
     # Test workflow with modules that implement a simple pipeline on test data
     def setUp(self):

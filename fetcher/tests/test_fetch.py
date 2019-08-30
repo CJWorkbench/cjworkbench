@@ -13,10 +13,11 @@ from cjwkernel.pandas.types import ProcessResult
 from cjwstate import minio
 from cjwstate.storedobjects import create_stored_object
 from cjwstate.rendercache import cache_render_result
-from server.models import LoadedModule, ModuleVersion, WfModule, Workflow
-from server.models.commands import InitWorkflowCommand
-from server.models.param_dtype import ParamDType
-from server.tests.utils import DbTestCase
+from cjwstate.models import ModuleVersion, WfModule, Workflow
+from cjwstate.models.commands import InitWorkflowCommand
+from cjwstate.models.loaded_module import LoadedModule
+from cjwstate.models.param_dtype import ParamDType
+from cjwstate.tests.utils import DbTestCase
 from fetcher import fetch
 
 
@@ -33,7 +34,7 @@ def DefaultMigrateParams(params):
 
 
 class FetchTests(DbTestCase):
-    @patch("server.models.loaded_module.LoadedModule.for_module_version_sync")
+    @patch.object(LoadedModule, "for_module_version_sync")
     @patch("fetcher.save.save_result_if_changed")
     def test_fetch_wf_module(self, save_result, load_module):
         result = ProcessResult(pd.DataFrame({"A": [1]}), error="hi")
@@ -90,7 +91,7 @@ class FetchTests(DbTestCase):
             ProcessResult(error="Cannot fetch: module was deleted"),
         )
 
-    @patch("server.models.loaded_module.LoadedModule.for_module_version_sync")
+    @patch.object(LoadedModule, "for_module_version_sync")
     def test_fetch_wf_module_skip_missed_update(self, load_module):
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
@@ -113,7 +114,7 @@ class FetchTests(DbTestCase):
         wf_module.refresh_from_db()
         self.assertEqual(wf_module.next_update, due_for_update)
 
-    @patch("server.models.loaded_module.LoadedModule.for_module_version_sync")
+    @patch.object(LoadedModule, "for_module_version_sync")
     @patch("fetcher.save.save_result_if_changed")
     def test_fetch_ignore_wf_module_deleted_when_updating(
         self, save_result, load_module
@@ -161,7 +162,7 @@ class FetchTests(DbTestCase):
         with self.assertLogs(fetch.__name__, level="DEBUG"):
             self.run_with_async_db(fetch.fetch_wf_module(workflow.id, wf_module, now))
 
-    @patch("server.models.loaded_module.LoadedModule.for_module_version_sync")
+    @patch.object(LoadedModule, "for_module_version_sync")
     @patch("fetcher.save.save_result_if_changed")
     def test_fetch_poll_when_setting_next_update(self, save_result, load_module):
         """
@@ -206,7 +207,7 @@ class FetchTests(DbTestCase):
         self.assertEqual(wf_module.auto_update_data, False)
         self.assertIsNone(wf_module.next_update)
 
-    @patch("server.models.loaded_module.LoadedModule.for_module_version_sync")
+    @patch.object(LoadedModule, "for_module_version_sync")
     def test_crashing_fetch(self, load_module):
         async def fake_fetch(*args, **kwargs):
             raise ValueError("boo")
@@ -245,7 +246,7 @@ class FetchTests(DbTestCase):
         self.assertEqual(wf_module.last_update_check, now)
         self.assertEqual(wf_module.next_update, due_for_update)
 
-    @patch("server.models.loaded_module.LoadedModule.for_module_version_sync")
+    @patch.object(LoadedModule, "for_module_version_sync")
     @patch("fetcher.save.save_result_if_changed")
     @patch("fetcher.fetchprep.clean_value", lambda _, params, __: params)
     def _test_fetch(

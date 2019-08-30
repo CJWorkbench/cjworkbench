@@ -88,7 +88,7 @@ services:
       'pipenv', 'run',
       'python', '-m', 'httpprocessproxy', '0.0.0.0:8000', '0.0.0.0:8080',
       '--exclude', '**/*.pyc', '**/tests/**/*',
-      '--pattern', 'server/**/*.py', 'server/**/*.json', 'server/**/*.yaml', 'server/lessons/**/*.html', 'server/courses/**/*.html', 'cjworkbench/**/*.py',
+      '--pattern', 'cjwkernel/**/*.py', 'cjwstate/**/*.py', 'cjwstate/**/*.yaml', 'server/**/*.py', 'server/**/*.json', 'server/**/*.yaml', 'server/lessons/**/*.html', 'server/courses/**/*.html', 'cjworkbench/**/*.py',
       '--exec',
       'python', './manage.py', 'runserver', '--noreload', '--insecure', '0.0.0.0:8080'
     ]
@@ -124,7 +124,7 @@ services:
       # syntax error.
       'pipenv', 'run', 'bin/watchman-monitor',
       '--exclude', '**/*.pyc', '**/tests/**/*',
-      '--pattern', 'cjworkbench/**/*.py', 'renderer/**/*.py', 'server/modules/**/*.*', 'server/models/**/*.*',
+      '--pattern', 'cjworkbench/**/*.py', 'cjwkernel/**/*.py', 'cjwstate/**/*.py', 'renderer/**/*.py', 'server/modules/**/*.*',
       '--exec',
       'python', './manage.py', 'renderer'
     ]
@@ -160,7 +160,7 @@ services:
       # Use watchman, not Django autoreload. autoreload crashes when there's a
       # syntax error.
       'sh', '-c',
-      'socat -d TCP-LISTEN:8000,reuseaddr,fork TCP:frontend:8000 & pipenv run bin/watchman-monitor --exclude "**/*.pyc" "**/tests/**/*" --pattern "cjworkbench/**/*.py" "fetcher/**/*.py" "server/modules/**/*.*" "server/models/**/*.*" --exec python ./manage.py fetcher'
+      'socat -d TCP-LISTEN:8000,reuseaddr,fork TCP:frontend:8000 & pipenv run bin/watchman-monitor --exclude "**/*.pyc" "**/tests/**/*" --pattern "cjworkbench/**/*.py" "cjwkernel/**/*.py" "cjwstate/**/*.py" "fetcher/**/*.py" "server/modules/**/*.*" --exec python ./manage.py fetcher'
     ]
 
   cron:
@@ -193,7 +193,7 @@ services:
       # syntax error.
       'pipenv', 'run', 'bin/watchman-monitor',
       '--exclude', '**/*.pyc', '**/tests/**/*',
-      '--pattern', 'cjworkbench/**/*.py', 'cron/**/*.py', 'server/models/**/*.*',
+      '--pattern', 'cjworkbench/**/*.py', 'cron/**/*.py', 'cjwstate/models/**/*.*',
       '--exec', 'python', './manage.py', 'cron'
     ]
 
@@ -239,7 +239,7 @@ services:
       # root user.)
       MINIO_ACCESS_KEY: minio_root_access
       MINIO_SECRET_KEY: minio_root_secret
-    command: server /data
+    command: [ 'server', '/data' ]
 
 networks:
   dev: {}

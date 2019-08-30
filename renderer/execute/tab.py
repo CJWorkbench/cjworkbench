@@ -4,8 +4,8 @@ from typing import Any, Dict, List, Optional, FrozenSet
 from cjworkbench.sync import database_sync_to_async
 from cjwkernel.pandas.types import ProcessResult, StepResultShape
 from cjwstate.rendercache import read_cached_render_result
-from server.models import WfModule, Workflow, Tab
-from server.models.param_spec import ParamDType
+from cjwstate.models import WfModule, Workflow, Tab
+from cjwstate.models.param_spec import ParamDType
 from .wf_module import execute_wfmodule, locked_wf_module
 
 

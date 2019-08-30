@@ -6,9 +6,10 @@ from unittest.mock import Mock, patch
 import pandas as pd
 from cjwkernel.pandas.types import ProcessResult
 from cjwstate.rendercache import cache_render_result, read_cached_render_result
-from server.models import LoadedModule, Workflow
-from server.models.commands import InitWorkflowCommand
-from server.tests.utils import DbTestCase
+from cjwstate.models import Workflow
+from cjwstate.models.commands import InitWorkflowCommand
+from cjwstate.models.loaded_module import LoadedModule
+from cjwstate.tests.utils import DbTestCase
 from renderer.execute.types import UnneededExecution
 from renderer.execute.workflow import execute_workflow, partition_ready_and_dependent
 
@@ -38,7 +39,7 @@ class WorkflowTests(DbTestCase):
         with self.assertLogs(level=logging.DEBUG):
             self.run_with_async_db(execute_workflow(workflow, workflow.last_delta_id))
 
-    @patch("server.models.loaded_module.LoadedModule.for_module_version_sync")
+    @patch.object(LoadedModule, "for_module_version_sync")
     @patch("server.websockets.ws_client_send_delta_async", fake_send)
     def test_execute_new_revision(self, fake_load_module):
         workflow = Workflow.objects.create()
@@ -67,7 +68,7 @@ class WorkflowTests(DbTestCase):
             read_cached_render_result(wf_module.cached_render_result), result2
         )
 
-    @patch("server.models.loaded_module.LoadedModule.for_module_version_sync")
+    @patch.object(LoadedModule, "for_module_version_sync")
     def test_execute_race_delete_workflow(self, fake_load_module):
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
@@ -87,7 +88,7 @@ class WorkflowTests(DbTestCase):
         with self.assertRaises(UnneededExecution):
             self._execute(workflow)
 
-    @patch("server.models.loaded_module.LoadedModule.for_module_version_sync")
+    @patch.object(LoadedModule, "for_module_version_sync")
     @patch("server.websockets.ws_client_send_delta_async")
     def test_execute_mark_unreachable(self, send_delta_async, fake_load_module):
         send_delta_async.return_value = future_none
@@ -146,7 +147,7 @@ class WorkflowTests(DbTestCase):
             },
         )
 
-    @patch("server.models.loaded_module.LoadedModule.for_module_version_sync")
+    @patch.object(LoadedModule, "for_module_version_sync")
     @patch("server.websockets.ws_client_send_delta_async", fake_send)
     def test_execute_cache_hit(self, fake_module):
         workflow = Workflow.objects.create()
@@ -165,7 +166,7 @@ class WorkflowTests(DbTestCase):
 
         fake_module.assert_not_called()
 
-    @patch("server.models.loaded_module.LoadedModule.for_module_version_sync")
+    @patch.object(LoadedModule, "for_module_version_sync")
     @patch("server.websockets.ws_client_send_delta_async", fake_send)
     def test_resume_without_rerunning_unneeded_renders(self, fake_load_module):
         workflow = Workflow.create_and_init()
@@ -196,7 +197,7 @@ class WorkflowTests(DbTestCase):
         self.assertEqual(actual, result2)
         fake_loaded_module.render.assert_called_once()  # only with module2
 
-    @patch("server.models.loaded_module.LoadedModule.for_module_version_sync")
+    @patch.object(LoadedModule, "for_module_version_sync")
     @patch("server.websockets.ws_client_send_delta_async", fake_send)
     @patch("renderer.notifications.email_output_delta")
     def test_email_delta(self, email, fake_load_module):
@@ -225,7 +226,7 @@ class WorkflowTests(DbTestCase):
 
         email.assert_called()
 
-    @patch("server.models.loaded_module.LoadedModule.for_module_version_sync")
+    @patch.object(LoadedModule, "for_module_version_sync")
     @patch("server.websockets.ws_client_send_delta_async", fake_send)
     @patch("renderer.notifications.email_output_delta")
     def test_email_no_delta_when_not_changed(self, email, fake_load_module):

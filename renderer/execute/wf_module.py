@@ -5,10 +5,11 @@ from typing import Any, Dict, Optional, Tuple
 from cjworkbench.sync import database_sync_to_async
 from cjwkernel.pandas.types import ProcessResult, StepResultShape, TableShape
 from cjwstate import rendercache, storedobjects
-from server.models import LoadedModule, WfModule, Workflow
-from renderer import notifications
+from cjwstate.models import WfModule, Workflow
+from cjwstate.models.loaded_module import LoadedModule
+from cjwstate.models.param_dtype import ParamDType
 from server import websockets
-from server.models.param_dtype import ParamDType
+from renderer import notifications
 from .types import (
     TabCycleError,
     TabOutputUnreachableError,

@@ -13,9 +13,9 @@ from cjwkernel.pandas.types import (
 )
 from cjwstate import minio
 from cjwstate.rendercache import cache_render_result
-from server.models import Workflow, UploadedFile
-from server.models.param_spec import ParamDType
-from server.tests.utils import DbTestCase
+from cjwstate.models import Workflow, UploadedFile
+from cjwstate.models.param_spec import ParamDType
+from cjwstate.tests.utils import DbTestCase
 from renderer.execute.renderprep import clean_value, RenderContext
 from renderer.execute.types import (
     TabCycleError,

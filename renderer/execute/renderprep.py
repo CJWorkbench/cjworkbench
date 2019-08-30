@@ -7,8 +7,8 @@ import weakref
 from typing import Any, Dict, List, Optional, Union
 from cjwkernel.pandas.types import RenderColumn, StepResultShape, TabOutput
 from cjwstate import minio
-from server.models import Tab, UploadedFile
-from server.models.param_spec import ParamDType
+from cjwstate.models import Tab, UploadedFile
+from cjwstate.models.param_spec import ParamDType
 from .types import (
     TabCycleError,
     TabOutputUnreachableError,

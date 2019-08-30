@@ -2,7 +2,7 @@ from typing import Optional
 import pandas as pd
 from cjwstate import parquet
 from cjwstate.rendercache import read_cached_render_result, CorruptCacheError
-from server.models import CachedRenderResult, StoredObject, WfModule
+from cjwstate.models import CachedRenderResult, StoredObject, WfModule
 
 
 def _read_dataframe_from_minio(bucket: str, key: str) -> Optional[pd.DataFrame]:

@@ -9,14 +9,14 @@ from django.db import transaction
 from django.utils import timezone
 from cjworkbench.sync import database_sync_to_async
 from server import oauth, rabbitmq, websockets
-from server.models import Workflow, WfModule
-from server.models.commands import (
+from cjwstate.models import Workflow, WfModule
+from cjwstate.models.commands import (
     ChangeParametersCommand,
     DeleteModuleCommand,
     ChangeDataVersionCommand,
     ChangeWfModuleNotesCommand,
 )
-from server.models.param_spec import ParamSpec
+from cjwstate.models.param_spec import ParamSpec
 import server.utils
 from . import autofetch
 from .types import HandlerError

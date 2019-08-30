@@ -2,7 +2,7 @@ from functools import partial, singledispatch
 import pathlib
 from typing import Any, Dict, List, Optional, Union
 from cjwkernel.pandas.types import TableShape
-from server.models.param_spec import ParamDType
+from cjwstate.models.param_spec import ParamDType
 from renderer.execute.renderprep import PromptErrorAggregator
 from renderer.execute.types import PromptingError
 

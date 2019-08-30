@@ -3,8 +3,8 @@ from django.conf import settings
 from django.test import override_settings
 import pandas as pd
 from cjwkernel.pandas.types import ProcessResult
-from server.models import StoredObject, Workflow
-from server.tests.utils import DbTestCase, mock_csv_table
+from cjwstate.models import StoredObject, Workflow
+from cjwstate.tests.utils import DbTestCase, mock_csv_table
 from fetcher.save import save_result_if_changed
 
 

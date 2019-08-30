@@ -45,7 +45,7 @@ their ``.json`` spec files.
 """
 import importlib
 import pathlib
-from server.models.module_loader import ModuleFiles, ModuleSpec
+from cjwstate.models.module_loader import ModuleFiles, ModuleSpec
 
 
 Lookup = {}
