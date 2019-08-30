@@ -10,6 +10,9 @@ logger = logging.getLogger(__name__)
 
 
 class ChangeParametersCommand(ChangesWfModuleOutputs, Delta):
+    class Meta:
+        db_table = "server_changeparameterscommand"
+
     wf_module = models.ForeignKey(WfModule, on_delete=models.PROTECT)
     old_values = JSONField("old_values")  # _all_ params
     new_values = JSONField("new_values")  # only _changed_ params

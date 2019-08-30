@@ -13,6 +13,9 @@ class DuplicateTabCommand(Delta):
     exist.
     """
 
+    class Meta:
+        db_table = "server_duplicatetabcommand"
+
     # Foreign keys can get a bit confusing. Here we go:
     #
     # * DuplicateTabCommand can only exist if its Tab exists.

@@ -21,6 +21,9 @@ from server import rabbitmq, websockets
 # When creating a Delta, the two commands will be called in the same atomic
 # transaction.
 class Delta(PolymorphicModel):
+    class Meta:
+        db_table = "server_delta"
+
     # These fields must be set by any child classes, when instantiating
     workflow = models.ForeignKey(
         "Workflow", related_name="deltas", on_delete=models.CASCADE

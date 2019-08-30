@@ -3,6 +3,9 @@ from server.models import Delta, WfModule
 
 
 class ChangeWfModuleNotesCommand(Delta):
+    class Meta:
+        db_table = "server_changewfmodulenotescommand"
+
     wf_module = models.ForeignKey(WfModule, on_delete=models.PROTECT)
     new_value = models.TextField("new_value")
     old_value = models.TextField("old_value")

@@ -18,6 +18,7 @@ class WfModule(models.Model):
     """An instance of a Module in a Workflow."""
 
     class Meta:
+        db_table = "server_wfmodule"
         ordering = ["order"]
         constraints = [
             models.CheckConstraint(

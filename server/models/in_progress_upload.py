@@ -29,6 +29,9 @@ class InProgressUpload(models.Model):
     Regardless, the minimum lifetime of an InProgressUpload is Excepti
     """
 
+    class Meta:
+        db_table = "server_inprogressupload"
+
     Bucket = minio.UserFilesBucket
     """
     S3 bucket where in-progress uploads happen.

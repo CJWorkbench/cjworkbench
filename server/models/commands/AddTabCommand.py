@@ -30,6 +30,10 @@ class AddTabCommand(Delta):
     #
     # TODO nix soft-deleting Tabs and WfModules; instead, give DeleteTabCommand
     # all the info it needs to undo itself. Change this field to `tab_slug`.
+
+    class Meta:
+        db_table = "server_addtabcommand"
+
     tab = models.ForeignKey(Tab, on_delete=models.PROTECT)
     old_selected_tab_position = models.IntegerField()
 

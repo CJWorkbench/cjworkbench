@@ -109,6 +109,7 @@ class ModuleVersion(models.Model):
     """
 
     class Meta:
+        db_table = "server_moduleversion"
         ordering = ["last_update_time"]
         unique_together = ("id_name", "last_update_time")
 

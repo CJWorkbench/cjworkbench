@@ -18,6 +18,9 @@ class StoredObject(models.Model):
     "{workflow_id}/{wf_module_id}/{uuidv1()}"
     """
 
+    class Meta:
+        db_table = "server_storedobject"
+
     # delete stored data if WfModule deleted
     wf_module = models.ForeignKey(
         "WfModule", related_name="stored_objects", on_delete=models.CASCADE

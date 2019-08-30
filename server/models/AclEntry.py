@@ -8,6 +8,7 @@ class AclEntry(models.Model):
     """
 
     class Meta:
+        db_table = "server_aclentry"
         ordering = ["email"]
         unique_together = ("workflow", "email")
 

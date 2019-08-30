@@ -9,6 +9,7 @@ from cjwstate import minio
 # data StoredObjects and then deleting
 class UploadedFile(models.Model):
     class Meta:
+        db_table = "server_uploadedfile"
         ordering = ["-created_at"]
 
     # delete this object if its WfModule deleted

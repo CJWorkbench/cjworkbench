@@ -12,6 +12,9 @@ class DeleteTabCommand(Delta):
     Workbench's API should pretend a soft-deleted Tab does not exist.
     """
 
+    class Meta:
+        db_table = "server_deletetabcommand"
+
     tab = models.ForeignKey(Tab, on_delete=models.PROTECT)
 
     def load_ws_data(self):

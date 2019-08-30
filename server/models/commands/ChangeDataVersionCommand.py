@@ -12,6 +12,9 @@ def _workflow_has_notifications(workflow):
 
 
 class ChangeDataVersionCommand(ChangesWfModuleOutputs, Delta):
+    class Meta:
+        db_table = "server_changedataversioncommand"
+
     wf_module = models.ForeignKey(WfModule, on_delete=models.PROTECT)
     # may not have had a previous version
     old_version = models.DateTimeField("old_version", null=True)

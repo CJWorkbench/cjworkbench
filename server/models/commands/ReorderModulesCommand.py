@@ -7,6 +7,9 @@ from .util import ChangesWfModuleOutputs
 class ReorderModulesCommand(ChangesWfModuleOutputs, Delta):
     """Overwrite wf_module.order for all wf_modules in a tab."""
 
+    class Meta:
+        db_table = "server_reordermodulescommand"
+
     tab = models.ForeignKey("Tab", on_delete=models.PROTECT)
     # We use a bizarre legacy data format: JSON [ { id: x, order: y}, ... ]
     old_order = models.TextField()

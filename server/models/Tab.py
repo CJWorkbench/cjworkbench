@@ -6,6 +6,7 @@ class Tab(models.Model):
     """A sequence of WfModules in a Workflow."""
 
     class Meta:
+        db_table = "server_tab"
         ordering = ["position"]
         unique_together = (("workflow", "slug"),)
 

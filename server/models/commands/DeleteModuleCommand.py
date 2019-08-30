@@ -12,6 +12,9 @@ class DeleteModuleCommand(ChangesWfModuleOutputs, Delta):
     of Workbench's API should pretend a soft-deleted WfModule does not exist.
     """
 
+    class Meta:
+        db_table = "server_deletemodulecommand"
+
     wf_module = models.ForeignKey(WfModule, on_delete=models.PROTECT)
     wf_module_delta_ids = ChangesWfModuleOutputs.wf_module_delta_ids
 

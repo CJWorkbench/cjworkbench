@@ -27,6 +27,10 @@ class AddModuleCommand(ChangesWfModuleOutputs, Delta):
     # ambiguous: should one delete the WfModule first, or the Delta? The answer
     # is: you _must_ delete the Delta first; after deleting the Delta, you
     # _may_ delete the WfModule.
+
+    class Meta:
+        db_table = "server_addmodulecommand"
+
     wf_module = models.ForeignKey(WfModule, on_delete=models.PROTECT)
     wf_module_delta_ids = ChangesWfModuleOutputs.wf_module_delta_ids
 

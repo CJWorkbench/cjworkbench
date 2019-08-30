@@ -13,6 +13,9 @@ class InitWorkflowCommand(Delta):
     Undo and redo are no-ops.
     """
 
+    class Meta:
+        db_table = "server_initworkflowcommand"
+
     async def forward(self):
         """Crash. There is no way to undo, so forward() can't be called."""
         raise RuntimeError(

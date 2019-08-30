@@ -3,6 +3,9 @@ from server.models import Delta
 
 
 class ChangeWorkflowTitleCommand(Delta):
+    class Meta:
+        db_table = "server_changeworkflowtitlecommand"
+
     new_value = models.TextField("new_value")
     old_value = models.TextField("old_value")
 

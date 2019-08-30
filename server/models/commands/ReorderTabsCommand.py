@@ -9,6 +9,9 @@ from .util import ChangesWfModuleOutputs
 class ReorderTabsCommand(ChangesWfModuleOutputs, Delta):
     """Overwrite tab.position for all tabs in a workflow."""
 
+    class Meta:
+        db_table = "server_reordertabscommand"
+
     old_order = ArrayField(models.IntegerField())
     new_order = ArrayField(models.IntegerField())
     wf_module_delta_ids = ChangesWfModuleOutputs.wf_module_delta_ids

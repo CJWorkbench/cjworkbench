@@ -11,6 +11,9 @@ class SetTabNameCommand(ChangesWfModuleOutputs, Delta):
     refers to this tab: the 'tab' parameter data includes tab _name_.
     """
 
+    class Meta:
+        db_table = "server_settabnamecommand"
+
     tab = models.ForeignKey(Tab, on_delete=models.PROTECT)
     old_name = models.TextField()
     new_name = models.TextField()
