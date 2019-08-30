@@ -1,7 +1,9 @@
+from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
 from cjwkernel.pandas.types import QuickFix, TableShape
 
 
+@dataclass
 class CachedRenderResult:
     """
     Result of a module render() call.
@@ -18,25 +20,14 @@ class CachedRenderResult:
     The `cjwstate.rendercache` module manipulates this data.
     """
 
-    def __init__(
-        self,
-        workflow_id: int,
-        wf_module_id: int,
-        delta_id: int,
-        status: str,
-        error: str,
-        json: Optional[Dict[str, Any]],
-        quick_fixes: List[QuickFix],
-        table_shape: TableShape,
-    ):
-        self.workflow_id = workflow_id
-        self.wf_module_id = wf_module_id
-        self.delta_id = delta_id
-        self.status = status
-        self.error = error
-        self.json = json
-        self.quick_fixes = quick_fixes
-        self.table_shape = table_shape
+    workflow_id: int
+    wf_module_id: int
+    delta_id: int
+    status: str  # "ok", "error", "unreachable"
+    error: str
+    json: Optional[Dict[str, Any]]
+    quick_fixes: List[QuickFix]
+    table_shape: TableShape
 
     @property
     def columns(self):
