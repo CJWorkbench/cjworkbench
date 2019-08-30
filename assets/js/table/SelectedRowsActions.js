@@ -5,6 +5,7 @@ import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from
 import { connect } from 'react-redux'
 import { createSelector } from 'reselect'
 import { addModuleAction, setWfModuleParamsAction, setSelectedWfModuleAction } from '../workflow-reducer'
+import { Plural } from '@lingui/macro'
 
 const numberFormat = new Intl.NumberFormat()
 
@@ -96,14 +97,18 @@ export class SelectedRowsActions extends React.PureComponent {
 
     const disabled = !wfModuleId || selectedRowIndexes.length === 0
 
-    const prompt = disabled ? 'No rows selected' : `${numberFormat.format(selectedRowIndexes.length)} rows selected`
-
     const rowSelect = disabled ? 'table-action disabled' : 'table-action'
 
     return (
       <UncontrolledDropdown disabled={disabled}>
         <DropdownToggle title='menu' className={rowSelect}>
-          {prompt}
+          <Plural
+            id='selectedRow.numberOfRows'
+            value={disabled ? 0 : numberFormat.format(selectedRowIndexes.length)}
+            _0='No rows selected'
+            one='# row selected'
+            other='# rows selected'
+          />
         </DropdownToggle>
         <DropdownMenu>
           {actions}

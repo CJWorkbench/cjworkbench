@@ -27,7 +27,7 @@ describe('SelectedRowsActions', () => {
 
     it('should render number of selected columns', () => {
       const w = wrapper({ selectedRowIndexes: [2, 5, 6] })
-      expect(w.text()).toMatch(/3 rows selected/)
+      expect(w.text()).toMatch(/selectedRow.numberOfRows/)
     })
 
     it('should invoke an action with rows as a string, 1-based', () => {
