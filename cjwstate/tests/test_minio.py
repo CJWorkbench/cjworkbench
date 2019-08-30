@@ -6,7 +6,7 @@ from unittest.mock import patch
 from botocore.response import StreamingBody
 from django.conf import settings
 from urllib3.exceptions import ProtocolError
-from server import minio
+from cjwstate import minio
 
 
 Bucket = minio.CachedRenderResultsBucket
@@ -148,7 +148,7 @@ class UploadTest(_MinioTest):
 
     def _assume_role_session_client_with_write_access(self, bucket, key):
         credentials = minio.assume_role_to_write(bucket, key)
-        # Import _after_ we've imported minio -- so server.minio's monkey-patch
+        # Import _after_ we've imported minio -- so cjwstate.minio's monkey-patch
         # takes effect.
         import boto3
 

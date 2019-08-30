@@ -1,7 +1,7 @@
 import asyncio
 from unittest.mock import patch
 from django.utils import timezone
-from server import minio
+from cjwstate import minio
 from server.models import Workflow
 from server.models.commands import ChangeDataVersionCommand
 from server.tests.utils import DbTestCase

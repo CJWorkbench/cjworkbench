@@ -3,9 +3,9 @@ import hashlib
 from unittest.mock import patch
 from django.contrib.auth.models import User
 from django.utils import timezone
+from cjwstate import minio
 from server.handlers.upload import create_upload, finish_upload, abort_upload
 from server.models import Workflow
-from server import minio
 from .util import HandlerTestCase
 
 

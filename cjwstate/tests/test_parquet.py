@@ -5,8 +5,7 @@ import unittest
 import numpy as np
 import pandas as pd
 from pandas.testing import assert_frame_equal
-from cjwstate import parquet
-from server import minio
+from cjwstate import minio, parquet
 
 
 bucket = minio.CachedRenderResultsBucket

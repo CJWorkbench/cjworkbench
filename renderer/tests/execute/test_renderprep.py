@@ -11,8 +11,8 @@ from cjwkernel.pandas.types import (
     RenderColumn,
     StepResultShape,
 )
+from cjwstate import minio
 from cjwstate.rendercache import cache_render_result
-from server import minio
 from server.models import Workflow, UploadedFile
 from server.models.param_spec import ParamDType
 from server.tests.utils import DbTestCase

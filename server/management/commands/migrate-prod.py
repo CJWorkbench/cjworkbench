@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.core import management
 from django.core.management.base import BaseCommand
-from server import minio
+from cjwstate import minio
 
 
 STATIC_FILES_BUCKET_POLICY = """{

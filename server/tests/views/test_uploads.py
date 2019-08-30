@@ -1,6 +1,6 @@
 import json
 from unittest.mock import patch
-from server import minio
+from cjwstate import minio
 from server.models import ModuleVersion, Workflow
 from server.tests.utils import DbTestCase
 

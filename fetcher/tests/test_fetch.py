@@ -2,7 +2,6 @@ import asyncio
 from pathlib import Path
 from typing import Callable
 from unittest.mock import Mock, patch
-import uuid
 from dataclasses import dataclass
 from dateutil import parser
 from django.contrib.auth.models import User
@@ -11,10 +10,10 @@ import pandas as pd
 from pandas.testing import assert_frame_equal
 from cjworkbench.sync import database_sync_to_async
 from cjwkernel.pandas.types import ProcessResult
-from cjwstate import parquet
+from cjwstate import minio
+from cjwstate.storedobjects import create_stored_object
 from cjwstate.rendercache import cache_render_result
-from server import minio
-from server.models import LoadedModule, ModuleVersion, StoredObject, WfModule, Workflow
+from server.models import LoadedModule, ModuleVersion, WfModule, Workflow
 from server.models.commands import InitWorkflowCommand
 from server.models.param_dtype import ParamDType
 from server.tests.utils import DbTestCase
@@ -34,18 +33,6 @@ def DefaultMigrateParams(params):
 
 
 class FetchTests(DbTestCase):
-    def _store_fetched_table(
-        self, wf_module: WfModule, table: pd.DataFrame
-    ) -> StoredObject:
-        key = f"{wf_module.workflow_id}/{wf_module.id}/{uuid.uuid1()}"
-        size = parquet.write(minio.StoredObjectsBucket, key, table)
-        return wf_module.stored_objects.create(
-            bucket=minio.StoredObjectsBucket,
-            key=key,
-            size=size,
-            hash="this test ignores hashes",
-        )
-
     @patch("server.models.loaded_module.LoadedModule.for_module_version_sync")
     @patch("fetcher.save.save_result_if_changed")
     def test_fetch_wf_module(self, save_result, load_module):
@@ -455,10 +442,10 @@ class FetchTests(DbTestCase):
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
         wf_module = tab.wf_modules.create(order=0, slug="step-1")
-        wf_module.stored_data_version = self._store_fetched_table(
-            wf_module, table
+        wf_module.stored_data_version = create_stored_object(
+            workflow, wf_module, table, "hash"
         ).stored_at
-        wf_module.save()
+        wf_module.save(update_fields=["stored_data_version"])
 
         async def fetch(params, *, get_stored_dataframe, **kwargs):
             assert_frame_equal(await get_stored_dataframe(), table)
@@ -469,9 +456,11 @@ class FetchTests(DbTestCase):
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
         wf_module = tab.wf_modules.create(order=0, slug="step-1")
-        stored_object = self._store_fetched_table(wf_module, pd.DataFrame())
+        stored_object = create_stored_object(
+            workflow, wf_module, pd.DataFrame(), "hash"
+        )
         wf_module.stored_data_version = stored_object.stored_at
-        wf_module.save()
+        wf_module.save(update_fields=["stored_data_version"])
         # Overwrite with invalid Parquet data
         minio.fput_file(
             stored_object.bucket,
@@ -494,9 +483,11 @@ class FetchTests(DbTestCase):
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
         wf_module = tab.wf_modules.create(order=0, slug="step-1")
-        stored_object = self._store_fetched_table(wf_module, pd.DataFrame())
+        stored_object = create_stored_object(
+            workflow, wf_module, pd.DataFrame(), "hash"
+        )
         wf_module.stored_data_version = stored_object.stored_at
-        wf_module.save()
+        wf_module.save(update_fields=["stored_data_version"])
         # Delete file -- making DB and S3 inconsistent
         minio.remove(stored_object.bucket, stored_object.key)
 
@@ -521,10 +512,10 @@ class FetchTests(DbTestCase):
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
         wf_module = tab.wf_modules.create(order=0, slug="step-1")
-        wf_module.stored_data_version = self._store_fetched_table(
-            wf_module, table
+        wf_module.stored_data_version = create_stored_object(
+            workflow, wf_module, table, "hash"
         ).stored_at
-        wf_module.save()
+        wf_module.save(update_fields=["stored_data_version"])
 
         # Delete from the database. They're still in memory. This deletion can
         # happen on production: we aren't locking the workflow during fetch

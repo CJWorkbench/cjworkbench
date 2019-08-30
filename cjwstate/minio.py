@@ -83,7 +83,7 @@ Namespace for exceptions.
 
 Usage:
 
-    from server import minio
+    from cjwstate import minio
 
     try:
         minio.client.head_bucket(Bucket='foo')

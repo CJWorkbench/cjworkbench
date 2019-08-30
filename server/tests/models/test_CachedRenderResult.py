@@ -1,6 +1,6 @@
 import pandas
 from cjwkernel.pandas.types import ProcessResult
-from server import minio
+from cjwstate import minio
 from server.models import Workflow
 from server.models.commands import InitWorkflowCommand
 from server.tests.utils import DbTestCase

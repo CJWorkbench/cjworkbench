@@ -7,7 +7,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.test import SimpleTestCase
 from cjworkbench.sync import WorkbenchDatabaseSyncToAsync
-from server import minio
+from cjwstate import minio
 import os
 import io
 import pandas as pd

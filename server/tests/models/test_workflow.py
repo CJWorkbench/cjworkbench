@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch
 import uuid
 from django.contrib.auth.models import User
-from server import minio
+from cjwstate import minio
 from server.models import ModuleVersion
 from server.models.workflow import Workflow, DependencyGraph
 from server.models.commands import (

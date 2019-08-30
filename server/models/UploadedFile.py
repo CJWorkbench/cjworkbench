@@ -1,7 +1,7 @@
 from django.db import models
 from django.dispatch import receiver
 from django.utils import timezone
-from server import minio
+from cjwstate import minio
 
 
 # Simple model that receives POST requests to upload a file.

@@ -16,11 +16,11 @@ from typing import Any, Awaitable, Callable, Dict, Optional
 import pandas as pd
 from cjworkbench.sync import database_sync_to_async
 from cjwkernel.pandas.types import ProcessResult, RenderColumn
+from cjwstate import minio
 from . import module_loader
 from .module_version import ModuleVersion
 from .param_dtype import ParamDTypeDict
 from ..modules import Lookup as InternalModules
-from server import minio
 
 
 logger = logging.getLogger(__name__)

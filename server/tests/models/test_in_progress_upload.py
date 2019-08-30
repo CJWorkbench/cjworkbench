@@ -1,5 +1,5 @@
 import time
-from server import minio
+from cjwstate import minio
 from server.models import Workflow
 from server.tests.utils import DbTestCase
 
@@ -112,7 +112,7 @@ class InProgressUploadTest(DbTestCase):
         self.assertGreater(updated_at2, updated_at1)
 
         # Upload using a separate S3 client
-        # Import _after_ we've imported minio -- so server.minio's monkey-patch
+        # Import _after_ we've imported minio -- so cjwstate.minio's monkey-patch
         # takes effect.
         import boto3
 

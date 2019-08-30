@@ -8,7 +8,7 @@ from asgiref.sync import async_to_sync
 import pandas as pd
 from pandas.testing import assert_frame_equal
 from cjwkernel.pandas.types import ProcessResult, Column, ColumnType
-from server import minio
+from cjwstate import minio
 from server.models import LoadedModule
 import server.models.loaded_module
 import server.modules.pastecsv

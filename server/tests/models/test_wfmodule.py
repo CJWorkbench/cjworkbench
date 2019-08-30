@@ -2,9 +2,9 @@ import io
 import pandas as pd
 import uuid as uuidgen
 from django.utils import timezone
-from cjwstate import parquet
-from server import minio
-from server.models import ModuleVersion, Workflow, WfModule
+from cjwstate import minio
+from cjwstate.storedobjects import create_stored_object
+from server.models import ModuleVersion, Workflow
 from server.models.commands import InitWorkflowCommand
 from server.tests.utils import DbTestCase
 
@@ -18,18 +18,6 @@ mock_csv_table2 = pd.read_csv(io.StringIO(mock_csv_text2))
 
 # Set up a simple pipeline on test data
 class WfModuleTests(DbTestCase):
-    def _store_fetched_table(
-        self, wf_module: WfModule, table: pd.DataFrame
-    ) -> timezone.datetime:
-        key = str(uuidgen.uuid1())
-        size = parquet.write(minio.StoredObjectsBucket, key, table)
-        return wf_module.stored_objects.create(
-            bucket=minio.StoredObjectsBucket,
-            key=key,
-            size=size,
-            hash="this test ignores hashes",
-        )
-
     def test_list_data_versions(self):
         workflow = Workflow.create_and_init()
         wf_module = workflow.tabs.first().wf_modules.create(order=0, slug="step-1")
@@ -44,8 +32,8 @@ class WfModuleTests(DbTestCase):
         wfm1 = workflow.tabs.first().wf_modules.create(order=0, slug="step-1")
 
         # store data to test that it is duplicated
-        self._store_fetched_table(wfm1, pd.DataFrame({"A": [1, 2]}))
-        so2 = self._store_fetched_table(wfm1, pd.DataFrame({"B": [2, 3]}))
+        create_stored_object(workflow, wfm1, pd.DataFrame({"A": [1, 2]}), "hash1")
+        so2 = create_stored_object(workflow, wfm1, pd.DataFrame({"B": [2, 3]}), "hash2")
         wfm1.secrets = {"do not copy": {"name": "evil", "secret": "evil"}}
         wfm1.stored_data_version = so2.stored_at
         wfm1.save(update_fields=["stored_data_version"])

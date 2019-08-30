@@ -17,7 +17,7 @@ def move_uploaded_file(workflow, wf_module, uploaded_file):
 
     This helps delete leaked files and find problem files.
     """
-    from server import minio
+    from cjwstate import minio
 
     bucket = uploaded_file.bucket
     old_key = uploaded_file.key

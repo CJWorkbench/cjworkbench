@@ -1,5 +1,5 @@
 from uuid import uuid1
-from server import minio
+from cjwstate import minio
 from server.models import Workflow
 from server.tests.utils import DbTestCase
 

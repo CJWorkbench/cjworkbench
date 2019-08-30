@@ -3,9 +3,8 @@ import uuid
 from django.conf import settings
 import pandas as pd
 from pandas.util import hash_pandas_object
-from cjwstate import parquet
+from cjwstate import minio, parquet
 from server.models import StoredObject, WfModule, Workflow
-from server import minio
 
 
 BUCKET = minio.StoredObjectsBucket

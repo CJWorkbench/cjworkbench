@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 from django.http import HttpRequest
 from django.urls import reverse
 from django.utils import timezone
-from server import minio
+from cjwstate import minio
 
 
 class WorkflowCooperativeLock:

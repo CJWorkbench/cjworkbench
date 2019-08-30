@@ -1,4 +1,3 @@
-import json
 import logging
 import os
 from pathlib import Path
@@ -6,8 +5,7 @@ import shutil
 import tempfile
 import git
 from git.exc import GitCommandError
-import yaml
-from server import minio
+from cjwstate import minio
 from server.models import ModuleVersion
 from server.models.module_loader import (
     ModuleFiles,

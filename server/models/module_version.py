@@ -6,7 +6,7 @@ from django.db.models import F, OuterRef, Subquery
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
 from django.utils import timezone
-from server import minio
+from cjwstate import minio
 from server.modules import Specs as InternalModuleSpecs
 from .module_loader import validate_module_spec
 from .param_dtype import ParamDType

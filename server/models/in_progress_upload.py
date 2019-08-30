@@ -5,7 +5,7 @@ import uuid
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
-from server import minio
+from cjwstate import minio
 
 
 class InProgressUpload(models.Model):

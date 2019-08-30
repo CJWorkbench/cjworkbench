@@ -3,9 +3,8 @@ from typing import List, Optional
 import pandas as pd
 import pyarrow
 from cjwkernel.pandas.types import ProcessResult
-from cjwstate import parquet
+from cjwstate import minio, parquet
 from server.models import WfModule, Workflow, CachedRenderResult
-from server import minio
 
 
 BUCKET = minio.CachedRenderResultsBucket

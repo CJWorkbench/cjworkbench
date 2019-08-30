@@ -5,7 +5,7 @@ from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.db.models import Q
 from cjwkernel.pandas.types import QuickFix, TableShape
-from server import minio
+from cjwstate import minio
 from server.models import loaded_module
 from .fields import ColumnsField
 from .CachedRenderResult import CachedRenderResult

@@ -1,14 +1,13 @@
 from contextlib import contextmanager
 from pathlib import Path
 from unittest.mock import patch
-from uuid import uuid1
 from django.utils import timezone
 import pandas as pd
 from pandas.testing import assert_frame_equal
 from cjwkernel.pandas.types import ProcessResult
-from cjwstate import parquet
-from server import minio
-from server.models import LoadedModule, Workflow, WfModule, StoredObject
+from cjwstate import minio
+from cjwstate.storedobjects import create_stored_object
+from server.models import LoadedModule, Workflow
 from server.models.param_dtype import ParamDType
 from server.tests.utils import DbTestCase
 from renderer.execute.wf_module import execute_wfmodule
@@ -19,21 +18,6 @@ async def noop(*args, **kwargs):
 
 
 class WfModuleTests(DbTestCase):
-    def _store_fetched_table(
-        self, wf_module: WfModule, table: pd.DataFrame
-    ) -> StoredObject:
-        key = str(uuid1())
-        size = parquet.write(minio.StoredObjectsBucket, key, table)
-        stored_object = wf_module.stored_objects.create(
-            bucket=minio.StoredObjectsBucket,
-            key=key,
-            size=size,
-            hash="this test ignores hashes",
-        )
-        wf_module.stored_data_version = stored_object.stored_at
-        wf_module.save(update_fields=["stored_data_version"])
-        return stored_object
-
     @patch("server.websockets.ws_client_send_delta_async", noop)
     def test_deleted_module(self):
         workflow = Workflow.create_and_init()
@@ -72,7 +56,7 @@ class WfModuleTests(DbTestCase):
             last_relevant_delta_id=workflow.last_delta_id,
             fetch_error="maybe an error",
         )
-        self._store_fetched_table(wf_module, pd.DataFrame({"A": [1]}))
+        create_stored_object(workflow, wf_module, pd.DataFrame({"A": [1]}), "hash")
 
         def render(*args, fetch_result, **kwargs):
             self.assertEqual(fetch_result.error, "maybe an error")
@@ -93,7 +77,7 @@ class WfModuleTests(DbTestCase):
             module_id_name="x",
             last_relevant_delta_id=workflow.last_delta_id,
         )
-        so = self._store_fetched_table(wf_module, pd.DataFrame({"A": [1]}))
+        so = create_stored_object(workflow, wf_module, pd.DataFrame({"A": [1]}), "hash")
         # Now delete the file on S3 -- but leave the DB pointing to it.
         minio.remove(so.bucket, so.key)
 
@@ -115,7 +99,9 @@ class WfModuleTests(DbTestCase):
             module_id_name="x",
             last_relevant_delta_id=workflow.last_delta_id,
         )
-        stored_object = self._store_fetched_table(wf_module, pd.DataFrame({"A": [1]}))
+        stored_object = create_stored_object(
+            workflow, wf_module, pd.DataFrame({"A": [1]}), "hash"
+        )
         # Now write an invalid (but realistic) Parquet file
         minio.fput_file(
             stored_object.bucket,

@@ -2,7 +2,7 @@ from django.db import models
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from django.utils import timezone
-from server import minio
+from cjwstate import minio
 
 
 # StoredObject is our persistence layer.

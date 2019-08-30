@@ -10,7 +10,7 @@ from fastparquet import ParquetFile
 import pandas
 import snappy
 import warnings
-from server import minio
+from cjwstate import minio
 
 
 # Workaround for https://github.com/dask/fastparquet/issues/394
