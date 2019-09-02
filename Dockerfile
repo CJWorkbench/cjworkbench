@@ -45,6 +45,7 @@ RUN true \
     && make install \
     && cd /tmp \
     && rm -rf icu*
+ENV ICU_DATA /app/i18n/bundles
 
 # Set up /app
 RUN mkdir /app
