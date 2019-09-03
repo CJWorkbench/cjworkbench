@@ -3,6 +3,9 @@ from abc import ABC, abstractmethod
 from dataclasses import asdict, dataclass, field
 import json
 from pathlib import Path
+import pyarrow
+import pyarrow.ipc
+import pyarrow.types
 from string import Formatter
 from typing import Any, Dict, List, Optional, Union
 
@@ -17,6 +20,7 @@ __all__ = [
     "QuickFix",
     "QuickFixAction",
     "RenderError",
+    "RenderResultOk",
     "Tab",
     "TableMetadata",
     "TabOutput",
@@ -284,25 +288,76 @@ class TableMetadata:
 @dataclass(frozen=True)
 class ArrowTable:
     """
-    Table stored on disk, ready to be mmapped.
+    Table on disk, opened and mmapped.
 
     A table with no rows must have a file on disk. A table with no _columns_
-    is a special case: it must have `path === None`.
+    is a special case: it must have `table is None and path is None`.
+
+    `self.table` will be populated and validated during construction.
     """
 
     path: Optional[Path] = None
     """
     Name of file on disk that contains data.
-    
+
     If and only if the table has columns, the file must exist.
     """
 
     metadata: TableMetadata = field(default_factory=TableMetadata)
-    """Metadata; must agree with the file on disk."""
+    """Metadata; must agree with `table`."""
+
+    def __post_init__(self):
+        """
+        Open the file on disk with mmap().
+
+        Raise OSError if file on disk could not be read.
+
+        Raise AssertionError if file on disk does not match metadata.
+        """
+        if self.path is None:
+            assert len(self.metadata.columns) == 0
+            table = None
+        if self.path is not None:
+            assert len(self.metadata.columns) != 0
+            reader = pyarrow.ipc.open_file(str(self.path))
+            table = reader.read_all()
+            assert table.num_rows == self.metadata.n_rows
+            assert table.num_columns == len(self.metadata.columns)
+            for tcol, mcol in zip(table.columns, self.metadata.columns):
+                assert tcol.name == mcol.name
+                # Assert the column type is one we support
+                ttype = tcol.type
+                assert (
+                    pyarrow.types.is_timestamp(ttype)
+                    or pyarrow.types.is_floating(ttype)
+                    or pyarrow.types.is_integer(ttype)
+                    or pyarrow.types.is_string(ttype)
+                    or (
+                        pyarrow.types.is_dictionary(ttype)
+                        and ttype.value_type.is_string()
+                    )
+                )
+                # Assert the column type in our metadata matches it
+                assert pyarrow.types.is_timestamp(ttype) == isinstance(
+                    mcol.type, ColumnTypeDatetime
+                )
+                assert (
+                    pyarrow.types.is_floating(ttype) or pyarrow.types.is_integer(ttype)
+                ) == isinstance(mcol.type, ColumnTypeNumber)
+                assert (
+                    pyarrow.types.is_string(ttype) or pyarrow.types.is_dictionary(ttype)
+                ) == isinstance(mcol.type, ColumnTypeText)
+        object.__setattr__(self, "table", table)
 
     @classmethod
     def from_thrift(cls, value: ttypes.ArrowTable) -> ArrowTable:
-        # TODO validate! (Figure out how much validation we need, too.)
+        """
+        Convert from a Thrift ArrowTable.
+
+        Raise OSError if the file on disk could not be read.
+
+        Raise AssertionError if the file on disk does not match metadata.
+        """
         cls(
             Path(value.filename) if value.filename else None,
             TableMetadata.from_thrift(value),

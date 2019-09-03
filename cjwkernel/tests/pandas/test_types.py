@@ -1,4 +1,7 @@
 from datetime import datetime as dt
+import os
+from pathlib import Path
+import tempfile
 import unittest
 from unittest import mock
 import numpy as np
@@ -11,6 +14,7 @@ from cjwkernel.pandas.types import (
     QuickFix,
     TableShape,
 )
+import cjwkernel.types as atypes
 
 
 class ColumnTypeTextTests(unittest.TestCase):
@@ -19,6 +23,14 @@ class ColumnTypeTextTests(unittest.TestCase):
         column_type = ColumnType.TEXT()
         result = column_type.format_series(series)
         assert_series_equal(result, pd.Series(["x", np.nan, "z"]))
+
+    def test_from_arrow(self):
+        self.assertEqual(
+            ColumnType.from_arrow(atypes.ColumnType.Text()), ColumnType.TEXT()
+        )
+
+    def test_to_arrow(self):
+        self.assertEqual(ColumnType.TEXT().to_arrow(), atypes.ColumnType.Text())
 
 
 class ColumnTypeNumberTests(unittest.TestCase):
@@ -107,6 +119,17 @@ class ColumnTypeNumberTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "Unknown format code 'T'"):
             ColumnType.NUMBER("{:T}")
 
+    def test_from_arrow(self):
+        self.assertEqual(
+            ColumnType.from_arrow(atypes.ColumnType.Number("{:,d}")),
+            ColumnType.NUMBER("{:,d}"),
+        )
+
+    def test_to_arrow(self):
+        self.assertEqual(
+            ColumnType.NUMBER("{:,d}").to_arrow(), atypes.ColumnType.Number("{:,d}")
+        )
+
 
 class ColumnTypeDatetimeTests(unittest.TestCase):
     def test_format(self):
@@ -119,6 +142,85 @@ class ColumnTypeDatetimeTests(unittest.TestCase):
             result,
             pd.Series(
                 ["1999-02-03T04:05:06.000007Z", np.nan, "2000-03-04T05:06:07.000008Z"]
+            ),
+        )
+
+    def test_from_arrow(self):
+        self.assertEqual(
+            ColumnType.from_arrow(atypes.ColumnType.Datetime()), ColumnType.DATETIME()
+        )
+
+    def test_to_arrow(self):
+        self.assertEqual(ColumnType.DATETIME().to_arrow(), atypes.ColumnType.Datetime())
+
+
+class ColumnTests(unittest.TestCase):
+    def test_from_arrow(self):
+        self.assertEqual(
+            Column.from_arrow(atypes.Column("A", atypes.ColumnType.Number("{:,d}"))),
+            Column("A", ColumnType.NUMBER("{:,d}")),
+        )
+
+    def test_to_arrow(self):
+        self.assertEqual(
+            Column("A", ColumnType.NUMBER("{:,d}")).to_arrow(),
+            atypes.Column("A", atypes.ColumnType.Number("{:,d}")),
+        )
+
+
+class TableShapeTests(unittest.TestCase):
+    def test_from_arrow(self):
+        self.assertEqual(
+            TableShape.from_arrow(
+                atypes.TableMetadata(
+                    3,
+                    [
+                        atypes.Column("A", atypes.ColumnType.Number("{:,d}")),
+                        atypes.Column("B", atypes.ColumnType.Text()),
+                    ],
+                )
+            ),
+            TableShape(
+                3,
+                [
+                    Column("A", ColumnType.NUMBER("{:,d}")),
+                    Column("B", ColumnType.TEXT()),
+                ],
+            ),
+        )
+
+    def test_to_arrow(self):
+        self.assertEqual(
+            TableShape(
+                3,
+                [
+                    Column("A", ColumnType.NUMBER("{:,d}")),
+                    Column("B", ColumnType.TEXT()),
+                ],
+            ).to_arrow(),
+            atypes.TableMetadata(
+                3,
+                [
+                    atypes.Column("A", atypes.ColumnType.Number("{:,d}")),
+                    atypes.Column("B", atypes.ColumnType.Text()),
+                ],
+            ),
+        )
+
+
+class QuickFixTests(unittest.TestCase):
+    def test_to_arrow(self):
+        self.assertEqual(
+            QuickFix(
+                "button text",
+                "prependModule",
+                ["converttotext", {"colnames": ["A", "B"]}],
+            ).to_arrow(),
+            atypes.QuickFix(
+                atypes.I18nMessage("TODO_i18n", ["button text"]),
+                atypes.QuickFixAction.PrependStep(
+                    "converttotext", {"colnames": ["A", "B"]}
+                ),
             ),
         )
 
@@ -547,3 +649,120 @@ class ProcessResultTests(unittest.TestCase):
     def test_empty_table_shape(self):
         result = ProcessResult()
         self.assertEqual(result.table_shape, TableShape(0, []))
+
+    def test_to_arrow_empty_dataframe(self):
+        fd, filename = tempfile.mkstemp()
+        os.close(fd)
+        # Remove the file. Then we'll test that ProcessResult.to_arrow() does
+        # not write it (because the result is an error)
+        os.unlink(filename)
+        try:
+            result = ProcessResult.coerce("bad, bad error").to_arrow(Path(filename))
+            self.assertEqual(
+                result,
+                atypes.RenderResultOk(
+                    atypes.ArrowTable(None, atypes.TableMetadata(0, [])),
+                    [
+                        atypes.RenderError(
+                            atypes.I18nMessage("TODO_i18n", ["bad, bad error"]), []
+                        )
+                    ],
+                    {},
+                ),
+            )
+            with self.assertRaises(FileNotFoundError):
+                open(filename)
+        finally:
+            try:
+                os.unlink(filename)
+            except FileNotFoundError:
+                pass
+
+    def test_to_arrow_quick_fixes(self):
+        fd, filename = tempfile.mkstemp()
+        os.close(fd)
+        # Remove the file. Then we'll test that ProcessResult.to_arrow() does
+        # not write it (because the result is an error)
+        os.unlink(filename)
+        try:
+            result = ProcessResult(
+                error="bad, bad error",
+                quick_fixes=[
+                    QuickFix(
+                        "button foo",
+                        "prependModule",
+                        ["converttotext", {"colnames": ["A", "B"]}],
+                    ),
+                    QuickFix(
+                        "button bar",
+                        "prependModule",
+                        ["converttonumber", {"colnames": ["A", "B"]}],
+                    ),
+                ],
+            ).to_arrow(Path(filename))
+            self.assertEqual(
+                result.errors,
+                [
+                    atypes.RenderError(
+                        atypes.I18nMessage("TODO_i18n", ["bad, bad error"]),
+                        [
+                            atypes.QuickFix(
+                                atypes.I18nMessage("TODO_i18n", ["button foo"]),
+                                atypes.QuickFixAction.PrependStep(
+                                    "converttotext", {"colnames": ["A", "B"]}
+                                ),
+                            ),
+                            atypes.QuickFix(
+                                atypes.I18nMessage("TODO_i18n", ["button bar"]),
+                                atypes.QuickFixAction.PrependStep(
+                                    "converttonumber", {"colnames": ["A", "B"]}
+                                ),
+                            ),
+                        ],
+                    )
+                ],
+            )
+            with self.assertRaises(FileNotFoundError):
+                open(filename)
+        finally:
+            try:
+                os.unlink(filename)
+            except FileNotFoundError:
+                pass
+
+    def test_to_arrow_normal_dataframe(self):
+        fd, filename = tempfile.mkstemp()
+        os.close(fd)
+        # Remove the file. Then we'll test that ProcessResult.to_arrow() does
+        # not write it (because the result is an error)
+        os.unlink(filename)
+        try:
+            process_result = ProcessResult.coerce(pd.DataFrame({"A": [1, 2]}))
+            result = process_result.to_arrow(Path(filename))
+            self.assertEqual(
+                result,
+                atypes.RenderResultOk(
+                    atypes.ArrowTable(
+                        Path(filename),
+                        atypes.TableMetadata(
+                            2,
+                            [
+                                atypes.Column(
+                                    "A",
+                                    atypes.ColumnType.Number(
+                                        # Whatever .format
+                                        # ProcessResult.coerce() gave
+                                        process_result.columns[0].type.format
+                                    ),
+                                )
+                            ],
+                        ),
+                    ),
+                    [],
+                    {},
+                ),
+            )
+            arrow_table = result.table.table
+            self.assertEqual(arrow_table.to_pydict(), {"A": [1, 2]})
+        finally:
+            os.unlink(filename)

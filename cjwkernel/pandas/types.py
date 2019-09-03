@@ -1,4 +1,4 @@
-# LEGACY types. TODO rebuild these on top of cjwkernel.types.
+# LEGACY types. TODO migrate most of these to cjwkernel.types.
 
 from __future__ import annotations
 
@@ -10,7 +10,9 @@ from typing import Any, Dict, Iterable, List, Optional, Union
 import numpy as np
 import pandas as pd
 from pandas.api.types import is_numeric_dtype, is_datetime64_dtype
+import pyarrow
 from .validate import validate_dataframe
+from .. import types as atypes
 
 
 class ColumnType(ABC):
@@ -25,7 +27,6 @@ class ColumnType(ABC):
         """
         Convert a Series to a str Series.
         """
-        pass
 
     @property
     @abstractmethod
@@ -33,7 +34,12 @@ class ColumnType(ABC):
         """
         The name of the type: 'text', 'number' or 'datetime'.
         """
-        pass
+
+    @abstractmethod
+    def to_arrow(self) -> atypes.ColumnType:
+        """
+        The lower-level type this type wraps.
+        """
 
     @staticmethod
     def class_from_dtype(dtype) -> type:
@@ -49,15 +55,29 @@ class ColumnType(ABC):
         else:
             raise ValueError(f"Unknown dtype: {dtype}")
 
-    @staticmethod
-    def from_dtype(dtype) -> ColumnType:
+    @classmethod
+    def from_dtype(cls, dtype) -> ColumnType:
         """
         Build a ColumnType based on pandas/numpy `dtype`.
 
         If the type is Number or Datetime, it will have an "empty"
         (auto-generated) format.
         """
-        return ColumnType.class_from_dtype(dtype)()
+        return cls.class_from_dtype(dtype)()
+
+    @classmethod
+    def from_arrow(cls, value: atypes.ColumnType) -> ColumnType:
+        """
+        Wrap a lower-level ColumnType.
+        """
+        if isinstance(value, atypes.ColumnType.Text):
+            return ColumnType.TEXT()
+        elif isinstance(value, atypes.ColumnType.Number):
+            return ColumnType.NUMBER(value.format)
+        elif isinstance(value, atypes.ColumnType.Datetime):
+            return ColumnType.DATETIME()
+        else:
+            raise RuntimeError("Unhandled value %r" % value)
 
 
 @dataclass(frozen=True)
@@ -70,6 +90,10 @@ class ColumnTypeText(ColumnType):
     @property
     def name(self) -> str:
         return "text"
+
+    # override
+    def to_arrow(self) -> atypes.ColumnType.Text:
+        return atypes.ColumnType.Text()
 
 
 class NumberFormatter:
@@ -192,6 +216,10 @@ class ColumnTypeNumber(ColumnType):
     def name(self) -> str:
         return "number"
 
+    # override
+    def to_arrow(self) -> atypes.ColumnType.Number:
+        return atypes.ColumnType.Number(self.format)
+
 
 @dataclass(frozen=True)
 class ColumnTypeDatetime(ColumnType):
@@ -210,6 +238,10 @@ class ColumnTypeDatetime(ColumnType):
     @property
     def name(self) -> str:
         return "datetime"
+
+    # override
+    def to_arrow(self) -> atypes.ColumnType.Datetime:
+        return atypes.ColumnType.Datetime()
 
 
 # Aliases to help with import. e.g.:
@@ -247,6 +279,13 @@ class Column:
         type_cls = ColumnType.TypeLookup[type]
         return Column(name, type_cls(**column_type_kwargs))
 
+    @classmethod
+    def from_arrow(cls, value: atypes.Column) -> Column:
+        return cls(value.name, ColumnType.from_arrow(value.type))
+
+    def to_arrow(self) -> atypes.Column:
+        return atypes.Column(self.name, self.type.to_arrow())
+
 
 @dataclass(frozen=True)
 class TableShape:
@@ -259,6 +298,13 @@ class TableShape:
 
     columns: List[Column]
     """Columns."""
+
+    @classmethod
+    def from_arrow(cls, value: atypes.TableMetadata) -> TableShape:
+        return cls(value.n_rows, [Column.from_arrow(c) for c in value.columns])
+
+    def to_arrow(self) -> atypes.TableMetadata:
+        return atypes.TableMetadata(self.nrows, [c.to_arrow() for c in self.columns])
 
 
 @dataclass(frozen=True)
@@ -396,6 +442,15 @@ class QuickFix:
             return QuickFix(text, action, args)
         else:
             raise ValueError("Cannot build QuickFix from value: %r" % value)
+
+    def to_arrow(self) -> atypes.QuickFix:
+        assert self.action == "prependModule"
+        assert len(self.args) == 2
+        [module_slug, partial_params] = self.args
+        return atypes.QuickFix(
+            atypes.I18nMessage("TODO_i18n", [self.text]),
+            atypes.QuickFixAction.PrependStep(module_slug, partial_params),
+        )
 
 
 def _infer_column(
@@ -712,3 +767,41 @@ class ProcessResult:
                 % type(value).__name__
             )
         )
+
+    def to_arrow(self, path: Path) -> atypes.RenderResultOk:
+        """
+        Build a lower-level RenderResultOk from this ProcessResult.
+
+        Iff this ProcessResult is not an error result, an Arrow table will be
+        written to `path`, then mmapped and validated (because
+        `RenderResultOk.__post_init__()` opens and validates Arrow files).
+
+        If this ProcessResult _is_ an error result, then nothing will be
+        written to `path` and the returned RenderResultOk will not refer to
+        `path`.
+
+        RenderResultOk is a lower-level (and more modern) representation of a
+        module's result. Prefer it everywhere. We want to eventually deprecate
+        ProcessResult.
+        """
+        if self.columns:
+            arrow_table = pyarrow.Table.from_pandas(
+                self.dataframe, preserve_index=False, nthreads=1
+            )  # TODO test dictionaries stay dictionaries
+            with pyarrow.RecordBatchFileWriter(str(path), arrow_table.schema) as writer:
+                writer.write_table(arrow_table)
+        else:
+            path = None
+
+        table = atypes.ArrowTable(path, self.table_shape.to_arrow())
+        if self.error:
+            error = atypes.RenderError(
+                # Mark the message as English-only (deprecated)
+                atypes.I18nMessage("TODO_i18n", [self.error]),
+                [qf.to_arrow() for qf in self.quick_fixes],
+            )
+            errors = [error]
+        else:
+            errors = []
+
+        return atypes.RenderResultOk(table, errors, self.json)
