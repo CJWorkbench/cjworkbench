@@ -1,6 +1,7 @@
 import multiprocessing.reduction
 import os
 import sys
+import types
 from typing import Any, List
 import thrift.protocol.TBinaryProtocol
 import thrift.transport.TTransport
@@ -24,7 +25,12 @@ def main(
     sys.stdout = os.fdopen(log_fileno, "wt", encoding="utf-8")
     sys.stderr = sys.stdout
 
-    assert function in ("render", "migrate_params", "fetch", "validate")
+    assert function in (
+        "render_thrift",
+        "migrate_params_thrift",
+        "fetch_thrift",
+        "validate_thrift",
+    )
 
     run_in_sandbox(output_fileno, compiled_module, function, args)
 
@@ -39,21 +45,46 @@ def run_in_sandbox(
     sys.__stderr__ = None
     # TODO sandbox -- will need an OS `clone()` with namespace, cgroups, ....
 
-    # Start with the default module, then exec() to override with user code.
-    module = cjwkernel.pandas.module
-    exec(compiled_module.code_object, module.__dict__, module.__dict__)
+    # Run the user's code in a new (programmatic) module.
+    #
+    # This gives the user code a blank namespace -- exactly what we want.
+    user_code_module = types.ModuleType(f"rawmodule.{compiled_module.module_slug}")
+    exec(compiled_module.code_object, user_code_module.__dict__)
+
     # And now ... now we're unsafe! Because `code_object` may be malicious, any
     # line of code from here on out gives undefined behavior. Luckily, a parent
     # is catching all possibile outcomes....
 
-    if function == "render":
+    # Now override the pieces of the _default_ module with the user-supplied
+    # ones. That way, when the default `render_pandas()` calls `render()`, that
+    # `render()` is the user-code `render()` (if supplied).
+    #
+    # Good thing we've forked! This totally messes with global variables.
+    module = cjwkernel.pandas.module
+    for fn in (
+        "fetch",
+        "fetch_pandas",
+        "fetch_thrift",
+        "migrate_params",
+        "migrate_params_thrift",
+        "render",
+        "render_arrow",
+        "render_pandas",
+        "render_thrift",
+    ):
+        if fn in user_code_module.__dict__:
+            module.__dict__[fn] = user_code_module.__dict__[fn]
+
+    if function == "render_thrift":
         result = module.render_thrift(*args)
-    if function == "migrate_params":
+    elif function == "migrate_params_thrift":
         result = module.migrate_params_thrift(*args)
-    elif function == "validate":
-        result = module.validate(*args)
-    elif function == "fetch":
+    elif function == "validate_thrift":
+        result = module.validate_thrift(*args)
+    elif function == "fetch_thrift":
         result = module.fetch_thrift(*args)
+    else:
+        raise NotImplementedError
 
     with os.fdopen(output_fileno, "wb") as f:
         transport = thrift.transport.TTransport.TFileObjectTransport(f)

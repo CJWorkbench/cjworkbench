@@ -7,12 +7,20 @@ import os
 from pathlib import Path
 import selectors
 import time
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 import thrift.protocol
 import thrift.transport
 from cjwkernel.errors import ModuleCompileError, ModuleTimeoutError, ModuleExitedError
 from cjwkernel.thrift import ttypes
-from cjwkernel.types import CompiledModule, Params
+from cjwkernel.types import (
+    ArrowTable,
+    CompiledModule,
+    FetchResult,
+    Params,
+    RenderResult,
+    Tab,
+    TabOutput,
+)
 from cjwkernel.pandas.main import main
 
 
@@ -131,16 +139,39 @@ class Kernel:
         return ret
 
     def _validate(self, compiled_module: CompiledModule) -> None:
-        self._run_in_child(compiled_module, ttypes.ValidateModuleResult(), "validate")
+        self._run_in_child(
+            compiled_module, ttypes.ValidateModuleResult(), "validate_thrift"
+        )
 
     def migrate_params(
         self, compiled_module: CompiledModule, params: Dict[str, Any]
     ) -> None:
         request = Params(params).to_thrift()
         response = self._run_in_child(
-            compiled_module, ttypes.Params(), "migrate_params", request
+            compiled_module, ttypes.Params(), "migrate_params_thrift", request
         )
         return Params.from_thrift(response).params
+
+    def render(
+        self,
+        compiled_module: CompiledModule,
+        input_table: ArrowTable,
+        params: Dict[str, Any],
+        tab: Tab,
+        input_tabs: Dict[str, TabOutput],
+        fetch_result: Optional[FetchResult],
+    ) -> RenderResult:
+        request = ttypes.RenderRequest(
+            input_table.to_thrift(),
+            Params(params).to_thrift(),
+            tab.to_thrift(),
+            {k: v.to_thrift() for k, v in input_tabs.items()},
+            None if fetch_result is None else fetch_result.to_thrift(),
+        )
+        result = self._run_in_child(
+            compiled_module, ttypes.RenderResult(), "render_thrift", request
+        )
+        return RenderResult.from_thrift(result)
 
     def _run_in_child(
         self, compiled_module: CompiledModule, result: Any, function: str, *args

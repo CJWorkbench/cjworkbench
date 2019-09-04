@@ -1469,8 +1469,9 @@ class FetchRequest(object):
      - input_table: Cached result from previous module's render.
 
     This is to support modules that take a column as input. Unfortunately, we
-    have a lot more work to do to make these modules work as expected. In the
-    meantime, this hack gets some jobs done.
+    have a lot more work to do to make these modules work as expected. (The
+    changes will probably require rewriting all modules that use this
+    feature.) In the meantime, this hack gets some jobs done.
     """
 
     __slots__ = (

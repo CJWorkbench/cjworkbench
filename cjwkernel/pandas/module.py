@@ -157,7 +157,7 @@ def render_thrift(request: ttypes.RenderRequest) -> ttypes.RenderResult:
         os.unlink(filename)
         raise
 
-    if arrow_result.arrow_table.path is None:
+    if arrow_result.table.path is None:
         os.unlink(filename)
 
     return arrow_result.to_thrift()
@@ -200,7 +200,7 @@ def migrate_params_thrift(params: ttypes.Params):
     return ttypes.Params(result_json)
 
 
-def validate() -> None:
+def validate_thrift() -> ttypes.ValidateModuleResult:
     """
     Crash with an error to stdout if something about this module seems amiss.
 

@@ -1,7 +1,32 @@
+from contextlib import contextmanager
+import os
+from pathlib import Path
+import tempfile
 import unittest
+import pyarrow
 from cjwstate.tests.utils import MockPath
 from cjwkernel.errors import ModuleCompileError, ModuleExitedError
 from cjwkernel.kernel import Kernel
+from cjwkernel import types
+
+
+@contextmanager
+def arrow_file(table: pyarrow.Table):
+    """
+    Yield a filename with `table` written to an Arrow file.
+    """
+    fd, filename = tempfile.mkstemp()
+    try:
+        os.close(fd)
+        writer = pyarrow.RecordBatchFileWriter(filename, table.schema)
+        writer.write_table(table)
+        writer.close()
+        yield filename
+    finally:
+        try:
+            os.unlink(filename)
+        except FileNotFoundError:
+            pass
 
 
 class KernelTests(unittest.TestCase):
@@ -50,3 +75,41 @@ class KernelTests(unittest.TestCase):
         )
         result = kernel.migrate_params(module, {"foo": 123})
         self.assertEquals(result, {"nested": {"foo": 123}})
+
+    def test_render_happy_path(self):
+        kernel = Kernel()
+        module = kernel.compile(
+            MockPath(
+                ["foo.py"],
+                b"import pandas as pd\ndef render(table, params): return pd.DataFrame({'A': table['A'] * params['m'], 'B': table['B'] + params['s']})",
+            ),
+            "foo",
+        )
+        with arrow_file(
+            pyarrow.Table.from_pydict({"A": [1, 2, 3], "B": ["a", "b", "c"]})
+        ) as filename:
+            result = kernel.render(
+                module,
+                types.ArrowTable(
+                    Path(filename),
+                    types.TableMetadata(
+                        3,
+                        [
+                            types.Column("A", types.ColumnType.Number("{:,d}")),
+                            types.Column("B", types.ColumnType.Text()),
+                        ],
+                    ),
+                ),
+                {"m": 2.5, "s": "XX"},
+                types.Tab("tab-1", "Tab 1"),
+                {},
+                None,
+            )
+        try:
+            self.assertEquals(
+                result.table.table.to_pydict(),
+                {"A": [2.5, 5.0, 7.5], "B": ["aXX", "bXX", "cXX"]},
+            )
+        finally:
+            # TODO pass this path somewhere else ... perhaps in the `render()` signature?
+            result.table.path.unlink()

@@ -373,9 +373,9 @@ class ArrowTable:
 
         Raise AssertionError if the file on disk does not match metadata.
         """
-        cls(
+        return cls(
             Path(value.filename) if value.filename else None,
-            TableMetadata.from_thrift(value),
+            TableMetadata.from_thrift(value.metadata),
         )
 
     def to_thrift(self) -> ttypes.ArrowTable:
