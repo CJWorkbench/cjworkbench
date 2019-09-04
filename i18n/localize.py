@@ -41,9 +41,19 @@ class MessageLocalizer:
             raise UnsupportedLocaleError('The given locale (%s) is not supported' % locale) from error
         
     def _(self, message_id, default=None, parameters={}):
-        return self.trans(self.get_message(message_id, default=default), parameters=parameters)
+        '''Finds the ICU message corresponding to the given ID in the catalog and formats it according to the given parameters.
         
-    def trans(self, message, parameters={}):
+        See self.format_message for acceptable values for the parameters argument.
+        '''
+        return self.format_message(self.get_message(message_id, default=default), parameters=parameters)
+        
+    def format_message(self, message, parameters={}):
+        '''Formats the given ICU message according to the given parameters.
+        
+        When the message needs only one parameter, you can specify it as a scalar value.
+        When the message has parameters that look like array indexes, you can specify the parameters with an array.
+        In any case, you can specify the parameters as a dict, with (string) keys being the parameter names.
+        '''
         if not message:
             return message
         message_format = MessageFormat(UnicodeString(message), self.locale)
@@ -55,10 +65,16 @@ class MessageLocalizer:
                 )
             elif isinstance(parameters, (list, tuple)):
                 return message_format.format([Formattable(x) for x in parameters])
+            else:
+                return message_format.format([Formattable(parameters)])
         except ICUError as error:
             raise InvalidICUParameters('The given parameters are invalid for the given message') from error
         
     def get_message(self, message_id, default=None):
+        '''Finds the ICU message corresponding to the given ID in the catalog.
+        
+        If the message is not found, the given default is returned.
+        '''
         message = self.catalog.get(message_id)
         if(message):
             return message.string
