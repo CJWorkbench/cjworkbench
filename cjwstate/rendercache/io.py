@@ -111,7 +111,7 @@ def read_cached_render_result(crr: CachedRenderResult) -> ProcessResult:
 
     If the CachedRenderResult is invalid, raise CorruptCacheError.
 
-    TODO switch retval to cjwkernel.types.RenderResultOk
+    TODO switch retval to cjwkernel.types.RenderResult
     """
     dataframe = _parquet_read_dataframe(
         minio.CachedRenderResultsBucket, crr_parquet_key(crr)

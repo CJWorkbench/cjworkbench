@@ -9,89 +9,12 @@
 namespace py cjwkernel.thrift
 
 /**
- * The module's code is invalid, as per its programming language.
- */
-struct ModuleErrorCompileError {
-  /** Compiler error message. */
-  1: string message
-}
-
-/** A module's code took too long to execute. */
-struct ModuleErrorTimeout {
-  /** How long we were configured to wait. */
-  1: double max_seconds,
-
-  /** Last few lines of console output before termination. */
-  2: string log
-}
-
-/** A module's code terminated unexpectedly. */
-struct ModuleErrorExited {
-  /**
-   * Exit code; must be non-zero.
-   *
-   * Exit code 137 means we were sent 'kill -9' ... which often means, "out of
-   * memory".
-   */
-  1: i16 exit_code, // Thrift doesn't have a uint8 type
-
-  /** Last few lines of console output before exit. */
-  2: string log
-}
-
-/**
  * Validation of a kernel module's code succeeded.
  *
  * This value cannot be trusted: a malicious module may report that it is ok.
  * (Indeed, many buggy modules _will_ self-report as ok.)
  */
-struct ValidateModuleResultOk {
-}
-
-/**
- * Validation of a kernel module's code failed.
- *
- * `compile_error` and `timeout` can be trusted: a malicious module cannot
- * fake them. `exited` can be manipulated by a malicious module, though there
- * doesn't seem to be much point.
- */
-union ValidateModuleResultError {
-  /** The kernel module's code cannot be run. */
-  1: ModuleErrorCompileError compile_error,
-
-  /**
-   * The kernel module's code took too long to run.
-   *
-   * In Python code, this can happen if there's a long-running block of code at
-   * the top level of the module.
-   */
-  2: ModuleErrorTimeout timeout,
-
-  /**
-   * The kernel module's code exited with a non-zero exit code.
-   *
-   * During module load, Workbench will execute the module code. The module
-   * will then self-validate and exit with status code 1 if it detects, say,
-   * that its `render()` function has the wrong signature.
-   *
-   * Do not trust this return value: it is returned by the module itself after
-   * user code was run. The intent is for well-meaning code to self-diagnose
-   * with a helpful error message. Malicious code will ... uh ...
-   * self-diagnose with an *un*-helpful error message.
-   */
-  3: ModuleErrorExited exited
-}
-
-/**
- * Result of attempting to load and run module code.
- *
- * An `ok` result does not mean the module can be _trusted_. No module code can
- * be trusted. An `error` result _always_ means the module can't be trusted.
- */
-union ValidateModuleResult {
-  1: ValidateModuleResultOk ok,
-  2: ValidateModuleResultError error
-}
+struct ValidateModuleResult {}
 
 /** A "text"-typed column. */
 struct ColumnTypeText {
@@ -159,6 +82,25 @@ struct ArrowTable {
   2: TableMetadata metadata
 }
 
+/**
+ * Table stored on disk, ready to be loaded.
+ *
+ * The file on disk is in a directory agreed upon by the processes passing this
+ * data around.
+ */
+struct ParquetTable {
+  /**
+   * Name of file on disk that contains data.
+   *
+   * For a zero-column table, filename may be the empty string -- meaning there
+   * is no file on disk. In all other cases, the file on disk must exist.
+   */
+  1: string filename,
+
+  /** Metadata; must agree with the file on disk. */
+  2: TableMetadata metadata
+}
+
 /** Module `render()` and `fetch()` parameters. */
 struct Params {
   /**
@@ -182,7 +124,7 @@ struct Tab {
  * Already-computed output of a tab.
  *
  * During workflow execute, the output from one tab can be used as the input to
- * another. This only happens if the output was a `RenderResultOk` with a
+ * another. This only happens if the output was a `RenderResult` with a
  * non-zero-column `table`. (The executor won't run a Step whose inputs aren't
  * valid.)
  */
@@ -250,13 +192,113 @@ struct RenderError {
   2: list<QuickFix> quick_fixes,
 }
 
+
+/**
+ * Parameters to `fetch()`.
+ */
+struct FetchRequest {
+  /**
+   * User-supplied params.
+   */
+  1: Params params,
+
+  /**
+   * User-supplied secrets.
+   */
+  2: Params secrets,
+
+  /**
+   * Result of the previous fetch().
+   *
+   * This is to support modules that "accumulate" data. Think of their fetch()
+   * as a reducer: each time they run, they operate on their previous output.
+   * (e.g., Twitter module monitoring a politician's tweets.)
+   *
+   * A Step may never run two fetches concurrently.
+   *
+   * Empty on initial call.
+   */
+  3: optional FetchResult last_fetch_result,
+
+  /**
+   * Cached result from previous module's render.
+   *
+   * This is to support modules that take a column as input. Unfortunately, we
+   * have a lot more work to do to make these modules work as expected. (The
+   * changes will probably require rewriting all modules that use this
+   * feature.) In the meantime, this hack gets some jobs done.
+   */
+  4: optional ParquetTable input_table,
+}
+
+/**
+ * The module executed a Step's fetch() without crashing.
+ *
+ * An "ok" result may be a user-friendly error -- that is, an empty file (or,
+ * for backwards compat, a zero-column parquet file) and non-empty `errors`.
+ */
+struct FetchResult {
+  /**
+   * File the fetch produced.
+   *
+   * Currently, this must be a valid Parquet file. In the future, we will
+   * loosen the requirement and allow any file.
+   *
+   * Empty file or zero-column parquet file typically means, "error"; but
+   * that's the module's choice and not a hard-and-fast rule.
+   */
+  1: string filename,
+
+  /**
+   * User-facing errors or warnings reported by the module.
+   *
+   * These are separate from `filename` for two reasons: 1) a convenience for
+   * module authors; and 2) so we can run SQL to find common problems.
+   */
+  2: list<RenderError> errors,
+}
+
+/**
+ * Parameters to `render()`.
+ */
+struct RenderRequest {
+  /**
+   * Output from previous Step.
+   *
+   * This is zero-row, zero-column on the first Step in a Tab.
+   */
+  1: ArrowTable input_table,
+
+  /** User-supplied parameters; must match the module's param_spec. */
+  2: Params params,
+
+  /** Description of tab being rendered. */
+  3: Tab tab,
+
+  /**
+   * Other tabs' results, supplied as inputs for this Step.
+   *
+   * Only user-selected tabs are included here. This is not all rendered
+   * tabs: it's only the tabs the user selected in this Step's `tab` and
+   * `multitab` parameters.
+   */
+  4: map<string, TabOutput> input_tabs
+
+  /**
+   * Result of latest `fetch`.
+   *
+   * If unset, `fetch` was never called.
+   */
+  5: optional FetchResult fetch_result
+}
+
 /**
  * The module executed a Step's render() without crashing.
  *
  * An "ok" result may be a user-friendly error -- that is, a zero-column table
  * and non-empty `errors`.
  */
-struct RenderResultOk {
+struct RenderResult {
   /**
    * Table the Step outputs.
    *
@@ -278,89 +320,11 @@ struct RenderResultOk {
 }
 
 /**
- * The module executed, but its output did not pass validation.
- *
- * This is always a bug in the module code. Module code must always return
- * RenderResultOk and then exit. Here are the errors a module may have that
- * would cause "invalid output":
- *
- * * The module did not write exactly one object to its output channel.
- * * The module wrote a non-RenderResultOk object to the output channel.
- * * The module wrote RenderResultOk, but its `table` or `json` were invalid.
- */
-struct RenderResultErrorInvalidOutput {
-  1: string message
-}
-
-/**
- * A bug in the module prevented this Step from completing.
- *
- * This should always email someone. Buggy modules affect users.
- */
-union RenderResultError {
-  /** The module exited with exit code 0 but did not write valid output. */
-  1: RenderResultErrorInvalidOutput invalid_output,
-
-  /** The module did not exit in time. */
-  2: ModuleErrorTimeout timeout,
-
-  /** The module exited with a non-zero status code. */
-  3: ModuleErrorExited exited
-}
-
-/**
- * The outcome of a call to `render()`.
- */
-union RenderResult {
-  /**
-   * The module did not crash.
-   *
-   * (This could still be an error message for the user.)
-   */
-  1: RenderResultOk ok,
-
-  /**
-   * The module crashed.
-   *
-   * This is always a bug. Email someone.
-   */
-  2: RenderResultError error
-}
-
-/**
  * Interface encapsulating a module (user code).
  */
 service KernelModule {
   ValidateModuleResult validateModule(),
-
-  Params migrateParams(
-      1: Params params
-  ),
-
-  /**
-   * Render a single Step.
-   */
-  RenderResult render(
-    /**
-     * Output from previous Step.
-     *
-     * This is zero-row, zero-column on the first Step in a Tab.
-     */
-    1: ArrowTable input_table,
-
-    /** User-supplied parameters; must match the module's param_spec. */
-    2: Params params,
-
-    /** Description of tab being rendered. */
-    3: Tab tab,
-
-    /**
-     * Other tabs' results, supplied as inputs for this Step.
-     *
-     * Only user-selected tabs are included here. This is not all rendered
-     * tabs: it's only the tabs the user selected in this Step's `tab` and
-     * `multitab` parameters.
-     */
-    4: map<string, TabOutput> input_tabs
-  )
+  Params migrateParams(1: Params params),
+  RenderResult render(1: RenderRequest render_request),
+  FetchResult fetch(1: FetchRequest fetch_request)
 }

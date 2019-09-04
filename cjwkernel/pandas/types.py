@@ -5,6 +5,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, asdict, field
 import json
+import pathlib
 from string import Formatter
 from typing import Any, Dict, Iterable, List, Optional, Union
 import numpy as np
@@ -768,19 +769,19 @@ class ProcessResult:
             )
         )
 
-    def to_arrow(self, path: Path) -> atypes.RenderResultOk:
+    def to_arrow(self, path: pathlib.Path) -> atypes.RenderResult:
         """
-        Build a lower-level RenderResultOk from this ProcessResult.
+        Build a lower-level RenderResult from this ProcessResult.
 
         Iff this ProcessResult is not an error result, an Arrow table will be
         written to `path`, then mmapped and validated (because
-        `RenderResultOk.__post_init__()` opens and validates Arrow files).
+        `ArrowTable.__post_init__()` opens and validates Arrow files).
 
         If this ProcessResult _is_ an error result, then nothing will be
-        written to `path` and the returned RenderResultOk will not refer to
+        written to `path` and the returned RenderResult will not refer to
         `path`.
 
-        RenderResultOk is a lower-level (and more modern) representation of a
+        RenderResult is a lower-level (and more modern) representation of a
         module's result. Prefer it everywhere. We want to eventually deprecate
         ProcessResult.
         """
@@ -804,4 +805,4 @@ class ProcessResult:
         else:
             errors = []
 
-        return atypes.RenderResultOk(table, errors, self.json)
+        return atypes.RenderResult(table, errors, self.json)

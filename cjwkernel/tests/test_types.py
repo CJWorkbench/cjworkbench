@@ -270,10 +270,10 @@ class ThriftConvertersTest(unittest.TestCase):
         )
 
         def test_render_result_ok_from_thrift(self):
-            pass  # TODO test RenderResultOk conversion
+            pass  # TODO test RenderResult conversion
 
         def test_render_result_ok_to_thrift(self):
-            pass  # TODO test RenderResultOk conversion
+            pass  # TODO test RenderResult conversion
 
 
 class NumberFormatterTest(unittest.TestCase):

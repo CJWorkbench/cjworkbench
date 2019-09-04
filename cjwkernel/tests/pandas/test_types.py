@@ -660,7 +660,7 @@ class ProcessResultTests(unittest.TestCase):
             result = ProcessResult.coerce("bad, bad error").to_arrow(Path(filename))
             self.assertEqual(
                 result,
-                atypes.RenderResultOk(
+                atypes.RenderResult(
                     atypes.ArrowTable(None, atypes.TableMetadata(0, [])),
                     [
                         atypes.RenderError(
@@ -741,7 +741,7 @@ class ProcessResultTests(unittest.TestCase):
             result = process_result.to_arrow(Path(filename))
             self.assertEqual(
                 result,
-                atypes.RenderResultOk(
+                atypes.RenderResult(
                     atypes.ArrowTable(
                         Path(filename),
                         atypes.TableMetadata(

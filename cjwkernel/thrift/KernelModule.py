@@ -32,21 +32,17 @@ class Iface(object):
         """
         pass
 
-    def render(self, input_table, params, tab, input_tabs):
+    def render(self, render_request):
         """
-        Render a single Step.
-
         Parameters:
-         - input_table: Output from previous Step.
+         - render_request
+        """
+        pass
 
-        This is zero-row, zero-column on the first Step in a Tab.
-         - params: User-supplied parameters; must match the module's param_spec.
-         - tab: Description of tab being rendered.
-         - input_tabs: Other tabs' results, supplied as inputs for this Step.
-
-        Only user-selected tabs are included here. This is not all rendered
-        tabs: it's only the tabs the user selected in this Step's `tab` and
-        `multitab` parameters.
+    def fetch(self, fetch_request):
+        """
+        Parameters:
+         - fetch_request
         """
         pass
 
@@ -118,32 +114,18 @@ class Client(Iface):
             return result.success
         raise TApplicationException(TApplicationException.MISSING_RESULT, "migrateParams failed: unknown result")
 
-    def render(self, input_table, params, tab, input_tabs):
+    def render(self, render_request):
         """
-        Render a single Step.
-
         Parameters:
-         - input_table: Output from previous Step.
-
-        This is zero-row, zero-column on the first Step in a Tab.
-         - params: User-supplied parameters; must match the module's param_spec.
-         - tab: Description of tab being rendered.
-         - input_tabs: Other tabs' results, supplied as inputs for this Step.
-
-        Only user-selected tabs are included here. This is not all rendered
-        tabs: it's only the tabs the user selected in this Step's `tab` and
-        `multitab` parameters.
+         - render_request
         """
-        self.send_render(input_table, params, tab, input_tabs)
+        self.send_render(render_request)
         return self.recv_render()
 
-    def send_render(self, input_table, params, tab, input_tabs):
+    def send_render(self, render_request):
         self._oprot.writeMessageBegin('render', TMessageType.CALL, self._seqid)
         args = render_args()
-        args.input_table = input_table
-        args.params = params
-        args.tab = tab
-        args.input_tabs = input_tabs
+        args.render_request = render_request
         args.write(self._oprot)
         self._oprot.writeMessageEnd()
         self._oprot.trans.flush()
@@ -163,6 +145,37 @@ class Client(Iface):
             return result.success
         raise TApplicationException(TApplicationException.MISSING_RESULT, "render failed: unknown result")
 
+    def fetch(self, fetch_request):
+        """
+        Parameters:
+         - fetch_request
+        """
+        self.send_fetch(fetch_request)
+        return self.recv_fetch()
+
+    def send_fetch(self, fetch_request):
+        self._oprot.writeMessageBegin('fetch', TMessageType.CALL, self._seqid)
+        args = fetch_args()
+        args.fetch_request = fetch_request
+        args.write(self._oprot)
+        self._oprot.writeMessageEnd()
+        self._oprot.trans.flush()
+
+    def recv_fetch(self):
+        iprot = self._iprot
+        (fname, mtype, rseqid) = iprot.readMessageBegin()
+        if mtype == TMessageType.EXCEPTION:
+            x = TApplicationException()
+            x.read(iprot)
+            iprot.readMessageEnd()
+            raise x
+        result = fetch_result()
+        result.read(iprot)
+        iprot.readMessageEnd()
+        if result.success is not None:
+            return result.success
+        raise TApplicationException(TApplicationException.MISSING_RESULT, "fetch failed: unknown result")
+
 
 class Processor(Iface, TProcessor):
     def __init__(self, handler):
@@ -171,6 +184,7 @@ class Processor(Iface, TProcessor):
         self._processMap["validateModule"] = Processor.process_validateModule
         self._processMap["migrateParams"] = Processor.process_migrateParams
         self._processMap["render"] = Processor.process_render
+        self._processMap["fetch"] = Processor.process_fetch
 
     def process(self, iprot, oprot):
         (name, type, seqid) = iprot.readMessageBegin()
@@ -239,7 +253,7 @@ class Processor(Iface, TProcessor):
         iprot.readMessageEnd()
         result = render_result()
         try:
-            result.success = self._handler.render(args.input_table, args.params, args.tab, args.input_tabs)
+            result.success = self._handler.render(args.render_request)
             msg_type = TMessageType.REPLY
         except TTransport.TTransportException:
             raise
@@ -252,6 +266,29 @@ class Processor(Iface, TProcessor):
             msg_type = TMessageType.EXCEPTION
             result = TApplicationException(TApplicationException.INTERNAL_ERROR, 'Internal error')
         oprot.writeMessageBegin("render", msg_type, seqid)
+        result.write(oprot)
+        oprot.writeMessageEnd()
+        oprot.trans.flush()
+
+    def process_fetch(self, seqid, iprot, oprot):
+        args = fetch_args()
+        args.read(iprot)
+        iprot.readMessageEnd()
+        result = fetch_result()
+        try:
+            result.success = self._handler.fetch(args.fetch_request)
+            msg_type = TMessageType.REPLY
+        except TTransport.TTransportException:
+            raise
+        except TApplicationException as ex:
+            logging.exception('TApplication exception in handler')
+            msg_type = TMessageType.EXCEPTION
+            result = ex
+        except Exception:
+            logging.exception('Unexpected exception in handler')
+            msg_type = TMessageType.EXCEPTION
+            result = TApplicationException(TApplicationException.INTERNAL_ERROR, 'Internal error')
+        oprot.writeMessageBegin("fetch", msg_type, seqid)
         result.write(oprot)
         oprot.writeMessageEnd()
         oprot.trans.flush()
@@ -532,31 +569,16 @@ migrateParams_result.thrift_spec = (
 class render_args(object):
     """
     Attributes:
-     - input_table: Output from previous Step.
-
-    This is zero-row, zero-column on the first Step in a Tab.
-     - params: User-supplied parameters; must match the module's param_spec.
-     - tab: Description of tab being rendered.
-     - input_tabs: Other tabs' results, supplied as inputs for this Step.
-
-    Only user-selected tabs are included here. This is not all rendered
-    tabs: it's only the tabs the user selected in this Step's `tab` and
-    `multitab` parameters.
+     - render_request
     """
 
     __slots__ = (
-        'input_table',
-        'params',
-        'tab',
-        'input_tabs',
+        'render_request',
     )
 
 
-    def __init__(self, input_table=None, params=None, tab=None, input_tabs=None,):
-        self.input_table = input_table
-        self.params = params
-        self.tab = tab
-        self.input_tabs = input_tabs
+    def __init__(self, render_request=None,):
+        self.render_request = render_request
 
     def read(self, iprot):
         if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
@@ -569,32 +591,8 @@ class render_args(object):
                 break
             if fid == 1:
                 if ftype == TType.STRUCT:
-                    self.input_table = ArrowTable()
-                    self.input_table.read(iprot)
-                else:
-                    iprot.skip(ftype)
-            elif fid == 2:
-                if ftype == TType.STRUCT:
-                    self.params = Params()
-                    self.params.read(iprot)
-                else:
-                    iprot.skip(ftype)
-            elif fid == 3:
-                if ftype == TType.STRUCT:
-                    self.tab = Tab()
-                    self.tab.read(iprot)
-                else:
-                    iprot.skip(ftype)
-            elif fid == 4:
-                if ftype == TType.MAP:
-                    self.input_tabs = {}
-                    (_ktype29, _vtype30, _size28) = iprot.readMapBegin()
-                    for _i32 in range(_size28):
-                        _key33 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
-                        _val34 = TabOutput()
-                        _val34.read(iprot)
-                        self.input_tabs[_key33] = _val34
-                    iprot.readMapEnd()
+                    self.render_request = RenderRequest()
+                    self.render_request.read(iprot)
                 else:
                     iprot.skip(ftype)
             else:
@@ -607,25 +605,9 @@ class render_args(object):
             oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
             return
         oprot.writeStructBegin('render_args')
-        if self.input_table is not None:
-            oprot.writeFieldBegin('input_table', TType.STRUCT, 1)
-            self.input_table.write(oprot)
-            oprot.writeFieldEnd()
-        if self.params is not None:
-            oprot.writeFieldBegin('params', TType.STRUCT, 2)
-            self.params.write(oprot)
-            oprot.writeFieldEnd()
-        if self.tab is not None:
-            oprot.writeFieldBegin('tab', TType.STRUCT, 3)
-            self.tab.write(oprot)
-            oprot.writeFieldEnd()
-        if self.input_tabs is not None:
-            oprot.writeFieldBegin('input_tabs', TType.MAP, 4)
-            oprot.writeMapBegin(TType.STRING, TType.STRUCT, len(self.input_tabs))
-            for kiter35, viter36 in self.input_tabs.items():
-                oprot.writeString(kiter35.encode('utf-8') if sys.version_info[0] == 2 else kiter35)
-                viter36.write(oprot)
-            oprot.writeMapEnd()
+        if self.render_request is not None:
+            oprot.writeFieldBegin('render_request', TType.STRUCT, 1)
+            self.render_request.write(oprot)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -653,10 +635,7 @@ class render_args(object):
 all_structs.append(render_args)
 render_args.thrift_spec = (
     None,  # 0
-    (1, TType.STRUCT, 'input_table', [ArrowTable, None], None, ),  # 1
-    (2, TType.STRUCT, 'params', [Params, None], None, ),  # 2
-    (3, TType.STRUCT, 'tab', [Tab, None], None, ),  # 3
-    (4, TType.MAP, 'input_tabs', (TType.STRING, 'UTF8', TType.STRUCT, [TabOutput, None], False), None, ),  # 4
+    (1, TType.STRUCT, 'render_request', [RenderRequest, None], None, ),  # 1
 )
 
 
@@ -729,6 +708,151 @@ class render_result(object):
 all_structs.append(render_result)
 render_result.thrift_spec = (
     (0, TType.STRUCT, 'success', [RenderResult, None], None, ),  # 0
+)
+
+
+class fetch_args(object):
+    """
+    Attributes:
+     - fetch_request
+    """
+
+    __slots__ = (
+        'fetch_request',
+    )
+
+
+    def __init__(self, fetch_request=None,):
+        self.fetch_request = fetch_request
+
+    def read(self, iprot):
+        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
+            return
+        iprot.readStructBegin()
+        while True:
+            (fname, ftype, fid) = iprot.readFieldBegin()
+            if ftype == TType.STOP:
+                break
+            if fid == 1:
+                if ftype == TType.STRUCT:
+                    self.fetch_request = FetchRequest()
+                    self.fetch_request.read(iprot)
+                else:
+                    iprot.skip(ftype)
+            else:
+                iprot.skip(ftype)
+            iprot.readFieldEnd()
+        iprot.readStructEnd()
+
+    def write(self, oprot):
+        if oprot._fast_encode is not None and self.thrift_spec is not None:
+            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
+            return
+        oprot.writeStructBegin('fetch_args')
+        if self.fetch_request is not None:
+            oprot.writeFieldBegin('fetch_request', TType.STRUCT, 1)
+            self.fetch_request.write(oprot)
+            oprot.writeFieldEnd()
+        oprot.writeFieldStop()
+        oprot.writeStructEnd()
+
+    def validate(self):
+        return
+
+    def __repr__(self):
+        L = ['%s=%r' % (key, getattr(self, key))
+             for key in self.__slots__]
+        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+    def __eq__(self, other):
+        if not isinstance(other, self.__class__):
+            return False
+        for attr in self.__slots__:
+            my_val = getattr(self, attr)
+            other_val = getattr(other, attr)
+            if my_val != other_val:
+                return False
+        return True
+
+    def __ne__(self, other):
+        return not (self == other)
+all_structs.append(fetch_args)
+fetch_args.thrift_spec = (
+    None,  # 0
+    (1, TType.STRUCT, 'fetch_request', [FetchRequest, None], None, ),  # 1
+)
+
+
+class fetch_result(object):
+    """
+    Attributes:
+     - success
+    """
+
+    __slots__ = (
+        'success',
+    )
+
+
+    def __init__(self, success=None,):
+        self.success = success
+
+    def read(self, iprot):
+        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
+            return
+        iprot.readStructBegin()
+        while True:
+            (fname, ftype, fid) = iprot.readFieldBegin()
+            if ftype == TType.STOP:
+                break
+            if fid == 0:
+                if ftype == TType.STRUCT:
+                    self.success = FetchResult()
+                    self.success.read(iprot)
+                else:
+                    iprot.skip(ftype)
+            else:
+                iprot.skip(ftype)
+            iprot.readFieldEnd()
+        iprot.readStructEnd()
+
+    def write(self, oprot):
+        if oprot._fast_encode is not None and self.thrift_spec is not None:
+            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
+            return
+        oprot.writeStructBegin('fetch_result')
+        if self.success is not None:
+            oprot.writeFieldBegin('success', TType.STRUCT, 0)
+            self.success.write(oprot)
+            oprot.writeFieldEnd()
+        oprot.writeFieldStop()
+        oprot.writeStructEnd()
+
+    def validate(self):
+        return
+
+    def __repr__(self):
+        L = ['%s=%r' % (key, getattr(self, key))
+             for key in self.__slots__]
+        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+    def __eq__(self, other):
+        if not isinstance(other, self.__class__):
+            return False
+        for attr in self.__slots__:
+            my_val = getattr(self, attr)
+            other_val = getattr(other, attr)
+            if my_val != other_val:
+                return False
+        return True
+
+    def __ne__(self, other):
+        return not (self == other)
+all_structs.append(fetch_result)
+fetch_result.thrift_spec = (
+    (0, TType.STRUCT, 'success', [FetchResult, None], None, ),  # 0
 )
 fix_spec(all_structs)
 del all_structs

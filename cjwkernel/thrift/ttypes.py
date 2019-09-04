@@ -16,241 +16,7 @@ from thrift.transport import TTransport
 all_structs = []
 
 
-class ModuleErrorCompileError(object):
-    """
-    The module's code is invalid, as per its programming language.
-
-    Attributes:
-     - message: Compiler error message.
-    """
-
-    __slots__ = (
-        'message',
-    )
-
-
-    def __init__(self, message=None,):
-        self.message = message
-
-    def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
-            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
-            return
-        iprot.readStructBegin()
-        while True:
-            (fname, ftype, fid) = iprot.readFieldBegin()
-            if ftype == TType.STOP:
-                break
-            if fid == 1:
-                if ftype == TType.STRING:
-                    self.message = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
-                else:
-                    iprot.skip(ftype)
-            else:
-                iprot.skip(ftype)
-            iprot.readFieldEnd()
-        iprot.readStructEnd()
-
-    def write(self, oprot):
-        if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
-            return
-        oprot.writeStructBegin('ModuleErrorCompileError')
-        if self.message is not None:
-            oprot.writeFieldBegin('message', TType.STRING, 1)
-            oprot.writeString(self.message.encode('utf-8') if sys.version_info[0] == 2 else self.message)
-            oprot.writeFieldEnd()
-        oprot.writeFieldStop()
-        oprot.writeStructEnd()
-
-    def validate(self):
-        return
-
-    def __repr__(self):
-        L = ['%s=%r' % (key, getattr(self, key))
-             for key in self.__slots__]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
-
-    def __eq__(self, other):
-        if not isinstance(other, self.__class__):
-            return False
-        for attr in self.__slots__:
-            my_val = getattr(self, attr)
-            other_val = getattr(other, attr)
-            if my_val != other_val:
-                return False
-        return True
-
-    def __ne__(self, other):
-        return not (self == other)
-
-
-class ModuleErrorTimeout(object):
-    """
-    A module's code took too long to execute.
-
-    Attributes:
-     - max_seconds: How long we were configured to wait.
-     - log: Last few lines of console output before termination.
-    """
-
-    __slots__ = (
-        'max_seconds',
-        'log',
-    )
-
-
-    def __init__(self, max_seconds=None, log=None,):
-        self.max_seconds = max_seconds
-        self.log = log
-
-    def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
-            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
-            return
-        iprot.readStructBegin()
-        while True:
-            (fname, ftype, fid) = iprot.readFieldBegin()
-            if ftype == TType.STOP:
-                break
-            if fid == 1:
-                if ftype == TType.DOUBLE:
-                    self.max_seconds = iprot.readDouble()
-                else:
-                    iprot.skip(ftype)
-            elif fid == 2:
-                if ftype == TType.STRING:
-                    self.log = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
-                else:
-                    iprot.skip(ftype)
-            else:
-                iprot.skip(ftype)
-            iprot.readFieldEnd()
-        iprot.readStructEnd()
-
-    def write(self, oprot):
-        if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
-            return
-        oprot.writeStructBegin('ModuleErrorTimeout')
-        if self.max_seconds is not None:
-            oprot.writeFieldBegin('max_seconds', TType.DOUBLE, 1)
-            oprot.writeDouble(self.max_seconds)
-            oprot.writeFieldEnd()
-        if self.log is not None:
-            oprot.writeFieldBegin('log', TType.STRING, 2)
-            oprot.writeString(self.log.encode('utf-8') if sys.version_info[0] == 2 else self.log)
-            oprot.writeFieldEnd()
-        oprot.writeFieldStop()
-        oprot.writeStructEnd()
-
-    def validate(self):
-        return
-
-    def __repr__(self):
-        L = ['%s=%r' % (key, getattr(self, key))
-             for key in self.__slots__]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
-
-    def __eq__(self, other):
-        if not isinstance(other, self.__class__):
-            return False
-        for attr in self.__slots__:
-            my_val = getattr(self, attr)
-            other_val = getattr(other, attr)
-            if my_val != other_val:
-                return False
-        return True
-
-    def __ne__(self, other):
-        return not (self == other)
-
-
-class ModuleErrorExited(object):
-    """
-    A module's code terminated unexpectedly.
-
-    Attributes:
-     - exit_code: Exit code; must be non-zero.
-
-    Exit code 137 means we were sent 'kill -9' ... which often means, "out of
-    memory".
-     - log: Last few lines of console output before exit.
-    """
-
-    __slots__ = (
-        'exit_code',
-        'log',
-    )
-
-
-    def __init__(self, exit_code=None, log=None,):
-        self.exit_code = exit_code
-        self.log = log
-
-    def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
-            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
-            return
-        iprot.readStructBegin()
-        while True:
-            (fname, ftype, fid) = iprot.readFieldBegin()
-            if ftype == TType.STOP:
-                break
-            if fid == 1:
-                if ftype == TType.I16:
-                    self.exit_code = iprot.readI16()
-                else:
-                    iprot.skip(ftype)
-            elif fid == 2:
-                if ftype == TType.STRING:
-                    self.log = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
-                else:
-                    iprot.skip(ftype)
-            else:
-                iprot.skip(ftype)
-            iprot.readFieldEnd()
-        iprot.readStructEnd()
-
-    def write(self, oprot):
-        if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
-            return
-        oprot.writeStructBegin('ModuleErrorExited')
-        if self.exit_code is not None:
-            oprot.writeFieldBegin('exit_code', TType.I16, 1)
-            oprot.writeI16(self.exit_code)
-            oprot.writeFieldEnd()
-        if self.log is not None:
-            oprot.writeFieldBegin('log', TType.STRING, 2)
-            oprot.writeString(self.log.encode('utf-8') if sys.version_info[0] == 2 else self.log)
-            oprot.writeFieldEnd()
-        oprot.writeFieldStop()
-        oprot.writeStructEnd()
-
-    def validate(self):
-        return
-
-    def __repr__(self):
-        L = ['%s=%r' % (key, getattr(self, key))
-             for key in self.__slots__]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
-
-    def __eq__(self, other):
-        if not isinstance(other, self.__class__):
-            return False
-        for attr in self.__slots__:
-            my_val = getattr(self, attr)
-            other_val = getattr(other, attr)
-            if my_val != other_val:
-                return False
-        return True
-
-    def __ne__(self, other):
-        return not (self == other)
-
-
-class ValidateModuleResultOk(object):
+class ValidateModuleResult(object):
     """
     Validation of a kernel module's code succeeded.
 
@@ -280,205 +46,7 @@ class ValidateModuleResultOk(object):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
             oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
             return
-        oprot.writeStructBegin('ValidateModuleResultOk')
-        oprot.writeFieldStop()
-        oprot.writeStructEnd()
-
-    def validate(self):
-        return
-
-    def __repr__(self):
-        L = ['%s=%r' % (key, getattr(self, key))
-             for key in self.__slots__]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
-
-    def __eq__(self, other):
-        if not isinstance(other, self.__class__):
-            return False
-        for attr in self.__slots__:
-            my_val = getattr(self, attr)
-            other_val = getattr(other, attr)
-            if my_val != other_val:
-                return False
-        return True
-
-    def __ne__(self, other):
-        return not (self == other)
-
-
-class ValidateModuleResultError(object):
-    """
-    Validation of a kernel module's code failed.
-
-    `compile_error` and `timeout` can be trusted: a malicious module cannot
-    fake them. `exited` can be manipulated by a malicious module, though there
-    doesn't seem to be much point.
-
-    Attributes:
-     - compile_error: The kernel module's code cannot be run.
-     - timeout: The kernel module's code took too long to run.
-
-    In Python code, this can happen if there's a long-running block of code at
-    the top level of the module.
-     - exited: The kernel module's code exited with a non-zero exit code.
-
-    During module load, Workbench will execute the module code. The module
-    will then self-validate and exit with status code 1 if it detects, say,
-    that its `render()` function has the wrong signature.
-
-    Do not trust this return value: it is returned by the module itself after
-    user code was run. The intent is for well-meaning code to self-diagnose
-    with a helpful error message. Malicious code will ... uh ...
-    self-diagnose with an *un*-helpful error message.
-    """
-
-    __slots__ = (
-        'compile_error',
-        'timeout',
-        'exited',
-    )
-
-
-    def __init__(self, compile_error=None, timeout=None, exited=None,):
-        self.compile_error = compile_error
-        self.timeout = timeout
-        self.exited = exited
-
-    def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
-            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
-            return
-        iprot.readStructBegin()
-        while True:
-            (fname, ftype, fid) = iprot.readFieldBegin()
-            if ftype == TType.STOP:
-                break
-            if fid == 1:
-                if ftype == TType.STRUCT:
-                    self.compile_error = ModuleErrorCompileError()
-                    self.compile_error.read(iprot)
-                else:
-                    iprot.skip(ftype)
-            elif fid == 2:
-                if ftype == TType.STRUCT:
-                    self.timeout = ModuleErrorTimeout()
-                    self.timeout.read(iprot)
-                else:
-                    iprot.skip(ftype)
-            elif fid == 3:
-                if ftype == TType.STRUCT:
-                    self.exited = ModuleErrorExited()
-                    self.exited.read(iprot)
-                else:
-                    iprot.skip(ftype)
-            else:
-                iprot.skip(ftype)
-            iprot.readFieldEnd()
-        iprot.readStructEnd()
-
-    def write(self, oprot):
-        if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
-            return
-        oprot.writeStructBegin('ValidateModuleResultError')
-        if self.compile_error is not None:
-            oprot.writeFieldBegin('compile_error', TType.STRUCT, 1)
-            self.compile_error.write(oprot)
-            oprot.writeFieldEnd()
-        if self.timeout is not None:
-            oprot.writeFieldBegin('timeout', TType.STRUCT, 2)
-            self.timeout.write(oprot)
-            oprot.writeFieldEnd()
-        if self.exited is not None:
-            oprot.writeFieldBegin('exited', TType.STRUCT, 3)
-            self.exited.write(oprot)
-            oprot.writeFieldEnd()
-        oprot.writeFieldStop()
-        oprot.writeStructEnd()
-
-    def validate(self):
-        return
-
-    def __repr__(self):
-        L = ['%s=%r' % (key, getattr(self, key))
-             for key in self.__slots__]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
-
-    def __eq__(self, other):
-        if not isinstance(other, self.__class__):
-            return False
-        for attr in self.__slots__:
-            my_val = getattr(self, attr)
-            other_val = getattr(other, attr)
-            if my_val != other_val:
-                return False
-        return True
-
-    def __ne__(self, other):
-        return not (self == other)
-
-
-class ValidateModuleResult(object):
-    """
-    Result of attempting to load and run module code.
-
-    An `ok` result does not mean the module can be _trusted_. No module code can
-    be trusted. An `error` result _always_ means the module can't be trusted.
-
-    Attributes:
-     - ok
-     - error
-    """
-
-    __slots__ = (
-        'ok',
-        'error',
-    )
-
-
-    def __init__(self, ok=None, error=None,):
-        self.ok = ok
-        self.error = error
-
-    def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
-            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
-            return
-        iprot.readStructBegin()
-        while True:
-            (fname, ftype, fid) = iprot.readFieldBegin()
-            if ftype == TType.STOP:
-                break
-            if fid == 1:
-                if ftype == TType.STRUCT:
-                    self.ok = ValidateModuleResultOk()
-                    self.ok.read(iprot)
-                else:
-                    iprot.skip(ftype)
-            elif fid == 2:
-                if ftype == TType.STRUCT:
-                    self.error = ValidateModuleResultError()
-                    self.error.read(iprot)
-                else:
-                    iprot.skip(ftype)
-            else:
-                iprot.skip(ftype)
-            iprot.readFieldEnd()
-        iprot.readStructEnd()
-
-    def write(self, oprot):
-        if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
-            return
         oprot.writeStructBegin('ValidateModuleResult')
-        if self.ok is not None:
-            oprot.writeFieldBegin('ok', TType.STRUCT, 1)
-            self.ok.write(oprot)
-            oprot.writeFieldEnd()
-        if self.error is not None:
-            oprot.writeFieldBegin('error', TType.STRUCT, 2)
-            self.error.write(oprot)
-            oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
 
@@ -958,7 +526,10 @@ class ArrowTable(object):
     data around.
 
     Attributes:
-     - filename: Name of file on disk that contains data. The file must exist.
+     - filename: Name of file on disk that contains data.
+
+    For a zero-column table, filename may be the empty string -- meaning there
+    is no file on disk. In all other cases, the file on disk must exist.
      - metadata: Metadata; must agree with the file on disk.
     """
 
@@ -1002,6 +573,94 @@ class ArrowTable(object):
             oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
             return
         oprot.writeStructBegin('ArrowTable')
+        if self.filename is not None:
+            oprot.writeFieldBegin('filename', TType.STRING, 1)
+            oprot.writeString(self.filename.encode('utf-8') if sys.version_info[0] == 2 else self.filename)
+            oprot.writeFieldEnd()
+        if self.metadata is not None:
+            oprot.writeFieldBegin('metadata', TType.STRUCT, 2)
+            self.metadata.write(oprot)
+            oprot.writeFieldEnd()
+        oprot.writeFieldStop()
+        oprot.writeStructEnd()
+
+    def validate(self):
+        return
+
+    def __repr__(self):
+        L = ['%s=%r' % (key, getattr(self, key))
+             for key in self.__slots__]
+        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+    def __eq__(self, other):
+        if not isinstance(other, self.__class__):
+            return False
+        for attr in self.__slots__:
+            my_val = getattr(self, attr)
+            other_val = getattr(other, attr)
+            if my_val != other_val:
+                return False
+        return True
+
+    def __ne__(self, other):
+        return not (self == other)
+
+
+class ParquetTable(object):
+    """
+    Table stored on disk, ready to be loaded.
+
+    The file on disk is in a directory agreed upon by the processes passing this
+    data around.
+
+    Attributes:
+     - filename: Name of file on disk that contains data.
+
+    For a zero-column table, filename may be the empty string -- meaning there
+    is no file on disk. In all other cases, the file on disk must exist.
+     - metadata: Metadata; must agree with the file on disk.
+    """
+
+    __slots__ = (
+        'filename',
+        'metadata',
+    )
+
+
+    def __init__(self, filename=None, metadata=None,):
+        self.filename = filename
+        self.metadata = metadata
+
+    def read(self, iprot):
+        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
+            return
+        iprot.readStructBegin()
+        while True:
+            (fname, ftype, fid) = iprot.readFieldBegin()
+            if ftype == TType.STOP:
+                break
+            if fid == 1:
+                if ftype == TType.STRING:
+                    self.filename = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                else:
+                    iprot.skip(ftype)
+            elif fid == 2:
+                if ftype == TType.STRUCT:
+                    self.metadata = TableMetadata()
+                    self.metadata.read(iprot)
+                else:
+                    iprot.skip(ftype)
+            else:
+                iprot.skip(ftype)
+            iprot.readFieldEnd()
+        iprot.readStructEnd()
+
+    def write(self, oprot):
+        if oprot._fast_encode is not None and self.thrift_spec is not None:
+            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
+            return
+        oprot.writeStructBegin('ParquetTable')
         if self.filename is not None:
             oprot.writeFieldBegin('filename', TType.STRING, 1)
             oprot.writeString(self.filename.encode('utf-8') if sys.version_info[0] == 2 else self.filename)
@@ -1192,7 +851,7 @@ class TabOutput(object):
     Already-computed output of a tab.
 
     During workflow execute, the output from one tab can be used as the input to
-    another. This only happens if the output was a `RenderResultOk` with a
+    another. This only happens if the output was a `RenderResult` with a
     non-zero-column `table`. (The executor won't run a Step whose inputs aren't
     valid.)
 
@@ -1791,7 +1450,370 @@ class RenderError(object):
         return not (self == other)
 
 
-class RenderResultOk(object):
+class FetchRequest(object):
+    """
+    Parameters to `fetch()`.
+
+    Attributes:
+     - params: User-supplied params.
+     - secrets: User-supplied secrets.
+     - last_fetch_result: Result of the previous fetch().
+
+    This is to support modules that "accumulate" data. Think of their fetch()
+    as a reducer: each time they run, they operate on their previous output.
+    (e.g., Twitter module monitoring a politician's tweets.)
+
+    A Step may never run two fetches concurrently.
+
+    Empty on initial call.
+     - input_table: Cached result from previous module's render.
+
+    This is to support modules that take a column as input. Unfortunately, we
+    have a lot more work to do to make these modules work as expected. In the
+    meantime, this hack gets some jobs done.
+    """
+
+    __slots__ = (
+        'params',
+        'secrets',
+        'last_fetch_result',
+        'input_table',
+    )
+
+
+    def __init__(self, params=None, secrets=None, last_fetch_result=None, input_table=None,):
+        self.params = params
+        self.secrets = secrets
+        self.last_fetch_result = last_fetch_result
+        self.input_table = input_table
+
+    def read(self, iprot):
+        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
+            return
+        iprot.readStructBegin()
+        while True:
+            (fname, ftype, fid) = iprot.readFieldBegin()
+            if ftype == TType.STOP:
+                break
+            if fid == 1:
+                if ftype == TType.STRUCT:
+                    self.params = Params()
+                    self.params.read(iprot)
+                else:
+                    iprot.skip(ftype)
+            elif fid == 2:
+                if ftype == TType.STRUCT:
+                    self.secrets = Params()
+                    self.secrets.read(iprot)
+                else:
+                    iprot.skip(ftype)
+            elif fid == 3:
+                if ftype == TType.STRUCT:
+                    self.last_fetch_result = FetchResult()
+                    self.last_fetch_result.read(iprot)
+                else:
+                    iprot.skip(ftype)
+            elif fid == 4:
+                if ftype == TType.STRUCT:
+                    self.input_table = ParquetTable()
+                    self.input_table.read(iprot)
+                else:
+                    iprot.skip(ftype)
+            else:
+                iprot.skip(ftype)
+            iprot.readFieldEnd()
+        iprot.readStructEnd()
+
+    def write(self, oprot):
+        if oprot._fast_encode is not None and self.thrift_spec is not None:
+            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
+            return
+        oprot.writeStructBegin('FetchRequest')
+        if self.params is not None:
+            oprot.writeFieldBegin('params', TType.STRUCT, 1)
+            self.params.write(oprot)
+            oprot.writeFieldEnd()
+        if self.secrets is not None:
+            oprot.writeFieldBegin('secrets', TType.STRUCT, 2)
+            self.secrets.write(oprot)
+            oprot.writeFieldEnd()
+        if self.last_fetch_result is not None:
+            oprot.writeFieldBegin('last_fetch_result', TType.STRUCT, 3)
+            self.last_fetch_result.write(oprot)
+            oprot.writeFieldEnd()
+        if self.input_table is not None:
+            oprot.writeFieldBegin('input_table', TType.STRUCT, 4)
+            self.input_table.write(oprot)
+            oprot.writeFieldEnd()
+        oprot.writeFieldStop()
+        oprot.writeStructEnd()
+
+    def validate(self):
+        return
+
+    def __repr__(self):
+        L = ['%s=%r' % (key, getattr(self, key))
+             for key in self.__slots__]
+        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+    def __eq__(self, other):
+        if not isinstance(other, self.__class__):
+            return False
+        for attr in self.__slots__:
+            my_val = getattr(self, attr)
+            other_val = getattr(other, attr)
+            if my_val != other_val:
+                return False
+        return True
+
+    def __ne__(self, other):
+        return not (self == other)
+
+
+class FetchResult(object):
+    """
+    The module executed a Step's fetch() without crashing.
+
+    An "ok" result may be a user-friendly error -- that is, an empty file (or,
+    for backwards compat, a zero-column parquet file) and non-empty `errors`.
+
+    Attributes:
+     - filename: File the fetch produced.
+
+    Currently, this must be a valid Parquet file. In the future, we will
+    loosen the requirement and allow any file.
+
+    Empty file or zero-column parquet file typically means, "error"; but
+    that's the module's choice and not a hard-and-fast rule.
+     - errors: User-facing errors or warnings reported by the module.
+
+    These are separate from `filename` for two reasons: 1) a convenience for
+    module authors; and 2) so we can run SQL to find common problems.
+    """
+
+    __slots__ = (
+        'filename',
+        'errors',
+    )
+
+
+    def __init__(self, filename=None, errors=None,):
+        self.filename = filename
+        self.errors = errors
+
+    def read(self, iprot):
+        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
+            return
+        iprot.readStructBegin()
+        while True:
+            (fname, ftype, fid) = iprot.readFieldBegin()
+            if ftype == TType.STOP:
+                break
+            if fid == 1:
+                if ftype == TType.STRING:
+                    self.filename = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                else:
+                    iprot.skip(ftype)
+            elif fid == 2:
+                if ftype == TType.LIST:
+                    self.errors = []
+                    (_etype24, _size21) = iprot.readListBegin()
+                    for _i25 in range(_size21):
+                        _elem26 = RenderError()
+                        _elem26.read(iprot)
+                        self.errors.append(_elem26)
+                    iprot.readListEnd()
+                else:
+                    iprot.skip(ftype)
+            else:
+                iprot.skip(ftype)
+            iprot.readFieldEnd()
+        iprot.readStructEnd()
+
+    def write(self, oprot):
+        if oprot._fast_encode is not None and self.thrift_spec is not None:
+            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
+            return
+        oprot.writeStructBegin('FetchResult')
+        if self.filename is not None:
+            oprot.writeFieldBegin('filename', TType.STRING, 1)
+            oprot.writeString(self.filename.encode('utf-8') if sys.version_info[0] == 2 else self.filename)
+            oprot.writeFieldEnd()
+        if self.errors is not None:
+            oprot.writeFieldBegin('errors', TType.LIST, 2)
+            oprot.writeListBegin(TType.STRUCT, len(self.errors))
+            for iter27 in self.errors:
+                iter27.write(oprot)
+            oprot.writeListEnd()
+            oprot.writeFieldEnd()
+        oprot.writeFieldStop()
+        oprot.writeStructEnd()
+
+    def validate(self):
+        return
+
+    def __repr__(self):
+        L = ['%s=%r' % (key, getattr(self, key))
+             for key in self.__slots__]
+        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+    def __eq__(self, other):
+        if not isinstance(other, self.__class__):
+            return False
+        for attr in self.__slots__:
+            my_val = getattr(self, attr)
+            other_val = getattr(other, attr)
+            if my_val != other_val:
+                return False
+        return True
+
+    def __ne__(self, other):
+        return not (self == other)
+
+
+class RenderRequest(object):
+    """
+    Parameters to `render()`.
+
+    Attributes:
+     - input_table: Output from previous Step.
+
+    This is zero-row, zero-column on the first Step in a Tab.
+     - params: User-supplied parameters; must match the module's param_spec.
+     - tab: Description of tab being rendered.
+     - input_tabs: Other tabs' results, supplied as inputs for this Step.
+
+    Only user-selected tabs are included here. This is not all rendered
+    tabs: it's only the tabs the user selected in this Step's `tab` and
+    `multitab` parameters.
+     - fetch_result: Result of latest `fetch`.
+
+    If unset, `fetch` was never called.
+    """
+
+    __slots__ = (
+        'input_table',
+        'params',
+        'tab',
+        'input_tabs',
+        'fetch_result',
+    )
+
+
+    def __init__(self, input_table=None, params=None, tab=None, input_tabs=None, fetch_result=None,):
+        self.input_table = input_table
+        self.params = params
+        self.tab = tab
+        self.input_tabs = input_tabs
+        self.fetch_result = fetch_result
+
+    def read(self, iprot):
+        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
+            return
+        iprot.readStructBegin()
+        while True:
+            (fname, ftype, fid) = iprot.readFieldBegin()
+            if ftype == TType.STOP:
+                break
+            if fid == 1:
+                if ftype == TType.STRUCT:
+                    self.input_table = ArrowTable()
+                    self.input_table.read(iprot)
+                else:
+                    iprot.skip(ftype)
+            elif fid == 2:
+                if ftype == TType.STRUCT:
+                    self.params = Params()
+                    self.params.read(iprot)
+                else:
+                    iprot.skip(ftype)
+            elif fid == 3:
+                if ftype == TType.STRUCT:
+                    self.tab = Tab()
+                    self.tab.read(iprot)
+                else:
+                    iprot.skip(ftype)
+            elif fid == 4:
+                if ftype == TType.MAP:
+                    self.input_tabs = {}
+                    (_ktype29, _vtype30, _size28) = iprot.readMapBegin()
+                    for _i32 in range(_size28):
+                        _key33 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                        _val34 = TabOutput()
+                        _val34.read(iprot)
+                        self.input_tabs[_key33] = _val34
+                    iprot.readMapEnd()
+                else:
+                    iprot.skip(ftype)
+            elif fid == 5:
+                if ftype == TType.STRUCT:
+                    self.fetch_result = FetchResult()
+                    self.fetch_result.read(iprot)
+                else:
+                    iprot.skip(ftype)
+            else:
+                iprot.skip(ftype)
+            iprot.readFieldEnd()
+        iprot.readStructEnd()
+
+    def write(self, oprot):
+        if oprot._fast_encode is not None and self.thrift_spec is not None:
+            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
+            return
+        oprot.writeStructBegin('RenderRequest')
+        if self.input_table is not None:
+            oprot.writeFieldBegin('input_table', TType.STRUCT, 1)
+            self.input_table.write(oprot)
+            oprot.writeFieldEnd()
+        if self.params is not None:
+            oprot.writeFieldBegin('params', TType.STRUCT, 2)
+            self.params.write(oprot)
+            oprot.writeFieldEnd()
+        if self.tab is not None:
+            oprot.writeFieldBegin('tab', TType.STRUCT, 3)
+            self.tab.write(oprot)
+            oprot.writeFieldEnd()
+        if self.input_tabs is not None:
+            oprot.writeFieldBegin('input_tabs', TType.MAP, 4)
+            oprot.writeMapBegin(TType.STRING, TType.STRUCT, len(self.input_tabs))
+            for kiter35, viter36 in self.input_tabs.items():
+                oprot.writeString(kiter35.encode('utf-8') if sys.version_info[0] == 2 else kiter35)
+                viter36.write(oprot)
+            oprot.writeMapEnd()
+            oprot.writeFieldEnd()
+        if self.fetch_result is not None:
+            oprot.writeFieldBegin('fetch_result', TType.STRUCT, 5)
+            self.fetch_result.write(oprot)
+            oprot.writeFieldEnd()
+        oprot.writeFieldStop()
+        oprot.writeStructEnd()
+
+    def validate(self):
+        return
+
+    def __repr__(self):
+        L = ['%s=%r' % (key, getattr(self, key))
+             for key in self.__slots__]
+        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+    def __eq__(self, other):
+        if not isinstance(other, self.__class__):
+            return False
+        for attr in self.__slots__:
+            my_val = getattr(self, attr)
+            other_val = getattr(other, attr)
+            if my_val != other_val:
+                return False
+        return True
+
+    def __ne__(self, other):
+        return not (self == other)
+
+
+class RenderResult(object):
     """
     The module executed a Step's render() without crashing.
 
@@ -1838,11 +1860,11 @@ class RenderResultOk(object):
             elif fid == 2:
                 if ftype == TType.LIST:
                     self.errors = []
-                    (_etype24, _size21) = iprot.readListBegin()
-                    for _i25 in range(_size21):
-                        _elem26 = RenderError()
-                        _elem26.read(iprot)
-                        self.errors.append(_elem26)
+                    (_etype40, _size37) = iprot.readListBegin()
+                    for _i41 in range(_size37):
+                        _elem42 = RenderError()
+                        _elem42.read(iprot)
+                        self.errors.append(_elem42)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
@@ -1860,7 +1882,7 @@ class RenderResultOk(object):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
             oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
             return
-        oprot.writeStructBegin('RenderResultOk')
+        oprot.writeStructBegin('RenderResult')
         if self.table is not None:
             oprot.writeFieldBegin('table', TType.STRUCT, 1)
             self.table.write(oprot)
@@ -1868,8 +1890,8 @@ class RenderResultOk(object):
         if self.errors is not None:
             oprot.writeFieldBegin('errors', TType.LIST, 2)
             oprot.writeListBegin(TType.STRUCT, len(self.errors))
-            for iter27 in self.errors:
-                iter27.write(oprot)
+            for iter43 in self.errors:
+                iter43.write(oprot)
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         if self.json is not None:
@@ -1899,300 +1921,8 @@ class RenderResultOk(object):
 
     def __ne__(self, other):
         return not (self == other)
-
-
-class RenderResultErrorInvalidOutput(object):
-    """
-    The module executed, but its output did not pass validation.
-
-    This is always a bug in the module code. Module code must always return
-    RenderResultOk and then exit. Here are the errors a module may have that
-    would cause "invalid output":
-
-    * The module did not write exactly one object to its output channel.
-    * The module wrote a non-RenderResultOk object to the output channel.
-    * The module wrote RenderResultOk, but its `table` or `json` were invalid.
-
-    Attributes:
-     - message
-    """
-
-    __slots__ = (
-        'message',
-    )
-
-
-    def __init__(self, message=None,):
-        self.message = message
-
-    def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
-            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
-            return
-        iprot.readStructBegin()
-        while True:
-            (fname, ftype, fid) = iprot.readFieldBegin()
-            if ftype == TType.STOP:
-                break
-            if fid == 1:
-                if ftype == TType.STRING:
-                    self.message = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
-                else:
-                    iprot.skip(ftype)
-            else:
-                iprot.skip(ftype)
-            iprot.readFieldEnd()
-        iprot.readStructEnd()
-
-    def write(self, oprot):
-        if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
-            return
-        oprot.writeStructBegin('RenderResultErrorInvalidOutput')
-        if self.message is not None:
-            oprot.writeFieldBegin('message', TType.STRING, 1)
-            oprot.writeString(self.message.encode('utf-8') if sys.version_info[0] == 2 else self.message)
-            oprot.writeFieldEnd()
-        oprot.writeFieldStop()
-        oprot.writeStructEnd()
-
-    def validate(self):
-        return
-
-    def __repr__(self):
-        L = ['%s=%r' % (key, getattr(self, key))
-             for key in self.__slots__]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
-
-    def __eq__(self, other):
-        if not isinstance(other, self.__class__):
-            return False
-        for attr in self.__slots__:
-            my_val = getattr(self, attr)
-            other_val = getattr(other, attr)
-            if my_val != other_val:
-                return False
-        return True
-
-    def __ne__(self, other):
-        return not (self == other)
-
-
-class RenderResultError(object):
-    """
-    A bug in the module prevented this Step from completing.
-
-    This should always email someone. Buggy modules affect users.
-
-    Attributes:
-     - invalid_output: The module exited with exit code 0 but did not write valid output.
-     - timeout: The module did not exit in time.
-     - exited: The module exited with a non-zero status code.
-    """
-
-    __slots__ = (
-        'invalid_output',
-        'timeout',
-        'exited',
-    )
-
-
-    def __init__(self, invalid_output=None, timeout=None, exited=None,):
-        self.invalid_output = invalid_output
-        self.timeout = timeout
-        self.exited = exited
-
-    def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
-            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
-            return
-        iprot.readStructBegin()
-        while True:
-            (fname, ftype, fid) = iprot.readFieldBegin()
-            if ftype == TType.STOP:
-                break
-            if fid == 1:
-                if ftype == TType.STRUCT:
-                    self.invalid_output = RenderResultErrorInvalidOutput()
-                    self.invalid_output.read(iprot)
-                else:
-                    iprot.skip(ftype)
-            elif fid == 2:
-                if ftype == TType.STRUCT:
-                    self.timeout = ModuleErrorTimeout()
-                    self.timeout.read(iprot)
-                else:
-                    iprot.skip(ftype)
-            elif fid == 3:
-                if ftype == TType.STRUCT:
-                    self.exited = ModuleErrorExited()
-                    self.exited.read(iprot)
-                else:
-                    iprot.skip(ftype)
-            else:
-                iprot.skip(ftype)
-            iprot.readFieldEnd()
-        iprot.readStructEnd()
-
-    def write(self, oprot):
-        if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
-            return
-        oprot.writeStructBegin('RenderResultError')
-        if self.invalid_output is not None:
-            oprot.writeFieldBegin('invalid_output', TType.STRUCT, 1)
-            self.invalid_output.write(oprot)
-            oprot.writeFieldEnd()
-        if self.timeout is not None:
-            oprot.writeFieldBegin('timeout', TType.STRUCT, 2)
-            self.timeout.write(oprot)
-            oprot.writeFieldEnd()
-        if self.exited is not None:
-            oprot.writeFieldBegin('exited', TType.STRUCT, 3)
-            self.exited.write(oprot)
-            oprot.writeFieldEnd()
-        oprot.writeFieldStop()
-        oprot.writeStructEnd()
-
-    def validate(self):
-        return
-
-    def __repr__(self):
-        L = ['%s=%r' % (key, getattr(self, key))
-             for key in self.__slots__]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
-
-    def __eq__(self, other):
-        if not isinstance(other, self.__class__):
-            return False
-        for attr in self.__slots__:
-            my_val = getattr(self, attr)
-            other_val = getattr(other, attr)
-            if my_val != other_val:
-                return False
-        return True
-
-    def __ne__(self, other):
-        return not (self == other)
-
-
-class RenderResult(object):
-    """
-    The outcome of a call to `render()`.
-
-    Attributes:
-     - ok: The module did not crash.
-
-    (This could be an error message for the user.)
-     - error: The module crashed.
-
-    This is always a bug. Email someone.
-    """
-
-    __slots__ = (
-        'ok',
-        'error',
-    )
-
-
-    def __init__(self, ok=None, error=None,):
-        self.ok = ok
-        self.error = error
-
-    def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
-            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
-            return
-        iprot.readStructBegin()
-        while True:
-            (fname, ftype, fid) = iprot.readFieldBegin()
-            if ftype == TType.STOP:
-                break
-            if fid == 1:
-                if ftype == TType.STRUCT:
-                    self.ok = RenderResultOk()
-                    self.ok.read(iprot)
-                else:
-                    iprot.skip(ftype)
-            elif fid == 2:
-                if ftype == TType.STRUCT:
-                    self.error = RenderResultError()
-                    self.error.read(iprot)
-                else:
-                    iprot.skip(ftype)
-            else:
-                iprot.skip(ftype)
-            iprot.readFieldEnd()
-        iprot.readStructEnd()
-
-    def write(self, oprot):
-        if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
-            return
-        oprot.writeStructBegin('RenderResult')
-        if self.ok is not None:
-            oprot.writeFieldBegin('ok', TType.STRUCT, 1)
-            self.ok.write(oprot)
-            oprot.writeFieldEnd()
-        if self.error is not None:
-            oprot.writeFieldBegin('error', TType.STRUCT, 2)
-            self.error.write(oprot)
-            oprot.writeFieldEnd()
-        oprot.writeFieldStop()
-        oprot.writeStructEnd()
-
-    def validate(self):
-        return
-
-    def __repr__(self):
-        L = ['%s=%r' % (key, getattr(self, key))
-             for key in self.__slots__]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
-
-    def __eq__(self, other):
-        if not isinstance(other, self.__class__):
-            return False
-        for attr in self.__slots__:
-            my_val = getattr(self, attr)
-            other_val = getattr(other, attr)
-            if my_val != other_val:
-                return False
-        return True
-
-    def __ne__(self, other):
-        return not (self == other)
-all_structs.append(ModuleErrorCompileError)
-ModuleErrorCompileError.thrift_spec = (
-    None,  # 0
-    (1, TType.STRING, 'message', 'UTF8', None, ),  # 1
-)
-all_structs.append(ModuleErrorTimeout)
-ModuleErrorTimeout.thrift_spec = (
-    None,  # 0
-    (1, TType.DOUBLE, 'max_seconds', None, None, ),  # 1
-    (2, TType.STRING, 'log', 'UTF8', None, ),  # 2
-)
-all_structs.append(ModuleErrorExited)
-ModuleErrorExited.thrift_spec = (
-    None,  # 0
-    (1, TType.I16, 'exit_code', None, None, ),  # 1
-    (2, TType.STRING, 'log', 'UTF8', None, ),  # 2
-)
-all_structs.append(ValidateModuleResultOk)
-ValidateModuleResultOk.thrift_spec = (
-)
-all_structs.append(ValidateModuleResultError)
-ValidateModuleResultError.thrift_spec = (
-    None,  # 0
-    (1, TType.STRUCT, 'compile_error', [ModuleErrorCompileError, None], None, ),  # 1
-    (2, TType.STRUCT, 'timeout', [ModuleErrorTimeout, None], None, ),  # 2
-    (3, TType.STRUCT, 'exited', [ModuleErrorExited, None], None, ),  # 3
-)
 all_structs.append(ValidateModuleResult)
 ValidateModuleResult.thrift_spec = (
-    None,  # 0
-    (1, TType.STRUCT, 'ok', [ValidateModuleResultOk, None], None, ),  # 1
-    (2, TType.STRUCT, 'error', [ValidateModuleResultError, None], None, ),  # 2
 )
 all_structs.append(ColumnTypeText)
 ColumnTypeText.thrift_spec = (
@@ -2226,6 +1956,12 @@ TableMetadata.thrift_spec = (
 )
 all_structs.append(ArrowTable)
 ArrowTable.thrift_spec = (
+    None,  # 0
+    (1, TType.STRING, 'filename', 'UTF8', None, ),  # 1
+    (2, TType.STRUCT, 'metadata', [TableMetadata, None], None, ),  # 2
+)
+all_structs.append(ParquetTable)
+ParquetTable.thrift_spec = (
     None,  # 0
     (1, TType.STRING, 'filename', 'UTF8', None, ),  # 1
     (2, TType.STRUCT, 'metadata', [TableMetadata, None], None, ),  # 2
@@ -2283,30 +2019,35 @@ RenderError.thrift_spec = (
     (1, TType.STRUCT, 'message', [I18nMessage, None], None, ),  # 1
     (2, TType.LIST, 'quick_fixes', (TType.STRUCT, [QuickFix, None], False), None, ),  # 2
 )
-all_structs.append(RenderResultOk)
-RenderResultOk.thrift_spec = (
+all_structs.append(FetchRequest)
+FetchRequest.thrift_spec = (
     None,  # 0
-    (1, TType.STRUCT, 'table', [ArrowTable, None], None, ),  # 1
+    (1, TType.STRUCT, 'params', [Params, None], None, ),  # 1
+    (2, TType.STRUCT, 'secrets', [Params, None], None, ),  # 2
+    (3, TType.STRUCT, 'last_fetch_result', [FetchResult, None], None, ),  # 3
+    (4, TType.STRUCT, 'input_table', [ParquetTable, None], None, ),  # 4
+)
+all_structs.append(FetchResult)
+FetchResult.thrift_spec = (
+    None,  # 0
+    (1, TType.STRING, 'filename', 'UTF8', None, ),  # 1
     (2, TType.LIST, 'errors', (TType.STRUCT, [RenderError, None], False), None, ),  # 2
-    (3, TType.STRING, 'json', 'UTF8', "", ),  # 3
 )
-all_structs.append(RenderResultErrorInvalidOutput)
-RenderResultErrorInvalidOutput.thrift_spec = (
+all_structs.append(RenderRequest)
+RenderRequest.thrift_spec = (
     None,  # 0
-    (1, TType.STRING, 'message', 'UTF8', None, ),  # 1
-)
-all_structs.append(RenderResultError)
-RenderResultError.thrift_spec = (
-    None,  # 0
-    (1, TType.STRUCT, 'invalid_output', [RenderResultErrorInvalidOutput, None], None, ),  # 1
-    (2, TType.STRUCT, 'timeout', [ModuleErrorTimeout, None], None, ),  # 2
-    (3, TType.STRUCT, 'exited', [ModuleErrorExited, None], None, ),  # 3
+    (1, TType.STRUCT, 'input_table', [ArrowTable, None], None, ),  # 1
+    (2, TType.STRUCT, 'params', [Params, None], None, ),  # 2
+    (3, TType.STRUCT, 'tab', [Tab, None], None, ),  # 3
+    (4, TType.MAP, 'input_tabs', (TType.STRING, 'UTF8', TType.STRUCT, [TabOutput, None], False), None, ),  # 4
+    (5, TType.STRUCT, 'fetch_result', [FetchResult, None], None, ),  # 5
 )
 all_structs.append(RenderResult)
 RenderResult.thrift_spec = (
     None,  # 0
-    (1, TType.STRUCT, 'ok', [RenderResultOk, None], None, ),  # 1
-    (2, TType.STRUCT, 'error', [RenderResultError, None], None, ),  # 2
+    (1, TType.STRUCT, 'table', [ArrowTable, None], None, ),  # 1
+    (2, TType.LIST, 'errors', (TType.STRUCT, [RenderError, None], False), None, ),  # 2
+    (3, TType.STRING, 'json', 'UTF8', "", ),  # 3
 )
 fix_spec(all_structs)
 del all_structs

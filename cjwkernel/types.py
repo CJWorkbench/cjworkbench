@@ -2,12 +2,14 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from dataclasses import asdict, dataclass, field
 import json
+import marshal
 from pathlib import Path
 import pyarrow
 import pyarrow.ipc
 import pyarrow.types
 from string import Formatter
 from typing import Any, Dict, List, Optional, Union
+from .util import json_encode
 
 # Some types we can import with no conversion
 from .thrift import ttypes
@@ -16,28 +18,41 @@ __all__ = [
     "ArrowTable",
     "Column",
     "ColumnType",
+    "CompiledModule",
     "I18nMessage",
+    "Params",
     "QuickFix",
     "QuickFixAction",
     "RenderError",
-    "RenderResultOk",
+    "RenderResult",
     "Tab",
     "TableMetadata",
     "TabOutput",
 ]
 
 
-def _json_encode(value: Dict[str, Any]) -> str:
+@dataclass(frozen=True)
+class CompiledModule:
+    module_slug: str
     """
-    Encode as JSON, without Python's stupid defaults.
+    Identifier for the module.
+
+    This helps with log messages and debugging.
     """
-    return json.dumps(
-        value,
-        ensure_ascii=False,
-        check_circular=False,
-        allow_nan=False,
-        separators=(",", ":"),
-    )
+
+    marshalled_code_object: bytes
+    """
+    `compile()` return value, serialied by "marshal" module.
+
+    This can be used as: `exec(marshal.loads(marshalled_code_object))`.
+
+    (The "marshal" module is designed specifically for building pyc files;
+    that's the way we use it.)
+    """
+
+    @property
+    def code_object(self) -> Any:
+        return marshal.loads(self.marshalled_code_object)
 
 
 class ColumnType(ABC):
@@ -393,7 +408,7 @@ class TabOutput:
     Already-computed output of a tab.
 
     During workflow execute, the output from one tab can be used as the input to
-    another. This only happens if the output was a `RenderResultOk` with a
+    another. This only happens if the output was a `RenderResult` with a
     non-zero-column `table`. (The executor won't run a Step whose inputs aren't
     valid.)
     """
@@ -454,6 +469,18 @@ class I18nMessage:
         )
 
 
+@dataclass(frozen=True)
+class Params:
+    params: Dict[str, Any]
+
+    @classmethod
+    def from_thrift(cls, value: ttypes.Params) -> Params:
+        return cls(json.loads(value.json))
+
+    def to_thrift(self) -> ttypes.Params:
+        return ttypes.Params(json_encode(self.params))
+
+
 class QuickFixAction(ABC):
     """Instruction for what happens when the user clicks a Quick Fix button."""
 
@@ -487,7 +514,7 @@ class PrependStepQuickFixAction:
     def to_thrift(self) -> ttypes.QuickFixAction:
         return ttypes.QuickFixAction(
             prepend_step=ttypes.PrependStepQuickFixAction(
-                self.module_slug, ttypes.Params(_json_encode(self.partial_params))
+                self.module_slug, ttypes.Params(json_encode(self.partial_params))
             )
         )
 
@@ -538,14 +565,42 @@ class RenderError:
 
 
 @dataclass(frozen=True)
-class RenderResultOk:
+class FetchResult:
+    """
+    The module executed a Step's fetch() without crashing.
+    """
+
+    path: Optional[Path]
+    """
+    File storing whatever data fetch() output.
+
+    Currently, this is a Parquet file. In the future, it may be something else.
+
+    If the Step output is "error, then the table must have zero columns.
+    """
+
+    errors: List[RenderError] = field(default_factory=list)
+    """User-facing errors or warnings reported by the module."""
+
+    @classmethod
+    def from_thrift(cls, value: ttypes.FetchResult) -> FetchResult:
+        return cls(
+            Path(value.filename), [RenderError.from_thrift(e) for e in value.errors]
+        )
+
+    def to_thrift(self) -> ttypes.FetchResult:
+        return ttypes.FetchResult(str(self.path), [e.to_thrift() for e in self.errors])
+
+
+@dataclass(frozen=True)
+class RenderResult:
     """
     The module executed a Step's render() without crashing.
 
-    An "ok" result may be a user-friendly "error" -- a zero-column table and
+    An result may be a user-friendly "error" -- a zero-column table and
     non-empty `errors`. Indeed, Workbench tends to catch and wrap bugs so
-    they appear as RenderResultOk. In most of Workbench's innards, the _only_
-    render result is a RenderResultOk.
+    they appear as RenderResult. In a sense, render cannot fail: it will
+    _always_ produce a RenderREsult.
     """
 
     table: ArrowTable = field(default_factory=ArrowTable)
@@ -562,16 +617,16 @@ class RenderResultOk:
     """JSON to pass to the module's HTML, if it has HTML."""
 
     @classmethod
-    def from_thrift(cls, value: ttypes.RenderResultOk) -> RenderResultOk:
+    def from_thrift(cls, value: ttypes.RenderResult) -> RenderResult:
         return cls(
             ArrowTable.from_thrift(value.table),
             [RenderError.from_thrift(e) for e in value.errors],
             json.loads(value.json) if value.json else None,
         )
 
-    def to_thrift(self) -> ttypes.RenderResultOk:
-        return ttypes.RenderResultOk(
+    def to_thrift(self) -> ttypes.RenderResult:
+        return ttypes.RenderResult(
             self.table.to_thrift(),
             [e.to_thrift() for e in self.errors],
-            "" if self.json is None else _json_encode(self.json),
+            "" if self.json is None else json_encode(self.json),
         )
