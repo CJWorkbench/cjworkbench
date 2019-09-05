@@ -1,9 +1,12 @@
 import datetime
 import pandas
-import pyarrow
 from cjwkernel.pandas import types as ptypes  # Pandas types
 from cjwkernel import types as atypes  # Arrow types
-from cjwkernel.tests.util import arrow_table
+from cjwkernel.tests.util import (
+    arrow_table,
+    assert_arrow_table_equals,
+    assert_render_result_equals,
+)
 from cjwstate import minio
 from cjwstate.models import Workflow, WfModule
 from cjwstate.models.commands import InitWorkflowCommand
@@ -70,30 +73,26 @@ class RendercacheIoTests(DbTestCase):
                 ],
             )
             self.assertEqual(result.json, {"foo": "bar"})
-            with arrow_table(pyarrow.Table.from_pydict({"A": [1]})) as table:
-                self.assertEqual(result.table.metadata, table.metadata)
-                self.assert_(result.table.table.equals(table.table))
+            assert_arrow_table_equals(result.table, arrow_table({"A": [1]}))
 
     def test_cache_render_result(self):
-        with arrow_table(pyarrow.Table.from_pydict({"A": [1]})) as table:
-            result = atypes.RenderResult(
-                table,
-                [
-                    atypes.RenderError(
-                        atypes.I18nMessage("e1", [1, "x"]),
-                        [
-                            atypes.QuickFix(
-                                atypes.I18nMessage("q1", []),
-                                atypes.QuickFixAction.PrependStep("filter", {"a": "x"}),
-                            )
-                        ],
-                    ),
-                    atypes.RenderError(atypes.I18nMessage("e2", []), []),
-                ],
-                {"foo": "bar"},
-            )
-
-            cache_render_result(self.workflow, self.wf_module, self.delta.id, result)
+        result = atypes.RenderResult(
+            arrow_table({"A": [1]}),
+            [
+                atypes.RenderError(
+                    atypes.I18nMessage("e1", [1, "x"]),
+                    [
+                        atypes.QuickFix(
+                            atypes.I18nMessage("q1", []),
+                            atypes.QuickFixAction.PrependStep("filter", {"a": "x"}),
+                        )
+                    ],
+                ),
+                atypes.RenderError(atypes.I18nMessage("e2", []), []),
+            ],
+            {"foo": "bar"},
+        )
+        cache_render_result(self.workflow, self.wf_module, self.delta.id, result)
 
         cached = self.wf_module.cached_render_result
         self.assertEqual(cached.wf_module_id, self.wf_module.id)
@@ -110,9 +109,7 @@ class RendercacheIoTests(DbTestCase):
         self.assertEqual(from_db, cached)
 
         with open_cached_render_result(from_db) as result2:
-            # `result` is still in scope; so even though its file was deleted,
-            # it's still mmapped into an ArrowTable.
-            self.assertEqual(result2, result)
+            assert_render_result_equals(result2, result)
 
     def test_clear(self):
         result = ptypes.ProcessResult(pandas.DataFrame({"a": [1]}))

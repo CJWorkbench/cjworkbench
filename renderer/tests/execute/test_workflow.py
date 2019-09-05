@@ -52,9 +52,8 @@ class WorkflowTests(DbTestCase):
             order=0, slug="step-1", last_relevant_delta_id=delta1.id
         )
 
-        with arrow_table({"A": [1]}) as table1:
-            result1 = RenderResult(table1)
-            cache_render_result(workflow, wf_module, delta1.id, result1)
+        result1 = RenderResult(arrow_table({"A": [1]}))
+        cache_render_result(workflow, wf_module, delta1.id, result1)
 
         delta2 = InitWorkflowCommand.create(workflow)
         wf_module.last_relevant_delta_id = delta2.id
@@ -62,17 +61,15 @@ class WorkflowTests(DbTestCase):
 
         fake_module = Mock(LoadedModule)
         fake_load_module.return_value = fake_module
-        with arrow_table({"B": [2]}) as table2:
-            result2 = RenderResult(table2)
+        result2 = RenderResult(arrow_table({"B": [2]}))
         fake_module.render.return_value = ProcessResult.from_arrow(result2)
 
         self._execute(workflow)
 
         wf_module.refresh_from_db()
 
-        with arrow_table(pyarrow.Table.from_pydict({"B": [2]})) as table2:
-            with open_cached_render_result(wf_module.cached_render_result) as result:
-                assert_render_result_equals(result, result2)
+        with open_cached_render_result(wf_module.cached_render_result) as result:
+            assert_render_result_equals(result, result2)
 
     @patch.object(LoadedModule, "for_module_version_sync")
     def test_execute_race_delete_workflow(self, fake_load_module):
@@ -85,8 +82,7 @@ class WorkflowTests(DbTestCase):
         def load_module_and_delete(module_version):
             workflow.delete()
             fake_module = Mock(LoadedModule)
-            with arrow_table({"A": [1]}) as table:
-                result = RenderResult(table)
+            result = RenderResult(arrow_table({"A": [1]}))
             fake_module.render.return_value = ProcessResult.from_arrow(result)
             return fake_module
 
@@ -162,13 +158,15 @@ class WorkflowTests(DbTestCase):
         wf_module1 = tab.wf_modules.create(
             order=0, slug="step-1", last_relevant_delta_id=delta.id
         )
-        with arrow_table({"A": [1]}) as table:
-            cache_render_result(workflow, wf_module1, delta.id, RenderResult(table))
+        cache_render_result(
+            workflow, wf_module1, delta.id, RenderResult(arrow_table({"A": [1]}))
+        )
         wf_module2 = tab.wf_modules.create(
             order=1, slug="step-2", last_relevant_delta_id=delta.id
         )
-        with arrow_table({"B": [2]}) as table:
-            cache_render_result(workflow, wf_module2, delta.id, RenderResult(table))
+        cache_render_result(
+            workflow, wf_module2, delta.id, RenderResult(arrow_table({"B": [2]}))
+        )
 
         self._execute(workflow)
 
@@ -185,8 +183,9 @@ class WorkflowTests(DbTestCase):
         wf_module1 = tab.wf_modules.create(
             order=0, slug="step-1", last_relevant_delta_id=delta_id
         )
-        with arrow_table({"A": [1]}) as table:
-            cache_render_result(workflow, wf_module1, delta_id, RenderResult(table))
+        cache_render_result(
+            workflow, wf_module1, delta_id, RenderResult(arrow_table({"A": [1]}))
+        )
 
         # wf_module2: has no cached result (must be rendered)
         wf_module2 = tab.wf_modules.create(
@@ -195,8 +194,7 @@ class WorkflowTests(DbTestCase):
 
         fake_loaded_module = Mock(LoadedModule)
         fake_load_module.return_value = fake_loaded_module
-        with arrow_table({"A": [2]}) as table:
-            result2 = RenderResult(table)
+        result2 = RenderResult(arrow_table({"A": [2]}))
 
         fake_loaded_module.render.return_value = ProcessResult.from_arrow(result2)
         self._execute(workflow)
@@ -216,8 +214,9 @@ class WorkflowTests(DbTestCase):
         wf_module = tab.wf_modules.create(
             order=0, slug="step-1", last_relevant_delta_id=delta1.id, notifications=True
         )
-        with arrow_table({"A": [1]}) as table:
-            cache_render_result(workflow, wf_module, delta1.id, RenderResult(table))
+        cache_render_result(
+            workflow, wf_module, delta1.id, RenderResult(arrow_table({"A": [1]}))
+        )
 
         # Now make a new delta, so we need to re-render. The render function's
         # output won't change.
@@ -227,8 +226,7 @@ class WorkflowTests(DbTestCase):
 
         fake_loaded_module = Mock(LoadedModule)
         fake_load_module.return_value = fake_loaded_module
-        with arrow_table({"A": [2]}) as table2:
-            result2 = RenderResult(table2)
+        result2 = RenderResult(arrow_table({"A": [2]}))
         fake_loaded_module.render.return_value = ProcessResult.from_arrow(result2)
 
         self._execute(workflow)
@@ -245,10 +243,8 @@ class WorkflowTests(DbTestCase):
         wf_module = tab.wf_modules.create(
             order=0, slug="step-1", last_relevant_delta_id=delta1.id, notifications=True
         )
-        with arrow_table({"A": [1]}) as table:
-            result1 = RenderResult(table)
-            result2 = RenderResult(table)
-            cache_render_result(workflow, wf_module, delta1.id, result1)
+        result = RenderResult(arrow_table({"A": [1]}))
+        cache_render_result(workflow, wf_module, delta1.id, result)
 
         # Now make a new delta, so we need to re-render. The render function's
         # output won't change.
@@ -258,7 +254,7 @@ class WorkflowTests(DbTestCase):
 
         fake_loaded_module = Mock(LoadedModule)
         fake_load_module.return_value = fake_loaded_module
-        fake_loaded_module.render.return_value = ProcessResult.from_arrow(result2)
+        fake_loaded_module.render.return_value = ProcessResult.from_arrow(result)
 
         self._execute(workflow)
 

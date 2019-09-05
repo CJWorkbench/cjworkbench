@@ -43,7 +43,7 @@ def _arrow_column_to_column(column: pyarrow.Column) -> Column:
 
 
 @contextmanager
-def arrow_table(table: Union[Dict[str, List[Any]], pyarrow.Table]):
+def arrow_table_context(table: Union[Dict[str, List[Any]], pyarrow.Table]):
     """
     Yield an ArrowTable (whose `.path` is a file).
 
@@ -59,6 +59,18 @@ def arrow_table(table: Union[Dict[str, List[Any]], pyarrow.Table]):
                 table.num_rows, [_arrow_column_to_column(c) for c in table.columns]
             ),
         )
+
+
+def arrow_table(table: Union[Dict[str, List[Any]], pyarrow.Table]) -> ArrowTable:
+    """
+    Yield an ArrowTable (whose `.path` is a _deleted_ file).
+
+    Metadata is inferred. Number columns have format `{:,}`.
+
+    The path may be deleted, but the file on disk is still mmapped.
+    """
+    with arrow_table_context(table) as table:
+        return table
 
 
 def assert_arrow_table_equals(result1: ArrowTable, result2: ArrowTable):
