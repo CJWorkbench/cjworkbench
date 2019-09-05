@@ -48,7 +48,7 @@ def crr_parquet_key(crr: CachedRenderResult) -> str:
     return parquet_key(crr.workflow_id, crr.wf_module_id, crr.delta_id)
 
 
-def cache_render_result(
+def cache_pandas_render_result(
     workflow: Workflow, wf_module: WfModule, delta_id: int, result: ProcessResult
 ) -> CachedRenderResult:
     """
@@ -60,7 +60,7 @@ def cache_render_result(
 
         with workflow.cooperative_lock():
             wf_module.refresh_from_db()  # may change delta_id
-            wf_module.cache_render_result(delta_id, result)
+            wf_module.cache_pandas_render_result(delta_id, result)
     """
     assert delta_id == wf_module.last_relevant_delta_id
     assert result is not None

@@ -12,7 +12,7 @@ from cjwkernel.pandas.types import (
     StepResultShape,
 )
 from cjwstate import minio
-from cjwstate.rendercache import cache_render_result
+from cjwstate.rendercache import cache_pandas_render_result
 from cjwstate.models import Workflow, UploadedFile
 from cjwstate.models.param_spec import ParamDType
 from cjwstate.tests.utils import DbTestCase
@@ -445,7 +445,7 @@ class CleanValueTests(DbTestCase):
         wfm = tab.wf_modules.create(
             order=0, slug="step-1", last_relevant_delta_id=workflow.last_delta_id
         )
-        cache_render_result(workflow, wfm, workflow.last_delta_id, tab_output)
+        cache_pandas_render_result(workflow, wfm, workflow.last_delta_id, tab_output)
 
         context = RenderContext(
             workflow.id,
@@ -467,7 +467,7 @@ class CleanValueTests(DbTestCase):
         wfm = tab.wf_modules.create(
             order=0, slug="step-1", last_relevant_delta_id=workflow.last_delta_id
         )
-        cache_render_result(workflow, wfm, workflow.last_delta_id, tab_output)
+        cache_pandas_render_result(workflow, wfm, workflow.last_delta_id, tab_output)
 
         schema = ParamDType.Dict(
             {
@@ -555,7 +555,7 @@ class CleanValueTests(DbTestCase):
         wfm = tab.wf_modules.create(
             order=0, slug="step-1", last_relevant_delta_id=workflow.last_delta_id
         )
-        cache_render_result(workflow, wfm, workflow.last_delta_id, tab_output)
+        cache_pandas_render_result(workflow, wfm, workflow.last_delta_id, tab_output)
         tab.is_deleted = True
         tab.save(update_fields=["is_deleted"])
         # Simulate reality: wfm.last_relevant_delta_id will change
@@ -588,7 +588,7 @@ class CleanValueTests(DbTestCase):
         wfm = tab.wf_modules.create(
             order=0, slug="step-1", last_relevant_delta_id=workflow.last_delta_id
         )
-        cache_render_result(workflow, wfm, workflow.last_delta_id, tab_output)
+        cache_pandas_render_result(workflow, wfm, workflow.last_delta_id, tab_output)
         # Simulate reality: wfm.last_relevant_delta_id will change
         wfm.last_relevant_delta_id += 1
         wfm.save(update_fields=["last_relevant_delta_id"])
@@ -610,7 +610,7 @@ class CleanValueTests(DbTestCase):
         wfm = tab1.wf_modules.create(
             order=0, slug="step-1", last_relevant_delta_id=workflow.last_delta_id
         )
-        cache_render_result(workflow, wfm, workflow.last_delta_id, tab1_output)
+        cache_pandas_render_result(workflow, wfm, workflow.last_delta_id, tab1_output)
 
         context = RenderContext(
             workflow.id,
@@ -635,11 +635,11 @@ class CleanValueTests(DbTestCase):
         wfm2 = tab2.wf_modules.create(
             order=0, slug="step-1", last_relevant_delta_id=workflow.last_delta_id
         )
-        cache_render_result(workflow, wfm2, workflow.last_delta_id, tab2_output)
+        cache_pandas_render_result(workflow, wfm2, workflow.last_delta_id, tab2_output)
         wfm3 = tab3.wf_modules.create(
             order=0, slug="step-2", last_relevant_delta_id=workflow.last_delta_id
         )
-        cache_render_result(workflow, wfm3, workflow.last_delta_id, tab3_output)
+        cache_pandas_render_result(workflow, wfm3, workflow.last_delta_id, tab3_output)
 
         # RenderContext's dict ordering determines desired tab order. (Python
         # 3.7 spec: dict is ordered in insertion order. CPython 3.6 and PyPy 7

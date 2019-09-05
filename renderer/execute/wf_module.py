@@ -135,7 +135,7 @@ def _execute_wfmodule_save(
     workflow: Workflow, wf_module: WfModule, result: ProcessResult
 ) -> notifications.OutputDelta:
     """
-    Call rendercache.cache_render_result() and build notifications.OutputDelta.
+    Call rendercache.cache_pandas_render_result() and build notifications.OutputDelta.
 
     All this runs synchronously within a database lock. (It's a separate
     function so that when we're done awaiting it, we can continue executing in
@@ -155,7 +155,7 @@ def _execute_wfmodule_save(
         else:
             stale_result = None
 
-        rendercache.cache_render_result(
+        rendercache.cache_pandas_render_result(
             workflow, safe_wf_module, wf_module.last_relevant_delta_id, result
         )
 

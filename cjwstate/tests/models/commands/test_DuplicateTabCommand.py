@@ -1,6 +1,6 @@
 from unittest.mock import patch
 from cjwkernel.pandas.types import ProcessResult
-from cjwstate.rendercache.io import cache_render_result
+from cjwstate.rendercache.io import cache_pandas_render_result
 from cjwstate.models import Workflow
 from cjwstate.models.commands import DuplicateTabCommand
 from cjwstate.tests.utils import DbTestCase
@@ -206,7 +206,7 @@ class DuplicateTabCommandTest(DbTestCase):
             params={"p": "s1"},
             last_relevant_delta_id=init_delta_id,
         )
-        cache_render_result(
+        cache_pandas_render_result(
             workflow, wfm1, init_delta_id, ProcessResult(error="simplest ctor")
         )
 

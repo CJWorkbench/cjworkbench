@@ -10,7 +10,7 @@ from rest_framework import status
 from rest_framework.test import force_authenticate
 from cjwkernel.pandas.types import Column, ColumnType, ProcessResult
 from cjwstate.rendercache.io import (
-    cache_render_result,
+    cache_pandas_render_result,
     delete_parquet_files_for_wf_module,
 )
 from cjwstate.models import Workflow
@@ -96,7 +96,7 @@ class WfModuleTests(LoggedInTestCase):
         # simple test case where Pandas produces int64 column type, and json
         # conversion throws ValueError
         # https://github.com/pandas-dev/pandas/issues/13258#issuecomment-326671257
-        cache_render_result(
+        cache_pandas_render_result(
             self.workflow,
             self.wf_module2,
             self.wf_module2.last_relevant_delta_id,
@@ -113,7 +113,7 @@ class WfModuleTests(LoggedInTestCase):
         # since we do not display more than that. (This is a funky hack that
         # assumes the client will behave differently when it has >MAX columns.)
         dataframe = pd.DataFrame({"A": [1], "B": [2], "C": [3], "D": [4]})
-        cache_render_result(
+        cache_pandas_render_result(
             self.workflow,
             self.wf_module2,
             self.wf_module2.last_relevant_delta_id,
@@ -127,7 +127,7 @@ class WfModuleTests(LoggedInTestCase):
         self.assertEqual(len(json.loads(response.content)["rows"][0]), 3)
 
     def test_wf_module_render(self):
-        cache_render_result(
+        cache_pandas_render_result(
             self.workflow,
             self.wf_module2,
             self.wf_module2.last_relevant_delta_id,
@@ -140,7 +140,7 @@ class WfModuleTests(LoggedInTestCase):
 
     def test_wf_module_render_missing_parquet_file(self):
         # https://www.pivotaltracker.com/story/show/161988744
-        cache_render_result(
+        cache_pandas_render_result(
             self.workflow,
             self.wf_module2,
             self.wf_module2.last_relevant_delta_id,
@@ -158,7 +158,7 @@ class WfModuleTests(LoggedInTestCase):
         )
 
     def test_wf_module_render_only_rows(self):
-        cache_render_result(
+        cache_pandas_render_result(
             self.workflow,
             self.wf_module2,
             self.wf_module2.last_relevant_delta_id,
@@ -175,7 +175,7 @@ class WfModuleTests(LoggedInTestCase):
         self.assertEqual(body["end_row"], 3)
 
     def test_wf_module_render_clip_out_of_bounds(self):
-        cache_render_result(
+        cache_pandas_render_result(
             self.workflow,
             self.wf_module2,
             self.wf_module2.last_relevant_delta_id,
@@ -197,7 +197,7 @@ class WfModuleTests(LoggedInTestCase):
         self.assertIs(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_value_counts_str(self):
-        cache_render_result(
+        cache_pandas_render_result(
             self.workflow,
             self.wf_module2,
             self.wf_module2.last_relevant_delta_id,
@@ -222,7 +222,7 @@ class WfModuleTests(LoggedInTestCase):
 
     def test_value_counts_missing_parquet_file(self):
         # https://www.pivotaltracker.com/story/show/161988744
-        cache_render_result(
+        cache_pandas_render_result(
             self.workflow,
             self.wf_module2,
             self.wf_module2.last_relevant_delta_id,
@@ -253,7 +253,7 @@ class WfModuleTests(LoggedInTestCase):
         )
 
     def test_value_counts_convert_to_text(self):
-        cache_render_result(
+        cache_pandas_render_result(
             self.workflow,
             self.wf_module2,
             self.wf_module2.last_relevant_delta_id,
@@ -281,7 +281,7 @@ class WfModuleTests(LoggedInTestCase):
         )
 
     def test_value_counts_missing_column(self):
-        cache_render_result(
+        cache_pandas_render_result(
             self.workflow,
             self.wf_module2,
             self.wf_module2.last_relevant_delta_id,

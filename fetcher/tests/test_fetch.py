@@ -12,7 +12,7 @@ from cjworkbench.sync import database_sync_to_async
 from cjwkernel.pandas.types import ProcessResult
 from cjwstate import minio
 from cjwstate.storedobjects import create_stored_object
-from cjwstate.rendercache import cache_render_result
+from cjwstate.rendercache import cache_pandas_render_result
 from cjwstate.models import ModuleVersion, WfModule, Workflow
 from cjwstate.models.commands import InitWorkflowCommand
 from cjwstate.models.loaded_module import LoadedModule
@@ -326,7 +326,7 @@ class FetchTests(DbTestCase):
         wfm1 = tab.wf_modules.create(
             order=0, slug="step-1", last_relevant_delta_id=delta.id
         )
-        cache_render_result(workflow, wfm1, delta.id, ProcessResult(table))
+        cache_pandas_render_result(workflow, wfm1, delta.id, ProcessResult(table))
         wfm2 = tab.wf_modules.create(order=1, slug="step-2")
 
         async def fetch(params, *, get_input_dataframe, **kwargs):
@@ -344,14 +344,14 @@ class FetchTests(DbTestCase):
         wfm1 = tab.wf_modules.create(
             order=0, slug="step-1", last_relevant_delta_id=delta_id
         )
-        cache_render_result(workflow, wfm1, delta_id, ProcessResult(table))
+        cache_pandas_render_result(workflow, wfm1, delta_id, ProcessResult(table))
         wfm2 = tab.wf_modules.create(order=1, slug="step-2")
 
         tab2 = workflow.tabs.create(position=1)
         wfm3 = tab2.wf_modules.create(
             order=0, slug="step-3", last_relevant_delta_id=delta_id
         )
-        cache_render_result(workflow, wfm3, delta_id, ProcessResult(wrong_table))
+        cache_pandas_render_result(workflow, wfm3, delta_id, ProcessResult(wrong_table))
 
         async def fetch(params, *, get_input_dataframe, **kwargs):
             assert_frame_equal(await get_input_dataframe(), table)
@@ -379,7 +379,7 @@ class FetchTests(DbTestCase):
         wfm1 = tab.wf_modules.create(
             order=0, slug="step-1", last_relevant_delta_id=delta1.id
         )
-        cache_render_result(workflow, wfm1, delta1.id, ProcessResult(table))
+        cache_pandas_render_result(workflow, wfm1, delta1.id, ProcessResult(table))
 
         # Now make wfm1's output stale
         delta2 = InitWorkflowCommand.create(workflow)
@@ -402,7 +402,7 @@ class FetchTests(DbTestCase):
         wfm1 = tab.wf_modules.create(
             order=0, slug="step-1", last_relevant_delta_id=delta.id
         )
-        cache_render_result(workflow, wfm1, delta.id, ProcessResult(table))
+        cache_pandas_render_result(workflow, wfm1, delta.id, ProcessResult(table))
         wfm2 = tab.wf_modules.create(order=1, slug="step-2")
 
         # Delete from the database. They're still in memory. This deletion can
@@ -424,7 +424,7 @@ class FetchTests(DbTestCase):
         wfm1 = tab.wf_modules.create(
             order=0, slug="step-1", last_relevant_delta_id=delta.id
         )
-        cache_render_result(workflow, wfm1, delta.id, ProcessResult(table))
+        cache_pandas_render_result(workflow, wfm1, delta.id, ProcessResult(table))
         wfm2 = tab.wf_modules.create(order=1, slug="step-2")
 
         # Delete from the database. They're still in memory. This deletion can

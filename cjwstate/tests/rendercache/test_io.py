@@ -7,7 +7,7 @@ from cjwstate.models.commands import InitWorkflowCommand
 from cjwstate.tests.utils import DbTestCase
 from cjwstate.rendercache.io import (
     BUCKET,
-    cache_render_result,
+    cache_pandas_render_result,
     read_cached_render_result,
     clear_cached_render_result_for_wf_module,
     crr_parquet_key,
@@ -33,7 +33,7 @@ class RendercacheIoTests(DbTestCase):
             columns=[Column("a", ColumnType.NUMBER("{:,d}"))],
         )
 
-        cache_render_result(self.workflow, self.wf_module, self.delta.id, result)
+        cache_pandas_render_result(self.workflow, self.wf_module, self.delta.id, result)
 
         cached = self.wf_module.cached_render_result
         self.assertEqual(cached.wf_module_id, self.wf_module.id)
@@ -54,7 +54,7 @@ class RendercacheIoTests(DbTestCase):
 
     def test_clear(self):
         result = ProcessResult(pandas.DataFrame({"a": [1]}))
-        cache_render_result(self.workflow, self.wf_module, self.delta.id, result)
+        cache_pandas_render_result(self.workflow, self.wf_module, self.delta.id, result)
         parquet_key = crr_parquet_key(self.wf_module.cached_render_result)
         clear_cached_render_result_for_wf_module(self.wf_module)
 
@@ -81,9 +81,9 @@ class RendercacheIoTests(DbTestCase):
             ),
             columns=columns,
         )
-        cache_render_result(self.workflow, self.wf_module, self.delta.id, result)
+        cache_pandas_render_result(self.workflow, self.wf_module, self.delta.id, result)
 
-        # cache_render_result() keeps its `result` parameter in memory, so we
+        # cache_pandas_render_result() keeps its `result` parameter in memory, so we
         # can avoid disk entirely. Prove it by deleting from disk.
         minio.remove(BUCKET, crr_parquet_key(self.wf_module.cached_render_result))
 

@@ -5,7 +5,7 @@ import unittest
 from unittest.mock import Mock, patch
 import pandas as pd
 from cjwkernel.pandas.types import ProcessResult
-from cjwstate.rendercache import cache_render_result, read_cached_render_result
+from cjwstate.rendercache import cache_pandas_render_result, read_cached_render_result
 from cjwstate.models import Workflow
 from cjwstate.models.commands import InitWorkflowCommand
 from cjwstate.models.loaded_module import LoadedModule
@@ -50,7 +50,7 @@ class WorkflowTests(DbTestCase):
         )
 
         result1 = ProcessResult(pd.DataFrame({"A": [1]}))
-        cache_render_result(workflow, wf_module, delta1.id, result1)
+        cache_pandas_render_result(workflow, wf_module, delta1.id, result1)
 
         result2 = ProcessResult(pd.DataFrame({"B": [2]}))
         delta2 = InitWorkflowCommand.create(workflow)
@@ -157,12 +157,12 @@ class WorkflowTests(DbTestCase):
             order=0, slug="step-1", last_relevant_delta_id=delta.id
         )
         result1 = ProcessResult(pd.DataFrame({"A": [1]}))
-        cache_render_result(workflow, wf_module1, delta.id, result1)
+        cache_pandas_render_result(workflow, wf_module1, delta.id, result1)
         wf_module2 = tab.wf_modules.create(
             order=1, slug="step-2", last_relevant_delta_id=delta.id
         )
         result2 = ProcessResult(pd.DataFrame({"B": [2]}))
-        cache_render_result(workflow, wf_module2, delta.id, result2)
+        cache_pandas_render_result(workflow, wf_module2, delta.id, result2)
 
         fake_module.assert_not_called()
 
@@ -178,7 +178,7 @@ class WorkflowTests(DbTestCase):
             order=0, slug="step-1", last_relevant_delta_id=delta_id
         )
         result1 = ProcessResult(pd.DataFrame({"A": [1]}))
-        cache_render_result(workflow, wf_module1, delta_id, result1)
+        cache_pandas_render_result(workflow, wf_module1, delta_id, result1)
 
         # wf_module2: has no cached result (must be rendered)
         wf_module2 = tab.wf_modules.create(
@@ -207,7 +207,7 @@ class WorkflowTests(DbTestCase):
         wf_module = tab.wf_modules.create(
             order=0, slug="step-1", last_relevant_delta_id=delta1.id, notifications=True
         )
-        cache_render_result(
+        cache_pandas_render_result(
             workflow, wf_module, delta1.id, ProcessResult(pd.DataFrame({"A": [1]}))
         )
 
@@ -236,7 +236,7 @@ class WorkflowTests(DbTestCase):
         wf_module = tab.wf_modules.create(
             order=0, slug="step-1", last_relevant_delta_id=delta1.id, notifications=True
         )
-        cache_render_result(
+        cache_pandas_render_result(
             workflow, wf_module, delta1.id, ProcessResult(pd.DataFrame({"A": [1]}))
         )
 

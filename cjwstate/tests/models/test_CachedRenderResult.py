@@ -5,7 +5,7 @@ from cjwstate.models import Workflow
 from cjwstate.models.commands import InitWorkflowCommand
 from cjwstate.rendercache.io import (
     BUCKET,
-    cache_render_result,
+    cache_pandas_render_result,
     clear_cached_render_result_for_wf_module,
     crr_parquet_key,
     read_cached_render_result,
@@ -28,7 +28,7 @@ class CachedRenderResultTests(DbTestCase):
 
     def test_delete_wfmodule(self):
         result = ProcessResult(pandas.DataFrame({"a": [1]}))
-        cache_render_result(self.workflow, self.wf_module, self.delta.id, result)
+        cache_pandas_render_result(self.workflow, self.wf_module, self.delta.id, result)
         parquet_key = crr_parquet_key(self.wf_module.cached_render_result)
         self.wf_module.delete()
         self.assertFalse(minio.exists(BUCKET, parquet_key))
@@ -43,7 +43,7 @@ class CachedRenderResultTests(DbTestCase):
 
     def test_double_clear(self):
         result = ProcessResult(pandas.DataFrame({"a": [1]}))
-        cache_render_result(self.workflow, self.wf_module, self.delta.id, result)
+        cache_pandas_render_result(self.workflow, self.wf_module, self.delta.id, result)
         clear_cached_render_result_for_wf_module(self.wf_module)
         clear_cached_render_result_for_wf_module(self.wf_module)  # don't crash
 
@@ -51,7 +51,7 @@ class CachedRenderResultTests(DbTestCase):
         # The cache's filename depends on workflow_id and wf_module_id.
         # Duplicating it would need more complex code :).
         result = ProcessResult(pandas.DataFrame({"a": [1]}))
-        cache_render_result(self.workflow, self.wf_module, self.delta.id, result)
+        cache_pandas_render_result(self.workflow, self.wf_module, self.delta.id, result)
 
         workflow2 = Workflow.objects.create()
         tab2 = workflow2.tabs.create(position=0)
@@ -66,7 +66,7 @@ class CachedRenderResultTests(DbTestCase):
         # The cache's filename depends on workflow_id and wf_module_id.
         # Duplicating it would need more complex code :).
         result = ProcessResult(pandas.DataFrame({"a": [1]}))
-        cache_render_result(self.workflow, self.wf_module, self.delta.id, result)
+        cache_pandas_render_result(self.workflow, self.wf_module, self.delta.id, result)
         # Now simulate a new delta that hasn't been rendered
         self.wf_module.last_relevant_delta_id += 1
         self.wf_module.save(update_fields=["last_relevant_delta_id"])
