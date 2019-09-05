@@ -1,7 +1,6 @@
 from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import ValidationError
-from cjwkernel.pandas.types import Column  # TODO cjwkernel.types.Column
-from cjwkernel.types import RenderError
+from cjwkernel.types import Column, RenderError
 
 
 class ColumnsField(JSONField):

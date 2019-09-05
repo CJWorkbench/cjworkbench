@@ -3,7 +3,6 @@ import os
 from pathlib import Path
 import tempfile
 from typing import List, Optional
-from cjwkernel.pandas import types as ptypes
 from cjwkernel.types import ArrowTable, RenderResult, TableMetadata
 from cjwkernel.util import json_encode
 from cjwstate import minio, parquet
@@ -84,9 +83,7 @@ def cache_render_result(
     wf_module.cached_render_result_quick_fixes = []  # DELETEME
     wf_module.cached_render_result_status = status
     wf_module.cached_render_result_json = json_bytes
-    wf_module.cached_render_result_columns = [
-        ptypes.Column.from_arrow(c) for c in result.table.metadata.columns
-    ]
+    wf_module.cached_render_result_columns = result.table.metadata.columns
     wf_module.cached_render_result_nrows = result.table.metadata.n_rows
 
     # Now we get to the part where things can end up inconsistent. Try to
@@ -143,17 +140,15 @@ def open_cached_render_result(
                 )
         except FileNotFoundError:
             raise CorruptCacheError  # FIXME add unit test
-        arrow_table = ArrowTable(
-            arrow_path,
-            TableMetadata(
-                crr.nrows,
-                [
-                    c.to_arrow()
-                    for c in crr.columns
-                    if only_columns is None or c.name in only_columns
-                ],
-            ),
-        )  # TODO handle validation errors
+        # TODO handle validation errors => CorruptCacheError
+        if only_columns is None:
+            table_metadata = crr.table_metadata
+        else:
+            table_metadata = TableMetadata(
+                crr.table_metadata.n_rows,
+                [c for c in crr.table_metadata.columns if c.name in only_columns],
+            )
+        arrow_table = ArrowTable(arrow_path, table_metadata)
         yield RenderResult(arrow_table, crr.errors, crr.json)
     finally:
         os.unlink(filename)

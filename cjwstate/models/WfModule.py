@@ -5,7 +5,7 @@ from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.db.models import Q
 from cjwkernel.pandas import types as ptypes
-from cjwkernel.types import I18nMessage, RenderError
+from cjwkernel.types import I18nMessage, RenderError, TableMetadata
 from cjwstate import minio
 from cjwstate.models.loaded_module import LoadedModule
 from .fields import ColumnsField, RenderErrorsField
@@ -476,7 +476,7 @@ class WfModule(models.Model):
 
     def _build_cached_render_result_fresh_or_not(self) -> Optional[CachedRenderResult]:
         """
-        Build a CachedRenderResult with this WfModule's renderd output.
+        Build a CachedRenderResult with this WfModule's rendered output.
 
         If the output is stale, return it anyway. (The return value's .delta_id
         will not match this WfModule's .delta_id.)
@@ -534,18 +534,15 @@ class WfModule(models.Model):
             else:
                 errors = []
 
-        ret = CachedRenderResult(
+        return CachedRenderResult(
             workflow_id=self.workflow_id,
             wf_module_id=self.id,
             delta_id=delta_id,
             status=status,
             errors=errors,
             json=json_dict,
-            table_shape=ptypes.TableShape(nrows, columns),
+            table_metadata=TableMetadata(nrows, columns),
         )
-        # Keep in mind: ret.result has not been loaded yet. It might not exist
-        # when we do try reading it.
-        return ret
 
     def clear_cached_render_result(self) -> None:
         """

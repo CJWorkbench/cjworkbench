@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
 from cjwkernel.pandas.types import TableShape
-from cjwkernel.types import RenderError
+from cjwkernel.types import RenderError, TableMetadata
 
 
 @dataclass
@@ -27,7 +27,11 @@ class CachedRenderResult:
     status: str  # "ok", "error", "unreachable"
     errors: List[RenderError]
     json: Optional[Dict[str, Any]]
-    table_shape: TableShape
+    table_metadata: TableMetadata
+
+    @property
+    def table_shape(self) -> TableShape:
+        return TableShape.from_arrow(self.table_metadata)
 
     @property
     def columns(self):
@@ -35,7 +39,7 @@ class CachedRenderResult:
 
     @property
     def nrows(self):
-        return self.table_shape.nrows
+        return self.table_metadata.n_rows
 
     def __bool__(self):
         # overridden so `len(self) == 0` is still `bool(self) is True`
