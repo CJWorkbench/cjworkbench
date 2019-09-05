@@ -769,6 +769,30 @@ class ProcessResult:
             )
         )
 
+    @classmethod
+    def from_arrow(self, value: atypes.RenderResult) -> ProcessResult:
+        dataframe = value.table.table.to_pandas(
+            date_as_object=False, deduplicate_objects=True, ignore_metadata=True
+        )  # TODO ensure dictionaries stay dictionaries
+        if value.errors:
+            if value.errors[0].message.id == "TODO_i18n":
+                error = value.errors[0].message.args[0]
+            else:
+                error = value.errors[0].message.id
+            quick_fixes = [
+                QuickFix.from_arrow(qf) for qf in value.errors[0].quick_fixes
+            ]
+        else:
+            error = ""
+            quick_fixes = []
+        return ProcessResult(
+            dataframe=dataframe,
+            error=error,
+            json=value.json,
+            quick_fixes=quick_fixes,
+            columns=[Column.from_arrow(c) for c in value.table.metadata.columns],
+        )
+
     def to_arrow(self, path: pathlib.Path) -> atypes.RenderResult:
         """
         Build a lower-level RenderResult from this ProcessResult.

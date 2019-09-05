@@ -19,7 +19,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view, renderer_classes
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
-from cjwstate.rendercache import CorruptCacheError, read_cached_render_result_as_arrow
+from cjwstate.rendercache import CorruptCacheError, open_cached_render_result
 from cjwstate.models import Tab, WfModule, Workflow
 from cjwstate.models.loaded_module import module_get_html_bytes
 from server import rabbitmq
@@ -120,17 +120,19 @@ def _make_render_tuple(cached_result, startrow=None, endrow=None):
         : (settings.MAX_COLUMNS_PER_CLIENT_REQUEST + 1)
     ]
     column_names = [c.name for c in columns]
-    # raise CorruptCacheError
-    table = read_cached_render_result_as_arrow(cached_result, only_columns=column_names)
 
     if startrow is None:
         startrow = 0
     if endrow is None:
         endrow = startrow + _MaxNRowsPerRequest
 
-    startrow = max(0, startrow)
-    endrow = min(table.num_rows, endrow, startrow + _MaxNRowsPerRequest)
-    records = _arrow_table_to_json_records(table, startrow, endrow)
+    # raise CorruptCacheError
+    with open_cached_render_result(cached_result, only_columns=column_names) as result:
+        startrow = max(0, startrow)
+        endrow = min(
+            result.table.table.num_rows, endrow, startrow + _MaxNRowsPerRequest
+        )
+        records = _arrow_table_to_json_records(result.table.table, startrow, endrow)
 
     return (startrow, endrow, records)
 
@@ -224,18 +226,18 @@ def wfmodule_value_counts(request: HttpRequest, wf_module: WfModule):
     except StopIteration:
         return JsonResponse({"error": f'column "{colname}" not found'}, status=404)
 
+    # raise CorruptCacheError
     try:
-        # raise CorruptCacheError
-        table = read_cached_render_result_as_arrow(
+        with open_cached_render_result(
             cached_result, only_columns=[column.name]
-        )
+        ) as result:
+            series = result.table.table[0].to_pandas()
     except CorruptCacheError:
         # We _could_ return an empty result set; but our only goal here is
         # "don't crash" and this 404 seems to be the simplest implementation.
         # (We assume that if the data is deleted, the user has moved elsewhere
         # and this response is going to be ignored.)
         return JsonResponse({"error": f'column "{colname}" not found'}, status=404)
-    series = table[0].to_pandas()
 
     # We only handle string. If it's not string, convert to string. (Rationale:
     # this is used in Refine and Filter by Value, which are both solely
@@ -292,13 +294,12 @@ def wfmodule_tile(
 
     only_columns = cached_result.column_names[cbegin:cend]
     try:
-        table = read_cached_render_result_as_arrow(
+        with open_cached_render_result(
             cached_result, only_columns=only_columns
-        )
+        ) as result:
+            records = _arrow_table_to_json_records(result.table.table, rbegin, rend)
     except CorruptCacheError:
         raise  # TODO handle this case!
-
-    records = _arrow_table_to_json_records(table, rbegin, rend)
 
     return JsonResponse(records)
 
@@ -315,7 +316,8 @@ def wfmodule_public_output(
     cached_result = wf_module.cached_render_result
     if cached_result:
         try:
-            table = read_cached_render_result_as_arrow(cached_result)
+            with open_cached_render_result(cached_result) as result:
+                table = result.table.table
         except CorruptCacheError:
             table = pyarrow.Table()
     else:

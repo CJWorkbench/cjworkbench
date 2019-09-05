@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
-from cjwkernel.pandas.types import QuickFix, TableShape
+from cjwkernel.pandas.types import TableShape
+from cjwkernel.types import RenderError
 
 
 @dataclass
@@ -24,9 +25,8 @@ class CachedRenderResult:
     wf_module_id: int
     delta_id: int
     status: str  # "ok", "error", "unreachable"
-    error: str
+    errors: List[RenderError]
     json: Optional[Dict[str, Any]]
-    quick_fixes: List[QuickFix]
     table_shape: TableShape
 
     @property
@@ -38,13 +38,14 @@ class CachedRenderResult:
         return self.table_shape.nrows
 
     def __bool__(self):
+        # overridden so `len(self) == 0` is still `bool(self) is True`
         return True
 
     def __len__(self):
         """
-        Scan on-disk header for number of rows.
+        Number of rows.
 
-        This does not read the entire DataFrame.
+        This does not read the DataFrame.
 
         TODO make all callers read `.nrows` instead.
         """

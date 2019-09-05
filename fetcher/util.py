@@ -1,7 +1,8 @@
 from typing import Optional
 import pandas as pd
 from cjwstate import parquet
-from cjwstate.rendercache import read_cached_render_result, CorruptCacheError
+from cjwkernel.pandas.types import ProcessResult
+from cjwstate.rendercache import open_cached_render_result, CorruptCacheError
 from cjwstate.models import CachedRenderResult, StoredObject, WfModule
 
 
@@ -70,7 +71,8 @@ def read_dataframe_from_cached_render_result(
         * the file on minio cannot be read
     """
     try:
-        result = read_cached_render_result(crr)
+        with open_cached_render_result(crr) as render_result:
+            process_result = ProcessResult.from_arrow(render_result)
     except CorruptCacheError:
         return None
-    return result.dataframe
+    return process_result.dataframe

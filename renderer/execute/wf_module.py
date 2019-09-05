@@ -151,7 +151,10 @@ def _execute_wfmodule_save(
                 stale_result = None
             else:
                 # Read entire old Parquet file, blocking
-                stale_result = rendercache.read_cached_render_result(stale_crr)
+                with rendercache.open_cached_render_result(
+                    stale_crr
+                ) as stale_arrow_result:
+                    stale_result = ProcessResult.from_arrow(stale_arrow_result)
         else:
             stale_result = None
 

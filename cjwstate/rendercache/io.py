@@ -1,8 +1,11 @@
-import json
+from contextlib import contextmanager
+import os
+from pathlib import Path
+import tempfile
 from typing import List, Optional
-import pandas as pd
-import pyarrow
-from cjwkernel.pandas.types import ProcessResult
+from cjwkernel.pandas import types as ptypes
+from cjwkernel.types import ArrowTable, RenderResult, TableMetadata
+from cjwkernel.util import json_encode
 from cjwstate import minio, parquet
 from cjwstate.models import WfModule, Workflow, CachedRenderResult
 
@@ -12,9 +15,10 @@ BUCKET = minio.CachedRenderResultsBucket
 
 WF_MODULE_FIELDS = [
     "cached_render_result_delta_id",
-    "cached_render_result_error",
+    "cached_render_result_errors",
+    "cached_render_result_error",  # DELETEME
+    "cached_render_result_quick_fixes",  # DELETEME
     "cached_render_result_json",
-    "cached_render_result_quick_fixes",
     "cached_render_result_columns",
     "cached_render_result_status",
     "cached_render_result_nrows",
@@ -49,10 +53,10 @@ def crr_parquet_key(crr: CachedRenderResult) -> str:
 
 
 def cache_pandas_render_result(
-    workflow: Workflow, wf_module: WfModule, delta_id: int, result: ProcessResult
+    workflow: Workflow, wf_module: WfModule, delta_id: int, result: ptypes.ProcessResult
 ) -> CachedRenderResult:
     """
-    Save the given ProcessResult for later viewing.
+    Save the given ptypes.ProcessResult for later viewing.
 
     Raise AssertionError if `delta_id` is not what we expect.
 
@@ -62,19 +66,52 @@ def cache_pandas_render_result(
             wf_module.refresh_from_db()  # may change delta_id
             wf_module.cache_pandas_render_result(delta_id, result)
     """
+    fd, filename = tempfile.mkstemp()
+    try:
+        os.close(fd)
+        arrow_path = Path(filename)
+        arrow_result = result.to_arrow(arrow_path)
+        cache_render_result(workflow, wf_module, delta_id, arrow_result)
+    finally:
+        os.unlink(filename)
+
+
+def cache_render_result(
+    workflow: Workflow, wf_module: WfModule, delta_id: int, result: RenderResult
+) -> None:
+    """
+    Save `result` for later viewing.
+
+    Raise AssertionError if `delta_id` is not what we expect.
+
+    Since this alters data, be sure to call it within a lock:
+
+        with workflow.cooperative_lock():
+            wf_module.refresh_from_db()  # may change delta_id
+            cache_render_result(workflow, wf_module, delta_id, result)
+    """
     assert delta_id == wf_module.last_relevant_delta_id
     assert result is not None
 
-    json_bytes = json.dumps(result.json).encode("utf-8")
-    quick_fixes = result.quick_fixes
+    json_bytes = json_encode(result.json).encode("utf-8")
+    if not result.table.metadata.columns:
+        if result.errors:
+            status = "error"
+        else:
+            status = "unreachable"
+    else:
+        status = "ok"
 
     wf_module.cached_render_result_delta_id = delta_id
-    wf_module.cached_render_result_error = result.error
-    wf_module.cached_render_result_status = result.status
+    wf_module.cached_render_result_errors = result.errors
+    wf_module.cached_render_result_error = ""  # DELETEME
+    wf_module.cached_render_result_quick_fixes = []  # DELETEME
+    wf_module.cached_render_result_status = status
     wf_module.cached_render_result_json = json_bytes
-    wf_module.cached_render_result_quick_fixes = [qf.to_dict() for qf in quick_fixes]
-    wf_module.cached_render_result_columns = result.columns
-    wf_module.cached_render_result_nrows = len(result.dataframe)
+    wf_module.cached_render_result_columns = [
+        ptypes.Column.from_arrow(c) for c in result.table.metadata.columns
+    ]
+    wf_module.cached_render_result_nrows = result.table.metadata.n_rows
 
     # Now we get to the part where things can end up inconsistent. Try to
     # err on the side of not-caching when that happens.
@@ -82,68 +119,68 @@ def cache_pandas_render_result(
         workflow.id, wf_module.id
     )  # makes old cache inconsistent
     wf_module.save(update_fields=WF_MODULE_FIELDS)  # makes new cache inconsistent
-    parquet.write(
-        BUCKET, parquet_key(workflow.id, wf_module.id, delta_id), result.dataframe
-    )  # makes new cache consistent
+    if result.table.metadata.columns:  # only write non-zero-column tables
+        parquet.write(
+            BUCKET, parquet_key(workflow.id, wf_module.id, delta_id), result.table.table
+        )  # makes new cache consistent
 
 
-def _parquet_read_dataframe(bucket: str, key: str) -> pd.DataFrame:
-    try:
-        return parquet.read(bucket, key)
-    except OSError:
-        # Two possibilities:
-        #
-        # 1. The file is missing.
-        # 2. The file is empty. (We used to write empty files in
-        #    assign_wf_module.)
-        #
-        # Either way, our cached DataFrame is "empty", and we represent
-        # that as None.
-        return pd.DataFrame()
-    except parquet.FastparquetCouldNotHandleFile:
-        # Treat bugs as "empty file"
-        return pd.DataFrame()
-
-
-def read_cached_render_result(crr: CachedRenderResult) -> ProcessResult:
+@contextmanager
+def open_cached_render_result(
+    crr: CachedRenderResult, only_columns: Optional[List[str]] = None
+):
     """
-    Hydrate a CachedRenderResult into a ProcessResult, by reading from disk.
+    Yield a RenderResult equivalent to the one passed to `cache_render_result()`.
 
-    If the CachedRenderResult is invalid, raise CorruptCacheError.
+    Raise CorruptCacheError if the cached data does not match `crr`. That can
+    mean:
 
-    TODO switch retval to cjwkernel.types.RenderResult
+        * The cached Parquet file is corrupt
+        * The cached Parquet file is missing
+        * `crr` is stale -- the cached result is for a different delta. This
+          could be detected by a `Workflow.cooperative_lock()`, too, should the
+          caller want to distinguish this error from the others.
+
+    The returned RenderResult is backed by an mmapped file on disk, so it
+    doesn't require much physical RAM.
+
+    If only_columns is a list of column names, the yielded RenderResult only
+    contains the specified columns.
     """
-    dataframe = _parquet_read_dataframe(
-        minio.CachedRenderResultsBucket, crr_parquet_key(crr)
-    )
-    if not len(dataframe.columns) and len(crr.columns):
-        # We cached data, and now the file is gone. That's a ValueError.
-        raise CorruptCacheError
-    return ProcessResult(
-        dataframe,
-        error=crr.error,
-        json=crr.json,
-        quick_fixes=crr.quick_fixes,
-        columns=crr.columns,
-    )
-
-
-def read_cached_render_result_as_arrow(
-    crr: CachedRenderResult, *, only_columns: Optional[List[str]] = None
-) -> pyarrow.Table:
-    """
-    Read a cached Parquet file into an mmapped Arrow table.
-
-    If the CachedRenderResult is invalid, raise CorruptCacheError.
-
-    If the CachedRenderResult is an "error" result, return an empty table.
-    """
-    try:
-        return parquet.read_arrow_table(
-            BUCKET, crr_parquet_key(crr), only_columns=only_columns
+    if not crr.columns:
+        # Zero-column tables aren't written to cache
+        yield RenderResult(
+            ArrowTable(None, TableMetadata(crr.nrows, [])), crr.errors, crr.json
         )
-    except FileNotFoundError:
-        raise CorruptCacheError
+        return
+
+    fd, filename = tempfile.mkstemp()
+    try:
+        os.close(fd)
+        arrow_path = Path(filename)
+        try:
+            with minio.temporarily_download(
+                BUCKET, crr_parquet_key(crr)
+            ) as parquet_path:
+                parquet.convert_parquet_file_to_arrow_file(
+                    parquet_path, arrow_path, only_columns=only_columns
+                )
+        except FileNotFoundError:
+            raise CorruptCacheError  # FIXME add unit test
+        arrow_table = ArrowTable(
+            arrow_path,
+            TableMetadata(
+                crr.nrows,
+                [
+                    c.to_arrow()
+                    for c in crr.columns
+                    if only_columns is None or c.name in only_columns
+                ],
+            ),
+        )  # TODO handle validation errors
+        yield RenderResult(arrow_table, crr.errors, crr.json)
+    finally:
+        os.unlink(filename)
 
 
 def delete_parquet_files_for_wf_module(workflow_id: int, wf_module_id: int) -> None:
@@ -169,6 +206,7 @@ def clear_cached_render_result_for_wf_module(wf_module: WfModule) -> None:
     delete_parquet_files_for_wf_module(wf_module.workflow_id, wf_module.id)
 
     wf_module.cached_render_result_delta_id = None
+    wf_module.cached_render_result_errors = []
     wf_module.cached_render_result_error = ""
     wf_module.cached_render_result_json = b"null"
     wf_module.cached_render_result_quick_fixes = []

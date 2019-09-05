@@ -5,7 +5,12 @@ import pathlib
 import tempfile
 import weakref
 from typing import Any, Dict, List, Optional, Union
-from cjwkernel.pandas.types import RenderColumn, StepResultShape, TabOutput
+from cjwkernel.pandas.types import (
+    ProcessResult,
+    RenderColumn,
+    StepResultShape,
+    TabOutput,
+)
 from cjwstate import minio
 from cjwstate.models import Tab, UploadedFile
 from cjwstate.models.param_spec import ParamDType
@@ -15,7 +20,7 @@ from .types import (
     UnneededExecution,
     PromptingError,
 )
-from cjwstate.rendercache import read_cached_render_result
+from cjwstate.rendercache import open_cached_render_result
 
 
 FilesystemUnsafeChars = re.compile("[^-_.,()a-zA-Z0-9]")
@@ -245,7 +250,10 @@ def _(dtype: ParamDType.Tab, value: str, context: RenderContext) -> TabOutput:
         # looks like that version must be stale.
         raise UnneededExecution
 
-    result = read_cached_render_result(crr)  # read Parquet from disk (slow)
+    # read Parquet from disk (slow)
+    with open_cached_render_result(crr) as arrow_result:
+        result = ProcessResult.from_arrow(arrow_result)
+
     return TabOutput(
         tab_slug,
         tab.name,

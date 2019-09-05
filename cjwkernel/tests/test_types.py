@@ -163,6 +163,20 @@ class ThriftConvertersTest(unittest.TestCase):
             ),
         )
 
+    def test_i18n_message_from_dict(self):
+        self.assertEqual(
+            types.I18nMessage.from_dict(
+                {"id": "modules.x.y", "arguments": ["s", 12345678, 0.123]}
+            ),
+            types.I18nMessage("modules.x.y", ["s", 12345678, 0.123]),
+        )
+
+    def test_i18n_message_to_dict(self):
+        self.assertEqual(
+            types.I18nMessage("modules.x.y", ["s", 12345678, 0.123]).to_dict(),
+            {"id": "modules.x.y", "arguments": ["s", 12345678, 0.123]},
+        )
+
     def test_prepend_step_quick_fix_action_from_thrift(self):
         self.assertEqual(
             types.QuickFixAction.from_thrift(
@@ -185,11 +199,33 @@ class ThriftConvertersTest(unittest.TestCase):
             ),
         )
 
+    def test_prepend_step_quick_fix_action_from_dict(self):
+        self.assertEqual(
+            types.QuickFixAction.from_dict(
+                {
+                    "type": "prependStep",
+                    "moduleSlug": "filter",
+                    "partialParams": {"x": "y"},
+                }
+            ),
+            types.QuickFixAction.PrependStep("filter", {"x": "y"}),
+        )
+
+    def test_prepend_step_quick_fix_action_to_dict(self):
+        self.assertEqual(
+            types.QuickFixAction.PrependStep("filter", {"x": "y"}).to_dict(),
+            {
+                "type": "prependStep",
+                "moduleSlug": "filter",
+                "partialParams": {"x": "y"},
+            },
+        )
+
     def test_quick_fix_from_thrift(self):
         self.assertEqual(
             types.QuickFix.from_thrift(
                 ttypes.QuickFix(
-                    "Click",
+                    ttypes.I18nMessage("click", []),
                     ttypes.QuickFixAction(
                         prepend_step=ttypes.PrependStepQuickFixAction(
                             "filter", ttypes.Params('{"x":"y"}')
@@ -198,23 +234,59 @@ class ThriftConvertersTest(unittest.TestCase):
                 )
             ),
             types.QuickFix(
-                "Click", types.QuickFixAction.PrependStep("filter", {"x": "y"})
+                types.I18nMessage("click", []),
+                types.QuickFixAction.PrependStep("filter", {"x": "y"}),
             ),
         )
 
     def test_quick_fix_to_thrift(self):
         self.assertEqual(
             types.QuickFix(
-                "Click", types.QuickFixAction.PrependStep("filter", {"x": "y"})
+                types.I18nMessage("click", []),
+                types.QuickFixAction.PrependStep("filter", {"x": "y"}),
             ).to_thrift(),
             ttypes.QuickFix(
-                "Click",
+                ttypes.I18nMessage("click", []),
                 ttypes.QuickFixAction(
                     prepend_step=ttypes.PrependStepQuickFixAction(
                         "filter", ttypes.Params('{"x":"y"}')
                     )
                 ),
             ),
+        )
+
+    def test_quick_fix_from_dict(self):
+        self.assertEqual(
+            types.QuickFix.from_dict(
+                {
+                    "buttonText": {"id": "click", "arguments": []},
+                    "action": {
+                        "type": "prependStep",
+                        "moduleSlug": "filter",
+                        "partialParams": {"x": "y"},
+                    },
+                }
+            ),
+            types.QuickFix(
+                types.I18nMessage("click", []),
+                types.QuickFixAction.PrependStep("filter", {"x": "y"}),
+            ),
+        )
+
+    def test_quick_fix_to_dict(self):
+        self.assertEqual(
+            types.QuickFix(
+                types.I18nMessage("click", []),
+                types.QuickFixAction.PrependStep("filter", {"x": "y"}),
+            ).to_dict(),
+            {
+                "buttonText": {"id": "click", "arguments": []},
+                "action": {
+                    "type": "prependStep",
+                    "moduleSlug": "filter",
+                    "partialParams": {"x": "y"},
+                },
+            },
         )
 
     def test_render_error_from_thrift(self):
@@ -224,7 +296,7 @@ class ThriftConvertersTest(unittest.TestCase):
                     ttypes.I18nMessage("foo", []),
                     [
                         ttypes.QuickFix(
-                            "Click",
+                            ttypes.I18nMessage("click", []),
                             ttypes.QuickFixAction(
                                 prepend_step=ttypes.PrependStepQuickFixAction(
                                     "filter", ttypes.Params('{"x":"y"}')
@@ -238,7 +310,8 @@ class ThriftConvertersTest(unittest.TestCase):
                 types.I18nMessage("foo", []),
                 [
                     types.QuickFix(
-                        "Click", types.QuickFixAction.PrependStep("filter", {"x": "y"})
+                        types.I18nMessage("click", []),
+                        types.QuickFixAction.PrependStep("filter", {"x": "y"}),
                     )
                 ],
             ),
@@ -250,7 +323,8 @@ class ThriftConvertersTest(unittest.TestCase):
                 types.I18nMessage("foo", []),
                 [
                     types.QuickFix(
-                        "Click", types.QuickFixAction.PrependStep("filter", {"x": "y"})
+                        types.I18nMessage("click", []),
+                        types.QuickFixAction.PrependStep("filter", {"x": "y"}),
                     )
                 ],
             ).to_thrift(),
@@ -258,7 +332,7 @@ class ThriftConvertersTest(unittest.TestCase):
                 ttypes.I18nMessage("foo", []),
                 [
                     ttypes.QuickFix(
-                        "Click",
+                        ttypes.I18nMessage("click", []),
                         ttypes.QuickFixAction(
                             prepend_step=ttypes.PrependStepQuickFixAction(
                                 "filter", ttypes.Params('{"x":"y"}')
@@ -269,11 +343,65 @@ class ThriftConvertersTest(unittest.TestCase):
             ),
         )
 
-        def test_render_result_ok_from_thrift(self):
-            pass  # TODO test RenderResult conversion
+    def test_render_error_from_dict(self):
+        self.assertEqual(
+            types.RenderError.from_dict(
+                {
+                    "message": {"id": "err", "arguments": []},
+                    "quickFixes": [
+                        {
+                            "buttonText": {"id": "click", "arguments": []},
+                            "action": {
+                                "type": "prependStep",
+                                "moduleSlug": "filter",
+                                "partialParams": {"x": "y"},
+                            },
+                        }
+                    ],
+                }
+            ),
+            types.RenderError(
+                types.I18nMessage("err", []),
+                [
+                    types.QuickFix(
+                        types.I18nMessage("click", []),
+                        types.QuickFixAction.PrependStep("filter", {"x": "y"}),
+                    )
+                ],
+            ),
+        )
 
-        def test_render_result_ok_to_thrift(self):
-            pass  # TODO test RenderResult conversion
+    def test_render_error_to_dict(self):
+        self.assertEqual(
+            types.RenderError(
+                types.I18nMessage("err", []),
+                [
+                    types.QuickFix(
+                        types.I18nMessage("click", []),
+                        types.QuickFixAction.PrependStep("filter", {"x": "y"}),
+                    )
+                ],
+            ).to_dict(),
+            {
+                "message": {"id": "err", "arguments": []},
+                "quickFixes": [
+                    {
+                        "buttonText": {"id": "click", "arguments": []},
+                        "action": {
+                            "type": "prependStep",
+                            "moduleSlug": "filter",
+                            "partialParams": {"x": "y"},
+                        },
+                    }
+                ],
+            },
+        )
+
+    def test_render_result_from_thrift(self):
+        pass  # TODO test RenderResult conversion
+
+    def test_render_result_to_thrift(self):
+        pass  # TODO test RenderResult conversion
 
 
 class NumberFormatterTest(unittest.TestCase):

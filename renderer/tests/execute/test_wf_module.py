@@ -5,6 +5,7 @@ from django.utils import timezone
 import pandas as pd
 from pandas.testing import assert_frame_equal
 from cjwkernel.pandas.types import ProcessResult
+from cjwkernel.types import I18nMessage, RenderError
 from cjwstate import minio
 from cjwstate.storedobjects import create_stored_object
 from cjwstate.models import Workflow
@@ -32,10 +33,17 @@ class WfModuleTests(DbTestCase):
         result = self.run_with_async_db(
             execute_wfmodule(workflow, wf_module, {}, tab.name, ProcessResult(), {})
         )
-        expected = "Please delete this step: an administrator uninstalled its code."
-        self.assertEqual(result.error, expected)
+        expected = [
+            RenderError(
+                I18nMessage(
+                    "TODO_i18n",
+                    ["Please delete this step: an administrator uninstalled its code."],
+                )
+            )
+        ]
+        self.assertEqual(result.to_arrow("unused").errors, expected)
         wf_module.refresh_from_db()
-        self.assertEqual(wf_module.cached_render_result_error, expected)
+        self.assertEqual(wf_module.cached_render_result.errors, expected)
 
     @contextmanager
     def _stub_module(self, render_fn):

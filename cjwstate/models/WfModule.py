@@ -4,10 +4,11 @@ from typing import Any, Dict, Optional, Union
 from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.db.models import Q
-from cjwkernel.pandas.types import QuickFix, TableShape
+from cjwkernel.pandas import types as ptypes
+from cjwkernel.types import I18nMessage, RenderError
 from cjwstate import minio
 from cjwstate.models.loaded_module import LoadedModule
-from .fields import ColumnsField
+from .fields import ColumnsField, RenderErrorsField
 from .CachedRenderResult import CachedRenderResult
 from .module_version import ModuleVersion
 from .Tab import Tab
@@ -104,10 +105,14 @@ class WfModule(models.Model):
         choices=[("ok", "ok"), ("error", "error"), ("unreachable", "unreachable")],
         max_length=20,
     )
+    cached_render_result_errors = RenderErrorsField(blank=True, default=list)
+
+    # Backwards-compatibility errors. TODO migrate to cached_render_result_errors.
     cached_render_result_error = models.TextField(blank=True)
+    cached_render_result_quick_fixes = JSONField(blank=True, default=list)
+
     # should be JSONField but we need backwards-compatibility
     cached_render_result_json = models.BinaryField(blank=True)
-    cached_render_result_quick_fixes = JSONField(blank=True, default=list)
     cached_render_result_columns = ColumnsField(null=True, blank=True)
     cached_render_result_nrows = models.IntegerField(null=True, blank=True)
 
@@ -115,7 +120,7 @@ class WfModule(models.Model):
     # be implied by the fact that the cached output revision is wrong.
     is_busy = models.BooleanField(default=False, null=False)
 
-    # There's fetch_error and there's cached_render_result_error.
+    # There's fetch_error and there's cached_render_result_errors.
     fetch_error = models.CharField("fetch_error", max_length=2000, blank=True)
 
     # Most-recent delta that may possibly affect the output of this module.
@@ -346,7 +351,15 @@ class WfModule(models.Model):
         if cached_result is not None and self.tab.name == to_tab.name:
             # assuming file-copy succeeds, copy cached results.
             new_wfm.cached_render_result_delta_id = new_wfm.last_relevant_delta_id
-            for attr in ("status", "error", "json", "quick_fixes", "columns", "nrows"):
+            for attr in (
+                "status",
+                "error",
+                "errors",
+                "json",
+                "quick_fixes",
+                "columns",
+                "nrows",
+            ):
                 full_attr = f"cached_render_result_{attr}"
                 setattr(new_wfm, full_attr, getattr(self, full_attr))
 
@@ -428,9 +441,10 @@ class WfModule(models.Model):
             with workflow.cooperative_lock():
                 wf_module.refresh_from_db()
                 # Read from disk
-                result = cjwstate.rendercache.io.read_cached_render_result(
-                    wf_module.get_stale_cached_render_result()
-                )
+                with cjwstate.rendercache.io.open_cached_render_result(
+                    wf_module.cached_render_result
+                ) as result:
+                    ...
         """
         result = self._build_cached_render_result_fresh_or_not()
         if result and result.delta_id != self.last_relevant_delta_id:
@@ -450,9 +464,10 @@ class WfModule(models.Model):
             with workflow.cooperative_lock():
                 wf_module.refresh_from_db()
                 # Read from disk
-                result = cjwstate.rendercache.io.read_cached_render_result(
+                with cjwstate.rendercache.io.open_cached_render_result(
                     wf_module.get_stale_cached_render_result()
-                )
+                ) as result:
+                    ...
         """
         result = self._build_cached_render_result_fresh_or_not()
         if result and result.delta_id == self.last_relevant_delta_id:
@@ -473,16 +488,15 @@ class WfModule(models.Model):
             with workflow.cooperative_lock():
                 wf_module.refresh_from_db()
                 # Read from disk
-                result = cjwstate.rendercache.io.read_cached_render_result(
-                    wf_module._build_cached_render_result_fresh_or_not()
-                )
+                with cjwstate.rendercache.io.open_cached_render_result(
+                    wf_module.get_stale_cached_render_result()
+                ) as result:
         """
         if self.cached_render_result_delta_id is None:
             return None
 
         delta_id = self.cached_render_result_delta_id
         status = self.cached_render_result_status
-        error = self.cached_render_result_error
         columns = self.cached_render_result_columns
         nrows = self.cached_render_result_nrows
 
@@ -500,21 +514,34 @@ class WfModule(models.Model):
         else:
             json_dict = None
 
-        quick_fixes = self.cached_render_result_quick_fixes
-        if not quick_fixes:
-            quick_fixes = []
-        # Coerce from dict to QuickFixes
-        quick_fixes = [QuickFix(**qf) for qf in quick_fixes]
+        if self.cached_render_result_errors:
+            errors = self.cached_render_result_errors
+        else:
+            # Compatibility. TODO migrate, then delete these columns
+            error = self.cached_render_result_error
+            if error:
+                quick_fixes = self.cached_render_result_quick_fixes
+                if not quick_fixes:
+                    quick_fixes = []
+                # Coerce from dict to QuickFixes
+                quick_fixes = [ptypes.QuickFix(**qf) for qf in quick_fixes]
+                errors = [
+                    RenderError(
+                        I18nMessage("TODO_i18n", [error]),
+                        [qf.to_arrow() for qf in quick_fixes],
+                    )
+                ]
+            else:
+                errors = []
 
         ret = CachedRenderResult(
             workflow_id=self.workflow_id,
             wf_module_id=self.id,
             delta_id=delta_id,
             status=status,
-            error=error,
+            errors=errors,
             json=json_dict,
-            quick_fixes=quick_fixes,
-            table_shape=TableShape(nrows, columns),
+            table_shape=ptypes.TableShape(nrows, columns),
         )
         # Keep in mind: ret.result has not been loaded yet. It might not exist
         # when we do try reading it.

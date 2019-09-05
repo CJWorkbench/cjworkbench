@@ -48,7 +48,7 @@ class ParquetTest(unittest.TestCase):
                 parquet.read(bucket, key)
 
     def _test_read_write_table(self, table):
-        parquet.write(bucket, key, table)
+        parquet.write_pandas(bucket, key, table)
         result = parquet.read(bucket, key)
         assert_frame_equal(result, table)
 
@@ -79,7 +79,7 @@ class ParquetTest(unittest.TestCase):
         expected = pd.DataFrame({"A": [np.nan]}, dtype=str).astype("category")
         assert expected["A"].cat.categories.dtype == object
         try:
-            parquet.write(bucket, key, expected)
+            parquet.write_pandas(bucket, key, expected)
             result = parquet.read(bucket, key)
         finally:
             minio.remove(bucket, key)
@@ -89,7 +89,7 @@ class ParquetTest(unittest.TestCase):
         expected = pd.DataFrame({"A": []}, dtype="str").astype("category")
         assert expected["A"].cat.categories.dtype == object
         try:
-            parquet.write(bucket, key, expected)
+            parquet.write_pandas(bucket, key, expected)
             result = parquet.read(bucket, key)
         finally:
             minio.remove(bucket, key)

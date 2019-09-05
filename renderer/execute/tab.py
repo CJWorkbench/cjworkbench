@@ -3,7 +3,7 @@ import logging
 from typing import Any, Dict, List, Optional, FrozenSet
 from cjworkbench.sync import database_sync_to_async
 from cjwkernel.pandas.types import ProcessResult, StepResultShape
-from cjwstate.rendercache import read_cached_render_result
+from cjwstate.rendercache import open_cached_render_result
 from cjwstate.models import WfModule, Workflow, Tab
 from cjwstate.models.param_spec import ParamDType
 from .wf_module import execute_wfmodule, locked_wf_module
@@ -124,7 +124,8 @@ def _load_input_from_cache(workflow: Workflow, flow: TabFlow) -> ProcessResult:
             assert crr is not None  # otherwise it's not fresh, see?
 
             # Read the entire input Parquet file.
-            return read_cached_render_result(crr)
+            with open_cached_render_result(crr) as arrow_result:
+                return ProcessResult.from_arrow(arrow_result)
 
 
 async def execute_tab_flow(

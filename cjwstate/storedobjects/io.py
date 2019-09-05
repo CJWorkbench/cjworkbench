@@ -90,7 +90,7 @@ def create_stored_object(
     The caller should call enforce_storage_limits() after calling this.
     """
     key = _build_key(workflow.id, wf_module.id)
-    size = parquet.write(minio.StoredObjectsBucket, key, table)
+    size = parquet.write_pandas(minio.StoredObjectsBucket, key, table)
     stored_object = wf_module.stored_objects.create(
         bucket=BUCKET, key=key, size=size, hash=hash
     )

@@ -349,7 +349,7 @@ class ArrowTable:
                     or pyarrow.types.is_string(ttype)
                     or (
                         pyarrow.types.is_dictionary(ttype)
-                        and ttype.value_type.is_string()
+                        and pyarrow.types.is_string(ttype.value_type)
                     )
                 )
                 # Assert the column type in our metadata matches it
@@ -363,6 +363,26 @@ class ArrowTable:
                     pyarrow.types.is_string(ttype) or pyarrow.types.is_dictionary(ttype)
                 ) == isinstance(mcol.type, ColumnTypeText)
         object.__setattr__(self, "table", table)
+
+    def __eq__(self, other: Any) -> bool:
+        """
+        Compare for table equality: same Arrow data and same metadata.
+
+        `path` is not tested. Typical callers will use tempfiles and not care
+        whether they're equal.
+        """
+        return (
+            isinstance(other, type(self))
+            and other.metadata == self.metadata
+            and (
+                (other.table is None and self.table is None)
+                or (
+                    other.table is not None
+                    and self.table is not None
+                    and other.table.equals(self.table)
+                )
+            )
+        )
 
     @classmethod
     def from_thrift(cls, value: ttypes.ArrowTable) -> ArrowTable:
@@ -468,6 +488,13 @@ class I18nMessage:
             self.id, [_i18n_argument_to_thrift(a) for a in self.args]
         )
 
+    @classmethod
+    def from_dict(cls, value: Dict[str, Any]) -> I18nMessage:
+        return cls(value["id"], value["arguments"])
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {"id": self.id, "arguments": self.args}
+
 
 @dataclass(frozen=True)
 class Params:
@@ -489,9 +516,25 @@ class QuickFixAction(ABC):
         if value.prepend_step is not None:
             return PrependStepQuickFixAction.from_thrift(value.prepend_step)
 
+    @classmethod
+    def from_dict(cls, value: Dict[str, Any]):
+        if value["type"] == "prependStep":
+            return PrependStepQuickFixAction.from_dict(value)
+        else:
+            raise ValueError("Unhandled type in QuickFixAction: %r", value)
+
     @abstractmethod
     def to_thrift(self) -> ttypes.QuickFixAction:
         pass
+
+    @abstractmethod
+    def to_dict(self) -> Dict[str, Any]:
+        """
+        Convert to Dict.
+        
+        Subclasses must implement this method. The returned dict must have a
+        "type" key, so `QuickFix.from_dict()` can handle it.
+        """
 
 
 @dataclass(frozen=True)
@@ -518,6 +561,18 @@ class PrependStepQuickFixAction:
             )
         )
 
+    @classmethod
+    def from_dict(cls, value: Dict[str, Any]) -> PrependStepQuickFixAction:
+        return cls(value["moduleSlug"], value["partialParams"])
+
+    # override
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "type": "prependStep",
+            "moduleSlug": self.module_slug,
+            "partialParams": self.partial_params,
+        }
+
 
 QuickFixAction.PrependStep = PrependStepQuickFixAction
 
@@ -531,10 +586,26 @@ class QuickFix:
 
     @classmethod
     def from_thrift(cls, value: ttypes.QuickFix) -> QuickFix:
-        return cls(value.button_text, QuickFixAction.from_thrift(value.action))
+        return cls(
+            I18nMessage.from_thrift(value.button_text),
+            QuickFixAction.from_thrift(value.action),
+        )
 
     def to_thrift(self) -> ttypes.QuickFix:
-        return ttypes.QuickFix(self.button_text, self.action.to_thrift())
+        return ttypes.QuickFix(self.button_text.to_thrift(), self.action.to_thrift())
+
+    @classmethod
+    def from_dict(cls, value: Dict[str, Any]) -> QuickFix:
+        return cls(
+            I18nMessage.from_dict(value["buttonText"]),
+            QuickFixAction.from_dict(value["action"]),
+        )
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "buttonText": self.button_text.to_dict(),
+            "action": self.action.to_dict(),
+        }
 
 
 @dataclass(frozen=True)
@@ -549,7 +620,7 @@ class RenderError:
     """
 
     message: I18nMessage
-    quick_fixes: List[QuickFix]
+    quick_fixes: List[QuickFix] = field(default_factory=list)
 
     @classmethod
     def from_thrift(cls, value: ttypes.RenderError) -> RenderError:
@@ -562,6 +633,19 @@ class RenderError:
         return ttypes.RenderError(
             self.message.to_thrift(), [qf.to_thrift() for qf in self.quick_fixes]
         )
+
+    @classmethod
+    def from_dict(cls, value: Dict[str, Any]) -> RenderError:
+        return cls(
+            I18nMessage.from_dict(value["message"]),
+            [QuickFix.from_dict(qf) for qf in value["quickFixes"]],
+        )
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "message": self.message.to_dict(),
+            "quickFixes": [qf.to_dict() for qf in self.quick_fixes],
+        }
 
 
 @dataclass(frozen=True)
@@ -613,7 +697,7 @@ class RenderResult:
     errors: List[RenderError] = field(default_factory=list)
     """User-facing errors or warnings reported by the module."""
 
-    json: Optional[Dict[str, Any]] = None
+    json: Dict[str, Any] = field(default_factory=dict)
     """JSON to pass to the module's HTML, if it has HTML."""
 
     @classmethod

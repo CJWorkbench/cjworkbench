@@ -4,7 +4,6 @@ import tempfile
 from typing import List, Optional
 import fastparquet
 from typing import Any, Callable
-import pyarrow as pa
 import pyarrow.parquet
 from fastparquet import ParquetFile
 import pandas
@@ -146,42 +145,41 @@ def read(
     return dataframe
 
 
-def read_arrow_table(
-    bucket: str, key: str, *, only_columns: Optional[List[str]] = None
-) -> pa.Table:
-    """
-    Return data from minio, as an Apache Arrow Table.
+def convert_parquet_file_to_arrow_file(
+    parquet_path: Path, arrow_path: Path, only_columns: Optional[List[str]] = None
+) -> None:
+    # TODO stream one column at a time? pyarrow makes it tricky, but it would
+    # be more efficient because less RAM would be used.
 
-    The table is stored entirely in RAM. TODO stream it to an mmapped file.
-    """
-    with minio.temporarily_download(bucket, key) as path:
-        table = pyarrow.parquet.read_table(
-            path, use_threads=False, columns=only_columns
-        )
+    table = pyarrow.parquet.read_table(
+        parquet_path, use_threads=False, columns=only_columns
+    )
 
-        # Avoid a problem calling .to_pandas() with fastparquet-dumped files.
-        #
-        #   File "pyarrow/array.pxi", line 441, in pyarrow.lib._PandasConvertible.to_pandas
-        #   File "pyarrow/table.pxi", line 1367, in pyarrow.lib.Table._to_pandas
-        #   File "/root/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.7/site-packages/pyarrow/pandas_compat.py", line 644, in table_to_blockmanager
-        #     table = _add_any_metadata(table, pandas_metadata)
-        #   File "/root/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.7/site-packages/pyarrow/pandas_compat.py", line 967, in _add_any_metadata
-        #     idx = schema.get_field_index(raw_name)
-        #   File "pyarrow/types.pxi", line 902, in pyarrow.lib.Schema.get_field_index
-        #   File "stringsource", line 15, in string.from_py.__pyx_convert_string_from_py_std__in_string
-        # TypeError: expected bytes, dict found
-        #
-        # [2019-08-22] fastparquet-dumped files will be around for a long time.
-        #
-        # We don't care about schema metadata, anyway. Workbench has its own
-        # restrictive schema; we don't need extra Pandas-specific data because
-        # we don't support everything Pandas supports.
-        table = table.replace_schema_metadata(None)  # FIXME unit-test this!
+    # Avoid a problem calling .to_pandas() with fastparquet-dumped files.
+    #
+    #   File "pyarrow/array.pxi", line 441, in pyarrow.lib._PandasConvertible.to_pandas
+    #   File "pyarrow/table.pxi", line 1367, in pyarrow.lib.Table._to_pandas
+    #   File "/root/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.7/site-packages/pyarrow/pandas_compat.py", line 644, in table_to_blockmanager
+    #     table = _add_any_metadata(table, pandas_metadata)
+    #   File "/root/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.7/site-packages/pyarrow/pandas_compat.py", line 967, in _add_any_metadata
+    #     idx = schema.get_field_index(raw_name)
+    #   File "pyarrow/types.pxi", line 902, in pyarrow.lib.Schema.get_field_index
+    #   File "stringsource", line 15, in string.from_py.__pyx_convert_string_from_py_std__in_string
+    # TypeError: expected bytes, dict found
+    #
+    # [2019-08-22] fastparquet-dumped files will be around for a long time.
+    #
+    # We don't care about schema metadata, anyway. Workbench has its own
+    # restrictive schema; we don't need extra Pandas-specific data because
+    # we don't support everything Pandas supports.
+    table = table.replace_schema_metadata(None)  # FIXME unit-test this!
 
-        return table
+    writer = pyarrow.RecordBatchFileWriter(str(arrow_path), table.schema)
+    writer.write_table(table)
+    writer.close()
 
 
-def write(bucket: str, key: str, table: pandas.DataFrame) -> int:
+def write_pandas(bucket: str, key: str, table: pandas.DataFrame) -> int:
     """
     Write a Pandas DataFrame to a minio file, overwriting if needed.
 
@@ -193,6 +191,33 @@ def write(bucket: str, key: str, table: pandas.DataFrame) -> int:
     """
     with tempfile.NamedTemporaryFile() as tf:
         fastparquet.write(tf.name, table, compression="SNAPPY", object_encoding="utf8")
+        minio.fput_file(bucket, key, Path(tf.name))
+        tf.seek(0, io.SEEK_END)
+        return tf.tell()
+
+
+def write(bucket: str, key: str, table: pyarrow.Table) -> int:
+    """
+    Write a Pandas DataFrame to a minio file, overwriting if needed.
+
+    Return number of bytes written.
+
+    We aim to keep the file format "stable": all future versions of
+    parquet.read() should support all files written by today's version of this
+    function.
+    """
+    with tempfile.NamedTemporaryFile("wb") as tf:
+        pyarrow.parquet.write_table(
+            table,
+            tf,
+            ## Preserve whatever dictionaries we have in Pandas. Write+read
+            ## should return an exact copy.
+            # use_dictionary=[
+            #    c.name for c in table.columns if pyarrow.types.is_dictionary(c.type)
+            # ],
+            compression="SNAPPY",
+        )
+        tf.flush()
         minio.fput_file(bucket, key, Path(tf.name))
         tf.seek(0, io.SEEK_END)
         return tf.tell()

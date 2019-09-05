@@ -1,32 +1,11 @@
-from contextlib import contextmanager
-import os
 from pathlib import Path
-import tempfile
 import unittest
 import pyarrow
 from cjwstate.tests.utils import MockPath
 from cjwkernel.errors import ModuleCompileError, ModuleExitedError
 from cjwkernel.kernel import Kernel
+from cjwkernel.tests.util import arrow_file
 from cjwkernel import types
-
-
-@contextmanager
-def arrow_file(table: pyarrow.Table):
-    """
-    Yield a filename with `table` written to an Arrow file.
-    """
-    fd, filename = tempfile.mkstemp()
-    try:
-        os.close(fd)
-        writer = pyarrow.RecordBatchFileWriter(filename, table.schema)
-        writer.write_table(table)
-        writer.close()
-        yield filename
-    finally:
-        try:
-            os.unlink(filename)
-        except FileNotFoundError:
-            pass
 
 
 class KernelTests(unittest.TestCase):
