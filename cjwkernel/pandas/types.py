@@ -813,6 +813,13 @@ class ProcessResult:
             arrow_table = pyarrow.Table.from_pandas(
                 self.dataframe, preserve_index=False, nthreads=1
             )  # TODO test dictionaries stay dictionaries
+            # Nix Pandas metadata JSON, to make
+            # `ProcessResult.from_arrow(...).to_arrow(...)` more likely to
+            # return an "equal" table.
+            #
+            # Equality is important when checking whether we must generate an
+            # OutputDelta.
+            arrow_table = arrow_table.replace_schema_metadata(None)
             with pyarrow.RecordBatchFileWriter(str(path), arrow_table.schema) as writer:
                 writer.write_table(arrow_table)
         else:

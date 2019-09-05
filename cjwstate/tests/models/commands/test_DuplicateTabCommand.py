@@ -1,6 +1,7 @@
 from unittest.mock import patch
-from cjwkernel.pandas.types import ProcessResult
-from cjwstate.rendercache.io import cache_pandas_render_result
+from cjwkernel.types import RenderResult
+from cjwkernel.tests.util import arrow_table
+from cjwstate.rendercache.io import cache_render_result
 from cjwstate.models import Workflow
 from cjwstate.models.commands import DuplicateTabCommand
 from cjwstate.tests.utils import DbTestCase
@@ -206,9 +207,8 @@ class DuplicateTabCommandTest(DbTestCase):
             params={"p": "s1"},
             last_relevant_delta_id=init_delta_id,
         )
-        cache_pandas_render_result(
-            workflow, wfm1, init_delta_id, ProcessResult(error="simplest ctor")
-        )
+        render_result = RenderResult(arrow_table({"A": [1]}))
+        cache_render_result(workflow, wfm1, init_delta_id, render_result)
 
         cmd = self.run_with_async_db(
             DuplicateTabCommand.create(

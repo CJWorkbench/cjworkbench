@@ -3,14 +3,13 @@ import json
 from unittest.mock import patch
 from django.contrib.auth.models import User
 from django.test import override_settings
-import numpy as np
-import pandas as pd
 from rest_framework.test import APIRequestFactory
 from rest_framework import status
 from rest_framework.test import force_authenticate
-from cjwkernel.pandas.types import Column, ColumnType, ProcessResult
+from cjwkernel.types import Column, ColumnType, RenderResult
+from cjwkernel.tests.util import arrow_table
 from cjwstate.rendercache.io import (
-    cache_pandas_render_result,
+    cache_render_result,
     delete_parquet_files_for_wf_module,
 )
 from cjwstate.models import Workflow
@@ -24,26 +23,6 @@ FakeCachedRenderResult = namedtuple("FakeCachedRenderResult", ["result"])
 async def async_noop(*args, **kwargs):
     pass
 
-
-test_data = pd.DataFrame(
-    {
-        "Class": ["math", "english", "history", "economics"],
-        "M": [10, np.nan, 11, 20],
-        "F": [12, 7, 13, 20],
-    }
-)
-
-
-test_data_json = {
-    "start_row": 0,
-    "end_row": 4,
-    "rows": [
-        {"Class": "math", "F": 12, "M": 10.0},
-        {"Class": "english", "F": 7, "M": None},
-        {"Class": "history", "F": 13, "M": 11.0},
-        {"Class": "economics", "F": 20, "M": 20.0},
-    ],
-}
 
 empty_data_json = {"start_row": 0, "end_row": 0, "rows": []}
 
@@ -96,11 +75,12 @@ class WfModuleTests(LoggedInTestCase):
         # simple test case where Pandas produces int64 column type, and json
         # conversion throws ValueError
         # https://github.com/pandas-dev/pandas/issues/13258#issuecomment-326671257
-        cache_pandas_render_result(
+        int64 = 2 ** 62 + 10
+        cache_render_result(
             self.workflow,
             self.wf_module2,
             self.wf_module2.last_relevant_delta_id,
-            ProcessResult(pd.DataFrame({"A": [1, 2]}, dtype="int64")),
+            RenderResult(arrow_table({"A": [1, int64]})),
         )
         self.wf_module2.save()
 
@@ -112,12 +92,11 @@ class WfModuleTests(LoggedInTestCase):
         # Only at most MAX_COLUMNS_PER_CLIENT_REQUEST should be returned,
         # since we do not display more than that. (This is a funky hack that
         # assumes the client will behave differently when it has >MAX columns.)
-        dataframe = pd.DataFrame({"A": [1], "B": [2], "C": [3], "D": [4]})
-        cache_pandas_render_result(
+        cache_render_result(
             self.workflow,
             self.wf_module2,
             self.wf_module2.last_relevant_delta_id,
-            ProcessResult(dataframe),
+            RenderResult(arrow_table({"A": [1], "B": [2], "C": [3], "D": [4]})),
         )
 
         response = self.client.get("/api/wfmodules/%d/render" % self.wf_module2.id)
@@ -127,24 +106,44 @@ class WfModuleTests(LoggedInTestCase):
         self.assertEqual(len(json.loads(response.content)["rows"][0]), 3)
 
     def test_wf_module_render(self):
-        cache_pandas_render_result(
+        cache_render_result(
             self.workflow,
             self.wf_module2,
             self.wf_module2.last_relevant_delta_id,
-            ProcessResult(test_data),
+            RenderResult(
+                arrow_table(
+                    {
+                        "Class": ["math", "english", "history", "economics"],
+                        "M": [10, None, 11, 20],
+                        "F": [12, 7, 13, 20],
+                    }
+                )
+            ),
         )
 
         response = self.client.get("/api/wfmodules/%d/render" % self.wf_module2.id)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(json.loads(response.content), test_data_json)
+        self.assertEqual(
+            json.loads(response.content),
+            {
+                "start_row": 0,
+                "end_row": 4,
+                "rows": [
+                    {"Class": "math", "F": 12, "M": 10.0},
+                    {"Class": "english", "F": 7, "M": None},
+                    {"Class": "history", "F": 13, "M": 11.0},
+                    {"Class": "economics", "F": 20, "M": 20.0},
+                ],
+            },
+        )
 
     def test_wf_module_render_missing_parquet_file(self):
         # https://www.pivotaltracker.com/story/show/161988744
-        cache_pandas_render_result(
+        cache_render_result(
             self.workflow,
             self.wf_module2,
             self.wf_module2.last_relevant_delta_id,
-            ProcessResult(test_data),
+            RenderResult(arrow_table({"A": [1]})),
         )
 
         # Simulate a race: we're overwriting the cache or deleting the WfModule
@@ -158,11 +157,11 @@ class WfModuleTests(LoggedInTestCase):
         )
 
     def test_wf_module_render_only_rows(self):
-        cache_pandas_render_result(
+        cache_render_result(
             self.workflow,
             self.wf_module2,
             self.wf_module2.last_relevant_delta_id,
-            ProcessResult(test_data),
+            RenderResult(arrow_table({"A": [0, 1, 2, 3, 4]})),
         )
 
         response = self.client.get(
@@ -170,16 +169,16 @@ class WfModuleTests(LoggedInTestCase):
         )
         self.assertIs(response.status_code, status.HTTP_200_OK)
         body = json.loads(response.content)
-        self.assertEqual(body["rows"], test_data_json["rows"][1:3])
+        self.assertEqual(body["rows"], [{"A": 1}, {"A": 2}])
         self.assertEqual(body["start_row"], 1)
         self.assertEqual(body["end_row"], 3)
 
     def test_wf_module_render_clip_out_of_bounds(self):
-        cache_pandas_render_result(
+        cache_render_result(
             self.workflow,
             self.wf_module2,
             self.wf_module2.last_relevant_delta_id,
-            ProcessResult(test_data),
+            RenderResult(arrow_table({"A": [0, 1]})),
         )
 
         # index out of bounds should clip
@@ -187,7 +186,10 @@ class WfModuleTests(LoggedInTestCase):
             "/api/wfmodules/%d/render?startrow=-1&endrow=500" % self.wf_module2.id
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(json.loads(response.content), test_data_json)
+        self.assertEqual(
+            json.loads(response.content),
+            {"start_row": 0, "end_row": 2, "rows": [{"A": 0}, {"A": 1}]},
+        )
 
     def test_wf_module_render_invalid_endrow(self):
         # index not a number -> bad request
@@ -197,18 +199,11 @@ class WfModuleTests(LoggedInTestCase):
         self.assertIs(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_value_counts_str(self):
-        cache_pandas_render_result(
+        cache_render_result(
             self.workflow,
             self.wf_module2,
             self.wf_module2.last_relevant_delta_id,
-            ProcessResult(
-                pd.DataFrame(
-                    {
-                        "A": ["a", "b", "b", "a", "c", np.nan],
-                        "B": ["x", "x", "x", "x", "x", "x"],
-                    }
-                )
-            ),
+            RenderResult(arrow_table({"A": ["a", "b", "b", "a", "c", None]})),
         )
 
         response = self.client.get(
@@ -220,20 +215,13 @@ class WfModuleTests(LoggedInTestCase):
             json.loads(response.content), {"values": {"a": 2, "b": 2, "c": 1}}
         )
 
-    def test_value_counts_missing_parquet_file(self):
+    def test_value_counts_corrupt_cache(self):
         # https://www.pivotaltracker.com/story/show/161988744
-        cache_pandas_render_result(
+        cache_render_result(
             self.workflow,
             self.wf_module2,
             self.wf_module2.last_relevant_delta_id,
-            ProcessResult(
-                pd.DataFrame(
-                    {
-                        "A": ["a", "b", "b", "a", "c", np.nan],
-                        "B": ["x", "x", "x", "x", "x", "x"],
-                    }
-                )
-            ),
+            RenderResult(arrow_table({"A": ["a"]})),
         )
         # Simulate a race: we're overwriting the cache or deleting the WfModule
         # or some-such.
@@ -253,13 +241,15 @@ class WfModuleTests(LoggedInTestCase):
         )
 
     def test_value_counts_convert_to_text(self):
-        cache_pandas_render_result(
+        cache_render_result(
             self.workflow,
             self.wf_module2,
             self.wf_module2.last_relevant_delta_id,
-            ProcessResult(
-                pd.DataFrame({"A": [1, 2, 3, 2, 1]}),
-                columns=[Column("A", ColumnType.NUMBER(format="{:.2f}"))],
+            RenderResult(
+                arrow_table(
+                    {"A": [1, 2, 3, 2, 1]},
+                    columns=[Column("A", ColumnType.Number(format="{:.2f}"))],
+                )
             ),
         )
 
@@ -281,25 +271,18 @@ class WfModuleTests(LoggedInTestCase):
         )
 
     def test_value_counts_missing_column(self):
-        cache_pandas_render_result(
+        cache_render_result(
             self.workflow,
             self.wf_module2,
             self.wf_module2.last_relevant_delta_id,
-            ProcessResult(
-                pd.DataFrame(
-                    {
-                        "A": ["a", "b", "b", "a", "c", np.nan],
-                        "B": ["x", "x", "x", "x", "x", "x"],
-                    }
-                )
-            ),
+            RenderResult(arrow_table({"A": ["a", "b"]})),
         )
 
         response = self.client.get(
-            f"/api/wfmodules/{self.wf_module2.id}/value-counts?column=C"
+            f"/api/wfmodules/{self.wf_module2.id}/value-counts?column=B"
         )
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(
-            json.loads(response.content), {"error": 'column "C" not found'}
+            json.loads(response.content), {"error": 'column "B" not found'}
         )

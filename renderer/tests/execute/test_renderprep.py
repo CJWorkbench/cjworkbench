@@ -11,8 +11,10 @@ from cjwkernel.pandas.types import (
     RenderColumn,
     StepResultShape,
 )
+from cjwkernel.types import RenderResult
+from cjwkernel.tests.util import arrow_table
 from cjwstate import minio
-from cjwstate.rendercache import cache_pandas_render_result
+from cjwstate.rendercache import cache_render_result
 from cjwstate.models import Workflow, UploadedFile
 from cjwstate.models.param_spec import ParamDType
 from cjwstate.tests.utils import DbTestCase
@@ -439,19 +441,23 @@ class CleanValueTests(DbTestCase):
         )
 
     def test_clean_tab_happy_path(self):
-        tab_output = ProcessResult(pd.DataFrame({"A": [1, 2]}))
+        tab_output = RenderResult(arrow_table({"A": [1, 2]}))
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
         wfm = tab.wf_modules.create(
             order=0, slug="step-1", last_relevant_delta_id=workflow.last_delta_id
         )
-        cache_pandas_render_result(workflow, wfm, workflow.last_delta_id, tab_output)
+        cache_render_result(workflow, wfm, workflow.last_delta_id, tab_output)
 
         context = RenderContext(
             workflow.id,
             None,
             None,
-            {tab.slug: StepResultShape("ok", tab_output.table_shape)},
+            {
+                tab.slug: StepResultShape(
+                    "ok", TableShape.from_arrow(tab_output.table.metadata)
+                )
+            },
             None,
         )
         result = clean_value(ParamDType.Tab(), tab.slug, context)
@@ -461,13 +467,13 @@ class CleanValueTests(DbTestCase):
         assert_frame_equal(result.dataframe, pd.DataFrame({"A": [1, 2]}))
 
     def test_clean_multicolumn_from_other_tab(self):
-        tab_output = ProcessResult(pd.DataFrame({"A-from-tab-2": [1, 2]}))
+        tab_output = RenderResult(arrow_table({"A-from-tab-2": [1, 2]}))
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
         wfm = tab.wf_modules.create(
             order=0, slug="step-1", last_relevant_delta_id=workflow.last_delta_id
         )
-        cache_pandas_render_result(workflow, wfm, workflow.last_delta_id, tab_output)
+        cache_render_result(workflow, wfm, workflow.last_delta_id, tab_output)
 
         schema = ParamDType.Dict(
             {
@@ -480,7 +486,7 @@ class CleanValueTests(DbTestCase):
             workflow.id,
             None,
             TableShape(3, [Column("A-from-tab-1", ColumnType.NUMBER())]),
-            {tab.slug: StepResultShape("ok", tab_output.table_shape)},
+            {tab.slug: StepResultShape("ok", TableShape.from_arrow(tab_output.table.metadata))},
             params,
         )
         result = clean_value(schema, params, context)
@@ -548,14 +554,14 @@ class CleanValueTests(DbTestCase):
         `Tab.DoesNotExist`.
         """
         # tab_output is what 'render' _thinks_ the output should be
-        tab_output = ProcessResult(pd.DataFrame({"A": [1, 2]}))
+        tab_output = RenderResult(arrow_table({"A": [1, 2]}))
 
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
         wfm = tab.wf_modules.create(
             order=0, slug="step-1", last_relevant_delta_id=workflow.last_delta_id
         )
-        cache_pandas_render_result(workflow, wfm, workflow.last_delta_id, tab_output)
+        cache_render_result(workflow, wfm, workflow.last_delta_id, tab_output)
         tab.is_deleted = True
         tab.save(update_fields=["is_deleted"])
         # Simulate reality: wfm.last_relevant_delta_id will change
@@ -566,7 +572,7 @@ class CleanValueTests(DbTestCase):
             workflow.id,
             None,
             None,
-            {tab.slug: StepResultShape("ok", tab_output.table_shape)},
+            {tab.slug: StepResultShape("ok", TableShape.from_arrow(tab_output.table.metadata))},
             None,
         )
         with self.assertRaises(UnneededExecution):
@@ -581,14 +587,14 @@ class CleanValueTests(DbTestCase):
         UnneededExecution seems like the simplest contract to enforce.
         """
         # tab_output is what 'render' _thinks_ the output should be
-        tab_output = ProcessResult(pd.DataFrame({"A": [1, 2]}))
+        tab_output = RenderResult(arrow_table({"A": [1, 2]}))
 
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
         wfm = tab.wf_modules.create(
             order=0, slug="step-1", last_relevant_delta_id=workflow.last_delta_id
         )
-        cache_pandas_render_result(workflow, wfm, workflow.last_delta_id, tab_output)
+        cache_render_result(workflow, wfm, workflow.last_delta_id, tab_output)
         # Simulate reality: wfm.last_relevant_delta_id will change
         wfm.last_relevant_delta_id += 1
         wfm.save(update_fields=["last_relevant_delta_id"])
@@ -597,26 +603,26 @@ class CleanValueTests(DbTestCase):
             workflow.id,
             None,
             None,
-            {tab.slug: StepResultShape("ok", tab_output.table_shape)},
+            {tab.slug: StepResultShape("ok", TableShape.from_arrow(tab_output.table.metadata))},
             None,
         )
         with self.assertRaises(UnneededExecution):
             clean_value(ParamDType.Tab(), tab.slug, context)
 
     def test_clean_tabs_happy_path(self):
-        tab1_output = ProcessResult(pd.DataFrame({"A": [1, 2]}))
+        tab1_output = RenderResult(arrow_table({"A": [1, 2]}))
         workflow = Workflow.create_and_init()
         tab1 = workflow.tabs.first()
         wfm = tab1.wf_modules.create(
             order=0, slug="step-1", last_relevant_delta_id=workflow.last_delta_id
         )
-        cache_pandas_render_result(workflow, wfm, workflow.last_delta_id, tab1_output)
+        cache_render_result(workflow, wfm, workflow.last_delta_id, tab1_output)
 
         context = RenderContext(
             workflow.id,
             None,
             None,
-            {tab1.slug: StepResultShape("ok", tab1_output.table_shape)},
+            {tab1.slug: StepResultShape("ok", TableShape.from_arrow(tab1_output.table.metadata))},
             None,
         )
         result = clean_value(ParamDType.Multitab(), [tab1.slug], context)
@@ -626,8 +632,8 @@ class CleanValueTests(DbTestCase):
         assert_frame_equal(result[0].dataframe, pd.DataFrame({"A": [1, 2]}))
 
     def test_clean_tabs_preserve_ordering(self):
-        tab2_output = ProcessResult(pd.DataFrame({"A": [1, 2]}))
-        tab3_output = ProcessResult(pd.DataFrame({"B": [2, 3]}))
+        tab2_output = RenderResult(arrow_table({"A": [1, 2]}))
+        tab3_output = RenderResult(arrow_table({"B": [2, 3]}))
         workflow = Workflow.create_and_init()
         tab1 = workflow.tabs.first()
         tab2 = workflow.tabs.create(position=1, slug="tab-2", name="Tab 2")
@@ -635,11 +641,11 @@ class CleanValueTests(DbTestCase):
         wfm2 = tab2.wf_modules.create(
             order=0, slug="step-1", last_relevant_delta_id=workflow.last_delta_id
         )
-        cache_pandas_render_result(workflow, wfm2, workflow.last_delta_id, tab2_output)
+        cache_render_result(workflow, wfm2, workflow.last_delta_id, tab2_output)
         wfm3 = tab3.wf_modules.create(
             order=0, slug="step-2", last_relevant_delta_id=workflow.last_delta_id
         )
-        cache_pandas_render_result(workflow, wfm3, workflow.last_delta_id, tab3_output)
+        cache_render_result(workflow, wfm3, workflow.last_delta_id, tab3_output)
 
         # RenderContext's dict ordering determines desired tab order. (Python
         # 3.7 spec: dict is ordered in insertion order. CPython 3.6 and PyPy 7
@@ -650,8 +656,8 @@ class CleanValueTests(DbTestCase):
             None,
             {
                 tab1.slug: None,
-                tab2.slug: StepResultShape("ok", tab2_output.table_shape),
-                tab3.slug: StepResultShape("ok", tab3_output.table_shape),
+                tab2.slug: StepResultShape("ok", TableShape.from_arrow(tab2_output.table.metadata)),
+                tab3.slug: StepResultShape("ok", TableShape.from_arrow(tab3_output.table.metadata)),
             },
             None,
         )

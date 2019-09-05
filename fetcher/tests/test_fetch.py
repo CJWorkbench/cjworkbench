@@ -10,9 +10,11 @@ import pandas as pd
 from pandas.testing import assert_frame_equal
 from cjworkbench.sync import database_sync_to_async
 from cjwkernel.pandas.types import ProcessResult
+from cjwkernel.types import RenderResult
+from cjwkernel.tests.util import arrow_table
 from cjwstate import minio
 from cjwstate.storedobjects import create_stored_object
-from cjwstate.rendercache import cache_pandas_render_result
+from cjwstate.rendercache import cache_render_result
 from cjwstate.models import ModuleVersion, WfModule, Workflow
 from cjwstate.models.commands import InitWorkflowCommand
 from cjwstate.models.loaded_module import LoadedModule
@@ -318,7 +320,7 @@ class FetchTests(DbTestCase):
         self._test_fetch(fetch, DefaultMigrateParams, wf_module, ParamDType.Dict({}))
 
     def test_fetch_get_input_dataframe_happy_path(self):
-        table = pd.DataFrame({"A": [1]})
+        input_result = RenderResult(arrow_table({"A": [1]}))
 
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
@@ -326,35 +328,38 @@ class FetchTests(DbTestCase):
         wfm1 = tab.wf_modules.create(
             order=0, slug="step-1", last_relevant_delta_id=delta.id
         )
-        cache_pandas_render_result(workflow, wfm1, delta.id, ProcessResult(table))
+        cache_render_result(workflow, wfm1, delta.id, input_result)
         wfm2 = tab.wf_modules.create(order=1, slug="step-2")
 
         async def fetch(params, *, get_input_dataframe, **kwargs):
-            assert_frame_equal(await get_input_dataframe(), table)
+            assert_frame_equal(await get_input_dataframe(), pd.DataFrame({"A": [1]}))
 
         self._test_fetch(fetch, DefaultMigrateParams, wfm2, ParamDType.Dict({}))
 
     def test_fetch_get_input_dataframe_two_tabs(self):
-        table = pd.DataFrame({"A": [1]})
-        wrong_table = pd.DataFrame({"B": [1]})
-
         workflow = Workflow.create_and_init()
         delta_id = workflow.last_delta_id
         tab = workflow.tabs.first()
         wfm1 = tab.wf_modules.create(
             order=0, slug="step-1", last_relevant_delta_id=delta_id
         )
-        cache_pandas_render_result(workflow, wfm1, delta_id, ProcessResult(table))
-        wfm2 = tab.wf_modules.create(order=1, slug="step-2")
+        cache_render_result(
+            workflow, wfm1, delta_id, RenderResult(arrow_table({"A": ["correct"]}))
+        )
 
+        wfm2 = tab.wf_modules.create(order=1, slug="step-2")
         tab2 = workflow.tabs.create(position=1)
         wfm3 = tab2.wf_modules.create(
             order=0, slug="step-3", last_relevant_delta_id=delta_id
         )
-        cache_pandas_render_result(workflow, wfm3, delta_id, ProcessResult(wrong_table))
+        cache_render_result(
+            workflow, wfm3, delta_id, RenderResult(arrow_table({"A": ["wrong"]}))
+        )
 
         async def fetch(params, *, get_input_dataframe, **kwargs):
-            assert_frame_equal(await get_input_dataframe(), table)
+            assert_frame_equal(
+                await get_input_dataframe(), pd.DataFrame({"A": ["correct"]})
+            )
 
         self._test_fetch(fetch, DefaultMigrateParams, wfm2, ParamDType.Dict({}))
 
@@ -371,15 +376,15 @@ class FetchTests(DbTestCase):
         self._test_fetch(fetch, DefaultMigrateParams, wfm2, ParamDType.Dict({}))
 
     def test_fetch_get_input_dataframe_stale_cache(self):
-        table = pd.DataFrame({"A": [1]})
-
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
         delta1 = InitWorkflowCommand.create(workflow)
         wfm1 = tab.wf_modules.create(
             order=0, slug="step-1", last_relevant_delta_id=delta1.id
         )
-        cache_pandas_render_result(workflow, wfm1, delta1.id, ProcessResult(table))
+        cache_render_result(
+            workflow, wfm1, delta1.id, RenderResult(arrow_table({"A": [1]}))
+        )
 
         # Now make wfm1's output stale
         delta2 = InitWorkflowCommand.create(workflow)
@@ -394,15 +399,15 @@ class FetchTests(DbTestCase):
         self._test_fetch(fetch, DefaultMigrateParams, wfm2, ParamDType.Dict({}))
 
     def test_fetch_get_input_dataframe_race_delete_prior_wf_module(self):
-        table = pd.DataFrame({"A": [1]})
-
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
         delta = InitWorkflowCommand.create(workflow)
         wfm1 = tab.wf_modules.create(
             order=0, slug="step-1", last_relevant_delta_id=delta.id
         )
-        cache_pandas_render_result(workflow, wfm1, delta.id, ProcessResult(table))
+        cache_render_result(
+            workflow, wfm1, delta.id, RenderResult(arrow_table({"A": [1]}))
+        )
         wfm2 = tab.wf_modules.create(order=1, slug="step-2")
 
         # Delete from the database. They're still in memory. This deletion can
@@ -416,15 +421,15 @@ class FetchTests(DbTestCase):
         self._test_fetch(fetch, DefaultMigrateParams, wfm2, ParamDType.Dict({}))
 
     def test_fetch_get_input_dataframe_race_delete_workflow(self):
-        table = pd.DataFrame({"A": [1]})
-
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
         delta = InitWorkflowCommand.create(workflow)
         wfm1 = tab.wf_modules.create(
             order=0, slug="step-1", last_relevant_delta_id=delta.id
         )
-        cache_pandas_render_result(workflow, wfm1, delta.id, ProcessResult(table))
+        cache_render_result(
+            workflow, wfm1, delta.id, RenderResult(arrow_table({"A": [1]}))
+        )
         wfm2 = tab.wf_modules.create(order=1, slug="step-2")
 
         # Delete from the database. They're still in memory. This deletion can

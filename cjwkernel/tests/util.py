@@ -2,7 +2,7 @@ from contextlib import contextmanager
 from pathlib import Path
 import os
 import tempfile
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List, Optional, Union
 import unittest
 import pyarrow
 from cjwkernel.types import ArrowTable, TableMetadata, Column, ColumnType, RenderResult
@@ -43,7 +43,10 @@ def _arrow_column_to_column(column: pyarrow.Column) -> Column:
 
 
 @contextmanager
-def arrow_table_context(table: Union[Dict[str, List[Any]], pyarrow.Table]):
+def arrow_table_context(
+    table: Union[Dict[str, List[Any]], pyarrow.Table],
+    columns: Optional[List[Column]] = None,
+):
     """
     Yield an ArrowTable (whose `.path` is a file).
 
@@ -52,16 +55,18 @@ def arrow_table_context(table: Union[Dict[str, List[Any]], pyarrow.Table]):
     if isinstance(table, dict):
         table = pyarrow.Table.from_pydict(table)
 
+    if columns is None:
+        columns = [_arrow_column_to_column(c) for c in table.columns]
+    metadata = TableMetadata(table.num_rows, columns)
+
     with arrow_file(table) as filename:
-        yield ArrowTable(
-            Path(filename),
-            TableMetadata(
-                table.num_rows, [_arrow_column_to_column(c) for c in table.columns]
-            ),
-        )
+        yield ArrowTable(Path(filename), metadata)
 
 
-def arrow_table(table: Union[Dict[str, List[Any]], pyarrow.Table]) -> ArrowTable:
+def arrow_table(
+    table: Union[Dict[str, List[Any]], pyarrow.Table],
+    columns: Optional[List[Column]] = None,
+) -> ArrowTable:
     """
     Yield an ArrowTable (whose `.path` is a _deleted_ file).
 
@@ -69,7 +74,7 @@ def arrow_table(table: Union[Dict[str, List[Any]], pyarrow.Table]) -> ArrowTable
 
     The path may be deleted, but the file on disk is still mmapped.
     """
-    with arrow_table_context(table) as table:
+    with arrow_table_context(table, columns) as table:
         return table
 
 

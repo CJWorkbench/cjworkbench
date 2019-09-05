@@ -1,44 +1,41 @@
+from dataclasses import dataclass
 import datetime
 from typing import Optional
 from allauth.account.utils import user_display
+from django.contrib.auth.models import User
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.conf import settings
-from cjwkernel.pandas.types import ProcessResult
+from cjwkernel.types import RenderResult
+from cjwstate.models import WfModule, Workflow
 from server.utils import get_absolute_url
 
 
+@dataclass
 class OutputDelta:
     """Description of changes between two versions of WfModule output."""
 
-    def __init__(
-        self,
-        wf_module: "WfModule",
-        old_result: Optional[ProcessResult],
-        new_result: ProcessResult,
-    ):
-        workflow = wf_module.workflow
+    user: User
+    workflow: Workflow
+    wf_module: WfModule
+    old_result: Optional[RenderResult]
+    new_result: RenderResult
 
-        self.user = workflow.owner
-        self.workflow_name = workflow.name
-        self.wf_module_id = wf_module.id
-        self.module_name = wf_module.module_id_name
-        self.workflow_url = get_absolute_url(workflow.get_absolute_url())
-        self.old_result = old_result
-        self.new_result = new_result
+    @property
+    def workflow_name(self) -> str:
+        return self.workflow.name
 
-    def __repr__(self):
-        return "OutputDelta" + repr(
-            (self.wf_module_id, self.old_result, self.new_result)
-        )
+    @property
+    def wf_module_id(self) -> int:
+        return self.wf_module.id
 
-    def __eq__(self, other):
-        return (
-            isinstance(other, OutputDelta)
-            and self.wf_module_id == other.wf_module_id
-            and self.old_result == other.old_result
-            and self.new_result == other.new_result
-        )
+    @property
+    def module_name(self) -> str:
+        return self.wf_module.module_id_name
+
+    @property
+    def workflow_url(self) -> str:
+        return get_absolute_url(self.workflow.get_absolute_url())
 
 
 def email_output_delta(output_delta: OutputDelta, updated_at: datetime.datetime):

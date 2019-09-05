@@ -1,6 +1,8 @@
 import asyncio
 import contextlib
 import datetime
+from pathlib import Path
+import tempfile
 from typing import Any, Dict, Optional, Tuple
 from cjworkbench.sync import database_sync_to_async
 from cjwkernel.pandas.types import ProcessResult, StepResultShape, TableShape
@@ -135,7 +137,7 @@ def _execute_wfmodule_save(
     workflow: Workflow, wf_module: WfModule, result: ProcessResult
 ) -> notifications.OutputDelta:
     """
-    Call rendercache.cache_pandas_render_result() and build notifications.OutputDelta.
+    Call rendercache.cache_render_result() and build notifications.OutputDelta.
 
     All this runs synchronously within a database lock. (It's a separate
     function so that when we're done awaiting it, we can continue executing in
@@ -151,21 +153,27 @@ def _execute_wfmodule_save(
                 stale_result = None
             else:
                 # Read entire old Parquet file, blocking
-                with rendercache.open_cached_render_result(
-                    stale_crr
-                ) as stale_arrow_result:
-                    stale_result = ProcessResult.from_arrow(stale_arrow_result)
+                with rendercache.open_cached_render_result(stale_crr) as stale_result:
+                    pass  # stale_result is deleted from disk but still mmapped
         else:
             stale_result = None
 
-        rendercache.cache_pandas_render_result(
-            workflow, safe_wf_module, wf_module.last_relevant_delta_id, result
-        )
+        with tempfile.NamedTemporaryFile() as tf:
+            arrow_result = result.to_arrow(Path(tf.name))
+            rendercache.cache_render_result(
+                workflow, safe_wf_module, wf_module.last_relevant_delta_id, arrow_result
+            )
 
-        if safe_wf_module.notifications and result != stale_result:
+        if safe_wf_module.notifications and arrow_result != stale_result:
             safe_wf_module.has_unseen_notification = True
             safe_wf_module.save(update_fields=["has_unseen_notification"])
-            return notifications.OutputDelta(safe_wf_module, stale_result, result)
+            return notifications.OutputDelta(
+                safe_wf_module.workflow.owner,
+                safe_wf_module.workflow,
+                safe_wf_module,
+                ProcessResult.from_arrow(stale_result),
+                result,
+            )
         else:
             return None  # nothing to email
 

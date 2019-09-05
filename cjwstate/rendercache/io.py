@@ -52,30 +52,6 @@ def crr_parquet_key(crr: CachedRenderResult) -> str:
     return parquet_key(crr.workflow_id, crr.wf_module_id, crr.delta_id)
 
 
-def cache_pandas_render_result(
-    workflow: Workflow, wf_module: WfModule, delta_id: int, result: ptypes.ProcessResult
-) -> CachedRenderResult:
-    """
-    Save the given ptypes.ProcessResult for later viewing.
-
-    Raise AssertionError if `delta_id` is not what we expect.
-
-    Since this alters data, be sure to call it within a lock:
-
-        with workflow.cooperative_lock():
-            wf_module.refresh_from_db()  # may change delta_id
-            wf_module.cache_pandas_render_result(delta_id, result)
-    """
-    fd, filename = tempfile.mkstemp()
-    try:
-        os.close(fd)
-        arrow_path = Path(filename)
-        arrow_result = result.to_arrow(arrow_path)
-        cache_render_result(workflow, wf_module, delta_id, arrow_result)
-    finally:
-        os.unlink(filename)
-
-
 def cache_render_result(
     workflow: Workflow, wf_module: WfModule, delta_id: int, result: RenderResult
 ) -> None:
