@@ -131,7 +131,6 @@ async function loadDefaultPickerFactory () {
       script.src = `https://apis.google.com/js/api.js?onload=${callbackName}`
 
       document.querySelector('head').appendChild(script)
-      this.script = script
     })
   }
 
