@@ -1,6 +1,6 @@
 from icu import Formattable, ICUError, Locale, MessageFormat, UnicodeString
 from babel.messages.pofile import read_po
-    
+
 class UnsupportedLocaleError(Exception):
     '''Indicates that an unsupported locale is (attempted to be) used
     
@@ -19,8 +19,21 @@ class InvalidICUParameters(Exception):
     
     For example, you may have passed a string in the place of an integer.
     '''
+
+_translators = {}
+
+def get_translations(locale):
+    '''Returns a MessageTranslator object for the given locale.
+    
+    In order to parse the message catalogs only once per locale,
+    uses the _translators dict to store the created MessageTranslator for each locale.
+    '''
+    if locale in _translators:
+        return _translators[locale]
+    _translators[locale] = MessageTranslator(locale)
+    return _translators[locale]
         
-class MessageLocalizer:
+class MessageTranslator:
     '''Loads the message catalogs for a given locale and provides helper methods for message translation.
     It uses the ICU message format for messages.
     
@@ -42,10 +55,13 @@ class MessageLocalizer:
         
     def _(self, message_id, default=None, parameters={}):
         '''Finds the ICU message corresponding to the given ID in the catalog and formats it according to the given parameters.
+        If the message is not found or is empty and a non-empty default is provided, the default is used instead.
+        Otherwise, the message_id is used instead.
         
-        See self.format_message for acceptable values for the parameters argument.
+        See self.format_message for acceptable types of the parameters argument.
+        
         '''
-        return self.format_message(self.get_message(message_id, default=default), parameters=parameters)
+        return self.format_message(self.get_message(message_id) or (default or message_id), parameters=parameters)
         
     def format_message(self, message, parameters={}):
         '''Formats the given ICU message according to the given parameters.
@@ -70,13 +86,10 @@ class MessageLocalizer:
         except ICUError as error:
             raise InvalidICUParameters('The given parameters are invalid for the given message') from error
         
-    def get_message(self, message_id, default=None):
+    def get_message(self, message_id):
         '''Finds the ICU message corresponding to the given ID in the catalog.
         
-        If the message is not found, the given default is returned.
+        If the message is not found, None is returned.
         '''
         message = self.catalog.get(message_id)
-        if(message):
-            return message.string
-        else: 
-            return default
+        return message.string if message else None
