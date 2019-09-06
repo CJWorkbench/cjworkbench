@@ -1,9 +1,7 @@
 from typing import Optional
 import pandas as pd
 from cjwstate import parquet
-from cjwkernel.pandas.types import ProcessResult
-from cjwstate.rendercache import open_cached_render_result, CorruptCacheError
-from cjwstate.models import CachedRenderResult, StoredObject, WfModule
+from cjwstate.models import StoredObject, WfModule
 
 
 def _read_dataframe_from_minio(bucket: str, key: str) -> Optional[pd.DataFrame]:
@@ -57,22 +55,3 @@ def read_fetched_dataframe_from_wf_module(
     except StoredObject.DoesNotExist:
         return None
     return read_dataframe_from_stored_object(stored_object)
-
-
-def read_dataframe_from_cached_render_result(
-    crr: CachedRenderResult
-) -> Optional[pd.DataFrame]:
-    """
-    Read DataFrame from a CachedRenderREsult.
-
-    Return None if:
-
-        * there is no file on minio
-        * the file on minio cannot be read
-    """
-    try:
-        with open_cached_render_result(crr) as render_result:
-            process_result = ProcessResult.from_arrow(render_result)
-    except CorruptCacheError:
-        return None
-    return process_result.dataframe

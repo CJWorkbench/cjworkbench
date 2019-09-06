@@ -694,14 +694,211 @@ class ParquetTable(object):
         return not (self == other)
 
 
-class Params(object):
+class ParamValue(object):
     """
-    Module `render()` and `fetch()` parameters.
+    Value (or nested value) in Params passed to render()/fetch().
+
+    These params are connected to the `table` parameter: a "column"-typed
+    parameter will be a `Column`; a "tab"-typed parameter will be a `TabOutput.
+
+    This is more permissive than module_spec. Callers should validate against
+    the module spec.
+
+    The special value `None` is allowed. Thrift unions are just structs with
+    optional fields; in this case, if all fields are unset, then that means
+    `null`.
 
     Attributes:
-     - json: JSON-encoded dictionary of values.
+     - string_value: String value.
 
-    Must be a valid JSON dictionary.
+    This represents "string", "enum" and "file" values. Over the wire, it's
+    all the same to us.
+     - integer_value
+     - float_value
+     - boolean_value
+     - column_value
+     - tab_value
+     - list_value: List of nested values.
+
+    This represents "list", "multicolumn", "multitab" and "multichartseries"
+    dtypes. Over the wire, it's all the same to us.
+     - map_value: Mapping of key to nested value.
+
+    This represents "map" and "dict" dtypes. Over the wire, it's all the same
+    to us.
+    """
+
+    __slots__ = (
+        'string_value',
+        'integer_value',
+        'float_value',
+        'boolean_value',
+        'column_value',
+        'tab_value',
+        'list_value',
+        'map_value',
+    )
+
+
+    def __init__(self, string_value=None, integer_value=None, float_value=None, boolean_value=None, column_value=None, tab_value=None, list_value=None, map_value=None,):
+        self.string_value = string_value
+        self.integer_value = integer_value
+        self.float_value = float_value
+        self.boolean_value = boolean_value
+        self.column_value = column_value
+        self.tab_value = tab_value
+        self.list_value = list_value
+        self.map_value = map_value
+
+    def read(self, iprot):
+        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
+            return
+        iprot.readStructBegin()
+        while True:
+            (fname, ftype, fid) = iprot.readFieldBegin()
+            if ftype == TType.STOP:
+                break
+            if fid == 1:
+                if ftype == TType.STRING:
+                    self.string_value = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                else:
+                    iprot.skip(ftype)
+            elif fid == 2:
+                if ftype == TType.I64:
+                    self.integer_value = iprot.readI64()
+                else:
+                    iprot.skip(ftype)
+            elif fid == 3:
+                if ftype == TType.DOUBLE:
+                    self.float_value = iprot.readDouble()
+                else:
+                    iprot.skip(ftype)
+            elif fid == 4:
+                if ftype == TType.BOOL:
+                    self.boolean_value = iprot.readBool()
+                else:
+                    iprot.skip(ftype)
+            elif fid == 5:
+                if ftype == TType.STRUCT:
+                    self.column_value = Column()
+                    self.column_value.read(iprot)
+                else:
+                    iprot.skip(ftype)
+            elif fid == 6:
+                if ftype == TType.STRUCT:
+                    self.tab_value = TabOutput()
+                    self.tab_value.read(iprot)
+                else:
+                    iprot.skip(ftype)
+            elif fid == 7:
+                if ftype == TType.LIST:
+                    self.list_value = []
+                    (_etype10, _size7) = iprot.readListBegin()
+                    for _i11 in range(_size7):
+                        _elem12 = ParamValue()
+                        _elem12.read(iprot)
+                        self.list_value.append(_elem12)
+                    iprot.readListEnd()
+                else:
+                    iprot.skip(ftype)
+            elif fid == 8:
+                if ftype == TType.MAP:
+                    self.map_value = {}
+                    (_ktype14, _vtype15, _size13) = iprot.readMapBegin()
+                    for _i17 in range(_size13):
+                        _key18 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                        _val19 = ParamValue()
+                        _val19.read(iprot)
+                        self.map_value[_key18] = _val19
+                    iprot.readMapEnd()
+                else:
+                    iprot.skip(ftype)
+            else:
+                iprot.skip(ftype)
+            iprot.readFieldEnd()
+        iprot.readStructEnd()
+
+    def write(self, oprot):
+        if oprot._fast_encode is not None and self.thrift_spec is not None:
+            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
+            return
+        oprot.writeStructBegin('ParamValue')
+        if self.string_value is not None:
+            oprot.writeFieldBegin('string_value', TType.STRING, 1)
+            oprot.writeString(self.string_value.encode('utf-8') if sys.version_info[0] == 2 else self.string_value)
+            oprot.writeFieldEnd()
+        if self.integer_value is not None:
+            oprot.writeFieldBegin('integer_value', TType.I64, 2)
+            oprot.writeI64(self.integer_value)
+            oprot.writeFieldEnd()
+        if self.float_value is not None:
+            oprot.writeFieldBegin('float_value', TType.DOUBLE, 3)
+            oprot.writeDouble(self.float_value)
+            oprot.writeFieldEnd()
+        if self.boolean_value is not None:
+            oprot.writeFieldBegin('boolean_value', TType.BOOL, 4)
+            oprot.writeBool(self.boolean_value)
+            oprot.writeFieldEnd()
+        if self.column_value is not None:
+            oprot.writeFieldBegin('column_value', TType.STRUCT, 5)
+            self.column_value.write(oprot)
+            oprot.writeFieldEnd()
+        if self.tab_value is not None:
+            oprot.writeFieldBegin('tab_value', TType.STRUCT, 6)
+            self.tab_value.write(oprot)
+            oprot.writeFieldEnd()
+        if self.list_value is not None:
+            oprot.writeFieldBegin('list_value', TType.LIST, 7)
+            oprot.writeListBegin(TType.STRUCT, len(self.list_value))
+            for iter20 in self.list_value:
+                iter20.write(oprot)
+            oprot.writeListEnd()
+            oprot.writeFieldEnd()
+        if self.map_value is not None:
+            oprot.writeFieldBegin('map_value', TType.MAP, 8)
+            oprot.writeMapBegin(TType.STRING, TType.STRUCT, len(self.map_value))
+            for kiter21, viter22 in self.map_value.items():
+                oprot.writeString(kiter21.encode('utf-8') if sys.version_info[0] == 2 else kiter21)
+                viter22.write(oprot)
+            oprot.writeMapEnd()
+            oprot.writeFieldEnd()
+        oprot.writeFieldStop()
+        oprot.writeStructEnd()
+
+    def validate(self):
+        return
+
+    def __repr__(self):
+        L = ['%s=%r' % (key, getattr(self, key))
+             for key in self.__slots__]
+        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+    def __eq__(self, other):
+        if not isinstance(other, self.__class__):
+            return False
+        for attr in self.__slots__:
+            my_val = getattr(self, attr)
+            other_val = getattr(other, attr)
+            if my_val != other_val:
+                return False
+        return True
+
+    def __ne__(self, other):
+        return not (self == other)
+
+
+class RawParams(object):
+    """
+    Value (or nested value) passed to `migrate_params()`.
+
+    Raw parameter values are stored in the database as JSON. We pass them using
+    JSON-encoded string. This is not the same as the Thrift type "Params", which
+    is passed to `render()`: Params are objects with TabOutput/Column/etc
+    members.
+
+    Attributes:
+     - json
     """
 
     __slots__ = (
@@ -735,7 +932,7 @@ class Params(object):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
             oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
             return
-        oprot.writeStructBegin('Params')
+        oprot.writeStructBegin('RawParams')
         if self.json is not None:
             oprot.writeFieldBegin('json', TType.STRING, 1)
             oprot.writeString(self.json.encode('utf-8') if sys.version_info[0] == 2 else self.json)
@@ -1065,11 +1262,11 @@ class I18nMessage(object):
             elif fid == 2:
                 if ftype == TType.LIST:
                     self.arguments = []
-                    (_etype10, _size7) = iprot.readListBegin()
-                    for _i11 in range(_size7):
-                        _elem12 = I18nArgument()
-                        _elem12.read(iprot)
-                        self.arguments.append(_elem12)
+                    (_etype26, _size23) = iprot.readListBegin()
+                    for _i27 in range(_size23):
+                        _elem28 = I18nArgument()
+                        _elem28.read(iprot)
+                        self.arguments.append(_elem28)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
@@ -1090,8 +1287,8 @@ class I18nMessage(object):
         if self.arguments is not None:
             oprot.writeFieldBegin('arguments', TType.LIST, 2)
             oprot.writeListBegin(TType.STRUCT, len(self.arguments))
-            for iter13 in self.arguments:
-                iter13.write(oprot)
+            for iter29 in self.arguments:
+                iter29.write(oprot)
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
@@ -1154,7 +1351,7 @@ class PrependStepQuickFixAction(object):
                     iprot.skip(ftype)
             elif fid == 2:
                 if ftype == TType.STRUCT:
-                    self.partial_params = Params()
+                    self.partial_params = RawParams()
                     self.partial_params.read(iprot)
                 else:
                     iprot.skip(ftype)
@@ -1396,11 +1593,11 @@ class RenderError(object):
             elif fid == 2:
                 if ftype == TType.LIST:
                     self.quick_fixes = []
-                    (_etype17, _size14) = iprot.readListBegin()
-                    for _i18 in range(_size14):
-                        _elem19 = QuickFix()
-                        _elem19.read(iprot)
-                        self.quick_fixes.append(_elem19)
+                    (_etype33, _size30) = iprot.readListBegin()
+                    for _i34 in range(_size30):
+                        _elem35 = QuickFix()
+                        _elem35.read(iprot)
+                        self.quick_fixes.append(_elem35)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
@@ -1421,8 +1618,8 @@ class RenderError(object):
         if self.quick_fixes is not None:
             oprot.writeFieldBegin('quick_fixes', TType.LIST, 2)
             oprot.writeListBegin(TType.STRUCT, len(self.quick_fixes))
-            for iter20 in self.quick_fixes:
-                iter20.write(oprot)
+            for iter36 in self.quick_fixes:
+                iter36.write(oprot)
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
@@ -1498,14 +1695,20 @@ class FetchRequest(object):
             if ftype == TType.STOP:
                 break
             if fid == 1:
-                if ftype == TType.STRUCT:
-                    self.params = Params()
-                    self.params.read(iprot)
+                if ftype == TType.MAP:
+                    self.params = {}
+                    (_ktype38, _vtype39, _size37) = iprot.readMapBegin()
+                    for _i41 in range(_size37):
+                        _key42 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                        _val43 = ParamValue()
+                        _val43.read(iprot)
+                        self.params[_key42] = _val43
+                    iprot.readMapEnd()
                 else:
                     iprot.skip(ftype)
             elif fid == 2:
                 if ftype == TType.STRUCT:
-                    self.secrets = Params()
+                    self.secrets = RawParams()
                     self.secrets.read(iprot)
                 else:
                     iprot.skip(ftype)
@@ -1532,8 +1735,12 @@ class FetchRequest(object):
             return
         oprot.writeStructBegin('FetchRequest')
         if self.params is not None:
-            oprot.writeFieldBegin('params', TType.STRUCT, 1)
-            self.params.write(oprot)
+            oprot.writeFieldBegin('params', TType.MAP, 1)
+            oprot.writeMapBegin(TType.STRING, TType.STRUCT, len(self.params))
+            for kiter44, viter45 in self.params.items():
+                oprot.writeString(kiter44.encode('utf-8') if sys.version_info[0] == 2 else kiter44)
+                viter45.write(oprot)
+            oprot.writeMapEnd()
             oprot.writeFieldEnd()
         if self.secrets is not None:
             oprot.writeFieldBegin('secrets', TType.STRUCT, 2)
@@ -1620,11 +1827,11 @@ class FetchResult(object):
             elif fid == 2:
                 if ftype == TType.LIST:
                     self.errors = []
-                    (_etype24, _size21) = iprot.readListBegin()
-                    for _i25 in range(_size21):
-                        _elem26 = RenderError()
-                        _elem26.read(iprot)
-                        self.errors.append(_elem26)
+                    (_etype49, _size46) = iprot.readListBegin()
+                    for _i50 in range(_size46):
+                        _elem51 = RenderError()
+                        _elem51.read(iprot)
+                        self.errors.append(_elem51)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
@@ -1645,8 +1852,8 @@ class FetchResult(object):
         if self.errors is not None:
             oprot.writeFieldBegin('errors', TType.LIST, 2)
             oprot.writeListBegin(TType.STRUCT, len(self.errors))
-            for iter27 in self.errors:
-                iter27.write(oprot)
+            for iter52 in self.errors:
+                iter52.write(oprot)
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
@@ -1726,9 +1933,15 @@ class RenderRequest(object):
                 else:
                     iprot.skip(ftype)
             elif fid == 2:
-                if ftype == TType.STRUCT:
-                    self.params = Params()
-                    self.params.read(iprot)
+                if ftype == TType.MAP:
+                    self.params = {}
+                    (_ktype54, _vtype55, _size53) = iprot.readMapBegin()
+                    for _i57 in range(_size53):
+                        _key58 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                        _val59 = ParamValue()
+                        _val59.read(iprot)
+                        self.params[_key58] = _val59
+                    iprot.readMapEnd()
                 else:
                     iprot.skip(ftype)
             elif fid == 3:
@@ -1740,12 +1953,12 @@ class RenderRequest(object):
             elif fid == 4:
                 if ftype == TType.MAP:
                     self.input_tabs = {}
-                    (_ktype29, _vtype30, _size28) = iprot.readMapBegin()
-                    for _i32 in range(_size28):
-                        _key33 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
-                        _val34 = TabOutput()
-                        _val34.read(iprot)
-                        self.input_tabs[_key33] = _val34
+                    (_ktype61, _vtype62, _size60) = iprot.readMapBegin()
+                    for _i64 in range(_size60):
+                        _key65 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                        _val66 = TabOutput()
+                        _val66.read(iprot)
+                        self.input_tabs[_key65] = _val66
                     iprot.readMapEnd()
                 else:
                     iprot.skip(ftype)
@@ -1770,8 +1983,12 @@ class RenderRequest(object):
             self.input_table.write(oprot)
             oprot.writeFieldEnd()
         if self.params is not None:
-            oprot.writeFieldBegin('params', TType.STRUCT, 2)
-            self.params.write(oprot)
+            oprot.writeFieldBegin('params', TType.MAP, 2)
+            oprot.writeMapBegin(TType.STRING, TType.STRUCT, len(self.params))
+            for kiter67, viter68 in self.params.items():
+                oprot.writeString(kiter67.encode('utf-8') if sys.version_info[0] == 2 else kiter67)
+                viter68.write(oprot)
+            oprot.writeMapEnd()
             oprot.writeFieldEnd()
         if self.tab is not None:
             oprot.writeFieldBegin('tab', TType.STRUCT, 3)
@@ -1780,9 +1997,9 @@ class RenderRequest(object):
         if self.input_tabs is not None:
             oprot.writeFieldBegin('input_tabs', TType.MAP, 4)
             oprot.writeMapBegin(TType.STRING, TType.STRUCT, len(self.input_tabs))
-            for kiter35, viter36 in self.input_tabs.items():
-                oprot.writeString(kiter35.encode('utf-8') if sys.version_info[0] == 2 else kiter35)
-                viter36.write(oprot)
+            for kiter69, viter70 in self.input_tabs.items():
+                oprot.writeString(kiter69.encode('utf-8') if sys.version_info[0] == 2 else kiter69)
+                viter70.write(oprot)
             oprot.writeMapEnd()
             oprot.writeFieldEnd()
         if self.fetch_result is not None:
@@ -1861,11 +2078,11 @@ class RenderResult(object):
             elif fid == 2:
                 if ftype == TType.LIST:
                     self.errors = []
-                    (_etype40, _size37) = iprot.readListBegin()
-                    for _i41 in range(_size37):
-                        _elem42 = RenderError()
-                        _elem42.read(iprot)
-                        self.errors.append(_elem42)
+                    (_etype74, _size71) = iprot.readListBegin()
+                    for _i75 in range(_size71):
+                        _elem76 = RenderError()
+                        _elem76.read(iprot)
+                        self.errors.append(_elem76)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
@@ -1891,8 +2108,8 @@ class RenderResult(object):
         if self.errors is not None:
             oprot.writeFieldBegin('errors', TType.LIST, 2)
             oprot.writeListBegin(TType.STRUCT, len(self.errors))
-            for iter43 in self.errors:
-                iter43.write(oprot)
+            for iter77 in self.errors:
+                iter77.write(oprot)
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         if self.json is not None:
@@ -1967,8 +2184,20 @@ ParquetTable.thrift_spec = (
     (1, TType.STRING, 'filename', 'UTF8', None, ),  # 1
     (2, TType.STRUCT, 'metadata', [TableMetadata, None], None, ),  # 2
 )
-all_structs.append(Params)
-Params.thrift_spec = (
+all_structs.append(ParamValue)
+ParamValue.thrift_spec = (
+    None,  # 0
+    (1, TType.STRING, 'string_value', 'UTF8', None, ),  # 1
+    (2, TType.I64, 'integer_value', None, None, ),  # 2
+    (3, TType.DOUBLE, 'float_value', None, None, ),  # 3
+    (4, TType.BOOL, 'boolean_value', None, None, ),  # 4
+    (5, TType.STRUCT, 'column_value', [Column, None], None, ),  # 5
+    (6, TType.STRUCT, 'tab_value', [TabOutput, None], None, ),  # 6
+    (7, TType.LIST, 'list_value', (TType.STRUCT, [ParamValue, None], False), None, ),  # 7
+    (8, TType.MAP, 'map_value', (TType.STRING, 'UTF8', TType.STRUCT, [ParamValue, None], False), None, ),  # 8
+)
+all_structs.append(RawParams)
+RawParams.thrift_spec = (
     None,  # 0
     (1, TType.STRING, 'json', 'UTF8', None, ),  # 1
 )
@@ -2001,7 +2230,7 @@ all_structs.append(PrependStepQuickFixAction)
 PrependStepQuickFixAction.thrift_spec = (
     None,  # 0
     (1, TType.STRING, 'module_slug', 'UTF8', None, ),  # 1
-    (2, TType.STRUCT, 'partial_params', [Params, None], None, ),  # 2
+    (2, TType.STRUCT, 'partial_params', [RawParams, None], None, ),  # 2
 )
 all_structs.append(QuickFixAction)
 QuickFixAction.thrift_spec = (
@@ -2023,8 +2252,8 @@ RenderError.thrift_spec = (
 all_structs.append(FetchRequest)
 FetchRequest.thrift_spec = (
     None,  # 0
-    (1, TType.STRUCT, 'params', [Params, None], None, ),  # 1
-    (2, TType.STRUCT, 'secrets', [Params, None], None, ),  # 2
+    (1, TType.MAP, 'params', (TType.STRING, 'UTF8', TType.STRUCT, [ParamValue, None], False), None, ),  # 1
+    (2, TType.STRUCT, 'secrets', [RawParams, None], None, ),  # 2
     (3, TType.STRUCT, 'last_fetch_result', [FetchResult, None], None, ),  # 3
     (4, TType.STRUCT, 'input_table', [ParquetTable, None], None, ),  # 4
 )
@@ -2038,7 +2267,7 @@ all_structs.append(RenderRequest)
 RenderRequest.thrift_spec = (
     None,  # 0
     (1, TType.STRUCT, 'input_table', [ArrowTable, None], None, ),  # 1
-    (2, TType.STRUCT, 'params', [Params, None], None, ),  # 2
+    (2, TType.MAP, 'params', (TType.STRING, 'UTF8', TType.STRUCT, [ParamValue, None], False), None, ),  # 2
     (3, TType.STRUCT, 'tab', [Tab, None], None, ),  # 3
     (4, TType.MAP, 'input_tabs', (TType.STRING, 'UTF8', TType.STRUCT, [TabOutput, None], False), None, ),  # 4
     (5, TType.STRUCT, 'fetch_result', [FetchResult, None], None, ),  # 5

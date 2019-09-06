@@ -1,9 +1,8 @@
 import aiohttp
 import asyncio
 from cjwkernel.pandas.types import ProcessResult
-from server.modules import utils
-from .utils import turn_header_into_first_row
-from .parse_util import parse_bytesio
+from cjwkernel.pandas import moduleutils
+from cjwkernel.pandas.parse_util import parse_bytesio
 
 
 ExtensionMimeTypes = {
@@ -53,7 +52,7 @@ def render(table, params, *, fetch_result, **kwargs):
 
     has_header: bool = params["has_header"]
     if not has_header:
-        table = turn_header_into_first_row(table)
+        table = moduleutils.turn_header_into_first_row(table)
 
     return ProcessResult(table, error)
 
@@ -66,7 +65,7 @@ async def fetch(params, **kwargs):
     timeout = aiohttp.ClientTimeout(total=5 * 60, connect=30)
 
     try:
-        async with utils.spooled_data_from_url(url, headers, timeout) as (
+        async with moduleutils.spooled_data_from_url(url, headers, timeout) as (
             bytesio,
             headers,
             charset,

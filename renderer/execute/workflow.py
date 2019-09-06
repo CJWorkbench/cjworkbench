@@ -1,8 +1,8 @@
 from typing import Dict, List, Optional, Tuple
 from cjworkbench.sync import database_sync_to_async
-from cjwkernel.pandas.types import StepResultShape
+from cjwkernel.types import RenderResult, TabOutput
+from cjwkernel.param_dtype import ParamDType
 from cjwstate.models import Workflow
-from cjwstate.models.param_dtype import ParamDType
 from .tab import ExecuteStep, TabFlow, execute_tab_flow
 from .types import UnneededExecution
 
@@ -83,9 +83,9 @@ async def execute_workflow(workflow: Workflow, delta_id: int) -> None:
     #
     # `tab_shapes.keys()` returns tab slugs in the Workflow's tab order -- that
     # is, the order the user determines.
-    tab_shapes: Dict[str, Optional[StepResultShape]] = dict(
-        (flow.tab_slug, None) for flow in pending_tab_flows
-    )
+    tab_outputs: Dict[str, Optional[TabOutput]] = {
+        flow.tab_slug: None for flow in pending_tab_flows
+    }
 
     # Execute one tab_flow at a time.
     #
@@ -93,25 +93,33 @@ async def execute_workflow(workflow: Workflow, delta_id: int) -> None:
     # time; it might be run multiple times simultaneously (even on different
     # computers); and `await` doesn't work with locks.
 
-    while pending_tab_flows:
-        ready_flows, dependent_flows = partition_ready_and_dependent(pending_tab_flows)
+    try:
+        while pending_tab_flows:
+            ready_flows, dependent_flows = partition_ready_and_dependent(
+                pending_tab_flows
+            )
 
-        if not ready_flows:
-            # All flows are dependent -- meaning they all have cycles. Execute
-            # them last; they can detect their cycles through `tab_shapes`.
-            break
+            if not ready_flows:
+                # All flows are dependent -- meaning they all have cycles. Execute
+                # them last; they can detect their cycles through `tab_outputs`.
+                break
 
-        for tab_flow in ready_flows:
-            result = await execute_tab_flow(workflow, tab_flow, tab_shapes)
-            tab_shape = StepResultShape(result.status, result.table_shape)
-            del result  # recover ram
-            tab_shapes[tab_flow.tab_slug] = tab_shape
+            for tab_flow in ready_flows:
+                result: RenderResult = await execute_tab_flow(
+                    workflow, tab_flow, tab_outputs
+                )
+                tab_outputs[tab_flow.tab_slug] = result
 
-        pending_tab_flows = dependent_flows  # iterate
+            pending_tab_flows = dependent_flows  # iterate
+    finally:
+        # Delete each tab-output DataFrame file.
+        for tab_output in tab_outputs.values():
+            if tab_output.table.path:
+                tab_output.table.path.unlink()
 
     # Now, `pending_tab_flows` only contains flows with cycles. Execute them,
     # but don't update `tab_shapes` because none of them should see the output
     # from any other. (If tab1 and tab 2 depend on each other, they should both
     # have the same error: "Cycle"; their order of execution shouldn't matter.)
     for tab_flow in pending_tab_flows:
-        await execute_tab_flow(workflow, tab_flow, tab_shapes)
+        await execute_tab_flow(workflow, tab_flow, tab_outputs)

@@ -5,7 +5,7 @@ Steps to loading a module:
 
     1. Find all the files. (deliverable: ModuleFiles instance)
     2. Load its spec. (deliverable: ModuleSpec instance)
-    3. Load its Python code. (deliverable: types.Module with valid functions)
+    3. Load its Python code. (deliverable: cjwkernel.types.CompiledModule)
 """
 
 
@@ -18,14 +18,20 @@ from pathlib import Path
 import jsonschema
 import sys
 import threading
-from typing import List, Optional, Set
+from typing import Any, List, Optional, Set, Tuple
 import yaml
+from cjwkernel.errors import ModuleError
+from cjwkernel.kernel import Kernel
+from cjwkernel.types import CompiledModule
 
 
 with (Path(__file__).parent / "module_spec_schema.yaml").open("rt") as spec_file:
     _validator = jsonschema.Draft7Validator(
         yaml.safe_load(spec_file), format_checker=jsonschema.FormatChecker()
     )
+
+
+kernel = Kernel()
 
 
 def validate_module_spec(spec):
@@ -244,7 +250,7 @@ class PathLoader(importlib.abc.SourceLoader):
         return f"<Module {self.name}>"
 
 
-def load_python_module(name: str, code_path: Path):
+def load_python_module(name: str, code_path: Path) -> Tuple[Any, CompiledModule]:
     """
     Convert from `pathlib.Path` to Python module.
 
@@ -263,6 +269,7 @@ def load_python_module(name: str, code_path: Path):
         loader,
     )
 
+    # DEPRECATED -- load a Module, for direct calls.
     try:
         module = importlib.util.module_from_spec(spec)
     except SyntaxError as err:
@@ -278,7 +285,13 @@ def load_python_module(name: str, code_path: Path):
     finally:
         del sys.modules[spec.name]
 
-    return module
+    # Un-deprecated: compile a module. (This is safe!)
+    try:
+        compiled_module = kernel.compile(code_path, name)
+    except ModuleError as err:
+        raise ValueError("Module %s cannot be loaded: %s" % (name, str(err)))
+
+    return module, compiled_module
 
 
 # Now check if the module is importable and defines the render function

@@ -309,6 +309,11 @@ class ArrowTable:
     is a special case: it must have `table is None and path is None`.
 
     `self.table` will be populated and validated during construction.
+
+    To pass an ArrowTable between processes, the file must be readable at the
+    same `path` to both processes. If your ArrowTable isn't being shared
+    between processes, you may safely delete the file at `path` immediately
+    after constructing the ArrowTable.
     """
 
     path: Optional[Path] = None
@@ -496,16 +501,96 @@ class I18nMessage:
         return {"id": self.id, "arguments": self.args}
 
 
+ParamValue = Optional[
+    Union[
+        str,
+        int,
+        float,
+        bool,
+        Column,
+        TabOutput,
+        List[Any],  # should be List[ParamValue]
+        Dict[str, Any],  # should be Dict[str, ParamValue]
+    ]
+]
+
+
 @dataclass(frozen=True)
-class Params:
+class RawParams:
     params: Dict[str, Any]
 
     @classmethod
-    def from_thrift(cls, value: ttypes.Params) -> Params:
+    def from_thrift(cls, value: ttypes.RawParams) -> RawParams:
         return cls(json.loads(value.json))
 
-    def to_thrift(self) -> ttypes.Params:
-        return ttypes.Params(json_encode(self.params))
+    def to_thrift(self) -> ttypes.RawParams:
+        return ttypes.RawParams(json_encode(self.params))
+
+
+@dataclass(frozen=True)
+class Params:
+    """
+    Nested data structure passed to `render()` -- includes Column/TabOutput.
+    """
+
+    params: Dict[str, Any]
+
+    @classmethod
+    def _value_from_thrift(cls, value: ttypes.ParamValue) -> ParamValue:
+        if value.string_value is not None:
+            return value.string_value
+        elif value.integer_value is not None:
+            return value.integer_value
+        elif value.float_value is not None:
+            return value.float_value
+        elif value.boolean_value is not None:
+            return value.boolean_value
+        elif value.column_value is not None:
+            return Column.from_thrift(value.column_value)
+        elif value.tab_value is not None:
+            return TabOutput.from_thrift(value.tab_value)
+        elif value.list_value is not None:
+            return [cls._value_from_thrift(v) for v in value.list_value]
+        elif value.map_value is not None:
+            return {k: cls._value_from_thrift(v) for k, v in value.map_value.items()}
+        else:
+            return None
+
+    @classmethod
+    def _value_to_thrift(cls, value: ParamValue) -> ttypes.ParamValue:
+        PV = ttypes.ParamValue
+
+        if value is None:
+            return PV()  # a Thrift union with no value
+        elif isinstance(value, str):
+            # string, file, enum
+            return PV(string_value=value)
+        elif isinstance(value, int) and not isinstance(value, bool):
+            return PV(integer_value=value)
+        elif isinstance(value, float):
+            return PV(float_value=value)
+        elif isinstance(value, bool):
+            # boolean, enum
+            return PV(boolean_value=value)
+        elif isinstance(value, Column):
+            return PV(column_value=value.to_thrift())
+        elif isinstance(value, TabOutput):
+            return PV(tab_value=value.to_thrift())
+        elif isinstance(value, list):
+            # list, multicolumn, multitab, multichartseries
+            return PV(list_value=[cls._value_to_thrift(v) for v in value])
+        elif isinstance(value, dict):
+            # map, dict
+            return PV(map_value={k: cls._value_to_thrift(v) for k, v in value.items()})
+        else:
+            raise RuntimeError("Unhandled value %r" % value)
+
+    @classmethod
+    def from_thrift(cls, value: Dict[str, ttypes.ParamValue]) -> Params:
+        return cls({k: cls._value_from_thrift(v) for k, v in value.items()})
+
+    def to_thrift(self) -> Dict[str, ttypes.ParamValue]:
+        return {k: self._value_to_thrift(v) for k, v in self.params.items()}
 
 
 class QuickFixAction(ABC):
@@ -557,7 +642,7 @@ class PrependStepQuickFixAction:
     def to_thrift(self) -> ttypes.QuickFixAction:
         return ttypes.QuickFixAction(
             prepend_step=ttypes.PrependStepQuickFixAction(
-                self.module_slug, ttypes.Params(json_encode(self.partial_params))
+                self.module_slug, ttypes.RawParams(json_encode(self.partial_params))
             )
         )
 
@@ -684,7 +769,12 @@ class RenderResult:
     An result may be a user-friendly "error" -- a zero-column table and
     non-empty `errors`. Indeed, Workbench tends to catch and wrap bugs so
     they appear as RenderResult. In a sense, render cannot fail: it will
-    _always_ produce a RenderREsult.
+    _always_ produce a RenderResult.
+
+    To pass a RenderResult between processes, the file must be readable at the
+    same `table.path` to both processes. If your RenderResult isn't shared
+    between processes, you may safely delete the file at `table.path`
+    immediately after constructing `table`.
     """
 
     table: ArrowTable = field(default_factory=ArrowTable)
@@ -706,6 +796,14 @@ class RenderResult:
             ArrowTable.from_thrift(value.table),
             [RenderError.from_thrift(e) for e in value.errors],
             json.loads(value.json) if value.json else None,
+        )
+
+    @classmethod
+    def from_deprecated_error(
+        cls, message: str, *, quick_fixes: List[QuickFix] = []
+    ) -> RenderError:
+        return cls(
+            errors=[RenderError(I18nMessage("TODO_i18n", [message]), quick_fixes)]
         )
 
     def to_thrift(self) -> ttypes.RenderResult:

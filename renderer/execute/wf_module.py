@@ -1,15 +1,13 @@
 import asyncio
 import contextlib
 import datetime
-from pathlib import Path
-import tempfile
 from typing import Any, Dict, Optional, Tuple
 from cjworkbench.sync import database_sync_to_async
-from cjwkernel.pandas.types import ProcessResult, StepResultShape, TableShape
+from cjwkernel.param_dtype import ParamDType
+from cjwkernel.types import ArrowTable, FetchResult, RenderResult
 from cjwstate import rendercache, storedobjects
 from cjwstate.models import WfModule, Workflow
 from cjwstate.models.loaded_module import LoadedModule
-from cjwstate.models.param_dtype import ParamDType
 from server import websockets
 from renderer import notifications
 from .types import (
@@ -54,7 +52,7 @@ def locked_wf_module(workflow, wf_module):
     return retval
 
 
-def _load_fetch_result(wf_module: WfModule) -> Optional[ProcessResult]:
+def _load_fetch_result(wf_module: WfModule) -> Optional[FetchResult]:
     """
     Load user-selected StoredObject as a kinda-ProcessResult.
 
@@ -80,7 +78,7 @@ def _load_fetch_result(wf_module: WfModule) -> Optional[ProcessResult]:
 
     error = wf_module.fetch_error
 
-    return ProcessResult(table, error)
+    return FetchResult(table, error)
 
 
 @database_sync_to_async
@@ -88,9 +86,9 @@ def _execute_wfmodule_pre(
     workflow: Workflow,
     wf_module: WfModule,
     params: Dict[str, Any],
-    input_table_shape: TableShape,
-    tab_shapes: Dict[str, Optional[StepResultShape]],
-) -> Tuple[Optional[LoadedModule], Optional[ProcessResult], Dict[str, Any]]:
+    input_table: ArrowTable,
+    tab_outputs: Dict[str, Optional[RenderResult]],
+) -> Tuple[Optional[LoadedModule], Optional[RenderResult], Dict[str, Any]]:
     """
     First step of execute_wfmodule().
 
@@ -109,7 +107,7 @@ def _execute_wfmodule_pre(
     function so that when we're done awaiting it, we can continue executing in
     a context that doesn't use a database thread.)
 
-    `tab_shapes.keys()` must be ordered as the Workflow's tabs are.
+    `tab_outputs.keys()` must be ordered as the Workflow's tabs are.
     """
     # raises UnneededExecution
     with locked_wf_module(workflow, wf_module) as safe_wf_module:
@@ -121,7 +119,7 @@ def _execute_wfmodule_pre(
 
         fetch_result = _load_fetch_result(safe_wf_module)
         render_context = renderprep.RenderContext(
-            workflow.id, wf_module.id, input_table_shape, tab_shapes, params  # ugh
+            workflow.id, wf_module.id, input_table, tab_outputs, params  # ugh
         )
         if module_version is None:
             param_schema = ParamDType.Dict({})
@@ -134,7 +132,7 @@ def _execute_wfmodule_pre(
 
 @database_sync_to_async
 def _execute_wfmodule_save(
-    workflow: Workflow, wf_module: WfModule, result: ProcessResult
+    workflow: Workflow, wf_module: WfModule, result: RenderResult
 ) -> notifications.OutputDelta:
     """
     Call rendercache.cache_render_result() and build notifications.OutputDelta.
@@ -158,20 +156,18 @@ def _execute_wfmodule_save(
         else:
             stale_result = None
 
-        with tempfile.NamedTemporaryFile() as tf:
-            arrow_result = result.to_arrow(Path(tf.name))
-            rendercache.cache_render_result(
-                workflow, safe_wf_module, wf_module.last_relevant_delta_id, arrow_result
-            )
+        rendercache.cache_render_result(
+            workflow, safe_wf_module, wf_module.last_relevant_delta_id, result
+        )
 
-        if safe_wf_module.notifications and arrow_result != stale_result:
+        if safe_wf_module.notifications and result != stale_result:
             safe_wf_module.has_unseen_notification = True
             safe_wf_module.save(update_fields=["has_unseen_notification"])
             return notifications.OutputDelta(
                 safe_wf_module.workflow.owner,
                 safe_wf_module.workflow,
                 safe_wf_module,
-                ProcessResult.from_arrow(stale_result),
+                stale_result,
                 result,
             )
         else:
@@ -183,9 +179,9 @@ async def _render_wfmodule(
     wf_module: WfModule,
     params: Dict[str, Any],
     tab_name: str,
-    input_result: Optional[ProcessResult],  # None for first module in tab
-    tab_shapes: Dict[str, Optional[StepResultShape]],
-) -> ProcessResult:
+    input_result: Optional[RenderResult],  # None for first module in tab
+    tab_outputs: Dict[str, Optional[RenderResult]],
+) -> RenderResult:
     """
     Prepare and call `wf_module`'s `render()`; return a ProcessResult.
 
@@ -193,26 +189,28 @@ async def _render_wfmodule(
     other events.
     """
     if wf_module.order > 0 and input_result.status != "ok":
-        return ProcessResult()  # 'unreachable'
+        return RenderResult()  # 'unreachable'
 
     try:
         loaded_module, fetch_result, param_values = await _execute_wfmodule_pre(
-            workflow, wf_module, params, input_result.table_shape, tab_shapes
+            workflow, wf_module, params, input_result.table_shape, tab_outputs
         )
     except TabCycleError:
-        return ProcessResult(
-            error=("The chosen tab depends on this one. Please choose another tab.")
+        return RenderResult.from_deprecated_error(
+            "The chosen tab depends on this one. Please choose another tab."
         )
     except TabOutputUnreachableError:
-        return ProcessResult(
-            error=("The chosen tab has no output. Please select another one.")
+        return RenderResult.from_deprecated_error(
+            "The chosen tab has no output. Please select another one."
         )
     except PromptingError as err:
-        return ProcessResult(error=err.as_error_str(), quick_fixes=err.as_quick_fixes())
+        return RenderResult.from_deprecated_error(
+            err.as_error_str(), quick_fixes=err.as_quick_fixes()
+        )
 
     if loaded_module is None:
-        return ProcessResult(
-            error="Please delete this step: an administrator uninstalled its code."
+        return RenderResult.from_deprecated_error(
+            "Please delete this step: an administrator uninstalled its code."
         )
 
     # Render may take a while. run_in_executor to push that slowdown to a
@@ -228,9 +226,9 @@ async def execute_wfmodule(
     wf_module: WfModule,
     params: Dict[str, Any],
     tab_name: str,
-    input_result: ProcessResult,
-    tab_shapes: Dict[str, Optional[StepResultShape]],
-) -> ProcessResult:
+    input_result: RenderResult,
+    tab_outputs: Dict[str, Optional[RenderResult]],
+) -> RenderResult:
     """
     Render a single WfModule; cache, broadcast and return output.
 
@@ -264,7 +262,7 @@ async def execute_wfmodule(
 
     # may raise UnneededExecution
     result = await _render_wfmodule(
-        workflow, wf_module, params, tab_name, input_result, tab_shapes
+        workflow, wf_module, params, tab_name, input_result, tab_outputs
     )
 
     # may raise UnneededExecution
@@ -293,14 +291,21 @@ async def execute_wfmodule(
     return result
 
 
-def build_status_dict(result: ProcessResult, delta_id: int) -> Dict[str, Any]:
-    quick_fixes = [qf.to_dict() for qf in result.quick_fixes]
+def build_status_dict(result: RenderResult, delta_id: int) -> Dict[str, Any]:
+    if result.errors:
+        if result.errors[0].message.id != "TODO_i18n":
+            raise RuntimeError("TODO serialize i18n-ready messages")
+        error = result.errors[0].message.arguments[0]
+        quick_fixes = [qf.to_dict() for qf in result.errors[0].quick_fixes]
+    else:
+        error = ""
+        quick_fixes = []
 
     return {
         "quick_fixes": quick_fixes,
         "output_columns": [c.to_dict() for c in result.columns],
-        "output_error": result.error,
+        "output_error": error,
         "output_status": result.status,
-        "output_n_rows": len(result.dataframe),
+        "output_n_rows": result.table.metadata.n_rows,
         "cached_render_result_delta_id": delta_id,
     }

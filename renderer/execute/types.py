@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import FrozenSet, List, Optional
-from cjwkernel.pandas.types import QuickFix
+from cjwkernel.types import I18nMessage, QuickFix, QuickFixAction
 
 
 TypeNames = {"text": "Text", "number": "Numbers", "datetime": "Dates & Times"}
@@ -139,7 +139,11 @@ class PromptingError(Exception):
             else:
                 raise RuntimeError(f"Unhandled wanted_types: {self.wanted_types}")
 
-            return QuickFix(prompt, "prependModule", [module_id, params])
+            return QuickFix(
+                I18nMessage(
+                    "TODO_i18n", [prompt], QuickFixAction.PrependStep(module_id, params)
+                )
+            )
 
     def __init__(self, errors: List[PromptingError.WrongColumnType]):
         super().__init__("user must change something before we render")

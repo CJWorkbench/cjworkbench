@@ -4,8 +4,7 @@ import numpy as np
 import pandas as pd
 from pandas.api.types import is_numeric_dtype, is_datetime64_dtype
 from schedula import DispatcherError
-from .utils import build_globals_for_eval
-from .utils import autocast_series_dtype
+from cjwkernel.pandas.moduleutils import autocast_series_dtype, build_globals_for_eval
 
 
 def sanitize_series(series: pd.Series) -> pd.Series:

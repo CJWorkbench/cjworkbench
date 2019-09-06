@@ -5,12 +5,12 @@ from django.utils import timezone
 import pandas as pd
 from pandas.testing import assert_frame_equal
 from cjwkernel.pandas.types import ProcessResult
+from cjwkernel.param_dtype import ParamDType
 from cjwkernel.types import I18nMessage, RenderError
 from cjwstate import minio
 from cjwstate.storedobjects import create_stored_object
 from cjwstate.models import Workflow
 from cjwstate.models.loaded_module import LoadedModule
-from cjwstate.models.param_dtype import ParamDType
 from cjwstate.tests.utils import DbTestCase
 from renderer.execute.wf_module import execute_wfmodule
 

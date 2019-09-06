@@ -771,9 +771,12 @@ class ProcessResult:
 
     @classmethod
     def from_arrow(self, value: atypes.RenderResult) -> ProcessResult:
-        dataframe = value.table.table.to_pandas(
-            date_as_object=False, deduplicate_objects=True, ignore_metadata=True
-        )  # TODO ensure dictionaries stay dictionaries
+        if value.table.table is None:
+            dataframe = pd.DataFrame()
+        else:
+            dataframe = value.table.table.to_pandas(
+                date_as_object=False, deduplicate_objects=True, ignore_metadata=True
+            )  # TODO ensure dictionaries stay dictionaries
         if value.errors:
             if value.errors[0].message.id == "TODO_i18n":
                 error = value.errors[0].message.args[0]

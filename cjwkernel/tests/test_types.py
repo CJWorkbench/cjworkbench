@@ -135,6 +135,120 @@ class ThriftConvertersTest(unittest.TestCase):
     def test_tab_output_to_thrift(self):
         pass  # TODO test ArrowTable conversions, then test TabOutput conversions
 
+    def test_raw_params_from_thrift(self):
+        self.assertEqual(
+            types.RawParams.from_thrift(ttypes.RawParams('{"A":"x","B":[1,2]}')),
+            types.RawParams({"A": "x", "B": [1, 2]}),
+        )
+
+    def test_raw_params_to_thrift(self):
+        self.assertEqual(
+            types.RawParams({"A": "x", "B": [1, 2]}).to_thrift(),
+            ttypes.RawParams('{"A":"x","B":[1,2]}'),
+        )
+
+    def test_params_from_thrift(self):
+        self.assertEqual(
+            types.Params.from_thrift(
+                {
+                    "str": ttypes.ParamValue(string_value="s"),
+                    "int": ttypes.ParamValue(integer_value=2),
+                    "float": ttypes.ParamValue(float_value=1.2),
+                    "null": ttypes.ParamValue(),
+                    "bool": ttypes.ParamValue(boolean_value=False),
+                    "column": ttypes.ParamValue(
+                        column_value=ttypes.Column(
+                            "A",
+                            ttypes.ColumnType(
+                                number_type=ttypes.ColumnTypeNumber(format="{:,.2f}")
+                            ),
+                        )
+                    ),
+                    "listofmaps": ttypes.ParamValue(
+                        list_value=[
+                            ttypes.ParamValue(
+                                map_value={
+                                    "A": ttypes.ParamValue(string_value="a"),
+                                    "B": ttypes.ParamValue(string_value="b"),
+                                }
+                            ),
+                            ttypes.ParamValue(
+                                map_value={
+                                    "C": ttypes.ParamValue(string_value="c"),
+                                    "D": ttypes.ParamValue(string_value="d"),
+                                }
+                            ),
+                        ]
+                    ),
+                    "tab": ttypes.ParamValue(string_value="TODO tabs"),
+                }
+            ),
+            types.Params(
+                {
+                    "str": "s",
+                    "int": 2,
+                    "float": 1.2,
+                    "null": None,
+                    "bool": False,
+                    "column": types.Column(
+                        "A", types.ColumnType.Number(format="{:,.2f}")
+                    ),
+                    "listofmaps": [{"A": "a", "B": "b"}, {"C": "c", "D": "d"}],
+                    "tab": "TODO tabs",
+                }
+            ),
+        )
+
+    def test_params_to_thrift(self):
+        self.assertEqual(
+            types.Params(
+                {
+                    "str": "s",
+                    "int": 2,
+                    "float": 1.2,
+                    "null": None,
+                    "bool": False,
+                    "column": types.Column(
+                        "A", types.ColumnType.Number(format="{:,.2f}")
+                    ),
+                    "listofmaps": [{"A": "a", "B": "b"}, {"C": "c", "D": "d"}],
+                    "tab": "TODO tabs",
+                }
+            ).to_thrift(),
+            {
+                "str": ttypes.ParamValue(string_value="s"),
+                "int": ttypes.ParamValue(integer_value=2),
+                "float": ttypes.ParamValue(float_value=1.2),
+                "null": ttypes.ParamValue(),
+                "bool": ttypes.ParamValue(boolean_value=False),
+                "column": ttypes.ParamValue(
+                    column_value=ttypes.Column(
+                        "A",
+                        ttypes.ColumnType(
+                            number_type=ttypes.ColumnTypeNumber(format="{:,.2f}")
+                        ),
+                    )
+                ),
+                "listofmaps": ttypes.ParamValue(
+                    list_value=[
+                        ttypes.ParamValue(
+                            map_value={
+                                "A": ttypes.ParamValue(string_value="a"),
+                                "B": ttypes.ParamValue(string_value="b"),
+                            }
+                        ),
+                        ttypes.ParamValue(
+                            map_value={
+                                "C": ttypes.ParamValue(string_value="c"),
+                                "D": ttypes.ParamValue(string_value="d"),
+                            }
+                        ),
+                    ]
+                ),
+                "tab": ttypes.ParamValue(string_value="TODO tabs"),
+            },
+        )
+
     def test_i18n_message_from_thrift(self):
         self.assertEqual(
             types.I18nMessage.from_thrift(
@@ -182,7 +296,7 @@ class ThriftConvertersTest(unittest.TestCase):
             types.QuickFixAction.from_thrift(
                 ttypes.QuickFixAction(
                     prepend_step=ttypes.PrependStepQuickFixAction(
-                        "filter", ttypes.Params('{"x":"y"}')
+                        "filter", ttypes.RawParams('{"x":"y"}')
                     )
                 )
             ),
@@ -194,7 +308,7 @@ class ThriftConvertersTest(unittest.TestCase):
             types.QuickFixAction.PrependStep("filter", {"x": "y"}).to_thrift(),
             ttypes.QuickFixAction(
                 prepend_step=ttypes.PrependStepQuickFixAction(
-                    "filter", ttypes.Params('{"x":"y"}')
+                    "filter", ttypes.RawParams('{"x":"y"}')
                 )
             ),
         )
@@ -228,7 +342,7 @@ class ThriftConvertersTest(unittest.TestCase):
                     ttypes.I18nMessage("click", []),
                     ttypes.QuickFixAction(
                         prepend_step=ttypes.PrependStepQuickFixAction(
-                            "filter", ttypes.Params('{"x":"y"}')
+                            "filter", ttypes.RawParams('{"x":"y"}')
                         )
                     ),
                 )
@@ -249,7 +363,7 @@ class ThriftConvertersTest(unittest.TestCase):
                 ttypes.I18nMessage("click", []),
                 ttypes.QuickFixAction(
                     prepend_step=ttypes.PrependStepQuickFixAction(
-                        "filter", ttypes.Params('{"x":"y"}')
+                        "filter", ttypes.RawParams('{"x":"y"}')
                     )
                 ),
             ),
@@ -299,7 +413,7 @@ class ThriftConvertersTest(unittest.TestCase):
                             ttypes.I18nMessage("click", []),
                             ttypes.QuickFixAction(
                                 prepend_step=ttypes.PrependStepQuickFixAction(
-                                    "filter", ttypes.Params('{"x":"y"}')
+                                    "filter", ttypes.RawParams('{"x":"y"}')
                                 )
                             ),
                         )
@@ -335,7 +449,7 @@ class ThriftConvertersTest(unittest.TestCase):
                         ttypes.I18nMessage("click", []),
                         ttypes.QuickFixAction(
                             prepend_step=ttypes.PrependStepQuickFixAction(
-                                "filter", ttypes.Params('{"x":"y"}')
+                                "filter", ttypes.RawParams('{"x":"y"}')
                             )
                         ),
                     )

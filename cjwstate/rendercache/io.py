@@ -98,6 +98,53 @@ def cache_render_result(
         )  # makes new cache consistent
 
 
+def load_cached_render_result(
+    crr: CachedRenderResult, path: Path, only_columns: Optional[List[str]] = None
+) -> RenderResult:
+    """
+    Return a RenderResult equivalent to the one passed to `cache_render_result()`.
+
+    Raise CorruptCacheError if the cached data does not match `crr`. That can
+    mean:
+
+        * The cached Parquet file is corrupt
+        * The cached Parquet file is missing
+        * `crr` is stale -- the cached result is for a different delta. This
+          could be detected by a `Workflow.cooperative_lock()`, too, should the
+          caller want to distinguish this error from the others.
+
+    The returned RenderResult is backed by an mmapped file on disk -- the one
+    supplied as `path`. It doesn't require much physical RAM: the Linux kernel
+    may page out data we aren't using.
+
+    If only_columns is a list of column names, the yielded RenderResult only
+    contains the specified columns.
+    """
+    if not crr.columns:
+        # Zero-column tables aren't written to cache
+        return RenderResult(
+            ArrowTable(None, TableMetadata(crr.nrows, [])), crr.errors, crr.json
+        )
+
+    try:
+        with minio.temporarily_download(BUCKET, crr_parquet_key(crr)) as parquet_path:
+            parquet.convert_parquet_file_to_arrow_file(
+                parquet_path, path, only_columns=only_columns
+            )
+    except FileNotFoundError:
+        raise CorruptCacheError  # FIXME add unit test
+    # TODO handle validation errors => CorruptCacheError
+    if only_columns is None:
+        table_metadata = crr.table_metadata
+    else:
+        table_metadata = TableMetadata(
+            crr.table_metadata.n_rows,
+            [c for c in crr.table_metadata.columns if c.name in only_columns],
+        )
+    arrow_table = ArrowTable(path, table_metadata)
+    return RenderResult(arrow_table, crr.errors, crr.json)
+
+
 @contextmanager
 def open_cached_render_result(
     crr: CachedRenderResult, only_columns: Optional[List[str]] = None
@@ -131,25 +178,7 @@ def open_cached_render_result(
     try:
         os.close(fd)
         arrow_path = Path(filename)
-        try:
-            with minio.temporarily_download(
-                BUCKET, crr_parquet_key(crr)
-            ) as parquet_path:
-                parquet.convert_parquet_file_to_arrow_file(
-                    parquet_path, arrow_path, only_columns=only_columns
-                )
-        except FileNotFoundError:
-            raise CorruptCacheError  # FIXME add unit test
-        # TODO handle validation errors => CorruptCacheError
-        if only_columns is None:
-            table_metadata = crr.table_metadata
-        else:
-            table_metadata = TableMetadata(
-                crr.table_metadata.n_rows,
-                [c for c in crr.table_metadata.columns if c.name in only_columns],
-            )
-        arrow_table = ArrowTable(arrow_path, table_metadata)
-        yield RenderResult(arrow_table, crr.errors, crr.json)
+        yield load_cached_render_result(crr, arrow_path, only_columns=only_columns)
     finally:
         os.unlink(filename)
 

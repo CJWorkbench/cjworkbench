@@ -9,17 +9,19 @@ import logging
 import os
 from pathlib import Path
 import sys
+import tempfile
 import time
 import traceback
 from types import ModuleType
 from typing import Any, Awaitable, Callable, Dict, Optional
 import pandas as pd
 from cjworkbench.sync import database_sync_to_async
-from cjwkernel.pandas.types import ProcessResult, RenderColumn
+from cjwkernel.pandas.types import Column, ProcessResult, RenderColumn
+from cjwkernel.param_dtype import ParamDTypeDict
+from cjwkernel.types import CompiledModule, Tab
 from cjwstate import minio
 from . import module_loader
 from .module_version import ModuleVersion
-from .param_dtype import ParamDTypeDict
 from server.modules import Lookup as InternalModules
 
 
@@ -37,6 +39,44 @@ def _default_render(table, params, *, fetch_result, **kwargs) -> ProcessResult:
 async def _default_fetch(params, **kwargs) -> Optional[ProcessResult]:
     """No-op fetch."""
     return None
+
+
+def _render_in_kernel(
+    compiled_module: CompiledModule,
+    table: pd.DataFrame,
+    params: Dict[str, Any],
+    *,
+    input_columns: Dict[str, RenderColumn],
+    tab_name: str,
+    fetch_result: Optional[ProcessResult],
+) -> ProcessResult:
+    with tempfile.NamedTemporaryFile() as input_file:
+        with tempfile.NamedTemporaryFile() as fetch_file:
+            # XXX DELETEME: convert to Arrow via ProcessResult.
+            arrow_table = (
+                ProcessResult(
+                    dataframe=table,
+                    columns=[
+                        Column.from_kwargs(name=c.name, type=c.type, format=c.format)
+                        for c in input_columns
+                    ],
+                )
+                .to_arrow(Path(input_file.name))
+                .table
+            )
+            if fetch_result is None:
+                arrow_fetch_result = None
+            else:
+                arrow_fetch_result = fetch_result.to_arrow(Path(fetch_file.name))
+
+            arrow_result = module_loader.kernel.render(
+                compiled_module,
+                arrow_table,
+                params,
+                Tab("tab-TODO-pass-the-tab", tab_name),
+                arrow_fetch_result,
+            )
+            return ProcessResult.from_arrow(arrow_result)
 
 
 def _memoize_async_func(f):
@@ -335,15 +375,15 @@ class LoadedModule:
         version_sha1 = module_version.source_version_hash
 
         try:
-            module = InternalModules[module_id_name]
+            module, compiled_module = InternalModules[module_id_name]
             version_sha1 = "internal"
         except KeyError:
-            module = load_external_module(
+            module, compiled_module = load_external_module(
                 module_id_name, version_sha1, module_version.last_update_time
             )
 
         param_schema = module_version.param_schema
-        render_impl = getattr(module, "render", _default_render)
+        render_impl = partial(_render_in_kernel, compiled_module)
         fetch_impl = getattr(module, "fetch", _default_fetch)
         migrate_params_impl = getattr(module, "migrate_params", None)
 

@@ -101,13 +101,73 @@ struct ParquetTable {
   2: TableMetadata metadata
 }
 
-/** Module `render()` and `fetch()` parameters. */
-struct Params {
+/**
+ * Value (or nested value) in Params passed to render()/fetch().
+ *
+ * These params are connected to the `table` parameter: a "column"-typed
+ * parameter will be a `Column`; a "tab"-typed parameter will be a `TabOutput.
+ *
+ * This is more permissive than module_spec. Callers should validate against
+ * the module spec.
+ *
+ * The special value `None` is allowed. Thrift unions are just structs with
+ * optional fields; in this case, if all fields are unset, then that means
+ * `null`.
+ */
+union ParamValue {
   /**
-   * JSON-encoded dictionary of values.
+   * String value.
    *
-   * Must be a valid JSON dictionary.
+   * This represents "string", "enum" and "file" values. Over the wire, it's
+   * all the same to us.
    */
+  1: string string_value,
+  2: i64 integer_value,
+  3: double float_value,
+  4: bool boolean_value,
+  5: Column column_value,
+  6: TabOutput tab_value,
+  /**
+   * List of nested values.
+   *
+   * This represents "list", "multicolumn", "multitab" and "multichartseries"
+   * dtypes. Over the wire, it's all the same to us.
+   */
+  7: list<ParamValue> list_value,
+  /**
+   * Mapping of key to nested value.
+   *
+   * This represents "map" and "dict" dtypes. Over the wire, it's all the same
+   * to us.
+   */
+  8: map<string, ParamValue> map_value,
+}
+
+/**
+ * Module `render()` and `fetch()` parameters.
+ *
+ * These are _basically_ JSON ... but Params can include TabOutput, Column, and
+ * others, so JSON doesn't cut it.
+ *
+ * See `module_spec_schema.yaml` for the data this needs to model.
+ *
+ * Examples:
+ *
+ * * `params["slug"].integer_value`
+ * * `params["slug"].multicolumn_value[2].name`;
+ * * `params["slug"].dict_value["subslug"].column_value.type
+ */
+typedef map<string, ParamValue> Params
+
+/**
+ * Value (or nested value) passed to `migrate_params()`.
+ *
+ * Raw parameter values are stored in the database as JSON. We pass them using
+ * JSON-encoded string. This is not the same as the Thrift type "Params", which
+ * is passed to `render()`: Params are objects with TabOutput/Column/etc
+ * members.
+ */
+struct RawParams {
   1: string json
 }
 
@@ -164,7 +224,7 @@ struct PrependStepQuickFixAction {
   1: string module_slug,
 
   /** Some params to set on the new Step (atop the module's defaults). */
-  2: Params partial_params,
+  2: RawParams partial_params,
 }
 
 /** Instruction for what happens when the user clicks a Quick Fix button. */
@@ -205,7 +265,7 @@ struct FetchRequest {
   /**
    * User-supplied secrets.
    */
-  2: Params secrets,
+  2: RawParams secrets,
 
   /**
    * Result of the previous fetch().
@@ -324,7 +384,7 @@ struct RenderResult {
  */
 service KernelModule {
   ValidateModuleResult validateModule(),
-  Params migrateParams(1: Params params),
+  RawParams migrateParams(1: RawParams params),
   RenderResult render(1: RenderRequest render_request),
   FetchResult fetch(1: FetchRequest fetch_request)
 }

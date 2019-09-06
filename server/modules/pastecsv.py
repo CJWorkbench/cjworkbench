@@ -1,6 +1,6 @@
 import io
 import pandas as pd
-from .parse_util import parse_text
+from cjwkernel.pandas.parse_util import parse_text
 
 
 def render(table, params):

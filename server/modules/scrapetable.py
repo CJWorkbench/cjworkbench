@@ -2,7 +2,7 @@ import asyncio
 import aiohttp
 import pandas as pd
 from cjwkernel.pandas.types import ProcessResult
-from server.modules import utils
+from cjwkernel.pandas import moduleutils
 
 
 def merge_colspan_headers_in_place(table) -> None:
@@ -37,7 +37,7 @@ def merge_colspan_headers_in_place(table) -> None:
         else:
             newcols.append(c)
     # newcols can contain duplicates. Rename them.
-    table.columns = list(utils.uniquize_colnames(newcols))
+    table.columns = list(moduleutils.uniquize_colnames(newcols))
 
 
 def render(table, params, *, fetch_result):
@@ -52,14 +52,14 @@ def render(table, params, *, fetch_result):
     has_header: bool = params["first_row_is_header"]
     if has_header and len(table) >= 1:  # if len == 0, no-op
         table.columns = list(
-            utils.uniquize_colnames(
+            moduleutils.uniquize_colnames(
                 str(c) or ("Column %d" % (i + 1))
                 for i, c in enumerate(table.iloc[0, :])
             )
         )
         table.drop(index=0, inplace=True)
         table.reset_index(drop=True, inplace=True)
-        utils.autocast_dtypes_in_place(table)
+        moduleutils.autocast_dtypes_in_place(table)
 
     if fetch_result.error:
         return (table, fetch_result.error)
@@ -82,11 +82,11 @@ async def fetch(params):
     result = None
 
     try:
-        async with utils.spooled_data_from_url(url) as (spool, headers, charset):
+        async with moduleutils.spooled_data_from_url(url) as (spool, headers, charset):
             # pandas.read_html() does automatic type conversion, but we prefer
             # our own. Delve into its innards so we can pass all the conversion
             # kwargs we want.
-            with utils.wrap_text(spool, charset) as textio:
+            with moduleutils.wrap_text(spool, charset) as textio:
                 tables = pd.io.html._parse(
                     # Positional arguments:
                     flavor="html5lib",  # force algorithm, for reproducibility
@@ -133,7 +133,7 @@ async def fetch(params):
     # pd.read_html() guarantees unique colnames
     table = tables[tablenum]
     merge_colspan_headers_in_place(table)
-    utils.autocast_dtypes_in_place(table)
+    moduleutils.autocast_dtypes_in_place(table)
     if len(table) == 0:
         # read_html() produces an empty Index. We want a RangeIndex.
         table.reset_index(drop=True, inplace=True)

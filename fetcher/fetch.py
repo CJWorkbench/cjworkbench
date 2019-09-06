@@ -7,17 +7,15 @@ from typing import Optional, Tuple
 from django.conf import settings
 from django.db import DatabaseError, InterfaceError
 from django.utils import timezone
+from cjwkernel.types import FetchResult
 import pandas as pd
 from cjworkbench.sync import database_sync_to_async
 from cjworkbench.util import benchmark
-from cjwkernel.pandas.types import ProcessResult
 from cjwstate.models import WfModule, Workflow, CachedRenderResult, ModuleVersion
 from cjwstate.models.loaded_module import LoadedModule
+from cjwstate.rendercache import open_cached_render_result
 from . import fetchprep, save
-from .util import (
-    read_fetched_dataframe_from_wf_module,
-    read_dataframe_from_cached_render_result,
-)
+from .util import read_fetched_dataframe_from_wf_module
 
 
 logger = logging.getLogger(__name__)
@@ -39,16 +37,6 @@ def _get_input_cached_render_result(
         return None
 
     return wf_module.cached_render_result
-
-
-async def _read_input_dataframe(crr: CachedRenderResult) -> Optional[pd.DataFrame]:
-    if crr is None:
-        return None
-    else:
-        loop = asyncio.get_event_loop()
-        return await loop.run_in_executor(
-            None, read_dataframe_from_cached_render_result, crr
-        )
 
 
 @database_sync_to_async
@@ -111,29 +99,29 @@ async def fetch_wf_module(workflow_id, wf_module, now):
         lm = await _get_loaded_module(wf_module)
         if lm is None:
             logger.info("fetch() deleted module '%s'", wf_module.module_id_name)
-            result = ProcessResult(error="Cannot fetch: module was deleted")
+            result = FetchResult.from_error_deprecated(
+                "Cannot fetch: module was deleted"
+            )
         else:
-            input_cached_render_result = await _get_input_cached_render_result(
+            input_crr = await _get_input_cached_render_result(
                 wf_module.tab_id, wf_module.order
             )
-            if input_cached_render_result:
-                input_shape = input_cached_render_result.table_shape
-            else:
-                input_shape = None
+            with open_cached_render_result(input_crr) as input_result:
+                # TODO handle input_result = None (see contextlib for help)
 
-            # Migrate params, so fetch() gets newest values
-            params = lm.migrate_params(wf_module.params)
-            # Clean params, so they're of the correct type
-            params = fetchprep.clean_value(lm.param_schema, params, input_shape)
-            result = await lm.fetch(
-                params=params,
-                secrets=wf_module.secrets,
-                workflow_id=workflow_id,
-                get_input_dataframe=partial(
-                    _read_input_dataframe, input_cached_render_result
-                ),
-                get_stored_dataframe=partial(_get_stored_dataframe, wf_module.id),
-            )
+                # Migrate params, so fetch() gets newest values
+                params = lm.migrate_params(wf_module.params)
+                # Clean params, so they're of the correct type
+                params = fetchprep.clean_value(
+                    lm.param_schema, params, input_result.table.metadata
+                )
+                result = await lm.fetch(
+                    params=params,
+                    secrets=wf_module.secrets,
+                    workflow_id=workflow_id,
+                    input_result=input_result,
+                    get_stored_dataframe=partial(_get_stored_dataframe, wf_module.id),
+                )
 
         await save.save_result_if_changed(workflow_id, wf_module, result)
     except asyncio.CancelledError:

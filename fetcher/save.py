@@ -1,8 +1,7 @@
 from typing import Optional
 from django.utils import timezone
-import pandas as pd
 from cjworkbench.sync import database_sync_to_async
-from cjwkernel.pandas.types import ProcessResult
+from cjwkernel.types import FetchResult
 from cjwstate import storedobjects
 from server import websockets
 from cjwstate.models import WfModule, Workflow
@@ -10,7 +9,7 @@ from cjwstate.models.commands import ChangeDataVersionCommand
 
 
 def _store_fetched_table_if_different(
-    workflow: Workflow, wf_module: WfModule, table: pd.DataFrame
+    workflow: Workflow, wf_module: WfModule, result: FetchResult
 ) -> Optional[timezone.datetime]:
     # Called within _maybe_add_version()
     hash = storedobjects.hash_table(table)
@@ -33,7 +32,7 @@ def _store_fetched_table_if_different(
 
 @database_sync_to_async
 def _maybe_add_version(
-    workflow: Workflow, wf_module: WfModule, maybe_result: Optional[ProcessResult]
+    workflow: Workflow, wf_module: WfModule, maybe_result: Optional[FetchResult]
 ) -> Optional[timezone.datetime]:
     """
     Apply `result` to `wf_module`.
@@ -52,31 +51,37 @@ def _maybe_add_version(
     # stale, so we must ignore those stale values.
     fields = {"is_busy": False, "last_update_check": timezone.now()}
     if maybe_result is not None:
-        fields["fetch_error"] = maybe_result.error
-
-    for k, v in fields.items():
-        setattr(wf_module, k, v)
+        if maybe_result.errors:
+            if maybe_result.errors[0].message.id != "TODO_i18n":
+                raise RuntimeError("TODO handle i18n-ready fetch-result errors")
+            elif maybe_result.errors[0].quick_fixes:
+                raise RuntimeError("TODO handle quick fixes from fetches")
+            else:
+                fields["fetch_error"] = maybe_result.errors[0].message.arguments[0]
+        else:
+            fields["fetch_error"] = ""
 
     try:
         with wf_module.workflow.cooperative_lock():
-            if not WfModule.objects.filter(
-                pk=wf_module.id, is_deleted=False, tab__is_deleted=False
-            ).exists():
+            wf_module.refresh_from_db()  # raise WfModule.DoesNotExist
+            if wf_module.is_deleted or wf_module.tab.is_deleted:
                 return None
 
             if maybe_result is not None:
                 # TODO store result error, too. Actually, nix StoredObject
                 # entirely and let fetch methods return arbitrary blobs.
                 version_added = _store_fetched_table_if_different(
-                    workflow, wf_module, maybe_result.dataframe
+                    workflow, wf_module, maybe_result
                 )
             else:
                 version_added = None
 
+            for k, v in fields.items():
+                setattr(wf_module, k, v)
             wf_module.save(update_fields=fields.keys())
 
             return version_added
-    except Workflow.DoesNotExist:
+    except (Workflow.DoesNotExist, WfModule.DoesNotExist):
         return None
 
 
@@ -86,7 +91,7 @@ def get_wf_module_workflow(wf_module: WfModule) -> Workflow:
 
 
 async def save_result_if_changed(
-    workflow_id: int, wf_module: WfModule, new_result: Optional[ProcessResult]
+    workflow_id: int, wf_module: WfModule, new_result: Optional[FetchResult]
 ) -> None:
     """
     Store fetched table, if it is a change from `wf_module`'s existing data.

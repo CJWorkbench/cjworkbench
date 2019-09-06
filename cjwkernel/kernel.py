@@ -17,6 +17,7 @@ from cjwkernel.types import (
     CompiledModule,
     FetchResult,
     Params,
+    RawParams,
     RenderResult,
     Tab,
     TabOutput,
@@ -121,7 +122,8 @@ class Kernel:
         """
         Detect common errors in the user's code.
 
-        Raise CompileError, 
+        Raise ModuleCompileError, ModuleExitedError or ModuleTimeoutError on
+        error.
         """
         code = path.read_text()
         try:
@@ -146,17 +148,17 @@ class Kernel:
     def migrate_params(
         self, compiled_module: CompiledModule, params: Dict[str, Any]
     ) -> None:
-        request = Params(params).to_thrift()
+        request = RawParams(params).to_thrift()
         response = self._run_in_child(
-            compiled_module, ttypes.Params(), "migrate_params_thrift", request
+            compiled_module, ttypes.RawParams(), "migrate_params_thrift", request
         )
-        return Params.from_thrift(response).params
+        return RawParams.from_thrift(response).params
 
     def render(
         self,
         compiled_module: CompiledModule,
         input_table: ArrowTable,
-        params: Dict[str, Any],
+        params: Params,
         tab: Tab,
         input_tabs: Dict[str, TabOutput],
         fetch_result: Optional[FetchResult],

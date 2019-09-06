@@ -1,12 +1,15 @@
 from dataclasses import dataclass
 import logging
+from pathlib import Path
+import tempfile
 from typing import Any, Dict, List, Optional, FrozenSet
 from cjworkbench.sync import database_sync_to_async
-from cjwkernel.pandas.types import ProcessResult, StepResultShape
-from cjwstate.rendercache import open_cached_render_result
+from cjwkernel.types import RenderResult, TabOutput
+from cjwstate.rendercache import load_cached_render_result, CorruptCacheError
 from cjwstate.models import WfModule, Workflow, Tab
 from cjwstate.models.param_spec import ParamDType
 from .wf_module import execute_wfmodule, locked_wf_module
+from .types import UnneededExecution
 
 
 logger = logging.getLogger(__name__)
@@ -113,24 +116,27 @@ class TabFlow:
 
 
 @database_sync_to_async
-def _load_input_from_cache(workflow: Workflow, flow: TabFlow) -> ProcessResult:
+def _load_input_from_cache(workflow: Workflow, flow: TabFlow) -> RenderResult:
     last_fresh_wfm = flow.last_fresh_wf_module
     if last_fresh_wfm is None:
-        return ProcessResult()
+        return RenderResult()
     else:
         # raises UnneededExecution
         with locked_wf_module(workflow, last_fresh_wfm) as safe_wfm:
             crr = safe_wfm.cached_render_result
             assert crr is not None  # otherwise it's not fresh, see?
 
-            # Read the entire input Parquet file.
-            with open_cached_render_result(crr) as arrow_result:
-                return ProcessResult.from_arrow(arrow_result)
+            # Read the entire input Parquet file into a temporary file.
+            fd, filename = tempfile.mkstemp()
+            try:
+                return load_cached_render_result(crr, Path(filename))
+            except CorruptCacheError:
+                raise UnneededExecution
 
 
 async def execute_tab_flow(
-    workflow: Workflow, flow: TabFlow, tab_shapes: Dict[str, Optional[StepResultShape]]
-) -> ProcessResult:
+    workflow: Workflow, flow: TabFlow, tab_outputs: Dict[str, Optional[TabOutput]]
+) -> RenderResult:
     """
     Ensure `flow.tab.live_wf_modules` all cache fresh render results.
 
@@ -154,12 +160,15 @@ async def execute_tab_flow(
     # different computers); and `await` doesn't work with locks.
     last_result = await _load_input_from_cache(workflow, flow)
     for step in flow.stale_steps:
-        last_result = await execute_wfmodule(
+        next_result = await execute_wfmodule(
             workflow,
             step.wf_module,
             step.params,
             flow.tab_name,
             last_result,
-            tab_shapes,
+            tab_outputs,
         )
+        if last_result.table.path:
+            last_result.table.path.unlink()
+        last_result = next_result
     return last_result

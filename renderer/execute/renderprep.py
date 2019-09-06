@@ -5,12 +5,7 @@ import pathlib
 import tempfile
 import weakref
 from typing import Any, Dict, List, Optional, Union
-from cjwkernel.pandas.types import (
-    ProcessResult,
-    RenderColumn,
-    StepResultShape,
-    TabOutput,
-)
+from cjwkernel.types import ArrowTable, RenderResult, TabMetadata, TabOutput
 from cjwstate import minio
 from cjwstate.models import Tab, UploadedFile
 from cjwstate.models.param_spec import ParamDType
@@ -67,9 +62,9 @@ class RenderContext:
         self,
         workflow_id: int,
         wf_module_id: int,
-        input_table_shape: StepResultShape,
-        # assume tab_shapes keys are ordered the way the user ordered the tabs.
-        tab_shapes: Dict[str, Optional[StepResultShape]],
+        input_table: ArrowTable,
+        # assume tab_outputs keys are ordered the way the user ordered the tabs.
+        tab_outputs: Dict[str, Optional[RenderResult]],
         # params is a HACK to let column selectors rely on a tab_parameter,
         # which is a _root-level_ parameter. So when we're walking the tree of
         # params, we need to keep a handle on the root ...  which is ugly and
@@ -82,14 +77,14 @@ class RenderContext:
     ):
         self.workflow_id = workflow_id
         self.wf_module_id = wf_module_id
-        self.input_table_shape = input_table_shape
-        self.tab_shapes = tab_shapes
+        self.input_table = input_table
+        self.tab_outputs = tab_outputs
         self.params = params
 
     def output_columns_for_tab_parameter(self, tab_parameter):
         if tab_parameter is None:
             # Common case: param selects from the input table
-            return {c.name: c for c in self.input_table_shape.columns}
+            return {c.name: c for c in self.input_table.metadata.columns}
 
         # Rare case: there's a "tab" parameter, and the column selector is
         # selecting from _that_ tab's output columns.
@@ -98,15 +93,15 @@ class RenderContext:
         tab_slug = self.params[tab_parameter]
 
         try:
-            tab = self.tab_shapes[tab_slug]
+            tab_output = self.tab_outputs[tab_slug]
         except KeyError:
             # Tab does not exist
             return {}
-        if tab is None or tab.status != "ok":
+        if tab_output is None or tab_output.status != "ok":
             # Tab has a cycle or other error
             return {}
 
-        return {c.name: c for c in tab.table_shape.columns}
+        return {c.name: c for c in tab_output.table.metadata.columns}
 
 
 def get_param_values(
@@ -217,15 +212,15 @@ def _(
 def _(dtype: ParamDType.Tab, value: str, context: RenderContext) -> TabOutput:
     tab_slug = value
     try:
-        shape = context.tab_shapes[tab_slug]
+        tab_output = context.tab_outputs[tab_slug]
     except KeyError:
         # It's a tab that doesn't exist.
         return None
-    if shape is None:
+    if tab_output is None:
         # It's an un-rendered tab. Or at least, the executor _tells_ us it's
         # un-rendered. That means there's a tab-cycle.
         raise TabCycleError
-    if shape.status != "ok":
+    if tab_output.status != "ok":
         raise TabOutputUnreachableError
 
     # Load Tab output from database. Assumes we've locked the workflow.
@@ -236,7 +231,7 @@ def _(dtype: ParamDType.Tab, value: str, context: RenderContext) -> TabOutput:
     except Tab.DoesNotExist:
         # If the Tab doesn't exist, someone deleted it mid-render. (We already
         # verified that the tab has been rendered -- that was
-        # context.tab_shapes[tab_slug].) So our param is stale.
+        # context.tab_outputs[tab_slug].) So our param is stale.
         raise UnneededExecution
 
     wf_module = tab.live_wf_modules.last()
@@ -246,23 +241,13 @@ def _(dtype: ParamDType.Tab, value: str, context: RenderContext) -> TabOutput:
 
     crr = wf_module.cached_render_result
     if crr is None:
-        # ... but tab_shapes implies we just cached the correct result! It
+        # ... but tab_outputs implies we just cached the correct result! It
         # looks like that version must be stale.
         raise UnneededExecution
 
     # read Parquet from disk (slow)
     with open_cached_render_result(crr) as arrow_result:
-        result = ProcessResult.from_arrow(arrow_result)
-
-    return TabOutput(
-        tab_slug,
-        tab.name,
-        dict(
-            (c.name, RenderColumn(c.name, c.type.name, getattr(c.type, "format", None)))
-            for c in result.columns
-        ),
-        result.dataframe,
-    )
+        return TabOutput(TabMetadata(tab_slug, tab.name), arrow_result.table)
 
 
 @clean_value.register(ParamDType.Column)
@@ -360,11 +345,11 @@ def clean_value_list(
 @clean_value.register(ParamDType.Multitab)
 def _(
     dtype: ParamDType.Multitab, value: List[str], context: RenderContext
-) -> List[Any]:
+) -> List[TabOutput]:
     # First, recurse -- the same way we clean a list.
     unordered = clean_value_list(dtype, value, context)
 
-    # Next, order outputs the way they're ordered in `context.tab_shapes`.
+    # Next, order outputs the way they're ordered in `context.tab_outputs`.
     # Ignore all `None` values -- those are nonexistent tabs, and we should
     # omit nonexistent tabs.
     lookup = dict(
@@ -372,7 +357,7 @@ def _(
         for tab_output in unordered
         if tab_output is not None
     )
-    return [lookup[slug] for slug in context.tab_shapes.keys() if slug in lookup]
+    return [lookup[slug] for slug in context.tab_outputs.keys() if slug in lookup]
 
 
 @clean_value.register(ParamDType.Dict)

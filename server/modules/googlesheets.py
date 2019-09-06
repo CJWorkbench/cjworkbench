@@ -5,7 +5,7 @@ import pandas as pd
 import requests
 from cjwkernel.pandas.types import ProcessResult
 from server import oauth
-from .utils import parse_bytesio, turn_header_into_first_row
+from cjwkernel.pandas.moduleutils import parse_bytesio, turn_header_into_first_row
 
 
 _Secret = Dict[str, Any]

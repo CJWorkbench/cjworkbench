@@ -7,7 +7,7 @@ import pandas as pd
 from django.test import SimpleTestCase, override_settings
 from pandas.testing import assert_frame_equal
 from cjwkernel.pandas.types import ProcessResult
-from server.modules.utils import (
+from cjwkernel.pandas.moduleutils import (
     build_globals_for_eval,
     parse_bytesio,
     turn_header_into_first_row,

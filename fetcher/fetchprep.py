@@ -1,7 +1,7 @@
 from functools import partial, singledispatch
 import pathlib
 from typing import Any, Dict, List, Optional, Union
-from cjwkernel.pandas.types import TableShape
+from cjwkernel.types import TableMetadata
 from cjwstate.models.param_spec import ParamDType
 from renderer.execute.renderprep import PromptErrorAggregator
 from renderer.execute.types import PromptingError
@@ -16,7 +16,7 @@ from renderer.execute.types import PromptingError
 # TODO abstract this pattern. The recursion parts seem like they should be
 # written in just one place.
 @singledispatch
-def clean_value(dtype: ParamDType, value: Any, input_shape: TableShape) -> Any:
+def clean_value(dtype: ParamDType, value: Any, input_shape: TableMetadata) -> Any:
     """
     Ensure `value` fits the Params dict `render()` expects.
 
@@ -39,7 +39,7 @@ def clean_value(dtype: ParamDType, value: Any, input_shape: TableShape) -> Any:
 
 @clean_value.register(ParamDType.Float)
 def _(
-    dtype: ParamDType.Float, value: Union[int, float], input_shape: TableShape
+    dtype: ParamDType.Float, value: Union[int, float], input_shape: TableMetadata
 ) -> float:
     # ParamDType.Float can have `int` values (because values come from
     # json.parse(), which only gives Numbers so can give "3" instead of
@@ -49,22 +49,22 @@ def _(
 
 @clean_value.register(ParamDType.File)
 def _(
-    dtype: ParamDType.File, value: Optional[str], input_shape: TableShape
+    dtype: ParamDType.File, value: Optional[str], input_shape: TableMetadata
 ) -> Optional[pathlib.Path]:
     raise RuntimeError("Unsupported: fetch file")
 
 
 @clean_value.register(ParamDType.Tab)
-def _(dtype: ParamDType.Tab, value: str, input_shape: TableShape) -> None:
+def _(dtype: ParamDType.Tab, value: str, input_shape: TableMetadata) -> None:
     raise RuntimeError("Unsupported: fetch tab")
 
 
 @clean_value.register(ParamDType.Column)
-def _(dtype: ParamDType.Column, value: str, input_shape: TableShape) -> str:
+def _(dtype: ParamDType.Column, value: str, input_shape: TableMetadata) -> str:
     if dtype.tab_parameter:
         raise RuntimeError("Unsupported: fetch column with tab_parameter")
 
-    if input_shape is None:
+    if not input_shape.columns:
         return ""
 
     valid_columns = {c.name: c for c in input_shape.columns}
@@ -85,12 +85,11 @@ def _(dtype: ParamDType.Column, value: str, input_shape: TableShape) -> str:
 
 
 @clean_value.register(ParamDType.Multicolumn)
-def _(dtype: ParamDType.Multicolumn, value: List[str], input_shape: TableShape) -> str:
+def _(
+    dtype: ParamDType.Multicolumn, value: List[str], input_shape: TableMetadata
+) -> str:
     if dtype.tab_parameter:
         raise RuntimeError("Unsupported: fetch multicolumn with tab_parameter")
-
-    if input_shape is None:
-        return []
 
     error_agg = PromptErrorAggregator()
     requested_colnames = set(value)
@@ -124,7 +123,7 @@ def _(dtype: ParamDType.Multicolumn, value: List[str], input_shape: TableShape) 
 def _(
     dtype: ParamDType.Multichartseries,
     value: List[Dict[str, str]],
-    input_shape: TableShape,
+    input_shape: TableMetadata,
 ) -> List[Dict[str, str]]:
     raise RuntimeError("Unsupported: fetch multichartseries")
 
@@ -132,7 +131,7 @@ def _(
 # ... and then the methods for recursing
 @clean_value.register(ParamDType.List)
 def clean_value_list(
-    dtype: ParamDType.List, value: List[Any], input_shape: TableShape
+    dtype: ParamDType.List, value: List[Any], input_shape: TableMetadata
 ) -> List[Any]:
     inner_clean = partial(clean_value, dtype.inner_dtype)
     ret = []
@@ -148,14 +147,14 @@ def clean_value_list(
 
 @clean_value.register(ParamDType.Multitab)
 def _(
-    dtype: ParamDType.Multitab, value: List[str], input_shape: TableShape
+    dtype: ParamDType.Multitab, value: List[str], input_shape: TableMetadata
 ) -> List[Any]:
     raise RuntimeError("Unsupported: fetch multitab")
 
 
 @clean_value.register(ParamDType.Dict)
 def _(
-    dtype: ParamDType.Dict, value: Dict[str, Any], input_shape: TableShape
+    dtype: ParamDType.Dict, value: Dict[str, Any], input_shape: TableMetadata
 ) -> Dict[str, Any]:
     ret = {}
     error_agg = PromptErrorAggregator()
@@ -172,7 +171,7 @@ def _(
 
 @clean_value.register(ParamDType.Map)
 def _(
-    dtype: ParamDType.Map, value: Dict[str, Any], input_shape: TableShape
+    dtype: ParamDType.Map, value: Dict[str, Any], input_shape: TableMetadata
 ) -> Dict[str, Any]:
     value_dtype = dtype.value_dtype
     value_clean = partial(clean_value, value_dtype)

@@ -4,20 +4,19 @@ from inspect import signature
 import io
 import math
 import multiprocessing
-import os.path
 import sys
 import traceback
 from typing import Any, Dict, Tuple
 import numpy
 import pandas
 from cjwkernel.pandas.types import ProcessResult
-from .utils import build_globals_for_eval, PythonFeatureDisabledError
+from cjwkernel.pandas.moduleutils import (
+    build_globals_for_eval,
+    PythonFeatureDisabledError,
+)
 
 
 TIMEOUT = 30.0  # seconds
-
-
-html_path = os.path.join(os.path.dirname(__file__), "pythoncode.html")
 
 
 # Disable dangerous builtins. Imported modules may hold references to them;

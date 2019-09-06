@@ -1,4 +1,4 @@
-from .parse_util import parse_file
+from cjwkernel.pandas.parse_util import parse_file
 
 
 def render(table, params):

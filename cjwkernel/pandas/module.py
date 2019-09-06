@@ -3,7 +3,6 @@
 # `migrate_params_thrift()` and `validate()`.
 
 import inspect
-import json
 import os
 import pathlib
 import tempfile
@@ -13,7 +12,6 @@ from typing import Any, Dict, Optional
 from cjwkernel import types
 from cjwkernel.pandas import types as ptypes
 from cjwkernel.thrift import ttypes
-from cjwkernel.util import json_encode
 
 
 def render(table: pd.DataFrame, params: Dict[str, Any], **kwargs):
@@ -132,7 +130,8 @@ def render_thrift(request: ttypes.RenderRequest) -> ttypes.RenderResult:
     function.
     """
     arrow_table = types.ArrowTable.from_thrift(request.input_table)
-    params_dict = json.loads(request.params.json)
+    params = types.Params.from_thrift(request.params)
+    params_dict = params.params
     arrow_input_tabs = {
         k: types.TabOutput.from_thrift(v) for k, v in request.input_tabs.items()
     }
@@ -193,11 +192,10 @@ def migrate_params(params: Dict[str, Any]) -> Dict[str, Any]:
     return params
 
 
-def migrate_params_thrift(params: ttypes.Params):
-    params_dict: Dict[str, Any] = json.loads(params.json)
+def migrate_params_thrift(params: ttypes.RawParams):
+    params_dict: Dict[str, Any] = types.RawParams.from_thrift(params).params
     result_dict = migrate_params(params_dict)
-    result_json = json_encode(result_dict)
-    return ttypes.Params(result_json)
+    return types.RawParams(result_dict).to_thrift()
 
 
 def validate_thrift() -> ttypes.ValidateModuleResult:

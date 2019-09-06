@@ -13,7 +13,7 @@ from yajl import YajlParser, YajlContentHandler, YajlError
 from typing import Dict, List, Optional, Tuple, Union
 from django.conf import settings
 import pandas as pd
-from .utils import (
+from .moduleutils import (
     detect_encoding,
     wrap_text,
     uniquize_colnames,

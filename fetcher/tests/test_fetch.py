@@ -10,6 +10,7 @@ import pandas as pd
 from pandas.testing import assert_frame_equal
 from cjworkbench.sync import database_sync_to_async
 from cjwkernel.pandas.types import ProcessResult
+from cjwkernel.param_dtype import ParamDType
 from cjwkernel.types import RenderResult
 from cjwkernel.tests.util import arrow_table
 from cjwstate import minio
@@ -18,7 +19,6 @@ from cjwstate.rendercache import cache_render_result
 from cjwstate.models import ModuleVersion, WfModule, Workflow
 from cjwstate.models.commands import InitWorkflowCommand
 from cjwstate.models.loaded_module import LoadedModule
-from cjwstate.models.param_dtype import ParamDType
 from cjwstate.tests.utils import DbTestCase
 from fetcher import fetch
 

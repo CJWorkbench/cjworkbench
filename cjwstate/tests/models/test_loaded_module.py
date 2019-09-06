@@ -8,11 +8,11 @@ from asgiref.sync import async_to_sync
 import pandas as pd
 from pandas.testing import assert_frame_equal
 from cjwkernel.pandas.types import ProcessResult, Column, ColumnType
+from cjwkernel.param_dtype import ParamDType
 from cjwstate import minio
 from cjwstate.models.loaded_module import LoadedModule, load_external_module
-import server.modules.pastecsv
 from cjwstate.tests.utils import clear_minio
-from cjwstate.models.param_dtype import ParamDType
+import server.modules.pastecsv
 
 
 MockModuleVersion = namedtuple(

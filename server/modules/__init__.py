@@ -45,7 +45,7 @@ their ``.json`` spec files.
 """
 import importlib
 import pathlib
-from cjwstate.models.module_loader import ModuleFiles, ModuleSpec
+from cjwstate.models.module_loader import kernel, ModuleSpec
 
 
 Lookup = {}
@@ -58,5 +58,6 @@ for spec_path in SpecPaths:
     spec = ModuleSpec.load_from_path(spec_path)
     id_name = spec_path.stem
     module = importlib.import_module("." + id_name, __package__)
-    Lookup[id_name] = module
+    compiled_module = kernel.compile(spec_path.with_suffix(".py"), id_name)
+    Lookup[id_name] = (module, compiled_module)
     Specs[id_name] = spec

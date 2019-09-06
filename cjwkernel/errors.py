@@ -1,16 +1,16 @@
-class ModuleBug(Exception):
+class ModuleError(Exception):
     """The module has a bug."""
 
 
-class ModuleCompileError(ModuleBug):
+class ModuleCompileError(ModuleError):
     """The module does not compile."""
 
 
-class ModuleTimeoutError(ModuleBug):
+class ModuleTimeoutError(ModuleError):
     """The module took too long to execute."""
 
 
-class ModuleExitedError(ModuleBug):
+class ModuleExitedError(ModuleError):
     """
     The module exited at the wrong time.
 
