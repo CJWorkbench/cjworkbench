@@ -3,6 +3,7 @@ from i18n.trans import trans
 
 register = template.Library()
 
+
 @register.simple_tag(takes_context=True)
 def trans(context, message_id, default=None, locale=None, **kwargs):
     """Translate a message, supporting ICU syntax.
@@ -10,4 +11,9 @@ def trans(context, message_id, default=None, locale=None, **kwargs):
     The locale will be taken from request if not provided.
     Named arguments, apart from default and locale, will be passed to the ICU message.
     """
-    return trans(locale or context['request'].locale_id, message_id, default=default, parameters=kwargs)
+    return trans(
+        locale or context["request"].locale_id,
+        message_id,
+        default=default,
+        parameters=kwargs,
+    )
