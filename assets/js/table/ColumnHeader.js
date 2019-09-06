@@ -253,7 +253,7 @@ export class ColumnHeader extends React.PureComponent {
 
     const columnMenuSection = this.renderColumnMenu()
 
-    function maybeDropZone (leftOrRight, toIndex) {
+    const maybeDropZone = (leftOrRight, toIndex) => {
       if (draggingColumnIndex === null || draggingColumnIndex === undefined) return null
       if (draggingColumnIndex === toIndex) return null
 
