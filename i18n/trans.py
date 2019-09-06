@@ -22,7 +22,7 @@ class InvalidICUParameters(Exception):
 
 _translators = {}
 
-def get_translations(locale):
+def _get_translations(locale):
     '''Returns a MessageTranslator object for the given locale.
     
     In order to parse the message catalogs only once per locale,
@@ -33,6 +33,11 @@ def get_translations(locale):
     _translators[locale] = MessageTranslator(locale)
     return _translators[locale]
         
+def trans(locale, message_id, default=None, parameters={}):
+    '''Translates the given message_id to the given locale.
+    '''
+    return _get_translations(locale)._(message_id, default=None, parameters={})
+
 class MessageTranslator:
     '''Loads the message catalogs for a given locale and provides helper methods for message translation.
     It uses the ICU message format for messages.
