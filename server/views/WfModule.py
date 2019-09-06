@@ -82,7 +82,14 @@ def _arrow_array_to_json_list(array: pyarrow.ChunkedArray) -> List[Any]:
     if isinstance(array.type, pyarrow.TimestampType):
         multiplier = 1.0 / TimestampUnits[array.type.unit]
         return [
-            datetime.datetime.utcfromtimestamp(v.value * multiplier).isoformat() + "Z"
+            (
+                None
+                if v is pyarrow.NULL
+                else (
+                    datetime.datetime.utcfromtimestamp(v.value * multiplier).isoformat()
+                    + "Z"
+                )
+            )
             for v in array
         ]
     else:

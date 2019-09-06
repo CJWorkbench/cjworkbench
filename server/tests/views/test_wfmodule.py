@@ -123,6 +123,24 @@ class WfModuleTests(LoggedInTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(json.loads(response.content), test_data_json)
 
+    def test_wf_module_render_null_datetime(self):
+        # Ran into problems 2019-09-06, when switching to Arrow
+        self.wf_module2.cache_render_result(
+            2,
+            ProcessResult(
+                pd.DataFrame(
+                    {"A": ["2019-01-01T01:02:03.004005Z", None]}, dtype="datetime64[ns]"
+                )
+            ),
+        )
+
+        response = self.client.get("/api/wfmodules/%d/render" % self.wf_module2.id)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            json.loads(response.content)["rows"],
+            [{"A": "2019-01-01T01:02:03.004005Z"}, {"A": None}],
+        )
+
     def test_wf_module_render_missing_parquet_file(self):
         # https://www.pivotaltracker.com/story/show/161988744
         crr = self.wf_module2.cache_render_result(2, ProcessResult(test_data))
