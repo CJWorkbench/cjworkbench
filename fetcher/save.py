@@ -57,7 +57,7 @@ def _maybe_add_version(
             elif maybe_result.errors[0].quick_fixes:
                 raise RuntimeError("TODO handle quick fixes from fetches")
             else:
-                fields["fetch_error"] = maybe_result.errors[0].message.arguments[0]
+                fields["fetch_error"] = maybe_result.errors[0].message.args[0]
         else:
             fields["fetch_error"] = ""
 

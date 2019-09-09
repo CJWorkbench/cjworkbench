@@ -1,10 +1,10 @@
 import aiohttp
 import asyncio
 import re
-from django.conf import settings
 from django.utils import timezone
 import pandas as pd
 import yarl  # aiohttp innards -- yuck!
+from cjwkernel import settings
 
 
 MaxNUrls = 10

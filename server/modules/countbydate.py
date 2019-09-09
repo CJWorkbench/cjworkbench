@@ -1,9 +1,9 @@
 import enum
 from typing import Any, Dict, Optional
-from django.conf import settings
 import numpy as np
 import pandas as pd
 from pandas.api.types import is_numeric_dtype
+from cjwkernel import settings
 
 # ---- CountByDate ----
 # group column by unique value, discard all other columns

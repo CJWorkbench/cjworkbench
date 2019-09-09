@@ -1,12 +1,20 @@
 import asyncio
 import contextlib
 import datetime
+from pathlib import Path
+import tempfile
 from typing import Any, Dict, Optional, Tuple
 from cjworkbench.sync import database_sync_to_async
-from cjwkernel.param_dtype import ParamDType
-from cjwkernel.types import ArrowTable, FetchResult, RenderResult
-from cjwstate import rendercache, storedobjects
-from cjwstate.models import WfModule, Workflow
+from cjwkernel.types import (
+    ArrowTable,
+    FetchResult,
+    I18nMessage,
+    RenderError,
+    RenderResult,
+    Tab,
+)
+from cjwstate import minio, rendercache
+from cjwstate.models import StoredObject, WfModule, Workflow
 from cjwstate.models.loaded_module import LoadedModule
 from server import websockets
 from renderer import notifications
@@ -52,50 +60,54 @@ def locked_wf_module(workflow, wf_module):
     return retval
 
 
-def _load_fetch_result(wf_module: WfModule) -> Optional[FetchResult]:
+def _load_fetch_result(wf_module: WfModule, path: Path) -> Optional[FetchResult]:
     """
-    Load user-selected StoredObject as a kinda-ProcessResult.
+    Download user-selected StoredObject to `path`, so render() can read it.
 
     Edge cases:
 
+    * Leave `path` alone if the user did not select a StoredObject.
     * Return None if there is no user-selected StoredObject.
-    * Return None if the user-selected StoredObject has no Parquet file.
-    * Return None if the user-selected Parquet file is invalid.
-
-    TODO nix StoredObjects, then nix this. Modules should get a different
-    abstraction than ProcessResult: one that can handle non-DataFrame data.
+    * Leave `path` alone if the user-seleted StoredObject is an error.
+    
+    The caller should ensure "leave `path` alone" means "return an empty
+    FetchResult". The FetchResult may still have an error.
     """
-    table = storedobjects.read_fetched_dataframe_from_wf_module(wf_module)
-    if table is None:
-        # One of:
-        # * there is no user-selected StoredObject
-        # * the user-selected StoredObject does not exist (the selection isn't a foreign key)
-        # * there is no file on minio
-        # * the file on minio cannot be read
-        #
-        # ... in all these cases, the module should see `None`.
-        return None
+    try:
+        stored_object = wf_module.stored_objects.get(
+            stored_at=wf_module.stored_data_version
+        )
+        minio.download(stored_object.bucket, stored_object.key, path)
+    except StoredObject.DoesNotExist:
+        pass  # leave the file with 0 bytes
+    except FileNotFoundError:
+        # A few StoredObjects -- very old ones with size=0 -- are
+        # *intentionally* not in minio.
+        pass  # leave the file with 0 bytes
 
-    error = wf_module.fetch_error
-
-    return FetchResult(table, error)
+    if wf_module.fetch_error:
+        errors = [RenderError(I18nMessage("TODO_i18n", [wf_module.fetch_error]))]
+    else:
+        errors = []
+    return FetchResult(path, errors)
 
 
 @database_sync_to_async
 def _execute_wfmodule_pre(
     workflow: Workflow,
     wf_module: WfModule,
-    params: Dict[str, Any],
+    raw_params: Dict[str, Any],
     input_table: ArrowTable,
-    tab_outputs: Dict[str, Optional[RenderResult]],
+    tab_results: Dict[Tab, Optional[RenderResult]],
+    fetch_result_path: Path,
 ) -> Tuple[Optional[LoadedModule], Optional[RenderResult], Dict[str, Any]]:
     """
     First step of execute_wfmodule().
 
     Return a Tuple in this order:
         * loaded_module: a ModuleVersion for dispatching render
-        * fetch_result: optional ProcessResult for dispatching render
-        * param_values: a dict for dispatching render
+        * fetch_result: optional FetchResult for dispatching render
+        * params: a Params for dispatching render
 
     Raise TabCycleError or TabOutputUnreachableError if the module depends on
     tabs with errors. (We won't call the render() method in that case.)
@@ -107,7 +119,7 @@ def _execute_wfmodule_pre(
     function so that when we're done awaiting it, we can continue executing in
     a context that doesn't use a database thread.)
 
-    `tab_outputs.keys()` must be ordered as the Workflow's tabs are.
+    `tab_results.keys()` must be ordered as the Workflow's tabs are.
     """
     # raises UnneededExecution
     with locked_wf_module(workflow, wf_module) as safe_wf_module:
@@ -117,17 +129,15 @@ def _execute_wfmodule_pre(
             # module was deleted. Skip other fetches.
             return (None, None, {})
 
-        fetch_result = _load_fetch_result(safe_wf_module)
+        fetch_result = _load_fetch_result(safe_wf_module, fetch_result_path)
         render_context = renderprep.RenderContext(
-            workflow.id, wf_module.id, input_table, tab_outputs, params  # ugh
+            workflow.id, wf_module.id, input_table, tab_results, raw_params  # ugh
         )
-        if module_version is None:
-            param_schema = ParamDType.Dict({})
-        else:
-            param_schema = module_version.param_schema
-        param_values = renderprep.get_param_values(param_schema, params, render_context)
+        params = renderprep.get_param_values(
+            module_version.param_schema, raw_params, render_context
+        )
 
-        return (loaded_module, fetch_result, param_values)
+        return (loaded_module, fetch_result, params)
 
 
 @database_sync_to_async
@@ -177,10 +187,11 @@ def _execute_wfmodule_save(
 async def _render_wfmodule(
     workflow: Workflow,
     wf_module: WfModule,
-    params: Dict[str, Any],
-    tab_name: str,
-    input_result: Optional[RenderResult],  # None for first module in tab
-    tab_outputs: Dict[str, Optional[RenderResult]],
+    raw_params: Dict[str, Any],
+    tab: Tab,
+    input_result: RenderResult,
+    tab_results: Dict[Tab, Optional[RenderResult]],
+    output_path: Path,
 ) -> RenderResult:
     """
     Prepare and call `wf_module`'s `render()`; return a ProcessResult.
@@ -191,43 +202,58 @@ async def _render_wfmodule(
     if wf_module.order > 0 and input_result.status != "ok":
         return RenderResult()  # 'unreachable'
 
-    try:
-        loaded_module, fetch_result, param_values = await _execute_wfmodule_pre(
-            workflow, wf_module, params, input_result.table_shape, tab_outputs
-        )
-    except TabCycleError:
-        return RenderResult.from_deprecated_error(
-            "The chosen tab depends on this one. Please choose another tab."
-        )
-    except TabOutputUnreachableError:
-        return RenderResult.from_deprecated_error(
-            "The chosen tab has no output. Please select another one."
-        )
-    except PromptingError as err:
-        return RenderResult.from_deprecated_error(
-            err.as_error_str(), quick_fixes=err.as_quick_fixes()
-        )
+    with tempfile.NamedTemporaryFile() as fetch_result_file:
+        fetch_result_path = Path(fetch_result_file.name)
 
-    if loaded_module is None:
-        return RenderResult.from_deprecated_error(
-            "Please delete this step: an administrator uninstalled its code."
-        )
+        try:
+            loaded_module, fetch_result, params = await _execute_wfmodule_pre(
+                workflow,
+                wf_module,
+                raw_params,
+                input_result.table,
+                tab_results,
+                fetch_result_path,
+            )
+        except TabCycleError:
+            return RenderResult.from_deprecated_error(
+                "The chosen tab depends on this one. Please choose another tab."
+            )
+        except TabOutputUnreachableError:
+            return RenderResult.from_deprecated_error(
+                "The chosen tab has no output. Please select another one."
+            )
+        except PromptingError as err:
+            return RenderResult.from_deprecated_error(
+                err.as_error_str(), quick_fixes=err.as_quick_fixes()
+            )
 
-    # Render may take a while. run_in_executor to push that slowdown to a
-    # thread and keep our event loop responsive.
-    loop = asyncio.get_event_loop()
-    return await loop.run_in_executor(
-        None, loaded_module.render, input_result, param_values, tab_name, fetch_result
-    )
+        if loaded_module is None:
+            return RenderResult.from_deprecated_error(
+                "Please delete this step: an administrator uninstalled its code."
+            )
+
+        # Render may take a while. run_in_executor to push that slowdown to a
+        # thread and keep our event loop responsive.
+        loop = asyncio.get_event_loop()
+        return await loop.run_in_executor(
+            None,
+            loaded_module.render,
+            input_result.table,
+            params,
+            tab,
+            fetch_result,
+            output_path,
+        )
 
 
 async def execute_wfmodule(
     workflow: Workflow,
     wf_module: WfModule,
     params: Dict[str, Any],
-    tab_name: str,
+    tab: Tab,
     input_result: RenderResult,
-    tab_outputs: Dict[str, Optional[RenderResult]],
+    tab_results: Dict[Tab, Optional[RenderResult]],
+    output_path: Path,
 ) -> RenderResult:
     """
     Render a single WfModule; cache, broadcast and return output.
@@ -262,7 +288,7 @@ async def execute_wfmodule(
 
     # may raise UnneededExecution
     result = await _render_wfmodule(
-        workflow, wf_module, params, tab_name, input_result, tab_outputs
+        workflow, wf_module, params, tab, input_result, tab_results, output_path
     )
 
     # may raise UnneededExecution
@@ -295,7 +321,7 @@ def build_status_dict(result: RenderResult, delta_id: int) -> Dict[str, Any]:
     if result.errors:
         if result.errors[0].message.id != "TODO_i18n":
             raise RuntimeError("TODO serialize i18n-ready messages")
-        error = result.errors[0].message.arguments[0]
+        error = result.errors[0].message.args[0]
         quick_fixes = [qf.to_dict() for qf in result.errors[0].quick_fixes]
     else:
         error = ""
@@ -303,7 +329,7 @@ def build_status_dict(result: RenderResult, delta_id: int) -> Dict[str, Any]:
 
     return {
         "quick_fixes": quick_fixes,
-        "output_columns": [c.to_dict() for c in result.columns],
+        "output_columns": [c.to_dict() for c in result.table.metadata.columns],
         "output_error": error,
         "output_status": result.status,
         "output_n_rows": result.table.metadata.n_rows,

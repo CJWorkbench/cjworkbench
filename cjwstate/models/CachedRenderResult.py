@@ -1,6 +1,5 @@
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional
-from cjwkernel.pandas.types import TableShape
+from typing import Any, Dict, List
 from cjwkernel.types import RenderError, TableMetadata
 
 
@@ -26,31 +25,5 @@ class CachedRenderResult:
     delta_id: int
     status: str  # "ok", "error", "unreachable"
     errors: List[RenderError]
-    json: Optional[Dict[str, Any]]
+    json: Dict[str, Any]
     table_metadata: TableMetadata
-
-    @property
-    def table_shape(self) -> TableShape:
-        return TableShape.from_arrow(self.table_metadata)
-
-    @property
-    def columns(self):
-        return self.table_shape.columns
-
-    @property
-    def nrows(self):
-        return self.table_metadata.n_rows
-
-    def __bool__(self):
-        # overridden so `len(self) == 0` is still `bool(self) is True`
-        return True
-
-    def __len__(self):
-        """
-        Number of rows.
-
-        This does not read the DataFrame.
-
-        TODO make all callers read `.nrows` instead.
-        """
-        return self.nrows

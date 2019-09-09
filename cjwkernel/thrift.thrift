@@ -105,7 +105,7 @@ struct ParquetTable {
  * Value (or nested value) in Params passed to render()/fetch().
  *
  * These params are connected to the `table` parameter: a "column"-typed
- * parameter will be a `Column`; a "tab"-typed parameter will be a `TabOutput.
+ * parameter will be a `Column`; a "tab"-typed parameter will be a `TabOutput`.
  *
  * This is more permissive than module_spec. Callers should validate against
  * the module spec.
@@ -288,7 +288,15 @@ struct FetchRequest {
    * changes will probably require rewriting all modules that use this
    * feature.) In the meantime, this hack gets some jobs done.
    */
-  4: optional ParquetTable input_table,
+  4: ParquetTable input_table,
+
+  /**
+   * File where the result should be written.
+   *
+   * The caller is assumed to have made a best effort to ensure the file is
+   * writable.
+   */
+  5: string output_filename,
 }
 
 /**
@@ -300,6 +308,8 @@ struct FetchRequest {
 struct FetchResult {
   /**
    * File the fetch produced.
+   *
+   * The kernel writes the output data to `fetch_request.output_file`.
    *
    * Currently, this must be a valid Parquet file. In the future, we will
    * loosen the requirement and allow any file.
@@ -336,20 +346,19 @@ struct RenderRequest {
   3: Tab tab,
 
   /**
-   * Other tabs' results, supplied as inputs for this Step.
-   *
-   * Only user-selected tabs are included here. This is not all rendered
-   * tabs: it's only the tabs the user selected in this Step's `tab` and
-   * `multitab` parameters.
-   */
-  4: map<string, TabOutput> input_tabs
-
-  /**
    * Result of latest `fetch`.
    *
    * If unset, `fetch` was never called.
    */
-  5: optional FetchResult fetch_result
+  4: optional FetchResult fetch_result
+
+  /**
+   * File where the result Arrow table should be written.
+   *
+   * The caller is assumed to have made a best effort to ensure the file is
+   * writable.
+   */
+  6: string output_filename,
 }
 
 /**
@@ -363,6 +372,8 @@ struct RenderResult {
    * Table the Step outputs.
    *
    * If the Step output is "error, then the table must have zero columns.
+   *
+   * The kernel writes the output Arrow data to `render_request.output_file`.
    */
   1: ArrowTable table,
 

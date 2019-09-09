@@ -9,7 +9,8 @@ import pyarrow.ipc
 import pyarrow.types
 from string import Formatter
 from typing import Any, Dict, List, Optional, Union
-from .util import json_encode
+from cjwkernel import settings
+from cjwkernel.util import json_encode
 
 # Some types we can import with no conversion
 from .thrift import ttypes
@@ -333,6 +334,9 @@ class ArrowTable:
         Raise OSError if file on disk could not be read.
 
         Raise AssertionError if file on disk does not match metadata.
+
+        Raise AssertionError if file on disk does not match `settings` (e.g.,
+        it has too many columns).
         """
         if self.path is None:
             assert len(self.metadata.columns) == 0
@@ -343,6 +347,8 @@ class ArrowTable:
             table = reader.read_all()
             assert table.num_rows == self.metadata.n_rows
             assert table.num_columns == len(self.metadata.columns)
+            assert table.num_rows <= settings.MAX_ROWS_PER_TABLE
+            assert table.num_columns <= settings.MAX_COLUMNS_PER_TABLE
             for tcol, mcol in zip(table.columns, self.metadata.columns):
                 assert tcol.name == mcol.name
                 # Assert the column type is one we support
@@ -388,6 +394,18 @@ class ArrowTable:
                 )
             )
         )
+
+    @property
+    def n_bytes_on_disk(self) -> int:
+        """
+        Return the number of bytes consumed on disk.
+
+        Raise FileNotFoundError if the file on disk could not be read.
+        """
+        if self.path is None:
+            return 0
+        else:
+            return self.path.stat().st_size
 
     @classmethod
     def from_thrift(cls, value: ttypes.ArrowTable) -> ArrowTable:
@@ -442,7 +460,12 @@ class TabOutput:
     """Tab that was processed."""
 
     table: ArrowTable
-    """Output from the final Step in `tab`."""
+    """
+    Output from the final Step in `tab`.
+
+    This is not a RenderResult because the kernel will not render a Step if one
+    of its params is a Tab whose result `.status` is not "ok".
+    """
 
     @classmethod
     def from_thrift(cls, value: ttypes.TabOutput) -> TabOutput:
@@ -739,17 +762,24 @@ class FetchResult:
     The module executed a Step's fetch() without crashing.
     """
 
-    path: Optional[Path]
+    path: Path
     """
     File storing whatever data fetch() output.
 
     Currently, this is a Parquet file. In the future, it may be something else.
+    The file may be empty to indicate a zero-sized table.
 
-    If the Step output is "error, then the table must have zero columns.
+    If the Step output is "error", then the file must be empty.
     """
 
     errors: List[RenderError] = field(default_factory=list)
-    """User-facing errors or warnings reported by the module."""
+    """
+    User-facing errors (NOT warnings) reported by the module.
+    """
+
+    def __post_init__(self):
+        if self.errors:
+            assert self.path.stat().st_size == 0
 
     @classmethod
     def from_thrift(cls, value: ttypes.FetchResult) -> FetchResult:
@@ -812,3 +842,26 @@ class RenderResult:
             [e.to_thrift() for e in self.errors],
             "" if self.json is None else json_encode(self.json),
         )
+
+    @property
+    def status(self) -> str:
+        """
+        Return "ok", "error" or "unreachable".
+
+        "ok" means there is a table as output.
+
+        "error" means there are no table columns and error messages have been
+        set by the module.
+
+        "unreachable" means there are no table columns. (We stop rendering when
+        a tab has no more columns -- hence the name, "unreachable".) Modules may
+        return a result in this state, but it's usually not what the user wants.
+        Modules should return error messages to help the user arrive at "ok".
+        """
+        if not self.table.metadata.columns:
+            if self.errors:
+                return "error"
+            else:
+                return "unreachable"
+        else:
+            return "ok"

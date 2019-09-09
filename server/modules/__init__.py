@@ -43,7 +43,6 @@ their ``.json`` spec files.
 >>> modules.pythoncode  # direct access
 >>> modules.Lookup['pythoncode']  # dynamic lookup by id_name
 """
-import importlib
 import pathlib
 from cjwstate.models.module_loader import kernel, ModuleSpec
 
@@ -57,7 +56,6 @@ SpecPaths = list(pathlib.Path(__file__).parent.glob("*.json")) + list(
 for spec_path in SpecPaths:
     spec = ModuleSpec.load_from_path(spec_path)
     id_name = spec_path.stem
-    module = importlib.import_module("." + id_name, __package__)
     compiled_module = kernel.compile(spec_path.with_suffix(".py"), id_name)
-    Lookup[id_name] = (module, compiled_module)
+    Lookup[id_name] = compiled_module
     Specs[id_name] = spec

@@ -120,10 +120,12 @@ def load_cached_render_result(
     If only_columns is a list of column names, the yielded RenderResult only
     contains the specified columns.
     """
-    if not crr.columns:
+    if not crr.table_metadata.columns:
         # Zero-column tables aren't written to cache
         return RenderResult(
-            ArrowTable(None, TableMetadata(crr.nrows, [])), crr.errors, crr.json
+            ArrowTable(None, TableMetadata(crr.table_metadata.n_rows, [])),
+            crr.errors,
+            crr.json,
         )
 
     try:
@@ -167,10 +169,12 @@ def open_cached_render_result(
     If only_columns is a list of column names, the yielded RenderResult only
     contains the specified columns.
     """
-    if not crr.columns:
+    if not crr.table_metadata.columns:
         # Zero-column tables aren't written to cache
         yield RenderResult(
-            ArrowTable(None, TableMetadata(crr.nrows, [])), crr.errors, crr.json
+            ArrowTable(None, TableMetadata(crr.table_metadata.n_rows, [])),
+            crr.errors,
+            crr.json,
         )
         return
 

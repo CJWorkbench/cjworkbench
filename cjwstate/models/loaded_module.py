@@ -1,24 +1,23 @@
 from __future__ import annotations
-import asyncio
 from dataclasses import dataclass
 import datetime
-from functools import partial
-import inspect
-import json
 import logging
-import os
 from pathlib import Path
-import sys
-import tempfile
 import time
-import traceback
-from types import ModuleType
-from typing import Any, Awaitable, Callable, Dict, Optional
-import pandas as pd
+from typing import Any, Dict, Optional
 from cjworkbench.sync import database_sync_to_async
-from cjwkernel.pandas.types import Column, ProcessResult, RenderColumn
+from cjwkernel.errors import ModuleError
+from cjwkernel.types import (
+    ArrowTable,
+    CompiledModule,
+    FetchResult,
+    I18nMessage,
+    Params,
+    Tab,
+    RenderError,
+    RenderResult,
+)
 from cjwkernel.param_dtype import ParamDTypeDict
-from cjwkernel.types import CompiledModule, Tab
 from cjwstate import minio
 from . import module_loader
 from .module_version import ModuleVersion
@@ -26,100 +25,6 @@ from server.modules import Lookup as InternalModules
 
 
 logger = logging.getLogger(__name__)
-
-
-def _default_render(table, params, *, fetch_result, **kwargs) -> ProcessResult:
-    """Render fetch_result or pass-through input."""
-    if fetch_result is not None:
-        return fetch_result
-    else:
-        return ProcessResult(table)
-
-
-async def _default_fetch(params, **kwargs) -> Optional[ProcessResult]:
-    """No-op fetch."""
-    return None
-
-
-def _render_in_kernel(
-    compiled_module: CompiledModule,
-    table: pd.DataFrame,
-    params: Dict[str, Any],
-    *,
-    input_columns: Dict[str, RenderColumn],
-    tab_name: str,
-    fetch_result: Optional[ProcessResult],
-) -> ProcessResult:
-    with tempfile.NamedTemporaryFile() as input_file:
-        with tempfile.NamedTemporaryFile() as fetch_file:
-            # XXX DELETEME: convert to Arrow via ProcessResult.
-            arrow_table = (
-                ProcessResult(
-                    dataframe=table,
-                    columns=[
-                        Column.from_kwargs(name=c.name, type=c.type, format=c.format)
-                        for c in input_columns
-                    ],
-                )
-                .to_arrow(Path(input_file.name))
-                .table
-            )
-            if fetch_result is None:
-                arrow_fetch_result = None
-            else:
-                arrow_fetch_result = fetch_result.to_arrow(Path(fetch_file.name))
-
-            arrow_result = module_loader.kernel.render(
-                compiled_module,
-                arrow_table,
-                params,
-                Tab("tab-TODO-pass-the-tab", tab_name),
-                arrow_fetch_result,
-            )
-            return ProcessResult.from_arrow(arrow_result)
-
-
-def _memoize_async_func(f):
-    """
-    Memoize an async function.
-
-    Every call to the retval will return the same Future.
-
-    It is an error to call the returned function from multiple event loops.
-    """
-    future = None
-
-    def inner():
-        nonlocal future
-        if future is None:
-            future = asyncio.ensure_future(f())
-        return future
-
-    return inner
-
-
-class DeletedModule:
-    def render(
-        self,
-        table: Optional[pd.DataFrame],
-        params: Dict[str, Any],
-        tab_name: str,
-        fetch_result: Optional[ProcessResult],
-    ) -> ProcessResult:
-        logger.info("render() deleted module")
-        return ProcessResult(error="Cannot render: module was deleted")
-
-    async def fetch(
-        self,
-        *,
-        params: Dict[str, Any],
-        secrets: Dict[str, Any],
-        workflow_id: int,
-        get_input_dataframe: Callable[[], Awaitable[pd.DataFrame]],
-        get_stored_dataframe: Callable[[], Awaitable[pd.DataFrame]],
-    ) -> ProcessResult:
-        logger.info("fetch() deleted module")
-        return ProcessResult(error="Cannot fetch: module was deleted")
 
 
 @dataclass(frozen=True)
@@ -134,174 +39,155 @@ class LoadedModule:
     module_id_name: str
     version_sha1: str
     param_schema: ParamDTypeDict
-    render_impl: Callable = _default_render
-    fetch_impl: Callable = _default_fetch
-    migrate_params_impl: Optional[Callable] = None
+    compiled_module: CompiledModule
 
     @property
     def name(self):
         return f"{self.module_id_name}:{self.version_sha1}"
 
-    def _wrap_exception(self, err) -> ProcessResult:
-        """Coerce an Exception (must be on the stack) into a ProcessResult."""
-        # Catch exceptions in the module render function, and return
-        # error message + line number to user
-        exc_name = type(err).__name__
-        exc_type, exc_obj, exc_tb = sys.exc_info()
-        # [1] = where the exception ocurred, not the render()
-        tb = traceback.extract_tb(exc_tb)[1]
-        fname = os.path.split(tb[0])[1]
-        lineno = tb[1]
-
-        error = f"{exc_name}: {str(err)} at line {lineno} of {fname}"
-        return ProcessResult(error=error)
-
     def render(
         self,
-        input_result: Optional[ProcessResult],
-        params: Dict[str, Any],
-        tab_name: str,
-        fetch_result: Optional[ProcessResult],
-    ) -> ProcessResult:
+        input_table: ArrowTable,
+        params: Params,
+        tab: Tab,
+        fetch_result: Optional[FetchResult],
+        output_path: Path,
+    ) -> RenderResult:
         """
-        Process `table` with module `render` method, for a ProcessResult.
+        Process `table` with module `render` method, for a RenderResult.
 
-        If the `render` method raises an exception, this method will return an
-        error string. It is always an error for a module to raise an exception.
-
-        Exceptions become error messages. This method cannot produce an
-        exception.
+        Exceptions become error results. This method cannot raise an exception.
+        (It is always an error for module code to raise an exception.)
 
         This synchronous method can be slow for complex modules or large
         datasets. Consider calling it from an executor.
         """
-        kwargs = {}
-        spec = inspect.getfullargspec(self.render_impl)
-        varkw = bool(spec.varkw)  # if True, function accepts **kwargs
-        kwonlyargs = spec.kwonlyargs
-        if varkw or "fetch_result" in kwonlyargs:
-            kwargs["fetch_result"] = fetch_result
-        if varkw or "tab_name" in kwonlyargs:
-            kwargs["tab_name"] = tab_name
-        if varkw or "input_columns" in kwonlyargs:
-            kwargs["input_columns"] = dict(
-                (
-                    c.name,
-                    RenderColumn(c.name, c.type.name, getattr(c.type, "format", None)),
-                )
-                for c in input_result.table_shape.columns
-            )
-
-        table = input_result.dataframe
-        input_columns = input_result.columns
-
         time1 = time.time()
-
         try:
-            out = self.render_impl(table, params, **kwargs)
-        except Exception as err:
-            logger.exception("Exception in %s.render", self.module_id_name)
-            out = self._wrap_exception(err)
-
-        try:
-            out = ProcessResult.coerce(out, try_fallback_columns=input_columns)
-        except ValueError as err:
-            logger.exception("Exception coercing %s.render output", self.module_id_name)
-            out = ProcessResult(
-                error=(
-                    "Something unexpected happened. We have been notified and are "
-                    "working to fix it. If this persists, contact us. Error code: "
-                    + str(err)
-                )
+            result = module_loader.kernel.render(
+                self.compiled_module,
+                input_table,
+                params,
+                tab,
+                fetch_result,
+                output_path,
             )
-
-        out.truncate_in_place_if_too_big()
-
+        except ModuleError as err:
+            logger.exception("Exception in %s.render", self.module_id_name)
+            result = RenderResult(
+                errors=[
+                    RenderError(
+                        I18nMessage(
+                            "TODO_i18n",
+                            [
+                                "Something unexpected happened. We have been notified and are "
+                                "working to fix it. If this persists, contact us. Error code: "
+                                + str(err)
+                            ],
+                        )
+                    )
+                ]
+            )
         time2 = time.time()
-        shape = out.dataframe.shape if out is not None else (-1, -1)
+
         logger.info(
-            "%s rendered (%drows,%dcols)=>(%drows,%dcols) in %dms",
+            "%s.render(%drows, %dcols, %0.1fMB) => (%drows, %dcols, %0.1fMB) in %dms",
             self.name,
-            table.shape[0],
-            table.shape[1],
-            shape[0],
-            shape[1],
+            input_table.metadata.n_rows,
+            len(input_table.metadata.columns),
+            input_table.n_bytes_on_disk / 1024 / 1024,
+            result.table.metadata.n_rows,
+            len(result.table.metadata.columns),
+            result.table.n_bytes_on_disk / 1024 / 1024,
             int((time2 - time1) * 1000),
         )
 
-        return out
+        return result
 
-    async def fetch(
+    def fetch(
         self,
         *,
-        params: Dict[str, Any],
+        params: Params,
         secrets: Dict[str, Any],
-        workflow_id: int,
-        get_input_dataframe: Callable[[], Awaitable[pd.DataFrame]],
-        get_stored_dataframe: Callable[[], Awaitable[pd.DataFrame]],
-    ) -> ProcessResult:
+        last_fetch_result: Optional[FetchResult],
+        input_table: ArrowTable,
+        output_path: Path,
+    ) -> FetchResult:
         """
-        Call module `fetch(...)` method to build a `ProcessResult`.
+        Call module `fetch(...)` method to build a `FetchResult`.
 
-        If the `fetch` method raises an exception, this method will return an
-        error string. It is always an error for a module to raise an exception.
+        Exceptions become error results. This method cannot raise an exception.
+        (It is always an error for module code to raise an exception.)
+
+        This synchronous method can be slow for complex modules, large datasets
+        or slow network requests. Consider calling it from an executor.
         """
-        kwargs = {}
-        spec = inspect.getfullargspec(self.fetch_impl)
-        varkw = bool(spec.varkw)  # if True, function accepts **kwargs
-        kwonlyargs = spec.kwonlyargs
-        get_input_dataframe = _memoize_async_func(get_input_dataframe)
-        if varkw or "secrets" in kwonlyargs:
-            kwargs["secrets"] = secrets
-        if varkw or "get_input_dataframe" in kwonlyargs:
-            kwargs["get_input_dataframe"] = get_input_dataframe
-        if varkw or "get_stored_dataframe" in kwonlyargs:
-            kwargs["get_stored_dataframe"] = get_stored_dataframe
-
         time1 = time.time()
-
-        if inspect.iscoroutinefunction(self.fetch_impl):
-            future_result = self.fetch_impl(params, **kwargs)
-        else:
-            loop = asyncio.get_event_loop()
-            func = partial(self.fetch_impl, params, **kwargs)
-            future_result = loop.run_in_executor(None, func)
-
         try:
-            out = await future_result
-        except asyncio.CancelledError:
-            raise
-        except Exception as err:
+            result = module_loader.kernel.fetch(
+                self.compiled_module,
+                params,
+                secrets,
+                last_fetch_result,
+                input_table,
+                output_path,
+            )
+        except ModuleError as err:
             logger.exception("Exception in %s.fetch", self.module_id_name)
-            out = self._wrap_exception(err)
+            result = FetchResult(
+                path=output_path,
+                errors=[
+                    RenderError(
+                        I18nMessage(
+                            "TODO_i18n",
+                            [
+                                "Something unexpected happened. We have been notified and are "
+                                "working to fix it. If this persists, contact us. Error code: "
+                                + str(err)
+                            ],
+                        )
+                    )
+                ],
+            )
 
         time2 = time.time()
-
-        if out is None:
-            shape = (-1, -1)
-        else:
-            try:
-                out = ProcessResult.coerce(out)
-            except ValueError as err:
-                logger.exception(
-                    "%s.fetch gave invalid output. workflow=%d, params=%s"
-                    % (self.module_id_name, workflow_id, json.dumps(params))
-                )
-                out = ProcessResult(
-                    error=("Fetch produced invalid data: %s" % (str(err),))
-                )
-            out.truncate_in_place_if_too_big()
-            shape = out.dataframe.shape
-
         logger.info(
-            "%s fetched =>(%drows,%dcols) in %dms",
+            "%s.fetch => %0.1fMB in %dms",
             self.name,
-            shape[0],
-            shape[1],
+            result.path.stat().st_size / 1024 / 1024,
             int((time2 - time1) * 1000),
         )
 
-        return out
+        return result
+
+    def migrate_params(self, raw_params: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Call module `migrate_params()` to update maybe-stale `raw_params`.
+
+        Raise ModuleError if module code did not execute.
+
+        Raise ValueError if module code returned params that do not match spec.
+        """
+        time1 = time.time()
+        try:
+            values = module_loader.kernel.migrate_params(
+                self.compiled_module, raw_params
+            )  # raise ModuleError
+            try:
+                self.param_schema.validate(values)
+            except ValueError as err:
+                raise ValueError(
+                    "%s.migrate_params() gave bad output: %s"
+                    % (self.module_id_name, str(err))
+                )
+            return values
+        finally:
+            time2 = time.time()
+            logger.info(
+                "%s.migrate_params() in %dms",
+                self.module_id_name,
+                int((time2 - time1) * 1000),
+            )
 
     @classmethod
     @database_sync_to_async
@@ -326,26 +212,6 @@ class LoadedModule:
         Invalid assumption? Fix the bug elsewhere.
         """
         return cls.for_module_version_sync(module_version)
-
-    def migrate_params(self, values: Dict[str, Any]) -> Dict[str, Any]:
-        if self.migrate_params_impl is not None:
-            try:
-                values = self.migrate_params_impl(values)
-            except Exception as err:
-                raise ValueError(
-                    "%s.migrate_params() raised %r" % (self.module_id_name, err)
-                )
-            try:
-                self.param_schema.validate(values)
-            except ValueError as err:
-                raise ValueError(
-                    "%s.migrate_params() gave bad output: %s"
-                    % (self.module_id_name, str(err))
-                )
-
-            return values
-        else:
-            return self.param_schema.coerce(values)
 
     @classmethod
     def for_module_version_sync(
@@ -375,26 +241,16 @@ class LoadedModule:
         version_sha1 = module_version.source_version_hash
 
         try:
-            module, compiled_module = InternalModules[module_id_name]
+            compiled_module = InternalModules[module_id_name]
             version_sha1 = "internal"
         except KeyError:
-            module, compiled_module = load_external_module(
+            compiled_module = load_external_module(
                 module_id_name, version_sha1, module_version.last_update_time
             )
 
         param_schema = module_version.param_schema
-        render_impl = partial(_render_in_kernel, compiled_module)
-        fetch_impl = getattr(module, "fetch", _default_fetch)
-        migrate_params_impl = getattr(module, "migrate_params", None)
 
-        return cls(
-            module_id_name,
-            version_sha1,
-            param_schema,
-            render_impl=render_impl,
-            fetch_impl=fetch_impl,
-            migrate_params_impl=migrate_params_impl,
-        )
+        return cls(module_id_name, version_sha1, param_schema, compiled_module)
 
 
 def _is_basename_python_code(key: str) -> bool:
@@ -419,7 +275,7 @@ def _is_basename_python_code(key: str) -> bool:
 
 def _load_external_module_uncached(
     module_id_name: str, version_sha1: str
-) -> ModuleType:
+) -> CompiledModule:
     """
     Load a Python Module given a name and version.
     """
@@ -435,12 +291,12 @@ def _load_external_module_uncached(
         minio.ExternalModulesBucket, python_code_key
     ) as path:
         logger.info(f"Loading {name} from {path}")
-        return module_loader.load_python_module(name, path)
+        return module_loader.kernel.compile(path, name)
 
 
 def load_external_module(
     module_id_name: str, version_sha1: str, last_update_time: datetime.datetime
-) -> ModuleType:
+) -> CompiledModule:
     """
     Load a Python Module given a name and version.
 

@@ -195,10 +195,10 @@ class WfModuleSerializer(serializers.ModelSerializer):
         if not cached_result:
             return data
 
-        columns = [c.to_dict() for c in cached_result.columns]
+        columns = [c.to_dict() for c in cached_result.table_metadata.columns]
         data["cached_render_result_delta_id"] = cached_result.delta_id
         data["output_columns"] = columns
-        data["output_n_rows"] = cached_result.nrows
+        data["output_n_rows"] = cached_result.table_metadata.n_rows
 
         return data
 

@@ -11,8 +11,8 @@ import pathlib
 import sys
 from yajl import YajlParser, YajlContentHandler, YajlError
 from typing import Dict, List, Optional, Tuple, Union
-from django.conf import settings
 import pandas as pd
+from cjwkernel import settings
 from .moduleutils import (
     detect_encoding,
     wrap_text,
@@ -137,14 +137,14 @@ def parse_table(textio: io.TextIOBase, dialect: csv.Dialect) -> ParseTableResult
 
     * Column names are 'Column 1', 'Column 2', etc.
     * All values are str.
-    * We drop every row starting at MAX_BYTES_PER_TABLE (and warn).
+    * We drop every row starting at MAX_PANDAS_BYTES_PER_TABLE (and warn).
     * We drop every column after MAX_COLUMNS_PER_TABLE (and warn).
     * We drop every row after MAX_ROWS_PER_TABLE (and warn).
     """
     columns: List[ColumnBuilder] = []  # column-wise data
     MAX_COLUMNS = settings.MAX_COLUMNS_PER_TABLE
     MAX_ROWS = settings.MAX_ROWS_PER_TABLE
-    MAX_BYTES = settings.MAX_BYTES_PER_TABLE
+    MAX_BYTES = settings.MAX_PANDAS_BYTES_PER_TABLE
 
     n_bytes = 0
     n_input_rows = 0

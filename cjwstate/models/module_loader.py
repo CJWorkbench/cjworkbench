@@ -12,17 +12,12 @@ Steps to loading a module:
 from __future__ import annotations
 
 from dataclasses import dataclass
-import importlib.util
 import json
 from pathlib import Path
 import jsonschema
-import sys
-import threading
-from typing import Any, List, Optional, Set, Tuple
+from typing import List, Optional, Set
 import yaml
-from cjwkernel.errors import ModuleError
 from cjwkernel.kernel import Kernel
-from cjwkernel.types import CompiledModule
 
 
 with (Path(__file__).parent / "module_spec_schema.yaml").open("rt") as spec_file:
@@ -233,83 +228,6 @@ class ModuleFiles:
             raise ValueError('Missing ".py" module-code file. ' "Please write one.")
 
         return cls(spec, code, html, javascript)
-
-
-class PathLoader(importlib.abc.SourceLoader):
-    def __init__(self, name: str, path: Path):
-        super().__init__()
-        self.name = name
-        self.path = path
-
-    # override ResourceLoader
-    def get_data(self, path):
-        return self.path.read_bytes()
-
-    # override ExecutionLoader
-    def get_filename(self, path):
-        return f"<Module {self.name}>"
-
-
-def load_python_module(name: str, code_path: Path) -> Tuple[Any, CompiledModule]:
-    """
-    Convert from `pathlib.Path` to Python module.
-
-    Raise `ValueError` if Path isn't executable Python code.
-    """
-    # execute the module, as a test
-    loader = PathLoader(name, code_path)
-    spec = importlib.util.spec_from_loader(
-        (
-            # generate unique package name -- no conflicts, please!
-            #
-            # (We temporarily inject this into sys.modules below.)
-            f"{__package__}._dynamic_{threading.get_ident()}"
-            f".{name}.{code_path.stem}"
-        ),
-        loader,
-    )
-
-    # DEPRECATED -- load a Module, for direct calls.
-    try:
-        module = importlib.util.module_from_spec(spec)
-    except SyntaxError as err:
-        raise ValueError("Syntax error in %s: %s" % (name, str(err)))
-
-    try:
-        # add to sys.modules, so "@dataclass()" can read the module data
-        # Needed when `from __future__ import annotations` in Python 3.7.
-        sys.modules[spec.name] = module
-        spec.loader.exec_module(module)
-    except Exception as err:  # really, code can raise _any_ error
-        raise ValueError("%s could not execute: %s" % (name, str(err)))
-    finally:
-        del sys.modules[spec.name]
-
-    # Un-deprecated: compile a module. (This is safe!)
-    try:
-        compiled_module = kernel.compile(code_path, name)
-    except ModuleError as err:
-        raise ValueError("Module %s cannot be loaded: %s" % (name, str(err)))
-
-    return module, compiled_module
-
-
-# Now check if the module is importable and defines the render function
-def validate_python_functions(code_path: Path):
-    test_module = load_python_module(code_path.stem, code_path)
-
-    if hasattr(test_module, "render"):
-        if callable(test_module.render):
-            return
-        else:
-            raise ValueError("%s.render is not callable" % code_path.name)
-    elif hasattr(test_module, "fetch"):
-        if callable(test_module.fetch):
-            return
-        else:
-            raise ValueError("%s.fetch is not callable" % code_path.name)
-    else:
-        raise ValueError("Missing %s.render (or .fetch)" % code_path.name)
 
 
 class ModuleSpec:

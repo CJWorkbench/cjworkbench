@@ -699,7 +699,7 @@ class ParamValue(object):
     Value (or nested value) in Params passed to render()/fetch().
 
     These params are connected to the `table` parameter: a "column"-typed
-    parameter will be a `Column`; a "tab"-typed parameter will be a `TabOutput.
+    parameter will be a `Column`; a "tab"-typed parameter will be a `TabOutput`.
 
     This is more permissive than module_spec. Callers should validate against
     the module spec.
@@ -1669,6 +1669,10 @@ class FetchRequest(object):
     have a lot more work to do to make these modules work as expected. (The
     changes will probably require rewriting all modules that use this
     feature.) In the meantime, this hack gets some jobs done.
+     - output_filename: File where the result should be written.
+
+    The caller is assumed to have made a best effort to ensure the file is
+    writable.
     """
 
     __slots__ = (
@@ -1676,14 +1680,16 @@ class FetchRequest(object):
         'secrets',
         'last_fetch_result',
         'input_table',
+        'output_filename',
     )
 
 
-    def __init__(self, params=None, secrets=None, last_fetch_result=None, input_table=None,):
+    def __init__(self, params=None, secrets=None, last_fetch_result=None, input_table=None, output_filename=None,):
         self.params = params
         self.secrets = secrets
         self.last_fetch_result = last_fetch_result
         self.input_table = input_table
+        self.output_filename = output_filename
 
     def read(self, iprot):
         if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
@@ -1724,6 +1730,11 @@ class FetchRequest(object):
                     self.input_table.read(iprot)
                 else:
                     iprot.skip(ftype)
+            elif fid == 5:
+                if ftype == TType.STRING:
+                    self.output_filename = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                else:
+                    iprot.skip(ftype)
             else:
                 iprot.skip(ftype)
             iprot.readFieldEnd()
@@ -1753,6 +1764,10 @@ class FetchRequest(object):
         if self.input_table is not None:
             oprot.writeFieldBegin('input_table', TType.STRUCT, 4)
             self.input_table.write(oprot)
+            oprot.writeFieldEnd()
+        if self.output_filename is not None:
+            oprot.writeFieldBegin('output_filename', TType.STRING, 5)
+            oprot.writeString(self.output_filename.encode('utf-8') if sys.version_info[0] == 2 else self.output_filename)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -1788,6 +1803,8 @@ class FetchResult(object):
 
     Attributes:
      - filename: File the fetch produced.
+
+    The kernel writes the output data to `fetch_request.output_file`.
 
     Currently, this must be a valid Parquet file. In the future, we will
     loosen the requirement and allow any file.
@@ -1891,31 +1908,30 @@ class RenderRequest(object):
     This is zero-row, zero-column on the first Step in a Tab.
      - params: User-supplied parameters; must match the module's param_spec.
      - tab: Description of tab being rendered.
-     - input_tabs: Other tabs' results, supplied as inputs for this Step.
-
-    Only user-selected tabs are included here. This is not all rendered
-    tabs: it's only the tabs the user selected in this Step's `tab` and
-    `multitab` parameters.
      - fetch_result: Result of latest `fetch`.
 
     If unset, `fetch` was never called.
+     - output_filename: File where the result Arrow table should be written.
+
+    The caller is assumed to have made a best effort to ensure the file is
+    writable.
     """
 
     __slots__ = (
         'input_table',
         'params',
         'tab',
-        'input_tabs',
         'fetch_result',
+        'output_filename',
     )
 
 
-    def __init__(self, input_table=None, params=None, tab=None, input_tabs=None, fetch_result=None,):
+    def __init__(self, input_table=None, params=None, tab=None, fetch_result=None, output_filename=None,):
         self.input_table = input_table
         self.params = params
         self.tab = tab
-        self.input_tabs = input_tabs
         self.fetch_result = fetch_result
+        self.output_filename = output_filename
 
     def read(self, iprot):
         if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
@@ -1951,21 +1967,14 @@ class RenderRequest(object):
                 else:
                     iprot.skip(ftype)
             elif fid == 4:
-                if ftype == TType.MAP:
-                    self.input_tabs = {}
-                    (_ktype61, _vtype62, _size60) = iprot.readMapBegin()
-                    for _i64 in range(_size60):
-                        _key65 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
-                        _val66 = TabOutput()
-                        _val66.read(iprot)
-                        self.input_tabs[_key65] = _val66
-                    iprot.readMapEnd()
-                else:
-                    iprot.skip(ftype)
-            elif fid == 5:
                 if ftype == TType.STRUCT:
                     self.fetch_result = FetchResult()
                     self.fetch_result.read(iprot)
+                else:
+                    iprot.skip(ftype)
+            elif fid == 6:
+                if ftype == TType.STRING:
+                    self.output_filename = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
                 else:
                     iprot.skip(ftype)
             else:
@@ -1985,26 +1994,22 @@ class RenderRequest(object):
         if self.params is not None:
             oprot.writeFieldBegin('params', TType.MAP, 2)
             oprot.writeMapBegin(TType.STRING, TType.STRUCT, len(self.params))
-            for kiter67, viter68 in self.params.items():
-                oprot.writeString(kiter67.encode('utf-8') if sys.version_info[0] == 2 else kiter67)
-                viter68.write(oprot)
+            for kiter60, viter61 in self.params.items():
+                oprot.writeString(kiter60.encode('utf-8') if sys.version_info[0] == 2 else kiter60)
+                viter61.write(oprot)
             oprot.writeMapEnd()
             oprot.writeFieldEnd()
         if self.tab is not None:
             oprot.writeFieldBegin('tab', TType.STRUCT, 3)
             self.tab.write(oprot)
             oprot.writeFieldEnd()
-        if self.input_tabs is not None:
-            oprot.writeFieldBegin('input_tabs', TType.MAP, 4)
-            oprot.writeMapBegin(TType.STRING, TType.STRUCT, len(self.input_tabs))
-            for kiter69, viter70 in self.input_tabs.items():
-                oprot.writeString(kiter69.encode('utf-8') if sys.version_info[0] == 2 else kiter69)
-                viter70.write(oprot)
-            oprot.writeMapEnd()
-            oprot.writeFieldEnd()
         if self.fetch_result is not None:
-            oprot.writeFieldBegin('fetch_result', TType.STRUCT, 5)
+            oprot.writeFieldBegin('fetch_result', TType.STRUCT, 4)
             self.fetch_result.write(oprot)
+            oprot.writeFieldEnd()
+        if self.output_filename is not None:
+            oprot.writeFieldBegin('output_filename', TType.STRING, 6)
+            oprot.writeString(self.output_filename.encode('utf-8') if sys.version_info[0] == 2 else self.output_filename)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -2042,6 +2047,8 @@ class RenderResult(object):
      - table: Table the Step outputs.
 
     If the Step output is "error, then the table must have zero columns.
+
+    The kernel writes the output Arrow data to `render_request.output_file`.
      - errors: User-facing errors or warnings reported by the module.
      - json: JSON to pass to the module's HTML, if it has HTML.
 
@@ -2078,11 +2085,11 @@ class RenderResult(object):
             elif fid == 2:
                 if ftype == TType.LIST:
                     self.errors = []
-                    (_etype74, _size71) = iprot.readListBegin()
-                    for _i75 in range(_size71):
-                        _elem76 = RenderError()
-                        _elem76.read(iprot)
-                        self.errors.append(_elem76)
+                    (_etype65, _size62) = iprot.readListBegin()
+                    for _i66 in range(_size62):
+                        _elem67 = RenderError()
+                        _elem67.read(iprot)
+                        self.errors.append(_elem67)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
@@ -2108,8 +2115,8 @@ class RenderResult(object):
         if self.errors is not None:
             oprot.writeFieldBegin('errors', TType.LIST, 2)
             oprot.writeListBegin(TType.STRUCT, len(self.errors))
-            for iter77 in self.errors:
-                iter77.write(oprot)
+            for iter68 in self.errors:
+                iter68.write(oprot)
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         if self.json is not None:
@@ -2256,6 +2263,7 @@ FetchRequest.thrift_spec = (
     (2, TType.STRUCT, 'secrets', [RawParams, None], None, ),  # 2
     (3, TType.STRUCT, 'last_fetch_result', [FetchResult, None], None, ),  # 3
     (4, TType.STRUCT, 'input_table', [ParquetTable, None], None, ),  # 4
+    (5, TType.STRING, 'output_filename', 'UTF8', None, ),  # 5
 )
 all_structs.append(FetchResult)
 FetchResult.thrift_spec = (
@@ -2269,8 +2277,9 @@ RenderRequest.thrift_spec = (
     (1, TType.STRUCT, 'input_table', [ArrowTable, None], None, ),  # 1
     (2, TType.MAP, 'params', (TType.STRING, 'UTF8', TType.STRUCT, [ParamValue, None], False), None, ),  # 2
     (3, TType.STRUCT, 'tab', [Tab, None], None, ),  # 3
-    (4, TType.MAP, 'input_tabs', (TType.STRING, 'UTF8', TType.STRUCT, [TabOutput, None], False), None, ),  # 4
-    (5, TType.STRUCT, 'fetch_result', [FetchResult, None], None, ),  # 5
+    (4, TType.STRUCT, 'fetch_result', [FetchResult, None], None, ),  # 4
+    None,  # 5
+    (6, TType.STRING, 'output_filename', 'UTF8', None, ),  # 6
 )
 all_structs.append(RenderResult)
 RenderResult.thrift_spec = (

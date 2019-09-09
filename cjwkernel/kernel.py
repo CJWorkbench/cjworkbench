@@ -20,7 +20,6 @@ from cjwkernel.types import (
     RawParams,
     RenderResult,
     Tab,
-    TabOutput,
 )
 from cjwkernel.pandas.main import main
 
@@ -115,7 +114,19 @@ class Kernel:
     def __init__(self):
         self._context = multiprocessing.get_context("forkserver")
         self._context.set_forkserver_preload(
-            ["cjwkernel.thrift.KernelModule", "pandas", "pyarrow", "numpy", "nltk"]
+            [
+                "dataclasses",
+                "re",
+                "typing",
+                "aiohttp",
+                "pandas",
+                "pyarrow",
+                "numpy",
+                "nltk",
+                "requests",
+                "re2",
+                "cjwkernel.pandas.module",
+            ]
         )
 
     def compile(self, path: Path, module_slug: str) -> CompiledModule:
@@ -160,20 +171,42 @@ class Kernel:
         input_table: ArrowTable,
         params: Params,
         tab: Tab,
-        input_tabs: Dict[str, TabOutput],
         fetch_result: Optional[FetchResult],
+        output_path: Path,
     ) -> RenderResult:
         request = ttypes.RenderRequest(
             input_table.to_thrift(),
-            Params(params).to_thrift(),
+            params.to_thrift(),
             tab.to_thrift(),
-            {k: v.to_thrift() for k, v in input_tabs.items()},
             None if fetch_result is None else fetch_result.to_thrift(),
+            str(output_path),
         )
         result = self._run_in_child(
             compiled_module, ttypes.RenderResult(), "render_thrift", request
         )
         return RenderResult.from_thrift(result)
+
+    def fetch(
+        self,
+        compiled_module: CompiledModule,
+        params: Params,
+        secrets: Dict[str, Any],
+        last_fetch_result: Optional[FetchResult],
+        input_table: ArrowTable,
+        output_path: Path,
+    ) -> FetchResult:
+        request = ttypes.FetchRequest(
+            params.to_thrift(),
+            RawParams(secrets).to_thrift(),
+            None if last_fetch_result is None else last_fetch_result.to_thrift(),
+            input_table.to_thrift(),
+            str(output_path),
+        )
+        result = self._run_in_child(
+            compiled_module, ttypes.FetchResult(), "fetch_thrift", request
+        )
+        out.truncate_in_place_if_too_big()
+        return FetchResult.from_thrift(result)
 
     def _run_in_child(
         self, compiled_module: CompiledModule, result: Any, function: str, *args

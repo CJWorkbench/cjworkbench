@@ -114,7 +114,7 @@ def _arrow_table_to_json_records(
 # Now reading a maximum of 101 columns directly from cache parquet
 def _make_render_tuple(cached_result, startrow=None, endrow=None):
     """Build (startrow, endrow, json_rows) data."""
-    columns = cached_result.columns[
+    columns = cached_result.table_metadata.columns[
         # Return one row more than configured, so the client knows there
         # are "too many rows".
         : (settings.MAX_COLUMNS_PER_CLIENT_REQUEST + 1)
@@ -222,7 +222,9 @@ def wfmodule_value_counts(request: HttpRequest, wf_module: WfModule):
         return JsonResponse({"values": {}})
 
     try:
-        column = next(c for c in cached_result.columns if c.name == colname)
+        column = next(
+            c for c in cached_result.table_metadata.columns if c.name == colname
+        )
     except StopIteration:
         return JsonResponse({"error": f'column "{colname}" not found'}, status=404)
 

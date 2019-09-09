@@ -4,12 +4,12 @@ import re
 from typing import Any, Dict, List, Optional, Tuple
 import aiohttp
 from aiohttp.client_exceptions import ClientResponseError
-from django.conf import settings
 import numpy as np
 from oauthlib import oauth1
 from oauthlib.common import urlencode
 import pandas as pd
 import yarl  # expose aiohttp's innards -- ick.
+from cjwkernel import settings
 from server import oauth
 
 

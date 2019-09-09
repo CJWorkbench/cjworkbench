@@ -5,17 +5,11 @@ import pathlib
 import tempfile
 import weakref
 from typing import Any, Dict, List, Optional, Union
-from cjwkernel.types import ArrowTable, RenderResult, TabMetadata, TabOutput
+from cjwkernel.types import ArrowTable, Params, RenderResult, Tab, TabOutput
 from cjwstate import minio
-from cjwstate.models import Tab, UploadedFile
+from cjwstate.models import UploadedFile
 from cjwstate.models.param_spec import ParamDType
-from .types import (
-    TabCycleError,
-    TabOutputUnreachableError,
-    UnneededExecution,
-    PromptingError,
-)
-from cjwstate.rendercache import open_cached_render_result
+from .types import TabCycleError, TabOutputUnreachableError, PromptingError
 
 
 FilesystemUnsafeChars = re.compile("[^-_.,()a-zA-Z0-9]")
@@ -63,8 +57,8 @@ class RenderContext:
         workflow_id: int,
         wf_module_id: int,
         input_table: ArrowTable,
-        # assume tab_outputs keys are ordered the way the user ordered the tabs.
-        tab_outputs: Dict[str, Optional[RenderResult]],
+        # assume tab_results keys are ordered the way the user ordered the tabs.
+        tab_results: Dict[Tab, Optional[RenderResult]],
         # params is a HACK to let column selectors rely on a tab_parameter,
         # which is a _root-level_ parameter. So when we're walking the tree of
         # params, we need to keep a handle on the root ...  which is ugly and
@@ -78,7 +72,8 @@ class RenderContext:
         self.workflow_id = workflow_id
         self.wf_module_id = wf_module_id
         self.input_table = input_table
-        self.tab_outputs = tab_outputs
+        self.tabs: Dict[str, Tab] = {tab.slug: tab for tab in tab_results.keys()}
+        self.tab_results = tab_results
         self.params = params
 
     def output_columns_for_tab_parameter(self, tab_parameter):
@@ -93,20 +88,20 @@ class RenderContext:
         tab_slug = self.params[tab_parameter]
 
         try:
-            tab_output = self.tab_outputs[tab_slug]
+            tab_result = self.tab_results[tab_slug]
         except KeyError:
             # Tab does not exist
             return {}
-        if tab_output is None or tab_output.status != "ok":
+        if tab_result is None or tab_result.status != "ok":
             # Tab has a cycle or other error
             return {}
 
-        return {c.name: c for c in tab_output.table.metadata.columns}
+        return {c.name: c for c in tab_result.table.metadata.columns}
 
 
 def get_param_values(
     schema: ParamDType.Dict, params: Dict[str, Any], context: RenderContext
-) -> Dict[str, Any]:
+) -> Params:
     """
     Convert `params` to a dict we'll pass to a module `render()` function.
 
@@ -123,7 +118,8 @@ def get_param_values(
     This uses database connections, and it's slow! (It needs to load input tab
     data.) Be sure the Workflow is locked while you call it.
     """
-    return clean_value(schema, params, context)
+    values: Dict[str, Any] = clean_value(schema, params, context)
+    return Params(values)
 
 
 # singledispatch primer: `clean_value(dtype, value, context)` will choose its
@@ -212,42 +208,19 @@ def _(
 def _(dtype: ParamDType.Tab, value: str, context: RenderContext) -> TabOutput:
     tab_slug = value
     try:
-        tab_output = context.tab_outputs[tab_slug]
+        tab = context.tabs[tab_slug]
     except KeyError:
         # It's a tab that doesn't exist.
         return None
-    if tab_output is None:
+    tab_result = context.tab_results[tab]
+    if tab_result is None:
         # It's an un-rendered tab. Or at least, the executor _tells_ us it's
         # un-rendered. That means there's a tab-cycle.
         raise TabCycleError
-    if tab_output.status != "ok":
+    if tab_result.status != "ok":
         raise TabOutputUnreachableError
 
-    # Load Tab output from database. Assumes we've locked the workflow.
-    try:
-        tab = Tab.objects.get(
-            workflow_id=context.workflow_id, is_deleted=False, slug=tab_slug
-        )
-    except Tab.DoesNotExist:
-        # If the Tab doesn't exist, someone deleted it mid-render. (We already
-        # verified that the tab has been rendered -- that was
-        # context.tab_outputs[tab_slug].) So our param is stale.
-        raise UnneededExecution
-
-    wf_module = tab.live_wf_modules.last()
-    if wf_module is None:
-        # empty tab -> empty output
-        raise TabOutputUnreachableError
-
-    crr = wf_module.cached_render_result
-    if crr is None:
-        # ... but tab_outputs implies we just cached the correct result! It
-        # looks like that version must be stale.
-        raise UnneededExecution
-
-    # read Parquet from disk (slow)
-    with open_cached_render_result(crr) as arrow_result:
-        return TabOutput(TabMetadata(tab_slug, tab.name), arrow_result.table)
+    return TabOutput(tab, tab_result.table)
 
 
 @clean_value.register(ParamDType.Column)
@@ -347,17 +320,17 @@ def _(
     dtype: ParamDType.Multitab, value: List[str], context: RenderContext
 ) -> List[TabOutput]:
     # First, recurse -- the same way we clean a list.
-    unordered = clean_value_list(dtype, value, context)
+    unordered: List[TabOutput] = clean_value_list(dtype, value, context)
 
-    # Next, order outputs the way they're ordered in `context.tab_outputs`.
+    # Next, order outputs the way they're ordered in `context.tab_results`.
     # Ignore all `None` values -- those are nonexistent tabs, and we should
     # omit nonexistent tabs.
-    lookup = dict(
-        (tab_output.slug, tab_output)
+    lookup = {
+        tab_output.slug: tab_output
         for tab_output in unordered
         if tab_output is not None
-    )
-    return [lookup[slug] for slug in context.tab_outputs.keys() if slug in lookup]
+    }
+    return [lookup[slug] for slug in context.tabs.keys() if slug in lookup]
 
 
 @clean_value.register(ParamDType.Dict)

@@ -1,4 +1,3 @@
-from pandas.api.types import union_categoricals
 from typing import List, Set
 
 

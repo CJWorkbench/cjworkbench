@@ -1,12 +1,9 @@
 import textwrap
-import traceback
 import unittest
 from cjwstate.models.module_loader import (
     validate_module_spec,
     ModuleFiles,
     ModuleSpec,
-    validate_python_functions,
-    load_python_module,
 )
 from cjwstate.tests.utils import MockDir, MockPath
 
@@ -388,67 +385,6 @@ class ModuleFilesTest(unittest.TestCase):
         self.assertEqual(module_files.code.name, "module.py")
         self.assertEqual(module_files.html.name, "module.html")
         self.assertEqual(module_files.javascript.name, "module.js")
-
-
-class LoadPythonModuleTest(unittest.TestCase):
-    def test_filename_in_traceback(self):
-        path = MockPath(["root", "badname.py"], b"def intify(x):\n    return int(x)")
-        module = load_python_module("goodname", path)
-        try:
-            module.intify("not-a-number")
-        except ValueError:
-            s = traceback.format_exc()
-            self.assertRegex(
-                s, 'File "<Module goodname>", line 2, in intify\nValueError'
-            )
-
-
-class ValidatePythonFunctionsTest(unittest.TestCase):
-    def _validate(self, data):
-        dirpath = MockDir({"module.py": data.encode("utf-8")})
-        path = dirpath / "module.py"
-        validate_python_functions(path)
-
-    def test_valid_render_function(self):
-        self._validate("def render(table, params):\n    return table")
-
-    def test_valid_fetch_function(self):
-        self._validate('async def fetch(params):\n    return "error"')
-
-    def test_dataclass_works(self):
-        """
-        Test we can compile @dataclass
-
-        @dataclass inspects `sys.modules`, so the module needs to be in
-        `sys.modules` when @dataclass is run.
-        """
-        self._validate(
-            textwrap.dedent(
-                """\
-            from __future__ import annotations
-            from dataclasses import dataclass
-
-            def render(table, params):
-                return table
-
-            @dataclass
-            class A:
-                y: int
-            """
-            )
-        )
-
-    def test_syntax_error(self):
-        with self.assertRaises(ValueError):
-            self._validate("def render(table, params")
-
-    def test_random_error(self):
-        with self.assertRaises(ValueError):
-            self._validate("x()")  # NameError
-
-    def test_missing_render_function(self):
-        with self.assertRaises(ValueError):
-            self._validate("def rendr(table, params):\n    return table")
 
 
 class LoadModuleSpecTest(unittest.TestCase):

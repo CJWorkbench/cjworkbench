@@ -509,10 +509,11 @@ class WfModule(models.Model):
 
         # cached_render_result_json is sometimes a memoryview
         json_bytes = bytes(self.cached_render_result_json)
-        if json_bytes:
+        try:
             json_dict = json.loads(json_bytes)
-        else:
-            json_dict = None
+        except ValueError:
+            # Backwards-compat: json.loads(b'')
+            json_dict = {}
 
         if self.cached_render_result_errors:
             errors = self.cached_render_result_errors
