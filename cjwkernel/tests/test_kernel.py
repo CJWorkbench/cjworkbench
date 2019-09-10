@@ -1,5 +1,6 @@
 import pathlib
 import tempfile
+import textwrap
 import unittest
 import pyarrow
 from cjwstate.tests.utils import MockPath
@@ -78,6 +79,35 @@ class KernelTests(unittest.TestCase):
         )
         self.assertEquals(result.module_slug, "foo")
         self.assertIsInstance(result.marshalled_code_object, bytes)
+
+    def test_compile_validate_works_with_dataclasses(self):
+        """
+        Test we can compile @dataclass
+
+        @dataclass inspects `sys.modules`, so the module needs to be in
+        `sys.modules` when @dataclass is run.
+        """
+        kernel = Kernel()
+        result = kernel.compile(
+            MockPath(
+                ["foo.py"],
+                textwrap.dedent(
+                    """
+                    from __future__ import annotations
+                    from dataclasses import dataclass
+
+                    def render(table, params):
+                        return table
+
+                    @dataclass
+                    class A:
+                        y: int
+                    """
+                ).encode("utf-8"),
+            ),
+            "foo",
+        )
+        self.assertEquals(result.module_slug, "foo")
 
     def test_migrate_params(self):
         kernel = Kernel()

@@ -234,10 +234,10 @@ class LoadedModule:
         module_id_name = module_version.id_name
         version_sha1 = module_version.source_version_hash
 
-        try:
+        if module_id_name in InternalModules:
             compiled_module = InternalModules[module_id_name]
             version_sha1 = "internal"
-        except KeyError:
+        else:
             compiled_module = load_external_module(
                 module_id_name, version_sha1, module_version.last_update_time
             )

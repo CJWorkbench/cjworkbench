@@ -48,7 +48,9 @@ def run_in_sandbox(
     # Run the user's code in a new (programmatic) module.
     #
     # This gives the user code a blank namespace -- exactly what we want.
-    user_code_module = types.ModuleType(f"rawmodule.{compiled_module.module_slug}")
+    module_name = f"rawmodule.{compiled_module.module_slug}"
+    user_code_module = types.ModuleType(module_name)
+    sys.modules[module_name] = user_code_module  # simulate "import"
     exec(compiled_module.code_object, user_code_module.__dict__)
 
     # And now ... now we're unsafe! Because `code_object` may be malicious, any
