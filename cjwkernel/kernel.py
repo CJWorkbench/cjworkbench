@@ -21,6 +21,7 @@ from cjwkernel.types import (
     RenderResult,
     Tab,
 )
+from cjwkernel.validate import validate
 from cjwkernel.pandas.main import main
 
 
@@ -184,7 +185,10 @@ class Kernel:
         result = self._run_in_child(
             compiled_module, ttypes.RenderResult(), "render_thrift", request
         )
-        return RenderResult.from_thrift(result)
+        render_result = RenderResult.from_thrift(result)
+        if render_result.table.table is not None:
+            validate(render_result.table.table, render_result.table.metadata)
+        return render_result
 
     def fetch(
         self,
@@ -205,7 +209,7 @@ class Kernel:
         result = self._run_in_child(
             compiled_module, ttypes.FetchResult(), "fetch_thrift", request
         )
-        out.truncate_in_place_if_too_big()
+        # TODO ensure result is truncated
         return FetchResult.from_thrift(result)
 
     def _run_in_child(

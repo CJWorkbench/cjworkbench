@@ -4,7 +4,6 @@ from pathlib import Path
 import unittest
 import numpy as np
 import pandas as pd
-from django.test import SimpleTestCase, override_settings
 from pandas.testing import assert_frame_equal
 from cjwkernel.pandas.types import ProcessResult
 from cjwkernel.pandas.moduleutils import (
@@ -14,6 +13,7 @@ from cjwkernel.pandas.moduleutils import (
     spooled_data_from_url,
     autocast_dtypes_in_place,
 )
+from cjwkernel.tests.util import override_settings
 from cjwstate.tests.utils import DbTestCase
 
 
@@ -36,7 +36,7 @@ ret = sorted(list([1, 2, sum([3, 4])]))
         self.assertEqual(env["ret"], [1, 2, 7])
 
 
-class ParseBytesIoTest(SimpleTestCase):
+class ParseBytesIoTest(unittest.TestCase):
     def test_parse_utf8_csv(self):
         result = parse_bytesio(io.BytesIO(b"A\ncaf\xc3\xa9"), "text/csv", "utf-8")
         expected = ProcessResult(pd.DataFrame({"A": ["café"]}).astype("category"))
@@ -312,7 +312,7 @@ class ParseBytesIoTest(SimpleTestCase):
         self.assertEqual(result, expected)
 
 
-class OtherUtilsTests(SimpleTestCase):
+class OtherUtilsTests(unittest.TestCase):
     def test_turn_header_into_first_row(self):
         result = turn_header_into_first_row(pd.DataFrame({"A": ["B"], "C": ["D"]}))
         expected = pd.DataFrame({"0": ["A", "B"], "1": ["C", "D"]})

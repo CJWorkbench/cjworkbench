@@ -334,9 +334,6 @@ class ArrowTable:
         Raise OSError if file on disk could not be read.
 
         Raise AssertionError if file on disk does not match metadata.
-
-        Raise AssertionError if file on disk does not match `settings` (e.g.,
-        it has too many columns).
         """
         if self.path is None:
             assert len(self.metadata.columns) == 0
@@ -347,8 +344,6 @@ class ArrowTable:
             table = reader.read_all()
             assert table.num_rows == self.metadata.n_rows
             assert table.num_columns == len(self.metadata.columns)
-            assert table.num_rows <= settings.MAX_ROWS_PER_TABLE
-            assert table.num_columns <= settings.MAX_COLUMNS_PER_TABLE
             for tcol, mcol in zip(table.columns, self.metadata.columns):
                 assert tcol.name == mcol.name
                 # Assert the column type is one we support

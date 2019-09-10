@@ -8,12 +8,12 @@ import tempfile
 from typing import Any, Dict, Callable, Iterator, Optional
 import aiohttp
 import cchardet as chardet
-from django.conf import settings
 import numpy as np
 import pandas as pd
 from pandas.api.types import is_numeric_dtype, is_datetime64_dtype
 import xlrd
 import yarl  # aiohttp innards -- yuck!
+from cjwkernel import settings
 from cjwkernel.pandas.types import ProcessResult
 
 

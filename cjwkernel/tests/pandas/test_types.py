@@ -3,7 +3,6 @@ import os
 from pathlib import Path
 import tempfile
 import unittest
-from unittest import mock
 import numpy as np
 import pandas as pd
 from pandas.testing import assert_series_equal, assert_frame_equal
@@ -15,6 +14,7 @@ from cjwkernel.pandas.types import (
     TableShape,
 )
 import cjwkernel.types as atypes
+from cjwkernel.tests.util import override_settings
 
 
 class ColumnTypeTextTests(unittest.TestCase):
@@ -570,40 +570,40 @@ class ProcessResultTests(unittest.TestCase):
         result = ProcessResult(pd.DataFrame(), "")
         self.assertEqual(result.status, "unreachable")
 
+    @override_settings(MAX_ROWS_PER_TABLE=2)
     def test_truncate_too_big_no_error(self):
         expected_df = pd.DataFrame({"foo": ["bar", "baz"]})
         expected = ProcessResult(
             dataframe=expected_df, error="Truncated output from 3 rows to 2"
         )
 
-        with mock.patch("django.conf.settings.MAX_ROWS_PER_TABLE", 2):
-            result_df = pd.DataFrame({"foo": ["bar", "baz", "moo"]})
-            result = ProcessResult(result_df, error="")
-            result.truncate_in_place_if_too_big()
+        result_df = pd.DataFrame({"foo": ["bar", "baz", "moo"]})
+        result = ProcessResult(result_df, error="")
+        result.truncate_in_place_if_too_big()
 
         self.assertEqual(result, expected)
 
+    @override_settings(MAX_ROWS_PER_TABLE=2)
     def test_truncate_too_big_and_error(self):
         expected_df = pd.DataFrame({"foo": ["bar", "baz"]})
         expected = ProcessResult(
             dataframe=expected_df, error="Some error\nTruncated output from 3 rows to 2"
         )
 
-        with mock.patch("django.conf.settings.MAX_ROWS_PER_TABLE", 2):
-            result_df = pd.DataFrame({"foo": ["bar", "baz", "moo"]})
-            result = ProcessResult(result_df, error="Some error")
-            result.truncate_in_place_if_too_big()
+        result_df = pd.DataFrame({"foo": ["bar", "baz", "moo"]})
+        result = ProcessResult(result_df, error="Some error")
+        result.truncate_in_place_if_too_big()
 
         self.assertEqual(result, expected)
 
+    @override_settings(MAX_ROWS_PER_TABLE=2)
     def test_truncate_too_big_remove_unused_categories(self):
-        with mock.patch("django.conf.settings.MAX_ROWS_PER_TABLE", 2):
-            result_df = pd.DataFrame({"A": ["x", "y", "z", "z"]}, dtype="category")
-            result = ProcessResult(result_df)
-            result.truncate_in_place_if_too_big()
-            assert_frame_equal(
-                result.dataframe, pd.DataFrame({"A": ["x", "y"]}, dtype="category")
-            )
+        result_df = pd.DataFrame({"A": ["x", "y", "z", "z"]}, dtype="category")
+        result = ProcessResult(result_df)
+        result.truncate_in_place_if_too_big()
+        assert_frame_equal(
+            result.dataframe, pd.DataFrame({"A": ["x", "y"]}, dtype="category")
+        )
 
     def test_truncate_not_too_big(self):
         df = pd.DataFrame({"foo": ["foo", "bar", "baz"]})

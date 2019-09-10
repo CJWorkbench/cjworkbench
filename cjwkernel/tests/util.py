@@ -5,6 +5,7 @@ import tempfile
 from typing import Any, Dict, List, Optional, Union
 import unittest
 import pyarrow
+from cjwkernel import settings
 from cjwkernel.types import ArrowTable, TableMetadata, Column, ColumnType, RenderResult
 
 
@@ -94,3 +95,7 @@ def assert_render_result_equals(result1: RenderResult, result2: RenderResult):
         [e.to_dict() for e in result1.errors], [e.to_dict() for e in result2.errors]
     )
     assertEqual(result1.json, result2.json)
+
+
+def override_settings(**kwargs):
+    return unittest.mock.patch.multiple(settings, **kwargs)

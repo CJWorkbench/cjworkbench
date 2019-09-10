@@ -13,7 +13,7 @@ import pandas as pd
 from pandas.api.types import is_numeric_dtype, is_datetime64_dtype
 import pyarrow
 from .validate import validate_dataframe
-from .. import types as atypes
+from .. import settings, types as atypes
 
 
 class ColumnType(ABC):
@@ -584,8 +584,6 @@ class ProcessResult:
         Truncate dataframe in-place and add to self.error if truncated.
         """
         # import after app startup. [2019-08-21, adamhooper] may not be needed
-        from django.conf import settings
-
         old_len = len(self.dataframe)
         new_len = min(old_len, settings.MAX_ROWS_PER_TABLE)
         if new_len != old_len:

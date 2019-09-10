@@ -371,7 +371,7 @@ def render(table, params, *, fetch_result):
         dataframe = fetch_result.dataframe
 
     # [2019-05-29] Even after fetch, let's save RAM. (This probably won't
-    # aftect much because render result are cached.)
+    # affect much because render result are cached.)
     dataframe = dataframe.truncate(after=settings.TWITTER_MAX_ROWS_PER_TABLE - 1)
 
     return {

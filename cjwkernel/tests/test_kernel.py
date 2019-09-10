@@ -48,16 +48,16 @@ class KernelTests(unittest.TestCase):
         self.assertRegex(cm.exception.log, r"fetch must take one positional argument")
         self.assertEqual(cm.exception.exit_code, 1)
 
-    def test_compile_validate_missing_render(self):
-        kernel = Kernel()
-        with self.assertRaises(ModuleExitedError) as cm:
-            # The child will print an assertion error to stderr.
-            kernel.compile(
-                MockPath(["foo.py"], b"def rendr(table, params): return table"), "foo"
-            )
-        self.assertRegex(cm.exception.log, r"AssertionError")
-        self.assertRegex(cm.exception.log, r"module must define render()")
-        self.assertEqual(cm.exception.exit_code, 1)
+    # def test_compile_validate_missing_render(self):
+    #     kernel = Kernel()
+    #     with self.assertRaises(ModuleExitedError) as cm:
+    #         # The child will print an assertion error to stderr.
+    #         kernel.compile(
+    #             MockPath(["foo.py"], b"def rendr(table, params): return table"), "foo"
+    #         )
+    #     self.assertRegex(cm.exception.log, r"AssertionError")
+    #     self.assertRegex(cm.exception.log, r"module must define render()")
+    #     self.assertEqual(cm.exception.exit_code, 1)
 
     def test_compile_validate_render_arrow_instead_of_render(self):
         kernel = Kernel()

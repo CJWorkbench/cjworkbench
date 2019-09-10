@@ -1,17 +1,17 @@
 from pathlib import Path
 import unittest
-from django.test import SimpleTestCase, override_settings
 import numpy as np
 import pandas as pd
 from pandas.testing import assert_frame_equal
 from cjwkernel.pandas.parse_util import parse_file
+from cjwkernel.tests.util import override_settings
 from cjwstate.tests.utils import mock_xlsx_path, MockPath
 
 
 EmptyDataFrame = pd.DataFrame().reset_index(drop=True)
 
 
-class ParseTableTests(SimpleTestCase):
+class ParseTableTests(unittest.TestCase):
     def test_parse_empty_csv(self):
         result = parse_file(MockPath(["x.csv"], b""), True)
         self.assertEqual(result, "This file is empty")
@@ -153,7 +153,7 @@ class ParseTableTests(SimpleTestCase):
         )
         assert_frame_equal(result["dataframe"], pd.DataFrame({"A": ["a"], "B": ["b"]}))
 
-    @override_settings(MAX_BYTES_PER_TABLE=290)
+    @override_settings(MAX_PANDAS_BYTES_PER_TABLE=290)
     def test_parse_too_many_bytes(self):
         result = parse_file(MockPath(["x.csv"], b"A,B\na,b\nc,d\ne,f"), True)
         self.assertEqual(
@@ -162,7 +162,7 @@ class ParseTableTests(SimpleTestCase):
         assert_frame_equal(result["dataframe"], pd.DataFrame({"A": ["a"], "B": ["b"]}))
 
 
-class ParseJsonTests(SimpleTestCase):
+class ParseJsonTests(unittest.TestCase):
     def _parse_json(self, b: bytes):
         return parse_file(MockPath(["x.json"], b), False)
 
@@ -351,7 +351,7 @@ class ParseJsonTests(SimpleTestCase):
             result["dataframe"], pd.DataFrame({"A": ["a", "aa"], "B": ["b", "bb"]})
         )
 
-    @override_settings(MAX_BYTES_PER_TABLE=220)
+    @override_settings(MAX_PANDAS_BYTES_PER_TABLE=220)
     def test_parse_too_many_bytes(self):
         result = self._parse_json(
             b"""[

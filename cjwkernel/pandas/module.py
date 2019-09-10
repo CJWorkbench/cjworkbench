@@ -371,7 +371,7 @@ def validate_thrift() -> ttypes.ValidateModuleResult:
     assert len(render_spec.args) == 2, "render must take two positional arguments"
     assert not (
         set(render_spec.kwonlyargs) - {"fetch_result", "tab_name", "input_columns"}
-    ), "one of this module's keyword arguments is misspelled"
+    ), "a render() keyword argument is misspelled"
 
     migrate_params_spec = inspect.getfullargspec(migrate_params)
     assert (
@@ -380,5 +380,13 @@ def validate_thrift() -> ttypes.ValidateModuleResult:
     assert migrate_params_spec.varargs is None, "migrate_params must not accept varargs"
     assert migrate_params_spec.varkw is None, "migrate_params must not accept kwargs"
     assert not migrate_params_spec.kwonlyargs, "migrate_params must not accept kwargs"
+
+    fetch_spec = inspect.getfullargspec(fetch)
+    assert fetch_spec.varargs is None, "fetch must not accept varargs"
+    assert len(fetch_spec.args) == 1, "fetch must take one positional argument"
+    assert not (
+        set(fetch_spec.kwonlyargs)
+        - {"secrets", "get_input_dataframe", "get_stored_dataframe"}
+    ), "a fetch() keyword argument is misspelled"
 
     return ttypes.ValidateModuleResult()

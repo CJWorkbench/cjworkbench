@@ -280,7 +280,7 @@ class JsonContentHandler(YajlContentHandler):
         self.n_bytes = 0
         self.max_rows = settings.MAX_ROWS_PER_TABLE
         self.max_cols = settings.MAX_COLUMNS_PER_TABLE
-        self.max_bytes = settings.MAX_BYTES_PER_TABLE
+        self.max_bytes = settings.MAX_PANDAS_BYTES_PER_TABLE
         self.truncated_columns = False
 
     def _assert_column(self):
@@ -419,7 +419,7 @@ def parse_json_utf8_bytes(bytesio: io.BytesIO) -> ParseJsonResult:
       error. (Lots of JSON parse errors are "JSON was truncated"; in that case
       we want all the data.)
     * Parse str/int/float as-is; for the rest, concatenate JSON tokens as str.
-    * Drop every row starting at MAX_BYTES_PER_TABLE (and warn)
+    * Drop every row starting at MAX_PANDAS_BYTES_PER_TABLE (and warn)
     * Drop every column after MAX_COLUMNS_PER_TABLE (and warn)
     * Drop every row starting at MAX_ROWS_PER_TABLE (and warn)
     """
