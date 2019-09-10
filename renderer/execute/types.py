@@ -140,9 +140,8 @@ class PromptingError(Exception):
                 raise RuntimeError(f"Unhandled wanted_types: {self.wanted_types}")
 
             return QuickFix(
-                I18nMessage(
-                    "TODO_i18n", [prompt], QuickFixAction.PrependStep(module_id, params)
-                )
+                I18nMessage.TODO_i18n(prompt),
+                QuickFixAction.PrependStep(module_id, params),
             )
 
     def __init__(self, errors: List[PromptingError.WrongColumnType]):

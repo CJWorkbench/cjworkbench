@@ -77,13 +77,10 @@ class LoadedModule:
             result = RenderResult(
                 errors=[
                     RenderError(
-                        I18nMessage(
-                            "TODO_i18n",
-                            [
-                                "Something unexpected happened. We have been notified and are "
-                                "working to fix it. If this persists, contact us. Error code: "
-                                + str(err)
-                            ],
+                        I18nMessage.TODO_i18n(
+                            "Something unexpected happened. We have been notified and are "
+                            "working to fix it. If this persists, contact us. Error code: "
+                            + str(err)
                         )
                     )
                 ]
@@ -138,13 +135,10 @@ class LoadedModule:
                 path=output_path,
                 errors=[
                     RenderError(
-                        I18nMessage(
-                            "TODO_i18n",
-                            [
-                                "Something unexpected happened. We have been notified and are "
-                                "working to fix it. If this persists, contact us. Error code: "
-                                + str(err)
-                            ],
+                        I18nMessage.TODO_i18n(
+                            "Something unexpected happened. We have been notified and are "
+                            "working to fix it. If this persists, contact us. Error code: "
+                            + str(err)
                         )
                     )
                 ],

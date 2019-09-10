@@ -35,9 +35,8 @@ class WfModuleTests(DbTestCase):
         )
         expected = [
             RenderError(
-                I18nMessage(
-                    "TODO_i18n",
-                    ["Please delete this step: an administrator uninstalled its code."],
+                I18nMessage.TODO_i18n(
+                    "Please delete this step: an administrator uninstalled its code."
                 )
             )
         ]

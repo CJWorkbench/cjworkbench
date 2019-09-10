@@ -28,7 +28,9 @@ class CachedRenderResultTests(DbTestCase):
         self.assertIsNone(self.wf_module.cached_render_result)
 
     def test_delete_wfmodule(self):
-        result = RenderResult(arrow_table({"A": [1]}), [RenderError(I18nMessage("X", []), [])], {})
+        result = RenderResult(
+            arrow_table({"A": [1]}), [RenderError(I18nMessage("X", []), [])], {}
+        )
         cache_render_result(self.workflow, self.wf_module, self.delta.id, result)
 
         parquet_key = crr_parquet_key(self.wf_module.cached_render_result)
@@ -44,7 +46,9 @@ class CachedRenderResultTests(DbTestCase):
         # Longer-term, a better approach is to nix soft-deletion.
 
     def test_double_clear(self):
-        result = RenderResult(arrow_table({"A": [1]}), [RenderError(I18nMessage("X", []), [])], {})
+        result = RenderResult(
+            arrow_table({"A": [1]}), [RenderError(I18nMessage("X", []), [])], {}
+        )
         cache_render_result(self.workflow, self.wf_module, self.delta.id, result)
         clear_cached_render_result_for_wf_module(self.wf_module)
         clear_cached_render_result_for_wf_module(self.wf_module)  # don't crash
@@ -52,7 +56,9 @@ class CachedRenderResultTests(DbTestCase):
     def test_duplicate_copies_fresh_cache(self):
         # The cache's filename depends on workflow_id and wf_module_id.
         # Duplicating it would need more complex code :).
-        result = RenderResult(arrow_table({"A": [1]}), [RenderError(I18nMessage("X", []), [])], {})
+        result = RenderResult(
+            arrow_table({"A": [1]}), [RenderError(I18nMessage("X", []), [])], {}
+        )
         cache_render_result(self.workflow, self.wf_module, self.delta.id, result)
 
         workflow2 = Workflow.objects.create()
@@ -67,7 +73,9 @@ class CachedRenderResultTests(DbTestCase):
     def test_duplicate_ignores_stale_cache(self):
         # The cache's filename depends on workflow_id and wf_module_id.
         # Duplicating it would need more complex code :).
-        result = RenderResult(arrow_table({"A": [1]}), [RenderError(I18nMessage("X", []), [])], {})
+        result = RenderResult(
+            arrow_table({"A": [1]}), [RenderError(I18nMessage("X", []), [])], {}
+        )
         cache_render_result(self.workflow, self.wf_module, self.delta.id, result)
         # Now simulate a new delta that hasn't been rendered
         self.wf_module.last_relevant_delta_id += 1

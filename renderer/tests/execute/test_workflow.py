@@ -118,8 +118,7 @@ class WorkflowTests(DbTestCase):
         self.assertEqual(wf_module1.cached_render_result.status, "error")
         with open_cached_render_result(wf_module1.cached_render_result) as result:
             assert_render_result_equals(
-                result,
-                RenderResult(errors=[RenderError(I18nMessage("TODO_i18n", ["foo"]))]),
+                result, RenderResult(errors=[RenderError(I18nMessage.TODO_i18n("foo"))])
             )
 
         wf_module2.refresh_from_db()

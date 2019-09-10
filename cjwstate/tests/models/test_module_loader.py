@@ -1,10 +1,6 @@
 import textwrap
 import unittest
-from cjwstate.models.module_loader import (
-    validate_module_spec,
-    ModuleFiles,
-    ModuleSpec,
-)
+from cjwstate.models.module_loader import validate_module_spec, ModuleFiles, ModuleSpec
 from cjwstate.tests.utils import MockDir, MockPath
 
 

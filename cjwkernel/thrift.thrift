@@ -213,9 +213,9 @@ struct I18nMessage {
   /**
    * Arguments (if Message ID takes any).
    *
-   * For instance, `["Old Name", "New Name"]`.
+   * For instance, `{"nColumns": 3, "exampleColumn": "Column X"}`
    */
-  2: list<I18nArgument> arguments
+  2: map<string, I18nArgument> arguments
 }
 
 /** Instruction that upon clicking a button, Workbench should create a Step. */

@@ -528,7 +528,7 @@ class WfModule(models.Model):
                 quick_fixes = [ptypes.QuickFix(**qf) for qf in quick_fixes]
                 errors = [
                     RenderError(
-                        I18nMessage("TODO_i18n", [error]),
+                        I18nMessage.TODO_i18n(error),
                         [qf.to_arrow() for qf in quick_fixes],
                     )
                 ]

@@ -86,7 +86,7 @@ def _load_fetch_result(wf_module: WfModule, path: Path) -> Optional[FetchResult]
         pass  # leave the file with 0 bytes
 
     if wf_module.fetch_error:
-        errors = [RenderError(I18nMessage("TODO_i18n", [wf_module.fetch_error]))]
+        errors = [RenderError(I18nMessage.TODO_i18n(wf_module.fetch_error))]
     else:
         errors = []
     return FetchResult(path, errors)
@@ -321,7 +321,7 @@ def build_status_dict(result: RenderResult, delta_id: int) -> Dict[str, Any]:
     if result.errors:
         if result.errors[0].message.id != "TODO_i18n":
             raise RuntimeError("TODO serialize i18n-ready messages")
-        error = result.errors[0].message.args[0]
+        error = result.errors[0].message.args["text"]
         quick_fixes = [qf.to_dict() for qf in result.errors[0].quick_fixes]
     else:
         error = ""

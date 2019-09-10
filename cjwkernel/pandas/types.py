@@ -449,7 +449,7 @@ class QuickFix:
         assert len(self.args) == 2
         [module_slug, partial_params] = self.args
         return atypes.QuickFix(
-            atypes.I18nMessage("TODO_i18n", [self.text]),
+            atypes.I18nMessage.TODO_i18n(self.text),
             atypes.QuickFixAction.PrependStep(module_slug, partial_params),
         )
 
@@ -779,7 +779,7 @@ class ProcessResult:
             )  # TODO ensure dictionaries stay dictionaries
         if value.errors:
             if value.errors[0].message.id == "TODO_i18n":
-                error = value.errors[0].message.args[0]
+                error = value.errors[0].message.args["text"]
             else:
                 error = value.errors[0].message.id
             quick_fixes = [
@@ -831,8 +831,7 @@ class ProcessResult:
         table = atypes.ArrowTable(path, self.table_shape.to_arrow())
         if self.error:
             error = atypes.RenderError(
-                # Mark the message as English-only (deprecated)
-                atypes.I18nMessage("TODO_i18n", [self.error]),
+                atypes.I18nMessage.TODO_i18n(self.error),
                 [qf.to_arrow() for qf in self.quick_fixes],
             )
             errors = [error]

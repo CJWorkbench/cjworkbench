@@ -217,7 +217,7 @@ class QuickFixTests(unittest.TestCase):
                 ["converttotext", {"colnames": ["A", "B"]}],
             ).to_arrow(),
             atypes.QuickFix(
-                atypes.I18nMessage("TODO_i18n", ["button text"]),
+                atypes.I18nMessage.TODO_i18n("button text"),
                 atypes.QuickFixAction.PrependStep(
                     "converttotext", {"colnames": ["A", "B"]}
                 ),
@@ -664,7 +664,7 @@ class ProcessResultTests(unittest.TestCase):
                     atypes.ArrowTable(None, atypes.TableMetadata(0, [])),
                     [
                         atypes.RenderError(
-                            atypes.I18nMessage("TODO_i18n", ["bad, bad error"]), []
+                            atypes.I18nMessage.TODO_i18n("bad, bad error"), []
                         )
                     ],
                     {},
@@ -704,16 +704,16 @@ class ProcessResultTests(unittest.TestCase):
                 result.errors,
                 [
                     atypes.RenderError(
-                        atypes.I18nMessage("TODO_i18n", ["bad, bad error"]),
+                        atypes.I18nMessage.TODO_i18n("bad, bad error"),
                         [
                             atypes.QuickFix(
-                                atypes.I18nMessage("TODO_i18n", ["button foo"]),
+                                atypes.I18nMessage.TODO_i18n("button foo"),
                                 atypes.QuickFixAction.PrependStep(
                                     "converttotext", {"colnames": ["A", "B"]}
                                 ),
                             ),
                             atypes.QuickFix(
-                                atypes.I18nMessage("TODO_i18n", ["button bar"]),
+                                atypes.I18nMessage.TODO_i18n("button bar"),
                                 atypes.QuickFixAction.PrependStep(
                                     "converttonumber", {"colnames": ["A", "B"]}
                                 ),

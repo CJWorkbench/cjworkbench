@@ -486,7 +486,11 @@ class CleanValueTests(DbTestCase):
             workflow.id,
             None,
             TableShape(3, [Column("A-from-tab-1", ColumnType.NUMBER())]),
-            {tab.slug: StepResultShape("ok", TableShape.from_arrow(tab_output.table.metadata))},
+            {
+                tab.slug: StepResultShape(
+                    "ok", TableShape.from_arrow(tab_output.table.metadata)
+                )
+            },
             params,
         )
         result = clean_value(schema, params, context)
@@ -572,7 +576,11 @@ class CleanValueTests(DbTestCase):
             workflow.id,
             None,
             None,
-            {tab.slug: StepResultShape("ok", TableShape.from_arrow(tab_output.table.metadata))},
+            {
+                tab.slug: StepResultShape(
+                    "ok", TableShape.from_arrow(tab_output.table.metadata)
+                )
+            },
             None,
         )
         with self.assertRaises(UnneededExecution):
@@ -603,7 +611,11 @@ class CleanValueTests(DbTestCase):
             workflow.id,
             None,
             None,
-            {tab.slug: StepResultShape("ok", TableShape.from_arrow(tab_output.table.metadata))},
+            {
+                tab.slug: StepResultShape(
+                    "ok", TableShape.from_arrow(tab_output.table.metadata)
+                )
+            },
             None,
         )
         with self.assertRaises(UnneededExecution):
@@ -622,7 +634,11 @@ class CleanValueTests(DbTestCase):
             workflow.id,
             None,
             None,
-            {tab1.slug: StepResultShape("ok", TableShape.from_arrow(tab1_output.table.metadata))},
+            {
+                tab1.slug: StepResultShape(
+                    "ok", TableShape.from_arrow(tab1_output.table.metadata)
+                )
+            },
             None,
         )
         result = clean_value(ParamDType.Multitab(), [tab1.slug], context)
@@ -656,8 +672,12 @@ class CleanValueTests(DbTestCase):
             None,
             {
                 tab1.slug: None,
-                tab2.slug: StepResultShape("ok", TableShape.from_arrow(tab2_output.table.metadata)),
-                tab3.slug: StepResultShape("ok", TableShape.from_arrow(tab3_output.table.metadata)),
+                tab2.slug: StepResultShape(
+                    "ok", TableShape.from_arrow(tab2_output.table.metadata)
+                ),
+                tab3.slug: StepResultShape(
+                    "ok", TableShape.from_arrow(tab3_output.table.metadata)
+                ),
             },
             None,
         )

@@ -504,17 +504,31 @@ class I18nMessage:
     id: str
     """Message ID. For instance, `modules.renamecolumns.duplicateColname`"""
 
-    args: List[Union[int, float, str]]
+    args: Dict[str, Union[int, float, str]] = field(default_factory=dict)
     """Arguments (empty if message does not need any -- which is common)."""
 
     @classmethod
     def from_thrift(cls, value: ttypes.I18nMessage) -> I18nMessage:
-        return cls(value.id, [_i18n_argument_from_thrift(a) for a in value.arguments])
+        return cls(
+            value.id,
+            {k: _i18n_argument_from_thrift(v) for k, v in value.arguments.items()},
+        )
 
     def to_thrift(self) -> ttypes.I18nMessage:
         return ttypes.I18nMessage(
-            self.id, [_i18n_argument_to_thrift(a) for a in self.args]
+            self.id, {k: _i18n_argument_to_thrift(v) for k, v in self.args.items()}
         )
+
+    @classmethod
+    def TODO_i18n(cls, text: str) -> I18nMessage:
+        """
+        Build an I18nMessage that "translates" into English only.
+
+        The message has id "TODO_i18n" and one argument, "text", in English.
+        Long-term, all these messages should disappear; but this helps us
+        migrate by letting us code without worrying about translation.
+        """
+        return cls("TODO_i18n", {"text": text})
 
     @classmethod
     def from_dict(cls, value: Dict[str, Any]) -> I18nMessage:

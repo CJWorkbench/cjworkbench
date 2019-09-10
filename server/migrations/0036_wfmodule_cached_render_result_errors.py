@@ -6,14 +6,12 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('server', '0035_auto_20190830_1623'),
-    ]
+    dependencies = [("server", "0035_auto_20190830_1623")]
 
     operations = [
         migrations.AddField(
-            model_name='wfmodule',
-            name='cached_render_result_errors',
+            model_name="wfmodule",
+            name="cached_render_result_errors",
             field=cjwstate.models.fields.RenderErrorsField(blank=True, default=list),
-        ),
+        )
     ]
