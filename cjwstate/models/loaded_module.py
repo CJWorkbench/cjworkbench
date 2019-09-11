@@ -131,6 +131,7 @@ class LoadedModule:
             )
         except ModuleError as err:
             logger.exception("Exception in %s.fetch", self.module_id_name)
+            output_path.write_bytes(b"")  # make sure it's empty
             result = FetchResult(
                 path=output_path,
                 errors=[

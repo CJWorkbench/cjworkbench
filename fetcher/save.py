@@ -12,6 +12,13 @@ def _store_fetched_table_if_different(
     workflow: Workflow, wf_module: WfModule, result: FetchResult
 ) -> Optional[timezone.datetime]:
     # Called within _maybe_add_version()
+    #
+    # For backwards-compat, we use an extremely inefficient method of
+    # deciding whether two fetch results are equivalent. We should probably
+    # delegate the hashing function to the modules themselves ... and default
+    # to a sha1 of the file data. Transitioning all our existing fetch results
+    # will be tricky.
+    table = storedobjects.parquet_file_to_pandas(result.path)
     hash = storedobjects.hash_table(table)
     old_so = wf_module.stored_objects.order_by("-stored_at").first()
     if (

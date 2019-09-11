@@ -9,6 +9,7 @@ import pathlib
 import fastparquet
 import pandas as pd
 import pyarrow
+import pyarrow.parquet
 from typing import Any, Dict, List, Optional
 from cjwkernel import types
 from cjwkernel.pandas import types as ptypes

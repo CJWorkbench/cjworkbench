@@ -9,7 +9,6 @@ import pyarrow.ipc
 import pyarrow.types
 from string import Formatter
 from typing import Any, Dict, List, Optional, Union
-from cjwkernel import settings
 from cjwkernel.util import json_encode
 
 # Some types we can import with no conversion
@@ -777,18 +776,12 @@ class FetchResult:
 
     Currently, this is a Parquet file. In the future, it may be something else.
     The file may be empty to indicate a zero-sized table.
-
-    If the Step output is "error", then the file must be empty.
     """
 
     errors: List[RenderError] = field(default_factory=list)
     """
-    User-facing errors (NOT warnings) reported by the module.
+    User-facing errors (or warnings) reported by the module.
     """
-
-    def __post_init__(self):
-        if self.errors:
-            assert self.path.stat().st_size == 0
 
     @classmethod
     def from_thrift(cls, value: ttypes.FetchResult) -> FetchResult:

@@ -116,14 +116,16 @@ class Kernel:
         self._context = multiprocessing.get_context("forkserver")
         self._context.set_forkserver_preload(
             [
+                "asyncio",
                 "dataclasses",
                 "re",
                 "typing",
                 "aiohttp",
-                "pandas",
-                "pyarrow",
                 "numpy",
                 "nltk",
+                "pandas",
+                "pyarrow",
+                "pyarrow.parquet",
                 "requests",
                 "re2",
                 "cjwkernel.pandas.module",

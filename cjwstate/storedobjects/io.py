@@ -1,8 +1,11 @@
+from pathlib import Path
 from typing import Optional
 import uuid
 from django.conf import settings
 import pandas as pd
 from pandas.util import hash_pandas_object
+import pyarrow
+import pyarrow.parquet
 from cjwstate import minio, parquet
 from cjwstate.models import StoredObject, WfModule, Workflow
 
@@ -15,6 +18,16 @@ def hash_table(table: pd.DataFrame) -> str:
     h = hash_pandas_object(table).sum()  # xor would be nice, but whatevs
     h = h if h > 0 else -h  # stay positive (sum often overflows)
     return str(h)
+
+
+def parquet_file_to_pandas(path: Path) -> pd.DataFrame:
+    if path.stat().st_size == 0:
+        return pd.DataFrame()
+    else:
+        arrow_table = pyarrow.parquet.read_table(str(path), use_threads=False)
+        return arrow_table.to_pandas(
+            date_as_object=False, deduplicate_objects=True, ignore_metadata=True
+        )  # TODO ensure dictionaries stay dictionaries
 
 
 def _build_key(workflow_id: int, wf_module_id: int) -> str:

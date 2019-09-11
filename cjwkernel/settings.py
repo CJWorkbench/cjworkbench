@@ -40,14 +40,6 @@ RAM-hungry Pandas). `render_arrow()` should only cost a few kilobytes of RAM,
 whereas `render()` costs all the user's data.
 """
 
-MAX_STORAGE_PER_MODULE = 1024 * 1024 * 1024
-"""
-How much space can a Step's FetchResults consume?
-
-When storing a new FetchResult, we delete old FetchResults that exceed this
-limit.
-"""
-
 TWITTER_MAX_ROWS_PER_TABLE = 100_000
 """
 Number of tweets allowed.

@@ -1,51 +1,96 @@
 import asyncio
+import contextlib
 from datetime import timedelta
 from functools import partial
 import logging
 import os
+from pathlib import Path
+import tempfile
 from typing import Optional, Tuple
 from django.conf import settings
 from django.db import DatabaseError, InterfaceError
 from django.utils import timezone
-from cjwkernel.types import FetchResult
-import pandas as pd
+from cjwkernel.types import ArrowTable, FetchResult, I18nMessage, Params, RenderError
 from cjworkbench.sync import database_sync_to_async
 from cjworkbench.util import benchmark
-from cjwstate.models import WfModule, Workflow, CachedRenderResult, ModuleVersion
+from cjwstate import minio
+from cjwstate.models import (
+    CachedRenderResult,
+    ModuleVersion,
+    StoredObject,
+    WfModule,
+    Workflow,
+)
 from cjwstate.models.loaded_module import LoadedModule
 from cjwstate.rendercache import open_cached_render_result
 from . import fetchprep, save
-from .util import read_fetched_dataframe_from_wf_module
 
 
 logger = logging.getLogger(__name__)
 
 
 @database_sync_to_async
-def _get_input_cached_render_result(
-    tab_id: int, wf_module_position: int
-) -> Optional[CachedRenderResult]:
+def _get_stored_object_and_input_cached_render_result(
+    wf_module: WfModule
+) -> Tuple[Optional[StoredObject], Optional[CachedRenderResult]]:
+    try:
+        # raises StoredObject.DoesNotExist
+        stored_object = wf_module.stored_objects.get(
+            stored_at=wf_module.stored_data_version
+        )
+    except StoredObject.DoesNotExist:
+        stored_object = None
+
     try:
         # raises WfModule.DoesNotExist
         wf_module = WfModule.objects.get(
-            tab_id=tab_id,
+            tab_id=wf_module.tab_id,
             tab__is_deleted=False,
-            order=wf_module_position - 1,
+            order=wf_module.order - 1,
             is_deleted=False,
         )
+        input_crr = wf_module.cached_render_result  # may be None
     except WfModule.DoesNotExist:
-        return None
+        input_crr = None
 
-    return wf_module.cached_render_result
+    return stored_object, input_crr
 
 
-@database_sync_to_async
-def _get_stored_dataframe(wf_module_id: int) -> pd.DataFrame:
-    try:
-        wf_module = WfModule.objects.get(pk=wf_module_id)
-    except WfModule.DoesNotExist:
-        return None
-    return read_fetched_dataframe_from_wf_module(wf_module)
+def open_cached_render_result_or_none(maybe_crr: Optional[CachedRenderResult]):
+    """
+    Context akin to `open_cached_render_result()`, but the argument None is ok.
+
+    If passed None, the yielded `result` will be `None`.
+    """
+    if maybe_crr is None:
+        return contextlib.nullcontext(None)
+    else:
+        return open_cached_render_result(maybe_crr)
+
+
+@contextlib.contextmanager
+def open_stored_object_or_none(maybe_stored_object: Optional[StoredObject], error: str):
+    if maybe_stored_object is None:
+        yield None
+    else:
+        if error:
+            errors = [RenderError(I18nMessage.TODO_i18n(error))]
+        else:
+            errors = []
+
+        bucket = maybe_stored_object.bucket
+        key = maybe_stored_object.key
+        with tempfile.NamedTemporaryFile(prefix="last-fetch-result") as tf:
+            path = Path(tf.name)
+            if maybe_stored_object.size > 0:
+                try:
+                    minio.download(bucket, key, path)
+                except FileNotFoundError:
+                    # StoredObject does not exist
+                    yield None
+                    return
+
+            yield FetchResult(path, errors)
 
 
 @database_sync_to_async
@@ -102,28 +147,46 @@ async def fetch_wf_module(workflow_id, wf_module, now):
             result = FetchResult.from_error_deprecated(
                 "Cannot fetch: module was deleted"
             )
+            await save.save_result_if_changed(workflow_id, wf_module, result)
         else:
-            input_crr = await _get_input_cached_render_result(
-                wf_module.tab_id, wf_module.order
+            stored_object, maybe_input_crr = await _get_stored_object_and_input_cached_render_result(
+                wf_module
             )
-            with open_cached_render_result(input_crr) as input_result:
-                # TODO handle input_result = None (see contextlib for help)
+            with open_cached_render_result_or_none(
+                maybe_input_crr
+            ) as maybe_input_result:
+                if maybe_input_result is None:
+                    input_table = ArrowTable()
+                else:
+                    input_table = maybe_input_result.table
 
                 # Migrate params, so fetch() gets newest values
                 params = lm.migrate_params(wf_module.params)
                 # Clean params, so they're of the correct type
-                params = fetchprep.clean_value(
-                    lm.param_schema, params, input_result.table.metadata
-                )
-                result = await lm.fetch(
-                    params=params,
-                    secrets=wf_module.secrets,
-                    workflow_id=workflow_id,
-                    input_result=input_result,
-                    get_stored_dataframe=partial(_get_stored_dataframe, wf_module.id),
+                params = Params(
+                    fetchprep.clean_value(lm.param_schema, params, input_table)
                 )
 
-        await save.save_result_if_changed(workflow_id, wf_module, result)
+                with open_stored_object_or_none(
+                    stored_object, wf_module.fetch_error
+                ) as last_fetch_result:
+                    with tempfile.NamedTemporaryFile(prefix="fetch-result") as tf:
+                        path = Path(tf.name)
+                        result = await asyncio.get_event_loop().run_in_executor(
+                            None,
+                            partial(
+                                lm.fetch,
+                                params=params,
+                                secrets=wf_module.secrets,
+                                last_fetch_result=last_fetch_result,
+                                input_table=input_table,
+                                output_path=path,
+                            ),
+                        )
+
+                        await save.save_result_if_changed(
+                            workflow_id, wf_module, result
+                        )
     except asyncio.CancelledError:
         raise
     except Exception:
