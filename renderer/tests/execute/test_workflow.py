@@ -8,7 +8,7 @@ from cjwkernel.pandas.types import ProcessResult
 from cjwkernel.types import I18nMessage, RenderError, RenderResult
 from cjwkernel.tests.util import arrow_table, assert_render_result_equals
 from cjwstate.rendercache import cache_render_result, open_cached_render_result
-from cjwstate.models import Workflow
+from cjwstate.models import ModuleVersion, Workflow
 from cjwstate.models.commands import InitWorkflowCommand
 from cjwstate.models.loaded_module import LoadedModule
 from cjwstate.tests.utils import DbTestCase
@@ -44,11 +44,17 @@ class WorkflowTests(DbTestCase):
     @patch.object(LoadedModule, "for_module_version_sync")
     @patch("server.websockets.ws_client_send_delta_async", fake_send)
     def test_execute_new_revision(self, fake_load_module):
-        workflow = Workflow.objects.create()
-        tab = workflow.tabs.create(position=0)
-        delta1 = InitWorkflowCommand.create(workflow)
+        workflow = Workflow.create_and_init()
+        tab = workflow.tabs.first()
+        delta1 = workflow.last_delta
+        ModuleVersion.create_or_replace_from_spec(
+            {"id_name": "mod", "name": "Mod", "category": "Clean", "parameters": []}
+        )
         wf_module = tab.wf_modules.create(
-            order=0, slug="step-1", last_relevant_delta_id=delta1.id
+            order=0,
+            slug="step-1",
+            last_relevant_delta_id=delta1.id,
+            module_id_name="mod",
         )
 
         result1 = RenderResult(arrow_table({"A": [1]}))
@@ -58,10 +64,11 @@ class WorkflowTests(DbTestCase):
         wf_module.last_relevant_delta_id = delta2.id
         wf_module.save(update_fields=["last_relevant_delta_id"])
 
-        fake_module = Mock(LoadedModule)
-        fake_load_module.return_value = fake_module
         result2 = RenderResult(arrow_table({"B": [2]}))
-        fake_module.render.return_value = ProcessResult.from_arrow(result2)
+        fake_module = Mock(LoadedModule)
+        fake_module.migrate_params.return_value = {}
+        fake_load_module.return_value = fake_module
+        fake_module.render.return_value = result2
 
         self._execute(workflow)
 
@@ -72,17 +79,29 @@ class WorkflowTests(DbTestCase):
 
     @patch.object(LoadedModule, "for_module_version_sync")
     def test_execute_race_delete_workflow(self, fake_load_module):
-        workflow = Workflow.objects.create()
-        tab = workflow.tabs.create(position=0)
-        delta = InitWorkflowCommand.create(workflow)
-        tab.wf_modules.create(order=0, slug="step-1", last_relevant_delta_id=delta.id)
-        tab.wf_modules.create(order=1, slug="step-2", last_relevant_delta_id=delta.id)
+        workflow = Workflow.create_and_init()
+        tab = workflow.tabs.first()
+        ModuleVersion.create_or_replace_from_spec(
+            {"id_name": "mod", "name": "Mod", "category": "Clean", "parameters": []}
+        )
+        tab.wf_modules.create(
+            order=0,
+            slug="step-1",
+            last_relevant_delta_id=workflow.last_delta_id,
+            module_id_name="mod",
+        )
+        tab.wf_modules.create(
+            order=1,
+            slug="step-2",
+            last_relevant_delta_id=workflow.last_delta_id,
+            module_id_name="mod",
+        )
 
         def load_module_and_delete(module_version):
-            workflow.delete()
+            Workflow.objects.filter(id=workflow.id).delete()
             fake_module = Mock(LoadedModule)
-            result = RenderResult(arrow_table({"A": [1]}))
-            fake_module.render.return_value = ProcessResult.from_arrow(result)
+            fake_module.migrate_params.return_value = {}
+            fake_module.render.return_value = RenderResult(arrow_table({"A": [1]}))
             return fake_module
 
         fake_load_module.side_effect = load_module_and_delete
@@ -95,31 +114,45 @@ class WorkflowTests(DbTestCase):
     def test_execute_mark_unreachable(self, send_delta_async, fake_load_module):
         send_delta_async.return_value = future_none
 
-        workflow = Workflow.objects.create()
-        tab = workflow.tabs.create(position=0)
-        delta = InitWorkflowCommand.create(workflow)
+        workflow = Workflow.create_and_init()
+        tab = workflow.tabs.first()
+        delta_id = workflow.last_delta_id
+        ModuleVersion.create_or_replace_from_spec(
+            {"id_name": "mod", "name": "Mod", "category": "Clean", "parameters": []}
+        )
         wf_module1 = tab.wf_modules.create(
-            order=0, slug="step-1", last_relevant_delta_id=delta.id
+            order=0,
+            slug="step-1",
+            last_relevant_delta_id=delta_id,
+            module_id_name="mod",
         )
         wf_module2 = tab.wf_modules.create(
-            order=1, slug="step-2", last_relevant_delta_id=delta.id
+            order=1,
+            slug="step-2",
+            last_relevant_delta_id=delta_id,
+            module_id_name="mod",
         )
         wf_module3 = tab.wf_modules.create(
-            order=2, slug="step-3", last_relevant_delta_id=delta.id
+            order=2,
+            slug="step-3",
+            last_relevant_delta_id=delta_id,
+            module_id_name="mod",
         )
 
         fake_module = Mock(LoadedModule)
         fake_load_module.return_value = fake_module
-        fake_module.render.return_value = ProcessResult(error="foo")
+        fake_module.migrate_params.return_value = {}
+        error_result = RenderResult(
+            errors=[RenderError(I18nMessage.TODO_i18n("error, not warning"))]
+        )
+        fake_module.render.return_value = error_result
 
         self._execute(workflow)
 
         wf_module1.refresh_from_db()
         self.assertEqual(wf_module1.cached_render_result.status, "error")
         with open_cached_render_result(wf_module1.cached_render_result) as result:
-            assert_render_result_equals(
-                result, RenderResult(errors=[RenderError(I18nMessage.TODO_i18n("foo"))])
-            )
+            assert_render_result_equals(result, error_result)
 
         wf_module2.refresh_from_db()
         self.assertEqual(wf_module2.cached_render_result.status, "unreachable")
@@ -141,7 +174,7 @@ class WorkflowTests(DbTestCase):
                         "output_error": "",
                         "output_columns": [],
                         "output_n_rows": 0,
-                        "cached_render_result_delta_id": delta.id,
+                        "cached_render_result_delta_id": delta_id,
                     }
                 }
             },
@@ -176,10 +209,16 @@ class WorkflowTests(DbTestCase):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
         delta_id = workflow.last_delta_id
+        ModuleVersion.create_or_replace_from_spec(
+            {"id_name": "mod", "name": "Mod", "category": "Clean", "parameters": []}
+        )
 
         # wf_module1: has a valid, cached result
         wf_module1 = tab.wf_modules.create(
-            order=0, slug="step-1", last_relevant_delta_id=delta_id
+            order=0,
+            slug="step-1",
+            last_relevant_delta_id=delta_id,
+            module_id_name="mod",
         )
         cache_render_result(
             workflow, wf_module1, delta_id, RenderResult(arrow_table({"A": [1]}))
@@ -187,14 +226,18 @@ class WorkflowTests(DbTestCase):
 
         # wf_module2: has no cached result (must be rendered)
         wf_module2 = tab.wf_modules.create(
-            order=1, slug="step-2", last_relevant_delta_id=delta_id
+            order=1,
+            slug="step-2",
+            last_relevant_delta_id=delta_id,
+            module_id_name="mod",
         )
 
         fake_loaded_module = Mock(LoadedModule)
+        fake_loaded_module.migrate_params.return_value = {}
         fake_load_module.return_value = fake_loaded_module
         result2 = RenderResult(arrow_table({"A": [2]}))
 
-        fake_loaded_module.render.return_value = ProcessResult.from_arrow(result2)
+        fake_loaded_module.render.return_value = result2
         self._execute(workflow)
         fake_loaded_module.render.assert_called_once()  # only with module2
 
@@ -209,23 +252,29 @@ class WorkflowTests(DbTestCase):
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
         delta1 = InitWorkflowCommand.create(workflow)
+        ModuleVersion.create_or_replace_from_spec(
+            {"id_name": "mod", "name": "Mod", "category": "Clean", "parameters": []}
+        )
         wf_module = tab.wf_modules.create(
-            order=0, slug="step-1", last_relevant_delta_id=delta1.id, notifications=True
+            order=0,
+            slug="step-1",
+            last_relevant_delta_id=delta1.id,
+            module_id_name="mod",
+            notifications=True,
         )
         cache_render_result(
             workflow, wf_module, delta1.id, RenderResult(arrow_table({"A": [1]}))
         )
 
-        # Now make a new delta, so we need to re-render. The render function's
-        # output won't change.
+        # Make a new delta, so we need to re-render.
         delta2 = InitWorkflowCommand.create(workflow)
         wf_module.last_relevant_delta_id = delta2.id
         wf_module.save(update_fields=["last_relevant_delta_id"])
 
         fake_loaded_module = Mock(LoadedModule)
         fake_load_module.return_value = fake_loaded_module
-        result2 = RenderResult(arrow_table({"A": [2]}))
-        fake_loaded_module.render.return_value = ProcessResult.from_arrow(result2)
+        fake_loaded_module.migrate_params.return_value = {}
+        fake_loaded_module.render.return_value = RenderResult(arrow_table({"A": [2]}))
 
         self._execute(workflow)
 
@@ -238,21 +287,29 @@ class WorkflowTests(DbTestCase):
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
         delta1 = InitWorkflowCommand.create(workflow)
-        wf_module = tab.wf_modules.create(
-            order=0, slug="step-1", last_relevant_delta_id=delta1.id, notifications=True
+        ModuleVersion.create_or_replace_from_spec(
+            {"id_name": "mod", "name": "Mod", "category": "Clean", "parameters": []}
         )
-        result = RenderResult(arrow_table({"A": [1]}))
-        cache_render_result(workflow, wf_module, delta1.id, result)
+        wf_module = tab.wf_modules.create(
+            order=0,
+            slug="step-1",
+            last_relevant_delta_id=delta1.id,
+            module_id_name="mod",
+            notifications=True,
+        )
+        cache_render_result(
+            workflow, wf_module, delta1.id, RenderResult(arrow_table({"A": [1]}))
+        )
 
-        # Now make a new delta, so we need to re-render. The render function's
-        # output won't change.
+        # Make a new delta, so we need to re-render. Give it the same output.
         delta2 = InitWorkflowCommand.create(workflow)
         wf_module.last_relevant_delta_id = delta2.id
         wf_module.save(update_fields=["last_relevant_delta_id"])
 
         fake_loaded_module = Mock(LoadedModule)
         fake_load_module.return_value = fake_loaded_module
-        fake_loaded_module.render.return_value = ProcessResult.from_arrow(result)
+        fake_loaded_module.migrate_params.return_value = {}
+        fake_loaded_module.render.return_value = RenderResult(arrow_table({"A": [1]}))
 
         self._execute(workflow)
 

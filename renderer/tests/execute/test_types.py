@@ -1,5 +1,5 @@
 import unittest
-from cjwkernel.pandas.types import QuickFix
+from cjwkernel.types import I18nMessage, QuickFix, QuickFixAction
 from renderer.execute.types import PromptingError
 
 
@@ -18,14 +18,16 @@ class PromptingErrorTest(unittest.TestCase):
             quick_fixes_result,
             [
                 QuickFix(
-                    "Convert Text to Numbers",
-                    "prependModule",
-                    ["converttexttonumber", {"colnames": ["A"]}],
+                    I18nMessage.TODO_i18n("Convert Text to Numbers"),
+                    QuickFixAction.PrependStep(
+                        "converttexttonumber", {"colnames": ["A"]}
+                    ),
                 ),
                 QuickFix(
-                    "Convert Dates & Times to Numbers",
-                    "prependModule",
-                    ["converttexttonumber", {"colnames": ["B", "C"]}],
+                    I18nMessage.TODO_i18n("Convert Dates & Times to Numbers"),
+                    QuickFixAction.PrependStep(
+                        "converttexttonumber", {"colnames": ["B", "C"]}
+                    ),
                 ),
             ],
         )
@@ -48,9 +50,10 @@ class PromptingErrorTest(unittest.TestCase):
             quick_fixes_result,
             [
                 QuickFix(
-                    "Convert to Text",
-                    "prependModule",
-                    ["converttotext", {"colnames": ["A", "B"]}],
+                    I18nMessage.TODO_i18n("Convert to Text"),
+                    QuickFixAction.PrependStep(
+                        "converttotext", {"colnames": ["A", "B"]}
+                    ),
                 )
             ],
         )
