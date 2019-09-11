@@ -835,7 +835,9 @@ class RenderResult:
         cls, message: str, *, quick_fixes: List[QuickFix] = []
     ) -> RenderError:
         return cls(
-            errors=[RenderError(I18nMessage("TODO_i18n", [message]), quick_fixes)]
+            errors=[
+                RenderError(I18nMessage("TODO_i18n", {"text": message}), quick_fixes)
+            ]
         )
 
     def to_thrift(self) -> ttypes.RenderResult:

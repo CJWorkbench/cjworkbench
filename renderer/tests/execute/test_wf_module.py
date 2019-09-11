@@ -1,15 +1,13 @@
 from contextlib import contextmanager
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 from django.utils import timezone
 import pandas as pd
 from pandas.testing import assert_frame_equal
-from cjwkernel.pandas.types import ProcessResult
-from cjwkernel.param_dtype import ParamDType
-from cjwkernel.types import I18nMessage, RenderError
+from cjwkernel.types import I18nMessage, RenderError, RenderResult
 from cjwstate import minio
-from cjwstate.storedobjects import create_stored_object
-from cjwstate.models import Workflow
+from cjwstate.storedobjects import create_stored_object, parquet_file_to_pandas
+from cjwstate.models import ModuleVersion, Workflow
 from cjwstate.models.loaded_module import LoadedModule
 from cjwstate.tests.utils import DbTestCase
 from renderer.execute.wf_module import execute_wfmodule
@@ -31,27 +29,40 @@ class WfModuleTests(DbTestCase):
             last_relevant_delta_id=workflow.last_delta_id,
         )
         result = self.run_with_async_db(
-            execute_wfmodule(workflow, wf_module, {}, tab.name, ProcessResult(), {})
-        )
-        expected = [
-            RenderError(
-                I18nMessage.TODO_i18n(
-                    "Please delete this step: an administrator uninstalled its code."
-                )
+            execute_wfmodule(
+                workflow,
+                wf_module,
+                {},
+                tab.to_arrow(),
+                RenderResult(),
+                {},
+                Path("/unused"),
             )
-        ]
-        self.assertEqual(result.to_arrow("unused").errors, expected)
+        )
+        expected = RenderResult(
+            errors=[
+                RenderError(
+                    I18nMessage.TODO_i18n(
+                        "Please delete this step: an administrator uninstalled its code."
+                    )
+                )
+            ]
+        )
+        self.assertEqual(result, expected)
         wf_module.refresh_from_db()
-        self.assertEqual(wf_module.cached_render_result.errors, expected)
+        self.assertEqual(wf_module.cached_render_result.errors, expected.errors)
 
     @contextmanager
     def _stub_module(self, render_fn):
-        mock_module = LoadedModule("x", "x", ParamDType.Dict({}), render_impl=render_fn)
+        mock_module = Mock(LoadedModule)
+        mock_module.render.side_effect = render_fn
+        ModuleVersion.create_or_replace_from_spec(
+            {"id_name": "x", "name": "X", "category": "Clean", "parameters": []}
+        )
         with patch.object(
             LoadedModule, "for_module_version_sync", lambda *a: mock_module
         ):
-            with self.assertLogs():  # eat log messages
-                yield
+            yield
 
     @patch("server.websockets.ws_client_send_delta_async", noop)
     def test_fetch_result_happy_path(self):
@@ -64,15 +75,31 @@ class WfModuleTests(DbTestCase):
             last_relevant_delta_id=workflow.last_delta_id,
             fetch_error="maybe an error",
         )
-        create_stored_object(workflow, wf_module, pd.DataFrame({"A": [1]}), "hash")
+        so = create_stored_object(workflow, wf_module, pd.DataFrame({"A": [1]}), "hash")
+        wf_module.stored_data_version = so.stored_at
+        wf_module.save(update_fields=["stored_data_version"])
 
         def render(*args, fetch_result, **kwargs):
-            self.assertEqual(fetch_result.error, "maybe an error")
-            assert_frame_equal(fetch_result.dataframe, pd.DataFrame({"A": [1]}))
+            self.assertEqual(
+                fetch_result.errors,
+                [RenderError(I18nMessage.TODO_i18n("maybe an error"))],
+            )
+            assert_frame_equal(
+                parquet_file_to_pandas(fetch_result.path), pd.DataFrame({"A": [1]})
+            )
+            return RenderResult()
 
         with self._stub_module(render):
             self.run_with_async_db(
-                execute_wfmodule(workflow, wf_module, {}, tab.name, ProcessResult(), {})
+                execute_wfmodule(
+                    workflow,
+                    wf_module,
+                    {},
+                    tab.name,
+                    RenderResult(),
+                    {},
+                    Path("/unused"),
+                )
             )
 
     @patch("server.websockets.ws_client_send_delta_async", noop)
@@ -86,49 +113,26 @@ class WfModuleTests(DbTestCase):
             last_relevant_delta_id=workflow.last_delta_id,
         )
         so = create_stored_object(workflow, wf_module, pd.DataFrame({"A": [1]}), "hash")
+        wf_module.stored_data_version = so.stored_at
+        wf_module.save(update_fields=["stored_data_version"])
         # Now delete the file on S3 -- but leave the DB pointing to it.
         minio.remove(so.bucket, so.key)
 
         def render(*args, fetch_result, **kwargs):
             self.assertIsNone(fetch_result)
+            return RenderResult()
 
         with self._stub_module(render):
             self.run_with_async_db(
-                execute_wfmodule(workflow, wf_module, {}, tab.name, ProcessResult(), {})
-            )
-
-    @patch("server.websockets.ws_client_send_delta_async", noop)
-    def test_fetch_result_invalid_parquet_means_none(self):
-        workflow = Workflow.create_and_init()
-        tab = workflow.tabs.first()
-        wf_module = tab.wf_modules.create(
-            order=0,
-            slug="step-1",
-            module_id_name="x",
-            last_relevant_delta_id=workflow.last_delta_id,
-        )
-        stored_object = create_stored_object(
-            workflow, wf_module, pd.DataFrame({"A": [1]}), "hash"
-        )
-        # Now write an invalid (but realistic) Parquet file
-        minio.fput_file(
-            stored_object.bucket,
-            stored_object.key,
-            (
-                Path(__file__).parent.parent.parent.parent
-                / "cjwstate"
-                / "tests"
-                / "test_data"
-                / "fastparquet-issue-375.par"
-            ),
-        )
-
-        def render(*args, fetch_result, **kwargs):
-            self.assertIsNone(fetch_result)
-
-        with self._stub_module(render):
-            self.run_with_async_db(
-                execute_wfmodule(workflow, wf_module, {}, tab.name, ProcessResult(), {})
+                execute_wfmodule(
+                    workflow,
+                    wf_module,
+                    {},
+                    tab.name,
+                    RenderResult(),
+                    {},
+                    Path("/unused"),
+                )
             )
 
     @patch("server.websockets.ws_client_send_delta_async", noop)
@@ -147,10 +151,19 @@ class WfModuleTests(DbTestCase):
 
         def render(*args, fetch_result, **kwargs):
             self.assertIsNone(fetch_result)
+            return RenderResult()
 
         with self._stub_module(render):
             self.run_with_async_db(
-                execute_wfmodule(workflow, wf_module, {}, tab.name, ProcessResult(), {})
+                execute_wfmodule(
+                    workflow,
+                    wf_module,
+                    {},
+                    tab.name,
+                    RenderResult(),
+                    {},
+                    Path("/unused"),
+                )
             )
 
     @patch("server.websockets.ws_client_send_delta_async", noop)
@@ -166,8 +179,17 @@ class WfModuleTests(DbTestCase):
 
         def render(*args, fetch_result, **kwargs):
             self.assertIsNone(fetch_result)
+            return RenderResult()
 
         with self._stub_module(render):
             self.run_with_async_db(
-                execute_wfmodule(workflow, wf_module, {}, tab.name, ProcessResult(), {})
+                execute_wfmodule(
+                    workflow,
+                    wf_module,
+                    {},
+                    tab.name,
+                    RenderResult(),
+                    {},
+                    Path("/unused"),
+                )
             )

@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from functools import partial, singledispatch
 import os
 import re
@@ -51,10 +52,19 @@ class PromptErrorAggregator:
         raise PromptingError(errors)
 
 
+@dataclass(frozen=True)
+class _TabData:
+    tab: Tab
+    result: Optional[RenderResult]
+
+    @property
+    def slug(self) -> str:
+        return self.tab.slug
+
+
 class RenderContext:
     def __init__(
         self,
-        workflow_id: int,
         wf_module_id: int,
         input_table: ArrowTable,
         # assume tab_results keys are ordered the way the user ordered the tabs.
@@ -69,11 +79,11 @@ class RenderContext:
         # get_param_values(), and get_param_values() also takes `params`. Ugh.
         params: Dict[str, Any],
     ):
-        self.workflow_id = workflow_id
         self.wf_module_id = wf_module_id
         self.input_table = input_table
-        self.tabs: Dict[str, Tab] = {tab.slug: tab for tab in tab_results.keys()}
-        self.tab_results = tab_results
+        self.tabs: Dict[str, _TabData] = {
+            k.slug: _TabData(k, v) for k, v in tab_results.items()
+        }
         self.params = params
 
     def output_columns_for_tab_parameter(self, tab_parameter):
@@ -88,15 +98,15 @@ class RenderContext:
         tab_slug = self.params[tab_parameter]
 
         try:
-            tab_result = self.tab_results[tab_slug]
+            tab_data = self.tabs[tab_slug]
         except KeyError:
             # Tab does not exist
             return {}
-        if tab_result is None or tab_result.status != "ok":
-            # Tab has a cycle or other error
+        if tab_data.result is None or tab_data.result.status != "ok":
+            # Tab has a cycle or other error.
             return {}
 
-        return {c.name: c for c in tab_result.table.metadata.columns}
+        return {c.name: c for c in tab_data.result.table.metadata.columns}
 
 
 def get_param_values(
@@ -208,11 +218,11 @@ def _(
 def _(dtype: ParamDType.Tab, value: str, context: RenderContext) -> TabOutput:
     tab_slug = value
     try:
-        tab = context.tabs[tab_slug]
+        tab_data = context.tabs[tab_slug]
     except KeyError:
         # It's a tab that doesn't exist.
         return None
-    tab_result = context.tab_results[tab]
+    tab_result = tab_data.result
     if tab_result is None:
         # It's an un-rendered tab. Or at least, the executor _tells_ us it's
         # un-rendered. That means there's a tab-cycle.
@@ -220,7 +230,7 @@ def _(dtype: ParamDType.Tab, value: str, context: RenderContext) -> TabOutput:
     if tab_result.status != "ok":
         raise TabOutputUnreachableError
 
-    return TabOutput(tab, tab_result.table)
+    return TabOutput(tab_data.tab, tab_result.table)
 
 
 @clean_value.register(ParamDType.Column)
@@ -319,18 +329,15 @@ def clean_value_list(
 def _(
     dtype: ParamDType.Multitab, value: List[str], context: RenderContext
 ) -> List[TabOutput]:
-    # First, recurse -- the same way we clean a list.
-    unordered: List[TabOutput] = clean_value_list(dtype, value, context)
-
-    # Next, order outputs the way they're ordered in `context.tab_results`.
-    # Ignore all `None` values -- those are nonexistent tabs, and we should
-    # omit nonexistent tabs.
-    lookup = {
-        tab_output.slug: tab_output
-        for tab_output in unordered
+    unordered: Dict[Tab, TabOutput] = {
+        tab_output.tab.slug: tab_output
+        # recurse -- the same way we clean a list.
+        for tab_output in clean_value_list(dtype, value, context)
         if tab_output is not None
     }
-    return [lookup[slug] for slug in context.tabs.keys() if slug in lookup]
+
+    # Order based on `context.tabs`.
+    return [unordered[tab] for tab in context.tabs.keys() if tab in unordered]
 
 
 @clean_value.register(ParamDType.Dict)

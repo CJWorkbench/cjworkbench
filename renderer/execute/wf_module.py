@@ -1,6 +1,7 @@
 import asyncio
 import contextlib
 import datetime
+from functools import partial
 from pathlib import Path
 import tempfile
 from typing import Any, Dict, Optional, Tuple
@@ -79,11 +80,14 @@ def _load_fetch_result(wf_module: WfModule, path: Path) -> Optional[FetchResult]
         )
         minio.download(stored_object.bucket, stored_object.key, path)
     except StoredObject.DoesNotExist:
-        pass  # leave the file with 0 bytes
-    except FileNotFoundError:
+        return None
+    except (minio.error.NoSuchBucket, FileNotFoundError):
         # A few StoredObjects -- very old ones with size=0 -- are
-        # *intentionally* not in minio.
-        pass  # leave the file with 0 bytes
+        # *intentionally* not in minio. It turns out the modules also happen
+        # to be written to treat empty-file and None as identical.
+        #
+        # New-style modules which report errors will also output empty files.
+        return None
 
     if wf_module.fetch_error:
         errors = [RenderError(I18nMessage.TODO_i18n(wf_module.fetch_error))]
@@ -129,13 +133,13 @@ def _execute_wfmodule_pre(
             # module was deleted. Skip other fetches.
             return (None, None, {})
 
-        fetch_result = _load_fetch_result(safe_wf_module, fetch_result_path)
         render_context = renderprep.RenderContext(
-            workflow.id, wf_module.id, input_table, tab_results, raw_params  # ugh
+            wf_module.id, input_table, tab_results, raw_params  # ugh
         )
         params = renderprep.get_param_values(
             module_version.param_schema, raw_params, render_context
         )
+        fetch_result = _load_fetch_result(safe_wf_module, fetch_result_path)
 
         return (loaded_module, fetch_result, params)
 
@@ -237,12 +241,14 @@ async def _render_wfmodule(
         loop = asyncio.get_event_loop()
         return await loop.run_in_executor(
             None,
-            loaded_module.render,
-            input_result.table,
-            params,
-            tab,
-            fetch_result,
-            output_path,
+            partial(
+                loaded_module.render,
+                input_table=input_result.table,
+                params=params,
+                tab=tab,
+                fetch_result=fetch_result,
+                output_path=output_path,
+            ),
         )
 
 

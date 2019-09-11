@@ -47,6 +47,7 @@ class LoadedModule:
 
     def render(
         self,
+        *,
         input_table: ArrowTable,
         params: Params,
         tab: Tab,

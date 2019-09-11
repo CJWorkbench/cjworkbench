@@ -1,5 +1,6 @@
 from django.db import models
 from .workflow import Workflow
+from cjwkernel.types import Tab as ArrowTab
 
 
 class Tab(models.Model):
@@ -50,3 +51,6 @@ class Tab(models.Model):
         wf_modules = list(self.live_wf_modules)
         for wf_module in wf_modules:
             wf_module.duplicate_into_new_workflow(new_tab)
+
+    def to_arrow(self) -> ArrowTab:
+        return ArrowTab(self.slug, self.name)

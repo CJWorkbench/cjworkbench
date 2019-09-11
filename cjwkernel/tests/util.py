@@ -35,7 +35,7 @@ def _arrow_column_to_column(column: pyarrow.Column) -> Column:
     if pyarrow.types.is_floating(column.type) or pyarrow.types.is_integer(column.type):
         column_type = ColumnType.Number("{:,}")
     elif pyarrow.types.is_timestamp(column.type):
-        column_type = ColumnType.DateTime()
+        column_type = ColumnType.Datetime()
     elif pyarrow.types.is_string(column.type) or pyarrow.types.is_dictionary(
         column.type
     ):
