@@ -39,10 +39,10 @@ def _get_translations(locale):
     return _translators[locale]
 
 
-def trans(locale, message_id, default=None, parameters={}):
+def trans(locale, message_id, default=None, context=None, parameters={}):
     """Translates the given message_id to the given locale.
     """
-    return _get_translations(locale)._(message_id, default=None, parameters={})
+    return _get_translations(locale)._(message_id, default, context, parameters)
 
 
 class MessageTranslator:
@@ -72,7 +72,7 @@ class MessageTranslator:
                 "The given locale (%s) is not supported" % locale
             ) from error
 
-    def _(self, message_id, default=None, parameters={}):
+    def _(self, message_id, default=None, context=None, parameters={}):
         """Finds the ICU message corresponding to the given ID in the catalog and formats it according to the given parameters.
         If the message is not found or is empty and a non-empty default is provided, the default is used instead.
         Otherwise, the message_id is used instead.
@@ -81,7 +81,7 @@ class MessageTranslator:
         
         """
         return self.format_message(
-            self.get_message(message_id) or (default or message_id),
+            self.get_message(message_id, context=context) or (default or message_id),
             parameters=parameters,
         )
 
@@ -110,10 +110,10 @@ class MessageTranslator:
                 "The given parameters are invalid for the given message"
             ) from error
 
-    def get_message(self, message_id):
+    def get_message(self, message_id, context=None):
         """Finds the ICU message corresponding to the given ID in the catalog.
         
         If the message is not found, None is returned.
         """
-        message = self.catalog.get(message_id)
+        message = self.catalog.get(message_id, context)
         return message.string if message else None
