@@ -1,14 +1,13 @@
 {% extends "account/base.html" %}
 {% load account socialaccount i18n_icu %}
 
-{% block title %}{% trans "accounts.sign_in" default="Sign in" %}{% endblock %}
+{% block title %}{% trans "accounts.sign_in.title" default="Sign in" %}{% endblock %}
 
 {% block content %}
 
     <form class="account_form login" autocapitalize="off" method="POST" action="{% url 'account_login' %}">
-        {% trans "accounts.sign_in" default="Sign in" as sign_in_label %}
         <div class="mt-3 mb-5">
-            <div class='sign-in'>{{ sign_in_label }}</div>
+            <div class='sign-in'>{% trans "accounts.sign_in.title" default="Sign in" %}</div>
               <div class='switch mt-1 d-flex justify-content-center'>
                   <a href="/account/signup">Sign up</a>
               </div>
@@ -43,6 +42,6 @@
         <div class='text-center mb-4'>
             <a class="content-1 t-white-u mx-auto" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
         </div>
-        <button class="button-white--fill action-button mx-auto mt-2 mb-3" type="submit">{{ sign_in_label }}</button>
+        <button class="button-white--fill action-button mx-auto mt-2 mb-3" type="submit">{% trans "accounts.sign_in.button" default="Sign In" %}</button>
     </form>
 {% endblock %}
