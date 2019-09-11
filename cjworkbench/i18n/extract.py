@@ -4,14 +4,18 @@ from django.template.base import Lexer, TokenType
 from django.utils.translation import trim_whitespace
 from django.utils.encoding import smart_text
 from django.utils.translation.template import (
-    block_re, endblock_re, plural_re, constant_re)
+    block_re,
+    endblock_re,
+    plural_re,
+    constant_re,
+)
 import re
 
 TOKEN_TEXT = TokenType.TEXT
 TOKEN_VAR = TokenType.VAR
 TOKEN_BLOCK = TokenType.BLOCK
 
-#re adapted from django.utils.translation.template.inline_re
+# re adapted from django.utils.translation.template.inline_re
 inline_re = re.compile(
     # Match the trans 'some text' part
     r"""^\s*trans\s+((?:"[^"]*?")|(?:'[^']*?'))"""
@@ -25,8 +29,9 @@ inline_re = re.compile(
     r"""(\s+.*comment=((?:"[^"]*?")|(?:'[^']*?')))?\s*"""
 )
 
+
 def join_tokens(tokens, trim=False):
-    message = ''.join(tokens)
+    message = "".join(tokens)
     if trim:
         message = trim_whitespace(message)
     return message
@@ -36,6 +41,7 @@ def strip_quotes(s):
     if (s[0] == s[-1]) and s.startswith(("'", '"')):
         return s[1:-1]
     return s
+
 
 def extract_django(fileobj, keywords, comment_tags, options):
     """Extract messages from Django template files.
@@ -57,7 +63,7 @@ def extract_django(fileobj, keywords, comment_tags, options):
     plural = []
     lineno = 1
 
-    encoding = options.get('encoding', 'utf8')
+    encoding = options.get("encoding", "utf8")
     text = fileobj.read().decode(encoding)
 
     try:
@@ -66,12 +72,11 @@ def extract_django(fileobj, keywords, comment_tags, options):
         # Django 1.9 changed the way we invoke Lexer; older versions
         # require two parameters.
         text_lexer = Lexer(text, None)
-        
-        
-    #raise SystemError([t.contents for t in text_lexer.tokenize()])
+
+    # raise SystemError([t.contents for t in text_lexer.tokenize()])
 
     for t in text_lexer.tokenize():
-        lineno += t.contents.count('\n')
+        lineno += t.contents.count("\n")
         if intrans:
             if t.token_type == TOKEN_BLOCK:
                 endbmatch = endblock_re.match(t.contents)
@@ -81,26 +86,33 @@ def extract_django(fileobj, keywords, comment_tags, options):
                         if message_context:
                             yield (
                                 lineno,
-                                'npgettext',
-                                [smart_text(message_context),
-                                 smart_text(join_tokens(singular, trimmed)),
-                                 smart_text(join_tokens(plural, trimmed))],
+                                "npgettext",
+                                [
+                                    smart_text(message_context),
+                                    smart_text(join_tokens(singular, trimmed)),
+                                    smart_text(join_tokens(plural, trimmed)),
+                                ],
                                 [],
                             )
                         else:
                             yield (
                                 lineno,
-                                'ngettext',
-                                (smart_text(join_tokens(singular, trimmed)),
-                                 smart_text(join_tokens(plural, trimmed))),
-                                [])
+                                "ngettext",
+                                (
+                                    smart_text(join_tokens(singular, trimmed)),
+                                    smart_text(join_tokens(plural, trimmed)),
+                                ),
+                                [],
+                            )
                     else:
                         if message_context:
                             yield (
                                 lineno,
-                                'pgettext',
-                                [smart_text(message_context),
-                                 smart_text(join_tokens(singular, trimmed))],
+                                "pgettext",
+                                [
+                                    smart_text(message_context),
+                                    smart_text(join_tokens(singular, trimmed)),
+                                ],
                                 [],
                             )
                         else:
@@ -108,7 +120,8 @@ def extract_django(fileobj, keywords, comment_tags, options):
                                 lineno,
                                 None,
                                 smart_text(join_tokens(singular, trimmed)),
-                                [])
+                                [],
+                            )
 
                     intrans = False
                     inplural = False
@@ -118,13 +131,15 @@ def extract_django(fileobj, keywords, comment_tags, options):
                 elif pluralmatch:
                     inplural = True
                 else:
-                    raise SyntaxError('Translation blocks must not include '
-                                      'other block tags: %s' % t.contents)
+                    raise SyntaxError(
+                        "Translation blocks must not include "
+                        "other block tags: %s" % t.contents
+                    )
             elif t.token_type == TOKEN_VAR:
                 if inplural:
-                    plural.append('%%(%s)s' % t.contents)
+                    plural.append("%%(%s)s" % t.contents)
                 else:
-                    singular.append('%%(%s)s' % t.contents)
+                    singular.append("%%(%s)s" % t.contents)
             elif t.token_type == TOKEN_TEXT:
                 if inplural:
                     plural.append(t.contents)
@@ -140,18 +155,19 @@ def extract_django(fileobj, keywords, comment_tags, options):
                     g = strip_quotes(g)
                     default_message = imatch.group(3)
                     if default_message:
-                        comments = ['default-message: ' + strip_quotes(default_message)]
+                        comments = ["default-message: " + strip_quotes(default_message)]
                     else:
                         comments = []
                     comment = imatch.group(7)
-                    if(comment): comments.append(comment)
+                    if comment:
+                        comments.append(comment)
                     message_context = imatch.group(5)
                     if message_context:
                         # strip quotes
                         message_context = message_context[1:-1]
                         yield (
                             lineno,
-                            'pgettext',
+                            "pgettext",
                             [smart_text(message_context), smart_text(g)],
                             comments,
                         )
@@ -166,7 +182,7 @@ def extract_django(fileobj, keywords, comment_tags, options):
                         yield lineno, None, smart_text(stripped_fmatch), []
                     intrans = True
                     inplural = False
-                    trimmed = 'trimmed' in t.split_contents()
+                    trimmed = "trimmed" in t.split_contents()
                     singular = []
                     plural = []
                 elif cmatches:
@@ -174,17 +190,17 @@ def extract_django(fileobj, keywords, comment_tags, options):
                         stripped_cmatch = strip_quotes(cmatch)
                         yield lineno, None, smart_text(stripped_cmatch), []
             elif t.token_type == TOKEN_VAR:
-                parts = t.contents.split('|')
+                parts = t.contents.split("|")
                 cmatch = constant_re.match(parts[0])
                 if cmatch:
                     stripped_cmatch = strip_quotes(cmatch.group(1))
                     yield lineno, None, smart_text(stripped_cmatch), []
                 for p in parts[1:]:
-                    if p.find(':_(') >= 0:
-                        p1 = p.split(':', 1)[1]
-                        if p1[0] == '_':
+                    if p.find(":_(") >= 0:
+                        p1 = p.split(":", 1)[1]
+                        if p1[0] == "_":
                             p1 = p1[1:]
-                        if p1[0] == '(':
-                            p1 = p1.strip('()')
+                        if p1[0] == "(":
+                            p1 = p1.strip("()")
                         p1 = strip_quotes(p1)
                         yield lineno, None, smart_text(p1), []

@@ -3,8 +3,18 @@ from cjworkbench.i18n.trans import trans as trans_icu
 
 register = template.Library()
 
+
 @register.simple_tag(takes_context=True)
-def trans(context, message_id, default=None, ctxt="", noop=False, comment="", locale=None, **kwargs):
+def trans(
+    context,
+    message_id,
+    default=None,
+    ctxt="",
+    noop=False,
+    comment="",
+    locale=None,
+    **kwargs,
+):
     """Translate a message, supporting ICU syntax.
 
     The locale will be taken from request if not provided.
