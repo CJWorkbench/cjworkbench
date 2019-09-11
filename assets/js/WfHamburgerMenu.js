@@ -5,9 +5,8 @@ import PropTypes from 'prop-types'
 import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from './components/Dropdown'
 import ImportModuleFromGitHub from './ImportModuleFromGitHub'
 import LocaleSwitcher from './i18n/LocaleSwitcher'
-import { I18n } from "@lingui/react"
-import { t } from "@lingui/macro"
-import { Trans } from '@lingui/macro'
+import { I18n } from '@lingui/react'
+import { t, Trans } from '@lingui/macro'
 
 export default class WfHamburgerMenu extends React.Component {
   static propTypes = {
@@ -38,14 +37,14 @@ export default class WfHamburgerMenu extends React.Component {
       <>
         <LocaleSwitcher />
         <UncontrolledDropdown>
-        <I18n>
-         {({ i18n }) => (
-             <DropdownToggle title={i18n._(t('workflow.visibility.menu') `menu`)} className='context-button'>
-             <i className='icon-more' />
-             </DropdownToggle>
-         )}
-        </I18n>
-         
+          <I18n>
+            {({ i18n }) => (
+              <DropdownToggle title={i18n._(t('workflow.visibility.menu')`menu`)} className='context-button'>
+                <i className='icon-more' />
+              </DropdownToggle>
+            )}
+          </I18n>
+
           <DropdownMenu>
             {loggedIn && workflowId ? (
               <>

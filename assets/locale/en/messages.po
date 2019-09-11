@@ -41,9 +41,17 @@ msgstr "Close"
 msgid "workflow.visibility.collaborators"
 msgstr "Collaborators"
 
+#: assets/js/table/TableInfo.js:45
+msgid "workflow.visibility.columns"
+msgstr "Columns"
+
 #: assets/js/ShareModal/Url.js:67
 msgid "workflow.visibility.cpToclip"
 msgstr "Copy to clipboard"
+
+#: assets/js/table/ColumnHeader.js:12
+msgid "workflow.visibility.dateType"
+msgstr "date & time"
 
 #: assets/js/WorkflowNavBar.js:201
 msgid "workflow.visibility.duplicate"
@@ -81,6 +89,10 @@ msgstr "My Workflows"
 msgid "workflow.visibility.notPublic"
 msgstr "Only collaborators can view this Workflow."
 
+#: assets/js/table/ColumnHeader.js:11
+msgid "workflow.visibility.numberType"
+msgstr "number"
+
 #: assets/js/ShareModal/OwnerAclEntry.js:8
 msgid "workflow.visibility.owner"
 msgstr "Owner"
@@ -105,6 +117,14 @@ msgstr "Public link (accessible to anyone)"
 msgid "workflow.visibility.redo"
 msgstr "Redo"
 
+#: assets/js/WorkflowEditor/PaneSelect.js:19
+msgid "workflow.visibility.reportButton"
+msgstr "Report"
+
+#: assets/js/table/TableInfo.js:41
+msgid "workflow.visibility.rows"
+msgstr "Rows"
+
 #: assets/js/WorkflowNavBar.js:203
 msgid "workflow.visibility.share"
 msgstr "Share"
@@ -120,6 +140,10 @@ msgstr "Change Workflow sharing"
 #: assets/js/ShareModal/Modal.js:36
 msgid "workflow.visibility.sharingWith"
 msgstr "Share with the world"
+
+#: assets/js/table/ColumnHeader.js:10
+msgid "workflow.visibility.textType"
+msgstr "Text"
 
 #: assets/js/UndoRedoButtons.js:64
 msgid "workflow.visibility.undo"

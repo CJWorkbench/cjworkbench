@@ -12,7 +12,7 @@ const Description = ({ isPublic }) => {
 const DescriptionWithToggle = ({ isPublic, onChange }) => (
   <label className='checkbox'>
     <input type='checkbox' checked={isPublic} onChange={onChange} />
-<span>{<Trans id='workflow.visibility.anyone'>Anyone can view and duplicate this workflow, and see your email.</Trans>}</span>
+    <span>{<Trans id='workflow.visibility.anyone'>Anyone can view and duplicate this workflow, and see your email.</Trans>}</span>
   </label>
 )
 

@@ -126,8 +126,6 @@ export default class WorkflowNavBar extends React.Component {
       })
   }
 
-  
-
   undo = () => {
     this.undoRedo('undo')
   }

@@ -41,9 +41,17 @@ msgstr "Κλείσιμο"
 msgid "workflow.visibility.collaborators"
 msgstr "Συνεργάτες"
 
+#: assets/js/table/TableInfo.js:45
+msgid "workflow.visibility.columns"
+msgstr "Στήλες"
+
 #: assets/js/ShareModal/Url.js:67
 msgid "workflow.visibility.cpToclip"
 msgstr "Αντιγραφή στο πληκτρολόγιο"
+
+#: assets/js/table/ColumnHeader.js:12
+msgid "workflow.visibility.dateType"
+msgstr "Ημε/μηνία"
 
 #: assets/js/WorkflowNavBar.js:201
 msgid "workflow.visibility.duplicate"
@@ -81,6 +89,10 @@ msgstr "Τα workflows μου"
 msgid "workflow.visibility.notPublic"
 msgstr "Περιορισμένο permission"
 
+#: assets/js/table/ColumnHeader.js:11
+msgid "workflow.visibility.numberType"
+msgstr "Αριθμός"
+
 #: assets/js/ShareModal/OwnerAclEntry.js:8
 msgid "workflow.visibility.owner"
 msgstr "Κάτοχος"
@@ -105,6 +117,14 @@ msgstr "Προσβάσιμο σε όλους"
 msgid "workflow.visibility.redo"
 msgstr "Επόμενο"
 
+#: assets/js/WorkflowEditor/PaneSelect.js:19
+msgid "workflow.visibility.reportButton"
+msgstr "Αναφορά"
+
+#: assets/js/table/TableInfo.js:41
+msgid "workflow.visibility.rows"
+msgstr "Σειρές"
+
 #: assets/js/WorkflowNavBar.js:203
 msgid "workflow.visibility.share"
 msgstr "Μοιράσου"
@@ -120,6 +140,10 @@ msgstr "Μοιράσου το"
 #: assets/js/ShareModal/Modal.js:36
 msgid "workflow.visibility.sharingWith"
 msgstr "Μοιράσου με"
+
+#: assets/js/table/ColumnHeader.js:10
+msgid "workflow.visibility.textType"
+msgstr "Κείμενο"
 
 #: assets/js/UndoRedoButtons.js:64
 msgid "workflow.visibility.undo"

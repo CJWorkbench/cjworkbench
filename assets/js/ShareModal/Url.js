@@ -64,7 +64,7 @@ export default class Url extends React.PureComponent {
         <h6 key='heading'>{heading}</h6>
         <div key='url' className='copy-url'>
           <div className='url'>{url}</div>
-    <button name='copy' onClick={this.handleClickCopy}>{<Trans id='workflow.visibility.cpToclip'>Copy to clipboard</Trans>}</button>
+          <button name='copy' onClick={this.handleClickCopy}>{<Trans id='workflow.visibility.cpToclip'>Copy to clipboard</Trans>}</button>
           {nTimesCopied > 0 ? <div className='copied-flash' key={nTimesCopied} /> : null}
         </div>
         {isPublic ? this.renderSocialLinks() : null}

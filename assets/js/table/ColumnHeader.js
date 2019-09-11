@@ -4,11 +4,12 @@ import ColumnContextMenu from './ColumnContextMenu'
 import { connect } from 'react-redux'
 import { idxToLetter } from '../utils'
 import { updateTableAction } from './UpdateTableAction'
+import { Trans } from '@lingui/macro'
 
 const columnTypeDisplay = {
-  text: 'text',
-  number: 'number',
-  datetime: 'date & time'
+  text: <Trans id='workflow.visibility.textType'>Text</Trans>,
+  number: <Trans id='workflow.visibility.numberType'>number</Trans>,
+  datetime: <Trans id='workflow.visibility.dateType'>date & time</Trans>
 }
 
 class ReorderColumnDropZone extends React.PureComponent {
