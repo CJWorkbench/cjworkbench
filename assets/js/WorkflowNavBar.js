@@ -48,7 +48,7 @@ function OwnedWorkflowTitleAndMetadata ({ isReadOnly, workflow }) {
       <ul className='metadata-container'>
         {!workflow.is_anonymous ? (
           <li className='attribution'>
-            <span className='metadata'>by {workflow.owner_name.trim()}</span>
+            <span className='metadata'>{<Trans id='workflow.visibility.by'>by</Trans>} {workflow.owner_name.trim()}</span>
             <span className='separator'>-</span>
           </li>
         ) : null}
@@ -126,6 +126,8 @@ export default class WorkflowNavBar extends React.Component {
       })
   }
 
+  
+
   undo = () => {
     this.undoRedo('undo')
   }
@@ -196,9 +198,9 @@ export default class WorkflowNavBar extends React.Component {
               {isReadOnly ? null : (
                 <UndoRedoButtons undo={this.undo} redo={this.redo} />
               )}
-              <button name='duplicate' onClick={this.handleDuplicate}>Duplicate</button>
+              <button name='duplicate' onClick={this.handleDuplicate}>{<Trans id='workflow.visibility.duplicate'>Duplicate</Trans>}</button>
               {lesson ? null : (/* We haven't yet designed what it means to share a lesson workflow. */
-                <ShareButton>Share</ShareButton>
+                <ShareButton>{<Trans id='workflow.visibility.share'>Share</Trans>}</ShareButton>
               )}
               {contextMenu}
             </div>

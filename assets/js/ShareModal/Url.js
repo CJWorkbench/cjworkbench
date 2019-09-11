@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { Trans } from '@lingui/macro'
 
 export default class Url extends React.PureComponent {
   static propTypes = {
@@ -57,14 +58,13 @@ export default class Url extends React.PureComponent {
     const { isPublic, url } = this.props
     const { nTimesCopied } = this.state
 
-    const heading = isPublic ? 'Public link (accessible to anyone)' : 'Private link (only accessible to collaborators)'
-
+    const heading = isPublic ? <Trans id='workflow.visibility.publicLink'>Public link (accessible to anyone)</Trans> : <Trans id='workflow.visibility.privateLink'>Private link (only accessible to collaborators)</Trans>
     return (
       <>
         <h6 key='heading'>{heading}</h6>
         <div key='url' className='copy-url'>
           <div className='url'>{url}</div>
-          <button name='copy' onClick={this.handleClickCopy}>Copy to clipboard</button>
+    <button name='copy' onClick={this.handleClickCopy}>{<Trans id='workflow.visibility.cpToclip'>Copy to clipboard</Trans>}</button>
           {nTimesCopied > 0 ? <div className='copied-flash' key={nTimesCopied} /> : null}
         </div>
         {isPublic ? this.renderSocialLinks() : null}

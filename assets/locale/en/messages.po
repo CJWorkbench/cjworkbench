@@ -25,17 +25,109 @@ msgstr "English"
 msgid "selectedRow.numberOfRows"
 msgstr "{0, plural, =0 {No rows selected} one {# row selected} other {# rows selected}}"
 
+#: assets/js/ShareModal/PublicPrivate.js:15
+msgid "workflow.visibility.anyone"
+msgstr "Anyone can view and duplicate this workflow, and see your email."
+
+#: assets/js/WorkflowNavBar.js:51
+msgid "workflow.visibility.by"
+msgstr "by"
+
+#: assets/js/ShareModal/Modal.js:64
+msgid "workflow.visibility.closeButton"
+msgstr "Close"
+
+#: assets/js/ShareModal/Modal.js:43
+msgid "workflow.visibility.collaborators"
+msgstr "Collaborators"
+
+#: assets/js/ShareModal/Url.js:67
+msgid "workflow.visibility.cpToclip"
+msgstr "Copy to clipboard"
+
+#: assets/js/WorkflowNavBar.js:201
+msgid "workflow.visibility.duplicate"
+msgstr "Duplicate"
+
+#: assets/js/ShareModal/NewAclEntry.js:42
+msgid "workflow.visibility.grandAccess"
+msgstr "Grant access"
+
+#: assets/js/WfHamburgerMenu.js:56
+msgid "workflow.visibility.home"
+msgstr "Home"
+
+#: assets/js/WfHamburgerMenu.js:53
+msgid "workflow.visibility.importModule"
+msgstr "Import Module"
+
+#: assets/js/ShareModal/PublicPrivate.js:6
+msgid "workflow.visibility.isPublic"
+msgstr "Anyone on the Internet may view and duplicate this Workflow."
+
+#: assets/js/WfHamburgerMenu.js:59
+msgid "workflow.visibility.logout"
+msgstr "Log Out"
+
+#: assets/js/WfHamburgerMenu.js:43
+msgid "workflow.visibility.menu"
+msgstr "menu"
+
+#: assets/js/WfHamburgerMenu.js:52
+msgid "workflow.visibility.myWorkflows"
+msgstr "My Workflows"
+
+#: assets/js/ShareModal/PublicPrivate.js:6
+msgid "workflow.visibility.notPublic"
+msgstr "Only collaborators can view this Workflow."
+
+#: assets/js/ShareModal/OwnerAclEntry.js:8
+msgid "workflow.visibility.owner"
+msgstr "Owner"
+
 #: assets/js/WorkflowNavBar.js:62
 msgid "workflow.visibility.private"
 msgstr "Private"
+
+#: assets/js/ShareModal/Url.js:61
+msgid "workflow.visibility.privateLink"
+msgstr "Private link (only accessible to collaborators)"
 
 #: assets/js/WorkflowNavBar.js:62
 msgid "workflow.visibility.public"
 msgstr "Public"
 
+#: assets/js/ShareModal/Url.js:61
+msgid "workflow.visibility.publicLink"
+msgstr "Public link (accessible to anyone)"
+
+#: assets/js/UndoRedoButtons.js:65
+msgid "workflow.visibility.redo"
+msgstr "Redo"
+
+#: assets/js/WorkflowNavBar.js:203
+msgid "workflow.visibility.share"
+msgstr "Share"
+
+#: assets/js/ShareModal/Modal.js:34
+msgid "workflow.visibility.sharingSettings"
+msgstr "SHARING SETTINGS"
+
+#: assets/js/ShareModal/ShareButton.js:25
+msgid "workflow.visibility.sharingTitle"
+msgstr "Change Workflow sharing"
+
+#: assets/js/ShareModal/Modal.js:36
+msgid "workflow.visibility.sharingWith"
+msgstr "Share with the world"
+
+#: assets/js/UndoRedoButtons.js:64
+msgid "workflow.visibility.undo"
+msgstr "Undo"
+
 #: assets/js/WorkflowNavBar.js:56
-msgid "workflow.visibility.update"
-msgstr "Updated"
+#~ msgid "workflow.visibility.update"
+#~ msgstr "Updated"
 
 #. This is used in navigation bar. It should be all-caps for styling reasons.
 #: assets/js/Workflows/Navbar.js:39

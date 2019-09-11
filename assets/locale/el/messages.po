@@ -25,17 +25,109 @@ msgstr "Αγγλικά"
 msgid "selectedRow.numberOfRows"
 msgstr ""
 
+#: assets/js/ShareModal/PublicPrivate.js:15
+msgid "workflow.visibility.anyone"
+msgstr "Ο καθένας μπορεί να δει και να το κάνει duplicate"
+
+#: assets/js/WorkflowNavBar.js:51
+msgid "workflow.visibility.by"
+msgstr "από"
+
+#: assets/js/ShareModal/Modal.js:64
+msgid "workflow.visibility.closeButton"
+msgstr "Κλείσιμο"
+
+#: assets/js/ShareModal/Modal.js:43
+msgid "workflow.visibility.collaborators"
+msgstr "Συνεργάτες"
+
+#: assets/js/ShareModal/Url.js:67
+msgid "workflow.visibility.cpToclip"
+msgstr "Αντιγραφή στο πληκτρολόγιο"
+
+#: assets/js/WorkflowNavBar.js:201
+msgid "workflow.visibility.duplicate"
+msgstr "Διπλότυπο"
+
+#: assets/js/ShareModal/NewAclEntry.js:42
+msgid "workflow.visibility.grandAccess"
+msgstr "Πρόσβαση"
+
+#: assets/js/WfHamburgerMenu.js:56
+msgid "workflow.visibility.home"
+msgstr "Αρχική"
+
+#: assets/js/WfHamburgerMenu.js:53
+msgid "workflow.visibility.importModule"
+msgstr "Εισαγωγή module"
+
+#: assets/js/ShareModal/PublicPrivate.js:6
+msgid "workflow.visibility.isPublic"
+msgstr "Ο καθένας μπορεί"
+
+#: assets/js/WfHamburgerMenu.js:59
+msgid "workflow.visibility.logout"
+msgstr "Έξοδος"
+
+#: assets/js/WfHamburgerMenu.js:43
+msgid "workflow.visibility.menu"
+msgstr "μενού"
+
+#: assets/js/WfHamburgerMenu.js:52
+msgid "workflow.visibility.myWorkflows"
+msgstr "Τα workflows μου"
+
+#: assets/js/ShareModal/PublicPrivate.js:6
+msgid "workflow.visibility.notPublic"
+msgstr "Περιορισμένο permission"
+
+#: assets/js/ShareModal/OwnerAclEntry.js:8
+msgid "workflow.visibility.owner"
+msgstr "Κάτοχος"
+
 #: assets/js/WorkflowNavBar.js:62
 msgid "workflow.visibility.private"
 msgstr "Ιδιωτικό"
+
+#: assets/js/ShareModal/Url.js:61
+msgid "workflow.visibility.privateLink"
+msgstr "Περιορισμένη πρόσβαση"
 
 #: assets/js/WorkflowNavBar.js:62
 msgid "workflow.visibility.public"
 msgstr "Δημόσιο"
 
+#: assets/js/ShareModal/Url.js:61
+msgid "workflow.visibility.publicLink"
+msgstr "Προσβάσιμο σε όλους"
+
+#: assets/js/UndoRedoButtons.js:65
+msgid "workflow.visibility.redo"
+msgstr "Επόμενο"
+
+#: assets/js/WorkflowNavBar.js:203
+msgid "workflow.visibility.share"
+msgstr "Μοιράσου"
+
+#: assets/js/ShareModal/Modal.js:34
+msgid "workflow.visibility.sharingSettings"
+msgstr "Αλλαγές στις Ρυθμίσεις"
+
+#: assets/js/ShareModal/ShareButton.js:25
+msgid "workflow.visibility.sharingTitle"
+msgstr "Μοιράσου το"
+
+#: assets/js/ShareModal/Modal.js:36
+msgid "workflow.visibility.sharingWith"
+msgstr "Μοιράσου με"
+
+#: assets/js/UndoRedoButtons.js:64
+msgid "workflow.visibility.undo"
+msgstr "Προηγούμενο"
+
 #: assets/js/WorkflowNavBar.js:56
-msgid "workflow.visibility.update"
-msgstr "Ενημερώθηκε"
+#~ msgid "workflow.visibility.update"
+#~ msgstr "Ενημερώθηκε"
 
 #. This is used in navigation bar. It should be all-caps for styling reasons.
 #: assets/js/Workflows/Navbar.js:39

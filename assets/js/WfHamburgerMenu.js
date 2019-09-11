@@ -5,6 +5,9 @@ import PropTypes from 'prop-types'
 import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from './components/Dropdown'
 import ImportModuleFromGitHub from './ImportModuleFromGitHub'
 import LocaleSwitcher from './i18n/LocaleSwitcher'
+import { I18n } from "@lingui/react"
+import { t } from "@lingui/macro"
+import { Trans } from '@lingui/macro'
 
 export default class WfHamburgerMenu extends React.Component {
   static propTypes = {
@@ -35,20 +38,25 @@ export default class WfHamburgerMenu extends React.Component {
       <>
         <LocaleSwitcher />
         <UncontrolledDropdown>
-          <DropdownToggle title='menu' className='context-button'>
-            <i className='icon-more' />
-          </DropdownToggle>
+        <I18n>
+         {({ i18n }) => (
+             <DropdownToggle title={i18n._(t('workflow.visibility.menu') `menu`)} className='context-button'>
+             <i className='icon-more' />
+             </DropdownToggle>
+         )}
+        </I18n>
+         
           <DropdownMenu>
             {loggedIn && workflowId ? (
               <>
-                <DropdownItem href='/workflows/'>My Workflows</DropdownItem>
-                <DropdownItem onClick={this.handleClickOpenImportModal}>Import Module</DropdownItem>
+                <DropdownItem href='/workflows/'>{<Trans id='workflow.visibility.myWorkflows'>My Workflows</Trans>}</DropdownItem>
+                <DropdownItem onClick={this.handleClickOpenImportModal}>{<Trans id='workflow.visibility.importModule'>Import Module</Trans>}</DropdownItem>
               </>
             ) : (
-              <DropdownItem href='//workbenchdata.com'>Home</DropdownItem>
+              <DropdownItem href='//workbenchdata.com'>{<Trans id='workflow.visibility.home'>Home</Trans>}</DropdownItem>
             )}
             {loggedIn ? (
-              <DropdownItem href='/account/logout'>Log Out</DropdownItem>
+              <DropdownItem href='/account/logout'>{<Trans id='workflow.visibility.logout'>Log Out</Trans>}</DropdownItem>
             ) : null}
           </DropdownMenu>
         </UncontrolledDropdown>

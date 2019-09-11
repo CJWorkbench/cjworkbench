@@ -1,7 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import ShareModal from './index'
-
+import { I18n } from "@lingui/react"
+import { t } from "@lingui/macro"
 /**
  * A <button> that opens/closes a ShareModal.
  *
@@ -15,15 +16,21 @@ export default function ShareButton ({ className, children }) {
 
   return (
     <>
-      <button
+      <I18n>
+      {({ i18n }) => (
+        <button
         type='button'
         className='share-button'
         name='share'
-        title='Change Workflow sharing'
+        title={i18n._(t('workflow.visibility.sharingTitle') `Change Workflow sharing`)}
         onClick={open}
-      >
+        >
         {children}
-      </button>
+        </button>
+      )}
+     
+      </I18n>
+    
       {isOpen ? (
         <ShareModal onClickClose={close} />
       ) : null}
