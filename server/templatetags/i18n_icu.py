@@ -1,4 +1,5 @@
 from django import template
+from django.utils.safestring import mark_safe
 from cjworkbench.i18n.trans import trans as trans_icu
 
 register = template.Library()
@@ -56,11 +57,13 @@ def trans(
           When the code is parsed, this will be ignored.
     """
     if noop is True:
-        return default or message_id
-    return trans_icu(
-        locale or context["request"].locale_id,
-        message_id,
-        default=default,
-        context=ctxt,
-        parameters=kwargs,
+        return mark_safe(default or message_id)
+    return mark_safe(
+        trans_icu(
+            locale or context["request"].locale_id,
+            message_id,
+            default=default,
+            context=ctxt,
+            parameters=kwargs,
+        )
     )
