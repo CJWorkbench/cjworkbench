@@ -17,8 +17,8 @@ def trans(
 ):
     """Translate a message, supporting ICU syntax.
 
+    Keyword arguments, apart from the ones explicitly named in the signature, will be passed to the ICU message.
     The locale will be taken from request if not provided.
-    Named arguments, apart from the ones explicitly named in the signature, will be passed to the ICU message.
     
     For code parsing reasons, respect the following order when passing more than one of `default`, `ctxt`, and `comment` arguments:
         `default` before `ctxt` before `comment`
