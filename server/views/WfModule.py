@@ -82,7 +82,14 @@ def _arrow_array_to_json_list(array: pyarrow.ChunkedArray) -> List[Any]:
     if isinstance(array.type, pyarrow.TimestampType):
         multiplier = 1.0 / TimestampUnits[array.type.unit]
         return [
-            datetime.datetime.utcfromtimestamp(v.value * multiplier).isoformat() + "Z"
+            (
+                None
+                if v is pyarrow.NULL
+                else (
+                    datetime.datetime.utcfromtimestamp(v.value * multiplier).isoformat()
+                    + "Z"
+                )
+            )
             for v in array
         ]
     else:
@@ -325,14 +332,14 @@ def wfmodule_public_output(
                 minio.CachedRenderResultsBucket, cached_result.parquet_key
             )
         except FileNotFoundError:
-            table = pyarrow.Table()
+            table = pyarrow.Table.from_pydict({})
     else:
         # We don't have a cached result, and we don't know how long it'll
         # take to get one.
         workflow = wf_module.workflow
         async_to_sync(rabbitmq.queue_render)(workflow.id, workflow.last_delta_id)
         # The user will simply need to try again....
-        table = pyarrow.Table()
+        table = pyarrow.Table.from_pydict({})
 
     if export_type == "json":
         records = _arrow_table_to_json_records(table, 0, table.num_rows)
