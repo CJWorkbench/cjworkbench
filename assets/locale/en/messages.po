@@ -33,6 +33,10 @@ msgstr "Private"
 msgid "workflow.visibility.public"
 msgstr "Public"
 
+#: assets/js/WorkflowNavBar.js:56
+msgid "workflow.visibility.update"
+msgstr "Updated"
+
 #. This is used in navigation bar. It should be all-caps for styling reasons.
 #: assets/js/Workflows/Navbar.js:39
 msgid "workflows.navbar.training"
