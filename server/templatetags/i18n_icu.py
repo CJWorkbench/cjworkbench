@@ -1,5 +1,5 @@
 from django import template
-from i18n.trans import trans as trans_icu
+from cjworkbench.i18n.trans import trans as trans_icu
 
 register = template.Library()
 
