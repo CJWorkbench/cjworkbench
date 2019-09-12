@@ -2,7 +2,7 @@ from contextlib import contextmanager
 import os
 from pathlib import Path
 import tempfile
-from typing import List, Optional
+from typing import ContextManager, List, Optional
 from cjwkernel.types import ArrowTable, RenderResult, TableMetadata
 from cjwkernel.util import json_encode
 from cjwstate import minio, parquet
@@ -98,6 +98,29 @@ def cache_render_result(
         )  # makes new cache consistent
 
 
+def downloaded_parquet_file(crr: CachedRenderResult) -> ContextManager[Path]:
+    """
+    Context manager to download and yield `path`, a hopefully-Parquet file.
+
+    This is cheaper than open_cached_render_result() because it does not parse
+    the file. Use this function when you suspect you won't need the table data.
+
+    Raise CorruptCacheError if the cached data is missing.
+
+    Usage:
+
+        try:
+            with rendercache.downloaded_parquet_file(crr) as path:
+                # do something with `path`, a `pathlib.Path`
+        except rendercache.CorruptCacheError:
+            # file does not exist....
+    """
+    try:
+        return minio.temporarily_download(BUCKET, crr_parquet_key(crr))
+    except FileNotFoundError:
+        raise CorruptCacheError
+
+
 def load_cached_render_result(
     crr: CachedRenderResult, path: Path, only_columns: Optional[List[str]] = None
 ) -> RenderResult:
@@ -129,7 +152,7 @@ def load_cached_render_result(
         )
 
     try:
-        with minio.temporarily_download(BUCKET, crr_parquet_key(crr)) as parquet_path:
+        with downloaded_parquet_file(crr) as parquet_path:
             parquet.convert_parquet_file_to_arrow_file(
                 parquet_path, path, only_columns=only_columns
             )
@@ -150,7 +173,7 @@ def load_cached_render_result(
 @contextmanager
 def open_cached_render_result(
     crr: CachedRenderResult, only_columns: Optional[List[str]] = None
-):
+) -> ContextManager[RenderResult]:
     """
     Yield a RenderResult equivalent to the one passed to `cache_render_result()`.
 

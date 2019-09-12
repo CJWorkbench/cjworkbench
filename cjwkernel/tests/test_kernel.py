@@ -167,7 +167,7 @@ class KernelTests(unittest.TestCase):
                 types.Params({"a": 1}),
                 {},
                 None,
-                types.ArrowTable(),
+                None,
                 pathlib.Path(output_file.name),
             )
 

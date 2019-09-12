@@ -108,7 +108,7 @@ class LoadedModule:
         params: Params,
         secrets: Dict[str, Any],
         last_fetch_result: Optional[FetchResult],
-        input_table: ArrowTable,
+        input_parquet_path: Optional[Path],
         output_path: Path,
     ) -> FetchResult:
         """
@@ -127,7 +127,7 @@ class LoadedModule:
                 params,
                 secrets,
                 last_fetch_result,
-                input_table,
+                input_parquet_path,
                 output_path,
             )
         except ModuleError as err:

@@ -10,7 +10,7 @@ from typing import Optional, Tuple
 from django.conf import settings
 from django.db import DatabaseError, InterfaceError
 from django.utils import timezone
-from cjwkernel.types import ArrowTable, FetchResult, I18nMessage, Params, RenderError
+from cjwkernel.types import FetchResult, I18nMessage, Params, RenderError, TableMetadata
 from cjworkbench.sync import database_sync_to_async
 from cjworkbench.util import benchmark
 from cjwstate import minio
@@ -22,7 +22,7 @@ from cjwstate.models import (
     Workflow,
 )
 from cjwstate.models.loaded_module import LoadedModule
-from cjwstate.rendercache import open_cached_render_result
+from cjwstate import rendercache, storedobjects
 from . import fetchprep, save
 
 
@@ -54,18 +54,6 @@ def _get_stored_object_and_input_cached_render_result(
         input_crr = None
 
     return stored_object, input_crr
-
-
-def open_cached_render_result_or_none(maybe_crr: Optional[CachedRenderResult]):
-    """
-    Context akin to `open_cached_render_result()`, but the argument None is ok.
-
-    If passed None, the yielded `result` will be `None`.
-    """
-    if maybe_crr is None:
-        return contextlib.nullcontext(None)
-    else:
-        return open_cached_render_result(maybe_crr)
 
 
 @contextlib.contextmanager
@@ -152,41 +140,57 @@ async def fetch_wf_module(workflow_id, wf_module, now):
             stored_object, maybe_input_crr = await _get_stored_object_and_input_cached_render_result(
                 wf_module
             )
-            with open_cached_render_result_or_none(
-                maybe_input_crr
-            ) as maybe_input_result:
-                if maybe_input_result is None:
-                    input_table = ArrowTable()
+            with contextlib.ExitStack() as ctx:
+                if stored_object is None:
+                    last_fetch_result = None
                 else:
-                    input_table = maybe_input_result.table
+                    try:
+                        last_fetch_path = ctx.enter_context(
+                            storedobjects.downloaded_file(stored_object)
+                        )
+                        last_fetch_result = FetchResult(
+                            last_fetch_path,
+                            [RenderError(I18nMessage.TODO_i18n(wf_module.fetch_error))],
+                        )
+                    except FileNotFoundError:
+                        last_fetch_result = None
+
+                if maybe_input_crr is None:
+                    input_parquet_path = None
+                    input_metadata = TableMetadata()
+                else:
+                    try:
+                        input_parquet_path = ctx.enter_context(
+                            rendercache.downloaded_parquet_file
+                        )
+                        input_metadata = maybe_input_crr.table_metadata
+                    except rendercache.CorruptCacheError:
+                        # This is probably a race. That's okay.
+                        input_parquet_path = None
+                        input_metadata = TableMetadata()
 
                 # Migrate params, so fetch() gets newest values
                 params = lm.migrate_params(wf_module.params)
                 # Clean params, so they're of the correct type
                 params = Params(
-                    fetchprep.clean_value(lm.param_schema, params, input_table)
+                    fetchprep.clean_value(lm.param_schema, params, input_metadata)
                 )
 
-                with open_stored_object_or_none(
-                    stored_object, wf_module.fetch_error
-                ) as last_fetch_result:
-                    with tempfile.NamedTemporaryFile(prefix="fetch-result") as tf:
-                        path = Path(tf.name)
-                        result = await asyncio.get_event_loop().run_in_executor(
-                            None,
-                            partial(
-                                lm.fetch,
-                                params=params,
-                                secrets=wf_module.secrets,
-                                last_fetch_result=last_fetch_result,
-                                input_table=input_table,
-                                output_path=path,
-                            ),
-                        )
+                with tempfile.NamedTemporaryFile(prefix="fetch-result") as tf:
+                    path = Path(tf.name)
+                    result = await asyncio.get_event_loop().run_in_executor(
+                        None,
+                        partial(
+                            lm.fetch,
+                            params=params,
+                            secrets=wf_module.secrets,
+                            last_fetch_result=last_fetch_result,
+                            input_parquet_path=input_parquet_path,
+                            output_path=path,
+                        ),
+                    )
 
-                        await save.save_result_if_changed(
-                            workflow_id, wf_module, result
-                        )
+                    await save.save_result_if_changed(workflow_id, wf_module, result)
     except asyncio.CancelledError:
         raise
     except Exception:

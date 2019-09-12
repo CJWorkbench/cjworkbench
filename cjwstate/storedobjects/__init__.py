@@ -1,5 +1,6 @@
 from .io import (
     create_stored_object,
+    downloaded_file,
     enforce_storage_limits,
     hash_table,
     parquet_file_to_pandas,
@@ -9,6 +10,7 @@ from .io import (
 
 __all__ = (
     "create_stored_object",
+    "downloaded_file",
     "enforce_storage_limits",
     "hash_table",
     "parquet_file_to_pandas",

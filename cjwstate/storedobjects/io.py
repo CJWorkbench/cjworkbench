@@ -1,5 +1,8 @@
+import contextlib
+import os
 from pathlib import Path
-from typing import Optional
+import tempfile
+from typing import ContextManager, Optional
 import uuid
 from django.conf import settings
 import pandas as pd
@@ -18,6 +21,39 @@ def hash_table(table: pd.DataFrame) -> str:
     h = hash_pandas_object(table).sum()  # xor would be nice, but whatevs
     h = h if h > 0 else -h  # stay positive (sum often overflows)
     return str(h)
+
+
+@contextlib.contextmanager
+def _empty_temporary_file() -> ContextManager[Path]:
+    fd, filename = tempfile.mkstemp(prefix="storedobjects-empty-file")
+    try:
+        os.close(fd)
+        yield Path(filename)
+    finally:
+        os.unlink(filename)
+
+
+def downloaded_file(stored_object: StoredObject) -> ContextManager[Path]:
+    """
+    Context manager to download and yield `path`, the StoredObject's file.
+
+    Raise FileNotFoundError if the object is missing.
+
+    Usage:
+
+        try:
+            with storedobjects.downloaded_file(stored_object) as path:
+                # do something with `path`, a `pathlib.Path`
+        except FileNotFoundError:
+            # file does not exist....
+    """
+    if stored_object.size == 0:
+        # Some stored objects with size=0 do not have bucket/key. These are
+        # valid -- they represent empty files.
+        return _empty_temporary_file()
+    else:
+        # raises FileNotFoundError
+        return minio.temporarily_download(stored_object.bucket, stored_object.key)
 
 
 def parquet_file_to_pandas(path: Path) -> pd.DataFrame:

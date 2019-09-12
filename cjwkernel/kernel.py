@@ -198,14 +198,14 @@ class Kernel:
         params: Params,
         secrets: Dict[str, Any],
         last_fetch_result: Optional[FetchResult],
-        input_table: ArrowTable,
+        input_parquet_path: Optional[Path],
         output_path: Path,
     ) -> FetchResult:
         request = ttypes.FetchRequest(
             params.to_thrift(),
             RawParams(secrets).to_thrift(),
             None if last_fetch_result is None else last_fetch_result.to_thrift(),
-            input_table.to_thrift(),
+            input_parquet_path,
             str(output_path),
         )
         result = self._run_in_child(
