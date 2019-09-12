@@ -606,94 +606,6 @@ class ArrowTable(object):
         return not (self == other)
 
 
-class ParquetTable(object):
-    """
-    Table stored on disk, ready to be loaded.
-
-    The file on disk is in a directory agreed upon by the processes passing this
-    data around.
-
-    Attributes:
-     - filename: Name of file on disk that contains data.
-
-    For a zero-column table, filename may be the empty string -- meaning there
-    is no file on disk. In all other cases, the file on disk must exist.
-     - metadata: Metadata; must agree with the file on disk.
-    """
-
-    __slots__ = (
-        'filename',
-        'metadata',
-    )
-
-
-    def __init__(self, filename=None, metadata=None,):
-        self.filename = filename
-        self.metadata = metadata
-
-    def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
-            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
-            return
-        iprot.readStructBegin()
-        while True:
-            (fname, ftype, fid) = iprot.readFieldBegin()
-            if ftype == TType.STOP:
-                break
-            if fid == 1:
-                if ftype == TType.STRING:
-                    self.filename = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
-                else:
-                    iprot.skip(ftype)
-            elif fid == 2:
-                if ftype == TType.STRUCT:
-                    self.metadata = TableMetadata()
-                    self.metadata.read(iprot)
-                else:
-                    iprot.skip(ftype)
-            else:
-                iprot.skip(ftype)
-            iprot.readFieldEnd()
-        iprot.readStructEnd()
-
-    def write(self, oprot):
-        if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
-            return
-        oprot.writeStructBegin('ParquetTable')
-        if self.filename is not None:
-            oprot.writeFieldBegin('filename', TType.STRING, 1)
-            oprot.writeString(self.filename.encode('utf-8') if sys.version_info[0] == 2 else self.filename)
-            oprot.writeFieldEnd()
-        if self.metadata is not None:
-            oprot.writeFieldBegin('metadata', TType.STRUCT, 2)
-            self.metadata.write(oprot)
-            oprot.writeFieldEnd()
-        oprot.writeFieldStop()
-        oprot.writeStructEnd()
-
-    def validate(self):
-        return
-
-    def __repr__(self):
-        L = ['%s=%r' % (key, getattr(self, key))
-             for key in self.__slots__]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
-
-    def __eq__(self, other):
-        if not isinstance(other, self.__class__):
-            return False
-        for attr in self.__slots__:
-            my_val = getattr(self, attr)
-            other_val = getattr(other, attr)
-            if my_val != other_val:
-                return False
-        return True
-
-    def __ne__(self, other):
-        return not (self == other)
-
-
 class ParamValue(object):
     """
     Value (or nested value) in Params passed to render()/fetch().
@@ -1665,7 +1577,7 @@ class FetchRequest(object):
     A Step may never run two fetches concurrently.
 
     Empty on initial call.
-     - input_table: Cached result from previous module's render.
+     - input_table_parquet_filename: Cached result from previous module's render, if fresh.
 
     This is to support modules that take a column as input. Unfortunately, we
     have a lot more work to do to make these modules work as expected. (The
@@ -1681,16 +1593,16 @@ class FetchRequest(object):
         'params',
         'secrets',
         'last_fetch_result',
-        'input_table',
+        'input_table_parquet_filename',
         'output_filename',
     )
 
 
-    def __init__(self, params=None, secrets=None, last_fetch_result=None, input_table=None, output_filename=None,):
+    def __init__(self, params=None, secrets=None, last_fetch_result=None, input_table_parquet_filename=None, output_filename=None,):
         self.params = params
         self.secrets = secrets
         self.last_fetch_result = last_fetch_result
-        self.input_table = input_table
+        self.input_table_parquet_filename = input_table_parquet_filename
         self.output_filename = output_filename
 
     def read(self, iprot):
@@ -1727,9 +1639,8 @@ class FetchRequest(object):
                 else:
                     iprot.skip(ftype)
             elif fid == 4:
-                if ftype == TType.STRUCT:
-                    self.input_table = ParquetTable()
-                    self.input_table.read(iprot)
+                if ftype == TType.STRING:
+                    self.input_table_parquet_filename = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
                 else:
                     iprot.skip(ftype)
             elif fid == 5:
@@ -1763,9 +1674,9 @@ class FetchRequest(object):
             oprot.writeFieldBegin('last_fetch_result', TType.STRUCT, 3)
             self.last_fetch_result.write(oprot)
             oprot.writeFieldEnd()
-        if self.input_table is not None:
-            oprot.writeFieldBegin('input_table', TType.STRUCT, 4)
-            self.input_table.write(oprot)
+        if self.input_table_parquet_filename is not None:
+            oprot.writeFieldBegin('input_table_parquet_filename', TType.STRING, 4)
+            oprot.writeString(self.input_table_parquet_filename.encode('utf-8') if sys.version_info[0] == 2 else self.input_table_parquet_filename)
             oprot.writeFieldEnd()
         if self.output_filename is not None:
             oprot.writeFieldBegin('output_filename', TType.STRING, 5)
@@ -2187,12 +2098,6 @@ ArrowTable.thrift_spec = (
     (1, TType.STRING, 'filename', 'UTF8', None, ),  # 1
     (2, TType.STRUCT, 'metadata', [TableMetadata, None], None, ),  # 2
 )
-all_structs.append(ParquetTable)
-ParquetTable.thrift_spec = (
-    None,  # 0
-    (1, TType.STRING, 'filename', 'UTF8', None, ),  # 1
-    (2, TType.STRUCT, 'metadata', [TableMetadata, None], None, ),  # 2
-)
 all_structs.append(ParamValue)
 ParamValue.thrift_spec = (
     None,  # 0
@@ -2264,7 +2169,7 @@ FetchRequest.thrift_spec = (
     (1, TType.MAP, 'params', (TType.STRING, 'UTF8', TType.STRUCT, [ParamValue, None], False), None, ),  # 1
     (2, TType.STRUCT, 'secrets', [RawParams, None], None, ),  # 2
     (3, TType.STRUCT, 'last_fetch_result', [FetchResult, None], None, ),  # 3
-    (4, TType.STRUCT, 'input_table', [ParquetTable, None], None, ),  # 4
+    (4, TType.STRING, 'input_table_parquet_filename', 'UTF8', None, ),  # 4
     (5, TType.STRING, 'output_filename', 'UTF8', None, ),  # 5
 )
 all_structs.append(FetchResult)

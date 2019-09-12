@@ -3,7 +3,6 @@
 # `migrate_params_thrift()` and `validate()`.
 
 import asyncio
-from functools import partial
 import inspect
 import pathlib
 import fastparquet
@@ -215,24 +214,11 @@ def fetch(params: Dict[str, Any], **kwargs):
     raise NotImplementedError("This module does not define a fetch() function")
 
 
-async def __get_input_dataframe(table: types.ArrowTable) -> pd.DataFrame:
-    return __arrow_to_pandas(table)
-
-
-async def __get_stored_dataframe(
-    maybe_fetch_result: Optional[types.FetchResult]
-) -> pd.DataFrame:
-    if maybe_fetch_result is None:
-        return None
-    else:
-        return __parquet_to_pandas(maybe_fetch_result.path)
-
-
 def fetch_pandas(
     params: Dict[str, Any],
     secrets: Dict[str, Any],
     last_fetch_result: Optional[types.FetchResult],
-    input_table: types.ArrowTable,
+    input_table_parquet_path: Optional[pathlib.Path],
 ) -> ptypes.ProcessResult:
     """
     Call `fetch()` and validate the result.
@@ -247,14 +233,29 @@ def fetch_pandas(
     kwargs = {}
     varkw = bool(spec.varkw)  # if True, function accepts **kwargs
     kwonlyargs = spec.kwonlyargs
+
     if varkw or "secrets" in kwonlyargs:
         kwargs["secrets"] = secrets
+
     if varkw or "get_input_dataframe" in kwonlyargs:
-        kwargs["get_input_dataframe"] = partial(__get_input_dataframe, input_table)
+
+        async def get_input_dataframe():
+            if input_table_parquet_path is None:
+                return None
+            else:
+                return __parquet_to_pandas(input_table_parquet_path)
+
+        kwargs["get_input_dataframe"] = get_input_dataframe
+
     if varkw or "get_stored_dataframe" in kwonlyargs:
-        kwargs["get_stored_dataframe"] = partial(
-            __get_stored_dataframe, last_fetch_result
-        )
+
+        async def get_stored_dataframe():
+            if last_fetch_result is None:
+                return None
+            else:
+                return __parquet_to_pandas(last_fetch_result.path)
+
+        kwargs["get_stored_dataframe"] = get_stored_dataframe
 
     result = fetch(params, **kwargs)
     if asyncio.iscoroutine(result):
@@ -266,7 +267,7 @@ def fetch_arrow(
     params: Dict[str, Any],
     secrets: Dict[str, Any],
     last_fetch_result: Optional[types.FetchResult],
-    input_table: types.ArrowTable,
+    input_table_parquet_path: Optional[pathlib.Path],
     output_path: pathlib.Path,
 ) -> types.FetchResult:
     """
@@ -278,7 +279,7 @@ def fetch_arrow(
     `fetch()` signature deals in dataframes instead of in raw data.
     """
     pandas_result: ptypes.ProcessResult = fetch_pandas(
-        params, secrets, last_fetch_result, input_table
+        params, secrets, last_fetch_result, input_table_parquet_path
     )
     if len(pandas_result.dataframe.columns):
         fastparquet.write(
@@ -310,7 +311,11 @@ def fetch_thrift(request: ttypes.FetchRequest) -> ttypes.FetchResult:
             if request.last_fetch_result is None
             else types.FetchResult.from_thrift(request.last_fetch_result)
         ),
-        types.ArrowTable.from_thrift(request.input_table),
+        (
+            None
+            if request.input_table_parquet_filename is None
+            else pathlib.Path(request.input_table_parquet_filename)
+        ),
         pathlib.Path(request.output_filename),
     )
     return arrow_result.to_thrift()

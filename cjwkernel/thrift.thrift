@@ -83,25 +83,6 @@ struct ArrowTable {
 }
 
 /**
- * Table stored on disk, ready to be loaded.
- *
- * The file on disk is in a directory agreed upon by the processes passing this
- * data around.
- */
-struct ParquetTable {
-  /**
-   * Name of file on disk that contains data.
-   *
-   * For a zero-column table, filename may be the empty string -- meaning there
-   * is no file on disk. In all other cases, the file on disk must exist.
-   */
-  1: string filename,
-
-  /** Metadata; must agree with the file on disk. */
-  2: TableMetadata metadata
-}
-
-/**
  * Value (or nested value) in Params passed to render()/fetch().
  *
  * These params are connected to the `table` parameter: a "column"-typed
@@ -281,14 +262,14 @@ struct FetchRequest {
   3: optional FetchResult last_fetch_result,
 
   /**
-   * Cached result from previous module's render.
+   * Cached result from previous module's render, if fresh.
    *
    * This is to support modules that take a column as input. Unfortunately, we
    * have a lot more work to do to make these modules work as expected. (The
    * changes will probably require rewriting all modules that use this
    * feature.) In the meantime, this hack gets some jobs done.
    */
-  4: ParquetTable input_table,
+  4: optional string input_table_parquet_filename,
 
   /**
    * File where the result should be written.

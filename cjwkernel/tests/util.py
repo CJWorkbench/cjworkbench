@@ -5,8 +5,9 @@ import tempfile
 from typing import Any, Dict, List, Optional, Union
 import unittest
 import pyarrow
+import pyarrow.parquet
 from cjwkernel import settings
-from cjwkernel.types import ArrowTable, TableMetadata, Column, ColumnType, RenderResult
+from cjwkernel.types import ArrowTable, Column, ColumnType, RenderResult, TableMetadata
 
 
 @contextmanager
@@ -79,7 +80,14 @@ def arrow_table(
         return table
 
 
-def assert_arrow_table_equals(result1: ArrowTable, result2: ArrowTable):
+def assert_arrow_table_equals(
+    result1: Union[pyarrow.Table, ArrowTable],
+    result2: Union[Dict[str, Any], pyarrow.Table, ArrowTable],
+):
+    if isinstance(result1, pyarrow.Table):
+        result1 = arrow_table(result1)
+    if isinstance(result2, pyarrow.Table) or isinstance(result2, dict):
+        result2 = arrow_table(result2)
     assertEqual = unittest.TestCase().assertEqual
     assertEqual(result1.metadata, result2.metadata)
     if result1.table is not None and result2.table is not None:
@@ -95,6 +103,21 @@ def assert_render_result_equals(result1: RenderResult, result2: RenderResult):
         [e.to_dict() for e in result1.errors], [e.to_dict() for e in result2.errors]
     )
     assertEqual(result1.json, result2.json)
+
+
+@contextmanager
+def parquet_file(table: Union[Dict[str, List[Any]], pyarrow.Table]):
+    """
+    Yield a filename with `table` written to a Parquet file.
+    """
+    atable = arrow_table(table)
+    fd, filename = tempfile.mkstemp()
+    try:
+        os.close(fd)
+        pyarrow.parquet.write_table(atable.table, filename, compression="SNAPPY")
+        yield filename
+    finally:
+        os.unlink(filename)
 
 
 def override_settings(**kwargs):
