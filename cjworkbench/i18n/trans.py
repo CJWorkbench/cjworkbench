@@ -3,6 +3,7 @@ from babel.messages.pofile import read_po
 from bs4 import BeautifulSoup
 from django.utils.html import escape
 
+
 class UnsupportedLocaleError(Exception):
     """Indicates that an unsupported locale is (attempted to be) used
     
@@ -27,6 +28,7 @@ class InvalidICUParameters(Exception):
 
 _translators = {}
 
+
 def _get_translations(locale):
     """Returns a MessageTranslator object for the given locale.
     
@@ -44,6 +46,7 @@ def trans(locale, message_id, default=None, context=None, parameters={}):
     """
     return _get_translations(locale).trans(message_id, default, context, parameters)
 
+
 def replace_tags(message):
     """Replaces the HTML tags of a message with placeholders and deletes their attributes.
     
@@ -57,15 +60,16 @@ def replace_tags(message):
     """
     tag_mapping = {}
     count_tags = {}
-    soup = BeautifulSoup(message, 'html.parser')
+    soup = BeautifulSoup(message, "html.parser")
     for tag in soup.findAll(True):
         count_tags[tag.name] = count_tags.get(tag.name, -1) + 1
         new_name = tag.name + str(count_tags[tag.name])
-        tag_mapping[new_name] = {'name': tag.name, 'attrs': tag.attrs}
+        tag_mapping[new_name] = {"name": tag.name, "attrs": tag.attrs}
         tag.name = new_name
         tag.attrs = {}
-    
-    return {'message': str(soup), 'mapping': tag_mapping}
+
+    return {"message": str(soup), "mapping": tag_mapping}
+
 
 def restore_tags(message, tag_mapping):
     """Replaces the HTML tags and attributes in a message.
@@ -78,14 +82,15 @@ def restore_tags(message, tag_mapping):
     
     Returns the new message
     """
-    soup = BeautifulSoup(message, 'html.parser')
+    soup = BeautifulSoup(message, "html.parser")
     for tag in soup.findAll(True):
         if tag.name in tag_mapping:
-            tag.attrs = tag_mapping[tag.name].get('attrs', {})
-            tag.name = tag_mapping[tag.name]['name']
+            tag.attrs = tag_mapping[tag.name].get("attrs", {})
+            tag.name = tag_mapping[tag.name]["name"]
         else:
             tag.unwrap()
     return str(soup)
+
 
 class MessageTranslator:
     """Loads the message catalogs for a given locale and provides helper methods for message translation.
@@ -128,10 +133,12 @@ class MessageTranslator:
         plain = default or message_id
         message = self.get_message(message_id, context=context)
         if message:
-            return self.format_message(self.replace_tags(message, plain), parameters=parameters)
+            return self.format_message(
+                self.replace_tags(message, plain), parameters=parameters
+            )
         else:
             return self.format_message(plain, parameters=parameters)
-        
+
     def replace_tags(self, target_message, source_message):
         """Replaces tag names and attributes of the `target_message` with the corresponding ones of `source_message`
         
@@ -139,7 +146,9 @@ class MessageTranslator:
         These placeholders are then searched and replaced in the target_message.
         Any tags of the target message that do not correspond to the source message are deleted (their contents remain).
         """
-        return restore_tags(target_message, tag_mapping=replace_tags(source_message)['mapping'])
+        return restore_tags(
+            target_message, tag_mapping=replace_tags(source_message)["mapping"]
+        )
 
     def format_message(self, message, parameters={}):
         """Formats the given ICU message according to the given parameters.
@@ -171,5 +180,8 @@ class MessageTranslator:
         
         If the message is not found, `None` is returned.
         """
-        message = self.catalog.get(message_id, context)
+        if context:
+            message = self.catalog.get(message_id, context)
+        else:
+            message = self.catalog.get(message_id)
         return message.string if message else None

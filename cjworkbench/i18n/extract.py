@@ -156,7 +156,10 @@ def extract_django(fileobj, keywords, comment_tags, options):
                     g = strip_quotes(g)
                     default_message = imatch.group(3)
                     if default_message:
-                        comments = ["default-message: " + replace_tags(strip_quotes(default_message))['message']]
+                        comments = [
+                            "default-message: "
+                            + replace_tags(strip_quotes(default_message))["message"]
+                        ]
                     else:
                         comments = []
                     comment = imatch.group(7)
