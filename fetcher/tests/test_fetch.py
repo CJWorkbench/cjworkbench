@@ -18,7 +18,7 @@ from cjwkernel.types import (
     RenderResult,
     TableMetadata,
 )
-from cjwkernel.tests.util import arrow_table_context
+from cjwkernel.tests.util import arrow_table_context, parquet_file
 from cjwstate import minio, rendercache, storedobjects
 from cjwstate.models import (
     CachedRenderResult,
@@ -108,11 +108,18 @@ class LoadDatabaseObjectsTests(DbTestCase):
         wf_module = workflow.tabs.first().wf_modules.create(
             order=0, slug="step-1", module_id_name="foodeleted"
         )
-        storedobjects.create_stored_object(workflow, wf_module, pd.DataFrame(), "hash1")
-        so2 = storedobjects.create_stored_object(
-            workflow, wf_module, pd.DataFrame(), "hash2"
-        )
-        storedobjects.create_stored_object(workflow, wf_module, pd.DataFrame(), "hash3")
+        with parquet_file({"A": [1]}) as path1:
+            storedobjects.create_stored_object(
+                workflow.id, wf_module.id, path1, "hash1"
+            )
+        with parquet_file({"A": [2]}) as path2:
+            so2 = storedobjects.create_stored_object(
+                workflow.id, wf_module.id, path2, "hash2"
+            )
+        with parquet_file({"A": [3]}) as path3:
+            storedobjects.create_stored_object(
+                workflow.id, wf_module.id, path3, "hash3"
+            )
         wf_module.stored_data_version = so2.stored_at
         wf_module.save(update_fields=["stored_data_version"])
         result = self.run_with_async_db(

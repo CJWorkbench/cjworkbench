@@ -2,7 +2,7 @@ from contextlib import contextmanager
 from pathlib import Path
 import os
 import tempfile
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, ContextManager, Dict, List, Optional, Union
 import unittest
 import pyarrow
 import pyarrow.parquet
@@ -11,9 +11,11 @@ from cjwkernel.types import ArrowTable, Column, ColumnType, RenderResult, TableM
 
 
 @contextmanager
-def arrow_file(table: Union[Dict[str, List[Any]], pyarrow.Table]):
+def arrow_file(
+    table: Union[Dict[str, List[Any]], pyarrow.Table]
+) -> ContextManager[Path]:
     """
-    Yield a filename with `table` written to an Arrow file.
+    Yield a path with `table` written to an Arrow file.
     """
     if isinstance(table, dict):
         table = pyarrow.Table.from_pydict(table)
@@ -24,7 +26,7 @@ def arrow_file(table: Union[Dict[str, List[Any]], pyarrow.Table]):
         writer = pyarrow.RecordBatchFileWriter(filename, table.schema)
         writer.write_table(table)
         writer.close()
-        yield filename
+        yield Path(filename)
     finally:
         try:
             os.unlink(filename)
@@ -41,6 +43,8 @@ def _arrow_column_to_column(column: pyarrow.Column) -> Column:
         column.type
     ):
         column_type = ColumnType.Text()
+    else:
+        raise RuntimeError("Unknown column type %r" % column.type)
     return Column(column.name, column_type)
 
 
@@ -48,7 +52,7 @@ def _arrow_column_to_column(column: pyarrow.Column) -> Column:
 def arrow_table_context(
     table: Union[Dict[str, List[Any]], pyarrow.Table],
     columns: Optional[List[Column]] = None,
-):
+) -> ContextManager[ArrowTable]:
     """
     Yield an ArrowTable (whose `.path` is a file).
 
@@ -83,7 +87,7 @@ def arrow_table(
 def assert_arrow_table_equals(
     result1: Union[pyarrow.Table, ArrowTable],
     result2: Union[Dict[str, Any], pyarrow.Table, ArrowTable],
-):
+) -> None:
     if isinstance(result1, pyarrow.Table):
         result1 = arrow_table(result1)
     if isinstance(result2, pyarrow.Table) or isinstance(result2, dict):
@@ -96,7 +100,7 @@ def assert_arrow_table_equals(
         assertEqual(result1.table is None, result2.table is None)
 
 
-def assert_render_result_equals(result1: RenderResult, result2: RenderResult):
+def assert_render_result_equals(result1: RenderResult, result2: RenderResult) -> None:
     assert_arrow_table_equals(result1.table, result2.table)
     assertEqual = unittest.TestCase().assertEqual
     assertEqual(
@@ -106,7 +110,9 @@ def assert_render_result_equals(result1: RenderResult, result2: RenderResult):
 
 
 @contextmanager
-def parquet_file(table: Union[Dict[str, List[Any]], pyarrow.Table]):
+def parquet_file(
+    table: Union[Dict[str, List[Any]], pyarrow.Table]
+) -> ContextManager[Path]:
     """
     Yield a filename with `table` written to a Parquet file.
     """
@@ -115,7 +121,7 @@ def parquet_file(table: Union[Dict[str, List[Any]], pyarrow.Table]):
     try:
         os.close(fd)
         pyarrow.parquet.write_table(atable.table, filename, compression="SNAPPY")
-        yield filename
+        yield Path(filename)
     finally:
         os.unlink(filename)
 

@@ -1,5 +1,5 @@
-import io
-import pandas as pd
+from pathlib import Path
+import tempfile
 import uuid as uuidgen
 from django.utils import timezone
 from cjwstate import minio
@@ -7,13 +7,6 @@ from cjwstate.storedobjects import create_stored_object
 from cjwstate.models import ModuleVersion, Workflow
 from cjwstate.models.commands import InitWorkflowCommand
 from cjwstate.tests.utils import DbTestCase
-
-
-mock_csv_text2 = """Month,Amount,Name
-Jan,10,Alicia Aliciason
-Feb,666,Fred Frederson
-"""
-mock_csv_table2 = pd.read_csv(io.StringIO(mock_csv_text2))
 
 
 # Set up a simple pipeline on test data
@@ -32,8 +25,14 @@ class WfModuleTests(DbTestCase):
         wfm1 = workflow.tabs.first().wf_modules.create(order=0, slug="step-1")
 
         # store data to test that it is duplicated
-        create_stored_object(workflow, wfm1, pd.DataFrame({"A": [1, 2]}), "hash1")
-        so2 = create_stored_object(workflow, wfm1, pd.DataFrame({"B": [2, 3]}), "hash2")
+        with tempfile.NamedTemporaryFile() as tf1:
+            path1 = Path(tf1.name)
+            path1.write_bytes(b"12345")
+            create_stored_object(workflow.id, wfm1.id, path1, "hash1")
+        with tempfile.NamedTemporaryFile() as tf2:
+            path2 = Path(tf2.name)
+            path1.write_bytes(b"23456")
+            so2 = create_stored_object(workflow.id, wfm1.id, path2, "hash2")
         wfm1.secrets = {"do not copy": {"name": "evil", "secret": "evil"}}
         wfm1.stored_data_version = so2.stored_at
         wfm1.save(update_fields=["stored_data_version"])

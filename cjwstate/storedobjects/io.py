@@ -10,7 +10,7 @@ from pandas.util import hash_pandas_object
 import pyarrow
 import pyarrow.parquet
 from cjwstate import minio, parquet
-from cjwstate.models import StoredObject, WfModule, Workflow
+from cjwstate.models import StoredObject, WfModule
 
 
 BUCKET = minio.StoredObjectsBucket
@@ -131,18 +131,23 @@ def read_fetched_dataframe_from_wf_module(
 
 
 def create_stored_object(
-    workflow: Workflow, wf_module: WfModule, table: pd.DataFrame, hash: str
+    workflow_id: int, wf_module_id: int, path: Path, hash: str
 ) -> StoredObject:
     """
     Write and return a new StoredObject.
 
     The caller should call enforce_storage_limits() after calling this.
+
+    Raise IntegrityError if a database race prevents saving this. Raise a minio
+    error if writing to minio failed. In case of partial completion, a
+    StoredObject will exist in the database but no file will be saved in minio.
     """
-    key = _build_key(workflow.id, wf_module.id)
-    size = parquet.write_pandas(minio.StoredObjectsBucket, key, table)
-    stored_object = wf_module.stored_objects.create(
-        bucket=BUCKET, key=key, size=size, hash=hash
+    key = _build_key(workflow_id, wf_module_id)
+    size = path.stat().st_size
+    stored_object = StoredObject.objects.create(
+        wf_module_id=wf_module_id, bucket=BUCKET, key=key, size=size, hash=hash
     )
+    minio.fput_file(BUCKET, key, path)
     return stored_object
 
 
@@ -162,10 +167,10 @@ def enforce_storage_limits(wf_module: WfModule) -> None:
     used = 0
     first = True
 
-    for so in sos:
+    for so in list(sos):
         used += so.size
+        # allow most recent version to be stored even if it is itself over
+        # limit
         if used > limit and not first:
-            # allow most recent version to be stored even if it is itself over
-            # limit
             so.delete()
         first = False

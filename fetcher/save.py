@@ -32,7 +32,9 @@ def _store_fetched_table_if_different(
         # `table` is identical to what was in `old_so`.
         return None
 
-    stored_object = storedobjects.create_stored_object(workflow, wf_module, table, hash)
+    stored_object = storedobjects.create_stored_object(
+        workflow.id, wf_module.id, result.path, hash
+    )
     storedobjects.enforce_storage_limits(wf_module)
     return stored_object.stored_at
 

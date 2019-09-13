@@ -5,6 +5,7 @@ from django.utils import timezone
 import pandas as pd
 from pandas.testing import assert_frame_equal
 from cjwkernel.types import I18nMessage, RenderError, RenderResult
+from cjwkernel.tests.util import parquet_file
 from cjwstate import minio
 from cjwstate.storedobjects import create_stored_object, parquet_file_to_pandas
 from cjwstate.models import ModuleVersion, Workflow
@@ -75,7 +76,8 @@ class WfModuleTests(DbTestCase):
             last_relevant_delta_id=workflow.last_delta_id,
             fetch_error="maybe an error",
         )
-        so = create_stored_object(workflow, wf_module, pd.DataFrame({"A": [1]}), "hash")
+        with parquet_file({"A": [1]}) as path:
+            so = create_stored_object(workflow.id, wf_module.id, path, "hash")
         wf_module.stored_data_version = so.stored_at
         wf_module.save(update_fields=["stored_data_version"])
 
@@ -112,7 +114,8 @@ class WfModuleTests(DbTestCase):
             module_id_name="x",
             last_relevant_delta_id=workflow.last_delta_id,
         )
-        so = create_stored_object(workflow, wf_module, pd.DataFrame({"A": [1]}), "hash")
+        with parquet_file({"A": [1]}) as path:
+            so = create_stored_object(workflow.id, wf_module.id, path, "hash")
         wf_module.stored_data_version = so.stored_at
         wf_module.save(update_fields=["stored_data_version"])
         # Now delete the file on S3 -- but leave the DB pointing to it.

@@ -375,13 +375,16 @@ async def fetch(*, workflow_id: Optional[int] = None, wf_module_id: int) -> None
         try:
             with crash_on_database_error():
                 await save.save_result_if_changed(workflow_id, wf_module, result)
-                await update_next_update_time(workflow_id, wf_module, now)
         except asyncio.CancelledError:
             raise
         except Exception:
             # Log exceptions but keep going.
             # TODO [adamhooper, 2019-09-12] really? I think we don't want this.
+            # Make `fetch.save() robust, then nix this handler
             logger.exception(f"Error fetching {wf_module}")
+
+        with crash_on_database_error():
+            await update_next_update_time(workflow_id, wf_module, now)
 
 
 async def handle_fetch(message):
