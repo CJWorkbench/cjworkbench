@@ -1,7 +1,7 @@
 {% extends "account/base.html" %}
-{% load account socialaccount i18n %}
+{% load account socialaccount i18n_icu %}
 
-{% block title %}{% trans "Sign Up" %}{% endblock %}
+{% block title %}{% trans "accounts.sign_up.title" default="Sign Up" %}{% endblock %}
 
 {% block content %}
 
@@ -9,7 +9,7 @@
     <div class="mt-3 mb-5">
         <div class='title-1 t-d-gray text-center'>Signup</div>
           <div class='switch mt-1 d-flex justify-content-center'>
-              <a href="/account/login" class='t-white-u content-2'>Sign in</a>
+              <a href="/account/login" class='t-white-u content-2'>{% trans "accounts.sign_in.title" default="Sign in" %}</a>
           </div>
     </div>
 
@@ -22,8 +22,9 @@
       </div>
       {% include "socialaccount/snippets/login_extra.html" %}
     {% else %}
-      <p>{% blocktrans %}If you have not created an account yet, then please
-      <a href="{{ signup_url }}">sign up</a> first.{% endblocktrans %}</p>
+      <p>
+        {% trans "accounts.sign_up.prompt" default='If you have not created an account yet, then please <a href="{ url }">sign up</a> first.' url=signup_url %}
+      </p>
     {% endif %}
 
     {% csrf_token %}
