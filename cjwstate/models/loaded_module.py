@@ -114,15 +114,16 @@ class LoadedModule:
         """
         Call module `fetch(...)` method to build a `FetchResult`.
 
-        Exceptions become error results. This method cannot raise an exception.
-        (It is always an error for module code to raise an exception.)
+        Raise ModuleError on error. (This is usually the module author's fault.)
 
         This synchronous method can be slow for complex modules, large datasets
         or slow network requests. Consider calling it from an executor.
         """
         time1 = time.time()
+        status = "???"
+
         try:
-            result = module_loader.kernel.fetch(
+            ret = module_loader.kernel.fetch(
                 self.compiled_module,
                 params,
                 secrets,
@@ -130,31 +131,16 @@ class LoadedModule:
                 input_parquet_path,
                 output_path,
             )
+            status = "%0.1fMB" % (ret.path.stat().st_size / 1024 / 1024)
+            return ret
         except ModuleError as err:
-            logger.exception("Exception in %s.fetch", self.module_id_name)
-            output_path.write_bytes(b"")  # make sure it's empty
-            result = FetchResult(
-                path=output_path,
-                errors=[
-                    RenderError(
-                        I18nMessage.TODO_i18n(
-                            "Something unexpected happened. We have been notified and are "
-                            "working to fix it. If this persists, contact us. Error code: "
-                            + str(err)
-                        )
-                    )
-                ],
+            status = str(type(err))  # we'll _log_ the error elsewhere
+            raise
+        finally:
+            time2 = time.time()
+            logger.info(
+                "%s.fetch => %s in %dms", self.name, status, int((time2 - time1) * 1000)
             )
-
-        time2 = time.time()
-        logger.info(
-            "%s.fetch => %0.1fMB in %dms",
-            self.name,
-            result.path.stat().st_size / 1024 / 1024,
-            int((time2 - time1) * 1000),
-        )
-
-        return result
 
     def migrate_params(self, raw_params: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -216,19 +202,14 @@ class LoadedModule:
         """
         Return module referenced by `module_version`.
 
-        We assume:
+        If `module_version is None`, return `None`.
 
-        * if `module_version is not None`, then its `module` is in the database
-        * external-module files exist on disk
-        * external-module files were validated before being written to database
-        * external-module files haven't changed
-        * external-module files' dependencies are in PYTHONPATH
-        * external-module files' dependencies haven't changed (i.e., imports)
+        Raise `FileNotFoundError` if module is not in minio
 
-        Invalid assumption? Fix the bug elsewhere.
+        Raise `cjwkernel.errors.ModuleError` if module cannot be compiled
 
         Do not call this from an async method, because you may leak a database
-        connection. Use `for_module_version` instead.
+        connection. Use `for_module_version()` instead.
         """
         if module_version is None:
             return None
@@ -238,7 +219,6 @@ class LoadedModule:
 
         if module_id_name in InternalModules:
             compiled_module = InternalModules[module_id_name]
-            version_sha1 = "internal"
         else:
             compiled_module = load_external_module(
                 module_id_name, version_sha1, module_version.last_update_time

@@ -330,8 +330,10 @@ class RetryingConnection:
     async def queue_render(self, workflow_id: int, delta_id: int) -> None:
         await self.publish("render", {"workflow_id": workflow_id, "delta_id": delta_id})
 
-    async def queue_fetch(self, wf_module_id: int) -> None:
-        await self.publish("fetch", {"wf_module_id": wf_module_id})
+    async def queue_fetch(self, workflow_id: int, wf_module_id: int) -> None:
+        await self.publish(
+            "fetch", {"workflow_id": workflow_id, "wf_module_id": wf_module_id}
+        )
 
 
 def get_connection(loop=None):

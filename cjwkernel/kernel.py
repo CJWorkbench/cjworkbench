@@ -187,6 +187,9 @@ class Kernel:
         result = self._run_in_child(
             compiled_module, ttypes.RenderResult(), "render_thrift", request
         )
+        if result.table.filename:
+            # TODO ensure output is to correct file (with tests!)
+            assert result.table.filename == str(output_path)  # security!
         render_result = RenderResult.from_thrift(result)
         if render_result.table.table is not None:
             validate(render_result.table.table, render_result.table.metadata)
@@ -212,6 +215,8 @@ class Kernel:
             compiled_module, ttypes.FetchResult(), "fetch_thrift", request
         )
         # TODO ensure result is truncated
+        # TODO ensure output is to correct file (with tests!)
+        assert result.filename == str(output_path)  # security!
         return FetchResult.from_thrift(result)
 
     def _run_in_child(

@@ -1,18 +1,18 @@
 import asyncio
+from collections import namedtuple
 import contextlib
 from datetime import timedelta
-from functools import partial
 import logging
 import os
 from pathlib import Path
 import tempfile
-from typing import Optional, Tuple
+from typing import ContextManager, Optional, Tuple
 from django.conf import settings
 from django.db import DatabaseError, InterfaceError
 from django.utils import timezone
 from cjwkernel.types import FetchResult, I18nMessage, Params, RenderError, TableMetadata
+from cjwkernel.errors import ModuleError
 from cjworkbench.sync import database_sync_to_async
-from cjworkbench.util import benchmark
 from cjwstate import minio
 from cjwstate.models import (
     CachedRenderResult,
@@ -27,33 +27,6 @@ from . import fetchprep, save
 
 
 logger = logging.getLogger(__name__)
-
-
-@database_sync_to_async
-def _get_stored_object_and_input_cached_render_result(
-    wf_module: WfModule
-) -> Tuple[Optional[StoredObject], Optional[CachedRenderResult]]:
-    try:
-        # raises StoredObject.DoesNotExist
-        stored_object = wf_module.stored_objects.get(
-            stored_at=wf_module.stored_data_version
-        )
-    except StoredObject.DoesNotExist:
-        stored_object = None
-
-    try:
-        # raises WfModule.DoesNotExist
-        wf_module = WfModule.objects.get(
-            tab_id=wf_module.tab_id,
-            tab__is_deleted=False,
-            order=wf_module.order - 1,
-            is_deleted=False,
-        )
-        input_crr = wf_module.cached_render_result  # may be None
-    except WfModule.DoesNotExist:
-        input_crr = None
-
-    return stored_object, input_crr
 
 
 @contextlib.contextmanager
@@ -81,35 +54,67 @@ def open_stored_object_or_none(maybe_stored_object: Optional[StoredObject], erro
             yield FetchResult(path, errors)
 
 
-@database_sync_to_async
-def _get_wf_module(wf_module_id: int) -> Tuple[int, WfModule, Optional[ModuleVersion]]:
-    """
-    Query WfModule info, or raise WfModule.DoesNotExist.
-    """
-    wf_module = WfModule.objects.get(id=wf_module_id)
-    # wf_module.workflow_id does a database access
-    return (wf_module.workflow_id, wf_module)
+DatabaseObjects = namedtuple(
+    "DatabaseObjects",
+    ["wf_module", "module_version", "stored_object", "input_cached_render_result"],
+)
 
 
 @database_sync_to_async
-def _get_loaded_module(wf_module: WfModule) -> Optional[LoadedModule]:
-    """
-    Query WfModule.module_version, then LoadedModule.for_module_version()
-    """
-    module_version = wf_module.module_version  # invokes DB query
-    # .for_module_version() allows null
-    return LoadedModule.for_module_version_sync(module_version)
+def wf_module_id_to_workflow_id(wf_module_id: int) -> int:
+    """DELETEME once all our fetch queue entries have `workflow_id`"""
+    return Workflow.objects.get(tabs__wf_modules__id=wf_module_id).id
 
 
 @database_sync_to_async
-def _update_next_update_time(wf_module, now):
+def load_database_objects(
+    workflow_id: Optional[int], wf_module_id: int
+) -> DatabaseObjects:
+    """
+    Query WfModule info or raise WfModule.DoesNotExist/Workflow.DoesNotExist.
+
+    Return tuple containing:
+
+        * wf_module: cjwstate.models.WfModule
+        * module_version: Optional[cjwstate.models.ModuleVersion]
+        * stored_object: Optional[cjwstate.models.StoredObject]
+        * input_cached_render_result: Optional[cjwstate.models.CachedRenderResult]
+                                      of previous module in tab
+    """
+    with Workflow.lookup_and_cooperative_lock(id=workflow_id) as workflow_lock:
+        # raise WfModule.DoesNotExist
+        wf_module = WfModule.live_in_workflow(workflow_lock.workflow).get(
+            id=wf_module_id
+        )
+        try:
+            module_version = ModuleVersion.objects.latest(wf_module.module_id_name)
+        except ModuleVersion.DoesNotExist:
+            module_version = None
+        try:
+            stored_object = wf_module.stored_objects.get(
+                stored_at=wf_module.stored_data_version
+            )
+        except StoredObject.DoesNotExist:
+            stored_object = None
+        try:
+            # raise WfModule.DoesNotExist -- but we'll catch this one
+            prev_module = wf_module.tab.live_wf_modules.get(order=wf_module.order - 1)
+            input_crr = prev_module.cached_render_result  # may be None
+        except WfModule.DoesNotExist:
+            input_crr = None
+        return DatabaseObjects(wf_module, module_version, stored_object, input_crr)
+
+
+@database_sync_to_async
+def update_next_update_time(workflow_id, wf_module, now):
     """Schedule next update, skipping missed updates if any."""
+
     tick = timedelta(
         seconds=max(wf_module.update_interval, settings.MIN_AUTOFETCH_INTERVAL)
     )
 
     try:
-        with wf_module.workflow.cooperative_lock():
+        with Workflow.lookup_and_cooperative_lock(id=workflow_id):
             wf_module.refresh_from_db()
             next_update = wf_module.next_update
             if next_update:
@@ -119,133 +124,264 @@ def _update_next_update_time(wf_module, now):
             WfModule.objects.filter(id=wf_module.id).update(
                 last_update_check=now, next_update=next_update
             )
-    except Workflow.DoesNotExist:
+    except (WfModule.DoesNotExist, Workflow.DoesNotExist):
         # [2019-05-27] `wf_module.workflow` throws `Workflow.DoesNotExist` if
         # the WfModule is deleted. This handler is for deleted-Workflow _and_
         # deleted-WfModule.
         pass
 
 
-async def fetch_wf_module(workflow_id, wf_module, now):
-    """Fetch `wf_module` and notify user of changes via email/websockets."""
-    try:
-        lm = await _get_loaded_module(wf_module)
-        if lm is None:
-            logger.info("fetch() deleted module '%s'", wf_module.module_id_name)
-            result = FetchResult.from_error_deprecated(
-                "Cannot fetch: module was deleted"
-            )
-            await save.save_result_if_changed(workflow_id, wf_module, result)
-        else:
-            stored_object, maybe_input_crr = await _get_stored_object_and_input_cached_render_result(
-                wf_module
-            )
-            with contextlib.ExitStack() as ctx:
-                if stored_object is None:
-                    last_fetch_result = None
-                else:
-                    try:
-                        last_fetch_path = ctx.enter_context(
-                            storedobjects.downloaded_file(stored_object)
-                        )
-                        last_fetch_result = FetchResult(
-                            last_fetch_path,
-                            [RenderError(I18nMessage.TODO_i18n(wf_module.fetch_error))],
-                        )
-                    except FileNotFoundError:
-                        last_fetch_result = None
-
-                if maybe_input_crr is None:
-                    input_parquet_path = None
-                    input_metadata = TableMetadata()
-                else:
-                    try:
-                        input_parquet_path = ctx.enter_context(
-                            rendercache.downloaded_parquet_file
-                        )
-                        input_metadata = maybe_input_crr.table_metadata
-                    except rendercache.CorruptCacheError:
-                        # This is probably a race. That's okay.
-                        input_parquet_path = None
-                        input_metadata = TableMetadata()
-
-                # Migrate params, so fetch() gets newest values
-                params = lm.migrate_params(wf_module.params)
-                # Clean params, so they're of the correct type
-                params = Params(
-                    fetchprep.clean_value(lm.param_schema, params, input_metadata)
+def user_visible_bug_fetch_result(output_path: Path, message: str) -> FetchResult:
+    output_path.write_bytes(b"")
+    return FetchResult(
+        path=output_path,  # empty
+        errors=[
+            RenderError(
+                I18nMessage.TODO_i18n(
+                    "Something unexpected happened. We have been notified and are "
+                    "working to fix it. If this persists, contact us. Error code: "
+                    + message
                 )
-
-                with tempfile.NamedTemporaryFile(prefix="fetch-result") as tf:
-                    path = Path(tf.name)
-                    result = await asyncio.get_event_loop().run_in_executor(
-                        None,
-                        partial(
-                            lm.fetch,
-                            params=params,
-                            secrets=wf_module.secrets,
-                            last_fetch_result=last_fetch_result,
-                            input_parquet_path=input_parquet_path,
-                            output_path=path,
-                        ),
-                    )
-
-                    await save.save_result_if_changed(workflow_id, wf_module, result)
-    except asyncio.CancelledError:
-        raise
-    except Exception:
-        # Log exceptions but keep going
-        logger.exception(f"Error fetching {wf_module}")
-
-    await _update_next_update_time(wf_module, now)
+            )
+        ],
+    )
 
 
-async def fetch(*, wf_module_id: int) -> None:
+def _with_downloaded_cached_render_result(
+    ctx: contextlib.ExitStack, maybe_crr: Optional[CachedRenderResult]
+) -> Tuple[Optional[Path], TableMetadata]:
+    if maybe_crr is None:
+        return (None, TableMetadata())
+    else:
+        try:
+            parquet_path = ctx.enter_context(
+                rendercache.downloaded_parquet_file(maybe_crr)
+            )
+            return (parquet_path, maybe_crr.table_metadata)
+        except rendercache.CorruptCacheError:
+            # This is probably a race. That's okay. Treat missing
+            # cache as, "there is no input". (This is user-visible
+            # but likely uncommon.)
+            return (None, TableMetadata())
+
+
+def _with_stored_object_as_fetch_result(
+    ctx: contextlib.ExitStack,
+    stored_object: Optional[StoredObject],
+    wf_module_fetch_error: str,
+) -> Optional[FetchResult]:
+    if stored_object is None:
+        return None
+    else:
+        try:
+            last_fetch_path = ctx.enter_context(
+                storedobjects.downloaded_file(stored_object)
+            )
+            if wf_module_fetch_error:
+                errors = [RenderError(I18nMessage.TODO_i18n(wf_module_fetch_error))]
+            else:
+                errors = []
+            return FetchResult(last_fetch_path, errors)
+        except FileNotFoundError:
+            return None
+
+
+def fetch_or_wrap_error(
+    wf_module: WfModule,
+    module_version: ModuleVersion,
+    stored_object: Optional[StoredObject],
+    maybe_input_crr: Optional[CachedRenderResult],
+    output_path: Path,
+):
+    """
+    Fetch `wf_module`, and do not raise any exceptions worth catching.
+
+    Exceptions are wrapped -- the result is a FetchResult with `.errors`.
+
+    This function is slow indeed. Perhaps call it from
+    EventLoop.run_in_executor(). (Why not make it async? Because all the
+    logic inside -- compile module, migrate_params() and fetch() -- is
+    sandboxed, meaning it gets its own processes. We may eventually avoid
+    asyncio entirely in `fetcher`.
+
+    These problems are all handled:
+
+    * Module was deleted (`module_version is None`)
+    * Module file has gone missing
+    * Module does not compile (`cjwkernel.errors.ModuleCompileError`)
+    * Module times out (`cjwkernel.errors.ModuleTimeoutError`), either in
+      migrate_params() or in fetch().
+    * Module crashes (`cjwkernel.errors.ModuleExitedError`), either in
+      migrate_params() or in fetch().
+    * Module migrate_params() returns invalid data (`ValueError`)
+    * input_crr points to a nonexistent file (`FileNotFoundError`)
+    * stored_object points to a nonexistent file (`FileNotFoundError`)
+    """
+
+    # module_version=None is allowed
     try:
-        (workflow_id, wf_module) = await _get_wf_module(wf_module_id)
-    except WfModule.DoesNotExist:
-        logger.info("Skipping fetch of deleted WfModule %d", wf_module_id)
-        return
+        loaded_module = LoadedModule.for_module_version_sync(module_version)
+    except FileNotFoundError:
+        logger.exception("Module %s code disappeared", module_version.id_name)
+        return user_visible_bug_fetch_result(
+            output_path, "Module %s code disappeared" % module_version.id_name
+        )
+    except ModuleError:
+        logger.exception("Error compiling module %s", module_version.id_name)
+        return user_visible_bug_fetch_result(
+            output_path, "Module %s did not compile" % module_version.id_name
+        )
+
+    if loaded_module is None:
+        logger.info("fetch() deleted module '%s'", wf_module.module_id_name)
+        return FetchResult(
+            output_path,
+            [RenderError(I18nMessage.TODO_i18n("Cannot fetch: module was deleted"))],
+        )
+
+    with contextlib.ExitStack() as ctx:
+        # Migrate params, so fetch() gets newest values
+        try:
+            params = loaded_module.migrate_params(wf_module.params)
+        except ModuleError:
+            logger.exception(
+                "Error calling %s.migrate_params()", module_version.id_name
+            )
+            return user_visible_bug_fetch_result(
+                output_path, "%s.migrate_params() crashed" % module_version.id_name
+            )
+        except ValueError:
+            logger.exception(
+                "Invalid return value from %s.migrate_params()", module_version.id_name
+            )
+            return user_visible_bug_fetch_result(
+                output_path,
+                "%s.migrate_params() output invalid params" % module_version.id_name,
+            )
+
+        # get input_metadata, input_parquet_path. (This can't error.)
+        input_parquet_path, input_metadata = _with_downloaded_cached_render_result(
+            ctx, maybe_input_crr
+        )
+
+        # Clean params, so they're of the correct type. (This can't error.)
+        params = Params(
+            fetchprep.clean_value(loaded_module.param_schema, params, input_metadata)
+        )
+
+        # get last_fetch_result (This can't error.)
+        last_fetch_result = _with_stored_object_as_fetch_result(
+            ctx, stored_object, wf_module.fetch_error
+        )
+
+        # actually fetch
+        try:
+            return loaded_module.fetch(
+                params=params,
+                secrets=wf_module.secrets,
+                last_fetch_result=last_fetch_result,
+                input_parquet_path=input_parquet_path,
+                output_path=output_path,
+            )
+        except ModuleError as err:
+            logger.exception("Error calling %s.fetch()", module_version.id_name)
+            return user_visible_bug_fetch_result(output_path, str(err))
+
+
+@contextlib.contextmanager
+def crash_on_database_error() -> ContextManager[None]:
+    """
+    Yield, and if the inner block crashes, sys._exit(1).
+
+    DatabaseError and InterfaceError from Django can mean:
+    
+    1. There's a bug in fetch() or its deps. Such bugs can permanently break
+    the event loop's executor thread's database connection.
+    [2018-11-06 saw this on production.] The best way to clear up the leaked,
+    broken connection is to die. (Our parent process should restart us, and
+    RabbitMQ will give the job to someone else.)
+    
+    2. The database connection died (e.g., Postgres went away.) This should
+    be rare -- e.g., when upgrading the database -- and it's okay to email us
+    and die in this case. (Our parent process should restart us, and RabbitMQ
+    will give the job to someone else.)
+    
+    3. There's some design flaw we haven't thought of, and we shouldn't ever
+    render this workflow. If this is the case, we're doomed.
+    
+    If you're seeing this error that means there's a bug somewhere _else_. If
+    you're staring at a case-3 situation, please remember that cases 1 and 2
+    are important, too.
+    """
+    try:
+        yield
+    except (DatabaseError, InterfaceError):
+        logger.exception("Fatal database error; exiting")
+        os._exit(1)
+
+
+# DEPRECATED: workflow_id should be required. Make it non-optional after deploy.
+async def fetch(*, workflow_id: Optional[int] = None, wf_module_id: int) -> None:
+    # 1. Load database objects
+    #    - missing WfModule? Return prematurely
+    #    - database error? _exit(1)
+    # 2. Calculate result
+    #    2a. Load module
+    #       - no module? Result is user-visible error
+    #       - load error? Result is user-visible error
+    #       - compile error? Result is user-visible error
+    #    2b. Build fetch kwargs
+    #       - migrate_params() module error? Result is user-visible error
+    #       - migrate_params() validation error? Result is user-visible error
+    #    2c. Call fetch (no errors possible -- LoadedModule catches them)
+    # 3. Save result (and send delta)
+    #    - database errors? _exit(1)
+    #    - other error (bug in `save`)? Log exception and ignore
+    # 4. Update WfModule last-fetch time
+    #    - database errors? _exit(1)
+    with crash_on_database_error():
+        if workflow_id is None:  # DELETEME when this is always false
+            workflow_id = await wf_module_id_to_workflow_id(wf_module_id)
+        logger.info(
+            "begin fetch(workflow_id=%d, wf_module_id=%d)", workflow_id, wf_module_id
+        )
+        try:
+            (
+                wf_module,
+                module_version,
+                stored_object,
+                input_crr,
+            ) = await load_database_objects(workflow_id, wf_module_id)
+        except (Workflow.DoesNotExist, WfModule.DoesNotExist):
+            logger.info(
+                "Skipping fetch of deleted WfModule %d-%d", workflow_id, wf_module_id
+            )
+            return
 
     now = timezone.now()
-    # most exceptions caught elsewhere
-    try:
-        task = fetch_wf_module(workflow_id, wf_module, now)
-        await benchmark(
-            logger,
-            task,
-            "fetch_wf_module(%d, %d:%s)",
-            workflow_id,
-            wf_module_id,
-            wf_module.module_id_name,
+
+    with tempfile.NamedTemporaryFile(prefix="fetch-result") as tf:
+        output_path = Path(tf.name)
+        result = await asyncio.get_event_loop().run_in_executor(
+            None,
+            fetch_or_wrap_error,
+            wf_module,
+            module_version,
+            stored_object,
+            input_crr,
+            output_path,
         )
-    except DatabaseError:
-        # Two possibilities:
-        #
-        # 1. There's a bug in module_dispatch_fetch. This may leave the event
-        # loop's executor thread's database connection in an inconsistent
-        # state. [2018-11-06 saw this on production.] The best way to clear
-        # up the leaked, broken connection is to die. (Our parent process
-        # should restart us, and RabbitMQ will give the job to someone
-        # else.)
-        #
-        # 2. The database connection died (e.g., Postgres went away.) The
-        # best way to clear up the leaked, broken connection is to die.
-        # (Our parent process should restart us, and RabbitMQ will give the
-        # job to someone else.)
-        #
-        # 3. There's some design flaw we haven't thought of, and we
-        # shouldn't ever render this workflow. If this is the case, we're
-        # doomed.
-        #
-        # If you're seeing this error that means there's a bug somewhere
-        # _else_. If you're staring at a case-3 situation, please remember
-        # that cases 1 and 2 are important, too.
-        logger.exception("Fatal database error; exiting")
-        os._exit(1)
-    except InterfaceError:
-        logger.exception("Fatal database error; exiting")
-        os._exit(1)
+
+        try:
+            with crash_on_database_error():
+                await save.save_result_if_changed(workflow_id, wf_module, result)
+                await update_next_update_time(workflow_id, wf_module, now)
+        except asyncio.CancelledError:
+            raise
+        except Exception:
+            # Log exceptions but keep going.
+            # TODO [adamhooper, 2019-09-12] really? I think we don't want this.
+            logger.exception(f"Error fetching {wf_module}")
 
 
 async def handle_fetch(message):
