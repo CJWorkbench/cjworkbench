@@ -1,5 +1,4 @@
 import datetime
-from cjwkernel.pandas import types as ptypes
 from cjwkernel.tests.util import arrow_table, assert_render_result_equals
 from cjwkernel.types import (
     RenderError,
@@ -9,6 +8,7 @@ from cjwkernel.types import (
     I18nMessage,
     QuickFix,
     QuickFixAction,
+    TableMetadata,
 )
 from cjwstate import minio
 from cjwstate.models import Workflow, WfModule
@@ -99,7 +99,4 @@ class RendercacheIoTests(DbTestCase):
         fresh_wf_module = WfModule.objects.get(id=self.wf_module.id)
         cached_result = fresh_wf_module.cached_render_result
 
-        self.assertEqual(cached_result.nrows, 1)
-        self.assertEqual(
-            cached_result.columns, [ptypes.Column.from_arrow(c) for c in columns]
-        )
+        self.assertEqual(cached_result.table_metadata, TableMetadata(1, columns))
