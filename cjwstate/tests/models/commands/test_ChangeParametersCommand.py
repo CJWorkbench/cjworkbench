@@ -204,14 +204,13 @@ class ChangeParametersCommandTest(DbTestCase):
             },
             source_version_hash="2",
         )
-        load_module.return_value = LoadedModule(
-            "x",
-            "2",
-            ParamDType.Dict(
-                {"version": ParamDType.String(), "x": ParamDType.Integer()}
-            ),
-            migrate_params_impl=lambda params: {**params, "version": "v2"},
+        load_module.return_value.param_dtype = ParamDType.Dict(
+            {"version": ParamDType.String(), "x": ParamDType.Integer()}
         )
+        load_module.return_value.migrate_params = lambda params: {
+            **params,
+            "version": "v2",
+        }
 
         # Now the user requests to change params.
         #
@@ -257,12 +256,10 @@ class ChangeParametersCommandTest(DbTestCase):
                 "parameters": [{"id_name": "x", "type": "integer"}],
             }
         )
-        load_module.return_value = LoadedModule(
-            "x",
-            "1",
-            ParamDType.Dict({"x": ParamDType.Integer()}),
-            migrate_params_impl=lambda x: x,
+        load_module.return_value.param_schema = ParamDType.Dict(
+            {"x": ParamDType.Integer()}
         )
+        load_module.return_value.migrate_params = lambda x: x
 
         with self.assertRaises(ValueError):
             # Now the user requests to change params, giving an invalid param.

@@ -87,7 +87,7 @@ class LoadedModuleTest(unittest.TestCase):
     def test_load_static(self):
         # Test with a _real_ static module
         lm = LoadedModule.for_module_version_sync(
-            MockModuleVersion("pastecsv", "(ignored)", ParamDType.Dict({}), "now")
+            MockModuleVersion("pastecsv", "internal", ParamDType.Dict({}), "now")
         )
         self.assertEqual(lm.name, "pastecsv:internal")
         self.assertEqual(lm.render_impl, server.modules.pastecsv.render)
