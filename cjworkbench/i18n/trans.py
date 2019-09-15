@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 from django.utils.html import escape
 from cjworkbench.i18n import catalog_path
 
+
 class UnsupportedLocaleError(Exception):
     """Indicates that an unsupported locale is (attempted to be) used
     

@@ -1,5 +1,6 @@
 from cjworkbench.i18n import default_locale, supported_locales
 
+
 class SetCurrentLocaleMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
