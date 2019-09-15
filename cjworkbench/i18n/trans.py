@@ -2,7 +2,7 @@ from icu import Formattable, ICUError, Locale, MessageFormat, UnicodeString
 from babel.messages.pofile import read_po
 from bs4 import BeautifulSoup
 from django.utils.html import escape
-
+from cjworkbench.i18n import catalog_path
 
 class UnsupportedLocaleError(Exception):
     """Indicates that an unsupported locale is (attempted to be) used
@@ -109,7 +109,7 @@ class MessageTranslator:
             ) from error
 
         try:
-            self.catalog = read_po(open("assets/locale/%s/messages.po" % locale))
+            self.catalog = read_po(open(catalog_path(locale)))
         except ValueError as error:
             raise BadCatalogsError(
                 "The catalog for the given locale (%s) is badly formatted" % locale

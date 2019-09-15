@@ -17,6 +17,7 @@ import json
 from json.decoder import JSONDecodeError
 from os.path import abspath, dirname, join, normpath
 from server.settingsutils import workbench_user_display
+from cjworkbench.i18n import default_locale, supported_locales
 
 if sys.version_info[0] < 3:
     raise RuntimeError("CJ Workbench requires Python 3")
@@ -265,13 +266,13 @@ LOGIN_REDIRECT_URL = "/workflows"
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/
 
-LANGUAGE_CODE = "en"
+LANGUAGE_CODE = default_locale
 TIME_ZONE = "UTC"
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
-LANGUAGES = [("el", "Greek"), ("en", "English")]
+LANGUAGES = [(locale, locale) for locale in supported_locales]
 
 LOCALE_PATHS = (os.path.join(BASE_DIR, "assets", "locale"),)
 
