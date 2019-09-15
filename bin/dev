@@ -46,6 +46,7 @@ print_usage() {
   echo '  pipenv ARGS -- run "pipenv ARGS..." in a Python environment' >&2
   echo '  python ARGS -- run "pipenv run python ARGS..." in a Python environment' >&2
   echo '  pybabel ARGS -- run "pipenv run pybabel ARGS..." in a Python environment' >&2
+  echo '  extract-messages -- extract translation messages from js, python, and templates and merge them into one file per locale' >&2
   echo '  reformat-code -- make code conform to (Black) styleguide' >&2
   echo '  run SERVICE ARGS -- run "docker-compose run -rm SERVICE ARGS..."' >&2
   echo '  quickstart -- start database, RabbitMQ, Webpack and Django without updates' >&2
