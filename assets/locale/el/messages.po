@@ -1,25 +1,26 @@
+
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2019-07-16 11:07+0000\n"
-"Mime-Version: 1.0\n"
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2019-09-15 22:18+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: el\n"
+"Language-Team: el <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: @lingui/cli\n"
-"Language: el\n"
-"Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2019-07-16 11:07+0000\n"
-"Last-Translator: \n"
-"Language-Team: \n"
-"Plural-Forms: \n"
+"Generated-By: Babel 2.7.0\n"
 
 #: assets/js/i18n/locales.js:5
 msgid "locales.el"
-msgstr "Ελληνικά"
+msgstr ""
 
 #: assets/js/i18n/locales.js:4
 msgid "locales.en"
-msgstr "Αγγλικά"
+msgstr ""
 
 #: assets/js/table/SelectedRowsActions.js:105
 msgid "selectedRow.numberOfRows"
@@ -27,18 +28,63 @@ msgstr ""
 
 #: assets/js/WorkflowNavBar.js:62
 msgid "workflow.visibility.private"
-msgstr "Ιδιωτικό"
+msgstr ""
 
 #: assets/js/WorkflowNavBar.js:62
 msgid "workflow.visibility.public"
-msgstr "Δημόσιο"
+msgstr ""
 
 #. This is used in navigation bar. It should be all-caps for styling reasons.
 #: assets/js/Workflows/Navbar.js:39
 msgid "workflows.navbar.training"
-msgstr "ΕΚΠΑΙΔΕΥΣΗ"
+msgstr ""
 
 #. This is used in navigation bar. It should be all-caps for styling reasons.
 #: assets/js/Workflows/Navbar.js:36
 msgid "workflows.navbar.workflows"
-msgstr "WORKFLOWS"
+msgstr ""
+
+#: server/views/lessons.py:61
+#, python-format
+msgid "Lesson: %(lesson_title)s"
+msgstr ""
+
+#: templates/account/login.html:4 templates/account/login.html:10
+#: templates/account/signup.html:12
+msgid "accounts.sign_in.title"
+msgstr ""
+
+#: templates/account/login.html:43
+msgid "Forgot Password?"
+msgstr ""
+
+#: templates/account/login.html:45
+msgid "accounts.sign_in.button"
+msgstr ""
+
+#: templates/account/signup.html:4
+msgid "accounts.sign_up.title"
+msgstr ""
+
+#: templates/account/signup.html:26
+msgid "accounts.sign_up.prompt"
+msgstr ""
+
+#~ msgid "Forgot Password?"
+#~ msgstr ""
+
+#~ msgid "Lesson: %(lesson_title)s"
+#~ msgstr ""
+
+#~ msgid "accounts.sign_in.button"
+#~ msgstr ""
+
+#~ msgid "accounts.sign_in.title"
+#~ msgstr ""
+
+#~ msgid "accounts.sign_up.prompt"
+#~ msgstr ""
+
+#~ msgid "accounts.sign_up.title"
+#~ msgstr ""
+
