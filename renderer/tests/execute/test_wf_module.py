@@ -2,12 +2,11 @@ from contextlib import contextmanager
 from pathlib import Path
 from unittest.mock import Mock, patch
 from django.utils import timezone
-import pandas as pd
-from pandas.testing import assert_frame_equal
+import pyarrow
 from cjwkernel.types import I18nMessage, RenderError, RenderResult
-from cjwkernel.tests.util import parquet_file
+from cjwkernel.tests.util import parquet_file, assert_arrow_table_equals
 from cjwstate import minio
-from cjwstate.storedobjects import create_stored_object, parquet_file_to_pandas
+from cjwstate.storedobjects import create_stored_object
 from cjwstate.models import ModuleVersion, Workflow
 from cjwstate.models.loaded_module import LoadedModule
 from cjwstate.tests.utils import DbTestCase
@@ -86,8 +85,8 @@ class WfModuleTests(DbTestCase):
                 fetch_result.errors,
                 [RenderError(I18nMessage.TODO_i18n("maybe an error"))],
             )
-            assert_frame_equal(
-                parquet_file_to_pandas(fetch_result.path), pd.DataFrame({"A": [1]})
+            assert_arrow_table_equals(
+                pyarrow.parquet.read_table(str(fetch_result.path)), {"A": [1]}
             )
             return RenderResult()
 

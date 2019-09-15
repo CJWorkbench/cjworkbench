@@ -4,7 +4,6 @@ import logging
 import unittest
 from unittest.mock import Mock, patch
 import pandas as pd
-from cjwkernel.pandas.types import ProcessResult
 from cjwkernel.types import I18nMessage, RenderError, RenderResult
 from cjwkernel.tests.util import arrow_table, assert_render_result_equals
 from cjwstate.rendercache import cache_render_result, open_cached_render_result

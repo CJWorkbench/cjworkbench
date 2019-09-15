@@ -7,7 +7,7 @@ import logging
 import math
 import pathlib
 import tempfile
-from typing import Any, Dict
+from typing import Any, ContextManager, Dict
 import urllib.parse
 import urllib3
 from django.conf import settings
@@ -340,7 +340,7 @@ def get_object_with_data(bucket: str, key: str, **kwargs) -> Dict[str, Any]:
 
 
 @contextmanager
-def temporarily_download(bucket: str, key: str) -> None:
+def temporarily_download(bucket: str, key: str) -> ContextManager[pathlib.Path]:
     """
     Copy a file from S3 to a pathlib.Path; yield; and delete.
 

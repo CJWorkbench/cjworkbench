@@ -306,7 +306,8 @@ class ArrowTable:
     Table on disk, opened and mmapped.
 
     A table with no rows must have a file on disk. A table with no _columns_
-    is a special case: it must have `table is None and path is None`.
+    is a special case: it _may_ have `table is None and path is None`, or it
+    may have an empty Arrow table on disk.
 
     `self.table` will be populated and validated during construction.
 
@@ -338,7 +339,6 @@ class ArrowTable:
             assert len(self.metadata.columns) == 0
             table = None
         if self.path is not None:
-            assert len(self.metadata.columns) != 0
             reader = pyarrow.ipc.open_file(str(self.path))
             table = reader.read_all()
             assert table.num_rows == self.metadata.n_rows

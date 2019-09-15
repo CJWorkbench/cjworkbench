@@ -5,8 +5,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 from dateutil import parser
-import pandas as pd
-from pandas.testing import assert_frame_equal
+import pyarrow.parquet
 from cjwkernel.errors import ModuleExitedError
 from cjwkernel.types import (
     Column,
@@ -18,7 +17,11 @@ from cjwkernel.types import (
     RenderResult,
     TableMetadata,
 )
-from cjwkernel.tests.util import arrow_table_context, parquet_file
+from cjwkernel.tests.util import (
+    arrow_table_context,
+    assert_arrow_table_equals,
+    parquet_file,
+)
 from cjwstate import minio, rendercache, storedobjects
 from cjwstate.models import (
     CachedRenderResult,
@@ -470,8 +473,10 @@ class FetchIntegrationTests(DbTestCase):
                 fetch.fetch(workflow_id=workflow.id, wf_module_id=wf_module.id)
             )
         wf_module.refresh_from_db()
-        fetched = storedobjects.read_fetched_dataframe_from_wf_module(wf_module)
-        assert_frame_equal(fetched, pd.DataFrame({"A": [1]}))
+        so = wf_module.stored_objects.get(stored_at=wf_module.stored_data_version)
+        with minio.temporarily_download(so.bucket, so.key) as parquet_path:
+            table = pyarrow.parquet.read_table(str(parquet_path), use_threads=False)
+            assert_arrow_table_equals(table, {"A": [1]})
 
         schedule_execute.assert_called()
         websockets.ws_client_send_delta_async.assert_called()

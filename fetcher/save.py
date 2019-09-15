@@ -1,11 +1,55 @@
+from pathlib import Path
 from typing import Optional
 from django.utils import timezone
+import pandas as pd
+from pandas.util import hash_pandas_object
+import pyarrow
+import pyarrow.parquet
 from cjworkbench.sync import database_sync_to_async
 from cjwkernel.types import FetchResult
 from cjwstate import storedobjects
 from server import websockets
-from cjwstate.models import WfModule, Workflow
+from cjwstate.models import StoredObject, WfModule, Workflow
 from cjwstate.models.commands import ChangeDataVersionCommand
+
+
+def hash_table(table: pd.DataFrame) -> str:
+    """Build a hash useful in comparing data frames for equality."""
+    h = hash_pandas_object(table).sum()  # xor would be nice, but whatevs
+    h = h if h > 0 else -h  # stay positive (sum often overflows)
+    return str(h)
+
+
+def parquet_file_to_pandas(path: Path) -> pd.DataFrame:
+    if path.stat().st_size == 0:
+        return pd.DataFrame()
+    else:
+        arrow_table = pyarrow.parquet.read_table(str(path), use_threads=False)
+        return arrow_table.to_pandas(
+            date_as_object=False, deduplicate_objects=True, ignore_metadata=True
+        )  # TODO ensure dictionaries stay dictionaries
+
+
+def read_dataframe_from_stored_object(
+    stored_object: StoredObject
+) -> Optional[pd.DataFrame]:
+    """
+    Read DataFrame from StoredObject.
+
+    Return None if:
+
+    * there is no file on minio
+    * the file on minio cannot be read
+
+    TODO return a pyarrow.Table instead.
+    """
+    if stored_object.bucket == "":  # ages ago, "empty" meant bucket='', key=''
+        return pd.DataFrame()
+    try:
+        with storedobjects.downloaded_file(stored_object) as path:
+            return parquet_file_to_pandas(path)
+    except (FileNotFoundError, pyarrow.ArrowIOError):
+        return None
 
 
 def _store_fetched_table_if_different(
@@ -18,7 +62,7 @@ def _store_fetched_table_if_different(
     # delegate the hashing function to the modules themselves ... and default
     # to a sha1 of the file data. Transitioning all our existing fetch results
     # will be tricky.
-    table = storedobjects.parquet_file_to_pandas(result.path)
+    table = parquet_file_to_pandas(result.path)
     hash = storedobjects.hash_table(table)
     old_so = wf_module.stored_objects.order_by("-stored_at").first()
     if (

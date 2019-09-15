@@ -93,9 +93,12 @@ def cache_render_result(
     )  # makes old cache inconsistent
     wf_module.save(update_fields=WF_MODULE_FIELDS)  # makes new cache inconsistent
     if result.table.metadata.columns:  # only write non-zero-column tables
-        parquet.write(
-            BUCKET, parquet_key(workflow.id, wf_module.id, delta_id), result.table.table
-        )  # makes new cache consistent
+        with tempfile.NamedTemporaryFile() as tf:
+            parquet_path = Path(tf.name)
+            parquet.write(parquet_path, result.table.table)
+            minio.fput_file(
+                BUCKET, parquet_key(workflow.id, wf_module.id, delta_id), parquet_path
+            )  # makes new cache consistent
 
 
 def downloaded_parquet_file(crr: CachedRenderResult) -> ContextManager[Path]:

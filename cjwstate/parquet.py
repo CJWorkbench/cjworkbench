@@ -1,148 +1,9 @@
-import io
+import contextlib
+import fastparquet
 from pathlib import Path
 import tempfile
-from typing import List, Optional
-import fastparquet
-from typing import Any, Callable
+from typing import ContextManager, List, Optional
 import pyarrow.parquet
-from fastparquet import ParquetFile
-import pandas
-import snappy
-import warnings
-from cjwstate import minio
-
-
-# Workaround for https://github.com/dask/fastparquet/issues/394
-# When we upgrade to fastparquet >= 0.2.2, nix this!
-warnings.filterwarnings(
-    "ignore", category=FutureWarning, module="fastparquet.util", lineno=221
-)
-
-
-def _minio_open_random(bucket, key):
-    if key.endswith("/_metadata"):
-        # fastparquet insists upon trying for the 'hive' storage schema before
-        # settling on the 'simple' storage schema. At no time have we ever
-        # saved a file in 'hive' format; therefore there are no '_metadata'
-        # files; therefore we can skip hitting minio here.
-        raise FileNotFoundError
-
-    # TODO store column metadata in the database, so we don't need to read it
-    # from S3. Then consider minio.FullReadMinioFile, which could be faster.
-    # (We'll want to benchmark.) Another option is to use the 'hive' format and
-    # FullReadMinioFile; but that choice would be hard to un-choose, so let's
-    # not rush into it.
-    raw = minio.RandomReadMinioFile(bucket, key)
-
-    # fastparquet actually expects a _buffered_ reader -- it expects `read()`
-    # to always return a buffer of the same length it requests.
-    buffered = io.BufferedReader(raw)
-
-    return buffered
-
-
-def _minio_open_full(bucket, key):
-    """
-    Optimized open call, for when we know we'll read the entire file.
-    """
-    if key.endswith("/_metadata"):
-        # fastparquet insists upon trying for the 'hive' storage schema before
-        # settling on the 'simple' storage schema. At no time have we ever
-        # saved a file in 'hive' format; therefore there are no '_metadata'
-        # files; therefore we can skip hitting minio here.
-        raise FileNotFoundError
-
-    # Don't worry about needing a _buffered_ reader here (like we worry in
-    # _minio_open_random). FullReadMinioFile actually does a regular open() on
-    # a regular file -- so it will behave exactly as fastparquet expects.
-    return minio.FullReadMinioFile(bucket, key)
-
-
-# Suppress this arning:
-# .../python3.6/site-packages/fastparquet/writer.py:407: FutureWarning: Method
-# .valid will be removed in a future version. Use .dropna instead.
-#   out = data.valid()  # better, data[data.notnull()], from above ?
-#
-# warnings.catch_warnings() is not thread-safe so we can't use it.
-warnings.filterwarnings(
-    action="ignore",
-    message="Method .valid will be removed in a future version.",
-    category=FutureWarning,
-    module="fastparquet.writer",
-)
-
-
-class FastparquetCouldNotHandleFile(Exception):
-    pass
-
-
-class FastparquetIssue375(FastparquetCouldNotHandleFile):
-    """
-    The file was written by pyarrow, has a really long string and
-    Fastparquet has a bug.
-
-    Track the issue at https://github.com/dask/fastparquet/issues/375
-    """
-
-    pass
-
-
-def read_header(
-    bucket: str, key: str, open_with: Callable[[str, str], Any] = _minio_open_random
-) -> ParquetFile:
-    """
-    Ensure a ParquetFile exists, and return it with headers read.
-
-    May raise FileNotFoundError or FastparquetCouldNotHandleFile.
-
-    `retval.fn` gives the filename; `retval.columns` gives column names;
-    `retval.dtypes` gives pandas dtypes, and `retval.to_pandas()` reads
-    the entire file.
-    """
-    filelike = open_with(bucket, key)  # raises FileNotFoundError
-    return fastparquet.ParquetFile(filelike)
-
-
-def read(
-    bucket: str, key: str, to_pandas_args=[], to_pandas_kwargs={}
-) -> pandas.DataFrame:
-    """
-    Load a Pandas DataFrame from disk or raise FileNotFoundError or
-    FastparquetCouldNotHandleFile.
-
-    May raise OSError (e.g., FileNotFoundError) or
-    FastparquetCouldNotHandleFile. The latter comes from
-    https://github.com/dask/fastparquet/issues/375 -- we used to write with
-    pyarrow, and fastparquet fails on some files with large strings. Those
-    files are so old we won't attempt to support them.
-    """
-    if to_pandas_args or to_pandas_kwargs:
-        open_with = _minio_open_random
-    else:
-        open_with = _minio_open_full
-
-    try:
-        pf = read_header(bucket, key, open_with=open_with)
-        dataframe = pf.to_pandas(*to_pandas_args, **to_pandas_kwargs)
-    except snappy.UncompressError as err:
-        if str(err) == "Error while decompressing: invalid input":
-            # Assume Fastparquet is reporting the wrong bug.
-            #
-            # XXX this means we can't actually report corrupt files. Let's fix
-            # Fastparquet and delete this possibility altogether.
-            raise FastparquetIssue375
-        raise
-    except AssertionError:
-        raise FastparquetIssue375
-
-    # Empty categorical gets read as int64. Convert to str.
-    if dataframe.empty:
-        cat_colnames = dataframe.columns[dataframe.dtypes == "category"]
-        for cat_colname in cat_colnames:
-            dataframe[cat_colname] = (
-                dataframe[cat_colname].astype(str).astype("category")
-            )
-    return dataframe
 
 
 def convert_parquet_file_to_arrow_file(
@@ -151,11 +12,39 @@ def convert_parquet_file_to_arrow_file(
     # TODO stream one column at a time? pyarrow makes it tricky, but it would
     # be more efficient because less RAM would be used.
 
-    table = pyarrow.parquet.read_table(
-        parquet_path, use_threads=False, columns=only_columns
-    )
+    # we use fastparquet, not pyarrow, to read metadata: [2019-09-15] pyarrow.parquet
+    # doesn't treat dictionary-encoded columns as dictionary-encoded (and it
+    # seems impossible to detect dictionary encoding). TODO pyarrow v0.15.0,
+    # we should use `pyarrow.parquet.read_table(..., use_categories=...)`.
+    fastparquet_file = fastparquet.ParquetFile(str(parquet_path))
+    # if len(fastparquet_file.row_groups) > 1:
+    #     raise pyarrow.ArrowIOError("Workbench only supports 0 or 1 parquet row group")
+    try:
+        rg0_columns = fastparquet_file.row_groups[0].columns
+        dictionary_columns = frozenset(
+            c.meta_data.path_in_schema[0]
+            for c in rg0_columns
+            if c.meta_data.dictionary_page_offset is not None
+        )
+    except IndexError:  # there is no row group 0
+        dictionary_columns = frozenset()
 
-    # Avoid a problem calling .to_pandas() with fastparquet-dumped files.
+    parquet_file = pyarrow.parquet.ParquetFile(str(parquet_path))
+    arrays: List[pyarrow.Array] = []
+    names: List[str] = []
+    for column in parquet_file.schema:
+        # TODO write in serial, so we don't store the whole Arrow table in RAM
+        array = parquet_file.read(
+            [column.name], use_threads=False, use_pandas_metadata=False
+        )[0]
+        if column.name in dictionary_columns:
+            array = array.dictionary_encode()
+        arrays.append(array)
+        names.append(column.name)
+    table = pyarrow.Table.from_arrays(arrays, names=names)
+
+    # Be sure to ignore the parquet file's schema metadata, because it can
+    # cause an error like this on Fastparquet-dumped files:
     #
     #   File "pyarrow/array.pxi", line 441, in pyarrow.lib._PandasConvertible.to_pandas
     #   File "pyarrow/table.pxi", line 1367, in pyarrow.lib.Table._to_pandas
@@ -172,52 +61,82 @@ def convert_parquet_file_to_arrow_file(
     # We don't care about schema metadata, anyway. Workbench has its own
     # restrictive schema; we don't need extra Pandas-specific data because
     # we don't support everything Pandas supports.
-    table = table.replace_schema_metadata(None)  # FIXME unit-test this!
 
     writer = pyarrow.RecordBatchFileWriter(str(arrow_path), table.schema)
     writer.write_table(table)
     writer.close()
 
 
-def write_pandas(bucket: str, key: str, table: pandas.DataFrame) -> int:
+def write(parquet_path: Path, table: pyarrow.Table) -> None:
     """
-    Write a Pandas DataFrame to a minio file, overwriting if needed.
-
-    Return number of bytes written.
+    Write an Arrow table to a Parquet file, overwriting if needed.
 
     We aim to keep the file format "stable": all future versions of
     parquet.read() should support all files written by today's version of this
     function.
+
+    Dictionary-encoded columns will stay dictionary-encoded. Practically,
+    `parquet.write(path, table); table = parquet.read(path)` does not change
+    `table`.
+    """
+    if table.num_rows == 0:
+        # Workaround for https://issues.apache.org/jira/browse/ARROW-6568
+        # If table is zero-length, guarantee it has a RecordBatch so Arrow
+        # won't crash when writing a DictionaryArray.
+
+        def empty_array_for_field(field):
+            if pyarrow.types.is_dictionary(field.type):
+                return pyarrow.DictionaryArray.from_arrays(
+                    pyarrow.array([], type=field.type.index_type),
+                    pyarrow.array([], type=field.type.value_type),
+                )
+            else:
+                return pyarrow.array([], type=field.type)
+
+        table = pyarrow.table(
+            {field.name: empty_array_for_field(field) for field in table.schema}
+        )
+
+    pyarrow.parquet.write_table(
+        table,
+        str(parquet_path),
+        compression="SNAPPY",
+        # Preserve whatever dictionaries we have in Pandas. Write+read
+        # should return an exact copy.
+        use_dictionary=[
+            c.name.encode("utf-8")
+            for c in table.columns
+            if pyarrow.types.is_dictionary(c.type)
+        ],
+    )
+
+
+@contextlib.contextmanager
+def open_as_mmapped_arrow(parquet_path: Path) -> ContextManager[pyarrow.Table]:
+    """
+    Load `parquet_path` as a low-RAM (mmapped) pyarrow.Table.
+
+    Raise `pyarrow.ArrowIOError` on invalid input file.
+
+    Dictionary-encoded columns will stay dictionary-encoded. Practically,
+    `parquet.write(path, table); table = parquet.read(path)` does not change
+    `table`.
     """
     with tempfile.NamedTemporaryFile() as tf:
-        fastparquet.write(tf.name, table, compression="SNAPPY", object_encoding="utf8")
-        minio.fput_file(bucket, key, Path(tf.name))
-        tf.seek(0, io.SEEK_END)
-        return tf.tell()
+        arrow_path = Path(tf.name)
+        # raise ArrowIOError
+        convert_parquet_file_to_arrow_file(parquet_path, arrow_path)
+        reader = pyarrow.ipc.open_file(str(arrow_path))
+        arrow_table = reader.read_all()
+        yield arrow_table
 
 
-def write(bucket: str, key: str, table: pyarrow.Table) -> int:
+def read(parquet_path: Path) -> pyarrow.Table:
     """
-    Write a Pandas DataFrame to a minio file, overwriting if needed.
+    Return a pyarrow.Table, with its backing file deleted.
 
-    Return number of bytes written.
-
-    We aim to keep the file format "stable": all future versions of
-    parquet.read() should support all files written by today's version of this
-    function.
+    (Even though the file is deleted from the _filesystem_, the data is still
+    on disk and mmapped until the return value goes out of scope.)
     """
-    with tempfile.NamedTemporaryFile("wb") as tf:
-        pyarrow.parquet.write_table(
-            table,
-            tf,
-            ## Preserve whatever dictionaries we have in Pandas. Write+read
-            ## should return an exact copy.
-            # use_dictionary=[
-            #    c.name for c in table.columns if pyarrow.types.is_dictionary(c.type)
-            # ],
-            compression="SNAPPY",
-        )
-        tf.flush()
-        minio.fput_file(bucket, key, Path(tf.name))
-        tf.seek(0, io.SEEK_END)
-        return tf.tell()
+    with open_as_mmapped_arrow(parquet_path) as table:
+        return table

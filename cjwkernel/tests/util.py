@@ -4,6 +4,7 @@ import os
 import tempfile
 from typing import Any, ContextManager, Dict, List, Optional, Union
 import unittest
+from numpy.testing import assert_equal  # [None, "x"] == [None, "x"]
 import pyarrow
 import pyarrow.parquet
 from cjwkernel import settings
@@ -93,9 +94,25 @@ def assert_arrow_table_equals(
     if isinstance(result2, pyarrow.Table) or isinstance(result2, dict):
         result2 = arrow_table(result2)
     assertEqual = unittest.TestCase().assertEqual
-    assertEqual(result1.metadata, result2.metadata)
+    assertEqual(result1.metadata.columns, result2.metadata.columns)
+    assertEqual(result1.metadata.n_rows, result2.metadata.n_rows)
+    if not result1.metadata.columns:
+        # No columns? Then any two tables with same number of rows are equal
+        return
     if result1.table is not None and result2.table is not None:
-        assertEqual(result1.table.to_pydict(), result2.table.to_pydict())
+        for actual_col, expected_col in zip(
+            result1.table.columns, result2.table.columns
+        ):
+            assertEqual(
+                actual_col.type,
+                expected_col.type,
+                msg=f"Column {actual_col.name} has wrong type",
+            )
+            assert_equal(
+                actual_col.to_pylist(),
+                expected_col.to_pylist(),
+                err_msg=f"Column {actual_col.name} has wrong values",
+            )
     else:
         assertEqual(result1.table is None, result2.table is None)
 
