@@ -161,4 +161,4 @@ msgstr "ΕΚΠΑΙΔΕΥΣΗ"
 #. This is used in navigation bar. It should be all-caps for styling reasons.
 #: assets/js/Workflows/Navbar.js:36
 msgid "workflows.navbar.workflows"
-msgstr "WORKFLOWS"
+msgstr "Ροές Εργασίας"
