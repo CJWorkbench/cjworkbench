@@ -6,12 +6,21 @@ from cjwstate.models.commands import (
     ChangeWorkflowTitleCommand,
     ChangeWfModuleNotesCommand,
 )
+from cjwstate.models.loaded_module import LoadedModule
 from cjwstate.tests.utils import DbTestCase
 from server.versions import WorkflowUndo, WorkflowRedo
 
 
 async def async_noop(*args, **kwargs):
     pass
+
+
+class MockLoadedModule:
+    def __init__(self, *args, **kwargs):
+        pass
+
+    def migrate_params(self, params):
+        return params
 
 
 @patch("server.rabbitmq.queue_render", async_noop)
@@ -32,6 +41,7 @@ class UndoRedoTests(DbTestCase):
     #    away commands 2,3
     # Command types used here are arbitrary, but different so that we test
     # polymorphism
+    @patch.object(LoadedModule, "for_module_version_sync", MockLoadedModule)
     def test_undo_redo(self):
         ModuleVersion.create_or_replace_from_spec(
             {
