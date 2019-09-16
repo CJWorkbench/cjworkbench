@@ -21,6 +21,7 @@ class MockLoadedModule:
 @patch("server.rabbitmq.queue_render", async_noop)
 @patch("cjwstate.models.Delta.ws_notify", async_noop)
 class ChangeParametersCommandTest(DbTestCase):
+    @patch.object(LoadedModule, "for_module_version_sync", MockLoadedModule)
     def test_change_parameters(self):
         # Setup: workflow with loadurl module
         #
