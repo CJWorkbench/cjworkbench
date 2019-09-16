@@ -24,7 +24,6 @@ def render(table: pd.DataFrame, params: Dict[str, Any], **kwargs):
     `render_thrift()`.)
     """
     if "fetch_result" in kwargs:
-        print(repr(kwargs["fetch_result"]))
         return kwargs["fetch_result"]
     else:
         return None
