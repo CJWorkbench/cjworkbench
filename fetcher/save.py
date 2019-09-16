@@ -63,7 +63,7 @@ def _store_fetched_table_if_different(
     # to a sha1 of the file data. Transitioning all our existing fetch results
     # will be tricky.
     table = parquet_file_to_pandas(result.path)
-    hash = storedobjects.hash_table(table)
+    hash = hash_table(table)
     old_so = wf_module.stored_objects.order_by("-stored_at").first()
     if (
         old_so is not None
@@ -71,7 +71,7 @@ def _store_fetched_table_if_different(
         and hash == old_so.hash
         # Slow: compare files. Expensive: reads a file from S3, holds
         # both DataFrames in RAM, uses lots of CPU.
-        and table.equals(storedobjects.read_dataframe_from_stored_object(old_so))
+        and table.equals(read_dataframe_from_stored_object(old_so))
     ):
         # `table` is identical to what was in `old_so`.
         return None
