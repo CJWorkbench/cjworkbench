@@ -19,6 +19,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view, renderer_classes
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
+from cjwkernel.pandas import types as ptypes
 from cjwstate.rendercache import CorruptCacheError, open_cached_render_result
 from cjwstate.models import Tab, WfModule, Workflow
 from cjwstate.models.loaded_module import module_get_html_bytes
@@ -246,7 +247,7 @@ def wfmodule_value_counts(request: HttpRequest, wf_module: WfModule):
     # String-based for now. Excel and Google Sheets only filter by String
     # values, so we're in good company.) Remember: in JavaScript, Object keys
     # must be String.
-    series = column.type.format_series(series)
+    series = ptypes.ColumnType.from_arrow(column.type).format_series(series)
     value_counts = series.value_counts().to_dict()
 
     return JsonResponse({"values": value_counts})

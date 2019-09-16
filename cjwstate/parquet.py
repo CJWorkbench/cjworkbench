@@ -33,6 +33,9 @@ def convert_parquet_file_to_arrow_file(
     arrays: List[pyarrow.Array] = []
     names: List[str] = []
     for column in parquet_file.schema:
+        if only_columns is not None and column.name not in only_columns:
+            continue
+
         # TODO write in serial, so we don't store the whole Arrow table in RAM
         array = parquet_file.read(
             [column.name], use_threads=False, use_pandas_metadata=False

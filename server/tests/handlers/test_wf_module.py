@@ -630,7 +630,7 @@ class WfModuleTest(HandlerTestCase):
 
         wf_module.refresh_from_db()
         self.assertEqual(wf_module.is_busy, True)
-        queue_fetch.assert_called_with(wf_module)
+        queue_fetch.assert_called_with(workflow.id, wf_module.id)
         send_delta.assert_called_with(
             workflow.id,
             {

@@ -4,9 +4,9 @@ import unittest
 from unittest.mock import patch
 from asgiref.sync import async_to_sync
 import dateutil
-from django.test import SimpleTestCase, override_settings
 import pandas as pd
 from pandas.testing import assert_frame_equal
+from cjwkernel.tests.util import override_settings
 from cjwkernel.pandas.types import ProcessResult
 from server.modules import twitter
 from .util import MockParams
@@ -880,7 +880,7 @@ class MigrateParamsTest(unittest.TestCase):
         self.assertEqual(result, expected)
 
 
-class TwitterTests(SimpleTestCase):
+class TwitterTests(unittest.TestCase):
     def test_fetch_empty_query_and_secret(self):
         result = fetch(P(querytype="search", query=""), None)
         self.assertIsNone(result)

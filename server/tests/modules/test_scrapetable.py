@@ -59,7 +59,7 @@ a_table = pd.DataFrame({"A": [1, 2], "B": [2, 3]})
 
 
 class ScrapeTableTest(unittest.TestCase):
-    @patch("server.modules.utils.spooled_data_from_url")
+    @patch("cjwkernel.pandas.moduleutils.spooled_data_from_url")
     def test_scrape_table(self, mock_data):
         url = "http://test.com/tablepage.html"
         mock_data.return_value = fake_spooled_data_from_url(a_table_html)
@@ -109,7 +109,7 @@ class ScrapeTableTest(unittest.TestCase):
         )
 
     @patch(
-        "server.modules.utils.spooled_data_from_url",
+        "cjwkernel.pandas.moduleutils.spooled_data_from_url",
         fake_spooled_data_from_url(a_table_html),
     )
     def test_table_index_over(self):
@@ -120,7 +120,7 @@ class ScrapeTableTest(unittest.TestCase):
         )
 
     @patch(
-        "server.modules.utils.spooled_data_from_url",
+        "cjwkernel.pandas.moduleutils.spooled_data_from_url",
         fake_spooled_data_from_url(
             b"""
                <html>
@@ -151,7 +151,7 @@ class ScrapeTableTest(unittest.TestCase):
         )
 
     @patch(
-        "server.modules.utils.spooled_data_from_url",
+        "cjwkernel.pandas.moduleutils.spooled_data_from_url",
         fake_spooled_data_from_url(
             error=aiohttp.ClientResponseError(
                 None, None, status=500, message="Server Error"
@@ -166,7 +166,7 @@ class ScrapeTableTest(unittest.TestCase):
         )
 
     @patch(
-        "server.modules.utils.spooled_data_from_url",
+        "cjwkernel.pandas.moduleutils.spooled_data_from_url",
         fake_spooled_data_from_url(b"<html><body>No table</body></html>"),
     )
     def test_no_tables(self):
@@ -180,7 +180,7 @@ class ScrapeTableTest(unittest.TestCase):
         )
 
     @patch(
-        "server.modules.utils.spooled_data_from_url",
+        "cjwkernel.pandas.moduleutils.spooled_data_from_url",
         fake_spooled_data_from_url(
             error=aiohttp.ClientResponseError(
                 None, None, status=404, message="Not Found"
@@ -194,7 +194,7 @@ class ScrapeTableTest(unittest.TestCase):
         )
 
     @patch(
-        "server.modules.utils.spooled_data_from_url",
+        "cjwkernel.pandas.moduleutils.spooled_data_from_url",
         fake_spooled_data_from_url(
             b"<table><tr><th>A</th></tr><tr><td>1</td></tr></table>"
         ),
@@ -204,7 +204,7 @@ class ScrapeTableTest(unittest.TestCase):
         assert_frame_equal(fetch_result.dataframe, pd.DataFrame({"A": [1]}))
 
     @patch(
-        "server.modules.utils.spooled_data_from_url",
+        "cjwkernel.pandas.moduleutils.spooled_data_from_url",
         fake_spooled_data_from_url(
             # Add two columns. pd.read_html() will not return an all-empty
             # row, and we're not testing what happens when it does. We want
@@ -220,7 +220,7 @@ class ScrapeTableTest(unittest.TestCase):
         )
 
     @patch(
-        "server.modules.utils.spooled_data_from_url",
+        "cjwkernel.pandas.moduleutils.spooled_data_from_url",
         fake_spooled_data_from_url(b"<html><body><table></table></body></html>"),
     )
     def test_empty_table(self):
@@ -233,7 +233,7 @@ class ScrapeTableTest(unittest.TestCase):
         )
 
     @patch(
-        "server.modules.utils.spooled_data_from_url",
+        "cjwkernel.pandas.moduleutils.spooled_data_from_url",
         fake_spooled_data_from_url(
             b"""
                <html><body><table>
@@ -248,7 +248,7 @@ class ScrapeTableTest(unittest.TestCase):
         assert_frame_equal(fetch_result.dataframe, pd.DataFrame({"A": []}, dtype=str))
 
     @patch(
-        "server.modules.utils.spooled_data_from_url",
+        "cjwkernel.pandas.moduleutils.spooled_data_from_url",
         fake_spooled_data_from_url(
             b"<table><tr><th>A</th><th>A</th></tr>"
             b"<tr><td>1</td><td>2</td></tr></table>"
@@ -264,7 +264,7 @@ class ScrapeTableTest(unittest.TestCase):
         )
 
     @patch(
-        "server.modules.utils.spooled_data_from_url",
+        "cjwkernel.pandas.moduleutils.spooled_data_from_url",
         fake_spooled_data_from_url(
             b"<table><thead>"
             b'  <tr><th colspan="2">Category</th></tr>'
@@ -284,7 +284,7 @@ class ScrapeTableTest(unittest.TestCase):
         )
 
     @patch(
-        "server.modules.utils.spooled_data_from_url",
+        "cjwkernel.pandas.moduleutils.spooled_data_from_url",
         fake_spooled_data_from_url(
             b"<table><tbody><tr><td>a</td><td>b</td></tr></tbody></table>"
         ),
@@ -299,7 +299,7 @@ class ScrapeTableTest(unittest.TestCase):
         )
 
     @patch(
-        "server.modules.utils.spooled_data_from_url",
+        "cjwkernel.pandas.moduleutils.spooled_data_from_url",
         fake_spooled_data_from_url(
             b"<table><thead>"
             b'  <tr><th colspan="2">Category</th><th rowspan="2">Category - A</th></tr>'
@@ -321,7 +321,7 @@ class ScrapeTableTest(unittest.TestCase):
         )
 
     @patch(
-        "server.modules.utils.spooled_data_from_url",
+        "cjwkernel.pandas.moduleutils.spooled_data_from_url",
         fake_spooled_data_from_url(
             b"<table><thead>"
             b"  <tr><th></th><th>Column 1</th></tr>"

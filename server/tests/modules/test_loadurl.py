@@ -80,7 +80,7 @@ def fetch(**kwargs):
 
 class LoadUrlTests(unittest.TestCase):
     @patch(
-        "server.modules.utils.spooled_data_from_url",
+        "cjwkernel.pandas.moduleutils.spooled_data_from_url",
         fake_spooled_data_from_url(mock_csv_raw, "text/csv"),
     )
     def test_fetch_csv(self):
@@ -88,7 +88,7 @@ class LoadUrlTests(unittest.TestCase):
         assert_frame_equal(result, mock_csv_table)
 
     @patch(
-        "server.modules.utils.spooled_data_from_url",
+        "cjwkernel.pandas.moduleutils.spooled_data_from_url",
         fake_spooled_data_from_url(b'a\n"b', "text/csv"),
     )
     def test_fetch_invalid_csv(self):
@@ -100,7 +100,7 @@ class LoadUrlTests(unittest.TestCase):
         assert_frame_equal(result, pd.DataFrame({"a": ["b"]}))
 
     @patch(
-        "server.modules.utils.spooled_data_from_url",
+        "cjwkernel.pandas.moduleutils.spooled_data_from_url",
         fake_spooled_data_from_url(mock_csv_raw, "text/plain"),
     )
     def test_fetch_csv_use_ext_given_bad_content_type(self):
@@ -110,7 +110,7 @@ class LoadUrlTests(unittest.TestCase):
         assert_frame_equal(result, mock_csv_table)
 
     @patch(
-        "server.modules.utils.spooled_data_from_url",
+        "cjwkernel.pandas.moduleutils.spooled_data_from_url",
         fake_spooled_data_from_url(mock_csv_raw, "application/csv"),
     )
     def test_fetch_csv_handle_nonstandard_mime_type(self):
@@ -124,7 +124,7 @@ class LoadUrlTests(unittest.TestCase):
         assert_frame_equal(result, mock_csv_table)
 
     @patch(
-        "server.modules.utils.spooled_data_from_url",
+        "cjwkernel.pandas.moduleutils.spooled_data_from_url",
         fake_spooled_data_from_url(b'[{"A":1}]', "application/json", "utf-8"),
     )
     def test_fetch_json(self):
@@ -132,7 +132,7 @@ class LoadUrlTests(unittest.TestCase):
         assert_frame_equal(result, pd.DataFrame({"A": [1]}))
 
     @patch(
-        "server.modules.utils.spooled_data_from_url",
+        "cjwkernel.pandas.moduleutils.spooled_data_from_url",
         fake_spooled_data_from_url(b"not json", "application/json"),
     )
     def test_fetch_json_invalid_json(self):
@@ -147,14 +147,14 @@ class LoadUrlTests(unittest.TestCase):
             xlsx_table = pd.read_excel(mock_xlsx_path)
 
         with patch(
-            "server.modules.utils.spooled_data_from_url",
+            "cjwkernel.pandas.moduleutils.spooled_data_from_url",
             fake_spooled_data_from_url(xlsx_bytes, XLSX_MIME_TYPE, None),
         ):
             result = fetch(url="http://test.com/x.xlsx")
         assert_frame_equal(result, xlsx_table)
 
     @patch(
-        "server.modules.utils.spooled_data_from_url",
+        "cjwkernel.pandas.moduleutils.spooled_data_from_url",
         fake_spooled_data_from_url(b"hi", XLSX_MIME_TYPE, None),
     )
     def test_fetch_xlsx_bad_content(self):
@@ -168,7 +168,7 @@ class LoadUrlTests(unittest.TestCase):
         )
 
     @patch(
-        "server.modules.utils.spooled_data_from_url",
+        "cjwkernel.pandas.moduleutils.spooled_data_from_url",
         fake_spooled_data_from_url(
             error=aiohttp.ClientResponseError(
                 None, None, status=404, message="Not Found"
