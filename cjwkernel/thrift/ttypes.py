@@ -1885,7 +1885,7 @@ class RenderRequest(object):
                     self.fetch_result.read(iprot)
                 else:
                     iprot.skip(ftype)
-            elif fid == 6:
+            elif fid == 5:
                 if ftype == TType.STRING:
                     self.output_filename = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
                 else:
@@ -1921,7 +1921,7 @@ class RenderRequest(object):
             self.fetch_result.write(oprot)
             oprot.writeFieldEnd()
         if self.output_filename is not None:
-            oprot.writeFieldBegin('output_filename', TType.STRING, 6)
+            oprot.writeFieldBegin('output_filename', TType.STRING, 5)
             oprot.writeString(self.output_filename.encode('utf-8') if sys.version_info[0] == 2 else self.output_filename)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
@@ -2185,8 +2185,7 @@ RenderRequest.thrift_spec = (
     (2, TType.MAP, 'params', (TType.STRING, 'UTF8', TType.STRUCT, [ParamValue, None], False), None, ),  # 2
     (3, TType.STRUCT, 'tab', [Tab, None], None, ),  # 3
     (4, TType.STRUCT, 'fetch_result', [FetchResult, None], None, ),  # 4
-    None,  # 5
-    (6, TType.STRING, 'output_filename', 'UTF8', None, ),  # 6
+    (5, TType.STRING, 'output_filename', 'UTF8', None, ),  # 5
 )
 all_structs.append(RenderResult)
 RenderResult.thrift_spec = (

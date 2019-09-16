@@ -339,7 +339,7 @@ struct RenderRequest {
    * The caller is assumed to have made a best effort to ensure the file is
    * writable.
    */
-  6: string output_filename,
+  5: string output_filename,
 }
 
 /**

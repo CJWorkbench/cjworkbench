@@ -23,7 +23,11 @@ def render(table: pd.DataFrame, params: Dict[str, Any], **kwargs):
     optimizing by rewriting as `render_arrow()` ... and maybe even
     `render_thrift()`.)
     """
-    raise NotImplementedError("This module does not define a render() function")
+    if "fetch_result" in kwargs:
+        print(repr(kwargs["fetch_result"]))
+        return kwargs["fetch_result"]
+    else:
+        return None
 
 
 def render_pandas(
@@ -60,9 +64,11 @@ def render_pandas(
     if varkw or "input_columns" in kwonlyargs:
         kwargs["input_columns"] = input_columns
     raw_result = render(input_table, params, **kwargs)
-    return ptypes.ProcessResult.coerce(
+    result = ptypes.ProcessResult.coerce(
         raw_result, try_fallback_columns=input_table_shape.columns
     )  # raise ValueError if invalid
+    result.truncate_in_place_if_too_big()
+    return result
 
 
 def __arrow_to_pandas(table: types.ArrowTable) -> pd.DataFrame:
@@ -151,10 +157,12 @@ def render_arrow(
     }
     if fetch_result is not None:
         fetched_table = __parquet_to_pandas(fetch_result.path)
-        pandas_fetch_result = ptypes.ProcessResult(
-            fetched_table,
-            error=("" if not fetch_result.errors else str(fetch_result.errors)),
-        )
+        if fetch_result.errors:
+            assert fetch_result.errors[0].message.id == "TODO_i18n"
+            error = fetch_result.errors[0].message.args["text"]
+        else:
+            error = ""
+        pandas_fetch_result = ptypes.ProcessResult(fetched_table, error)
     else:
         pandas_fetch_result = None
 
