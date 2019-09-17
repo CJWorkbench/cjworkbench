@@ -48,11 +48,12 @@ class LoadedModule:
     def render(
         self,
         *,
+        basedir: Path,
         input_table: ArrowTable,
         params: Params,
         tab: Tab,
         fetch_result: Optional[FetchResult],
-        output_path: Path,
+        output_filename: str,
     ) -> RenderResult:
         """
         Process `table` with module `render` method, for a RenderResult.
@@ -67,11 +68,12 @@ class LoadedModule:
         try:
             result = module_loader.kernel.render(
                 self.compiled_module,
+                basedir,
                 input_table,
                 params,
                 tab,
                 fetch_result,
-                output_path,
+                output_filename,
             )
         except ModuleError as err:
             logger.exception("Exception in %s.render", self.module_id_name)
@@ -105,11 +107,12 @@ class LoadedModule:
     def fetch(
         self,
         *,
+        basedir: Path,
         params: Params,
         secrets: Dict[str, Any],
         last_fetch_result: Optional[FetchResult],
-        input_parquet_path: Optional[Path],
-        output_path: Path,
+        input_parquet_filename: Optional[str],
+        output_filename: str,
     ) -> FetchResult:
         """
         Call module `fetch(...)` method to build a `FetchResult`.
@@ -125,11 +128,12 @@ class LoadedModule:
         try:
             ret = module_loader.kernel.fetch(
                 self.compiled_module,
+                basedir,
                 params,
                 secrets,
                 last_fetch_result,
-                input_parquet_path,
-                output_path,
+                input_parquet_filename,
+                output_filename,
             )
             status = "%0.1fMB" % (ret.path.stat().st_size / 1024 / 1024)
             return ret

@@ -1,10 +1,8 @@
-import contextlib
-import os
 from pathlib import Path
-import tempfile
 from typing import ContextManager
 import uuid
 from django.conf import settings
+from cjwkernel.util import tempfile_context
 from cjwstate import minio
 from cjwstate.models import StoredObject, WfModule
 
@@ -12,17 +10,7 @@ from cjwstate.models import StoredObject, WfModule
 BUCKET = minio.StoredObjectsBucket
 
 
-@contextlib.contextmanager
-def _empty_temporary_file() -> ContextManager[Path]:
-    fd, filename = tempfile.mkstemp(prefix="storedobjects-empty-file")
-    try:
-        os.close(fd)
-        yield Path(filename)
-    finally:
-        os.unlink(filename)
-
-
-def downloaded_file(stored_object: StoredObject) -> ContextManager[Path]:
+def downloaded_file(stored_object: StoredObject, dir=None) -> ContextManager[Path]:
     """
     Context manager to download and yield `path`, the StoredObject's file.
 
@@ -39,10 +27,12 @@ def downloaded_file(stored_object: StoredObject) -> ContextManager[Path]:
     if stored_object.size == 0:
         # Some stored objects with size=0 do not have bucket/key. These are
         # valid -- they represent empty files.
-        return _empty_temporary_file()
+        return tempfile_context(prefix="storedobjects-empty-file", dir=dir)
     else:
         # raises FileNotFoundError
-        return minio.temporarily_download(stored_object.bucket, stored_object.key)
+        return minio.temporarily_download(
+            stored_object.bucket, stored_object.key, dir=dir
+        )
 
 
 def _build_key(workflow_id: int, wf_module_id: int) -> str:

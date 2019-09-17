@@ -171,26 +171,27 @@ class Kernel:
     def render(
         self,
         compiled_module: CompiledModule,
+        basedir: Path,
         input_table: ArrowTable,
         params: Params,
         tab: Tab,
         fetch_result: Optional[FetchResult],
-        output_path: Path,
+        output_filename: str,
     ) -> RenderResult:
         request = ttypes.RenderRequest(
+            str(basedir),
             input_table.to_thrift(),
             params.to_thrift(),
             tab.to_thrift(),
             None if fetch_result is None else fetch_result.to_thrift(),
-            str(output_path),
+            output_filename,
         )
         result = self._run_in_child(
             compiled_module, ttypes.RenderResult(), "render_thrift", request
         )
-        if result.table.filename:
-            # TODO ensure output is to correct file (with tests!)
-            assert result.table.filename == str(output_path)  # security!
-        render_result = RenderResult.from_thrift(result)
+        # RenderResult.from_thrift() verifies all filenames passed by the
+        # module are in the directory the module has access to.
+        render_result = RenderResult.from_thrift(result, basedir)
         if render_result.table.table is not None:
             validate(render_result.table.table, render_result.table.metadata)
         return render_result
@@ -198,26 +199,26 @@ class Kernel:
     def fetch(
         self,
         compiled_module: CompiledModule,
+        basedir: Path,
         params: Params,
         secrets: Dict[str, Any],
         last_fetch_result: Optional[FetchResult],
-        input_parquet_path: Optional[Path],
-        output_path: Path,
+        input_parquet_filename: str,
+        output_filename: str,
     ) -> FetchResult:
         request = ttypes.FetchRequest(
+            str(basedir),
             params.to_thrift(),
             RawParams(secrets).to_thrift(),
             None if last_fetch_result is None else last_fetch_result.to_thrift(),
-            input_parquet_path,
-            str(output_path),
+            input_parquet_filename,
+            output_filename,
         )
         result = self._run_in_child(
             compiled_module, ttypes.FetchResult(), "fetch_thrift", request
         )
         # TODO ensure result is truncated
-        # TODO ensure output is to correct file (with tests!)
-        assert result.filename == str(output_path)  # security!
-        return FetchResult.from_thrift(result)
+        return FetchResult.from_thrift(result, basedir)
 
     def _run_in_child(
         self, compiled_module: CompiledModule, result: Any, function: str, *args

@@ -65,9 +65,6 @@ struct TableMetadata {
 
 /**
  * Table stored on disk, ready to be mmapped.
- *
- * The file on disk is in a directory agreed upon by the processes passing this
- * data around.
  */
 struct ArrowTable {
   /**
@@ -75,6 +72,9 @@ struct ArrowTable {
    *
    * For a zero-column table, filename may be the empty string -- meaning there
    * is no file on disk. In all other cases, the file on disk must exist.
+   *
+   * The file on disk is in a directory agreed upon by the processes passing
+   * this data around. Subdirectories and hidden files aren't allowed.
    */
   1: string filename,
 
@@ -122,6 +122,12 @@ union ParamValue {
    * to us.
    */
   8: map<string, ParamValue> map_value,
+  /**
+   * A string filename, with no path information, pointing to a file on disk.
+   *
+   * The directory is assumed based on context.
+   */
+  9: string filename_value,
 }
 
 /**
@@ -239,14 +245,23 @@ struct RenderError {
  */
 struct FetchRequest {
   /**
+   * Directory where the module will be allowed to read and write.
+   *
+   * Filenames in the fetch request/response pairs must not contain
+   * subdirectories or start with dots; and they must exist within this
+   * directory.
+   */
+  1: string basedir,
+
+  /**
    * User-supplied params.
    */
-  1: Params params,
+  2: Params params,
 
   /**
    * User-supplied secrets.
    */
-  2: RawParams secrets,
+  3: RawParams secrets,
 
   /**
    * Result of the previous fetch().
@@ -259,7 +274,7 @@ struct FetchRequest {
    *
    * Empty on initial call.
    */
-  3: optional FetchResult last_fetch_result,
+  4: optional FetchResult last_fetch_result,
 
   /**
    * Cached result from previous module's render, if fresh.
@@ -268,16 +283,20 @@ struct FetchRequest {
    * have a lot more work to do to make these modules work as expected. (The
    * changes will probably require rewriting all modules that use this
    * feature.) In the meantime, this hack gets some jobs done.
+   *
+   * The file on disk is in the directory, `basedir`, and it is readable.
    */
-  4: optional string input_table_parquet_filename,
+  5: optional string input_table_parquet_filename,
 
   /**
    * File where the result should be written.
    *
    * The caller is assumed to have made a best effort to ensure the file is
    * writable.
+   *
+   * The file on disk is in the directory, `basedir`, and it is writable.
    */
-  5: string output_filename,
+  6: string output_filename,
 }
 
 /**
@@ -297,6 +316,9 @@ struct FetchResult {
    *
    * Empty file or zero-column parquet file typically means, "error"; but
    * that's the module's choice and not a hard-and-fast rule.
+   *
+   * The file on disk is in a directory agreed upon by the processes passing
+   * this data around. Subdirectories and hidden files aren't allowed.
    */
   1: string filename,
 
@@ -314,32 +336,53 @@ struct FetchResult {
  */
 struct RenderRequest {
   /**
+   * Directory on disk where all filenames in this request are to be found.
+   *
+   * The RenderResponse file is expected to be written here, too.
+   *
+   * Here's a way to safely reuse this directory after every render(): when
+   * sandboxing, mount an OverlayFS with all the input files as read-only,
+   * then overlay-mount a "scratch" directory for the module to use (and
+   * write to `output_filename`).
+   */
+  1: string basedir,
+
+  /**
    * Output from previous Step.
    *
    * This is zero-row, zero-column on the first Step in a Tab.
    */
-  1: ArrowTable input_table,
+  2: ArrowTable input_table,
 
-  /** User-supplied parameters; must match the module's param_spec. */
-  2: Params params,
+  /**
+   * User-supplied parameters; must match the module's param_spec.
+   *
+   * `File` params are passed as strings, pointing to temporary files in
+   * `basedir`.
+   */
+  3: Params params,
 
   /** Description of tab being rendered. */
-  3: Tab tab,
+  4: Tab tab,
 
   /**
    * Result of latest `fetch`.
    *
    * If unset, `fetch` was never called.
+   *
+   * `fetch_result.filename` will point to a temporary file in `basedir`.
    */
-  4: optional FetchResult fetch_result
+  5: optional FetchResult fetch_result
 
   /**
    * File where the result Arrow table should be written.
    *
    * The caller is assumed to have made a best effort to ensure the file is
    * writable.
+   *
+   * The file on disk will be in `basedir`.
    */
-  5: string output_filename,
+  6: string output_filename,
 }
 
 /**

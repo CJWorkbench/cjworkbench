@@ -1,11 +1,12 @@
 import logging
-import os
 from pathlib import Path
+import shutil
 import tempfile
 from typing import Dict, List, Optional, Tuple
 from cjworkbench.sync import database_sync_to_async
-from cjwkernel.types import RenderResult, Tab
 from cjwkernel.param_dtype import ParamDType
+from cjwkernel.types import RenderResult, Tab
+from cjwkernel.util import tempdir_context
 from cjwstate.models import Workflow
 from .tab import ExecuteStep, TabFlow, execute_tab_flow
 from .types import UnneededExecution
@@ -69,12 +70,6 @@ def partition_ready_and_dependent(
     return (ready, dependent)
 
 
-def _create_output_path(tab_slug: str) -> Path:
-    fd, filename = tempfile.mkstemp(prefix="tab-output-%s" % tab_slug, suffix=".arrow")
-    os.close(fd)
-    return Path(filename)
-
-
 async def execute_workflow(workflow: Workflow, delta_id: int) -> None:
     """
     Ensure all `workflow.tabs[*].live_wf_modules` cache fresh render results.
@@ -107,13 +102,13 @@ async def execute_workflow(workflow: Workflow, delta_id: int) -> None:
     # time; it might be run multiple times simultaneously (even on different
     # computers); and `await` doesn't work with locks.
 
-    async def execute_tab_flow_into_new_file(tab_flow: TabFlow) -> RenderResult:
-        nonlocal workflow, tab_results, output_paths
-        output_path = _create_output_path(tab_flow.tab_slug)
-        output_paths.append(output_path)
-        return await execute_tab_flow(workflow, tab_flow, tab_results, output_path)
+    with tempdir_context() as basedir:
 
-    try:
+        async def execute_tab_flow_into_new_file(tab_flow: TabFlow) -> RenderResult:
+            nonlocal workflow, tab_results, output_paths
+            output_path = basedir / ("tab-output-%s.arrow" % tab_flow.tab_slug)
+            return await execute_tab_flow(workflow, tab_flow, tab_results, output_path)
+
         while pending_tab_flows:
             ready_flows, dependent_flows = partition_ready_and_dependent(
                 pending_tab_flows
@@ -135,9 +130,3 @@ async def execute_workflow(workflow: Workflow, delta_id: int) -> None:
         # each other, they should have the same error ("Cycle").
         for tab_flow in pending_tab_flows:
             await execute_tab_flow_into_new_file(tab_flow)
-    finally:
-        for output_path in output_paths:
-            try:
-                output_path.unlink()
-            except Exception:
-                logger.exception("Error (ignored) unlinking %s", str(output_path))

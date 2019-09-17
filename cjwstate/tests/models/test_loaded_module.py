@@ -65,17 +65,21 @@ class LoadedModuleTest(unittest.TestCase):
 
         # This ends up being kinda an integration test.
         with ExitStack() as ctx:
-            input_table = ctx.enter_context(arrow_table_context({"A": [1]}))
-            output_tf = ctx.enter_context(tempfile.NamedTemporaryFile())
+            basedir = Path(ctx.enter_context(tempfile.TemporaryDirectory()))
+            input_table = ctx.enter_context(
+                arrow_table_context({"A": [1]}, dir=basedir)
+            )
+            output_tf = ctx.enter_context(tempfile.NamedTemporaryFile(dir=basedir))
 
             ctx.enter_context(self.assertLogs("cjwstate.models.loaded_module"))
 
             result = lm.render(
+                basedir=basedir,
                 input_table=input_table,
                 params=Params({"col": "A"}),
                 tab=Tab("tab-1", "Tab 1"),
                 fetch_result=None,
-                output_path=Path(output_tf.name),
+                output_filename=Path(output_tf.name).name,
             )
 
         assert_render_result_equals(result, RenderResult(arrow_table({"A": [2]})))

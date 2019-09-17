@@ -5,15 +5,14 @@ from datetime import timedelta
 import logging
 import os
 from pathlib import Path
-import tempfile
 from typing import ContextManager, Optional, Tuple
 from django.conf import settings
 from django.db import DatabaseError, InterfaceError
 from django.utils import timezone
-from cjwkernel.types import FetchResult, I18nMessage, Params, RenderError, TableMetadata
 from cjwkernel.errors import ModuleError
+from cjwkernel.types import FetchResult, I18nMessage, Params, RenderError, TableMetadata
+from cjwkernel.util import tempdir_context, tempfile_context
 from cjworkbench.sync import database_sync_to_async
-from cjwstate import minio
 from cjwstate.models import (
     CachedRenderResult,
     ModuleVersion,
@@ -27,31 +26,6 @@ from . import fetchprep, save
 
 
 logger = logging.getLogger(__name__)
-
-
-@contextlib.contextmanager
-def open_stored_object_or_none(maybe_stored_object: Optional[StoredObject], error: str):
-    if maybe_stored_object is None:
-        yield None
-    else:
-        if error:
-            errors = [RenderError(I18nMessage.TODO_i18n(error))]
-        else:
-            errors = []
-
-        bucket = maybe_stored_object.bucket
-        key = maybe_stored_object.key
-        with tempfile.NamedTemporaryFile(prefix="last-fetch-result") as tf:
-            path = Path(tf.name)
-            if maybe_stored_object.size > 0:
-                try:
-                    minio.download(bucket, key, path)
-                except FileNotFoundError:
-                    # StoredObject does not exist
-                    yield None
-                    return
-
-            yield FetchResult(path, errors)
 
 
 DatabaseObjects = namedtuple(
@@ -148,14 +122,14 @@ def user_visible_bug_fetch_result(output_path: Path, message: str) -> FetchResul
 
 
 def _with_downloaded_cached_render_result(
-    ctx: contextlib.ExitStack, maybe_crr: Optional[CachedRenderResult]
+    ctx: contextlib.ExitStack, maybe_crr: Optional[CachedRenderResult], dir: Path
 ) -> Tuple[Optional[Path], TableMetadata]:
     if maybe_crr is None:
         return (None, TableMetadata())
     else:
         try:
             parquet_path = ctx.enter_context(
-                rendercache.downloaded_parquet_file(maybe_crr)
+                rendercache.downloaded_parquet_file(maybe_crr, dir=dir)
             )
             return (parquet_path, maybe_crr.table_metadata)
         except rendercache.CorruptCacheError:
@@ -169,13 +143,14 @@ def _with_stored_object_as_fetch_result(
     ctx: contextlib.ExitStack,
     stored_object: Optional[StoredObject],
     wf_module_fetch_error: str,
+    dir: Path,
 ) -> Optional[FetchResult]:
     if stored_object is None:
         return None
     else:
         try:
             last_fetch_path = ctx.enter_context(
-                storedobjects.downloaded_file(stored_object)
+                storedobjects.downloaded_file(stored_object, dir=dir)
             )
             if wf_module_fetch_error:
                 errors = [RenderError(I18nMessage.TODO_i18n(wf_module_fetch_error))]
@@ -187,6 +162,7 @@ def _with_stored_object_as_fetch_result(
 
 
 def fetch_or_wrap_error(
+    basedir: Path,
     wf_module: WfModule,
     module_version: ModuleVersion,
     stored_object: Optional[StoredObject],
@@ -261,7 +237,7 @@ def fetch_or_wrap_error(
 
         # get input_metadata, input_parquet_path. (This can't error.)
         input_parquet_path, input_metadata = _with_downloaded_cached_render_result(
-            ctx, maybe_input_crr
+            ctx, maybe_input_crr, dir=basedir
         )
 
         # Clean params, so they're of the correct type. (This can't error.)
@@ -271,17 +247,20 @@ def fetch_or_wrap_error(
 
         # get last_fetch_result (This can't error.)
         last_fetch_result = _with_stored_object_as_fetch_result(
-            ctx, stored_object, wf_module.fetch_error
+            ctx, stored_object, wf_module.fetch_error, dir=basedir
         )
 
         # actually fetch
         try:
             return loaded_module.fetch(
+                basedir=basedir,
                 params=params,
                 secrets=wf_module.secrets,
                 last_fetch_result=last_fetch_result,
-                input_parquet_path=input_parquet_path,
-                output_path=output_path,
+                input_parquet_filename=(
+                    None if input_parquet_path is None else input_parquet_path.name
+                ),
+                output_filename=output_path.name,
             )
         except ModuleError as err:
             logger.exception("Error calling %s.fetch()", module_version.id_name)
@@ -360,28 +339,29 @@ async def fetch(*, workflow_id: Optional[int] = None, wf_module_id: int) -> None
 
     now = timezone.now()
 
-    with tempfile.NamedTemporaryFile(prefix="fetch-result") as tf:
-        output_path = Path(tf.name)
-        result = await asyncio.get_event_loop().run_in_executor(
-            None,
-            fetch_or_wrap_error,
-            wf_module,
-            module_version,
-            stored_object,
-            input_crr,
-            output_path,
-        )
+    with tempdir_context(prefix="fetch-") as basedir:
+        with tempfile_context(prefix="fetch-result-", dir=basedir) as output_path:
+            result = await asyncio.get_event_loop().run_in_executor(
+                None,
+                fetch_or_wrap_error,
+                basedir,
+                wf_module,
+                module_version,
+                stored_object,
+                input_crr,
+                output_path,
+            )
 
-        try:
-            with crash_on_database_error():
-                await save.save_result_if_changed(workflow_id, wf_module, result)
-        except asyncio.CancelledError:
-            raise
-        except Exception:
-            # Log exceptions but keep going.
-            # TODO [adamhooper, 2019-09-12] really? I think we don't want this.
-            # Make `fetch.save() robust, then nix this handler
-            logger.exception(f"Error fetching {wf_module}")
+            try:
+                with crash_on_database_error():
+                    await save.save_result_if_changed(workflow_id, wf_module, result)
+            except asyncio.CancelledError:
+                raise
+            except Exception:
+                # Log exceptions but keep going.
+                # TODO [adamhooper, 2019-09-12] really? I think we don't want this.
+                # Make `fetch.save() robust, then nix this handler
+                logger.exception(f"Error fetching {wf_module}")
 
         with crash_on_database_error():
             await update_next_update_time(workflow_id, wf_module, now)

@@ -13,7 +13,7 @@ from cjwkernel.types import ArrowTable, Column, ColumnType, RenderResult, TableM
 
 @contextmanager
 def arrow_file(
-    table: Union[Dict[str, List[Any]], pyarrow.Table]
+    table: Union[Dict[str, List[Any]], pyarrow.Table], dir: Optional[Path] = None
 ) -> ContextManager[Path]:
     """
     Yield a path with `table` written to an Arrow file.
@@ -21,7 +21,7 @@ def arrow_file(
     if isinstance(table, dict):
         table = pyarrow.Table.from_pydict(table)
 
-    fd, filename = tempfile.mkstemp()
+    fd, filename = tempfile.mkstemp(dir=dir)
     try:
         os.close(fd)
         writer = pyarrow.RecordBatchFileWriter(filename, table.schema)
@@ -53,6 +53,7 @@ def _arrow_column_to_column(column: pyarrow.Column) -> Column:
 def arrow_table_context(
     table: Union[Dict[str, List[Any]], pyarrow.Table],
     columns: Optional[List[Column]] = None,
+    dir: Optional[Path] = None,
 ) -> ContextManager[ArrowTable]:
     """
     Yield an ArrowTable (whose `.path` is a file).
@@ -66,7 +67,7 @@ def arrow_table_context(
         columns = [_arrow_column_to_column(c) for c in table.columns]
     metadata = TableMetadata(table.num_rows, columns)
 
-    with arrow_file(table) as filename:
+    with arrow_file(table, dir=dir) as filename:
         yield ArrowTable(Path(filename), metadata)
 
 
@@ -128,13 +129,13 @@ def assert_render_result_equals(result1: RenderResult, result2: RenderResult) ->
 
 @contextmanager
 def parquet_file(
-    table: Union[Dict[str, List[Any]], pyarrow.Table]
+    table: Union[Dict[str, List[Any]], pyarrow.Table], dir: Optional[Path] = None
 ) -> ContextManager[Path]:
     """
     Yield a filename with `table` written to a Parquet file.
     """
     atable = arrow_table(table)
-    fd, filename = tempfile.mkstemp()
+    fd, filename = tempfile.mkstemp(dir=dir)
     try:
         os.close(fd)
         pyarrow.parquet.write_table(atable.table, filename, compression="SNAPPY")

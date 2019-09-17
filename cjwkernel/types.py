@@ -31,6 +31,17 @@ __all__ = [
 ]
 
 
+def _thrift_filename_to_path(filename: str, basedir: Path) -> Path:
+    if "/" in filename:
+        raise ValueError("filename must not contain directories; got '%s'" % filename)
+    if filename.startswith("."):
+        raise ValueError("filename must not be hidden; got '%s'" % filename)
+    path = basedir / filename
+    if not path.is_file():
+        raise ValueError("file must exist and be a regular file; got '%s'" % str(path))
+    return path
+
+
 @dataclass(frozen=True)
 class CompiledModule:
     module_slug: str
@@ -321,7 +332,7 @@ class ArrowTable:
     """
     Name of file on disk that contains data.
 
-    If and only if the table has columns, the file must exist.
+    If the table has columns, the file must exist.
     """
 
     metadata: TableMetadata = field(default_factory=TableMetadata)
@@ -402,7 +413,7 @@ class ArrowTable:
             return self.path.stat().st_size
 
     @classmethod
-    def from_thrift(cls, value: ttypes.ArrowTable) -> ArrowTable:
+    def from_thrift(cls, value: ttypes.ArrowTable, basedir: Path) -> ArrowTable:
         """
         Convert from a Thrift ArrowTable.
 
@@ -410,14 +421,15 @@ class ArrowTable:
 
         Raise AssertionError if the file on disk does not match metadata.
         """
-        return cls(
-            Path(value.filename) if value.filename else None,
-            TableMetadata.from_thrift(value.metadata),
-        )
+        if value.filename:
+            path = _thrift_filename_to_path(value.filename, basedir)
+        else:
+            path = None
+        return cls(path, TableMetadata.from_thrift(value.metadata))
 
     def to_thrift(self) -> ttypes.ArrowTable:
         return ttypes.ArrowTable(
-            "" if self.path is None else str(self.path), self.metadata.to_thrift()
+            "" if self.path is None else self.path.name, self.metadata.to_thrift()
         )
 
 
@@ -462,11 +474,13 @@ class TabOutput:
     """
 
     @classmethod
-    def from_thrift(cls, value: ttypes.TabOutput) -> TabOutput:
-        return cls(value.tab, value.table)
+    def from_thrift(cls, value: ttypes.TabOutput, basedir: Path) -> TabOutput:
+        return cls(
+            Tab.from_thrift(value.tab), ArrowTable.from_thrift(value.table, basedir)
+        )
 
     def to_thrift(self) -> ttypes.TabOutput:
-        return ttypes.TabOutput(self.tab, self.table)
+        return ttypes.TabOutput(self.tab.to_thrift(), self.table.to_thrift())
 
 
 def _i18n_argument_from_thrift(value: ttypes.I18nArgument) -> Union[str, int, float]:
@@ -567,7 +581,7 @@ class Params:
     params: Dict[str, Any]
 
     @classmethod
-    def _value_from_thrift(cls, value: ttypes.ParamValue) -> ParamValue:
+    def _value_from_thrift(cls, value: ttypes.ParamValue, basedir: Path) -> ParamValue:
         if value.string_value is not None:
             return value.string_value
         elif value.integer_value is not None:
@@ -581,9 +595,14 @@ class Params:
         elif value.tab_value is not None:
             return TabOutput.from_thrift(value.tab_value)
         elif value.list_value is not None:
-            return [cls._value_from_thrift(v) for v in value.list_value]
+            return [cls._value_from_thrift(v, basedir) for v in value.list_value]
         elif value.map_value is not None:
-            return {k: cls._value_from_thrift(v) for k, v in value.map_value.items()}
+            return {
+                k: cls._value_from_thrift(v, basedir)
+                for k, v in value.map_value.items()
+            }
+        elif value.filename_value is not None:
+            return _thrift_filename_to_path(value.filename_value, basedir)
         else:
             return None
 
@@ -613,12 +632,14 @@ class Params:
         elif isinstance(value, dict):
             # map, dict
             return PV(map_value={k: cls._value_to_thrift(v) for k, v in value.items()})
+        elif isinstance(value, Path):
+            return PV(filename_value=value.name)
         else:
             raise RuntimeError("Unhandled value %r" % value)
 
     @classmethod
-    def from_thrift(cls, value: Dict[str, ttypes.ParamValue]) -> Params:
-        return cls({k: cls._value_from_thrift(v) for k, v in value.items()})
+    def from_thrift(cls, value: Dict[str, ttypes.ParamValue], basedir: Path) -> Params:
+        return cls({k: cls._value_from_thrift(v, basedir) for k, v in value.items()})
 
     def to_thrift(self) -> Dict[str, ttypes.ParamValue]:
         return {k: self._value_to_thrift(v) for k, v in self.params.items()}
@@ -784,13 +805,12 @@ class FetchResult:
     """
 
     @classmethod
-    def from_thrift(cls, value: ttypes.FetchResult) -> FetchResult:
-        return cls(
-            Path(value.filename), [RenderError.from_thrift(e) for e in value.errors]
-        )
+    def from_thrift(cls, value: ttypes.FetchResult, basedir: Path) -> FetchResult:
+        path = _thrift_filename_to_path(value.filename, basedir)
+        return cls(path, [RenderError.from_thrift(e) for e in value.errors])
 
     def to_thrift(self) -> ttypes.FetchResult:
-        return ttypes.FetchResult(str(self.path), [e.to_thrift() for e in self.errors])
+        return ttypes.FetchResult(self.path.name, [e.to_thrift() for e in self.errors])
 
 
 @dataclass(frozen=True)
@@ -823,9 +843,9 @@ class RenderResult:
     """JSON to pass to the module's HTML, if it has HTML."""
 
     @classmethod
-    def from_thrift(cls, value: ttypes.RenderResult) -> RenderResult:
+    def from_thrift(cls, value: ttypes.RenderResult, basedir: Path) -> RenderResult:
         return cls(
-            ArrowTable.from_thrift(value.table),
+            ArrowTable.from_thrift(value.table, basedir),
             [RenderError.from_thrift(e) for e in value.errors],
             json.loads(value.json) if value.json else None,
         )

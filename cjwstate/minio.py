@@ -11,6 +11,7 @@ from typing import Any, ContextManager, Dict
 import urllib.parse
 import urllib3
 from django.conf import settings
+from cjwkernel.util import tempfile_context
 
 
 # Monkey-patch s3transfer so it retries on ProtocolError. On production,
@@ -340,11 +341,13 @@ def get_object_with_data(bucket: str, key: str, **kwargs) -> Dict[str, Any]:
 
 
 @contextmanager
-def temporarily_download(bucket: str, key: str) -> ContextManager[pathlib.Path]:
+def temporarily_download(
+    bucket: str, key: str, dir=None
+) -> ContextManager[pathlib.Path]:
     """
     Copy a file from S3 to a pathlib.Path; yield; and delete.
 
-    Raise FileNotFound if the key is not on S3.
+    Raise FileNotFoundError if the key is not on S3.
 
     Usage:
 
@@ -353,9 +356,8 @@ def temporarily_download(bucket: str, key: str) -> ContextManager[pathlib.Path]:
             path.read_bytes()  # returns file contents
         # when you exit the block, the pathlib.Path is deleted
     """
-    with tempfile.NamedTemporaryFile(prefix="minio_download") as tf:
-        path = pathlib.Path(tf.name)
-        download(bucket, key, path)  # raises FileNotFound
+    with tempfile_context(prefix="minio-download-", dir=dir) as path:
+        download(bucket, key, path)  # raise FileNotFoundError (deleting path)
         yield path
 
 

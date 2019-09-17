@@ -522,14 +522,14 @@ class ArrowTable(object):
     """
     Table stored on disk, ready to be mmapped.
 
-    The file on disk is in a directory agreed upon by the processes passing this
-    data around.
-
     Attributes:
      - filename: Name of file on disk that contains data.
 
     For a zero-column table, filename may be the empty string -- meaning there
     is no file on disk. In all other cases, the file on disk must exist.
+
+    The file on disk is in a directory agreed upon by the processes passing
+    this data around. Subdirectories and hidden files aren't allowed.
      - metadata: Metadata; must agree with the file on disk.
     """
 
@@ -638,6 +638,9 @@ class ParamValue(object):
 
     This represents "map" and "dict" dtypes. Over the wire, it's all the same
     to us.
+     - filename_value: A string filename, with no path information, pointing to a file on disk.
+
+    The directory is assumed based on context.
     """
 
     __slots__ = (
@@ -649,10 +652,11 @@ class ParamValue(object):
         'tab_value',
         'list_value',
         'map_value',
+        'filename_value',
     )
 
 
-    def __init__(self, string_value=None, integer_value=None, float_value=None, boolean_value=None, column_value=None, tab_value=None, list_value=None, map_value=None,):
+    def __init__(self, string_value=None, integer_value=None, float_value=None, boolean_value=None, column_value=None, tab_value=None, list_value=None, map_value=None, filename_value=None,):
         self.string_value = string_value
         self.integer_value = integer_value
         self.float_value = float_value
@@ -661,6 +665,7 @@ class ParamValue(object):
         self.tab_value = tab_value
         self.list_value = list_value
         self.map_value = map_value
+        self.filename_value = filename_value
 
     def read(self, iprot):
         if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
@@ -726,6 +731,11 @@ class ParamValue(object):
                     iprot.readMapEnd()
                 else:
                     iprot.skip(ftype)
+            elif fid == 9:
+                if ftype == TType.STRING:
+                    self.filename_value = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                else:
+                    iprot.skip(ftype)
             else:
                 iprot.skip(ftype)
             iprot.readFieldEnd()
@@ -774,6 +784,10 @@ class ParamValue(object):
                 oprot.writeString(kiter21.encode('utf-8') if sys.version_info[0] == 2 else kiter21)
                 viter22.write(oprot)
             oprot.writeMapEnd()
+            oprot.writeFieldEnd()
+        if self.filename_value is not None:
+            oprot.writeFieldBegin('filename_value', TType.STRING, 9)
+            oprot.writeString(self.filename_value.encode('utf-8') if sys.version_info[0] == 2 else self.filename_value)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -1566,6 +1580,11 @@ class FetchRequest(object):
     Parameters to `fetch()`.
 
     Attributes:
+     - basedir: Directory where the module will be allowed to read and write.
+
+    Filenames in the fetch request/response pairs must not contain
+    subdirectories or start with dots; and they must exist within this
+    directory.
      - params: User-supplied params.
      - secrets: User-supplied secrets.
      - last_fetch_result: Result of the previous fetch().
@@ -1583,13 +1602,18 @@ class FetchRequest(object):
     have a lot more work to do to make these modules work as expected. (The
     changes will probably require rewriting all modules that use this
     feature.) In the meantime, this hack gets some jobs done.
+
+    The file on disk is in the directory, `basedir`, and it is readable.
      - output_filename: File where the result should be written.
 
     The caller is assumed to have made a best effort to ensure the file is
     writable.
+
+    The file on disk is in the directory, `basedir`, and it is writable.
     """
 
     __slots__ = (
+        'basedir',
         'params',
         'secrets',
         'last_fetch_result',
@@ -1598,7 +1622,8 @@ class FetchRequest(object):
     )
 
 
-    def __init__(self, params=None, secrets=None, last_fetch_result=None, input_table_parquet_filename=None, output_filename=None,):
+    def __init__(self, basedir=None, params=None, secrets=None, last_fetch_result=None, input_table_parquet_filename=None, output_filename=None,):
+        self.basedir = basedir
         self.params = params
         self.secrets = secrets
         self.last_fetch_result = last_fetch_result
@@ -1615,6 +1640,11 @@ class FetchRequest(object):
             if ftype == TType.STOP:
                 break
             if fid == 1:
+                if ftype == TType.STRING:
+                    self.basedir = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                else:
+                    iprot.skip(ftype)
+            elif fid == 2:
                 if ftype == TType.MAP:
                     self.params = {}
                     (_ktype40, _vtype41, _size39) = iprot.readMapBegin()
@@ -1626,24 +1656,24 @@ class FetchRequest(object):
                     iprot.readMapEnd()
                 else:
                     iprot.skip(ftype)
-            elif fid == 2:
+            elif fid == 3:
                 if ftype == TType.STRUCT:
                     self.secrets = RawParams()
                     self.secrets.read(iprot)
                 else:
                     iprot.skip(ftype)
-            elif fid == 3:
+            elif fid == 4:
                 if ftype == TType.STRUCT:
                     self.last_fetch_result = FetchResult()
                     self.last_fetch_result.read(iprot)
                 else:
                     iprot.skip(ftype)
-            elif fid == 4:
+            elif fid == 5:
                 if ftype == TType.STRING:
                     self.input_table_parquet_filename = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
                 else:
                     iprot.skip(ftype)
-            elif fid == 5:
+            elif fid == 6:
                 if ftype == TType.STRING:
                     self.output_filename = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
                 else:
@@ -1658,8 +1688,12 @@ class FetchRequest(object):
             oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
             return
         oprot.writeStructBegin('FetchRequest')
+        if self.basedir is not None:
+            oprot.writeFieldBegin('basedir', TType.STRING, 1)
+            oprot.writeString(self.basedir.encode('utf-8') if sys.version_info[0] == 2 else self.basedir)
+            oprot.writeFieldEnd()
         if self.params is not None:
-            oprot.writeFieldBegin('params', TType.MAP, 1)
+            oprot.writeFieldBegin('params', TType.MAP, 2)
             oprot.writeMapBegin(TType.STRING, TType.STRUCT, len(self.params))
             for kiter46, viter47 in self.params.items():
                 oprot.writeString(kiter46.encode('utf-8') if sys.version_info[0] == 2 else kiter46)
@@ -1667,19 +1701,19 @@ class FetchRequest(object):
             oprot.writeMapEnd()
             oprot.writeFieldEnd()
         if self.secrets is not None:
-            oprot.writeFieldBegin('secrets', TType.STRUCT, 2)
+            oprot.writeFieldBegin('secrets', TType.STRUCT, 3)
             self.secrets.write(oprot)
             oprot.writeFieldEnd()
         if self.last_fetch_result is not None:
-            oprot.writeFieldBegin('last_fetch_result', TType.STRUCT, 3)
+            oprot.writeFieldBegin('last_fetch_result', TType.STRUCT, 4)
             self.last_fetch_result.write(oprot)
             oprot.writeFieldEnd()
         if self.input_table_parquet_filename is not None:
-            oprot.writeFieldBegin('input_table_parquet_filename', TType.STRING, 4)
+            oprot.writeFieldBegin('input_table_parquet_filename', TType.STRING, 5)
             oprot.writeString(self.input_table_parquet_filename.encode('utf-8') if sys.version_info[0] == 2 else self.input_table_parquet_filename)
             oprot.writeFieldEnd()
         if self.output_filename is not None:
-            oprot.writeFieldBegin('output_filename', TType.STRING, 5)
+            oprot.writeFieldBegin('output_filename', TType.STRING, 6)
             oprot.writeString(self.output_filename.encode('utf-8') if sys.version_info[0] == 2 else self.output_filename)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
@@ -1724,6 +1758,9 @@ class FetchResult(object):
 
     Empty file or zero-column parquet file typically means, "error"; but
     that's the module's choice and not a hard-and-fast rule.
+
+    The file on disk is in a directory agreed upon by the processes passing
+    this data around. Subdirectories and hidden files aren't allowed.
      - errors: User-facing errors or warnings reported by the module.
 
     These are separate from `filename` for two reasons: 1) a convenience for
@@ -1816,21 +1853,37 @@ class RenderRequest(object):
     Parameters to `render()`.
 
     Attributes:
+     - basedir: Directory on disk where all filenames in this request are to be found.
+
+    The RenderResponse file is expected to be written here, too.
+
+    Here's a way to safely reuse this directory after every render(): when
+    sandboxing, mount an OverlayFS with all the input files as read-only,
+    then overlay-mount a "scratch" directory for the module to use (and
+    write to `output_filename`).
      - input_table: Output from previous Step.
 
     This is zero-row, zero-column on the first Step in a Tab.
      - params: User-supplied parameters; must match the module's param_spec.
+
+    `File` params are passed as strings, pointing to temporary files in
+    `basedir`.
      - tab: Description of tab being rendered.
      - fetch_result: Result of latest `fetch`.
 
     If unset, `fetch` was never called.
+
+    `fetch_result.filename` will point to a temporary file in `basedir`.
      - output_filename: File where the result Arrow table should be written.
 
     The caller is assumed to have made a best effort to ensure the file is
     writable.
+
+    The file on disk will be in `basedir`.
     """
 
     __slots__ = (
+        'basedir',
         'input_table',
         'params',
         'tab',
@@ -1839,7 +1892,8 @@ class RenderRequest(object):
     )
 
 
-    def __init__(self, input_table=None, params=None, tab=None, fetch_result=None, output_filename=None,):
+    def __init__(self, basedir=None, input_table=None, params=None, tab=None, fetch_result=None, output_filename=None,):
+        self.basedir = basedir
         self.input_table = input_table
         self.params = params
         self.tab = tab
@@ -1856,12 +1910,17 @@ class RenderRequest(object):
             if ftype == TType.STOP:
                 break
             if fid == 1:
+                if ftype == TType.STRING:
+                    self.basedir = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                else:
+                    iprot.skip(ftype)
+            elif fid == 2:
                 if ftype == TType.STRUCT:
                     self.input_table = ArrowTable()
                     self.input_table.read(iprot)
                 else:
                     iprot.skip(ftype)
-            elif fid == 2:
+            elif fid == 3:
                 if ftype == TType.MAP:
                     self.params = {}
                     (_ktype56, _vtype57, _size55) = iprot.readMapBegin()
@@ -1873,19 +1932,19 @@ class RenderRequest(object):
                     iprot.readMapEnd()
                 else:
                     iprot.skip(ftype)
-            elif fid == 3:
+            elif fid == 4:
                 if ftype == TType.STRUCT:
                     self.tab = Tab()
                     self.tab.read(iprot)
                 else:
                     iprot.skip(ftype)
-            elif fid == 4:
+            elif fid == 5:
                 if ftype == TType.STRUCT:
                     self.fetch_result = FetchResult()
                     self.fetch_result.read(iprot)
                 else:
                     iprot.skip(ftype)
-            elif fid == 5:
+            elif fid == 6:
                 if ftype == TType.STRING:
                     self.output_filename = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
                 else:
@@ -1900,12 +1959,16 @@ class RenderRequest(object):
             oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
             return
         oprot.writeStructBegin('RenderRequest')
+        if self.basedir is not None:
+            oprot.writeFieldBegin('basedir', TType.STRING, 1)
+            oprot.writeString(self.basedir.encode('utf-8') if sys.version_info[0] == 2 else self.basedir)
+            oprot.writeFieldEnd()
         if self.input_table is not None:
-            oprot.writeFieldBegin('input_table', TType.STRUCT, 1)
+            oprot.writeFieldBegin('input_table', TType.STRUCT, 2)
             self.input_table.write(oprot)
             oprot.writeFieldEnd()
         if self.params is not None:
-            oprot.writeFieldBegin('params', TType.MAP, 2)
+            oprot.writeFieldBegin('params', TType.MAP, 3)
             oprot.writeMapBegin(TType.STRING, TType.STRUCT, len(self.params))
             for kiter62, viter63 in self.params.items():
                 oprot.writeString(kiter62.encode('utf-8') if sys.version_info[0] == 2 else kiter62)
@@ -1913,15 +1976,15 @@ class RenderRequest(object):
             oprot.writeMapEnd()
             oprot.writeFieldEnd()
         if self.tab is not None:
-            oprot.writeFieldBegin('tab', TType.STRUCT, 3)
+            oprot.writeFieldBegin('tab', TType.STRUCT, 4)
             self.tab.write(oprot)
             oprot.writeFieldEnd()
         if self.fetch_result is not None:
-            oprot.writeFieldBegin('fetch_result', TType.STRUCT, 4)
+            oprot.writeFieldBegin('fetch_result', TType.STRUCT, 5)
             self.fetch_result.write(oprot)
             oprot.writeFieldEnd()
         if self.output_filename is not None:
-            oprot.writeFieldBegin('output_filename', TType.STRING, 5)
+            oprot.writeFieldBegin('output_filename', TType.STRING, 6)
             oprot.writeString(self.output_filename.encode('utf-8') if sys.version_info[0] == 2 else self.output_filename)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
@@ -2109,6 +2172,7 @@ ParamValue.thrift_spec = (
     (6, TType.STRUCT, 'tab_value', [TabOutput, None], None, ),  # 6
     (7, TType.LIST, 'list_value', (TType.STRUCT, [ParamValue, None], False), None, ),  # 7
     (8, TType.MAP, 'map_value', (TType.STRING, 'UTF8', TType.STRUCT, [ParamValue, None], False), None, ),  # 8
+    (9, TType.STRING, 'filename_value', 'UTF8', None, ),  # 9
 )
 all_structs.append(RawParams)
 RawParams.thrift_spec = (
@@ -2166,11 +2230,12 @@ RenderError.thrift_spec = (
 all_structs.append(FetchRequest)
 FetchRequest.thrift_spec = (
     None,  # 0
-    (1, TType.MAP, 'params', (TType.STRING, 'UTF8', TType.STRUCT, [ParamValue, None], False), None, ),  # 1
-    (2, TType.STRUCT, 'secrets', [RawParams, None], None, ),  # 2
-    (3, TType.STRUCT, 'last_fetch_result', [FetchResult, None], None, ),  # 3
-    (4, TType.STRING, 'input_table_parquet_filename', 'UTF8', None, ),  # 4
-    (5, TType.STRING, 'output_filename', 'UTF8', None, ),  # 5
+    (1, TType.STRING, 'basedir', 'UTF8', None, ),  # 1
+    (2, TType.MAP, 'params', (TType.STRING, 'UTF8', TType.STRUCT, [ParamValue, None], False), None, ),  # 2
+    (3, TType.STRUCT, 'secrets', [RawParams, None], None, ),  # 3
+    (4, TType.STRUCT, 'last_fetch_result', [FetchResult, None], None, ),  # 4
+    (5, TType.STRING, 'input_table_parquet_filename', 'UTF8', None, ),  # 5
+    (6, TType.STRING, 'output_filename', 'UTF8', None, ),  # 6
 )
 all_structs.append(FetchResult)
 FetchResult.thrift_spec = (
@@ -2181,11 +2246,12 @@ FetchResult.thrift_spec = (
 all_structs.append(RenderRequest)
 RenderRequest.thrift_spec = (
     None,  # 0
-    (1, TType.STRUCT, 'input_table', [ArrowTable, None], None, ),  # 1
-    (2, TType.MAP, 'params', (TType.STRING, 'UTF8', TType.STRUCT, [ParamValue, None], False), None, ),  # 2
-    (3, TType.STRUCT, 'tab', [Tab, None], None, ),  # 3
-    (4, TType.STRUCT, 'fetch_result', [FetchResult, None], None, ),  # 4
-    (5, TType.STRING, 'output_filename', 'UTF8', None, ),  # 5
+    (1, TType.STRING, 'basedir', 'UTF8', None, ),  # 1
+    (2, TType.STRUCT, 'input_table', [ArrowTable, None], None, ),  # 2
+    (3, TType.MAP, 'params', (TType.STRING, 'UTF8', TType.STRUCT, [ParamValue, None], False), None, ),  # 3
+    (4, TType.STRUCT, 'tab', [Tab, None], None, ),  # 4
+    (5, TType.STRUCT, 'fetch_result', [FetchResult, None], None, ),  # 5
+    (6, TType.STRING, 'output_filename', 'UTF8', None, ),  # 6
 )
 all_structs.append(RenderResult)
 RenderResult.thrift_spec = (

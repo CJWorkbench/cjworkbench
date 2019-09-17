@@ -1,4 +1,5 @@
-import pathlib
+from pathlib import Path
+import shutil
 import tempfile
 import textwrap
 import unittest
@@ -11,6 +12,14 @@ from cjwkernel import types
 
 
 class KernelTests(unittest.TestCase):
+    def setUp(self):
+        super().setUp()
+        self.basedir = Path(tempfile.mkdtemp())
+
+    def tearDown(self):
+        shutil.rmtree(self.basedir)
+        super().tearDown()
+
     def test_compile_syntax_error(self):
         kernel = Kernel()
         with self.assertRaises(ModuleCompileError):
@@ -48,17 +57,6 @@ class KernelTests(unittest.TestCase):
         self.assertRegex(cm.exception.log, r"AssertionError")
         self.assertRegex(cm.exception.log, r"fetch must take one positional argument")
         self.assertEqual(cm.exception.exit_code, 1)
-
-    # def test_compile_validate_missing_render(self):
-    #     kernel = Kernel()
-    #     with self.assertRaises(ModuleExitedError) as cm:
-    #         # The child will print an assertion error to stderr.
-    #         kernel.compile(
-    #             MockPath(["foo.py"], b"def rendr(table, params): return table"), "foo"
-    #         )
-    #     self.assertRegex(cm.exception.log, r"AssertionError")
-    #     self.assertRegex(cm.exception.log, r"module must define render()")
-    #     self.assertEqual(cm.exception.exit_code, 1)
 
     def test_compile_validate_render_arrow_instead_of_render(self):
         kernel = Kernel()
@@ -135,15 +133,17 @@ class KernelTests(unittest.TestCase):
                 types.Column("A", types.ColumnType.Number("{:,d}")),
                 types.Column("B", types.ColumnType.Text()),
             ],
+            dir=self.basedir,
         ) as input_table:
-            with tempfile.NamedTemporaryFile() as output_file:
+            with tempfile.NamedTemporaryFile(dir=self.basedir) as output_file:
                 result = kernel.render(
                     module,
+                    self.basedir,
                     input_table,
                     types.Params({"m": 2.5, "s": "XX"}),
                     types.Tab("tab-1", "Tab 1"),
                     None,
-                    pathlib.Path(output_file.name),
+                    Path(output_file.name).name,
                 )
 
                 self.assertEquals(
@@ -161,14 +161,15 @@ class KernelTests(unittest.TestCase):
             "foo",
         )
 
-        with tempfile.NamedTemporaryFile() as output_file:
+        with tempfile.NamedTemporaryFile(dir=self.basedir) as output_file:
             result = kernel.fetch(
                 module,
+                self.basedir,
                 types.Params({"a": 1}),
                 {},
                 None,
                 None,
-                pathlib.Path(output_file.name),
+                Path(output_file.name).name,
             )
 
             self.assertEquals(result.errors, [])

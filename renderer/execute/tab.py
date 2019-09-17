@@ -155,6 +155,8 @@ async def execute_tab_flow(
         "Rendering Tab(%d, %s - %s)", workflow.id, flow.tab_slug, flow.tab.name
     )
 
+    basedir = output_path.parent
+
     # Execute one module at a time.
     #
     # We don't hold any lock throughout the loop: the loop can take a long
@@ -164,7 +166,7 @@ async def execute_tab_flow(
     # We pass data between two Arrow files, kinda like double-buffering. The
     # two are `output_path` and `buffer_path`. This requires fewer temporary
     # files, so it's less of a hassle to clean up.
-    fd, buffer_filename = tempfile.mkstemp(prefix="render-buffer.arrow")
+    fd, buffer_filename = tempfile.mkstemp(prefix="render-buffer.arrow", dir=basedir)
     os.close(fd)
     buffer_path = Path(buffer_filename)
 

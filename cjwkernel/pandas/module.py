@@ -4,7 +4,7 @@
 
 import asyncio
 import inspect
-import pathlib
+from pathlib import Path
 import fastparquet
 import pandas as pd
 import pyarrow
@@ -98,7 +98,7 @@ def __arrow_tab_output_to_pandas(tab_output: types.TabOutput) -> ptypes.TabOutpu
     )
 
 
-def __parquet_to_pandas(path: pathlib.Path) -> pd.DataFrame:
+def __parquet_to_pandas(path: Path) -> pd.DataFrame:
     if path.stat().st_size == 0:
         return pd.DataFrame()
     else:
@@ -135,7 +135,7 @@ def render_arrow(
     params: Dict[str, Any],
     tab_name: str,
     fetch_result: Optional[types.FetchResult],
-    output_path: pathlib.Path,
+    output_path: Path,
 ) -> types.RenderResult:
     """
     Render using `cjwkernel.types` data types.
@@ -191,20 +191,21 @@ def render_thrift(request: ttypes.RenderRequest) -> ttypes.RenderResult:
     modules _do_ look at table data, so they should not overwrite this
     function.
     """
-    arrow_table = types.ArrowTable.from_thrift(request.input_table)
-    params = types.Params.from_thrift(request.params)
+    basedir = Path(request.basedir)
+    arrow_table = types.ArrowTable.from_thrift(request.input_table, basedir)
+    params = types.Params.from_thrift(request.params, basedir)
     params_dict = params.params
     if request.fetch_result is None:
         fetch_result = None
     else:
-        fetch_result = types.FetchResult.from_thrift(request.fetch_result)
+        fetch_result = types.FetchResult.from_thrift(request.fetch_result, basedir)
 
     arrow_result: types.RenderResult = render_arrow(
         arrow_table,
         params_dict,
         request.tab.name,
         fetch_result,
-        pathlib.Path(request.output_filename),
+        basedir / request.output_filename,
     )
 
     return arrow_result.to_thrift()
@@ -225,7 +226,7 @@ def fetch_pandas(
     params: Dict[str, Any],
     secrets: Dict[str, Any],
     last_fetch_result: Optional[types.FetchResult],
-    input_table_parquet_path: Optional[pathlib.Path],
+    input_table_parquet_path: Optional[Path],
 ) -> ptypes.ProcessResult:
     """
     Call `fetch()` and validate the result.
@@ -274,8 +275,8 @@ def fetch_arrow(
     params: Dict[str, Any],
     secrets: Dict[str, Any],
     last_fetch_result: Optional[types.FetchResult],
-    input_table_parquet_path: Optional[pathlib.Path],
-    output_path: pathlib.Path,
+    input_table_parquet_path: Optional[Path],
+    output_path: Path,
 ) -> types.FetchResult:
     """
     Render using `cjwkernel.types` data types.
@@ -310,20 +311,21 @@ def fetch_arrow(
 
 
 def fetch_thrift(request: ttypes.FetchRequest) -> ttypes.FetchResult:
+    basedir = Path(request.basedir)
     arrow_result = fetch_arrow(
-        types.Params.from_thrift(request.params).params,
+        types.Params.from_thrift(request.params, basedir).params,
         types.RawParams.from_thrift(request.secrets).params,
         (
             None
             if request.last_fetch_result is None
-            else types.FetchResult.from_thrift(request.last_fetch_result)
+            else types.FetchResult.from_thrift(request.last_fetch_result, basedir)
         ),
         (
             None
             if request.input_table_parquet_filename is None
-            else pathlib.Path(request.input_table_parquet_filename)
+            else basedir / request.input_table_parquet_filename
         ),
-        pathlib.Path(request.output_filename),
+        basedir / request.output_filename,
     )
     return arrow_result.to_thrift()
 

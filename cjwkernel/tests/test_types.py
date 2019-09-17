@@ -1,9 +1,19 @@
+from pathlib import Path
+import tempfile
 import unittest
 from cjwkernel import types
 from cjwkernel.thrift import ttypes
 
 
 class ThriftConvertersTest(unittest.TestCase):
+    def setUp(self):
+        super().setUp()
+        self.basedir = Path(tempfile.mkdtemp())
+
+    def tearDown(self):
+        self.basedir.rmdir()
+        super().tearDown()
+
     def test_column_type_text_to_thrift(self):
         self.assertEqual(
             types.ColumnType.Text().to_thrift(),
@@ -181,7 +191,8 @@ class ThriftConvertersTest(unittest.TestCase):
                         ]
                     ),
                     "tab": ttypes.ParamValue(string_value="TODO tabs"),
-                }
+                },
+                self.basedir,
             ),
             types.Params(
                 {
@@ -248,6 +259,30 @@ class ThriftConvertersTest(unittest.TestCase):
                 "tab": ttypes.ParamValue(string_value="TODO tabs"),
             },
         )
+
+    def test_params_filename_from_thrift_happy_path(self):
+        with tempfile.NamedTemporaryFile(dir=self.basedir) as tf:
+            path = Path(tf.name)
+            path.write_bytes(b"")
+            self.assertEqual(
+                types.Params.from_thrift(
+                    {"A": ttypes.ParamValue(filename_value=path.name)}, self.basedir
+                ),
+                types.Params({"A": path}),
+            )
+
+    def test_params_filename_to_thrift(self):
+        path = self.basedir / "x.bin"
+        self.assertEqual(
+            types.Params({"A": path}).to_thrift(),
+            {"A": ttypes.ParamValue(filename_value="x.bin")},
+        )
+
+    def test_params_filename_from_thrift_file_not_found_is_error(self):
+        with self.assertRaisesRegexp(ValueError, "file must exist"):
+            types.Params.from_thrift(
+                {"A": ttypes.ParamValue(filename_value="does_not_exist")}, self.basedir
+            )
 
     def test_i18n_message_from_thrift(self):
         self.assertEqual(
@@ -518,6 +553,46 @@ class ThriftConvertersTest(unittest.TestCase):
 
     def test_render_result_to_thrift(self):
         pass  # TODO test RenderResult conversion
+
+    def test_fetch_result_from_thrift_disallow_directories(self):
+        with self.assertRaisesRegex(ValueError, "must not contain directories"):
+            types.FetchResult.from_thrift(
+                ttypes.FetchResult("/etc/passwd", []), Path(__file__).parent
+            )
+
+    def test_fetch_result_from_thrift_disallow_hidden_files(self):
+        with self.assertRaisesRegex(ValueError, "must not be hidden"):
+            types.FetchResult.from_thrift(
+                ttypes.FetchResult(".secrets", []), Path(__file__).parent
+            )
+
+    def test_fetch_result_from_thrift_disallow_non_files(self):
+        with self.assertRaisesRegex(ValueError, "must exist"):
+            types.FetchResult.from_thrift(
+                ttypes.FetchResult("missing", []), self.basedir
+            )
+
+    def test_fetch_result_from_thrift_disallow_non_file(self):
+        with tempfile.TemporaryDirectory(dir=str(self.basedir)) as tmpsubdir:
+            with self.assertRaisesRegex(ValueError, "be a regular file"):
+                types.FetchResult.from_thrift(
+                    ttypes.FetchResult(Path(tmpsubdir).name, []), self.basedir
+                )
+
+    def test_fetch_result_from_thrift_happy_path(self):
+        with tempfile.NamedTemporaryFile(dir=str(self.basedir)) as tf:
+            self.assertEqual(
+                types.FetchResult.from_thrift(
+                    ttypes.FetchResult(
+                        Path(tf.name).name,
+                        [types.RenderError(types.I18nMessage("hi")).to_thrift()],
+                    ),
+                    self.basedir,
+                ),
+                types.FetchResult(
+                    Path(tf.name), [types.RenderError(types.I18nMessage("hi"))]
+                ),
+            )
 
 
 class NumberFormatterTest(unittest.TestCase):

@@ -3,7 +3,6 @@ import contextlib
 import datetime
 from functools import partial
 from pathlib import Path
-import tempfile
 from typing import Any, Dict, Optional, Tuple
 from cjworkbench.sync import database_sync_to_async
 from cjwkernel.types import (
@@ -14,6 +13,7 @@ from cjwkernel.types import (
     RenderResult,
     Tab,
 )
+from cjwkernel.util import tempfile_context
 from cjwstate import minio, rendercache
 from cjwstate.models import StoredObject, WfModule, Workflow
 from cjwstate.models.loaded_module import LoadedModule
@@ -61,16 +61,18 @@ def locked_wf_module(workflow, wf_module):
     return retval
 
 
-def _load_fetch_result(wf_module: WfModule, path: Path) -> Optional[FetchResult]:
+def _load_fetch_result(
+    wf_module: WfModule, basedir: Path, exit_stack: contextlib.ExitStack
+) -> Optional[FetchResult]:
     """
-    Download user-selected StoredObject to `path`, so render() can read it.
+    Download user-selected StoredObject to `basedir`, so render() can read it.
 
     Edge cases:
 
-    * Leave `path` alone if the user did not select a StoredObject.
-    * Return None if there is no user-selected StoredObject.
-    * Leave `path` alone if the user-seleted StoredObject is an error.
-    
+    Create no file (and return `None`) if the user did not select a
+    StoredObject, or if the selected StoredObject does not point to a file
+    on minio.
+
     The caller should ensure "leave `path` alone" means "return an empty
     FetchResult". The FetchResult may still have an error.
     """
@@ -78,16 +80,34 @@ def _load_fetch_result(wf_module: WfModule, path: Path) -> Optional[FetchResult]
         stored_object = wf_module.stored_objects.get(
             stored_at=wf_module.stored_data_version
         )
-        minio.download(stored_object.bucket, stored_object.key, path)
     except StoredObject.DoesNotExist:
         return None
-    except (minio.error.NoSuchBucket, FileNotFoundError):
-        # A few StoredObjects -- very old ones with size=0 -- are
-        # *intentionally* not in minio. It turns out the modules also happen
-        # to be written to treat empty-file and None as identical.
-        #
-        # New-style modules which report errors will also output empty files.
-        return None
+
+    with contextlib.ExitStack() as inner_stack:
+        path = inner_stack.enter_context(
+            tempfile_context(prefix="fetch-result-", dir=basedir)
+        )
+
+        try:
+            minio.download(stored_object.bucket, stored_object.key, path)
+            # Download succeeded, so we no longer want to delete `path`
+            # right _now_ ("now" means, "in inner_stack.close()"). Instead,
+            # transfer ownership of `path` to exit_stack.
+            exit_stack.callback(inner_stack.pop_all().close)
+        except (minio.error.NoSuchBucket, FileNotFoundError):
+            # A few StoredObjects -- very old ones with size=0 -- are
+            # *intentionally* not in minio. It turns out modules from that era
+            # treated empty-file and None as identical. The _modules_ must
+            # preserve that logic for backwards compatibility; so it's safe to
+            # return `None` here.
+            #
+            # Other than that, if the file doesn't exist it's a race: either
+            # the fetch result is too _new_ (it's in the database but its file
+            # hasn't been written yet) or the fetch result is half-deleted (its
+            # file was deleted and it's still in the database). In either case,
+            # pretend the fetch result does not exist in the database -- i.e.,
+            # return `None`.
+            return None
 
     if wf_module.fetch_error:
         errors = [RenderError(I18nMessage.TODO_i18n(wf_module.fetch_error))]
@@ -98,12 +118,13 @@ def _load_fetch_result(wf_module: WfModule, path: Path) -> Optional[FetchResult]
 
 @database_sync_to_async
 def _execute_wfmodule_pre(
+    basedir: Path,
+    exit_stack: contextlib.ExitStack,
     workflow: Workflow,
     wf_module: WfModule,
     raw_params: Dict[str, Any],
     input_table: ArrowTable,
     tab_results: Dict[Tab, Optional[RenderResult]],
-    fetch_result_path: Path,
 ) -> Tuple[Optional[LoadedModule], Optional[RenderResult], Dict[str, Any]]:
     """
     First step of execute_wfmodule().
@@ -134,12 +155,17 @@ def _execute_wfmodule_pre(
             return (None, None, {})
 
         render_context = renderprep.RenderContext(
-            wf_module.id, input_table, tab_results, raw_params  # ugh
+            wf_module.id,
+            input_table,
+            tab_results,
+            basedir,
+            exit_stack,
+            raw_params,  # ugh
         )
         params = renderprep.get_param_values(
             module_version.param_schema, raw_params, render_context
         )
-        fetch_result = _load_fetch_result(safe_wf_module, fetch_result_path)
+        fetch_result = _load_fetch_result(safe_wf_module, basedir, exit_stack)
 
         return (loaded_module, fetch_result, params)
 
@@ -203,20 +229,22 @@ async def _render_wfmodule(
     The actual render runs in a background thread so the event loop can process
     other events.
     """
+    basedir = output_path.parent
+
     if wf_module.order > 0 and input_result.status != "ok":
         return RenderResult()  # 'unreachable'
 
-    with tempfile.NamedTemporaryFile() as fetch_result_file:
-        fetch_result_path = Path(fetch_result_file.name)
-
+    # exit_stack: stuff that gets deleted when the render is done
+    with contextlib.ExitStack() as exit_stack:
         try:
             loaded_module, fetch_result, params = await _execute_wfmodule_pre(
+                basedir,
+                exit_stack,
                 workflow,
                 wf_module,
                 raw_params,
                 input_result.table,
                 tab_results,
-                fetch_result_path,
             )
         except TabCycleError:
             return RenderResult.from_deprecated_error(
@@ -243,6 +271,7 @@ async def _render_wfmodule(
             None,
             partial(
                 loaded_module.render,
+                basedir=basedir,
                 input_table=input_result.table,
                 params=params,
                 tab=tab,

@@ -1,7 +1,7 @@
 from contextlib import ExitStack  # workaround https://github.com/psf/black/issues/664
 from datetime import datetime
 from pathlib import Path
-import tempfile
+import shutil
 import unittest
 from unittest.mock import patch
 import pandas as pd
@@ -15,6 +15,7 @@ from cjwkernel.tests.util import (
     parquet_file,
     override_settings,
 )
+from cjwkernel.util import create_tempdir, tempfile_context
 from cjwkernel.thrift import ttypes
 from cjwkernel.types import (
     Column,
@@ -67,6 +68,14 @@ class MigrateParamsTests(unittest.TestCase):
 
 
 class RenderTests(unittest.TestCase):
+    def setUp(self):
+        super().setUp()
+        self.basedir = create_tempdir()
+
+    def tearDown(self):
+        shutil.rmtree(self.basedir)
+        super().tearDown()
+
     def _test_render(
         self,
         render_fn,
@@ -79,11 +88,14 @@ class RenderTests(unittest.TestCase):
     ):
         with ExitStack() as ctx:
             if arrow_table is None:
-                arrow_table = ctx.enter_context(arrow_table_context(arrow_table_dict))
+                arrow_table = ctx.enter_context(
+                    arrow_table_context(arrow_table_dict, dir=self.basedir)
+                )
             ctx.enter_context(patch.object(module, "render", render_fn))
-            out_filename = ctx.enter_context(tempfile.NamedTemporaryFile()).name
+            out_filename = ctx.enter_context(tempfile_context(dir=self.basedir)).name
             thrift_result = module.render_thrift(
                 ttypes.RenderRequest(
+                    str(self.basedir),
                     arrow_table.to_thrift(),
                     Params(params).to_thrift(),
                     tab.to_thrift(),
@@ -91,26 +103,32 @@ class RenderTests(unittest.TestCase):
                     out_filename,
                 )
             )
-            return RenderResult.from_thrift(thrift_result)
+            return RenderResult.from_thrift(thrift_result, self.basedir)
 
     def test_default_render_returns_fetch_result(self):
         # Functionality used by libraryofcongress
         with ExitStack() as ctx:
-            input_arrow_table = ctx.enter_context(arrow_table_context({"A": [1]}))
-            parquet_path = ctx.enter_context(parquet_file({"A": [2]}))
-            out_filename = ctx.enter_context(tempfile.NamedTemporaryFile()).name
+            input_arrow_table = ctx.enter_context(
+                arrow_table_context({"A": [1]}, dir=self.basedir)
+            )
+            parquet_filename = Path(
+                ctx.enter_context(parquet_file({"A": [2]}, dir=self.basedir)).name
+            ).name
+            out_filename = ctx.enter_context(tempfile_context(dir=self.basedir)).name
             thrift_result = module.render_thrift(
                 ttypes.RenderRequest(
+                    str(self.basedir),
                     input_arrow_table.to_thrift(),
                     Params({}).to_thrift(),
                     ttypes.Tab("tab-1", "Tab 1"),
-                    FetchResult(
-                        parquet_path, [RenderError(I18nMessage.TODO_i18n("A warning"))]
-                    ).to_thrift(),
+                    ttypes.FetchResult(
+                        parquet_filename,
+                        [RenderError(I18nMessage.TODO_i18n("A warning")).to_thrift()],
+                    ),
                     out_filename,
                 )
             )
-            result = RenderResult.from_thrift(thrift_result)
+            result = RenderResult.from_thrift(thrift_result, self.basedir)
             assert_render_result_equals(
                 result,
                 RenderResult(
@@ -159,7 +177,7 @@ class RenderTests(unittest.TestCase):
         def render(*args, fetch_result):
             return fetch_result
 
-        with parquet_file({"A": ["fetched"]}) as pf:
+        with parquet_file({"A": ["fetched"]}, dir=self.basedir) as pf:
             self._test_render(render, fetch_result=FetchResult(pf))
             # TODO test when fetch result is _not_ Parquet-formatted?
 
@@ -181,6 +199,7 @@ class RenderTests(unittest.TestCase):
                 Column("B", ColumnType.Number("{:,.3f}")),
                 Column("C", ColumnType.Datetime()),
             ],
+            dir=self.basedir,
         ) as arrow_table:
             self._test_render(render, arrow_table=arrow_table)
 
@@ -189,7 +208,7 @@ class RenderTests(unittest.TestCase):
             return pd.DataFrame({"A": [1]})
 
         with arrow_table_context(
-            {"A": [1]}, [Column("A", ColumnType.Number("{:,.3f}"))]
+            {"A": [1]}, [Column("A", ColumnType.Number("{:,.3f}"))], dir=self.basedir
         ) as arrow_table:
             result = self._test_render(render, arrow_table=arrow_table)
             self.assertEqual(
@@ -223,23 +242,60 @@ class RenderTests(unittest.TestCase):
 
 
 class FetchTests(unittest.TestCase):
+    def setUp(self):
+        super().setUp()
+        self.basedir = create_tempdir()
+
+    def tearDown(self):
+        shutil.rmtree(self.basedir)
+        super().tearDown()
+
+    def _test_fetch(
+        self,
+        fetch_fn,
+        *,
+        params={},
+        secrets={},
+        last_fetch_result=None,
+        input_table_parquet_path=None,
+        output_filename=None,
+    ):
+        with ExitStack() as ctx:
+            ctx.enter_context(patch.object(module, "fetch", fetch_fn))
+            if output_filename is None:
+                # Make a temporary output filename -- this will make `fetch()`
+                # complete, but callers won't be able to see the data it
+                # outputs because we'll delete the file too soon.
+                output_filename = ctx.enter_context(
+                    tempfile_context(dir=self.basedir)
+                ).name
+            thrift_result = module.fetch_thrift(
+                ttypes.FetchRequest(
+                    basedir=str(self.basedir),
+                    params=Params(params).to_thrift(),
+                    secrets=RawParams(secrets).to_thrift(),
+                    last_fetch_result=(
+                        last_fetch_result.to_thrift()
+                        if last_fetch_result is not None
+                        else None
+                    ),
+                    input_table_parquet_filename=(
+                        input_table_parquet_path.name
+                        if input_table_parquet_path is not None
+                        else None
+                    ),
+                    output_filename=output_filename,
+                )
+            )
+            return FetchResult.from_thrift(thrift_result, self.basedir)
+
     def test_fetch_get_stored_dataframe_happy_path(self):
         async def fetch(params, *, get_stored_dataframe):
             df = await get_stored_dataframe()
             assert_frame_equal(df, pd.DataFrame({"A": [1]}))
 
-        with ExitStack() as ctx:
-            output_filename = ctx.enter_context(tempfile.NamedTemporaryFile()).name
-            stored_filename = ctx.enter_context(parquet_file({"A": [1]}))
-            ctx.enter_context(patch.object(module, "fetch", fetch))
-            module.fetch_thrift(
-                ttypes.FetchRequest(
-                    params=Params({}).to_thrift(),
-                    secrets=RawParams({}).to_thrift(),
-                    last_fetch_result=ttypes.FetchResult(stored_filename, []),
-                    output_filename=output_filename,
-                )
-            )
+        with parquet_file({"A": [1]}, dir=self.basedir) as parquet_path:
+            self._test_fetch(fetch, last_fetch_result=FetchResult(parquet_path, []))
 
     def test_fetch_get_stored_dataframe_unhandled_parquet_is_error(self):
         # Why an error? So module authors can handle it. They _created_ the
@@ -248,223 +304,106 @@ class FetchTests(unittest.TestCase):
             with self.assertRaises(pyarrow.ArrowIOError):
                 await get_stored_dataframe()
 
-        with ExitStack() as ctx:
-            output_filename = ctx.enter_context(tempfile.NamedTemporaryFile()).name
-            stored_filename = ctx.enter_context(tempfile.NamedTemporaryFile()).name
-            ctx.enter_context(patch.object(module, "fetch", fetch))
-            Path(stored_filename).write_bytes(b"12345")
-            module.fetch_thrift(
-                ttypes.FetchRequest(
-                    params=Params({}).to_thrift(),
-                    secrets=RawParams({}).to_thrift(),
-                    last_fetch_result=ttypes.FetchResult(stored_filename, []),
-                    output_filename=output_filename,
-                )
-            )
+        with tempfile_context(dir=self.basedir) as parquet_path:
+            parquet_path.write_bytes(b"12345")
+            self._test_fetch(fetch, last_fetch_result=FetchResult(parquet_path, []))
 
     def test_fetch_get_stored_dataframe_empty_file_is_empty_table(self):
         async def fetch(params, *, get_stored_dataframe):
             df = await get_stored_dataframe()
             assert_frame_equal(df, pd.DataFrame())
 
-        with ExitStack() as ctx:
-            output_filename = ctx.enter_context(tempfile.NamedTemporaryFile()).name
-            stored_filename = ctx.enter_context(tempfile.NamedTemporaryFile()).name
-            ctx.enter_context(patch.object(module, "fetch", fetch))
-            module.fetch_thrift(
-                ttypes.FetchRequest(
-                    params=Params({}).to_thrift(),
-                    secrets=RawParams({}).to_thrift(),
-                    last_fetch_result=ttypes.FetchResult(stored_filename, []),
-                    output_filename=output_filename,
-                )
-            )
+        with tempfile_context(dir=self.basedir) as parquet_path:
+            self._test_fetch(fetch, last_fetch_result=FetchResult(parquet_path, []))
 
     def test_fetch_get_stored_dataframe_none_is_none(self):
         async def fetch(params, *, get_stored_dataframe):
             df = await get_stored_dataframe()
             self.assertIsNone(df)
 
-        with ExitStack() as ctx:
-            output_filename = ctx.enter_context(tempfile.NamedTemporaryFile()).name
-            ctx.enter_context(patch.object(module, "fetch", fetch))
-            module.fetch_thrift(
-                ttypes.FetchRequest(
-                    params=Params({}).to_thrift(),
-                    secrets=RawParams({}).to_thrift(),
-                    output_filename=output_filename,
-                )
-            )
+        self._test_fetch(fetch, last_fetch_result=None)
 
     def test_fetch_get_input_dataframe_happy_path(self):
         async def fetch(params, *, get_input_dataframe):
             df = await get_input_dataframe()
             assert_frame_equal(df, pd.DataFrame({"A": [1]}))
 
-        with ExitStack() as ctx:
-            output_filename = ctx.enter_context(tempfile.NamedTemporaryFile()).name
-            input_filename = ctx.enter_context(parquet_file({"A": [1]}))
-            ctx.enter_context(patch.object(module, "fetch", fetch))
-            module.fetch_thrift(
-                ttypes.FetchRequest(
-                    params=Params({}).to_thrift(),
-                    secrets=RawParams({}).to_thrift(),
-                    input_table_parquet_filename=input_filename,
-                    output_filename=output_filename,
-                )
-            )
+        with parquet_file({"A": [1]}, dir=self.basedir) as parquet_path:
+            self._test_fetch(fetch, input_table_parquet_path=parquet_path)
 
     def test_fetch_get_input_dataframe_empty_file_is_empty_table(self):
         async def fetch(params, *, get_input_dataframe):
             df = await get_input_dataframe()
             assert_frame_equal(df, pd.DataFrame())
 
-        with ExitStack() as ctx:
-            output_filename = ctx.enter_context(tempfile.NamedTemporaryFile()).name
-            input_filename = ctx.enter_context(tempfile.NamedTemporaryFile()).name
-            ctx.enter_context(patch.object(module, "fetch", fetch))
-            module.fetch_thrift(
-                ttypes.FetchRequest(
-                    params=Params({}).to_thrift(),
-                    secrets=RawParams({}).to_thrift(),
-                    input_table_parquet_filename=input_filename,
-                    output_filename=output_filename,
-                )
-            )
+        with tempfile_context(dir=self.basedir) as input_table_parquet_path:
+            self._test_fetch(fetch, input_table_parquet_path=input_table_parquet_path)
 
     def test_fetch_get_input_dataframe_none_is_none(self):
         async def fetch(params, *, get_input_dataframe):
             df = await get_input_dataframe()
             self.assertIsNone(df)
 
-        with ExitStack() as ctx:
-            output_filename = ctx.enter_context(tempfile.NamedTemporaryFile()).name
-            ctx.enter_context(patch.object(module, "fetch", fetch))
-            module.fetch_thrift(
-                ttypes.FetchRequest(
-                    params=Params({}).to_thrift(),
-                    secrets=RawParams({}).to_thrift(),
-                    output_filename=output_filename,
-                )
-            )
+        self._test_fetch(fetch, input_table_parquet_path=None)
 
     def test_fetch_params(self):
         async def fetch(params):
             self.assertEqual(params, {"A": [{"B": "C"}]})
 
-        with ExitStack() as ctx:
-            output_filename = ctx.enter_context(tempfile.NamedTemporaryFile()).name
-            ctx.enter_context(patch.object(module, "fetch", fetch))
-            module.fetch_thrift(
-                ttypes.FetchRequest(
-                    params=Params({"A": [{"B": "C"}]}).to_thrift(),
-                    secrets=RawParams({}).to_thrift(),
-                    output_filename=output_filename,
-                )
-            )
+        self._test_fetch(fetch, params={"A": [{"B": "C"}]})
 
     def test_fetch_secrets(self):
         async def fetch(params, *, secrets):
             self.assertEqual(secrets, {"A": "B"})
 
-        with ExitStack() as ctx:
-            output_filename = ctx.enter_context(tempfile.NamedTemporaryFile()).name
-            ctx.enter_context(patch.object(module, "fetch", fetch))
-            module.fetch_thrift(
-                ttypes.FetchRequest(
-                    params=Params({}).to_thrift(),
-                    secrets=RawParams({"A": "B"}).to_thrift(),
-                    output_filename=output_filename,
-                )
-            )
+        self._test_fetch(fetch, secrets={"A": "B"})
 
     def test_fetch_return_dataframe(self):
         async def fetch(params):
             return pd.DataFrame({"A": [1, 2, 3]})
 
-        with ExitStack() as ctx:
-            output_filename = ctx.enter_context(tempfile.NamedTemporaryFile()).name
-            ctx.enter_context(patch.object(module, "fetch", fetch))
-            result = module.fetch_thrift(
-                ttypes.FetchRequest(
-                    params=Params({}).to_thrift(),
-                    secrets=RawParams({}).to_thrift(),
-                    output_filename=output_filename,
-                )
-            )
-            self.assertEqual(result.filename, output_filename)
+        with tempfile_context(dir=self.basedir) as outfile:
+            result = self._test_fetch(fetch, output_filename=outfile.name)
+
+            self.assertEqual(result.path, outfile)
             self.assertEqual(result.errors, [])
-            arrow_table = pyarrow.parquet.read_table(output_filename, use_threads=False)
+            arrow_table = pyarrow.parquet.read_table(str(outfile), use_threads=False)
             assert_arrow_table_equals(arrow_table, {"A": [1, 2, 3]})
 
     def test_fetch_return_error(self):
         async def fetch(params):
             return "bad things"
 
-        with ExitStack() as ctx:
-            output_filename = ctx.enter_context(tempfile.NamedTemporaryFile()).name
-            ctx.enter_context(patch.object(module, "fetch", fetch))
-            result = module.fetch_thrift(
-                ttypes.FetchRequest(
-                    params=Params({}).to_thrift(),
-                    secrets=RawParams({}).to_thrift(),
-                    output_filename=output_filename,
-                )
-            )
-            self.assertEqual(result.filename, output_filename)
+        with tempfile_context(dir=self.basedir) as outfile:
+            result = self._test_fetch(fetch, output_filename=outfile.name)
+            self.assertEqual(result.path, outfile)
             self.assertEqual(
-                [RenderError.from_thrift(e) for e in result.errors],
-                [RenderError(I18nMessage.TODO_i18n("bad things"))],
+                result.errors, [RenderError(I18nMessage.TODO_i18n("bad things"))]
             )
-            self.assertEqual(Path(output_filename).read_bytes(), b"")
+            self.assertEqual(outfile.read_bytes(), b"")
 
     def test_fetch_return_uncoerceable_dataframe_is_error(self):
         async def fetch(params):
             return pd.DataFrame({"A": [1, "2"]})  # mixed types -- invalid
 
-        with ExitStack() as ctx:
-            output_filename = ctx.enter_context(tempfile.NamedTemporaryFile()).name
-            ctx.enter_context(patch.object(module, "fetch", fetch))
-            with self.assertRaisesRegex(ValueError, "invalid value"):
-                module.fetch_thrift(
-                    ttypes.FetchRequest(
-                        params=Params({}).to_thrift(),
-                        secrets=RawParams({}).to_thrift(),
-                        output_filename=output_filename,
-                    )
-                )
+        with self.assertRaisesRegex(ValueError, "invalid value"):
+            self._test_fetch(fetch)
 
     def test_fetch_raise(self):
         async def fetch(params):
             raise RuntimeError("buggy fetch")
 
-        with ExitStack() as ctx:
-            output_filename = ctx.enter_context(tempfile.NamedTemporaryFile()).name
-            ctx.enter_context(patch.object(module, "fetch", fetch))
-            with self.assertRaisesRegex(RuntimeError, "buggy fetch"):
-                module.fetch_thrift(
-                    ttypes.FetchRequest(
-                        params=Params({}).to_thrift(),
-                        secrets=RawParams({}).to_thrift(),
-                        output_filename=output_filename,
-                    )
-                )
+        with self.assertRaisesRegex(RuntimeError, "buggy fetch"):
+            self._test_fetch(fetch)
 
     def test_fetch_sync(self):
-        def fetch(params):
+        def fetch(params):  # not async
             return pd.DataFrame({"A": [1, 2, 3]})
 
-        with ExitStack() as ctx:
-            output_filename = ctx.enter_context(tempfile.NamedTemporaryFile()).name
-            ctx.enter_context(patch.object(module, "fetch", fetch))
-            result = module.fetch_thrift(
-                ttypes.FetchRequest(
-                    params=Params({}).to_thrift(),
-                    secrets=RawParams({}).to_thrift(),
-                    output_filename=output_filename,
-                )
-            )
-            self.assertEqual(result.filename, output_filename)
+        with tempfile_context(dir=self.basedir) as outfile:
+            result = self._test_fetch(fetch, output_filename=outfile.name)
+
+            self.assertEqual(result.path, outfile)
             self.assertEqual(result.errors, [])
-            arrow_table = pyarrow.parquet.read_table(output_filename, use_threads=False)
+            arrow_table = pyarrow.parquet.read_table(str(outfile), use_threads=False)
             assert_arrow_table_equals(arrow_table, {"A": [1, 2, 3]})

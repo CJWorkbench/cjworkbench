@@ -1,13 +1,11 @@
+from contextlib import ExitStack
 from datetime import datetime
-import os
-import pathlib
+from pathlib import Path
 import uuid
-import pandas as pd
-from pandas.testing import assert_frame_equal
-from cjwkernel.types import I18nMessage, RenderError, RenderResult, Tab, TabOutput
+from cjwkernel.types import RenderResult, Tab, TabOutput
 from cjwkernel.tests.util import arrow_table
+from cjwkernel.util import tempdir_context
 from cjwstate import minio
-from cjwstate.rendercache import cache_render_result
 from cjwstate.models import Workflow, UploadedFile
 from cjwstate.models.param_spec import ParamDType
 from cjwstate.tests.utils import DbTestCase
@@ -20,6 +18,35 @@ from renderer.execute.types import (
 
 
 class CleanValueTests(DbTestCase):
+    def setUp(self):
+        super().setUp()
+        self.exit_stack = ExitStack()
+        self.basedir = self.exit_stack.enter_context(tempdir_context())
+
+    def tearDown(self):
+        self.exit_stack.close()
+        super().tearDown()
+
+    def _render_context(
+        self,
+        *,
+        wf_module_id=None,
+        input_table=None,
+        tab_results={},
+        params={},
+        exit_stack=None,
+    ) -> RenderContext:
+        if exit_stack is None:
+            exit_stack = self.exit_stack
+        return RenderContext(
+            wf_module_id=wf_module_id,
+            input_table=input_table,
+            tab_results=tab_results,
+            basedir=self.basedir,
+            exit_stack=exit_stack,
+            params=params,
+        )
+
     def test_clean_float(self):
         result = clean_value(ParamDType.Float(), 3.0, None)
         self.assertEqual(result, 3.0)
@@ -52,25 +79,26 @@ class CleanValueTests(DbTestCase):
             bucket=minio.UserFilesBucket,
             key=key,
         )
-        context = RenderContext(wfm.id, None, {}, None)
-        result = clean_value(ParamDType.File(), id, context)
-        self.assertIsInstance(result, pathlib.Path)
-        self.assertEqual(result.read_bytes(), b"1234")
-        self.assertEqual(result.suffixes, [".csv", ".gz"])
+        with ExitStack() as inner_stack:
+            context = self._render_context(wf_module_id=wfm.id, exit_stack=inner_stack)
+            result: Path = clean_value(ParamDType.File(), id, context)
+            self.assertIsInstance(result, Path)
+            self.assertEqual(result.read_bytes(), b"1234")
+            self.assertEqual(result.suffixes, [".csv", ".gz"])
 
-        # Assert that once `path` goes out of scope, it's deleted
-        str_path = str(result)  # get the filesystem path
-        del result  # should finalize, deleting the file on the filesystem
-        with self.assertRaises(FileNotFoundError):
-            os.open(str_path, 0)
+        # Assert that once `exit_stack` goes out of scope, file is deleted
+        self.assertFalse(result.exists())
 
     def test_clean_file_no_uploaded_file(self):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
         wfm = tab.wf_modules.create(module_id_name="uploadfile", order=0, slug="step-1")
-        context = RenderContext(wfm.id, None, {}, None)
+        context = self._render_context(wf_module_id=wfm.id)
         result = clean_value(ParamDType.File(), str(uuid.uuid4()), context)
         self.assertIsNone(result)
+        # Assert that if a temporary file was created to house the download, it
+        # no longer exists.
+        self.assertListEqual(list(self.basedir.iterdir()), [])
 
     def test_clean_file_no_minio_file(self):
         workflow = Workflow.create_and_init()
@@ -91,9 +119,12 @@ class CleanValueTests(DbTestCase):
             bucket=minio.UserFilesBucket,
             key=key,
         )
-        context = RenderContext(wfm.id, None, {}, None)
+        context = self._render_context(wf_module_id=wfm.id)
         result = clean_value(ParamDType.File(), id, context)
         self.assertIsNone(result)
+        # Assert that if a temporary file was created to house the download, it
+        # no longer exists.
+        self.assertListEqual(list(self.basedir.iterdir()), [])
 
     def test_clean_file_wrong_wf_module(self):
         workflow = Workflow.create_and_init()
@@ -113,12 +144,15 @@ class CleanValueTests(DbTestCase):
             bucket=minio.UserFilesBucket,
             key=key,
         )
-        context = RenderContext(wfm.id, None, {}, None)
+        context = self._render_context(wf_module_id=wfm.id)
         result = clean_value(ParamDType.File(), id, context)
         self.assertIsNone(result)
+        # Assert that if a temporary file was created to house the download, it
+        # no longer exists.
+        self.assertListEqual(list(self.basedir.iterdir()), [])
 
     def test_clean_normal_dict(self):
-        context = RenderContext(None, None, {}, None)
+        context = self._render_context()
         schema = ParamDType.Dict(
             {"str": ParamDType.String(), "int": ParamDType.Integer()}
         )
@@ -128,7 +162,7 @@ class CleanValueTests(DbTestCase):
         self.assertEqual(result, expected)
 
     def test_clean_column_valid(self):
-        context = RenderContext(None, arrow_table({"A": [1]}), {}, None)
+        context = self._render_context(input_table=arrow_table({"A": [1]}))
         result = clean_value(ParamDType.Column(), "A", context)
         self.assertEqual(result, "A")
 
@@ -139,7 +173,7 @@ class CleanValueTests(DbTestCase):
         # a new Text column but preserve its input column's data type.
         #
         # ... but for now: prompt for a Quick Fix.
-        context = RenderContext(None, arrow_table({"A": [1]}), {}, None)
+        context = self._render_context(input_table=arrow_table({"A": [1]}))
         with self.assertRaises(PromptingError) as cm:
             clean_value(
                 ParamDType.Column(column_types=frozenset({"text"})), "A", context
@@ -151,7 +185,7 @@ class CleanValueTests(DbTestCase):
         )
 
     def test_clean_column_prompting_error_convert_to_number(self):
-        context = RenderContext(None, arrow_table({"A": ["1"]}), {}, None)
+        context = self._render_context(input_table=arrow_table({"A": ["1"]}))
         with self.assertRaises(PromptingError) as cm:
             clean_value(
                 ParamDType.Column(column_types=frozenset({"number"})), "A", context
@@ -162,7 +196,9 @@ class CleanValueTests(DbTestCase):
         )
 
     def test_list_prompting_error_concatenate_same_type(self):
-        context = RenderContext(None, arrow_table({"A": ["1"], "B": ["2"]}), {}, None)
+        context = self._render_context(
+            input_table=arrow_table({"A": ["1"], "B": ["2"]})
+        )
         schema = ParamDType.List(
             inner_dtype=ParamDType.Column(column_types=frozenset({"number"}))
         )
@@ -175,8 +211,8 @@ class CleanValueTests(DbTestCase):
         )
 
     def test_list_prompting_error_concatenate_different_type(self):
-        context = RenderContext(
-            None, arrow_table({"A": ["1"], "B": [datetime.now()]}), {}, None
+        context = self._render_context(
+            input_table=arrow_table({"A": ["1"], "B": [datetime.now()]})
         )
         schema = ParamDType.List(
             inner_dtype=ParamDType.Column(column_types=frozenset({"number"}))
@@ -195,8 +231,8 @@ class CleanValueTests(DbTestCase):
         )
 
     def test_list_prompting_error_concatenate_different_type_to_text(self):
-        context = RenderContext(
-            None, arrow_table({"A": [1], "B": [datetime.now()]}), {}, None
+        context = self._render_context(
+            input_table=arrow_table({"A": [1], "B": [datetime.now()]})
         )
         schema = ParamDType.List(
             inner_dtype=ParamDType.Column(column_types=frozenset({"text"}))
@@ -210,7 +246,9 @@ class CleanValueTests(DbTestCase):
         )
 
     def test_dict_prompting_error(self):
-        context = RenderContext(None, arrow_table({"A": ["a"], "B": ["b"]}), {}, None)
+        context = self._render_context(
+            input_table=arrow_table({"A": ["a"], "B": ["b"]})
+        )
         schema = ParamDType.Dict(
             {
                 "col1": ParamDType.Column(column_types=frozenset({"number"})),
@@ -229,7 +267,9 @@ class CleanValueTests(DbTestCase):
         )
 
     def test_dict_prompting_error_concatenate_same_type(self):
-        context = RenderContext(None, arrow_table({"A": ["1"], "B": ["2"]}), {}, None)
+        context = self._render_context(
+            input_table=arrow_table({"A": ["1"], "B": ["2"]})
+        )
         schema = ParamDType.Dict(
             {
                 "x": ParamDType.Column(column_types=frozenset({"number"})),
@@ -245,8 +285,8 @@ class CleanValueTests(DbTestCase):
         )
 
     def test_dict_prompting_error_concatenate_different_types(self):
-        context = RenderContext(
-            None, arrow_table({"A": ["1"], "B": [datetime.now()]}), {}, None
+        context = self._render_context(
+            input_table=arrow_table({"A": ["1"], "B": [datetime.now()]})
         )
         schema = ParamDType.Dict(
             {
@@ -268,25 +308,25 @@ class CleanValueTests(DbTestCase):
         )
 
     def test_clean_column_missing_becomes_empty_string(self):
-        context = RenderContext(None, arrow_table({"A": [1]}), {}, None)
+        context = self._render_context(input_table=arrow_table({"A": [1]}))
         result = clean_value(ParamDType.Column(), "B", context)
         self.assertEqual(result, "")
 
     def test_clean_multicolumn_valid(self):
-        context = RenderContext(None, arrow_table({"A": [1], "B": [2]}), {}, None)
+        context = self._render_context(input_table=arrow_table({"A": [1], "B": [2]}))
         result = clean_value(ParamDType.Multicolumn(), ["A", "B"], context)
         self.assertEqual(result, ["A", "B"])
 
     def test_clean_multicolumn_sort_in_table_order(self):
-        context = RenderContext(None, arrow_table({"B": [1], "A": [2]}), {}, None)
+        context = self._render_context(input_table=arrow_table({"B": [1], "A": [2]}))
         result = clean_value(ParamDType.Multicolumn(), ["A", "B"], context)
         self.assertEqual(result, ["B", "A"])
 
     def test_clean_multicolumn_prompting_error_convert_to_text(self):
         # TODO make this _automatic_ instead of quick-fix?
         # ... but for now: prompt for a Quick Fix.
-        context = RenderContext(
-            None, arrow_table({"A": [1], "B": [datetime.now()], "C": ["x"]}), {}, None
+        context = self._render_context(
+            input_table=arrow_table({"A": [1], "B": [datetime.now()], "C": ["x"]})
         )
         with self.assertRaises(PromptingError) as cm:
             schema = ParamDType.Multicolumn(column_types=frozenset({"text"}))
@@ -298,12 +338,12 @@ class CleanValueTests(DbTestCase):
         )
 
     def test_clean_multicolumn_missing_is_removed(self):
-        context = RenderContext(None, arrow_table({"A": [1], "B": [1]}), {}, None)
+        context = self._render_context(input_table=arrow_table({"A": [1], "B": [1]}))
         result = clean_value(ParamDType.Multicolumn(), ["A", "X", "B"], context)
         self.assertEqual(result, ["A", "B"])
 
     def test_clean_multichartseries_missing_is_removed(self):
-        context = RenderContext(None, arrow_table({"A": [1], "B": [1]}), {}, None)
+        context = self._render_context(input_table=arrow_table({"A": [1], "B": [1]}))
         value = [
             {"column": "A", "color": "#aaaaaa"},
             {"column": "C", "color": "#cccccc"},
@@ -312,8 +352,8 @@ class CleanValueTests(DbTestCase):
         self.assertEqual(result, [{"column": "A", "color": "#aaaaaa"}])
 
     def test_clean_multichartseries_non_number_is_prompting_error(self):
-        context = RenderContext(
-            None, arrow_table({"A": ["a"], "B": [datetime.now()]}), {}, None
+        context = self._render_context(
+            input_table=arrow_table({"A": ["a"], "B": [datetime.now()]})
         )
         value = [
             {"column": "A", "color": "#aaaaaa"},
@@ -335,7 +375,7 @@ class CleanValueTests(DbTestCase):
     def test_clean_tab_happy_path(self):
         tab = Tab("tab-1", "Tab 1")
         table = arrow_table({"A": [1, 2]})
-        context = RenderContext(None, None, {tab: RenderResult(table)}, None)
+        context = self._render_context(tab_results={tab: RenderResult(table)})
         result = clean_value(ParamDType.Tab(), "tab-1", context)
         self.assertEqual(result, TabOutput(tab, table))
 
@@ -350,11 +390,10 @@ class CleanValueTests(DbTestCase):
             }
         )
         params = {"tab": "tab-2", "columns": ["A-from-tab-1", "A-from-tab-2"]}
-        context = RenderContext(
-            None,
-            arrow_table({"A-from-tab-1": [1]}),
-            {tab2: RenderResult(tab2_output_table)},
-            params,
+        context = self._render_context(
+            input_table=arrow_table({"A-from-tab-1": [1]}),
+            tab_results={tab2: RenderResult(tab2_output_table)},
+            params=params,
         )
         result = clean_value(schema, params, context)
         # result['tab'] is not what we're testing here
@@ -370,13 +409,17 @@ class CleanValueTests(DbTestCase):
             }
         )
         params = {"tab": "tab-missing", "columns": ["A-from-tab-1"]}
-        context = RenderContext(None, arrow_table({"A-from-tab-1": [1]}), {}, params)
+        context = self._render_context(
+            input_table=arrow_table({"A-from-tab-1": [1]}),
+            tab_results={},
+            params=params,
+        )
         result = clean_value(schema, params, context)
         # result['tab'] is not what we're testing here
         self.assertEqual(result["columns"], [])
 
     def test_clean_tab_no_tab_selected_gives_none(self):
-        context = RenderContext(None, None, {}, None)
+        context = self._render_context(tab_results={})
         result = clean_value(ParamDType.Tab(), "", context)
         self.assertEqual(result, None)
 
@@ -386,19 +429,19 @@ class CleanValueTests(DbTestCase):
 
         JS sees nonexistent tab slugs. render() doesn't.
         """
-        context = RenderContext(None, None, {}, None)
+        context = self._render_context(tab_results={})
         result = clean_value(ParamDType.Tab(), "tab-XXX", context)
         self.assertEqual(result, None)
 
     def test_clean_tab_cycle(self):
         tab = Tab("tab-1", "Tab 1")
-        context = RenderContext(None, None, {tab: None}, None)
+        context = self._render_context(tab_results={tab: None})
         with self.assertRaises(TabCycleError):
             clean_value(ParamDType.Tab(), "tab-1", context)
 
     def test_clean_tab_unreachable(self):
         tab = Tab("tab-error", "Buggy Tab")
-        context = RenderContext(None, None, {tab: RenderResult()}, None)
+        context = self._render_context(tab_results={tab: RenderResult()})
         with self.assertRaises(TabOutputUnreachableError):
             clean_value(ParamDType.Tab(), "tab-error", context)
 
@@ -408,11 +451,11 @@ class CleanValueTests(DbTestCase):
         tab3 = Tab("tab-3", "Tab 3")
         tab3_output = arrow_table({"C": [1]})
 
-        context = RenderContext(
-            None,
-            None,
-            {tab2: RenderResult(tab2_output), tab3: RenderResult(tab3_output)},
-            None,
+        context = self._render_context(
+            tab_results={
+                tab2: RenderResult(tab2_output),
+                tab3: RenderResult(tab3_output),
+            }
         )
         result = clean_value(ParamDType.Multitab(), ["tab-2", "tab-3"], context)
         self.assertEqual(
@@ -425,32 +468,32 @@ class CleanValueTests(DbTestCase):
         tab3 = Tab("tab-3", "Tab 3")
         tab3_output = arrow_table({"C": [1]})
 
-        context = RenderContext(
-            None,
-            None,
+        context = self._render_context(
             # RenderContext's dict ordering determines desired tab order.
             # (Python 3.7 spec: dict is ordered in insertion order. CPython 3.6
             # and PyPy 7 do this, too.)
-            {tab3: RenderResult(tab3_output), tab2: RenderResult(tab2_output)},
-            None,
+            tab_results={
+                tab3: RenderResult(tab3_output),
+                tab2: RenderResult(tab2_output),
+            }
         )
         # Supply wrongly-ordered tabs; renderprep should reorder them.
         result = clean_value(ParamDType.Multitab(), ["tab-2", "tab-3"], context)
         self.assertEqual([t.tab.slug for t in result], ["tab-3", "tab-2"])
 
     def test_clean_tabs_nix_missing_tab(self):
-        context = RenderContext(None, None, {}, None)
+        context = self._render_context(tab_results={})
         result = clean_value(ParamDType.Multitab(), ["tab-missing"], context)
         self.assertEqual(result, [])
 
     def test_clean_tabs_tab_cycle(self):
         tab = Tab("tab-1", "Tab 1")
-        context = RenderContext(None, None, {tab: None}, None)
+        context = self._render_context(tab_results={tab: None})
         with self.assertRaises(TabCycleError):
             clean_value(ParamDType.Multitab(), ["tab-1"], context)
 
     def test_clean_tabs_tab_unreachable(self):
         tab = Tab("tab-1", "Tab 1")
-        context = RenderContext(None, None, {tab: RenderResult()}, None)
+        context = self._render_context(tab_results={tab: RenderResult()})
         with self.assertRaises(TabOutputUnreachableError):
             clean_value(ParamDType.Multitab(), ["tab-1"], context)

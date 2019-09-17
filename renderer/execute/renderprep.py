@@ -1,12 +1,11 @@
+from contextlib import ExitStack
 from dataclasses import dataclass
 from functools import partial, singledispatch
-import os
 import re
-import pathlib
-import tempfile
-import weakref
+from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 from cjwkernel.types import ArrowTable, Params, RenderResult, Tab, TabOutput
+from cjwkernel.util import tempfile_context
 from cjwstate import minio
 from cjwstate.models import UploadedFile
 from cjwstate.models.param_spec import ParamDType
@@ -69,6 +68,8 @@ class RenderContext:
         input_table: ArrowTable,
         # assume tab_results keys are ordered the way the user ordered the tabs.
         tab_results: Dict[Tab, Optional[RenderResult]],
+        basedir: Path,
+        exit_stack: ExitStack,
         # params is a HACK to let column selectors rely on a tab_parameter,
         # which is a _root-level_ parameter. So when we're walking the tree of
         # params, we need to keep a handle on the root ...  which is ugly and
@@ -84,6 +85,8 @@ class RenderContext:
         self.tabs: Dict[str, _TabData] = {
             k.slug: _TabData(k, v) for k, v in tab_results.items()
         }
+        self.basedir = basedir
+        self.exit_stack = exit_stack
         self.params = params
 
     def output_columns_for_tab_parameter(self, tab_parameter):
@@ -168,14 +171,10 @@ def _(
     return float(value)
 
 
-class WeakreffablePath(pathlib.PosixPath):
-    """Exactly like pathlib.Path, but weakref.finalize works on it."""
-
-
 @clean_value.register(ParamDType.File)
 def _(
     dtype: ParamDType.File, value: Optional[str], context: RenderContext
-) -> Optional[pathlib.Path]:
+) -> Optional[Path]:
     """
     Convert a `file` String-encoded UUID to a tempfile `pathlib.Path`.
 
@@ -184,6 +183,8 @@ def _(
     * Points to a temporary file containing all bytes
     * Has the same suffix as the originally-uploaded file
     * Will have its file deleted when it goes out of scope
+
+    If the file is in the database but does not exist on minio, return `None`.
     """
     if value is None:
         return None
@@ -198,20 +199,21 @@ def _(
     # have the same suffix as the original: that helps with filetype
     # detection. We also put the UUID in the name so debug messages help
     # devs find the original file.
-    name = FilesystemUnsafeChars.sub("-", uploaded_file.name)
-    suffix = "".join(pathlib.PurePath(name).suffixes)
-    fd, filename = tempfile.mkstemp(suffix=suffix, prefix=value)
-    os.close(fd)  # we just want the empty file; no need to have it open
-    # Build our retval: it'll delete the file when it's destroyed
-    path = WeakreffablePath(filename)
-    weakref.finalize(path, os.unlink, filename)
+    safe_name = FilesystemUnsafeChars.sub("-", uploaded_file.name)
+    path = context.exit_stack.enter_context(
+        tempfile_context(
+            prefix="file-",
+            suffix=(uploaded_file.uuid + "-" + safe_name),
+            dir=context.basedir,
+        )
+    )
     try:
         # Overwrite the file
         minio.download(uploaded_file.bucket, uploaded_file.key, path)
+        return path
     except FileNotFoundError:
-        # tempfile will be deleted by weakref
+        # tempfile will be deleted by context.exit_stack
         return None
-    return path
 
 
 @clean_value.register(ParamDType.Tab)

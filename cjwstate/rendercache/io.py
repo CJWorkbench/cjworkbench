@@ -1,10 +1,8 @@
-from contextlib import contextmanager
-import os
+import contextlib
 from pathlib import Path
-import tempfile
 from typing import ContextManager, List, Optional
 from cjwkernel.types import ArrowTable, RenderResult, TableMetadata
-from cjwkernel.util import json_encode
+from cjwkernel.util import json_encode, tempfile_context
 from cjwstate import minio, parquet
 from cjwstate.models import WfModule, Workflow, CachedRenderResult
 
@@ -93,15 +91,15 @@ def cache_render_result(
     )  # makes old cache inconsistent
     wf_module.save(update_fields=WF_MODULE_FIELDS)  # makes new cache inconsistent
     if result.table.metadata.columns:  # only write non-zero-column tables
-        with tempfile.NamedTemporaryFile() as tf:
-            parquet_path = Path(tf.name)
+        with tempfile_context() as parquet_path:
             parquet.write(parquet_path, result.table.table)
             minio.fput_file(
                 BUCKET, parquet_key(workflow.id, wf_module.id, delta_id), parquet_path
             )  # makes new cache consistent
 
 
-def downloaded_parquet_file(crr: CachedRenderResult) -> ContextManager[Path]:
+@contextlib.contextmanager
+def downloaded_parquet_file(crr: CachedRenderResult, dir=None) -> ContextManager[Path]:
     """
     Context manager to download and yield `path`, a hopefully-Parquet file.
 
@@ -118,10 +116,15 @@ def downloaded_parquet_file(crr: CachedRenderResult) -> ContextManager[Path]:
         except rendercache.CorruptCacheError:
             # file does not exist....
     """
-    try:
-        return minio.temporarily_download(BUCKET, crr_parquet_key(crr))
-    except FileNotFoundError:
-        raise CorruptCacheError
+    with contextlib.ExitStack() as ctx:
+        try:
+            path = ctx.enter_context(
+                minio.temporarily_download(BUCKET, crr_parquet_key(crr), dir=dir)
+            )
+        except FileNotFoundError:
+            raise CorruptCacheError
+
+        yield path
 
 
 def load_cached_render_result(
@@ -173,7 +176,7 @@ def load_cached_render_result(
     return RenderResult(arrow_table, crr.errors, crr.json)
 
 
-@contextmanager
+@contextlib.contextmanager
 def open_cached_render_result(
     crr: CachedRenderResult, only_columns: Optional[List[str]] = None
 ) -> ContextManager[RenderResult]:
@@ -204,13 +207,11 @@ def open_cached_render_result(
         )
         return
 
-    fd, filename = tempfile.mkstemp()
-    try:
-        os.close(fd)
-        arrow_path = Path(filename)
-        yield load_cached_render_result(crr, arrow_path, only_columns=only_columns)
-    finally:
-        os.unlink(filename)
+    with tempfile_context(prefix="cached-render-result") as arrow_path:
+        # raise CorruptCacheError (deleting `arrow_path` in the process)
+        result = load_cached_render_result(crr, arrow_path, only_columns=only_columns)
+
+        yield result
 
 
 def delete_parquet_files_for_wf_module(workflow_id: int, wf_module_id: int) -> None:
