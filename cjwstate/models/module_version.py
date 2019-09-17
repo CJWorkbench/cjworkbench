@@ -8,7 +8,7 @@ from django.dispatch import receiver
 from django.utils import timezone
 from cjwkernel.param_dtype import ParamDType
 from cjwstate import minio
-from server.modules import Specs as InternalModuleSpecs
+from server.modules.registry import Specs as InternalModuleSpecs
 from .module_loader import validate_module_spec
 from .param_spec import ParamSpec
 

@@ -177,6 +177,11 @@ def safe_eval_process(code, table, timeout=TIMEOUT):
     process with restricted execution (a sandbox). The sandbox forbids key
     Python features (such as opening files).
     """
+    # Import from a path that the spawned process can access.
+    #
+    # TODO use the kernel to sandbox.
+    from server.modules.pythoncode import inner_eval
+
     recver, sender = multiprocessing.Pipe(duplex=False)
     subprocess = multiprocessing.Process(
         target=inner_eval, name="pythoncode", daemon=True, args=[code, table, sender]
