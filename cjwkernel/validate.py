@@ -74,10 +74,18 @@ class WrongColumnType(ValueError):
 
 
 class DatetimeTimezoneNotAllowed(ValueError):
-    def __init__(self, name: str, dtype: pyarrow.DataType):
+    def __init__(self, name: str, dtype: pyarrow.TimestampType):
         super().__init__(
             "Table column '%s' (%r) has a time zone, but Workbench does not support time zones"
             % (name, dtype)
+        )
+
+
+class DatetimeUnitNotAllowed(ValueError):
+    def __init__(self, name: str, dtype: pyarrow.TimestampType):
+        super().__init__(
+            "Table column '%s' (%r) has unit '%s', but Workbench only supports 'ns'"
+            % (name, dtype, dtype.unit)
         )
 
 
@@ -197,5 +205,7 @@ def validate(table: Optional[pyarrow.Table], metadata: TableMetadata) -> None:
                     raise WrongColumnType(actual_name, expected.type, actual.type)
                 if actual.type.tz is not None:
                     raise DatetimeTimezoneNotAllowed(actual_name, actual.type)
+                if actual.type.unit != "ns":
+                    raise DatetimeUnitNotAllowed(actual_name, actual.type)
             else:
                 raise NotImplementedError

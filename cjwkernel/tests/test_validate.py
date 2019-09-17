@@ -7,6 +7,7 @@ from cjwkernel.validate import (
     ColumnNameIsInvalidUtf8,
     DictionaryColumnHasUnusedEntry,
     DatetimeTimezoneNotAllowed,
+    DatetimeUnitNotAllowed,
     DuplicateColumnName,
     TableHasTooManyRecordBatches,
     TableShouldBeNone,
@@ -100,8 +101,23 @@ class ValidateTests(unittest.TestCase):
                 pyarrow.table(
                     {
                         "A": pyarrow.array(
-                            [5298375234],
-                            type=pyarrow.timestamp("us", "America/New_York"),
+                            [5298375234123],
+                            type=pyarrow.timestamp("ns", "America/New_York"),
+                        )
+                    }
+                ),
+                TableMetadata(1, [Datetime("A")]),
+            )
+
+    def test_column_datetime_must_be_ns_resolution(self):
+        # [2019-09-17] Pandas only supports datetime64[ns]
+        # https://github.com/pandas-dev/pandas/issues/7307#issuecomment-224180563
+        with self.assertRaises(DatetimeUnitNotAllowed):
+            validate(
+                pyarrow.table(
+                    {
+                        "A": pyarrow.array(
+                            [5298375234], type=pyarrow.timestamp("us", tz=None)
                         )
                     }
                 ),
