@@ -291,6 +291,10 @@ describe('WfModule, not read-only mode', () => {
     mockApi.setSelectedWfModule = jest.fn(() => Promise.resolve(null))
     mockApi.addModule = jest.fn(() => Promise.resolve(null))
     generateSlug.mockImplementation(prefix => prefix + 'X')
+    const quickFix = {
+      buttonText: { id: 'TODO_i18n', arguments: { text: 'Fix it' } },
+      action: { type: 'prependStep', moduleSlug: 'dosomething', partialParams: { A: 'B' } }
+    }
     const store = mockStore({
       workflow: {
         id: 99,
@@ -331,7 +335,7 @@ describe('WfModule, not read-only mode', () => {
           isZenMode={false}
           isZenModeAllowed={false}
           index={1}
-          wfModule={{ id: 20, module: 'loadurl', is_collapsed: false, status: 'error', params: {}, secrets: {}, error: 'foo', files: [], quick_fixes: [{ text: 'Fix', action: 'prependModule', args: ['fixtype', { foo: 'bar' }] }] }}
+          wfModule={{ id: 20, module: 'loadurl', is_collapsed: false, status: 'error', params: {}, secrets: {}, error: 'foo', files: [], quick_fixes: [quickFix] }}
           isSelected
           isAfterSelected={false}
           onDragStart={jest.fn()}
@@ -343,7 +347,7 @@ describe('WfModule, not read-only mode', () => {
     )
 
     w.find('button.quick-fix').simulate('click')
-    expect(mockApi.addModule).toHaveBeenCalledWith('tab-11', 'step-X', 'fixtype', 1, { foo: 'bar' })
+    expect(mockApi.addModule).toHaveBeenCalledWith('tab-11', 'step-X', 'dosomething', 1, { A: 'B' })
   })
 
   describe('lesson highlights', () => {
@@ -402,7 +406,7 @@ describe('WfModule, not read-only mode', () => {
             isZenMode={false}
             isZenModeAllowed={false}
             index={1}
-            wfModule={{ id: 20, module: 'loadurl', is_collapsed: false, status: 'error', params: {}, secrets: {}, error: 'foo', files: [], quick_fixes: [{ text: 'Fix', action: 'prependModule', args: ['fixtype', { foo: 'bar' }] }] }}
+            wfModule={{ id: 20, module: 'loadurl', is_collapsed: false, status: 'error', params: {}, secrets: {}, error: 'foo', files: [], quick_fixes: [] }}
             isSelected
             isAfterSelected={false}
             onDragStart={jest.fn()}

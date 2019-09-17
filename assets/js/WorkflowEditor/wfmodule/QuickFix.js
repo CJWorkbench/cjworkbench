@@ -1,10 +1,19 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import I18nMessage from '../I18nMessage'
 
 export const QuickFixPropTypes = {
-  text: PropTypes.string.isRequired,
-  action: PropTypes.oneOf(['prependModule']).isRequired,
-  args: PropTypes.array.isRequired
+  buttonText: PropTypes.shape({
+    id: PropTypes.string.isRequired, // message ID
+    arguments: PropTypes.object.isRequired // arguments
+  }).isRequired,
+  action: PropTypes.oneOfType([
+    PropTypes.exact({
+      type: PropTypes.oneOf(['prependStep']).isRequired,
+      moduleSlug: PropTypes.string.isRequired,
+      partialParams: PropTypes.object.isRequired
+    }).isRequired
+  ]).isRequired
 }
 
 export default class QuickFix extends React.PureComponent {
@@ -15,12 +24,12 @@ export default class QuickFix extends React.PureComponent {
   }
 
   handleClick = () => {
-    const { action, args, applyQuickFix } = this.props
-    applyQuickFix(action, args)
+    const { action, applyQuickFix } = this.props
+    applyQuickFix(action)
   }
 
   render () {
-    const { disabled, text } = this.props
+    const { disabled, buttonText } = this.props
 
     return (
       <button
@@ -28,7 +37,7 @@ export default class QuickFix extends React.PureComponent {
         className='quick-fix action-button button-orange'
         onClick={this.handleClick}
       >
-        {text}
+        <I18nMessage {...buttonText} />
       </button>
     )
   }

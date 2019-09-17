@@ -84,7 +84,7 @@ export class WfModule extends React.PureComponent {
     setSelectedWfModule: PropTypes.func.isRequired, // func(wfModuleId) => undefined
     setWfModuleCollapsed: PropTypes.func.isRequired, // func(wfModuleId, isCollapsed, isReadOnly) => undefined
     setZenMode: PropTypes.func.isRequired, // func(wfModuleId, bool) => undefined
-    applyQuickFix: PropTypes.func.isRequired, // func(wfModuleId, action, args) => undefined
+    applyQuickFix: PropTypes.func.isRequired, // func(wfModuleId, action) => undefined
     setWfModuleNotes: PropTypes.func.isRequired // func(wfModuleId, notes) => undefined
   }
 
@@ -214,8 +214,8 @@ export class WfModule extends React.PureComponent {
     })
   }
 
-  applyQuickFix = (...args) => {
-    this.props.applyQuickFix(this.props.wfModule.id, ...args)
+  applyQuickFix = (action) => {
+    this.props.applyQuickFix(this.props.wfModule.id, action)
   }
 
   handleChangeIsZenMode = (ev) => {

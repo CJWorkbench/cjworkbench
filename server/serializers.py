@@ -203,7 +203,11 @@ class WfModuleSerializer(serializers.ModelSerializer):
         return data
 
     def get_quick_fixes(self, wfm):
-        return wfm.cached_render_result_quick_fixes
+        crr = wfm.cached_render_result
+        if crr is None:
+            return []
+        else:
+            return [qf.to_dict() for err in crr.errors for qf in err.quick_fixes]
 
     def to_representation(self, wfm):
         ret = super().to_representation(wfm)

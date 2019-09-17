@@ -24,56 +24,49 @@ describe('Status line', () => {
   })
 
   it('renders and applies a quick fix', () => {
+    const quickFix = {
+      buttonText: { id: 'TODO_i18n', arguments: { text: 'Fix it' } },
+      action: { type: 'prependStep', moduleSlug: 'dosomething', partialParams: { A: 'B' } }
+    }
     const w = wrapper({
       status: 'error',
       error: 'Wrong type',
-      quickFixes: [
-        {
-          text: 'Fix it',
-          action: 'prependModule',
-          args: [1, 2]
-        }
-      ]
+      quickFixes: [quickFix]
     })
 
     expect(w.find('button').text()).toEqual('Fix it')
     w.find('button').simulate('click')
-    expect(w.prop('applyQuickFix')).toHaveBeenCalledWith('prependModule', [1, 2])
+    expect(w.prop('applyQuickFix')).toHaveBeenCalledWith(quickFix.action)
   })
 
   it('shows error but not quick fixes if isReadOnly', () => {
+    const quickFix = {
+      buttonText: { id: 'TODO_i18n', arguments: { text: 'Fix it' } },
+      action: { type: 'prependStep', moduleSlug: 'dosomething', partialParams: { A: 'B' } }
+    }
     const w = wrapper({
       status: 'error',
       error: 'Wrong type',
       isReadOnly: true,
-      quickFixes: [
-        {
-          text: 'Fix it',
-          action: 'prependModule',
-          args: [1, 2]
-        }
-      ]
+      quickFixes: [quickFix]
     })
     expect(w.find('p').text()).toEqual('Wrong type')
     expect(w.find('button')).toHaveLength(0)
   })
 
   it('prevents double-applying a quick fix', () => {
+    const quickFix1 = {
+      buttonText: { id: 'TODO_i18n', arguments: { text: 'Fix it' } },
+      action: { type: 'prependStep', moduleSlug: 'dosomething', partialParams: { A: 'B' } }
+    }
+    const quickFix2 = {
+      buttonText: { id: 'TODO_i18n', arguments: { text: 'Fix it more' } },
+      action: { type: 'prependStep', moduleSlug: 'dosomething2', partialParams: { B: 'C' } }
+    }
     const w = wrapper({
       status: 'error',
       error: 'Wrong type',
-      quickFixes: [
-        {
-          text: 'Fix it',
-          action: 'prependModule',
-          args: [1, 2]
-        },
-        {
-          text: 'Fix it more',
-          action: 'prependModule',
-          args: [2, 3]
-        }
-      ]
+      quickFixes: [quickFix1, quickFix2]
     })
 
     w.find('button').at(0).simulate('click')
@@ -90,16 +83,14 @@ describe('Status line', () => {
     // 2. Click "Undo"
     //
     // expected results: you can quick fix again
+    const quickFix = {
+      buttonText: { id: 'TODO_i18n', arguments: { text: 'Fix it' } },
+      action: { type: 'prependStep', moduleSlug: 'dosomething', partialParams: { A: 'B' } }
+    }
     const errorProps = {
       status: 'error',
       error: 'Wrong type',
-      quickFixes: [
-        {
-          text: 'Fix it',
-          action: 'prependModule',
-          args: [1, 2]
-        }
-      ]
+      quickFixes: [quickFix]
     }
 
     const w = wrapper(errorProps)
