@@ -59,8 +59,16 @@ class ParquetTest(unittest.TestCase):
     def test_read_write_float64(self):
         self._test_read_write_table({"A": [1.0, 2.2, 3.0, np.nan]})
 
+    def test_read_write_float64_all_null(self):
+        self._test_read_write_table(
+            {"A": pyarrow.array([None], type=pyarrow.float64())}
+        )
+
     def test_read_write_text(self):
         self._test_read_write_table({"A": ["x", None, "y"]})
+
+    def test_read_write_text_all_null(self):
+        self._test_read_write_table({"A": pyarrow.array([None], type=pyarrow.string())})
 
     def test_read_write_text_categorical(self):
         table = pyarrow.table(

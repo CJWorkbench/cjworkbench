@@ -6,15 +6,23 @@ import unittest
 import numpy as np
 import pandas as pd
 from pandas.testing import assert_series_equal, assert_frame_equal
+import pyarrow
 from cjwkernel.pandas.types import (
     Column,
     ColumnType,
     ProcessResult,
     QuickFix,
     TableShape,
+    arrow_table_to_dataframe,
+    dataframe_to_arrow_table,
 )
 import cjwkernel.types as atypes
-from cjwkernel.tests.util import override_settings
+from cjwkernel.util import create_tempfile
+from cjwkernel.tests.util import (
+    override_settings,
+    arrow_table,
+    assert_arrow_table_equals,
+)
 
 
 class ColumnTypeTextTests(unittest.TestCase):
@@ -766,3 +774,162 @@ class ProcessResultTests(unittest.TestCase):
             self.assertEqual(arrow_table.to_pydict(), {"A": [1, 2]})
         finally:
             os.unlink(filename)
+
+
+class ArrowConversionTests(unittest.TestCase):
+    def setUp(self):
+        super().setUp()
+        self.path = create_tempfile()
+
+    def tearDown(self):
+        self.path.unlink()
+        super().tearDown()
+
+    def test_dataframe_all_null_text_column(self):
+        assert_arrow_table_equals(
+            dataframe_to_arrow_table(
+                pd.DataFrame({"A": [None]}, dtype=str),
+                [Column("A", ColumnType.TEXT())],
+                self.path,
+            ),
+            arrow_table({"A": pyarrow.array([None], pyarrow.string())}),
+        )
+
+    def test_arrow_all_null_text_column(self):
+        dataframe, columns = arrow_table_to_dataframe(
+            arrow_table(
+                {"A": pyarrow.array(["a", "b", None, "c"])},
+                columns=[atypes.Column("A", atypes.ColumnType.Text())],
+            )
+        )
+        assert_frame_equal(dataframe, pd.DataFrame({"A": ["a", "b", np.nan, "c"]}))
+        self.assertEqual(columns, [Column("A", ColumnType.TEXT())])
+
+    def test_dataframe_category_column(self):
+        assert_arrow_table_equals(
+            dataframe_to_arrow_table(
+                pd.DataFrame({"A": ["A", "B", None, "A"]}, dtype="category"),
+                [Column("A", ColumnType.TEXT())],
+                self.path,
+            ),
+            arrow_table(
+                {
+                    "A": pyarrow.DictionaryArray.from_arrays(
+                        pyarrow.array([0, 1, None, 0], type=pyarrow.int8()),
+                        pyarrow.array(["A", "B"], type=pyarrow.string()),
+                    )
+                }
+            ),
+        )
+
+    def test_arrow_category_column(self):
+        atable = arrow_table(
+            {
+                "A": pyarrow.DictionaryArray.from_arrays(
+                    pyarrow.array([0, 1, None, 0], type=pyarrow.int8()),
+                    pyarrow.array(["A", "B"], type=pyarrow.string()),
+                )
+            }
+        )
+        dataframe, columns = arrow_table_to_dataframe(atable)
+        self.assertEqual(columns, [Column("A", ColumnType.TEXT())])
+        assert_frame_equal(
+            dataframe, pd.DataFrame({"A": ["A", "B", None, "A"]}, dtype="category")
+        )
+
+    def test_dataframe_all_null_category_column(self):
+        assert_arrow_table_equals(
+            dataframe_to_arrow_table(
+                pd.DataFrame({"A": [None]}, dtype=str).astype("category"),
+                [Column("A", ColumnType.TEXT())],
+                self.path,
+            ),
+            arrow_table(
+                {
+                    "A": pyarrow.DictionaryArray.from_arrays(
+                        pyarrow.array([None], type=pyarrow.int8()),
+                        pyarrow.array([], type=pyarrow.string()),
+                    )
+                }
+            ),
+        )
+
+    def test_arrow_all_null_category_column(self):
+        atable = arrow_table(
+            {
+                "A": pyarrow.DictionaryArray.from_arrays(
+                    pyarrow.array([None], type=pyarrow.int8()),
+                    pyarrow.array([], type=pyarrow.string()),
+                )
+            }
+        )
+        dataframe, columns = arrow_table_to_dataframe(atable)
+        self.assertEqual(columns, [Column("A", ColumnType.TEXT())])
+        assert_frame_equal(
+            dataframe, pd.DataFrame({"A": [None]}, dtype=str).astype("category")
+        )
+
+    def test_dataframe_uint8_column(self):
+        assert_arrow_table_equals(
+            dataframe_to_arrow_table(
+                pd.DataFrame({"A": [1, 2, 3, 253]}, dtype=np.uint8),
+                [Column("A", ColumnType.NUMBER("{:,d}"))],
+                self.path,
+            ),
+            arrow_table(
+                {"A": pyarrow.array([1, 2, 3, 253], type=pyarrow.uint8())},
+                [atypes.Column("A", atypes.ColumnType.Number("{:,d}"))],
+            ),
+        )
+
+    def test_arrow_uint8_column(self):
+        dataframe, columns = arrow_table_to_dataframe(
+            arrow_table(
+                {"A": pyarrow.array([1, 2, 3, 253], type=pyarrow.uint8())},
+                columns=[atypes.Column("A", atypes.ColumnType.Number("{:,d}"))],
+            )
+        )
+        assert_frame_equal(
+            dataframe, pd.DataFrame({"A": [1, 2, 3, 253]}, dtype=np.uint8)
+        )
+        self.assertEqual(columns, [Column("A", ColumnType.NUMBER("{:,d}"))])
+
+    def test_dataframe_datetime_column(self):
+        assert_arrow_table_equals(
+            dataframe_to_arrow_table(
+                pd.DataFrame(
+                    {"A": ["2019-09-17T21:21:00.123456Z", None]}, dtype="datetime64[ns]"
+                ),
+                [Column("A", ColumnType.DATETIME())],
+                self.path,
+            ),
+            arrow_table(
+                {
+                    "A": pyarrow.array(
+                        [dt.fromisoformat("2019-09-17T21:21:00.123456"), None],
+                        type=pyarrow.timestamp(unit="ns", tz=None),
+                    )
+                },
+                [atypes.Column("A", atypes.ColumnType.Datetime())],
+            ),
+        )
+
+    def test_arrow_datetime_column(self):
+        dataframe, columns = arrow_table_to_dataframe(
+            arrow_table(
+                {
+                    "A": pyarrow.array(
+                        [dt.fromisoformat("2019-09-17T21:21:00.123456"), None],
+                        type=pyarrow.timestamp(unit="ns", tz=None),
+                    )
+                },
+                [atypes.Column("A", atypes.ColumnType.Datetime())],
+            )
+        )
+        assert_frame_equal(
+            dataframe,
+            pd.DataFrame(
+                {"A": ["2019-09-17T21:21:00.123456Z", None]}, dtype="datetime64[ns]"
+            ),
+        )
+        self.assertEqual(columns, [Column("A", ColumnType.DATETIME())])

@@ -5,9 +5,9 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, asdict, field
 import json
-import pathlib
+from pathlib import Path
 from string import Formatter
-from typing import Any, Dict, Iterable, List, Optional, Union
+from typing import Any, Dict, Iterable, List, Optional, Union, Tuple
 import numpy as np
 import pandas as pd
 from pandas.api.types import is_numeric_dtype, is_datetime64_dtype
@@ -513,6 +513,94 @@ def _infer_columns(
     ]
 
 
+def _dtype_to_arrow_type(dtype: np.dtype) -> pyarrow.DataType:
+    if dtype == np.int8:
+        return pyarrow.int8()
+    elif dtype == np.int16:
+        return pyarrow.int16()
+    elif dtype == np.int32:
+        return pyarrow.int32()
+    elif dtype == np.int64:
+        return pyarrow.int64()
+    elif dtype == np.uint8:
+        return pyarrow.uint8()
+    elif dtype == np.uint16:
+        return pyarrow.uint16()
+    elif dtype == np.uint32:
+        return pyarrow.uint32()
+    elif dtype == np.uint64:
+        return pyarrow.uint64()
+    elif dtype == np.float16:
+        return pyarrow.float16()
+    elif dtype == np.float32:
+        return pyarrow.float32()
+    elif dtype == np.float64:
+        return pyarrow.float64()
+    elif dtype.kind == "M":
+        # [2019-09-17] Pandas only allows "ns" unit -- as in, datetime64[ns]
+        # https://github.com/pandas-dev/pandas/issues/7307#issuecomment-224180563
+        assert dtype.str.endswith("[ns]")
+        return pyarrow.timestamp(unit="ns", tz=None)
+    elif dtype == np.object_:
+        return pyarrow.string()
+    else:
+        raise RuntimeError("Unhandled dtype %r" % dtype)
+
+
+def series_to_arrow_array(series: pd.Series) -> pyarrow.Array:
+    """
+    Convert a Pandas series to an in-memory Arrow array.
+    """
+    if hasattr(series, "cat"):
+        return pyarrow.DictionaryArray.from_arrays(
+            # Pandas categorical value "-1" means None
+            pyarrow.Array.from_pandas(series.cat.codes, mask=(series.cat.codes == -1)),
+            series_to_arrow_array(series.cat.categories),
+        )
+    else:
+        return pyarrow.array(series, type=_dtype_to_arrow_type(series.dtype))
+
+
+def dataframe_to_arrow_table(
+    dataframe: pd.DataFrame, columns: List[Column], path: Path
+) -> atypes.ArrowTable:
+    """
+    Write `dataframe` to an Arrow file and return an ArrowTable backed by it.
+
+    The result will consume little RAM, because its data is stored in an
+    mmapped file.
+    """
+    arrow_columns = []
+    if columns:
+        arrays = []
+        for pandas_column in columns:
+            arrays.append(series_to_arrow_array(dataframe[pandas_column.name]))
+            arrow_columns.append(pandas_column.to_arrow())
+
+        arrow_table = pyarrow.Table.from_arrays(arrays, names=[c.name for c in columns])
+        with pyarrow.RecordBatchFileWriter(str(path), arrow_table.schema) as writer:
+            writer.write_table(arrow_table)
+    else:
+        path = None
+
+    return atypes.ArrowTable(path, atypes.TableMetadata(len(dataframe), arrow_columns))
+
+
+def arrow_table_to_dataframe(
+    table: atypes.ArrowTable
+) -> Tuple[pd.DataFrame, List[Column]]:
+    if table.table is None:
+        dataframe = pd.DataFrame()
+    else:
+        dataframe = table.table.to_pandas(
+            date_as_object=False, deduplicate_objects=True, ignore_metadata=True
+        )  # TODO ensure dictionaries stay dictionaries
+
+    columns = [Column.from_arrow(c) for c in table.metadata.columns]
+
+    return dataframe, columns
+
+
 @dataclass
 class ProcessResult:
     """
@@ -769,12 +857,7 @@ class ProcessResult:
 
     @classmethod
     def from_arrow(self, value: atypes.RenderResult) -> ProcessResult:
-        if value.table.table is None:
-            dataframe = pd.DataFrame()
-        else:
-            dataframe = value.table.table.to_pandas(
-                date_as_object=False, deduplicate_objects=True, ignore_metadata=True
-            )  # TODO ensure dictionaries stay dictionaries
+        dataframe, columns = arrow_table_to_dataframe(value.table)
         if value.errors:
             if value.errors[0].message.id == "TODO_i18n":
                 error = value.errors[0].message.args["text"]
@@ -791,10 +874,10 @@ class ProcessResult:
             error=error,
             json=value.json,
             quick_fixes=quick_fixes,
-            columns=[Column.from_arrow(c) for c in value.table.metadata.columns],
+            columns=columns,
         )
 
-    def to_arrow(self, path: pathlib.Path) -> atypes.RenderResult:
+    def to_arrow(self, path: Path) -> atypes.RenderResult:
         """
         Build a lower-level RenderResult from this ProcessResult.
 
@@ -810,23 +893,7 @@ class ProcessResult:
         module's result. Prefer it everywhere. We want to eventually deprecate
         ProcessResult.
         """
-        if self.columns:
-            arrow_table = pyarrow.Table.from_pandas(
-                self.dataframe, preserve_index=False, nthreads=1
-            )  # TODO test dictionaries stay dictionaries
-            # Nix Pandas metadata JSON, to make
-            # `ProcessResult.from_arrow(...).to_arrow(...)` more likely to
-            # return an "equal" table.
-            #
-            # Equality is important when checking whether we must generate an
-            # OutputDelta.
-            arrow_table = arrow_table.replace_schema_metadata(None)
-            with pyarrow.RecordBatchFileWriter(str(path), arrow_table.schema) as writer:
-                writer.write_table(arrow_table)
-        else:
-            path = None
-
-        table = atypes.ArrowTable(path, self.table_shape.to_arrow())
+        table = dataframe_to_arrow_table(self.dataframe, self.columns, path)
         if self.error:
             error = atypes.RenderError(
                 atypes.I18nMessage.TODO_i18n(self.error),

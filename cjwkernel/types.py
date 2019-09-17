@@ -352,8 +352,14 @@ class ArrowTable:
         if self.path is not None:
             reader = pyarrow.ipc.open_file(str(self.path))
             table = reader.read_all()
-            assert table.num_rows == self.metadata.n_rows
-            assert table.num_columns == len(self.metadata.columns)
+            assert table.num_rows == self.metadata.n_rows, (
+                "Metadata suggests %d rows; table has %d"
+                % (self.metadata.n_rows, table.num_rows)
+            )
+            assert table.num_columns == len(self.metadata.columns), (
+                "Metadata suggests %d columns; table has %d"
+                % (len(self.metadata.columns), table.num_columns)
+            )
             for tcol, mcol in zip(table.columns, self.metadata.columns):
                 assert tcol.name == mcol.name
                 # Assert the column type is one we support
