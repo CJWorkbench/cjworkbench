@@ -367,7 +367,7 @@ class ArrowTable:
                         pyarrow.types.is_dictionary(ttype)
                         and pyarrow.types.is_string(ttype.value_type)
                     )
-                )
+                ), "Column %r type %r" % (tcol.name, ttype)
                 # Assert the column type in our metadata matches it
                 assert pyarrow.types.is_timestamp(ttype) == isinstance(
                     mcol.type, ColumnTypeDatetime
