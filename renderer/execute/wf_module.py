@@ -276,7 +276,7 @@ async def _render_wfmodule(
                 params=params,
                 tab=tab,
                 fetch_result=fetch_result,
-                output_path=output_path,
+                output_filename=output_path.name,
             ),
         )
 
