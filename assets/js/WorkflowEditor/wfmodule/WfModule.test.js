@@ -239,7 +239,7 @@ describe('WfModule, not read-only mode', () => {
     // (This is white-box testing -- we assume the .then() and the sync
     // call.)
     let onSetWfModuleParamsDone = null
-    const setWfModuleParams = jest.fn(() => ({ then: (fn) => onSetWfModuleParamsDone = fn }))
+    const setWfModuleParams = jest.fn(() => ({ then: (fn) => { onSetWfModuleParamsDone = fn } }))
     const w = wrapper({
       wfModule,
       module: aModule,
