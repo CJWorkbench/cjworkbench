@@ -126,7 +126,7 @@ def get_param_values(
         * `column` parameters become '' if they aren't input columns
         * `multicolumn` parameters lose values that aren't input columns
         * Raise `PromptingError` if a chosen column is of the wrong type
-          (so the caller can render a ProcessResult with errors and quickfixes)
+          (so the caller can return a RenderResult with errors and quickfixes)
 
     This uses database connections, and it's slow! (It needs to load input tab
     data.) Be sure the Workflow is locked while you call it.

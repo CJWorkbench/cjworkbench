@@ -224,7 +224,7 @@ async def _render_wfmodule(
     output_path: Path,
 ) -> RenderResult:
     """
-    Prepare and call `wf_module`'s `render()`; return a ProcessResult.
+    Prepare and call `wf_module`'s `render()`; return a RenderResult.
 
     The actual render runs in a background thread so the event loop can process
     other events.

@@ -32,7 +32,7 @@ def clean_value(dtype: ParamDType, value: Any, input_metadata: TableMetadata) ->
         * `column` parameters become '' if they aren't input columns
         * `multicolumn` parameters lose values that aren't input columns
         * Raise `PromptingError` if a chosen column is of the wrong type
-          (so the caller can render a ProcessResult with errors and quickfixes)
+          (so the caller can return a FetchResult with errors and quickfixes)
     """
     return value  # fallback method
 
