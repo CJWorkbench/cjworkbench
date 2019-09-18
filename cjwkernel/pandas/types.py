@@ -383,6 +383,21 @@ class TabOutput:
     DataFrame output by the final module in this tab.
     """
 
+    @classmethod
+    def from_arrow(cls, value: atypes.TabOutput):
+        dataframe, columns = arrow_table_to_dataframe(value.table)
+        return cls(
+            slug=value.tab.slug,
+            name=value.tab.name,
+            columns={
+                c.name: RenderColumn(
+                    c.name, c.type.name, getattr(c.type, "format", None)
+                )
+                for c in columns
+            },
+            dataframe=dataframe,
+        )
+
 
 @dataclass(frozen=True)
 class QuickFix:
@@ -594,7 +609,7 @@ def arrow_table_to_dataframe(
     else:
         dataframe = table.table.to_pandas(
             date_as_object=False, deduplicate_objects=True, ignore_metadata=True
-        )  # TODO ensure dictionaries stay dictionaries
+        )
 
     columns = [Column.from_arrow(c) for c in table.metadata.columns]
 

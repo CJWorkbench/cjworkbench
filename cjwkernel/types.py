@@ -599,7 +599,7 @@ class Params:
         elif value.column_value is not None:
             return Column.from_thrift(value.column_value)
         elif value.tab_value is not None:
-            return TabOutput.from_thrift(value.tab_value)
+            return TabOutput.from_thrift(value.tab_value, basedir)
         elif value.list_value is not None:
             return [cls._value_from_thrift(v, basedir) for v in value.list_value]
         elif value.map_value is not None:

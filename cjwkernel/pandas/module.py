@@ -168,7 +168,7 @@ def render_arrow(
     pandas_result: ptypes.ProcessResult = render_pandas(
         input_table=pandas_table,
         input_table_shape=ptypes.TableShape.from_arrow(table.metadata),
-        params=params,
+        params=_arrow_param_to_pandas_param(params),
         tab_name=tab_name,
         input_tabs=pandas_input_tabs,
         fetch_result=pandas_fetch_result,
@@ -271,6 +271,22 @@ def fetch_pandas(
     return ptypes.ProcessResult.coerce(result)
 
 
+def _arrow_param_to_pandas_param(param):
+    """
+    Recursively prepare `params` to be passed to `render()`.
+
+    * TabOutput gets converted so it has dataframe.
+    """
+    if isinstance(param, list):
+        return [_arrow_param_to_pandas_param(p) for p in param]
+    elif isinstance(param, dict):
+        return {k: _arrow_param_to_pandas_param(v) for k, v in param.items()}
+    elif isinstance(param, types.TabOutput):
+        return ptypes.TabOutput.from_arrow(param)
+    else:
+        return param
+
+
 def fetch_arrow(
     params: Dict[str, Any],
     secrets: Dict[str, Any],
@@ -287,7 +303,10 @@ def fetch_arrow(
     `fetch()` signature deals in dataframes instead of in raw data.
     """
     pandas_result: ptypes.ProcessResult = fetch_pandas(
-        params, secrets, last_fetch_result, input_table_parquet_path
+        params=_arrow_param_to_pandas_param(params),
+        secrets=secrets,
+        last_fetch_result=last_fetch_result,
+        input_table_parquet_path=input_table_parquet_path,
     )
     if len(pandas_result.dataframe.columns):
         fastparquet.write(

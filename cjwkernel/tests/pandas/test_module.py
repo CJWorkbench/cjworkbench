@@ -27,6 +27,7 @@ from cjwkernel.types import (
     RenderError,
     RenderResult,
     Tab,
+    TabOutput,
 )
 import cjwkernel.pandas.types as ptypes
 from cjwkernel.pandas import module
@@ -239,6 +240,33 @@ class RenderTests(unittest.TestCase):
             result.errors,
             [RenderError(I18nMessage.TODO_i18n("Truncated output from 3 rows to 2"))],
         )
+
+    def test_render_using_tab_output(self):
+        def render(table, params):
+            self.assertEqual(params["tabparam"].slug, "tab-1")
+            self.assertEqual(params["tabparam"].name, "Tab 1")
+            self.assertEqual(
+                params["tabparam"].columns,
+                {
+                    "X": ptypes.RenderColumn("X", "number", "{:,d}"),
+                    "Y": ptypes.RenderColumn("Y", "text", None),
+                },
+            )
+            assert_frame_equal(
+                params["tabparam"].dataframe, pd.DataFrame({"X": [1], "Y": ["y"]})
+            )
+
+        with arrow_table_context(
+            {"X": [1], "Y": ["y"]},
+            columns=[
+                Column("X", ColumnType.Number("{:,d}")),
+                Column("Y", ColumnType.Text()),
+            ],
+            dir=self.basedir,
+        ) as atable:
+            self._test_render(
+                render, params={"tabparam": TabOutput(Tab("tab-1", "Tab 1"), atable)}
+            )
 
 
 class FetchTests(unittest.TestCase):

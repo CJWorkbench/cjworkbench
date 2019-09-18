@@ -933,3 +933,7 @@ class ArrowConversionTests(unittest.TestCase):
             ),
         )
         self.assertEqual(columns, [Column("A", ColumnType.DATETIME())])
+
+    def test_arrow_table_reuse_string_memory(self):
+        dataframe, _ = arrow_table_to_dataframe(arrow_table({"A": ["x", "x"]}))
+        self.assertIs(dataframe["A"][0], dataframe["A"][1])
