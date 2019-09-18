@@ -1,8 +1,7 @@
 import unittest
-import numpy
 import pandas
 from pandas.testing import assert_frame_equal
-from server.modules.pythoncode import safe_eval_process
+from staticmodules.pythoncode import safe_eval_process
 
 
 EMPTY_DATAFRAME = pandas.DataFrame()

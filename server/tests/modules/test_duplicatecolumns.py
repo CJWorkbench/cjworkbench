@@ -2,7 +2,7 @@ from collections import namedtuple
 import unittest
 import pandas as pd
 from pandas.testing import assert_frame_equal
-from server.modules.duplicatecolumns import migrate_params, render
+from staticmodules.duplicatecolumns import migrate_params, render
 
 
 RenderColumn = namedtuple("RenderColumn", ("format",))

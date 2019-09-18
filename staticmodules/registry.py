@@ -39,7 +39,7 @@ Looking up modules
 This ``registry.py`` imports all the modules automatically, finding them by
 their ``.json`` spec files.
 
->>> from server.modules import registry
+>>> from staticmodules import registry
 >>> registry.Lookup['pythoncode']  # dynamic lookup by id_name
 """
 import pathlib

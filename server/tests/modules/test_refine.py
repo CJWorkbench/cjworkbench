@@ -4,7 +4,7 @@ from typing import Any, Dict, List
 import numpy as np
 import pandas as pd
 from pandas.testing import assert_frame_equal
-from server.modules.refine import render, migrate_params, RefineSpec
+from staticmodules.refine import render, migrate_params, RefineSpec
 
 
 def P(column: str, refine: Dict[str, Any]) -> Dict[str, Any]:
@@ -291,9 +291,7 @@ class MigrateParamsTest(unittest.TestCase):
         # [left]:  CategoricalDtype(categories=[], ordered=False)
         # [right]: CategoricalDtype(categories=[], ordered=False)
         spec = RefineSpec({"b": "c"})
-        dtype1 = pd.DataFrame({"A": []}, dtype="category")["A"].dtype
         result = spec.apply(pd.DataFrame({"A": []}, dtype="category"), "A")
-        dtype2 = result["A"].dtype
         self.assertEqual(0, len(result))
         self.assertEqual(0, len(result["A"].cat.categories))
 

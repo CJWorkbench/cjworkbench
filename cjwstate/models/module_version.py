@@ -8,7 +8,7 @@ from django.dispatch import receiver
 from django.utils import timezone
 from cjwkernel.param_dtype import ParamDType
 from cjwstate import minio
-from server.modules.registry import Specs as InternalModuleSpecs
+from staticmodules.registry import Specs as InternalModuleSpecs
 from .module_loader import validate_module_spec
 from .param_spec import ParamSpec
 
@@ -25,7 +25,7 @@ class ModuleVersionManager(models.Manager):
     Juggle internal and external modules.
 
     _Internal_ modules are defined by source code: they do not change while the
-    program is running. Edit them in `server/modules/` and load the new
+    program is running. Edit them in `staticmodules/` and load the new
     versions by restarting Workbench.
 
     _External_ modules are in the database. Upload a directory to S3 and create

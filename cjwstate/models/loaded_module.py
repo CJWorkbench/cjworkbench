@@ -21,7 +21,7 @@ from cjwkernel.param_dtype import ParamDTypeDict
 from cjwstate import minio
 from . import module_loader
 from .module_version import ModuleVersion
-from server.modules.registry import Lookup as InternalModules
+from staticmodules.registry import Lookup as InternalModules
 
 
 logger = logging.getLogger(__name__)
@@ -323,10 +323,7 @@ def module_get_html_bytes(module_version: ModuleVersion) -> Optional[bytes]:
 def _internal_module_get_html_bytes(id_name: str) -> Optional[bytes]:
     try:
         with open(
-            Path(__file__).parent.parent.parent
-            / "server"
-            / "modules"
-            / f"{id_name}.html",
+            Path(__file__).parent.parent.parent / "staticmodules" / f"{id_name}.html",
             "rb",
         ) as f:
             return f.read()

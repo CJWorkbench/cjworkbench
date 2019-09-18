@@ -4,7 +4,7 @@ import numpy as np
 import pandas
 from pandas.testing import assert_frame_equal
 from cjwkernel.tests.util import override_settings
-from server.modules.countbydate import migrate_params, render
+from staticmodules.countbydate import migrate_params, render
 from .util import MockParams
 
 

@@ -3,7 +3,7 @@ from typing import Optional
 import unittest
 import pandas as pd
 from pandas.testing import assert_frame_equal
-from server.modules.renamecolumns import (
+from staticmodules.renamecolumns import (
     migrate_params,
     render,
     _parse_renames,

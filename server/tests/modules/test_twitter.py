@@ -8,7 +8,7 @@ import pandas as pd
 from pandas.testing import assert_frame_equal
 from cjwkernel.tests.util import override_settings
 from cjwkernel.pandas.types import ProcessResult
-from server.modules import twitter
+from staticmodules import twitter
 from .util import MockParams
 
 

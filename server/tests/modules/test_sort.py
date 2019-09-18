@@ -3,7 +3,7 @@ import unittest
 import pandas as pd
 from pandas.testing import assert_frame_equal
 import numpy as np
-from server.modules.sort import render, migrate_params
+from staticmodules.sort import render, migrate_params
 
 
 def P(sort_columns=[], keep_top=""):

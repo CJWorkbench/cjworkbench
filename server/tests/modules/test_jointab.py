@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 from pandas.testing import assert_frame_equal
 from cjwkernel.pandas.types import RenderColumn, TabOutput
-from server.modules.jointab import migrate_params, render
+from staticmodules.jointab import migrate_params, render
 
 
 class MigrateTests(unittest.TestCase):

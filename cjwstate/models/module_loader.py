@@ -235,7 +235,7 @@ class ModuleSpec:
     Dict-like object representing a valid module spec.
 
     See `module_spec_schema.yaml` for the spec definition, or look to
-    `server/modules/` for example JSON and YAML files.
+    `staticmodules/` for example JSON and YAML files.
 
     You may pass this to `ModuleVersion.create_or_replace_from_spec()`.
     """
