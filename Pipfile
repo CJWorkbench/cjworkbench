@@ -43,7 +43,6 @@ pyyaml = "*"
 boto3 = "*"
 yajl-py = "*"
 pyarrow = "*"
-pyicu = "*"
 babel = "*"
 
 [dev-packages]
