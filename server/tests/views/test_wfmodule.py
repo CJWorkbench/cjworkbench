@@ -1,4 +1,5 @@
 from collections import namedtuple
+from datetime import datetime as dt
 import json
 from unittest.mock import patch
 from django.contrib.auth.models import User
@@ -135,6 +136,24 @@ class WfModuleTests(LoggedInTestCase):
                     {"Class": "economics", "F": 20, "M": 20.0},
                 ],
             },
+        )
+
+    def test_wf_module_render_null_datetime(self):
+        # Ran into problems 2019-09-06, when switching to Arrow
+        cache_render_result(
+            self.workflow,
+            self.wf_module2,
+            self.wf_module2.last_relevant_delta_id,
+            RenderResult(
+                arrow_table({"A": [dt(2019, 1, 2, 3, 4, 5, 6007, None), None]})
+            ),
+        )
+
+        response = self.client.get("/api/wfmodules/%d/render" % self.wf_module2.id)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            json.loads(response.content)["rows"],
+            [{"A": "2019-01-02T03:04:05.006007Z"}, {"A": None}],
         )
 
     def test_wf_module_render_missing_parquet_file(self):

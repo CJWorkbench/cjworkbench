@@ -86,10 +86,6 @@ urlpatterns = [
         "public/moduledata/live/<int:wf_module_id>.<export_type:export_type>",
         views.wfmodule_public_output,
     ),
-    url(
-        r"^api/wfmodules/(?P<pk>[0-9]+)/notifications",
-        views.notifications_delete_by_wfmodule,
-    ),  # DELETEME
     # Parameters
     url(
         r"^oauth/create-secret/(?P<workflow_id>[0-9]+)/(?P<wf_module_id>[0-9]+)/(?P<param>[-_a-zA-Z0-9]+)/",
