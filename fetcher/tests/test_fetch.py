@@ -202,7 +202,7 @@ class FetchTests(unittest.TestCase):
                 self.output_path,
             )
         self.assertEqual(self.output_path.stat().st_size, 0)
-        self.assertEqual(result, self._bug_err("Module missing code disappeared"))
+        self.assertEqual(result, self._bug_err("FileNotFoundError"))
 
     @patch.object(LoadedModule, "for_module_version_sync")
     def test_load_module_compile_error(self, load_module):
@@ -217,7 +217,7 @@ class FetchTests(unittest.TestCase):
                 self.output_path,
             )
         self.assertEqual(self.output_path.stat().st_size, 0)
-        self.assertEqual(result, self._bug_err("Module bad did not compile"))
+        self.assertEqual(result, self._bug_err("exit code 1: log (during load)"))
 
     @patch.object(LoadedModule, "for_module_version_sync")
     def test_simple(self, load_module):
@@ -364,9 +364,7 @@ class FetchTests(unittest.TestCase):
             result = fetch.fetch_or_wrap_error(
                 self.basedir, WfModule(), ModuleVersion(), None, None, self.output_path
             )
-        self.assertEqual(
-            result, self._bug_err("Module exited with code 1 and logged: bad")
-        )
+        self.assertEqual(result, self._bug_err("exit code 1: bad"))
 
 
 class UpdateNextUpdateTimeTests(DbTestCase):

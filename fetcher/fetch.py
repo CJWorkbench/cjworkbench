@@ -9,7 +9,7 @@ from typing import ContextManager, Optional, Tuple
 from django.conf import settings
 from django.db import DatabaseError, InterfaceError
 from django.utils import timezone
-from cjwkernel.errors import ModuleError
+from cjwkernel.errors import ModuleError, format_for_user_debugging
 from cjwkernel.types import FetchResult, I18nMessage, Params, RenderError, TableMetadata
 from cjwkernel.util import tempdir_context, tempfile_context
 from cjworkbench.sync import database_sync_to_async
@@ -199,13 +199,11 @@ def fetch_or_wrap_error(
         loaded_module = LoadedModule.for_module_version_sync(module_version)
     except FileNotFoundError:
         logger.exception("Module %s code disappeared", module_version.id_name)
+        return user_visible_bug_fetch_result(output_path, "FileNotFoundError")
+    except ModuleError as err:
+        logger.exception("Error loading module %s", module_version.id_name)
         return user_visible_bug_fetch_result(
-            output_path, "Module %s code disappeared" % module_version.id_name
-        )
-    except ModuleError:
-        logger.exception("Error compiling module %s", module_version.id_name)
-        return user_visible_bug_fetch_result(
-            output_path, "Module %s did not compile" % module_version.id_name
+            output_path, format_for_user_debugging(err) + " (during load)"
         )
 
     if loaded_module is None:
@@ -219,12 +217,12 @@ def fetch_or_wrap_error(
         # Migrate params, so fetch() gets newest values
         try:
             params = loaded_module.migrate_params(wf_module.params)
-        except ModuleError:
+        except ModuleError as err:
             logger.exception(
                 "Error calling %s.migrate_params()", module_version.id_name
             )
             return user_visible_bug_fetch_result(
-                output_path, "%s.migrate_params() crashed" % module_version.id_name
+                output_path, format_for_user_debugging(err)
             )
         except ValueError:
             logger.exception(
@@ -264,7 +262,9 @@ def fetch_or_wrap_error(
             )
         except ModuleError as err:
             logger.exception("Error calling %s.fetch()", module_version.id_name)
-            return user_visible_bug_fetch_result(output_path, str(err))
+            return user_visible_bug_fetch_result(
+                output_path, format_for_user_debugging(err)
+            )
 
 
 @contextlib.contextmanager

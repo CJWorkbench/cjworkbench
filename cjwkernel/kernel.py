@@ -148,8 +148,8 @@ class Kernel:
                 dont_inherit=True,
                 optimize=0,  # keep assertions -- we use them!
             )
-        except SyntaxError:
-            raise ModuleCompileError  # and SyntaxError is its cause
+        except SyntaxError as err:
+            raise ModuleCompileError from err
         ret = CompiledModule(module_slug, marshal.dumps(code_object))
         self._validate(ret)
         return ret
@@ -309,7 +309,7 @@ class Kernel:
         try:
             result.read(protocol)
         except EOFError:  # TODO handle other errors Thrift may throw
-            raise ModuleExitedError(child.exitcode, log_reader.to_str())
+            raise ModuleExitedError(child.exitcode, log_reader.to_str()) from None
 
         # We should be at the end of the output now. If we aren't, that means
         # the child wrote too much.

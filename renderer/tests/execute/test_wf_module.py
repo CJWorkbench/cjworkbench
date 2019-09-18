@@ -3,6 +3,7 @@ from pathlib import Path
 from unittest.mock import Mock, patch
 from django.utils import timezone
 import pyarrow
+from cjwkernel.errors import ModuleExitedError
 from cjwkernel.types import I18nMessage, RenderError, RenderResult
 from cjwkernel.tests.util import parquet_file, assert_arrow_table_equals
 from cjwstate import minio
@@ -195,3 +196,44 @@ class WfModuleTests(DbTestCase):
                     Path("/unused"),
                 )
             )
+
+    @patch("server.websockets.ws_client_send_delta_async", noop)
+    def test_report_module_error(self):
+        workflow = Workflow.create_and_init()
+        tab = workflow.tabs.first()
+        wf_module = tab.wf_modules.create(
+            order=0,
+            slug="step-1",
+            module_id_name="x",
+            last_relevant_delta_id=workflow.last_delta_id,
+        )
+
+        def render(*args, fetch_result, **kwargs):
+            raise ModuleExitedError(-9, "")
+
+        with self._stub_module(render):
+            result = self.run_with_async_db(
+                execute_wfmodule(
+                    workflow,
+                    wf_module,
+                    {},
+                    tab.name,
+                    RenderResult(),
+                    {},
+                    Path("/unused"),
+                )
+            )
+        self.assertEqual(
+            result,
+            RenderResult(
+                errors=[
+                    RenderError(
+                        I18nMessage.TODO_i18n(
+                            "Something unexpected happened. We have been notified and are "
+                            "working to fix it. If this persists, contact us. Error code: "
+                            "SIGKILL"
+                        )
+                    )
+                ]
+            ),
+        )

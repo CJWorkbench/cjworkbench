@@ -1,3 +1,6 @@
+import signal
+
+
 class ModuleError(Exception):
     """The module has a bug."""
 
@@ -5,9 +8,17 @@ class ModuleError(Exception):
 class ModuleCompileError(ModuleError):
     """The module does not compile."""
 
+    def user_visible_error_code(self):
+        return "Compile error: %s" % str(
+            self.__cause__ or self.__context__ or "unknown"
+        )
+
 
 class ModuleTimeoutError(ModuleError):
     """The module took too long to execute."""
+
+    def user_visible_error_code(self):
+        return "Module timed out"
 
 
 class ModuleExitedError(ModuleError):
@@ -24,3 +35,41 @@ class ModuleExitedError(ModuleError):
         super().__init__("Module exited with code %d and logged: %s" % (exit_code, log))
         self.exit_code = exit_code
         self.log = log
+
+
+def format_for_user_debugging(err: ModuleError) -> str:
+    """
+    Return a string for showing hapless users.
+
+    Users should never see ModuleError. Only developers should see ModuleError,
+    in logs and emailed alerts. But we need to show users _something_, and a
+    hint of an error message greatly helps us talk with our users our debugging
+    effort.
+    """
+    if isinstance(err, ModuleCompileError) and err.__cause__ is not None:
+        # "SyntaxError: unexpected EOF while parsing ..."
+        return "%s: %s" % (str(type(err.__cause__).__name__), str(err.__cause__))
+    elif isinstance(err, ModuleTimeoutError):
+        return "timed out"
+    elif isinstance(err, ModuleExitedError):
+        try:
+            # If the exit code is -9, for instance, return 'SIGTERM'
+            exit_text = signal.Signals(-err.exit_code).name
+        except ValueError:
+            # Exit code 1 goes to "1"
+            exit_text = "exit code %d" % err.exit_code
+        # Usually, the last line of output is the one that differentiates it.
+        # In particular, this is the "ValueError" line in a Python stack trace.
+        last_line = err.log.split("\n")[-1]
+        if last_line:
+            # "exit code 1: ValueError: invalid JSON..."
+            return "%s: %s" % (exit_text, last_line or "(empty)")
+        else:
+            # SIGSEGV
+            return exit_text
+    else:
+        message = str(err)
+        if message:
+            return type(err).__name__ + ": " + message
+        else:
+            return type(err).__name__

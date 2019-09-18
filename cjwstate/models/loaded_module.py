@@ -11,10 +11,8 @@ from cjwkernel.types import (
     ArrowTable,
     CompiledModule,
     FetchResult,
-    I18nMessage,
     Params,
     Tab,
-    RenderError,
     RenderResult,
 )
 from cjwkernel.param_dtype import ParamDTypeDict
@@ -58,13 +56,15 @@ class LoadedModule:
         """
         Process `table` with module `render` method, for a RenderResult.
 
-        Exceptions become error results. This method cannot raise an exception.
-        (It is always an error for module code to raise an exception.)
+        Raise ModuleError on error. (This is usually the module author's fault.)
+
+        Log any ModuleError. Also log success.
 
         This synchronous method can be slow for complex modules or large
         datasets. Consider calling it from an executor.
         """
         time1 = time.time()
+        status = "???"
         try:
             result = module_loader.kernel.render(
                 self.compiled_module,
@@ -75,34 +75,28 @@ class LoadedModule:
                 fetch_result,
                 output_filename,
             )
+            status = "(%drows, %dcols, %0.1fMB)" % (
+                result.table.metadata.n_rows,
+                len(result.table.metadata.columns),
+                result.table.n_bytes_on_disk / 1024 / 1024,
+            )
+            return result
         except ModuleError as err:
             logger.exception("Exception in %s.render", self.module_id_name)
-            result = RenderResult(
-                errors=[
-                    RenderError(
-                        I18nMessage.TODO_i18n(
-                            "Something unexpected happened. We have been notified and are "
-                            "working to fix it. If this persists, contact us. Error code: "
-                            + str(err)
-                        )
-                    )
-                ]
+            status = type(err).__name__
+            raise
+        finally:
+            time2 = time.time()
+
+            logger.info(
+                "%s.render(%drows, %dcols, %0.1fMB) => %s in %dms",
+                self.name,
+                input_table.metadata.n_rows,
+                len(input_table.metadata.columns),
+                input_table.n_bytes_on_disk / 1024 / 1024,
+                status,
+                int((time2 - time1) * 1000),
             )
-        time2 = time.time()
-
-        logger.info(
-            "%s.render(%drows, %dcols, %0.1fMB) => (%drows, %dcols, %0.1fMB) in %dms",
-            self.name,
-            input_table.metadata.n_rows,
-            len(input_table.metadata.columns),
-            input_table.n_bytes_on_disk / 1024 / 1024,
-            result.table.metadata.n_rows,
-            len(result.table.metadata.columns),
-            result.table.n_bytes_on_disk / 1024 / 1024,
-            int((time2 - time1) * 1000),
-        )
-
-        return result
 
     def fetch(
         self,
@@ -118,6 +112,8 @@ class LoadedModule:
         Call module `fetch(...)` method to build a `FetchResult`.
 
         Raise ModuleError on error. (This is usually the module author's fault.)
+
+        Log any ModuleError. Also log success.
 
         This synchronous method can be slow for complex modules, large datasets
         or slow network requests. Consider calling it from an executor.
@@ -138,7 +134,8 @@ class LoadedModule:
             status = "%0.1fMB" % (ret.path.stat().st_size / 1024 / 1024)
             return ret
         except ModuleError as err:
-            status = str(type(err))  # we'll _log_ the error elsewhere
+            logger.exception("Exception in %s.fetch", self.module_id_name)
+            status = type(err).__name__
             raise
         finally:
             time2 = time.time()
@@ -153,6 +150,8 @@ class LoadedModule:
         Raise ModuleError if module code did not execute.
 
         Raise ValueError if module code returned params that do not match spec.
+
+        Log any ModuleError. Also log success.
         """
         time1 = time.time()
         try:
@@ -165,7 +164,7 @@ class LoadedModule:
                 raise ValueError(
                     "%s.migrate_params() gave bad output: %s"
                     % (self.module_id_name, str(err))
-                )
+                ) from None
             return values
         finally:
             time2 = time.time()

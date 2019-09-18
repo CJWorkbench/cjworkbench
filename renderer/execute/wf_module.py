@@ -5,6 +5,7 @@ from functools import partial
 from pathlib import Path
 from typing import Any, Dict, Optional, Tuple
 from cjworkbench.sync import database_sync_to_async
+from cjwkernel.errors import ModuleError, format_for_user_debugging
 from cjwkernel.types import (
     ArrowTable,
     FetchResult,
@@ -114,6 +115,23 @@ def _load_fetch_result(
     else:
         errors = []
     return FetchResult(path, errors)
+
+
+def _wrap_render_errors(render_call):
+    try:
+        return render_call()
+    except ModuleError as err:
+        return RenderResult(
+            errors=[
+                RenderError(
+                    I18nMessage.TODO_i18n(
+                        "Something unexpected happened. We have been notified and are "
+                        "working to fix it. If this persists, contact us. Error code: "
+                        + format_for_user_debugging(err)
+                    )
+                )
+            ]
+        )
 
 
 @database_sync_to_async
@@ -269,6 +287,7 @@ async def _render_wfmodule(
         loop = asyncio.get_event_loop()
         return await loop.run_in_executor(
             None,
+            _wrap_render_errors,
             partial(
                 loaded_module.render,
                 basedir=basedir,
