@@ -2,8 +2,9 @@ import json
 from pathlib import Path
 import os
 from cjwkernel.errors import ModuleCompileError
+from cjwkernel.tests.util import MockDir
 from cjwstate.models import ModuleVersion
-from cjwstate.tests.utils import DbTestCase, MockDir
+from cjwstate.tests.utils import DbTestCase
 from server.importmodulefromgithub import import_module_from_directory
 
 

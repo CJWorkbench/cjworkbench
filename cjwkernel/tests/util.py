@@ -1,8 +1,9 @@
 from contextlib import contextmanager
-from pathlib import Path
+import io
+import pathlib
 import os
 import tempfile
-from typing import Any, ContextManager, Dict, List, Optional, Union
+from typing import Any, ContextManager, Dict, Iterable, List, Optional, Union
 import unittest
 from numpy.testing import assert_equal  # [None, "x"] == [None, "x"]
 import pyarrow
@@ -13,8 +14,9 @@ from cjwkernel.types import ArrowTable, Column, ColumnType, RenderResult, TableM
 
 @contextmanager
 def arrow_file(
-    table: Union[Dict[str, List[Any]], pyarrow.Table], dir: Optional[Path] = None
-) -> ContextManager[Path]:
+    table: Union[Dict[str, List[Any]], pyarrow.Table],
+    dir: Optional[pathlib.Path] = None,
+) -> ContextManager[pathlib.Path]:
     """
     Yield a path with `table` written to an Arrow file.
     """
@@ -27,7 +29,7 @@ def arrow_file(
         writer = pyarrow.RecordBatchFileWriter(filename, table.schema)
         writer.write_table(table)
         writer.close()
-        yield Path(filename)
+        yield pathlib.Path(filename)
     finally:
         try:
             os.unlink(filename)
@@ -53,7 +55,7 @@ def _arrow_column_to_column(column: pyarrow.Column) -> Column:
 def arrow_table_context(
     table: Union[Dict[str, List[Any]], pyarrow.Table],
     columns: Optional[List[Column]] = None,
-    dir: Optional[Path] = None,
+    dir: Optional[pathlib.Path] = None,
 ) -> ContextManager[ArrowTable]:
     """
     Yield an ArrowTable (whose `.path` is a file).
@@ -68,7 +70,7 @@ def arrow_table_context(
     metadata = TableMetadata(table.num_rows, columns)
 
     with arrow_file(table, dir=dir) as filename:
-        yield ArrowTable(Path(filename), metadata)
+        yield ArrowTable(pathlib.Path(filename), metadata)
 
 
 def arrow_table(
@@ -129,8 +131,9 @@ def assert_render_result_equals(result1: RenderResult, result2: RenderResult) ->
 
 @contextmanager
 def parquet_file(
-    table: Union[Dict[str, List[Any]], pyarrow.Table], dir: Optional[Path] = None
-) -> ContextManager[Path]:
+    table: Union[Dict[str, List[Any]], pyarrow.Table],
+    dir: Optional[pathlib.Path] = None,
+) -> ContextManager[pathlib.Path]:
     """
     Yield a filename with `table` written to a Parquet file.
     """
@@ -139,10 +142,92 @@ def parquet_file(
     try:
         os.close(fd)
         pyarrow.parquet.write_table(atable.table, filename, compression="SNAPPY")
-        yield Path(filename)
+        yield pathlib.Path(filename)
     finally:
         os.unlink(filename)
 
 
 def override_settings(**kwargs):
     return unittest.mock.patch.multiple(settings, **kwargs)
+
+
+class MockPath(pathlib.PurePosixPath):
+    """
+    Simulate pathlib.Path
+
+    Features:
+
+        * read_bytes()
+        * read_text(), including encoding and errors
+        * open()
+        * when `data` is None, raise `FileNotFoundError` when expecting a file
+    """
+
+    def __new__(
+        cls,
+        parts: List[str],
+        data: Optional[bytes],
+        parent: Optional[pathlib.PurePosixPath] = None,
+    ):
+        ret = super().__new__(cls, *parts)
+        ret.data = data
+        ret._parent = parent
+        return ret
+
+    # override
+    @property
+    def parent(self):
+        return self._parent
+
+    # Path interface
+    def read_bytes(self):
+        if self.data is None:
+            raise FileNotFoundError(self.name)
+
+        return self.data
+
+    # Path interface
+    def read_text(self, encoding="utf-8", errors="strict"):
+        if self.data is None:
+            raise FileNotFoundError(self.name)
+
+        return self.data.decode(encoding, errors)
+
+    def open(self, mode):
+        assert mode == "rb"
+        return io.BytesIO(self.data)
+
+
+class MockDir(pathlib.PurePosixPath):
+    """
+    Mock filesystem directory using pathlib.Path interface.
+
+    Usage:
+
+        dirpath: PurePath = MockDir({
+            'xxx.yaml': b'id_name: xxx...'
+            'xxx.py': b'def render(
+        })
+
+        yaml_text = (dirpath / 'xxx.yaml').read_text()
+    """
+
+    def __new__(cls, filedata: Dict[str, bytes]):  # filename => bytes
+        ret = super().__new__(cls, pathlib.PurePath("root"))
+        ret.filedata = filedata
+        return ret
+
+    # override
+    def __truediv__(self, filename: str) -> MockPath:
+        data = self.filedata.get(filename)  # None if file does not exist
+        return MockPath(["root", filename], data, parent=self)
+        try:
+            return self.files[filename]
+        except KeyError:
+            return MockPath(["root", filename], None)
+
+    def glob(self, pattern: str) -> Iterable[MockPath]:
+        for key in self.filedata.keys():
+            path = self / key
+            if path.match(pattern):
+                yield path

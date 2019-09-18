@@ -1,7 +1,8 @@
-import aiohttp
+import asyncio
 import io
 from pathlib import Path
 import unittest
+import aiohttp
 import numpy as np
 import pandas as pd
 from pandas.testing import assert_frame_equal
@@ -14,7 +15,6 @@ from cjwkernel.pandas.moduleutils import (
     autocast_dtypes_in_place,
 )
 from cjwkernel.tests.util import override_settings
-from cjwstate.tests.utils import DbTestCase
 
 
 TestDataPath = Path(__file__).parent.parent / "test_data"
@@ -322,14 +322,14 @@ class OtherUtilsTests(unittest.TestCase):
         self.assertIsNone(turn_header_into_first_row(None))
 
 
-class SpooledDataFromUrlTest(DbTestCase):
+class SpooledDataFromUrlTest(unittest.TestCase):
     def test_relative_url_raises_invalid_url(self):
         async def inner():
             async with spooled_data_from_url("/foo"):
                 pass
 
         with self.assertRaises(aiohttp.InvalidURL):
-            self.run_with_async_db(inner())
+            asyncio.run(inner())
 
     def test_schemaless_url_raises_invalid_url(self):
         async def inner():
@@ -337,7 +337,7 @@ class SpooledDataFromUrlTest(DbTestCase):
                 pass
 
         with self.assertRaises(aiohttp.InvalidURL):
-            self.run_with_async_db(inner())
+            asyncio.run(inner())
 
     def test_mailto_url_raises_invalid_url(self):
         async def inner():
@@ -345,7 +345,7 @@ class SpooledDataFromUrlTest(DbTestCase):
                 pass
 
         with self.assertRaises(aiohttp.InvalidURL):
-            self.run_with_async_db(inner())
+            asyncio.run(inner())
 
 
 class AutocastDtypesTest(unittest.TestCase):

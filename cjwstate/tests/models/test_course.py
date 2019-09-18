@@ -1,9 +1,9 @@
 import textwrap
 import unittest
 import yaml
+from cjwkernel.tests.util import MockDir
 from server.models.course import Course
 from server.models.lesson import Lesson, LessonHeader, LessonFooter
-from cjwstate.tests.utils import MockDir
 
 
 class CourseTests(unittest.TestCase):

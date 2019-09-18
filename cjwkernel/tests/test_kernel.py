@@ -4,10 +4,9 @@ import tempfile
 import textwrap
 import unittest
 import pyarrow
-from cjwstate.tests.utils import MockPath
 from cjwkernel.errors import ModuleCompileError, ModuleExitedError
 from cjwkernel.kernel import Kernel
-from cjwkernel.tests.util import arrow_table_context
+from cjwkernel.tests.util import arrow_table_context, MockPath
 from cjwkernel import types
 
 

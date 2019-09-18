@@ -4,11 +4,12 @@ import numpy as np
 import pandas as pd
 from pandas.testing import assert_frame_equal
 from cjwkernel.pandas.parse_util import parse_file
-from cjwkernel.tests.util import override_settings
-from cjwstate.tests.utils import mock_xlsx_path, MockPath
+from cjwkernel.tests.util import override_settings, MockPath
 
 
 EmptyDataFrame = pd.DataFrame().reset_index(drop=True)
+
+mock_xlsx_path = Path(__file__).parent.parent / "test_data" / "test.xlsx"
 
 
 class ParseTableTests(unittest.TestCase):

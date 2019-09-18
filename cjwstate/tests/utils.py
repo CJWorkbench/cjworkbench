@@ -1,21 +1,14 @@
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
-import pathlib
-from typing import Dict, Iterable, List, Optional
+import os
 from django.db import connection, connections
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.test import SimpleTestCase
 from cjworkbench.sync import WorkbenchDatabaseSyncToAsync
 from cjwstate import minio
-import os
-import io
-import pandas as pd
 
 # --- Test data ----
-
-mock_csv_text = "Month,Amount\nJan,10\nFeb,20"
-mock_csv_table = pd.read_csv(io.StringIO(mock_csv_text))
 
 mock_xlsx_path = os.path.join(settings.BASE_DIR, "server/tests/test_data/test.xlsx")
 
@@ -154,85 +147,3 @@ def clear_minio():
 
     for bucket in buckets:
         minio.remove_recursive(bucket, "/", force=True)
-
-
-class MockPath(pathlib.PurePosixPath):
-    """
-    Simulate pathlib.Path
-
-    Features:
-
-        * read_bytes()
-        * read_text(), including encoding and errors
-        * open()
-        * when `data` is None, raise `FileNotFoundError` when expecting a file
-    """
-
-    def __new__(
-        cls,
-        parts: List[str],
-        data: Optional[bytes],
-        parent: Optional[pathlib.PurePosixPath] = None,
-    ):
-        ret = super().__new__(cls, *parts)
-        ret.data = data
-        ret._parent = parent
-        return ret
-
-    # override
-    @property
-    def parent(self):
-        return self._parent
-
-    # Path interface
-    def read_bytes(self):
-        if self.data is None:
-            raise FileNotFoundError(self.name)
-
-        return self.data
-
-    # Path interface
-    def read_text(self, encoding="utf-8", errors="strict"):
-        if self.data is None:
-            raise FileNotFoundError(self.name)
-
-        return self.data.decode(encoding, errors)
-
-    def open(self, mode):
-        assert mode == "rb"
-        return io.BytesIO(self.data)
-
-
-class MockDir(pathlib.PurePosixPath):
-    """
-    Mock filesystem directory using pathlib.Path interface.
-
-    Usage:
-
-        dirpath: PurePath = MockDir({
-            'xxx.yaml': b'id_name: xxx...'
-            'xxx.py': b'def render(
-        })
-
-        yaml_text = (dirpath / 'xxx.yaml').read_text()
-    """
-
-    def __new__(cls, filedata: Dict[str, bytes]):  # filename => bytes
-        ret = super().__new__(cls, pathlib.PurePath("root"))
-        ret.filedata = filedata
-        return ret
-
-    # override
-    def __truediv__(self, filename: str) -> MockPath:
-        data = self.filedata.get(filename)  # None if file does not exist
-        return MockPath(["root", filename], data, parent=self)
-        try:
-            return self.files[filename]
-        except KeyError:
-            return MockPath(["root", filename], None)
-
-    def glob(self, pattern: str) -> Iterable[MockPath]:
-        for key in self.filedata.keys():
-            path = self / key
-            if path.match(pattern):
-                yield path

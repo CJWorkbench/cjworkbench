@@ -2,7 +2,7 @@ import pandas as pd
 import unittest
 from pandas.testing import assert_frame_equal
 from server.modules import upload
-from cjwstate.tests.utils import MockPath
+from cjwkernel.tests.util import MockPath
 
 
 # See UploadFileViewTests for that
