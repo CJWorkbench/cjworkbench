@@ -43,35 +43,15 @@ def convert_parquet_file_to_arrow_file(
             continue
 
         # TODO write in serial, so we don't build the whole Arrow table in RAM
-        if column.name in dictionary_columns:
-            # TODO pyarrow 0.15 reader allows uses_dictionary=True, so we can
-            # avoid fastparquet.
-            from cjwkernel.pandas.types import series_to_arrow_array
-
-            # This _temporary_ code (we want to delete the whole if-statement)
-            # was tested with 1.1GB "general.csv". Please test before getting
-            # clever and letting fastparquet handle
-            #
-            # assume there is a row-group 0 (otherwise dictionary_columns would
-            # be empty)
-            #
-            # n_categories: fastparquet guesses the wrong number of categories,
-            # so let's just use int32. (Can't wait for pyarrow 0.15.)
-            series = fastparquet_file.to_pandas(
-                [column.name], categories={column.name: 2 ** 30}, index=False
-            )[column.name]
-            array = series_to_arrow_array(series)
-            # fastparquet reads empty-categories list as int64 categories
-            if not pyarrow.types.is_string(array.dictionary.type):
-                array = pyarrow.DictionaryArray.from_arrays(
-                    array.indices, pyarrow.array([], type=pyarrow.string())
-                )
-        else:
-            array = parquet_file.read(
-                [column.name], use_threads=False, use_pandas_metadata=False
-            )[0]
+        array = parquet_file.read(
+            [column.name], use_threads=False, use_pandas_metadata=False
+        )[0]
         if only_rows is not None:
             array = array[only_rows.start : only_rows.stop]
+        if column.name in dictionary_columns:
+            # TODO pyarrow 0.15 reader allows uses_dictionary=True, so we can
+            # avoid decoding+re-encoding.
+            array = array.dictionary_encode()
         arrays.append(array)
         names.append(column.name)
     table = pyarrow.Table.from_arrays(arrays, names=names)
