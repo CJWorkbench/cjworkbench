@@ -8,7 +8,6 @@ from django.dispatch import receiver
 from django.utils import timezone
 from cjwkernel.param_dtype import ParamDType
 from cjwstate import minio
-from staticmodules.registry import Specs as InternalModuleSpecs
 from .module_loader import validate_module_spec
 from .param_spec import ParamSpec
 
@@ -52,6 +51,11 @@ class ModuleVersionManager(models.Manager):
             return
 
         self.internal = {}
+
+        # Import staticmodules.registry only on demand. That way Django can
+        # import all its objects without starting a (RAM-hungry) kernel.
+        from staticmodules.registry import Specs as InternalModuleSpecs
+
         for spec in InternalModuleSpecs.values():
             module_version = ModuleVersion(
                 id_name=spec.id_name,

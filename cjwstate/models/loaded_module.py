@@ -18,7 +18,6 @@ from cjwkernel.types import (
 from cjwstate import minio
 from . import module_loader
 from .module_version import ModuleVersion
-from staticmodules.registry import Lookup as InternalModules
 
 
 logger = logging.getLogger(__name__)
@@ -220,6 +219,10 @@ class LoadedModule:
         module_id_name = module_version.id_name
         version_sha1 = module_version.source_version_hash
 
+        # Import staticmodules.registry only on demand. That way Django can
+        # import all its objects without starting a (RAM-hungry) kernel.
+        from staticmodules.registry import Lookup as InternalModules
+
         if module_id_name in InternalModules:
             compiled_module = InternalModules[module_id_name]
         else:
@@ -309,6 +312,10 @@ load_external_module.cache_clear = load_external_module._cache.clear
 
 
 def module_get_html_bytes(module_version: ModuleVersion) -> Optional[bytes]:
+    # Import staticmodules.registry only on demand. That way Django can
+    # import all its objects without starting a (RAM-hungry) kernel.
+    from staticmodules.registry import Lookup as InternalModules
+
     if module_version.id_name in InternalModules:
         return _internal_module_get_html_bytes(module_version.id_name)
     else:
