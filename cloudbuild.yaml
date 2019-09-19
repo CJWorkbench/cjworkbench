@@ -1,5 +1,8 @@
 # See https://cloud.google.com/cloud-build/docs/build-debug-locally for debug
 # instructions.
+#
+# The copy/paste-able command:
+# cloud-build-local --dryrun=false --substitutions COMMIT_SHA=abc123,BRANCH_NAME=branch .
 timeout: 2400s
 options:
   machineType: N1_HIGHCPU_8
