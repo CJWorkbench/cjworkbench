@@ -73,9 +73,9 @@ def manual_acking_callback(fn):
             nonlocal acked
             if acked:
                 try:
-                    raise RuntimeError("You called `await ack()` twice")
+                    raise RuntimeError
                 except RuntimeError:
-                    logger.exception()
+                    logger.exception("You called `ack()` twice")
             await channel.basic_client_ack(envelope.delivery_tag)
             acked = True
 
@@ -85,9 +85,9 @@ def manual_acking_callback(fn):
         finally:
             if not acked:
                 try:
-                    raise RuntimeError("You did not call ack()")
+                    raise RuntimeError
                 except RuntimeError:
-                    logger.exception()
+                    logger.exception("You did not call ack()")
                 await ack()
 
     return inner
