@@ -1,6 +1,7 @@
 import contextlib
 from pathlib import Path
-from typing import ContextManager, List, Optional
+from typing import Any, ContextManager, Dict, List, Optional
+import pyarrow
 from cjwkernel.types import ArrowTable, RenderResult, TableMetadata
 from cjwkernel.util import json_encode, tempfile_context
 from cjwstate import minio, parquet
@@ -128,10 +129,7 @@ def downloaded_parquet_file(crr: CachedRenderResult, dir=None) -> ContextManager
 
 
 def load_cached_render_result(
-    crr: CachedRenderResult,
-    path: Path,
-    only_columns: Optional[List[str]] = None,
-    only_rows: Optional[range] = None,
+    crr: CachedRenderResult, path: Path, only_columns: Optional[List[str]] = None
 ) -> RenderResult:
     """
     Return a RenderResult equivalent to the one passed to `cache_render_result()`.
@@ -163,7 +161,7 @@ def load_cached_render_result(
     try:
         with downloaded_parquet_file(crr) as parquet_path:
             parquet.convert_parquet_file_to_arrow_file(
-                parquet_path, path, only_columns=only_columns, only_rows=only_rows
+                parquet_path, path, only_columns=only_columns
             )
     except FileNotFoundError:
         raise CorruptCacheError  # FIXME add unit test
@@ -171,12 +169,9 @@ def load_cached_render_result(
     if only_columns is None:
         table_metadata = crr.table_metadata
     else:
-        if only_rows is None:
-            n_rows = crr.table_metadata.n_rows
-        else:
-            n_rows = only_rows.stop - only_rows.start
         table_metadata = TableMetadata(
-            n_rows, [c for c in crr.table_metadata.columns if c.name in only_columns]
+            crr.table_metadata.n_rows,
+            [c for c in crr.table_metadata.columns if c.name in only_columns],
         )
     arrow_table = ArrowTable(path, table_metadata)
     return RenderResult(arrow_table, crr.errors, crr.json)
@@ -184,9 +179,7 @@ def load_cached_render_result(
 
 @contextlib.contextmanager
 def open_cached_render_result(
-    crr: CachedRenderResult,
-    only_columns: Optional[List[str]] = None,
-    only_rows: Optional[range] = None,
+    crr: CachedRenderResult, only_columns: Optional[List[str]] = None
 ) -> ContextManager[RenderResult]:
     """
     Yield a RenderResult equivalent to the one passed to `cache_render_result()`.
@@ -217,11 +210,43 @@ def open_cached_render_result(
 
     with tempfile_context(prefix="cached-render-result") as arrow_path:
         # raise CorruptCacheError (deleting `arrow_path` in the process)
-        result = load_cached_render_result(
-            crr, arrow_path, only_columns=only_columns, only_rows=only_rows
-        )
+        result = load_cached_render_result(crr, arrow_path, only_columns=only_columns)
 
         yield result
+
+
+def read_cached_render_result_pydict(
+    crr: CachedRenderResult, only_columns: List[str], only_rows: range
+) -> Dict[str, List[Any]]:
+    """
+    Return a dict mapping column name to data (Python objects).
+
+    Python data consumes RAM, so you must specify columns and rows.
+
+    `retval.keys()` is in table-column order (not `only_columns` order).
+
+    Missing rows and columns are ignored.
+
+    `NaN` is returned as float("nan").
+
+    Raise CorruptCacheError if the cached data does not match `crr`. That can
+    mean:
+
+        * The cached Parquet file is corrupt
+        * The cached Parquet file is missing
+        * `crr` is stale -- the cached result is for a different delta. This
+          could be detected by a `Workflow.cooperative_lock()`, too, should the
+          caller want to distinguish this error from the others.
+    """
+    if not crr.table_metadata.columns:
+        # Zero-column tables aren't written to cache
+        return {}
+
+    try:
+        with downloaded_parquet_file(crr) as parquet_path:
+            return parquet.read_pydict(parquet_path, only_columns, only_rows)
+    except (pyarrow.ArrowIOError, FileNotFoundError):  # FIXME unit-test
+        raise CorruptCacheError
 
 
 def delete_parquet_files_for_wf_module(workflow_id: int, wf_module_id: int) -> None:

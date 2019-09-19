@@ -20,7 +20,12 @@ from rest_framework.decorators import api_view, renderer_classes
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from cjwkernel.pandas import types as ptypes
-from cjwstate.rendercache import CorruptCacheError, open_cached_render_result
+from cjwkernel.types import Column, ColumnType
+from cjwstate.rendercache import (
+    CorruptCacheError,
+    open_cached_render_result,
+    read_cached_render_result_pydict,
+)
 from cjwstate.models import Tab, WfModule, Workflow
 from cjwstate.models.loaded_module import module_get_html_bytes
 from server import rabbitmq
@@ -114,6 +119,32 @@ def _arrow_table_to_json_records(table: pyarrow.Table) -> List[Dict[str, Any]]:
     return [{k: v[i] for k, v in values.items()} for i in range(table.num_rows)]
 
 
+def _pydict_to_json_records(
+    # need to pass n_rows in case len(columns) == 0
+    pydict: Dict[str, List[Any]],
+    columns: List[Column],
+    n_rows: int,
+) -> List[Dict[str, Any]]:
+    """
+    Converts column-wise `pydict` to JSON records.
+
+    String values become Strings; Number values become int/float; Datetime
+    values become ISO8601-encoded Strings.
+    """
+    # Convert datetime to str
+    converted = {}
+    for column in columns:
+        if isinstance(column.type, ColumnType.Datetime):
+            converted[column.name] = [
+                (None if v is None else (v.isoformat() + "Z"))
+                for v in pydict[column.name]
+            ]
+        else:
+            converted[column.name] = pydict[column.name]
+    # Transpose into JSON records
+    return [{k: v[i] for k, v in converted.items()} for i in range(n_rows)]
+
+
 # Helper method that produces json output for a table + start/end row
 # Also silently clips row indices
 # Now reading a maximum of 101 columns directly from cache parquet
@@ -136,10 +167,14 @@ def _make_render_tuple(cached_result, startrow=None, endrow=None):
     )
 
     # raise CorruptCacheError
-    with open_cached_render_result(
+    data = read_cached_render_result_pydict(
         cached_result, only_columns=column_names, only_rows=range(startrow, endrow)
-    ) as result:
-        records = _arrow_table_to_json_records(result.table.table)
+    )
+    records = _pydict_to_json_records(
+        data,
+        [c for c in cached_result.table_metadata.columns if c.name in column_names],
+        endrow - startrow,
+    )
 
     return (startrow, endrow, records)
 
@@ -303,10 +338,14 @@ def wfmodule_tile(
 
     only_columns = cached_result.column_names[cbegin:cend]
     try:
-        with open_cached_render_result(
-            cached_result, only_columns=only_columns
-        ) as result:
-            records = _arrow_table_to_json_records(result.table.table)
+        data = read_cached_render_result_pydict(
+            cached_result, only_columns=only_columns, only_rows=range(rbegin, rend)
+        )
+        records = _pydict_to_json_records(
+            data,
+            [c for c in cached_result.table_metadata.columns if c.name in only_columns],
+            rend - rbegin,
+        )
     except CorruptCacheError:
         raise  # TODO handle this case!
 

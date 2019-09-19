@@ -1,8 +1,6 @@
 from contextlib import contextmanager
 import io
 import pathlib
-import os
-import tempfile
 from typing import Any, ContextManager, Dict, Iterable, List, Optional, Union
 import unittest
 from numpy.testing import assert_equal  # [None, "x"] == [None, "x"]
@@ -10,6 +8,7 @@ import pyarrow
 import pyarrow.parquet
 from cjwkernel import settings
 from cjwkernel.types import ArrowTable, Column, ColumnType, RenderResult, TableMetadata
+from cjwkernel.util import tempfile_context
 
 
 @contextmanager
@@ -23,18 +22,11 @@ def arrow_file(
     if isinstance(table, dict):
         table = pyarrow.Table.from_pydict(table)
 
-    fd, filename = tempfile.mkstemp(dir=dir)
-    try:
-        os.close(fd)
-        writer = pyarrow.RecordBatchFileWriter(filename, table.schema)
+    with tempfile_context(dir=dir) as path:
+        writer = pyarrow.RecordBatchFileWriter(str(path), table.schema)
         writer.write_table(table)
         writer.close()
-        yield pathlib.Path(filename)
-    finally:
-        try:
-            os.unlink(filename)
-        except FileNotFoundError:
-            pass
+        yield path
 
 
 def _arrow_column_to_column(column: pyarrow.Column) -> Column:
@@ -63,7 +55,7 @@ def arrow_table_context(
     Metadata is inferred. Number columns have format `{:,}`.
     """
     if isinstance(table, dict):
-        table = pyarrow.Table.from_pydict(table)
+        table = pyarrow.table(table)
 
     if columns is None:
         columns = [_arrow_column_to_column(c) for c in table.columns]
@@ -138,13 +130,9 @@ def parquet_file(
     Yield a filename with `table` written to a Parquet file.
     """
     atable = arrow_table(table)
-    fd, filename = tempfile.mkstemp(dir=dir)
-    try:
-        os.close(fd)
-        pyarrow.parquet.write_table(atable.table, filename, compression="SNAPPY")
-        yield pathlib.Path(filename)
-    finally:
-        os.unlink(filename)
+    with tempfile_context(dir=dir) as parquet_path:
+        pyarrow.parquet.write_table(atable.table, parquet_path, compression="SNAPPY")
+        yield parquet_path
 
 
 def override_settings(**kwargs):

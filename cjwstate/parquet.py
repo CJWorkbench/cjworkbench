@@ -1,20 +1,15 @@
 import contextlib
 import fastparquet
 from pathlib import Path
-import tempfile
-from typing import ContextManager, List, Optional
+from typing import Any, ContextManager, Dict, List, Optional
+import pyarrow
 import pyarrow.parquet
+from cjwkernel.util import tempfile_context
 
 
 def convert_parquet_file_to_arrow_file(
-    parquet_path: Path,
-    arrow_path: Path,
-    only_columns: Optional[List[str]] = None,
-    only_rows: Optional[range] = None,
+    parquet_path: Path, arrow_path: Path, only_columns: Optional[List[str]] = None
 ) -> None:
-    if only_rows is not None:
-        assert only_rows.step == 1 and only_rows.start <= only_rows.stop
-
     # TODO stream one column at a time? pyarrow makes it tricky, but it would
     # be more efficient because less RAM would be used.
 
@@ -45,13 +40,20 @@ def convert_parquet_file_to_arrow_file(
         # TODO write in serial, so we don't build the whole Arrow table in RAM
         array = parquet_file.read(
             [column.name], use_threads=False, use_pandas_metadata=False
-        )[0]
-        if only_rows is not None:
-            array = array[only_rows.start : only_rows.stop]
-        if column.name in dictionary_columns:
-            # TODO pyarrow 0.15 reader allows uses_dictionary=True, so we can
-            # avoid decoding+re-encoding.
-            array = array.dictionary_encode()
+        )[0].data
+        if len(array.chunks) == 0:
+            pass  # this is fine
+        elif len(array.chunks) == 1:
+            # simplification: pass Array, not ChunkedArray.
+            array = array.chunks[0]
+            if column.name in dictionary_columns:
+                # TODO pyarrow 0.15 reader allows uses_dictionary=True, so we can
+                # avoid decoding+re-encoding.
+                array = array.dictionary_encode()
+        else:
+            raise pyarrow.ArrowIOError(
+                "Workbench can only handle 0-1 chunks, not %d" % len(array.chunks)
+            )
         arrays.append(array)
         names.append(column.name)
     table = pyarrow.Table.from_arrays(arrays, names=names)
@@ -135,8 +137,7 @@ def open_as_mmapped_arrow(parquet_path: Path) -> ContextManager[pyarrow.Table]:
     `parquet.write(path, table); table = parquet.read(path)` does not change
     `table`.
     """
-    with tempfile.NamedTemporaryFile() as tf:
-        arrow_path = Path(tf.name)
+    with tempfile_context() as arrow_path:
         # raise ArrowIOError
         convert_parquet_file_to_arrow_file(parquet_path, arrow_path)
         reader = pyarrow.ipc.open_file(str(arrow_path))
@@ -153,3 +154,53 @@ def read(parquet_path: Path) -> pyarrow.Table:
     """
     with open_as_mmapped_arrow(parquet_path) as table:
         return table
+
+
+def _read_pylist(
+    parquet_file: pyarrow.parquet.ParquetFile, column: str, only_rows: range
+) -> List[Any]:
+    arrow_table = parquet_file.read(
+        [column], use_threads=False, use_pandas_metadata=False
+    )
+    arrow_column = arrow_table[0]
+    arrow_data = arrow_column.data
+    # Assume there is a chunk -- otherwise we wouldn't get here
+    pylist = arrow_data[only_rows.start : only_rows.stop].to_pylist()
+    if pyarrow.types.is_timestamp(arrow_column.type):
+        # pyarrow returns timestamps as pandas.Timestamp values (because
+        # that has higher resolution than datetime.datetime). But we want
+        # datetime.datetime.
+        pylist = [None if v is None else v.to_pydatetime() for v in pylist]
+    return pylist
+
+
+def read_pydict(
+    parquet_path: Path, only_columns: List[str], only_rows: range
+) -> Dict[str, List[Any]]:
+    """
+    Return a dict mapping column name to data (Python objects).
+
+    Python data consumes RAM, so you must specify columns and rows.
+
+    `retval.keys()` is in table-column order (not `only_columns` order).
+
+    Missing rows and columns are ignored.
+
+    `NaN` is returned as float("nan").
+    """
+    assert only_rows.step == 1
+    assert only_rows.start >= 0
+    assert only_rows.stop >= only_rows.start
+    parquet_file = pyarrow.parquet.ParquetFile(str(parquet_path))
+
+    only_columns = frozenset(only_columns)
+    columns = [c for c in parquet_file.schema.names if c in only_columns]
+
+    if parquet_file.num_row_groups == 0:
+        return {c: [] for c in columns}
+    elif parquet_file.num_row_groups == 1:
+        return {c: _read_pylist(parquet_file, c, only_rows) for c in columns}
+    else:
+        raise pyarrow.ArrowIOError(
+            "Workbench only supports <2 row groups in parquet files"
+        )

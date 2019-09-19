@@ -4,6 +4,7 @@ from .io import (
     downloaded_parquet_file,
     load_cached_render_result,
     open_cached_render_result,
+    read_cached_render_result_pydict,
     CorruptCacheError,
 )
 
@@ -14,4 +15,5 @@ __all__ = (
     "downloaded_parquet_file",
     "load_cached_render_result",
     "open_cached_render_result",
+    "read_cached_render_result_pydict",
 )
