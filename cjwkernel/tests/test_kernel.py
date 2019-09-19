@@ -116,6 +116,14 @@ class KernelTests(unittest.TestCase):
         result = kernel.migrate_params(module, {"foo": 123})
         self.assertEquals(result, {"nested": {"foo": 123}})
 
+    def test_migrate_params_retval_not_thrift_ready(self):
+        kernel = Kernel()
+        module = kernel.compile(
+            MockPath(["foo.py"], b"def migrate_params(params): return range(2)"), "foo"
+        )
+        with self.assertRaises(ModuleExitedError):
+            kernel.migrate_params(module, {"foo": 123})
+
     def test_render_happy_path(self):
         kernel = Kernel()
         module = kernel.compile(

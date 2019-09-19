@@ -4,7 +4,8 @@ import logging
 import unittest
 from unittest.mock import Mock, patch
 import pandas as pd
-from cjwkernel.types import I18nMessage, RenderError, RenderResult
+from cjwkernel.errors import ModuleExitedError
+from cjwkernel.types import I18nMessage, Params, RenderError, RenderResult
 from cjwkernel.tests.util import arrow_table, assert_render_result_equals
 from cjwstate.rendercache import cache_render_result, open_cached_render_result
 from cjwstate.models import ModuleVersion, Workflow
@@ -178,6 +179,73 @@ class WorkflowTests(DbTestCase):
                 }
             },
         )
+
+    @patch.object(LoadedModule, "for_module_version_sync")
+    @patch("server.websockets.ws_client_send_delta_async", fake_send)
+    def test_execute_migrate_params_invalid_params_are_coerced(self, fake_load_module):
+        workflow = Workflow.create_and_init()
+        tab = workflow.tabs.first()
+        delta1 = workflow.last_delta
+        ModuleVersion.create_or_replace_from_spec(
+            {
+                "id_name": "mod",
+                "name": "Mod",
+                "category": "Clean",
+                "parameters": [{"type": "string", "id_name": "x"}],
+            }
+        )
+        tab.wf_modules.create(
+            order=0,
+            slug="step-1",
+            last_relevant_delta_id=delta1.id,
+            module_id_name="mod",
+        )
+
+        def render(*args, params, **kwargs):
+            self.assertEqual(params, Params({"x": "2"}))
+            return RenderResult(arrow_table({"A": [1]}))
+
+        # make migrate_params() return an int instead of a str. Assume
+        # ParamDType.coerce() will cast it to str.
+        fake_load_module.return_value.migrate_params.return_value = {"x": 2}
+        fake_load_module.return_value.render.side_effect = render
+        self._execute(workflow)
+        fake_load_module.return_value.render.assert_called()
+
+    @patch.object(LoadedModule, "for_module_version_sync")
+    @patch("server.websockets.ws_client_send_delta_async", fake_send)
+    def test_execute_migrate_params_module_error_gives_default_params(
+        self, fake_load_module
+    ):
+        workflow = Workflow.create_and_init()
+        tab = workflow.tabs.first()
+        delta1 = workflow.last_delta
+        ModuleVersion.create_or_replace_from_spec(
+            {
+                "id_name": "mod",
+                "name": "Mod",
+                "category": "Clean",
+                "parameters": [{"type": "string", "id_name": "x", "default": "def"}],
+            }
+        )
+        tab.wf_modules.create(
+            order=0,
+            slug="step-1",
+            last_relevant_delta_id=delta1.id,
+            module_id_name="mod",
+        )
+
+        def render(*args, params, **kwargs):
+            self.assertEqual(params, Params({"x": "def"}))  # default params
+            return RenderResult(arrow_table({"A": [1]}))
+
+        # make migrate_params() raise an error.
+        fake_load_module.return_value.migrate_params.side_effect = ModuleExitedError(
+            -9, ""
+        )
+        fake_load_module.return_value.render.side_effect = render
+        self._execute(workflow)
+        fake_load_module.return_value.render.assert_called()
 
     @patch.object(LoadedModule, "for_module_version_sync")
     @patch("server.websockets.ws_client_send_delta_async", fake_send)

@@ -1,4 +1,6 @@
 import contextlib
+from dataclasses import dataclass, field
+from functools import partial
 import logging
 from pathlib import Path
 import unittest
@@ -6,6 +8,7 @@ from unittest.mock import patch
 from dateutil import parser
 import pyarrow.parquet
 from cjwkernel.errors import ModuleExitedError
+from cjwkernel.param_dtype import ParamDType
 from cjwkernel.types import (
     Column,
     ColumnType,
@@ -42,6 +45,13 @@ def async_value(v):
         return v
 
     return async_value_inner
+
+
+@dataclass(frozen=True)
+class MockModuleVersion:
+    id_name: str = "mod"
+    source_version_hash: str = "abc123"
+    param_schema: ParamDType.Dict = field(default_factory=partial(ParamDType.Dict, {}))
 
 
 class LoadDatabaseObjectsTests(DbTestCase):
@@ -196,7 +206,7 @@ class FetchTests(unittest.TestCase):
             result = fetch.fetch_or_wrap_error(
                 self.basedir,
                 WfModule(),
-                ModuleVersion(id_name="missing"),
+                MockModuleVersion("missing"),
                 None,
                 None,
                 self.output_path,
@@ -211,7 +221,7 @@ class FetchTests(unittest.TestCase):
             result = fetch.fetch_or_wrap_error(
                 self.basedir,
                 WfModule(),
-                ModuleVersion(id_name="bad"),
+                MockModuleVersion("bad"),
                 None,
                 None,
                 self.output_path,
@@ -226,7 +236,9 @@ class FetchTests(unittest.TestCase):
         result = fetch.fetch_or_wrap_error(
             self.basedir,
             WfModule(params={"A": "input"}, secrets={"C": "D"}),
-            ModuleVersion(),
+            MockModuleVersion(
+                id_name="A", param_schema=ParamDType.Dict({"A": ParamDType.String()})
+            ),
             None,
             None,
             self.output_path,
@@ -246,14 +258,19 @@ class FetchTests(unittest.TestCase):
     @patch.object(fetchprep, "clean_value")
     @patch.object(rendercache, "downloaded_parquet_file")
     def test_input_crr(self, downloaded_parquet_file, clean_value, load_module):
-        load_module.return_value.migrate_params.return_value = {"A": "B"}
+        load_module.return_value.migrate_params.return_value = {}
         load_module.return_value.fetch.return_value = FetchResult(self.output_path, [])
         clean_value.return_value = {}
         downloaded_parquet_file.return_value = Path("/path/to/x.parquet")
         input_metadata = TableMetadata(3, [Column("A", ColumnType.Text())])
         input_crr = CachedRenderResult(1, 2, 3, "ok", [], {}, input_metadata)
         fetch.fetch_or_wrap_error(
-            self.basedir, WfModule(), ModuleVersion(), None, input_crr, self.output_path
+            self.basedir,
+            WfModule(),
+            MockModuleVersion(),
+            None,
+            input_crr,
+            self.output_path,
         )
         # Passed file is downloaded from rendercache
         downloaded_parquet_file.assert_called_with(input_crr, dir=self.basedir)
@@ -271,7 +288,7 @@ class FetchTests(unittest.TestCase):
     def test_input_crr_corrupt_cache_error_is_none(
         self, downloaded_parquet_file, load_module
     ):
-        load_module.return_value.migrate_params.return_value = {"A": "B"}
+        load_module.return_value.migrate_params.return_value = {}
         load_module.return_value.fetch.return_value = FetchResult(self.output_path, [])
         downloaded_parquet_file.side_effect = rendercache.CorruptCacheError(
             "file not found"
@@ -279,7 +296,12 @@ class FetchTests(unittest.TestCase):
         input_metadata = TableMetadata(3, [Column("A", ColumnType.Text())])
         input_crr = CachedRenderResult(1, 2, 3, "ok", [], {}, input_metadata)
         fetch.fetch_or_wrap_error(
-            self.basedir, WfModule(), ModuleVersion(), None, input_crr, self.output_path
+            self.basedir,
+            WfModule(),
+            MockModuleVersion(),
+            None,
+            input_crr,
+            self.output_path,
         )
         # fetch is still called, with `None` as argument.
         self.assertIsNone(
@@ -291,13 +313,13 @@ class FetchTests(unittest.TestCase):
     @patch.object(storedobjects, "downloaded_file")
     def test_last_fetch_result(self, downloaded_file, load_module):
         downloaded_file.return_value = Path("/foo.bin")
-        load_module.return_value.migrate_params.return_value = {"A": "B"}
+        load_module.return_value.migrate_params.return_value = {}
         load_module.return_value.fetch.return_value = FetchResult(self.output_path, [])
         stored_object = StoredObject()
         fetch.fetch_or_wrap_error(
             self.basedir,
             WfModule(fetch_error=""),
-            ModuleVersion(),
+            MockModuleVersion(),
             stored_object,
             None,
             self.output_path,
@@ -313,13 +335,13 @@ class FetchTests(unittest.TestCase):
     @patch.object(storedobjects, "downloaded_file")
     def test_last_fetch_result_with_error(self, downloaded_file, load_module):
         downloaded_file.return_value = Path("/foo.bin")
-        load_module.return_value.migrate_params.return_value = {"A": "B"}
+        load_module.return_value.migrate_params.return_value = {}
         load_module.return_value.fetch.return_value = FetchResult(self.output_path, [])
         stored_object = StoredObject()
         fetch.fetch_or_wrap_error(
             self.basedir,
             WfModule(fetch_error="some error"),
-            ModuleVersion(),
+            MockModuleVersion(),
             stored_object,
             None,
             self.output_path,
@@ -339,13 +361,13 @@ class FetchTests(unittest.TestCase):
         self, downloaded_file, load_module
     ):
         downloaded_file.side_effect = FileNotFoundError
-        load_module.return_value.migrate_params.return_value = {"A": "B"}
+        load_module.return_value.migrate_params.return_value = {}
         load_module.return_value.fetch.return_value = FetchResult(self.output_path, [])
         stored_object = StoredObject()
         fetch.fetch_or_wrap_error(
             self.basedir,
             WfModule(),
-            ModuleVersion(),
+            MockModuleVersion(),
             stored_object,
             None,
             self.output_path,
@@ -358,11 +380,16 @@ class FetchTests(unittest.TestCase):
     @patch.object(LoadedModule, "for_module_version_sync")
     @patch.object(fetchprep, "clean_value", lambda *a: {})
     def test_fetch_module_error(self, load_module):
-        load_module.return_value.migrate_params.return_value = {"A": "B"}
+        load_module.return_value.migrate_params.return_value = {}
         load_module.return_value.fetch.side_effect = ModuleExitedError(1, "bad")
         with self.assertLogs(level=logging.ERROR):
             result = fetch.fetch_or_wrap_error(
-                self.basedir, WfModule(), ModuleVersion(), None, None, self.output_path
+                self.basedir,
+                WfModule(),
+                MockModuleVersion(),
+                None,
+                None,
+                self.output_path,
             )
         self.assertEqual(result, self._bug_err("exit code 1: bad"))
 

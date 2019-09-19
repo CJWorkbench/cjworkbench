@@ -211,7 +211,7 @@ class Upload(View):
             return ErrorResponse(409, "file-not-uploaded")
 
         # After the cooperative lock ends, update the WfModule.
-        want_params = {**wf_module.get_params(), file_param_id_name: uploaded_file.uuid}
+        want_params = {file_param_id_name: uploaded_file.uuid}
 
         def create_change_parameters_command():
             workflow = workflow_lock.workflow

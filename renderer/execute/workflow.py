@@ -1,13 +1,12 @@
 import logging
-from pathlib import Path
-import shutil
-import tempfile
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 from cjworkbench.sync import database_sync_to_async
+from cjwkernel.errors import ModuleError
 from cjwkernel.param_dtype import ParamDType
 from cjwkernel.types import RenderResult, Tab
 from cjwkernel.util import tempdir_context
-from cjwstate.models import Workflow
+from cjwstate.models import WfModule, Workflow
+from cjwstate.models.loaded_module import LoadedModule
 from .tab import ExecuteStep, TabFlow, execute_tab_flow
 from .types import UnneededExecution
 
@@ -15,10 +14,58 @@ from .types import UnneededExecution
 logger = logging.getLogger(__name__)
 
 
+def _get_migrated_params(wf_module: WfModule) -> Dict[str, Any]:
+    """
+    Build the Params dict which will be passed to render().
+
+    Call LoadedModule.migrate_params() to ensure the params are up-to-date.
+
+    On ModuleError or ValueError, log the error and return default params. This
+    will render the "wrong" thing ... but the front-end should show the migrate
+    error (as it's rendering the form) so users should figure out the problem.
+    (What's the alternative? Abort the whole workflow render? We can't render
+    _any_ module until we've migrated _all_ modules; and it's hard to imagine
+    showing the user a huge, aborted render.)
+
+    Assume we are called within a `workflow.cooperative_lock()`.
+    """
+    module_version = wf_module.module_version
+
+    if module_version is None:
+        # This is a deleted module. Renderer will pass the input through to
+        # the output.
+        return {}
+
+    try:
+        # raises ModuleError
+        lm = LoadedModule.for_module_version_sync(wf_module.module_version)
+        # raises ModuleError
+        result = lm.migrate_params(wf_module.params)
+    except ModuleError:
+        # LoadedModule logged this error; no need to log it again.
+        return module_version.param_schema.coerce(None)
+
+    # Is the module buggy? It might be. Log that error, and return a valid
+    # set of params anyway -- even if it isn't the params the user wants.
+    try:
+        module_version.param_schema.validate(result)
+        return result
+    except ValueError as err:
+        logger.exception(
+            "%s.migrate_params() gave wrong retval: %s",
+            module_version.id_name,
+            str(err),
+        )
+        return module_version.param_schema.coerce(result)
+
+
 @database_sync_to_async
 def _load_tab_flows(workflow: Workflow, delta_id: int) -> List[TabFlow]:
     """
     Query `workflow` for each tab's `TabFlow` (ordered by tab position).
+
+    Raise `ModuleError` or `ValueError` if migrate_params() fails. Failed
+    migration means the whole execute can't happen.
     """
     ret = []
     with workflow.cooperative_lock():  # reloads workflow
@@ -34,7 +81,11 @@ def _load_tab_flows(workflow: Workflow, delta_id: int) -> List[TabFlow]:
                         if wfm.module_version is not None
                         else ParamDType.Dict({})
                     ),
-                    wfm.get_params(),
+                    # We need to invoke the kernel and migrate _all_ modules'
+                    # params (WfModule.get_params), because we can only check
+                    # for tab cycles after migrating (and before calling any
+                    # render()).
+                    _get_migrated_params(wfm),
                 )
                 for wfm in tab_model.live_wf_modules.all()
             ]

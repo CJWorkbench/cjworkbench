@@ -278,11 +278,19 @@ class WfModule(models.Model):
             return {}
 
         lm = LoadedModule.for_module_version_sync(self.module_version)
-
         if lm is None:
             return {}
 
-        return lm.migrate_params(self.params)  # raises ValueError
+        result = lm.migrate_params(self.params)  # raises ModuleError
+        try:
+            self.module_version.param_schema.validate(result)
+        except ValueError as err:
+            # rephrase error
+            raise ValueError(
+                "%s.migrate_params() gave bad output: %s"
+                % (self.module_id_name, str(err))
+            ) from None
+        return result
 
     # --- Duplicate ---
     # used when duplicating a whole workflow

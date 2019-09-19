@@ -140,6 +140,9 @@ class LoadedModuleTest(unittest.TestCase):
         self.assertIsNone(result)
 
     def test_migrate_params_retval_does_not_match_schema(self):
+        # LoadedModule.migrate_params() may return invalid data: it's up to the
+        # caller to validate it. In this test, we test that indeed, invalid
+        # data may be returned.
         code = b"def migrate_params(params):\n    return {}"
         minio.client.put_object(
             Bucket=minio.ExternalModulesBucket,
@@ -156,9 +159,11 @@ class LoadedModuleTest(unittest.TestCase):
                     "now",
                 )
             )
-            with self.assertRaisesRegex(ValueError, "expected names.*x"):
+            self.assertEqual(
                 # should have 'x' key
-                lm.migrate_params({})
+                lm.migrate_params({}),
+                {},
+            )
 
     def test_migrate_params_crash(self):
         code = b"def migrate_params(params):\n    raise RuntimeError('xxx')"

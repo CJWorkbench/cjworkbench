@@ -224,6 +224,8 @@ def fetch_or_wrap_error(
             return user_visible_bug_fetch_result(
                 output_path, format_for_user_debugging(err)
             )
+        try:
+            module_version.param_schema.validate(params)
         except ValueError:
             logger.exception(
                 "Invalid return value from %s.migrate_params()", module_version.id_name
@@ -240,7 +242,7 @@ def fetch_or_wrap_error(
 
         # Clean params, so they're of the correct type. (This can't error.)
         params = Params(
-            fetchprep.clean_value(loaded_module.param_schema, params, input_metadata)
+            fetchprep.clean_value(module_version.param_schema, params, input_metadata)
         )
 
         # get last_fetch_result (This can't error.)

@@ -15,7 +15,6 @@ from cjwkernel.types import (
     Tab,
     RenderResult,
 )
-from cjwkernel.param_dtype import ParamDTypeDict
 from cjwstate import minio
 from . import module_loader
 from .module_version import ModuleVersion
@@ -36,7 +35,6 @@ class LoadedModule:
 
     module_id_name: str
     version_sha1: str
-    param_schema: ParamDTypeDict
     compiled_module: CompiledModule
 
     @property
@@ -149,28 +147,30 @@ class LoadedModule:
 
         Raise ModuleError if module code did not execute.
 
-        Raise ValueError if module code returned params that do not match spec.
+        The result may not be valid. Call `param_schema.validate(result)` to
+        raise `ValueError` on error; or call `param_schema.coerce(result)` to
+        guarantee a valid result.
 
         Log any ModuleError. Also log success.
         """
         time1 = time.time()
+        status = "???"
         try:
-            values = module_loader.kernel.migrate_params(
+            result = module_loader.kernel.migrate_params(
                 self.compiled_module, raw_params
             )  # raise ModuleError
-            try:
-                self.param_schema.validate(values)
-            except ValueError as err:
-                raise ValueError(
-                    "%s.migrate_params() gave bad output: %s"
-                    % (self.module_id_name, str(err))
-                ) from None
-            return values
+            status = "ok"
+            return result
+        except ModuleError as err:
+            logger.exception("Exception in %s.render", self.module_id_name)
+            status = type(err).__name__
+            raise
         finally:
             time2 = time.time()
             logger.info(
-                "%s.migrate_params() in %dms",
+                "%s.migrate_params() => %s in %dms",
                 self.module_id_name,
+                status,
                 int((time2 - time1) * 1000),
             )
 
@@ -227,9 +227,7 @@ class LoadedModule:
                 module_id_name, version_sha1, module_version.last_update_time
             )
 
-        param_schema = module_version.param_schema
-
-        return cls(module_id_name, version_sha1, param_schema, compiled_module)
+        return cls(module_id_name, version_sha1, compiled_module)
 
 
 def _is_basename_python_code(key: str) -> bool:
