@@ -128,7 +128,10 @@ def downloaded_parquet_file(crr: CachedRenderResult, dir=None) -> ContextManager
 
 
 def load_cached_render_result(
-    crr: CachedRenderResult, path: Path, only_columns: Optional[List[str]] = None
+    crr: CachedRenderResult,
+    path: Path,
+    only_columns: Optional[List[str]] = None,
+    only_rows: Optional[range] = None,
 ) -> RenderResult:
     """
     Return a RenderResult equivalent to the one passed to `cache_render_result()`.
@@ -160,7 +163,7 @@ def load_cached_render_result(
     try:
         with downloaded_parquet_file(crr) as parquet_path:
             parquet.convert_parquet_file_to_arrow_file(
-                parquet_path, path, only_columns=only_columns
+                parquet_path, path, only_columns=only_columns, only_rows=only_rows
             )
     except FileNotFoundError:
         raise CorruptCacheError  # FIXME add unit test
@@ -168,9 +171,12 @@ def load_cached_render_result(
     if only_columns is None:
         table_metadata = crr.table_metadata
     else:
+        if only_rows is None:
+            n_rows = crr.table_metadata.n_rows
+        else:
+            n_rows = only_rows.stop - only_rows.start
         table_metadata = TableMetadata(
-            crr.table_metadata.n_rows,
-            [c for c in crr.table_metadata.columns if c.name in only_columns],
+            n_rows, [c for c in crr.table_metadata.columns if c.name in only_columns]
         )
     arrow_table = ArrowTable(path, table_metadata)
     return RenderResult(arrow_table, crr.errors, crr.json)
@@ -178,7 +184,9 @@ def load_cached_render_result(
 
 @contextlib.contextmanager
 def open_cached_render_result(
-    crr: CachedRenderResult, only_columns: Optional[List[str]] = None
+    crr: CachedRenderResult,
+    only_columns: Optional[List[str]] = None,
+    only_rows: Optional[range] = None,
 ) -> ContextManager[RenderResult]:
     """
     Yield a RenderResult equivalent to the one passed to `cache_render_result()`.
@@ -209,7 +217,9 @@ def open_cached_render_result(
 
     with tempfile_context(prefix="cached-render-result") as arrow_path:
         # raise CorruptCacheError (deleting `arrow_path` in the process)
-        result = load_cached_render_result(crr, arrow_path, only_columns=only_columns)
+        result = load_cached_render_result(
+            crr, arrow_path, only_columns=only_columns, only_rows=only_rows
+        )
 
         yield result
 

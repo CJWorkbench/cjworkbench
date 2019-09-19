@@ -7,8 +7,14 @@ import pyarrow.parquet
 
 
 def convert_parquet_file_to_arrow_file(
-    parquet_path: Path, arrow_path: Path, only_columns: Optional[List[str]] = None
+    parquet_path: Path,
+    arrow_path: Path,
+    only_columns: Optional[List[str]] = None,
+    only_rows: Optional[range] = None,
 ) -> None:
+    if only_rows is not None:
+        assert only_rows.step == 1 and only_rows.start <= only_rows.stop
+
     # TODO stream one column at a time? pyarrow makes it tricky, but it would
     # be more efficient because less RAM would be used.
 
@@ -40,6 +46,8 @@ def convert_parquet_file_to_arrow_file(
         array = parquet_file.read(
             [column.name], use_threads=False, use_pandas_metadata=False
         )[0]
+        if only_rows is not None:
+            array = array[only_rows.start : only_rows.stop]
         if column.name in dictionary_columns:
             array = array.dictionary_encode()
         arrays.append(array)

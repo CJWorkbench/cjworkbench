@@ -97,9 +97,7 @@ def _arrow_array_to_json_list(array: pyarrow.ChunkedArray) -> List[Any]:
         return array.to_pylist()
 
 
-def _arrow_table_to_json_records(
-    table: pyarrow.Table, begin: int, end: int
-) -> List[Dict[str, Any]]:
+def _arrow_table_to_json_records(table: pyarrow.Table) -> List[Dict[str, Any]]:
     """
     Convert `table` to JSON records.
 
@@ -110,11 +108,10 @@ def _arrow_table_to_json_records(
     """
     # Select the values we want -- columnar, so memory accesses are contiguous
     values = {
-        column.name: _arrow_array_to_json_list(column[begin:end])
-        for column in table.itercolumns()
+        column.name: _arrow_array_to_json_list(column) for column in table.itercolumns()
     }
     # Transpose into JSON records
-    return [{k: v[i] for k, v in values.items()} for i in range(end - begin)]
+    return [{k: v[i] for k, v in values.items()} for i in range(table.num_rows)]
 
 
 # Helper method that produces json output for a table + start/end row
@@ -131,16 +128,18 @@ def _make_render_tuple(cached_result, startrow=None, endrow=None):
 
     if startrow is None:
         startrow = 0
+    startrow = max(0, startrow)
     if endrow is None:
         endrow = startrow + _MaxNRowsPerRequest
+    endrow = min(
+        cached_result.table_metadata.n_rows, endrow, startrow + _MaxNRowsPerRequest
+    )
 
     # raise CorruptCacheError
-    with open_cached_render_result(cached_result, only_columns=column_names) as result:
-        startrow = max(0, startrow)
-        endrow = min(
-            result.table.table.num_rows, endrow, startrow + _MaxNRowsPerRequest
-        )
-        records = _arrow_table_to_json_records(result.table.table, startrow, endrow)
+    with open_cached_render_result(
+        cached_result, only_columns=column_names, only_rows=range(startrow, endrow)
+    ) as result:
+        records = _arrow_table_to_json_records(result.table.table)
 
     return (startrow, endrow, records)
 
@@ -307,7 +306,7 @@ def wfmodule_tile(
         with open_cached_render_result(
             cached_result, only_columns=only_columns
         ) as result:
-            records = _arrow_table_to_json_records(result.table.table, rbegin, rend)
+            records = _arrow_table_to_json_records(result.table.table)
     except CorruptCacheError:
         raise  # TODO handle this case!
 
@@ -339,7 +338,7 @@ def wfmodule_public_output(
         table = pyarrow.table({})
 
     if export_type == "json":
-        records = _arrow_table_to_json_records(table, 0, table.num_rows)
+        records = _arrow_table_to_json_records(table)
         return JsonResponse(records, safe=False)
     elif export_type == "csv":
         df = table.to_pandas()
