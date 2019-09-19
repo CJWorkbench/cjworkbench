@@ -61,6 +61,14 @@ class LoadedModule:
         datasets. Consider calling it from an executor.
         """
         time1 = time.time()
+        begin_status_format = "%s.render() (%d rows, %d cols, %0.1fMB)"
+        begin_status_args = (
+            self.name,
+            input_table.metadata.n_rows,
+            len(input_table.metadata.columns),
+            input_table.n_bytes_on_disk / 1024 / 1024,
+        )
+        logger.info(begin_status_format + " begin", *begin_status_args)
         status = "???"
         try:
             result = module_loader.kernel.render(
@@ -86,11 +94,8 @@ class LoadedModule:
             time2 = time.time()
 
             logger.info(
-                "%s.render(%drows, %dcols, %0.1fMB) => %s in %dms",
-                self.name,
-                input_table.metadata.n_rows,
-                len(input_table.metadata.columns),
-                input_table.n_bytes_on_disk / 1024 / 1024,
+                begin_status_format + " => %s in %dms",
+                *begin_status_args,
                 status,
                 int((time2 - time1) * 1000),
             )
@@ -118,6 +123,8 @@ class LoadedModule:
         time1 = time.time()
         status = "???"
 
+        logger.info("%s.fetch() begin", self.name)
+
         try:
             ret = module_loader.kernel.fetch(
                 self.compiled_module,
@@ -137,7 +144,10 @@ class LoadedModule:
         finally:
             time2 = time.time()
             logger.info(
-                "%s.fetch => %s in %dms", self.name, status, int((time2 - time1) * 1000)
+                "%s.fetch() => %s in %dms",
+                self.name,
+                status,
+                int((time2 - time1) * 1000),
             )
 
     def migrate_params(self, raw_params: Dict[str, Any]) -> Dict[str, Any]:
@@ -153,6 +163,7 @@ class LoadedModule:
         Log any ModuleError. Also log success.
         """
         time1 = time.time()
+        logger.info("%s.migrate_params() begin", self.name)
         status = "???"
         try:
             result = module_loader.kernel.migrate_params(
