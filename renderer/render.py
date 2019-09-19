@@ -178,9 +178,8 @@ async def handle_render(
     try:
         workflow_id = int(message["workflow_id"])
         delta_id = int(message["delta_id"])
-    except asyncio.CancelledError:
-        raise
     except Exception:
+        # Message has invalid types. Ignore it.
         logger.info(
             (
                 "Ignoring invalid render request. "
@@ -188,6 +187,7 @@ async def handle_render(
             ),
             message,
         )
+        await ack()
         return
 
     await render_workflow_and_maybe_requeue(
