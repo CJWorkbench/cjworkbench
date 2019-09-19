@@ -9,10 +9,7 @@ def import_workbench_module(browser: Browser, slug: str) -> None:
     """
     with browser.scope(".navbar", wait=True):  # wait for page to load
         browser.click_button("menu")
-    # TODO why wait=True on the "Import Module" button? [2019-09-19] Cloud
-    # Build gave capybara.exceptions.ElementNotFound: Unable to find button
-    # 'Import Module' .... so let's see if this fixes it.
-    browser.click_button("Import Module", wait=True)
+    browser.click_button("Import Module")
     with browser.scope(".modal-dialog"):
         browser.fill_in("url", f"http://git-server/{slug}.git", wait=True)
         browser.click_button("Import")
