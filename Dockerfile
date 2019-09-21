@@ -31,21 +31,6 @@ RUN mkdir -p /usr/share/nltk_data \
 
 RUN pip install pipenv==2018.11.26
 
-RUN true \
-    && apt-get update \
-    && apt-get install --no-install-recommends -y \
-      build-essential \
-    && cd /tmp \
-    && curl -L https://github.com/unicode-org/icu/releases/download/release-64-2/icu4c-64_2-src.tgz > icu4c-64_2-src.tgz \
-    && tar zxvf icu4c-64_2-src.tgz \
-    && cd icu/source \
-    && chmod +x runConfigureICU configure install-sh \
-    && ./runConfigureICU Linux \
-    && make \
-    && make install \
-    && cd /tmp \
-    && rm -rf icu*
-
 # Set up /app
 RUN mkdir /app
 WORKDIR /app

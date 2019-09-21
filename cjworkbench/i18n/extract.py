@@ -9,7 +9,6 @@ from django.utils.translation.template import (
     plural_re,
     constant_re,
 )
-from cjworkbench.i18n.trans import replace_tags
 import re
 
 TOKEN_TEXT = TokenType.TEXT
@@ -156,10 +155,7 @@ def extract_django(fileobj, keywords, comment_tags, options):
                     g = strip_quotes(g)
                     default_message = imatch.group(3)
                     if default_message:
-                        comments = [
-                            "default-message: "
-                            + replace_tags(strip_quotes(default_message))["message"]
-                        ]
+                        comments = ["default-message: " + strip_quotes(default_message)]
                     else:
                         comments = []
                     comment = imatch.group(7)
