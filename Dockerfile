@@ -1,4 +1,7 @@
-# 0. The barest Python: used in dev and prod
+# 0.1 parquet-to-arrow: executables we use in Workbench
+FROM workbenchdata/parquet-to-arrow:v0.0.1 AS parquet-to-arrow
+
+# 0.2 pybase: Python and tools we use in dev and production
 FROM python:3.7.4-slim-buster AS pybase
 
 # We probably don't want these, long-term.
@@ -31,11 +34,13 @@ RUN mkdir -p /usr/share/nltk_data \
 
 RUN pip install pipenv==2018.11.26
 
+COPY --from=parquet-to-arrow /usr/bin/parquet-to-arrow-slice /usr/bin/parquet-to-arrow-slice
+
 # Set up /app
 RUN mkdir /app
 WORKDIR /app
 
-# 0.1 Pydev: just for the development environment
+# 0.2 Pydev: just for the development environment
 FROM pybase AS pydev
 
 # Need build-essential for:

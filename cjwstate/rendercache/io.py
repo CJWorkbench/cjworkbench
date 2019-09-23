@@ -216,7 +216,7 @@ def open_cached_render_result(
 
 
 def read_cached_render_result_pydict(
-    crr: CachedRenderResult, only_columns: List[str], only_rows: range
+    crr: CachedRenderResult, only_columns: range, only_rows: range
 ) -> Dict[str, List[Any]]:
     """
     Return a dict mapping column name to data (Python objects).

@@ -150,12 +150,6 @@ def _pydict_to_json_records(
 # Now reading a maximum of 101 columns directly from cache parquet
 def _make_render_tuple(cached_result, startrow=None, endrow=None):
     """Build (startrow, endrow, json_rows) data."""
-    columns = cached_result.table_metadata.columns[
-        # Return one row more than configured, so the client knows there
-        # are "too many rows".
-        : (settings.MAX_COLUMNS_PER_CLIENT_REQUEST + 1)
-    ]
-    column_names = [c.name for c in columns]
 
     if startrow is None:
         startrow = 0
@@ -168,11 +162,17 @@ def _make_render_tuple(cached_result, startrow=None, endrow=None):
 
     # raise CorruptCacheError
     data = read_cached_render_result_pydict(
-        cached_result, only_columns=column_names, only_rows=range(startrow, endrow)
+        cached_result,
+        # Return one row more than configured, so the client knows there
+        # are "too many rows".
+        only_columns=range(settings.MAX_COLUMNS_PER_CLIENT_REQUEST + 1),
+        only_rows=range(startrow, endrow),
     )
     records = _pydict_to_json_records(
         data,
-        [c for c in cached_result.table_metadata.columns if c.name in column_names],
+        cached_result.table_metadata.columns[
+            0 : settings.MAX_COLUMNS_PER_CLIENT_REQUEST + 1
+        ],
         endrow - startrow,
     )
 
@@ -336,16 +336,14 @@ def wfmodule_tile(
     rbegin = N_ROWS_PER_TILE * tile_row
     rend = N_ROWS_PER_TILE * (tile_row + 1)
 
-    only_columns = cached_result.column_names[cbegin:cend]
     try:
         data = read_cached_render_result_pydict(
-            cached_result, only_columns=only_columns, only_rows=range(rbegin, rend)
+            cached_result,
+            only_columns=range(cbegin, cend),
+            only_rows=range(rbegin, rend),
         )
-        records = _pydict_to_json_records(
-            data,
-            [c for c in cached_result.table_metadata.columns if c.name in only_columns],
-            rend - rbegin,
-        )
+        columns = cached_result.table_metadata.columns[cbegin:cend]
+        records = _pydict_to_json_records(data, columns, rend - rbegin)
     except CorruptCacheError:
         raise  # TODO handle this case!
 

@@ -51,8 +51,13 @@ class ParquetTest(unittest.TestCase):
             },
         )
 
-    def _test_read_write_table(self, table):
-        parquet.write(self.temp_path, arrow_table(table).table)
+    def _test_read_write_table(self, table, expected=None):
+        table = arrow_table(table).table
+        if expected is None:
+            expected = table
+        else:
+            expected = arrow_table(expected).table
+        parquet.write(self.temp_path, table)
         result = parquet.read(self.temp_path)
         assert_arrow_table_equals(result, table)
 
@@ -60,7 +65,9 @@ class ParquetTest(unittest.TestCase):
         self._test_read_write_table(arrow_table({"A": [1, 2 ** 62, 3]}).table)
 
     def test_read_write_float64(self):
-        self._test_read_write_table({"A": [1.0, 2.2, 3.0, np.nan]})
+        self._test_read_write_table(
+            {"A": [1.0, 2.2, 3.0, np.nan, None]}, {"A": [1.0, 2.2, 3.0, np.nan, np.nan]}
+        )
 
     def test_read_write_float64_all_null(self):
         self._test_read_write_table(
@@ -120,7 +127,7 @@ class ReadPydictTests(unittest.TestCase):
             [], schema=pyarrow.schema([("A", pyarrow.string())])
         )
         with parquet_file(table) as path:
-            self.assertEqual(parquet.read_pydict(path, ["A"], range(0)), {"A": []})
+            self.assertEqual(parquet.read_pydict(path, range(1), range(0)), {"A": []})
 
     def test_pydict_zero_rows(self):
         with tempfile_context() as path:
@@ -140,7 +147,7 @@ class ReadPydictTests(unittest.TestCase):
                 ),
             )
             self.assertEqual(
-                parquet.read_pydict(path, ["A", "B", "C", "D"], range(0)),
+                parquet.read_pydict(path, range(4), range(0)),
                 {"A": [], "B": [], "C": [], "D": []},
             )
 
@@ -157,9 +164,7 @@ class ReadPydictTests(unittest.TestCase):
             }
         ) as path:
             self.assertEqual(
-                parquet.read_pydict(
-                    path, ["str", "cat", "dt", "int32", "int+null", "float"], range(4)
-                ),
+                parquet.read_pydict(path, range(5), range(4)),
                 {
                     "str": ["x", "y", None, "z"],
                     "cat": ["x", "y", None, "x"],
@@ -169,35 +174,27 @@ class ReadPydictTests(unittest.TestCase):
                 },
             )
 
-    def test_pydict_order_columns_in_table_order(self):
-        with parquet_file({"D": [1], "C": [2], "B": [3]}) as path:
-            self.assertEqual(
-                list(parquet.read_pydict(path, ["B", "C", "D"], range(1)).keys()),
-                ["D", "C", "B"],
-            )
-
     def test_pydict_nan(self):
         with parquet_file(
-            {"A": pyarrow.array([1.1, float("nan")], type=pyarrow.float64())}
+            {"A": pyarrow.array([1.1, float("nan"), None], type=pyarrow.float64())}
         ) as path:
-            result = parquet.read_pydict(path, ["A"], range(2))
+            result = parquet.read_pydict(path, range(1), range(3))
             self.assertEqual(result["A"][0], 1.1)
             self.assert_(math.isnan(result["A"][1]))
+            self.assert_(math.isnan(result["A"][2]))
 
     def test_pydict_ignore_missing_columns(self):
         with parquet_file({"A": [1]}) as path:
-            self.assertEqual(
-                parquet.read_pydict(path, ["A", "B", "C"], range(1)), {"A": [1]}
-            )
+            self.assertEqual(parquet.read_pydict(path, range(3), range(1)), {"A": [1]})
 
     def test_pydict_only_rows(self):
         with parquet_file({"A": [0, 1, 2, 3, 4, 5, 6, 7]}) as path:
             self.assertEqual(
-                parquet.read_pydict(path, ["A"], range(2, 5)), {"A": [2, 3, 4]}
+                parquet.read_pydict(path, range(1), range(2, 5)), {"A": [2, 3, 4]}
             )
 
     def test_pydict_ignore_missing_rows(self):
         with parquet_file({"A": [0, 1, 2, 3]}) as path:
             self.assertEqual(
-                parquet.read_pydict(path, ["A"], range(2, 5)), {"A": [2, 3]}
+                parquet.read_pydict(path, range(1), range(2, 5)), {"A": [2, 3]}
             )

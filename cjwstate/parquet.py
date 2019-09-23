@@ -1,7 +1,9 @@
 import contextlib
+import subprocess
 import fastparquet
 from pathlib import Path
 from typing import Any, ContextManager, Dict, List, Optional
+import pandas as pd
 import pyarrow
 import pyarrow.parquet
 from cjwkernel.util import tempfile_context
@@ -156,31 +158,35 @@ def read(parquet_path: Path) -> pyarrow.Table:
         return table
 
 
-def _read_pylist(
-    parquet_file: pyarrow.parquet.ParquetFile, column: str, only_rows: range
-) -> List[Any]:
-    arrow_table = parquet_file.read(
-        [column], use_threads=False, use_pandas_metadata=False
-    )
-    arrow_column = arrow_table[0]
-    arrow_data = arrow_column.data
-    # Assume there is a chunk -- otherwise we wouldn't get here
-    pylist = arrow_data[only_rows.start : only_rows.stop].to_pylist()
-    if pyarrow.types.is_timestamp(arrow_column.type):
+def _read_pylist(column: pyarrow.Column) -> List[Any]:
+    dtype = column.type
+
+    pylist = column.to_pylist()
+    if pyarrow.types.is_timestamp(column.type):
         # pyarrow returns timestamps as pandas.Timestamp values (because
         # that has higher resolution than datetime.datetime). But we want
         # datetime.datetime.
         pylist = [None if v is None else v.to_pydatetime() for v in pylist]
+    elif pyarrow.types.is_floating(column.type):
+        # Pandas does not differentiate between NaN and None; so in effect,
+        # neither do we. Numeric tables can have NaN and never None;
+        # timestamp and String columns can have None and never NaT; int
+        # columns cannot have NaN or None.
+        nan = float("nan")
+        pylist = [nan if v is None else v for v in pylist]
     return pylist
 
 
 def read_pydict(
-    parquet_path: Path, only_columns: List[str], only_rows: range
+    parquet_path: Path, only_columns: range, only_rows: range
 ) -> Dict[str, List[Any]]:
     """
     Return a dict mapping column name to data (Python objects).
 
-    Python data consumes RAM, so you must specify columns and rows.
+    Raise pyarrow.ArrowIOError if processing fails.
+
+    Python data consumes RAM, so the caller must specify columns and rows.
+    Specify them with integer keys.
 
     `retval.keys()` is in table-column order (not `only_columns` order).
 
@@ -188,19 +194,33 @@ def read_pydict(
 
     `NaN` is returned as float("nan").
     """
+    assert only_columns.step == 1
+    assert only_columns.start >= 0
+    assert only_columns.stop >= only_columns.start
     assert only_rows.step == 1
     assert only_rows.start >= 0
     assert only_rows.stop >= only_rows.start
-    parquet_file = pyarrow.parquet.ParquetFile(str(parquet_path))
 
-    only_columns = frozenset(only_columns)
-    columns = [c for c in parquet_file.schema.names if c in only_columns]
+    with tempfile_context(prefix="read_pydict-", suffix=".arrow") as arrow_path:
+        try:
+            subprocess.check_output(
+                [
+                    "/usr/bin/parquet-to-arrow-slice",
+                    str(parquet_path),
+                    "%d-%d" % (only_columns.start, only_columns.stop),
+                    "%d-%d" % (only_rows.start, only_rows.stop),
+                    str(arrow_path),
+                ]
+            )
+        except subprocess.CalledProcessError as err:
+            raise pyarrow.ArrowIOError(
+                "Conversion failed with status %d: %s"
+                % (
+                    err.returncode,
+                    (err.output or b"").decode("utf-8", errors="replace"),
+                )
+            )
 
-    if parquet_file.num_row_groups == 0:
-        return {c: [] for c in columns}
-    elif parquet_file.num_row_groups == 1:
-        return {c: _read_pylist(parquet_file, c, only_rows) for c in columns}
-    else:
-        raise pyarrow.ArrowIOError(
-            "Workbench only supports <2 row groups in parquet files"
-        )
+        reader = pyarrow.ipc.open_file(str(arrow_path))
+        table = reader.read_all()
+        return {c.name: _read_pylist(c) for c in table.columns}

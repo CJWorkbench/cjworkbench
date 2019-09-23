@@ -131,7 +131,16 @@ def parquet_file(
     """
     atable = arrow_table(table)
     with tempfile_context(dir=dir) as parquet_path:
-        pyarrow.parquet.write_table(atable.table, parquet_path, compression="SNAPPY")
+        pyarrow.parquet.write_table(
+            atable.table,
+            parquet_path,
+            compression="SNAPPY",
+            use_dictionary=[
+                c.name.encode("utf-8")
+                for c in atable.table.columns
+                if pyarrow.types.is_dictionary(c.type)
+            ],
+        )
         yield parquet_path
 
 
