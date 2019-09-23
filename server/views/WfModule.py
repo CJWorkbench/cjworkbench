@@ -1,5 +1,6 @@
 import datetime
 import json
+import math
 import re
 from typing import Any, Dict, List
 from asgiref.sync import async_to_sync
@@ -138,6 +139,10 @@ def _pydict_to_json_records(
             converted[column.name] = [
                 (None if v is None else (v.isoformat() + "Z"))
                 for v in pydict[column.name]
+            ]
+        elif isinstance(column.type, ColumnType.Number):
+            converted[column.name] = [
+                (None if math.isnan(v) else v) for v in pydict[column.name]
             ]
         else:
             converted[column.name] = pydict[column.name]
