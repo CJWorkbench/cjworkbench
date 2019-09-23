@@ -115,7 +115,7 @@ class WfModuleTests(LoggedInTestCase):
                 arrow_table(
                     {
                         "Class": ["math", "english", "history", "economics"],
-                        "M": [10, None, 11, 20],
+                        "M": [10, float("nan"), 11, 20],
                         "F": [12, 7, 13, 20],
                     }
                 )
