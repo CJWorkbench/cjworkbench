@@ -11,17 +11,16 @@ class MockRequest(object):
 def mock_context(**kwargs):
     return {"request": MockRequest(**kwargs)}
 
-mock_message_id = "some+crazy+id+that+will+never+be+actually+used+in+real+translation+files"
+
+mock_message_id = (
+    "some+crazy+id+that+will+never+be+actually+used+in+real+translation+files"
+)
+
 
 class TransTemplateTagTests(SimpleTestCase):
     def test_trans_default(self):
         self.assertEqual(
-            trans(
-                mock_context(),
-                mock_message_id,
-                default="The default",
-            ),
-            "The default",
+            trans(mock_context(), mock_message_id, default="The default"), "The default"
         )
 
     def test_trans_noop(self):
@@ -31,7 +30,13 @@ class TransTemplateTagTests(SimpleTestCase):
 
     def test_trans_params(self):
         self.assertEqual(
-            trans(mock_context(), mock_message_id, default="Hello {a} {b}!", arg_a="you", arg_b="there"),
+            trans(
+                mock_context(),
+                mock_message_id,
+                default="Hello {a} {b}!",
+                arg_a="you",
+                arg_b="there",
+            ),
             "Hello you there!",
         )
 
