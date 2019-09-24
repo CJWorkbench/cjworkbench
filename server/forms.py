@@ -1,5 +1,5 @@
 from django.forms import ModelForm
-from server.models.UploadedFile import UploadedFile
+from cjwstate.models.UploadedFile import UploadedFile
 
 
 #  Processes submitted file upload

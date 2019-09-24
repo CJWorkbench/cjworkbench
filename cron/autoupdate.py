@@ -4,7 +4,7 @@ from django.utils import timezone
 from cjworkbench.pg_render_locker import PgRenderLocker, WorkflowAlreadyLocked
 from cjworkbench.sync import database_sync_to_async
 from server import rabbitmq, websockets
-from server.models import WfModule
+from cjwstate.models import WfModule
 
 
 logger = logging.getLogger(__name__)

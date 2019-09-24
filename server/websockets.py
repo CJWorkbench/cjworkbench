@@ -11,7 +11,7 @@ from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from channels.exceptions import DenyConnection
 from cjworkbench.sync import database_sync_to_async
 from server import handlers, rabbitmq
-from server.models import WfModule, Workflow
+from cjwstate.models import WfModule, Workflow
 from server.serializers import WorkflowSerializer, TabSerializer, WfModuleSerializer
 
 logger = logging.getLogger(__name__)

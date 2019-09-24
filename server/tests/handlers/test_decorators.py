@@ -5,7 +5,7 @@ from django.contrib.auth.models import AnonymousUser, User
 from django.contrib.sessions.models import Session
 from server import handlers
 from server.handlers import decorators, HandlerResponse, HandlerError
-from server.models import Workflow
+from cjwstate.models import Workflow
 from .util import HandlerTestCase
 
 

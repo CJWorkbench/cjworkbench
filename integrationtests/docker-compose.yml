@@ -24,8 +24,8 @@ services:
   migrate:
     #image:
     #build:
-    # Depends on minio because `import server.minio` pings it to ensure bucket
-    # Dpeends on rabbitmq so that rabbitmq is already warm when we launch
+    # Depends on minio because `import cjwstate.minio` pings it to ensure bucket
+    # Depends on rabbitmq so that rabbitmq is already warm when we launch
     # integration-test
     depends_on: [ 'db', 'minio', 'rabbitmq' ]
     environment:

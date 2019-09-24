@@ -1,9 +1,8 @@
 import gzip
-import io
 import mimetypes
 from django.conf import settings
 from django.core.files.storage import Storage
-from server.minio import ensure_bucket_exists, client, StaticFilesBucket
+from cjwstate.minio import ensure_bucket_exists, client, StaticFilesBucket
 
 
 class MinioStorage(Storage):

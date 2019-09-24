@@ -37,7 +37,7 @@ export default class Groups extends React.PureComponent {
   }
 
   addConvertToDateModule = () => {
-    this.props.applyQuickFix('prependModule', ['convert-date', {}])
+    this.props.applyQuickFix({ type: 'prependStep', moduleSlug: 'convert-date', partialParams: {} })
   }
 
   render () {

@@ -6,7 +6,7 @@ from django.db import migrations
 
 
 def delete_upload_stored_objects(apps, _):
-    from server import minio
+    from cjwstate import minio
 
     StoredObject = apps.get_model("server", "StoredObject")
 

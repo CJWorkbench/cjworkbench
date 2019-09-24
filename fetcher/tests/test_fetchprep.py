@@ -1,11 +1,11 @@
-from cjworkbench.types import Column, ColumnType, TableShape
-from server.models.param_spec import ParamDType
-from server.tests.utils import DbTestCase
+import unittest
+from cjwkernel.types import Column, ColumnType, TableMetadata
+from cjwstate.models.param_spec import ParamDType
 from fetcher.fetchprep import clean_value
 from renderer.execute.types import PromptingError
 
 
-class CleanValueTests(DbTestCase):
+class CleanValueTests(unittest.TestCase):
     def test_clean_float(self):
         result = clean_value(ParamDType.Float(), 3.0, None)
         self.assertEqual(result, 3.0)
@@ -24,7 +24,7 @@ class CleanValueTests(DbTestCase):
             clean_value(ParamDType.File(), None, None)
 
     def test_clean_normal_dict(self):
-        input_shape = TableShape(3, [Column("A", ColumnType.NUMBER())])
+        input_shape = TableMetadata(3, [Column("A", ColumnType.Number())])
         schema = ParamDType.Dict(
             {"str": ParamDType.String(), "int": ParamDType.Integer()}
         )
@@ -34,17 +34,17 @@ class CleanValueTests(DbTestCase):
         self.assertEqual(result, expected)
 
     def test_clean_column_no_input_is_empty(self):
-        self.assertEqual(clean_value(ParamDType.Column(), "A", None), "")
+        self.assertEqual(clean_value(ParamDType.Column(), "A", TableMetadata()), "")
 
     def test_clean_column_tab_parameter_is_error(self):
-        input_shape = TableShape(3, [Column("A", ColumnType.NUMBER())])
+        input_shape = TableMetadata(3, [Column("A", ColumnType.Number())])
         with self.assertRaisesRegex(
             RuntimeError, "Unsupported: fetch column with tab_parameter"
         ):
             clean_value(ParamDType.Column(tab_parameter="tab-2"), "A", input_shape)
 
     def test_clean_column_happy_path(self):
-        input_shape = TableShape(3, [Column("A", ColumnType.NUMBER())])
+        input_shape = TableMetadata(3, [Column("A", ColumnType.Number())])
         self.assertEqual(
             clean_value(
                 ParamDType.Column(column_types=frozenset({"number"})), "A", input_shape
@@ -53,7 +53,7 @@ class CleanValueTests(DbTestCase):
         )
 
     def test_clean_column_missing(self):
-        input_shape = TableShape(3, [Column("A", ColumnType.NUMBER())])
+        input_shape = TableMetadata(3, [Column("A", ColumnType.Number())])
         self.assertEqual(clean_value(ParamDType.Column(), "B", input_shape), "")
 
     def test_clean_column_prompting_error_convert_to_text(self):
@@ -63,7 +63,7 @@ class CleanValueTests(DbTestCase):
         # a new Text column but preserve its input column's data type.
         #
         # ... but for now: prompt for a Quick Fix.
-        input_shape = TableShape(3, [Column("A", ColumnType.NUMBER())])
+        input_shape = TableMetadata(3, [Column("A", ColumnType.Number())])
         with self.assertRaises(PromptingError) as cm:
             clean_value(
                 ParamDType.Column(column_types=frozenset({"text"})), "A", input_shape
@@ -75,7 +75,7 @@ class CleanValueTests(DbTestCase):
         )
 
     def test_clean_column_prompting_error_convert_to_number(self):
-        input_shape = TableShape(3, [Column("A", ColumnType.TEXT())])
+        input_shape = TableMetadata(3, [Column("A", ColumnType.Text())])
         with self.assertRaises(PromptingError) as cm:
             clean_value(
                 ParamDType.Column(column_types=frozenset({"number"})), "A", input_shape
@@ -87,8 +87,8 @@ class CleanValueTests(DbTestCase):
         )
 
     def test_dict_prompting_error(self):
-        input_shape = TableShape(
-            3, [Column("A", ColumnType.TEXT()), Column("B", ColumnType.TEXT())]
+        input_shape = TableMetadata(
+            3, [Column("A", ColumnType.Text()), Column("B", ColumnType.Text())]
         )
         schema = ParamDType.Dict(
             {
@@ -108,18 +108,20 @@ class CleanValueTests(DbTestCase):
         )
 
     def test_clean_multicolumn_valid(self):
-        input_shape = TableShape(
-            3, [Column("A", ColumnType.NUMBER()), Column("B", ColumnType.NUMBER())]
+        input_shape = TableMetadata(
+            3, [Column("A", ColumnType.Number()), Column("B", ColumnType.Number())]
         )
         result = clean_value(ParamDType.Multicolumn(), ["A", "B"], input_shape)
         self.assertEqual(result, ["A", "B"])
 
     def test_clean_multicolumn_no_input_is_empty(self):
-        self.assertEqual(clean_value(ParamDType.Multicolumn(), "A", None), [])
+        self.assertEqual(
+            clean_value(ParamDType.Multicolumn(), "A", TableMetadata()), []
+        )
 
     def test_clean_multicolumn_sort_in_table_order(self):
-        input_shape = TableShape(
-            3, [Column("B", ColumnType.NUMBER()), Column("A", ColumnType.NUMBER())]
+        input_shape = TableMetadata(
+            3, [Column("B", ColumnType.Number()), Column("A", ColumnType.Number())]
         )
         result = clean_value(ParamDType.Multicolumn(), ["A", "B"], input_shape)
         self.assertEqual(result, ["B", "A"])
@@ -127,12 +129,12 @@ class CleanValueTests(DbTestCase):
     def test_clean_multicolumn_prompting_error_convert_to_text(self):
         # TODO make this _automatic_ instead of quick-fix?
         # ... but for now: prompt for a Quick Fix.
-        input_shape = TableShape(
+        input_shape = TableMetadata(
             3,
             [
-                Column("A", ColumnType.NUMBER()),
-                Column("B", ColumnType.DATETIME()),
-                Column("C", ColumnType.TEXT()),
+                Column("A", ColumnType.Number()),
+                Column("B", ColumnType.Datetime()),
+                Column("C", ColumnType.Text()),
             ],
         )
         with self.assertRaises(PromptingError) as cm:
@@ -145,8 +147,8 @@ class CleanValueTests(DbTestCase):
         )
 
     def test_clean_multicolumn_missing_is_removed(self):
-        input_shape = TableShape(
-            3, [Column("A", ColumnType.NUMBER()), Column("B", ColumnType.NUMBER())]
+        input_shape = TableMetadata(
+            3, [Column("A", ColumnType.Number()), Column("B", ColumnType.Number())]
         )
         result = clean_value(ParamDType.Multicolumn(), ["A", "X", "B"], input_shape)
         self.assertEqual(result, ["A", "B"])

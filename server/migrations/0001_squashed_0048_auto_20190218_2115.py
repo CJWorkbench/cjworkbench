@@ -7,9 +7,9 @@ from django.db import migrations, models
 import django.db.models.deletion
 import django.db.models.manager
 import django.utils.timezone
-import server.models.commands.util
-import server.models.fields
-import server.models.module_version
+import server.models
+import cjwstate.models.fields
+import cjwstate.models.module_version
 
 
 # To generate this file:
@@ -130,7 +130,7 @@ class Migration(migrations.Migration):
                     "spec",
                     django.contrib.postgres.fields.jsonb.JSONField(
                         validators=[
-                            server.models.module_version._django_validate_module_spec
+                            cjwstate.models.module_version._django_validate_module_spec
                         ],
                         verbose_name="spec",
                     ),
@@ -250,7 +250,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "cached_render_result_columns",
-                    server.models.fields.ColumnsField(blank=True, null=True),
+                    cjwstate.models.fields.ColumnsField(blank=True, null=True),
                 ),
                 (
                     "cached_render_result_nrows",

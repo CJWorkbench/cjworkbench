@@ -31,7 +31,7 @@ async def queue_render(workflow_id: int, delta_id: int):
     await connection.queue_render(workflow_id, delta_id)
 
 
-async def queue_fetch(wf_module):
+async def queue_fetch(workflow_id: int, wf_module_id: int):
     """
     Queue fetch in RabbitMQ.
 
@@ -45,4 +45,4 @@ async def queue_fetch(wf_module):
     or the fetcher could finish first.)
     """
     connection = await get_connection()
-    await connection.queue_fetch(wf_module.id)
+    await connection.queue_fetch(workflow_id, wf_module_id)

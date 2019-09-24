@@ -25,7 +25,7 @@ describe('Groups', () => {
     })
 
     w.find('button[name="w[date_granularities][add-module]"]').simulate('click')
-    expect(w.prop('applyQuickFix')).toHaveBeenCalledWith('prependModule', ['convert-date', {}])
+    expect(w.prop('applyQuickFix')).toHaveBeenCalledWith({ type: 'prependStep', moduleSlug: 'convert-date', partialParams: {} })
   })
 
   it('should show message when group_dates:true and there are unselected date columns', () => {

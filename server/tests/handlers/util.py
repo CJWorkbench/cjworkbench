@@ -1,10 +1,10 @@
 from unittest.mock import Mock, patch
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.sessions.models import Session
-from server.models import Workflow
+from cjwstate.models import Workflow
 from server.handlers import decorators
 from server.handlers.types import HandlerRequest
-from server.tests.utils import DbTestCase
+from cjwstate.tests.utils import DbTestCase
 
 
 class HandlerTestCase(DbTestCase):

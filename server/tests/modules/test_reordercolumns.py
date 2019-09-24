@@ -1,7 +1,7 @@
 import unittest
 import pandas as pd
 from pandas.testing import assert_frame_equal
-from server.modules import reordercolumns
+from staticmodules import reordercolumns
 
 
 a_table = pd.DataFrame(

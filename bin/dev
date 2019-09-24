@@ -54,6 +54,7 @@ print_usage() {
   echo '  start -- start database, RabbitMQ, Webpack and Django' >&2
   echo '  stop -- stop services created by start' >&2
   echo '  test-sql -- open a psql prompt in the test database (it must be up)' >&2
+  echo '  thrift ARGS -- run "thrift ARGS..." (see cjwkernel/thrift/)' >&2
   echo '  unittest ARGS -- run "./manage.py test ARGS..."' >&2
 }
 
@@ -92,8 +93,8 @@ case "$COMMAND" in
     docker_compose_with_commands run --rm pydev pipenv run python "$@"
     ;;
 
-  "pipenv")
-    docker_compose_with_commands run --rm pydev pipenv "$@"
+  "pipenv"|"thrift")
+    docker_compose_with_commands run --rm pydev "$COMMAND" "$@"
     ;;
 
   "pybabel")

@@ -1,9 +1,9 @@
 from contextlib import asynccontextmanager
 from unittest.mock import Mock, patch
 from cjworkbench.pg_render_locker import WorkflowAlreadyLocked
-from server.models import Workflow
-from server.models.commands import InitWorkflowCommand
-from server.tests.utils import DbTestCase
+from cjwstate.models import Workflow
+from cjwstate.models.commands import InitWorkflowCommand
+from cjwstate.tests.utils import DbTestCase
 from renderer import execute
 from renderer.render import handle_render, render_workflow_and_maybe_requeue
 
@@ -37,15 +37,14 @@ class FailedRenderLocker:
         yield  # otherwise, Python 3.7, it isn't an asynccontextmanager.
 
 
-async def async_noop(*args, **kwargs):
-    pass
-
-
 class RenderTest(DbTestCase):
     def test_handle_render_invalid_message(self):
+        ack = Mock()
+        ack.side_effect = async_noop
+
         async def inner():
             with self.assertLogs("renderer", level="INFO") as cm:
-                await handle_render({"workflow_id": 123}, None, None)
+                await handle_render({"workflow_id": 123}, ack, None)
                 self.assertEqual(
                     cm.output,
                     [
@@ -58,6 +57,7 @@ class RenderTest(DbTestCase):
                 )
 
         self.run_with_async_db(inner())
+        ack.assert_called()
 
     @patch("renderer.execute.execute_workflow")
     def test_render_happy_path(self, execute):

@@ -1,9 +1,8 @@
-from typing import List
 import unittest
 import numpy as np
 import pandas as pd
 from pandas.testing import assert_frame_equal
-from server.modules.converttexttonumber import (
+from staticmodules.converttexttonumber import (
     render,
     InputNumberType,
     InputLocale,

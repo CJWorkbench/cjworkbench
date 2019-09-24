@@ -2,8 +2,8 @@ import unittest
 import numpy as np
 import pandas as pd
 from pandas.testing import assert_frame_equal
-from server.modules.concattabs import render
-from cjworkbench.types import RenderColumn, TabOutput
+from cjwkernel.pandas.types import RenderColumn, TabOutput
+from staticmodules.concattabs import render
 
 
 class ConcattabsTest(unittest.TestCase):

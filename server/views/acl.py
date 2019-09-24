@@ -3,7 +3,7 @@ from django import forms
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.utils.decorators import method_decorator
 from django.views import View
-from server.models import AclEntry, Workflow
+from cjwstate.models import AclEntry, Workflow
 from .auth import loads_workflow_for_owner
 
 # access-control lists

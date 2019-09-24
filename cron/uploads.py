@@ -1,7 +1,7 @@
 import logging
 from cjworkbench.sync import database_sync_to_async
 from django.utils import timezone
-from server.models import InProgressUpload, Tab, WfModule, Workflow
+from cjwstate.models import InProgressUpload, Tab, WfModule, Workflow
 
 
 logger = logging.getLogger(__name__)

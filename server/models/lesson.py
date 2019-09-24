@@ -229,7 +229,7 @@ class Lesson:
         return self.header.title
 
     @classmethod
-    def load_from_path(cls, course: Optional["Course"], path: Path) -> Lesson:
+    def load_from_path(cls, course: Optional["Course"], path: pathlib.Path) -> Lesson:
         slug = path.stem
         html = path.read_text()
         try:

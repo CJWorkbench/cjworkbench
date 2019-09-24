@@ -33,4 +33,15 @@ def create_application() -> ProtocolTypeRouter:
     return ProtocolTypeRouter({"websocket": AuthMiddlewareStack(create_url_router())})
 
 
+# Load static modules on startup.
+#
+# This means starting a kernel and validating all static modules. There are
+# two good reasons to load during startup:
+#
+# 1. In dev mode, this reports errors in modules ASAP -- during startup
+# 2. In production, this import line costs time -- better to incur that
+#    cost during startup than to incur it when responding to some random
+#    request.
+import staticmodules.registry
+
 application = create_application()

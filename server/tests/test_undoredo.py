@@ -1,12 +1,13 @@
 from unittest.mock import patch
-from server.models import Delta, ModuleVersion, Workflow
-from server.models.commands import (
+from cjwstate.models import Delta, ModuleVersion, Workflow
+from cjwstate.models.commands import (
     AddModuleCommand,
     ChangeParametersCommand,
     ChangeWorkflowTitleCommand,
     ChangeWfModuleNotesCommand,
 )
-from server.tests.utils import DbTestCase
+from cjwstate.models.loaded_module import LoadedModule
+from cjwstate.tests.utils import DbTestCase
 from server.versions import WorkflowUndo, WorkflowRedo
 
 
@@ -14,8 +15,16 @@ async def async_noop(*args, **kwargs):
     pass
 
 
+class MockLoadedModule:
+    def __init__(self, *args, **kwargs):
+        pass
+
+    def migrate_params(self, params):
+        return params
+
+
 @patch("server.rabbitmq.queue_render", async_noop)
-@patch("server.models.Delta.ws_notify", async_noop)
+@patch("cjwstate.models.Delta.ws_notify", async_noop)
 class UndoRedoTests(DbTestCase):
     # Be careful, in these tests, not to run database queries in async blocks.
 
@@ -32,6 +41,7 @@ class UndoRedoTests(DbTestCase):
     #    away commands 2,3
     # Command types used here are arbitrary, but different so that we test
     # polymorphism
+    @patch.object(LoadedModule, "for_module_version_sync", MockLoadedModule)
     def test_undo_redo(self):
         ModuleVersion.create_or_replace_from_spec(
             {

@@ -2,7 +2,7 @@ from typing import Any, Dict, List
 import unittest
 import pandas as pd
 from pandas.testing import assert_frame_equal
-from server.modules.selectcolumns import migrate_params, render
+from staticmodules.selectcolumns import migrate_params, render
 
 
 class MigrateParamsTest(unittest.TestCase):

@@ -1,5 +1,6 @@
 import datetime
 import json
+import math
 import re
 from typing import Any, Dict, List
 from asgiref.sync import async_to_sync
@@ -19,10 +20,16 @@ from rest_framework import status
 from rest_framework.decorators import api_view, renderer_classes
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
-from cjworkbench.types import ProcessResult
-from server.models import Tab, WfModule, Workflow
-from server import minio, parquet, rabbitmq
-from server.models.loaded_module import module_get_html_bytes
+from cjwkernel.pandas import types as ptypes
+from cjwkernel.types import Column, ColumnType
+from cjwstate.rendercache import (
+    CorruptCacheError,
+    open_cached_render_result,
+    read_cached_render_result_pydict,
+)
+from cjwstate.models import Tab, WfModule, Workflow
+from cjwstate.models.loaded_module import module_get_html_bytes
+from server import rabbitmq
 
 
 _MaxNRowsPerRequest = 300
@@ -96,9 +103,7 @@ def _arrow_array_to_json_list(array: pyarrow.ChunkedArray) -> List[Any]:
         return array.to_pylist()
 
 
-def _arrow_table_to_json_records(
-    table: pyarrow.Table, begin: int, end: int
-) -> List[Dict[str, Any]]:
+def _arrow_table_to_json_records(table: pyarrow.Table) -> List[Dict[str, Any]]:
     """
     Convert `table` to JSON records.
 
@@ -109,11 +114,40 @@ def _arrow_table_to_json_records(
     """
     # Select the values we want -- columnar, so memory accesses are contiguous
     values = {
-        column.name: _arrow_array_to_json_list(column[begin:end])
-        for column in table.itercolumns()
+        column.name: _arrow_array_to_json_list(column) for column in table.itercolumns()
     }
     # Transpose into JSON records
-    return [{k: v[i] for k, v in values.items()} for i in range(end - begin)]
+    return [{k: v[i] for k, v in values.items()} for i in range(table.num_rows)]
+
+
+def _pydict_to_json_records(
+    # need to pass n_rows in case len(columns) == 0
+    pydict: Dict[str, List[Any]],
+    columns: List[Column],
+    n_rows: int,
+) -> List[Dict[str, Any]]:
+    """
+    Converts column-wise `pydict` to JSON records.
+
+    String values become Strings; Number values become int/float; Datetime
+    values become ISO8601-encoded Strings.
+    """
+    # Convert datetime to str
+    converted = {}
+    for column in columns:
+        if isinstance(column.type, ColumnType.Datetime):
+            converted[column.name] = [
+                (None if v is None else (v.isoformat() + "Z"))
+                for v in pydict[column.name]
+            ]
+        elif isinstance(column.type, ColumnType.Number):
+            converted[column.name] = [
+                (None if math.isnan(v) else v) for v in pydict[column.name]
+            ]
+        else:
+            converted[column.name] = pydict[column.name]
+    # Transpose into JSON records
+    return [{k: v[i] for k, v in converted.items()} for i in range(n_rows)]
 
 
 # Helper method that produces json output for a table + start/end row
@@ -121,26 +155,31 @@ def _arrow_table_to_json_records(
 # Now reading a maximum of 101 columns directly from cache parquet
 def _make_render_tuple(cached_result, startrow=None, endrow=None):
     """Build (startrow, endrow, json_rows) data."""
-    columns = cached_result.columns[
-        # Return one row more than configured, so the client knows there
-        # are "too many rows".
-        : (settings.MAX_COLUMNS_PER_CLIENT_REQUEST + 1)
-    ]
-    column_names = [c.name for c in columns]
-    table = parquet.read_arrow_table(  # raise FileNotFoundError
-        minio.CachedRenderResultsBucket,
-        cached_result.parquet_key,
-        only_columns=column_names,
-    )
 
     if startrow is None:
         startrow = 0
+    startrow = max(0, startrow)
     if endrow is None:
         endrow = startrow + _MaxNRowsPerRequest
+    endrow = min(
+        cached_result.table_metadata.n_rows, endrow, startrow + _MaxNRowsPerRequest
+    )
 
-    startrow = max(0, startrow)
-    endrow = min(table.num_rows, endrow, startrow + _MaxNRowsPerRequest)
-    records = _arrow_table_to_json_records(table, startrow, endrow)
+    # raise CorruptCacheError
+    data = read_cached_render_result_pydict(
+        cached_result,
+        # Return one row more than configured, so the client knows there
+        # are "too many rows".
+        only_columns=range(settings.MAX_COLUMNS_PER_CLIENT_REQUEST + 1),
+        only_rows=range(startrow, endrow),
+    )
+    records = _pydict_to_json_records(
+        data,
+        cached_result.table_metadata.columns[
+            0 : settings.MAX_COLUMNS_PER_CLIENT_REQUEST + 1
+        ],
+        endrow - startrow,
+    )
 
     return (startrow, endrow, records)
 
@@ -176,7 +215,7 @@ def wfmodule_render(request: HttpRequest, wf_module: WfModule, format=None):
             startrow, endrow, records = _make_render_tuple(
                 cached_result, startrow, endrow
             )
-        except FileNotFoundError:
+        except CorruptCacheError:
             # assume we'll get another request after execute finishes
             return JsonResponse({"start_row": 0, "end_row": 0, "rows": []})
 
@@ -230,30 +269,31 @@ def wfmodule_value_counts(request: HttpRequest, wf_module: WfModule):
         return JsonResponse({"values": {}})
 
     try:
-        column = next(c for c in cached_result.columns if c.name == colname)
+        column = next(
+            c for c in cached_result.table_metadata.columns if c.name == colname
+        )
     except StopIteration:
         return JsonResponse({"error": f'column "{colname}" not found'}, status=404)
 
+    # raise CorruptCacheError
     try:
-        table: pyarrow.Table = parquet.read_arrow_table(
-            minio.CachedRenderResultsBucket,
-            cached_result.parquet_key,
-            only_columns=[column.name],
-        )
-    except FileNotFoundError:
+        with open_cached_render_result(
+            cached_result, only_columns=[column.name]
+        ) as result:
+            series = result.table.table[0].to_pandas()
+    except CorruptCacheError:
         # We _could_ return an empty result set; but our only goal here is
         # "don't crash" and this 404 seems to be the simplest implementation.
         # (We assume that if the data is deleted, the user has moved elsewhere
         # and this response is going to be ignored.)
         return JsonResponse({"error": f'column "{colname}" not found'}, status=404)
-    series = table[0].to_pandas()
 
     # We only handle string. If it's not string, convert to string. (Rationale:
     # this is used in Refine and Filter by Value, which are both solely
     # String-based for now. Excel and Google Sheets only filter by String
     # values, so we're in good company.) Remember: in JavaScript, Object keys
     # must be String.
-    series = column.type.format_series(series)
+    series = ptypes.ColumnType.from_arrow(column.type).format_series(series)
     value_counts = series.value_counts().to_dict()
 
     return JsonResponse({"values": value_counts})
@@ -301,17 +341,16 @@ def wfmodule_tile(
     rbegin = N_ROWS_PER_TILE * tile_row
     rend = N_ROWS_PER_TILE * (tile_row + 1)
 
-    only_columns = cached_result.column_names[cbegin:cend]
     try:
-        table = parquet.read_arrow_table(
-            minio.CachedRenderResultsBucket,
-            cached_result.parquet_key,
-            only_columns=only_columns,
+        data = read_cached_render_result_pydict(
+            cached_result,
+            only_columns=range(cbegin, cend),
+            only_rows=range(rbegin, rend),
         )
-    except FileNotFoundError:
-        raise RuntimeError("FIXME: what happens when file is gone?")
-
-    records = _arrow_table_to_json_records(table, rbegin, rend)
+        columns = cached_result.table_metadata.columns[cbegin:cend]
+        records = _pydict_to_json_records(data, columns, rend - rbegin)
+    except CorruptCacheError:
+        raise  # TODO handle this case!
 
     return JsonResponse(records)
 
@@ -328,21 +367,20 @@ def wfmodule_public_output(
     cached_result = wf_module.cached_render_result
     if cached_result:
         try:
-            table = parquet.read_arrow_table(
-                minio.CachedRenderResultsBucket, cached_result.parquet_key
-            )
-        except FileNotFoundError:
-            table = pyarrow.Table.from_pydict({})
+            with open_cached_render_result(cached_result) as result:
+                table = result.table.table
+        except CorruptCacheError:
+            table = pyarrow.table({})
     else:
         # We don't have a cached result, and we don't know how long it'll
         # take to get one.
         workflow = wf_module.workflow
         async_to_sync(rabbitmq.queue_render)(workflow.id, workflow.last_delta_id)
         # The user will simply need to try again....
-        table = pyarrow.Table.from_pydict({})
+        table = pyarrow.table({})
 
     if export_type == "json":
-        records = _arrow_table_to_json_records(table, 0, table.num_rows)
+        records = _arrow_table_to_json_records(table)
         return JsonResponse(records, safe=False)
     elif export_type == "csv":
         df = table.to_pandas()

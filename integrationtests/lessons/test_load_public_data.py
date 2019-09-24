@@ -14,6 +14,11 @@ class TestLesson(LessonTest):
         b.click_whatever(
             "h2", text="I. Load public data and make a chart", wait=True
         )  # wait for page to load
+        b.assert_element(
+            ".title-metadata-stack",
+            text="I. Load public data and make a chart",
+            wait=True,
+        )
 
         self.import_module("columnchart")
         self.import_module("filter")

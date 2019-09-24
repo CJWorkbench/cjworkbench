@@ -3,9 +3,9 @@ from typing import Any, Dict
 import numpy as np
 import pandas as pd
 from pandas.testing import assert_frame_equal, assert_series_equal
-from cjworkbench.types import ProcessResult
-from server.modules import formula
-from server.modules.formula import sanitize_series
+from cjwkernel.pandas.types import ProcessResult
+from staticmodules import formula
+from staticmodules.formula import sanitize_series
 from .util import MockParams
 
 

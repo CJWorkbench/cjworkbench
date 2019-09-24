@@ -6,7 +6,7 @@ import pandas as pd
 from pandas.testing import assert_frame_equal
 import requests.exceptions
 from server import oauth
-from server.modules.googlesheets import fetch, render, migrate_params
+from staticmodules.googlesheets import fetch, render, migrate_params
 from .util import MockParams
 
 # example_csv, example_tsv, example_xls, example_xlsx: same spreadsheet, four

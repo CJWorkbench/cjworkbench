@@ -1,8 +1,8 @@
 import json
 from unittest.mock import patch
-from server import minio
-from server.models import ModuleVersion, Workflow
-from server.tests.utils import DbTestCase
+from cjwstate import minio
+from cjwstate.models import ModuleVersion, Workflow
+from cjwstate.tests.utils import DbTestCase
 
 
 async def async_noop(*args, **kwargs):
@@ -316,7 +316,7 @@ class UploadTest(DbTestCase):
     @patch("server.websockets.ws_client_send_delta_async")
     @patch("server.rabbitmq.queue_render")
     @patch(
-        "server.models.loaded_module.LoadedModule.for_module_version_sync",
+        "cjwstate.models.loaded_module.LoadedModule.for_module_version_sync",
         MockLoadedModule,
     )
     def test_complete_happy_path(self, queue_render, send_delta):

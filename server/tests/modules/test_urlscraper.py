@@ -8,8 +8,8 @@ from django.test import override_settings, SimpleTestCase
 from django.utils import timezone
 import pandas as pd
 from pandas.testing import assert_frame_equal
-from cjworkbench.types import ProcessResult
-from server.modules import urlscraper
+from cjwkernel.pandas.types import ProcessResult
+from staticmodules import urlscraper
 from .util import MockParams
 
 # --- Some test data ----
@@ -263,7 +263,7 @@ class URLScraperTests(unittest.TestCase):
             return
 
         with patch("django.utils.timezone.now", lambda: testnow):
-            with patch("server.modules.urlscraper.scrape_urls") as scrape:
+            with patch("staticmodules.urlscraper.scrape_urls") as scrape:
                 scrape.side_effect = mock_scrapeurls
 
                 result = fetch(
@@ -286,7 +286,7 @@ class URLScraperTests(unittest.TestCase):
         urls = list(simple_result_table["url"])
 
         with patch("django.utils.timezone.now", lambda: testnow):
-            with patch("server.modules.urlscraper.scrape_urls") as scrape:
+            with patch("staticmodules.urlscraper.scrape_urls") as scrape:
                 # call the mock function instead, the real fn is tested above
                 scrape.side_effect = mock_scrapeurls
 
@@ -303,7 +303,7 @@ class URLScraperTests(unittest.TestCase):
             table["html"] = "<html></html>"
             return
 
-        with patch("server.modules.urlscraper.scrape_urls") as scrape:
+        with patch("staticmodules.urlscraper.scrape_urls") as scrape:
             scrape.side_effect = mock_scrapeurls
 
             table, error = fetch(
@@ -338,7 +338,7 @@ class URLScraperTests(unittest.TestCase):
             return
 
         with patch("django.utils.timezone.now", lambda: testnow):
-            with patch("server.modules.urlscraper.scrape_urls") as scrape:
+            with patch("staticmodules.urlscraper.scrape_urls") as scrape:
                 scrape.side_effect = mock_scrapeurls
 
                 result = fetch(
@@ -359,7 +359,7 @@ class URLScraperTests(unittest.TestCase):
             table["html"] = "<html></html>"
             return
 
-        with patch("server.modules.urlscraper.scrape_urls") as scrape:
+        with patch("staticmodules.urlscraper.scrape_urls") as scrape:
             scrape.side_effect = mock_scrapeurls
 
             table, error = fetch(

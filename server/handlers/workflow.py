@@ -2,8 +2,8 @@ from typing import List
 from .decorators import register_websockets_handler, websockets_handler
 from .types import HandlerError
 from cjworkbench.sync import database_sync_to_async
-from server.models import Tab, Workflow, WfModule
-from server.models.commands import ChangeWorkflowTitleCommand, ReorderTabsCommand
+from cjwstate.models import Tab, Workflow, WfModule
+from cjwstate.models.commands import ChangeWorkflowTitleCommand, ReorderTabsCommand
 from server.versions import WorkflowRedo, WorkflowUndo
 
 

@@ -4,9 +4,9 @@ from allauth.account.utils import user_display
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from cjworkbench.settings import KB_ROOT_URL
-from server.models import Workflow, WfModule, ModuleVersion, StoredObject, Tab
+from cjwstate.models import Workflow, WfModule, ModuleVersion, StoredObject, Tab
 from server.settingsutils import workbench_user_display
-from server.models.param_spec import ParamSpec
+from cjwstate.models.param_spec import ParamSpec
 
 User = get_user_model()
 
@@ -195,15 +195,19 @@ class WfModuleSerializer(serializers.ModelSerializer):
         if not cached_result:
             return data
 
-        columns = [c.to_dict() for c in cached_result.columns]
+        columns = [c.to_dict() for c in cached_result.table_metadata.columns]
         data["cached_render_result_delta_id"] = cached_result.delta_id
         data["output_columns"] = columns
-        data["output_n_rows"] = cached_result.nrows
+        data["output_n_rows"] = cached_result.table_metadata.n_rows
 
         return data
 
     def get_quick_fixes(self, wfm):
-        return wfm.cached_render_result_quick_fixes
+        crr = wfm.cached_render_result
+        if crr is None:
+            return []
+        else:
+            return [qf.to_dict() for err in crr.errors for qf in err.quick_fixes]
 
     def to_representation(self, wfm):
         ret = super().to_representation(wfm)

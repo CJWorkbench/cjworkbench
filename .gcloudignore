@@ -13,7 +13,6 @@ local_mail/
 *.log
 media/
 node_modules/
-server/modules/dynamic
 tmp/
 webpack-stats.json
 .DS_Store

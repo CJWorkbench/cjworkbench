@@ -1,17 +1,91 @@
-import json
-from typing import Any, Dict, Optional
-from django.conf import settings
+from pathlib import Path
+from typing import Optional
 from django.utils import timezone
+import pandas as pd
+from pandas.util import hash_pandas_object
+import pyarrow
+import pyarrow.parquet
 from cjworkbench.sync import database_sync_to_async
-from cjworkbench.types import ProcessResult
+from cjwkernel.types import FetchResult
+from cjwstate import storedobjects
 from server import websockets
-from server.models import WfModule, Workflow
-from server.models.commands import ChangeDataVersionCommand
+from cjwstate.models import StoredObject, WfModule, Workflow
+from cjwstate.models.commands import ChangeDataVersionCommand
+
+
+def hash_table(table: pd.DataFrame) -> str:
+    """Build a hash useful in comparing data frames for equality."""
+    h = hash_pandas_object(table).sum()  # xor would be nice, but whatevs
+    h = h if h > 0 else -h  # stay positive (sum often overflows)
+    return str(h)
+
+
+def parquet_file_to_pandas(path: Path) -> pd.DataFrame:
+    if path.stat().st_size == 0:
+        return pd.DataFrame()
+    else:
+        arrow_table = pyarrow.parquet.read_table(str(path), use_threads=False)
+        return arrow_table.to_pandas(
+            date_as_object=False, deduplicate_objects=True, ignore_metadata=True
+        )  # TODO ensure dictionaries stay dictionaries
+
+
+def read_dataframe_from_stored_object(
+    stored_object: StoredObject
+) -> Optional[pd.DataFrame]:
+    """
+    Read DataFrame from StoredObject.
+
+    Return None if:
+
+    * there is no file on minio
+    * the file on minio cannot be read
+
+    TODO return a pyarrow.Table instead.
+    """
+    if stored_object.bucket == "":  # ages ago, "empty" meant bucket='', key=''
+        return pd.DataFrame()
+    try:
+        with storedobjects.downloaded_file(stored_object) as path:
+            return parquet_file_to_pandas(path)
+    except (FileNotFoundError, pyarrow.ArrowIOError):
+        return None
+
+
+def _store_fetched_table_if_different(
+    workflow: Workflow, wf_module: WfModule, result: FetchResult
+) -> Optional[timezone.datetime]:
+    # Called within _maybe_add_version()
+    #
+    # For backwards-compat, we use an extremely inefficient method of
+    # deciding whether two fetch results are equivalent. We should probably
+    # delegate the hashing function to the modules themselves ... and default
+    # to a sha1 of the file data. Transitioning all our existing fetch results
+    # will be tricky.
+    table = parquet_file_to_pandas(result.path)
+    hash = hash_table(table)
+    old_so = wf_module.stored_objects.order_by("-stored_at").first()
+    if (
+        old_so is not None
+        # Fast: hashes differ, so we don't need to read the table
+        and hash == old_so.hash
+        # Slow: compare files. Expensive: reads a file from S3, holds
+        # both DataFrames in RAM, uses lots of CPU.
+        and table.equals(read_dataframe_from_stored_object(old_so))
+    ):
+        # `table` is identical to what was in `old_so`.
+        return None
+
+    stored_object = storedobjects.create_stored_object(
+        workflow.id, wf_module.id, result.path, hash
+    )
+    storedobjects.enforce_storage_limits(wf_module)
+    return stored_object.stored_at
 
 
 @database_sync_to_async
 def _maybe_add_version(
-    workflow: Workflow, wf_module: WfModule, maybe_result: Optional[ProcessResult]
+    workflow: Workflow, wf_module: WfModule, maybe_result: Optional[FetchResult]
 ) -> Optional[timezone.datetime]:
     """
     Apply `result` to `wf_module`.
@@ -30,32 +104,37 @@ def _maybe_add_version(
     # stale, so we must ignore those stale values.
     fields = {"is_busy": False, "last_update_check": timezone.now()}
     if maybe_result is not None:
-        fields["fetch_error"] = maybe_result.error
-
-    for k, v in fields.items():
-        setattr(wf_module, k, v)
+        if maybe_result.errors:
+            if maybe_result.errors[0].message.id != "TODO_i18n":
+                raise RuntimeError("TODO handle i18n-ready fetch-result errors")
+            elif maybe_result.errors[0].quick_fixes:
+                raise RuntimeError("TODO handle quick fixes from fetches")
+            else:
+                fields["fetch_error"] = maybe_result.errors[0].message.args["text"]
+        else:
+            fields["fetch_error"] = ""
 
     try:
         with wf_module.workflow.cooperative_lock():
-            if not WfModule.objects.filter(
-                pk=wf_module.id, is_deleted=False, tab__is_deleted=False
-            ).exists():
+            wf_module.refresh_from_db()  # raise WfModule.DoesNotExist
+            if wf_module.is_deleted or wf_module.tab.is_deleted:
                 return None
 
             if maybe_result is not None:
-                version_added = wf_module.store_fetched_table_if_different(
-                    maybe_result.dataframe  # TODO store entire result
+                # TODO store result error, too. Actually, nix StoredObject
+                # entirely and let fetch methods return arbitrary blobs.
+                version_added = _store_fetched_table_if_different(
+                    workflow, wf_module, maybe_result
                 )
             else:
                 version_added = None
 
-            if version_added:
-                enforce_storage_limits(wf_module)
-
+            for k, v in fields.items():
+                setattr(wf_module, k, v)
             wf_module.save(update_fields=fields.keys())
 
             return version_added
-    except Workflow.DoesNotExist:
+    except (Workflow.DoesNotExist, WfModule.DoesNotExist):
         return None
 
 
@@ -65,7 +144,7 @@ def get_wf_module_workflow(wf_module: WfModule) -> Workflow:
 
 
 async def save_result_if_changed(
-    workflow_id: int, wf_module: WfModule, new_result: Optional[ProcessResult]
+    workflow_id: int, wf_module: WfModule, new_result: Optional[FetchResult]
 ) -> None:
     """
     Store fetched table, if it is a change from `wf_module`'s existing data.
@@ -127,28 +206,3 @@ async def save_result_if_changed(
                 }
             },
         )
-
-
-def enforce_storage_limits(wf_module: WfModule) -> None:
-    """
-    Delete old versions that bring us past MAX_STORAGE_PER_MODULE.
-
-    This is important on frequently-updating modules that add to the previous
-    table, such as Twitter search, because every version we store is an entire
-    table. Without deleting old versions, we'd grow too quickly.
-    """
-    limit = settings.MAX_STORAGE_PER_MODULE
-
-    # walk over this WfM's StoredObjects from newest to oldest, deleting all
-    # that are over the limit
-    sos = wf_module.stored_objects.order_by("-stored_at")
-    cumulative = 0
-    first = True
-
-    for so in sos:
-        cumulative += so.size
-        if cumulative > limit and not first:
-            # allow most recent version to be stored even if it is itself over
-            # limit
-            so.delete()
-        first = False

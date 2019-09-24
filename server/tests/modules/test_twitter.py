@@ -4,11 +4,11 @@ import unittest
 from unittest.mock import patch
 from asgiref.sync import async_to_sync
 import dateutil
-from django.test import SimpleTestCase, override_settings
 import pandas as pd
 from pandas.testing import assert_frame_equal
-from cjworkbench.types import ProcessResult
-from server.modules import twitter
+from cjwkernel.tests.util import override_settings
+from cjwkernel.pandas.types import ProcessResult
+from staticmodules import twitter
 from .util import MockParams
 
 
@@ -880,7 +880,7 @@ class MigrateParamsTest(unittest.TestCase):
         self.assertEqual(result, expected)
 
 
-class TwitterTests(SimpleTestCase):
+class TwitterTests(unittest.TestCase):
     def test_fetch_empty_query_and_secret(self):
         result = fetch(P(querytype="search", query=""), None)
         self.assertIsNone(result)
@@ -939,7 +939,7 @@ class TwitterTests(SimpleTestCase):
     @patch("server.oauth.OAuthService.lookup_or_none", mock_auth)
     @patch("aiohttp.ClientSession")
     def test_accumulate_truncate(self, session):
-        session.return_value = mock_session = MockAiohttpSession([mock_statuses2, []])
+        session.return_value = MockAiohttpSession([mock_statuses2, []])
 
         params = P(querytype="user_timeline", username="foouser", accumulate=True)
 

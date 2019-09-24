@@ -1,8 +1,8 @@
 from functools import partial, singledispatch
 import pathlib
 from typing import Any, Dict, List, Optional, Union
-from cjworkbench.types import TableShape
-from server.models.param_spec import ParamDType
+from cjwkernel.types import TableMetadata
+from cjwstate.models.param_spec import ParamDType
 from renderer.execute.renderprep import PromptErrorAggregator
 from renderer.execute.types import PromptingError
 
@@ -16,7 +16,7 @@ from renderer.execute.types import PromptingError
 # TODO abstract this pattern. The recursion parts seem like they should be
 # written in just one place.
 @singledispatch
-def clean_value(dtype: ParamDType, value: Any, input_shape: TableShape) -> Any:
+def clean_value(dtype: ParamDType, value: Any, input_metadata: TableMetadata) -> Any:
     """
     Ensure `value` fits the Params dict `render()` expects.
 
@@ -32,14 +32,14 @@ def clean_value(dtype: ParamDType, value: Any, input_shape: TableShape) -> Any:
         * `column` parameters become '' if they aren't input columns
         * `multicolumn` parameters lose values that aren't input columns
         * Raise `PromptingError` if a chosen column is of the wrong type
-          (so the caller can render a ProcessResult with errors and quickfixes)
+          (so the caller can return a FetchResult with errors and quickfixes)
     """
     return value  # fallback method
 
 
 @clean_value.register(ParamDType.Float)
 def _(
-    dtype: ParamDType.Float, value: Union[int, float], input_shape: TableShape
+    dtype: ParamDType.Float, value: Union[int, float], input_metadata: TableMetadata
 ) -> float:
     # ParamDType.Float can have `int` values (because values come from
     # json.parse(), which only gives Numbers so can give "3" instead of
@@ -49,25 +49,25 @@ def _(
 
 @clean_value.register(ParamDType.File)
 def _(
-    dtype: ParamDType.File, value: Optional[str], input_shape: TableShape
+    dtype: ParamDType.File, value: Optional[str], input_metadata: TableMetadata
 ) -> Optional[pathlib.Path]:
     raise RuntimeError("Unsupported: fetch file")
 
 
 @clean_value.register(ParamDType.Tab)
-def _(dtype: ParamDType.Tab, value: str, input_shape: TableShape) -> None:
+def _(dtype: ParamDType.Tab, value: str, input_metadata: TableMetadata) -> None:
     raise RuntimeError("Unsupported: fetch tab")
 
 
 @clean_value.register(ParamDType.Column)
-def _(dtype: ParamDType.Column, value: str, input_shape: TableShape) -> str:
+def _(dtype: ParamDType.Column, value: str, input_metadata: TableMetadata) -> str:
     if dtype.tab_parameter:
         raise RuntimeError("Unsupported: fetch column with tab_parameter")
 
-    if input_shape is None:
+    if not input_metadata.columns:
         return ""
 
-    valid_columns = {c.name: c for c in input_shape.columns}
+    valid_columns = {c.name: c for c in input_metadata.columns}
     if value not in valid_columns:
         return ""  # Null column
 
@@ -85,12 +85,11 @@ def _(dtype: ParamDType.Column, value: str, input_shape: TableShape) -> str:
 
 
 @clean_value.register(ParamDType.Multicolumn)
-def _(dtype: ParamDType.Multicolumn, value: List[str], input_shape: TableShape) -> str:
+def _(
+    dtype: ParamDType.Multicolumn, value: List[str], input_metadata: TableMetadata
+) -> str:
     if dtype.tab_parameter:
         raise RuntimeError("Unsupported: fetch multicolumn with tab_parameter")
-
-    if input_shape is None:
-        return []
 
     error_agg = PromptErrorAggregator()
     requested_colnames = set(value)
@@ -98,7 +97,7 @@ def _(dtype: ParamDType.Multicolumn, value: List[str], input_shape: TableShape) 
     valid_colnames = []
     # ignore colnames not in valid_columns
     # iterate in table order
-    for column in input_shape.columns:
+    for column in input_metadata.columns:
         if column.name not in requested_colnames:
             continue
 
@@ -124,7 +123,7 @@ def _(dtype: ParamDType.Multicolumn, value: List[str], input_shape: TableShape) 
 def _(
     dtype: ParamDType.Multichartseries,
     value: List[Dict[str, str]],
-    input_shape: TableShape,
+    input_metadata: TableMetadata,
 ) -> List[Dict[str, str]]:
     raise RuntimeError("Unsupported: fetch multichartseries")
 
@@ -132,14 +131,14 @@ def _(
 # ... and then the methods for recursing
 @clean_value.register(ParamDType.List)
 def clean_value_list(
-    dtype: ParamDType.List, value: List[Any], input_shape: TableShape
+    dtype: ParamDType.List, value: List[Any], input_metadata: TableMetadata
 ) -> List[Any]:
     inner_clean = partial(clean_value, dtype.inner_dtype)
     ret = []
     error_agg = PromptErrorAggregator()
     for v in value:
         try:
-            ret.append(inner_clean(v, input_shape))
+            ret.append(inner_clean(v, input_metadata))
         except PromptingError as err:
             error_agg.extend(err.errors)
     error_agg.raise_if_nonempty()
@@ -148,21 +147,21 @@ def clean_value_list(
 
 @clean_value.register(ParamDType.Multitab)
 def _(
-    dtype: ParamDType.Multitab, value: List[str], input_shape: TableShape
+    dtype: ParamDType.Multitab, value: List[str], input_metadata: TableMetadata
 ) -> List[Any]:
     raise RuntimeError("Unsupported: fetch multitab")
 
 
 @clean_value.register(ParamDType.Dict)
 def _(
-    dtype: ParamDType.Dict, value: Dict[str, Any], input_shape: TableShape
+    dtype: ParamDType.Dict, value: Dict[str, Any], input_metadata: TableMetadata
 ) -> Dict[str, Any]:
     ret = {}
     error_agg = PromptErrorAggregator()
 
     for k, v in value.items():
         try:
-            ret[k] = clean_value(dtype.properties[k], v, input_shape)
+            ret[k] = clean_value(dtype.properties[k], v, input_metadata)
         except PromptingError as err:
             error_agg.extend(err.errors)
 
@@ -172,8 +171,8 @@ def _(
 
 @clean_value.register(ParamDType.Map)
 def _(
-    dtype: ParamDType.Map, value: Dict[str, Any], input_shape: TableShape
+    dtype: ParamDType.Map, value: Dict[str, Any], input_metadata: TableMetadata
 ) -> Dict[str, Any]:
     value_dtype = dtype.value_dtype
     value_clean = partial(clean_value, value_dtype)
-    return dict((k, value_clean(v, input_shape)) for k, v in value.items())
+    return dict((k, value_clean(v, input_metadata)) for k, v in value.items())

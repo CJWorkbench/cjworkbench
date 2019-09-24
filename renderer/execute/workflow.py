@@ -1,23 +1,78 @@
-from typing import Dict, List, Optional, Tuple
+import logging
+from typing import Any, Dict, List, Optional, Tuple
 from cjworkbench.sync import database_sync_to_async
-from cjworkbench.types import StepResultShape
-from server.models import Workflow
-from server.models.param_dtype import ParamDType
+from cjwkernel.errors import ModuleError
+from cjwkernel.param_dtype import ParamDType
+from cjwkernel.types import RenderResult, Tab
+from cjwkernel.util import tempdir_context
+from cjwstate.models import WfModule, Workflow
+from cjwstate.models.loaded_module import LoadedModule
 from .tab import ExecuteStep, TabFlow, execute_tab_flow
 from .types import UnneededExecution
+
+
+logger = logging.getLogger(__name__)
+
+
+def _get_migrated_params(wf_module: WfModule) -> Dict[str, Any]:
+    """
+    Build the Params dict which will be passed to render().
+
+    Call LoadedModule.migrate_params() to ensure the params are up-to-date.
+
+    On ModuleError or ValueError, log the error and return default params. This
+    will render the "wrong" thing ... but the front-end should show the migrate
+    error (as it's rendering the form) so users should figure out the problem.
+    (What's the alternative? Abort the whole workflow render? We can't render
+    _any_ module until we've migrated _all_ modules; and it's hard to imagine
+    showing the user a huge, aborted render.)
+
+    Assume we are called within a `workflow.cooperative_lock()`.
+    """
+    module_version = wf_module.module_version
+
+    if module_version is None:
+        # This is a deleted module. Renderer will pass the input through to
+        # the output.
+        return {}
+
+    try:
+        # raises ModuleError
+        lm = LoadedModule.for_module_version_sync(wf_module.module_version)
+        # raises ModuleError
+        result = lm.migrate_params(wf_module.params)
+    except ModuleError:
+        # LoadedModule logged this error; no need to log it again.
+        return module_version.param_schema.coerce(None)
+
+    # Is the module buggy? It might be. Log that error, and return a valid
+    # set of params anyway -- even if it isn't the params the user wants.
+    try:
+        module_version.param_schema.validate(result)
+        return result
+    except ValueError as err:
+        logger.exception(
+            "%s.migrate_params() gave wrong retval: %s",
+            module_version.id_name,
+            str(err),
+        )
+        return module_version.param_schema.coerce(result)
 
 
 @database_sync_to_async
 def _load_tab_flows(workflow: Workflow, delta_id: int) -> List[TabFlow]:
     """
     Query `workflow` for each tab's `TabFlow` (ordered by tab position).
+
+    Raise `ModuleError` or `ValueError` if migrate_params() fails. Failed
+    migration means the whole execute can't happen.
     """
     ret = []
     with workflow.cooperative_lock():  # reloads workflow
         if workflow.last_delta_id != delta_id:
             raise UnneededExecution
 
-        for tab in workflow.live_tabs.all():
+        for tab_model in workflow.live_tabs.all():
             steps = [
                 ExecuteStep(
                     wfm,
@@ -26,11 +81,15 @@ def _load_tab_flows(workflow: Workflow, delta_id: int) -> List[TabFlow]:
                         if wfm.module_version is not None
                         else ParamDType.Dict({})
                     ),
-                    wfm.get_params(),
+                    # We need to invoke the kernel and migrate _all_ modules'
+                    # params (WfModule.get_params), because we can only check
+                    # for tab cycles after migrating (and before calling any
+                    # render()).
+                    _get_migrated_params(wfm),
                 )
-                for wfm in tab.live_wf_modules.all()
+                for wfm in tab_model.live_wf_modules.all()
             ]
-            ret.append(TabFlow(tab, steps))
+            ret.append(TabFlow(Tab(tab_model.slug, tab_model.name), steps))
     return ret
 
 
@@ -83,9 +142,10 @@ async def execute_workflow(workflow: Workflow, delta_id: int) -> None:
     #
     # `tab_shapes.keys()` returns tab slugs in the Workflow's tab order -- that
     # is, the order the user determines.
-    tab_shapes: Dict[str, Optional[StepResultShape]] = dict(
-        (flow.tab_slug, None) for flow in pending_tab_flows
-    )
+    tab_results: Dict[Tab, Optional[RenderResult]] = {
+        flow.tab: None for flow in pending_tab_flows
+    }
+    output_paths = []
 
     # Execute one tab_flow at a time.
     #
@@ -93,25 +153,31 @@ async def execute_workflow(workflow: Workflow, delta_id: int) -> None:
     # time; it might be run multiple times simultaneously (even on different
     # computers); and `await` doesn't work with locks.
 
-    while pending_tab_flows:
-        ready_flows, dependent_flows = partition_ready_and_dependent(pending_tab_flows)
+    with tempdir_context() as basedir:
 
-        if not ready_flows:
-            # All flows are dependent -- meaning they all have cycles. Execute
-            # them last; they can detect their cycles through `tab_shapes`.
-            break
+        async def execute_tab_flow_into_new_file(tab_flow: TabFlow) -> RenderResult:
+            nonlocal workflow, tab_results, output_paths
+            output_path = basedir / ("tab-output-%s.arrow" % tab_flow.tab_slug)
+            return await execute_tab_flow(workflow, tab_flow, tab_results, output_path)
 
-        for tab_flow in ready_flows:
-            result = await execute_tab_flow(workflow, tab_flow, tab_shapes)
-            tab_shape = StepResultShape(result.status, result.table_shape)
-            del result  # recover ram
-            tab_shapes[tab_flow.tab_slug] = tab_shape
+        while pending_tab_flows:
+            ready_flows, dependent_flows = partition_ready_and_dependent(
+                pending_tab_flows
+            )
 
-        pending_tab_flows = dependent_flows  # iterate
+            if not ready_flows:
+                # All flows are dependent -- meaning they all have cycles. Execute
+                # them last; they can detect their cycles through `tab_results`.
+                break
 
-    # Now, `pending_tab_flows` only contains flows with cycles. Execute them,
-    # but don't update `tab_shapes` because none of them should see the output
-    # from any other. (If tab1 and tab 2 depend on each other, they should both
-    # have the same error: "Cycle"; their order of execution shouldn't matter.)
-    for tab_flow in pending_tab_flows:
-        await execute_tab_flow(workflow, tab_flow, tab_shapes)
+            for tab_flow in ready_flows:
+                result = await execute_tab_flow_into_new_file(tab_flow)
+                tab_results[tab_flow.tab] = result
+
+            pending_tab_flows = dependent_flows  # iterate
+
+        # Now, `pending_tab_flows` only contains flows with cycles. Execute
+        # them. No need to update `tab_results`: If tab1 and tab 2 depend on
+        # each other, they should have the same error ("Cycle").
+        for tab_flow in pending_tab_flows:
+            await execute_tab_flow_into_new_file(tab_flow)

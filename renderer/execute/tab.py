@@ -1,11 +1,16 @@
 from dataclasses import dataclass
+from itertools import cycle
 import logging
+from pathlib import Path
 from typing import Any, Dict, List, Optional, FrozenSet
 from cjworkbench.sync import database_sync_to_async
-from cjworkbench.types import ProcessResult, StepResultShape
-from server.models import WfModule, Workflow, Tab
-from server.models.param_spec import ParamDType
+from cjwkernel.types import RenderResult, Tab
+from cjwkernel.util import tempfile_context
+from cjwstate.rendercache import load_cached_render_result, CorruptCacheError
+from cjwstate.models import WfModule, Workflow
+from cjwstate.models.param_spec import ParamDType
 from .wf_module import execute_wfmodule, locked_wf_module
+from .types import UnneededExecution
 
 
 logger = logging.getLogger(__name__)
@@ -53,10 +58,6 @@ class TabFlow:
     @property
     def tab_slug(self) -> str:
         return self.tab.slug
-
-    @property
-    def tab_name(self) -> str:
-        return self.tab.name
 
     @cached_property
     def first_stale_index(self) -> int:
@@ -112,27 +113,35 @@ class TabFlow:
 
 
 @database_sync_to_async
-def _load_input_from_cache(workflow: Workflow, flow: TabFlow) -> ProcessResult:
+def _load_input_from_cache(
+    workflow: Workflow, flow: TabFlow, path: Path
+) -> RenderResult:
     last_fresh_wfm = flow.last_fresh_wf_module
     if last_fresh_wfm is None:
-        return ProcessResult()
+        return RenderResult()
     else:
         # raises UnneededExecution
         with locked_wf_module(workflow, last_fresh_wfm) as safe_wfm:
             crr = safe_wfm.cached_render_result
             assert crr is not None  # otherwise it's not fresh, see?
 
-            # Read the entire input Parquet file.
-            return crr.result
+            try:
+                # Read the entire input Parquet file.
+                return load_cached_render_result(crr, path)
+            except CorruptCacheError:
+                raise UnneededExecution
 
 
 async def execute_tab_flow(
-    workflow: Workflow, flow: TabFlow, tab_shapes: Dict[str, Optional[StepResultShape]]
-) -> ProcessResult:
+    workflow: Workflow,
+    flow: TabFlow,
+    tab_results: Dict[Tab, Optional[RenderResult]],
+    output_path: Path,
+) -> RenderResult:
     """
     Ensure `flow.tab.live_wf_modules` all cache fresh render results.
 
-    `tab_shapes.keys()` must be ordered as the Workflow's tabs are.
+    `tab_results.keys()` must be ordered as the Workflow's tabs are.
 
     Raise `UnneededExecution` if something changes underneath us such that we
     can't guarantee all render results will be fresh. (The remaining execution
@@ -145,19 +154,47 @@ async def execute_tab_flow(
         "Rendering Tab(%d, %s - %s)", workflow.id, flow.tab_slug, flow.tab.name
     )
 
+    basedir = output_path.parent
+
     # Execute one module at a time.
     #
     # We don't hold any lock throughout the loop: the loop can take a long
     # time; it might be run multiple times simultaneously (even on
     # different computers); and `await` doesn't work with locks.
-    last_result = await _load_input_from_cache(workflow, flow)
-    for step in flow.stale_steps:
-        last_result = await execute_wfmodule(
-            workflow,
-            step.wf_module,
-            step.params,
-            flow.tab_name,
-            last_result,
-            tab_shapes,
+    #
+    # We pass data between two Arrow files, kinda like double-buffering. The
+    # two are `output_path` and `buffer_path`. This requires fewer temporary
+    # files, so it's less of a hassle to clean up.
+    with tempfile_context(
+        dir=basedir, prefix="render-buffer", suffix=".arrow"
+    ) as buffer_path:
+        # Choose the right input file, such that the final render is to
+        # `output_path`. For instance:
+        #
+        # [cache] -> A -> B -> C: A and C use `output_path`.
+        # [cache] -> A -> B: cache and B use `output_path`.
+        #
+        # The first retval of `next(step_output_paths)` will be used by the cache.
+        if len(flow.stale_steps) % 2 == 1:
+            # [cache], A, B, C => cache gets buffer_path
+            step_output_paths = cycle([buffer_path, output_path])
+        else:
+            # [cache], A, B => cache gets output_path
+            step_output_paths = cycle([output_path, buffer_path])
+
+        last_result = await _load_input_from_cache(
+            workflow, flow, next(step_output_paths)
         )
-    return last_result
+        for step, step_output_path in zip(flow.stale_steps, step_output_paths):
+            step_output_path.write_bytes(b"")  # don't leak data from two steps ago
+            next_result = await execute_wfmodule(
+                workflow,
+                step.wf_module,
+                step.params,
+                flow.tab,
+                last_result,
+                tab_results,
+                step_output_path,
+            )
+            last_result = next_result
+        return last_result

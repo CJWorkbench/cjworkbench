@@ -1,6 +1,6 @@
 from django.template.response import TemplateResponse
 from django.views.decorators.clickjacking import xframe_options_exempt
-from server.models import WfModule
+from cjwstate.models import WfModule
 from server.serializers import WorkflowSerializerLite, WfModuleSerializer
 
 

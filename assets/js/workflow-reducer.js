@@ -804,14 +804,14 @@ export function deleteSecretAction (wfModuleId, param) {
   }
 }
 
-function quickFixPrependModule (wfModuleId, moduleIdName, parameterValues) {
-  return addModuleAction(moduleIdName, { beforeWfModuleId: wfModuleId }, parameterValues)
+function quickFixPrependStep (wfModuleId, { moduleSlug, partialParams }) {
+  return addModuleAction(moduleSlug, { beforeWfModuleId: wfModuleId }, partialParams)
 }
 
-export function quickFixAction (wfModuleId, action, args) {
+export function quickFixAction (wfModuleId, action) {
   return {
-    prependModule: quickFixPrependModule
-  }[action](wfModuleId, ...args)
+    prependStep: quickFixPrependStep
+  }[action.type](wfModuleId, action)
 }
 
 // ---- Reducer ----

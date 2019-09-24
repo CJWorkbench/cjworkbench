@@ -1,10 +1,10 @@
 import unittest
 import dateutil
-from django.test import override_settings, SimpleTestCase
 import numpy as np
 import pandas
 from pandas.testing import assert_frame_equal
-from server.modules.countbydate import migrate_params, render
+from cjwkernel.tests.util import override_settings
+from staticmodules.countbydate import migrate_params, render
 from .util import MockParams
 
 
@@ -78,7 +78,7 @@ agg_int_table = pandas.DataFrame(
 )
 
 
-class CountByDateTests(SimpleTestCase):
+class CountByDateTests(unittest.TestCase):
     def _assertRendersTable(self, in_table, params, expected_table):
         result = render(in_table, params)
 

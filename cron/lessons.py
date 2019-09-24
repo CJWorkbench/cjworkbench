@@ -2,7 +2,7 @@ from datetime import timedelta
 import logging
 from django.utils import timezone
 from cjworkbench.sync import database_sync_to_async
-from server.models import WfModule
+from cjwstate.models import WfModule
 
 
 LessonFreshDuration = 7 * 86400  # seconds

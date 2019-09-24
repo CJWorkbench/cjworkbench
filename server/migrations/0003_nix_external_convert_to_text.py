@@ -6,7 +6,7 @@ from django.db import migrations
 
 
 def delete_module_versions(apps, schema_editor):
-    from server import minio
+    from cjwstate import minio
 
     # Delete from database
     ModuleVersion = apps.get_model("server", "ModuleVersion")
