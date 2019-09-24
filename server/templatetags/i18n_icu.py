@@ -1,9 +1,14 @@
 from django import template
 from django.utils.safestring import mark_safe
 from cjworkbench.i18n.trans import trans as trans_icu
-from ast import literal_eval
+import re
 
 register = template.Library()
+
+trans_tag_re = re.compile(
+    r"^tag_(?P<placeholder>(?P<name>[a-zA-Z]+)\d+)_(?P<attr>[a-zA-Z]+)$", re.ASCII
+)
+trans_param_re = re.compile(r"arg_(?P<arg>\w+)", re.ASCII)
 
 
 @register.simple_tag(takes_context=True)
@@ -11,25 +16,35 @@ def trans(
     context,
     message_id,
     default=None,
-    tags="{}",
     ctxt="",
     noop=False,
     comment="",
     locale=None,
     **kwargs,
 ):
-    """Translate a message, supporting variables in the form `{var}`.
+    """Translate a message, supporting HTML placeholders and variables.
 
-    Keyword arguments, apart from the ones explicitly named in the signature, will be used for variable substitution.
-    The locale will be taken from request if not provided.
+    The message can contain variables in the form `{var}`. Their values must be given with keys of the form `arg_{variable}`,
+    e.g. for the message `"Hello {name}"`, `arg_name` is expected
     
-    HTML tags and their attributes must have been replaced with placeholders and the original must be provided in the `tags` argument.
-    Nested HTML tags are forbidden.
+    HTML tags and their attributes must have been replaced with placeholders and the original must be provided as follows:
+        - Each tag placeholder consists of the name of the tag followed by an integer, e.g. `a` becomes `a0` or `a1` etc.
+          You are advised to use consecutive integers starting from 0 for each tag name, 
+          i.e. you could have `a0`, then `a1`, then `span0`, then `div0`, then `span1`
+        - Each attribute is provided (only once) with key `tag_{placeholder}_{attribute_name}`,
+          so in order to replace `<a0>...</a0>` with `<a href="/hello" class="red small">...</a>`, 
+          you need to provide `tag_a0_href="/hello"` and `tag_a0_class="red small"` 
+        - At this point, tags without attributes are not supported
+        - Tags and their attributes can't contain dashes, so data attributes are not supported
+    Nested HTML tags are forbidden; in fact, at this point, the inner ones will be escaped, but you should not rely on this.
+    Non-nested tags that have not been mapped in this way will be ignored; in fact, at this point, they will replaced by their escaped contents, but you should not rely on this.
+    
+    The locale will be taken from request if not provided.
     
     For code parsing reasons, respect the following order when passing more than one of `default`, `ctxt`, and `comment` arguments:
         `default` before `ctxt` before `comment`
     
-    If `noop` is the value `True`, the translation library will not be used and you will just get the message ID (or the default value, if it's truthy)
+    If `noop` is the value `True`, the translation library will not be used and you will just get `None`
     
     The `comment` argument is ignored here, it's only used in code parsing.
     
@@ -43,22 +58,22 @@ def trans(
           if not found, returns `"Hello"`.
           When the code is parsed, the comment and the default will be added to the message catalog.
           
-        - `{% trans "messages.hello" default="Hello {name}" name="Adam"%}` 
+        - `{% trans "messages.hello" default="Hello {name}" arg_name="Adam"%}` 
           looks up `messages.hello` in the catalog for the current locale and provides `"Adam"` as a value for `name`; 
           if not found, returns `"Hello Adam"`
           When the code is parsed, the default will be added to the message catalog.
           
-        - `{% trans "messages.hello" default="Hello {name}" ctxt="dashboard" name="Adam"%}` 
+        - `{% trans "messages.hello" default="Hello {name}" ctxt="dashboard" arg_name="Adam"%}` 
           looks up `messages.hello` with context `dashboard` in the catalog for the current locale and provides `"Adam"` as a value for `name`; 
           if not found, returns `"Hello Adam"`
           When the code is parsed, the context and the default will be added to the message catalog.
           
         - `{% trans "messages.hello" noop=True default="Hello" %}` 
-          returns `"Hello"`
+          returns None
           When the code is parsed, the default will be added to the message catalog.
           
-        - `{% trans "messages.hello" default="<span0>Hello</span0> <span1>you</span1>" tags={'span0': {'tag': 'span', 'attrs': {'class': 'red big'}}, 'span1': {'tag': 'span', 'attrs': {'class': 'small yellow', 'id': 'you'}}} %}` 
-          looks up `messages.hello` in the catalog for the current locale and replaces the placeholders with the info in `tags`;
+        - `{% trans "messages.hello" default="<span0>Hello</span0> <span1>you</span1>" tag_span0_class="red big" tag_span1_class="small yellow" tag_span1_id="you" %}` 
+          looks up `messages.hello` in the catalog for the current locale and replaces the placeholders with the info in `tag_*` arguments;
           for example, the default message would become `'<span class="red big">Hello</span> <span class="small yellow" id="you">you</span>'` 
           When the code is parsed, the default will be added to the message catalog.
           
@@ -67,8 +82,25 @@ def trans(
           When the code is parsed, this will be ignored.
     """
     if noop is True:
-        return mark_safe(default or message_id)
-    tags = literal_eval(tags)
+        return None
+
+    params = {}
+    tags = {}
+    for arg in kwargs:
+        match_param = trans_param_re.match(arg)
+        if match_param:
+            params[match_param.group("arg")] = kwargs[arg]
+            continue
+        match_tag = trans_tag_re.match(arg)
+        if match_tag:
+            placeholder = match_tag.group("placeholder")
+            tag_name = match_tag.group("name")
+            tag_attr = match_tag.group("attr")
+            if not (placeholder in tags):
+                tags[placeholder] = {"tag": tag_name, "attrs": {}}
+            tags[placeholder]["attrs"][tag_attr] = kwargs[arg]
+            continue
+
     return mark_safe(
         trans_icu(
             locale or context["request"].locale_id,
@@ -76,12 +108,6 @@ def trans(
             default=default,
             context=ctxt,
             tags=tags,
-            parameters=kwargs,
+            parameters=params,
         )
     )
-
-
-@register.filter
-def addstr(arg1, arg2):
-    """concatenate arg1 & arg2"""
-    return str(arg1) + str(arg2)

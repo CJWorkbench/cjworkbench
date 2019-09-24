@@ -23,7 +23,7 @@
       {% include "socialaccount/snippets/login_extra.html" %}
     {% else %}
       <p>
-        {% trans "accounts.sign_up.prompt" default='If you have not created an account yet, then please <a0>sign up</a0> first.' tags="{'a0': {'tag': 'a', 'attrs': {'href': ''} } }" %}
+        {% trans "accounts.sign_up.login_prompt" default='If you have already created an account, then please <a0>log in</a0>.' tag_a0_href=login_url %}
       </p>
     {% endif %}
 
