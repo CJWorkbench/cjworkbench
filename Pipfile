@@ -41,10 +41,11 @@ rfc3987 = "*"  # for jsonschema 'uri' format
 aioamqp = "*"
 pyyaml = "*"
 boto3 = "*"
-yajl-py = "*"
 pyarrow = "*"
 babel = "*"
 thrift = "~=0.11.0"
+yajl-py = "*"
+six = "*"  # yajl-py depends on it but doesn't declare so. https://github.com/pykler/yajl-py/issues/21
 
 [dev-packages]
 watchdog = "*"
