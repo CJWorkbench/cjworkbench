@@ -134,6 +134,7 @@ def parquet_file(
         pyarrow.parquet.write_table(
             atable.table,
             parquet_path,
+            version="2.0",
             compression="SNAPPY",
             use_dictionary=[
                 c.name.encode("utf-8")
