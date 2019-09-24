@@ -56,20 +56,25 @@ def restore_tags(message, tag_mapping):
     
     For each non-nested HTML tag found, searches `tag_mapping` for a replacement for its name and attributes.
     If found, replaces with the ones found.
-    If not found, removes the tag but keeps the contents.
+    If not found, removes the tag but keeps the (escaped) contents.
     
-    Nested HTML tags are escaped
+    Nested HTML tags are removed, with their (escaped) contents kept
     
     Returns the new message
     """
     soup = BeautifulSoup(message, "html.parser")
+    bad = []
     for child in soup.children:
         if child.name:  # i.e. child is a tag
             if child.name in tag_mapping:
                 child.attrs = tag_mapping[child.name].get("attrs", {})
                 child.name = tag_mapping[child.name]["tag"]
+                child.string = "".join(child.strings)
             else:
-                child.unwrap()
+                bad.append(child)
+    for child in bad:
+        child.string = escape("".join(child.strings))
+        child.unwrap()
     return str(soup)
 
 
@@ -109,12 +114,9 @@ class MessageTranslator:
         """
         plain = default or message_id
         message = self.get_message(message_id, context=context)
-        if message:
-            return self.format_message(
-                self.replace_tags(message, tags), parameters=parameters
-            )
-        else:
-            return self.format_message(plain, parameters=parameters)
+        return self.format_message(
+            self.replace_tags(message or plain, tags), parameters=parameters
+        )
 
     def replace_tags(self, target_message, tags):
         """Replaces non-nested tag names and attributes of the `target_message` with the corresponding ones in `tags`
