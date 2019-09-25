@@ -57,8 +57,8 @@ msgid "accounts.sign_in.title"
 msgstr "Sign in"
 
 #: templates/account/login.html:43
-msgid "Forgot Password?"
-msgstr ""
+msgid "accounts.sign_in.forgot_password_prompt"
+msgstr "Forgot Password?"
 
 #: templates/account/login.html:45
 msgid "accounts.sign_in.button"
@@ -69,29 +69,5 @@ msgid "accounts.sign_up.title"
 msgstr "Sign Up"
 
 #: templates/account/signup.html:26
-msgid "accounts.sign_up.prompt"
-msgstr ""
-"If you have not created an account yet, then please <a0>sign up</a0> "
-"first."
-
-#~ msgid "Forgot Password?"
-#~ msgstr ""
-
-#~ msgid "Lesson: %(lesson_title)s"
-#~ msgstr ""
-
-#~ msgid "accounts.sign_in.button"
-#~ msgstr "Sign In"
-
-#~ msgid "accounts.sign_in.title"
-#~ msgstr "Sign in"
-
-#~ msgid "accounts.sign_up.prompt"
-#~ msgstr ""
-#~ "If you have not created an account"
-#~ " yet, then please <a0>sign up</a0> "
-#~ "first."
-
-#~ msgid "accounts.sign_up.title"
-#~ msgstr "Sign Up"
-
+msgid "accounts.sign_up.login_prompt"
+msgstr "If you have already created an account, then please <a0>log in</a0>."

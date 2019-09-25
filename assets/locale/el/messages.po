@@ -28,16 +28,16 @@ msgstr ""
 
 #: assets/js/WorkflowNavBar.js:62
 msgid "workflow.visibility.private"
-msgstr ""
+msgstr "δημόσιο"
 
 #: assets/js/WorkflowNavBar.js:62
 msgid "workflow.visibility.public"
-msgstr ""
+msgstr "ιδιωτικό"
 
 #. This is used in navigation bar. It should be all-caps for styling reasons.
 #: assets/js/Workflows/Navbar.js:39
 msgid "workflows.navbar.training"
-msgstr ""
+msgstr "ΕΚΠΑΙΔΕΥΣΗ"
 
 #. This is used in navigation bar. It should be all-caps for styling reasons.
 #: assets/js/Workflows/Navbar.js:36
@@ -55,7 +55,7 @@ msgid "accounts.sign_in.title"
 msgstr ""
 
 #: templates/account/login.html:43
-msgid "Forgot Password?"
+msgid "accounts.sign_in.forgot_password_prompt"
 msgstr ""
 
 #: templates/account/login.html:45
@@ -67,24 +67,5 @@ msgid "accounts.sign_up.title"
 msgstr ""
 
 #: templates/account/signup.html:26
-msgid "accounts.sign_up.prompt"
+msgid "accounts.sign_up.login_prompt"
 msgstr ""
-
-#~ msgid "Forgot Password?"
-#~ msgstr ""
-
-#~ msgid "Lesson: %(lesson_title)s"
-#~ msgstr ""
-
-#~ msgid "accounts.sign_in.button"
-#~ msgstr ""
-
-#~ msgid "accounts.sign_in.title"
-#~ msgstr ""
-
-#~ msgid "accounts.sign_up.prompt"
-#~ msgstr ""
-
-#~ msgid "accounts.sign_up.title"
-#~ msgstr ""
-

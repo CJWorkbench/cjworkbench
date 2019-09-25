@@ -40,7 +40,7 @@
         {% endif %}
 
         <div class='text-center mb-4'>
-            <a class="content-1 t-white-u mx-auto" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
+            <a class="content-1 t-white-u mx-auto" href="{% url 'account_reset_password' %}">{% trans "accounts.sign_in.forgot_password_prompt" default="Forgot Password?" %}</a>
         </div>
         <button class="button-white--fill action-button mx-auto mt-2 mb-3" type="submit">{% trans "accounts.sign_in.button" default="Sign In" %}</button>
     </form>

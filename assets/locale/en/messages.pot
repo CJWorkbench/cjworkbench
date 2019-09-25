@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-09-15 22:18+0000\n"
+"POT-Creation-Date: 2019-09-25 10:02+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -27,8 +27,9 @@ msgstr ""
 msgid "accounts.sign_in.title"
 msgstr ""
 
+#. default-message: Forgot Password?
 #: templates/account/login.html:43
-msgid "Forgot Password?"
+msgid "accounts.sign_in.forgot_password_prompt"
 msgstr ""
 
 #. default-message: Sign In
@@ -41,8 +42,8 @@ msgstr ""
 msgid "accounts.sign_up.title"
 msgstr ""
 
-#. default-message: If you have not created an account yet, then please <a0>sign up</a0> first.
+#. default-message: If you have already created an account, then please <a0>log in</a0>.
 #: templates/account/signup.html:26
-msgid "accounts.sign_up.prompt"
+msgid "accounts.sign_up.login_prompt"
 msgstr ""
 
