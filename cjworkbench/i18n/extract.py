@@ -3,12 +3,6 @@
 from django.template.base import Lexer, TokenType
 from django.utils.translation import trim_whitespace
 from django.utils.encoding import smart_text
-from django.utils.translation.template import (
-    block_re,
-    endblock_re,
-    plural_re,
-    constant_re,
-)
 import re
 
 TOKEN_BLOCK = TokenType.BLOCK
