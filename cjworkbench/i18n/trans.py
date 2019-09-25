@@ -4,6 +4,7 @@ from django.utils.html import escape
 from cjworkbench.i18n import catalog_path
 from string import Formatter
 
+
 class UnsupportedLocaleError(Exception):
     """Indicates that an unsupported locale is (attempted to be) used
     
@@ -112,8 +113,13 @@ class MessageTranslator:
         
         HTML-like tags in the message used are replaced by their counterpart in `tags`, as specified in `restore_tags`
         """
-        return self.process_message(self.get_message(message_id, context=context), default or message_id, parameters, tags)
-            
+        return self.process_message(
+            self.get_message(message_id, context=context),
+            default or message_id,
+            parameters,
+            tags,
+        )
+
     def process_message(self, message, plain, parameters={}, tags={}):
         if message:
             try:
@@ -125,7 +131,7 @@ class MessageTranslator:
         return self.format_message(
             self.replace_tags(plain, tags), parameters=parameters
         )
-        
+
     def replace_tags(self, target_message, tags):
         """Replaces non-nested tag names and attributes of the `target_message` with the corresponding ones in `tags`
         
@@ -149,9 +155,7 @@ class MessageTranslator:
                     "The given parameters are invalid for the given message"
                 ) from error
         else:
-            raise InvalidICUParameters(
-                "The given parameters are not a dict"
-            ) from error
+            raise InvalidICUParameters("The given parameters are not a dict") from error
 
     def get_message(self, message_id, context=None):
         """Finds the message corresponding to the given ID in the catalog.
@@ -163,13 +167,15 @@ class MessageTranslator:
         else:
             message = self.catalog.get(message_id)
         return message.string if message else None
-        
+
+
 class PartialFormatter(Formatter):
     def get_field(self, field_name, args, kwargs):
         # Handle a key not found
         try:
             return super().get_field(field_name, args, kwargs)
         except (KeyError, AttributeError):
-            return "{%s}" % field_name,field_name 
+            return "{%s}" % field_name, field_name
+
 
 formatter = PartialFormatter()
