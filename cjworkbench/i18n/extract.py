@@ -11,8 +11,6 @@ from django.utils.translation.template import (
 )
 import re
 
-TOKEN_TEXT = TokenType.TEXT
-TOKEN_VAR = TokenType.VAR
 TOKEN_BLOCK = TokenType.BLOCK
 
 # re adapted from django.utils.translation.template.inline_re
@@ -77,130 +75,29 @@ def extract_django(fileobj, keywords, comment_tags, options):
 
     for t in text_lexer.tokenize():
         lineno += t.contents.count("\n")
-        if intrans:
-            if t.token_type == TOKEN_BLOCK:
-                endbmatch = endblock_re.match(t.contents)
-                pluralmatch = plural_re.match(t.contents)
-                if endbmatch:
-                    if inplural:
-                        if message_context:
-                            yield (
-                                lineno,
-                                "npgettext",
-                                [
-                                    smart_text(message_context),
-                                    smart_text(join_tokens(singular, trimmed)),
-                                    smart_text(join_tokens(plural, trimmed)),
-                                ],
-                                [],
-                            )
-                        else:
-                            yield (
-                                lineno,
-                                "ngettext",
-                                (
-                                    smart_text(join_tokens(singular, trimmed)),
-                                    smart_text(join_tokens(plural, trimmed)),
-                                ),
-                                [],
-                            )
-                    else:
-                        if message_context:
-                            yield (
-                                lineno,
-                                "pgettext",
-                                [
-                                    smart_text(message_context),
-                                    smart_text(join_tokens(singular, trimmed)),
-                                ],
-                                [],
-                            )
-                        else:
-                            yield (
-                                lineno,
-                                None,
-                                smart_text(join_tokens(singular, trimmed)),
-                                [],
-                            )
-
-                    intrans = False
-                    inplural = False
-                    message_context = None
-                    singular = []
-                    plural = []
-                elif pluralmatch:
-                    inplural = True
+        if t.token_type == TOKEN_BLOCK:
+            imatch = inline_re.match(t.contents)
+            if imatch:
+                g = imatch.group(1)
+                g = strip_quotes(g)
+                default_message = imatch.group(3)
+                if default_message:
+                    comments = ["default-message: " + strip_quotes(default_message)]
                 else:
-                    raise SyntaxError(
-                        "Translation blocks must not include "
-                        "other block tags: %s" % t.contents
+                    comments = []
+                comment = imatch.group(7)
+                if comment:
+                    comments.append(comment)
+                message_context = imatch.group(5)
+                if message_context:
+                    # strip quotes
+                    message_context = message_context[1:-1]
+                    yield (
+                        lineno,
+                        "pgettext",
+                        [smart_text(message_context), smart_text(g)],
+                        comments,
                     )
-            elif t.token_type == TOKEN_VAR:
-                if inplural:
-                    plural.append("%%(%s)s" % t.contents)
+                    message_context = None
                 else:
-                    singular.append("%%(%s)s" % t.contents)
-            elif t.token_type == TOKEN_TEXT:
-                if inplural:
-                    plural.append(t.contents)
-                else:
-                    singular.append(t.contents)
-        else:
-            if t.token_type == TOKEN_BLOCK:
-                imatch = inline_re.match(t.contents)
-                bmatch = block_re.match(t.contents)
-                cmatches = constant_re.findall(t.contents)
-                if imatch:
-                    g = imatch.group(1)
-                    g = strip_quotes(g)
-                    default_message = imatch.group(3)
-                    if default_message:
-                        comments = ["default-message: " + strip_quotes(default_message)]
-                    else:
-                        comments = []
-                    comment = imatch.group(7)
-                    if comment:
-                        comments.append(comment)
-                    message_context = imatch.group(5)
-                    if message_context:
-                        # strip quotes
-                        message_context = message_context[1:-1]
-                        yield (
-                            lineno,
-                            "pgettext",
-                            [smart_text(message_context), smart_text(g)],
-                            comments,
-                        )
-                        message_context = None
-                    else:
-                        yield lineno, None, smart_text(g), comments
-                elif bmatch:
-                    if bmatch.group(2):
-                        message_context = bmatch.group(2)[1:-1]
-                    for fmatch in constant_re.findall(t.contents):
-                        stripped_fmatch = strip_quotes(fmatch)
-                        yield lineno, None, smart_text(stripped_fmatch), []
-                    intrans = True
-                    inplural = False
-                    trimmed = "trimmed" in t.split_contents()
-                    singular = []
-                    plural = []
-                elif cmatches:
-                    for cmatch in cmatches:
-                        stripped_cmatch = strip_quotes(cmatch)
-                        yield lineno, None, smart_text(stripped_cmatch), []
-            elif t.token_type == TOKEN_VAR:
-                parts = t.contents.split("|")
-                cmatch = constant_re.match(parts[0])
-                if cmatch:
-                    stripped_cmatch = strip_quotes(cmatch.group(1))
-                    yield lineno, None, smart_text(stripped_cmatch), []
-                for p in parts[1:]:
-                    if p.find(":_(") >= 0:
-                        p1 = p.split(":", 1)[1]
-                        if p1[0] == "_":
-                            p1 = p1[1:]
-                        if p1[0] == "(":
-                            p1 = p1.strip("()")
-                        p1 = strip_quotes(p1)
-                        yield lineno, None, smart_text(p1), []
+                    yield lineno, None, smart_text(g), comments
