@@ -170,30 +170,30 @@ def validate(table: Optional[pyarrow.Table], metadata: TableMetadata) -> None:
                 ):
                     raise WrongColumnType(actual_name, expected.type, actual.type)
                 # Validate string values are UTF-8
-                if pyarrow.types.is_string(actual.type):
-                    _validate_strings_are_utf8(actual.data.chunks[0], actual_name)
-                elif pyarrow.types.is_dictionary(actual.type):
-                    # motivation for TableHasTooManyRecordBatches
-                    dictionary = actual.data.chunks[0].dictionary
-                    _validate_strings_are_utf8(dictionary, actual_name)
-                    # Now check that all indices are used and valid.
-                    used_indices = np.zeros(len(dictionary), dtype=np.bool)
-                    try:
-                        for row, dict_index in enumerate(actual.data.chunks[0].indices):
-                            if dict_index is not pyarrow.NULL:
-                                used_indices[dict_index.as_py()] = True
-                    except IndexError:
-                        raise DictionaryColumnHasInvalidIndex(
-                            actual.name, row, dict_index
-                        )
-                    # np.where() gives tuple of arrays, one for each axis
-                    unused_indices = np.where(~used_indices)[0]
-                    if unused_indices:
-                        raise DictionaryColumnHasUnusedEntry(
-                            actual.name, dictionary[unused_indices[0]]
-                        )
-                else:
-                    raise NotImplementedError
+                for i, chunk in enumerate(actual.data.chunks):
+                    if pyarrow.types.is_string(chunk.type):
+                        _validate_strings_are_utf8(chunk, actual_name)
+                    else:
+                        dictionary = chunk.dictionary
+                        _validate_strings_are_utf8(dictionary, actual_name)
+                        # Now check that all indices are used and valid.
+                        # We want this check, which is why we raise
+                        # TableHasTooManyRecordBatches
+                        used_indices = np.zeros(len(dictionary), dtype=np.bool)
+                        try:
+                            for row, dict_index in enumerate(chunk.indices):
+                                if dict_index is not pyarrow.NULL:
+                                    used_indices[dict_index.as_py()] = True
+                        except IndexError:
+                            raise DictionaryColumnHasInvalidIndex(
+                                actual.name, row, dict_index
+                            )
+                        # np.where() gives tuple of arrays, one for each axis
+                        unused_indices = np.where(~used_indices)[0]
+                        if unused_indices:
+                            raise DictionaryColumnHasUnusedEntry(
+                                actual.name, dictionary[unused_indices[0]]
+                            )
             elif isinstance(expected.type, ColumnType.Number):
                 if not (
                     pyarrow.types.is_floating(actual.type)

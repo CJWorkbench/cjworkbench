@@ -124,6 +124,23 @@ class ValidateTests(unittest.TestCase):
                 TableMetadata(1, [Datetime("A")]),
             )
 
+    def test_text_zero_chunks_valid(self):
+        validate(
+            pyarrow.Table.from_batches([], pyarrow.schema([("A", pyarrow.string())])),
+            TableMetadata(0, [Text("A")]),
+        )
+
+    def test_text_dictionary_zero_chunks_is_valid(self):
+        validate(
+            pyarrow.Table.from_batches(
+                [],
+                pyarrow.schema(
+                    [("A", pyarrow.dictionary(pyarrow.int32(), pyarrow.string()))]
+                ),
+            ),
+            TableMetadata(0, [Text("A")]),
+        )
+
     def test_text_invalid_utf8(self):
         # Let's construct a particularly tricky case: two strings that are
         # invalid on their own but are valid when concatenated. (In the buffer
