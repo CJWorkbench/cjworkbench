@@ -26,6 +26,7 @@ def trans(
 
     The message can contain variables in the form `{var}`. Their values must be given with keys of the form `arg_{variable}`,
     e.g. for the message `"Hello {name}"`, `arg_name` is expected
+    The variables can't be named as integers, i.e. `{0}` is not a valid variable name.
     
     HTML tags and their attributes must have been replaced with placeholders and the original must be provided as follows:
         - Each tag placeholder consists of the name of the tag followed by an integer, e.g. `a` becomes `a0` or `a1` etc.

@@ -2,7 +2,7 @@ from babel.messages.pofile import read_po
 from bs4 import BeautifulSoup
 from django.utils.html import escape
 from cjworkbench.i18n import catalog_path
-
+from string import Formatter
 
 class UnsupportedLocaleError(Exception):
     """Indicates that an unsupported locale is (attempted to be) used
@@ -107,17 +107,25 @@ class MessageTranslator:
         
         See `self.format_message` for acceptable types of the parameters argument.
         
-        In case a message from the catalogs is used, 
-            i) non-nested HTML-like tags in the message are replaced by their original counterparts in the `tags` parameter;
-               if they have no counterparts, they are replaced by their (escaped) contents
-            ii) escapes the nested HTML-like tags
+        In case a message from the catalogs is used, if the message contains illegal (i.e. numeric) variables, 
+        they are handled so as to not raise an exception; at this point, the default message is used instead, but you should not rely on this behaviour
+        
+        HTML-like tags in the message used are replaced by their counterpart in `tags`, as specified in `restore_tags`
         """
-        plain = default or message_id
-        message = self.get_message(message_id, context=context)
+        return self.process_message(self.get_message(message_id, context=context), default or message_id, parameters, tags)
+            
+    def process_message(self, message, plain, parameters={}, tags={}):
+        if message:
+            try:
+                return self.format_message(
+                    self.replace_tags(message, tags), parameters=parameters
+                )
+            except Exception:
+                pass
         return self.format_message(
-            self.replace_tags(message or plain, tags), parameters=parameters
+            self.replace_tags(plain, tags), parameters=parameters
         )
-
+        
     def replace_tags(self, target_message, tags):
         """Replaces non-nested tag names and attributes of the `target_message` with the corresponding ones in `tags`
         
@@ -129,25 +137,20 @@ class MessageTranslator:
     def format_message(self, message, parameters={}):
         """Formats the given message according to the given parameters.
         
-        When the message has parameters that look like array indexes, you can specify the parameters with a list/tuple.
-        When the message needs a list/tuple of one element, you can specify it as a scalar value.
-        In other cases, you can specify the parameters as a dict, with keys being the parameter names.
+        The parameters must be a dict
         """
         if not message:
             return message
-        try:
-
-            if isinstance(parameters, dict):
-                return message.format(**parameters)
-            elif isinstance(parameters, (list, tuple)):
-                return message.format(parameters)
-            else:
-                return message.format(parameters)
-
-            return message.format(**parameters)
-        except Exception as error:
+        if isinstance(parameters, dict):
+            try:
+                return formatter.format(message, **parameters)
+            except Exception as error:
+                raise InvalidICUParameters(
+                    "The given parameters are invalid for the given message"
+                ) from error
+        else:
             raise InvalidICUParameters(
-                "The given parameters are invalid for the given message"
+                "The given parameters are not a dict"
             ) from error
 
     def get_message(self, message_id, context=None):
@@ -160,3 +163,13 @@ class MessageTranslator:
         else:
             message = self.catalog.get(message_id)
         return message.string if message else None
+        
+class PartialFormatter(Formatter):
+    def get_field(self, field_name, args, kwargs):
+        # Handle a key not found
+        try:
+            return super().get_field(field_name, args, kwargs)
+        except (KeyError, AttributeError):
+            return "{%s}" % field_name,field_name 
+
+formatter = PartialFormatter()
