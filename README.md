@@ -38,7 +38,7 @@ Workbench is a platform that combines data tools and training for journalists. I
 
 # Try it
 
-To see what Workbench does, try our [public server](http://workbenchdata.org), now in beta. Or run your [own server](https://github.com/CJWorkbench/cjworkbench/wiki/Deployment).
+To see what Workbench does, try our [public server](http://workbenchdata.com), now in beta. Or run your [own server](https://github.com/CJWorkbench/cjworkbench/wiki/Deployment).
 
 <div align="center">
   <img src="https://github.com/CJWorkbench/cjworkbench/blob/master/assets/images/demoSignup.gif"><br>
@@ -63,7 +63,7 @@ Workbench is licensed under the AGPL 3.0 license. You are free to use the code o
 # Contact us
 Always happy to hear from you:
  - [Twitter](https://twitter.com/workbenchdata)
- - [email](mailto:hello@workbenchdata.org)
+ - [email](mailto:hello@workbenchdata.com)
 
  We also accept Pull Requests :)
 
