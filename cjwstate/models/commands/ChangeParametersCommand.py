@@ -21,12 +21,28 @@ class ChangeParametersCommand(ChangesWfModuleOutputs, Delta):
 
     def forward_impl(self):
         self.wf_module.params = self.new_values
-        self.wf_module.save(update_fields=["params"])
+        self.wf_module.cached_migrated_params = None
+        self.wf_module.cached_migrated_params_module_version = None
+        self.wf_module.save(
+            update_fields=[
+                "params",
+                "cached_migrated_params",
+                "cached_migrated_params_module_version",
+            ]
+        )
         self.forward_affected_delta_ids()
 
     def backward_impl(self):
         self.wf_module.params = self.old_values
-        self.wf_module.save(update_fields=["params"])
+        self.wf_module.cached_migrated_params = None
+        self.wf_module.cached_migrated_params_module_version = None
+        self.wf_module.save(
+            update_fields=[
+                "params",
+                "cached_migrated_params",
+                "cached_migrated_params_module_version",
+            ]
+        )
         self.backward_affected_delta_ids()
 
     @classmethod

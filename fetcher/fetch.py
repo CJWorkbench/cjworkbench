@@ -216,6 +216,8 @@ def fetch_or_wrap_error(
     with contextlib.ExitStack() as ctx:
         # Migrate params, so fetch() gets newest values
         try:
+            # TODO use params.get_migrated_params(). (Remember to use a
+            # Workflow.cooperative_lock().)
             params = loaded_module.migrate_params(wf_module.params)
         except ModuleError as err:
             logger.exception(

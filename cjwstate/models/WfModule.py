@@ -34,6 +34,19 @@ class WfModule(models.Model):
                 ),
                 name="auto_update_consistency_check",
             ),
+            models.CheckConstraint(
+                check=(
+                    (
+                        Q(cached_migrated_params__isnull=True)
+                        & Q(cached_migrated_params_module_version__isnull=True)
+                    )
+                    | (
+                        Q(cached_migrated_params__isnull=False)
+                        & Q(cached_migrated_params_module_version__isnull=False)
+                    )
+                ),
+                name="cached_migrated_params_consistency_check",
+            ),
             models.UniqueConstraint(
                 # Really, we want WfModule slug to be unique by _workflow_, not
                 # by tab. But that's not reasonable with Postgres CHECK constraints.
@@ -98,6 +111,25 @@ class WfModule(models.Model):
     # true means user has not acknowledged email
     has_unseen_notification = models.BooleanField(default=False)
 
+    cached_migrated_params = JSONField(null=True, blank=True)
+    """
+    Non-secret parameter values -- after a call to migrate_params().
+
+    This may not match the current module version. And it may be `None` for
+    backwards compatibility with WfModules that did not cache migrated params.
+
+    Why not just overwrite `params`? Because `params` is set by a user and
+    `cached_migrated_params` is set by a machine, and let's not confuse our
+    sources.
+    """
+
+    cached_migrated_params_module_version = models.CharField(
+        max_length=200, blank=True, null=True
+    )
+    """
+    Module-version .source_version_hash that generated cached_migrated_params.
+    """
+
     cached_render_result_delta_id = models.IntegerField(null=True, blank=True)
     cached_render_result_status = models.CharField(
         null=True,
@@ -134,6 +166,8 @@ class WfModule(models.Model):
 
     This may not match the current module version: migrate_params() will make
     the params match today's Python and JavaScript.
+
+    These values were set by a human.
     """
 
     secrets = JSONField(default=dict)
@@ -263,34 +297,6 @@ class WfModule(models.Model):
         validated against a schema.
         """
         return {k: {"name": v["name"]} for k, v in self.secrets.items() if v}
-
-    def get_params(self) -> Dict[str, Any]:
-        """
-        Build the Params dict which will be passed to JS, render(), and fetch().
-
-        Calls LoadedModule.migrate_params() to ensure the params are up-to-date.
-
-        Raise ValueError on _programmer_ error. That's usually the module
-        author's problem (e.g. bad migration) and we'll want to display the
-        error to the user so the user can pester the module author.
-        """
-        if self.module_version is None:
-            return {}
-
-        lm = LoadedModule.for_module_version_sync(self.module_version)
-        if lm is None:
-            return {}
-
-        result = lm.migrate_params(self.params)  # raises ModuleError
-        try:
-            self.module_version.param_schema.validate(result)
-        except ValueError as err:
-            # rephrase error
-            raise ValueError(
-                "%s.migrate_params() gave bad output: %s"
-                % (self.module_id_name, str(err))
-            ) from None
-        return result
 
     # --- Duplicate ---
     # used when duplicating a whole workflow

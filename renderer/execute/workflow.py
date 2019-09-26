@@ -7,6 +7,7 @@ from cjwkernel.types import RenderResult, Tab
 from cjwkernel.util import tempdir_context
 from cjwstate.models import WfModule, Workflow
 from cjwstate.models.loaded_module import LoadedModule
+from cjwstate.params import get_migrated_params
 from .tab import ExecuteStep, TabFlow, execute_tab_flow
 from .types import UnneededExecution
 
@@ -37,10 +38,7 @@ def _get_migrated_params(wf_module: WfModule) -> Dict[str, Any]:
         return {}
 
     try:
-        # raises ModuleError
-        lm = LoadedModule.for_module_version_sync(wf_module.module_version)
-        # raises ModuleError
-        result = lm.migrate_params(wf_module.params)
+        result = get_migrated_params(wf_module)
     except ModuleError:
         # LoadedModule logged this error; no need to log it again.
         return module_version.param_schema.coerce(None)

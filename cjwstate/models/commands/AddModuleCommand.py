@@ -151,6 +151,8 @@ class AddModuleCommand(ChangesWfModuleOutputs, Delta):
             slug=slug,
             is_deleted=True,
             params=params,
+            cached_migrated_params=params,
+            cached_migrated_params_module_version=module_version.source_version_hash,
             secrets={},
         )
 
