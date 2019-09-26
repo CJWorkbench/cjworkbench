@@ -317,6 +317,6 @@ class Kernel:
             raise ModuleExitedError(child.exitcode, log_reader.to_str())
 
         if log_reader.buffer:
-            logger.info("Output from child:" % log_reader.to_str())
+            logger.info("Output from child: %s" % log_reader.to_str())
 
         return result
