@@ -46,11 +46,6 @@ msgstr "TRAINING"
 msgid "workflows.navbar.workflows"
 msgstr "WORKFLOWS"
 
-#: server/views/lessons.py:61
-#, python-format
-msgid "Lesson: %(lesson_title)s"
-msgstr ""
-
 #: templates/account/login.html:4 templates/account/login.html:10
 #: templates/account/signup.html:12
 msgid "accounts.sign_in.title"
