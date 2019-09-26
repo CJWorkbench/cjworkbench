@@ -57,7 +57,8 @@ def _ensure_workflow(request, lesson: Lesson):
     with transaction.atomic():
         workflow, created = Workflow.objects.get_or_create(
             defaults={
-                "name": "Lesson: " + lesson.title, # https://www.pivotaltracker.com/story/show/168752481
+                "name": "Lesson: "
+                + lesson.title,  # https://www.pivotaltracker.com/story/show/168752481
                 "public": False,
                 "last_delta": None,
             },
