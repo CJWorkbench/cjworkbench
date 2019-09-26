@@ -84,47 +84,6 @@ def _with_wf_module_for_read(fn):
 TimestampUnits = {"us": 1000000, "s": 1, "ms": 1000, "ns": 1000000000}  # most common
 
 
-def _arrow_array_to_json_list(array: pyarrow.ChunkedArray) -> List[Any]:
-    """
-    Convert `array` to a JSON-encodable List.
-
-    Strings become Strings; Numbers become int/float; Datetimes become
-    ISO8601-encoded Strings.
-    """
-    if isinstance(array.type, pyarrow.TimestampType):
-        multiplier = 1.0 / TimestampUnits[array.type.unit]
-        return [
-            (
-                None
-                if v is pyarrow.NULL
-                else (
-                    datetime.datetime.utcfromtimestamp(v.value * multiplier).isoformat()
-                    + "Z"
-                )
-            )
-            for v in array
-        ]
-    else:
-        return array.to_pylist()
-
-
-def _arrow_table_to_json_records(table: pyarrow.Table) -> List[Dict[str, Any]]:
-    """
-    Convert `table` to JSON records.
-
-    Slice from `begin` (inclusive, first is 0) to `end` (exclusive).
-
-    String values become Strings; Number values become int/float; Datetime
-    values become ISO8601-encoded Strings.
-    """
-    # Select the values we want -- columnar, so memory accesses are contiguous
-    values = {
-        column.name: _arrow_array_to_json_list(column) for column in table.itercolumns()
-    }
-    # Transpose into JSON records
-    return [{k: v[i] for k, v in values.items()} for i in range(table.num_rows)]
-
-
 def _pydict_to_json_records(
     # need to pass n_rows in case len(columns) == 0
     pydict: Dict[str, List[Any]],
@@ -447,13 +406,23 @@ def wfmodule_public_json(request: HttpRequest, wf_module: WfModule):
         return schedule_render_and_suggest_retry()
 
     try:
-        with open_cached_render_result(cached_result) as result:
-            table = result.table.table
+        with downloaded_parquet_file(cached_result) as parquet_path:
+            output = SubprocessOutputFileLike(
+                ["/usr/bin/parquet-to-text-stream", str(parquet_path), "json"]
+            )
+            # It's okay to delete the file now (i.e., exit the context manager)
     except CorruptCacheError:
         return schedule_render_and_suggest_retry()
 
-    records = _arrow_table_to_json_records(table)
-    return JsonResponse(records, safe=False)
+    return FileResponse(
+        output,
+        as_attachment=True,
+        filename=(
+            "Workflow %d - %s-%d.json"
+            % (cached_result.workflow_id, wf_module.module_id_name, wf_module.id)
+        ),
+        content_type="application/json",
+    )
 
 
 @_with_wf_module_for_read
