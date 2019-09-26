@@ -199,7 +199,7 @@ def safe_eval_process(code, table, timeout=TIMEOUT):
         )
 
     # we got our result; clean up like an assassin
-    subprocess.terminate()  # TODO subprocess.kill() in Python 3.7
+    subprocess.kill()
     subprocess.join()
 
     # Use ProcessResult.coerce() here (as opposed to _after_ render) so we
