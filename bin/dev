@@ -97,7 +97,7 @@ case "$COMMAND" in
 
   "unittest")
     # Overwrite the "command" so we can incorporate "$@".
-    docker_compose_with_commands run --rm unittest sh -c 'while ! curl --silent -I $MINIO_URL >/dev/null; do sleep 0.1; done; mc config host add workbench $MINIO_URL minio_root_access minio_root_secret && mc admin user add workbench $MINIO_ACCESS_KEY $MINIO_SECRET_KEY readwrite'
+    docker_compose_with_commands run --rm unittest sh -c 'while ! curl --silent -I $MINIO_URL >/dev/null; do sleep 0.1; done; mc config host add workbench $MINIO_URL minio_root_access minio_root_secret && mc admin user add workbench $MINIO_ACCESS_KEY $MINIO_SECRET_KEY && mc admin policy set workbench readwrite user=$MINIO_ACCESS_KEY'
     docker_compose_with_commands run --rm unittest pipenv run python ./manage.py test "$@"
     ;;
 
