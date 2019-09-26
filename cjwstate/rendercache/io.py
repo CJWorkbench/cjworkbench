@@ -158,13 +158,11 @@ def load_cached_render_result(
             crr.json,
         )
 
-    try:
-        with downloaded_parquet_file(crr) as parquet_path:
-            parquet.convert_parquet_file_to_arrow_file(
-                parquet_path, path, only_columns=only_columns
-            )
-    except FileNotFoundError:
-        raise CorruptCacheError  # FIXME add unit test
+    # raise CorruptCacheError
+    with downloaded_parquet_file(crr) as parquet_path:
+        parquet.convert_parquet_file_to_arrow_file(
+            parquet_path, path, only_columns=only_columns
+        )
     # TODO handle validation errors => CorruptCacheError
     if only_columns is None:
         table_metadata = crr.table_metadata

@@ -1,5 +1,5 @@
 # 0.1 parquet-to-arrow: executables we use in Workbench
-FROM workbenchdata/parquet-to-arrow:v0.0.1 AS parquet-to-arrow
+FROM workbenchdata/parquet-to-arrow:v0.0.2 AS parquet-to-arrow
 
 # 0.2 pybase: Python and tools we use in dev and production
 FROM python:3.7.4-slim-buster AS pybase
@@ -35,6 +35,7 @@ RUN mkdir -p /usr/share/nltk_data \
 RUN pip install pipenv==2018.11.26
 
 COPY --from=parquet-to-arrow /usr/bin/parquet-to-arrow-slice /usr/bin/parquet-to-arrow-slice
+COPY --from=parquet-to-arrow /usr/bin/parquet-to-text-stream /usr/bin/parquet-to-text-stream
 
 # Set up /app
 RUN mkdir /app

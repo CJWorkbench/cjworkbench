@@ -1,12 +1,16 @@
 import datetime
+import io
 import json
 import math
 import re
+import selectors
+import subprocess
 from typing import Any, Dict, List
 from asgiref.sync import async_to_sync
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.http import (
+    FileResponse,
     HttpRequest,
     HttpResponse,
     Http404,
@@ -24,6 +28,7 @@ from cjwkernel.pandas import types as ptypes
 from cjwkernel.types import Column, ColumnType
 from cjwstate.rendercache import (
     CorruptCacheError,
+    downloaded_parquet_file,
     open_cached_render_result,
     read_cached_render_result_pydict,
 )
@@ -355,36 +360,140 @@ def wfmodule_tile(
     return JsonResponse(records)
 
 
-# Public access to wfmodule output. Basically just /render with different auth
-# and output format
-# NOTE: does not support startrow/endrow at the moment
+class SubprocessOutputFileLike(io.RawIOBase):
+    """
+    Run a subrocess; .read() reads its stdout and stderr (combined).
+
+    __init__() will only return after the process starts producing output.
+    This requirement lets us raise OSError during startup; it also means a
+    caller with knowledge of the subprocess's behavior may safely delete a file
+    the subprocess is reading from, before the subprocess is finished reading
+    it.
+
+    On close(), kill the subprocess (if it's still running) and wait for it.
+
+    close() is the only way to wait for the subprocess. Don't worry: __del__()
+    calls close().
+
+    If read() is called after the subprocess terminates and the subprocess's
+    exit code is not 0, raise IOError.
+
+    Not thread-safe.
+    """
+
+    def __init__(self, args):
+        super().__init__()
+
+        # Raises OSError
+        self.process = subprocess.Popen(
+            args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+        )
+        # Wait for subprocess to begin outputting data. After that, the caller
+        # may delete input files safely, assuming the subprocess already has
+        # them open and thus can continue reading from them after they're
+        # deleted.
+        self._await_stdout_ready()
+
+    def _await_stdout_ready(self):
+        """
+        Wait until `self.process.stdout.read()` is guaranteed not to block.
+        """
+        with selectors.DefaultSelector() as selector:
+            selector.register(self.process.stdout, selectors.EVENT_READ)
+            while len(selector.select()) == 0:
+                pass
+
+    def readable(self):
+        return True
+
+    def fileno(self):
+        return self.process.stdout.fileno()
+
+    def readinto(self, b):
+        ret = self.process.stdout.readinto(b)
+        return ret
+
+    def close(self):
+        if self.closed:
+            return
+
+        self.process.stdout.close()
+        self.process.kill()
+        # wait() should not deadlock, because process will certainly die.
+        self.process.wait()  # ignore exit code
+        super().close()  # sets self.closed
+
+
 @api_view(["GET"])
-@renderer_classes((JSONRenderer,))
 @_with_wf_module_for_read
-def wfmodule_public_output(
-    request: HttpRequest, wf_module: WfModule, export_type: str, format=None
-):
-    cached_result = wf_module.cached_render_result
-    if cached_result:
-        try:
-            with open_cached_render_result(cached_result) as result:
-                table = result.table.table
-        except CorruptCacheError:
-            table = pyarrow.table({})
-    else:
+def wfmodule_public_json(request: HttpRequest, wf_module: WfModule):
+    def schedule_render_and_suggest_retry():
+        """
+        Schedule a render and return a response asking the user to retry.
+
+        It is a *bug* that we publish URLs that aren't guaranteed to work.
+        Because we publish URLs that do not work, let's be transparent and
+        give them the 500-level error code they deserve.
+        """
         # We don't have a cached result, and we don't know how long it'll
-        # take to get one.
+        # take to get one. The user will simply need to try again....
+        nonlocal wf_module
         workflow = wf_module.workflow
         async_to_sync(rabbitmq.queue_render)(workflow.id, workflow.last_delta_id)
-        # The user will simply need to try again....
-        table = pyarrow.table({})
+        return JsonResponse([], safe=False, status=503, headers={"Retry-After": "30"})
 
-    if export_type == "json":
-        records = _arrow_table_to_json_records(table)
-        return JsonResponse(records, safe=False)
-    elif export_type == "csv":
-        df = table.to_pandas()
-        d = df.to_csv(index=False)
-        return HttpResponse(d, content_type="text/csv")
-    else:
-        raise RuntimeError("Undefined export_type" + export_type)
+    cached_result = wf_module.cached_render_result
+    if not cached_result:
+        return schedule_render_and_suggest_retry()
+
+    try:
+        with open_cached_render_result(cached_result) as result:
+            table = result.table.table
+    except CorruptCacheError:
+        return schedule_render_and_suggest_retry()
+
+    records = _arrow_table_to_json_records(table)
+    return JsonResponse(records, safe=False)
+
+
+@_with_wf_module_for_read
+def wfmodule_public_csv(request: HttpRequest, wf_module: WfModule):
+    def schedule_render_and_suggest_retry():
+        """
+        Schedule a render and return a response asking the user to retry.
+
+        It is a *bug* that we publish URLs that aren't guaranteed to work.
+        Because we publish URLs that do not work, let's be transparent and
+        give them the 500-level error code they deserve.
+        """
+        # We don't have a cached result, and we don't know how long it'll
+        # take to get one. The user will simply need to try again....
+        nonlocal wf_module
+        workflow = wf_module.workflow
+        async_to_sync(rabbitmq.queue_render)(workflow.id, workflow.last_delta_id)
+        return HttpResponse(
+            b"", content_type="text/csv", status=503, headers={"Retry-After": "30"}
+        )
+
+    cached_result = wf_module.cached_render_result
+    if not cached_result:
+        return schedule_render_and_suggest_retry()
+
+    try:
+        with downloaded_parquet_file(cached_result) as parquet_path:
+            output = SubprocessOutputFileLike(
+                ["/usr/bin/parquet-to-text-stream", str(parquet_path), "csv"]
+            )
+            # It's okay to delete the file now (i.e., exit the context manager)
+    except CorruptCacheError:
+        return schedule_render_and_suggest_retry()
+
+    return FileResponse(
+        output,
+        as_attachment=True,
+        filename=(
+            "Workflow %d - %s-%d.csv"
+            % (cached_result.workflow_id, wf_module.module_id_name, wf_module.id)
+        ),
+        content_type="text/csv; charset=utf-8; header=present",
+    )
