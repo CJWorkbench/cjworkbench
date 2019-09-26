@@ -14,11 +14,11 @@ from .util import MockParams
 example_csv = b"foo,bar\n1,2\n2,3"
 example_tsv = b"foo\tbar\n1\t2\n2\t3"
 with open(
-    os.path.join(os.path.dirname(__file__), "..", "test_data", "example.xls"), "rb"
+    os.path.join(os.path.dirname(__file__), "test_data", "example.xls"), "rb"
 ) as f:
     example_xls = f.read()
 with open(
-    os.path.join(os.path.dirname(__file__), "..", "test_data", "example.xlsx"), "rb"
+    os.path.join(os.path.dirname(__file__), "test_data", "example.xlsx"), "rb"
 ) as f:
     example_xlsx = f.read()
 
