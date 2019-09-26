@@ -235,7 +235,7 @@ class WfModuleSerializer(serializers.ModelSerializer):
             except ValueError as err:
                 logger.exception(
                     "%s.migrate_params() gave invalid output: %r",
-                    wf_module.module_id_name,
+                    wfm.module_id_name,
                     params,
                 )
                 return param_schema.coerce(params)
