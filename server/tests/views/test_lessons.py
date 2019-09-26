@@ -315,8 +315,7 @@ class LessonDetailTests(DbTestCase):
         self.assertEqual(wfm1["is_busy"], True)  # because we sent a fetch
 
         # We should be rendering the modules
-        fetch.assert_called()
-        self.assertEqual(fetch.call_args[0][0].id, wfm1["id"])
+        fetch.assert_called_with(state["workflow"]["id"], wfm1["id"])
         render.assert_not_called()
 
     @patch.dict(

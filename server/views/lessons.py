@@ -149,7 +149,7 @@ def _queue_workflow_updates(workflow: Workflow) -> None:
             # immediately)
             if wfm.is_busy:
                 have_a_fetch_module = True
-                async_to_sync(rabbitmq.queue_fetch)(wfm)
+                async_to_sync(rabbitmq.queue_fetch)(workflow.id, wfm.id)
 
     if have_a_module and not have_a_fetch_module:
         # Render. (e.g., pastecsv)
