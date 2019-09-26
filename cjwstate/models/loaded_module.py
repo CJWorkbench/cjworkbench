@@ -172,7 +172,7 @@ class LoadedModule:
             status = "ok"
             return result
         except ModuleError as err:
-            logger.exception("Exception in %s.render", self.module_id_name)
+            logger.exception("Exception in %s.migrate_params", self.module_id_name)
             status = type(err).__name__
             raise
         finally:
