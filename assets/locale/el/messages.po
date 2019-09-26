@@ -28,11 +28,11 @@ msgstr ""
 
 #: assets/js/WorkflowNavBar.js:62
 msgid "workflow.visibility.private"
-msgstr "δημόσιο"
+msgstr "ιδιωτικό"
 
 #: assets/js/WorkflowNavBar.js:62
 msgid "workflow.visibility.public"
-msgstr "ιδιωτικό"
+msgstr "δημόσιο"
 
 #. This is used in navigation bar. It should be all-caps for styling reasons.
 #: assets/js/Workflows/Navbar.js:39
