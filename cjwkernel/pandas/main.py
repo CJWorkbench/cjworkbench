@@ -22,7 +22,11 @@ def main(
     output_fileno = output_dup_fd.detach()
     log_fileno = log_dup_fd.detach()
 
-    sys.stdout = os.fdopen(log_fileno, "wt", encoding="utf-8")
+    # We're writing in text mode so we're forced to buffer output. But we don't
+    # want buffering: if we crash, we want whatever was written to be visible
+    # to the reader at the other end. So set buffering=1, meaning "line
+    # buffering". This is what interactive Python uses for stdout+stderr.
+    sys.stdout = os.fdopen(log_fileno, "wt", encoding="utf-8", buffering=1)
     sys.stderr = sys.stdout
 
     assert function in (
