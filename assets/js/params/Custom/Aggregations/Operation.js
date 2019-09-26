@@ -16,9 +16,10 @@ export default function Operation ({ isReadOnly, name, value, onChange }) {
       <option value='size'>Count</option>
       <option value='nunique'>Count unique</option>
       <option value='sum'>Sum</option>
-      <option value='mean'>Mean</option>
-      <option value='max'>Maximum</option>
+      <option value='mean'>Average (Mean)</option>
+      <option value='median'>Median</option>
       <option value='min'>Minimum</option>
+      <option value='max'>Maximum</option>
       <option value='first'>First</option>
     </select>
   )
@@ -26,6 +27,6 @@ export default function Operation ({ isReadOnly, name, value, onChange }) {
 Operation.propTypes = {
   isReadOnly: PropTypes.bool.isRequired,
   name: PropTypes.string.isRequired,
-  value: PropTypes.oneOf(['size', 'nunique', 'sum', 'mean', 'min', 'max', 'first']).isRequired,
+  value: PropTypes.oneOf(['size', 'nunique', 'sum', 'mean', 'median', 'min', 'max', 'first']).isRequired,
   onChange: PropTypes.func.isRequired // func(ev) => undefined
 }

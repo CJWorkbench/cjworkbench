@@ -11,7 +11,7 @@ export default class Aggregations extends React.PureComponent {
     name: PropTypes.string.isRequired, // <input name=...>
     fieldId: PropTypes.string.isRequired, // <input id=...>
     value: PropTypes.arrayOf(PropTypes.shape({
-      operation: PropTypes.oneOf(['size', 'nunique', 'sum', 'mean', 'min', 'max', 'first']).isRequired,
+      operation: PropTypes.oneOf(['size', 'nunique', 'sum', 'mean', 'median', 'min', 'max', 'first']).isRequired,
       colname: PropTypes.string.isRequired,
       outname: PropTypes.string.isRequired
     }).isRequired).isRequired,
