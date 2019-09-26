@@ -18,6 +18,56 @@ def render(table, reorder_history):
     return reordercolumns.render(table.copy(), params)
 
 
+# class MigrateParamsTest(unittest.TestCase):
+#     def test_v0_empty(self):
+#         self.assertEqual(reordercolumns.migrate_params(""), {"reorder-history": []})
+#
+#     def test_v0(self):
+#         self.assertEqual(
+#             reordercolumns.migrate_params(
+#                 '{"no-param-text":"","reorder-history":[{"column":"FEDERAL_PROGRAMNAME","from":1,"to":0}]}'
+#             ),
+#             {
+#                 "reorder-history": [
+#                     {"column": "FEDERAL_PROGRAMNAME", "from": 1, "to": 0}
+#                 ]
+#             },
+#         )
+#
+#     def test_v1(self):
+#         self.assertEqual(
+#             reordercolumns.migrate_params(
+#                 {
+#                     "no-param-text": "",
+#                     "reorder-history": [
+#                         {"column": "FEDERAL_PROGRAMNAME", "from": 1, "to": 0}
+#                     ],
+#                 }
+#             ),
+#             {
+#                 "reorder-history": [
+#                     {"column": "FEDERAL_PROGRAMNAME", "from": 1, "to": 0}
+#                 ]
+#             },
+#         )
+#
+#     def test_v2(self):
+#         self.assertEqual(
+#             reordercolumns.migrate_params(
+#                 {
+#                     "reorder-history": [
+#                         {"column": "FEDERAL_PROGRAMNAME", "from": 1, "to": 0}
+#                     ]
+#                 }
+#             ),
+#             {
+#                 "reorder-history": [
+#                     {"column": "FEDERAL_PROGRAMNAME", "from": 1, "to": 0}
+#                 ]
+#             },
+#         )
+
+
 class ReorderTest(unittest.TestCase):
     def test_reorder_empty(self):
         result = render(a_table, {})

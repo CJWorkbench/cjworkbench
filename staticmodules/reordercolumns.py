@@ -47,3 +47,33 @@ def render(table, params):
         columns.insert(to_idx, moved)
 
     return table[columns]
+
+
+# def _migrate_params_v0_to_v1(params):
+#     """
+#     We used to store params as JSON-encoded str. And sometimes it was ''.
+#
+#     JSON-decode params.
+#     """
+#     if params == "":
+#         return {"no-param-text": "", "reorder-history": []}
+#     else:
+#         return json.loads(params)
+#
+#
+# def _migrate_params_v1_to_v2(params):
+#     """
+#     Remove 'no-param-text' from params.
+#
+#     This was stored back in the day, when statictext actually created a param
+#     value.
+#     """
+#     return {"reorder-history": params["reorder-history"]}
+#
+#
+# def migrate_params(params):
+#     if isinstance(params, str):
+#         params = _migrate_params_v0_to_v1(params)
+#     if "no-param-text" in params:
+#         params = _migrate_params_v1_to_v2(params)
+#     return params
