@@ -399,7 +399,9 @@ def wfmodule_public_json(request: HttpRequest, wf_module: WfModule):
         nonlocal wf_module
         workflow = wf_module.workflow
         async_to_sync(rabbitmq.queue_render)(workflow.id, workflow.last_delta_id)
-        return JsonResponse([], safe=False, status=503, headers={"Retry-After": "30"})
+        response = JsonResponse([], safe=False, status=503)
+        response["Retry-After"] = "30"
+        return response
 
     cached_result = wf_module.cached_render_result
     if not cached_result:
@@ -440,9 +442,9 @@ def wfmodule_public_csv(request: HttpRequest, wf_module: WfModule):
         nonlocal wf_module
         workflow = wf_module.workflow
         async_to_sync(rabbitmq.queue_render)(workflow.id, workflow.last_delta_id)
-        return HttpResponse(
-            b"", content_type="text/csv", status=503, headers={"Retry-After": "30"}
-        )
+        response = HttpResponse(b"", content_type="text/csv", status=503)
+        response["Retry-After"] = "30"
+        return response
 
     cached_result = wf_module.cached_render_result
     if not cached_result:
