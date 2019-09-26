@@ -28,7 +28,7 @@ from cjwkernel.pandas.main import main
 logger = logging.getLogger(__name__)
 
 
-TIMEOUT = 30  # seconds
+TIMEOUT = 300  # seconds
 LOG_BUFFER_MAX_BYTES = 100 * 1024  # waaaay too much log output
 OUTPUT_BUFFER_MAX_BYTES = (
     2 * 1024 * 1024
@@ -268,9 +268,10 @@ class Kernel:
         # DO NOT call `log_receiver.recv()` or `output_receiver.recv()`!!!
         # `recv()` is evil.
         start_time = time.time()
+        limit_time = start_time + TIMEOUT
         timed_out = False
         while True:
-            remaining = time.time() - start_time
+            remaining = limit_time - time.time()
             if remaining <= 0:
                 if not timed_out:
                     timed_out = True
@@ -286,7 +287,6 @@ class Kernel:
                     if reader.eof:
                         selector.unregister(reader.fileno)
             if child.sentinel in ready:
-                timed_out = False
                 break  # child has exited
         # Now that the child has exited, read from the child until EOF. We know
         # EOF is coming, because the child died.
