@@ -157,7 +157,9 @@ async def execute_workflow(workflow: Workflow, delta_id: int) -> None:
 
         async def execute_tab_flow_into_new_file(tab_flow: TabFlow) -> RenderResult:
             nonlocal workflow, tab_results, output_paths
-            output_path = basedir / ("tab-output-%s.arrow" % tab_flow.tab_slug)
+            output_path = basedir / (
+                "tab-output-%s.arrow" % tab_flow.tab_slug.replace("/", "-")
+            )
             return await execute_tab_flow(workflow, tab_flow, tab_results, output_path)
 
         while pending_tab_flows:
