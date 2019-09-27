@@ -1,11 +1,25 @@
 import unittest
 import pandas
 from pandas.testing import assert_frame_equal
-from staticmodules.pythoncode import safe_eval_process
+from staticmodules.pythoncode import safe_eval_process, migrate_params
 
 
 EMPTY_DATAFRAME = pandas.DataFrame()
 EMPTY_OUTPUT = {"output": ""}
+
+
+class MigrateParamsTest(unittest.TestCase):
+    def test_v0(self):
+        self.assertEqual(
+            migrate_params({"run": "", "code": "def process(x):\n  return x"}),
+            {"code": "def process(x):\n  return x"},
+        )
+
+    def test_v1(self):
+        self.assertEqual(
+            migrate_params({"code": "def process(x):\n  return x"}),
+            {"code": "def process(x):\n  return x"},
+        )
 
 
 class SafeEvalProcessTest(unittest.TestCase):
