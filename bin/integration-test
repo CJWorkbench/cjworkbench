@@ -62,8 +62,8 @@ echo 'Building…' >&2
 # https://github.com/docker/compose/issues/6440
 # In the meantime, use `docker build` directly, so we can speedily build all
 # the slow bits.
-DOCKER_BUILDKIT=1 docker build --pull --rm=false . -t migrate  # includes JS unit tests
-DOCKER_BUILDKIT=1 docker build --pull --rm=false . -t frontend
+DOCKER_BUILDKIT=1 docker build --pull --rm=false --target=migrate . # includes JS unit tests
+DOCKER_BUILDKIT=1 docker build --pull --rm=false --target=frontend .
 DOCKER_BUILDKIT=1 docker build --pull --rm=false . -f Dockerfile.integrationtest
 # Now make docker-compose _aware_ of these newly-cached, quickly-built images
 docker_compose build
