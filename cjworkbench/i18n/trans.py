@@ -6,7 +6,7 @@ from string import Formatter
 
 
 class UnsupportedLocaleError(Exception):
-    """Indicates that an unsupported locale is (attempted to be) used
+    """An unsupported locale is (attempted to be) used
     
     A locale may be unsupported because its not recognised as a locale
     or because there are no catalogs for it.
@@ -14,14 +14,14 @@ class UnsupportedLocaleError(Exception):
 
 
 class BadCatalogsError(Exception):
-    """Indicates that the catalog for a locale is not properly formatted
+    """The catalog for a locale is not properly formatted
     
     A possible formatting error is empty comments at the start of the file.
     """
 
 
 class InvalidICUParameters(Exception):
-    """Indicates that the parameters passed for a message are not valid
+    """The parameters passed for a message are not valid
     
     For example, you may have passed a string in the place of an integer.
     """
@@ -31,7 +31,7 @@ _translators = {}
 
 
 def _get_translations(locale):
-    """Returns a MessageTranslator object for the given locale.
+    """Return a singleton MessageTranslator for the given locale.
     
     In order to parse the message catalogs only once per locale,
     uses the _translators dict to store the created MessageTranslator for each locale.
@@ -43,7 +43,7 @@ def _get_translations(locale):
 
 
 def trans(locale, message_id, default=None, context=None, parameters={}, tags={}):
-    """Translates the given message ID to the given locale.
+    """Translate the given message ID to the given locale.
     """
     return _get_translations(locale).trans(
         message_id, default, context, parameters, tags
@@ -51,7 +51,7 @@ def trans(locale, message_id, default=None, context=None, parameters={}, tags={}
 
 
 def restore_tags(message, tag_mapping):
-    """Replaces the HTML tags and attributes in a message.
+    """Replace the HTML tags and attributes in a message.
     
     `tag_mapping` is a dict that for each tag name contains a new name `name` and new attributes `attrs`
     
@@ -80,7 +80,7 @@ def restore_tags(message, tag_mapping):
 
 
 class MessageTranslator:
-    """Loads the message catalogs for a given locale and provides helper methods for message translation.
+    """Load the message catalogs for a given locale and provide helper methods for message translation.
     It uses plaintext messages with variables in `{var}` placeholders, e.g. in `"Hello {name}"`, `name` is a variable.
     
     Essentially, it is a wrapper for the combination of 
@@ -102,7 +102,7 @@ class MessageTranslator:
             ) from error
 
     def trans(self, message_id, default=None, context=None, parameters={}, tags={}):
-        """Finds the message corresponding to the given ID in the catalog and formats it according to the given parameters.
+        """Find the message corresponding to the given ID in the catalog and format it according to the given parameters.
         If the message is either not found or empty and a non-empty `default` is provided, the `default` is used instead.
         Otherwise, the `message_id` is used instead.
         
@@ -133,7 +133,7 @@ class MessageTranslator:
         )
 
     def _replace_tags(self, target_message, tags):
-        """Replaces non-nested tag names and attributes of the `target_message` with the corresponding ones in `tags`
+        """Replace non-nested tag names and attributes of the `target_message` with the corresponding ones in `tags`
         
         `tags` must be a dict that maps each placeholder in `target_message` to its original tag and attrs,
         e.g. a message like `"Click <a0>here</a0>"` expects tags like `{'a0': {'tag': 'a', 'attrs': {'href': 'http://example.com/pages/1'}}}`
@@ -141,7 +141,9 @@ class MessageTranslator:
         return restore_tags(target_message, tag_mapping=tags)
 
     def _format_message(self, message, parameters={}):
-        """Formats the given message according to the given parameters.
+        """Substitute parameters into ICU-style message.
+        At this point, ICU is not actually supported (i.e. you can have no plurals, secects, etc).
+        Only variable substitution is supported.
         
         The parameters must be a dict
         """
@@ -158,7 +160,7 @@ class MessageTranslator:
             raise InvalidICUParameters("The given parameters are not a dict") from error
 
     def get_message(self, message_id, context=None):
-        """Finds the message corresponding to the given ID in the catalog.
+        """Find the message corresponding to the given ID in the catalog.
         
         If the message is not found, `None` is returned.
         """
