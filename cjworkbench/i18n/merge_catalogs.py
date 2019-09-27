@@ -12,9 +12,9 @@ def _merge_catalog(locale, source_catalog, default={}):
         catalog = read_po(target_catalog_file)
     for message in source_catalog:
         if message.id:  # ignore header
-            catalog.__setitem__(message.id, message)
             if default and message.id in default:
-                catalog[message.id].string = default[message.id]
+                message.string = default[message.id]
+            catalog[message.id] = message
     with open(target_catalog_path, "wb") as target_catalog_file:
         write_po(target_catalog_file, catalog)
 
