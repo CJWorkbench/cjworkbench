@@ -6,6 +6,7 @@
   "description" : "Scrape and load a table from a webpage and get updates if it changes.",
   "loads_data": true,
   "help_url":"modules/scrape/scrape-table",
+  "parameters_version": 0,
   "parameters": [
     {
       "name": "",

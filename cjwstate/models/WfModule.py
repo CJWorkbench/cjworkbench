@@ -7,7 +7,6 @@ from django.db.models import Q
 from cjwkernel.pandas import types as ptypes
 from cjwkernel.types import I18nMessage, RenderError, TableMetadata
 from cjwstate import minio
-from cjwstate.models.loaded_module import LoadedModule
 from .fields import ColumnsField, RenderErrorsField
 from .CachedRenderResult import CachedRenderResult
 from .module_version import ModuleVersion
@@ -128,6 +127,9 @@ class WfModule(models.Model):
     )
     """
     Module-version .source_version_hash that generated cached_migrated_params.
+
+    For internal modules (which don't have .source_version_hashes), this is
+    `module_version.param_schema_version`.
     """
 
     cached_render_result_delta_id = models.IntegerField(null=True, blank=True)

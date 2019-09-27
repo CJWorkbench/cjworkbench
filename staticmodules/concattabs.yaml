@@ -7,6 +7,7 @@
   "description": "Append rows from other tabs to this tab.",
   "loads_data": true,
   "uses_data": true,
+  "parameters_version": 1,
   "parameters": [
     {
       "id_name": "tabs",

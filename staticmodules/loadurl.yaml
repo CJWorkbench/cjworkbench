@@ -6,6 +6,7 @@
   "description" : "Connect a dataset, JSON feed or API via its public URL, and get updates when new data is available.",
   "loads_data": true,
   "help_url":"modules/add-data/add-from-url",
+  "parameters_version": 1,
   "parameters": [
     {
       "name": "",

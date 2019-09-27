@@ -5,6 +5,7 @@
   "icon" : "group",
   "description": "Group rows by date and time. Count rows and calculate the sum, average, max and min values in each group.",
   "help_url":"modules/analyze/count-by-date",
+  "parameters_version": 1,
   "parameters": [
     {
       "name": "",

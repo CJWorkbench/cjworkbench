@@ -28,7 +28,7 @@ def get_migrated_params(wf_module: WfModule) -> Dict[str, Any]:
         stale = True
     elif (
         # works if cached version (and thus cached _result_) is None
-        module_version.source_version_hash
+        module_version.param_schema_version
         != wf_module.cached_migrated_params_module_version
     ):
         stale = True
@@ -44,12 +44,15 @@ def get_migrated_params(wf_module: WfModule) -> Dict[str, Any]:
             params = loaded_module.migrate_params(params)  # raises ModuleError
             wf_module.cached_migrated_params = params
             wf_module.cached_migrated_params_module_version = (
-                module_version.source_version_hash
+                module_version.param_schema_version
             )
-            # Write to DB, even if the WfModule was deleted in a race
+            # Write to DB, like wf_module.save(fields=[...]), even if the
+            # WfModule was deleted in a race
             WfModule.objects.filter(id=wf_module.id).update(
                 cached_migrated_params=wf_module.cached_migrated_params,
-                cached_migrated_params_module_version=wf_module.cached_migrated_params_module_version,
+                cached_migrated_params_module_version=(
+                    wf_module.cached_migrated_params_module_version
+                ),
             )
             return params
         else:

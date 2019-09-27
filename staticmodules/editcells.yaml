@@ -18,6 +18,7 @@
       }
     }
   },
+  "parameters_version": 1,
   "parameters": [
     {
       "name": "Cell Editor",

@@ -23,6 +23,7 @@
     },
     "keep_top": { "type": "string" }
   },
+  "parameters_version": 2,
   "parameters": [
     {
       "id_name": "sort_columns",

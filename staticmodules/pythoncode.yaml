@@ -9,6 +9,7 @@
   "loads_data": true,
   "uses_data": true,
   "help_url":"modules/code/python-editor",
+  "parameters_version": 0,
   "parameters": [
     {
       "name": "Code",

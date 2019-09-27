@@ -4,6 +4,7 @@ category: Analyze
 icon: sigma
 description: 'Run Excel or Python formula between columns and store result in a new column.'
 help_url: steps/excel-formulas
+parameters_version: 1
 parameters:
 - name: ''
   id_name: syntax

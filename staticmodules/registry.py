@@ -54,6 +54,9 @@ SpecPaths = list(pathlib.Path(__file__).parent.glob("*.json")) + list(
 )
 for spec_path in SpecPaths:
     spec = ModuleSpec.load_from_path(spec_path)
+    assert (
+        "parameters_version" in spec.data
+    ), "Internal modules require a 'parameters_version'"
     id_name = spec_path.stem
     compiled_module = kernel.compile(spec_path.with_suffix(".py"), id_name)
     Lookup[id_name] = compiled_module

@@ -5,6 +5,7 @@
   "icon" : "columns",
   "description" : "Select or delete columns from the table.",
   "help_url":"modules/clean/select-columns",
+  "parameters_version": 1,
   "parameters": [
     {
       "name": "",

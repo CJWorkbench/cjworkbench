@@ -6,6 +6,7 @@
   "description" : "Load CSV, Google Sheets and Excel files directly from your account and get updates when new data is available.",
   "help_url":"modules/add-data/google-drive",
   "loads_data": true,
+  "parameters_version": 1,
   "parameters": [
     {
       "id_name": "google_credentials",

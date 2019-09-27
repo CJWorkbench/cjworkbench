@@ -216,6 +216,20 @@ class ModuleVersion(models.Model):
     def default_params(self):
         return self.param_schema.coerce(None)
 
+    @property
+    def param_schema_version(self):
+        """
+        Version of param_schema. Changes whenever param_schema changes.
+
+        This is used in caching: if params were cached under
+        param_schema_version=v1 and now the module has param_schema_version=v2,
+        then we must call the module's migrate_params() on the params.
+        """
+        if self.source_version_hash == "internal":
+            return "v%d" % self.spec["parameters_version"]
+        else:
+            return self.source_version_hash
+
     def __str__(self):
         return "%s#%s" % (self.id_name, self.source_version_hash)
 

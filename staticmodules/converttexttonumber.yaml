@@ -4,6 +4,7 @@ category: Clean
 icon: number
 help_url: steps/clean/convert-to-numbers
 description: Convert text to numbers.
+parameters_version: 2
 parameters:
 - id_name: colnames
   type: multicolumn
