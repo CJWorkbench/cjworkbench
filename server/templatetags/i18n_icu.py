@@ -12,7 +12,7 @@ trans_param_re = re.compile(r"arg_(?P<arg>\w+)", re.ASCII)
 
 
 @register.simple_tag(takes_context=True)
-def trans(
+def trans_html(
     context,
     message_id,
     default=None,

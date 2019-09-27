@@ -106,33 +106,33 @@ class MessageTranslator:
         If the message is either not found or empty and a non-empty `default` is provided, the `default` is used instead.
         Otherwise, the `message_id` is used instead.
         
-        See `self.format_message` for acceptable types of the parameters argument.
+        See `self._format_message` for acceptable types of the parameters argument.
         
         In case a message from the catalogs is used, if the message contains illegal (i.e. numeric) variables, 
         they are handled so as to not raise an exception; at this point, the default message is used instead, but you should not rely on this behaviour
         
         HTML-like tags in the message used are replaced by their counterpart in `tags`, as specified in `restore_tags`
         """
-        return self.process_message(
+        return self._process_message(
             self.get_message(message_id, context=context),
             default or message_id,
             parameters,
             tags,
         )
 
-    def process_message(self, message, plain, parameters={}, tags={}):
+    def _process_message(self, message, fallback, parameters={}, tags={}):
         if message:
             try:
-                return self.format_message(
-                    self.replace_tags(message, tags), parameters=parameters
+                return self._format_message(
+                    self._replace_tags(message, tags), parameters=parameters
                 )
             except Exception:
                 pass
-        return self.format_message(
-            self.replace_tags(plain, tags), parameters=parameters
+        return self._format_message(
+            self._replace_tags(fallback, tags), parameters=parameters
         )
 
-    def replace_tags(self, target_message, tags):
+    def _replace_tags(self, target_message, tags):
         """Replaces non-nested tag names and attributes of the `target_message` with the corresponding ones in `tags`
         
         `tags` must be a dict that maps each placeholder in `target_message` to its original tag and attrs,
@@ -140,7 +140,7 @@ class MessageTranslator:
         """
         return restore_tags(target_message, tag_mapping=tags)
 
-    def format_message(self, message, parameters={}):
+    def _format_message(self, message, parameters={}):
         """Formats the given message according to the given parameters.
         
         The parameters must be a dict

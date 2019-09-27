@@ -24,7 +24,7 @@ class TransTest(SimpleTestCase):
         """Tests that a translator can't break our system by including a numeric variable in the message
         """
         self.assertEqual(
-            MessageTranslator(default_locale).process_message(
+            MessageTranslator(default_locale)._process_message(
                 "Hello {a} {0} {b}", "Hello {a} {b}", parameters={"a": "you", "b": "!"}
             ),
             "Hello you !",

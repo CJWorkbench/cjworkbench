@@ -17,7 +17,7 @@ def _merge_catalog(locale, source_catalog, default={}):
     write_po(open(target_catalog_path, "wb"), catalog)
 
 
-def do():
+def main():
     source_catalog_path = catalog_path(default_locale, "messages.pot")
     source_catalog = read_po(open(source_catalog_path))
     default_messages = {}
@@ -35,4 +35,4 @@ def do():
 
 
 if __name__ == "__main__":
-    do()
+    main()

@@ -1,5 +1,5 @@
 from django.test import SimpleTestCase
-from server.templatetags.i18n_icu import trans
+from server.templatetags.i18n_icu import trans_html
 from cjworkbench.i18n import default_locale
 from cjworkbench.tests.i18n import mock_message_id
 
@@ -17,13 +17,15 @@ class TransTemplateTagTests(SimpleTestCase):
     def test_trans_no_default(self):
         """Tests that when no default is given, the message id is returned
         """
-        self.assertEqual(trans(mock_context(), mock_message_id), mock_message_id)
+        self.assertEqual(trans_html(mock_context(), mock_message_id), mock_message_id)
 
     def test_trans_noop(self):
         """Tests that `noop=True` returns `None`
         """
         self.assertIsNone(
-            trans(mock_context(), mock_message_id, noop=True, default="Hello {a} {b}!")
+            trans_html(
+                mock_context(), mock_message_id, noop=True, default="Hello {a} {b}!"
+            )
         )
 
     def test_trans_params(self):
@@ -35,7 +37,7 @@ class TransTemplateTagTests(SimpleTestCase):
            (behaviour for when the translator tries to use numeric arguments is tested elsewhere)
         """
         self.assertEqual(
-            trans(
+            trans_html(
                 mock_context(),
                 mock_message_id,
                 default="Hello {a} {param_b} {c}!",
@@ -46,7 +48,7 @@ class TransTemplateTagTests(SimpleTestCase):
         )
 
         with self.assertRaises(Exception):
-            trans(
+            trans_html(
                 mock_context(),
                 mock_message_id,
                 default="Hello {a} {0} {b}",
@@ -66,7 +68,7 @@ class TransTemplateTagTests(SimpleTestCase):
         Does not test what happens to nested tags, since we have no hard policy
         """
         self.assertEqual(
-            trans(
+            trans_html(
                 mock_context(),
                 mock_message_id,
                 default='<span0>Hello</span0><span1></span1> <a0>{a}<b></b></a0> < <a1>there<</a1>!<br /><script type="text/javascript" src="mybadscript.js"></script>',
@@ -86,7 +88,7 @@ class TransTemplateTagTests(SimpleTestCase):
         This may change in the future.
         """
         self.assertEqual(
-            trans(
+            trans_html(
                 mock_context(),
                 mock_message_id,
                 default="<a0>Hello<b0>you</b0><div>there</div></a0>",
