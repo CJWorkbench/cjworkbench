@@ -64,6 +64,7 @@ class TransTemplateTagTests(SimpleTestCase):
         2) Tags or placeholders that have no counterpart in the arguments are removed
         3) The order of `tag` arguments is not important
         4) Special characters, except for the ones of valid tags, are escaped
+        5) In settings where there are multiple tags, some of which have to be deleted, all of them are processed
         
         Does not test what happens to nested tags, since we have no hard policy
         """
@@ -97,4 +98,47 @@ class TransTemplateTagTests(SimpleTestCase):
                 tag_b0_id="hi",
             ),
             '<a href="/you">Helloyouthere</a>',
+        )
+
+    def test_trans_params_in_tags(self):
+        """ Tests that parameters are substituted within tags
+        """
+        self.assertEqual(
+            trans_html(
+                mock_context(),
+                mock_message_id,
+                default="<a0>Hello {name}</a0>{test}",
+                arg_name="you",
+                arg_test="!",
+                tag_a0_href="/you",
+            ),
+            '<a href="/you">Hello you</a>!',
+        )
+
+    def test_trans_escapes_params(self):
+        """ Tests that message parameters are escaped
+        """
+        self.assertEqual(
+            trans_html(
+                mock_context(),
+                mock_message_id,
+                default="<a0>Hello {name}</a0>{test}",
+                arg_name="<b>you</b>",
+                arg_test="<b>there</b>",
+                tag_a0_href="/you",
+            ),
+            '<a href="/you">Hello &lt;b&gt;you&lt;/b&gt;</a>&lt;b&gt;there&lt;/b&gt;',
+        )
+
+    def test_trans_escapes_tag_attrs(self):
+        """ Tests that tag attributes in messages are escaped
+        """
+        self.assertEqual(
+            trans_html(
+                mock_context(),
+                mock_message_id,
+                default="<a0>Hello</a0>",
+                tag_a0_href="/you?a=b&c=d",
+            ),
+            '<a href="/you?a=b&amp;c=d">Hello</a>',
         )

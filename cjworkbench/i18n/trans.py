@@ -151,7 +151,17 @@ class MessageTranslator:
             return message
         if isinstance(parameters, dict):
             try:
-                return formatter.format(message, **parameters)
+                return formatter.format(
+                    message,
+                    **{
+                        key: (
+                            escape(parameters[key])
+                            if isinstance(parameters[key], str)
+                            else parameters[key]
+                        )
+                        for key in parameters
+                    },
+                )
             except Exception as error:
                 raise InvalidICUParameters(
                     "The given parameters are invalid for the given message"
