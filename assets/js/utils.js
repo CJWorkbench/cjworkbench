@@ -1,6 +1,7 @@
 // ---- Utilities ---
 import * as Cookies from 'js-cookie'
 import { fromByteArray as base64Encode } from 'base64-js'
+import i18n from './i18n/i18n.js'
 
 export function goToUrl (url) {
   window.location.href = url
@@ -41,17 +42,18 @@ export function timeDifference (start, end) {
   const years = Math.floor(days / 365.25)
 
   if (years > 0) {
-    return years + 'y ago'
+    return i18n._('time_diff.ago.years', {nYears: years}, {defaults: '{nYears}y ago'})
   } else if (days > 0) {
-    return days + 'd ago'
+    return i18n._('time_diff.ago.days', {nDays: days}, {defaults: '{nDays}d ago'})
   } else if (hours > 0) {
+    return i18n._('time_diff.ago.hours', {nHours: hours}, {defaults: '{nHours}h ago'})
     return hours + 'h ago'
   } else if (minutes > 0) {
-    return minutes + 'm ago'
+    return i18n._('time_diff.ago.minutes', {nMinutes: minutes}, {defaults: '{nMinutes}m ago'})
   } else if (seconds > 0) {
-    return seconds + 's ago'
+    return i18n._('time_diff.ago.seconds', {nSeconds: seconds}, {defaults: '{nSeconds}s ago'})
   } else {
-    return 'just now'
+    return i18n._('time_diff.now', undefined, {defaults: 'just now'})
   }
 }
 
