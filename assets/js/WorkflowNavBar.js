@@ -53,7 +53,9 @@ function OwnedWorkflowTitleAndMetadata ({ isReadOnly, workflow }) {
           </li>
         ) : null}
         <li>
-          Updated {timeDifference(workflow.last_update, new Date())}
+          <Trans id='workflow.last_updated' description="The parameter will contain something like '4h ago'">
+            Updated {timeDifference(workflow.last_update, new Date())}
+          </Trans>
         </li>
         {(!isReadOnly && !workflow.is_anonymous) ? (
           <li>
