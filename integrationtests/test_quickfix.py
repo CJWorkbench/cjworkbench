@@ -85,7 +85,7 @@ class TestQuickFix(LoggedInIntegrationTest):
         # Wait for module to appear
         b.assert_element(".module-name", text="Convert to numbers", wait=True)
         # The conversion won't work until we check an option.
-        b.check("Extract number")
+        b.check("Find numbers in text")
         self.submit_wf_module()
 
         # Now, the "Format numbers" module will have the correct output.
