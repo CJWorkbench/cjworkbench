@@ -1,7 +1,8 @@
 import React from 'react'
 import { escapeHtml, timeDifference } from './utils'
+import { withI18n } from '@lingui/react'
 
-export default class Embed extends React.Component {
+export default withI18n()(class Embed extends React.Component {
   state = {
     overlayOpen: false
   }
@@ -64,7 +65,7 @@ export default class Embed extends React.Component {
                   </li>
                   <li>
                     <a href={'/workflows/' + this.props.workflow.id} target='_blank' rel='noopener noreferrer'>
-                    Updated {timeDifference(this.props.workflow.last_update, new Date())}
+                    Updated {timeDifference(this.props.workflow.last_update, new Date(), this.props.i18n)}
                     </a>
                   </li>
                 </ul>
@@ -89,4 +90,4 @@ export default class Embed extends React.Component {
       </div>
     )
   }
-}
+})

@@ -4,9 +4,16 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { timeDifference } from '../utils'
+import { withI18n } from '@lingui/react'
+import { supportedLocaleIds } from './locales'
 
-export default class WorkflowMetadata extends React.Component {
+export default withI18n()(class WorkflowMetadata extends React.Component {
   static propTypes = {
+    i18n: PropTypes.shape({
+        // i18n object injected by LinguiJS withI18n()
+        language: PropTypes.oneOf(supportedLocaleIds),
+        _: PropTypes.func.isRequired
+    }),
     workflow: PropTypes.object.isRequired,
     openShareModal: PropTypes.func.isRequired, // func(workflowId) => undefined
     test_now: PropTypes.object // optional injection for testing, avoid time zone issues for Last Update time
@@ -47,10 +54,10 @@ export default class WorkflowMetadata extends React.Component {
       <ul className='metadata-container'>
         {attribution}
         <li>
-          Updated {timeDifference(this.props.workflow.last_update, now)}
+          Updated {timeDifference(this.props.workflow.last_update, now, this.props.i18n)}
         </li>
         {modalLink}
       </ul>
     )
   }
-}
+})

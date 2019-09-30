@@ -33,7 +33,7 @@ export function logUserEvent (name, metadata) {
   window.Intercom('trackEvent', name, metadata)
 }
 
-export function timeDifference (start, end) {
+export function timeDifference (start, end, i18n) {
   const ms = new Date(end) - new Date(start)
   const seconds = Math.floor(ms / 1000)
   const minutes = Math.floor(seconds / 60)

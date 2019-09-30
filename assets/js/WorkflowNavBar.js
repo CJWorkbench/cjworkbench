@@ -6,6 +6,8 @@ import ConnectedEditableWorkflowName, { EditableWorkflowName } from './EditableW
 import { goToUrl, timeDifference } from './utils'
 import ShareButton from './ShareModal/ShareButton'
 import { Trans } from '@lingui/macro'
+import { withI18n } from '@lingui/react'
+import { supportedLocaleIds } from './locales'
 
 function NoOp () {}
 
@@ -41,7 +43,7 @@ function LessonWorkflowTitle ({ lesson }) {
   )
 }
 
-function OwnedWorkflowTitleAndMetadata ({ isReadOnly, workflow }) {
+function OwnedWorkflowTitleAndMetadata ({ i18n, isReadOnly, workflow }) {
   return (
     <div className='title-metadata-stack'>
       <ConnectedEditableWorkflowName isReadOnly={isReadOnly} />
@@ -54,7 +56,7 @@ function OwnedWorkflowTitleAndMetadata ({ isReadOnly, workflow }) {
         ) : null}
         <li>
           <Trans id='workflow.last_updated' description="The parameter will contain something like '4h ago'">
-            Updated {timeDifference(workflow.last_update, new Date())}
+            Updated {timeDifference(workflow.last_update, new Date(), i18n)}
           </Trans>
         </li>
         {(!isReadOnly && !workflow.is_anonymous) ? (
@@ -79,10 +81,12 @@ function WorkflowTitleAndMetadata ({ lesson, isReadOnly, workflow }) {
     )
   } else {
     return (
-      <OwnedWorkflowTitleAndMetadata
-        isReadOnly={isReadOnly}
-        workflow={workflow}
-      />
+      withI18n()(
+          <OwnedWorkflowTitleAndMetadata
+            isReadOnly={isReadOnly}
+            workflow={workflow}
+          />
+      )
     )
   }
 }
