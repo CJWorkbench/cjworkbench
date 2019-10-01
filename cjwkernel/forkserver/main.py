@@ -58,33 +58,48 @@ def spawn_module(
             os.close(sys.stdout.fileno())  # disallow flooding our logs
             os.close(sys.stderr.fileno())  # disallow flooding our logs
 
+            # Rewrite sys.stdout+sys.stderr to write to log_fd
+            #
+            # We're writing in text mode so we're forced to buffer output. But
+            # we don't want buffering: if we crash, we want whatever we write
+            # to be visible to the reader at the other end, even if we crash.
+            # Set buffering=1, meaning "line buffering". This is what
+            # interactive Python uses for stdout+stderr.
+            sys.stdout = os.fdopen(message.log_fd, "wt", encoding="utf-8", buffering=1)
+            sys.stderr = sys.stdout
+            sys.__stdout__ = sys.stdout
+            sys.__stderr__ = sys.stderr
+
             # Aid in debugging a bit
             name = "cjwkernel-module:%s" % message.compiled_module.module_slug
             libc.prctl(PR_SET_NAME, name.encode("utf-8"), 0, 0, 0)
 
             # Run the module code. This is what it's all about!
-            try:
-                cjwkernel.pandas.main.main(
-                    message.compiled_module,
-                    message.output_fd,
-                    message.log_fd,
-                    message.function,
-                    *message.args,
-                )
-            finally:
-                # SECURITY: the module code may have rewritten our stack, our
-                # code ... anything. We _want_ to os._exit(0) so as to close
-                # the file descriptors "parent" is reading and then let
-                # "parent" reap us. But there are no guarantees. A malicious
-                # process could find a way to jump somewhere else instead of
-                # exiting.
-                #
-                # That's okay: we closed all the interesting file descriptors;
-                # we sandboxed the process; and "parent" has a timer running
-                # that will kill the "module" process.
-                #
-                # But in the _common_ case ... exit here.
-                os._exit(0)
+            #
+            # If the module raises an exception, that's okay -- the
+            # forkserver_main() loop won't catch them so they'll crash this
+            # "module" process and log output to "log_fd" -- exactly what we
+            # want.
+            cjwkernel.pandas.main.main(
+                message.compiled_module,
+                message.output_fd,
+                message.function,
+                *message.args,
+            )
+
+            # SECURITY: the module code may have rewritten our stack, our
+            # code ... anything. We _want_ to os._exit(0) so as to close
+            # the file descriptors "parent" is reading and then let
+            # "parent" reap us. But there are no guarantees. A malicious
+            # process could find a way to jump somewhere else instead of
+            # exiting.
+            #
+            # That's okay: we closed all the interesting file descriptors;
+            # we sandboxed the process; and "parent" has a timer running
+            # that will kill the "module" process.
+            #
+            # But in the _common_ case ... exit here.
+            os._exit(0)
         else:
             # "spawner"
             # Send "module_pid" to "forkserver". We can't send it to "parent"

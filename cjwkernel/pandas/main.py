@@ -10,21 +10,11 @@ import cjwkernel.pandas.module
 
 
 def main(
-    compiled_module: CompiledModule,
-    output_fileno: int,
-    log_fileno: int,
-    function: str,
-    *args,
+    compiled_module: CompiledModule, output_fileno: int, function: str, *args
 ) -> None:
     """
     Run `function` with `args`, and write the (Thrift) result to `output_fileno`.
     """
-    # We're writing in text mode so we're forced to buffer output. But we don't
-    # want buffering: if we crash, we want whatever was written to be visible
-    # to the reader at the other end. So set buffering=1, meaning "line
-    # buffering". This is what interactive Python uses for stdout+stderr.
-    sys.stdout = os.fdopen(log_fileno, "wt", encoding="utf-8", buffering=1)
-    sys.stderr = sys.stdout
 
     assert function in (
         "render_thrift",
@@ -42,8 +32,6 @@ def run_in_sandbox(
     """
     Run `function` with `args`, and write the (Thrift) result to `output_fileno`.
     """
-    sys.__stdout__ = None
-    sys.__stderr__ = None
     # TODO sandbox -- will need an OS `clone()` with namespace, cgroups, ....
 
     # Run the user's code in a new (programmatic) module.
