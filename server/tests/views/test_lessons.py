@@ -34,7 +34,7 @@ def create_module_version(id_name: str, parameters: List[Dict[str, Any]], **kwar
     )
 
 
-@patch.object(LoadedModule, "for_module_version_sync", lambda x: MockLoadedModule())
+@patch.object(LoadedModule, "for_module_version", lambda x: MockLoadedModule())
 @patch("server.utils.log_user_event_from_request", lambda *a: None)
 class LessonDetailTests(DbTestCase):
     def log_in(self):

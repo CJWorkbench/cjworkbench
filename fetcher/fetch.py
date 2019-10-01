@@ -196,7 +196,7 @@ def fetch_or_wrap_error(
 
     # module_version=None is allowed
     try:
-        loaded_module = LoadedModule.for_module_version_sync(module_version)
+        loaded_module = LoadedModule.for_module_version(module_version)
     except FileNotFoundError:
         logger.exception("Module %s code disappeared", module_version.id_name)
         return user_visible_bug_fetch_result(output_path, "FileNotFoundError")

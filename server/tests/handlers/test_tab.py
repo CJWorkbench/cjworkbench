@@ -31,7 +31,7 @@ class MockLoadedModule:
 
 class TabTest(HandlerTestCase):
     @patch(
-        "cjwstate.modules.loaded_module.LoadedModule.for_module_version_sync",
+        "cjwstate.modules.loaded_module.LoadedModule.for_module_version",
         MockLoadedModule,
     )
     @patch("server.websockets.ws_client_send_delta_async", async_noop)

@@ -42,7 +42,7 @@ class LoadedModuleTest(unittest.TestCase):
 
     def test_load_static(self):
         # Test with a _real_ static module
-        lm = LoadedModule.for_module_version_sync(
+        lm = LoadedModule.for_module_version(
             MockModuleVersion("pastecsv", "internal", ParamDType.Dict({}), "now")
         )
         self.assertEqual(lm.name, "pastecsv:internal")
@@ -57,7 +57,7 @@ class LoadedModuleTest(unittest.TestCase):
         )
 
         with self.assertLogs("cjwstate.modules.loaded_module"):
-            lm = LoadedModule.for_module_version_sync(
+            lm = LoadedModule.for_module_version(
                 MockModuleVersion("imported", "abcdef", ParamDType.Dict({}), "now")
             )
 
@@ -107,7 +107,7 @@ class LoadedModuleTest(unittest.TestCase):
         )
 
         with self.assertLogs("cjwstate.modules.loaded_module"):
-            LoadedModule.for_module_version_sync(
+            LoadedModule.for_module_version(
                 MockModuleVersion("imported", "abcdef", ParamDType.Dict({}), "now")
             )
 
@@ -124,19 +124,19 @@ class LoadedModuleTest(unittest.TestCase):
         )
 
         with self.assertLogs("cjwstate.modules.loaded_module"):
-            lm = LoadedModule.for_module_version_sync(
+            lm = LoadedModule.for_module_version(
                 MockModuleVersion("imported", "abcdef", ParamDType.Dict({}), "now")
             )
 
         with patch("importlib.util.module_from_spec", None):
-            lm2 = LoadedModule.for_module_version_sync(
+            lm2 = LoadedModule.for_module_version(
                 MockModuleVersion("imported", "abcdef", ParamDType.Dict({}), "now")
             )
 
         self.assertIs(lm.compiled_module, lm2.compiled_module)
 
     def test_load_dynamic_from_none(self):
-        result = LoadedModule.for_module_version_sync(None)
+        result = LoadedModule.for_module_version(None)
         self.assertIsNone(result)
 
     def test_migrate_params_retval_does_not_match_schema(self):
@@ -151,7 +151,7 @@ class LoadedModuleTest(unittest.TestCase):
             ContentLength=len(code),
         )
         with self.assertLogs("cjwstate.modules.loaded_module"):
-            lm = LoadedModule.for_module_version_sync(
+            lm = LoadedModule.for_module_version(
                 MockModuleVersion(
                     "imported",
                     "abcdef",
@@ -174,7 +174,7 @@ class LoadedModuleTest(unittest.TestCase):
             ContentLength=len(code),
         )
         with self.assertLogs("cjwstate.modules.loaded_module"):
-            lm = LoadedModule.for_module_version_sync(
+            lm = LoadedModule.for_module_version(
                 MockModuleVersion(
                     "imported",
                     "abcdef",

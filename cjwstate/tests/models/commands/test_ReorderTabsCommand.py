@@ -73,7 +73,7 @@ class ReorderTabsCommandTest(DbTestCase):
 
     @patch("server.websockets.ws_client_send_delta_async", async_noop)
     @patch("server.rabbitmq.queue_render", async_noop)
-    @patch.object(LoadedModule, "for_module_version_sync", MockLoadedModule)
+    @patch.object(LoadedModule, "for_module_version", MockLoadedModule)
     def test_change_dependent_wf_modules(self):
         # tab slug: tab-1
         workflow = Workflow.create_and_init(selected_tab_position=2)

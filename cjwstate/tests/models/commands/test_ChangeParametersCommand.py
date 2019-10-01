@@ -21,7 +21,7 @@ class MockLoadedModule:
 @patch("server.rabbitmq.queue_render", async_noop)
 @patch("cjwstate.models.Delta.ws_notify", async_noop)
 class ChangeParametersCommandTest(DbTestCase):
-    @patch.object(LoadedModule, "for_module_version_sync", MockLoadedModule)
+    @patch.object(LoadedModule, "for_module_version", MockLoadedModule)
     def test_change_parameters(self):
         # Setup: workflow with loadurl module
         #
@@ -174,7 +174,7 @@ class ChangeParametersCommandTest(DbTestCase):
         )
         self.assertIsNone(cmd)
 
-    @patch.object(LoadedModule, "for_module_version_sync")
+    @patch.object(LoadedModule, "for_module_version")
     def test_change_parameters_across_module_versions(self, load_module):
         workflow = Workflow.create_and_init()
 
@@ -238,7 +238,7 @@ class ChangeParametersCommandTest(DbTestCase):
             wf_module.params, {"version": "v1", "x": 1}  # exactly what we had before
         )
 
-    @patch.object(LoadedModule, "for_module_version_sync")
+    @patch.object(LoadedModule, "for_module_version")
     def test_change_parameters_deny_invalid_params(self, load_module):
         workflow = Workflow.create_and_init()
         wf_module = workflow.tabs.first().wf_modules.create(
@@ -270,7 +270,7 @@ class ChangeParametersCommandTest(DbTestCase):
                 )
             )
 
-    @patch.object(LoadedModule, "for_module_version_sync", MockLoadedModule)
+    @patch.object(LoadedModule, "for_module_version", MockLoadedModule)
     def test_change_parameters_update_tab_delta_ids(self):
         workflow = Workflow.create_and_init()
         # tab1's wfm1 depends on tab2's wfm2

@@ -199,7 +199,7 @@ class FetchTests(unittest.TestCase):
         self.assertEqual(self.output_path.stat().st_size, 0)
         self.assertEqual(result, self._err("Cannot fetch: module was deleted"))
 
-    @patch.object(LoadedModule, "for_module_version_sync")
+    @patch.object(LoadedModule, "for_module_version")
     def test_load_module_missing(self, load_module):
         load_module.side_effect = FileNotFoundError
         with self.assertLogs(level=logging.INFO):
@@ -214,7 +214,7 @@ class FetchTests(unittest.TestCase):
         self.assertEqual(self.output_path.stat().st_size, 0)
         self.assertEqual(result, self._bug_err("FileNotFoundError"))
 
-    @patch.object(LoadedModule, "for_module_version_sync")
+    @patch.object(LoadedModule, "for_module_version")
     def test_load_module_compile_error(self, load_module):
         load_module.side_effect = ModuleExitedError(1, "log")
         with self.assertLogs(level=logging.ERROR):
@@ -229,7 +229,7 @@ class FetchTests(unittest.TestCase):
         self.assertEqual(self.output_path.stat().st_size, 0)
         self.assertEqual(result, self._bug_err("exit code 1: log (during load)"))
 
-    @patch.object(LoadedModule, "for_module_version_sync")
+    @patch.object(LoadedModule, "for_module_version")
     def test_simple(self, load_module):
         load_module.return_value.migrate_params.return_value = {"A": "B"}
         load_module.return_value.fetch.return_value = FetchResult(self.output_path, [])
@@ -254,7 +254,7 @@ class FetchTests(unittest.TestCase):
             output_filename=self.output_path.name,
         )
 
-    @patch.object(LoadedModule, "for_module_version_sync")
+    @patch.object(LoadedModule, "for_module_version")
     @patch.object(fetchprep, "clean_value")
     @patch.object(rendercache, "downloaded_parquet_file")
     def test_input_crr(self, downloaded_parquet_file, clean_value, load_module):
@@ -282,7 +282,7 @@ class FetchTests(unittest.TestCase):
         clean_value.assert_called()
         self.assertEqual(clean_value.call_args[0][2], input_metadata)
 
-    @patch.object(LoadedModule, "for_module_version_sync")
+    @patch.object(LoadedModule, "for_module_version")
     @patch.object(fetchprep, "clean_value", lambda *a: {})
     @patch.object(rendercache, "downloaded_parquet_file")
     def test_input_crr_corrupt_cache_error_is_none(
@@ -308,7 +308,7 @@ class FetchTests(unittest.TestCase):
             load_module.return_value.fetch.call_args[1]["input_parquet_filename"]
         )
 
-    @patch.object(LoadedModule, "for_module_version_sync")
+    @patch.object(LoadedModule, "for_module_version")
     @patch.object(fetchprep, "clean_value", lambda *a: {})
     @patch.object(storedobjects, "downloaded_file")
     def test_last_fetch_result(self, downloaded_file, load_module):
@@ -330,7 +330,7 @@ class FetchTests(unittest.TestCase):
             FetchResult(Path("/foo.bin"), []),
         )
 
-    @patch.object(LoadedModule, "for_module_version_sync")
+    @patch.object(LoadedModule, "for_module_version")
     @patch.object(fetchprep, "clean_value", lambda *a: {})
     @patch.object(storedobjects, "downloaded_file")
     def test_last_fetch_result_with_error(self, downloaded_file, load_module):
@@ -354,7 +354,7 @@ class FetchTests(unittest.TestCase):
             ),
         )
 
-    @patch.object(LoadedModule, "for_module_version_sync")
+    @patch.object(LoadedModule, "for_module_version")
     @patch.object(fetchprep, "clean_value", lambda *a: {})
     @patch.object(storedobjects, "downloaded_file")
     def test_last_fetch_result_file_not_found_is_none(
@@ -377,7 +377,7 @@ class FetchTests(unittest.TestCase):
             load_module.return_value.fetch.call_args[1]["last_fetch_result"]
         )
 
-    @patch.object(LoadedModule, "for_module_version_sync")
+    @patch.object(LoadedModule, "for_module_version")
     @patch.object(fetchprep, "clean_value", lambda *a: {})
     def test_fetch_module_error(self, load_module):
         load_module.return_value.migrate_params.return_value = {}

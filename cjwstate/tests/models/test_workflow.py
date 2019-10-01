@@ -130,7 +130,7 @@ class WorkflowTests(DbTestCase):
 
     @patch("server.rabbitmq.queue_render", async_noop)
     @patch("server.websockets.ws_client_send_delta_async", async_noop)
-    @patch.object(LoadedModule, "for_module_version_sync", MockLoadedModule)
+    @patch.object(LoadedModule, "for_module_version", MockLoadedModule)
     def test_delete_deltas_without_init_delta(self):
         workflow = Workflow.objects.create(name="A")
         tab = workflow.tabs.create(position=0)
@@ -158,7 +158,7 @@ class WorkflowTests(DbTestCase):
 
     @patch("server.rabbitmq.queue_render", async_noop)
     @patch("server.websockets.ws_client_send_delta_async", async_noop)
-    @patch.object(LoadedModule, "for_module_version_sync", MockLoadedModule)
+    @patch.object(LoadedModule, "for_module_version", MockLoadedModule)
     def test_delete_remove_leaked_stored_objects_and_uploaded_files(self):
         workflow = Workflow.create_and_init()
         # If the user deletes a workflow, all data associated with that
@@ -252,7 +252,7 @@ class SimpleDependencyGraphTests(unittest.TestCase):
 
 
 class DependencyGraphTests(DbTestCase):
-    @patch.object(LoadedModule, "for_module_version_sync", MockLoadedModule)
+    @patch.object(LoadedModule, "for_module_version", MockLoadedModule)
     def test_read_graph_happy_path(self):
         workflow = Workflow.objects.create()
         tab1 = workflow.tabs.create(position=0, slug="tab-1")

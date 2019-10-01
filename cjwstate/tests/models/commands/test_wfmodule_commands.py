@@ -56,7 +56,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
         self.delta = InitWorkflowCommand.create(self.workflow)
 
     # Add another module, then undo, redo
-    @patch.object(LoadedModule, "for_module_version_sync", MockLoadedModule)
+    @patch.object(LoadedModule, "for_module_version", MockLoadedModule)
     def test_add_module(self):
         existing_module = self.tab.wf_modules.create(
             order=0,
@@ -123,7 +123,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
         with self.assertRaises(WfModule.DoesNotExist):
             all_modules.get(pk=added_module.id)  # should be gone
 
-    @patch.object(LoadedModule, "for_module_version_sync", MockLoadedModule)
+    @patch.object(LoadedModule, "for_module_version", MockLoadedModule)
     def test_add_module_default_params(self):
         workflow = Workflow.create_and_init()
         module_version = ModuleVersion.create_or_replace_from_spec(
@@ -209,7 +209,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
 
     # Try inserting at various positions to make sure the renumbering works
     # right Then undo multiple times
-    @patch.object(LoadedModule, "for_module_version_sync", MockLoadedModule)
+    @patch.object(LoadedModule, "for_module_version", MockLoadedModule)
     def test_add_many_modules(self):
         existing_module = self.tab.wf_modules.create(
             order=0,
@@ -360,7 +360,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
 
         self.run_with_async_db(cmd.backward())  # don't crash
 
-    @patch.object(LoadedModule, "for_module_version_sync", MockLoadedModule)
+    @patch.object(LoadedModule, "for_module_version", MockLoadedModule)
     def test_undo_add_only_selected(self):
         """Undoing the only add sets selection to None."""
         cmd = self.run_with_async_db(
@@ -385,7 +385,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
     # ensure that adding a module, selecting it, then undo add, prevents
     # dangling selected_wf_module (basically the AddModule equivalent of
     # test_delete_selected)
-    @patch.object(LoadedModule, "for_module_version_sync", MockLoadedModule)
+    @patch.object(LoadedModule, "for_module_version", MockLoadedModule)
     def test_add_undo_selected(self):
         """Undoing an add sets selection."""
         self.tab.wf_modules.create(
@@ -418,7 +418,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
         self.tab.refresh_from_db()
         self.assertEqual(self.tab.selected_wf_module_position, 0)
 
-    @patch.object(LoadedModule, "for_module_version_sync", MockLoadedModule)
+    @patch.object(LoadedModule, "for_module_version", MockLoadedModule)
     def test_add_to_empty_tab_affects_dependent_tab_wf_modules(self):
         ModuleVersion.create_or_replace_from_spec(
             {
@@ -457,7 +457,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
 
     # We had a bug where add then delete caused an error when deleting
     # workflow, since both commands tried to delete the WfModule
-    @patch.object(LoadedModule, "for_module_version_sync", MockLoadedModule)
+    @patch.object(LoadedModule, "for_module_version", MockLoadedModule)
     def test_add_delete(self):
         cmda = self.run_with_async_db(
             AddModuleCommand.create(
@@ -475,7 +475,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
         self.workflow.delete()
         self.assertTrue(True)  # we didn't crash! Yay, we pass
 
-    @patch.object(LoadedModule, "for_module_version_sync", MockLoadedModule)
+    @patch.object(LoadedModule, "for_module_version", MockLoadedModule)
     def test_delete_if_workflow_delete_cascaded_to_wf_module_first(self):
         self.run_with_async_db(
             AddModuleCommand.create(
@@ -502,7 +502,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
         self.workflow.delete()
         self.assertTrue(True)  # we didn't crash! Yay, we pass
 
-    @patch.object(LoadedModule, "for_module_version_sync", MockLoadedModule)
+    @patch.object(LoadedModule, "for_module_version", MockLoadedModule)
     def test_delete_if_workflow_missing_init(self):
         self.workflow.last_delta_id = None
         self.workflow.save(update_fields=["last_delta_id"])

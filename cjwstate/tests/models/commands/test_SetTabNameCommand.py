@@ -42,7 +42,7 @@ class SetTabNameCommandTest(DbTestCase):
 
     @patch("server.websockets.ws_client_send_delta_async", async_noop)
     @patch("server.rabbitmq.queue_render", async_noop)
-    @patch.object(LoadedModule, "for_module_version_sync", MockLoadedModule)
+    @patch.object(LoadedModule, "for_module_version", MockLoadedModule)
     def test_change_last_relevant_delta_ids_of_dependent_wf_modules(self):
         workflow = Workflow.create_and_init()
         delta_id = workflow.last_delta_id
@@ -76,7 +76,7 @@ class SetTabNameCommandTest(DbTestCase):
 
     @patch("server.websockets.ws_client_send_delta_async", async_noop)
     @patch("server.rabbitmq.queue_render", async_noop)
-    @patch.object(LoadedModule, "for_module_version_sync", MockLoadedModule)
+    @patch.object(LoadedModule, "for_module_version", MockLoadedModule)
     def test_change_last_relevant_delta_ids_of_self_wf_modules(self):
         """
         Module render() accepts a `tab_name` argument: test it sees a new one.

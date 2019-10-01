@@ -167,7 +167,7 @@ def _execute_wfmodule_pre(
     # raises UnneededExecution
     with locked_wf_module(workflow, wf_module) as safe_wf_module:
         module_version = safe_wf_module.module_version
-        loaded_module = LoadedModule.for_module_version_sync(module_version)
+        loaded_module = LoadedModule.for_module_version(module_version)
         if loaded_module is None:
             # module was deleted. Skip other fetches.
             return (None, None, {})

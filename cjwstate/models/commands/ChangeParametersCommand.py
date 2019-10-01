@@ -82,7 +82,7 @@ class ChangeParametersCommand(ChangesWfModuleOutputs, Delta):
 
         # New values: store _migrated_ old_values, with new_values applied on
         # top
-        lm = loaded_module.LoadedModule.for_module_version_sync(module_version)
+        lm = loaded_module.LoadedModule.for_module_version(module_version)
         migrated_old_values = lm.migrate_params(old_values)
         new_values = {**migrated_old_values, **new_values}
 

@@ -41,7 +41,7 @@ class UndoRedoTests(DbTestCase):
     #    away commands 2,3
     # Command types used here are arbitrary, but different so that we test
     # polymorphism
-    @patch.object(LoadedModule, "for_module_version_sync", MockLoadedModule)
+    @patch.object(LoadedModule, "for_module_version", MockLoadedModule)
     def test_undo_redo(self):
         ModuleVersion.create_or_replace_from_spec(
             {

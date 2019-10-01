@@ -60,9 +60,7 @@ class WfModuleTests(DbTestCase):
         ModuleVersion.create_or_replace_from_spec(
             {"id_name": "x", "name": "X", "category": "Clean", "parameters": []}
         )
-        with patch.object(
-            LoadedModule, "for_module_version_sync", lambda *a: mock_module
-        ):
+        with patch.object(LoadedModule, "for_module_version", lambda *a: mock_module):
             yield
 
     @patch("server.websockets.ws_client_send_delta_async", noop)

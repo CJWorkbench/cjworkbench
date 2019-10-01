@@ -7,7 +7,7 @@ from cjwstate.tests.utils import DbTestCase
 
 
 class GetMigratedParamsTest(DbTestCase):
-    @patch.object(LoadedModule, "for_module_version_sync")
+    @patch.object(LoadedModule, "for_module_version")
     def test_get_cached(self, load_module):
         workflow = Workflow.create_and_init()
         wf_module = workflow.tabs.first().wf_modules.create(
@@ -30,7 +30,7 @@ class GetMigratedParamsTest(DbTestCase):
         self.assertEqual(get_migrated_params(wf_module), {"foo": "bar"})
         load_module.assert_not_called()
 
-    @patch.object(LoadedModule, "for_module_version_sync")
+    @patch.object(LoadedModule, "for_module_version")
     def test_internal_module_get_cached(self, load_module):
         workflow = Workflow.create_and_init()
         wf_module = workflow.tabs.first().wf_modules.create(
@@ -54,7 +54,7 @@ class GetMigratedParamsTest(DbTestCase):
         self.assertEqual(get_migrated_params(wf_module), {"foo": "bar"})
         load_module.assert_not_called()
 
-    @patch.object(LoadedModule, "for_module_version_sync")
+    @patch.object(LoadedModule, "for_module_version")
     def test_wrong_cache_version_calls_migrate_params(self, load_module):
         workflow = Workflow.create_and_init()
         wf_module = workflow.tabs.first().wf_modules.create(
@@ -85,7 +85,7 @@ class GetMigratedParamsTest(DbTestCase):
         self.assertEqual(wf_module.cached_migrated_params, {"foo": "baz"})
         self.assertEqual(wf_module.cached_migrated_params_module_version, "newversion")
 
-    @patch.object(LoadedModule, "for_module_version_sync")
+    @patch.object(LoadedModule, "for_module_version")
     def test_internal_wrong_cache_version_calls_migrate_params(self, load_module):
         workflow = Workflow.create_and_init()
         wf_module = workflow.tabs.first().wf_modules.create(
@@ -117,7 +117,7 @@ class GetMigratedParamsTest(DbTestCase):
         self.assertEqual(wf_module.cached_migrated_params, {"foo": "baz"})
         self.assertEqual(wf_module.cached_migrated_params_module_version, "v3")
 
-    @patch.object(LoadedModule, "for_module_version_sync")
+    @patch.object(LoadedModule, "for_module_version")
     def test_no_cache_version_calls_migrate_params(self, load_module):
         workflow = Workflow.create_and_init()
         wf_module = workflow.tabs.first().wf_modules.create(
@@ -148,7 +148,7 @@ class GetMigratedParamsTest(DbTestCase):
         self.assertEqual(wf_module.cached_migrated_params, {"foo": "baz"})
         self.assertEqual(wf_module.cached_migrated_params_module_version, "abc123")
 
-    @patch.object(LoadedModule, "for_module_version_sync")
+    @patch.object(LoadedModule, "for_module_version")
     def test_module_error_raises(self, load_module):
         workflow = Workflow.create_and_init()
         wf_module = workflow.tabs.first().wf_modules.create(
@@ -175,7 +175,7 @@ class GetMigratedParamsTest(DbTestCase):
         self.assertIsNone(wf_module.cached_migrated_params)
         self.assertIsNone(wf_module.cached_migrated_params_module_version)
 
-    @patch.object(LoadedModule, "for_module_version_sync")
+    @patch.object(LoadedModule, "for_module_version")
     def test_no_validate_after_migrate_params(self, load_module):
         workflow = Workflow.create_and_init()
         wf_module = workflow.tabs.first().wf_modules.create(
@@ -217,7 +217,7 @@ class GetMigratedParamsTest(DbTestCase):
         self.assertEqual(wf_module.cached_migrated_params, {"foo": "bar"})
         self.assertEqual(wf_module.cached_migrated_params_module_version, "abc123")
 
-    @patch.object(LoadedModule, "for_module_version_sync")
+    @patch.object(LoadedModule, "for_module_version")
     def test_deleted_wf_module_race(self, load_module):
         workflow = Workflow.create_and_init()
         wf_module = workflow.tabs.first().wf_modules.create(

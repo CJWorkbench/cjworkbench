@@ -38,7 +38,7 @@ def get_migrated_params(wf_module: WfModule) -> Dict[str, Any]:
     if not stale:
         return wf_module.cached_migrated_params
     else:
-        loaded_module = LoadedModule.for_module_version_sync(module_version)
+        loaded_module = LoadedModule.for_module_version(module_version)
         if loaded_module:
             params = wf_module.params  # the user-supplied params
             params = loaded_module.migrate_params(params)  # raises ModuleError

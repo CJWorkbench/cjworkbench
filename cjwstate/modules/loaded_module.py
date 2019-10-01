@@ -3,6 +3,7 @@ from dataclasses import dataclass
 import datetime
 import logging
 from pathlib import Path
+import threading
 import time
 from typing import Any, Dict, Optional
 from cjwkernel.errors import ModuleError
@@ -184,7 +185,7 @@ class LoadedModule:
             )
 
     @classmethod
-    def for_module_version_sync(
+    def for_module_version(
         cls, module_version: Optional["ModuleVersion"]
     ) -> Optional[LoadedModule]:
         """
@@ -254,11 +255,20 @@ def _load_external_module_uncached(
         return cjwstate.modules.kernel.compile(path, name)
 
 
+_load_external_module_lock = threading.Lock()
+
+
 def load_external_module(
     module_id_name: str, version_sha1: str, last_update_time: datetime.datetime
 ) -> CompiledModule:
     """
     Load a Python Module given a name and version.
+
+    Raise `FileNotFoundError` if module is not in minio.
+
+    Raise `cjwkernel.errors.ModuleError` if module cannot be compiled.
+
+    This function is thread-safe.
 
     This is memoized: for each module_id_name, the latest
     (version_sha1, last_update_time) is kept in memory to speed up future
@@ -277,14 +287,20 @@ def load_external_module(
     """
     cache = load_external_module._cache
     cache_condition = (version_sha1, last_update_time)
-    cached_condition, cached_value = cache.get(module_id_name, (None, None))
 
+    # Quickly check if we can skip locking.
+    cached_condition, cached_value = cache.get(module_id_name, (None, None))
     if cached_condition == cache_condition:
         return cached_value
 
-    value = _load_external_module_uncached(module_id_name, version_sha1)
-    cache[module_id_name] = (cache_condition, value)
-    return value
+    with _load_external_module_lock:
+        cached_condition, cached_value = cache.get(module_id_name, (None, None))
+        if cached_condition == cache_condition:
+            return cached_value
+
+        value = _load_external_module_uncached(module_id_name, version_sha1)
+        cache[module_id_name] = (cache_condition, value)
+        return value
 
 
 load_external_module._cache = {}
