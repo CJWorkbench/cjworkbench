@@ -5,7 +5,6 @@ import logging
 from pathlib import Path
 import time
 from typing import Any, Dict, Optional
-from cjworkbench.sync import database_sync_to_async
 from cjwkernel.errors import ModuleError
 from cjwkernel.types import (
     ArrowTable,
@@ -185,30 +184,6 @@ class LoadedModule:
             )
 
     @classmethod
-    @database_sync_to_async
-    def for_module_version(
-        cls, module_version: Optional["ModuleVersion"]
-    ) -> Optional[LoadedModule]:
-        """
-        Return module referenced by `module_version` (asynchronously).
-
-        If `module_version is None`, return `None`.
-
-        We assume:
-
-        * the ModuleVersion and Module are in the database (foreign keys prove
-          this)
-        * external-module files exist on disk
-        * external-module files were validated before being written to database
-        * external-module files haven't changed
-        * external-module files' dependencies are in PYTHONPATH
-        * external-module files' dependencies haven't changed (i.e., imports)
-
-        Invalid assumption? Fix the bug elsewhere.
-        """
-        return cls.for_module_version_sync(module_version)
-
-    @classmethod
     def for_module_version_sync(
         cls, module_version: Optional["ModuleVersion"]
     ) -> Optional[LoadedModule]:
@@ -217,12 +192,9 @@ class LoadedModule:
 
         If `module_version is None`, return `None`.
 
-        Raise `FileNotFoundError` if module is not in minio
+        Raise `FileNotFoundError` if module is not in minio.
 
-        Raise `cjwkernel.errors.ModuleError` if module cannot be compiled
-
-        Do not call this from an async method, because you may leak a database
-        connection. Use `for_module_version()` instead.
+        Raise `cjwkernel.errors.ModuleError` if module cannot be compiled.
         """
         if module_version is None:
             return None
