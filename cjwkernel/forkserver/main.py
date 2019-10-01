@@ -63,21 +63,28 @@ def spawn_module(
             libc.prctl(PR_SET_NAME, name.encode("utf-8"), 0, 0, 0)
 
             # Run the module code. This is what it's all about!
-            cjwkernel.pandas.main.main(
-                message.compiled_module,
-                message.output_fd,
-                message.log_fd,
-                message.function,
-                *message.args,
-            )
-            # SECURITY: the module code may have rewritten anything here. We
-            # _want_ to os._exit(0) so as to close the file descriptors
-            # "parent" is reading and then let "parent" reap us. But there are
-            # no guarantees. A malicious process could find a way to jump to
-            # some other code and read other memory.
-            #
-            # ... good thing we closed all the interesting file descriptors!
-            os._exit(0)
+            try:
+                cjwkernel.pandas.main.main(
+                    message.compiled_module,
+                    message.output_fd,
+                    message.log_fd,
+                    message.function,
+                    *message.args,
+                )
+            finally:
+                # SECURITY: the module code may have rewritten our stack, our
+                # code ... anything. We _want_ to os._exit(0) so as to close
+                # the file descriptors "parent" is reading and then let
+                # "parent" reap us. But there are no guarantees. A malicious
+                # process could find a way to jump somewhere else instead of
+                # exiting.
+                #
+                # That's okay: we closed all the interesting file descriptors;
+                # we sandboxed the process; and "parent" has a timer running
+                # that will kill the "module" process.
+                #
+                # But in the _common_ case ... exit here.
+                os._exit(0)
         else:
             # "spawner"
             # Send "module_pid" to "forkserver". We can't send it to "parent"
