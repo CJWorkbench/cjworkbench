@@ -224,6 +224,4 @@ class WfModuleTests(DbTestCase):
         # wf_module.uploaded_files.create(name='t.csv', size=3, uuid=uuid,
         #                                bucket=minio.UserFilesBucket, key=key)
         wf_module.delete()  # do not crash
-        with self.assertRaises(FileNotFoundError):
-            with minio.RandomReadMinioFile(minio.UserFilesBucket, key) as f:
-                f.read()
+        self.assertFalse(minio.exists(minio.UserFilesBucket, key))
