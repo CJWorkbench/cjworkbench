@@ -11,17 +11,14 @@ import cjwkernel.pandas.module
 
 def main(
     compiled_module: CompiledModule,
-    output_dup_fd: multiprocessing.reduction.DupFd,
-    log_dup_fd: multiprocessing.reduction.DupFd,
+    output_fileno: int,
+    log_fileno: int,
     function: str,
     *args,
 ) -> None:
     """
     Run `function` with `args`, and write the (Thrift) result to `output_fileno`.
     """
-    output_fileno = output_dup_fd.detach()
-    log_fileno = log_dup_fd.detach()
-
     # We're writing in text mode so we're forced to buffer output. But we don't
     # want buffering: if we crash, we want whatever was written to be visible
     # to the reader at the other end. So set buffering=1, meaning "line
