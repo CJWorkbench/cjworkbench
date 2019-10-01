@@ -20,6 +20,7 @@ from channels.auth import AuthMiddlewareStack
 from django.conf.urls import url
 
 from server.websockets import WorkflowConsumer
+import cjwstate.modules
 
 
 def create_url_router() -> AuthMiddlewareStack:
@@ -30,18 +31,18 @@ def create_url_router() -> AuthMiddlewareStack:
 
 def create_application() -> ProtocolTypeRouter:
     """Create an ASGI application."""
+    # Load static modules on startup.
+    #
+    # This means starting a kernel and validating all static modules. There are
+    # two good reasons to load during startup:
+    #
+    # 1. In dev mode, this reports errors in modules ASAP -- during startup
+    # 2. In production, this import line costs time -- better to incur that
+    #    cost during startup than to incur it when responding to some random
+    #    request.
+    cjwstate.modules.init_module_system()
+
     return ProtocolTypeRouter({"websocket": AuthMiddlewareStack(create_url_router())})
 
-
-# Load static modules on startup.
-#
-# This means starting a kernel and validating all static modules. There are
-# two good reasons to load during startup:
-#
-# 1. In dev mode, this reports errors in modules ASAP -- during startup
-# 2. In production, this import line costs time -- better to incur that
-#    cost during startup than to incur it when responding to some random
-#    request.
-import staticmodules.registry
 
 application = create_application()

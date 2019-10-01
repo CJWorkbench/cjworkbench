@@ -5,11 +5,25 @@ import pyarrow
 from cjwkernel.errors import ModuleCompileError, ModuleExitedError
 from cjwkernel.kernel import Kernel
 from cjwkernel.tests.util import arrow_table_context, MockPath
-from cjwkernel import types
+from cjwkernel import forkserver, types
 from cjwkernel.util import create_tempdir, tempfile_context
 
 
 class KernelTests(unittest.TestCase):
+    kernel = None
+
+    @classmethod
+    def setUpClass(cls):
+        with cls.assertLogs(forkserver.__name__):
+            forkserver.install_calling_process_as_subreaper()
+        # Kernel takes a while to start up -- it's loading pyarrow+pandas in a
+        # separate process. So we'll only load it once.
+        cls.kernel = Kernel()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.kernel = None
+
     def setUp(self):
         super().setUp()
         self.basedir = create_tempdir()
@@ -19,25 +33,22 @@ class KernelTests(unittest.TestCase):
         super().tearDown()
 
     def test_compile_syntax_error(self):
-        kernel = Kernel()
         with self.assertRaises(ModuleCompileError):
-            kernel.compile(
+            self.kernel.compile(
                 MockPath(["foo.py"], b"de render(table, params): return table"), "foo"
             )
 
     def test_compile_validate_exited_error(self):
-        kernel = Kernel()
         with self.assertRaises(ModuleExitedError) as cm:
             # The child will print an assertion error to stderr.
-            kernel.compile(MockPath(["foo.py"], b"undefined()"), "foo")
+            self.kernel.compile(MockPath(["foo.py"], b"undefined()"), "foo")
         self.assertRegex(cm.exception.log, r"NameError")
         self.assertEqual(cm.exception.exit_code, 1)
 
     def test_compile_validate_bad_render_signature(self):
-        kernel = Kernel()
         with self.assertRaises(ModuleExitedError) as cm:
             # The child will print an assertion error to stderr.
-            kernel.compile(
+            self.kernel.compile(
                 MockPath(["foo.py"], b"def render(table, params, x): return table"),
                 "foo",
             )
@@ -46,10 +57,9 @@ class KernelTests(unittest.TestCase):
         self.assertEqual(cm.exception.exit_code, 1)
 
     def test_compile_validate_bad_fetch_signature(self):
-        kernel = Kernel()
         with self.assertRaises(ModuleExitedError) as cm:
             # The child will print an assertion error to stderr.
-            kernel.compile(
+            self.kernel.compile(
                 MockPath(["foo.py"], b"def fetch(table, params): return table"), "foo"
             )
         self.assertRegex(cm.exception.log, r"AssertionError")
@@ -57,8 +67,7 @@ class KernelTests(unittest.TestCase):
         self.assertEqual(cm.exception.exit_code, 1)
 
     def test_compile_validate_render_arrow_instead_of_render(self):
-        kernel = Kernel()
-        result = kernel.compile(
+        result = self.kernel.compile(
             MockPath(
                 ["foo.py"],
                 b"from cjwkernel.types import RenderResult\ndef render_arrow(table, params, _1, _2, _3, output_path): return RenderResult()",
@@ -69,8 +78,7 @@ class KernelTests(unittest.TestCase):
         self.assertIsInstance(result.marshalled_code_object, bytes)
 
     def test_compile_validate_happy_path(self):
-        kernel = Kernel()
-        result = kernel.compile(
+        result = self.kernel.compile(
             MockPath(["foo.py"], b"def render(table, params): return table"), "foo"
         )
         self.assertEquals(result.module_slug, "foo")
@@ -83,8 +91,7 @@ class KernelTests(unittest.TestCase):
         @dataclass inspects `sys.modules`, so the module needs to be in
         `sys.modules` when @dataclass is run.
         """
-        kernel = Kernel()
-        result = kernel.compile(
+        result = self.kernel.compile(
             MockPath(
                 ["foo.py"],
                 textwrap.dedent(
@@ -106,27 +113,24 @@ class KernelTests(unittest.TestCase):
         self.assertEquals(result.module_slug, "foo")
 
     def test_migrate_params(self):
-        kernel = Kernel()
-        module = kernel.compile(
+        module = self.kernel.compile(
             MockPath(
                 ["foo.py"], b"def migrate_params(params): return {'nested': params}"
             ),
             "foo",
         )
-        result = kernel.migrate_params(module, {"foo": 123})
+        result = self.kernel.migrate_params(module, {"foo": 123})
         self.assertEquals(result, {"nested": {"foo": 123}})
 
     def test_migrate_params_retval_not_thrift_ready(self):
-        kernel = Kernel()
-        module = kernel.compile(
+        module = self.kernel.compile(
             MockPath(["foo.py"], b"def migrate_params(params): return range(2)"), "foo"
         )
         with self.assertRaises(ModuleExitedError):
-            kernel.migrate_params(module, {"foo": 123})
+            self.kernel.migrate_params(module, {"foo": 123})
 
     def test_render_happy_path(self):
-        kernel = Kernel()
-        module = kernel.compile(
+        module = self.kernel.compile(
             MockPath(
                 ["foo.py"],
                 b"import pandas as pd\ndef render(table, params): return pd.DataFrame({'A': table['A'] * params['m'], 'B': table['B'] + params['s']})",
@@ -142,7 +146,7 @@ class KernelTests(unittest.TestCase):
             dir=self.basedir,
         ) as input_table:
             with tempfile_context(dir=self.basedir) as output_path:
-                result = kernel.render(
+                result = self.kernel.render(
                     module,
                     self.basedir,
                     input_table,
@@ -167,8 +171,7 @@ class KernelTests(unittest.TestCase):
         # and kill a process using SIGKILL.
         #
         # So let's simulate that SIGKILL.
-        kernel = Kernel()
-        module = kernel.compile(
+        module = self.kernel.compile(
             MockPath(
                 ["foo.py"],
                 b"import os\ndef render(table, params): os.kill(os.getpid(), 9)",
@@ -178,7 +181,7 @@ class KernelTests(unittest.TestCase):
         with self.assertRaises(ModuleExitedError) as cm:
             with arrow_table_context({"A": [1]}, dir=self.basedir) as input_table:
                 with tempfile_context(dir=self.basedir) as output_path:
-                    kernel.render(
+                    self.kernel.render(
                         module,
                         self.basedir,
                         input_table,
@@ -192,8 +195,7 @@ class KernelTests(unittest.TestCase):
         self.assertEquals(cm.exception.log, "")
 
     def test_fetch_happy_path(self):
-        kernel = Kernel()
-        module = kernel.compile(
+        module = self.kernel.compile(
             MockPath(
                 ["foo.py"],
                 b"import pandas as pd\ndef fetch(params): return pd.DataFrame({'A': [params['a']]})",
@@ -202,7 +204,7 @@ class KernelTests(unittest.TestCase):
         )
 
         with tempfile_context(dir=self.basedir) as output_path:
-            result = kernel.fetch(
+            result = self.kernel.fetch(
                 module,
                 self.basedir,
                 types.Params({"a": 1}),

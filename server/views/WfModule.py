@@ -33,7 +33,7 @@ from cjwstate.rendercache import (
     read_cached_render_result_pydict,
 )
 from cjwstate.models import Tab, WfModule, Workflow
-from cjwstate.models.loaded_module import module_get_html_bytes
+from cjwstate.modules.loaded_module import module_get_html_bytes
 from server import rabbitmq
 
 

@@ -9,7 +9,7 @@ from cjwkernel.tests.util import parquet_file, assert_arrow_table_equals
 from cjwstate import minio
 from cjwstate.storedobjects import create_stored_object
 from cjwstate.models import ModuleVersion, Workflow
-from cjwstate.models.loaded_module import LoadedModule
+from cjwstate.modules.loaded_module import LoadedModule
 from cjwstate.tests.utils import DbTestCase
 from renderer.execute.wf_module import execute_wfmodule
 

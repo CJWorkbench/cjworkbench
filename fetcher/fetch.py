@@ -20,7 +20,7 @@ from cjwstate.models import (
     WfModule,
     Workflow,
 )
-from cjwstate.models.loaded_module import LoadedModule
+from cjwstate.modules.loaded_module import LoadedModule
 from cjwstate import rendercache, storedobjects
 from . import fetchprep, save
 

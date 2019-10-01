@@ -6,7 +6,7 @@ from cjwstate.models.commands import (
     ChangeWorkflowTitleCommand,
     ChangeWfModuleNotesCommand,
 )
-from cjwstate.models.loaded_module import LoadedModule
+from cjwstate.modules.loaded_module import LoadedModule
 from cjwstate.tests.utils import DbTestCase
 from server.versions import WorkflowUndo, WorkflowRedo
 

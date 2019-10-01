@@ -16,8 +16,8 @@ from cjwkernel.types import (
     RenderResult,
 )
 from cjwstate import minio
-from . import module_loader
-from .module_version import ModuleVersion
+import cjwstate.modules.staticregistry
+import cjwstate.modules
 
 
 logger = logging.getLogger(__name__)
@@ -71,7 +71,7 @@ class LoadedModule:
         logger.info(begin_status_format + " begin", *begin_status_args)
         status = "???"
         try:
-            result = module_loader.kernel.render(
+            result = cjwstate.modules.kernel.render(
                 self.compiled_module,
                 basedir,
                 input_table,
@@ -126,7 +126,7 @@ class LoadedModule:
         logger.info("%s.fetch() begin", self.name)
 
         try:
-            ret = module_loader.kernel.fetch(
+            ret = cjwstate.modules.kernel.fetch(
                 self.compiled_module,
                 basedir,
                 params,
@@ -166,7 +166,7 @@ class LoadedModule:
         logger.info("%s.migrate_params() begin", self.name)
         status = "???"
         try:
-            result = module_loader.kernel.migrate_params(
+            result = cjwstate.modules.kernel.migrate_params(
                 self.compiled_module, raw_params
             )  # raise ModuleError
             status = "ok"
@@ -187,7 +187,7 @@ class LoadedModule:
     @classmethod
     @database_sync_to_async
     def for_module_version(
-        cls, module_version: Optional[ModuleVersion]
+        cls, module_version: Optional["ModuleVersion"]
     ) -> Optional[LoadedModule]:
         """
         Return module referenced by `module_version` (asynchronously).
@@ -210,7 +210,7 @@ class LoadedModule:
 
     @classmethod
     def for_module_version_sync(
-        cls, module_version: Optional[ModuleVersion]
+        cls, module_version: Optional["ModuleVersion"]
     ) -> Optional[LoadedModule]:
         """
         Return module referenced by `module_version`.
@@ -230,12 +230,9 @@ class LoadedModule:
         module_id_name = module_version.id_name
         version_sha1 = module_version.source_version_hash
 
-        # Import staticmodules.registry only on demand. That way Django can
-        # import all its objects without starting a (RAM-hungry) kernel.
-        from staticmodules.registry import Lookup as InternalModules
-
-        if module_id_name in InternalModules:
-            compiled_module = InternalModules[module_id_name]
+        internal_modules = cjwstate.modules.staticregistry.Lookup
+        if module_id_name in internal_modules:
+            compiled_module = internal_modules[module_id_name]
         else:
             compiled_module = load_external_module(
                 module_id_name, version_sha1, module_version.last_update_time
@@ -282,7 +279,7 @@ def _load_external_module_uncached(
         minio.ExternalModulesBucket, python_code_key
     ) as path:
         logger.info(f"Loading {name} from {path}")
-        return module_loader.kernel.compile(path, name)
+        return cjwstate.modules.kernel.compile(path, name)
 
 
 def load_external_module(
@@ -322,7 +319,7 @@ load_external_module._cache = {}
 load_external_module.cache_clear = load_external_module._cache.clear
 
 
-def module_get_html_bytes(module_version: ModuleVersion) -> Optional[bytes]:
+def module_get_html_bytes(module_version: "ModuleVersion") -> Optional[bytes]:
     # Import staticmodules.registry only on demand. That way Django can
     # import all its objects without starting a (RAM-hungry) kernel.
     from staticmodules.registry import Lookup as InternalModules

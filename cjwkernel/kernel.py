@@ -133,6 +133,9 @@ class Kernel:
             ]
         )
 
+    def __del__(self):
+        self._forkserver.close()
+
     def compile(self, path: Path, module_slug: str) -> CompiledModule:
         """
         Detect common errors in the user's code.

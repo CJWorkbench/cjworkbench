@@ -13,7 +13,7 @@ from cjwkernel.tests.util import (
     assert_render_result_equals,
 )
 from cjwstate import minio
-from cjwstate.models.loaded_module import LoadedModule, load_external_module
+from cjwstate.modules.loaded_module import LoadedModule, load_external_module
 from cjwstate.tests.utils import clear_minio
 
 
@@ -56,7 +56,7 @@ class LoadedModuleTest(unittest.TestCase):
             ContentLength=len(code),
         )
 
-        with self.assertLogs("cjwstate.models.loaded_module"):
+        with self.assertLogs("cjwstate.modules.loaded_module"):
             lm = LoadedModule.for_module_version_sync(
                 MockModuleVersion("imported", "abcdef", ParamDType.Dict({}), "now")
             )
@@ -71,7 +71,7 @@ class LoadedModuleTest(unittest.TestCase):
             )
             output_tf = ctx.enter_context(tempfile.NamedTemporaryFile(dir=basedir))
 
-            ctx.enter_context(self.assertLogs("cjwstate.models.loaded_module"))
+            ctx.enter_context(self.assertLogs("cjwstate.modules.loaded_module"))
 
             result = lm.render(
                 basedir=basedir,
@@ -106,7 +106,7 @@ class LoadedModuleTest(unittest.TestCase):
             ContentLength=0,
         )
 
-        with self.assertLogs("cjwstate.models.loaded_module"):
+        with self.assertLogs("cjwstate.modules.loaded_module"):
             LoadedModule.for_module_version_sync(
                 MockModuleVersion("imported", "abcdef", ParamDType.Dict({}), "now")
             )
@@ -123,7 +123,7 @@ class LoadedModuleTest(unittest.TestCase):
             ContentLength=len(code),
         )
 
-        with self.assertLogs("cjwstate.models.loaded_module"):
+        with self.assertLogs("cjwstate.modules.loaded_module"):
             lm = LoadedModule.for_module_version_sync(
                 MockModuleVersion("imported", "abcdef", ParamDType.Dict({}), "now")
             )
@@ -150,7 +150,7 @@ class LoadedModuleTest(unittest.TestCase):
             Body=code,
             ContentLength=len(code),
         )
-        with self.assertLogs("cjwstate.models.loaded_module"):
+        with self.assertLogs("cjwstate.modules.loaded_module"):
             lm = LoadedModule.for_module_version_sync(
                 MockModuleVersion(
                     "imported",
@@ -173,7 +173,7 @@ class LoadedModuleTest(unittest.TestCase):
             Body=code,
             ContentLength=len(code),
         )
-        with self.assertLogs("cjwstate.models.loaded_module"):
+        with self.assertLogs("cjwstate.modules.loaded_module"):
             lm = LoadedModule.for_module_version_sync(
                 MockModuleVersion(
                     "imported",

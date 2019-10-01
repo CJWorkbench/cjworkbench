@@ -17,16 +17,12 @@ from pathlib import Path
 import jsonschema
 from typing import List, Optional, Set
 import yaml
-from cjwkernel.kernel import Kernel
 
 
 with (Path(__file__).parent / "module_spec_schema.yaml").open("rt") as spec_file:
     _validator = jsonschema.Draft7Validator(
         yaml.safe_load(spec_file), format_checker=jsonschema.FormatChecker()
     )
-
-
-kernel = Kernel()
 
 
 def validate_module_spec(spec):

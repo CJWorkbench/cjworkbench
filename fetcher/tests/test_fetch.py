@@ -34,7 +34,7 @@ from cjwstate.models import (
     Workflow,
 )
 from cjwstate.models.commands import ChangeDataVersionCommand
-from cjwstate.models.loaded_module import LoadedModule
+from cjwstate.modules.loaded_module import LoadedModule
 from cjwstate.tests.utils import DbTestCase
 from fetcher import fetch, fetchprep
 from server import websockets

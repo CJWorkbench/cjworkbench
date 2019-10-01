@@ -2,7 +2,7 @@ import asyncio
 from typing import Any, Dict, List
 from unittest.mock import patch
 from cjwstate.models import Workflow, ModuleVersion
-from cjwstate.models.loaded_module import LoadedModule
+from cjwstate.modules.loaded_module import LoadedModule
 from server.models.lesson import Lesson, LessonLookup, LessonInitialWorkflow
 from cjwstate.tests.utils import DbTestCase, create_test_user
 

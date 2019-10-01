@@ -10,7 +10,6 @@ from . import protocol
 
 libc = ctypes.CDLL("libc.so.6")
 PR_SET_NAME = 15
-PR_SET_CHILD_SUBREAPER = 36
 
 
 def spawn_module(
@@ -69,7 +68,7 @@ def spawn_module(
                 message.output_fd,
                 message.log_fd,
                 message.function,
-                *message.args
+                *message.args,
             )
             # SECURITY: the module code may have rewritten anything here. We
             # _want_ to os._exit(0) so as to close the file descriptors
@@ -81,16 +80,10 @@ def spawn_module(
             os._exit(0)
         else:
             # "spawner"
-
-            # Make "parent" the parent of "spawner" once "spawner" dies. After
-            # "spawner" dies, "parent" may waitpid(module_pid).
-            #
-            # The inevitable race: if "parent" doesn't read "module_pid" from
-            # the other end of "sock" and wait() for it, then nothing will
-            # wait() for the module process after it dies and it will become a
-            # zombie.
-            libc.prctl(PR_SET_CHILD_SUBREAPER, ppid, 0, 0, 0)
-
+            # Send "module_pid" to "forkserver". We can't send it to "parent"
+            # because we haven't died yet; and "parent" won't be able to wait
+            # on it until after we've died. (Only "forkserver" knows when
+            # "spawner" has died.)
             os.write(module_pid_w, array.array("i", [module_pid]).tobytes())
             os._exit(0)  # closes all open fds
     else:
@@ -132,12 +125,16 @@ def forkserver_main(ppid: int, socket_fd: int) -> None:
     4a. Parent creates fds and sends them through SpawnPandasModule().
     4b. Child forks and sends parent the PID. The returned PID is a *direct*
         child of parent (not of child) -- it got there via double-fork with
-        PR_SET_CHILD_SUBREAPER.
+        "parent" having PR_SET_CHILD_SUBREAPER.
     5a. Parent receives PID from client.
     6a. Parent UNLOCKs
     7a. Parent reads from its fds and polls PID.
 
     For shutdown, the client simply closes its connection.
+
+    The inevitable race: if "parent" doesn't read "module_pid" from the other
+    end of "sock" and wait() for it, then nothing will wait() for the module
+    process after it dies and it will become a zombie.
     """
     # 1b. Child establishes socket connection
     with socket.fromfd(socket_fd, socket.AF_INET, socket.SOCK_STREAM) as sock:

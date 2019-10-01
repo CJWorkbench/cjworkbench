@@ -1,4 +1,6 @@
+import ctypes
 from dataclasses import dataclass
+import logging
 import os
 import socket
 import subprocess
@@ -8,6 +10,14 @@ from typing import Any, List, Tuple
 from . import protocol
 from cjwkernel.types import CompiledModule
 from cjwkernel.pandas import main as module_main
+
+libc = ctypes.CDLL("libc.so.6")
+PR_SET_NAME = 15
+PR_SET_CHILD_SUBREAPER = 36
+PR_GET_CHILD_SUBREAPER = 37
+
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
@@ -58,6 +68,15 @@ class Forkserver:
     """
 
     def __init__(self, *, forkserver_preload: List[str] = []):
+        if not _is_process_subreaper():
+            raise RuntimeError(
+                """
+                To use forkserver, you must be a subreaper process. Call
+                cjwkernel.forkserver.install_calling_process_as_subreaper()
+                before using forkserver.
+                """
+            )
+
         # We rely on Python's os.fork() internals to close FDs and run a child
         # process.
         self._pid = os.getpid()
@@ -117,3 +136,17 @@ class Forkserver:
         """
         self._socket.close()  # inspire self._process to exit of its own accord
         self._process.wait()
+
+
+def _is_process_subreaper() -> bool:
+    val = ctypes.c_int(0)
+    libc.prctl(PR_GET_CHILD_SUBREAPER, ctypes.pointer(val), 0, 0, 0)
+    return val.value != 0
+
+
+def install_calling_process_as_subreaper() -> None:
+    logger.info(
+        "Setting process as subreaper. Unreaped child processes will become zombies."
+        " (This is good; but if you see zombie processes, fix something.)"
+    )
+    libc.prctl(PR_SET_CHILD_SUBREAPER, 1, 0, 0, 0)

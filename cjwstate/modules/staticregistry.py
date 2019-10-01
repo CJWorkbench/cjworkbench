@@ -39,25 +39,28 @@ Looking up modules
 This ``registry.py`` imports all the modules automatically, finding them by
 their ``.json`` spec files.
 
->>> from staticmodules import registry
->>> registry.Lookup['pythoncode']  # dynamic lookup by id_name
+>>> import cjwstate.modules
+>>> from cjwstate.modules import staticregistry
+>>> cjwstate.modules.init_module_system()
+>>> staticregistry.Lookup['pythoncode']  # dynamic lookup by id_name
 """
-import pathlib
-from cjwstate.models.module_loader import kernel, ModuleSpec
+from pathlib import Path
+import staticmodules
+from .module_loader import ModuleSpec
 
 
 Lookup = {}
 Specs = {}
 
-SpecPaths = list(pathlib.Path(__file__).parent.glob("*.json")) + list(
-    pathlib.Path(__file__).parent.glob("*.yaml")
-)
-for spec_path in SpecPaths:
-    spec = ModuleSpec.load_from_path(spec_path)
-    assert (
-        "parameters_version" in spec.data
-    ), "Internal modules require a 'parameters_version'"
-    id_name = spec_path.stem
-    compiled_module = kernel.compile(spec_path.with_suffix(".py"), id_name)
-    Lookup[id_name] = compiled_module
-    Specs[id_name] = spec
+
+def _setup(kernel):
+    spec_paths = list(Path(staticmodules.__file__).parent.glob("*.yaml"))
+    for spec_path in spec_paths:
+        spec = ModuleSpec.load_from_path(spec_path)
+        assert (
+            "parameters_version" in spec.data
+        ), "Internal modules require a 'parameters_version'"
+        id_name = spec_path.stem
+        compiled_module = kernel.compile(spec_path.with_suffix(".py"), id_name)
+        Lookup[id_name] = compiled_module
+        Specs[id_name] = spec

@@ -2,7 +2,7 @@ import logging
 from django.contrib.postgres.fields import JSONField
 from django.db import models
 from .. import Delta, WfModule
-from .. import loaded_module
+from cjwstate.modules import loaded_module
 from .util import ChangesWfModuleOutputs
 
 

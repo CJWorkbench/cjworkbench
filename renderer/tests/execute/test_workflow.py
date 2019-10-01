@@ -10,7 +10,7 @@ from cjwkernel.tests.util import arrow_table, assert_render_result_equals
 from cjwstate.rendercache import cache_render_result, open_cached_render_result
 from cjwstate.models import ModuleVersion, Workflow
 from cjwstate.models.commands import InitWorkflowCommand
-from cjwstate.models.loaded_module import LoadedModule
+from cjwstate.modules.loaded_module import LoadedModule
 from cjwstate.tests.utils import DbTestCase
 from renderer.execute.types import UnneededExecution
 from renderer.execute.workflow import execute_workflow, partition_ready_and_dependent

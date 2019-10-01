@@ -6,7 +6,7 @@ from cjwkernel.param_dtype import ParamDType
 from cjwkernel.types import RenderResult, Tab
 from cjwkernel.util import tempdir_context
 from cjwstate.models import WfModule, Workflow
-from cjwstate.models.loaded_module import LoadedModule
+from cjwstate.modules.loaded_module import LoadedModule
 from cjwstate.params import get_migrated_params
 from .tab import ExecuteStep, TabFlow, execute_tab_flow
 from .types import UnneededExecution

@@ -17,7 +17,7 @@ from cjwkernel.types import (
 from cjwkernel.util import tempfile_context
 from cjwstate import minio, rendercache
 from cjwstate.models import StoredObject, WfModule, Workflow
-from cjwstate.models.loaded_module import LoadedModule
+from cjwstate.modules.loaded_module import LoadedModule
 from server import websockets
 from renderer import notifications
 from .types import (

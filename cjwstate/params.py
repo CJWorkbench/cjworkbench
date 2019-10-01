@@ -1,6 +1,6 @@
 from typing import Any, Dict
 from cjwstate.models import WfModule
-from cjwstate.models.loaded_module import LoadedModule
+from cjwstate.modules.loaded_module import LoadedModule
 
 
 def get_migrated_params(wf_module: WfModule) -> Dict[str, Any]:

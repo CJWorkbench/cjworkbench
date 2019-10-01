@@ -1,7 +1,7 @@
 import textwrap
 import unittest
 from cjwkernel.tests.util import MockDir, MockPath
-from cjwstate.models.module_loader import validate_module_spec, ModuleFiles, ModuleSpec
+from cjwstate.modules.module_loader import validate_module_spec, ModuleFiles, ModuleSpec
 
 
 class ValidateModuleSpecTest(unittest.TestCase):

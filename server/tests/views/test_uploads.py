@@ -316,7 +316,7 @@ class UploadTest(DbTestCase):
     @patch("server.websockets.ws_client_send_delta_async")
     @patch("server.rabbitmq.queue_render")
     @patch(
-        "cjwstate.models.loaded_module.LoadedModule.for_module_version_sync",
+        "cjwstate.modules.loaded_module.LoadedModule.for_module_version_sync",
         MockLoadedModule,
     )
     def test_complete_happy_path(self, queue_render, send_delta):

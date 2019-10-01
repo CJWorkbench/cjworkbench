@@ -1,7 +1,7 @@
 from unittest.mock import patch
 from cjwkernel.errors import ModuleError
 from cjwstate.models import ModuleVersion, Workflow
-from cjwstate.models.loaded_module import LoadedModule
+from cjwstate.modules.loaded_module import LoadedModule
 from cjwstate.params import get_migrated_params
 from cjwstate.tests.utils import DbTestCase
 
