@@ -4,7 +4,7 @@ category: Visualize
 icon: chart
 description: Visualize data in a column chart.
 html_output: true
-help_url: steps/visualize/column-chart
+help_url: modules/visualize/column-chart
 parameters:
 - id_name: title
   type: string

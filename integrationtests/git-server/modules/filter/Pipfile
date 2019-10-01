@@ -5,7 +5,7 @@ name = "pypi"
 
 [packages]
 numpy = "*"
-pandas = "*"
+pandas = "~=0.25.0"
 fb-re2 = "*"
 
 [dev-packages]

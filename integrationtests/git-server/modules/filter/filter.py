@@ -170,7 +170,6 @@ def mask_text_does_not_contain(series, text, case_sensitive):
 def mask_text_does_not_contain_regex(series, text, case_sensitive):
     # keeprows = not matching, allow NaN
     r = str_to_regex(text, case_sensitive)
-    contains = series.map(r.test_search, na_action="ignore")
     contains = series_map_predicate(series, r.test_search)
     return contains != True  # noqa: E712
 
@@ -184,23 +183,47 @@ def mask_text_is_exactly(series, text, case_sensitive):
 
 
 @type_text
+def mask_text_is_not_exactly(series, text, case_sensitive):
+    if case_sensitive:
+        return series != text
+    else:
+        return series.str.lower() != text.lower()
+
+
+@type_text
 def mask_text_is_exactly_regex(series, text, case_sensitive):
     r = str_to_regex(text, case_sensitive)
-    contains = series_map_predicate(series, r.test_search)
+    contains = series_map_predicate(series, r.test_fullmatch)
     return contains == True  # noqa: E712
 
 
-def mask_cell_is_empty(series, val, case_sensitive):
+def mask_cell_is_null(series, val, case_sensitive):
     return series.isnull()
 
 
+def mask_cell_is_not_null(series, val, case_sensitive):
+    return ~(series.isnull())
+
+
+def mask_cell_is_empty(series, val, case_sensitive):
+    return (series.isnull()) | (series == "")
+
+
 def mask_cell_is_not_empty(series, val, case_sensitive):
-    return ~series.isnull()
+    if series.dtype == object or hasattr(series, "cat"):
+        return ~((series.isnull()) | (series == ""))
+    else:
+        return ~(series.isnull())
 
 
 @type_number
 def mask_number_equals(series, number, case_sensitive):
     return series == number
+
+
+@type_number
+def mask_number_does_not_equal(series, number, case_sensitive):
+    return series != number
 
 
 @type_number
@@ -229,6 +252,11 @@ def mask_date_is(series, date, case_sensitive):
 
 
 @type_date
+def mask_date_is_not(series, date, case_sensitive):
+    return series != date
+
+
+@type_date
 def mask_date_is_before(series, date, case_sensitive):
     return series < date
 
@@ -242,17 +270,29 @@ MaskFunctions = {
     "text_contains": mask_text_contains,
     "text_does_not_contain": mask_text_does_not_contain,
     "text_is_exactly": mask_text_is_exactly,
+    "text_is_not_exactly": mask_text_is_not_exactly,
     "text_contains_regex": mask_text_contains_regex,
     "text_does_not_contain_regex": mask_text_does_not_contain_regex,
     "text_is_exactly_regex": mask_text_is_exactly_regex,
-    "cell_is_empty": mask_cell_is_empty,
-    "cell_is_not_empty": mask_cell_is_not_empty,
+    # TODO next migration, do some renames:
+    # cell_is_empty => cell_is_null
+    # cell_is_not_empty => cell_is_not_null
+    # cell_is_empty_str_or_null => cell_is_empty
+    # cell_is_not_empty_str_or_null => cell_is_not_empty
+    # https://www.pivotaltracker.com/story/show/167466174
+    # https://www.pivotaltracker.com/story/show/167467347
+    "cell_is_empty": mask_cell_is_null,
+    "cell_is_not_empty": mask_cell_is_not_null,
+    "cell_is_empty_str_or_null": mask_cell_is_empty,
+    "cell_is_not_empty_str_or_null": mask_cell_is_not_empty,
     "number_equals": mask_number_equals,
+    "number_does_not_equal": mask_number_does_not_equal,
     "number_is_greater_than": mask_number_is_greater_than,
     "number_is_greater_than_or_equals": mask_number_is_greater_than_or_equals,
     "number_is_less_than": mask_number_is_less_than,
     "number_is_less_than_or_equals": mask_number_is_less_than_or_equals,
     "date_is": mask_date_is,
+    "date_is_not": mask_date_is_not,
     "date_is_before": mask_date_is_before,
     "date_is_after": mask_date_is_after,
 }
@@ -418,9 +458,18 @@ def _parse_subfilter(
         not colname
         or condition not in MaskFunctions
         or (
-            condition != "cell_is_empty"
-            and condition != "cell_is_not_empty"
-            and not value
+            not value
+            and (
+                condition
+                not in (
+                    "text_is_exactly",
+                    "text_is_not_exactly",
+                    "cell_is_empty",
+                    "cell_is_not_empty",
+                    "cell_is_empty_str_or_null",
+                    "cell_is_not_empty_str_or_null",
+                )
+            )
         )
     ):
         return None

@@ -1,9 +1,9 @@
 def _isempty(series):
     na = series.isna()
 
-    if hasattr(series, "cat") or series.dtype == object:
+    if hasattr(series, 'cat') or series.dtype == object:
         # string series: '' and None are the ones to delete
-        empty = series == ""
+        empty = (series == '')
         return (na | empty).all()
     else:
         # non-string: NA is the only thing to delete

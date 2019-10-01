@@ -11,5 +11,5 @@ setup(
     url="https://github.com/CJWorkbench/histogram",
     packages=[""],
     py_modules=["columnchart"],
-    install_requires=["pandas==0.24.1"],
+    install_requires=["pandas==0.25.0"],
 )
