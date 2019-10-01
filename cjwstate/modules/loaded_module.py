@@ -310,9 +310,7 @@ load_external_module.cache_clear = load_external_module._cache.clear
 def module_get_html_bytes(module_version: "ModuleVersion") -> Optional[bytes]:
     # Import staticmodules.registry only on demand. That way Django can
     # import all its objects without starting a (RAM-hungry) kernel.
-    from staticmodules.registry import Lookup as InternalModules
-
-    if module_version.id_name in InternalModules:
+    if module_version.id_name in cjwstate.modules.staticregistry.Lookup:
         return _internal_module_get_html_bytes(module_version.id_name)
     else:
         return _external_module_get_html_bytes(
