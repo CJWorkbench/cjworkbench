@@ -8,12 +8,15 @@ from django.core.management.base import BaseCommand
 from watchdog.events import RegexMatchingEventHandler
 from watchdog.observers import Observer
 from server.importmodulefromgithub import import_module_from_directory
+import cjwstate.modules
 
 
 logger = logging.getLogger(__name__)
 
 
 def main(directory):
+    cjwstate.modules.init_module_system()
+
     def reload():
         logger.info(f"Reloading...")
 
