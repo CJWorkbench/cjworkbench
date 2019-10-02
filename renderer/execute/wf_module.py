@@ -218,7 +218,11 @@ def _execute_wfmodule_save(
             workflow, safe_wf_module, wf_module.last_relevant_delta_id, result
         )
 
-        if safe_wf_module.notifications and result != stale_result:
+        if (
+            safe_wf_module.notifications
+            and stale_result is not None
+            and result != stale_result
+        ):
             safe_wf_module.has_unseen_notification = True
             safe_wf_module.save(update_fields=["has_unseen_notification"])
             return notifications.OutputDelta(
