@@ -566,21 +566,6 @@ class WfModule(models.Model):
             table_metadata=TableMetadata(nrows, columns),
         )
 
-    def clear_cached_render_result(self) -> None:
-        """
-        Delete our CachedRenderResult, if it exists.
-
-        This deletes the Parquet file from disk, _then_ empties relevant
-        database fields and saves them (and only them).
-
-        Since this alters data, be sure to call it within a lock:
-
-            with wf_module.workflow.cooperative_lock():
-                wf_module.refresh_from_db()
-                wf_module.clear_cached_render_result()
-        """
-        CachedRenderResult.clear_wf_module(self)
-
     def delete(self, *args, **kwargs):
         # TODO make DB _not_ depend upon minio.
         for in_progress_upload in self.in_progress_uploads.all():
