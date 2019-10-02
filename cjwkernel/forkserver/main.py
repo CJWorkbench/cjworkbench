@@ -4,7 +4,6 @@ import os
 import sys
 import socket
 import cjwkernel.pandas.main
-from typing import Any, List
 from . import protocol
 
 
@@ -85,7 +84,7 @@ def spawn_module(
                 message.output_fd,
                 message.function,
                 *message.args,
-            )
+            )  # may raise ... er ... anything
 
             # SECURITY: the module code may have rewritten our stack, our
             # code ... anything. We _want_ to os._exit(0) so as to close
@@ -159,28 +158,32 @@ def forkserver_main(ppid: int, socket_fd: int) -> None:
     process after it dies and it will become a zombie.
     """
     # 1b. Child establishes socket connection
-    with socket.fromfd(socket_fd, socket.AF_INET, socket.SOCK_STREAM) as sock:
-        assert sock.fileno() != socket_fd  # socket.fromfd() does a dup...
-        os.close(socket_fd)  # ... so close the original.
+    #
+    # Note: we don't put this in a `with` block, because that would add a
+    # finalizer. Finalizers will run in the "module_pid" process if
+    # cjwkernel.pandas.main() raises an exception ... but the "module_pid"
+    # process closes the socket before calling cjwkernel.pandas.main(), so the
+    # finalizer would crash.
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM, fileno=socket_fd)
 
-        # 2b. Child imports modules in its main (and only) thread
-        imports = protocol.ImportModules.recv_on_socket(sock)
-        for im in imports.modules:
-            __import__(im)
+    # 2b. Child imports modules in its main (and only) thread
+    imports = protocol.ImportModules.recv_on_socket(sock)
+    for im in imports.modules:
+        __import__(im)
 
-        while True:
-            try:
-                # raise EOFError, RuntimeError
-                message = protocol.SpawnPandasModule.recv_on_socket(sock)
-            except EOFError:
-                # shutdown: client closed its connection
-                return
+    while True:
+        try:
+            # raise EOFError, RuntimeError
+            message = protocol.SpawnPandasModule.recv_on_socket(sock)
+        except EOFError:
+            # shutdown: client closed its connection
+            return
 
-            # 4b. Child forks and sends parent the PID
-            #
-            # The _child_ sends `SpawnedPandasModule` over `sock`, because only
-            # the child knows the sub-child's PID.
-            spawn_module(ppid, sock, message)
+        # 4b. Child forks and sends parent the PID
+        #
+        # The _child_ sends `SpawnedPandasModule` over `sock`, because only
+        # the child knows the sub-child's PID.
+        spawn_module(ppid, sock, message)
 
-            os.close(message.output_fd)
-            os.close(message.log_fd)
+        os.close(message.output_fd)
+        os.close(message.log_fd)

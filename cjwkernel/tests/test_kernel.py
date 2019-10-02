@@ -162,6 +162,35 @@ class KernelTests(unittest.TestCase):
                     {"A": [2.5, 5.0, 7.5], "B": ["aXX", "bXX", "cXX"]},
                 )
 
+    def test_render_exception(self):
+        module = self.kernel.compile(
+            MockPath(
+                ["foo.py"],
+                b"import os\ndef render(table, params): raise RuntimeError('fail')",
+            ),
+            "foo",
+        )
+        with self.assertRaises(ModuleExitedError) as cm:
+            with arrow_table_context({"A": [1]}, dir=self.basedir) as input_table:
+                with tempfile_context(dir=self.basedir) as output_path:
+                    self.kernel.render(
+                        module,
+                        self.basedir,
+                        input_table,
+                        types.Params({"m": 2.5, "s": "XX"}),
+                        types.Tab("tab-1", "Tab 1"),
+                        None,
+                        output_filename=output_path.name,
+                    )
+
+        self.assertEquals(cm.exception.exit_code, 1)  # Python exit code
+        self.assertRegex(cm.exception.log, r"\bRuntimeError\b")
+        self.assertRegex(cm.exception.log, r"\bfail\b")
+        # Regression test: [2019-10-02], the "forkserver_main()->spawn_module()"
+        # process would raise _another_ exception while exiting. It would try to
+        # close an already-closed socket.
+        self.assertNotRegex(cm.exception.log, r"Bad file descriptor")
+
     def test_render_killed_hard_out_of_memory(self):
         # This is similar to out-of-memory kill (but with different exit_code).
         # Testing out-of-memory is slow because we have to force the kernel to,
