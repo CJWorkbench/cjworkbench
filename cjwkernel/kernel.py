@@ -22,7 +22,6 @@ from cjwkernel.types import (
     Tab,
 )
 from cjwkernel.validate import validate
-from cjwkernel.pandas.main import main
 
 
 logger = logging.getLogger(__name__)
@@ -268,7 +267,7 @@ class Kernel:
                 if remaining <= 0:
                     if not timed_out:
                         timed_out = True
-                        child.kill()  # untrusted code could ignore SIGTERM
+                        module_process.kill()  # untrusted code could ignore SIGTERM
                     timeout = None  # wait as long as it takes for everything to die
                     # Fall through. After SIGKILL the child will close each fd,
                     # sending EOF to us. That means the selector _must_ return.
@@ -325,6 +324,6 @@ class Kernel:
             raise ModuleExitedError(exit_code, log_reader.to_str())
 
         if log_reader.buffer:
-            logger.info("Output from child: %s" % log_reader.to_str())
+            logger.info("Output from module process: %s", log_reader.to_str())
 
         return result
