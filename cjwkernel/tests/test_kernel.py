@@ -1,8 +1,9 @@
 import shutil
 import textwrap
 import unittest
+from unittest.mock import patch
 import pyarrow
-from cjwkernel.errors import ModuleCompileError, ModuleExitedError
+from cjwkernel.errors import ModuleCompileError, ModuleExitedError, ModuleTimeoutError
 from cjwkernel.kernel import Kernel
 from cjwkernel.tests.util import arrow_table_context, MockPath
 from cjwkernel import forkserver, types
@@ -193,6 +194,27 @@ class KernelTests(unittest.TestCase):
 
         self.assertEquals(cm.exception.exit_code, -9)  # SIGKILL
         self.assertEquals(cm.exception.log, "")
+
+    def test_render_kill_timeout(self):
+        module = self.kernel.compile(
+            MockPath(
+                ["foo.py"], b"import time\ndef render(table, params):\n  time.sleep(2)"
+            ),
+            "foo",
+        )
+        with patch.object(self.kernel, "render_timeout", 0.001):
+            with self.assertRaises(ModuleTimeoutError):
+                with arrow_table_context({"A": [1]}, dir=self.basedir) as input_table:
+                    with tempfile_context(dir=self.basedir) as output_path:
+                        self.kernel.render(
+                            module,
+                            self.basedir,
+                            input_table,
+                            types.Params({}),
+                            types.Tab("tab-1", "Tab 1"),
+                            None,
+                            output_filename=output_path.name,
+                        )
 
     def test_fetch_happy_path(self):
         module = self.kernel.compile(

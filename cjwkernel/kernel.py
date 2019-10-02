@@ -112,7 +112,17 @@ class Kernel:
     (which executes code on unexpected data).
     """
 
-    def __init__(self):
+    def __init__(
+        self,
+        validate_timeout: float = TIMEOUT,
+        migrate_params_timeout: float = TIMEOUT,
+        fetch_timeout: float = TIMEOUT,
+        render_timeout: float = TIMEOUT,
+    ):
+        self.validate_timeout = validate_timeout
+        self.migrate_params_timeout = migrate_params_timeout
+        self.fetch_timeout = fetch_timeout
+        self.render_timeout = render_timeout
         self._forkserver = Forkserver(
             forkserver_preload=[
                 "asyncio",
@@ -159,7 +169,10 @@ class Kernel:
 
     def _validate(self, compiled_module: CompiledModule) -> None:
         self._run_in_child(
-            compiled_module, ttypes.ValidateModuleResult(), "validate_thrift"
+            compiled_module,
+            self.validate_timeout,
+            ttypes.ValidateModuleResult(),
+            "validate_thrift",
         )
 
     def migrate_params(
@@ -167,7 +180,11 @@ class Kernel:
     ) -> None:
         request = RawParams(params).to_thrift()
         response = self._run_in_child(
-            compiled_module, ttypes.RawParams(), "migrate_params_thrift", request
+            compiled_module,
+            self.migrate_params_timeout,
+            ttypes.RawParams(),
+            "migrate_params_thrift",
+            request,
         )
         return RawParams.from_thrift(response).params
 
@@ -190,7 +207,11 @@ class Kernel:
             output_filename,
         )
         result = self._run_in_child(
-            compiled_module, ttypes.RenderResult(), "render_thrift", request
+            compiled_module,
+            self.render_timeout,
+            ttypes.RenderResult(),
+            "render_thrift",
+            request,
         )
         # RenderResult.from_thrift() verifies all filenames passed by the
         # module are in the directory the module has access to.
@@ -218,13 +239,22 @@ class Kernel:
             output_filename,
         )
         result = self._run_in_child(
-            compiled_module, ttypes.FetchResult(), "fetch_thrift", request
+            compiled_module,
+            self.fetch_timeout,
+            ttypes.FetchResult(),
+            "fetch_thrift",
+            request,
         )
         # TODO ensure result is truncated
         return FetchResult.from_thrift(result, basedir)
 
     def _run_in_child(
-        self, compiled_module: CompiledModule, result: Any, function: str, *args
+        self,
+        compiled_module: CompiledModule,
+        timeout: float,
+        result: Any,
+        function: str,
+        *args,
     ) -> None:
         """
         Fork a child process to run `function` with `args`.
@@ -238,7 +268,7 @@ class Kernel:
         Raise ModuleTimeoutError if it did not exit after a delay -- or if it
         closed its file descriptors long before it exited.
         """
-        limit_time = time.time() + TIMEOUT
+        limit_time = time.time() + timeout
 
         output_r, output_w = os.pipe()
         log_r, log_w = os.pipe()
