@@ -26,8 +26,8 @@ def python_format_to_d3_tick_format(python_format: str) -> str:
     # Formatter.parse() returns Iterable[(literal, field_name, format_spec,
     # conversion)]
     specifier = next(Formatter().parse(python_format))[2]
-    if not specifier or specifier[-1] not in 'bcdoxXneEfFgGn%':
-        specifier += 'r'
+    if not specifier or specifier[-1] not in "bcdoxXneEfFgGn%":
+        specifier += "r"
     return specifier
 
 
@@ -99,9 +99,7 @@ class SeriesParams:
         #
         # (The "index" here is a "group id" -- an index into
         # self.x_series.series. We call that "group".)
-        dataframe = pandas.DataFrame(
-            {yc.name: yc.series for yc in self.y_columns},
-        )
+        dataframe = pandas.DataFrame({yc.name: yc.series for yc in self.y_columns})
 
         # stacked: a series indexed by group, like:
         # group  bar
@@ -115,8 +113,8 @@ class SeriesParams:
         #        C      4.0
         #        D      7.0
         stacked = dataframe.stack(dropna=False)
-        stacked.name = 'y'
-        stacked.index.names = ['group', 'bar']
+        stacked.name = "y"
+        stacked.index.names = ["group", "bar"]
 
         # Now convert back to a dataframe. This is the data we'll pass to Vega.
         #
@@ -125,10 +123,10 @@ class SeriesParams:
         table = stacked.reset_index()
 
         # Change nulls from NaN to None (Object). NaN is invalid JSON.
-        y = table['y'].astype(object)
+        y = table["y"].astype(object)
         y[y.isnull()] = None
-        table['y'] = y
-        return table.to_dict('records')
+        table["y"] = y
+        return table.to_dict("records")
 
     def to_vega(self) -> Dict[str, Any]:
         """
@@ -140,19 +138,12 @@ class SeriesParams:
             "title": {
                 "text": self.title,
                 "offset": 15,
-                "color": '#383838',
+                "color": "#383838",
                 "font": "Nunito Sans, Helvetica, sans-serif",
                 "fontSize": 20,
-                "fontWeight": "normal"
+                "fontWeight": "normal",
             },
-
-            "data": [
-                {
-                    "name": "table",
-                    "values": self.to_vega_data_values(),
-                }
-            ],
-
+            "data": [{"name": "table", "values": self.to_vega_data_values()}],
             "scales": [
                 {
                     "name": "xscale",
@@ -190,7 +181,6 @@ class SeriesParams:
                     "range": [ys.color for ys in self.y_columns],
                 },
             ],
-
             "axes": [
                 {
                     "title": self.x_axis_label,
@@ -218,14 +208,12 @@ class SeriesParams:
                                 }
                             }
                         }
-                    }
+                    },
                 },
                 {
                     "title": self.y_axis_label,
                     "format": self.y_label_format,
-                    "tickMinStep": (
-                        1 if self.y_label_format.endswith('d') else None
-                    ),
+                    "tickMinStep": (1 if self.y_label_format.endswith("d") else None),
                     "orient": "left",
                     "scale": "yscale",
                     "tickSize": 3,
@@ -242,29 +230,14 @@ class SeriesParams:
                     "labelFontSize": 11,
                 },
             ],
-
             "marks": [
                 {
                     "type": "group",
-
                     "from": {
-                        "facet": {
-                            "data": "table",
-                            "name": "facet",
-                            "groupby": "group",
-                        }
+                        "facet": {"data": "table", "name": "facet", "groupby": "group"}
                     },
-
-                    "encode": {
-                        "enter": {
-                            "x": {"scale": "xscale", "field": "group"},
-                        }
-                    },
-
-                    "signals": [
-                        {"name": "width", "update": "bandwidth('xscale')"}
-                    ],
-
+                    "encode": {"enter": {"x": {"scale": "xscale", "field": "group"}}},
+                    "signals": [{"name": "width", "update": "bandwidth('xscale')"}],
                     "scales": [
                         {
                             "name": "pos",
@@ -273,7 +246,6 @@ class SeriesParams:
                             "domain": {"data": "facet", "field": "bar"},
                         }
                     ],
-
                     "marks": [
                         {
                             "name": "bars",
@@ -285,12 +257,11 @@ class SeriesParams:
                                     "width": {"scale": "pos", "band": 1},
                                     "y": {"scale": "yscale", "field": "y"},
                                     "y2": {"scale": "yscale", "value": 0},
-                                    "fill": {"scale": "color",
-                                             "field": "bar"},
+                                    "fill": {"scale": "color", "field": "bar"},
                                 }
-                            }
+                            },
                         }
-                    ]
+                    ],
                 }
             ],
         }
@@ -307,7 +278,7 @@ class SeriesParams:
                     "labelFont": "Nunito Sans, Helvetica, sans-serif",
                     "labelColor": "#383838",
                     "labelFontWeight": "normal",
-                },
+                }
             ]
 
         return ret
@@ -335,8 +306,9 @@ class Form:
     def from_params(cls, *, y_columns: List[Dict[str, str]], **kwargs) -> Form:
         return Form(**kwargs, y_columns=[YColumn(**y) for y in y_columns])
 
-    def validate_with_table(self, table: pandas.DataFrame,
-                            input_columns: Dict[str, Any]) -> SeriesParams:
+    def validate_with_table(
+        self, table: pandas.DataFrame, input_columns: Dict[str, Any]
+    ) -> SeriesParams:
         """
         Create a SeriesParams ready for charting, or raises ValueError.
 
@@ -353,14 +325,13 @@ class Form:
         """
         if len(table.index) >= MaxNBars:
             raise ValueError(
-                f'Column chart can visualize '
-                f'a maximum of {MaxNBars} bars'
+                f"Column chart can visualize " f"a maximum of {MaxNBars} bars"
             )
 
         if not self.x_column:
-            raise GentleValueError('Please choose an X-axis column')
+            raise GentleValueError("Please choose an X-axis column")
         if not self.y_columns:
-            raise GentleValueError('Please choose a Y-axis column')
+            raise GentleValueError("Please choose a Y-axis column")
 
         x_series = XSeries(table[self.x_column].astype(str))
 
@@ -368,26 +339,31 @@ class Form:
         for y_column in self.y_columns:
             if y_column.column == self.x_column:
                 raise ValueError(
-                    f'You cannot plot Y-axis column {y_column.column} '
-                    'because it is the X-axis column'
+                    f"You cannot plot Y-axis column {y_column.column} "
+                    "because it is the X-axis column"
                 )
 
             series = table[y_column.column]
             y_columns.append(YSeries(series, y_column.color))
 
         if not len(table):
-            raise GentleValueError('no records to plot')
+            raise GentleValueError("no records to plot")
 
-        title = self.title or 'Column Chart'
+        title = self.title or "Column Chart"
         x_axis_label = self.x_axis_label or x_series.name
         y_axis_label = self.y_axis_label or y_columns[0].name
         y_label_format = python_format_to_d3_tick_format(
             input_columns[y_columns[0].name].format
         )
 
-        return SeriesParams(title=title, x_axis_label=x_axis_label,
-                            y_axis_label=y_axis_label, x_series=x_series,
-                            y_columns=y_columns, y_label_format=y_label_format)
+        return SeriesParams(
+            title=title,
+            x_axis_label=x_axis_label,
+            y_axis_label=y_axis_label,
+            x_series=x_series,
+            y_columns=y_columns,
+            y_label_format=y_label_format,
+        )
 
 
 def _migrate_params_v0_to_v1(params):
@@ -396,20 +372,17 @@ def _migrate_params_v0_to_v1(params):
 
     v1: params['y_columns'] is List[Dict[{ name, color }, str]].
     """
-    json_y_columns = params['y_columns']
+    json_y_columns = params["y_columns"]
     if not json_y_columns:
         # empty str => no columns
         y_columns = []
     else:
         y_columns = json.loads(json_y_columns)
-    return {
-        **params,
-        'y_columns': y_columns
-    }
+    return {**params, "y_columns": y_columns}
 
 
 def migrate_params(params):
-    if isinstance(params['y_columns'], str):
+    if isinstance(params["y_columns"], str):
         params = _migrate_params_v0_to_v1(params)
 
     return params
@@ -420,9 +393,9 @@ def render(table, params, *, input_columns):
     try:
         valid_params = form.validate_with_table(table, input_columns)
     except GentleValueError as err:
-        return (table, '', {'error': str(err)})
+        return (table, "", {"error": str(err)})
     except ValueError as err:
-        return (table, str(err), {'error': str(err)})
+        return (table, str(err), {"error": str(err)})
 
     json_dict = valid_params.to_vega()
-    return (table, '', json_dict)
+    return (table, "", json_dict)
