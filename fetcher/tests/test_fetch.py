@@ -8,7 +8,6 @@ from unittest.mock import patch
 from dateutil import parser
 import pyarrow.parquet
 from cjwkernel.errors import ModuleExitedError
-from cjwkernel.forkserver import install_calling_process_as_subreaper
 from cjwkernel.param_dtype import ParamDType
 from cjwkernel.types import (
     Column,
