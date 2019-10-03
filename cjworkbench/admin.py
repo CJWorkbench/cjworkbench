@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models.userprofile import UserProfile
+from cjworkbench.models.userprofile import UserProfile
 
 
 class UserProfileAdmin(admin.ModelAdmin):

@@ -1,0 +1,17 @@
+{
+  "name": "Start from tab",
+  "id_name": "startfromtab",
+  "category": "Add data",
+  "icon": "import-tab",
+  "help_url": "modules/add-data/startfromtab",
+  "description": "Use the output of another tab as the data source for this tab.",
+  "loads_data": true,
+  "parameters_version": 1,
+  "parameters": [
+    {
+      "name": "",
+      "id_name": "tab",
+      "type": "tab"
+    }
+  ]
+}

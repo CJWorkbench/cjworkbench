@@ -6,7 +6,7 @@ from django.db import migrations
 
 
 def nix_code_from_minio(apps, schema_editor):
-    from server import minio
+    from cjwstate import minio
 
     # Delete from S3
     try:

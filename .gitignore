@@ -16,7 +16,6 @@ client_secret.json
 # Asset bundles, downloaded modules, saved data
 /node_modules/
 /assets/bundles/
-/server/modules/dynamic
 /media/
 /assets/locale/_build
 

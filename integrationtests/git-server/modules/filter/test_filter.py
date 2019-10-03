@@ -226,12 +226,22 @@ class TestRender(unittest.TestCase):
         assert_frame_equal(result, expected)
 
     def test_not_contains_regex(self):
-        params = simple_params(
-            "a", "text_does_not_contain_regex", "f[a-zA-Z]+d", case_sensitive=True
+        table = pd.DataFrame(
+            {
+                "A": pd.Series([" fredx", "fd", np.nan, "x"], dtype="category"),
+                "B": [1, 2, 3, 4],
+            }
         )
-        result = render(self.table, params)
-        expected = self.table[[False, False, True, True, True]].reset_index(drop=True)
-        assert_frame_equal(result, expected)
+        params = simple_params(
+            "A", "text_does_not_contain_regex", "f[a-zA-Z]+d", case_sensitive=True
+        )
+        result = render(table, params)
+        assert_frame_equal(
+            result,
+            pd.DataFrame(
+                {"A": pd.Series(["fd", np.nan, "x"], dtype="category"), "B": [2, 3, 4]}
+            ),
+        )
 
     def test_not_contains_regex_drop(self):
         params = simple_params(
@@ -251,10 +261,33 @@ class TestRender(unittest.TestCase):
         expected = self.table[[True, False, False, False, False]].reset_index(drop=True)
         assert_frame_equal(result, expected)
 
+    def test_exactly_empty_str(self):
+        params = simple_params("a", "text_is_exactly", "")
+        result = render(pd.DataFrame({"a": ["", np.nan, "x"]}), params)
+        assert_frame_equal(result, pd.DataFrame({"a": [""]}))
+
+    def test_not_exactly(self):
+        params = simple_params("a", "text_is_not_exactly", "x", case_sensitive=True)
+        result = render(pd.DataFrame({"a": ["x", "y", "z"]}), params)
+        assert_frame_equal(result, pd.DataFrame({"a": ["y", "z"]}))
+
+    def test_not_exactly_empty_str(self):
+        params = simple_params("a", "text_is_not_exactly", "")
+        result = render(pd.DataFrame({"a": ["", np.nan, "x"]}), params)
+        assert_frame_equal(result, pd.DataFrame({"a": [np.nan, "x"]}))
+
+    def test_not_exactly_case_insensitive(self):
+        params = simple_params("a", "text_is_not_exactly", "x", case_sensitive=False)
+        result = render(pd.DataFrame({"a": ["x", "X", "y"]}), params)
+        assert_frame_equal(result, pd.DataFrame({"a": ["y"]}))
+
     def test_exactly_regex(self):
-        params = simple_params("d", "text_is_exactly_regex", "round")
-        result = render(self.table, params)
-        expected = self.table[[True, False, False, True, False]].reset_index(drop=True)
+        table = pd.DataFrame(
+            {"A": ["around", "round", "rounded", np.nan, "e"], "B": [1, 2, 3, 4, 5]}
+        )
+        params = simple_params("A", "text_is_exactly_regex", "round")
+        result = render(table, params)
+        expected = pd.DataFrame({"A": ["round"], "B": [2]})
         assert_frame_equal(result, expected)
 
     def test_exactly_non_text_column(self):
@@ -262,7 +295,7 @@ class TestRender(unittest.TestCase):
         result = render(self.table, params)
         self.assertEqual(result, "Column is not text. Please convert to text.")
 
-    def test_empty(self):
+    def test_null(self):
         params = simple_params("c", "cell_is_empty", "nonsense")
         result = render(self.table, params)
         expected = self.table[[False, True, True, False, True]].reset_index(drop=True)
@@ -273,7 +306,7 @@ class TestRender(unittest.TestCase):
         result = render(self.table, params)
         assert_frame_equal(result, expected)
 
-    def test_not_empty(self):
+    def test_not_null(self):
         params = simple_params("c", "cell_is_not_empty", "nonsense")
         result = render(self.table, params)
         expected = self.table[[True, False, False, True, False]].reset_index(drop=True)
@@ -283,6 +316,23 @@ class TestRender(unittest.TestCase):
         params = simple_params("c", "cell_is_not_empty", "")
         result = render(self.table, params)
         assert_frame_equal(result, expected)
+
+    def test_empty(self):
+        params = simple_params("c", "cell_is_empty_str_or_null", "")
+        result = render(pd.DataFrame({"c": ["x", "", np.nan, "y"]}), params)
+        assert_frame_equal(result, pd.DataFrame({"c": ["", np.nan]}))
+
+    def test_non_empty(self):
+        params = simple_params("c", "cell_is_not_empty_str_or_null", "")
+        result = render(pd.DataFrame({"c": ["x", "", np.nan, "y"]}), params)
+        assert_frame_equal(result, pd.DataFrame({"c": ["x", "y"]}))
+
+    def test_non_empty_with_non_text_input(self):
+        # Workbench allows the concept of "empty" on _any_ value -- text or
+        # otherwise. With non-text columns, "empty" is a synonym for "null".
+        params = simple_params("c", "cell_is_not_empty_str_or_null", "")
+        result = render(pd.DataFrame({"c": [0, 1, np.nan, 2]}), params)
+        assert_frame_equal(result, pd.DataFrame({"c": [0.0, 1, 2]}))
 
     def test_equals(self):
         # working as intended
@@ -306,6 +356,11 @@ class TestRender(unittest.TestCase):
         params = simple_params("c", "number_equals", "gibberish")
         result = render(self.table, params)
         self.assertEqual(result, "Value is not a number. Please enter a valid number.")
+
+    def test_not_equals(self):
+        params = simple_params("c", "number_does_not_equal", "3")
+        result = render(pd.DataFrame({"c": [1, np.nan, 3, 5]}), params)
+        assert_frame_equal(result, pd.DataFrame({"c": [1, np.nan, 5]}))
 
     def test_category_equals(self):
         table = pd.DataFrame({"A": ["foo", np.nan, "bar"]}, dtype="category")
@@ -345,6 +400,17 @@ class TestRender(unittest.TestCase):
         params = simple_params("date", "date_is", "2015-07-31")
         result = render(self.table, params)
         expected = self.table[[False, False, False, True, False]].reset_index(drop=True)
+        assert_frame_equal(result, expected)
+
+    def test_date_is_not(self):
+        params = simple_params("date", "date_is_not", "2015-07-31")
+        result = render(
+            pd.DataFrame(
+                {"date": ["2015-07-31", "2015-07-20"]}, dtype="datetime64[ns]"
+            ),
+            params,
+        )
+        expected = pd.DataFrame({"date": ["2015-07-20"]}, dtype="datetime64[ns]")
         assert_frame_equal(result, expected)
 
     def test_bad_date(self):
@@ -394,7 +460,7 @@ class TestRender(unittest.TestCase):
                             {
                                 "colname": "A",
                                 "condition": "number_is_less_than",
-                                "value": 3,
+                                "value": "3",
                                 "case_sensitive": False,
                             }
                         ],
@@ -405,7 +471,7 @@ class TestRender(unittest.TestCase):
                             {
                                 "colname": "B",
                                 "condition": "number_is_greater_than",
-                                "value": 2,
+                                "value": "2",
                                 "case_sensitive": False,
                             }
                         ],
@@ -429,7 +495,7 @@ class TestRender(unittest.TestCase):
                             {
                                 "colname": "A",
                                 "condition": "number_is_less_than",
-                                "value": 2,
+                                "value": "2",
                                 "case_sensitive": False,
                             }
                         ],
@@ -440,7 +506,7 @@ class TestRender(unittest.TestCase):
                             {
                                 "colname": "B",
                                 "condition": "number_is_greater_than",
-                                "value": 3,
+                                "value": "3",
                                 "case_sensitive": False,
                             }
                         ],
@@ -464,13 +530,13 @@ class TestRender(unittest.TestCase):
                             {
                                 "colname": "A",
                                 "condition": "number_is_less_than",
-                                "value": 3,
+                                "value": "3",
                                 "case_sensitive": False,
                             },
                             {
                                 "colname": "B",
                                 "condition": "number_is_greater_than",
-                                "value": 2,
+                                "value": "2",
                                 "case_sensitive": False,
                             },
                         ],
@@ -494,13 +560,13 @@ class TestRender(unittest.TestCase):
                             {
                                 "colname": "A",
                                 "condition": "number_is_less_than",
-                                "value": 2,
+                                "value": "2",
                                 "case_sensitive": False,
                             },
                             {
                                 "colname": "B",
                                 "condition": "number_is_greater_than",
-                                "value": 3,
+                                "value": "3",
                                 "case_sensitive": False,
                             },
                         ],
@@ -510,6 +576,50 @@ class TestRender(unittest.TestCase):
         }
         result = render(table, params)
         assert_frame_equal(result, pd.DataFrame({"A": [1, 3], "B": [2, 4]}))
+
+    def test_multi_filters_and_subfilters_all_and(self):
+        # https://www.pivotaltracker.com/story/show/165434277
+        # I couldn't reproduce -- dunno what the issue was. But it's good to
+        # test for it!
+        table = pd.DataFrame({"A": [1, 2, 3, 4, 5, 6]})
+        params = {
+            "keep": True,
+            "filters": {
+                "operator": "and",
+                "filters": [
+                    {
+                        "operator": "and",
+                        "subfilters": [
+                            {
+                                "colname": "A",
+                                "condition": "number_is_greater_than",
+                                "value": "1",
+                                "case_sensitive": False,
+                            },
+                            {
+                                "colname": "A",
+                                "condition": "number_is_greater_than",
+                                "value": "5",
+                                "case_sensitive": False,
+                            },
+                        ],
+                    },
+                    {
+                        "operator": "and",
+                        "subfilters": [
+                            {
+                                "colname": "A",
+                                "condition": "number_is_greater_than",
+                                "value": "2",
+                                "case_sensitive": False,
+                            }
+                        ],
+                    },
+                ],
+            },
+        }
+        result = render(table, params)
+        assert_frame_equal(result, pd.DataFrame({"A": [6]}))
 
     def test_remove_unused_categories(self):
         # [2019-04-23] we're stricter about module output now: categories must

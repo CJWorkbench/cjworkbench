@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.core import management
 from django.core.management.base import BaseCommand
-from server import minio
+from cjwstate import minio
 
 
 STATIC_FILES_BUCKET_POLICY = """{
@@ -41,12 +41,6 @@ class Command(BaseCommand):
     help = "Run DB migrations, reload modules and upload static files to minio"
 
     def handle(self, *args, **options):
-        # We only collectstatic on non-debug. On debug, we don't upload to
-        # minio because we'd need to run collectstatic every reboot, which
-        # would be too slow/complex-to-set-up.
-        if not settings.DEBUG:
-            management.call_command("collectstatic", "--no-input")
-
         minio.ensure_bucket_exists(minio.UserFilesBucket)
         minio.ensure_bucket_exists(minio.StoredObjectsBucket)
         minio.ensure_bucket_exists(minio.ExternalModulesBucket)
@@ -62,6 +56,12 @@ class Command(BaseCommand):
             # No need to enable CORS for minio-served buckets:
             # "Minio enables CORS by default on all buckets for all HTTP verbs"
             # https://docs.min.io/docs/minio-server-limits-per-tenant.html
+
+        # We only collectstatic on non-debug. On debug, we don't upload to
+        # minio because we'd need to run collectstatic every reboot, which
+        # would be too slow/complex-to-set-up.
+        if not settings.DEBUG:
+            management.call_command("collectstatic", "--no-input")
 
         # Migrate comes last: during deploy, in some cases, migration can make
         # the site unusable until it's completed. So don't add any instructions

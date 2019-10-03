@@ -1,5 +1,6 @@
 /* globals describe, it, expect, jest, beforeEach, afterEach */
 import React from 'react'
+import { act } from 'react-dom/test-utils'
 import ConnectedWfModule, { WfModule } from './WfModule'
 import DataVersionModal from '../DataVersionModal'
 import { shallow, mount } from 'enzyme'
@@ -233,22 +234,37 @@ describe('WfModule, not read-only mode', () => {
       ...module,
       param_fields: [pspec('a', 'string'), pspec('b', 'string')]
     }
-    const w = wrapper({ wfModule, module: aModule })
+    // Make setWfModuleParams() return a thennable -- a fake promise.
+    // It'll set onSetWfModuleParamsDone, which we can call synchronously.
+    // (This is white-box testing -- we assume the .then() and the sync
+    // call.)
+    let onSetWfModuleParamsDone = null
+    const setWfModuleParams = jest.fn(() => ({ then: (fn) => { onSetWfModuleParamsDone = fn } }))
+    const w = wrapper({
+      wfModule,
+      module: aModule,
+      setWfModuleParams
+    })
 
     w.find('ParamsForm').prop('onChange')({ a: 'C' })
     w.update()
     expect(w.find('ParamsForm').prop('edits')).toEqual({ a: 'C' })
 
     // not submitted to the server
-    expect(w.instance().props.setWfModuleParams).not.toHaveBeenCalled()
+    expect(setWfModuleParams).not.toHaveBeenCalled()
     expect(w.prop('className')).toMatch(/\bediting\b/)
 
     w.find('ParamsForm').prop('onSubmit')()
-    expect(w.instance().props.setWfModuleParams).toHaveBeenCalledWith(999, { a: 'C' })
-    expect(w.prop('className')).not.toMatch(/\bediting\b/)
+    expect(setWfModuleParams).toHaveBeenCalledWith(999, { a: 'C' })
 
-    // a bit of a white-box test: state should be cleared
+    // a bit of a white-box test: state should be cleared ... but only
+    // after a tick, so Redux can do its magic in setWfModuleParams
+    expect(w.prop('className')).toMatch(/\bediting\b/)
+    expect(w.state('edits')).toEqual({ a: 'C' })
+    w.setProps({ wfModule: { ...wfModule, params: { a: 'C' } } })
+    act(onSetWfModuleParamsDone)
     expect(w.state('edits')).toEqual({})
+    expect(w.prop('className')).not.toMatch(/\bediting\b/)
   })
 
   it('submits a fetch event in onSubmit', () => {
@@ -266,16 +282,17 @@ describe('WfModule, not read-only mode', () => {
       secrets: {},
       files: []
     }
+    const setWfModuleParams = jest.fn(() => ({ then: jest.fn() })) // dummy promise
     const aModule = {
       ...module,
       param_fields: [pspec('url', 'string'), pspec('version_select', 'custom')]
     }
-    const w = wrapper({ wfModule, module: aModule })
+    const w = wrapper({ wfModule, module: aModule, setWfModuleParams })
 
     w.find('ParamsForm').prop('onChange')({ url: 'http://example.org' })
     w.find('ParamsForm').prop('onSubmit')()
 
-    expect(w.instance().props.setWfModuleParams).toHaveBeenCalledWith(999, { url: 'http://example.org' })
+    expect(setWfModuleParams).toHaveBeenCalledWith(999, { url: 'http://example.org' })
     expect(w.instance().props.maybeRequestFetch).toHaveBeenCalledWith(999)
   })
 
@@ -291,6 +308,10 @@ describe('WfModule, not read-only mode', () => {
     mockApi.setSelectedWfModule = jest.fn(() => Promise.resolve(null))
     mockApi.addModule = jest.fn(() => Promise.resolve(null))
     generateSlug.mockImplementation(prefix => prefix + 'X')
+    const quickFix = {
+      buttonText: { id: 'TODO_i18n', arguments: { text: 'Fix it' } },
+      action: { type: 'prependStep', moduleSlug: 'dosomething', partialParams: { A: 'B' } }
+    }
     const store = mockStore({
       workflow: {
         id: 99,
@@ -331,7 +352,7 @@ describe('WfModule, not read-only mode', () => {
           isZenMode={false}
           isZenModeAllowed={false}
           index={1}
-          wfModule={{ id: 20, module: 'loadurl', is_collapsed: false, status: 'error', params: {}, secrets: {}, error: 'foo', files: [], quick_fixes: [{ text: 'Fix', action: 'prependModule', args: ['fixtype', { foo: 'bar' }] }] }}
+          wfModule={{ id: 20, module: 'loadurl', is_collapsed: false, status: 'error', params: {}, secrets: {}, error: 'foo', files: [], quick_fixes: [quickFix] }}
           isSelected
           isAfterSelected={false}
           onDragStart={jest.fn()}
@@ -343,7 +364,7 @@ describe('WfModule, not read-only mode', () => {
     )
 
     w.find('button.quick-fix').simulate('click')
-    expect(mockApi.addModule).toHaveBeenCalledWith('tab-11', 'step-X', 'fixtype', 1, { foo: 'bar' })
+    expect(mockApi.addModule).toHaveBeenCalledWith('tab-11', 'step-X', 'dosomething', 1, { A: 'B' })
   })
 
   describe('lesson highlights', () => {
@@ -402,7 +423,7 @@ describe('WfModule, not read-only mode', () => {
             isZenMode={false}
             isZenModeAllowed={false}
             index={1}
-            wfModule={{ id: 20, module: 'loadurl', is_collapsed: false, status: 'error', params: {}, secrets: {}, error: 'foo', files: [], quick_fixes: [{ text: 'Fix', action: 'prependModule', args: ['fixtype', { foo: 'bar' }] }] }}
+            wfModule={{ id: 20, module: 'loadurl', is_collapsed: false, status: 'error', params: {}, secrets: {}, error: 'foo', files: [], quick_fixes: [] }}
             isSelected
             isAfterSelected={false}
             onDragStart={jest.fn()}

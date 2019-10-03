@@ -1,0 +1,23 @@
+id_name: refine
+name: Refine
+category: Clean
+icon: clean
+description: 'Clean inconsistencies and typos across values in seconds using algorithms, or standardize facets manually.'
+has_zen_mode: true
+help_url: steps/clean/refine
+param_schema: # we have a custom param, "refine"
+  column: { type: column, column_types: [ text ] }
+  refine:
+    type: dict
+    properties:
+      renames: { type: map, value_dtype: { type: string } }
+parameters_version: 3
+parameters:
+- id_name: column
+  type: column
+  name: ''
+  column_types: [ text ]
+  placeholder: Select column
+- id_name: refine
+  type: custom
+  name: ''

@@ -1,20 +1,15 @@
+from contextlib import ExitStack
+from dataclasses import dataclass
 from functools import partial, singledispatch
-import os
 import re
-import pathlib
-import tempfile
-import weakref
+from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
-from cjworkbench.types import RenderColumn, StepResultShape, TabOutput
-from server import minio
-from server.models import Tab, UploadedFile
-from server.models.param_spec import ParamDType
-from .types import (
-    TabCycleError,
-    TabOutputUnreachableError,
-    UnneededExecution,
-    PromptingError,
-)
+from cjwkernel.types import ArrowTable, Params, RenderResult, Tab, TabOutput
+from cjwkernel.util import tempfile_context
+from cjwstate import minio
+from cjwstate.models import UploadedFile
+from cjwstate.models.param_spec import ParamDType
+from .types import TabCycleError, TabOutputUnreachableError, PromptingError
 
 
 FilesystemUnsafeChars = re.compile("[^-_.,()a-zA-Z0-9]")
@@ -56,14 +51,25 @@ class PromptErrorAggregator:
         raise PromptingError(errors)
 
 
+@dataclass(frozen=True)
+class _TabData:
+    tab: Tab
+    result: Optional[RenderResult]
+
+    @property
+    def slug(self) -> str:
+        return self.tab.slug
+
+
 class RenderContext:
     def __init__(
         self,
-        workflow_id: int,
         wf_module_id: int,
-        input_table_shape: StepResultShape,
-        # assume tab_shapes keys are ordered the way the user ordered the tabs.
-        tab_shapes: Dict[str, Optional[StepResultShape]],
+        input_table: ArrowTable,
+        # assume tab_results keys are ordered the way the user ordered the tabs.
+        tab_results: Dict[Tab, Optional[RenderResult]],
+        basedir: Path,
+        exit_stack: ExitStack,
         # params is a HACK to let column selectors rely on a tab_parameter,
         # which is a _root-level_ parameter. So when we're walking the tree of
         # params, we need to keep a handle on the root ...  which is ugly and
@@ -74,16 +80,19 @@ class RenderContext:
         # get_param_values(), and get_param_values() also takes `params`. Ugh.
         params: Dict[str, Any],
     ):
-        self.workflow_id = workflow_id
         self.wf_module_id = wf_module_id
-        self.input_table_shape = input_table_shape
-        self.tab_shapes = tab_shapes
+        self.input_table = input_table
+        self.tabs: Dict[str, _TabData] = {
+            k.slug: _TabData(k, v) for k, v in tab_results.items()
+        }
+        self.basedir = basedir
+        self.exit_stack = exit_stack
         self.params = params
 
     def output_columns_for_tab_parameter(self, tab_parameter):
         if tab_parameter is None:
             # Common case: param selects from the input table
-            return {c.name: c for c in self.input_table_shape.columns}
+            return {c.name: c for c in self.input_table.metadata.columns}
 
         # Rare case: there's a "tab" parameter, and the column selector is
         # selecting from _that_ tab's output columns.
@@ -92,20 +101,20 @@ class RenderContext:
         tab_slug = self.params[tab_parameter]
 
         try:
-            tab = self.tab_shapes[tab_slug]
+            tab_data = self.tabs[tab_slug]
         except KeyError:
             # Tab does not exist
             return {}
-        if tab is None or tab.status != "ok":
-            # Tab has a cycle or other error
+        if tab_data.result is None or tab_data.result.status != "ok":
+            # Tab has a cycle or other error.
             return {}
 
-        return {c.name: c for c in tab.table_shape.columns}
+        return {c.name: c for c in tab_data.result.table.metadata.columns}
 
 
 def get_param_values(
     schema: ParamDType.Dict, params: Dict[str, Any], context: RenderContext
-) -> Dict[str, Any]:
+) -> Params:
     """
     Convert `params` to a dict we'll pass to a module `render()` function.
 
@@ -117,12 +126,13 @@ def get_param_values(
         * `column` parameters become '' if they aren't input columns
         * `multicolumn` parameters lose values that aren't input columns
         * Raise `PromptingError` if a chosen column is of the wrong type
-          (so the caller can render a ProcessResult with errors and quickfixes)
+          (so the caller can return a RenderResult with errors and quickfixes)
 
     This uses database connections, and it's slow! (It needs to load input tab
     data.) Be sure the Workflow is locked while you call it.
     """
-    return clean_value(schema, params, context)
+    values: Dict[str, Any] = clean_value(schema, params, context)
+    return Params(values)
 
 
 # singledispatch primer: `clean_value(dtype, value, context)` will choose its
@@ -161,14 +171,10 @@ def _(
     return float(value)
 
 
-class WeakreffablePath(pathlib.PosixPath):
-    """Exactly like pathlib.Path, but weakref.finalize works on it."""
-
-
 @clean_value.register(ParamDType.File)
 def _(
     dtype: ParamDType.File, value: Optional[str], context: RenderContext
-) -> Optional[pathlib.Path]:
+) -> Optional[Path]:
     """
     Convert a `file` String-encoded UUID to a tempfile `pathlib.Path`.
 
@@ -177,6 +183,8 @@ def _(
     * Points to a temporary file containing all bytes
     * Has the same suffix as the originally-uploaded file
     * Will have its file deleted when it goes out of scope
+
+    If the file is in the database but does not exist on minio, return `None`.
     """
     if value is None:
         return None
@@ -191,69 +199,40 @@ def _(
     # have the same suffix as the original: that helps with filetype
     # detection. We also put the UUID in the name so debug messages help
     # devs find the original file.
-    name = FilesystemUnsafeChars.sub("-", uploaded_file.name)
-    suffix = "".join(pathlib.PurePath(name).suffixes)
-    fd, filename = tempfile.mkstemp(suffix=suffix, prefix=value)
-    os.close(fd)  # we just want the empty file; no need to have it open
-    # Build our retval: it'll delete the file when it's destroyed
-    path = WeakreffablePath(filename)
-    weakref.finalize(path, os.unlink, filename)
+    safe_name = FilesystemUnsafeChars.sub("-", uploaded_file.name)
+    path = context.exit_stack.enter_context(
+        tempfile_context(
+            prefix="file-",
+            suffix=(uploaded_file.uuid + "-" + safe_name),
+            dir=context.basedir,
+        )
+    )
     try:
         # Overwrite the file
         minio.download(uploaded_file.bucket, uploaded_file.key, path)
+        return path
     except FileNotFoundError:
-        # tempfile will be deleted by weakref
+        # tempfile will be deleted by context.exit_stack
         return None
-    return path
 
 
 @clean_value.register(ParamDType.Tab)
 def _(dtype: ParamDType.Tab, value: str, context: RenderContext) -> TabOutput:
     tab_slug = value
     try:
-        shape = context.tab_shapes[tab_slug]
+        tab_data = context.tabs[tab_slug]
     except KeyError:
         # It's a tab that doesn't exist.
         return None
-    if shape is None:
+    tab_result = tab_data.result
+    if tab_result is None:
         # It's an un-rendered tab. Or at least, the executor _tells_ us it's
         # un-rendered. That means there's a tab-cycle.
         raise TabCycleError
-    if shape.status != "ok":
+    if tab_result.status != "ok":
         raise TabOutputUnreachableError
 
-    # Load Tab output from database. Assumes we've locked the workflow.
-    try:
-        tab = Tab.objects.get(
-            workflow_id=context.workflow_id, is_deleted=False, slug=tab_slug
-        )
-    except Tab.DoesNotExist:
-        # If the Tab doesn't exist, someone deleted it mid-render. (We already
-        # verified that the tab has been rendered -- that was
-        # context.tab_shapes[tab_slug].) So our param is stale.
-        raise UnneededExecution
-
-    wf_module = tab.live_wf_modules.last()
-    if wf_module is None:
-        # empty tab -> empty output
-        raise TabOutputUnreachableError
-
-    crr = wf_module.cached_render_result
-    if crr is None:
-        # ... but tab_shapes implies we just cached the correct result! It
-        # looks like that version must be stale.
-        raise UnneededExecution
-
-    result = crr.result  # read Parquet file from disk (slow)
-    return TabOutput(
-        tab_slug,
-        tab.name,
-        dict(
-            (c.name, RenderColumn(c.name, c.type.name, getattr(c.type, "format", None)))
-            for c in result.columns
-        ),
-        result.dataframe,
-    )
+    return TabOutput(tab_data.tab, tab_result.table)
 
 
 @clean_value.register(ParamDType.Column)
@@ -351,19 +330,16 @@ def clean_value_list(
 @clean_value.register(ParamDType.Multitab)
 def _(
     dtype: ParamDType.Multitab, value: List[str], context: RenderContext
-) -> List[Any]:
-    # First, recurse -- the same way we clean a list.
-    unordered = clean_value_list(dtype, value, context)
-
-    # Next, order outputs the way they're ordered in `context.tab_shapes`.
-    # Ignore all `None` values -- those are nonexistent tabs, and we should
-    # omit nonexistent tabs.
-    lookup = dict(
-        (tab_output.slug, tab_output)
-        for tab_output in unordered
+) -> List[TabOutput]:
+    unordered: Dict[Tab, TabOutput] = {
+        tab_output.tab.slug: tab_output
+        # recurse -- the same way we clean a list.
+        for tab_output in clean_value_list(dtype, value, context)
         if tab_output is not None
-    )
-    return [lookup[slug] for slug in context.tab_shapes.keys() if slug in lookup]
+    }
+
+    # Order based on `context.tabs`.
+    return [unordered[tab] for tab in context.tabs.keys() if tab in unordered]
 
 
 @clean_value.register(ParamDType.Dict)

@@ -1,8 +1,8 @@
 from unittest.mock import Mock, patch
 from django.contrib.auth.models import User
 from server import oauth
-from server.models import Workflow, ModuleVersion
-from server.tests.utils import DbTestCase
+from cjwstate.models import Workflow, ModuleVersion
+from cjwstate.tests.utils import DbTestCase
 
 
 class OauthTest(DbTestCase):

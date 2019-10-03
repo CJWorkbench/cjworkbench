@@ -22,6 +22,7 @@ import {
 } from '../../workflow-reducer'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
+import deepEqual from 'fast-deep-equal'
 import lessonSelector from '../../lessons/lessonSelector'
 import { createSelector } from 'reselect'
 
@@ -84,7 +85,7 @@ export class WfModule extends React.PureComponent {
     setSelectedWfModule: PropTypes.func.isRequired, // func(wfModuleId) => undefined
     setWfModuleCollapsed: PropTypes.func.isRequired, // func(wfModuleId, isCollapsed, isReadOnly) => undefined
     setZenMode: PropTypes.func.isRequired, // func(wfModuleId, bool) => undefined
-    applyQuickFix: PropTypes.func.isRequired, // func(wfModuleId, action, args) => undefined
+    applyQuickFix: PropTypes.func.isRequired, // func(wfModuleId, action) => undefined
     setWfModuleNotes: PropTypes.func.isRequired // func(wfModuleId, notes) => undefined
   }
 
@@ -214,8 +215,8 @@ export class WfModule extends React.PureComponent {
     })
   }
 
-  applyQuickFix = (...args) => {
-    this.props.applyQuickFix(this.props.wfModule.id, ...args)
+  applyQuickFix = (action) => {
+    this.props.applyQuickFix(this.props.wfModule.id, action)
   }
 
   handleChangeIsZenMode = (ev) => {
@@ -257,12 +258,49 @@ export class WfModule extends React.PureComponent {
     // (this.state.edits is the pre-onChange() data.)
     this.setState(({ edits }) => {
       if (Object.keys(edits).length > 0) {
-        setWfModuleParams(wfModule.id, edits)
+        setWfModuleParams(wfModule.id, edits).then(() => this.clearUpToDateEdits())
       }
 
       maybeRequestFetch(wfModule.id)
 
-      return { edits: {} }
+      // Do not clear "edits" here: at this point, setWfModuleParams() has
+      // not updated the Redux state yet, so the edits will flicker away
+      // for a fraction of a second. A simple test to prove the problem
+      // with `return { edits: {} }`:
+      //
+      // 1. Paste text data with column "A"
+      // 2. Add "Refine" module
+      // 3. Choose column "A"
+      // 4. Click Submit
+      //
+      // Expected results: refine values stay put. If we were to
+      // `return { edits: {} }`, the refine values would disappear because
+      // setWfModuleParams() has not adjusted the state yet, so
+      // `reduxState.edits.column` is `""`; we must ensure
+      // `this.state.edits.column` is `"A"` until `setWfModuleParams()`
+      // completes.
+      //
+      // We call `this.clearUpToDateEdits()` elsewhere to make sure the edits
+      // disappear, so the user sees the module as not-editing.
+      return null
+    })
+  }
+
+  /**
+   * Remove from this.state.edits any edits that do not modify a value.
+   */
+  clearUpToDateEdits () {
+    this.setState(({ edits }) => {
+      const upstream = this.props.wfModule ? this.props.wfModule.params : {}
+      const newEdits = {}
+      for (const key in edits) {
+        const upstreamValue = upstream[key]
+        const editedValue = edits[key]
+        if (!deepEqual(upstreamValue, editedValue)) {
+          newEdits[key] = editedValue
+        }
+      }
+      return { edits: newEdits }
     })
   }
 

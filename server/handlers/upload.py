@@ -2,7 +2,7 @@ import functools
 from typing import Any, Dict
 import uuid as uuidgen
 from cjworkbench.sync import database_sync_to_async
-from server.models import Workflow, WfModule, InProgressUpload
+from cjwstate.models import Workflow, WfModule, InProgressUpload
 from server import serializers, websockets
 from .decorators import register_websockets_handler, websockets_handler
 from .types import HandlerError

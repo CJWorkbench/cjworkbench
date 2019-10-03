@@ -9,8 +9,8 @@ from django.template.response import TemplateResponse
 from django.utils.translation import gettext as _
 from server import rabbitmq
 import server.utils
-from server.models.commands import InitWorkflowCommand
-from server.models import Workflow, ModuleVersion
+from cjwstate.models.commands import InitWorkflowCommand
+from cjwstate.models import Workflow, ModuleVersion
 from server.models.course import Course, CourseLookup, AllCourses
 from server.models.lesson import Lesson, AllLessons, LessonLookup
 from server.serializers import LessonSerializer, UserSerializer
@@ -149,7 +149,7 @@ def _queue_workflow_updates(workflow: Workflow) -> None:
             # immediately)
             if wfm.is_busy:
                 have_a_fetch_module = True
-                async_to_sync(rabbitmq.queue_fetch)(wfm)
+                async_to_sync(rabbitmq.queue_fetch)(workflow.id, wfm.id)
 
     if have_a_module and not have_a_fetch_module:
         # Render. (e.g., pastecsv)

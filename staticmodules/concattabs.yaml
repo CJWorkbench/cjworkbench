@@ -1,0 +1,34 @@
+{
+  "name": "Concatenate tabs",
+  "id_name": "concattabs",
+  "category": "Combine",
+  "icon": "concatenate",
+  "help_url": "modules/add-data/concatenate-tabs",
+  "description": "Append rows from other tabs to this tab.",
+  "loads_data": true,
+  "uses_data": true,
+  "parameters_version": 1,
+  "parameters": [
+    {
+      "id_name": "tabs",
+      "type": "multitab",
+      "name": "",
+      "placeholder": "Select tabs to append"
+    },
+    {
+      "id_name": "add_source_column",
+      "type": "checkbox",
+      "name": "Add source column"
+    },
+    {
+      "name": "",
+      "id_name": "source_column_name",
+      "type": "string",
+      "placeholder": "Source",
+      "visible_if": {
+        "id_name": "add_source_column",
+        "value": true
+      }
+    }
+  ]
+}

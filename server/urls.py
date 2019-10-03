@@ -2,8 +2,7 @@ from django.conf import settings
 from django.conf.urls import url
 from django.views.generic import TemplateView
 from django.views.generic.base import RedirectView
-from django.urls import path, register_converter
-from django.urls.converters import StringConverter
+from django.urls import path
 from . import views
 from django.contrib.staticfiles import views as staticfiles_views
 from .views import acl, lessons, oauth, workflows, uploads
@@ -11,13 +10,6 @@ from .views import acl, lessons, oauth, workflows, uploads
 
 def redirect(url: str):
     return RedirectView.as_view(url=url)
-
-
-class ExportTypeConverter(StringConverter):
-    regex = r"(csv|json)"
-
-
-register_converter(ExportTypeConverter, "export_type")
 
 
 urlpatterns = [
@@ -82,10 +74,8 @@ urlpatterns = [
     path("api/wfmodules/<int:wf_module_id>/output", views.wfmodule_output),
     path("api/wfmodules/<int:wf_module_id>/embeddata", views.wfmodule_embeddata),
     path("api/wfmodules/<int:wf_module_id>/value-counts", views.wfmodule_value_counts),
-    path(
-        "public/moduledata/live/<int:wf_module_id>.<export_type:export_type>",
-        views.wfmodule_public_output,
-    ),
+    path("public/moduledata/live/<int:wf_module_id>.csv", views.wfmodule_public_csv),
+    path("public/moduledata/live/<int:wf_module_id>.json", views.wfmodule_public_json),
     # Parameters
     url(
         r"^oauth/create-secret/(?P<workflow_id>[0-9]+)/(?P<wf_module_id>[0-9]+)/(?P<param>[-_a-zA-Z0-9]+)/",

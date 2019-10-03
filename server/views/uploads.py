@@ -10,9 +10,9 @@ from django.http import HttpRequest, JsonResponse
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
-from server.models import InProgressUpload, Workflow, WfModule
-from server.models.commands import ChangeParametersCommand
-from server.models.workflow import WorkflowCooperativeLock
+from cjwstate.models import InProgressUpload, Workflow, WfModule
+from cjwstate.models.commands import ChangeParametersCommand
+from cjwstate.models.workflow import WorkflowCooperativeLock
 
 
 AuthTokenHeaderRegex = re.compile(r"\ABearer ([-a-zA-Z0-9_]+)\Z", re.IGNORECASE)
@@ -211,7 +211,7 @@ class Upload(View):
             return ErrorResponse(409, "file-not-uploaded")
 
         # After the cooperative lock ends, update the WfModule.
-        want_params = {**wf_module.get_params(), file_param_id_name: uploaded_file.uuid}
+        want_params = {file_param_id_name: uploaded_file.uuid}
 
         def create_change_parameters_command():
             workflow = workflow_lock.workflow

@@ -1,0 +1,38 @@
+{
+  "name": "Edit Cells",
+  "id_name": "editcells" ,
+  "category" : "Clean",
+  "icon" : "edit",
+  "description" : "Edit cells and keep a log of all changes",
+  "help_url":"modules/clean/edit-cells",
+  "param_schema": {
+    "celledits": {
+      "type": "list",
+      "inner_dtype": {
+        "type": "dict",
+        "properties": {
+          "row": { "type": "integer" },
+          "col": { "type": "string" },
+          "value": { "type": "string" }
+        }
+      }
+    }
+  },
+  "parameters_version": 1,
+  "parameters": [
+    {
+      "name": "Cell Editor",
+      "id_name" : "celledits",
+      "type": "custom"
+    },
+    {
+      "name": "Double-click cells to edit values",
+      "id_name": "no-param-text",
+      "type": "statictext",
+      "visible_if": {
+        "id_name": "celledits",
+        "value": []
+      }
+    }
+  ]
+}

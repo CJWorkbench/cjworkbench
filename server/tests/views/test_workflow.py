@@ -7,9 +7,9 @@ from django.contrib.auth.models import AnonymousUser, User
 from rest_framework import status
 from rest_framework.test import APIRequestFactory, force_authenticate
 from server import rabbitmq
-from server.models import ModuleVersion, Workflow
-from server.models.commands import InitWorkflowCommand
-from server.tests.utils import LoggedInTestCase
+from cjwstate.models import ModuleVersion, Workflow
+from cjwstate.models.commands import InitWorkflowCommand
+from cjwstate.tests.utils import LoggedInTestCase
 from server.views.workflows import Index, workflow_detail, render_workflow
 
 
@@ -27,7 +27,7 @@ future_none = asyncio.Future()
 future_none.set_result(None)
 
 
-@patch("server.models.Delta.ws_notify", async_noop)
+@patch("cjwstate.models.Delta.ws_notify", async_noop)
 class WorkflowViewTests(LoggedInTestCase):
     def setUp(self):
         super().setUp()  # log in
@@ -205,7 +205,7 @@ class WorkflowViewTests(LoggedInTestCase):
         date2 = self.workflow1.last_viewed_at
         self.assertGreater(date2, date1)
 
-    @patch("server.models.Workflow.cooperative_lock")
+    @patch("cjwstate.models.Workflow.cooperative_lock")
     def test_workflow_view_race_delete_after_auth(self, lock):
         # cooperative_lock() is called _after_ auth. (Auth is optimized to be
         # quick, which means no cooperative_lock().) Assume make_init_state()

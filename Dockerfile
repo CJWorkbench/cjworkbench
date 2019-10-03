@@ -1,5 +1,8 @@
-# 0. The barest Python: used in dev and prod
-FROM python:3.7.2-slim-stretch AS pybase
+# 0.1 parquet-to-arrow: executables we use in Workbench
+FROM workbenchdata/parquet-to-arrow:v0.0.4 AS parquet-to-arrow
+
+# 0.2 pybase: Python and tools we use in dev and production
+FROM python:3.7.4-slim-buster AS pybase
 
 # We probably don't want these, long-term.
 # nano: because we edit files on production
@@ -31,11 +34,14 @@ RUN mkdir -p /usr/share/nltk_data \
 
 RUN pip install pipenv==2018.11.26
 
+COPY --from=parquet-to-arrow /usr/bin/parquet-to-arrow-slice /usr/bin/parquet-to-arrow-slice
+COPY --from=parquet-to-arrow /usr/bin/parquet-to-text-stream /usr/bin/parquet-to-text-stream
+
 # Set up /app
 RUN mkdir /app
 WORKDIR /app
 
-# 0.1 Pydev: just for the development environment
+# 0.2 Pydev: just for the development environment
 FROM pybase AS pydev
 
 # Need build-essential for:
@@ -47,6 +53,7 @@ FROM pybase AS pydev
 # * fb-re2
 # * watchman (until someone packages binaries)
 # * pysycopg2 (binaries are evil because psycopg2 links SSL -- as does Python)
+# * thrift-compiler (to generate cjwkernel/thrift/...)
 #
 # Also:
 # * socat: for our dev environment: fetcher uses http://localhost:8000 for in-lesson files
@@ -59,6 +66,7 @@ RUN mkdir -p /root/.local/share/virtualenvs \
       libpq-dev \
       libyajl-dev \
       socat \
+      thrift-compiler \
     && rm -rf /var/lib/apt/lists/*
 
 # build watchman. Someday let's hope someone publishes binaries
@@ -76,7 +84,7 @@ RUN cd /tmp \
       libpcre3-dev \
       pkg-config \
     && ./autogen.sh \
-    && ./configure --prefix=/usr \
+    && ./configure --prefix=/usr --enable-lenient \
     && make -j4 \
     && make install \
     && cd /tmp \
@@ -93,7 +101,7 @@ RUN cd /tmp \
 
 # Add "mc" command, so we can create a non-root user in minio (for STS).
 RUN true \
-    && curl https://dl.min.io/client/mc/release/linux-amd64/archive/mc.RELEASE.2019-07-17T22-13-42Z -o /usr/bin/mc \
+    && curl https://dl.min.io/client/mc/release/linux-amd64/archive/mc.RELEASE.2019-09-24T01-36-20Z -o /usr/bin/mc \
     && chmod +x /usr/bin/mc
 
 # Add a Python wrapper that will help PyCharm cooperate with pipenv
@@ -144,7 +152,7 @@ RUN true \
       build-essential \
       libsnappy1v5 \
       libsnappy-dev \
-      libre2-3 \
+      libre2-5 \
       libre2-dev \
       libpq-dev \
       libyajl2 \
@@ -161,7 +169,7 @@ RUN true \
 
 # 2. Node deps -- completely independent
 # 2.1 jsbase: what we use in dev-in-docker
-FROM node:11.14.0-slim as jsbase
+FROM node:12.9.0-buster-slim as jsbase
 
 RUN mkdir /app
 WORKDIR /app
@@ -186,7 +194,13 @@ RUN node_modules/.bin/webpack -p
 # 3. Three prod servers will all be based on the same stuff:
 FROM pybuild AS base
 
+# Configure Black
+COPY pyproject.toml pyproject.toml
+
+COPY cjwkernel/ /app/cjwkernel/
+COPY cjwstate/ /app/cjwstate/
 COPY cjworkbench/ /app/cjworkbench/
+COPY staticmodules/ /app/staticmodules/
 # TODO make server/ frontend-specific
 COPY server/ /app/server/
 # cron/, fetcher/ and renderer/ are referenced in settings.py, so they must be

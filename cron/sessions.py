@@ -2,7 +2,7 @@ import logging
 from django.contrib.sessions.backends.db import SessionStore
 from django.contrib.sessions.models import Session
 from cjworkbench.sync import database_sync_to_async
-from server.models import Workflow
+from cjwstate.models import Workflow
 
 
 logger = logging.getLogger(__name__)

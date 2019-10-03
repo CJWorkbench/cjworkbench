@@ -25,6 +25,9 @@ class TestLesson(LessonTest):
         b = self.browser
         b.visit("/lessons/")
         b.click_whatever("h2", text="II. Clean dirty data", wait=True)
+        b.assert_element(
+            ".title-metadata-stack", text="II. Clean dirty data", wait=True
+        )
 
         self.import_module("dropna")
         self.import_module("nulldropper")

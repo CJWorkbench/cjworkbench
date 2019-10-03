@@ -23,49 +23,20 @@ if sys.version_info[0] < 3:
 
 SITE_ID = 1
 
-# ----- Configurable Parameters -----
-
-# How much table can we parse?
-#
-# When parsing a file with a header row, the header row counts towards this
-# total. Since header is the _common_ case, it makes more sense to max out at
-# 1,000,001 rows instead of 1,000,000 -- that way, after we move the header the
-# user will see a table with 1,000,000 rows: a nice, round number.
-MAX_ROWS_PER_TABLE = 1_000_001
-# How many bytes can we parse? (This is only used by the CSV parser for now.)
-#
-# Our algorithms use this as an estimate -- they may not be accurate.
-MAX_BYTES_PER_TABLE = 4.5 * 1024 * 1024 * 1024  # 4.5GB -- mostly str overhead
-# How many columns do we allow? (This is only used by the CSV parser for now.)
-MAX_COLUMNS_PER_TABLE = 500
-
 # How many columns can the client side display?
 # Current, we limit how many the client will display because react-data-grid
 # is terribly slow at >10 columns.
 MAX_COLUMNS_PER_CLIENT_REQUEST = 100
 
-# How much StoredObject space can each module take up?
-MAX_STORAGE_PER_MODULE = 1024 * 1024 * 1024
-
-# [2019-05-28] `twitter` deserves its own limit: it's a _common_ module, so
-# in practice we want to restrict its RAM usage way more than a _rare_
-# module like `upload`.
-TWITTER_MAX_ROWS_PER_TABLE = 100_000
-
-# configuration for urlscraper
-SCRAPER_NUM_CONNECTIONS = 8
-SCRAPER_TIMEOUT = 30  # seconds
-
-# Chunk size for chardet file encoding detection
-CHARDET_CHUNK_SIZE = 1024 * 1024
-
-# Chunk size for separator detection
-SEP_DETECT_CHUNK_SIZE = 1024 * 1024
-
-# Use categories if file over this size
-CATEGORY_FILE_SIZE_MIN = 250 * 1024 * 1024
-
 MIN_AUTOFETCH_INTERVAL = 300  # seconds between cron autofetches
+
+MAX_STORAGE_PER_MODULE = 1024 * 1024 * 1024
+"""
+How much space can a Step's FetchResults consume?
+
+When storing a new FetchResult, we delete old FetchResults that exceed this
+limit.
+"""
 
 # ----- App Boilerplate -----
 

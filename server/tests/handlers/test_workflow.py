@@ -6,8 +6,8 @@ from server.handlers.workflow import (
     set_tab_order,
     set_selected_tab,
 )
-from server.models import Workflow
-from server.models.commands import ChangeWorkflowTitleCommand
+from cjwstate.models import Workflow
+from cjwstate.models.commands import ChangeWorkflowTitleCommand
 from .util import HandlerTestCase
 
 

@@ -1,0 +1,36 @@
+{
+  "name": "Google Drive",
+  "id_name": "googlesheets" ,
+  "category" : "Add data",
+  "icon" : "google-drive",
+  "description" : "Load CSV, Google Sheets and Excel files directly from your account and get updates when new data is available.",
+  "help_url":"modules/add-data/google-drive",
+  "loads_data": true,
+  "parameters_version": 1,
+  "parameters": [
+    {
+      "id_name": "google_credentials",
+      "type": "secret",
+      "secret_logic": {
+        "provider": "oauth",
+        "service": "google"
+      }
+    },
+    {
+      "id_name": "file",
+      "type": "gdrivefile",
+      "secret_parameter": "google_credentials"
+    },
+    {
+      "name": "Has header row",
+      "id_name": "has_header",
+      "type": "checkbox",
+      "default": true
+    },
+    {
+      "name": "Update",
+      "id_name" : "version_select",
+      "type": "custom"
+    }
+  ]
+}

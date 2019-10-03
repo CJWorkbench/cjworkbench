@@ -1,0 +1,26 @@
+{
+  "name": "Reorder columns",
+  "id_name": "reordercolumns",
+  "category": "Clean",
+  "icon": "transform",
+  "description": "Change the order of columns in the table, and log all changes.",
+  "help_url":"modules/clean/reorder-columns",
+  "parameters_version": 2,
+  "parameters": [
+    {
+      "name": "",
+      "id_name": "reorder-history",
+      "type": "custom"
+    },
+    {
+      "name": "Drag column headers to reorder columns",
+      "id_name": "no-param-text",
+      "type": "statictext",
+      "visible_if": {
+        "id_name": "reorder-history",
+        "value": false,
+        "invert": false
+      }
+    }
+  ]
+}

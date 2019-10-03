@@ -4,7 +4,7 @@ from django.utils import timezone
 from cjworkbench.pg_render_locker import PgRenderLocker, WorkflowAlreadyLocked
 from cjworkbench.sync import database_sync_to_async
 from server import rabbitmq, websockets
-from server.models import WfModule
+from cjwstate.models import WfModule
 
 
 logger = logging.getLogger(__name__)
@@ -70,7 +70,7 @@ async def queue_fetches(pg_render_locker: PgRenderLocker):
                     }
                 },
             )
-            await rabbitmq.queue_fetch(wf_module)
+            await rabbitmq.queue_fetch(workflow_id, wf_module.id)
         except WorkflowAlreadyLocked:
             # Don't queue a fetch. We'll revisit this WfModule next time we
             # query for pending fetches.

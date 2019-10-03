@@ -1,18 +1,15 @@
 import asyncio
-from concurrent.futures import ThreadPoolExecutor
 import functools
 import json
-import logging
 from unittest.mock import patch
 from channels.layers import get_channel_layer
 from channels.testing import WebsocketCommunicator
 from django.contrib.auth.models import AnonymousUser, User
-import django.db
 from cjworkbench.asgi import create_url_router
 from server import handlers
-from server.models import Workflow
+from cjwstate.models import Workflow
 from server.websockets import ws_client_send_delta_async, queue_render_if_listening
-from server.tests.utils import DbTestCase
+from cjwstate.tests.utils import DbTestCase
 
 
 def async_test(f):

@@ -1,6 +1,6 @@
 from typing import Optional
 from cjworkbench.sync import database_sync_to_async
-from server.models import Delta, Workflow
+from cjwstate.models import Delta, Workflow
 
 
 @database_sync_to_async

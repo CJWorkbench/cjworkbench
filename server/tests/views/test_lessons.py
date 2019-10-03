@@ -1,9 +1,10 @@
 import asyncio
 from typing import Any, Dict, List
 from unittest.mock import patch
-from server.models import Workflow, ModuleVersion, LoadedModule
+from cjwstate.models import Workflow, ModuleVersion
+from cjwstate.modules.loaded_module import LoadedModule
 from server.models.lesson import Lesson, LessonLookup, LessonInitialWorkflow
-from server.tests.utils import DbTestCase, create_test_user
+from cjwstate.tests.utils import DbTestCase, create_test_user
 
 
 async def async_noop(*args, **kwargs):
@@ -33,7 +34,7 @@ def create_module_version(id_name: str, parameters: List[Dict[str, Any]], **kwar
     )
 
 
-@patch.object(LoadedModule, "for_module_version_sync", lambda x: MockLoadedModule())
+@patch.object(LoadedModule, "for_module_version", lambda x: MockLoadedModule())
 @patch("server.utils.log_user_event_from_request", lambda *a: None)
 class LessonDetailTests(DbTestCase):
     def log_in(self):
@@ -314,8 +315,7 @@ class LessonDetailTests(DbTestCase):
         self.assertEqual(wfm1["is_busy"], True)  # because we sent a fetch
 
         # We should be rendering the modules
-        fetch.assert_called()
-        self.assertEqual(fetch.call_args[0][0].id, wfm1["id"])
+        fetch.assert_called_with(state["workflow"]["id"], wfm1["id"])
         render.assert_not_called()
 
     @patch.dict(

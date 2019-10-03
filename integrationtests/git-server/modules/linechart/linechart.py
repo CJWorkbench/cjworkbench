@@ -10,6 +10,15 @@ from pandas.api.types import is_numeric_dtype, is_datetime64_dtype
 MaxNAxisLabels = 300
 
 
+def _migrate_params_vneg1_to_v0(params):
+    """
+    v-1: an 'x_data_type' param integer.
+
+    v0: no 'x_data_type'.
+    """
+    return {k: v for k, v in params.items() if k != "x_data_type"}
+
+
 def _migrate_params_v0_to_v1(params):
     """
     v0: params['y_columns'] is JSON-encoded.
@@ -26,6 +35,8 @@ def _migrate_params_v0_to_v1(params):
 
 
 def migrate_params(params):
+    if "x_data_type" in params:
+        params = _migrate_params_vneg1_to_v0(params)
     if isinstance(params["y_columns"], str):
         params = _migrate_params_v0_to_v1(params)
 

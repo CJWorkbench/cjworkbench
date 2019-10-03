@@ -1,0 +1,11 @@
+id_name: duplicatecolumns
+name: Duplicate Columns
+category: Clean
+description: Duplicate columns with all their values.
+help_url: steps/clean/Duplicate-columns
+icon: duplicate
+parameters_version: 1
+parameters:
+- id_name: colnames
+  name: ''
+  type: multicolumn

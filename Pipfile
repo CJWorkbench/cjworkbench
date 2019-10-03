@@ -43,10 +43,11 @@ pyyaml = "*"
 boto3 = "*"
 yajl-py = "*"
 pyarrow = "*"
+thrift = "~=0.11.0"
 
 [dev-packages]
 watchdog = "*"
-http-process-proxy = ">=0.0.9"
+http-process-proxy = "==0.0.10"
 black = "==19.3b0"
 
 [requires]

@@ -22,8 +22,8 @@ from server.handlers.wf_module import (
     reset_file_upload_api_token,
     clear_file_upload_api_token,
 )
-from server.models import ModuleVersion, Workflow
-from server.models.commands import (
+from cjwstate.models import ModuleVersion, Workflow
+from cjwstate.models.commands import (
     ChangeParametersCommand,
     ChangeWfModuleNotesCommand,
     DeleteModuleCommand,
@@ -69,7 +69,7 @@ class WfModuleTest(HandlerTestCase):
     @patch("server.websockets.ws_client_send_delta_async", async_noop)
     @patch("server.rabbitmq.queue_render", async_noop)
     @patch(
-        "server.models.loaded_module.LoadedModule.for_module_version_sync",
+        "cjwstate.modules.loaded_module.LoadedModule.for_module_version",
         MockLoadedModule,
     )
     def test_set_params(self):
@@ -106,7 +106,7 @@ class WfModuleTest(HandlerTestCase):
     @patch("server.websockets.ws_client_send_delta_async", async_noop)
     @patch("server.rabbitmq.queue_render", async_noop)
     @patch(
-        "server.models.loaded_module.LoadedModule.for_module_version_sync",
+        "cjwstate.modules.loaded_module.LoadedModule.for_module_version",
         MockLoadedModule,
     )
     def test_set_params_invalid_params(self):
@@ -143,7 +143,7 @@ class WfModuleTest(HandlerTestCase):
     @patch("server.websockets.ws_client_send_delta_async", async_noop)
     @patch("server.rabbitmq.queue_render", async_noop)
     @patch(
-        "server.models.loaded_module.LoadedModule.for_module_version_sync",
+        "cjwstate.modules.loaded_module.LoadedModule.for_module_version",
         MockLoadedModule,
     )
     def test_set_params_null_byte_in_json(self):
@@ -630,7 +630,7 @@ class WfModuleTest(HandlerTestCase):
 
         wf_module.refresh_from_db()
         self.assertEqual(wf_module.is_busy, True)
-        queue_fetch.assert_called_with(wf_module)
+        queue_fetch.assert_called_with(workflow.id, wf_module.id)
         send_delta.assert_called_with(
             workflow.id,
             {
@@ -673,7 +673,7 @@ class WfModuleTest(HandlerTestCase):
         self.assertResponse(response, error="AuthError: no owner access to workflow")
 
     @patch(
-        "server.models.loaded_module.LoadedModule.for_module_version_sync",
+        "cjwstate.modules.loaded_module.LoadedModule.for_module_version",
         MockLoadedModule,
     )
     def test_generate_secret_access_token_no_value_gives_null(self):
@@ -704,7 +704,7 @@ class WfModuleTest(HandlerTestCase):
         self.assertResponse(response, data={"token": None})
 
     @patch(
-        "server.models.loaded_module.LoadedModule.for_module_version_sync",
+        "cjwstate.modules.loaded_module.LoadedModule.for_module_version",
         MockLoadedModule,
     )
     def test_generate_secret_access_token_wrong_param_type_gives_null(self):
@@ -735,7 +735,7 @@ class WfModuleTest(HandlerTestCase):
         self.assertResponse(response, data={"token": None})
 
     @patch(
-        "server.models.loaded_module.LoadedModule.for_module_version_sync",
+        "cjwstate.modules.loaded_module.LoadedModule.for_module_version",
         MockLoadedModule,
     )
     def test_generate_secret_access_token_wrong_param_name_gives_null(self):
@@ -766,7 +766,7 @@ class WfModuleTest(HandlerTestCase):
         self.assertResponse(response, data={"token": None})
 
     @patch(
-        "server.models.loaded_module.LoadedModule.for_module_version_sync",
+        "cjwstate.modules.loaded_module.LoadedModule.for_module_version",
         MockLoadedModule,
     )
     @patch("server.oauth.OAuthService.lookup_or_none", lambda _: None)
@@ -799,7 +799,7 @@ class WfModuleTest(HandlerTestCase):
         self.assertResponse(response, error=("AuthError: we only support twitter"))
 
     @patch(
-        "server.models.loaded_module.LoadedModule.for_module_version_sync",
+        "cjwstate.modules.loaded_module.LoadedModule.for_module_version",
         MockLoadedModule,
     )
     @patch("server.oauth.OAuthService.lookup_or_none")
@@ -835,7 +835,7 @@ class WfModuleTest(HandlerTestCase):
         self.assertResponse(response, error="AuthError: an error")
 
     @patch(
-        "server.models.loaded_module.LoadedModule.for_module_version_sync",
+        "cjwstate.modules.loaded_module.LoadedModule.for_module_version",
         MockLoadedModule,
     )
     @patch("server.oauth.OAuthService.lookup_or_none")
@@ -935,7 +935,7 @@ class WfModuleTest(HandlerTestCase):
         )
 
     @patch(
-        "server.models.loaded_module.LoadedModule.for_module_version_sync",
+        "cjwstate.modules.loaded_module.LoadedModule.for_module_version",
         MockLoadedModule,
     )
     @patch("server.websockets.ws_client_send_delta_async")
@@ -1035,7 +1035,7 @@ class WfModuleTest(HandlerTestCase):
         self.assertEqual(wf_module.secrets, {})
 
     @patch(
-        "server.models.loaded_module.LoadedModule.for_module_version_sync",
+        "cjwstate.modules.loaded_module.LoadedModule.for_module_version",
         MockLoadedModule,
     )
     @patch("server.websockets.ws_client_send_delta_async")

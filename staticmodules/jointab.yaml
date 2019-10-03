@@ -1,0 +1,31 @@
+id_name: jointab
+name: Join tab
+category: Combine
+icon: join
+help_url: steps/add-data/join-tabs
+description: Join data using shared columns between two tabs.
+param_schema:
+  right_tab: { type: tab }
+  type: { type: enum, choices: [ left, inner, right ], default: left }
+  join_columns:
+    type: dict
+    properties:
+      'on': { type: multicolumn }
+      right: { type: multicolumn, tab_parameter: right_tab }
+parameters_version: 1
+parameters:
+  - id_name: right_tab
+    type: tab
+    name: ''
+    placeholder: Select tab to join
+  - id_name: join_columns
+    type: custom
+    name: ''
+  - id_name: type
+    type: menu
+    name: Join type
+    default: left
+    options:
+    - { value: left, label: Left }
+    - { value: inner, label: Inner }
+    - { value: right, label: Right }

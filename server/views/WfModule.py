@@ -1,11 +1,16 @@
 import datetime
+import io
 import json
+import math
 import re
+import selectors
+import subprocess
 from typing import Any, Dict, List
 from asgiref.sync import async_to_sync
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.http import (
+    FileResponse,
     HttpRequest,
     HttpResponse,
     Http404,
@@ -19,10 +24,17 @@ from rest_framework import status
 from rest_framework.decorators import api_view, renderer_classes
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
-from cjworkbench.types import ProcessResult
-from server.models import Tab, WfModule, Workflow
-from server import minio, parquet, rabbitmq
-from server.models.loaded_module import module_get_html_bytes
+from cjwkernel.pandas import types as ptypes
+from cjwkernel.types import Column, ColumnType
+from cjwstate.rendercache import (
+    CorruptCacheError,
+    downloaded_parquet_file,
+    open_cached_render_result,
+    read_cached_render_result_pydict,
+)
+from cjwstate.models import Tab, WfModule, Workflow
+from cjwstate.modules.loaded_module import module_get_html_bytes
+from server import rabbitmq
 
 
 _MaxNRowsPerRequest = 300
@@ -72,48 +84,34 @@ def _with_wf_module_for_read(fn):
 TimestampUnits = {"us": 1000000, "s": 1, "ms": 1000, "ns": 1000000000}  # most common
 
 
-def _arrow_array_to_json_list(array: pyarrow.ChunkedArray) -> List[Any]:
-    """
-    Convert `array` to a JSON-encodable List.
-
-    Strings become Strings; Numbers become int/float; Datetimes become
-    ISO8601-encoded Strings.
-    """
-    if isinstance(array.type, pyarrow.TimestampType):
-        multiplier = 1.0 / TimestampUnits[array.type.unit]
-        return [
-            (
-                None
-                if v is pyarrow.NULL
-                else (
-                    datetime.datetime.utcfromtimestamp(v.value * multiplier).isoformat()
-                    + "Z"
-                )
-            )
-            for v in array
-        ]
-    else:
-        return array.to_pylist()
-
-
-def _arrow_table_to_json_records(
-    table: pyarrow.Table, begin: int, end: int
+def _pydict_to_json_records(
+    # need to pass n_rows in case len(columns) == 0
+    pydict: Dict[str, List[Any]],
+    columns: List[Column],
+    n_rows: int,
 ) -> List[Dict[str, Any]]:
     """
-    Convert `table` to JSON records.
-
-    Slice from `begin` (inclusive, first is 0) to `end` (exclusive).
+    Converts column-wise `pydict` to JSON records.
 
     String values become Strings; Number values become int/float; Datetime
     values become ISO8601-encoded Strings.
     """
-    # Select the values we want -- columnar, so memory accesses are contiguous
-    values = {
-        column.name: _arrow_array_to_json_list(column[begin:end])
-        for column in table.itercolumns()
-    }
+    # Convert datetime to str
+    converted = {}
+    for column in columns:
+        if isinstance(column.type, ColumnType.Datetime):
+            converted[column.name] = [
+                (None if v is None else (v.isoformat() + "Z"))
+                for v in pydict[column.name]
+            ]
+        elif isinstance(column.type, ColumnType.Number):
+            converted[column.name] = [
+                (None if math.isnan(v) else v) for v in pydict[column.name]
+            ]
+        else:
+            converted[column.name] = pydict[column.name]
     # Transpose into JSON records
-    return [{k: v[i] for k, v in values.items()} for i in range(end - begin)]
+    return [{k: v[i] for k, v in converted.items()} for i in range(n_rows)]
 
 
 # Helper method that produces json output for a table + start/end row
@@ -121,26 +119,31 @@ def _arrow_table_to_json_records(
 # Now reading a maximum of 101 columns directly from cache parquet
 def _make_render_tuple(cached_result, startrow=None, endrow=None):
     """Build (startrow, endrow, json_rows) data."""
-    columns = cached_result.columns[
-        # Return one row more than configured, so the client knows there
-        # are "too many rows".
-        : (settings.MAX_COLUMNS_PER_CLIENT_REQUEST + 1)
-    ]
-    column_names = [c.name for c in columns]
-    table = parquet.read_arrow_table(  # raise FileNotFoundError
-        minio.CachedRenderResultsBucket,
-        cached_result.parquet_key,
-        only_columns=column_names,
-    )
 
     if startrow is None:
         startrow = 0
+    startrow = max(0, startrow)
     if endrow is None:
         endrow = startrow + _MaxNRowsPerRequest
+    endrow = min(
+        cached_result.table_metadata.n_rows, endrow, startrow + _MaxNRowsPerRequest
+    )
 
-    startrow = max(0, startrow)
-    endrow = min(table.num_rows, endrow, startrow + _MaxNRowsPerRequest)
-    records = _arrow_table_to_json_records(table, startrow, endrow)
+    # raise CorruptCacheError
+    data = read_cached_render_result_pydict(
+        cached_result,
+        # Return one row more than configured, so the client knows there
+        # are "too many rows".
+        only_columns=range(settings.MAX_COLUMNS_PER_CLIENT_REQUEST + 1),
+        only_rows=range(startrow, endrow),
+    )
+    records = _pydict_to_json_records(
+        data,
+        cached_result.table_metadata.columns[
+            0 : settings.MAX_COLUMNS_PER_CLIENT_REQUEST + 1
+        ],
+        endrow - startrow,
+    )
 
     return (startrow, endrow, records)
 
@@ -176,7 +179,7 @@ def wfmodule_render(request: HttpRequest, wf_module: WfModule, format=None):
             startrow, endrow, records = _make_render_tuple(
                 cached_result, startrow, endrow
             )
-        except FileNotFoundError:
+        except CorruptCacheError:
             # assume we'll get another request after execute finishes
             return JsonResponse({"start_row": 0, "end_row": 0, "rows": []})
 
@@ -230,30 +233,31 @@ def wfmodule_value_counts(request: HttpRequest, wf_module: WfModule):
         return JsonResponse({"values": {}})
 
     try:
-        column = next(c for c in cached_result.columns if c.name == colname)
+        column = next(
+            c for c in cached_result.table_metadata.columns if c.name == colname
+        )
     except StopIteration:
         return JsonResponse({"error": f'column "{colname}" not found'}, status=404)
 
+    # raise CorruptCacheError
     try:
-        table: pyarrow.Table = parquet.read_arrow_table(
-            minio.CachedRenderResultsBucket,
-            cached_result.parquet_key,
-            only_columns=[column.name],
-        )
-    except FileNotFoundError:
+        with open_cached_render_result(
+            cached_result, only_columns=[column.name]
+        ) as result:
+            series = result.table.table[0].to_pandas()
+    except CorruptCacheError:
         # We _could_ return an empty result set; but our only goal here is
         # "don't crash" and this 404 seems to be the simplest implementation.
         # (We assume that if the data is deleted, the user has moved elsewhere
         # and this response is going to be ignored.)
         return JsonResponse({"error": f'column "{colname}" not found'}, status=404)
-    series = table[0].to_pandas()
 
     # We only handle string. If it's not string, convert to string. (Rationale:
     # this is used in Refine and Filter by Value, which are both solely
     # String-based for now. Excel and Google Sheets only filter by String
     # values, so we're in good company.) Remember: in JavaScript, Object keys
     # must be String.
-    series = column.type.format_series(series)
+    series = ptypes.ColumnType.from_arrow(column.type).format_series(series)
     value_counts = series.value_counts().to_dict()
 
     return JsonResponse({"values": value_counts})
@@ -301,52 +305,166 @@ def wfmodule_tile(
     rbegin = N_ROWS_PER_TILE * tile_row
     rend = N_ROWS_PER_TILE * (tile_row + 1)
 
-    only_columns = cached_result.column_names[cbegin:cend]
     try:
-        table = parquet.read_arrow_table(
-            minio.CachedRenderResultsBucket,
-            cached_result.parquet_key,
-            only_columns=only_columns,
+        data = read_cached_render_result_pydict(
+            cached_result,
+            only_columns=range(cbegin, cend),
+            only_rows=range(rbegin, rend),
         )
-    except FileNotFoundError:
-        raise RuntimeError("FIXME: what happens when file is gone?")
-
-    records = _arrow_table_to_json_records(table, rbegin, rend)
+        columns = cached_result.table_metadata.columns[cbegin:cend]
+        records = _pydict_to_json_records(data, columns, rend - rbegin)
+    except CorruptCacheError:
+        raise  # TODO handle this case!
 
     return JsonResponse(records)
 
 
-# Public access to wfmodule output. Basically just /render with different auth
-# and output format
-# NOTE: does not support startrow/endrow at the moment
+class SubprocessOutputFileLike(io.RawIOBase):
+    """
+    Run a subrocess; .read() reads its stdout and stderr (combined).
+
+    __init__() will only return after the process starts producing output.
+    This requirement lets us raise OSError during startup; it also means a
+    caller with knowledge of the subprocess's behavior may safely delete a file
+    the subprocess is reading from, before the subprocess is finished reading
+    it.
+
+    On close(), kill the subprocess (if it's still running) and wait for it.
+
+    close() is the only way to wait for the subprocess. Don't worry: __del__()
+    calls close().
+
+    If read() is called after the subprocess terminates and the subprocess's
+    exit code is not 0, raise IOError.
+
+    Not thread-safe.
+    """
+
+    def __init__(self, args):
+        super().__init__()
+
+        # Raises OSError
+        self.process = subprocess.Popen(
+            args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+        )
+        # Wait for subprocess to begin outputting data. After that, the caller
+        # may delete input files safely, assuming the subprocess already has
+        # them open and thus can continue reading from them after they're
+        # deleted.
+        self._await_stdout_ready()
+
+    def _await_stdout_ready(self):
+        """
+        Wait until `self.process.stdout.read()` is guaranteed not to block.
+        """
+        with selectors.DefaultSelector() as selector:
+            selector.register(self.process.stdout, selectors.EVENT_READ)
+            while len(selector.select()) == 0:
+                pass
+
+    def readable(self):
+        return True
+
+    def fileno(self):
+        return self.process.stdout.fileno()
+
+    def readinto(self, b):
+        ret = self.process.stdout.readinto(b)
+        return ret
+
+    def close(self):
+        if self.closed:
+            return
+
+        self.process.stdout.close()
+        self.process.kill()
+        # wait() should not deadlock, because process will certainly die.
+        self.process.wait()  # ignore exit code
+        super().close()  # sets self.closed
+
+
 @api_view(["GET"])
-@renderer_classes((JSONRenderer,))
 @_with_wf_module_for_read
-def wfmodule_public_output(
-    request: HttpRequest, wf_module: WfModule, export_type: str, format=None
-):
-    cached_result = wf_module.cached_render_result
-    if cached_result:
-        try:
-            table = parquet.read_arrow_table(
-                minio.CachedRenderResultsBucket, cached_result.parquet_key
-            )
-        except FileNotFoundError:
-            table = pyarrow.Table.from_pydict({})
-    else:
+def wfmodule_public_json(request: HttpRequest, wf_module: WfModule):
+    def schedule_render_and_suggest_retry():
+        """
+        Schedule a render and return a response asking the user to retry.
+
+        It is a *bug* that we publish URLs that aren't guaranteed to work.
+        Because we publish URLs that do not work, let's be transparent and
+        give them the 500-level error code they deserve.
+        """
         # We don't have a cached result, and we don't know how long it'll
-        # take to get one.
+        # take to get one. The user will simply need to try again....
+        nonlocal wf_module
         workflow = wf_module.workflow
         async_to_sync(rabbitmq.queue_render)(workflow.id, workflow.last_delta_id)
-        # The user will simply need to try again....
-        table = pyarrow.Table.from_pydict({})
+        response = JsonResponse([], safe=False, status=503)
+        response["Retry-After"] = "30"
+        return response
 
-    if export_type == "json":
-        records = _arrow_table_to_json_records(table, 0, table.num_rows)
-        return JsonResponse(records, safe=False)
-    elif export_type == "csv":
-        df = table.to_pandas()
-        d = df.to_csv(index=False)
-        return HttpResponse(d, content_type="text/csv")
-    else:
-        raise RuntimeError("Undefined export_type" + export_type)
+    cached_result = wf_module.cached_render_result
+    if not cached_result:
+        return schedule_render_and_suggest_retry()
+
+    try:
+        with downloaded_parquet_file(cached_result) as parquet_path:
+            output = SubprocessOutputFileLike(
+                ["/usr/bin/parquet-to-text-stream", str(parquet_path), "json"]
+            )
+            # It's okay to delete the file now (i.e., exit the context manager)
+    except CorruptCacheError:
+        return schedule_render_and_suggest_retry()
+
+    return FileResponse(
+        output,
+        as_attachment=True,
+        filename=(
+            "Workflow %d - %s-%d.json"
+            % (cached_result.workflow_id, wf_module.module_id_name, wf_module.id)
+        ),
+        content_type="application/json",
+    )
+
+
+@_with_wf_module_for_read
+def wfmodule_public_csv(request: HttpRequest, wf_module: WfModule):
+    def schedule_render_and_suggest_retry():
+        """
+        Schedule a render and return a response asking the user to retry.
+
+        It is a *bug* that we publish URLs that aren't guaranteed to work.
+        Because we publish URLs that do not work, let's be transparent and
+        give them the 500-level error code they deserve.
+        """
+        # We don't have a cached result, and we don't know how long it'll
+        # take to get one. The user will simply need to try again....
+        nonlocal wf_module
+        workflow = wf_module.workflow
+        async_to_sync(rabbitmq.queue_render)(workflow.id, workflow.last_delta_id)
+        response = HttpResponse(b"", content_type="text/csv", status=503)
+        response["Retry-After"] = "30"
+        return response
+
+    cached_result = wf_module.cached_render_result
+    if not cached_result:
+        return schedule_render_and_suggest_retry()
+
+    try:
+        with downloaded_parquet_file(cached_result) as parquet_path:
+            output = SubprocessOutputFileLike(
+                ["/usr/bin/parquet-to-text-stream", str(parquet_path), "csv"]
+            )
+            # It's okay to delete the file now (i.e., exit the context manager)
+    except CorruptCacheError:
+        return schedule_render_and_suggest_retry()
+
+    return FileResponse(
+        output,
+        as_attachment=True,
+        filename=(
+            "Workflow %d - %s-%d.csv"
+            % (cached_result.workflow_id, wf_module.module_id_name, wf_module.id)
+        ),
+        content_type="text/csv; charset=utf-8; header=present",
+    )

@@ -1,4 +1,3 @@
-import json
 import logging
 import os
 from pathlib import Path
@@ -6,14 +5,10 @@ import shutil
 import tempfile
 import git
 from git.exc import GitCommandError
-import yaml
-from server import minio
-from server.models import ModuleVersion
-from server.models.module_loader import (
-    ModuleFiles,
-    ModuleSpec,
-    validate_python_functions,
-)
+from cjwstate import minio
+from cjwstate.models import ModuleVersion
+import cjwstate.modules
+from cjwstate.modules.module_loader import ModuleFiles, ModuleSpec
 
 
 logger = logging.getLogger(__name__)
@@ -26,7 +21,7 @@ logger = logging.getLogger(__name__)
 def import_module_from_directory(version: str, importdir: Path, force_reload=False):
     module_files = ModuleFiles.load_from_dirpath(importdir)  # raise ValueError
     spec = ModuleSpec.load_from_path(module_files.spec)  # raise ValueError
-    validate_python_functions(module_files.code)  # raise ValueError
+    cjwstate.modules.kernel.compile(module_files.code, spec.id_name)
 
     if not force_reload:
         # Don't allow importing the same version twice

@@ -14,7 +14,7 @@ export default class Aggregation extends React.PureComponent {
     })), // or null if unknown
     onChange: PropTypes.func.isRequired, // func(index, value) => undefined
     onDelete: PropTypes.func, // func(index) => undefined, or null if delete not allowed
-    operation: PropTypes.oneOf(['size', 'nunique', 'sum', 'mean', 'min', 'max', 'first']).isRequired,
+    operation: PropTypes.oneOf(['size', 'nunique', 'sum', 'mean', 'median', 'min', 'max', 'first']).isRequired,
     colname: PropTypes.string.isRequired,
     outname: PropTypes.string.isRequired // may be empty
   }
@@ -54,6 +54,7 @@ export default class Aggregation extends React.PureComponent {
       case 'nunique': return `Unique count of ${colname}`
       case 'sum': return `Sum of ${colname}`
       case 'mean': return `Average of ${colname}`
+      case 'median': return `Median of ${colname}`
       case 'min': return `Minimum of ${colname}`
       case 'max': return `Maximum of ${colname}`
       case 'first': return `First of ${colname}`
