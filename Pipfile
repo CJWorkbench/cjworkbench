@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-aiohttp = "==3.5.4"
+aiohttp = "==3.6.1"
 "beautifulsoup4" = "==4.7.1"
 channels = "==2.2.0"
 Django = "~=2.2.2"
