@@ -5,12 +5,6 @@ from server import rabbitmq, websockets
 from .util import ChangesWfModuleOutputs
 
 
-@database_sync_to_async
-def _workflow_has_notifications(workflow):
-    """Detect whether a workflow sends email on changes."""
-    return WfModule.live_in_workflow(workflow).filter(notifications=True).exists()
-
-
 class ChangeDataVersionCommand(ChangesWfModuleOutputs, Delta):
     class Meta:
         app_label = "server"
@@ -33,45 +27,11 @@ class ChangeDataVersionCommand(ChangesWfModuleOutputs, Delta):
         self.backward_affected_delta_ids()
 
     # override
-    async def schedule_execute_if_needed(self) -> None:
+    def get_modifies_render_output(self) -> bool:
         """
         Tell renderers to render the new workflow, _maybe_.
-
-        ChangeDataVersionCommand is often created from a fetch, and fetches
-        are often invoked by cron. These can be our most resource-intensive
-        operations: e.g., Twitter-accumulate with 1M records. So let's use lazy
-        rendering.
-
-        From our point of view:
-
-            * If self.workflow has notifications, render.
-            * If anybody is viewing self.workflow right now, render.
-
-        Of course, it's impossible for us to know whether anybody is viewing
-        self.workflow. So we _broadcast_ to them and ask _them_ to request a
-        render if they're listening. This gives N render requests (one per
-        Websockets cconsumer) instead of 1, but we assume the extra render
-        requests will be no-ops.
-
-        From the user's point of view:
-
-            * If I'm viewing self.workflow, changing data versions causes a
-              render. (There isn't even any HTTP traffic: the consumer does
-              the work.)
-            * Otherwise, the next time I browse to the page, the page-load
-              will request a render.
-
-        Assumptions:
-
-            * Websockets consumers queue a render when we ask them.
-            * The Django page-load view queues a render when needed.
         """
-        if await _workflow_has_notifications(self.workflow):
-            await rabbitmq.queue_render(self.workflow.id, self.workflow.last_delta_id)
-        else:
-            await websockets.queue_render_if_listening(
-                self.workflow.id, self.workflow.last_delta_id
-            )
+        return True
 
     @classmethod
     def amend_create_kwargs(cls, *, wf_module, **kwargs):

@@ -1,6 +1,7 @@
 from unittest.mock import patch
 from cjwkernel.types import RenderResult
 from cjwkernel.tests.util import arrow_table
+from cjwstate import commands
 from cjwstate.rendercache.io import cache_render_result
 from cjwstate.models import Workflow
 from cjwstate.models.commands import DuplicateTabCommand
@@ -12,16 +13,20 @@ async def async_noop(*args, **kwargs):
 
 
 class DuplicateTabCommandTest(DbTestCase):
-    @patch("server.rabbitmq.queue_render")
-    @patch("cjwstate.models.Delta.ws_notify")
+    @patch.object(commands, "queue_render")
+    @patch.object(commands, "websockets_notify")
     def test_duplicate_empty_tab(self, ws_notify, queue_render):
         ws_notify.side_effect = async_noop
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
 
         cmd = self.run_with_async_db(
-            DuplicateTabCommand.create(
-                workflow=workflow, from_tab=tab, slug="tab-2", name="Tab 2"
+            commands.do(
+                DuplicateTabCommand,
+                workflow=workflow,
+                from_tab=tab,
+                slug="tab-2",
+                name="Tab 2",
             )
         )
 
@@ -31,6 +36,7 @@ class DuplicateTabCommandTest(DbTestCase):
         self.assertEqual(cmd.tab.slug, "tab-2")
         self.assertEqual(cmd.tab.name, "Tab 2")
         ws_notify.assert_called_with(
+            workflow.id,
             {
                 "updateWorkflow": {
                     "name": workflow.name,
@@ -47,14 +53,15 @@ class DuplicateTabCommandTest(DbTestCase):
                     }
                 },
                 "updateWfModules": {},
-            }
+            },
         )
 
         # Backward: should delete tab
-        self.run_with_async_db(cmd.backward())
+        self.run_with_async_db(commands.undo(cmd))
         cmd.tab.refresh_from_db()
         self.assertTrue(cmd.tab.is_deleted)
         ws_notify.assert_called_with(
+            workflow.id,
             {
                 "updateWorkflow": {
                     "name": workflow.name,
@@ -64,14 +71,15 @@ class DuplicateTabCommandTest(DbTestCase):
                 },
                 "clearTabSlugs": ["tab-2"],
                 "clearWfModuleIds": [],
-            }
+            },
         )
 
         # Forward: should bring us back
-        self.run_with_async_db(cmd.forward())
+        self.run_with_async_db(commands.redo(cmd))
         cmd.tab.refresh_from_db()
         self.assertFalse(cmd.tab.is_deleted)
         ws_notify.assert_called_with(
+            workflow.id,
             {
                 "updateWorkflow": {
                     "name": workflow.name,
@@ -88,15 +96,15 @@ class DuplicateTabCommandTest(DbTestCase):
                     }
                 },
                 "updateWfModules": {},
-            }
+            },
         )
 
         # There should never be a render: we aren't changing any module
         # outputs.
         queue_render.assert_not_called()
 
-    @patch("server.rabbitmq.queue_render")
-    @patch("cjwstate.models.Delta.ws_notify")
+    @patch.object(commands, "queue_render")
+    @patch.object(commands, "websockets_notify")
     def test_duplicate_nonempty_unrendered_tab(self, ws_notify, queue_render):
         ws_notify.side_effect = async_noop
         queue_render.side_effect = async_noop
@@ -124,8 +132,12 @@ class DuplicateTabCommandTest(DbTestCase):
         )
 
         cmd = self.run_with_async_db(
-            DuplicateTabCommand.create(
-                workflow=workflow, from_tab=tab, slug="tab-2", name="Tab 2"
+            commands.do(
+                DuplicateTabCommand,
+                workflow=workflow,
+                from_tab=tab,
+                slug="tab-2",
+                name="Tab 2",
             )
         )
 
@@ -151,7 +163,7 @@ class DuplicateTabCommandTest(DbTestCase):
         self.assertEqual(wfm2dup.module_id_name, "y")
         self.assertEqual(wfm2dup.params, {"p": "s2"})
         self.assertNotEqual(wfm1dup.id, wfm1.id)
-        delta = ws_notify.mock_calls[0][1][0]
+        delta = ws_notify.mock_calls[0][1][1]
         self.assertEqual(
             delta["updateTabs"]["tab-2"]["wf_module_ids"], [wfm1dup.id, wfm2dup.id]
         )
@@ -170,10 +182,10 @@ class DuplicateTabCommandTest(DbTestCase):
         queue_render.reset_mock()  # so we can assert next time
 
         # undo
-        self.run_with_async_db(cmd.backward())
+        self.run_with_async_db(commands.undo(cmd))
         cmd.tab.refresh_from_db()
         self.assertTrue(cmd.tab.is_deleted)
-        delta = ws_notify.mock_calls[1][1][0]
+        delta = ws_notify.mock_calls[1][1][1]
         self.assertEqual(delta["clearTabSlugs"], ["tab-2"])
         self.assertEqual(
             delta["clearWfModuleIds"],
@@ -185,12 +197,12 @@ class DuplicateTabCommandTest(DbTestCase):
         queue_render.assert_not_called()
 
         # redo
-        self.run_with_async_db(cmd.forward())
+        self.run_with_async_db(commands.redo(cmd))
         # Need to call render() again -- these modules are still out-of-date
         queue_render.assert_called_with(workflow.id, cmd.id)
 
-    @patch("server.rabbitmq.queue_render")
-    @patch("cjwstate.models.Delta.ws_notify")
+    @patch.object(commands, "queue_render")
+    @patch.object(commands, "websockets_notify")
     def test_duplicate_nonempty_rendered_tab(self, ws_notify, queue_render):
         ws_notify.side_effect = async_noop
         queue_render.side_effect = async_noop
@@ -211,8 +223,12 @@ class DuplicateTabCommandTest(DbTestCase):
         cache_render_result(workflow, wfm1, init_delta_id, render_result)
 
         cmd = self.run_with_async_db(
-            DuplicateTabCommand.create(
-                workflow=workflow, from_tab=tab, slug="tab-2", name="Tab 2"
+            commands.do(
+                DuplicateTabCommand,
+                workflow=workflow,
+                from_tab=tab,
+                slug="tab-2",
+                name="Tab 2",
             )
         )
         tab2 = workflow.tabs.last()
@@ -229,20 +245,28 @@ class DuplicateTabCommandTest(DbTestCase):
         tab = workflow.tabs.first()
         with self.assertRaisesRegex(ValueError, "used"):
             self.run_with_async_db(
-                DuplicateTabCommand.create(
-                    workflow=workflow, from_tab=tab, slug=tab.slug, name="Tab 2"
+                commands.do(
+                    DuplicateTabCommand,
+                    workflow=workflow,
+                    from_tab=tab,
+                    slug=tab.slug,
+                    name="Tab 2",
                 )
             )
 
-    @patch("server.rabbitmq.queue_render", async_noop)
-    @patch("cjwstate.models.Delta.ws_notify", async_noop)
+    @patch.object(commands, "queue_render", async_noop)
+    @patch.object(commands, "websockets_notify", async_noop)
     def test_position_after_tab(self):
         workflow = Workflow.create_and_init()
         tab1 = workflow.tabs.first()
         workflow.tabs.create(position=1, slug="tab-2", name="Tab 2")
         self.run_with_async_db(
-            DuplicateTabCommand.create(
-                workflow=workflow, from_tab=tab1, slug="tab-3", name="Tab 3"
+            commands.do(
+                DuplicateTabCommand,
+                workflow=workflow,
+                from_tab=tab1,
+                slug="tab-3",
+                name="Tab 3",
             )
         )
         self.assertEqual(

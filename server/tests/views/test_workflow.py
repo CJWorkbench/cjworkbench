@@ -27,7 +27,7 @@ future_none = asyncio.Future()
 future_none.set_result(None)
 
 
-@patch("cjwstate.models.Delta.ws_notify", async_noop)
+@patch("cjwstate.commands.websockets_notify", async_noop)
 class WorkflowViewTests(LoggedInTestCase):
     def setUp(self):
         super().setUp()  # log in

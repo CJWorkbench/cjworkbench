@@ -8,6 +8,7 @@ from unittest.mock import patch
 from dateutil import parser
 import pyarrow.parquet
 from cjwkernel.errors import ModuleExitedError
+from cjwkernel.forkserver import install_calling_process_as_subreaper
 from cjwkernel.param_dtype import ParamDType
 from cjwkernel.types import (
     Column,
@@ -25,7 +26,7 @@ from cjwkernel.tests.util import (
     assert_arrow_table_equals,
     parquet_file,
 )
-from cjwstate import minio, rendercache, storedobjects
+from cjwstate import commands, minio, rendercache, storedobjects
 from cjwstate.models import (
     CachedRenderResult,
     ModuleVersion,
@@ -34,10 +35,11 @@ from cjwstate.models import (
     Workflow,
 )
 from cjwstate.models.commands import ChangeDataVersionCommand
+import cjwstate.modules
 from cjwstate.modules.loaded_module import LoadedModule
 from cjwstate.tests.utils import DbTestCase
 from fetcher import fetch, fetchprep
-from server import websockets
+from server import rabbitmq, websockets
 
 
 def async_value(v):
@@ -485,10 +487,10 @@ class UpdateNextUpdateTimeTests(DbTestCase):
 
 
 class FetchIntegrationTests(DbTestCase):
-    @patch.object(ChangeDataVersionCommand, "schedule_execute_if_needed")
+    @patch.object(websockets, "queue_render_if_listening")
     @patch.object(websockets, "ws_client_send_delta_async")
-    def test_fetch_integration(self, send_delta, schedule_execute):
-        schedule_execute.side_effect = async_value(None)
+    def test_fetch_integration(self, send_delta, queue_render):
+        queue_render.side_effect = async_value(None)
         send_delta.side_effect = async_value(None)
         workflow = Workflow.create_and_init()
         ModuleVersion.create_or_replace_from_spec(
@@ -504,6 +506,7 @@ class FetchIntegrationTests(DbTestCase):
             b"import pandas as pd\ndef fetch(params): return pd.DataFrame({'A': [1]})\ndef render(table, params): return table",
         )
         with self.assertLogs(level=logging.INFO):
+            cjwstate.modules.init_module_system()
             self.run_with_async_db(
                 fetch.fetch(workflow_id=workflow.id, wf_module_id=wf_module.id)
             )
@@ -513,5 +516,6 @@ class FetchIntegrationTests(DbTestCase):
             table = pyarrow.parquet.read_table(str(parquet_path), use_threads=False)
             assert_arrow_table_equals(table, {"A": [1]})
 
-        schedule_execute.assert_called()
-        websockets.ws_client_send_delta_async.assert_called()
+        workflow.refresh_from_db()
+        queue_render.assert_called_with(workflow.id, workflow.last_delta_id)
+        send_delta.assert_called()

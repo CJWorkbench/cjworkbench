@@ -1,6 +1,8 @@
 from typing import Optional
 from cjworkbench.sync import database_sync_to_async
+from cjwstate import commands
 from cjwstate.models import Delta, Workflow
+from cjwstate.models.commands import InitWorkflowCommand
 
 
 @database_sync_to_async
@@ -42,19 +44,20 @@ def _load_next_delta(workflow: Workflow) -> Optional[Delta]:
 
 async def WorkflowUndo(workflow):
     """
-    Run workflow.last_delta.backward().
+    Run commands.undo(workflow.last_delta).
 
-    The delta may modify the passed `workflow`.
+    This may modify the passed `workflow`.
     """
     # TODO avoid race undoing the same delta twice (or make it a no-op)
     delta = await _load_last_delta(workflow)
 
-    await delta.backward()  # Delta uses cooperative lock
+    if not isinstance(delta, InitWorkflowCommand):
+        await commands.undo(delta)  # uses cooperative_lock()
 
 
 async def WorkflowRedo(workflow):
     """
-    Run workflow.last_delta.next_delta.forward(), if there is a next delta.
+    Run commands.redo(workflow.last_delta.next_delta), if there is one.
 
     The delta may modify the passed `workflow`.
     """
@@ -64,4 +67,4 @@ async def WorkflowRedo(workflow):
     if not delta:
         return
 
-    await delta.forward()  # Delta uses cooperative lock
+    await commands.redo(delta)  # uses cooperative_lock()

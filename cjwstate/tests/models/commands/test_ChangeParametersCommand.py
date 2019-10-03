@@ -1,5 +1,6 @@
 from unittest.mock import patch
 from cjwkernel.param_dtype import ParamDType
+from cjwstate import commands
 from cjwstate.models import ModuleVersion, Workflow
 from cjwstate.models.commands import InitWorkflowCommand, ChangeParametersCommand
 from cjwstate.modules.loaded_module import LoadedModule
@@ -18,8 +19,8 @@ class MockLoadedModule:
         return params  # no-op
 
 
-@patch("server.rabbitmq.queue_render", async_noop)
-@patch("cjwstate.models.Delta.ws_notify", async_noop)
+@patch.object(commands, "queue_render", async_noop)
+@patch.object(commands, "websockets_notify", async_noop)
 class ChangeParametersCommandTest(DbTestCase):
     @patch.object(LoadedModule, "for_module_version", MockLoadedModule)
     def test_change_parameters(self):
@@ -58,7 +59,8 @@ class ChangeParametersCommandTest(DbTestCase):
 
         # Create and apply delta. It should change params.
         cmd = self.run_with_async_db(
-            ChangeParametersCommand.create(
+            commands.do(
+                ChangeParametersCommand,
                 workflow=workflow,
                 wf_module=wf_module,
                 new_values={"url": "http://example.com/foo", "has_header": False},
@@ -74,12 +76,12 @@ class ChangeParametersCommandTest(DbTestCase):
         self.assertEqual(wf_module.params, params2)
 
         # undo
-        self.run_with_async_db(cmd.backward())
+        self.run_with_async_db(commands.undo(cmd))
         wf_module.refresh_from_db()
         self.assertEqual(wf_module.params, params1)
 
         # redo
-        self.run_with_async_db(cmd.forward())
+        self.run_with_async_db(commands.redo(cmd))
         wf_module.refresh_from_db()
         self.assertEqual(wf_module.params, params2)
 
@@ -105,7 +107,8 @@ class ChangeParametersCommandTest(DbTestCase):
         )
 
         cmd = self.run_with_async_db(
-            ChangeParametersCommand.create(
+            commands.do(
+                ChangeParametersCommand,
                 workflow=workflow,
                 wf_module=wf_module,
                 new_values={"url": "https://example.com"},
@@ -136,7 +139,8 @@ class ChangeParametersCommandTest(DbTestCase):
         )
 
         cmd = self.run_with_async_db(
-            ChangeParametersCommand.create(
+            commands.do(
+                ChangeParametersCommand,
                 workflow=workflow,
                 wf_module=wf_module,
                 new_values={"url": "https://example.com"},
@@ -166,7 +170,8 @@ class ChangeParametersCommandTest(DbTestCase):
         wf_module.delete()
 
         cmd = self.run_with_async_db(
-            ChangeParametersCommand.create(
+            commands.do(
+                ChangeParametersCommand,
                 workflow=workflow,
                 wf_module=wf_module,
                 new_values={"url": "https://example.com"},
@@ -221,8 +226,11 @@ class ChangeParametersCommandTest(DbTestCase):
         # presented `params` to the user.) So the changes should apply atop
         # _migrated_ params.
         cmd = self.run_with_async_db(
-            ChangeParametersCommand.create(
-                workflow=workflow, wf_module=wf_module, new_values={"x": 2}
+            commands.do(
+                ChangeParametersCommand,
+                workflow=workflow,
+                wf_module=wf_module,
+                new_values={"x": 2},
             )
         )
         self.assertEqual(
@@ -233,7 +241,7 @@ class ChangeParametersCommandTest(DbTestCase):
             },
         )
 
-        self.run_with_async_db(cmd.backward())
+        self.run_with_async_db(commands.undo(cmd))
         self.assertEqual(
             wf_module.params, {"version": "v1", "x": 1}  # exactly what we had before
         )
@@ -265,8 +273,11 @@ class ChangeParametersCommandTest(DbTestCase):
         with self.assertRaises(ValueError):
             # Now the user requests to change params, giving an invalid param.
             self.run_with_async_db(
-                ChangeParametersCommand.create(
-                    workflow=workflow, wf_module=wf_module, new_values={"x": "Threeve"}
+                commands.do(
+                    ChangeParametersCommand,
+                    workflow=workflow,
+                    wf_module=wf_module,
+                    new_values={"x": "Threeve"},
                 )
             )
 
@@ -309,8 +320,11 @@ class ChangeParametersCommandTest(DbTestCase):
         )
 
         cmd = self.run_with_async_db(
-            ChangeParametersCommand.create(
-                workflow=workflow, wf_module=wfm2, new_values={"x": 2}
+            commands.do(
+                ChangeParametersCommand,
+                workflow=workflow,
+                wf_module=wfm2,
+                new_values={"x": 2},
             )
         )
 

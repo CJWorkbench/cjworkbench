@@ -20,8 +20,9 @@ def init_module_system():
           `cjwstate.modules.staticregistry`.
     """
     global kernel
-    if kernel is not None:
-        raise RuntimeError("Module system already initialized")
-    cjwkernel.forkserver.install_calling_process_as_subreaper()
-    kernel = cjwkernel.kernel.Kernel()
-    cjwstate.modules.staticregistry._setup(kernel)
+    # Ignore spurious init() calls. They happen in unit-testing: each unit test
+    # that relies on the module system needs to ensure it's initialized.
+    if kernel is None:
+        cjwkernel.forkserver.install_calling_process_as_subreaper()
+        kernel = cjwkernel.kernel.Kernel()
+        cjwstate.modules.staticregistry._setup(kernel)

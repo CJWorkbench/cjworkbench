@@ -2,6 +2,7 @@ import functools
 import re
 from typing import Any, Dict, List
 from cjworkbench.sync import database_sync_to_async
+from cjwstate import commands
 from cjwstate.models import ModuleVersion, Workflow, Tab
 from cjwstate.models.commands import (
     AddModuleCommand,
@@ -72,7 +73,8 @@ async def add_module(
         return None
 
     try:
-        await AddModuleCommand.create(
+        await commands.do(
+            AddModuleCommand,
             workflow=workflow,
             tab=tab,
             slug=slug,
@@ -117,8 +119,8 @@ async def reorder_modules(
     workflow: Workflow, tab: Tab, wfModuleIds: List[int], **kwargs
 ):
     try:
-        await ReorderModulesCommand.create(
-            workflow=workflow, tab=tab, new_order=wfModuleIds
+        await commands.do(
+            ReorderModulesCommand, workflow=workflow, tab=tab, new_order=wfModuleIds
         )
     except ValueError as err:
         raise HandlerError(str(err))
@@ -129,7 +131,7 @@ async def reorder_modules(
 async def create(workflow: Workflow, slug: str, name: str, **kwargs):
     slug = _parse_slug(slug)
     name = str(name)  # JSON values can't lead to error
-    await AddTabCommand.create(workflow=workflow, slug=slug, name=name)
+    await commands.do(AddTabCommand, workflow=workflow, slug=slug, name=name)
 
 
 @register_websockets_handler
@@ -137,8 +139,8 @@ async def create(workflow: Workflow, slug: str, name: str, **kwargs):
 @_loading_tab
 async def duplicate(workflow: Workflow, tab: Tab, slug: str, name: str, **kwargs):
     try:
-        await DuplicateTabCommand.create(
-            workflow=workflow, from_tab=tab, slug=slug, name=name
+        await commands.do(
+            DuplicateTabCommand, workflow=workflow, from_tab=tab, slug=slug, name=name
         )
     except ValueError as err:
         raise HandlerError("BadRequest: %s" % str(err))
@@ -148,7 +150,7 @@ async def duplicate(workflow: Workflow, tab: Tab, slug: str, name: str, **kwargs
 @websockets_handler("write")
 @_loading_tab
 async def delete(workflow: Workflow, tab: Tab, **kwargs):
-    await DeleteTabCommand.create(workflow=workflow, tab=tab)
+    await commands.do(DeleteTabCommand, workflow=workflow, tab=tab)
 
 
 @register_websockets_handler
@@ -156,4 +158,4 @@ async def delete(workflow: Workflow, tab: Tab, **kwargs):
 @_loading_tab
 async def set_name(workflow: Workflow, tab: Tab, name: str, **kwargs):
     name = str(name)  # JSON values can't lead to error
-    await SetTabNameCommand.create(workflow=workflow, tab=tab, new_name=name)
+    await commands.do(SetTabNameCommand, workflow=workflow, tab=tab, new_name=name)

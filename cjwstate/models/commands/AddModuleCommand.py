@@ -107,7 +107,7 @@ class AddModuleCommand(ChangesWfModuleOutputs, Delta):
         self.backward_affected_delta_ids()
 
     # override
-    async def schedule_execute_if_needed(self) -> None:
+    def get_modifies_render_output(self) -> bool:
         """
         Force a render.
 
@@ -118,7 +118,7 @@ class AddModuleCommand(ChangesWfModuleOutputs, Delta):
         know this delta's ID until after we save it to the database, yet we
         need to save its own ID in self._changed_wf_module_versions.
         """
-        await self._schedule_execute()
+        return True
 
     @classmethod
     def amend_create_kwargs(
