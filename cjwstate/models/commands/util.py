@@ -27,13 +27,13 @@ class ChangesWfModuleOutputs:
                         cls.affected_wf_module_delta_ids(wf_module),
                 }
 
-            def forward_impl(self):
+            def forward(self):
                 ...
                 # update wf_modules in database and store
                 # self._changed_wf_module_delta_ids, for websockets message.
                 self.forward_affected_delta_ids()
 
-            def backward_impl(self):
+            def backward(self):
                 ...
                 # update wf_modules in database and store
                 # self._changed_wf_module_delta_ids, for websockets message.

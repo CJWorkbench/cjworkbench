@@ -110,7 +110,7 @@ def _first_forward_and_save_returning_ws_data(
         delta = cls.objects.create(
             prev_delta_id=workflow.last_delta_id, **create_kwargs
         )
-        delta.forward_impl()
+        delta.forward()
 
         if orphan_delta:
             # We just deleted deltas; now we can garbage-collect Tabs and
@@ -129,7 +129,7 @@ def _first_forward_and_save_returning_ws_data(
 def _call_forward_and_load_ws_data(delta: Delta) -> Tuple[Dict[str, Any], bool]:
     workflow = delta.workflow
     with workflow.cooperative_lock():
-        delta.forward_impl()
+        delta.forward()
         workflow.last_delta = delta
         workflow.save(update_fields=["last_delta_id"])
 
@@ -140,11 +140,11 @@ def _call_forward_and_load_ws_data(delta: Delta) -> Tuple[Dict[str, Any], bool]:
 def _call_backward_and_load_ws_data(delta: Delta) -> Tuple[Dict[str, Any], bool]:
     workflow = delta.workflow
     with workflow.cooperative_lock():
-        delta.backward_impl()
+        delta.backward()
 
         # Point workflow to previous delta
         # Only update prev_delta_id: other columns may have been edited in
-        # backward_impl().
+        # backward().
         workflow.last_delta = delta.prev_delta
         workflow.save(update_fields=["last_delta_id"])
 
@@ -189,7 +189,7 @@ async def do(cls, *, workflow: Workflow, **kwargs) -> Delta:
 
 async def redo(delta: Delta) -> None:
     """
-    Call delta.forward_impl(); notify websockets and renderer.
+    Call delta.forward(); notify websockets and renderer.
     """
     ws_data, want_render = await _call_forward_and_load_ws_data(delta)
     if ws_data:
@@ -201,7 +201,7 @@ async def redo(delta: Delta) -> None:
 
 async def undo(delta: Delta) -> None:
     """
-    Call delta.backward_impl(); notify websockets and renderer.
+    Call delta.backward(); notify websockets and renderer.
     """
     ws_data, want_render = await _call_backward_and_load_ws_data(delta)
     if ws_data:

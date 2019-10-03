@@ -2,12 +2,9 @@
 # A single change to state of a workflow
 # You can also think of this as a "command." Contains a specification of what
 # actually happened.
-from typing import Optional
 from django.db import connection, models
 import django.utils
 from polymorphic.models import PolymorphicModel
-from cjworkbench.sync import database_sync_to_async
-from server import rabbitmq, websockets
 
 
 # Base class of a single undoable/redoable action
@@ -16,10 +13,11 @@ from server import rabbitmq, websockets
 # To derive a command from Delta:
 #
 #   - implement @classmethod amend_create_kwargs() -- a database-sync method.
-#   - implement forward_impl() and backward_impl() -- database-sync methods.
+#   - implement load_ws_data() -- a database-sync method.
+#   - implement forward() and backward() -- database-sync methods.
 #
-# When creating a Delta, the two commands will be called in the same atomic
-# transaction.
+# Create Deltas using `cjwstate.commands.do()`. This will call these
+# synchronous methods correctly.
 class Delta(PolymorphicModel):
     class Meta:
         app_label = "server"

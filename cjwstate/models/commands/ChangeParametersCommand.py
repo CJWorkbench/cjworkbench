@@ -19,7 +19,7 @@ class ChangeParametersCommand(ChangesWfModuleOutputs, Delta):
     new_values = JSONField("new_values")  # only _changed_ params
     wf_module_delta_ids = ChangesWfModuleOutputs.wf_module_delta_ids
 
-    def forward_impl(self):
+    def forward(self):
         self.wf_module.params = self.new_values
         self.wf_module.cached_migrated_params = None
         self.wf_module.cached_migrated_params_module_version = None
@@ -32,7 +32,7 @@ class ChangeParametersCommand(ChangesWfModuleOutputs, Delta):
         )
         self.forward_affected_delta_ids()
 
-    def backward_impl(self):
+    def backward(self):
         self.wf_module.params = self.old_values
         self.wf_module.cached_migrated_params = None
         self.wf_module.cached_migrated_params_module_version = None

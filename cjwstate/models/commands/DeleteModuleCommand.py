@@ -37,7 +37,7 @@ class DeleteModuleCommand(ChangesWfModuleOutputs, Delta):
             tab_id=wf_module.tab_id, order__gt=wf_module.order, is_deleted=False
         )
 
-    def forward_impl(self):
+    def forward(self):
         # If we are deleting the selected module, then set the previous module
         # in stack as selected (behavior same as in workflow-reducer.js)
         tab = self.wf_module.tab
@@ -59,7 +59,7 @@ class DeleteModuleCommand(ChangesWfModuleOutputs, Delta):
 
         self.forward_affected_delta_ids()
 
-    def backward_impl(self):
+    def backward(self):
         tab = self.wf_module.tab
 
         # Move subsequent modules over to make way for this one.

@@ -16,12 +16,12 @@ class ChangeDataVersionCommand(ChangesWfModuleOutputs, Delta):
     new_version = models.DateTimeField("new_version")
     wf_module_delta_ids = ChangesWfModuleOutputs.wf_module_delta_ids
 
-    def forward_impl(self):
+    def forward(self):
         self.wf_module.stored_data_version = self.new_version
         self.wf_module.save(update_fields=["stored_data_version"])
         self.forward_affected_delta_ids()
 
-    def backward_impl(self):
+    def backward(self):
         self.wf_module.stored_data_version = self.old_version
         self.wf_module.save(update_fields=["stored_data_version"])
         self.backward_affected_delta_ids()
