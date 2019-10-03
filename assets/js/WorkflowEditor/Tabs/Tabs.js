@@ -3,9 +3,14 @@ import PropTypes from 'prop-types'
 import TabList from './TabList'
 import NewTabPrompt from './NewTabPrompt'
 import * as propTypes from '../propTypes'
+import { withI18n } from '@lingui/react'
 
-export default class Tabs extends React.PureComponent {
+export default withI18n()(class Tabs extends React.PureComponent {
   static propTypes = {
+    i18n: PropTypes.shape({
+      // i18n object injected by LinguiJS withI18n()
+      _: PropTypes.func.isRequired
+    }),
     tabs: PropTypes.arrayOf(PropTypes.shape({
       slug: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
@@ -22,7 +27,7 @@ export default class Tabs extends React.PureComponent {
   }
 
   create = () => {
-    this.props.create(this.props.tabs.length, '')
+    this.props.create(this.props.i18n)
   }
 
   render () {
@@ -48,4 +53,4 @@ export default class Tabs extends React.PureComponent {
       </div>
     )
   }
-}
+})

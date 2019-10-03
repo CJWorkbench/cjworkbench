@@ -1,5 +1,6 @@
 import * as util from './util'
 import { generateSlug } from '../../utils'
+import { t } from '@lingui/macro'
 
 const TAB_SET_NAME = 'TAB_SET_NAME'
 const TAB_DESTROY = 'TAB_DESTROY'
@@ -72,7 +73,7 @@ export function select (slug) {
   }
 }
 
-export function create () {
+export function create (i18n) {
   return (dispatch, getState, api) => {
     const state = getState()
     const { workflow, tabs } = state
@@ -87,7 +88,8 @@ export function create () {
     }
 
     const slug = generateSlug('tab-')
-    const name = util.generateTabName(/Tab (\d+)/, 'Tab %d', tabNames)
+    const tabLiteral = i18n._(t('workflow.tabs.tab_literal')`Tab`)
+    const name = util.generateTabName(new RegExp(tabLiteral + ' (\\d+)'), tabLiteral + ' %d', tabNames)
 
     return dispatch({
       type: TAB_CREATE,
