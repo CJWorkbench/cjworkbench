@@ -1,7 +1,5 @@
 from django.db import models
-from cjworkbench.sync import database_sync_to_async
 from cjwstate.models import Delta, WfModule
-from server import rabbitmq, websockets
 from .util import ChangesWfModuleOutputs
 
 
