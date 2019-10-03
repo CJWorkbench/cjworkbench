@@ -196,6 +196,42 @@ class WfModuleTests(DbTestCase):
             )
 
     @patch("server.websockets.ws_client_send_delta_async", noop)
+    def test_fetch_result_no_bucket_or_key_stored_object_means_none(self):
+        workflow = Workflow.create_and_init()
+        tab = workflow.tabs.first()
+        wf_module = tab.wf_modules.create(
+            order=0,
+            slug="step-1",
+            module_id_name="x",
+            last_relevant_delta_id=workflow.last_delta_id,
+            stored_data_version=timezone.now(),
+        )
+        wf_module.stored_objects.create(
+            stored_at=wf_module.stored_data_version,
+            bucket="",
+            key="",
+            size=0,
+            hash="whatever",
+        )
+
+        def render(*args, fetch_result, **kwargs):
+            self.assertIsNone(fetch_result)
+            return RenderResult()
+
+        with self._stub_module(render):
+            self.run_with_async_db(
+                execute_wfmodule(
+                    workflow,
+                    wf_module,
+                    {},
+                    tab.name,
+                    RenderResult(),
+                    {},
+                    Path("/unused"),
+                )
+            )
+
+    @patch("server.websockets.ws_client_send_delta_async", noop)
     def test_report_module_error(self):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()

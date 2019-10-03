@@ -83,6 +83,8 @@ def _load_fetch_result(
         )
     except StoredObject.DoesNotExist:
         return None
+    if not stored_object.bucket or not stored_object.key:
+        return None
 
     with contextlib.ExitStack() as inner_stack:
         path = inner_stack.enter_context(
@@ -95,7 +97,7 @@ def _load_fetch_result(
             # right _now_ ("now" means, "in inner_stack.close()"). Instead,
             # transfer ownership of `path` to exit_stack.
             exit_stack.callback(inner_stack.pop_all().close)
-        except (minio.error.NoSuchBucket, FileNotFoundError):
+        except FileNotFoundError:
             # A few StoredObjects -- very old ones with size=0 -- are
             # *intentionally* not in minio. It turns out modules from that era
             # treated empty-file and None as identical. The _modules_ must
@@ -218,7 +220,11 @@ def _execute_wfmodule_save(
             workflow, safe_wf_module, wf_module.last_relevant_delta_id, result
         )
 
-        if safe_wf_module.notifications and result != stale_result:
+        if (
+            safe_wf_module.notifications
+            and stale_result is not None
+            and result != stale_result
+        ):
             safe_wf_module.has_unseen_notification = True
             safe_wf_module.save(update_fields=["has_unseen_notification"])
             return notifications.OutputDelta(

@@ -382,6 +382,44 @@ class WorkflowTests(DbTestCase):
 
         email.assert_not_called()
 
+    @patch.object(LoadedModule, "for_module_version")
+    @patch("server.websockets.ws_client_send_delta_async", fake_send)
+    @patch("renderer.notifications.email_output_delta")
+    def test_email_no_delta_when_no_cached_render_result(self, email, fake_load_module):
+        # No cached render result means one of two things:
+        #
+        # 1. This is a new module (in which case, why email the user?)
+        # 2. We cleared the render cache (in which case, better to skip emailing a few
+        #    users than to email _every_ user that results have changed when they haven't)
+
+        workflow = Workflow.objects.create()
+        tab = workflow.tabs.create(position=0)
+        delta1 = InitWorkflowCommand.create(workflow)
+        ModuleVersion.create_or_replace_from_spec(
+            {"id_name": "mod", "name": "Mod", "category": "Clean", "parameters": []}
+        )
+        wf_module = tab.wf_modules.create(
+            order=0,
+            slug="step-1",
+            last_relevant_delta_id=delta1.id,
+            module_id_name="mod",
+            notifications=True,
+        )
+
+        # Make a new delta, so we need to re-render. Give it the same output.
+        delta2 = InitWorkflowCommand.create(workflow)
+        wf_module.last_relevant_delta_id = delta2.id
+        wf_module.save(update_fields=["last_relevant_delta_id"])
+
+        fake_loaded_module = Mock(LoadedModule)
+        fake_load_module.return_value = fake_loaded_module
+        fake_loaded_module.migrate_params.return_value = {}
+        fake_loaded_module.render.return_value = RenderResult(arrow_table({"A": [1]}))
+
+        self._execute(workflow)
+
+        email.assert_not_called()
+
 
 class PartitionReadyAndDependentTests(unittest.TestCase):
     MockTabFlow = namedtuple("MockTabFlow", ("tab_slug", "input_tab_slugs"))

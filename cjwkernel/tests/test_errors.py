@@ -42,7 +42,7 @@ class FormatForUserDebuggingTests(unittest.TestCase):
             format_for_user_debugging(
                 ModuleExitedError(
                     1,
-                    """\n  File "/app/cjwkernel/errors.py", line 1, in <module>\n    import signals\nModuleNotFoundError: No module named 'signals'""",
+                    """\n  File "/app/cjwkernel/errors.py", line 1, in <module>\n    import signals\nModuleNotFoundError: No module named 'signals'\n""",
                 )
             ),
             "exit code 1: ModuleNotFoundError: No module named 'signals'",

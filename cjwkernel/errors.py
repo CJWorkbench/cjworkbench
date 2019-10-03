@@ -60,12 +60,18 @@ def format_for_user_debugging(err: ModuleError) -> str:
             exit_text = "exit code %d" % err.exit_code
         # Usually, the last line of output is the one that differentiates it.
         # In particular, this is the "ValueError" line in a Python stack trace.
-        last_line = err.log.split("\n")[-1]
+        for line in reversed(err.log.split("\n")):
+            # Ignore newlines at the end of output.
+            if line:
+                last_line = line
+                break
+        else:
+            last_line = None
         if last_line:
             # "exit code 1: ValueError: invalid JSON..."
             return "%s: %s" % (exit_text, last_line or "(empty)")
         else:
-            # SIGSEGV
+            # "SIGSEGV"
             return exit_text
     else:
         message = str(err)
