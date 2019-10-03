@@ -4,6 +4,8 @@ from django.utils.html import escape
 from cjworkbench.i18n import catalog_path
 from string import Formatter
 
+_default_is_required = True
+
 
 class UnsupportedLocaleError(Exception):
     """An unsupported locale is (attempted to be) used
@@ -24,6 +26,11 @@ class InvalidICUParameters(Exception):
     """The parameters passed for a message are not valid
     
     For example, you may have passed a string in the place of an integer.
+    """
+
+
+class MissingDefaultMessage(Exception):
+    """It is required to pass a default message and you failed to do so.
     """
 
 
@@ -104,7 +111,10 @@ class MessageTranslator:
     def trans(self, message_id, default=None, context=None, parameters={}, tags={}):
         """Find the message corresponding to the given ID in the catalog and format it according to the given parameters.
         If the message is either not found or empty and a non-empty `default` is provided, the `default` is used instead.
-        Otherwise, the `message_id` is used instead.
+        
+        If the default is None, depending on the value of `_default_is_required`, one of the following happens:
+          - True: an exception is thrown
+          - False: the `message_id` is used instead.
         
         See `self._format_message` for acceptable types of the parameters argument.
         
@@ -113,6 +123,8 @@ class MessageTranslator:
         
         HTML-like tags in the message used are replaced by their counterpart in `tags`, as specified in `restore_tags`
         """
+        if _default_is_required and default is None:
+            raise MissingDefaultMessage("You have not passed a default message")
         return self._process_message(
             self.get_message(message_id, context=context),
             default or message_id,

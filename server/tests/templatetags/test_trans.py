@@ -15,9 +15,10 @@ def mock_context(**kwargs):
 
 class TransTemplateTagTests(SimpleTestCase):
     def test_trans_no_default(self):
-        """Tests that when no default is given, the message id is returned
+        """Tests that default message is required
         """
-        self.assertEqual(trans_html(mock_context(), mock_message_id), mock_message_id)
+        with self.assertRaises(Exception):
+            trans_html(mock_context(), mock_message_id)
 
     def test_trans_noop(self):
         """Tests that `noop=True` returns `None`
