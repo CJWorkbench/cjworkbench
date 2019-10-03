@@ -68,7 +68,7 @@ function StringPrompt ({ isReadOnly, label, name, fieldId, placeholder, pattern,
   )
 }
 
-function StringDisplay ({ i18n, isReadOnly, secretMetadata, label, name, fieldId, deleteSecret }) {
+const StringDisplay = withI18n()(function ({ i18n, isReadOnly, secretMetadata, label, name, fieldId, deleteSecret }) {
   const [isSubmitted, setSubmitted] = React.useState(false)
   const handleSubmit = React.useCallback(() => {
     deleteSecret(name)
@@ -95,21 +95,19 @@ function StringDisplay ({ i18n, isReadOnly, secretMetadata, label, name, fieldId
       </div>
     </>
   )
-}
+})
 
 const String_ = React.memo(function String_ ({ secretMetadata, isReadOnly, name, fieldId, secretLogic: { label, placeholder, pattern, help, helpUrl, helpUrlPrompt }, submitSecret, deleteSecret }) {
   if (secretMetadata) {
     return (
-      withI18n()(
-          <StringDisplay
-            isReadOnly={isReadOnly}
-            secretMetadata={secretMetadata}
-            label={label}
-            name={name}
-            fieldId={fieldId}
-            deleteSecret={deleteSecret}
-          />
-      )
+      <StringDisplay
+        isReadOnly={isReadOnly}
+        secretMetadata={secretMetadata}
+        label={label}
+        name={name}
+        fieldId={fieldId}
+        deleteSecret={deleteSecret}
+      />
     )
   } else {
     return (

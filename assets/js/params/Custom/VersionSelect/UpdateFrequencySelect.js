@@ -5,13 +5,11 @@ import { timeDifference } from '../../../utils'
 import { trySetWfModuleAutofetchAction, setWfModuleNotificationsAction } from '../../../workflow-reducer'
 import { connect } from 'react-redux'
 import { withI18n } from '@lingui/react'
-import { supportedLocaleIds } from './locales'
 
-export withI18n()(class UpdateFrequencySelect extends React.PureComponent {
+export const UpdateFrequencySelect = withI18n()(class UpdateFrequencySelect extends React.PureComponent {
   static propTypes = {
     i18n: PropTypes.shape({
       // i18n object injected by LinguiJS withI18n()
-      language: PropTypes.oneOf(supportedLocaleIds),
       _: PropTypes.func.isRequired
     }),
     workflowId: PropTypes.number.isRequired,

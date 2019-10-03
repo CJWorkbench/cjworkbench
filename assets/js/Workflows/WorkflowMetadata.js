@@ -5,14 +5,12 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { timeDifference } from '../utils'
 import { withI18n } from '@lingui/react'
-import { supportedLocaleIds } from './locales'
 
 export default withI18n()(class WorkflowMetadata extends React.Component {
   static propTypes = {
     i18n: PropTypes.shape({
-        // i18n object injected by LinguiJS withI18n()
-        language: PropTypes.oneOf(supportedLocaleIds),
-        _: PropTypes.func.isRequired
+      // i18n object injected by LinguiJS withI18n()
+      _: PropTypes.func.isRequired
     }),
     workflow: PropTypes.object.isRequired,
     openShareModal: PropTypes.func.isRequired, // func(workflowId) => undefined

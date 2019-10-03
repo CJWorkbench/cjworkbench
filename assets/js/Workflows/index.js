@@ -9,7 +9,6 @@ import { logUserEvent } from '../utils'
 import CreateWorkflowButton from './CreateWorkflowButton'
 import WorkflowLists from './WorkflowLists'
 import { WorkflowListPropType } from './WorkflowList'
-import { Trans } from '@lingui/macro'
 
 export default class Workflows extends React.Component {
   static propTypes = {

@@ -7,7 +7,6 @@ import { goToUrl, timeDifference } from './utils'
 import ShareButton from './ShareModal/ShareButton'
 import { Trans } from '@lingui/macro'
 import { withI18n } from '@lingui/react'
-import { supportedLocaleIds } from './locales'
 
 function NoOp () {}
 
@@ -43,7 +42,7 @@ function LessonWorkflowTitle ({ lesson }) {
   )
 }
 
-function OwnedWorkflowTitleAndMetadata ({ i18n, isReadOnly, workflow }) {
+const OwnedWorkflowTitleAndMetadata = withI18n()(function ({ i18n, isReadOnly, workflow }) {
   return (
     <div className='title-metadata-stack'>
       <ConnectedEditableWorkflowName isReadOnly={isReadOnly} />
@@ -70,7 +69,7 @@ function OwnedWorkflowTitleAndMetadata ({ i18n, isReadOnly, workflow }) {
       </ul>
     </div>
   )
-}
+})
 
 function WorkflowTitleAndMetadata ({ lesson, isReadOnly, workflow }) {
   if (lesson) {
@@ -81,12 +80,10 @@ function WorkflowTitleAndMetadata ({ lesson, isReadOnly, workflow }) {
     )
   } else {
     return (
-      withI18n()(
-          <OwnedWorkflowTitleAndMetadata
-            isReadOnly={isReadOnly}
-            workflow={workflow}
-          />
-      )
+      <OwnedWorkflowTitleAndMetadata
+        isReadOnly={isReadOnly}
+        workflow={workflow}
+      />
     )
   }
 }
