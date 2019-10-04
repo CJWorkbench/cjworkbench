@@ -105,7 +105,7 @@ case "$COMMAND" in
     ;;
 
   "extract-messages")
-    docker_compose run --rm webpack npm run extract
+    docker_compose run --rm webpack npm run extract -- --clean
     
     # 0. This must come after `npm run extract`, since `npm run extract` 
     #    comments out any messages it can't find in js code
