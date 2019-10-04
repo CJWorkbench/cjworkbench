@@ -1,7 +1,7 @@
 /* globals afterEach, describe, expect, it */
 import React from 'react'
 import WfHamburgerMenu from './WfHamburgerMenu'
-import { mountWithI18n } from './test-utils'
+import { mountWithI18n } from './i18n/test-utils'
 
 describe('WfHamburgerMenu', () => {
   let wrapper // all tests must mount one

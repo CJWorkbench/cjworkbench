@@ -1,6 +1,7 @@
 /* globals afterEach, beforeEach, describe, expect, it, jest */
 import React from 'react'
-import { mountWithI18n, tick, okResponseMock } from '../test-utils'
+import { tick, okResponseMock } from '../test-utils'
+import { mountWithI18n } from '../i18n/test-utils'
 import { act } from 'react-dom/test-utils'
 import Workflows from './index'
 import Workflow from './Workflow'

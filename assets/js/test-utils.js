@@ -4,10 +4,6 @@ import thunk from 'redux-thunk'
 import promiseMiddleware from 'redux-promise-middleware'
 import errorMiddleware from './error-middleware'
 import { workflowReducer } from './workflow-reducer'
-import React from 'react'
-import { shape, object } from 'prop-types'
-import { mount, shallow } from 'enzyme'
-import { I18nProvider } from '@lingui/react'
 
 // Returns new mock function that returns given json. Used for mocking "get" API calls
 export function jsonResponseMock (json) {
@@ -70,69 +66,4 @@ export function mockStore (initialState, api = {}) {
   const middlewares = [errorMiddleware(), promiseMiddleware, thunk.withExtraArgument(api)]
   const store = createStore(workflowReducer, initialState, applyMiddleware(...middlewares))
   return store
-}
-
-/*
- * Below lie utils for testing with i18n (see https://lingui.js.org/guides/testing.html)
- */
-// Create the I18nProvider to retrieve context for wrapping around.
-const intlProvider = new I18nProvider({
-  language: 'en',
-  catalogs: {
-    en: {}
-  }
-}, {})
-
-const {
-  linguiPublisher: {
-    i18n: originalI18n
-  }
-} = intlProvider.getChildContext()
-
-// You customize the i18n object here:
-const i18n = {
-  ...originalI18n,
-  _: key => key // provide _ macro, for just passing down the key
-}
-
-/**
- * When using Lingui `withI18n` on components, props.i18n is required.
- */
-function nodeWithI18nProp (node) {
-  return React.cloneElement(node, { i18n })
-}
-
-/*
- * Methods to use
- */
-export function shallowWithI18n (node, { context } = {}) {
-  return shallow(
-    nodeWithI18nProp(node),
-    {
-      context: Object.assign({}, context, { i18n })
-    }
-  )
-}
-
-export function mountWithI18n (node, { context, childContextTypes } = {}) {
-  const newContext = Object.assign({}, context, { linguiPublisher: { i18n } })
-  /*
-   * I18nProvider sets the linguiPublisher in the context for withI18n to get
-   * the i18n object from.
-   */
-  const newChildContextTypes = Object.assign({},
-    {
-      linguiPublisher: shape({
-        i18n: object.isRequired
-      }).isRequired
-    },
-    childContextTypes
-  )
-  return mount(
-    nodeWithI18nProp(node),
-    {
-      context: newContext,
-      childContextTypes: newChildContextTypes
-    }
-  )
 }
