@@ -31,7 +31,7 @@ class MockLoadedModule:
 
 class TabTest(HandlerTestCase):
     @patch(
-        "cjwstate.models.loaded_module.LoadedModule.for_module_version_sync",
+        "cjwstate.modules.loaded_module.LoadedModule.for_module_version",
         MockLoadedModule,
     )
     @patch("server.websockets.ws_client_send_delta_async", async_noop)
@@ -64,7 +64,7 @@ class TabTest(HandlerTestCase):
         command = AddModuleCommand.objects.first()
         self.assertEquals(command.wf_module.order, 3)
         self.assertEquals(command.wf_module.module_version, module_version)
-        self.assertEquals(command.wf_module.get_params()["foo"], "bar")
+        self.assertEquals(command.wf_module.params["foo"], "bar")
         self.assertEquals(command.wf_module.tab.slug, "tab-1")
         self.assertEquals(command.workflow_id, workflow.id)
 

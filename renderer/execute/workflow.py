@@ -6,7 +6,8 @@ from cjwkernel.param_dtype import ParamDType
 from cjwkernel.types import RenderResult, Tab
 from cjwkernel.util import tempdir_context
 from cjwstate.models import WfModule, Workflow
-from cjwstate.models.loaded_module import LoadedModule
+from cjwstate.modules.loaded_module import LoadedModule
+from cjwstate.params import get_migrated_params
 from .tab import ExecuteStep, TabFlow, execute_tab_flow
 from .types import UnneededExecution
 
@@ -37,10 +38,7 @@ def _get_migrated_params(wf_module: WfModule) -> Dict[str, Any]:
         return {}
 
     try:
-        # raises ModuleError
-        lm = LoadedModule.for_module_version_sync(wf_module.module_version)
-        # raises ModuleError
-        result = lm.migrate_params(wf_module.params)
+        result = get_migrated_params(wf_module)
     except ModuleError:
         # LoadedModule logged this error; no need to log it again.
         return module_version.param_schema.coerce(None)
@@ -157,7 +155,9 @@ async def execute_workflow(workflow: Workflow, delta_id: int) -> None:
 
         async def execute_tab_flow_into_new_file(tab_flow: TabFlow) -> RenderResult:
             nonlocal workflow, tab_results, output_paths
-            output_path = basedir / ("tab-output-%s.arrow" % tab_flow.tab_slug)
+            output_path = basedir / (
+                "tab-output-%s.arrow" % tab_flow.tab_slug.replace("/", "-")
+            )
             return await execute_tab_flow(workflow, tab_flow, tab_results, output_path)
 
         while pending_tab_flows:

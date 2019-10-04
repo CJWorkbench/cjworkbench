@@ -7,7 +7,7 @@ import pyarrow
 import pyarrow.parquet
 from cjworkbench.sync import database_sync_to_async
 from cjwkernel.types import FetchResult
-from cjwstate import storedobjects
+from cjwstate import commands, storedobjects
 from server import websockets
 from cjwstate.models import StoredObject, WfModule, Workflow
 from cjwstate.models.commands import ChangeDataVersionCommand
@@ -186,8 +186,11 @@ async def save_result_if_changed(
         # * After the next line of code, the user _still_sees "busy"
         #   (is_busy=False, cache=stale)
         # * Later, the user will see "ok" (is_busy=False, cache=fresh)
-        await ChangeDataVersionCommand.create(
-            workflow=workflow, wf_module=wf_module, new_version=version_added
+        await commands.do(
+            ChangeDataVersionCommand,
+            workflow=workflow,
+            wf_module=wf_module,
+            new_version=version_added,
         )
     else:
         last_update_check = wf_module.last_update_check

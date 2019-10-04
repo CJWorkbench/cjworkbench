@@ -7,7 +7,8 @@ import git
 from git.exc import GitCommandError
 from cjwstate import minio
 from cjwstate.models import ModuleVersion
-from cjwstate.models.module_loader import ModuleFiles, ModuleSpec, kernel
+import cjwstate.modules
+from cjwstate.modules.module_loader import ModuleFiles, ModuleSpec
 
 
 logger = logging.getLogger(__name__)
@@ -20,7 +21,7 @@ logger = logging.getLogger(__name__)
 def import_module_from_directory(version: str, importdir: Path, force_reload=False):
     module_files = ModuleFiles.load_from_dirpath(importdir)  # raise ValueError
     spec = ModuleSpec.load_from_path(module_files.spec)  # raise ValueError
-    kernel.compile(module_files.code, spec.id_name)
+    cjwstate.modules.kernel.compile(module_files.code, spec.id_name)
 
     if not force_reload:
         # Don't allow importing the same version twice

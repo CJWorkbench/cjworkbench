@@ -19,6 +19,28 @@ min_columns = {"A": Column("A", "number", "{:,}"), "B": Column("B", "number", "{
 
 
 class MigrateParamsTest(unittest.TestCase):
+    def test_vneg1(self):
+        result = migrate_params(
+            {
+                "title": "Title",
+                "x_axis_label": "X axis",
+                "y_axis_label": "Y axis",
+                "x_column": "X",
+                "y_columns": "",
+                "x_data_type": 1,
+            }
+        )
+        self.assertEqual(
+            result,
+            {
+                "title": "Title",
+                "x_axis_label": "X axis",
+                "y_axis_label": "Y axis",
+                "x_column": "X",
+                "y_columns": [],
+            },
+        )
+
     def test_v0_empty_y_columns(self):
         result = migrate_params(
             {

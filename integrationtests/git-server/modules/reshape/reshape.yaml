@@ -3,7 +3,7 @@ name: Reshape
 category: Clean
 description: Convert between wide and long formats.
 icon: reshape
-help_url: steps/clean/reshape
+help_url: modules/clean/reshape
 parameters:
 - id_name: direction
   name: ""

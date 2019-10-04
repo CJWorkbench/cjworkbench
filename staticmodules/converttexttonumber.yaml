@@ -4,33 +4,34 @@ category: Clean
 icon: number
 help_url: steps/clean/convert-to-numbers
 description: Convert text to numbers.
+parameters_version: 2
 parameters:
 - id_name: colnames
   type: multicolumn
   name: ''
   column_types: [ text, number ]  # we also convert numbers to numbers
-- id_name: error_means_null
-  name: 'Convert non-numbers to null'
-  type: checkbox
-  default: true
-- id_name: extract
-  type: checkbox
-  name: Extract numbers
-  default: false
+- id_name: input_locale
+  type: menu
+  default: us
+  name: Format of numbers to convert
+  options:
+  - { value: us, label: 'United States: 1,500.00' }
+  - { value: eu, label: 'Europe: 1.500,00' }
 - id_name: input_number_type
   type: menu
-  name: Format and style of numbers to extract
   default: any
   options:
   - { value: any, label: Any number }
   - { value: int, label: Any integer }
   - { value: float, label: Any decimal }
-- id_name: input_locale
-  type: menu
-  default: us
-  options:
-  - { value: us, label: 'United States: 1,500.00' }
-  - { value: eu, label: 'Europe: 1.500,00' }
+- id_name: extract
+  type: checkbox
+  name: Find numbers in text
+  default: false
+- id_name: error_means_null
+  name: 'Convert non-numbers to null'
+  type: checkbox
+  default: true
 - id_name: output_format
   type: numberformat
   name: Display as

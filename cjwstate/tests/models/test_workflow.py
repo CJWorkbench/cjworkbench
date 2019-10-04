@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch
 import uuid
 from django.contrib.auth.models import User
-from cjwstate import minio
+from cjwstate import commands, minio
 from cjwstate.models import ModuleVersion
 from cjwstate.models.workflow import Workflow, DependencyGraph
 from cjwstate.models.commands import (
@@ -10,7 +10,7 @@ from cjwstate.models.commands import (
     AddModuleCommand,
     ChangeWorkflowTitleCommand,
 )
-from cjwstate.models.loaded_module import LoadedModule
+from cjwstate.modules.loaded_module import LoadedModule
 from cjwstate.tests.utils import DbTestCase
 
 
@@ -128,20 +128,21 @@ class WorkflowTests(DbTestCase):
         self.assertFalse(wf.request_authorized_write(MockRequest.anonymous("session2")))
         self.assertFalse(wf.request_authorized_read(MockRequest.uninitialized()))
 
-    @patch("server.rabbitmq.queue_render", async_noop)
-    @patch("server.websockets.ws_client_send_delta_async", async_noop)
-    @patch.object(LoadedModule, "for_module_version_sync", MockLoadedModule)
+    @patch.object(commands, "queue_render", async_noop)
+    @patch.object(commands, "websockets_notify", async_noop)
+    @patch.object(LoadedModule, "for_module_version", MockLoadedModule)
     def test_delete_deltas_without_init_delta(self):
         workflow = Workflow.objects.create(name="A")
         tab = workflow.tabs.create(position=0)
         self.run_with_async_db(
-            ChangeWorkflowTitleCommand.create(workflow=workflow, new_value="B")
+            commands.do(ChangeWorkflowTitleCommand, workflow=workflow, new_value="B")
         )
         ModuleVersion.create_or_replace_from_spec(
             {"id_name": "x", "name": "x", "category": "Clean", "parameters": []}
         )
         self.run_with_async_db(
-            AddModuleCommand.create(
+            commands.do(
+                AddModuleCommand,
                 workflow=workflow,
                 tab=tab,
                 slug="step-1",
@@ -151,14 +152,14 @@ class WorkflowTests(DbTestCase):
             )
         )
         self.run_with_async_db(
-            ChangeWorkflowTitleCommand.create(workflow=workflow, new_value="C")
+            commands.do(ChangeWorkflowTitleCommand, workflow=workflow, new_value="C")
         )
         workflow.delete()
         self.assertTrue(True)  # no crash
 
     @patch("server.rabbitmq.queue_render", async_noop)
     @patch("server.websockets.ws_client_send_delta_async", async_noop)
-    @patch.object(LoadedModule, "for_module_version_sync", MockLoadedModule)
+    @patch.object(LoadedModule, "for_module_version", MockLoadedModule)
     def test_delete_remove_leaked_stored_objects_and_uploaded_files(self):
         workflow = Workflow.create_and_init()
         # If the user deletes a workflow, all data associated with that
@@ -252,7 +253,7 @@ class SimpleDependencyGraphTests(unittest.TestCase):
 
 
 class DependencyGraphTests(DbTestCase):
-    @patch.object(LoadedModule, "for_module_version_sync", MockLoadedModule)
+    @patch.object(LoadedModule, "for_module_version", MockLoadedModule)
     def test_read_graph_happy_path(self):
         workflow = Workflow.objects.create()
         tab1 = workflow.tabs.create(position=0, slug="tab-1")

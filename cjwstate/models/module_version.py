@@ -8,7 +8,8 @@ from django.dispatch import receiver
 from django.utils import timezone
 from cjwkernel.param_dtype import ParamDType
 from cjwstate import minio
-from .module_loader import validate_module_spec
+from cjwstate.modules.module_loader import validate_module_spec
+import cjwstate.modules.staticregistry
 from .param_spec import ParamSpec
 
 
@@ -52,11 +53,7 @@ class ModuleVersionManager(models.Manager):
 
         self.internal = {}
 
-        # Import staticmodules.registry only on demand. That way Django can
-        # import all its objects without starting a (RAM-hungry) kernel.
-        from staticmodules.registry import Specs as InternalModuleSpecs
-
-        for spec in InternalModuleSpecs.values():
+        for spec in cjwstate.modules.staticregistry.Specs.values():
             module_version = ModuleVersion(
                 id_name=spec.id_name,
                 source_version_hash="internal",
@@ -215,6 +212,20 @@ class ModuleVersion(models.Model):
     @property
     def default_params(self):
         return self.param_schema.coerce(None)
+
+    @property
+    def param_schema_version(self):
+        """
+        Version of param_schema. Changes whenever param_schema changes.
+
+        This is used in caching: if params were cached under
+        param_schema_version=v1 and now the module has param_schema_version=v2,
+        then we must call the module's migrate_params() on the params.
+        """
+        if self.source_version_hash == "internal":
+            return "v%d" % self.spec["parameters_version"]
+        else:
+            return self.source_version_hash
 
     def __str__(self):
         return "%s#%s" % (self.id_name, self.source_version_hash)

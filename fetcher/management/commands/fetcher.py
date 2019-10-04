@@ -2,6 +2,7 @@ import asyncio
 import logging
 import os
 from django.core.management.base import BaseCommand
+import cjwstate.modules
 from ...main import main_loop
 
 
@@ -47,4 +48,5 @@ class Command(BaseCommand):
     help = "Continually run cron- and user-initiated fetches."
 
     def handle(self, *args, **options):
+        cjwstate.modules.init_module_system()
         asyncio.run(main())

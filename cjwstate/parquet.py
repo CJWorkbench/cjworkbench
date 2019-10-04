@@ -117,6 +117,7 @@ def write(parquet_path: Path, table: pyarrow.Table) -> None:
     pyarrow.parquet.write_table(
         table,
         str(parquet_path),
+        version="2.0",
         compression="SNAPPY",
         # Preserve whatever dictionaries we have in Pandas. Write+read
         # should return an exact copy.

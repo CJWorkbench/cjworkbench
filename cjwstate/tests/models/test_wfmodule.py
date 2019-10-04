@@ -193,13 +193,6 @@ class WfModuleTests(DbTestCase):
         # white-box testing: test that we work even from cache
         self.assertEqual(wf_module.module_version, module_version)
 
-    def test_get_params_on_deleted_module(self):
-        workflow = Workflow.create_and_init()
-        wf_module = workflow.tabs.first().wf_modules.create(
-            order=0, slug="step-1", module_id_name="deleted_module", params={"a": "b"}
-        )
-        self.assertEqual(wf_module.get_params(), {})
-
     def test_module_version_missing(self):
         workflow = Workflow.create_and_init()
         wf_module = workflow.tabs.first().wf_modules.create(
@@ -231,6 +224,4 @@ class WfModuleTests(DbTestCase):
         # wf_module.uploaded_files.create(name='t.csv', size=3, uuid=uuid,
         #                                bucket=minio.UserFilesBucket, key=key)
         wf_module.delete()  # do not crash
-        with self.assertRaises(FileNotFoundError):
-            with minio.RandomReadMinioFile(minio.UserFilesBucket, key) as f:
-                f.read()
+        self.assertFalse(minio.exists(minio.UserFilesBucket, key))

@@ -1,5 +1,6 @@
 import asyncio
 from unittest.mock import patch
+from cjwstate import commands
 from cjwstate.models import Workflow
 from cjwstate.models.commands import AddTabCommand
 from cjwstate.tests.utils import DbTestCase
@@ -14,7 +15,7 @@ class AddTabCommandTest(DbTestCase):
     def test_append_tab(self):
         workflow = Workflow.create_and_init(selected_tab_position=0)
         cmd = self.run_with_async_db(
-            AddTabCommand.create(workflow=workflow, slug="tab-2", name="A")
+            commands.do(AddTabCommand, workflow=workflow, slug="tab-2", name="A")
         )
         new_tab = workflow.live_tabs.get(position=1)
         self.assertEqual(new_tab.name, "A")
@@ -24,7 +25,7 @@ class AddTabCommandTest(DbTestCase):
             [("tab-1", 0), ("tab-2", 1)],
         )
 
-        self.run_with_async_db(cmd.backward())
+        self.run_with_async_db(commands.undo(cmd))
         self.assertEqual(
             list(workflow.live_tabs.values_list("slug", "position")), [("tab-1", 0)]
         )
@@ -33,7 +34,7 @@ class AddTabCommandTest(DbTestCase):
     def test_no_hard_or_soft_delete_when_deleting_applied_delta(self):
         workflow = Workflow.create_and_init()
         cmd = self.run_with_async_db(
-            AddTabCommand.create(workflow=workflow, slug="tab-2", name="A")
+            commands.do(AddTabCommand, workflow=workflow, slug="tab-2", name="A")
         )
         cmd.delete()
         self.assertEquals(workflow.live_tabs.count(), 2)
@@ -46,7 +47,7 @@ class AddTabCommandTest(DbTestCase):
 
         workflow = Workflow.create_and_init(selected_tab_position=0)
         cmd = self.run_with_async_db(
-            AddTabCommand.create(workflow=workflow, slug="tab-2", name="A")
+            commands.do(AddTabCommand, workflow=workflow, slug="tab-2", name="A")
         )
         delta1 = send_delta.call_args[0][1]
         self.assertEqual(delta1["updateWorkflow"]["tab_slugs"], ["tab-1", "tab-2"])
@@ -54,7 +55,7 @@ class AddTabCommandTest(DbTestCase):
         with self.assertRaises(KeyError):
             delta1["clearTabIds"]
 
-        self.run_with_async_db(cmd.backward())
+        self.run_with_async_db(commands.undo(cmd))
         delta2 = send_delta.call_args[0][1]
         self.assertEqual(delta2["updateWorkflow"]["tab_slugs"], ["tab-1"])
         with self.assertRaises(KeyError):

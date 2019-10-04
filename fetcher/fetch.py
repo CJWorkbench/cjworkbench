@@ -20,7 +20,7 @@ from cjwstate.models import (
     WfModule,
     Workflow,
 )
-from cjwstate.models.loaded_module import LoadedModule
+from cjwstate.modules.loaded_module import LoadedModule
 from cjwstate import rendercache, storedobjects
 from . import fetchprep, save
 
@@ -196,7 +196,7 @@ def fetch_or_wrap_error(
 
     # module_version=None is allowed
     try:
-        loaded_module = LoadedModule.for_module_version_sync(module_version)
+        loaded_module = LoadedModule.for_module_version(module_version)
     except FileNotFoundError:
         logger.exception("Module %s code disappeared", module_version.id_name)
         return user_visible_bug_fetch_result(output_path, "FileNotFoundError")
@@ -216,6 +216,8 @@ def fetch_or_wrap_error(
     with contextlib.ExitStack() as ctx:
         # Migrate params, so fetch() gets newest values
         try:
+            # TODO use params.get_migrated_params(). (Remember to use a
+            # Workflow.cooperative_lock().)
             params = loaded_module.migrate_params(wf_module.params)
         except ModuleError as err:
             logger.exception(

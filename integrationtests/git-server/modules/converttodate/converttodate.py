@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from enum import Enum
 from typing import Optional
 import pandas as pd
@@ -36,13 +36,14 @@ class ErrorCount:
 
     def __add__(self, rhs: "ErrorCount") -> "ErrorCount":
         """Add more errors to this ErrorCount."""
-        return ErrorCount(
-            self.a_column or rhs.a_column,
-            self.a_row or rhs.a_row,
-            self.a_value or rhs.a_value,
-            self.total + rhs.total,
-            self.n_columns + rhs.n_columns,
-        )
+        if self.total == 0:
+            return rhs
+        else:
+            return replace(
+                self,
+                total=self.total + rhs.total,
+                n_columns=self.n_columns + rhs.n_columns,
+            )
 
     def __str__(self):
         if self.total == 1:
@@ -101,9 +102,36 @@ def render(table, params):
             # For now, assume value is year and cast to string
             kwargs["format"] = "%Y"
 
-        out_series = pd.to_datetime(
-            in_series, errors="coerce", exact=False, cache=True, utc=True, **kwargs
-        ).dt.tz_localize(None)
+        # Build `out_series`, a pd.Series of datetime64[ns]
+        if hasattr(in_series, "cat"):
+            # Pandas `to_datetime()` sometimes converts to Categorical; and
+            # when it does, `series.dt.tz_localize()` doesn't unwrap the
+            # Categorical. We can't blame `to_datetime()` for returning a
+            # Categorical but we _can_ blame `.dt.tz_localize()` for not
+            # unwrapping it.
+            #
+            # The bug: https://github.com/pandas-dev/pandas/issues/27952
+            #
+            # Workaround is to basically do what `pd.to_datetime()` does
+            # with its cache, using the assumption that categories are unique.
+            # We `tz_localize()` before caching, for speedup.
+            #
+            # Nix this if-statement and code path when the Pandas bug is fixed.
+            text_values = in_series.cat.categories
+            date_values = pd.to_datetime(
+                text_values,
+                errors="coerce",
+                exact=False,
+                cache=False,
+                utc=True,
+                **kwargs,
+            ).tz_localize(None)
+            mapping = pd.Series(date_values, index=text_values)
+            out_series = in_series.map(mapping).astype("datetime64[ns]")
+        else:
+            out_series = pd.to_datetime(
+                in_series, errors="coerce", exact=False, cache=True, utc=True, **kwargs
+            ).dt.tz_localize(None)
 
         if not params["error_means_null"]:
             error_count += ErrorCount.from_diff(in_series, out_series)

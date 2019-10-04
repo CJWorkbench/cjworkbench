@@ -1,3 +1,4 @@
+import logging
 import re
 from typing import Any, Dict, List, Optional
 from allauth.account.utils import user_display
@@ -5,6 +6,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from cjworkbench.settings import KB_ROOT_URL
 from cjwstate.models import Workflow, WfModule, ModuleVersion, StoredObject, Tab
+from cjwstate.params import get_migrated_params
 from server.settingsutils import workbench_user_display
 from cjwstate.models.param_spec import ParamSpec
 
@@ -12,6 +14,9 @@ User = get_user_model()
 
 
 _NeedCamelRegex = re.compile("_(\w)")
+
+
+logger = logging.getLogger(__name__)
 
 
 def isoformat(dt_or_none) -> str:
@@ -215,8 +220,27 @@ class WfModuleSerializer(serializers.ModelSerializer):
         return ret
 
     def get_params(self, wfm):
-        """WfModule.params, migrated"""
-        return wfm.get_params()
+        """
+        WfModule.params, migrated.
+
+        If migrate_params() gives bad results, we coerce them to _good_ results
+        and email ourselves the error.
+        """
+        if wfm.module_version:
+            param_schema = wfm.module_version.param_schema
+            params = get_migrated_params(wfm)  # raise ModuleError
+            try:
+                param_schema.validate(params)
+                return params
+            except ValueError as err:
+                logger.exception(
+                    "%s.migrate_params() gave invalid output: %r",
+                    wfm.module_id_name,
+                    params,
+                )
+                return param_schema.coerce(params)
+        else:
+            return {}
 
     def get_secrets(self, wfm):
         """Secret *metadata* -- NOT THE ACTUAL SECRETS"""

@@ -10,20 +10,11 @@ import cjwkernel.pandas.module
 
 
 def main(
-    compiled_module: CompiledModule,
-    output_dup_fd: multiprocessing.reduction.DupFd,
-    log_dup_fd: multiprocessing.reduction.DupFd,
-    function: str,
-    *args,
+    compiled_module: CompiledModule, output_fileno: int, function: str, *args
 ) -> None:
     """
     Run `function` with `args`, and write the (Thrift) result to `output_fileno`.
     """
-    output_fileno = output_dup_fd.detach()
-    log_fileno = log_dup_fd.detach()
-
-    sys.stdout = os.fdopen(log_fileno, "wt", encoding="utf-8")
-    sys.stderr = sys.stdout
 
     assert function in (
         "render_thrift",
@@ -41,8 +32,6 @@ def run_in_sandbox(
     """
     Run `function` with `args`, and write the (Thrift) result to `output_fileno`.
     """
-    sys.__stdout__ = None
-    sys.__stderr__ = None
     # TODO sandbox -- will need an OS `clone()` with namespace, cgroups, ....
 
     # Run the user's code in a new (programmatic) module.

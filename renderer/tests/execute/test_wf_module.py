@@ -9,7 +9,7 @@ from cjwkernel.tests.util import parquet_file, assert_arrow_table_equals
 from cjwstate import minio
 from cjwstate.storedobjects import create_stored_object
 from cjwstate.models import ModuleVersion, Workflow
-from cjwstate.models.loaded_module import LoadedModule
+from cjwstate.modules.loaded_module import LoadedModule
 from cjwstate.tests.utils import DbTestCase
 from renderer.execute.wf_module import execute_wfmodule
 
@@ -60,9 +60,7 @@ class WfModuleTests(DbTestCase):
         ModuleVersion.create_or_replace_from_spec(
             {"id_name": "x", "name": "X", "category": "Clean", "parameters": []}
         )
-        with patch.object(
-            LoadedModule, "for_module_version_sync", lambda *a: mock_module
-        ):
+        with patch.object(LoadedModule, "for_module_version", lambda *a: mock_module):
             yield
 
     @patch("server.websockets.ws_client_send_delta_async", noop)
@@ -178,6 +176,42 @@ class WfModuleTests(DbTestCase):
             slug="step-1",
             module_id_name="x",
             last_relevant_delta_id=workflow.last_delta_id,
+        )
+
+        def render(*args, fetch_result, **kwargs):
+            self.assertIsNone(fetch_result)
+            return RenderResult()
+
+        with self._stub_module(render):
+            self.run_with_async_db(
+                execute_wfmodule(
+                    workflow,
+                    wf_module,
+                    {},
+                    tab.name,
+                    RenderResult(),
+                    {},
+                    Path("/unused"),
+                )
+            )
+
+    @patch("server.websockets.ws_client_send_delta_async", noop)
+    def test_fetch_result_no_bucket_or_key_stored_object_means_none(self):
+        workflow = Workflow.create_and_init()
+        tab = workflow.tabs.first()
+        wf_module = tab.wf_modules.create(
+            order=0,
+            slug="step-1",
+            module_id_name="x",
+            last_relevant_delta_id=workflow.last_delta_id,
+            stored_data_version=timezone.now(),
+        )
+        wf_module.stored_objects.create(
+            stored_at=wf_module.stored_data_version,
+            bucket="",
+            key="",
+            size=0,
+            hash="whatever",
         )
 
         def render(*args, fetch_result, **kwargs):

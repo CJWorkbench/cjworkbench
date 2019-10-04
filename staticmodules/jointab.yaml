@@ -12,6 +12,7 @@ param_schema:
     properties:
       'on': { type: multicolumn }
       right: { type: multicolumn, tab_parameter: right_tab }
+parameters_version: 1
 parameters:
   - id_name: right_tab
     type: tab

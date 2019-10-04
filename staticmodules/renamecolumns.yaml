@@ -1,0 +1,42 @@
+{
+  "name": "Rename columns",
+  "id_name": "renamecolumns",
+  "category": "Clean",
+  "icon": "edit",
+  "description": "Rename columns and log all edits.",
+  "help_url":"modules/clean/rename-columns",
+  "param_schema": {
+    "custom_list": { "type": "boolean" },
+    "list_string": { "type": "string" },
+    "renames": { "type": "map", "value_dtype": { "type": "string" } }
+  },
+  "parameters_version": 1,
+  "parameters": [
+    {
+      "name": "Paste list of new names",
+      "id_name": "custom_list",
+      "type": "checkbox",
+      "default": false
+    },
+    {
+      "name": "",
+      "id_name": "list_string",
+      "type": "string",
+      "multiline": true,
+      "placeholder":"Paste values of column names (comma or newline separated)",
+      "visible_if": {
+        "id_name": "custom_list",
+        "value": true
+      }
+    },
+    {
+      "name": "",
+      "id_name": "renames",
+      "type": "custom",
+      "visible_if": {
+        "id_name": "custom_list",
+        "value": false
+      }
+    }
+  ]
+}

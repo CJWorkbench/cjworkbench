@@ -70,7 +70,7 @@ async def queue_fetches(pg_render_locker: PgRenderLocker):
                     }
                 },
             )
-            await rabbitmq.queue_fetch(wf_module)
+            await rabbitmq.queue_fetch(workflow_id, wf_module.id)
         except WorkflowAlreadyLocked:
             # Don't queue a fetch. We'll revisit this WfModule next time we
             # query for pending fetches.

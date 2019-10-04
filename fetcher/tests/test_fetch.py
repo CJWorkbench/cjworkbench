@@ -25,7 +25,7 @@ from cjwkernel.tests.util import (
     assert_arrow_table_equals,
     parquet_file,
 )
-from cjwstate import minio, rendercache, storedobjects
+from cjwstate import commands, minio, rendercache, storedobjects
 from cjwstate.models import (
     CachedRenderResult,
     ModuleVersion,
@@ -34,10 +34,11 @@ from cjwstate.models import (
     Workflow,
 )
 from cjwstate.models.commands import ChangeDataVersionCommand
-from cjwstate.models.loaded_module import LoadedModule
+import cjwstate.modules
+from cjwstate.modules.loaded_module import LoadedModule
 from cjwstate.tests.utils import DbTestCase
 from fetcher import fetch, fetchprep
-from server import websockets
+from server import rabbitmq, websockets
 
 
 def async_value(v):
@@ -199,7 +200,7 @@ class FetchTests(unittest.TestCase):
         self.assertEqual(self.output_path.stat().st_size, 0)
         self.assertEqual(result, self._err("Cannot fetch: module was deleted"))
 
-    @patch.object(LoadedModule, "for_module_version_sync")
+    @patch.object(LoadedModule, "for_module_version")
     def test_load_module_missing(self, load_module):
         load_module.side_effect = FileNotFoundError
         with self.assertLogs(level=logging.INFO):
@@ -214,7 +215,7 @@ class FetchTests(unittest.TestCase):
         self.assertEqual(self.output_path.stat().st_size, 0)
         self.assertEqual(result, self._bug_err("FileNotFoundError"))
 
-    @patch.object(LoadedModule, "for_module_version_sync")
+    @patch.object(LoadedModule, "for_module_version")
     def test_load_module_compile_error(self, load_module):
         load_module.side_effect = ModuleExitedError(1, "log")
         with self.assertLogs(level=logging.ERROR):
@@ -229,7 +230,7 @@ class FetchTests(unittest.TestCase):
         self.assertEqual(self.output_path.stat().st_size, 0)
         self.assertEqual(result, self._bug_err("exit code 1: log (during load)"))
 
-    @patch.object(LoadedModule, "for_module_version_sync")
+    @patch.object(LoadedModule, "for_module_version")
     def test_simple(self, load_module):
         load_module.return_value.migrate_params.return_value = {"A": "B"}
         load_module.return_value.fetch.return_value = FetchResult(self.output_path, [])
@@ -254,7 +255,7 @@ class FetchTests(unittest.TestCase):
             output_filename=self.output_path.name,
         )
 
-    @patch.object(LoadedModule, "for_module_version_sync")
+    @patch.object(LoadedModule, "for_module_version")
     @patch.object(fetchprep, "clean_value")
     @patch.object(rendercache, "downloaded_parquet_file")
     def test_input_crr(self, downloaded_parquet_file, clean_value, load_module):
@@ -282,7 +283,7 @@ class FetchTests(unittest.TestCase):
         clean_value.assert_called()
         self.assertEqual(clean_value.call_args[0][2], input_metadata)
 
-    @patch.object(LoadedModule, "for_module_version_sync")
+    @patch.object(LoadedModule, "for_module_version")
     @patch.object(fetchprep, "clean_value", lambda *a: {})
     @patch.object(rendercache, "downloaded_parquet_file")
     def test_input_crr_corrupt_cache_error_is_none(
@@ -308,7 +309,7 @@ class FetchTests(unittest.TestCase):
             load_module.return_value.fetch.call_args[1]["input_parquet_filename"]
         )
 
-    @patch.object(LoadedModule, "for_module_version_sync")
+    @patch.object(LoadedModule, "for_module_version")
     @patch.object(fetchprep, "clean_value", lambda *a: {})
     @patch.object(storedobjects, "downloaded_file")
     def test_last_fetch_result(self, downloaded_file, load_module):
@@ -330,7 +331,7 @@ class FetchTests(unittest.TestCase):
             FetchResult(Path("/foo.bin"), []),
         )
 
-    @patch.object(LoadedModule, "for_module_version_sync")
+    @patch.object(LoadedModule, "for_module_version")
     @patch.object(fetchprep, "clean_value", lambda *a: {})
     @patch.object(storedobjects, "downloaded_file")
     def test_last_fetch_result_with_error(self, downloaded_file, load_module):
@@ -354,7 +355,7 @@ class FetchTests(unittest.TestCase):
             ),
         )
 
-    @patch.object(LoadedModule, "for_module_version_sync")
+    @patch.object(LoadedModule, "for_module_version")
     @patch.object(fetchprep, "clean_value", lambda *a: {})
     @patch.object(storedobjects, "downloaded_file")
     def test_last_fetch_result_file_not_found_is_none(
@@ -377,7 +378,7 @@ class FetchTests(unittest.TestCase):
             load_module.return_value.fetch.call_args[1]["last_fetch_result"]
         )
 
-    @patch.object(LoadedModule, "for_module_version_sync")
+    @patch.object(LoadedModule, "for_module_version")
     @patch.object(fetchprep, "clean_value", lambda *a: {})
     def test_fetch_module_error(self, load_module):
         load_module.return_value.migrate_params.return_value = {}
@@ -485,10 +486,10 @@ class UpdateNextUpdateTimeTests(DbTestCase):
 
 
 class FetchIntegrationTests(DbTestCase):
-    @patch.object(ChangeDataVersionCommand, "schedule_execute_if_needed")
+    @patch.object(websockets, "queue_render_if_listening")
     @patch.object(websockets, "ws_client_send_delta_async")
-    def test_fetch_integration(self, send_delta, schedule_execute):
-        schedule_execute.side_effect = async_value(None)
+    def test_fetch_integration(self, send_delta, queue_render):
+        queue_render.side_effect = async_value(None)
         send_delta.side_effect = async_value(None)
         workflow = Workflow.create_and_init()
         ModuleVersion.create_or_replace_from_spec(
@@ -504,6 +505,7 @@ class FetchIntegrationTests(DbTestCase):
             b"import pandas as pd\ndef fetch(params): return pd.DataFrame({'A': [1]})\ndef render(table, params): return table",
         )
         with self.assertLogs(level=logging.INFO):
+            cjwstate.modules.init_module_system()
             self.run_with_async_db(
                 fetch.fetch(workflow_id=workflow.id, wf_module_id=wf_module.id)
             )
@@ -513,5 +515,6 @@ class FetchIntegrationTests(DbTestCase):
             table = pyarrow.parquet.read_table(str(parquet_path), use_threads=False)
             assert_arrow_table_equals(table, {"A": [1]})
 
-        schedule_execute.assert_called()
-        websockets.ws_client_send_delta_async.assert_called()
+        workflow.refresh_from_db()
+        queue_render.assert_called_with(workflow.id, workflow.last_delta_id)
+        send_delta.assert_called()

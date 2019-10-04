@@ -2,7 +2,6 @@ from dataclasses import dataclass, field
 import io
 import logging
 import marshal
-import multiprocessing
 import os
 from pathlib import Path
 import selectors
@@ -10,6 +9,7 @@ import time
 from typing import Any, Dict, Optional
 import thrift.protocol
 import thrift.transport
+from cjwkernel.forkserver import Forkserver
 from cjwkernel.errors import ModuleCompileError, ModuleTimeoutError, ModuleExitedError
 from cjwkernel.thrift import ttypes
 from cjwkernel.types import (
@@ -22,13 +22,14 @@ from cjwkernel.types import (
     Tab,
 )
 from cjwkernel.validate import validate
-from cjwkernel.pandas.main import main
 
 
 logger = logging.getLogger(__name__)
 
 
-TIMEOUT = 30  # seconds
+TIMEOUT = 300  # seconds
+DEAD_PROCESS_N_WAITS = 50  # number of waitpid() calls after process exits
+DEAD_PROCESS_WAIT_POLL_INTERVAL = 0.02  # seconds between waitpid() calls
 LOG_BUFFER_MAX_BYTES = 100 * 1024  # waaaay too much log output
 OUTPUT_BUFFER_MAX_BYTES = (
     2 * 1024 * 1024
@@ -100,22 +101,30 @@ class Kernel:
     the entire process must be killed: otherwise, the module may leak one
     workflow's data into another workflow (intentionally or not).
 
-    The solution: Python's multiprocessing "forkserver". One "forkserver"
-    process loads 100MB of Python deps and then idles. The "compile" method
-    compiles a user's module, then forks and evaluates it in a child process to ensure
-    sanity. The "migrate_params", "render" and "fetch" methods fork, evaluate
-    the user's module, then invoke that user's `migrate_params()`, `render()`
-    or `fetch`.
+    The solution: "forkserver". One "forkserver" process loads 100MB of Python
+    deps and then idles. The "compile" method compiles a user's module, then
+    forks and evaluates it in a child process to ensure sanity. The
+    "migrate_params", "render" and "fetch" methods fork, evaluate the user's
+    module, then invoke that user's `migrate_params()`, `render()` or `fetch`.
 
-    Child processes cannot be trusted to use the regular `multiprocessing.Pipe`
-    `send()` and `recv()`, because they use Python pickle, which can inject
-    code. So we communicate via Thrift.
+    Child processes cannot be trusted to return sane values. So we communicate
+    via Thrift (which errors on unexpected data) rather than Python pickle
+    (which executes code on unexpected data).
     """
 
-    def __init__(self):
-        self._context = multiprocessing.get_context("forkserver")
-        self._context.set_forkserver_preload(
-            [
+    def __init__(
+        self,
+        validate_timeout: float = TIMEOUT,
+        migrate_params_timeout: float = TIMEOUT,
+        fetch_timeout: float = TIMEOUT,
+        render_timeout: float = TIMEOUT,
+    ):
+        self.validate_timeout = validate_timeout
+        self.migrate_params_timeout = migrate_params_timeout
+        self.fetch_timeout = fetch_timeout
+        self.render_timeout = render_timeout
+        self._forkserver = Forkserver(
+            forkserver_preload=[
                 "asyncio",
                 "dataclasses",
                 "re",
@@ -128,9 +137,13 @@ class Kernel:
                 "pyarrow.parquet",
                 "requests",
                 "re2",
+                "cjwkernel.pandas.main",
                 "cjwkernel.pandas.module",
             ]
         )
+
+    def __del__(self):
+        self._forkserver.close()
 
     def compile(self, path: Path, module_slug: str) -> CompiledModule:
         """
@@ -156,7 +169,10 @@ class Kernel:
 
     def _validate(self, compiled_module: CompiledModule) -> None:
         self._run_in_child(
-            compiled_module, ttypes.ValidateModuleResult(), "validate_thrift"
+            compiled_module,
+            self.validate_timeout,
+            ttypes.ValidateModuleResult(),
+            "validate_thrift",
         )
 
     def migrate_params(
@@ -164,7 +180,11 @@ class Kernel:
     ) -> None:
         request = RawParams(params).to_thrift()
         response = self._run_in_child(
-            compiled_module, ttypes.RawParams(), "migrate_params_thrift", request
+            compiled_module,
+            self.migrate_params_timeout,
+            ttypes.RawParams(),
+            "migrate_params_thrift",
+            request,
         )
         return RawParams.from_thrift(response).params
 
@@ -187,7 +207,11 @@ class Kernel:
             output_filename,
         )
         result = self._run_in_child(
-            compiled_module, ttypes.RenderResult(), "render_thrift", request
+            compiled_module,
+            self.render_timeout,
+            ttypes.RenderResult(),
+            "render_thrift",
+            request,
         )
         # RenderResult.from_thrift() verifies all filenames passed by the
         # module are in the directory the module has access to.
@@ -215,13 +239,22 @@ class Kernel:
             output_filename,
         )
         result = self._run_in_child(
-            compiled_module, ttypes.FetchResult(), "fetch_thrift", request
+            compiled_module,
+            self.fetch_timeout,
+            ttypes.FetchResult(),
+            "fetch_thrift",
+            request,
         )
         # TODO ensure result is truncated
         return FetchResult.from_thrift(result, basedir)
 
     def _run_in_child(
-        self, compiled_module: CompiledModule, result: Any, function: str, *args
+        self,
+        compiled_module: CompiledModule,
+        timeout: float,
+        result: Any,
+        function: str,
+        *args,
     ) -> None:
         """
         Fork a child process to run `function` with `args`.
@@ -231,92 +264,96 @@ class Kernel:
         the child process has a bug. (EOFError is very likely.)
 
         Raise ModuleExitedError if the child process did not behave as expected.
-        Raise ModuleTimeoutError if it did not exit after a delay.
+
+        Raise ModuleTimeoutError if it did not exit after a delay -- or if it
+        closed its file descriptors long before it exited.
         """
+        limit_time = time.time() + timeout
 
         output_r, output_w = os.pipe()
-        os.set_inheritable(output_w, True)
-        os.set_blocking(output_r, False)
-        output_reader = ChildReader(output_r, OUTPUT_BUFFER_MAX_BYTES)
         log_r, log_w = os.pipe()
-        log_reader = ChildReader(log_r, LOG_BUFFER_MAX_BYTES)
-        os.set_inheritable(log_w, True)
-        os.set_blocking(log_r, False)
-
-        child = self._context.Process(
-            target=main,
-            args=[
-                compiled_module,
-                # Python's multiprocessing module is a bit more complex than
-                # C fork(). File descriptors get mangled during fork. So we
-                # pass them as callbacks.
-                self._context.reducer.DupFd(output_w),
-                self._context.reducer.DupFd(log_w),
-                function,
-                *args,
-            ],
-            name="cjwkernel-module:%s" % compiled_module.module_slug,
+        module_process = self._forkserver.spawn_module(
+            compiled_module, output_w, log_w, function, args
         )
-        selector = selectors.DefaultSelector()
-        child.start()
+        # Close the (refcounted) fds we sent the spawned child. That way, when
+        # the child closes _its_ copies of the "_w" fds, we'll see the EOF as
+        # we read() from our "_r" fds.
         os.close(output_w)
         os.close(log_w)
-        selector.register(log_r, selectors.EVENT_READ)
-        selector.register(output_r, selectors.EVENT_READ)
-        selector.register(child.sentinel, selectors.EVENT_READ)
-        # starting here, `child` can't be trusted. In particular,
-        # DO NOT call `log_receiver.recv()` or `output_receiver.recv()`!!!
-        # `recv()` is evil.
-        start_time = time.time()
-        timed_out = False
-        while True:
-            remaining = time.time() - start_time
-            if remaining <= 0:
-                if not timed_out:
-                    timed_out = True
-                    child.kill()  # untrusted code will never die without SIGKILL
-                timeout = None  # wait as long as it takes for everything to die
-            else:
-                timeout = remaining  # wait until we reach our timeout
-            events = selector.select(timeout=timeout)
-            ready = frozenset(key.fd for key, _ in events)
-            for reader in (output_reader, log_reader):
-                if reader.fileno in ready:
-                    reader.ingest()
-                    if reader.eof:
-                        selector.unregister(reader.fileno)
-            if child.sentinel in ready:
-                timed_out = False
-                break  # child has exited
-        # Now that the child has exited, read from the child until EOF. We know
-        # EOF is coming, because the child died.
-        for reader in (output_reader, log_reader):
-            if not reader.eof:
-                os.set_blocking(reader.fileno, True)
-                reader.ingest()
-        # ... and reap the child
-        selector.close()
-        child.join()
+
+        os.set_blocking(output_r, False)
+        os.set_blocking(log_r, False)
+        output_reader = ChildReader(output_r, OUTPUT_BUFFER_MAX_BYTES)
+        log_reader = ChildReader(log_r, LOG_BUFFER_MAX_BYTES)
+
+        # Read until the child closes its output_w and log_w.
+        with selectors.DefaultSelector() as selector:
+            selector.register(log_r, selectors.EVENT_READ)
+            selector.register(output_r, selectors.EVENT_READ)
+
+            timed_out = False
+            while selector.get_map():
+                remaining = limit_time - time.time()
+                if remaining <= 0:
+                    if not timed_out:
+                        timed_out = True
+                        module_process.kill()  # untrusted code could ignore SIGTERM
+                    timeout = None  # wait as long as it takes for everything to die
+                    # Fall through. After SIGKILL the child will close each fd,
+                    # sending EOF to us. That means the selector _must_ return.
+                else:
+                    timeout = remaining  # wait until we reach our timeout
+
+                events = selector.select(timeout=timeout)
+                ready = frozenset(key.fd for key, _ in events)
+                for reader in (output_reader, log_reader):
+                    if reader.fileno in ready:
+                        reader.ingest()
+                        if reader.eof:
+                            selector.unregister(reader.fileno)
+
+        # The child closed its fds, so it should die soon. If it doesn't, that's
+        # a bug -- so kill -9 it!
+        #
+        # os.wait() has no timeout option, and asyncio messes with signals so
+        # we won't use those. Spin until the process dies, and force-kill if we
+        # spin too long.
+        for _ in range(DEAD_PROCESS_N_WAITS):
+            pid, exit_status = module_process.wait(os.WNOHANG)
+            if pid != 0:  # pid==0 means process is still running
+                break
+            time.sleep(DEAD_PROCESS_WAIT_POLL_INTERVAL)
+        else:
+            # we waited and waited. No luck. Dead module. Kill it.
+            timed_out = True
+            module_process.kill()
+            _, exit_status = module_process.wait(0)
+        if os.WIFEXITED(exit_status):
+            exit_code = os.WEXITSTATUS(exit_status)
+        elif os.WIFSIGNALED(exit_status):
+            exit_code = -os.WTERMSIG(exit_status)
+        else:
+            raise RuntimeError("Unhandled wait() status: %r" % exit_status)
 
         if timed_out:
             raise ModuleTimeoutError
 
-        if child.exitcode != 0:
-            raise ModuleExitedError(child.exitcode, log_reader.to_str())
+        if exit_code != 0:
+            raise ModuleExitedError(exit_code, log_reader.to_str())
 
         transport = thrift.transport.TTransport.TMemoryBuffer(output_reader.buffer)
         protocol = thrift.protocol.TBinaryProtocol.TBinaryProtocol(transport)
         try:
             result.read(protocol)
         except EOFError:  # TODO handle other errors Thrift may throw
-            raise ModuleExitedError(child.exitcode, log_reader.to_str()) from None
+            raise ModuleExitedError(exit_code, log_reader.to_str()) from None
 
         # We should be at the end of the output now. If we aren't, that means
         # the child wrote too much.
         if transport.read(1) != b"":
-            raise ModuleExitedError(child.exitcode, log_reader.to_str())
+            raise ModuleExitedError(exit_code, log_reader.to_str())
 
         if log_reader.buffer:
-            logger.info("Output from child:" % log_reader.to_str())
+            logger.info("Output from module process: %s", log_reader.to_str())
 
         return result

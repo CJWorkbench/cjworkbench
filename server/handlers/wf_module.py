@@ -9,6 +9,7 @@ from django.db import transaction
 from django.utils import timezone
 from cjworkbench.sync import database_sync_to_async
 from server import oauth, rabbitmq, websockets
+from cjwstate import commands
 from cjwstate.models import Workflow, WfModule
 from cjwstate.models.commands import (
     ChangeParametersCommand,
@@ -110,8 +111,11 @@ async def set_params(
     _postgresize_dict_in_place(values)
 
     try:
-        await ChangeParametersCommand.create(
-            workflow=workflow, wf_module=wf_module, new_values=values
+        await commands.do(
+            ChangeParametersCommand,
+            workflow=workflow,
+            wf_module=wf_module,
+            new_values=values,
         )
     except ValueError as err:
         raise HandlerError("ValueError: " + str(err))
@@ -121,7 +125,7 @@ async def set_params(
 @websockets_handler("write")
 @_loading_wf_module
 async def delete(workflow: Workflow, wf_module: WfModule, **kwargs):
-    await DeleteModuleCommand.create(workflow=workflow, wf_module=wf_module)
+    await commands.do(DeleteModuleCommand, workflow=workflow, wf_module=wf_module)
 
 
 @database_sync_to_async
@@ -167,8 +171,11 @@ async def set_stored_data_version(
 
     version = await _find_precise_version(wf_module, version)
 
-    await ChangeDataVersionCommand.create(
-        workflow=workflow, wf_module=wf_module, new_version=version
+    await commands.do(
+        ChangeDataVersionCommand,
+        workflow=workflow,
+        wf_module=wf_module,
+        new_version=version,
     )
 
     await _mark_stored_object_read(wf_module, version)
@@ -179,8 +186,11 @@ async def set_stored_data_version(
 @_loading_wf_module
 async def set_notes(workflow: Workflow, wf_module: WfModule, notes: str, **kwargs):
     notes = str(notes)  # cannot error from JSON input
-    await ChangeWfModuleNotesCommand.create(
-        workflow=workflow, wf_module=wf_module, new_value=notes
+    await commands.do(
+        ChangeWfModuleNotesCommand,
+        workflow=workflow,
+        wf_module=wf_module,
+        new_value=notes,
     )
 
 

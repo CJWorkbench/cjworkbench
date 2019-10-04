@@ -199,7 +199,7 @@ def safe_eval_process(code, table, timeout=TIMEOUT):
         )
 
     # we got our result; clean up like an assassin
-    subprocess.terminate()  # TODO subprocess.kill() in Python 3.7
+    subprocess.kill()
     subprocess.join()
 
     # Use ProcessResult.coerce() here (as opposed to _after_ render) so we
@@ -220,3 +220,18 @@ def render(
         return table
 
     return safe_eval_process(code, table)
+
+
+def _migrate_params_v0_to_v1(params):
+    """
+    v0 had an empty-string "run" param, which was the button.
+
+    In v1, the button does not store data.
+    """
+    return {"code": params["code"]}
+
+
+def migrate_params(params):
+    if "run" in params:
+        params = _migrate_params_v0_to_v1(params)
+    return params

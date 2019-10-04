@@ -654,8 +654,12 @@ class DependencyGraph:
                     steps[wf_module.id] = cls.Step(set())
                     continue
 
+                from cjwstate.params import get_migrated_params
+
+                params = get_migrated_params(wf_module)
+
                 # raises ValueError (and we don't handle that right now)
-                params = wf_module.get_params()
+                schema.validate(params)
                 tab_slugs = frozenset(
                     v
                     for dtype, v in schema.iter_dfs_dtype_values(params)
