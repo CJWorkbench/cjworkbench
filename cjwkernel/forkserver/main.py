@@ -4,19 +4,146 @@ import os
 import signal
 import sys
 import socket
+import traceback
 import cjwkernel.pandas.main
 from . import protocol
 
 
-libc = ctypes.CDLL("libc.so.6")
+libc = ctypes.CDLL("libc.so.6", use_errno=True)
 PR_SET_NAME = 15
 NR_clone = 56
 NR_getpid = 39
+# BEWARE: Docker, by default, disallows user-namespace cloning. We use Docker
+# in development. Therefore we override Docker's seccomp profile to allow our
+# clone() syscall to succeed. If you're adding to this list, also modify the
+# seccomp profile we use in dev, unittest and integrationtest.
 CLONE_PARENT = 0x00008000
+CLONE_NEWUSER = 0x10000000
+CLONE_NEWCGROUP = 0x02000000
+CLONE_NEWIPC = 0x08000000
+CLONE_NEWPID = 0x20000000
+CLONE_NEWNS = 0x00020000  # new mount namespace
+
+
+def _call_libc(fn, *args):
+    """
+    Call a libc function; raise OSError if it returns a negative number.
+
+    Raise AttributeError if libc does not have an `fn` function.
+    """
+    func = getattr(libc, fn)  # raise AttributeError
+
+    retval = func(*args)
+    if retval < 0:
+        errno = ctypes.get_errno()
+        raise OSError(errno, "error calling %s(): %s" % (fn, os.strerror(errno)))
+    return retval
+
+
+_MODULE_STACK = ctypes.create_string_buffer(2 * 1024 * 1024)
+"""
+The memory area our child-module process will use for its stack.
+
+Yup, this is low-level.
+"""
+_MODULE_STACK_POINTER = ctypes.c_void_p(
+    ctypes.cast(_MODULE_STACK, ctypes.c_void_p).value + len(_MODULE_STACK)
+)
+
+
+# GLOBAL VARIABLES
+#
+# SECURITY: _any_ variable in "forkserver" is accessible to a "module" that it
+# spawns. `del` will not delete the data.
+#
+# Our calling convention is: "forkserver uses global variables; module can see
+# them." Rationale: to a malicious module, all variables are global anyway.
+# "forkserver" should use very few variables, and they are all listed here.
+sock: socket.socket = None
+"""Socket "forkserver" uses to communicate with its parent."""
+message: protocol.SpawnPandasModule = None
+"""Arguments passed to the spawned module."""
+
+
+def _sandbox_module():
+    """
+    Prevent module code from interacting with the rest of our system.
+
+    Tasks with rationale ('[x]' means, "unit-tested"):
+
+    [ ] Close `sock` (so "forkserver" does not misbehave)
+    [ ] Close stdout/stderr (so modules do not flood logs; point
+        stdout/stderr to `message.log_fd` instead)
+    [ ] Remount /proc (so modules can't see other processes)
+    """
+    os.close(sock.fileno())  # Close `sock`
+    _sandbox_stdout_stderr()  # Close stdout/stderr
+    # _sandbox_remount_proc()  # Remount /proc
+
+
+def _sandbox_stdout_stderr():
+    os.close(sys.stdin.fileno())
+    os.close(sys.stdout.fileno())  # disallow flooding our logs
+    os.close(sys.stderr.fileno())  # disallow flooding our logs
+
+    # Rewrite sys.stdout+sys.stderr to write to log_fd
+    #
+    # We're writing in text mode so we're forced to buffer output. But
+    # we don't want buffering: if we crash, we want whatever we write
+    # to be visible to the reader at the other end, even if we crash.
+    # Set buffering=1, meaning "line buffering". This is what
+    # interactive Python uses for stdout+stderr.
+    sys.stdout = os.fdopen(message.log_fd, "wt", encoding="utf-8", buffering=1)
+    sys.stderr = sys.stdout
+    sys.__stdout__ = sys.stdout
+    sys.__stderr__ = sys.stderr
+
+
+def _sandbox_remount_proc():
+    _call_libc(
+        "mount",
+        ctypes.c_char_p(b"proc"),
+        ctypes.c_char_p(b"/proc"),
+        ctypes.c_char_p(b"proc"),
+        0,
+        0,
+    )
+
+
+def module_main() -> int:
+    # Aid in debugging a bit
+    name = "cjwkernel-module:%s" % message.compiled_module.module_slug
+    libc.prctl(PR_SET_NAME, name.encode("utf-8"), 0, 0, 0)
+
+    _sandbox_module()
+
+    # Run the module code. This is what it's all about!
+    #
+    # It's normal for a module to raise an exception. That's probably a
+    # developer error, and it's best to show the developer the problem --
+    # exactly what `log_fd` is for. So we want to log exceptions to log_fd.
+    #
+    # SECURITY: it's possible for a module to try and fiddle with the stack or
+    # heap to execute anything in memory. So this function might never return.
+    # (Imagine `goto`.) That's okay -- we sandbox the module so it can't harm
+    # us (aside from wasting CPU cycles), and we kill it after a timeout.
+    try:
+        cjwkernel.pandas.main.main(
+            message.compiled_module, message.output_fd, message.function, *message.args
+        )
+    except:
+        traceback.print_exc(sys.stderr.buffer.fileno())
+        os._exit(1)
+
+    # In the _common_ case ... exit here.
+    os._exit(0)
+
+
+_MODULE_MAIN_FUNC = ctypes.PYFUNCTYPE(ctypes.c_int)(module_main)
 
 
 def spawn_module(
-    ppid: int, sock: socket.socket, message: protocol.SpawnPandasModule
+    sock: socket.socket, message: protocol.SpawnPandasModule
 ) -> protocol.SpawnedPandasModule:
     """
     Fork a child process; send its PID on `sock`.
@@ -28,71 +155,31 @@ def spawn_module(
 
     There are three processes running concurrently here:
 
-    * "parent" (`ppid`): the Python process that holds a ForkServer handle.
-                         It sent `SpawnPandasModule` on `sock` and expects a
-                         response of `SpawnedPandasModule` (with "module" PID).
+    * "parent": the Python process that holds a ForkServer handle. It sent
+                `SpawnPandasModule` on `sock` and expects a response of
+                `SpawnedPandasModule` (with "module_pid").
     * "forkserver": the forkserver_main() process. It called this function. It
                     has few file handles open -- by design. It spawns "module",
                     and sends "parent" the "module_pid" over `sock`.
     * "module": invokes `cjwkernel.pandas.main.main()`, using the file
                 descriptors passed in `SpawnPandasModule`.
     """
-    module_pid = libc.syscall(NR_clone, signal.SIGCHLD | CLONE_PARENT, 0, 0, 0, 0)
-    if module_pid == 0:
-        # "module" (subchild)
-        # Close everything we don't want module code to access.
-        os.close(sock.fileno())
-        os.close(sys.stdin.fileno())
-        os.close(sys.stdout.fileno())  # disallow flooding our logs
-        os.close(sys.stderr.fileno())  # disallow flooding our logs
 
-        # Rewrite sys.stdout+sys.stderr to write to log_fd
-        #
-        # We're writing in text mode so we're forced to buffer output. But
-        # we don't want buffering: if we crash, we want whatever we write
-        # to be visible to the reader at the other end, even if we crash.
-        # Set buffering=1, meaning "line buffering". This is what
-        # interactive Python uses for stdout+stderr.
-        sys.stdout = os.fdopen(message.log_fd, "wt", encoding="utf-8", buffering=1)
-        sys.stderr = sys.stdout
-        sys.__stdout__ = sys.stdout
-        sys.__stderr__ = sys.stderr
+    module_pid = _call_libc(
+        "clone",
+        _MODULE_MAIN_FUNC,
+        _MODULE_STACK_POINTER,
+        CLONE_PARENT | CLONE_NEWUSER | signal.SIGCHLD,
+        0,
+    )
+    if module_pid < 0:
+        raise OSError(ctypes.get_errno(), "clone() system call failed")
+    assert module_pid != 0, "clone() should not return in the child process"
 
-        # Aid in debugging a bit
-        name = "cjwkernel-module:%s" % message.compiled_module.module_slug
-        libc.prctl(PR_SET_NAME, name.encode("utf-8"), 0, 0, 0)
-
-        # Run the module code. This is what it's all about!
-        #
-        # If the module raises an exception, that's okay -- the
-        # forkserver_main() loop won't catch them so they'll crash this
-        # "module" process and log output to "log_fd" -- exactly what we
-        # want.
-        cjwkernel.pandas.main.main(
-            message.compiled_module, message.output_fd, message.function, *message.args
-        )  # may raise ... er ... anything
-
-        # SECURITY: the module code may have rewritten our stack, our
-        # code ... anything. We _want_ to os._exit(0) so as to close
-        # the file descriptors "parent" is reading and then let
-        # "parent" reap us. But there are no guarantees. A malicious
-        # process could find a way to jump somewhere else instead of
-        # exiting.
-        #
-        # That's okay: we closed all the interesting file descriptors;
-        # we sandboxed the process; and "parent" has a timer running
-        # that will kill the "module" process.
-        #
-        # But in the _common_ case ... exit here.
-        os._exit(0)
-    else:
-        # "forkserver"
-        # Send module_pid to "parent" and then exit. After we exit, the
-        # "module" process will be reparented to "parent".
-        protocol.SpawnedPandasModule(module_pid).send_on_socket(sock)
+    return protocol.SpawnedPandasModule(module_pid)
 
 
-def forkserver_main(ppid: int, socket_fd: int) -> None:
+def forkserver_main(socket_fd: int) -> None:
     """
     Start the forkserver.
 
@@ -125,6 +212,7 @@ def forkserver_main(ppid: int, socket_fd: int) -> None:
     # cjwkernel.pandas.main() raises an exception ... but the "module_pid"
     # process closes the socket before calling cjwkernel.pandas.main(), so the
     # finalizer would crash.
+    global sock  # see GLOBAL VARIABLES comment
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM, fileno=socket_fd)
 
     # 2b. Child imports modules in its main (and only) thread
@@ -133,6 +221,7 @@ def forkserver_main(ppid: int, socket_fd: int) -> None:
         __import__(im)
 
     while True:
+        global message  # see GLOBAL VARIABLES comment
         try:
             # raise EOFError, RuntimeError
             message = protocol.SpawnPandasModule.recv_on_socket(sock)
@@ -144,7 +233,8 @@ def forkserver_main(ppid: int, socket_fd: int) -> None:
         #
         # The _child_ sends `SpawnedPandasModule` over `sock`, because only
         # the child knows the sub-child's PID.
-        spawn_module(ppid, sock, message)
+        spawned_module = spawn_module(sock, message)
+        spawned_module.send_on_socket(sock)
 
         os.close(message.output_fd)
         os.close(message.log_fd)

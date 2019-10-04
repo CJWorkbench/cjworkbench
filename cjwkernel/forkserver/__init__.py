@@ -77,8 +77,8 @@ class Forkserver:
             [
                 sys.executable,
                 "-c",
-                "import cjwkernel.forkserver.main; cjwkernel.forkserver.main.forkserver_main(%d, %d)"
-                % (self._pid, child_socket.fileno()),
+                "import cjwkernel.forkserver.main; cjwkernel.forkserver.main.forkserver_main(%d)"
+                % child_socket.fileno(),
             ],
             # env={},  # FIXME SECURITY set env so modules don't get secrets
             stdin=subprocess.DEVNULL,

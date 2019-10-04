@@ -1,0 +1,53 @@
+#!/usr/bin/env python3
+
+# Generate a seccomp profile for our frontend/worker/renderer processes.
+#
+# Docs:
+#
+# * https://github.com/moby/moby/blob/master/docs/security/seccomp.md
+# * https://docs.docker.com/engine/security/seccomp/
+#
+# The default profile is too restrictive: it does not let us create
+# containers; and we need containers so we can sandbox module code.
+#
+# The Docker profile is used in unit tests, integration tests and dev mode.
+# It isn't used in production (Kubernetes).
+
+import json
+from pathlib import Path
+import sys
+from urllib.request import urlopen
+
+DEFAULT_PROFILE_URL = (
+    "https://raw.githubusercontent.com/moby/moby/master/profiles/seccomp/default.json"
+)
+
+CUSTOM_PROFILE_PATH = "docker/forkserver-seccomp-profile.json"
+
+
+def generate_profile() -> str:
+    with urlopen(DEFAULT_PROFILE_URL) as response:
+        profile = json.load(response)
+
+    profile["syscalls"].append(
+        {
+            "names": ["clone", "mount"],
+            "action": "SCMP_ACT_ALLOW",
+            "args": [],
+            "comment": "So cjwkernel.forkserver can sandbox module_main()",
+            "includes": {},
+            "excludes": {},
+        }
+    )
+
+    return json.dumps(profile, indent="\t")
+
+
+def main():
+    profile = generate_profile()
+    path = Path(__file__).parent.parent / CUSTOM_PROFILE_PATH
+    path.write_text(profile + "\n", encoding="utf-8")
+
+
+if __name__ == "__main__":
+    main()
