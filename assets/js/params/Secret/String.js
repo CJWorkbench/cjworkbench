@@ -68,7 +68,7 @@ function StringPrompt ({ isReadOnly, label, name, fieldId, placeholder, pattern,
   )
 }
 
-const StringDisplay = withI18n()(function ({ i18n, isReadOnly, secretMetadata, label, name, fieldId, deleteSecret }) {
+function StringDisplay ({ i18n, isReadOnly, secretMetadata, label, name, fieldId, deleteSecret }) {
   const [isSubmitted, setSubmitted] = React.useState(false)
   const handleSubmit = React.useCallback(() => {
     deleteSecret(name)
@@ -81,7 +81,7 @@ const StringDisplay = withI18n()(function ({ i18n, isReadOnly, secretMetadata, l
     <>
       <MaybeLabel fieldId={fieldId} label={label} />
       <div className='secret-string-display'>
-        <time dateTime={createdAt}>(Secret, saved {timeDifference(Date.parse(createdAt), new Date(), this.props.i18n)})</time>
+        <time dateTime={createdAt}>(Secret, saved {timeDifference(Date.parse(createdAt), new Date(), i18n)})</time>
         {!isReadOnly ? (
           <button
             type='button'
@@ -95,12 +95,13 @@ const StringDisplay = withI18n()(function ({ i18n, isReadOnly, secretMetadata, l
       </div>
     </>
   )
-})
+}
 
-const String_ = React.memo(function String_ ({ secretMetadata, isReadOnly, name, fieldId, secretLogic: { label, placeholder, pattern, help, helpUrl, helpUrlPrompt }, submitSecret, deleteSecret }) {
+const String_ = React.memo(withI18n()(function String_ ({ i18n, secretMetadata, isReadOnly, name, fieldId, secretLogic: { label, placeholder, pattern, help, helpUrl, helpUrlPrompt }, submitSecret, deleteSecret }) {
   if (secretMetadata) {
     return (
       <StringDisplay
+        i18n={i18n}
         isReadOnly={isReadOnly}
         secretMetadata={secretMetadata}
         label={label}
@@ -125,7 +126,7 @@ const String_ = React.memo(function String_ ({ secretMetadata, isReadOnly, name,
       />
     )
   }
-})
+}))
 String_.propTypes = {
   isReadOnly: PropTypes.bool.isRequired,
   name: PropTypes.string.isRequired, // <input name=...>
