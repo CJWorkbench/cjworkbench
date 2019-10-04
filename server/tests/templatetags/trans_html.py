@@ -14,24 +14,20 @@ def mock_context(**kwargs):
 
 
 class TransTemplateTagTests(SimpleTestCase):
+    # Tests that `noop=True` returns `None`
     def test_trans_noop(self):
-        """Tests that `noop=True` returns `None`
-        """
         self.assertIsNone(
             trans_html(
                 mock_context(), mock_message_id, noop=True, default="Hello {a} {b}!"
             )
         )
 
+    # Tests that `arg_XX` arguments replace variables in the message.
+    # 1) Parameters that do not exist in the message are ignored.
+    # 2) Variables in the message for which no parameter has been given are ignored.
+    # 3) The order of `arg` arguments is not important.
+    # 4) When the programmer tries to use numeric arguments, an exception is raised (behaviour for when the translator tries to use numeric arguments is tested elsewhere)
     def test_trans_params(self):
-        """Tests that `arg_XX` arguments replace variables in the message.
-        
-        1) Parameters that do not exist in the message are ignored.
-        2) Variables in the message for which no parameter has been given are ignored.
-        3) The order of `arg` arguments is not important.
-        4) When the programmer tries to use numeric arguments, an exception is raised
-           (behaviour for when the translator tries to use numeric arguments is tested elsewhere)
-        """
         self.assertEqual(
             trans_html(
                 mock_context(),
@@ -54,17 +50,15 @@ class TransTemplateTagTests(SimpleTestCase):
                 arg_b="2",
             ),
 
+    # Tests the combination of properties of placeholder tags and of message parameters.
+    # 0) In settings where there are multiple tags, some of which have to be deleted, all of them are processed
+    # 1) `tag_XX_YY` arguments are used to replace placeholders; existing attributes are removed
+    # 2) Tags or placeholders that have no counterpart in the arguments are removed
+    # 3) The order of `tag` arguments is not important
+    # 4) Special characters, except for the ones of valid tags, are escaped, even in tag attributes and in args
+    # 5) Nested tags are not tolerated
+    # 6) `arg_XX` arguments are replaced correctly
     def test_trans_tag_placeholders(self):
-        """ Tests the combination of properties of placeholder tags and of message parameters.
-        
-        0) In settings where there are multiple tags, some of which have to be deleted, all of them are processed
-        1) `tag_XX_YY` arguments are used to replace placeholders; existing attributes are removed
-        2) Tags or placeholders that have no counterpart in the arguments are removed
-        3) The order of `tag` arguments is not important
-        4) Special characters, except for the ones of valid tags, are escaped, even in tag attributes and in args
-        5) Nested tags are not tolerated
-        6) `arg_XX` arguments are replaced correctly
-        """
         self.assertEqual(
             trans_html(
                 mock_context(),

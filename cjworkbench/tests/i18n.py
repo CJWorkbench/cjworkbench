@@ -9,12 +9,10 @@ mock_message_id = (
 
 
 class TransTest(SimpleTestCase):
+    # Tests that `parameters` argument replaces variables in the message.
+    # 1) Parameters that do not exist in the message are ignored.
+    # 2) Variables in the message for which no parameter has been given are ignored.
     def test_trans_params(self):
-        """Tests that `parameters` argument replaces variables in the message.
-        
-        1) Parameters that do not exist in the message are ignored.
-        2) Variables in the message for which no parameter has been given are ignored.
-        """
         self.assertEqual(
             trans(
                 default_locale,
@@ -25,9 +23,8 @@ class TransTest(SimpleTestCase):
             "Hello you there {c}!",
         )
 
+    # Tests that a programmer will get an exception when including a numeric variable in the message
     def test_format_invalid_default(self):
-        """Tests that a programmer will get an exception when including a numeric variable in the message
-        """
         with self.assertRaises(InvalidICUParameters):
             trans(
                 default_locale,
@@ -36,9 +33,8 @@ class TransTest(SimpleTestCase):
                 parameters={"a": "you", "0": "!", "b": "2"},
             ),
 
+    # Tests that a translator can't break our system by including a numeric variable in the message
     def test_format_invalid_message(self):
-        """Tests that a translator can't break our system by including a numeric variable in the message
-        """
         self.assertEqual(
             MessageTranslator(default_locale)._process_message(
                 "Hello {a} {0} {b}", "Hello {a} {b}", parameters={"a": "you", "b": "!"}
@@ -46,14 +42,12 @@ class TransTest(SimpleTestCase):
             "Hello you !",
         )
 
+    # Tests that tags in messages are replaced correctly.
+    # 1) Tags in `tags` that are not in the message are ignored.
+    # 2) Tags in the message but not in `tags` are ignored. At this point, their contents are kept, but this may change in the future.
+    # 3) All attributes given for a tag in `tags` are used.
+    # 4) Tag attributes existing in the message are ignored.
     def test_trans_tags(self):
-        """ Tests that tags in messages are replaced correctly.
-        
-        1) Tags in `tags` that are not in the message are ignored.
-        2) Tags in the message but not in `tags` are ignored. At this point, their contents are kept, but this may change in the future.
-        3) All attributes given for a tag in `tags` are used.
-        4) Tag attributes existing in the message are ignored. 
-        """
         self.assertEqual(
             trans(
                 default_locale,
@@ -75,12 +69,9 @@ class TransTest(SimpleTestCase):
             '<a class="the test" data-target="someid" href="/you">Hello</a>youthere',
         )
 
+    # Tests that nested tags in messages are not tolerated.
+    # At this point, nested tags are ignored, but their contents are kept. This may change in the future.
     def test_trans_nested_tags(self):
-        """ Tests that nested tags in messages are not tolerated.
-        
-        At this point, nested tags are ignored, but their contents are kept.
-        This may change in the future.
-        """
         self.assertEqual(
             trans(
                 default_locale,
@@ -95,9 +86,8 @@ class TransTest(SimpleTestCase):
             '<a href="/you">Helloyouthere</a>',
         )
 
+    # Tests that parameters are substituted within tags
     def test_trans_params_in_tags(self):
-        """ Tests that parameters are substituted within tags
-        """
         self.assertEqual(
             trans(
                 default_locale,
@@ -109,9 +99,8 @@ class TransTest(SimpleTestCase):
             '<a href="/you">Hello you</a>!',
         )
 
+    # Tests that special characters in the text are escaped, in any depth
     def test_trans_escapes_text(self):
-        """ Tests that special characters in the text are escaped, in any depth
-        """
         self.assertEqual(
             trans(
                 default_locale,
@@ -122,9 +111,8 @@ class TransTest(SimpleTestCase):
             '<a href="/you">Hello &amp;&amp;</a>&gt;',
         )
 
+    # Tests that message parameters are escaped
     def test_trans_escapes_params(self):
-        """ Tests that message parameters are escaped
-        """
         self.assertEqual(
             trans(
                 default_locale,
@@ -136,9 +124,8 @@ class TransTest(SimpleTestCase):
             '<a href="/you">Hello &lt;b&gt;you&lt;/b&gt;</a>&lt;b&gt;there&lt;/b&gt;',
         )
 
+    # Tests that tag attributes in messages are escaped
     def test_trans_escapes_tag_attrs(self):
-        """ Tests that tag attributes in messages are escaped
-        """
         self.assertEqual(
             trans(
                 default_locale,
@@ -149,16 +136,14 @@ class TransTest(SimpleTestCase):
             '<a href="/you?a=b&amp;c=d">Hello</a>',
         )
 
+    # Tests the combination of properties of placeholder tags and of message parameters.
+    # 0) In settings where there are multiple tags, some of which have to be deleted, all of them are processed
+    # 1) the `tags` argument is used to replace placeholders and they are escaped correctly
+    # 2) Tags or tag placeholders that have no counterpart in the arguments are removed
+    # 3) Special characters, except for the ones of valid tags, are escaped
+    # 4) Nested tags are not tolerated
+    # 5) `arg_XX` arguments are replaced and escaped correctly
     def test_trans_tag_placeholders(self):
-        """ Tests the combination of properties of placeholder tags and of message parameters.
-        
-        0) In settings where there are multiple tags, some of which have to be deleted, all of them are processed
-        1) the `tags` argument is used to replace placeholders and they are escaped correctly
-        2) Tags or tag placeholders that have no counterpart in the arguments are removed
-        3) Special characters, except for the ones of valid tags, are escaped
-        4) Nested tags are not tolerated
-        5) `arg_XX` arguments are replaced and escaped correctly
-        """
         self.assertEqual(
             trans(
                 default_locale,
