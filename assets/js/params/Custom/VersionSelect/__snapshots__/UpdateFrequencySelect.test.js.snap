@@ -1,35 +1,118 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`UpdateFrequencySelect shallow matches snapshot 1`] = `
-<div
-  className="update-frequency-select"
+<WithI18n
+  fetchInterval={300}
+  i18n={
+    Object {
+      "_": [Function],
+      "_activeLanguageData": Object {
+        "plurals": [Function],
+      },
+      "_activeMessages": Object {},
+      "_catalogs": Object {
+        "en": Object {
+          "languageData": Object {},
+          "messages": Object {},
+        },
+      },
+      "_dev": Object {
+        "compile": [Function],
+        "loadLanguageData": [Function],
+      },
+      "_language": "en",
+      "_locales": undefined,
+      "_missing": undefined,
+      "plural": [Function],
+      "select": [Function],
+      "selectOrdinal": [Function],
+      "t": [Function],
+    }
+  }
+  isAnonymous={false}
+  isAutofetch={false}
+  isEmailUpdates={false}
+  isReadOnly={false}
+  lastCheckDate={2018-05-28T19:00:54.154Z}
+  setEmailUpdates={[MockFunction]}
+  trySetAutofetch={[MockFunction]}
+  wfModuleId={212}
+  workflowId={123}
 >
-  <div
-    className="update-option"
+  <I18n
+    update={true}
+    withHash={true}
   >
-    <span
-      className="version-box-option"
+    <UpdateFrequencySelect
+      fetchInterval={300}
+      i18n={
+        Object {
+          "_": [Function],
+          "_activeLanguageData": Object {
+            "plurals": [Function],
+          },
+          "_activeMessages": Object {},
+          "_catalogs": Object {
+            "en": Object {
+              "languageData": Object {},
+              "messages": Object {},
+            },
+          },
+          "_dev": Object {
+            "compile": [Function],
+            "loadLanguageData": [Function],
+          },
+          "_language": "en",
+          "_locales": undefined,
+          "_missing": undefined,
+          "plural": [Function],
+          "select": [Function],
+          "selectOrdinal": [Function],
+          "t": [Function],
+        }
+      }
+      isAnonymous={false}
+      isAutofetch={false}
+      isEmailUpdates={false}
+      isReadOnly={false}
+      lastCheckDate={2018-05-28T19:00:54.154Z}
+      setEmailUpdates={[MockFunction]}
+      trySetAutofetch={[MockFunction]}
+      wfModuleId={212}
+      workflowId={123}
     >
-      Update 
-    </span>
-    <a
-      className="content-1 ml-1 action-link"
-      href="#"
-      onClick={[Function]}
-      title="change auto-update settings"
-    >
-      Manual
-    </a>
-  </div>
-  <div
-    className="last-checked"
-  >
-    Checked 
-    <time
-      dateTime="2018-05-28T19:00:54.154Z"
-    >
-      12m ago
-    </time>
-  </div>
-</div>
+      <div
+        className="update-frequency-select"
+      >
+        <div
+          className="update-option"
+        >
+          <span
+            className="version-box-option"
+          >
+            Update 
+          </span>
+          <a
+            className="content-1 ml-1 action-link"
+            href="#"
+            onClick={[Function]}
+            title="change auto-update settings"
+          >
+            Manual
+          </a>
+        </div>
+        <div
+          className="last-checked"
+        >
+          Checked 
+          <time
+            dateTime="2018-05-28T19:00:54.154Z"
+          >
+            {minutes}m ago
+          </time>
+        </div>
+      </div>
+    </UpdateFrequencySelect>
+  </I18n>
+</WithI18n>
 `;
