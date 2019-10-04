@@ -15,7 +15,8 @@ trans_param_re = re.compile(r"arg_(?P<arg>\w+)", re.ASCII)
 def trans_html(
     context,
     message_id,
-    default=None,
+    *,
+    default,
     ctxt="",
     noop=False,
     comment="",
