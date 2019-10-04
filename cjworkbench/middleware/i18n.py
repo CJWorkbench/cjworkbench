@@ -1,4 +1,5 @@
 from cjworkbench.i18n import default_locale, supported_locales
+from django.utils.translation import activate
 
 
 class SetCurrentLocaleMiddleware:
@@ -15,6 +16,7 @@ class SetCurrentLocaleMiddleware:
             locale = default_locale
 
         request.locale_id = locale
+        activate(locale)
 
         response = self.get_response(request)
 

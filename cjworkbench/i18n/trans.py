@@ -1,7 +1,9 @@
 from babel.messages.pofile import read_po
 from bs4 import BeautifulSoup
+from django.utils.functional import lazy
 from django.utils.html import escape
-from cjworkbench.i18n import catalog_path
+from django.utils.translation import get_language
+from cjworkbench.i18n import catalog_path, default_locale
 from string import Formatter
 
 
@@ -42,12 +44,19 @@ def _get_translations(locale):
     return _translators[locale]
 
 
-def trans(locale, message_id, *, default, context=None, parameters={}, tags={}):
+def trans(*args, **kwargs):
+    return do_trans(get_language(), *args, **kwargs)
+
+
+def do_trans(locale, message_id, *, default, context=None, parameters={}, tags={}):
     """Translate the given message ID to the given locale.
     """
     return _get_translations(locale).trans(
         message_id, default, context, parameters, tags
     )
+
+
+trans_lazy = lazy(trans)
 
 
 def restore_tags(message, tag_mapping):
