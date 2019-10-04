@@ -4,8 +4,6 @@ from django.utils.html import escape
 from cjworkbench.i18n import catalog_path
 from string import Formatter
 
-_default_is_required = True
-
 
 class UnsupportedLocaleError(Exception):
     """An unsupported locale is (attempted to be) used
@@ -29,11 +27,6 @@ class InvalidICUParameters(Exception):
     """
 
 
-class MissingDefaultMessage(Exception):
-    """It is required to pass a default message and you failed to do so.
-    """
-
-
 _translators = {}
 
 
@@ -49,7 +42,7 @@ def _get_translations(locale):
     return _translators[locale]
 
 
-def trans(locale, message_id, default=None, context=None, parameters={}, tags={}):
+def trans(locale, message_id, *, default, context=None, parameters={}, tags={}):
     """Translate the given message ID to the given locale.
     """
     return _get_translations(locale).trans(
@@ -91,7 +84,9 @@ class MessageTranslator:
     It uses plaintext messages with variables in `{var}` placeholders, e.g. in `"Hello {name}"`, `name` is a variable.
     
     Essentially, it is a wrapper for the combination of 
-    Babel (for loading PO files) and variable substitution and our HTML placeholder construct.
+      - Babel (for loading PO files)
+      - variable substitution
+      - our HTML placeholder construct.
     """
 
     def __init__(self, locale):
@@ -112,10 +107,6 @@ class MessageTranslator:
         """Find the message corresponding to the given ID in the catalog and format it according to the given parameters.
         If the message is either not found or empty and a non-empty `default` is provided, the `default` is used instead.
         
-        If the default is None, depending on the value of `_default_is_required`, one of the following happens:
-          - True: an exception is thrown
-          - False: the `message_id` is used instead.
-        
         See `self._format_message` for acceptable types of the parameters argument.
         
         In case a message from the catalogs is used, if the message contains illegal (i.e. numeric) variables, 
@@ -123,8 +114,6 @@ class MessageTranslator:
         
         HTML-like tags in the message used are replaced by their counterpart in `tags`, as specified in `restore_tags`
         """
-        if _default_is_required and default is None:
-            raise MissingDefaultMessage("You have not passed a default message")
         return self._process_message(
             self.get_message(message_id, context=context),
             default or message_id,

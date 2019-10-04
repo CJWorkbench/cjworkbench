@@ -9,12 +9,6 @@ mock_message_id = (
 
 
 class TransTest(SimpleTestCase):
-    def test_trans_no_default(self):
-        """Tests that default message is required
-        """
-        with self.assertRaises(Exception):
-            trans(default_locale, mock_message_id)
-
     def test_trans_params(self):
         """Tests that `parameters` argument replaces variables in the message.
         

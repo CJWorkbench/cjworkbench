@@ -50,10 +50,6 @@ def trans_html(
     The `comment` argument is ignored here, it's only used in code parsing.
     
     Examples:
-        - `{% trans "Hello" %}` 
-          Looks up `Hello` in the catalog for the current locale; 
-          if not found, returns `"Hello"`
-          
         - `{% trans "messages.hello" default="Hello" comment="This can be all caps if you really want it to be" %}` 
           Looks up `messages.hello` in the catalog for the current locale; 
           if not found, returns `"Hello"`.
@@ -78,9 +74,9 @@ def trans_html(
           for example, the default message would become `'<span class="red big">Hello</span> <span class="small yellow" id="you">you</span>'` 
           When the code is parsed, the default will be added to the message catalog.
           
-        - `{% trans some_var %}`
-          Looks up the content of some_var in the catalog.
-          When the code is parsed, this will be ignored.
+        - `{% trans some_var default="the default" %}`
+          Looks up the content of `some_var` in the catalog. If found, returns it, else returns the default.
+          When the code is parsed for message extraction, this will be ignored.
     """
     if noop is True:
         return None
