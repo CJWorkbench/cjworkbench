@@ -22,9 +22,14 @@ const {
 } = intlProvider.getChildContext()
 
 // You customize the i18n object here:
-const i18n = {
+export const i18n = {
   ...originalI18n,
-  _: key => key // provide _ macro, for just passing down the key
+  // provide _ macro, for trying to unwrap default/id or just passing down the key
+  _: key => {
+    if (typeof key.defaults === 'string') return key.defaults
+    if (typeof key.id === 'string') return key.id
+    return key
+  }
 }
 
 /**
