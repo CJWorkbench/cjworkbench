@@ -10,7 +10,7 @@ TOKEN_BLOCK = TokenType.BLOCK
 # re adapted from django.utils.translation.template.inline_re
 inline_re = re.compile(
     # Match the trans 'some text' part
-    r"""^\s*trans\s+((?:"[^"]*?")|(?:'[^']*?'))"""
+    r"""^\s*trans_html\s+((?:"[^"]*?")|(?:'[^']*?'))"""
     # Match and ignore optional filters
     r"""(?:\s*\|\s*[^\s:]+(?::(?:[^\s'":]+|(?:"[^"]*?")|(?:'[^']*?')))?)*"""
     # Match the optional default argument
