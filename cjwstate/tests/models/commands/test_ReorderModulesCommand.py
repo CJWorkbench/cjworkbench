@@ -1,4 +1,5 @@
 from unittest.mock import patch
+from cjwstate import commands
 from cjwstate.models import Workflow
 from cjwstate.models.commands import InitWorkflowCommand, ReorderModulesCommand
 from cjwstate.tests.utils import DbTestCase
@@ -8,8 +9,8 @@ async def async_noop(*args, **kwargs):
     pass
 
 
-@patch("server.rabbitmq.queue_render", async_noop)
-@patch("cjwstate.models.Delta.ws_notify", async_noop)
+@patch.object(commands, "queue_render", async_noop)
+@patch.object(commands, "websockets_notify", async_noop)
 class ReorderModulesCommandTest(DbTestCase):
     def setUp(self):
         super().setUp()
@@ -42,7 +43,8 @@ class ReorderModulesCommandTest(DbTestCase):
         )
 
         cmd = self.run_with_async_db(
-            ReorderModulesCommand.create(
+            commands.do(
+                ReorderModulesCommand,
                 workflow=self.workflow,
                 tab=self.tab,
                 new_order=[wfm1.id, wfm3.id, wfm2.id],
@@ -57,7 +59,7 @@ class ReorderModulesCommandTest(DbTestCase):
         )
 
         # undo
-        self.run_with_async_db(cmd.backward())
+        self.run_with_async_db(commands.undo(cmd))
         self.assertWfModuleVersions([v1, v1, v1])
         wfm2.refresh_from_db()
         wfm3.refresh_from_db()
@@ -66,7 +68,7 @@ class ReorderModulesCommandTest(DbTestCase):
         )
 
         # redo
-        self.run_with_async_db(cmd.forward())
+        self.run_with_async_db(commands.redo(cmd))
         self.assertWfModuleVersions([v1, v2, v2])
         wfm2.refresh_from_db()
         wfm3.refresh_from_db()
@@ -95,7 +97,8 @@ class ReorderModulesCommandTest(DbTestCase):
 
         with self.assertRaises(ValueError):
             self.run_with_async_db(
-                ReorderModulesCommand.create(
+                commands.do(
+                    ReorderModulesCommand,
                     workflow=self.workflow,
                     tab=self.tab,
                     new_order=[wfm1.id, wfm3.id, wfm2.id],
@@ -108,16 +111,22 @@ class ReorderModulesCommandTest(DbTestCase):
         )
         with self.assertRaises(ValueError):
             self.run_with_async_db(
-                ReorderModulesCommand.create(
-                    workflow=self.workflow, tab=self.tab, new_order=[wfm1.id + 1]
+                commands.do(
+                    ReorderModulesCommand,
+                    workflow=self.workflow,
+                    tab=self.tab,
+                    new_order=[wfm1.id + 1],
                 )
             )
 
     def test_non_array_valueerror(self):
         with self.assertRaises(ValueError):
             self.run_with_async_db(
-                ReorderModulesCommand.create(
-                    workflow=self.workflow, tab=self.tab, new_order={"not": "an array"}
+                commands.do(
+                    ReorderModulesCommand,
+                    workflow=self.workflow,
+                    tab=self.tab,
+                    new_order={"not": "an array"},
                 )
             )
 
@@ -131,8 +140,11 @@ class ReorderModulesCommandTest(DbTestCase):
 
         with self.assertRaises(ValueError):
             self.run_with_async_db(
-                ReorderModulesCommand.create(
-                    workflow=self.workflow, tab=self.tab, new_order=[wfm1.id]
+                commands.do(
+                    ReorderModulesCommand,
+                    workflow=self.workflow,
+                    tab=self.tab,
+                    new_order=[wfm1.id],
                 )
             )
 
@@ -146,8 +158,11 @@ class ReorderModulesCommandTest(DbTestCase):
 
         with self.assertRaises(ValueError):
             self.run_with_async_db(
-                ReorderModulesCommand.create(
-                    workflow=self.workflow, tab=self.tab, new_order=[wfm1.id, wfm1.id]
+                commands.do(
+                    ReorderModulesCommand,
+                    workflow=self.workflow,
+                    tab=self.tab,
+                    new_order=[wfm1.id, wfm1.id],
                 )
             )
 
@@ -160,8 +175,11 @@ class ReorderModulesCommandTest(DbTestCase):
         )
 
         cmd = self.run_with_async_db(
-            ReorderModulesCommand.create(
-                workflow=self.workflow, tab=self.tab, new_order=[wfm1.id, wfm2.id]
+            commands.do(
+                ReorderModulesCommand,
+                workflow=self.workflow,
+                tab=self.tab,
+                new_order=[wfm1.id, wfm2.id],
             )
         )
         self.assertIsNone(cmd)

@@ -43,9 +43,10 @@ class Forkserver:
     The solution: start up a mini-server, the "forkserver", which preloads
     pyarrow+pandas. fork() each time we need a subprocess. fork() is
     near-instantaneous. Beware: since fork() copies all memory, we must ensure
-    the "forkserver" doesn't load much (no Django -- it reads secrets!); and we
-    must ensure the "forkserver" closes everything children shouldn't access
-    (no control socket back to our web server!).
+    the "forkserver" doesn't load anything sensitive before fork() (no Django:
+    it reads secrets!); and we must ensure the "forkserver"'s child closes
+    everything children shouldn't access (no control socket back to our web
+    server!).
 
     Similar to Python's multiprocessing.forkserver, except...:
 
@@ -68,15 +69,6 @@ class Forkserver:
     """
 
     def __init__(self, *, forkserver_preload: List[str] = []):
-        if not _is_process_subreaper():
-            raise RuntimeError(
-                """
-                To use forkserver, you must be a subreaper process. Call
-                cjwkernel.forkserver.install_calling_process_as_subreaper()
-                before using forkserver.
-                """
-            )
-
         # We rely on Python's os.fork() internals to close FDs and run a child
         # process.
         self._pid = os.getpid()
@@ -136,17 +128,3 @@ class Forkserver:
         """
         self._socket.close()  # inspire self._process to exit of its own accord
         self._process.wait()
-
-
-def _is_process_subreaper() -> bool:
-    val = ctypes.c_int(0)
-    libc.prctl(PR_GET_CHILD_SUBREAPER, ctypes.pointer(val), 0, 0, 0)
-    return val.value != 0
-
-
-def install_calling_process_as_subreaper() -> None:
-    logger.info(
-        "Setting process as subreaper. Unreaped child processes will become zombies."
-        " (This is good; but if you see zombie processes, fix something.)"
-    )
-    libc.prctl(PR_SET_CHILD_SUBREAPER, 1, 0, 0, 0)

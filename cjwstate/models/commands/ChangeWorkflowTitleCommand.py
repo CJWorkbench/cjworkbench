@@ -10,11 +10,11 @@ class ChangeWorkflowTitleCommand(Delta):
     new_value = models.TextField("new_value")
     old_value = models.TextField("old_value")
 
-    def forward_impl(self):
+    def forward(self):
         self.workflow.name = self.new_value
         self.workflow.save(update_fields=["name"])
 
-    def backward_impl(self):
+    def backward(self):
         self.workflow.name = self.old_value
         self.workflow.save(update_fields=["name"])
 

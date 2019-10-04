@@ -1,5 +1,6 @@
 import asyncio
 from unittest.mock import patch
+from cjwstate import commands
 from cjwstate.models import Delta, ModuleVersion, Workflow, WfModule
 from cjwstate.models.commands import (
     AddModuleCommand,
@@ -26,8 +27,8 @@ class MockLoadedModule:
         return values
 
 
-@patch("server.rabbitmq.queue_render", async_noop)
-@patch("cjwstate.models.Delta.ws_notify", async_noop)
+@patch.object(commands, "queue_render", async_noop)
+@patch.object(commands, "websockets_notify", async_noop)
 class AddDeleteModuleCommandTests(DbTestCase):
     def assertWfModuleVersions(self, expected_versions):
         positions = list(self.tab.live_wf_modules.values_list("order", flat=True))
@@ -73,7 +74,8 @@ class AddDeleteModuleCommandTests(DbTestCase):
         # Add a module, insert before the existing one, check to make sure it
         # went there and old one is after
         cmd = self.run_with_async_db(
-            AddModuleCommand.create(
+            commands.do(
+                AddModuleCommand,
                 workflow=self.workflow,
                 tab=self.workflow.tabs.first(),
                 slug="step-2",
@@ -102,12 +104,12 @@ class AddDeleteModuleCommandTests(DbTestCase):
             cmd.next_delta
 
         # undo! undo! ahhhhh everything is on fire! undo!
-        self.run_with_async_db(cmd.backward())
+        self.run_with_async_db(commands.undo(cmd))
         self.assertEqual(all_modules.count(), 1)
         self.assertEqual(all_modules.first(), existing_module)
 
         # wait no, we wanted that module
-        self.run_with_async_db(cmd.forward())
+        self.run_with_async_db(commands.redo(cmd))
         self.assertEqual(all_modules.count(), 2)
         added_module = all_modules.get(order=0)
         self.assertNotEqual(added_module, existing_module)
@@ -116,7 +118,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
 
         # Undo and test deleting the un-applied command. Should delete dangling
         # WfModule too
-        self.run_with_async_db(cmd.backward())
+        self.run_with_async_db(commands.undo(cmd))
         self.assertEqual(all_modules.count(), 1)
         self.assertEqual(all_modules.first(), existing_module)
         cmd.delete_with_successors()
@@ -140,7 +142,8 @@ class AddDeleteModuleCommandTests(DbTestCase):
         )
 
         cmd = self.run_with_async_db(
-            AddModuleCommand.create(
+            commands.do(
+                AddModuleCommand,
                 workflow=workflow,
                 tab=workflow.tabs.first(),
                 slug="step-1",
@@ -159,7 +162,8 @@ class AddDeleteModuleCommandTests(DbTestCase):
         # assume the uniqueness check comes first
         with self.assertRaisesRegex(ValueError, "unique"):
             self.run_with_async_db(
-                AddModuleCommand.create(
+                commands.do(
+                    AddModuleCommand,
                     workflow=workflow,
                     tab=tab,
                     slug="step-1",
@@ -173,7 +177,8 @@ class AddDeleteModuleCommandTests(DbTestCase):
         workflow = Workflow.create_and_init()
         with self.assertRaises(ModuleVersion.DoesNotExist):
             self.run_with_async_db(
-                AddModuleCommand.create(
+                commands.do(
+                    AddModuleCommand,
                     workflow=workflow,
                     tab=workflow.tabs.first(),
                     slug="step-1",
@@ -197,7 +202,8 @@ class AddDeleteModuleCommandTests(DbTestCase):
 
         with self.assertRaises(ValueError):
             self.run_with_async_db(
-                AddModuleCommand.create(
+                commands.do(
+                    AddModuleCommand,
                     workflow=workflow,
                     tab=workflow.tabs.first(),
                     slug="step-1",
@@ -226,7 +232,8 @@ class AddDeleteModuleCommandTests(DbTestCase):
 
         # Insert at beginning
         cmd1 = self.run_with_async_db(
-            AddModuleCommand.create(
+            commands.do(
+                AddModuleCommand,
                 workflow=self.workflow,
                 tab=self.workflow.tabs.first(),
                 slug="step-2",
@@ -244,7 +251,8 @@ class AddDeleteModuleCommandTests(DbTestCase):
 
         # Insert at end
         cmd2 = self.run_with_async_db(
-            AddModuleCommand.create(
+            commands.do(
+                AddModuleCommand,
                 workflow=self.workflow,
                 tab=self.workflow.tabs.first(),
                 slug="step-3",
@@ -260,7 +268,8 @@ class AddDeleteModuleCommandTests(DbTestCase):
 
         # Insert in between two modules
         cmd3 = self.run_with_async_db(
-            AddModuleCommand.create(
+            commands.do(
+                AddModuleCommand,
                 workflow=self.workflow,
                 tab=self.workflow.tabs.first(),
                 slug="step-4",
@@ -287,11 +296,11 @@ class AddDeleteModuleCommandTests(DbTestCase):
         self.assertEqual(cmd1.prev_delta_id, self.delta.id)
 
         # We should be able to go all the way back
-        self.run_with_async_db(cmd3.backward())
+        self.run_with_async_db(commands.undo(cmd3))
         self.assertWfModuleVersions([v2, v2, v3])
-        self.run_with_async_db(cmd2.backward())
+        self.run_with_async_db(commands.undo(cmd2))
         self.assertWfModuleVersions([v2, v2])
-        self.run_with_async_db(cmd1.backward())
+        self.run_with_async_db(commands.undo(cmd1))
         self.assertWfModuleVersions([v1])
         self.assertEqual(
             list(all_modules.values_list("id", flat=True)), [existing_module.id]
@@ -314,8 +323,8 @@ class AddDeleteModuleCommandTests(DbTestCase):
 
         # Delete it. Yeah, you better run.
         cmd = self.run_with_async_db(
-            DeleteModuleCommand.create(
-                workflow=self.workflow, wf_module=existing_module
+            commands.do(
+                DeleteModuleCommand, workflow=self.workflow, wf_module=existing_module
             )
         )
         self.assertEqual(all_modules.count(), 0)
@@ -334,7 +343,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
             cmd.next_delta
 
         # undo
-        self.run_with_async_db(cmd.backward())
+        self.run_with_async_db(commands.undo(cmd))
         self.assertEqual(all_modules.count(), 1)
         self.assertWfModuleVersions([v1])
         self.assertEqual(all_modules.first(), existing_module)
@@ -352,19 +361,22 @@ class AddDeleteModuleCommandTests(DbTestCase):
         self.tab.save(update_fields=["selected_wf_module_position"])
 
         cmd = self.run_with_async_db(
-            DeleteModuleCommand.create(workflow=self.workflow, wf_module=wf_module)
+            commands.do(
+                DeleteModuleCommand, workflow=self.workflow, wf_module=wf_module
+            )
         )
 
         self.tab.refresh_from_db()
         self.assertIsNone(self.tab.selected_wf_module_position)
 
-        self.run_with_async_db(cmd.backward())  # don't crash
+        self.run_with_async_db(commands.undo(cmd))  # don't crash
 
     @patch.object(LoadedModule, "for_module_version", MockLoadedModule)
     def test_undo_add_only_selected(self):
         """Undoing the only add sets selection to None."""
         cmd = self.run_with_async_db(
-            AddModuleCommand.create(
+            commands.do(
+                AddModuleCommand,
                 workflow=self.workflow,
                 tab=self.workflow.tabs.first(),
                 slug="step-1",
@@ -377,7 +389,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
         self.tab.selected_wf_module_position = 0
         self.tab.save(update_fields=["selected_wf_module_position"])
 
-        self.run_with_async_db(cmd.backward())
+        self.run_with_async_db(commands.undo(cmd))
 
         self.tab.refresh_from_db()
         self.assertIsNone(self.tab.selected_wf_module_position)
@@ -400,7 +412,8 @@ class AddDeleteModuleCommandTests(DbTestCase):
         self.assertEqual(all_modules.count(), 1)
 
         cmd = self.run_with_async_db(
-            AddModuleCommand.create(
+            commands.do(
+                AddModuleCommand,
                 workflow=self.workflow,
                 tab=self.workflow.tabs.first(),
                 slug="step-2",
@@ -413,7 +426,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
         self.tab.selected_wf_module_position = 1
         self.tab.save(update_fields=["selected_wf_module_position"])
 
-        self.run_with_async_db(cmd.backward())
+        self.run_with_async_db(commands.undo(cmd))
 
         self.tab.refresh_from_db()
         self.assertEqual(self.tab.selected_wf_module_position, 0)
@@ -441,7 +454,8 @@ class AddDeleteModuleCommandTests(DbTestCase):
 
         # Now add a module to tab2.
         cmd = self.run_with_async_db(
-            AddModuleCommand.create(
+            commands.do(
+                AddModuleCommand,
                 workflow=self.workflow,
                 tab=tab2,
                 slug="step-2",
@@ -460,7 +474,8 @@ class AddDeleteModuleCommandTests(DbTestCase):
     @patch.object(LoadedModule, "for_module_version", MockLoadedModule)
     def test_add_delete(self):
         cmda = self.run_with_async_db(
-            AddModuleCommand.create(
+            commands.do(
+                AddModuleCommand,
                 workflow=self.workflow,
                 tab=self.workflow.tabs.first(),
                 slug="step-1",
@@ -470,7 +485,9 @@ class AddDeleteModuleCommandTests(DbTestCase):
             )
         )
         self.run_with_async_db(
-            DeleteModuleCommand.create(workflow=self.workflow, wf_module=cmda.wf_module)
+            commands.do(
+                DeleteModuleCommand, workflow=self.workflow, wf_module=cmda.wf_module
+            )
         )
         self.workflow.delete()
         self.assertTrue(True)  # we didn't crash! Yay, we pass
@@ -478,7 +495,8 @@ class AddDeleteModuleCommandTests(DbTestCase):
     @patch.object(LoadedModule, "for_module_version", MockLoadedModule)
     def test_delete_if_workflow_delete_cascaded_to_wf_module_first(self):
         self.run_with_async_db(
-            AddModuleCommand.create(
+            commands.do(
+                AddModuleCommand,
                 workflow=self.workflow,
                 tab=self.workflow.tabs.first(),
                 slug="step-1",
@@ -490,7 +508,8 @@ class AddDeleteModuleCommandTests(DbTestCase):
         # Add a second command -- so we test what happens when deleting
         # multiple deltas while deleting the workflow.
         self.run_with_async_db(
-            AddModuleCommand.create(
+            commands.do(
+                AddModuleCommand,
                 workflow=self.workflow,
                 tab=self.workflow.tabs.first(),
                 slug="step-2",
@@ -509,7 +528,8 @@ class AddDeleteModuleCommandTests(DbTestCase):
 
         self.delta.delete()
         self.run_with_async_db(
-            AddModuleCommand.create(
+            commands.do(
+                AddModuleCommand,
                 workflow=self.workflow,
                 tab=self.workflow.tabs.first(),
                 slug="step-1",

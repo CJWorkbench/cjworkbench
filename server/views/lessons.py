@@ -6,7 +6,6 @@ from django.db import transaction
 from django.http import Http404
 from django.http.response import HttpResponseServerError
 from django.template.response import TemplateResponse
-from django.utils.translation import gettext as _
 from server import rabbitmq
 import server.utils
 from cjwstate.models.commands import InitWorkflowCommand
@@ -58,7 +57,8 @@ def _ensure_workflow(request, lesson: Lesson):
     with transaction.atomic():
         workflow, created = Workflow.objects.get_or_create(
             defaults={
-                "name": _("Lesson: %(lesson_title)s") % {"lesson_title": lesson.title},
+                "name": "Lesson: "
+                + lesson.title,  # https://www.pivotaltracker.com/story/show/168752481
                 "public": False,
                 "last_delta": None,
             },

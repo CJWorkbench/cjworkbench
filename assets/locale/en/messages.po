@@ -1,17 +1,18 @@
+
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2019-07-16 11:07+0000\n"
-"Mime-Version: 1.0\n"
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2019-09-15 22:18+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: @lingui/cli\n"
-"Language: en\n"
-"Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: \n"
-"Language-Team: \n"
-"Plural-Forms: \n"
+"Generated-By: Babel 2.7.0\n"
 
 #: assets/js/i18n/locales.js:5
 msgid "locales.el"
@@ -23,13 +24,51 @@ msgstr "English"
 
 #: assets/js/table/SelectedRowsActions.js:105
 msgid "selectedRow.numberOfRows"
-msgstr "{0, plural, =0 {No rows selected} one {# row selected} other {# rows selected}}"
+msgstr ""
+"{0, plural, =0 {No rows selected} one {# row selected} other {# rows "
+"selected}}"
+
+#: assets/js/utils.js:47
+msgid "time_diff.ago.days"
+msgstr "{days}d ago"
+
+#: assets/js/utils.js:49
+msgid "time_diff.ago.hours"
+msgstr "{hours}h ago"
+
+#: assets/js/utils.js:51
+msgid "time_diff.ago.minutes"
+msgstr "{minutes}m ago"
+
+#: assets/js/utils.js:53
+msgid "time_diff.ago.seconds"
+msgstr "{seconds}s ago"
+
+#: assets/js/utils.js:45
+msgid "time_diff.ago.years"
+msgstr "{years}y ago"
+
+#: assets/js/utils.js:55
+msgid "time_diff.now"
+msgstr "just now"
+
+#. The parameter will contain something like '4h ago'
+#: assets/js/WorkflowNavBar.js:57
+msgid "workflow.last_updated"
+msgstr "Updated {0}"
+
+#. The tab prefix will be used as the first part of the default name of tabs,
+#. i.e. if the tab prefix is 'Tab', the default names can be 'Tab 1', 'Tab 2',
+#. etc
+#: assets/js/WorkflowEditor/Tabs/actions.js:93
+msgid "workflow.tabs.tab_prefix"
+msgstr "Tab"
 
 #: assets/js/ShareModal/PublicPrivate.js:15
 msgid "workflow.visibility.anyone"
 msgstr "Anyone can view and duplicate this workflow, and see your email."
 
-#: assets/js/WorkflowNavBar.js:51
+#: assets/js/WorkflowNavBar.js:52
 msgid "workflow.visibility.by"
 msgstr "by"
 
@@ -53,7 +92,7 @@ msgstr "Copy to clipboard"
 msgid "workflow.visibility.dateType"
 msgstr "date & time"
 
-#: assets/js/WorkflowNavBar.js:201
+#: assets/js/WorkflowNavBar.js:202
 msgid "workflow.visibility.duplicate"
 msgstr "Duplicate"
 
@@ -61,11 +100,11 @@ msgstr "Duplicate"
 msgid "workflow.visibility.grandAccess"
 msgstr "Grant access"
 
-#: assets/js/WfHamburgerMenu.js:56
+#: assets/js/WfHamburgerMenu.js:55
 msgid "workflow.visibility.home"
 msgstr "Home"
 
-#: assets/js/WfHamburgerMenu.js:53
+#: assets/js/WfHamburgerMenu.js:52
 msgid "workflow.visibility.importModule"
 msgstr "Import Module"
 
@@ -73,15 +112,15 @@ msgstr "Import Module"
 msgid "workflow.visibility.isPublic"
 msgstr "Anyone on the Internet may view and duplicate this Workflow."
 
-#: assets/js/WfHamburgerMenu.js:59
+#: assets/js/WfHamburgerMenu.js:58
 msgid "workflow.visibility.logout"
 msgstr "Log Out"
 
-#: assets/js/WfHamburgerMenu.js:43
+#: assets/js/WfHamburgerMenu.js:42
 msgid "workflow.visibility.menu"
 msgstr "menu"
 
-#: assets/js/WfHamburgerMenu.js:52
+#: assets/js/WfHamburgerMenu.js:51
 msgid "workflow.visibility.myWorkflows"
 msgstr "My Workflows"
 
@@ -97,7 +136,7 @@ msgstr "number"
 msgid "workflow.visibility.owner"
 msgstr "Owner"
 
-#: assets/js/WorkflowNavBar.js:62
+#: assets/js/WorkflowNavBar.js:65
 msgid "workflow.visibility.private"
 msgstr "Private"
 
@@ -105,7 +144,7 @@ msgstr "Private"
 msgid "workflow.visibility.privateLink"
 msgstr "Private link (only accessible to collaborators)"
 
-#: assets/js/WorkflowNavBar.js:62
+#: assets/js/WorkflowNavBar.js:65
 msgid "workflow.visibility.public"
 msgstr "Public"
 
@@ -125,7 +164,7 @@ msgstr "Report"
 msgid "workflow.visibility.rows"
 msgstr "Rows"
 
-#: assets/js/WorkflowNavBar.js:203
+#: assets/js/WorkflowNavBar.js:204
 msgid "workflow.visibility.share"
 msgstr "Share"
 
@@ -149,10 +188,6 @@ msgstr "Text"
 msgid "workflow.visibility.undo"
 msgstr "Undo"
 
-#: assets/js/WorkflowNavBar.js:56
-#~ msgid "workflow.visibility.update"
-#~ msgstr "Updated"
-
 #. This is used in navigation bar. It should be all-caps for styling reasons.
 #: assets/js/Workflows/Navbar.js:39
 msgid "workflows.navbar.training"
@@ -162,3 +197,25 @@ msgstr "TRAINING"
 #: assets/js/Workflows/Navbar.js:36
 msgid "workflows.navbar.workflows"
 msgstr "WORKFLOWS"
+
+#: templates/account/login.html:4 templates/account/login.html:10
+#: templates/account/signup.html:12
+msgid "accounts.sign_in.title"
+msgstr "Sign in"
+
+#: templates/account/login.html:43
+msgid "accounts.sign_in.forgot_password_prompt"
+msgstr "Forgot Password?"
+
+#: templates/account/login.html:45
+msgid "accounts.sign_in.button"
+msgstr "Sign In"
+
+#: templates/account/signup.html:4
+msgid "accounts.sign_up.title"
+msgstr "Sign Up"
+
+#: templates/account/signup.html:26
+msgid "accounts.sign_up.login_prompt"
+msgstr "If you have already created an account, then please <a0>log in</a0>."
+

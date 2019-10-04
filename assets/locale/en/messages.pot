@@ -1,0 +1,44 @@
+# Translations template for PROJECT.
+# Copyright (C) 2019 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2019-10-04 15:19+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.7.0\n"
+
+#. default-message: Sign in
+#: templates/account/login.html:4 templates/account/login.html:10 templates/account/signup.html:12
+msgid "accounts.sign_in.title"
+msgstr ""
+
+#. default-message: Forgot Password?
+#: templates/account/login.html:43
+msgid "accounts.sign_in.forgot_password_prompt"
+msgstr ""
+
+#. default-message: Sign In
+#: templates/account/login.html:45
+msgid "accounts.sign_in.button"
+msgstr ""
+
+#. default-message: Sign Up
+#: templates/account/signup.html:4
+msgid "accounts.sign_up.title"
+msgstr ""
+
+#. default-message: If you have already created an account, then please <a0>log in</a0>.
+#: templates/account/signup.html:26
+msgid "accounts.sign_up.login_prompt"
+msgstr ""
+

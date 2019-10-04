@@ -62,7 +62,7 @@ class DuplicateTabCommand(Delta):
                 },
             }
 
-    def forward_impl(self):
+    def forward(self):
         self.workflow.live_tabs.filter(position__gte=self.tab.position).update(
             position=F("position") + 1
         )
@@ -73,7 +73,7 @@ class DuplicateTabCommand(Delta):
         self.workflow.selected_tab_position = self.tab.position
         self.workflow.save(update_fields=["selected_tab_position"])
 
-    def backward_impl(self):
+    def backward(self):
         self.tab.is_deleted = True
         self.tab.save(update_fields=["is_deleted"])
 
@@ -86,7 +86,7 @@ class DuplicateTabCommand(Delta):
         self.workflow.save(update_fields=["selected_tab_position"])
 
     # override
-    async def schedule_execute_if_needed(self) -> None:
+    def get_modifies_render_output(self) -> bool:
         """
         Execute if we added a module that isn't rendered.
         
@@ -96,12 +96,13 @@ class DuplicateTabCommand(Delta):
 
         We do not need to schedule a render after deleting the tab, because all
         modified modules don't exist -- therefore they're up to date.
+
+        This must be called in a `workflow.cooperative_lock()`.
         """
-        if not self.tab.is_deleted and any(
+        return not self.tab.is_deleted and any(
             wfm.last_relevant_delta_id != wfm.cached_render_result_delta_id
             for wfm in self.tab.live_wf_modules.all()
-        ):
-            await self._schedule_execute()
+        )
 
     @classmethod
     def amend_create_kwargs(

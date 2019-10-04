@@ -29,7 +29,7 @@ class DeleteTabCommand(Delta):
         )
         return data
 
-    def forward_impl(self):
+    def forward(self):
         self.tab.is_deleted = True
         self.tab.save(update_fields=["is_deleted"])
 
@@ -43,7 +43,7 @@ class DeleteTabCommand(Delta):
             )
             self.workflow.save(update_fields=["selected_tab_position"])
 
-    def backward_impl(self):
+    def backward(self):
         self.workflow.live_tabs.filter(position__gte=self.tab.position).update(
             position=F("position") + 1
         )

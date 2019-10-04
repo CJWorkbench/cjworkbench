@@ -10,6 +10,7 @@ from django.http import HttpRequest, JsonResponse
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
+from cjwstate import commands
 from cjwstate.models import InProgressUpload, Workflow, WfModule
 from cjwstate.models.commands import ChangeParametersCommand
 from cjwstate.models.workflow import WorkflowCooperativeLock
@@ -216,8 +217,11 @@ class Upload(View):
         def create_change_parameters_command():
             workflow = workflow_lock.workflow
             # sends delta to Websockets clients and queues render.
-            async_to_sync(ChangeParametersCommand.create)(
-                workflow=workflow, wf_module=wf_module, new_values=want_params
+            async_to_sync(commands.do)(
+                ChangeParametersCommand,
+                workflow=workflow,
+                wf_module=wf_module,
+                new_values=want_params,
             )
 
         workflow_lock.after_commit(create_change_parameters_command)

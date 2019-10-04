@@ -1,4 +1,4 @@
-from django.conf import settings
+from cjworkbench.i18n import default_locale, supported_locales
 
 
 class SetCurrentLocaleMiddleware:
@@ -11,8 +11,8 @@ class SetCurrentLocaleMiddleware:
         # the view (and later middleware) are called.
         locale = request.GET.get("locale")
 
-        if locale not in (tup[0] for tup in settings.LANGUAGES):
-            locale = settings.LANGUAGE_CODE
+        if locale not in supported_locales:
+            locale = default_locale
 
         request.locale_id = locale
 

@@ -33,13 +33,13 @@ class ReorderModulesCommand(ChangesWfModuleOutputs, Delta):
         for record in order:
             self.tab.wf_modules.filter(pk=record["id"]).update(order=record["order"])
 
-    def forward_impl(self):
+    def forward(self):
         new_order = json.loads(self.new_order)
         self.apply_order(new_order)
 
         self.forward_affected_delta_ids()
 
-    def backward_impl(self):
+    def backward(self):
         old_order = json.loads(self.old_order)
         self.apply_order(old_order)
 

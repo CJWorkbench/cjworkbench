@@ -1,35 +1,72 @@
+
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2019-07-16 11:07+0000\n"
-"Mime-Version: 1.0\n"
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2019-09-15 22:18+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: el\n"
+"Language-Team: el <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: @lingui/cli\n"
-"Language: el\n"
-"Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: \n"
-"Language-Team: \n"
-"Plural-Forms: \n"
+"Generated-By: Babel 2.7.0\n"
 
 #: assets/js/i18n/locales.js:5
 msgid "locales.el"
-msgstr "Ελληνικά"
+msgstr ""
 
 #: assets/js/i18n/locales.js:4
 msgid "locales.en"
-msgstr "Αγγλικά"
+msgstr ""
 
 #: assets/js/table/SelectedRowsActions.js:105
 msgid "selectedRow.numberOfRows"
+msgstr ""
+
+#: assets/js/utils.js:47
+msgid "time_diff.ago.days"
+msgstr ""
+
+#: assets/js/utils.js:49
+msgid "time_diff.ago.hours"
+msgstr ""
+
+#: assets/js/utils.js:51
+msgid "time_diff.ago.minutes"
+msgstr ""
+
+#: assets/js/utils.js:53
+msgid "time_diff.ago.seconds"
+msgstr ""
+
+#: assets/js/utils.js:45
+msgid "time_diff.ago.years"
+msgstr ""
+
+#: assets/js/utils.js:55
+msgid "time_diff.now"
+msgstr ""
+
+#. The parameter will contain something like '4h ago'
+#: assets/js/WorkflowNavBar.js:57
+msgid "workflow.last_updated"
+msgstr ""
+
+#. The tab prefix will be used as the first part of the default name of tabs,
+#. i.e. if the tab prefix is 'Tab', the default names can be 'Tab 1', 'Tab 2',
+#. etc
+#: assets/js/WorkflowEditor/Tabs/actions.js:93
+msgid "workflow.tabs.tab_prefix"
 msgstr ""
 
 #: assets/js/ShareModal/PublicPrivate.js:15
 msgid "workflow.visibility.anyone"
 msgstr "Ο καθένας μπορεί να δει και να το κάνει duplicate"
 
-#: assets/js/WorkflowNavBar.js:51
+#: assets/js/WorkflowNavBar.js:52
 msgid "workflow.visibility.by"
 msgstr "από"
 
@@ -53,7 +90,7 @@ msgstr "Αντιγραφή στο πληκτρολόγιο"
 msgid "workflow.visibility.dateType"
 msgstr "Ημε/μηνία"
 
-#: assets/js/WorkflowNavBar.js:201
+#: assets/js/WorkflowNavBar.js:202
 msgid "workflow.visibility.duplicate"
 msgstr "Διπλότυπο"
 
@@ -61,11 +98,11 @@ msgstr "Διπλότυπο"
 msgid "workflow.visibility.grandAccess"
 msgstr "Πρόσβαση"
 
-#: assets/js/WfHamburgerMenu.js:56
+#: assets/js/WfHamburgerMenu.js:55
 msgid "workflow.visibility.home"
 msgstr "Αρχική"
 
-#: assets/js/WfHamburgerMenu.js:53
+#: assets/js/WfHamburgerMenu.js:52
 msgid "workflow.visibility.importModule"
 msgstr "Εισαγωγή module"
 
@@ -73,15 +110,15 @@ msgstr "Εισαγωγή module"
 msgid "workflow.visibility.isPublic"
 msgstr "Ο καθένας μπορεί"
 
-#: assets/js/WfHamburgerMenu.js:59
+#: assets/js/WfHamburgerMenu.js:58
 msgid "workflow.visibility.logout"
 msgstr "Έξοδος"
 
-#: assets/js/WfHamburgerMenu.js:43
+#: assets/js/WfHamburgerMenu.js:42
 msgid "workflow.visibility.menu"
 msgstr "μενού"
 
-#: assets/js/WfHamburgerMenu.js:52
+#: assets/js/WfHamburgerMenu.js:51
 msgid "workflow.visibility.myWorkflows"
 msgstr "Τα workflows μου"
 
@@ -97,17 +134,17 @@ msgstr "Αριθμός"
 msgid "workflow.visibility.owner"
 msgstr "Κάτοχος"
 
-#: assets/js/WorkflowNavBar.js:62
+#: assets/js/WorkflowNavBar.js:65
 msgid "workflow.visibility.private"
-msgstr "Ιδιωτικό"
+msgstr "ιδιωτικό"
 
 #: assets/js/ShareModal/Url.js:61
 msgid "workflow.visibility.privateLink"
 msgstr "Περιορισμένη πρόσβαση"
 
-#: assets/js/WorkflowNavBar.js:62
+#: assets/js/WorkflowNavBar.js:65
 msgid "workflow.visibility.public"
-msgstr "Δημόσιο"
+msgstr "δημόσιο"
 
 #: assets/js/ShareModal/Url.js:61
 msgid "workflow.visibility.publicLink"
@@ -125,7 +162,7 @@ msgstr "Αναφορά"
 msgid "workflow.visibility.rows"
 msgstr "Σειρές"
 
-#: assets/js/WorkflowNavBar.js:203
+#: assets/js/WorkflowNavBar.js:204
 msgid "workflow.visibility.share"
 msgstr "Μοιράσου"
 
@@ -149,10 +186,6 @@ msgstr "Κείμενο"
 msgid "workflow.visibility.undo"
 msgstr "Προηγούμενο"
 
-#: assets/js/WorkflowNavBar.js:56
-#~ msgid "workflow.visibility.update"
-#~ msgstr "Ενημερώθηκε"
-
 #. This is used in navigation bar. It should be all-caps for styling reasons.
 #: assets/js/Workflows/Navbar.js:39
 msgid "workflows.navbar.training"
@@ -161,4 +194,26 @@ msgstr "ΕΚΠΑΙΔΕΥΣΗ"
 #. This is used in navigation bar. It should be all-caps for styling reasons.
 #: assets/js/Workflows/Navbar.js:36
 msgid "workflows.navbar.workflows"
-msgstr "Ροές Εργασίας"
+msgstr ""
+
+#: templates/account/login.html:4 templates/account/login.html:10
+#: templates/account/signup.html:12
+msgid "accounts.sign_in.title"
+msgstr ""
+
+#: templates/account/login.html:43
+msgid "accounts.sign_in.forgot_password_prompt"
+msgstr ""
+
+#: templates/account/login.html:45
+msgid "accounts.sign_in.button"
+msgstr ""
+
+#: templates/account/signup.html:4
+msgid "accounts.sign_up.title"
+msgstr ""
+
+#: templates/account/signup.html:26
+msgid "accounts.sign_up.login_prompt"
+msgstr ""
+

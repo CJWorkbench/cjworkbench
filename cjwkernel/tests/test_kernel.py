@@ -15,15 +15,13 @@ class KernelTests(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        with cls.assertLogs(forkserver.__name__):
-            forkserver.install_calling_process_as_subreaper()
         # Kernel takes a while to start up -- it's loading pyarrow+pandas in a
         # separate process. So we'll only load it once.
         cls.kernel = Kernel()
 
     @classmethod
     def tearDownClass(cls):
-        cls.kernel = None
+        del cls.kernel
 
     def setUp(self):
         super().setUp()
