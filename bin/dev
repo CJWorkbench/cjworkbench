@@ -118,7 +118,7 @@ case "$COMMAND" in
     #    for pontoon to find
     docker_compose_with_commands run --rm -e PYTHONPATH=. pydev pipenv run pybabel extract \
         -w 10000000 -F pybabel.cfg \
-        -k trans -k trans_lazy \
+        -k trans -k trans_lazy -c "i18n" \
         -o assets/locale/en/messages.pot . 
         
     # for PYTHONPATH, ditto `pybabel` command above
