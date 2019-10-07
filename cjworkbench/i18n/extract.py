@@ -187,6 +187,18 @@ def extract_python(fileobj, keywords, comment_tags, options):
                     translator_comments.append(
                         (message_lineno, "default-message: " + messages[1])
                     )
+
+                if len(messages) > 2 and isinstance(messages[2], str):
+                    context = messages[2]
+                else:
+                    context = None
+
+                if funcname in ["trans", "trans_lazy"]:
+                    if context:
+                        funcname = "pgettext"
+                        messages = [context, messages[0]]
+                    else:
+                        funcname = None
                 ### HERE end our modifications to pybabel's script
 
                 yield (

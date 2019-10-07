@@ -44,8 +44,19 @@ def _get_translations(locale):
     return _translators[locale]
 
 
-def trans(*args, **kwargs):
-    return do_trans(get_language(), *args, **kwargs)
+def trans(message_id, *, default, context=None, parameters={}, tags={}):
+    """Translate the given message ID to the current locale
+    
+    For code parsing reasons, respect the following order when passing keyword arguments:
+        `message_id` and then `default` and then `context` and then everything else
+    """
+    return do_trans(
+        get_language(),
+        default=default,
+        context=context,
+        parameters=parameters,
+        tags=tags,
+    )
 
 
 def do_trans(locale, message_id, *, default, context=None, parameters={}, tags={}):
@@ -57,6 +68,9 @@ def do_trans(locale, message_id, *, default, context=None, parameters={}, tags={
 
 
 trans_lazy = lazy(trans)
+"""Mark a string for translation, but actually translate it when it has to be used.
+   See the documentation of `trans` for more details on the parameters.
+"""
 
 
 def restore_tags(message, tag_mapping):
