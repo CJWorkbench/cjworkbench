@@ -1,5 +1,10 @@
 from django.test import SimpleTestCase
-from cjworkbench.i18n.trans import trans, MessageTranslator, InvalidICUParameters
+from cjworkbench.i18n.trans import (
+    trans_html,
+    trans,
+    MessageTranslator,
+    InvalidICUParameters,
+)
 from cjworkbench.i18n import default_locale
 
 
@@ -15,7 +20,6 @@ class TransTest(SimpleTestCase):
     def test_trans_params(self):
         self.assertEqual(
             trans(
-                default_locale,
                 mock_message_id,
                 default="Hello {a} {param_b} {c}!",
                 parameters={"param_b": "there", "a": "you", "d": "tester"},
@@ -27,6 +31,51 @@ class TransTest(SimpleTestCase):
     def test_format_invalid_default(self):
         with self.assertRaises(InvalidICUParameters):
             trans(
+                mock_message_id,
+                default="Hello {a} {0} {b}",
+                parameters={"a": "you", "0": "!", "b": "2"},
+            ),
+
+    # Tests that a translator can't break our system by including a numeric variable in the message
+    def test_format_invalid_message(self):
+        self.assertEqual(
+            MessageTranslator(default_locale)._process_simple_message(
+                "Hello {a} {0} {b}", "Hello {a} {b}", parameters={"a": "you", "b": "!"}
+            ),
+            "Hello you !",
+        )
+
+    # Tests that HTML is not escaped
+    def test_no_html_escape(self):
+        self.assertEqual(
+            trans(
+                mock_message_id,
+                default='Hello <a href="/you?a=n&b=e">you > {param_b}</a> my & friend',
+                parameters={"param_b": "> there"},
+            ),
+            'Hello <a href="/you?a=n&b=e">you > > there</a> my & friend',
+        )
+
+
+class TransHtmlTest(SimpleTestCase):
+    # Tests that `parameters` argument replaces variables in the message.
+    # 1) Parameters that do not exist in the message are ignored.
+    # 2) Variables in the message for which no parameter has been given are ignored.
+    def test_trans_params(self):
+        self.assertEqual(
+            trans_html(
+                default_locale,
+                mock_message_id,
+                default="Hello {a} {param_b} {c}!",
+                parameters={"param_b": "there", "a": "you", "d": "tester"},
+            ),
+            "Hello you there {c}!",
+        )
+
+    # Tests that a programmer will get an exception when including a numeric variable in the message
+    def test_format_invalid_default(self):
+        with self.assertRaises(InvalidICUParameters):
+            trans_html(
                 default_locale,
                 mock_message_id,
                 default="Hello {a} {0} {b}",
@@ -36,7 +85,7 @@ class TransTest(SimpleTestCase):
     # Tests that a translator can't break our system by including a numeric variable in the message
     def test_format_invalid_message(self):
         self.assertEqual(
-            MessageTranslator(default_locale)._process_message(
+            MessageTranslator(default_locale)._process_html_message(
                 "Hello {a} {0} {b}", "Hello {a} {b}", parameters={"a": "you", "b": "!"}
             ),
             "Hello you !",
@@ -49,7 +98,7 @@ class TransTest(SimpleTestCase):
     # 4) Tag attributes existing in the message are ignored.
     def test_trans_tags(self):
         self.assertEqual(
-            trans(
+            trans_html(
                 default_locale,
                 mock_message_id,
                 default='<a0 id="nope">Hello</a0><b0>you</b0><div>there</div>',
@@ -73,7 +122,7 @@ class TransTest(SimpleTestCase):
     # At this point, nested tags are ignored, but their contents are kept. This may change in the future.
     def test_trans_nested_tags(self):
         self.assertEqual(
-            trans(
+            trans_html(
                 default_locale,
                 mock_message_id,
                 default="<a0>Hello<b0>you</b0><div>there</div></a0>",
@@ -89,7 +138,7 @@ class TransTest(SimpleTestCase):
     # Tests that parameters are substituted within tags
     def test_trans_params_in_tags(self):
         self.assertEqual(
-            trans(
+            trans_html(
                 default_locale,
                 mock_message_id,
                 default="<a0>Hello {name}</a0>{test}",
@@ -102,7 +151,7 @@ class TransTest(SimpleTestCase):
     # Tests that special characters in the text are escaped, in any depth
     def test_trans_escapes_text(self):
         self.assertEqual(
-            trans(
+            trans_html(
                 default_locale,
                 mock_message_id,
                 default="<a0>Hello &<b>&</b></a0>>",
@@ -114,7 +163,7 @@ class TransTest(SimpleTestCase):
     # Tests that message parameters are escaped
     def test_trans_escapes_params(self):
         self.assertEqual(
-            trans(
+            trans_html(
                 default_locale,
                 mock_message_id,
                 default="<a0>Hello {name}</a0>{test}",
@@ -127,7 +176,7 @@ class TransTest(SimpleTestCase):
     # Tests that tag attributes in messages are escaped
     def test_trans_escapes_tag_attrs(self):
         self.assertEqual(
-            trans(
+            trans_html(
                 default_locale,
                 mock_message_id,
                 default="<a0>Hello</a0>",
@@ -145,7 +194,7 @@ class TransTest(SimpleTestCase):
     # 5) `arg_XX` arguments are replaced and escaped correctly
     def test_trans_tag_placeholders(self):
         self.assertEqual(
-            trans(
+            trans_html(
                 default_locale,
                 mock_message_id,
                 default='<span0 class="nope">Hello {first}</span0><span1></span1> {second} <a0>{a}<b></b></a0> < <a1>there<</a1>!<br /><script type="text/javascript" src="mybadscript.js"></script>',

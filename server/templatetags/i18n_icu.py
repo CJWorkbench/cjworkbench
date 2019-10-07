@@ -1,6 +1,6 @@
 from django import template
 from django.utils.safestring import mark_safe
-from cjworkbench.i18n.trans import do_trans
+from cjworkbench.i18n.trans import trans_html as do_trans_html
 import re
 
 register = template.Library()
@@ -100,7 +100,7 @@ def trans_html(
             continue
 
     return mark_safe(
-        do_trans(
+        do_trans_html(
             locale or context["request"].locale_id,
             message_id,
             default=default,
