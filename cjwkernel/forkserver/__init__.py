@@ -74,7 +74,7 @@ class Forkserver:
         self,
         *,
         module_main: str = "cjwkernel.pandas.main.main",
-        forkserver_preload: List[str] = []
+        forkserver_preload: List[str] = [],
     ):
         # We rely on Python's os.fork() internals to close FDs and run a child
         # process.
