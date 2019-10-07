@@ -1,10 +1,12 @@
 import array
 import ctypes
+import importlib
 import os
 import signal
 import sys
 import socket
 import traceback
+from typing import Callable
 import cjwkernel.pandas.main
 from . import protocol
 
@@ -59,10 +61,16 @@ _MODULE_STACK_POINTER = ctypes.c_void_p(
 # Our calling convention is: "forkserver uses global variables; module can see
 # them." Rationale: to a malicious module, all variables are global anyway.
 # "forkserver" should use very few variables, and they are all listed here.
+module_main: Callable[..., None] = None
+"""Function to call after sandboxing, with *message.args."""
 sock: socket.socket = None
 """Socket "forkserver" uses to communicate with its parent."""
 message: protocol.SpawnPandasModule = None
 """Arguments passed to the spawned module."""
+stdout_read_fd: int = None
+stdout_write_fd: int = None
+stderr_read_fd: int = None
+stderr_write_fd: int = None
 
 
 def _sandbox_module():
@@ -77,26 +85,23 @@ def _sandbox_module():
     [ ] Remount /proc (so modules can't see other processes)
     """
     os.close(sock.fileno())  # Close `sock`
+    global stdout_read_fd, stderr_read_fd
+    os.close(stdout_read_fd)
+    os.close(stderr_read_fd)
+    stdout_read_fd = None
+    stderr_read_fd = None
     _sandbox_stdout_stderr()  # Close stdout/stderr
     # _sandbox_remount_proc()  # Remount /proc
 
 
 def _sandbox_stdout_stderr():
-    os.close(sys.stdin.fileno())
-    os.close(sys.stdout.fileno())  # disallow flooding our logs
-    os.close(sys.stderr.fileno())  # disallow flooding our logs
-
-    # Rewrite sys.stdout+sys.stderr to write to log_fd
-    #
-    # We're writing in text mode so we're forced to buffer output. But
-    # we don't want buffering: if we crash, we want whatever we write
-    # to be visible to the reader at the other end, even if we crash.
-    # Set buffering=1, meaning "line buffering". This is what
-    # interactive Python uses for stdout+stderr.
-    sys.stdout = os.fdopen(message.log_fd, "wt", encoding="utf-8", buffering=1)
-    sys.stderr = sys.stdout
-    sys.__stdout__ = sys.stdout
-    sys.__stderr__ = sys.stderr
+    global stdout_write_fd, stderr_write_fd
+    os.dup2(stdout_write_fd, 1)
+    os.dup2(stderr_write_fd, 2)
+    os.close(stdout_write_fd)
+    os.close(stderr_write_fd)
+    stdout_write_fd = None
+    stderr_write_fd = None
 
 
 def _sandbox_remount_proc():
@@ -110,9 +115,9 @@ def _sandbox_remount_proc():
     )
 
 
-def module_main() -> int:
+def cloned_module_main() -> int:
     # Aid in debugging a bit
-    name = "cjwkernel-module:%s" % message.compiled_module.module_slug
+    name = "cjwkernel-module:%s" % message.process_name
     libc.prctl(PR_SET_NAME, name.encode("utf-8"), 0, 0, 0)
 
     _sandbox_module()
@@ -128,9 +133,7 @@ def module_main() -> int:
     # (Imagine `goto`.) That's okay -- we sandbox the module so it can't harm
     # us (aside from wasting CPU cycles), and we kill it after a timeout.
     try:
-        cjwkernel.pandas.main.main(
-            message.compiled_module, message.output_fd, message.function, *message.args
-        )
+        module_main(*message.args)
     except:
         traceback.print_exc(sys.stderr.buffer.fileno())
         os._exit(1)
@@ -139,14 +142,12 @@ def module_main() -> int:
     os._exit(0)
 
 
-_MODULE_MAIN_FUNC = ctypes.PYFUNCTYPE(ctypes.c_int)(module_main)
+_MODULE_MAIN_FUNC = ctypes.PYFUNCTYPE(ctypes.c_int)(cloned_module_main)
 
 
-def spawn_module(
-    sock: socket.socket, message: protocol.SpawnPandasModule
-) -> protocol.SpawnedPandasModule:
+def spawn_module(sock: socket.socket, message: protocol.SpawnPandasModule) -> None:
     """
-    Fork a child process; send its PID on `sock`.
+    Fork a child process; send its handle over `sock`; return.
 
     This closes all open file descriptors in the child: stdin, stdout, stderr,
     and `sock.fileno()`. The reason is SECURITY: the child will invoke
@@ -164,6 +165,15 @@ def spawn_module(
     * "module": invokes `cjwkernel.pandas.main.main()`, using the file
                 descriptors passed in `SpawnPandasModule`.
     """
+    global stdout_read_fd, stdout_write_fd, stderr_read_fd, stderr_write_fd
+
+    assert stdout_read_fd is None
+    assert stdout_write_fd is None
+    assert stderr_read_fd is None
+    assert stderr_write_fd is None
+
+    stdout_read_fd, stdout_write_fd = os.pipe()
+    stderr_read_fd, stderr_write_fd = os.pipe()
 
     module_pid = _call_libc(
         "clone",
@@ -176,10 +186,23 @@ def spawn_module(
         raise OSError(ctypes.get_errno(), "clone() system call failed")
     assert module_pid != 0, "clone() should not return in the child process"
 
-    return protocol.SpawnedPandasModule(module_pid)
+    os.close(stdout_write_fd)
+    os.close(stderr_write_fd)
+    stdout_write_fd = None
+    stderr_write_fd = None
+
+    spawned_module = protocol.SpawnedPandasModule(
+        module_pid, stdout_read_fd, stderr_read_fd
+    )
+    spawned_module.send_on_socket(sock)
+
+    os.close(stdout_read_fd)
+    os.close(stderr_read_fd)
+    stdout_read_fd = None
+    stderr_read_fd = None
 
 
-def forkserver_main(socket_fd: int) -> None:
+def forkserver_main(_module_main: str, socket_fd: int) -> None:
     """
     Start the forkserver.
 
@@ -205,6 +228,15 @@ def forkserver_main(socket_fd: int) -> None:
     end of "sock" and wait() for it, then nothing will wait() for the module
     process after it dies and it will become a zombie.
     """
+    # Close fd=0 (stdin). No children should be able to read from stdin; and
+    # forkserver_main has no reason to read from stdin, either.
+    os.close(0)
+
+    global module_main
+    module_main_module_name, module_main_name = _module_main.rsplit(".", 1)
+    module_main_module = importlib.import_module(module_main_module_name)
+    module_main = module_main_module.__dict__[module_main_name]
+
     # 1b. Child establishes socket connection
     #
     # Note: we don't put this in a `with` block, because that would add a
@@ -233,8 +265,4 @@ def forkserver_main(socket_fd: int) -> None:
         #
         # The _child_ sends `SpawnedPandasModule` over `sock`, because only
         # the child knows the sub-child's PID.
-        spawned_module = spawn_module(sock, message)
-        spawned_module.send_on_socket(sock)
-
-        os.close(message.output_fd)
-        os.close(message.log_fd)
+        spawn_module(sock, message)

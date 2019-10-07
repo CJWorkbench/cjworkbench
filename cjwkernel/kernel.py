@@ -124,6 +124,7 @@ class Kernel:
         self.fetch_timeout = fetch_timeout
         self.render_timeout = render_timeout
         self._forkserver = Forkserver(
+            module_main="cjwkernel.pandas.main.main",
             forkserver_preload=[
                 "asyncio",
                 "dataclasses",
@@ -139,7 +140,7 @@ class Kernel:
                 "re2",
                 "cjwkernel.pandas.main",
                 "cjwkernel.pandas.module",
-            ]
+            ],
         )
 
     def __del__(self):
@@ -270,26 +271,23 @@ class Kernel:
         """
         limit_time = time.time() + timeout
 
-        output_r, output_w = os.pipe()
-        log_r, log_w = os.pipe()
         module_process = self._forkserver.spawn_module(
-            compiled_module, output_w, log_w, function, args
+            process_name=compiled_module.module_slug,
+            args=[compiled_module, function, args],
         )
-        # Close the (refcounted) fds we sent the spawned child. That way, when
-        # the child closes _its_ copies of the "_w" fds, we'll see the EOF as
-        # we read() from our "_r" fds.
-        os.close(output_w)
-        os.close(log_w)
 
-        os.set_blocking(output_r, False)
-        os.set_blocking(log_r, False)
-        output_reader = ChildReader(output_r, OUTPUT_BUFFER_MAX_BYTES)
-        log_reader = ChildReader(log_r, LOG_BUFFER_MAX_BYTES)
+        # stdout is Thrift package; stderr is logs
+        output_reader = ChildReader(
+            module_process.stdout.fileno(), OUTPUT_BUFFER_MAX_BYTES
+        )
+        log_reader = ChildReader(module_process.stderr.fileno(), LOG_BUFFER_MAX_BYTES)
 
-        # Read until the child closes its output_w and log_w.
+        os.set_blocking(output_reader.fileno, False)
+        os.set_blocking(log_reader.fileno, False)
+        # Read until the child closes its stdout and stderr
         with selectors.DefaultSelector() as selector:
-            selector.register(log_r, selectors.EVENT_READ)
-            selector.register(output_r, selectors.EVENT_READ)
+            selector.register(output_reader.fileno, selectors.EVENT_READ)
+            selector.register(log_reader.fileno, selectors.EVENT_READ)
 
             timed_out = False
             while selector.get_map():

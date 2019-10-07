@@ -6,7 +6,7 @@ import socket
 import subprocess
 import sys
 import threading
-from typing import Any, List, Tuple
+from typing import Any, BinaryIO, List, Tuple
 from . import protocol
 from cjwkernel.types import CompiledModule
 from cjwkernel.pandas import main as module_main
@@ -22,8 +22,10 @@ logger = logging.getLogger(__name__)
 
 @dataclass(frozen=True)
 class ModuleProcess:
-    module_slug: str
+    process_name: str
     pid: int
+    stdout: BinaryIO  # auto-closes in __del__
+    stderr: BinaryIO  # auto-closes in __del__
 
     def kill(self) -> None:
         return os.kill(self.pid, 9)
@@ -68,7 +70,12 @@ class Forkserver:
       named-pipe+hmac approach does not inspire confidence.)
     """
 
-    def __init__(self, *, forkserver_preload: List[str] = []):
+    def __init__(
+        self,
+        *,
+        module_main: str = "cjwkernel.pandas.main.main",
+        forkserver_preload: List[str] = []
+    ):
         # We rely on Python's os.fork() internals to close FDs and run a child
         # process.
         self._pid = os.getpid()
@@ -77,8 +84,8 @@ class Forkserver:
             [
                 sys.executable,
                 "-c",
-                "import cjwkernel.forkserver.main; cjwkernel.forkserver.main.forkserver_main(%d)"
-                % child_socket.fileno(),
+                'import cjwkernel.forkserver.main; cjwkernel.forkserver.main.forkserver_main("%s", %d)'
+                % (module_main, child_socket.fileno()),
             ],
             # env={},  # FIXME SECURITY set env so modules don't get secrets
             stdin=subprocess.DEVNULL,
@@ -94,30 +101,22 @@ class Forkserver:
             message = protocol.ImportModules(forkserver_preload)
             message.send_on_socket(self._socket)
 
-    def spawn_module(
-        self,
-        compiled_module: CompiledModule,
-        output_fd: int,
-        log_fd: int,
-        function: str,
-        args: List[Any],
-    ) -> ModuleProcess:
+    def spawn_module(self, process_name: str, args: List[Any]) -> ModuleProcess:
         """
         Make our server spawn a process, and return it.
 
         `args` are the arguments to pass to `cjwkernel.pandas.module.main()`.
         """
-        message = protocol.SpawnPandasModule(
-            compiled_module=compiled_module,
-            output_fd=output_fd,
-            log_fd=log_fd,
-            function=function,
-            args=args,
-        )
+        message = protocol.SpawnPandasModule(process_name=process_name, args=args)
         with self._lock:
             message.send_on_socket(self._socket)
             response = protocol.SpawnedPandasModule.recv_on_socket(self._socket)
-        return ModuleProcess(module_slug=compiled_module.module_slug, pid=response.pid)
+        return ModuleProcess(
+            process_name=process_name,
+            pid=response.pid,
+            stdout=os.fdopen(response.stdout_fd, mode="rb"),
+            stderr=os.fdopen(response.stderr_fd, mode="rb"),
+        )
 
     def close(self) -> None:
         """

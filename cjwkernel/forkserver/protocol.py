@@ -86,11 +86,19 @@ class SpawnPandasModule(MessageToChild):
     Tell child to fork(), close this socket, and run child code.
     """
 
-    compiled_module: CompiledModule
-    output_fd: int
-    log_fd: int
-    function: str
+    process_name: str
     args: List[Any]
+
+
+@dataclass(frozen=True)
+class SpawnedPandasModule(MessageToParent):
+    """
+    Respond to SpawnPandasModule with a child process's information.
+    """
+
+    pid: int
+    stdout_fd: int
+    stderr_fd: int
 
     # override
     def send_on_socket(self, sock: socket.socket) -> None:
@@ -109,20 +117,11 @@ class SpawnPandasModule(MessageToChild):
         #
         # It turns out the multiprocessing.reduction module does exactly what
         # we want.
-        sendfds(sock, [self.output_fd, self.log_fd])
+        sendfds(sock, [self.stdout_fd, self.stderr_fd])
 
     # override
     @classmethod
     def recv_on_socket(cls, sock: socket.socket) -> SpawnPandasModule:
         raw_message = super().recv_on_socket(sock)
-        child_output_fd, child_log_fd = recvfds(sock, 2)
-        return replace(raw_message, output_fd=child_output_fd, log_fd=child_log_fd)
-
-
-@dataclass(frozen=True)
-class SpawnedPandasModule(MessageToParent):
-    """
-    Respond to SpawnPandasModule with a child process's information.
-    """
-
-    pid: int
+        stdout_fd, stderr_fd = recvfds(sock, 2)
+        return replace(raw_message, stdout_fd=stdout_fd, stderr_fd=stderr_fd)
