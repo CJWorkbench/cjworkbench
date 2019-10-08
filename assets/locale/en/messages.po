@@ -46,6 +46,14 @@ msgstr "TRAINING"
 msgid "workflows.navbar.workflows"
 msgstr "WORKFLOWS"
 
+#: cjworkbench/forms/signup.py:24
+msgid "accounts.sign_up.fields.first_name.placeholder"
+msgstr "First name"
+
+#: cjworkbench/forms/signup.py:32
+msgid "accounts.sign_up.fields.last_name.placeholder"
+msgstr "Last name"
+
 #: templates/account/login.html:4 templates/account/login.html:10
 #: templates/account/signup.html:12
 msgid "accounts.sign_in.title"
@@ -66,3 +74,4 @@ msgstr "Sign Up"
 #: templates/account/signup.html:26
 msgid "accounts.sign_up.login_prompt"
 msgstr "If you have already created an account, then please <a0>log in</a0>."
+
