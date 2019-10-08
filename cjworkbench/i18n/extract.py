@@ -100,8 +100,9 @@ def extract_python(fileobj, keywords, comment_tags, options):
     It returns an iterator yielding tuples in the following form ``(lineno,
     funcname, message, comments)``.
     
-    
-    Adapted from the corresponding pybabel built-in function
+    Adapted from the corresponding pybabel built-in function,
+    so that it understands the syntax of our custom `trans`/`trans_lazy` function
+    and correctly parses the default message and the context.
     
     :param fileobj: the seekable, file-like object the messages should be
                     extracted from
@@ -183,18 +184,26 @@ def extract_python(fileobj, keywords, comment_tags, options):
                     translator_comments = []
 
                 ### HERE start our modifications to pybabel's script
-                if len(messages) > 1 and messages[1]:
-                    translator_comments.append(
-                        (message_lineno, "default-message: " + messages[1])
-                    )
-
-                if len(messages) > 2 and isinstance(messages[2], str):
-                    context = messages[2]
-                else:
-                    context = None
-
                 if funcname in ["trans", "trans_lazy"]:
+                    # `messages` will have all the string parameters to our function
+                    # As we specify in the documentation of `trans`,
+                    # the first will be the message ID, the second will be the default message
+                    # and the (optional) third will be the message context
+                    if len(messages) > 1 and messages[1]:
+                        # If we have a default, add it as a special comment
+                        # that will be processed by our `merge_catalogs` script
+                        translator_comments.append(
+                            (message_lineno, "default-message: " + messages[1])
+                        )
+
+                    if len(messages) > 2 and isinstance(messages[2], str):
+                        context = messages[2]
+                    else:
+                        context = None
+                    
                     if context:
+                        # if we have a context, trick pybabel to use `pgettext`
+                        # so that it adds the context to the translation file
                         funcname = "pgettext"
                         messages = [context, messages[0]]
                     else:
