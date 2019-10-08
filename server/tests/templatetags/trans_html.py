@@ -4,13 +4,8 @@ from cjworkbench.i18n import default_locale
 from cjworkbench.tests.i18n import mock_message_id
 
 
-class MockRequest(object):
-    def __init__(self, **kwargs):
-        self.locale_id = kwargs.get("locale_id", default_locale)
-
-
 def mock_context(**kwargs):
-    return {"request": MockRequest(**kwargs)}
+    return {"i18n": {"locale_id": kwargs.get("locale_id", default_locale)}}
 
 
 class TransTemplateTagTests(SimpleTestCase):
