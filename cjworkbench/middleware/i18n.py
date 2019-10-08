@@ -16,7 +16,7 @@ class SetCurrentLocaleMiddleware:
             locale = default_locale
 
         request.locale_id = locale
-        # We set the locale of django, in order to 
+        # We set the locale of django, in order to
         # a) activate the automatic translation of its translatable elements
         #    (e.g. placeholders of password form inputs)
         # b) have a global source of the current locale

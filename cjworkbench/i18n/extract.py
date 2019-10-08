@@ -200,7 +200,7 @@ def extract_python(fileobj, keywords, comment_tags, options):
                         context = messages[2]
                     else:
                         context = None
-                    
+
                     if context:
                         # if we have a context, trick pybabel to use `pgettext`
                         # so that it adds the context to the translation file
