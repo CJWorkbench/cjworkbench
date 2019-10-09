@@ -99,6 +99,15 @@ def trans_html(
             tags[placeholder]["attrs"][tag_attr] = kwargs[arg]
             continue
 
+    locale = (
+        # if asked for a specific locale, we use it
+        locale
+        # else, we look for the i18n context and get the value from there
+        or context.get("i18n", {}).get("locale_id")
+        # sometimes (e.g. in `allauth` emails) we don't have the i18n context; in this case, we inspect the current request
+        or context["request"].locale_id
+    )
+
     return mark_safe(
         do_trans_html(
             locale or context["i18n"]["locale_id"],
