@@ -1,4 +1,6 @@
+/* global fetch */
 import { t } from '@lingui/macro'
+import { csrfToken } from '../utils'
 
 export const supportedLocales = {
   en: t('locales.en')`English`,
@@ -18,9 +20,20 @@ function isSupported (locale) {
 /**
  * Reload the page, adding a "locale" query parameter to the URL
  */
-export function setLocale (locale) {
-  // very quick and dirty solution for reloading with added parameter
-  const q = new URLSearchParams(window.location.search)
-  q.set('locale', locale)
-  window.location.search = '?' + q.toString()
+export async function setLocale (locale) {
+  const response = await fetch('/i18n/set_locale', {
+    method: 'POST',
+    credentials: 'same-origin',
+    redirect: 'follow',
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8',
+      'X-CSRFToken': csrfToken
+    },
+    body: JSON.stringify({
+      new_locale: locale
+    })
+  })
+  if (response.url) {
+    window.location = response.url
+  }
 }
