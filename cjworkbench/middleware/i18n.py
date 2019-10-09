@@ -28,30 +28,36 @@ class SetCurrentLocaleMiddleware:
         """ Search for the locale to use.
         
         We search in the following places, in order
-         1. In the current request attributes, so that the user can change it any time
-         2. In the current session, in case it's there from some previous request
-         3. In the current user's settings
-         4. In the Accept-Language header sent by the browser
+         1. In the current request attributes, so that the user can change it any time.
+            This is meant for testing purposes and does not affect the preferences of logged-in users.
+         2. If the user is logged in and has ever set a locale preference, in the user's profile;
+            otherwise, in the current session.
+         3. In the Accept-Language header sent by the browser
+         4. The default locale
          
-         If the locale found is not supported, we fallback to the default
+         If the locale found at some step is not supported, we proceed to the next step
+         
+         If the user is not logged in or has never set a locale preference, the selected locale is saved in session
         """
         locale = (
-            self._get_locale_from_request_attributes(request)
-            or self._get_locale_from_session(request)
+            self._get_locale_from_query(request)
             or self._get_locale_from_current_user(request)
             or self._get_locale_from_language_header(request)
         )
 
         return locale if is_supported(locale) else default_locale
 
-    def _get_locale_from_request_attributes(self, request):
-        return request.GET.get("locale")
-
-    def _get_locale_from_session(self, request):
-        return request.session.get("locale_id")
+    def _get_locale_from_query(self, request):
+        locale = request.GET.get("locale")
+        return locale if is_supported(locale) else None
 
     def _get_locale_from_current_user(self, request):
-        return getattr(request.user, "locale_id", None)
+        if request.user.is_authenticated and hasattr(request.user, "locale_id"):
+            locale = getattr(request.user, "locale_id", None)
+            return locale if is_supported(locale) else None
+
+        locale = request.session.get("locale_id")
+        return locale if is_supported(locale) else None
 
     def _get_locale_from_language_header(self, request):
         # Copied from django.utils.translation.real_trans.get_language_from_request
@@ -78,6 +84,8 @@ class SetCurrentLocaleMiddleware:
         #    (e.g. for use in lazy translations)
         activate(locale)
 
-        # We set the locale in session, so that we will remember it in future requests
-        if request.session.get("locale_id") != locale:
+        # We set the locale in session if needed, so that we will remember it in future requests
+        if (
+            not request.user.is_authenticated or not hasattr(request.user, "locale_id")
+        ) and request.session.get("locale_id") != locale:
             request.session["locale_id"] = locale
