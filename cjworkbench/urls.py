@@ -28,6 +28,6 @@ urlpatterns = [
         name="account_signup",
     ),
     url(r"^account/", include("allauth.urls")),
-    url(r"^i18n/set_locale", set_locale, name="set_locale"),
+    url(r"^locale", set_locale, name="set_locale"),
     url(r"^", include("server.urls")),
 ]

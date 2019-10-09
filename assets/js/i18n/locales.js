@@ -21,7 +21,7 @@ function isSupported (locale) {
  * Ask the server to change the current locale and go to the page instructed
  */
 export async function setLocale (locale) {
-  const response = await fetch('/i18n/set_locale', {
+  const response = await fetch('/locale', {
     method: 'POST',
     credentials: 'same-origin',
     redirect: 'follow',
