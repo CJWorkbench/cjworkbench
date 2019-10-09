@@ -73,3 +73,11 @@ msgstr ""
 msgid "accounts.sign_up.login_prompt"
 msgstr ""
 
+#: templates/account/email/password_reset_key_subject.txt:3
+msgid "accounts.emails.password_reset.subject"
+msgstr "Επαναφορά κωδικού πρόσβασης"
+
+#: templates/notifications/new_data_version_subject.txt:3
+msgid "notifications.new_data_version.subject"
+msgstr "{workflow_name}: Νέα δεδομένα διαθέσιμα"
+

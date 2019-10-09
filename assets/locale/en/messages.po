@@ -75,3 +75,11 @@ msgstr "Sign Up"
 msgid "accounts.sign_up.login_prompt"
 msgstr "If you have already created an account, then please <a0>log in</a0>."
 
+#: templates/account/email/password_reset_key_subject.txt:3
+msgid "accounts.emails.password_reset.subject"
+msgstr "Password Reset E-mail"
+
+#: templates/notifications/new_data_version_subject.txt:3
+msgid "notifications.new_data_version.subject"
+msgstr "New data available in {workflow_name}"
+

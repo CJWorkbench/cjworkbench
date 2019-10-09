@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-10-07 06:12+0000\n"
+"POT-Creation-Date: 2019-10-09 07:43+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -50,5 +50,15 @@ msgstr ""
 #. default-message: If you have already created an account, then please <a0>log in</a0>.
 #: templates/account/signup.html:26
 msgid "accounts.sign_up.login_prompt"
+msgstr ""
+
+#. default-message: Password Reset E-mail
+#: templates/account/email/password_reset_key_subject.txt:3
+msgid "accounts.emails.password_reset.subject"
+msgstr ""
+
+#. default-message: New data available in {workflow_name}
+#: templates/notifications/new_data_version_subject.txt:3
+msgid "notifications.new_data_version.subject"
 msgstr ""
 
