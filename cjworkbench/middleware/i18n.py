@@ -1,4 +1,4 @@
-from cjworkbench.i18n import default_locale, supported_locales
+from cjworkbench.i18n import default_locale, is_supported
 from django.utils.translation import activate
 from django.utils.translation.trans_real import (
     language_code_re,
@@ -42,7 +42,7 @@ class SetCurrentLocaleMiddleware:
             or self._get_locale_from_language_header(request)
         )
 
-        return locale if locale in supported_locales else default_locale
+        return locale if is_supported(locale) else default_locale
 
     def _get_locale_from_request_attributes(self, request):
         return request.GET.get("locale")

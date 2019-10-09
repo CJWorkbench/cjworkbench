@@ -1,5 +1,5 @@
 from django.http import HttpResponseRedirect
-from cjworkbench.i18n import supported_locales
+from cjworkbench.i18n import is_supported
 from urllib.parse import unquote
 from django.utils.http import is_safe_url
 import json
@@ -23,6 +23,6 @@ def set_locale(request):
         next = "/"
     if request.method == "POST":
         locale = json.loads(request.body.decode("utf-8")).get("new_locale")
-        if locale in supported_locales:
+        if is_supported(locale):
             request.session["locale_id"] = locale
     return HttpResponseRedirect(next)
