@@ -44,7 +44,7 @@ def _get_translations(locale):
     return _translators[locale]
 
 
-def trans(message_id, *, default, context=None, parameters={}, tags={}):
+def trans(message_id, *, default, context=None, parameters={}):
     """Translate the given message ID to the current locale
     
     HTML is not escaped.
