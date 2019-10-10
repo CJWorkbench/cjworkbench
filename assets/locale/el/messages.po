@@ -199,7 +199,7 @@ msgstr ""
 #: templates/account/login.html:4 templates/account/login.html:10
 #: templates/account/signup.html:12
 msgid "accounts.sign_in.title"
-msgstr ""
+msgstr "Σύνδεση"
 
 #: templates/account/login.html:43
 msgid "accounts.sign_in.forgot_password_prompt"

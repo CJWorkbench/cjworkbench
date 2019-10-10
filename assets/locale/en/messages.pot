@@ -1,21 +1,228 @@
-# Translations template for PROJECT.
-# Copyright (C) 2019 ORGANIZATION
-# This file is distributed under the same license as the PROJECT project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
-#
-#, fuzzy
-msgid ""
+#. default-message: Greek
+#: assets/js/i18n/locales.js:5
+msgid "locales.el"
 msgstr ""
-"Project-Id-Version: PROJECT VERSION\n"
-"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-10-04 15:19+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.7.0\n"
+
+#. default-message: English
+#: assets/js/i18n/locales.js:4
+msgid "locales.en"
+msgstr ""
+
+#. default-message: {0, plural, =0 {No rows selected} one {# row selected} other {# rows selected}}
+#: assets/js/table/SelectedRowsActions.js:105
+msgid "selectedRow.numberOfRows"
+msgstr ""
+
+#. default-message: {days}d ago
+#: assets/js/utils.js:47
+msgid "time_diff.ago.days"
+msgstr ""
+
+#. default-message: {hours}h ago
+#: assets/js/utils.js:49
+msgid "time_diff.ago.hours"
+msgstr ""
+
+#. default-message: {minutes}m ago
+#: assets/js/utils.js:51
+msgid "time_diff.ago.minutes"
+msgstr ""
+
+#. default-message: {seconds}s ago
+#: assets/js/utils.js:53
+msgid "time_diff.ago.seconds"
+msgstr ""
+
+#. default-message: {years}y ago
+#: assets/js/utils.js:45
+msgid "time_diff.ago.years"
+msgstr ""
+
+#. default-message: just now
+#: assets/js/utils.js:55
+msgid "time_diff.now"
+msgstr ""
+
+#. The parameter will contain something like '4h ago'
+#. default-message: Updated {0}
+#: assets/js/WorkflowNavBar.js:57
+msgid "workflow.last_updated"
+msgstr ""
+
+#. The tab prefix will be used as the first part of the default name of tabs,
+#. i.e. if the tab prefix is 'Tab', the default names can be 'Tab 1', 'Tab 2',
+#. etc
+#. default-message: Tab
+#: assets/js/WorkflowEditor/Tabs/actions.js:93
+msgid "workflow.tabs.tab_prefix"
+msgstr ""
+
+#. default-message: Anyone can view and duplicate this workflow, and see your email.
+#: assets/js/ShareModal/PublicPrivate.js:15
+msgid "workflow.visibility.anyone"
+msgstr ""
+
+#. default-message: by
+#: assets/js/WorkflowNavBar.js:52
+msgid "workflow.visibility.by"
+msgstr ""
+
+#. default-message: Close
+#: assets/js/ShareModal/Modal.js:64
+msgid "workflow.visibility.closeButton"
+msgstr ""
+
+#. default-message: Collaborators
+#: assets/js/ShareModal/Modal.js:43
+msgid "workflow.visibility.collaborators"
+msgstr ""
+
+#. default-message: Columns
+#: assets/js/table/TableInfo.js:45
+msgid "workflow.visibility.columns"
+msgstr ""
+
+#. default-message: Copy to clipboard
+#: assets/js/ShareModal/Url.js:67
+msgid "workflow.visibility.cpToclip"
+msgstr ""
+
+#. default-message: date & time
+#: assets/js/table/ColumnHeader.js:12
+msgid "workflow.visibility.dateType"
+msgstr ""
+
+#. default-message: Duplicate
+#: assets/js/WorkflowNavBar.js:202
+msgid "workflow.visibility.duplicate"
+msgstr ""
+
+#. default-message: Grant access
+#: assets/js/ShareModal/NewAclEntry.js:42
+msgid "workflow.visibility.grandAccess"
+msgstr ""
+
+#. default-message: Home
+#: assets/js/WfHamburgerMenu.js:55
+msgid "workflow.visibility.home"
+msgstr ""
+
+#. default-message: Import Module
+#: assets/js/WfHamburgerMenu.js:52
+msgid "workflow.visibility.importModule"
+msgstr ""
+
+#. default-message: Anyone on the Internet may view and duplicate this Workflow.
+#: assets/js/ShareModal/PublicPrivate.js:6
+msgid "workflow.visibility.isPublic"
+msgstr ""
+
+#. default-message: Log Out
+#: assets/js/WfHamburgerMenu.js:58
+msgid "workflow.visibility.logout"
+msgstr ""
+
+#. default-message: menu
+#: assets/js/WfHamburgerMenu.js:42
+msgid "workflow.visibility.menu"
+msgstr ""
+
+#. default-message: My Workflows
+#: assets/js/WfHamburgerMenu.js:51
+msgid "workflow.visibility.myWorkflows"
+msgstr ""
+
+#. default-message: Only collaborators can view this Workflow.
+#: assets/js/ShareModal/PublicPrivate.js:6
+msgid "workflow.visibility.notPublic"
+msgstr ""
+
+#. default-message: number
+#: assets/js/table/ColumnHeader.js:11
+msgid "workflow.visibility.numberType"
+msgstr ""
+
+#. default-message: Owner
+#: assets/js/ShareModal/OwnerAclEntry.js:8
+msgid "workflow.visibility.owner"
+msgstr ""
+
+#. default-message: Private
+#: assets/js/WorkflowNavBar.js:65
+msgid "workflow.visibility.private"
+msgstr ""
+
+#. default-message: Private link (only accessible to collaborators)
+#: assets/js/ShareModal/Url.js:61
+msgid "workflow.visibility.privateLink"
+msgstr ""
+
+#. default-message: Public
+#: assets/js/WorkflowNavBar.js:65
+msgid "workflow.visibility.public"
+msgstr ""
+
+#. default-message: Public link (accessible to anyone)
+#: assets/js/ShareModal/Url.js:61
+msgid "workflow.visibility.publicLink"
+msgstr ""
+
+#. default-message: Redo
+#: assets/js/UndoRedoButtons.js:65
+msgid "workflow.visibility.redo"
+msgstr ""
+
+#. default-message: Report
+#: assets/js/WorkflowEditor/PaneSelect.js:19
+msgid "workflow.visibility.reportButton"
+msgstr ""
+
+#. default-message: Rows
+#: assets/js/table/TableInfo.js:41
+msgid "workflow.visibility.rows"
+msgstr ""
+
+#. default-message: Share
+#: assets/js/WorkflowNavBar.js:204
+msgid "workflow.visibility.share"
+msgstr ""
+
+#. default-message: SHARING SETTINGS
+#: assets/js/ShareModal/Modal.js:34
+msgid "workflow.visibility.sharingSettings"
+msgstr ""
+
+#. default-message: Change Workflow sharing
+#: assets/js/ShareModal/ShareButton.js:25
+msgid "workflow.visibility.sharingTitle"
+msgstr ""
+
+#. default-message: Share with the world
+#: assets/js/ShareModal/Modal.js:36
+msgid "workflow.visibility.sharingWith"
+msgstr ""
+
+#. default-message: Text
+#: assets/js/table/ColumnHeader.js:10
+msgid "workflow.visibility.textType"
+msgstr ""
+
+#. default-message: Undo
+#: assets/js/UndoRedoButtons.js:64
+msgid "workflow.visibility.undo"
+msgstr ""
+
+#. This is used in navigation bar. It should be all-caps for styling reasons.
+#. default-message: TRAINING
+#: assets/js/Workflows/Navbar.js:39
+msgid "workflows.navbar.training"
+msgstr ""
+
+#. This is used in navigation bar. It should be all-caps for styling reasons.
+#. default-message: WORKFLOWS
+#: assets/js/Workflows/Navbar.js:36
+msgid "workflows.navbar.workflows"
+msgstr ""
 
 #. default-message: Sign in
 #: templates/account/login.html:4 templates/account/login.html:10 templates/account/signup.html:12
