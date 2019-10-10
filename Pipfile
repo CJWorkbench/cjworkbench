@@ -42,7 +42,7 @@ aioamqp = "*"
 pyyaml = "*"
 boto3 = "*"
 yajl-py = "*"
-pyarrow = "*"
+pyarrow = "~=0.15.0"
 thrift = "~=0.11.0"
 
 [dev-packages]

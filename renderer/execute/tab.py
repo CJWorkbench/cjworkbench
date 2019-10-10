@@ -10,7 +10,6 @@ from cjwstate.rendercache import load_cached_render_result, CorruptCacheError
 from cjwstate.models import WfModule, Workflow
 from cjwstate.models.param_spec import ParamDType
 from .wf_module import execute_wfmodule, locked_wf_module
-from .types import UnneededExecution
 
 
 logger = logging.getLogger(__name__)
@@ -113,23 +112,16 @@ class TabFlow:
 
 
 @database_sync_to_async
-def _load_input_from_cache(
-    workflow: Workflow, flow: TabFlow, path: Path
+def _load_step_output_from_rendercache(
+    workflow: Workflow, step: WfModule, path: Path
 ) -> RenderResult:
-    last_fresh_wfm = flow.last_fresh_wf_module
-    if last_fresh_wfm is None:
-        return RenderResult()
-    else:
-        # raises UnneededExecution
-        with locked_wf_module(workflow, last_fresh_wfm) as safe_wfm:
-            crr = safe_wfm.cached_render_result
-            assert crr is not None  # otherwise it's not fresh, see?
+    # raises UnneededExecution
+    with locked_wf_module(workflow, step) as safe_step:
+        crr = safe_step.cached_render_result
+        assert crr is not None  # otherwise we'd have raised UnneededExecution
 
-            try:
-                # Read the entire input Parquet file.
-                return load_cached_render_result(crr, path)
-            except CorruptCacheError:
-                raise UnneededExecution
+        # Read the entire input Parquet file. Raise CorruptCacheError.
+        return load_cached_render_result(crr, path)
 
 
 async def execute_tab_flow(
@@ -168,24 +160,68 @@ async def execute_tab_flow(
     with tempfile_context(
         dir=basedir, prefix="render-buffer", suffix=".arrow"
     ) as buffer_path:
-        # Choose the right input file, such that the final render is to
-        # `output_path`. For instance:
+        # We will render from `buffer_path` to `output_path` and from
+        # `output_path` to `buffer_path`, alternating, so that the final output
+        # is in `output_path` and we only use a single tempfile. (Think "page
+        # flipping" in graphics.) Illustrated:
         #
         # [cache] -> A -> B -> C: A and C use `output_path`.
         # [cache] -> A -> B: cache and B use `output_path`.
-        #
-        # The first retval of `next(step_output_paths)` will be used by the cache.
-        if len(flow.stale_steps) % 2 == 1:
-            # [cache], A, B, C => cache gets buffer_path
-            step_output_paths = cycle([buffer_path, output_path])
-        else:
-            # [cache], A, B => cache gets output_path
-            step_output_paths = cycle([output_path, buffer_path])
+        step_output_paths = cycle([output_path, buffer_path])
 
-        last_result = await _load_input_from_cache(
-            workflow, flow, next(step_output_paths)
-        )
-        for step, step_output_path in zip(flow.stale_steps, step_output_paths):
+        # Find the first stale step, going backwards. Build a to-do list (in
+        # reverse).
+        #
+        # When render() exits, the render cache should be fresh for all steps.
+        # "fresh" means `step.cached_render_result` returns non-None and
+        # reading does not result in a `CorruptCacheError`. BUT it's really
+        # expensive to check for `CorruptCacheError` all the time; so as an
+        # optimization, we only check for `CorruptCacheError` when it prevents
+        # us from loading a step's _input_. [2019-10-10, adamhooper] This rule
+        # was created so that renderer can recover from `CorruptCacheError`
+        # (instead of crashing completely). `CorruptCacheError` is still a
+        # serious problem that needs human intervention.
+        #
+        # A _correct_ approach would be to read every step from the cache.
+        #
+        # Set `step_index` (first step that needs rendering) and `last_result`
+        # (the input to `flow.steps[step_index]`)
+        known_stale = flow.first_stale_index
+        for step_index in range(len(flow.steps) - 1, -1, -1):
+            step_output_path = next(step_output_paths)
+            if known_stale is not None and step_index >= known_stale:
+                # We know this step needs to be rendered, from our
+                # last_relevant_delta_id math.
+                continue  # loop, decrementing `step_index`
+            else:
+                # This step _shouldn't_ need to be rendered. Load its output.
+                # If we get CorruptCacheError, recover by backtracking another
+                # step.
+                wf_module = flow.steps[step_index].wf_module
+                try:
+                    # raise CorruptCacheError, UnneededExecution
+                    last_result = await _load_step_output_from_rendercache(
+                        workflow, wf_module, step_output_path
+                    )
+                    # `last_result` will be the input into steps[step_index]
+                    step_index += 1
+                    break
+                except CorruptCacheError:
+                    logger.exception(
+                        "Backtracking to recover from corrupt cache in wf-%d/wfm-%d",
+                        workflow.id,
+                        wf_module.id,
+                    )
+                    # loop
+        else:
+            # "Step minus-1" -- we need an input into flow.steps[0]
+            #
+            # fiddle with cycle's state -- `last_result` has no backing file;
+            # but if it did, it would be `next(step_output_paths)`.
+            next(step_output_paths)
+            last_result = RenderResult()
+
+        for step, step_output_path in zip(flow.steps[step_index:], step_output_paths):
             step_output_path.write_bytes(b"")  # don't leak data from two steps ago
             next_result = await execute_wfmodule(
                 workflow,
@@ -197,4 +233,5 @@ async def execute_tab_flow(
                 step_output_path,
             )
             last_result = next_result
+
         return last_result
