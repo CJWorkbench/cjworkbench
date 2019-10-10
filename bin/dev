@@ -105,6 +105,8 @@ case "$COMMAND" in
     ;;
 
   "extract-messages")
+    docker_compose_with_commands run --rm -e PYTHONPATH=. pydev pipenv run python cjworkbench/i18n/merge_catalogs.py prepare
+    
     docker_compose run --rm webpack npm run extract -- --clean
     
     # 0. This must come after `npm run extract`, since `npm run extract` 
