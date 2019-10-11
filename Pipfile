@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-aiohttp = "==3.5.4"
+aiohttp = "==3.6.1"
 "beautifulsoup4" = "==4.7.1"
 channels = "==2.2.0"
 Django = "~=2.2.2"
@@ -41,9 +41,11 @@ rfc3987 = "*"  # for jsonschema 'uri' format
 aioamqp = "*"
 pyyaml = "*"
 boto3 = "*"
-yajl-py = "*"
 pyarrow = "~=0.15.0"
+babel = "*"
 thrift = "~=0.11.0"
+yajl-py = "*"
+six = "*"  # yajl-py depends on it but doesn't declare so. https://github.com/pykler/yajl-py/issues/21
 
 [dev-packages]
 watchdog = "*"

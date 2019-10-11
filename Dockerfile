@@ -214,6 +214,7 @@ COPY manage.py /app/
 # templates are used in renderer for notifications emails and in frontend for
 # views. TODO move renderer templates elsewhere.
 COPY templates/ /app/templates/
+COPY assets/locale/ /app/assets/locale/
 # Inject code-style tests into our continuous integration.
 # This catches style errors that accidentally got past somebody's
 # pre-commit hook.

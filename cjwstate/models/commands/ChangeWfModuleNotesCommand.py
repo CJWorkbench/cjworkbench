@@ -11,11 +11,11 @@ class ChangeWfModuleNotesCommand(Delta):
     new_value = models.TextField("new_value")
     old_value = models.TextField("old_value")
 
-    def forward_impl(self):
+    def forward(self):
         self.wf_module.notes = self.new_value
         self.wf_module.save(update_fields=["notes"])
 
-    def backward_impl(self):
+    def backward(self):
         self.wf_module.notes = self.old_value
         self.wf_module.save(update_fields=["notes"])
 

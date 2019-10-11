@@ -3,7 +3,7 @@ from enum import Enum
 import re
 from typing import Any, Dict, List, Optional, Tuple
 import aiohttp
-from aiohttp.client_exceptions import ClientResponseError
+from aiohttp.client_exceptions import ClientError, ClientResponseError
 import numpy as np
 from oauthlib import oauth1
 from oauthlib.common import urlencode
@@ -421,3 +421,6 @@ async def fetch(params, *, secrets, get_stored_dataframe):
                 return "Error from Twitter: %d %s" % (err.status, err.message)
         else:
             return "Error fetching tweets: %s" % str(err)
+
+    except ClientError as err:
+        return "Error fetching tweets: %s" % str(err)

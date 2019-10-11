@@ -1,4 +1,5 @@
 from unittest.mock import patch
+from cjwstate import commands
 from cjwstate.models import Delta, ModuleVersion, Workflow
 from cjwstate.models.commands import (
     AddModuleCommand,
@@ -23,9 +24,9 @@ class MockLoadedModule:
         return params
 
 
-@patch("server.rabbitmq.queue_render", async_noop)
-@patch("cjwstate.models.Delta.ws_notify", async_noop)
-class UndoRedoTests(DbTestCase):
+@patch.object(commands, "queue_render", async_noop)
+@patch.object(commands, "websockets_notify", async_noop)
+class VersionsTests(DbTestCase):
     # Be careful, in these tests, not to run database queries in async blocks.
 
     def assertWfModuleVersions(self, tab, expected_versions):
@@ -68,7 +69,8 @@ class UndoRedoTests(DbTestCase):
 
         # Add a module
         cmd1 = self.run_with_async_db(
-            AddModuleCommand.create(
+            commands.do(
+                AddModuleCommand,
                 workflow=workflow,
                 tab=tab,
                 slug="step-1",
@@ -100,7 +102,8 @@ class UndoRedoTests(DbTestCase):
 
         # Change a parameter
         cmd2 = self.run_with_async_db(
-            ChangeParametersCommand.create(
+            commands.do(
+                ChangeParametersCommand,
                 workflow=workflow,
                 wf_module=tab.live_wf_modules.first(),
                 new_values={"csv": "some value"},
@@ -136,7 +139,9 @@ class UndoRedoTests(DbTestCase):
 
         # Add one more command so the stack is 3 deep
         cmd3 = self.run_with_async_db(
-            ChangeWorkflowTitleCommand.create(workflow=workflow, new_value="New Title")
+            commands.do(
+                ChangeWorkflowTitleCommand, workflow=workflow, new_value="New Title"
+            )
         )
         v3 = cmd3.id
         self.assertGreater(v3, v2)
@@ -172,8 +177,11 @@ class UndoRedoTests(DbTestCase):
         # stack and delete them from the db
         wfm = all_modules.first()
         cmd4 = self.run_with_async_db(
-            ChangeWfModuleNotesCommand.create(
-                workflow=workflow, wf_module=wfm, new_value="Note of no note"
+            commands.do(
+                ChangeWfModuleNotesCommand,
+                workflow=workflow,
+                wf_module=wfm,
+                new_value="Note of no note",
             )
         )
         v4 = cmd4.id
@@ -189,7 +197,8 @@ class UndoRedoTests(DbTestCase):
         workflow.refresh_from_db()
         self.assertEqual(workflow.last_delta_id, v1)
         cmd5 = self.run_with_async_db(
-            ChangeWfModuleNotesCommand.create(
+            commands.do(
+                ChangeWfModuleNotesCommand,
                 workflow=workflow,
                 wf_module=cmd1.wf_module,
                 new_value="Note of some note",

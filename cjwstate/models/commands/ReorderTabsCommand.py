@@ -46,12 +46,12 @@ class ReorderTabsCommand(ChangesWfModuleOutputs, Delta):
             self.workflow.selected_tab_position = new_position
             self.workflow.save(update_fields=["selected_tab_position"])
 
-    def forward_impl(self):
+    def forward(self):
         self._write_order(self.new_order)
         self._update_selected_position(self.old_order, self.new_order)
         self.forward_affected_delta_ids()
 
-    def backward_impl(self):
+    def backward(self):
         self.backward_affected_delta_ids()
         self._write_order(self.old_order)
         self._update_selected_position(self.new_order, self.old_order)

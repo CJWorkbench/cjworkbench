@@ -56,7 +56,7 @@ class AddModuleCommand(ChangesWfModuleOutputs, Delta):
             tab_id=wf_module.tab_id, order__gte=wf_module.order, is_deleted=False
         )
 
-    def forward_impl(self):
+    def forward(self):
         if not self.wf_module.last_relevant_delta_id:
             # We couldn't set self.wf_module.last_relevant_delta_id during
             # creation because `self` (the delta in question) wasn't created.
@@ -79,7 +79,7 @@ class AddModuleCommand(ChangesWfModuleOutputs, Delta):
 
         self.forward_affected_delta_ids()
 
-    def backward_impl(self):
+    def backward(self):
         self.wf_module.is_deleted = True
         self.wf_module.save(update_fields=["is_deleted"])
 
@@ -107,7 +107,7 @@ class AddModuleCommand(ChangesWfModuleOutputs, Delta):
         self.backward_affected_delta_ids()
 
     # override
-    async def schedule_execute_if_needed(self) -> None:
+    def get_modifies_render_output(self) -> bool:
         """
         Force a render.
 
@@ -118,7 +118,7 @@ class AddModuleCommand(ChangesWfModuleOutputs, Delta):
         know this delta's ID until after we save it to the database, yet we
         need to save its own ID in self._changed_wf_module_versions.
         """
-        await self._schedule_execute()
+        return True
 
     @classmethod
     def amend_create_kwargs(

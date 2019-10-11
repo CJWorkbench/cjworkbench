@@ -2,6 +2,7 @@ import io
 import unittest
 from unittest.mock import patch
 import aiohttp
+import aiohttp.client
 from asgiref.sync import async_to_sync
 import pandas as pd
 from pandas.testing import assert_frame_equal
@@ -171,7 +172,15 @@ class LoadUrlTests(unittest.TestCase):
         "cjwkernel.pandas.moduleutils.spooled_data_from_url",
         fake_spooled_data_from_url(
             error=aiohttp.ClientResponseError(
-                None, None, status=404, message="Not Found"
+                aiohttp.client.RequestInfo(
+                    url="http://example.com",
+                    method="GET",
+                    headers={},
+                    real_url="http://example.com",
+                ),
+                (),
+                status=404,
+                message="Not Found",
             )
         ),
     )

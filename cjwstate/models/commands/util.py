@@ -27,13 +27,13 @@ class ChangesWfModuleOutputs:
                         cls.affected_wf_module_delta_ids(wf_module),
                 }
 
-            def forward_impl(self):
+            def forward(self):
                 ...
                 # update wf_modules in database and store
                 # self._changed_wf_module_delta_ids, for websockets message.
                 self.forward_affected_delta_ids()
 
-            def backward_impl(self):
+            def backward(self):
                 ...
                 # update wf_modules in database and store
                 # self._changed_wf_module_delta_ids, for websockets message.
@@ -129,7 +129,7 @@ class ChangesWfModuleOutputs:
         if hasattr(self, "wf_module_id") and self.wf_module_id in affected_ids:
             self.wf_module.last_relevant_delta_id = self.id
 
-        # for ws_notify()
+        # for websockets notify
         self._changed_wf_module_versions = [(pi[0], self.id) for pi in prev_ids]
 
     def backward_affected_delta_ids(self):
@@ -145,7 +145,7 @@ class ChangesWfModuleOutputs:
                 # If we have a wf_module in memory, update it
                 self.wf_module.last_relevant_delta_id = delta_id
 
-        # for ws_notify()
+        # for websockets notify
         self._changed_wf_module_versions = prev_ids
 
     # override Delta
@@ -182,9 +182,8 @@ class ChangesWfModuleOutputs:
         return data
 
     # override Delta
-    async def schedule_execute_if_needed(self) -> None:
+    def get_modifies_render_output(self) -> None:
         """
         If any WfModule output may change, schedule a render over RabbitMQ.
         """
-        if len(self._changed_wf_module_versions):
-            await self._schedule_execute()
+        return len(self._changed_wf_module_versions) > 0

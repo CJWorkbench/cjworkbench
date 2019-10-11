@@ -424,6 +424,8 @@ async def spooled_data_from_url(
     Raise aiohttp.ClientError on generic error. Subclasses of note:
     * aiohttp.InvalidURL on invalid URL
     * aiohttp.ClientResponseError when HTTP status is not 200
+    * aiohttp.ClientPayloadError when server closes connection prematurely
+    * aiohttp.ClientConnectionError (OSError) when connection fails
 
     Raise asyncio.TimeoutError when `timeout` seconds have expired.
     """

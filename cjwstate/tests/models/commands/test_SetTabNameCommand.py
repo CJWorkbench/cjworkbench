@@ -1,4 +1,5 @@
 from unittest.mock import patch
+from cjwstate import commands
 from cjwstate.models import ModuleVersion, Workflow
 from cjwstate.models.commands import SetTabNameCommand
 from cjwstate.modules.loaded_module import LoadedModule
@@ -18,8 +19,8 @@ class MockLoadedModule:
 
 
 class SetTabNameCommandTest(DbTestCase):
-    @patch("server.websockets.ws_client_send_delta_async", async_noop)
-    @patch("server.rabbitmq.queue_render", async_noop)
+    @patch.object(commands, "websockets_notify", async_noop)
+    @patch.object(commands, "queue_render", async_noop)
     def test_set_name(self):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
@@ -27,21 +28,21 @@ class SetTabNameCommandTest(DbTestCase):
         tab.save(update_fields=["name"])
 
         cmd = self.run_with_async_db(
-            SetTabNameCommand.create(workflow=workflow, tab=tab, new_name="bar")
+            commands.do(SetTabNameCommand, workflow=workflow, tab=tab, new_name="bar")
         )
         tab.refresh_from_db()
         self.assertEqual(tab.name, "bar")
 
-        self.run_with_async_db(cmd.backward())
+        self.run_with_async_db(commands.undo(cmd))
         tab.refresh_from_db()
         self.assertEqual(tab.name, "foo")
 
-        self.run_with_async_db(cmd.forward())
+        self.run_with_async_db(commands.redo(cmd))
         tab.refresh_from_db()
         self.assertEqual(tab.name, "bar")
 
-    @patch("server.websockets.ws_client_send_delta_async", async_noop)
-    @patch("server.rabbitmq.queue_render", async_noop)
+    @patch.object(commands, "websockets_notify", async_noop)
+    @patch.object(commands, "queue_render", async_noop)
     @patch.object(LoadedModule, "for_module_version", MockLoadedModule)
     def test_change_last_relevant_delta_ids_of_dependent_wf_modules(self):
         workflow = Workflow.create_and_init()
@@ -67,15 +68,15 @@ class SetTabNameCommandTest(DbTestCase):
         )
 
         cmd = self.run_with_async_db(
-            SetTabNameCommand.create(
-                workflow=workflow, tab=tab1, new_name=tab1.name + "X"
+            commands.do(
+                SetTabNameCommand, workflow=workflow, tab=tab1, new_name=tab1.name + "X"
             )
         )
         wf_module.refresh_from_db()
         self.assertEqual(wf_module.last_relevant_delta_id, cmd.id)
 
-    @patch("server.websockets.ws_client_send_delta_async", async_noop)
-    @patch("server.rabbitmq.queue_render", async_noop)
+    @patch.object(commands, "websockets_notify", async_noop)
+    @patch.object(commands, "queue_render", async_noop)
     @patch.object(LoadedModule, "for_module_version", MockLoadedModule)
     def test_change_last_relevant_delta_ids_of_self_wf_modules(self):
         """
@@ -94,15 +95,15 @@ class SetTabNameCommandTest(DbTestCase):
         )
 
         cmd = self.run_with_async_db(
-            SetTabNameCommand.create(
-                workflow=workflow, tab=tab, new_name=tab.name + "X"
+            commands.do(
+                SetTabNameCommand, workflow=workflow, tab=tab, new_name=tab.name + "X"
             )
         )
         wf_module.refresh_from_db()
         self.assertEqual(wf_module.last_relevant_delta_id, cmd.id)
 
-    @patch("server.websockets.ws_client_send_delta_async")
-    @patch("server.rabbitmq.queue_render", async_noop)
+    @patch.object(commands, "websockets_notify")
+    @patch.object(commands, "queue_render", async_noop)
     def test_ws_data(self, send_delta):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
@@ -111,14 +112,14 @@ class SetTabNameCommandTest(DbTestCase):
 
         send_delta.return_value = async_noop()
         cmd = self.run_with_async_db(
-            SetTabNameCommand.create(workflow=workflow, tab=tab, new_name="bar")
+            commands.do(SetTabNameCommand, workflow=workflow, tab=tab, new_name="bar")
         )
         send_delta.assert_called()
         delta1 = send_delta.call_args[0][1]
         self.assertEqual(delta1["updateTabs"], {tab.slug: {"name": "bar"}})
 
         send_delta.return_value = async_noop()
-        self.run_with_async_db(cmd.backward())
+        self.run_with_async_db(commands.undo(cmd))
         delta2 = send_delta.call_args[0][1]
         self.assertEqual(delta2["updateTabs"], {tab.slug: {"name": "foo"}})
 
@@ -129,6 +130,6 @@ class SetTabNameCommandTest(DbTestCase):
         tab.save(update_fields=["name"])
 
         cmd = self.run_with_async_db(
-            SetTabNameCommand.create(workflow=workflow, tab=tab, new_name="foo")
+            commands.do(SetTabNameCommand, workflow=workflow, tab=tab, new_name="foo")
         )
         self.assertIsNone(cmd)

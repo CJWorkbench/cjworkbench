@@ -9,6 +9,7 @@ from rest_framework import status
 from rest_framework.test import force_authenticate
 from cjwkernel.types import Column, ColumnType, RenderResult
 from cjwkernel.tests.util import arrow_table
+from cjwstate import commands
 from cjwstate.rendercache.io import (
     cache_render_result,
     delete_parquet_files_for_wf_module,
@@ -28,8 +29,8 @@ async def async_noop(*args, **kwargs):
 empty_data_json = {"start_row": 0, "end_row": 0, "rows": []}
 
 
-@patch("server.rabbitmq.queue_render", async_noop)
-@patch("cjwstate.models.Delta.ws_notify", async_noop)
+@patch.object(commands, "queue_render", async_noop)
+@patch.object(commands, "websockets_notify", async_noop)
 class WfModuleTests(LoggedInTestCase):
     # Test workflow with modules that implement a simple pipeline on test data
     def setUp(self):

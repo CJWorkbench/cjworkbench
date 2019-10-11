@@ -25,12 +25,12 @@ class SetTabNameCommand(ChangesWfModuleOutputs, Delta):
         data["updateTabs"] = {self.tab.slug: {"name": self.tab.name}}
         return data
 
-    def forward_impl(self):
+    def forward(self):
         self.tab.name = self.new_name
         self.tab.save(update_fields=["name"])
         self.forward_affected_delta_ids()
 
-    def backward_impl(self):
+    def backward(self):
         self.backward_affected_delta_ids()
         self.tab.name = self.old_name
         self.tab.save(update_fields=["name"])

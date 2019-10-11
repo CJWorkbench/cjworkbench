@@ -25,12 +25,13 @@ need to explicitly register submodules:
         from .. import websockets_handler
         # load sub-module code
         from . import tabs
+        from .. import commands
 
         @register_websockets_handler
         @websockets_handler(role='read')
         async def set_name(workflow, name, **kwargs):
             # role is one of {'read', 'write', 'owner'}
-            await ChangeWorkflowTitleCommand.create(workflow, name)
+            await commands.do(ChangeWorkflowTitleCommand, workflow, name)
             return
 
 TypeError (meaning, "client arguments don't match function signature") will

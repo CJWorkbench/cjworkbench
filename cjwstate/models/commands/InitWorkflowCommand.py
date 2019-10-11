@@ -17,17 +17,6 @@ class InitWorkflowCommand(Delta):
         app_label = "server"
         db_table = "server_initworkflowcommand"
 
-    async def forward(self):
-        """Crash. There is no way to undo, so forward() can't be called."""
-        raise RuntimeError(
-            "InitWorkflowCommand cannot be undone, so forward() cannot happen"
-        )
-
-    async def backward(self):
-        """Do nothing at all."""
-        # Don't do _anything_.
-        pass
-
     @classmethod
     def create(cls, workflow):
         """
