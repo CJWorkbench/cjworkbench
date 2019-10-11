@@ -39,6 +39,13 @@ class TabTests(DbTestCase):
                 )
                 yield result
 
+    def test_execute_empty_tab(self):
+        workflow = Workflow.create_and_init()
+        tab = workflow.tabs.first()
+        tab_flow = TabFlow(tab.to_arrow(), [])
+        with self._execute(workflow, tab_flow, {}) as result:
+            assert_render_result_equals(result, RenderResult())
+
     @patch.object(LoadedModule, "for_module_version")
     @patch("server.websockets.ws_client_send_delta_async", fake_send)
     def test_execute_cache_hit(self, fake_module):

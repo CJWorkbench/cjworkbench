@@ -220,6 +220,7 @@ async def execute_tab_flow(
             # but if it did, it would be `next(step_output_paths)`.
             next(step_output_paths)
             last_result = RenderResult()
+            step_index = 0  # needed when there are no steps at all
 
         for step, step_output_path in zip(flow.steps[step_index:], step_output_paths):
             step_output_path.write_bytes(b"")  # don't leak data from two steps ago
