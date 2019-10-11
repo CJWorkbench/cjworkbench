@@ -1,6 +1,7 @@
 import React from 'react'
 import { escapeHtml, timeDifference } from './utils'
 import { withI18n } from '@lingui/react'
+import { Trans } from '@lingui/macro'
 
 export default withI18n()(class Embed extends React.Component {
   state = {
@@ -17,14 +18,15 @@ export default withI18n()(class Embed extends React.Component {
     return (
       <div className='embed-wrapper'>
         <div className='embed-not-available'>
-          <h1>This workflow is not available</h1>
+          <h1>{<Trans id='workflow.notavailableworkflow'>This workflow is not available</Trans>}</h1>
         </div>
         <div className='embed-footer'>
           <div className='embed-footer-logo'>
             <img src={`${window.STATIC_URL}images/logo.png`} width='21' />
           </div>
           <div className='embed-footer-meta'>
-            <h1>WORKBENCH</h1>
+
+            <h1>{<Trans id='workflow.workbenchheader'>WORKBENCH</Trans>}</h1>
           </div>
           <div className='embed-footer-button'>
             <i className='icon icon-share' />
