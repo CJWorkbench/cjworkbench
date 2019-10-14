@@ -6,6 +6,7 @@ import re
 from babel.util import parse_encoding, parse_future_flags
 from babel._compat import PY2, text_type
 from tokenize import generate_tokens, COMMENT, NAME, OP, STRING
+from cjworkbench.i18n.catalogs import COMMENT_TAG_FOR_DEFAULT_MESSAGE
 
 TOKEN_BLOCK = TokenType.BLOCK
 
@@ -74,7 +75,11 @@ def extract_django(fileobj, keywords, comment_tags, options):
                 g = strip_quotes(g)
                 default_message = imatch.group(3)
                 if default_message:
-                    comments = ["default-message: " + strip_quotes(default_message)]
+                    comments = [
+                        COMMENT_TAG_FOR_DEFAULT_MESSAGE
+                        + ": "
+                        + strip_quotes(default_message)
+                    ]
                 else:
                     comments = []
                 comment = imatch.group(7)
