@@ -65,8 +65,9 @@ def _merge_catalog(locale, source_catalog, default={}):
     for message in source_catalog:
         if message.id:  # ignore header
             string = ""
-            if default and message.id in default:
-                message.string = default[message.id]
+            key = message.id if not message.context else (message.id, message.context)
+            if default and key in default:
+                message.string = default[key]
             elif old and old.get(message.id, context=message.context):
                 message.string = old.get(message.id, context=message.context).string
             catalog[message.id] = message
@@ -89,7 +90,10 @@ def merge():
         for comment in message.auto_comments:
             match = _default_message_re.match(comment)
             if match:
-                default_messages[message.id] = match.group(1).strip()
+                key = (
+                    message.id if not message.context else (message.id, message.context)
+                )
+                default_messages[key] = match.group(1).strip()
                 message.auto_comments.remove(comment)
     for locale in supported_locales:
         if locale != default_locale:
