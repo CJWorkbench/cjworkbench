@@ -18,7 +18,7 @@ export default withI18n()(class Embed extends React.Component {
     return (
       <div className='embed-wrapper'>
         <div className='embed-not-available'>
-          <h1>{<Trans id='workflow.notavailableworkflow'>This workflow is not available</Trans>}</h1>
+          <h1><Trans id='workflow.notavailableworkflow'>This workflow is not available</Trans></h1>
         </div>
         <div className='embed-footer'>
           <div className='embed-footer-logo'>
@@ -26,7 +26,7 @@ export default withI18n()(class Embed extends React.Component {
           </div>
           <div className='embed-footer-meta'>
 
-            <h1>{<Trans id='workflow.workbenchheader'>WORKBENCH</Trans>}</h1>
+            <h1><Trans id='workflow.workbenchheader'>WORKBENCH</Trans></h1>
           </div>
           <div className='embed-footer-button'>
             <i className='icon icon-share' />
@@ -67,7 +67,7 @@ export default withI18n()(class Embed extends React.Component {
                   </li>
                   <li>
                     <a href={'/workflows/' + this.props.workflow.id} target='_blank' rel='noopener noreferrer'>
-                    Updated {timeDifference(this.props.workflow.last_update, new Date(), this.props.i18n)}
+                   <Trans id='workflow.workbenchupdated'> Updated</Trans> {timeDifference(this.props.workflow.last_update, new Date(), this.props.i18n)}
                     </a>
                   </li>
                 </ul>
@@ -80,8 +80,8 @@ export default withI18n()(class Embed extends React.Component {
         </div>
         <div className={'embed-overlay' + (this.state.overlayOpen ? ' open' : '')} onClick={this.handleToggleOverlay}>
           <div className='embed-share-links' onClick={(e) => { e.stopPropagation() }}>
-            <h1>EMBED THIS CHART</h1>
-            <h2>Paste this code into any webpage HTML</h2>
+            <h1><Trans id='workflow.workbenchembedheader'>EMBED THIS CHART</Trans></h1>
+            <h2><Trans id='workflow.workbenchpastecodeheader'>Paste this code into any webpage HTML</Trans></h2>
             <div className='code-snippet'>
               <code className='embed--share-code'>
                 {iframeCode}

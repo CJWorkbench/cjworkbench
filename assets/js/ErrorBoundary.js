@@ -1,4 +1,5 @@
 import React from 'react'
+import { Trans } from '@lingui/macro'
 
 export default class ErrorBoundary extends React.PureComponent {
   state = {
@@ -17,7 +18,7 @@ export default class ErrorBoundary extends React.PureComponent {
     if (this.state.error) {
       return (
         <div className='caught-error'>
-          Something is wrong. <br /> Please refresh the page.
+          <Trans id='workflow.workbenchsomethingwrong'>Something is wrong.</Trans> <br /> <Trans id='workflow.workbenchrefresh'> Please refresh the page.</Trans> 
         </div>
       )
     } else {

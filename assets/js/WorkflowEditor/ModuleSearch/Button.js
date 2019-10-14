@@ -2,6 +2,8 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Manager, Reference } from 'react-popper'
 import Popup from './Popup'
+import { I18n } from '@lingui/react'
+import { Trans,t } from '@lingui/macro'
 
 export default class Button extends React.PureComponent {
   static propTypes = {
@@ -39,7 +41,7 @@ export default class Button extends React.PureComponent {
             <div ref={ref} className={className}>
               <button type='button' className={buttonClassNames.join(' ')} onClick={this.handleClick}>
                 <i className='icon-add' />{' '}
-                <span>ADD STEP</span>
+                <span><Trans id="workflow.addstep">ADD STEP</Trans></span>
               </button>
             </div>
           )}
