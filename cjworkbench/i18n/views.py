@@ -15,14 +15,13 @@ def set_locale(request):
     
     Based on `django.views.i18n.set_language`
     """
-    next = request.META.get("HTTP_REFERER")
-    next = next and unquote(next)  # HTTP_REFERER may be encoded.
+    next = request.POST.get("next", "/")
     if not is_safe_url(
         url=next, allowed_hosts={request.get_host()}, require_https=request.is_secure()
     ):
         next = "/"
     if request.method == "POST":
-        locale = json.loads(request.body.decode("utf-8")).get("new_locale")
+        locale = request.POST.get("new_locale")
         if is_supported(locale):
             request.session["locale_id"] = locale
     return HttpResponseRedirect(next)

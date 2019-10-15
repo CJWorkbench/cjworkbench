@@ -1,4 +1,3 @@
-/* global fetch */
 import { t } from '@lingui/macro'
 import { csrfToken } from '../utils'
 
@@ -20,20 +19,29 @@ function isSupported (locale) {
 /**
  * Ask the server to change the current locale and go to the page instructed
  */
-export async function setLocale (locale) {
-  const response = await fetch('/locale', {
-    method: 'POST',
-    credentials: 'same-origin',
-    redirect: 'follow',
-    headers: {
-      'Content-Type': 'application/json; charset=utf-8',
-      'X-CSRFToken': csrfToken
-    },
-    body: JSON.stringify({
-      new_locale: locale
-    })
-  })
-  if (response.url) {
-    window.location = response.url
-  }
+export function setLocale (locale) {
+  const form = document.createElement('form')
+  form.action = '/locale'
+  form.method = 'POST'
+
+  const csrf = document.createElement('input')
+  csrf.type = 'hidden'
+  csrf.name = 'csrfmiddlewaretoken'
+  csrf.value = csrfToken
+  form.appendChild(csrf)
+
+  const newLocale = document.createElement('input')
+  newLocale.type = 'hidden'
+  newLocale.name = 'new_locale'
+  newLocale.value = locale
+  form.appendChild(newLocale)
+
+  const next = document.createElement('input')
+  next.type = 'hidden'
+  next.name = 'next'
+  next.value = window.location
+  form.appendChild(next)
+
+  document.body.appendChild(form)
+  form.submit()
 }
