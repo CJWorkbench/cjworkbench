@@ -1,25 +1,11 @@
-from babel.messages.pofile import read_po
 from bs4 import BeautifulSoup
 from django.utils.functional import lazy
 from django.utils.html import escape
 from django.utils.translation import get_language
-from cjworkbench.i18n import catalog_path, default_locale
+from cjworkbench.i18n import default_locale
+from cjworkbench.i18n.catalogs import load_catalog
 from string import Formatter
-
-
-class UnsupportedLocaleError(Exception):
-    """An unsupported locale is (attempted to be) used
-    
-    A locale may be unsupported because its not recognised as a locale
-    or because there are no catalogs for it.
-    """
-
-
-class BadCatalogsError(Exception):
-    """The catalog for a locale is not properly formatted
-    
-    A possible formatting error is empty comments at the start of the file.
-    """
+from cjworkbench.i18n.exceptions import UnsupportedLocaleError, BadCatalogsError
 
 
 class InvalidICUParameters(Exception):
@@ -117,17 +103,7 @@ class MessageTranslator:
 
     def __init__(self, locale):
         self.locale = locale
-
-        try:
-            self.catalog = read_po(open(catalog_path(locale)))
-        except ValueError as error:
-            raise BadCatalogsError(
-                "The catalog for the given locale (%s) is badly formatted" % locale
-            ) from error
-        except Exception as error:
-            raise UnsupportedLocaleError(
-                "Can't load a catalog for the given locale (%s)" % locale
-            ) from error
+        self.catalog = load_catalog(locale)
 
     def trans(self, message_id, default=None, context=None, parameters={}):
         """Find the message corresponding to the given ID in the catalog and format it according to the given parameters.
