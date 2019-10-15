@@ -13,15 +13,7 @@ trans_param_re = re.compile(r"arg_(?P<arg>\w+)", re.ASCII)
 
 @register.simple_tag(takes_context=True)
 def trans_html(
-    context,
-    message_id,
-    *,
-    default,
-    ctxt="",
-    noop=False,
-    comment="",
-    locale=None,
-    **kwargs,
+    context, message_id, *, default, ctxt="", noop=False, comment="", **kwargs
 ):
     """Translate a message, supporting HTML placeholders and variables.
 
@@ -41,7 +33,7 @@ def trans_html(
     Nested HTML tags are forbidden; in fact, at this point, the inner ones will be escaped, but you should not rely on this.
     Non-nested tags that have not been mapped in this way will be ignored; in fact, at this point, they will replaced by their escaped contents, but you should not rely on this.
     
-    The locale will be taken from context if not provided.
+    The locale will be taken from context.
     
     For code parsing reasons, respect the following order when passing more than one of `default`, `ctxt`, and `comment` arguments:
         `default` before `ctxt` before `comment`
@@ -101,7 +93,7 @@ def trans_html(
 
     return mark_safe(
         do_trans_html(
-            locale or context["i18n"]["locale_id"],
+            context["i18n"]["locale_id"],
             message_id,
             default=default,
             context=ctxt,
