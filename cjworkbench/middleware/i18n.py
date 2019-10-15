@@ -25,13 +25,6 @@ class SetCurrentLocaleMiddleware:
         #    (e.g. for use in lazy translations)
         activate(locale)
 
-        # We set the locale in session if needed, so that we will remember it in future requests
-        if (
-            self._use_session(request.user)
-            and request.session.get("locale_id") != locale
-        ):
-            request.session["locale_id"] = locale
-
         response = self.get_response(request)
 
         # Code to be executed for each request/response after
