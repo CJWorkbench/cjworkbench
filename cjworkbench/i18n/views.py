@@ -20,8 +20,7 @@ def set_locale(request):
         url=next, allowed_hosts={request.get_host()}, require_https=request.is_secure()
     ):
         next = "/"
-    if request.method == "POST":
-        locale = request.POST.get("new_locale")
-        if is_supported(locale):
-            request.session["locale_id"] = locale
+    locale = request.POST.get("new_locale")
+    if is_supported(locale):
+        request.session["locale_id"] = locale
     return HttpResponseRedirect(next)
