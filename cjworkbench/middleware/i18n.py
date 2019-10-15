@@ -15,7 +15,22 @@ class SetCurrentLocaleMiddleware:
     def __call__(self, request):
         # Code to be executed for each request before
         # the view (and later middleware) are called.
-        self._set_locale(request, self._decide_locale(request))
+        locale = self._decide_locale(request)
+
+        request.locale_id = locale
+        # We set the locale of django, in order to
+        # a) activate the automatic translation of its translatable elements
+        #    (e.g. placeholders of password form inputs)
+        # b) have a global source of the current locale
+        #    (e.g. for use in lazy translations)
+        activate(locale)
+
+        # We set the locale in session if needed, so that we will remember it in future requests
+        if (
+            self._use_session(request.user)
+            and request.session.get("locale_id") != locale
+        ):
+            request.session["locale_id"] = locale
 
         response = self.get_response(request)
 
@@ -77,19 +92,3 @@ class SetCurrentLocaleMiddleware:
             except LookupError:
                 continue
         return None
-
-    def _set_locale(self, request, locale):
-        request.locale_id = locale
-        # We set the locale of django, in order to
-        # a) activate the automatic translation of its translatable elements
-        #    (e.g. placeholders of password form inputs)
-        # b) have a global source of the current locale
-        #    (e.g. for use in lazy translations)
-        activate(locale)
-
-        # We set the locale in session if needed, so that we will remember it in future requests
-        if (
-            self._use_session(request.user)
-            and request.session.get("locale_id") != locale
-        ):
-            request.session["locale_id"] = locale
