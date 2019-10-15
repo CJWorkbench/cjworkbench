@@ -40,13 +40,22 @@ OUTPUT_BUFFER_MAX_BYTES = (
 class ChildReader:
     fileno: int
     """
-    File descriptor to read from. Must be non-blocking.
+    File descriptor to read from.
+
+    ChildReader will call `os.close(fileno)` when closing; so when the
+    ChildReader is deleted, this file descriptor will be closed.
     """
 
     limit_bytes: int
     bytesio: io.BytesIO = field(default_factory=io.BytesIO)
     overflowed: bool = False
     eof: bool = False
+
+    def __post_init__(self):
+        os.set_blocking(self.fileno, False)
+
+    def __del__(self):
+        os.close(self.fileno)
 
     def ingest(self):
         if self.eof:
@@ -281,8 +290,6 @@ class Kernel:
         os.close(output_w)
         os.close(log_w)
 
-        os.set_blocking(output_r, False)
-        os.set_blocking(log_r, False)
         output_reader = ChildReader(output_r, OUTPUT_BUFFER_MAX_BYTES)
         log_reader = ChildReader(log_r, LOG_BUFFER_MAX_BYTES)
 
