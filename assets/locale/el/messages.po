@@ -14,6 +14,10 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.7.0\n"
 
+#: assets/js/Workflows/index.js:193
+msgid " workflow.trainingtitle"
+msgstr ""
+
 #: assets/js/i18n/locales.js:5
 msgid "locales.el"
 msgstr ""
@@ -50,12 +54,24 @@ msgstr ""
 msgid "time_diff.now"
 msgstr ""
 
+#: assets/js/WorkflowEditor/Tabs/TabDropdown.js:15
+msgid "workflow.Duplicate"
+msgstr ""
+
 #: assets/js/WorkflowEditor/AddData/Button.js:25
 msgid "workflow.addData"
 msgstr ""
 
 #: assets/js/WorkflowEditor/ModuleSearch/Button.js:44
 msgid "workflow.addstep"
+msgstr ""
+
+#: assets/js/WorkflowEditor/DataVersionModal.js:131
+msgid "workflow.alertsare"
+msgstr ""
+
+#: assets/js/Workflows/SortMenu.js:35
+msgid "workflow.alphabetical"
 msgstr ""
 
 #: assets/js/WorkflowEditor/AddData/Modal.js:25
@@ -74,6 +90,27 @@ msgstr ""
 msgid "workflow.copydebugging"
 msgstr ""
 
+#: assets/js/Workflows/index.js:199
+msgid "workflow.createworkflow"
+msgstr ""
+
+#: assets/js/Workflows/WorkflowLists.js:51
+msgid "workflow.createyourworkflow"
+msgstr ""
+
+#: assets/js/WorkflowEditor/OutputPane.js:100
+msgid "workflow.dataledtoan error"
+msgstr ""
+
+#: assets/js/WorkflowEditor/wfmodule/WfModuleContextMenu.js:22
+#: assets/js/Workflows/WorkflowContextMenu.js:41
+msgid "workflow.delete"
+msgstr ""
+
+#: assets/js/WorkflowEditor/Tabs/TabDropdown.js:16
+msgid "workflow.deleteEvent"
+msgstr ""
+
 #: assets/js/UnhandledErrorReport.js:21
 msgid "workflow.describeproblem"
 msgstr ""
@@ -82,17 +119,61 @@ msgstr ""
 msgid "workflow.describethisbug"
 msgstr ""
 
+#: assets/js/Workflows/WorkflowContextMenu.js:36
+msgid "workflow.duplicate"
+msgstr ""
+
 #: assets/js/Workflow.js:18
 msgid "workflow.duplicatetosavechanges"
+msgstr ""
+
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:370
+msgid "workflow.emailalertdisabled"
+msgstr ""
+
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:370
+msgid "workflow.emailalertenebled"
+msgstr ""
+
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:234
+msgid "workflow.enterzenmode"
+msgstr ""
+
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:234
+msgid "workflow.exitzenmode"
+msgstr ""
+
+#: assets/js/WorkflowEditor/wfmodule/WfModuleContextMenu.js:21
+msgid "workflow.exportdata"
 msgstr ""
 
 #: assets/js/UnhandledErrorReport.js:55
 msgid "workflow.followsteps"
 msgstr ""
 
+#: assets/js/WorkflowEditor/wfmodule/DeprecationNotice.js:12
+msgid "workflow.howtoreplace"
+msgstr ""
+
 #. The parameter will contain something like '4h ago'
 #: assets/js/WorkflowNavBar.js:57
 msgid "workflow.last_updated"
+msgstr ""
+
+#: assets/js/Workflows/SortMenu.js:32
+msgid "workflow.lastmodified"
+msgstr ""
+
+#: assets/js/Workflows/index.js:196
+msgid "workflow.learnworkwithdata"
+msgstr ""
+
+#: assets/js/Workflows/WorkflowLists.js:111
+msgid "workflow.myworkflows"
+msgstr ""
+
+#: assets/js/Workflows/index.js:190
+msgid "workflow.new"
 msgstr ""
 
 #: assets/js/WorkflowEditor/AddData/Modules.js:15
@@ -103,12 +184,44 @@ msgstr ""
 msgid "workflow.notavailableworkflow"
 msgstr ""
 
+#: assets/js/Workflows/SortMenu.js:33
+msgid "workflow.oldestmodified"
+msgstr ""
+
+#: assets/js/Workflows/index.js:91
+msgid "workflow.permanentdelete"
+msgstr ""
+
 #: assets/js/WorkflowEditor/ModuleSearch/Prompt.js:42
 msgid "workflow.placeholder.search"
 msgstr ""
 
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:351
+msgid "workflow.placeholder.typeanote"
+msgstr ""
+
 #: assets/js/UnhandledErrorReport.js:20
 msgid "workflow.plssendmsg"
+msgstr ""
+
+#: assets/js/Workflows/WorkflowMetadata.js:49
+msgid "workflow.private"
+msgstr ""
+
+#: assets/js/Workflows/WorkflowMetadata.js:49
+msgid "workflow.public"
+msgstr ""
+
+#: assets/js/Workflows/WorkflowLists.js:76
+msgid "workflow.publishenewrecipes"
+msgstr ""
+
+#: assets/js/WorkflowEditor/DataVersionModal.js:132
+msgid "workflow.receiveemail"
+msgstr ""
+
+#: assets/js/Workflows/WorkflowLists.js:113
+msgid "workflow.recipes"
 msgstr ""
 
 #: assets/js/UnhandledErrorReport.js:62
@@ -119,12 +232,24 @@ msgstr ""
 msgid "workflow.refreshthepagethankyou"
 msgstr ""
 
+#: assets/js/WorkflowEditor/Tabs/TabDropdown.js:14
+msgid "workflow.rename"
+msgstr ""
+
+#: assets/js/Workflows/SortMenu.js:36
+msgid "workflow.reversealphabet"
+msgstr ""
+
 #: assets/js/Workflow.js:20
 msgid "workflow.saveurchanges"
 msgstr ""
 
 #: assets/js/WorkflowEditor/AddData/Search.js:17
 msgid "workflow.searchattribute"
+msgstr ""
+
+#: assets/js/Workflows/WorkflowLists.js:112
+msgid "workflow.sharedwithme"
 msgstr ""
 
 #: assets/js/Workflow.js:37
@@ -146,6 +271,34 @@ msgstr ""
 msgid "workflow.tabs.tab_prefix"
 msgstr ""
 
+#: assets/js/WorkflowEditor/ModuleStack.js:139
+msgid "workflow.thistabnosteps"
+msgstr ""
+
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:398
+msgid "workflow.title.editnote"
+msgstr ""
+
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:384
+msgid "workflow.title.helpformodule"
+msgstr ""
+
+#: assets/js/WorkflowEditor/DataVersionModal.js:138
+msgid "workflow.turnoff"
+msgstr ""
+
+#: assets/js/WorkflowEditor/DataVersionModal.js:138
+msgid "workflow.turnon"
+msgstr ""
+
+#: assets/js/WorkflowEditor/DataVersionModal.js:132
+msgid "workflow.turnonalerts"
+msgstr ""
+
+#: assets/js/Workflows/WorkflowMetadata.js:60
+msgid "workflow.updated"
+msgstr ""
+
 #: assets/js/ShareModal/PublicPrivate.js:15
 msgid "workflow.visibility.anyone"
 msgstr "Ο καθένας μπορεί να δει και να το κάνει duplicate"
@@ -153,6 +306,10 @@ msgstr "Ο καθένας μπορεί να δει και να το κάνει d
 #: assets/js/WorkflowNavBar.js:52
 msgid "workflow.visibility.by"
 msgstr "από"
+
+#: assets/js/Workflows/WorkflowMetadata.js:48
+msgid "workflow.visibility.changeprivacy"
+msgstr ""
 
 #: assets/js/ShareModal/Modal.js:64
 msgid "workflow.visibility.closeButton"
@@ -383,6 +540,10 @@ msgstr ""
 
 #: assets/js/Embed.js:70
 msgid "workflow.workbenchupdated"
+msgstr ""
+
+#: assets/js/Workflows/WorkflowLists.js:64
+msgid "workflow.workflowswillappearhere"
 msgstr ""
 
 #. This is used in navigation bar. It should be all-caps for styling reasons.

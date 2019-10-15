@@ -5,6 +5,8 @@ import PropTypes from 'prop-types'
 import DelayedTableSwitcher from '../table/DelayedTableSwitcher'
 import OutputIframe from '../OutputIframe'
 import { connect } from 'react-redux'
+import { I18n } from '@lingui/react'
+import { Trans,t } from '@lingui/macro'
 
 export class OutputPane extends React.Component {
   static propTypes = {
@@ -95,7 +97,7 @@ export class OutputPane extends React.Component {
           key='error'
           className='showing-input-because-error'
         >
-          This was the data that led to an error. Please correct the error in the left pane.
+          <Trans id="workflow.dataledtoan error">This was the data that led to an error. Please correct the error in the left pane.</Trans>
         </p>
       )
     } else {

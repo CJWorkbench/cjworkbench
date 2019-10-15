@@ -25,6 +25,8 @@ import { connect } from 'react-redux'
 import deepEqual from 'fast-deep-equal'
 import lessonSelector from '../../lessons/lessonSelector'
 import { createSelector } from 'reselect'
+import { I18n } from '@lingui/react'
+import { Trans,t } from '@lingui/macro'
 
 const numberFormat = new Intl.NumberFormat()
 
@@ -229,7 +231,7 @@ export class WfModule extends React.PureComponent {
     if (!isZenModeAllowed) return null
 
     const className = `toggle-zen-mode ${isZenMode ? 'is-zen-mode' : 'not-zen-mode'}`
-    const title = isZenMode ? 'exit Zen mode' : 'enter Zen mode'
+    const title = isZenMode ? <Trans id="workflow.exitzenmode">exit Zen mode</Trans> : <Trans id="workflow.enterzenmode">enter Zen mode</Trans>
 
     return (
       <label className={className} title={title}>
@@ -341,16 +343,20 @@ export class WfModule extends React.PureComponent {
 
     const notes = (
       <div className={`module-notes${isNoteVisible ? ' visible' : ''}`}>
+       <I18n>
+        {({ i18n }) => (
         <EditableNotes
           isReadOnly={isReadOnly}
           inputRef={this.notesInputRef}
-          placeholder='Type a note...'
+          placeholder={i18n._(t('workflow.placeholder.typeanote')`Type a note...`)}
           value={this.state.editedNotes === null ? (this.props.wfModule.notes || '') : this.state.editedNotes}
           onChange={this.handleChangeNote}
           onFocus={this.handleFocusNote}
           onBlur={this.handleBlurNote}
           onCancel={this.handleCancelNote}
         />
+        )}
+        </I18n>
       </div>
     )
 
@@ -361,7 +367,7 @@ export class WfModule extends React.PureComponent {
       let className = 'notifications'
       if (notifications) className += ' enabled'
       if (hasUnseen) className += ' has-unseen'
-      const title = notifications ? 'Email alerts enabled' : 'Email alerts disabled'
+      const title = notifications ? <Trans id='workflow.emailalertenebled'>Email alerts enabled</Trans> : <Trans id="workflow.emailalertdisabled">Email alerts disabled</Trans>
 
       alertButton = (
         <button title={title} className={className} onClick={this.handleClickNotification}>
@@ -373,22 +379,30 @@ export class WfModule extends React.PureComponent {
     let helpIcon = null
     if (!this.props.isReadOnly) {
       helpIcon = (
-        <a title='Help for this module' className='help-button' href={moduleHelpUrl} target='_blank' rel='noopener noreferrer'>
+        <I18n>
+        {({ i18n }) => (
+        <a title={i18n._(t('workflow.title.helpformodule')`Help for this module`)} className='help-button' href={moduleHelpUrl} target='_blank' rel='noopener noreferrer'>
           <i className='icon-help' />
         </a>
+        )}
+       </I18n>
       )
     }
 
     let notesIcon = null
     if (!this.props.isReadOnly) {
       notesIcon = (
+        <I18n>
+        {({ i18n }) => (
         <button
-          title='Edit Note'
+          title={i18n._(t('workflow.title.editnote')`Edit Note`)}
           className={'btn edit-note' + (this.props.isLessonHighlightNotes ? ' lesson-highlight' : '')}
           onClick={this.handleClickNoteButton}
         >
           <i className='icon-note' />
         </button>
+         )}
+         </I18n>
       )
     }
 

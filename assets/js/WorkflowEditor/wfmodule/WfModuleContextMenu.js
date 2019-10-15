@@ -3,6 +3,8 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from '../../components/Dropdown'
 import ExportModal from '../../ExportModal'
+import { I18n } from '@lingui/react'
+import { Trans,t } from '@lingui/macro'
 
 const WfModuleContextMenu = React.memo(function WfModuleContextMenu ({ removeModule, id }) {
   const [isExportModalOpen, setExportModalOpen] = React.useState(false)
@@ -16,8 +18,8 @@ const WfModuleContextMenu = React.memo(function WfModuleContextMenu ({ removeMod
         <i className='icon-more' />
       </DropdownToggle>
       <DropdownMenu>
-        <DropdownItem onClick={handleClickOpenExportModal} className='test-export-button' icon='icon-download'>Export data</DropdownItem>
-        <DropdownItem onClick={handleClickDelete} className='test-delete-button' icon='icon-bin'>Delete</DropdownItem>
+        <DropdownItem onClick={handleClickOpenExportModal} className='test-export-button' icon='icon-download'><Trans id="workflow.exportdata">Export data</Trans></DropdownItem>
+        <DropdownItem onClick={handleClickDelete} className='test-delete-button' icon='icon-bin'><Trans id="workflow.delete">Delete</Trans></DropdownItem>
       </DropdownMenu>
       <ExportModal open={isExportModalOpen} wfModuleId={id} toggle={handleCloseExportModal} />
     </UncontrolledDropdown>

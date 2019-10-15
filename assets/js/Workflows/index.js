@@ -9,6 +9,8 @@ import { logUserEvent } from '../utils'
 import CreateWorkflowButton from './CreateWorkflowButton'
 import WorkflowLists from './WorkflowLists'
 import { WorkflowListPropType } from './WorkflowList'
+import { I18n } from '@lingui/react'
+import { Trans,t } from '@lingui/macro'
 
 export default class Workflows extends React.Component {
   static propTypes = {
@@ -86,7 +88,7 @@ export default class Workflows extends React.Component {
     const tabName = this.workflowIdToTabName(workflowId)
     if (!tabName) return
 
-    if (!confirm('Permanently delete this workflow?')) return
+    if (!confirm(<Trans id="workflow.permanentdelete">Permanently delete this workflow?</Trans>)) return
 
     this.props.api.deleteWorkflow(workflowId)
       .then(() => {
@@ -185,16 +187,16 @@ export default class Workflows extends React.Component {
         <Navbar user={user} />
         <a href='/lessons/' className='lesson-banner mx-auto'>
           <div>
-            <div className='content-1'>NEW</div>
+            <div className='content-1'><Trans id="workflow.new">NEW</Trans></div>
             <div className='d-flex'>
               <span className='icon-star' />
-              <div className=' title-1 '>TRAINING</div>
+              <div className=' title-1 '><Trans id=" workflow.trainingtitle">TRAINING</Trans></div>
             </div>
           </div>
-          <p>Learn how to work with data without coding</p>
+          <p><Trans id="workflow.learnworkwithdata">Learn how to work with data without coding</Trans></p>
         </a>
         <CreateWorkflowButton>
-          Create Workflow
+          <Trans id="workflow.createworkflow">Create Workflow</Trans>
         </CreateWorkflowButton>
         <WorkflowLists
           workflows={workflows}

@@ -49,7 +49,7 @@ const OwnedWorkflowTitleAndMetadata = withI18n()(function ({ i18n, isReadOnly, w
       <ul className='metadata-container'>
         {!workflow.is_anonymous ? (
           <li className='attribution'>
-            <span className='metadata'>{<Trans id='workflow.visibility.by'>by</Trans>} {workflow.owner_name.trim()}</span>
+            <span className='metadata'><Trans id='workflow.visibility.by'>by {workflow.owner_name.trim()}</Trans> </span>
             <span className='separator'>-</span>
           </li>
         ) : null}
