@@ -12,7 +12,7 @@ from os import remove
 from shutil import copyfile
 
 
-TEMP_BACKUP_CATALOG_FILENAME = "old.po"
+MID_EXTRACT_CATALOG_FILENAME = "old.po"
 
 
 _default_message_re = re.compile(
@@ -42,7 +42,7 @@ def prepare():
         if locale != default_locale:
             copyfile(
                 catalog_path(locale, CATALOG_FILENAME),
-                catalog_path(locale, TEMP_BACKUP_CATALOG_FILENAME),
+                catalog_path(locale, MID_EXTRACT_CATALOG_FILENAME),
             )
 
 
@@ -62,7 +62,7 @@ def _merge_catalog(locale, source_catalog, default={}):
         catalog = read_po(target_catalog_file)
     if not default:
         with open(
-            catalog_path(locale, TEMP_BACKUP_CATALOG_FILENAME), "r"
+            catalog_path(locale, MID_EXTRACT_CATALOG_FILENAME), "r"
         ) as target_catalog_file:
             old = read_po(target_catalog_file)
     for message in source_catalog:
@@ -113,7 +113,7 @@ def clean():
     # Remove temp files for non-default locales
     for locale in supported_locales:
         if locale != default_locale:
-            remove(catalog_path(locale, TEMP_BACKUP_CATALOG_FILENAME))
+            remove(catalog_path(locale, MID_EXTRACT_CATALOG_FILENAME))
 
     # Update template file for default locale
     with open(catalog_path(default_locale, CATALOG_FILENAME)) as catalog_file:
