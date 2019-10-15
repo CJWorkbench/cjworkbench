@@ -52,12 +52,15 @@ class SetCurrentLocaleMiddleware:
         return locale if is_supported(locale) else None
 
     def _get_locale_from_current_user(self, request):
-        if request.user.is_authenticated and hasattr(request.user, "locale_id"):
+        if self._use_session(request.user):
+            locale = request.session.get("locale_id")
+            return locale if is_supported(locale) else None
+        else:
             locale = getattr(request.user, "locale_id", None)
             return locale if is_supported(locale) else None
 
-        locale = request.session.get("locale_id")
-        return locale if is_supported(locale) else None
+    def _use_session(self, user):
+        return not user.is_authenticated or not hasattr(user, "locale_id")
 
     def _get_locale_from_language_header(self, request):
         # Copied from django.utils.translation.real_trans.get_language_from_request
@@ -86,6 +89,7 @@ class SetCurrentLocaleMiddleware:
 
         # We set the locale in session if needed, so that we will remember it in future requests
         if (
-            not request.user.is_authenticated or not hasattr(request.user, "locale_id")
-        ) and request.session.get("locale_id") != locale:
+            self._use_session(request.user)
+            and request.session.get("locale_id") != locale
+        ):
             request.session["locale_id"] = locale
