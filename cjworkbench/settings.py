@@ -108,6 +108,9 @@ CHANNEL_LAYERS = {
     }
 }
 
+# For django-allauth
+ACCOUNT_ADAPTER = "cjworkbench.allauth_account_adapter.AccountAdapter"
+
 # EMAIL_BACKEND
 #
 # In Production, sets ACCOUNT_ADAPTER, SENDGRID_TEMPLATE_IDS
