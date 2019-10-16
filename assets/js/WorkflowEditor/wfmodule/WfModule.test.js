@@ -1,9 +1,9 @@
 /* globals describe, it, expect, jest, beforeEach, afterEach */
 import React from 'react'
 import { act } from 'react-dom/test-utils'
-import ConnectedWfModule, { WfModule } from './WfModule'
+import ConnectedWfModule, { WfModuleClass } from './WfModule'
 import DataVersionModal from '../DataVersionModal'
-import { shallow, mount } from 'enzyme'
+import { shallowWithI18n, mountWithI18n } from '../../i18n/test-utils'
 import deepEqual from 'fast-deep-equal'
 import { createStore } from 'redux'
 import { Provider } from 'react-redux'
@@ -65,8 +65,11 @@ describe('WfModule, not read-only mode', () => {
   }
 
   const wrapper = (extraProps = {}) => {
-    return shallow(
-      <WfModule
+    // Since we use shallow and WfModule has <I18n> as the outer component,
+    // we use shallow in the WfModuleClass directly.
+    // Otherwise, shallow would only render <I18n>.
+    return shallowWithI18n(
+      <WfModuleClass
         isReadOnly={false}
         isAnonymous={false}
         isZenMode={false}
@@ -344,7 +347,7 @@ describe('WfModule, not read-only mode', () => {
       testHighlight: _ => false
     })
 
-    const w = mount(
+    const w = mountWithI18n(
       <Provider store={store}>
         <ConnectedWfModule
           isReadOnly={false}
@@ -415,7 +418,7 @@ describe('WfModule, not read-only mode', () => {
 
       highlight([])
 
-      wrapper = mount(
+      wrapper = mountWithI18n(
         <Provider store={store}>
           <ConnectedWfModule
             isReadOnly={false}
