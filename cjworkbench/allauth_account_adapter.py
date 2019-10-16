@@ -1,5 +1,6 @@
 from allauth.account.adapter import DefaultAccountAdapter
 from cjworkbench.i18n.templates import context_processor
+from django.contrib.sites.shortcuts import get_current_site
 
 
 class AccountAdapter(DefaultAccountAdapter):
