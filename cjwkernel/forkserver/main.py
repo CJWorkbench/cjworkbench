@@ -1,4 +1,3 @@
-import array
 import ctypes
 import os
 import signal
