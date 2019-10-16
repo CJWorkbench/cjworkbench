@@ -1,12 +1,12 @@
 from unittest.mock import Mock, patch
 from django.contrib.auth.models import User
-from server import oauth
+from cjwstate import oauth
 from cjwstate.models import Workflow, ModuleVersion
 from cjwstate.tests.utils import DbTestCase
 
 
 class OauthTest(DbTestCase):
-    @patch("server.oauth.OAuthService.lookup_or_none")
+    @patch("cjwstate.oauth.OAuthService.lookup_or_none")
     def test_oauth1a_token_request_denied(self, lookup):
         lookup.return_value = Mock(oauth.OAuthService)
         lookup.return_value.generate_redirect_url_and_state.side_effect = oauth.TokenRequestDenied(

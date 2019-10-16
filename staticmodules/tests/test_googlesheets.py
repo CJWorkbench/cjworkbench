@@ -5,7 +5,7 @@ from typing import Any, Dict, Optional
 import pandas as pd
 from pandas.testing import assert_frame_equal
 import requests.exceptions
-from server import oauth
+from cjwstate import oauth
 from staticmodules.googlesheets import fetch, render, migrate_params
 from .util import MockParams
 

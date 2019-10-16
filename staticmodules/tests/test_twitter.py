@@ -8,6 +8,7 @@ import pandas as pd
 from pandas.testing import assert_frame_equal
 from cjwkernel.tests.util import override_settings
 from cjwkernel.pandas.types import ProcessResult
+from cjwstate import oauth
 from staticmodules import twitter
 from .util import MockParams
 
@@ -904,7 +905,7 @@ class TwitterTests(unittest.TestCase):
         )
         self.assertEqual(result, "Not a valid Twitter list URL")
 
-    @patch("server.oauth.OAuthService.lookup_or_none", mock_auth)
+    @patch.object(oauth.OAuthService, "lookup_or_none", mock_auth)
     @patch("aiohttp.ClientSession")
     def test_fetch_user_timeline_accumulate(self, session):
         session.return_value = mock_session = MockAiohttpSession([mock_statuses2, []])
@@ -936,7 +937,7 @@ class TwitterTests(unittest.TestCase):
         )
 
     @override_settings(TWITTER_MAX_ROWS_PER_TABLE=3)
-    @patch("server.oauth.OAuthService.lookup_or_none", mock_auth)
+    @patch.object(oauth.OAuthService, "lookup_or_none", mock_auth)
     @patch("aiohttp.ClientSession")
     def test_accumulate_truncate(self, session):
         session.return_value = MockAiohttpSession([mock_statuses2, []])
@@ -956,7 +957,7 @@ class TwitterTests(unittest.TestCase):
         )
         assert_frame_equal(result, expected)
 
-    @patch("server.oauth.OAuthService.lookup_or_none", mock_auth)
+    @patch.object(oauth.OAuthService, "lookup_or_none", mock_auth)
     @patch("aiohttp.ClientSession")
     def test_fetch_accumulate_from_None(self, session):
         # https://www.pivotaltracker.com/story/show/160258591
@@ -966,7 +967,7 @@ class TwitterTests(unittest.TestCase):
         result = fetch(P(accumulate=True), DefaultSecret, None)
         assert_frame_equal(result, mock_tweet_table)
 
-    @patch("server.oauth.OAuthService.lookup_or_none", mock_auth)
+    @patch.object(oauth.OAuthService, "lookup_or_none", mock_auth)
     @patch("aiohttp.ClientSession")
     def test_fetch_accumulate_from_empty(self, session):
         # https://www.pivotaltracker.com/story/show/160258591
@@ -977,7 +978,7 @@ class TwitterTests(unittest.TestCase):
         result = fetch(P(accumulate=True), DefaultSecret, pd.DataFrame())
         assert_frame_equal(result, mock_tweet_table)
 
-    @patch("server.oauth.OAuthService.lookup_or_none", mock_auth)
+    @patch.object(oauth.OAuthService, "lookup_or_none", mock_auth)
     @patch("aiohttp.ClientSession")
     def test_fetch_accumulate_all_empty(self, session):
         # https://www.pivotaltracker.com/story/show/160258591
@@ -989,7 +990,7 @@ class TwitterTests(unittest.TestCase):
         expected = mock_tweet_table[0:0].reset_index(drop=True)  # empty table
         assert_frame_equal(result, expected)
 
-    @patch("server.oauth.OAuthService.lookup_or_none", mock_auth)
+    @patch.object(oauth.OAuthService, "lookup_or_none", mock_auth)
     @patch("aiohttp.ClientSession")
     def test_fetch_accumulate_empty_upon_data(self, session):
         # https://www.pivotaltracker.com/story/show/160258591
@@ -1000,7 +1001,7 @@ class TwitterTests(unittest.TestCase):
         result = fetch(P(accumulate=True), DefaultSecret, mock_tweet_table)
         assert_frame_equal(result, mock_tweet_table)
 
-    @patch("server.oauth.OAuthService.lookup_or_none", mock_auth)
+    @patch.object(oauth.OAuthService, "lookup_or_none", mock_auth)
     @patch("aiohttp.ClientSession")
     def test_accumulate_recover_after_bug_160258591(self, session):
         # https://www.pivotaltracker.com/story/show/160258591
@@ -1023,7 +1024,7 @@ class TwitterTests(unittest.TestCase):
         result = fetch(P(accumulate=True), DefaultSecret, bad_table)
         assert_frame_equal(result, mock_tweet_table)
 
-    @patch("server.oauth.OAuthService.lookup_or_none", mock_auth)
+    @patch.object(oauth.OAuthService, "lookup_or_none", mock_auth)
     @patch("aiohttp.ClientSession")
     def test_twitter_search(self, session):
         session.return_value = mock_session = MockAiohttpSession([mock_statuses, []])
@@ -1048,7 +1049,7 @@ class TwitterTests(unittest.TestCase):
         # Check that render output is right
         assert_frame_equal(result, mock_tweet_table)
 
-    @patch("server.oauth.OAuthService.lookup_or_none", mock_auth)
+    @patch.object(oauth.OAuthService, "lookup_or_none", mock_auth)
     @patch("aiohttp.ClientSession")
     def test_twitter_list(self, session):
         session.return_value = mock_session = MockAiohttpSession([mock_statuses, []])
@@ -1113,7 +1114,7 @@ class TwitterTests(unittest.TestCase):
         )
         assert_frame_equal(result["dataframe"], mock_tweet_table.iloc[[0]])
 
-    @patch("server.oauth.OAuthService.lookup_or_none", mock_auth)
+    @patch.object(oauth.OAuthService, "lookup_or_none", mock_auth)
     @patch("aiohttp.ClientSession")
     def test_add_retweet_status_screen_name(self, session):
         # Migration: what happens when we accumulate tweets
@@ -1140,7 +1141,7 @@ class TwitterTests(unittest.TestCase):
         expected.loc[3:5, "retweeted_status_screen_name"] = None
         assert_frame_equal(result, expected)
 
-    @patch("server.oauth.OAuthService.lookup_or_none", mock_auth)
+    @patch.object(oauth.OAuthService, "lookup_or_none", mock_auth)
     @patch("aiohttp.ClientSession")
     def test_retweeted_status_full_text(self, session):
         # https://www.pivotaltracker.com/story/show/165502310
@@ -1161,7 +1162,7 @@ class TwitterTests(unittest.TestCase):
             ),
         )
 
-    @patch("server.oauth.OAuthService.lookup_or_none", mock_auth)
+    @patch.object(oauth.OAuthService, "lookup_or_none", mock_auth)
     @patch("aiohttp.ClientSession")
     def test_undefined_language_is_null(self, session):
         # https://blog.twitter.com/developer/en_us/a/2013/introducing-new-metadata-for-tweets.html

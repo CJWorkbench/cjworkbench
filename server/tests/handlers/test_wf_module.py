@@ -5,7 +5,13 @@ from dateutil.parser import isoparse
 from django.contrib.auth.models import User
 from django.test import override_settings
 from django.utils import timezone
-from server import oauth
+from cjwstate import oauth
+from cjwstate.models import ModuleVersion, Workflow
+from cjwstate.models.commands import (
+    ChangeParametersCommand,
+    ChangeWfModuleNotesCommand,
+    DeleteModuleCommand,
+)
 from server.handlers.wf_module import (
     set_params,
     delete,
@@ -21,12 +27,6 @@ from server.handlers.wf_module import (
     get_file_upload_api_token,
     reset_file_upload_api_token,
     clear_file_upload_api_token,
-)
-from cjwstate.models import ModuleVersion, Workflow
-from cjwstate.models.commands import (
-    ChangeParametersCommand,
-    ChangeWfModuleNotesCommand,
-    DeleteModuleCommand,
 )
 from .util import HandlerTestCase
 
@@ -769,7 +769,7 @@ class WfModuleTest(HandlerTestCase):
         "cjwstate.modules.loaded_module.LoadedModule.for_module_version",
         MockLoadedModule,
     )
-    @patch("server.oauth.OAuthService.lookup_or_none", lambda _: None)
+    @patch("cjwstate.oauth.OAuthService.lookup_or_none", lambda _: None)
     @override_settings(OAUTH_SERVICES={"twitter": {}})
     def test_generate_secret_access_token_no_service_gives_error(self):
         user = User.objects.create()
@@ -802,7 +802,7 @@ class WfModuleTest(HandlerTestCase):
         "cjwstate.modules.loaded_module.LoadedModule.for_module_version",
         MockLoadedModule,
     )
-    @patch("server.oauth.OAuthService.lookup_or_none")
+    @patch("cjwstate.oauth.OAuthService.lookup_or_none")
     def test_generate_secret_access_token_auth_error_gives_error(self, factory):
         service = Mock(oauth.OAuth2)
         service.generate_access_token_or_str_error.return_value = "an error"
@@ -838,7 +838,7 @@ class WfModuleTest(HandlerTestCase):
         "cjwstate.modules.loaded_module.LoadedModule.for_module_version",
         MockLoadedModule,
     )
-    @patch("server.oauth.OAuthService.lookup_or_none")
+    @patch("cjwstate.oauth.OAuthService.lookup_or_none")
     def test_generate_secret_access_token_happy_path(self, factory):
         service = Mock(oauth.OAuth2)
         service.generate_access_token_or_str_error.return_value = {

@@ -10,7 +10,7 @@ from oauthlib.common import urlencode
 import pandas as pd
 import yarl  # expose aiohttp's innards -- ick.
 from cjwkernel import settings
-from server import oauth
+from cjwstate import oauth
 
 
 class QueryType(Enum):

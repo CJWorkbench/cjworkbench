@@ -4,8 +4,8 @@ from typing import Any, Dict, Optional, Union
 import pandas as pd
 import requests
 from cjwkernel.pandas.types import ProcessResult
-from server import oauth
 from cjwkernel.pandas.moduleutils import parse_bytesio, turn_header_into_first_row
+from cjwstate import oauth
 
 
 _Secret = Dict[str, Any]

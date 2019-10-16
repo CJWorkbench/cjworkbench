@@ -10,9 +10,10 @@ from django.http import (
 )
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
+from cjwstate import oauth
 from cjwstate.models import ModuleVersion, WfModule, Workflow
 from cjwstate.models.param_spec import ParamSpec
-from .. import oauth, websockets
+from .. import websockets
 
 
 logger = logging.getLogger(__name__)

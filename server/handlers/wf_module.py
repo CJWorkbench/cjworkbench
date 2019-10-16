@@ -8,8 +8,8 @@ from django.conf import settings
 from django.db import transaction
 from django.utils import timezone
 from cjworkbench.sync import database_sync_to_async
-from server import oauth, rabbitmq, websockets
-from cjwstate import commands
+from server import rabbitmq, websockets
+from cjwstate import commands, oauth
 from cjwstate.models import Workflow, WfModule
 from cjwstate.models.commands import (
     ChangeParametersCommand,
