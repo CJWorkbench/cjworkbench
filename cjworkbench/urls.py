@@ -17,6 +17,7 @@ from allauth.account.views import SignupView
 from django.conf.urls import include, url
 from django.contrib import admin
 from django.views.generic.base import RedirectView
+from cjworkbench.i18n.views import set_locale
 
 urlpatterns = [
     url(r"^admin/?", admin.site.urls),
@@ -27,5 +28,6 @@ urlpatterns = [
         name="account_signup",
     ),
     url(r"^account/", include("allauth.urls")),
+    url(r"^locale", set_locale, name="set_locale"),
     url(r"^", include("server.urls")),
 ]

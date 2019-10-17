@@ -13,15 +13,7 @@ trans_param_re = re.compile(r"arg_(?P<arg>\w+)", re.ASCII)
 
 @register.simple_tag(takes_context=True)
 def trans_html(
-    context,
-    message_id,
-    *,
-    default,
-    ctxt="",
-    noop=False,
-    comment="",
-    locale=None,
-    **kwargs,
+    context, message_id, *, default, ctxt="", noop=False, comment="", **kwargs
 ):
     """Translate a message, supporting HTML placeholders and variables.
 
@@ -41,7 +33,7 @@ def trans_html(
     Nested HTML tags are forbidden; in fact, at this point, the inner ones will be escaped, but you should not rely on this.
     Non-nested tags that have not been mapped in this way will be ignored; in fact, at this point, they will replaced by their escaped contents, but you should not rely on this.
     
-    The locale will be taken from request if not provided.
+    The locale will be taken from context.
     
     For code parsing reasons, respect the following order when passing more than one of `default`, `ctxt`, and `comment` arguments:
         `default` before `ctxt` before `comment`
@@ -51,31 +43,31 @@ def trans_html(
     The `comment` argument is ignored here, it's only used in code parsing.
     
     Examples:
-        - `{% trans "messages.hello" default="Hello" comment="This can be all caps if you really want it to be" %}` 
+        - `{% trans_html "messages.hello" default="Hello" comment="This can be all caps if you really want it to be" %}` 
           Looks up `messages.hello` in the catalog for the current locale; 
           if not found, returns `"Hello"`.
           When the code is parsed, the comment and the default will be added to the message catalog.
           
-        - `{% trans "messages.hello" default="Hello {name}" arg_name="Adam"%}` 
+        - `{% trans_html "messages.hello" default="Hello {name}" arg_name="Adam"%}` 
           looks up `messages.hello` in the catalog for the current locale and provides `"Adam"` as a value for `name`; 
           if not found, returns `"Hello Adam"`
           When the code is parsed, the default will be added to the message catalog.
           
-        - `{% trans "messages.hello" default="Hello {name}" ctxt="dashboard" arg_name="Adam"%}` 
+        - `{% trans_html "messages.hello" default="Hello {name}" ctxt="dashboard" arg_name="Adam"%}` 
           looks up `messages.hello` with context `dashboard` in the catalog for the current locale and provides `"Adam"` as a value for `name`; 
           if not found, returns `"Hello Adam"`
           When the code is parsed, the context and the default will be added to the message catalog.
           
-        - `{% trans "messages.hello" noop=True default="Hello" %}` 
+        - `{% trans_html "messages.hello" noop=True default="Hello" %}` 
           returns None
           When the code is parsed, the default will be added to the message catalog.
           
-        - `{% trans "messages.hello" default="<span0>Hello</span0> <span1>you</span1>" tag_span0_class="red big" tag_span1_class="small yellow" tag_span1_id="you" %}` 
+        - `{% trans_html "messages.hello" default="<span0>Hello</span0> <span1>you</span1>" tag_span0_class="red big" tag_span1_class="small yellow" tag_span1_id="you" %}` 
           looks up `messages.hello` in the catalog for the current locale and replaces the placeholders with the info in `tag_*` arguments;
           for example, the default message would become `'<span class="red big">Hello</span> <span class="small yellow" id="you">you</span>'` 
           When the code is parsed, the default will be added to the message catalog.
           
-        - `{% trans some_var default="the default" %}`
+        - `{% trans_html some_var default="the default" %}`
           Looks up the content of `some_var` in the catalog. If found, returns it, else returns the default.
           When the code is parsed for message extraction, this will be ignored.
     """
@@ -101,7 +93,7 @@ def trans_html(
 
     return mark_safe(
         do_trans_html(
-            locale or context["request"].locale_id,
+            context["i18n"]["locale_id"],
             message_id,
             default=default,
             context=ctxt,

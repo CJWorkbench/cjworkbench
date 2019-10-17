@@ -1,16 +1,11 @@
 from django.test import SimpleTestCase
 from server.templatetags.i18n_icu import trans_html
 from cjworkbench.i18n import default_locale
-from cjworkbench.tests.i18n import mock_message_id
-
-
-class MockRequest(object):
-    def __init__(self, **kwargs):
-        self.locale_id = kwargs.get("locale_id", default_locale)
+from cjworkbench.tests.test_trans import mock_message_id
 
 
 def mock_context(**kwargs):
-    return {"request": MockRequest(**kwargs)}
+    return {"i18n": {"locale_id": kwargs.get("locale_id", default_locale)}}
 
 
 class TransTemplateTagTests(SimpleTestCase):

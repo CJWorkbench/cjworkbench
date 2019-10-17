@@ -14,11 +14,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.7.0\n"
 
-#: assets/js/i18n/locales.js:5
+#: assets/js/i18n/locales.js:7
 msgid "locales.el"
 msgstr "Greek"
 
-#: assets/js/i18n/locales.js:4
+#: assets/js/i18n/locales.js:6
 msgid "locales.en"
 msgstr "English"
 
@@ -74,4 +74,12 @@ msgstr "Sign Up"
 #: templates/account/signup.html:26
 msgid "accounts.sign_up.login_prompt"
 msgstr "If you have already created an account, then please <a0>log in</a0>."
+
+#: templates/account/email/password_reset_key_subject.txt:3
+msgid "accounts.emails.password_reset.subject"
+msgstr "Password Reset E-mail"
+
+#: templates/notifications/new_data_version_subject.txt:3
+msgid "notifications.new_data_version.subject"
+msgstr "New data available in {workflow_name}"
 

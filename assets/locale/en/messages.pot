@@ -1,21 +1,39 @@
-# Translations template for PROJECT.
-# Copyright (C) 2019 ORGANIZATION
-# This file is distributed under the same license as the PROJECT project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
-#
-#, fuzzy
-msgid ""
+#. default-message: Greek
+#: assets/js/i18n/locales.js:7
+msgid "locales.el"
 msgstr ""
-"Project-Id-Version: PROJECT VERSION\n"
-"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-10-07 06:12+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.7.0\n"
+
+#. default-message: English
+#: assets/js/i18n/locales.js:6
+msgid "locales.en"
+msgstr ""
+
+#. default-message: {0, plural, =0 {No rows selected} one {# row selected} other {# rows selected}}
+#: assets/js/table/SelectedRowsActions.js:105
+msgid "selectedRow.numberOfRows"
+msgstr ""
+
+#. default-message: Private
+#: assets/js/WorkflowNavBar.js:62
+msgid "workflow.visibility.private"
+msgstr ""
+
+#. default-message: Public
+#: assets/js/WorkflowNavBar.js:62
+msgid "workflow.visibility.public"
+msgstr ""
+
+#. This is used in navigation bar. It should be all-caps for styling reasons.
+#. default-message: TRAINING
+#: assets/js/Workflows/Navbar.js:39
+msgid "workflows.navbar.training"
+msgstr ""
+
+#. This is used in navigation bar. It should be all-caps for styling reasons.
+#. default-message: WORKFLOWS
+#: assets/js/Workflows/Navbar.js:36
+msgid "workflows.navbar.workflows"
+msgstr ""
 
 #. default-message: First name
 #: cjworkbench/forms/signup.py:24
@@ -50,5 +68,15 @@ msgstr ""
 #. default-message: If you have already created an account, then please <a0>log in</a0>.
 #: templates/account/signup.html:26
 msgid "accounts.sign_up.login_prompt"
+msgstr ""
+
+#. default-message: Password Reset E-mail
+#: templates/account/email/password_reset_key_subject.txt:3
+msgid "accounts.emails.password_reset.subject"
+msgstr ""
+
+#. default-message: New data available in {workflow_name}
+#: templates/notifications/new_data_version_subject.txt:3
+msgid "notifications.new_data_version.subject"
 msgstr ""
 
