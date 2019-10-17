@@ -360,10 +360,12 @@ class ArrowTable:
                 "Metadata suggests %d columns; table has %d"
                 % (len(self.metadata.columns), table.num_columns)
             )
-            for tcol, mcol in zip(table.columns, self.metadata.columns):
-                assert tcol.name == mcol.name
+            for name, chunks, metacol in zip(
+                table.column_names, table.columns, self.metadata.columns
+            ):
+                assert name == metacol.name
                 # Assert the column type is one we support
-                ttype = tcol.type
+                ttype = chunks.type
                 assert (
                     pyarrow.types.is_timestamp(ttype)
                     or pyarrow.types.is_floating(ttype)
@@ -373,17 +375,17 @@ class ArrowTable:
                         pyarrow.types.is_dictionary(ttype)
                         and pyarrow.types.is_string(ttype.value_type)
                     )
-                ), "Column %r type %r" % (tcol.name, ttype)
+                ), "Column %r type %r" % (name, ttype)
                 # Assert the column type in our metadata matches it
                 assert pyarrow.types.is_timestamp(ttype) == isinstance(
-                    mcol.type, ColumnTypeDatetime
+                    metacol.type, ColumnTypeDatetime
                 )
                 assert (
                     pyarrow.types.is_floating(ttype) or pyarrow.types.is_integer(ttype)
-                ) == isinstance(mcol.type, ColumnTypeNumber)
+                ) == isinstance(metacol.type, ColumnTypeNumber)
                 assert (
                     pyarrow.types.is_string(ttype) or pyarrow.types.is_dictionary(ttype)
-                ) == isinstance(mcol.type, ColumnTypeText)
+                ) == isinstance(metacol.type, ColumnTypeText)
         object.__setattr__(self, "table", table)
 
     def __eq__(self, other: Any) -> bool:

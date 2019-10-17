@@ -1,12 +1,9 @@
 from contextlib import contextmanager
 from dataclasses import dataclass
 import errno
-import io
 import json
 import logging
-import math
 import pathlib
-import tempfile
 from typing import Any, ContextManager, Dict
 import urllib.parse
 import urllib3

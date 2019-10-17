@@ -3,7 +3,7 @@ import React from 'react'
 import { act } from 'react-dom/test-utils'
 import ConnectedWfModule, { WfModule } from './WfModule'
 import DataVersionModal from '../DataVersionModal'
-import { shallow, mount } from 'enzyme'
+import { shallowWithI18n, mountWithI18n } from '../../i18n/test-utils'
 import deepEqual from 'fast-deep-equal'
 import { createStore } from 'redux'
 import { Provider } from 'react-redux'
@@ -65,7 +65,7 @@ describe('WfModule, not read-only mode', () => {
   }
 
   const wrapper = (extraProps = {}) => {
-    return shallow(
+    return shallowWithI18n(
       <WfModule
         isReadOnly={false}
         isAnonymous={false}
@@ -344,7 +344,7 @@ describe('WfModule, not read-only mode', () => {
       testHighlight: _ => false
     })
 
-    const w = mount(
+    const w = mountWithI18n(
       <Provider store={store}>
         <ConnectedWfModule
           isReadOnly={false}
@@ -415,7 +415,7 @@ describe('WfModule, not read-only mode', () => {
 
       highlight([])
 
-      wrapper = mount(
+      wrapper = mountWithI18n(
         <Provider store={store}>
           <ConnectedWfModule
             isReadOnly={false}

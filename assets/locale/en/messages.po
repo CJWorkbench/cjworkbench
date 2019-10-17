@@ -14,6 +14,10 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.7.0\n"
 
+#: assets/js/Workflows/index.js:193
+msgid " workflow.trainingtitle"
+msgstr "TRAINING"
+
 #: assets/js/lessons/LessonNav.js:55
 msgid "lessons.nav.next"
 msgstr "Next"
@@ -38,6 +42,14 @@ msgstr "English"
 msgid "report.dashboard.emptyReport"
 msgstr "Add charts to tabs, and they'll appear here."
 
+#: assets/js/Report/ShareCard.js:21
+msgid "report.shareCard.accessibleTo.private"
+msgstr "Only collaborators can view this report"
+
+#: assets/js/Report/ShareCard.js:19
+msgid "report.shareCard.accessibleTo.public"
+msgstr "Anyone can view this report"
+
 #: assets/js/Report/ShareCard.js:24
 msgid "report.shareCard.editPrivacy"
 msgstr "Edit privacy"
@@ -46,16 +58,26 @@ msgstr "Edit privacy"
 msgid "report.shareCard.reportUrl"
 msgstr "Report URL"
 
-#: assets/js/table/SelectedRowsActions.js:105
+#: assets/js/Report/ShareCard.js:14
+msgid "report.shareCard.status.private"
+msgstr "This workflow is private"
+
+#: assets/js/Report/ShareCard.js:12
+msgid "report.shareCard.status.public"
+msgstr "This workflow is public"
+
+#: assets/js/table/SelectedRowsActions.js:106
 msgid "selectedRow.numberOfRows"
 msgstr ""
 "{0, plural, =0 {No rows selected} one {# row selected} other {# rows "
 "selected}}"
 
+#: assets/js/ShareModal/Role.js:8 assets/js/ShareModal/Role.js:15
 #: assets/js/ShareModal/Role.js:19
 msgid "shareModal.role.canEdit"
 msgstr "Can edit"
 
+#: assets/js/ShareModal/Role.js:8 assets/js/ShareModal/Role.js:15
 #: assets/js/ShareModal/Role.js:18
 msgid "shareModal.role.canView"
 msgstr "Can view"
@@ -128,10 +150,221 @@ msgstr "{years}y ago"
 msgid "time_diff.now"
 msgstr "just now"
 
+#: assets/js/WorkflowEditor/Tabs/TabDropdown.js:15
+msgid "workflow.Duplicate"
+msgstr "Duplicate"
+
+#: assets/js/WorkflowEditor/AddData/Button.js:25
+msgid "workflow.addData"
+msgstr "ADD DATA"
+
+#: assets/js/WorkflowEditor/ModuleSearch/Button.js:44
+msgid "workflow.addstep"
+msgstr "ADD STEP"
+
+#: assets/js/WorkflowEditor/DataVersionModal.js:131
+msgid "workflow.alertsare"
+msgstr "Alerts are"
+
+#: assets/js/Workflows/SortMenu.js:35
+msgid "workflow.alphabetical"
+msgstr "Alphabetical"
+
+#: assets/js/WorkflowEditor/AddData/Modal.js:25
+msgid "workflow.attribute.close"
+msgstr "Close"
+
+#: assets/js/WorkflowEditor/AddData/Modal.js:22
+msgid "workflow.choosedata"
+msgstr "CHOOSE A DATA SOURCE"
+
+#: assets/js/WorkflowEditor/AddData/Search.js:28
+msgid "workflow.clearSearch"
+msgstr "Clear Search"
+
+#: assets/js/UnhandledErrorReport.js:45
+msgid "workflow.copydebugging"
+msgstr "Copy the debugging details below and send them to"
+
+#: assets/js/Workflows/index.js:199
+msgid "workflow.createworkflow"
+msgstr "Create Workflow"
+
+#: assets/js/Workflows/WorkflowLists.js:51
+msgid "workflow.createyourworkflow"
+msgstr "Create your first workflow"
+
+#: assets/js/WorkflowEditor/OutputPane.js:105
+msgid "workflow.dataledtoanerror"
+msgstr ""
+"This was the data that led to an error. Please correct the error in the "
+"left panel."
+
+#: assets/js/WorkflowEditor/wfmodule/WfModuleContextMenu.js:22
+#: assets/js/Workflows/WorkflowContextMenu.js:41
+msgid "workflow.delete"
+msgstr "Delete"
+
+#: assets/js/WorkflowEditor/Tabs/TabDropdown.js:16
+msgid "workflow.deleteEvent"
+msgstr "Delete"
+
+#: assets/js/UnhandledErrorReport.js:21
+msgid "workflow.describeproblem"
+msgstr ""
+"It helps if you can describe what you were doing before you ran into the "
+"bug."
+
+#: assets/js/UnhandledErrorReport.js:46
+msgid "workflow.describethisbug"
+msgstr ""
+"It helps if you can describe what you were doing before you ran into the "
+"bug."
+
+#: assets/js/Workflows/WorkflowContextMenu.js:36
+msgid "workflow.duplicate"
+msgstr "Duplicate"
+
+#: assets/js/Workflow.js:18
+msgid "workflow.duplicatetosavechanges"
+msgstr "Duplicate it to save your changes"
+
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:373
+msgid "workflow.emailalertdisabled"
+msgstr "Email alerts disabled"
+
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:373
+msgid "workflow.emailalertenebled"
+msgstr "Email alerts enabled"
+
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:241
+msgid "workflow.enterzenmode"
+msgstr "enter Zen mode"
+
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:241
+msgid "workflow.exitzenmode"
+msgstr "exit Zen mode"
+
+#: assets/js/WorkflowEditor/wfmodule/WfModuleContextMenu.js:21
+msgid "workflow.exportdata"
+msgstr "Export data"
+
+#: assets/js/UnhandledErrorReport.js:55
+msgid "workflow.followsteps"
+msgstr "Please follow these simple steps to help us fix the issue."
+
+#: assets/js/WorkflowEditor/wfmodule/DeprecationNotice.js:12
+msgid "workflow.howtoreplace"
+msgstr "Learn how to replace this step"
+
 #. The parameter will contain something like '4h ago'
 #: assets/js/WorkflowNavBar.js:57
 msgid "workflow.last_updated"
 msgstr "Updated {0}"
+
+#: assets/js/Workflows/SortMenu.js:32
+msgid "workflow.lastmodified"
+msgstr "Last modified"
+
+#: assets/js/Workflows/index.js:196
+msgid "workflow.learnworkwithdata"
+msgstr "Learn how to work with data without coding"
+
+#: assets/js/Workflows/WorkflowLists.js:111
+msgid "workflow.myworkflows"
+msgstr "My workflows"
+
+#: assets/js/Workflows/index.js:190
+msgid "workflow.new"
+msgstr "NEW"
+
+#: assets/js/WorkflowEditor/AddData/Modules.js:15
+msgid "workflow.nodataconnectors"
+msgstr "No data connectors match your search."
+
+#: assets/js/Embed.js:21
+msgid "workflow.notavailableworkflow"
+msgstr "This workflow is not available"
+
+#: assets/js/Workflows/SortMenu.js:33
+msgid "workflow.oldestmodified"
+msgstr "Oldest modified"
+
+#: assets/js/Workflows/index.js:91
+msgid "workflow.permanentdelete"
+msgstr "Permanently delete this workflow?"
+
+#: assets/js/WorkflowEditor/ModuleSearch/Prompt.js:42
+msgid "workflow.placeholder.search"
+msgstr "Search…"
+
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:356
+msgid "workflow.placeholder.typeanote"
+msgstr "Type a note..."
+
+#: assets/js/UnhandledErrorReport.js:20
+msgid "workflow.plssendmsg"
+msgstr "Please send the message"
+
+#: assets/js/Workflows/WorkflowMetadata.js:48
+msgid "workflow.private"
+msgstr "private"
+
+#: assets/js/Workflows/WorkflowMetadata.js:48
+msgid "workflow.public"
+msgstr "public"
+
+#: assets/js/Workflows/WorkflowLists.js:76
+msgid "workflow.publishenewrecipes"
+msgstr "Publishe new recipes via the Django admin"
+
+#: assets/js/WorkflowEditor/DataVersionModal.js:132
+msgid "workflow.receiveemail"
+msgstr "You will receive and email if the output of this module changes"
+
+#: assets/js/Workflows/WorkflowLists.js:113
+msgid "workflow.recipes"
+msgstr "Recipes"
+
+#: assets/js/UnhandledErrorReport.js:62
+msgid "workflow.refreshthepage"
+msgstr "Refresh page"
+
+#: assets/js/UnhandledErrorReport.js:57
+msgid "workflow.refreshthepagethankyou"
+msgstr "THANK YOU! Refresh this page to return to your Workflow."
+
+#: assets/js/WorkflowEditor/Tabs/TabDropdown.js:14
+msgid "workflow.rename"
+msgstr "Rename"
+
+#: assets/js/Workflows/SortMenu.js:36
+msgid "workflow.reversealphabet"
+msgstr "Reverse alphabetical"
+
+#: assets/js/Workflow.js:20
+msgid "workflow.saveurchanges"
+msgstr "to save your changes"
+
+#: assets/js/WorkflowEditor/AddData/Search.js:17
+msgid "workflow.searchattribute"
+msgstr "Search…"
+
+#: assets/js/Workflows/WorkflowLists.js:112
+msgid "workflow.sharedwithme"
+msgstr "Shared with me"
+
+#: assets/js/Workflow.js:37
+msgid "workflow.sharedworkflowview"
+msgstr "You are viewing a shared workflow"
+
+#: assets/js/Workflow.js:20
+msgid "workflow.signin"
+msgstr "Sign in"
+
+#: assets/js/UnhandledErrorReport.js:54
+msgid "workflow.smtwentwrong"
+msgstr "Oops! Something isn't right."
 
 #. The tab prefix will be used as the first part of the default name of tabs,
 #. i.e. if the tab prefix is 'Tab', the default names can be 'Tab 1', 'Tab 2',
@@ -139,6 +372,34 @@ msgstr "Updated {0}"
 #: assets/js/WorkflowEditor/Tabs/actions.js:93
 msgid "workflow.tabs.tab_prefix"
 msgstr "Tab"
+
+#: assets/js/WorkflowEditor/ModuleStack.js:139
+msgid "workflow.thistabnosteps"
+msgstr "This Tab has no Steps."
+
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:395
+msgid "workflow.title.editnote"
+msgstr "Edit Note"
+
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:385
+msgid "workflow.title.helpformodule"
+msgstr "Help for this module"
+
+#: assets/js/WorkflowEditor/DataVersionModal.js:138
+msgid "workflow.turnoff"
+msgstr "Turn off"
+
+#: assets/js/WorkflowEditor/DataVersionModal.js:138
+msgid "workflow.turnon"
+msgstr "Turn on"
+
+#: assets/js/WorkflowEditor/DataVersionModal.js:132
+msgid "workflow.turnonalerts"
+msgstr "Turn alerts ON to receive an email if the output of this module changes"
+
+#: assets/js/Workflows/WorkflowMetadata.js:57
+msgid "workflow.updated"
+msgstr "Updated"
 
 #: assets/js/ShareModal/PublicPrivate.js:15
 msgid "workflow.visibility.anyone"
@@ -148,9 +409,17 @@ msgstr "Anyone can view and duplicate this workflow, and see your email."
 msgid "workflow.visibility.by"
 msgstr "by"
 
+#: assets/js/Workflows/WorkflowMetadata.js:47
+msgid "workflow.visibility.changeprivacy"
+msgstr "Change privacy"
+
 #: assets/js/ShareModal/Modal.js:64
 msgid "workflow.visibility.closeButton"
 msgstr "Close"
+
+#: assets/js/WorkflowEditor/ModuleSearch/Prompt.js:53
+msgid "workflow.visibility.closesearch"
+msgstr "Close Search"
 
 #: assets/js/ShareModal/Modal.js:43
 msgid "workflow.visibility.collaborators"
@@ -264,6 +533,125 @@ msgstr "Text"
 msgid "workflow.visibility.undo"
 msgstr "Undo"
 
+#: assets/js/UnhandledErrorReport.js:20
+msgid "workflow.workbenchbugreport"
+msgstr ""
+"We opened a messaging window and included details for our developers to "
+"fix the issue."
+
+#: assets/js/ImportModuleFromGitHub.js:81
+#: assets/js/ImportModuleFromGitHub.js:101
+msgid "workflow.workbenchbuildmodule"
+msgstr "Learn about how to build your own module"
+
+#: assets/js/OutputIframe.js:111
+msgid "workflow.workbenchcancel"
+msgstr "Cancel"
+
+#: assets/js/ExportModal.js:75
+msgid "workflow.workbenchcjsonfeedlink"
+msgstr "JSON FEED LINK COPIED TO CLIPBOARD"
+
+#: assets/js/ImportModuleFromGitHub.js:106
+msgid "workflow.workbenchclose"
+msgstr "Close"
+
+#: assets/js/ExportModal.js:66 assets/js/ExportModal.js:80
+msgid "workflow.workbenchcopylivelink"
+msgstr "COPY LIVE LINK"
+
+#: assets/js/ExportModal.js:97
+msgid "workflow.workbenchcsv"
+msgstr "CSV"
+
+#: assets/js/ExportModal.js:61
+msgid "workflow.workbenchcsvcopied"
+msgstr "CSV LINK COPIED TO CLIPBOARD"
+
+#: assets/js/OutputIframe.js:107
+msgid "workflow.workbenchcurrprivate"
+msgstr "This workflow is currently private"
+
+#: assets/js/ImportModuleFromGitHub.js:62
+#: assets/js/ImportModuleFromGitHub.js:98
+msgid "workflow.workbenchcustommodule"
+msgstr "Import Custom Module"
+
+#: assets/js/ExportModal.js:124
+msgid "workflow.workbenchdone"
+msgstr "done"
+
+#: assets/js/OutputIframe.js:124
+msgid "workflow.workbenchembedchart"
+msgstr "EMBED THIS CHART"
+
+#: assets/js/Embed.js:83
+msgid "workflow.workbenchembedheader"
+msgstr "EMBED THIS CHART"
+
+#: assets/js/ExportModal.js:94
+msgid "workflow.workbenchexportdata"
+msgstr "EXPORT DATA"
+
+#: assets/js/Embed.js:29
+msgid "workflow.workbenchheader"
+msgstr "WORKBENCH"
+
+#: assets/js/ImportModuleFromGitHub.js:83
+#: assets/js/ImportModuleFromGitHub.js:102
+msgid "workflow.workbenchhere"
+msgstr "here"
+
+#: assets/js/ImportModuleFromGitHub.js:88
+msgid "workflow.workbenchimport"
+msgstr "Import"
+
+#: assets/js/ExportModal.js:110
+msgid "workflow.workbenchjsonfeed"
+msgstr "JSON FEED"
+
+#: assets/js/OutputIframe.js:135
+msgid "workflow.workbenchokmessage"
+msgstr "OK"
+
+#: assets/js/Embed.js:84
+msgid "workflow.workbenchpastecodeheader"
+msgstr "Paste this code into any webpage HTML"
+
+#: assets/js/OutputIframe.js:127
+msgid "workflow.workbenchpastehtmlcode"
+msgstr "Paste this code into any webpage HTML"
+
+#: assets/js/ErrorBoundary.js:21
+msgid "workflow.workbenchrefresh"
+msgstr "Please refresh the page."
+
+#: assets/js/OutputIframe.js:112
+msgid "workflow.workbenchsetpublic"
+msgstr "Set public"
+
+#: assets/js/OutputIframe.js:108
+msgid "workflow.workbenchsetthisworkflow"
+msgstr ""
+"Set this workflow to Public in order to share it? Anyone with the URL "
+"will be able to access and duplicate it."
+
+#: assets/js/OutputIframe.js:104
+msgid "workflow.workbenchshareworkflow"
+msgstr "SHARE THIS WORKFLOW"
+
+#: assets/js/ErrorBoundary.js:21
+msgid "workflow.workbenchsomethingwrong"
+msgstr "Something is wrong."
+
+#: assets/js/Embed.js:70
+msgid "workflow.workbenchupdated"
+msgstr "Updated"
+
+#: assets/js/Workflows/WorkflowLists.js:64
+msgid "workflow.workflowswillappearhere"
+msgstr "Workflows shared with you as collaborator will appear here"
+
 #. This is used in navigation bar. It should be all-caps for styling reasons.
 #: assets/js/Workflows/Navbar.js:39
 msgid "workflows.navbar.training"
@@ -273,6 +661,14 @@ msgstr "TRAINING"
 #: assets/js/Workflows/Navbar.js:36
 msgid "workflows.navbar.workflows"
 msgstr "WORKFLOWS"
+
+#: cjworkbench/forms/signup.py:24
+msgid "accounts.sign_up.fields.first_name.placeholder"
+msgstr "First name"
+
+#: cjworkbench/forms/signup.py:32
+msgid "accounts.sign_up.fields.last_name.placeholder"
+msgstr "Last name"
 
 #: templates/account/login.html:4 templates/account/login.html:10
 #: templates/account/signup.html:12
@@ -294,4 +690,12 @@ msgstr "Sign Up"
 #: templates/account/signup.html:26
 msgid "accounts.sign_up.login_prompt"
 msgstr "If you have already created an account, then please <a0>log in</a0>."
+
+#: templates/account/email/password_reset_key_subject.txt:3
+msgid "accounts.emails.password_reset.subject"
+msgstr "Password Reset E-mail"
+
+#: templates/notifications/new_data_version_subject.txt:3
+msgid "notifications.new_data_version.subject"
+msgstr "New data available in {workflow_name}"
 

@@ -1,3 +1,8 @@
+#. default-message: TRAINING
+#: assets/js/Workflows/index.js:193
+msgid " workflow.trainingtitle"
+msgstr ""
+
 #. default-message: Next
 #: assets/js/lessons/LessonNav.js:55
 msgid "lessons.nav.next"
@@ -28,6 +33,16 @@ msgstr ""
 msgid "report.dashboard.emptyReport"
 msgstr ""
 
+#. default-message: Only collaborators can view this report
+#: assets/js/Report/ShareCard.js:21
+msgid "report.shareCard.accessibleTo.private"
+msgstr ""
+
+#. default-message: Anyone can view this report
+#: assets/js/Report/ShareCard.js:19
+msgid "report.shareCard.accessibleTo.public"
+msgstr ""
+
 #. default-message: Edit privacy
 #: assets/js/Report/ShareCard.js:24
 msgid "report.shareCard.editPrivacy"
@@ -38,18 +53,28 @@ msgstr ""
 msgid "report.shareCard.reportUrl"
 msgstr ""
 
+#. default-message: This workflow is private
+#: assets/js/Report/ShareCard.js:14
+msgid "report.shareCard.status.private"
+msgstr ""
+
+#. default-message: This workflow is public
+#: assets/js/Report/ShareCard.js:12
+msgid "report.shareCard.status.public"
+msgstr ""
+
 #. default-message: {0, plural, =0 {No rows selected} one {# row selected} other {# rows selected}}
-#: assets/js/table/SelectedRowsActions.js:105
+#: assets/js/table/SelectedRowsActions.js:106
 msgid "selectedRow.numberOfRows"
 msgstr ""
 
 #. default-message: Can edit
-#: assets/js/ShareModal/Role.js:19
+#: assets/js/ShareModal/Role.js:8 assets/js/ShareModal/Role.js:15 assets/js/ShareModal/Role.js:19
 msgid "shareModal.role.canEdit"
 msgstr ""
 
 #. default-message: Can view
-#: assets/js/ShareModal/Role.js:18
+#: assets/js/ShareModal/Role.js:8 assets/js/ShareModal/Role.js:15 assets/js/ShareModal/Role.js:18
 msgid "shareModal.role.canView"
 msgstr ""
 
@@ -138,10 +163,265 @@ msgstr ""
 msgid "time_diff.now"
 msgstr ""
 
+#. default-message: Duplicate
+#: assets/js/WorkflowEditor/Tabs/TabDropdown.js:15
+msgid "workflow.Duplicate"
+msgstr ""
+
+#. default-message: ADD DATA
+#: assets/js/WorkflowEditor/AddData/Button.js:25
+msgid "workflow.addData"
+msgstr ""
+
+#. default-message: ADD STEP
+#: assets/js/WorkflowEditor/ModuleSearch/Button.js:44
+msgid "workflow.addstep"
+msgstr ""
+
+#. default-message: Alerts are
+#: assets/js/WorkflowEditor/DataVersionModal.js:131
+msgid "workflow.alertsare"
+msgstr ""
+
+#. default-message: Alphabetical
+#: assets/js/Workflows/SortMenu.js:35
+msgid "workflow.alphabetical"
+msgstr ""
+
+#. default-message: Close
+#: assets/js/WorkflowEditor/AddData/Modal.js:25
+msgid "workflow.attribute.close"
+msgstr ""
+
+#. default-message: CHOOSE A DATA SOURCE
+#: assets/js/WorkflowEditor/AddData/Modal.js:22
+msgid "workflow.choosedata"
+msgstr ""
+
+#. default-message: Clear Search
+#: assets/js/WorkflowEditor/AddData/Search.js:28
+msgid "workflow.clearSearch"
+msgstr ""
+
+#. default-message: Copy the debugging details below and send them to
+#: assets/js/UnhandledErrorReport.js:45
+msgid "workflow.copydebugging"
+msgstr ""
+
+#. default-message: Create Workflow
+#: assets/js/Workflows/index.js:199
+msgid "workflow.createworkflow"
+msgstr ""
+
+#. default-message: Create your first workflow
+#: assets/js/Workflows/WorkflowLists.js:51
+msgid "workflow.createyourworkflow"
+msgstr ""
+
+#. default-message: This was the data that led to an error. Please correct the error in the left panel.
+#: assets/js/WorkflowEditor/OutputPane.js:105
+msgid "workflow.dataledtoanerror"
+msgstr ""
+
+#. default-message: Delete
+#: assets/js/WorkflowEditor/wfmodule/WfModuleContextMenu.js:22 assets/js/Workflows/WorkflowContextMenu.js:41
+msgid "workflow.delete"
+msgstr ""
+
+#. default-message: Delete
+#: assets/js/WorkflowEditor/Tabs/TabDropdown.js:16
+msgid "workflow.deleteEvent"
+msgstr ""
+
+#. default-message: It helps if you can describe what you were doing before you ran into the bug.
+#: assets/js/UnhandledErrorReport.js:21
+msgid "workflow.describeproblem"
+msgstr ""
+
+#. default-message: It helps if you can describe what you were doing before you ran into the bug.
+#: assets/js/UnhandledErrorReport.js:46
+msgid "workflow.describethisbug"
+msgstr ""
+
+#. default-message: Duplicate
+#: assets/js/Workflows/WorkflowContextMenu.js:36
+msgid "workflow.duplicate"
+msgstr ""
+
+#. default-message: Duplicate it to save your changes
+#: assets/js/Workflow.js:18
+msgid "workflow.duplicatetosavechanges"
+msgstr ""
+
+#. default-message: Email alerts disabled
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:373
+msgid "workflow.emailalertdisabled"
+msgstr ""
+
+#. default-message: Email alerts enabled
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:373
+msgid "workflow.emailalertenebled"
+msgstr ""
+
+#. default-message: enter Zen mode
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:241
+msgid "workflow.enterzenmode"
+msgstr ""
+
+#. default-message: exit Zen mode
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:241
+msgid "workflow.exitzenmode"
+msgstr ""
+
+#. default-message: Export data
+#: assets/js/WorkflowEditor/wfmodule/WfModuleContextMenu.js:21
+msgid "workflow.exportdata"
+msgstr ""
+
+#. default-message: Please follow these simple steps to help us fix the issue.
+#: assets/js/UnhandledErrorReport.js:55
+msgid "workflow.followsteps"
+msgstr ""
+
+#. default-message: Learn how to replace this step
+#: assets/js/WorkflowEditor/wfmodule/DeprecationNotice.js:12
+msgid "workflow.howtoreplace"
+msgstr ""
+
 #. The parameter will contain something like '4h ago'
 #. default-message: Updated {0}
 #: assets/js/WorkflowNavBar.js:57
 msgid "workflow.last_updated"
+msgstr ""
+
+#. default-message: Last modified
+#: assets/js/Workflows/SortMenu.js:32
+msgid "workflow.lastmodified"
+msgstr ""
+
+#. default-message: Learn how to work with data without coding
+#: assets/js/Workflows/index.js:196
+msgid "workflow.learnworkwithdata"
+msgstr ""
+
+#. default-message: My workflows
+#: assets/js/Workflows/WorkflowLists.js:111
+msgid "workflow.myworkflows"
+msgstr ""
+
+#. default-message: NEW
+#: assets/js/Workflows/index.js:190
+msgid "workflow.new"
+msgstr ""
+
+#. default-message: No data connectors match your search.
+#: assets/js/WorkflowEditor/AddData/Modules.js:15
+msgid "workflow.nodataconnectors"
+msgstr ""
+
+#. default-message: This workflow is not available
+#: assets/js/Embed.js:21
+msgid "workflow.notavailableworkflow"
+msgstr ""
+
+#. default-message: Oldest modified
+#: assets/js/Workflows/SortMenu.js:33
+msgid "workflow.oldestmodified"
+msgstr ""
+
+#. default-message: Permanently delete this workflow?
+#: assets/js/Workflows/index.js:91
+msgid "workflow.permanentdelete"
+msgstr ""
+
+#. default-message: Search…
+#: assets/js/WorkflowEditor/ModuleSearch/Prompt.js:42
+msgid "workflow.placeholder.search"
+msgstr ""
+
+#. default-message: Type a note...
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:356
+msgid "workflow.placeholder.typeanote"
+msgstr ""
+
+#. default-message: Please send the message
+#: assets/js/UnhandledErrorReport.js:20
+msgid "workflow.plssendmsg"
+msgstr ""
+
+#. default-message: private
+#: assets/js/Workflows/WorkflowMetadata.js:48
+msgid "workflow.private"
+msgstr ""
+
+#. default-message: public
+#: assets/js/Workflows/WorkflowMetadata.js:48
+msgid "workflow.public"
+msgstr ""
+
+#. default-message: Publishe new recipes via the Django admin
+#: assets/js/Workflows/WorkflowLists.js:76
+msgid "workflow.publishenewrecipes"
+msgstr ""
+
+#. default-message: You will receive and email if the output of this module changes
+#: assets/js/WorkflowEditor/DataVersionModal.js:132
+msgid "workflow.receiveemail"
+msgstr ""
+
+#. default-message: Recipes
+#: assets/js/Workflows/WorkflowLists.js:113
+msgid "workflow.recipes"
+msgstr ""
+
+#. default-message: Refresh page
+#: assets/js/UnhandledErrorReport.js:62
+msgid "workflow.refreshthepage"
+msgstr ""
+
+#. default-message: THANK YOU! Refresh this page to return to your Workflow.
+#: assets/js/UnhandledErrorReport.js:57
+msgid "workflow.refreshthepagethankyou"
+msgstr ""
+
+#. default-message: Rename
+#: assets/js/WorkflowEditor/Tabs/TabDropdown.js:14
+msgid "workflow.rename"
+msgstr ""
+
+#. default-message: Reverse alphabetical
+#: assets/js/Workflows/SortMenu.js:36
+msgid "workflow.reversealphabet"
+msgstr ""
+
+#. default-message: to save your changes
+#: assets/js/Workflow.js:20
+msgid "workflow.saveurchanges"
+msgstr ""
+
+#. default-message: Search…
+#: assets/js/WorkflowEditor/AddData/Search.js:17
+msgid "workflow.searchattribute"
+msgstr ""
+
+#. default-message: Shared with me
+#: assets/js/Workflows/WorkflowLists.js:112
+msgid "workflow.sharedwithme"
+msgstr ""
+
+#. default-message: You are viewing a shared workflow
+#: assets/js/Workflow.js:37
+msgid "workflow.sharedworkflowview"
+msgstr ""
+
+#. default-message: Sign in
+#: assets/js/Workflow.js:20
+msgid "workflow.signin"
+msgstr ""
+
+#. default-message: Oops! Something isn't right.
+#: assets/js/UnhandledErrorReport.js:54
+msgid "workflow.smtwentwrong"
 msgstr ""
 
 #. The tab prefix will be used as the first part of the default name of tabs,
@@ -150,6 +430,41 @@ msgstr ""
 #. default-message: Tab
 #: assets/js/WorkflowEditor/Tabs/actions.js:93
 msgid "workflow.tabs.tab_prefix"
+msgstr ""
+
+#. default-message: This Tab has no Steps.
+#: assets/js/WorkflowEditor/ModuleStack.js:139
+msgid "workflow.thistabnosteps"
+msgstr ""
+
+#. default-message: Edit Note
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:395
+msgid "workflow.title.editnote"
+msgstr ""
+
+#. default-message: Help for this module
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:385
+msgid "workflow.title.helpformodule"
+msgstr ""
+
+#. default-message: Turn off
+#: assets/js/WorkflowEditor/DataVersionModal.js:138
+msgid "workflow.turnoff"
+msgstr ""
+
+#. default-message: Turn on
+#: assets/js/WorkflowEditor/DataVersionModal.js:138
+msgid "workflow.turnon"
+msgstr ""
+
+#. default-message: Turn alerts ON to receive an email if the output of this module changes
+#: assets/js/WorkflowEditor/DataVersionModal.js:132
+msgid "workflow.turnonalerts"
+msgstr ""
+
+#. default-message: Updated
+#: assets/js/Workflows/WorkflowMetadata.js:57
+msgid "workflow.updated"
 msgstr ""
 
 #. default-message: Anyone can view and duplicate this workflow, and see your email.
@@ -162,9 +477,19 @@ msgstr ""
 msgid "workflow.visibility.by"
 msgstr ""
 
+#. default-message: Change privacy
+#: assets/js/Workflows/WorkflowMetadata.js:47
+msgid "workflow.visibility.changeprivacy"
+msgstr ""
+
 #. default-message: Close
 #: assets/js/ShareModal/Modal.js:64
 msgid "workflow.visibility.closeButton"
+msgstr ""
+
+#. default-message: Close Search
+#: assets/js/WorkflowEditor/ModuleSearch/Prompt.js:53
+msgid "workflow.visibility.closesearch"
 msgstr ""
 
 #. default-message: Collaborators
@@ -307,6 +632,146 @@ msgstr ""
 msgid "workflow.visibility.undo"
 msgstr ""
 
+#. default-message: We opened a messaging window and included details for our developers to fix the issue.
+#: assets/js/UnhandledErrorReport.js:20
+msgid "workflow.workbenchbugreport"
+msgstr ""
+
+#. default-message: Learn about how to build your own module
+#: assets/js/ImportModuleFromGitHub.js:81 assets/js/ImportModuleFromGitHub.js:101
+msgid "workflow.workbenchbuildmodule"
+msgstr ""
+
+#. default-message: Cancel
+#: assets/js/OutputIframe.js:111
+msgid "workflow.workbenchcancel"
+msgstr ""
+
+#. default-message: JSON FEED LINK COPIED TO CLIPBOARD
+#: assets/js/ExportModal.js:75
+msgid "workflow.workbenchcjsonfeedlink"
+msgstr ""
+
+#. default-message: Close
+#: assets/js/ImportModuleFromGitHub.js:106
+msgid "workflow.workbenchclose"
+msgstr ""
+
+#. default-message: COPY LIVE LINK
+#: assets/js/ExportModal.js:66 assets/js/ExportModal.js:80
+msgid "workflow.workbenchcopylivelink"
+msgstr ""
+
+#. default-message: CSV
+#: assets/js/ExportModal.js:97
+msgid "workflow.workbenchcsv"
+msgstr ""
+
+#. default-message: CSV LINK COPIED TO CLIPBOARD
+#: assets/js/ExportModal.js:61
+msgid "workflow.workbenchcsvcopied"
+msgstr ""
+
+#. default-message: This workflow is currently private
+#: assets/js/OutputIframe.js:107
+msgid "workflow.workbenchcurrprivate"
+msgstr ""
+
+#. default-message: Import Custom Module
+#: assets/js/ImportModuleFromGitHub.js:62 assets/js/ImportModuleFromGitHub.js:98
+msgid "workflow.workbenchcustommodule"
+msgstr ""
+
+#. default-message: done
+#: assets/js/ExportModal.js:124
+msgid "workflow.workbenchdone"
+msgstr ""
+
+#. default-message: EMBED THIS CHART
+#: assets/js/OutputIframe.js:124
+msgid "workflow.workbenchembedchart"
+msgstr ""
+
+#. default-message: EMBED THIS CHART
+#: assets/js/Embed.js:83
+msgid "workflow.workbenchembedheader"
+msgstr ""
+
+#. default-message: EXPORT DATA
+#: assets/js/ExportModal.js:94
+msgid "workflow.workbenchexportdata"
+msgstr ""
+
+#. default-message: WORKBENCH
+#: assets/js/Embed.js:29
+msgid "workflow.workbenchheader"
+msgstr ""
+
+#. default-message: here
+#: assets/js/ImportModuleFromGitHub.js:83 assets/js/ImportModuleFromGitHub.js:102
+msgid "workflow.workbenchhere"
+msgstr ""
+
+#. default-message: Import
+#: assets/js/ImportModuleFromGitHub.js:88
+msgid "workflow.workbenchimport"
+msgstr ""
+
+#. default-message: JSON FEED
+#: assets/js/ExportModal.js:110
+msgid "workflow.workbenchjsonfeed"
+msgstr ""
+
+#. default-message: OK
+#: assets/js/OutputIframe.js:135
+msgid "workflow.workbenchokmessage"
+msgstr ""
+
+#. default-message: Paste this code into any webpage HTML
+#: assets/js/Embed.js:84
+msgid "workflow.workbenchpastecodeheader"
+msgstr ""
+
+#. default-message: Paste this code into any webpage HTML
+#: assets/js/OutputIframe.js:127
+msgid "workflow.workbenchpastehtmlcode"
+msgstr ""
+
+#. default-message: Please refresh the page.
+#: assets/js/ErrorBoundary.js:21
+msgid "workflow.workbenchrefresh"
+msgstr ""
+
+#. default-message: Set public
+#: assets/js/OutputIframe.js:112
+msgid "workflow.workbenchsetpublic"
+msgstr ""
+
+#. default-message: Set this workflow to Public in order to share it? Anyone with the URL will be able to access and duplicate it.
+#: assets/js/OutputIframe.js:108
+msgid "workflow.workbenchsetthisworkflow"
+msgstr ""
+
+#. default-message: SHARE THIS WORKFLOW
+#: assets/js/OutputIframe.js:104
+msgid "workflow.workbenchshareworkflow"
+msgstr ""
+
+#. default-message: Something is wrong.
+#: assets/js/ErrorBoundary.js:21
+msgid "workflow.workbenchsomethingwrong"
+msgstr ""
+
+#. default-message: Updated
+#: assets/js/Embed.js:70
+msgid "workflow.workbenchupdated"
+msgstr ""
+
+#. default-message: Workflows shared with you as collaborator will appear here
+#: assets/js/Workflows/WorkflowLists.js:64
+msgid "workflow.workflowswillappearhere"
+msgstr ""
+
 #. This is used in navigation bar. It should be all-caps for styling reasons.
 #. default-message: TRAINING
 #: assets/js/Workflows/Navbar.js:39
@@ -317,6 +782,16 @@ msgstr ""
 #. default-message: WORKFLOWS
 #: assets/js/Workflows/Navbar.js:36
 msgid "workflows.navbar.workflows"
+msgstr ""
+
+#. default-message: First name
+#: cjworkbench/forms/signup.py:24
+msgid "accounts.sign_up.fields.first_name.placeholder"
+msgstr ""
+
+#. default-message: Last name
+#: cjworkbench/forms/signup.py:32
+msgid "accounts.sign_up.fields.last_name.placeholder"
 msgstr ""
 
 #. default-message: Sign in
@@ -342,5 +817,15 @@ msgstr ""
 #. default-message: If you have already created an account, then please <a0>log in</a0>.
 #: templates/account/signup.html:26
 msgid "accounts.sign_up.login_prompt"
+msgstr ""
+
+#. default-message: Password Reset E-mail
+#: templates/account/email/password_reset_key_subject.txt:3
+msgid "accounts.emails.password_reset.subject"
+msgstr ""
+
+#. default-message: New data available in {workflow_name}
+#: templates/notifications/new_data_version_subject.txt:3
+msgid "notifications.new_data_version.subject"
 msgstr ""
 

@@ -4,6 +4,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from '../components/Dropdown'
+import { I18n } from '@lingui/react'
+import { Trans,t } from '@lingui/macro'
 
 export default class WorkflowContextMenu extends React.Component {
   static propTypes = {
@@ -31,12 +33,12 @@ export default class WorkflowContextMenu extends React.Component {
         <DropdownMenu>
           <DropdownItem onClick={this.handleClickDuplicate} className='duplicate-workflow'>
             <i className='icon-duplicate' />
-            <span>Duplicate</span>
+            <span><Trans id="workflow.duplicate">Duplicate</Trans></span>
           </DropdownItem>
           {this.props.deleteWorkflow ? (
             <DropdownItem onClick={this.handleClickDelete} className='delete-workflow'>
               <i className='icon-bin' />
-              <span>Delete</span>
+              <span><Trans id="workflow.delete">Delete</Trans></span>
             </DropdownItem>
           ) : null}
         </DropdownMenu>

@@ -6,6 +6,7 @@ import Lesson from './lessons/Lesson'
 import PropTypes from 'prop-types'
 import WorkflowEditor from './WorkflowEditor'
 import { connect } from 'react-redux'
+import { Trans } from '@lingui/macro'
 
 export function MaybeNotYourWorkflow (props) {
   if (!props.isReadOnly && !props.isAnonymous) {
@@ -14,9 +15,9 @@ export function MaybeNotYourWorkflow (props) {
 
   let suggestion = null
   if (props.isLoggedIn) {
-    suggestion = <h3 className='suggestion'>Duplicate it to save your changes</h3>
+    suggestion = <h3 className='suggestion'><Trans id="workflow.duplicatetosavechanges">Duplicate it to save your changes</Trans></h3>
   } else {
-    suggestion = <h3 className='suggestion'><a href={`/account/login/?next=/workflows/${props.workflowId}`} className='action-button '>Sign in</a> to save your changes</h3>
+    suggestion = <h3 className='suggestion'><a href={`/account/login/?next=/workflows/${props.workflowId}`} className='action-button '><Trans id="workflow.signin">Sign in</Trans></a><Trans id="workflow.saveurchanges"> to save your changes</Trans></h3>
   }
 
   let inner, className
@@ -33,7 +34,7 @@ export function MaybeNotYourWorkflow (props) {
     className = 'is-read-only'
     inner = (
       <>
-        <h3>You are viewing a shared workflow</h3>
+        <h3><Trans id="workflow.sharedworkflowview">You are viewing a shared workflow</Trans></h3>
         <p className='message' />
         {suggestion}
       </>

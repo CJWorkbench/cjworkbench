@@ -133,7 +133,9 @@ exports[`DataVersionModal matches snapshot 1`] = `
                           <i
                             class="icon icon-no-notification"
                           />
-                           Alerts are 
+                           
+                          workflow.alertsare
+                           
                           <strong>
                              off
                           </strong>
@@ -141,7 +143,7 @@ exports[`DataVersionModal matches snapshot 1`] = `
                         <p
                           class="description"
                         >
-                          Turn alerts ON to receive an email if the output of this module changes
+                          workflow.turnonalerts
                         </p>
                       </div>
                       <div
@@ -155,7 +157,7 @@ exports[`DataVersionModal matches snapshot 1`] = `
                           <span
                             class="action"
                           >
-                            Turn on
+                            workflow.turnon
                           </span>
                         </label>
                       </div>
@@ -309,7 +311,28 @@ exports[`DataVersionModal matches snapshot 1`] = `
                           <i
                             className="icon icon-no-notification"
                           />
-                           Alerts are 
+                           
+                          <WithI18n
+                            defaults="Alerts are"
+                            id="workflow.alertsare"
+                          >
+                            <I18n
+                              update={true}
+                              withHash={true}
+                            >
+                              <Trans
+                                defaults="Alerts are"
+                                id="workflow.alertsare"
+                              >
+                                <Render
+                                  value="workflow.alertsare"
+                                >
+                                  workflow.alertsare
+                                </Render>
+                              </Trans>
+                            </I18n>
+                          </WithI18n>
+                           
                           <strong>
                              off
                           </strong>
@@ -317,7 +340,26 @@ exports[`DataVersionModal matches snapshot 1`] = `
                         <p
                           className="description"
                         >
-                          Turn alerts ON to receive an email if the output of this module changes
+                          <WithI18n
+                            defaults="Turn alerts ON to receive an email if the output of this module changes"
+                            id="workflow.turnonalerts"
+                          >
+                            <I18n
+                              update={true}
+                              withHash={true}
+                            >
+                              <Trans
+                                defaults="Turn alerts ON to receive an email if the output of this module changes"
+                                id="workflow.turnonalerts"
+                              >
+                                <Render
+                                  value="workflow.turnonalerts"
+                                >
+                                  workflow.turnonalerts
+                                </Render>
+                              </Trans>
+                            </I18n>
+                          </WithI18n>
                         </p>
                       </div>
                       <div
@@ -333,7 +375,26 @@ exports[`DataVersionModal matches snapshot 1`] = `
                           <span
                             className="action"
                           >
-                            Turn on
+                            <WithI18n
+                              defaults="Turn on"
+                              id="workflow.turnon"
+                            >
+                              <I18n
+                                update={true}
+                                withHash={true}
+                              >
+                                <Trans
+                                  defaults="Turn on"
+                                  id="workflow.turnon"
+                                >
+                                  <Render
+                                    value="workflow.turnon"
+                                  >
+                                    workflow.turnon
+                                  </Render>
+                                </Trans>
+                              </I18n>
+                            </WithI18n>
                           </span>
                         </label>
                       </div>

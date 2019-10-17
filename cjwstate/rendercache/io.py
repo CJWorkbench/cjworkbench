@@ -1,6 +1,6 @@
 import contextlib
 from pathlib import Path
-from typing import Any, ContextManager, Dict, List, Optional
+from typing import Any, ContextManager, Dict, List
 import pyarrow
 from cjwkernel.types import ArrowTable, RenderResult, TableMetadata
 from cjwkernel.util import json_encode, tempfile_context
@@ -128,9 +128,7 @@ def downloaded_parquet_file(crr: CachedRenderResult, dir=None) -> ContextManager
         yield path
 
 
-def load_cached_render_result(
-    crr: CachedRenderResult, path: Path, only_columns: Optional[List[str]] = None
-) -> RenderResult:
+def load_cached_render_result(crr: CachedRenderResult, path: Path) -> RenderResult:
     """
     Return a RenderResult equivalent to the one passed to `cache_render_result()`.
 
@@ -146,9 +144,6 @@ def load_cached_render_result(
     The returned RenderResult is backed by an mmapped file on disk -- the one
     supplied as `path`. It doesn't require much physical RAM: the Linux kernel
     may page out data we aren't using.
-
-    If only_columns is a list of column names, the yielded RenderResult only
-    contains the specified columns.
     """
     if not crr.table_metadata.columns:
         # Zero-column tables aren't written to cache
@@ -158,27 +153,20 @@ def load_cached_render_result(
             crr.json,
         )
 
-    # raise CorruptCacheError
+    # raises CorruptCacheError
     with downloaded_parquet_file(crr) as parquet_path:
-        parquet.convert_parquet_file_to_arrow_file(
-            parquet_path, path, only_columns=only_columns
-        )
+        try:
+            # raises ArrowIOError
+            parquet.convert_parquet_file_to_arrow_file(parquet_path, path)
+        except pyarrow.ArrowIOError as err:
+            raise CorruptCacheError from err
     # TODO handle validation errors => CorruptCacheError
-    if only_columns is None:
-        table_metadata = crr.table_metadata
-    else:
-        table_metadata = TableMetadata(
-            crr.table_metadata.n_rows,
-            [c for c in crr.table_metadata.columns if c.name in only_columns],
-        )
-    arrow_table = ArrowTable(path, table_metadata)
+    arrow_table = ArrowTable(path, crr.table_metadata)
     return RenderResult(arrow_table, crr.errors, crr.json)
 
 
 @contextlib.contextmanager
-def open_cached_render_result(
-    crr: CachedRenderResult, only_columns: Optional[List[str]] = None
-) -> ContextManager[RenderResult]:
+def open_cached_render_result(crr: CachedRenderResult) -> ContextManager[RenderResult]:
     """
     Yield a RenderResult equivalent to the one passed to `cache_render_result()`.
 
@@ -193,9 +181,6 @@ def open_cached_render_result(
 
     The returned RenderResult is backed by an mmapped file on disk, so it
     doesn't require much physical RAM.
-
-    If only_columns is a list of column names, the yielded RenderResult only
-    contains the specified columns.
     """
     if not crr.table_metadata.columns:
         # Zero-column tables aren't written to cache
@@ -208,7 +193,7 @@ def open_cached_render_result(
 
     with tempfile_context(prefix="cached-render-result") as arrow_path:
         # raise CorruptCacheError (deleting `arrow_path` in the process)
-        result = load_cached_render_result(crr, arrow_path, only_columns=only_columns)
+        result = load_cached_render_result(crr, arrow_path)
 
         yield result
 

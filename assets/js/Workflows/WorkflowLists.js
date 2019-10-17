@@ -3,6 +3,8 @@ import PropTypes from 'prop-types'
 import CreateWorkflowButton from './CreateWorkflowButton'
 import SortMenu from './SortMenu'
 import WorkflowList, { WorkflowListPropType } from './WorkflowList'
+import { I18n } from '@lingui/react'
+import { Trans,t } from '@lingui/macro'
 
 const Tab = React.memo(function Tab ({ name, isActive, setIsActive, children }) {
   return (
@@ -46,7 +48,7 @@ const OwnedWorkflowList = React.memo(function OwnedWorkflowList ({ workflows, is
         <WorkflowList workflows={workflows} {...props} />
       ) : (
         <CreateWorkflowButton>
-          Create your first workflow
+          <Trans id="workflow.createyourworkflow">Create your first workflow</Trans>
         </CreateWorkflowButton>
       )}
     </TabPane>
@@ -59,7 +61,7 @@ const SharedWorkflowList = React.memo(function SharedWorkflowList ({ workflows, 
       {workflows.length > 0 ? (
         <WorkflowList workflows={workflows} {...props} deleteWorkflow={null} />
       ) : (
-        <div className='placeholder'>Workflows shared with you as collaborator will appear here ~ ༼ つ ◕_◕ ༽つ</div>
+        <div className='placeholder'><Trans id="workflow.workflowswillappearhere">Workflows shared with you as collaborator will appear here</Trans> ~ ༼ つ ◕_◕ ༽つ</div>
       )}
     </TabPane>
   )
@@ -71,7 +73,7 @@ const TemplatesWorkflowList = React.memo(function TemplatesWorkflowList ({ workf
       {workflows.length > 0 ? (
         <WorkflowList workflows={workflows} {...props} deleteWorkflow={null} />
       ) : (
-        <div className='placeholder'>Publishe new recipes via the Django admin </div>
+        <div className='placeholder'><Trans id="workflow.publishenewrecipes">Publishe new recipes via the Django admin</Trans> </div>
       )}
     </TabPane>
   )
@@ -106,9 +108,9 @@ function WorkflowLists ({ workflows, deleteWorkflow, duplicateWorkflow, openShar
     <div className='workflow-lists'>
       <div className='nav'>
         <ul className='workflow-tabs' id='workflow-tabs' role='tablist'>
-          <Tab {...tabProps('owned')}>My workflows</Tab>
-          <Tab {...tabProps('shared')}>Shared with me</Tab>
-          <Tab {...tabProps('templates')}>Recipes</Tab>
+          <Tab {...tabProps('owned')}><Trans id="workflow.myworkflows">My workflows</Trans></Tab>
+          <Tab {...tabProps('shared')}><Trans id="workflow.sharedwithme">Shared with me</Trans></Tab>
+          <Tab {...tabProps('templates')}><Trans id="workflow.recipes">Recipes</Trans></Tab>
         </ul>
         <SortMenu comparator={comparator} setComparator={setComparator} />
       </div>

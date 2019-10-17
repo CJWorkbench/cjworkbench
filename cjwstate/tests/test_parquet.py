@@ -2,7 +2,6 @@ from datetime import datetime
 from pathlib import Path
 import math
 import tempfile
-from typing import Any, Dict, List
 import unittest
 import numpy as np
 import pyarrow
