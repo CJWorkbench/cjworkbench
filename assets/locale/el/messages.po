@@ -14,11 +14,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.7.0\n"
 
-#: assets/js/i18n/locales.js:5
+#: assets/js/i18n/locales.js:7
 msgid "locales.el"
 msgstr ""
 
-#: assets/js/i18n/locales.js:4
+#: assets/js/i18n/locales.js:6
 msgid "locales.en"
 msgstr ""
 
@@ -55,7 +55,7 @@ msgstr ""
 #: templates/account/login.html:4 templates/account/login.html:10
 #: templates/account/signup.html:12
 msgid "accounts.sign_in.title"
-msgstr ""
+msgstr "Σύνδεση"
 
 #: templates/account/login.html:43
 msgid "accounts.sign_in.forgot_password_prompt"
@@ -72,4 +72,12 @@ msgstr ""
 #: templates/account/signup.html:26
 msgid "accounts.sign_up.login_prompt"
 msgstr ""
+
+#: templates/account/email/password_reset_key_subject.txt:3
+msgid "accounts.emails.password_reset.subject"
+msgstr "Επαναφορά κωδικού πρόσβασης"
+
+#: templates/notifications/new_data_version_subject.txt:3
+msgid "notifications.new_data_version.subject"
+msgstr "{workflow_name}: Νέα δεδομένα διαθέσιμα"
 

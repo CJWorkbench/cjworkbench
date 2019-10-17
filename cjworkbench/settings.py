@@ -108,6 +108,9 @@ CHANNEL_LAYERS = {
     }
 }
 
+# For django-allauth
+ACCOUNT_ADAPTER = "cjworkbench.allauth_account_adapter.AccountAdapter"
+
 # EMAIL_BACKEND
 #
 # In Production, sets ACCOUNT_ADAPTER, SENDGRID_TEMPLATE_IDS
@@ -204,6 +207,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "cjworkbench.i18n.templates.context_processor",
             ]
         },
     }
@@ -479,5 +483,3 @@ if "MINIO_STATIC_URL_PATTERN" in os.environ:
 
 if STATIC_URL != "http://localhost:8000/static/":
     print(f"Serving static files from {STATIC_URL}")
-
-TEMPLATE_CONTEXT_PROCESSORS = ["django.core.context_processors.request"]
