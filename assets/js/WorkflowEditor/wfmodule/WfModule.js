@@ -34,7 +34,7 @@ const numberFormat = new Intl.NumberFormat()
 // The WfModuleClass should only be used in unit testing.
 // Everything else must use WfModule,
 // which wraps the WfModuleClass in a <I18n> element
-export class WfModuleClass extends React.PureComponent {
+export class WfModule extends React.PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired,
     isAnonymous: PropTypes.bool.isRequired,
@@ -533,8 +533,6 @@ export class WfModuleClass extends React.PureComponent {
   }
 }
 
-export const WfModule = withI18n()(WfModuleClass)
-
 class WfModuleCollapseButton extends React.PureComponent {
   static propTypes = {
     isCollapsed: PropTypes.bool.isRequired,
@@ -647,4 +645,4 @@ const mapDispatchToProps = {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(WfModule)
+)(withI18n()(WfModule))

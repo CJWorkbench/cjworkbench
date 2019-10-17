@@ -1,7 +1,7 @@
 /* globals describe, it, expect, jest, beforeEach, afterEach */
 import React from 'react'
 import { act } from 'react-dom/test-utils'
-import ConnectedWfModule, { WfModuleClass } from './WfModule'
+import ConnectedWfModule, { WfModule } from './WfModule'
 import DataVersionModal from '../DataVersionModal'
 import { shallowWithI18n, mountWithI18n } from '../../i18n/test-utils'
 import deepEqual from 'fast-deep-equal'
@@ -65,11 +65,8 @@ describe('WfModule, not read-only mode', () => {
   }
 
   const wrapper = (extraProps = {}) => {
-    // Since we use shallow and WfModule has <I18n> as the outer component,
-    // we use shallow in the WfModuleClass directly.
-    // Otherwise, shallow would only render <I18n>.
     return shallowWithI18n(
-      <WfModuleClass
+      <WfModule
         isReadOnly={false}
         isAnonymous={false}
         isZenMode={false}
