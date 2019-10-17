@@ -3,6 +3,32 @@
 exports[`ModuleSearch Popup matches snapshot 1`] = `
 <Popup
   addModule={[MockFunction]}
+  i18n={
+    Object {
+      "_": [Function],
+      "_activeLanguageData": Object {
+        "plurals": [Function],
+      },
+      "_activeMessages": Object {},
+      "_catalogs": Object {
+        "en": Object {
+          "languageData": Object {},
+          "messages": Object {},
+        },
+      },
+      "_dev": Object {
+        "compile": [Function],
+        "loadLanguageData": [Function],
+      },
+      "_language": "en",
+      "_locales": undefined,
+      "_missing": undefined,
+      "plural": [Function],
+      "select": [Function],
+      "selectOrdinal": [Function],
+      "t": [Function],
+    }
+  }
   index={2}
   isLessonHighlight={false}
   modules={
@@ -44,24 +70,34 @@ exports[`ModuleSearch Popup matches snapshot 1`] = `
         onReset={[MockFunction]}
         onSubmit={[Function]}
       >
-        <input
-          autoComplete="off"
-          name="moduleQ"
-          onChange={[Function]}
-          onKeyDown={[Function]}
-          placeholder="Search…"
-          type="search"
-          value=""
-        />
-        <button
-          className="reset"
-          title="Close Search"
-          type="reset"
+        <I18n
+          update={true}
+          withHash={true}
         >
-          <i
-            className="icon-close"
+          <input
+            autoComplete="off"
+            name="moduleQ"
+            onChange={[Function]}
+            onKeyDown={[Function]}
+            placeholder="Search…"
+            type="search"
+            value=""
           />
-        </button>
+        </I18n>
+        <I18n
+          update={true}
+          withHash={true}
+        >
+          <button
+            className="reset"
+            title="Close Search"
+            type="reset"
+          >
+            <i
+              className="icon-close"
+            />
+          </button>
+        </I18n>
       </form>
     </Prompt>
     <SearchResults

@@ -5,6 +5,7 @@ import { mount } from 'enzyme'
 import { Provider } from 'react-redux'
 import { mockStore } from '../../test-utils'
 import { generateSlug } from '../../utils'
+import { mountWithI18n } from '../../i18n/test-utils'
 
 jest.mock('../../utils')
 
@@ -41,7 +42,7 @@ describe('ModuleSearch Popup', () => {
   }
   const modulesArray = [modules.enigma, modules.filter]
 
-  const wrapper = (extraProps = {}) => mount(
+  const wrapper = (extraProps = {}) => mountWithI18n(
     <Popup
       tabSlug='tab-1'
       index={2}
@@ -139,7 +140,7 @@ describe('ModuleSearch Popup', () => {
   })
 
   describe('connected component', () => {
-    const wrapper = (store, extraProps = {}) => mount(
+    const wrapper = (store, extraProps = {}) => mountWithI18n(
       <Provider store={store}>
         <ConnectedPopup
           tabSlug='tab-1'

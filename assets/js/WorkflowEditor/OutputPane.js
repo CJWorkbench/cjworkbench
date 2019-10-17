@@ -7,6 +7,7 @@ import OutputIframe from '../OutputIframe'
 import { connect } from 'react-redux'
 import { I18n } from '@lingui/react'
 import { Trans,t } from '@lingui/macro'
+import { withI18n } from '@lingui/react'
 
 export class OutputPane extends React.Component {
   static propTypes = {
@@ -34,7 +35,11 @@ export class OutputPane extends React.Component {
       nRows: PropTypes.number // or null
     }), // or null if no selection
     isPublic: PropTypes.bool.isRequired,
-    isReadOnly: PropTypes.bool.isRequired
+    isReadOnly: PropTypes.bool.isRequired,
+     i18n: PropTypes.shape({
+      // i18n object injected by LinguiJS withI18n()
+      _: PropTypes.func.isRequired
+    })
   }
 
   /**
@@ -97,7 +102,7 @@ export class OutputPane extends React.Component {
           key='error'
           className='showing-input-because-error'
         >
-          <Trans id="workflow.dataledtoan error">This was the data that led to an error. Please correct the error in the left pane.</Trans>
+          {this.props.i18n._(t('workflow.dataledtoanerror')`This was the data that led to an error. Please correct the error in the left panel.`)}
         </p>
       )
     } else {
@@ -219,4 +224,4 @@ function mapDispatchToProps (dispatch) {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(OutputPane)
+)(withI18n()(OutputPane))
