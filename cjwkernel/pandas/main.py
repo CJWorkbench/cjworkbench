@@ -1,4 +1,3 @@
-import multiprocessing.reduction
 import os
 import sys
 import types

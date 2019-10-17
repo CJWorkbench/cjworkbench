@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth import get_user_model
 from cjworkbench.models.userprofile import UserProfile
+from cjworkbench.i18n.trans import trans_lazy
 
 
 class WorkbenchSignupForm(forms.ModelForm):
@@ -18,8 +19,22 @@ class WorkbenchSignupForm(forms.ModelForm):
         model = get_user_model()
         fields = ["first_name", "last_name"]
         widgets = {
-            "first_name": forms.TextInput(attrs={"placeholder": "First name"}),
-            "last_name": forms.TextInput(attrs={"placeholder": "Last name"}),
+            "first_name": forms.TextInput(
+                attrs={
+                    "placeholder": trans_lazy(
+                        "accounts.sign_up.fields.first_name.placeholder",
+                        default="First name",
+                    )
+                }
+            ),
+            "last_name": forms.TextInput(
+                attrs={
+                    "placeholder": trans_lazy(
+                        "accounts.sign_up.fields.last_name.placeholder",
+                        default="Last name",
+                    )
+                }
+            ),
         }
 
     def signup(self, request, user):

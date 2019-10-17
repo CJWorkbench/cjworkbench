@@ -9,6 +9,7 @@ from django.conf import settings
 from cjwkernel.types import RenderResult
 from cjwstate.models import WfModule, Workflow
 from server.utils import get_absolute_url
+from cjworkbench.i18n.templates import get_i18n_context
 
 
 @dataclass
@@ -42,6 +43,7 @@ def email_output_delta(output_delta: OutputDelta, updated_at: datetime.datetime)
     user = output_delta.user
 
     ctx = {
+        **get_i18n_context(user=user),
         "user_name": user_display(user),
         "module_name": output_delta.module_name,
         "workflow_name": output_delta.workflow_name,

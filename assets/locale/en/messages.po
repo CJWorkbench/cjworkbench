@@ -100,11 +100,11 @@ msgstr "Create Workflow"
 msgid "workflow.createyourworkflow"
 msgstr "Create your first workflow"
 
-#: assets/js/WorkflowEditor/OutputPane.js:100
-msgid "workflow.dataledtoan error"
+#: assets/js/WorkflowEditor/OutputPane.js:105
+msgid "workflow.dataledtoanerror"
 msgstr ""
 "This was the data that led to an error. Please correct the error in the "
-"left pane."
+"left panel."
 
 #: assets/js/WorkflowEditor/wfmodule/WfModuleContextMenu.js:22
 #: assets/js/Workflows/WorkflowContextMenu.js:41
@@ -135,19 +135,19 @@ msgstr "Duplicate"
 msgid "workflow.duplicatetosavechanges"
 msgstr "Duplicate it to save your changes"
 
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:370
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:373
 msgid "workflow.emailalertdisabled"
 msgstr "Email alerts disabled"
 
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:370
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:373
 msgid "workflow.emailalertenebled"
 msgstr "Email alerts enabled"
 
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:234
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:241
 msgid "workflow.enterzenmode"
 msgstr "enter Zen mode"
 
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:234
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:241
 msgid "workflow.exitzenmode"
 msgstr "exit Zen mode"
 
@@ -204,7 +204,7 @@ msgstr "Permanently delete this workflow?"
 msgid "workflow.placeholder.search"
 msgstr "Search…"
 
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:351
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:356
 msgid "workflow.placeholder.typeanote"
 msgstr "Type a note..."
 
@@ -212,11 +212,11 @@ msgstr "Type a note..."
 msgid "workflow.plssendmsg"
 msgstr "Please send the message"
 
-#: assets/js/Workflows/WorkflowMetadata.js:49
+#: assets/js/Workflows/WorkflowMetadata.js:48
 msgid "workflow.private"
 msgstr "private"
 
-#: assets/js/Workflows/WorkflowMetadata.js:49
+#: assets/js/Workflows/WorkflowMetadata.js:48
 msgid "workflow.public"
 msgstr "public"
 
@@ -283,11 +283,11 @@ msgstr "Tab"
 msgid "workflow.thistabnosteps"
 msgstr "This Tab has no Steps."
 
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:398
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:395
 msgid "workflow.title.editnote"
 msgstr "Edit Note"
 
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:384
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:385
 msgid "workflow.title.helpformodule"
 msgstr "Help for this module"
 
@@ -303,7 +303,7 @@ msgstr "Turn on"
 msgid "workflow.turnonalerts"
 msgstr "Turn alerts ON to receive an email if the output of this module changes"
 
-#: assets/js/Workflows/WorkflowMetadata.js:60
+#: assets/js/Workflows/WorkflowMetadata.js:57
 msgid "workflow.updated"
 msgstr "Updated"
 
@@ -315,7 +315,7 @@ msgstr "Anyone can view and duplicate this workflow, and see your email."
 msgid "workflow.visibility.by"
 msgstr "by"
 
-#: assets/js/Workflows/WorkflowMetadata.js:48
+#: assets/js/Workflows/WorkflowMetadata.js:47
 msgid "workflow.visibility.changeprivacy"
 msgstr "Change privacy"
 
@@ -568,6 +568,14 @@ msgstr "TRAINING"
 msgid "workflows.navbar.workflows"
 msgstr "WORKFLOWS"
 
+#: cjworkbench/forms/signup.py:24
+msgid "accounts.sign_up.fields.first_name.placeholder"
+msgstr "First name"
+
+#: cjworkbench/forms/signup.py:32
+msgid "accounts.sign_up.fields.last_name.placeholder"
+msgstr "Last name"
+
 #: templates/account/login.html:4 templates/account/login.html:10
 #: templates/account/signup.html:12
 msgid "accounts.sign_in.title"
@@ -588,4 +596,12 @@ msgstr "Sign Up"
 #: templates/account/signup.html:26
 msgid "accounts.sign_up.login_prompt"
 msgstr "If you have already created an account, then please <a0>log in</a0>."
+
+#: templates/account/email/password_reset_key_subject.txt:3
+msgid "accounts.emails.password_reset.subject"
+msgstr "Password Reset E-mail"
+
+#: templates/notifications/new_data_version_subject.txt:3
+msgid "notifications.new_data_version.subject"
+msgstr "New data available in {workflow_name}"
 

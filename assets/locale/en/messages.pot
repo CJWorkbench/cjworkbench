@@ -103,9 +103,9 @@ msgstr ""
 msgid "workflow.createyourworkflow"
 msgstr ""
 
-#. default-message: This was the data that led to an error. Please correct the error in the left pane.
-#: assets/js/WorkflowEditor/OutputPane.js:100
-msgid "workflow.dataledtoan error"
+#. default-message: This was the data that led to an error. Please correct the error in the left panel.
+#: assets/js/WorkflowEditor/OutputPane.js:105
+msgid "workflow.dataledtoanerror"
 msgstr ""
 
 #. default-message: Delete
@@ -139,22 +139,22 @@ msgid "workflow.duplicatetosavechanges"
 msgstr ""
 
 #. default-message: Email alerts disabled
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:370
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:373
 msgid "workflow.emailalertdisabled"
 msgstr ""
 
 #. default-message: Email alerts enabled
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:370
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:373
 msgid "workflow.emailalertenebled"
 msgstr ""
 
 #. default-message: enter Zen mode
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:234
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:241
 msgid "workflow.enterzenmode"
 msgstr ""
 
 #. default-message: exit Zen mode
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:234
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:241
 msgid "workflow.exitzenmode"
 msgstr ""
 
@@ -225,7 +225,7 @@ msgid "workflow.placeholder.search"
 msgstr ""
 
 #. default-message: Type a note...
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:351
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:356
 msgid "workflow.placeholder.typeanote"
 msgstr ""
 
@@ -235,12 +235,12 @@ msgid "workflow.plssendmsg"
 msgstr ""
 
 #. default-message: private
-#: assets/js/Workflows/WorkflowMetadata.js:49
+#: assets/js/Workflows/WorkflowMetadata.js:48
 msgid "workflow.private"
 msgstr ""
 
 #. default-message: public
-#: assets/js/Workflows/WorkflowMetadata.js:49
+#: assets/js/Workflows/WorkflowMetadata.js:48
 msgid "workflow.public"
 msgstr ""
 
@@ -323,12 +323,12 @@ msgid "workflow.thistabnosteps"
 msgstr ""
 
 #. default-message: Edit Note
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:398
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:395
 msgid "workflow.title.editnote"
 msgstr ""
 
 #. default-message: Help for this module
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:384
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:385
 msgid "workflow.title.helpformodule"
 msgstr ""
 
@@ -348,7 +348,7 @@ msgid "workflow.turnonalerts"
 msgstr ""
 
 #. default-message: Updated
-#: assets/js/Workflows/WorkflowMetadata.js:60
+#: assets/js/Workflows/WorkflowMetadata.js:57
 msgid "workflow.updated"
 msgstr ""
 
@@ -363,7 +363,7 @@ msgid "workflow.visibility.by"
 msgstr ""
 
 #. default-message: Change privacy
-#: assets/js/Workflows/WorkflowMetadata.js:48
+#: assets/js/Workflows/WorkflowMetadata.js:47
 msgid "workflow.visibility.changeprivacy"
 msgstr ""
 
@@ -669,6 +669,16 @@ msgstr ""
 msgid "workflows.navbar.workflows"
 msgstr ""
 
+#. default-message: First name
+#: cjworkbench/forms/signup.py:24
+msgid "accounts.sign_up.fields.first_name.placeholder"
+msgstr ""
+
+#. default-message: Last name
+#: cjworkbench/forms/signup.py:32
+msgid "accounts.sign_up.fields.last_name.placeholder"
+msgstr ""
+
 #. default-message: Sign in
 #: templates/account/login.html:4 templates/account/login.html:10 templates/account/signup.html:12
 msgid "accounts.sign_in.title"
@@ -692,5 +702,15 @@ msgstr ""
 #. default-message: If you have already created an account, then please <a0>log in</a0>.
 #: templates/account/signup.html:26
 msgid "accounts.sign_up.login_prompt"
+msgstr ""
+
+#. default-message: Password Reset E-mail
+#: templates/account/email/password_reset_key_subject.txt:3
+msgid "accounts.emails.password_reset.subject"
+msgstr ""
+
+#. default-message: New data available in {workflow_name}
+#: templates/notifications/new_data_version_subject.txt:3
+msgid "notifications.new_data_version.subject"
 msgstr ""
 

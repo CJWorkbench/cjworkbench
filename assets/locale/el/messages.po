@@ -98,8 +98,8 @@ msgstr ""
 msgid "workflow.createyourworkflow"
 msgstr ""
 
-#: assets/js/WorkflowEditor/OutputPane.js:100
-msgid "workflow.dataledtoan error"
+#: assets/js/WorkflowEditor/OutputPane.js:105
+msgid "workflow.dataledtoanerror"
 msgstr ""
 
 #: assets/js/WorkflowEditor/wfmodule/WfModuleContextMenu.js:22
@@ -127,19 +127,19 @@ msgstr ""
 msgid "workflow.duplicatetosavechanges"
 msgstr ""
 
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:370
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:373
 msgid "workflow.emailalertdisabled"
 msgstr ""
 
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:370
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:373
 msgid "workflow.emailalertenebled"
 msgstr ""
 
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:234
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:241
 msgid "workflow.enterzenmode"
 msgstr ""
 
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:234
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:241
 msgid "workflow.exitzenmode"
 msgstr ""
 
@@ -196,7 +196,7 @@ msgstr ""
 msgid "workflow.placeholder.search"
 msgstr ""
 
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:351
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:356
 msgid "workflow.placeholder.typeanote"
 msgstr ""
 
@@ -204,11 +204,11 @@ msgstr ""
 msgid "workflow.plssendmsg"
 msgstr ""
 
-#: assets/js/Workflows/WorkflowMetadata.js:49
+#: assets/js/Workflows/WorkflowMetadata.js:48
 msgid "workflow.private"
 msgstr ""
 
-#: assets/js/Workflows/WorkflowMetadata.js:49
+#: assets/js/Workflows/WorkflowMetadata.js:48
 msgid "workflow.public"
 msgstr ""
 
@@ -275,11 +275,11 @@ msgstr ""
 msgid "workflow.thistabnosteps"
 msgstr ""
 
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:398
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:395
 msgid "workflow.title.editnote"
 msgstr ""
 
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:384
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:385
 msgid "workflow.title.helpformodule"
 msgstr ""
 
@@ -295,7 +295,7 @@ msgstr ""
 msgid "workflow.turnonalerts"
 msgstr ""
 
-#: assets/js/Workflows/WorkflowMetadata.js:60
+#: assets/js/Workflows/WorkflowMetadata.js:57
 msgid "workflow.updated"
 msgstr ""
 
@@ -307,7 +307,7 @@ msgstr "Ο καθένας μπορεί να δει και να το κάνει d
 msgid "workflow.visibility.by"
 msgstr "από"
 
-#: assets/js/Workflows/WorkflowMetadata.js:48
+#: assets/js/Workflows/WorkflowMetadata.js:47
 msgid "workflow.visibility.changeprivacy"
 msgstr ""
 
@@ -556,6 +556,14 @@ msgstr "ΕΚΠΑΙΔΕΥΣΗ"
 msgid "workflows.navbar.workflows"
 msgstr ""
 
+#: cjworkbench/forms/signup.py:24
+msgid "accounts.sign_up.fields.first_name.placeholder"
+msgstr ""
+
+#: cjworkbench/forms/signup.py:32
+msgid "accounts.sign_up.fields.last_name.placeholder"
+msgstr ""
+
 #: templates/account/login.html:4 templates/account/login.html:10
 #: templates/account/signup.html:12
 msgid "accounts.sign_in.title"
@@ -575,5 +583,13 @@ msgstr ""
 
 #: templates/account/signup.html:26
 msgid "accounts.sign_up.login_prompt"
+msgstr ""
+
+#: templates/account/email/password_reset_key_subject.txt:3
+msgid "accounts.emails.password_reset.subject"
+msgstr ""
+
+#: templates/notifications/new_data_version_subject.txt:3
+msgid "notifications.new_data_version.subject"
 msgstr ""
 

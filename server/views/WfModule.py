@@ -233,18 +233,22 @@ def wfmodule_value_counts(request: HttpRequest, wf_module: WfModule):
         return JsonResponse({"values": {}})
 
     try:
-        column = next(
-            c for c in cached_result.table_metadata.columns if c.name == colname
+        column_index, column = next(
+            (i, c)
+            for i, c in enumerate(cached_result.table_metadata.columns)
+            if c.name == colname
         )
     except StopIteration:
         return JsonResponse({"error": f'column "{colname}" not found'}, status=404)
 
     # raise CorruptCacheError
     try:
-        with open_cached_render_result(
-            cached_result, only_columns=[column.name]
-        ) as result:
-            series = result.table.table[0].to_pandas()
+        with open_cached_render_result(cached_result) as result:
+            arrow_table = result.table.table
+            # series may be of any type, not just str/categorical
+            series = arrow_table.column(column_index).to_pandas(
+                deduplicate_objects=True, ignore_metadata=True
+            )
     except CorruptCacheError:
         # We _could_ return an empty result set; but our only goal here is
         # "don't crash" and this 404 seems to be the simplest implementation.

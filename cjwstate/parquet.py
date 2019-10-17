@@ -1,87 +1,35 @@
 import contextlib
-import subprocess
-import fastparquet
+import logging
 from pathlib import Path
-from typing import Any, ContextManager, Dict, List, Optional
-import pandas as pd
+import subprocess
+from typing import Any, ContextManager, Dict, List
 import pyarrow
 import pyarrow.parquet
 from cjwkernel.util import tempfile_context
 
 
-def convert_parquet_file_to_arrow_file(
-    parquet_path: Path, arrow_path: Path, only_columns: Optional[List[str]] = None
-) -> None:
-    # TODO stream one column at a time? pyarrow makes it tricky, but it would
-    # be more efficient because less RAM would be used.
+logger = logging.getLogger(__name__)
 
-    # we use fastparquet, not pyarrow, to read metadata: [2019-09-15] pyarrow.parquet
-    # doesn't treat dictionary-encoded columns as dictionary-encoded (and it
-    # seems impossible to detect dictionary encoding). TODO pyarrow v0.15.0,
-    # we should use `pyarrow.parquet.read_table(..., use_categories=...)`.
-    fastparquet_file = fastparquet.ParquetFile(str(parquet_path))
-    # if len(fastparquet_file.row_groups) > 1:
-    #     raise pyarrow.ArrowIOError("Workbench only supports 0 or 1 parquet row group")
-    try:
-        rg0_columns = fastparquet_file.row_groups[0].columns
-        dictionary_columns = frozenset(
-            c.meta_data.path_in_schema[0]
-            for c in rg0_columns
-            if c.meta_data.dictionary_page_offset is not None
+
+def convert_parquet_file_to_arrow_file(parquet_path: Path, arrow_path: Path) -> None:
+    result = subprocess.run(
+        ["/usr/bin/parquet-to-arrow", str(parquet_path), str(arrow_path)],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        # We don't handle TimeoutException at all: conversion should always be
+        # quick. If it takes longer than 60s that's certainly a bug in
+        # parquet-to-arrow; crash and email us so we can fix it ASAP.
+        timeout=60,  # should never time out
+    )
+    if result.stdout:
+        logger.error(
+            "parquet-to-arrow wrote to stdout! That's a bug. It wrote: %s",
+            result.stdout,
         )
-    except IndexError:  # there is no row group 0
-        dictionary_columns = frozenset()
-
-    parquet_file = pyarrow.parquet.ParquetFile(str(parquet_path))
-    arrays: List[pyarrow.Array] = []
-    names: List[str] = []
-    for column in parquet_file.schema:
-        if only_columns is not None and column.name not in only_columns:
-            continue
-
-        # TODO write in serial, so we don't build the whole Arrow table in RAM
-        array = parquet_file.read(
-            [column.name], use_threads=False, use_pandas_metadata=False
-        )[0].data
-        if len(array.chunks) == 0:
-            pass  # this is fine
-        elif len(array.chunks) == 1:
-            # simplification: pass Array, not ChunkedArray.
-            array = array.chunks[0]
-            if column.name in dictionary_columns:
-                # TODO pyarrow 0.15 reader allows uses_dictionary=True, so we can
-                # avoid decoding+re-encoding.
-                array = array.dictionary_encode()
-        else:
-            raise pyarrow.ArrowIOError(
-                "Workbench can only handle 0-1 chunks, not %d" % len(array.chunks)
-            )
-        arrays.append(array)
-        names.append(column.name)
-    table = pyarrow.Table.from_arrays(arrays, names=names)
-
-    # Be sure to ignore the parquet file's schema metadata, because it can
-    # cause an error like this on Fastparquet-dumped files:
-    #
-    #   File "pyarrow/array.pxi", line 441, in pyarrow.lib._PandasConvertible.to_pandas
-    #   File "pyarrow/table.pxi", line 1367, in pyarrow.lib.Table._to_pandas
-    #   File "/root/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.7/site-packages/pyarrow/pandas_compat.py", line 644, in table_to_blockmanager
-    #     table = _add_any_metadata(table, pandas_metadata)
-    #   File "/root/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.7/site-packages/pyarrow/pandas_compat.py", line 967, in _add_any_metadata
-    #     idx = schema.get_field_index(raw_name)
-    #   File "pyarrow/types.pxi", line 902, in pyarrow.lib.Schema.get_field_index
-    #   File "stringsource", line 15, in string.from_py.__pyx_convert_string_from_py_std__in_string
-    # TypeError: expected bytes, dict found
-    #
-    # [2019-08-22] fastparquet-dumped files will be around for a long time.
-    #
-    # We don't care about schema metadata, anyway. Workbench has its own
-    # restrictive schema; we don't need extra Pandas-specific data because
-    # we don't support everything Pandas supports.
-
-    writer = pyarrow.RecordBatchFileWriter(str(arrow_path), table.schema)
-    writer.write_table(table)
-    writer.close()
+    if result.returncode != 0:
+        raise pyarrow.ArrowIOError(result.stderr)
 
 
 def write(parquet_path: Path, table: pyarrow.Table) -> None:
@@ -122,9 +70,9 @@ def write(parquet_path: Path, table: pyarrow.Table) -> None:
         # Preserve whatever dictionaries we have in Pandas. Write+read
         # should return an exact copy.
         use_dictionary=[
-            c.name.encode("utf-8")
-            for c in table.columns
-            if pyarrow.types.is_dictionary(c.type)
+            name.encode("utf-8")
+            for name, column in zip(table.column_names, table.columns)
+            if pyarrow.types.is_dictionary(column.type)
         ],
     )
 
@@ -159,16 +107,19 @@ def read(parquet_path: Path) -> pyarrow.Table:
         return table
 
 
-def _read_pylist(column: pyarrow.Column) -> List[Any]:
+def _read_pylist(column: pyarrow.ChunkedArray) -> List[Any]:
     dtype = column.type
 
     pylist = column.to_pylist()
-    if pyarrow.types.is_timestamp(column.type):
+    if pyarrow.types.is_timestamp(dtype) and dtype.unit == "ns":
         # pyarrow returns timestamps as pandas.Timestamp values (because
         # that has higher resolution than datetime.datetime). But we want
-        # datetime.datetime.
+        # datetime.datetime. We'll truncate to microseconds.
+        #
+        # If someone complains, then we should change our API to pass int64
+        # instead of datetime.datetime.
         pylist = [None if v is None else v.to_pydatetime() for v in pylist]
-    elif pyarrow.types.is_floating(column.type):
+    elif pyarrow.types.is_floating(dtype):
         # Pandas does not differentiate between NaN and None; so in effect,
         # neither do we. Numeric tables can have NaN and never None;
         # timestamp and String columns can have None and never NaT; int
@@ -224,4 +175,7 @@ def read_pydict(
 
         reader = pyarrow.ipc.open_file(str(arrow_path))
         table = reader.read_all()
-        return {c.name: _read_pylist(c) for c in table.columns}
+        return {
+            name: _read_pylist(chunks)
+            for name, chunks in zip(table.column_names, table.columns)
+        }
