@@ -39,10 +39,16 @@ exports[`WorkflowNavBar should duplicate the workflow when user is logged in and
           name="duplicate"
           onClick={[Function]}
         >
-          Duplicate
+          <WithI18n
+            defaults="Duplicate"
+            id="workflow.visibility.duplicate"
+          />
         </button>
         <ShareButton>
-          Share
+          <WithI18n
+            defaults="Share"
+            id="workflow.visibility.share"
+          />
         </ShareButton>
         <WfHamburgerMenu
           api={
@@ -103,10 +109,16 @@ exports[`WorkflowNavBar should redirect to sign-in page when user clicks duplica
           name="duplicate"
           onClick={[Function]}
         >
-          Duplicate
+          <WithI18n
+            defaults="Duplicate"
+            id="workflow.visibility.duplicate"
+          />
         </button>
         <ShareButton>
-          Share
+          <WithI18n
+            defaults="Share"
+            id="workflow.visibility.share"
+          />
         </ShareButton>
         <a
           className="nav--link"

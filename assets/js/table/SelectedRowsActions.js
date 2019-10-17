@@ -7,6 +7,7 @@ import { createSelector } from 'reselect'
 import { addModuleAction, setWfModuleParamsAction, setSelectedWfModuleAction } from '../workflow-reducer'
 import { Plural } from '@lingui/macro'
 
+
 const numberFormat = new Intl.NumberFormat()
 
 class Action extends React.PureComponent {

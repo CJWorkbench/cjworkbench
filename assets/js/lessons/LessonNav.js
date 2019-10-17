@@ -1,5 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { Trans } from '@lingui/macro'
+
 
 export default class LessonNav extends React.PureComponent {
   static propTypes = {
@@ -35,7 +37,7 @@ export default class LessonNav extends React.PureComponent {
             disabled={c <= 0}
             onClick={this.handleClickPrevious}
           >
-            Previous
+            {<Trans id='lessons.nav.previous' description=''>Previous</Trans>}
           </button>
           {c === n ? null : (
             <div className='current-and-total'>
@@ -50,7 +52,7 @@ export default class LessonNav extends React.PureComponent {
             disabled={c + 1 > n}
             onClick={this.handleClickNext}
           >
-            Next
+            {<Trans id='lessons.nav.next' description=''>Next</Trans>}
           </button>
         </div>
       </footer>

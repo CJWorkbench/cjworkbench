@@ -14,6 +14,18 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.7.0\n"
 
+#: assets/js/lessons/LessonNav.js:55
+msgid "lessons.nav.next"
+msgstr ""
+
+#: assets/js/lessons/LessonNav.js:40
+msgid "lessons.nav.previous"
+msgstr ""
+
+#: assets/js/lessons/LessonFooter.js:41 assets/js/lessons/LessonSection.js:71
+msgid "lessons.training"
+msgstr ""
+
 #: assets/js/i18n/locales.js:5
 msgid "locales.el"
 msgstr ""
@@ -22,8 +34,72 @@ msgstr ""
 msgid "locales.en"
 msgstr ""
 
+#: assets/js/Report/Dashboard.js:11
+msgid "report.dashboard.emptyReport"
+msgstr ""
+
+#: assets/js/Report/ShareCard.js:24
+msgid "report.shareCard.editPrivacy"
+msgstr ""
+
+#: assets/js/Report/ShareCard.js:27
+msgid "report.shareCard.reportUrl"
+msgstr ""
+
 #: assets/js/table/SelectedRowsActions.js:105
 msgid "selectedRow.numberOfRows"
+msgstr ""
+
+#: assets/js/ShareModal/Role.js:19
+msgid "shareModal.role.canEdit"
+msgstr ""
+
+#: assets/js/ShareModal/Role.js:18
+msgid "shareModal.role.canView"
+msgstr ""
+
+#: assets/js/table/ColumnContextMenu.js:52
+msgid "table.columnContextMenu.cleanText"
+msgstr ""
+
+#: assets/js/table/ColumnContextMenu.js:54
+msgid "table.columnContextMenu.convertToDateTime"
+msgstr ""
+
+#: assets/js/table/ColumnContextMenu.js:55
+msgid "table.columnContextMenu.convertToNumbers"
+msgstr ""
+
+#: assets/js/table/ColumnContextMenu.js:56
+msgid "table.columnContextMenu.convertToText"
+msgstr ""
+
+#: assets/js/table/ColumnContextMenu.js:60
+msgid "table.columnContextMenu.deleteColumn"
+msgstr ""
+
+#: assets/js/table/ColumnContextMenu.js:46
+msgid "table.columnContextMenu.duplicate"
+msgstr ""
+
+#: assets/js/table/ColumnContextMenu.js:51
+msgid "table.columnContextMenu.filter"
+msgstr ""
+
+#: assets/js/table/ColumnContextMenu.js:58
+msgid "table.columnContextMenu.formatNumbers"
+msgstr ""
+
+#: assets/js/table/ColumnContextMenu.js:45
+msgid "table.columnContextMenu.rename"
+msgstr ""
+
+#: assets/js/table/ColumnContextMenu.js:48
+msgid "table.columnContextMenu.sortAscending"
+msgstr ""
+
+#: assets/js/table/ColumnContextMenu.js:49
+msgid "table.columnContextMenu.sortDescending"
 msgstr ""
 
 #: assets/js/utils.js:47

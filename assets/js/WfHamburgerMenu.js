@@ -49,7 +49,7 @@ export default class WfHamburgerMenu extends React.Component {
             {loggedIn && workflowId ? (
               <>
                 <DropdownItem href='/workflows/'>{<Trans id='workflow.visibility.myWorkflows'>My Workflows</Trans>}</DropdownItem>
-                <DropdownItem onClick={this.handleClickOpenImportModal}>{<Trans id='workflow.visibility.importModule'>Import Module</Trans>}</DropdownItem>
+                <DropdownItem onClick={this.handleClickOpenImportModal}><Trans id='workflow.visibility.importModule'>Import Module</Trans></DropdownItem>
               </>
             ) : (
               <DropdownItem href='//workbenchdata.com'>{<Trans id='workflow.visibility.home'>Home</Trans>}</DropdownItem>

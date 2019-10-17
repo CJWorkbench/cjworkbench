@@ -1,3 +1,18 @@
+#. default-message: Next
+#: assets/js/lessons/LessonNav.js:55
+msgid "lessons.nav.next"
+msgstr ""
+
+#. default-message: Previous
+#: assets/js/lessons/LessonNav.js:40
+msgid "lessons.nav.previous"
+msgstr ""
+
+#. default-message: Training
+#: assets/js/lessons/LessonFooter.js:41 assets/js/lessons/LessonSection.js:71
+msgid "lessons.training"
+msgstr ""
+
 #. default-message: Greek
 #: assets/js/i18n/locales.js:5
 msgid "locales.el"
@@ -8,9 +23,89 @@ msgstr ""
 msgid "locales.en"
 msgstr ""
 
+#. default-message: Add charts to tabs, and they'll appear here.
+#: assets/js/Report/Dashboard.js:11
+msgid "report.dashboard.emptyReport"
+msgstr ""
+
+#. default-message: Edit privacy
+#: assets/js/Report/ShareCard.js:24
+msgid "report.shareCard.editPrivacy"
+msgstr ""
+
+#. default-message: Report URL
+#: assets/js/Report/ShareCard.js:27
+msgid "report.shareCard.reportUrl"
+msgstr ""
+
 #. default-message: {0, plural, =0 {No rows selected} one {# row selected} other {# rows selected}}
 #: assets/js/table/SelectedRowsActions.js:105
 msgid "selectedRow.numberOfRows"
+msgstr ""
+
+#. default-message: Can edit
+#: assets/js/ShareModal/Role.js:19
+msgid "shareModal.role.canEdit"
+msgstr ""
+
+#. default-message: Can view
+#: assets/js/ShareModal/Role.js:18
+msgid "shareModal.role.canView"
+msgstr ""
+
+#. default-message: Clean Text
+#: assets/js/table/ColumnContextMenu.js:52
+msgid "table.columnContextMenu.cleanText"
+msgstr ""
+
+#. default-message: Convert to date & time
+#: assets/js/table/ColumnContextMenu.js:54
+msgid "table.columnContextMenu.convertToDateTime"
+msgstr ""
+
+#. default-message: Convert to numbers
+#: assets/js/table/ColumnContextMenu.js:55
+msgid "table.columnContextMenu.convertToNumbers"
+msgstr ""
+
+#. default-message: Convert to text
+#: assets/js/table/ColumnContextMenu.js:56
+msgid "table.columnContextMenu.convertToText"
+msgstr ""
+
+#. default-message: Delete column
+#: assets/js/table/ColumnContextMenu.js:60
+msgid "table.columnContextMenu.deleteColumn"
+msgstr ""
+
+#. default-message: Duplicate
+#: assets/js/table/ColumnContextMenu.js:46
+msgid "table.columnContextMenu.duplicate"
+msgstr ""
+
+#. default-message: Filter
+#: assets/js/table/ColumnContextMenu.js:51
+msgid "table.columnContextMenu.filter"
+msgstr ""
+
+#. default-message: Format numbers
+#: assets/js/table/ColumnContextMenu.js:58
+msgid "table.columnContextMenu.formatNumbers"
+msgstr ""
+
+#. default-message: Rename
+#: assets/js/table/ColumnContextMenu.js:45
+msgid "table.columnContextMenu.rename"
+msgstr ""
+
+#. default-message: Sort ascending
+#: assets/js/table/ColumnContextMenu.js:48
+msgid "table.columnContextMenu.sortAscending"
+msgstr ""
+
+#. default-message: Sort descending
+#: assets/js/table/ColumnContextMenu.js:49
+msgid "table.columnContextMenu.sortDescending"
 msgstr ""
 
 #. default-message: {days}d ago
