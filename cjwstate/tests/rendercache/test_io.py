@@ -10,13 +10,16 @@ from cjwkernel.types import (
     QuickFixAction,
     TableMetadata,
 )
+from cjwkernel.tests.util import tempfile_context
 from cjwstate import minio
 from cjwstate.models import Workflow, WfModule
 from cjwstate.models.commands import InitWorkflowCommand
 from cjwstate.tests.utils import DbTestCase
 from cjwstate.rendercache.io import (
     BUCKET,
+    CorruptCacheError,
     cache_render_result,
+    load_cached_render_result,
     open_cached_render_result,
     clear_cached_render_result_for_wf_module,
     crr_parquet_key,
@@ -100,3 +103,12 @@ class RendercacheIoTests(DbTestCase):
         cached_result = fresh_wf_module.cached_render_result
 
         self.assertEqual(cached_result.table_metadata, TableMetadata(1, columns))
+
+    def test_invalid_parquet_is_corrupt_cache_error(self):
+        result = RenderResult(arrow_table({"A": [1]}))
+        cache_render_result(self.workflow, self.wf_module, self.delta.id, result)
+        crr = self.wf_module.cached_render_result
+        minio.put_bytes(BUCKET, crr_parquet_key(crr), b"NOT PARQUET")
+        with tempfile_context() as arrow_path:
+            with self.assertRaises(CorruptCacheError):
+                load_cached_render_result(crr, arrow_path)

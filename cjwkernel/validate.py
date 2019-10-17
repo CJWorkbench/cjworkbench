@@ -137,20 +137,24 @@ def validate(table: Optional[pyarrow.Table], metadata: TableMetadata) -> None:
     else:
         if not metadata.columns:
             raise TableShouldBeNone
-        if table.columns[0].data.num_chunks > 1:
-            raise TableHasTooManyRecordBatches(table.columns[0].data.num_chunks)
         if metadata.n_rows != table.num_rows:
             raise WrongRowCount(metadata.n_rows, table.num_rows)
         seen_column_names = {}
-        for position, expected, actual in zip(
-            range(len(metadata.columns)), metadata.columns, table.columns
-        ):
+        for position, expected in enumerate(metadata.columns):
             try:
-                # actual stores names as bytes, not str. The `.name` getter
-                # forces decoding.
-                actual_name = actual.name
+                # pyarrow 0.15 will try to decode the column name when it
+                # reads the ChunkedArray -- so it can store `retval._name`.
+                # It's an odd API, for legacy reasons: previously, Arrow's API
+                # included a "Column" type with `.name`.
+                #
+                # We'll use the `._name` in our code: we rely on this oddity
+                # to raise ColumnNameIsInvalidUtf8.
+                actual = table.column(position)
             except UnicodeDecodeError:
                 raise ColumnNameIsInvalidUtf8(position)
+            actual_name = actual._name
+            if position == 0 and actual.num_chunks > 1:
+                raise TableHasTooManyRecordBatches(actual.num_chunks)
             if expected.name != actual_name:
                 raise WrongColumnName(position, expected.name, actual_name)
             if actual_name in seen_column_names:
@@ -170,7 +174,7 @@ def validate(table: Optional[pyarrow.Table], metadata: TableMetadata) -> None:
                 ):
                     raise WrongColumnType(actual_name, expected.type, actual.type)
                 # Validate string values are UTF-8
-                for i, chunk in enumerate(actual.data.chunks):
+                for i, chunk in enumerate(actual.chunks):
                     if pyarrow.types.is_string(chunk.type):
                         _validate_strings_are_utf8(chunk, actual_name)
                     else:
@@ -186,13 +190,13 @@ def validate(table: Optional[pyarrow.Table], metadata: TableMetadata) -> None:
                                     used_indices[dict_index.as_py()] = True
                         except IndexError:
                             raise DictionaryColumnHasInvalidIndex(
-                                actual.name, row, dict_index
+                                actual_name, row, dict_index
                             )
                         # np.where() gives tuple of arrays, one for each axis
                         unused_indices = np.where(~used_indices)[0]
                         if unused_indices:
                             raise DictionaryColumnHasUnusedEntry(
-                                actual.name, dictionary[unused_indices[0]]
+                                actual_name, dictionary[unused_indices[0]]
                             )
             elif isinstance(expected.type, ColumnType.Number):
                 if not (
