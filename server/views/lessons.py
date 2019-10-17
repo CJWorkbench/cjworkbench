@@ -14,6 +14,7 @@ from server.models.course import Course, CourseLookup, AllCourses
 from server.models.lesson import Lesson, AllLessons, LessonLookup
 from server.serializers import LessonSerializer, UserSerializer
 from server.views.workflows import visible_modules, make_init_state
+from cjworkbench.i18n import default_locale
 
 
 def _get_course_or_404(slug):
@@ -113,6 +114,7 @@ def _add_wf_module_to_tab(wfm_dict, order, tab, delta_id, lesson):
                 [
                     settings.STATIC_URL,
                     ("lessons/" if lesson.course is None else "courses/"),
+                    f"{lesson.locale}/",
                     (
                         lesson.slug
                         if lesson.course is None
@@ -207,7 +209,9 @@ def _render_course(request, course, lesson_url_prefix):
         {
             "initState": json.dumps({"loggedInUser": logged_in_user}),
             "course": course,
-            "courses": AllCourses,
+            "courses": [
+                c for c in AllCourses if c.locale in [request.locale_id, default_locale]
+            ],
             "lessons": list(course.lessons.values()),
             "lesson_url_prefix": lesson_url_prefix,
         },
@@ -220,7 +224,14 @@ def render_lesson_list(request):
     #
     # Do not build this Course using LessonLookup: LessonLookup contains
     # "hidden" lessons; AllLessons does not.
-    course = Course(title="Lessons", lessons=dict((l.slug, l) for l in AllLessons))
+    course = Course(
+        title="Lessons",
+        lessons=dict(
+            (l.slug, l)
+            for l in AllLessons
+            if l.locale in [request.locale_id, default_locale]
+        ),
+    )
     return _render_course(request, course, "/lessons")
 
 

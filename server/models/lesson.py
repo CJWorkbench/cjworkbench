@@ -219,6 +219,7 @@ class LessonParseError(Exception):
 class Lesson:
     course: Optional["Course"]
     slug: str
+    locale: str
     header: LessonHeader = LessonHeader()
     sections: List[LessonSection] = field(default_factory=list)
     footer: LessonFooter = LessonFooter()
@@ -231,18 +232,21 @@ class Lesson:
     @classmethod
     def load_from_path(cls, course: Optional["Course"], path: pathlib.Path) -> Lesson:
         slug = path.stem
+        locale = path.parent.stem
         html = path.read_text()
         try:
-            return cls.parse(course, slug, html)
+            return cls.parse(course, slug, locale, html)
         except LessonParseError as err:
             raise LessonParseError("In %s: %s" % (str(path), str(err)))
 
     @classmethod
-    def parse(cls, course: Optional["Course"], slug: str, html: str) -> Lesson:
+    def parse(
+        cls, course: Optional["Course"], slug: str, locale: str, html: str
+    ) -> Lesson:
         if course:
-            base_href = f"courses/{course.slug}/{slug}"
+            base_href = f"courses/{locale}/{course.slug}/{slug}"
         else:
-            base_href = f"lessons/{slug}"
+            base_href = f"lessons/{locale}/{slug}"
 
         parser = html5lib.HTMLParser(strict=True, namespaceHTMLElements=False)
         try:
@@ -280,6 +284,7 @@ class Lesson:
         return cls(
             course,
             slug,
+            locale,
             lesson_header,
             lesson_sections,
             lesson_footer,
@@ -292,7 +297,7 @@ class Lesson:
 
 AllLessons = [
     Lesson.load_from_path(None, path)
-    for path in ((pathlib.Path(__file__).parent.parent).glob("lessons/*.html"))
+    for path in ((pathlib.Path(__file__).parent.parent).glob("lessons/*/*.html"))
 ]
 AllLessons.sort(key=lambda lesson: lesson.header.title)
 
