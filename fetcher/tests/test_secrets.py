@@ -222,12 +222,13 @@ class PrepareSecretOauth2(AioHTTPTestCase):
             },
         )
 
+    @patch.object(oauth.OAuthService, "lookup_or_none", lambda s: FakeIntercom)
     @unittest_run_loop
     async def test_return_access_token_when_no_refresh_token(self):
         # Intercom gives tokens that last forever and doesn't have a refresh_url
         self.assertEqual(
             await prepare_secret(
-                self.GoogleLogic,
+                self.IntercomLogic,
                 {
                     "name": "(unknown)",
                     "secret": {
