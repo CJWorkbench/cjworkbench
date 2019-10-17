@@ -125,7 +125,7 @@ async def fetch(params, *, secrets, **kwargs):
         return "Please connect to Google Drive."
     if "error" in secret:
         assert secret["error"]["id"] == "TODO_i18n"
-        return secret["error"]["args"][0]
+        return secret["error"]["arguments"][0]
     assert "secret" in secret
     oauth2_client = oauth2.Client(
         client_id=None,  # unneeded
