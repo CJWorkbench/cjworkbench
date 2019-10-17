@@ -46,7 +46,7 @@ class MockLoadedModule:
 TestGoogleSecret = {
     "id_name": "google_credentials",
     "type": "secret",
-    "secret_logic": {"provider": "oauth", "service": "google"},
+    "secret_logic": {"provider": "oauth2", "service": "google"},
 }
 
 
@@ -653,14 +653,14 @@ class WfModuleTest(HandlerTestCase):
         workflow.acl.create(email=user.email, can_edit=True)
         ModuleVersion.create_or_replace_from_spec(
             {
-                "id_name": "g",
+                "id_name": "googlesheets",
                 "name": "g",
                 "category": "Clean",
                 "parameters": [TestGoogleSecret],
             }
         )
         wf_module = workflow.tabs.first().wf_modules.create(
-            module_id_name="g", order=0, slug="step-1"
+            module_id_name="googlesheets", order=0, slug="step-1"
         )
 
         response = self.run_handler(
@@ -681,14 +681,14 @@ class WfModuleTest(HandlerTestCase):
         workflow = Workflow.create_and_init(owner=user)
         ModuleVersion.create_or_replace_from_spec(
             {
-                "id_name": "g",
+                "id_name": "googlesheets",
                 "name": "g",
                 "category": "Clean",
                 "parameters": [TestGoogleSecret],
             }
         )
         wf_module = workflow.tabs.first().wf_modules.create(
-            module_id_name="g",
+            module_id_name="googlesheets",
             slug="step-1",
             order=0,
             secrets={"google_credentials": None},
@@ -712,14 +712,14 @@ class WfModuleTest(HandlerTestCase):
         workflow = Workflow.create_and_init(owner=user)
         ModuleVersion.create_or_replace_from_spec(
             {
-                "id_name": "g",
+                "id_name": "googlesheets",
                 "name": "g",
                 "category": "Clean",
                 "parameters": [TestGoogleSecret],
             }
         )
         wf_module = workflow.tabs.first().wf_modules.create(
-            module_id_name="g",
+            module_id_name="googlesheets",
             order=0,
             slug="step-1",
             params={"s": '{"name":"a","secret":"hello"}'},
@@ -743,14 +743,14 @@ class WfModuleTest(HandlerTestCase):
         workflow = Workflow.create_and_init(owner=user)
         ModuleVersion.create_or_replace_from_spec(
             {
-                "id_name": "g",
+                "id_name": "googlesheets",
                 "name": "g",
                 "category": "Clean",
                 "parameters": [TestGoogleSecret],
             }
         )
         wf_module = workflow.tabs.first().wf_modules.create(
-            module_id_name="g",
+            module_id_name="googlesheets",
             order=0,
             slug="step-1",
             secrets={"google_credentials": {"name": "a", "secret": "hello"}},
@@ -776,14 +776,14 @@ class WfModuleTest(HandlerTestCase):
         workflow = Workflow.create_and_init(owner=user)
         ModuleVersion.create_or_replace_from_spec(
             {
-                "id_name": "g",
+                "id_name": "googlesheets",
                 "name": "g",
                 "category": "Clean",
                 "parameters": [TestGoogleSecret],
             }
         )
         wf_module = workflow.tabs.first().wf_modules.create(
-            module_id_name="g",
+            module_id_name="googlesheets",
             order=0,
             slug="step-1",
             secrets={"google_credentials": {"name": "a", "secret": "hello"}},
@@ -812,14 +812,14 @@ class WfModuleTest(HandlerTestCase):
         workflow = Workflow.create_and_init(owner=user)
         ModuleVersion.create_or_replace_from_spec(
             {
-                "id_name": "g",
+                "id_name": "googlesheets",
                 "name": "g",
                 "category": "Clean",
                 "parameters": [TestGoogleSecret],
             }
         )
         wf_module = workflow.tabs.first().wf_modules.create(
-            module_id_name="g",
+            module_id_name="googlesheets",
             order=0,
             slug="step-1",
             secrets={"google_credentials": {"name": "a", "secret": "hello"}},
@@ -851,14 +851,14 @@ class WfModuleTest(HandlerTestCase):
         workflow = Workflow.create_and_init(owner=user)
         ModuleVersion.create_or_replace_from_spec(
             {
-                "id_name": "g",
+                "id_name": "googlesheets",
                 "name": "g",
                 "category": "Clean",
                 "parameters": [TestGoogleSecret],
             }
         )
         wf_module = workflow.tabs.first().wf_modules.create(
-            module_id_name="g",
+            module_id_name="googlesheets",
             order=0,
             slug="step-1",
             secrets={"google_credentials": {"name": "a", "secret": "hello"}},
@@ -879,14 +879,14 @@ class WfModuleTest(HandlerTestCase):
         workflow.acl.create(email=user.email, can_edit=True)
         ModuleVersion.create_or_replace_from_spec(
             {
-                "id_name": "g",
+                "id_name": "googlesheets",
                 "name": "g",
                 "category": "Clean",
                 "parameters": [TestGoogleSecret],
             }
         )
         wf_module = workflow.tabs.first().wf_modules.create(
-            module_id_name="g",
+            module_id_name="googlesheets",
             order=0,
             slug="step-1",
             secrets={"google_credentials": {"name": "a", "secret": "hello"}},
@@ -906,14 +906,14 @@ class WfModuleTest(HandlerTestCase):
         workflow = Workflow.create_and_init(owner=user)
         ModuleVersion.create_or_replace_from_spec(
             {
-                "id_name": "g",
+                "id_name": "googlesheets",
                 "name": "g",
                 "category": "Clean",
                 "parameters": [TestGoogleSecret, {"id_name": "foo", "type": "string"}],
             }
         )
         wf_module = workflow.tabs.first().wf_modules.create(
-            module_id_name="g",
+            module_id_name="googlesheets",
             order=0,
             slug="step-1",
             params={"foo": "bar"},
@@ -946,14 +946,14 @@ class WfModuleTest(HandlerTestCase):
         workflow = Workflow.create_and_init(owner=user)
         ModuleVersion.create_or_replace_from_spec(
             {
-                "id_name": "g",
+                "id_name": "googlesheets",
                 "name": "g",
                 "category": "Clean",
                 "parameters": [TestGoogleSecret],
             }
         )
         wf_module = workflow.tabs.first().wf_modules.create(
-            module_id_name="g",
+            module_id_name="googlesheets",
             order=0,
             slug="step-1",
             secrets={"google_credentials": {"name": "a", "secret": "hello"}},

@@ -440,16 +440,16 @@ async def spooled_data_from_url(
 
     with tempfile.TemporaryFile(prefix="loadurl") as spool:
         async with aiohttp.ClientSession() as session:
-            async with session.get(
-                url, headers=headers, timeout=timeout, raise_for_status=True
-            ) as response:
+            # raise aiohttp.ClientError, asyncio.TimeoutError
+            async with session.get(url, headers=headers, timeout=timeout) as response:
+                # raise aiohttp.ClientResponseError
                 response.raise_for_status()
-
-                async for blob in response.content.iter_chunked(_ChunkSize):
-                    spool.write(blob)
-
                 headers = response.headers
                 charset = response.charset
+
+                # raise aiohttp.ClientPyaloadError
+                async for blob in response.content.iter_chunked(_ChunkSize):
+                    spool.write(blob)
 
         spool.seek(0)
         yield spool, headers, charset

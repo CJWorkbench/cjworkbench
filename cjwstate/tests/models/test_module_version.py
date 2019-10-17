@@ -63,7 +63,7 @@ class ModuleVersionTest(DbTestCase):
     def test_param_schema_implicit(self):
         mv = ModuleVersion.create_or_replace_from_spec(
             {
-                "id_name": "x",
+                "id_name": "googlesheets",
                 "name": "x",
                 "category": "Clean",
                 "parameters": [
@@ -71,7 +71,7 @@ class ModuleVersionTest(DbTestCase):
                     {
                         "id_name": "bar",
                         "type": "secret",
-                        "secret_logic": {"provider": "oauth", "service": "google"},
+                        "secret_logic": {"provider": "oauth2", "service": "google"},
                     },
                     {
                         "id_name": "baz",

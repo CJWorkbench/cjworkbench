@@ -25,7 +25,7 @@ from cjwkernel.tests.util import (
     assert_arrow_table_equals,
     parquet_file,
 )
-from cjwstate import commands, minio, rendercache, storedobjects
+from cjwstate import minio, rendercache, storedobjects
 from cjwstate.models import (
     CachedRenderResult,
     ModuleVersion,
@@ -33,12 +33,11 @@ from cjwstate.models import (
     WfModule,
     Workflow,
 )
-from cjwstate.models.commands import ChangeDataVersionCommand
 import cjwstate.modules
 from cjwstate.modules.loaded_module import LoadedModule
 from cjwstate.tests.utils import DbTestCase
 from fetcher import fetch, fetchprep
-from server import rabbitmq, websockets
+from server import websockets
 
 
 def async_value(v):
@@ -195,7 +194,7 @@ class FetchTests(unittest.TestCase):
     def test_deleted_wf_module(self):
         with self.assertLogs(level=logging.INFO):
             result = fetch.fetch_or_wrap_error(
-                self.basedir, WfModule(), None, None, None, self.output_path
+                self.basedir, WfModule(), None, {}, None, None, self.output_path
             )
         self.assertEqual(self.output_path.stat().st_size, 0)
         self.assertEqual(result, self._err("Cannot fetch: module was deleted"))
@@ -208,6 +207,7 @@ class FetchTests(unittest.TestCase):
                 self.basedir,
                 WfModule(),
                 MockModuleVersion("missing"),
+                {},
                 None,
                 None,
                 self.output_path,
@@ -223,6 +223,7 @@ class FetchTests(unittest.TestCase):
                 self.basedir,
                 WfModule(),
                 MockModuleVersion("bad"),
+                {},
                 None,
                 None,
                 self.output_path,
@@ -236,10 +237,11 @@ class FetchTests(unittest.TestCase):
         load_module.return_value.fetch.return_value = FetchResult(self.output_path, [])
         result = fetch.fetch_or_wrap_error(
             self.basedir,
-            WfModule(params={"A": "input"}, secrets={"C": "D"}),
+            WfModule(params={"A": "input"}, secrets={"C": "wrong"}),
             MockModuleVersion(
                 id_name="A", param_schema=ParamDType.Dict({"A": ParamDType.String()})
             ),
+            {"C": "D"},
             None,
             None,
             self.output_path,
@@ -269,6 +271,7 @@ class FetchTests(unittest.TestCase):
             self.basedir,
             WfModule(),
             MockModuleVersion(),
+            {},
             None,
             input_crr,
             self.output_path,
@@ -300,6 +303,7 @@ class FetchTests(unittest.TestCase):
             self.basedir,
             WfModule(),
             MockModuleVersion(),
+            {},
             None,
             input_crr,
             self.output_path,
@@ -321,6 +325,7 @@ class FetchTests(unittest.TestCase):
             self.basedir,
             WfModule(fetch_error=""),
             MockModuleVersion(),
+            {},
             stored_object,
             None,
             self.output_path,
@@ -343,6 +348,7 @@ class FetchTests(unittest.TestCase):
             self.basedir,
             WfModule(fetch_error="some error"),
             MockModuleVersion(),
+            {},
             stored_object,
             None,
             self.output_path,
@@ -369,6 +375,7 @@ class FetchTests(unittest.TestCase):
             self.basedir,
             WfModule(),
             MockModuleVersion(),
+            {},
             stored_object,
             None,
             self.output_path,
@@ -388,6 +395,7 @@ class FetchTests(unittest.TestCase):
                 self.basedir,
                 WfModule(),
                 MockModuleVersion(),
+                {},
                 None,
                 None,
                 self.output_path,

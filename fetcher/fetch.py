@@ -5,7 +5,7 @@ from datetime import timedelta
 import logging
 import os
 from pathlib import Path
-from typing import ContextManager, Optional, Tuple
+from typing import Any, ContextManager, Dict, Optional, Tuple
 from django.conf import settings
 from django.db import DatabaseError, InterfaceError
 from django.utils import timezone
@@ -22,6 +22,7 @@ from cjwstate.models import (
 )
 from cjwstate.modules.loaded_module import LoadedModule
 from cjwstate import rendercache, storedobjects
+import fetcher.secrets
 from . import fetchprep, save
 
 
@@ -165,6 +166,7 @@ def fetch_or_wrap_error(
     basedir: Path,
     wf_module: WfModule,
     module_version: ModuleVersion,
+    secrets: Dict[str, Any],
     stored_object: Optional[StoredObject],
     maybe_input_crr: Optional[CachedRenderResult],
     output_path: Path,
@@ -257,7 +259,7 @@ def fetch_or_wrap_error(
             return loaded_module.fetch(
                 basedir=basedir,
                 params=params,
-                secrets=wf_module.secrets,
+                secrets=secrets,
                 last_fetch_result=last_fetch_result,
                 input_parquet_filename=(
                     None if input_parquet_path is None else input_parquet_path.name
@@ -328,6 +330,7 @@ async def fetch(*, workflow_id: Optional[int] = None, wf_module_id: int) -> None
         logger.info(
             "begin fetch(workflow_id=%d, wf_module_id=%d)", workflow_id, wf_module_id
         )
+
         try:
             (
                 wf_module,
@@ -341,6 +344,13 @@ async def fetch(*, workflow_id: Optional[int] = None, wf_module_id: int) -> None
             )
             return
 
+    # Prepare secrets -- mangle user values so modules have all they need.
+    #
+    # This can involve, e.g., HTTP request to OAuth2 token servers.
+    secrets = await fetcher.secrets.prepare_secrets(
+        module_version.param_fields, wf_module.secrets
+    )
+
     now = timezone.now()
 
     with tempdir_context(prefix="fetch-") as basedir:
@@ -351,6 +361,7 @@ async def fetch(*, workflow_id: Optional[int] = None, wf_module_id: int) -> None
                 basedir,
                 wf_module,
                 module_version,
+                secrets,
                 stored_object,
                 input_crr,
                 output_path,

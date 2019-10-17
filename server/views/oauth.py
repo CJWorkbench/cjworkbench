@@ -56,7 +56,10 @@ def _load_wf_module_and_service(
         if (
             isinstance(field, ParamSpec.Secret)
             and field.id_name == param
-            and isinstance(field.secret_logic, ParamSpec.Secret.Logic.Oauth)
+            and (
+                isinstance(field.secret_logic, ParamSpec.Secret.Logic.Oauth1a)
+                or isinstance(field.secret_logic, ParamSpec.Secret.Logic.Oauth2)
+            )
         ):
             service_name = field.secret_logic.service
             service = oauth.OAuthService.lookup_or_none(service_name)

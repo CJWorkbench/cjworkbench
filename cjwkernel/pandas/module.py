@@ -308,6 +308,7 @@ def fetch_arrow(
         last_fetch_result=last_fetch_result,
         input_table_parquet_path=input_table_parquet_path,
     )
+    pandas_result.truncate_in_place_if_too_big()
     if len(pandas_result.dataframe.columns):
         fastparquet.write(
             str(output_path),

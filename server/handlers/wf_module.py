@@ -339,12 +339,15 @@ def _lookup_service(wf_module: WfModule, param: str) -> oauth.OAuthService:
     """
     module_version = wf_module.module_version
     if module_version is None:
-        raise HandlerError("BadRequest: module {wf_module.module_id_name} not found")
+        raise HandlerError(f"BadRequest: module {wf_module.module_id_name} not found")
     for field in module_version.param_fields:
         if (
             field.id_name == param
             and isinstance(field, ParamSpec.Secret)
-            and isinstance(field.secret_logic, ParamSpec.Secret.Logic.Oauth)
+            and (
+                isinstance(field.secret_logic, ParamSpec.Secret.Logic.Oauth1a)
+                or isinstance(field.secret_logic, ParamSpec.Secret.Logic.Oauth2)
+            )
         ):
             service_name = field.secret_logic.service
             service = oauth.OAuthService.lookup_or_none(service_name)

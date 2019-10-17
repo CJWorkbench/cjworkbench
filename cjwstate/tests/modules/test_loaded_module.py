@@ -13,6 +13,7 @@ from cjwkernel.tests.util import (
     assert_render_result_equals,
 )
 from cjwstate import minio
+from cjwstate.modules import init_module_system
 from cjwstate.modules.loaded_module import LoadedModule, load_external_module
 from cjwstate.tests.utils import clear_minio
 
@@ -24,6 +25,10 @@ MockModuleVersion = namedtuple(
 
 
 class LoadedModuleTest(unittest.TestCase):
+    @classmethod
+    def setUpClass(self):
+        init_module_system()
+
     def setUp(self):
         super().setUp()
 

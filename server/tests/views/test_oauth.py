@@ -15,14 +15,14 @@ class OauthTest(DbTestCase):
 
         ModuleVersion.create_or_replace_from_spec(
             {
-                "id_name": "ext",
+                "id_name": "twitter",
                 "name": "",
                 "category": "Clean",
                 "parameters": [
                     {
-                        "id_name": "auth",
+                        "id_name": "twitter_credentials",
                         "type": "secret",
-                        "secret_logic": {"provider": "oauth", "service": "twitter"},
+                        "secret_logic": {"provider": "oauth1a", "service": "twitter"},
                     }
                 ],
             }
@@ -32,11 +32,11 @@ class OauthTest(DbTestCase):
         self.client.force_login(user)
         workflow = Workflow.create_and_init(owner=user)
         wf_module = workflow.tabs.first().wf_modules.create(
-            module_id_name="ext", order=0, slug="step-1"
+            module_id_name="twitter", order=0, slug="step-1"
         )
 
         response = self.client.get(
-            f"/oauth/create-secret/{workflow.id}/{wf_module.id}/auth/"
+            f"/oauth/create-secret/{workflow.id}/{wf_module.id}/twitter_credentials/"
         )
         self.assertEqual(response.status_code, 403)
         self.assertRegex(

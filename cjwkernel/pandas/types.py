@@ -698,6 +698,7 @@ class ProcessResult:
                 self.error = f"{self.error}\n{warning}"
             else:
                 self.error = warning
+            self.dataframe.reset_index(inplace=True, drop=True)
             # Nix unused categories
             for column in self.dataframe:
                 series = self.dataframe[column]

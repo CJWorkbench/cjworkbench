@@ -1,42 +1,28 @@
-import os.path
+import logging
+from pathlib import Path
 import unittest
-from unittest.mock import patch, Mock
+from unittest.mock import patch
 from typing import Any, Dict, Optional
+import aiohttp
+from aiohttp import web
+from aiohttp.test_utils import AioHTTPTestCase, unittest_run_loop
 import pandas as pd
-from pandas.testing import assert_frame_equal
-import requests.exceptions
-from cjwstate import oauth
+from yarl import URL
 from staticmodules.googlesheets import fetch, render, migrate_params
 from .util import MockParams
-
-# example_csv, example_tsv, example_xls, example_xlsx: same spreadsheet, four
-# binary representations
-example_csv = b"foo,bar\n1,2\n2,3"
-example_tsv = b"foo\tbar\n1\t2\n2\t3"
-with open(
-    os.path.join(os.path.dirname(__file__), "test_data", "example.xls"), "rb"
-) as f:
-    example_xls = f.read()
-with open(
-    os.path.join(os.path.dirname(__file__), "test_data", "example.xlsx"), "rb"
-) as f:
-    example_xlsx = f.read()
+from cjwkernel.pandas.types import ProcessResult
+from cjwkernel.tests.pandas.util import assert_process_result_equal
 
 expected_table = pd.DataFrame({"foo": [1, 2], "bar": [2, 3]})
 
-
-class MockResponse:
-    def __init__(self, status_code, text):
-        self.status_code = status_code
-
-        if isinstance(text, str):
-            self.text = text
-            self.content = text.encode("utf-8")
-        else:
-            self.content = text
-
-
-default_secret = {"name": "x", "secret": {"refresh_token": "a-refresh-token"}}
+DEFAULT_SECRET = {
+    "name": "x",
+    "secret": {
+        # As returned by fetcher.secrets.process_secret_oauth2()
+        "token_type": "Bearer",
+        "access_token": "an-access-token",
+    },
+}
 default_file = {
     "id": "aushwyhtbndh7365YHALsdfsdf987IBHJB98uc9uisdj",
     "name": "Police Data",
@@ -55,114 +41,240 @@ def secrets(secret: Optional[Dict[str, Any]]) -> Dict[str, Any]:
         return {}
 
 
-class GoogleSheetsTests(unittest.TestCase):
+MOCK_ROUTES = {
+    "csv": (
+        "aushwyhtbndh7365YHALsdfsdf987IBHJB98uc9uisdj",
+        "/drive/v3/files/aushwyhtbndh7365YHALsdfsdf987IBHJB98uc9uisdj?alt=media",
+        web.Response(body=b"foocsv,bar\n1,2\n2,3"),
+        pd.DataFrame({"foocsv": [1, 2], "bar": [2, 3]}),
+    ),
+    "tsv": (),
+    "xls": (),
+    "xlsx": (),
+}
+
+
+class FetchTests(AioHTTPTestCase):
     def setUp(self):
         super().setUp()
+        self.export_path_responses = {}
+        self.file_path_responses = {}
 
-        # Set up auth
-        self.requests = Mock()
-        self.requests.get = Mock(return_value=MockResponse(404, "Test not written"))
-        self.oauth_service = Mock()
-        self.oauth_service.requests_or_str_error = Mock(return_value=self.requests)
-        self.oauth_service_lookup_patch = patch.object(
-            oauth.OAuthService, "lookup_or_none", return_value=self.oauth_service
+        self.logger = logging.getLogger("aiohttp.access")
+        self.old_log_level = self.logger.level
+        self.logger.setLevel(logging.WARN)
+
+        self.client_patcher = patch.object(
+            aiohttp, "ClientSession", lambda: self.client
         )
-        self.oauth_service_lookup_patch.start()
+        self.client_patcher.start()
+
+        self.last_request = None
+
+        # googlesheets constructs absolute URLs, not just paths. That isn't what
+        # AioHTTPTestCase normally expects.
+        self.server.make_url = lambda path: self.server._root.join(URL(path).relative())
 
     def tearDown(self):
-        self.oauth_service_lookup_patch.stop()
-
+        self.client_patcher.stop()
+        self.logger.setLevel(self.old_log_level)
         super().tearDown()
 
-    def test_render_no_file(self):
-        fetch_result = fetch(P(file=None), secrets=secrets(default_secret))
-        self.assertEqual(fetch_result.error, "")
-        self.assertTrue(fetch_result.dataframe.empty)
+    async def export_handler(self, request: web.Request) -> web.Response:
+        # raise KeyError (500 error)
+        self.last_request = request
+        self.assertEqual(
+            self.last_request.headers["Authorization"], "Bearer an-access-token"
+        )
+        return self.export_path_responses[request.match_info["sheet_id"]]
 
-    def _assert_happy_path(self, fetch_result):
-        self.requests.get.assert_called_with(
-            "https://www.googleapis.com/drive/v3/files/"
-            "aushwyhtbndh7365YHALsdfsdf987IBHJB98uc9uisdj?alt=media"
+    async def file_handler(self, request: web.Request) -> web.Response:
+        # raise KeyError (500 error)
+        self.last_request = request
+        return self.file_path_responses[request.match_info["sheet_id"]]
+
+    async def get_application(self):  # AioHTTPTestCase requirement
+        app = web.Application()
+        app.router.add_get("/drive/v3/files/{sheet_id}/export", self.export_handler)
+        app.router.add_get("/drive/v3/files/{sheet_id}", self.file_handler)
+        return app
+
+    @unittest_run_loop
+    async def test_fetch_native_sheet(self):
+        self.export_path_responses[
+            "aushwyhtbndh7365YHALsdfsdf987IBHJB98uc9uisdj"
+        ] = web.Response(body=b"A,B\nx,y\nz,a")
+        fetch_result = await fetch(P(), secrets=secrets(DEFAULT_SECRET))
+        assert_process_result_equal(
+            fetch_result,
+            pd.DataFrame({"A": ["x", "z"], "B": ["y", "a"]}, dtype="category"),
         )
 
-        self.assertEqual(fetch_result.error, "")
-        assert_frame_equal(fetch_result.dataframe, expected_table)
-
-    def test_fetch_csv(self):
-        self.requests.get.return_value = MockResponse(200, example_csv)
-        fetch_result = fetch(
+    @unittest_run_loop
+    async def test_fetch_csv_file(self):
+        self.file_path_responses[
+            "aushwyhtbndh7365YHALsdfsdf987IBHJB98uc9uisdj"
+        ] = web.Response(body=b"A,B\nx,y\nz,a")
+        fetch_result = await fetch(
             P(file={**default_file, "mimeType": "text/csv"}),
-            secrets=secrets(default_secret),
+            secrets=secrets(DEFAULT_SECRET),
         )
-        self._assert_happy_path(fetch_result)
+        assert_process_result_equal(
+            fetch_result,
+            pd.DataFrame({"A": ["x", "z"], "B": ["y", "a"]}, dtype="category"),
+        )
 
-    def test_fetch_tsv(self):
-        self.requests.get.return_value = MockResponse(200, example_tsv)
-        fetch_result = fetch(
+    @unittest_run_loop
+    async def test_fetch_tsv_file(self):
+        self.file_path_responses[
+            "aushwyhtbndh7365YHALsdfsdf987IBHJB98uc9uisdj"
+        ] = web.Response(body=b"A\tB\nx\ty\nz\tb")
+        fetch_result = await fetch(
             P(file={**default_file, "mimeType": "text/tab-separated-values"}),
-            secrets=secrets(default_secret),
+            secrets=secrets(DEFAULT_SECRET),
         )
-        self._assert_happy_path(fetch_result)
+        assert_process_result_equal(
+            fetch_result,
+            pd.DataFrame({"A": ["x", "z"], "B": ["y", "b"]}, dtype="category"),
+        )
 
-    def test_fetch_xls(self):
-        self.requests.get.return_value = MockResponse(200, example_xls)
-        fetch_result = fetch(
+    @unittest_run_loop
+    async def test_fetch_xls_file(self):
+        self.file_path_responses[
+            "aushwyhtbndh7365YHALsdfsdf987IBHJB98uc9uisdj"
+        ] = web.FileResponse(Path(__file__).parent / "test_data" / "example.xls")
+        fetch_result = await fetch(
             P(file={**default_file, "mimeType": "application/vnd.ms-excel"}),
-            secrets=secrets(default_secret),
+            secrets=secrets(DEFAULT_SECRET),
         )
-        self._assert_happy_path(fetch_result)
+        assert_process_result_equal(
+            fetch_result, pd.DataFrame({"foo": [1, 2], "bar": [2, 3]})
+        )
 
-    def test_fetch_xlsx(self):
-        self.requests.get.return_value = MockResponse(200, example_xlsx)
-        fetch_result = fetch(
+    @unittest_run_loop
+    async def test_fetch_xlsx_file(self):
+        self.file_path_responses[
+            "aushwyhtbndh7365YHALsdfsdf987IBHJB98uc9uisdj"
+        ] = web.FileResponse(Path(__file__).parent / "test_data" / "example.xls")
+        fetch_result = await fetch(
             P(
                 file={
                     **default_file,
                     "mimeType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 }
             ),
-            secrets=secrets(default_secret),
+            secrets=secrets(DEFAULT_SECRET),
         )
-        self._assert_happy_path(fetch_result)
-
-    def test_no_first_row_header(self):
-        self.requests.get.return_value = MockResponse(200, example_csv)
-        kwargs = {"file": {**default_file, "mimeType": "text/csv"}, "has_header": False}
-        fetch_result = fetch(P(**kwargs), secrets=secrets(default_secret))
-        result = render(pd.DataFrame(), P(**kwargs), fetch_result=fetch_result)
-        assert_frame_equal(
-            result, pd.DataFrame({"0": ["foo", "1", "2"], "1": ["bar", "2", "3"]})
+        assert_process_result_equal(
+            fetch_result, pd.DataFrame({"foo": [1, 2], "bar": [2, 3]})
         )
 
-    def test_no_table_on_missing_auth(self):
-        fetch_result = fetch(P(), secrets={})
-        self.assertTrue(fetch_result.dataframe.empty)
-        self.assertEqual(
-            fetch_result.error, "Not authorized. Please connect to Google Drive."
+    @unittest_run_loop
+    async def test_missing_secret_error(self):
+        fetch_result = await fetch(P(), secrets=secrets(None))
+        # Should not make any request
+        self.assertIsNone(self.last_request)
+        assert_process_result_equal(fetch_result, "Please connect to Google Drive.")
+
+    @unittest_run_loop
+    async def test_invalid_auth_error(self):
+        self.export_path_responses[
+            "aushwyhtbndh7365YHALsdfsdf987IBHJB98uc9uisdj"
+        ] = web.Response(status=401)
+        fetch_result = await fetch(P(), secrets=secrets(DEFAULT_SECRET))
+        assert_process_result_equal(
+            fetch_result, "Invalid credentials. Please reconnect to Google Drive."
         )
 
-    def test_no_table_on_http_error(self):
-        self.requests.get.side_effect = requests.exceptions.ReadTimeout("read timeout")
-        fetch_result = fetch(P(), secrets=secrets(default_secret))
-        self.assertTrue(fetch_result.dataframe.empty)
-        self.assertEqual(fetch_result.error, "read timeout")
+    @unittest_run_loop
+    async def test_not_found(self):
+        self.export_path_responses[
+            "aushwyhtbndh7365YHALsdfsdf987IBHJB98uc9uisdj"
+        ] = web.Response(status=404)
+        fetch_result = await fetch(P(), secrets=secrets(DEFAULT_SECRET))
+        assert_process_result_equal(
+            fetch_result, "File not found. Please choose a different file."
+        )
 
-    def test_no_table_on_missing_table(self):
-        self.requests.get.return_value = MockResponse(404, "not found")
-        fetch_result = fetch(P(), secrets=secrets(default_secret))
-        self.assertTrue(fetch_result.dataframe.empty)
-        self.assertEqual(fetch_result.error, "HTTP 404 from Google: not found")
+    @unittest_run_loop
+    async def test_no_access_error(self):
+        self.export_path_responses[
+            "aushwyhtbndh7365YHALsdfsdf987IBHJB98uc9uisdj"
+        ] = web.Response(status=403)
+        fetch_result = await fetch(P(), secrets=secrets(DEFAULT_SECRET))
+        assert_process_result_equal(
+            fetch_result,
+            "You chose a file your logged-in user cannot access. Please reconnect to Google Drive or choose a different file.",
+        )
 
-    def test_render(self):
-        self.requests.get.return_value = MockResponse(200, example_csv)
-        kwargs = {"file": {**default_file, "mimeType": "text/csv"}}
-        fetch_result = fetch(P(**kwargs), secrets=secrets(default_secret))
-        result = render(pd.DataFrame(), P(**kwargs), fetch_result=fetch_result)
-        assert_frame_equal(result, expected_table)
+    @unittest_run_loop
+    async def test_unhandled_http_error(self):
+        self.export_path_responses[
+            "aushwyhtbndh7365YHALsdfsdf987IBHJB98uc9uisdj"
+        ] = web.Response(body=b"hi", headers={"Content-Encoding": "gzip"})
+        fetch_result = await fetch(P(), secrets=secrets(DEFAULT_SECRET))
+        assert_process_result_equal(
+            fetch_result,
+            # googlesheet should pass through aiohttp's message
+            "Error during GDrive request: 400, message='Can not decode content-encoding: gzip'",
+        )
+
+    @unittest_run_loop
+    async def test_ignore_first_row_header(self):
+        # Currently, we parse the table during fetch. For legacy reasons, we
+        # parse with has_header_row=True, _and_ we auto-convert numbers. That
+        # means during fetch, we may lose information -- e.g., we may convert
+        # "3.5000" to 3.5 (losing the "000"); or we may convert "" to `null`
+        # (indistinguishable from _actual_ null).
+        #
+        # For now, unit-test that this is indeed our behavior. render() relies
+        # on it.
+        #
+        # TODO store _raw_ fetched data; make "first row is header" a parse
+        # option used during render.
+        self.export_path_responses[
+            "aushwyhtbndh7365YHALsdfsdf987IBHJB98uc9uisdj"
+        ] = web.Response(body=b"A,B\n1,2")
+        fetch_result = await fetch(P(has_header=False), secrets=secrets(DEFAULT_SECRET))
+        assert_process_result_equal(fetch_result, pd.DataFrame({"A": [1], "B": [2]}))
+
+
+class RenderTests(unittest.TestCase):
+    def test_render_no_file(self):
+        result = render(pd.DataFrame(), P(), fetch_result=ProcessResult())
+        assert_process_result_equal(result, None)
+
+    def test_render_fetch_error(self):
+        result = render(
+            pd.DataFrame(), P(), fetch_result=ProcessResult(error="please log in")
+        )
+        assert_process_result_equal(result, "please log in")
+
+    def test_render_fetch_warning(self):
+        result = render(
+            pd.DataFrame(), P(), fetch_result=ProcessResult(expected_table, "truncated")
+        )
+        assert_process_result_equal(result, (expected_table, "truncated"))
+
+    def test_render_ok(self):
+        result = render(pd.DataFrame(), P(), fetch_result=ProcessResult(expected_table))
+        assert_process_result_equal(result, expected_table)
 
     def test_render_missing_fetch_result_returns_empty(self):
         result = render(pd.DataFrame(), P(), fetch_result=None)
-        assert_frame_equal(result, pd.DataFrame())
+        assert_process_result_equal(result, pd.DataFrame())
+
+    def test_render_has_header_false(self):
+        # TODO "no first row" should be a parse option. Fetch should store
+        # raw data, and render should parse.
+        result = render(
+            pd.DataFrame(),
+            P(has_header=False),
+            fetch_result=ProcessResult(pd.DataFrame({"A": [1], "B": [2]})),
+        )
+        assert_process_result_equal(
+            result, pd.DataFrame({"0": ["A", "1"], "1": ["B", "2"]})
+        )
 
 
 class MigrateParamsTest(unittest.TestCase):
