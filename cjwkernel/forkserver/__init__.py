@@ -1,4 +1,3 @@
-import ctypes
 from dataclasses import dataclass
 import logging
 import os
@@ -6,15 +5,10 @@ import socket
 import subprocess
 import sys
 import threading
-from typing import Any, BinaryIO, List, Tuple
+from typing import Any, BinaryIO, FrozenSet, List, Tuple
 from . import protocol
 from cjwkernel.types import CompiledModule
 from cjwkernel.pandas import main as module_main
-
-libc = ctypes.CDLL("libc.so.6")
-PR_SET_NAME = 15
-PR_SET_CHILD_SUBREAPER = 36
-PR_GET_CHILD_SUBREAPER = 37
 
 
 logger = logging.getLogger(__name__)
@@ -101,13 +95,28 @@ class Forkserver:
             message = protocol.ImportModules(forkserver_preload)
             message.send_on_socket(self._socket)
 
-    def spawn_module(self, process_name: str, args: List[Any]) -> ModuleProcess:
+    def spawn_module(
+        self,
+        process_name: str,
+        args: List[Any],
+        *,
+        skip_sandbox_except: FrozenSet[str] = frozenset(),
+    ) -> ModuleProcess:
         """
         Make our server spawn a process, and return it.
 
+        `process_name` is the name to display in `ps` output and server logs.
+
         `args` are the arguments to pass to `cjwkernel.pandas.module.main()`.
+
+        `skip_sandbox_except` MUST BE EXACTLY `frozenset()`. Other values are
+        only for unit tests. See `protocol.SpawnPandasModule` for details.
         """
-        message = protocol.SpawnPandasModule(process_name=process_name, args=args)
+        message = protocol.SpawnPandasModule(
+            process_name=process_name,
+            args=args,
+            skip_sandbox_except=skip_sandbox_except,
+        )
         with self._lock:
             message.send_on_socket(self._socket)
             response = protocol.SpawnedPandasModule.recv_on_socket(self._socket)

@@ -2,6 +2,7 @@ import array
 import ctypes
 import importlib
 import os
+from pathlib import Path
 import signal
 import sys
 import socket
@@ -12,13 +13,23 @@ from . import protocol
 
 
 libc = ctypes.CDLL("libc.so.6", use_errno=True)
+libcapng = ctypes.CDLL("libcap-ng.so.0", use_errno=True)
+# Yes, there's a Python version of capng ... but it's not on PyPi and
+# [2019-10-11] pipenv is a crazy pain in the neck so we basically can't
+# install it.
+# <capng.h>
+CAPNG_SELECT_BOTH = 48
+# <linux/prctl.h>
 PR_SET_NAME = 15
-NR_clone = 56
-NR_getpid = 39
+PR_CAPBSET_DROP = 24
+PR_SET_NO_NEW_PRIVS = 38
+# <linux/capability.h>
+CAP_LAST_CAP = 37
 # BEWARE: Docker, by default, disallows user-namespace cloning. We use Docker
 # in development. Therefore we override Docker's seccomp profile to allow our
 # clone() syscall to succeed. If you're adding to this list, also modify the
 # seccomp profile we use in dev, unittest and integrationtest.
+# <linux/sched.h>
 CLONE_PARENT = 0x00008000
 CLONE_NEWUSER = 0x10000000
 CLONE_NEWCGROUP = 0x02000000
@@ -27,13 +38,13 @@ CLONE_NEWPID = 0x20000000
 CLONE_NEWNS = 0x00020000  # new mount namespace
 
 
-def _call_libc(fn, *args):
+def _call_c(lib, fn, *args):
     """
     Call a libc function; raise OSError if it returns a negative number.
 
     Raise AttributeError if libc does not have an `fn` function.
     """
-    func = getattr(libc, fn)  # raise AttributeError
+    func = getattr(lib, fn)  # raise AttributeError
 
     retval = func(*args)
     if retval < 0:
@@ -71,6 +82,23 @@ stdout_read_fd: int = None
 stdout_write_fd: int = None
 stderr_read_fd: int = None
 stderr_write_fd: int = None
+is_uidmap_written_read_fd: int = None
+is_uidmap_written_write_fd: int = None
+
+
+def _should_sandbox(feature: str) -> bool:
+    """
+    Return `True` if we should call a particular sandbox function.
+
+    This should _always_ return `True` on production code. The function only
+    exists to help with unit testing.
+    """
+    if message.skip_sandbox_except:
+        # test code only
+        return feature in message.skip_sandbox_except
+    else:
+        # production code
+        return True
 
 
 def _sandbox_module():
@@ -79,10 +107,13 @@ def _sandbox_module():
 
     Tasks with rationale ('[x]' means, "unit-tested"):
 
-    [ ] Close `sock` (so "forkserver" does not misbehave)
-    [ ] Close stdout/stderr (so modules do not flood logs; point
+    [ ] Wait for forkserver to write uid_map
+    [x] Close `sock` (so "forkserver" does not misbehave)
+    [x] Close stdout/stderr (so modules do not flood logs; point
         stdout/stderr to `message.log_fd` instead)
-    [ ] Remount /proc (so modules can't see other processes)
+    [x] Drop capabilities (like CAP_SYS_ADMIN)
+    [x] Setuid to 1000
+    [ ] Use chroot (so modules can't see other processes)
     """
     os.close(sock.fileno())  # Close `sock`
     global stdout_read_fd, stderr_read_fd
@@ -90,35 +121,100 @@ def _sandbox_module():
     os.close(stderr_read_fd)
     stdout_read_fd = None
     stderr_read_fd = None
-    _sandbox_stdout_stderr()  # Close stdout/stderr
-    # _sandbox_remount_proc()  # Remount /proc
+
+    # Wait for parent to close the is_uidmap_written pipe
+    os.close(is_uidmap_written_write_fd)
+    os.read(is_uidmap_written_read_fd, 1)
+    os.close(is_uidmap_written_read_fd)
+
+    _sandbox_stdout_stderr()
+    if _should_sandbox("no_new_privs"):
+        _sandbox_no_new_privs()
+    # if _should_sandbox("setuid"):
+    #     _sandbox_setuid()
+    if _should_sandbox("drop_capabilities"):
+        _sandbox_drop_capabilities()
 
 
 def _sandbox_stdout_stderr():
+    """
+    Rewrite the fds 1 and 2 to become stdout_write_fd and stderr_write_fd.
+
+    Close stdout_write_fd and stderr_write_fd and set them to `None`.
+
+    After this, `sys.stdout` and `sys.stderr` will point to `stdout_write_fd`
+    and `stderr_write_fd`. There will be no way to write to the _original_
+    stdout and stderr (file descriptors 1 and 2) -- they will be closed.
+
+    Why call this? Because by default, stdout and stderr are inherited from the
+    parent process. In the parent, they are used for logging. User code must
+    not be allowed to write to our server logs; therefore, user code must not
+    be able to access the original stdout and stderr.
+    """
     global stdout_write_fd, stderr_write_fd
     os.dup2(stdout_write_fd, 1)
     os.dup2(stderr_write_fd, 2)
+    # Now close the originals (since we just duplicated them)
     os.close(stdout_write_fd)
     os.close(stderr_write_fd)
     stdout_write_fd = None
     stderr_write_fd = None
 
 
-def _sandbox_remount_proc():
-    _call_libc(
-        "mount",
-        ctypes.c_char_p(b"proc"),
-        ctypes.c_char_p(b"/proc"),
-        ctypes.c_char_p(b"proc"),
-        0,
-        0,
-    )
+def _write_namespace_uidgid(pid: int) -> None:
+    """
+    Write /proc/self/uid_map and /proc/self/gid_map.
+
+    Why call this? Because otherwise, the called code can do it for us. That
+    would mean root in the child would be equal to root in the parent -- so the
+    child could, for instance, modify files owned outside of it.
+
+    ref: man user_namespaces(7).
+    """
+    Path(f"/proc/{pid}/uid_map").write_text("0 100000 65536")
+    Path(f"/proc/{pid}/setgroups").write_text("deny")
+    Path(f"/proc/{pid}/gid_map").write_text("0 100000 65536")
+
+
+def _sandbox_drop_capabilities():
+    """
+    Drop all capabilities in the caller.
+
+    Why call this? So if user code manages to setuid to root (which should be
+    impossible), it still won't have permission to call dangerous kernel code.
+    (For example: after dropping privileges, "pivot_root" will fail with
+    EPERM, even for root.)
+
+    ref: http://people.redhat.com/sgrubb/libcap-ng/
+    """
+    libcapng.capng_clear(CAPNG_SELECT_BOTH)  # cannot error
+    _call_c(libcapng, "capng_apply", CAPNG_SELECT_BOTH)
+
+
+def _sandbox_no_new_privs():
+    """
+    Prevent a setuid bit on a file from restoring capabilities.
+    """
+    _call_c(libc, "prctl", PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0)
+
+
+def _sandbox_setuid():
+    """
+    Drop root: switch to UID 1000.
+
+    Why call this? Because Linux gives special capabilities to root (even after
+    we drop privileges).
+
+    ref: man setresuid(2)
+    """
+    os.setresuid(1000, 1000, 1000)
+    os.setresgid(1000, 1000, 1000)
 
 
 def cloned_module_main() -> int:
     # Aid in debugging a bit
     name = "cjwkernel-module:%s" % message.process_name
-    libc.prctl(PR_SET_NAME, name.encode("utf-8"), 0, 0, 0)
+    _call_c(libc, "prctl", PR_SET_NAME, name.encode("utf-8"), 0, 0, 0)
 
     _sandbox_module()
 
@@ -165,17 +261,21 @@ def spawn_module(sock: socket.socket, message: protocol.SpawnPandasModule) -> No
     * "module": invokes `cjwkernel.pandas.main.main()`, using the file
                 descriptors passed in `SpawnPandasModule`.
     """
-    global stdout_read_fd, stdout_write_fd, stderr_read_fd, stderr_write_fd
+    global stdout_read_fd, stdout_write_fd, stderr_read_fd, stderr_write_fd, is_uidmap_written_read_fd, is_uidmap_written_write_fd
 
     assert stdout_read_fd is None
     assert stdout_write_fd is None
     assert stderr_read_fd is None
     assert stderr_write_fd is None
+    assert is_uidmap_written_read_fd is None
+    assert is_uidmap_written_write_fd is None
 
     stdout_read_fd, stdout_write_fd = os.pipe()
     stderr_read_fd, stderr_write_fd = os.pipe()
+    is_uidmap_written_read_fd, is_uidmap_written_write_fd = os.pipe()
 
-    module_pid = _call_libc(
+    module_pid = _call_c(
+        libc,
         "clone",
         _MODULE_MAIN_FUNC,
         _MODULE_STACK_POINTER,
@@ -190,6 +290,12 @@ def spawn_module(sock: socket.socket, message: protocol.SpawnPandasModule) -> No
     os.close(stderr_write_fd)
     stdout_write_fd = None
     stderr_write_fd = None
+
+    os.close(is_uidmap_written_read_fd)
+    is_uidmap_written_read_fd = None
+    _write_namespace_uidgid(module_pid)
+    os.close(is_uidmap_written_write_fd)
+    is_uidmap_written_write_fd = None
 
     spawned_module = protocol.SpawnedPandasModule(
         module_pid, stdout_read_fd, stderr_read_fd

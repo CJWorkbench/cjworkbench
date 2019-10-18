@@ -1,8 +1,8 @@
 from __future__ import annotations
 import array
-from dataclasses import dataclass, replace
+from dataclasses import dataclass, field, replace
 import pickle
-from typing import Any, List, Type, TypeVar
+from typing import Any, FrozenSet, List, Type, TypeVar
 from cjwkernel.types import CompiledModule
 from multiprocessing.reduction import sendfds, recvfds
 import socket
@@ -87,7 +87,32 @@ class SpawnPandasModule(MessageToChild):
     """
 
     process_name: str
+    """Process name to display in 'ps' and server logs."""
+
     args: List[Any]
+    """Arguments to pass to `module_main(*args)`."""
+
+    skip_sandbox_except: FrozenSet[str] = field(default_factory=frozenset)
+    """
+    Security layers to enable in child processes. (DO NOT USE IN PRODUCTION.)
+
+    By default, child processes are sandboxed: user code should not be able to
+    access the rest of the system. (In particular, it should not be able to
+    access parent-process state; influence parent-process behavior in any way
+    but its stdout, stderr and exit code; or communicate with any internal
+    services.)
+    
+    Our layers of sandbox security overlap: for instance: we (a) restrict the
+    user code to run as non-root _and_ (b) disallow root from escaping its
+    chroot. We can't test layer (b) unless we disable layer (a); and that's
+    what this feature is for.
+
+    By default, all sandbox features are enabled. To enable only a subset, set
+    `skip_sandbox_except` to a `frozenset()` with one or more of the following
+    strings:
+
+    * "drop_capabilities": limit root's capabilities
+    """
 
 
 @dataclass(frozen=True)
