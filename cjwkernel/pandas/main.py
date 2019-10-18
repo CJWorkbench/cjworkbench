@@ -8,9 +8,7 @@ from cjwkernel.types import CompiledModule
 import cjwkernel.pandas.module
 
 
-def main(
-    compiled_module: CompiledModule, output_fileno: int, function: str, *args
-) -> None:
+def main(compiled_module: CompiledModule, function: str, args: List[Any]) -> None:
     """
     Run `function` with `args`, and write the (Thrift) result to `output_fileno`.
     """
@@ -22,14 +20,18 @@ def main(
         "validate_thrift",
     )
 
-    run_in_sandbox(output_fileno, compiled_module, function, args)
+    # Point sys.stdout towards sys.stderr. We're printing Thrift messages to
+    # stdout; we can't have text interwoven.
+    sys.stdout = sys.stderr
+
+    run_in_sandbox(compiled_module, function, args)
 
 
 def run_in_sandbox(
-    output_fileno: int, compiled_module: CompiledModule, function: str, args: List[Any]
+    compiled_module: CompiledModule, function: str, args: List[Any]
 ) -> None:
     """
-    Run `function` with `args`, and write the (Thrift) result to `output_fileno`.
+    Run `function` with `args`, and write the (Thrift) result to `sys.stdout`.
     """
     # TODO sandbox -- will need an OS `clone()` with namespace, cgroups, ....
 
@@ -76,8 +78,7 @@ def run_in_sandbox(
     else:
         raise NotImplementedError
 
-    with os.fdopen(output_fileno, "wb") as f:
-        transport = thrift.transport.TTransport.TFileObjectTransport(f)
-        protocol = thrift.protocol.TBinaryProtocol.TBinaryProtocol(transport)
-        if result is not None:
-            result.write(protocol)
+    transport = thrift.transport.TTransport.TFileObjectTransport(sys.__stdout__.buffer)
+    protocol = thrift.protocol.TBinaryProtocol.TBinaryProtocol(transport)
+    if result is not None:
+        result.write(protocol)

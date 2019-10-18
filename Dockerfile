@@ -13,12 +13,16 @@ FROM python:3.7.4-slim-buster AS pybase
 # curl: handy for testing, NLTK download, Watchman download; not worth uninstalling each time
 # unzip: to build Watchman ... and [adamhooper, 2019-02-21] I'm afraid
 #        to uninstall it after build, in case one of our Python deps shells to it
+#
+# We do want:
+# libcap-ng0: used by forkserver (via ctypes) to drop capabilities
 RUN mkdir -p /usr/share/man/man1 /usr/share/man/man7 \
     && apt-get update \
     && apt-get install --no-install-recommends -y \
         git \
         nano \
         postgresql-client \
+        libcap-ng0 \
         unzip \
         curl \
     && rm -rf /var/lib/apt/lists/*
