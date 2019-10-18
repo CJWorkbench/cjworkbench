@@ -77,6 +77,13 @@ class Forkserver:
         self._process = subprocess.Popen(
             [
                 sys.executable,
+                # PYTHONUNBUFFERED: parents read children's data sooner
+                "-u",
+                # Force UTF8 mode. We already set UTF8 at the OS level; but
+                # let's be redundant because module authors would really
+                # dislike it if our encoding changed.
+                "-X",
+                "utf8",
                 "-c",
                 'import cjwkernel.forkserver.main; cjwkernel.forkserver.main.forkserver_main("%s", %d)'
                 % (module_main, child_socket.fileno()),
