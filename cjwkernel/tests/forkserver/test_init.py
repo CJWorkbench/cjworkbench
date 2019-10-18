@@ -12,7 +12,9 @@ from cjwkernel.tests.util import tempfile_context
 
 def module_main(indented_code: str) -> None:
     code = dedent(indented_code)
-    exec(code)
+    code_obj = compile(code, "<module string>", "exec", dont_inherit=True, optimize=0)
+    # Exec in global scope, so imports go to globals, not locals
+    exec(code_obj, globals(), globals())
 
 
 @contextlib.contextmanager
@@ -153,6 +155,29 @@ class ForkserverTest(unittest.TestCase):
             assert ctypes.get_errno() == EPERM
             """,
             skip_sandbox_except=frozenset(["drop_capabilities"]),
+        )
+
+    def test_SECURITY_prevent_writing_uid_map(self):
+        self._spawn_and_communicate_or_raise(
+            r"""
+            from pathlib import Path
+
+            def assert_write_fails(path: str, text: str):
+                try:
+                    Path(path).write_text(text)
+                except PermissionError:
+                    pass
+                else:
+                    assert False, "Write to %s should have failed" % path
+
+            assert_write_fails("/proc/self/uid_map", "0 0 65536")
+            assert_write_fails("/proc/self/setgroups", "allow")
+            assert_write_fails("/proc/self/gid_map", "0 0 65536")
+            """,
+            # There's no way to disable this security feature. But for testing
+            # we must _disable_ setuid, drop_capabilities and chroot; so write
+            # a dummy skip_sandbox_except to accomplish that.
+            skip_sandbox_except=frozenset(["skip_all_optional_sandboxing"]),
         )
 
     # def test_SECURITY_setuid(self):
