@@ -36,7 +36,7 @@ from cjwstate.models import (
 import cjwstate.modules
 from cjwstate.modules.loaded_module import LoadedModule
 from cjwstate.tests.utils import DbTestCase
-from fetcher import fetch, fetchprep
+from fetcher import fetch, fetchprep, save
 from server import websockets
 
 
@@ -526,3 +526,28 @@ class FetchIntegrationTests(DbTestCase):
         workflow.refresh_from_db()
         queue_render.assert_called_with(workflow.id, workflow.last_delta_id)
         send_delta.assert_called()
+
+    @patch.object(save, "save_result_if_changed")
+    def test_fetch_tempfiles_are_on_disk(self, save_result):
+        # /tmp is RAM; /var/tmp is disk. Assert big files go on disk.
+        workflow = Workflow.create_and_init()
+        ModuleVersion.create_or_replace_from_spec(
+            {"id_name": "mod", "name": "Mod", "category": "Clean", "parameters": []},
+            source_version_hash="abc123",
+        )
+        wf_module = workflow.tabs.first().wf_modules.create(
+            order=0, slug="step-1", module_id_name="mod"
+        )
+        minio.put_bytes(
+            minio.ExternalModulesBucket,
+            "mod/abc123/code.py",
+            b"import pandas as pd\ndef fetch(params): return pd.DataFrame({'A': [1]})\ndef render(table, params): return table",
+        )
+        with self.assertLogs(level=logging.INFO):
+            cjwstate.modules.init_module_system()
+            self.run_with_async_db(
+                fetch.fetch(workflow_id=workflow.id, wf_module_id=wf_module.id)
+            )
+        save_result.assert_called()
+        saved_result: FetchResult = save_result.call_args[0][2]
+        self.assertRegex(str(saved_result.path), r"^/var/tmp/")

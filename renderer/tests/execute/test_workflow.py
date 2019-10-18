@@ -78,6 +78,34 @@ class WorkflowTests(DbTestCase):
             assert_render_result_equals(result, result2)
 
     @patch.object(LoadedModule, "for_module_version")
+    @patch("server.websockets.ws_client_send_delta_async", fake_send)
+    def test_execute_tempdir_not_in_tmpfs(self, fake_load_module):
+        # /tmp is RAM; /var/tmp is disk. Assert big files go on disk.
+        workflow = Workflow.create_and_init()
+        tab = workflow.tabs.first()
+        delta1 = workflow.last_delta
+        ModuleVersion.create_or_replace_from_spec(
+            {"id_name": "mod", "name": "Mod", "category": "Clean", "parameters": []}
+        )
+        wf_module = tab.wf_modules.create(
+            order=0,
+            slug="step-1",
+            last_relevant_delta_id=delta1.id - 1,
+            module_id_name="mod",
+        )
+
+        result2 = RenderResult(arrow_table({"B": [2]}))
+        fake_load_module.return_value.migrate_params.return_value = {}
+        fake_load_module.return_value.render.return_value = result2
+
+        self._execute(workflow)
+
+        self.assertRegex(
+            str(fake_load_module.return_value.render.call_args[1]["basedir"]),
+            r"^/var/tmp/",
+        )
+
+    @patch.object(LoadedModule, "for_module_version")
     def test_execute_race_delete_workflow(self, fake_load_module):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()

@@ -1,23 +1,21 @@
 from datetime import datetime
 from pathlib import Path
 import math
-import tempfile
 import unittest
 import numpy as np
 import pyarrow
 from cjwkernel.tests.util import arrow_table, assert_arrow_table_equals, parquet_file
-from cjwkernel.util import tempfile_context
+from cjwkernel.util import create_tempfile, tempfile_context
 from cjwstate import parquet
 
 
 class ParquetTest(unittest.TestCase):
     def setUp(self):
         super().setUp()
-        self.temp_file = tempfile.NamedTemporaryFile()
-        self.temp_path = Path(self.temp_file.name)
+        self.temp_path = create_tempfile(prefix="parquet-text")
 
     def tearDown(self):
-        self.temp_file.close()
+        self.temp_path.unlink()
         super().tearDown()
 
     def _testPath(self, relpath):

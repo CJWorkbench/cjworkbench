@@ -1,7 +1,7 @@
 from pathlib import Path
-import tempfile
 import uuid as uuidgen
 from django.utils import timezone
+from cjwkernel.util import tempfile_context
 from cjwstate import minio
 from cjwstate.storedobjects import create_stored_object
 from cjwstate.models import ModuleVersion, Workflow
@@ -25,12 +25,10 @@ class WfModuleTests(DbTestCase):
         wfm1 = workflow.tabs.first().wf_modules.create(order=0, slug="step-1")
 
         # store data to test that it is duplicated
-        with tempfile.NamedTemporaryFile() as tf1:
-            path1 = Path(tf1.name)
+        with tempfile_context() as path1:
             path1.write_bytes(b"12345")
             create_stored_object(workflow.id, wfm1.id, path1, "hash1")
-        with tempfile.NamedTemporaryFile() as tf2:
-            path2 = Path(tf2.name)
+        with tempfile_context() as path2:
             path1.write_bytes(b"23456")
             so2 = create_stored_object(workflow.id, wfm1.id, path2, "hash2")
         wfm1.secrets = {"do not copy": {"name": "evil", "secret": "evil"}}
