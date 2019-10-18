@@ -14,6 +14,10 @@ import { Trans,t } from '@lingui/macro'
 
 export default class Workflows extends React.Component {
   static propTypes = {
+     i18n: PropTypes.shape({
+      // i18n object injected by LinguiJS withI18n()
+      _: PropTypes.func.isRequired
+    }),
     api: PropTypes.shape({
       deleteWorkflow: PropTypes.func.isRequired, // func(id) => Promise[null]
       duplicateWorkflow: PropTypes.func.isRequired // func(id) => Promise[{ id, name }]

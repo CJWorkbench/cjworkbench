@@ -7,7 +7,7 @@ import { timeDifference } from '../utils'
 import { withI18n,I18n } from '@lingui/react'
 import { Trans,t } from '@lingui/macro'
 
-export default withI18n()(class WorkflowMetadata extends React.Component {
+export default class WorkflowMetadata extends React.Component {  
   static propTypes = {
     i18n: PropTypes.shape({
       // i18n object injected by LinguiJS withI18n()
@@ -54,10 +54,11 @@ export default withI18n()(class WorkflowMetadata extends React.Component {
       <ul className='metadata-container'>
         {attribution}
         <li>
-          <Trans id="workflow.updated">Updated</Trans> {timeDifference(this.props.workflow.last_update, now, this.props.i18n)}
+          {this.props.i18n._(t('workflow.updated')`Updated`)} {timeDifference(this.props.workflow.last_update, now, this.props.i18n)}
         </li>
         {modalLink}
       </ul>
     )
   }
-})
+}
+withI18n()(WorkflowMetadata);
