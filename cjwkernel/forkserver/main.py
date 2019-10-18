@@ -2,12 +2,12 @@ import ctypes
 import importlib
 import os
 from pathlib import Path
+import shutil
 import signal
 import sys
 import socket
 import traceback
-from typing import Callable
-import cjwkernel.pandas.main
+from typing import Callable, List, Tuple
 from . import protocol
 
 
@@ -106,7 +106,7 @@ def _sandbox_module():
 
     Tasks with rationale ('[x]' means, "unit-tested"):
 
-    [ ] Wait for forkserver to write uid_map
+    [x] Wait for forkserver to write uid_map
     [x] Close `sock` (so "forkserver" does not misbehave)
     [x] Close stdout/stderr (so modules do not flood logs; point
         stdout/stderr to `message.log_fd` instead)
@@ -129,8 +129,10 @@ def _sandbox_module():
     _sandbox_stdout_stderr()
     if _should_sandbox("no_new_privs"):
         _sandbox_no_new_privs()
-    # if _should_sandbox("setuid"):
-    #     _sandbox_setuid()
+    if _should_sandbox("chroot") and message.chroot_dir is not None:
+        _sandbox_chroot(message.chroot_dir, message.chroot_provide_paths)
+    if _should_sandbox("setuid"):
+        _sandbox_setuid()
     if _should_sandbox("drop_capabilities"):
         _sandbox_drop_capabilities()
 
@@ -173,6 +175,41 @@ def _write_namespace_uidgid(pid: int) -> None:
     Path(f"/proc/{pid}/uid_map").write_text("0 100000 65536")
     Path(f"/proc/{pid}/setgroups").write_text("deny")
     Path(f"/proc/{pid}/gid_map").write_text("0 100000 65536")
+
+
+def _sandbox_chroot(root: Path, provide_paths: List[Tuple[Path, Path]]):
+    """
+    Enter a restricted filesystem, so absolute paths are relative to `dir`.
+
+    Why call this? So the user can't read files from our filesystem (which
+    include our secrets and our users' secrets); and the user can't *write*
+    files to our filesystem (which might inject code into a parent process).
+
+    SECURITY: entering a chroot is not enough. To prevent this process from
+    accessing files outside the chroot, this process must drop its ability to
+    chroot back _out_ of the chroot. Use _sandbox_drop_capabilities().
+
+    SECURITY: TODO: switch from chroot to pivot_root. pivot_root makes it far
+    harder for root to break out of the jail. It needs a process-specific mount
+    namespace. But on Kubernetes (and Docker), bind-mount isn't allowed in
+    unprivileged processes.
+
+    For now, since we don't use a separate mount namespace, chroot doesn't
+    add much "security" in the case of privilege escalation: root will be able
+    to see our secrets. But chroot helps us, as developers, prepare for
+    pivot_root by coding to the contract it will provide.
+    """
+    for dest, src in provide_paths:
+        # "dest" is after chroot. Before chroot, we need "absolute_dest"
+        absolute_dest = root / str(dest)[1:]
+        absolute_dest.parent.mkdir(0o755, parents=True, exist_ok=True)
+        if src.is_dir():
+            shutil.copytree(src, absolute_dest, copy_function=os.link)
+        else:
+            os.link(src, absolute_dest)
+
+    os.chroot(str(root))
+    os.chdir("/")
 
 
 def _sandbox_drop_capabilities():

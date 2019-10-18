@@ -7,8 +7,8 @@ from pathlib import Path
 import selectors
 import time
 from typing import Any, Dict, Optional
-import thrift.protocol
-import thrift.transport
+import thrift.protocol.TBinaryProtocol
+import thrift.transport.TTransport
 from cjwkernel.forkserver import Forkserver
 from cjwkernel.errors import ModuleCompileError, ModuleTimeoutError, ModuleExitedError
 from cjwkernel.thrift import ttypes
@@ -149,6 +149,8 @@ class Kernel:
                 "pyarrow.parquet",
                 "re2",
                 "requests",
+                "thrift.protocol.TBinaryProtocol",
+                "thrift.transport.TTransport",
                 "xlrd",
                 "yajl",
                 "cjwkernel.pandas.main",
