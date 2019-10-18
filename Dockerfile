@@ -5,7 +5,6 @@ FROM workbenchdata/parquet-to-arrow:v0.1.3 AS parquet-to-arrow
 FROM python:3.7.4-slim-buster AS pybase
 
 # We probably don't want these, long-term.
-# nano: because we edit files on production
 # postgresql-client: because we poll the DB:
 # * on prod before ./manage.py migrate
 # * on unittest before ./manage.py test
@@ -20,7 +19,6 @@ RUN mkdir -p /usr/share/man/man1 /usr/share/man/man7 \
     && apt-get update \
     && apt-get install --no-install-recommends -y \
         git \
-        nano \
         postgresql-client \
         libcap-ng0 \
         unzip \
