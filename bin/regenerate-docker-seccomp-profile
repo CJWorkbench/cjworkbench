@@ -31,7 +31,7 @@ def generate_profile() -> str:
 
     profile["syscalls"].append(
         {
-            "names": ["clone", "mount"],
+            "names": ["clone"],
             "action": "SCMP_ACT_ALLOW",
             "args": [],
             "comment": "So cjwkernel.forkserver can sandbox module_main()",

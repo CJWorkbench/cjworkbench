@@ -796,8 +796,7 @@
 		},
 		{
 			"names": [
-				"clone",
-				"mount"
+				"clone"
 			],
 			"action": "SCMP_ACT_ALLOW",
 			"args": [],
