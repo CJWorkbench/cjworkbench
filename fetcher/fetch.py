@@ -347,9 +347,14 @@ async def fetch(*, workflow_id: Optional[int] = None, wf_module_id: int) -> None
     # Prepare secrets -- mangle user values so modules have all they need.
     #
     # This can involve, e.g., HTTP request to OAuth2 token servers.
-    secrets = await fetcher.secrets.prepare_secrets(
-        module_version.param_fields, wf_module.secrets
-    )
+    #
+    # TODO unit-test this code path
+    if module_version is None:
+        secrets = {}
+    else:
+        secrets = await fetcher.secrets.prepare_secrets(
+            module_version.param_fields, wf_module.secrets
+        )
 
     now = timezone.now()
 
