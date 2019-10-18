@@ -88,7 +88,11 @@ class Forkserver:
                 'import cjwkernel.forkserver.main; cjwkernel.forkserver.main.forkserver_main("%s", %d)'
                 % (module_main, child_socket.fileno()),
             ],
-            # env={},  # FIXME SECURITY set env so modules don't get secrets
+            env={
+                # SECURITY: children inherit these values
+                "LANG": "C.UTF-8",
+                "HOME": "/",
+            },
             stdin=subprocess.DEVNULL,
             stdout=sys.stdout.fileno(),
             stderr=sys.stderr.fileno(),

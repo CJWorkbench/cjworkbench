@@ -119,6 +119,18 @@ class ForkserverTest(unittest.TestCase):
         self.assertEqual(stdout, b"")
         self.assertRegex(stderr, b"ModuleNotFoundError")
 
+    def test_SECURITY_wipe_env(self):
+        self._spawn_and_communicate_or_raise(
+            r"""
+            import os
+            env = dict(os.environ)
+            assert env == {
+                "LANG": "C.UTF-8",
+                "HOME": "/",
+            }, "Got wrong os.environ: %r" % env
+            """
+        )
+
     def test_SECURITY_sock_and_stdin_and_other_fds_are_closed(self):
         # The user cannot access pipes or files outside its sandbox (aside from
         # stdout+stderr, which the parent process knows are untrusted).
