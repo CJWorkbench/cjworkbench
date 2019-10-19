@@ -4,9 +4,9 @@ import math
 import unittest
 import numpy as np
 import pyarrow
+from cjwkernel import parquet
 from cjwkernel.tests.util import arrow_table, assert_arrow_table_equals, parquet_file
 from cjwkernel.util import create_tempfile, tempfile_context
-from cjwstate import parquet
 
 
 class ParquetTest(unittest.TestCase):

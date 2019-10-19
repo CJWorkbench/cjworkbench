@@ -9,4 +9,4 @@ for legacy reasons, our database is filled with DataFrames instead of raw data.
 StoredObjects are stored in the database, and they point to minio.
 
 This module depends on `cjwstate.models`, `cjwstate.minio` and
-`cjwstate.parquet`.
+`cjwkernel.parquet`.

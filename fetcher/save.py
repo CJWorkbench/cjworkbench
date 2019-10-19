@@ -4,8 +4,8 @@ from django.utils import timezone
 import pandas as pd
 from pandas.util import hash_pandas_object
 import pyarrow
-import pyarrow.parquet
 from cjworkbench.sync import database_sync_to_async
+from cjwkernel import parquet
 from cjwkernel.types import FetchResult
 from cjwstate import commands, storedobjects
 from server import websockets
@@ -24,10 +24,19 @@ def parquet_file_to_pandas(path: Path) -> pd.DataFrame:
     if path.stat().st_size == 0:
         return pd.DataFrame()
     else:
-        arrow_table = pyarrow.parquet.read_table(str(path), use_threads=False)
-        return arrow_table.to_pandas(
-            date_as_object=False, deduplicate_objects=True, ignore_metadata=True
-        )  # TODO ensure dictionaries stay dictionaries
+        with parquet.open_as_mmapped_arrow(path) as arrow_table:
+            return arrow_table.to_pandas(
+                date_as_object=False,
+                deduplicate_objects=True,
+                ignore_metadata=True,
+                categories=[
+                    column_name.encode("utf-8")
+                    for column_name, column in zip(
+                        arrow_table.column_names, arrow_table.columns
+                    )
+                    if hasattr(column.type, "dictionary")
+                ],
+            )  # TODO ensure dictionaries stay dictionaries
 
 
 def read_dataframe_from_stored_object(
