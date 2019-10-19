@@ -213,19 +213,29 @@ class MockDir(pathlib.PurePosixPath):
         yaml_text = (dirpath / 'xxx.yaml').read_text()
     """
 
-    def __new__(cls, filedata: Dict[str, bytes]):  # filename => bytes
-        ret = super().__new__(cls, pathlib.PurePath("root"))
+    def __new__(
+        cls, filedata: Dict[str, bytes], parent: Optional[str] = None
+    ):  # filename => bytes
+        ret = super().__new__(cls, pathlib.PurePath(cls._get_path(parent)))
         ret.filedata = filedata
+        ret._parent = parent
         return ret
+
+    @classmethod
+    def _get_path(cls, parent) -> str:
+        return ("%s/root" % parent) if parent else "root"
+
+    def _path(self) -> str:
+        return self.__class__._get_path(self._parent)
 
     # override
     def __truediv__(self, filename: str) -> MockPath:
         data = self.filedata.get(filename)  # None if file does not exist
-        return MockPath(["root", filename], data, parent=self)
+        return MockPath([self._path(), filename], data, parent=self)
         try:
             return self.files[filename]
         except KeyError:
-            return MockPath(["root", filename], None)
+            return MockPath([self._path(), filename], None)
 
     def glob(self, pattern: str) -> Iterable[MockPath]:
         for key in self.filedata.keys():
