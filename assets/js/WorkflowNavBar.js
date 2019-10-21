@@ -199,9 +199,9 @@ export default class WorkflowNavBar extends React.Component {
               {isReadOnly ? null : (
                 <UndoRedoButtons undo={this.undo} redo={this.redo} />
               )}
-              <button name='duplicate' onClick={this.handleDuplicate}>{<Trans id='workflow.visibility.duplicate'>Duplicate</Trans>}</button>
+              <button name='duplicate' onClick={this.handleDuplicate}><Trans id='workflow.visibility.duplicate'>Duplicate</Trans></button>
               {lesson ? null : (/* We haven't yet designed what it means to share a lesson workflow. */
-                <ShareButton>{<Trans id='workflow.visibility.share'>Share</Trans>}</ShareButton>
+                <ShareButton><Trans id='workflow.visibility.share'>Share</Trans></ShareButton>
               )}
               {contextMenu}
             </div>

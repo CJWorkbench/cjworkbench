@@ -67,7 +67,7 @@ export default class UndoRedoButtons extends React.PureComponent {
         )}
       </I18n>
       // <div className='group--undo-redo'>
-      //   <button name='undo' title={<Trans id='workflow.visibility.undo'>Undo</Trans>} onClick={undo}><i className='icon-undo' /></button>
+      //   <button name='undo' title=<Trans id='workflow.visibility.undo'>Undo</Trans> onClick={undo}><i className='icon-undo' /></button>
       //   <button name='redo' title='Redo' onClick={redo}><i className='icon-redo' /></button>
       // </div>
     )

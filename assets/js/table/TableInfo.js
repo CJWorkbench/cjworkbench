@@ -38,11 +38,11 @@ export default class TableInfo extends React.PureComponent {
       <div className='outputpane-header'>
         <div className='table-info-container'>
           <div className='table-info'>
-            <div className='data'>{<Trans id='workflow.visibility.rows'>Rows</Trans>}</div>
+            <div className='data'><Trans id='workflow.visibility.rows'>Rows</Trans></div>
             <div className='value'>{nRowsString}</div>
           </div>
           <div className='table-info'>
-            <div className='data'>{<Trans id='workflow.visibility.columns'>Columns</Trans>}</div>
+            <div className='data'><Trans id='workflow.visibility.columns'>Columns</Trans></div>
             <div className='value'>{nColumnsString}</div>
           </div>
           {isReadOnly ? null : (

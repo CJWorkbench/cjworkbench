@@ -8,7 +8,7 @@ function EmptyReport () {
   return (
     <article className='report'>
       <p className='empty-report'>
-        {<Trans id='report.dashboard.emptyReport' description=''>Add charts to tabs, and they'll appear here.</Trans>}
+        <Trans id='report.dashboard.emptyReport'>Add charts to tabs, and they\'ll appear here.</Trans>
       </p>
     </article>
   )
