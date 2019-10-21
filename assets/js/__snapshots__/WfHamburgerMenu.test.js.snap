@@ -83,33 +83,28 @@ exports[`WfHamburgerMenu renders logged in, non-read only 1`] = `
         <div
           className="dropdown"
         >
-          <I18n
-            update={true}
-            withHash={true}
+          <DropdownToggle
+            className="context-button"
+            title="menu"
           >
-            <DropdownToggle
-              className="context-button"
-              title="menu"
-            >
-              <Reference>
-                <InnerReference
-                  setReferenceNode={[Function]}
+            <Reference>
+              <InnerReference
+                setReferenceNode={[Function]}
+              >
+                <button
+                  aria-expanded={true}
+                  className="btn btn-secondary context-button"
+                  disabled={false}
+                  onClick={[Function]}
+                  title="menu"
                 >
-                  <button
-                    aria-expanded={true}
-                    className="btn btn-secondary context-button"
-                    disabled={false}
-                    onClick={[Function]}
-                    title="menu"
-                  >
-                    <i
-                      className="icon-more"
-                    />
-                  </button>
-                </InnerReference>
-              </Reference>
-            </DropdownToggle>
-          </I18n>
+                  <i
+                    className="icon-more"
+                  />
+                </button>
+              </InnerReference>
+            </Reference>
+          </DropdownToggle>
           <DropdownMenu>
             <OpenDropdownMenu>
               <Portal

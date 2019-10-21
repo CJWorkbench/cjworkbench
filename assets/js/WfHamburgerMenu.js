@@ -5,11 +5,15 @@ import PropTypes from 'prop-types'
 import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from './components/Dropdown'
 import ImportModuleFromGitHub from './ImportModuleFromGitHub'
 import LocaleSwitcher from './i18n/LocaleSwitcher'
-import { I18n } from '@lingui/react'
-import { t, Trans } from '@lingui/macro'
+import { Trans,t } from '@lingui/macro'
+import { withI18n,I18n } from '@lingui/react'
 
-export default class WfHamburgerMenu extends React.Component {
+export class WfHamburgerMenu extends React.Component {
   static propTypes = {
+    i18n: PropTypes.shape({
+      // i18n object injected by LinguiJS withI18n()
+      _: PropTypes.func.isRequired
+    }),
     api: PropTypes.object, // not required: WorkflowListNavBar doesn't allow import from github
     workflowId: PropTypes.number, // not required: WorkflowListNavBar has no workflow
     user: PropTypes.shape({
@@ -30,21 +34,18 @@ export default class WfHamburgerMenu extends React.Component {
   }
 
   render () {
-    const { api, workflowId, user } = this.props
+    const { api, workflowId, user, i18n} = this.props
     const loggedIn = !!user
 
     return (
       <>
         <LocaleSwitcher />
         <UncontrolledDropdown>
-          <I18n>
-            {({ i18n }) => (
-              <DropdownToggle title={i18n._(t('workflow.visibility.menu')`menu`)} className='context-button'>
-                <i className='icon-more' />
-              </DropdownToggle>
-            )}
-          </I18n>
-
+         
+            <DropdownToggle title={i18n._(t('workflow.visibility.menu')`menu`)} className='context-button'>
+              <i className='icon-more' />
+            </DropdownToggle>
+           
           <DropdownMenu>
             {loggedIn && workflowId ? (
               <>
@@ -69,3 +70,5 @@ export default class WfHamburgerMenu extends React.Component {
     )
   }
 }
+
+export default withI18n()(WfHamburgerMenu);

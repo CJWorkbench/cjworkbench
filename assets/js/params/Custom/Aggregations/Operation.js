@@ -1,5 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { Trans,t } from '@lingui/macro'
+import { withI18n,I18n } from '@lingui/react'
 
 export default function Operation ({ isReadOnly, name, value, onChange }) {
   // Mimic <MenuParam>'s HTML, but with string values. As of [2019-01-04],
@@ -13,14 +15,14 @@ export default function Operation ({ isReadOnly, name, value, onChange }) {
       onChange={onChange}
       readOnly={isReadOnly}
     >
-      <option value='size'>Count</option>
-      <option value='nunique'>Count unique</option>
-      <option value='sum'>Sum</option>
-      <option value='mean'>Average (Mean)</option>
-      <option value='median'>Median</option>
-      <option value='min'>Minimum</option>
-      <option value='max'>Maximum</option>
-      <option value='first'>First</option>
+      {<option value='size'><Trans id="workflow.count">Count</Trans></option>}
+      {<option value='nunique'><Trans id="workflow.countunique">Count unique</Trans></option>}
+      {<option value='sum'><Trans id="workflow.sum">Sum</Trans></option>}
+      {<option value='mean'><Trans id="workflow.Averagemean">Average (Mean)</Trans></option>}
+      {<option value='median'><Trans id="workflow.median">Median</Trans></option>}
+      {<option value='min'><Trans id="workflow.Minimum">Minimum</Trans></option>}
+      {<option value='max'><Trans id="workflow.maximum">Maximum</Trans></option>}
+      {<option value='first'><Trans id="workflow.first">First</Trans></option>}
     </select>
   )
 }

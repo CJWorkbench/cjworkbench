@@ -1,19 +1,150 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Embed Available workflow Renders the embed widget with the correct information 1`] = `
-<I18n
-  update={true}
-  withHash={true}
+<div
+  className="embed-wrapper"
 >
-  <Component />
-</I18n>
+  <iframe
+    frameBorder={0}
+    src="/api/wfmodules/1/output"
+  />
+  <div
+    className="embed-footer"
+  >
+    <div
+      className="metadata-stack"
+    >
+      <div
+        className="embed-footer-logo"
+      >
+        <a
+          href="http://workbenchdata.com"
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          <img
+            src="undefinedimages/logo.png"
+            width="35"
+          />
+        </a>
+      </div>
+      <div
+        className="embed-footer-meta"
+      >
+        <div
+          className="title"
+        >
+          <a
+            href="/workflows/1"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Workflow Title
+          </a>
+        </div>
+        <div
+          className="metadata"
+        >
+          <ul>
+            <li>
+              <a
+                href="/workflows/1"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                by 
+                Workflow Owner Name
+              </a>
+            </li>
+            <li>
+              <a
+                href="/workflows/1"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                Updated
+                 
+                just now
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <button
+      className="embed-footer-button"
+      onClick={[Function]}
+      type="button"
+    >
+      <i
+        className="icon icon-code"
+      />
+    </button>
+  </div>
+  <div
+    className="embed-overlay"
+    onClick={[Function]}
+  >
+    <div
+      className="embed-share-links"
+      onClick={[Function]}
+    >
+      <h1>
+        EMBED THIS CHART
+      </h1>
+      <h2>
+        Paste this code into any webpage HTML
+      </h2>
+      <div
+        className="code-snippet"
+      >
+        <code
+          className="embed--share-code"
+        >
+          &lt;iframe src="http://localhost/embed/1" width="560" height="315" frameborder="0" /&gt;
+        </code>
+      </div>
+    </div>
+  </div>
+</div>
 `;
 
 exports[`Embed Unavailable workflow Renders the embed widget with the correct information 1`] = `
-<I18n
-  update={true}
-  withHash={true}
+<div
+  className="embed-wrapper"
 >
-  <Component />
-</I18n>
+  <div
+    className="embed-not-available"
+  >
+    <h1>
+      This workflow is not available
+    </h1>
+  </div>
+  <div
+    className="embed-footer"
+  >
+    <div
+      className="embed-footer-logo"
+    >
+      <img
+        src="undefinedimages/logo.png"
+        width="21"
+      />
+    </div>
+    <div
+      className="embed-footer-meta"
+    >
+      <h1>
+        WORKBENCH
+      </h1>
+    </div>
+    <div
+      className="embed-footer-button"
+    >
+      <i
+        className="icon icon-share"
+      />
+    </div>
+  </div>
+</div>
 `;

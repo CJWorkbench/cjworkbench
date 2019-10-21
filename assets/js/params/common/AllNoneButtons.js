@@ -1,32 +1,41 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { Trans,t } from '@lingui/macro'
+import { withI18n,I18n } from '@lingui/react'
 
-export default function AllNoneButtons ({ isReadOnly, onClickAll, onClickNone }) {
+export function AllNoneButtons ({ isReadOnly, onClickAll, onClickNone,i18n }) {
   return (
     <div className='all-none-buttons'>
       <button
         disabled={isReadOnly}
         type='button'
         name='refine-select-all'
-        title='Select All'
+        title={i18n._(t('workflow.selectAll')`Select All`)}
         onClick={onClickAll}
       >
-        All
+      <Trans id='workflow.visibility.All'>All</Trans> 
       </button>
       <button
         disabled={isReadOnly}
         type='button'
         name='refine-select-none'
-        title='Select None'
+        title={i18n._(t('workflow.selectAll')`Select None`)}
         onClick={onClickNone}
       >
-        None
+        <Trans id='workflow.visibility.None'>None</Trans> 
       </button>
     </div>
   )
 }
-AllNoneButtons.propTypes = {
-  isReadOnly: PropTypes.bool.isRequired,
-  onClickNone: PropTypes.func.isRequired, // func() => undefined
-  onClickAll: PropTypes.func.isRequired // func() => undefined
-}
+AllNoneButtons.propTypes =
+  { 
+    i18n: PropTypes.shape({
+        // i18n object injected by LinguiJS withI18n()
+      _: PropTypes.func.isRequired
+    }),
+    isReadOnly: PropTypes.bool.isRequired,
+    onClickNone: PropTypes.func.isRequired, // func() => undefined
+    onClickAll: PropTypes.func.isRequired // func() => undefined
+  }
+
+export default withI18n()(AllNoneButtons)

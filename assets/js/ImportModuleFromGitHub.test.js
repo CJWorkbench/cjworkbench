@@ -1,13 +1,14 @@
 /* globals describe, expect, it, jest */
 import React from 'react'
 import ConnectedImportModuleFromGitHub from './ImportModuleFromGitHub'
-import { mount } from 'enzyme'
+// import { mount } from 'enzyme'
+import { mountWithI18n } from './i18n/test-utils'
 import { Provider } from 'react-redux'
 import { mockStore, tick } from './test-utils'
 
 describe('ImportModuleFromGitHub', () => {
   const wrapper = (store, extraProps = {}) => {
-    return mount(
+    return mountWithI18n(
       <Provider store={store}>
         <ConnectedImportModuleFromGitHub
           closeModal={jest.fn()}
@@ -44,7 +45,7 @@ describe('ImportModuleFromGitHub', () => {
       b: { id_name: 'b', author: 'Aut', category: 'cat', name: 'yay' }
     })
 
-    expect(w.find('.import-github-success').text()).toEqual('Imported module "yay" under category "cat"')
+    expect(w.find('.import-github-success').text()).toEqual('Imported module {0} under category {1}')
   })
 
   it('should display a link but no form for non-staff users', () => {

@@ -3,8 +3,8 @@ import PropTypes from 'prop-types'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from './components/Modal'
 import { updateModuleAction } from './workflow-reducer'
 import { connect } from 'react-redux'
-import { Trans } from '@lingui/macro'
-import { withI18n } from '@lingui/react'
+import { Trans,t } from '@lingui/macro'
+import { withI18n,I18n } from '@lingui/react'
 
 const StaffImportModuleFromGitHub = withI18n()(class StaffImportModuleFromGitHub extends React.PureComponent {
   static propTypes = {

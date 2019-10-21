@@ -3,6 +3,32 @@
 exports[`ExportModal should match snapshot 1`] = `
 <ExportModal
   className="menu-test-class"
+  i18n={
+    Object {
+      "_": [Function],
+      "_activeLanguageData": Object {
+        "plurals": [Function],
+      },
+      "_activeMessages": Object {},
+      "_catalogs": Object {
+        "en": Object {
+          "languageData": Object {},
+          "messages": Object {},
+        },
+      },
+      "_dev": Object {
+        "compile": [Function],
+        "loadLanguageData": [Function],
+      },
+      "_language": "en",
+      "_locales": undefined,
+      "_missing": undefined,
+      "plural": [Function],
+      "select": [Function],
+      "selectOrdinal": [Function],
+      "t": [Function],
+    }
+  }
   open={true}
   toggle={[MockFunction]}
   wfModuleId={415}
@@ -42,7 +68,7 @@ exports[`ExportModal should match snapshot 1`] = `
                     <h5
                       class="modal-title"
                     >
-                      EXPORT DATA
+                      workflow.workbenchexportdata
                     </h5>
                     <button
                       aria-label="Close"
@@ -65,12 +91,12 @@ exports[`ExportModal should match snapshot 1`] = `
                       <div
                         class="dl-file"
                       >
-                        CSV
+                        workflow.workbenchcsv
                       </div>
                       <div
                         class="clipboard test-csv-copy"
                       >
-                        COPY LIVE LINK
+                        workflow.workbenchcopylivelink
                       </div>
                     </div>
                     <div
@@ -98,12 +124,12 @@ exports[`ExportModal should match snapshot 1`] = `
                       <div
                         class="dl-file"
                       >
-                        JSON FEED
+                        workflow.workbenchjsonfeed
                       </div>
                       <div
                         class="clipboard test-json-copy"
                       >
-                        COPY LIVE LINK
+                        workflow.workbenchcopylivelink
                       </div>
                     </div>
                     <div
@@ -133,7 +159,7 @@ exports[`ExportModal should match snapshot 1`] = `
                       class="button-blue action-button test-done-button"
                       type="button"
                     >
-                      Done
+                      workflow.workbenchdone
                     </button>
                   </div>
                 </div>
@@ -166,7 +192,52 @@ exports[`ExportModal should match snapshot 1`] = `
                   <h5
                     className="modal-title"
                   >
-                    EXPORT DATA
+                    <WithI18n
+                      defaults="EXPORT DATA"
+                      id="workflow.workbenchexportdata"
+                    >
+                      <I18n
+                        update={true}
+                        withHash={true}
+                      >
+                        <Trans
+                          defaults="EXPORT DATA"
+                          i18n={
+                            Object {
+                              "_": [Function],
+                              "_activeLanguageData": Object {
+                                "plurals": [Function],
+                              },
+                              "_activeMessages": Object {},
+                              "_catalogs": Object {
+                                "en": Object {
+                                  "languageData": Object {},
+                                  "messages": Object {},
+                                },
+                              },
+                              "_dev": Object {
+                                "compile": [Function],
+                                "loadLanguageData": [Function],
+                              },
+                              "_language": "en",
+                              "_locales": undefined,
+                              "_missing": undefined,
+                              "plural": [Function],
+                              "select": [Function],
+                              "selectOrdinal": [Function],
+                              "t": [Function],
+                            }
+                          }
+                          id="workflow.workbenchexportdata"
+                        >
+                          <Render
+                            value="workflow.workbenchexportdata"
+                          >
+                            workflow.workbenchexportdata
+                          </Render>
+                        </Trans>
+                      </I18n>
+                    </WithI18n>
                   </h5>
                   <button
                     aria-label="Close"
@@ -192,7 +263,52 @@ exports[`ExportModal should match snapshot 1`] = `
                     <div
                       className="dl-file"
                     >
-                      CSV
+                      <WithI18n
+                        defaults="CSV"
+                        id="workflow.workbenchcsv"
+                      >
+                        <I18n
+                          update={true}
+                          withHash={true}
+                        >
+                          <Trans
+                            defaults="CSV"
+                            i18n={
+                              Object {
+                                "_": [Function],
+                                "_activeLanguageData": Object {
+                                  "plurals": [Function],
+                                },
+                                "_activeMessages": Object {},
+                                "_catalogs": Object {
+                                  "en": Object {
+                                    "languageData": Object {},
+                                    "messages": Object {},
+                                  },
+                                },
+                                "_dev": Object {
+                                  "compile": [Function],
+                                  "loadLanguageData": [Function],
+                                },
+                                "_language": "en",
+                                "_locales": undefined,
+                                "_missing": undefined,
+                                "plural": [Function],
+                                "select": [Function],
+                                "selectOrdinal": [Function],
+                                "t": [Function],
+                              }
+                            }
+                            id="workflow.workbenchcsv"
+                          >
+                            <Render
+                              value="workflow.workbenchcsv"
+                            >
+                              workflow.workbenchcsv
+                            </Render>
+                          </Trans>
+                        </I18n>
+                      </WithI18n>
                     </div>
                     <CopyToClipboard
                       className="clipboard test-csv-copy"
@@ -203,7 +319,52 @@ exports[`ExportModal should match snapshot 1`] = `
                         className="clipboard test-csv-copy"
                         onClick={[Function]}
                       >
-                        COPY LIVE LINK
+                        <WithI18n
+                          defaults="COPY LIVE LINK"
+                          id="workflow.workbenchcopylivelink"
+                        >
+                          <I18n
+                            update={true}
+                            withHash={true}
+                          >
+                            <Trans
+                              defaults="COPY LIVE LINK"
+                              i18n={
+                                Object {
+                                  "_": [Function],
+                                  "_activeLanguageData": Object {
+                                    "plurals": [Function],
+                                  },
+                                  "_activeMessages": Object {},
+                                  "_catalogs": Object {
+                                    "en": Object {
+                                      "languageData": Object {},
+                                      "messages": Object {},
+                                    },
+                                  },
+                                  "_dev": Object {
+                                    "compile": [Function],
+                                    "loadLanguageData": [Function],
+                                  },
+                                  "_language": "en",
+                                  "_locales": undefined,
+                                  "_missing": undefined,
+                                  "plural": [Function],
+                                  "select": [Function],
+                                  "selectOrdinal": [Function],
+                                  "t": [Function],
+                                }
+                              }
+                              id="workflow.workbenchcopylivelink"
+                            >
+                              <Render
+                                value="workflow.workbenchcopylivelink"
+                              >
+                                workflow.workbenchcopylivelink
+                              </Render>
+                            </Trans>
+                          </I18n>
+                        </WithI18n>
                       </div>
                     </CopyToClipboard>
                   </div>
@@ -233,7 +394,52 @@ exports[`ExportModal should match snapshot 1`] = `
                     <div
                       className="dl-file"
                     >
-                      JSON FEED
+                      <WithI18n
+                        defaults="JSON FEED"
+                        id="workflow.workbenchjsonfeed"
+                      >
+                        <I18n
+                          update={true}
+                          withHash={true}
+                        >
+                          <Trans
+                            defaults="JSON FEED"
+                            i18n={
+                              Object {
+                                "_": [Function],
+                                "_activeLanguageData": Object {
+                                  "plurals": [Function],
+                                },
+                                "_activeMessages": Object {},
+                                "_catalogs": Object {
+                                  "en": Object {
+                                    "languageData": Object {},
+                                    "messages": Object {},
+                                  },
+                                },
+                                "_dev": Object {
+                                  "compile": [Function],
+                                  "loadLanguageData": [Function],
+                                },
+                                "_language": "en",
+                                "_locales": undefined,
+                                "_missing": undefined,
+                                "plural": [Function],
+                                "select": [Function],
+                                "selectOrdinal": [Function],
+                                "t": [Function],
+                              }
+                            }
+                            id="workflow.workbenchjsonfeed"
+                          >
+                            <Render
+                              value="workflow.workbenchjsonfeed"
+                            >
+                              workflow.workbenchjsonfeed
+                            </Render>
+                          </Trans>
+                        </I18n>
+                      </WithI18n>
                     </div>
                     <CopyToClipboard
                       className="clipboard test-json-copy"
@@ -244,7 +450,52 @@ exports[`ExportModal should match snapshot 1`] = `
                         className="clipboard test-json-copy"
                         onClick={[Function]}
                       >
-                        COPY LIVE LINK
+                        <WithI18n
+                          defaults="COPY LIVE LINK"
+                          id="workflow.workbenchcopylivelink"
+                        >
+                          <I18n
+                            update={true}
+                            withHash={true}
+                          >
+                            <Trans
+                              defaults="COPY LIVE LINK"
+                              i18n={
+                                Object {
+                                  "_": [Function],
+                                  "_activeLanguageData": Object {
+                                    "plurals": [Function],
+                                  },
+                                  "_activeMessages": Object {},
+                                  "_catalogs": Object {
+                                    "en": Object {
+                                      "languageData": Object {},
+                                      "messages": Object {},
+                                    },
+                                  },
+                                  "_dev": Object {
+                                    "compile": [Function],
+                                    "loadLanguageData": [Function],
+                                  },
+                                  "_language": "en",
+                                  "_locales": undefined,
+                                  "_missing": undefined,
+                                  "plural": [Function],
+                                  "select": [Function],
+                                  "selectOrdinal": [Function],
+                                  "t": [Function],
+                                }
+                              }
+                              id="workflow.workbenchcopylivelink"
+                            >
+                              <Render
+                                value="workflow.workbenchcopylivelink"
+                              >
+                                workflow.workbenchcopylivelink
+                              </Render>
+                            </Trans>
+                          </I18n>
+                        </WithI18n>
                       </div>
                     </CopyToClipboard>
                   </div>
@@ -279,7 +530,52 @@ exports[`ExportModal should match snapshot 1`] = `
                     onClick={[Function]}
                     type="button"
                   >
-                    Done
+                    <WithI18n
+                      defaults="done"
+                      id="workflow.workbenchdone"
+                    >
+                      <I18n
+                        update={true}
+                        withHash={true}
+                      >
+                        <Trans
+                          defaults="done"
+                          i18n={
+                            Object {
+                              "_": [Function],
+                              "_activeLanguageData": Object {
+                                "plurals": [Function],
+                              },
+                              "_activeMessages": Object {},
+                              "_catalogs": Object {
+                                "en": Object {
+                                  "languageData": Object {},
+                                  "messages": Object {},
+                                },
+                              },
+                              "_dev": Object {
+                                "compile": [Function],
+                                "loadLanguageData": [Function],
+                              },
+                              "_language": "en",
+                              "_locales": undefined,
+                              "_missing": undefined,
+                              "plural": [Function],
+                              "select": [Function],
+                              "selectOrdinal": [Function],
+                              "t": [Function],
+                            }
+                          }
+                          id="workflow.workbenchdone"
+                        >
+                          <Render
+                            value="workflow.workbenchdone"
+                          >
+                            workflow.workbenchdone
+                          </Render>
+                        </Trans>
+                      </I18n>
+                    </WithI18n>
                   </button>
                 </div>
               </ModalFooter>

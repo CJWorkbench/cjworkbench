@@ -1,10 +1,43 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`WorkflowMetadata renders private workflow correctly 1`] = `
-<I18n
-  update={true}
-  withHash={true}
+<ul
+  className="metadata-container"
 >
-  <Component />
-</I18n>
+  <li
+    className="attribution"
+  >
+    <span
+      className="metadata"
+    >
+      by 
+      Harry Harrison
+    </span>
+    <span
+      className="separator"
+    >
+      -
+    </span>
+  </li>
+  <li>
+    Updated
+     
+    just now
+  </li>
+  <li>
+    <span
+      className="separator"
+    >
+      -
+    </span>
+    <button
+      className="public-private"
+      onClick={[Function]}
+      title="Change privacy"
+      type="button"
+    >
+      private
+    </button>
+  </li>
+</ul>
 `;

@@ -3,10 +3,11 @@ import PropTypes from 'prop-types'
 import CreateWorkflowButton from './CreateWorkflowButton'
 import SortMenu from './SortMenu'
 import WorkflowList, { WorkflowListPropType } from './WorkflowList'
-import { I18n } from '@lingui/react'
 import { Trans,t } from '@lingui/macro'
+import { withI18n,I18n } from '@lingui/react'
 
 const Tab = React.memo(function Tab ({ name, isActive, setIsActive, children }) {
+
   return (
     <li className={`nav-item${isActive ? ' active' : ''}`}>
       <a
@@ -79,7 +80,8 @@ const TemplatesWorkflowList = React.memo(function TemplatesWorkflowList ({ workf
   )
 })
 
-function WorkflowLists ({ workflows, deleteWorkflow, duplicateWorkflow, openShareModal }) {
+function WorkflowLists ({ workflows, deleteWorkflow, duplicateWorkflow, openShareModal, i18n }) {
+
   const [activeTab, setActiveTab] = useState(workflows.owned.length ? 'owned' : 'templates')
   const [comparator, setComparator] = useState('last_update|descending')
   const tabProps = (name) => ({
@@ -123,6 +125,10 @@ function WorkflowLists ({ workflows, deleteWorkflow, duplicateWorkflow, openShar
   )
 }
 WorkflowLists.PropTypes = {
+   i18n: PropTypes.shape({
+      // i18n object injected by LinguiJS withI18n()
+      _: PropTypes.func.isRequired
+    }),
   workflows: PropTypes.shape({
     owned: WorkflowListPropType.isRequired,
     shared: WorkflowListPropType.isRequired,
@@ -132,4 +138,5 @@ WorkflowLists.PropTypes = {
   duplicateWorkflow: PropTypes.func.isRequired, // func(id) => undefined
   openShareModal: PropTypes.func.isRequired // func(id) => undefined
 }
-export default React.memo(WorkflowLists)
+export default React.memo(withI18n()(WorkflowLists))
+
