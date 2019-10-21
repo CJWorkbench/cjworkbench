@@ -4,7 +4,7 @@ import { withI18n,I18n } from '@lingui/react'
 import { Trans,t } from '@lingui/macro'
 import PropTypes from 'prop-types'
 
-export default class Embed extends React.Component {
+export class Embed extends React.Component {
   static propTypes = {
     i18n: PropTypes.shape({
       // i18n object injected by LinguiJS withI18n()
@@ -100,4 +100,4 @@ export default class Embed extends React.Component {
     )
   }
 }
-withI18n()(Embed);
+export default withI18n()(Embed);

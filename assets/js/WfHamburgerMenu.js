@@ -8,7 +8,7 @@ import LocaleSwitcher from './i18n/LocaleSwitcher'
 import { Trans,t } from '@lingui/macro'
 import { withI18n,I18n } from '@lingui/react'
 
-export default class WfHamburgerMenu extends React.Component {
+export class WfHamburgerMenu extends React.Component {
   static propTypes = {
     i18n: PropTypes.shape({
       // i18n object injected by LinguiJS withI18n()
@@ -42,9 +42,9 @@ export default class WfHamburgerMenu extends React.Component {
         <LocaleSwitcher />
         <UncontrolledDropdown>
          
-              <DropdownToggle title={i18n._(t('workflow.visibility.menu')`menu`)} className='context-button'>
-                <i className='icon-more' />
-              </DropdownToggle>
+            <DropdownToggle title={i18n._(t('workflow.visibility.menu')`menu`)} className='context-button'>
+              <i className='icon-more' />
+            </DropdownToggle>
            
           <DropdownMenu>
             {loggedIn && workflowId ? (
@@ -71,4 +71,4 @@ export default class WfHamburgerMenu extends React.Component {
   }
 }
 
-withI18n()(WfHamburgerMenu);
+export default withI18n()(WfHamburgerMenu);

@@ -9,10 +9,10 @@ import { logUserEvent } from '../utils'
 import CreateWorkflowButton from './CreateWorkflowButton'
 import WorkflowLists from './WorkflowLists'
 import { WorkflowListPropType } from './WorkflowList'
-import { I18n } from '@lingui/react'
 import { Trans,t } from '@lingui/macro'
+import { withI18n,I18n } from '@lingui/react'
 
-export default class Workflows extends React.Component {
+export class Workflows extends React.Component {
   static propTypes = {
      i18n: PropTypes.shape({
       // i18n object injected by LinguiJS withI18n()
@@ -92,7 +92,7 @@ export default class Workflows extends React.Component {
     const tabName = this.workflowIdToTabName(workflowId)
     if (!tabName) return
 
-    if (!confirm(<Trans id="workflow.permanentdelete">Permanently delete this workflow?</Trans>)) return
+    if (!confirm(this.props.i18n._(t('workflow.permanentdelete')`Permanently delete this workflow?`))) return
 
     this.props.api.deleteWorkflow(workflowId)
       .then(() => {
@@ -184,23 +184,23 @@ export default class Workflows extends React.Component {
 
   render () {
     const { workflows } = this.state
-    const { user } = this.props
+    const { user, i18n } = this.props
 
     return (
       <div className='workflows-page'>
         <Navbar user={user} />
         <a href='/lessons/' className='lesson-banner mx-auto'>
           <div>
-            <div className='content-1'><Trans id="workflow.new">NEW</Trans></div>
+            <div className='content-1'>{this.props.i18n._(t('workflow.new')`NEW`)}</div>
             <div className='d-flex'>
               <span className='icon-star' />
-              <div className=' title-1 '><Trans id=" workflow.trainingtitle">TRAINING</Trans></div>
+              <div className=' title-1 '>{this.props.i18n._(t('workflow.trainingtitle')`TRAINING`)}</div>
             </div>
           </div>
-          <p><Trans id="workflow.learnworkwithdata">Learn how to work with data without coding</Trans></p>
+          <p>{this.props.i18n._(t('workflow.learnworkwithdata')`Learn how to work with data without coding`)}</p>
         </a>
         <CreateWorkflowButton>
-          <Trans id="workflow.createworkflow">Create Workflow</Trans>
+          {this.props.i18n._(t('workflow.createworkflow')`Create Workflow`)}
         </CreateWorkflowButton>
         <WorkflowLists
           workflows={workflows}
@@ -213,3 +213,5 @@ export default class Workflows extends React.Component {
     )
   }
 }
+
+export default withI18n()(Workflows);

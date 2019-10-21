@@ -1,6 +1,6 @@
 /* globals afterEach, describe, expect, it */
 import React from 'react'
-import WfHamburgerMenu from './WfHamburgerMenu'
+import { WfHamburgerMenu } from './WfHamburgerMenu'
 import { mountWithI18n } from './i18n/test-utils'
 
 describe('WfHamburgerMenu', () => {
