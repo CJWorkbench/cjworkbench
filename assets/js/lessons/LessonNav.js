@@ -37,7 +37,7 @@ export default class LessonNav extends React.PureComponent {
             disabled={c <= 0}
             onClick={this.handleClickPrevious}
           >
-            {<Trans id='lessons.nav.previous' description=''>Previous</Trans>}
+            <Trans id='lessons.nav.previous' description=''>Previous</Trans>
           </button>
           {c === n ? null : (
             <div className='current-and-total'>
@@ -52,7 +52,7 @@ export default class LessonNav extends React.PureComponent {
             disabled={c + 1 > n}
             onClick={this.handleClickNext}
           >
-            {<Trans id='lessons.nav.next' description=''>Next</Trans>}
+            <Trans id='lessons.nav.next' description=''>Next</Trans>
           </button>
         </div>
       </footer>
