@@ -75,7 +75,7 @@ async def add_module(
     try:
         await commands.do(
             AddModuleCommand,
-            workflow=workflow,
+            workflow_id=workflow.id,
             tab=tab,
             slug=slug,
             module_id_name=moduleIdName,
@@ -120,7 +120,10 @@ async def reorder_modules(
 ):
     try:
         await commands.do(
-            ReorderModulesCommand, workflow=workflow, tab=tab, new_order=wfModuleIds
+            ReorderModulesCommand,
+            workflow_id=workflow.id,
+            tab=tab,
+            new_order=wfModuleIds,
         )
     except ValueError as err:
         raise HandlerError(str(err))
@@ -131,7 +134,7 @@ async def reorder_modules(
 async def create(workflow: Workflow, slug: str, name: str, **kwargs):
     slug = _parse_slug(slug)
     name = str(name)  # JSON values can't lead to error
-    await commands.do(AddTabCommand, workflow=workflow, slug=slug, name=name)
+    await commands.do(AddTabCommand, workflow_id=workflow.id, slug=slug, name=name)
 
 
 @register_websockets_handler
@@ -140,7 +143,11 @@ async def create(workflow: Workflow, slug: str, name: str, **kwargs):
 async def duplicate(workflow: Workflow, tab: Tab, slug: str, name: str, **kwargs):
     try:
         await commands.do(
-            DuplicateTabCommand, workflow=workflow, from_tab=tab, slug=slug, name=name
+            DuplicateTabCommand,
+            workflow_id=workflow.id,
+            from_tab=tab,
+            slug=slug,
+            name=name,
         )
     except ValueError as err:
         raise HandlerError("BadRequest: %s" % str(err))
@@ -150,7 +157,7 @@ async def duplicate(workflow: Workflow, tab: Tab, slug: str, name: str, **kwargs
 @websockets_handler("write")
 @_loading_tab
 async def delete(workflow: Workflow, tab: Tab, **kwargs):
-    await commands.do(DeleteTabCommand, workflow=workflow, tab=tab)
+    await commands.do(DeleteTabCommand, workflow_id=workflow.id, tab=tab)
 
 
 @register_websockets_handler
@@ -158,4 +165,6 @@ async def delete(workflow: Workflow, tab: Tab, **kwargs):
 @_loading_tab
 async def set_name(workflow: Workflow, tab: Tab, name: str, **kwargs):
     name = str(name)  # JSON values can't lead to error
-    await commands.do(SetTabNameCommand, workflow=workflow, tab=tab, new_name=name)
+    await commands.do(
+        SetTabNameCommand, workflow_id=workflow.id, tab=tab, new_name=name
+    )

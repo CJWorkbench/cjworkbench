@@ -29,7 +29,7 @@ class ReorderTabsCommandTest(DbTestCase):
         cmd = self.run_with_async_db(
             commands.do(
                 ReorderTabsCommand,
-                workflow=workflow,
+                workflow_id=workflow.id,
                 new_order=["tab-3", "tab-1", "tab-2"],
             )
         )
@@ -61,7 +61,7 @@ class ReorderTabsCommandTest(DbTestCase):
         cmd = self.run_with_async_db(
             commands.do(
                 ReorderTabsCommand,
-                workflow=workflow,
+                workflow_id=workflow.id,
                 new_order=["tab-3", "tab-1", "tab-2"],
             )
         )
@@ -105,7 +105,7 @@ class ReorderTabsCommandTest(DbTestCase):
         cmd = self.run_with_async_db(
             commands.do(
                 ReorderTabsCommand,
-                workflow=workflow,
+                workflow_id=workflow.id,
                 new_order=["tab-3", "tab-1", "tab-2"],
             )
         )
@@ -125,7 +125,7 @@ class ReorderTabsCommandTest(DbTestCase):
         self.run_with_async_db(
             commands.do(
                 ReorderTabsCommand,
-                workflow=workflow,
+                workflow_id=workflow.id,
                 new_order=["tab-3", "tab-1", "tab-2"],
             )
         )
@@ -143,7 +143,7 @@ class ReorderTabsCommandTest(DbTestCase):
             self.run_with_async_db(
                 commands.do(
                     ReorderTabsCommand,
-                    workflow=workflow,
+                    workflow_id=workflow.id,
                     new_order=["tab-1", "tab-1", "tab-2"],
                 )
             )
@@ -154,7 +154,9 @@ class ReorderTabsCommandTest(DbTestCase):
 
         with self.assertRaises(ValueError):
             self.run_with_async_db(
-                commands.do(ReorderTabsCommand, workflow=workflow, new_order=["tab-1"])
+                commands.do(
+                    ReorderTabsCommand, workflow_id=workflow.id, new_order=["tab-1"]
+                )
             )
 
     def test_no_op(self):
@@ -163,7 +165,9 @@ class ReorderTabsCommandTest(DbTestCase):
 
         cmd = self.run_with_async_db(
             commands.do(
-                ReorderTabsCommand, workflow=workflow, new_order=["tab-1", "tab-2"]
+                ReorderTabsCommand,
+                workflow_id=workflow.id,
+                new_order=["tab-1", "tab-2"],
             )
         )
         self.assertIsNone(cmd)

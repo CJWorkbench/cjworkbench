@@ -45,7 +45,7 @@ class ReorderModulesCommandTest(DbTestCase):
         cmd = self.run_with_async_db(
             commands.do(
                 ReorderModulesCommand,
-                workflow=self.workflow,
+                workflow_id=self.workflow.id,
                 tab=self.tab,
                 new_order=[wfm1.id, wfm3.id, wfm2.id],
             )
@@ -99,7 +99,7 @@ class ReorderModulesCommandTest(DbTestCase):
             self.run_with_async_db(
                 commands.do(
                     ReorderModulesCommand,
-                    workflow=self.workflow,
+                    workflow_id=self.workflow.id,
                     tab=self.tab,
                     new_order=[wfm1.id, wfm3.id, wfm2.id],
                 )
@@ -113,7 +113,7 @@ class ReorderModulesCommandTest(DbTestCase):
             self.run_with_async_db(
                 commands.do(
                     ReorderModulesCommand,
-                    workflow=self.workflow,
+                    workflow_id=self.workflow.id,
                     tab=self.tab,
                     new_order=[wfm1.id + 1],
                 )
@@ -124,7 +124,7 @@ class ReorderModulesCommandTest(DbTestCase):
             self.run_with_async_db(
                 commands.do(
                     ReorderModulesCommand,
-                    workflow=self.workflow,
+                    workflow_id=self.workflow.id,
                     tab=self.tab,
                     new_order={"not": "an array"},
                 )
@@ -142,7 +142,7 @@ class ReorderModulesCommandTest(DbTestCase):
             self.run_with_async_db(
                 commands.do(
                     ReorderModulesCommand,
-                    workflow=self.workflow,
+                    workflow_id=self.workflow.id,
                     tab=self.tab,
                     new_order=[wfm1.id],
                 )
@@ -160,7 +160,7 @@ class ReorderModulesCommandTest(DbTestCase):
             self.run_with_async_db(
                 commands.do(
                     ReorderModulesCommand,
-                    workflow=self.workflow,
+                    workflow_id=self.workflow.id,
                     tab=self.tab,
                     new_order=[wfm1.id, wfm1.id],
                 )
@@ -177,7 +177,7 @@ class ReorderModulesCommandTest(DbTestCase):
         cmd = self.run_with_async_db(
             commands.do(
                 ReorderModulesCommand,
-                workflow=self.workflow,
+                workflow_id=self.workflow.id,
                 tab=self.tab,
                 new_order=[wfm1.id, wfm2.id],
             )

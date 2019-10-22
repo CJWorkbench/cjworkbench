@@ -15,6 +15,13 @@ def json_encode(value: Dict[str, Any]) -> str:
 
 
 def create_tempfile(prefix=None, suffix=None, dir=None) -> Path:
+    # Workbench tempfiles are usually _big_ -- sometimes >1GB. In Kubernetes
+    # and Docker, /tmp is mounted on tmpfs; /var/tmp isn't, so its files are on
+    # disk.
+    #
+    # Default to /var/tmp so tempfiles don't consume RAM.
+    if dir is None:
+        dir = "/var/tmp"
     fd, filename = tempfile.mkstemp(prefix=prefix, suffix=suffix, dir=dir)
     os.close(fd)
     return Path(filename)
@@ -31,6 +38,13 @@ def tempfile_context(prefix=None, suffix=None, dir=None) -> ContextManager[Path]
 
 
 def create_tempdir(prefix=None, suffix=None, dir=None) -> Path:
+    # Workbench tempfiles are usually _big_ -- sometimes >1GB. In Kubernetes
+    # and Docker, /tmp is mounted on tmpfs; /var/tmp isn't, so its files are on
+    # disk.
+    #
+    # Default to /var/tmp so tempfiles don't consume RAM.
+    if dir is None:
+        dir = "/var/tmp"
     return Path(tempfile.mkdtemp(prefix=prefix, suffix=suffix, dir=dir))
 
 

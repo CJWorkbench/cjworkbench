@@ -28,7 +28,9 @@ class SetTabNameCommandTest(DbTestCase):
         tab.save(update_fields=["name"])
 
         cmd = self.run_with_async_db(
-            commands.do(SetTabNameCommand, workflow=workflow, tab=tab, new_name="bar")
+            commands.do(
+                SetTabNameCommand, workflow_id=workflow.id, tab=tab, new_name="bar"
+            )
         )
         tab.refresh_from_db()
         self.assertEqual(tab.name, "bar")
@@ -69,7 +71,10 @@ class SetTabNameCommandTest(DbTestCase):
 
         cmd = self.run_with_async_db(
             commands.do(
-                SetTabNameCommand, workflow=workflow, tab=tab1, new_name=tab1.name + "X"
+                SetTabNameCommand,
+                workflow_id=workflow.id,
+                tab=tab1,
+                new_name=tab1.name + "X",
             )
         )
         wf_module.refresh_from_db()
@@ -96,7 +101,10 @@ class SetTabNameCommandTest(DbTestCase):
 
         cmd = self.run_with_async_db(
             commands.do(
-                SetTabNameCommand, workflow=workflow, tab=tab, new_name=tab.name + "X"
+                SetTabNameCommand,
+                workflow_id=workflow.id,
+                tab=tab,
+                new_name=tab.name + "X",
             )
         )
         wf_module.refresh_from_db()
@@ -112,7 +120,9 @@ class SetTabNameCommandTest(DbTestCase):
 
         send_delta.return_value = async_noop()
         cmd = self.run_with_async_db(
-            commands.do(SetTabNameCommand, workflow=workflow, tab=tab, new_name="bar")
+            commands.do(
+                SetTabNameCommand, workflow_id=workflow.id, tab=tab, new_name="bar"
+            )
         )
         send_delta.assert_called()
         delta1 = send_delta.call_args[0][1]
@@ -130,6 +140,8 @@ class SetTabNameCommandTest(DbTestCase):
         tab.save(update_fields=["name"])
 
         cmd = self.run_with_async_db(
-            commands.do(SetTabNameCommand, workflow=workflow, tab=tab, new_name="foo")
+            commands.do(
+                SetTabNameCommand, workflow_id=workflow.id, tab=tab, new_name="foo"
+            )
         )
         self.assertIsNone(cmd)

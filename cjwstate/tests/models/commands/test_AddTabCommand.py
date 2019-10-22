@@ -15,7 +15,7 @@ class AddTabCommandTest(DbTestCase):
     def test_append_tab(self):
         workflow = Workflow.create_and_init(selected_tab_position=0)
         cmd = self.run_with_async_db(
-            commands.do(AddTabCommand, workflow=workflow, slug="tab-2", name="A")
+            commands.do(AddTabCommand, workflow_id=workflow.id, slug="tab-2", name="A")
         )
         new_tab = workflow.live_tabs.get(position=1)
         self.assertEqual(new_tab.name, "A")
@@ -34,7 +34,7 @@ class AddTabCommandTest(DbTestCase):
     def test_no_hard_or_soft_delete_when_deleting_applied_delta(self):
         workflow = Workflow.create_and_init()
         cmd = self.run_with_async_db(
-            commands.do(AddTabCommand, workflow=workflow, slug="tab-2", name="A")
+            commands.do(AddTabCommand, workflow_id=workflow.id, slug="tab-2", name="A")
         )
         cmd.delete()
         self.assertEquals(workflow.live_tabs.count(), 2)
@@ -47,7 +47,7 @@ class AddTabCommandTest(DbTestCase):
 
         workflow = Workflow.create_and_init(selected_tab_position=0)
         cmd = self.run_with_async_db(
-            commands.do(AddTabCommand, workflow=workflow, slug="tab-2", name="A")
+            commands.do(AddTabCommand, workflow_id=workflow.id, slug="tab-2", name="A")
         )
         delta1 = send_delta.call_args[0][1]
         self.assertEqual(delta1["updateWorkflow"]["tab_slugs"], ["tab-1", "tab-2"])

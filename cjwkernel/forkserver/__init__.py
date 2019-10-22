@@ -91,6 +91,15 @@ class Forkserver:
                 # SECURITY: children inherit these values
                 "LANG": "C.UTF-8",
                 "HOME": "/",
+                # [adamhooper, 2019-10-19] rrrgh, OpenBLAS....
+                #
+                # If we preload numpy, we're in trouble. Numpy loads OpenBLAS,
+                # and OpenBLAS starts a whole threading subsystem ... which
+                # breaks fork() in our modules. (We use fork() to open Parquet
+                # files....) OPENBLAS_NUM_THREADS=1 disables the thread pool.
+                #
+                # I'm frustrated.
+                "OPENBLAS_NUM_THREADS": "1",
             },
             stdin=subprocess.DEVNULL,
             stdout=sys.stdout.fileno(),

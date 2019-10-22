@@ -16,10 +16,10 @@ spec:
           image: "gcr.io/cj-workbench/frontend:latest"
           resources:
             requests:
-              cpu: 0.5
+              cpu: 0.75
               memory: 2Gi
             limits:
-              cpu: 0.9
+              cpu: 0.75
               memory: 2Gi
           ports:
             - name: http

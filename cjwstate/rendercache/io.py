@@ -2,9 +2,10 @@ import contextlib
 from pathlib import Path
 from typing import Any, ContextManager, Dict, List
 import pyarrow
+from cjwkernel import parquet
 from cjwkernel.types import ArrowTable, RenderResult, TableMetadata
 from cjwkernel.util import json_encode, tempfile_context
-from cjwstate import minio, parquet
+from cjwstate import minio
 from cjwstate.models import WfModule, Workflow, CachedRenderResult
 
 

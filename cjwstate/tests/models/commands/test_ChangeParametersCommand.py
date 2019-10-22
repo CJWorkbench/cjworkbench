@@ -61,7 +61,7 @@ class ChangeParametersCommandTest(DbTestCase):
         cmd = self.run_with_async_db(
             commands.do(
                 ChangeParametersCommand,
-                workflow=workflow,
+                workflow_id=workflow.id,
                 wf_module=wf_module,
                 new_values={"url": "http://example.com/foo", "has_header": False},
             )
@@ -109,7 +109,7 @@ class ChangeParametersCommandTest(DbTestCase):
         cmd = self.run_with_async_db(
             commands.do(
                 ChangeParametersCommand,
-                workflow=workflow,
+                workflow_id=workflow.id,
                 wf_module=wf_module,
                 new_values={"url": "https://example.com"},
             )
@@ -141,7 +141,7 @@ class ChangeParametersCommandTest(DbTestCase):
         cmd = self.run_with_async_db(
             commands.do(
                 ChangeParametersCommand,
-                workflow=workflow,
+                workflow_id=workflow.id,
                 wf_module=wf_module,
                 new_values={"url": "https://example.com"},
             )
@@ -172,7 +172,7 @@ class ChangeParametersCommandTest(DbTestCase):
         cmd = self.run_with_async_db(
             commands.do(
                 ChangeParametersCommand,
-                workflow=workflow,
+                workflow_id=workflow.id,
                 wf_module=wf_module,
                 new_values={"url": "https://example.com"},
             )
@@ -228,7 +228,7 @@ class ChangeParametersCommandTest(DbTestCase):
         cmd = self.run_with_async_db(
             commands.do(
                 ChangeParametersCommand,
-                workflow=workflow,
+                workflow_id=workflow.id,
                 wf_module=wf_module,
                 new_values={"x": 2},
             )
@@ -275,7 +275,7 @@ class ChangeParametersCommandTest(DbTestCase):
             self.run_with_async_db(
                 commands.do(
                     ChangeParametersCommand,
-                    workflow=workflow,
+                    workflow_id=workflow.id,
                     wf_module=wf_module,
                     new_values={"x": "Threeve"},
                 )
@@ -322,7 +322,7 @@ class ChangeParametersCommandTest(DbTestCase):
         cmd = self.run_with_async_db(
             commands.do(
                 ChangeParametersCommand,
-                workflow=workflow,
+                workflow_id=workflow.id,
                 wf_module=wfm2,
                 new_values={"x": 2},
             )

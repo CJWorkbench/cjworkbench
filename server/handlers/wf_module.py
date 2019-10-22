@@ -113,7 +113,7 @@ async def set_params(
     try:
         await commands.do(
             ChangeParametersCommand,
-            workflow=workflow,
+            workflow_id=workflow.id,
             wf_module=wf_module,
             new_values=values,
         )
@@ -125,7 +125,7 @@ async def set_params(
 @websockets_handler("write")
 @_loading_wf_module
 async def delete(workflow: Workflow, wf_module: WfModule, **kwargs):
-    await commands.do(DeleteModuleCommand, workflow=workflow, wf_module=wf_module)
+    await commands.do(DeleteModuleCommand, workflow_id=workflow.id, wf_module=wf_module)
 
 
 @database_sync_to_async
@@ -173,7 +173,7 @@ async def set_stored_data_version(
 
     await commands.do(
         ChangeDataVersionCommand,
-        workflow=workflow,
+        workflow_id=workflow.id,
         wf_module=wf_module,
         new_version=version,
     )
@@ -188,7 +188,7 @@ async def set_notes(workflow: Workflow, wf_module: WfModule, notes: str, **kwarg
     notes = str(notes)  # cannot error from JSON input
     await commands.do(
         ChangeWfModuleNotesCommand,
-        workflow=workflow,
+        workflow_id=workflow.id,
         wf_module=wf_module,
         new_value=notes,
     )

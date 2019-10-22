@@ -1,7 +1,8 @@
 from pathlib import Path
-from typing import ContextManager
+from typing import ContextManager, Optional
 import uuid
 from django.conf import settings
+from django.utils import timezone
 from cjwkernel.util import tempfile_context
 from cjwstate import minio
 from cjwstate.models import StoredObject, WfModule
@@ -41,7 +42,10 @@ def _build_key(workflow_id: int, wf_module_id: int) -> str:
 
 
 def create_stored_object(
-    workflow_id: int, wf_module_id: int, path: Path, hash: str
+    workflow_id: int,
+    wf_module_id: int,
+    path: Path,
+    stored_at: Optional[timezone.datetime] = None,
 ) -> StoredObject:
     """
     Write and return a new StoredObject.
@@ -52,10 +56,17 @@ def create_stored_object(
     error if writing to minio failed. In case of partial completion, a
     StoredObject will exist in the database but no file will be saved in minio.
     """
+    if stored_at is None:
+        stored_at = timezone.now()
     key = _build_key(workflow_id, wf_module_id)
     size = path.stat().st_size
     stored_object = StoredObject.objects.create(
-        wf_module_id=wf_module_id, bucket=BUCKET, key=key, size=size, hash=hash
+        stored_at=stored_at,
+        wf_module_id=wf_module_id,
+        bucket=BUCKET,
+        key=key,
+        size=size,
+        hash="unhashed",
     )
     minio.fput_file(BUCKET, key, path)
     return stored_object

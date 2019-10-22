@@ -146,6 +146,7 @@ class ForkserverTest(unittest.TestCase):
             assert env == {
                 "LANG": "C.UTF-8",
                 "HOME": "/",
+                "OPENBLAS_NUM_THREADS": "1",
             }, "Got wrong os.environ: %r" % env
             """
         )

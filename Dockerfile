@@ -1,11 +1,10 @@
 # 0.1 parquet-to-arrow: executables we use in Workbench
-FROM workbenchdata/parquet-to-arrow:v0.1.3 AS parquet-to-arrow
+FROM workbenchdata/parquet-to-arrow:v0.2.0 AS parquet-to-arrow
 
 # 0.2 pybase: Python and tools we use in dev and production
 FROM python:3.7.4-slim-buster AS pybase
 
 # We probably don't want these, long-term.
-# nano: because we edit files on production
 # postgresql-client: because we poll the DB:
 # * on prod before ./manage.py migrate
 # * on unittest before ./manage.py test
@@ -20,7 +19,6 @@ RUN mkdir -p /usr/share/man/man1 /usr/share/man/man7 \
     && apt-get update \
     && apt-get install --no-install-recommends -y \
         git \
-        nano \
         postgresql-client \
         libcap-ng0 \
         unzip \
@@ -38,6 +36,7 @@ RUN mkdir -p /usr/share/nltk_data \
 
 RUN pip install pipenv==2018.11.26
 
+COPY --from=parquet-to-arrow /usr/bin/parquet-diff /usr/bin/parquet-diff
 COPY --from=parquet-to-arrow /usr/bin/parquet-to-arrow /usr/bin/parquet-to-arrow
 COPY --from=parquet-to-arrow /usr/bin/parquet-to-arrow-slice /usr/bin/parquet-to-arrow-slice
 COPY --from=parquet-to-arrow /usr/bin/parquet-to-text-stream /usr/bin/parquet-to-text-stream

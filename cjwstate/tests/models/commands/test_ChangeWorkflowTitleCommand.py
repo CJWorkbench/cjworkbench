@@ -18,21 +18,18 @@ class ChangeWorkflowTitleCommandTests(DbTestCase):
         # Change back to second title, see if it saved
         cmd = self.run_with_async_db(
             commands.do(
-                ChangeWorkflowTitleCommand, workflow=workflow, new_value="title2"
+                ChangeWorkflowTitleCommand, workflow_id=workflow.id, new_value="title2"
             )
         )
-        self.assertEqual(workflow.name, "title2")  # test var change
         workflow.refresh_from_db()
         self.assertEqual(workflow.name, "title2")  # test DB change
 
         # undo
         self.run_with_async_db(commands.undo(cmd))
-        self.assertEqual(workflow.name, "title1")  # test var change
         workflow.refresh_from_db()
         self.assertEqual(workflow.name, "title1")  # test DB change
 
         # redo
         self.run_with_async_db(commands.redo(cmd))
-        self.assertEqual(workflow.name, "title2")
         workflow.refresh_from_db()
         self.assertEqual(workflow.name, "title2")

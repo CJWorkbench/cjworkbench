@@ -15,7 +15,7 @@ The *Websockets* client sends a command like this:
 
 This will attempt to invoke:
 
-    await server.handlers.workflow.set_name(workflow=workflow, name='foo')
+    await server.handlers.workflow.set_name(workflow_id=workflow_id, name='foo')
 
 To avoid remote-code-execution security problems, the modules under `handler`
 need to explicitly register submodules:
