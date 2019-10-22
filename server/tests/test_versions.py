@@ -61,9 +61,8 @@ class VersionsTests(DbTestCase):
         v0 = workflow.last_delta_id
 
         # Test undoing nothing at all. Should NOP
-        self.run_with_async_db(WorkflowUndo(workflow))
+        self.run_with_async_db(WorkflowUndo(workflow.id))
         workflow.refresh_from_db()
-        self.assertEqual(workflow.last_delta_id, v0)
         self.assertEqual(all_modules.count(), 0)
         self.assertEqual(workflow.last_delta_id, v0)
 
@@ -71,7 +70,7 @@ class VersionsTests(DbTestCase):
         cmd1 = self.run_with_async_db(
             commands.do(
                 AddModuleCommand,
-                workflow=workflow,
+                workflow_id=workflow.id,
                 tab=tab,
                 slug="step-1",
                 module_id_name="pastecsv",
@@ -87,14 +86,14 @@ class VersionsTests(DbTestCase):
         self.assertWfModuleVersions(tab, [v1])
 
         # Undo, ensure we are back at start
-        self.run_with_async_db(WorkflowUndo(workflow))
+        self.run_with_async_db(WorkflowUndo(workflow.id))
         workflow.refresh_from_db()
         self.assertEqual(all_modules.count(), 0)
         self.assertEqual(workflow.last_delta_id, v0)
         self.assertWfModuleVersions(tab, [])
 
         # Redo, ensure we are back at v1
-        self.run_with_async_db(WorkflowRedo(workflow))
+        self.run_with_async_db(WorkflowRedo(workflow.id))
         workflow.refresh_from_db()
         self.assertEqual(all_modules.count(), 1)
         self.assertEqual(workflow.last_delta_id, v1)
@@ -104,7 +103,7 @@ class VersionsTests(DbTestCase):
         cmd2 = self.run_with_async_db(
             commands.do(
                 ChangeParametersCommand,
-                workflow=workflow,
+                workflow_id=workflow.id,
                 wf_module=tab.live_wf_modules.first(),
                 new_values={"csv": "some value"},
             )
@@ -117,21 +116,21 @@ class VersionsTests(DbTestCase):
         self.assertWfModuleVersions(tab, [v2])
 
         # Undo parameter change
-        self.run_with_async_db(WorkflowUndo(workflow))
+        self.run_with_async_db(WorkflowUndo(workflow.id))
         workflow.refresh_from_db()
         self.assertEqual(workflow.last_delta_id, v1)
         self.assertEqual(tab.live_wf_modules.first().params["csv"], "")
         self.assertWfModuleVersions(tab, [v1])
 
         # Redo
-        self.run_with_async_db(WorkflowRedo(workflow))
+        self.run_with_async_db(WorkflowRedo(workflow.id))
         workflow.refresh_from_db()
         self.assertEqual(workflow.last_delta_id, v2)
         self.assertEqual(tab.live_wf_modules.first().params["csv"], "some value")
         self.assertWfModuleVersions(tab, [v2])
 
         # Redo again should do nothing
-        self.run_with_async_db(WorkflowRedo(workflow))
+        self.run_with_async_db(WorkflowRedo(workflow.id))
         workflow.refresh_from_db()
         self.assertEqual(workflow.last_delta_id, v2)
         self.assertEqual(tab.live_wf_modules.first().params["csv"], "some value")
@@ -140,7 +139,9 @@ class VersionsTests(DbTestCase):
         # Add one more command so the stack is 3 deep
         cmd3 = self.run_with_async_db(
             commands.do(
-                ChangeWorkflowTitleCommand, workflow=workflow, new_value="New Title"
+                ChangeWorkflowTitleCommand,
+                workflow_id=workflow.id,
+                new_value="New Title",
             )
         )
         v3 = cmd3.id
@@ -148,28 +149,28 @@ class VersionsTests(DbTestCase):
         self.assertWfModuleVersions(tab, [v2])
 
         # Undo twice
-        self.run_with_async_db(WorkflowUndo(workflow))
+        self.run_with_async_db(WorkflowUndo(workflow.id))
         workflow.refresh_from_db()
         self.assertEqual(workflow.last_delta, cmd2)
         self.assertWfModuleVersions(tab, [v2])
-        self.run_with_async_db(WorkflowUndo(workflow))
+        self.run_with_async_db(WorkflowUndo(workflow.id))
         workflow.refresh_from_db()
         self.assertEqual(workflow.last_delta, cmd1)
         self.assertWfModuleVersions(tab, [v1])
 
         # Redo twice
-        self.run_with_async_db(WorkflowRedo(workflow))
+        self.run_with_async_db(WorkflowRedo(workflow.id))
         workflow.refresh_from_db()
         self.assertEqual(workflow.last_delta, cmd2)
         self.assertWfModuleVersions(tab, [v2])
-        self.run_with_async_db(WorkflowRedo(workflow))
+        self.run_with_async_db(WorkflowRedo(workflow.id))
         workflow.refresh_from_db()
         self.assertEqual(workflow.last_delta, cmd3)
         self.assertWfModuleVersions(tab, [v2])
 
         # Undo again to get to a place where we have two commands to redo
-        self.run_with_async_db(WorkflowUndo(workflow))
-        self.run_with_async_db(WorkflowUndo(workflow))
+        self.run_with_async_db(WorkflowUndo(workflow.id))
+        self.run_with_async_db(WorkflowUndo(workflow.id))
         workflow.refresh_from_db()
         self.assertEqual(workflow.last_delta, cmd1)
 
@@ -179,7 +180,7 @@ class VersionsTests(DbTestCase):
         cmd4 = self.run_with_async_db(
             commands.do(
                 ChangeWfModuleNotesCommand,
-                workflow=workflow,
+                workflow_id=workflow.id,
                 wf_module=wfm,
                 new_value="Note of no note",
             )
@@ -193,13 +194,13 @@ class VersionsTests(DbTestCase):
 
         # Undo back to start, then add a command, ensure it deletes dangling
         # commands (tests an edge case in Delta.save)
-        self.run_with_async_db(WorkflowUndo(workflow))
+        self.run_with_async_db(WorkflowUndo(workflow.id))
         workflow.refresh_from_db()
         self.assertEqual(workflow.last_delta_id, v1)
         cmd5 = self.run_with_async_db(
             commands.do(
                 ChangeWfModuleNotesCommand,
-                workflow=workflow,
+                workflow_id=workflow.id,
                 wf_module=cmd1.wf_module,
                 new_value="Note of some note",
             )

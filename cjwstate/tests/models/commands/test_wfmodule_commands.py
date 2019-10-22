@@ -76,7 +76,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
         cmd = self.run_with_async_db(
             commands.do(
                 AddModuleCommand,
-                workflow=self.workflow,
+                workflow_id=self.workflow.id,
                 tab=self.workflow.tabs.first(),
                 slug="step-2",
                 module_id_name=self.module_version.id_name,
@@ -144,7 +144,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
         cmd = self.run_with_async_db(
             commands.do(
                 AddModuleCommand,
-                workflow=workflow,
+                workflow_id=workflow.id,
                 tab=workflow.tabs.first(),
                 slug="step-1",
                 module_id_name=module_version.id_name,
@@ -164,7 +164,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
             self.run_with_async_db(
                 commands.do(
                     AddModuleCommand,
-                    workflow=workflow,
+                    workflow_id=workflow.id,
                     tab=tab,
                     slug="step-1",
                     module_id_name="x",
@@ -179,7 +179,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
             self.run_with_async_db(
                 commands.do(
                     AddModuleCommand,
-                    workflow=workflow,
+                    workflow_id=workflow.id,
                     tab=workflow.tabs.first(),
                     slug="step-1",
                     module_id_name="doesnotexist",
@@ -204,7 +204,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
             self.run_with_async_db(
                 commands.do(
                     AddModuleCommand,
-                    workflow=workflow,
+                    workflow_id=workflow.id,
                     tab=workflow.tabs.first(),
                     slug="step-1",
                     module_id_name=module_version.id_name,
@@ -234,7 +234,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
         cmd1 = self.run_with_async_db(
             commands.do(
                 AddModuleCommand,
-                workflow=self.workflow,
+                workflow_id=self.workflow.id,
                 tab=self.workflow.tabs.first(),
                 slug="step-2",
                 module_id_name=self.module_version.id_name,
@@ -253,7 +253,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
         cmd2 = self.run_with_async_db(
             commands.do(
                 AddModuleCommand,
-                workflow=self.workflow,
+                workflow_id=self.workflow.id,
                 tab=self.workflow.tabs.first(),
                 slug="step-3",
                 module_id_name=self.module_version.id_name,
@@ -270,7 +270,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
         cmd3 = self.run_with_async_db(
             commands.do(
                 AddModuleCommand,
-                workflow=self.workflow,
+                workflow_id=self.workflow.id,
                 tab=self.workflow.tabs.first(),
                 slug="step-4",
                 module_id_name=self.module_version.id_name,
@@ -324,7 +324,9 @@ class AddDeleteModuleCommandTests(DbTestCase):
         # Delete it. Yeah, you better run.
         cmd = self.run_with_async_db(
             commands.do(
-                DeleteModuleCommand, workflow=self.workflow, wf_module=existing_module
+                DeleteModuleCommand,
+                workflow_id=self.workflow.id,
+                wf_module=existing_module,
             )
         )
         self.assertEqual(all_modules.count(), 0)
@@ -362,7 +364,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
 
         cmd = self.run_with_async_db(
             commands.do(
-                DeleteModuleCommand, workflow=self.workflow, wf_module=wf_module
+                DeleteModuleCommand, workflow_id=self.workflow.id, wf_module=wf_module
             )
         )
 
@@ -377,7 +379,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
         cmd = self.run_with_async_db(
             commands.do(
                 AddModuleCommand,
-                workflow=self.workflow,
+                workflow_id=self.workflow.id,
                 tab=self.workflow.tabs.first(),
                 slug="step-1",
                 module_id_name=self.module_version.id_name,
@@ -414,7 +416,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
         cmd = self.run_with_async_db(
             commands.do(
                 AddModuleCommand,
-                workflow=self.workflow,
+                workflow_id=self.workflow.id,
                 tab=self.workflow.tabs.first(),
                 slug="step-2",
                 module_id_name=self.module_version.id_name,
@@ -456,7 +458,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
         cmd = self.run_with_async_db(
             commands.do(
                 AddModuleCommand,
-                workflow=self.workflow,
+                workflow_id=self.workflow.id,
                 tab=tab2,
                 slug="step-2",
                 module_id_name=self.module_version.id_name,
@@ -476,7 +478,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
         cmda = self.run_with_async_db(
             commands.do(
                 AddModuleCommand,
-                workflow=self.workflow,
+                workflow_id=self.workflow.id,
                 tab=self.workflow.tabs.first(),
                 slug="step-1",
                 module_id_name=self.module_version.id_name,
@@ -486,7 +488,9 @@ class AddDeleteModuleCommandTests(DbTestCase):
         )
         self.run_with_async_db(
             commands.do(
-                DeleteModuleCommand, workflow=self.workflow, wf_module=cmda.wf_module
+                DeleteModuleCommand,
+                workflow_id=self.workflow.id,
+                wf_module=cmda.wf_module,
             )
         )
         self.workflow.delete()
@@ -497,7 +501,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
         self.run_with_async_db(
             commands.do(
                 AddModuleCommand,
-                workflow=self.workflow,
+                workflow_id=self.workflow.id,
                 tab=self.workflow.tabs.first(),
                 slug="step-1",
                 module_id_name=self.module_version.id_name,
@@ -510,7 +514,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
         self.run_with_async_db(
             commands.do(
                 AddModuleCommand,
-                workflow=self.workflow,
+                workflow_id=self.workflow.id,
                 tab=self.workflow.tabs.first(),
                 slug="step-2",
                 module_id_name=self.module_version.id_name,
@@ -530,7 +534,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
         self.run_with_async_db(
             commands.do(
                 AddModuleCommand,
-                workflow=self.workflow,
+                workflow_id=self.workflow.id,
                 tab=self.workflow.tabs.first(),
                 slug="step-1",
                 module_id_name=self.module_version.id_name,

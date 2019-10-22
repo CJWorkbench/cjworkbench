@@ -75,7 +75,7 @@ class WfModuleTests(DbTestCase):
             fetch_error="maybe an error",
         )
         with parquet_file({"A": [1]}) as path:
-            so = create_stored_object(workflow.id, wf_module.id, path, "hash")
+            so = create_stored_object(workflow.id, wf_module.id, path)
         wf_module.stored_data_version = so.stored_at
         wf_module.save(update_fields=["stored_data_version"])
 
@@ -113,7 +113,7 @@ class WfModuleTests(DbTestCase):
             last_relevant_delta_id=workflow.last_delta_id,
         )
         with parquet_file({"A": [1]}) as path:
-            so = create_stored_object(workflow.id, wf_module.id, path, "hash")
+            so = create_stored_object(workflow.id, wf_module.id, path)
         wf_module.stored_data_version = so.stored_at
         wf_module.save(update_fields=["stored_data_version"])
         # Now delete the file on S3 -- but leave the DB pointing to it.

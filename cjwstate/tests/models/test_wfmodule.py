@@ -27,10 +27,10 @@ class WfModuleTests(DbTestCase):
         # store data to test that it is duplicated
         with tempfile_context() as path1:
             path1.write_bytes(b"12345")
-            create_stored_object(workflow.id, wfm1.id, path1, "hash1")
+            create_stored_object(workflow.id, wfm1.id, path1)
         with tempfile_context() as path2:
             path1.write_bytes(b"23456")
-            so2 = create_stored_object(workflow.id, wfm1.id, path2, "hash2")
+            so2 = create_stored_object(workflow.id, wfm1.id, path2)
         wfm1.secrets = {"do not copy": {"name": "evil", "secret": "evil"}}
         wfm1.stored_data_version = so2.stored_at
         wfm1.save(update_fields=["stored_data_version"])

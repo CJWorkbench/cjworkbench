@@ -32,6 +32,27 @@ def convert_parquet_file_to_arrow_file(parquet_path: Path, arrow_path: Path) -> 
         raise pyarrow.ArrowIOError(result.stderr)
 
 
+def are_files_equal(path1: Path, path2: Path) -> bool:
+    result = subprocess.run(
+        ["/usr/bin/parquet-diff", str(path1), str(path2)],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        # We don't handle TimeoutException at all: conversion should always be
+        # quick. If it takes longer than 60s that's certainly a bug in
+        # parquet-to-arrow; crash and email us so we can fix it ASAP.
+        timeout=60,  # should never time out
+    )
+    if result.returncode == 0:
+        return True  # files are same
+    elif result.returncode == 1:
+        return False  # and ignore message -- it's a debug message
+    else:
+        raise pyarrow.ArrowIOError(result.stdout)
+
+
 def write(parquet_path: Path, table: pyarrow.Table) -> None:
     """
     Write an Arrow table to a Parquet file, overwriting if needed.

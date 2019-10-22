@@ -16,7 +16,7 @@ async def websockets_notify(workflow_id: int, ws_data: Dict[str, Any]) -> None:
 
 async def queue_render(workflow_id: int, delta_id: int) -> None:
     """
-    Tell renderer to render `workflow`; return immediately.
+    Tell renderer to render workflow; return immediately.
 
     This is an alias; its main purpose is for white-box unit testing.
     """
@@ -24,14 +24,16 @@ async def queue_render(workflow_id: int, delta_id: int) -> None:
 
 
 @database_sync_to_async
-def _workflow_has_notifications(workflow: Workflow) -> bool:
+def _workflow_has_notifications(workflow_id: int) -> bool:
     """Detect whether a workflow sends email on changes."""
-    return WfModule.live_in_workflow(workflow).filter(notifications=True).exists()
+    return WfModule.live_in_workflow(workflow_id).filter(notifications=True).exists()
 
 
-async def _maybe_queue_render(workflow: Workflow, delta: Delta) -> None:
+async def _maybe_queue_render(
+    workflow_id: int, relevant_delta_id: int, delta: Delta
+) -> None:
     """
-    Tell renderer to render `workflow`; return immediately.
+    Tell renderer to render workflow; return immediately.
 
     `delta` is used to check for ChangeDataVersionCommand, which gets special
     logic. But to be clear: the `delta` in question might have been undo()-ne.
@@ -46,18 +48,18 @@ async def _maybe_queue_render(workflow: Workflow, delta: Delta) -> None:
         #
         # From our point of view:
         #
-        #     * If self.workflow has notifications, render.
-        #     * If anybody is viewing self.workflow right now, render.
+        #     * If workflow has notifications, render.
+        #     * If anybody is viewing workflow right now, render.
         #
         # Of course, it's impossible for us to know whether anybody is viewing
-        # self.workflow. So we _broadcast_ to them and ask _them_ to request a
+        # workflow. So we _broadcast_ to them and ask _them_ to request a
         # render if they're listening. This gives N render requests (one per
         # Websockets cconsumer) instead of 1, but we assume the extra render
         # requests will be no-ops.
         #
         # From the user's point of view:
         #
-        #     * If I'm viewing self.workflow, changing data versions causes a
+        #     * If I'm viewing workflow, changing data versions causes a
         #       render. (There isn't even any HTTP traffic: the consumer does
         #       the work.)
         #     * Otherwise, the next time I browse to the page, the page-load
@@ -67,21 +69,19 @@ async def _maybe_queue_render(workflow: Workflow, delta: Delta) -> None:
         #
         #     * Websockets consumers queue a render when we ask them.
         #     * The Django page-load view queues a render when needed.
-        if await _workflow_has_notifications(workflow):
-            await queue_render(workflow.id, workflow.last_delta_id)
+        if await _workflow_has_notifications(workflow_id):
+            await queue_render(workflow_id, relevant_delta_id)
         else:
-            await websockets.queue_render_if_listening(
-                workflow.id, workflow.last_delta_id
-            )
+            await websockets.queue_render_if_listening(workflow_id, relevant_delta_id)
     else:
         # Normal case: the Delta says we need a render. Assume there's a user
         # waiting for this render -- otherwise, how did the Delta get here?
-        await queue_render(workflow.id, workflow.last_delta_id)
+        await queue_render(workflow_id, relevant_delta_id)
 
 
 @database_sync_to_async
 def _first_forward_and_save_returning_ws_data(
-    cls, workflow: Workflow, **kwargs
+    cls, workflow_id: int, **kwargs
 ) -> Tuple[Delta, Dict[str, Any], bool]:
     """
     Create and execute `cls` command; return `(Delta, WebSocket data, render?)`.
@@ -94,7 +94,9 @@ def _first_forward_and_save_returning_ws_data(
     This is how `cls.amend_create_kwargs()` suggests the Delta should not be
     created at all.
     """
-    with workflow.cooperative_lock():
+    # raises Workflow.DoesNotExist
+    with Workflow.lookup_and_cooperative_lock(id=workflow_id) as workflow_lock:
+        workflow = workflow_lock.workflow
         create_kwargs = cls.amend_create_kwargs(workflow=workflow, **kwargs)
         if not create_kwargs:
             return (None, None, False)
@@ -127,31 +129,29 @@ def _first_forward_and_save_returning_ws_data(
 
 @database_sync_to_async
 def _call_forward_and_load_ws_data(delta: Delta) -> Tuple[Dict[str, Any], bool]:
-    workflow = delta.workflow
-    with workflow.cooperative_lock():
+    with Workflow.lookup_and_cooperative_lock(id=delta.workflow_id):
         delta.forward()
-        workflow.last_delta = delta
-        workflow.save(update_fields=["last_delta_id"])
+        delta.workflow.last_delta = delta
+        delta.workflow.save(update_fields=["last_delta_id"])
 
         return (delta.load_ws_data(), delta.get_modifies_render_output())
 
 
 @database_sync_to_async
 def _call_backward_and_load_ws_data(delta: Delta) -> Tuple[Dict[str, Any], bool]:
-    workflow = delta.workflow
-    with workflow.cooperative_lock():
+    with Workflow.lookup_and_cooperative_lock(id=delta.workflow_id):
         delta.backward()
 
         # Point workflow to previous delta
         # Only update prev_delta_id: other columns may have been edited in
         # backward().
-        workflow.last_delta = delta.prev_delta
-        workflow.save(update_fields=["last_delta_id"])
+        delta.workflow.last_delta = delta.prev_delta
+        delta.workflow.save(update_fields=["last_delta_id"])
 
         return (delta.load_ws_data(), delta.get_modifies_render_output())
 
 
-async def do(cls, *, workflow: Workflow, **kwargs) -> Delta:
+async def do(cls, *, workflow_id: int, **kwargs) -> Delta:
     """
     Create a Command and run its .forward().
 
@@ -160,29 +160,29 @@ async def do(cls, *, workflow: Workflow, **kwargs) -> Delta:
     If Delta suggests sending websockets data, send it over Websockets
     and possibly schedule a render.
 
-    Keyword arguments vary by cls, but `workflow` is always required.
+    Keyword arguments vary by cls, but `workflow_id` is always required.
 
     Example:
 
         delta = await commands.do(
             ChangeWfModuleNotesCommand,
-            workflow=wf_module.workflow, 
+            workflow_id=wf_module.workflow_id, 
             # ... other kwargs
         )
         # now delta has been applied and committed to the database, and
         # websockets users have been notified.
     """
     delta, ws_data, want_render = await _first_forward_and_save_returning_ws_data(
-        cls, workflow, **kwargs
+        cls, workflow_id, **kwargs
     )
 
     # In order: notify websockets that things are busy, _then_ give
     # renderer the chance to notify websockets rendering is finished.
     if delta:
-        await websockets_notify(workflow.id, ws_data)
+        await websockets_notify(workflow_id, ws_data)
 
     if want_render:
-        await _maybe_queue_render(workflow, delta)
+        await _maybe_queue_render(workflow_id, delta.id, delta)
 
     return delta
 
@@ -191,21 +191,25 @@ async def redo(delta: Delta) -> None:
     """
     Call delta.forward(); notify websockets and renderer.
     """
+    # updates delta.workflow.last_delta_id (so querying it won't cause a DB lookup)
     ws_data, want_render = await _call_forward_and_load_ws_data(delta)
     if ws_data:
         await websockets_notify(delta.workflow_id, ws_data)
     if want_render:
         # Assume delta.workflow is cached and will not cause a database request
-        await _maybe_queue_render(delta.workflow, delta)
+        await _maybe_queue_render(delta.workflow_id, delta.id, delta)
 
 
 async def undo(delta: Delta) -> None:
     """
     Call delta.backward(); notify websockets and renderer.
     """
+    # updates delta.workflow.last_delta_id (so querying it won't cause a DB lookup)
     ws_data, want_render = await _call_backward_and_load_ws_data(delta)
     if ws_data:
         await websockets_notify(delta.workflow_id, ws_data)
     if want_render:
         # Assume delta.workflow is cached and will not cause a database request
-        await _maybe_queue_render(delta.workflow, delta)
+        await _maybe_queue_render(
+            delta.workflow_id, delta.workflow.last_delta_id, delta
+        )
