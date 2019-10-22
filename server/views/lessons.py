@@ -202,6 +202,13 @@ def _render_course(request, course, lesson_url_prefix):
     if request.user and request.user.is_authenticated:
         logged_in_user = UserSerializer(request.user).data
 
+    courses = [c for c in AllCourses if c.locale == request.locale_id]
+    if request.locale_id != default_locale:
+        courses = [*courses, *[c for c in AllCourses if c.locale == default_locale]]
+
+    if course.title != "Lessons" and course not in courses:
+        courses.append(course)
+
     # We render using HTML, not React, to make this page SEO-friendly.
     return TemplateResponse(
         request,
@@ -209,9 +216,7 @@ def _render_course(request, course, lesson_url_prefix):
         {
             "initState": json.dumps({"loggedInUser": logged_in_user}),
             "course": course,
-            "courses": [
-                c for c in AllCourses if c.locale in [request.locale_id, default_locale]
-            ],
+            "courses": courses,
             "lessons": list(course.lessons.values()),
             "lesson_url_prefix": lesson_url_prefix,
         },
@@ -224,14 +229,13 @@ def render_lesson_list(request):
     #
     # Do not build this Course using LessonLookup: LessonLookup contains
     # "hidden" lessons; AllLessons does not.
-    course = Course(
-        title="Lessons",
-        lessons=dict(
-            (l.slug, l)
-            for l in AllLessons
-            if l.locale in [request.locale_id, default_locale]
-        ),
-    )
+    lessons = dict((l.slug, l) for l in AllLessons if l.locale == request.locale_id)
+    if request.locale_id != default_locale:
+        lessons = {
+            **lessons,
+            **dict((l.slug, l) for l in AllLessons if l.locale == default_locale),
+        }
+    course = Course(title="Lessons", lessons=lessons)
     return _render_course(request, course, "/lessons")
 
 
