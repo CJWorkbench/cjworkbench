@@ -1,16 +1,23 @@
 from contextlib import contextmanager
+import logging
 from pathlib import Path
 from unittest.mock import Mock, patch
 from django.utils import timezone
 import pyarrow
 from cjwkernel.errors import ModuleExitedError
-from cjwkernel.types import I18nMessage, RenderError, RenderResult
-from cjwkernel.tests.util import parquet_file, assert_arrow_table_equals
-from cjwstate import minio
+from cjwkernel.types import I18nMessage, RenderError, RenderResult, Tab
+from cjwkernel.tests.util import (
+    arrow_table,
+    arrow_table_context,
+    parquet_file,
+    assert_arrow_table_equals,
+)
+from cjwstate import minio, rendercache
 from cjwstate.storedobjects import create_stored_object
 from cjwstate.models import ModuleVersion, Workflow
 from cjwstate.modules.loaded_module import LoadedModule
 from cjwstate.tests.utils import DbTestCase
+from renderer import notifications
 from renderer.execute.wf_module import execute_wfmodule
 
 
@@ -64,6 +71,100 @@ class WfModuleTests(DbTestCase):
             yield
 
     @patch("server.websockets.ws_client_send_delta_async", noop)
+    @patch.object(notifications, "email_output_delta")
+    def test_email_delta(self, email_delta):
+        workflow = Workflow.create_and_init()
+        tab = workflow.tabs.first()
+        wf_module = tab.wf_modules.create(
+            order=0,
+            slug="step-1",
+            module_id_name="x",
+            last_relevant_delta_id=workflow.last_delta_id - 1,
+            notifications=True,
+        )
+        rendercache.cache_render_result(
+            workflow,
+            wf_module,
+            workflow.last_delta_id - 1,
+            RenderResult(arrow_table({"A": [1]})),
+        )
+        wf_module.last_relevant_delta_id = workflow.last_delta_id
+        wf_module.save(update_fields=["last_relevant_delta_id"])
+
+        with arrow_table_context({"A": [2]}) as table2:
+
+            def render(*args, **kwargs):
+                return RenderResult(table2)
+
+            with self._stub_module(render):
+                self.run_with_async_db(
+                    execute_wfmodule(
+                        workflow,
+                        wf_module,
+                        {},
+                        Tab(tab.slug, tab.name),
+                        RenderResult(),
+                        {},
+                        Path("/unused"),
+                    )
+                )
+
+        email_delta.assert_called()
+        delta = email_delta.call_args[0][0]
+        self.assertEqual(delta.user, workflow.owner)
+        self.assertEqual(delta.workflow, workflow)
+        self.assertEqual(delta.wf_module, wf_module)
+        self.assertEqual(delta.old_result, RenderResult(arrow_table({"A": [1]})))
+        self.assertEqual(delta.new_result, RenderResult(arrow_table({"A": [2]})))
+
+    @patch("server.websockets.ws_client_send_delta_async", noop)
+    @patch.object(rendercache, "open_cached_render_result")
+    @patch.object(notifications, "email_output_delta")
+    def test_email_delta_ignore_corrupt_cache_error(self, email_delta, read_cache):
+        read_cache.side_effect = rendercache.CorruptCacheError
+        workflow = Workflow.create_and_init()
+        tab = workflow.tabs.first()
+        wf_module = tab.wf_modules.create(
+            order=0,
+            slug="step-1",
+            module_id_name="x",
+            last_relevant_delta_id=workflow.last_delta_id - 1,
+            notifications=True,
+        )
+        # We need to actually populate the cache to set up the test. The code
+        # under test will only try to open the render result if the database
+        # says there's something there.
+        rendercache.cache_render_result(
+            workflow,
+            wf_module,
+            workflow.last_delta_id - 1,
+            RenderResult(arrow_table({"A": [1]})),
+        )
+        wf_module.last_relevant_delta_id = workflow.last_delta_id
+        wf_module.save(update_fields=["last_relevant_delta_id"])
+
+        with arrow_table_context({"A": [2]}) as table2:
+
+            def render(*args, **kwargs):
+                return RenderResult(table2)
+
+            with self._stub_module(render):
+                with self.assertLogs(level=logging.ERROR):
+                    self.run_with_async_db(
+                        execute_wfmodule(
+                            workflow,
+                            wf_module,
+                            {},
+                            Tab(tab.slug, tab.name),
+                            RenderResult(),
+                            {},
+                            Path("/unused"),
+                        )
+                    )
+
+        email_delta.assert_not_called()
+
+    @patch("server.websockets.ws_client_send_delta_async", noop)
     def test_fetch_result_happy_path(self):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
@@ -95,7 +196,7 @@ class WfModuleTests(DbTestCase):
                     workflow,
                     wf_module,
                     {},
-                    tab.name,
+                    Tab(tab.slug, tab.name),
                     RenderResult(),
                     {},
                     Path("/unused"),
@@ -129,7 +230,7 @@ class WfModuleTests(DbTestCase):
                     workflow,
                     wf_module,
                     {},
-                    tab.name,
+                    Tab(tab.slug, tab.name),
                     RenderResult(),
                     {},
                     Path("/unused"),
@@ -160,7 +261,7 @@ class WfModuleTests(DbTestCase):
                     workflow,
                     wf_module,
                     {},
-                    tab.name,
+                    Tab(tab.slug, tab.name),
                     RenderResult(),
                     {},
                     Path("/unused"),
@@ -188,7 +289,7 @@ class WfModuleTests(DbTestCase):
                     workflow,
                     wf_module,
                     {},
-                    tab.name,
+                    Tab(tab.slug, tab.name),
                     RenderResult(),
                     {},
                     Path("/unused"),
@@ -224,7 +325,7 @@ class WfModuleTests(DbTestCase):
                     workflow,
                     wf_module,
                     {},
-                    tab.name,
+                    Tab(tab.slug, tab.name),
                     RenderResult(),
                     {},
                     Path("/unused"),
@@ -251,7 +352,7 @@ class WfModuleTests(DbTestCase):
                     workflow,
                     wf_module,
                     {},
-                    tab.name,
+                    Tab(tab.slug, tab.name),
                     RenderResult(),
                     {},
                     Path("/unused"),
