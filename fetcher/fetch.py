@@ -193,7 +193,6 @@ def fetch_or_wrap_error(
     * Module migrate_params() returns invalid data (`ValueError`)
     * input_crr points to a nonexistent file (`FileNotFoundError`)
     """
-
     # module_version=None is allowed
     try:
         loaded_module = LoadedModule.for_module_version(module_version)

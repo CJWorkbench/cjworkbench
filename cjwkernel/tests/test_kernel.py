@@ -6,7 +6,7 @@ import pyarrow
 from cjwkernel.errors import ModuleCompileError, ModuleExitedError, ModuleTimeoutError
 from cjwkernel.kernel import Kernel
 from cjwkernel.tests.util import arrow_table_context, MockPath
-from cjwkernel import forkserver, types
+from cjwkernel import types
 from cjwkernel.util import create_tempdir, tempfile_context
 
 
@@ -25,7 +25,8 @@ class KernelTests(unittest.TestCase):
 
     def setUp(self):
         super().setUp()
-        self.basedir = create_tempdir()
+        self.basedir = create_tempdir(prefix="basedir-")
+        self.basedir.chmod(0o755)
 
     def tearDown(self):
         shutil.rmtree(self.basedir)
@@ -155,7 +156,8 @@ class KernelTests(unittest.TestCase):
             ],
             dir=self.basedir,
         ) as input_table:
-            with tempfile_context(dir=self.basedir) as output_path:
+            input_table.path.chmod(0o644)
+            with tempfile_context(prefix="output-", dir=self.basedir) as output_path:
                 result = self.kernel.render(
                     module,
                     self.basedir,
@@ -181,7 +183,10 @@ class KernelTests(unittest.TestCase):
         )
         with self.assertRaises(ModuleExitedError) as cm:
             with arrow_table_context({"A": [1]}, dir=self.basedir) as input_table:
-                with tempfile_context(dir=self.basedir) as output_path:
+                input_table.path.chmod(0o644)
+                with tempfile_context(
+                    prefix="output-", dir=self.basedir
+                ) as output_path:
                     self.kernel.render(
                         module,
                         self.basedir,
@@ -219,7 +224,10 @@ class KernelTests(unittest.TestCase):
         )
         with self.assertRaises(ModuleExitedError) as cm:
             with arrow_table_context({"A": [1]}, dir=self.basedir) as input_table:
-                with tempfile_context(dir=self.basedir) as output_path:
+                input_table.path.chmod(0o644)
+                with tempfile_context(
+                    prefix="output-", dir=self.basedir
+                ) as output_path:
                     result = self.kernel.render(
                         module,
                         self.basedir,
@@ -244,7 +252,10 @@ class KernelTests(unittest.TestCase):
         with patch.object(self.kernel, "render_timeout", 0.001):
             with self.assertRaises(ModuleTimeoutError):
                 with arrow_table_context({"A": [1]}, dir=self.basedir) as input_table:
-                    with tempfile_context(dir=self.basedir) as output_path:
+                    input_table.path.chmod(0o644)
+                    with tempfile_context(
+                        prefix="output-", dir=self.basedir
+                    ) as output_path:
                         self.kernel.render(
                             module,
                             self.basedir,
@@ -259,12 +270,19 @@ class KernelTests(unittest.TestCase):
         module = self.kernel.compile(
             MockPath(
                 ["foo.py"],
-                b"import pandas as pd\ndef fetch(params): return pd.DataFrame({'A': [params['a']]})",
+                textwrap.dedent(
+                    """
+                    import pandas as pd
+
+                    def fetch(params):
+                        return pd.DataFrame({"A": [params["a"]]})
+                    """
+                ).encode("utf-8"),
             ),
             "foo",
         )
 
-        with tempfile_context(dir=self.basedir) as output_path:
+        with tempfile_context(prefix="output-", dir=self.basedir) as output_path:
             result = self.kernel.fetch(
                 module,
                 self.basedir,
@@ -278,3 +296,27 @@ class KernelTests(unittest.TestCase):
             self.assertEquals(result.errors, [])
             table = pyarrow.parquet.read_pandas(str(result.path))
             self.assertEquals(table.to_pydict(), {"A": [1]})
+
+    def test_sandbox_no_open_file_descriptors(self):
+        self.kernel.compile(  # and validate!
+            MockPath(
+                ["foo.py"],
+                textwrap.dedent(
+                    """
+                    import errno
+                    import os
+
+                    for i in range(3, 100):
+                        try:
+                            os.fstat(i)
+                            assert False, f"We passed fd{i} which can be used to escape chroot"
+                        except OSError as err:
+                            if err.errno == errno.EBADF:
+                                pass  # this is what we expect: no FDs
+                            else:
+                                raise  # what the heck happened?
+                    """
+                ).encode("utf-8"),
+            ),
+            "foo",
+        )

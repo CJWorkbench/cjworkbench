@@ -1,5 +1,6 @@
 import contextlib
 import os
+import tempfile
 from pathlib import Path
 import shutil
 import stat
@@ -64,6 +65,15 @@ class ForkserverTest(unittest.TestCase):
     def tearDownClass(cls):
         cls._forkserver.close()
         del cls._forkserver
+
+    def setUp(self):
+        super().setUp()
+        self.chroot_dir = Path(tempfile.mkdtemp(prefix="forkserver-test-chroot-"))
+        self.chroot_dir.chmod(0o777)  # so subprocesses can play in their chroots
+
+    def tearDown(self):
+        shutil.rmtree(self.chroot_dir)
+        super().tearDown()
 
     def _spawn_and_communicate(
         self,
@@ -186,11 +196,12 @@ class ForkserverTest(unittest.TestCase):
             # Test we can't actually *use* a capability -- chroot, for example
 
             try:
-                os.chroot("/sys")  # raise on error
+                os.chroot("/lib")  # raise on error
                 assert False, "chroot worked after dropping capabilities?"
             except PermissionError:
                 pass
             """,
+            chroot_dir=self.chroot_dir,
             skip_sandbox_except=frozenset(["drop_capabilities"]),
         )
 
@@ -212,88 +223,96 @@ class ForkserverTest(unittest.TestCase):
             assert_write_fails("/proc/self/gid_map", "0 0 65536")
             """,
             # There's no way to disable this security feature. But for testing
-            # we must _disable_ setuid, drop_capabilities and chroot; so write
-            # a dummy skip_sandbox_except to accomplish that.
+            # we must _disable_ setuid and chroot; so write a dummy
+            # skip_sandbox_except to accomplish that.
             skip_sandbox_except=frozenset(["skip_all_optional_sandboxing"]),
         )
 
     def test_SECURITY_chroot_has_no_proc_dir(self):
-        with tempdir_context() as root:
-            self._spawn_and_communicate_or_raise(
-                r"""
-                import os
+        self._spawn_and_communicate_or_raise(
+            r"""
+            import os
 
-                assert not os.path.exists("/proc"), "/proc should not be accessible"
-                assert not os.path.exists("/sys"), "/sys should not be accessible"
-                """,
-                chroot_dir=root,
-                skip_sandbox_except=frozenset(["chroot"]),
-            )
+            assert not os.path.exists("/proc"), "/proc should not be accessible"
+            assert not os.path.exists("/sys"), "/sys should not be accessible"
+            """,
+            chroot_dir=self.chroot_dir,
+            skip_sandbox_except=frozenset(["chroot"]),
+        )
+
+    def test_chroot_tempdirs(self):
+        self._spawn_and_communicate_or_raise(
+            r"""
+            import tempfile
+
+            tempfile.NamedTemporaryFile(dir="/tmp")  # do not crash
+            tempfile.NamedTemporaryFile(dir="/var/tmp")  # do not crash
+            """,
+            chroot_dir=self.chroot_dir,
+            skip_sandbox_except=frozenset(["chroot"]),
+        )
 
     def test_SECURITY_chroot_ensures_cwd_is_under_root(self):
-        with tempdir_context() as root:
-            self._spawn_and_communicate_or_raise(
-                r"""
-                import os
+        self._spawn_and_communicate_or_raise(
+            r"""
+            import os
 
-                assert os.getcwd() == "/"
-                """,
-                chroot_dir=root,
-                skip_sandbox_except=frozenset(["chroot"]),
-            )
+            assert os.getcwd() == "/"
+            """,
+            chroot_dir=self.chroot_dir,
+            skip_sandbox_except=frozenset(["chroot"]),
+        )
 
     def test_SECURITY_provide_dir_readable(self):
-        with tempdir_context() as root:
-            with tempdir_context() as files:
-                (files / "foo.txt").write_text("foo")
-                (files / "subdir").mkdir(0o755)
-                (files / "subdir" / "bar.bin").write_bytes(b"subbar")
-
-                self._spawn_and_communicate_or_raise(
-                    r"""
-                    from pathlib import Path
-
-                    assert Path("/data/foo.txt").read_text() == "foo"
-                    assert Path("/data/subdir/bar.bin").read_text() == "subbar"
-                    """,
-                    chroot_dir=root,
-                    chroot_provide_paths=[(Path("/data"), files)],
-                    skip_sandbox_except=frozenset(["chroot"]),
-                )
-
-    def test_SECURITY_can_exec_statically_linked_program(self):
-        with tempdir_context() as root:
-            # Write /data.parquet within the subprocess itself. We can't use
-            # `chroot_provide_paths` here because on dev machines, /app is a
-            # volume mount while `root` is in the container image; os.link()
-            # won't cross filesystems.
-            parquet_bytes = (
-                Path(__file__).parent.parent / "test_data" / "trivial.parquet"
-            ).read_bytes()
+        with tempdir_context() as files:
+            files.chmod(0o755)
+            (files / "foo.txt").write_text("foo")
+            (files / "subdir").mkdir(0o755)
+            (files / "subdir" / "bar.bin").write_bytes(b"subbar")
 
             self._spawn_and_communicate_or_raise(
                 r"""
                 from pathlib import Path
-                import subprocess
-                Path("/data.parquet").write_bytes(%r)
-                result = subprocess.run(
-                    ["/usr/bin/parquet-to-text-stream", "/data.parquet", "csv"],
-                    capture_output=True,
-                )
-                assert result.stderr == b"", "program errored %%r" %% result.stderr
-                assert result.stdout == b"A\n1\n2", "program output %%r" %% result.stdout
-                assert result.returncode == 0, "program exited with status code %%d" %% result.returncode
-                """
-                % parquet_bytes,
-                chroot_dir=root,
-                chroot_provide_paths=[
-                    (
-                        Path("/usr/bin/parquet-to-text-stream"),
-                        Path("/usr/bin/parquet-to-text-stream"),
-                    )
-                ],
-                skip_sandbox_except=frozenset(["chroot"]),
+
+                assert Path("/data/foo.txt").read_text() == "foo"
+                assert Path("/data/subdir/bar.bin").read_text() == "subbar"
+                """,
+                chroot_dir=self.chroot_dir,
+                chroot_provide_paths=[(Path("/data"), files)],
             )
+
+    def test_SECURITY_can_exec_statically_linked_program(self):
+        # Write /data.parquet within the subprocess itself. We can't use
+        # `chroot_provide_paths` here because on dev machines, /app is a
+        # volume mount while `root` is in the container image; os.link()
+        # won't cross filesystems.
+        parquet_bytes = (
+            Path(__file__).parent.parent / "test_data" / "trivial.parquet"
+        ).read_bytes()
+        self.chroot_dir.chmod(0o777)  # let module write file to /
+
+        self._spawn_and_communicate_or_raise(
+            r"""
+            from pathlib import Path
+            import subprocess
+            Path("/data.parquet").write_bytes(%r)
+            result = subprocess.run(
+                ["/usr/bin/parquet-to-text-stream", "/data.parquet", "csv"],
+                capture_output=True,
+            )
+            assert result.stderr == b"", "program errored %%r" %% result.stderr
+            assert result.stdout == b"A\n1\n2", "program output %%r" %% result.stdout
+            assert result.returncode == 0, "program exited with status code %%d" %% result.returncode
+            """
+            % parquet_bytes,
+            chroot_dir=self.chroot_dir,
+            chroot_provide_paths=[
+                (
+                    Path("/usr/bin/parquet-to-text-stream"),
+                    Path("/usr/bin/parquet-to-text-stream"),
+                )
+            ],
+        )
 
     def test_SECURITY_setuid(self):
         # The user is not root
@@ -305,14 +324,12 @@ class ForkserverTest(unittest.TestCase):
             # Assert the script can't setuid() to anything else. In other
             # words: test we really used setresuid(), not setuid() -- because
             # setuid() lets you un-setuid() later.
-            #
-            # This relies on the "drop_capabilities" sandboxing feature.
-            # (Otherwise, the caller would have CAP_SETUID.)
             try:
                 os.setuid(0); assert False, "gah, how did we setuid to 0?"
             except PermissionError:
                 pass  # good
             """,
+            chroot_dir=self.chroot_dir,
             skip_sandbox_except=frozenset(["setuid", "drop_capabilities"]),
         )
 
