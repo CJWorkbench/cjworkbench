@@ -83,6 +83,17 @@ class KernelTests(unittest.TestCase):
         self.assertEquals(result.module_slug, "foo")
         self.assertIsInstance(result.marshalled_code_object, bytes)
 
+    # def test_SECURITY_child_cannot_access_other_processes(self):
+    #     cm = self.kernel.compile(
+    #         MockPath(
+    #             ["foo.py"],
+    #             b"import os\ndef migrate_params(params): return {'x':[int(pid) for pid in os.listdir('/proc') if pid.isdigit()]}",
+    #         ),
+    #         "foo",
+    #     )
+    #     result = self.kernel.migrate_params(cm, {})
+    #     self.assertEquals(result["x"], [1])
+
     def test_compile_validate_works_with_dataclasses(self):
         """
         Test we can compile @dataclass
@@ -202,14 +213,14 @@ class KernelTests(unittest.TestCase):
         module = self.kernel.compile(
             MockPath(
                 ["foo.py"],
-                b"import os\ndef render(table, params): os.kill(os.getpid(), 9)",
+                b"import os\nimport time\ndef render(table, params): os.kill(os.getpid(), 9); time.sleep(1)",
             ),
             "foo",
         )
         with self.assertRaises(ModuleExitedError) as cm:
             with arrow_table_context({"A": [1]}, dir=self.basedir) as input_table:
                 with tempfile_context(dir=self.basedir) as output_path:
-                    self.kernel.render(
+                    result = self.kernel.render(
                         module,
                         self.basedir,
                         input_table,
@@ -218,6 +229,7 @@ class KernelTests(unittest.TestCase):
                         None,
                         output_filename=output_path.name,
                     )
+                    print(repr(result))
 
         self.assertEquals(cm.exception.exit_code, -9)  # SIGKILL
         self.assertEquals(cm.exception.log, "")

@@ -10,6 +10,7 @@ export default class OAuth extends React.PureComponent {
     startCreateSecret: PropTypes.func.isRequired, // func(name) => undefined
     deleteSecret: PropTypes.func.isRequired, // func(name) => undefined
     secretLogic: PropTypes.shape({
+      provider: PropTypes.oneOf(['oauth1a', 'oauth2']),
       service: PropTypes.oneOf(['google', 'intercom', 'twitter'])
     })
   }

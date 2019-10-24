@@ -10,7 +10,6 @@ from oauthlib.common import urlencode
 import pandas as pd
 import yarl  # expose aiohttp's innards -- ick.
 from cjwkernel import settings
-from server import oauth
 
 
 class QueryType(Enum):
@@ -182,22 +181,18 @@ def statuses_to_dataframe(statuses: List[Dict[str, Any]]) -> pd.DataFrame:
 
 
 async def fetch_from_twitter(
-    access_token,
+    credentials,
     path,
     params: List[Tuple[str, str]],
     since_id: Optional[int],
     per_page: int,
     n_pages: int,
 ) -> List[Dict[str, Any]]:
-    service = oauth.OAuthService.lookup_or_none("twitter")
-    if not service:
-        raise Exception("Twitter connection misconfigured")
-
     oauth_client = oauth1.Client(
-        client_key=service.consumer_key,
-        client_secret=service.consumer_secret,
-        resource_owner_key=access_token["oauth_token"],
-        resource_owner_secret=access_token["oauth_token_secret"],
+        client_key=credentials["consumer_key"],
+        client_secret=credentials["consumer_secret"],
+        resource_owner_key=credentials["resource_owner_key"],
+        resource_owner_secret=credentials["resource_owner_secret"],
     )
 
     page_dataframes = [create_empty_table()]
@@ -249,11 +244,11 @@ async def fetch_from_twitter(
 
 
 async def twitter_user_timeline(
-    access_token, screen_name, since_id: Optional[int]
+    credentials, screen_name, since_id: Optional[int]
 ) -> List[Dict[str, Any]]:
     # 3200 tweets, aribitrarily
     return await fetch_from_twitter(
-        access_token,
+        credentials,
         "statuses/user_timeline.json",
         [("screen_name", screen_name)],
         since_id,
@@ -263,12 +258,12 @@ async def twitter_user_timeline(
 
 
 async def twitter_search(
-    access_token, q, since_id: Optional[int]
+    credentials, q, since_id: Optional[int]
 ) -> List[Dict[str, Any]]:
     # 1000 tweets, aribitrarily, to try to go easy on rate limits
     # (this is still 10 calls)
     return await fetch_from_twitter(
-        access_token,
+        credentials,
         "search/tweets.json",
         [("q", q), ("result_type", "recent")],
         since_id,
@@ -278,12 +273,12 @@ async def twitter_search(
 
 
 async def twitter_list_timeline(
-    access_token, owner_screen_name, slug, since_id: Optional[int]
+    credentials, owner_screen_name, slug, since_id: Optional[int]
 ) -> List[Dict[str, Any]]:
     # 2000 tweets, aribitrarily, to try to go easy on rate limits
     # (this is still 10 calls)
     return await fetch_from_twitter(
-        access_token,
+        credentials,
         "lists/statuses.json",
         [("owner_screen_name", owner_screen_name), ("slug", slug)],
         since_id,
@@ -304,7 +299,7 @@ LIST_REGEX = re.compile(f"^{USERNAME_REGEX_PART}/{LIST_REGEX_PART}$")
 
 
 # Get from Twitter, return as dataframe
-async def get_new_tweets(access_token, querytype, query, old_tweets):
+async def get_new_tweets(credentials, querytype, query, old_tweets):
     if old_tweets is not None and not old_tweets.empty:
         last_id = old_tweets["id"].max()
     else:
@@ -317,10 +312,10 @@ async def get_new_tweets(access_token, querytype, query, old_tweets):
         username = match.group(1)
 
         # 16 pages of 200 each is Twitter's current maximum archived
-        return await twitter_user_timeline(access_token, username, last_id)
+        return await twitter_user_timeline(credentials, username, last_id)
 
     elif querytype == QueryType.SEARCH:
-        return await twitter_search(access_token, query, last_id)
+        return await twitter_search(credentials, query, last_id)
 
     else:  # querytype == QueryType.LISTS_STATUSES
         match = LIST_URL_REGEX.match(query)
@@ -330,7 +325,7 @@ async def get_new_tweets(access_token, querytype, query, old_tweets):
             raise ValueError("Not a valid Twitter list URL")
 
         return await twitter_list_timeline(
-            access_token, match.group(1), match.group(2), last_id
+            credentials, match.group(1), match.group(2), last_id
         )
 
 
@@ -383,24 +378,24 @@ def render(table, params, *, fetch_result):
 async def fetch(params, *, secrets, get_stored_dataframe):
     querytype = QueryType(params["querytype"])
     query: str = params[querytype.query_param_name]
-    access_token = (secrets.get("twitter_credentials") or {}).get("secret")
+    credentials = (secrets.get("twitter_credentials") or {}).get("secret")
 
-    if not query.strip() and not access_token:
+    if not query.strip() and not credentials:
         return None  # Don't create a version
 
     if not query.strip():
         return "Please enter a query"
 
-    if not access_token:
+    if not credentials:
         return "Please sign in to Twitter"
 
     try:
         if params["accumulate"]:
             old_tweets = await get_stored_tweets(get_stored_dataframe)
-            tweets = await get_new_tweets(access_token, querytype, query, old_tweets)
+            tweets = await get_new_tweets(credentials, querytype, query, old_tweets)
             tweets = merge_tweets(old_tweets, tweets)
         else:
-            tweets = await get_new_tweets(access_token, querytype, query, None)
+            tweets = await get_new_tweets(credentials, querytype, query, None)
         return tweets
 
     except ValueError as err:

@@ -1,13 +1,22 @@
-import aiohttp
 import asyncio
+import datetime
 import re
-from django.utils import timezone
 import pandas as pd
+import aiohttp
 import yarl  # aiohttp innards -- yuck!
 from cjwkernel import settings
 
 
 MaxNUrls = 10
+
+
+def utcnow():
+    """
+    Return datetime.datetime.utcnow().
+
+    It's a separate function so we can mock it in unit tests.
+    """
+    return datetime.datetime.utcnow()
 
 
 async def async_get_url(row, url):
@@ -171,9 +180,9 @@ async def fetch(params, *, get_input_dataframe):
         {
             "url": urls,
             # TODO use response date, not current date
-            "date": (
-                timezone.now().isoformat(timespec="seconds").replace("+00:00", "Z")
-            ),
+            # TODO migrate to use timestamp type, not text (will affect
+            # existing users)
+            "date": utcnow().isoformat(timespec="seconds") + "Z",
             "status": "",
             "html": "",
         }

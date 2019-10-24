@@ -25,7 +25,7 @@ class ChangeWfModuleNotesCommandTests(DbTestCase):
         cmd = self.run_with_async_db(
             commands.do(
                 ChangeWfModuleNotesCommand,
-                workflow=workflow,
+                workflow_id=workflow.id,
                 wf_module=wf_module,
                 new_value="text2",
             )

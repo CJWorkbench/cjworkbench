@@ -12,7 +12,7 @@
       "id_name": "google_credentials",
       "type": "secret",
       "secret_logic": {
-        "provider": "oauth",
+        "provider": "oauth2",
         "service": "google"
       }
     },

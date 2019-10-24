@@ -63,6 +63,8 @@ services:
     #image:
     #build:
     depends_on: [ 'db', 'rabbitmq', 'minio' ]
+    security_opt:
+      - seccomp=docker/forkserver-seccomp-profile.json
     environment:
       CJW_N_FETCHERS: '2'
       PYTHONUNBUFFERED: '1'
@@ -82,6 +84,8 @@ services:
     #image:
     #build:
     depends_on: [ 'db', 'rabbitmq', 'minio' ]
+    security_opt:
+      - seccomp=docker/forkserver-seccomp-profile.json
     environment:
       CJW_N_RENDERERS: '2'
       PYTHONUNBUFFERED: '1'
@@ -122,6 +126,8 @@ services:
     #build:
     #no ports: on cloudbuild
     depends_on: [ 'db', 'rabbitmq', 'minio' ]
+    security_opt:
+      - seccomp=docker/forkserver-seccomp-profile.json
     environment:
       PYTHONUNBUFFERED: '1'
       ASGI_THREADS: '2'

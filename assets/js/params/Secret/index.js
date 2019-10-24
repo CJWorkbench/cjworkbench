@@ -4,7 +4,8 @@ import OAuth from './OAuth'
 import String_ from './String'
 
 const Components = {
-  oauth: OAuth,
+  oauth1a: OAuth,
+  oauth2: OAuth,
   string: String_
 }
 
@@ -33,7 +34,7 @@ Secret.propTypes = {
   startCreateSecret: PropTypes.func.isRequired, // func(name) => undefined
   deleteSecret: PropTypes.func.isRequired, // func(name) => undefined
   secretLogic: PropTypes.shape({
-    provider: PropTypes.oneOf(['oauth', 'string'])
+    provider: PropTypes.oneOf(['oauth1a', 'oauth2', 'string'])
     // Plus provider-specific stuff
   }).isRequired
 }

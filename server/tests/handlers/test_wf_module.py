@@ -5,7 +5,13 @@ from dateutil.parser import isoparse
 from django.contrib.auth.models import User
 from django.test import override_settings
 from django.utils import timezone
-from server import oauth
+from cjwstate import oauth
+from cjwstate.models import ModuleVersion, Workflow
+from cjwstate.models.commands import (
+    ChangeParametersCommand,
+    ChangeWfModuleNotesCommand,
+    DeleteModuleCommand,
+)
 from server.handlers.wf_module import (
     set_params,
     delete,
@@ -21,12 +27,6 @@ from server.handlers.wf_module import (
     get_file_upload_api_token,
     reset_file_upload_api_token,
     clear_file_upload_api_token,
-)
-from cjwstate.models import ModuleVersion, Workflow
-from cjwstate.models.commands import (
-    ChangeParametersCommand,
-    ChangeWfModuleNotesCommand,
-    DeleteModuleCommand,
 )
 from .util import HandlerTestCase
 
@@ -46,7 +46,7 @@ class MockLoadedModule:
 TestGoogleSecret = {
     "id_name": "google_credentials",
     "type": "secret",
-    "secret_logic": {"provider": "oauth", "service": "google"},
+    "secret_logic": {"provider": "oauth2", "service": "google"},
 }
 
 
@@ -653,14 +653,14 @@ class WfModuleTest(HandlerTestCase):
         workflow.acl.create(email=user.email, can_edit=True)
         ModuleVersion.create_or_replace_from_spec(
             {
-                "id_name": "g",
+                "id_name": "googlesheets",
                 "name": "g",
                 "category": "Clean",
                 "parameters": [TestGoogleSecret],
             }
         )
         wf_module = workflow.tabs.first().wf_modules.create(
-            module_id_name="g", order=0, slug="step-1"
+            module_id_name="googlesheets", order=0, slug="step-1"
         )
 
         response = self.run_handler(
@@ -681,14 +681,14 @@ class WfModuleTest(HandlerTestCase):
         workflow = Workflow.create_and_init(owner=user)
         ModuleVersion.create_or_replace_from_spec(
             {
-                "id_name": "g",
+                "id_name": "googlesheets",
                 "name": "g",
                 "category": "Clean",
                 "parameters": [TestGoogleSecret],
             }
         )
         wf_module = workflow.tabs.first().wf_modules.create(
-            module_id_name="g",
+            module_id_name="googlesheets",
             slug="step-1",
             order=0,
             secrets={"google_credentials": None},
@@ -712,14 +712,14 @@ class WfModuleTest(HandlerTestCase):
         workflow = Workflow.create_and_init(owner=user)
         ModuleVersion.create_or_replace_from_spec(
             {
-                "id_name": "g",
+                "id_name": "googlesheets",
                 "name": "g",
                 "category": "Clean",
                 "parameters": [TestGoogleSecret],
             }
         )
         wf_module = workflow.tabs.first().wf_modules.create(
-            module_id_name="g",
+            module_id_name="googlesheets",
             order=0,
             slug="step-1",
             params={"s": '{"name":"a","secret":"hello"}'},
@@ -743,14 +743,14 @@ class WfModuleTest(HandlerTestCase):
         workflow = Workflow.create_and_init(owner=user)
         ModuleVersion.create_or_replace_from_spec(
             {
-                "id_name": "g",
+                "id_name": "googlesheets",
                 "name": "g",
                 "category": "Clean",
                 "parameters": [TestGoogleSecret],
             }
         )
         wf_module = workflow.tabs.first().wf_modules.create(
-            module_id_name="g",
+            module_id_name="googlesheets",
             order=0,
             slug="step-1",
             secrets={"google_credentials": {"name": "a", "secret": "hello"}},
@@ -769,21 +769,21 @@ class WfModuleTest(HandlerTestCase):
         "cjwstate.modules.loaded_module.LoadedModule.for_module_version",
         MockLoadedModule,
     )
-    @patch("server.oauth.OAuthService.lookup_or_none", lambda _: None)
+    @patch("cjwstate.oauth.OAuthService.lookup_or_none", lambda _: None)
     @override_settings(OAUTH_SERVICES={"twitter": {}})
     def test_generate_secret_access_token_no_service_gives_error(self):
         user = User.objects.create()
         workflow = Workflow.create_and_init(owner=user)
         ModuleVersion.create_or_replace_from_spec(
             {
-                "id_name": "g",
+                "id_name": "googlesheets",
                 "name": "g",
                 "category": "Clean",
                 "parameters": [TestGoogleSecret],
             }
         )
         wf_module = workflow.tabs.first().wf_modules.create(
-            module_id_name="g",
+            module_id_name="googlesheets",
             order=0,
             slug="step-1",
             secrets={"google_credentials": {"name": "a", "secret": "hello"}},
@@ -802,7 +802,7 @@ class WfModuleTest(HandlerTestCase):
         "cjwstate.modules.loaded_module.LoadedModule.for_module_version",
         MockLoadedModule,
     )
-    @patch("server.oauth.OAuthService.lookup_or_none")
+    @patch("cjwstate.oauth.OAuthService.lookup_or_none")
     def test_generate_secret_access_token_auth_error_gives_error(self, factory):
         service = Mock(oauth.OAuth2)
         service.generate_access_token_or_str_error.return_value = "an error"
@@ -812,14 +812,14 @@ class WfModuleTest(HandlerTestCase):
         workflow = Workflow.create_and_init(owner=user)
         ModuleVersion.create_or_replace_from_spec(
             {
-                "id_name": "g",
+                "id_name": "googlesheets",
                 "name": "g",
                 "category": "Clean",
                 "parameters": [TestGoogleSecret],
             }
         )
         wf_module = workflow.tabs.first().wf_modules.create(
-            module_id_name="g",
+            module_id_name="googlesheets",
             order=0,
             slug="step-1",
             secrets={"google_credentials": {"name": "a", "secret": "hello"}},
@@ -838,7 +838,7 @@ class WfModuleTest(HandlerTestCase):
         "cjwstate.modules.loaded_module.LoadedModule.for_module_version",
         MockLoadedModule,
     )
-    @patch("server.oauth.OAuthService.lookup_or_none")
+    @patch("cjwstate.oauth.OAuthService.lookup_or_none")
     def test_generate_secret_access_token_happy_path(self, factory):
         service = Mock(oauth.OAuth2)
         service.generate_access_token_or_str_error.return_value = {
@@ -851,14 +851,14 @@ class WfModuleTest(HandlerTestCase):
         workflow = Workflow.create_and_init(owner=user)
         ModuleVersion.create_or_replace_from_spec(
             {
-                "id_name": "g",
+                "id_name": "googlesheets",
                 "name": "g",
                 "category": "Clean",
                 "parameters": [TestGoogleSecret],
             }
         )
         wf_module = workflow.tabs.first().wf_modules.create(
-            module_id_name="g",
+            module_id_name="googlesheets",
             order=0,
             slug="step-1",
             secrets={"google_credentials": {"name": "a", "secret": "hello"}},
@@ -879,14 +879,14 @@ class WfModuleTest(HandlerTestCase):
         workflow.acl.create(email=user.email, can_edit=True)
         ModuleVersion.create_or_replace_from_spec(
             {
-                "id_name": "g",
+                "id_name": "googlesheets",
                 "name": "g",
                 "category": "Clean",
                 "parameters": [TestGoogleSecret],
             }
         )
         wf_module = workflow.tabs.first().wf_modules.create(
-            module_id_name="g",
+            module_id_name="googlesheets",
             order=0,
             slug="step-1",
             secrets={"google_credentials": {"name": "a", "secret": "hello"}},
@@ -906,14 +906,14 @@ class WfModuleTest(HandlerTestCase):
         workflow = Workflow.create_and_init(owner=user)
         ModuleVersion.create_or_replace_from_spec(
             {
-                "id_name": "g",
+                "id_name": "googlesheets",
                 "name": "g",
                 "category": "Clean",
                 "parameters": [TestGoogleSecret, {"id_name": "foo", "type": "string"}],
             }
         )
         wf_module = workflow.tabs.first().wf_modules.create(
-            module_id_name="g",
+            module_id_name="googlesheets",
             order=0,
             slug="step-1",
             params={"foo": "bar"},
@@ -946,14 +946,14 @@ class WfModuleTest(HandlerTestCase):
         workflow = Workflow.create_and_init(owner=user)
         ModuleVersion.create_or_replace_from_spec(
             {
-                "id_name": "g",
+                "id_name": "googlesheets",
                 "name": "g",
                 "category": "Clean",
                 "parameters": [TestGoogleSecret],
             }
         )
         wf_module = workflow.tabs.first().wf_modules.create(
-            module_id_name="g",
+            module_id_name="googlesheets",
             order=0,
             slug="step-1",
             secrets={"google_credentials": {"name": "a", "secret": "hello"}},

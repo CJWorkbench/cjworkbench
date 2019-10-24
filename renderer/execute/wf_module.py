@@ -2,6 +2,7 @@ import asyncio
 import contextlib
 import datetime
 from functools import partial
+import logging
 from pathlib import Path
 from typing import Any, Dict, Optional, Tuple
 from cjworkbench.sync import database_sync_to_async
@@ -27,6 +28,9 @@ from .types import (
     PromptingError,
 )
 from . import renderprep
+
+
+logger = logging.getLogger(__name__)
 
 
 @contextlib.contextmanager
@@ -210,9 +214,21 @@ def _execute_wfmodule_save(
             if stale_crr is None:
                 stale_result = None
             else:
-                # Read entire old Parquet file, blocking
-                with rendercache.open_cached_render_result(stale_crr) as stale_result:
-                    pass  # stale_result is deleted from disk but still mmapped
+                try:
+                    # Read entire old Parquet file, blocking
+                    with rendercache.open_cached_render_result(
+                        stale_crr
+                    ) as stale_result:
+                        pass  # stale_result is deleted from disk but still mmapped
+                except rendercache.CorruptCacheError:
+                    # No, let's not send an email. Corrupt cache probably means
+                    # we've been messing with our codebase.
+                    logger.exception(
+                        "Ignoring CorruptCacheError on workflow %d, wf_module %d because we are about to overwrite it",
+                        workflow.id,
+                        wf_module.id,
+                    )
+                    stale_result = None
         else:
             stale_result = None
 

@@ -219,7 +219,7 @@ class Upload(View):
             # sends delta to Websockets clients and queues render.
             async_to_sync(commands.do)(
                 ChangeParametersCommand,
-                workflow=workflow,
+                workflow_id=workflow.id,
                 wf_module=wf_module,
                 new_values=want_params,
             )

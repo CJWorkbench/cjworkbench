@@ -1,135 +1,150 @@
-import math
-from pathlib import Path
 from unittest.mock import patch
-from django.test import override_settings
+from django.utils import timezone
 from cjwkernel.types import FetchResult
 from cjwkernel.tests.util import parquet_file
-from cjwstate.models import StoredObject, WfModule, Workflow
+from cjwstate import storedobjects
+from cjwstate.models import WfModule, Workflow
+from cjwstate.models.commands import ChangeDataVersionCommand
 from cjwstate.tests.utils import DbTestCase
-from fetcher.save import save_result_if_changed
+from fetcher import save
+from server import websockets
 
 
 async def async_noop(*args, **kwargs):
     pass
 
 
-@patch("server.websockets._workflow_group_send", async_noop)
-@patch("server.websockets.queue_render_if_listening", async_noop)
+@patch.object(websockets, "queue_render_if_listening", async_noop)
 class SaveTests(DbTestCase):
-    def test_store_if_changed(self):
+    @patch.object(websockets, "ws_client_send_delta_async")
+    def test_create_result(self, send_delta):
+        send_delta.side_effect = async_noop
+
+        workflow = Workflow.create_and_init()
+        wf_module = workflow.tabs.first().wf_modules.create(
+            order=0, slug="step-1", is_busy=True, fetch_error="previous error"
+        )
+        now = timezone.datetime(2019, 10, 22, 12, 22, tzinfo=timezone.utc)
+
+        with parquet_file({"A": [1], "B": ["x"]}) as parquet_path:
+            self.run_with_async_db(
+                save.create_result(
+                    workflow.id, wf_module, FetchResult(parquet_path), now
+                )
+            )
+        self.assertEqual(wf_module.stored_objects.count(), 1)
+
+        self.assertEqual(wf_module.fetch_error, "")
+        self.assertEqual(wf_module.is_busy, False)
+        self.assertEqual(wf_module.last_update_check, now)
+        wf_module.refresh_from_db()
+        self.assertEqual(wf_module.fetch_error, "")
+        self.assertEqual(wf_module.is_busy, False)
+        self.assertEqual(wf_module.last_update_check, now)
+
+        send_delta.assert_called_with(
+            workflow.id,
+            {
+                "updateWfModules": {
+                    str(wf_module.id): {
+                        "is_busy": False,
+                        "fetch_error": "",
+                        "last_update_check": "2019-10-22T12:22:00Z",
+                    }
+                }
+            },
+        )
+
+        workflow.refresh_from_db()
+        self.assertIsInstance(workflow.last_delta, ChangeDataVersionCommand)
+
+    @patch.object(websockets, "ws_client_send_delta_async")
+    def test_mark_result_unchanged(self, send_delta):
+        send_delta.side_effect = async_noop
+        workflow = Workflow.create_and_init()
+        wf_module = workflow.tabs.first().wf_modules.create(
+            order=0, slug="step-1", is_busy=True, fetch_error="previous error"
+        )
+        now = timezone.datetime(2019, 10, 22, 12, 22, tzinfo=timezone.utc)
+
+        self.run_with_async_db(save.mark_result_unchanged(workflow.id, wf_module, now))
+        self.assertEqual(wf_module.stored_objects.count(), 0)
+
+        self.assertEqual(wf_module.fetch_error, "previous error")
+        self.assertEqual(wf_module.is_busy, False)
+        self.assertEqual(wf_module.last_update_check, now)
+        wf_module.refresh_from_db()
+        self.assertEqual(wf_module.fetch_error, "previous error")
+        self.assertEqual(wf_module.is_busy, False)
+        self.assertEqual(wf_module.last_update_check, now)
+
+        send_delta.assert_called_with(
+            workflow.id,
+            {
+                "updateWfModules": {
+                    str(wf_module.id): {
+                        "is_busy": False,
+                        "fetch_error": "previous error",
+                        "last_update_check": "2019-10-22T12:22:00Z",
+                    }
+                }
+            },
+        )
+
+    @patch.object(websockets, "ws_client_send_delta_async", async_noop)
+    @patch.object(storedobjects, "enforce_storage_limits")
+    def test_storage_limits(self, limit):
         workflow = Workflow.create_and_init()
         wf_module = workflow.tabs.first().wf_modules.create(order=0, slug="step-1")
 
         with parquet_file({"A": [1], "B": ["x"]}) as parquet_path:
             self.run_with_async_db(
-                save_result_if_changed(
-                    workflow.id, wf_module, FetchResult(parquet_path)
+                save.create_result(
+                    workflow.id, wf_module, FetchResult(parquet_path), timezone.now()
                 )
             )
-        self.assertEqual(StoredObject.objects.count(), 1)
-
-        # store same data again (different file); should not create a new one
-        with parquet_file({"A": [1], "B": ["x"]}) as parquet_path:
-            self.run_with_async_db(
-                save_result_if_changed(
-                    workflow.id, wf_module, FetchResult(parquet_path)
-                )
-            )
-        self.assertEqual(StoredObject.objects.count(), 1)
-
-        # changed table should create new
-        with parquet_file({"B": ["x"], "A": [1]}) as parquet_path:
-            self.run_with_async_db(
-                save_result_if_changed(
-                    workflow.id, wf_module, FetchResult(parquet_path)
-                )
-            )
-        self.assertEqual(StoredObject.objects.count(), 2)
-
-    def test_storage_limits(self):
-        workflow = Workflow.create_and_init()
-        wf_module = workflow.tabs.first().wf_modules.create(order=0, slug="step-1")
-
-        stored_objects = wf_module.stored_objects  # not queried yet
-
-        # Store 1 version, to measure its size
-        with parquet_file({"A": ["abc0"]}) as parquet_path:
-            self.run_with_async_db(
-                save_result_if_changed(
-                    workflow.id, wf_module, FetchResult(parquet_path)
-                )
-            )
-            one_size = parquet_path.stat().st_size
-
-        # Store 3 more versions, given enough room for 4 tables
-        with override_settings(MAX_STORAGE_PER_MODULE=math.ceil(one_size * 4.2)):
-            for i in range(1, 4):
-                with parquet_file({"A": ["abc" + str(i)]}) as parquet_path:
-                    self.run_with_async_db(
-                        save_result_if_changed(
-                            workflow.id, wf_module, FetchResult(parquet_path)
-                        )
-                    )
-        self.assertEqual(stored_objects.count(), 4)  # all four were saved
-
-        # Store 1 more version, given enough room for 2 tables
-        with override_settings(MAX_STORAGE_PER_MODULE=math.ceil(one_size * 2.2)):
-            with parquet_file({"A": ["abc4"]}) as parquet_path:
-                self.run_with_async_db(
-                    save_result_if_changed(
-                        workflow.id, wf_module, FetchResult(parquet_path)
-                    )
-                )
-        self.assertEqual(stored_objects.count(), 2)  # some were deleted
-
-        # Store 1 more version, given enough room for _not even one_ table
-        with override_settings(MAX_STORAGE_PER_MODULE=math.ceil(one_size * 0.3)):
-            with parquet_file({"A": ["abc5"]}) as parquet_path:
-                self.run_with_async_db(
-                    save_result_if_changed(
-                        workflow.id, wf_module, FetchResult(parquet_path)
-                    )
-                )
-        self.assertEqual(stored_objects.count(), 1)
+        limit.assert_called_with(wf_module)
 
     def test_race_deleted_workflow(self):
         workflow = Workflow.create_and_init()
         wf_module = workflow.tabs.first().wf_modules.create(order=0, slug="step-1")
-
         workflow_id = workflow.id
-
         workflow.delete()
 
         # Don't crash
-        self.run_with_async_db(
-            save_result_if_changed(
-                workflow_id, wf_module, FetchResult(Path("/not-checked"))
+        with parquet_file({"A": [1], "B": ["x"]}) as parquet_path:
+            self.run_with_async_db(
+                save.create_result(
+                    workflow_id, wf_module, FetchResult(parquet_path), timezone.now()
+                )
             )
-        )
 
     def test_race_soft_deleted_wf_module(self):
         workflow = Workflow.create_and_init()
         wf_module = workflow.tabs.first().wf_modules.create(
             order=0, slug="step-1", is_deleted=True
         )
+        workflow_id = workflow.id
+        workflow.delete()
 
         # Don't crash
-        self.run_with_async_db(
-            save_result_if_changed(
-                workflow.id, wf_module, FetchResult(Path("/not-used"))
+        with parquet_file({"A": [1], "B": ["x"]}) as parquet_path:
+            self.run_with_async_db(
+                save.create_result(
+                    workflow_id, wf_module, FetchResult(parquet_path), timezone.now()
+                )
             )
-        )
         self.assertEqual(wf_module.stored_objects.count(), 0)
 
     def test_race_hard_deleted_wf_module(self):
         workflow = Workflow.create_and_init()
         wf_module = workflow.tabs.first().wf_modules.create(order=0, slug="step-1")
-
         WfModule.objects.filter(id=wf_module.id).delete()
 
         # Don't crash
-        self.run_with_async_db(
-            save_result_if_changed(
-                workflow.id, wf_module, FetchResult(Path("/not-used"))
+        with parquet_file({"A": [1], "B": ["x"]}) as parquet_path:
+            self.run_with_async_db(
+                save.create_result(
+                    workflow.id, wf_module, FetchResult(parquet_path), timezone.now()
+                )
             )
-        )

@@ -4,7 +4,6 @@ import io
 import json
 import re
 import shutil
-import tempfile
 from typing import Any, Dict, Callable, Iterator, Optional
 import aiohttp
 import cchardet as chardet
@@ -14,6 +13,7 @@ from pandas.api.types import is_numeric_dtype, is_datetime64_dtype
 import xlrd
 import yarl  # aiohttp innards -- yuck!
 from cjwkernel import settings
+from cjwkernel.util import tempfile_context
 from cjwkernel.pandas.types import ProcessResult
 
 
@@ -279,16 +279,18 @@ def _parse_xlsx(bytesio: io.BytesIO, _unused: _TextEncoding) -> pd.DataFrame:
 
     * Error can be xlrd.XLRDError or pandas error
     * We read the entire file contents into memory before parsing
+
+    TODO change signature to require `Path`, not `io.BytesIO`. The way things
+    are, we're copying tempfiles gratuitously.
     """
     # dtype='category' crashes as of 2018-09-11
     try:
         # Use xlrd.open_workbook(): if we call pandas.read_excel(bytesio) it
         # will read the entire file into RAM.
-        with tempfile.NamedTemporaryFile() as temp:
-            shutil.copyfileobj(bytesio, temp)
-            temp.flush()
-            temp.seek(0)
-            workbook = xlrd.open_workbook(temp.name)
+        with tempfile_context() as path:
+            with path.open("wb") as tmp:
+                shutil.copyfileobj(bytesio, tmp)
+            workbook = xlrd.open_workbook(str(path))
             data = pd.read_excel(workbook, engine="xlrd", dtype=object)
     except xlrd.XLRDError as err:
         return ProcessResult(error=f"Error reading Excel file: {str(err)}")
@@ -438,21 +440,21 @@ async def spooled_data_from_url(
     if url.scheme not in ("http", "https"):
         raise aiohttp.InvalidURL("URL must start with http:// or https://")
 
-    with tempfile.TemporaryFile(prefix="loadurl") as spool:
+    with tempfile_context(prefix="loadurl") as spool_path:
         async with aiohttp.ClientSession() as session:
-            async with session.get(
-                url, headers=headers, timeout=timeout, raise_for_status=True
-            ) as response:
+            # raise aiohttp.ClientError, asyncio.TimeoutError
+            async with session.get(url, headers=headers, timeout=timeout) as response:
+                # raise aiohttp.ClientResponseError
                 response.raise_for_status()
-
-                async for blob in response.content.iter_chunked(_ChunkSize):
-                    spool.write(blob)
-
                 headers = response.headers
                 charset = response.charset
 
-        spool.seek(0)
-        yield spool, headers, charset
+                with spool_path.open("wb") as spool:
+                    # raise aiohttp.ClientPayloadError
+                    async for blob in response.content.iter_chunked(_ChunkSize):
+                        spool.write(blob)
+
+        yield spool_path.open("rb"), headers, charset
 
 
 def autocast_series_dtype(series: pd.Series) -> pd.Series:

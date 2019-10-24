@@ -1,11 +1,11 @@
 import asyncio
+from datetime import datetime
 import random
 import unittest
 from unittest.mock import patch
 import aiohttp
 from asgiref.sync import async_to_sync
 from django.test import override_settings, SimpleTestCase
-from django.utils import timezone
 import pandas as pd
 from pandas.testing import assert_frame_equal
 from cjwkernel.pandas.types import ProcessResult
@@ -14,8 +14,8 @@ from .util import MockParams
 
 # --- Some test data ----
 
-testnow = timezone.now()
-testdate = testnow.isoformat(timespec="seconds").replace("+00:00", "Z")
+testnow = datetime.utcnow()
+testdate = testnow.isoformat(timespec="seconds") + "Z"
 
 
 simple_result_table = pd.DataFrame(
@@ -262,7 +262,7 @@ class URLScraperTests(unittest.TestCase):
             table["html"] = onescrape["html"]
             return
 
-        with patch("django.utils.timezone.now", lambda: testnow):
+        with patch("staticmodules.urlscraper.utcnow", lambda: testnow):
             with patch("staticmodules.urlscraper.scrape_urls") as scrape:
                 scrape.side_effect = mock_scrapeurls
 
@@ -285,7 +285,7 @@ class URLScraperTests(unittest.TestCase):
 
         urls = list(simple_result_table["url"])
 
-        with patch("django.utils.timezone.now", lambda: testnow):
+        with patch("staticmodules.urlscraper.utcnow", lambda: testnow):
             with patch("staticmodules.urlscraper.scrape_urls") as scrape:
                 # call the mock function instead, the real fn is tested above
                 scrape.side_effect = mock_scrapeurls
@@ -337,7 +337,7 @@ class URLScraperTests(unittest.TestCase):
             table["html"] = paged_result_table["html"]
             return
 
-        with patch("django.utils.timezone.now", lambda: testnow):
+        with patch("staticmodules.urlscraper.utcnow", lambda: testnow):
             with patch("staticmodules.urlscraper.scrape_urls") as scrape:
                 scrape.side_effect = mock_scrapeurls
 
