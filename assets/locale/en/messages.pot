@@ -1,8 +1,3 @@
-#. default-message: TRAINING
-#: assets/js/Workflows/index.js:193
-msgid " workflow.trainingtitle"
-msgstr ""
-
 #. default-message: Greek
 #: assets/js/i18n/locales.js:5
 msgid "locales.el"
@@ -48,8 +43,18 @@ msgstr ""
 msgid "time_diff.now"
 msgstr ""
 
+#. default-message: Imported module {0} under category {1}
+#: assets/js/ImportModuleFromGitHub.js:44
+msgid "workbench.importedmodule"
+msgstr ""
+
+#. default-message: Processing...
+#: assets/js/ImportModuleFromGitHub.js:32
+msgid "workbench.processing"
+msgstr ""
+
 #. default-message: Duplicate
-#: assets/js/WorkflowEditor/Tabs/TabDropdown.js:15
+#: assets/js/WorkflowEditor/Tabs/TabDropdown.js:14
 msgid "workflow.Duplicate"
 msgstr ""
 
@@ -59,27 +64,27 @@ msgid "workflow.addData"
 msgstr ""
 
 #. default-message: ADD STEP
-#: assets/js/WorkflowEditor/ModuleSearch/Button.js:44
+#: assets/js/WorkflowEditor/ModuleSearch/Button.js:43
 msgid "workflow.addstep"
 msgstr ""
 
 #. default-message: Alerts are
-#: assets/js/WorkflowEditor/DataVersionModal.js:131
+#: assets/js/WorkflowEditor/DataVersionModal.js:130
 msgid "workflow.alertsare"
 msgstr ""
 
 #. default-message: Alphabetical
-#: assets/js/Workflows/SortMenu.js:35
+#: assets/js/Workflows/SortMenu.js:34
 msgid "workflow.alphabetical"
 msgstr ""
 
 #. default-message: Close
-#: assets/js/WorkflowEditor/AddData/Modal.js:25
+#: assets/js/WorkflowEditor/AddData/Modal.js:24
 msgid "workflow.attribute.close"
 msgstr ""
 
 #. default-message: CHOOSE A DATA SOURCE
-#: assets/js/WorkflowEditor/AddData/Modal.js:22
+#: assets/js/WorkflowEditor/AddData/Modal.js:21
 msgid "workflow.choosedata"
 msgstr ""
 
@@ -94,7 +99,7 @@ msgid "workflow.copydebugging"
 msgstr ""
 
 #. default-message: Create Workflow
-#: assets/js/Workflows/index.js:199
+#: assets/js/Workflows/index.js:203
 msgid "workflow.createworkflow"
 msgstr ""
 
@@ -104,17 +109,17 @@ msgid "workflow.createyourworkflow"
 msgstr ""
 
 #. default-message: This was the data that led to an error. Please correct the error in the left panel.
-#: assets/js/WorkflowEditor/OutputPane.js:105
+#: assets/js/WorkflowEditor/OutputPane.js:104
 msgid "workflow.dataledtoanerror"
 msgstr ""
 
 #. default-message: Delete
-#: assets/js/WorkflowEditor/wfmodule/WfModuleContextMenu.js:22 assets/js/Workflows/WorkflowContextMenu.js:41
+#: assets/js/WorkflowEditor/wfmodule/WfModuleContextMenu.js:21 assets/js/Workflows/WorkflowContextMenu.js:40
 msgid "workflow.delete"
 msgstr ""
 
 #. default-message: Delete
-#: assets/js/WorkflowEditor/Tabs/TabDropdown.js:16
+#: assets/js/WorkflowEditor/Tabs/TabDropdown.js:15
 msgid "workflow.deleteEvent"
 msgstr ""
 
@@ -129,7 +134,7 @@ msgid "workflow.describethisbug"
 msgstr ""
 
 #. default-message: Duplicate
-#: assets/js/Workflows/WorkflowContextMenu.js:36
+#: assets/js/Workflows/WorkflowContextMenu.js:35
 msgid "workflow.duplicate"
 msgstr ""
 
@@ -159,7 +164,7 @@ msgid "workflow.exitzenmode"
 msgstr ""
 
 #. default-message: Export data
-#: assets/js/WorkflowEditor/wfmodule/WfModuleContextMenu.js:21
+#: assets/js/WorkflowEditor/wfmodule/WfModuleContextMenu.js:20
 msgid "workflow.exportdata"
 msgstr ""
 
@@ -169,7 +174,7 @@ msgid "workflow.followsteps"
 msgstr ""
 
 #. default-message: Learn how to replace this step
-#: assets/js/WorkflowEditor/wfmodule/DeprecationNotice.js:12
+#: assets/js/WorkflowEditor/wfmodule/DeprecationNotice.js:11
 msgid "workflow.howtoreplace"
 msgstr ""
 
@@ -180,12 +185,12 @@ msgid "workflow.last_updated"
 msgstr ""
 
 #. default-message: Last modified
-#: assets/js/Workflows/SortMenu.js:32
+#: assets/js/Workflows/SortMenu.js:31
 msgid "workflow.lastmodified"
 msgstr ""
 
 #. default-message: Learn how to work with data without coding
-#: assets/js/Workflows/index.js:196
+#: assets/js/Workflows/index.js:200
 msgid "workflow.learnworkwithdata"
 msgstr ""
 
@@ -195,7 +200,7 @@ msgid "workflow.myworkflows"
 msgstr ""
 
 #. default-message: NEW
-#: assets/js/Workflows/index.js:190
+#: assets/js/Workflows/index.js:194
 msgid "workflow.new"
 msgstr ""
 
@@ -205,17 +210,17 @@ msgid "workflow.nodataconnectors"
 msgstr ""
 
 #. default-message: This workflow is not available
-#: assets/js/Embed.js:21
+#: assets/js/Embed.js:29
 msgid "workflow.notavailableworkflow"
 msgstr ""
 
 #. default-message: Oldest modified
-#: assets/js/Workflows/SortMenu.js:33
+#: assets/js/Workflows/SortMenu.js:32
 msgid "workflow.oldestmodified"
 msgstr ""
 
 #. default-message: Permanently delete this workflow?
-#: assets/js/Workflows/index.js:91
+#: assets/js/Workflows/index.js:95
 msgid "workflow.permanentdelete"
 msgstr ""
 
@@ -250,7 +255,7 @@ msgid "workflow.publishenewrecipes"
 msgstr ""
 
 #. default-message: You will receive and email if the output of this module changes
-#: assets/js/WorkflowEditor/DataVersionModal.js:132
+#: assets/js/WorkflowEditor/DataVersionModal.js:131
 msgid "workflow.receiveemail"
 msgstr ""
 
@@ -270,12 +275,12 @@ msgid "workflow.refreshthepagethankyou"
 msgstr ""
 
 #. default-message: Rename
-#: assets/js/WorkflowEditor/Tabs/TabDropdown.js:14
+#: assets/js/WorkflowEditor/Tabs/TabDropdown.js:13
 msgid "workflow.rename"
 msgstr ""
 
 #. default-message: Reverse alphabetical
-#: assets/js/Workflows/SortMenu.js:36
+#: assets/js/Workflows/SortMenu.js:35
 msgid "workflow.reversealphabet"
 msgstr ""
 
@@ -300,7 +305,7 @@ msgid "workflow.sharedworkflowview"
 msgstr ""
 
 #. default-message: Sign in
-#: assets/js/Workflow.js:20
+#: assets/js/Workflow.js:20 assets/js/WorkflowNavBar.js:175
 msgid "workflow.signin"
 msgstr ""
 
@@ -318,7 +323,7 @@ msgid "workflow.tabs.tab_prefix"
 msgstr ""
 
 #. default-message: This Tab has no Steps.
-#: assets/js/WorkflowEditor/ModuleStack.js:139
+#: assets/js/WorkflowEditor/ModuleStack.js:138
 msgid "workflow.thistabnosteps"
 msgstr ""
 
@@ -332,18 +337,23 @@ msgstr ""
 msgid "workflow.title.helpformodule"
 msgstr ""
 
+#. default-message: TRAINING
+#: assets/js/Workflows/index.js:197
+msgid "workflow.trainingtitle"
+msgstr ""
+
 #. default-message: Turn off
-#: assets/js/WorkflowEditor/DataVersionModal.js:138
+#: assets/js/WorkflowEditor/DataVersionModal.js:137
 msgid "workflow.turnoff"
 msgstr ""
 
 #. default-message: Turn on
-#: assets/js/WorkflowEditor/DataVersionModal.js:138
+#: assets/js/WorkflowEditor/DataVersionModal.js:137
 msgid "workflow.turnon"
 msgstr ""
 
 #. default-message: Turn alerts ON to receive an email if the output of this module changes
-#: assets/js/WorkflowEditor/DataVersionModal.js:132
+#: assets/js/WorkflowEditor/DataVersionModal.js:131
 msgid "workflow.turnonalerts"
 msgstr ""
 
@@ -398,7 +408,7 @@ msgid "workflow.visibility.dateType"
 msgstr ""
 
 #. default-message: Duplicate
-#: assets/js/WorkflowNavBar.js:202
+#: assets/js/WorkflowNavBar.js:206
 msgid "workflow.visibility.duplicate"
 msgstr ""
 
@@ -408,12 +418,12 @@ msgid "workflow.visibility.grandAccess"
 msgstr ""
 
 #. default-message: Home
-#: assets/js/WfHamburgerMenu.js:55
+#: assets/js/WfHamburgerMenu.js:56
 msgid "workflow.visibility.home"
 msgstr ""
 
 #. default-message: Import Module
-#: assets/js/WfHamburgerMenu.js:52
+#: assets/js/WfHamburgerMenu.js:53
 msgid "workflow.visibility.importModule"
 msgstr ""
 
@@ -423,17 +433,17 @@ msgid "workflow.visibility.isPublic"
 msgstr ""
 
 #. default-message: Log Out
-#: assets/js/WfHamburgerMenu.js:58
+#: assets/js/WfHamburgerMenu.js:59
 msgid "workflow.visibility.logout"
 msgstr ""
 
 #. default-message: menu
-#: assets/js/WfHamburgerMenu.js:42
+#: assets/js/WfHamburgerMenu.js:45
 msgid "workflow.visibility.menu"
 msgstr ""
 
 #. default-message: My Workflows
-#: assets/js/WfHamburgerMenu.js:51
+#: assets/js/WfHamburgerMenu.js:52
 msgid "workflow.visibility.myWorkflows"
 msgstr ""
 
@@ -488,7 +498,7 @@ msgid "workflow.visibility.rows"
 msgstr ""
 
 #. default-message: Share
-#: assets/js/WorkflowNavBar.js:204
+#: assets/js/WorkflowNavBar.js:208
 msgid "workflow.visibility.share"
 msgstr ""
 
@@ -578,7 +588,7 @@ msgid "workflow.workbenchembedchart"
 msgstr ""
 
 #. default-message: EMBED THIS CHART
-#: assets/js/Embed.js:83
+#: assets/js/Embed.js:91
 msgid "workflow.workbenchembedheader"
 msgstr ""
 
@@ -588,7 +598,7 @@ msgid "workflow.workbenchexportdata"
 msgstr ""
 
 #. default-message: WORKBENCH
-#: assets/js/Embed.js:29
+#: assets/js/Embed.js:37
 msgid "workflow.workbenchheader"
 msgstr ""
 
@@ -613,7 +623,7 @@ msgid "workflow.workbenchokmessage"
 msgstr ""
 
 #. default-message: Paste this code into any webpage HTML
-#: assets/js/Embed.js:84
+#: assets/js/Embed.js:92
 msgid "workflow.workbenchpastecodeheader"
 msgstr ""
 
@@ -648,7 +658,7 @@ msgid "workflow.workbenchsomethingwrong"
 msgstr ""
 
 #. default-message: Updated
-#: assets/js/Embed.js:70
+#: assets/js/Embed.js:78
 msgid "workflow.workbenchupdated"
 msgstr ""
 
@@ -659,13 +669,13 @@ msgstr ""
 
 #. This is used in navigation bar. It should be all-caps for styling reasons.
 #. default-message: TRAINING
-#: assets/js/Workflows/Navbar.js:39
+#: assets/js/Workflows/Navbar.js:40
 msgid "workflows.navbar.training"
 msgstr ""
 
 #. This is used in navigation bar. It should be all-caps for styling reasons.
 #. default-message: WORKFLOWS
-#: assets/js/Workflows/Navbar.js:36
+#: assets/js/Workflows/Navbar.js:37
 msgid "workflows.navbar.workflows"
 msgstr ""
 

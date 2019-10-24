@@ -14,10 +14,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.7.0\n"
 
-#: assets/js/Workflows/index.js:193
-msgid " workflow.trainingtitle"
-msgstr "TRAINING"
-
 #: assets/js/i18n/locales.js:5
 msgid "locales.el"
 msgstr "Greek"
@@ -56,7 +52,15 @@ msgstr "{years}y ago"
 msgid "time_diff.now"
 msgstr "just now"
 
-#: assets/js/WorkflowEditor/Tabs/TabDropdown.js:15
+#: assets/js/ImportModuleFromGitHub.js:44
+msgid "workbench.importedmodule"
+msgstr "Imported module {0} under category {1}"
+
+#: assets/js/ImportModuleFromGitHub.js:32
+msgid "workbench.processing"
+msgstr "Processing..."
+
+#: assets/js/WorkflowEditor/Tabs/TabDropdown.js:14
 msgid "workflow.Duplicate"
 msgstr "Duplicate"
 
@@ -64,23 +68,23 @@ msgstr "Duplicate"
 msgid "workflow.addData"
 msgstr "ADD DATA"
 
-#: assets/js/WorkflowEditor/ModuleSearch/Button.js:44
+#: assets/js/WorkflowEditor/ModuleSearch/Button.js:43
 msgid "workflow.addstep"
 msgstr "ADD STEP"
 
-#: assets/js/WorkflowEditor/DataVersionModal.js:131
+#: assets/js/WorkflowEditor/DataVersionModal.js:130
 msgid "workflow.alertsare"
 msgstr "Alerts are"
 
-#: assets/js/Workflows/SortMenu.js:35
+#: assets/js/Workflows/SortMenu.js:34
 msgid "workflow.alphabetical"
 msgstr "Alphabetical"
 
-#: assets/js/WorkflowEditor/AddData/Modal.js:25
+#: assets/js/WorkflowEditor/AddData/Modal.js:24
 msgid "workflow.attribute.close"
 msgstr "Close"
 
-#: assets/js/WorkflowEditor/AddData/Modal.js:22
+#: assets/js/WorkflowEditor/AddData/Modal.js:21
 msgid "workflow.choosedata"
 msgstr "CHOOSE A DATA SOURCE"
 
@@ -92,7 +96,7 @@ msgstr "Clear Search"
 msgid "workflow.copydebugging"
 msgstr "Copy the debugging details below and send them to"
 
-#: assets/js/Workflows/index.js:199
+#: assets/js/Workflows/index.js:203
 msgid "workflow.createworkflow"
 msgstr "Create Workflow"
 
@@ -100,18 +104,18 @@ msgstr "Create Workflow"
 msgid "workflow.createyourworkflow"
 msgstr "Create your first workflow"
 
-#: assets/js/WorkflowEditor/OutputPane.js:105
+#: assets/js/WorkflowEditor/OutputPane.js:104
 msgid "workflow.dataledtoanerror"
 msgstr ""
 "This was the data that led to an error. Please correct the error in the "
 "left panel."
 
-#: assets/js/WorkflowEditor/wfmodule/WfModuleContextMenu.js:22
-#: assets/js/Workflows/WorkflowContextMenu.js:41
+#: assets/js/WorkflowEditor/wfmodule/WfModuleContextMenu.js:21
+#: assets/js/Workflows/WorkflowContextMenu.js:40
 msgid "workflow.delete"
 msgstr "Delete"
 
-#: assets/js/WorkflowEditor/Tabs/TabDropdown.js:16
+#: assets/js/WorkflowEditor/Tabs/TabDropdown.js:15
 msgid "workflow.deleteEvent"
 msgstr "Delete"
 
@@ -127,7 +131,7 @@ msgstr ""
 "It helps if you can describe what you were doing before you ran into the "
 "bug."
 
-#: assets/js/Workflows/WorkflowContextMenu.js:36
+#: assets/js/Workflows/WorkflowContextMenu.js:35
 msgid "workflow.duplicate"
 msgstr "Duplicate"
 
@@ -151,7 +155,7 @@ msgstr "enter Zen mode"
 msgid "workflow.exitzenmode"
 msgstr "exit Zen mode"
 
-#: assets/js/WorkflowEditor/wfmodule/WfModuleContextMenu.js:21
+#: assets/js/WorkflowEditor/wfmodule/WfModuleContextMenu.js:20
 msgid "workflow.exportdata"
 msgstr "Export data"
 
@@ -159,7 +163,7 @@ msgstr "Export data"
 msgid "workflow.followsteps"
 msgstr "Please follow these simple steps to help us fix the issue."
 
-#: assets/js/WorkflowEditor/wfmodule/DeprecationNotice.js:12
+#: assets/js/WorkflowEditor/wfmodule/DeprecationNotice.js:11
 msgid "workflow.howtoreplace"
 msgstr "Learn how to replace this step"
 
@@ -168,11 +172,11 @@ msgstr "Learn how to replace this step"
 msgid "workflow.last_updated"
 msgstr "Updated {0}"
 
-#: assets/js/Workflows/SortMenu.js:32
+#: assets/js/Workflows/SortMenu.js:31
 msgid "workflow.lastmodified"
 msgstr "Last modified"
 
-#: assets/js/Workflows/index.js:196
+#: assets/js/Workflows/index.js:200
 msgid "workflow.learnworkwithdata"
 msgstr "Learn how to work with data without coding"
 
@@ -180,7 +184,7 @@ msgstr "Learn how to work with data without coding"
 msgid "workflow.myworkflows"
 msgstr "My workflows"
 
-#: assets/js/Workflows/index.js:190
+#: assets/js/Workflows/index.js:194
 msgid "workflow.new"
 msgstr "NEW"
 
@@ -188,15 +192,15 @@ msgstr "NEW"
 msgid "workflow.nodataconnectors"
 msgstr "No data connectors match your search."
 
-#: assets/js/Embed.js:21
+#: assets/js/Embed.js:29
 msgid "workflow.notavailableworkflow"
 msgstr "This workflow is not available"
 
-#: assets/js/Workflows/SortMenu.js:33
+#: assets/js/Workflows/SortMenu.js:32
 msgid "workflow.oldestmodified"
 msgstr "Oldest modified"
 
-#: assets/js/Workflows/index.js:91
+#: assets/js/Workflows/index.js:95
 msgid "workflow.permanentdelete"
 msgstr "Permanently delete this workflow?"
 
@@ -224,7 +228,7 @@ msgstr "public"
 msgid "workflow.publishenewrecipes"
 msgstr "Publishe new recipes via the Django admin"
 
-#: assets/js/WorkflowEditor/DataVersionModal.js:132
+#: assets/js/WorkflowEditor/DataVersionModal.js:131
 msgid "workflow.receiveemail"
 msgstr "You will receive and email if the output of this module changes"
 
@@ -240,11 +244,11 @@ msgstr "Refresh page"
 msgid "workflow.refreshthepagethankyou"
 msgstr "THANK YOU! Refresh this page to return to your Workflow."
 
-#: assets/js/WorkflowEditor/Tabs/TabDropdown.js:14
+#: assets/js/WorkflowEditor/Tabs/TabDropdown.js:13
 msgid "workflow.rename"
 msgstr "Rename"
 
-#: assets/js/Workflows/SortMenu.js:36
+#: assets/js/Workflows/SortMenu.js:35
 msgid "workflow.reversealphabet"
 msgstr "Reverse alphabetical"
 
@@ -264,7 +268,7 @@ msgstr "Shared with me"
 msgid "workflow.sharedworkflowview"
 msgstr "You are viewing a shared workflow"
 
-#: assets/js/Workflow.js:20
+#: assets/js/Workflow.js:20 assets/js/WorkflowNavBar.js:175
 msgid "workflow.signin"
 msgstr "Sign in"
 
@@ -279,7 +283,7 @@ msgstr "Oops! Something isn't right."
 msgid "workflow.tabs.tab_prefix"
 msgstr "Tab"
 
-#: assets/js/WorkflowEditor/ModuleStack.js:139
+#: assets/js/WorkflowEditor/ModuleStack.js:138
 msgid "workflow.thistabnosteps"
 msgstr "This Tab has no Steps."
 
@@ -291,15 +295,19 @@ msgstr "Edit Note"
 msgid "workflow.title.helpformodule"
 msgstr "Help for this module"
 
-#: assets/js/WorkflowEditor/DataVersionModal.js:138
+#: assets/js/Workflows/index.js:197
+msgid "workflow.trainingtitle"
+msgstr "TRAINING"
+
+#: assets/js/WorkflowEditor/DataVersionModal.js:137
 msgid "workflow.turnoff"
 msgstr "Turn off"
 
-#: assets/js/WorkflowEditor/DataVersionModal.js:138
+#: assets/js/WorkflowEditor/DataVersionModal.js:137
 msgid "workflow.turnon"
 msgstr "Turn on"
 
-#: assets/js/WorkflowEditor/DataVersionModal.js:132
+#: assets/js/WorkflowEditor/DataVersionModal.js:131
 msgid "workflow.turnonalerts"
 msgstr "Turn alerts ON to receive an email if the output of this module changes"
 
@@ -343,7 +351,7 @@ msgstr "Copy to clipboard"
 msgid "workflow.visibility.dateType"
 msgstr "date & time"
 
-#: assets/js/WorkflowNavBar.js:202
+#: assets/js/WorkflowNavBar.js:206
 msgid "workflow.visibility.duplicate"
 msgstr "Duplicate"
 
@@ -351,11 +359,11 @@ msgstr "Duplicate"
 msgid "workflow.visibility.grandAccess"
 msgstr "Grant access"
 
-#: assets/js/WfHamburgerMenu.js:55
+#: assets/js/WfHamburgerMenu.js:56
 msgid "workflow.visibility.home"
 msgstr "Home"
 
-#: assets/js/WfHamburgerMenu.js:52
+#: assets/js/WfHamburgerMenu.js:53
 msgid "workflow.visibility.importModule"
 msgstr "Import Module"
 
@@ -363,15 +371,15 @@ msgstr "Import Module"
 msgid "workflow.visibility.isPublic"
 msgstr "Anyone on the Internet may view and duplicate this Workflow."
 
-#: assets/js/WfHamburgerMenu.js:58
+#: assets/js/WfHamburgerMenu.js:59
 msgid "workflow.visibility.logout"
 msgstr "Log Out"
 
-#: assets/js/WfHamburgerMenu.js:42
+#: assets/js/WfHamburgerMenu.js:45
 msgid "workflow.visibility.menu"
 msgstr "menu"
 
-#: assets/js/WfHamburgerMenu.js:51
+#: assets/js/WfHamburgerMenu.js:52
 msgid "workflow.visibility.myWorkflows"
 msgstr "My Workflows"
 
@@ -415,7 +423,7 @@ msgstr "Report"
 msgid "workflow.visibility.rows"
 msgstr "Rows"
 
-#: assets/js/WorkflowNavBar.js:204
+#: assets/js/WorkflowNavBar.js:208
 msgid "workflow.visibility.share"
 msgstr "Share"
 
@@ -491,7 +499,7 @@ msgstr "done"
 msgid "workflow.workbenchembedchart"
 msgstr "EMBED THIS CHART"
 
-#: assets/js/Embed.js:83
+#: assets/js/Embed.js:91
 msgid "workflow.workbenchembedheader"
 msgstr "EMBED THIS CHART"
 
@@ -499,7 +507,7 @@ msgstr "EMBED THIS CHART"
 msgid "workflow.workbenchexportdata"
 msgstr "EXPORT DATA"
 
-#: assets/js/Embed.js:29
+#: assets/js/Embed.js:37
 msgid "workflow.workbenchheader"
 msgstr "WORKBENCH"
 
@@ -520,7 +528,7 @@ msgstr "JSON FEED"
 msgid "workflow.workbenchokmessage"
 msgstr "OK"
 
-#: assets/js/Embed.js:84
+#: assets/js/Embed.js:92
 msgid "workflow.workbenchpastecodeheader"
 msgstr "Paste this code into any webpage HTML"
 
@@ -550,7 +558,7 @@ msgstr "SHARE THIS WORKFLOW"
 msgid "workflow.workbenchsomethingwrong"
 msgstr "Something is wrong."
 
-#: assets/js/Embed.js:70
+#: assets/js/Embed.js:78
 msgid "workflow.workbenchupdated"
 msgstr "Updated"
 
@@ -559,12 +567,12 @@ msgid "workflow.workflowswillappearhere"
 msgstr "Workflows shared with you as collaborator will appear here"
 
 #. This is used in navigation bar. It should be all-caps for styling reasons.
-#: assets/js/Workflows/Navbar.js:39
+#: assets/js/Workflows/Navbar.js:40
 msgid "workflows.navbar.training"
 msgstr "TRAINING"
 
 #. This is used in navigation bar. It should be all-caps for styling reasons.
-#: assets/js/Workflows/Navbar.js:36
+#: assets/js/Workflows/Navbar.js:37
 msgid "workflows.navbar.workflows"
 msgstr "WORKFLOWS"
 
