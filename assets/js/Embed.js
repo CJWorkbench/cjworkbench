@@ -1,7 +1,7 @@
 import React from 'react'
 import { escapeHtml, timeDifference } from './utils'
-import { withI18n,I18n } from '@lingui/react'
-import { Trans,t } from '@lingui/macro'
+import { withI18n } from '@lingui/react'
+import { t } from '@lingui/macro'
 import PropTypes from 'prop-types'
 
 export class Embed extends React.Component {
@@ -9,8 +9,9 @@ export class Embed extends React.Component {
     i18n: PropTypes.shape({
       // i18n object injected by LinguiJS withI18n()
       _: PropTypes.func.isRequired
-    }),
+    })
   }
+
   state = {
     overlayOpen: false
   }
@@ -74,7 +75,7 @@ export class Embed extends React.Component {
                   </li>
                   <li>
                     <a href={'/workflows/' + this.props.workflow.id} target='_blank' rel='noopener noreferrer'>
-                    {this.props.i18n._(t('workflow.workbenchupdated')`Updated`)} {timeDifference(this.props.workflow.last_update, new Date(), this.props.i18n)}
+                      {this.props.i18n._(t('workflow.workbenchupdated')`Updated`)} {timeDifference(this.props.workflow.last_update, new Date(), this.props.i18n)}
                     </a>
                   </li>
                 </ul>
@@ -100,4 +101,4 @@ export class Embed extends React.Component {
     )
   }
 }
-export default withI18n()(Embed);
+export default withI18n()(Embed)

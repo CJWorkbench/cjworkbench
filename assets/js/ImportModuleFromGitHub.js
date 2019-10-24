@@ -3,8 +3,8 @@ import PropTypes from 'prop-types'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from './components/Modal'
 import { updateModuleAction } from './workflow-reducer'
 import { connect } from 'react-redux'
-import { Trans,t } from '@lingui/macro'
-import { withI18n,I18n } from '@lingui/react'
+import { Trans, t } from '@lingui/macro'
+import { withI18n } from '@lingui/react'
 
 const StaffImportModuleFromGitHub = withI18n()(class StaffImportModuleFromGitHub extends React.PureComponent {
   static propTypes = {
@@ -41,7 +41,7 @@ const StaffImportModuleFromGitHub = withI18n()(class StaffImportModuleFromGitHub
     this.props.addModuleToState(data)
     this.setState({
       status: {
-        message: this.props.i18n._(t("workbench.importedmodule")`Imported module ${data.name} under category ${data.category}`)
+        message: this.props.i18n._(t('workbench.importedmodule')`Imported module ${data.name} under category ${data.category}`)
       }
     })
   }
@@ -78,8 +78,8 @@ const StaffImportModuleFromGitHub = withI18n()(class StaffImportModuleFromGitHub
               <div className='import-github-error'>{status.error}</div>
             ) : null}
             <div className='label-margin t-m-gray info-1'>
-            <Trans id='workflow.workbenchbuildmodule'>Learn about how to build your own module</Trans>
-              
+              <Trans id='workflow.workbenchbuildmodule'>Learn about how to build your own module</Trans>
+
               {' '}<a target='_blank' rel='noopener noreferrer' href='https://github.com/CJWorkbench/cjworkbench/wiki/Creating-A-Module' className='action-link'><Trans id='workflow.workbenchhere'>here</Trans></a>
             </div>
           </form>

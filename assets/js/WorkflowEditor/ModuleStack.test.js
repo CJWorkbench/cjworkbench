@@ -4,9 +4,8 @@ import { ModuleStack } from './ModuleStack'
 // import { mount } from 'enzyme'
 import { mountWithI18n } from '../i18n/test-utils'
 
-
 describe('ModuleStack', () => {
-  const wrapper = (extraProps) =>  mountWithI18n(
+  const wrapper = (extraProps) => mountWithI18n(
     <ModuleStack
       api={{}}
       isReadOnly={false}

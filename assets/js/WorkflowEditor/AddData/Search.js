@@ -12,20 +12,20 @@ const Search = React.memo(function Search ({ value, onChange }) {
     <form className='search' onSubmit={handleSubmit} onReset={handleReset}>
       <I18n>
         {({ i18n }) => (
-      <input
-        type='search'
-        placeholder={i18n._(t('workflow.searchattribute')`Search…`)}
-        name='moduleQ'
-        autoFocus
-        autoComplete='off'
-        onChange={handleChange}
-        value={value}
-      />
-       )}
+          <input
+            type='search'
+            placeholder={i18n._(t('workflow.searchattribute')`Search…`)}
+            name='moduleQ'
+            autoFocus
+            autoComplete='off'
+            onChange={handleChange}
+            value={value}
+          />
+        )}
       </I18n>
-       <I18n>
+      <I18n>
         {({ i18n }) => (
-      <button type='reset' className='reset' title={i18n._(t('workflow.clearSearch')`Clear Search`)}><i className='icon-close' /></button>
+          <button type='reset' className='reset' title={i18n._(t('workflow.clearSearch')`Clear Search`)}><i className='icon-close' /></button>
         )}
       </I18n>
     </form>

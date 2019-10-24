@@ -7,9 +7,8 @@ import { addModuleAction } from '../../workflow-reducer'
 import { connect } from 'react-redux'
 import Modules from './Modules'
 import Search from './Search'
-import { Trans,t } from '@lingui/macro'
+import { Trans, t } from '@lingui/macro'
 import { I18n } from '@lingui/react'
-
 
 export const Modal = React.memo(function Modal ({ modules, tabSlug, close, addModule }) {
   const onSelectModule = React.useCallback(moduleIdName => addModule(tabSlug, moduleIdName))
@@ -19,13 +18,13 @@ export const Modal = React.memo(function Modal ({ modules, tabSlug, close, addMo
     <section className='add-data-modal'>
       <header>
         <div className='title'>
-          <h5><Trans id="workflow.choosedata">CHOOSE A DATA SOURCE</Trans></h5>
-           <I18n>
-          {({ i18n }) => (
-            <button type='button' className='close' aria-label='Close' title={i18n._(t('workflow.attribute.close')`Close`)} onClick={close}>×</button>
-          )}
+          <h5><Trans id='workflow.choosedata'>CHOOSE A DATA SOURCE</Trans></h5>
+          <I18n>
+            {({ i18n }) => (
+              <button type='button' className='close' aria-label='Close' title={i18n._(t('workflow.attribute.close')`Close`)} onClick={close}>×</button>
+            )}
           </I18n>
-          
+
         </div>
         <Search value={search} onChange={setSearch} />
       </header>

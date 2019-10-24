@@ -17,8 +17,8 @@ export function UnhandledErrorReport ({ error }) {
   if (typeof window.Intercom === 'function') {
     helpText = (
       <ol>
-        <li><Trans id='workflow.workbenchbugreport'>We opened a messaging window and included details for our developers to fix the issue.</Trans> <em><Trans id="workflow.plssendmsg">Please send the message</Trans></em>.</li>
-        <li><Trans id="workflow.describeproblem">It helps if you can describe what you were doing before you ran into the bug.</Trans></li>
+        <li><Trans id='workflow.workbenchbugreport'>We opened a messaging window and included details for our developers to fix the issue.</Trans> <em><Trans id='workflow.plssendmsg'>Please send the message</Trans></em>.</li>
+        <li><Trans id='workflow.describeproblem'>It helps if you can describe what you were doing before you ran into the bug.</Trans></li>
       </ol>
     )
     React.useEffect(() => {
@@ -42,8 +42,8 @@ export function UnhandledErrorReport ({ error }) {
     ].join('\n\n'))
     helpText = (
       <ol>
-        <li><Trans id="workflow.copydebugging">Copy the debugging details below and send them to</Trans> <a href={url} target='_blank' rel='noopener noreferrer'>hello@workbenchdata.com</a>.</li>
-        <li><Trans id="workflow.describethisbug">It helps if you can describe what you were doing before you ran into the bug.</Trans></li>
+        <li><Trans id='workflow.copydebugging'>Copy the debugging details below and send them to</Trans> <a href={url} target='_blank' rel='noopener noreferrer'>hello@workbenchdata.com</a>.</li>
+        <li><Trans id='workflow.describethisbug'>It helps if you can describe what you were doing before you ran into the bug.</Trans></li>
       </ol>
     )
   }
@@ -51,15 +51,15 @@ export function UnhandledErrorReport ({ error }) {
   return (
     <div className='unhandled-error-report'>
       <div className='content'>
-        <h2><Trans id="workflow.smtwentwrong">Oops! Something isn't right.</Trans></h2>
-        <p><Trans id="workflow.followsteps">Please follow these simple steps to help us fix the issue.</Trans></p>
+        <h2><Trans id='workflow.smtwentwrong'>Oops! Something isn't right.</Trans></h2>
+        <p><Trans id='workflow.followsteps'>Please follow these simple steps to help us fix the issue.</Trans></p>
         <div className='help-us-debug'>{helpText}</div>
-        <p><Trans id="workflow.refreshthepagethankyou">THANK YOU! Refresh this page to return to your Workflow.</Trans></p>
+        <p><Trans id='workflow.refreshthepagethankyou'>THANK YOU! Refresh this page to return to your Workflow.</Trans></p>
         <p>Debugging details (please send):</p>
         <pre>{bugReportText}</pre>
         <div className='actions'>
           <button type='button' onClick={() => window.location.reload()}>
-            <Trans id="workflow.refreshthepage">Refresh page</Trans>
+            <Trans id='workflow.refreshthepage'>Refresh page</Trans>
           </button>
         </div>
       </div>

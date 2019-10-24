@@ -5,7 +5,6 @@ import { OutputPane } from './OutputPane'
 import OutputIframe from '../OutputIframe'
 import DelayedTableSwitcher from '../table/DelayedTableSwitcher'
 import { shallowWithI18n } from '../i18n/test-utils'
-import { mountWithI18n } from '../i18n/test-utils'
 
 describe('OutputPane', () => {
   const wrapper = function (extraProps = {}) {

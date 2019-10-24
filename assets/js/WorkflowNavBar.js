@@ -5,8 +5,8 @@ import UndoRedoButtons from './UndoRedoButtons'
 import ConnectedEditableWorkflowName, { EditableWorkflowName } from './EditableWorkflowName'
 import { goToUrl, timeDifference } from './utils'
 import ShareButton from './ShareModal/ShareButton'
-import { Trans,t } from '@lingui/macro'
-import { withI18n,I18n } from '@lingui/react'
+import { Trans, t } from '@lingui/macro'
+import { withI18n } from '@lingui/react'
 
 function NoOp () {}
 
@@ -90,7 +90,7 @@ function WorkflowTitleAndMetadata ({ lesson, isReadOnly, workflow }) {
 
 export class WorkflowNavBar extends React.Component {
   static propTypes = {
-     i18n: PropTypes.shape({
+    i18n: PropTypes.shape({
       // i18n object injected by LinguiJS withI18n()
       _: PropTypes.func.isRequired
     }),
@@ -215,4 +215,4 @@ export class WorkflowNavBar extends React.Component {
     )
   }
 }
-export default withI18n()(WorkflowNavBar);
+export default withI18n()(WorkflowNavBar)

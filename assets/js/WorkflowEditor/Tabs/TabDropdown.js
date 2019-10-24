@@ -1,8 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from '../../components/Dropdown'
-import { I18n } from '@lingui/react'
-import { Trans,t } from '@lingui/macro'
+import { Trans } from '@lingui/macro'
 
 export default function TabDropdown ({ onClickRename, onClickDelete, onClickDuplicate }) {
   return (
@@ -11,9 +10,9 @@ export default function TabDropdown ({ onClickRename, onClickDelete, onClickDupl
         <i className='icon-caret-down' />
       </DropdownToggle>
       <DropdownMenu>
-        <DropdownItem onClick={onClickRename} icon='icon-edit'><Trans id="workflow.rename">Rename</Trans></DropdownItem>
-        <DropdownItem onClick={onClickDuplicate} icon='icon-duplicate'><Trans id="workflow.Duplicate">Duplicate</Trans></DropdownItem>
-        <DropdownItem onClick={onClickDelete} icon='icon-removec'><Trans id="workflow.deleteEvent">Delete</Trans></DropdownItem>
+        <DropdownItem onClick={onClickRename} icon='icon-edit'><Trans id='workflow.rename'>Rename</Trans></DropdownItem>
+        <DropdownItem onClick={onClickDuplicate} icon='icon-duplicate'><Trans id='workflow.Duplicate'>Duplicate</Trans></DropdownItem>
+        <DropdownItem onClick={onClickDelete} icon='icon-removec'><Trans id='workflow.deleteEvent'>Delete</Trans></DropdownItem>
       </DropdownMenu>
     </UncontrolledDropdown>
   )

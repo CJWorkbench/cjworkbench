@@ -9,8 +9,6 @@ describe('EditableNotes', () => {
 
   // Can't test "startsFocused" with shallow(), because there's no DOM element to focus
 
-  
-
   describe('read-only', () => {
     beforeEach(() => {
       wrapper = shallowWithI18n(

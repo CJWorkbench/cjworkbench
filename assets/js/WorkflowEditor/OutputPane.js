@@ -5,9 +5,8 @@ import PropTypes from 'prop-types'
 import DelayedTableSwitcher from '../table/DelayedTableSwitcher'
 import OutputIframe from '../OutputIframe'
 import { connect } from 'react-redux'
-import { I18n } from '@lingui/react'
-import { Trans,t } from '@lingui/macro'
 import { withI18n } from '@lingui/react'
+import { t } from '@lingui/macro'
 
 export class OutputPane extends React.Component {
   static propTypes = {
@@ -36,7 +35,7 @@ export class OutputPane extends React.Component {
     }), // or null if no selection
     isPublic: PropTypes.bool.isRequired,
     isReadOnly: PropTypes.bool.isRequired,
-     i18n: PropTypes.shape({
+    i18n: PropTypes.shape({
       // i18n object injected by LinguiJS withI18n()
       _: PropTypes.func.isRequired
     })
