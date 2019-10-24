@@ -17,7 +17,7 @@ export function MaybeNotYourWorkflow (props) {
   if (props.isLoggedIn) {
     suggestion = <h3 className='suggestion'><Trans id='workflow.duplicatetosavechanges'>Duplicate it to save your changes</Trans></h3>
   } else {
-    suggestion = <h3 className='suggestion'><a href={`/account/login/?next=/workflows/${props.workflowId}`} className='action-button '><Trans id='workflow.signin'>Sign in</Trans></a><Trans id='workflow.saveurchanges'> to save your changes</Trans></h3>
+    suggestion = <h3 className='suggestion'><Trans id='workflow.signintosaveurchanges'><a href={`/account/login/?next=/workflows/${props.workflowId}`} className='action-button '>Sign in</a>to save your changes</Trans></h3>
   }
 
   let inner, className

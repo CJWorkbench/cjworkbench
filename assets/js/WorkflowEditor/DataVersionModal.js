@@ -127,7 +127,7 @@ class NotificationsForm extends React.PureComponent {
     return (
       <form onSubmit={this.handleSubmit} className={`notifications ${className}`}>
         <div className='text'>
-          <p className='status'><i className={`icon ${iconAlert}`} /> <Trans id='workflow.alertsare'>Alerts are</Trans> <strong>{checked ? ' on' : ' off'}</strong></p>
+          <p className='status'><i className={`icon ${iconAlert}`} /> {checked ? <Trans id='workflow.alertsareon'>Alerts are <strong>on</strong></Trans> : <Trans id='workflow.alertsareoff'>Alerts are <strong>off</strong></Trans>}</p>
           <p className='description'>{checked ? <Trans id='workflow.receiveemail'>You will receive and email if the output of this module changes</Trans> : <Trans id='workflow.turnonalerts'>Turn alerts ON to receive an email if the output of this module changes</Trans>}
           </p>
         </div>

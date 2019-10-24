@@ -1,7 +1,6 @@
 /* globals describe, expect, it, jest */
 import React from 'react'
 import { WorkflowMetadata } from './WorkflowMetadata'
-// import { shallow } from 'enzyme'
 import { shallowWithI18n } from '../i18n/test-utils'
 
 describe('WorkflowMetadata', () => {

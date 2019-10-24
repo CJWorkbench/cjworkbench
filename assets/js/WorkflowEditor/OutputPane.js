@@ -101,7 +101,7 @@ export class OutputPane extends React.Component {
           key='error'
           className='showing-input-because-error'
         >
-          {this.props.i18n._(t('workflow.dataledtoanerror')`This was the data that led to an error. Please correct the error in the left panel.`)}
+          {this.props.i18n._(t('workflow.dataledtoanerror')`This was the data that led to an error. Please correct the error in the left pane.`)}
         </p>
       )
     } else {

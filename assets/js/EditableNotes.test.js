@@ -1,6 +1,5 @@
 /* globals beforeEach, describe, expect, it, jest */
 import React from 'react'
-// import { shallow } from 'enzyme'
 import EditableNotes from './EditableNotes'
 import { shallowWithI18n } from './i18n/test-utils'
 

@@ -1,7 +1,6 @@
 /* globals describe, expect, it, jest */
 import React from 'react'
 import { ModuleStack } from './ModuleStack'
-// import { mount } from 'enzyme'
 import { mountWithI18n } from '../i18n/test-utils'
 
 describe('ModuleStack', () => {

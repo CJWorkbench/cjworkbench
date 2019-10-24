@@ -73,8 +73,12 @@ msgid "workflow.addstep"
 msgstr "ADD STEP"
 
 #: assets/js/WorkflowEditor/DataVersionModal.js:130
-msgid "workflow.alertsare"
-msgstr "Alerts are"
+msgid "workflow.alertsareoff"
+msgstr "Alerts are <0>off</0>"
+
+#: assets/js/WorkflowEditor/DataVersionModal.js:130
+msgid "workflow.alertsareon"
+msgstr "Alerts are <0>on</0>"
 
 #: assets/js/Workflows/SortMenu.js:34
 msgid "workflow.alphabetical"
@@ -252,10 +256,6 @@ msgstr "Rename"
 msgid "workflow.reversealphabet"
 msgstr "Reverse alphabetical"
 
-#: assets/js/Workflow.js:20
-msgid "workflow.saveurchanges"
-msgstr "to save your changes"
-
 #: assets/js/WorkflowEditor/AddData/Search.js:17
 msgid "workflow.searchattribute"
 msgstr "Search…"
@@ -268,9 +268,13 @@ msgstr "Shared with me"
 msgid "workflow.sharedworkflowview"
 msgstr "You are viewing a shared workflow"
 
-#: assets/js/Workflow.js:20 assets/js/WorkflowNavBar.js:175
+#: assets/js/WorkflowNavBar.js:175
 msgid "workflow.signin"
 msgstr "Sign in"
+
+#: assets/js/Workflow.js:20
+msgid "workflow.signintosaveurchanges"
+msgstr "<0>Sign in</0>to save your changes"
 
 #: assets/js/UnhandledErrorReport.js:54
 msgid "workflow.smtwentwrong"
@@ -454,7 +458,7 @@ msgstr ""
 "fix the issue."
 
 #: assets/js/ImportModuleFromGitHub.js:81
-#: assets/js/ImportModuleFromGitHub.js:101
+#: assets/js/ImportModuleFromGitHub.js:104
 msgid "workflow.workbenchbuildmodule"
 msgstr "Learn about how to build your own module"
 
@@ -466,7 +470,7 @@ msgstr "Cancel"
 msgid "workflow.workbenchcjsonfeedlink"
 msgstr "JSON FEED LINK COPIED TO CLIPBOARD"
 
-#: assets/js/ImportModuleFromGitHub.js:106
+#: assets/js/ImportModuleFromGitHub.js:113
 msgid "workflow.workbenchclose"
 msgstr "Close"
 
@@ -487,7 +491,7 @@ msgid "workflow.workbenchcurrprivate"
 msgstr "This workflow is currently private"
 
 #: assets/js/ImportModuleFromGitHub.js:62
-#: assets/js/ImportModuleFromGitHub.js:98
+#: assets/js/ImportModuleFromGitHub.js:101
 msgid "workflow.workbenchcustommodule"
 msgstr "Import Custom Module"
 
@@ -511,12 +515,7 @@ msgstr "EXPORT DATA"
 msgid "workflow.workbenchheader"
 msgstr "WORKBENCH"
 
-#: assets/js/ImportModuleFromGitHub.js:83
-#: assets/js/ImportModuleFromGitHub.js:102
-msgid "workflow.workbenchhere"
-msgstr "here"
-
-#: assets/js/ImportModuleFromGitHub.js:88
+#: assets/js/ImportModuleFromGitHub.js:91
 msgid "workflow.workbenchimport"
 msgstr "Import"
 
