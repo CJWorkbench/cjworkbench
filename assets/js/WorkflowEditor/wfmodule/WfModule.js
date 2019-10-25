@@ -370,7 +370,7 @@ export class WfModule extends React.PureComponent {
       let className = 'notifications'
       if (notifications) className += ' enabled'
       if (hasUnseen) className += ' has-unseen'
-      const title = notifications ? <Trans id='workflow.emailalertenebled'>Email alerts enabled</Trans> : <Trans id='workflow.emailalertdisabled'>Email alerts disabled</Trans>
+      const title = notifications ? i18n._(t('workflow.emailalertenebled')`Email alerts enabled`) : i18n._(t('workflow.emailalertdisabled')`Email alerts disabled`)
 
       alertButton = (
         <button title={title} className={className} onClick={this.handleClickNotification}>
