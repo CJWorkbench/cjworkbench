@@ -53,6 +53,8 @@ services:
     # RACE! Sleep 10 so that `addminiouser` can finish
     command: [ 'sh', '-c', 'sleep 10 && ./manage.py test -v2' ]
     depends_on: [ 'testdb', 'testrabbitmq', 'testminio', 'addminiouser' ]
+    security_opt:
+      - seccomp=docker/forkserver-seccomp-profile.json
     environment:
       PYTHONUNBUFFERED: '1'
       ASGI_THREADS: '5'

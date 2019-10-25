@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -188,12 +188,12 @@ class ModuleVersion(models.Model):
         return self.spec.get("html_output", False)
 
     @property
-    def param_fields(self):
+    def param_fields(self) -> List[ParamSpec]:
         return [ParamSpec.from_dict(d) for d in self.spec["parameters"]]
 
     # Returns a dict of DTypes for all parameters
     @property
-    def param_schema(self):
+    def param_schema(self) -> ParamDType.Dict:
         if "param_schema" in self.spec:
             # Module author wrote a schema in the YAML, to define storage of 'custom' parameters
             json_schema = self.spec["param_schema"]
@@ -210,11 +210,11 @@ class ModuleVersion(models.Model):
             )
 
     @property
-    def default_params(self):
+    def default_params(self) -> Dict[str, Any]:
         return self.param_schema.coerce(None)
 
     @property
-    def param_schema_version(self):
+    def param_schema_version(self) -> str:
         """
         Version of param_schema. Changes whenever param_schema changes.
 

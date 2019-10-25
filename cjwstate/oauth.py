@@ -24,7 +24,6 @@ TODO create a lovely HTTP-level test suite.
 from django.conf import settings
 from typing import Union, Optional, Dict, Tuple
 from oauthlib.oauth2.rfc6749.errors import OAuth2Error
-from oauthlib.oauth1.rfc5849.errors import OAuth1Error
 import jwt
 import requests
 import requests_oauthlib
@@ -32,7 +31,7 @@ from requests_oauthlib.oauth1_session import TokenRequestDenied
 import json
 from urllib.parse import urlencode
 
-__all__ = ["TokenRequestDenied", "OAuthService", "OAuth1a", "Oauth2"]
+__all__ = ["TokenRequestDenied", "OAuthService", "OAuth1a", "OAuth2"]
 
 
 OfflineToken = Dict[str, str]

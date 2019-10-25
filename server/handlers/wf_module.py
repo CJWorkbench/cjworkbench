@@ -8,8 +8,8 @@ from django.conf import settings
 from django.db import transaction
 from django.utils import timezone
 from cjworkbench.sync import database_sync_to_async
-from server import oauth, rabbitmq, websockets
-from cjwstate import commands
+from server import rabbitmq, websockets
+from cjwstate import commands, oauth
 from cjwstate.models import Workflow, WfModule
 from cjwstate.models.commands import (
     ChangeParametersCommand,
@@ -113,7 +113,7 @@ async def set_params(
     try:
         await commands.do(
             ChangeParametersCommand,
-            workflow=workflow,
+            workflow_id=workflow.id,
             wf_module=wf_module,
             new_values=values,
         )
@@ -125,7 +125,7 @@ async def set_params(
 @websockets_handler("write")
 @_loading_wf_module
 async def delete(workflow: Workflow, wf_module: WfModule, **kwargs):
-    await commands.do(DeleteModuleCommand, workflow=workflow, wf_module=wf_module)
+    await commands.do(DeleteModuleCommand, workflow_id=workflow.id, wf_module=wf_module)
 
 
 @database_sync_to_async
@@ -173,7 +173,7 @@ async def set_stored_data_version(
 
     await commands.do(
         ChangeDataVersionCommand,
-        workflow=workflow,
+        workflow_id=workflow.id,
         wf_module=wf_module,
         new_version=version,
     )
@@ -188,7 +188,7 @@ async def set_notes(workflow: Workflow, wf_module: WfModule, notes: str, **kwarg
     notes = str(notes)  # cannot error from JSON input
     await commands.do(
         ChangeWfModuleNotesCommand,
-        workflow=workflow,
+        workflow_id=workflow.id,
         wf_module=wf_module,
         new_value=notes,
     )
@@ -339,12 +339,15 @@ def _lookup_service(wf_module: WfModule, param: str) -> oauth.OAuthService:
     """
     module_version = wf_module.module_version
     if module_version is None:
-        raise HandlerError("BadRequest: module {wf_module.module_id_name} not found")
+        raise HandlerError(f"BadRequest: module {wf_module.module_id_name} not found")
     for field in module_version.param_fields:
         if (
             field.id_name == param
             and isinstance(field, ParamSpec.Secret)
-            and isinstance(field.secret_logic, ParamSpec.Secret.Logic.Oauth)
+            and (
+                isinstance(field.secret_logic, ParamSpec.Secret.Logic.Oauth1a)
+                or isinstance(field.secret_logic, ParamSpec.Secret.Logic.Oauth2)
+            )
         ):
             service_name = field.secret_logic.service
             service = oauth.OAuthService.lookup_or_none(service_name)

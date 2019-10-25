@@ -46,7 +46,7 @@ class ChangeDataVersionCommandTests(DbTestCase):
         cmd = self.run_with_async_db(
             commands.do(
                 ChangeDataVersionCommand,
-                workflow=self.workflow,
+                workflow_id=self.workflow.id,
                 wf_module=self.wf_module,
                 new_version=date1,
             )
@@ -82,7 +82,7 @@ class ChangeDataVersionCommandTests(DbTestCase):
         delta = self.run_with_async_db(
             commands.do(
                 ChangeDataVersionCommand,
-                workflow=self.workflow,
+                workflow_id=self.workflow.id,
                 wf_module=self.wf_module,
                 new_version=date2,
             )
@@ -109,7 +109,7 @@ class ChangeDataVersionCommandTests(DbTestCase):
         delta = self.run_with_async_db(
             commands.do(
                 ChangeDataVersionCommand,
-                workflow=self.workflow,
+                workflow_id=self.workflow.id,
                 wf_module=self.wf_module,
                 new_version=date2,
             )
@@ -142,7 +142,7 @@ class ChangeDataVersionCommandTests(DbTestCase):
         delta = self.run_with_async_db(
             commands.do(
                 ChangeDataVersionCommand,
-                workflow=self.workflow,
+                workflow_id=self.workflow.id,
                 wf_module=self.wf_module,
                 new_version=date2,
             )

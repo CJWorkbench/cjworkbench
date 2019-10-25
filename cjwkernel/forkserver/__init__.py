@@ -1,4 +1,3 @@
-import ctypes
 from dataclasses import dataclass
 import logging
 import os
@@ -6,15 +5,10 @@ import socket
 import subprocess
 import sys
 import threading
-from typing import Any, List, Tuple
+from typing import Any, BinaryIO, FrozenSet, List, Tuple
 from . import protocol
 from cjwkernel.types import CompiledModule
 from cjwkernel.pandas import main as module_main
-
-libc = ctypes.CDLL("libc.so.6")
-PR_SET_NAME = 15
-PR_SET_CHILD_SUBREAPER = 36
-PR_GET_CHILD_SUBREAPER = 37
 
 
 logger = logging.getLogger(__name__)
@@ -22,8 +16,10 @@ logger = logging.getLogger(__name__)
 
 @dataclass(frozen=True)
 class ModuleProcess:
-    module_slug: str
+    process_name: str
     pid: int
+    stdout: BinaryIO  # auto-closes in __del__
+    stderr: BinaryIO  # auto-closes in __del__
 
     def kill(self) -> None:
         return os.kill(self.pid, 9)
@@ -68,7 +64,12 @@ class Forkserver:
       named-pipe+hmac approach does not inspire confidence.)
     """
 
-    def __init__(self, *, forkserver_preload: List[str] = []):
+    def __init__(
+        self,
+        *,
+        module_main: str = "cjwkernel.pandas.main.main",
+        forkserver_preload: List[str] = [],
+    ):
         # We rely on Python's os.fork() internals to close FDs and run a child
         # process.
         self._pid = os.getpid()
@@ -76,11 +77,31 @@ class Forkserver:
         self._process = subprocess.Popen(
             [
                 sys.executable,
+                # PYTHONUNBUFFERED: parents read children's data sooner
+                "-u",
+                # Force UTF8 mode. We already set UTF8 at the OS level; but
+                # let's be redundant because module authors would really
+                # dislike it if our encoding changed.
+                "-X",
+                "utf8",
                 "-c",
-                "import cjwkernel.forkserver.main; cjwkernel.forkserver.main.forkserver_main(%d, %d)"
-                % (self._pid, child_socket.fileno()),
+                'import cjwkernel.forkserver.main; cjwkernel.forkserver.main.forkserver_main("%s", %d)'
+                % (module_main, child_socket.fileno()),
             ],
-            # env={},  # FIXME SECURITY set env so modules don't get secrets
+            env={
+                # SECURITY: children inherit these values
+                "LANG": "C.UTF-8",
+                "HOME": "/",
+                # [adamhooper, 2019-10-19] rrrgh, OpenBLAS....
+                #
+                # If we preload numpy, we're in trouble. Numpy loads OpenBLAS,
+                # and OpenBLAS starts a whole threading subsystem ... which
+                # breaks fork() in our modules. (We use fork() to open Parquet
+                # files....) OPENBLAS_NUM_THREADS=1 disables the thread pool.
+                #
+                # I'm frustrated.
+                "OPENBLAS_NUM_THREADS": "1",
+            },
             stdin=subprocess.DEVNULL,
             stdout=sys.stdout.fileno(),
             stderr=sys.stderr.fileno(),
@@ -96,28 +117,35 @@ class Forkserver:
 
     def spawn_module(
         self,
-        compiled_module: CompiledModule,
-        output_fd: int,
-        log_fd: int,
-        function: str,
+        process_name: str,
         args: List[Any],
+        *,
+        skip_sandbox_except: FrozenSet[str] = frozenset(),
     ) -> ModuleProcess:
         """
         Make our server spawn a process, and return it.
 
+        `process_name` is the name to display in `ps` output and server logs.
+
         `args` are the arguments to pass to `cjwkernel.pandas.module.main()`.
+
+        `skip_sandbox_except` MUST BE EXACTLY `frozenset()`. Other values are
+        only for unit tests. See `protocol.SpawnPandasModule` for details.
         """
         message = protocol.SpawnPandasModule(
-            compiled_module=compiled_module,
-            output_fd=output_fd,
-            log_fd=log_fd,
-            function=function,
+            process_name=process_name,
             args=args,
+            skip_sandbox_except=skip_sandbox_except,
         )
         with self._lock:
             message.send_on_socket(self._socket)
             response = protocol.SpawnedPandasModule.recv_on_socket(self._socket)
-        return ModuleProcess(module_slug=compiled_module.module_slug, pid=response.pid)
+        return ModuleProcess(
+            process_name=process_name,
+            pid=response.pid,
+            stdout=os.fdopen(response.stdout_fd, mode="rb"),
+            stderr=os.fdopen(response.stderr_fd, mode="rb"),
+        )
 
     def close(self) -> None:
         """

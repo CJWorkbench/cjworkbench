@@ -12,7 +12,7 @@
       "id_name": "twitter_credentials",
       "type": "secret",
       "secret_logic": {
-        "provider": "oauth",
+        "provider": "oauth1a",
         "service": "twitter"
       }
     },

@@ -12,4 +12,4 @@ Really, we cache the output. Metadata is cached in the database (in `WfModule`
 fields); and tabular data is cached in Parquet files in minio.
 
 This module depends on `cjwstate.models`, `cjwstate.minio` and
-`cjwstate.parquet`.
+`cjwkernel.parquet`.

@@ -23,7 +23,7 @@ class DuplicateTabCommandTest(DbTestCase):
         cmd = self.run_with_async_db(
             commands.do(
                 DuplicateTabCommand,
-                workflow=workflow,
+                workflow_id=workflow.id,
                 from_tab=tab,
                 slug="tab-2",
                 name="Tab 2",
@@ -134,7 +134,7 @@ class DuplicateTabCommandTest(DbTestCase):
         cmd = self.run_with_async_db(
             commands.do(
                 DuplicateTabCommand,
-                workflow=workflow,
+                workflow_id=workflow.id,
                 from_tab=tab,
                 slug="tab-2",
                 name="Tab 2",
@@ -225,7 +225,7 @@ class DuplicateTabCommandTest(DbTestCase):
         cmd = self.run_with_async_db(
             commands.do(
                 DuplicateTabCommand,
-                workflow=workflow,
+                workflow_id=workflow.id,
                 from_tab=tab,
                 slug="tab-2",
                 name="Tab 2",
@@ -247,7 +247,7 @@ class DuplicateTabCommandTest(DbTestCase):
             self.run_with_async_db(
                 commands.do(
                     DuplicateTabCommand,
-                    workflow=workflow,
+                    workflow_id=workflow.id,
                     from_tab=tab,
                     slug=tab.slug,
                     name="Tab 2",
@@ -263,7 +263,7 @@ class DuplicateTabCommandTest(DbTestCase):
         self.run_with_async_db(
             commands.do(
                 DuplicateTabCommand,
-                workflow=workflow,
+                workflow_id=workflow.id,
                 from_tab=tab1,
                 slug="tab-3",
                 name="Tab 3",

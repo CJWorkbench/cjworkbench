@@ -42,8 +42,8 @@ class ChildReader:
     """
     File descriptor to read from.
 
-    ChildReader will call `os.close(fileno)` when closing; so when the
-    ChildReader is deleted, this file descriptor will be closed.
+    ChildReader won't call `os.close(fileno)` when closing; be sure
+    you close `fileno` elsewhere.
     """
 
     limit_bytes: int
@@ -53,9 +53,6 @@ class ChildReader:
 
     def __post_init__(self):
         os.set_blocking(self.fileno, False)
-
-    def __del__(self):
-        os.close(self.fileno)
 
     def ingest(self):
         if self.eof:
@@ -133,22 +130,30 @@ class Kernel:
         self.fetch_timeout = fetch_timeout
         self.render_timeout = render_timeout
         self._forkserver = Forkserver(
+            module_main="cjwkernel.pandas.main.main",
             forkserver_preload=[
                 "asyncio",
                 "dataclasses",
                 "re",
                 "typing",
                 "aiohttp",
+                "formulas",
+                "formulas.parser",
                 "numpy",
                 "nltk",
+                "oauthlib",
+                "oauthlib.oauth1",
+                "oauthlib.oauth2",
                 "pandas",
                 "pyarrow",
                 "pyarrow.parquet",
-                "requests",
                 "re2",
+                "requests",
+                "xlrd",
+                "yajl",
                 "cjwkernel.pandas.main",
                 "cjwkernel.pandas.module",
-            ]
+            ],
         )
 
     def __del__(self):
@@ -279,24 +284,20 @@ class Kernel:
         """
         limit_time = time.time() + timeout
 
-        output_r, output_w = os.pipe()
-        log_r, log_w = os.pipe()
         module_process = self._forkserver.spawn_module(
-            compiled_module, output_w, log_w, function, args
+            process_name=compiled_module.module_slug,
+            args=[compiled_module, function, args],
         )
-        # Close the (refcounted) fds we sent the spawned child. That way, when
-        # the child closes _its_ copies of the "_w" fds, we'll see the EOF as
-        # we read() from our "_r" fds.
-        os.close(output_w)
-        os.close(log_w)
 
-        output_reader = ChildReader(output_r, OUTPUT_BUFFER_MAX_BYTES)
-        log_reader = ChildReader(log_r, LOG_BUFFER_MAX_BYTES)
-
-        # Read until the child closes its output_w and log_w.
+        # stdout is Thrift package; stderr is logs
+        output_reader = ChildReader(
+            module_process.stdout.fileno(), OUTPUT_BUFFER_MAX_BYTES
+        )
+        log_reader = ChildReader(module_process.stderr.fileno(), LOG_BUFFER_MAX_BYTES)
+        # Read until the child closes its stdout and stderr
         with selectors.DefaultSelector() as selector:
-            selector.register(log_r, selectors.EVENT_READ)
-            selector.register(output_r, selectors.EVENT_READ)
+            selector.register(output_reader.fileno, selectors.EVENT_READ)
+            selector.register(log_reader.fileno, selectors.EVENT_READ)
 
             timed_out = False
             while selector.get_map():

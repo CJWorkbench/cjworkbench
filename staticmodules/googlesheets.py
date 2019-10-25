@@ -1,82 +1,52 @@
-import io
 import json
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict
+import aiohttp
+import asyncio
+from oauthlib import oauth2
 import pandas as pd
-import requests
-from cjwkernel.pandas.types import ProcessResult
-from server import oauth
-from cjwkernel.pandas.moduleutils import parse_bytesio, turn_header_into_first_row
+from cjwkernel.pandas.types import Tuple, Union
+from cjwkernel.pandas.moduleutils import (
+    parse_bytesio,
+    spooled_data_from_url,
+    turn_header_into_first_row,
+)
 
 
 _Secret = Dict[str, Any]
 
 
-def _build_requests_session(secret: _Secret) -> Union[requests.Session, str]:
-    """Prepare a Requests session, so caller can then call
-    `session.get(url)`.
+def _generate_google_sheet_url(sheet_id: str) -> str:
     """
-    service = oauth.OAuthService.lookup_or_none("google")
-    if not service:
-        return (
-            "google not configured. " "Please restart Workbench with a Google secret."
-        )
-
-    session = service.requests_or_str_error(secret)
-    return session  # even if it's an error
-
-
-def _download_bytes(session: requests.Session, url: str) -> Union[bytes, str]:
-    """Download bytes from `url` or return a str error message.
-
-    This discards Content-Type, including charset. GDrive doesn't know the
-    charset anyway.
-    """
-    try:
-        response = session.get(url)
-
-        if response.status_code < 200 or response.status_code > 299:
-            return f"HTTP {response.status_code} from Google: {response.text}"
-
-        return response.content
-    except requests.RequestException as err:
-        return str(err)
-
-
-def _download_google_sheet(
-    session: requests.Session, sheet_id: str
-) -> Union[bytes, str]:
-    """Download a Google Sheet as utf-8 CSV, or return a str error message.
+    URL to download text/csv from Google Drive.
 
     This uses the GDrive "export" API.
+
+    Google Content-Type header is broken. According to RFC2616, "Data in
+    character sets other than "ISO-8859-1" or its subsets MUST be labeled
+    with an appropriate charset value". Google Sheets does not specify a
+    charset (implying ISO-8859-1), but the text it serves is utf-8.
+    
+    So the caller should ignore the content-type Google returns.
     """
-    # Google Content-Type header is broken. According to RFC2616, "Data in
-    # character sets other than "ISO-8859-1" or its subsets MUST be labeled
-    # with an appropriate charset value". Google Sheets does not specify a
-    # charset (implying ISO-8859-1), but the text it serves is utf-8.
-    #
-    # So we ignore the content-type.
-    url = (
+    return (
         f"https://www.googleapis.com/drive/v3/files/"
         f"{sheet_id}/export?mimeType=text%2Fcsv"
     )
-    return _download_bytes(session, url)
 
 
-def _download_gdrive_file(
-    session: requests.Session, sheet_id: str
-) -> Union[bytes, str]:
-    """Download bytes from Google Drive, or return a str error message.
+def _generate_gdrive_file_url(sheet_id: str) -> str:
+    """
+    URL to download raw bytes from Google Drive.
 
     This discards Content-Type, including charset. GDrive doesn't know the
     charset anyway.
     """
-    url = f"https://www.googleapis.com/drive/v3/files/{sheet_id}?alt=media"
-    return _download_bytes(session, url)
+    return f"https://www.googleapis.com/drive/v3/files/{sheet_id}?alt=media"
 
 
-def download_data_frame(
-    sheet_id: str, sheet_mime_type: str, secret: Optional[_Secret]
-) -> ProcessResult:
+async def download_data_frame(
+    sheet_id: str, sheet_mime_type: str, oauth2_client: oauth2.Client
+) -> Union[pd.DataFrame, str, Tuple[pd.DataFrame, str]]:
     """Download spreadsheet from Google, or return a str error message.
 
     Arguments decide how the download and parse will occur:
@@ -86,22 +56,31 @@ def download_data_frame(
       GDrive API to _export_ a text/csv, then parse it. Otherwise, use GDrive
       API to _download_ the file, and parse it according to its mime type.
     """
-    if not secret:
-        return ProcessResult(error="Not authorized. Please connect to Google Drive.")
-
-    session = _build_requests_session(secret)
-    if isinstance(session, str):
-        return ProcessResult(error=session)
-
     if sheet_mime_type == "application/vnd.google-apps.spreadsheet":
-        blob = _download_google_sheet(session, sheet_id)
+        url = _generate_google_sheet_url(sheet_id)
         sheet_mime_type = "text/csv"
     else:
-        blob = _download_gdrive_file(session, sheet_id)
-    if isinstance(blob, str):
-        return ProcessResult(error=blob)
+        url = _generate_gdrive_file_url(sheet_id)
+        # and use the passed sheet_mime_type
 
-    return parse_bytesio(io.BytesIO(blob), sheet_mime_type)
+    url, headers, _ = oauth2_client.add_token(url, headers={})
+
+    try:
+        async with spooled_data_from_url(url, headers) as (blobio, _, __):
+            return parse_bytesio(blobio, sheet_mime_type)
+    except aiohttp.ClientResponseError as err:
+        if err.status == 401:
+            return "Invalid credentials. Please reconnect to Google Drive."
+        elif err.status == 403:
+            return "You chose a file your logged-in user cannot access. Please reconnect to Google Drive or choose a different file."
+        elif err.status == 404:
+            return "File not found. Please choose a different file."
+        else:
+            return "GDrive responded with HTTP %d %s" % (err.status, err.message)
+    except aiohttp.ClientError as err:
+        return "Error during GDrive request: %s" % str(err)
+    except asyncio.TimeoutError:
+        return "Timeout during GDrive request"
 
 
 def render(_unused_table, params, *, fetch_result, **kwargs):
@@ -125,27 +104,36 @@ def render(_unused_table, params, *, fetch_result, **kwargs):
         return table
 
 
-def fetch(params, *, secrets, **kwargs):  # TODO make async
+async def fetch(params, *, secrets, **kwargs):
     file_meta = params["file"]
     if not file_meta:
-        return ProcessResult()
+        return None
 
+    # Ignore file_meta['url']. That's for the client's web browser, not for
+    # an API request.
     sheet_id = file_meta["id"]
+    if not sheet_id:
+        return None
+
     # backwards-compat for old entries without 'mimeType', 2018-06-13
     sheet_mime_type = file_meta.get(
         "mimeType", "application/vnd.google-apps.spreadsheet"
     )
 
-    # Ignore file_meta['url']. That's for the client's web browser, not for
-    # an API request.
+    secret = secrets.get("google_credentials")
+    if not secret:
+        return "Please connect to Google Drive."
+    if "error" in secret:
+        assert secret["error"]["id"] == "TODO_i18n"
+        return secret["error"]["arguments"][0]
+    assert "secret" in secret
+    oauth2_client = oauth2.Client(
+        client_id=None,  # unneeded
+        token_type=secret["secret"]["token_type"],
+        access_token=secret["secret"]["access_token"],
+    )
 
-    if sheet_id:
-        secret = (secrets.get("google_credentials") or {}).get("secret")
-        result = download_data_frame(sheet_id, sheet_mime_type, secret)
-        result.truncate_in_place_if_too_big()
-        return result
-    else:
-        return ProcessResult()
+    return await download_data_frame(sheet_id, sheet_mime_type, oauth2_client)
 
 
 def _migrate_params_v0_to_v1(params):

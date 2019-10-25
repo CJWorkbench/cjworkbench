@@ -285,11 +285,24 @@ definitions:
                       - type: object
                         required: [ provider, service ]
                         properties:
-                            provider: { const: oauth }
+                            provider: { const: oauth1a }
+                            service:
+                                oneOf:
+                                    - const: twitter
+                      - type: object
+                        required: [ provider, service ]
+                        properties:
+                            provider: { const: oauth2 }
                             service:
                                 oneOf:
                                     - const: google
-                                    - const: twitter
+                                    - const: intercom
+                      - type: object
+                        required: [ provider, service ]
+                        properties:
+                            provider: { const: oauth }  # DEPRECATED synonym for "oauth2"
+                            service:
+                                oneOf:
                                     - const: intercom
                       - type: object
                         required: [ provider, pattern, label, placeholder, help, help_url, help_url_prompt ]

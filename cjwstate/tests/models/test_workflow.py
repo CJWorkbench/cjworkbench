@@ -135,7 +135,9 @@ class WorkflowTests(DbTestCase):
         workflow = Workflow.objects.create(name="A")
         tab = workflow.tabs.create(position=0)
         self.run_with_async_db(
-            commands.do(ChangeWorkflowTitleCommand, workflow=workflow, new_value="B")
+            commands.do(
+                ChangeWorkflowTitleCommand, workflow_id=workflow.id, new_value="B"
+            )
         )
         ModuleVersion.create_or_replace_from_spec(
             {"id_name": "x", "name": "x", "category": "Clean", "parameters": []}
@@ -143,7 +145,7 @@ class WorkflowTests(DbTestCase):
         self.run_with_async_db(
             commands.do(
                 AddModuleCommand,
-                workflow=workflow,
+                workflow_id=workflow.id,
                 tab=tab,
                 slug="step-1",
                 module_id_name="x",
@@ -152,7 +154,9 @@ class WorkflowTests(DbTestCase):
             )
         )
         self.run_with_async_db(
-            commands.do(ChangeWorkflowTitleCommand, workflow=workflow, new_value="C")
+            commands.do(
+                ChangeWorkflowTitleCommand, workflow_id=workflow.id, new_value="C"
+            )
         )
         workflow.delete()
         self.assertTrue(True)  # no crash

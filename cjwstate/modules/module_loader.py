@@ -19,10 +19,63 @@ from typing import List, Optional, Set
 import yaml
 
 
+MODULE_ALLOWED_SECRETS = {
+    "googlesheets": ["google"],  # OAuth2: generate temporary access token
+    "intercom": ["intercom"],  # OAuth2: pass user's long-lasting access token
+    "twitter": ["twitter"],  # OAuth1: give module consumer_key+consumer_secret
+}
+"""
+Mapping from module slug to OAUTH_SERVICES key mangling `fetch(secrets=...)`.
+"""
+
+
 with (Path(__file__).parent / "module_spec_schema.yaml").open("rt") as spec_file:
     _validator = jsonschema.Draft7Validator(
         yaml.safe_load(spec_file), format_checker=jsonschema.FormatChecker()
     )
+
+
+def _validate_secret_param(module_id_name, param) -> None:
+    """
+    Raise ValueError rather than leak global secrets to an untrusted module.
+
+    SECURITY: this is ... a hack. First, let's describe The Vision; then Reality.
+
+    The Vision: each module ought to have its own security tokens. There should
+    not be an OAUTH_SERVICES global variable. A sysadmin should register an app
+    with Twitter/Google/whatever at module-installation time. When we have that,
+    we can delete MODULE_ALLOWED_SECRETS.
+
+    Reality: [2019-10-16] today isn't the revamp day. Consumer secrets are
+    global; and in the case of OAuth1.0a (Twitter), the module can read those
+    secrets. If a new module, "eviltwitter," comes along with a
+    "twitter_credentials" parameter, the module author will gain Workbench's
+    Twitter credentials -- and the user's credentials, too.
+
+    From the user's perspective:
+
+        1. Add "twitter" step
+        2. Sign in; grant (global-variable) Workbench access to Twitter stuff
+        3. Add "eviltwitter" module
+        4. Sign in again?
+
+    Results (The Vision): step 4 prompts the user to trust "eviltwitter".
+    Results (SECURITY disaster): step 4 re-uses the grant from step 2.
+    Results (alternate SECURITY disaster): step 4 prompts the user, NOT
+                                           mentioning "eviltwitter != twitter".
+    Results (Reality, 2019-10-16): "eviltwitter" does not validate because it
+                                   isn't in MODULE_ALLOWED_SECRETS. Not fun,
+                                   but not a security disaster.
+    """
+    allowed_secrets = MODULE_ALLOWED_SECRETS.get(module_id_name, [])
+    if param["secret_logic"]["provider"] == "string":
+        return
+    if param["secret_logic"]["service"] in allowed_secrets:
+        return
+    else:
+        raise ValueError(
+            "Denied access to global %r secrets" % param["secret_logic"]["service"]
+        )
 
 
 def validate_module_spec(spec):
@@ -35,6 +88,7 @@ def validate_module_spec(spec):
 
     * `spec` adheres to `cjwstate/models/module_spec_schema.yaml`
     * `spec.parameters[*].id_name` are unique
+    * Only whitelisted secrets are allowed (ref: cjworkbench/settings.py)
     * `spec.parameters[*].visible_if[*].id_name` are valid
     * If `spec.parameters[*].options` and `default` exist, `default` is valid
     * `spec.parameters[*].visible_if[*].value` is/are valid if it's a menu
@@ -73,6 +127,15 @@ def validate_module_spec(spec):
                     f"Param '{param['id_name']}' has a 'default' that is not "
                     "in its 'options'"
                 )
+
+    # Check that secrets are in global whitelist.
+    #
+    # This is to prevent malicious modules from stealing our global secrets.
+    # A better approach would be to nix global secrets altogether and configure
+    # OAuth per-module. So far we've been too lazy to do this.
+    for param in spec["parameters"]:
+        if param["type"] == "secret":
+            _validate_secret_param(spec["id_name"], param)
 
     # Now that check visible_if refs
     for param in spec["parameters"]:
@@ -153,12 +216,12 @@ def validate_module_spec(spec):
                     "that is not a 'secret'"
                 )
             elif param["type"] == "gdrivefile" and (
-                secret["secret_logic"]["provider"] != "oauth"
+                secret["secret_logic"]["provider"] != "oauth2"
                 or secret["secret_logic"]["service"] != "google"
             ):
                 messages.append(
                     f"Param '{param['id_name']}' 'secret_parameter' "
-                    "does not refer to a 'google', 'oauth' secret"
+                    "does not refer to a 'google', 'oauth2' secret"
                 )
 
     if messages:

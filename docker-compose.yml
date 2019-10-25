@@ -67,6 +67,8 @@ services:
         target: /app/
         consistency: cached
       - virtualenvs:/root/.local/share/virtualenvs/:rw
+    security_opt:
+      - seccomp=docker/forkserver-seccomp-profile.json
     environment:
       PYTHONUNBUFFERED: '1'
       ASGI_THREADS: '5'
@@ -105,6 +107,8 @@ services:
         target: /app/
         consistency: cached
       - virtualenvs:/root/.local/share/virtualenvs/:rw
+    security_opt:
+      - seccomp=docker/forkserver-seccomp-profile.json
     environment:
       PYTHONUNBUFFERED: '1'
       ASGI_THREADS: '2'
@@ -141,6 +145,8 @@ services:
         target: /app/
         consistency: cached
       - virtualenvs:/root/.local/share/virtualenvs/:rw
+    security_opt:
+      - seccomp=docker/forkserver-seccomp-profile.json
     environment:
       PYTHONUNBUFFERED: '1'
       ASGI_THREADS: '3'
