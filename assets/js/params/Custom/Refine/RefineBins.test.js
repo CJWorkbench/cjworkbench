@@ -1,7 +1,8 @@
 /* global describe, it, expect, jest */
 import React from 'react'
-import { mount } from 'enzyme'
+// import { mount } from 'enzyme'
 import RefineBins from './RefineBins'
+import {mountWithI18n} from '../../../i18n/test-utils.js'
 
 describe('RefineBins', () => {
   const testBins = [
@@ -9,7 +10,7 @@ describe('RefineBins', () => {
     { name: 'x', isSelected: false, count: 2, bucket: { x: 1, y: 1 } }
   ]
 
-  const wrapper = (extraProps = {}) => mount(
+  const wrapper = (extraProps = {}) => mountWithI18n(
     <RefineBins
       bins={testBins}
       onChange={jest.fn()}
@@ -19,7 +20,7 @@ describe('RefineBins', () => {
 
   it('should render a message when there are no bins', () => {
     const w = wrapper({ bins: [] })
-    expect(w.find('.no-bins').text()).toMatch(/no clusters/i)
+    expect(w.find('.no-bins').text()).toMatch(/workflow.refineBins.noclustersfound/)
     expect(w.find('table')).toHaveLength(0)
   })
 

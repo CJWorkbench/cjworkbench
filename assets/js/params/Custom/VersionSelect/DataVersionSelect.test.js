@@ -2,13 +2,14 @@
 import React from 'react'
 import ConnectedDataVersionSelect, { DataVersionSelect } from './DataVersionSelect'
 import DataVersionModal from '../../../WorkflowEditor/DataVersionModal' // to check it's rendered in shallow()
-import { shallow, mount } from 'enzyme'
+// import { shallow, mount } from 'enzyme'
+import { mountWithI18n, shallowWithI18n } from '../../../i18n/test-utils'
 import { Provider } from 'react-redux'
 import configureMockStore from 'redux-mock-store'
 
 describe('DataVersionSelect', () => {
   const wrapper = (extraProps = {}) => {
-    return shallow(
+    return shallowWithI18n(
       <DataVersionSelect
         wfModuleId={123}
         currentVersionIndex={0}
@@ -81,7 +82,7 @@ describe('DataVersionSelect', () => {
 
     const connectedWrapper = (state) => {
       const store = configureMockStore([])(state)
-      _wrapper = mount(
+      _wrapper = mountWithI18n(
         <Provider store={store}>
           <ConnectedDataVersionSelect wfModuleId={123} />
         </Provider>

@@ -1,5 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { Trans,t } from '@lingui/macro'
+import { withI18n,I18n } from '@lingui/react'
 
 const numberFormatter = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 })
 
@@ -27,23 +29,23 @@ const QuotaExceeded = React.memo(function QuotaExceeded ({ workflowId, wfModuleI
 
   return (
     <div className='quota-exceeded'>
-      <h5>AUTO-UPDATE QUOTA EXCEEDED</h5>
+      <h5><Trans id="workflow.quotaexceeds">AUTO-UPDATE QUOTA EXCEEDED</Trans></h5>
       <p>
-        You're requesting{' '}
+        <Trans id="workflow.yourequesting">You're requesting</Trans>{' '}
         <strong className='n-fetches-per-day'>{Math.ceil(numberFormatter.format(nFetchesPerDay))}</strong>{' '}
-        updates per day across all your workflows. Your daily limit is{' '}
+        <Trans id="workflow.updatesperday">updates per day across all your workflows. Your daily limit is</Trans>{' '}
         <strong className='max-fetches-per-day'>{numberFormatter.format(maxFetchesPerDay)}</strong>.
       </p>
       <p>
-        Here are the steps that count against your limit.
+      <Trans id="workflow.quotasteps">Here are the steps that count against your limit.
         Adjust their update times or set them to manual, then click
-        "Retry" above.
+        "Retry" above.</Trans>
       </p>
       <table>
         <thead>
           <tr>
-            <th className='n-fetches-per-day'>#/day</th>
-            <th className='step'>Workflow</th>
+            <th className='n-fetches-per-day'>#/<Trans id="quotaday">day</Trans></th>
+            <th className='step'><Trans id="quota.workflow">Workflow</Trans></th>
             <th className='open' />
           </tr>
         </thead>
@@ -56,12 +58,12 @@ const QuotaExceeded = React.memo(function QuotaExceeded ({ workflowId, wfModuleI
               <td className='workflow'>
                 <div className='workflow'>
                   {workflowId === workflow.id ? (
-                    <div className='this-workflow'>(This workflow)</div>
+                    <div className='this-workflow'>(<Trans id="quoataexceeded.thisworflow">This workflow</Trans>)</div>
                   ) : (
                     <div className='other-workflow'>
                       {workflow.name}{' '}
                       <a className='edit' target='_blank' rel='noopener noreferrer' href={`/workflows/${workflow.id}/`}>
-                        Edit workflow <i className='icon-edit' />
+                        <Trans id="workflow.editworkflow">Edit workflow</Trans> <i className='icon-edit' />
                       </a>
                     </div>
                   )}
@@ -70,9 +72,9 @@ const QuotaExceeded = React.memo(function QuotaExceeded ({ workflowId, wfModuleI
                   {autofetches.map(({ tab, wfModule }) => (
                     <li key={wfModule.id}>
                       {workflowId === workflow.id && wfModuleId === wfModule.id ? (
-                        <>(You asked for this step to make {numberFormatter.format(86400 / wfModule.fetchInterval)} updates per day.)</>
+                        <>(<Trans id="quotaexceeded">You asked for this step to make {numberFormatter.format(86400 / wfModule.fetchInterval)} updates per day.</Trans>)</>
                       ) : (
-                        <>Step {wfModule.order + 1} on {tab.name} makes {numberFormatter.format(86400 / wfModule.fetchInterval)} updates per day.</>
+                        <Trans id="">Step {wfModule.order + 1} on {tab.name} makes {numberFormatter.format(86400 / wfModule.fetchInterval)} updates per day.</Trans>
                       )}
                     </li>
                   ))}
@@ -83,8 +85,8 @@ const QuotaExceeded = React.memo(function QuotaExceeded ({ workflowId, wfModuleI
         </tbody>
       </table>
       <p className='request-lift'>
-        Need a higher limit?
-        Send us a short <a href='mailto:pierre@tablesdata.com' target='_blank' rel='noopener noreferrer'>email</a>.
+        <Trans id="quotaexceeded.needahigherlimit">Need a higher limit?</Trans>
+        <Trans id="quoataexceeded.sendusmailshort">Send us a short <a href='mailto:pierre@tablesdata.com' target='_blank' rel='noopener noreferrer'>email</a>.</Trans>
       </p>
     </div>
   )

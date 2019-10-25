@@ -13,6 +13,7 @@ import ReorderHistory from './ReorderHistory'
 import SortColumns from './SortColumn'
 import ValueSelect from './ValueSelect'
 import VersionSelect, { VersionSelectSimpler } from './VersionSelect'
+import { Trans,t } from '@lingui/macro'
 
 const Components = {
   aggregations: Aggregations,
@@ -32,7 +33,7 @@ const Components = {
 }
 
 const ComponentNotFound = ({ name }) => (
-  <p className='error'>Custom type {name} not handled</p>
+  <p className='error'><Trans id="custom.index.error">Custom type {name} not handled</Trans></p>
 )
 
 export default function Custom (props) {

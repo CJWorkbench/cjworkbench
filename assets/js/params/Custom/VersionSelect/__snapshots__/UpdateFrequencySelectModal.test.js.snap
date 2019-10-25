@@ -90,7 +90,7 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                             class="big-radio-details"
                           >
                             <p>
-                              Automatically update this workflow with the newest data (old versions will be saved).
+                              updatefrequency.automaticallyupdate
                             </p>
                             <label
                               for="updateFrequencySelectTimeUnitCount"
@@ -123,27 +123,27 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                                   <option
                                     value="weeks"
                                   >
-                                    weeks
+                                    [object Object]
                                   </option>
                                   <option
                                     value="days"
                                   >
-                                    days
+                                    [object Object]
                                   </option>
                                   <option
                                     value="hours"
                                   >
-                                    hours
+                                    [object Object]
                                   </option>
                                   <option
                                     value="minutes"
                                   >
-                                    minutes
+                                    [object Object]
                                   </option>
                                   <option
                                     value="seconds"
                                   >
-                                    seconds
+                                    [object Object]
                                   </option>
                                 </select>
                                 <div
@@ -174,14 +174,14 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                             <div
                               class="radio"
                             >
-                              Manual
+                              updatefrequency.manual
                             </div>
                           </label>
                           <div
                             class="big-radio-details"
                           >
                             <p>
-                              Check for new data manually.
+                              updatefrequency.checkmanually
                             </p>
                           </div>
                         </div>
@@ -198,7 +198,7 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                       <label
                         for="update-frequency-select-modal-is-email-updates-checkbox"
                       >
-                        Email me when data changes
+                        updatefrequency.email
                       </label>
                     </div>
                   </div>
@@ -210,7 +210,7 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                       title="Close"
                       type="button"
                     >
-                      Close
+                      close.updatefrequency
                     </button>
                   </div>
                 </div>
@@ -294,7 +294,26 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                           className="big-radio-details"
                         >
                           <p>
-                            Automatically update this workflow with the newest data (old versions will be saved).
+                            <WithI18n
+                              defaults="Automatically update this workflow with the newest data (old versions will be saved)."
+                              id="updatefrequency.automaticallyupdate"
+                            >
+                              <I18n
+                                update={true}
+                                withHash={true}
+                              >
+                                <Trans
+                                  defaults="Automatically update this workflow with the newest data (old versions will be saved)."
+                                  id="updatefrequency.automaticallyupdate"
+                                >
+                                  <Render
+                                    value="updatefrequency.automaticallyupdate"
+                                  >
+                                    updatefrequency.automaticallyupdate
+                                  </Render>
+                                </Trans>
+                              </I18n>
+                            </WithI18n>
                           </p>
                           <label
                             htmlFor="updateFrequencySelectTimeUnitCount"
@@ -330,27 +349,42 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                                 <option
                                   value="weeks"
                                 >
-                                  weeks
+                                  <WithI18n
+                                    defaults="weeks"
+                                    id="weeks.updatefrequency"
+                                  />
                                 </option>
                                 <option
                                   value="days"
                                 >
-                                  days
+                                  <WithI18n
+                                    defaults="days"
+                                    id="days.updatefrequency"
+                                  />
                                 </option>
                                 <option
                                   value="hours"
                                 >
-                                  hours
+                                  <WithI18n
+                                    defaults="hours"
+                                    id="hours.updatefrequency"
+                                  />
                                 </option>
                                 <option
                                   value="minutes"
                                 >
-                                  minutes
+                                  <WithI18n
+                                    defaults="minutes"
+                                    id="minutes.updatefrequency"
+                                  />
                                 </option>
                                 <option
                                   value="seconds"
                                 >
-                                  seconds
+                                  <WithI18n
+                                    defaults="seconds"
+                                    id="seconds.updatefrequency"
+                                  />
                                 </option>
                               </select>
                               <div
@@ -383,14 +417,52 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                           <div
                             className="radio"
                           >
-                            Manual
+                            <WithI18n
+                              defaults="Manual"
+                              id="updatefrequency.manual"
+                            >
+                              <I18n
+                                update={true}
+                                withHash={true}
+                              >
+                                <Trans
+                                  defaults="Manual"
+                                  id="updatefrequency.manual"
+                                >
+                                  <Render
+                                    value="updatefrequency.manual"
+                                  >
+                                    updatefrequency.manual
+                                  </Render>
+                                </Trans>
+                              </I18n>
+                            </WithI18n>
                           </div>
                         </label>
                         <div
                           className="big-radio-details"
                         >
                           <p>
-                            Check for new data manually.
+                            <WithI18n
+                              defaults="Check for new data manually."
+                              id="updatefrequency.checkmanually"
+                            >
+                              <I18n
+                                update={true}
+                                withHash={true}
+                              >
+                                <Trans
+                                  defaults="Check for new data manually."
+                                  id="updatefrequency.checkmanually"
+                                >
+                                  <Render
+                                    value="updatefrequency.checkmanually"
+                                  >
+                                    updatefrequency.checkmanually
+                                  </Render>
+                                </Trans>
+                              </I18n>
+                            </WithI18n>
                           </p>
                         </div>
                       </div>
@@ -409,7 +481,26 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                     <label
                       htmlFor="update-frequency-select-modal-is-email-updates-checkbox"
                     >
-                      Email me when data changes
+                      <WithI18n
+                        defaults="Email me when data changes"
+                        id="updatefrequency.email"
+                      >
+                        <I18n
+                          update={true}
+                          withHash={true}
+                        >
+                          <Trans
+                            defaults="Email me when data changes"
+                            id="updatefrequency.email"
+                          >
+                            <Render
+                              value="updatefrequency.email"
+                            >
+                              updatefrequency.email
+                            </Render>
+                          </Trans>
+                        </I18n>
+                      </WithI18n>
                     </label>
                   </div>
                 </div>
@@ -424,7 +515,26 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                     title="Close"
                     type="button"
                   >
-                    Close
+                    <WithI18n
+                      defaults="Close"
+                      id="close.updatefrequency"
+                    >
+                      <I18n
+                        update={true}
+                        withHash={true}
+                      >
+                        <Trans
+                          defaults="Close"
+                          id="close.updatefrequency"
+                        >
+                          <Render
+                            value="close.updatefrequency"
+                          >
+                            close.updatefrequency
+                          </Render>
+                        </Trans>
+                      </I18n>
+                    </WithI18n>
                   </button>
                 </div>
               </ModalFooter>

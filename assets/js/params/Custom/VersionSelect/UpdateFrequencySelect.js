@@ -4,7 +4,8 @@ import UpdateFrequencySelectModal from './UpdateFrequencySelectModal'
 import { timeDifference } from '../../../utils'
 import { trySetWfModuleAutofetchAction, setWfModuleNotificationsAction } from '../../../workflow-reducer'
 import { connect } from 'react-redux'
-import { withI18n } from '@lingui/react'
+import { Trans,t } from '@lingui/macro'
+import { withI18n,I18n } from '@lingui/react'
 
 export const UpdateFrequencySelect = withI18n()(class UpdateFrequencySelect extends React.PureComponent {
   static propTypes = {
@@ -62,19 +63,19 @@ export const UpdateFrequencySelect = withI18n()(class UpdateFrequencySelect exte
     return (
       <div className='update-frequency-select'>
         <div className='update-option'>
-          <span className='version-box-option'>Update </span>
+          <span className='version-box-option'><Trans id="UpdateFrequencySelect.update">Update</Trans> </span>
           <a
             href='#'
             title='change auto-update settings'
             className='content-1 ml-1 action-link'
             onClick={this.handleClickOpenModal}
           >
-            {isAutofetch ? 'Auto' : 'Manual'}
+            {isAutofetch ? <Trans id="updatefrequency.auto">Auto</Trans> : <Trans id="updatefrequency.manual">Manual</Trans>}
           </a>
         </div>
         {lastCheckDate ? (
           <div className='last-checked'>
-            Checked <time dateTime={this.props.lastCheckDate.toISOString()}>{timeDifference(lastCheckDate, Date.now(), i18n)}</time>
+            <Trans id="updatefrequency.Checked">Checked</Trans> <time dateTime={this.props.lastCheckDate.toISOString()}>{timeDifference(lastCheckDate, Date.now(), i18n)}</time>
           </div>
         ) : null}
         {isModalOpen ? (

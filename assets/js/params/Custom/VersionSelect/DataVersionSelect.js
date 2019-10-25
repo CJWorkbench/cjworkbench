@@ -2,9 +2,16 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import DataVersionModal from '../../../WorkflowEditor/DataVersionModal'
 import { connect } from 'react-redux'
+import { Trans,t } from '@lingui/macro'
+import { withI18n,I18n } from '@lingui/react'
+
 
 export class DataVersionSelect extends React.PureComponent {
   static propTypes = {
+    i18n: PropTypes.shape({
+      // i18n object injected by LinguiJS withI18n()
+      _: PropTypes.func.isRequired
+    }),
     wfModuleId: PropTypes.number.isRequired,
     currentVersionIndex: PropTypes.number, // or null for no selected version
     nVersions: PropTypes.number.isRequired, // may be 0
@@ -19,7 +26,7 @@ export class DataVersionSelect extends React.PureComponent {
   handleCloseModal = () => this.setState({ isDataVersionModalOpen: false })
 
   render () {
-    const { wfModuleId, currentVersionIndex, nVersions, isReadOnly } = this.props
+    const { wfModuleId, currentVersionIndex, nVersions, isReadOnly, i18n } = this.props
     const { isDataVersionModalOpen } = this.state
 
     let inner
@@ -27,19 +34,19 @@ export class DataVersionSelect extends React.PureComponent {
     if (nVersions === 0) {
       inner = (
         <>
-          <div className='label'>Version</div>
+          <div className='label'>{ this.props.i18n._(t('workbench.version')`Version`) }</div>
           <div className='no-versions'>–</div>
         </>
       )
     } else if (isReadOnly) {
       inner = (
-        <div className='read-only'>Version {nVersions - currentVersionIndex} of {nVersions}</div>
+        <div className='read-only'>{ this.props.i18n._(t('workbench.version')`Version`) } {nVersions - currentVersionIndex} { this.props.i18n._(t('workbenchdataversion.of')`of`) } {nVersions}</div>
       )
     } else {
       inner = (
         <>
-          <div className='label'>Version</div>
-          <button type='button' title='Select version' onClick={this.handleClickOpenModal}>{nVersions - currentVersionIndex} of {nVersions}</button>
+          <div className='label'>{ this.props.i18n._(t('workbench.version')`Version`) }</div>
+          <button type='button' title={ i18n._(t('workbench.dataversionselect.selectversion')`Select version`) } onClick={this.handleClickOpenModal}>{nVersions - currentVersionIndex} { this.props.i18n._(t('workbenchdataversion.of')`of`) } {nVersions}</button>
           {isDataVersionModalOpen ? (
             <DataVersionModal
               wfModuleId={wfModuleId}
@@ -82,4 +89,4 @@ function mapStateToProps (state, { wfModuleId }) {
 
 export default connect(
   mapStateToProps
-)(DataVersionSelect)
+)(withI18n()(DataVersionSelect))

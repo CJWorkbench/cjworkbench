@@ -90,7 +90,53 @@ exports[`UpdateFrequencySelect shallow matches snapshot 1`] = `
           <span
             className="version-box-option"
           >
-            Update 
+            <WithI18n
+              defaults="Update"
+              id="UpdateFrequencySelect.update"
+            >
+              <I18n
+                update={true}
+                withHash={true}
+              >
+                <Trans
+                  defaults="Update"
+                  i18n={
+                    Object {
+                      "_": [Function],
+                      "_activeLanguageData": Object {
+                        "plurals": [Function],
+                      },
+                      "_activeMessages": Object {},
+                      "_catalogs": Object {
+                        "en": Object {
+                          "languageData": Object {},
+                          "messages": Object {},
+                        },
+                      },
+                      "_dev": Object {
+                        "compile": [Function],
+                        "loadLanguageData": [Function],
+                      },
+                      "_language": "en",
+                      "_locales": undefined,
+                      "_missing": undefined,
+                      "plural": [Function],
+                      "select": [Function],
+                      "selectOrdinal": [Function],
+                      "t": [Function],
+                    }
+                  }
+                  id="UpdateFrequencySelect.update"
+                >
+                  <Render
+                    value="UpdateFrequencySelect.update"
+                  >
+                    UpdateFrequencySelect.update
+                  </Render>
+                </Trans>
+              </I18n>
+            </WithI18n>
+             
           </span>
           <a
             className="content-1 ml-1 action-link"
@@ -98,13 +144,104 @@ exports[`UpdateFrequencySelect shallow matches snapshot 1`] = `
             onClick={[Function]}
             title="change auto-update settings"
           >
-            Manual
+            <WithI18n
+              defaults="Manual"
+              id="updatefrequency.manual"
+            >
+              <I18n
+                update={true}
+                withHash={true}
+              >
+                <Trans
+                  defaults="Manual"
+                  i18n={
+                    Object {
+                      "_": [Function],
+                      "_activeLanguageData": Object {
+                        "plurals": [Function],
+                      },
+                      "_activeMessages": Object {},
+                      "_catalogs": Object {
+                        "en": Object {
+                          "languageData": Object {},
+                          "messages": Object {},
+                        },
+                      },
+                      "_dev": Object {
+                        "compile": [Function],
+                        "loadLanguageData": [Function],
+                      },
+                      "_language": "en",
+                      "_locales": undefined,
+                      "_missing": undefined,
+                      "plural": [Function],
+                      "select": [Function],
+                      "selectOrdinal": [Function],
+                      "t": [Function],
+                    }
+                  }
+                  id="updatefrequency.manual"
+                >
+                  <Render
+                    value="updatefrequency.manual"
+                  >
+                    updatefrequency.manual
+                  </Render>
+                </Trans>
+              </I18n>
+            </WithI18n>
           </a>
         </div>
         <div
           className="last-checked"
         >
-          Checked 
+          <WithI18n
+            defaults="Checked"
+            id="updatefrequency.Checked"
+          >
+            <I18n
+              update={true}
+              withHash={true}
+            >
+              <Trans
+                defaults="Checked"
+                i18n={
+                  Object {
+                    "_": [Function],
+                    "_activeLanguageData": Object {
+                      "plurals": [Function],
+                    },
+                    "_activeMessages": Object {},
+                    "_catalogs": Object {
+                      "en": Object {
+                        "languageData": Object {},
+                        "messages": Object {},
+                      },
+                    },
+                    "_dev": Object {
+                      "compile": [Function],
+                      "loadLanguageData": [Function],
+                    },
+                    "_language": "en",
+                    "_locales": undefined,
+                    "_missing": undefined,
+                    "plural": [Function],
+                    "select": [Function],
+                    "selectOrdinal": [Function],
+                    "t": [Function],
+                  }
+                }
+                id="updatefrequency.Checked"
+              >
+                <Render
+                  value="updatefrequency.Checked"
+                >
+                  updatefrequency.Checked
+                </Render>
+              </Trans>
+            </I18n>
+          </WithI18n>
+           
           <time
             dateTime="2018-05-28T19:00:54.154Z"
           >
