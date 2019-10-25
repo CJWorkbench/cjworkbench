@@ -40,10 +40,11 @@
       @include title-2;
       @include make-col-ready();
       width: auto;
+      line-height: 3.2rem;
 
       a {
         border-bottom: 4px solid transparent;
-        padding-bottom: .5rem;
+        padding-bottom: .1rem;
       }
 
       &:not(.active) { // we're linking to this course
