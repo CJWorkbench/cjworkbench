@@ -445,7 +445,7 @@ msgstr "Share with the world"
 
 #: assets/js/table/ColumnHeader.js:10
 msgid "workflow.visibility.textType"
-msgstr "Text"
+msgstr "text"
 
 #: assets/js/UndoRedoButtons.js:64
 msgid "workflow.visibility.undo"

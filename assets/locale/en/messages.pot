@@ -522,7 +522,7 @@ msgstr ""
 msgid "workflow.visibility.sharingWith"
 msgstr ""
 
-#. default-message: Text
+#. default-message: text
 #: assets/js/table/ColumnHeader.js:10
 msgid "workflow.visibility.textType"
 msgstr ""
