@@ -314,7 +314,6 @@ class Kernel:
                 "cjwkernel.pandas.moduleutils",
                 "cjwkernel.pandas.parse_util",
                 "cjwkernel.parquet",
-                "staticmodules.pythoncode",
                 *ENCODING_IMPORTS,
             ],
         )
