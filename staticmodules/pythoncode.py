@@ -78,13 +78,13 @@ def eval_process(code, table):
                         "Please make your process(table) function accept exactly 1 argument"
                     )
 
-                retval = process(table)
+                retval = process(table)  # raise any exception
             except Exception:
                 # An error in the code or in process()
                 etype, value, tb = sys.exc_info()
                 tb = tb.tb_next  # omit this method from the stack trace
                 traceback.print_exception(etype, value, tb)
-                return ret(error=(f"Line {tb.tb_lineno}: {etype.__name__}: {value}"))
+                return ret(f"Line {tb.tb_lineno}: {etype.__name__}: {value}")
 
     if isinstance(retval, pd.DataFrame):
         try:

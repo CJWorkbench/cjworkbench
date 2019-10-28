@@ -132,6 +132,23 @@ class RenderTest(unittest.TestCase):
         text = "Line 3: unexpected EOF while parsing (your code, line 3)"
         assert_process_result_equal(result, (EMPTY_DATAFRAME, text, {"output": text}))
 
+    def test_error_during_process(self):
+        result = eval_process(
+            """
+            def process(table):
+                return ta()
+            """,
+            EMPTY_DATAFRAME,
+        )
+        trace = """Traceback (most recent call last):
+  File "your code", line 3, in process
+NameError: name 'ta' is not defined
+"""
+        text = "Line 3: NameError: name 'ta' is not defined"
+        assert_process_result_equal(
+            result, (EMPTY_DATAFRAME, text, {"output": trace + text})
+        )
+
     def test_missing_process(self):
         result = eval_process(
             """
