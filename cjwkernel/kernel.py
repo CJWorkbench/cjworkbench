@@ -62,6 +62,14 @@ NETWORKING_PATHS = [
 DATA_PATHS = [Path("/usr/share/nltk_data")]
 
 
+# Import all encodings. Some modules (e.g., loadurl) may encounter weird stuff
+ENCODING_IMPORTS = [
+    "encodings." + p.stem
+    for p in Path("/usr/local/lib/python3.7/encodings").glob("*.py")
+    if p.stem not in {"cp65001", "mbcs", "oem"}  # un-importable
+]
+
+
 @contextlib.contextmanager
 def _chroot_dir_context(
     *, provide_paths: List[Path] = [], extract_paths: List[Path] = []
@@ -260,7 +268,6 @@ class Kernel:
                 "concurrent.futures",
                 "concurrent.futures.thread",
                 "dataclasses",
-                "encodings.cp437",
                 "multiprocessing",
                 "multiprocessing.connection",
                 "multiprocessing.popen_fork",
@@ -308,6 +315,7 @@ class Kernel:
                 "cjwkernel.pandas.parse_util",
                 "cjwkernel.parquet",
                 "staticmodules.pythoncode",
+                *ENCODING_IMPORTS,
             ],
         )
 
