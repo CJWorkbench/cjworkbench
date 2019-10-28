@@ -24,7 +24,7 @@ from cjwstate.models import (
 from cjwstate.modules.loaded_module import LoadedModule
 from cjwstate import rendercache, storedobjects
 import fetcher.secrets
-from . import fetchprep, save
+from . import fetchprep, save, versions
 
 
 logger = logging.getLogger(__name__)
@@ -371,10 +371,8 @@ async def fetch(
 
         try:
             with crash_on_database_error():
-                if (
-                    last_fetch_result is not None
-                    and result.errors == last_fetch_result.errors
-                    and parquet.are_files_equal(last_fetch_result.path, result.path)
+                if last_fetch_result is not None and versions.are_fetch_results_equal(
+                    last_fetch_result, result
                 ):
                     await save.mark_result_unchanged(workflow_id, wf_module, now)
                 else:
