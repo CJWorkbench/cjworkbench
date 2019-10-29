@@ -17,14 +17,14 @@ from server.views.workflows import visible_modules, make_init_state
 from cjworkbench.i18n import default_locale
 
 
-def _get_course_or_404(slug):
+def _get_course_or_404(locale_id, slug):
     try:
         return CourseLookup[slug]
     except KeyError:
         raise Http404("Course does not exist")
 
 
-def _get_lesson_or_404(course_slug: Optional[str], lesson_slug: str):
+def _get_lesson_or_404(locale_id: str, course_slug: Optional[str], lesson_slug: str):
     """
     Return Lesson or raise Http404.
     """
@@ -32,7 +32,7 @@ def _get_lesson_or_404(course_slug: Optional[str], lesson_slug: str):
         if course_slug is None:
             return LessonLookup[lesson_slug]
         else:
-            course = _get_course_or_404(course_slug)  # raises Http404
+            course = _get_course_or_404(locale_id, course_slug)  # raises Http404
             return course.lessons[lesson_slug]
     except KeyError:
         raise Http404("Course does not contain lesson")
@@ -186,14 +186,14 @@ def _render_get_lesson_detail(request, lesson):
 
 
 # Even allowed for logged-out users
-def render_course_lesson_detail(request, course_slug, lesson_slug):
-    lesson = _get_lesson_or_404(course_slug, lesson_slug)
+def render_course_lesson_detail(request, locale_id, course_slug, lesson_slug):
+    lesson = _get_lesson_or_404(locale_id, course_slug, lesson_slug)
     return _render_get_lesson_detail(request, lesson)
 
 
 # Even allowed for logged-out users
-def render_lesson_detail(request, slug):
-    lesson = _get_lesson_or_404(None, slug)
+def render_lesson_detail(request, locale_id, slug):
+    lesson = _get_lesson_or_404(locale_id, None, slug)
     return _render_get_lesson_detail(request, lesson)
 
 
@@ -202,12 +202,7 @@ def _render_course(request, course, lesson_url_prefix):
     if request.user and request.user.is_authenticated:
         logged_in_user = UserSerializer(request.user).data
 
-    courses = [c for c in AllCourses if c.locale == request.locale_id]
-    if request.locale_id != default_locale:
-        courses = [*courses, *[c for c in AllCourses if c.locale == default_locale]]
-
-    if course.title != "Lessons" and course not in courses:
-        courses.append(course)
+    courses = [c for c in AllCourses if c.locale == course.locale]
 
     # We render using HTML, not React, to make this page SEO-friendly.
     return TemplateResponse(
@@ -224,22 +219,18 @@ def _render_course(request, course, lesson_url_prefix):
 
 
 # Even allowed for logged-out users
-def render_lesson_list(request):
+def render_lesson_list(request, locale_id=None):
     # Make a "fake" Course to encompass Lessons
     #
     # Do not build this Course using LessonLookup: LessonLookup contains
     # "hidden" lessons; AllLessons does not.
-    lessons = dict((l.slug, l) for l in AllLessons if l.locale == request.locale_id)
-    if request.locale_id != default_locale:
-        lessons = {
-            **lessons,
-            **dict((l.slug, l) for l in AllLessons if l.locale == default_locale),
-        }
-    course = Course(title="Lessons", lessons=lessons)
-    return _render_course(request, course, "/lessons")
+    locale_id = locale_id or request.locale_id
+    lessons = dict((l.slug, l) for l in AllLessons if l.locale == locale_id)
+    course = Course(title="Lessons", locale=locale_id, lessons=lessons)
+    return _render_course(request, course, "/lessons/%s" % locale_id)
 
 
 # Even allowed for logged-out users
-def render_course(request, course_slug):
-    course = _get_course_or_404(course_slug)
-    return _render_course(request, course, "/courses/" + course.slug)
+def render_course(request, locale_id, course_slug):
+    course = _get_course_or_404(locale_id, course_slug)
+    return _render_course(request, course, "/courses/%s/%s" % (locale_id, course.slug))
