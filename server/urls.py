@@ -23,11 +23,11 @@ urlpatterns = [
     url(r"^lessons/(?P<locale_id>[a-z]+)$", lessons.render_lesson_list),
     url(r"^lessons/(?P<locale_id>[a-z]+)/$", redirect("/lessons/%(locale_id)s")),
     url(
-        r"^lessons/(?P<locale_id>[a-z]+)/(?P<slug>[-\w]+)$",
+        r"^lessons/(?P<locale_id>[a-z]+)/(?P<slug>[-a-z0-9]+)$",
         lessons.render_lesson_detail,
     ),
     url(
-        r"^lessons/(?P<locale_id>[a-z]+)/(?P<slug>[-\w]+)/$",
+        r"^lessons/(?P<locale_id>[a-z]+)/(?P<slug>[-a-z0-9]+)/$",
         redirect("/lessons/%(slug)s"),
     ),
     url(r"^courses/(?P<locale_id>[a-z]+)$", redirect("/lessons/%(locale_id)s")),
