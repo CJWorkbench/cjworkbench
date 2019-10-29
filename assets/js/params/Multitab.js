@@ -2,8 +2,10 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import ReactSelect from './common/react-select'
 import { MaybeLabel } from './util'
+import { Trans,t } from '@lingui/macro'
+import { withI18n,I18n } from '@lingui/react'
 
-export default class MultitabParam extends React.PureComponent {
+export class MultitabParam extends React.PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired,
     onChange: PropTypes.func.isRequired, // func(['tab-1', 'tab-2']) => undefined
@@ -38,10 +40,12 @@ export default class MultitabParam extends React.PureComponent {
           value={value}
           onChange={onChange}
           isReadOnly={isReadOnly}
-          placeholder={placeholder || 'Select Tabs'}
+          placeholder={placeholder || i18n._(t('.Multitab.selectTabs')`Select Tabs`)}
           isMulti
         />
       </>
     )
   }
 }
+
+export default withI18n()(MultitabParam);

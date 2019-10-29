@@ -1,6 +1,9 @@
 /* globals gapi, google */
 import React from 'react'
 import PropTypes from 'prop-types'
+import { Trans,t } from '@lingui/macro'
+import { withI18n,I18n } from '@lingui/react'
+
 
 const MimeTypesString = [
   'application/vnd.google-apps.spreadsheet',
@@ -90,7 +93,7 @@ class PickerFactory {
 function FileInfo ({ id, name, url }) {
   if (!id) {
     return (
-      <a className='file-info empty'>(please choose a file)</a>
+     <Trans id="gdrivefile.pleasechoosefile"> <a className='file-info empty'>(please choose a file)</a></Trans>
     )
   } else {
     return (
@@ -255,15 +258,15 @@ export default class Gdrivefile extends React.PureComponent {
     if (!isReadOnly) {
       if (loadingAccessToken || !pickerFactory) {
         return (
-          <a className='file-info'><p className='loading'>Loading...</p></a>
+          <a className='file-info'><p className='loading'><Trans id="gdrivefile.loading">Loading...</Trans></p></a>
         )
       } else if (unauthenticated) {
         return (
-          <a className='file-info'><p className='sign-in-error'>failure: please reconnect</p></a>
+          <a className='file-info'><p className='sign-in-error'><Trans id="gdrivefile.failurerecconect">failure: please reconnect</Trans></p></a>
         )
       } else if (!secretMetadata) {
         return (
-          <a className='file-info'><p className='not-signed-in'>(please sign in)</p></a>
+          <a className='file-info'><p className='not-signed-in'><Trans id="gdrive.pleasesignin">(please sign in)</Trans></p></a>
         )
       }
     }
@@ -279,7 +282,7 @@ export default class Gdrivefile extends React.PureComponent {
             className='change-file'
             onClick={this.handleClickOpenPicker}
           >
-            {value ? 'Change' : 'Choose'}
+            {value ? <Trans id="Gdrivefile.change">Change</Trans> : <Trans id="Gdrivefile.choose">Choose</Trans>}
           </button>
         ) : null}
       </>

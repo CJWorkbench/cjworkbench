@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { MaybeLabel } from '../util'
 import { timeDifference } from '../../utils'
 import { withI18n } from '@lingui/react'
+import { Trans,t } from '@lingui/macro'
 
 /**
  * Prompt the user to enter a string: show a <label>, <input>, <button> and <p className='help'>.
@@ -89,7 +90,7 @@ function StringDisplay ({ i18n, isReadOnly, secretMetadata, label, name, fieldId
             onClick={handleSubmit}
             disabled={isSubmitted}
           >
-            Clear
+            <Trans id="secterfile.string.cleartext">Clear</Trans>
           </button>
         ) : null}
       </div>

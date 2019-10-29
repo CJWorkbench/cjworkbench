@@ -46,7 +46,7 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                     <h5
                       class="modal-title"
                     >
-                      WORKFLOW UPDATE
+                      updatefrequencyselect.worklfowupdate
                     </h5>
                     <button
                       aria-label="Close"
@@ -95,7 +95,7 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                             <label
                               for="updateFrequencySelectTimeUnitCount"
                             >
-                              Check for update every
+                              updatefrequency.checkupdates
                             </label>
                             <fieldset
                               class="fetch-interval"
@@ -154,7 +154,7 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                                     name="apply"
                                     type="submit"
                                   >
-                                    Apply
+                                    updatefrequency.apply
                                   </button>
                                 </div>
                               </div>
@@ -243,7 +243,26 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                   <h5
                     className="modal-title"
                   >
-                    WORKFLOW UPDATE
+                    <WithI18n
+                      defaults="WORKFLOW UPDATE"
+                      id="updatefrequencyselect.worklfowupdate"
+                    >
+                      <I18n
+                        update={true}
+                        withHash={true}
+                      >
+                        <Trans
+                          defaults="WORKFLOW UPDATE"
+                          id="updatefrequencyselect.worklfowupdate"
+                        >
+                          <Render
+                            value="updatefrequencyselect.worklfowupdate"
+                          >
+                            updatefrequencyselect.worklfowupdate
+                          </Render>
+                        </Trans>
+                      </I18n>
+                    </WithI18n>
                   </h5>
                   <button
                     aria-label="Close"
@@ -318,7 +337,26 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                           <label
                             htmlFor="updateFrequencySelectTimeUnitCount"
                           >
-                            Check for update every
+                            <WithI18n
+                              defaults="Check for update every"
+                              id="updatefrequency.checkupdates"
+                            >
+                              <I18n
+                                update={true}
+                                withHash={true}
+                              >
+                                <Trans
+                                  defaults="Check for update every"
+                                  id="updatefrequency.checkupdates"
+                                >
+                                  <Render
+                                    value="updatefrequency.checkupdates"
+                                  >
+                                    updatefrequency.checkupdates
+                                  </Render>
+                                </Trans>
+                              </I18n>
+                            </WithI18n>
                           </label>
                           <fieldset
                             className="fetch-interval"
@@ -396,7 +434,26 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                                   name="apply"
                                   type="submit"
                                 >
-                                  Apply
+                                  <WithI18n
+                                    defaults="Apply"
+                                    id="updatefrequency.apply"
+                                  >
+                                    <I18n
+                                      update={true}
+                                      withHash={true}
+                                    >
+                                      <Trans
+                                        defaults="Apply"
+                                        id="updatefrequency.apply"
+                                      >
+                                        <Render
+                                          value="updatefrequency.apply"
+                                        >
+                                          updatefrequency.apply
+                                        </Render>
+                                      </Trans>
+                                    </I18n>
+                                  </WithI18n>
                                 </button>
                               </div>
                             </div>

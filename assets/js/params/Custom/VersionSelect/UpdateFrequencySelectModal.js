@@ -133,7 +133,7 @@ export default class UpdateFrequencySelectModal extends React.PureComponent {
 
     return (
       <Modal isOpen className='update-frequency-modal' toggle={onClose}>
-        <ModalHeader>WORKFLOW UPDATE</ModalHeader>
+        <ModalHeader><Trans id="updatefrequencyselect.worklfowupdate">WORKFLOW UPDATE</Trans></ModalHeader>
         <ModalBody>
           <form
             className='autofetch'
@@ -156,7 +156,7 @@ export default class UpdateFrequencySelectModal extends React.PureComponent {
                 </label>
                 <div className='big-radio-details'>
                   <p><Trans id="updatefrequency.automaticallyupdate">Automatically update this workflow with the newest data (old versions will be saved).</Trans></p>
-                  <label htmlFor='updateFrequencySelectTimeUnitCount'>Check for update every</label>
+                  <label htmlFor='updateFrequencySelectTimeUnitCount'><Trans id="updatefrequency.checkupdates">Check for update every</Trans></label>
                   <fieldset className='fetch-interval' disabled={!wantAutofetch}>
                     <div className='input-group'>
                       <div className='input-group-prepend'>
@@ -189,7 +189,7 @@ export default class UpdateFrequencySelectModal extends React.PureComponent {
                           name='apply'
                           disabled={!this.isFetchIntervalSubmittable}
                         >
-                          {quotaExceeded ? 'Retry' : 'Apply'}
+                          {quotaExceeded ? <Trans id="updateFrequency.retry">Retry</Trans> : <Trans id="updatefrequency.apply">Apply</Trans>}
                         </button>
                       </div>
                     </div>{/* input-group */}
