@@ -1,10 +1,11 @@
+import textwrap
 import unittest
-import pandas
-from pandas.testing import assert_frame_equal
-from staticmodules.pythoncode import safe_eval_process, migrate_params
+import pandas as pd
+from cjwkernel.tests.pandas.util import assert_process_result_equal
+from staticmodules.pythoncode import render, migrate_params
 
 
-EMPTY_DATAFRAME = pandas.DataFrame()
+EMPTY_DATAFRAME = pd.DataFrame()
 EMPTY_OUTPUT = {"output": ""}
 
 
@@ -22,205 +23,164 @@ class MigrateParamsTest(unittest.TestCase):
         )
 
 
-class SafeEvalProcessTest(unittest.TestCase):
-    def test_pipe_dataframe(self):
-        dataframe = pandas.DataFrame({"a": [1, 2]})
-        result = safe_eval_process(
+def eval_process(indented_code, table):
+    code = textwrap.dedent(indented_code)
+    return render(table, {"code": code})
+
+
+class RenderTest(unittest.TestCase):
+    def test_accept_and_return_dataframe(self):
+        result = eval_process(
             """
-def process(table):
-    return table
-""",
-            dataframe.copy(),
+            def process(table):
+                return table * 2
+            """,
+            pd.DataFrame({"A": [1, 2]}),
         )
-        self.assertEqual(result.error, "")
-        assert_frame_equal(result.dataframe, dataframe)
-        self.assertEqual(result.json, EMPTY_OUTPUT)
+        assert_process_result_equal(
+            result, (pd.DataFrame({"A": [2, 4]}), "", EMPTY_OUTPUT)
+        )
 
     def test_return_str_for_error(self):
-        result = safe_eval_process(
+        result = eval_process(
             """
-def process(table):
-    return 'hi'
-""",
+            def process(table):
+                return 'hi'
+            """,
             EMPTY_DATAFRAME,
         )
-        self.assertEqual(result.error, "hi")
-        assert_frame_equal(result.dataframe, EMPTY_DATAFRAME)
-        self.assertEqual(result.json, EMPTY_OUTPUT)
+        assert_process_result_equal(result, (EMPTY_DATAFRAME, "hi", {"output": "hi"}))
 
     def test_builtins(self):
         # spot-check: do `list`, `sum` and `str` work the way we expect?
-        result = safe_eval_process(
+        result = eval_process(
             """
-def process(table):
-    return str(sum(list([1, 2, 3])))
-""",
+            def process(table):
+                return str(sum(list([1, 2, 3])))
+            """,
             EMPTY_DATAFRAME,
         )
-        self.assertEqual(result.error, "6")
+        assert_process_result_equal(result, (EMPTY_DATAFRAME, "6", {"output": "6"}))
 
     def test_has_math(self):
-        result = safe_eval_process(
+        result = eval_process(
             """
-def process(table):
-    return str(math.sqrt(4))
-""",
+            def process(table):
+                return str(math.sqrt(4))
+            """,
             EMPTY_DATAFRAME,
         )
-        self.assertEqual(result.error, "2.0")
+        assert_process_result_equal(result, (EMPTY_DATAFRAME, "2.0", {"output": "2.0"}))
 
     def test_has_pandas_as_pd(self):
-        result = safe_eval_process(
+        result = eval_process(
             """
-def process(table):
-    return pd.DataFrame({'A': [1, 2]})
-""",
+            def process(table):
+                return pd.DataFrame({'A': [1, 2]})
+            """,
             EMPTY_DATAFRAME,
         )
-        assert_frame_equal(result.dataframe, pandas.DataFrame({"A": [1, 2]}))
+        assert_process_result_equal(
+            result, (pd.DataFrame({"A": [1, 2]}), "", EMPTY_OUTPUT)
+        )
 
     def test_has_numpy_as_np(self):
-        result = safe_eval_process(
+        result = eval_process(
             """
-def process(table):
-    return pd.DataFrame({'A': np.array([1, 2])})
-""",
+            def process(table):
+                return pd.DataFrame({'A': np.array([1, 2])})
+            """,
             EMPTY_DATAFRAME,
         )
-        assert_frame_equal(result.dataframe, pandas.DataFrame({"A": [1, 2]}))
+        assert_process_result_equal(
+            result, (pd.DataFrame({"A": [1, 2]}), "", EMPTY_OUTPUT)
+        )
 
-    def test_import_disabled(self):
-        result = safe_eval_process(
+    def test_import(self):
+        result = eval_process(
             """
-import typing
+            from typing import Dict
 
-def process(table):
-    return 'should not arrive here'
-""",
+            def process(table):
+                x: Dict[str, str] = {"x": "y"}
+                return list(x.keys())[0]
+            """,
             EMPTY_DATAFRAME,
         )
-        self.assertEqual(
-            result.error,
-            ("Line 2: PythonFeatureDisabledError: " "builtins.__import__ is disabled"),
-        )
-        self.assertEqual(
-            result.json,
-            {
-                "output": """Traceback (most recent call last):
-  File "user input", line 2, in <module>
-PythonFeatureDisabledError: builtins.__import__ is disabled
-"""
-            },
-        )
-
-    def test_builtins_disabled(self):
-        result = safe_eval_process(
-            """
-def process(table):
-    return eval('foo')
-""",
-            EMPTY_DATAFRAME,
-        )
-        self.assertEqual(
-            result.error,
-            ("Line 3: PythonFeatureDisabledError: builtins.eval is disabled"),
-        )
-        self.assertEqual(
-            result.json,
-            {
-                "output": """Traceback (most recent call last):
-  File "user input", line 3, in process
-PythonFeatureDisabledError: builtins.eval is disabled
-"""
-            },
-        )
+        assert_process_result_equal(result, (EMPTY_DATAFRAME, "x", {"output": "x"}))
 
     def test_print_is_captured(self):
-        result = safe_eval_process(
+        result = eval_process(
             """
-def process(table):
-    print('hello')
-    print('world')
-    return table
-""",
+            def process(table):
+                print('hello')
+                print('world')
+                return table
+            """,
             EMPTY_DATAFRAME,
         )
-        self.assertEqual(result.json, {"output": "hello\nworld\n"})
+        assert_process_result_equal(result, {"json": {"output": "hello\nworld\n"}})
 
     def test_syntax_error(self):
-        result = safe_eval_process(
+        result = eval_process(
             """
-def process(table):
-    return ta(
-""",
+            def process(table):
+                return ta(
+            """,
             EMPTY_DATAFRAME,
         )
-        self.assertEqual(
-            result.error, ("Line 3: unexpected EOF while parsing (user input, line 3)")
+        text = "Line 3: unexpected EOF while parsing (your code, line 3)"
+        assert_process_result_equal(result, (EMPTY_DATAFRAME, text, {"output": text}))
+
+    def test_error_during_process(self):
+        result = eval_process(
+            """
+            def process(table):
+                return ta()
+            """,
+            EMPTY_DATAFRAME,
         )
-        self.assertEqual(result.json, EMPTY_OUTPUT)
+        trace = """Traceback (most recent call last):
+  File "your code", line 3, in process
+NameError: name 'ta' is not defined
+"""
+        text = "Line 3: NameError: name 'ta' is not defined"
+        assert_process_result_equal(
+            result, (EMPTY_DATAFRAME, text, {"output": trace + text})
+        )
 
     def test_missing_process(self):
-        result = safe_eval_process(
+        result = eval_process(
             """
-def xprocess(table):
-    return table
-""",
+            def xprocess(table):
+                return table
+            """,
             EMPTY_DATAFRAME,
         )
-        self.assertEqual(result.error, 'You must define a "process" function')
+        text = 'Please define a "process(table)" function'
+        assert_process_result_equal(result, (EMPTY_DATAFRAME, text, {"output": text}))
 
     def test_bad_process_signature(self):
-        result = safe_eval_process(
+        result = eval_process(
             """
-def process(table, params):
-    return table
-""",
+            def process(table, params):
+                return table
+            """,
             EMPTY_DATAFRAME,
         )
-        self.assertEqual(
-            result.error, 'Your "process" function must accept exactly one argument'
-        )
-
-    def test_kill_after_timeout(self):
-        result = safe_eval_process(
-            """
-def process(table):
-    while True:
-        pass  # infinite loop!
-""",
-            EMPTY_DATAFRAME,
-            timeout=0.0001,
-        )
-        self.assertEqual(result.error, "Python subprocess did not respond in 0.0001s")
+        text = "Please make your process(table) function accept exactly 1 argument"
+        assert_process_result_equal(result, (EMPTY_DATAFRAME, text, {"output": text}))
 
     def test_invalid_retval(self):
-        result = safe_eval_process(
+        result = eval_process(
             """
-def process(table):
-    return None
-""",
+            def process(table):
+                return None
+            """,
             EMPTY_DATAFRAME,
         )
-        self.assertEqual(
-            result.error, "process(table) did not return a pd.DataFrame or a str"
+        text = (
+            "Please make process(table) return a pd.DataFrame. "
+            "(Yours returned a NoneType.)"
         )
-        self.assertEqual(
-            result.json,
-            {"output": "process(table) did not return a pd.DataFrame or a str\n"},
-        )
-
-
-#     def test_builtins_disabled_within_pandas(self):
-#         result = safe_eval_process("""
-# def process(table):
-#     return pd.read_csv('/some/file')
-# """, EMPTY_DATAFRAME)
-#
-#         self.assertEqual(result, ProcessResult(
-#             error=(
-#                 'Line 3: PythonFeatureDisabledError: '
-#                 'builtins.open is disabled'
-#             ),
-#             json=EMPTY_OUTPUT
-#         ))
+        assert_process_result_equal(result, (EMPTY_DATAFRAME, text, {"output": text}))

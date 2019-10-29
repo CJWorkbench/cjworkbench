@@ -1,29 +1,37 @@
 import ctypes
+import errno
 import importlib
 import os
 from pathlib import Path
+import shutil
 import signal
 import sys
 import socket
 import traceback
-from typing import Callable
-import cjwkernel.pandas.main
+from typing import Callable, List, Tuple
 from . import protocol
 
 
 libc = ctypes.CDLL("libc.so.6", use_errno=True)
-libcapng = ctypes.CDLL("libcap-ng.so.0", use_errno=True)
-# Yes, there's a Python version of capng ... but it's not on PyPi and
-# [2019-10-11] pipenv is a crazy pain in the neck so we basically can't
-# install it.
-# <capng.h>
-CAPNG_SELECT_BOTH = 48
+libcap = ctypes.CDLL("libcap.so.2", use_errno=True)
+libcap.cap_init.restype = ctypes.c_void_p
+libcap.cap_set_proc.argtypes = [ctypes.c_void_p]
+libcap.cap_free.argtypes = [ctypes.c_void_p]
 # <linux/prctl.h>
 PR_SET_NAME = 15
 PR_CAPBSET_DROP = 24
+PR_SET_SECUREBITS = 28
 PR_SET_NO_NEW_PRIVS = 38
 # <linux/capability.h>
+CAP_SETPCAP = 8
 CAP_LAST_CAP = 37
+# <linux/securebits.h>
+SECBIT_KEEP_CAPS_LOCKED = 1 << 5
+SECBIT_NO_SETUID_FIXUP = 1 << 2
+SECBIT_NO_SETUID_FIXUP_LOCKED = 1 << 3
+SECBIT_NOROOT = 1 << 0
+SECBIT_NOROOT_LOCKED = 1 << 1
+
 # BEWARE: Docker, by default, disallows user-namespace cloning. We use Docker
 # in development. Therefore we override Docker's seccomp profile to allow our
 # clone() syscall to succeed. If you're adding to this list, also modify the
@@ -35,6 +43,14 @@ CLONE_NEWCGROUP = 0x02000000
 CLONE_NEWIPC = 0x08000000
 CLONE_NEWPID = 0x20000000
 CLONE_NEWNS = 0x00020000  # new mount namespace
+
+
+CHROOT_REQUIRED_PATHS = ["/lib/x86_64-linux-gnu"]
+"""
+Paths that will always have their contents provided within a chroot.
+
+Why do we force paths? Because otherwise, we can't even create a chroot.
+"""
 
 
 def _call_c(lib, fn, *args):
@@ -106,13 +122,13 @@ def _sandbox_module():
 
     Tasks with rationale ('[x]' means, "unit-tested"):
 
-    [ ] Wait for forkserver to write uid_map
+    [x] Wait for forkserver to write uid_map
     [x] Close `sock` (so "forkserver" does not misbehave)
     [x] Close stdout/stderr (so modules do not flood logs; point
         stdout/stderr to `message.log_fd` instead)
     [x] Drop capabilities (like CAP_SYS_ADMIN)
     [x] Setuid to 1000
-    [ ] Use chroot (so modules can't see other processes)
+    [x] Use chroot (so modules can't see other processes)
     """
     os.close(sock.fileno())  # Close `sock`
     global stdout_read_fd, stderr_read_fd
@@ -129,8 +145,10 @@ def _sandbox_module():
     _sandbox_stdout_stderr()
     if _should_sandbox("no_new_privs"):
         _sandbox_no_new_privs()
-    # if _should_sandbox("setuid"):
-    #     _sandbox_setuid()
+    if message.chroot_dir is not None:
+        _sandbox_chroot(message.chroot_dir, message.chroot_provide_paths)
+    if _should_sandbox("setuid"):
+        _sandbox_setuid()
     if _should_sandbox("drop_capabilities"):
         _sandbox_drop_capabilities()
 
@@ -175,9 +193,81 @@ def _write_namespace_uidgid(pid: int) -> None:
     Path(f"/proc/{pid}/gid_map").write_text("0 100000 65536")
 
 
+def _copy_chroot_file(src: str, dst: str) -> None:
+    """
+    Try os.link(); if it's a cross-device link, use shutil.copy2().
+
+    This is designed to be used by shutil.copytree().
+    """
+    # try os.link() and return if it works
+    try:
+        return os.link(src, dst)
+        # ... _return_. This is the end of it.
+    except OSError as err:
+        if err.errno == errno.EXDEV:
+            # cross-device link: fall through.
+            # (Let's not pollute the stack trace by calling shutil.copy2()
+            # within the exception handler.)
+            pass
+        else:
+            raise
+
+    # fallback: shutil.copy2()
+    return shutil.copy2(src, dst)
+
+
+def _sandbox_chroot(root: Path, provide_paths: List[Tuple[Path, Path]]):
+    """
+    Enter a restricted filesystem, so absolute paths are relative to `dir`.
+
+    Why call this? So the user can't read files from our filesystem (which
+    include our secrets and our users' secrets); and the user can't *write*
+    files to our filesystem (which might inject code into a parent process).
+
+    SECURITY: entering a chroot is not enough. To prevent this process from
+    accessing files outside the chroot, this process must drop its ability to
+    chroot back _out_ of the chroot. Use _sandbox_drop_capabilities().
+
+    SECURITY: TODO: switch from chroot to pivot_root. pivot_root makes it far
+    harder for root to break out of the jail. It needs a process-specific mount
+    namespace. But on Kubernetes (and Docker), bind-mount isn't allowed in
+    unprivileged processes.
+
+    For now, since we don't use a separate mount namespace, chroot doesn't
+    add much "security" in the case of privilege escalation: root will be able
+    to see our secrets. But chroot helps us, as developers, prepare for
+    pivot_root by coding to the contract it will provide.
+    """
+    all_paths = provide_paths + [(Path(s), Path(s)) for s in CHROOT_REQUIRED_PATHS]
+    for dest, src in all_paths:
+        # "dest" is after chroot. Before chroot, we need "absolute_dest"
+        absolute_dest = root / str(dest)[1:]
+        absolute_dest.parent.mkdir(0o755, parents=True, exist_ok=True)
+        if src.is_dir():
+            shutil.copytree(src, absolute_dest, copy_function=_copy_chroot_file)
+
+        else:
+            # TODO unit-test that /etc/resolv.conf (on a different mount point)
+            # is copied correctly
+            _copy_chroot_file(src, absolute_dest)
+
+    # Create temporary directories
+    tmp = root / "tmp"
+    os.makedirs(tmp, exist_ok=True)
+    os.chmod(tmp, 0o1777)
+    var_tmp = root / "var" / "tmp"
+    os.makedirs(var_tmp, exist_ok=True)
+    os.chmod(var_tmp, 0o1777)
+
+    os.chroot(str(root))
+    os.chdir("/")
+
+
 def _sandbox_drop_capabilities():
     """
     Drop all capabilities in the caller.
+
+    Also, set the process "securebits" to prevent regaining capabilities.
 
     Why call this? So if user code manages to setuid to root (which should be
     impossible), it still won't have permission to call dangerous kernel code.
@@ -185,9 +275,36 @@ def _sandbox_drop_capabilities():
     EPERM, even for root.)
 
     ref: http://people.redhat.com/sgrubb/libcap-ng/
+    ref: man capabilities(7)
     """
-    libcapng.capng_clear(CAPNG_SELECT_BOTH)  # cannot error
-    _call_c(libcapng, "capng_apply", CAPNG_SELECT_BOTH)
+    # straight from man capabilities(7):
+    # "An  application  can  use  the following call to lock itself, and all of
+    # its descendants, into an environment where the only way of gaining
+    # capabilities is by executing a program with associated file capabilities"
+    _call_c(
+        libc,
+        "prctl",
+        PR_SET_SECUREBITS,
+        (
+            SECBIT_KEEP_CAPS_LOCKED
+            | SECBIT_NO_SETUID_FIXUP
+            | SECBIT_NO_SETUID_FIXUP_LOCKED
+            | SECBIT_NOROOT
+            | SECBIT_NOROOT_LOCKED
+        ),
+        0,
+        0,
+        0,
+    )
+
+    # And now, _drop_ the capabilities (and we can never gain them again)
+    # Drop the Bounding set...
+    for i in range(CAP_LAST_CAP + 1):
+        _call_c(libc, "prctl", PR_CAPBSET_DROP, i, 0, 0, 0)
+    # ... and drop permitted/effective/inheritable capabilities
+    empty_capabilities = libcap.cap_init()
+    _call_c(libcap, "cap_set_proc", empty_capabilities)
+    _call_c(libcap, "cap_free", empty_capabilities)
 
 
 def _sandbox_no_new_privs():

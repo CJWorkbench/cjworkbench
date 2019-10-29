@@ -14,13 +14,13 @@ FROM python:3.7.4-slim-buster AS pybase
 #        to uninstall it after build, in case one of our Python deps shells to it
 #
 # We do want:
-# libcap-ng0: used by forkserver (via ctypes) to drop capabilities
+# libcap2: used by forkserver (via ctypes) to drop capabilities
 RUN mkdir -p /usr/share/man/man1 /usr/share/man/man7 \
     && apt-get update \
     && apt-get install --no-install-recommends -y \
         git \
         postgresql-client \
-        libcap-ng0 \
+        libcap2 \
         unzip \
         curl \
     && rm -rf /var/lib/apt/lists/*

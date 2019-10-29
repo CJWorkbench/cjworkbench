@@ -12,6 +12,7 @@ from cjwkernel.tests.util import (
     arrow_table_context,
     assert_render_result_equals,
 )
+from cjwkernel.util import tempdir_context, tempfile_context
 from cjwstate import minio
 from cjwstate.modules import init_module_system
 from cjwstate.modules.loaded_module import LoadedModule, load_external_module
@@ -70,10 +71,12 @@ class LoadedModuleTest(unittest.TestCase):
 
         # This ends up being kinda an integration test.
         with ExitStack() as ctx:
-            basedir = Path(ctx.enter_context(tempfile.TemporaryDirectory()))
+            basedir = Path(ctx.enter_context(tempdir_context(prefix="test-basedir-")))
+            basedir.chmod(0o755)
             input_table = ctx.enter_context(
                 arrow_table_context({"A": [1]}, dir=basedir)
             )
+            input_table.path.chmod(0o644)
             output_tf = ctx.enter_context(tempfile.NamedTemporaryFile(dir=basedir))
 
             ctx.enter_context(self.assertLogs("cjwstate.modules.loaded_module"))

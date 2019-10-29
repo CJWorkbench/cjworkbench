@@ -5,7 +5,7 @@ import pandas as pd
 from pandas.testing import assert_frame_equal, assert_series_equal
 from cjwkernel.pandas.types import ProcessResult
 from staticmodules import formula
-from staticmodules.formula import sanitize_series
+from staticmodules.formula import build_globals_for_eval, sanitize_series
 from .util import MockParams
 
 
@@ -371,3 +371,19 @@ class FormulaTests(unittest.TestCase):
             {"formula_excel": '=IF(A1=1, 1, "x")', "all_rows": True},
             pd.DataFrame({"A": [1, 2], "R": ["1", "x"]}),
         )
+
+
+class SafeExecTest(unittest.TestCase):
+    def exec_code(self, code):
+        built_globals = build_globals_for_eval()
+        inner_locals = {}
+        exec(code, built_globals, inner_locals)
+        return inner_locals
+
+    def test_builtin_functions(self):
+        env = self.exec_code(
+            """
+ret = sorted(list([1, 2, sum([3, 4])]))
+"""
+        )
+        self.assertEqual(env["ret"], [1, 2, 7])

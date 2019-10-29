@@ -1,14 +1,13 @@
 from dataclasses import dataclass
 import logging
 import os
+from pathlib import Path
 import socket
 import subprocess
 import sys
 import threading
-from typing import Any, BinaryIO, FrozenSet, List, Tuple
+from typing import Any, BinaryIO, FrozenSet, List, Optional, Tuple
 from . import protocol
-from cjwkernel.types import CompiledModule
-from cjwkernel.pandas import main as module_main
 
 
 logger = logging.getLogger(__name__)
@@ -120,6 +119,8 @@ class Forkserver:
         process_name: str,
         args: List[Any],
         *,
+        chroot_dir: Optional[Path] = None,
+        chroot_provide_paths: List[Tuple[Path, Path]] = [],
         skip_sandbox_except: FrozenSet[str] = frozenset(),
     ) -> ModuleProcess:
         """
@@ -129,12 +130,33 @@ class Forkserver:
 
         `args` are the arguments to pass to `cjwkernel.pandas.module.main()`.
 
+        If `chroot_dir` is set, it must point to an empty directory on the
+        filesystem. A chroot will be created with a directory structure
+        matching `chroot_provide_paths` -- all files hard-linked. Each entry
+        in `chroot_provide_paths` should be a "child", "parent" pair: for
+        instance, `(Path("/data"), Path("/var/tmp/xxx"))` means the child's
+        "/data" directory will contain the contents of the parent's
+        "/var/tmp/xxx" directory.
+
+        Ensure provided files are readable by "other" (otherwise there's no
+        point in including them) and not writable by "other" (otherwise the
+        module may overwrite them).
+
+        The caller should `shutil.rmtree(chroot_dir)` after the child exits to
+        free up resources.
+
+        (TODO `chroot_dir` should use bind-mounting and pivot_root, for speed
+        and security. When Kubernetes lets us bind-mount in an unprivileged
+        container, switch to pivot_root.)
+
         `skip_sandbox_except` MUST BE EXACTLY `frozenset()`. Other values are
         only for unit tests. See `protocol.SpawnPandasModule` for details.
         """
         message = protocol.SpawnPandasModule(
             process_name=process_name,
             args=args,
+            chroot_dir=chroot_dir,
+            chroot_provide_paths=chroot_provide_paths,
             skip_sandbox_except=skip_sandbox_except,
         )
         with self._lock:
