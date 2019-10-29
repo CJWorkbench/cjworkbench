@@ -9,7 +9,7 @@ from .lesson import Lesson, LessonParseError
 @dataclass(frozen=True)
 class Course:
     slug: str = ""
-    locale: str = ""
+    locale_id: str = ""
     title: str = ""
     introduction_html: str = ""
     lessons: Dict[str, Lesson] = field(default_factory=list)
@@ -48,18 +48,20 @@ class Course:
         """
         dirpath = path.parent
         slug = dirpath.name
-        locale = dirpath.parent.name
+        locale_id = dirpath.parent.name
         data = yaml.safe_load(path.read_text())  # raises YAMLError
         title = str(data["title"])  # raises KeyError
         introduction_html = str(data["introduction_html"])  # raises KeyError
         lesson_slugs = list(data["lessons"])  # raises KeyError
 
-        course = cls(slug, locale, title, introduction_html, {})
+        course = cls(slug, locale_id, title, introduction_html, {})
         for slug in lesson_slugs:
             lesson_path = dirpath / (str(slug) + ".html")
             lesson_html = lesson_path.read_text()
             try:
-                course.lessons[slug] = Lesson.parse(course, slug, locale, lesson_html)
+                course.lessons[slug] = Lesson.parse(
+                    course, slug, locale_id, lesson_html
+                )
             except LessonParseError as err:
                 raise RuntimeError(
                     "Lesson parse error in %s: %s" % (str(lesson_path), str(err))

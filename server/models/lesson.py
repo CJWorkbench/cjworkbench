@@ -219,7 +219,7 @@ class LessonParseError(Exception):
 class Lesson:
     course: Optional["Course"]
     slug: str
-    locale: str
+    locale_id: str
     header: LessonHeader = LessonHeader()
     sections: List[LessonSection] = field(default_factory=list)
     footer: LessonFooter = LessonFooter()
@@ -232,21 +232,21 @@ class Lesson:
     @classmethod
     def load_from_path(cls, course: Optional["Course"], path: pathlib.Path) -> Lesson:
         slug = path.stem
-        locale = path.parent.stem
+        locale_id = path.parent.stem
         html = path.read_text()
         try:
-            return cls.parse(course, slug, locale, html)
+            return cls.parse(course, slug, locale_id, html)
         except LessonParseError as err:
             raise LessonParseError("In %s: %s" % (str(path), str(err)))
 
     @classmethod
     def parse(
-        cls, course: Optional["Course"], slug: str, locale: str, html: str
+        cls, course: Optional["Course"], slug: str, locale_id: str, html: str
     ) -> Lesson:
         if course:
-            base_href = f"courses/{locale}/{course.slug}/{slug}"
+            base_href = f"courses/{locale_id}/{course.slug}/{slug}"
         else:
-            base_href = f"lessons/{locale}/{slug}"
+            base_href = f"lessons/{locale_id}/{slug}"
 
         parser = html5lib.HTMLParser(strict=True, namespaceHTMLElements=False)
         try:
@@ -284,7 +284,7 @@ class Lesson:
         return cls(
             course,
             slug,
-            locale,
+            locale_id,
             lesson_header,
             lesson_sections,
             lesson_footer,
