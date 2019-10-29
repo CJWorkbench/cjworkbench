@@ -315,6 +315,7 @@ class Kernel:
                 "pandas.core",
                 "pandas.core.apply",
                 "pandas.core.computation.expressions",
+                "pandas.core.groupby.categorical",
                 "pyarrow",
                 "pyarrow.pandas_compat",
                 "pyarrow.parquet",
