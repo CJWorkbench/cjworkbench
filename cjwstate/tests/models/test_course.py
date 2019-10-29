@@ -4,7 +4,6 @@ import yaml
 from cjwkernel.tests.util import MockDir
 from server.models.course import Course
 from server.models.lesson import Lesson, LessonHeader, LessonFooter
-from cjworkbench.i18n import default_locale
 
 
 class CourseTests(unittest.TestCase):
@@ -31,30 +30,30 @@ class CourseTests(unittest.TestCase):
                     b"<footer><h2>F2</h2><p>foot</p></footer>"
                 ),
             },
-            parent=default_locale,
+            parent="en",
         )
         assert dirpath.name == "root"  # we define this in 'utils'
-        self.assertEqual(dirpath.parent.name, default_locale)
+        self.assertEqual(dirpath.parent.name, "en")
         course = Course.load_from_path(dirpath / "index.yaml")
         self.assertEqual(
             course,
             Course(
                 slug="root",
                 title="Title",
-                locale=default_locale,
+                locale="en",
                 introduction_html="<p>Hi</p>\n<p>Bye</p>",
                 lessons={
                     "lesson-1": Lesson(
                         course,
                         "lesson-1",
-                        default_locale,
+                        "en",
                         header=LessonHeader("L1", "<p>HP1</p>"),
                         footer=LessonFooter("F1", "<p>foot</p>"),
                     ),
                     "lesson-2": Lesson(
                         course,
                         "lesson-2",
-                        default_locale,
+                        "en",
                         header=LessonHeader("L2", "<p>HP2</p>"),
                         footer=LessonFooter("F2", "<p>foot</p>"),
                     ),

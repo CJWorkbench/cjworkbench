@@ -5,7 +5,6 @@ from cjwstate.models import Workflow, ModuleVersion
 from cjwstate.modules.loaded_module import LoadedModule
 from server.models.lesson import Lesson, LessonLookup, LessonInitialWorkflow
 from cjwstate.tests.utils import DbTestCase, create_test_user
-from cjworkbench.i18n import default_locale
 
 
 async def async_noop(*args, **kwargs):
@@ -189,7 +188,7 @@ class LessonDetailTests(DbTestCase):
             "a-lesson": Lesson(
                 None,
                 "slug",
-                default_locale,
+                "en",
                 initial_workflow=LessonInitialWorkflow(
                     [
                         {
@@ -244,7 +243,7 @@ class LessonDetailTests(DbTestCase):
             "a-lesson": Lesson(
                 None,
                 "a-lesson",
-                default_locale,
+                "en",
                 initial_workflow=LessonInitialWorkflow(
                     [
                         {
@@ -275,10 +274,7 @@ class LessonDetailTests(DbTestCase):
         wf_module = next(iter(state["wfModules"].values()))
         self.assertEqual(
             wf_module["params"],
-            {
-                "url": "http://localhost:8000/static/lessons/%s/a-lesson/foo.txt"
-                % default_locale
-            },
+            {"url": "http://localhost:8000/static/lessons/%s/a-lesson/foo.txt" % "en"},
         )
 
     @patch("server.rabbitmq.queue_fetch")
@@ -289,7 +285,7 @@ class LessonDetailTests(DbTestCase):
             "a-lesson": Lesson(
                 None,
                 "slug",
-                default_locale,
+                "en",
                 initial_workflow=LessonInitialWorkflow(
                     [
                         {
@@ -331,7 +327,7 @@ class LessonDetailTests(DbTestCase):
             "a-lesson": Lesson(
                 None,
                 "slug",
-                default_locale,
+                "en",
                 initial_workflow=LessonInitialWorkflow(
                     [
                         {
@@ -361,7 +357,7 @@ class LessonDetailTests(DbTestCase):
             "a-lesson": Lesson(
                 None,
                 "slug",
-                default_locale,
+                "en",
                 initial_workflow=LessonInitialWorkflow(
                     [
                         {
