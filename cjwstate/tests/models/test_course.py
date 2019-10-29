@@ -40,7 +40,7 @@ class CourseTests(unittest.TestCase):
             Course(
                 slug="root",
                 title="Title",
-                locale="en",
+                locale_id="en",
                 introduction_html="<p>Hi</p>\n<p>Bye</p>",
                 lessons={
                     "lesson-1": Lesson(
