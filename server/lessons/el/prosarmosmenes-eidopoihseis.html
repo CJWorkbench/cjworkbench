@@ -1,0 +1,67 @@
+<header>
+  <h1>V. Παρακολουθήστε δεδομένα και ορίστε προσαρμοσμένες προειδοποιήσεις</h1>
+  <p>Παρακολουθήστε μια τροφοδοσία δεδομένων και λάβετε ηλ. μήνυμα ειδοποίησης όταν επαληθεύεται μια συνθήκη.</p><img src="./banner.svg" alt=""></header>
+<section>
+  <h2>ΕΠΙΣΚΟΠΗΣΗ</h2>
+  <p>Σε αυτό το μάθημα θα μάθετε πώς να παρακολουθείτε μια πηγή έτσι ώστε να σας σταλεί προειδοποίηση αν αλλάξουν συγκεκριμένα δεδομένα.</p>
+  <p>Θα εργαστείτε με δεδομένα από αστυνομικές αναφορές της Πόλης της Νέας Υόρκης, οι οποίες ενημερώνονται καθημερινά. Θα αναλύσετε τα δεδομένα και θα ορίσετε μια ειδοποίηση που θα σας γνωστοποιεί ότι, π.χ., τα συμβάντα στον δήμο του Μανχάταν έχουν αλλάξει.</p>
+</section>
+<section>
+  <h2>1. Αυτόματες ενημερώσεις δεδομένων</h2>
+  <p>Πρώτα, ας συνδεθούμε με την πηγή των δεδομένων και ας καθορίσουμε το βήμα στο οποίο θα κατεβάζουμε τα νεότερα διαθέσιμα δεδομένα.</p>
+  <p>Τα δεδομένα &quot;NYPD Complaint Data Current&quot; από την Πόλη της Νέας Υόρκης εκδίδονται και τεκμηριώνονται <a href="https://data.cityofnewyork.us/Public-Safety/NYPD-Complaint-Data-Current-Year-To-Date-/5uac-w243/data" class="highlight" target="_blank">εδώ</a>.</p>
+  <h3 class="instructions">Οδηγίες</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      >Προσθέστε την πηγή δεδομένων &quot;Προσθήκη από URL&quot;.</li>
+    <li
+      data-highlight='[{"type":"WfModule","moduleName":"Add from URL"}]'
+      data-test="const wfModule = workflow.tabs[0].wfModules[0]; return wfModule.params.url === 'https://data.cityofnewyork.us/resource/7x9x-zpz6.json?$order=cmplnt_fr_dt%20DESC' && wfModule.selectedVersion"
+    >Επικολλήστε το ακόλουθο URL και κάντε κλικ στην <kbd>Ενημέρωση</kbd> για να φορτωθούν τα δεδομένα.<div class="copy-txt">https://data.cityofnewyork.us/resource/7x9x-zpz6.json?$order=cmplnt_fr_dt%20DESC</div>
+    </li>
+    <li
+      data-highlight='[{"type":"WfModule","moduleName":"Add from URL"}]'
+      data-test="
+        const wfModule = workflow.tabs[0].wfModules[0]
+        return wfModule.updateInterval === 18000
+      "
+      >Κάνε κλικ στο <kbd>μη αυτόματο</kbd> για να ανοίξει ο διάλογος &quot;Ενημέρωση ροής εργασίας&quot;. Ορίστε τη λειτουργία στην επιλογή <kbd>Αυτόματο</kbd>, ορίστε τη συχνότητα σε <kbd>5 ώρες</kbd>, και κάντε κλικ στο <kbd>Εφαρμογή</kbd></li>
+
+  </ol>
+</section>
+<section>
+  <h2>2. Φιλτράρισμα και καθορισμός ειδοποίησης</h2>
+  <p>Θέλουμε να παρακολουθήσουμε αν αναφέρονται νέα συμβάντα αστυνομικού ενδιαφέροντος στο Μανχάταν.</p>
+  <h3 class="instructions">Οδηγίες</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"Module","index":1,"name":"Filter by value"}]'
+      data-test="return workflow.tabs[0].wfModuleNames[1] === 'Filter by value'"
+      >Προσθέστε το βήμα &quot;Φιλτράρισμα βάσει συνθήκης&quot;.</li>
+    <li
+      data-test="return workflow.tabs[0].wfModules[1].params.column === 'boro_nm'"
+      >Επιλέξτε τη στήλη <kbd>boro_nm</kbd> για το φιλτράρισμα.</li>
+    <li
+      data-test="return workflow.tabs[0].wfModules[1].params.valueselect.includes('MANHATTAN')"
+      >Στο &quot;Φιλτράρισμα βάσει τιμής&quot; επιλέξτε <kbd>Manhattan</kbd> για να συγκεντρώσετε κατάσταση με συμβάντα αστυνομικού ενδιαφέροντος που αναφέρθηκαν εκεί.<p class="instruction-detail">Θέλουμε να παίρνουμε ειδοποιήσεις για νέα συμβάντα που προστίθενται στην κατάσταση.</p>
+    </li>
+    <li
+      data-test="return workflow.tabs[0].wfModules[1].isEmailUpdates"
+      >Στο βήμα του φιλτραρίσματος, κάντε κλικ στον <img class="icon-insert" src="./alert_button.svg">εικονίδιο. Ενεργοποιήστε τις ειδοποιήσεις με <kbd>ON</kbd>και κλείστε το παράθυρο.</li>
+  </ol>
+</section>
+<footer>
+  <h2>Εδώ τελειώνει το μάθημα!</h2>
+  <div class="completed">
+    <p class="summary">Η ροή εργασίας είναι ενεργή! Θα ενημερώνεται αυτόματα για να αντικατοπτρίζει τις αλλαγές στα δεδομένα και θα σας στέλνει ηλ. μήνυμα όταν αλλάζει η έξοδος του φιλτραρίσματος.</p>
+  </div>
+  <div class="next">
+    <h4>Συνεχίστε τα μαθήματα:</h4>
+    <ol>
+      <li><a href="/lessons/scrape-table/">Συλλογή και παρακολούθηση πίνακα από ιστοσελίδα</a></li>
+      <li><a href="/lessons/clean-and-standardize/">Συλλέξτε περιεχόμενο από μια ιστοσελίδα και παρακολουθήστε το</a></li>
+    </ol>
+  </div>
+</footer>
