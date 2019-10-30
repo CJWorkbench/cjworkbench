@@ -347,7 +347,7 @@ def cloned_module_main() -> int:
     try:
         module_main(*message.args)
     except:
-        traceback.print_exc(sys.stderr.buffer.fileno())
+        traceback.print_exc()
         os._exit(1)
 
     # In the _common_ case ... exit here.
