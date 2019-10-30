@@ -307,10 +307,6 @@ msgstr ""
 msgid "workflow.turnonalerts"
 msgstr ""
 
-#: assets/js/Workflows/WorkflowMetadata.js:57
-msgid "workflow.updated"
-msgstr ""
-
 #: assets/js/ShareModal/PublicPrivate.js:15
 msgid "workflow.visibility.anyone"
 msgstr "Ο καθένας μπορεί να δει και να το κάνει duplicate"
@@ -343,7 +339,7 @@ msgstr "Στήλες"
 msgid "workflow.visibility.cpToclip"
 msgstr "Αντιγραφή στο πληκτρολόγιο"
 
-#: assets/js/table/ColumnHeader.js:12
+#: assets/js/table/ColumnHeader.js:13
 msgid "workflow.visibility.dateType"
 msgstr "Ημε/μηνία"
 
@@ -383,7 +379,7 @@ msgstr "Τα workflows μου"
 msgid "workflow.visibility.notPublic"
 msgstr "Περιορισμένο permission"
 
-#: assets/js/table/ColumnHeader.js:11
+#: assets/js/table/ColumnHeader.js:12
 msgid "workflow.visibility.numberType"
 msgstr "Αριθμός"
 
@@ -435,7 +431,7 @@ msgstr "Μοιράσου το"
 msgid "workflow.visibility.sharingWith"
 msgstr "Μοιράσου με"
 
-#: assets/js/table/ColumnHeader.js:10
+#: assets/js/table/ColumnHeader.js:11
 msgid "workflow.visibility.textType"
 msgstr "Κείμενο"
 
@@ -448,7 +444,7 @@ msgid "workflow.workbenchbugreport"
 msgstr ""
 
 #: assets/js/ImportModuleFromGitHub.js:81
-#: assets/js/ImportModuleFromGitHub.js:104
+#: assets/js/ImportModuleFromGitHub.js:105
 msgid "workflow.workbenchbuildmodule"
 msgstr ""
 
@@ -460,7 +456,7 @@ msgstr ""
 msgid "workflow.workbenchcjsonfeedlink"
 msgstr ""
 
-#: assets/js/ImportModuleFromGitHub.js:113
+#: assets/js/ImportModuleFromGitHub.js:115
 msgid "workflow.workbenchclose"
 msgstr ""
 
@@ -481,7 +477,7 @@ msgid "workflow.workbenchcurrprivate"
 msgstr ""
 
 #: assets/js/ImportModuleFromGitHub.js:62
-#: assets/js/ImportModuleFromGitHub.js:101
+#: assets/js/ImportModuleFromGitHub.js:102
 msgid "workflow.workbenchcustommodule"
 msgstr ""
 
@@ -505,7 +501,7 @@ msgstr ""
 msgid "workflow.workbenchheader"
 msgstr ""
 
-#: assets/js/ImportModuleFromGitHub.js:91
+#: assets/js/ImportModuleFromGitHub.js:92
 msgid "workflow.workbenchimport"
 msgstr ""
 
@@ -554,13 +550,17 @@ msgid "workflow.workflowswillappearhere"
 msgstr ""
 
 #. This is used in navigation bar. It should be all-caps for styling reasons.
-#: assets/js/Workflows/Navbar.js:40
+#: assets/js/Workflows/Navbar.js:39
 msgid "workflows.navbar.training"
 msgstr "ΕΚΠΑΙΔΕΥΣΗ"
 
 #. This is used in navigation bar. It should be all-caps for styling reasons.
-#: assets/js/Workflows/Navbar.js:37
+#: assets/js/Workflows/Navbar.js:36
 msgid "workflows.navbar.workflows"
+msgstr ""
+
+#: assets/js/Workflows/WorkflowMetadata.js:57
+msgid "workflows.workflowmetadata.update"
 msgstr ""
 
 #: cjworkbench/forms/signup.py:24

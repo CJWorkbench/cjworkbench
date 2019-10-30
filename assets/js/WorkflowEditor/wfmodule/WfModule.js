@@ -31,9 +31,7 @@ import { Trans, t } from '@lingui/macro'
 const numberFormat = new Intl.NumberFormat()
 
 // ---- WfModule ----
-// The WfModuleClass should only be used in unit testing.
-// Everything else must use WfModule,
-// which wraps the WfModuleClass in a <I18n> element
+
 export class WfModule extends React.PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired,

@@ -17,7 +17,7 @@ export function UnhandledErrorReport ({ error }) {
   if (typeof window.Intercom === 'function') {
     helpText = (
       <ol>
-        <li><Trans id='workflow.workbenchbugreport'>We opened a messaging window and included details for our developers to fix the issue.</Trans> <em><Trans id='workflow.plssendmsg'>Please send the message</Trans></em>.</li>
+        <li><Trans id='workflow.workbenchbugreport'>We opened a messaging window and included details for our developers to fix the issue. <em>Please send the message</em>.</Trans></li>
         <li><Trans id='workflow.describeproblem'>It helps if you can describe what you were doing before you ran into the bug.</Trans></li>
       </ol>
     )
@@ -55,7 +55,7 @@ export function UnhandledErrorReport ({ error }) {
         <p><Trans id='workflow.followsteps'>Please follow these simple steps to help us fix the issue.</Trans></p>
         <div className='help-us-debug'>{helpText}</div>
         <p><Trans id='workflow.refreshthepagethankyou'>THANK YOU! Refresh this page to return to your Workflow.</Trans></p>
-        <p>Debugging details (please send):</p>
+        <p><Trans id='unhandledErrorRerpor.debuggingDetails'>Debugging details (please send):</Trans></p>
         <pre>{bugReportText}</pre>
         <div className='actions'>
           <button type='button' onClick={() => window.location.reload()}>

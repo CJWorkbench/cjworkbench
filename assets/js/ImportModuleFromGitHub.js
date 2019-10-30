@@ -79,7 +79,8 @@ class StaffImportModuleFromGitHub extends React.PureComponent {
             ) : null}
             <div className='label-margin t-m-gray info-1'>
               <Trans id='workflow.workbenchbuildmodule'>
-                Learn about how to build your own module
+                Learn about how to build your own module {''}
+
                 <a target='_blank' rel='noopener noreferrer' href='https://github.com/CJWorkbench/cjworkbench/wiki/Creating-A-Module' className='action-link'>
                     here
                 </a>
@@ -102,7 +103,8 @@ function PublicImportModuleFromGitHub ({ closeModal }) {
       <ModalBody>
         <div className='label-margin t-m-gray info-1'>
           <Trans id='workflow.workbenchbuildmodule'>
-            Learn about how to build your own module
+            Learn about how to build your own module {''}
+
             <a target='_blank' rel='noopener noreferrer' href='https://github.com/CJWorkbench/cjworkbench/wiki/Creating-A-Module' className='action-link'>
                 here
             </a>

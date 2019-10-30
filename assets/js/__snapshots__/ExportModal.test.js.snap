@@ -531,7 +531,7 @@ exports[`ExportModal should match snapshot 1`] = `
                     type="button"
                   >
                     <WithI18n
-                      defaults="done"
+                      defaults="Done"
                       id="workflow.workbenchdone"
                     >
                       <I18n
@@ -539,7 +539,7 @@ exports[`ExportModal should match snapshot 1`] = `
                         withHash={true}
                       >
                         <Trans
-                          defaults="done"
+                          defaults="Done"
                           i18n={
                             Object {
                               "_": [Function],

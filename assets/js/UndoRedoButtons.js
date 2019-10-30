@@ -1,9 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { I18n } from '@lingui/react'
 import { t } from '@lingui/macro'
+import { withI18n } from '@lingui/react'
 
-export default class UndoRedoButtons extends React.PureComponent {
+export class UndoRedoButtons extends React.PureComponent {
   static propTypes = {
     undo: PropTypes.func.isRequired, // func() => undefined
     redo: PropTypes.func.isRequired // func() => undefined
@@ -54,22 +54,16 @@ export default class UndoRedoButtons extends React.PureComponent {
   }
 
   render () {
-    const { undo, redo } = this.props
+    const { undo, redo, i18n } = this.props
 
     return (
-      <I18n>
-        {({ i18n }) => (
 
-          <div className='group--undo-redo'>
-            <button name='undo' title={i18n._(t('workflow.visibility.undo')`Undo`)} onClick={undo}><i className='icon-undo' /></button>
-            <button name='redo' title={i18n._(t('workflow.visibility.redo')`Redo`)} onClick={redo}><i className='icon-redo' /></button>
-          </div>
-        )}
-      </I18n>
-      // <div className='group--undo-redo'>
-      //   <button name='undo' title={<Trans id='workflow.visibility.undo'>Undo</Trans>} onClick={undo}><i className='icon-undo' /></button>
-      //   <button name='redo' title='Redo' onClick={redo}><i className='icon-redo' /></button>
-      // </div>
+      <div className='group--undo-redo'>
+        <button name='undo' title={i18n._(t('workflow.visibility.undo')`Undo`)} onClick={undo}><i className='icon-undo' /></button>
+        <button name='redo' title={i18n._(t('workflow.visibility.redo')`Redo`)} onClick={redo}><i className='icon-redo' /></button>
+      </div>
     )
   }
 }
+
+export default withI18n()(UndoRedoButtons)

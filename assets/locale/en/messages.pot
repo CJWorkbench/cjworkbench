@@ -362,11 +362,6 @@ msgstr ""
 msgid "workflow.turnonalerts"
 msgstr ""
 
-#. default-message: Updated
-#: assets/js/Workflows/WorkflowMetadata.js:57
-msgid "workflow.updated"
-msgstr ""
-
 #. default-message: Anyone can view and duplicate this workflow, and see your email.
 #: assets/js/ShareModal/PublicPrivate.js:15
 msgid "workflow.visibility.anyone"
@@ -408,7 +403,7 @@ msgid "workflow.visibility.cpToclip"
 msgstr ""
 
 #. default-message: date & time
-#: assets/js/table/ColumnHeader.js:12
+#: assets/js/table/ColumnHeader.js:13
 msgid "workflow.visibility.dateType"
 msgstr ""
 
@@ -458,7 +453,7 @@ msgid "workflow.visibility.notPublic"
 msgstr ""
 
 #. default-message: number
-#: assets/js/table/ColumnHeader.js:11
+#: assets/js/table/ColumnHeader.js:12
 msgid "workflow.visibility.numberType"
 msgstr ""
 
@@ -523,7 +518,7 @@ msgid "workflow.visibility.sharingWith"
 msgstr ""
 
 #. default-message: text
-#: assets/js/table/ColumnHeader.js:10
+#: assets/js/table/ColumnHeader.js:11
 msgid "workflow.visibility.textType"
 msgstr ""
 
@@ -537,8 +532,8 @@ msgstr ""
 msgid "workflow.workbenchbugreport"
 msgstr ""
 
-#. default-message: Learn about how to build your own module
-#: assets/js/ImportModuleFromGitHub.js:81 assets/js/ImportModuleFromGitHub.js:104
+#. default-message: Learn about how to build your own module <0>here</0>
+#: assets/js/ImportModuleFromGitHub.js:81 assets/js/ImportModuleFromGitHub.js:105
 msgid "workflow.workbenchbuildmodule"
 msgstr ""
 
@@ -553,7 +548,7 @@ msgid "workflow.workbenchcjsonfeedlink"
 msgstr ""
 
 #. default-message: Close
-#: assets/js/ImportModuleFromGitHub.js:113
+#: assets/js/ImportModuleFromGitHub.js:115
 msgid "workflow.workbenchclose"
 msgstr ""
 
@@ -578,7 +573,7 @@ msgid "workflow.workbenchcurrprivate"
 msgstr ""
 
 #. default-message: Import Custom Module
-#: assets/js/ImportModuleFromGitHub.js:62 assets/js/ImportModuleFromGitHub.js:101
+#: assets/js/ImportModuleFromGitHub.js:62 assets/js/ImportModuleFromGitHub.js:102
 msgid "workflow.workbenchcustommodule"
 msgstr ""
 
@@ -608,7 +603,7 @@ msgid "workflow.workbenchheader"
 msgstr ""
 
 #. default-message: Import
-#: assets/js/ImportModuleFromGitHub.js:91
+#: assets/js/ImportModuleFromGitHub.js:92
 msgid "workflow.workbenchimport"
 msgstr ""
 
@@ -669,14 +664,19 @@ msgstr ""
 
 #. This is used in navigation bar. It should be all-caps for styling reasons.
 #. default-message: TRAINING
-#: assets/js/Workflows/Navbar.js:40
+#: assets/js/Workflows/Navbar.js:39
 msgid "workflows.navbar.training"
 msgstr ""
 
 #. This is used in navigation bar. It should be all-caps for styling reasons.
 #. default-message: WORKFLOWS
-#: assets/js/Workflows/Navbar.js:37
+#: assets/js/Workflows/Navbar.js:36
 msgid "workflows.navbar.workflows"
+msgstr ""
+
+#. default-message: Updated {0}
+#: assets/js/Workflows/WorkflowMetadata.js:57
+msgid "workflows.workflowmetadata.update"
 msgstr ""
 
 #. default-message: First name

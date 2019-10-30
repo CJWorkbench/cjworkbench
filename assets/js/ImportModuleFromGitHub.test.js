@@ -55,6 +55,6 @@ describe('ImportModuleFromGitHub', () => {
     }, null)
     const w = wrapper(store, { api })
     expect(w.find('input')).toHaveLength(0)
-    expect(w.text()).toMatch(/workflow.workbenchbuildmodule/) // external link => to docs
+    expect(w.find('Trans[defaults*="<0>here</0>"]')).toHaveLength(1) // external link => to docs
   })
 })

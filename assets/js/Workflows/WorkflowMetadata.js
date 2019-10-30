@@ -5,7 +5,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { timeDifference } from '../utils'
 import { withI18n } from '@lingui/react'
-import { t } from '@lingui/macro'
+import { t, Trans } from '@lingui/macro'
 
 export class WorkflowMetadata extends React.Component {
   static propTypes = {
@@ -54,7 +54,10 @@ export class WorkflowMetadata extends React.Component {
       <ul className='metadata-container'>
         {attribution}
         <li>
-          {this.props.i18n._(t('workflow.updated')`Updated`)} {timeDifference(this.props.workflow.last_update, now, this.props.i18n)}
+          <Trans id='workflows.workflowmetadata.update'>
+          Updated
+            {timeDifference(this.props.workflow.last_update, now, this.props.i18n)}
+          </Trans>
         </li>
         {modalLink}
       </ul>

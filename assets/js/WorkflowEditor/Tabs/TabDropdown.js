@@ -11,7 +11,7 @@ export default function TabDropdown ({ onClickRename, onClickDelete, onClickDupl
       </DropdownToggle>
       <DropdownMenu>
         <DropdownItem onClick={onClickRename} icon='icon-edit'><Trans id='workflow.rename'>Rename</Trans></DropdownItem>
-        <DropdownItem onClick={onClickDuplicate} icon='icon-duplicate'><Trans id='workflow.Duplicate'>Duplicate</Trans></DropdownItem>
+        <DropdownItem onClick={onClickDuplicate} icon='icon-duplicate'><Trans id='workflow.duplicate'>Duplicate</Trans></DropdownItem>
         <DropdownItem onClick={onClickDelete} icon='icon-removec'><Trans id='workflow.deleteEvent'>Delete</Trans></DropdownItem>
       </DropdownMenu>
     </UncontrolledDropdown>

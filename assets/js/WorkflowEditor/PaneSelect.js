@@ -16,7 +16,7 @@ const PaneSelect = React.memo(function PaneSelect ({ selectedPane, selectReportP
           disabled={selectedPane.pane === 'report'}
         >
           <i className='icon icon-chart' />
-          {<Trans id='workflow.visibility.reportButton'>Report</Trans>}
+          {<Trans id='workflow.paneselect.reportButton'>Report</Trans>}
         </button>
       </div>
     </nav>

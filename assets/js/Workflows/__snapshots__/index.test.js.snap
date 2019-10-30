@@ -998,9 +998,62 @@ exports[`Workflow list page renders correctly 1`] = `
                                         </span>
                                       </li>
                                       <li>
-                                        Updated
-                                         
-                                        {years}y ago
+                                        <WithI18n
+                                          defaults="Updated {0}"
+                                          id="workflows.workflowmetadata.update"
+                                          values={
+                                            Object {
+                                              "0": "{years}y ago",
+                                            }
+                                          }
+                                        >
+                                          <I18n
+                                            update={true}
+                                            withHash={true}
+                                          >
+                                            <Trans
+                                              defaults="Updated {0}"
+                                              i18n={
+                                                Object {
+                                                  "_": [Function],
+                                                  "_activeLanguageData": Object {
+                                                    "plurals": [Function],
+                                                  },
+                                                  "_activeMessages": Object {},
+                                                  "_catalogs": Object {
+                                                    "en": Object {
+                                                      "languageData": Object {},
+                                                      "messages": Object {},
+                                                    },
+                                                  },
+                                                  "_dev": Object {
+                                                    "compile": [Function],
+                                                    "loadLanguageData": [Function],
+                                                  },
+                                                  "_language": "en",
+                                                  "_locales": undefined,
+                                                  "_missing": undefined,
+                                                  "plural": [Function],
+                                                  "select": [Function],
+                                                  "selectOrdinal": [Function],
+                                                  "t": [Function],
+                                                }
+                                              }
+                                              id="workflows.workflowmetadata.update"
+                                              values={
+                                                Object {
+                                                  "0": "{years}y ago",
+                                                }
+                                              }
+                                            >
+                                              <Render
+                                                value="workflows.workflowmetadata.update"
+                                              >
+                                                workflows.workflowmetadata.update
+                                              </Render>
+                                            </Trans>
+                                          </I18n>
+                                        </WithI18n>
                                       </li>
                                       <li>
                                         <span
@@ -1168,9 +1221,62 @@ exports[`Workflow list page renders correctly 1`] = `
                                         </span>
                                       </li>
                                       <li>
-                                        Updated
-                                         
-                                        {years}y ago
+                                        <WithI18n
+                                          defaults="Updated {0}"
+                                          id="workflows.workflowmetadata.update"
+                                          values={
+                                            Object {
+                                              "0": "{years}y ago",
+                                            }
+                                          }
+                                        >
+                                          <I18n
+                                            update={true}
+                                            withHash={true}
+                                          >
+                                            <Trans
+                                              defaults="Updated {0}"
+                                              i18n={
+                                                Object {
+                                                  "_": [Function],
+                                                  "_activeLanguageData": Object {
+                                                    "plurals": [Function],
+                                                  },
+                                                  "_activeMessages": Object {},
+                                                  "_catalogs": Object {
+                                                    "en": Object {
+                                                      "languageData": Object {},
+                                                      "messages": Object {},
+                                                    },
+                                                  },
+                                                  "_dev": Object {
+                                                    "compile": [Function],
+                                                    "loadLanguageData": [Function],
+                                                  },
+                                                  "_language": "en",
+                                                  "_locales": undefined,
+                                                  "_missing": undefined,
+                                                  "plural": [Function],
+                                                  "select": [Function],
+                                                  "selectOrdinal": [Function],
+                                                  "t": [Function],
+                                                }
+                                              }
+                                              id="workflows.workflowmetadata.update"
+                                              values={
+                                                Object {
+                                                  "0": "{years}y ago",
+                                                }
+                                              }
+                                            >
+                                              <Render
+                                                value="workflows.workflowmetadata.update"
+                                              >
+                                                workflows.workflowmetadata.update
+                                              </Render>
+                                            </Trans>
+                                          </I18n>
+                                        </WithI18n>
                                       </li>
                                       <li>
                                         <span
@@ -1338,9 +1444,62 @@ exports[`Workflow list page renders correctly 1`] = `
                                         </span>
                                       </li>
                                       <li>
-                                        Updated
-                                         
-                                        {years}y ago
+                                        <WithI18n
+                                          defaults="Updated {0}"
+                                          id="workflows.workflowmetadata.update"
+                                          values={
+                                            Object {
+                                              "0": "{years}y ago",
+                                            }
+                                          }
+                                        >
+                                          <I18n
+                                            update={true}
+                                            withHash={true}
+                                          >
+                                            <Trans
+                                              defaults="Updated {0}"
+                                              i18n={
+                                                Object {
+                                                  "_": [Function],
+                                                  "_activeLanguageData": Object {
+                                                    "plurals": [Function],
+                                                  },
+                                                  "_activeMessages": Object {},
+                                                  "_catalogs": Object {
+                                                    "en": Object {
+                                                      "languageData": Object {},
+                                                      "messages": Object {},
+                                                    },
+                                                  },
+                                                  "_dev": Object {
+                                                    "compile": [Function],
+                                                    "loadLanguageData": [Function],
+                                                  },
+                                                  "_language": "en",
+                                                  "_locales": undefined,
+                                                  "_missing": undefined,
+                                                  "plural": [Function],
+                                                  "select": [Function],
+                                                  "selectOrdinal": [Function],
+                                                  "t": [Function],
+                                                }
+                                              }
+                                              id="workflows.workflowmetadata.update"
+                                              values={
+                                                Object {
+                                                  "0": "{years}y ago",
+                                                }
+                                              }
+                                            >
+                                              <Render
+                                                value="workflows.workflowmetadata.update"
+                                              >
+                                                workflows.workflowmetadata.update
+                                              </Render>
+                                            </Trans>
+                                          </I18n>
+                                        </WithI18n>
                                       </li>
                                       <li>
                                         <span
@@ -1579,9 +1738,62 @@ exports[`Workflow list page renders correctly 1`] = `
                                         </span>
                                       </li>
                                       <li>
-                                        Updated
-                                         
-                                        {years}y ago
+                                        <WithI18n
+                                          defaults="Updated {0}"
+                                          id="workflows.workflowmetadata.update"
+                                          values={
+                                            Object {
+                                              "0": "{years}y ago",
+                                            }
+                                          }
+                                        >
+                                          <I18n
+                                            update={true}
+                                            withHash={true}
+                                          >
+                                            <Trans
+                                              defaults="Updated {0}"
+                                              i18n={
+                                                Object {
+                                                  "_": [Function],
+                                                  "_activeLanguageData": Object {
+                                                    "plurals": [Function],
+                                                  },
+                                                  "_activeMessages": Object {},
+                                                  "_catalogs": Object {
+                                                    "en": Object {
+                                                      "languageData": Object {},
+                                                      "messages": Object {},
+                                                    },
+                                                  },
+                                                  "_dev": Object {
+                                                    "compile": [Function],
+                                                    "loadLanguageData": [Function],
+                                                  },
+                                                  "_language": "en",
+                                                  "_locales": undefined,
+                                                  "_missing": undefined,
+                                                  "plural": [Function],
+                                                  "select": [Function],
+                                                  "selectOrdinal": [Function],
+                                                  "t": [Function],
+                                                }
+                                              }
+                                              id="workflows.workflowmetadata.update"
+                                              values={
+                                                Object {
+                                                  "0": "{years}y ago",
+                                                }
+                                              }
+                                            >
+                                              <Render
+                                                value="workflows.workflowmetadata.update"
+                                              >
+                                                workflows.workflowmetadata.update
+                                              </Render>
+                                            </Trans>
+                                          </I18n>
+                                        </WithI18n>
                                       </li>
                                       <li>
                                         <span
@@ -1749,9 +1961,62 @@ exports[`Workflow list page renders correctly 1`] = `
                                         </span>
                                       </li>
                                       <li>
-                                        Updated
-                                         
-                                        {years}y ago
+                                        <WithI18n
+                                          defaults="Updated {0}"
+                                          id="workflows.workflowmetadata.update"
+                                          values={
+                                            Object {
+                                              "0": "{years}y ago",
+                                            }
+                                          }
+                                        >
+                                          <I18n
+                                            update={true}
+                                            withHash={true}
+                                          >
+                                            <Trans
+                                              defaults="Updated {0}"
+                                              i18n={
+                                                Object {
+                                                  "_": [Function],
+                                                  "_activeLanguageData": Object {
+                                                    "plurals": [Function],
+                                                  },
+                                                  "_activeMessages": Object {},
+                                                  "_catalogs": Object {
+                                                    "en": Object {
+                                                      "languageData": Object {},
+                                                      "messages": Object {},
+                                                    },
+                                                  },
+                                                  "_dev": Object {
+                                                    "compile": [Function],
+                                                    "loadLanguageData": [Function],
+                                                  },
+                                                  "_language": "en",
+                                                  "_locales": undefined,
+                                                  "_missing": undefined,
+                                                  "plural": [Function],
+                                                  "select": [Function],
+                                                  "selectOrdinal": [Function],
+                                                  "t": [Function],
+                                                }
+                                              }
+                                              id="workflows.workflowmetadata.update"
+                                              values={
+                                                Object {
+                                                  "0": "{years}y ago",
+                                                }
+                                              }
+                                            >
+                                              <Render
+                                                value="workflows.workflowmetadata.update"
+                                              >
+                                                workflows.workflowmetadata.update
+                                              </Render>
+                                            </Trans>
+                                          </I18n>
+                                        </WithI18n>
                                       </li>
                                       <li>
                                         <span
@@ -1974,9 +2239,62 @@ exports[`Workflow list page renders correctly 1`] = `
                                         </span>
                                       </li>
                                       <li>
-                                        Updated
-                                         
-                                        {years}y ago
+                                        <WithI18n
+                                          defaults="Updated {0}"
+                                          id="workflows.workflowmetadata.update"
+                                          values={
+                                            Object {
+                                              "0": "{years}y ago",
+                                            }
+                                          }
+                                        >
+                                          <I18n
+                                            update={true}
+                                            withHash={true}
+                                          >
+                                            <Trans
+                                              defaults="Updated {0}"
+                                              i18n={
+                                                Object {
+                                                  "_": [Function],
+                                                  "_activeLanguageData": Object {
+                                                    "plurals": [Function],
+                                                  },
+                                                  "_activeMessages": Object {},
+                                                  "_catalogs": Object {
+                                                    "en": Object {
+                                                      "languageData": Object {},
+                                                      "messages": Object {},
+                                                    },
+                                                  },
+                                                  "_dev": Object {
+                                                    "compile": [Function],
+                                                    "loadLanguageData": [Function],
+                                                  },
+                                                  "_language": "en",
+                                                  "_locales": undefined,
+                                                  "_missing": undefined,
+                                                  "plural": [Function],
+                                                  "select": [Function],
+                                                  "selectOrdinal": [Function],
+                                                  "t": [Function],
+                                                }
+                                              }
+                                              id="workflows.workflowmetadata.update"
+                                              values={
+                                                Object {
+                                                  "0": "{years}y ago",
+                                                }
+                                              }
+                                            >
+                                              <Render
+                                                value="workflows.workflowmetadata.update"
+                                              >
+                                                workflows.workflowmetadata.update
+                                              </Render>
+                                            </Trans>
+                                          </I18n>
+                                        </WithI18n>
                                       </li>
                                       <li>
                                         <span
