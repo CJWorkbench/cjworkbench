@@ -323,7 +323,7 @@ msgstr ""
 #. i.e. if the tab prefix is 'Tab', the default names can be 'Tab 1', 'Tab 2',
 #. etc
 #. default-message: Tab
-#: assets/js/WorkflowEditor/Tabs/actions.js:93
+#: assets/js/WorkflowEditor/Tabs/Tabs.js:33
 msgid "workflow.tabs.tab_prefix"
 msgstr ""
 

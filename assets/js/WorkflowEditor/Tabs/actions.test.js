@@ -1,6 +1,5 @@
 /* globals describe, expect, it, jest */
 import { mockStore } from '../../test-utils'
-import { i18n } from '../../i18n/test-utils'
 import { generateSlug } from '../../utils'
 import * as actions from './actions'
 
@@ -344,7 +343,7 @@ describe('Tabs.actions', () => {
       }, api)
 
       generateSlug.mockImplementationOnce(prefix => prefix + 'X')
-      const done = store.dispatch(actions.create(i18n))
+      const done = store.dispatch(actions.create('Tab'))
       expect(api.createTab).toHaveBeenCalledWith('tab-X', 'Tab 1')
       expect(store.getState().workflow.tab_slugs).toEqual(['t1', 'tab-X'])
       expect(store.getState().pendingTabs).toEqual({
@@ -386,7 +385,7 @@ describe('Tabs.actions', () => {
       }, api)
 
       generateSlug.mockImplementationOnce(prefix => prefix + 'X')
-      await store.dispatch(actions.create(i18n))
+      await store.dispatch(actions.create('Tab'))
       expect(api.createTab).toHaveBeenCalledWith('tab-X', 'Tab 4')
     })
 
@@ -409,7 +408,7 @@ describe('Tabs.actions', () => {
       }, api)
 
       generateSlug.mockImplementationOnce(prefix => prefix + 'X')
-      await store.dispatch(actions.create(i18n))
+      await store.dispatch(actions.create('Tab'))
       expect(api.createTab).toHaveBeenCalledWith('tab-X', 'Tab 15')
     })
   })
