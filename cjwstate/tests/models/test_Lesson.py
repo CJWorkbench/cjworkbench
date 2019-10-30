@@ -457,9 +457,10 @@ class LessonGlobalsTests(unittest.TestCase):
     # will fall by the wayside if we don't keep an example in that directory
     # and test the "hidden lessons" feature with every deploy.
     HiddenSlug = "_hidden-example"
+    HiddenLocale = "en"
 
     def test_hidden_lessons_not_in_AllLessons(self):
         self.assertFalse(any(l.slug == self.HiddenSlug for l in AllLessons))
 
     def test_hidden_lessons_appear_in_LessonLookup(self):
-        self.assertIn(self.HiddenSlug, LessonLookup)
+        self.assertIn(self.HiddenLocale + "/" + self.HiddenSlug, LessonLookup)

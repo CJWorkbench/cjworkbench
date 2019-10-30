@@ -185,7 +185,7 @@ class LessonDetailTests(DbTestCase):
     @patch.dict(
         LessonLookup,
         {
-            "a-lesson": Lesson(
+            "en/a-lesson": Lesson(
                 None,
                 "slug",
                 "en",
@@ -240,7 +240,7 @@ class LessonDetailTests(DbTestCase):
     @patch.dict(
         LessonLookup,
         {
-            "a-lesson": Lesson(
+            "en/a-lesson": Lesson(
                 None,
                 "a-lesson",
                 "en",
@@ -282,7 +282,7 @@ class LessonDetailTests(DbTestCase):
     @patch.dict(
         LessonLookup,
         {
-            "a-lesson": Lesson(
+            "en/a-lesson": Lesson(
                 None,
                 "slug",
                 "en",
@@ -324,7 +324,7 @@ class LessonDetailTests(DbTestCase):
     @patch.dict(
         LessonLookup,
         {
-            "a-lesson": Lesson(
+            "en/a-lesson": Lesson(
                 None,
                 "slug",
                 "en",
@@ -354,7 +354,7 @@ class LessonDetailTests(DbTestCase):
     @patch.dict(
         LessonLookup,
         {
-            "a-lesson": Lesson(
+            "en/a-lesson": Lesson(
                 None,
                 "slug",
                 "en",

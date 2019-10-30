@@ -9,6 +9,7 @@ import yaml
 from django.conf import settings
 import html5lib
 import jsonschema
+from itertools import groupby
 
 
 # Load and parse the spec that defines the format of the initial workflow JSON
@@ -299,10 +300,18 @@ AllLessons = [
     Lesson.load_from_path(None, path)
     for path in ((pathlib.Path(__file__).parent.parent).glob("lessons/*/*.html"))
 ]
-AllLessons.sort(key=lambda lesson: lesson.header.title)
+AllLessonsByLocale = {
+    locale_id: sorted(lessons, key=lambda lesson: lesson.header.title)
+    for locale_id, lessons in groupby(
+        sorted(AllLessons, key=lambda lesson: lesson.locale_id),
+        lambda lesson: lesson.locale_id,
+    )
+}
 
-
-LessonLookup = dict((lesson.slug, lesson) for lesson in AllLessons)
+LessonLookup = dict(
+    (lesson.locale_id + "/" + lesson.slug, lesson) for lesson in AllLessons
+)
 # add "hidden" lessons to LessonLookup. They do not appear in AllLessons.
 for _path in (pathlib.Path(__file__).parent.parent).glob("lessons/hidden/*/*.html"):
-    LessonLookup[_path.stem] = Lesson.load_from_path(None, _path)
+    lesson = Lesson.load_from_path(None, _path)
+    LessonLookup[lesson.locale_id + "/" + lesson.slug] = lesson

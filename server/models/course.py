@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Dict
 import yaml
 from .lesson import Lesson, LessonParseError
+from itertools import groupby
 
 
 @dataclass(frozen=True)
@@ -73,6 +74,15 @@ AllCourses = [
     Course.load_from_path(path)
     for path in ((Path(__file__).parent.parent).glob("courses/**/index.yaml"))
 ]
+AllCoursesByLocale = {
+    locale_id: list(courses)
+    for locale_id, courses in groupby(
+        sorted(AllCourses, key=lambda course: course.locale_id),
+        lambda course: course.locale_id,
+    )
+}
 
 
-CourseLookup = dict((course.slug, course) for course in AllCourses)
+CourseLookup = dict(
+    (course.locale_id + "/" + course.slug, course) for course in AllCourses
+)

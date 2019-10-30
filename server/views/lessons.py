@@ -10,15 +10,15 @@ from server import rabbitmq
 import server.utils
 from cjwstate.models.commands import InitWorkflowCommand
 from cjwstate.models import Workflow, ModuleVersion
-from server.models.course import Course, CourseLookup, AllCourses
-from server.models.lesson import Lesson, AllLessons, LessonLookup
+from server.models.course import Course, CourseLookup, AllCoursesByLocale
+from server.models.lesson import Lesson, AllLessonsByLocale, LessonLookup
 from server.serializers import LessonSerializer, UserSerializer
 from server.views.workflows import visible_modules, make_init_state
 
 
 def _get_course_or_404(locale_id, slug):
     try:
-        return CourseLookup[slug]
+        return CourseLookup[locale_id + "/" + slug]
     except KeyError:
         raise Http404("Course does not exist")
 
@@ -29,7 +29,7 @@ def _get_lesson_or_404(locale_id: str, course_slug: Optional[str], lesson_slug: 
     """
     try:
         if course_slug is None:
-            return LessonLookup[lesson_slug]
+            return LessonLookup[locale_id + "/" + lesson_slug]
         else:
             course = _get_course_or_404(locale_id, course_slug)  # raises Http404
             return course.lessons[lesson_slug]
@@ -201,7 +201,10 @@ def _render_course(request, course, lesson_url_prefix):
     if request.user and request.user.is_authenticated:
         logged_in_user = UserSerializer(request.user).data
 
-    courses = [c for c in AllCourses if c.locale_id == course.locale_id]
+    try:
+        courses = AllCoursesByLocale[course.locale_id]
+    except KeyError:
+        raise Http404("No lessons exist for this language")
 
     # We render using HTML, not React, to make this page SEO-friendly.
     return TemplateResponse(
@@ -222,10 +225,17 @@ def render_lesson_list(request, locale_id=None):
     # Make a "fake" Course to encompass Lessons
     #
     # Do not build this Course using LessonLookup: LessonLookup contains
-    # "hidden" lessons; AllLessons does not.
+    # "hidden" lessons; AllLessonsByLocale does not.
     locale_id = locale_id or request.locale_id
-    lessons = dict((l.slug, l) for l in AllLessons if l.locale_id == locale_id)
-    course = Course(title="Lessons", locale_id=locale_id, lessons=lessons)
+    try:
+        lessons = AllLessonsByLocale[locale_id]
+    except KeyError:
+        raise Http404("No lessons exist for this language")
+    course = Course(
+        title="Lessons",
+        locale_id=locale_id,
+        lessons={lesson.slug: lesson for lesson in lessons},
+    )
     return _render_course(request, course, "/lessons/%s" % locale_id)
 
 
