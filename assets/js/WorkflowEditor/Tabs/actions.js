@@ -1,6 +1,5 @@
 import * as util from './util'
 import { generateSlug } from '../../utils'
-import { t } from '@lingui/macro'
 
 const TAB_SET_NAME = 'TAB_SET_NAME'
 const TAB_DESTROY = 'TAB_DESTROY'
@@ -73,7 +72,7 @@ export function select (slug) {
   }
 }
 
-export function create (i18n) {
+export function create (tabPrefix) {
   return (dispatch, getState, api) => {
     const state = getState()
     const { workflow, tabs } = state
@@ -88,11 +87,7 @@ export function create (i18n) {
     }
 
     const slug = generateSlug('tab-')
-    const tabPrefix = i18n._(
-      /* i18n: The tab prefix will be used as the first part of the default name of tabs, i.e. if the tab prefix is 'Tab', the default names can be 'Tab 1', 'Tab 2', etc */
-      t('workflow.tabs.tab_prefix')`Tab`
-    )
-    const name = util.generateTabName(new RegExp(tabPrefix + ' (\\d+)'), tabPrefix + ' %d', tabNames)
+    const name = util.generateTabName(new RegExp(util.escapeRegExp(tabPrefix) + ' (\\d+)'), tabPrefix + ' %d', tabNames)
 
     return dispatch({
       type: TAB_CREATE,

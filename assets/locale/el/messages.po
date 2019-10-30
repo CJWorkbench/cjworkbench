@@ -275,7 +275,7 @@ msgstr ""
 #. The tab prefix will be used as the first part of the default name of tabs,
 #. i.e. if the tab prefix is 'Tab', the default names can be 'Tab 1', 'Tab 2',
 #. etc
-#: assets/js/WorkflowEditor/Tabs/actions.js:93
+#: assets/js/WorkflowEditor/Tabs/Tabs.js:33
 msgid "workflow.tabs.tab_prefix"
 msgstr ""
 

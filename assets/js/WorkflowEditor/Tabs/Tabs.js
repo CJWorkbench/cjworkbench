@@ -4,6 +4,7 @@ import TabList from './TabList'
 import NewTabPrompt from './NewTabPrompt'
 import * as propTypes from '../propTypes'
 import { withI18n } from '@lingui/react'
+import { t } from '@lingui/macro'
 
 export default withI18n()(class Tabs extends React.PureComponent {
   static propTypes = {
@@ -27,7 +28,10 @@ export default withI18n()(class Tabs extends React.PureComponent {
   }
 
   create = () => {
-    this.props.create(this.props.i18n)
+    this.props.create(this.props.i18n._(
+      /* i18n: The tab prefix will be used as the first part of the default name of tabs, i.e. if the tab prefix is 'Tab', the default names can be 'Tab 1', 'Tab 2', etc */
+      t('workflow.tabs.tab_prefix')`Tab`
+    ))
   }
 
   render () {
