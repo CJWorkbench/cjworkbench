@@ -19,7 +19,7 @@ export default withI18n()(class Tabs extends React.PureComponent {
     }).isRequired).isRequired,
     selectedPane: propTypes.selectedPane.isRequired,
     isReadOnly: PropTypes.bool.isRequired,
-    create: PropTypes.func.isRequired, // func(position, name) => undefined
+    create: PropTypes.func.isRequired, // func(name) => undefined
     setName: PropTypes.func.isRequired, // func(slug, name) => undefined
     destroy: PropTypes.func.isRequired, // func(slug) => undefined
     duplicate: PropTypes.func.isRequired, // func(slug) => undefined
