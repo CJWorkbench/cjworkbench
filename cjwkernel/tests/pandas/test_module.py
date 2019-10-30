@@ -398,6 +398,29 @@ class FetchTests(unittest.TestCase):
             arrow_table = pyarrow.parquet.read_table(str(outfile), use_threads=False)
             assert_arrow_table_equals(arrow_table, {"A": [1, 2, 3]})
 
+    def test_fetch_return_path(self):
+        with tempfile_context(dir=self.basedir) as outfile:
+
+            async def fetch(params):
+                outfile.write_text("xyz")
+                return outfile
+
+            result = self._test_fetch(fetch, output_filename=outfile.name)
+
+            self.assertEqual(result.path, outfile)
+            self.assertEqual(result.errors, [])
+            self.assertEqual(result.path.read_text(), "xyz")
+
+    def test_fetch_return_tuple_path_and_error(self):
+        with tempfile_context(dir=self.basedir) as outfile:
+
+            async def fetch(params):
+                outfile.write_text("xyz")
+                return outfile, "foo"
+
+            result = self._test_fetch(fetch, output_filename=outfile.name)
+            self.assertEqual(result.errors, [RenderError(I18nMessage.TODO_i18n("foo"))])
+
     @override_settings(MAX_ROWS_PER_TABLE=2)
     def test_fetch_truncate(self):
         def fetch(params):
