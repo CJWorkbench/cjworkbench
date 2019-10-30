@@ -33,7 +33,7 @@ def render_pandas(
     params: Dict[str, Any],
     tab_name: str,
     input_tabs: Dict[str, ptypes.TabOutput],
-    fetch_result: Optional[ptypes.ProcessResult],
+    fetch_result: Optional[Union[types.FetchResult, ptypes.ProcessResult]],
 ) -> ptypes.ProcessResult:
     """
     Call `render()` and validate the result.
@@ -162,13 +162,18 @@ def render_arrow(
         for to in _find_tab_outputs(params)
     }
     if fetch_result is not None:
-        fetched_table = __parquet_to_pandas(fetch_result.path)
-        if fetch_result.errors:
-            assert fetch_result.errors[0].message.id == "TODO_i18n"
-            error = fetch_result.errors[0].message.args["text"]
+        if fetch_result.path.stat().st_size == 0 or parquet.file_has_parquet_magic_number(
+            fetch_result.path
+        ):
+            fetched_table = __parquet_to_pandas(fetch_result.path)
+            if fetch_result.errors:
+                assert fetch_result.errors[0].message.id == "TODO_i18n"
+                error = fetch_result.errors[0].message.args["text"]
+            else:
+                error = ""
+            pandas_fetch_result = ptypes.ProcessResult(fetched_table, error)
         else:
-            error = ""
-        pandas_fetch_result = ptypes.ProcessResult(fetched_table, error)
+            pandas_fetch_result = fetch_result
     else:
         pandas_fetch_result = None
 
@@ -242,6 +247,7 @@ def fetch_pandas(
     secrets: Dict[str, Any],
     last_fetch_result: Optional[types.FetchResult],
     input_table_parquet_path: Optional[Path],
+    output_path: Path,
 ) -> Union[ptypes.ProcessResult, types.FetchResult]:
     """
     Call `fetch()` and validate the result.
@@ -279,6 +285,9 @@ def fetch_pandas(
                 return __parquet_to_pandas(last_fetch_result.path)
 
         kwargs["get_stored_dataframe"] = get_stored_dataframe
+
+    if varkw or "output_path" in kwonlyargs:
+        kwargs["output_path"] = output_path
 
     result = fetch(params, **kwargs)
     if asyncio.iscoroutine(result):
@@ -334,6 +343,7 @@ def fetch_arrow(
         secrets=secrets,
         last_fetch_result=last_fetch_result,
         input_table_parquet_path=input_table_parquet_path,
+        output_path=output_path,
     )
     if isinstance(pandas_result, ptypes.ProcessResult):
         pandas_result.truncate_in_place_if_too_big()
@@ -441,7 +451,7 @@ def validate_thrift() -> ttypes.ValidateModuleResult:
     assert len(fetch_spec.args) == 1, "fetch must take one positional argument"
     assert not (
         set(fetch_spec.kwonlyargs)
-        - {"secrets", "get_input_dataframe", "get_stored_dataframe"}
+        - {"secrets", "get_input_dataframe", "get_stored_dataframe", "output_path"}
     ), "a fetch() keyword argument is misspelled"
 
     return ttypes.ValidateModuleResult()

@@ -8,27 +8,7 @@ from cjwkernel.types import FetchResult
 _BUFFER_SIZE = 1024 * 1024
 
 
-def _is_parquet_path(path: Path) -> bool:
-    """
-    Detect Parquet.
-
-    A Parquet file starts and ends with "PAR1" (ASCII-encoded).
-
-    TODO nix detection and store the actual format.
-    """
-    with path.open("rb", buffering=0) as f:
-        if f.read(4) != b"PAR1":
-            return False
-
-        # fseek(-4, SEEK_END) shouldn't error EINVAL: we know the file is >=4
-        # bytes long because we'd have returned above if it were shorter.
-        if f.seek(-4, io.SEEK_END) == 0:
-            # the file is just the text, "PAR1", on its own
-            return False
-        if f.read(4) != b"PAR1":
-            return False
-
-    return True
+_is_parquet_path = parquet.file_has_parquet_magic_number
 
 
 def _are_file_contents_equal(path1: Path, path2: Path) -> bool:
