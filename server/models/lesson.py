@@ -304,5 +304,5 @@ AllLessons.sort(key=lambda lesson: lesson.header.title)
 
 LessonLookup = dict((lesson.slug, lesson) for lesson in AllLessons)
 # add "hidden" lessons to LessonLookup. They do not appear in AllLessons.
-for _path in (pathlib.Path(__file__).parent.parent).glob("lessons/*/hidden/*.html"):
+for _path in (pathlib.Path(__file__).parent.parent).glob("lessons/hidden/*/*.html"):
     LessonLookup[_path.stem] = Lesson.load_from_path(None, _path)
