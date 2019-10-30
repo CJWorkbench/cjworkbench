@@ -292,6 +292,7 @@ class Kernel:
                 "aiohttp",
                 "bs4",
                 "formulas",
+                "formulas.functions.operators",
                 "formulas.parser",
                 "html5lib",
                 "html5lib.constants",
