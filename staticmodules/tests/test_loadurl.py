@@ -1,4 +1,5 @@
 import gzip
+import json
 import logging
 from pathlib import Path
 import unittest
@@ -67,8 +68,9 @@ class FetchTests(AioHTTPTestCase):
     ):
         with actual.open("rb") as f:
             with gzip.GzipFile(fileobj=f, mode="rb") as zf:
-                actual_url = zf.readline()[:-2].decode("utf-8")
-                self.assertEqual(actual_url, expected_url, "URL mismatch")
+                actual_params = json.loads(zf.readline()[:-2].decode("utf-8"))
+                expected_params = {"url": expected_url}
+                self.assertEqual(actual_params, expected_params, "URL mismatch")
 
                 actual_status = zf.readline()[:-2].decode("ascii")
                 self.assertEqual(actual_status, expected_status, "HTTP status mismatch")
@@ -283,7 +285,7 @@ class RenderTests(unittest.TestCase):
                 gzip.compress(
                     b"\r\n".join(
                         [
-                            b"http://example.org/x",
+                            b'{"url":"http://example.org/x"}',
                             b"200 OK",
                             b"Content-Type: text/csv; charset=utf-8",
                             b"",
@@ -305,7 +307,7 @@ class RenderTests(unittest.TestCase):
                 gzip.compress(
                     b"\r\n".join(
                         [
-                            b"http://example.org/x",
+                            b'{"url":"http://example.org/x"}',
                             b"200 OK",
                             b"Content-Type: text/csv; charset=utf-8",
                             b"",
@@ -332,7 +334,7 @@ class RenderTests(unittest.TestCase):
                 gzip.compress(
                     b"\r\n".join(
                         [
-                            b"http://raw.githubusercontent.com/user/project/x.csv",
+                            b'{"url":"http://raw.githubusercontent.com/user/project/x.csv"}',
                             b"200 OK",
                             b"Content-Type: text/plain",
                             b"",
@@ -356,7 +358,7 @@ class RenderTests(unittest.TestCase):
                 gzip.compress(
                     b"\r\n".join(
                         [
-                            b"http://example.com/the.data?format=csv&foo=bar",
+                            b'{"url":"http://example.com/the.data?format=csv&foo=bar"}',
                             b"200 OK",
                             b"Content-Type: application/x-csv",
                             b"",
@@ -380,7 +382,7 @@ class RenderTests(unittest.TestCase):
                 gzip.compress(
                     b"\r\n".join(
                         [
-                            b"http://example.com/api/foo",
+                            b'{"url":"http://example.com/api/foo"}',
                             b"200 OK",
                             b"Content-Type: application/json",
                             b"",
@@ -403,7 +405,7 @@ class RenderTests(unittest.TestCase):
                 gzip.compress(
                     b"\r\n".join(
                         [
-                            b"http://example.com/x.json",
+                            b'{"url":"http://example.com/x.json"}',
                             b"200 OK",
                             b"Content-Type: application/json",
                             b"",
@@ -427,7 +429,7 @@ class RenderTests(unittest.TestCase):
                 gzip.compress(
                     b"\r\n".join(
                         [
-                            b"http://example.org/xlsx",
+                            b'{"url":"http://example.org/xlsx"}',
                             b"200 OK",
                             b"Content-Type: " + XLSX_MIME_TYPE.encode("latin1"),
                             b"",
@@ -445,7 +447,7 @@ class RenderTests(unittest.TestCase):
                 gzip.compress(
                     b"\r\n".join(
                         [
-                            b"http://example.org/bad-xlsx",
+                            b'{"url":"http://example.org/bad-xlsx"}',
                             b"200 OK",
                             b"Content-Type: " + XLSX_MIME_TYPE.encode("latin1"),
                             b"",

@@ -25,7 +25,7 @@ types were auto-detected. There is no way to recover the original data.
 The new format is simpler. In case of success, a special HTTP log is written to
 a _gzipped_ file:
 
-    https://example.com/test.csv\r\n
+    {"url":"https://example.com/test.csv"}\r\n
     200 OK\r\n
     Response-Header-1: X\r\n
     Response-Header-2: Y\r\n
@@ -38,14 +38,21 @@ and `Cjw-Original-Content-Length`. (The body in the HTTP log is dechunked
 and decompressed, because Python's ecosystem doesn't have nice options for
 storing raw HTTP traffic and dechunking from a file.)
 
-The URL is UTF-8-encoded; status is ASCII-encoded; headers are latin1-encoded;
-the body is raw. (Rationale: we wrote URL ourselves; status and headers are
-exactly what the server sent.)
+The params in the first line are UTF-8-encoded with no added whitespace
+(so: "\r\n" cannot ever appear); status is ASCII-encoded; headers are
+latin1-encoded; the body is raw. (Rationale: each encoding is the content's
+native encoding.)
+
+Rationale for storing params: it avoids a race in which we render with new
+params but an old fetch result. We only store the "fetch params" ("url"),
+not the "render params" ("has_header"), so the file is byte-for-byte identical
+when we fetch an unchanged URL with new render params.
 
 In case of redirect, only the last request is logged.
 """
 import asyncio
 import gzip
+import json
 from pathlib import Path
 import re
 import shutil
@@ -133,8 +140,9 @@ def _render_file(path: Path, params):
         # Parse file into headers + tempfile
         with path.open("rb") as f:
             with gzip.GzipFile(mode="rb", fileobj=f) as zf:
-                # read URL (line 1)
-                url = zf.readline().decode("utf-8").strip()
+                # read params (line 1)
+                fetch_params_json = zf.readline()
+                fetch_params = json.loads(fetch_params_json)
                 # read and skip status (line 2)
                 zf.readline()
 
@@ -159,7 +167,7 @@ def _render_file(path: Path, params):
                 with tf.open("wb") as body_f:
                     shutil.copyfileobj(zf, body_f)
 
-        mime_type = guess_mime_type_or_none(content_type, url)
+        mime_type = guess_mime_type_or_none(content_type, fetch_params["url"])
         if not mime_type:
             return (
                 "Server responded with unhandled Content-Type %r."
@@ -220,7 +228,16 @@ async def fetch(params, *, output_path: Path) -> Union[Path, str]:
         # same data. (This helps with testing and versioning.)
         with gzip.GzipFile(mode="wb", filename="", fileobj=f, mtime=0) as zf:
             # Write URL -- original URL, not redirected URL
-            zf.write(url.encode("utf-8") + b"\r\n")
+            zf.write(
+                json.dumps(
+                    {"url": params["url"]},
+                    ensure_ascii=False,
+                    allow_nan=False,
+                    separators=(",", ":"),
+                    sort_keys=True,
+                ).encode("utf-8")
+                + b"\r\n"
+            )
             # Write status line -- INCORRECT but oh well
             zf.write(b"200 OK\r\n")
             # Write response headers.
