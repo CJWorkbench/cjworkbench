@@ -6,7 +6,7 @@ import * as propTypes from '../propTypes'
 import { withI18n } from '@lingui/react'
 import { t } from '@lingui/macro'
 
-export default withI18n()(class Tabs extends React.PureComponent {
+class Tabs extends React.PureComponent {
   static propTypes = {
     i18n: PropTypes.shape({
       // i18n object injected by LinguiJS withI18n()
@@ -57,4 +57,6 @@ export default withI18n()(class Tabs extends React.PureComponent {
       </div>
     )
   }
-})
+}
+
+export default withI18n()(Tabs)
