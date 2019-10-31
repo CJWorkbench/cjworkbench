@@ -204,7 +204,7 @@ def _render_course(request, course, lesson_url_prefix):
     try:
         courses = AllCoursesByLocale[course.locale_id]
     except KeyError:
-        raise Http404("No lessons exist for this language")
+        courses = []
 
     # We render using HTML, not React, to make this page SEO-friendly.
     return TemplateResponse(
