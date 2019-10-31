@@ -31,23 +31,23 @@ tabs:
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Drop empty rows"}]'
       data-test="const colnames = workflow.tabs[0].wfModules[1].params.colnames.sort().join('|'); return colnames === 'date|subject_race'"
-      >Επιλέξτε τις στήλες <kbd>ημερομηνία</kbd> και <kbd>φυλή_οδηγών</kbd>.</li>
+      >Επιλέξτε τις στήλες <kbd>date</kbd> και <kbd>subject_race</kbd>.</li>
   </ol>
 </section>
 <section>
   <h2>2. Ανεύρεση του εύρους ημερομηνιών</h2>
-  <p>Ας δούμε ποια χρονική περίοδο καλύπτουν τα δεδομένα. Η στήλη <kbd>ημερομηνία</kbd> έχει προστεθεί σαν <kbd>κείμενο</kbd>, γι&apos; αυτό θα πρέπει πρώτα να τη μετατρέψουμε σε μορφή &quot;ημερομηνία &amp; ώρα&quot;. Στη συνέχεια, μπορούμε να ταξινομήσουμε τα δεδομένα για να δούμε ποιες είναι οι πιο πρώτες και ποιες οι πιο τελευταίες ημερομηνίες.</p>
+  <p>Ας δούμε ποια χρονική περίοδο καλύπτουν τα δεδομένα. Η στήλη <kbd>date</kbd> έχει προστεθεί σαν <kbd>κείμενο</kbd>, γι&apos; αυτό θα πρέπει πρώτα να τη μετατρέψουμε σε μορφή <kbd>ημερομηνία &amp; ώρα</kbd>. Στη συνέχεια, μπορούμε να ταξινομήσουμε τα δεδομένα για να δούμε ποιες είναι οι πιο πρώτες και ποιες οι πιο τελευταίες ημερομηνίες.</p>
   <h3 class="instructions">Οδηγίες</h3>
   <ol class="steps">
     <li
       data-highlight='[{"type": "WfModule","moduleName": "Convert to date & time"},{"type":"Module","index":2,"name":"Convert to date & time"}]'
       data-test="const wfModule = workflow.tabs[0].wfModules[2] || {};
       return wfModule.moduleSlug === 'convert-date' && wfModule.params.colnames.join('|') === 'date'"
-      >Στην κεφαλίδα του πίνακα ανοίξτε με κλικ το μενού <span><img class="icon-insert" src="images/lesson-icons/menu.svg"></span> της στήλης <kbd>ημερομηνία</kbd> και επιλέξτε <kbd>Μετατροπή σε ημερομηνία &amp; ώρα</kbd>.</li>
+      >Στην κεφαλίδα του πίνακα ανοίξτε με κλικ το μενού <span><img class="icon-insert" src="images/lesson-icons/menu.svg"></span> της στήλης <kbd>date</kbd> και επιλέξτε <kbd>Μετατροπή σε ημερομηνία &amp; ώρα</kbd>.</li>
     <li
       data-highlight='[{"type": "WfModule", "moduleName": "Sort"},{"type":"Module","index":3,"name":"Sort"}]'
       data-test="return workflow.tabs[0].wfModuleNames[3] === 'Sort'
-      ">Ας δούμε ποια είναι η πιο πρώτη ημερομηνία. Χρησιμοποιήστε το μενού <span><img class="icon-insert" src="images/lesson-icons/menu.svg"></span> της στήλης <kbd>ημερομηνία</kbd> για να διαλέξετε <kbd>Αύξουσα ταξινόμηση</kbd>. Η πρώτη ημερομηνία πρέπει να είναι η <kbd>2010-05-16</kbd>.<li
+      ">Ας δούμε ποια είναι η πιο πρώτη ημερομηνία. Χρησιμοποιήστε το μενού <span><img class="icon-insert" src="images/lesson-icons/menu.svg"></span> της στήλης <kbd>date</kbd> για να διαλέξετε <kbd>Αύξουσα ταξινόμηση</kbd>. Η πρώτη ημερομηνία πρέπει να είναι η <kbd>2010-05-16</kbd>.<li
       data-highlight='[{"type": "WfModule", "moduleName": "Sort"}]'
       data-test="const wfModule = workflow.tabs[0].wfModules[3] || {}
         const params = wfModule.params || {}
@@ -73,7 +73,7 @@ tabs:
         if (!p.filters.filters[0] || !p.filters.filters[0].subfilters[0]) return false;
         const sf1 = p.filters.filters[0].subfilters[0];
         return sf1.colname === 'date' && sf1.condition === 'date_is_after' && sf1.value === '2010-05-31' && p.keep"
-      >Επιλέξτε τη στήλη <kbd>ημερομηνία</kbd>, διαλέξτε τη συνθήκη <kbd>Η ημερομηνία είναι μετά από</kbd><br/> και πληκτρολογήστε την τιμή <kbd>2010-05-31</kbd>.</li>
+      >Επιλέξτε τη στήλη <kbd>date</kbd>, διαλέξτε τη συνθήκη <kbd>Η ημερομηνία είναι μετά από</kbd><br/> και πληκτρολογήστε την τιμή <kbd>2010-05-31</kbd>.</li>
     <li
       data-highlight='[{"type": "WfModule", "moduleName": "Filter by condition"}]'
       data-test="
@@ -107,7 +107,7 @@ tabs:
 </section>
 <section>
   <h2>4. Ανεύρεση ελέγχων ανά μήνα βάσει φυλής</h2>
-  <p>Τώρα είμαστε έτοιμοι να τους ομαδοποιήσουμε με κριτήρια <kbd>ημερομηνία</kbd> και <kbd>φυλή_οδηγών</kbd> για να καθορίσουμε πόσοι έλεγχοι έγιναν ανά μήνα για κάθε φυλή.</p>
+  <p>Τώρα είμαστε έτοιμοι να τους ομαδοποιήσουμε με κριτήρια <kbd>ημερομηνία</kbd> και <kbd>φυλή οδηγών</kbd> για να καθορίσουμε πόσοι έλεγχοι έγιναν ανά μήνα για κάθε φυλή.</p>
   <h3 class="instructions">Οδηγίες</h3>
   <ol class="steps">
     <li
@@ -117,19 +117,19 @@ tabs:
     <li
       data-highlight='[{"type": "WfModule", "moduleName": "Group"}]'
       data-test="return workflow.tabs[0].wfModules[5].params.groups.colnames.join('|') === 'date|subject_race'"
-      >Επιλέξτε τη στήλη <kbd>ημερομηνία</kbd> και <kbd>φυλή_οδηγών</kbd>.</li>
+      >Επιλέξτε τη στήλη <kbd>date</kbd> και <kbd>subject_race</kbd>.</li>
     <li
       data-highlight='[{"type": "WfModule", "moduleName": "Group"}]'
       data-test="
         const groups = workflow.tabs[0].wfModules[5].params.groups
         return groups.group_dates &&
         ['M'].includes(groups.date_granularities['date'])"
-      >Ελέγξτε τις <kbd>Ημερομηνίες ομάδας</kbd> και κάτω από τις <kbd>Λεπτομέρειες ημερομηνίας</kbd> επιλέξτε <kbd>βάσει μήνα</kbd>.</li>
+      >Επιλέξτε <kbd>Ομαδοποίηση κατά ημερομηνία</kbd> και κάτω από τις <kbd>Λεπτομέρειες ημερομηνίας</kbd> επιλέξτε <kbd>βάσει μήνα</kbd>.</li>
   </ol>
 </section>
 <section>
   <h2>5. Δημιουργία γραμμικού γραφήματος</h2>
-  <p>Τέλος, ας προσθέσουμε ένα γραμμικό για να οπτικοποιήσουμε τα δεδομένα.</p>
+  <p>Τέλος, ας προσθέσουμε ένα γραμμικό γράφημα για να οπτικοποιήσουμε τα δεδομένα.</p>
   <p>Επειδή όλα τα γραφήματα σχεδιάζουν στήλες δεδομένων, πρέπει πρώτα να φέρουμε τα δεδομένα για κάθε φυλή στη δική της στήλη. Μπορούμε να χρησιμοποιήσουμε το βήμα <kbd>Αναδιαμόρφωση</kbd> για να το κάνουμε αυτό.</p>
   <h3 class="instructions">Οδηγίες</h3>
   <ol class="steps">
@@ -142,7 +142,7 @@ tabs:
       data-test="
         const params = workflow.tabs[0].wfModules[6].params
         return params.direction === 'longtowide' && params.colnames === 'date' && params.varcol === 'subject_race'"
-      >Επιλέξτε <kbd>Από κατακόρυφο σε οριζόντιο</kbd>, ορίστε τη <kbd>Μεταβλητή σειράς</kbd> στη στήλη <kbd>ημερομηνία</kbd> και τη <kbd>Μεταβλητή στήλης</kbd> σε <kbd>φυλή_οδηγών</kbd>.</li>
+      >Επιλέξτε <kbd>Από κατακόρυφο σε οριζόντιο</kbd>, ορίστε τη <kbd>Μεταβλητή σειράς</kbd> στη στήλη <kbd>date</kbd> και τη <kbd>Μεταβλητή στήλης</kbd> σε <kbd>subject_race</kbd>.</li>
     <li
       data-highlight='[{"type":"Module","index":7,"name":"Line Chart"}]'
       data-test="return workflow.tabs[0].wfModuleNames[7] === 'Line Chart'"

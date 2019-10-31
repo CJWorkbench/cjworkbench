@@ -35,7 +35,7 @@
   <li
     data-highlight='[{"type":"WfModule","moduleName":"Twitter"}]'
     data-test="const param = workflow.tabs[0].wfModules[0].params.username; return (param || '').toLowerCase() === 'neiltyson'"
-    >Κάντε κλικ στην «Ενημέρωση» για να φορτώσετε τουίτ από τον συγκεκριμένο λογαριασμό.<p class="instruction-detail">Λόγω των περιορισμό του <a class="highlight" href='https://developer.twitter.com/en/docs/basics/rate-limiting.html' target="_blank" className="backToLessons info-1">Twitter API</a>, υπάρχει όριο στον αριθμό των τουίτ που μπορείτε να συλλέξετε από έναν συγκεκριμένο χρήστη. Θα πρέπει να μπορέσετε να φορτώσετε περίπου 3.000 τουίτ, που είναι μια καλή αρχή.</p>
+    >Κάντε κλικ στην «Ενημέρωση» για να φορτώσετε τουίτ από τον συγκεκριμένο λογαριασμό.<p class="instruction-detail">Λόγω των περιορισμών του <a class="highlight" href='https://developer.twitter.com/en/docs/basics/rate-limiting.html' target="_blank" className="backToLessons info-1">Twitter API</a>, υπάρχει όριο στον αριθμό των τουίτ που μπορείτε να συλλέξετε από έναν συγκεκριμένο χρήστη. Θα πρέπει να μπορέσετε να φορτώσετε περίπου 3.000 τουίτ, που είναι μια καλή αρχή.</p>
   </li>
 </ol>
 </section>
@@ -61,7 +61,7 @@
         && subfilter.value.toLowerCase() === 'science'
       )
     "
-    >Επιλέξτε τη στήλη <kbd>κείμενο</kbd> για το φιλτράρισμα. Επιλέξτε <kbd>Το κείμενο περιέχει</kbd> ως συνθήκη και αναζητήστε <code>science</code>.<p class="instruction-detail">Ας ομαδοποιήσουμε τώρα βάσει ημερομηνίας τα τουίτ που προέκυψαν.</p>
+    >Επιλέξτε τη στήλη <kbd>text</kbd> για το φιλτράρισμα. Επιλέξτε <kbd>Το κείμενο περιέχει</kbd> ως συνθήκη και αναζητήστε <code>science</code>.<p class="instruction-detail">Ας ομαδοποιήσουμε τώρα βάσει ημερομηνίας τα τουίτ που προέκυψαν.</p>
   </li>
   <li
     data-highlight='[{"type":"Module","index":2,"name":"Group"}]'
@@ -70,7 +70,7 @@
   <li
     data-highlight='[{"type":"WfModule","moduleName":"Group"}]'
     data-test="const params = workflow.tabs[0].wfModules[2].params; return params.groups.colnames.join('|') === 'created_at' && params.groups.group_dates && params.groups.date_granularities.created_at === 'Y' && params.aggregations.length === 1 && params.aggregations[0].operation === 'size' && params.aggregations[0].outname.toLowerCase() === 'number of tweets'"
-    >Επιλέξτε <kbd>που_δημιουργήθηκαν_στις</kbd> ως στήλη ημερομηνίας. Ελέγξτε τις <kbd>Ημερομηνίες ομάδας</kbd> και τις σειρές ομάδας <kbd>βάσει έτους</kbd>. Ορίστε το όνομα της στήλης εξόδου &quot;Πλήθος&quot; σε <code>Number of tweets</code></li>
+    >Επιλέξτε <kbd>created_at</kbd> ως στήλη ημερομηνίας. Επιλέξτε <kbd>Ομαδοποίηση κατά ημερομηνία</kbd> και ομαδοποιήστε <kbd>βάσει έτους</kbd>. Ορίστε το όνομα της στήλης εξόδου &quot;Πλήθος&quot; σε <code>Number of tweets</code></li>
 </ol>
 </section>
 <section>
@@ -85,7 +85,7 @@
   <li
     data-highlight='[{"type":"WfModule","moduleName":"Line Chart"}]'
     data-test="const p = workflow.tabs[0].wfModules[3].params; return p.x_column === 'created_at' && (p.y_columns[0] && p.y_columns[0].column || '').toLowerCase() === 'number of tweets'"
-    >Επιλέξτε <kbd>που_δημιουργήθηκαν_στις</kbd> για τον άξονα Χ και <kbd>Αριθμός των τουίτ</kbd> για τον άξονα Y.</li>
+    >Επιλέξτε <kbd>created_at</kbd> για τον άξονα Χ και <kbd>Αριθμός των τουίτ</kbd> για τον άξονα Y.</li>
   <li
     data-highlight='[{"type":"WfModule","moduleName":"Line Chart"}]'
     data-test="const p = workflow.tabs[0].wfModules[3].params; return !!p.title"
@@ -118,8 +118,8 @@
     <p>Αποκτήστε τον κώδικα ενσωμάτωσης για να δημοσιεύσετε το γράφημα κάνοντας κλικ στο κουμπί <img class="icon-insert" src="./embed_button.svg" /> στο επάνω δεξιό μέρος του πίνακα γραφημάτων.</p>
     <h4>Συνεχίστε τα μαθήματα:</h4>
     <ol>
-      <li><a href="/lessons/custom-alerts/">Παρακολουθήστε δεδομένα και ορίστε προσαρμοσμένες προειδοποιήσεις</a></li>
-      <li><a href="/lessons/clean-and-standardize/">Συλλέξτε περιεχόμενο από μια ιστοσελίδα και παρακολουθήστε το</a></li>
+      <li><a href="/lessons/el/prosarmosmenes-eidopoihseis/">Παρακολουθήστε δεδομένα και ορίστε προσαρμοσμένες ειδοποιήσεις</a></li>
+      <li><a href="/lessons/el/kathariste-vromika-dedomena/">Συλλέξτε περιεχόμενο από μια ιστοσελίδα και παρακολουθήστε το</a></li>
     </ol>
   </div>
 </footer>
