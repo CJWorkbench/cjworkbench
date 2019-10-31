@@ -174,13 +174,34 @@ class RenderTests(unittest.TestCase):
         with self.assertRaisesRegexp(ValueError, "unsupported dtype"):
             self._test_render(render)
 
-    def test_render_with_fetch_result(self):
+    def test_render_with_parquet_fetch_result(self):
         def render(*args, fetch_result):
             return fetch_result
 
         with parquet_file({"A": ["fetched"]}, dir=self.basedir) as pf:
-            self._test_render(render, fetch_result=FetchResult(pf))
-            # TODO test when fetch result is _not_ Parquet-formatted?
+            result = self._test_render(render, fetch_result=FetchResult(pf))
+            assert_render_result_equals(
+                result, RenderResult(arrow_table({"A": ["fetched"]}))
+            )
+
+    def test_render_with_non_parquet_fetch_result(self):
+        def render(*args, fetch_result):
+            return pd.DataFrame({"A": [fetch_result.path.read_text()]})
+
+        with tempfile_context(dir=self.basedir) as tf:
+            tf.write_bytes(b"abcd")
+            result = self._test_render(render, fetch_result=FetchResult(tf))
+            assert_render_result_equals(
+                result, RenderResult(arrow_table({"A": ["abcd"]}))
+            )
+
+    def test_render_empty_file_fetch_result_is_parquet(self):
+        def render(*args, fetch_result):
+            return fetch_result.dataframe
+
+        with tempfile_context(dir=self.basedir) as tf:
+            result = self._test_render(render, fetch_result=FetchResult(tf))
+            assert_render_result_equals(result, RenderResult(arrow_table({})))
 
     def test_render_with_input_columns(self):
         def render(*args, input_columns):
