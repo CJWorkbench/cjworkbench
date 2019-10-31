@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { t } from '@lingui/macro'
 import { withI18n } from '@lingui/react'
 
-const Search = React.memo(function Search ({ value, onChange }) {
+const Search = React.memo(function Search ({ i18n, value, onChange }) {
   const handleReset = React.useCallback(() => onChange(''))
   const handleSubmit = React.useCallback(ev => { ev.preventDefault(); ev.stopPropagation() })
   const handleChange = React.useCallback(ev => onChange(ev.target.value))
@@ -13,7 +13,7 @@ const Search = React.memo(function Search ({ value, onChange }) {
 
       <input
         type='search'
-        placeholder={this.props.i18n._(t('placeholder.searchJs.search')`Search…`)}
+        placeholder={i18n._(t('placeholder.searchJs.search')`Search…`)}
         name='moduleQ'
         autoFocus
         autoComplete='off'
@@ -21,7 +21,7 @@ const Search = React.memo(function Search ({ value, onChange }) {
         value={value}
       />
 
-      <button type='reset' className='reset' title={this.props.i18n._(t('title.workflow.clearSearch')`Clear Search`)}><i className='icon-close' /></button>
+      <button type='reset' className='reset' title={i18n._(t('title.workflow.clearSearch')`Clear Search`)}><i className='icon-close' /></button>
     </form>
   )
 })

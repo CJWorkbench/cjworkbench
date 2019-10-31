@@ -9,7 +9,7 @@ import Modules from './Modules'
 import Search from './Search'
 import { Trans, t } from '@lingui/macro'
 import { withI18n } from '@lingui/react'
-export const Modal = React.memo(function Modal ({ modules, tabSlug, close, addModule }) {
+export const Modal = React.memo(function Modal ({ i18n, modules, tabSlug, close, addModule }) {
   const onSelectModule = React.useCallback(moduleIdName => addModule(tabSlug, moduleIdName))
   const [search, setSearch] = React.useState('')
 
@@ -19,7 +19,7 @@ export const Modal = React.memo(function Modal ({ modules, tabSlug, close, addMo
         <div className='title'>
           <h5><Trans id='workflow.choosedata'>CHOOSE A DATA SOURCE</Trans></h5>
 
-          <button type='button' className='close' aria-label='Close' title={this.props.i18n._(t('workflow.attribute.close')`Close`)} onClick={close}>×</button>
+          <button type='button' className='close' aria-label='Close' title={i18n._(t('workflow.attribute.close')`Close`)} onClick={close}>×</button>
 
         </div>
         <Search value={search} onChange={setSearch} />
