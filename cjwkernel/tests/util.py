@@ -206,39 +206,59 @@ class MockDir(pathlib.PurePosixPath):
     Usage:
 
         dirpath: PurePath = MockDir({
-            'xxx.yaml': b'id_name: xxx...'
+            'yyy/xxx.yaml': b'id_name: xxx...'
             'xxx.py': b'def render(
         })
 
-        yaml_text = (dirpath / 'xxx.yaml').read_text()
+        yaml_text = (dirpath / 'yyy' / 'xxx.yaml').read_text()
     """
 
     def __new__(
-        cls, filedata: Dict[str, bytes], parent: Optional[str] = None
+        cls,
+        filedata: Dict[str, bytes],
+        parent: pathlib.PurePath = pathlib.PurePath("/"),
+        basename: str = "root",
     ):  # filename => bytes
-        ret = super().__new__(cls, pathlib.PurePath(cls._get_path(parent)))
-        ret.filedata = filedata
+        ret = super().__new__(cls, parent, basename)
+
+        ret._filenames = list(filedata.keys())
+        ret._children = {}
         ret._parent = parent
+        subfolders = {}
+        for filename, data in filedata.items():
+            if "/" in filename:
+                subfolder, subpath = filename.split("/", 1)
+                if not subfolder in subfolders:
+                    subfolders[subfolder] = {}
+                subfolders[subfolder][subpath] = data
+            else:
+                ret._children[filename] = MockPath(
+                    [ret.as_posix(), filename], parent=ret, data=data
+                )
+        for subfolder, subfolder_data in subfolders.items():
+            ret._children[subfolder] = MockDir(
+                subfolder_data, parent=ret, basename=subfolder
+            )
         return ret
 
-    @classmethod
-    def _get_path(cls, parent) -> str:
-        return ("%s/root" % parent) if parent else "root"
-
-    def _path(self) -> str:
-        return self.__class__._get_path(self._parent)
+    # override
+    @property
+    def parent(self):
+        return self._parent
 
     # override
     def __truediv__(self, filename: str) -> MockPath:
-        data = self.filedata.get(filename)  # None if file does not exist
-        return MockPath([self._path(), filename], data, parent=self)
         try:
-            return self.files[filename]
+            if "/" in filename:
+                subfolder, subpath = filename.split("/", 1)
+                return self._children[subfolder] / subpath
+            else:
+                return self._children[filename]
         except KeyError:
-            return MockPath([self._path(), filename], None)
+            return MockPath([self.as_posix(), filename], data=None, parent=self)
 
     def glob(self, pattern: str) -> Iterable[MockPath]:
-        for key in self.filedata.keys():
-            path = self / key
+        for filename in self._filenames:
+            path = self / filename
             if path.match(pattern):
                 yield path

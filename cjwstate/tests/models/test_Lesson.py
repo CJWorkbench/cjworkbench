@@ -12,7 +12,6 @@ from server.models.lesson import (
     LessonSection,
     LessonSectionStep,
 )
-from cjworkbench.i18n import default_locale
 
 
 def _lesson_html_with_initial_workflow(initial_workflow_json):
@@ -38,7 +37,7 @@ class LessonTests(SimpleTestCase):
         out = Lesson.parse(
             None,
             "a-slug",
-            default_locale,
+            "en",
             """
             <header><h1>Lesson</h1><p>Contents</p></header>
             <section><h2>Foo</h2><p>bar</p><ol class="steps">
@@ -63,7 +62,7 @@ class LessonTests(SimpleTestCase):
             Lesson.parse(
                 None,
                 "a-slug",
-                default_locale,
+                "en",
                 """
                 <header><h1>X</h1><p>X</p></header>
                 <section><h2>X</h2><p>bar</p><ol class="steps">
@@ -79,7 +78,7 @@ class LessonTests(SimpleTestCase):
             Lesson.parse(
                 None,
                 "a-slug",
-                default_locale,
+                "en",
                 """
                 <header><h1>Lesson</h1><p>Contents</p></header>
                 <section><h2>Foo</h2><p>bar</p><ol class="steps">
@@ -93,7 +92,7 @@ class LessonTests(SimpleTestCase):
         result = Lesson.parse(
             None,
             "a-slug",
-            default_locale,
+            "en",
             """
             <header><h1>x</h1><p>x</p></header>
             <section><h2>X</h2><ol class="steps">
@@ -104,7 +103,7 @@ class LessonTests(SimpleTestCase):
         )
         self.assertEquals(
             result.sections[0].steps[0].test_js,
-            "window.x == 'https://static/lessons/%s/a-slug/x.csv'" % default_locale,
+            "window.x == 'https://static/lessons/%s/a-slug/x.csv'" % "en",
         )
 
     def test_parse_invalid_html(self):
@@ -114,7 +113,7 @@ class LessonTests(SimpleTestCase):
             Lesson.parse(
                 None,
                 "a-slug",
-                default_locale,
+                "en",
                 """
                 <header><h1>Lesson</p></header>
             """,
@@ -124,15 +123,13 @@ class LessonTests(SimpleTestCase):
         with self.assertRaisesRegex(
             LessonParseError, "Lesson HTML needs a top-level <header>"
         ):
-            Lesson.parse(None, "a-slug", default_locale, "<h1>Foo</h1><p>body</p>")
+            Lesson.parse(None, "a-slug", "en", "<h1>Foo</h1><p>body</p>")
 
     def test_parse_no_header_title(self):
         with self.assertRaisesRegex(
             LessonParseError, "Lesson <header> needs a non-empty <h1> title"
         ):
-            Lesson.parse(
-                None, "a-slug", default_locale, "<header><p>Contents</p></header>"
-            )
+            Lesson.parse(None, "a-slug", "en", "<header><p>Contents</p></header>")
 
     def test_parse_no_section_title(self):
         with self.assertRaisesRegex(
@@ -141,7 +138,7 @@ class LessonTests(SimpleTestCase):
             Lesson.parse(
                 None,
                 "a-slug",
-                default_locale,
+                "en",
                 """
                 <header><h1>x</h1><p>y</p></header>
                 <section><ol class="steps">
@@ -154,7 +151,7 @@ class LessonTests(SimpleTestCase):
         out = Lesson.parse(
             None,
             "a-slug",
-            default_locale,
+            "en",
             """
             <header><h1>x</h1><p>y</p></header>
             <section><h2>T</h2><ol class="not-steps"><li>L</li></ol></section>
@@ -173,7 +170,7 @@ class LessonTests(SimpleTestCase):
         result = Lesson.parse(
             None,
             "a-slug",
-            default_locale,
+            "en",
             """
             <header><h1>x</h1><p>y</p></header>
             <footer><h2>Foot</h2></footer>
@@ -185,7 +182,7 @@ class LessonTests(SimpleTestCase):
         result = Lesson.parse(
             None,
             "a-slug",
-            default_locale,
+            "en",
             """
             <header><h1>x</h1></header>
             <section class="fullscreen"><h2>title</h2><p>content</p></section>
@@ -200,7 +197,7 @@ class LessonTests(SimpleTestCase):
         result = Lesson.parse(
             None,
             "a-slug",
-            default_locale,
+            "en",
             """
             <header><h1>x</h1></header>
             <section><h2>T</h2><p class="fullscreen"></p></section>
@@ -213,7 +210,7 @@ class LessonTests(SimpleTestCase):
         result = Lesson.parse(
             None,
             "a-slug",
-            default_locale,
+            "en",
             """
             <header><h1>x</h1></header>
             <footer class="fullscreen"><h2>z</h2></footer>
@@ -228,7 +225,7 @@ class LessonTests(SimpleTestCase):
             Lesson.parse(
                 None,
                 "a-slug",
-                default_locale,
+                "en",
                 """
                 <header><h1>x</h1><p>y</p></header>
             """,
@@ -241,7 +238,7 @@ class LessonTests(SimpleTestCase):
             Lesson.parse(
                 None,
                 "a-slug",
-                default_locale,
+                "en",
                 """
                 <header><h1>x</h1><p>y</p></header>
                 <footer>Hi</footer>
@@ -252,7 +249,7 @@ class LessonTests(SimpleTestCase):
         out = Lesson.parse(
             None,
             "a-slug",
-            default_locale,
+            "en",
             """
             <header><h1>x</h1><p>y</p></header>
             <footer><h2>Foot</h2><p>My foot</p></footer>
@@ -265,7 +262,7 @@ class LessonTests(SimpleTestCase):
         result = Lesson.parse(
             None,
             "a-slug",
-            default_locale,
+            "en",
             """
             <header><h1>x</h1><p><img src="./foo.png"/></p></header>
             <footer><h2>z</h2></footer>
@@ -273,7 +270,7 @@ class LessonTests(SimpleTestCase):
         )
         self.assertEquals(
             result.header.html,
-            '<p><img src="//static/lessons/%s/a-slug/foo.png"></p>' % default_locale,
+            '<p><img src="//static/lessons/%s/a-slug/foo.png"></p>' % "en",
         )
 
     @override_settings(STATIC_URL="//static/")
@@ -281,7 +278,7 @@ class LessonTests(SimpleTestCase):
         result = Lesson.parse(
             Course("a-course"),
             "a-slug",
-            default_locale,
+            "en",
             """
             <header><h1>x</h1><p><img src="./foo.png"/></p></header>
             <footer><h2>z</h2></footer>
@@ -289,8 +286,7 @@ class LessonTests(SimpleTestCase):
         )
         self.assertEquals(
             result.header.html,
-            '<p><img src="//static/courses/%s/a-course/a-slug/foo.png"></p>'
-            % default_locale,
+            '<p><img src="//static/courses/%s/a-course/a-slug/foo.png"></p>' % "en",
         )
 
     @override_settings(STATIC_URL="https://static/")
@@ -298,7 +294,7 @@ class LessonTests(SimpleTestCase):
         result = Lesson.parse(
             Course("a-course"),
             "a-slug",
-            default_locale,
+            "en",
             """
             <header><h1>x</h1><p><i>{{LESSON_FILES_URL}}/x.csv</i></p></header>
             <footer><h2>z</h2></footer>
@@ -306,8 +302,7 @@ class LessonTests(SimpleTestCase):
         )
         self.assertEquals(
             result.header.html,
-            "<p><i>https://static/courses/%s/a-course/a-slug/x.csv</i></p>"
-            % default_locale,
+            "<p><i>https://static/courses/%s/a-course/a-slug/x.csv</i></p>" % "en",
         )
 
     @override_settings(STATIC_URL="https://static/")
@@ -315,7 +310,7 @@ class LessonTests(SimpleTestCase):
         result = Lesson.parse(
             None,
             "a-slug",
-            default_locale,
+            "en",
             """
             <header><h1>x</h1><p><i>{{LESSON_FILES_URL}}/x.csv</i></p></header>
             <footer><h2>z</h2></footer>
@@ -323,7 +318,7 @@ class LessonTests(SimpleTestCase):
         )
         self.assertEquals(
             result.header.html,
-            "<p><i>https://static/lessons/%s/a-slug/x.csv</i></p>" % default_locale,
+            "<p><i>https://static/lessons/%s/a-slug/x.csv</i></p>" % "en",
         )
 
     @override_settings(STATIC_URL="//static/")
@@ -331,7 +326,7 @@ class LessonTests(SimpleTestCase):
         result = Lesson.parse(
             None,
             "a-slug",
-            default_locale,
+            "en",
             """
             <header><h1>x</h1><p><img src="images/foo.png"/></p></header>
             <footer><h2>z</h2></footer>
@@ -346,7 +341,7 @@ class LessonTests(SimpleTestCase):
         result = Lesson.parse(
             None,
             "a-slug",
-            default_locale,
+            "en",
             """
             <header><h1>x</h1><img src="https://x/images/foo.png"/></header>
             <footer><h2>z</h2></footer>
@@ -359,7 +354,7 @@ class LessonTests(SimpleTestCase):
         result = Lesson.parse(
             None,
             "a-slug",
-            default_locale,
+            "en",
             """
             <header><h1>x</h1></header>
             '<section><h2>title</h2><p><img src="./foo.png"></p></section>',
@@ -368,7 +363,7 @@ class LessonTests(SimpleTestCase):
         )
         self.assertEquals(
             result.sections[0].html,
-            '<p><img src="//static/lessons/%s/a-slug/foo.png"></p>' % default_locale,
+            '<p><img src="//static/lessons/%s/a-slug/foo.png"></p>' % "en",
         )
 
     @override_settings(STATIC_URL="//static/")
@@ -376,7 +371,7 @@ class LessonTests(SimpleTestCase):
         result = Lesson.parse(
             None,
             "a-slug",
-            default_locale,
+            "en",
             """
             <header><h1>x</h1></header>
             <footer><h2>z</h2><p><img src="./foo.png"></p></footer>
@@ -384,7 +379,7 @@ class LessonTests(SimpleTestCase):
         )
         self.assertEquals(
             result.footer.html,
-            '<p><img src="//static/lessons/%s/a-slug/foo.png"></p>' % default_locale,
+            '<p><img src="//static/lessons/%s/a-slug/foo.png"></p>' % "en",
         )
 
     def test_parse_initial_workflow(self):
@@ -406,7 +401,7 @@ class LessonTests(SimpleTestCase):
         out = Lesson.parse(
             None,
             "a-slug",
-            default_locale,
+            "en",
             _lesson_html_with_initial_workflow(json.dumps(initial_workflow)),
         )
         self.assertEquals(
@@ -418,17 +413,14 @@ class LessonTests(SimpleTestCase):
             LessonParseError, "Initial-workflow YAML parse error"
         ):
             Lesson.parse(
-                None,
-                "a-slug",
-                default_locale,
-                _lesson_html_with_initial_workflow("{bad"),
+                None, "a-slug", "en", _lesson_html_with_initial_workflow("{bad")
             )
 
     def test_parse_initial_workflow_yaml(self):
         out = Lesson.parse(
             None,
             "a-slug",
-            default_locale,
+            "en",
             _lesson_html_with_initial_workflow(
                 """
                 tabs:
@@ -465,9 +457,10 @@ class LessonGlobalsTests(unittest.TestCase):
     # will fall by the wayside if we don't keep an example in that directory
     # and test the "hidden lessons" feature with every deploy.
     HiddenSlug = "_hidden-example"
+    HiddenLocale = "en"
 
     def test_hidden_lessons_not_in_AllLessons(self):
         self.assertFalse(any(l.slug == self.HiddenSlug for l in AllLessons))
 
     def test_hidden_lessons_appear_in_LessonLookup(self):
-        self.assertIn(self.HiddenSlug, LessonLookup)
+        self.assertIn(self.HiddenLocale + "/" + self.HiddenSlug, LessonLookup)

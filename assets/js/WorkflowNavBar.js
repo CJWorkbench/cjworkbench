@@ -9,15 +9,15 @@ import { Trans } from '@lingui/macro'
 
 function NoOp () {}
 
-function LessonCourse ({ course }) {
+function LessonCourse ({ localeId, course }) {
   let path
   let title
 
   if (course) {
-    path = '/courses/' + course.slug
+    path = `/courses/${course.locale_id}/${course.slug}`
     title = course.title
   } else {
-    path = '/lessons'
+    path = `/lessons/${localeId}`
     title = 'Training'
   }
 
@@ -31,7 +31,7 @@ function LessonCourse ({ course }) {
 function LessonWorkflowTitle ({ lesson }) {
   return (
     <div className='title-metadata-stack'>
-      <LessonCourse course={lesson.course} />
+      <LessonCourse localeId={lesson.locale_id} course={lesson.course} />
       <EditableWorkflowName
         value={lesson.header.title}
         setWorkflowName={NoOp}

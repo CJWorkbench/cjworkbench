@@ -5,7 +5,6 @@ from cjwstate.models import Workflow, ModuleVersion
 from cjwstate.modules.loaded_module import LoadedModule
 from server.models.lesson import Lesson, LessonLookup, LessonInitialWorkflow
 from cjwstate.tests.utils import DbTestCase, create_test_user
-from cjworkbench.i18n import default_locale
 
 
 async def async_noop(*args, **kwargs):
@@ -52,7 +51,7 @@ class LessonDetailTests(DbTestCase):
         return self._other_user
 
     def test_get_anonymous(self):
-        response = self.client.get("/lessons/load-public-data")
+        response = self.client.get("/lessons/en/load-public-data")
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed("workflow.html")
         self.assertEqual(Workflow.objects.count(), 1)
@@ -73,7 +72,7 @@ class LessonDetailTests(DbTestCase):
         )
 
         # This should create the workflow
-        response = self.client.get("/lessons/load-public-data")
+        response = self.client.get("/lessons/en/load-public-data")
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed("workflow.html")
         self.assertEqual(Workflow.objects.count(), 4)
@@ -82,7 +81,7 @@ class LessonDetailTests(DbTestCase):
         self.log_in()
 
         Workflow.objects.create(owner=self.user, lesson_slug="load-public-data")
-        response = self.client.get("/lessons/load-public-data")
+        response = self.client.get("/lessons/en/load-public-data")
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed("workflow.html")
 
@@ -92,18 +91,18 @@ class LessonDetailTests(DbTestCase):
         Workflow.objects.create(
             owner=self.user, lesson_slug="intro-to-data-journalism/filter"
         )
-        response = self.client.get("/courses/intro-to-data-journalism/filter")
+        response = self.client.get("/courses/en/intro-to-data-journalism/filter")
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed("workflow.html")
 
     def test_get_without_login(self):
-        self.client.get("/lessons/load-public-data")
+        self.client.get("/lessons/en/load-public-data")
         self.assertEqual(Workflow.objects.count(), 1)
 
     def test_get_with_existing(self):
         self.log_in()
         Workflow.objects.create(owner=self.user, lesson_slug="load-public-data")
-        self.client.get("/lessons/load-public-data")
+        self.client.get("/lessons/en/load-public-data")
         self.assertEqual(Workflow.objects.count(), 1)  # don't create duplicate
 
     def test_get_without_existing(self):
@@ -116,7 +115,7 @@ class LessonDetailTests(DbTestCase):
             owner=self.other_user, lesson_slug="load-public-data", public=True
         )
 
-        self.client.post("/lessons/load-public-data")
+        self.client.post("/lessons/en/load-public-data")
         self.assertEqual(Workflow.objects.count(), 4)  # create Workflow
         self.assertEqual(
             Workflow.objects.filter(lesson_slug="load-public-data").count(), 2
@@ -141,7 +140,7 @@ class LessonDetailTests(DbTestCase):
             owner=self.user, lesson_slug="load-public-data"
         )
         response = self.client.get(workflow.get_absolute_url())
-        self.assertRedirects(response, "/lessons/load-public-data")
+        self.assertRedirects(response, "/lessons/en/load-public-data")
 
     def test_get_public_workflow_with_lesson_slug(self):
         self.log_in()
@@ -180,16 +179,16 @@ class LessonDetailTests(DbTestCase):
             owner=self.user, lesson_slug="intro-to-data-journalism/filter"
         )
         response = self.client.get(workflow.get_absolute_url())
-        self.assertRedirects(response, "/courses/intro-to-data-journalism/filter")
+        self.assertRedirects(response, "/courses/en/intro-to-data-journalism/filter")
 
     @patch("server.rabbitmq.queue_render")
     @patch.dict(
         LessonLookup,
         {
-            "a-lesson": Lesson(
+            "en/a-lesson": Lesson(
                 None,
                 "slug",
-                default_locale,
+                "en",
                 initial_workflow=LessonInitialWorkflow(
                     [
                         {
@@ -217,7 +216,7 @@ class LessonDetailTests(DbTestCase):
         )
 
         self.log_in()
-        response = self.client.get("/lessons/a-lesson")
+        response = self.client.get("/lessons/en/a-lesson")
         state = response.context_data["initState"]
         tabs = state["tabs"]
         tab1 = list(tabs.values())[0]
@@ -241,10 +240,10 @@ class LessonDetailTests(DbTestCase):
     @patch.dict(
         LessonLookup,
         {
-            "a-lesson": Lesson(
+            "en/a-lesson": Lesson(
                 None,
                 "a-lesson",
-                default_locale,
+                "en",
                 initial_workflow=LessonInitialWorkflow(
                     [
                         {
@@ -270,15 +269,12 @@ class LessonDetailTests(DbTestCase):
         )
 
         self.log_in()
-        response = self.client.get("/lessons/a-lesson")
+        response = self.client.get("/lessons/en/a-lesson")
         state = response.context_data["initState"]
         wf_module = next(iter(state["wfModules"].values()))
         self.assertEqual(
             wf_module["params"],
-            {
-                "url": "http://localhost:8000/static/lessons/%s/a-lesson/foo.txt"
-                % default_locale
-            },
+            {"url": "http://localhost:8000/static/lessons/%s/a-lesson/foo.txt" % "en"},
         )
 
     @patch("server.rabbitmq.queue_fetch")
@@ -286,10 +282,10 @@ class LessonDetailTests(DbTestCase):
     @patch.dict(
         LessonLookup,
         {
-            "a-lesson": Lesson(
+            "en/a-lesson": Lesson(
                 None,
                 "slug",
-                default_locale,
+                "en",
                 initial_workflow=LessonInitialWorkflow(
                     [
                         {
@@ -315,7 +311,7 @@ class LessonDetailTests(DbTestCase):
         )
 
         self.log_in()
-        response = self.client.get("/lessons/a-lesson")
+        response = self.client.get("/lessons/en/a-lesson")
         state = response.context_data["initState"]
         wf_modules = state["wfModules"]
         wfm1 = list(wf_modules.values())[0]
@@ -328,10 +324,10 @@ class LessonDetailTests(DbTestCase):
     @patch.dict(
         LessonLookup,
         {
-            "a-lesson": Lesson(
+            "en/a-lesson": Lesson(
                 None,
                 "slug",
-                default_locale,
+                "en",
                 initial_workflow=LessonInitialWorkflow(
                     [
                         {
@@ -352,16 +348,16 @@ class LessonDetailTests(DbTestCase):
     def test_fetch_initial_workflow_with_missing_module_raises_500(self):
         self.log_in()
         with self.assertLogs("django.request"):
-            response = self.client.get("/lessons/a-lesson")
+            response = self.client.get("/lessons/en/a-lesson")
         self.assertEqual(response.status_code, 500)
 
     @patch.dict(
         LessonLookup,
         {
-            "a-lesson": Lesson(
+            "en/a-lesson": Lesson(
                 None,
                 "slug",
-                default_locale,
+                "en",
                 initial_workflow=LessonInitialWorkflow(
                     [
                         {
@@ -384,5 +380,5 @@ class LessonDetailTests(DbTestCase):
 
         self.log_in()
         with self.assertLogs("django.request"):
-            response = self.client.get("/lessons/a-lesson")
+            response = self.client.get("/lessons/en/a-lesson")
         self.assertEqual(response.status_code, 500)
