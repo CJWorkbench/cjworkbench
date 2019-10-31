@@ -106,8 +106,7 @@ class FetchTests(AioHTTPTestCase):
         ] = web.Response(body=b"A,B\nx,y\nz,a")
         fetch_result = await fetch(P(), secrets=secrets(DEFAULT_SECRET))
         assert_process_result_equal(
-            fetch_result,
-            pd.DataFrame({"A": ["x", "z"], "B": ["y", "a"]}, dtype="category"),
+            fetch_result, pd.DataFrame({"A": ["x", "z"], "B": ["y", "a"]})
         )
 
     @unittest_run_loop
@@ -120,8 +119,7 @@ class FetchTests(AioHTTPTestCase):
             secrets=secrets(DEFAULT_SECRET),
         )
         assert_process_result_equal(
-            fetch_result,
-            pd.DataFrame({"A": ["x", "z"], "B": ["y", "a"]}, dtype="category"),
+            fetch_result, pd.DataFrame({"A": ["x", "z"], "B": ["y", "a"]})
         )
 
     @unittest_run_loop
@@ -134,8 +132,7 @@ class FetchTests(AioHTTPTestCase):
             secrets=secrets(DEFAULT_SECRET),
         )
         assert_process_result_equal(
-            fetch_result,
-            pd.DataFrame({"A": ["x", "z"], "B": ["y", "b"]}, dtype="category"),
+            fetch_result, pd.DataFrame({"A": ["x", "z"], "B": ["y", "b"]})
         )
 
     @unittest_run_loop
