@@ -16,7 +16,7 @@ export default function ShareCard ({ workflowId, isPublic }) {
         </span>
         <p className='accessible-to'>
           {isPublic ? (
-             <Trans id='report.shareCard.accessibleTo.public'>Anyone can view this report</Trans>
+            <Trans id='report.shareCard.accessibleTo.public'>Anyone can view this report</Trans>
           ) : (
             <Trans id='report.shareCard.accessibleTo.private'>Only collaborators can view this report</Trans>
           )}

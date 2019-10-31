@@ -1,7 +1,7 @@
 /* global describe, it, expect, jest */
 import React from 'react'
 // import { mount } from 'enzyme'
-import {mountWithI18n} from '../../../i18n/test-utils.js'
+import { mountWithI18n } from '../../../i18n/test-utils.js'
 import { tick } from '../../../test-utils'
 import RefineClusterer from './RefineClusterer'
 

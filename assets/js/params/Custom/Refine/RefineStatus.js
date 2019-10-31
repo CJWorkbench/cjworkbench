@@ -1,11 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Trans,t } from '@lingui/macro'
-import { withI18n,I18n } from '@lingui/react'
+import { t } from '@lingui/macro'
+import { withI18n } from '@lingui/react'
 
 export class RefineStatus extends React.PureComponent {
   static propTypes = {
-       i18n: PropTypes.shape({
+    i18n: PropTypes.shape({
       // i18n object injected by LinguiJS withI18n()
       _: PropTypes.func.isRequired
     }),
@@ -18,11 +18,11 @@ export class RefineStatus extends React.PureComponent {
 
     let statusText
     if (nBinsTotal === null) {
-      statusText = i18n._(t('refinestatus.clustering') `Clustering`)
+      statusText = i18n._(t('refinestatus.clustering')`Clustering`)
     } else if (nBinsTotal === 1) {
-      statusText = i18n._(t('refinestatus.oneclusterfound') `1 cluster found`)
+      statusText = i18n._(t('refinestatus.oneclusterfound')`1 cluster found`)
     } else {
-      statusText = i18n._(t('refinestatus.specnumberclusterfound') `${nBinsTotal} clusters found`)
+      statusText = i18n._(t('refinestatus.specnumberclusterfound')`${nBinsTotal} clusters found`)
     }
 
     return (

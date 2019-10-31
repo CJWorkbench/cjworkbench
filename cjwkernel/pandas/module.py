@@ -5,12 +5,10 @@
 import asyncio
 import inspect
 from pathlib import Path
-import fastparquet
 import pandas as pd
-import pyarrow
-import pyarrow.parquet
 from typing import Any, Dict, List, Optional
-from cjwkernel import types
+from cjwkernel import parquet, types
+from cjwkernel.util import tempfile_context
 from cjwkernel.pandas import types as ptypes
 from cjwkernel.thrift import ttypes
 
@@ -102,10 +100,19 @@ def __parquet_to_pandas(path: Path) -> pd.DataFrame:
     if path.stat().st_size == 0:
         return pd.DataFrame()
     else:
-        arrow_table = pyarrow.parquet.read_table(str(path), use_threads=False)
-        return arrow_table.to_pandas(
-            date_as_object=False, deduplicate_objects=True, ignore_metadata=True
-        )  # TODO ensure dictionaries stay dictionaries
+        with parquet.open_as_mmapped_arrow(path) as arrow_table:
+            return arrow_table.to_pandas(
+                date_as_object=False,
+                deduplicate_objects=True,
+                ignore_metadata=True,
+                categories=[
+                    column_name.encode("utf-8")
+                    for column_name, column in zip(
+                        arrow_table.column_names, arrow_table.columns
+                    )
+                    if hasattr(column.type, "dictionary")
+                ],
+            )  # TODO ensure dictionaries stay dictionaries
 
 
 def _find_tab_outputs(value: Dict[str, Any]) -> List[types.TabOutput]:
@@ -308,25 +315,16 @@ def fetch_arrow(
         last_fetch_result=last_fetch_result,
         input_table_parquet_path=input_table_parquet_path,
     )
-    if len(pandas_result.dataframe.columns):
-        fastparquet.write(
-            str(output_path),
-            pandas_result.dataframe,
-            compression="SNAPPY",
-            object_encoding="utf8",
-        )
+    pandas_result.truncate_in_place_if_too_big()
+    # ProcessResult => FetchResult isn't a thing; but we can hack it using
+    # ProcessResult => RenderResult => FetchResult.
+    with tempfile_context(suffix=".arrow") as arrow_path:
+        hacky_result = pandas_result.to_arrow(arrow_path)
+    if hacky_result.table.path:
+        parquet.write(output_path, hacky_result.table.table)
     else:
         output_path.write_bytes(b"")
-    # Convert from Pandas-style errors to new-style errors. This is a hack
-    # because we use a function that converts to Arrow, but we assume it won't
-    # actually write to an Arrow file.
-    hacky_result = ptypes.ProcessResult(
-        dataframe=pd.DataFrame(),
-        error=pandas_result.error,
-        quick_fixes=pandas_result.quick_fixes,
-    )
-    errors = hacky_result.to_arrow(None).errors
-    return types.FetchResult(output_path, errors)
+    return types.FetchResult(output_path, hacky_result.errors)
 
 
 def fetch_thrift(request: ttypes.FetchRequest) -> ttypes.FetchResult:

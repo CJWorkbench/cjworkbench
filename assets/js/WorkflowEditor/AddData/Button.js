@@ -22,7 +22,7 @@ const Button = React.memo(function Button ({ tabSlug, isLessonHighlight, paneRef
     <div className='add-data-button'>
       <button type='button' onClick={open}>
         <i className='icon-add' />{' '}
-        <span><Trans id="workflow.addData">ADD DATA</Trans></span>
+        <span><Trans id='workflow.addData'>ADD DATA</Trans></span>
       </button>
       {isOpen && paneRef.current ? ReactDOM.createPortal((
         <Modal

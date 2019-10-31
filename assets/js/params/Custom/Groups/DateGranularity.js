@@ -1,7 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Trans,t } from '@lingui/macro'
-import { withI18n,I18n } from '@lingui/react'
+import { Trans } from '@lingui/macro'
 
 export default class DateGranularity extends React.PureComponent {
   static propTypes = {
@@ -34,14 +33,14 @@ export default class DateGranularity extends React.PureComponent {
           onChange={this.handleChange}
           readOnly={isReadOnly}
         >
-          <option value=''><Trans id="dategranularity.asis">as is</Trans></option>
-          <option value='S'><Trans id="dategranularity.bysecond">by second</Trans></option>
-          <option value='T'><Trans id="dategranularity.byminute">by minute</Trans></option>
-          <option value='H'><Trans id="dategranularity.byhour">by hour</Trans></option>
-          <option value='D'><Trans id="dategranularity.byday">by day</Trans></option>
-          <option value='M'><Trans id="dategranularity.bymonth">by month</Trans></option>
-          <option value='Q'><Trans id="dategranularity.byquarter">by quarter</Trans></option>
-          <option value='Y'><Trans id="dategranularity.byyear">by year</Trans></option>
+          <option value=''><Trans id='dategranularity.asis'>as is</Trans></option>
+          <option value='S'><Trans id='dategranularity.bysecond'>by second</Trans></option>
+          <option value='T'><Trans id='dategranularity.byminute'>by minute</Trans></option>
+          <option value='H'><Trans id='dategranularity.byhour'>by hour</Trans></option>
+          <option value='D'><Trans id='dategranularity.byday'>by day</Trans></option>
+          <option value='M'><Trans id='dategranularity.bymonth'>by month</Trans></option>
+          <option value='Q'><Trans id='dategranularity.byquarter'>by quarter</Trans></option>
+          <option value='Y'><Trans id='dategranularity.byyear'>by year</Trans></option>
         </select>
       </label>
     )

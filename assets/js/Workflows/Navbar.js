@@ -1,8 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import WfHamburgerMenu from '../WfHamburgerMenu'
-import { Trans,t } from '@lingui/macro'
-import { withI18n,I18n } from '@lingui/react'
+import { Trans } from '@lingui/macro'
 
 function getActiveSection () {
   return window.location.pathname.startsWith('/workflows') ? 'workflows' : 'lessons'
@@ -16,18 +15,14 @@ function propsForLink (activeSection, name) {
   }
 }
 
-export class Navbar extends React.Component {
-  static propTypes =
-   { i18n: PropTypes.shape({
-      // i18n object injected by LinguiJS withI18n()
-      _: PropTypes.func.isRequired
-    }),
+export default class Navbar extends React.Component {
+  static propTypes = {
     user: PropTypes.shape({ id: PropTypes.number.isRequired }) // null/undefined if logged out
   }
 
   render () {
     const activeSection = getActiveSection()
-    const { user, i18n } = this.props
+    const { user } = this.props
 
     return (
       <div>
@@ -38,10 +33,10 @@ export class Navbar extends React.Component {
           </div>
           <div className='links'>
             <a {...propsForLink(activeSection, 'workflows')}>
-              <Trans id='workflows.navbar.workflows' description={this.props.i18n._(t('workflow.descriptionworflow')`This is used in navigation bar. It should be all-caps for styling reasons.`)}>WORKFLOWS</Trans>
+              <Trans id='workflows.navbar.workflows' description='This is used in navigation bar. It should be all-caps for styling reasons.'>WORKFLOWS</Trans>
             </a>
             <a {...propsForLink(activeSection, 'lessons')}>
-              <Trans id='workflows.navbar.training' description={this.props.i18n._(t('workflow.descriptionworflow')`This is used in navigation bar. It should be all-caps for styling reasons.`)}>TRAINING</Trans>
+              <Trans id='workflows.navbar.training' description='This is used in navigation bar. It should be all-caps for styling reasons.'>TRAINING</Trans>
             </a>
           </div>
           <WfHamburgerMenu user={user} />
@@ -50,5 +45,3 @@ export class Navbar extends React.Component {
     )
   }
 }
-
-export default withI18n()(Navbar);

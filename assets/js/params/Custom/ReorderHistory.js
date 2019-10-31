@@ -2,8 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { idxToLetter } from '../../utils'
 import { withJsonStringValues } from '../util'
-import { Trans,t } from '@lingui/macro'
-import { withI18n,I18n } from '@lingui/react'
+import { Trans } from '@lingui/macro'
 
 export class ReorderHistory extends React.Component {
   static propTypes = {
@@ -22,9 +21,9 @@ export class ReorderHistory extends React.Component {
         <thead>
           <tr>
             <td className='reorder-info'>#</td>
-            <td className='reorder-info'><Trans id="reorderHistory.column">COLUMN</Trans></td>
-            <td className='reorder-position'><Trans id="reorderHistory.from">FROM</Trans></td>
-            <td className='reorder-position'><Trans id="reorderHistory.to">TO</Trans></td>
+            <td className='reorder-info'><Trans id='reorderHistory.column'>COLUMN</Trans></td>
+            <td className='reorder-position'><Trans id='reorderHistory.from'>FROM</Trans></td>
+            <td className='reorder-position'><Trans id='reorderHistory.to'>TO</Trans></td>
           </tr>
         </thead>
         <tbody>

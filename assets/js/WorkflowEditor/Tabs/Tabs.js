@@ -4,8 +4,9 @@ import TabList from './TabList'
 import NewTabPrompt from './NewTabPrompt'
 import * as propTypes from '../propTypes'
 import { withI18n } from '@lingui/react'
+import { t } from '@lingui/macro'
 
-export default withI18n()(class Tabs extends React.PureComponent {
+class Tabs extends React.PureComponent {
   static propTypes = {
     i18n: PropTypes.shape({
       // i18n object injected by LinguiJS withI18n()
@@ -18,7 +19,7 @@ export default withI18n()(class Tabs extends React.PureComponent {
     }).isRequired).isRequired,
     selectedPane: propTypes.selectedPane.isRequired,
     isReadOnly: PropTypes.bool.isRequired,
-    create: PropTypes.func.isRequired, // func(position, name) => undefined
+    create: PropTypes.func.isRequired, // func(name) => undefined
     setName: PropTypes.func.isRequired, // func(slug, name) => undefined
     destroy: PropTypes.func.isRequired, // func(slug) => undefined
     duplicate: PropTypes.func.isRequired, // func(slug) => undefined
@@ -27,7 +28,10 @@ export default withI18n()(class Tabs extends React.PureComponent {
   }
 
   create = () => {
-    this.props.create(this.props.i18n)
+    this.props.create(this.props.i18n._(
+      /* i18n: The tab prefix will be used as the first part of the default name of tabs, i.e. if the tab prefix is 'Tab', the default names can be 'Tab 1', 'Tab 2', etc */
+      t('workflow.tabs.tab_prefix')`Tab`
+    ))
   }
 
   render () {
@@ -53,4 +57,6 @@ export default withI18n()(class Tabs extends React.PureComponent {
       </div>
     )
   }
-})
+}
+
+export default withI18n()(Tabs)

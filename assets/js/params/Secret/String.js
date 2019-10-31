@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { MaybeLabel } from '../util'
 import { timeDifference } from '../../utils'
 import { withI18n } from '@lingui/react'
-import { Trans,t } from '@lingui/macro'
+import { Trans } from '@lingui/macro'
 
 /**
  * Prompt the user to enter a string: show a <label>, <input>, <button> and <p className='help'>.
@@ -90,7 +90,7 @@ function StringDisplay ({ i18n, isReadOnly, secretMetadata, label, name, fieldId
             onClick={handleSubmit}
             disabled={isSubmitted}
           >
-            <Trans id="secterfile.string.cleartext">Clear</Trans>
+            <Trans id='secterfile.string.cleartext'>Clear</Trans>
           </button>
         ) : null}
       </div>
@@ -98,7 +98,7 @@ function StringDisplay ({ i18n, isReadOnly, secretMetadata, label, name, fieldId
   )
 }
 
-const String_ = React.memo(withI18n()(function String_ ({ i18n, secretMetadata, isReadOnly, name, fieldId, secretLogic: { label, placeholder, pattern, help, helpUrl, helpUrlPrompt }, submitSecret, deleteSecret }) {
+const String_ = React.memo(function String_ ({ i18n, secretMetadata, isReadOnly, name, fieldId, secretLogic: { label, placeholder, pattern, help, helpUrl, helpUrlPrompt }, submitSecret, deleteSecret }) {
   if (secretMetadata) {
     return (
       <StringDisplay
@@ -127,7 +127,7 @@ const String_ = React.memo(withI18n()(function String_ ({ i18n, secretMetadata, 
       />
     )
   }
-}))
+})
 String_.propTypes = {
   isReadOnly: PropTypes.bool.isRequired,
   name: PropTypes.string.isRequired, // <input name=...>
@@ -146,4 +146,4 @@ String_.propTypes = {
     helpUrlPrompt: PropTypes.string.isRequired
   })
 }
-export default String_
+export default withI18n()(String_)

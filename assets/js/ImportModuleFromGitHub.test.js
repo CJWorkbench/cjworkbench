@@ -1,7 +1,6 @@
 /* globals describe, expect, it, jest */
 import React from 'react'
 import ConnectedImportModuleFromGitHub from './ImportModuleFromGitHub'
-// import { mount } from 'enzyme'
 import { mountWithI18n } from './i18n/test-utils'
 import { Provider } from 'react-redux'
 import { mockStore, tick } from './test-utils'
@@ -56,6 +55,6 @@ describe('ImportModuleFromGitHub', () => {
     }, null)
     const w = wrapper(store, { api })
     expect(w.find('input')).toHaveLength(0)
-    expect(w.find('a[href^="http"]')).toHaveLength(1) // external link => to docs
+    expect(w.find('Trans[defaults*="<0>here</0>"]')).toHaveLength(1) // external link => to docs
   })
 })

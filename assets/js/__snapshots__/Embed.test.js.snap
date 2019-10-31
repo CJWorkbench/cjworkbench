@@ -62,9 +62,7 @@ exports[`Embed Available workflow Renders the embed widget with the correct info
                 rel="noopener noreferrer"
                 target="_blank"
               >
-                Updated
-                 
-                just now
+                Updated {0}
               </a>
             </li>
           </ul>
@@ -90,10 +88,16 @@ exports[`Embed Available workflow Renders the embed widget with the correct info
       onClick={[Function]}
     >
       <h1>
-        EMBED THIS CHART
+        <WithI18n
+          defaults="EMBED THIS CHART"
+          id="workflow.workbenchembedheader"
+        />
       </h1>
       <h2>
-        Paste this code into any webpage HTML
+        <WithI18n
+          defaults="Paste this code into any webpage HTML"
+          id="workflow.workbenchpastecodeheader"
+        />
       </h2>
       <div
         className="code-snippet"
@@ -117,7 +121,10 @@ exports[`Embed Unavailable workflow Renders the embed widget with the correct in
     className="embed-not-available"
   >
     <h1>
-      This workflow is not available
+      <WithI18n
+        defaults="This workflow is not available"
+        id="workflow.notavailableworkflow"
+      />
     </h1>
   </div>
   <div
@@ -135,7 +142,10 @@ exports[`Embed Unavailable workflow Renders the embed widget with the correct in
       className="embed-footer-meta"
     >
       <h1>
-        WORKBENCH
+        <WithI18n
+          defaults="This workflow is not available"
+          id="workflow.workbenchheader"
+        />
       </h1>
     </div>
     <div

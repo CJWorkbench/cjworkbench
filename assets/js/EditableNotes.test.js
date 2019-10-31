@@ -1,6 +1,5 @@
 /* globals beforeEach, describe, expect, it, jest */
 import React from 'react'
-// import { shallow } from 'enzyme'
 import EditableNotes from './EditableNotes'
 import { shallowWithI18n } from './i18n/test-utils'
 
@@ -8,8 +7,6 @@ describe('EditableNotes', () => {
   let wrapper
 
   // Can't test "startsFocused" with shallow(), because there's no DOM element to focus
-
-  
 
   describe('read-only', () => {
     beforeEach(() => {

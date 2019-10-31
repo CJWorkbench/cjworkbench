@@ -1,6 +1,5 @@
 /* globals afterEach, beforeEach, describe, expect, it, jest */
 import React from 'react'
-// import { mount } from 'enzyme'
 import ExportModal from './ExportModal'
 import { mountWithI18n } from './i18n/test-utils'
 

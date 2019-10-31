@@ -3,11 +3,10 @@ import PropTypes from 'prop-types'
 import CreateWorkflowButton from './CreateWorkflowButton'
 import SortMenu from './SortMenu'
 import WorkflowList, { WorkflowListPropType } from './WorkflowList'
-import { Trans,t } from '@lingui/macro'
-import { withI18n,I18n } from '@lingui/react'
+import { Trans } from '@lingui/macro'
+import { withI18n } from '@lingui/react'
 
 const Tab = React.memo(function Tab ({ name, isActive, setIsActive, children }) {
-
   return (
     <li className={`nav-item${isActive ? ' active' : ''}`}>
       <a
@@ -49,7 +48,7 @@ const OwnedWorkflowList = React.memo(function OwnedWorkflowList ({ workflows, is
         <WorkflowList workflows={workflows} {...props} />
       ) : (
         <CreateWorkflowButton>
-          <Trans id="workflow.createyourworkflow">Create your first workflow</Trans>
+          <Trans id='workflow.createyourworkflow'>Create your first workflow</Trans>
         </CreateWorkflowButton>
       )}
     </TabPane>
@@ -62,7 +61,7 @@ const SharedWorkflowList = React.memo(function SharedWorkflowList ({ workflows, 
       {workflows.length > 0 ? (
         <WorkflowList workflows={workflows} {...props} deleteWorkflow={null} />
       ) : (
-        <div className='placeholder'><Trans id="workflow.workflowswillappearhere">Workflows shared with you as collaborator will appear here</Trans> ~ ༼ つ ◕_◕ ༽つ</div>
+        <div className='placeholder'><Trans id='workflow.workflowswillappearhere'>Workflows shared with you as collaborator will appear here</Trans> ~ ༼ つ ◕_◕ ༽つ</div>
       )}
     </TabPane>
   )
@@ -74,14 +73,13 @@ const TemplatesWorkflowList = React.memo(function TemplatesWorkflowList ({ workf
       {workflows.length > 0 ? (
         <WorkflowList workflows={workflows} {...props} deleteWorkflow={null} />
       ) : (
-        <div className='placeholder'><Trans id="workflow.publishenewrecipes">Publishe new recipes via the Django admin</Trans> </div>
+        <div className='placeholder'><Trans id='workflow.publishenewrecipes'>Publishe new recipes via the Django admin</Trans> </div>
       )}
     </TabPane>
   )
 })
 
 function WorkflowLists ({ workflows, deleteWorkflow, duplicateWorkflow, openShareModal, i18n }) {
-
   const [activeTab, setActiveTab] = useState(workflows.owned.length ? 'owned' : 'templates')
   const [comparator, setComparator] = useState('last_update|descending')
   const tabProps = (name) => ({
@@ -110,9 +108,9 @@ function WorkflowLists ({ workflows, deleteWorkflow, duplicateWorkflow, openShar
     <div className='workflow-lists'>
       <div className='nav'>
         <ul className='workflow-tabs' id='workflow-tabs' role='tablist'>
-          <Tab {...tabProps('owned')}><Trans id="workflow.myworkflows">My workflows</Trans></Tab>
-          <Tab {...tabProps('shared')}><Trans id="workflow.sharedwithme">Shared with me</Trans></Tab>
-          <Tab {...tabProps('templates')}><Trans id="workflow.recipes">Recipes</Trans></Tab>
+          <Tab {...tabProps('owned')}><Trans id='workflow.myworkflows'>My workflows</Trans></Tab>
+          <Tab {...tabProps('shared')}><Trans id='workflow.sharedwithme'>Shared with me</Trans></Tab>
+          <Tab {...tabProps('templates')}><Trans id='workflow.recipes'>Recipes</Trans></Tab>
         </ul>
         <SortMenu comparator={comparator} setComparator={setComparator} />
       </div>
@@ -125,10 +123,10 @@ function WorkflowLists ({ workflows, deleteWorkflow, duplicateWorkflow, openShar
   )
 }
 WorkflowLists.PropTypes = {
-   i18n: PropTypes.shape({
-      // i18n object injected by LinguiJS withI18n()
-      _: PropTypes.func.isRequired
-    }),
+  i18n: PropTypes.shape({
+    // i18n object injected by LinguiJS withI18n()
+    _: PropTypes.func.isRequired
+  }),
   workflows: PropTypes.shape({
     owned: WorkflowListPropType.isRequired,
     shared: WorkflowListPropType.isRequired,
@@ -139,4 +137,3 @@ WorkflowLists.PropTypes = {
   openShareModal: PropTypes.func.isRequired // func(id) => undefined
 }
 export default React.memo(withI18n()(WorkflowLists))
-

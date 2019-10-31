@@ -1,6 +1,6 @@
 import io
 import unittest
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 import aiohttp
 import aiohttp.client
 from asgiref.sync import async_to_sync
@@ -40,7 +40,7 @@ class fake_spooled_data_from_url:
 
 
 def mock_text_response(text, content_type):
-    response = requests.Response()
+    response = Mock(aiohttp.ClientResponse)
     response.encoding = "utf-8"
     response.headers["Content-Type"] = content_type
     # In requests, `response.raw` does not behave like a file-like object
@@ -53,7 +53,7 @@ def mock_text_response(text, content_type):
 
 
 def mock_bytes_response(b, content_type):
-    response = requests.Response()
+    response = Mock(aiohttp.ClientResponse)
     response.headers["Content-Type"] = content_type
     response.raw = io.BytesIO(b)
     response.reason = "OK"

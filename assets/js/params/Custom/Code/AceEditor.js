@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import AceEditor from 'react-ace/lib/ace'
 import memoize from 'memoize-one'
 
-
 import 'brace/mode/python'
 import 'brace/theme/xcode'
 

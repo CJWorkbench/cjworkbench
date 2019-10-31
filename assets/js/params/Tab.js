@@ -2,9 +2,8 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import ReactSelect from './common/react-select'
 import { MaybeLabel } from './util'
-import { Trans,t } from '@lingui/macro'
-import { withI18n,I18n } from '@lingui/react'
-
+import { t } from '@lingui/macro'
+import { withI18n } from '@lingui/react'
 
 export class TabParam extends React.PureComponent {
   static propTypes = {
@@ -51,4 +50,4 @@ export class TabParam extends React.PureComponent {
     )
   }
 }
-export default withI18n()(TabParam);
+export default withI18n()(TabParam)

@@ -12,7 +12,7 @@ export default function Modules ({ modules, addModule, search }) {
   if (!foundModules.length) {
     return (
       <div className='modules no-results'>
-        <p><Trans id="workflow.nodataconnectors">No data connectors match your search.</Trans></p>
+        <p><Trans id='workflow.nodataconnectors'>No data connectors match your search.</Trans></p>
       </div>
     )
   } else {

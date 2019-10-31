@@ -398,6 +398,24 @@ class FetchTests(unittest.TestCase):
             arrow_table = pyarrow.parquet.read_table(str(outfile), use_threads=False)
             assert_arrow_table_equals(arrow_table, {"A": [1, 2, 3]})
 
+    @override_settings(MAX_ROWS_PER_TABLE=2)
+    def test_fetch_truncate(self):
+        def fetch(params):
+            return pd.DataFrame({"A": [1, 2, 3]})
+
+        with tempfile_context(dir=self.basedir) as outfile:
+            result = self._test_fetch(fetch, output_filename=outfile.name)
+            self.assertEqual(
+                result.errors,
+                [
+                    RenderError(
+                        I18nMessage.TODO_i18n("Truncated output from 3 rows to 2")
+                    )
+                ],
+            )
+            arrow_table = pyarrow.parquet.read_table(str(outfile), use_threads=False)
+            assert_arrow_table_equals(arrow_table, {"A": [1, 2]})
+
     def test_fetch_return_error(self):
         async def fetch(params):
             return "bad things"

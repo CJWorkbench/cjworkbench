@@ -1,8 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { ConditionPropType } from './PropTypes'
-import { Trans,t } from '@lingui/macro'
-import { withI18n,I18n } from '@lingui/react'
+import { t } from '@lingui/macro'
+import { withI18n } from '@lingui/react'
 
 const ValidConditions = {
   text: [
@@ -29,7 +29,7 @@ const ValidConditions = {
     { name: 'number_is_less_than_or_equals', label: t('condition.Numberislessthanorequals')`Number is less than or equals` }
   ],
   any: [
-    { name: 'cell_is_empty', label:  t('condition.Cellisnull')`Cell is null`},
+    { name: 'cell_is_empty', label: t('condition.Cellisnull')`Cell is null` },
     { name: 'cell_is_not_empty', label: t('condition.Cellisnotnull')`Cell is not null` },
     { name: 'cell_is_empty_str_or_null', label: t('condition.Cellisempty')`Cell is empty` },
     { name: 'cell_is_not_empty_str_or_null', label: t('condition.Cellisnotempty')`Cell is not empty` }
@@ -37,7 +37,7 @@ const ValidConditions = {
 }
 
 export class Condition extends React.PureComponent {
-  static propTypes = { 
+  static propTypes = {
     i18n: PropTypes.shape({
       // i18n object injected by LinguiJS withI18n()
       _: PropTypes.func.isRequired
@@ -54,7 +54,7 @@ export class Condition extends React.PureComponent {
   }
 
   render () {
-    const { isReadOnly, name, value, dtype } = this.props
+    const { isReadOnly, name, value, i18n, dtype } = this.props
     const options = ValidConditions[dtype].concat(ValidConditions.any)
 
     return (
@@ -64,7 +64,7 @@ export class Condition extends React.PureComponent {
         value={value}
         onChange={this.handleChange}
       >
-        <option value=''> { this.props.i18n._(t('workbench.selectcondition')`Select condition`) }</option>
+        <option value=''> {i18n._(t('workbench.selectcondition')`Select condition`)}</option>
         {options.map(({ name, label }) => (
           <option key={name} value={name}>{i18n._(label)}</option>
         ))}
@@ -73,4 +73,4 @@ export class Condition extends React.PureComponent {
   }
 }
 
-export default withI18n()(Condition);
+export default withI18n()(Condition)

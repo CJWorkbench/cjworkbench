@@ -1,7 +1,6 @@
 /* globals describe, expect, it, jest */
 import React from 'react'
 import ConnectedPopup, { Popup } from './Popup'
-import { mount } from 'enzyme'
 import { Provider } from 'react-redux'
 import { mockStore } from '../../test-utils'
 import { generateSlug } from '../../utils'

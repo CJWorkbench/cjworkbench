@@ -14,8 +14,8 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 import os
 import sys
 import json
-from json.decoder import JSONDecodeError
 from os.path import abspath, dirname, join, normpath
+from typing import Dict, Optional
 from server.settingsutils import workbench_user_display
 from cjworkbench.i18n import default_locale, supported_locales
 
@@ -340,7 +340,10 @@ ACCOUNT_SIGNUP_FORM_CLASS = "cjworkbench.forms.signup.WorkbenchSignupForm"
 AUTHENTICATION_BACKENDS = ["allauth.account.auth_backends.AuthenticationBackend"]
 
 # Third party services
-OAUTH_SERVICES = {}  # service => parameters. See requests-oauthlib docs
+OAUTH_SERVICES: Dict[str, Dict[str, Optional[str]]] = {}
+"""
+service => parameters. See requests-oauthlib docs
+"""
 
 
 def _maybe_load_oauth_service(
@@ -434,14 +437,13 @@ if os.path.isfile(CJW_SOCIALACCOUNT_SECRETS_PATH):
         CJW_SOCIALACCOUNT_SECRETS = json.loads(
             open(CJW_SOCIALACCOUNT_SECRETS_PATH, "r").read()
         )
-    except JSONDecodeError:
+    except ValueError:
         CJW_SOCIALACCOUNT_SECRETS = []
 
     for provider in CJW_SOCIALACCOUNT_SECRETS:
 
         INSTALLED_APPS.append("allauth.socialaccount.providers." + provider["provider"])
 else:
-
     CJW_SOCIALACCOUNT_SECRETS = []
 
 

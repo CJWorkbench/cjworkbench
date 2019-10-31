@@ -4,8 +4,8 @@ import memoize from 'memoize-one'
 import { clusterByKey, clusterByKnn } from 'clustring'
 import fingerprint from 'clustring/key/fingerprint'
 import levenshtein from 'clustring/knn/levenshtein'
-import { Trans,t } from '@lingui/macro'
-import { withI18n,I18n } from '@lingui/react'
+import { Trans, t } from '@lingui/macro'
+import { withI18n } from '@lingui/react'
 
 const Algorithms = [
   {
@@ -18,12 +18,12 @@ const Algorithms = [
   },
   {
     name: 'levenshtein',
-    selectName: t('RefineClusterer.fingerprint')`Edit distance`,
-    description: t('RefineClusterer.fingerprint')`Groups values if the number of characters added, edited or deleted to get from one value to the other is equal or inferior to \'Maximum distance\'. For instance, the distance between "Cafés" and "cafe" is 3.`,
+    selectName: t('RefineClusterer.editDistance')`Edit distance`,
+    description: t('RefineClusterer.groupsValues')`Groups values if the number of characters added, edited or deleted to get from one value to the other is equal or inferior to \'Maximum distance\'. For instance, the distance between "Cafés" and "cafe" is 3.`,
     defaultOptions: { maxDistance: 3 },
     optionFields: (handlers, options) => (
       <div className='form-group'>
-        <label htmlFor='refine-clusterer-max-distance'><Trans id="refineclusterer.maxdistance">Maximum distance</Trans></label>
+        <label htmlFor='refine-clusterer-max-distance'><Trans id='refineclusterer.maxdistance'>Maximum distance</Trans></label>
         <input className='form-control' id='refine-clusterer-max-distance' type='number' required name='maxDistance' size='2' value={options.maxDistance} min='1' max='999' placeholder='3' {...handlers} />
       </div>
     ),
@@ -33,7 +33,7 @@ const Algorithms = [
 
 export class RefineClusterer extends React.PureComponent {
   static propTypes = {
-     i18n: PropTypes.shape({
+    i18n: PropTypes.shape({
       // i18n object injected by LinguiJS withI18n()
       _: PropTypes.func.isRequired
     }),
@@ -176,7 +176,7 @@ export class RefineClusterer extends React.PureComponent {
 
     return (
       <div className='refine-clusterer'>
-        <legend><Trans id="refineclustered.method">Method</Trans></legend>
+        <legend><Trans id='refineclustered.method'>Method</Trans></legend>
         <div className='method'>
           <div className='method-select'>
             {this.renderSelect()}
@@ -192,4 +192,4 @@ export class RefineClusterer extends React.PureComponent {
     )
   }
 }
-export default withI18n()(RefineClusterer);
+export default withI18n()(RefineClusterer)

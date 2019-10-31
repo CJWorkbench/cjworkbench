@@ -5,7 +5,7 @@ import Groups from './index'
 import { mountWithI18n } from '../../../i18n/test-utils.js'
 
 describe('Groups', () => {
-  const wrapper = (extraProps = {}) => mountWithI18n (
+  const wrapper = (extraProps = {}) => mountWithI18n(
     <Groups
       isReadOnly={false}
       name='groups'

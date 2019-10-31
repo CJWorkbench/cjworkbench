@@ -2,7 +2,6 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Trans } from '@lingui/macro'
 
-
 export default class LessonNav extends React.PureComponent {
   static propTypes = {
     currentSectionIndex: PropTypes.number.isRequired, // what the user is reading

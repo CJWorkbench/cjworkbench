@@ -4,8 +4,8 @@ import PropTypes from 'prop-types'
 import ReactSelect from './common/react-select'
 import { components } from 'react-select'
 import { MaybeLabel } from './util'
-import { Trans,t } from '@lingui/macro'
-import { withI18n,I18n } from '@lingui/react'
+import { t } from '@lingui/macro'
+import { withI18n } from '@lingui/react'
 
 class MenuList extends React.PureComponent {
   handleClickSelectAll = () => {
@@ -125,4 +125,4 @@ export class Multicolumn extends React.PureComponent {
     )
   }
 }
- export default withI18n()(Multicolumn);
+export default withI18n()(Multicolumn)

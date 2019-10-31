@@ -2,7 +2,7 @@
 import React from 'react'
 // import { mount } from 'enzyme'
 import AclEntry from './AclEntry'
-import { shallowWithI18n, mountWithI18n } from '../i18n/test-utils'
+import { mountWithI18n } from '../i18n/test-utils'
 
 describe('AclEntry', () => {
   // We mount() because we're testing both Role and AclEntry together.

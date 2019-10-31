@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import LessonStep from './LessonStep'
 import { Trans } from '@lingui/macro'
 
-
 export default class LessonSection extends React.PureComponent {
   static ropTypes = {
     title: PropTypes.string.isRequired,

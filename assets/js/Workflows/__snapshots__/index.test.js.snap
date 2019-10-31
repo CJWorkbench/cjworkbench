@@ -101,188 +101,48 @@ exports[`Workflow list page renders correctly 1`] = `
   <div
     className="workflows-page"
   >
-    <WithI18n
+    <Navbar
       user={
         Object {
           "id": 1,
         }
       }
     >
-      <I18n
-        update={true}
-        withHash={true}
-      >
-        <Navbar
-          i18n={
-            Object {
-              "_": [Function],
-              "_activeLanguageData": Object {
-                "plurals": [Function],
-              },
-              "_activeMessages": Object {},
-              "_catalogs": Object {
-                "en": Object {
-                  "languageData": Object {},
-                  "messages": Object {},
-                },
-              },
-              "_dev": Object {
-                "compile": [Function],
-                "loadLanguageData": [Function],
-              },
-              "_language": "en",
-              "_locales": undefined,
-              "_missing": undefined,
-              "plural": [Function],
-              "select": [Function],
-              "selectOrdinal": [Function],
-              "t": [Function],
-            }
-          }
-          user={
-            Object {
-              "id": 1,
-            }
-          }
+      <div>
+        <nav
+          className="navbar"
         >
-          <div>
-            <nav
-              className="navbar"
+          <div
+            className="logo"
+          >
+            <img
+              className="logo"
+              src="undefinedimages/logo.svg"
+            />
+            <img
+              className="logo-text"
+              src="undefinedimages/logo-text-dark.svg"
+            />
+          </div>
+          <div
+            className="links"
+          >
+            <a
+              className="inactive"
+              href="/workflows"
             >
-              <div
-                className="logo"
-              >
-                <img
-                  className="logo"
-                  src="undefinedimages/logo.svg"
-                />
-                <img
-                  className="logo-text"
-                  src="undefinedimages/logo-text-dark.svg"
-                />
-              </div>
-              <div
-                className="links"
-              >
-                <a
-                  className="inactive"
-                  href="/workflows"
-                >
-                  <WithI18n
-                    defaults="WORKFLOWS"
-                    description="This is used in navigation bar. It should be all-caps for styling reasons."
-                    id="workflows.navbar.workflows"
-                  >
-                    <I18n
-                      update={true}
-                      withHash={true}
-                    >
-                      <Trans
-                        defaults="WORKFLOWS"
-                        description="This is used in navigation bar. It should be all-caps for styling reasons."
-                        i18n={
-                          Object {
-                            "_": [Function],
-                            "_activeLanguageData": Object {
-                              "plurals": [Function],
-                            },
-                            "_activeMessages": Object {},
-                            "_catalogs": Object {
-                              "en": Object {
-                                "languageData": Object {},
-                                "messages": Object {},
-                              },
-                            },
-                            "_dev": Object {
-                              "compile": [Function],
-                              "loadLanguageData": [Function],
-                            },
-                            "_language": "en",
-                            "_locales": undefined,
-                            "_missing": undefined,
-                            "plural": [Function],
-                            "select": [Function],
-                            "selectOrdinal": [Function],
-                            "t": [Function],
-                          }
-                        }
-                        id="workflows.navbar.workflows"
-                      >
-                        <Render
-                          value="workflows.navbar.workflows"
-                        >
-                          workflows.navbar.workflows
-                        </Render>
-                      </Trans>
-                    </I18n>
-                  </WithI18n>
-                </a>
-                <a
-                  className="active"
-                  href={null}
-                >
-                  <WithI18n
-                    defaults="TRAINING"
-                    description="This is used in navigation bar. It should be all-caps for styling reasons."
-                    id="workflows.navbar.training"
-                  >
-                    <I18n
-                      update={true}
-                      withHash={true}
-                    >
-                      <Trans
-                        defaults="TRAINING"
-                        description="This is used in navigation bar. It should be all-caps for styling reasons."
-                        i18n={
-                          Object {
-                            "_": [Function],
-                            "_activeLanguageData": Object {
-                              "plurals": [Function],
-                            },
-                            "_activeMessages": Object {},
-                            "_catalogs": Object {
-                              "en": Object {
-                                "languageData": Object {},
-                                "messages": Object {},
-                              },
-                            },
-                            "_dev": Object {
-                              "compile": [Function],
-                              "loadLanguageData": [Function],
-                            },
-                            "_language": "en",
-                            "_locales": undefined,
-                            "_missing": undefined,
-                            "plural": [Function],
-                            "select": [Function],
-                            "selectOrdinal": [Function],
-                            "t": [Function],
-                          }
-                        }
-                        id="workflows.navbar.training"
-                      >
-                        <Render
-                          value="workflows.navbar.training"
-                        >
-                          workflows.navbar.training
-                        </Render>
-                      </Trans>
-                    </I18n>
-                  </WithI18n>
-                </a>
-              </div>
               <WithI18n
-                user={
-                  Object {
-                    "id": 1,
-                  }
-                }
+                defaults="WORKFLOWS"
+                description="This is used in navigation bar. It should be all-caps for styling reasons."
+                id="workflows.navbar.workflows"
               >
                 <I18n
                   update={true}
                   withHash={true}
                 >
-                  <WfHamburgerMenu
+                  <Trans
+                    defaults="WORKFLOWS"
+                    description="This is used in navigation bar. It should be all-caps for styling reasons."
                     i18n={
                       Object {
                         "_": [Function],
@@ -309,93 +169,194 @@ exports[`Workflow list page renders correctly 1`] = `
                         "t": [Function],
                       }
                     }
-                    user={
-                      Object {
-                        "id": 1,
-                      }
-                    }
+                    id="workflows.navbar.workflows"
                   >
-                    <WithI18n>
-                      <I18n
-                        update={true}
-                        withHash={true}
-                      >
-                        <Memo(LocaleSwitcher)
-                          i18n={
-                            Object {
-                              "_": [Function],
-                              "_activeLanguageData": Object {
-                                "plurals": [Function],
-                              },
-                              "_activeMessages": Object {},
-                              "_catalogs": Object {
-                                "en": Object {
-                                  "languageData": Object {},
-                                  "messages": Object {},
-                                },
-                              },
-                              "_dev": Object {
-                                "compile": [Function],
-                                "loadLanguageData": [Function],
-                              },
-                              "_language": "en",
-                              "_locales": undefined,
-                              "_missing": undefined,
-                              "plural": [Function],
-                              "select": [Function],
-                              "selectOrdinal": [Function],
-                              "t": [Function],
-                            }
-                          }
-                        />
-                      </I18n>
-                    </WithI18n>
-                    <UncontrolledDropdown>
-                      <Dropdown
-                        isOpen={false}
-                        toggle={[Function]}
-                      >
-                        <Manager
-                          tag={false}
-                        >
-                          <div
-                            className="dropdown"
-                          >
-                            <DropdownToggle
-                              className="context-button"
-                              title="menu"
-                            >
-                              <Reference>
-                                <InnerReference
-                                  setReferenceNode={[Function]}
-                                >
-                                  <button
-                                    aria-expanded={false}
-                                    className="btn btn-secondary context-button"
-                                    disabled={false}
-                                    onClick={[Function]}
-                                    title="menu"
-                                  >
-                                    <i
-                                      className="icon-more"
-                                    />
-                                  </button>
-                                </InnerReference>
-                              </Reference>
-                            </DropdownToggle>
-                            <DropdownMenu />
-                          </div>
-                        </Manager>
-                      </Dropdown>
-                    </UncontrolledDropdown>
-                  </WfHamburgerMenu>
+                    <Render
+                      value="workflows.navbar.workflows"
+                    >
+                      workflows.navbar.workflows
+                    </Render>
+                  </Trans>
                 </I18n>
               </WithI18n>
-            </nav>
+            </a>
+            <a
+              className="active"
+              href={null}
+            >
+              <WithI18n
+                defaults="TRAINING"
+                description="This is used in navigation bar. It should be all-caps for styling reasons."
+                id="workflows.navbar.training"
+              >
+                <I18n
+                  update={true}
+                  withHash={true}
+                >
+                  <Trans
+                    defaults="TRAINING"
+                    description="This is used in navigation bar. It should be all-caps for styling reasons."
+                    i18n={
+                      Object {
+                        "_": [Function],
+                        "_activeLanguageData": Object {
+                          "plurals": [Function],
+                        },
+                        "_activeMessages": Object {},
+                        "_catalogs": Object {
+                          "en": Object {
+                            "languageData": Object {},
+                            "messages": Object {},
+                          },
+                        },
+                        "_dev": Object {
+                          "compile": [Function],
+                          "loadLanguageData": [Function],
+                        },
+                        "_language": "en",
+                        "_locales": undefined,
+                        "_missing": undefined,
+                        "plural": [Function],
+                        "select": [Function],
+                        "selectOrdinal": [Function],
+                        "t": [Function],
+                      }
+                    }
+                    id="workflows.navbar.training"
+                  >
+                    <Render
+                      value="workflows.navbar.training"
+                    >
+                      workflows.navbar.training
+                    </Render>
+                  </Trans>
+                </I18n>
+              </WithI18n>
+            </a>
           </div>
-        </Navbar>
-      </I18n>
-    </WithI18n>
+          <WithI18n
+            user={
+              Object {
+                "id": 1,
+              }
+            }
+          >
+            <I18n
+              update={true}
+              withHash={true}
+            >
+              <WfHamburgerMenu
+                i18n={
+                  Object {
+                    "_": [Function],
+                    "_activeLanguageData": Object {
+                      "plurals": [Function],
+                    },
+                    "_activeMessages": Object {},
+                    "_catalogs": Object {
+                      "en": Object {
+                        "languageData": Object {},
+                        "messages": Object {},
+                      },
+                    },
+                    "_dev": Object {
+                      "compile": [Function],
+                      "loadLanguageData": [Function],
+                    },
+                    "_language": "en",
+                    "_locales": undefined,
+                    "_missing": undefined,
+                    "plural": [Function],
+                    "select": [Function],
+                    "selectOrdinal": [Function],
+                    "t": [Function],
+                  }
+                }
+                user={
+                  Object {
+                    "id": 1,
+                  }
+                }
+              >
+                <WithI18n>
+                  <I18n
+                    update={true}
+                    withHash={true}
+                  >
+                    <Memo(LocaleSwitcher)
+                      i18n={
+                        Object {
+                          "_": [Function],
+                          "_activeLanguageData": Object {
+                            "plurals": [Function],
+                          },
+                          "_activeMessages": Object {},
+                          "_catalogs": Object {
+                            "en": Object {
+                              "languageData": Object {},
+                              "messages": Object {},
+                            },
+                          },
+                          "_dev": Object {
+                            "compile": [Function],
+                            "loadLanguageData": [Function],
+                          },
+                          "_language": "en",
+                          "_locales": undefined,
+                          "_missing": undefined,
+                          "plural": [Function],
+                          "select": [Function],
+                          "selectOrdinal": [Function],
+                          "t": [Function],
+                        }
+                      }
+                    />
+                  </I18n>
+                </WithI18n>
+                <UncontrolledDropdown>
+                  <Dropdown
+                    isOpen={false}
+                    toggle={[Function]}
+                  >
+                    <Manager
+                      tag={false}
+                    >
+                      <div
+                        className="dropdown"
+                      >
+                        <DropdownToggle
+                          className="context-button"
+                          title="menu"
+                        >
+                          <Reference>
+                            <InnerReference
+                              setReferenceNode={[Function]}
+                            >
+                              <button
+                                aria-expanded={false}
+                                className="btn btn-secondary context-button"
+                                disabled={false}
+                                onClick={[Function]}
+                                title="menu"
+                              >
+                                <i
+                                  className="icon-more"
+                                />
+                              </button>
+                            </InnerReference>
+                          </Reference>
+                        </DropdownToggle>
+                        <DropdownMenu />
+                      </div>
+                    </Manager>
+                  </Dropdown>
+                </UncontrolledDropdown>
+              </WfHamburgerMenu>
+            </I18n>
+          </WithI18n>
+        </nav>
+      </div>
+    </Navbar>
     <a
       className="lesson-banner mx-auto"
       href="/lessons/"
@@ -1037,9 +998,62 @@ exports[`Workflow list page renders correctly 1`] = `
                                         </span>
                                       </li>
                                       <li>
-                                        Updated
-                                         
-                                        {years}y ago
+                                        <WithI18n
+                                          defaults="Updated {0}"
+                                          id="workflows.workflowmetadata.update"
+                                          values={
+                                            Object {
+                                              "0": "{years}y ago",
+                                            }
+                                          }
+                                        >
+                                          <I18n
+                                            update={true}
+                                            withHash={true}
+                                          >
+                                            <Trans
+                                              defaults="Updated {0}"
+                                              i18n={
+                                                Object {
+                                                  "_": [Function],
+                                                  "_activeLanguageData": Object {
+                                                    "plurals": [Function],
+                                                  },
+                                                  "_activeMessages": Object {},
+                                                  "_catalogs": Object {
+                                                    "en": Object {
+                                                      "languageData": Object {},
+                                                      "messages": Object {},
+                                                    },
+                                                  },
+                                                  "_dev": Object {
+                                                    "compile": [Function],
+                                                    "loadLanguageData": [Function],
+                                                  },
+                                                  "_language": "en",
+                                                  "_locales": undefined,
+                                                  "_missing": undefined,
+                                                  "plural": [Function],
+                                                  "select": [Function],
+                                                  "selectOrdinal": [Function],
+                                                  "t": [Function],
+                                                }
+                                              }
+                                              id="workflows.workflowmetadata.update"
+                                              values={
+                                                Object {
+                                                  "0": "{years}y ago",
+                                                }
+                                              }
+                                            >
+                                              <Render
+                                                value="workflows.workflowmetadata.update"
+                                              >
+                                                workflows.workflowmetadata.update
+                                              </Render>
+                                            </Trans>
+                                          </I18n>
+                                        </WithI18n>
                                       </li>
                                       <li>
                                         <span
@@ -1207,9 +1221,62 @@ exports[`Workflow list page renders correctly 1`] = `
                                         </span>
                                       </li>
                                       <li>
-                                        Updated
-                                         
-                                        {years}y ago
+                                        <WithI18n
+                                          defaults="Updated {0}"
+                                          id="workflows.workflowmetadata.update"
+                                          values={
+                                            Object {
+                                              "0": "{years}y ago",
+                                            }
+                                          }
+                                        >
+                                          <I18n
+                                            update={true}
+                                            withHash={true}
+                                          >
+                                            <Trans
+                                              defaults="Updated {0}"
+                                              i18n={
+                                                Object {
+                                                  "_": [Function],
+                                                  "_activeLanguageData": Object {
+                                                    "plurals": [Function],
+                                                  },
+                                                  "_activeMessages": Object {},
+                                                  "_catalogs": Object {
+                                                    "en": Object {
+                                                      "languageData": Object {},
+                                                      "messages": Object {},
+                                                    },
+                                                  },
+                                                  "_dev": Object {
+                                                    "compile": [Function],
+                                                    "loadLanguageData": [Function],
+                                                  },
+                                                  "_language": "en",
+                                                  "_locales": undefined,
+                                                  "_missing": undefined,
+                                                  "plural": [Function],
+                                                  "select": [Function],
+                                                  "selectOrdinal": [Function],
+                                                  "t": [Function],
+                                                }
+                                              }
+                                              id="workflows.workflowmetadata.update"
+                                              values={
+                                                Object {
+                                                  "0": "{years}y ago",
+                                                }
+                                              }
+                                            >
+                                              <Render
+                                                value="workflows.workflowmetadata.update"
+                                              >
+                                                workflows.workflowmetadata.update
+                                              </Render>
+                                            </Trans>
+                                          </I18n>
+                                        </WithI18n>
                                       </li>
                                       <li>
                                         <span
@@ -1377,9 +1444,62 @@ exports[`Workflow list page renders correctly 1`] = `
                                         </span>
                                       </li>
                                       <li>
-                                        Updated
-                                         
-                                        {years}y ago
+                                        <WithI18n
+                                          defaults="Updated {0}"
+                                          id="workflows.workflowmetadata.update"
+                                          values={
+                                            Object {
+                                              "0": "{years}y ago",
+                                            }
+                                          }
+                                        >
+                                          <I18n
+                                            update={true}
+                                            withHash={true}
+                                          >
+                                            <Trans
+                                              defaults="Updated {0}"
+                                              i18n={
+                                                Object {
+                                                  "_": [Function],
+                                                  "_activeLanguageData": Object {
+                                                    "plurals": [Function],
+                                                  },
+                                                  "_activeMessages": Object {},
+                                                  "_catalogs": Object {
+                                                    "en": Object {
+                                                      "languageData": Object {},
+                                                      "messages": Object {},
+                                                    },
+                                                  },
+                                                  "_dev": Object {
+                                                    "compile": [Function],
+                                                    "loadLanguageData": [Function],
+                                                  },
+                                                  "_language": "en",
+                                                  "_locales": undefined,
+                                                  "_missing": undefined,
+                                                  "plural": [Function],
+                                                  "select": [Function],
+                                                  "selectOrdinal": [Function],
+                                                  "t": [Function],
+                                                }
+                                              }
+                                              id="workflows.workflowmetadata.update"
+                                              values={
+                                                Object {
+                                                  "0": "{years}y ago",
+                                                }
+                                              }
+                                            >
+                                              <Render
+                                                value="workflows.workflowmetadata.update"
+                                              >
+                                                workflows.workflowmetadata.update
+                                              </Render>
+                                            </Trans>
+                                          </I18n>
+                                        </WithI18n>
                                       </li>
                                       <li>
                                         <span
@@ -1618,9 +1738,62 @@ exports[`Workflow list page renders correctly 1`] = `
                                         </span>
                                       </li>
                                       <li>
-                                        Updated
-                                         
-                                        {years}y ago
+                                        <WithI18n
+                                          defaults="Updated {0}"
+                                          id="workflows.workflowmetadata.update"
+                                          values={
+                                            Object {
+                                              "0": "{years}y ago",
+                                            }
+                                          }
+                                        >
+                                          <I18n
+                                            update={true}
+                                            withHash={true}
+                                          >
+                                            <Trans
+                                              defaults="Updated {0}"
+                                              i18n={
+                                                Object {
+                                                  "_": [Function],
+                                                  "_activeLanguageData": Object {
+                                                    "plurals": [Function],
+                                                  },
+                                                  "_activeMessages": Object {},
+                                                  "_catalogs": Object {
+                                                    "en": Object {
+                                                      "languageData": Object {},
+                                                      "messages": Object {},
+                                                    },
+                                                  },
+                                                  "_dev": Object {
+                                                    "compile": [Function],
+                                                    "loadLanguageData": [Function],
+                                                  },
+                                                  "_language": "en",
+                                                  "_locales": undefined,
+                                                  "_missing": undefined,
+                                                  "plural": [Function],
+                                                  "select": [Function],
+                                                  "selectOrdinal": [Function],
+                                                  "t": [Function],
+                                                }
+                                              }
+                                              id="workflows.workflowmetadata.update"
+                                              values={
+                                                Object {
+                                                  "0": "{years}y ago",
+                                                }
+                                              }
+                                            >
+                                              <Render
+                                                value="workflows.workflowmetadata.update"
+                                              >
+                                                workflows.workflowmetadata.update
+                                              </Render>
+                                            </Trans>
+                                          </I18n>
+                                        </WithI18n>
                                       </li>
                                       <li>
                                         <span
@@ -1788,9 +1961,62 @@ exports[`Workflow list page renders correctly 1`] = `
                                         </span>
                                       </li>
                                       <li>
-                                        Updated
-                                         
-                                        {years}y ago
+                                        <WithI18n
+                                          defaults="Updated {0}"
+                                          id="workflows.workflowmetadata.update"
+                                          values={
+                                            Object {
+                                              "0": "{years}y ago",
+                                            }
+                                          }
+                                        >
+                                          <I18n
+                                            update={true}
+                                            withHash={true}
+                                          >
+                                            <Trans
+                                              defaults="Updated {0}"
+                                              i18n={
+                                                Object {
+                                                  "_": [Function],
+                                                  "_activeLanguageData": Object {
+                                                    "plurals": [Function],
+                                                  },
+                                                  "_activeMessages": Object {},
+                                                  "_catalogs": Object {
+                                                    "en": Object {
+                                                      "languageData": Object {},
+                                                      "messages": Object {},
+                                                    },
+                                                  },
+                                                  "_dev": Object {
+                                                    "compile": [Function],
+                                                    "loadLanguageData": [Function],
+                                                  },
+                                                  "_language": "en",
+                                                  "_locales": undefined,
+                                                  "_missing": undefined,
+                                                  "plural": [Function],
+                                                  "select": [Function],
+                                                  "selectOrdinal": [Function],
+                                                  "t": [Function],
+                                                }
+                                              }
+                                              id="workflows.workflowmetadata.update"
+                                              values={
+                                                Object {
+                                                  "0": "{years}y ago",
+                                                }
+                                              }
+                                            >
+                                              <Render
+                                                value="workflows.workflowmetadata.update"
+                                              >
+                                                workflows.workflowmetadata.update
+                                              </Render>
+                                            </Trans>
+                                          </I18n>
+                                        </WithI18n>
                                       </li>
                                       <li>
                                         <span
@@ -2013,9 +2239,62 @@ exports[`Workflow list page renders correctly 1`] = `
                                         </span>
                                       </li>
                                       <li>
-                                        Updated
-                                         
-                                        {years}y ago
+                                        <WithI18n
+                                          defaults="Updated {0}"
+                                          id="workflows.workflowmetadata.update"
+                                          values={
+                                            Object {
+                                              "0": "{years}y ago",
+                                            }
+                                          }
+                                        >
+                                          <I18n
+                                            update={true}
+                                            withHash={true}
+                                          >
+                                            <Trans
+                                              defaults="Updated {0}"
+                                              i18n={
+                                                Object {
+                                                  "_": [Function],
+                                                  "_activeLanguageData": Object {
+                                                    "plurals": [Function],
+                                                  },
+                                                  "_activeMessages": Object {},
+                                                  "_catalogs": Object {
+                                                    "en": Object {
+                                                      "languageData": Object {},
+                                                      "messages": Object {},
+                                                    },
+                                                  },
+                                                  "_dev": Object {
+                                                    "compile": [Function],
+                                                    "loadLanguageData": [Function],
+                                                  },
+                                                  "_language": "en",
+                                                  "_locales": undefined,
+                                                  "_missing": undefined,
+                                                  "plural": [Function],
+                                                  "select": [Function],
+                                                  "selectOrdinal": [Function],
+                                                  "t": [Function],
+                                                }
+                                              }
+                                              id="workflows.workflowmetadata.update"
+                                              values={
+                                                Object {
+                                                  "0": "{years}y ago",
+                                                }
+                                              }
+                                            >
+                                              <Render
+                                                value="workflows.workflowmetadata.update"
+                                              >
+                                                workflows.workflowmetadata.update
+                                              </Render>
+                                            </Trans>
+                                          </I18n>
+                                        </WithI18n>
                                       </li>
                                       <li>
                                         <span

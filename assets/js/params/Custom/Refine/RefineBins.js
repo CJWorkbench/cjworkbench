@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Trans,t } from '@lingui/macro'
-import { withI18n,I18n } from '@lingui/react'
+import { Trans, t } from '@lingui/macro'
+import { withI18n } from '@lingui/react'
 
 const numberFormat = new Intl.NumberFormat()
 
@@ -70,14 +70,14 @@ const RefineBin = withI18n()(class RefineBin extends React.PureComponent {
           <tr key={i} className='value'>
             <td className='value'>{value}</td>
             <td className='count'>{numberFormat.format(count)}</td>
-          </tr> 
+          </tr>
         ))}
       </>
     )
   }
-});
+})
 
- class RefineBins extends React.PureComponent {
+class RefineBins extends React.PureComponent {
   static propTypes = {
     bins: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string.isRequired, // editable by user
@@ -105,7 +105,7 @@ const RefineBin = withI18n()(class RefineBin extends React.PureComponent {
     if (bins.length === 0) {
       return (
         <div className='refine-bins'>
-          <div className='no-bins'><Trans id="workflow.refineBins.noclustersfound">No clusters found. Try different settings.</Trans></div>
+          <div className='no-bins'><Trans id='workflow.refineBins.noclustersfound'>No clusters found. Try different settings.</Trans></div>
         </div>
       )
     }
@@ -116,10 +116,10 @@ const RefineBin = withI18n()(class RefineBin extends React.PureComponent {
           <thead>
             <tr>
               <th className='is-selected' />
-              <th className='cluster-size'><Trans id="workflow.refinebin.clustesize">Cluster size</Trans></th>
-              <th className='value'><Trans id="workflow.refinebin.values">Values</Trans></th>
-              <th className='count'># <Trans id="workflow.refinebin.rows">rows</Trans></th>
-              <th className='new-value'><Trans id="workflow.refinebin.newvalue">New value</Trans></th>
+              <th className='cluster-size'><Trans id='workflow.refinebin.clustesize'>Cluster size</Trans></th>
+              <th className='value'><Trans id='workflow.refinebin.values'>Values</Trans></th>
+              <th className='count'># <Trans id='workflow.refinebin.rows'>rows</Trans></th>
+              <th className='new-value'><Trans id='workflow.refinebin.newvalue'>New value</Trans></th>
             </tr>
           </thead>
           <tbody>
@@ -131,4 +131,4 @@ const RefineBin = withI18n()(class RefineBin extends React.PureComponent {
   }
 }
 
-export default withI18n()(RefineBins);
+export default withI18n()(RefineBins)

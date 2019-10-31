@@ -23,7 +23,7 @@ describe('Gdrivefile', () => {
       close: jest.fn()
     }
 
-    return  mountWithI18n(
+    return mountWithI18n(
       <Gdrivefile
         createOauthAccessToken={jest.fn(() => Promise.resolve('access-token'))}
         isReadOnly={false}

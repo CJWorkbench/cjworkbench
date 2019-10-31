@@ -3,7 +3,7 @@ import React from 'react'
 // import { mount } from 'enzyme'
 import { tick } from '../../../test-utils'
 import RefineModal from './RefineModal'
-import {mountWithI18n} from '../../../i18n/test-utils.js'
+import { mountWithI18n } from '../../../i18n/test-utils.js'
 
 describe('RefineModal', () => {
   // These are kinda integration-test-y. See RefineClusterer.test.js and

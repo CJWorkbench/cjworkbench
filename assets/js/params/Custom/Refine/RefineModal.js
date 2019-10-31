@@ -5,8 +5,7 @@ import RefineClusterer from './RefineClusterer'
 import RefineClustererProgress from './RefineClustererProgress'
 import RefineStatus from './RefineStatus'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from '../../../components/Modal'
-import { Trans,t } from '@lingui/macro'
-import { withI18n,I18n } from '@lingui/react'
+import { Trans } from '@lingui/macro'
 
 export default class RefineModal extends React.PureComponent {
   static propTypes = {
@@ -63,7 +62,7 @@ export default class RefineModal extends React.PureComponent {
 
     return (
       <Modal className='refine-modal' size='lg' isOpen fade={false} toggle={onClose}>
-        <ModalHeader toggle={onClose}><Trans id="refinemodal.cluster">CLUSTER</Trans></ModalHeader>
+        <ModalHeader toggle={onClose}><Trans id='refinemodal.cluster'>CLUSTER</Trans></ModalHeader>
         <ModalBody>
           <RefineClusterer
             bucket={bucket}
@@ -80,7 +79,7 @@ export default class RefineModal extends React.PureComponent {
               name='close'
               className='action-button button-gray'
               onClick={onClose}
-            ><Trans id="refinemodal.cancel">Cancel</Trans>
+            ><Trans id='refinemodal.cancel'>Cancel</Trans>
             </button>
             <button
               name='submit'
@@ -88,7 +87,7 @@ export default class RefineModal extends React.PureComponent {
               className='action-button button-blue'
               onClick={this.handleSubmit}
               disabled={!canSubmit}
-            ><Trans id="refinemodal.mergeselected">Merge selected</Trans>
+            ><Trans id='refinemodal.mergeselected'>Merge selected</Trans>
             </button>
           </div>
         </ModalFooter>

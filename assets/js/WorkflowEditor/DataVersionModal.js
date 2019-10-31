@@ -5,8 +5,7 @@ import memoize from 'memoize-one'
 import { setDataVersionAction, setWfModuleNotificationsAction } from '../workflow-reducer'
 import { connect } from 'react-redux'
 import { createSelector } from 'reselect'
-import { I18n } from '@lingui/react'
-import { Trans,t } from '@lingui/macro'
+import { Trans } from '@lingui/macro'
 
 const Months = [
   // AP style
@@ -128,14 +127,14 @@ class NotificationsForm extends React.PureComponent {
     return (
       <form onSubmit={this.handleSubmit} className={`notifications ${className}`}>
         <div className='text'>
-          <p className='status'><i className={`icon ${iconAlert}`} /> <Trans id="workflow.alertsare">Alerts are</Trans> <strong>{checked ? ' on' : ' off'}</strong></p>
-          <p className='description'>{checked ? <Trans id="workflow.receiveemail">You will receive and email if the output of this module changes</Trans> : <Trans id="workflow.turnonalerts">Turn alerts ON to receive an email if the output of this module changes</Trans>}
+          <p className='status'><i className={`icon ${iconAlert}`} /> {checked ? <Trans id='workflow.alertsareon'>Alerts are <strong>on</strong></Trans> : <Trans id='workflow.alertsareoff'>Alerts are <strong>off</strong></Trans>}</p>
+          <p className='description'>{checked ? <Trans id='workflow.receiveemail'>You will receive and email if the output of this module changes</Trans> : <Trans id='workflow.turnonalerts'>Turn alerts ON to receive an email if the output of this module changes</Trans>}
           </p>
         </div>
         <div className='options'>
           <label>
             <input name='notifications-enabled' type='checkbox' checked={checked} onChange={this.handleChange} />
-            <span className='action'>{checked ? <Trans id="workflow.turnoff">Turn off</Trans> : <Trans id="workflow.turnon">Turn on</Trans>}</span>
+            <span className='action'>{checked ? <Trans id='workflow.turnoff'>Turn off</Trans> : <Trans id='workflow.turnon'>Turn on</Trans>}</span>
           </label>
         </div>
       </form>

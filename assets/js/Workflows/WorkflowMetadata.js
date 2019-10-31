@@ -4,10 +4,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { timeDifference } from '../utils'
-import { withI18n,I18n } from '@lingui/react'
-import { Trans,t } from '@lingui/macro'
+import { withI18n } from '@lingui/react'
+import { t, Trans } from '@lingui/macro'
 
-export class WorkflowMetadata extends React.Component {  
+export class WorkflowMetadata extends React.Component {
   static propTypes = {
     i18n: PropTypes.shape({
       // i18n object injected by LinguiJS withI18n()
@@ -43,10 +43,10 @@ export class WorkflowMetadata extends React.Component {
     const modalLink = !(this.props.workflow.read_only || this.props.workflow.is_anonymous) ? (
       <li>
         <span className='separator'>-</span>
-        
+
         <button type='button' className='public-private' title={this.props.i18n._(t('workflow.visibility.changeprivacy')`Change privacy`)} onClick={this.handleClickOpenShareModal}>
           {this.props.workflow.public ? this.props.i18n._(t('workflow.public')`public`) : this.props.i18n._(t('workflow.private')`private`)}
-        </button> 
+        </button>
       </li>
     ) : null
 
@@ -54,11 +54,14 @@ export class WorkflowMetadata extends React.Component {
       <ul className='metadata-container'>
         {attribution}
         <li>
-          {this.props.i18n._(t('workflow.updated')`Updated`)} {timeDifference(this.props.workflow.last_update, now, this.props.i18n)}
+          <Trans id='workflows.workflowmetadata.update'>
+          Updated
+            {timeDifference(this.props.workflow.last_update, now, this.props.i18n)}
+          </Trans>
         </li>
         {modalLink}
       </ul>
     )
   }
 }
-export default withI18n()(WorkflowMetadata);
+export default withI18n()(WorkflowMetadata)

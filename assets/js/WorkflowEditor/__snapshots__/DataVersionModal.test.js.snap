@@ -134,11 +134,7 @@ exports[`DataVersionModal matches snapshot 1`] = `
                             class="icon icon-no-notification"
                           />
                            
-                          workflow.alertsare
-                           
-                          <strong>
-                             off
-                          </strong>
+                          workflow.alertsareoff
                         </p>
                         <p
                           class="description"
@@ -313,29 +309,35 @@ exports[`DataVersionModal matches snapshot 1`] = `
                           />
                            
                           <WithI18n
-                            defaults="Alerts are"
-                            id="workflow.alertsare"
+                            components={
+                              Array [
+                                <strong />,
+                              ]
+                            }
+                            defaults="Alerts are <0>off</0>"
+                            id="workflow.alertsareoff"
                           >
                             <I18n
                               update={true}
                               withHash={true}
                             >
                               <Trans
-                                defaults="Alerts are"
-                                id="workflow.alertsare"
+                                components={
+                                  Array [
+                                    <strong />,
+                                  ]
+                                }
+                                defaults="Alerts are <0>off</0>"
+                                id="workflow.alertsareoff"
                               >
                                 <Render
-                                  value="workflow.alertsare"
+                                  value="workflow.alertsareoff"
                                 >
-                                  workflow.alertsare
+                                  workflow.alertsareoff
                                 </Render>
                               </Trans>
                             </I18n>
                           </WithI18n>
-                           
-                          <strong>
-                             off
-                          </strong>
                         </p>
                         <p
                           className="description"

@@ -9,12 +9,12 @@ import { logUserEvent } from '../utils'
 import CreateWorkflowButton from './CreateWorkflowButton'
 import WorkflowLists from './WorkflowLists'
 import { WorkflowListPropType } from './WorkflowList'
-import { Trans,t } from '@lingui/macro'
-import { withI18n,I18n } from '@lingui/react'
+import { t } from '@lingui/macro'
+import { withI18n } from '@lingui/react'
 
 export class Workflows extends React.Component {
   static propTypes = {
-     i18n: PropTypes.shape({
+    i18n: PropTypes.shape({
       // i18n object injected by LinguiJS withI18n()
       _: PropTypes.func.isRequired
     }),
@@ -191,16 +191,16 @@ export class Workflows extends React.Component {
         <Navbar user={user} />
         <a href='/lessons/' className='lesson-banner mx-auto'>
           <div>
-            <div className='content-1'>{this.props.i18n._(t('workflow.new')`NEW`)}</div>
+            <div className='content-1'>{i18n._(t('workflow.new')`NEW`)}</div>
             <div className='d-flex'>
               <span className='icon-star' />
-              <div className=' title-1 '>{this.props.i18n._(t('workflow.trainingtitle')`TRAINING`)}</div>
+              <div className=' title-1 '>{i18n._(t('workflow.trainingtitle')`TRAINING`)}</div>
             </div>
           </div>
-          <p>{this.props.i18n._(t('workflow.learnworkwithdata')`Learn how to work with data without coding`)}</p>
+          <p>{i18n._(t('workflow.learnworkwithdata')`Learn how to work with data without coding`)}</p>
         </a>
         <CreateWorkflowButton>
-          {this.props.i18n._(t('workflow.createworkflow')`Create Workflow`)}
+          {i18n._(t('workflow.createworkflow')`Create Workflow`)}
         </CreateWorkflowButton>
         <WorkflowLists
           workflows={workflows}
@@ -214,4 +214,4 @@ export class Workflows extends React.Component {
   }
 }
 
-export default withI18n()(Workflows);
+export default withI18n()(Workflows)

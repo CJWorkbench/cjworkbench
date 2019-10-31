@@ -1,8 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import ChartSeriesSelect from './ChartSeriesSelect'
-import { Trans,t } from '@lingui/macro'
-import { withI18n,I18n } from '@lingui/react'
+import { Trans, t } from '@lingui/macro'
+import { withI18n } from '@lingui/react'
 
 export class Multichartseries extends React.PureComponent {
   static propTypes = {
@@ -85,7 +85,7 @@ export class Multichartseries extends React.PureComponent {
     const { inputColumns, value, placeholder, isReadOnly, name, fieldId } = this.props
 
     if (inputColumns === null) {
-      return <p className='loading'><Trans id="index.loadingtext">Loading…</Trans></p>
+      return <p className='loading'><Trans id='index.loadingtext'>Loading…</Trans></p>
     }
 
     const pickedColumns = value.map(x => x.column)
@@ -141,4 +141,4 @@ export class Multichartseries extends React.PureComponent {
   }
 }
 
-export default withI18n()(Multichartseries);
+export default withI18n()(Multichartseries)

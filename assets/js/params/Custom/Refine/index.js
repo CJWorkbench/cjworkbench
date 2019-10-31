@@ -9,8 +9,7 @@ import { withFetchedData } from '../FetchedData'
 import AllNoneButtons from '../../common/AllNoneButtons'
 import FacetSearch from '../../common/FacetSearch'
 import ValueSortSelect from '../../common/ValueSortSelect'
-import { Trans,t } from '@lingui/macro'
-import { withI18n,I18n } from '@lingui/react'
+import { Trans } from '@lingui/macro'
 
 const NumberFormatter = new Intl.NumberFormat() // user's locale
 
@@ -261,7 +260,7 @@ class RefineGroup extends React.Component { // uses react-window's shouldCompone
         <input
           type='checkbox'
           name='expand'
-          title={group.isExpanded ? <Trans id="workflow.refine.hideoriginalvalue">Hide original values</Trans> : <Trans id="workflow.refine.showoriginalvalues">Show original values</Trans>}
+          title={group.isExpanded ? <Trans id='workflow.refine.hideoriginalvalue'>Hide original values</Trans> : <Trans id='workflow.refine.showoriginalvalues'>Show original values</Trans>}
           checked={group.isExpanded}
           onChange={this.handleChangeIsExpanded}
         />
@@ -273,7 +272,7 @@ class RefineGroup extends React.Component { // uses react-window's shouldCompone
       <button
         name='reset'
         type='button'
-        title={ <Trans id="workflow.refine.canceleditofthesevalues"> Cancel edits of these values </Trans>}
+        title={<Trans id='workflow.refine.canceleditofthesevalues'> Cancel edits of these values </Trans>}
         onClick={this.handleClickReset}
       >
         <i className='icon-undo' />
@@ -450,11 +449,11 @@ class GroupList extends React.PureComponent {
       // Waiting for user to select a column
       return null
     } else if (loading) {
-      return <Trans id="workflows.refine.loadingvalues">Loading values…</Trans>
+      return <Trans id='workflows.refine.loadingvalues'>Loading values…</Trans>
     } else if (isObjectEmpty(valueCounts)) {
-      return <Trans id="workflows.refine.thiscolumnnothavevalues">This column does not have any values</Trans>
+      return <Trans id='workflows.refine.thiscolumnnothavevalues'>This column does not have any values</Trans>
     } else if (groups.length === 0) {
-      return <Trans id="workflows.refine.Novaluesmatchyoursearch">No values match your search</Trans>
+      return <Trans id='workflows.refine.Novaluesmatchyoursearch'>No values match your search</Trans>
     } else {
       if (this.listRef.current) {
         // If we're re-rendering this component, then it's likely a list item
@@ -805,7 +804,7 @@ export class Refine extends React.PureComponent {
     const canSearch = this.groups.length > 1
 
     const maybeMergeButton = groups.length > 0 ? (
-      <button type='button' name='merge' onClick={this.handleClickMergeSelected} disabled={selectedGroupNames.size < 2}><Trans id="workflows.mergefacets">Merge facets</Trans></button>
+      <button type='button' name='merge' onClick={this.handleClickMergeSelected} disabled={selectedGroupNames.size < 2}><Trans id='workflows.mergefacets'>Merge facets</Trans></button>
     ) : null
 
     return (

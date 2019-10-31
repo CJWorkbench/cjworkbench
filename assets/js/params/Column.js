@@ -3,8 +3,8 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import ReactSelect from './common/react-select'
 import { MaybeLabel } from './util'
-import { Trans,t } from '@lingui/macro'
-import { withI18n,I18n } from '@lingui/react'
+import { t } from '@lingui/macro'
+import { withI18n } from '@lingui/react'
 
 export class ColumnParam extends React.PureComponent {
   static propTypes = {
@@ -43,10 +43,10 @@ export class ColumnParam extends React.PureComponent {
           isLoading={isLoading}
           onChange={onChange}
           isReadOnly={isReadOnly}
-          placeholder={placeholder || i18n._(t("params.Column.select")`Select`)}
+          placeholder={placeholder || i18n._(t('params.Column.select')`Select`)}
         />
       </>
     )
   }
 }
-export default withI18n()(ColumnParam);
+export default withI18n()(ColumnParam)

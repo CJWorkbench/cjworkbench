@@ -2,8 +2,8 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import ReactSelect from './common/react-select'
 import { MaybeLabel } from './util'
-import { Trans,t } from '@lingui/macro'
-import { withI18n,I18n } from '@lingui/react'
+import { t } from '@lingui/macro'
+import { withI18n } from '@lingui/react'
 
 export class MultitabParam extends React.PureComponent {
   static propTypes = {
@@ -23,7 +23,7 @@ export class MultitabParam extends React.PureComponent {
   }
 
   render () {
-    const { name, value, upstreamValue, placeholder, isReadOnly, fieldId, label, tabs, currentTab, onChange } = this.props
+    const { name, value, upstreamValue, placeholder, isReadOnly, fieldId, label, tabs, currentTab, onChange, i18n } = this.props
 
     const tabOptions = tabs
       .filter(({ slug }) => slug !== currentTab)
@@ -48,4 +48,4 @@ export class MultitabParam extends React.PureComponent {
   }
 }
 
-export default withI18n()(MultitabParam);
+export default withI18n()(MultitabParam)

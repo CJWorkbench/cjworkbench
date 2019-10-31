@@ -1,8 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Trans,t } from '@lingui/macro'
-import { withI18n,I18n } from '@lingui/react'
-
+import { t } from '@lingui/macro'
+import { withI18n } from '@lingui/react'
 
 /**
  * A search input box.
@@ -11,7 +10,7 @@ import { withI18n,I18n } from '@lingui/react'
  * user presses Escape. The caller is expected to manage the `value` of the
  * search input.
  */
-export function FacetSearch ({ onChange, onReset, value, i18n}) {
+export function FacetSearch ({ onChange, onReset, value, i18n }) {
   const onKeyDown = React.useCallback(ev => {
     switch (ev.key) {
       case 'Escape':
@@ -45,7 +44,7 @@ export function FacetSearch ({ onChange, onReset, value, i18n}) {
 }
 FacetSearch.propTypes = {
   i18n: PropTypes.shape({
-      // i18n object injected by LinguiJS withI18n()
+    // i18n object injected by LinguiJS withI18n()
     _: PropTypes.func.isRequired
   }),
   onReset: PropTypes.func.isRequired, // func() => undefined

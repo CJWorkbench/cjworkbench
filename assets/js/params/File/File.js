@@ -2,8 +2,8 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import UploadApiModal from './UploadApiModal'
 import UploadedFileSelect from './UploadedFileSelect'
-import { Trans,t } from '@lingui/macro'
-import { withI18n,I18n } from '@lingui/react'
+import { Trans, t } from '@lingui/macro'
+import { withI18n } from '@lingui/react'
 
 const UploadProgress = React.memo(function UploadProgress ({ nBytesTotal, nBytesUploaded }) {
   const percent = (nBytesUploaded || 0) / nBytesTotal * 100
@@ -184,8 +184,8 @@ export class File extends React.PureComponent {
               <div className='filename'>{inProgressUpload.name}</div>
               <div className='status'>
                 <UploadedFileSelect isReadOnly value={value} files={files} onChange={this.handleChange} />
-                <button type='button' onClick={this.handleClickCancelUpload} name='cancel-upload' title={i18n._(t('workbench.filecancelupload')`Cancel upload`) }>
-                  <Trans id="file.cancelupload">Cancel Upload</Trans>
+                <button type='button' onClick={this.handleClickCancelUpload} name='cancel-upload' title={i18n._(t('workbench.filecancelupload')`Cancel upload`)}>
+                  <Trans id='file.cancelupload'>Cancel Upload</Trans>
                 </button>
               </div>
               <UploadProgress
@@ -200,12 +200,12 @@ export class File extends React.PureComponent {
                 <UploadedFileSelect isReadOnly={isReadOnly} value={value} files={files} onChange={this.handleChange} />
                 <p className='file-select-button'>
                   {FeatureFlagUploadApi ? (
-                    <button type='button' onClick={this.handleClickOpenUploadApiModal} name='open-upload-api' title={i18n._(t('workbench.fileopenuploadapi')`Open upload API instructions`) }>
-                      <Trans id="file.fileapi">API</Trans>
+                    <button type='button' onClick={this.handleClickOpenUploadApiModal} name='open-upload-api' title={i18n._(t('workbench.fileopenuploadapi')`Open upload API instructions`)}>
+                      <Trans id='file.fileapi'>API</Trans>
                     </button>
                   ) : null}
                   <label htmlFor={fieldId}>
-                   <Trans id="file.replace">Replace</Trans> 
+                    <Trans id='file.replace'>Replace</Trans>
                   </label>
                   <input
                     name={name}
@@ -220,16 +220,16 @@ export class File extends React.PureComponent {
             </div>
           ) : (
             <div className='no-file'>
-              <p> <Trans id="file.dragfilehere">Drag file here</Trans> </p>
-              <p><Trans id="file.or">or</Trans></p>
+              <p> <Trans id='file.dragfilehere'>Drag file here</Trans> </p>
+              <p><Trans id='file.or'>or</Trans></p>
               <p className='file-select-button'>
                 {FeatureFlagUploadApi ? (
-                  <button type='button' onClick={this.handleClickOpenUploadApiModal} name='open-upload-api' title={i18n._(t('workbench.fileopenuploadapi')`Open upload API instructions`) }>
-                     <Trans id="file.fileapi">API</Trans>
+                  <button type='button' onClick={this.handleClickOpenUploadApiModal} name='open-upload-api' title={i18n._(t('workbench.fileopenuploadapi')`Open upload API instructions`)}>
+                    <Trans id='file.fileapi'>API</Trans>
                   </button>
                 ) : null}
                 <label htmlFor={fieldId}>
-                   <Trans id="file.browse">Browse</Trans> 
+                  <Trans id='file.browse'>Browse</Trans>
                 </label>
                 <input
                   name={name}
@@ -242,11 +242,11 @@ export class File extends React.PureComponent {
             </div>
           ))}
           <div className='drop-here'>
-            <p><Trans id="file.dropfilehere">Drop file here</Trans> </p>
+            <p><Trans id='file.dropfilehere'>Drop file here</Trans> </p>
           </div>
         </div>
       </>
     )
   }
 }
- export default withI18n()(File);
+export default withI18n()(File)

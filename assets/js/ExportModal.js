@@ -121,7 +121,7 @@ export default class ExportModal extends React.PureComponent {
           </div>
         </ModalBody>
         <ModalFooter>
-          <button type='button' onClick={this.handleClickClose} className='button-blue action-button test-done-button'><Trans id='workflow.workbenchdone'>done</Trans></button>
+          <button type='button' onClick={this.handleClickClose} className='button-blue action-button test-done-button'><Trans id='workflow.workbenchdone'>Done</Trans></button>
         </ModalFooter>
       </Modal>
     )

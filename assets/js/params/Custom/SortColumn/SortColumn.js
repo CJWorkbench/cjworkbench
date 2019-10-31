@@ -2,8 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import ColumnParam from '../../Column'
 import RadioParam from '../../Radio.js'
-import { Trans,t } from '@lingui/macro'
-import { withI18n,I18n } from '@lingui/react'
+import { Trans } from '@lingui/macro'
 
 const AscendingParamOptions = [
   { value: true, label: 'Ascending' },
@@ -30,10 +29,7 @@ AscendingParam.propTypes = {
 
 export default class SortColumn extends React.PureComponent {
   static propTypes = {
-    i18n: PropTypes.shape({
-      // i18n object injected by LinguiJS withI18n()
-      _: PropTypes.func.isRequired
-    }),
+
     isReadOnly: PropTypes.bool.isRequired,
     index: PropTypes.number.isRequired,
     name: PropTypes.string.isRequired, // for <input name=...>
@@ -50,7 +46,7 @@ export default class SortColumn extends React.PureComponent {
   }
 
   handleChangeIsAscending = (isAscending) => {
-    const { index, value: { colname }, onChange, i18n } = this.props
+    const { index, value: { colname }, onChange } = this.props
     onChange(index, { colname, is_ascending: isAscending })
   }
 
@@ -66,7 +62,7 @@ export default class SortColumn extends React.PureComponent {
 
   render () {
     const { index, value, name, fieldId, onDelete, isReadOnly, inputColumns } = this.props
-    const label = index === 0 ? <Trans id="SortColumn.bylabel">By</Trans> : <Trans id="SortColumn.thenby">Then by</Trans>
+    const label = index === 0 ? <Trans id='SortColumn.bylabel'>By</Trans> : <Trans id='SortColumn.thenby'>Then by</Trans>
 
     return (
       <li>
@@ -103,4 +99,3 @@ export default class SortColumn extends React.PureComponent {
     )
   }
 }
-

@@ -1,4 +1,4 @@
-from typing import Optional
+from django.db.models import F
 from cjworkbench.sync import database_sync_to_async
 from cjwstate import commands
 from cjwstate.models import Delta, Workflow
@@ -6,65 +6,53 @@ from cjwstate.models.commands import InitWorkflowCommand
 
 
 @database_sync_to_async
-def _load_last_delta(workflow: Workflow) -> Delta:
+def _load_last_delta(workflow_id: int) -> Delta:
     """
-    Read a Delta from the database.
+    Read the current Delta for a workflow from the database.
+
+    Raise Delta.DoesNotExist if there is no next delta.
     """
-    delta = workflow.last_delta
-
-    if delta is None:
-        raise RuntimeError("Workflow %d has no deltas", workflow.id)
-
-    # Deltas write to their `self.workflow`. Make them read/write the Workflow
-    # _we_ see instead of querying their own `workflow` from the database.
-    delta.workflow = workflow
-    return delta
+    return Delta.objects.get(workflow_id=workflow_id, workflow__last_delta_id=F("id"))
 
 
 @database_sync_to_async
-def _load_next_delta(workflow: Workflow) -> Optional[Delta]:
+def _load_next_delta(workflow_id: int) -> Delta:
     """
-    Read a Delta from the database.
+    Read (undone, not-applied) "next" Delta for a workflow from the database.
+
+    Raise Delta.DoesNotExist if there is no next delta.
     """
-    prev_delta = workflow.last_delta
-
-    if not prev_delta:
-        raise RuntimeError("Workflow %d has no deltas", workflow.id)
-
-    try:
-        delta = prev_delta.next_delta
-    except Delta.DoesNotExist:
-        return None
-
-    # Deltas write to their `self.workflow`. Make them read/write the Workflow
-    # _we_ see instead of querying their own `workflow` from the database.
-    delta.workflow = workflow
-    return delta
+    return Delta.objects.get(
+        workflow_id=workflow_id, workflow__last_delta_id=F("prev_delta_id")
+    )
 
 
-async def WorkflowUndo(workflow):
+async def WorkflowUndo(workflow_id: int):
     """
     Run commands.undo(workflow.last_delta).
 
     This may modify the passed `workflow`.
     """
     # TODO avoid race undoing the same delta twice (or make it a no-op)
-    delta = await _load_last_delta(workflow)
+    try:
+        delta = await _load_last_delta(workflow_id)
+    except Delta.DoesNotExist:
+        return
 
     if not isinstance(delta, InitWorkflowCommand):
         await commands.undo(delta)  # uses cooperative_lock()
 
 
-async def WorkflowRedo(workflow):
+async def WorkflowRedo(workflow_id: int):
     """
     Run commands.redo(workflow.last_delta.next_delta), if there is one.
 
     The delta may modify the passed `workflow`.
     """
     # TODO avoid race redoing the same delta twice (or make it a no-op)
-    delta = await _load_next_delta(workflow)
-
-    if not delta:
+    try:
+        delta = await _load_next_delta(workflow_id)
+    except Delta.DoesNotExist:
         return
 
     await commands.redo(delta)  # uses cooperative_lock()

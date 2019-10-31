@@ -1,8 +1,8 @@
 from __future__ import annotations
 import array
-from dataclasses import dataclass, replace
+from dataclasses import dataclass, field, replace
 import pickle
-from typing import Any, List, Type, TypeVar
+from typing import Any, FrozenSet, List, Type, TypeVar
 from cjwkernel.types import CompiledModule
 from multiprocessing.reduction import sendfds, recvfds
 import socket
@@ -86,11 +86,44 @@ class SpawnPandasModule(MessageToChild):
     Tell child to fork(), close this socket, and run child code.
     """
 
-    compiled_module: CompiledModule
-    output_fd: int
-    log_fd: int
-    function: str
+    process_name: str
+    """Process name to display in 'ps' and server logs."""
+
     args: List[Any]
+    """Arguments to pass to `module_main(*args)`."""
+
+    skip_sandbox_except: FrozenSet[str] = field(default_factory=frozenset)
+    """
+    Security layers to enable in child processes. (DO NOT USE IN PRODUCTION.)
+
+    By default, child processes are sandboxed: user code should not be able to
+    access the rest of the system. (In particular, it should not be able to
+    access parent-process state; influence parent-process behavior in any way
+    but its stdout, stderr and exit code; or communicate with any internal
+    services.)
+    
+    Our layers of sandbox security overlap: for instance: we (a) restrict the
+    user code to run as non-root _and_ (b) disallow root from escaping its
+    chroot. We can't test layer (b) unless we disable layer (a); and that's
+    what this feature is for.
+
+    By default, all sandbox features are enabled. To enable only a subset, set
+    `skip_sandbox_except` to a `frozenset()` with one or more of the following
+    strings:
+
+    * "drop_capabilities": limit root's capabilities
+    """
+
+
+@dataclass(frozen=True)
+class SpawnedPandasModule(MessageToParent):
+    """
+    Respond to SpawnPandasModule with a child process's information.
+    """
+
+    pid: int
+    stdout_fd: int
+    stderr_fd: int
 
     # override
     def send_on_socket(self, sock: socket.socket) -> None:
@@ -109,20 +142,11 @@ class SpawnPandasModule(MessageToChild):
         #
         # It turns out the multiprocessing.reduction module does exactly what
         # we want.
-        sendfds(sock, [self.output_fd, self.log_fd])
+        sendfds(sock, [self.stdout_fd, self.stderr_fd])
 
     # override
     @classmethod
     def recv_on_socket(cls, sock: socket.socket) -> SpawnPandasModule:
         raw_message = super().recv_on_socket(sock)
-        child_output_fd, child_log_fd = recvfds(sock, 2)
-        return replace(raw_message, output_fd=child_output_fd, log_fd=child_log_fd)
-
-
-@dataclass(frozen=True)
-class SpawnedPandasModule(MessageToParent):
-    """
-    Respond to SpawnPandasModule with a child process's information.
-    """
-
-    pid: int
+        stdout_fd, stderr_fd = recvfds(sock, 2)
+        return replace(raw_message, stdout_fd=stdout_fd, stderr_fd=stderr_fd)

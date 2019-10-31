@@ -39,7 +39,7 @@ export default class NewAclEntry extends React.PureComponent {
       <form className='new-acl-entry input-group' onSubmit={this.handleSubmit}>
         <input className='form-control' type='email' name='email' ref={this.emailRef} required placeholder='user@example.org' />
         <div className='input-group-append'>
-          <button type='submit' className='btn btn-outline-secondary'><Trans id='workflow.visibility.grandAccess'>Grant access</Trans></button>
+          <button type='submit' className='btn btn-outline-secondary'><Trans id='workflow.visibility.grantAccess'>Grant access</Trans></button>
         </div>
       </form>
     )

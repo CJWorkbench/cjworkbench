@@ -284,7 +284,50 @@ class ValidateModuleSpecTest(unittest.TestCase):
         ):
             validate_module_spec(
                 {
-                    "id_name": "id",
+                    "id_name": "twitter",  # only twitter is allowed a twitter secret
+                    "name": "Name",
+                    "category": "Clean",
+                    "parameters": [
+                        {
+                            "id_name": "twitter_credentials",
+                            "type": "secret",
+                            "secret_logic": {
+                                "provider": "oauth1a",
+                                "service": "twitter",
+                            },
+                        },
+                        {
+                            "id_name": "b",
+                            "type": "gdrivefile",
+                            "secret_parameter": "twitter_credentials",
+                        },
+                    ],
+                }
+            )
+
+    def test_validate_allow_secret_based_on_module_id_name(self):
+        validate_module_spec(
+            {
+                "id_name": "twitter",
+                "name": "Name",
+                "category": "Clean",
+                "parameters": [
+                    {
+                        "id_name": "a",
+                        "type": "secret",
+                        "secret_logic": {"provider": "oauth1a", "service": "twitter"},
+                    }
+                ],
+            }
+        )
+
+    def test_validate_disallow_secret_based_on_module_id_name(self):
+        with self.assertRaisesRegex(
+            ValueError, "Denied access to global 'twitter' secrets"
+        ):
+            validate_module_spec(
+                {
+                    "id_name": "eviltwitter",
                     "name": "Name",
                     "category": "Clean",
                     "parameters": [
@@ -292,12 +335,10 @@ class ValidateModuleSpecTest(unittest.TestCase):
                             "id_name": "a",
                             "type": "secret",
                             "secret_logic": {
-                                "provider": "oauth",
+                                "provider": "oauth1a",
                                 "service": "twitter",
-                                "name": "Connect",
                             },
-                        },
-                        {"id_name": "b", "type": "gdrivefile", "secret_parameter": "a"},
+                        }
                     ],
                 }
             )

@@ -20,9 +20,15 @@ exports[`WorkflowMetadata renders private workflow correctly 1`] = `
     </span>
   </li>
   <li>
-    Updated
-     
-    just now
+    <WithI18n
+      defaults="Updated {0}"
+      id="workflows.workflowmetadata.update"
+      values={
+        Object {
+          "0": "just now",
+        }
+      }
+    />
   </li>
   <li>
     <span

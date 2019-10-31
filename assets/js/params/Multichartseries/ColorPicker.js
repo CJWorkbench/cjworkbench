@@ -3,8 +3,8 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import PropTypes from 'prop-types'
 import { Popper } from 'react-popper'
-import { Trans,t } from '@lingui/macro'
-import { withI18n,I18n } from '@lingui/react'
+import { t } from '@lingui/macro'
+import { withI18n } from '@lingui/react'
 
 class ColorChoice extends React.PureComponent {
   static propTypes = {
@@ -244,7 +244,7 @@ export class ColorPicker extends React.PureComponent {
       <ColorPickerContext.Provider value={context}>
         <button
           type='button'
-          title={i18n._(t('workbench.pickcolor.colorpicker')`Pick color`) }
+          title={i18n._(t('workbench.pickcolor.colorpicker')`Pick color`)}
           onClick={this.handleClickButton}
           className='btn color-picker'
           style={{ background: safeValue }}
@@ -265,4 +265,4 @@ export class ColorPicker extends React.PureComponent {
   }
 }
 
-export default withI18n()(ColorPicker);
+export default withI18n()(ColorPicker)

@@ -14,13 +14,3 @@ export const currentLocale = window.i18nConfig && window.i18nConfig.locale && is
 function isSupported (locale) {
   return Object.prototype.hasOwnProperty.call(supportedLocales, locale)
 }
-
-/**
- * Reload the page, adding a "locale" query parameter to the URL
- */
-export function setLocale (locale) {
-  // very quick and dirty solution for reloading with added parameter
-  const q = new URLSearchParams(window.location.search)
-  q.set('locale', locale)
-  window.location.search = '?' + q.toString()
-}

@@ -31,9 +31,7 @@ import { Trans, t } from '@lingui/macro'
 const numberFormat = new Intl.NumberFormat()
 
 // ---- WfModule ----
-// The WfModuleClass should only be used in unit testing.
-// Everything else must use WfModule,
-// which wraps the WfModuleClass in a <I18n> element
+
 export class WfModule extends React.PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired,
@@ -370,7 +368,7 @@ export class WfModule extends React.PureComponent {
       let className = 'notifications'
       if (notifications) className += ' enabled'
       if (hasUnseen) className += ' has-unseen'
-      const title = notifications ? <Trans id='workflow.emailalertenebled'>Email alerts enabled</Trans> : <Trans id='workflow.emailalertdisabled'>Email alerts disabled</Trans>
+      const title = notifications ? i18n._(t('workflow.emailalertenebled')`Email alerts enabled`) : i18n._(t('workflow.emailalertdisabled')`Email alerts disabled`)
 
       alertButton = (
         <button title={title} className={className} onClick={this.handleClickNotification}>

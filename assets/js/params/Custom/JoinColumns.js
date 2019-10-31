@@ -1,8 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import Multicolumn from '../Multicolumn'
-import { Trans,t } from '@lingui/macro'
-import { withI18n,I18n } from '@lingui/react'
+import { t } from '@lingui/macro'
+import { withI18n } from '@lingui/react'
 
 export class JoinColumns extends React.PureComponent {
   static propTypes = {
@@ -71,7 +71,7 @@ export class JoinColumns extends React.PureComponent {
           label='Join on'
           inputColumns={bothColumns}
           addMenuListClassName='join-on'
-          noOptionsMessage={rightTab ?  i18n._(t('workbench.joinColumns.columntojoin')`There is no column to join on in ${rightTab.name}. Columns in both tabs must have identical names and capitalization. Please edit column names.`)  : undefined}
+          noOptionsMessage={rightTab ? i18n._(t('workbench.joinColumns.columntojoin')`There is no column to join on in ${rightTab.name}. Columns in both tabs must have identical names and capitalization. Please edit column names.`) : undefined}
           value={value.on}
         />
         <Multicolumn
@@ -88,4 +88,4 @@ export class JoinColumns extends React.PureComponent {
   }
 }
 
-export default withI18n()(JoinColumns);
+export default withI18n()(JoinColumns)

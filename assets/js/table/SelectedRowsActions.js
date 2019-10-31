@@ -5,9 +5,8 @@ import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from
 import { connect } from 'react-redux'
 import { createSelector } from 'reselect'
 import { addModuleAction, setWfModuleParamsAction, setSelectedWfModuleAction } from '../workflow-reducer'
-import { Plural,Trans,t } from '@lingui/macro'
-import { withI18n,I18n } from '@lingui/react'
-
+import { Plural, t } from '@lingui/macro'
+import { withI18n } from '@lingui/react'
 
 const numberFormat = new Intl.NumberFormat()
 
@@ -91,7 +90,7 @@ export class SelectedRowsActions extends React.PureComponent {
   }
 
   render () {
-    const { selectedRowIndexes, wfModuleId, rowActionModules,i18n } = this.props
+    const { selectedRowIndexes, wfModuleId, rowActionModules, i18n } = this.props
 
     const actions = rowActionModules.map(({ idName, title }) => (
       <Action key={idName} idName={idName} title={title} onClick={this.handleClickAction} />
@@ -255,4 +254,4 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withI18n() (SelectedRowsActions))
+export default connect(mapStateToProps, mapDispatchToProps)(withI18n()(SelectedRowsActions))

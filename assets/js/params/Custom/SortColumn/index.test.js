@@ -4,7 +4,6 @@ import SortColumns from './index'
 // import { mount } from 'enzyme'
 import { mountWithI18n } from '../../../i18n/test-utils'
 
-
 describe('SortColumns', () => {
   const wrapper = (extraProps = {}) => mountWithI18n(
     <SortColumns

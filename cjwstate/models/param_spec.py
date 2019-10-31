@@ -154,15 +154,25 @@ class SecretLogic(ABC):
     @classmethod
     def _from_dict(cls, json_value) -> SecretLogic:
         provider = json_value["provider"]
-        if provider == "oauth":
-            return cls.Oauth(**json_value)
+        if provider == "oauth":  # DEPRECATED
+            return cls.Oauth2(provider="oauth2", service=json_value["service"])
+        elif provider == "oauth2":
+            return cls.Oauth2(**json_value)
+        elif provider == "oauth1a":
+            return cls.Oauth1a(**json_value)
         elif provider == "string":
             return cls.String(**json_value)
 
 
 @dataclass(frozen=True)
-class SecretLogicOauth:
-    provider: str  # 'oauth', always
+class SecretLogicOauth1a:
+    provider: str  # 'oauth1a', always
+    service: str
+
+
+@dataclass(frozen=True)
+class SecretLogicOauth2:
+    provider: str  # 'oauth2', always
     service: str
 
 
@@ -204,7 +214,8 @@ class ParamSpecSecret(_RegisterType("secret"), ParamSpec):
 
 
 ParamSpecSecret.Logic = SecretLogic
-SecretLogic.Oauth = SecretLogicOauth
+SecretLogic.Oauth2 = SecretLogicOauth2
+SecretLogic.Oauth1a = SecretLogicOauth1a
 SecretLogic.String = SecretLogicString
 
 

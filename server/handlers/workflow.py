@@ -11,20 +11,22 @@ from server.versions import WorkflowRedo, WorkflowUndo
 @register_websockets_handler
 @websockets_handler("write")
 async def undo(workflow: Workflow, **kwargs):
-    await WorkflowUndo(workflow)
+    await WorkflowUndo(workflow.id)
 
 
 @register_websockets_handler
 @websockets_handler("write")
 async def redo(workflow: Workflow, **kwargs):
-    await WorkflowRedo(workflow)
+    await WorkflowRedo(workflow.id)
 
 
 @register_websockets_handler
 @websockets_handler("write")
 async def set_name(workflow: Workflow, name: str, **kwargs):
     name = str(name)  # JSON input cannot cause error here
-    await commands.do(ChangeWorkflowTitleCommand, workflow=workflow, new_value=name)
+    await commands.do(
+        ChangeWorkflowTitleCommand, workflow_id=workflow.id, new_value=name
+    )
 
 
 @database_sync_to_async
@@ -91,7 +93,9 @@ async def set_tab_order(workflow: Workflow, tabSlugs: List[str], **kwargs):
             raise HandlerError("tabSlugs must be an Array of slugs")
 
     try:
-        await commands.do(ReorderTabsCommand, workflow=workflow, new_order=tabSlugs)
+        await commands.do(
+            ReorderTabsCommand, workflow_id=workflow.id, new_order=tabSlugs
+        )
     except ValueError as err:
         if str(err) == "wrong tab slugs":
             raise HandlerError("wrong tab slugs")
