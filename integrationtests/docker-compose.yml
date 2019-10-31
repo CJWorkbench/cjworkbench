@@ -66,9 +66,8 @@ services:
     security_opt:
       - seccomp=docker/forkserver-seccomp-profile.json
     environment:
-      CJW_N_FETCHERS: '2'
       PYTHONUNBUFFERED: '1'
-      ASGI_THREADS: '3'
+      ASGI_THREADS: '2'
       CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq/
       CJW_PRODUCTION: 'True'
       CJW_DB_HOST: workbench-db
@@ -87,7 +86,6 @@ services:
     security_opt:
       - seccomp=docker/forkserver-seccomp-profile.json
     environment:
-      CJW_N_RENDERERS: '2'
       PYTHONUNBUFFERED: '1'
       ASGI_THREADS: '2'
       CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq/

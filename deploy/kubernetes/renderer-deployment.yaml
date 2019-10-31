@@ -21,10 +21,10 @@ spec:
             # synchronous.
             requests:
               cpu: 1
-              memory: 8Gi
+              memory: 5.5Gi
             limits:
               cpu: 1
-              memory: 8Gi
+              memory: 5.5Gi
           env:
             - name: CJW_PRODUCTION
               value: 'True'
@@ -32,8 +32,6 @@ spec:
               value: '1'
             - name: ASGI_THREADS
               value: '2'
-            - name: CJW_N_RENDERERS
-              value: '1'
             - name: CJW_DB_HOST
               value: database-service
             - name: CJW_DB_PASSWORD

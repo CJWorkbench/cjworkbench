@@ -38,9 +38,7 @@ spec:
             - name: PYTHONUNBUFFERED
               value: '1'
             - name: ASGI_THREADS
-              value: '4'
-            - name: CJW_N_FETCHERS
-              value: '4'
+              value: '2'
             - name: CJW_DB_HOST
               value: database-service
             - name: CJW_DB_PASSWORD

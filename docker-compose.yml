@@ -112,7 +112,6 @@ services:
     environment:
       PYTHONUNBUFFERED: '1'
       ASGI_THREADS: '2'
-      CJW_N_RENDERERS: '2'  # >1 so devs can see contention
       CJW_DB_HOST: database
       CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq/
       CJW_DB_PASSWORD: cjworkbench
@@ -150,7 +149,6 @@ services:
     environment:
       PYTHONUNBUFFERED: '1'
       ASGI_THREADS: '3'
-      CJW_N_FETCHERS: '3'  # >1 so devs can see parallelism
       CJW_DB_HOST: database
       CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq/
       CJW_DB_PASSWORD: cjworkbench
