@@ -9,7 +9,7 @@ import { withI18n } from '@lingui/react'
  * When the user clicks the <button>, the modal opens. The user can close
  * the modal, and then the <button> becomes clickable again.
  */
-export function ShareButton ({ className, children }) {
+export function ShareButton ({ i18n, className, children }) {
   const [isOpen, setIsOpen] = React.useState(false)
   const open = React.useCallback(() => setIsOpen(true))
   const close = React.useCallback(() => setIsOpen(false))
@@ -20,7 +20,7 @@ export function ShareButton ({ className, children }) {
         type='button'
         className='share-button'
         name='share'
-        title={this.props.i18n._(t('workflow.visibility.sharingTitle')`Change Workflow sharing`)}
+        title={i18n._(t('workflow.visibility.sharingTitle')`Change Workflow sharing`)}
         onClick={open}
       >
         {children}
