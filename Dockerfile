@@ -51,7 +51,6 @@ FROM pybase AS pydev
 # Need build-essential for:
 # * regex (TODO nix the dep or make it support manylinux .whl)
 # * Twisted - https://twistedmatrix.com/trac/ticket/7945
-# * fastparquet
 # * python-snappy
 # * yajl-py
 # * fb-re2
@@ -145,7 +144,6 @@ COPY Pipfile Pipfile.lock /app/
 # Need build-essential for:
 # * regex (TODO nix the dep or make it support manylinux .whl)
 # * Twisted - https://twistedmatrix.com/trac/ticket/7945
-# * fastparquet
 # * python-snappy
 # * yajl-py
 # * pysycopg2 (binaries are evil because psycopg2 links SSL -- as does Python)
