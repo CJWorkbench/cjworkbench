@@ -81,3 +81,4 @@ def run_in_sandbox(
     protocol = thrift.protocol.TBinaryProtocol.TBinaryProtocol(transport)
     if result is not None:
         result.write(protocol)
+    transport.flush()
