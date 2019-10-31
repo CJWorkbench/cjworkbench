@@ -2,16 +2,12 @@ from contextlib import contextmanager, asynccontextmanager
 import io
 import json
 import re
-import shutil
 from typing import Dict, Callable, Iterator, Optional
 import aiohttp
-import cchardet as chardet
 import numpy as np
 import pandas as pd
 from pandas.api.types import is_numeric_dtype, is_datetime64_dtype
-import xlrd
 import yarl  # aiohttp innards -- yuck!
-from cjwkernel import settings
 from cjwkernel.util import tempfile_context
 from cjwkernel.pandas.types import ProcessResult
 
@@ -66,16 +62,15 @@ def uniquize_colnames(colnames: Iterator[str]) -> Iterator[str]:
 
 
 def _safe_parse(
-    bytesio: io.BytesIO,
-    parser: Callable[[bytes], pd.DataFrame],
-    text_encoding: _TextEncoding,
+    bytesio: io.BytesIO, parser: Callable[[bytes], pd.DataFrame]
 ) -> ProcessResult:
-    """Run the given parser, or return the error as a string.
+    """
+    Run the given parser, or return the error as a string.
 
     Empty dataset is not an error: it is just an empty dataset.
     """
     try:
-        return ProcessResult.coerce(parser(bytesio, text_encoding))
+        return ProcessResult.coerce(parser(bytesio))
     except BadInput as err:
         return ProcessResult(error=str(err))
     except json.decoder.JSONDecodeError as err:
@@ -100,206 +95,6 @@ def wrap_text(bytesio: io.BytesIO, text_encoding: _TextEncoding):
         yield textio
 
 
-def _parse_table(
-    bytesio: io.BytesIO, sep: Optional[str], text_encoding: _TextEncoding
-) -> pd.DataFrame:
-    with wrap_text(bytesio, text_encoding) as textio:
-        if not sep:
-            sep = _detect_separator(textio)
-
-        # Pandas CSV parser looks like this:
-        #
-        # 1. "Tokenize" the input stream: copy all its _data_ bytes into
-        #    memory, and maintain arrays of "words" and "lines" pointers
-        #    into that array.
-        # 2. Determine list of columns
-        # 3. Per-column, convert dtypes to array
-        # 4. Smoosh arrays together into a pd.DataFrame.
-        #
-        # When `low_memory=True`, all this happens in a bigger loop, so
-        # that the tokenized data structure is smaller.
-        #
-        # `low_memory=True` forces re-coding categories. That's `O(Ch * N
-        # * Ca lg Ca)`, where Ch is number of column-chunks (9,000 * 60
-        # in this case), N is number of records, Ch is number of chunks
-        # (8, in this case), and Ca is the number of categories.
-        #
-        # This `rc11.txt` file has enormous `Ch`: 9,000 * 60 = 540,000.
-        # `general.csv` (our 1.2GB file) is much smaller, at ~4,000, even
-        # though it has 250x more rows. Pandas doesn't let us adjust
-        # chunk size, and its heuristic is terrible for`rc11.txt`.
-        #
-        # Let's try `low_memory=False`. That makes the CPU cost
-        # `O(N * Co * Ca lg Ca)`, where Co is the number of columns. Memory
-        # usage grows by the number of cells. In the case of `general.csv`,
-        # the cost is an extra 1GB.
-        data = pd.read_csv(
-            textio, dtype="category", sep=sep, na_filter=False, low_memory=False
-        )
-        data.reset_index(drop=True, inplace=True)  # empty => RangeIndex
-        autocast_dtypes_in_place(data)
-        return data
-
-
-def _parse_csv(bytesio: io.BytesIO, text_encoding: _TextEncoding) -> pd.DataFrame:
-    """Build a pd.DataFrame or raise parse error.
-
-    Peculiarities:
-
-    * The file encoding defaults to UTF-8.
-    * Data types. This is a CSV, so every value is a string ... _but_ we do the
-      pandas default auto-detection.
-    * For compatibility with EU CSVs we detect the separator
-    """
-    with wrap_text(bytesio, text_encoding) as textio:
-        sep = _detect_separator(textio)
-        return _parse_table(bytesio, sep, text_encoding)
-
-
-def _parse_tsv(bytesio: io.BytesIO, text_encoding: _TextEncoding) -> pd.DataFrame:
-    """Build a pd.DataFrame or raise parse error.
-
-    Peculiarities:
-
-    * The file encoding defaults to UTF-8.
-    * Data types. This is a CSV, so every value is a string ... _but_ we do the
-      pandas default auto-detection.
-    """
-    return _parse_table(bytesio, "\t", text_encoding)
-
-
-def _parse_json(bytesio: io.BytesIO, text_encoding: _TextEncoding) -> pd.DataFrame:
-    """Build a pd.DataFrame or raise parse error.
-
-    Peculiarities:
-
-    * The file encoding defaults to UTF-8.
-    * Pandas may auto-convert strings to dates/integers.
-    * Columns are ordered as in the first JSON object, and the input must be an
-      Array of Objects.
-    * We may raise json.decoder.JSONDecodeError or pd.errors.ParserError.
-    """
-    with wrap_text(bytesio, text_encoding) as textio:
-        try:
-            data = pd.read_json(
-                textio, orient="records", dtype=False, convert_dates=False
-            )
-        except ValueError as err:
-            if "Mixing dicts with non-Series" in str(
-                err
-            ) or "If using all scalar values" in str(err):
-                raise BadInput(
-                    "Workbench cannot import this JSON file. The JSON file "
-                    "must be an Array of Objects for Workbench to import it."
-                )
-            else:
-                raise BadInput("Invalid JSON (%s)" % str(err))
-
-        # pd.read_json(io.StringIO('{}')).colnames.index is a Float64Index for
-        # some reason.
-        #
-        # There's no other reason to convert to str -- JSON keys are all str.
-        if not len(data.columns):
-            data.columns = data.columns.astype(str)
-
-        # pd.read_json(io.StringIO('{}')) has a Float64Index instead of a
-        # RangeIndex. No harm in setting RangeIndex always.
-        data.reset_index(drop=True, inplace=True)
-
-        # do not autocast_dtypes_in_place(): we want an str of ints to stay
-        # str. But _do_ make sure all the types are valid.
-        #
-        # We allow str and numbers.
-        colnames = [
-            colname
-            for colname, dtype in zip(data.columns, data.dtypes)
-            if dtype == object
-        ]
-        strs = data[colnames].astype(str)
-        strs[data[colnames].isna()] = np.nan
-        data[colnames] = strs
-
-        return data
-
-
-def _parse_xlsx(bytesio: io.BytesIO, _unused: _TextEncoding) -> pd.DataFrame:
-    """
-    Build a pd.DataFrame from xlsx bytes or raise parse error.
-
-    Peculiarities:
-
-    * Error can be xlrd.XLRDError or pandas error
-    * We read the entire file contents into memory before parsing
-
-    TODO change signature to require `Path`, not `io.BytesIO`. The way things
-    are, we're copying tempfiles gratuitously.
-    """
-    # dtype='category' crashes as of 2018-09-11
-    try:
-        # Use xlrd.open_workbook(): if we call pandas.read_excel(bytesio) it
-        # will read the entire file into RAM.
-        with tempfile_context() as path:
-            with path.open("wb") as tmp:
-                shutil.copyfileobj(bytesio, tmp)
-            workbook = xlrd.open_workbook(str(path))
-            data = pd.read_excel(workbook, engine="xlrd", dtype=object)
-    except xlrd.XLRDError as err:
-        return ProcessResult(error=f"Error reading Excel file: {str(err)}")
-
-    data.columns = [str(c) for c in data.columns]
-    autocast_dtypes_in_place(data)
-    return data
-
-
-def _parse_txt(bytesio: io.BytesIO, text_encoding: _TextEncoding) -> pd.DataFrame:
-    """
-    Build a pd.DataFrame from txt bytes or raise parse error.
-
-    Peculiarities:
-
-    * The file encoding defaults to UTF-8.
-    * Data types. Call _detect_separator to determine separator
-    """
-    return _parse_table(bytesio, None, text_encoding)
-
-
-def _detect_separator(textio: io.TextIOWrapper) -> str:
-    """
-    Detect most common char of '\t', ';', ',' in first MB
-
-    TODO: Could be a tie or no counts at all, keep going until you find a
-    winner.
-    """
-    map = [",", ";", "\t"]
-    chunk = textio.read(settings.SEP_DETECT_CHUNK_SIZE)
-    textio.seek(0)
-    results = [chunk.count(x) for x in map]
-
-    return map[results.index(max(results))]
-
-
-def detect_encoding(bytesio: io.BytesIO):
-    """
-    Detect charset, as Python-friendly encoding string.
-
-    Peculiarities:
-
-    * Reads file by CHARDET_CHUNK_SIZE defined in settings.py
-    * Stops seeking when detector.done flag True
-    * Seeks back to beginning of file for downstream usage
-    """
-    detector = chardet.UniversalDetector()
-    while not detector.done:
-        chunk = bytesio.read(settings.CHARDET_CHUNK_SIZE)
-        if not chunk:
-            break  # EOF
-        detector.feed(chunk)
-
-    detector.close()
-    bytesio.seek(0)
-    return detector.result["encoding"]
-
-
 # Move dataframe column names into the first row of data, and replace column
 # names with numbers. Used to undo first row of data incorrectly read as header
 def turn_header_into_first_row(table: pd.DataFrame) -> pd.DataFrame:
@@ -322,49 +117,6 @@ def turn_header_into_first_row(table: pd.DataFrame) -> pd.DataFrame:
     new_table[str_columns.columns][isna] = np.nan
 
     return new_table
-
-
-_parse_xls = _parse_xlsx
-
-
-_Parsers = {
-    "text/csv": (_parse_csv, True),
-    "text/tab-separated-values": (_parse_tsv, True),
-    "application/vnd.ms-excel": (_parse_xls, False),
-    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": (
-        _parse_xlsx,
-        False,
-    ),
-    "application/json": (_parse_json, True),
-    "text/plain": (_parse_txt, True),
-}
-
-
-def parse_bytesio(
-    bytesio: io.BytesIO, mime_type: str, text_encoding: _TextEncoding = None
-) -> ProcessResult:
-    """Parse bytes to produce a ProcessResult.
-
-    This will produce a _sane_ ProcessResult (see `types.validate_dataframe`).
-
-    Keyword arguments:
-
-    bytesio -- input bytes
-    mime_type -- handled MIME type
-    text_encoding -- if set and input is text-based, the suggested charset
-                     (which may be incorrect)
-
-    XXX See `upload` module for new-style parsers. New-style parsers operate on
-    _files_, not _bytesio_; and they do not parse the first row as header.
-    Basically, new-style parsers avoid all Pandas features.
-    """
-    if mime_type in _Parsers:
-        parser, need_encoding = _Parsers[mime_type]
-        if need_encoding and not text_encoding:
-            text_encoding = detect_encoding(bytesio)
-        return _safe_parse(bytesio, parser, text_encoding)
-    else:
-        return ProcessResult(error=f'Unhandled MIME type "{mime_type}"')
 
 
 @asynccontextmanager

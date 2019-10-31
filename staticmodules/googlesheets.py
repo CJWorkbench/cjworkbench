@@ -5,8 +5,8 @@ import asyncio
 from oauthlib import oauth2
 import pandas as pd
 from cjwkernel.pandas.types import Tuple, Union
+from cjwkernel.pandas.parse_util import parse_bytesio
 from cjwkernel.pandas.moduleutils import (
-    parse_bytesio,
     spooled_data_from_url,
     turn_header_into_first_row,
 )
@@ -67,7 +67,18 @@ async def download_data_frame(
 
     try:
         async with spooled_data_from_url(url, headers) as (blobio, _, __):
-            return parse_bytesio(blobio, sheet_mime_type)
+            # TODO store raw bytes and then parse in render(), like in
+            # [2019-10-31] loadurl module.
+            #
+            # For now, we hard-code questionable params:
+            #
+            # * encoding=None: because GDrive doesn't know the charset, and it
+            #                  returns the wrong charset sometimes.
+            # * has_header=True: legacy (and buggy). When we store raw bytes,
+            #                    we'll use the user's preference.
+            return parse_bytesio(
+                blobio, encoding=None, content_type=sheet_mime_type, has_header=True
+            )
     except aiohttp.ClientResponseError as err:
         if err.status == 401:
             return "Invalid credentials. Please reconnect to Google Drive."
