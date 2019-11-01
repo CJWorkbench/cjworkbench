@@ -1,8 +1,8 @@
-{% load account %}{% user_display user as user_display %}{% load i18n %}{% autoescape off %}{% blocktrans with site_name=current_site.name site_domain=current_site.domain %}
-
-Welcome to Workbench!
+{% load account %}{% user_display user as user_display %}{% load i18n_icu %}{% autoescape off %}{% trans_html ".account.email.email_confirmation_message" default="Welcome to Workbench!
 Please confirm your email address by clicking the link below. If you didn't sign up, you can safely ignore this email.
 
-{{ activate_url }}
+{ activateUrl }" arg_activateUrl = activate_url %}
 
-{% endblocktrans %}{% endautoescape %}
+
+
+{% endautoescape %}

@@ -7,6 +7,6 @@
 {% block content %}
     <h2 class='t-d-gray title-2 text-center mb-3'>{% trans_html "account.email_confirmation.confirmYouremail" default="Confirm your email address"  %}</h2>
 
-    <p class='message-body'>{% trans_html "account.email_confirmation.weHavesendEMail" default='We have sent an email to <b0>{email}</b0> for verification. If you do not receive it within a few minutes, contact us at <a0>{themeContactemail}</a0> ' arg_email=email tag_b0='' tag_a0_href="mailto:hello@workbenchdata.com" arg_themeContactemail="hello@workbenchdata.com" %}</p>
+    <p class='message-body'>{% trans_html "account.email_confirmation.weHavesendEmail" default='We have sent an email to <b0>{email}</b0> for verification. If you do not receive it within a few minutes, contact us at <a0>{themeContactemail}</a0> ' arg_email=email tag_b0='' tag_a0_href="mailto:hello@workbenchdata.com" arg_themeContactemail="hello@workbenchdata.com" %}</p>
     <p><a href="{{ success_url }}" class='button-white action-button mx-auto mt-3'>{% trans_html "account.email_confirmation.goBack" default="Go back" %}</a></p>
 {% endblock %}
