@@ -15,18 +15,18 @@
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      data-highlight='[{"type":"Module","index":0,"id_name":"loadurl"}]'
+      data-test="return workflow.tabs[0].wfModuleSlugs[0] === 'loadurl'"
       >Add the data source 'Add from URL'.
     </li>
     <li
-      data-highlight='[{"type":"WfModule","moduleName":"Add from URL"}]'
+      data-highlight='[{"type":"WfModule","moduleIdName":"loadurl"}]'
       data-test="const wfModule = workflow.tabs[0].wfModules[0]; return wfModule.params.url === 'https://data.cityofnewyork.us/resource/7x9x-zpz6.json?$order=cmplnt_fr_dt%20DESC' && wfModule.selectedVersion"
     >Paste in the following URL and click <kbd>Update</kbd> to load the data.
       <div class="copy-txt">https://data.cityofnewyork.us/resource/7x9x-zpz6.json?$order=cmplnt_fr_dt%20DESC</div>
     </li>
     <li
-      data-highlight='[{"type":"WfModule","moduleName":"Add from URL"}]'
+      data-highlight='[{"type":"WfModule","moduleIdName":"loadurl"}]'
       data-test="
         const wfModule = workflow.tabs[0].wfModules[0]
         return wfModule.updateInterval === 18000
@@ -42,8 +42,8 @@
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"Module","index":1,"name":"Filter by value"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[1] === 'Filter by value'"
+      data-highlight='[{"type":"Module","index":1,"id_name":"valuefilter"}]'
+      data-test="return workflow.tabs[0].wfModuleSlugs[1] === 'valuefilter'"
       >Add the step 'Filter by value'.
     </li>
     <li

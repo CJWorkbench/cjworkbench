@@ -25,11 +25,11 @@ tabs:
   <h3 class="instructions">Οδηγίες</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"Module","index":1,"name":"Select columns"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[1] === 'Select columns'"
+      data-highlight='[{"type":"Module","index":1,"id_name":"selectcolumns"}]'
+      data-test="return workflow.tabs[0].wfModuleSlugs[1] === 'selectcolumns'"
       >Προσθέστε το βήμα &quot;Επιλογή στηλών&quot; χρησιμοποιώντας την αναζήτηση</li>
     <li
-      data-highlight='[{"type":"WfModule","moduleName":"Drop empty rows"}]'
+      data-highlight='[{"type":"WfModule","moduleIdName":"dropna"}]'
       data-test="const colnames = workflow.tabs[0].wfModules[1].params.colnames.sort().join('|'); return colnames === 'date|subject_race'"
       >Επιλέξτε τις στήλες <kbd>date</kbd> και <kbd>subject_race</kbd>.</li>
   </ol>
@@ -40,15 +40,15 @@ tabs:
   <h3 class="instructions">Οδηγίες</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type": "WfModule","moduleName": "Convert to date & time"},{"type":"Module","index":2,"name":"Convert to date & time"}]'
+      data-highlight='[{"type": "WfModule","moduleIdName": "convert-date"},{"type":"Module","index":2,"id_name":"convert-date"}]'
       data-test="const wfModule = workflow.tabs[0].wfModules[2] || {};
       return wfModule.moduleSlug === 'convert-date' && wfModule.params.colnames.join('|') === 'date'"
       >Στην κεφαλίδα του πίνακα ανοίξτε με κλικ το μενού <span><img class="icon-insert" src="images/lesson-icons/menu.svg"></span> της στήλης <kbd>date</kbd> και επιλέξτε <kbd>Μετατροπή σε ημερομηνία &amp; ώρα</kbd>.</li>
     <li
-      data-highlight='[{"type": "WfModule", "moduleName": "Sort"},{"type":"Module","index":3,"name":"Sort"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[3] === 'Sort'
+      data-highlight='[{"type": "WfModule", "moduleIdName": "sort"},{"type":"Module","index":3,"id_name":"sort"}]'
+      data-test="return workflow.tabs[0].wfModuleSlugs[3] === 'sort'
       ">Ας δούμε ποια είναι η πιο πρώτη ημερομηνία. Χρησιμοποιήστε το μενού <span><img class="icon-insert" src="images/lesson-icons/menu.svg"></span> της στήλης <kbd>date</kbd> για να διαλέξετε <kbd>Αύξουσα ταξινόμηση</kbd>. Η πρώτη ημερομηνία πρέπει να είναι η <kbd>2010-05-16</kbd>.<li
-      data-highlight='[{"type": "WfModule", "moduleName": "Sort"}]'
+      data-highlight='[{"type": "WfModule", "moduleIdName": "sort"}]'
       data-test="const wfModule = workflow.tabs[0].wfModules[3] || {}
         const params = wfModule.params || {}
         const sort_columns = params.sort_columns || []
@@ -63,11 +63,11 @@ tabs:
   <h3 class="instructions">Οδηγίες</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"Module","index":4,"name":"Filter by condition"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[4] === 'Filter by condition'"
+      data-highlight='[{"type":"Module","index":4,"id_name":"filter"}]'
+      data-test="return workflow.tabs[0].wfModuleSlugs[4] === 'filter'"
       >Προσθέστε το βήμα &quot;Φιλτράρισμα βάσει συνθήκης&quot;.</li>
     <li
-      data-highlight='[{"type": "WfModule", "moduleName": "Filter by condition"}]'
+      data-highlight='[{"type": "WfModule", "moduleIdName": "filter"}]'
       data-test="
         const p = workflow.tabs[0].wfModules[4].params;
         if (!p.filters.filters[0] || !p.filters.filters[0].subfilters[0]) return false;
@@ -75,7 +75,7 @@ tabs:
         return sf1.colname === 'date' && sf1.condition === 'date_is_after' && sf1.value === '2010-05-31' && p.keep"
       >Επιλέξτε τη στήλη <kbd>date</kbd>, διαλέξτε τη συνθήκη <kbd>Η ημερομηνία είναι μετά από</kbd><br/> και πληκτρολογήστε την τιμή <kbd>2010-05-31</kbd>.</li>
     <li
-      data-highlight='[{"type": "WfModule", "moduleName": "Filter by condition"}]'
+      data-highlight='[{"type": "WfModule", "moduleIdName": "filter"}]'
       data-test="
         const p = workflow.tabs[0].wfModules[4].params
         if (!p.keep) return false
@@ -111,15 +111,15 @@ tabs:
   <h3 class="instructions">Οδηγίες</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"Module","index":5,"name":"Group"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[5] === 'Group'"
+      data-highlight='[{"type":"Module","index":5,"id_name":"groupby"}]'
+      data-test="return workflow.tabs[0].wfModuleSlugs[5] === 'groupby'"
       >Προσθέστε το βήμα «Ομαδοποίηση».</li>
     <li
-      data-highlight='[{"type": "WfModule", "moduleName": "Group"}]'
+      data-highlight='[{"type": "WfModule", "moduleIdName": "groupby"}]'
       data-test="return workflow.tabs[0].wfModules[5].params.groups.colnames.join('|') === 'date|subject_race'"
       >Επιλέξτε τη στήλη <kbd>date</kbd> και <kbd>subject_race</kbd>.</li>
     <li
-      data-highlight='[{"type": "WfModule", "moduleName": "Group"}]'
+      data-highlight='[{"type": "WfModule", "moduleIdName": "groupby"}]'
       data-test="
         const groups = workflow.tabs[0].wfModules[5].params.groups
         return groups.group_dates &&
@@ -134,21 +134,21 @@ tabs:
   <h3 class="instructions">Οδηγίες</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"Module","index":6,"name":"Reshape"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[6] === 'Reshape'"
+      data-highlight='[{"type":"Module","index":6,"id_name":"reshape"}]'
+      data-test="return workflow.tabs[0].wfModuleSlugs[6] === 'reshape'"
       >Προσθέστε το βήμα <kbd>Αναδιαμόρφωση</kbd>.</li>
     <li
-      data-highlight='[{"type": "WfModule", "moduleName": "Reshape"}]'
+      data-highlight='[{"type": "WfModule", "moduleIdName": "reshape"}]'
       data-test="
         const params = workflow.tabs[0].wfModules[6].params
         return params.direction === 'longtowide' && params.colnames === 'date' && params.varcol === 'subject_race'"
       >Επιλέξτε <kbd>Από κατακόρυφο σε οριζόντιο</kbd>, ορίστε τη <kbd>Μεταβλητή σειράς</kbd> στη στήλη <kbd>date</kbd> και τη <kbd>Μεταβλητή στήλης</kbd> σε <kbd>subject_race</kbd>.</li>
     <li
-      data-highlight='[{"type":"Module","index":7,"name":"Line Chart"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[7] === 'Line Chart'"
+      data-highlight='[{"type":"Module","index":7,"id_name":"linechart"}]'
+      data-test="return workflow.tabs[0].wfModuleSlugs[7] === 'linechart'"
       >Τώρα προσθέστε το βήμα <kbd>Γραμμικό γράφημα</kbd>.</li>
     <li
-      data-highlight='[{"type":"WfModule","moduleName":"Line Chart"}]'
+      data-highlight='[{"type":"WfModule","moduleIdName":"linechart"}]'
       data-test="
         const wfModule = workflow.tabs[0].wfModules[7]; const p = wfModule.params;
         if (p.x_column !== 'date') return false;
@@ -157,7 +157,7 @@ tabs:
         return p.y_columns.length === 5 && lines.sort().join('|') === 'NA|asian/pacific islander|black|other/unknown|white'"
       >Επιλέξτε <kbd>ημερομηνία</kbd> για τον άξονα X και προσθέστε τις υπόλοιπες στήλες ως γραμμές στον άξονα Y.</li>
     <li
-      data-highlight='[{"type":"WfModule","moduleName":"Line Chart"}]'
+      data-highlight='[{"type":"WfModule","moduleIdName":"linechart"}]'
       data-test="const p = workflow.tabs[0].wfModules[7].params; return !!p.title && !!p.x_axis_label && !!p.y_axis_label"
       >Προσθέστε στο γράφημα τίτλο, ετικέτα του άξονα X και ετικέτα του άξονα Y.</li>
   </ol>

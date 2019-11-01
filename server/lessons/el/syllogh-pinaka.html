@@ -11,17 +11,17 @@
   <h3 class="instructions">Οδηγίες</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Scrape table"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Scrape table'"
+      data-highlight='[{"type":"Module","index":0,"id_name":"scrapetable"}]'
+      data-test="return workflow.tabs[0].wfModuleSlugs[0] === 'scrapetable'"
       >Προσθέστε την πηγή δεδομένων «Συλλογή πίνακα»</li>
     <li
-      data-highlight='[{"type":"WfModule","moduleName":"Scrape table"}]'
+      data-highlight='[{"type":"WfModule","moduleIdName":"scrapetable"}]'
       data-test="const url = workflow.tabs[0].wfModules[0].params.url; return url === 'https://en.wikipedia.org/wiki/Global_Gender_Gap_Report' || url === 'https://en.wikipedia.org/wiki/List_of_countries_by_GDP_(nominal)'"
       >Επικολλήστε το URL της ιστοσελίδας όπου δημοσιεύεται ο πίνακας.<div class="copy-txt">https://en.wikipedia.org/wiki/Global_Gender_Gap_Report</div>
       <p class="instruction-detail">Στη σελίδα αυτή υπάρχουν πολλοί πίνακες. Ο πίνακας που θέλετε να συλλέξετε (να «σκαραπάρετε») είναι ο <code>WEF Global Gender Gap Index rankings</code>, ο οποίος είναι ο τρίτος από την αρχή της σελίδας.</p>
     </li>
     <li
-      data-highlight='[{"type":"WfModule","moduleName":"Scrape table"}]'
+      data-highlight='[{"type":"WfModule","moduleIdName":"scrapetable"}]'
       data-test="return workflow.tabs[0].wfModules[0].params.tablenum === 3"
       >Ορίστε τη θέση του πίνακα στη σελίδα με <code>3</code> και κάντε κλικ στο <kbd>Συλλογή</kbd><p class="instruction-detail">Όταν φορτώνονται τα δεδομένα, αποθηκεύονται στον Συλλέκτη ως συγκεκριμένη έκδοση. Θα παραμείνουν προσπελάσιμα ακόμα κι αν εξαφανιστεί η ιστοσελίδα με τον πίνακα.</p>
     </li>
@@ -37,7 +37,7 @@
   <ol class="steps">
     <li
       data-highlight='[]'
-      data-test="return workflow.tabs[0].wfModuleNames[1] === 'Rename columns'"
+      data-test="return workflow.tabs[0].wfModuleSlugs[1] === 'renamecolumns'"
       >Κάντε κλικ στο όνομα μιας στήλης στην κεφαλίδα του πίνακα για να δώσετε ένα πιο ευανάγνωστο όνομα.<p>Για παράδειγμα: Επεξεργαστείτε το <code>Year[note 1] - 2006</code> σε <code>2006</code>.</p>
     </li>
   </ol>

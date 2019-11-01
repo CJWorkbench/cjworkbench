@@ -12,11 +12,11 @@
 <h3 class="instructions">Οδηγίες</h3>
 <ol class="steps">
   <li
-    data-highlight='[{"type":"Module","index":0,"name":"Twitter"}]'
+    data-highlight='[{"type":"Module","index":0,"id_name":"twitter"}]'
     data-test="return workflow.tabs[0].wfModuleSlugs[0] === 'twitter'"
     >Προσθέστε την πηγή δεδομένων «Twitter»</li>
   <li
-    data-highlight='[{"type":"WfModule","name":"Twitter"}]'
+    data-highlight='[{"type":"WfModule","id_name":"twitter"}]'
     data-test="const cred = workflow.tabs[0].wfModules[0].params.twitter_credentials; return cred && cred.name && cred.name.indexOf('@') !== -1;"
     >Κάνε κλικ στο <kbd>Σύνδεση λογαριασμού</kbd>. Στο ακόλουθο αναδυόμενο παράθυρο, κάντε κλικ στο <kbd>Εξουσιοδότηση εφαρμογής</kbd>.</li>
 
@@ -28,12 +28,12 @@
 <h3 class="instructions">Οδηγίες</h3>
 <ol class="steps">
   <li
-    data-highlight='[{"type":"WfModule","moduleName":"Twitter"}]'
+    data-highlight='[{"type":"WfModule","moduleIdName":"twitter"}]'
     data-test="const params = workflow.tabs[0].wfModules[0].params; return params.querytype === 'user_timeline' && ['neiltyson', '@neiltyson'].indexOf(params.username) !== -1"
     >Διαλέξτε «Τουίτ χρήστη» στο πρώτο αναπτυσσόμενο μενού και επικολλήστε το όνομα χρήστη<div class="copy-txt">neiltyson</div>
   </li>
   <li
-    data-highlight='[{"type":"WfModule","moduleName":"Twitter"}]'
+    data-highlight='[{"type":"WfModule","moduleIdName":"twitter"}]'
     data-test="const param = workflow.tabs[0].wfModules[0].params.username; return (param || '').toLowerCase() === 'neiltyson'"
     >Κάντε κλικ στην «Ενημέρωση» για να φορτώσετε τουίτ από τον συγκεκριμένο λογαριασμό.<p class="instruction-detail">Λόγω των περιορισμών του <a class="highlight" href='https://developer.twitter.com/en/docs/basics/rate-limiting.html' target="_blank" className="backToLessons info-1">Twitter API</a>, υπάρχει όριο στον αριθμό των τουίτ που μπορείτε να συλλέξετε από έναν συγκεκριμένο χρήστη. Θα πρέπει να μπορέσετε να φορτώσετε περίπου 3.000 τουίτ, που είναι μια καλή αρχή.</p>
   </li>
@@ -46,11 +46,11 @@
 <p class="instruction-detail">Πρώτα, φιλτράρουμε τα τουίτ για να ανακαλύψουμε ποια περιέχουν τη λέξη &quot;science&quot;.</p>
 <ol class="steps">
   <li
-    data-highlight='[{"type":"Module","index":1,"name":"Filter by condition"}]'
+    data-highlight='[{"type":"Module","index":1,"id_name":"filter"}]'
     data-test="return workflow.tabs[0].wfModuleSlugs[1] === 'filter'"
     >Προσθέστε το βήμα &quot;Φιλτράρισμα βάσει συνθήκης&quot;.</li>
   <li
-    data-highlight='[{"type":"WfModule","moduleName":"Filter by condition"}]'
+    data-highlight='[{"type":"WfModule","moduleIdName":"filter"}]'
     data-test="
       const filters = workflow.tabs[0].wfModules[1].params.filters.filters
       if (filters.length !== 1 || filters[0].subfilters.length !== 1) return false
@@ -64,11 +64,11 @@
     >Επιλέξτε τη στήλη <kbd>text</kbd> για το φιλτράρισμα. Επιλέξτε <kbd>Το κείμενο περιέχει</kbd> ως συνθήκη και αναζητήστε <code>science</code>.<p class="instruction-detail">Ας ομαδοποιήσουμε τώρα βάσει ημερομηνίας τα τουίτ που προέκυψαν.</p>
   </li>
   <li
-    data-highlight='[{"type":"Module","index":2,"name":"Group"}]'
+    data-highlight='[{"type":"Module","index":2,"id_name":"groupby"}]'
     data-test="return workflow.tabs[0].wfModuleSlugs[2] === 'groupby'"
     >Προσθέστε το βήμα «Ομαδοποίηση».</li>
   <li
-    data-highlight='[{"type":"WfModule","moduleName":"Group"}]'
+    data-highlight='[{"type":"WfModule","moduleIdName":"groupby"}]'
     data-test="const params = workflow.tabs[0].wfModules[2].params; return params.groups.colnames.join('|') === 'created_at' && params.groups.group_dates && params.groups.date_granularities.created_at === 'Y' && params.aggregations.length === 1 && params.aggregations[0].operation === 'size' && params.aggregations[0].outname.toLowerCase() === 'number of tweets'"
     >Επιλέξτε <kbd>created_at</kbd> ως στήλη ημερομηνίας. Επιλέξτε <kbd>Ομαδοποίηση κατά ημερομηνία</kbd> και ομαδοποιήστε <kbd>βάσει έτους</kbd>. Ορίστε το όνομα της στήλης εξόδου &quot;Πλήθος&quot; σε <code>Number of tweets</code></li>
 </ol>
@@ -79,15 +79,15 @@
 <h3 class="instructions">Οδηγίες</h3>
 <ol class="steps">
   <li
-    data-highlight='[{"type":"Module","index":3,"name":"Line Chart"}]'
+    data-highlight='[{"type":"Module","index":3,"id_name":"linechart"}]'
     data-test="return workflow.tabs[0].wfModuleSlugs[3] === 'linechart'"
     >Προσθέστε το βήμα &quot;Γράφημα γραμμής&quot;.</li>
   <li
-    data-highlight='[{"type":"WfModule","moduleName":"Line Chart"}]'
+    data-highlight='[{"type":"WfModule","moduleIdName":"linechart"}]'
     data-test="const p = workflow.tabs[0].wfModules[3].params; return p.x_column === 'created_at' && (p.y_columns[0] && p.y_columns[0].column || '').toLowerCase() === 'number of tweets'"
     >Επιλέξτε <kbd>created_at</kbd> για τον άξονα Χ και <kbd>Αριθμός των τουίτ</kbd> για τον άξονα Y.</li>
   <li
-    data-highlight='[{"type":"WfModule","moduleName":"Line Chart"}]'
+    data-highlight='[{"type":"WfModule","moduleIdName":"linechart"}]'
     data-test="const p = workflow.tabs[0].wfModules[3].params; return !!p.title"
     >Προσθέστε <kbd>τίτλο</kbd> στο γράφημα.<p class="instruction-detail">Στη συνέχεια, ας κάνουμε αυτό το γράφημα να ενημερώνεται κάθε φορά που τα τουίτ των χρηστών μας περιέχουν τη λέξη που επιλέξαμε.</p>
   </li>
@@ -99,11 +99,11 @@
   <h3 class="instructions">Οδηγίες</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"WfModule","moduleName":"Twitter"}]'
+      data-highlight='[{"type":"WfModule","moduleIdName":"twitter"}]'
       data-test="const wfModule = workflow.tabs[0].wfModules[0]; return wfModule.updateInterval === '5h'"
       >Πίσω στην ενότητα &quot;Twitter&quot;, κάνουμε κλικ στο <kbd>μη αυτόματο</kbd> για να ανοίξουμε το παράθυρο &quot;Ενημέρωση ροής εργασίας&quot;. Ορίστε τη λειτουργία στην επιλογή<kbd>Αυτόματο</kbd>, ορίστε τη συχνότητα σε <kbd>5 ώρες</kbd>, και κάντε κλικ στο <kbd>Εφαρμογή</kbd>.</li>
     <li
-      data-highlight='[{"type":"WfModule","moduleName":"Twitter"}]'
+      data-highlight='[{"type":"WfModule","moduleIdName":"twitter"}]'
       data-test="return workflow.tabs[0].wfModules[0].params.accumulate === true"
       >Βεβαιωθείτε ότι η επιλογή <kbd>Συγκέντρωση τουίτ</kbd> είναι τσεκαρισμένη, έτσι ώστε να προστίθενται νέα δεδομένα στον υπάρχοντα πίνακα.</li>
   </ol>

@@ -41,7 +41,7 @@ const getLoadDataModules = createSelector([getModules, lessonSelector], (modules
     .sort((a, b) => NameCollator.compare(a.name, b.name))
     .map(m => ({
       idName: m.id_name,
-      isLessonHighlight: testHighlight({ type: 'Module', name: m.name, index: 0 }),
+      isLessonHighlight: testHighlight({ type: 'Module', id_name: m.id_name, index: 0 }),
       name: m.name,
       description: m.description,
       icon: m.icon,

@@ -226,7 +226,7 @@ describe('ModuleSearch Popup', () => {
             {
               steps: [
                 {
-                  highlight: [{ type: 'Module', name: 'AAA', index: 0 }],
+                  highlight: [{ type: 'Module', id_name: 'a', index: 0 }],
                   testJs: 'return false'
                 }
               ]

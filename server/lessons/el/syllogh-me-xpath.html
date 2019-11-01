@@ -13,11 +13,11 @@
   <h3 class="instructions">Οδηγίες</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"HTML scraper"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'HTML scraper'"
+      data-highlight='[{"type":"Module","index":0,"id_name":"urlscraper"}]'
+      data-test="return workflow.tabs[0].wfModuleSlugs[0] === 'urlscraper'"
     >Αρχίστε με την πηγή δεδομένων για τον <kbd>Συλλέκτη HTML</kbd> .</li>
     <li
-      data-highlight='[{"type":"WfModule","moduleName":"HTML scraper"}]'
+      data-highlight='[{"type":"WfModule","moduleIdName":"urlscraper"}]'
       data-test="return workflow.tabs[0].wfModules[0].params.pagedurl.trim() === 'http://www.atlaudit.org/audit-reports.html'"
       >Επικολλήστε το ακόλουθο URL της ιστοσελίδας όπου απαριθμούνται όλες οι δημόσιες εκθέσεις και πατήστε <kbd>Συλλογή</kbd><div class="copy-txt">http://www.atlaudit.org/audit-reports.html</div>
       <p class="instruction-detail">Στη συνέχεια, ας κάνουμε εξαγωγή των δεδομένων μας.</p>
@@ -31,8 +31,8 @@
   <h3 class="instructions">Οδηγίες</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"Module","index":1,"name":"HTML to Table"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[1] === 'HTML to Table'"
+      data-highlight='[{"type":"Module","index":1,"id_name":"xpathextractor"}]'
+      data-test="return workflow.tabs[0].wfModuleSlugs[1] === 'xpathextractor'"
     >Προσθέστε το βήμα <kbd>Από HTML σε πίνακα</kbd> .</li>
   </ol>
 </section>
@@ -57,7 +57,7 @@
   <h3 class="instructions">Οδηγίες</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"WfModule","moduleName":"HTML to Table"}]'
+      data-highlight='[{"type":"WfModule","moduleIdName":"xpathextractor"}]'
       data-test="
         const cols = workflow.tabs[0].wfModules[1].params.colselectors;
         return (
@@ -93,7 +93,7 @@
   <h3 class="instructions">Οδηγίες</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"WfModule","moduleName":"HTML to Table"}]'
+      data-highlight='[{"type":"WfModule","moduleIdName":"xpathextractor"}]'
       data-test="
         const cols = workflow.tabs[0].wfModules[1].params.colselectors;
         return (
@@ -110,11 +110,11 @@
   <h3 class="instructions">Οδηγίες</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"WfModule","moduleName":"HTML to Table"}]'
+      data-highlight='[{"type":"WfModule","moduleIdName":"xpathextractor"}]'
       data-test="return workflow.tabs[0].wfModules[0].updateInterval !== null"
       >Στον Συλλέκτη HTML, κάντε κλικ στο <kbd>μη αυτόματο</kbd> για να ανοίξετε το παράθυρο &quot;Ενημέρωση ροής εργασίας&quot;. Ορίστε τη λειτουργία στην επιλογή <kbd>Αυτόματο</kbd>. Κάνε κλικ στο <kbd>Εφαρμογή</kbd>.</li>
     <li
-      data-highlight='[{"type":"WfModule","moduleName":"HTML to Table"}]'
+      data-highlight='[{"type":"WfModule","moduleIdName":"xpathextractor"}]'
       data-test="return workflow.tabs[0].wfModules[1].isEmailUpdates"
       >Στην επιλογή &quot;Από HTML σε πίνακα&quot;, κάντε κλικ στο εικονίδιο της ειδοποίησης <span><img class="icon-insert" src="images/lesson-icons/notification.svg"></span> και κάντε κλικ στο <kbd>Ενεργοποίηση</kbd> για να παίρνετε ηλ. μήνυμα όταν αλλάζει η έξοδος αυτού του βήματος.</li>
   </ol>
