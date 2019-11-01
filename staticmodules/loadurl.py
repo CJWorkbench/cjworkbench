@@ -211,7 +211,7 @@ async def fetch(params, *, output_path: Path) -> Union[Path, str]:
             # after we exit the context and the file is deleted.
             pass
     except asyncio.TimeoutError:
-        output_path.truncate()
+        output_path.write_bytes(b"")  # truncate file
         return f"Timeout fetching {url}"
     except aiohttp.InvalidURL:
         return f"Invalid URL"
