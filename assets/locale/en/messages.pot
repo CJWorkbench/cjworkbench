@@ -1,3 +1,8 @@
+#. default-message: Copy to clipboard
+#: assets/js/ShareModal/Url.js:67
+msgid "button.shareModal.url.copyToClipboard"
+msgstr ""
+
 #. default-message: Greek
 #: assets/js/i18n/locales.js:5
 msgid "locales.el"
@@ -6,6 +11,11 @@ msgstr ""
 #. default-message: English
 #: assets/js/i18n/locales.js:4
 msgid "locales.en"
+msgstr ""
+
+#. default-message: Search…
+#: assets/js/WorkflowEditor/AddData/Search.js:16
+msgid "placeholder.searchJs.search"
 msgstr ""
 
 #. default-message: {0, plural, =0 {No rows selected} one {# row selected} other {# rows selected}}
@@ -43,6 +53,16 @@ msgstr ""
 msgid "time_diff.now"
 msgstr ""
 
+#. default-message: Clear Search
+#: assets/js/WorkflowEditor/AddData/Search.js:24
+msgid "title.workflow.clearSearch"
+msgstr ""
+
+#. default-message: Debugging details (please send):
+#: assets/js/UnhandledErrorReport.js:58
+msgid "unhandledErrorRerpor.debuggingDetails"
+msgstr ""
+
 #. default-message: Imported module {0} under category {1}
 #: assets/js/ImportModuleFromGitHub.js:44
 msgid "workbench.importedmodule"
@@ -51,11 +71,6 @@ msgstr ""
 #. default-message: Processing...
 #: assets/js/ImportModuleFromGitHub.js:32
 msgid "workbench.processing"
-msgstr ""
-
-#. default-message: Duplicate
-#: assets/js/WorkflowEditor/Tabs/TabDropdown.js:14
-msgid "workflow.Duplicate"
 msgstr ""
 
 #. default-message: ADD DATA
@@ -84,18 +99,13 @@ msgid "workflow.alphabetical"
 msgstr ""
 
 #. default-message: Close
-#: assets/js/WorkflowEditor/AddData/Modal.js:24
+#: assets/js/WorkflowEditor/AddData/Modal.js:22
 msgid "workflow.attribute.close"
 msgstr ""
 
 #. default-message: CHOOSE A DATA SOURCE
-#: assets/js/WorkflowEditor/AddData/Modal.js:21
+#: assets/js/WorkflowEditor/AddData/Modal.js:20
 msgid "workflow.choosedata"
-msgstr ""
-
-#. default-message: Clear Search
-#: assets/js/WorkflowEditor/AddData/Search.js:28
-msgid "workflow.clearSearch"
 msgstr ""
 
 #. default-message: Copy the debugging details below and send them to
@@ -113,7 +123,7 @@ msgstr ""
 msgid "workflow.createyourworkflow"
 msgstr ""
 
-#. default-message: This was the data that led to an error. Please correct the error in the left panel.
+#. default-message: This was the data that led to an error. Please correct the error in the left pane.
 #: assets/js/WorkflowEditor/OutputPane.js:104
 msgid "workflow.dataledtoanerror"
 msgstr ""
@@ -139,7 +149,7 @@ msgid "workflow.describethisbug"
 msgstr ""
 
 #. default-message: Duplicate
-#: assets/js/Workflows/WorkflowContextMenu.js:35
+#: assets/js/WorkflowEditor/Tabs/TabDropdown.js:14 assets/js/Workflows/WorkflowContextMenu.js:35
 msgid "workflow.duplicate"
 msgstr ""
 
@@ -149,22 +159,22 @@ msgid "workflow.duplicatetosavechanges"
 msgstr ""
 
 #. default-message: Email alerts disabled
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:373
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:371
 msgid "workflow.emailalertdisabled"
 msgstr ""
 
 #. default-message: Email alerts enabled
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:373
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:371
 msgid "workflow.emailalertenebled"
 msgstr ""
 
 #. default-message: enter Zen mode
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:241
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:239
 msgid "workflow.enterzenmode"
 msgstr ""
 
 #. default-message: exit Zen mode
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:241
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:239
 msgid "workflow.exitzenmode"
 msgstr ""
 
@@ -224,24 +234,24 @@ msgstr ""
 msgid "workflow.oldestmodified"
 msgstr ""
 
+#. default-message: Report
+#: assets/js/WorkflowEditor/PaneSelect.js:19
+msgid "workflow.paneselect.reportButton"
+msgstr ""
+
 #. default-message: Permanently delete this workflow?
 #: assets/js/Workflows/index.js:95
 msgid "workflow.permanentdelete"
 msgstr ""
 
 #. default-message: Search…
-#: assets/js/WorkflowEditor/ModuleSearch/Prompt.js:42
+#: assets/js/WorkflowEditor/ModuleSearch/Prompt.js:41
 msgid "workflow.placeholder.search"
 msgstr ""
 
 #. default-message: Type a note...
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:356
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:354
 msgid "workflow.placeholder.typeanote"
-msgstr ""
-
-#. default-message: Please send the message
-#: assets/js/UnhandledErrorReport.js:20
-msgid "workflow.plssendmsg"
 msgstr ""
 
 #. default-message: private
@@ -289,11 +299,6 @@ msgstr ""
 msgid "workflow.reversealphabet"
 msgstr ""
 
-#. default-message: Search…
-#: assets/js/WorkflowEditor/AddData/Search.js:17
-msgid "workflow.searchattribute"
-msgstr ""
-
 #. default-message: Shared with me
 #: assets/js/Workflows/WorkflowLists.js:112
 msgid "workflow.sharedwithme"
@@ -309,7 +314,7 @@ msgstr ""
 msgid "workflow.signin"
 msgstr ""
 
-#. default-message: <0>Sign in</0>to save your changes
+#. default-message: <0>Sign in</0> to save your changes
 #: assets/js/Workflow.js:20
 msgid "workflow.signintosaveurchanges"
 msgstr ""
@@ -333,12 +338,12 @@ msgid "workflow.thistabnosteps"
 msgstr ""
 
 #. default-message: Edit Note
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:395
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:393
 msgid "workflow.title.editnote"
 msgstr ""
 
 #. default-message: Help for this module
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:385
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:383
 msgid "workflow.title.helpformodule"
 msgstr ""
 
@@ -367,7 +372,7 @@ msgstr ""
 msgid "workflow.visibility.anyone"
 msgstr ""
 
-#. default-message: by
+#. default-message: by {0}
 #: assets/js/WorkflowNavBar.js:52
 msgid "workflow.visibility.by"
 msgstr ""
@@ -383,7 +388,7 @@ msgid "workflow.visibility.closeButton"
 msgstr ""
 
 #. default-message: Close Search
-#: assets/js/WorkflowEditor/ModuleSearch/Prompt.js:53
+#: assets/js/WorkflowEditor/ModuleSearch/Prompt.js:49
 msgid "workflow.visibility.closesearch"
 msgstr ""
 
@@ -395,11 +400,6 @@ msgstr ""
 #. default-message: Columns
 #: assets/js/table/TableInfo.js:45
 msgid "workflow.visibility.columns"
-msgstr ""
-
-#. default-message: Copy to clipboard
-#: assets/js/ShareModal/Url.js:67
-msgid "workflow.visibility.cpToclip"
 msgstr ""
 
 #. default-message: date & time
@@ -414,7 +414,7 @@ msgstr ""
 
 #. default-message: Grant access
 #: assets/js/ShareModal/NewAclEntry.js:42
-msgid "workflow.visibility.grandAccess"
+msgid "workflow.visibility.grantAccess"
 msgstr ""
 
 #. default-message: Home
@@ -483,13 +483,8 @@ msgid "workflow.visibility.publicLink"
 msgstr ""
 
 #. default-message: Redo
-#: assets/js/UndoRedoButtons.js:65
+#: assets/js/UndoRedoButtons.js:63
 msgid "workflow.visibility.redo"
-msgstr ""
-
-#. default-message: Report
-#: assets/js/WorkflowEditor/PaneSelect.js:19
-msgid "workflow.visibility.reportButton"
 msgstr ""
 
 #. default-message: Rows
@@ -508,7 +503,7 @@ msgid "workflow.visibility.sharingSettings"
 msgstr ""
 
 #. default-message: Change Workflow sharing
-#: assets/js/ShareModal/ShareButton.js:25
+#: assets/js/ShareModal/ShareButton.js:23
 msgid "workflow.visibility.sharingTitle"
 msgstr ""
 
@@ -523,11 +518,11 @@ msgid "workflow.visibility.textType"
 msgstr ""
 
 #. default-message: Undo
-#: assets/js/UndoRedoButtons.js:64
+#: assets/js/UndoRedoButtons.js:62
 msgid "workflow.visibility.undo"
 msgstr ""
 
-#. default-message: We opened a messaging window and included details for our developers to fix the issue.
+#. default-message: We opened a messaging window and included details for our developers to fix the issue. <0>Please send the message</0>.
 #: assets/js/UnhandledErrorReport.js:20
 msgid "workflow.workbenchbugreport"
 msgstr ""
@@ -577,7 +572,7 @@ msgstr ""
 msgid "workflow.workbenchcustommodule"
 msgstr ""
 
-#. default-message: done
+#. default-message: Done
 #: assets/js/ExportModal.js:124
 msgid "workflow.workbenchdone"
 msgstr ""
@@ -597,7 +592,7 @@ msgstr ""
 msgid "workflow.workbenchexportdata"
 msgstr ""
 
-#. default-message: WORKBENCH
+#. default-message: This workflow is not available
 #: assets/js/Embed.js:37
 msgid "workflow.workbenchheader"
 msgstr ""
@@ -652,7 +647,7 @@ msgstr ""
 msgid "workflow.workbenchsomethingwrong"
 msgstr ""
 
-#. default-message: Updated
+#. default-message: Updated {0}
 #: assets/js/Embed.js:78
 msgid "workflow.workbenchupdated"
 msgstr ""

@@ -14,12 +14,20 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.7.0\n"
 
+#: assets/js/ShareModal/Url.js:67
+msgid "button.shareModal.url.copyToClipboard"
+msgstr ""
+
 #: assets/js/i18n/locales.js:5
 msgid "locales.el"
 msgstr ""
 
 #: assets/js/i18n/locales.js:4
 msgid "locales.en"
+msgstr ""
+
+#: assets/js/WorkflowEditor/AddData/Search.js:16
+msgid "placeholder.searchJs.search"
 msgstr ""
 
 #: assets/js/table/SelectedRowsActions.js:105
@@ -50,16 +58,20 @@ msgstr ""
 msgid "time_diff.now"
 msgstr ""
 
+#: assets/js/WorkflowEditor/AddData/Search.js:24
+msgid "title.workflow.clearSearch"
+msgstr ""
+
+#: assets/js/UnhandledErrorReport.js:58
+msgid "unhandledErrorRerpor.debuggingDetails"
+msgstr ""
+
 #: assets/js/ImportModuleFromGitHub.js:44
 msgid "workbench.importedmodule"
 msgstr ""
 
 #: assets/js/ImportModuleFromGitHub.js:32
 msgid "workbench.processing"
-msgstr ""
-
-#: assets/js/WorkflowEditor/Tabs/TabDropdown.js:14
-msgid "workflow.Duplicate"
 msgstr ""
 
 #: assets/js/WorkflowEditor/AddData/Button.js:25
@@ -82,16 +94,12 @@ msgstr ""
 msgid "workflow.alphabetical"
 msgstr ""
 
-#: assets/js/WorkflowEditor/AddData/Modal.js:24
+#: assets/js/WorkflowEditor/AddData/Modal.js:22
 msgid "workflow.attribute.close"
 msgstr ""
 
-#: assets/js/WorkflowEditor/AddData/Modal.js:21
+#: assets/js/WorkflowEditor/AddData/Modal.js:20
 msgid "workflow.choosedata"
-msgstr ""
-
-#: assets/js/WorkflowEditor/AddData/Search.js:28
-msgid "workflow.clearSearch"
 msgstr ""
 
 #: assets/js/UnhandledErrorReport.js:45
@@ -127,6 +135,7 @@ msgstr ""
 msgid "workflow.describethisbug"
 msgstr ""
 
+#: assets/js/WorkflowEditor/Tabs/TabDropdown.js:14
 #: assets/js/Workflows/WorkflowContextMenu.js:35
 msgid "workflow.duplicate"
 msgstr ""
@@ -135,19 +144,19 @@ msgstr ""
 msgid "workflow.duplicatetosavechanges"
 msgstr ""
 
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:373
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:371
 msgid "workflow.emailalertdisabled"
 msgstr ""
 
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:373
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:371
 msgid "workflow.emailalertenebled"
 msgstr ""
 
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:241
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:239
 msgid "workflow.enterzenmode"
 msgstr ""
 
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:241
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:239
 msgid "workflow.exitzenmode"
 msgstr ""
 
@@ -196,20 +205,20 @@ msgstr ""
 msgid "workflow.oldestmodified"
 msgstr ""
 
+#: assets/js/WorkflowEditor/PaneSelect.js:19
+msgid "workflow.paneselect.reportButton"
+msgstr ""
+
 #: assets/js/Workflows/index.js:95
 msgid "workflow.permanentdelete"
 msgstr ""
 
-#: assets/js/WorkflowEditor/ModuleSearch/Prompt.js:42
+#: assets/js/WorkflowEditor/ModuleSearch/Prompt.js:41
 msgid "workflow.placeholder.search"
 msgstr ""
 
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:356
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:354
 msgid "workflow.placeholder.typeanote"
-msgstr ""
-
-#: assets/js/UnhandledErrorReport.js:20
-msgid "workflow.plssendmsg"
 msgstr ""
 
 #: assets/js/Workflows/WorkflowMetadata.js:48
@@ -248,10 +257,6 @@ msgstr ""
 msgid "workflow.reversealphabet"
 msgstr ""
 
-#: assets/js/WorkflowEditor/AddData/Search.js:17
-msgid "workflow.searchattribute"
-msgstr ""
-
 #: assets/js/Workflows/WorkflowLists.js:112
 msgid "workflow.sharedwithme"
 msgstr ""
@@ -283,11 +288,11 @@ msgstr ""
 msgid "workflow.thistabnosteps"
 msgstr ""
 
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:395
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:393
 msgid "workflow.title.editnote"
 msgstr ""
 
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:385
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:383
 msgid "workflow.title.helpformodule"
 msgstr ""
 
@@ -323,7 +328,7 @@ msgstr ""
 msgid "workflow.visibility.closeButton"
 msgstr "Κλείσιμο"
 
-#: assets/js/WorkflowEditor/ModuleSearch/Prompt.js:53
+#: assets/js/WorkflowEditor/ModuleSearch/Prompt.js:49
 msgid "workflow.visibility.closesearch"
 msgstr ""
 
@@ -335,10 +340,6 @@ msgstr "Συνεργάτες"
 msgid "workflow.visibility.columns"
 msgstr "Στήλες"
 
-#: assets/js/ShareModal/Url.js:67
-msgid "workflow.visibility.cpToclip"
-msgstr "Αντιγραφή στο πληκτρολόγιο"
-
 #: assets/js/table/ColumnHeader.js:13
 msgid "workflow.visibility.dateType"
 msgstr "Ημε/μηνία"
@@ -348,8 +349,8 @@ msgid "workflow.visibility.duplicate"
 msgstr "Διπλότυπο"
 
 #: assets/js/ShareModal/NewAclEntry.js:42
-msgid "workflow.visibility.grandAccess"
-msgstr "Πρόσβαση"
+msgid "workflow.visibility.grantAccess"
+msgstr ""
 
 #: assets/js/WfHamburgerMenu.js:56
 msgid "workflow.visibility.home"
@@ -403,13 +404,9 @@ msgstr "δημόσιο"
 msgid "workflow.visibility.publicLink"
 msgstr "Προσβάσιμο σε όλους"
 
-#: assets/js/UndoRedoButtons.js:65
+#: assets/js/UndoRedoButtons.js:63
 msgid "workflow.visibility.redo"
 msgstr "Επόμενο"
-
-#: assets/js/WorkflowEditor/PaneSelect.js:19
-msgid "workflow.visibility.reportButton"
-msgstr "Αναφορά"
 
 #: assets/js/table/TableInfo.js:41
 msgid "workflow.visibility.rows"
@@ -423,7 +420,7 @@ msgstr "Μοιράσου"
 msgid "workflow.visibility.sharingSettings"
 msgstr "Αλλαγές στις Ρυθμίσεις"
 
-#: assets/js/ShareModal/ShareButton.js:25
+#: assets/js/ShareModal/ShareButton.js:23
 msgid "workflow.visibility.sharingTitle"
 msgstr "Μοιράσου το"
 
@@ -435,7 +432,7 @@ msgstr "Μοιράσου με"
 msgid "workflow.visibility.textType"
 msgstr "Κείμενο"
 
-#: assets/js/UndoRedoButtons.js:64
+#: assets/js/UndoRedoButtons.js:62
 msgid "workflow.visibility.undo"
 msgstr "Προηγούμενο"
 
