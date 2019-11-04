@@ -3,7 +3,7 @@
 {% load i18n_icu %}
 {% load bootstrap %}
 
-{% block title %}{% trans "Account" %}{% endblock %}
+{% block title %}{% trans_html "account.settings.title" default="Account" %}{% endblock %}
 
 {% block body %}
     <form method="POST" action="{% url "account_settings" %}">

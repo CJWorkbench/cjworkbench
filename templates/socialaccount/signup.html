@@ -1,28 +1,29 @@
 {% extends "socialaccount/base.html" %}
 
-{% load i18n %}
+{% load i18n_icu %}
 
-{% block head_title %}{% trans "Signup" %}{% endblock %}
+{% block head_title %}{% trans_html "templates.socialaccount.signup.header" default="Signup" %}{% endblock %}
 
 {% block content %}
 {% comment %}
-This template is only ever called if 1) the social network in question does not provide an email address or 2) the
+{% trans_html "templates.socialaccount.signup.comment" default="This template is only ever called if 1) the social network in question does not provide an email address or 2) the
 social network provided an email address but that address is already in our system. In case of 2) we want to give the
 user the chance to log in and connect their account. Ther are several open issues with django_allauth about making this
-behavior more clear, and we should contribute a fix and a pull request.
+behavior more clear, and we should contribute a fix and a pull request." %}
+
 {% endcomment %}
 {% if form.email.value %}
 
     {% with provider_slug=account.get_provider.get_slug provider_name=account.get_provider.name site_name=site.name %}
-        <p class='content-1 t-d-gray text-center mb-4'>There is already an account registered with that email address.</p>
+        <p class='content-1 t-d-gray text-center mb-4'>{% trans_html "templates.socialaccount.signup.alreadyAccount" default="There is already an account registered with that email address." %}</p>
         {# TODO: Come up with a more elegant way to do this #}
-        <a class="content-1 text-center action-link white" href="/account/login?next=/account/{{provider_slug}}/login?process=connect">Sign in and connect your existing account.</a>
+        <a class="content-1 text-center action-link white" href="/account/login?next=/account/{{provider_slug}}/login?process=connect">{% trans_html "templates.socialaccount.signup.connectexistingacc" default="Sign in and connect your existing account." %}</a>
     {%  endwith %}
 
 {% else %}
 
-    <p class='content-1 t-d-gray text-center mb-5'>{% blocktrans with provider_name=account.get_provider.name site_name=site.name %}You are about to use your {{provider_name}} account to login to
-    {{site_name}}. As a final step, please complete the following form:{% endblocktrans %}</p>
+    <p class='content-1 t-d-gray text-center mb-5'>{% trans_html "templates.socialaccount.signup.completeform" default="You are about to use your {provider_name} account to login to
+    {site_name}. As a final step, please complete the following form: "  arg_provider_name=account.get_provider.name arg_site_name=site.name %}</p>
 
     <form class="signup" id="signup_form" method="post" action="{% url 'socialaccount_signup' %}">
       {% csrf_token %}
@@ -30,7 +31,7 @@ behavior more clear, and we should contribute a fix and a pull request.
       {% if redirect_field_value %}
       <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
       {% endif %}
-      <button type="submit">{% trans "Sign Up" %} &raquo;</button>
+      <button type="submit">{% trans_html "templates.socialaccount.signup.button" default="Sign Up" %} &raquo;</button>
     </form>
 
 {% endif %}
