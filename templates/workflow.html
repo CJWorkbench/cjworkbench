@@ -2,7 +2,7 @@
 {% load render_bundle from webpack_loader %}
 {% load i18n_icu %}
 
-{% block title %}{% Workbench %}{% endblock %}
+{% block title %}{% trans_html "templates.workflow.title" default="Workbench" %}{% endblock %}
 
 {% block body %}
   <div id="root"></div>

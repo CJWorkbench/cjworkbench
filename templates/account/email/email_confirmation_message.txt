@@ -1,8 +1,2 @@
-{% load account %}{% user_display user as user_display %}{% load i18n_icu %}{% autoescape off %}{% trans_html ".account.email.email_confirmation_message" default="Welcome to Workbench!
-Please confirm your email address by clicking the link below. If you didn't sign up, you can safely ignore this email.
-
-{activateUrl}" arg_activateUrl = activate_url %}
-
-
-
+{% load account %}{% user_display user as user_display %}{% load i18n_icu %}{% autoescape off %}{% trans_html "account.email.email_confirmation_message" default="Welcome to Workbench! Please confirm your email address by clicking the link below.If you didn't sign up, you can safely ignore this email.{activateUrl}" arg_activateUrl=activate_url %}
 {% endautoescape %}
