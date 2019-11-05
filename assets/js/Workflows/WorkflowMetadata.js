@@ -44,8 +44,8 @@ export class WorkflowMetadata extends React.Component {
       <li>
         <span className='separator'>-</span>
 
-        <button type='button' className='public-private' title={this.props.i18n._(t('workflow.visibility.changeprivacy')`Change privacy`)} onClick={this.handleClickOpenShareModal}>
-          {this.props.workflow.public ? this.props.i18n._(t('workflow.public')`public`) : this.props.i18n._(t('workflow.private')`private`)}
+        <button type='button' className='public-private' title={this.props.i18n._(t('js.Workflows.WorkflowMetadata.changePrivacy.button')`Change privacy`)} onClick={this.handleClickOpenShareModal}>
+          {this.props.workflow.public ? this.props.i18n._(t('js.Workflows.WorkflowMetadata.public')`public`) : this.props.i18n._(t('js.Workflows.WorkflowMetadata.private')`private`)}
         </button>
       </li>
     ) : null
@@ -54,7 +54,7 @@ export class WorkflowMetadata extends React.Component {
       <ul className='metadata-container'>
         {attribution}
         <li>
-          <Trans id='workflows.workflowmetadata.update'>
+          <Trans id='js.Workflows.WorkflowMetadata.update'>
           Updated
             {timeDifference(this.props.workflow.last_update, now, this.props.i18n)}
           </Trans>

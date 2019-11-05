@@ -588,7 +588,7 @@ exports[`Workflow list page renders correctly 1`] = `
                     >
                       <WithI18n
                         defaults="My workflows"
-                        id="workflow.myworkflows"
+                        id="js.Workflows.WorkflowLists.myWorkflows.tab"
                       >
                         <I18n
                           update={true}
@@ -622,12 +622,12 @@ exports[`Workflow list page renders correctly 1`] = `
                                 "t": [Function],
                               }
                             }
-                            id="workflow.myworkflows"
+                            id="js.Workflows.WorkflowLists.myWorkflows.tab"
                           >
                             <Render
-                              value="workflow.myworkflows"
+                              value="js.Workflows.WorkflowLists.myWorkflows.tab"
                             >
-                              workflow.myworkflows
+                              js.Workflows.WorkflowLists.myWorkflows.tab
                             </Render>
                           </Trans>
                         </I18n>
@@ -653,7 +653,7 @@ exports[`Workflow list page renders correctly 1`] = `
                     >
                       <WithI18n
                         defaults="Shared with me"
-                        id="workflow.sharedwithme"
+                        id="js.Workflows.WorkflowLists.sharedWithMe.tab"
                       >
                         <I18n
                           update={true}
@@ -687,12 +687,12 @@ exports[`Workflow list page renders correctly 1`] = `
                                 "t": [Function],
                               }
                             }
-                            id="workflow.sharedwithme"
+                            id="js.Workflows.WorkflowLists.sharedWithMe.tab"
                           >
                             <Render
-                              value="workflow.sharedwithme"
+                              value="js.Workflows.WorkflowLists.sharedWithMe.tab"
                             >
-                              workflow.sharedwithme
+                              js.Workflows.WorkflowLists.sharedWithMe.tab
                             </Render>
                           </Trans>
                         </I18n>
@@ -718,7 +718,7 @@ exports[`Workflow list page renders correctly 1`] = `
                     >
                       <WithI18n
                         defaults="Recipes"
-                        id="workflow.recipes"
+                        id="js.Workflows.WorkflowLists.recipes.tab"
                       >
                         <I18n
                           update={true}
@@ -752,12 +752,12 @@ exports[`Workflow list page renders correctly 1`] = `
                                 "t": [Function],
                               }
                             }
-                            id="workflow.recipes"
+                            id="js.Workflows.WorkflowLists.recipes.tab"
                           >
                             <Render
-                              value="workflow.recipes"
+                              value="js.Workflows.WorkflowLists.recipes.tab"
                             >
-                              workflow.recipes
+                              js.Workflows.WorkflowLists.recipes.tab
                             </Render>
                           </Trans>
                         </I18n>
@@ -795,7 +795,53 @@ exports[`Workflow list page renders correctly 1`] = `
                                   disabled={false}
                                   onClick={[Function]}
                                 >
-                                  Sort 
+                                  <WithI18n
+                                    defaults="Sort"
+                                    id="js.Workflows.SortMenu.sort.DropdownTitle"
+                                  >
+                                    <I18n
+                                      update={true}
+                                      withHash={true}
+                                    >
+                                      <Trans
+                                        defaults="Sort"
+                                        i18n={
+                                          Object {
+                                            "_": [Function],
+                                            "_activeLanguageData": Object {
+                                              "plurals": [Function],
+                                            },
+                                            "_activeMessages": Object {},
+                                            "_catalogs": Object {
+                                              "en": Object {
+                                                "languageData": Object {},
+                                                "messages": Object {},
+                                              },
+                                            },
+                                            "_dev": Object {
+                                              "compile": [Function],
+                                              "loadLanguageData": [Function],
+                                            },
+                                            "_language": "en",
+                                            "_locales": undefined,
+                                            "_missing": undefined,
+                                            "plural": [Function],
+                                            "select": [Function],
+                                            "selectOrdinal": [Function],
+                                            "t": [Function],
+                                          }
+                                        }
+                                        id="js.Workflows.SortMenu.sort.DropdownTitle"
+                                      >
+                                        <Render
+                                          value="js.Workflows.SortMenu.sort.DropdownTitle"
+                                        >
+                                          js.Workflows.SortMenu.sort.DropdownTitle
+                                        </Render>
+                                      </Trans>
+                                    </I18n>
+                                  </WithI18n>
+                                   
                                   <i
                                     className="icon-caret-down"
                                   />
@@ -1000,7 +1046,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                       <li>
                                         <WithI18n
                                           defaults="Updated {0}"
-                                          id="workflows.workflowmetadata.update"
+                                          id="js.Workflows.WorkflowMetadata.update"
                                           values={
                                             Object {
                                               "0": "{years}y ago",
@@ -1039,7 +1085,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                                   "t": [Function],
                                                 }
                                               }
-                                              id="workflows.workflowmetadata.update"
+                                              id="js.Workflows.WorkflowMetadata.update"
                                               values={
                                                 Object {
                                                   "0": "{years}y ago",
@@ -1047,9 +1093,9 @@ exports[`Workflow list page renders correctly 1`] = `
                                               }
                                             >
                                               <Render
-                                                value="workflows.workflowmetadata.update"
+                                                value="js.Workflows.WorkflowMetadata.update"
                                               >
-                                                workflows.workflowmetadata.update
+                                                js.Workflows.WorkflowMetadata.update
                                               </Render>
                                             </Trans>
                                           </I18n>
@@ -1223,7 +1269,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                       <li>
                                         <WithI18n
                                           defaults="Updated {0}"
-                                          id="workflows.workflowmetadata.update"
+                                          id="js.Workflows.WorkflowMetadata.update"
                                           values={
                                             Object {
                                               "0": "{years}y ago",
@@ -1262,7 +1308,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                                   "t": [Function],
                                                 }
                                               }
-                                              id="workflows.workflowmetadata.update"
+                                              id="js.Workflows.WorkflowMetadata.update"
                                               values={
                                                 Object {
                                                   "0": "{years}y ago",
@@ -1270,9 +1316,9 @@ exports[`Workflow list page renders correctly 1`] = `
                                               }
                                             >
                                               <Render
-                                                value="workflows.workflowmetadata.update"
+                                                value="js.Workflows.WorkflowMetadata.update"
                                               >
-                                                workflows.workflowmetadata.update
+                                                js.Workflows.WorkflowMetadata.update
                                               </Render>
                                             </Trans>
                                           </I18n>
@@ -1446,7 +1492,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                       <li>
                                         <WithI18n
                                           defaults="Updated {0}"
-                                          id="workflows.workflowmetadata.update"
+                                          id="js.Workflows.WorkflowMetadata.update"
                                           values={
                                             Object {
                                               "0": "{years}y ago",
@@ -1485,7 +1531,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                                   "t": [Function],
                                                 }
                                               }
-                                              id="workflows.workflowmetadata.update"
+                                              id="js.Workflows.WorkflowMetadata.update"
                                               values={
                                                 Object {
                                                   "0": "{years}y ago",
@@ -1493,9 +1539,9 @@ exports[`Workflow list page renders correctly 1`] = `
                                               }
                                             >
                                               <Render
-                                                value="workflows.workflowmetadata.update"
+                                                value="js.Workflows.WorkflowMetadata.update"
                                               >
-                                                workflows.workflowmetadata.update
+                                                js.Workflows.WorkflowMetadata.update
                                               </Render>
                                             </Trans>
                                           </I18n>
@@ -1740,7 +1786,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                       <li>
                                         <WithI18n
                                           defaults="Updated {0}"
-                                          id="workflows.workflowmetadata.update"
+                                          id="js.Workflows.WorkflowMetadata.update"
                                           values={
                                             Object {
                                               "0": "{years}y ago",
@@ -1779,7 +1825,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                                   "t": [Function],
                                                 }
                                               }
-                                              id="workflows.workflowmetadata.update"
+                                              id="js.Workflows.WorkflowMetadata.update"
                                               values={
                                                 Object {
                                                   "0": "{years}y ago",
@@ -1787,9 +1833,9 @@ exports[`Workflow list page renders correctly 1`] = `
                                               }
                                             >
                                               <Render
-                                                value="workflows.workflowmetadata.update"
+                                                value="js.Workflows.WorkflowMetadata.update"
                                               >
-                                                workflows.workflowmetadata.update
+                                                js.Workflows.WorkflowMetadata.update
                                               </Render>
                                             </Trans>
                                           </I18n>
@@ -1963,7 +2009,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                       <li>
                                         <WithI18n
                                           defaults="Updated {0}"
-                                          id="workflows.workflowmetadata.update"
+                                          id="js.Workflows.WorkflowMetadata.update"
                                           values={
                                             Object {
                                               "0": "{years}y ago",
@@ -2002,7 +2048,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                                   "t": [Function],
                                                 }
                                               }
-                                              id="workflows.workflowmetadata.update"
+                                              id="js.Workflows.WorkflowMetadata.update"
                                               values={
                                                 Object {
                                                   "0": "{years}y ago",
@@ -2010,9 +2056,9 @@ exports[`Workflow list page renders correctly 1`] = `
                                               }
                                             >
                                               <Render
-                                                value="workflows.workflowmetadata.update"
+                                                value="js.Workflows.WorkflowMetadata.update"
                                               >
-                                                workflows.workflowmetadata.update
+                                                js.Workflows.WorkflowMetadata.update
                                               </Render>
                                             </Trans>
                                           </I18n>
@@ -2241,7 +2287,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                       <li>
                                         <WithI18n
                                           defaults="Updated {0}"
-                                          id="workflows.workflowmetadata.update"
+                                          id="js.Workflows.WorkflowMetadata.update"
                                           values={
                                             Object {
                                               "0": "{years}y ago",
@@ -2280,7 +2326,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                                   "t": [Function],
                                                 }
                                               }
-                                              id="workflows.workflowmetadata.update"
+                                              id="js.Workflows.WorkflowMetadata.update"
                                               values={
                                                 Object {
                                                   "0": "{years}y ago",
@@ -2288,9 +2334,9 @@ exports[`Workflow list page renders correctly 1`] = `
                                               }
                                             >
                                               <Render
-                                                value="workflows.workflowmetadata.update"
+                                                value="js.Workflows.WorkflowMetadata.update"
                                               >
-                                                workflows.workflowmetadata.update
+                                                js.Workflows.WorkflowMetadata.update
                                               </Render>
                                             </Trans>
                                           </I18n>

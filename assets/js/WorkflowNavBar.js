@@ -172,7 +172,7 @@ export class WorkflowNavBar extends React.Component {
       )
     } else {
       contextMenu = (
-        <a href='/account/login' className='nav--link'>{i18n._(t('workflow.signin')`Sign in`)}</a>
+        <a href='/account/login' className='nav--link'>{i18n._(t('js.WorkflowNavBar.signIn.accountLink')`Sign in`)}</a>
       )
     }
 
@@ -203,9 +203,9 @@ export class WorkflowNavBar extends React.Component {
               {isReadOnly ? null : (
                 <UndoRedoButtons undo={this.undo} redo={this.redo} />
               )}
-              <button name='duplicate' onClick={this.handleDuplicate}>{i18n._(t('workflow.visibility.duplicate')`Duplicate`)}</button>
+              <button name='duplicate' onClick={this.handleDuplicate}>{i18n._(t('js.WorkflowNavBar.duplicate.button')`Duplicate`)}</button>
               {lesson ? null : (/* We haven't yet designed what it means to share a lesson workflow. */
-                <ShareButton>{i18n._(t('workflow.visibility.share')`Share`)}</ShareButton>
+                <ShareButton>{i18n._(t('js.WorkflowNavBar.share.shareButton')`Share`)}</ShareButton>
               )}
               {contextMenu}
             </div>
