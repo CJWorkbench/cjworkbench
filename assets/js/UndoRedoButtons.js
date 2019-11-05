@@ -59,8 +59,8 @@ export class UndoRedoButtons extends React.PureComponent {
     return (
 
       <div className='group--undo-redo'>
-        <button name='undo' title={i18n._(t('workflow.visibility.undo')`Undo`)} onClick={undo}><i className='icon-undo' /></button>
-        <button name='redo' title={i18n._(t('workflow.visibility.redo')`Redo`)} onClick={redo}><i className='icon-redo' /></button>
+        <button name='undo' title={i18n._(t('js.UndoRedoButtons.undo.hoverText')`Undo`)} onClick={undo}><i className='icon-undo' /></button>
+        <button name='redo' title={i18n._(t('js.UndoRedoButtons.redo.hoverText')`Redo`)} onClick={redo}><i className='icon-redo' /></button>
       </div>
 
     )

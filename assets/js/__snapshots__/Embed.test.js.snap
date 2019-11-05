@@ -90,13 +90,14 @@ exports[`Embed Available workflow Renders the embed widget with the correct info
       <h1>
         <WithI18n
           defaults="EMBED THIS CHART"
-          id="workflow.workbenchembedheader"
+          description="This should be all-caps for styling reasons"
+          id="js.Embed.embedThisChart"
         />
       </h1>
       <h2>
         <WithI18n
           defaults="Paste this code into any webpage HTML"
-          id="workflow.workbenchpastecodeheader"
+          id="js.Embed.embedCode"
         />
       </h2>
       <div
@@ -123,7 +124,7 @@ exports[`Embed Unavailable workflow Renders the embed widget with the correct in
     <h1>
       <WithI18n
         defaults="This workflow is not available"
-        id="workflow.notavailableworkflow"
+        id="js.Embed.workflowNotAvailable"
       />
     </h1>
   </div>
@@ -144,7 +145,7 @@ exports[`Embed Unavailable workflow Renders the embed widget with the correct in
       <h1>
         <WithI18n
           defaults="This workflow is not available"
-          id="workflow.workbenchheader"
+          id="js.Embed.workflowNotAvailable.footer"
         />
       </h1>
     </div>

@@ -22,16 +22,14 @@ class WorkbenchSignupForm(forms.ModelForm):
             "first_name": forms.TextInput(
                 attrs={
                     "placeholder": trans_lazy(
-                        "accounts.sign_up.fields.first_name.placeholder",
-                        default="First name",
+                        "py.forms.signup.firstName.placeholder", default="First name"
                     )
                 }
             ),
             "last_name": forms.TextInput(
                 attrs={
                     "placeholder": trans_lazy(
-                        "accounts.sign_up.fields.last_name.placeholder",
-                        default="Last name",
+                        "py.forms.signup.lastName.placeholder", default="Last name"
                     )
                 }
             ),

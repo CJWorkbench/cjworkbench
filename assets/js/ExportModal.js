@@ -58,12 +58,20 @@ export default class ExportModal extends React.PureComponent {
   renderCsvCopyLink () {
     if (this.state.csvCopied) {
       return (
-        <div className='clipboard copied' onMouseLeave={this.handleLeaveCsv}><Trans id='workflow.workbenchcsvcopied'>CSV LINK COPIED TO CLIPBOARD</Trans></div>
+        <div className='clipboard copied' onMouseLeave={this.handleLeaveCsv}>
+          <Trans id='js.ExportModal.csvCopyLink.copiedToClipboard' description='This should be all-caps for styling reasons'>
+                CSV LINK COPIED TO CLIPBOARD
+          </Trans>
+        </div>
       )
     } else {
       return (
         <CopyToClipboard text={this.csvUrlString} onCopy={this.handleCopyCsv} className='clipboard test-csv-copy'>
-          <div><Trans id='workflow.workbenchcopylivelink'>COPY LIVE LINK</Trans></div>
+          <div>
+            <Trans id='js.ExportModal.csvCopyLink.copyLiveLink' description='This should be all-caps for styling reasons'>
+                COPY LIVE LINK
+            </Trans>
+          </div>
         </CopyToClipboard>
       )
     }
@@ -72,12 +80,20 @@ export default class ExportModal extends React.PureComponent {
   renderJsonCopyLink () {
     if (this.state.jsonCopied) {
       return (
-        <div className='clipboard copied' onMouseLeave={this.handleLeaveJson}><Trans id='workflow.workbenchcjsonfeedlink'>JSON FEED LINK COPIED TO CLIPBOARD</Trans></div>
+        <div className='clipboard copied' onMouseLeave={this.handleLeaveJson}>
+          <Trans id='js.ExportModal.jsonCopyLink.copiedToClipboard' description='This should be all-caps for styling reasons'>
+                JSON FEED LINK COPIED TO CLIPBOARD
+          </Trans>
+        </div>
       )
     } else {
       return (
         <CopyToClipboard text={this.jsonUrlString} onCopy={this.handleCopyJson} className='clipboard test-json-copy'>
-          <div><Trans id='workflow.workbenchcopylivelink'>COPY LIVE LINK</Trans></div>
+          <div>
+            <Trans id='js.ExportModal.jsonCopyLink.copyLiveLink' description='This should be all-caps for styling reasons'>
+                COPY LIVE LINK
+            </Trans>
+          </div>
         </CopyToClipboard>
       )
     }
@@ -91,10 +107,18 @@ export default class ExportModal extends React.PureComponent {
 
     return (
       <Modal isOpen={this.props.open} className={this.props.className} toggle={this.props.toggle}>
-        <ModalHeader><Trans id='workflow.workbenchexportdata'>EXPORT DATA</Trans></ModalHeader>
+        <ModalHeader>
+          <Trans id='js.ExportModal.header.title' description='This should be all-caps for styling reasons'>
+                EXPORT DATA
+          </Trans>
+        </ModalHeader>
         <ModalBody>
           <div className='d-flex justify-content-between flex-row'>
-            <div className='dl-file'><Trans id='workflow.workbenchcsv'>CSV</Trans></div>
+            <div className='dl-file'>
+              <Trans id='js.ExportModal.type.CSV' description='This should be all-caps for styling reasons'>
+                    CSV
+              </Trans>
+            </div>
             {csvCopyLink}
           </div>
           <div className='d-flex justify-content-between flex-row mb-3'>
@@ -107,7 +131,11 @@ export default class ExportModal extends React.PureComponent {
             </div>
           </div>
           <div className='d-flex justify-content-between flex-row'>
-            <div className='dl-file'><Trans id='workflow.workbenchjsonfeed'>JSON FEED</Trans></div>
+            <div className='dl-file'>
+              <Trans id='js.ExportModal.type.JSON' description='This should be all-caps for styling reasons'>
+                    JSON FEED
+              </Trans>
+            </div>
             {jsonCopyLink}
           </div>
           <div className='d-flex justify-content-between flex-row'>
@@ -121,7 +149,9 @@ export default class ExportModal extends React.PureComponent {
           </div>
         </ModalBody>
         <ModalFooter>
-          <button type='button' onClick={this.handleClickClose} className='button-blue action-button test-done-button'><Trans id='workflow.workbenchdone'>Done</Trans></button>
+          <button type='button' onClick={this.handleClickClose} className='button-blue action-button test-done-button'>
+            <Trans id='js.ExportModal.footer.doneButton'>Done</Trans>
+          </button>
         </ModalFooter>
       </Modal>
     )

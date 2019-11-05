@@ -68,7 +68,7 @@ exports[`ExportModal should match snapshot 1`] = `
                     <h5
                       class="modal-title"
                     >
-                      workflow.workbenchexportdata
+                      js.ExportModal.header.title
                     </h5>
                     <button
                       aria-label="Close"
@@ -91,12 +91,12 @@ exports[`ExportModal should match snapshot 1`] = `
                       <div
                         class="dl-file"
                       >
-                        workflow.workbenchcsv
+                        js.ExportModal.type.CSV
                       </div>
                       <div
                         class="clipboard test-csv-copy"
                       >
-                        workflow.workbenchcopylivelink
+                        js.ExportModal.csvCopyLink.copyLiveLink
                       </div>
                     </div>
                     <div
@@ -124,12 +124,12 @@ exports[`ExportModal should match snapshot 1`] = `
                       <div
                         class="dl-file"
                       >
-                        workflow.workbenchjsonfeed
+                        js.ExportModal.type.JSON
                       </div>
                       <div
                         class="clipboard test-json-copy"
                       >
-                        workflow.workbenchcopylivelink
+                        js.ExportModal.jsonCopyLink.copyLiveLink
                       </div>
                     </div>
                     <div
@@ -159,7 +159,7 @@ exports[`ExportModal should match snapshot 1`] = `
                       class="button-blue action-button test-done-button"
                       type="button"
                     >
-                      workflow.workbenchdone
+                      js.ExportModal.footer.doneButton
                     </button>
                   </div>
                 </div>
@@ -194,7 +194,8 @@ exports[`ExportModal should match snapshot 1`] = `
                   >
                     <WithI18n
                       defaults="EXPORT DATA"
-                      id="workflow.workbenchexportdata"
+                      description="This should be all-caps for styling reasons"
+                      id="js.ExportModal.header.title"
                     >
                       <I18n
                         update={true}
@@ -202,6 +203,7 @@ exports[`ExportModal should match snapshot 1`] = `
                       >
                         <Trans
                           defaults="EXPORT DATA"
+                          description="This should be all-caps for styling reasons"
                           i18n={
                             Object {
                               "_": [Function],
@@ -228,12 +230,12 @@ exports[`ExportModal should match snapshot 1`] = `
                               "t": [Function],
                             }
                           }
-                          id="workflow.workbenchexportdata"
+                          id="js.ExportModal.header.title"
                         >
                           <Render
-                            value="workflow.workbenchexportdata"
+                            value="js.ExportModal.header.title"
                           >
-                            workflow.workbenchexportdata
+                            js.ExportModal.header.title
                           </Render>
                         </Trans>
                       </I18n>
@@ -265,7 +267,8 @@ exports[`ExportModal should match snapshot 1`] = `
                     >
                       <WithI18n
                         defaults="CSV"
-                        id="workflow.workbenchcsv"
+                        description="This should be all-caps for styling reasons"
+                        id="js.ExportModal.type.CSV"
                       >
                         <I18n
                           update={true}
@@ -273,6 +276,7 @@ exports[`ExportModal should match snapshot 1`] = `
                         >
                           <Trans
                             defaults="CSV"
+                            description="This should be all-caps for styling reasons"
                             i18n={
                               Object {
                                 "_": [Function],
@@ -299,12 +303,12 @@ exports[`ExportModal should match snapshot 1`] = `
                                 "t": [Function],
                               }
                             }
-                            id="workflow.workbenchcsv"
+                            id="js.ExportModal.type.CSV"
                           >
                             <Render
-                              value="workflow.workbenchcsv"
+                              value="js.ExportModal.type.CSV"
                             >
-                              workflow.workbenchcsv
+                              js.ExportModal.type.CSV
                             </Render>
                           </Trans>
                         </I18n>
@@ -321,7 +325,8 @@ exports[`ExportModal should match snapshot 1`] = `
                       >
                         <WithI18n
                           defaults="COPY LIVE LINK"
-                          id="workflow.workbenchcopylivelink"
+                          description="This should be all-caps for styling reasons"
+                          id="js.ExportModal.csvCopyLink.copyLiveLink"
                         >
                           <I18n
                             update={true}
@@ -329,6 +334,7 @@ exports[`ExportModal should match snapshot 1`] = `
                           >
                             <Trans
                               defaults="COPY LIVE LINK"
+                              description="This should be all-caps for styling reasons"
                               i18n={
                                 Object {
                                   "_": [Function],
@@ -355,12 +361,12 @@ exports[`ExportModal should match snapshot 1`] = `
                                   "t": [Function],
                                 }
                               }
-                              id="workflow.workbenchcopylivelink"
+                              id="js.ExportModal.csvCopyLink.copyLiveLink"
                             >
                               <Render
-                                value="workflow.workbenchcopylivelink"
+                                value="js.ExportModal.csvCopyLink.copyLiveLink"
                               >
-                                workflow.workbenchcopylivelink
+                                js.ExportModal.csvCopyLink.copyLiveLink
                               </Render>
                             </Trans>
                           </I18n>
@@ -396,7 +402,8 @@ exports[`ExportModal should match snapshot 1`] = `
                     >
                       <WithI18n
                         defaults="JSON FEED"
-                        id="workflow.workbenchjsonfeed"
+                        description="This should be all-caps for styling reasons"
+                        id="js.ExportModal.type.JSON"
                       >
                         <I18n
                           update={true}
@@ -404,6 +411,7 @@ exports[`ExportModal should match snapshot 1`] = `
                         >
                           <Trans
                             defaults="JSON FEED"
+                            description="This should be all-caps for styling reasons"
                             i18n={
                               Object {
                                 "_": [Function],
@@ -430,12 +438,12 @@ exports[`ExportModal should match snapshot 1`] = `
                                 "t": [Function],
                               }
                             }
-                            id="workflow.workbenchjsonfeed"
+                            id="js.ExportModal.type.JSON"
                           >
                             <Render
-                              value="workflow.workbenchjsonfeed"
+                              value="js.ExportModal.type.JSON"
                             >
-                              workflow.workbenchjsonfeed
+                              js.ExportModal.type.JSON
                             </Render>
                           </Trans>
                         </I18n>
@@ -452,7 +460,8 @@ exports[`ExportModal should match snapshot 1`] = `
                       >
                         <WithI18n
                           defaults="COPY LIVE LINK"
-                          id="workflow.workbenchcopylivelink"
+                          description="This should be all-caps for styling reasons"
+                          id="js.ExportModal.jsonCopyLink.copyLiveLink"
                         >
                           <I18n
                             update={true}
@@ -460,6 +469,7 @@ exports[`ExportModal should match snapshot 1`] = `
                           >
                             <Trans
                               defaults="COPY LIVE LINK"
+                              description="This should be all-caps for styling reasons"
                               i18n={
                                 Object {
                                   "_": [Function],
@@ -486,12 +496,12 @@ exports[`ExportModal should match snapshot 1`] = `
                                   "t": [Function],
                                 }
                               }
-                              id="workflow.workbenchcopylivelink"
+                              id="js.ExportModal.jsonCopyLink.copyLiveLink"
                             >
                               <Render
-                                value="workflow.workbenchcopylivelink"
+                                value="js.ExportModal.jsonCopyLink.copyLiveLink"
                               >
-                                workflow.workbenchcopylivelink
+                                js.ExportModal.jsonCopyLink.copyLiveLink
                               </Render>
                             </Trans>
                           </I18n>
@@ -532,7 +542,7 @@ exports[`ExportModal should match snapshot 1`] = `
                   >
                     <WithI18n
                       defaults="Done"
-                      id="workflow.workbenchdone"
+                      id="js.ExportModal.footer.doneButton"
                     >
                       <I18n
                         update={true}
@@ -566,12 +576,12 @@ exports[`ExportModal should match snapshot 1`] = `
                               "t": [Function],
                             }
                           }
-                          id="workflow.workbenchdone"
+                          id="js.ExportModal.footer.doneButton"
                         >
                           <Render
-                            value="workflow.workbenchdone"
+                            value="js.ExportModal.footer.doneButton"
                           >
-                            workflow.workbenchdone
+                            js.ExportModal.footer.doneButton
                           </Render>
                         </Trans>
                       </I18n>

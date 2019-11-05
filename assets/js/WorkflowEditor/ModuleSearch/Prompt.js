@@ -38,7 +38,7 @@ export class Prompt extends React.PureComponent {
         <input
           type='search'
           name='moduleQ'
-          placeholder={this.props.i18n._(t('workflow.placeholder.search')`Search…`)}
+          placeholder={this.props.i18n._(t('js.WorkflowEditor.ModuleSearch.Prompt.placeholder')`Search…`)}
           autoComplete='off'
           ref={this.inputRef}
           value={value}
@@ -46,7 +46,7 @@ export class Prompt extends React.PureComponent {
           onKeyDown={this.handleKeyDown}
         />
 
-        <button type='reset' className='reset' title={this.props.i18n._(t('workflow.visibility.closesearch')`Close Search`)}><i className='icon-close' /></button>
+        <button type='reset' className='reset' title={this.props.i18n._(t('js.WorkflowEditor.ModuleSearch.Prompt.closeButton.hoverText')`Close Search`)}><i className='icon-close' /></button>
 
       </form>
     )

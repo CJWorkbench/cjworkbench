@@ -10,9 +10,15 @@ export default function TabDropdown ({ onClickRename, onClickDelete, onClickDupl
         <i className='icon-caret-down' />
       </DropdownToggle>
       <DropdownMenu>
-        <DropdownItem onClick={onClickRename} icon='icon-edit'><Trans id='workflow.rename'>Rename</Trans></DropdownItem>
-        <DropdownItem onClick={onClickDuplicate} icon='icon-duplicate'><Trans id='workflow.duplicate'>Duplicate</Trans></DropdownItem>
-        <DropdownItem onClick={onClickDelete} icon='icon-removec'><Trans id='workflow.deleteEvent'>Delete</Trans></DropdownItem>
+        <DropdownItem onClick={onClickRename} icon='icon-edit'>
+          <Trans id='js.WorkflowEditor.Tabs.TabDropdown.menu.rename'>Rename</Trans>
+        </DropdownItem>
+        <DropdownItem onClick={onClickDuplicate} icon='icon-duplicate'>
+          <Trans id='js.WorkflowEditor.Tabs.TabDropdown.menu.duplicate'>Duplicate</Trans>
+        </DropdownItem>
+        <DropdownItem onClick={onClickDelete} icon='icon-removec'>
+          <Trans id='js.WorkflowEditor.Tabs.TabDropdown.menu.delete'>Delete</Trans>
+        </DropdownItem>
       </DropdownMenu>
     </UncontrolledDropdown>
   )

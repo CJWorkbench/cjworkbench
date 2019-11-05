@@ -20,7 +20,7 @@ export function ShareButton ({ i18n, className, children }) {
         type='button'
         className='share-button'
         name='share'
-        title={i18n._(t('workflow.visibility.sharingTitle')`Change Workflow sharing`)}
+        title={i18n._(t('js.ShareModal.ShareButton.button.hoverText')`Change Workflow sharing`)}
         onClick={open}
       >
         {children}

@@ -104,7 +104,7 @@ export class SelectedRowsActions extends React.PureComponent {
       <UncontrolledDropdown disabled={disabled}>
         <DropdownToggle title={i18n._(t('selectedRowsactions.menu')`menu`)} className={rowSelect}>
           <Plural
-            id='selectedRow.numberOfRows'
+            id='js.table.SelectedRowsActions.numberOfSelectedRows'
             value={disabled ? 0 : numberFormat.format(selectedRowIndexes.length)}
             _0='No rows selected'
             one='# row selected'

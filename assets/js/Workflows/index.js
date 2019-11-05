@@ -92,7 +92,7 @@ export class Workflows extends React.Component {
     const tabName = this.workflowIdToTabName(workflowId)
     if (!tabName) return
 
-    if (!confirm(this.props.i18n._(t('workflow.permanentdelete')`Permanently delete this workflow?`))) return
+    if (!confirm(this.props.i18n._(t('js.Workflows.index.permanentyDelete')`Permanently delete this workflow?`))) return
 
     this.props.api.deleteWorkflow(workflowId)
       .then(() => {
@@ -191,16 +191,16 @@ export class Workflows extends React.Component {
         <Navbar user={user} />
         <a href='/lessons/' className='lesson-banner mx-auto'>
           <div>
-            <div className='content-1'>{i18n._(t('workflow.new')`NEW`)}</div>
+            <div className='content-1'>{i18n._(t('js.Workflows.index.new')`NEW`)}</div>
             <div className='d-flex'>
               <span className='icon-star' />
-              <div className=' title-1 '>{i18n._(t('workflow.trainingtitle')`TRAINING`)}</div>
+              <div className=' title-1 '>{i18n._(t('js.Workflows.index.training.title')`TRAINING`)}</div>
             </div>
           </div>
-          <p>{i18n._(t('workflow.learnworkwithdata')`Learn how to work with data without coding`)}</p>
+          <p>{i18n._(t('js.Workflows.index.learnHowToWorkWithData')`Learn how to work with data without coding`)}</p>
         </a>
         <CreateWorkflowButton>
-          {i18n._(t('workflow.createworkflow')`Create Workflow`)}
+          {i18n._(t('js.Workflows.index.createWorkflow')`Create Workflow`)}
         </CreateWorkflowButton>
         <WorkflowLists
           workflows={workflows}

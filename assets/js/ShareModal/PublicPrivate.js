@@ -3,7 +3,9 @@ import PropTypes from 'prop-types'
 import { Trans } from '@lingui/macro'
 
 const Description = ({ isPublic }) => {
-  const message = isPublic ? <Trans id='workflow.visibility.isPublic'>Anyone on the Internet may view and duplicate this Workflow.</Trans> : <Trans id='workflow.visibility.notPublic'>Only collaborators can view this Workflow.</Trans>
+  const message = isPublic
+    ? <Trans id='js.ShareModal.PublicPrivate.description.public'>Anyone on the Internet may view and duplicate this Workflow.</Trans>
+    : <Trans id='js.ShareModal.PublicPrivate.description.private'>Only collaborators can view this Workflow.</Trans>
   return (
     <p>{message}</p>
   )
@@ -12,7 +14,11 @@ const Description = ({ isPublic }) => {
 const DescriptionWithToggle = ({ isPublic, onChange }) => (
   <label className='checkbox'>
     <input type='checkbox' checked={isPublic} onChange={onChange} />
-    <span><Trans id='workflow.visibility.anyone'>Anyone can view and duplicate this workflow, and see your email.</Trans></span>
+    <span>
+      <Trans id='js.ShareModal.PublicPrivate.descriptionWithToggle'>
+            Anyone can view and duplicate this workflow, and see your email.
+      </Trans>
+    </span>
   </label>
 )
 

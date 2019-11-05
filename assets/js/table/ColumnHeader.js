@@ -8,9 +8,9 @@ import { t } from '@lingui/macro'
 import { withI18n } from '@lingui/react'
 
 const columnTypeDisplay = {
-  text: t('workflow.visibility.textType')`text`,
-  number: t('workflow.visibility.numberType')`number`,
-  datetime: t('workflow.visibility.dateType')`date & time`
+  text: t('js.table.ColumnHeader.text')`text`,
+  number: t('js.table.ColumnHeader.number')`number`,
+  datetime: t('js.table.ColumnHeader.dateAndtime')`date & time`
 }
 
 class ReorderColumnDropZone extends React.PureComponent {

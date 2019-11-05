@@ -135,7 +135,7 @@ class ModuleStackInsertSpot extends React.PureComponent {
 function EmptyReadOnlyModuleStack () {
   return (
     <div className='empty-read-only'>
-      <Trans id='workflow.thistabnosteps'>This Tab has no Steps.</Trans>
+      <Trans id='js.WorkflowEditor.ModuleStack.EmptyReadOnlyModuleStack'>This Tab has no Steps.</Trans>
     </div>
   )
 }

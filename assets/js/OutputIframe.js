@@ -101,15 +101,29 @@ export class OutputIframe extends React.PureComponent {
     return (
       <Modal isOpen={this.isModalOpen('public')} toggle={this.closeModal}>
         <ModalHeader toggle={this.closeModal}>
-          <div className='modal-title'> <Trans id='workflow.workbenchshareworkflow'>SHARE THIS WORKFLOW</Trans></div>
+          <div className='modal-title'>
+            <Trans id='js.OutputIframe.private.header.title' description='This should be all-caps for styling reasons'>
+                SHARE THIS WORKFLOW
+            </Trans>
+          </div>
         </ModalHeader>
         <ModalBody>
-          <div className='title-3 mb-3'><Trans id='workflow.workbenchcurrprivate'>This workflow is currently private</Trans></div>
-          <div className='info-3 t-d-gray'><Trans id='workflow.workbenchsetthisworkflow'>Set this workflow to Public in order to share it? Anyone with the URL will be able to access and duplicate it.</Trans></div>
+          <div className='title-3 mb-3'>
+            <Trans id='js.OutputIframe.private.workflowIsPrivate'>This workflow is currently private</Trans>
+          </div>
+          <div className='info-3 t-d-gray'>
+            <Trans id='js.OutputIframe.private.setToPublic'>
+                Set this workflow to Public in order to share it? Anyone with the URL will be able to access and duplicate it.
+            </Trans>
+          </div>
         </ModalBody>
         <ModalFooter>
-          <div onClick={this.handleClickModalClose} className='button-gray action-button mr-4'><Trans id='workflow.workbenchcancel'>Cancel</Trans></div>
-          <div onClick={this.handleClickSetWorkflowPublic} className='button-blue action-button test-public-button'><Trans id='workflow.workbenchsetpublic'>Set public</Trans></div>
+          <div onClick={this.handleClickModalClose} className='button-gray action-button mr-4'>
+            <Trans id='js.OutputIframe.footer.cancelButton'>Cancel</Trans>
+          </div>
+          <div onClick={this.handleClickSetWorkflowPublic} className='button-blue action-button test-public-button'>
+            <Trans id='js.OutputIframe.footer.setPublicButton'>Set public</Trans>
+          </div>
         </ModalFooter>
       </Modal>
     )
@@ -121,10 +135,16 @@ export class OutputIframe extends React.PureComponent {
     return (
       <Modal isOpen={this.isModalOpen('embed')} toggle={this.closeModal}>
         <ModalHeader toggle={this.closeModal}>
-          <div className='modal-title'><Trans id='workflow.workbenchembedchart'>EMBED THIS CHART</Trans></div>
+          <div className='modal-title'>
+            <Trans id='js.OutputIframe.embed.header.title' description='This should be all-caps for styling reasons'>
+                EMBED THIS CHART
+            </Trans>
+          </div>
         </ModalHeader>
         <ModalBody>
-          <p className='info'><Trans id='workflow.workbenchpastehtmlcode'>Paste this code into any webpage HTML</Trans></p>
+          <p className='info'>
+            <Trans id='js.OutputIframe.embed.embedCode'>Paste this code into any webpage HTML</Trans>
+          </p>
           <div className='code-snippet'>
             <code className='chart-embed'>
               {iframeCode}
@@ -132,7 +152,9 @@ export class OutputIframe extends React.PureComponent {
           </div>
         </ModalBody>
         <div className='modal-footer'>
-          <div onClick={this.handleClickModalClose} className='button-gray action-button'><Trans id='workflow.workbenchokmessage'>OK</Trans></div>
+          <div onClick={this.handleClickModalClose} className='button-gray action-button'>
+            <Trans id='js.OutputIframe.footer.OKButton'>OK</Trans>
+          </div>
         </div>
       </Modal>
     )

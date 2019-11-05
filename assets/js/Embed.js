@@ -26,15 +26,14 @@ export class Embed extends React.Component {
     return (
       <div className='embed-wrapper'>
         <div className='embed-not-available'>
-          <h1><Trans id='workflow.notavailableworkflow'>This workflow is not available</Trans></h1>
+          <h1><Trans id='js.Embed.workflowNotAvailable'>This workflow is not available</Trans></h1>
         </div>
         <div className='embed-footer'>
           <div className='embed-footer-logo'>
             <img src={`${window.STATIC_URL}images/logo.png`} width='21' />
           </div>
           <div className='embed-footer-meta'>
-
-            <h1><Trans id='workflow.workbenchheader'>This workflow is not available</Trans></h1>
+            <h1><Trans id='js.Embed.workflowNotAvailable.footer'>This workflow is not available</Trans></h1>
           </div>
           <div className='embed-footer-button'>
             <i className='icon icon-share' />
@@ -75,7 +74,10 @@ export class Embed extends React.Component {
                   </li>
                   <li>
                     <a href={'/workflows/' + this.props.workflow.id} target='_blank' rel='noopener noreferrer'>
-                      {this.props.i18n._(t('workflow.workbenchupdated')`Updated ${timeDifference(this.props.workflow.last_update, new Date(), this.props.i18n)}`)}
+                      {this.props.i18n._(
+                        /* i18n: The parameter will contain a time difference (i.e. something like '4h ago') */
+                        t('js.Embed.metadata.updated')`Updated ${timeDifference(this.props.workflow.last_update, new Date(), this.props.i18n)}`
+                      )}
                     </a>
                   </li>
                 </ul>
@@ -88,8 +90,8 @@ export class Embed extends React.Component {
         </div>
         <div className={'embed-overlay' + (this.state.overlayOpen ? ' open' : '')} onClick={this.handleToggleOverlay}>
           <div className='embed-share-links' onClick={(e) => { e.stopPropagation() }}>
-            <h1><Trans id='workflow.workbenchembedheader'>EMBED THIS CHART</Trans></h1>
-            <h2><Trans id='workflow.workbenchpastecodeheader'>Paste this code into any webpage HTML</Trans></h2>
+            <h1><Trans id='js.Embed.embedThisChart' description='This should be all-caps for styling reasons'>EMBED THIS CHART</Trans></h1>
+            <h2><Trans id='js.Embed.embedCode'>Paste this code into any webpage HTML</Trans></h2>
             <div className='code-snippet'>
               <code className='embed--share-code'>
                 {iframeCode}
