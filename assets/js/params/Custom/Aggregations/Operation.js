@@ -14,14 +14,14 @@ export default function Operation ({ isReadOnly, name, value, onChange }) {
       onChange={onChange}
       readOnly={isReadOnly}
     >
-      {<option value='size'><Trans id='workflow.count'>Count</Trans></option>}
-      {<option value='nunique'><Trans id='workflow.countunique'>Count unique</Trans></option>}
-      {<option value='sum'><Trans id='workflow.sum'>Sum</Trans></option>}
-      {<option value='mean'><Trans id='workflow.Averagemean'>Average (Mean)</Trans></option>}
-      {<option value='median'><Trans id='workflow.median'>Median</Trans></option>}
-      {<option value='min'><Trans id='workflow.Minimum'>Minimum</Trans></option>}
-      {<option value='max'><Trans id='workflow.maximum'>Maximum</Trans></option>}
-      {<option value='first'><Trans id='workflow.first'>First</Trans></option>}
+      {<option value='size'><Trans id='js.params.Custom.Operation.count.option'>Count</Trans></option>}
+      {<option value='nunique'><Trans id='js.params.Custom.Operation.countUnique.option'>Count unique</Trans></option>}
+      {<option value='sum'><Trans id='js.params.Custom.Operation.sum.option'>Sum</Trans></option>}
+      {<option value='mean'><Trans id='js.params.Custom.Operation.averageMean.option'>Average (Mean)</Trans></option>}
+      {<option value='median'><Trans id='js.params.Custom.Operation.median.option'>Median</Trans></option>}
+      {<option value='min'><Trans id='js.params.Custom.Operation.minimum.option'>Minimum</Trans></option>}
+      {<option value='max'><Trans id='js.params.Custom.Operation.maximum.option'>Maximum</Trans></option>}
+      {<option value='first'><Trans id='js.params.Custom.Operation.first.option'>First</Trans></option>}
     </select>
   )
 }

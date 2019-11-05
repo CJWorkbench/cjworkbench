@@ -184,7 +184,7 @@ export class File extends React.PureComponent {
               <div className='filename'>{inProgressUpload.name}</div>
               <div className='status'>
                 <UploadedFileSelect isReadOnly value={value} files={files} onChange={this.handleChange} />
-                <button type='button' onClick={this.handleClickCancelUpload} name='cancel-upload' title={i18n._(t('workbench.filecancelupload')`Cancel upload`)}>
+                <button type='button' onClick={this.handleClickCancelUpload} name='cancel-upload' title={i18n._(t('js.params.Custom.File.cancelUpload')`Cancel upload`)}>
                   <Trans id='file.cancelupload'>Cancel Upload</Trans>
                 </button>
               </div>
@@ -200,7 +200,7 @@ export class File extends React.PureComponent {
                 <UploadedFileSelect isReadOnly={isReadOnly} value={value} files={files} onChange={this.handleChange} />
                 <p className='file-select-button'>
                   {FeatureFlagUploadApi ? (
-                    <button type='button' onClick={this.handleClickOpenUploadApiModal} name='open-upload-api' title={i18n._(t('workbench.fileopenuploadapi')`Open upload API instructions`)}>
+                    <button type='button' onClick={this.handleClickOpenUploadApiModal} name='open-upload-api' title={i18n._(t('js.params.Custom.File.openUploadApiInstructions')`Open upload API instructions`)}>
                       <Trans id='file.fileapi'>API</Trans>
                     </button>
                   ) : null}
@@ -224,7 +224,7 @@ export class File extends React.PureComponent {
               <p><Trans id='file.or'>or</Trans></p>
               <p className='file-select-button'>
                 {FeatureFlagUploadApi ? (
-                  <button type='button' onClick={this.handleClickOpenUploadApiModal} name='open-upload-api' title={i18n._(t('workbench.fileopenuploadapi')`Open upload API instructions`)}>
+                  <button type='button' onClick={this.handleClickOpenUploadApiModal} name='open-upload-api' title={i18n._(t('js.params.Custom.File.openUploadApiInstructions')`Open upload API instructions`)}>
                     <Trans id='file.fileapi'>API</Trans>
                   </button>
                 ) : null}
@@ -242,7 +242,7 @@ export class File extends React.PureComponent {
             </div>
           ))}
           <div className='drop-here'>
-            <p><Trans id='file.dropfilehere'>Drop file here</Trans> </p>
+            <p><Trans id='js.params.Custom.File.dropFileHere'>Drop file here</Trans> </p>
           </div>
         </div>
       </>

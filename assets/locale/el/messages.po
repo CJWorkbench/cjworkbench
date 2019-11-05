@@ -652,11 +652,11 @@ msgid "js.WorkflowEditor.wfmodule.notes.edit.hoverText"
 msgstr ""
 
 #: assets/js/WorkflowEditor/wfmodule/WfModuleContextMenu.js:21
-msgid "js.WorkflowEditor.wfmodule.wfModumeContextMenu.delete"
+msgid "js.WorkflowEditor.wfmodule.wfModuleContextMenu.delete"
 msgstr ""
 
 #: assets/js/WorkflowEditor/wfmodule/WfModuleContextMenu.js:20
-msgid "js.WorkflowEditor.wfmodule.wfModumeContextMenu.exportData"
+msgid "js.WorkflowEditor.wfmodule.wfModuleContextMenu.exportData"
 msgstr ""
 
 #. The parameter will contain something like '4h ago'
@@ -731,19 +731,19 @@ msgid "js.Workflows.WorkflowLists.createYourFirtsWorkflow.button"
 msgstr ""
 
 #: assets/js/Workflows/WorkflowLists.js:111
-msgid "js.Workflows.WorkflowLists.myWorkflows.tab"
+msgid "js.Workflows.WorkflowLists.nav.myWorkflows"
+msgstr ""
+
+#: assets/js/Workflows/WorkflowLists.js:113
+msgid "js.Workflows.WorkflowLists.nav.recipes"
+msgstr ""
+
+#: assets/js/Workflows/WorkflowLists.js:112
+msgid "js.Workflows.WorkflowLists.nav.sharedWithMe"
 msgstr ""
 
 #: assets/js/Workflows/WorkflowLists.js:76
 msgid "js.Workflows.WorkflowLists.publisheNewRecipes"
-msgstr ""
-
-#: assets/js/Workflows/WorkflowLists.js:113
-msgid "js.Workflows.WorkflowLists.recipes.tab"
-msgstr ""
-
-#: assets/js/Workflows/WorkflowLists.js:112
-msgid "js.Workflows.WorkflowLists.sharedWithMe.tab"
 msgstr ""
 
 #: assets/js/Workflows/WorkflowLists.js:64
@@ -754,48 +754,59 @@ msgstr ""
 msgid "js.Workflows.WorkflowMetadata.changePrivacy.button"
 msgstr ""
 
-#: assets/js/Workflows/WorkflowMetadata.js:48
-msgid "js.Workflows.WorkflowMetadata.private"
-msgstr ""
-
-#: assets/js/Workflows/WorkflowMetadata.js:48
-msgid "js.Workflows.WorkflowMetadata.public"
-msgstr ""
-
+#. The parameter will contain a time difference (i.e. something like '5h ago')
 #: assets/js/Workflows/WorkflowMetadata.js:57
 msgid "js.Workflows.WorkflowMetadata.update"
 msgstr ""
 
+#: assets/js/Workflows/WorkflowMetadata.js:48
+msgid "js.Workflows.WorkflowMetadata.visibility.private"
+msgstr ""
+
+#: assets/js/Workflows/WorkflowMetadata.js:48
+msgid "js.Workflows.WorkflowMetadata.visibility.public"
+msgstr ""
+
 #: assets/js/Workflows/index.js:203
-msgid "js.Workflows.index.createWorkflow"
-msgstr ""
-
-#: assets/js/Workflows/index.js:200
-msgid "js.Workflows.index.learnHowToWorkWithData"
-msgstr ""
-
-#: assets/js/Workflows/index.js:194
-msgid "js.Workflows.index.new"
+msgid "js.Workflows.createWorkflowButton"
 msgstr ""
 
 #: assets/js/Workflows/index.js:95
-msgid "js.Workflows.index.permanentyDelete"
+msgid "js.Workflows.delete.permanentyDeleteWarning"
 msgstr ""
 
+#: assets/js/Workflows/index.js:200
+msgid "js.Workflows.learnHowToWorkWithData"
+msgstr ""
+
+#. This should be all-caps for styling reasons
+#: assets/js/Workflows/index.js:194
+msgid "js.Workflows.new"
+msgstr ""
+
+#. This should be all-caps for styling reasons
 #: assets/js/Workflows/index.js:197
-msgid "js.Workflows.index.training.title"
+msgid "js.Workflows.training.title"
+msgstr ""
+
+#: assets/js/i18n/locales.js:5
+msgid "js.i18n.locales.el"
+msgstr ""
+
+#: assets/js/i18n/locales.js:4
+msgid "js.i18n.locales.en"
 msgstr ""
 
 #: assets/js/table/ColumnHeader.js:13
-msgid "js.table.ColumnHeader.dateAndtime"
+msgid "js.table.ColumnHeader.types.dateAndtime"
 msgstr ""
 
 #: assets/js/table/ColumnHeader.js:12
-msgid "js.table.ColumnHeader.number"
+msgid "js.table.ColumnHeader.types.number"
 msgstr ""
 
 #: assets/js/table/ColumnHeader.js:11
-msgid "js.table.ColumnHeader.text"
+msgid "js.table.ColumnHeader.types.text"
 msgstr ""
 
 #: assets/js/table/SelectedRowsActions.js:106
@@ -844,14 +855,6 @@ msgstr ""
 
 #: assets/js/lessons/LessonFooter.js:41 assets/js/lessons/LessonSection.js:70
 msgid "lessons.training"
-msgstr ""
-
-#: assets/js/i18n/locales.js:5
-msgid "locales.el"
-msgstr ""
-
-#: assets/js/i18n/locales.js:4
-msgid "locales.en"
 msgstr ""
 
 #: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:180

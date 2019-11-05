@@ -13,7 +13,7 @@ const WorkbenchAceEditor = lazy(() => import('./AceEditor'))
 export default function LazyAceEditor (props) {
   return (
     <ErrorBoundary>
-      <Suspense fallback={<div className='loading-ace-editor'><Trans id='workflow.loadingeditor'>Loading editor...</Trans></div>}>
+      <Suspense fallback={<div className='loading-ace-editor'><Trans id='js.params.Custom.code.loadingEditor'>Loading editor...</Trans></div>}>
         <WorkbenchAceEditor {...props} />
       </Suspense>
     </ErrorBoundary>

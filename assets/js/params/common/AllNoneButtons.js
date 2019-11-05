@@ -10,19 +10,19 @@ export function AllNoneButtons ({ isReadOnly, onClickAll, onClickNone, i18n }) {
         disabled={isReadOnly}
         type='button'
         name='refine-select-all'
-        title={i18n._(t('workflow.selectAll')`Select All`)}
+        title={i18n._(t('js.params.AllNoneButtons.selectAll.title')`Select All`)}
         onClick={onClickAll}
       >
-        <Trans id='workflow.visibility.All'>All</Trans>
+        <Trans id='js.params.AllNoneButtons.All'>All</Trans>
       </button>
       <button
         disabled={isReadOnly}
         type='button'
         name='refine-select-none'
-        title={i18n._(t('workflow.selectNone')`Select None`)}
+        title={i18n._(t('js.params.AllNoneButtons.selectNone.title')`Select None`)}
         onClick={onClickNone}
       >
-        <Trans id='workflow.visibility.None'>None</Trans>
+        <Trans id='js.params.AllNoneButtons.None'>None</Trans>
       </button>
     </div>
   )

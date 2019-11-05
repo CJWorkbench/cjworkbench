@@ -17,8 +17,8 @@ const WfModuleContextMenu = React.memo(function WfModuleContextMenu ({ removeMod
         <i className='icon-more' />
       </DropdownToggle>
       <DropdownMenu>
-        <DropdownItem onClick={handleClickOpenExportModal} className='test-export-button' icon='icon-download'><Trans id='js.WorkflowEditor.wfmodule.wfModumeContextMenu.exportData'>Export data</Trans></DropdownItem>
-        <DropdownItem onClick={handleClickDelete} className='test-delete-button' icon='icon-bin'><Trans id='js.WorkflowEditor.wfmodule.wfModumeContextMenu.delete'>Delete</Trans></DropdownItem>
+        <DropdownItem onClick={handleClickOpenExportModal} className='test-export-button' icon='icon-download'><Trans id='js.WorkflowEditor.wfmodule.wfModuleContextMenu.exportData'>Export data</Trans></DropdownItem>
+        <DropdownItem onClick={handleClickDelete} className='test-delete-button' icon='icon-bin'><Trans id='js.WorkflowEditor.wfmodule.wfModuleContextMenu.delete'>Delete</Trans></DropdownItem>
       </DropdownMenu>
       <ExportModal open={isExportModalOpen} wfModuleId={id} toggle={handleCloseExportModal} />
     </UncontrolledDropdown>

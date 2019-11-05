@@ -46,7 +46,7 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                     <h5
                       class="modal-title"
                     >
-                      updatefrequencyselect.worklfowupdate
+                      js.params.Custom.VersionSelect.UpdateFrequencySelectModal.worklfowUpdate
                     </h5>
                     <button
                       aria-label="Close"
@@ -90,12 +90,12 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                             class="big-radio-details"
                           >
                             <p>
-                              updatefrequency.automaticallyupdate
+                              js.params.Custom.VersionSelect.UpdateFrequencySelectModal.automaticallyUpdate
                             </p>
                             <label
                               for="updateFrequencySelectTimeUnitCount"
                             >
-                              updatefrequency.checkupdates
+                              js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkForUpdate
                             </label>
                             <fieldset
                               class="fetch-interval"
@@ -154,7 +154,7 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                                     name="apply"
                                     type="submit"
                                   >
-                                    updatefrequency.apply
+                                    js.params.Custom.VersionSelect.UpdateFrequencySelectModal.apply
                                   </button>
                                 </div>
                               </div>
@@ -174,14 +174,14 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                             <div
                               class="radio"
                             >
-                              updatefrequency.manual
+                              js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual
                             </div>
                           </label>
                           <div
                             class="big-radio-details"
                           >
                             <p>
-                              updatefrequency.checkmanually
+                              js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkManually
                             </p>
                           </div>
                         </div>
@@ -198,7 +198,7 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                       <label
                         for="update-frequency-select-modal-is-email-updates-checkbox"
                       >
-                        updatefrequency.email
+                        js.params.Custom.VersionSelect.UpdateFrequencySelectModal.emailWhendataChanges
                       </label>
                     </div>
                   </div>
@@ -210,7 +210,7 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                       title="Close"
                       type="button"
                     >
-                      close.updatefrequency
+                      js.params.Custom.VersionSelect.UpdateFrequencySelectModal.close
                     </button>
                   </div>
                 </div>
@@ -245,7 +245,7 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                   >
                     <WithI18n
                       defaults="WORKFLOW UPDATE"
-                      id="updatefrequencyselect.worklfowupdate"
+                      id="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.worklfowUpdate"
                     >
                       <I18n
                         update={true}
@@ -253,12 +253,12 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                       >
                         <Trans
                           defaults="WORKFLOW UPDATE"
-                          id="updatefrequencyselect.worklfowupdate"
+                          id="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.worklfowUpdate"
                         >
                           <Render
-                            value="updatefrequencyselect.worklfowupdate"
+                            value="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.worklfowUpdate"
                           >
-                            updatefrequencyselect.worklfowupdate
+                            js.params.Custom.VersionSelect.UpdateFrequencySelectModal.worklfowUpdate
                           </Render>
                         </Trans>
                       </I18n>
@@ -315,7 +315,7 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                           <p>
                             <WithI18n
                               defaults="Automatically update this workflow with the newest data (old versions will be saved)."
-                              id="updatefrequency.automaticallyupdate"
+                              id="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.automaticallyUpdate"
                             >
                               <I18n
                                 update={true}
@@ -323,12 +323,12 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                               >
                                 <Trans
                                   defaults="Automatically update this workflow with the newest data (old versions will be saved)."
-                                  id="updatefrequency.automaticallyupdate"
+                                  id="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.automaticallyUpdate"
                                 >
                                   <Render
-                                    value="updatefrequency.automaticallyupdate"
+                                    value="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.automaticallyUpdate"
                                   >
-                                    updatefrequency.automaticallyupdate
+                                    js.params.Custom.VersionSelect.UpdateFrequencySelectModal.automaticallyUpdate
                                   </Render>
                                 </Trans>
                               </I18n>
@@ -339,7 +339,7 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                           >
                             <WithI18n
                               defaults="Check for update every"
-                              id="updatefrequency.checkupdates"
+                              id="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkForUpdate"
                             >
                               <I18n
                                 update={true}
@@ -347,12 +347,12 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                               >
                                 <Trans
                                   defaults="Check for update every"
-                                  id="updatefrequency.checkupdates"
+                                  id="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkForUpdate"
                                 >
                                   <Render
-                                    value="updatefrequency.checkupdates"
+                                    value="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkForUpdate"
                                   >
-                                    updatefrequency.checkupdates
+                                    js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkForUpdate
                                   </Render>
                                 </Trans>
                               </I18n>
@@ -389,7 +389,7 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                                 >
                                   <WithI18n
                                     defaults="weeks"
-                                    id="weeks.updatefrequency"
+                                    id="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.weeks.option"
                                   />
                                 </option>
                                 <option
@@ -397,7 +397,7 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                                 >
                                   <WithI18n
                                     defaults="days"
-                                    id="days.updatefrequency"
+                                    id="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.days.option"
                                   />
                                 </option>
                                 <option
@@ -405,7 +405,7 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                                 >
                                   <WithI18n
                                     defaults="hours"
-                                    id="hours.updatefrequency"
+                                    id="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.hours.option"
                                   />
                                 </option>
                                 <option
@@ -413,7 +413,7 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                                 >
                                   <WithI18n
                                     defaults="minutes"
-                                    id="minutes.updatefrequency"
+                                    id="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.minutes.option"
                                   />
                                 </option>
                                 <option
@@ -421,7 +421,7 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                                 >
                                   <WithI18n
                                     defaults="seconds"
-                                    id="seconds.updatefrequency"
+                                    id="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.seconds.option"
                                   />
                                 </option>
                               </select>
@@ -436,7 +436,7 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                                 >
                                   <WithI18n
                                     defaults="Apply"
-                                    id="updatefrequency.apply"
+                                    id="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.apply"
                                   >
                                     <I18n
                                       update={true}
@@ -444,12 +444,12 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                                     >
                                       <Trans
                                         defaults="Apply"
-                                        id="updatefrequency.apply"
+                                        id="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.apply"
                                       >
                                         <Render
-                                          value="updatefrequency.apply"
+                                          value="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.apply"
                                         >
-                                          updatefrequency.apply
+                                          js.params.Custom.VersionSelect.UpdateFrequencySelectModal.apply
                                         </Render>
                                       </Trans>
                                     </I18n>
@@ -476,7 +476,7 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                           >
                             <WithI18n
                               defaults="Manual"
-                              id="updatefrequency.manual"
+                              id="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual"
                             >
                               <I18n
                                 update={true}
@@ -484,12 +484,12 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                               >
                                 <Trans
                                   defaults="Manual"
-                                  id="updatefrequency.manual"
+                                  id="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual"
                                 >
                                   <Render
-                                    value="updatefrequency.manual"
+                                    value="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual"
                                   >
-                                    updatefrequency.manual
+                                    js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual
                                   </Render>
                                 </Trans>
                               </I18n>
@@ -502,7 +502,7 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                           <p>
                             <WithI18n
                               defaults="Check for new data manually."
-                              id="updatefrequency.checkmanually"
+                              id="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkManually"
                             >
                               <I18n
                                 update={true}
@@ -510,12 +510,12 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                               >
                                 <Trans
                                   defaults="Check for new data manually."
-                                  id="updatefrequency.checkmanually"
+                                  id="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkManually"
                                 >
                                   <Render
-                                    value="updatefrequency.checkmanually"
+                                    value="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkManually"
                                   >
-                                    updatefrequency.checkmanually
+                                    js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkManually
                                   </Render>
                                 </Trans>
                               </I18n>
@@ -540,7 +540,7 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                     >
                       <WithI18n
                         defaults="Email me when data changes"
-                        id="updatefrequency.email"
+                        id="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.emailWhendataChanges"
                       >
                         <I18n
                           update={true}
@@ -548,12 +548,12 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                         >
                           <Trans
                             defaults="Email me when data changes"
-                            id="updatefrequency.email"
+                            id="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.emailWhendataChanges"
                           >
                             <Render
-                              value="updatefrequency.email"
+                              value="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.emailWhendataChanges"
                             >
-                              updatefrequency.email
+                              js.params.Custom.VersionSelect.UpdateFrequencySelectModal.emailWhendataChanges
                             </Render>
                           </Trans>
                         </I18n>
@@ -574,7 +574,7 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                   >
                     <WithI18n
                       defaults="Close"
-                      id="close.updatefrequency"
+                      id="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.close"
                     >
                       <I18n
                         update={true}
@@ -582,12 +582,12 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                       >
                         <Trans
                           defaults="Close"
-                          id="close.updatefrequency"
+                          id="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.close"
                         >
                           <Render
-                            value="close.updatefrequency"
+                            value="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.close"
                           >
-                            close.updatefrequency
+                            js.params.Custom.VersionSelect.UpdateFrequencySelectModal.close
                           </Render>
                         </Trans>
                       </I18n>

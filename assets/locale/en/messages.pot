@@ -790,12 +790,12 @@ msgstr ""
 
 #. default-message: Delete
 #: assets/js/WorkflowEditor/wfmodule/WfModuleContextMenu.js:21
-msgid "js.WorkflowEditor.wfmodule.wfModumeContextMenu.delete"
+msgid "js.WorkflowEditor.wfmodule.wfModuleContextMenu.delete"
 msgstr ""
 
 #. default-message: Export data
 #: assets/js/WorkflowEditor/wfmodule/WfModuleContextMenu.js:20
-msgid "js.WorkflowEditor.wfmodule.wfModumeContextMenu.exportData"
+msgid "js.WorkflowEditor.wfmodule.wfModuleContextMenu.exportData"
 msgstr ""
 
 #. The parameter will contain something like '4h ago'
@@ -846,7 +846,7 @@ msgstr ""
 msgid "js.Workflows.NavBar.links.workflows"
 msgstr ""
 
-#. default-message: Alphabetical
+#. default-message: Alphabetical<<<<<<< HEAD
 #: assets/js/Workflows/SortMenu.js:34
 msgid "js.Workflows.SortMenu.alphabetical.dropdownItem"
 msgstr ""
@@ -888,22 +888,22 @@ msgstr ""
 
 #. default-message: My workflows
 #: assets/js/Workflows/WorkflowLists.js:111
-msgid "js.Workflows.WorkflowLists.myWorkflows.tab"
+msgid "js.Workflows.WorkflowLists.nav.myWorkflows"
+msgstr ""
+
+#. default-message: Recipes
+#: assets/js/Workflows/WorkflowLists.js:113
+msgid "js.Workflows.WorkflowLists.nav.recipes"
+msgstr ""
+
+#. default-message: Shared with me
+#: assets/js/Workflows/WorkflowLists.js:112
+msgid "js.Workflows.WorkflowLists.nav.sharedWithMe"
 msgstr ""
 
 #. default-message: Publishe new recipes via the Django admin
 #: assets/js/Workflows/WorkflowLists.js:76
 msgid "js.Workflows.WorkflowLists.publisheNewRecipes"
-msgstr ""
-
-#. default-message: Recipes
-#: assets/js/Workflows/WorkflowLists.js:113
-msgid "js.Workflows.WorkflowLists.recipes.tab"
-msgstr ""
-
-#. default-message: Shared with me
-#: assets/js/Workflows/WorkflowLists.js:112
-msgid "js.Workflows.WorkflowLists.sharedWithMe.tab"
 msgstr ""
 
 #. default-message: Workflows shared with you as collaborator will appear here
@@ -916,59 +916,72 @@ msgstr ""
 msgid "js.Workflows.WorkflowMetadata.changePrivacy.button"
 msgstr ""
 
-#. default-message: private
-#: assets/js/Workflows/WorkflowMetadata.js:48
-msgid "js.Workflows.WorkflowMetadata.private"
-msgstr ""
-
-#. default-message: public
-#: assets/js/Workflows/WorkflowMetadata.js:48
-msgid "js.Workflows.WorkflowMetadata.public"
-msgstr ""
-
+#. The parameter will contain a time difference (i.e. something like '5h ago')
 #. default-message: Updated {0}
 #: assets/js/Workflows/WorkflowMetadata.js:57
 msgid "js.Workflows.WorkflowMetadata.update"
 msgstr ""
 
+#. default-message: private
+#: assets/js/Workflows/WorkflowMetadata.js:48
+msgid "js.Workflows.WorkflowMetadata.visibility.private"
+msgstr ""
+
+#. default-message: public
+#: assets/js/Workflows/WorkflowMetadata.js:48
+msgid "js.Workflows.WorkflowMetadata.visibility.public"
+msgstr ""
+
 #. default-message: Create Workflow
 #: assets/js/Workflows/index.js:203
-msgid "js.Workflows.index.createWorkflow"
-msgstr ""
-
-#. default-message: Learn how to work with data without coding
-#: assets/js/Workflows/index.js:200
-msgid "js.Workflows.index.learnHowToWorkWithData"
-msgstr ""
-
-#. default-message: NEW
-#: assets/js/Workflows/index.js:194
-msgid "js.Workflows.index.new"
+msgid "js.Workflows.createWorkflowButton"
 msgstr ""
 
 #. default-message: Permanently delete this workflow?
 #: assets/js/Workflows/index.js:95
-msgid "js.Workflows.index.permanentyDelete"
+msgid "js.Workflows.delete.permanentyDeleteWarning"
 msgstr ""
 
+#. default-message: Learn how to work with data without coding
+#: assets/js/Workflows/index.js:200
+msgid "js.Workflows.learnHowToWorkWithData"
+msgstr ""
+
+#. This should be all-caps for styling reasons
+#. default-message: NEW
+#: assets/js/Workflows/index.js:194
+msgid "js.Workflows.new"
+msgstr ""
+
+#. This should be all-caps for styling reasons
 #. default-message: TRAINING
 #: assets/js/Workflows/index.js:197
-msgid "js.Workflows.index.training.title"
+msgid "js.Workflows.training.title"
+msgstr ""
+
+#. default-message: Greek
+#: assets/js/i18n/locales.js:5
+msgid "js.i18n.locales.el"
+msgstr ""
+
+#. default-message: English
+#: assets/js/i18n/locales.js:4
+msgid "js.i18n.locales.en"
 msgstr ""
 
 #. default-message: date & time
 #: assets/js/table/ColumnHeader.js:13
-msgid "js.table.ColumnHeader.dateAndtime"
+msgid "js.table.ColumnHeader.types.dateAndtime"
 msgstr ""
 
 #. default-message: number
 #: assets/js/table/ColumnHeader.js:12
-msgid "js.table.ColumnHeader.number"
+msgid "js.table.ColumnHeader.types.number"
 msgstr ""
 
 #. default-message: text
 #: assets/js/table/ColumnHeader.js:11
-msgid "js.table.ColumnHeader.text"
+msgid "js.table.ColumnHeader.types.text"
 msgstr ""
 
 #. default-message: {0, plural, =0 {No rows selected} one {# row selected} other {# rows selected}}
@@ -1011,7 +1024,7 @@ msgstr ""
 msgid "js.util.timeDifference.ago.years"
 msgstr ""
 
-#. default-message: just now
+#. default-message: just now>>>>>>> d23b317a95ef6043ec12a18b284c4ecaf275f3da
 #: assets/js/utils.js:55
 msgid "js.util.timeDifference.now"
 msgstr ""
@@ -1029,16 +1042,6 @@ msgstr ""
 #. default-message: Training=======>>>>>>> a75b04afdff1d1fb96423a849f25e21e5d3b85a5
 #: assets/js/lessons/LessonFooter.js:41 assets/js/lessons/LessonSection.js:70
 msgid "lessons.training"
-msgstr ""
-
-#. default-message: Greek
-#: assets/js/i18n/locales.js:5
-msgid "locales.el"
-msgstr ""
-
-#. default-message: English
-#: assets/js/i18n/locales.js:4
-msgid "locales.en"
 msgstr ""
 
 #. default-message: minutes
@@ -1761,7 +1764,7 @@ msgstr ""
 msgid "workflows.refine.loadingvalues"
 msgstr ""
 
-#. default-message: This column does not have any values=======>>>>>>> c17fea9ca325599fcde6435645a0d9ce59476874
+#. default-message: This column does not have any values=======>>>>>>> c17fea9ca325599fcde6435645a0d9ce59476874=======
 #: assets/js/params/Custom/Refine/index.js:454
 msgid "workflows.refine.thiscolumnnothavevalues"
 msgstr ""

@@ -49,7 +49,7 @@ const RefineBin = withI18n()(class RefineBin extends React.PureComponent {
       <>
         <tr className='bin'>
           <td rowSpan={values.length} className='is-selected'>
-            <input type='checkbox' name={`selected-${index}`} checked={isSelected} onChange={this.handleChangeIsSelected} placeholder={i18n._(t('workflow.newvalue.refinebin')`New Value`)} />
+            <input type='checkbox' name={`selected-${index}`} checked={isSelected} onChange={this.handleChangeIsSelected} placeholder={i18n._(t('js.params.Custom.RefineBins.newValue.placeholder')`New Value`)} />
           </td>
           <td rowSpan={values.length} className='cluster-size'>{numberFormat.format(count)}</td>
           <td className='value'>{values[0].value}</td>
@@ -59,7 +59,7 @@ const RefineBin = withI18n()(class RefineBin extends React.PureComponent {
               <span className='autosize-cluster-text'>{name}</span>
               <textarea
                 name={`value-${index}`}
-                placeholder={i18n._(t('workflow.newvalue.refinebin')`New Value`)}
+                placeholder={i18n._(t('js.params.Custom.RefineBins.newValue.placeholder')`New Value`)}
                 value={name}
                 onChange={this.handleChangeName}
               />
@@ -105,7 +105,7 @@ class RefineBins extends React.PureComponent {
     if (bins.length === 0) {
       return (
         <div className='refine-bins'>
-          <div className='no-bins'><Trans id='workflow.refineBins.noclustersfound'>No clusters found. Try different settings.</Trans></div>
+          <div className='no-bins'><Trans id='js.params.Custom.RefineBins.noClustersFound'>No clusters found. Try different settings.</Trans></div>
         </div>
       )
     }
@@ -116,10 +116,10 @@ class RefineBins extends React.PureComponent {
           <thead>
             <tr>
               <th className='is-selected' />
-              <th className='cluster-size'><Trans id='workflow.refinebin.clustesize'>Cluster size</Trans></th>
-              <th className='value'><Trans id='workflow.refinebin.values'>Values</Trans></th>
-              <th className='count'># <Trans id='workflow.refinebin.rows'>rows</Trans></th>
-              <th className='new-value'><Trans id='workflow.refinebin.newvalue'>New value</Trans></th>
+              <th className='cluster-size'><Trans id='js.params.Custom.RefineBins.clusteSize'>Cluster size</Trans></th>
+              <th className='value'><Trans id='js.params.Custom.RefineBins.values'>Values</Trans></th>
+              <th className='count'># <Trans id='js.params.Custom.RefineBins.rows'>rows</Trans></th>
+              <th className='new-value'><Trans id='js.params.Custom.RefineBins.newValue'>New value</Trans></th>
             </tr>
           </thead>
           <tbody>

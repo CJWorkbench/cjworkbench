@@ -18,11 +18,11 @@ export class RefineStatus extends React.PureComponent {
 
     let statusText
     if (nBinsTotal === null) {
-      statusText = i18n._(t('refinestatus.clustering')`Clustering`)
+      statusText = i18n._(t('js.params.Custom.RefineStatus.clustering')`Clustering`)
     } else if (nBinsTotal === 1) {
-      statusText = i18n._(t('refinestatus.oneclusterfound')`1 cluster found`)
+      statusText = i18n._(t('js.params.Custom.RefineStatus.oneclusterfound')`1 cluster found`)
     } else {
-      statusText = i18n._(t('refinestatus.specnumberclusterfound')`${nBinsTotal} clusters found`)
+      statusText = i18n._(t('js.params.Custom.RefineStatus.specNumberclustersFound')`${nBinsTotal} clusters found`)
     }
 
     return (

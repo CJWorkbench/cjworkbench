@@ -108,9 +108,9 @@ function WorkflowLists ({ workflows, deleteWorkflow, duplicateWorkflow, openShar
     <div className='workflow-lists'>
       <div className='nav'>
         <ul className='workflow-tabs' id='workflow-tabs' role='tablist'>
-          <Tab {...tabProps('owned')}><Trans id='js.Workflows.WorkflowLists.myWorkflows.tab'>My workflows</Trans></Tab>
-          <Tab {...tabProps('shared')}><Trans id='js.Workflows.WorkflowLists.sharedWithMe.tab'>Shared with me</Trans></Tab>
-          <Tab {...tabProps('templates')}><Trans id='js.Workflows.WorkflowLists.recipes.tab'>Recipes</Trans></Tab>
+          <Tab {...tabProps('owned')}><Trans id='js.Workflows.WorkflowLists.nav.myWorkflows'>My workflows</Trans></Tab>
+          <Tab {...tabProps('shared')}><Trans id='js.Workflows.WorkflowLists.nav.sharedWithMe'>Shared with me</Trans></Tab>
+          <Tab {...tabProps('templates')}><Trans id='js.Workflows.WorkflowLists.nav.recipes'>Recipes</Trans></Tab>
         </ul>
         <SortMenu comparator={comparator} setComparator={setComparator} />
       </div>

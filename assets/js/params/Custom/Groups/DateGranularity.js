@@ -33,14 +33,14 @@ export default class DateGranularity extends React.PureComponent {
           onChange={this.handleChange}
           readOnly={isReadOnly}
         >
-          <option value=''><Trans id='dategranularity.asis'>as is</Trans></option>
-          <option value='S'><Trans id='dategranularity.bysecond'>by second</Trans></option>
-          <option value='T'><Trans id='dategranularity.byminute'>by minute</Trans></option>
-          <option value='H'><Trans id='dategranularity.byhour'>by hour</Trans></option>
-          <option value='D'><Trans id='dategranularity.byday'>by day</Trans></option>
-          <option value='M'><Trans id='dategranularity.bymonth'>by month</Trans></option>
-          <option value='Q'><Trans id='dategranularity.byquarter'>by quarter</Trans></option>
-          <option value='Y'><Trans id='dategranularity.byyear'>by year</Trans></option>
+          <option value=''><Trans id='js.params.Custom.Groups.DateGranularity.asIs.option'>as is</Trans></option>
+          <option value='S'><Trans id='js.params.Custom.Groups.DateGranularity.bySecond.option'>by second</Trans></option>
+          <option value='T'><Trans id='js.params.Custom.Groups.DateGranularity.byMinute.option'>by minute</Trans></option>
+          <option value='H'><Trans id='js.params.Custom.Groups.DateGranularity.byHour.option'>by hour</Trans></option>
+          <option value='D'><Trans id='js.params.Custom.Groups.DateGranularity.byDay.option'>by day</Trans></option>
+          <option value='M'><Trans id='js.params.Custom.Groups.DateGranularity.byMonth.option'>by month</Trans></option>
+          <option value='Q'><Trans id='js.params.Custom.Groups.DateGranularity.byQuarter.option'>by quarter</Trans></option>
+          <option value='Y'><Trans id='js.params.Custom.Groups.DateGranularity.byYear.option'>by year</Trans></option>
         </select>
       </label>
     )

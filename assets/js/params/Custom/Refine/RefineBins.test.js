@@ -20,7 +20,7 @@ describe('RefineBins', () => {
 
   it('should render a message when there are no bins', () => {
     const w = wrapper({ bins: [] })
-    expect(w.find('.no-bins').text()).toMatch(/workflow.refineBins.noclustersfound/)
+    expect(w.find('.no-bins').text()).toMatch(/js.params.Custom.RefineBins.noClustersFound/)
     expect(w.find('table')).toHaveLength(0)
   })
 

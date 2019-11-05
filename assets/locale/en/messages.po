@@ -674,11 +674,11 @@ msgid "js.WorkflowEditor.wfmodule.notes.edit.hoverText"
 msgstr "Edit Note"
 
 #: assets/js/WorkflowEditor/wfmodule/WfModuleContextMenu.js:21
-msgid "js.WorkflowEditor.wfmodule.wfModumeContextMenu.delete"
+msgid "js.WorkflowEditor.wfmodule.wfModuleContextMenu.delete"
 msgstr "Delete"
 
 #: assets/js/WorkflowEditor/wfmodule/WfModuleContextMenu.js:20
-msgid "js.WorkflowEditor.wfmodule.wfModumeContextMenu.exportData"
+msgid "js.WorkflowEditor.wfmodule.wfModuleContextMenu.exportData"
 msgstr "Export data"
 
 #. The parameter will contain something like '4h ago'
@@ -722,7 +722,7 @@ msgstr "WORKFLOWS"
 
 #: assets/js/Workflows/SortMenu.js:34
 msgid "js.Workflows.SortMenu.alphabetical.dropdownItem"
-msgstr "Alphabetical"
+msgstr "Alphabetical<<<<<<< HEAD"
 
 #: assets/js/Workflows/SortMenu.js:31
 msgid "js.Workflows.SortMenu.lastModified.dropdownItem"
@@ -753,20 +753,20 @@ msgid "js.Workflows.WorkflowLists.createYourFirtsWorkflow.button"
 msgstr "Create your first workflow"
 
 #: assets/js/Workflows/WorkflowLists.js:111
-msgid "js.Workflows.WorkflowLists.myWorkflows.tab"
+msgid "js.Workflows.WorkflowLists.nav.myWorkflows"
 msgstr "My workflows"
+
+#: assets/js/Workflows/WorkflowLists.js:113
+msgid "js.Workflows.WorkflowLists.nav.recipes"
+msgstr "Recipes"
+
+#: assets/js/Workflows/WorkflowLists.js:112
+msgid "js.Workflows.WorkflowLists.nav.sharedWithMe"
+msgstr "Shared with me"
 
 #: assets/js/Workflows/WorkflowLists.js:76
 msgid "js.Workflows.WorkflowLists.publisheNewRecipes"
 msgstr "Publishe new recipes via the Django admin"
-
-#: assets/js/Workflows/WorkflowLists.js:113
-msgid "js.Workflows.WorkflowLists.recipes.tab"
-msgstr "Recipes"
-
-#: assets/js/Workflows/WorkflowLists.js:112
-msgid "js.Workflows.WorkflowLists.sharedWithMe.tab"
-msgstr "Shared with me"
 
 #: assets/js/Workflows/WorkflowLists.js:64
 msgid "js.Workflows.WorkflowLists.workflowsWillAppearHere"
@@ -776,48 +776,59 @@ msgstr "Workflows shared with you as collaborator will appear here"
 msgid "js.Workflows.WorkflowMetadata.changePrivacy.button"
 msgstr "Change privacy"
 
-#: assets/js/Workflows/WorkflowMetadata.js:48
-msgid "js.Workflows.WorkflowMetadata.private"
-msgstr "private"
-
-#: assets/js/Workflows/WorkflowMetadata.js:48
-msgid "js.Workflows.WorkflowMetadata.public"
-msgstr "public"
-
+#. The parameter will contain a time difference (i.e. something like '5h ago')
 #: assets/js/Workflows/WorkflowMetadata.js:57
 msgid "js.Workflows.WorkflowMetadata.update"
 msgstr "Updated {0}"
 
+#: assets/js/Workflows/WorkflowMetadata.js:48
+msgid "js.Workflows.WorkflowMetadata.visibility.private"
+msgstr "private"
+
+#: assets/js/Workflows/WorkflowMetadata.js:48
+msgid "js.Workflows.WorkflowMetadata.visibility.public"
+msgstr "public"
+
 #: assets/js/Workflows/index.js:203
-msgid "js.Workflows.index.createWorkflow"
+msgid "js.Workflows.createWorkflowButton"
 msgstr "Create Workflow"
 
-#: assets/js/Workflows/index.js:200
-msgid "js.Workflows.index.learnHowToWorkWithData"
-msgstr "Learn how to work with data without coding"
-
-#: assets/js/Workflows/index.js:194
-msgid "js.Workflows.index.new"
-msgstr "NEW"
-
 #: assets/js/Workflows/index.js:95
-msgid "js.Workflows.index.permanentyDelete"
+msgid "js.Workflows.delete.permanentyDeleteWarning"
 msgstr "Permanently delete this workflow?"
 
+#: assets/js/Workflows/index.js:200
+msgid "js.Workflows.learnHowToWorkWithData"
+msgstr "Learn how to work with data without coding"
+
+#. This should be all-caps for styling reasons
+#: assets/js/Workflows/index.js:194
+msgid "js.Workflows.new"
+msgstr "NEW"
+
+#. This should be all-caps for styling reasons
 #: assets/js/Workflows/index.js:197
-msgid "js.Workflows.index.training.title"
+msgid "js.Workflows.training.title"
 msgstr "TRAINING"
 
+#: assets/js/i18n/locales.js:5
+msgid "js.i18n.locales.el"
+msgstr "Greek"
+
+#: assets/js/i18n/locales.js:4
+msgid "js.i18n.locales.en"
+msgstr "English"
+
 #: assets/js/table/ColumnHeader.js:13
-msgid "js.table.ColumnHeader.dateAndtime"
+msgid "js.table.ColumnHeader.types.dateAndtime"
 msgstr "date & time"
 
 #: assets/js/table/ColumnHeader.js:12
-msgid "js.table.ColumnHeader.number"
+msgid "js.table.ColumnHeader.types.number"
 msgstr "number"
 
 #: assets/js/table/ColumnHeader.js:11
-msgid "js.table.ColumnHeader.text"
+msgid "js.table.ColumnHeader.types.text"
 msgstr "text"
 
 #: assets/js/table/SelectedRowsActions.js:106
@@ -856,7 +867,7 @@ msgstr "{years}y ago"
 
 #: assets/js/utils.js:55
 msgid "js.util.timeDifference.now"
-msgstr "just now"
+msgstr "just now>>>>>>> d23b317a95ef6043ec12a18b284c4ecaf275f3da"
 
 #: assets/js/lessons/LessonNav.js:54
 msgid "lessons.nav.next"
@@ -869,14 +880,6 @@ msgstr "Previous"
 #: assets/js/lessons/LessonFooter.js:41 assets/js/lessons/LessonSection.js:70
 msgid "lessons.training"
 msgstr "Training=======>>>>>>> a75b04afdff1d1fb96423a849f25e21e5d3b85a5"
-
-#: assets/js/i18n/locales.js:5
-msgid "locales.el"
-msgstr "Greek"
-
-#: assets/js/i18n/locales.js:4
-msgid "locales.en"
-msgstr "English"
 
 #: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:180
 msgid "minutes.updatefrequency"
@@ -1499,7 +1502,7 @@ msgstr "Loading values…"
 msgid "workflows.refine.thiscolumnnothavevalues"
 msgstr ""
 "This column does not have any values=======>>>>>>> "
-"c17fea9ca325599fcde6435645a0d9ce59476874"
+"c17fea9ca325599fcde6435645a0d9ce59476874======="
 
 #: cjworkbench/forms/signup.py:24
 msgid "py.forms.signup.firstName.placeholder"

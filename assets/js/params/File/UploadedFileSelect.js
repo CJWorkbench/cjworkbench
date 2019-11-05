@@ -2,6 +2,8 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from '../../components/Modal'
 import filesize from 'filesize'
+import { t } from '@lingui/macro'
+import { withI18n } from '@lingui/react'
 
 const FilesizeOptions = { standard: 'iec', round: 1 }
 function formatNBytes (nBytes) {
@@ -108,7 +110,7 @@ const UploadedFileSelect = React.memo(function UploadedFileSelect ({ value, file
 
   return (
     <>
-      <button className='uploaded-file-select' onClick={open} title={canOpen ? 'Choose a previously-uploaded file' : undefined} disabled={!canOpen}>
+      <button className='uploaded-file-select' onClick={open} title={canOpen ? this.props._(t('js.params.File.UploadedFileSelect.choosePreviousFile.button')`Choose a previously-uploaded file`) : undefined} disabled={!canOpen}>
         {`File ${valueIndex === -1 ? '[NONE]' : (valueIndex + 1)} of ${files.length}`}
       </button>
       {isOpen ? (
@@ -132,4 +134,4 @@ UploadedFileSelect.propTypes = {
   }).isRequired).isRequired,
   onChange: PropTypes.func.isRequired // func(uuid) => undefined
 }
-export default UploadedFileSelect
+export default withI18n() (UploadedFileSelect)

@@ -33,19 +33,19 @@ export class DataVersionSelect extends React.PureComponent {
     if (nVersions === 0) {
       inner = (
         <>
-          <div className='label'>{this.props.i18n._(t('workbench.version')`Version`)}</div>
+          <div className='label'>{this.props.i18n._(t('js.params.Custom.VersionSelect.DataVersionSelect.version')`Version`)}</div>
           <div className='no-versions'>–</div>
         </>
       )
     } else if (isReadOnly) {
       inner = (
-        <div className='read-only'>{this.props.i18n._(t('workbench.version')`Version`)} {nVersions - currentVersionIndex} {this.props.i18n._(t('workbenchdataversion.of')`of`)} {nVersions}</div>
+        <div className='read-only'>{this.props.i18n._(t('js.params.Custom.VersionSelect.DataVersionSelect.version')`Version`)} {nVersions - currentVersionIndex} {this.props.i18n._(t('js.params.Custom.VersionSelect.DataVersionSelect.of')`of`)} {nVersions}</div>
       )
     } else {
       inner = (
         <>
-          <div className='label'>{this.props.i18n._(t('workbench.version')`Version`)}</div>
-          <button type='button' title={i18n._(t('workbench.dataversionselect.selectversion')`Select version`)} onClick={this.handleClickOpenModal}>{nVersions - currentVersionIndex} {this.props.i18n._(t('workbenchdataversion.of')`of`)} {nVersions}</button>
+          <div className='label'>{this.props.i18n._(t('js.params.Custom.VersionSelect.DataVersionSelect.version')`Version`)}</div>
+          <button type='button' title={i18n._(t('js.params.Custom.VersionSelect.DataVersionSelect.selectversion')`Select version`)} onClick={this.handleClickOpenModal}>{nVersions - currentVersionIndex} {this.props.i18n._(t('js.params.Custom.VersionSelect.DataVersionSelect.of')`of`)} {nVersions}</button>
           {isDataVersionModalOpen ? (
             <DataVersionModal
               wfModuleId={wfModuleId}

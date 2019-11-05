@@ -63,19 +63,19 @@ export const UpdateFrequencySelect = withI18n()(class UpdateFrequencySelect exte
     return (
       <div className='update-frequency-select'>
         <div className='update-option'>
-          <span className='version-box-option'><Trans id='UpdateFrequencySelect.update'>Update</Trans> </span>
+          <span className='version-box-option'><Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelect.update'>Update</Trans> </span>
           <a
             href='#'
             title='change auto-update settings'
             className='content-1 ml-1 action-link'
             onClick={this.handleClickOpenModal}
           >
-            {isAutofetch ? <Trans id='updatefrequency.auto'>Auto</Trans> : <Trans id='updatefrequency.manual'>Manual</Trans>}
+            {isAutofetch ? <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelect.auto'>Auto</Trans> : <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelect.manual'>Manual</Trans>}
           </a>
         </div>
         {lastCheckDate ? (
           <div className='last-checked'>
-            <Trans id='updatefrequency.Checked'>Checked</Trans> <time dateTime={this.props.lastCheckDate.toISOString()}>{timeDifference(lastCheckDate, Date.now(), i18n)}</time>
+            <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelect.checked'>Checked</Trans> <time dateTime={this.props.lastCheckDate.toISOString()}>{timeDifference(lastCheckDate, Date.now(), i18n)}</time>
           </div>
         ) : null}
         {isModalOpen ? (

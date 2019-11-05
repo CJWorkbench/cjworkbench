@@ -588,7 +588,7 @@ exports[`Workflow list page renders correctly 1`] = `
                     >
                       <WithI18n
                         defaults="My workflows"
-                        id="js.Workflows.WorkflowLists.myWorkflows.tab"
+                        id="js.Workflows.WorkflowLists.nav.myWorkflows"
                       >
                         <I18n
                           update={true}
@@ -622,12 +622,12 @@ exports[`Workflow list page renders correctly 1`] = `
                                 "t": [Function],
                               }
                             }
-                            id="js.Workflows.WorkflowLists.myWorkflows.tab"
+                            id="js.Workflows.WorkflowLists.nav.myWorkflows"
                           >
                             <Render
-                              value="js.Workflows.WorkflowLists.myWorkflows.tab"
+                              value="js.Workflows.WorkflowLists.nav.myWorkflows"
                             >
-                              js.Workflows.WorkflowLists.myWorkflows.tab
+                              js.Workflows.WorkflowLists.nav.myWorkflows
                             </Render>
                           </Trans>
                         </I18n>
@@ -653,7 +653,7 @@ exports[`Workflow list page renders correctly 1`] = `
                     >
                       <WithI18n
                         defaults="Shared with me"
-                        id="js.Workflows.WorkflowLists.sharedWithMe.tab"
+                        id="js.Workflows.WorkflowLists.nav.sharedWithMe"
                       >
                         <I18n
                           update={true}
@@ -687,12 +687,12 @@ exports[`Workflow list page renders correctly 1`] = `
                                 "t": [Function],
                               }
                             }
-                            id="js.Workflows.WorkflowLists.sharedWithMe.tab"
+                            id="js.Workflows.WorkflowLists.nav.sharedWithMe"
                           >
                             <Render
-                              value="js.Workflows.WorkflowLists.sharedWithMe.tab"
+                              value="js.Workflows.WorkflowLists.nav.sharedWithMe"
                             >
-                              js.Workflows.WorkflowLists.sharedWithMe.tab
+                              js.Workflows.WorkflowLists.nav.sharedWithMe
                             </Render>
                           </Trans>
                         </I18n>
@@ -718,7 +718,7 @@ exports[`Workflow list page renders correctly 1`] = `
                     >
                       <WithI18n
                         defaults="Recipes"
-                        id="js.Workflows.WorkflowLists.recipes.tab"
+                        id="js.Workflows.WorkflowLists.nav.recipes"
                       >
                         <I18n
                           update={true}
@@ -752,12 +752,12 @@ exports[`Workflow list page renders correctly 1`] = `
                                 "t": [Function],
                               }
                             }
-                            id="js.Workflows.WorkflowLists.recipes.tab"
+                            id="js.Workflows.WorkflowLists.nav.recipes"
                           >
                             <Render
-                              value="js.Workflows.WorkflowLists.recipes.tab"
+                              value="js.Workflows.WorkflowLists.nav.recipes"
                             >
-                              js.Workflows.WorkflowLists.recipes.tab
+                              js.Workflows.WorkflowLists.nav.recipes
                             </Render>
                           </Trans>
                         </I18n>
@@ -1046,6 +1046,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                       <li>
                                         <WithI18n
                                           defaults="Updated {0}"
+                                          description="The parameter will contain a time difference (i.e. something like '5h ago')"
                                           id="js.Workflows.WorkflowMetadata.update"
                                           values={
                                             Object {
@@ -1059,6 +1060,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                           >
                                             <Trans
                                               defaults="Updated {0}"
+                                              description="The parameter will contain a time difference (i.e. something like '5h ago')"
                                               i18n={
                                                 Object {
                                                   "_": [Function],
@@ -1269,6 +1271,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                       <li>
                                         <WithI18n
                                           defaults="Updated {0}"
+                                          description="The parameter will contain a time difference (i.e. something like '5h ago')"
                                           id="js.Workflows.WorkflowMetadata.update"
                                           values={
                                             Object {
@@ -1282,6 +1285,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                           >
                                             <Trans
                                               defaults="Updated {0}"
+                                              description="The parameter will contain a time difference (i.e. something like '5h ago')"
                                               i18n={
                                                 Object {
                                                   "_": [Function],
@@ -1492,6 +1496,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                       <li>
                                         <WithI18n
                                           defaults="Updated {0}"
+                                          description="The parameter will contain a time difference (i.e. something like '5h ago')"
                                           id="js.Workflows.WorkflowMetadata.update"
                                           values={
                                             Object {
@@ -1505,6 +1510,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                           >
                                             <Trans
                                               defaults="Updated {0}"
+                                              description="The parameter will contain a time difference (i.e. something like '5h ago')"
                                               i18n={
                                                 Object {
                                                   "_": [Function],
@@ -1786,6 +1792,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                       <li>
                                         <WithI18n
                                           defaults="Updated {0}"
+                                          description="The parameter will contain a time difference (i.e. something like '5h ago')"
                                           id="js.Workflows.WorkflowMetadata.update"
                                           values={
                                             Object {
@@ -1799,6 +1806,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                           >
                                             <Trans
                                               defaults="Updated {0}"
+                                              description="The parameter will contain a time difference (i.e. something like '5h ago')"
                                               i18n={
                                                 Object {
                                                   "_": [Function],
@@ -2009,6 +2017,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                       <li>
                                         <WithI18n
                                           defaults="Updated {0}"
+                                          description="The parameter will contain a time difference (i.e. something like '5h ago')"
                                           id="js.Workflows.WorkflowMetadata.update"
                                           values={
                                             Object {
@@ -2022,6 +2031,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                           >
                                             <Trans
                                               defaults="Updated {0}"
+                                              description="The parameter will contain a time difference (i.e. something like '5h ago')"
                                               i18n={
                                                 Object {
                                                   "_": [Function],
@@ -2287,6 +2297,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                       <li>
                                         <WithI18n
                                           defaults="Updated {0}"
+                                          description="The parameter will contain a time difference (i.e. something like '5h ago')"
                                           id="js.Workflows.WorkflowMetadata.update"
                                           values={
                                             Object {
@@ -2300,6 +2311,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                           >
                                             <Trans
                                               defaults="Updated {0}"
+                                              description="The parameter will contain a time difference (i.e. something like '5h ago')"
                                               i18n={
                                                 Object {
                                                   "_": [Function],

@@ -52,7 +52,7 @@ const ValueItem = withI18n()(class ValueItem extends React.PureComponent {
         <input
           name={`include[${item}]`}
           type='checkbox'
-          title={i18n._(t('workbench.valueselecttheserows')`Include these rows`)}
+          title={i18n._(t('js.params.Custom.ValueSelect.includeTheserows')`Include these rows`)}
           checked={isSelected}
           onChange={this.handleChangeItem}
         />
@@ -118,11 +118,11 @@ const ValueList = withI18n()(class ValueList extends React.PureComponent {
       // Waiting for user to select a column
       return null
     } else if (loading) {
-      return i18n._(t('workbench.loadingvalues')`Loading values…`)
+      return i18n._(t('js.params.Custom.ValueSelect.loadingValues')`Loading values…`)
     } else if (nItemsTotal === 0) {
-      return i18n._(t('workbench.Columvalues')`Column does not have any values`)
+      return i18n._(t('js.params.Custom.ValueSelect.columNovalues')`Column does not have any values`)
     } else if (items.length === 0) {
-      return i18n._(t('workbench.Novalsearch')`No values match your search`)
+      return i18n._(t('js.params.Custom.ValueSelect.noValuesmatchYourSearch')`No values match your search`)
     } else {
       const height = Math.min(maxHeight, items.length * itemHeight)
       return (

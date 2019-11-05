@@ -9,7 +9,8 @@ import { withFetchedData } from '../FetchedData'
 import AllNoneButtons from '../../common/AllNoneButtons'
 import FacetSearch from '../../common/FacetSearch'
 import ValueSortSelect from '../../common/ValueSortSelect'
-import { Trans } from '@lingui/macro'
+import { Trans, t } from '@lingui/macro'
+import { withI18n } from '@lingui/react'
 
 const NumberFormatter = new Intl.NumberFormat() // user's locale
 
@@ -129,7 +130,7 @@ class RefineModalPrompt extends React.PureComponent {
 
     return (
       <div className='refine-modal-prompt'>
-        <button type='button' name='cluster' onClick={this.handleClickOpenModal}>Find clusters...</button>
+        <button type='button' name='cluster' onClick={this.handleClickOpenModal}><Trans id="js.params.Refine.findClusters.button">Find clusters...</Trans></button>
         <span className='instructions' />
         {!isModalOpen ? null : (
           <RefineModal
@@ -143,7 +144,7 @@ class RefineModalPrompt extends React.PureComponent {
   }
 }
 
-class RefineGroup extends React.Component { // uses react-window's shouldComponentUpdate, not PureComponent
+const RefineGroup = withI18n()(class RefineGroup extends React.Component { // uses react-window's shouldComponentUpdate, not PureComponent
   static propTypes = {
     style: PropTypes.object.isRequired, // CSS styles
     valueCounts: PropTypes.object, // null or { value1: n, value2: n, ... }
@@ -250,7 +251,7 @@ class RefineGroup extends React.Component { // uses react-window's shouldCompone
   }
 
   render () {
-    const { style, group, valueCounts } = this.props
+    const { style, group, valueCounts,i18n } = this.props
     // isEdited is from _props_, not state.
     // If user is _editing_, that doesn't mean the group is _edited_.
     const className = `refine-group ${group.isEdited ? 'edited' : 'original'}`
@@ -260,7 +261,7 @@ class RefineGroup extends React.Component { // uses react-window's shouldCompone
         <input
           type='checkbox'
           name='expand'
-          title={group.isExpanded ? <Trans id='workflow.refine.hideoriginalvalue'>Hide original values</Trans> : <Trans id='workflow.refine.showoriginalvalues'>Show original values</Trans>}
+          title={group.isExpanded ? i18n._(t('js.params.Refine.hideOriginalValues')`Hide original values`) : i18n._(t('js.params.Refine.showOriginalValues')`Show original values`) }
           checked={group.isExpanded}
           onChange={this.handleChangeIsExpanded}
         />
@@ -272,7 +273,7 @@ class RefineGroup extends React.Component { // uses react-window's shouldCompone
       <button
         name='reset'
         type='button'
-        title={<Trans id='workflow.refine.canceleditofthesevalues'> Cancel edits of these values </Trans>}
+        title={i18n._(t('js.params.Refine.cancelEditsOfTheseValues')`Cancel edits of these values`)}
         onClick={this.handleClickReset}
       >
         <i className='icon-undo' />
@@ -334,7 +335,7 @@ class RefineGroup extends React.Component { // uses react-window's shouldCompone
       </div>
     )
   }
-}
+});
 
 const buildSpecModifier = (_this, helperName, shouldSubmit = false) => {
   const func = util[helperName]
@@ -449,11 +450,11 @@ class GroupList extends React.PureComponent {
       // Waiting for user to select a column
       return null
     } else if (loading) {
-      return <Trans id='workflows.refine.loadingvalues'>Loading values…</Trans>
+      return <Trans id='js.params.Refine.loadingValues'>Loading values…</Trans>
     } else if (isObjectEmpty(valueCounts)) {
-      return <Trans id='workflows.refine.thiscolumnnothavevalues'>This column does not have any values</Trans>
+      return <Trans id='js.params.Refine.thisColumnNoValues'>This column does not have any values</Trans>
     } else if (groups.length === 0) {
-      return <Trans id='workflows.refine.Novaluesmatchyoursearch'>No values match your search</Trans>
+      return <Trans id='js.params.Refine.noValuesMatchSearch'>No values match your search</Trans>
     } else {
       if (this.listRef.current) {
         // If we're re-rendering this component, then it's likely a list item
@@ -804,7 +805,7 @@ export class Refine extends React.PureComponent {
     const canSearch = this.groups.length > 1
 
     const maybeMergeButton = groups.length > 0 ? (
-      <button type='button' name='merge' onClick={this.handleClickMergeSelected} disabled={selectedGroupNames.size < 2}><Trans id='workflows.mergefacets'>Merge facets</Trans></button>
+      <button type='button' name='merge' onClick={this.handleClickMergeSelected} disabled={selectedGroupNames.size < 2}><Trans id='js.params.Refine.mergeFacets.button'>Merge facets</Trans></button>
     ) : null
 
     return (

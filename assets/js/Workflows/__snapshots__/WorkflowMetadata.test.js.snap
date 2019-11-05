@@ -22,6 +22,7 @@ exports[`WorkflowMetadata renders private workflow correctly 1`] = `
   <li>
     <WithI18n
       defaults="Updated {0}"
+      description="The parameter will contain a time difference (i.e. something like '5h ago')"
       id="js.Workflows.WorkflowMetadata.update"
       values={
         Object {

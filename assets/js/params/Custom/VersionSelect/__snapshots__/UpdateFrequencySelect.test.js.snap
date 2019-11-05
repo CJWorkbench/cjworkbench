@@ -92,7 +92,7 @@ exports[`UpdateFrequencySelect shallow matches snapshot 1`] = `
           >
             <WithI18n
               defaults="Update"
-              id="UpdateFrequencySelect.update"
+              id="js.params.Custom.VersionSelect.UpdateFrequencySelect.update"
             >
               <I18n
                 update={true}
@@ -126,12 +126,12 @@ exports[`UpdateFrequencySelect shallow matches snapshot 1`] = `
                       "t": [Function],
                     }
                   }
-                  id="UpdateFrequencySelect.update"
+                  id="js.params.Custom.VersionSelect.UpdateFrequencySelect.update"
                 >
                   <Render
-                    value="UpdateFrequencySelect.update"
+                    value="js.params.Custom.VersionSelect.UpdateFrequencySelect.update"
                   >
-                    UpdateFrequencySelect.update
+                    js.params.Custom.VersionSelect.UpdateFrequencySelect.update
                   </Render>
                 </Trans>
               </I18n>
@@ -146,7 +146,7 @@ exports[`UpdateFrequencySelect shallow matches snapshot 1`] = `
           >
             <WithI18n
               defaults="Manual"
-              id="updatefrequency.manual"
+              id="js.params.Custom.VersionSelect.UpdateFrequencySelect.manual"
             >
               <I18n
                 update={true}
@@ -180,12 +180,12 @@ exports[`UpdateFrequencySelect shallow matches snapshot 1`] = `
                       "t": [Function],
                     }
                   }
-                  id="updatefrequency.manual"
+                  id="js.params.Custom.VersionSelect.UpdateFrequencySelect.manual"
                 >
                   <Render
-                    value="updatefrequency.manual"
+                    value="js.params.Custom.VersionSelect.UpdateFrequencySelect.manual"
                   >
-                    updatefrequency.manual
+                    js.params.Custom.VersionSelect.UpdateFrequencySelect.manual
                   </Render>
                 </Trans>
               </I18n>
@@ -197,7 +197,7 @@ exports[`UpdateFrequencySelect shallow matches snapshot 1`] = `
         >
           <WithI18n
             defaults="Checked"
-            id="updatefrequency.Checked"
+            id="js.params.Custom.VersionSelect.UpdateFrequencySelect.checked"
           >
             <I18n
               update={true}
@@ -231,12 +231,12 @@ exports[`UpdateFrequencySelect shallow matches snapshot 1`] = `
                     "t": [Function],
                   }
                 }
-                id="updatefrequency.Checked"
+                id="js.params.Custom.VersionSelect.UpdateFrequencySelect.checked"
               >
                 <Render
-                  value="updatefrequency.Checked"
+                  value="js.params.Custom.VersionSelect.UpdateFrequencySelect.checked"
                 >
-                  updatefrequency.Checked
+                  js.params.Custom.VersionSelect.UpdateFrequencySelect.checked
                 </Render>
               </Trans>
             </I18n>
