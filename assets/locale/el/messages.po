@@ -419,6 +419,14 @@ msgstr ""
 msgid "js.WorkflowEditor.wfmodule.notes.edit.hoverText"
 msgstr ""
 
+#: assets/js/WorkflowEditor/wfmodule/WfModuleContextMenu.js:21
+msgid "js.WorkflowEditor.wfmodule.wfModuleContextMenu.delete"
+msgstr ""
+
+#: assets/js/WorkflowEditor/wfmodule/WfModuleContextMenu.js:20
+msgid "js.WorkflowEditor.wfmodule.wfModuleContextMenu.exportData"
+msgstr ""
+
 #. The parameter will contain something like '4h ago'
 #: assets/js/WorkflowNavBar.js:57
 msgid "js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.lastUpdated"
@@ -436,6 +444,18 @@ msgstr ""
 msgid "js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.visibility.public"
 msgstr ""
 
+#: assets/js/WorkflowNavBar.js:206
+msgid "js.WorkflowNavBar.duplicate.button"
+msgstr ""
+
+#: assets/js/WorkflowNavBar.js:208
+msgid "js.WorkflowNavBar.share.shareButton"
+msgstr ""
+
+#: assets/js/WorkflowNavBar.js:175
+msgid "js.WorkflowNavBar.signIn.accountLink"
+msgstr ""
+
 #. This is used in navigation bar. It should be all-caps for styling reasons.
 #: assets/js/Workflows/Navbar.js:39
 msgid "js.Workflows.NavBar.links.training"
@@ -446,8 +466,127 @@ msgstr ""
 msgid "js.Workflows.NavBar.links.workflows"
 msgstr ""
 
+#: assets/js/Workflows/SortMenu.js:34
+msgid "js.Workflows.SortMenu.alphabetical.dropdownItem"
+msgstr ""
+
+#: assets/js/Workflows/SortMenu.js:31
+msgid "js.Workflows.SortMenu.lastModified.dropdownItem"
+msgstr ""
+
+#: assets/js/Workflows/SortMenu.js:32
+msgid "js.Workflows.SortMenu.oldestModified.dropdownItem"
+msgstr ""
+
+#: assets/js/Workflows/SortMenu.js:35
+msgid "js.Workflows.SortMenu.reverseAlphabet.dropdownItem"
+msgstr ""
+
+#: assets/js/Workflows/SortMenu.js:28
+msgid "js.Workflows.SortMenu.sort.DropdownTitle"
+msgstr ""
+
+#: assets/js/Workflows/WorkflowContextMenu.js:40
+msgid "js.Workflows.WorkflowContextMenu.delete"
+msgstr ""
+
+#: assets/js/Workflows/WorkflowContextMenu.js:35
+msgid "js.Workflows.WorkflowContextMenu.duplicate"
+msgstr ""
+
+#: assets/js/Workflows/WorkflowLists.js:51
+msgid "js.Workflows.WorkflowLists.createYourFirtsWorkflow.button"
+msgstr ""
+
+#: assets/js/Workflows/WorkflowLists.js:111
+msgid "js.Workflows.WorkflowLists.nav.myWorkflows"
+msgstr ""
+
+#: assets/js/Workflows/WorkflowLists.js:113
+msgid "js.Workflows.WorkflowLists.nav.recipes"
+msgstr ""
+
+#: assets/js/Workflows/WorkflowLists.js:112
+msgid "js.Workflows.WorkflowLists.nav.sharedWithMe"
+msgstr ""
+
+#: assets/js/Workflows/WorkflowLists.js:76
+msgid "js.Workflows.WorkflowLists.publisheNewRecipes"
+msgstr ""
+
+#: assets/js/Workflows/WorkflowLists.js:64
+msgid "js.Workflows.WorkflowLists.workflowsWillAppearHere"
+msgstr ""
+
+#: assets/js/Workflows/WorkflowMetadata.js:47
+msgid "js.Workflows.WorkflowMetadata.changePrivacy.button"
+msgstr ""
+
+#. The parameter will contain a time difference (i.e. something like '5h ago')
+#: assets/js/Workflows/WorkflowMetadata.js:57
+msgid "js.Workflows.WorkflowMetadata.update"
+msgstr ""
+
+#: assets/js/Workflows/WorkflowMetadata.js:48
+msgid "js.Workflows.WorkflowMetadata.visibility.private"
+msgstr ""
+
+#: assets/js/Workflows/WorkflowMetadata.js:48
+msgid "js.Workflows.WorkflowMetadata.visibility.public"
+msgstr ""
+
+#: assets/js/Workflows/index.js:203
+msgid "js.Workflows.createWorkflowButton"
+msgstr ""
+
+#: assets/js/Workflows/index.js:95
+msgid "js.Workflows.delete.permanentyDeleteWarning"
+msgstr ""
+
+#: assets/js/Workflows/index.js:200
+msgid "js.Workflows.learnHowToWorkWithData"
+msgstr ""
+
+#. This should be all-caps for styling reasons
+#: assets/js/Workflows/index.js:194
+msgid "js.Workflows.new"
+msgstr ""
+
+#. This should be all-caps for styling reasons
+#: assets/js/Workflows/index.js:197
+msgid "js.Workflows.training.title"
+msgstr ""
+
+#: assets/js/i18n/locales.js:5
+msgid "js.i18n.locales.el"
+msgstr ""
+
+#: assets/js/i18n/locales.js:4
+msgid "js.i18n.locales.en"
+msgstr ""
+
+#: assets/js/table/ColumnHeader.js:13
+msgid "js.table.ColumnHeader.types.dateAndtime"
+msgstr ""
+
+#: assets/js/table/ColumnHeader.js:12
+msgid "js.table.ColumnHeader.types.number"
+msgstr ""
+
+#: assets/js/table/ColumnHeader.js:11
+msgid "js.table.ColumnHeader.types.text"
+msgstr ""
+
 #: assets/js/table/SelectedRowsActions.js:105
 msgid "js.table.SelectedRowsActions.numberOfSelectedRows"
+msgstr ""
+
+#: assets/js/table/TableInfo.js:45
+msgid "js.table.TableInfo.columns"
+msgstr ""
+
+#: assets/js/table/TableInfo.js:41
+msgid "js.table.TableInfo.rows"
 msgstr ""
 
 #: assets/js/utils.js:47
@@ -472,135 +611,6 @@ msgstr ""
 
 #: assets/js/utils.js:55
 msgid "js.util.timeDifference.now"
-msgstr ""
-
-#: assets/js/i18n/locales.js:5
-msgid "locales.el"
-msgstr ""
-
-#: assets/js/i18n/locales.js:4
-msgid "locales.en"
-msgstr ""
-
-#: assets/js/Workflows/SortMenu.js:34
-msgid "workflow.alphabetical"
-msgstr ""
-
-#: assets/js/Workflows/index.js:203
-msgid "workflow.createworkflow"
-msgstr ""
-
-#: assets/js/Workflows/WorkflowLists.js:51
-msgid "workflow.createyourworkflow"
-msgstr ""
-
-#: assets/js/WorkflowEditor/wfmodule/WfModuleContextMenu.js:21
-#: assets/js/Workflows/WorkflowContextMenu.js:40
-msgid "workflow.delete"
-msgstr ""
-
-#: assets/js/Workflows/WorkflowContextMenu.js:35
-msgid "workflow.duplicate"
-msgstr ""
-
-#: assets/js/WorkflowEditor/wfmodule/WfModuleContextMenu.js:20
-msgid "workflow.exportdata"
-msgstr ""
-
-#: assets/js/Workflows/SortMenu.js:31
-msgid "workflow.lastmodified"
-msgstr ""
-
-#: assets/js/Workflows/index.js:200
-msgid "workflow.learnworkwithdata"
-msgstr ""
-
-#: assets/js/Workflows/WorkflowLists.js:111
-msgid "workflow.myworkflows"
-msgstr ""
-
-#: assets/js/Workflows/index.js:194
-msgid "workflow.new"
-msgstr ""
-
-#: assets/js/Workflows/SortMenu.js:32
-msgid "workflow.oldestmodified"
-msgstr ""
-
-#: assets/js/Workflows/index.js:95
-msgid "workflow.permanentdelete"
-msgstr ""
-
-#: assets/js/Workflows/WorkflowMetadata.js:48
-msgid "workflow.private"
-msgstr ""
-
-#: assets/js/Workflows/WorkflowMetadata.js:48
-msgid "workflow.public"
-msgstr ""
-
-#: assets/js/Workflows/WorkflowLists.js:76
-msgid "workflow.publishenewrecipes"
-msgstr ""
-
-#: assets/js/Workflows/WorkflowLists.js:113
-msgid "workflow.recipes"
-msgstr ""
-
-#: assets/js/Workflows/SortMenu.js:35
-msgid "workflow.reversealphabet"
-msgstr ""
-
-#: assets/js/Workflows/WorkflowLists.js:112
-msgid "workflow.sharedwithme"
-msgstr ""
-
-#: assets/js/WorkflowNavBar.js:175
-msgid "workflow.signin"
-msgstr ""
-
-#: assets/js/Workflows/index.js:197
-msgid "workflow.trainingtitle"
-msgstr ""
-
-#: assets/js/Workflows/WorkflowMetadata.js:47
-msgid "workflow.visibility.changeprivacy"
-msgstr ""
-
-#: assets/js/table/TableInfo.js:45
-msgid "workflow.visibility.columns"
-msgstr ""
-
-#: assets/js/table/ColumnHeader.js:13
-msgid "workflow.visibility.dateType"
-msgstr ""
-
-#: assets/js/WorkflowNavBar.js:206
-msgid "workflow.visibility.duplicate"
-msgstr ""
-
-#: assets/js/table/ColumnHeader.js:12
-msgid "workflow.visibility.numberType"
-msgstr ""
-
-#: assets/js/table/TableInfo.js:41
-msgid "workflow.visibility.rows"
-msgstr ""
-
-#: assets/js/WorkflowNavBar.js:208
-msgid "workflow.visibility.share"
-msgstr ""
-
-#: assets/js/table/ColumnHeader.js:11
-msgid "workflow.visibility.textType"
-msgstr ""
-
-#: assets/js/Workflows/WorkflowLists.js:64
-msgid "workflow.workflowswillappearhere"
-msgstr ""
-
-#: assets/js/Workflows/WorkflowMetadata.js:57
-msgid "workflows.workflowmetadata.update"
 msgstr ""
 
 #: cjworkbench/forms/signup.py:24
