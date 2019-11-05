@@ -104,7 +104,7 @@ RUN cd /tmp \
 
 # Add "mc" command, so we can create a non-root user in minio (for STS).
 RUN true \
-    && curl https://dl.min.io/client/mc/release/linux-amd64/archive/mc.RELEASE.2019-09-24T01-36-20Z -o /usr/bin/mc \
+    && curl https://dl.min.io/client/mc/release/linux-amd64/archive/mc.RELEASE.2019-10-09T22-54-57Z -o /usr/bin/mc \
     && chmod +x /usr/bin/mc
 
 # Add a Python wrapper that will help PyCharm cooperate with pipenv
