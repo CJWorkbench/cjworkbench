@@ -102,6 +102,12 @@ RUN cd /tmp \
     && apt-get autoremove --purge -y \
     && rm -rf /var/lib/apt/lists/*
 
+COPY cjwkernel/setup-chroot-layers.sh /tmp/setup-chroot-layers.sh
+RUN /tmp/setup-chroot-layers.sh && rm /tmp/setup-chroot-layers.sh
+# Let chroots overlay the root FS -- meaning they must be on another FS.
+# see cjwkernel/setup-chroots.sh
+VOLUME /var/lib/cjwkernel/chroot
+
 # Add "mc" command, so we can create a non-root user in minio (for STS).
 RUN true \
     && curl https://dl.min.io/client/mc/release/linux-amd64/archive/mc.RELEASE.2019-09-24T01-36-20Z -o /usr/bin/mc \
@@ -167,6 +173,14 @@ RUN true \
       libpq-dev \
     && apt-get autoremove --purge -y \
     && rm -rf /var/lib/apt/lists/*
+
+# Set up chroot-layers ASAP, so they're cached in a rarely-changing
+# Docker layer.
+COPY cjwkernel/setup-chroot-layers.sh /tmp/setup-chroot-layers.sh
+RUN /tmp/setup-chroot-layers.sh && rm /tmp/setup-chroot-layers.sh
+# Let chroots overlay the root FS -- meaning they must be on another FS.
+# see cjwkernel/setup-chroots.sh
+VOLUME /var/lib/cjwkernel/chroot
 
 
 # 2. Node deps -- completely independent

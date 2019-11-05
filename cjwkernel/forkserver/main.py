@@ -5,10 +5,9 @@ import os
 from pathlib import Path
 import shutil
 import signal
-import sys
 import socket
 import traceback
-from typing import Callable, List, Tuple
+from typing import Callable
 from . import protocol
 
 
@@ -146,7 +145,7 @@ def _sandbox_module():
     if _should_sandbox("no_new_privs"):
         _sandbox_no_new_privs()
     if message.chroot_dir is not None:
-        _sandbox_chroot(message.chroot_dir, message.chroot_provide_paths)
+        _sandbox_chroot(message.chroot_dir)
     if _should_sandbox("setuid"):
         _sandbox_setuid()
     if _should_sandbox("drop_capabilities"):
@@ -216,9 +215,9 @@ def _copy_chroot_file(src: str, dst: str) -> None:
     return shutil.copy2(src, dst)
 
 
-def _sandbox_chroot(root: Path, provide_paths: List[Tuple[Path, Path]]):
+def _sandbox_chroot(root: Path) -> None:
     """
-    Enter a restricted filesystem, so absolute paths are relative to `dir`.
+    Enter a restricted filesystem, so absolute paths are relative to `root`.
 
     Why call this? So the user can't read files from our filesystem (which
     include our secrets and our users' secrets); and the user can't *write*
@@ -230,35 +229,16 @@ def _sandbox_chroot(root: Path, provide_paths: List[Tuple[Path, Path]]):
 
     SECURITY: TODO: switch from chroot to pivot_root. pivot_root makes it far
     harder for root to break out of the jail. It needs a process-specific mount
-    namespace. But on Kubernetes (and Docker), bind-mount isn't allowed in
-    unprivileged processes.
+    namespace. But on Kubernetes (and Docker), we'd need so many privileges to
+    pivot_root that we'd be _decreasing_ security. Find out how to do it with
+    fewer privileges.
 
     For now, since we don't use a separate mount namespace, chroot doesn't
     add much "security" in the case of privilege escalation: root will be able
-    to see our secrets. But chroot helps us, as developers, prepare for
-    pivot_root by coding to the contract it will provide.
+    to escape the chroot. (Even root doesn't have permission to read our
+    secrets, though.) Chroot isn't to allay evildoers: it's so module
+    developers see the filesystem tree we want them to see.
     """
-    all_paths = provide_paths + [(Path(s), Path(s)) for s in CHROOT_REQUIRED_PATHS]
-    for dest, src in all_paths:
-        # "dest" is after chroot. Before chroot, we need "absolute_dest"
-        absolute_dest = root / str(dest)[1:]
-        absolute_dest.parent.mkdir(0o755, parents=True, exist_ok=True)
-        if src.is_dir():
-            shutil.copytree(src, absolute_dest, copy_function=_copy_chroot_file)
-
-        else:
-            # TODO unit-test that /etc/resolv.conf (on a different mount point)
-            # is copied correctly
-            _copy_chroot_file(src, absolute_dest)
-
-    # Create temporary directories
-    tmp = root / "tmp"
-    os.makedirs(tmp, exist_ok=True)
-    os.chmod(tmp, 0o1777)
-    var_tmp = root / "var" / "tmp"
-    os.makedirs(var_tmp, exist_ok=True)
-    os.chmod(var_tmp, 0o1777)
-
     os.chroot(str(root))
     os.chdir("/")
 

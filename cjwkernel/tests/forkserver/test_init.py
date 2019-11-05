@@ -7,8 +7,12 @@ import stat
 from textwrap import dedent
 from typing import Any, ContextManager, FrozenSet, List, Optional, Tuple
 import unittest
+from cjwkernel.chroot import (
+    EDITABLE_CHROOT,
+    ensure_initialized as ensure_chroot_initialized,
+)
 from cjwkernel import forkserver
-from cjwkernel.util import tempdir_context, tempfile_context
+from cjwkernel.util import tempfile_context
 
 
 def module_main(indented_code: str) -> None:
@@ -23,14 +27,12 @@ def _spawned_module_context(
     server: forkserver.Forkserver,
     args: List[Any] = [],
     chroot_dir: Optional[Path] = None,
-    chroot_provide_paths: List[Tuple[Path, Path]] = [],
     skip_sandbox_except: FrozenSet[str] = frozenset(),
 ) -> ContextManager[forkserver.ModuleProcess]:
     subprocess = server.spawn_module(
         "forkserver-test",
         args,
         chroot_dir=chroot_dir,
-        chroot_provide_paths=chroot_provide_paths,
         skip_sandbox_except=skip_sandbox_except,
     )
     try:
@@ -57,6 +59,7 @@ def _spawned_module_context(
 class ForkserverTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        ensure_chroot_initialized()
         cls._forkserver = forkserver.Forkserver(
             module_main="cjwkernel.tests.forkserver.test_init.module_main"
         )
@@ -79,7 +82,6 @@ class ForkserverTest(unittest.TestCase):
         self,
         indented_code: str,
         chroot_dir: Optional[Path] = None,
-        chroot_provide_paths: List[Tuple[Path, Path]] = [],
         skip_sandbox_except: FrozenSet[str] = frozenset(),
     ) -> Tuple[int, bytes, bytes]:
         """
@@ -91,7 +93,6 @@ class ForkserverTest(unittest.TestCase):
             self._forkserver,
             args=[indented_code],
             chroot_dir=chroot_dir,
-            chroot_provide_paths=chroot_provide_paths,
             skip_sandbox_except=skip_sandbox_except,
         ) as subprocess:
             stdout = subprocess.stdout.read()
@@ -109,7 +110,6 @@ class ForkserverTest(unittest.TestCase):
         self,
         indented_code: str,
         chroot_dir: Optional[Path] = None,
-        chroot_provide_paths: List[Tuple[Path, Path]] = [],
         skip_sandbox_except: FrozenSet[str] = frozenset(),
     ) -> None:
         """
@@ -118,10 +118,9 @@ class ForkserverTest(unittest.TestCase):
         exitcode, stdout, stderr = self._spawn_and_communicate(
             indented_code,
             chroot_dir=chroot_dir,
-            chroot_provide_paths=chroot_provide_paths,
             skip_sandbox_except=skip_sandbox_except,
         )
-        self.assertEqual(exitcode, 0, "Exit code %d: %s" % (exitcode, stderr))
+        self.assertEqual(exitcode, 0, "Exit code %d: %r" % (exitcode, stderr))
         self.assertEqual(stderr, b"", "Unexpected stderr: %r" % stderr)
         self.assertEqual(stdout, b"", "Unexpected stdout: %r" % stdout)
 
@@ -196,7 +195,7 @@ class ForkserverTest(unittest.TestCase):
             # Test we can't actually *use* a capability -- chroot, for example
 
             try:
-                os.chroot("/lib")  # raise on error
+                os.chroot("/")  # raise on error
                 assert False, "chroot worked after dropping capabilities?"
             except PermissionError:
                 pass
@@ -240,17 +239,26 @@ class ForkserverTest(unittest.TestCase):
             skip_sandbox_except=frozenset(["chroot"]),
         )
 
-    def test_chroot_tempdirs(self):
-        self._spawn_and_communicate_or_raise(
-            r"""
-            import tempfile
+    def test_chroot_tempfiles(self):
+        with EDITABLE_CHROOT.acquire_context() as chroot_context:
+            exitcode, stdout, stderr = self._spawn_and_communicate(
+                r"""
+                import tempfile
 
-            tempfile.NamedTemporaryFile(dir="/tmp")  # do not crash
-            tempfile.NamedTemporaryFile(dir="/var/tmp")  # do not crash
-            """,
-            chroot_dir=self.chroot_dir,
-            skip_sandbox_except=frozenset(["chroot"]),
-        )
+                print(tempfile.mkstemp(dir="/tmp")[1])  # do not crash
+                print(tempfile.mkstemp(dir="/var/tmp")[1])  # do not crash
+                """,
+                chroot_dir=chroot_context.chroot.root,
+            )
+            self.assertEqual(exitcode, 0, "Exit code %d: %r" % (exitcode, stderr))
+            self.assertEqual(stderr, b"", "Unexpected stderr: %r" % stderr)
+            tmp1, tmp2, _ = stdout.decode("ascii").split("\n")
+            self.assertTrue(Path(chroot_context.chroot.root / tmp1[1:]).exists())
+            self.assertTrue(Path(chroot_context.chroot.root / tmp2[1:]).exists())
+        # a bit of an integration test: test that after we release the chroot,
+        # the temporary files are gone.
+        self.assertFalse(Path(chroot_context.chroot.root / tmp1).exists())
+        self.assertFalse(Path(chroot_context.chroot.root / tmp2).exists())
 
     def test_SECURITY_chroot_ensures_cwd_is_under_root(self):
         self._spawn_and_communicate_or_raise(
@@ -263,55 +271,29 @@ class ForkserverTest(unittest.TestCase):
             skip_sandbox_except=frozenset(["chroot"]),
         )
 
-    def test_SECURITY_provide_dir_readable(self):
-        with tempdir_context() as files:
-            files.chmod(0o755)
-            (files / "foo.txt").write_text("foo")
-            (files / "subdir").mkdir(0o755)
-            (files / "subdir" / "bar.bin").write_bytes(b"subbar")
-
-            self._spawn_and_communicate_or_raise(
-                r"""
-                from pathlib import Path
-
-                assert Path("/data/foo.txt").read_text() == "foo"
-                assert Path("/data/subdir/bar.bin").read_text() == "subbar"
-                """,
-                chroot_dir=self.chroot_dir,
-                chroot_provide_paths=[(Path("/data"), files)],
-            )
-
-    def test_SECURITY_can_exec_statically_linked_program(self):
-        # Write /data.parquet within the subprocess itself. We can't use
-        # `chroot_provide_paths` here because on dev machines, /app is a
-        # volume mount while `root` is in the container image; os.link()
-        # won't cross filesystems.
-        parquet_bytes = (
-            Path(__file__).parent.parent / "test_data" / "trivial.parquet"
-        ).read_bytes()
-        self.chroot_dir.chmod(0o777)  # let module write file to /
+    def test_SECURITY_can_exec_binaries_in_chroot(self):
+        usr_bin = self.chroot_dir / "usr" / "bin"
+        usr_bin.mkdir(parents=True)
+        shutil.copy2(
+            "/usr/bin/parquet-to-text-stream", usr_bin / "parquet-to-text-stream"
+        )
+        shutil.copy2(
+            Path(__file__).parent.parent / "test_data" / "trivial.parquet",
+            self.chroot_dir / "data.parquet",
+        )
 
         self._spawn_and_communicate_or_raise(
             r"""
-            from pathlib import Path
             import subprocess
-            Path("/data.parquet").write_bytes(%r)
             result = subprocess.run(
                 ["/usr/bin/parquet-to-text-stream", "/data.parquet", "csv"],
                 capture_output=True,
             )
-            assert result.stderr == b"", "program errored %%r" %% result.stderr
-            assert result.stdout == b"A\n1\n2", "program output %%r" %% result.stdout
-            assert result.returncode == 0, "program exited with status code %%d" %% result.returncode
-            """
-            % parquet_bytes,
+            assert result.stderr == b"", "program errored %r" % result.stderr
+            assert result.stdout == b"A\n1\n2", "program output %r" % result.stdout
+            assert result.returncode == 0, "program exited with status code %d" % result.returncode
+            """,
             chroot_dir=self.chroot_dir,
-            chroot_provide_paths=[
-                (
-                    Path("/usr/bin/parquet-to-text-stream"),
-                    Path("/usr/bin/parquet-to-text-stream"),
-                )
-            ],
         )
 
     def test_SECURITY_setuid(self):

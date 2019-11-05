@@ -65,6 +65,7 @@ services:
     depends_on: [ 'db', 'rabbitmq', 'minio' ]
     security_opt:
       - seccomp=docker/forkserver-seccomp-profile.json
+    cap_add: [ SYS_ADMIN ] # for cjwkernel.kernel to overlay-mount chroots (on k8s we use an init container instead)
     environment:
       PYTHONUNBUFFERED: '1'
       ASGI_THREADS: '2'
@@ -85,6 +86,7 @@ services:
     depends_on: [ 'db', 'rabbitmq', 'minio' ]
     security_opt:
       - seccomp=docker/forkserver-seccomp-profile.json
+    cap_add: [ SYS_ADMIN ] # for cjwkernel.kernel to overlay-mount chroots (on k8s we use an init container instead)
     environment:
       PYTHONUNBUFFERED: '1'
       ASGI_THREADS: '2'
@@ -126,6 +128,7 @@ services:
     depends_on: [ 'db', 'rabbitmq', 'minio' ]
     security_opt:
       - seccomp=docker/forkserver-seccomp-profile.json
+    cap_add: [ SYS_ADMIN ] # for cjwkernel.kernel to overlay-mount chroots (on k8s we use an init container instead)
     environment:
       PYTHONUNBUFFERED: '1'
       ASGI_THREADS: '2'
