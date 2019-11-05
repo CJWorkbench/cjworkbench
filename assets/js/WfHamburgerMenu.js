@@ -42,21 +42,21 @@ export class WfHamburgerMenu extends React.Component {
         <LocaleSwitcher />
         <UncontrolledDropdown>
 
-          <DropdownToggle title={i18n._(t('workflow.visibility.menu')`menu`)} className='context-button'>
+          <DropdownToggle title={i18n._(t('js.WfHamburgerMenu.toggle.hoverText')`menu`)} className='context-button'>
             <i className='icon-more' />
           </DropdownToggle>
 
           <DropdownMenu>
             {loggedIn && workflowId ? (
               <>
-                <DropdownItem href='/workflows/'><Trans id='workflow.visibility.myWorkflows'>My Workflows</Trans></DropdownItem>
-                <DropdownItem onClick={this.handleClickOpenImportModal}><Trans id='workflow.visibility.importModule'>Import Module</Trans></DropdownItem>
+                <DropdownItem href='/workflows/'><Trans id='js.WfHamburgerMenu.menu.myWorkflows'>My Workflows</Trans></DropdownItem>
+                <DropdownItem onClick={this.handleClickOpenImportModal}><Trans id='js.WfHamburgerMenu.menu.importModule'>Import Module</Trans></DropdownItem>
               </>
             ) : (
-              <DropdownItem href='//workbenchdata.com'><Trans id='workflow.visibility.home'>Home</Trans></DropdownItem>
+              <DropdownItem href='//workbenchdata.com'><Trans id='js.WfHamburgerMenu.menu.home'>Home</Trans></DropdownItem>
             )}
             {loggedIn ? (
-              <DropdownItem href='/account/logout'><Trans id='workflow.visibility.logout'>Log Out</Trans></DropdownItem>
+              <DropdownItem href='/account/logout'><Trans id='js.WfHamburgerMenu.menu.logout'>Log Out</Trans></DropdownItem>
             ) : null}
           </DropdownMenu>
         </UncontrolledDropdown>

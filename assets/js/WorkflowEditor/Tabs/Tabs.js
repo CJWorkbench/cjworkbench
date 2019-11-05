@@ -30,7 +30,7 @@ class Tabs extends React.PureComponent {
   create = () => {
     this.props.create(this.props.i18n._(
       /* i18n: The tab prefix will be used as the first part of the default name of tabs, i.e. if the tab prefix is 'Tab', the default names can be 'Tab 1', 'Tab 2', etc */
-      t('workflow.tabs.tab_prefix')`Tab`
+      t('js.WorkflowEditor.Tabs.create.defaultPrefix')`Tab`
     ))
   }
 

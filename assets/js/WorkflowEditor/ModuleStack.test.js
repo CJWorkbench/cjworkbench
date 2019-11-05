@@ -22,6 +22,6 @@ describe('ModuleStack', () => {
 
   it('should render a placeholder when empty and read-only', () => {
     const w = wrapper({ wfModules: [], isReadOnly: true })
-    expect(w.text()).toMatch(/workflow.thistabnosteps/)
+    expect(w.find('Trans[id="js.WorkflowEditor.ModuleStack.EmptyReadOnlyModuleStack"]')).toHaveLength(1)
   })
 })

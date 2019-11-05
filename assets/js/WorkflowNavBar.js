@@ -49,12 +49,12 @@ const OwnedWorkflowTitleAndMetadata = withI18n()(function ({ i18n, isReadOnly, w
       <ul className='metadata-container'>
         {!workflow.is_anonymous ? (
           <li className='attribution'>
-            <span className='metadata'><Trans id='workflow.visibility.by'>by {workflow.owner_name.trim()}</Trans> </span>
+            <span className='metadata'><Trans id='js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.owner'>by {workflow.owner_name.trim()}</Trans> </span>
             <span className='separator'>-</span>
           </li>
         ) : null}
         <li>
-          <Trans id='workflow.last_updated' description="The parameter will contain something like '4h ago'">
+          <Trans id='js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.lastUpdated' description="The parameter will contain something like '4h ago'">
             Updated {timeDifference(workflow.last_update, new Date(), i18n)}
           </Trans>
         </li>
@@ -62,7 +62,7 @@ const OwnedWorkflowTitleAndMetadata = withI18n()(function ({ i18n, isReadOnly, w
           <li>
             <span className='separator'>-</span>
             <ShareButton>
-              {workflow.public ? <Trans id='workflow.visibility.public'>Public</Trans> : <Trans id='workflow.visibility.private'>Private</Trans>}
+              {workflow.public ? <Trans id='js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.visibility.public'>Public</Trans> : <Trans id='js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.visibility.private'>Private</Trans>}
             </ShareButton>
           </li>
         ) : null}

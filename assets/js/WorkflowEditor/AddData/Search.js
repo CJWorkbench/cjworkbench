@@ -13,7 +13,7 @@ const Search = React.memo(function Search ({ i18n, value, onChange }) {
 
       <input
         type='search'
-        placeholder={i18n._(t('placeholder.searchJs.search')`Search…`)}
+        placeholder={i18n._(t('js.WorkflowEditor.AddData.Search.placeholder')`Search…`)}
         name='moduleQ'
         autoFocus
         autoComplete='off'
@@ -21,7 +21,7 @@ const Search = React.memo(function Search ({ i18n, value, onChange }) {
         value={value}
       />
 
-      <button type='reset' className='reset' title={i18n._(t('title.workflow.clearSearch')`Clear Search`)}><i className='icon-close' /></button>
+      <button type='reset' className='reset' title={i18n._(t('js.WorkflowEditor.AddData.Search.clearButton.hoverText')`Clear Search`)}><i className='icon-close' /></button>
     </form>
   )
 })
