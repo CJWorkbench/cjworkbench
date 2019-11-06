@@ -3,13 +3,13 @@
 {% load i18n_icu %}
 {% load bootstrap %}
 
-{% block title %}{% trans_html "account.settings.title" default="Account" %}{% endblock %}
+{% block title %}{% trans_html "py.templates.account.settings.account.title" default="Account" %}{% endblock %}
 
 {% block body %}
     <form method="POST" action="{% url "account_settings" %}">
-        <legend class='title-1 t-d-gray text-center mb-3'>{% trans_html "account.settings.title" default="Account" %}</legend>
+        <legend class='title-1 t-d-gray text-center mb-3'>{% trans_html "py.templates.account.settings.account.header" default="Account" %}</legend>
         {% csrf_token %}
         {{ form }}
-        <button class="button-blue action-button mx-auto mt-3" type="submit">{% trans_html "account.settings.save" default="Save" %}</button>
+        <button class="button-blue action-button mx-auto mt-3" type="submit">{% trans_html "py.templates.account.settings.save.button" default="Save" %}</button>
     </form>
 {% endblock %}

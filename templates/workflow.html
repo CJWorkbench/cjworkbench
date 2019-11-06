@@ -2,7 +2,7 @@
 {% load render_bundle from webpack_loader %}
 {% load i18n_icu %}
 
-{% block title %}{% trans_html "templates.workflow.title" default="Workbench" %}{% endblock %}
+{% block title %}{% trans_html "py.templates.workflow.title" default="Workbench" %}{% endblock %}
 
 {% block body %}
   <div id="root"></div>
@@ -31,10 +31,10 @@
           onResize(); // initial check
         })
       </script>
-      <div class="warning">{% trans_html "templates.workflow.widerScreen" default="You need a wider screen to enjoy Workbench" %}</div>
-      <div class="detail">{% trans_html "templates.workflow.minimumrequirement" default="Min 650px wide" %}</div>
-      <div class="detail">{% trans_html "templates.workflow.experienceOptforbrowsers" default="Experience optimized for web browsers" %}</div>
-      <a href="{% url "account_login" %}" class="button-white--fill action-button mx-auto">{% trans_html "templates.workflow.signupLink" default="Signup" %}</a>
+      <div class="warning">{% trans_html "py.templates.workflow.widerScreen" default="You need a wider screen to enjoy Workbench" %}</div>
+      <div class="detail">{% trans_html "py.templates.workflow.minimumRequirement" default="Min 650px wide" %}</div>
+      <div class="detail">{% trans_html "py.templates.workflow.experienceOptforbrowsers" default="Experience optimized for web browsers" %}</div>
+      <a href="{% url "account_login" %}" class="button-white--fill action-button mx-auto">{% trans_html "py.templates.workflow.signupLink.link" default="Signup" %}</a>
     </div>
     <div class="background"></div>
   </div>

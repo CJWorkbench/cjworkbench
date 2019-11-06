@@ -11,7 +11,7 @@
     {% block body %}
       {% if messages %}
         <div>
-          <strong>{% trans_html "templates.base.title" default="Messages:" %}</strong>
+          <strong>{% trans_html "py.templates._base.message" default="Messages:" %}</strong>
           <ul>
             {% for message in messages %}
               <li>{{message}}</li>
@@ -21,14 +21,14 @@
       {% endif %}
 
       <div>
-        <strong>Menu:</strong>
+        <strong>{% trans_html "py.templates._base.menu" default="Menu:" %}</strong>
         <ul>
           {% if user.is_authenticated %}
-          <li><a href="{% url 'account_email' %}">{% trans_html "templates.base.link.changemail" default="Change E-mail" %}</a></li>
-          <li><a href="{% url 'account_logout' %}">{% trans_html "templates.base.link.signout" default="Sign Out" %}</a></li>
+          <li><a href="{% url 'account_email' %}">{% trans_html "py.templates._base.changeMail" default="Change E-mail" %}</a></li>
+          <li><a href="{% url 'account_logout' %}">{% trans_html "py.templates._base.signOut" default="Sign Out" %}</a></li>
           {% else %}
-          <li><a href="{% url 'account_login' %}">{% trans_html "templates.base.link.signin" default="Sign In" %}</a></li>
-          <li><a href="{% url 'account_signup' %}">{% trans_html "templates.base.link.signup" default="Sign Up" %}</a></li>
+          <li><a href="{% url 'account_login' %}">{% trans_html "py.templates._base.signIn" default="Sign In" %}</a></li>
+          <li><a href="{% url 'account_signup' %}">{% trans_html "py.templates._base.signUp" default="Sign Up" %}</a></li>
           {% endif %}
         </ul>
       </div>

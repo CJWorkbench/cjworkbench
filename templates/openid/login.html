@@ -2,17 +2,17 @@
 
 {% load i18n_icu  %}
 
-{% block head_title %}{% trans_html "templates.openid.loginHead" default="OpenID Sign In" %}{% endblock %}
+{% block head_title %}{% trans_html "py.templates.openid.login.signIn.title" default="OpenID Sign In" %}{% endblock %}
 
 {% block content %}
 
-<h1>{% trans_html "templates.openid.login.title" default="OpenID Sign In" %}</h1>
+<h1>{% trans_html "py.templates.openid.login.signIn.header" default="OpenID Sign In" %}</h1>
 
 
 <form id="openid_login_form" class="openid_login" method="post" action="{% url 'openid_login' %}">
 {% csrf_token %}
 {{form.as_p}}
-<button type="submit">{% trans_html "templates.openid.login.button.signIn" default="Sign In" %}</button>
+<button type="submit">{% trans_html "py.templates.openid.login.signIn.button" default="Sign In" %}</button>
 </form>
 
 {% endblock %}

@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load render_bundle from webpack_loader %}
 {% load i18n_icu %}
-{% block title %}{% trans_html "templates.course.title" default="Workbench Training" %}{% endblock %}
+{% block title %}{% trans_html "py.templates.course.workbenchTraining.title" default="Workbench Training" %}{% endblock %}
 
 {% block body %}
   <div id="root">
@@ -12,7 +12,7 @@
           <ul>
             <!-- "Training" has a special URL -->
             <li class="{% if not course.slug %}active{% endif %}">
-              <a href="/lessons/">{% trans_html "templates.course.tutorialsLink" default="TUTORIALS" %}</a>
+              <a href="/lessons/">{% trans_html "py.templates.course.tutorials.link" default="TUTORIALS" %}</a>
             </li>
             {% for c in courses %}
               <li class="{% if c is course %}active{% endif %}">

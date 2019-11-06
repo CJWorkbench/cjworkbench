@@ -2,15 +2,15 @@
 
 {% load i18n_icu %}
 
-{% block title %}{% trans_html "account.logout.title" default="Log out"  %}{% endblock %}
+{% block title %}{% trans_html "py.templates.account.logout.logOut.title" default="Log out"  %}{% endblock %}
 
 {% block content %}
     <form class="account_form" method="POST" action="{% url "account_logout" %}">
-        <legend class='t-d-gray title-1 text-center mb-3'>{% trans_html "account.logout.title" default="Log out" %}</legend>
+        <legend class='t-d-gray title-1 text-center mb-3'>{% trans_html "py.templates.account.logout.LogOut.formHeader" default="Log out" %}</legend>
         <fieldset>
             {% csrf_token %}
-            <p class='message-body'>{% trans_html "account.logout.areYousure" default="Are you sure you want to log out?" %}</p>
-            <button type="submit" class="button-white action-button mx-auto mb-3">{% trans_html "account.logout.button" default="Log out" %}</button>
+            <p class='message-body'>{% trans_html "py.templates.account.logout.logOutConfirmation" default="Are you sure you want to log out?" %}</p>
+            <button type="submit" class="button-white action-button mx-auto mb-3">{% trans_html "py.templates.account.logout.logOut.button" default="Log out" %}</button>
         </fieldset>
     </form>
 {% endblock %}

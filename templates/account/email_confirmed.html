@@ -2,9 +2,9 @@
 
 {% load i18n_icu %}
 
-{% block title %}{% trans_html "account.email_confirmed.title" default="Email confirmed" %}{% endblock %}
+{% block title %}{% trans_html "py.template.account.email_confirmed.emailConfirm.title" default="Email confirmed" %}{% endblock %}
 
 {% block content %}
-    <h1 class='t-d-gray title-1 text-center mb-3'>{% trans_html "account.email_confirmed.title" default="Email confirmed" %}</h1>
-    <p class='message-body'>{% trans_html "account.email_confirmed.youConfirmed" default="You have confirmed <b0>{email}</b0>" arg_email=confirmation.email_address.email tag_b0=""  %}</p>
+    <h1 class='t-d-gray title-1 text-center mb-3'>{% trans_html "py.template.account.email_confirmed.emailConfirm.emailConfirmed.header" default="Email confirmed" %}</h1>
+    <p class='message-body'>{% trans_html "py.template.account.email_confirmed.youConfirmeedEmail" default="You have confirmed <b0>{email}</b0>" arg_email=confirmation.email_address.email tag_b0=""  %}</p>
 {% endblock %}

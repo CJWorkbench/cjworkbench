@@ -32,12 +32,12 @@ export default class WorkflowContextMenu extends React.Component {
         <DropdownMenu>
           <DropdownItem onClick={this.handleClickDuplicate} className='duplicate-workflow'>
             <i className='icon-duplicate' />
-            <span><Trans id='workflow.duplicate'>Duplicate</Trans></span>
+            <span><Trans id='js.Workflows.WorkflowContextMenu.duplicate'>Duplicate</Trans></span>
           </DropdownItem>
           {this.props.deleteWorkflow ? (
             <DropdownItem onClick={this.handleClickDelete} className='delete-workflow'>
               <i className='icon-bin' />
-              <span><Trans id='workflow.delete'>Delete</Trans></span>
+              <span><Trans id='js.Workflows.WorkflowContextMenu.delete'>Delete</Trans></span>
             </DropdownItem>
           ) : null}
         </DropdownMenu>
