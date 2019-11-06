@@ -51,7 +51,7 @@ services:
   unittest:
     image: 'gcr.io/${PROJECT_ID}/frontend:${COMMIT_SHA}'
     # RACE! Sleep 10 so that `addminiouser` can finish
-    command: [ 'sh', '-c', 'sleep 10 && ./manage.py test -v2' ]
+    command: [ 'sh', '-c', '/app/cjwkernel/setup-chroots.sh && sleep 10 && exec ./manage.py test -v2' ]
     depends_on: [ 'testdb', 'testrabbitmq', 'testminio', 'addminiouser' ]
     security_opt:
       - seccomp=docker/forkserver-seccomp-profile.json
