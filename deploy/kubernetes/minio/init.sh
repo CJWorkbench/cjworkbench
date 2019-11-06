@@ -117,13 +117,13 @@ kubectl -n "$ENV" apply -f "$DIR"/minio-deployment.yaml
 kubectl -n "$ENV" run minio-adduser \
   -i --rm=true \
   --restart=Never \
-  --image=minio/mc:RELEASE.2019-09-24T01-36-20Z \
+  --image=minio/mc:RELEASE.2019-10-09T22-54-57Z \
   --overrides='
     {
       "spec": {
         "containers": [{
           "name": "minio-adduser",
-          "image": "minio/mc:RELEASE.2019-09-24T01-36-20Z",
+          "image": "minio/mc:RELEASE.2019-10-09T22-54-57Z",
           "command": [
             "sh", "-c",
             "while ! nc -z minio-service 80; do sleep 0.1; done; mc config host add workbench http://minio-service \"$ROOT_ACCESS_KEY\" \"$ROOT_SECRET_KEY\" && mc admin user add workbench \"$ACCESS_KEY\" \"$SECRET_KEY\" && mc admin policy set workbench readwrite user=\"$ACCESS_KEY\""

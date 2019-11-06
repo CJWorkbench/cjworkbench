@@ -24,6 +24,11 @@ spec:
           ports:
             - name: http
               containerPort: 8080
+          readinessProbe:
+            # During rolling upgrade, don't delete old pods until new ones are responsive
+            httpGet:
+              path: /
+              port: 8080
           env:
             - name: CJW_PRODUCTION
               value: 'True'
