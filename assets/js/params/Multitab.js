@@ -40,7 +40,7 @@ export class MultitabParam extends React.PureComponent {
           value={value}
           onChange={onChange}
           isReadOnly={isReadOnly}
-          placeholder={placeholder || i18n._(t('.Multitab.selectTabs')`Select Tabs`)}
+          placeholder={placeholder || i18n._(t('js.params.Multitab.selectTabs.placeholder')`Select Tabs`)}
           isMulti
         />
       </>

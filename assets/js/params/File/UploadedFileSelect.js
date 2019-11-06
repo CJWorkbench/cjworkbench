@@ -134,4 +134,4 @@ UploadedFileSelect.propTypes = {
   }).isRequired).isRequired,
   onChange: PropTypes.func.isRequired // func(uuid) => undefined
 }
-export default withI18n() (UploadedFileSelect)
+export default withI18n()(UploadedFileSelect)

@@ -130,7 +130,7 @@ class RefineModalPrompt extends React.PureComponent {
 
     return (
       <div className='refine-modal-prompt'>
-        <button type='button' name='cluster' onClick={this.handleClickOpenModal}><Trans id="js.params.Refine.findClusters.button">Find clusters...</Trans></button>
+        <button type='button' name='cluster' onClick={this.handleClickOpenModal}><Trans id='js.params.Refine.findClusters.button'>Find clusters...</Trans></button>
         <span className='instructions' />
         {!isModalOpen ? null : (
           <RefineModal
@@ -251,7 +251,7 @@ const RefineGroup = withI18n()(class RefineGroup extends React.Component { // us
   }
 
   render () {
-    const { style, group, valueCounts,i18n } = this.props
+    const { style, group, valueCounts, i18n } = this.props
     // isEdited is from _props_, not state.
     // If user is _editing_, that doesn't mean the group is _edited_.
     const className = `refine-group ${group.isEdited ? 'edited' : 'original'}`
@@ -261,7 +261,7 @@ const RefineGroup = withI18n()(class RefineGroup extends React.Component { // us
         <input
           type='checkbox'
           name='expand'
-          title={group.isExpanded ? i18n._(t('js.params.Refine.hideOriginalValues')`Hide original values`) : i18n._(t('js.params.Refine.showOriginalValues')`Show original values`) }
+          title={group.isExpanded ? i18n._(t('js.params.Refine.hideOriginalValues')`Hide original values`) : i18n._(t('js.params.Refine.showOriginalValues')`Show original values`)}
           checked={group.isExpanded}
           onChange={this.handleChangeIsExpanded}
         />
@@ -335,7 +335,7 @@ const RefineGroup = withI18n()(class RefineGroup extends React.Component { // us
       </div>
     )
   }
-});
+})
 
 const buildSpecModifier = (_this, helperName, shouldSubmit = false) => {
   const func = util[helperName]

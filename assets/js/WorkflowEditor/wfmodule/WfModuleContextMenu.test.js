@@ -1,7 +1,7 @@
 /* globals afterEach, beforeEach, describe, expect, it, jest */
 import React from 'react'
 import WfModuleContextMenu from './WfModuleContextMenu'
-import { mount } from 'enzyme'
+import { mountWithI18n } from '../../i18n/test-utils'
 
 describe('WfModuleContextMenu', () => {
   let wrapper
@@ -10,7 +10,7 @@ describe('WfModuleContextMenu', () => {
   beforeEach(() => {
     removeModule = jest.fn()
 
-    wrapper = mount(
+    wrapper = mountWithI18n(
       <WfModuleContextMenu
         removeModule={removeModule}
         id={415}

@@ -38,7 +38,7 @@ export default class LessonFooter extends React.PureComponent {
 
     return (
       <section className={`lesson-footer ${isCurrent ? 'current' : 'not-current'}`}>
-        <a href='/lessons/' className='backToLessons'><Trans id='lessons.training'>Training</Trans></a>
+        <a href='/lessons/' className='backToLessons'><Trans id='js.lessons.LessonFooter.training.link'>Training</Trans></a>
         <h2>{title}</h2>
         <div className='description' dangerouslySetInnerHTML={({ __html: html })} />
         <Confetti active={isFinished} config={ConfettiConfig} className='confetti' />

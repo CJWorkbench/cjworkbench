@@ -61,13 +61,13 @@ export class Multichartseries extends React.PureComponent {
       return null
     } else {
       const addButton = !showAddButton ? null : (
-        <button type='button' title={i18n._(t('workbench.addanothercolumn')`add another column`)} onClick={this.handleClickAddPlaceholder}>
+        <button type='button' title={i18n._(t('js.params.Multichartseries.addAnotherColumn')`add another column`)} onClick={this.handleClickAddPlaceholder}>
           <i className='icon-addc' />
         </button>
       )
 
       const removeButton = !showRemoveButton ? null : (
-        <button type='button' title={i18n._(t('workbench.removelastcolumn')`remove last column`)} onClick={this.handleClickRemoveLast}>
+        <button type='button' title={i18n._(t('js.params.Multichartseries.removeLastColumn')`remove last column`)} onClick={this.handleClickRemoveLast}>
           <i className='icon-removec' />
         </button>
       )
@@ -85,7 +85,7 @@ export class Multichartseries extends React.PureComponent {
     const { inputColumns, value, placeholder, isReadOnly, name, fieldId } = this.props
 
     if (inputColumns === null) {
-      return <p className='loading'><Trans id='index.loadingtext'>Loading…</Trans></p>
+      return <p className='loading'><Trans id='js.params.Multichartseries.loading'>Loading…</Trans></p>
     }
 
     const pickedColumns = value.map(x => x.column)

@@ -91,7 +91,7 @@ class PickerFactory {
 function FileInfo ({ id, name, url }) {
   if (!id) {
     return (
-      <Trans id='gdrivefile.pleasechoosefile'> <a className='file-info empty'>(please choose a file)</a></Trans>
+      <Trans id='js.params.Gdrivefile.chooseFile.link'> <a className='file-info empty'>(please choose a file)</a></Trans>
     )
   } else {
     return (
@@ -256,15 +256,15 @@ export default class Gdrivefile extends React.PureComponent {
     if (!isReadOnly) {
       if (loadingAccessToken || !pickerFactory) {
         return (
-          <a className='file-info'><p className='loading'><Trans id='gdrivefile.loading'>Loading...</Trans></p></a>
+          <a className='file-info'><p className='loading'><Trans id='js.params.Gdrivefile.loading.link'>Loading...</Trans></p></a>
         )
       } else if (unauthenticated) {
         return (
-          <a className='file-info'><p className='sign-in-error'><Trans id='gdrivefile.failurerecconect'>failure: please reconnect</Trans></p></a>
+          <a className='file-info'><p className='sign-in-error'><Trans id='js.params.Gdrivefile.failureRecconect'>failure: please reconnect</Trans></p></a>
         )
       } else if (!secretMetadata) {
         return (
-          <a className='file-info'><p className='not-signed-in'><Trans id='gdrive.pleasesignin'>(please sign in)</Trans></p></a>
+          <a className='file-info'><p className='not-signed-in'><Trans id='js.params.Gdrivefile.pleaseSignin.link'>(please sign in)</Trans></p></a>
         )
       }
     }
@@ -280,7 +280,7 @@ export default class Gdrivefile extends React.PureComponent {
             className='change-file'
             onClick={this.handleClickOpenPicker}
           >
-            {value ? <Trans id='Gdrivefile.change'>Change</Trans> : <Trans id='Gdrivefile.choose'>Choose</Trans>}
+            {value ? <Trans id='js.params.Gdrivefile.change.button'>Change</Trans> : <Trans id='js.params.Gdrivefile.choose.button'>Choose</Trans>}
           </button>
         ) : null}
       </>

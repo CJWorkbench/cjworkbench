@@ -20,7 +20,7 @@ describe('AclEntry', () => {
   it('should render the email and role', () => {
     const w = wrapper({ email: 'a@example.com', canEdit: true })
     expect(w.find('.email').text()).toEqual('a@example.com')
-    expect(w.find('button.dropdown-toggle').text()).toEqual('shareModal.role.canEdit')
+    expect(w.find('button.dropdown-toggle').text()).toEqual('js.shareModal.Role.canEdit')
   })
 
   it('should change editor to viewer', () => {
@@ -59,7 +59,7 @@ describe('AclEntry', () => {
 
   it('should render read-only', () => {
     const w = wrapper({ isReadOnly: true, canEdit: true })
-    expect(w.find('.role').text()).toEqual('shareModal.role.canEdit')
+    expect(w.find('.role').text()).toEqual('js.shareModal.Role.canEdit')
     expect(w.find('button')).toHaveLength(0)
   })
 })

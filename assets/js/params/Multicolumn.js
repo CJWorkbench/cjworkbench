@@ -119,7 +119,7 @@ export class Multicolumn extends React.PureComponent {
           noOptionsMessage={noOptionsMessage}
           components={Components}
           value={this.value}
-          placeholder={placeholder || i18n._(t('Multicolumn.selectcolumn')`Select columns`)}
+          placeholder={placeholder || i18n._(t('js.params.Multicolumn.selectColumn.placeholder')`Select columns`)}
         />
       </>
     )

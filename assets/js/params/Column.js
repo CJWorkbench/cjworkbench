@@ -43,7 +43,7 @@ export class ColumnParam extends React.PureComponent {
           isLoading={isLoading}
           onChange={onChange}
           isReadOnly={isReadOnly}
-          placeholder={placeholder || i18n._(t('params.Column.select')`Select`)}
+          placeholder={placeholder || i18n._(t('js.params.Column.select.placeholder')`Select`)}
         />
       </>
     )

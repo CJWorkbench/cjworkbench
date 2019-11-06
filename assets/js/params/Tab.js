@@ -44,7 +44,7 @@ export class TabParam extends React.PureComponent {
           value={value || ''}
           onChange={onChange}
           isReadOnly={isReadOnly}
-          placeholder={placeholder || i18n._(t('params.tab.selecttab')`Select Tab`)}
+          placeholder={placeholder || i18n._(t('js.params.Tab.selectTab.placeholder')`Select Tab`)}
         />
       </>
     )
