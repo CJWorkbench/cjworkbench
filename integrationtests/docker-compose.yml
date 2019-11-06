@@ -62,6 +62,7 @@ services:
   fetcher:
     #image:
     #build:
+    command: [ 'sh', '-c', '/app/cjwkernel/setup-chroots.sh && exec ./manage.py fetcher' ]
     depends_on: [ 'db', 'rabbitmq', 'minio' ]
     security_opt:
       - seccomp=docker/forkserver-seccomp-profile.json
@@ -83,6 +84,7 @@ services:
   renderer:
     #image:
     #build:
+    command: [ 'sh', '-c', '/app/cjwkernel/setup-chroots.sh && exec ./manage.py renderer' ]
     depends_on: [ 'db', 'rabbitmq', 'minio' ]
     security_opt:
       - seccomp=docker/forkserver-seccomp-profile.json
@@ -125,6 +127,7 @@ services:
     #image:
     #build:
     #no ports: on cloudbuild
+    command: [ 'sh', '-c', '/app/cjwkernel/setup-chroots.sh && exec daphne -b 0.0.0.0 -p 8080 --application-close-timeout 180 cjworkbench.asgi:application' ]
     depends_on: [ 'db', 'rabbitmq', 'minio' ]
     security_opt:
       - seccomp=docker/forkserver-seccomp-profile.json
