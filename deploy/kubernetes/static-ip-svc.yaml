@@ -1,21 +1,25 @@
-# https://github.com/kubernetes/ingress-nginx/tree/master/docs/examples/static-ip
-apiVersion: v1
+# https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/cloud-generic.yaml
 kind: Service
+apiVersion: v1
 metadata:
-  name: nginx-ingress-lb
-  namespace: ingress-nginx
+  name: ingress-nginx
+  namespace: ingress-nginx-v2
   labels:
-    app: nginx-ingress-lb
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/part-of: ingress-nginx
 spec:
   externalTrafficPolicy: Local
   type: LoadBalancer
-  ports:
-    - port: 80
-      name: http
-      targetPort: 80
-    - port: 443
-      name: https
-      targetPort: 443
   selector:
-    # Selects nginx-ingress-controller pods
-    app: ingress-nginx
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/part-of: ingress-nginx
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+    - name: https
+      port: 443
+      targetPort: https
+
+---
+
