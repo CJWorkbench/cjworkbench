@@ -154,6 +154,11 @@ COPY Pipfile Pipfile.lock /app/
 # * yajl-py
 # * pysycopg2 (binaries are evil because psycopg2 links SSL -- as does Python)
 # ... and we want to keep libsnappy and yajl around after the fact, too
+#
+# Clean up after pipenv, because it leaves varbage in /root/.cache and
+# /root/.local/share/virtualenvs, even when --deploy is used. (We test for
+# presence of /root/.local/share/virtualenvs to decide whether we need a
+# bind-mount in dev mode; so it can't exist in production.)
 RUN true \
     && apt-get update \
     && apt-get install --no-install-recommends -y \
@@ -166,6 +171,7 @@ RUN true \
       libyajl2 \
       libyajl-dev \
     && pipenv install --dev --system --deploy \
+    && rm -rf /root/.cache/pipenv /root/.local/share/virtualenvs \
     && apt-get remove --purge -y \
       build-essential \
       libsnappy-dev \
