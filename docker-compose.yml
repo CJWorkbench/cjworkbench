@@ -9,7 +9,7 @@ version: '3.4'
 
 services:
   database:
-    image: postgres:10.4
+    image: postgres:10.10
     environment:
       POSTGRES_USER: cjworkbench
       POSTGRES_PASSWORD: cjworkbench
