@@ -62,7 +62,7 @@ export default class SortColumn extends React.PureComponent {
 
   render () {
     const { index, value, name, fieldId, onDelete, isReadOnly, inputColumns } = this.props
-    const label = index === 0 ? <Trans id='js.params.Custom.SortColumn.SortColumn.by.label'>By</Trans> : <Trans id='js.params.Custom.SortColumn.SortColumn.thenBy.label'>Then by</Trans>
+    const label = index === 0 ? <Trans id='js.params.Custom.SortColumn.by.label'>By</Trans> : <Trans id='js.params.Custom.SortColumn.thenBy.label'>Then by</Trans>
 
     return (
       <li>

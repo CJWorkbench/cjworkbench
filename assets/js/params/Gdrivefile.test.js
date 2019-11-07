@@ -93,7 +93,7 @@ describe('Gdrivefile', () => {
     await tick()
     w.update()
     expect(w.find('button')).toHaveLength(1)
-    expect(w.find('button').text()).toEqual('js.params.Gdrivefile.change.button')
+    expect(w.find('button Trans[id="js.params.Gdrivefile.change.button"]')).toHaveLength(1)
 
     pickerFactory.open.mockImplementation((accessToken, onPick, onCancel) => {
       expect(accessToken).toEqual('access-token')
@@ -134,7 +134,7 @@ describe('Gdrivefile', () => {
     const w = wrapper({ value: null })
     await tick()
     w.update()
-    expect(w.find('button').text()).toEqual('js.params.Gdrivefile.choose.button')
+    expect(w.find('button Trans[id="js.params.Gdrivefile.choose.button"]')).toHaveLength(1)
   })
 
   it('closes on unmount', async () => {

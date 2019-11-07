@@ -61,13 +61,13 @@ export class Multichartseries extends React.PureComponent {
       return null
     } else {
       const addButton = !showAddButton ? null : (
-        <button type='button' title={i18n._(t('js.params.Multichartseries.addAnotherColumn')`add another column`)} onClick={this.handleClickAddPlaceholder}>
+        <button type='button' title={i18n._(t('js.params.Multichartseries.addColumn.hoverText')`add another column`)} onClick={this.handleClickAddPlaceholder}>
           <i className='icon-addc' />
         </button>
       )
 
       const removeButton = !showRemoveButton ? null : (
-        <button type='button' title={i18n._(t('js.params.Multichartseries.removeLastColumn')`remove last column`)} onClick={this.handleClickRemoveLast}>
+        <button type='button' title={i18n._(t('js.params.Multichartseries.removeLastColumn.hoverText')`remove last column`)} onClick={this.handleClickRemoveLast}>
           <i className='icon-removec' />
         </button>
       )

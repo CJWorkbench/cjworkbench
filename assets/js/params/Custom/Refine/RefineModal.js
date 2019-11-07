@@ -62,7 +62,7 @@ export default class RefineModal extends React.PureComponent {
 
     return (
       <Modal className='refine-modal' size='lg' isOpen fade={false} toggle={onClose}>
-        <ModalHeader toggle={onClose}><Trans id='js.params.Custom.RefineModal.cluster'>CLUSTER</Trans></ModalHeader>
+        <ModalHeader toggle={onClose}><Trans id='js.params.Custom.RefineModal.header.title' description='This should be all-caps for styling reasons'>CLUSTER</Trans></ModalHeader>
         <ModalBody>
           <RefineClusterer
             bucket={bucket}
@@ -79,7 +79,7 @@ export default class RefineModal extends React.PureComponent {
               name='close'
               className='action-button button-gray'
               onClick={onClose}
-            ><Trans id='js.params.Custom.RefineModal.cancel'>Cancel</Trans>
+            ><Trans id='js.params.Custom.RefineModal.footer.cancelButton'>Cancel</Trans>
             </button>
             <button
               name='submit'
@@ -87,7 +87,7 @@ export default class RefineModal extends React.PureComponent {
               className='action-button button-blue'
               onClick={this.handleSubmit}
               disabled={!canSubmit}
-            ><Trans id='js.params.Custom.RefineModal.mergeSelected'>Merge selected</Trans>
+            ><Trans id='js.params.Custom.RefineModal.footer.mergeSelectedButton'>Merge selected</Trans>
             </button>
           </div>
         </ModalFooter>

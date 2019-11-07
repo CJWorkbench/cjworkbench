@@ -14,238 +14,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.7.0\n"
 
-#: assets/js/params/Multitab.js:43
-msgid ".Multitab.selectTabs"
-msgstr ""
-
-#: assets/js/params/Gdrivefile.js:283
-msgid "Gdrivefile.change"
-msgstr ""
-
-#: assets/js/params/Gdrivefile.js:283
-msgid "Gdrivefile.choose"
-msgstr ""
-
-#: assets/js/params/Multicolumn.js:122
-msgid "Multicolumn.selectcolumn"
-msgstr ""
-
-#: assets/js/params/Secret/OAuth.js:42
-msgid "OAuth.connectaccount"
-msgstr ""
-
-#: assets/js/params/Secret/OAuth.js:37
-msgid "OAuth.signout"
-msgstr ""
-
-#: assets/js/params/Custom/Refine/RefineClusterer.js:21
-msgid "RefineClusterer.editDistance"
-msgstr ""
-
-#: assets/js/params/Custom/Refine/RefineClusterer.js:13
-msgid "RefineClusterer.fingerprint"
-msgstr ""
-
-#: assets/js/params/Custom/Refine/RefineClusterer.js:22
-msgid "RefineClusterer.groupsValues"
-msgstr ""
-
-#: assets/js/params/Custom/Refine/RefineClusterer.js:14
-msgid "RefineClusterer.groupvalues.fingerprint"
-msgstr ""
-
-#: assets/js/params/Custom/SortColumn/SortColumn.js:65
-msgid "SortColumn.bylabel"
-msgstr ""
-
-#: assets/js/params/Custom/SortColumn/SortColumn.js:65
-msgid "SortColumn.thenby"
-msgstr ""
-
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:66
-msgid "UpdateFrequencySelect.update"
-msgstr ""
-
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:240
-msgid "close.updatefrequency"
-msgstr ""
-
-#: assets/js/params/Custom/Filters/Condition.js:34
-msgid "condition.Cellisempty"
-msgstr ""
-
-#: assets/js/params/Custom/Filters/Condition.js:35
-msgid "condition.Cellisnotempty"
-msgstr ""
-
-#: assets/js/params/Custom/Filters/Condition.js:33
-msgid "condition.Cellisnotnull"
-msgstr ""
-
-#: assets/js/params/Custom/Filters/Condition.js:32
-msgid "condition.Cellisnull"
-msgstr ""
-
-#: assets/js/params/Custom/Filters/Condition.js:18
-msgid "condition.Dateis"
-msgstr ""
-
-#: assets/js/params/Custom/Filters/Condition.js:21
-msgid "condition.Dateisafter"
-msgstr ""
-
-#: assets/js/params/Custom/Filters/Condition.js:20
-msgid "condition.Dateisbefore"
-msgstr ""
-
-#: assets/js/params/Custom/Filters/Condition.js:19
-msgid "condition.Dateisnot"
-msgstr ""
-
-#: assets/js/params/Custom/Filters/Condition.js:27
-msgid "condition.Numbergreaterthanequals"
-msgstr ""
-
-#: assets/js/params/Custom/Filters/Condition.js:24
-msgid "condition.Numberis"
-msgstr ""
-
-#: assets/js/params/Custom/Filters/Condition.js:26
-msgid "condition.Numberisgreaterthan"
-msgstr ""
-
-#: assets/js/params/Custom/Filters/Condition.js:28
-msgid "condition.Numberislessthan"
-msgstr ""
-
-#: assets/js/params/Custom/Filters/Condition.js:29
-msgid "condition.Numberislessthanorequals"
-msgstr ""
-
-#: assets/js/params/Custom/Filters/Condition.js:25
-msgid "condition.Numberisnot"
-msgstr ""
-
-#: assets/js/params/Custom/Filters/Condition.js:15
-msgid "condition.Textmatchesregexexactly"
-msgstr ""
-
-#: assets/js/params/Custom/Filters/Condition.js:9
-msgid "condition.textcontainer"
-msgstr ""
-
-#: assets/js/params/Custom/Filters/Condition.js:13
-msgid "condition.textcontainsregex"
-msgstr ""
-
-#: assets/js/params/Custom/Filters/Condition.js:10
-msgid "condition.textdoesntcontain"
-msgstr ""
-
-#: assets/js/params/Custom/Filters/Condition.js:14
-msgid "condition.textdoesntcontainregex"
-msgstr ""
-
-#: assets/js/params/Custom/Filters/Condition.js:11
-msgid "condition.textexactly"
-msgstr ""
-
-#: assets/js/params/Custom/Filters/Condition.js:12
-msgid "condition.textnotexactly"
-msgstr ""
-
-#: assets/js/params/Custom/index.js:36
-msgid "custom.index.error"
-msgstr ""
-
-#: assets/js/params/Custom/Groups/DateGranularity.js:36
-msgid "dategranularity.asis"
-msgstr ""
-
-#: assets/js/params/Custom/Groups/DateGranularity.js:40
-msgid "dategranularity.byday"
-msgstr ""
-
-#: assets/js/params/Custom/Groups/DateGranularity.js:39
-msgid "dategranularity.byhour"
-msgstr ""
-
-#: assets/js/params/Custom/Groups/DateGranularity.js:38
-msgid "dategranularity.byminute"
-msgstr ""
-
-#: assets/js/params/Custom/Groups/DateGranularity.js:41
-msgid "dategranularity.bymonth"
-msgstr ""
-
-#: assets/js/params/Custom/Groups/DateGranularity.js:42
-msgid "dategranularity.byquarter"
-msgstr ""
-
-#: assets/js/params/Custom/Groups/DateGranularity.js:37
-msgid "dategranularity.bysecond"
-msgstr ""
-
-#: assets/js/params/Custom/Groups/DateGranularity.js:43
-msgid "dategranularity.byyear"
-msgstr ""
-
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:178
-msgid "days.updatefrequency"
-msgstr ""
-
-#: assets/js/params/File/File.js:232
-msgid "file.browse"
-msgstr ""
-
-#: assets/js/params/File/File.js:188
-msgid "file.cancelupload"
-msgstr ""
-
-#: assets/js/params/File/File.js:223
-msgid "file.dragfilehere"
-msgstr ""
-
-#: assets/js/params/File/File.js:245
-msgid "file.dropfilehere"
-msgstr ""
-
-#: assets/js/params/File/File.js:204 assets/js/params/File/File.js:228
-msgid "file.fileapi"
-msgstr ""
-
-#: assets/js/params/File/File.js:224
-msgid "file.or"
-msgstr ""
-
-#: assets/js/params/File/File.js:208
-msgid "file.replace"
-msgstr ""
-
-#: assets/js/params/Gdrivefile.js:267
-msgid "gdrive.pleasesignin"
-msgstr ""
-
-#: assets/js/params/Gdrivefile.js:263
-msgid "gdrivefile.failurerecconect"
-msgstr ""
-
-#: assets/js/params/Gdrivefile.js:259
-msgid "gdrivefile.loading"
-msgstr ""
-
-#: assets/js/params/Gdrivefile.js:94
-msgid "gdrivefile.pleasechoosefile"
-msgstr ""
-
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:179
-msgid "hours.updatefrequency"
-msgstr ""
-
-#: assets/js/params/Multichartseries/index.js:88
-msgid "index.loadingtext"
-msgstr ""
-
 #: assets/js/Embed.js:94
 msgid "js.Embed.embedCode"
 msgstr ""
@@ -381,6 +149,34 @@ msgstr ""
 msgid "js.OutputIframe.private.workflowIsPrivate"
 msgstr ""
 
+#: assets/js/Report/Dashboard.js:11
+msgid "js.Report.Dashboard.addChartstoTabs"
+msgstr ""
+
+#: assets/js/Report/ShareCard.js:21
+msgid "js.Report.ShareCard.accessibilityDescription.private"
+msgstr ""
+
+#: assets/js/Report/ShareCard.js:19
+msgid "js.Report.ShareCard.accessibilityDescription.public"
+msgstr ""
+
+#: assets/js/Report/ShareCard.js:24
+msgid "js.Report.ShareCard.editPrivacy.sharebutton"
+msgstr ""
+
+#: assets/js/Report/ShareCard.js:27
+msgid "js.Report.ShareCard.reportUrl.header"
+msgstr ""
+
+#: assets/js/Report/ShareCard.js:14
+msgid "js.Report.ShareCard.sharingStatus.private"
+msgstr ""
+
+#: assets/js/Report/ShareCard.js:12
+msgid "js.Report.ShareCard.sharingStatus.public"
+msgstr ""
+
 #: assets/js/ShareModal/Modal.js:47
 msgid "js.ShareModal.Modal.collaborators"
 msgstr ""
@@ -416,6 +212,16 @@ msgstr ""
 
 #: assets/js/ShareModal/PublicPrivate.js:18
 msgid "js.ShareModal.PublicPrivate.descriptionWithToggle"
+msgstr ""
+
+#: assets/js/ShareModal/Role.js:8 assets/js/ShareModal/Role.js:15
+#: assets/js/ShareModal/Role.js:19
+msgid "js.ShareModal.Role.canEdit"
+msgstr ""
+
+#: assets/js/ShareModal/Role.js:8 assets/js/ShareModal/Role.js:15
+#: assets/js/ShareModal/Role.js:18
+msgid "js.ShareModal.Role.canView"
 msgstr ""
 
 #: assets/js/ShareModal/ShareButton.js:23
@@ -600,6 +406,10 @@ msgstr ""
 msgid "js.WorkflowEditor.PaneSelect.nav.report"
 msgstr ""
 
+#: assets/js/WorkflowEditor/Tabs/NewTabPrompt.js:14
+msgid "js.WorkflowEditor.Tabs.NewTabPrompt.createTab.title"
+msgstr ""
+
 #: assets/js/WorkflowEditor/Tabs/TabDropdown.js:20
 msgid "js.WorkflowEditor.Tabs.TabDropdown.menu.delete"
 msgstr ""
@@ -627,6 +437,10 @@ msgstr ""
 msgid "js.WorkflowEditor.wfmodule.EditableNotes.placeholder"
 msgstr ""
 
+#: assets/js/WorkflowEditor/wfmodule/WfModuleContextMenu.js:17
+msgid "js.WorkflowEditor.wfmodule.WfModuleContextMenu.more"
+msgstr ""
+
 #: assets/js/WorkflowEditor/wfmodule/WfModule.js:239
 msgid "js.WorkflowEditor.wfmodule.ZenMode.enter"
 msgstr ""
@@ -651,11 +465,11 @@ msgstr ""
 msgid "js.WorkflowEditor.wfmodule.notes.edit.hoverText"
 msgstr ""
 
-#: assets/js/WorkflowEditor/wfmodule/WfModuleContextMenu.js:21
+#: assets/js/WorkflowEditor/wfmodule/WfModuleContextMenu.js:22
 msgid "js.WorkflowEditor.wfmodule.wfModuleContextMenu.delete"
 msgstr ""
 
-#: assets/js/WorkflowEditor/wfmodule/WfModuleContextMenu.js:20
+#: assets/js/WorkflowEditor/wfmodule/WfModuleContextMenu.js:21
 msgid "js.WorkflowEditor.wfmodule.wfModuleContextMenu.exportData"
 msgstr ""
 
@@ -797,6 +611,859 @@ msgstr ""
 msgid "js.i18n.locales.en"
 msgstr ""
 
+#: assets/js/lessons/LessonFooter.js:41
+msgid "js.lessons.LessonFooter.training.link"
+msgstr ""
+
+#: assets/js/lessons/LessonNav.js:54
+msgid "js.lessons.LessonNav.next.button"
+msgstr ""
+
+#: assets/js/lessons/LessonNav.js:39
+msgid "js.lessons.LessonNav.previous.button"
+msgstr ""
+
+#: assets/js/lessons/LessonSection.js:70
+msgid "js.lessons.LessonSection.training.link"
+msgstr ""
+
+#: assets/js/params/Column.js:46
+msgid "js.params.Column.select.placeholder"
+msgstr ""
+
+#. The parameter will the the name of the custom type
+#: assets/js/params/Custom/index.js:36
+msgid "js.params.Custom.ComponentNotFound.error"
+msgstr ""
+
+#: assets/js/params/File/File.js:232
+msgid "js.params.Custom.File.browse.label"
+msgstr ""
+
+#: assets/js/params/File/File.js:188
+msgid "js.params.Custom.File.cancelUpload.button"
+msgstr ""
+
+#: assets/js/params/File/File.js:187
+msgid "js.params.Custom.File.cancelUpload.hoverText"
+msgstr ""
+
+#: assets/js/params/File/File.js:223
+msgid "js.params.Custom.File.dragfilehere"
+msgstr ""
+
+#: assets/js/params/File/File.js:245
+msgid "js.params.Custom.File.dropFileHere"
+msgstr ""
+
+#. This is shown after js.params.Custom.File.dragfilehere
+#: assets/js/params/File/File.js:224
+msgid "js.params.Custom.File.or"
+msgstr ""
+
+#: assets/js/params/File/File.js:208
+msgid "js.params.Custom.File.replace"
+msgstr ""
+
+#: assets/js/params/File/File.js:204 assets/js/params/File/File.js:228
+msgid "js.params.Custom.File.uploadApi.button"
+msgstr ""
+
+#: assets/js/params/File/File.js:203 assets/js/params/File/File.js:227
+msgid "js.params.Custom.File.uploadApi.hoverText"
+msgstr ""
+
+#: assets/js/params/Custom/Filters/Condition.js:27
+msgid "js.params.Custom.Filters.Condition.NumberIsGreaterOrEqual"
+msgstr ""
+
+#: assets/js/params/Custom/Filters/Condition.js:33
+msgid "js.params.Custom.Filters.Condition.cellIsNotnull"
+msgstr ""
+
+#: assets/js/params/Custom/Filters/Condition.js:34
+msgid "js.params.Custom.Filters.Condition.cellIsempty"
+msgstr ""
+
+#: assets/js/params/Custom/Filters/Condition.js:35
+msgid "js.params.Custom.Filters.Condition.cellIsnotEmpty"
+msgstr ""
+
+#: assets/js/params/Custom/Filters/Condition.js:32
+msgid "js.params.Custom.Filters.Condition.cellIsnull"
+msgstr ""
+
+#: assets/js/params/Custom/Filters/Condition.js:18
+msgid "js.params.Custom.Filters.Condition.dateIs"
+msgstr ""
+
+#: assets/js/params/Custom/Filters/Condition.js:21
+msgid "js.params.Custom.Filters.Condition.dateIsAfter"
+msgstr ""
+
+#: assets/js/params/Custom/Filters/Condition.js:20
+msgid "js.params.Custom.Filters.Condition.dateIsBefore"
+msgstr ""
+
+#: assets/js/params/Custom/Filters/Condition.js:19
+msgid "js.params.Custom.Filters.Condition.dateIsNot"
+msgstr ""
+
+#: assets/js/params/Custom/Filters/Condition.js:24
+msgid "js.params.Custom.Filters.Condition.numberIs"
+msgstr ""
+
+#: assets/js/params/Custom/Filters/Condition.js:26
+msgid "js.params.Custom.Filters.Condition.numberIsGreaterThan"
+msgstr ""
+
+#: assets/js/params/Custom/Filters/Condition.js:29
+msgid "js.params.Custom.Filters.Condition.numberIsLessOrequal"
+msgstr ""
+
+#: assets/js/params/Custom/Filters/Condition.js:28
+msgid "js.params.Custom.Filters.Condition.numberIsLessthan"
+msgstr ""
+
+#: assets/js/params/Custom/Filters/Condition.js:25
+msgid "js.params.Custom.Filters.Condition.numberIsNot"
+msgstr ""
+
+#: assets/js/params/Custom/Filters/Condition.js:67
+msgid "js.params.Custom.Filters.Condition.selectCondition"
+msgstr ""
+
+#: assets/js/params/Custom/Filters/Condition.js:9
+msgid "js.params.Custom.Filters.Condition.textContains"
+msgstr ""
+
+#: assets/js/params/Custom/Filters/Condition.js:13
+msgid "js.params.Custom.Filters.Condition.textContainsRegex"
+msgstr ""
+
+#: assets/js/params/Custom/Filters/Condition.js:10
+msgid "js.params.Custom.Filters.Condition.textDoesNotContain"
+msgstr ""
+
+#: assets/js/params/Custom/Filters/Condition.js:14
+msgid "js.params.Custom.Filters.Condition.textDoesntContainRegex"
+msgstr ""
+
+#: assets/js/params/Custom/Filters/Condition.js:11
+msgid "js.params.Custom.Filters.Condition.textIsExactly"
+msgstr ""
+
+#: assets/js/params/Custom/Filters/Condition.js:12
+msgid "js.params.Custom.Filters.Condition.textIsNotExactly"
+msgstr ""
+
+#: assets/js/params/Custom/Filters/Condition.js:15
+msgid "js.params.Custom.Filters.Condition.textMatchesRegexExactly"
+msgstr ""
+
+#: assets/js/params/Custom/Groups/DateGranularities.js:72
+msgid "js.params.Custom.Groups.DateGranularities.convertColumns"
+msgstr ""
+
+#: assets/js/params/Custom/Groups/DateGranularities.js:65
+msgid "js.params.Custom.Groups.DateGranularities.noDateAndTimeToGroup"
+msgstr ""
+
+#: assets/js/params/Custom/Groups/DateGranularities.js:76
+msgid "js.params.Custom.Groups.DateGranularities.selectDateAndTimeToGroup"
+msgstr ""
+
+#: assets/js/params/Custom/Groups/DateGranularity.js:36
+msgid "js.params.Custom.Groups.DateGranularity.asIs.option"
+msgstr ""
+
+#: assets/js/params/Custom/Groups/DateGranularity.js:40
+msgid "js.params.Custom.Groups.DateGranularity.byDay.option"
+msgstr ""
+
+#: assets/js/params/Custom/Groups/DateGranularity.js:39
+msgid "js.params.Custom.Groups.DateGranularity.byHour.option"
+msgstr ""
+
+#: assets/js/params/Custom/Groups/DateGranularity.js:38
+msgid "js.params.Custom.Groups.DateGranularity.byMinute.option"
+msgstr ""
+
+#: assets/js/params/Custom/Groups/DateGranularity.js:41
+msgid "js.params.Custom.Groups.DateGranularity.byMonth.option"
+msgstr ""
+
+#: assets/js/params/Custom/Groups/DateGranularity.js:42
+msgid "js.params.Custom.Groups.DateGranularity.byQuarter.option"
+msgstr ""
+
+#: assets/js/params/Custom/Groups/DateGranularity.js:37
+msgid "js.params.Custom.Groups.DateGranularity.bySecond.option"
+msgstr ""
+
+#: assets/js/params/Custom/Groups/DateGranularity.js:43
+msgid "js.params.Custom.Groups.DateGranularity.byYear.option"
+msgstr ""
+
+#: assets/js/params/Custom/Aggregations/Operation.js:17
+msgid "js.params.Custom.Operation.count.option"
+msgstr ""
+
+#: assets/js/params/Custom/Aggregations/Operation.js:18
+msgid "js.params.Custom.Operation.countUnique.option"
+msgstr ""
+
+#: assets/js/params/Custom/Aggregations/Operation.js:24
+msgid "js.params.Custom.Operation.first.option"
+msgstr ""
+
+#: assets/js/params/Custom/Aggregations/Operation.js:23
+msgid "js.params.Custom.Operation.maximum.option"
+msgstr ""
+
+#: assets/js/params/Custom/Aggregations/Operation.js:20
+msgid "js.params.Custom.Operation.mean.option"
+msgstr ""
+
+#: assets/js/params/Custom/Aggregations/Operation.js:21
+msgid "js.params.Custom.Operation.median.option"
+msgstr ""
+
+#: assets/js/params/Custom/Aggregations/Operation.js:22
+msgid "js.params.Custom.Operation.minimum.option"
+msgstr ""
+
+#: assets/js/params/Custom/Aggregations/Operation.js:19
+msgid "js.params.Custom.Operation.sum.option"
+msgstr ""
+
+#: assets/js/params/Custom/Refine/RefineBins.js:62
+msgid "js.params.Custom.RefineBins.RefineBin.newValue.placeholder"
+msgstr ""
+
+#: assets/js/params/Custom/Refine/RefineBins.js:119
+msgid "js.params.Custom.RefineBins.clusterSize.heading"
+msgstr ""
+
+#: assets/js/params/Custom/Refine/RefineBins.js:121
+msgid "js.params.Custom.RefineBins.countRows.heading"
+msgstr ""
+
+#: assets/js/params/Custom/Refine/RefineBins.js:122
+msgid "js.params.Custom.RefineBins.newValue.heading"
+msgstr ""
+
+#: assets/js/params/Custom/Refine/RefineBins.js:52
+msgid "js.params.Custom.RefineBins.newValue.placeholder"
+msgstr ""
+
+#: assets/js/params/Custom/Refine/RefineBins.js:108
+msgid "js.params.Custom.RefineBins.noClustersFound"
+msgstr ""
+
+#: assets/js/params/Custom/Refine/RefineBins.js:120
+msgid "js.params.Custom.RefineBins.values.heading"
+msgstr ""
+
+#: assets/js/params/Custom/Refine/RefineClusterer.js:14
+msgid "js.params.Custom.RefineClusterer.Algorithms.fingerprint.description"
+msgstr ""
+
+#: assets/js/params/Custom/Refine/RefineClusterer.js:13
+msgid "js.params.Custom.RefineClusterer.Algorithms.fingerprint.name"
+msgstr ""
+
+#: assets/js/params/Custom/Refine/RefineClusterer.js:22
+msgid "js.params.Custom.RefineClusterer.Algorithms.levenshtein.description"
+msgstr ""
+
+#: assets/js/params/Custom/Refine/RefineClusterer.js:21
+msgid "js.params.Custom.RefineClusterer.Algorithms.levenshtein.name"
+msgstr ""
+
+#: assets/js/params/Custom/Refine/RefineClusterer.js:26
+msgid "js.params.Custom.RefineClusterer.Algorithms.levenshtein.options.maxDistance.label"
+msgstr ""
+
+#: assets/js/params/Custom/Refine/RefineClusterer.js:179
+msgid "js.params.Custom.RefineClusterer.method"
+msgstr ""
+
+#: assets/js/params/Custom/Refine/RefineClustererProgress.js:14
+msgid "js.params.Custom.RefineClustererProgress.findingClusters"
+msgstr ""
+
+#: assets/js/params/Custom/Refine/RefineModal.js:82
+msgid "js.params.Custom.RefineModal.footer.cancelButton"
+msgstr ""
+
+#: assets/js/params/Custom/Refine/RefineModal.js:90
+msgid "js.params.Custom.RefineModal.footer.mergeSelectedButton"
+msgstr ""
+
+#. This should be all-caps for styling reasons
+#: assets/js/params/Custom/Refine/RefineModal.js:65
+msgid "js.params.Custom.RefineModal.header.title"
+msgstr ""
+
+#: assets/js/params/Custom/Refine/RefineStatus.js:21
+msgid "js.params.Custom.RefineStatus.clustering"
+msgstr ""
+
+#: assets/js/params/Custom/Refine/RefineStatus.js:23
+msgid "js.params.Custom.RefineStatus.numberOfClustersFound"
+msgstr ""
+
+#. This should be all-caps for styling reasons
+#: assets/js/params/Custom/ReorderHistory.js:24
+msgid "js.params.Custom.ReorderHistory.column.heading"
+msgstr ""
+
+#. This should be all-caps for styling reasons
+#: assets/js/params/Custom/ReorderHistory.js:25
+msgid "js.params.Custom.ReorderHistory.from.heading"
+msgstr ""
+
+#. This should be all-caps for styling reasons
+#: assets/js/params/Custom/ReorderHistory.js:26
+msgid "js.params.Custom.ReorderHistory.to.heading"
+msgstr ""
+
+#: assets/js/params/Custom/SortColumn/SortColumn.js:65
+msgid "js.params.Custom.SortColumn.by.label"
+msgstr ""
+
+#: assets/js/params/Custom/SortColumn/SortColumn.js:65
+msgid "js.params.Custom.SortColumn.thenBy.label"
+msgstr ""
+
+#: assets/js/params/File/UploadApiModal.js:44
+msgid "js.params.Custom.UploadApiModal.ApiTokenOk.disableApi"
+msgstr ""
+
+#: assets/js/params/File/UploadApiModal.js:58
+msgid "js.params.Custom.UploadApiModal.ApiTokenOk.enableApi"
+msgstr ""
+
+#: assets/js/params/File/UploadApiModal.js:57
+msgid "js.params.Custom.UploadApiModal.ApiTokenOk.noApiToken"
+msgstr ""
+
+#: assets/js/params/File/UploadApiModal.js:43
+msgid "js.params.Custom.UploadApiModal.ApiTokenOk.resetApiToken"
+msgstr ""
+
+#: assets/js/params/File/UploadApiModal.js:51
+msgid "js.params.Custom.UploadApiModal.ApiTokenOk.stepId"
+msgstr ""
+
+#: assets/js/params/File/UploadApiModal.js:47
+msgid "js.params.Custom.UploadApiModal.ApiTokenOk.workflowId"
+msgstr ""
+
+#. The tags are links to external info. The parameter is the name of a library.
+#: assets/js/params/File/UploadApiModal.js:136
+msgid "js.params.Custom.UploadApiModal.Instructions.dependencies.boto3"
+msgstr ""
+
+#. The tags are links to external info. The parameters are names of libraries.
+#: assets/js/params/File/UploadApiModal.js:141
+msgid "js.params.Custom.UploadApiModal.Instructions.dependencies.requestsHttpLib"
+msgstr ""
+
+#: assets/js/params/File/UploadApiModal.js:132
+msgid "js.params.Custom.UploadApiModal.Instructions.dependencies.title"
+msgstr ""
+
+#: assets/js/params/File/UploadApiModal.js:133
+msgid "js.params.Custom.UploadApiModal.Instructions.dependencies.yourProgramWillneed"
+msgstr ""
+
+#. The tag is a link to Amazon s3
+#: assets/js/params/File/UploadApiModal.js:118
+msgid "js.params.Custom.UploadApiModal.Instructions.eachFileBelongs"
+msgstr ""
+
+#: assets/js/params/File/UploadApiModal.js:196
+msgid "js.params.Custom.UploadApiModal.Instructions.finishUploadAndGiveFilename"
+msgstr ""
+
+#: assets/js/params/File/UploadApiModal.js:198
+msgid "js.params.Custom.UploadApiModal.Instructions.finishUploadAndGiveFilename.workflowUploadModal"
+msgstr ""
+
+#: assets/js/params/File/UploadApiModal.js:128
+msgid "js.params.Custom.UploadApiModal.Instructions.goodWaytoStart"
+msgstr ""
+
+#. The parameters contain code. The tags wrap them for correct presentation.
+#: assets/js/params/File/UploadApiModal.js:154
+msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.postRequest"
+msgstr ""
+
+#: assets/js/params/File/UploadApiModal.js:176
+msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.s3Config.bucket"
+msgstr ""
+
+#. The parameters contain code. The tags wrap them for correct presentation.
+#: assets/js/params/File/UploadApiModal.js:182
+msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.s3Config.credentials"
+msgstr ""
+
+#: assets/js/params/File/UploadApiModal.js:166
+msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.s3Config.endpoint"
+msgstr ""
+
+#: assets/js/params/File/UploadApiModal.js:186
+msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.s3Config.finishUrl"
+msgstr ""
+
+#: assets/js/params/File/UploadApiModal.js:180
+msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.s3Config.key"
+msgstr ""
+
+#: assets/js/params/File/UploadApiModal.js:171
+msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.s3Config.region"
+msgstr ""
+
+#. The parameter contains code. The tag wraps it for correct presentation.
+#: assets/js/params/File/UploadApiModal.js:160
+msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.s3Config.root"
+msgstr ""
+
+#. The parameters are 'bucket' and 'key' respectively. The tags wrap them for
+#. correct presentation.
+#: assets/js/params/File/UploadApiModal.js:189
+msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.theCredsAllowBucketKey"
+msgstr ""
+
+#: assets/js/params/File/UploadApiModal.js:152
+msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.title"
+msgstr ""
+
+#. The tag adds emphasis
+#: assets/js/params/File/UploadApiModal.js:148
+msgid "js.params.Custom.UploadApiModal.Instructions.storeVariablesAndsecrets.notShareApitoken"
+msgstr ""
+
+#: assets/js/params/File/UploadApiModal.js:145
+msgid "js.params.Custom.UploadApiModal.Instructions.storeVariablesAndsecrets.title"
+msgstr ""
+
+#: assets/js/params/File/UploadApiModal.js:123
+msgid "js.params.Custom.UploadApiModal.Instructions.theseInstructionsUsepython"
+msgstr ""
+
+#: assets/js/params/File/UploadApiModal.js:116
+msgid "js.params.Custom.UploadApiModal.Instructions.title"
+msgstr ""
+
+#. The tag is a URL to external info
+#: assets/js/params/File/UploadApiModal.js:195
+msgid "js.params.Custom.UploadApiModal.Instructions.uploadS3CompatibleBucket.seeAwsSdkDocumentation"
+msgstr ""
+
+#: assets/js/params/File/UploadApiModal.js:193
+msgid "js.params.Custom.UploadApiModal.Instructions.uploadS3CompatibleBucket.title"
+msgstr ""
+
+#: assets/js/params/File/UploadApiModal.js:227
+msgid "js.params.Custom.UploadApiModal.fileuploadApiStatus.disabled"
+msgstr ""
+
+#. The tag adds emphasis
+#: assets/js/params/File/UploadApiModal.js:225
+msgid "js.params.Custom.UploadApiModal.fileuploadApiStatus.enabled"
+msgstr ""
+
+#: assets/js/params/File/UploadApiModal.js:246
+msgid "js.params.Custom.UploadApiModal.footer.closeButton"
+msgstr ""
+
+#. This should be all-caps for styling reasons
+#: assets/js/params/File/UploadApiModal.js:220
+msgid "js.params.Custom.UploadApiModal.header.title"
+msgstr ""
+
+#: assets/js/params/File/UploadApiModal.js:222
+msgid "js.params.Custom.UploadApiModal.programmerInstructions"
+msgstr ""
+
+#: assets/js/params/File/UploadApiModal.js:223
+msgid "js.params.Custom.UploadApiModal.theFileUploadApiIsPerfect"
+msgstr ""
+
+#: assets/js/params/Custom/ValueSelect.js:55
+msgid "js.params.Custom.ValueSelect.ValueItem.includeTheseRows"
+msgstr ""
+
+#: assets/js/params/Custom/ValueSelect.js:121
+msgid "js.params.Custom.ValueSelect.ValueList.loadingValues"
+msgstr ""
+
+#: assets/js/params/Custom/ValueSelect.js:123
+msgid "js.params.Custom.ValueSelect.ValueList.noValuesInColumn"
+msgstr ""
+
+#: assets/js/params/Custom/ValueSelect.js:125
+msgid "js.params.Custom.ValueSelect.ValueList.noValuesMatchSearch"
+msgstr ""
+
+#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:37
+msgid "js.params.Custom.VersionSelect.DataVersionSelect.noVersions.label"
+msgstr ""
+
+#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:47
+msgid "js.params.Custom.VersionSelect.DataVersionSelect.readOnly.label"
+msgstr ""
+
+#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:62
+msgid "js.params.Custom.VersionSelect.DataVersionSelect.selectVersion.hoverText"
+msgstr ""
+
+#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:56
+msgid "js.params.Custom.VersionSelect.DataVersionSelect.selectVersion.label"
+msgstr ""
+
+#. The first parameter will be the current version and the second will be the
+#. number of versions
+#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:65
+msgid "js.params.Custom.VersionSelect.DataVersionSelect.versionCount"
+msgstr ""
+
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:68
+msgid "js.params.Custom.VersionSelect.QuotaExceeded.editWorkflow"
+msgstr ""
+
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:49
+msgid "js.params.Custom.VersionSelect.QuotaExceeded.fetchesPerDay.heading"
+msgstr ""
+
+#. The {1} argument is a tab name
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:79
+msgid "js.params.Custom.VersionSelect.QuotaExceeded.otherStep.fetchesPerDay"
+msgstr ""
+
+#. The tag is a mailto url
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:90
+msgid "js.params.Custom.VersionSelect.QuotaExceeded.requestLift"
+msgstr ""
+
+#. The two tags add emphasis
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:33
+msgid "js.params.Custom.VersionSelect.QuotaExceeded.requestsVsLimit"
+msgstr ""
+
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:77
+msgid "js.params.Custom.VersionSelect.QuotaExceeded.thisStep.fetchesPerDay"
+msgstr ""
+
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:63
+msgid "js.params.Custom.VersionSelect.QuotaExceeded.thisWorkflow"
+msgstr ""
+
+#. This must be all-caps for styling reasons
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:31
+msgid "js.params.Custom.VersionSelect.QuotaExceeded.title"
+msgstr ""
+
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:50
+msgid "js.params.Custom.VersionSelect.QuotaExceeded.workFlow.heading"
+msgstr ""
+
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:73
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.auto"
+msgstr ""
+
+#. The parameter is a time difference (i.e. something like '4h ago'. The tag is
+#. a <time> tag.
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:78
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.lastChecked"
+msgstr ""
+
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:73
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.manual"
+msgstr ""
+
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:66
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.update"
+msgstr ""
+
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:192
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.apply"
+msgstr ""
+
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:158
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.auto.description"
+msgstr ""
+
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:155
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.auto.label"
+msgstr ""
+
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:180
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.days.option"
+msgstr ""
+
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:181
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.hours.option"
+msgstr ""
+
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:159
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.label"
+msgstr ""
+
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:182
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.minutes.option"
+msgstr ""
+
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:183
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.seconds.option"
+msgstr ""
+
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:179
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.weeks.option"
+msgstr ""
+
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:237
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.emailUpdates.label"
+msgstr ""
+
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:242
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.footer.closeButton"
+msgstr ""
+
+#. This should be all-caps for styling reasons
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:135
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title"
+msgstr ""
+
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:220
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual.description"
+msgstr ""
+
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:217
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual.label"
+msgstr ""
+
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:192
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.retry"
+msgstr ""
+
+#: assets/js/params/Custom/Code/index.js:16
+msgid "js.params.Custom.code.loadingEditor"
+msgstr ""
+
+#. The parameter will contain a tab name
+#: assets/js/params/Custom/JoinColumns.js:74
+msgid "js.params.Custom.joinColumns.noColumnToJoin"
+msgstr ""
+
+#: assets/js/params/File/UploadApiModal.js:41
+msgid "js.params.File.UploadApiModal.ApiTokenOk.apiToken"
+msgstr ""
+
+#: assets/js/params/File/UploadedFileSelect.js:93
+msgid "js.params.File.UploadedFileSelect.UploadedFileSelectModal.footer.cancelButton"
+msgstr ""
+
+#: assets/js/params/File/UploadedFileSelect.js:86
+msgid "js.params.File.UploadedFileSelect.UploadedFileSelectModal.footer.loadButton"
+msgstr ""
+
+#. This should be all-caps for styling reasons
+#: assets/js/params/File/UploadedFileSelect.js:57
+msgid "js.params.File.UploadedFileSelect.UploadedFileSelectModal.header.title"
+msgstr ""
+
+#: assets/js/params/File/UploadedFileSelect.js:60
+msgid "js.params.File.UploadedFileSelect.UploadedFileSelectModal.noFiles"
+msgstr ""
+
+#. The parameter will contain a specific date
+#: assets/js/params/File/UploadedFileSelect.js:71
+msgid "js.params.File.UploadedFileSelect.UploadedFileSelectModal.uploaded_at"
+msgstr ""
+
+#: assets/js/params/File/UploadedFileSelect.js:113
+msgid "js.params.File.UploadedFileSelect.choosePreviousFile.hoverText"
+msgstr ""
+
+#: assets/js/params/File/UploadedFileSelect.js:115
+msgid "js.params.File.UploadedFileSelect.choosePreviousFile.none"
+msgstr ""
+
+#. The first parameter is the number of the file (or
+#. js.params.File.UploadedFileSelect.choosePreviousFile.none) and the second is
+#. the total number of files
+#: assets/js/params/File/UploadedFileSelect.js:114
+msgid "js.params.File.UploadedFileSelect.choosePreviousFile.text"
+msgstr ""
+
+#: assets/js/params/Gdrivefile.js:94
+msgid "js.params.Gdrivefile.FileInfo.chooseFile"
+msgstr ""
+
+#: assets/js/params/Gdrivefile.js:283
+msgid "js.params.Gdrivefile.change.button"
+msgstr ""
+
+#: assets/js/params/Gdrivefile.js:283
+msgid "js.params.Gdrivefile.choose.button"
+msgstr ""
+
+#: assets/js/params/Gdrivefile.js:263
+msgid "js.params.Gdrivefile.status.failureRecconect"
+msgstr ""
+
+#: assets/js/params/Gdrivefile.js:259
+msgid "js.params.Gdrivefile.status.loading"
+msgstr ""
+
+#: assets/js/params/Gdrivefile.js:267
+msgid "js.params.Gdrivefile.status.pleaseSignin"
+msgstr ""
+
+#: assets/js/params/Multichartseries/ColorPicker.js:247
+msgid "js.params.Multichartseries.ColorPicker.pickColor.hoverText"
+msgstr ""
+
+#: assets/js/params/Multichartseries/index.js:64
+msgid "js.params.Multichartseries.addColumn.hoverText"
+msgstr ""
+
+#: assets/js/params/Multichartseries/index.js:88
+msgid "js.params.Multichartseries.loading"
+msgstr ""
+
+#: assets/js/params/Multichartseries/index.js:70
+msgid "js.params.Multichartseries.removeLastColumn.hoverText"
+msgstr ""
+
+#: assets/js/params/Multicolumn.js:122
+msgid "js.params.Multicolumn.selectColumn.placeholder"
+msgstr ""
+
+#: assets/js/params/Multitab.js:43
+msgid "js.params.MultitabParam.selectTabs.placeholder"
+msgstr ""
+
+#: assets/js/params/Custom/Refine/index.js:453
+msgid "js.params.Refine.GroupList.loadingValues"
+msgstr ""
+
+#: assets/js/params/Custom/Refine/index.js:455
+msgid "js.params.Refine.GroupList.noValuesInColumn"
+msgstr ""
+
+#: assets/js/params/Custom/Refine/index.js:457
+msgid "js.params.Refine.GroupList.noValuesMatchSearch"
+msgstr ""
+
+#: assets/js/params/Custom/Refine/index.js:276
+msgid "js.params.Refine.RefineGroup.cancelEdits"
+msgstr ""
+
+#: assets/js/params/Custom/Refine/index.js:264
+msgid "js.params.Refine.RefineGroup.expandStatus.expanded"
+msgstr ""
+
+#: assets/js/params/Custom/Refine/index.js:264
+msgid "js.params.Refine.RefineGroup.expandStatus.notExpanded"
+msgstr ""
+
+#: assets/js/params/Custom/Refine/index.js:133
+msgid "js.params.Refine.RefineModalPrompt.findClusters.button"
+msgstr ""
+
+#: assets/js/params/Custom/Refine/index.js:808
+msgid "js.params.Refine.mergeFacets.button"
+msgstr ""
+
+#: assets/js/params/Secret/OAuth.js:42
+msgid "js.params.Secret.OAuth.connectAccount.button"
+msgstr ""
+
+#: assets/js/params/Secret/OAuth.js:37
+msgid "js.params.Secret.OAuth.signOut.button"
+msgstr ""
+
+#: assets/js/params/Secret/String.js:93
+msgid "js.params.Secret.String.StringDisplay.clear.button"
+msgstr ""
+
+#: assets/js/params/Tab.js:47
+msgid "js.params.Tab.selectTab.placeholder"
+msgstr ""
+
+#: assets/js/params/common/AllNoneButtons.js:16
+msgid "js.params.common.AllNoneButtons.selectAll.button"
+msgstr ""
+
+#: assets/js/params/common/AllNoneButtons.js:13
+msgid "js.params.common.AllNoneButtons.selectAll.hoverText"
+msgstr ""
+
+#: assets/js/params/common/AllNoneButtons.js:25
+msgid "js.params.common.AllNoneButtons.selectNone.button"
+msgstr ""
+
+#: assets/js/params/common/AllNoneButtons.js:22
+msgid "js.params.common.AllNoneButtons.selectNone.hoverText"
+msgstr ""
+
+#: assets/js/params/common/FacetSearch.js:38
+msgid "js.params.common.FacetSearch.clearSearch.hoverText"
+msgstr ""
+
+#: assets/js/params/common/FacetSearch.js:28
+msgid "js.params.common.FacetSearch.searchFacets.placeholder"
+msgstr ""
+
+#: assets/js/table/ColumnContextMenu.js:52
+msgid "js.table.ColumnContextMenu.cleanText"
+msgstr ""
+
+#: assets/js/table/ColumnContextMenu.js:54
+msgid "js.table.ColumnContextMenu.convertToDateTime"
+msgstr ""
+
+#: assets/js/table/ColumnContextMenu.js:55
+msgid "js.table.ColumnContextMenu.convertToNumbers"
+msgstr ""
+
+#: assets/js/table/ColumnContextMenu.js:56
+msgid "js.table.ColumnContextMenu.convertToText"
+msgstr ""
+
+#: assets/js/table/ColumnContextMenu.js:60
+msgid "js.table.ColumnContextMenu.deleteColumn"
+msgstr ""
+
+#: assets/js/table/ColumnContextMenu.js:46
+msgid "js.table.ColumnContextMenu.duplicate"
+msgstr ""
+
+#: assets/js/table/ColumnContextMenu.js:51
+msgid "js.table.ColumnContextMenu.filter"
+msgstr ""
+
+#: assets/js/table/ColumnContextMenu.js:58
+msgid "js.table.ColumnContextMenu.formatNumbers"
+msgstr ""
+
+#: assets/js/table/ColumnContextMenu.js:45
+msgid "js.table.ColumnContextMenu.rename."
+msgstr ""
+
+#: assets/js/table/ColumnContextMenu.js:48
+msgid "js.table.ColumnContextMenu.sortAscending"
+msgstr ""
+
+#: assets/js/table/ColumnContextMenu.js:49
+msgid "js.table.ColumnContextMenu.sortDescending"
+msgstr ""
+
 #: assets/js/table/ColumnHeader.js:13
 msgid "js.table.ColumnHeader.types.dateAndtime"
 msgstr ""
@@ -809,6 +1476,10 @@ msgstr ""
 msgid "js.table.ColumnHeader.types.text"
 msgstr ""
 
+#: assets/js/table/SelectedRowsActions.js:105
+msgid "js.table.SelectedRowsActions.menu"
+msgstr ""
+
 #: assets/js/table/SelectedRowsActions.js:106
 msgid "js.table.SelectedRowsActions.numberOfSelectedRows"
 msgstr ""
@@ -819,6 +1490,14 @@ msgstr ""
 
 #: assets/js/table/TableInfo.js:41
 msgid "js.table.TableInfo.rows"
+msgstr ""
+
+#: assets/js/table/TableView.js:65
+msgid "js.table.TableView.maxOf100ColumnsCanbeDIsplayed"
+msgstr ""
+
+#: assets/js/table/TableView.js:67
+msgid "js.table.TableView.selectColumns.button"
 msgstr ""
 
 #: assets/js/utils.js:47
@@ -845,603 +1524,13 @@ msgstr ""
 msgid "js.util.timeDifference.now"
 msgstr ""
 
-#: assets/js/lessons/LessonNav.js:54
-msgid "lessons.nav.next"
-msgstr ""
-
-#: assets/js/lessons/LessonNav.js:39
-msgid "lessons.nav.previous"
-msgstr ""
-
-#: assets/js/lessons/LessonFooter.js:41 assets/js/lessons/LessonSection.js:70
-msgid "lessons.training"
-msgstr ""
-
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:180
-msgid "minutes.updatefrequency"
-msgstr ""
-
-#: assets/js/params/Column.js:46
-msgid "params.Column.select"
-msgstr ""
-
-#: assets/js/params/Tab.js:47
-msgid "params.tab.selecttab"
-msgstr ""
-
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:89
-msgid "quoataexceeded.sendusmailshort"
-msgstr ""
-
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:61
-msgid "quoataexceeded.thisworflow"
-msgstr ""
-
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:48
-msgid "quota.workflow"
-msgstr ""
-
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:47
-msgid "quotaday"
-msgstr ""
-
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:75
-msgid "quotaexceeded"
-msgstr ""
-
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:88
-msgid "quotaexceeded.needahigherlimit"
-msgstr ""
-
-#: assets/js/params/Custom/Refine/RefineClusterer.js:179
-msgid "refineclustered.method"
-msgstr ""
-
-#: assets/js/params/Custom/Refine/RefineClusterer.js:26
-msgid "refineclusterer.maxdistance"
-msgstr ""
-
-#: assets/js/params/Custom/Refine/RefineClustererProgress.js:14
-msgid "refineclustererprog.findingclusters"
-msgstr ""
-
-#: assets/js/params/Custom/Refine/RefineModal.js:82
-msgid "refinemodal.cancel"
-msgstr ""
-
-#: assets/js/params/Custom/Refine/RefineModal.js:65
-msgid "refinemodal.cluster"
-msgstr ""
-
-#: assets/js/params/Custom/Refine/RefineModal.js:90
-msgid "refinemodal.mergeselected"
-msgstr ""
-
-#: assets/js/params/Custom/Refine/RefineStatus.js:21
-msgid "refinestatus.clustering"
-msgstr ""
-
-#: assets/js/params/Custom/Refine/RefineStatus.js:23
-msgid "refinestatus.oneclusterfound"
-msgstr ""
-
-#: assets/js/params/Custom/Refine/RefineStatus.js:25
-msgid "refinestatus.specnumberclusterfound"
-msgstr ""
-
-#: assets/js/params/Custom/ReorderHistory.js:24
-msgid "reorderHistory.column"
-msgstr ""
-
-#: assets/js/params/Custom/ReorderHistory.js:25
-msgid "reorderHistory.from"
-msgstr ""
-
-#: assets/js/params/Custom/ReorderHistory.js:26
-msgid "reorderHistory.to"
-msgstr ""
-
-#: assets/js/Report/Dashboard.js:11
-msgid "report.dashboard.emptyReport"
-msgstr ""
-
-#: assets/js/Report/ShareCard.js:21
-msgid "report.shareCard.accessibleTo.private"
-msgstr ""
-
-#: assets/js/Report/ShareCard.js:19
-msgid "report.shareCard.accessibleTo.public"
-msgstr ""
-
-#: assets/js/Report/ShareCard.js:24
-msgid "report.shareCard.editPrivacy"
-msgstr ""
-
-#: assets/js/Report/ShareCard.js:27
-msgid "report.shareCard.reportUrl"
-msgstr ""
-
-#: assets/js/Report/ShareCard.js:14
-msgid "report.shareCard.status.private"
-msgstr ""
-
-#: assets/js/Report/ShareCard.js:12
-msgid "report.shareCard.status.public"
-msgstr ""
-
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:181
-msgid "seconds.updatefrequency"
-msgstr ""
-
-#: assets/js/params/Secret/String.js:93
-msgid "secterfile.string.cleartext"
-msgstr ""
-
-#: assets/js/table/SelectedRowsActions.js:105
-msgid "selectedRowsactions.menu"
-msgstr ""
-
-#: assets/js/ShareModal/Role.js:8 assets/js/ShareModal/Role.js:15
-#: assets/js/ShareModal/Role.js:19
-msgid "shareModal.role.canEdit"
-msgstr ""
-
-#: assets/js/ShareModal/Role.js:8 assets/js/ShareModal/Role.js:15
-#: assets/js/ShareModal/Role.js:18
-msgid "shareModal.role.canView"
-msgstr ""
-
-#: assets/js/table/ColumnContextMenu.js:52
-msgid "table.columnContextMenu.cleanText"
-msgstr ""
-
-#: assets/js/table/ColumnContextMenu.js:54
-msgid "table.columnContextMenu.convertToDateTime"
-msgstr ""
-
-#: assets/js/table/ColumnContextMenu.js:55
-msgid "table.columnContextMenu.convertToNumbers"
-msgstr ""
-
-#: assets/js/table/ColumnContextMenu.js:56
-msgid "table.columnContextMenu.convertToText"
-msgstr ""
-
-#: assets/js/table/ColumnContextMenu.js:60
-msgid "table.columnContextMenu.deleteColumn"
-msgstr ""
-
-#: assets/js/table/ColumnContextMenu.js:46
-msgid "table.columnContextMenu.duplicate"
-msgstr ""
-
-#: assets/js/table/ColumnContextMenu.js:51
-msgid "table.columnContextMenu.filter"
-msgstr ""
-
-#: assets/js/table/ColumnContextMenu.js:58
-msgid "table.columnContextMenu.formatNumbers"
-msgstr ""
-
-#: assets/js/table/ColumnContextMenu.js:45
-msgid "table.columnContextMenu.rename"
-msgstr ""
-
-#: assets/js/table/ColumnContextMenu.js:48
-msgid "table.columnContextMenu.sortAscending"
-msgstr ""
-
-#: assets/js/table/ColumnContextMenu.js:49
-msgid "table.columnContextMenu.sortDescending"
-msgstr ""
-
+#. This should be all-caps for styling reasons
 #: assets/js/table/TableInfo.js:61
 msgid "tableinfo.export"
 msgstr ""
 
-#: assets/js/table/TableView.js:65
-msgid "tableview.maximumofcolumns"
-msgstr ""
-
-#: assets/js/table/TableView.js:67
-msgid "tableview.selectcolumns"
-msgstr ""
-
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:190
-msgid "updateFrequency.retry"
-msgstr ""
-
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:78
-msgid "updatefrequency.Checked"
-msgstr ""
-
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:190
-msgid "updatefrequency.apply"
-msgstr ""
-
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:73
-msgid "updatefrequency.auto"
-msgstr ""
-
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:156
-msgid "updatefrequency.automaticallyupdate"
-msgstr ""
-
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:218
-msgid "updatefrequency.checkmanually"
-msgstr ""
-
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:157
-msgid "updatefrequency.checkupdates"
-msgstr ""
-
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:235
-msgid "updatefrequency.email"
-msgstr ""
-
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:73
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:215
-msgid "updatefrequency.manual"
-msgstr ""
-
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:134
-msgid "updatefrequencyselect.worklfowupdate"
-msgstr ""
-
-#: assets/js/params/File/UploadApiModal.js:193
-msgid "uploadApiModal.closertext"
-msgstr ""
-
-#: assets/js/params/File/UploadApiModal.js:174
-msgid "uploadApimodal.thefileuploadisdisabled"
-msgstr ""
-
-#: assets/js/params/File/UploadApiModal.js:43
-msgid "uploadapimodal.DisableAPI"
-msgstr ""
-
-#: assets/js/params/File/UploadApiModal.js:57
-msgid "uploadapimodal.EnableAPI"
-msgstr ""
-
-#: assets/js/params/File/UploadApiModal.js:56
-msgid "uploadapimodal.NoAPItoken"
-msgstr ""
-
-#: assets/js/params/File/UploadApiModal.js:127
-msgid "uploadapimodal.QueryWorkbenchforuploadcreds"
-msgstr ""
-
-#: assets/js/params/File/UploadApiModal.js:42
-msgid "uploadapimodal.ResetAPItoken"
-msgstr ""
-
-#: assets/js/params/File/UploadApiModal.js:50
-msgid "uploadapimodal.StepID"
-msgstr ""
-
-#: assets/js/params/File/UploadApiModal.js:124
-msgid "uploadapimodal.Storevariablesandsecrets"
-msgstr ""
-
-#: assets/js/params/File/UploadApiModal.js:143
-msgid "uploadapimodal.Tellitafilename"
-msgstr ""
-
-#: assets/js/params/File/UploadApiModal.js:169
-msgid "uploadapimodal.Theseinstructions"
-msgstr ""
-
-#: assets/js/params/File/UploadApiModal.js:167
-msgid "uploadapimodal.UPLOADBYAPI"
-msgstr ""
-
-#: assets/js/params/File/UploadApiModal.js:140
-msgid "uploadapimodal.UploadS3-compatiblebucket"
-msgstr ""
-
-#: assets/js/params/File/UploadApiModal.js:46
-msgid "uploadapimodal.WorkflowID"
-msgstr ""
-
-#: assets/js/params/File/UploadApiModal.js:120
-msgid "uploadapimodal.Yourprogramwill"
-msgstr ""
-
-#: assets/js/params/File/UploadApiModal.js:40
-msgid "uploadapimodal.apitoken"
-msgstr ""
-
-#: assets/js/params/File/UploadApiModal.js:134
-msgid "uploadapimodal.bucketFilenameshare"
-msgstr ""
-
-#: assets/js/params/File/UploadApiModal.js:136
-msgid "uploadapimodal.credsDictionary"
-msgstr ""
-
-#: assets/js/params/File/UploadApiModal.js:126
-msgid "uploadapimodal.donotshareapitoken"
-msgstr ""
-
-#: assets/js/params/File/UploadApiModal.js:116
-msgid "uploadapimodal.eachfilebelongs"
-msgstr ""
-
-#: assets/js/params/File/UploadApiModal.js:132
-msgid "uploadapimodal.endpointcompatible"
-msgstr ""
-
-#: assets/js/params/File/UploadApiModal.js:137
-msgid "uploadapimodal.finishUrltonotify"
-msgstr ""
-
-#: assets/js/params/File/UploadApiModal.js:118
-msgid "uploadapimodal.goodwaytoStart"
-msgstr ""
-
-#: assets/js/params/File/UploadApiModal.js:115
-msgid "uploadapimodal.howtoupload"
-msgstr ""
-
-#: assets/js/params/File/UploadApiModal.js:128
-msgid "uploadapimodal.httpPostrequesxtto"
-msgstr ""
-
-#: assets/js/params/File/UploadApiModal.js:122
-msgid "uploadapimodal.isthesdkforPython"
-msgstr ""
-
-#: assets/js/params/File/UploadApiModal.js:119
-msgid "uploadapimodal.loaddepend"
-msgstr ""
-
-#: assets/js/params/File/UploadApiModal.js:133
-msgid "uploadapimodal.regioncodecompatible"
-msgstr ""
-
-#: assets/js/params/File/UploadApiModal.js:123
-msgid "uploadapimodal.requestshttplib"
-msgstr ""
-
-#: assets/js/params/File/UploadApiModal.js:135
-msgid "uploadapimodal.s3keynameshouldbeuploaded"
-msgstr ""
-
-#: assets/js/params/File/UploadApiModal.js:142
-msgid "uploadapimodal.seeAWSSDKdocumentation"
-msgstr ""
-
-#: assets/js/params/File/UploadApiModal.js:139
-msgid "uploadapimodal.thecredsallowbucketkey"
-msgstr ""
-
-#: assets/js/params/File/UploadApiModal.js:170
-msgid "uploadapimodal.thefileuploadapisiperf"
-msgstr ""
-
-#: assets/js/params/File/UploadApiModal.js:117
-msgid "uploadapimodal.theseinstructionsusepython"
-msgstr ""
-
-#: assets/js/params/File/UploadApiModal.js:172
-msgid "uploadapimodal.uploadApimodalenabled"
-msgstr ""
-
-#: assets/js/params/File/UploadApiModal.js:130
-msgid "uploadapimodal.willbedictionary"
-msgstr ""
-
-#: assets/js/params/File/UploadApiModal.js:145
-msgid "uploadapimodal.workflowuploadmodal.willbeupdateduse "
-msgstr ""
-
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:177
-msgid "weeks.updatefrequency"
-msgstr ""
-
-#: assets/js/params/Custom/ValueSelect.js:123
-msgid "workbench.Columvalues"
-msgstr ""
-
-#: assets/js/params/Custom/ValueSelect.js:125
-msgid "workbench.Novalsearch"
-msgstr ""
-
-#: assets/js/params/Multichartseries/index.js:64
-msgid "workbench.addanothercolumn"
-msgstr ""
-
-#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:48
-msgid "workbench.dataversionselect.selectversion"
-msgstr ""
-
-#: assets/js/params/File/File.js:187
-msgid "workbench.filecancelupload"
-msgstr ""
-
-#: assets/js/params/File/File.js:203 assets/js/params/File/File.js:227
-msgid "workbench.fileopenuploadapi"
-msgstr ""
-
-#: assets/js/params/Custom/JoinColumns.js:74
-msgid "workbench.joinColumns.columntojoin"
-msgstr ""
-
-#: assets/js/params/Custom/ValueSelect.js:121
-msgid "workbench.loadingvalues"
-msgstr ""
-
-#: assets/js/params/Multichartseries/ColorPicker.js:247
-msgid "workbench.pickcolor.colorpicker"
-msgstr ""
-
-#: assets/js/params/Multichartseries/index.js:70
-msgid "workbench.removelastcolumn"
-msgstr ""
-
-#: assets/js/params/Custom/Filters/Condition.js:67
-msgid "workbench.selectcondition"
-msgstr ""
-
-#: assets/js/params/Custom/ValueSelect.js:55
-msgid "workbench.valueselecttheserows"
-msgstr ""
-
-#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:36
-#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:42
-#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:47
-msgid "workbench.version"
-msgstr ""
-
-#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:42
-#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:48
-msgid "workbenchdataversion.of"
-msgstr ""
-
-#: assets/js/params/Custom/Aggregations/Operation.js:20
-msgid "workflow.Averagemean"
-msgstr ""
-
-#: assets/js/params/Custom/Aggregations/Operation.js:22
-msgid "workflow.Minimum"
-msgstr ""
-
-#: assets/js/params/common/FacetSearch.js:38
-msgid "workflow.clearsearch"
-msgstr ""
-
-#: assets/js/params/Custom/Aggregations/Operation.js:17
-msgid "workflow.count"
-msgstr ""
-
-#: assets/js/params/Custom/Aggregations/Operation.js:18
-msgid "workflow.countunique"
-msgstr ""
-
-#: assets/js/params/Custom/Groups/DateGranularities.js:72
-msgid "workflow.dateGranularities"
-msgstr ""
-
-#: assets/js/params/Custom/Groups/DateGranularities.js:76
-msgid "workflow.dateGranularities.selectdateandtime"
-msgstr ""
-
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:66
-msgid "workflow.editworkflow"
-msgstr ""
-
-#: assets/js/params/Custom/Aggregations/Operation.js:24
-msgid "workflow.first"
-msgstr ""
-
-#: assets/js/params/Custom/Code/index.js:16
-msgid "workflow.loadingeditor"
-msgstr ""
-
-#: assets/js/params/Custom/Aggregations/Operation.js:23
-msgid "workflow.maximum"
-msgstr ""
-
-#: assets/js/params/Custom/Aggregations/Operation.js:21
-msgid "workflow.median"
-msgstr ""
-
-#: assets/js/params/Custom/Refine/RefineBins.js:52
-#: assets/js/params/Custom/Refine/RefineBins.js:62
-msgid "workflow.newvalue.refinebin"
-msgstr ""
-
-#: assets/js/params/Custom/Groups/DateGranularities.js:65
-msgid "workflow.nodateandtime"
-msgstr ""
-
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:31
-msgid "workflow.quotaexceeds"
-msgstr ""
-
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:39
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:41
 msgid "workflow.quotasteps"
-msgstr ""
-
-#: assets/js/params/Custom/Refine/index.js:275
-msgid "workflow.refine.canceleditofthesevalues"
-msgstr ""
-
-#: assets/js/params/Custom/Refine/index.js:263
-msgid "workflow.refine.hideoriginalvalue"
-msgstr ""
-
-#: assets/js/params/Custom/Refine/index.js:263
-msgid "workflow.refine.showoriginalvalues"
-msgstr ""
-
-#: assets/js/params/Custom/Refine/RefineBins.js:108
-msgid "workflow.refineBins.noclustersfound"
-msgstr ""
-
-#: assets/js/params/Custom/Refine/RefineBins.js:119
-msgid "workflow.refinebin.clustesize"
-msgstr ""
-
-#: assets/js/params/Custom/Refine/RefineBins.js:122
-msgid "workflow.refinebin.newvalue"
-msgstr ""
-
-#: assets/js/params/Custom/Refine/RefineBins.js:121
-msgid "workflow.refinebin.rows"
-msgstr ""
-
-#: assets/js/params/Custom/Refine/RefineBins.js:120
-msgid "workflow.refinebin.values"
-msgstr ""
-
-#: assets/js/params/common/FacetSearch.js:28
-msgid "workflow.searchfacets"
-msgstr ""
-
-#: assets/js/params/common/AllNoneButtons.js:13
-msgid "workflow.selectAll"
-msgstr ""
-
-#: assets/js/params/common/AllNoneButtons.js:22
-msgid "workflow.selectNone"
-msgstr ""
-
-#: assets/js/params/Custom/Aggregations/Operation.js:19
-msgid "workflow.sum"
-msgstr ""
-
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:35
-msgid "workflow.updatesperday"
-msgstr ""
-
-#: assets/js/params/common/AllNoneButtons.js:16
-msgid "workflow.visibility.All"
-msgstr ""
-
-#: assets/js/params/common/AllNoneButtons.js:25
-msgid "workflow.visibility.None"
-msgstr ""
-
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:33
-msgid "workflow.yourequesting"
-msgstr ""
-
-#: assets/js/params/Custom/Refine/index.js:807
-msgid "workflows.mergefacets"
-msgstr ""
-
-#: assets/js/params/Custom/Refine/index.js:456
-msgid "workflows.refine.Novaluesmatchyoursearch"
-msgstr ""
-
-#: assets/js/params/Custom/Refine/index.js:452
-msgid "workflows.refine.loadingvalues"
-msgstr ""
-
-#: assets/js/params/Custom/Refine/index.js:454
-msgid "workflows.refine.thiscolumnnothavevalues"
 msgstr ""
 
 #: cjworkbench/forms/signup.py:24

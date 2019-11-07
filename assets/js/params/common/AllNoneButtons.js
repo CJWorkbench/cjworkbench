@@ -10,19 +10,19 @@ export function AllNoneButtons ({ isReadOnly, onClickAll, onClickNone, i18n }) {
         disabled={isReadOnly}
         type='button'
         name='refine-select-all'
-        title={i18n._(t('js.params.AllNoneButtons.selectAll.title')`Select All`)}
+        title={i18n._(t('js.params.common.AllNoneButtons.selectAll.hoverText')`Select All`)}
         onClick={onClickAll}
       >
-        <Trans id='js.params.AllNoneButtons.All'>All</Trans>
+        <Trans id='js.params.common.AllNoneButtons.selectAll.button'>All</Trans>
       </button>
       <button
         disabled={isReadOnly}
         type='button'
         name='refine-select-none'
-        title={i18n._(t('js.params.AllNoneButtons.selectNone.title')`Select None`)}
+        title={i18n._(t('js.params.common.AllNoneButtons.selectNone.hoverText')`Select None`)}
         onClick={onClickNone}
       >
-        <Trans id='js.params.AllNoneButtons.None'>None</Trans>
+        <Trans id='js.params.common.AllNoneButtons.selectNone.button'>None</Trans>
       </button>
     </div>
   )

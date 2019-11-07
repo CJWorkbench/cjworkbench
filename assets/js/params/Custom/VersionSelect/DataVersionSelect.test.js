@@ -9,6 +9,18 @@ import configureMockStore from 'redux-mock-store'
 
 describe('DataVersionSelect', () => {
   const wrapper = (extraProps = {}) => {
+    return mountWithI18n(
+      <DataVersionSelect
+        wfModuleId={123}
+        currentVersionIndex={0}
+        nVersions={7}
+        isReadOnly={false}
+        {...extraProps}
+      />
+    )
+  }
+
+  const shallowWrapper = (extraProps = {}) => {
     return shallowWithI18n(
       <DataVersionSelect
         wfModuleId={123}
@@ -31,16 +43,16 @@ describe('DataVersionSelect', () => {
 
   it('should show text when read-only', () => {
     const w = wrapper({ isReadOnly: true })
-    expect(w.find('.read-only').text()).toBe('Version 7 of 7')
+    expect(w.find('.read-only Trans[id="js.params.Custom.VersionSelect.DataVersionSelect.readOnly.label"]').prop('values')).toEqual({ 0: 7, nVersions: 7 })
   })
 
   it('should show a button', () => {
     const w = wrapper()
-    expect(w.find('button').text()).toBe('7 of 7')
+    expect(w.find('button Trans[id="js.params.Custom.VersionSelect.DataVersionSelect.versionCount"]').prop('values')).toEqual({ 0: 7, nVersions: 7 })
   })
 
   it('should open and close the dialog upon clicking the button', () => {
-    const w = wrapper()
+    const w = shallowWrapper()
     expect(w.find(DataVersionModal).length).toBe(0)
     w.find('button').simulate('click')
     expect(w.find(DataVersionModal).length).toBe(1)
@@ -92,7 +104,7 @@ describe('DataVersionSelect', () => {
 
     it('finds versions', () => {
       const w = connectedWrapper(IdealState)
-      expect(w.find('button').text()).toBe('1 of 2')
+      expect(w.find('button Trans[id="js.params.Custom.VersionSelect.DataVersionSelect.versionCount"]').prop('values')).toEqual({ 0: 1, nVersions: 2 })
     })
 
     it('finds isReadOnly', () => {
@@ -103,7 +115,7 @@ describe('DataVersionSelect', () => {
           read_only: true
         }
       })
-      expect(w.find('.read-only').text()).toBe('Version 1 of 2')
+      expect(w.find('.read-only Trans[id="js.params.Custom.VersionSelect.DataVersionSelect.readOnly.label"]').prop('values')).toEqual({ 0: 1, nVersions: 2 })
     })
 
     it('handles empty version list', () => {

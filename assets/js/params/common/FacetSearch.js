@@ -25,7 +25,7 @@ export function FacetSearch ({ onChange, onReset, value, i18n }) {
     <fieldset className='facet-search' onReset={onReset}>
       <input
         type='search'
-        placeholder={i18n._(t('js.params.FacetSearch.searchFacets.placeholder')`Search facets...`)}
+        placeholder={i18n._(t('js.params.common.FacetSearch.searchFacets.placeholder')`Search facets...`)}
         autoComplete='off'
         value={value}
         onChange={onChangeCallback}
@@ -35,7 +35,7 @@ export function FacetSearch ({ onChange, onReset, value, i18n }) {
         type='button'
         onClick={onReset}
         className='close'
-        title={i18n._(t('js.params.FacetSearch.clearSearch.title')`Clear Search`)}
+        title={i18n._(t('js.params.common.FacetSearch.clearSearch.hoverText')`Clear Search`)}
       >
         <i className='icon-close' />
       </button>

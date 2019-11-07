@@ -90,7 +90,7 @@ function StringDisplay ({ i18n, isReadOnly, secretMetadata, label, name, fieldId
             onClick={handleSubmit}
             disabled={isSubmitted}
           >
-            <Trans id='js.params.Secret.String.clear.button'>Clear</Trans>
+            <Trans id='js.params.Secret.String.StringDisplay.clear.button'>Clear</Trans>
           </button>
         ) : null}
       </div>

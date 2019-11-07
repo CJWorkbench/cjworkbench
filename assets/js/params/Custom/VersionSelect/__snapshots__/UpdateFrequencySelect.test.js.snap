@@ -196,15 +196,36 @@ exports[`UpdateFrequencySelect shallow matches snapshot 1`] = `
           className="last-checked"
         >
           <WithI18n
-            defaults="Checked"
-            id="js.params.Custom.VersionSelect.UpdateFrequencySelect.checked"
+            components={
+              Array [
+                <time
+                  dateTime="2018-05-28T19:00:54.154Z"
+                />,
+              ]
+            }
+            defaults="Checked <0>{0}</0>"
+            description="The parameter is a time difference (i.e. something like '4h ago'. The tag is a <time> tag."
+            id="js.params.Custom.VersionSelect.UpdateFrequencySelect.lastChecked"
+            values={
+              Object {
+                "0": "{minutes}m ago",
+              }
+            }
           >
             <I18n
               update={true}
               withHash={true}
             >
               <Trans
-                defaults="Checked"
+                components={
+                  Array [
+                    <time
+                      dateTime="2018-05-28T19:00:54.154Z"
+                    />,
+                  ]
+                }
+                defaults="Checked <0>{0}</0>"
+                description="The parameter is a time difference (i.e. something like '4h ago'. The tag is a <time> tag."
                 i18n={
                   Object {
                     "_": [Function],
@@ -231,22 +252,21 @@ exports[`UpdateFrequencySelect shallow matches snapshot 1`] = `
                     "t": [Function],
                   }
                 }
-                id="js.params.Custom.VersionSelect.UpdateFrequencySelect.checked"
+                id="js.params.Custom.VersionSelect.UpdateFrequencySelect.lastChecked"
+                values={
+                  Object {
+                    "0": "{minutes}m ago",
+                  }
+                }
               >
                 <Render
-                  value="js.params.Custom.VersionSelect.UpdateFrequencySelect.checked"
+                  value="js.params.Custom.VersionSelect.UpdateFrequencySelect.lastChecked"
                 >
-                  js.params.Custom.VersionSelect.UpdateFrequencySelect.checked
+                  js.params.Custom.VersionSelect.UpdateFrequencySelect.lastChecked
                 </Render>
               </Trans>
             </I18n>
           </WithI18n>
-           
-          <time
-            dateTime="2018-05-28T19:00:54.154Z"
-          >
-            {minutes}m ago
-          </time>
         </div>
       </div>
     </UpdateFrequencySelect>

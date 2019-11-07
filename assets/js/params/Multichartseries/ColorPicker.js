@@ -244,7 +244,7 @@ export class ColorPicker extends React.PureComponent {
       <ColorPickerContext.Provider value={context}>
         <button
           type='button'
-          title={i18n._(t('js.params.Multichartseries.pickColor.title')`Pick color`)}
+          title={i18n._(t('js.params.Multichartseries.ColorPicker.pickColor.hoverText')`Pick color`)}
           onClick={this.handleClickButton}
           className='btn color-picker'
           style={{ background: safeValue }}

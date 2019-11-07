@@ -75,7 +75,9 @@ export const UpdateFrequencySelect = withI18n()(class UpdateFrequencySelect exte
         </div>
         {lastCheckDate ? (
           <div className='last-checked'>
-            <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelect.checked'>Checked</Trans> <time dateTime={this.props.lastCheckDate.toISOString()}>{timeDifference(lastCheckDate, Date.now(), i18n)}</time>
+            <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelect.lastChecked' description="The parameter is a time difference (i.e. something like '4h ago'. The tag is a <time> tag.">
+                Checked <time dateTime={this.props.lastCheckDate.toISOString()}>{timeDifference(lastCheckDate, Date.now(), i18n)}</time>
+            </Trans>
           </div>
         ) : null}
         {isModalOpen ? (

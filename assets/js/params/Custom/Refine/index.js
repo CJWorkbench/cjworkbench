@@ -130,7 +130,7 @@ class RefineModalPrompt extends React.PureComponent {
 
     return (
       <div className='refine-modal-prompt'>
-        <button type='button' name='cluster' onClick={this.handleClickOpenModal}><Trans id='js.params.Refine.findClusters.button'>Find clusters...</Trans></button>
+        <button type='button' name='cluster' onClick={this.handleClickOpenModal}><Trans id='js.params.Refine.RefineModalPrompt.findClusters.button'>Find clusters...</Trans></button>
         <span className='instructions' />
         {!isModalOpen ? null : (
           <RefineModal
@@ -261,7 +261,7 @@ const RefineGroup = withI18n()(class RefineGroup extends React.Component { // us
         <input
           type='checkbox'
           name='expand'
-          title={group.isExpanded ? i18n._(t('js.params.Refine.hideOriginalValues')`Hide original values`) : i18n._(t('js.params.Refine.showOriginalValues')`Show original values`)}
+          title={group.isExpanded ? i18n._(t('js.params.Refine.RefineGroup.expandStatus.expanded')`Hide original values`) : i18n._(t('js.params.Refine.RefineGroup.expandStatus.notExpanded')`Show original values`)}
           checked={group.isExpanded}
           onChange={this.handleChangeIsExpanded}
         />
@@ -273,7 +273,7 @@ const RefineGroup = withI18n()(class RefineGroup extends React.Component { // us
       <button
         name='reset'
         type='button'
-        title={i18n._(t('js.params.Refine.cancelEditsOfTheseValues')`Cancel edits of these values`)}
+        title={i18n._(t('js.params.Refine.RefineGroup.cancelEdits')`Cancel edits of these values`)}
         onClick={this.handleClickReset}
       >
         <i className='icon-undo' />
@@ -450,11 +450,11 @@ class GroupList extends React.PureComponent {
       // Waiting for user to select a column
       return null
     } else if (loading) {
-      return <Trans id='js.params.Refine.loadingValues'>Loading values…</Trans>
+      return <Trans id='js.params.Refine.GroupList.loadingValues'>Loading values…</Trans>
     } else if (isObjectEmpty(valueCounts)) {
-      return <Trans id='js.params.Refine.thisColumnNoValues'>This column does not have any values</Trans>
+      return <Trans id='js.params.Refine.GroupList.noValuesInColumn'>This column does not have any values</Trans>
     } else if (groups.length === 0) {
-      return <Trans id='js.params.Refine.noValuesMatchSearch'>No values match your search</Trans>
+      return <Trans id='js.params.Refine.GroupList.noValuesMatchSearch'>No values match your search</Trans>
     } else {
       if (this.listRef.current) {
         // If we're re-rendering this component, then it's likely a list item

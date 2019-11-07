@@ -28,12 +28,14 @@ const QuotaExceeded = React.memo(function QuotaExceeded ({ workflowId, wfModuleI
 
   return (
     <div className='quota-exceeded'>
-      <h5><Trans id='js.params.Custom.VersionSelect.QuotaExceeded.autoUpdateQuota'>AUTO-UPDATE QUOTA EXCEEDED</Trans></h5>
+      <h5><Trans id='js.params.Custom.VersionSelect.QuotaExceeded.title' description='This must be all-caps for styling reasons'>AUTO-UPDATE QUOTA EXCEEDED</Trans></h5>
       <p>
-        <Trans id='js.params.Custom.VersionSelect.QuotaExceeded.youRequesting'>You're requesting</Trans>{' '}
-        <strong className='n-fetches-per-day'>{Math.ceil(numberFormatter.format(nFetchesPerDay))}</strong>{' '}
-        <Trans id='js.params.Custom.VersionSelect.QuotaExceeded.updatesPerdayAcrossall'>updates per day across all your workflows. Your daily limit is</Trans>{' '}
-        <strong className='max-fetches-per-day'>{numberFormatter.format(maxFetchesPerDay)}</strong>.
+        <Trans id='js.params.Custom.VersionSelect.QuotaExceeded.requestsVsLimit' description='The two tags add emphasis'>
+            You're requesting {''}
+          <strong className='n-fetches-per-day'>{Math.ceil(numberFormatter.format(nFetchesPerDay))}</strong> {''}
+            updates per day across all your workflows. Your daily limit is {''}
+          <strong className='max-fetches-per-day'>{numberFormatter.format(maxFetchesPerDay)}</strong>.
+        </Trans>
       </p>
       <p>
         <Trans id='workflow.quotasteps'>Here are the steps that count against your limit.
@@ -44,8 +46,8 @@ const QuotaExceeded = React.memo(function QuotaExceeded ({ workflowId, wfModuleI
       <table>
         <thead>
           <tr>
-            <th className='n-fetches-per-day'>#/<Trans id='js.params.Custom.VersionSelect.QuotaExceeded.day'>day</Trans></th>
-            <th className='step'><Trans id='js.params.Custom.VersionSelect.QuotaExceeded.workFlow'>Workflow</Trans></th>
+            <th className='n-fetches-per-day'><Trans id='js.params.Custom.VersionSelect.QuotaExceeded.fetchesPerDay.heading'>#/day</Trans></th>
+            <th className='step'><Trans id='js.params.Custom.VersionSelect.QuotaExceeded.workFlow.heading'>Workflow</Trans></th>
             <th className='open' />
           </tr>
         </thead>
@@ -72,9 +74,9 @@ const QuotaExceeded = React.memo(function QuotaExceeded ({ workflowId, wfModuleI
                   {autofetches.map(({ tab, wfModule }) => (
                     <li key={wfModule.id}>
                       {workflowId === workflow.id && wfModuleId === wfModule.id ? (
-                        <>(<Trans id='js.params.Custom.VersionSelect.QuotaExceeded.youAskedforThis'>You asked for this step to make {numberFormatter.format(86400 / wfModule.fetchInterval)} updates per day.</Trans>)</>
+                        <>(<Trans id='js.params.Custom.VersionSelect.QuotaExceeded.thisStep.fetchesPerDay'>You asked for this step to make {numberFormatter.format(86400 / wfModule.fetchInterval)} updates per day.</Trans>)</>
                       ) : (
-                        <Trans id='js.params.Custom.VersionSelect.QuotaExceeded.stepOnmakesUpdatesperday'>Step {wfModule.order + 1} on {tab.name} makes {numberFormatter.format(86400 / wfModule.fetchInterval)} updates per day.</Trans>
+                        <Trans id='js.params.Custom.VersionSelect.QuotaExceeded.otherStep.fetchesPerDay' description='The {1} argument is a tab name'>Step {wfModule.order + 1} on {tab.name} makes {numberFormatter.format(86400 / wfModule.fetchInterval)} updates per day.</Trans>
                       )}
                     </li>
                   ))}
@@ -85,8 +87,10 @@ const QuotaExceeded = React.memo(function QuotaExceeded ({ workflowId, wfModuleI
         </tbody>
       </table>
       <p className='request-lift'>
-        <Trans id='js.params.Custom.VersionSelect.QuotaExceeded.needAhigherLimit'>Need a higher limit?</Trans>
-        <Trans id='js.params.Custom.VersionSelect.QuotaExceeded.sendUsmailShort'>Send us a short <a href='mailto:pierre@tablesdata.com' target='_blank' rel='noopener noreferrer'>email</a>.</Trans>
+        <Trans id='js.params.Custom.VersionSelect.QuotaExceeded.requestLift' description='The tag is a mailto url'>
+            Need a higher limit?
+            Send us a short <a href='mailto:pierre@tablesdata.com' target='_blank' rel='noopener noreferrer'>email</a>.
+        </Trans>
       </p>
     </div>
   )

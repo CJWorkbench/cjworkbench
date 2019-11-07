@@ -184,8 +184,8 @@ export class File extends React.PureComponent {
               <div className='filename'>{inProgressUpload.name}</div>
               <div className='status'>
                 <UploadedFileSelect isReadOnly value={value} files={files} onChange={this.handleChange} />
-                <button type='button' onClick={this.handleClickCancelUpload} name='cancel-upload' title={i18n._(t('js.params.Custom.File.cancelUpload')`Cancel upload`)}>
-                  <Trans id='file.cancelupload'>Cancel Upload</Trans>
+                <button type='button' onClick={this.handleClickCancelUpload} name='cancel-upload' title={i18n._(t('js.params.Custom.File.cancelUpload.hoverText')`Cancel upload`)}>
+                  <Trans id='js.params.Custom.File.cancelUpload.button'>Cancel Upload</Trans>
                 </button>
               </div>
               <UploadProgress
@@ -200,12 +200,12 @@ export class File extends React.PureComponent {
                 <UploadedFileSelect isReadOnly={isReadOnly} value={value} files={files} onChange={this.handleChange} />
                 <p className='file-select-button'>
                   {FeatureFlagUploadApi ? (
-                    <button type='button' onClick={this.handleClickOpenUploadApiModal} name='open-upload-api' title={i18n._(t('js.params.Custom.File.openUploadApiInstructions')`Open upload API instructions`)}>
-                      <Trans id='file.fileapi'>API</Trans>
+                    <button type='button' onClick={this.handleClickOpenUploadApiModal} name='open-upload-api' title={i18n._(t('js.params.Custom.File.uploadApi.hoverText')`Open upload API instructions`)}>
+                      <Trans id='js.params.Custom.File.uploadApi.button'>API</Trans>
                     </button>
                   ) : null}
                   <label htmlFor={fieldId}>
-                    <Trans id='file.replace'>Replace</Trans>
+                    <Trans id='js.params.Custom.File.replace'>Replace</Trans>
                   </label>
                   <input
                     name={name}
@@ -220,16 +220,16 @@ export class File extends React.PureComponent {
             </div>
           ) : (
             <div className='no-file'>
-              <p> <Trans id='file.dragfilehere'>Drag file here</Trans> </p>
-              <p><Trans id='file.or'>or</Trans></p>
+              <p><Trans id='js.params.Custom.File.dragfilehere'>Drag file here</Trans></p>
+              <p><Trans id='js.params.Custom.File.or' description='This is shown after js.params.Custom.File.dragfilehere'>or</Trans></p>
               <p className='file-select-button'>
                 {FeatureFlagUploadApi ? (
-                  <button type='button' onClick={this.handleClickOpenUploadApiModal} name='open-upload-api' title={i18n._(t('js.params.Custom.File.openUploadApiInstructions')`Open upload API instructions`)}>
-                    <Trans id='file.fileapi'>API</Trans>
+                  <button type='button' onClick={this.handleClickOpenUploadApiModal} name='open-upload-api' title={i18n._(t('js.params.Custom.File.uploadApi.hoverText')`Open upload API instructions`)}>
+                    <Trans id='js.params.Custom.File.uploadApi.button'>API</Trans>
                   </button>
                 ) : null}
                 <label htmlFor={fieldId}>
-                  <Trans id='file.browse'>Browse</Trans>
+                  <Trans id='js.params.Custom.File.browse.label'>Browse</Trans>
                 </label>
                 <input
                   name={name}

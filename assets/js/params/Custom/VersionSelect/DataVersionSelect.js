@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import DataVersionModal from '../../../WorkflowEditor/DataVersionModal'
 import { connect } from 'react-redux'
-import { t } from '@lingui/macro'
+import { t, Trans } from '@lingui/macro'
 import { withI18n } from '@lingui/react'
 
 export class DataVersionSelect extends React.PureComponent {
@@ -33,19 +33,40 @@ export class DataVersionSelect extends React.PureComponent {
     if (nVersions === 0) {
       inner = (
         <>
-          <div className='label'>{this.props.i18n._(t('js.params.Custom.VersionSelect.DataVersionSelect.version')`Version`)}</div>
+          <div className='label'>
+            <Trans id='js.params.Custom.VersionSelect.DataVersionSelect.noVersions.label'>
+                Version
+            </Trans>
+          </div>
           <div className='no-versions'>–</div>
         </>
       )
     } else if (isReadOnly) {
       inner = (
-        <div className='read-only'>{this.props.i18n._(t('js.params.Custom.VersionSelect.DataVersionSelect.version')`Version`)} {nVersions - currentVersionIndex} {this.props.i18n._(t('js.params.Custom.VersionSelect.DataVersionSelect.of')`of`)} {nVersions}</div>
+        <div className='read-only'>
+          <Trans id='js.params.Custom.VersionSelect.DataVersionSelect.readOnly.label'>
+            Version {nVersions - currentVersionIndex} of {nVersions}
+          </Trans>
+        </div>
       )
     } else {
       inner = (
         <>
-          <div className='label'>{this.props.i18n._(t('js.params.Custom.VersionSelect.DataVersionSelect.version')`Version`)}</div>
-          <button type='button' title={i18n._(t('js.params.Custom.VersionSelect.DataVersionSelect.selectversion')`Select version`)} onClick={this.handleClickOpenModal}>{nVersions - currentVersionIndex} {this.props.i18n._(t('js.params.Custom.VersionSelect.DataVersionSelect.of')`of`)} {nVersions}</button>
+          <div className='label'>
+            <Trans id='js.params.Custom.VersionSelect.DataVersionSelect.selectVersion.label'>
+                Version
+            </Trans>
+          </div>
+          <button
+            type='button'
+            title={i18n._(t('js.params.Custom.VersionSelect.DataVersionSelect.selectVersion.hoverText')`Select version`)}
+            onClick={this.handleClickOpenModal}
+          >
+            <Trans id='js.params.Custom.VersionSelect.DataVersionSelect.versionCount' description='The first parameter will be the current version and the second will be the number of versions'>
+              {nVersions - currentVersionIndex} of {nVersions}
+            </Trans>
+            )}
+          </button>
           {isDataVersionModalOpen ? (
             <DataVersionModal
               wfModuleId={wfModuleId}

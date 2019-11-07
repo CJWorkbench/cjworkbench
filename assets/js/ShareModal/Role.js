@@ -5,18 +5,18 @@ import { Trans } from '@lingui/macro'
 
 const ReadOnlyRole = ({ canEdit }) => (
   <p className='role'>
-    {canEdit ? <Trans id='js.shareModal.Role.canEdit'>Can edit</Trans> : <Trans id='js.shareModal.Role.canView'>Can view</Trans>}
+    {canEdit ? <Trans id='js.ShareModal.Role.canEdit'>Can edit</Trans> : <Trans id='js.ShareModal.Role.canView'>Can view</Trans>}
   </p>
 )
 
 const EditableRole = ({ canEdit, setCanEdit, unsetCanEdit }) => (
   <UncontrolledDropdown>
     <DropdownToggle caret>
-      {canEdit ? <Trans id='js.shareModal.Role.canEdit'>Can edit</Trans> : <Trans id='js.shareModal.Role.canView'>Can view</Trans>}
+      {canEdit ? <Trans id='js.ShareModal.Role.canEdit'>Can edit</Trans> : <Trans id='js.ShareModal.Role.canView'>Can view</Trans>}
     </DropdownToggle>
     <DropdownMenu>
-      <DropdownItem className='can-edit-false' active={!canEdit} onClick={unsetCanEdit}><Trans id='js.shareModal.Role.canView'>Can view</Trans></DropdownItem>
-      <DropdownItem className='can-edit-true' active={canEdit} onClick={setCanEdit}><Trans id='js.shareModal.Role.canEdit'>Can edit</Trans></DropdownItem>
+      <DropdownItem className='can-edit-false' active={!canEdit} onClick={unsetCanEdit}><Trans id='js.ShareModal.Role.canView'>Can view</Trans></DropdownItem>
+      <DropdownItem className='can-edit-true' active={canEdit} onClick={setCanEdit}><Trans id='js.ShareModal.Role.canEdit'>Can edit</Trans></DropdownItem>
     </DropdownMenu>
   </UncontrolledDropdown>
 )

@@ -9,16 +9,16 @@ export default function ShareCard ({ workflowId, isPublic }) {
       <div className='prompt'>
         <span className='status'>
           {isPublic ? (
-            <Trans id='js.Report.ShareCard.thisWorkflowIspublic'>This workflow is public</Trans>
+            <Trans id='js.Report.ShareCard.sharingStatus.public'>This workflow is public</Trans>
           ) : (
-            <Trans id='js.Report.ShareCard.thisWorkflowIsprivate'>This workflow is private</Trans>
+            <Trans id='js.Report.ShareCard.sharingStatus.private'>This workflow is private</Trans>
           )}
         </span>
         <p className='accessible-to'>
           {isPublic ? (
-            <Trans id='js.Report.ShareCard.anyoneCanViewThisreport'>Anyone can view this report</Trans>
+            <Trans id='js.Report.ShareCard.accessibilityDescription.public'>Anyone can view this report</Trans>
           ) : (
-            <Trans id='js.Report.ShareCard.onlyCollaboratorsCanViewThisreport'>Only collaborators can view this report</Trans>
+            <Trans id='js.Report.ShareCard.accessibilityDescription.private'>Only collaborators can view this report</Trans>
           )}
         </p>
         <ShareButton><Trans id='js.Report.ShareCard.editPrivacy.sharebutton'>Edit privacy</Trans></ShareButton>

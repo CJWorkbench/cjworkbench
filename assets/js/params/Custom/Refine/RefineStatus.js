@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { t } from '@lingui/macro'
+import { t, plural } from '@lingui/macro'
 import { withI18n } from '@lingui/react'
 
 export class RefineStatus extends React.PureComponent {
@@ -19,10 +19,12 @@ export class RefineStatus extends React.PureComponent {
     let statusText
     if (nBinsTotal === null) {
       statusText = i18n._(t('js.params.Custom.RefineStatus.clustering')`Clustering`)
-    } else if (nBinsTotal === 1) {
-      statusText = i18n._(t('js.params.Custom.RefineStatus.oneclusterfound')`1 cluster found`)
     } else {
-      statusText = i18n._(t('js.params.Custom.RefineStatus.specNumberclustersFound')`${nBinsTotal} clusters found`)
+      statusText = i18n._(plural('js.params.Custom.RefineStatus.numberOfClustersFound', {
+        value: nBinsTotal,
+        one: '# cluster found',
+        other: '# clusters found'
+      }))
     }
 
     return (

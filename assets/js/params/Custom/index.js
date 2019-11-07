@@ -33,7 +33,7 @@ const Components = {
 }
 
 const ComponentNotFound = ({ name }) => (
-  <p className='error'><Trans id='js.params.Custom.customTypenotHandled'>Custom type {name} not handled</Trans></p>
+  <p className='error'><Trans id='js.params.Custom.ComponentNotFound.error' description='The parameter will the the name of the custom type'>Custom type {name} not handled</Trans></p>
 )
 
 export default function Custom (props) {

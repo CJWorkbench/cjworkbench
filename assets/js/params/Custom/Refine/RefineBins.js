@@ -59,7 +59,7 @@ const RefineBin = withI18n()(class RefineBin extends React.PureComponent {
               <span className='autosize-cluster-text'>{name}</span>
               <textarea
                 name={`value-${index}`}
-                placeholder={i18n._(t('js.params.Custom.RefineBins.newValue.placeholder')`New Value`)}
+                placeholder={i18n._(t('js.params.Custom.RefineBins.RefineBin.newValue.placeholder')`New Value`)}
                 value={name}
                 onChange={this.handleChangeName}
               />
@@ -116,10 +116,10 @@ class RefineBins extends React.PureComponent {
           <thead>
             <tr>
               <th className='is-selected' />
-              <th className='cluster-size'><Trans id='js.params.Custom.RefineBins.clusteSize'>Cluster size</Trans></th>
-              <th className='value'><Trans id='js.params.Custom.RefineBins.values'>Values</Trans></th>
-              <th className='count'># <Trans id='js.params.Custom.RefineBins.rows'>rows</Trans></th>
-              <th className='new-value'><Trans id='js.params.Custom.RefineBins.newValue'>New value</Trans></th>
+              <th className='cluster-size'><Trans id='js.params.Custom.RefineBins.clusterSize.heading'>Cluster size</Trans></th>
+              <th className='value'><Trans id='js.params.Custom.RefineBins.values.heading'>Values</Trans></th>
+              <th className='count'><Trans id='js.params.Custom.RefineBins.countRows.heading'># rows</Trans></th>
+              <th className='new-value'><Trans id='js.params.Custom.RefineBins.newValue.heading'>New value</Trans></th>
             </tr>
           </thead>
           <tbody>

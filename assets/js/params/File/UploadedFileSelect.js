@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from '../../components/Modal'
 import filesize from 'filesize'
-import { t } from '@lingui/macro'
+import { t, Trans } from '@lingui/macro'
 import { withI18n } from '@lingui/react'
 
 const FilesizeOptions = { standard: 'iec', round: 1 }
@@ -54,10 +54,10 @@ class UploadedFileSelectModal extends React.PureComponent {
 
     return (
       <Modal className='uploaded-file-select-modal' isOpen toggle={close}>
-        <ModalHeader>FILE HISTORY</ModalHeader>
+        <ModalHeader><Trans id='js.params.File.UploadedFileSelect.UploadedFileSelectModal.header.title' description='This should be all-caps for styling reasons'>FILE HISTORY</Trans></ModalHeader>
         <ModalBody>
           {files.length === 0 ? (
-            <p className='no-files'>You have not uploaded any files to this Step</p>
+            <p className='no-files'><Trans id='js.params.File.UploadedFileSelect.UploadedFileSelectModal.noFiles'>You have not uploaded any files to this Step</Trans></p>
           ) : (
             <ol className='files'>
               {files.map(({ uuid, size, name, createdAt }) => (
@@ -68,7 +68,7 @@ class UploadedFileSelectModal extends React.PureComponent {
                       <abbr className='size' title={`${numberFormat.format(size)} bytes`}>
                         {formatNBytes(size)}
                       </abbr>
-                      <time className='created-at' dateTime={createdAt} title={createdAt}>Uploaded {dateFormat.format(new Date(createdAt))}</time>
+                      <time className='created-at' dateTime={createdAt} title={createdAt}><Trans id='js.params.File.UploadedFileSelect.UploadedFileSelectModal.uploaded_at' description='The parameter will contain a specific date'>Uploaded {dateFormat.format(new Date(createdAt))}</Trans></time>
                     </div>
                   </a>
                 </li>
@@ -83,14 +83,14 @@ class UploadedFileSelectModal extends React.PureComponent {
             onClick={this.handleClickSelect}
             disabled={newValue === value}
           >
-            Load
+            <Trans id='js.params.File.UploadedFileSelect.UploadedFileSelectModal.footer.loadButton'>Load</Trans>
           </button>
           <button
             type='button'
             name='close'
             onClick={close}
           >
-            Cancel
+            <Trans id='js.params.File.UploadedFileSelect.UploadedFileSelectModal.footer.cancelButton'>Cancel</Trans>
           </button>
         </ModalFooter>
       </Modal>
@@ -110,8 +110,10 @@ const UploadedFileSelect = React.memo(function UploadedFileSelect ({ value, file
 
   return (
     <>
-      <button className='uploaded-file-select' onClick={open} title={canOpen ? this.props._(t('js.params.File.UploadedFileSelect.choosePreviousFile.button')`Choose a previously-uploaded file`) : undefined} disabled={!canOpen}>
-        {`File ${valueIndex === -1 ? '[NONE]' : (valueIndex + 1)} of ${files.length}`}
+      <button className='uploaded-file-select' onClick={open} title={canOpen ? this.props._(t('js.params.File.UploadedFileSelect.choosePreviousFile.hoverText')`Choose a previously-uploaded file`) : undefined} disabled={!canOpen}>
+        <Trans id='js.params.File.UploadedFileSelect.choosePreviousFile.text' description='The first parameter is the number of the file (or js.params.File.UploadedFileSelect.choosePreviousFile.none) and the second is the total number of files'>
+            File {valueIndex === -1 ? <Trans id='js.params.File.UploadedFileSelect.choosePreviousFile.none'>[NONE]</Trans> : (valueIndex + 1)} of {files.length}
+        </Trans>
       </button>
       {isOpen ? (
         <UploadedFileSelectModal

@@ -10,20 +10,20 @@ import { withI18n } from '@lingui/react'
 const Algorithms = [
   {
     name: 'fingerprint',
-    selectName: t('js.params.Custom.RefineClusterer.fingerPrint')`Fingerprint`,
-    description: t('js.params.Custom.RefineClusterer.groupValuesByFingerpring.description')`Group values by fingerprint. This method is effective when values are capitalized irregularly or if special characters are used in some and not others. For instance, "café" and "Cafe" both have the same fingerprint, "cafe".`,
+    selectName: t('js.params.Custom.RefineClusterer.Algorithms.fingerprint.name')`Fingerprint`,
+    description: t('js.params.Custom.RefineClusterer.Algorithms.fingerprint.description')`Group values by fingerprint. This method is effective when values are capitalized irregularly or if special characters are used in some and not others. For instance, "café" and "Cafe" both have the same fingerprint, "cafe".`,
     defaultOptions: null,
     optionFields: null,
     buildClusterer: (bucket) => clusterByKey(bucket, fingerprint())
   },
   {
     name: 'levenshtein',
-    selectName: t('js.params.Custom.RefineClusterer.editDistance')`Edit distance`,
-    description: t('js.params.Custom.RefineClusterer.groupsValues.description')`Groups values if the number of characters added, edited or deleted to get from one value to the other is equal or inferior to \'Maximum distance\'. For instance, the distance between "Cafés" and "cafe" is 3.`,
+    selectName: t('js.params.Custom.RefineClusterer.Algorithms.levenshtein.name')`Edit distance`,
+    description: t('js.params.Custom.RefineClusterer.Algorithms.levenshtein.description')`Groups values if the number of characters added, edited or deleted to get from one value to the other is equal or inferior to \'Maximum distance\'. For instance, the distance between "Cafés" and "cafe" is 3.`,
     defaultOptions: { maxDistance: 3 },
     optionFields: (handlers, options) => (
       <div className='form-group'>
-        <label htmlFor='refine-clusterer-max-distance'><Trans id='js.params.Custom.RefineClusterer.maxDistance.label'>Maximum distance</Trans></label>
+        <label htmlFor='refine-clusterer-max-distance'><Trans id='js.params.Custom.RefineClusterer.Algorithms.levenshtein.options.maxDistance.label'>Maximum distance</Trans></label>
         <input className='form-control' id='refine-clusterer-max-distance' type='number' required name='maxDistance' size='2' value={options.maxDistance} min='1' max='999' placeholder='3' {...handlers} />
       </div>
     ),
