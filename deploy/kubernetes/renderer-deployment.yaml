@@ -13,6 +13,24 @@ spec:
       labels:
         app: renderer-app
     spec:
+      initContainers:
+        # setup-chroots.sh needs special privileges; run it in an init container.
+        #
+        # We run this command separately because it runs with privileged: true.
+        # (forkserver shouldn't have permission to fiddle with the mount
+        # namespace, lest malicious code use that permission to somehow escape
+        # its sandbox.)
+        #
+        # See https://itnext.io/using-overlay-mounts-with-kubernetes-960375c05959
+        - name: setup-chroot
+          image: "gcr.io/cj-workbench/migrate:latest"
+          securityContext:
+            privileged: true  # so it can run mount
+          command: [ "bash", "-x", "/app/cjwkernel/setup-chroots.sh" ]
+          volumeMounts:
+            - mountPath: /var/lib/cjwkernel/chroot
+              name: chroot
+              mountPropagation: Bidirectional  # expose mounts to main app
       containers:
         - name: renderer
           image: "gcr.io/cj-workbench/renderer:latest"
@@ -77,3 +95,25 @@ spec:
                   key: rabbitmq-pass
             - name: CJW_RABBITMQ_HOST
               value: "amqp://rabbit:$(_RABBITMQ_PASSWORD)@rabbitmq-1-rabbitmq-svc/"
+          volumeMounts:
+            - mountPath: /var/lib/cjwkernel/chroot
+              name: chroot
+        # "any volume mounts created by Containers in Pods must be destroyed
+        # (unmounted) by the Containers on termination"
+        # -- https://kubernetes.io/docs/concepts/storage/volumes/#mount-propagation
+        - name: teardown-chroot-prestop
+          image: debian:buster-slim
+          command: ["sh", "-c", "sleep infinity"]  # do nothing, until exit. (sh responds to INT signal)
+          securityContext:
+            privileged: true  # so it can unmount
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sh", "-c", "umount --verbose /var/lib/cjwkernel/chroot/editable/root /var/lib/cjwkernel/chroot/readonly/root"]
+          volumeMounts:
+            - mountPath: /var/lib/cjwkernel/chroot
+              name: chroot
+              mountPropagation: Bidirectional  # expose mounts to main app
+      volumes:
+        - name: chroot
+          emptyDir: {}
