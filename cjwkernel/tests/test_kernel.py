@@ -1,4 +1,4 @@
-import shutil
+import contextlib
 import textwrap
 import unittest
 from unittest.mock import patch
@@ -6,8 +6,11 @@ import pyarrow
 from cjwkernel.errors import ModuleCompileError, ModuleExitedError, ModuleTimeoutError
 from cjwkernel.kernel import Kernel
 from cjwkernel.tests.util import arrow_table_context, MockPath
+from cjwkernel.chroot import (
+    EDITABLE_CHROOT,
+    ensure_initialized as ensure_chroot_initialized,
+)
 from cjwkernel import types
-from cjwkernel.util import create_tempdir, tempfile_context
 
 
 class KernelTests(unittest.TestCase):
@@ -15,6 +18,7 @@ class KernelTests(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        ensure_chroot_initialized()
         # Kernel takes a while to start up -- it's loading pyarrow+pandas in a
         # separate process. So we'll only load it once.
         cls.kernel = Kernel()
@@ -25,11 +29,14 @@ class KernelTests(unittest.TestCase):
 
     def setUp(self):
         super().setUp()
-        self.basedir = create_tempdir(prefix="basedir-")
-        self.basedir.chmod(0o755)
+        self.ctx = contextlib.ExitStack()
+        self.chroot_context = self.ctx.enter_context(EDITABLE_CHROOT.acquire_context())
+        self.basedir = self.ctx.enter_context(
+            self.chroot_context.tempdir_context(prefix="basedir-")
+        )
 
     def tearDown(self):
-        shutil.rmtree(self.basedir)
+        self.ctx.close()
         super().tearDown()
 
     def test_compile_syntax_error(self):
@@ -157,9 +164,12 @@ class KernelTests(unittest.TestCase):
             dir=self.basedir,
         ) as input_table:
             input_table.path.chmod(0o644)
-            with tempfile_context(prefix="output-", dir=self.basedir) as output_path:
+            with self.chroot_context.tempfile_context(
+                prefix="output-", dir=self.basedir
+            ) as output_path:
                 result = self.kernel.render(
                     module,
+                    self.chroot_context,
                     self.basedir,
                     input_table,
                     types.Params({"m": 2.5, "s": "XX"}),
@@ -184,11 +194,12 @@ class KernelTests(unittest.TestCase):
         with self.assertRaises(ModuleExitedError) as cm:
             with arrow_table_context({"A": [1]}, dir=self.basedir) as input_table:
                 input_table.path.chmod(0o644)
-                with tempfile_context(
+                with self.chroot_context.tempfile_context(
                     prefix="output-", dir=self.basedir
                 ) as output_path:
                     self.kernel.render(
                         module,
+                        self.chroot_context,
                         self.basedir,
                         input_table,
                         types.Params({"m": 2.5, "s": "XX"}),
@@ -225,11 +236,12 @@ class KernelTests(unittest.TestCase):
         with self.assertRaises(ModuleExitedError) as cm:
             with arrow_table_context({"A": [1]}, dir=self.basedir) as input_table:
                 input_table.path.chmod(0o644)
-                with tempfile_context(
+                with self.chroot_context.tempfile_context(
                     prefix="output-", dir=self.basedir
                 ) as output_path:
                     result = self.kernel.render(
                         module,
+                        self.chroot_context,
                         self.basedir,
                         input_table,
                         types.Params({"m": 2.5, "s": "XX"}),
@@ -253,11 +265,12 @@ class KernelTests(unittest.TestCase):
             with self.assertRaises(ModuleTimeoutError):
                 with arrow_table_context({"A": [1]}, dir=self.basedir) as input_table:
                     input_table.path.chmod(0o644)
-                    with tempfile_context(
+                    with self.chroot_context.tempfile_context(
                         prefix="output-", dir=self.basedir
                     ) as output_path:
                         self.kernel.render(
                             module,
+                            self.chroot_context,
                             self.basedir,
                             input_table,
                             types.Params({}),
@@ -282,9 +295,12 @@ class KernelTests(unittest.TestCase):
             "foo",
         )
 
-        with tempfile_context(prefix="output-", dir=self.basedir) as output_path:
+        with self.chroot_context.tempfile_context(
+            prefix="output-", dir=self.basedir
+        ) as output_path:
             result = self.kernel.fetch(
                 module,
+                self.chroot_context,
                 self.basedir,
                 types.Params({"a": 1}),
                 {},

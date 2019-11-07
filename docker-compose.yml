@@ -9,7 +9,7 @@ version: '3.4'
 
 services:
   database:
-    image: postgres:10.4
+    image: postgres:10.10
     environment:
       POSTGRES_USER: cjworkbench
       POSTGRES_PASSWORD: cjworkbench
@@ -69,6 +69,7 @@ services:
       - virtualenvs:/root/.local/share/virtualenvs/:rw
     security_opt:
       - seccomp=docker/forkserver-seccomp-profile.json
+    cap_add: [ SYS_ADMIN ] # for cjwkernel.kernel to overlay-mount chroots (on k8s we use an init container instead)
     environment:
       PYTHONUNBUFFERED: '1'
       ASGI_THREADS: '5'
@@ -109,6 +110,7 @@ services:
       - virtualenvs:/root/.local/share/virtualenvs/:rw
     security_opt:
       - seccomp=docker/forkserver-seccomp-profile.json
+    cap_add: [ SYS_ADMIN ] # for cjwkernel.kernel to overlay-mount chroots (on k8s we use an init container instead)
     environment:
       PYTHONUNBUFFERED: '1'
       ASGI_THREADS: '2'
@@ -146,6 +148,7 @@ services:
       - virtualenvs:/root/.local/share/virtualenvs/:rw
     security_opt:
       - seccomp=docker/forkserver-seccomp-profile.json
+    cap_add: [ SYS_ADMIN ] # for cjwkernel.kernel to overlay-mount chroots (on k8s we use an init container instead)
     environment:
       PYTHONUNBUFFERED: '1'
       ASGI_THREADS: '3'

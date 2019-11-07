@@ -1,9 +1,9 @@
 from collections import namedtuple
 from contextlib import ExitStack
 from pathlib import Path
-import tempfile
 import unittest
 from unittest.mock import patch
+from cjwkernel.chroot import EDITABLE_CHROOT
 from cjwkernel.errors import ModuleExitedError
 from cjwkernel.param_dtype import ParamDType
 from cjwkernel.types import Params, RenderResult, Tab
@@ -12,7 +12,6 @@ from cjwkernel.tests.util import (
     arrow_table_context,
     assert_render_result_equals,
 )
-from cjwkernel.util import tempdir_context, tempfile_context
 from cjwstate import minio
 from cjwstate.modules import init_module_system
 from cjwstate.modules.loaded_module import LoadedModule, load_external_module
@@ -71,23 +70,30 @@ class LoadedModuleTest(unittest.TestCase):
 
         # This ends up being kinda an integration test.
         with ExitStack() as ctx:
-            basedir = Path(ctx.enter_context(tempdir_context(prefix="test-basedir-")))
-            basedir.chmod(0o755)
+            chroot_context = ctx.enter_context(EDITABLE_CHROOT.acquire_context())
+            basedir = Path(
+                ctx.enter_context(
+                    chroot_context.tempdir_context(prefix="test-basedir-")
+                )
+            )
             input_table = ctx.enter_context(
                 arrow_table_context({"A": [1]}, dir=basedir)
             )
             input_table.path.chmod(0o644)
-            output_tf = ctx.enter_context(tempfile.NamedTemporaryFile(dir=basedir))
+            output_path = ctx.enter_context(
+                chroot_context.tempfile_context(prefix="output-", dir=basedir)
+            )
 
             ctx.enter_context(self.assertLogs("cjwstate.modules.loaded_module"))
 
             result = lm.render(
+                chroot_context=chroot_context,
                 basedir=basedir,
                 input_table=input_table,
                 params=Params({"col": "A"}),
                 tab=Tab("tab-1", "Tab 1"),
                 fetch_result=None,
-                output_filename=Path(output_tf.name).name,
+                output_filename=output_path.name,
             )
 
         assert_render_result_equals(result, RenderResult(arrow_table({"A": [2]})))

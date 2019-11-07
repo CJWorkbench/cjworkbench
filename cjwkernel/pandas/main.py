@@ -9,7 +9,7 @@ import cjwkernel.pandas.module
 
 def main(compiled_module: CompiledModule, function: str, args: List[Any]) -> None:
     """
-    Run `function` with `args`, and write the (Thrift) result to `output_fileno`.
+    Run `function` with `args`, and write the (Thrift) result to stdout.
     """
 
     assert function in (

@@ -1,18 +1,18 @@
-import contextlib
 from dataclasses import dataclass, field
 import io
 import logging
 import marshal
 import os
+import os.path
 from pathlib import Path
 import selectors
-import stat
 import time
-from typing import Any, ContextManager, Dict, List, Optional
+from typing import Any, Dict, List, Optional
 import thrift.protocol.TBinaryProtocol
 import thrift.transport.TTransport
-from cjwkernel.forkserver import Forkserver
+from cjwkernel.chroot import ChrootContext, READONLY_CHROOT_CONTEXT
 from cjwkernel.errors import ModuleCompileError, ModuleTimeoutError, ModuleExitedError
+from cjwkernel.forkserver import Forkserver
 from cjwkernel.thrift import ttypes
 from cjwkernel.types import (
     ArrowTable,
@@ -23,7 +23,6 @@ from cjwkernel.types import (
     RenderResult,
     Tab,
 )
-from cjwkernel.util import tempdir_context
 from cjwkernel.validate import validate
 
 
@@ -38,132 +37,12 @@ OUTPUT_BUFFER_MAX_BYTES = (
     2 * 1024 * 1024
 )  # a huge migrate_params() return value, perhaps?
 
-
-PARQUET_PATHS = [
-    Path("/usr/bin/parquet-to-arrow"),
-    Path("/usr/bin/parquet-to-arrow-slice"),
-    Path("/usr/bin/parquet-to-text-stream"),
-    Path("/usr/bin/parquet-diff"),
-]
-
-
-NETWORKING_PATHS = [
-    # Path("/etc/ssl/certs/ca-certificates.crt"),
-    Path("/etc/ssl/certs"),  # TODO narrow it down
-    Path("/etc/ssl/openssl.cnf"),
-    # Path("/usr/lib/ssl/openssl.cnf"),
-    Path("/usr/lib/ssl/certs"),
-    Path("/usr/share/ca-certificates"),
-    Path("/etc/resolv.conf"),  # TODO sandbox DNS resolving
-    Path("/etc/nsswitch.conf"),
-]
-
-
-DATA_PATHS = [Path("/usr/share/nltk_data")]
-
-
-# Import all encodings. Some modules (e.g., loadurl) may encounter weird stuff
+# Import all encodings. Some modules (e.g., loadurl) encounter weird stuff
 ENCODING_IMPORTS = [
     "encodings." + p.stem
     for p in Path("/usr/local/lib/python3.7/encodings").glob("*.py")
     if p.stem not in {"cp65001", "mbcs", "oem"}  # un-importable
 ]
-
-
-@contextlib.contextmanager
-def _chroot_dir_context(
-    *, provide_paths: List[Path] = [], extract_paths: List[Path] = []
-) -> ContextManager[Path]:
-    """
-    Prepare paths for forkserver's `chroot_dir` and `chroot_provide_paths`.
-
-    Each of `provide_paths` is a file or directory we will expose to module
-    code -- code with an effective UID/GID outside of 0-65535, so we can't
-    transfer ownership to it. Each path within each `provide_path` will be
-    temporarily set to other-readable. (TODO bind-mount instead of chroot,
-    and somehow fiddle with ownership while mounting.)
-
-    Each of `extract_paths` is an empty file that already exists, which we
-    allow the module to write to. Each path will be set to world-writable
-    within the chroot (so processes with effective UIDs outside of 0-65535 may
-    write to it -- e.g., setuid-nonroot processes within forkserver's sandbox).
-    After the context exits, the original permissions will be restored.
-
-    The caller is expected to expose the `extract_path` through a
-    `chroot_provide_paths` argument to forkserver. (For instance, if
-    `extract_paths` includes /tmp/basedir/x.arrow, `chroot_provide_paths`
-    should include /tmp/basedir or /tmp/basedir/x.arrow.
-
-    TODO refactor chroot construction so it happens here, not in forkserver.
-    The contents of the chroot really depend on the code being run -- in this
-    case, code the kernel spawns.
-    """
-    with tempdir_context(prefix="kernel-chroot-") as chroot:
-        chroot.chmod(0o755)
-
-        old_stats: Dict[Path, os.stat_result] = {}
-
-        for provide_path in provide_paths:
-            for dirname, _, filenames in os.walk(provide_path):
-                dirpath = Path(dirname)
-                old_stat = dirpath.stat()
-                old_stats[dirpath] = old_stat
-                dirpath.chmod((old_stat.st_mode & 0o7777) | stat.S_IROTH | stat.S_IXOTH)
-                for filename in filenames:
-                    path = dirpath / filename
-                    old_stat = path.stat()
-                    old_stats[path] = old_stat
-                    path.chmod((old_stat.st_mode & 0o7777) | stat.S_IROTH)
-
-        for path in extract_paths:
-            # read old_stat from cache, not from file! We changed the file.
-            old_stat = old_stats[path]  # KeyError? provide_paths+extract_paths disagree
-            # make it writable
-            path.chmod((old_stat.st_mode & 0o7777) | stat.S_IROTH | stat.S_IWOTH)
-
-        yield chroot
-
-        for path in extract_paths:
-            # The module ran as a high-UID user. Extract its output from
-            # the chroot and give it its original permissions. That way,
-            # future module runs won't be allowed to write it (unless
-            # old_stats says it was world-writable in the first place).
-            _extract_from_chroot(chroot, path)
-
-        for path, old_stat in old_stats.items():
-            # Restore original owner UID, GID
-            os.chown(path, old_stat.st_uid, old_stat.st_gid)
-            # Restore original permissions (ref: man inode(7))
-            path.chmod(old_stat.st_mode & 0o7777)
-
-
-def _extract_from_chroot(chroot: Path, path: Path) -> None:
-    """
-    Extract a file from `chroot`
-
-    Modules write to files within their chroot. If path is `/tmp/out.arrow`,
-    then the module wrote to `/chroot-dir/tmp/out.arrow`.
-
-    (`path` exists before we create the chroot, and the chroot logic uses
-    hard-link; so it's possible the module wrote directly to `/tmp/out.arrow`
-    because `/chroot-dir/tmp/out.arrow` hard-links to it. But we don't count
-    on modules opening an existing file rather than writing a new one.)
-
-    To handle all cases, we hard-link `/tmp/out.arrow` to point to the file
-    `/chroot-dir/tmp/out.arrow`. This "copies" the data, cheaply.
-    
-    The caller is responsible for restoring the file's permissions and
-    attributes.
-
-    Raise ModuleExitedError if the module tried to inject a symlink.
-    """
-    src = chroot / path.relative_to("/")
-    if src.is_symlink():
-        # If the module wrote a symlink, DO NOT READ IT. That's a security
-        # issue -- the module could write "/etc/passwd" and then we'd read it.
-        raise ModuleExitedError(0, "SECURITY: module output a symlink")
-    path.unlink()  # os.link() won't overwrite; delete the destination
-    os.link(src, path)
 
 
 @dataclass
@@ -364,36 +243,36 @@ class Kernel:
         return ret
 
     def _validate(self, compiled_module: CompiledModule) -> None:
-        with _chroot_dir_context() as chroot:
-            self._run_in_child(
-                chroot=chroot,
-                chroot_paths=DATA_PATHS,
-                compiled_module=compiled_module,
-                timeout=self.validate_timeout,
-                result=ttypes.ValidateModuleResult(),
-                function="validate_thrift",
-                args=[],
-            )
+        self._run_in_child(
+            chroot_context=READONLY_CHROOT_CONTEXT,
+            compiled_module=compiled_module,
+            timeout=self.validate_timeout,
+            result=ttypes.ValidateModuleResult(),
+            function="validate_thrift",
+            args=[],
+        )
 
     def migrate_params(
         self, compiled_module: CompiledModule, params: Dict[str, Any]
     ) -> None:
+        """
+        Call a module's migrate_params().
+        """
         request = RawParams(params).to_thrift()
-        with _chroot_dir_context() as chroot:
-            response = self._run_in_child(
-                chroot=chroot,
-                chroot_paths=DATA_PATHS,
-                compiled_module=compiled_module,
-                timeout=self.migrate_params_timeout,
-                result=ttypes.RawParams(),
-                function="migrate_params_thrift",
-                args=[request],
-            )
+        response = self._run_in_child(
+            chroot_context=READONLY_CHROOT_CONTEXT,
+            compiled_module=compiled_module,
+            timeout=self.migrate_params_timeout,
+            result=ttypes.RawParams(),
+            function="migrate_params_thrift",
+            args=[request],
+        )
         return RawParams.from_thrift(response).params
 
     def render(
         self,
         compiled_module: CompiledModule,
+        chroot_context: ChrootContext,
         basedir: Path,
         input_table: ArrowTable,
         params: Params,
@@ -401,31 +280,32 @@ class Kernel:
         fetch_result: Optional[FetchResult],
         output_filename: str,
     ) -> RenderResult:
+        basedir_seen_by_module = Path("/") / basedir.relative_to(
+            chroot_context.chroot.root
+        )
         request = ttypes.RenderRequest(
-            str(basedir),
+            str(basedir_seen_by_module),
             input_table.to_thrift(),
             params.to_thrift(),
             tab.to_thrift(),
             None if fetch_result is None else fetch_result.to_thrift(),
             output_filename,
         )
-        with _chroot_dir_context(
-            provide_paths=[basedir], extract_paths=[basedir / output_filename]
-        ) as chroot:
-            result = self._run_in_child(
-                chroot=chroot,
-                chroot_paths=[basedir]
-                + DATA_PATHS
-                + PARQUET_PATHS
-                + NETWORKING_PATHS,  # TODO nix networking
-                compiled_module=compiled_module,
-                timeout=self.render_timeout,
-                result=ttypes.RenderResult(),
-                function="render_thrift",
-                args=[request],
-            )
-            if result.table.filename and result.table.filename != output_filename:
-                raise ModuleExitedError(0, "Module wrote to wrong output file")
+        try:
+            with chroot_context.writable_file(basedir / output_filename):
+                result = self._run_in_child(
+                    chroot_context=chroot_context,
+                    compiled_module=compiled_module,
+                    timeout=self.render_timeout,
+                    result=ttypes.RenderResult(),
+                    function="render_thrift",
+                    args=[request],
+                )
+        finally:
+            chroot_context.clear_unowned_edits()
+
+        if result.table.filename and result.table.filename != output_filename:
+            raise ModuleExitedError(0, "Module wrote to wrong output file")
 
         # RenderResult.from_thrift() verifies all filenames passed by the
         # module are in the directory the module has access to.
@@ -437,6 +317,7 @@ class Kernel:
     def fetch(
         self,
         compiled_module: CompiledModule,
+        chroot_context: ChrootContext,
         basedir: Path,
         params: Params,
         secrets: Dict[str, Any],
@@ -444,28 +325,33 @@ class Kernel:
         input_parquet_filename: str,
         output_filename: str,
     ) -> FetchResult:
+        basedir_seen_by_module = Path("/") / basedir.relative_to(
+            chroot_context.chroot.root
+        )
         request = ttypes.FetchRequest(
-            str(basedir),
+            str(basedir_seen_by_module),
             params.to_thrift(),
             RawParams(secrets).to_thrift(),
             None if last_fetch_result is None else last_fetch_result.to_thrift(),
             input_parquet_filename,
             output_filename,
         )
-        with _chroot_dir_context(
-            provide_paths=[basedir], extract_paths=[basedir / output_filename]
-        ) as chroot:
-            result = self._run_in_child(
-                chroot=chroot,
-                chroot_paths=[basedir] + DATA_PATHS + PARQUET_PATHS + NETWORKING_PATHS,
-                compiled_module=compiled_module,
-                timeout=self.fetch_timeout,
-                result=ttypes.FetchResult(),
-                function="fetch_thrift",
-                args=[request],
-            )
-            if result.filename and result.filename != output_filename:
-                raise ModuleExitedError(0, "Module wrote to wrong output file")
+        try:
+            with chroot_context.writable_file(basedir / output_filename):
+                result = self._run_in_child(
+                    chroot_context=chroot_context,
+                    compiled_module=compiled_module,
+                    timeout=self.fetch_timeout,
+                    result=ttypes.FetchResult(),
+                    function="fetch_thrift",
+                    args=[request],
+                )
+        finally:
+            chroot_context.clear_unowned_edits()
+
+        if result.filename and result.filename != output_filename:
+            raise ModuleExitedError(0, "Module wrote to wrong output file")
+
         # TODO validate result isn't too large. If result is dataframe it makes
         # sense to truncate; but fetch results aren't necessarily data frames.
         # It's up to the module to enforce this logic ... but we need to set a
@@ -475,8 +361,7 @@ class Kernel:
     def _run_in_child(
         self,
         *,
-        chroot: Path,
-        chroot_paths: List[Path],
+        chroot_context: ChrootContext,
         compiled_module: CompiledModule,
         timeout: float,
         result: Any,
@@ -499,8 +384,7 @@ class Kernel:
 
         module_process = self._forkserver.spawn_module(
             process_name=compiled_module.module_slug,
-            chroot_dir=chroot,
-            chroot_provide_paths=[(p, p) for p in chroot_paths],
+            chroot_dir=chroot_context.chroot.root,
             args=[compiled_module, function, args],
         )
 

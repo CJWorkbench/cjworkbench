@@ -1,3 +1,4 @@
+import cjwkernel.chroot
 import cjwkernel.kernel
 import cjwstate.modules.staticregistry
 
@@ -18,5 +19,6 @@ def init_module_system():
     # Ignore spurious init() calls. They happen in unit-testing: each unit test
     # that relies on the module system needs to ensure it's initialized.
     if kernel is None:
+        cjwkernel.chroot.ensure_initialized()
         kernel = cjwkernel.kernel.Kernel()
         cjwstate.modules.staticregistry._setup(kernel)

@@ -15,6 +15,7 @@ from cjwkernel.types import (
     Tab,
     RenderResult,
 )
+from cjwkernel.kernel import ChrootContext
 from cjwstate import minio
 import cjwstate.modules.staticregistry
 import cjwstate.modules
@@ -43,6 +44,7 @@ class LoadedModule:
     def render(
         self,
         *,
+        chroot_context: ChrootContext,
         basedir: Path,
         input_table: ArrowTable,
         params: Params,
@@ -73,6 +75,7 @@ class LoadedModule:
         try:
             result = cjwstate.modules.kernel.render(
                 self.compiled_module,
+                chroot_context,
                 basedir,
                 input_table,
                 params,
@@ -103,6 +106,7 @@ class LoadedModule:
     def fetch(
         self,
         *,
+        chroot_context: ChrootContext,
         basedir: Path,
         params: Params,
         secrets: Dict[str, Any],
@@ -128,6 +132,7 @@ class LoadedModule:
         try:
             ret = cjwstate.modules.kernel.fetch(
                 self.compiled_module,
+                chroot_context,
                 basedir,
                 params,
                 secrets,

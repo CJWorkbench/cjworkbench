@@ -6,7 +6,7 @@ version: '3.4'
 
 services:
   db:
-    image: postgres:10
+    image: postgres:10.10
     networks:
       default:
         aliases: [ 'workbench-db' ]
@@ -28,7 +28,7 @@ services:
     # Depends on rabbitmq so that rabbitmq is already warm when we launch
     # integration-test
     depends_on: [ 'db', 'minio', 'rabbitmq' ]
-    environment:
+    environment: &common_env
       PYTHONUNBUFFERED: '1'
       ASGI_THREADS: '2'
       CJW_PRODUCTION: 'True'
@@ -59,45 +59,38 @@ services:
     #image:
     #build:
 
+  # In Kubernetes, we use sidecar processes to manage chroots. But we can't
+  # mimic those in pure Docker, because we can't adjust mount propagation.
+  # (Each container has its own mount namespace, and there's no way for
+  # mounted volumes to cross namespaces.)
+  #
+  # Instead, we set privileged: true on each container and run
+  # /app/cjwkernel/setup-chroots.sh before the normal command.
+  #
+  # [adamhooper, 2019-11-07] I'm not sure whether we need privileged: true.
+  # CAP_SYS_ADMIN works on localhost, but not on Cloud Build. Perhaps apparmor
+  # causes problems? Dunno. But Docker is so far removed from Kubernetes that
+  # debugging this problem seems like a waste of time. We'd be better off
+  # revising our integration-test framework to use Kubernetes.
   fetcher:
     #image:
     #build:
+    command: [ 'sh', '-c', '/app/cjwkernel/setup-chroots.sh && exec ./manage.py fetcher' ]
     depends_on: [ 'db', 'rabbitmq', 'minio' ]
     security_opt:
       - seccomp=docker/forkserver-seccomp-profile.json
-    environment:
-      PYTHONUNBUFFERED: '1'
-      ASGI_THREADS: '2'
-      CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq/
-      CJW_PRODUCTION: 'True'
-      CJW_DB_HOST: workbench-db
-      CJW_DB_PASSWORD: cjworkbench
-      CJW_SECRET_KEY: cjw-secret-key
-      CJW_MOCK_EMAIL: 'True'
-      MINIO_ACCESS_KEY: minio_access
-      MINIO_SECRET_KEY: minio_secret
-      MINIO_URL: http://minio:9000
-      MINIO_BUCKET_PREFIX: integrationtest
+    privileged: true  # for setup-chroots.sh
+    environment: *common_env
 
   renderer:
     #image:
     #build:
+    command: [ 'sh', '-c', '/app/cjwkernel/setup-chroots.sh && exec ./manage.py renderer' ]
     depends_on: [ 'db', 'rabbitmq', 'minio' ]
     security_opt:
       - seccomp=docker/forkserver-seccomp-profile.json
-    environment:
-      PYTHONUNBUFFERED: '1'
-      ASGI_THREADS: '2'
-      CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq/
-      CJW_PRODUCTION: 'True'
-      CJW_DB_HOST: workbench-db
-      CJW_DB_PASSWORD: cjworkbench
-      CJW_SECRET_KEY: cjw-secret-key
-      CJW_MOCK_EMAIL: 'True'
-      MINIO_ACCESS_KEY: minio_access
-      MINIO_SECRET_KEY: minio_secret
-      MINIO_URL: http://minio:9000
-      MINIO_BUCKET_PREFIX: integrationtest
+    privileged: true  # for setup-chroots.sh
+    environment: *common_env
     volumes:
       - local_mail:/app/local_mail
 
@@ -105,40 +98,19 @@ services:
     #image:
     #build:
     depends_on: [ 'db', 'rabbitmq', 'minio' ]
-    environment:
-      PYTHONUNBUFFERED: '1'
-      ASGI_THREADS: '2'
-      CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq/
-      CJW_PRODUCTION: 'True'
-      CJW_DB_HOST: workbench-db
-      CJW_DB_PASSWORD: cjworkbench
-      CJW_SECRET_KEY: cjw-secret-key
-      CJW_MOCK_EMAIL: 'True'
-      MINIO_ACCESS_KEY: minio_access
-      MINIO_SECRET_KEY: minio_secret
-      MINIO_URL: http://minio:9000
-      MINIO_BUCKET_PREFIX: integrationtest
+    environment: *common_env
 
   frontend:
     #image:
     #build:
     #no ports: on cloudbuild
+    command: [ 'sh', '-c', '/app/cjwkernel/setup-chroots.sh && exec daphne -b 0.0.0.0 -p 8080 --application-close-timeout 180 cjworkbench.asgi:application' ]
     depends_on: [ 'db', 'rabbitmq', 'minio' ]
     security_opt:
       - seccomp=docker/forkserver-seccomp-profile.json
+    privileged: true  # for setup-chroots.sh
     environment:
-      PYTHONUNBUFFERED: '1'
-      ASGI_THREADS: '2'
-      CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq/
-      CJW_PRODUCTION: 'True'
-      CJW_DB_HOST: workbench-db
-      CJW_DB_PASSWORD: cjworkbench
-      CJW_SECRET_KEY: cjw-secret-key
-      CJW_MOCK_EMAIL: 'True'
-      MINIO_ACCESS_KEY: minio_access
-      MINIO_SECRET_KEY: minio_secret
-      MINIO_URL: http://minio:9000
-      MINIO_BUCKET_PREFIX: integrationtest
+      <<: *common_env
       STATIC_URL: http://minio:9000/integrationtest-static/
     volumes:
       - local_mail:/app/local_mail

@@ -77,6 +77,12 @@ RUN mkdir -p /root/.local/share/virtualenvs \
 COPY --from=watchman-bin /usr/bin/watchman /usr/bin/watchman
 COPY --from=watchman-bin /usr/var/run/watchman /usr/var/run/watchman
 
+COPY cjwkernel/setup-chroot-layers.sh /tmp/setup-chroot-layers.sh
+RUN /tmp/setup-chroot-layers.sh && rm /tmp/setup-chroot-layers.sh
+# Let chroots overlay the root FS -- meaning they must be on another FS.
+# see cjwkernel/setup-chroots.sh
+VOLUME /var/lib/cjwkernel/chroot
+
 # Add "mc" command, so we can create a non-root user in minio (for STS).
 COPY --from=mc /usr/bin/mc /usr/bin/mc
 
@@ -121,6 +127,11 @@ COPY Pipfile Pipfile.lock /app/
 # * yajl-py
 # * pysycopg2 (binaries are evil because psycopg2 links SSL -- as does Python)
 # ... and we want to keep libsnappy and yajl around after the fact, too
+#
+# Clean up after pipenv, because it leaves varbage in /root/.cache and
+# /root/.local/share/virtualenvs, even when --deploy is used. (We test for
+# presence of /root/.local/share/virtualenvs to decide whether we need a
+# bind-mount in dev mode; so it can't exist in production.)
 RUN true \
     && apt-get update \
     && apt-get install --no-install-recommends -y \
@@ -133,6 +144,7 @@ RUN true \
       libyajl2 \
       libyajl-dev \
     && pipenv install --dev --system --deploy \
+    && rm -rf /root/.cache/pipenv /root/.local/share/virtualenvs \
     && apt-get remove --purge -y \
       build-essential \
       libsnappy-dev \
@@ -140,6 +152,14 @@ RUN true \
       libpq-dev \
     && apt-get autoremove --purge -y \
     && rm -rf /var/lib/apt/lists/*
+
+# Set up chroot-layers ASAP, so they're cached in a rarely-changing
+# Docker layer.
+COPY cjwkernel/setup-chroot-layers.sh /tmp/setup-chroot-layers.sh
+RUN /tmp/setup-chroot-layers.sh && rm /tmp/setup-chroot-layers.sh
+# Let chroots overlay the root FS -- meaning they must be on another FS.
+# see cjwkernel/setup-chroots.sh
+VOLUME /var/lib/cjwkernel/chroot
 
 
 # 2. Node deps -- completely independent
