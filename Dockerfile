@@ -9,9 +9,9 @@ FROM python:3.7.4-slim-buster AS pybase
 # * on prod before ./manage.py migrate
 # * on unittest before ./manage.py test
 # git: used for importmodulefromgithub
-# curl: handy for testing, NLTK download, Watchman download; not worth uninstalling each time
-# unzip: to build Watchman ... and [adamhooper, 2019-02-21] I'm afraid
-#        to uninstall it after build, in case one of our Python deps shells to it
+# curl: handy for testing, NLTK download; not worth uninstalling each time
+# unzip: [adamhooper, 2019-02-21] I'm afraid to uninstall it, in case one
+#        of our Python deps shells to it
 #
 # We do want:
 # libcap2: used by forkserver (via ctypes) to drop capabilities
