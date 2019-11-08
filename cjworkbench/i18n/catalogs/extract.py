@@ -84,7 +84,7 @@ def extract_django(fileobj, keywords, comment_tags, options):
                     comments = []
                 comment = imatch.group(7)
                 if comment:
-                    comments.append(comment)
+                    comments.append(strip_quotes(comment))
                 message_context = imatch.group(5)
                 if message_context:
                     # strip quotes
