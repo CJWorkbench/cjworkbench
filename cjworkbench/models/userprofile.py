@@ -14,6 +14,13 @@ class UserProfile(models.Model):
     )
 
     get_newsletter = models.BooleanField(default=False)
+    """
+    True iff the user is requesting to be part of our newsletter.
+
+    There is a race here. TODO delete this field and query our mass-mail
+    service instead.
+    """
+
     max_fetches_per_day = models.IntegerField(
         default=500,
         help_text=(
@@ -21,6 +28,9 @@ class UserProfile(models.Model):
             "One fetch every 5min = 288 fetches per day."
         ),
     )
+    """
+    Quota for cronjobs.
+    """
 
     def __str__(self):
         return user_display(self.user) + " (" + self.user.email + ")"
