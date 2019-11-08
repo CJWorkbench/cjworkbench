@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 from allauth.account.utils import user_display
+from cjworkbench import i18n
 
 
 User = get_user_model()
@@ -30,6 +31,18 @@ class UserProfile(models.Model):
     )
     """
     Quota for cronjobs.
+    """
+
+    locale_id = models.CharField(
+        max_length=5,
+        default=i18n.default_locale,
+        choices=[(x, x) for x in i18n.supported_locales],
+    )
+    """
+    User-selected locale ID.
+
+    This overrides the request-session locale ID. It's also used for emailed
+    "new data available" notifications (for which there are no HTTP requests).
     """
 
     def __str__(self):
