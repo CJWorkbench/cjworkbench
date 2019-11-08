@@ -2,14 +2,14 @@
 
 {% load i18n_icu %}
 
-{% block head_title %}{% trans_html "py.templates.socialaccount.login_cancelled.loginCancelled.title" default="Login Cancelled" %}{% endblock %}
+{% block head_title %}{% trans_html "py.templates.socialaccount.login_cancelled.title" default="Login Cancelled" %}{% endblock %}
 
 {% block content %}
 
-<h1>{% trans_html "py.templates.socialaccount.login_cancelled.loginCancelled.header" default="Login Cancelled" %}</h1>
+<h1>{% trans_html "py.templates.socialaccount.login_cancelled.header" default="Login Cancelled" %}</h1>
 
 {% url 'account_login' as login_url %}
 
-<p>{% trans_html "py.templates.socialaccount.login_cancelled.youDecidedToCancelLogging" default="You decided to cancel logging in to our site using one of your existing accounts. If this was a mistake, please proceed to <a0 href="{{login_url}}">sign in</a0>." tag_a0_href=login.url %}</p>
+<p>{% trans_html "py.templates.socialaccount.login_cancelled.youDecidedToCancelLogging" default="You decided to cancel logging in to our site using one of your existing accounts. If this was a mistake, please proceed to <a0>sign in</a0>." tag_a0_href=login_url comment="The tag is a link to the login page" %}</p>
 
 {% endblock %}

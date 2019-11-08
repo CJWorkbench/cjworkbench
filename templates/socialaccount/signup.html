@@ -6,24 +6,22 @@
 
 {% block content %}
 {% comment %}
-{% trans_html "py.templates.socialaccount.signup.comment" default="This template is only ever called if 1) the social network in question does not provide an email address or 2) the
+This template is only ever called if 1) the social network in question does not provide an email address or 2) the
 social network provided an email address but that address is already in our system. In case of 2) we want to give the
 user the chance to log in and connect their account. Ther are several open issues with django_allauth about making this
-behavior more clear, and we should contribute a fix and a pull request." %}
-
+behavior more clear, and we should contribute a fix and a pull request.
 {% endcomment %}
 {% if form.email.value %}
 
     {% with provider_slug=account.get_provider.get_slug provider_name=account.get_provider.name site_name=site.name %}
         <p class='content-1 t-d-gray text-center mb-4'>{% trans_html "py.templates.socialaccount.signup.thereIsAlreadyAccount" default="There is already an account registered with that email address." %}</p>
         {# TODO: Come up with a more elegant way to do this #}
-        <a class="content-1 text-center action-link white" href="/account/login?next=/account/{{provider_slug}}/login?process=connect">{% trans_html "py.templates.socialaccount.signup.signInAndConnectExistinAcc" default="Sign in and connect your existing account." %}</a>
+        <a class="content-1 text-center action-link white" href="/account/login?next=/account/{{provider_slug}}/login?process=connect">{% trans_html "py.templates.socialaccount.signup.connectExistingAccount" default="Sign in and connect your existing account." %}</a>
     {%  endwith %}
 
 {% else %}
 
-    <p class='content-1 t-d-gray text-center mb-5'>{% trans_html "py.templates.socialaccount.signup.specificAccountToLogin" default="You are about to use your {provider_name} account to login to
-    {site_name}. As a final step, please complete the following form: "  arg_provider_name=account.get_provider.name arg_site_name=site.name %}</p>
+    <p class='content-1 t-d-gray text-center mb-5'>{% trans_html "py.templates.socialaccount.signup.specificAccountToLogin" default="You are about to use your {provider_name} account to login to {site_name}. As a final step, please complete the following form: "  arg_provider_name=account.get_provider.name arg_site_name=site.name %}</p>
 
     <form class="signup" id="signup_form" method="post" action="{% url 'socialaccount_signup' %}">
       {% csrf_token %}

@@ -1,2 +1,2 @@
 {% load i18n_icu %}
-{% trans_html "py.templates.socialaccount.messages.account_connected.hasBeenConnected" default="The social account has been connected." %}
+{% trans_html "py.templates.socialaccount.messages.account_connected.text" default="The social account has been connected." %}

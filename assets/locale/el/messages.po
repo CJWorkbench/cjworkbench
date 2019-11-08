@@ -621,35 +621,478 @@ msgstr ""
 msgid "py.forms.signup.lastName.placeholder"
 msgstr ""
 
+#: templates/403.html:5
+msgid "py.templates.403.title"
+msgstr ""
+
+#: templates/403.html:13
+msgid "py.templates.403.description"
+msgstr ""
+
+#: templates/403.html:14
+msgid "py.templates.403.goBack.link"
+msgstr ""
+
+#: templates/404.html:5
+msgid "py.templates.404.title"
+msgstr ""
+
+#: templates/404.html:13
+msgid "py.templates.404.description"
+msgstr ""
+
+#: templates/404.html:14
+msgid "py.templates.404.backToWorkspace.link"
+msgstr ""
+
+#: templates/_base.html:14
+msgid "py.templates._base.message"
+msgstr ""
+
+#: templates/_base.html:24
+msgid "py.templates._base.menu"
+msgstr ""
+
+#: templates/_base.html:27
+msgid "py.templates._base.changeMail"
+msgstr ""
+
+#: templates/_base.html:28
+msgid "py.templates._base.signOut"
+msgstr ""
+
+#: templates/_base.html:30
+msgid "py.templates._base.signIn"
+msgstr ""
+
+#: templates/_base.html:31
+msgid "py.templates._base.signUp"
+msgstr ""
+
+#: templates/course.html:4
+msgid "py.templates.course.workbenchTraining.title"
+msgstr ""
+
+#. This must be all-caps for styling reasons
+#: templates/course.html:15
+msgid "py.templates.course.tutorials.link"
+msgstr ""
+
+#: templates/embed_404.html:11
+msgid "py.templates.embed_404.notAvailable.header"
+msgstr ""
+
+#: templates/index.html:3
+msgid "py.templates.title"
+msgstr ""
+
+#: templates/minimum.html:7
+msgid "py.templates.minimum.title"
+msgstr ""
+
+#: templates/oauth_token_request_denied.html:5
+msgid "py.templates.oauth_token_request_denied.error.Title"
+msgstr ""
+
+#: templates/oauth_token_request_denied.html:11
+msgid "py.templates.oauth_token_request_denied.serverRefusedtoLogin"
+msgstr ""
+
+#: templates/oauth_token_request_denied.html:18
+msgid "py.templates.oauth_token_request_denied.contactus"
+msgstr ""
+
+#: templates/report.html:18
+msgid "py.templates.report.author"
+msgstr ""
+
+#: templates/report.html:19
+msgid "py.templates.report.updated"
+msgstr ""
+
+#: templates/report.html:21
+msgid "py.templates.report.sourceDataLink.link"
+msgstr ""
+
+#: templates/report.html:36
+msgid "py.templates.report.addChartsTitle"
+msgstr ""
+
+#: templates/workflow.html:5
+msgid "py.templates.workflow.title"
+msgstr ""
+
+#: templates/workflow.html:34
+msgid "py.templates.workflow.widerScreen"
+msgstr ""
+
+#: templates/workflow.html:35
+msgid "py.templates.workflow.minimumRequirement"
+msgstr ""
+
+#: templates/workflow.html:36
+msgid "py.templates.workflow.optimizedForbrowsers"
+msgstr ""
+
+#: templates/workflow.html:37
+msgid "py.templates.workflow.signupLink.link"
+msgstr ""
+
+#: templates/account/delete.html:5
+msgid "py.templates.account.delete.deleteAccount.header"
+msgstr ""
+
+#. The tag adds emphasis
+#: templates/account/delete.html:7
+msgid "py.templates.account.delete.accountDeletionExpungeHours"
+msgstr ""
+
+#: templates/account/delete.html:11
+msgid "py.templates.account.delete.deleteMyAccount"
+msgstr ""
+
+#: templates/account/email_confirm.html:5
+msgid "py.templates.account.email_confirm.confirmEmail.title"
+msgstr ""
+
+#: templates/account/email_confirm.html:9
+msgid "py.templates.account.email_confirm.confirmEmail"
+msgstr ""
+
+#: templates/account/email_confirm.html:13
+msgid "py.templates.account.email_confirm.confirm.button"
+msgstr ""
+
+#: templates/account/email_confirmation_sent.html:5
+msgid "py.templates.account.email_confirmation_sent.title"
+msgstr ""
+
+#: templates/account/email_confirmation_sent.html:8
+msgid "py.templates.account.email_confirmation_sent.header"
+msgstr ""
+
+#. The b0 tag adds emphasis. The a0 tag is a mailto link for the contactMail
+#: templates/account/email_confirmation_sent.html:10
+msgid "py.templates.account.email_confirmation_sent.verificationEmail"
+msgstr ""
+
+#: templates/account/email_confirmation_sent.html:11
+msgid "py.templates.account.email_confirmation_sent.goBack.link"
+msgstr ""
+
+#: templates/account/email_confirmed.html:5
+msgid "py.templates.account.email_confirmed.title"
+msgstr ""
+
+#: templates/account/email_confirmed.html:8
+msgid "py.templates.account.email_confirmed.emailConfirm.header"
+msgstr ""
+
+#. The tag adds emphasis
+#: templates/account/email_confirmed.html:9
+msgid "py.templates.account.email_confirmed.youConfirmeedEmail"
+msgstr ""
+
 #: templates/account/login.html:4 templates/account/login.html:10
-msgid "py.account.login.title"
+msgid "py.templates.account.login.title"
+msgstr ""
+
+#: templates/account/login.html:12
+msgid "accounts.sign_in.linkToSignUp"
 msgstr ""
 
 #: templates/account/login.html:43
-msgid "py.account.login.forgotPasswordPrompt"
+msgid "py.templates.account.login.forgotPasswordPrompt"
 msgstr ""
 
 #: templates/account/login.html:45
-msgid "py.account.login.submitButton"
+msgid "py.templates.account.login.submitButton"
 msgstr ""
 
-#: templates/account/signup.html:4
-msgid "py.account.signup.title"
+#: templates/account/logout.html:5
+msgid "py.templates.account.logout.title"
+msgstr ""
+
+#: templates/account/logout.html:9
+msgid "py.templates.account.logout.formHeader"
+msgstr ""
+
+#: templates/account/logout.html:12
+msgid "py.templates.account.logout.confirmation"
+msgstr ""
+
+#: templates/account/logout.html:13
+msgid "py.templates.account.logout.button"
+msgstr ""
+
+#: templates/account/password_change.html:5
+msgid "py.templates.account.password_change.title"
+msgstr ""
+
+#: templates/account/password_change.html:9
+msgid "py.templates.account.password_change.formHeader"
+msgstr ""
+
+#: templates/account/password_change.html:13
+msgid "py.templates.account.password_change.saveButton"
+msgstr ""
+
+#: templates/account/password_reset.html:6
+msgid "py.templates.account.password_reset.title"
+msgstr ""
+
+#: templates/account/password_reset.html:12
+msgid "py.templates.account.password_reset.formHeader"
+msgstr ""
+
+#: templates/account/password_reset.html:17
+msgid "py.templates.account.password_reset.sendMeinstructions.button"
+msgstr ""
+
+#: templates/account/password_reset.html:25
+msgid "py.templates.account.password_reset.backToLogIn.link"
+msgstr ""
+
+#: templates/account/password_reset_done.html:6
+msgid "py.templates.account.password_reset_done.title"
+msgstr ""
+
+#: templates/account/password_reset_done.html:9
+msgid "py.templates.account.password_reset_done.header"
+msgstr ""
+
+#: templates/account/password_reset_done.html:11
+msgid "py.templates.account.password_reset_done.checkYourEMail"
+msgstr ""
+
+#. The a0 tag is a mailto link to the email
+#: templates/account/password_reset_done.html:14
+msgid "py.templates.account.password_reset_done.weHaveResentThePass"
+msgstr ""
+
+#: templates/account/password_reset_done.html:16
+msgid "py.templates.account.password_reset_done.backToLogIn.link"
+msgstr ""
+
+#: templates/account/password_reset_from_key.html:4
+msgid "py.templates.account.password_reset_from_key.title"
+msgstr ""
+
+#: templates/account/password_reset_from_key.html:7
+msgid "py.templates.account.password_reset_from_key.invalidLink"
+msgstr ""
+
+#: templates/account/password_reset_from_key.html:7
+msgid "py.templates.account.password_reset_from_key.changePass"
+msgstr ""
+
+#. The a0 tag is a url to another page
+#: templates/account/password_reset_from_key.html:10
+msgid "py.templates.account.password_reset_from_key.notValidAnymore"
+msgstr ""
+
+#: templates/account/password_reset_from_key.html:20
+msgid "account.password_reset_from_key.input.changePassword.placeholder"
+msgstr ""
+
+#: templates/account/password_reset_from_key.html:24
+msgid "py.templates.account.password_reset_from_key.newPassIsSet"
+msgstr ""
+
+#: templates/account/password_reset_from_key_done.html:4
+msgid "py.templates.account.password_reset_from_key_done.title"
+msgstr ""
+
+#: templates/account/password_reset_from_key_done.html:7
+msgid "py.templates.account.password_reset_from_key_done.description"
+msgstr ""
+
+#: templates/account/password_reset_from_key_done.html:9
+msgid "py.templates.account.password_reset_from_key_done.backToLogIn.link"
+msgstr ""
+
+#: templates/account/settings.html:6
+msgid "py.templates.account.settings.title"
+msgstr ""
+
+#: templates/account/settings.html:10
+msgid "py.templates.account.settings.header"
+msgstr ""
+
+#: templates/account/settings.html:13
+msgid "py.templates.account.settings.saveButton"
+msgstr ""
+
+#. default-message: Signup
+#: templates/account/signup.html:4 templates/account/signup.html:10
+msgid "py.templates.account.signup.title"
 msgstr ""
 
 #: templates/account/signup.html:12
-msgid "py.account.signup.signIn"
+msgid "py.templates.account.signup.linkToSignIn"
 msgstr ""
 
+#. The a0 tag is a link to the login page
 #: templates/account/signup.html:26
-msgid "py.account.signup.loginPrompt"
+msgid "py.templates.account.signup.loginPrompt"
+msgstr ""
+
+#: templates/account/signup.html:44
+msgid "py.templates.account.signup.sendMeNews.label"
+msgstr ""
+
+#. The tags are urls to the respective pages
+#: templates/account/signup.html:51
+msgid "py.templates.account.signup.agreeToWorkbench"
+msgstr ""
+
+#: templates/account/signup.html:53
+msgid "py.templates.account.signup.registerButton"
+msgstr ""
+
+#: templates/account/verification_sent.html:5
+msgid "py.templates.account.verification_sent.title"
+msgstr ""
+
+#: templates/account/verification_sent.html:8
+msgid "py.templates.account.verification_sent.header"
+msgstr ""
+
+#: templates/account/verification_sent.html:9
+msgid "py.templates.account.verification_sent.description"
+msgstr ""
+
+#: templates/account/verification_sent.html:10
+msgid "py.templates.account.verification_sent.backToLogIn.link"
+msgstr ""
+
+#: templates/account/email/email_confirmation_message.txt:5
+msgid "py.templates.account.email.email_confirmation_message.confirmYourEmail"
+msgstr ""
+
+#: templates/account/email/email_confirmation_subject.txt:3
+msgid "py.templates.account.email.email_confirmation_subject.pleaseConfirmEmailaddress"
+msgstr ""
+
+#: templates/account/email/password_reset_key_message.txt:1
+msgid "py.templates.account.email.password_reset_key_message.passwordRequest"
+msgstr ""
+
+#: templates/account/email/password_reset_key_message.txt:5
+msgid "py.templates.account.email.password_reset_key_message.forgotUsername"
 msgstr ""
 
 #: templates/account/email/password_reset_key_subject.txt:3
-msgid "py.account.email.password_reset_key_subject"
+msgid "py.templates.account.email.password_reset_key_subject"
+msgstr ""
+
+#. The tag is a url
+#: templates/notifications/new_data_version.txt:2
+msgid "py.templates.notifications.new_data_version.workflowHasBeenUpdated"
 msgstr ""
 
 #: templates/notifications/new_data_version_subject.txt:3
-msgid "py.notifications.new_data_version_subject"
+msgid "py.templates.notifications.new_data_version_subject"
+msgstr ""
+
+#: templates/openid/login.html:5
+msgid "py.templates.openid.login.title"
+msgstr ""
+
+#: templates/openid/login.html:9
+msgid "py.templates.openid.login.header"
+msgstr ""
+
+#: templates/openid/login.html:15
+msgid "py.templates.openid.login.signInButton"
+msgstr ""
+
+#: templates/socialaccount/authentication_error.html:5
+msgid "py.templates.socialaccount.authentication_error.title"
+msgstr ""
+
+#: templates/socialaccount/authentication_error.html:8
+msgid "py.templates.socialaccount.authentication_error.header"
+msgstr ""
+
+#: templates/socialaccount/authentication_error.html:10
+msgid "py.templates.socialaccount.authentication_error.description"
+msgstr ""
+
+#: templates/socialaccount/connections.html:5
+msgid "py.templates.socialaccount.connections.title"
+msgstr ""
+
+#: templates/socialaccount/connections.html:10
+msgid "py.templates.socialaccount.connections.accountLinked"
+msgstr ""
+
+#: templates/socialaccount/connections.html:12
+msgid "py.templates.socialaccount.connections.signInLink"
+msgstr ""
+
+#: templates/socialaccount/connections.html:16
+msgid "py.templates.socialaccount.connections.removeLinkedAccount"
+msgstr ""
+
+#: templates/socialaccount/connections.html:41
+msgid "py.templates.socialaccount.connections.removeButton"
+msgstr ""
+
+#: templates/socialaccount/connections.html:49
+msgid "py.templates.socialaccount.connections.noSocialAccounts"
+msgstr ""
+
+#: templates/socialaccount/connections.html:52
+msgid "py.templates.socialaccount.connections.addAnotherAccount"
+msgstr ""
+
+#: templates/socialaccount/login_cancelled.html:5
+msgid "py.templates.socialaccount.login_cancelled.title"
+msgstr ""
+
+#: templates/socialaccount/login_cancelled.html:9
+msgid "py.templates.socialaccount.login_cancelled.header"
+msgstr ""
+
+#. The tag is a link to the login page
+#: templates/socialaccount/login_cancelled.html:13
+msgid "py.templates.socialaccount.login_cancelled.youDecidedToCancelLogging"
+msgstr ""
+
+#: templates/socialaccount/signup.html:5
+msgid "py.templates.socialaccount.signup.title"
+msgstr ""
+
+#: templates/socialaccount/signup.html:17
+msgid "py.templates.socialaccount.signup.thereIsAlreadyAccount"
+msgstr ""
+
+#: templates/socialaccount/signup.html:19
+msgid "py.templates.socialaccount.signup.connectExistingAccount"
+msgstr ""
+
+#: templates/socialaccount/signup.html:24
+msgid "py.templates.socialaccount.signup.specificAccountToLogin"
+msgstr ""
+
+#: templates/socialaccount/signup.html:32
+msgid "py.templates.socialaccount.signup.button"
+msgstr ""
+
+#: templates/socialaccount/messages/account_connected.txt:2
+msgid "py.templates.socialaccount.messages.account_connected.text"
+msgstr ""
+
+#: templates/socialaccount/messages/account_connected_other.txt:2
+msgid "py.templates.socialaccount.messages.account_connected_other.text"
+msgstr ""
+
+#: templates/socialaccount/messages/account_disconnected.txt:2
+msgid "py.templates.socialaccount.messages.account_disconnected.text"
+msgstr ""
+
+#: templates/socialaccount/snippets/provider_list.html:22
+msgid "py.templates.socialaccount.snippets.provider_list.useAccount"
 msgstr ""
 
