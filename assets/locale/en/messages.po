@@ -632,34 +632,34 @@ msgid "py.forms.signup.lastName.placeholder"
 msgstr "Last name"
 
 #: templates/account/login.html:4 templates/account/login.html:10
-msgid "py.account.login.title"
+msgid "py.templates.account.login.title"
 msgstr "Sign in"
 
 #: templates/account/login.html:43
-msgid "py.account.login.forgotPasswordPrompt"
+msgid "py.templates.account.login.forgotPasswordPrompt"
 msgstr "Forgot Password?"
 
 #: templates/account/login.html:45
-msgid "py.account.login.submitButton"
+msgid "py.templates.account.login.submitButton"
 msgstr "Sign In"
 
 #: templates/account/signup.html:4
-msgid "py.account.signup.title"
+msgid "py.templates.account.signup.title"
 msgstr "Sign Up"
 
 #: templates/account/signup.html:12
-msgid "py.account.signup.signIn"
+msgid "py.templates.account.signup.signIn"
 msgstr "Sign in"
 
 #: templates/account/signup.html:26
-msgid "py.account.signup.loginPrompt"
+msgid "py.templates.account.signup.loginPrompt"
 msgstr "If you have already created an account, then please <a0>log in</a0>."
 
 #: templates/account/email/password_reset_key_subject.txt:3
-msgid "py.account.email.password_reset_key_subject"
+msgid "py.templates.account.email.password_reset_key_subject"
 msgstr "Password Reset E-mail"
 
 #: templates/notifications/new_data_version_subject.txt:3
-msgid "py.notifications.new_data_version_subject"
+msgid "py.templates.notifications.new_data_version_subject"
 msgstr "New data available in {workflow_name}"
 
