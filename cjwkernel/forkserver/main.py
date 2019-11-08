@@ -6,6 +6,7 @@ from pathlib import Path
 import shutil
 import signal
 import socket
+import struct
 import traceback
 from typing import Callable
 from . import protocol
@@ -18,12 +19,15 @@ libcap.cap_set_proc.argtypes = [ctypes.c_void_p]
 libcap.cap_free.argtypes = [ctypes.c_void_p]
 # <linux/prctl.h>
 PR_SET_NAME = 15
+PR_SET_SECCOMP = 22
 PR_CAPBSET_DROP = 24
 PR_SET_SECUREBITS = 28
 PR_SET_NO_NEW_PRIVS = 38
 # <linux/capability.h>
 CAP_SETPCAP = 8
 CAP_LAST_CAP = 37
+# <linux/seccomp.h>
+SECCOMP_MODE_FILTER = 2
 # <linux/securebits.h>
 SECBIT_KEEP_CAPS_LOCKED = 1 << 5
 SECBIT_NO_SETUID_FIXUP = 1 << 2
@@ -126,6 +130,7 @@ def _sandbox_module():
     [x] Close stdout/stderr (so modules do not flood logs; point
         stdout/stderr to `message.log_fd` instead)
     [x] Drop capabilities (like CAP_SYS_ADMIN)
+    [ ] Set seccomp filter
     [x] Setuid to 1000
     [x] Use chroot (so modules can't see other processes)
     """
@@ -141,6 +146,9 @@ def _sandbox_module():
     os.read(is_uidmap_written_read_fd, 1)
     os.close(is_uidmap_written_read_fd)
 
+    # Read seccomp data before we chroot().
+    seccomp_bpf_bytes = Path(__file__).with_name("sandbox-seccomp.bpf").read_bytes()
+
     _sandbox_stdout_stderr()
     if _should_sandbox("no_new_privs"):
         _sandbox_no_new_privs()
@@ -150,6 +158,8 @@ def _sandbox_module():
         _sandbox_setuid()
     if _should_sandbox("drop_capabilities"):
         _sandbox_drop_capabilities()
+    if _should_sandbox("seccomp"):
+        _sandbox_seccomp(seccomp_bpf_bytes)
 
 
 def _sandbox_stdout_stderr():
@@ -292,6 +302,58 @@ def _sandbox_no_new_privs():
     Prevent a setuid bit on a file from restoring capabilities.
     """
     _call_c(libc, "prctl", PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0)
+
+
+def _sandbox_seccomp(bpf_bytes):
+    """
+    Install a whitelist filter to prevent unwanted syscalls.
+
+    Why call this? Two reasons:
+
+    1. Redundancy: if there's a Linux bug, there's a good chance our seccomp
+       filter may prevent an attacker from exploiting it.
+    2. Speculative execution: seccomp implicitly prevents _all_ syscalls from
+       exploiting Spectre-type CPU security bypasses.
+
+    Docker comes with seccomp by default, making seccomp mostly redundant. But
+    Kubernetes 1.14 still doesn't use seccomp, and [2019-11-07] that's what we
+    use on prod.
+
+    To maintain our whitelist, read `docker/seccomp/README.md`. The compiled
+    file, for x86-64, belongs in `cjwkernel/forkserver/sandbox-seccomp.bpf`.
+
+    Requires `no_new_privs` sandbox (or CAP_SYS_ADMIN).
+    """
+    # seccomp arg must be a pointer to:
+    #
+    # struct sock_fprog {
+    #     unsigned short len; /* Number of filter blocks */
+    #     struct sock_filter* filter;
+    # }
+    #
+    # ... and we'll emulate that with raw bytes.
+    #
+    # Our seccomp.bpf file contains the bytes for `filter`. Calculate `len`.
+    # (We call it `n_blocks` because `len` is taken in Python.)
+    #
+    # Each filter is:
+    #
+    # struct sock_filter {	/* Filter block */
+    # 	__u16	code;   /* Actual filter code */
+    # 	__u8	jt;	/* Jump true */
+    # 	__u8	jf;	/* Jump false */
+    # 	__u32	k;      /* Generic multiuse field */
+    # };
+    #
+    # ... for a total of 8 bytes (64 bits) per filter.
+
+    n_blocks = len(bpf_bytes) // 8
+
+    # Pack a sock_fprog struct. With a pointer in it.
+    bpf_buf = ctypes.create_string_buffer(bpf_bytes)
+    sock_fprog = struct.pack("HL", n_blocks, ctypes.addressof(bpf_buf))
+
+    _call_c(libc, "prctl", PR_SET_SECCOMP, SECCOMP_MODE_FILTER, sock_fprog, 0, 0)
 
 
 def _sandbox_setuid():

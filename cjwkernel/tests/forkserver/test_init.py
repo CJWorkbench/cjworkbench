@@ -297,7 +297,12 @@ class ForkserverTest(unittest.TestCase):
         )
 
     def test_SECURITY_setuid(self):
-        # The user is not root
+        # The user is cannot setuid(0) because UID 1000 has no capabilities
+        #
+        # This tests setuid and drop_capabilities sandbox features. See also
+        # test_SECURITY_seccomp(), which overrides this one. (On production,
+        # seccomp will kill -31 the process; the kernel will never get a chance
+        # to set EPERM.)
         self._spawn_and_communicate_or_raise(
             r"""
             import os
@@ -314,6 +319,22 @@ class ForkserverTest(unittest.TestCase):
             chroot_dir=self.chroot_dir,
             skip_sandbox_except=frozenset(["setuid", "drop_capabilities"]),
         )
+
+    def test_SECURITY_seccomp(self):
+        # The user cannot call forbidden syscalls.
+        #
+        # We test setuid() because it's an obvious one. See also
+        # test_SECURITY_setuid(), which tests that seccomp is not the only
+        # thing protecting us from setuid.
+        exitcode, stdout, stderr = self._spawn_and_communicate(
+            r"""
+            import os
+            os.setuid(2)
+            """,
+            chroot_dir=self.chroot_dir,
+            skip_sandbox_except=frozenset(["seccomp", "no_new_privs"]),
+        )
+        self.assertEqual(exitcode, -31)
 
     def test_SECURITY_no_new_privs(self):
         # The user cannot use a setuid program to become root
