@@ -14,7 +14,7 @@ function LessonCourse ({ localeId, course }) {
   let title
 
   if (course) {
-    path = `/courses/${course.locale_id}/${course.slug}`
+    path = `/courses/${course.localeId}/${course.slug}`
     title = course.title
   } else {
     path = `/lessons/${localeId}`
@@ -31,7 +31,7 @@ function LessonCourse ({ localeId, course }) {
 function LessonWorkflowTitle ({ lesson }) {
   return (
     <div className='title-metadata-stack'>
-      <LessonCourse localeId={lesson.locale_id} course={lesson.course} />
+      <LessonCourse localeId={lesson.localeId} course={lesson.course} />
       <EditableWorkflowName
         value={lesson.header.title}
         setWorkflowName={NoOp}

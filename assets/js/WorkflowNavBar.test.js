@@ -24,7 +24,7 @@ describe('WorkflowNavBar', () => {
 
     const lesson = {
       course: null,
-      locale_id: 'en',
+      localeId: 'en',
       header: { title: 'A Lesson' }
     }
 
@@ -56,7 +56,7 @@ describe('WorkflowNavBar', () => {
       course: {
         title: 'A Course',
         slug: 'a-course',
-        locale_id: 'en'
+        localeId: 'en'
       },
       header: { title: 'A Lesson' }
     }
