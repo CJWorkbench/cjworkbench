@@ -10,15 +10,15 @@ import { withI18n } from '@lingui/react'
 
 function NoOp () {}
 
-function LessonCourse ({ course }) {
+function LessonCourse ({ localeId, course }) {
   let path
   let title
 
   if (course) {
-    path = '/courses/' + course.slug
+    path = `/courses/${course.localeId}/${course.slug}`
     title = course.title
   } else {
-    path = '/lessons'
+    path = `/lessons/${localeId}`
     title = 'Training'
   }
 
@@ -32,7 +32,7 @@ function LessonCourse ({ course }) {
 function LessonWorkflowTitle ({ lesson }) {
   return (
     <div className='title-metadata-stack'>
-      <LessonCourse course={lesson.course} />
+      <LessonCourse localeId={lesson.localeId} course={lesson.course} />
       <EditableWorkflowName
         value={lesson.header.title}
         setWorkflowName={NoOp}

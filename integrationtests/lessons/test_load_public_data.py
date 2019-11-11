@@ -2,7 +2,7 @@ from integrationtests.lessons import LessonTest
 import time
 
 DataUrl = (
-    "http://minio:9000/integrationtest-static/lessons/load-public-data"
+    "http://minio:9000/integrationtest-static/lessons/en/load-public-data"
     "/affordable_housing_1.csv"
 )
 
