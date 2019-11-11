@@ -9,6 +9,7 @@ import { deleteModuleAction, moveModuleAction } from '../workflow-reducer'
 import { scrollTo } from '../utils'
 import { connect } from 'react-redux'
 import lessonSelector from '../lessons/lessonSelector'
+import { Trans } from '@lingui/macro'
 
 class ModuleDropSpot extends React.PureComponent {
   static propTypes = {
@@ -134,7 +135,7 @@ class ModuleStackInsertSpot extends React.PureComponent {
 function EmptyReadOnlyModuleStack () {
   return (
     <div className='empty-read-only'>
-      This Tab has no Steps.
+      <Trans id='js.WorkflowEditor.ModuleStack.EmptyReadOnlyModuleStack'>This Tab has no Steps.</Trans>
     </div>
   )
 }

@@ -1,7 +1,7 @@
 /* globals describe, expect, it, jest */
 import React from 'react'
 import { Provider } from 'react-redux'
-import { mount } from 'enzyme'
+import { mountWithI18n } from '../i18n/test-utils'
 import { mockStore, tick } from '../test-utils'
 import DataGrid from './DataGrid'
 
@@ -49,7 +49,7 @@ describe('DataGrid', () => {
 
     const nRows = httpResponses.reduce((s, j) => s + j.rows.length, 0)
 
-    const ret = mount(
+    const ret = mountWithI18n(
       <Provider store={store}>
         <DataGrid
           loadRows={defaultLoadRows}

@@ -5,6 +5,7 @@ import memoize from 'memoize-one'
 import { setDataVersionAction, setWfModuleNotificationsAction } from '../workflow-reducer'
 import { connect } from 'react-redux'
 import { createSelector } from 'reselect'
+import { Trans } from '@lingui/macro'
 
 const Months = [
   // AP style
@@ -126,18 +127,23 @@ class NotificationsForm extends React.PureComponent {
     return (
       <form onSubmit={this.handleSubmit} className={`notifications ${className}`}>
         <div className='text'>
-          <p className='status'><i className={`icon ${iconAlert}`} /> Alerts are <strong>{checked ? ' on' : ' off'}</strong></p>
-          <p className='description'>{checked ? (
-            'You will receive and email if the output of this module changes'
-          ) : (
-            'Turn alerts ON to receive an email if the output of this module changes'
-          )}
+          <p className='status'><i className={`icon ${iconAlert}`} />{
+            checked
+              ? <Trans id='js.WorkflowEditor.DataVersionModal.NotificationsForm.status.alertsOn' description='The tag adds emphasis'>Alerts are <strong>on</strong></Trans>
+              : <Trans id='js.WorkflowEditor.DataVersionModal.NotificationsForm.status.alertsOff' description='The tag adds emphasis'>Alerts are <strong>off</strong></Trans>
+          }
+          </p>
+          <p className='description'>{
+            checked
+              ? <Trans id='js.WorkflowEditor.DataVersionModal.NotificationsForm.description.emailOnOutputChange'>You will receive and email if the output of this module changes</Trans>
+              : <Trans id='js.WorkflowEditor.DataVersionModal.NotificationsForm.description.turnAlertsOn'>Turn alerts ON to receive an email if the output of this module changes</Trans>
+          }
           </p>
         </div>
         <div className='options'>
           <label>
             <input name='notifications-enabled' type='checkbox' checked={checked} onChange={this.handleChange} />
-            <span className='action'>{checked ? 'Turn off' : 'Turn on'}</span>
+            <span className='action'>{checked ? <Trans id='js.WorkflowEditor.DataVersionModal.NotificationsForm.options.turnOff'>Turn off</Trans> : <Trans id='js.WorkflowEditor.DataVersionModal.NotificationsForm.options.turnOn'>Turn on</Trans>}</span>
           </label>
         </div>
       </form>

@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import ExportModal from '../ExportModal'
 import SelectedRowsActions from './SelectedRowsActions'
+import { Trans } from '@lingui/macro'
 
 const numberFormat = new Intl.NumberFormat('en-US')
 
@@ -37,11 +38,11 @@ export default class TableInfo extends React.PureComponent {
       <div className='outputpane-header'>
         <div className='table-info-container'>
           <div className='table-info'>
-            <div className='data'>Rows</div>
+            <div className='data'>{<Trans id='js.table.TableInfo.rows'>Rows</Trans>}</div>
             <div className='value'>{nRowsString}</div>
           </div>
           <div className='table-info'>
-            <div className='data'>Columns</div>
+            <div className='data'>{<Trans id='js.table.TableInfo.columns'>Columns</Trans>}</div>
             <div className='value'>{nColumnsString}</div>
           </div>
           {isReadOnly ? null : (

@@ -1,7 +1,17 @@
 import React from 'react'
 import { escapeHtml, timeDifference } from './utils'
+import { withI18n } from '@lingui/react'
+import { t, Trans } from '@lingui/macro'
+import PropTypes from 'prop-types'
 
-export default class Embed extends React.Component {
+export class Embed extends React.Component {
+  static propTypes = {
+    i18n: PropTypes.shape({
+      // i18n object injected by LinguiJS withI18n()
+      _: PropTypes.func.isRequired
+    })
+  }
+
   state = {
     overlayOpen: false
   }
@@ -16,14 +26,18 @@ export default class Embed extends React.Component {
     return (
       <div className='embed-wrapper'>
         <div className='embed-not-available'>
-          <h1>This workflow is not available</h1>
+          <h1><Trans id='js.Embed.workflowNotAvailable.title'>This workflow is not available</Trans></h1>
         </div>
         <div className='embed-footer'>
           <div className='embed-footer-logo'>
             <img src={`${window.STATIC_URL}images/logo.png`} width='21' />
           </div>
           <div className='embed-footer-meta'>
-            <h1>WORKBENCH</h1>
+            <h1>
+              <Trans id='js.Embed.workflowNotAvailable.footer.logo' description='This should be all-caps for styling reasons'>
+                    WORKBENCH
+              </Trans>
+            </h1>
           </div>
           <div className='embed-footer-button'>
             <i className='icon icon-share' />
@@ -64,7 +78,10 @@ export default class Embed extends React.Component {
                   </li>
                   <li>
                     <a href={'/workflows/' + this.props.workflow.id} target='_blank' rel='noopener noreferrer'>
-                    Updated {timeDifference(this.props.workflow.last_update, new Date())}
+                      {this.props.i18n._(
+                        /* i18n: The parameter will contain a time difference (i.e. something like '4h ago') */
+                        t('js.Embed.metadata.updated')`Updated ${timeDifference(this.props.workflow.last_update, new Date(), this.props.i18n)}`
+                      )}
                     </a>
                   </li>
                 </ul>
@@ -77,8 +94,8 @@ export default class Embed extends React.Component {
         </div>
         <div className={'embed-overlay' + (this.state.overlayOpen ? ' open' : '')} onClick={this.handleToggleOverlay}>
           <div className='embed-share-links' onClick={(e) => { e.stopPropagation() }}>
-            <h1>EMBED THIS CHART</h1>
-            <h2>Paste this code into any webpage HTML</h2>
+            <h1><Trans id='js.Embed.embedThisChart' description='This should be all-caps for styling reasons'>EMBED THIS CHART</Trans></h1>
+            <h2><Trans id='js.Embed.embedCode'>Paste this code into any webpage HTML</Trans></h2>
             <div className='code-snippet'>
               <code className='embed--share-code'>
                 {iframeCode}
@@ -90,3 +107,4 @@ export default class Embed extends React.Component {
     )
   }
 }
+export default withI18n()(Embed)

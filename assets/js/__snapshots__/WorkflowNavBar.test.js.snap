@@ -31,7 +31,7 @@ exports[`WorkflowNavBar should duplicate the workflow when user is logged in and
       <div
         className="nav-buttons"
       >
-        <UndoRedoButtons
+        <WithI18n
           redo={[Function]}
           undo={[Function]}
         />
@@ -41,10 +41,10 @@ exports[`WorkflowNavBar should duplicate the workflow when user is logged in and
         >
           Duplicate
         </button>
-        <ShareButton>
+        <WithI18n>
           Share
-        </ShareButton>
-        <WfHamburgerMenu
+        </WithI18n>
+        <WithI18n
           api={
             Object {
               "duplicateWorkflow": [MockFunction],
@@ -95,7 +95,7 @@ exports[`WorkflowNavBar should redirect to sign-in page when user clicks duplica
       <div
         className="nav-buttons"
       >
-        <UndoRedoButtons
+        <WithI18n
           redo={[Function]}
           undo={[Function]}
         />
@@ -105,9 +105,9 @@ exports[`WorkflowNavBar should redirect to sign-in page when user clicks duplica
         >
           Duplicate
         </button>
-        <ShareButton>
+        <WithI18n>
           Share
-        </ShareButton>
+        </WithI18n>
         <a
           className="nav--link"
           href="/account/login"

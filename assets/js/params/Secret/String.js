@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { MaybeLabel } from '../util'
 import { timeDifference } from '../../utils'
+import { withI18n } from '@lingui/react'
 
 /**
  * Prompt the user to enter a string: show a <label>, <input>, <button> and <p className='help'>.
@@ -67,7 +68,7 @@ function StringPrompt ({ isReadOnly, label, name, fieldId, placeholder, pattern,
   )
 }
 
-function StringDisplay ({ isReadOnly, secretMetadata, label, name, fieldId, deleteSecret }) {
+function StringDisplay ({ i18n, isReadOnly, secretMetadata, label, name, fieldId, deleteSecret }) {
   const [isSubmitted, setSubmitted] = React.useState(false)
   const handleSubmit = React.useCallback(() => {
     deleteSecret(name)
@@ -80,7 +81,7 @@ function StringDisplay ({ isReadOnly, secretMetadata, label, name, fieldId, dele
     <>
       <MaybeLabel fieldId={fieldId} label={label} />
       <div className='secret-string-display'>
-        <time dateTime={createdAt}>(Secret, saved {timeDifference(Date.parse(createdAt), new Date())})</time>
+        <time dateTime={createdAt}>(Secret, saved {timeDifference(Date.parse(createdAt), new Date(), i18n)})</time>
         {!isReadOnly ? (
           <button
             type='button'
@@ -96,10 +97,11 @@ function StringDisplay ({ isReadOnly, secretMetadata, label, name, fieldId, dele
   )
 }
 
-const String_ = React.memo(function String_ ({ secretMetadata, isReadOnly, name, fieldId, secretLogic: { label, placeholder, pattern, help, helpUrl, helpUrlPrompt }, submitSecret, deleteSecret }) {
+const String_ = React.memo(withI18n()(function String_ ({ i18n, secretMetadata, isReadOnly, name, fieldId, secretLogic: { label, placeholder, pattern, help, helpUrl, helpUrlPrompt }, submitSecret, deleteSecret }) {
   if (secretMetadata) {
     return (
       <StringDisplay
+        i18n={i18n}
         isReadOnly={isReadOnly}
         secretMetadata={secretMetadata}
         label={label}
@@ -124,7 +126,7 @@ const String_ = React.memo(function String_ ({ secretMetadata, isReadOnly, name,
       />
     )
   }
-})
+}))
 String_.propTypes = {
   isReadOnly: PropTypes.bool.isRequired,
   name: PropTypes.string.isRequired, // <input name=...>

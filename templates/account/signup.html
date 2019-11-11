@@ -1,7 +1,7 @@
 {% extends "account/base.html" %}
 {% load account socialaccount i18n_icu %}
 
-{% block title %}{% trans_html "accounts.sign_up.title" default="Sign Up" %}{% endblock %}
+{% block title %}{% trans_html "py.templates.account.signup.title" default="Sign Up" %}{% endblock %}
 
 {% block content %}
 
@@ -9,7 +9,7 @@
     <div class="mt-3 mb-5">
         <div class='title-1 t-d-gray text-center'>Signup</div>
           <div class='switch mt-1 d-flex justify-content-center'>
-              <a href="/account/login" class='t-white-u content-2'>{% trans_html "accounts.sign_in.title" default="Sign in" %}</a>
+              <a href="/account/login" class='t-white-u content-2'>{% trans_html "py.templates.account.signup.signIn" default="Sign in" %}</a>
           </div>
     </div>
 
@@ -23,7 +23,7 @@
       {% include "socialaccount/snippets/login_extra.html" %}
     {% else %}
       <p>
-        {% trans_html "accounts.sign_up.login_prompt" default='If you have already created an account, then please <a0>log in</a0>.' tag_a0_href=login_url %}
+        {% trans_html "py.templates.account.signup.loginPrompt" default='If you have already created an account, then please <a0>log in</a0>.' tag_a0_href=login_url %}
       </p>
     {% endif %}
 

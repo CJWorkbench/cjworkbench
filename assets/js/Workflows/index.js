@@ -9,9 +9,15 @@ import { logUserEvent } from '../utils'
 import CreateWorkflowButton from './CreateWorkflowButton'
 import WorkflowLists from './WorkflowLists'
 import { WorkflowListPropType } from './WorkflowList'
+import { t } from '@lingui/macro'
+import { withI18n } from '@lingui/react'
 
-export default class Workflows extends React.Component {
+export class Workflows extends React.Component {
   static propTypes = {
+    i18n: PropTypes.shape({
+      // i18n object injected by LinguiJS withI18n()
+      _: PropTypes.func.isRequired
+    }),
     api: PropTypes.shape({
       deleteWorkflow: PropTypes.func.isRequired, // func(id) => Promise[null]
       duplicateWorkflow: PropTypes.func.isRequired // func(id) => Promise[{ id, name }]
@@ -86,7 +92,7 @@ export default class Workflows extends React.Component {
     const tabName = this.workflowIdToTabName(workflowId)
     if (!tabName) return
 
-    if (!confirm('Permanently delete this workflow?')) return
+    if (!confirm(this.props.i18n._(t('js.Workflows.delete.permanentyDeleteWarning')`Permanently delete this workflow?`))) return
 
     this.props.api.deleteWorkflow(workflowId)
       .then(() => {
@@ -178,23 +184,23 @@ export default class Workflows extends React.Component {
 
   render () {
     const { workflows } = this.state
-    const { user } = this.props
+    const { user, i18n } = this.props
 
     return (
       <div className='workflows-page'>
         <Navbar user={user} />
         <a href='/lessons/' className='lesson-banner mx-auto'>
           <div>
-            <div className='content-1'>NEW</div>
+            <div className='content-1'>{i18n._(/* i18n: This should be all-caps for styling reasons */t('js.Workflows.new')`NEW`)}</div>
             <div className='d-flex'>
               <span className='icon-star' />
-              <div className=' title-1 '>TRAINING</div>
+              <div className=' title-1 '>{i18n._(/* i18n: This should be all-caps for styling reasons */t('js.Workflows.training.title')`TRAINING`)}</div>
             </div>
           </div>
-          <p>Learn how to work with data without coding</p>
+          <p>{i18n._(t('js.Workflows.learnHowToWorkWithData')`Learn how to work with data without coding`)}</p>
         </a>
         <CreateWorkflowButton>
-          Create Workflow
+          {i18n._(t('js.Workflows.createWorkflowButton')`Create Workflow`)}
         </CreateWorkflowButton>
         <WorkflowLists
           workflows={workflows}
@@ -207,3 +213,5 @@ export default class Workflows extends React.Component {
     )
   }
 }
+
+export default withI18n()(Workflows)

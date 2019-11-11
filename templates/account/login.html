@@ -1,13 +1,13 @@
 {% extends "account/base.html" %}
 {% load account socialaccount i18n_icu %}
 
-{% block title %}{% trans_html "accounts.sign_in.title" default="Sign in" %}{% endblock %}
+{% block title %}{% trans_html "py.templates.account.login.title" default="Sign in" %}{% endblock %}
 
 {% block content %}
 
     <form class="account_form login" autocapitalize="off" method="POST" action="{% url 'account_login' %}">
         <div class="mt-3 mb-5">
-            <div class='sign-in'>{% trans_html "accounts.sign_in.title" default="Sign in" %}</div>
+            <div class='sign-in'>{% trans_html "py.templates.account.login.title" default="Sign in" %}</div>
               <div class='switch mt-1 d-flex justify-content-center'>
                   <a href="/account/signup">Sign up</a>
               </div>
@@ -40,8 +40,8 @@
         {% endif %}
 
         <div class='text-center mb-4'>
-            <a class="content-1 t-white-u mx-auto" href="{% url 'account_reset_password' %}">{% trans_html "accounts.sign_in.forgot_password_prompt" default="Forgot Password?" %}</a>
+            <a class="content-1 t-white-u mx-auto" href="{% url 'account_reset_password' %}">{% trans_html "py.templates.account.login.forgotPasswordPrompt" default="Forgot Password?" %}</a>
         </div>
-        <button class="button-white--fill action-button mx-auto mt-2 mb-3" type="submit">{% trans_html "accounts.sign_in.button" default="Sign In" %}</button>
+        <button class="button-white--fill action-button mx-auto mt-2 mb-3" type="submit">{% trans_html "py.templates.account.login.submitButton" default="Sign In" %}</button>
     </form>
 {% endblock %}

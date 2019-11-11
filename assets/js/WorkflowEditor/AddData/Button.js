@@ -3,6 +3,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import PropTypes from 'prop-types'
 import Modal from './Modal'
+import { Trans } from '@lingui/macro'
 
 const Button = React.memo(function Button ({ tabSlug, isLessonHighlight, paneRef }) {
   const [isOpen, setOpen] = React.useState(false)
@@ -21,7 +22,9 @@ const Button = React.memo(function Button ({ tabSlug, isLessonHighlight, paneRef
     <div className='add-data-button'>
       <button type='button' onClick={open}>
         <i className='icon-add' />{' '}
-        <span>ADD DATA</span>
+        <span>
+          <Trans id='js.WorkflowEditor.AddData.button' description='This should be all-caps for styling reasons'>ADD DATA</Trans>
+        </span>
       </button>
       {isOpen && paneRef.current ? ReactDOM.createPortal((
         <Modal

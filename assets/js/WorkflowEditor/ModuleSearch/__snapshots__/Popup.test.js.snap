@@ -3,6 +3,32 @@
 exports[`ModuleSearch Popup matches snapshot 1`] = `
 <Popup
   addModule={[MockFunction]}
+  i18n={
+    Object {
+      "_": [Function],
+      "_activeLanguageData": Object {
+        "plurals": [Function],
+      },
+      "_activeMessages": Object {},
+      "_catalogs": Object {
+        "en": Object {
+          "languageData": Object {},
+          "messages": Object {},
+        },
+      },
+      "_dev": Object {
+        "compile": [Function],
+        "loadLanguageData": [Function],
+      },
+      "_language": "en",
+      "_locales": undefined,
+      "_missing": undefined,
+      "plural": [Function],
+      "select": [Function],
+      "selectOrdinal": [Function],
+      "t": [Function],
+    }
+  }
   index={2}
   isLessonHighlight={false}
   modules={
@@ -34,36 +60,73 @@ exports[`ModuleSearch Popup matches snapshot 1`] = `
   <div
     className="module-search-popup"
   >
-    <Prompt
+    <WithI18n
       cancel={[MockFunction]}
       onChange={[Function]}
       value=""
     >
-      <form
-        className="module-search-field"
-        onReset={[MockFunction]}
-        onSubmit={[Function]}
+      <I18n
+        update={true}
+        withHash={true}
       >
-        <input
-          autoComplete="off"
-          name="moduleQ"
+        <Prompt
+          cancel={[MockFunction]}
+          i18n={
+            Object {
+              "_": [Function],
+              "_activeLanguageData": Object {
+                "plurals": [Function],
+              },
+              "_activeMessages": Object {},
+              "_catalogs": Object {
+                "en": Object {
+                  "languageData": Object {},
+                  "messages": Object {},
+                },
+              },
+              "_dev": Object {
+                "compile": [Function],
+                "loadLanguageData": [Function],
+              },
+              "_language": "en",
+              "_locales": undefined,
+              "_missing": undefined,
+              "plural": [Function],
+              "select": [Function],
+              "selectOrdinal": [Function],
+              "t": [Function],
+            }
+          }
           onChange={[Function]}
-          onKeyDown={[Function]}
-          placeholder="Search…"
-          type="search"
           value=""
-        />
-        <button
-          className="reset"
-          title="Close Search"
-          type="reset"
         >
-          <i
-            className="icon-close"
-          />
-        </button>
-      </form>
-    </Prompt>
+          <form
+            className="module-search-field"
+            onReset={[MockFunction]}
+            onSubmit={[Function]}
+          >
+            <input
+              autoComplete="off"
+              name="moduleQ"
+              onChange={[Function]}
+              onKeyDown={[Function]}
+              placeholder="Search…"
+              type="search"
+              value=""
+            />
+            <button
+              className="reset"
+              title="Close Search"
+              type="reset"
+            >
+              <i
+                className="icon-close"
+              />
+            </button>
+          </form>
+        </Prompt>
+      </I18n>
+    </WithI18n>
     <SearchResults
       modules={
         Array [

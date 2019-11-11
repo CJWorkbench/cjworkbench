@@ -1,3 +1,3 @@
 {% load i18n_icu %}
 
-{% trans_html "notifications.new_data_version.subject" default="New data available in {workflow_name}" arg_workflow_name=workflow_name %}
+{% trans_html "py.templates.notifications.new_data_version_subject" default="New data available in {workflow_name}" arg_workflow_name=workflow_name %}

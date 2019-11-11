@@ -124,14 +124,14 @@ exports[`WfHamburgerMenu renders logged in, non-read only 1`] = `
                           role="menuitem"
                           tabindex="0"
                         >
-                          My Workflows
+                          js.WfHamburgerMenu.menu.myWorkflows
                         </a>
                         <button
                           class="dropdown-item"
                           role="menuitem"
                           tabindex="0"
                         >
-                          Import Module
+                          js.WfHamburgerMenu.menu.importModule
                         </button>
                         <a
                           class="dropdown-item"
@@ -139,7 +139,7 @@ exports[`WfHamburgerMenu renders logged in, non-read only 1`] = `
                           role="menuitem"
                           tabindex="0"
                         >
-                          Log Out
+                          js.WfHamburgerMenu.menu.logout
                         </a>
                       </div>
                     </div>
@@ -204,7 +204,52 @@ exports[`WfHamburgerMenu renders logged in, non-read only 1`] = `
                             role="menuitem"
                             tabIndex={0}
                           >
-                            My Workflows
+                            <WithI18n
+                              defaults="My Workflows"
+                              id="js.WfHamburgerMenu.menu.myWorkflows"
+                            >
+                              <I18n
+                                update={true}
+                                withHash={true}
+                              >
+                                <Trans
+                                  defaults="My Workflows"
+                                  i18n={
+                                    Object {
+                                      "_": [Function],
+                                      "_activeLanguageData": Object {
+                                        "plurals": [Function],
+                                      },
+                                      "_activeMessages": Object {},
+                                      "_catalogs": Object {
+                                        "en": Object {
+                                          "languageData": Object {},
+                                          "messages": Object {},
+                                        },
+                                      },
+                                      "_dev": Object {
+                                        "compile": [Function],
+                                        "loadLanguageData": [Function],
+                                      },
+                                      "_language": "en",
+                                      "_locales": undefined,
+                                      "_missing": undefined,
+                                      "plural": [Function],
+                                      "select": [Function],
+                                      "selectOrdinal": [Function],
+                                      "t": [Function],
+                                    }
+                                  }
+                                  id="js.WfHamburgerMenu.menu.myWorkflows"
+                                >
+                                  <Render
+                                    value="js.WfHamburgerMenu.menu.myWorkflows"
+                                  >
+                                    js.WfHamburgerMenu.menu.myWorkflows
+                                  </Render>
+                                </Trans>
+                              </I18n>
+                            </WithI18n>
                           </a>
                         </DropdownItem>
                         <DropdownItem
@@ -216,7 +261,52 @@ exports[`WfHamburgerMenu renders logged in, non-read only 1`] = `
                             role="menuitem"
                             tabIndex={0}
                           >
-                            Import Module
+                            <WithI18n
+                              defaults="Import Module"
+                              id="js.WfHamburgerMenu.menu.importModule"
+                            >
+                              <I18n
+                                update={true}
+                                withHash={true}
+                              >
+                                <Trans
+                                  defaults="Import Module"
+                                  i18n={
+                                    Object {
+                                      "_": [Function],
+                                      "_activeLanguageData": Object {
+                                        "plurals": [Function],
+                                      },
+                                      "_activeMessages": Object {},
+                                      "_catalogs": Object {
+                                        "en": Object {
+                                          "languageData": Object {},
+                                          "messages": Object {},
+                                        },
+                                      },
+                                      "_dev": Object {
+                                        "compile": [Function],
+                                        "loadLanguageData": [Function],
+                                      },
+                                      "_language": "en",
+                                      "_locales": undefined,
+                                      "_missing": undefined,
+                                      "plural": [Function],
+                                      "select": [Function],
+                                      "selectOrdinal": [Function],
+                                      "t": [Function],
+                                    }
+                                  }
+                                  id="js.WfHamburgerMenu.menu.importModule"
+                                >
+                                  <Render
+                                    value="js.WfHamburgerMenu.menu.importModule"
+                                  >
+                                    js.WfHamburgerMenu.menu.importModule
+                                  </Render>
+                                </Trans>
+                              </I18n>
+                            </WithI18n>
                           </button>
                         </DropdownItem>
                         <DropdownItem
@@ -228,7 +318,52 @@ exports[`WfHamburgerMenu renders logged in, non-read only 1`] = `
                             role="menuitem"
                             tabIndex={0}
                           >
-                            Log Out
+                            <WithI18n
+                              defaults="Log Out"
+                              id="js.WfHamburgerMenu.menu.logout"
+                            >
+                              <I18n
+                                update={true}
+                                withHash={true}
+                              >
+                                <Trans
+                                  defaults="Log Out"
+                                  i18n={
+                                    Object {
+                                      "_": [Function],
+                                      "_activeLanguageData": Object {
+                                        "plurals": [Function],
+                                      },
+                                      "_activeMessages": Object {},
+                                      "_catalogs": Object {
+                                        "en": Object {
+                                          "languageData": Object {},
+                                          "messages": Object {},
+                                        },
+                                      },
+                                      "_dev": Object {
+                                        "compile": [Function],
+                                        "loadLanguageData": [Function],
+                                      },
+                                      "_language": "en",
+                                      "_locales": undefined,
+                                      "_missing": undefined,
+                                      "plural": [Function],
+                                      "select": [Function],
+                                      "selectOrdinal": [Function],
+                                      "t": [Function],
+                                    }
+                                  }
+                                  id="js.WfHamburgerMenu.menu.logout"
+                                >
+                                  <Render
+                                    value="js.WfHamburgerMenu.menu.logout"
+                                  >
+                                    js.WfHamburgerMenu.menu.logout
+                                  </Render>
+                                </Trans>
+                              </I18n>
+                            </WithI18n>
                           </a>
                         </DropdownItem>
                       </div>

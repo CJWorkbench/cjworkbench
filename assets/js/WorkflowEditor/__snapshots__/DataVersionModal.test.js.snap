@@ -133,15 +133,12 @@ exports[`DataVersionModal matches snapshot 1`] = `
                           <i
                             class="icon icon-no-notification"
                           />
-                           Alerts are 
-                          <strong>
-                             off
-                          </strong>
+                          js.WorkflowEditor.DataVersionModal.NotificationsForm.status.alertsOff
                         </p>
                         <p
                           class="description"
                         >
-                          Turn alerts ON to receive an email if the output of this module changes
+                          js.WorkflowEditor.DataVersionModal.NotificationsForm.description.turnAlertsOn
                         </p>
                       </div>
                       <div
@@ -155,7 +152,7 @@ exports[`DataVersionModal matches snapshot 1`] = `
                           <span
                             class="action"
                           >
-                            Turn on
+                            js.WorkflowEditor.DataVersionModal.NotificationsForm.options.turnOn
                           </span>
                         </label>
                       </div>
@@ -309,15 +306,62 @@ exports[`DataVersionModal matches snapshot 1`] = `
                           <i
                             className="icon icon-no-notification"
                           />
-                           Alerts are 
-                          <strong>
-                             off
-                          </strong>
+                          <WithI18n
+                            components={
+                              Array [
+                                <strong />,
+                              ]
+                            }
+                            defaults="Alerts are <0>off</0>"
+                            description="The tag adds emphasis"
+                            id="js.WorkflowEditor.DataVersionModal.NotificationsForm.status.alertsOff"
+                          >
+                            <I18n
+                              update={true}
+                              withHash={true}
+                            >
+                              <Trans
+                                components={
+                                  Array [
+                                    <strong />,
+                                  ]
+                                }
+                                defaults="Alerts are <0>off</0>"
+                                description="The tag adds emphasis"
+                                id="js.WorkflowEditor.DataVersionModal.NotificationsForm.status.alertsOff"
+                              >
+                                <Render
+                                  value="js.WorkflowEditor.DataVersionModal.NotificationsForm.status.alertsOff"
+                                >
+                                  js.WorkflowEditor.DataVersionModal.NotificationsForm.status.alertsOff
+                                </Render>
+                              </Trans>
+                            </I18n>
+                          </WithI18n>
                         </p>
                         <p
                           className="description"
                         >
-                          Turn alerts ON to receive an email if the output of this module changes
+                          <WithI18n
+                            defaults="Turn alerts ON to receive an email if the output of this module changes"
+                            id="js.WorkflowEditor.DataVersionModal.NotificationsForm.description.turnAlertsOn"
+                          >
+                            <I18n
+                              update={true}
+                              withHash={true}
+                            >
+                              <Trans
+                                defaults="Turn alerts ON to receive an email if the output of this module changes"
+                                id="js.WorkflowEditor.DataVersionModal.NotificationsForm.description.turnAlertsOn"
+                              >
+                                <Render
+                                  value="js.WorkflowEditor.DataVersionModal.NotificationsForm.description.turnAlertsOn"
+                                >
+                                  js.WorkflowEditor.DataVersionModal.NotificationsForm.description.turnAlertsOn
+                                </Render>
+                              </Trans>
+                            </I18n>
+                          </WithI18n>
                         </p>
                       </div>
                       <div
@@ -333,7 +377,26 @@ exports[`DataVersionModal matches snapshot 1`] = `
                           <span
                             className="action"
                           >
-                            Turn on
+                            <WithI18n
+                              defaults="Turn on"
+                              id="js.WorkflowEditor.DataVersionModal.NotificationsForm.options.turnOn"
+                            >
+                              <I18n
+                                update={true}
+                                withHash={true}
+                              >
+                                <Trans
+                                  defaults="Turn on"
+                                  id="js.WorkflowEditor.DataVersionModal.NotificationsForm.options.turnOn"
+                                >
+                                  <Render
+                                    value="js.WorkflowEditor.DataVersionModal.NotificationsForm.options.turnOn"
+                                  >
+                                    js.WorkflowEditor.DataVersionModal.NotificationsForm.options.turnOn
+                                  </Render>
+                                </Trans>
+                              </I18n>
+                            </WithI18n>
                           </span>
                         </label>
                       </div>

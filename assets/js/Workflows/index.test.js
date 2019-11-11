@@ -1,8 +1,9 @@
 /* globals afterEach, beforeEach, describe, expect, it, jest */
 import React from 'react'
-import { mountWithI18n, tick, okResponseMock } from '../test-utils'
+import { tick, okResponseMock } from '../test-utils'
+import { mountWithI18n } from '../i18n/test-utils'
 import { act } from 'react-dom/test-utils'
-import Workflows from './index'
+import { Workflows } from './index'
 import Workflow from './Workflow'
 import CreateWorkflowButton from './CreateWorkflowButton'
 
@@ -90,7 +91,7 @@ describe('Workflow list page', () => {
     expect(w).toMatchSnapshot()
 
     // owned tab should have 3 workflows
-    w.find('.nav-link').findWhere(node => node.props().children === 'My workflows').simulate('click')
+    w.find('.nav-link').find("Trans[defaults='My workflows']").simulate('click')
     expect(w.find('.tab-pane.active').find(Workflow)).toHaveLength(3)
     // Make sure there is a context menu for each workflow
     expect(w.find('.tab-pane.active WorkflowContextMenu')).toHaveLength(3)
@@ -98,11 +99,11 @@ describe('Workflow list page', () => {
     expect(w.find('.tab-pane.active WorkflowMetadata')).toHaveLength(3)
 
     // shared tab should have 2 workflows
-    w.find('.nav-link').findWhere(node => node.props().children === 'Shared with me').simulate('click')
+    w.find('.nav-link').find("Trans[defaults='Shared with me']").simulate('click')
     expect(w.find('.tab-pane.active').find(Workflow)).toHaveLength(2)
 
     // template tab should have 1 workflow1
-    w.find('.nav-link').findWhere(node => node.props().children === 'Recipes').simulate('click')
+    w.find('.nav-link').find("Trans[defaults='Recipes']").simulate('click')
     expect(w.find('.tab-pane.active').find(Workflow)).toHaveLength(1)
   })
 
@@ -145,7 +146,7 @@ describe('Workflow list page', () => {
 
     // Owned list should start with 3 WFs, shared with 2
     expect(w.find('.tab-pane.active').find(Workflow)).toHaveLength(3)
-    w.find('.nav-link').findWhere(node => node.props().children === 'Shared with me').simulate('click')
+    w.find('.nav-link').find("Trans[defaults='Shared with me']").simulate('click')
     expect(w.find('.tab-pane.active').find(Workflow)).toHaveLength(2)
 
     act(() => {
@@ -165,7 +166,7 @@ describe('Workflow list page', () => {
     const w = wrapper({ workflows })
 
     // Owned list should have no workflows, instead a create workflow link
-    w.find('.nav-link').findWhere(node => node.props().children === 'My workflows').simulate('click')
+    w.find('.nav-link').find("Trans[defaults='My workflows']").simulate('click')
     expect(w.find('.tab-pane.active').find(Workflow)).toHaveLength(0)
     expect(w.find('.tab-pane.active').find(CreateWorkflowButton)).toHaveLength(1)
   })
@@ -180,10 +181,10 @@ describe('Workflow list page', () => {
     })
     setImmediate(() => {
       w.update()
-      w.find('.nav-link').findWhere(node => node.props().children === 'Shared with me').simulate('click')
+      w.find('.nav-link').find("Trans[defaults='Shared with me']").simulate('click')
       expect(w.find('.tab-pane.active').find(Workflow)).toHaveLength(0)
       expect(w.find('.tab-pane.active .placeholder')).toHaveLength(1)
-      w.find('.nav-link').findWhere(node => node.props().children === 'Recipes').simulate('click')
+      w.find('.nav-link').find("Trans[defaults='Recipes']").simulate('click')
       expect(w.find('.tab-pane.active').find(Workflow)).toHaveLength(0)
       expect(w.find('.tab-pane.active .placeholder')).toHaveLength(1)
       done()
@@ -230,14 +231,14 @@ describe('Workflow list page', () => {
 
   it('should not allow delete of shared-with-me workflows', () => {
     const w = wrapper({ workflows: testWorkflows })
-    w.find('.nav-link').findWhere(node => node.props().children === 'Shared with me').simulate('click')
+    w.find('.nav-link').find("Trans[defaults='Shared with me']").simulate('click')
     w.find('.tab-pane.active .context-button').at(0).simulate('click')
     expect(w.find('.tab-pane.active button.delete-workflow')).toHaveLength(0)
   })
 
   it('should not allow delete of templates', () => {
     const w = wrapper({ workflows: testWorkflows })
-    w.find('.nav-link').findWhere(node => node.props().children === 'Recipes').simulate('click')
+    w.find('.nav-link').find("Trans[defaults='Recipes']").simulate('click')
     w.find('.tab-pane.active .context-button').at(0).simulate('click')
     expect(w.find('.tab-pane.active button.delete-workflow')).toHaveLength(0)
   })

@@ -72,7 +72,7 @@ export function select (slug) {
   }
 }
 
-export function create () {
+export function create (tabPrefix) {
   return (dispatch, getState, api) => {
     const state = getState()
     const { workflow, tabs } = state
@@ -87,7 +87,7 @@ export function create () {
     }
 
     const slug = generateSlug('tab-')
-    const name = util.generateTabName(/Tab (\d+)/, 'Tab %d', tabNames)
+    const name = util.generateTabName(new RegExp(util.escapeRegExp(tabPrefix) + ' (\\d+)'), tabPrefix + ' %d', tabNames)
 
     return dispatch({
       type: TAB_CREATE,

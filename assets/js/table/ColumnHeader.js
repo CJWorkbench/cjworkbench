@@ -4,11 +4,13 @@ import ColumnContextMenu from './ColumnContextMenu'
 import { connect } from 'react-redux'
 import { idxToLetter } from '../utils'
 import { updateTableAction } from './UpdateTableAction'
+import { t } from '@lingui/macro'
+import { withI18n } from '@lingui/react'
 
 const columnTypeDisplay = {
-  text: 'text',
-  number: 'number',
-  datetime: 'date & time'
+  text: t('js.table.ColumnHeader.types.text')`text`,
+  number: t('js.table.ColumnHeader.types.number')`number`,
+  datetime: t('js.table.ColumnHeader.types.dateAndtime')`date & time`
 }
 
 class ReorderColumnDropZone extends React.PureComponent {
@@ -65,7 +67,7 @@ class ReorderColumnDropZone extends React.PureComponent {
   }
 }
 
-export class EditableColumnName extends React.Component {
+export const EditableColumnName = withI18n()(class EditableColumnName extends React.Component {
   static propTypes = {
     columnKey: PropTypes.string.isRequired,
     columnType: PropTypes.string.isRequired,
@@ -156,13 +158,13 @@ export class EditableColumnName extends React.Component {
             {this.state.newName}
           </div>
           <div className='column-type'>
-            {columnTypeDisplay[this.props.columnType]}
+            {this.props.i18n._(columnTypeDisplay[this.props.columnType])}
           </div>
         </span>
       )
     }
   }
-}
+})
 
 // Sort arrows, A-Z letter identifiers
 export class ColumnHeader extends React.PureComponent {

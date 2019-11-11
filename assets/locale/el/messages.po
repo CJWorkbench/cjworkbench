@@ -14,70 +14,643 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.7.0\n"
 
-#: assets/js/i18n/locales.js:7
-msgid "locales.el"
+#: assets/js/Embed.js:98
+msgid "js.Embed.embedCode"
 msgstr ""
 
-#: assets/js/i18n/locales.js:6
-msgid "locales.en"
+#. This should be all-caps for styling reasons
+#: assets/js/Embed.js:97
+msgid "js.Embed.embedThisChart"
 msgstr ""
 
-#: assets/js/table/SelectedRowsActions.js:105
-msgid "selectedRow.numberOfRows"
+#. The parameter will contain a time difference (i.e. something like '4h ago')
+#: assets/js/Embed.js:83
+msgid "js.Embed.metadata.updated"
 msgstr ""
 
-#: assets/js/WorkflowNavBar.js:62
-msgid "workflow.visibility.private"
-msgstr "ιδιωτικό"
+#. This should be all-caps for styling reasons
+#: assets/js/Embed.js:37
+msgid "js.Embed.workflowNotAvailable.footer.logo"
+msgstr ""
 
-#: assets/js/WorkflowNavBar.js:62
-msgid "workflow.visibility.public"
-msgstr "δημόσιο"
+#: assets/js/Embed.js:29
+msgid "js.Embed.workflowNotAvailable.title"
+msgstr ""
+
+#: assets/js/ErrorBoundary.js:23
+msgid "js.ErrorBoundary.pleaseRefreshPage"
+msgstr ""
+
+#: assets/js/ErrorBoundary.js:21
+msgid "js.ErrorBoundary.somethingIsWrong"
+msgstr ""
+
+#. This should be all-caps for styling reasons
+#: assets/js/ExportModal.js:62
+msgid "js.ExportModal.csvCopyLink.copiedToClipboard"
+msgstr ""
+
+#. This should be all-caps for styling reasons
+#: assets/js/ExportModal.js:71
+msgid "js.ExportModal.csvCopyLink.copyLiveLink"
+msgstr ""
+
+#: assets/js/ExportModal.js:153
+msgid "js.ExportModal.footer.doneButton"
+msgstr ""
+
+#. This should be all-caps for styling reasons
+#: assets/js/ExportModal.js:111
+msgid "js.ExportModal.header.title"
+msgstr ""
+
+#. This should be all-caps for styling reasons
+#: assets/js/ExportModal.js:84
+msgid "js.ExportModal.jsonCopyLink.copiedToClipboard"
+msgstr ""
+
+#. This should be all-caps for styling reasons
+#: assets/js/ExportModal.js:93
+msgid "js.ExportModal.jsonCopyLink.copyLiveLink"
+msgstr ""
+
+#. This should be all-caps for styling reasons
+#: assets/js/ExportModal.js:118
+msgid "js.ExportModal.type.CSV"
+msgstr ""
+
+#. This should be all-caps for styling reasons
+#: assets/js/ExportModal.js:135
+msgid "js.ExportModal.type.JSON"
+msgstr ""
+
+#: assets/js/ImportModuleFromGitHub.js:122
+msgid "js.ImportModuleFromGithub.footer.closeButton"
+msgstr ""
+
+#: assets/js/ImportModuleFromGitHub.js:96
+msgid "js.ImportModuleFromGithub.footer.importButton"
+msgstr ""
+
+#: assets/js/ImportModuleFromGitHub.js:112
+msgid "js.ImportModuleFromGithub.public.buildingModuleTutorialLink"
+msgstr ""
+
+#: assets/js/ImportModuleFromGitHub.js:108
+msgid "js.ImportModuleFromGithub.public.header.title"
+msgstr ""
+
+#: assets/js/ImportModuleFromGitHub.js:85
+msgid "js.ImportModuleFromGithub.staff.buildingModuleTutorialLink"
+msgstr ""
+
+#: assets/js/ImportModuleFromGitHub.js:65
+msgid "js.ImportModuleFromGithub.staff.header.title"
+msgstr ""
+
+#: assets/js/ImportModuleFromGitHub.js:45
+msgid "js.ImportModuleFromGithub.status.importedModule"
+msgstr ""
+
+#: assets/js/ImportModuleFromGitHub.js:32
+msgid "js.ImportModuleFromGithub.status.processing"
+msgstr ""
+
+#: assets/js/OutputIframe.js:146
+msgid "js.OutputIframe.embed.embedCode"
+msgstr ""
+
+#. This should be all-caps for styling reasons
+#: assets/js/OutputIframe.js:139
+msgid "js.OutputIframe.embed.header.title"
+msgstr ""
+
+#: assets/js/OutputIframe.js:156
+msgid "js.OutputIframe.footer.OKButton"
+msgstr ""
+
+#: assets/js/OutputIframe.js:122
+msgid "js.OutputIframe.footer.cancelButton"
+msgstr ""
+
+#: assets/js/OutputIframe.js:125
+msgid "js.OutputIframe.footer.setPublicButton"
+msgstr ""
+
+#. This should be all-caps for styling reasons
+#: assets/js/OutputIframe.js:105
+msgid "js.OutputIframe.private.header.title"
+msgstr ""
+
+#: assets/js/OutputIframe.js:115
+msgid "js.OutputIframe.private.setToPublic"
+msgstr ""
+
+#: assets/js/OutputIframe.js:112
+msgid "js.OutputIframe.private.workflowIsPrivate"
+msgstr ""
+
+#: assets/js/ShareModal/Modal.js:47
+msgid "js.ShareModal.Modal.collaborators"
+msgstr ""
+
+#: assets/js/ShareModal/Modal.js:68
+msgid "js.ShareModal.Modal.footer.closeButton"
+msgstr ""
+
+#. This should be all-caps for styling reasons
+#: assets/js/ShareModal/Modal.js:35
+msgid "js.ShareModal.Modal.header.title"
+msgstr ""
+
+#: assets/js/ShareModal/Modal.js:40
+msgid "js.ShareModal.Modal.shareWithTheWorld"
+msgstr ""
+
+#: assets/js/ShareModal/NewAclEntry.js:43
+msgid "js.ShareModal.NewAclEntry.grantAccess"
+msgstr ""
+
+#: assets/js/ShareModal/OwnerAclEntry.js:8
+msgid "js.ShareModal.OwnerAclEntry.owner"
+msgstr ""
+
+#: assets/js/ShareModal/PublicPrivate.js:8
+msgid "js.ShareModal.PublicPrivate.description.private"
+msgstr ""
+
+#: assets/js/ShareModal/PublicPrivate.js:7
+msgid "js.ShareModal.PublicPrivate.description.public"
+msgstr ""
+
+#: assets/js/ShareModal/PublicPrivate.js:18
+msgid "js.ShareModal.PublicPrivate.descriptionWithToggle"
+msgstr ""
+
+#: assets/js/ShareModal/ShareButton.js:23
+msgid "js.ShareModal.ShareButton.button.hoverText"
+msgstr ""
+
+#: assets/js/ShareModal/Url.js:76
+msgid "js.ShareModal.Url.copyToClipboardButton"
+msgstr ""
+
+#: assets/js/ShareModal/Url.js:69
+msgid "js.ShareModal.Url.heading.private"
+msgstr ""
+
+#: assets/js/ShareModal/Url.js:68
+msgid "js.ShareModal.Url.heading.public"
+msgstr ""
+
+#: assets/js/ShareModal/Url.js:57
+msgid "js.ShareModal.Url.socialLinks.facebook"
+msgstr ""
+
+#. The parameter will be a mention to workbench account (i.e. "@cjworkbench")
+#: assets/js/ShareModal/Url.js:43
+msgid "js.ShareModal.Url.socialLinks.shareText"
+msgstr "Δείτε το γράφημα που έφτιαξα με το {workbenchMention}:"
+
+#: assets/js/ShareModal/Url.js:52
+msgid "js.ShareModal.Url.socialLinks.twitter"
+msgstr ""
+
+#: assets/js/UndoRedoButtons.js:63
+msgid "js.UndoRedoButtons.redo.hoverText"
+msgstr ""
+
+#: assets/js/UndoRedoButtons.js:62
+msgid "js.UndoRedoButtons.undo.hoverText"
+msgstr ""
+
+#. The tag adds emphasis
+#: assets/js/UnhandledErrorReport.js:20
+msgid "js.UnhandledErrorReport.Intercom.helpText.weOpenedAWindow"
+msgstr ""
+
+#: assets/js/UnhandledErrorReport.js:71
+msgid "js.UnhandledErrorReport.actions.refreshPageButton"
+msgstr ""
+
+#: assets/js/UnhandledErrorReport.js:67
+msgid "js.UnhandledErrorReport.content.debuggingDetails"
+msgstr ""
+
+#: assets/js/UnhandledErrorReport.js:63
+msgid "js.UnhandledErrorReport.content.oops"
+msgstr ""
+
+#: assets/js/UnhandledErrorReport.js:64
+msgid "js.UnhandledErrorReport.content.pleaseFollowSteps"
+msgstr ""
+
+#: assets/js/UnhandledErrorReport.js:66
+msgid "js.UnhandledErrorReport.content.thankYou"
+msgstr ""
+
+#. The parameter is an email address and the tag is a 'mailto:' url
+#: assets/js/UnhandledErrorReport.js:47
+msgid "js.UnhandledErrorReport.helpText.debuggingDetails"
+msgstr ""
+
+#: assets/js/UnhandledErrorReport.js:21 assets/js/UnhandledErrorReport.js:52
+msgid "js.UnhandledErrorReport.helpText.pleaseDescribeYourActions"
+msgstr ""
+
+#: assets/js/WfHamburgerMenu.js:56
+msgid "js.WfHamburgerMenu.menu.home"
+msgstr ""
+
+#: assets/js/WfHamburgerMenu.js:53
+msgid "js.WfHamburgerMenu.menu.importModule"
+msgstr ""
+
+#: assets/js/WfHamburgerMenu.js:59
+msgid "js.WfHamburgerMenu.menu.logout"
+msgstr ""
+
+#: assets/js/WfHamburgerMenu.js:52
+msgid "js.WfHamburgerMenu.menu.myWorkflows"
+msgstr ""
+
+#: assets/js/WfHamburgerMenu.js:45
+msgid "js.WfHamburgerMenu.toggle.hoverText"
+msgstr ""
+
+#: assets/js/Workflow.js:47
+msgid "js.Workflow.isShared"
+msgstr ""
+
+#: assets/js/Workflow.js:20
+msgid "js.Workflow.suggestion.duplicateToSaveChanges"
+msgstr ""
+
+#. The tag is a link to the login page
+#: assets/js/Workflow.js:26
+msgid "js.Workflow.suggestion.signInToSaveChanges"
+msgstr ""
+
+#: assets/js/WorkflowEditor/AddData/Modal.js:26
+msgid "js.WorkflowEditor.AddData.Modal.closeButton.hoverText"
+msgstr ""
+
+#. This should be all-caps for styling reasons
+#: assets/js/WorkflowEditor/AddData/Modal.js:21
+msgid "js.WorkflowEditor.AddData.Modal.header.title"
+msgstr ""
+
+#: assets/js/WorkflowEditor/AddData/Modules.js:15
+msgid "js.WorkflowEditor.AddData.Modules.noModulesFound"
+msgstr ""
+
+#: assets/js/WorkflowEditor/AddData/Search.js:24
+msgid "js.WorkflowEditor.AddData.Search.clearButton.hoverText"
+msgstr ""
+
+#: assets/js/WorkflowEditor/AddData/Search.js:16
+msgid "js.WorkflowEditor.AddData.Search.placeholder"
+msgstr ""
+
+#. This should be all-caps for styling reasons
+#: assets/js/WorkflowEditor/AddData/Button.js:26
+msgid "js.WorkflowEditor.AddData.button"
+msgstr ""
+
+#: assets/js/WorkflowEditor/DataVersionModal.js:138
+msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.description.emailOnOutputChange"
+msgstr ""
+
+#: assets/js/WorkflowEditor/DataVersionModal.js:139
+msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.description.turnAlertsOn"
+msgstr ""
+
+#: assets/js/WorkflowEditor/DataVersionModal.js:146
+msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.options.turnOff"
+msgstr ""
+
+#: assets/js/WorkflowEditor/DataVersionModal.js:146
+msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.options.turnOn"
+msgstr ""
+
+#. The tag adds emphasis
+#: assets/js/WorkflowEditor/DataVersionModal.js:133
+msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.status.alertsOff"
+msgstr ""
+
+#. The tag adds emphasis
+#: assets/js/WorkflowEditor/DataVersionModal.js:132
+msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.status.alertsOn"
+msgstr ""
+
+#. This should be all-caps for styling reasons
+#: assets/js/WorkflowEditor/ModuleSearch/Button.js:43
+msgid "js.WorkflowEditor.ModuleSearch.Button.addStep"
+msgstr ""
+
+#: assets/js/WorkflowEditor/ModuleSearch/Prompt.js:49
+msgid "js.WorkflowEditor.ModuleSearch.Prompt.closeButton.hoverText"
+msgstr ""
+
+#: assets/js/WorkflowEditor/ModuleSearch/Prompt.js:41
+msgid "js.WorkflowEditor.ModuleSearch.Prompt.placeholder"
+msgstr ""
+
+#: assets/js/WorkflowEditor/ModuleStack.js:138
+msgid "js.WorkflowEditor.ModuleStack.EmptyReadOnlyModuleStack"
+msgstr ""
+
+#: assets/js/WorkflowEditor/OutputPane.js:104
+msgid "js.WorkflowEditor.OutputPane.showingInput.becauseError"
+msgstr ""
+
+#. This is a link to a report
+#: assets/js/WorkflowEditor/PaneSelect.js:19
+msgid "js.WorkflowEditor.PaneSelect.nav.report"
+msgstr ""
+
+#: assets/js/WorkflowEditor/Tabs/TabDropdown.js:20
+msgid "js.WorkflowEditor.Tabs.TabDropdown.menu.delete"
+msgstr ""
+
+#: assets/js/WorkflowEditor/Tabs/TabDropdown.js:17
+msgid "js.WorkflowEditor.Tabs.TabDropdown.menu.duplicate"
+msgstr ""
+
+#: assets/js/WorkflowEditor/Tabs/TabDropdown.js:14
+msgid "js.WorkflowEditor.Tabs.TabDropdown.menu.rename"
+msgstr ""
+
+#. The tab prefix will be used as the first part of the default name of tabs,
+#. i.e. if the tab prefix is 'Tab', the default names can be 'Tab 1', 'Tab 2',
+#. etc
+#: assets/js/WorkflowEditor/Tabs/Tabs.js:33
+msgid "js.WorkflowEditor.Tabs.create.defaultPrefix"
+msgstr ""
+
+#: assets/js/WorkflowEditor/wfmodule/DeprecationNotice.js:12
+msgid "js.WorkflowEditor.wfmodule.DeprecationNotice.learnHowToReplace"
+msgstr ""
+
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:354
+msgid "js.WorkflowEditor.wfmodule.EditableNotes.placeholder"
+msgstr ""
+
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:239
+msgid "js.WorkflowEditor.wfmodule.ZenMode.enter"
+msgstr ""
+
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:239
+msgid "js.WorkflowEditor.wfmodule.ZenMode.exit"
+msgstr ""
+
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:371
+msgid "js.WorkflowEditor.wfmodule.alert.disabled"
+msgstr ""
+
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:371
+msgid "js.WorkflowEditor.wfmodule.alert.enabled"
+msgstr ""
+
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:383
+msgid "js.WorkflowEditor.wfmodule.help.hoverText"
+msgstr ""
+
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:393
+msgid "js.WorkflowEditor.wfmodule.notes.edit.hoverText"
+msgstr ""
+
+#: assets/js/WorkflowEditor/wfmodule/WfModuleContextMenu.js:21
+msgid "js.WorkflowEditor.wfmodule.wfModuleContextMenu.delete"
+msgstr ""
+
+#: assets/js/WorkflowEditor/wfmodule/WfModuleContextMenu.js:20
+msgid "js.WorkflowEditor.wfmodule.wfModuleContextMenu.exportData"
+msgstr ""
+
+#. The parameter will contain something like '4h ago'
+#: assets/js/WorkflowNavBar.js:57
+msgid "js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.lastUpdated"
+msgstr ""
+
+#: assets/js/WorkflowNavBar.js:52
+msgid "js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.owner"
+msgstr ""
+
+#: assets/js/WorkflowNavBar.js:65
+msgid "js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.visibility.private"
+msgstr ""
+
+#: assets/js/WorkflowNavBar.js:65
+msgid "js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.visibility.public"
+msgstr ""
+
+#: assets/js/WorkflowNavBar.js:206
+msgid "js.WorkflowNavBar.duplicate.button"
+msgstr ""
+
+#: assets/js/WorkflowNavBar.js:208
+msgid "js.WorkflowNavBar.share.shareButton"
+msgstr ""
+
+#: assets/js/WorkflowNavBar.js:175
+msgid "js.WorkflowNavBar.signIn.accountLink"
+msgstr ""
 
 #. This is used in navigation bar. It should be all-caps for styling reasons.
 #: assets/js/Workflows/Navbar.js:39
-msgid "workflows.navbar.training"
-msgstr "ΕΚΠΑΙΔΕΥΣΗ"
+msgid "js.Workflows.NavBar.links.training"
+msgstr ""
 
 #. This is used in navigation bar. It should be all-caps for styling reasons.
 #: assets/js/Workflows/Navbar.js:36
-msgid "workflows.navbar.workflows"
+msgid "js.Workflows.NavBar.links.workflows"
+msgstr ""
+
+#: assets/js/Workflows/SortMenu.js:34
+msgid "js.Workflows.SortMenu.alphabetical.dropdownItem"
+msgstr ""
+
+#: assets/js/Workflows/SortMenu.js:31
+msgid "js.Workflows.SortMenu.lastModified.dropdownItem"
+msgstr ""
+
+#: assets/js/Workflows/SortMenu.js:32
+msgid "js.Workflows.SortMenu.oldestModified.dropdownItem"
+msgstr ""
+
+#: assets/js/Workflows/SortMenu.js:35
+msgid "js.Workflows.SortMenu.reverseAlphabet.dropdownItem"
+msgstr ""
+
+#: assets/js/Workflows/SortMenu.js:28
+msgid "js.Workflows.SortMenu.sort.DropdownTitle"
+msgstr ""
+
+#: assets/js/Workflows/WorkflowContextMenu.js:40
+msgid "js.Workflows.WorkflowContextMenu.delete"
+msgstr ""
+
+#: assets/js/Workflows/WorkflowContextMenu.js:35
+msgid "js.Workflows.WorkflowContextMenu.duplicate"
+msgstr ""
+
+#: assets/js/Workflows/WorkflowLists.js:51
+msgid "js.Workflows.WorkflowLists.createYourFirtsWorkflow.button"
+msgstr ""
+
+#: assets/js/Workflows/WorkflowLists.js:111
+msgid "js.Workflows.WorkflowLists.nav.myWorkflows"
+msgstr ""
+
+#: assets/js/Workflows/WorkflowLists.js:113
+msgid "js.Workflows.WorkflowLists.nav.recipes"
+msgstr ""
+
+#: assets/js/Workflows/WorkflowLists.js:112
+msgid "js.Workflows.WorkflowLists.nav.sharedWithMe"
+msgstr ""
+
+#: assets/js/Workflows/WorkflowLists.js:76
+msgid "js.Workflows.WorkflowLists.publisheNewRecipes"
+msgstr ""
+
+#: assets/js/Workflows/WorkflowLists.js:64
+msgid "js.Workflows.WorkflowLists.workflowsWillAppearHere"
+msgstr ""
+
+#: assets/js/Workflows/WorkflowMetadata.js:47
+msgid "js.Workflows.WorkflowMetadata.changePrivacy.button"
+msgstr ""
+
+#. The parameter will contain a time difference (i.e. something like '5h ago')
+#: assets/js/Workflows/WorkflowMetadata.js:57
+msgid "js.Workflows.WorkflowMetadata.update"
+msgstr ""
+
+#: assets/js/Workflows/WorkflowMetadata.js:48
+msgid "js.Workflows.WorkflowMetadata.visibility.private"
+msgstr ""
+
+#: assets/js/Workflows/WorkflowMetadata.js:48
+msgid "js.Workflows.WorkflowMetadata.visibility.public"
+msgstr ""
+
+#: assets/js/Workflows/index.js:203
+msgid "js.Workflows.createWorkflowButton"
+msgstr ""
+
+#: assets/js/Workflows/index.js:95
+msgid "js.Workflows.delete.permanentyDeleteWarning"
+msgstr ""
+
+#: assets/js/Workflows/index.js:200
+msgid "js.Workflows.learnHowToWorkWithData"
+msgstr ""
+
+#. This should be all-caps for styling reasons
+#: assets/js/Workflows/index.js:194
+msgid "js.Workflows.new"
+msgstr ""
+
+#. This should be all-caps for styling reasons
+#: assets/js/Workflows/index.js:197
+msgid "js.Workflows.training.title"
+msgstr ""
+
+#: assets/js/i18n/locales.js:5
+msgid "js.i18n.locales.el"
+msgstr ""
+
+#: assets/js/i18n/locales.js:4
+msgid "js.i18n.locales.en"
+msgstr ""
+
+#: assets/js/table/ColumnHeader.js:13
+msgid "js.table.ColumnHeader.types.dateAndtime"
+msgstr ""
+
+#: assets/js/table/ColumnHeader.js:12
+msgid "js.table.ColumnHeader.types.number"
+msgstr ""
+
+#: assets/js/table/ColumnHeader.js:11
+msgid "js.table.ColumnHeader.types.text"
+msgstr ""
+
+#: assets/js/table/SelectedRowsActions.js:105
+msgid "js.table.SelectedRowsActions.numberOfSelectedRows"
+msgstr ""
+
+#: assets/js/table/TableInfo.js:45
+msgid "js.table.TableInfo.columns"
+msgstr ""
+
+#: assets/js/table/TableInfo.js:41
+msgid "js.table.TableInfo.rows"
+msgstr ""
+
+#: assets/js/utils.js:47
+msgid "js.util.timeDifference.ago.days"
+msgstr ""
+
+#: assets/js/utils.js:49
+msgid "js.util.timeDifference.ago.hours"
+msgstr ""
+
+#: assets/js/utils.js:51
+msgid "js.util.timeDifference.ago.minutes"
+msgstr ""
+
+#: assets/js/utils.js:53
+msgid "js.util.timeDifference.ago.seconds"
+msgstr ""
+
+#: assets/js/utils.js:45
+msgid "js.util.timeDifference.ago.years"
+msgstr ""
+
+#: assets/js/utils.js:55
+msgid "js.util.timeDifference.now"
 msgstr ""
 
 #: cjworkbench/forms/signup.py:24
-msgid "accounts.sign_up.fields.first_name.placeholder"
+msgid "py.forms.signup.firstName.placeholder"
 msgstr ""
 
-#: cjworkbench/forms/signup.py:32
-msgid "accounts.sign_up.fields.last_name.placeholder"
+#: cjworkbench/forms/signup.py:31
+msgid "py.forms.signup.lastName.placeholder"
 msgstr ""
 
 #: templates/account/login.html:4 templates/account/login.html:10
-#: templates/account/signup.html:12
-msgid "accounts.sign_in.title"
-msgstr "Σύνδεση"
+msgid "py.templates.account.login.title"
+msgstr ""
 
 #: templates/account/login.html:43
-msgid "accounts.sign_in.forgot_password_prompt"
+msgid "py.templates.account.login.forgotPasswordPrompt"
 msgstr ""
 
 #: templates/account/login.html:45
-msgid "accounts.sign_in.button"
+msgid "py.templates.account.login.submitButton"
 msgstr ""
 
 #: templates/account/signup.html:4
-msgid "accounts.sign_up.title"
+msgid "py.templates.account.signup.title"
+msgstr ""
+
+#: templates/account/signup.html:12
+msgid "py.templates.account.signup.signIn"
 msgstr ""
 
 #: templates/account/signup.html:26
-msgid "accounts.sign_up.login_prompt"
+msgid "py.templates.account.signup.loginPrompt"
 msgstr ""
 
 #: templates/account/email/password_reset_key_subject.txt:3
-msgid "accounts.emails.password_reset.subject"
-msgstr "Επαναφορά κωδικού πρόσβασης"
+msgid "py.templates.account.email.password_reset_key_subject"
+msgstr ""
 
 #: templates/notifications/new_data_version_subject.txt:3
-msgid "notifications.new_data_version.subject"
-msgstr "{workflow_name}: Νέα δεδομένα διαθέσιμα"
+msgid "py.templates.notifications.new_data_version_subject"
+msgstr ""
 

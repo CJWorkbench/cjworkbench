@@ -2,7 +2,7 @@
 import { mockStore } from '../../../test-utils'
 import React from 'react'
 import ConnectedUpdateFrequencySelect, { UpdateFrequencySelect } from './UpdateFrequencySelect'
-import { shallow, mount } from 'enzyme'
+import { mountWithI18n } from '../../../i18n/test-utils'
 import { Provider } from 'react-redux'
 
 describe('UpdateFrequencySelect', () => {
@@ -27,7 +27,7 @@ describe('UpdateFrequencySelect', () => {
     afterEach(() => dateSpy.mockRestore())
 
     const wrapper = (extraProps) => {
-      return shallow(
+      return mountWithI18n(
         <UpdateFrequencySelect
           {...defaultProps}
           {...extraProps}
@@ -87,7 +87,7 @@ describe('UpdateFrequencySelect', () => {
         dispatch: jest.fn(),
         subscribe: jest.fn()
       }
-      wrapper = mount(
+      wrapper = mountWithI18n(
         <Provider store={store}>
           <ConnectedUpdateFrequencySelect
             wfModuleId={212}
@@ -111,7 +111,7 @@ describe('UpdateFrequencySelect', () => {
         dispatch: jest.fn(),
         subscribe: jest.fn()
       }
-      wrapper = mount(
+      wrapper = mountWithI18n(
         <Provider store={store}>
           <ConnectedUpdateFrequencySelect
             wfModuleId={212}
@@ -127,7 +127,7 @@ describe('UpdateFrequencySelect', () => {
         trySetWfModuleAutofetch: jest.fn(() => Promise.resolve({ isAutofetch: true, fetchInterval: 7200 }))
       }
       const store = mockStore(sampleState, api)
-      wrapper = mount(
+      wrapper = mountWithI18n(
         <Provider store={store}>
           <ConnectedUpdateFrequencySelect
             wfModuleId={212}
@@ -146,7 +146,7 @@ describe('UpdateFrequencySelect', () => {
         setWfModuleNotifications: jest.fn(() => Promise.resolve(null))
       }
       const store = mockStore(sampleState, api)
-      wrapper = mount(
+      wrapper = mountWithI18n(
         <Provider store={store}>
           <ConnectedUpdateFrequencySelect
             wfModuleId={212}

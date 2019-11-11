@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Manager, Reference } from 'react-popper'
 import Popup from './Popup'
+import { Trans } from '@lingui/macro'
 
 export default class Button extends React.PureComponent {
   static propTypes = {
@@ -39,7 +40,7 @@ export default class Button extends React.PureComponent {
             <div ref={ref} className={className}>
               <button type='button' className={buttonClassNames.join(' ')} onClick={this.handleClick}>
                 <i className='icon-add' />{' '}
-                <span>ADD STEP</span>
+                <span><Trans id='js.WorkflowEditor.ModuleSearch.Button.addStep' description='This should be all-caps for styling reasons'>ADD STEP</Trans></span>
               </button>
             </div>
           )}

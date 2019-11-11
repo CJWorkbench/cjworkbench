@@ -1,8 +1,8 @@
 import { t } from '@lingui/macro'
 
 export const supportedLocales = {
-  en: t('locales.en')`English`,
-  el: t('locales.el')`Greek`
+  en: t('js.i18n.locales.en')`English`,
+  el: t('js.i18n.locales.el')`Greek`
 }
 
 export const supportedLocaleIds = Object.keys(supportedLocales)

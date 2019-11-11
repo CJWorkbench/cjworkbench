@@ -4,9 +4,14 @@ import UpdateFrequencySelectModal from './UpdateFrequencySelectModal'
 import { timeDifference } from '../../../utils'
 import { trySetWfModuleAutofetchAction, setWfModuleNotificationsAction } from '../../../workflow-reducer'
 import { connect } from 'react-redux'
+import { withI18n } from '@lingui/react'
 
-export class UpdateFrequencySelect extends React.PureComponent {
+export const UpdateFrequencySelect = withI18n()(class UpdateFrequencySelect extends React.PureComponent {
   static propTypes = {
+    i18n: PropTypes.shape({
+      // i18n object injected by LinguiJS withI18n()
+      _: PropTypes.func.isRequired
+    }),
     workflowId: PropTypes.number.isRequired,
     wfModuleId: PropTypes.number.isRequired,
     isAnonymous: PropTypes.bool.isRequired,
@@ -51,7 +56,7 @@ export class UpdateFrequencySelect extends React.PureComponent {
   }
 
   render () {
-    const { lastCheckDate, isAutofetch, fetchInterval, isEmailUpdates, workflowId, wfModuleId } = this.props
+    const { i18n, lastCheckDate, isAutofetch, fetchInterval, isEmailUpdates, workflowId, wfModuleId } = this.props
     const { isModalOpen } = this.state
 
     return (
@@ -69,7 +74,7 @@ export class UpdateFrequencySelect extends React.PureComponent {
         </div>
         {lastCheckDate ? (
           <div className='last-checked'>
-            Checked <time dateTime={this.props.lastCheckDate.toISOString()}>{timeDifference(lastCheckDate, Date.now())}</time>
+            Checked <time dateTime={this.props.lastCheckDate.toISOString()}>{timeDifference(lastCheckDate, Date.now(), i18n)}</time>
           </div>
         ) : null}
         {isModalOpen ? (
@@ -87,7 +92,7 @@ export class UpdateFrequencySelect extends React.PureComponent {
       </div>
     )
   }
-}
+})
 
 const mapStateToProps = (state, ownProps) => {
   const workflow = state.workflow || {}

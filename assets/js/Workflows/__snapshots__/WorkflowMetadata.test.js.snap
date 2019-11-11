@@ -20,8 +20,16 @@ exports[`WorkflowMetadata renders private workflow correctly 1`] = `
     </span>
   </li>
   <li>
-    Updated 
-    just now
+    <WithI18n
+      defaults="Updated {0}"
+      description="The parameter will contain a time difference (i.e. something like '5h ago')"
+      id="js.Workflows.WorkflowMetadata.update"
+      values={
+        Object {
+          "0": "just now",
+        }
+      }
+    />
   </li>
   <li>
     <span

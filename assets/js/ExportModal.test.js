@@ -1,14 +1,14 @@
 /* globals afterEach, beforeEach, describe, expect, it, jest */
 import React from 'react'
-import { mount } from 'enzyme'
 import ExportModal from './ExportModal'
+import { mountWithI18n } from './i18n/test-utils'
 
 describe('ExportModal', () => {
   let wrapper
 
   beforeEach(() => {
     // mount not shallow as we are looking for components down in the tree, e.g. the input fields inside FormGroup
-    wrapper = mount(
+    wrapper = mountWithI18n(
       <ExportModal
         wfModuleId={415}
         open

@@ -25,10 +25,13 @@ import { connect } from 'react-redux'
 import deepEqual from 'fast-deep-equal'
 import lessonSelector from '../../lessons/lessonSelector'
 import { createSelector } from 'reselect'
+import { withI18n } from '@lingui/react'
+import { Trans, t } from '@lingui/macro'
 
 const numberFormat = new Intl.NumberFormat()
 
 // ---- WfModule ----
+
 export class WfModule extends React.PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired,
@@ -86,7 +89,11 @@ export class WfModule extends React.PureComponent {
     setWfModuleCollapsed: PropTypes.func.isRequired, // func(wfModuleId, isCollapsed, isReadOnly) => undefined
     setZenMode: PropTypes.func.isRequired, // func(wfModuleId, bool) => undefined
     applyQuickFix: PropTypes.func.isRequired, // func(wfModuleId, action) => undefined
-    setWfModuleNotes: PropTypes.func.isRequired // func(wfModuleId, notes) => undefined
+    setWfModuleNotes: PropTypes.func.isRequired, // func(wfModuleId, notes) => undefined
+    i18n: PropTypes.shape({
+      // i18n object injected by LinguiJS withI18n()
+      _: PropTypes.func.isRequired
+    })
   }
 
   notesInputRef = React.createRef()
@@ -229,7 +236,7 @@ export class WfModule extends React.PureComponent {
     if (!isZenModeAllowed) return null
 
     const className = `toggle-zen-mode ${isZenMode ? 'is-zen-mode' : 'not-zen-mode'}`
-    const title = isZenMode ? 'exit Zen mode' : 'enter Zen mode'
+    const title = isZenMode ? <Trans id='js.WorkflowEditor.wfmodule.ZenMode.exit'>exit Zen mode</Trans> : <Trans id='js.WorkflowEditor.wfmodule.ZenMode.enter'>enter Zen mode</Trans>
 
     return (
       <label className={className} title={title}>
@@ -330,7 +337,7 @@ export class WfModule extends React.PureComponent {
   }
 
   render () {
-    const { isReadOnly, index, wfModule, module, inputWfModule, tabs, currentTab } = this.props
+    const { isReadOnly, index, wfModule, module, inputWfModule, tabs, currentTab, i18n } = this.props
 
     const moduleSlug = module ? module.id_name : '_undefined'
     const moduleName = module ? module.name : '_undefined'
@@ -344,7 +351,7 @@ export class WfModule extends React.PureComponent {
         <EditableNotes
           isReadOnly={isReadOnly}
           inputRef={this.notesInputRef}
-          placeholder='Type a note...'
+          placeholder={i18n._(t('js.WorkflowEditor.wfmodule.EditableNotes.placeholder')`Type a note...`)}
           value={this.state.editedNotes === null ? (this.props.wfModule.notes || '') : this.state.editedNotes}
           onChange={this.handleChangeNote}
           onFocus={this.handleFocusNote}
@@ -361,7 +368,7 @@ export class WfModule extends React.PureComponent {
       let className = 'notifications'
       if (notifications) className += ' enabled'
       if (hasUnseen) className += ' has-unseen'
-      const title = notifications ? 'Email alerts enabled' : 'Email alerts disabled'
+      const title = notifications ? i18n._(t('js.WorkflowEditor.wfmodule.alert.enabled')`Email alerts enabled`) : i18n._(t('js.WorkflowEditor.wfmodule.alert.disabled')`Email alerts disabled`)
 
       alertButton = (
         <button title={title} className={className} onClick={this.handleClickNotification}>
@@ -373,7 +380,7 @@ export class WfModule extends React.PureComponent {
     let helpIcon = null
     if (!this.props.isReadOnly) {
       helpIcon = (
-        <a title='Help for this module' className='help-button' href={moduleHelpUrl} target='_blank' rel='noopener noreferrer'>
+        <a title={i18n._(t('js.WorkflowEditor.wfmodule.help.hoverText')`Help for this module`)} className='help-button' href={moduleHelpUrl} target='_blank' rel='noopener noreferrer'>
           <i className='icon-help' />
         </a>
       )
@@ -383,7 +390,7 @@ export class WfModule extends React.PureComponent {
     if (!this.props.isReadOnly) {
       notesIcon = (
         <button
-          title='Edit Note'
+          title={i18n._(t('js.WorkflowEditor.wfmodule.notes.edit.hoverText')`Edit Note`)}
           className={'btn edit-note' + (this.props.isLessonHighlightNotes ? ' lesson-highlight' : '')}
           onClick={this.handleClickNoteButton}
         >
@@ -636,4 +643,4 @@ const mapDispatchToProps = {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(WfModule)
+)(withI18n()(WfModule))
