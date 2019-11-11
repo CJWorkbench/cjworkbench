@@ -18,8 +18,7 @@ urlpatterns = [
     url(r"^$", redirect("/workflows")),
     # list all workflows
     url(r"^workflows/$", workflows.Index.as_view(), name="workflows"),
-    url(r"^lessons$", lessons.render_lesson_list),
-    url(r"^lessons/$", redirect("/lessons")),
+    url(r"^lessons/?$", redirect("/lessons/en")),
     url(r"^lessons/(?P<locale_id>[a-z]+)$", lessons.render_lesson_list),
     url(r"^lessons/(?P<locale_id>[a-z]+)/$", redirect("/lessons/%(locale_id)s")),
     url(
@@ -30,9 +29,8 @@ urlpatterns = [
         r"^lessons/(?P<locale_id>[a-z]+)/(?P<slug>[-a-z0-9]+)/$",
         redirect("/lessons/%(locale_id)s/%(slug)s"),
     ),
-    url(r"^courses/(?P<locale_id>[a-z]+)$", redirect("/lessons/%(locale_id)s")),
-    url(r"^courses/(?P<locale_id>[a-z]+)/$", redirect("/lessons/%(locale_id)s")),
-    url(r"^courses/?$", redirect("/lessons")),
+    url(r"^courses/?$", redirect("/lessons/en")),
+    url(r"^courses/(?P<locale_id>[a-z]+)/?$", redirect("/lessons/%(locale_id)s")),
     url(
         r"^courses/(?P<locale_id>[a-z]+)/(?P<course_slug>[-\w]+)$",
         lessons.render_course,
