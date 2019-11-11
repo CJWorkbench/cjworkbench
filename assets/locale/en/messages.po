@@ -14,26 +14,27 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.7.0\n"
 
-#: assets/js/Embed.js:94
+#: assets/js/Embed.js:98
 msgid "js.Embed.embedCode"
 msgstr "Paste this code into any webpage HTML"
 
 #. This should be all-caps for styling reasons
-#: assets/js/Embed.js:93
+#: assets/js/Embed.js:97
 msgid "js.Embed.embedThisChart"
 msgstr "EMBED THIS CHART"
 
 #. The parameter will contain a time difference (i.e. something like '4h ago')
-#: assets/js/Embed.js:79
+#: assets/js/Embed.js:83
 msgid "js.Embed.metadata.updated"
 msgstr "Updated {0}"
 
-#: assets/js/Embed.js:29
-msgid "js.Embed.workflowNotAvailable"
-msgstr "This workflow is not available"
+#. This should be all-caps for styling reasons
+#: assets/js/Embed.js:37
+msgid "js.Embed.workflowNotAvailable.footer.logo"
+msgstr "WORKBENCH"
 
-#: assets/js/Embed.js:36
-msgid "js.Embed.workflowNotAvailable.footer"
+#: assets/js/Embed.js:29
+msgid "js.Embed.workflowNotAvailable.title"
 msgstr "This workflow is not available"
 
 #: assets/js/ErrorBoundary.js:23
