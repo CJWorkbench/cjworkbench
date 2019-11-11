@@ -803,6 +803,26 @@
 			"comment": "So cjwkernel.forkserver can sandbox module_main()",
 			"includes": {},
 			"excludes": {}
+		},
+		{
+			"names": [
+				"mount"
+			],
+			"action": "SCMP_ACT_ALLOW",
+			"args": [],
+			"comment": "So cjwkernel can set up chroot directories",
+			"includes": {},
+			"excludes": {}
+		},
+		{
+			"names": [
+				"unshare"
+			],
+			"action": "SCMP_ACT_ALLOW",
+			"args": [],
+			"comment": "For 'docker exec'-style testing using /usr/bin/unshare (unused in our own code)",
+			"includes": {},
+			"excludes": {}
 		}
 	]
 }

@@ -1,8 +1,9 @@
 import asyncio
+from dataclasses import dataclass
 import functools
 import logging
 import types
-from typing import Any, Callable, Dict
+from typing import Any, Callable, Dict, Optional
 import aioamqp
 from aioamqp.exceptions import AmqpClosedConnection
 from django.conf import settings
@@ -17,11 +18,15 @@ Render = "render"
 Fetch = "fetch"
 
 
+@dataclass
 class DeclaredQueueConsume:
-    def __init__(self, name: str, prefetch_count: int, callback: Callable):
-        self.name = name
-        self.prefetch_count = prefetch_count
-        self.callback = callback
+    name: str
+    callback: Optional[Callable] = None
+    """
+    Function to run on every queue element.
+
+    If `None`, just _declare_ the queue but never consume from it.
+    """
 
 
 def acking_callback(fn):
@@ -251,7 +256,7 @@ class RetryingConnection:
 
         # Start consuming `self._declared_queues`
         for queue in self._declared_queues:
-            if queue.prefetch_count == 0:
+            if queue.callback is None:
                 # Don't actually _consume_ the queue: just declare it.
                 continue
 
@@ -259,7 +264,7 @@ class RetryingConnection:
             # actual channel. https://www.rabbitmq.com/consumer-prefetch.html
             #
             # leave prefetch_size at its default, 0: "no octet-size limit"
-            await self._channel.basic_qos(prefetch_count=queue.prefetch_count)
+            await self._channel.basic_qos(prefetch_count=1)
 
             # call (and await) `callback` for every message.
             await self._channel.basic_consume(
@@ -291,9 +296,7 @@ class RetryingConnection:
             await asyncio.wait(self._processing_messages)
         self._closed_event.set()  # we're finished closing.
 
-    def declare_queue_consume(
-        self, queue: str, prefetch_count: int, callback: Callable
-    ) -> None:
+    def declare_queue_consume(self, queue: str, callback: Callable) -> None:
         """
         Declare a queue to be consumed after connect.
 
@@ -301,9 +304,7 @@ class RetryingConnection:
 
         (This is used on fetcher/renderer.)
         """
-        self._declared_queues.append(
-            DeclaredQueueConsume(queue, prefetch_count, callback)
-        )
+        self._declared_queues.append(DeclaredQueueConsume(queue, callback))
 
     def declare_queue(self, queue: str) -> None:
         """
@@ -313,7 +314,7 @@ class RetryingConnection:
 
         (This is used on the web server.)
         """
-        self._declared_queues.append(DeclaredQueueConsume(queue, None, None))
+        self._declared_queues.append(DeclaredQueueConsume(queue))
 
     async def publish(self, queue: str, message: Dict[str, Any]) -> None:
         """

@@ -1,4 +1,5 @@
 import contextlib
+import io
 import logging
 from pathlib import Path
 import subprocess
@@ -9,6 +10,45 @@ from cjwkernel.util import tempfile_context
 
 
 logger = logging.getLogger(__name__)
+
+
+def file_has_parquet_magic_number(path: Path) -> bool:
+    """
+    Detect Parquet.
+
+    A Parquet file starts and ends with "PAR1" (ASCII-encoded).
+    """
+    with path.open("rb", buffering=0) as f:
+        if f.read(4) != b"PAR1":
+            return False
+
+        # fseek(-4, SEEK_END) shouldn't error EINVAL: we know the file is >=4
+        # bytes long because we'd have returned above if it were shorter.
+        if f.seek(-4, io.SEEK_END) < 16:
+            # The file may start and end with "PAR1" (or it may _be_ "PAR1" on
+            # its own, if f.seek() returns 0); but it's too small to be a
+            # Parquet file.
+            #
+            # Parquet file has a certain amount of Thrift; let's ignore Thrift
+            # overhead and picture the minimum file:
+            #
+            #     "PAR1" magic number (4)
+            #     File metadata:
+            #         i32 version (4)
+            #         i64 number of rows (8)
+            #     i32 length of file metadata (4)
+            #     "PAR1" magic number (4)
+            #
+            # An inane empty Parquet file -- impossible because Thrift adds
+            # overhead -- would be 20 bytes long.
+            #
+            # So if we seeked to 4 bytes from the end and we aren't at _least_
+            # 16 bytes in, we know for sure the file isn't Parquet.
+            return False
+        if f.read(4) != b"PAR1":
+            return False
+
+    return True
 
 
 def convert_parquet_file_to_arrow_file(parquet_path: Path, arrow_path: Path) -> None:

@@ -1,14 +1,13 @@
 from dataclasses import dataclass
 import logging
 import os
+from pathlib import Path
 import socket
 import subprocess
 import sys
 import threading
-from typing import Any, BinaryIO, FrozenSet, List, Tuple
+from typing import Any, BinaryIO, FrozenSet, List, Optional, Tuple
 from . import protocol
-from cjwkernel.types import CompiledModule
-from cjwkernel.pandas import main as module_main
 
 
 logger = logging.getLogger(__name__)
@@ -120,6 +119,7 @@ class Forkserver:
         process_name: str,
         args: List[Any],
         *,
+        chroot_dir: Optional[Path] = None,
         skip_sandbox_except: FrozenSet[str] = frozenset(),
     ) -> ModuleProcess:
         """
@@ -129,12 +129,22 @@ class Forkserver:
 
         `args` are the arguments to pass to `cjwkernel.pandas.module.main()`.
 
+        If `chroot_dir` is set, it must point to a directory on the filesystem.
+        Remember that we call setuid() to an extreme UID (>65535) by default:
+        that means the module will only be able to read files that are
+        world-readable (i.e., "chmod o+r").
+
+        (TODO `chroot_dir` should use pivot_root, for security. When Kubernetes
+        lets us modify our mount namespace in an unprivileged container, switch
+        to pivot_root.)
+
         `skip_sandbox_except` MUST BE EXACTLY `frozenset()`. Other values are
         only for unit tests. See `protocol.SpawnPandasModule` for details.
         """
         message = protocol.SpawnPandasModule(
             process_name=process_name,
             args=args,
+            chroot_dir=chroot_dir,
             skip_sandbox_except=skip_sandbox_except,
         )
         with self._lock:

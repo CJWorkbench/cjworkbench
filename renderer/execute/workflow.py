@@ -1,12 +1,11 @@
 import logging
 from typing import Any, Dict, List, Optional, Tuple
 from cjworkbench.sync import database_sync_to_async
+from cjwkernel.chroot import EDITABLE_CHROOT
 from cjwkernel.errors import ModuleError
 from cjwkernel.param_dtype import ParamDType
 from cjwkernel.types import RenderResult, Tab
-from cjwkernel.util import tempdir_context
 from cjwstate.models import WfModule, Workflow
-from cjwstate.modules.loaded_module import LoadedModule
 from cjwstate.params import get_migrated_params
 from .tab import ExecuteStep, TabFlow, execute_tab_flow
 from .types import UnneededExecution
@@ -151,33 +150,36 @@ async def execute_workflow(workflow: Workflow, delta_id: int) -> None:
     # time; it might be run multiple times simultaneously (even on different
     # computers); and `await` doesn't work with locks.
 
-    with tempdir_context() as basedir:
+    with EDITABLE_CHROOT.acquire_context() as chroot_context:
+        with chroot_context.tempdir_context("render-") as basedir:
 
-        async def execute_tab_flow_into_new_file(tab_flow: TabFlow) -> RenderResult:
-            nonlocal workflow, tab_results, output_paths
-            output_path = basedir / (
-                "tab-output-%s.arrow" % tab_flow.tab_slug.replace("/", "-")
-            )
-            return await execute_tab_flow(workflow, tab_flow, tab_results, output_path)
+            async def execute_tab_flow_into_new_file(tab_flow: TabFlow) -> RenderResult:
+                nonlocal workflow, tab_results, output_paths
+                output_path = basedir / (
+                    "tab-output-%s.arrow" % tab_flow.tab_slug.replace("/", "-")
+                )
+                return await execute_tab_flow(
+                    chroot_context, workflow, tab_flow, tab_results, output_path
+                )
 
-        while pending_tab_flows:
-            ready_flows, dependent_flows = partition_ready_and_dependent(
-                pending_tab_flows
-            )
+            while pending_tab_flows:
+                ready_flows, dependent_flows = partition_ready_and_dependent(
+                    pending_tab_flows
+                )
 
-            if not ready_flows:
-                # All flows are dependent -- meaning they all have cycles. Execute
-                # them last; they can detect their cycles through `tab_results`.
-                break
+                if not ready_flows:
+                    # All flows are dependent -- meaning they all have cycles. Execute
+                    # them last; they can detect their cycles through `tab_results`.
+                    break
 
-            for tab_flow in ready_flows:
-                result = await execute_tab_flow_into_new_file(tab_flow)
-                tab_results[tab_flow.tab] = result
+                for tab_flow in ready_flows:
+                    result = await execute_tab_flow_into_new_file(tab_flow)
+                    tab_results[tab_flow.tab] = result
 
-            pending_tab_flows = dependent_flows  # iterate
+                pending_tab_flows = dependent_flows  # iterate
 
-        # Now, `pending_tab_flows` only contains flows with cycles. Execute
-        # them. No need to update `tab_results`: If tab1 and tab 2 depend on
-        # each other, they should have the same error ("Cycle").
-        for tab_flow in pending_tab_flows:
-            await execute_tab_flow_into_new_file(tab_flow)
+            # Now, `pending_tab_flows` only contains flows with cycles. Execute
+            # them. No need to update `tab_results`: If tab1 and tab 2 depend on
+            # each other, they should have the same error ("Cycle").
+            for tab_flow in pending_tab_flows:
+                await execute_tab_flow_into_new_file(tab_flow)

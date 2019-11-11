@@ -1,14 +1,20 @@
 from __future__ import annotations
 import array
 from dataclasses import dataclass, field, replace
+from pathlib import Path
 import pickle
-from typing import Any, FrozenSet, List, Type, TypeVar
-from cjwkernel.types import CompiledModule
+from typing import Any, FrozenSet, List, Optional, Type, TypeVar
 from multiprocessing.reduction import sendfds, recvfds
+import shutil
 import socket
 
 
 _MessageType = TypeVar("T", bound="Message")
+
+
+assert (
+    shutil.rmtree.avoids_symlink_attacks
+), "chroot is unusable: a child's symlinks can make a parent delete files"
 
 
 class Message:
@@ -91,6 +97,13 @@ class SpawnPandasModule(MessageToChild):
 
     args: List[Any]
     """Arguments to pass to `module_main(*args)`."""
+
+    chroot_dir: Optional[Path]
+    """
+    Setting for "chroot" security layer.
+
+    If `chroot_dir` is set, it must point to a directory on the filesystem.
+    """
 
     skip_sandbox_except: FrozenSet[str] = field(default_factory=frozenset)
     """

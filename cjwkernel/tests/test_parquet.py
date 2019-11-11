@@ -9,6 +9,32 @@ from cjwkernel.tests.util import arrow_table, assert_arrow_table_equals, parquet
 from cjwkernel.util import create_tempfile, tempfile_context
 
 
+class MagicNumbersTest(unittest.TestCase):
+    def test_parquet_file_has_magic_numbers(self):
+        with parquet_file({"A": [1]}) as path:
+            self.assertTrue(parquet.file_has_parquet_magic_number(path))
+
+    def test_empty_file(self):
+        with tempfile_context() as path:
+            self.assertFalse(parquet.file_has_parquet_magic_number(path))
+
+    def test_very_short_file(self):
+        with tempfile_context() as path:
+            path.write_bytes(b"PAR")
+            self.assertFalse(parquet.file_has_parquet_magic_number(path))
+
+    def test_good_magic_numbers_but_too_short_to_be_parquet(self):
+        # Parquet has PAR1 at the beginning and end. But the file "PAR1" on its
+        # own is not a Parquet file.
+        with tempfile_context() as path:
+            path.write_bytes(b"PAR1")
+            self.assertFalse(parquet.file_has_parquet_magic_number(path))
+
+    def test_empty_parquet_file(self):
+        with parquet_file({}) as path:
+            self.assertTrue(parquet.file_has_parquet_magic_number(path))
+
+
 class ParquetTest(unittest.TestCase):
     def setUp(self):
         super().setUp()

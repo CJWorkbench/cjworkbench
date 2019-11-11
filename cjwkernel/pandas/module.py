@@ -6,7 +6,7 @@ import asyncio
 import inspect
 from pathlib import Path
 import pandas as pd
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 from cjwkernel import parquet, types
 from cjwkernel.util import tempfile_context
 from cjwkernel.pandas import types as ptypes
@@ -33,7 +33,7 @@ def render_pandas(
     params: Dict[str, Any],
     tab_name: str,
     input_tabs: Dict[str, ptypes.TabOutput],
-    fetch_result: Optional[ptypes.ProcessResult],
+    fetch_result: Optional[Union[types.FetchResult, ptypes.ProcessResult]],
 ) -> ptypes.ProcessResult:
     """
     Call `render()` and validate the result.
@@ -162,13 +162,18 @@ def render_arrow(
         for to in _find_tab_outputs(params)
     }
     if fetch_result is not None:
-        fetched_table = __parquet_to_pandas(fetch_result.path)
-        if fetch_result.errors:
-            assert fetch_result.errors[0].message.id == "TODO_i18n"
-            error = fetch_result.errors[0].message.args["text"]
+        if fetch_result.path.stat().st_size == 0 or parquet.file_has_parquet_magic_number(
+            fetch_result.path
+        ):
+            fetched_table = __parquet_to_pandas(fetch_result.path)
+            if fetch_result.errors:
+                assert fetch_result.errors[0].message.id == "TODO_i18n"
+                error = fetch_result.errors[0].message.args["text"]
+            else:
+                error = ""
+            pandas_fetch_result = ptypes.ProcessResult(fetched_table, error)
         else:
-            error = ""
-        pandas_fetch_result = ptypes.ProcessResult(fetched_table, error)
+            pandas_fetch_result = fetch_result
     else:
         pandas_fetch_result = None
 
@@ -225,6 +230,14 @@ def fetch(params: Dict[str, Any], **kwargs):
     (After building a working `fetch()`, module authors might consider
     optimizing by rewriting as `fetch_arrow()` ... and maybe even
     `fetch_thrift()`.)
+
+    Valid return types:
+
+    * pd.DataFrame -> becomes a Parquet file
+    * (pd.DataFrame, str) -> Parquet file plus warning
+    * str -> error
+    * Path -> raw file
+    * (Path, str) -> raw file plus warning
     """
     raise NotImplementedError("This module does not define a fetch() function")
 
@@ -234,7 +247,8 @@ def fetch_pandas(
     secrets: Dict[str, Any],
     last_fetch_result: Optional[types.FetchResult],
     input_table_parquet_path: Optional[Path],
-) -> ptypes.ProcessResult:
+    output_path: Path,
+) -> Union[ptypes.ProcessResult, types.FetchResult]:
     """
     Call `fetch()` and validate the result.
 
@@ -272,10 +286,25 @@ def fetch_pandas(
 
         kwargs["get_stored_dataframe"] = get_stored_dataframe
 
+    if varkw or "output_path" in kwonlyargs:
+        kwargs["output_path"] = output_path
+
     result = fetch(params, **kwargs)
     if asyncio.iscoroutine(result):
         result = asyncio.run(result)
-    return ptypes.ProcessResult.coerce(result)
+    if (
+        isinstance(result, tuple)
+        and len(result) == 2
+        and isinstance(result[0], Path)
+        and isinstance(result[1], str)
+    ):
+        return types.FetchResult(
+            result[0], [types.RenderError(types.I18nMessage.TODO_i18n(result[1]))]
+        )
+    elif isinstance(result, Path):
+        return types.FetchResult(result)
+    else:
+        return ptypes.ProcessResult.coerce(result)
 
 
 def _arrow_param_to_pandas_param(param):
@@ -309,22 +338,26 @@ def fetch_arrow(
     Module authors are encouraged to replace this function, because the
     `fetch()` signature deals in dataframes instead of in raw data.
     """
-    pandas_result: ptypes.ProcessResult = fetch_pandas(
+    pandas_result: Union[ptypes.ProcessResult, types.FetchResult] = fetch_pandas(
         params=_arrow_param_to_pandas_param(params),
         secrets=secrets,
         last_fetch_result=last_fetch_result,
         input_table_parquet_path=input_table_parquet_path,
+        output_path=output_path,
     )
-    pandas_result.truncate_in_place_if_too_big()
-    # ProcessResult => FetchResult isn't a thing; but we can hack it using
-    # ProcessResult => RenderResult => FetchResult.
-    with tempfile_context(suffix=".arrow") as arrow_path:
-        hacky_result = pandas_result.to_arrow(arrow_path)
-    if hacky_result.table.path:
-        parquet.write(output_path, hacky_result.table.table)
-    else:
-        output_path.write_bytes(b"")
-    return types.FetchResult(output_path, hacky_result.errors)
+    if isinstance(pandas_result, ptypes.ProcessResult):
+        pandas_result.truncate_in_place_if_too_big()
+        # ProcessResult => FetchResult isn't a thing; but we can hack it using
+        # ProcessResult => RenderResult => FetchResult.
+        with tempfile_context(suffix=".arrow") as arrow_path:
+            hacky_result = pandas_result.to_arrow(arrow_path)
+        if hacky_result.table.path:
+            parquet.write(output_path, hacky_result.table.table)
+        else:
+            output_path.write_bytes(b"")
+        return types.FetchResult(output_path, hacky_result.errors)
+    else:  # it's already a types.FetchResult
+        return pandas_result
 
 
 def fetch_thrift(request: ttypes.FetchRequest) -> ttypes.FetchResult:
@@ -418,7 +451,7 @@ def validate_thrift() -> ttypes.ValidateModuleResult:
     assert len(fetch_spec.args) == 1, "fetch must take one positional argument"
     assert not (
         set(fetch_spec.kwonlyargs)
-        - {"secrets", "get_input_dataframe", "get_stored_dataframe"}
+        - {"secrets", "get_input_dataframe", "get_stored_dataframe", "output_path"}
     ), "a fetch() keyword argument is misspelled"
 
     return ttypes.ValidateModuleResult()

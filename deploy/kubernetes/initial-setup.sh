@@ -10,20 +10,52 @@ set -x
 CLUSTER_NAME="workbench"
 
 ## Create a cluster
-#gcloud container clusters create $CLUSTER_NAME
+#gcloud beta container clusters create $CLUSTER_NAME \
+#  --identity-namespace=cj-workbench.svc.id.goog \
+#  --no-enable-basic-auth
 
-## Save money: always shrink to the smallest number of nodes we need
-#gcloud container clusters update $CLUSTER_NAME \
-#  --node-pool default-pool \
-#  --enable-autoscaling \
-#  --min-nodes 1 \
-#  --max-nodes 5
+## Harden service account security
+## https://cloud.google.com/kubernetes-engine/docs/how-to/hardening-your-cluster#use_least_privilege_sa
+#gcloud iam service-accounts create least-privilege-sa \
+#  --display-name=least-privilege-sa
+#  
+#gcloud projects add-iam-policy-binding cj-workbench \
+#  --member "serviceAccount:least-privilege-sa@cj-workbench.iam.gserviceaccount.com" \
+#  --role roles/logging.logWriter
+#
+#gcloud projects add-iam-policy-binding cj-workbench \
+#  --member "serviceAccount:least-privilege-sa@cj-workbench.iam.gserviceaccount.com" \
+#  --role roles/monitoring.metricWriter
+#
+#gcloud projects add-iam-policy-binding cj-workbench \
+#  --member "serviceAccount:least-privilege-sa@cj-workbench.iam.gserviceaccount.com" \
+#  --role roles/monitoring.viewer
 
-## Simplify maintenance: GCP will upgrade Kubernetes while we sleep
-#gcloud container node-pools update default-pool \
-#  --cluster $CLUSTER_NAME \
-#  --enable-autoupgrade \
-#  --enable-autorepair
+## Build a node pool with all the settings we want
+#
+# * size 1-11 machines
+# * disable hyperthreading, because we run untrusted code
+#   see https://cloud.google.com/kubernetes-engine/docs/security-bulletins#may-14-2019
+# * 6-vCPU machines because after we disable hyperthreading, it's really 3.
+#   4-vCPU would prevent us from scheduling two renderers on the same node
+#   because we lose a bit of CPU to overhead. For instance, 4-vCPU would give
+#   ~1.75 CPUs for our own tasks (and a fetcher/renderer costs 1 CPU).
+# * 12GB RAM: [2019-11-06] we give renderer 5GB RAM; leave room for 2.
+# * no gvisor for now, since it'll take new deployment YAML
+# * Workflow Identity, so http://metadata/ doesn't leak passwords
+gcloud beta container node-pools create main-pool-v7 \
+  --cluster=$CLUSTER_NAME \
+  --service-account=least-privilege-sa@cj-workbench.iam.gserviceaccount.com \
+  --machine-type=custom-6-12288 \
+  --enable-autoupgrade \
+  --enable-autoscaling \
+  --min-nodes 1 \
+  --max-nodes 15 \
+  --node-labels=cloud.google.com/gke-smt-disabled=true \
+  --metadata disable-legacy-endpoints=true \
+  --workload-metadata-from-node=GKE_METADATA_SERVER
+kubectl create -f \
+  https://raw.githubusercontent.com/GoogleCloudPlatform/k8s-node-tools/master/disable-smt/gke/disable-smt.yaml
 
 #kubectl create namespace production
 #kubectl create namespace staging
@@ -133,11 +165,11 @@ echo -n 'Waiting for external IP... ' >&2
 EXTERNAL_IP='<none>'
 while [ "$EXTERNAL_IP" = "<none>" ]; do
   sleep 1
-  EXTERNAL_IP=$(kubectl -n ingress-nginx get service nginx-ingress-lb -o custom-columns=x:status.loadBalancer.ingress[0].ip | tail -n1)
+  EXTERNAL_IP=$(kubectl -n ingress-nginx-v2 get service ingress-nginx -o custom-columns=x:status.loadBalancer.ingress[0].ip | tail -n1)
 done
 echo "$EXTERNAL_IP"
 # Make static IP persist. https://github.com/kubernetes/ingress-nginx/tree/master/docs/examples/static-ip
-kubectl -n ingress-nginx patch service nginx-ingress-lb -p '{"spec":{"loadBalancerIP":"'$EXTERNAL_IP'"}}'
+kubectl -n ingress-nginx-v2 patch service ingress-nginx -p '{"spec":{"loadBalancerIP":"'$EXTERNAL_IP'"}}'
 gcloud compute addresses create nginx-ingress-lb --addresses "$EXTERNAL_IP" --region us-central1
 
 kubectl apply -f frontend-production-ingress.yaml

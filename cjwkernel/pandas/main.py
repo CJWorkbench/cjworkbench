@@ -1,4 +1,3 @@
-import os
 import sys
 import types
 from typing import Any, List
@@ -10,7 +9,7 @@ import cjwkernel.pandas.module
 
 def main(compiled_module: CompiledModule, function: str, args: List[Any]) -> None:
     """
-    Run `function` with `args`, and write the (Thrift) result to `output_fileno`.
+    Run `function` with `args`, and write the (Thrift) result to stdout.
     """
 
     assert function in (
@@ -82,3 +81,4 @@ def run_in_sandbox(
     protocol = thrift.protocol.TBinaryProtocol.TBinaryProtocol(transport)
     if result is not None:
         result.write(protocol)
+    transport.flush()

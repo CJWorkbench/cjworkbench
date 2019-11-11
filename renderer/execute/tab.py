@@ -4,8 +4,8 @@ import logging
 from pathlib import Path
 from typing import Any, Dict, List, Optional, FrozenSet
 from cjworkbench.sync import database_sync_to_async
+from cjwkernel.chroot import ChrootContext
 from cjwkernel.types import RenderResult, Tab
-from cjwkernel.util import tempfile_context
 from cjwstate.rendercache import load_cached_render_result, CorruptCacheError
 from cjwstate.models import WfModule, Workflow
 from cjwstate.models.param_spec import ParamDType
@@ -125,6 +125,7 @@ def _load_step_output_from_rendercache(
 
 
 async def execute_tab_flow(
+    chroot_context: ChrootContext,
     workflow: Workflow,
     flow: TabFlow,
     tab_results: Dict[Tab, Optional[RenderResult]],
@@ -157,7 +158,7 @@ async def execute_tab_flow(
     # We pass data between two Arrow files, kinda like double-buffering. The
     # two are `output_path` and `buffer_path`. This requires fewer temporary
     # files, so it's less of a hassle to clean up.
-    with tempfile_context(
+    with chroot_context.tempfile_context(
         dir=basedir, prefix="render-buffer", suffix=".arrow"
     ) as buffer_path:
         # We will render from `buffer_path` to `output_path` and from
@@ -225,6 +226,7 @@ async def execute_tab_flow(
         for step, step_output_path in zip(flow.steps[step_index:], step_output_paths):
             step_output_path.write_bytes(b"")  # don't leak data from two steps ago
             next_result = await execute_wfmodule(
+                chroot_context,
                 workflow,
                 step.wf_module,
                 step.params,

@@ -3,14 +3,16 @@ import io
 import logging
 import marshal
 import os
+import os.path
 from pathlib import Path
 import selectors
 import time
-from typing import Any, Dict, Optional
-import thrift.protocol
-import thrift.transport
-from cjwkernel.forkserver import Forkserver
+from typing import Any, Dict, List, Optional
+import thrift.protocol.TBinaryProtocol
+import thrift.transport.TTransport
+from cjwkernel.chroot import ChrootContext, READONLY_CHROOT_CONTEXT
 from cjwkernel.errors import ModuleCompileError, ModuleTimeoutError, ModuleExitedError
+from cjwkernel.forkserver import Forkserver
 from cjwkernel.thrift import ttypes
 from cjwkernel.types import (
     ArrowTable,
@@ -34,6 +36,13 @@ LOG_BUFFER_MAX_BYTES = 100 * 1024  # waaaay too much log output
 OUTPUT_BUFFER_MAX_BYTES = (
     2 * 1024 * 1024
 )  # a huge migrate_params() return value, perhaps?
+
+# Import all encodings. Some modules (e.g., loadurl) encounter weird stuff
+ENCODING_IMPORTS = [
+    "encodings." + p.stem
+    for p in Path("/usr/local/lib/python3.7/encodings").glob("*.py")
+    if p.stem not in {"cp65001", "mbcs", "oem"}  # un-importable
+]
 
 
 @dataclass
@@ -132,27 +141,79 @@ class Kernel:
         self._forkserver = Forkserver(
             module_main="cjwkernel.pandas.main.main",
             forkserver_preload=[
+                "_strptime",
+                "abc",
                 "asyncio",
+                "base64",
+                "collections",
+                "concurrent",
+                "concurrent.futures",
+                "concurrent.futures.thread",
                 "dataclasses",
+                "datetime",
+                "enum",
+                "functools",
+                "inspect",
+                "itertools",
+                "json",
+                "math",
+                "multiprocessing",
+                "multiprocessing.connection",
+                "multiprocessing.popen_fork",
+                "os.path",
                 "re",
+                "sqlite3",
+                "ssl",
+                "string",
                 "typing",
+                "urllib.parse",
+                "warnings",
                 "aiohttp",
+                "bs4",
                 "formulas",
+                "formulas.functions.operators",
                 "formulas.parser",
+                "html5lib",
+                "html5lib.constants",
+                "html5lib.filters",
+                "html5lib.filters.whitespace",
+                "html5lib.treewalkers.etree",
+                "idna.uts46data",
+                "lxml",
+                "lxml.etree",
+                "lxml.html",
+                "lxml.html.html5parser",
+                "networkx",
                 "numpy",
                 "nltk",
+                "nltk.corpus",
+                "nltk.sentiment.vader",
                 "oauthlib",
                 "oauthlib.oauth1",
                 "oauthlib.oauth2",
                 "pandas",
+                "pandas.core",
+                "pandas.core.apply",
+                "pandas.core.computation.expressions",
+                "pandas.core.groupby.categorical",
                 "pyarrow",
+                "pyarrow.pandas_compat",
                 "pyarrow.parquet",
                 "re2",
                 "requests",
+                "schedula.dispatcher",
+                "schedula.utils.blue",
+                "schedula.utils.sol",
+                "thrift.protocol.TBinaryProtocol",
+                "thrift.transport.TTransport",
                 "xlrd",
                 "yajl",
                 "cjwkernel.pandas.main",
                 "cjwkernel.pandas.module",
+                "cjwkernel.pandas.moduleutils",
+                "cjwkernel.pandas.parse_util",
+                "cjwkernel.parquet",
+                *ENCODING_IMPORTS,
             ],
         )
 
@@ -183,28 +244,35 @@ class Kernel:
 
     def _validate(self, compiled_module: CompiledModule) -> None:
         self._run_in_child(
-            compiled_module,
-            self.validate_timeout,
-            ttypes.ValidateModuleResult(),
-            "validate_thrift",
+            chroot_context=READONLY_CHROOT_CONTEXT,
+            compiled_module=compiled_module,
+            timeout=self.validate_timeout,
+            result=ttypes.ValidateModuleResult(),
+            function="validate_thrift",
+            args=[],
         )
 
     def migrate_params(
         self, compiled_module: CompiledModule, params: Dict[str, Any]
     ) -> None:
+        """
+        Call a module's migrate_params().
+        """
         request = RawParams(params).to_thrift()
         response = self._run_in_child(
-            compiled_module,
-            self.migrate_params_timeout,
-            ttypes.RawParams(),
-            "migrate_params_thrift",
-            request,
+            chroot_context=READONLY_CHROOT_CONTEXT,
+            compiled_module=compiled_module,
+            timeout=self.migrate_params_timeout,
+            result=ttypes.RawParams(),
+            function="migrate_params_thrift",
+            args=[request],
         )
         return RawParams.from_thrift(response).params
 
     def render(
         self,
         compiled_module: CompiledModule,
+        chroot_context: ChrootContext,
         basedir: Path,
         input_table: ArrowTable,
         params: Params,
@@ -212,21 +280,33 @@ class Kernel:
         fetch_result: Optional[FetchResult],
         output_filename: str,
     ) -> RenderResult:
+        basedir_seen_by_module = Path("/") / basedir.relative_to(
+            chroot_context.chroot.root
+        )
         request = ttypes.RenderRequest(
-            str(basedir),
+            str(basedir_seen_by_module),
             input_table.to_thrift(),
             params.to_thrift(),
             tab.to_thrift(),
             None if fetch_result is None else fetch_result.to_thrift(),
             output_filename,
         )
-        result = self._run_in_child(
-            compiled_module,
-            self.render_timeout,
-            ttypes.RenderResult(),
-            "render_thrift",
-            request,
-        )
+        try:
+            with chroot_context.writable_file(basedir / output_filename):
+                result = self._run_in_child(
+                    chroot_context=chroot_context,
+                    compiled_module=compiled_module,
+                    timeout=self.render_timeout,
+                    result=ttypes.RenderResult(),
+                    function="render_thrift",
+                    args=[request],
+                )
+        finally:
+            chroot_context.clear_unowned_edits()
+
+        if result.table.filename and result.table.filename != output_filename:
+            raise ModuleExitedError(0, "Module wrote to wrong output file")
+
         # RenderResult.from_thrift() verifies all filenames passed by the
         # module are in the directory the module has access to.
         render_result = RenderResult.from_thrift(result, basedir)
@@ -237,6 +317,7 @@ class Kernel:
     def fetch(
         self,
         compiled_module: CompiledModule,
+        chroot_context: ChrootContext,
         basedir: Path,
         params: Params,
         secrets: Dict[str, Any],
@@ -244,31 +325,48 @@ class Kernel:
         input_parquet_filename: str,
         output_filename: str,
     ) -> FetchResult:
+        basedir_seen_by_module = Path("/") / basedir.relative_to(
+            chroot_context.chroot.root
+        )
         request = ttypes.FetchRequest(
-            str(basedir),
+            str(basedir_seen_by_module),
             params.to_thrift(),
             RawParams(secrets).to_thrift(),
             None if last_fetch_result is None else last_fetch_result.to_thrift(),
             input_parquet_filename,
             output_filename,
         )
-        result = self._run_in_child(
-            compiled_module,
-            self.fetch_timeout,
-            ttypes.FetchResult(),
-            "fetch_thrift",
-            request,
-        )
-        # TODO ensure result is truncated
+        try:
+            with chroot_context.writable_file(basedir / output_filename):
+                result = self._run_in_child(
+                    chroot_context=chroot_context,
+                    compiled_module=compiled_module,
+                    timeout=self.fetch_timeout,
+                    result=ttypes.FetchResult(),
+                    function="fetch_thrift",
+                    args=[request],
+                )
+        finally:
+            chroot_context.clear_unowned_edits()
+
+        if result.filename and result.filename != output_filename:
+            raise ModuleExitedError(0, "Module wrote to wrong output file")
+
+        # TODO validate result isn't too large. If result is dataframe it makes
+        # sense to truncate; but fetch results aren't necessarily data frames.
+        # It's up to the module to enforce this logic ... but we need to set a
+        # maximum file size.
         return FetchResult.from_thrift(result, basedir)
 
     def _run_in_child(
         self,
+        *,
+        chroot_context: ChrootContext,
         compiled_module: CompiledModule,
         timeout: float,
         result: Any,
         function: str,
-        *args,
+        args: List[Any],
     ) -> None:
         """
         Fork a child process to run `function` with `args`.
@@ -286,6 +384,7 @@ class Kernel:
 
         module_process = self._forkserver.spawn_module(
             process_name=compiled_module.module_slug,
+            chroot_dir=chroot_context.chroot.root,
             args=[compiled_module, function, args],
         )
 
