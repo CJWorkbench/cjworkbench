@@ -25,7 +25,7 @@ spec:
         - name: setup-chroot
           image: "gcr.io/cj-workbench/migrate:latest"
           securityContext:
-            privileged: true  # so it can run mount
+            privileged: true  # so it can run mount and iptables
           command: [ "bash", "-x", "/app/cjwkernel/setup-chroots.sh" ]
           volumeMounts:
             - mountPath: /var/lib/cjwkernel/chroot
@@ -98,6 +98,11 @@ spec:
           volumeMounts:
             - mountPath: /var/lib/cjwkernel/chroot
               name: chroot
+        securityContext:
+          capabilities:
+            add:
+              # TODO ban render() from networking. Period. Then nix NET_ADMIN priv.
+              - NET_ADMIN # To create network interface for sandbox in cjwkernel
         # "any volume mounts created by Containers in Pods must be destroyed
         # (unmounted) by the Containers on termination"
         # -- https://kubernetes.io/docs/concepts/storage/volumes/#mount-propagation
