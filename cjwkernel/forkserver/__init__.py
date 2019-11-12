@@ -120,6 +120,7 @@ class Forkserver:
         args: List[Any],
         *,
         chroot_dir: Optional[Path] = None,
+        network_config: Optional[protocol.NetworkConfig] = None,
         skip_sandbox_except: FrozenSet[str] = frozenset(),
     ) -> ModuleProcess:
         """
@@ -145,6 +146,7 @@ class Forkserver:
             process_name=process_name,
             args=args,
             chroot_dir=chroot_dir,
+            network_config=network_config,
             skip_sandbox_except=skip_sandbox_except,
         )
         with self._lock:

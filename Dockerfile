@@ -21,6 +21,7 @@ RUN mkdir -p /usr/share/man/man1 /usr/share/man/man7 \
         git \
         postgresql-client \
         libcap2 \
+        iptables \
         unzip \
         curl \
     && rm -rf /var/lib/apt/lists/*
@@ -77,14 +78,14 @@ RUN mkdir -p /root/.local/share/virtualenvs \
 COPY --from=watchman-bin /usr/bin/watchman /usr/bin/watchman
 COPY --from=watchman-bin /usr/var/run/watchman /usr/var/run/watchman
 
+# Add "mc" command, so we can create a non-root user in minio (for STS).
+COPY --from=mc /usr/bin/mc /usr/bin/mc
+
 COPY cjwkernel/setup-chroot-layers.sh /tmp/setup-chroot-layers.sh
 RUN /tmp/setup-chroot-layers.sh && rm /tmp/setup-chroot-layers.sh
 # Let chroots overlay the root FS -- meaning they must be on another FS.
 # see cjwkernel/setup-chroots.sh
 VOLUME /var/lib/cjwkernel/chroot
-
-# Add "mc" command, so we can create a non-root user in minio (for STS).
-COPY --from=mc /usr/bin/mc /usr/bin/mc
 
 # Add a Python wrapper that will help PyCharm cooperate with pipenv
 # See https://blog.jetbrains.com/pycharm/2015/12/using-docker-in-pycharm/ for

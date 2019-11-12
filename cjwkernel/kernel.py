@@ -13,6 +13,7 @@ import thrift.transport.TTransport
 from cjwkernel.chroot import ChrootContext, READONLY_CHROOT_CONTEXT
 from cjwkernel.errors import ModuleCompileError, ModuleTimeoutError, ModuleExitedError
 from cjwkernel.forkserver import Forkserver
+from cjwkernel.forkserver.protocol import NetworkConfig
 from cjwkernel.thrift import ttypes
 from cjwkernel.types import (
     ArrowTable,
@@ -245,6 +246,7 @@ class Kernel:
     def _validate(self, compiled_module: CompiledModule) -> None:
         self._run_in_child(
             chroot_context=READONLY_CHROOT_CONTEXT,
+            network_config=None,
             compiled_module=compiled_module,
             timeout=self.validate_timeout,
             result=ttypes.ValidateModuleResult(),
@@ -261,6 +263,7 @@ class Kernel:
         request = RawParams(params).to_thrift()
         response = self._run_in_child(
             chroot_context=READONLY_CHROOT_CONTEXT,
+            network_config=None,
             compiled_module=compiled_module,
             timeout=self.migrate_params_timeout,
             result=ttypes.RawParams(),
@@ -295,6 +298,7 @@ class Kernel:
             with chroot_context.writable_file(basedir / output_filename):
                 result = self._run_in_child(
                     chroot_context=chroot_context,
+                    network_config=NetworkConfig(),  # TODO disallow networking
                     compiled_module=compiled_module,
                     timeout=self.render_timeout,
                     result=ttypes.RenderResult(),
@@ -340,6 +344,7 @@ class Kernel:
             with chroot_context.writable_file(basedir / output_filename):
                 result = self._run_in_child(
                     chroot_context=chroot_context,
+                    network_config=NetworkConfig(),
                     compiled_module=compiled_module,
                     timeout=self.fetch_timeout,
                     result=ttypes.FetchResult(),
@@ -362,6 +367,7 @@ class Kernel:
         self,
         *,
         chroot_context: ChrootContext,
+        network_config: Optional[NetworkConfig],
         compiled_module: CompiledModule,
         timeout: float,
         result: Any,
@@ -385,6 +391,7 @@ class Kernel:
         module_process = self._forkserver.spawn_module(
             process_name=compiled_module.module_slug,
             chroot_dir=chroot_context.chroot.root,
+            network_config=network_config,
             args=[compiled_module, function, args],
         )
 

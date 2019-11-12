@@ -3,15 +3,18 @@ import os
 import tempfile
 from pathlib import Path
 import shutil
+import socket
 import stat
 from textwrap import dedent
 from typing import Any, ContextManager, FrozenSet, List, Optional, Tuple
 import unittest
 from cjwkernel.chroot import (
     EDITABLE_CHROOT,
+    READONLY_CHROOT,
     ensure_initialized as ensure_chroot_initialized,
 )
 from cjwkernel import forkserver
+from cjwkernel.forkserver import protocol
 from cjwkernel.util import tempfile_context
 
 
@@ -27,12 +30,14 @@ def _spawned_module_context(
     server: forkserver.Forkserver,
     args: List[Any] = [],
     chroot_dir: Optional[Path] = None,
+    network_config: Optional[protocol.NetworkConfig] = None,
     skip_sandbox_except: FrozenSet[str] = frozenset(),
 ) -> ContextManager[forkserver.ModuleProcess]:
     subprocess = server.spawn_module(
         "forkserver-test",
         args,
         chroot_dir=chroot_dir,
+        network_config=network_config,
         skip_sandbox_except=skip_sandbox_except,
     )
     try:
@@ -82,6 +87,7 @@ class ForkserverTest(unittest.TestCase):
         self,
         indented_code: str,
         chroot_dir: Optional[Path] = None,
+        network_config: Optional[protocol.NetworkConfig] = None,
         skip_sandbox_except: FrozenSet[str] = frozenset(),
     ) -> Tuple[int, bytes, bytes]:
         """
@@ -93,6 +99,7 @@ class ForkserverTest(unittest.TestCase):
             self._forkserver,
             args=[indented_code],
             chroot_dir=chroot_dir,
+            network_config=network_config,
             skip_sandbox_except=skip_sandbox_except,
         ) as subprocess:
             stdout = subprocess.stdout.read()
@@ -110,6 +117,7 @@ class ForkserverTest(unittest.TestCase):
         self,
         indented_code: str,
         chroot_dir: Optional[Path] = None,
+        network_config: Optional[protocol.NetworkConfig] = None,
         skip_sandbox_except: FrozenSet[str] = frozenset(),
     ) -> None:
         """
@@ -118,6 +126,7 @@ class ForkserverTest(unittest.TestCase):
         exitcode, stdout, stderr = self._spawn_and_communicate(
             indented_code,
             chroot_dir=chroot_dir,
+            network_config=network_config,
             skip_sandbox_except=skip_sandbox_except,
         )
         self.assertEqual(exitcode, 0, "Exit code %d: %r" % (exitcode, stderr))
@@ -174,6 +183,93 @@ class ForkserverTest(unittest.TestCase):
                     assert err.args[0] == 9  # Bad file descriptor
             """
         )
+
+    def test_SECURITY_parent_ip_is_off_limits(self):
+        # The module cannot access a service on its host
+        hostname = socket.gethostname()
+        host_ip = socket.gethostbyname(hostname)
+        port = 19999  # arbitrary
+
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.bind((host_ip, port))
+            s.listen(1)
+
+            self._spawn_and_communicate_or_raise(
+                r"""
+                import errno
+                import socket
+                try:
+                    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                        s.connect((%r, %r))
+                        assert False, "connect() should have failed"
+                except OSError as err:
+                    assert err.errno == errno.ECONNREFUSED
+                """
+                % (host_ip, port),
+                network_config=protocol.NetworkConfig(),
+            )
+
+    def test_SECURITY_private_network_is_off_limits(self):
+        # The module cannot access a service on the private network.
+        # Try to connect to Postgres -- we know it's there.
+        postgres_name = os.getenv("CJW_DB_HOST")
+        postgres_ip = socket.gethostbyname(postgres_name)
+        port = 5432
+
+        self._spawn_and_communicate_or_raise(
+            r"""
+            import errno
+            import socket
+            try:
+                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                    s.connect((%r, %r))
+                    assert False, "connect() should have failed"
+            except OSError as err:
+                assert err.errno == errno.ECONNREFUSED
+            """
+            % (postgres_ip, port),
+            network_config=protocol.NetworkConfig(),
+        )
+
+    def test_SECURITY_network_none_means_no_networking(self):
+        self._spawn_and_communicate_or_raise(
+            r"""
+            import errno
+            import socket
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                try:
+                    s.connect(("1.1.1.1", 53))
+                    assert False, "Connect should not work when network disabled"
+                except OSError as err:
+                    assert err.errno == errno.ENETUNREACH
+            """,
+            network_config=None,
+        )
+
+    # TODO enable external-network tests under some sort of tag.
+    # (External-network tests can fail for reasons outside our control.)
+    # In the meantime: if you're going to fiddle with iptables, remember to
+    # uncomment these tests during development.
+    # def test_network_external_dns(self):
+    #     self._spawn_and_communicate_or_raise(
+    #         r"""
+    #         import socket
+    #         socket.gethostbyname("example.com")  # don't crash
+    #         """,
+    #         chroot_dir=READONLY_CHROOT.root,  # for /etc/resolv.conf et al
+    #         network_config=protocol.NetworkConfig(),
+    #     )
+    #
+    # def test_network_external_ip(self):
+    #     self._spawn_and_communicate_or_raise(
+    #         r"""
+    #         import socket
+    #         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+    #             s.settimeout(5)  # in case the test fails, fail fast
+    #             s.connect(("1.1.1.1", 53))  # don't crash or timeout
+    #         """,
+    #         network_config=protocol.NetworkConfig(),
+    #     )
 
     def test_SECURITY_no_capabilities(self):
         # Even if the user becomes root, the Linux "capabilities" system

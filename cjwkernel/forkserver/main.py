@@ -1,12 +1,15 @@
 import ctypes
+import encodings.idna  # noqa -- used when network-resolve fails
 import errno
 import importlib
 import os
 from pathlib import Path
+import pyroute2
 import shutil
 import signal
 import socket
 import struct
+import subprocess
 import traceback
 from typing import Callable
 from . import protocol
@@ -41,11 +44,13 @@ SECBIT_NOROOT_LOCKED = 1 << 1
 # seccomp profile we use in dev, unittest and integrationtest.
 # <linux/sched.h>
 CLONE_PARENT = 0x00008000
-CLONE_NEWUSER = 0x10000000
+CLONE_NEWNS = 0x00020000
 CLONE_NEWCGROUP = 0x02000000
+CLONE_NEWUTS = 0x04000000
 CLONE_NEWIPC = 0x08000000
+CLONE_NEWUSER = 0x10000000
 CLONE_NEWPID = 0x20000000
-CLONE_NEWNS = 0x00020000  # new mount namespace
+CLONE_NEWNET = 0x40000000
 
 
 CHROOT_REQUIRED_PATHS = ["/lib/x86_64-linux-gnu"]
@@ -53,6 +58,28 @@ CHROOT_REQUIRED_PATHS = ["/lib/x86_64-linux-gnu"]
 Paths that will always have their contents provided within a chroot.
 
 Why do we force paths? Because otherwise, we can't even create a chroot.
+"""
+
+UNSAFE_IPV4_ADDRESS_BLOCKS = [
+    "0.0.0.0/8",
+    "10.0.0.0/8",
+    "100.64.0.0/10",
+    "127.0.0.0/8",
+    "169.254.0.0/16",
+    "172.16.0.0/12",
+    "192.0.0.0/24",
+    "192.0.2.0/24",
+    "192.88.99.0/24",
+    "192.168.0.0/16",
+    "198.18.0.0/15",
+    "198.51.100.0/24",
+    "203.0.113.0/24",
+    "224.0.0.0/4",
+    "240.0.0.0/4",
+    "255.255.255.255/32",
+]
+"""
+IPv4 addresses no nice Workbench module will ever access.
 """
 
 
@@ -100,8 +127,8 @@ stdout_read_fd: int = None
 stdout_write_fd: int = None
 stderr_read_fd: int = None
 stderr_write_fd: int = None
-is_uidmap_written_read_fd: int = None
-is_uidmap_written_write_fd: int = None
+is_namespace_ready_read_fd: int = None
+is_namespace_ready_write_fd: int = None
 
 
 def _should_sandbox(feature: str) -> bool:
@@ -130,7 +157,7 @@ def _sandbox_module():
     [x] Close stdout/stderr (so modules do not flood logs; point
         stdout/stderr to `message.log_fd` instead)
     [x] Drop capabilities (like CAP_SYS_ADMIN)
-    [ ] Set seccomp filter
+    [x] Set seccomp filter
     [x] Setuid to 1000
     [x] Use chroot (so modules can't see other processes)
     """
@@ -141,15 +168,17 @@ def _sandbox_module():
     stdout_read_fd = None
     stderr_read_fd = None
 
-    # Wait for parent to close the is_uidmap_written pipe
-    os.close(is_uidmap_written_write_fd)
-    os.read(is_uidmap_written_read_fd, 1)
-    os.close(is_uidmap_written_read_fd)
+    # Wait for parent to close the is_namespace_ready pipe
+    os.close(is_namespace_ready_write_fd)
+    os.read(is_namespace_ready_read_fd, 1)
+    os.close(is_namespace_ready_read_fd)
 
     # Read seccomp data before we chroot().
     seccomp_bpf_bytes = Path(__file__).with_name("sandbox-seccomp.bpf").read_bytes()
 
     _sandbox_stdout_stderr()
+    if message.network_config is not None:
+        _sandbox_network(message.network_config)
     if _should_sandbox("no_new_privs"):
         _sandbox_no_new_privs()
     if message.chroot_dir is not None:
@@ -185,6 +214,29 @@ def _sandbox_stdout_stderr():
     os.close(stderr_write_fd)
     stdout_write_fd = None
     stderr_write_fd = None
+
+
+def _sandbox_network(config: protocol.NetworkConfig) -> None:
+    """
+    Set up networking, assuming forkserver passed us a network interface.
+
+    Set ip address of veth interface, then bring it up.
+
+    Also bring up the "lo" interface.
+
+    This requires CAP_NET_ADMIN. Use the "drop_capabilities" sandboxing step
+    afterwards to prevent further fiddling.
+    """
+    with pyroute2.IPRoute() as ipr:
+        lo_index = ipr.link_lookup(ifname="lo")[0]
+        ipr.link("set", index=lo_index, state="up")
+
+        veth_index = ipr.link_lookup(ifname=config.child_veth_name)[0]
+        ipr.addr(
+            "add", index=veth_index, address=config.child_ipv4_address, prefixlen=24
+        )
+        ipr.link("set", index=veth_index, state="up")
+        ipr.route("add", gateway=config.kernel_ipv4_address)
 
 
 def _write_namespace_uidgid(pid: int) -> None:
@@ -399,6 +451,117 @@ def cloned_module_main() -> int:
 _MODULE_MAIN_FUNC = ctypes.PYFUNCTYPE(ctypes.c_int)(cloned_module_main)
 
 
+def _setup_network_namespace_from_parent(
+    config: protocol.NetworkConfig, child_pid: int
+) -> None:
+    """
+    Ensure iptables rules and send new veth device to `child_pid` namespace.
+
+    See `_sandbox_network()` for the receiving end; and read the
+    `NetworkConfig` docstring to understand how the network namespace works.
+    """
+    with pyroute2.IPRoute() as ipr:
+        # Avoid a race: what if another forked process already created this
+        # interface?
+        #
+        # If that's the case, assume the other process has already exited
+        # (because [2019-11-11] we only run one networking-enabled module at a
+        # time). So the veth device is about to be deleted anyway.
+        try:
+            ipr.link("del", ifname=config.kernel_veth_name)
+        except pyroute2.NetlinkError as err:
+            if err.code == errno.ENODEV:
+                pass  # common case -- the device doesn't exist
+            else:
+                raise
+
+        # Create kernel_veth + child_veth veth pair
+        ipr.link(
+            "add",
+            ifname=config.kernel_veth_name,
+            peer=config.child_veth_name,
+            kind="veth",
+        )
+
+        # Bring up kernel_veth
+        kernel_veth_index = ipr.link_lookup(ifname=config.kernel_veth_name)[0]
+        ipr.addr(
+            "add",
+            index=kernel_veth_index,
+            address=config.kernel_ipv4_address,
+            prefixlen=24,
+        )
+        ipr.link("set", index=kernel_veth_index, state="up")
+
+        # Send child_veth to child namespace
+        child_veth_index = ipr.link_lookup(ifname=config.child_veth_name)[0]
+        ipr.link("set", index=child_veth_index, net_ns_pid=child_pid)
+
+        # Find IPv4 address to use for NAT.
+        # Use any external IP to find the default route. ("1.1.1.1" is
+        # Cloudfare DNS.)
+        (default_route,) = ipr.route("get", dst="1.1.1.1")
+        ipv4_snat_source = next(
+            v for k, v in default_route["attrs"] if k == "RTA_PREFSRC"
+        )
+
+    # Ensure iptables rules (TODO this should probably go in setup-chroots.sh,
+    # renamed setup-sandboxes.sh)
+    process = subprocess.run(
+        [
+            "/usr/sbin/iptables-legacy",
+            "-t",
+            "nat",
+            "-C",
+            "POSTROUTING",
+            "-s",
+            config.child_ipv4_address,
+            "-j",
+            "SNAT",
+            "--to-source",
+            ipv4_snat_source,
+        ],
+        capture_output=True,
+    )
+    if process.returncode == 1:
+        ruleset = "\n".join(
+            [
+                "*filter",
+                ":INPUT ACCEPT",
+                ":FORWARD DROP",
+                # Block access to the host itself from a module.
+                "-A INPUT -i %s -j REJECT" % (config.kernel_veth_name),
+                # Allow forwarding response packets back to our module (even
+                # though our module's IP is in UNSAFE_IPV4_ADDRESS_BLOCKS).
+                "-A FORWARD -o %s -j ACCEPT" % config.kernel_veth_name,
+                # Block unsafe destination addresses. Modules should not be
+                # able to access internal services. (Not even our DNS server.)
+                *[
+                    "-A FORWARD -d %s -i %s -j REJECT" % (addr, config.kernel_veth_name)
+                    for addr in UNSAFE_IPV4_ADDRESS_BLOCKS
+                ],
+                # Allow forwarding exactly the source address of the module.
+                # Don't forward just any address (i.e., don't set policy
+                # ACCEPT): if a module somehow gains CAP_NET_ADMIN (which
+                # shouldn't happen), it should not be able to spoof source
+                # addresses.
+                "-A FORWARD -i %s -s %s -j ACCEPT"
+                % (config.kernel_veth_name, config.child_ipv4_address),
+                "COMMIT",
+                "*nat",
+                ":POSTROUTING ACCEPT",
+                f"-A POSTROUTING -s {config.child_ipv4_address} -j SNAT --to-source {ipv4_snat_source}",
+                "COMMIT",
+                "",  # iptables-restore needs newline at end of files
+            ]
+        )
+        subprocess.run(
+            ["/usr/sbin/iptables-legacy-restore", "--noflush"],
+            input=ruleset.encode("ascii"),
+            check=True,
+        )
+
+
 def spawn_module(sock: socket.socket, message: protocol.SpawnPandasModule) -> None:
     """
     Fork a child process; send its handle over `sock`; return.
@@ -419,25 +582,33 @@ def spawn_module(sock: socket.socket, message: protocol.SpawnPandasModule) -> No
     * "module": invokes `cjwkernel.pandas.main.main()`, using the file
                 descriptors passed in `SpawnPandasModule`.
     """
-    global stdout_read_fd, stdout_write_fd, stderr_read_fd, stderr_write_fd, is_uidmap_written_read_fd, is_uidmap_written_write_fd
+    global stdout_read_fd, stdout_write_fd, stderr_read_fd, stderr_write_fd, is_namespace_ready_read_fd, is_namespace_ready_write_fd
 
     assert stdout_read_fd is None
     assert stdout_write_fd is None
     assert stderr_read_fd is None
     assert stderr_write_fd is None
-    assert is_uidmap_written_read_fd is None
-    assert is_uidmap_written_write_fd is None
+    assert is_namespace_ready_read_fd is None
+    assert is_namespace_ready_write_fd is None
 
     stdout_read_fd, stdout_write_fd = os.pipe()
     stderr_read_fd, stderr_write_fd = os.pipe()
-    is_uidmap_written_read_fd, is_uidmap_written_write_fd = os.pipe()
+    is_namespace_ready_read_fd, is_namespace_ready_write_fd = os.pipe()
 
     module_pid = _call_c(
         libc,
         "clone",
         _MODULE_MAIN_FUNC,
         _MODULE_STACK_POINTER,
-        CLONE_PARENT | CLONE_NEWUSER | signal.SIGCHLD,
+        CLONE_PARENT
+        | CLONE_NEWNS
+        | CLONE_NEWCGROUP
+        | CLONE_NEWUTS
+        | CLONE_NEWIPC
+        | CLONE_NEWUSER
+        | CLONE_NEWPID
+        | CLONE_NEWNET
+        | signal.SIGCHLD,
         0,
     )
     if module_pid < 0:
@@ -446,14 +617,17 @@ def spawn_module(sock: socket.socket, message: protocol.SpawnPandasModule) -> No
 
     os.close(stdout_write_fd)
     os.close(stderr_write_fd)
+    os.close(is_namespace_ready_read_fd)
     stdout_write_fd = None
     stderr_write_fd = None
+    is_namespace_ready_read_fd = None
 
-    os.close(is_uidmap_written_read_fd)
-    is_uidmap_written_read_fd = None
     _write_namespace_uidgid(module_pid)
-    os.close(is_uidmap_written_write_fd)
-    is_uidmap_written_write_fd = None
+    if message.network_config is not None:
+        _setup_network_namespace_from_parent(message.network_config, module_pid)
+
+    os.close(is_namespace_ready_write_fd)
+    is_namespace_ready_write_fd = None
 
     spawned_module = protocol.SpawnedPandasModule(
         module_pid, stdout_read_fd, stderr_read_fd

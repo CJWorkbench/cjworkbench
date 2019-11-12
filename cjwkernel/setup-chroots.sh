@@ -50,8 +50,6 @@
 #   dev mode, Docker points this directory to the host. "cp -a" may not be
 #   ideal, but it's fast enough (the directory is tiny); and the benefit is,
 #   we get the same logic on dev and production.
-# * /etc/resolv.conf: we "cp -a" this into chroot-layers/base. In dev mode,
-#   Docker does funny stuff with this file.
 # * /root/.local/share/virtualenvs: this only exists in dev. We bind-mount
 #   it into each chroot. (We can't bind-mount before overlay-mount: overlayfs
 #   would only display the mountpoint, not the mounted filesystem.)
@@ -74,10 +72,6 @@ VENV_PATH="/root/.local/share/virtualenvs" # only exits in dev
 rm -rf $LAYERS/base/app # in case we're re-running this script
 mkdir -p $LAYERS/base/app
 cp -a /app/cjwkernel $LAYERS/base/app/cjwkernel
-
-# /etc/resolv.conf (base layer)
-rm -f $LAYERS/base/etc/resolv.conf  # in case we're re-running this script
-cp -a /etc/resolv.conf $LAYERS/base/etc/resolv.conf
 
 # Create directories on the chroots filesystem (not the root filesystem)
 for chroot in editable "readonly"; do

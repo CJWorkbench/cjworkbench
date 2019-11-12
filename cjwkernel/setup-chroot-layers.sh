@@ -58,4 +58,32 @@ for tempdir in $LAYERS/base/tmp $LAYERS/base/var/tmp; do
   mkdir -p $tempdir
   chmod 1777 $tempdir
 done
+
+# Hard-code resolv.conf and nsswitch.conf to avoid the local network entirely.
+cat << EOF > $LAYERS/base/etc/resolv.conf
+domain .
+nameserver 1.1.1.1  # CloudFare DNS
+nameserver 8.8.8.8  # Google DNS
+EOF
+
+cat << EOF > $LAYERS/base/etc/nsswitch.conf
+passwd:         files
+group:          files
+shadow:         files
+gshadow:        files
+hosts:          dns files
+networks:       files
+protocols:      db files
+services:       db files
+ethers:         db files
+rpc:            db files
+netgroup:       nis
+EOF
+
+# /etc/hosts -- let's not put anything
+cat << EOF > $LAYERS/base/etc/hosts
+127.0.0.1   localhost
+::1         localhost
+EOF
+
 # /app/cjworkbench/cjwkernel we handle in setup-chroots.sh
