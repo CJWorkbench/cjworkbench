@@ -59,9 +59,6 @@ FROM pybase AS pydev
 # * fb-re2
 # * pysycopg2 (binaries are evil because psycopg2 links SSL -- as does Python)
 # * thrift-compiler (to generate cjwkernel/thrift/...)
-#
-# Also:
-# * socat: for our dev environment: fetcher uses http://localhost:8000 for in-lesson files
 RUN mkdir -p /root/.local/share/virtualenvs \
     && apt-get update \
     && apt-get install --no-install-recommends -y \
@@ -70,7 +67,6 @@ RUN mkdir -p /root/.local/share/virtualenvs \
       libre2-dev \
       libpq-dev \
       libyajl-dev \
-      socat \
       thrift-compiler \
     && rm -rf /var/lib/apt/lists/*
 

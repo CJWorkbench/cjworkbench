@@ -149,11 +149,10 @@ services:
     depends_on: [ 'database', 'rabbitmq', 'minio' ]
     networks: [ 'dev' ]
     command: [
-      # Use socat so fetcher can fetch URLs like http://localhost:8000/static/lessons/a-lesson/file.csv
       # Use watchman, not Django autoreload. autoreload crashes when there's a
       # syntax error.
       'sh', '-c',
-      'socat -d TCP-LISTEN:8000,reuseaddr,fork TCP:frontend:8000 & pipenv run bin/watchman-monitor --exclude "**/*.pyc" "**/tests/**/*" --pattern "cjworkbench/**/*.py" "cjwkernel/**/*.py" "cjwstate/**/*.py" "fetcher/**/*.py" "staticmodules/**/*.*" --exec python ./manage.py fetcher'
+      'pipenv run bin/watchman-monitor --exclude "**/*.pyc" "**/tests/**/*" --pattern "cjworkbench/**/*.py" "cjwkernel/**/*.py" "cjwstate/**/*.py" "fetcher/**/*.py" "staticmodules/**/*.*" --exec python ./manage.py fetcher'
     ]
 
   cron:
