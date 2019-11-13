@@ -64,7 +64,7 @@
 set -e
 
 MODE="$1"
-if [ "$MODE" != only-readonly -a "$MODE" != "all" ]; then
+if [ "$MODE" != only-readonly ] && [ "$MODE" != "all" ]; then
   echo "Usage: $0 only-readonly|all" >&2
   exit 1
 fi
@@ -76,12 +76,11 @@ VENV_PATH="/root/.local/share/virtualenvs" # only exits in dev
 
 # NetworkConfig mimics cjwkernel/forkserver/protocol.py
 KERNEL_VETH=cjw-veth-kernel
-CHILD_VETH=cjw-veth-child
-KERNEL_VETH_IP4="192.168.123.1"
 CHILD_VETH_IP4="192.168.123.2"
 
 
 # If we're re-running this script, unmount previous mounts
+# shellcheck source=cjwkernel/teardown-sandboxes.sh
 . "$(dirname "$0")"/teardown-sandboxes.sh
 rm -rf $CHROOT/{readonly,editable}
 
@@ -143,7 +142,7 @@ mount -t overlay overlay -o dirsync,lowerdir=$LAYERS/base,upperdir=$CHROOT/edita
 #     1.1.1.1 via 192.168.86.1 dev wlp2s0 src 192.168.86.70 uid 1000
 # Grep for the "src x.x.x.x" part and store the "x.x.x.x"
 ipv4_snat_source=$(ip route get 1.1.1.1 | grep -oe "src [^ ]\+" | cut -d' ' -f2)
-if iptables-legacy -t nat -C POSTROUTING -s $CHILD_VETH_IP4 -j SNAT --to-source $ipv4_snat_source; then
+if iptables-legacy -t nat -C POSTROUTING -s $CHILD_VETH_IP4 -j SNAT --to-source "$ipv4_snat_source"; then
 	# Assume we're re-running this script in dev mode. It's tricky to "rebuild"
   # the firewall because Docker does stuff inside the container, too. So
   # skip re-running.
@@ -151,6 +150,7 @@ if iptables-legacy -t nat -C POSTROUTING -s $CHILD_VETH_IP4 -j SNAT --to-source 
   # If you're developing the network layer and noticing your iptables
   # edits have no effect, please run `bin/dev stop` and
   # `bin/dev quickstart` to see your changes.
+  true  # no-op
 else
 	cat << EOF | iptables-legacy-restore
 *filter
