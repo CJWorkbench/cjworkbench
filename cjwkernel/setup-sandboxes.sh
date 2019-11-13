@@ -157,10 +157,10 @@ else
 :INPUT ACCEPT
 :FORWARD DROP
 # Block access to the host itself from a module.
--A INPUT -i $CHILD_VETH_IP4 -j REJECT
+-A INPUT -i $KERNEL_VETH -j REJECT
 # Allow forwarding response packets back to our module (even
 # though our module's IP is in UNSAFE_IPV4_ADDRESS_BLOCKS).
--A FORWARD -o $CHILD_VETH_IP4 -j ACCEPT
+-A FORWARD -o $KERNEL_VETH -j ACCEPT
 # Block unsafe destination addresses. Modules should not be
 # able to access internal services. (Not even our DNS server.)
 -A FORWARD -d 0.0.0.0/8          -i $KERNEL_VETH -j REJECT
