@@ -152,7 +152,7 @@ if iptables-legacy -t nat -C POSTROUTING -s $CHILD_VETH_IP4 -j SNAT --to-source 
   # `bin/dev quickstart` to see your changes.
   true  # no-op
 else
-	cat << EOF | iptables-legacy-restore
+	cat << EOF | iptables-legacy-restore --noflush
 *filter
 :INPUT ACCEPT
 :FORWARD DROP
