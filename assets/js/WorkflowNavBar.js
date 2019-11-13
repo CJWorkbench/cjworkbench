@@ -43,19 +43,21 @@ function LessonWorkflowTitle ({ lesson }) {
 }
 
 const OwnedWorkflowTitleAndMetadata = withI18n()(function ({ i18n, isReadOnly, workflow }) {
+  const owner = workflow.owner_name.trim()
+  const timeAgo = timeDifference(workflow.last_update, new Date(), i18n)
   return (
     <div className='title-metadata-stack'>
       <ConnectedEditableWorkflowName isReadOnly={isReadOnly} />
       <ul className='metadata-container'>
         {!workflow.is_anonymous ? (
           <li className='attribution'>
-            <span className='metadata'><Trans id='js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.owner'>by {workflow.owner_name.trim()}</Trans> </span>
+            <span className='metadata'><Trans id='js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.owner'>by {owner}</Trans> </span>
             <span className='separator'>-</span>
           </li>
         ) : null}
         <li>
-          <Trans id='js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.lastUpdated' description="The parameter will contain something like '4h ago'">
-            Updated {timeDifference(workflow.last_update, new Date(), i18n)}
+          <Trans id='js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.lastUpdated' description="{timeAgo} will contain something like '4h ago'">
+            Updated {timeAgo}
           </Trans>
         </li>
         {(!isReadOnly && !workflow.is_anonymous) ? (

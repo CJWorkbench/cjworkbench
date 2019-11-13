@@ -122,7 +122,7 @@ function WorkflowLists ({ workflows, deleteWorkflow, duplicateWorkflow, openShar
     </div>
   )
 }
-WorkflowLists.PropTypes = {
+WorkflowLists.propTypes = {
   i18n: PropTypes.shape({
     // i18n object injected by LinguiJS withI18n()
     _: PropTypes.func.isRequired

@@ -109,6 +109,10 @@ case "$COMMAND" in
 
     docker_compose run --rm webpack npm run extract -- --clean
 
+    # linguijs creates files we don't want. Why does it leave them behind?
+    # dunno. Clean up after it.
+    docker_compose run --rm webpack rm -rf assets/locale/_build assets/locale/*/messages.js
+
     # 0. This must come after `npm run extract`, since `npm run extract`
     #    comments out any messages it can't find in js code
     # 1. For PYTHONPATH, ditto `pybabel` command above
