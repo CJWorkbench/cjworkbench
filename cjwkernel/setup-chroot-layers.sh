@@ -1,8 +1,8 @@
 #!/bin/bash
 #
-# Called in Dockerfile, enabling `setup-chroots.sh` later.
+# Called in Dockerfile, enabling `setup-sandboxes.sh` later.
 #
-# Documentation is in setup-chroots.sh.
+# Documentation is in setup-sandboxes.sh.
 #
 # We run this in the Dockerfile so we don't need to run it during startup. It
 # takes a few seconds.
@@ -86,4 +86,4 @@ cat << EOF > $LAYERS/base/etc/hosts
 ::1         localhost
 EOF
 
-# /app/cjworkbench/cjwkernel we handle in setup-chroots.sh
+# /app/cjworkbench/cjwkernel we handle in setup-sandboxes.sh

@@ -7,7 +7,7 @@ import os.path
 from pathlib import Path
 import subprocess
 import threading
-from typing import ContextManager, Iterator, List, Tuple
+from typing import Callable, ContextManager, Iterator, List, Tuple
 from cjwkernel.util import tempdir_context, tempfile_context
 from cjwkernel.errors import ModuleExitedError
 
@@ -287,8 +287,8 @@ _initialized = False
 def ensure_initialized():
     global _initialized
     if not _initialized:
-        # Run setup-chroots.sh if we're in dev mode.
+        # Run setup-sandboxes.sh if we're in dev mode.
         # (If we were on production, an init container would have run it.)
         if os.path.isdir("/root/.local/share/virtualenvs"):
-            subprocess.run(["/app/cjwkernel/setup-chroots.sh"], check=True)
+            subprocess.run(["/app/cjwkernel/setup-sandboxes.sh", "all"], check=True)
         _initialized = True

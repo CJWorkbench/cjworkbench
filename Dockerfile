@@ -80,7 +80,7 @@ COPY --from=mc /usr/bin/mc /usr/bin/mc
 COPY cjwkernel/setup-chroot-layers.sh /tmp/setup-chroot-layers.sh
 RUN /tmp/setup-chroot-layers.sh && rm /tmp/setup-chroot-layers.sh
 # Let chroots overlay the root FS -- meaning they must be on another FS.
-# see cjwkernel/setup-chroots.sh
+# see cjwkernel/setup-sandboxes.sh
 VOLUME /var/lib/cjwkernel/chroot
 
 # Add a Python wrapper that will help PyCharm cooperate with pipenv
@@ -155,7 +155,7 @@ RUN true \
 COPY cjwkernel/setup-chroot-layers.sh /tmp/setup-chroot-layers.sh
 RUN /tmp/setup-chroot-layers.sh && rm /tmp/setup-chroot-layers.sh
 # Let chroots overlay the root FS -- meaning they must be on another FS.
-# see cjwkernel/setup-chroots.sh
+# see cjwkernel/setup-sandboxes.sh
 VOLUME /var/lib/cjwkernel/chroot
 
 
