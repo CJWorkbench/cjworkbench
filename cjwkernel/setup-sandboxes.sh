@@ -1,14 +1,15 @@
 #!/bin/bash
 #
-# Called by cjwkernel (in dev/unittest/integration-test) or an init container
-# (in staging/prodution) to create chroot environments for forkserver. It's
-# just called once, on container start.
+# Called before Workbench start (in dev/unittest/integration-test) or by an
+# init container (in staging/production) to create sandbox environments for
+# forkserver. It's called just once per container.
 #
 # This requires CAP_SYS_ADMIN privilege, and seccomp must allow the "mount"
-# system call. DO NOT give CAP_SYS_ADMIN willy-nilly. We use it and then drop
-# it in dev/unittest/integration-test. In production, we run this in a
-# privileged init container, so the regular fetcher/worker/frontend container
-# can run without extra privileges.
+# system call. DO NOT grant CAP_SYS_ADMIN willy-nilly in production. In
+# production, we run this in a privileged init container, so the regular
+# fetcher/worker/frontend container can run without extra privileges. This
+# is a source of frustration: integration-test runs privileged but staging
+# and production don't. If you're messing with sandboxes, test on staging.
 #
 # This is _one_ chroot environment, suitable for _one_ command. Assume
 # forkserver never runs two commands at once.
@@ -79,16 +80,9 @@ KERNEL_VETH=cjw-veth-kernel
 CHILD_VETH_IP4="192.168.123.2"
 
 
-# If we're re-running this script, unmount previous mounts
-# shellcheck source=cjwkernel/teardown-sandboxes.sh
-. "$(dirname "$0")"/teardown-sandboxes.sh
-rm -rf $CHROOT/{readonly,editable}
-
-
 # /app/cjwkernel (base layer)
 # We copy the dir at runtime, not build time, because that's compatible with
 # both dev and production.
-rm -rf $LAYERS/base/app # in case we're re-running this script
 mkdir -p $LAYERS/base/app
 cp -a /app/cjwkernel $LAYERS/base/app/cjwkernel
 
@@ -126,11 +120,16 @@ fi
 # script super-fast on producion. (We don't care much about FS speed. The
 # intended use case is large tempfiles and no fsync. When files grow beyond
 # the Linux I/O cache size, users should expect slowdowns.)
-rm -rf $CHROOT/editable/upperfs $CHROOT/editable/upperfs.ext4
 mkdir -p $CHROOT/editable/upperfs
 truncate --size=$EDITABLE_CHROOT_SIZE $CHROOT/editable/upperfs.ext4  # create sparse file
 mkfs.ext4 -q -O ^has_journal $CHROOT/editable/upperfs.ext4
-mount -o loop $CHROOT/editable/upperfs.ext4 $CHROOT/editable/upperfs
+if ! mount -o loop $CHROOT/editable/upperfs.ext4 $CHROOT/editable/upperfs; then
+  # Docker without --privileged doesn't provide a loopback device. This affects
+  # dev mode (which we don't care about). But it should never happen on production.
+  echo "******* WARNING: failed to mount loopback filesystem $CHROOT/editable/upperfs *****" >&2
+  echo "Workbench will not constrain modules' disk usage. If a module writes" >&2
+  echo "too much to disk, Workbench will experience undefined behavior." >&2
+fi
 # Build overlay filesystem, with upper layer on upperfs
 mkdir -p $CHROOT/editable/upperfs/{upper,work}
 mkdir -p $CHROOT/editable/root
@@ -142,17 +141,7 @@ mount -t overlay overlay -o dirsync,lowerdir=$LAYERS/base,upperdir=$CHROOT/edita
 #     1.1.1.1 via 192.168.86.1 dev wlp2s0 src 192.168.86.70 uid 1000
 # Grep for the "src x.x.x.x" part and store the "x.x.x.x"
 ipv4_snat_source=$(ip route get 1.1.1.1 | grep -oe "src [^ ]\+" | cut -d' ' -f2)
-if iptables-legacy -t nat -C POSTROUTING -s $CHILD_VETH_IP4 -j SNAT --to-source "$ipv4_snat_source"; then
-	# Assume we're re-running this script in dev mode. It's tricky to "rebuild"
-  # the firewall because Docker does stuff inside the container, too. So
-  # skip re-running.
-  #
-  # If you're developing the network layer and noticing your iptables
-  # edits have no effect, please run `bin/dev stop` and
-  # `bin/dev quickstart` to see your changes.
-  true  # no-op
-else
-	cat << EOF | iptables-legacy-restore --noflush
+cat << EOF | iptables-legacy-restore --noflush
 *filter
 :INPUT ACCEPT
 :FORWARD DROP
@@ -191,4 +180,3 @@ COMMIT
 -A POSTROUTING -s $CHILD_VETH_IP4 -j SNAT --to-source $ipv4_snat_source
 COMMIT
 EOF
-fi

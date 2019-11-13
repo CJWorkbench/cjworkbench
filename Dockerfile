@@ -82,6 +82,9 @@ COPY --from=mc /usr/bin/mc /usr/bin/mc
 
 COPY cjwkernel/setup-chroot-layers.sh /tmp/setup-chroot-layers.sh
 RUN /tmp/setup-chroot-layers.sh && rm /tmp/setup-chroot-layers.sh
+
+COPY bin/unittest-entrypoint.sh /app/bin/unittest-entrypoint.sh
+
 # Let chroots overlay the root FS -- meaning they must be on another FS.
 # see cjwkernel/setup-sandboxes.sh
 VOLUME /var/lib/cjwkernel/chroot

@@ -69,7 +69,7 @@ services:
       - virtualenvs:/root/.local/share/virtualenvs/:rw
     security_opt:
       - seccomp=docker/forkserver-seccomp-profile.json
-    cap_add: [ SYS_ADMIN ] # for cjwkernel.kernel to overlay-mount chroots (on k8s we use an init container instead)
+    cap_add: [ SYS_ADMIN ] # for setup-sandboxes.sh to overlay-mount chroots (on k8s we use an init container instead)
     environment: &django-env
       PYTHONUNBUFFERED: '1'
       ASGI_THREADS: '3'
@@ -86,14 +86,11 @@ services:
     networks: [ 'dev' ]
     depends_on: [ 'database', 'rabbitmq', 'minio' ]
     command: [
+      'sh',
+      '-c',
       # Use http-process-proxy, not Django reload. Django reload crashes
       # when there's a syntax error.
-      'pipenv', 'run',
-      'python', '-m', 'httpprocessproxy', '0.0.0.0:8000', '0.0.0.0:8080',
-      '--exclude', '**/*.pyc', '**/tests/**/*',
-      '--pattern', 'cjwkernel/**/*.py', 'cjwstate/**/*.py', 'cjwstate/**/*.yaml', 'server/**/*.py', 'staticmodules/**/*.*', 'server/**/*.yaml', 'server/lessons/**/*.html', 'server/courses/**/*.html', 'cjworkbench/**/*.py',
-      '--exec',
-      'python', './manage.py', 'runserver', '--noreload', '--insecure', '0.0.0.0:8080'
+      'cjwkernel/setup-sandboxes.sh only-readonly && pipenv run python -m httpprocessproxy 0.0.0.0:8000 0.0.0.0:8080 --exclude "**/*.pyc" "**/tests/**/*" "--pattern" "cjwkernel/**/*.py" "cjwstate/**/*.py" "cjwstate/**/*.yaml" "server/**/*.py" "staticmodules/**/*.*" "server/**/*.yaml" "server/lessons/**/*.html" "server/courses/**/*.html" "cjworkbench/**/*.py" --exec python ./manage.py runserver --noreload --insecure 0.0.0.0:8080'
     ]
 
   renderer:
@@ -111,20 +108,18 @@ services:
     security_opt:
       - seccomp=docker/forkserver-seccomp-profile.json
     cap_add:
-      - SYS_ADMIN # for cjwkernel.kernel to overlay-mount chroots (on k8s we use an init container instead)
+      - SYS_ADMIN # for setup-sandboxes.sh to overlay-mount chroots (on k8s we use an init container instead)
       - NET_ADMIN # for forkserver to create new network namespace without access to private network
     environment:
       <<: *django-env
     depends_on: [ 'database', 'rabbitmq', 'minio' ]
     networks: [ 'dev' ]
     command: [
+      'sh',
+      '-c',
       # Use watchman, not Django autoreload. autoreload crashes when there's a
       # syntax error.
-      'pipenv', 'run', 'bin/watchman-monitor',
-      '--exclude', '**/*.pyc', '**/tests/**/*',
-      '--pattern', 'cjworkbench/**/*.py', 'cjwkernel/**/*.py', 'cjwstate/**/*.py', 'renderer/**/*.py', 'staticmodules/**/*.*',
-      '--exec',
-      'python', './manage.py', 'renderer'
+      'cjwkernel/setup-sandboxes.sh all && pipenv run bin/watchman-monitor --exclude "**/*.pyc" "**/tests/**/*" "--pattern cjworkbench/**/*.py" "cjwkernel/**/*.py" "cjwstate/**/*.py" "renderer/**/*.py" "staticmodules/**/*.*" --exec python ./manage.py renderer'
     ]
 
   fetcher:
@@ -142,17 +137,17 @@ services:
     security_opt:
       - seccomp=docker/forkserver-seccomp-profile.json
     cap_add:
-      - SYS_ADMIN # for cjwkernel.kernel to overlay-mount chroots (on k8s we use an init container instead)
+      - SYS_ADMIN # for setup-sandboxes.sh to overlay-mount chroots (on k8s we use an init container instead)
       - NET_ADMIN # for forkserver to create new network namespace without access to private network
     environment:
       <<: *django-env
     depends_on: [ 'database', 'rabbitmq', 'minio' ]
     networks: [ 'dev' ]
     command: [
+      'sh', '-c',
       # Use watchman, not Django autoreload. autoreload crashes when there's a
       # syntax error.
-      'sh', '-c',
-      'pipenv run bin/watchman-monitor --exclude "**/*.pyc" "**/tests/**/*" --pattern "cjworkbench/**/*.py" "cjwkernel/**/*.py" "cjwstate/**/*.py" "fetcher/**/*.py" "staticmodules/**/*.*" --exec python ./manage.py fetcher'
+      'cjwkernel/setup-sandboxes.sh all && pipenv run bin/watchman-monitor --exclude "**/*.pyc" "**/tests/**/*" --pattern "cjworkbench/**/*.py" "cjwkernel/**/*.py" "cjwstate/**/*.py" "fetcher/**/*.py" "staticmodules/**/*.*" --exec python ./manage.py fetcher'
     ]
 
   cron:

@@ -3,10 +3,7 @@ import logging
 from unittest.mock import Mock, patch
 from django.utils import timezone
 import pyarrow
-from cjwkernel.chroot import (
-    EDITABLE_CHROOT,
-    ensure_initialized as ensure_chroot_initialized,
-)
+from cjwkernel.chroot import EDITABLE_CHROOT
 from cjwkernel.errors import ModuleExitedError
 from cjwkernel.types import I18nMessage, RenderError, RenderResult, Tab
 from cjwkernel.tests.util import (
@@ -29,10 +26,6 @@ async def noop(*args, **kwargs):
 
 
 class WfModuleTests(DbTestCase):
-    @classmethod
-    def setUpClass(cls):
-        ensure_chroot_initialized()
-
     def setUp(self):
         super().setUp()
         self.ctx = contextlib.ExitStack()

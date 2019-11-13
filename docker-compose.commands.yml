@@ -93,4 +93,4 @@ services:
       MINIO_URL: http://testminio:9000
     networks: [ 'test' ]
     depends_on: [ 'testdatabase', 'testrabbitmq', 'testminio' ]
-    command: [ 'sh', '-c', 'while ! curl --silent -I $$MINIO_URL >/dev/null; do sleep 0.1; done; mc config host add workbench $$MINIO_URL minio_root_access minio_root_secret && mc admin user add workbench $$MINIO_ACCESS_KEY $$MINIO_SECRET_KEY && mc admin policy set workbench readwrite $$MINIO_ACCESS_KEY && pipenv run python ./manage.py test' ]
+    entrypoint: 'bin/unittest-entrypoint.sh'

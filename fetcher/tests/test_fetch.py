@@ -8,10 +8,7 @@ from unittest.mock import patch
 from dateutil import parser
 from django.utils import timezone
 import pyarrow.parquet
-from cjwkernel.chroot import (
-    EDITABLE_CHROOT,
-    ensure_initialized as ensure_chroot_initialized,
-)
+from cjwkernel.chroot import EDITABLE_CHROOT
 from cjwkernel.errors import ModuleExitedError
 from cjwkernel.param_dtype import ParamDType
 from cjwkernel.types import (
