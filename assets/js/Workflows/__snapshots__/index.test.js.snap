@@ -1034,8 +1034,62 @@ exports[`Workflow list page renders correctly 1`] = `
                                         <span
                                           className="metadata"
                                         >
-                                          by 
-                                          Fred Frederson
+                                          <WithI18n
+                                            defaults="by {owner}"
+                                            id="js.Workflows.WorkflowMetadata.owner"
+                                            values={
+                                              Object {
+                                                "owner": "Fred Frederson",
+                                              }
+                                            }
+                                          >
+                                            <I18n
+                                              update={true}
+                                              withHash={true}
+                                            >
+                                              <Trans
+                                                defaults="by {owner}"
+                                                i18n={
+                                                  Object {
+                                                    "_": [Function],
+                                                    "_activeLanguageData": Object {
+                                                      "plurals": [Function],
+                                                    },
+                                                    "_activeMessages": Object {},
+                                                    "_catalogs": Object {
+                                                      "en": Object {
+                                                        "languageData": Object {},
+                                                        "messages": Object {},
+                                                      },
+                                                    },
+                                                    "_dev": Object {
+                                                      "compile": [Function],
+                                                      "loadLanguageData": [Function],
+                                                    },
+                                                    "_language": "en",
+                                                    "_locales": undefined,
+                                                    "_missing": undefined,
+                                                    "plural": [Function],
+                                                    "select": [Function],
+                                                    "selectOrdinal": [Function],
+                                                    "t": [Function],
+                                                  }
+                                                }
+                                                id="js.Workflows.WorkflowMetadata.owner"
+                                                values={
+                                                  Object {
+                                                    "owner": "Fred Frederson",
+                                                  }
+                                                }
+                                              >
+                                                <Render
+                                                  value="js.Workflows.WorkflowMetadata.owner"
+                                                >
+                                                  js.Workflows.WorkflowMetadata.owner
+                                                </Render>
+                                              </Trans>
+                                            </I18n>
+                                          </WithI18n>
                                         </span>
                                         <span
                                           className="separator"
@@ -1045,12 +1099,12 @@ exports[`Workflow list page renders correctly 1`] = `
                                       </li>
                                       <li>
                                         <WithI18n
-                                          defaults="Updated {0}"
+                                          defaults="Updated {timeAgo}"
                                           description="The parameter will contain a time difference (i.e. something like '5h ago')"
                                           id="js.Workflows.WorkflowMetadata.update"
                                           values={
                                             Object {
-                                              "0": "{years}y ago",
+                                              "timeAgo": "{years}y ago",
                                             }
                                           }
                                         >
@@ -1059,7 +1113,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                             withHash={true}
                                           >
                                             <Trans
-                                              defaults="Updated {0}"
+                                              defaults="Updated {timeAgo}"
                                               description="The parameter will contain a time difference (i.e. something like '5h ago')"
                                               i18n={
                                                 Object {
@@ -1090,7 +1144,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                               id="js.Workflows.WorkflowMetadata.update"
                                               values={
                                                 Object {
-                                                  "0": "{years}y ago",
+                                                  "timeAgo": "{years}y ago",
                                                 }
                                               }
                                             >
@@ -1115,7 +1169,52 @@ exports[`Workflow list page renders correctly 1`] = `
                                           title="Change privacy"
                                           type="button"
                                         >
-                                          private
+                                          <WithI18n
+                                            defaults="private"
+                                            id="js.Workflows.WorkflowMetadata.visibility.private"
+                                          >
+                                            <I18n
+                                              update={true}
+                                              withHash={true}
+                                            >
+                                              <Trans
+                                                defaults="private"
+                                                i18n={
+                                                  Object {
+                                                    "_": [Function],
+                                                    "_activeLanguageData": Object {
+                                                      "plurals": [Function],
+                                                    },
+                                                    "_activeMessages": Object {},
+                                                    "_catalogs": Object {
+                                                      "en": Object {
+                                                        "languageData": Object {},
+                                                        "messages": Object {},
+                                                      },
+                                                    },
+                                                    "_dev": Object {
+                                                      "compile": [Function],
+                                                      "loadLanguageData": [Function],
+                                                    },
+                                                    "_language": "en",
+                                                    "_locales": undefined,
+                                                    "_missing": undefined,
+                                                    "plural": [Function],
+                                                    "select": [Function],
+                                                    "selectOrdinal": [Function],
+                                                    "t": [Function],
+                                                  }
+                                                }
+                                                id="js.Workflows.WorkflowMetadata.visibility.private"
+                                              >
+                                                <Render
+                                                  value="js.Workflows.WorkflowMetadata.visibility.private"
+                                                >
+                                                  js.Workflows.WorkflowMetadata.visibility.private
+                                                </Render>
+                                              </Trans>
+                                            </I18n>
+                                          </WithI18n>
                                         </button>
                                       </li>
                                     </ul>
@@ -1259,8 +1358,62 @@ exports[`Workflow list page renders correctly 1`] = `
                                         <span
                                           className="metadata"
                                         >
-                                          by 
-                                          Fred Frederson
+                                          <WithI18n
+                                            defaults="by {owner}"
+                                            id="js.Workflows.WorkflowMetadata.owner"
+                                            values={
+                                              Object {
+                                                "owner": "Fred Frederson",
+                                              }
+                                            }
+                                          >
+                                            <I18n
+                                              update={true}
+                                              withHash={true}
+                                            >
+                                              <Trans
+                                                defaults="by {owner}"
+                                                i18n={
+                                                  Object {
+                                                    "_": [Function],
+                                                    "_activeLanguageData": Object {
+                                                      "plurals": [Function],
+                                                    },
+                                                    "_activeMessages": Object {},
+                                                    "_catalogs": Object {
+                                                      "en": Object {
+                                                        "languageData": Object {},
+                                                        "messages": Object {},
+                                                      },
+                                                    },
+                                                    "_dev": Object {
+                                                      "compile": [Function],
+                                                      "loadLanguageData": [Function],
+                                                    },
+                                                    "_language": "en",
+                                                    "_locales": undefined,
+                                                    "_missing": undefined,
+                                                    "plural": [Function],
+                                                    "select": [Function],
+                                                    "selectOrdinal": [Function],
+                                                    "t": [Function],
+                                                  }
+                                                }
+                                                id="js.Workflows.WorkflowMetadata.owner"
+                                                values={
+                                                  Object {
+                                                    "owner": "Fred Frederson",
+                                                  }
+                                                }
+                                              >
+                                                <Render
+                                                  value="js.Workflows.WorkflowMetadata.owner"
+                                                >
+                                                  js.Workflows.WorkflowMetadata.owner
+                                                </Render>
+                                              </Trans>
+                                            </I18n>
+                                          </WithI18n>
                                         </span>
                                         <span
                                           className="separator"
@@ -1270,12 +1423,12 @@ exports[`Workflow list page renders correctly 1`] = `
                                       </li>
                                       <li>
                                         <WithI18n
-                                          defaults="Updated {0}"
+                                          defaults="Updated {timeAgo}"
                                           description="The parameter will contain a time difference (i.e. something like '5h ago')"
                                           id="js.Workflows.WorkflowMetadata.update"
                                           values={
                                             Object {
-                                              "0": "{years}y ago",
+                                              "timeAgo": "{years}y ago",
                                             }
                                           }
                                         >
@@ -1284,7 +1437,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                             withHash={true}
                                           >
                                             <Trans
-                                              defaults="Updated {0}"
+                                              defaults="Updated {timeAgo}"
                                               description="The parameter will contain a time difference (i.e. something like '5h ago')"
                                               i18n={
                                                 Object {
@@ -1315,7 +1468,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                               id="js.Workflows.WorkflowMetadata.update"
                                               values={
                                                 Object {
-                                                  "0": "{years}y ago",
+                                                  "timeAgo": "{years}y ago",
                                                 }
                                               }
                                             >
@@ -1340,7 +1493,52 @@ exports[`Workflow list page renders correctly 1`] = `
                                           title="Change privacy"
                                           type="button"
                                         >
-                                          public
+                                          <WithI18n
+                                            defaults="public"
+                                            id="js.Workflows.WorkflowMetadata.visibility.public"
+                                          >
+                                            <I18n
+                                              update={true}
+                                              withHash={true}
+                                            >
+                                              <Trans
+                                                defaults="public"
+                                                i18n={
+                                                  Object {
+                                                    "_": [Function],
+                                                    "_activeLanguageData": Object {
+                                                      "plurals": [Function],
+                                                    },
+                                                    "_activeMessages": Object {},
+                                                    "_catalogs": Object {
+                                                      "en": Object {
+                                                        "languageData": Object {},
+                                                        "messages": Object {},
+                                                      },
+                                                    },
+                                                    "_dev": Object {
+                                                      "compile": [Function],
+                                                      "loadLanguageData": [Function],
+                                                    },
+                                                    "_language": "en",
+                                                    "_locales": undefined,
+                                                    "_missing": undefined,
+                                                    "plural": [Function],
+                                                    "select": [Function],
+                                                    "selectOrdinal": [Function],
+                                                    "t": [Function],
+                                                  }
+                                                }
+                                                id="js.Workflows.WorkflowMetadata.visibility.public"
+                                              >
+                                                <Render
+                                                  value="js.Workflows.WorkflowMetadata.visibility.public"
+                                                >
+                                                  js.Workflows.WorkflowMetadata.visibility.public
+                                                </Render>
+                                              </Trans>
+                                            </I18n>
+                                          </WithI18n>
                                         </button>
                                       </li>
                                     </ul>
@@ -1484,8 +1682,62 @@ exports[`Workflow list page renders correctly 1`] = `
                                         <span
                                           className="metadata"
                                         >
-                                          by 
-                                          Fred Frederson
+                                          <WithI18n
+                                            defaults="by {owner}"
+                                            id="js.Workflows.WorkflowMetadata.owner"
+                                            values={
+                                              Object {
+                                                "owner": "Fred Frederson",
+                                              }
+                                            }
+                                          >
+                                            <I18n
+                                              update={true}
+                                              withHash={true}
+                                            >
+                                              <Trans
+                                                defaults="by {owner}"
+                                                i18n={
+                                                  Object {
+                                                    "_": [Function],
+                                                    "_activeLanguageData": Object {
+                                                      "plurals": [Function],
+                                                    },
+                                                    "_activeMessages": Object {},
+                                                    "_catalogs": Object {
+                                                      "en": Object {
+                                                        "languageData": Object {},
+                                                        "messages": Object {},
+                                                      },
+                                                    },
+                                                    "_dev": Object {
+                                                      "compile": [Function],
+                                                      "loadLanguageData": [Function],
+                                                    },
+                                                    "_language": "en",
+                                                    "_locales": undefined,
+                                                    "_missing": undefined,
+                                                    "plural": [Function],
+                                                    "select": [Function],
+                                                    "selectOrdinal": [Function],
+                                                    "t": [Function],
+                                                  }
+                                                }
+                                                id="js.Workflows.WorkflowMetadata.owner"
+                                                values={
+                                                  Object {
+                                                    "owner": "Fred Frederson",
+                                                  }
+                                                }
+                                              >
+                                                <Render
+                                                  value="js.Workflows.WorkflowMetadata.owner"
+                                                >
+                                                  js.Workflows.WorkflowMetadata.owner
+                                                </Render>
+                                              </Trans>
+                                            </I18n>
+                                          </WithI18n>
                                         </span>
                                         <span
                                           className="separator"
@@ -1495,12 +1747,12 @@ exports[`Workflow list page renders correctly 1`] = `
                                       </li>
                                       <li>
                                         <WithI18n
-                                          defaults="Updated {0}"
+                                          defaults="Updated {timeAgo}"
                                           description="The parameter will contain a time difference (i.e. something like '5h ago')"
                                           id="js.Workflows.WorkflowMetadata.update"
                                           values={
                                             Object {
-                                              "0": "{years}y ago",
+                                              "timeAgo": "{years}y ago",
                                             }
                                           }
                                         >
@@ -1509,7 +1761,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                             withHash={true}
                                           >
                                             <Trans
-                                              defaults="Updated {0}"
+                                              defaults="Updated {timeAgo}"
                                               description="The parameter will contain a time difference (i.e. something like '5h ago')"
                                               i18n={
                                                 Object {
@@ -1540,7 +1792,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                               id="js.Workflows.WorkflowMetadata.update"
                                               values={
                                                 Object {
-                                                  "0": "{years}y ago",
+                                                  "timeAgo": "{years}y ago",
                                                 }
                                               }
                                             >
@@ -1565,7 +1817,52 @@ exports[`Workflow list page renders correctly 1`] = `
                                           title="Change privacy"
                                           type="button"
                                         >
-                                          private
+                                          <WithI18n
+                                            defaults="private"
+                                            id="js.Workflows.WorkflowMetadata.visibility.private"
+                                          >
+                                            <I18n
+                                              update={true}
+                                              withHash={true}
+                                            >
+                                              <Trans
+                                                defaults="private"
+                                                i18n={
+                                                  Object {
+                                                    "_": [Function],
+                                                    "_activeLanguageData": Object {
+                                                      "plurals": [Function],
+                                                    },
+                                                    "_activeMessages": Object {},
+                                                    "_catalogs": Object {
+                                                      "en": Object {
+                                                        "languageData": Object {},
+                                                        "messages": Object {},
+                                                      },
+                                                    },
+                                                    "_dev": Object {
+                                                      "compile": [Function],
+                                                      "loadLanguageData": [Function],
+                                                    },
+                                                    "_language": "en",
+                                                    "_locales": undefined,
+                                                    "_missing": undefined,
+                                                    "plural": [Function],
+                                                    "select": [Function],
+                                                    "selectOrdinal": [Function],
+                                                    "t": [Function],
+                                                  }
+                                                }
+                                                id="js.Workflows.WorkflowMetadata.visibility.private"
+                                              >
+                                                <Render
+                                                  value="js.Workflows.WorkflowMetadata.visibility.private"
+                                                >
+                                                  js.Workflows.WorkflowMetadata.visibility.private
+                                                </Render>
+                                              </Trans>
+                                            </I18n>
+                                          </WithI18n>
                                         </button>
                                       </li>
                                     </ul>
@@ -1780,8 +2077,62 @@ exports[`Workflow list page renders correctly 1`] = `
                                         <span
                                           className="metadata"
                                         >
-                                          by 
-                                          Sally Sallerson
+                                          <WithI18n
+                                            defaults="by {owner}"
+                                            id="js.Workflows.WorkflowMetadata.owner"
+                                            values={
+                                              Object {
+                                                "owner": "Sally Sallerson",
+                                              }
+                                            }
+                                          >
+                                            <I18n
+                                              update={true}
+                                              withHash={true}
+                                            >
+                                              <Trans
+                                                defaults="by {owner}"
+                                                i18n={
+                                                  Object {
+                                                    "_": [Function],
+                                                    "_activeLanguageData": Object {
+                                                      "plurals": [Function],
+                                                    },
+                                                    "_activeMessages": Object {},
+                                                    "_catalogs": Object {
+                                                      "en": Object {
+                                                        "languageData": Object {},
+                                                        "messages": Object {},
+                                                      },
+                                                    },
+                                                    "_dev": Object {
+                                                      "compile": [Function],
+                                                      "loadLanguageData": [Function],
+                                                    },
+                                                    "_language": "en",
+                                                    "_locales": undefined,
+                                                    "_missing": undefined,
+                                                    "plural": [Function],
+                                                    "select": [Function],
+                                                    "selectOrdinal": [Function],
+                                                    "t": [Function],
+                                                  }
+                                                }
+                                                id="js.Workflows.WorkflowMetadata.owner"
+                                                values={
+                                                  Object {
+                                                    "owner": "Sally Sallerson",
+                                                  }
+                                                }
+                                              >
+                                                <Render
+                                                  value="js.Workflows.WorkflowMetadata.owner"
+                                                >
+                                                  js.Workflows.WorkflowMetadata.owner
+                                                </Render>
+                                              </Trans>
+                                            </I18n>
+                                          </WithI18n>
                                         </span>
                                         <span
                                           className="separator"
@@ -1791,12 +2142,12 @@ exports[`Workflow list page renders correctly 1`] = `
                                       </li>
                                       <li>
                                         <WithI18n
-                                          defaults="Updated {0}"
+                                          defaults="Updated {timeAgo}"
                                           description="The parameter will contain a time difference (i.e. something like '5h ago')"
                                           id="js.Workflows.WorkflowMetadata.update"
                                           values={
                                             Object {
-                                              "0": "{years}y ago",
+                                              "timeAgo": "{years}y ago",
                                             }
                                           }
                                         >
@@ -1805,7 +2156,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                             withHash={true}
                                           >
                                             <Trans
-                                              defaults="Updated {0}"
+                                              defaults="Updated {timeAgo}"
                                               description="The parameter will contain a time difference (i.e. something like '5h ago')"
                                               i18n={
                                                 Object {
@@ -1836,7 +2187,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                               id="js.Workflows.WorkflowMetadata.update"
                                               values={
                                                 Object {
-                                                  "0": "{years}y ago",
+                                                  "timeAgo": "{years}y ago",
                                                 }
                                               }
                                             >
@@ -1861,7 +2212,52 @@ exports[`Workflow list page renders correctly 1`] = `
                                           title="Change privacy"
                                           type="button"
                                         >
-                                          public
+                                          <WithI18n
+                                            defaults="public"
+                                            id="js.Workflows.WorkflowMetadata.visibility.public"
+                                          >
+                                            <I18n
+                                              update={true}
+                                              withHash={true}
+                                            >
+                                              <Trans
+                                                defaults="public"
+                                                i18n={
+                                                  Object {
+                                                    "_": [Function],
+                                                    "_activeLanguageData": Object {
+                                                      "plurals": [Function],
+                                                    },
+                                                    "_activeMessages": Object {},
+                                                    "_catalogs": Object {
+                                                      "en": Object {
+                                                        "languageData": Object {},
+                                                        "messages": Object {},
+                                                      },
+                                                    },
+                                                    "_dev": Object {
+                                                      "compile": [Function],
+                                                      "loadLanguageData": [Function],
+                                                    },
+                                                    "_language": "en",
+                                                    "_locales": undefined,
+                                                    "_missing": undefined,
+                                                    "plural": [Function],
+                                                    "select": [Function],
+                                                    "selectOrdinal": [Function],
+                                                    "t": [Function],
+                                                  }
+                                                }
+                                                id="js.Workflows.WorkflowMetadata.visibility.public"
+                                              >
+                                                <Render
+                                                  value="js.Workflows.WorkflowMetadata.visibility.public"
+                                                >
+                                                  js.Workflows.WorkflowMetadata.visibility.public
+                                                </Render>
+                                              </Trans>
+                                            </I18n>
+                                          </WithI18n>
                                         </button>
                                       </li>
                                     </ul>
@@ -2005,8 +2401,62 @@ exports[`Workflow list page renders correctly 1`] = `
                                         <span
                                           className="metadata"
                                         >
-                                          by 
-                                          John Johnson
+                                          <WithI18n
+                                            defaults="by {owner}"
+                                            id="js.Workflows.WorkflowMetadata.owner"
+                                            values={
+                                              Object {
+                                                "owner": "John Johnson",
+                                              }
+                                            }
+                                          >
+                                            <I18n
+                                              update={true}
+                                              withHash={true}
+                                            >
+                                              <Trans
+                                                defaults="by {owner}"
+                                                i18n={
+                                                  Object {
+                                                    "_": [Function],
+                                                    "_activeLanguageData": Object {
+                                                      "plurals": [Function],
+                                                    },
+                                                    "_activeMessages": Object {},
+                                                    "_catalogs": Object {
+                                                      "en": Object {
+                                                        "languageData": Object {},
+                                                        "messages": Object {},
+                                                      },
+                                                    },
+                                                    "_dev": Object {
+                                                      "compile": [Function],
+                                                      "loadLanguageData": [Function],
+                                                    },
+                                                    "_language": "en",
+                                                    "_locales": undefined,
+                                                    "_missing": undefined,
+                                                    "plural": [Function],
+                                                    "select": [Function],
+                                                    "selectOrdinal": [Function],
+                                                    "t": [Function],
+                                                  }
+                                                }
+                                                id="js.Workflows.WorkflowMetadata.owner"
+                                                values={
+                                                  Object {
+                                                    "owner": "John Johnson",
+                                                  }
+                                                }
+                                              >
+                                                <Render
+                                                  value="js.Workflows.WorkflowMetadata.owner"
+                                                >
+                                                  js.Workflows.WorkflowMetadata.owner
+                                                </Render>
+                                              </Trans>
+                                            </I18n>
+                                          </WithI18n>
                                         </span>
                                         <span
                                           className="separator"
@@ -2016,12 +2466,12 @@ exports[`Workflow list page renders correctly 1`] = `
                                       </li>
                                       <li>
                                         <WithI18n
-                                          defaults="Updated {0}"
+                                          defaults="Updated {timeAgo}"
                                           description="The parameter will contain a time difference (i.e. something like '5h ago')"
                                           id="js.Workflows.WorkflowMetadata.update"
                                           values={
                                             Object {
-                                              "0": "{years}y ago",
+                                              "timeAgo": "{years}y ago",
                                             }
                                           }
                                         >
@@ -2030,7 +2480,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                             withHash={true}
                                           >
                                             <Trans
-                                              defaults="Updated {0}"
+                                              defaults="Updated {timeAgo}"
                                               description="The parameter will contain a time difference (i.e. something like '5h ago')"
                                               i18n={
                                                 Object {
@@ -2061,7 +2511,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                               id="js.Workflows.WorkflowMetadata.update"
                                               values={
                                                 Object {
-                                                  "0": "{years}y ago",
+                                                  "timeAgo": "{years}y ago",
                                                 }
                                               }
                                             >
@@ -2086,7 +2536,52 @@ exports[`Workflow list page renders correctly 1`] = `
                                           title="Change privacy"
                                           type="button"
                                         >
-                                          private
+                                          <WithI18n
+                                            defaults="private"
+                                            id="js.Workflows.WorkflowMetadata.visibility.private"
+                                          >
+                                            <I18n
+                                              update={true}
+                                              withHash={true}
+                                            >
+                                              <Trans
+                                                defaults="private"
+                                                i18n={
+                                                  Object {
+                                                    "_": [Function],
+                                                    "_activeLanguageData": Object {
+                                                      "plurals": [Function],
+                                                    },
+                                                    "_activeMessages": Object {},
+                                                    "_catalogs": Object {
+                                                      "en": Object {
+                                                        "languageData": Object {},
+                                                        "messages": Object {},
+                                                      },
+                                                    },
+                                                    "_dev": Object {
+                                                      "compile": [Function],
+                                                      "loadLanguageData": [Function],
+                                                    },
+                                                    "_language": "en",
+                                                    "_locales": undefined,
+                                                    "_missing": undefined,
+                                                    "plural": [Function],
+                                                    "select": [Function],
+                                                    "selectOrdinal": [Function],
+                                                    "t": [Function],
+                                                  }
+                                                }
+                                                id="js.Workflows.WorkflowMetadata.visibility.private"
+                                              >
+                                                <Render
+                                                  value="js.Workflows.WorkflowMetadata.visibility.private"
+                                                >
+                                                  js.Workflows.WorkflowMetadata.visibility.private
+                                                </Render>
+                                              </Trans>
+                                            </I18n>
+                                          </WithI18n>
                                         </button>
                                       </li>
                                     </ul>
@@ -2285,8 +2780,62 @@ exports[`Workflow list page renders correctly 1`] = `
                                         <span
                                           className="metadata"
                                         >
-                                          by 
-                                          Workbench
+                                          <WithI18n
+                                            defaults="by {owner}"
+                                            id="js.Workflows.WorkflowMetadata.owner"
+                                            values={
+                                              Object {
+                                                "owner": "Workbench",
+                                              }
+                                            }
+                                          >
+                                            <I18n
+                                              update={true}
+                                              withHash={true}
+                                            >
+                                              <Trans
+                                                defaults="by {owner}"
+                                                i18n={
+                                                  Object {
+                                                    "_": [Function],
+                                                    "_activeLanguageData": Object {
+                                                      "plurals": [Function],
+                                                    },
+                                                    "_activeMessages": Object {},
+                                                    "_catalogs": Object {
+                                                      "en": Object {
+                                                        "languageData": Object {},
+                                                        "messages": Object {},
+                                                      },
+                                                    },
+                                                    "_dev": Object {
+                                                      "compile": [Function],
+                                                      "loadLanguageData": [Function],
+                                                    },
+                                                    "_language": "en",
+                                                    "_locales": undefined,
+                                                    "_missing": undefined,
+                                                    "plural": [Function],
+                                                    "select": [Function],
+                                                    "selectOrdinal": [Function],
+                                                    "t": [Function],
+                                                  }
+                                                }
+                                                id="js.Workflows.WorkflowMetadata.owner"
+                                                values={
+                                                  Object {
+                                                    "owner": "Workbench",
+                                                  }
+                                                }
+                                              >
+                                                <Render
+                                                  value="js.Workflows.WorkflowMetadata.owner"
+                                                >
+                                                  js.Workflows.WorkflowMetadata.owner
+                                                </Render>
+                                              </Trans>
+                                            </I18n>
+                                          </WithI18n>
                                         </span>
                                         <span
                                           className="separator"
@@ -2296,12 +2845,12 @@ exports[`Workflow list page renders correctly 1`] = `
                                       </li>
                                       <li>
                                         <WithI18n
-                                          defaults="Updated {0}"
+                                          defaults="Updated {timeAgo}"
                                           description="The parameter will contain a time difference (i.e. something like '5h ago')"
                                           id="js.Workflows.WorkflowMetadata.update"
                                           values={
                                             Object {
-                                              "0": "{years}y ago",
+                                              "timeAgo": "{years}y ago",
                                             }
                                           }
                                         >
@@ -2310,7 +2859,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                             withHash={true}
                                           >
                                             <Trans
-                                              defaults="Updated {0}"
+                                              defaults="Updated {timeAgo}"
                                               description="The parameter will contain a time difference (i.e. something like '5h ago')"
                                               i18n={
                                                 Object {
@@ -2341,7 +2890,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                               id="js.Workflows.WorkflowMetadata.update"
                                               values={
                                                 Object {
-                                                  "0": "{years}y ago",
+                                                  "timeAgo": "{years}y ago",
                                                 }
                                               }
                                             >
@@ -2366,7 +2915,52 @@ exports[`Workflow list page renders correctly 1`] = `
                                           title="Change privacy"
                                           type="button"
                                         >
-                                          private
+                                          <WithI18n
+                                            defaults="private"
+                                            id="js.Workflows.WorkflowMetadata.visibility.private"
+                                          >
+                                            <I18n
+                                              update={true}
+                                              withHash={true}
+                                            >
+                                              <Trans
+                                                defaults="private"
+                                                i18n={
+                                                  Object {
+                                                    "_": [Function],
+                                                    "_activeLanguageData": Object {
+                                                      "plurals": [Function],
+                                                    },
+                                                    "_activeMessages": Object {},
+                                                    "_catalogs": Object {
+                                                      "en": Object {
+                                                        "languageData": Object {},
+                                                        "messages": Object {},
+                                                      },
+                                                    },
+                                                    "_dev": Object {
+                                                      "compile": [Function],
+                                                      "loadLanguageData": [Function],
+                                                    },
+                                                    "_language": "en",
+                                                    "_locales": undefined,
+                                                    "_missing": undefined,
+                                                    "plural": [Function],
+                                                    "select": [Function],
+                                                    "selectOrdinal": [Function],
+                                                    "t": [Function],
+                                                  }
+                                                }
+                                                id="js.Workflows.WorkflowMetadata.visibility.private"
+                                              >
+                                                <Render
+                                                  value="js.Workflows.WorkflowMetadata.visibility.private"
+                                                >
+                                                  js.Workflows.WorkflowMetadata.visibility.private
+                                                </Render>
+                                              </Trans>
+                                            </I18n>
+                                          </WithI18n>
                                         </button>
                                       </li>
                                     </ul>

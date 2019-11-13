@@ -39,10 +39,12 @@ class StaffImportModuleFromGitHub extends React.PureComponent {
 
   onImportSuccess = (data) => {
     this.props.addModuleToState(data)
+    const module = data.name
+    const category = data.category
     this.setState({
       status: {
         message: this.props.i18n._(
-          t('js.ImportModuleFromGithub.status.importedModule')`Imported module ${data.name} under category ${data.category}`
+          t('js.ImportModuleFromGithub.status.importedModule')`Imported module ${module} under category ${category}`
         )
       }
     })

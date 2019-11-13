@@ -52,6 +52,7 @@ export class Embed extends React.Component {
       return this.renderNotAvailable()
     }
     const iframeCode = escapeHtml('<iframe src="' + window.location.protocol + '//' + window.location.host + '/embed/' + this.props.wf_module.id + '" width="560" height="315" frameborder="0" />')
+    const timeAgo = timeDifference(this.props.workflow.last_update, new Date(), this.props.i18n)
 
     return (
       <div className='embed-wrapper'>
@@ -79,8 +80,8 @@ export class Embed extends React.Component {
                   <li>
                     <a href={'/workflows/' + this.props.workflow.id} target='_blank' rel='noopener noreferrer'>
                       {this.props.i18n._(
-                        /* i18n: The parameter will contain a time difference (i.e. something like '4h ago') */
-                        t('js.Embed.metadata.updated')`Updated ${timeDifference(this.props.workflow.last_update, new Date(), this.props.i18n)}`
+                        /* i18n: {timeAgo} will contain a time difference (i.e. something like '4h ago') */
+                        t('js.Embed.metadata.updated')`Updated ${timeAgo}`
                       )}
                     </a>
                   </li>
