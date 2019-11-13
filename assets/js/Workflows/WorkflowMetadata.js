@@ -49,9 +49,9 @@ export class WorkflowMetadata extends React.Component {
         <span className='separator'>-</span>
         <button type='button' className='public-private' title={this.props.i18n._(t('js.Workflows.WorkflowMetadata.changePrivacy.button')`Change privacy`)} onClick={this.handleClickOpenShareModal}>
           {this.props.workflow.public ? (
-            <Trans id="js.Workflows.WorkflowMetadata.visibility.public">public</Trans>
+            <Trans id='js.Workflows.WorkflowMetadata.visibility.public'>public</Trans>
           ) : (
-            <Trans id="js.Workflows.WorkflowMetadata.visibility.private">private</Trans>
+            <Trans id='js.Workflows.WorkflowMetadata.visibility.private'>private</Trans>
           )}
         </button>
       </li>

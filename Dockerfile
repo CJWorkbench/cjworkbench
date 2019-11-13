@@ -172,7 +172,7 @@ FROM jsbase AS jsbuild
 COPY package.json package-lock.json /app/
 RUN npm install
 
-COPY webpack.config.js setupJest.js /app/
+COPY webpack.config.js setupJest.js lingui.config.js /app/
 COPY __mocks__/ /app/__mocks__/
 COPY assets/ /app/assets/
 # Inject unit tests into our continuous integration

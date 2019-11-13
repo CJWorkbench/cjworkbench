@@ -171,6 +171,9 @@ class AccountAdmin:
         email: str,
         username: str = None,
         password: str = None,
+        *,
+        first_name: str = "First",
+        last_name: str = "Last",
         is_staff: bool = False,
         is_superuser: bool = False,
     ) -> UserHandle:
@@ -202,7 +205,7 @@ class AccountAdmin:
                         email, username, password, is_staff, is_superuser
                     )
                     VALUES (
-                        'First', 'Last', TRUE, NOW(),
+                        %(first_name)s, %(last_name)s, TRUE, NOW(),
                         %(email)s, %(username)s, %(password_hash)s,
                         %(is_staff)s, %(is_superuser)s
                     )
@@ -217,6 +220,8 @@ class AccountAdmin:
             email=email,
             username=username,
             password_hash=password_hash,
+            first_name=first_name,
+            last_name=last_name,
             is_staff=is_staff,
             is_superuser=is_superuser,
         )
