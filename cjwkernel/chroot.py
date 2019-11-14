@@ -5,9 +5,8 @@ import errno
 import os
 import os.path
 from pathlib import Path
-import subprocess
 import threading
-from typing import ContextManager, Iterator, List, Tuple
+from typing import Callable, ContextManager, Iterator, List, Tuple
 from cjwkernel.util import tempdir_context, tempfile_context
 from cjwkernel.errors import ModuleExitedError
 
@@ -70,7 +69,28 @@ def _walk_and_delete_upper_files(
 
 @dataclass
 class Chroot:
-    parent: Path
+    root: Path
+    """
+    Path where we'll call `chroot`.
+
+    This contains the file tree the child module will see.
+    """
+
+    base: Path
+    """
+    Path to the "base layer" of the overlayfs filesystem.
+
+    We examine the base layer as we "clean up" changes in the upper layer.
+    """
+
+    upper: Path
+    """
+    Path holding the differences between `base` and `root`, as per overlayfs.
+
+    See https://www.kernel.org/doc/Documentation/filesystems/overlayfs.txt to
+    learn what the upper layer is.
+    """
+
     lock: threading.Lock = field(default_factory=threading.Lock)
     """
     Sanity check.
@@ -79,18 +99,6 @@ class Chroot:
     assertion that we aren't using the same chroot twice. (A bug would mean
     one module could read another module's data.)
     """
-
-    @property
-    def base(self) -> Path:
-        return self.parent.parent.parent / "chroot-layers" / "base"
-
-    @property
-    def root(self) -> Path:
-        return self.parent / "root"
-
-    @property
-    def upper(self) -> Path:
-        return self.parent / "upper"
 
     def acquire_context(self) -> ContextManager[ChrootContext]:
         self.lock.acquire(timeout=0.01)
@@ -276,19 +284,17 @@ class ChrootContext:
         os.chown(path, old_stat.st_uid, old_stat.st_gid)
 
 
-EDITABLE_CHROOT = Chroot(Path("/var/lib/cjwkernel/chroot/editable"))
-READONLY_CHROOT = Chroot(Path("/var/lib/cjwkernel/chroot/readonly"))
+_chroots = Path("/var/lib/cjwkernel/chroot")
+_base = Path("/var/lib/cjwkernel/chroot-layers/base")
+
+
+EDITABLE_CHROOT = Chroot(
+    _chroots / "editable" / "root", _base, _chroots / "editable" / "upperfs" / "upper"
+)
+READONLY_CHROOT = Chroot(
+    _chroots / "readonly" / "root",
+    # TODO remove "base/upper" logic. Readonly chroot doesn't use/need them.
+    _base,
+    _chroots / "readonly" / "upper",
+)
 READONLY_CHROOT_CONTEXT = ChrootContext(READONLY_CHROOT)  # without locking
-
-
-_initialized = False
-
-
-def ensure_initialized():
-    global _initialized
-    if not _initialized:
-        # Run setup-chroots.sh if we're in dev mode.
-        # (If we were on production, an init container would have run it.)
-        if os.path.isdir("/root/.local/share/virtualenvs"):
-            subprocess.run(["/app/cjwkernel/setup-chroots.sh"], check=True)
-        _initialized = True

@@ -114,6 +114,9 @@ class NetworkConfig:
     only do networking with EDITABLE_CHROOT, which we use as a singleton.
     Therefore, we can use the same interface names and IP addresses with each
     invocation.
+
+    The default values match those in `cjwkernel/setup-sandboxes.sh`. Don't
+    edit one without editing the other.
     """
 
     kernel_veth_name: str = "cjw-veth-kernel"

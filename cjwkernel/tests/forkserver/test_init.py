@@ -8,11 +8,7 @@ import stat
 from textwrap import dedent
 from typing import Any, ContextManager, FrozenSet, List, Optional, Tuple
 import unittest
-from cjwkernel.chroot import (
-    EDITABLE_CHROOT,
-    READONLY_CHROOT,
-    ensure_initialized as ensure_chroot_initialized,
-)
+from cjwkernel.chroot import EDITABLE_CHROOT
 from cjwkernel import forkserver
 from cjwkernel.forkserver import protocol
 from cjwkernel.util import tempfile_context
@@ -64,7 +60,6 @@ def _spawned_module_context(
 class ForkserverTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        ensure_chroot_initialized()
         cls._forkserver = forkserver.Forkserver(
             module_main="cjwkernel.tests.forkserver.test_init.module_main"
         )

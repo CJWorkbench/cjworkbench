@@ -5,10 +5,7 @@ from unittest.mock import patch
 import pandas as pd
 from cjwkernel.types import RenderResult
 from cjwkernel.tests.util import arrow_table, assert_render_result_equals
-from cjwkernel.chroot import (
-    EDITABLE_CHROOT,
-    ensure_initialized as ensure_chroot_initialized,
-)
+from cjwkernel.chroot import EDITABLE_CHROOT
 from cjwstate import minio, rendercache
 from cjwstate.models import ModuleVersion, Workflow
 from cjwstate.models.param_spec import ParamDType
@@ -30,10 +27,6 @@ async def fake_send(*args, **kwargs):
 
 
 class TabTests(DbTestCase):
-    @classmethod
-    def setUpClass(cls):
-        ensure_chroot_initialized()
-
     @contextlib.contextmanager
     def _execute(self, workflow, flow, tab_results, expect_log_level=logging.DEBUG):
         with EDITABLE_CHROOT.acquire_context() as chroot_context:

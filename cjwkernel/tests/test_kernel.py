@@ -6,10 +6,7 @@ import pyarrow
 from cjwkernel.errors import ModuleCompileError, ModuleExitedError, ModuleTimeoutError
 from cjwkernel.kernel import Kernel
 from cjwkernel.tests.util import arrow_table_context, MockPath
-from cjwkernel.chroot import (
-    EDITABLE_CHROOT,
-    ensure_initialized as ensure_chroot_initialized,
-)
+from cjwkernel.chroot import EDITABLE_CHROOT
 from cjwkernel import types
 
 
@@ -18,7 +15,6 @@ class KernelTests(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        ensure_chroot_initialized()
         # Kernel takes a while to start up -- it's loading pyarrow+pandas in a
         # separate process. So we'll only load it once.
         cls.kernel = Kernel()

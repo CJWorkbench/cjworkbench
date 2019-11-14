@@ -74,22 +74,16 @@ mkdir -p $LAYERS/base/app
 cp -a /app/cjwkernel $LAYERS/base/app/cjwkernel
 
 # Create directories on the chroots filesystem (not the root filesystem)
-for chroot in editable "readonly"; do
-  # Wipe dirs if we're re-running this script. (We re-run it in dev mode.)
-  if test -d "$VENV_PATH"; then
-    umount -f "$CHROOT/$chroot/root$VENV_PATH" 2>/dev/null || true
-  fi
-  umount -f $CHROOT/$chroot/root 2>/dev/null || true
-  rm -rf "$CHROOT/$chroot"
-
-  # Now create all the directory structure we need
-  for dir in upper work root; do
-    mkdir -p "$CHROOT/$chroot/$dir"
-  done
-done
+mkdir -p \
+  $CHROOT/editable/upperfs/upper \
+  $CHROOT/editable/upperfs/work \
+  $CHROOT/editable/root \
+  $CHROOT/readonly/upper \
+  $CHROOT/readonly/work \
+  $CHROOT/readonly/root \
 
 # Overlay!
-mount -t overlay overlay -o dirsync,lowerdir=$LAYERS/base,upperdir=$CHROOT/editable/upper,workdir=$CHROOT/editable/work $CHROOT/editable/root
+mount -t overlay overlay -o dirsync,lowerdir=$LAYERS/base,upperdir=$CHROOT/editable/upperfs/upper,workdir=$CHROOT/editable/upperfs/work $CHROOT/editable/root
 mount -t overlay overlay -o dirsync,lowerdir=$LAYERS/base,upperdir=$CHROOT/readonly/upper,workdir=$CHROOT/readonly/work $CHROOT/readonly/root
 
 # Bind-mount /root/.local/share/virtualenvs in dev mode. (On production, the

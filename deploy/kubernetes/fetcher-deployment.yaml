@@ -14,7 +14,7 @@ spec:
         app: fetcher-app
     spec:
       initContainers:
-        # setup-chroots.sh needs special privileges; run it in an init container.
+        # setup-sandboxes.sh needs special privileges; run it in an init container.
         #
         # We run this command separately because it runs with privileged: true.
         # (forkserver shouldn't have permission to fiddle with the mount
@@ -26,7 +26,7 @@ spec:
           image: "gcr.io/cj-workbench/migrate:latest"
           securityContext:
             privileged: true  # so it can run mount and iptables
-          command: [ "bash", "-x", "/app/cjwkernel/setup-chroots.sh" ]
+          command: [ "bash", "-x", "/app/cjwkernel/setup-sandboxes.sh", "all" ]
           volumeMounts:
             - mountPath: /var/lib/cjwkernel/chroot
               name: chroot

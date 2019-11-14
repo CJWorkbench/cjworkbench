@@ -65,7 +65,7 @@ services:
   # mounted volumes to cross namespaces.)
   #
   # Instead, we set privileged: true on each container and run
-  # /app/cjwkernel/setup-chroots.sh before the normal command.
+  # /app/cjwkernel/setup-sandboxes.sh before the normal command.
   #
   # [adamhooper, 2019-11-07] I'm not sure whether we need privileged: true.
   # CAP_SYS_ADMIN works on localhost, but not on Cloud Build. Perhaps apparmor
@@ -75,21 +75,21 @@ services:
   fetcher:
     #image:
     #build:
-    command: [ 'sh', '-c', '/app/cjwkernel/setup-chroots.sh && exec ./manage.py fetcher' ]
+    command: [ 'sh', '-c', '/app/cjwkernel/setup-sandboxes.sh all && exec ./manage.py fetcher' ]
     depends_on: [ 'db', 'rabbitmq', 'minio' ]
     security_opt:
       - seccomp=docker/forkserver-seccomp-profile.json
-    privileged: true  # for setup-chroots.sh
+    privileged: true  # for setup-sandboxes.sh
     environment: *common_env
 
   renderer:
     #image:
     #build:
-    command: [ 'sh', '-c', '/app/cjwkernel/setup-chroots.sh && exec ./manage.py renderer' ]
+    command: [ 'sh', '-c', '/app/cjwkernel/setup-sandboxes.sh all && exec ./manage.py renderer' ]
     depends_on: [ 'db', 'rabbitmq', 'minio' ]
     security_opt:
       - seccomp=docker/forkserver-seccomp-profile.json
-    privileged: true  # for setup-chroots.sh
+    privileged: true  # for setup-sandboxes.sh
     environment: *common_env
     volumes:
       - local_mail:/app/local_mail
@@ -104,11 +104,11 @@ services:
     #image:
     #build:
     #no ports: on cloudbuild
-    command: [ 'sh', '-c', '/app/cjwkernel/setup-chroots.sh && exec daphne -b 0.0.0.0 -p 8080 --application-close-timeout 180 cjworkbench.asgi:application' ]
+    command: [ 'sh', '-c', '/app/cjwkernel/setup-sandboxes.sh only-readonly && exec daphne -b 0.0.0.0 -p 8080 --application-close-timeout 180 cjworkbench.asgi:application' ]
     depends_on: [ 'db', 'rabbitmq', 'minio' ]
     security_opt:
       - seccomp=docker/forkserver-seccomp-profile.json
-    privileged: true  # for setup-chroots.sh
+    privileged: true  # for setup-sandboxes.sh
     environment:
       <<: *common_env
       STATIC_URL: http://minio:9000/integrationtest-static/

@@ -505,8 +505,9 @@ def _setup_network_namespace_from_parent(
             v for k, v in default_route["attrs"] if k == "RTA_PREFSRC"
         )
 
-    # Ensure iptables rules (TODO this should probably go in setup-chroots.sh,
-    # renamed setup-sandboxes.sh)
+    # Ensure iptables rules. DELETEME: all this in setup-sandboxes.sh. The
+    # duplication is for migrating our production Kubernetes environment
+    # on [2019-11-12].
     process = subprocess.run(
         [
             "/usr/sbin/iptables-legacy",
