@@ -22,7 +22,7 @@ spec:
         # its sandbox.)
         #
         # See https://itnext.io/using-overlay-mounts-with-kubernetes-960375c05959
-        - name: setup-chroot
+        - name: setup-sandboxes
           image: "gcr.io/cj-workbench/migrate:latest"
           securityContext:
             privileged: true  # so it can run mount and iptables
@@ -122,22 +122,22 @@ spec:
               readOnly: true
             - mountPath: /var/lib/cjwkernel/chroot
               name: chroot
-        securityContext:
-          capabilities:
-            add:
-              - NET_ADMIN # To create network interface for sandbox in cjwkernel
-        # "any volume mounts created by Containers in Pods must be destroyed
-        # (unmounted) by the Containers on termination"
-        # -- https://kubernetes.io/docs/concepts/storage/volumes/#mount-propagation
-        - name: teardown-chroot-prestop
-          image: debian:buster-slim
+          securityContext:
+            capabilities:
+              add:
+                - NET_ADMIN # To create network interface for sandbox in cjwkernel
+        - name: teardown-sandboxes
+          # "any volume mounts created by Containers in Pods must be destroyed
+          # (unmounted) by the Containers on termination"
+          # -- https://kubernetes.io/docs/concepts/storage/volumes/#mount-propagation
+          image: "gcr.io/cj-workbench/migrate:latest"
           command: ["sh", "-c", "sleep infinity"]  # do nothing, until exit. (sh responds to INT signal)
           securityContext:
             privileged: true  # so it can unmount
           lifecycle:
             preStop:
               exec:
-                command: ["sh", "-c", "umount --verbose /var/lib/cjwkernel/chroot/editable/root /var/lib/cjwkernel/chroot/readonly/root"]
+                command: ["bash", "-x", "/app/cjwkernel/teardown-sandboxes.sh"]
           volumeMounts:
             - mountPath: /var/lib/cjwkernel/chroot
               name: chroot

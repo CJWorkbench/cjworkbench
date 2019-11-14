@@ -23,9 +23,10 @@ run_migrations >&2
 
 echo -n "Setting frontend, fetcher, renderer and cron images to $SHA on $ENV..." >&2
 repo="gcr.io/cj-workbench"
-kubectl -n $ENV set image deployment/fetcher-deployment fetcher=$repo/fetcher:$SHA setup-chroot=$repo/migrate:$SHA >/dev/null
-kubectl -n $ENV set image deployment/renderer-deployment renderer=$repo/renderer:$SHA setup-chroot=$repo/migrate:$SHA >/dev/null
-kubectl -n $ENV set image deployment/frontend-deployment frontend=$repo/frontend:$SHA setup-chroot=$repo/migrate:$SHA >/dev/null
+sandboxer="$repo/migrate:$SHA"
+kubectl -n $ENV set image deployment/fetcher-deployment fetcher=$repo/fetcher:$SHA setup-sandboxes=$sandboxer teardown-sandboxes=$sandboxer >/dev/null
+kubectl -n $ENV set image deployment/renderer-deployment renderer=$repo/renderer:$SHA setup-sandboxes=$sandboxer teardown-sandboxes=$sandboxer >/dev/null
+kubectl -n $ENV set image deployment/frontend-deployment frontend=$repo/frontend:$SHA setup-sandboxes=$sandboxer teardown-sandboxes=$sandboxer >/dev/null
 kubectl -n $ENV set image deployment/cron-deployment cron=$repo/cron:$SHA >/dev/null
 echo ' done' >&2
 
