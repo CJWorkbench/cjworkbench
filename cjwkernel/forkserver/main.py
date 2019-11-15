@@ -1,5 +1,4 @@
 import ctypes
-import encodings.idna  # noqa -- used when network-resolve fails
 import errno
 import importlib
 import os
@@ -9,7 +8,6 @@ import shutil
 import signal
 import socket
 import struct
-import subprocess
 import traceback
 from typing import Callable
 from . import protocol
@@ -68,31 +66,33 @@ def _call_c(lib, fn, *args):
     return retval
 
 
-_MODULE_STACK = ctypes.create_string_buffer(2 * 1024 * 1024)
+_CHILD_STACK = ctypes.create_string_buffer(2 * 1024 * 1024)
 """
-The memory area our child-module process will use for its stack.
+The memory area our child process will use for its stack.
 
 Yup, this is low-level.
 """
-_MODULE_STACK_POINTER = ctypes.c_void_p(
-    ctypes.cast(_MODULE_STACK, ctypes.c_void_p).value + len(_MODULE_STACK)
+_RUN_CHILD_STACK_POINTER = ctypes.c_void_p(
+    ctypes.cast(_CHILD_STACK, ctypes.c_void_p).value + len(_CHILD_STACK)
 )
 
 
 # GLOBAL VARIABLES
 #
-# SECURITY: _any_ variable in "forkserver" is accessible to a "module" that it
-# spawns. `del` will not delete the data.
+# SECURITY: _any_ variable in "forkserver" is accessible to a child it spawns.
+# `del` will not delete the data.
 #
-# Our calling convention is: "forkserver uses global variables; module can see
-# them." Rationale: to a malicious module, all variables are global anyway.
+# Our calling convention is: "forkserver uses global variables; child can see
+# them." Rationale: to a malicious child, all variables are global anyway.
 # "forkserver" should use very few variables, and they are all listed here.
-module_main: Callable[..., None] = None
+child_main: Callable[..., None] = None
 """Function to call after sandboxing, with *message.args."""
 sock: socket.socket = None
 """Socket "forkserver" uses to communicate with its parent."""
-message: protocol.SpawnPandasModule = None
-"""Arguments passed to the spawned module."""
+message: protocol.SpawnChild = None
+"""Arguments passed to the spawned child."""
+stdin_read_fd: int = None
+stdin_write_fd: int = None
 stdout_read_fd: int = None
 stdout_write_fd: int = None
 stderr_read_fd: int = None
@@ -116,37 +116,26 @@ def _should_sandbox(feature: str) -> bool:
         return True
 
 
-def _sandbox_module():
+def _sandbox_child():
     """
-    Prevent module code from interacting with the rest of our system.
+    Prevent child code from interacting with the rest of our system.
 
     Tasks with rationale ('[x]' means, "unit-tested"):
 
     [x] Wait for forkserver to write uid_map
     [x] Close `sock` (so "forkserver" does not misbehave)
-    [x] Close stdout/stderr (so modules do not flood logs; point
-        stdout/stderr to `message.log_fd` instead)
     [x] Drop capabilities (like CAP_SYS_ADMIN)
     [x] Set seccomp filter
     [x] Setuid to 1000
-    [x] Use chroot (so modules can't see other processes)
+    [x] Use chroot (so children can't see other files)
     """
-    os.close(sock.fileno())  # Close `sock`
-    global stdout_read_fd, stderr_read_fd
-    os.close(stdout_read_fd)
-    os.close(stderr_read_fd)
-    stdout_read_fd = None
-    stderr_read_fd = None
-
     # Wait for parent to close the is_namespace_ready pipe
-    os.close(is_namespace_ready_write_fd)
     os.read(is_namespace_ready_read_fd, 1)
     os.close(is_namespace_ready_read_fd)
 
     # Read seccomp data before we chroot().
     seccomp_bpf_bytes = Path(__file__).with_name("sandbox-seccomp.bpf").read_bytes()
 
-    _sandbox_stdout_stderr()
     if message.network_config is not None:
         _sandbox_network(message.network_config)
     if _should_sandbox("no_new_privs"):
@@ -161,27 +150,34 @@ def _sandbox_module():
         _sandbox_seccomp(seccomp_bpf_bytes)
 
 
-def _sandbox_stdout_stderr():
+def _rewrite_stdin_stdout_stderr():
     """
-    Rewrite the fds 1 and 2 to become stdout_write_fd and stderr_write_fd.
+    Rewrite fds 0, 1, 2 to stdin_read_fd, stdout_write_fd, stderr_write_fd.
 
-    Close stdout_write_fd and stderr_write_fd and set them to `None`.
+    Close the original stdin_read_fd, stdout_write_fd and stderr_write_fd.
 
-    After this, `sys.stdout` and `sys.stderr` will point to `stdout_write_fd`
-    and `stderr_write_fd`. There will be no way to write to the _original_
-    stdout and stderr (file descriptors 1 and 2) -- they will be closed.
+    After this, `sys.stdin`, `sys.stdout` and `sys.stderr` will point to our
+    new file descriptors. There will be no way to access the _parent_'s
+    file descriptors (the original fds 0, 1 and 2) -- those will be closed.
 
-    Why call this? Because by default, stdout and stderr are inherited from the
-    parent process. In the parent, they are used for logging. User code must
-    not be allowed to write to our server logs; therefore, user code must not
-    be able to access the original stdout and stderr.
+    Why call this? Well, first of all, these are our communication channels
+    with the parent process. But there's also a security reason: the parent's
+    stdout and stderr are used for logging. User code must not be allowed to
+    flood our server logs; therefore, user code must not access the parent's
+    stdout and stderr.
     """
-    global stdout_write_fd, stderr_write_fd
-    os.dup2(stdout_write_fd, 1)
-    os.dup2(stderr_write_fd, 2)
-    # Now close the originals (since we just duplicated them)
-    os.close(stdout_write_fd)
-    os.close(stderr_write_fd)
+    global stdin_read_fd, stdout_write_fd, stderr_write_fd
+    for passed_fd, want_fd in [
+        (stdin_read_fd, 0),
+        (stdout_write_fd, 1),
+        (stderr_write_fd, 2),
+    ]:
+        # Handle an edge case: passed_fd may coincidentally be want_fd, if
+        # forkserver closes file descriptors on init and they get reused.
+        if passed_fd != want_fd:
+            os.dup2(passed_fd, want_fd)
+            os.close(passed_fd)
+    stdin_read_fd = None
     stdout_write_fd = None
     stderr_write_fd = None
 
@@ -209,9 +205,9 @@ def _sandbox_network(config: protocol.NetworkConfig) -> None:
         ipr.route("add", gateway=config.kernel_ipv4_address)
 
 
-def _write_namespace_uidgid(pid: int) -> None:
+def _write_namespace_uidgid(child_pid: int) -> None:
     """
-    Write /proc/self/uid_map and /proc/self/gid_map.
+    Write /proc/child_pid/uid_map and /proc/child_pid/gid_map.
 
     Why call this? Because otherwise, the called code can do it for us. That
     would mean root in the child would be equal to root in the parent -- so the
@@ -219,9 +215,9 @@ def _write_namespace_uidgid(pid: int) -> None:
 
     ref: man user_namespaces(7).
     """
-    Path(f"/proc/{pid}/uid_map").write_text("0 100000 65536")
-    Path(f"/proc/{pid}/setgroups").write_text("deny")
-    Path(f"/proc/{pid}/gid_map").write_text("0 100000 65536")
+    Path(f"/proc/{child_pid}/uid_map").write_text("0 100000 65536")
+    Path(f"/proc/{child_pid}/setgroups").write_text("deny")
+    Path(f"/proc/{child_pid}/gid_map").write_text("0 100000 65536")
 
 
 def _copy_chroot_file(src: str, dst: str) -> None:
@@ -268,7 +264,7 @@ def _sandbox_chroot(root: Path) -> None:
     For now, since we don't use a separate mount namespace, chroot doesn't
     add much "security" in the case of privilege escalation: root will be able
     to escape the chroot. (Even root doesn't have permission to read our
-    secrets, though.) Chroot isn't to allay evildoers: it's so module
+    secrets, though.) Chroot isn't to allay evildoers: it's so child-code
     developers see the filesystem tree we want them to see.
     """
     os.chroot(str(root))
@@ -391,25 +387,61 @@ def _sandbox_setuid():
     os.setresgid(1000, 1000, 1000)
 
 
-def cloned_module_main() -> int:
-    # Aid in debugging a bit
-    name = "cjwkernel-module:%s" % message.process_name
+def _close_parent_fds() -> None:
+    """
+    Close file descriptors "owned" by forkserver.
+
+    This is called by both the parent and the child.
+
+    When the parent calls clone(), it has open file descriptors for _its_ end
+    of UNIX pipes.
+
+    The child must close these pipes which were duplicated by clone().
+    Otherwise, then pipes will never close, so the child will never be able to
+    read() until the pipe closes. (read() will deadlock.)
+
+    As for the parent: it sends stdin+stdout+stderr file descriptors to _its_
+    parent, duplicating them. After that, it should close them to prevent
+    leaking or deadlocking.
+    """
+    global stdin_write_fd, stdout_read_fd, stderr_read_fd, is_namespace_ready_write_fd
+    os.close(stdin_write_fd)
+    os.close(stdout_read_fd)
+    os.close(stderr_read_fd)
+    os.close(is_namespace_ready_write_fd)
+    stdin_write_fd = None
+    stdout_read_fd = None
+    stderr_read_fd = None
+    is_namespace_ready_write_fd = None
+
+
+def run_child() -> int:
+    # Set process name seen in "ps". Helps find PID when debugging.
+    name = "forked-child:%s" % message.process_name
     _call_c(libc, "prctl", PR_SET_NAME, name.encode("utf-8"), 0, 0, 0)
 
-    _sandbox_module()
+    global sock
+    os.close(sock.fileno())
+    sock = None
 
-    # Run the module code. This is what it's all about!
+    _close_parent_fds()
+    _rewrite_stdin_stdout_stderr()
+
+    _sandbox_child()
+
+    # Run the child code. This is what it's all about!
     #
-    # It's normal for a module to raise an exception. That's probably a
+    # It's normal for child code to raise an exception. That's probably a
     # developer error, and it's best to show the developer the problem --
-    # exactly what `log_fd` is for. So we want to log exceptions to log_fd.
+    # exactly what `stderr` is for. So we log exceptions to stderr.
     #
-    # SECURITY: it's possible for a module to try and fiddle with the stack or
+    # SECURITY: it's possible for a child to try and fiddle with the stack or
     # heap to execute anything in memory. So this function might never return.
-    # (Imagine `goto`.) That's okay -- we sandbox the module so it can't harm
-    # us (aside from wasting CPU cycles), and we kill it after a timeout.
+    # (Imagine `goto`.) That's okay -- we sandbox the child so it can't harm
+    # us (aside from wasting CPU cycles). The parent may choose to kill the
+    # child after a timeout.
     try:
-        module_main(*message.args)
+        child_main(*message.args)
     except:
         traceback.print_exc()
         os._exit(1)
@@ -418,24 +450,24 @@ def cloned_module_main() -> int:
     os._exit(0)
 
 
-_MODULE_MAIN_FUNC = ctypes.PYFUNCTYPE(ctypes.c_int)(cloned_module_main)
+_RUN_CHILD_FUNC = ctypes.PYFUNCTYPE(ctypes.c_int)(run_child)
 
 
-def _setup_network_namespace_from_parent(
+def _setup_network_namespace_from_forkserver(
     config: protocol.NetworkConfig, child_pid: int
 ) -> None:
     """
-    Ensure iptables rules and send new veth device to `child_pid` namespace.
+    Send new veth device to `child_pid`'s network namespace.
 
-    See `_sandbox_network()` for the receiving end; and read the
-    `NetworkConfig` docstring to understand how the network namespace works.
+    See `_sandbox_network()` for the child's logic. Read the `NetworkConfig`
+    docstring to understand how the network namespace works.
     """
     with pyroute2.IPRoute() as ipr:
         # Avoid a race: what if another forked process already created this
         # interface?
         #
         # If that's the case, assume the other process has already exited
-        # (because [2019-11-11] we only run one networking-enabled module at a
+        # (because [2019-11-11] we only run one networking-enabled child at a
         # time). So the veth device is about to be deleted anyway.
         try:
             ipr.link("del", ifname=config.kernel_veth_name)
@@ -468,7 +500,7 @@ def _setup_network_namespace_from_parent(
         ipr.link("set", index=child_veth_index, net_ns_pid=child_pid)
 
 
-def spawn_module(sock: socket.socket, message: protocol.SpawnPandasModule) -> None:
+def spawn_child(sock: socket.socket, message: protocol.SpawnChild) -> None:
     """
     Fork a child process; send its handle over `sock`; return.
 
@@ -480,16 +512,17 @@ def spawn_module(sock: socket.socket, message: protocol.SpawnPandasModule) -> No
     There are three processes running concurrently here:
 
     * "parent": the Python process that holds a ForkServer handle. It sent
-                `SpawnPandasModule` on `sock` and expects a response of
-                `SpawnedPandasModule` (with "module_pid").
+                `SpawnChild` on `sock` and expects a response of `SpawnedChild`
+                (with "child_pid").
     * "forkserver": the forkserver_main() process. It called this function. It
-                    has few file handles open -- by design. It spawns "module",
-                    and sends "parent" the "module_pid" over `sock`.
-    * "module": invokes `cjwkernel.pandas.main.main()`, using the file
-                descriptors passed in `SpawnPandasModule`.
+                    has few file handles open -- by design. It spawns "child",
+                    and sends "parent" the "child_pid" over `sock`.
+    * "child": invokes `child_main()`.
     """
-    global stdout_read_fd, stdout_write_fd, stderr_read_fd, stderr_write_fd, is_namespace_ready_read_fd, is_namespace_ready_write_fd
+    global stdin_write_fd, stdin_read_fd, stdout_read_fd, stdout_write_fd, stderr_read_fd, stderr_write_fd, is_namespace_ready_read_fd, is_namespace_ready_write_fd
 
+    assert stdin_write_fd is None
+    assert stdin_read_fd is None
     assert stdout_read_fd is None
     assert stdout_write_fd is None
     assert stderr_read_fd is None
@@ -497,15 +530,16 @@ def spawn_module(sock: socket.socket, message: protocol.SpawnPandasModule) -> No
     assert is_namespace_ready_read_fd is None
     assert is_namespace_ready_write_fd is None
 
+    stdin_read_fd, stdin_write_fd = os.pipe()
     stdout_read_fd, stdout_write_fd = os.pipe()
     stderr_read_fd, stderr_write_fd = os.pipe()
     is_namespace_ready_read_fd, is_namespace_ready_write_fd = os.pipe()
 
-    module_pid = _call_c(
+    child_pid = _call_c(
         libc,
         "clone",
-        _MODULE_MAIN_FUNC,
-        _MODULE_STACK_POINTER,
+        _RUN_CHILD_FUNC,
+        _RUN_CHILD_STACK_POINTER,
         CLONE_PARENT
         | CLONE_NEWNS
         | CLONE_NEWCGROUP
@@ -517,96 +551,100 @@ def spawn_module(sock: socket.socket, message: protocol.SpawnPandasModule) -> No
         | signal.SIGCHLD,
         0,
     )
-    if module_pid < 0:
+    if child_pid < 0:
         raise OSError(ctypes.get_errno(), "clone() system call failed")
-    assert module_pid != 0, "clone() should not return in the child process"
+    assert child_pid != 0, "clone() should not return in the child process"
 
+    # close fds meant exclusively for the child
+    os.close(stdin_read_fd)
     os.close(stdout_write_fd)
     os.close(stderr_write_fd)
     os.close(is_namespace_ready_read_fd)
+    stdin_read_fd = None
     stdout_write_fd = None
     stderr_write_fd = None
     is_namespace_ready_read_fd = None
 
-    _write_namespace_uidgid(module_pid)
+    # Sandbox the child from the forkserver side of things. (To avoid races,
+    # the child waits for us to close is_namespace_ready_write_fd before
+    # continuing with its own sandboxing.)
+    #
+    # Do this sandboxing before returning the PID to the parent process.
+    # Otherwise, the parent could kill the process before we're done sandboxing
+    # it (and we'd need to recover from that race).
+    _write_namespace_uidgid(child_pid)
     if message.network_config is not None:
-        _setup_network_namespace_from_parent(message.network_config, module_pid)
+        _setup_network_namespace_from_forkserver(message.network_config, child_pid)
 
-    os.close(is_namespace_ready_write_fd)
-    is_namespace_ready_write_fd = None
-
-    spawned_module = protocol.SpawnedPandasModule(
-        module_pid, stdout_read_fd, stderr_read_fd
+    # Send our lovely new process to the caller (parent process)
+    spawned_child = protocol.SpawnedChild(
+        child_pid, stdin_write_fd, stdout_read_fd, stderr_read_fd
     )
-    spawned_module.send_on_socket(sock)
+    spawned_child.send_on_socket(sock)
 
-    os.close(stdout_read_fd)
-    os.close(stderr_read_fd)
-    stdout_read_fd = None
-    stderr_read_fd = None
+    _close_parent_fds()  # closes is_namespace_ready_write_fd
 
 
-def forkserver_main(_module_main: str, socket_fd: int) -> None:
+def forkserver_main(_child_main: str, socket_fd: int) -> None:
     """
     Start the forkserver.
 
     The init protocol ("a" means "parent" [class ForkServer], "b" means,
-    "child" [forkserver_main()]):
+    "forkserver" [forkserver_main()]; "c" means, "child" [run_child()]):
 
     1a. Parent invokes forkserver_main(), passing AF_UNIX fd as argument.
-    1b. Child calls socket.fromfd(), establishing a socket connection.
+    1b. Forkserver calls socket.fromfd(), establishing a socket connection.
     2a. Parent sends ImportModules.
-    2b. Child imports modules in its main (and only) thread.
-    3a. Parent LOCKs
-    4a. Parent creates fds and sends them through SpawnPandasModule().
-    4b. Child forks and sends parent the PID. The returned PID is a *direct*
-        child of parent (not of child) -- it got there via double-fork with
-        "parent" having PR_SET_CHILD_SUBREAPER.
-    5a. Parent receives PID from client.
-    6a. Parent UNLOCKs
-    7a. Parent reads from its fds and polls PID.
+    2b. Forkserver imports modules in its main (and only) thread.
+    3b. Forkserver waits for a message from parent.
+    4a. Parent sends a message with spawn parameters.
+    4b. Forkserver opens pipes for file descriptors, calls clone(), and sends
+        a response to Parent with pid and (stdin, stdout, stderr) descriptors.
+    4c. Child waits for forkserver to close its file descriptors.
+    5a. Parent receives PID and descriptors from Forkserver.
+    5b. Forkserver closes its file descriptors and waits for parent again.
+    5c. Child sandboxes itself and calls child code with stdin/stdout/stderr.
+    6a. Parent writes to child's stdin, reads from its stdout, and waits for
+        its PID.
+    6c. Child reads from stdin, writes to stdout, and exits.
 
     For shutdown, the client simply closes its connection.
 
-    The inevitable race: if "parent" doesn't read "module_pid" from the other
-    end of "sock" and wait() for it, then nothing will wait() for the module
-    process after it dies and it will become a zombie.
+    The inevitable race: if "parent" doesn't read "child_pid" from the other
+    end of "sock" and wait() for it, then nothing will wait() for the child
+    process after it dies and it will become a zombie child of "parent".
     """
-    # Close fd=0 (stdin). No children should be able to read from stdin; and
-    # forkserver_main has no reason to read from stdin, either.
-    os.close(0)
+    # Load the function we'll call in clone() children
+    global child_main
+    child_main_module_name, child_main_name = _child_main.rsplit(".", 1)
+    child_main_module = importlib.import_module(child_main_module_name)
+    child_main = child_main_module.__dict__[child_main_name]
 
-    global module_main
-    module_main_module_name, module_main_name = _module_main.rsplit(".", 1)
-    module_main_module = importlib.import_module(module_main_module_name)
-    module_main = module_main_module.__dict__[module_main_name]
-
-    # 1b. Child establishes socket connection
+    # 1b. Forkserver establishes socket connection
     #
     # Note: we don't put this in a `with` block, because that would add a
-    # finalizer. Finalizers will run in the "module_pid" process if
-    # cjwkernel.pandas.main() raises an exception ... but the "module_pid"
-    # process closes the socket before calling cjwkernel.pandas.main(), so the
-    # finalizer would crash.
+    # finalizer. Finalizers would run in the "child" process; but our child
+    # closes the socket as a security precaution, so the finalizer would
+    # crash.
+    #
+    # (As a rule, forkserver shouldn't use try/finally or context managers.)
     global sock  # see GLOBAL VARIABLES comment
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM, fileno=socket_fd)
 
-    # 2b. Child imports modules in its main (and only) thread
+    # 2b. Forkserver imports modules in its main (and only) thread
     imports = protocol.ImportModules.recv_on_socket(sock)
     for im in imports.modules:
         __import__(im)
 
     while True:
+        # 4a. Parent sends a message with spawn parameters.
         global message  # see GLOBAL VARIABLES comment
         try:
             # raise EOFError, RuntimeError
-            message = protocol.SpawnPandasModule.recv_on_socket(sock)
+            message = protocol.SpawnChild.recv_on_socket(sock)
         except EOFError:
             # shutdown: client closed its connection
             return
 
-        # 4b. Child forks and sends parent the PID
-        #
-        # The _child_ sends `SpawnedPandasModule` over `sock`, because only
-        # the child knows the sub-child's PID.
-        spawn_module(sock, message)
+        # 4b. Forkserver calls clone() and sends a response to Parent.
+        spawn_child(sock, message)

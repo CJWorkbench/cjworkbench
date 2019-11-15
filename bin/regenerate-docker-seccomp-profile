@@ -33,7 +33,7 @@ def generate_profile() -> str:
             "names": ["clone"],
             "action": "SCMP_ACT_ALLOW",
             "args": [],
-            "comment": "So cjwkernel.forkserver can sandbox module_main()",
+            "comment": "So cjwkernel.forkserver can sandbox child_main()",
             "includes": {},
             "excludes": {},
         }

@@ -6,7 +6,7 @@ import socket
 import subprocess
 import sys
 import threading
-from typing import Any, BinaryIO, FrozenSet, List, Optional, Tuple
+from typing import Any, BinaryIO, Dict, FrozenSet, List, Optional, Tuple
 from . import protocol
 
 
@@ -14,9 +14,10 @@ logger = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
-class ModuleProcess:
+class ChildProcess:
     process_name: str
     pid: int
+    stdin: BinaryIO  # auto-closes in __del__
     stdout: BinaryIO  # auto-closes in __del__
     stderr: BinaryIO  # auto-closes in __del__
 
@@ -31,29 +32,29 @@ class Forkserver:
     """
     Launch Python quickly, sharing most memory pages.
 
-    The problem this solves: we want to spin up many modules quickly; but as
-    soon as a module starts running we can't trust it. Pyarrow+Pandas takes ~1s
-    to import and costs ~100MB RAM.
+    The problem this solves: we want to spin up many children quickly; but as
+    soon as a child starts running we can't trust it. Starting Python with lots
+    of imports like Pyarrow+Pandas can take ~2s and cost ~100MB RAM.
 
     The solution: start up a mini-server, the "forkserver", which preloads
-    pyarrow+pandas. fork() each time we need a subprocess. fork() is
-    near-instantaneous. Beware: since fork() copies all memory, we must ensure
-    the "forkserver" doesn't load anything sensitive before fork() (no Django:
-    it reads secrets!); and we must ensure the "forkserver"'s child closes
-    everything children shouldn't access (no control socket back to our web
-    server!).
+    Python modules. clone() each time we need a subprocess. clone() is
+    near-instantaneous. Beware: since clone() copies all memory, the
+    "forkserver" shouldn't load anything sensitive before clone(). (No Django:
+    it reads secrets!). Also, the "forkserver"'s child should close everything
+    children before executing user code so it can't fiddle with the control
+    socket.
 
     Similar to Python's multiprocessing.forkserver, except...:
 
     * Children are not managed. It's up to the caller to kill and wait for the
-      process. Modules are direct children of the _caller_, not of the
-      forkserver.
+      process. Children are direct children of the _caller_, not of the
+      forkserver. (We use CLONE_PARENT.)
     * asyncio-safe: we don't listen for SIGCHLD, because asyncio's
       subprocess-management routines override the signal handler.
     * Thread-safe: multiple threads may spawn multiple children, and they may
-      all run concurrently.
+      all run concurrently (unless child code writes files or uses networking).
     * No `multiprocessing.context`. This forkserver is the context.
-    * No `Connection` (or other high-level constructs). Pass fds while forking.
+    * No `Connection` (or other high-level constructs).
     * The caller interacts with the forkserver process via _unnamed_ AF_UNIX
       socket, rather than a named socket. (`multiprocessing` writes a pipe
       to /tmp.) No messing with hmac. Instead, we mess with locks. ("Aren't
@@ -66,8 +67,9 @@ class Forkserver:
     def __init__(
         self,
         *,
-        module_main: str = "cjwkernel.pandas.main.main",
-        forkserver_preload: List[str] = [],
+        child_main: str = "cjwkernel.pandas.main.main",
+        environment: Dict[str, Any] = {},
+        preload_imports: List[str] = [],
     ):
         # We rely on Python's os.fork() internals to close FDs and run a child
         # process.
@@ -76,31 +78,13 @@ class Forkserver:
         self._process = subprocess.Popen(
             [
                 sys.executable,
-                # PYTHONUNBUFFERED: parents read children's data sooner
-                "-u",
-                # Force UTF8 mode. We already set UTF8 at the OS level; but
-                # let's be redundant because module authors would really
-                # dislike it if our encoding changed.
-                "-X",
-                "utf8",
+                "-u",  # PYTHONUNBUFFERED: parents read children's data sooner
                 "-c",
                 'import cjwkernel.forkserver.main; cjwkernel.forkserver.main.forkserver_main("%s", %d)'
-                % (module_main, child_socket.fileno()),
+                % (child_main, child_socket.fileno()),
             ],
-            env={
-                # SECURITY: children inherit these values
-                "LANG": "C.UTF-8",
-                "HOME": "/",
-                # [adamhooper, 2019-10-19] rrrgh, OpenBLAS....
-                #
-                # If we preload numpy, we're in trouble. Numpy loads OpenBLAS,
-                # and OpenBLAS starts a whole threading subsystem ... which
-                # breaks fork() in our modules. (We use fork() to open Parquet
-                # files....) OPENBLAS_NUM_THREADS=1 disables the thread pool.
-                #
-                # I'm frustrated.
-                "OPENBLAS_NUM_THREADS": "1",
-            },
+            # SECURITY: children inherit these values
+            env=environment,
             stdin=subprocess.DEVNULL,
             stdout=sys.stdout.fileno(),
             stderr=sys.stderr.fileno(),
@@ -111,10 +95,10 @@ class Forkserver:
         self._lock = threading.Lock()
 
         with self._lock:
-            message = protocol.ImportModules(forkserver_preload)
+            message = protocol.ImportModules(preload_imports)
             message.send_on_socket(self._socket)
 
-    def spawn_module(
+    def spawn_child(
         self,
         process_name: str,
         args: List[Any],
@@ -122,17 +106,17 @@ class Forkserver:
         chroot_dir: Optional[Path] = None,
         network_config: Optional[protocol.NetworkConfig] = None,
         skip_sandbox_except: FrozenSet[str] = frozenset(),
-    ) -> ModuleProcess:
+    ) -> ChildProcess:
         """
         Make our server spawn a process, and return it.
 
         `process_name` is the name to display in `ps` output and server logs.
 
-        `args` are the arguments to pass to `cjwkernel.pandas.module.main()`.
+        `args` are the arguments to pass to `child_main()`.
 
         If `chroot_dir` is set, it must point to a directory on the filesystem.
         Remember that we call setuid() to an extreme UID (>65535) by default:
-        that means the module will only be able to read files that are
+        that means the child will only be able to read files that are
         world-readable (i.e., "chmod o+r").
 
         (TODO `chroot_dir` should use pivot_root, for security. When Kubernetes
@@ -140,9 +124,9 @@ class Forkserver:
         to pivot_root.)
 
         `skip_sandbox_except` MUST BE EXACTLY `frozenset()`. Other values are
-        only for unit tests. See `protocol.SpawnPandasModule` for details.
+        only for unit tests. See `protocol.SpawnChild` for details.
         """
-        message = protocol.SpawnPandasModule(
+        message = protocol.SpawnChild(
             process_name=process_name,
             args=args,
             chroot_dir=chroot_dir,
@@ -151,10 +135,11 @@ class Forkserver:
         )
         with self._lock:
             message.send_on_socket(self._socket)
-            response = protocol.SpawnedPandasModule.recv_on_socket(self._socket)
-        return ModuleProcess(
+            response = protocol.SpawnedChild.recv_on_socket(self._socket)
+        return ChildProcess(
             process_name=process_name,
             pid=response.pid,
+            stdin=os.fdopen(response.stdin_fd, mode="wb"),
             stdout=os.fdopen(response.stdout_fd, mode="rb"),
             stderr=os.fdopen(response.stderr_fd, mode="rb"),
         )

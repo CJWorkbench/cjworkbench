@@ -207,7 +207,7 @@ class KernelTests(unittest.TestCase):
         self.assertEquals(cm.exception.exit_code, 1)  # Python exit code
         self.assertRegex(cm.exception.log, r"\bRuntimeError\b")
         self.assertRegex(cm.exception.log, r"\bfail\b")
-        # Regression test: [2019-10-02], the "forkserver_main()->spawn_module()"
+        # Regression test: [2019-10-02], the "forkserver_main()->spawn_child()"
         # process would raise _another_ exception while exiting. It would try to
         # close an already-closed socket.
         self.assertNotRegex(cm.exception.log, r"Bad file descriptor")
@@ -336,10 +336,7 @@ class KernelTests(unittest.TestCase):
                             os.fstat(i)
                             assert False, f"We passed fd{i} which can be used to escape chroot"
                         except OSError as err:
-                            if err.errno == errno.EBADF:
-                                pass  # this is what we expect: no FDs
-                            else:
-                                raise  # what the heck happened?
+                            assert err.errno == errno.EBADF, "we wanted EBADF; got %d" % err.errno
                     """
                 ).encode("utf-8"),
             ),

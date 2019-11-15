@@ -89,10 +89,10 @@ class ImportModules(MessageToChild):
 @dataclass(frozen=True)
 class NetworkConfig:
     """
-    Network configuration that lets modules access the Internet.
+    Network configuration that lets children access the Internet.
 
     The kernel will create a veth interface and associated iptables rules to
-    route traffic from the module to the Internet via network address
+    route traffic from the child to the Internet via network address
     translation (NAT). The iptables rules will prevent access to private IP
     addresses.
 
@@ -165,7 +165,7 @@ class NetworkConfig:
 
 
 @dataclass(frozen=True)
-class SpawnPandasModule(MessageToChild):
+class SpawnChild(MessageToChild):
     """
     Tell child to fork(), close this socket, and run child code.
     """
@@ -174,7 +174,7 @@ class SpawnPandasModule(MessageToChild):
     """Process name to display in 'ps' and server logs."""
 
     args: List[Any]
-    """Arguments to pass to `module_main(*args)`."""
+    """Arguments to pass to `child_main(*args)`."""
 
     chroot_dir: Optional[Path]
     """
@@ -214,12 +214,13 @@ class SpawnPandasModule(MessageToChild):
 
 
 @dataclass(frozen=True)
-class SpawnedPandasModule(MessageToParent):
+class SpawnedChild(MessageToParent):
     """
-    Respond to SpawnPandasModule with a child process's information.
+    Respond to SpawnChild with a child process's information.
     """
 
     pid: int
+    stdin_fd: int
     stdout_fd: int
     stderr_fd: int
 
@@ -240,11 +241,13 @@ class SpawnedPandasModule(MessageToParent):
         #
         # It turns out the multiprocessing.reduction module does exactly what
         # we want.
-        sendfds(sock, [self.stdout_fd, self.stderr_fd])
+        sendfds(sock, [self.stdin_fd, self.stdout_fd, self.stderr_fd])
 
     # override
     @classmethod
-    def recv_on_socket(cls, sock: socket.socket) -> SpawnPandasModule:
+    def recv_on_socket(cls, sock: socket.socket) -> SpawnedChild:
         raw_message = super().recv_on_socket(sock)
-        stdout_fd, stderr_fd = recvfds(sock, 2)
-        return replace(raw_message, stdout_fd=stdout_fd, stderr_fd=stderr_fd)
+        stdin_fd, stdout_fd, stderr_fd = recvfds(sock, 3)
+        return replace(
+            raw_message, stdin_fd=stdin_fd, stdout_fd=stdout_fd, stderr_fd=stderr_fd
+        )

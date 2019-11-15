@@ -14,22 +14,24 @@ from cjwkernel.forkserver import protocol
 from cjwkernel.util import tempfile_context
 
 
-def module_main(indented_code: str) -> None:
+def child_main(indented_code: str) -> None:
     code = dedent(indented_code)
-    code_obj = compile(code, "<module string>", "exec", dont_inherit=True, optimize=0)
+    code_obj = compile(
+        code, "<child_main string>", "exec", dont_inherit=True, optimize=0
+    )
     # Exec in global scope, so imports go to globals, not locals
     exec(code_obj, globals(), globals())
 
 
 @contextlib.contextmanager
-def _spawned_module_context(
+def _spawned_child_context(
     server: forkserver.Forkserver,
     args: List[Any] = [],
     chroot_dir: Optional[Path] = None,
     network_config: Optional[protocol.NetworkConfig] = None,
     skip_sandbox_except: FrozenSet[str] = frozenset(),
-) -> ContextManager[forkserver.ModuleProcess]:
-    subprocess = server.spawn_module(
+) -> ContextManager[forkserver.ChildProcess]:
+    subprocess = server.spawn_child(
         "forkserver-test",
         args,
         chroot_dir=chroot_dir,
@@ -61,7 +63,8 @@ class ForkserverTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls._forkserver = forkserver.Forkserver(
-            module_main="cjwkernel.tests.forkserver.test_init.module_main"
+            child_main="cjwkernel.tests.forkserver.test_init.child_main",
+            environment={"LC_CTYPE": "C.UTF-8", "TEST_ENV": "yes"},
         )
 
     @classmethod
@@ -81,6 +84,7 @@ class ForkserverTest(unittest.TestCase):
     def _spawn_and_communicate(
         self,
         indented_code: str,
+        stdin: bytes = b"",
         chroot_dir: Optional[Path] = None,
         network_config: Optional[protocol.NetworkConfig] = None,
         skip_sandbox_except: FrozenSet[str] = frozenset(),
@@ -90,13 +94,15 @@ class ForkserverTest(unittest.TestCase):
 
         This will never error.
         """
-        with _spawned_module_context(
+        with _spawned_child_context(
             self._forkserver,
             args=[indented_code],
             chroot_dir=chroot_dir,
             network_config=network_config,
             skip_sandbox_except=skip_sandbox_except,
         ) as subprocess:
+            subprocess.stdin.write(stdin)
+            subprocess.stdin.close()
             stdout = subprocess.stdout.read()
             stderr = subprocess.stderr.read()
             _, status = subprocess.wait(0)
@@ -151,26 +157,37 @@ class ForkserverTest(unittest.TestCase):
         self.assertEqual(stdout, b"")
         self.assertRegex(stderr, b"ModuleNotFoundError")
 
-    def test_SECURITY_wipe_env(self):
+    def test_stdin(self):
+        exitcode, stdout, stderr = self._spawn_and_communicate(
+            r"""
+            import sys
+            sys.stdout.write(sys.stdin.read())
+            """,
+            stdin=b"hello",
+        )
+        self.assertEqual(stderr, b"")
+        self.assertEqual(stdout, b"hello")
+        self.assertEqual(exitcode, 0)
+
+    def test_SECURITY_use_environment(self):
         self._spawn_and_communicate_or_raise(
             r"""
             import os
             env = dict(os.environ)
             assert env == {
-                "LANG": "C.UTF-8",
-                "HOME": "/",
-                "OPENBLAS_NUM_THREADS": "1",
+                "LC_CTYPE": "C.UTF-8",
+                "TEST_ENV": "yes",
             }, "Got wrong os.environ: %r" % env
             """
         )
 
-    def test_SECURITY_sock_and_stdin_and_other_fds_are_closed(self):
+    def test_SECURITY_sock_and_any_other_fds_are_closed(self):
         # The user cannot access pipes or files outside its sandbox (aside from
         # stdout+stderr, which the parent process knows are untrusted).
         self._spawn_and_communicate_or_raise(
             r"""
             import os
-            for badfd in [0] + list(range(3, 20)):
+            for badfd in list(range(3, 20)):
                 try:
                     os.write(badfd, b"x")
                     raise RuntimeError("fd %d is unexpectedly open" % badfd)

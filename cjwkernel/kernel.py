@@ -140,8 +140,22 @@ class Kernel:
         self.fetch_timeout = fetch_timeout
         self.render_timeout = render_timeout
         self._forkserver = Forkserver(
-            module_main="cjwkernel.pandas.main.main",
-            forkserver_preload=[
+            child_main="cjwkernel.pandas.main.main",
+            environment={
+                # SECURITY: children inherit these values
+                "LANG": "C.UTF-8",
+                "HOME": "/",
+                # [adamhooper, 2019-10-19] rrrgh, OpenBLAS....
+                #
+                # If we preload numpy, we're in trouble. Numpy loads OpenBLAS,
+                # and OpenBLAS starts a whole threading subsystem ... which
+                # breaks fork() in our modules. (We use fork() to open Parquet
+                # files....) OPENBLAS_NUM_THREADS=1 disables the thread pool.
+                #
+                # I'm frustrated.
+                "OPENBLAS_NUM_THREADS": "1",
+            },
+            preload_imports=[
                 "_strptime",
                 "abc",
                 "asyncio",
@@ -388,7 +402,7 @@ class Kernel:
         """
         limit_time = time.time() + timeout
 
-        module_process = self._forkserver.spawn_module(
+        module_process = self._forkserver.spawn_child(
             process_name=compiled_module.module_slug,
             chroot_dir=chroot_context.chroot.root,
             network_config=network_config,
