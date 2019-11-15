@@ -25,19 +25,17 @@ def find_corresponding_string(catalog: Catalog, message: Message) -> Optional[st
     return corresponding_message.string if corresponding_message else None
 
 
-def read_po_catalog(filename: str) -> Optional[Catalog]:
+def read_po_catalog(filename: str) -> Catalog:
     """ Try to read a po catalog from the given path.
-    Return None on failure
+    Throw on failure.
     """
-    try:
-        with open(filename, "r") as catalog_file:
-            return read_po(catalog_file)
-    except Exception:
-        return None
+    with open(filename, "r") as catalog_file:
+        return read_po(catalog_file)
 
 
 def write_po_catalog(filename: str, catalog: Catalog, **kwargs):
     """ Try to write a po catalog to the given path.
+    Throw on failure.
     """
     with open(filename, "wb") as catalog_file:
         write_po(catalog_file, catalog, **kwargs)
