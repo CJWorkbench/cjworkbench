@@ -53,36 +53,6 @@ CLONE_NEWPID = 0x20000000
 CLONE_NEWNET = 0x40000000
 
 
-CHROOT_REQUIRED_PATHS = ["/lib/x86_64-linux-gnu"]
-"""
-Paths that will always have their contents provided within a chroot.
-
-Why do we force paths? Because otherwise, we can't even create a chroot.
-"""
-
-UNSAFE_IPV4_ADDRESS_BLOCKS = [
-    "0.0.0.0/8",
-    "10.0.0.0/8",
-    "100.64.0.0/10",
-    "127.0.0.0/8",
-    "169.254.0.0/16",
-    "172.16.0.0/12",
-    "192.0.0.0/24",
-    "192.0.2.0/24",
-    "192.88.99.0/24",
-    "192.168.0.0/16",
-    "198.18.0.0/15",
-    "198.51.100.0/24",
-    "203.0.113.0/24",
-    "224.0.0.0/4",
-    "240.0.0.0/4",
-    "255.255.255.255/32",
-]
-"""
-IPv4 addresses no nice Workbench module will ever access.
-"""
-
-
 def _call_c(lib, fn, *args):
     """
     Call a libc function; raise OSError if it returns a negative number.
