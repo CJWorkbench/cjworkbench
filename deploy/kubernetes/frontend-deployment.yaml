@@ -163,24 +163,28 @@ spec:
         - name: google-oauth-secret
           secret:
             secretName: google-oauth-secret
+            defaultMode: 0400
             items:
               - key: json
                 path: google-oauth-secret.json
         - name: intercom-oauth-secret
           secret:
             secretName: intercom-oauth-secret
+            defaultMode: 0400
             items:
               - key: json
                 path: intercom-oauth-secret.json
         - name: socialaccount-secrets
           secret:
             secretName: socialaccount-secrets
+            defaultMode: 0400
             items:
               - key: json
                 path: socialaccount-secrets.json
         - name: twitter-oauth-secret
           secret:
             secretName: twitter-oauth-secret
+            defaultMode: 0400
             items:
               - key: json
                 path: twitter-oauth-secret.json

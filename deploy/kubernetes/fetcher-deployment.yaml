@@ -73,8 +73,6 @@ spec:
               value: secrets/google-oauth-secret/google-oauth-secret.json
             - name: CJW_INTERCOM_CLIENT_SECRETS
               value: secrets/intercom-oauth-secret/intercom-oauth-secret.json
-            - name: CJW_SOCIALACCOUNT_SECRETS
-              value: secrets/socialaccount-secrets/socialaccount-secrets.json
             - name: CJW_TWITTER_CLIENT_SECRETS
               value: secrets/twitter-oauth-secret/twitter-oauth-secret.json
             - name: MINIO_ACCESS_KEY
@@ -114,9 +112,6 @@ spec:
             - mountPath: /app/secrets/intercom-oauth-secret
               name: intercom-oauth-secret
               readOnly: true
-            - mountPath: /app/secrets/socialaccount-secrets
-              name: socialaccount-secrets
-              readOnly: true
             - mountPath: /app/secrets/twitter-oauth-secret
               name: twitter-oauth-secret
               readOnly: true
@@ -146,24 +141,21 @@ spec:
         - name: google-oauth-secret
           secret:
             secretName: google-oauth-secret
+            defaultMode: 0400
             items:
               - key: json
                 path: google-oauth-secret.json
         - name: intercom-oauth-secret
           secret:
             secretName: intercom-oauth-secret
+            defaultMode: 0400
             items:
               - key: json
                 path: intercom-oauth-secret.json
-        - name: socialaccount-secrets
-          secret:
-            secretName: socialaccount-secrets
-            items:
-              - key: json
-                path: socialaccount-secrets.json
         - name: twitter-oauth-secret
           secret:
             secretName: twitter-oauth-secret
+            defaultMode: 0400
             items:
               - key: json
                 path: twitter-oauth-secret.json
