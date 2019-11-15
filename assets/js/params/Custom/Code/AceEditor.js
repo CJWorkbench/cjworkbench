@@ -74,7 +74,7 @@ export default class WorkbenchAceEditor extends React.PureComponent {
     return (
       <>
         <div className='help'>
-          Define a <kbd>render</kbd> function that accepts
+          Define a <kbd>process(table)</kbd> function that accepts
           a <kbd>pd.DataFrame</kbd> and returns
           a <kbd>pd.DataFrame</kbd>. You may use
           the <a target='_blank' rel='noopener noreferrer' href='https://docs.python.org/3/library/math.html'><kbd>math</kbd></a>,
@@ -82,7 +82,7 @@ export default class WorkbenchAceEditor extends React.PureComponent {
           (<a target='_blank' rel='noopener noreferrer' href='https://pandas.pydata.org/pandas-docs/stable/api.html#dataframe'>Pandas</a>)
           {' '}and <kbd>np</kbd>{' '}
           (<a target='_blank' rel='noopener noreferrer' href='https://docs.scipy.org/doc/numpy/reference/routines.html'>Numpy</a>)
-          {' '}modules; <kbd>import</kbd> is disabled.
+          {' '}modules.
         </div>
         <div className='ace-aspect-ratio-container'>
           <div className='ace-wrapper' ref={this.wrapperRef}>

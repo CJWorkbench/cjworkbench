@@ -87,7 +87,7 @@ class WorkflowTests(DbTestCase):
         ModuleVersion.create_or_replace_from_spec(
             {"id_name": "mod", "name": "Mod", "category": "Clean", "parameters": []}
         )
-        wf_module = tab.wf_modules.create(
+        tab.wf_modules.create(
             order=0,
             slug="step-1",
             last_relevant_delta_id=delta1.id - 1,
@@ -102,7 +102,7 @@ class WorkflowTests(DbTestCase):
 
         self.assertRegex(
             str(fake_load_module.return_value.render.call_args[1]["basedir"]),
-            r"^/var/tmp/",
+            r"/var/tmp/",
         )
 
     @patch.object(LoadedModule, "for_module_version")

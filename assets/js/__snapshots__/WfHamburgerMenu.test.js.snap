@@ -124,14 +124,14 @@ exports[`WfHamburgerMenu renders logged in, non-read only 1`] = `
                           role="menuitem"
                           tabindex="0"
                         >
-                          workflow.visibility.myWorkflows
+                          js.WfHamburgerMenu.menu.myWorkflows
                         </a>
                         <button
                           class="dropdown-item"
                           role="menuitem"
                           tabindex="0"
                         >
-                          workflow.visibility.importModule
+                          js.WfHamburgerMenu.menu.importModule
                         </button>
                         <a
                           class="dropdown-item"
@@ -139,7 +139,7 @@ exports[`WfHamburgerMenu renders logged in, non-read only 1`] = `
                           role="menuitem"
                           tabindex="0"
                         >
-                          workflow.visibility.logout
+                          js.WfHamburgerMenu.menu.logout
                         </a>
                       </div>
                     </div>
@@ -206,7 +206,7 @@ exports[`WfHamburgerMenu renders logged in, non-read only 1`] = `
                           >
                             <WithI18n
                               defaults="My Workflows"
-                              id="workflow.visibility.myWorkflows"
+                              id="js.WfHamburgerMenu.menu.myWorkflows"
                             >
                               <I18n
                                 update={true}
@@ -240,12 +240,12 @@ exports[`WfHamburgerMenu renders logged in, non-read only 1`] = `
                                       "t": [Function],
                                     }
                                   }
-                                  id="workflow.visibility.myWorkflows"
+                                  id="js.WfHamburgerMenu.menu.myWorkflows"
                                 >
                                   <Render
-                                    value="workflow.visibility.myWorkflows"
+                                    value="js.WfHamburgerMenu.menu.myWorkflows"
                                   >
-                                    workflow.visibility.myWorkflows
+                                    js.WfHamburgerMenu.menu.myWorkflows
                                   </Render>
                                 </Trans>
                               </I18n>
@@ -263,7 +263,7 @@ exports[`WfHamburgerMenu renders logged in, non-read only 1`] = `
                           >
                             <WithI18n
                               defaults="Import Module"
-                              id="workflow.visibility.importModule"
+                              id="js.WfHamburgerMenu.menu.importModule"
                             >
                               <I18n
                                 update={true}
@@ -297,12 +297,12 @@ exports[`WfHamburgerMenu renders logged in, non-read only 1`] = `
                                       "t": [Function],
                                     }
                                   }
-                                  id="workflow.visibility.importModule"
+                                  id="js.WfHamburgerMenu.menu.importModule"
                                 >
                                   <Render
-                                    value="workflow.visibility.importModule"
+                                    value="js.WfHamburgerMenu.menu.importModule"
                                   >
-                                    workflow.visibility.importModule
+                                    js.WfHamburgerMenu.menu.importModule
                                   </Render>
                                 </Trans>
                               </I18n>
@@ -320,7 +320,7 @@ exports[`WfHamburgerMenu renders logged in, non-read only 1`] = `
                           >
                             <WithI18n
                               defaults="Log Out"
-                              id="workflow.visibility.logout"
+                              id="js.WfHamburgerMenu.menu.logout"
                             >
                               <I18n
                                 update={true}
@@ -354,12 +354,12 @@ exports[`WfHamburgerMenu renders logged in, non-read only 1`] = `
                                       "t": [Function],
                                     }
                                   }
-                                  id="workflow.visibility.logout"
+                                  id="js.WfHamburgerMenu.menu.logout"
                                 >
                                   <Render
-                                    value="workflow.visibility.logout"
+                                    value="js.WfHamburgerMenu.menu.logout"
                                   >
-                                    workflow.visibility.logout
+                                    js.WfHamburgerMenu.menu.logout
                                   </Render>
                                 </Trans>
                               </I18n>

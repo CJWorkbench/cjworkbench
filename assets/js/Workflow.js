@@ -15,9 +15,19 @@ export function MaybeNotYourWorkflow (props) {
 
   let suggestion = null
   if (props.isLoggedIn) {
-    suggestion = <h3 className='suggestion'><Trans id='workflow.duplicatetosavechanges'>Duplicate it to save your changes</Trans></h3>
+    suggestion = (
+      <h3 className='suggestion'>
+        <Trans id='js.Workflow.suggestion.duplicateToSaveChanges'>Duplicate it to save your changes</Trans>
+      </h3>
+    )
   } else {
-    suggestion = <h3 className='suggestion'><Trans id='workflow.signintosaveurchanges'><a href={`/account/login/?next=/workflows/${props.workflowId}`} className='action-button '>Sign in</a> to save your changes</Trans></h3>
+    suggestion = (
+      <h3 className='suggestion'>
+        <Trans id='js.Workflow.suggestion.signInToSaveChanges' description='The tag is a link to the login page'>
+          <a href={`/account/login/?next=/workflows/${props.workflowId}`} className='action-button '>Sign in</a> to save your changes
+        </Trans>
+      </h3>
+    )
   }
 
   let inner, className
@@ -34,7 +44,7 @@ export function MaybeNotYourWorkflow (props) {
     className = 'is-read-only'
     inner = (
       <>
-        <h3><Trans id='workflow.sharedworkflowview'>You are viewing a shared workflow</Trans></h3>
+        <h3><Trans id='js.Workflow.isShared'>You are viewing a shared workflow</Trans></h3>
         <p className='message' />
         {suggestion}
       </>

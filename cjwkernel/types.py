@@ -803,8 +803,10 @@ class FetchResult:
     """
     File storing whatever data fetch() output.
 
-    Currently, this is a Parquet file. In the future, it may be something else.
-    The file may be empty to indicate a zero-sized table.
+    If `path` starts and ends with Parquet's magic numbers, "PAR1", then
+    fetcher will interpret `path` as tabular data. Otherwise, it will be
+    treated as a file. See `fetcher/versions.py` for rationale. TODO make file
+    format explicit (or nix the concept entirely).
     """
 
     errors: List[RenderError] = field(default_factory=list)

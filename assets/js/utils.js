@@ -42,17 +42,17 @@ export function timeDifference (start, end, i18n) {
   const years = Math.floor(days / 365.25)
 
   if (years > 0) {
-    return i18n._(t('time_diff.ago.years')`${years}y ago`)
+    return i18n._(t('js.util.timeDifference.ago.years')`${years}y ago`)
   } else if (days > 0) {
-    return i18n._(t('time_diff.ago.days')`${days}d ago`)
+    return i18n._(t('js.util.timeDifference.ago.days')`${days}d ago`)
   } else if (hours > 0) {
-    return i18n._(t('time_diff.ago.hours')`${hours}h ago`)
+    return i18n._(t('js.util.timeDifference.ago.hours')`${hours}h ago`)
   } else if (minutes > 0) {
-    return i18n._(t('time_diff.ago.minutes')`${minutes}m ago`)
+    return i18n._(t('js.util.timeDifference.ago.minutes')`${minutes}m ago`)
   } else if (seconds > 0) {
-    return i18n._(t('time_diff.ago.seconds')`${seconds}s ago`)
+    return i18n._(t('js.util.timeDifference.ago.seconds')`${seconds}s ago`)
   } else {
-    return i18n._(t('time_diff.now')`just now`)
+    return i18n._(t('js.util.timeDifference.now')`just now`)
   }
 }
 

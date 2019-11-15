@@ -31,16 +31,20 @@ export default class _Modal extends React.PureComponent {
 
     return (
       <Modal className='share-modal' isOpen toggle={onClickClose}>
-        <ModalHeader>{<Trans id='workflow.visibility.sharingSettings'>SHARING SETTINGS</Trans>}</ModalHeader>
+        <ModalHeader>
+          <Trans id='js.ShareModal.Modal.header.title' description='This should be all-caps for styling reasons'>
+                SHARING SETTINGS
+          </Trans>
+        </ModalHeader>
         <ModalBody>
-          <h6>{<Trans id='workflow.visibility.sharingWith'>Share with the world</Trans>}</h6>
+          <h6><Trans id='js.ShareModal.Modal.shareWithTheWorld'>Share with the world</Trans></h6>
           <PublicPrivate
             isReadOnly={isReadOnly}
             isPublic={isPublic}
             setIsPublic={setIsPublic}
           />
 
-          <h6>{<Trans id='workflow.visibility.collaborators'>Collaborators</Trans>}</h6>
+          <h6><Trans id='js.ShareModal.Modal.collaborators'>Collaborators</Trans></h6>
           <Acl
             isReadOnly={isReadOnly}
             ownerEmail={ownerEmail}
@@ -61,7 +65,7 @@ export default class _Modal extends React.PureComponent {
               name='close'
               className='action-button button-gray'
               onClick={onClickClose}
-            >{<Trans id='workflow.visibility.closeButton'>Close</Trans>}
+            ><Trans id='js.ShareModal.Modal.footer.closeButton'>Close</Trans>
             </button>
           </div>
         </ModalFooter>

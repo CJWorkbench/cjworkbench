@@ -10,15 +10,15 @@ import { withI18n } from '@lingui/react'
 
 function NoOp () {}
 
-function LessonCourse ({ course }) {
+function LessonCourse ({ localeId, course }) {
   let path
   let title
 
   if (course) {
-    path = '/courses/' + course.slug
+    path = `/courses/${course.localeId}/${course.slug}`
     title = course.title
   } else {
-    path = '/lessons'
+    path = `/lessons/${localeId}`
     title = 'Training'
   }
 
@@ -32,7 +32,7 @@ function LessonCourse ({ course }) {
 function LessonWorkflowTitle ({ lesson }) {
   return (
     <div className='title-metadata-stack'>
-      <LessonCourse course={lesson.course} />
+      <LessonCourse localeId={lesson.localeId} course={lesson.course} />
       <EditableWorkflowName
         value={lesson.header.title}
         setWorkflowName={NoOp}
@@ -43,26 +43,28 @@ function LessonWorkflowTitle ({ lesson }) {
 }
 
 const OwnedWorkflowTitleAndMetadata = withI18n()(function ({ i18n, isReadOnly, workflow }) {
+  const owner = workflow.owner_name.trim()
+  const timeAgo = timeDifference(workflow.last_update, new Date(), i18n)
   return (
     <div className='title-metadata-stack'>
       <ConnectedEditableWorkflowName isReadOnly={isReadOnly} />
       <ul className='metadata-container'>
         {!workflow.is_anonymous ? (
           <li className='attribution'>
-            <span className='metadata'><Trans id='workflow.visibility.by'>by {workflow.owner_name.trim()}</Trans> </span>
+            <span className='metadata'><Trans id='js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.owner'>by {owner}</Trans> </span>
             <span className='separator'>-</span>
           </li>
         ) : null}
         <li>
-          <Trans id='workflow.last_updated' description="The parameter will contain something like '4h ago'">
-            Updated {timeDifference(workflow.last_update, new Date(), i18n)}
+          <Trans id='js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.lastUpdated' description="{timeAgo} will contain something like '4h ago'">
+            Updated {timeAgo}
           </Trans>
         </li>
         {(!isReadOnly && !workflow.is_anonymous) ? (
           <li>
             <span className='separator'>-</span>
             <ShareButton>
-              {workflow.public ? <Trans id='workflow.visibility.public'>Public</Trans> : <Trans id='workflow.visibility.private'>Private</Trans>}
+              {workflow.public ? <Trans id='js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.visibility.public'>Public</Trans> : <Trans id='js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.visibility.private'>Private</Trans>}
             </ShareButton>
           </li>
         ) : null}
@@ -172,7 +174,7 @@ export class WorkflowNavBar extends React.Component {
       )
     } else {
       contextMenu = (
-        <a href='/account/login' className='nav--link'>{i18n._(t('workflow.signin')`Sign in`)}</a>
+        <a href='/account/login' className='nav--link'>{i18n._(t('js.WorkflowNavBar.signIn.accountLink')`Sign in`)}</a>
       )
     }
 
@@ -203,9 +205,9 @@ export class WorkflowNavBar extends React.Component {
               {isReadOnly ? null : (
                 <UndoRedoButtons undo={this.undo} redo={this.redo} />
               )}
-              <button name='duplicate' onClick={this.handleDuplicate}>{i18n._(t('workflow.visibility.duplicate')`Duplicate`)}</button>
+              <button name='duplicate' onClick={this.handleDuplicate}>{i18n._(t('js.WorkflowNavBar.duplicate.button')`Duplicate`)}</button>
               {lesson ? null : (/* We haven't yet designed what it means to share a lesson workflow. */
-                <ShareButton>{i18n._(t('workflow.visibility.share')`Share`)}</ShareButton>
+                <ShareButton>{i18n._(t('js.WorkflowNavBar.share.shareButton')`Share`)}</ShareButton>
               )}
               {contextMenu}
             </div>

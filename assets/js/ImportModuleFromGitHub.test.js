@@ -44,7 +44,7 @@ describe('ImportModuleFromGitHub', () => {
       b: { id_name: 'b', author: 'Aut', category: 'cat', name: 'yay' }
     })
 
-    expect(w.find('.import-github-success').text()).toEqual('Imported module {0} under category {1}')
+    expect(w.find('.import-github-success').text()).toEqual('Imported module {module} under category {category}')
   })
 
   it('should display a link but no form for non-staff users', () => {

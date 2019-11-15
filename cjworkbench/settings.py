@@ -483,3 +483,19 @@ if "MINIO_STATIC_URL_PATTERN" in os.environ:
 
 if STATIC_URL != "http://localhost:8000/static/":
     print(f"Serving static files from {STATIC_URL}")
+
+LESSON_FILES_URL = "https://storage.googleapis.com/production-static.workbenchdata.com"
+"""
+URL where we publish data for users to fetch in lessons.
+
+[2019-11-12] Currently, this is in the production static-files URL. TODO move
+it to a new bucket, because developers must write to the bucket before
+deploying code that depends on it.
+
+Why not use an environment-specific url, like STATIC_URL? Because our network
+sandbox forbids fetcher modules from accessing private-use IP addresses. We
+don't use internal resolvers (e.g., Docker DNS, Docker-managed /etc/hosts) and
+we firewall internal IP addresses (e.g., minio, localhost). Dev,
+integration-test and production all have different network setups, and we'd
+need three different codepaths to make environment-specific URLs work.
+"""

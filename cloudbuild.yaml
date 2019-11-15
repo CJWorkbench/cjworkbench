@@ -51,7 +51,7 @@ steps:
         ./integrationtests/git-server
 
 # Unit-test
-- name: 'docker/compose:1.23.2'
+- name: 'docker/compose:1.24.1'
   args: [ '-f', 'server/tests/docker-compose.yml',
           'run',
           'unittest'
@@ -60,7 +60,7 @@ steps:
     - 'PROJECT_ID=$PROJECT_ID'
     - 'COMMIT_SHA=$COMMIT_SHA'
 # Integration-test: addminiouser, migrate, then run the integration-test image
-- name: 'docker/compose:1.23.2'
+- name: 'docker/compose:1.24.1'
   args: [ '-f', 'integrationtests/docker-compose.yml',
           '-f', 'integrationtests/docker-compose.cloudbuild-override.yml',
           'run',
@@ -69,7 +69,7 @@ steps:
   env:
     - 'PROJECT_ID=$PROJECT_ID'
     - 'COMMIT_SHA=$COMMIT_SHA'
-- name: 'docker/compose:1.23.2'
+- name: 'docker/compose:1.24.1'
   args: [ '-f', 'integrationtests/docker-compose.yml',
           '-f', 'integrationtests/docker-compose.cloudbuild-override.yml',
           'run',
@@ -78,7 +78,7 @@ steps:
   env:
     - 'PROJECT_ID=$PROJECT_ID'
     - 'COMMIT_SHA=$COMMIT_SHA'
-- name: 'docker/compose:1.23.2'
+- name: 'docker/compose:1.24.1'
   args: [ '-f', 'integrationtests/docker-compose.yml',
           '-f', 'integrationtests/docker-compose.cloudbuild-override.yml',
           'run',

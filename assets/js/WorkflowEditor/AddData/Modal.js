@@ -17,9 +17,13 @@ export const Modal = React.memo(function Modal ({ i18n, modules, tabSlug, close,
     <section className='add-data-modal'>
       <header>
         <div className='title'>
-          <h5><Trans id='workflow.choosedata'>CHOOSE A DATA SOURCE</Trans></h5>
+          <h5>
+            <Trans id='js.WorkflowEditor.AddData.Modal.header.title' description='This should be all-caps for styling reasons'>
+                CHOOSE A DATA SOURCE
+            </Trans>
+          </h5>
 
-          <button type='button' className='close' aria-label='Close' title={i18n._(t('workflow.attribute.close')`Close`)} onClick={close}>×</button>
+          <button type='button' className='close' aria-label='Close' title={i18n._(t('js.WorkflowEditor.AddData.Modal.closeButton.hoverText')`Close`)} onClick={close}>×</button>
 
         </div>
         <Search value={search} onChange={setSearch} />

@@ -60,12 +60,26 @@ docker_compose down -v
 echo 'Building…' >&2
 # docker_compose doesn't use buildkit.
 # https://github.com/docker/compose/issues/6440
-# In the meantime, use `docker build` directly, so we can speedily build all
-# the slow bits.
-DOCKER_BUILDKIT=1 docker build --pull --rm=false --target=migrate . # includes JS unit tests
-DOCKER_BUILDKIT=1 docker build --pull --rm=false --target=frontend .
-DOCKER_BUILDKIT=1 docker build --pull --rm=false . -f Dockerfile.integrationtest
-# Now make docker-compose _aware_ of these newly-cached, quickly-built images
+#
+# In the meantime, `docker-compose build --pull` is super-inefficient: it pulls
+# from scratch on every single image. And `docker-compose build --parallel` is
+# even worse: it will run the exact same build steps in each build process,
+# simultaneously.
+#
+# So let's "pull once, run everywhere". Grab dependencies using `docker pull`,
+# then build using `docker-compose` without pulling.
+#
+# We can find all dependencies in our Dockerfiles:
+#   * Each dependency is in Dockerfile with a 'FROM xxx AS yyy" command
+#   * Multi-stage builds often depend on internal names. External images all
+#     have ':' in their names: for instance, 'debian:buster-slim' is external;
+#     'pybase' is internal.
+#   * "sort -u" removes duplicates
+for image in $(grep '^FROM .*:.*' Dockerfile Dockerfile.integrationtest | cut -d' ' -f2 | sort -u); do
+  docker pull $image
+done
+
+# Now docker-compose needn't --pull
 docker_compose build
 
 echo 'Creating minio user…' >&2

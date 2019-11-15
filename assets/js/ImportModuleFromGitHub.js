@@ -29,7 +29,7 @@ class StaffImportModuleFromGitHub extends React.PureComponent {
     ev.preventDefault() // don't submit browser-default GET/POST
 
     this.setState({
-      status: { message: this.props.i18n._(t('workbench.processing')`Processing...`) }
+      status: { message: this.props.i18n._(t('js.ImportModuleFromGithub.status.processing')`Processing...`) }
     })
 
     const url = this.inputRef.current.value
@@ -39,9 +39,13 @@ class StaffImportModuleFromGitHub extends React.PureComponent {
 
   onImportSuccess = (data) => {
     this.props.addModuleToState(data)
+    const module = data.name
+    const category = data.category
     this.setState({
       status: {
-        message: this.props.i18n._(t('workbench.importedmodule')`Imported module ${data.name} under category ${data.category}`)
+        message: this.props.i18n._(
+          t('js.ImportModuleFromGithub.status.importedModule')`Imported module ${module} under category ${category}`
+        )
       }
     })
   }
@@ -59,7 +63,9 @@ class StaffImportModuleFromGitHub extends React.PureComponent {
 
     return (
       <Modal isOpen toggle={this.props.closeModal}>
-        <ModalHeader toggle={this.props.closeModal}><Trans id='workflow.workbenchcustommodule'>Import Custom Module</Trans></ModalHeader>
+        <ModalHeader toggle={this.props.closeModal}>
+          <Trans id='js.ImportModuleFromGithub.staff.header.title'>Import Custom Module</Trans>
+        </ModalHeader>
         <ModalBody>
           <form id='import-from-github-form' onSubmit={this.handleSubmit}>
             <div className='import-url-field'>
@@ -78,9 +84,8 @@ class StaffImportModuleFromGitHub extends React.PureComponent {
               <div className='import-github-error'>{status.error}</div>
             ) : null}
             <div className='label-margin t-m-gray info-1'>
-              <Trans id='workflow.workbenchbuildmodule'>
+              <Trans id='js.ImportModuleFromGithub.staff.buildingModuleTutorialLink'>
                 Learn about how to build your own module {''}
-
                 <a target='_blank' rel='noopener noreferrer' href='https://github.com/CJWorkbench/cjworkbench/wiki/Creating-A-Module' className='action-link'>
                     here
                 </a>
@@ -89,7 +94,9 @@ class StaffImportModuleFromGitHub extends React.PureComponent {
           </form>
         </ModalBody>
         <ModalFooter>
-          <button type='submit' className='action-button button-blue' name='import' form='import-from-github-form'><Trans id='workflow.workbenchimport'>Import</Trans></button>
+          <button type='submit' className='action-button button-blue' name='import' form='import-from-github-form'>
+            <Trans id='js.ImportModuleFromGithub.footer.importButton'>Import</Trans>
+          </button>
         </ModalFooter>
       </Modal>
     )
@@ -99,12 +106,13 @@ class StaffImportModuleFromGitHub extends React.PureComponent {
 function PublicImportModuleFromGitHub ({ closeModal }) {
   return (
     <Modal isOpen toggle={closeModal}>
-      <ModalHeader toggle={closeModal}><Trans id='workflow.workbenchcustommodule'>Import Custom Module</Trans></ModalHeader>
+      <ModalHeader toggle={closeModal}>
+        <Trans id='js.ImportModuleFromGithub.public.header.title'>Import Custom Module</Trans>
+      </ModalHeader>
       <ModalBody>
         <div className='label-margin t-m-gray info-1'>
-          <Trans id='workflow.workbenchbuildmodule'>
+          <Trans id='js.ImportModuleFromGithub.public.buildingModuleTutorialLink'>
             Learn about how to build your own module {''}
-
             <a target='_blank' rel='noopener noreferrer' href='https://github.com/CJWorkbench/cjworkbench/wiki/Creating-A-Module' className='action-link'>
                 here
             </a>
@@ -112,7 +120,9 @@ function PublicImportModuleFromGitHub ({ closeModal }) {
         </div>
       </ModalBody>
       <ModalFooter>
-        <button type='button' className='action-button button-blue' name='close' onClick={closeModal}><Trans id='workflow.workbenchclose'>Close</Trans></button>
+        <button type='button' className='action-button button-blue' name='close' onClick={closeModal}>
+          <Trans id='js.ImportModuleFromGithub.footer.closeButton'>Close</Trans>
+        </button>
       </ModalFooter>
     </Modal>
   )

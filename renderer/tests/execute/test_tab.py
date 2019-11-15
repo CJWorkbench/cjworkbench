@@ -4,11 +4,8 @@ import logging
 from unittest.mock import patch
 import pandas as pd
 from cjwkernel.types import RenderResult
-from cjwkernel.tests.util import (
-    arrow_table,
-    assert_render_result_equals,
-    tempfile_context,
-)
+from cjwkernel.tests.util import arrow_table, assert_render_result_equals
+from cjwkernel.chroot import EDITABLE_CHROOT
 from cjwstate import minio, rendercache
 from cjwstate.models import ModuleVersion, Workflow
 from cjwstate.models.param_spec import ParamDType
@@ -32,12 +29,18 @@ async def fake_send(*args, **kwargs):
 class TabTests(DbTestCase):
     @contextlib.contextmanager
     def _execute(self, workflow, flow, tab_results, expect_log_level=logging.DEBUG):
-        with tempfile_context(prefix="execute-tab-output", suffix=".arrow") as out_path:
-            with self.assertLogs(level=expect_log_level):
-                result = self.run_with_async_db(
-                    execute_tab_flow(workflow, flow, tab_results, out_path)
-                )
-                yield result
+        with EDITABLE_CHROOT.acquire_context() as chroot_context:
+            with chroot_context.tempdir_context(prefix="test_tab") as tempdir:
+                with chroot_context.tempfile_context(
+                    prefix="execute-tab-output", suffix=".arrow", dir=tempdir
+                ) as out_path:
+                    with self.assertLogs(level=expect_log_level):
+                        result = self.run_with_async_db(
+                            execute_tab_flow(
+                                chroot_context, workflow, flow, tab_results, out_path
+                            )
+                        )
+                        yield result
 
     def test_execute_empty_tab(self):
         workflow = Workflow.create_and_init()

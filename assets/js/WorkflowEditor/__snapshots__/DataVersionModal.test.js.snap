@@ -133,13 +133,12 @@ exports[`DataVersionModal matches snapshot 1`] = `
                           <i
                             class="icon icon-no-notification"
                           />
-                           
-                          workflow.alertsareoff
+                          js.WorkflowEditor.DataVersionModal.NotificationsForm.status.alertsOff
                         </p>
                         <p
                           class="description"
                         >
-                          workflow.turnonalerts
+                          js.WorkflowEditor.DataVersionModal.NotificationsForm.description.turnAlertsOn
                         </p>
                       </div>
                       <div
@@ -153,7 +152,7 @@ exports[`DataVersionModal matches snapshot 1`] = `
                           <span
                             class="action"
                           >
-                            workflow.turnon
+                            js.WorkflowEditor.DataVersionModal.NotificationsForm.options.turnOn
                           </span>
                         </label>
                       </div>
@@ -307,7 +306,6 @@ exports[`DataVersionModal matches snapshot 1`] = `
                           <i
                             className="icon icon-no-notification"
                           />
-                           
                           <WithI18n
                             components={
                               Array [
@@ -315,7 +313,8 @@ exports[`DataVersionModal matches snapshot 1`] = `
                               ]
                             }
                             defaults="Alerts are <0>off</0>"
-                            id="workflow.alertsareoff"
+                            description="The tag adds emphasis"
+                            id="js.WorkflowEditor.DataVersionModal.NotificationsForm.status.alertsOff"
                           >
                             <I18n
                               update={true}
@@ -328,12 +327,13 @@ exports[`DataVersionModal matches snapshot 1`] = `
                                   ]
                                 }
                                 defaults="Alerts are <0>off</0>"
-                                id="workflow.alertsareoff"
+                                description="The tag adds emphasis"
+                                id="js.WorkflowEditor.DataVersionModal.NotificationsForm.status.alertsOff"
                               >
                                 <Render
-                                  value="workflow.alertsareoff"
+                                  value="js.WorkflowEditor.DataVersionModal.NotificationsForm.status.alertsOff"
                                 >
-                                  workflow.alertsareoff
+                                  js.WorkflowEditor.DataVersionModal.NotificationsForm.status.alertsOff
                                 </Render>
                               </Trans>
                             </I18n>
@@ -344,7 +344,7 @@ exports[`DataVersionModal matches snapshot 1`] = `
                         >
                           <WithI18n
                             defaults="Turn alerts ON to receive an email if the output of this module changes"
-                            id="workflow.turnonalerts"
+                            id="js.WorkflowEditor.DataVersionModal.NotificationsForm.description.turnAlertsOn"
                           >
                             <I18n
                               update={true}
@@ -352,12 +352,12 @@ exports[`DataVersionModal matches snapshot 1`] = `
                             >
                               <Trans
                                 defaults="Turn alerts ON to receive an email if the output of this module changes"
-                                id="workflow.turnonalerts"
+                                id="js.WorkflowEditor.DataVersionModal.NotificationsForm.description.turnAlertsOn"
                               >
                                 <Render
-                                  value="workflow.turnonalerts"
+                                  value="js.WorkflowEditor.DataVersionModal.NotificationsForm.description.turnAlertsOn"
                                 >
-                                  workflow.turnonalerts
+                                  js.WorkflowEditor.DataVersionModal.NotificationsForm.description.turnAlertsOn
                                 </Render>
                               </Trans>
                             </I18n>
@@ -379,7 +379,7 @@ exports[`DataVersionModal matches snapshot 1`] = `
                           >
                             <WithI18n
                               defaults="Turn on"
-                              id="workflow.turnon"
+                              id="js.WorkflowEditor.DataVersionModal.NotificationsForm.options.turnOn"
                             >
                               <I18n
                                 update={true}
@@ -387,12 +387,12 @@ exports[`DataVersionModal matches snapshot 1`] = `
                               >
                                 <Trans
                                   defaults="Turn on"
-                                  id="workflow.turnon"
+                                  id="js.WorkflowEditor.DataVersionModal.NotificationsForm.options.turnOn"
                                 >
                                   <Render
-                                    value="workflow.turnon"
+                                    value="js.WorkflowEditor.DataVersionModal.NotificationsForm.options.turnOn"
                                   >
-                                    workflow.turnon
+                                    js.WorkflowEditor.DataVersionModal.NotificationsForm.options.turnOn
                                   </Render>
                                 </Trans>
                               </I18n>

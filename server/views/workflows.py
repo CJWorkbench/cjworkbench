@@ -1,7 +1,7 @@
 from __future__ import annotations
 from dataclasses import dataclass
 import datetime
-from typing import List
+from typing import List, Optional
 from asgiref.sync import async_to_sync
 from django.contrib.auth.decorators import login_required
 import django.db
@@ -32,6 +32,7 @@ from server.serializers import (
 import server.utils
 from server.settingsutils import workbench_user_display
 from .auth import lookup_workflow_for_write, loads_workflow_for_read
+from cjworkbench.i18n import default_locale
 
 
 def make_init_state(request, workflow=None, modules=None):
@@ -173,16 +174,32 @@ def visible_modules(request):
     return ret
 
 
-def _lesson_exists(slug):
-    if "/" in slug:
-        course_slug, lesson_slug = slug.split("/")
+def _lesson_redirect_url(slug) -> Optional[str]:
+    *other, lesson_slug = slug.split("/")
+
+    if not other:  # compatibility case: only lesson_slug with no locale_id
+        new_slug = default_locale + "/" + slug
+        return "/lessons/" + new_slug if new_slug in LessonLookup else None
+
+    if len(other) == 2:  # locale_id/course_slug/lesson_slug
         try:
-            course = CourseLookup[course_slug]
+            course = CourseLookup["/".join(other)]
         except KeyError:
-            return False
-        return lesson_slug in course.lessons
-    else:
-        return slug in LessonLookup
+            return None
+        return "/courses/" + slug if lesson_slug in course.lessons else None
+
+    try:  # compatibility case: course_slug/lesson_slug with no locale_id
+        new_slug = default_locale + "/" + other[0]
+        course = CourseLookup[new_slug]
+        return (
+            "/courses/" + new_slug + "/" + lesson_slug
+            if lesson_slug in course.lessons
+            else None
+        )
+    except KeyError:
+        pass
+
+    return "/lessons/" + slug if slug in LessonLookup else None  # locale_id/lesson_slug
 
 
 # no login_required as logged out users can view example/public workflows
@@ -190,16 +207,10 @@ def _lesson_exists(slug):
 def render_workflow(request: HttpRequest, workflow: Workflow):
     if (
         workflow.lesson_slug
-        and _lesson_exists(workflow.lesson_slug)
+        and _lesson_redirect_url(workflow.lesson_slug)
         and workflow.owner == request.user
     ):
-        if "/" in workflow.lesson_slug:
-            # /courses/a-course/a-lesson -- no trailing '/' because courses use
-            # relative URLs
-            return redirect("/courses/" + workflow.lesson_slug)
-        else:
-            # /lessons/a-lesson/
-            return redirect("/lessons/" + workflow.lesson_slug)
+        return redirect(_lesson_redirect_url(workflow.lesson_slug))
     else:
         if workflow.example and workflow.owner != request.user:
             workflow = _get_anonymous_workflow_for(workflow, request)

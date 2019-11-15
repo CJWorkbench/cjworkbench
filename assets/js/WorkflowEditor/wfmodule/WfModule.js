@@ -236,7 +236,7 @@ export class WfModule extends React.PureComponent {
     if (!isZenModeAllowed) return null
 
     const className = `toggle-zen-mode ${isZenMode ? 'is-zen-mode' : 'not-zen-mode'}`
-    const title = isZenMode ? <Trans id='workflow.exitzenmode'>exit Zen mode</Trans> : <Trans id='workflow.enterzenmode'>enter Zen mode</Trans>
+    const title = isZenMode ? <Trans id='js.WorkflowEditor.wfmodule.ZenMode.exit'>exit Zen mode</Trans> : <Trans id='js.WorkflowEditor.wfmodule.ZenMode.enter'>enter Zen mode</Trans>
 
     return (
       <label className={className} title={title}>
@@ -351,7 +351,7 @@ export class WfModule extends React.PureComponent {
         <EditableNotes
           isReadOnly={isReadOnly}
           inputRef={this.notesInputRef}
-          placeholder={i18n._(t('workflow.placeholder.typeanote')`Type a note...`)}
+          placeholder={i18n._(t('js.WorkflowEditor.wfmodule.EditableNotes.placeholder')`Type a note...`)}
           value={this.state.editedNotes === null ? (this.props.wfModule.notes || '') : this.state.editedNotes}
           onChange={this.handleChangeNote}
           onFocus={this.handleFocusNote}
@@ -368,7 +368,7 @@ export class WfModule extends React.PureComponent {
       let className = 'notifications'
       if (notifications) className += ' enabled'
       if (hasUnseen) className += ' has-unseen'
-      const title = notifications ? i18n._(t('workflow.emailalertenebled')`Email alerts enabled`) : i18n._(t('workflow.emailalertdisabled')`Email alerts disabled`)
+      const title = notifications ? i18n._(t('js.WorkflowEditor.wfmodule.alert.enabled')`Email alerts enabled`) : i18n._(t('js.WorkflowEditor.wfmodule.alert.disabled')`Email alerts disabled`)
 
       alertButton = (
         <button title={title} className={className} onClick={this.handleClickNotification}>
@@ -380,7 +380,7 @@ export class WfModule extends React.PureComponent {
     let helpIcon = null
     if (!this.props.isReadOnly) {
       helpIcon = (
-        <a title={i18n._(t('workflow.title.helpformodule')`Help for this module`)} className='help-button' href={moduleHelpUrl} target='_blank' rel='noopener noreferrer'>
+        <a title={i18n._(t('js.WorkflowEditor.wfmodule.help.hoverText')`Help for this module`)} className='help-button' href={moduleHelpUrl} target='_blank' rel='noopener noreferrer'>
           <i className='icon-help' />
         </a>
       )
@@ -390,7 +390,7 @@ export class WfModule extends React.PureComponent {
     if (!this.props.isReadOnly) {
       notesIcon = (
         <button
-          title={i18n._(t('workflow.title.editnote')`Edit Note`)}
+          title={i18n._(t('js.WorkflowEditor.wfmodule.notes.edit.hoverText')`Edit Note`)}
           className={'btn edit-note' + (this.props.isLessonHighlightNotes ? ' lesson-highlight' : '')}
           onClick={this.handleClickNoteButton}
         >

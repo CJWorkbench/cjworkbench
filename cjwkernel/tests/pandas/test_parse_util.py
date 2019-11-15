@@ -1,15 +1,16 @@
+import io
 from pathlib import Path
 import unittest
 import numpy as np
 import pandas as pd
 from pandas.testing import assert_frame_equal
-from cjwkernel.pandas.parse_util import parse_file
+from cjwkernel.pandas.parse_util import parse_bytesio, parse_file
+from cjwkernel.tests.pandas.util import assert_process_result_equal
 from cjwkernel.tests.util import override_settings, MockPath
 
 
 EmptyDataFrame = pd.DataFrame().reset_index(drop=True)
-
-mock_xlsx_path = Path(__file__).parent.parent / "test_data" / "test.xlsx"
+TestDataPath = Path(__file__).parent.parent / "test_data"
 
 
 class ParseTableTests(unittest.TestCase):
@@ -89,6 +90,12 @@ class ParseTableTests(unittest.TestCase):
         csv = "A\nfôo\nbar".encode("windows-1252")
         result = parse_file(MockPath(["x.csv"], csv), True)
         assert_frame_equal(result, pd.DataFrame({"A": ["fôo", "bar"]}))
+
+    def test_parse_csv_bytesio_replace_invalid_utf8(self):
+        # tests that `chardet` is invoked
+        csv = "A\nfôo\nbar".encode("windows-1252")
+        result = parse_bytesio(io.BytesIO(csv), "utf-8", "text/csv", True)
+        assert_frame_equal(result, pd.DataFrame({"A": ["f�o", "bar"]}))
 
     def test_parse_txt_sniff_delimiter(self):
         result = parse_file(MockPath(["x.txt"], b"A;B\na,b;c"), True)
@@ -375,7 +382,7 @@ class ParseJsonTests(unittest.TestCase):
 
 class ParseOtherTests(unittest.TestCase):
     def test_parse_xlsx(self):
-        path = Path(mock_xlsx_path)
+        path = TestDataPath / "test.xlsx"
         result = parse_file(path, True)
         assert_frame_equal(
             result, pd.DataFrame({"Month": ["Jan", "Feb"], "Amount": [10, 20]})
@@ -391,6 +398,11 @@ class ParseOtherTests(unittest.TestCase):
         self.assertEqual(
             result, ("Unknown file extension '.bin'. Please upload a different file.")
         )
+
+    def test_xlsx_cast_colnames_to_str(self):
+        with (TestDataPath / "all-numeric.xlsx").open("rb") as f:
+            result = parse_bytesio(f, None, "application/vnd.ms-excel", True)
+        assert_process_result_equal(result, pd.DataFrame({"1": [2]}))
 
     def test_parse_invalid_xlsx(self):
         result = parse_file(MockPath(["x.xlsx"], b"not an xlsx"), True)
