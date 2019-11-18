@@ -10,15 +10,15 @@ import { withI18n } from '@lingui/react'
 
 function NoOp () {}
 
-function LessonCourse ({ course }) {
+function LessonCourse ({ localeId, course }) {
   let path
   let title
 
   if (course) {
-    path = '/courses/' + course.slug
+    path = `/courses/${course.localeId}/${course.slug}`
     title = course.title
   } else {
-    path = '/lessons'
+    path = `/lessons/${localeId}`
     title = 'Training'
   }
 
@@ -32,7 +32,7 @@ function LessonCourse ({ course }) {
 function LessonWorkflowTitle ({ lesson }) {
   return (
     <div className='title-metadata-stack'>
-      <LessonCourse course={lesson.course} />
+      <LessonCourse localeId={lesson.localeId} course={lesson.course} />
       <EditableWorkflowName
         value={lesson.header.title}
         setWorkflowName={NoOp}
@@ -43,19 +43,21 @@ function LessonWorkflowTitle ({ lesson }) {
 }
 
 const OwnedWorkflowTitleAndMetadata = withI18n()(function ({ i18n, isReadOnly, workflow }) {
+  const owner = workflow.owner_name.trim()
+  const timeAgo = timeDifference(workflow.last_update, new Date(), i18n)
   return (
     <div className='title-metadata-stack'>
       <ConnectedEditableWorkflowName isReadOnly={isReadOnly} />
       <ul className='metadata-container'>
         {!workflow.is_anonymous ? (
           <li className='attribution'>
-            <span className='metadata'><Trans id='js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.owner'>by {workflow.owner_name.trim()}</Trans> </span>
+            <span className='metadata'><Trans id='js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.owner'>by {owner}</Trans> </span>
             <span className='separator'>-</span>
           </li>
         ) : null}
         <li>
-          <Trans id='js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.lastUpdated' description="The parameter will contain something like '4h ago'">
-            Updated {timeDifference(workflow.last_update, new Date(), i18n)}
+          <Trans id='js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.lastUpdated' description="{timeAgo} will contain something like '4h ago'">
+            Updated {timeAgo}
           </Trans>
         </li>
         {(!isReadOnly && !workflow.is_anonymous) ? (

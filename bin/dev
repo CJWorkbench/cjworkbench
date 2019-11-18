@@ -100,37 +100,40 @@ case "$COMMAND" in
   "pybabel")
     # For some weird reason, pybabel can't find our source files
     # even when run with our project root as working directory.
-    # Works if we set `PYTHONPATH` to `.` (maybe `PYTHONPATH` is overriden somewhere?) 
+    # Works if we set `PYTHONPATH` to `.` (maybe `PYTHONPATH` is overriden somewhere?)
     docker_compose_with_commands run --rm -e PYTHONPATH=. pydev pipenv run pybabel "$@"
     ;;
 
   "extract-messages")
     docker_compose_with_commands run --rm -e PYTHONPATH=. pydev pipenv run python cjworkbench/i18n/catalogs/merge.py prepare
-    
+
     docker_compose run --rm webpack npm run extract -- --clean
-    
-    # 0. This must come after `npm run extract`, since `npm run extract` 
+
+    # linguijs creates files we don't want. Why does it leave them behind?
+    # dunno. Clean up after it.
+    docker_compose run --rm webpack rm -rf assets/locale/_build assets/locale/*/messages.js
+
+    # 0. This must come after `npm run extract`, since `npm run extract`
     #    comments out any messages it can't find in js code
     # 1. For PYTHONPATH, ditto `pybabel` command above
-    # 2. We want pybabel to extract default messages in single-line comments, 
+    # 2. We want pybabel to extract default messages in single-line comments,
     #    hence we must disable line wrapping when extracting.
-    #    However, looks like `--no-wrap` does not work for comments, 
-    #    so we have to set a big enough max line width to fit every (even remotely) sensible default message 
+    #    However, looks like `--no-wrap` does not work for comments,
+    #    so we have to set a big enough max line width to fit every (even remotely) sensible default message
     # 3. We extract the pot file in the directory of our source locale,
     #    for pontoon to find
     docker_compose_with_commands run --rm -e PYTHONPATH=. pydev pipenv run pybabel extract \
         -w 10000000 -F pybabel.cfg \
         -k trans -k trans_lazy -c "i18n" \
-        -o assets/locale/en/messages.pot . 
-        
+        -o assets/locale/en/messages.pot .
+
     # for PYTHONPATH, ditto `pybabel` command above
     docker_compose_with_commands run --rm -e PYTHONPATH=. pydev pipenv run python cjworkbench/i18n/catalogs/merge.py merge
     ;;
 
   "unittest")
     # Overwrite the "command" so we can incorporate "$@".
-    docker_compose_with_commands run --rm unittest sh -c 'while ! curl --silent -I $MINIO_URL >/dev/null; do sleep 0.1; done; mc config host add workbench $MINIO_URL minio_root_access minio_root_secret && mc admin user add workbench $MINIO_ACCESS_KEY $MINIO_SECRET_KEY && mc admin policy set workbench readwrite user=$MINIO_ACCESS_KEY'
-    docker_compose_with_commands run --rm unittest pipenv run python ./manage.py test "$@"
+    docker_compose_with_commands run --rm unittest "$@"
     ;;
 
   "develop-module")

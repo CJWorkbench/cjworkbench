@@ -1,5 +1,5 @@
-import enCatalog from '../../locale/en/messages'
-import elCatalog from '../../locale/el/messages'
+import enCatalog from '../../locale/en/messages.po'
+import elCatalog from '../../locale/el/messages.po'
 
 const catalogs = {
   en: enCatalog,

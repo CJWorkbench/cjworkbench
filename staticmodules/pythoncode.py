@@ -1,225 +1,129 @@
-import builtins
-import importlib
+import contextlib
 from inspect import signature
 import io
 import math
-import multiprocessing
 import sys
 import traceback
-from typing import Any, Dict, Tuple
-import numpy
-import pandas
-from cjwkernel.pandas.types import ProcessResult
-from cjwkernel.pandas.moduleutils import (
-    build_globals_for_eval,
-    PythonFeatureDisabledError,
-)
+from typing import Any, ContextManager, Dict, Tuple
+import numpy as np
+import pandas as pd
+from cjwkernel.pandas.validate import validate_dataframe
 
 
-TIMEOUT = 30.0  # seconds
+@contextlib.contextmanager
+def _patch_log(name: str, stringio: io.StringIO) -> ContextManager[None]:
+    original = getattr(sys, name)
+    setattr(sys, name, stringio)
+    try:
+        yield
+    finally:
+        setattr(sys, name, original)
 
 
-# Disable dangerous builtins. Imported modules may hold references to them;
-# let's hope they don't.
-def _disable_builtin(name, d=builtins.__dict__):
-    """Put a stub method in builtins, so it cannot be called."""
-
-    def _disabled(*args, **kwargs):
-        raise RuntimeError(f"builtins.{name} is disabled")
-
-    d[name] = _disabled
-
-
-def _scrub_globals_for_safety():
+def eval_process(code, table):
     """
-    Permanently destroys builtins and sys functions.
+    Runs `code`'s "process" method; returns (retval, log).
 
-    This will run in a subprocess so it can forget about all ids dangerous
-    abilities.
+    stdout, stderr, exception tracebacks, and error messages will all be
+    written to log. (The UX is: log is displayed as a monospaced console to the
+    user -- presumably the person who wrote the code.)
+
+    If there's an Exception `err`, `str(err)` will be returned as the retval.
+
+    This method relies on `cjwkernel.kernel` for sandboxing. The process()
+    function can access to anything the module can access.
+
+    This should never raise an exception. (TODO handle out-of-memory.)
+    Exceptions would email _us_; but in this case, we want the _user_ to see
+    all error messages.
     """
-    # Pandas and numpy may use these
-    sys_keys_to_keep = [
-        "flags",
-        "implementation",
-        "meta_path",
-        "modules",
-        "path",
-        "path_hooks",
-        "path_importer_cache",
-        "platform",
-        "ps1",
-        "ps2",
-        "version_info",
-        "exc_info",
-        "getrecursionlimit",
-        "getfilesystemencoding",
-        "_getframe",
-        "_current_frames",
-        "dont_write_bytecode",
-        # we overwrote these:
-        "stdout",
-        "stderr",
-        "__stdout__",
-        "__stderr__",
-    ]
+    log = io.StringIO()
+    eval_globals = {"pd": pd, "np": np, "math": math}
 
-    # Delete every `sys` function and variable. Imported modules may hold
-    # references to them; let's hope they don't.
-    for key in list(sys.__dict__.keys()):
-        if key not in sys_keys_to_keep:
-            del sys.__dict__[key]
-
-    # We want pandas.read_csv() to be disabled
-    _disable_builtin("breakpoint")
-    _disable_builtin("open")
-    _disable_builtin("eval")
-
-    # Now re-import modules the modules we'll expose
-    importlib.invalidate_caches()
-    importlib.reload(math)
-    importlib.reload(numpy)
-    importlib.reload(pandas)
-
-    # The modules may use these builtins during reload and that's okay.
-    # Disable them now that reload is finished.
-    _disable_builtin("compile")
-    # _disable_builtin('exec')
-
-
-def inner_eval(code, table, sender):
-    """Within a subprocess, run code's "process(table)" and exit."""
-    result = [pandas.DataFrame(), "", {"output": ""}]
-    output = io.StringIO()
-
-    def sending_return(*, error=None, tb=None):
-        result[2]["output"] = output.getvalue()
-
-        if error is not None:
-            result[1] = error
-
-        return sender.send(tuple(result))
+    def ret(retval):
+        """
+        Usage: `return ret(whatever)`
+        """
+        if isinstance(retval, str):
+            log.write(retval)
+        return (retval, log.getvalue())
 
     try:
-        compiled_code = compile(code, "user input", "exec")
+        compiled_code = compile(code, "your code", "exec")
     except SyntaxError as err:
-        return sending_return(error=f"Line {err.lineno}: {err}")
+        return ret("Line %d: %s" % (err.lineno, err))
     except ValueError:
         # Apparently this is another thing that compile() can raise
-        return sending_return(error=f"User input contains null bytes")
+        return ret("Your code contains null bytes")
 
-    sys.stdout = sys.stderr = sys.__stdout__ = sys.__stderr__ = output
-
-    code_globals = build_globals_for_eval()
-    _scrub_globals_for_safety()
-
-    # Catch errors with the code and display to user
-    try:
-        exec(compiled_code, code_globals)
-
-        if "process" not in code_globals:
-            return sending_return(error='You must define a "process" function')
-
-        process = code_globals["process"]
-
-        sig = signature(process)
-        if len(sig.parameters) != 1:
-            return sending_return(
-                error=('Your "process" function must accept exactly one argument')
-            )
-
-        out_table = process(table)
-    except PythonFeatureDisabledError:
-        # This is an error _we_ throw. Hide our internals.
-        etype, value, tb = sys.exc_info()
-        tb = tb.tb_next  # omit _this_ method from the stack trace
-        limit = len(traceback.extract_tb(tb)) - 1  # omit _disabled()
-
-        # Now, print the stack trace ... but "rename" the exception so we don't
-        # expose its namespace
-        # traceback.print_exception(etype, value, tb, limit=limit)
-        print("Traceback (most recent call last):")
-        traceback.print_tb(tb, limit=limit)
-        print(f"{etype.__name__}: {value}")
-
-        return sending_return(error=(f"Line {tb.tb_lineno}: {etype.__name__}: {value}"))
-    except Exception:
-        # An error in the code
-        etype, value, tb = sys.exc_info()
-        tb = tb.tb_next  # omit this method from the stack trace
-        traceback.print_exception(etype, value, tb)
-        return sending_return(error=(f"Line {tb.tb_lineno}: {etype.__name__}: {value}"))
-
-    if isinstance(out_table, code_globals["pd"].DataFrame):
-        result[0] = out_table
-    elif isinstance(out_table, str):
-        return sending_return(error=out_table)
-    else:
-        message = "process(table) did not return a pd.DataFrame or a str"
-        print(message)  # to show it in JSON output
-        return sending_return(error=message)
-
-    return sending_return()
-
-
-def safe_eval_process(code, table, timeout=TIMEOUT):
-    """
-    Runs `code`'s "process" method in a sandbox; returns (table, error, json).
-
-    The inner process will send a (table, error, json) tuple as a result, then
-    exit.
-
-    Process stdout, stderr and exception traceback are all stored in
-    result[2].output.
-
-    An exception string is also returned in result.error.
-
-    Internally, this method uses multiprocessing to spin up a new Python
-    process with restricted execution (a sandbox). The sandbox forbids key
-    Python features (such as opening files).
-    """
-    # Import from a path that the spawned process can access.
+    # Override sys.stdout and sys.stderr ... but only in the context of
+    # `process()`. After `process()`, the module needs its original values
+    # again so it can send a Thrift object over stdout and log errors (which
+    # should never happen) to stderr.
     #
-    # TODO use the kernel to sandbox.
-    from staticmodules.pythoncode import inner_eval
+    # This function's sandbox isn't perfect, but we aren't protecting anything
+    # dangerous. Writing to the _original_ `sys.stdout` and `sys.stderr` can at
+    # worst cause a single `ModuleExitedError`, which would email us. That's
+    # the security risk: an email to us.
+    with _patch_log("stdout", log):
+        with _patch_log("stderr", log):
+            try:
+                exec(compiled_code, eval_globals)  # raise any exception
 
-    recver, sender = multiprocessing.Pipe(duplex=False)
-    subprocess = multiprocessing.Process(
-        target=inner_eval, name="pythoncode", daemon=True, args=[code, table, sender]
-    )
-    subprocess.start()
-    # TODO make this async
-    if recver.poll(timeout):
-        result = recver.recv()
+                if "process" not in eval_globals:
+                    return ret('Please define a "process(table)" function')
+                process = eval_globals["process"]
+                if len(signature(process).parameters) != 1:
+                    return ret(
+                        "Please make your process(table) function accept exactly 1 argument"
+                    )
+
+                retval = process(table)  # raise any exception
+            except Exception:
+                # An error in the code or in process()
+                etype, value, tb = sys.exc_info()
+                tb = tb.tb_next  # omit this method from the stack trace
+                traceback.print_exception(etype, value, tb)
+                return ret(f"Line {tb.tb_lineno}: {etype.__name__}: {value}")
+
+    if isinstance(retval, pd.DataFrame):
+        try:
+            validate_dataframe(retval)  # raise ValueError
+        except ValueError as err:
+            return ret(
+                "Unhandled DataFrame: %s. Please return a different DataFrame."
+                % str(err)
+            )
+        return ret(retval)
+    elif isinstance(retval, str):
+        return ret(retval)
     else:
-        subprocess.terminate()  # in case the timeout was exceeded
-        result = (
-            pandas.DataFrame(),
-            f"Python subprocess did not respond in {timeout}s",
-            {"output": ""},
+        return ret(
+            "Please make process(table) return a pd.DataFrame. "
+            "(Yours returned a %s.)" % type(retval).__name__
         )
-
-    # we got our result; clean up like an assassin
-    subprocess.kill()
-    subprocess.join()
-
-    # Use ProcessResult.coerce() here (as opposed to _after_ render) so we
-    # catch ValueError and display it to the user instead of emailing us.
-    try:
-        return ProcessResult.coerce(result)
-    except ValueError as err:
-        return "process() returned invalid data: " + str(err)
 
 
 def render(
-    table: pandas.DataFrame, params: Dict[str, Any]
-) -> Tuple[pandas.DataFrame, str, Dict[str, str]]:
+    table: pd.DataFrame, params: Dict[str, Any]
+) -> Tuple[pd.DataFrame, str, Dict[str, str]]:
     code: str = params["code"]
 
     if not code.strip():
         # empty code, NOP
         return table
 
-    return safe_eval_process(code, table)
+    dataframe = pd.DataFrame()
+    error = ""
+    retval, log = eval_process(code, table)
+    if isinstance(retval, pd.DataFrame):
+        dataframe = retval
+    elif isinstance(retval, str):
+        error = retval
+    else:
+        error = "process() must return a pd.DataFrame or str"
+
+    return (dataframe, error, {"output": log})
 
 
 def _migrate_params_v0_to_v1(params):

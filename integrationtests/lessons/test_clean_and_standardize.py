@@ -1,10 +1,7 @@
 from integrationtests.lessons import LessonTest
 
 
-DataUrl = (
-    "http://minio:9000/integrationtest-static/lessons/clean-and-standardize"
-    "/population_growth_data.csv"
-)
+DataUrl = "https://storage.googleapis.com/production-static.workbenchdata.com/lessons/en/clean-and-standardize/population_growth_data.csv"
 
 
 class TestLesson(LessonTest):

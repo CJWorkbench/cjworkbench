@@ -31,11 +31,15 @@ export class WorkflowMetadata extends React.Component {
 
   render () {
     const now = this.props.test_now || new Date()
+    const owner = this.props.workflow.owner_name.trim()
+    const timeAgo = timeDifference(this.props.workflow.last_update, now, this.props.i18n)
 
     // don't show author if this workflow is anonymous
     const attribution = !this.props.workflow.is_anonymous ? (
       <li className='attribution'>
-        <span className='metadata'>by {this.props.workflow.owner_name.trim()}</span>
+        <span className='metadata'>
+          <Trans id='js.Workflows.WorkflowMetadata.owner'>by {owner}</Trans>
+        </span>
         <span className='separator'>-</span>
       </li>
     ) : null
@@ -43,9 +47,12 @@ export class WorkflowMetadata extends React.Component {
     const modalLink = !(this.props.workflow.read_only || this.props.workflow.is_anonymous) ? (
       <li>
         <span className='separator'>-</span>
-
         <button type='button' className='public-private' title={this.props.i18n._(t('js.Workflows.WorkflowMetadata.changePrivacy.button')`Change privacy`)} onClick={this.handleClickOpenShareModal}>
-          {this.props.workflow.public ? this.props.i18n._(t('js.Workflows.WorkflowMetadata.visibility.public')`public`) : this.props.i18n._(t('js.Workflows.WorkflowMetadata.visibility.private')`private`)}
+          {this.props.workflow.public ? (
+            <Trans id='js.Workflows.WorkflowMetadata.visibility.public'>public</Trans>
+          ) : (
+            <Trans id='js.Workflows.WorkflowMetadata.visibility.private'>private</Trans>
+          )}
         </button>
       </li>
     ) : null
@@ -55,7 +62,7 @@ export class WorkflowMetadata extends React.Component {
         {attribution}
         <li>
           <Trans id='js.Workflows.WorkflowMetadata.update' description="The parameter will contain a time difference (i.e. something like '5h ago')">
-            Updated {timeDifference(this.props.workflow.last_update, now, this.props.i18n)}
+            Updated {timeAgo}
           </Trans>
         </li>
         {modalLink}

@@ -1,28 +1,29 @@
 #. default-message: Paste this code into any webpage HTML
-#: assets/js/Embed.js:94
+#: assets/js/Embed.js:99
 msgid "js.Embed.embedCode"
 msgstr ""
 
 #. This should be all-caps for styling reasons
 #. default-message: EMBED THIS CHART
-#: assets/js/Embed.js:93
+#: assets/js/Embed.js:98
 msgid "js.Embed.embedThisChart"
 msgstr ""
 
-#. The parameter will contain a time difference (i.e. something like '4h ago')
-#. default-message: Updated {0}
-#: assets/js/Embed.js:79
+#. {timeAgo} will contain a time difference (i.e. something like '4h ago')
+#. default-message: Updated {timeAgo}
+#: assets/js/Embed.js:84
 msgid "js.Embed.metadata.updated"
+msgstr ""
+
+#. This should be all-caps for styling reasons
+#. default-message: WORKBENCH
+#: assets/js/Embed.js:37
+msgid "js.Embed.workflowNotAvailable.footer.logo"
 msgstr ""
 
 #. default-message: This workflow is not available
 #: assets/js/Embed.js:29
-msgid "js.Embed.workflowNotAvailable"
-msgstr ""
-
-#. default-message: This workflow is not available
-#: assets/js/Embed.js:36
-msgid "js.Embed.workflowNotAvailable.footer"
+msgid "js.Embed.workflowNotAvailable.title"
 msgstr ""
 
 #. default-message: Please refresh the page.
@@ -83,37 +84,37 @@ msgid "js.ExportModal.type.JSON"
 msgstr ""
 
 #. default-message: Close
-#: assets/js/ImportModuleFromGitHub.js:122
+#: assets/js/ImportModuleFromGitHub.js:124
 msgid "js.ImportModuleFromGithub.footer.closeButton"
 msgstr ""
 
 #. default-message: Import
-#: assets/js/ImportModuleFromGitHub.js:96
+#: assets/js/ImportModuleFromGitHub.js:98
 msgid "js.ImportModuleFromGithub.footer.importButton"
 msgstr ""
 
 #. default-message: Learn about how to build your own module <0>here</0>
-#: assets/js/ImportModuleFromGitHub.js:112
+#: assets/js/ImportModuleFromGitHub.js:114
 msgid "js.ImportModuleFromGithub.public.buildingModuleTutorialLink"
 msgstr ""
 
 #. default-message: Import Custom Module
-#: assets/js/ImportModuleFromGitHub.js:108
+#: assets/js/ImportModuleFromGitHub.js:110
 msgid "js.ImportModuleFromGithub.public.header.title"
 msgstr ""
 
 #. default-message: Learn about how to build your own module <0>here</0>
-#: assets/js/ImportModuleFromGitHub.js:85
+#: assets/js/ImportModuleFromGitHub.js:87
 msgid "js.ImportModuleFromGithub.staff.buildingModuleTutorialLink"
 msgstr ""
 
 #. default-message: Import Custom Module
-#: assets/js/ImportModuleFromGitHub.js:65
+#: assets/js/ImportModuleFromGitHub.js:67
 msgid "js.ImportModuleFromGithub.staff.header.title"
 msgstr ""
 
-#. default-message: Imported module {0} under category {1}
-#: assets/js/ImportModuleFromGitHub.js:45
+#. default-message: Imported module {module} under category {category}
+#: assets/js/ImportModuleFromGitHub.js:47
 msgid "js.ImportModuleFromGithub.status.importedModule"
 msgstr ""
 
@@ -508,39 +509,39 @@ msgstr ""
 msgid "js.WorkflowEditor.wfmodule.wfModuleContextMenu.exportData"
 msgstr ""
 
-#. The parameter will contain something like '4h ago'
-#. default-message: Updated {0}
-#: assets/js/WorkflowNavBar.js:57
+#. {timeAgo} will contain something like '4h ago'
+#. default-message: Updated {timeAgo}
+#: assets/js/WorkflowNavBar.js:59
 msgid "js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.lastUpdated"
 msgstr ""
 
-#. default-message: by {0}
-#: assets/js/WorkflowNavBar.js:52
+#. default-message: by {owner}
+#: assets/js/WorkflowNavBar.js:54
 msgid "js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.owner"
 msgstr ""
 
 #. default-message: Private
-#: assets/js/WorkflowNavBar.js:65
+#: assets/js/WorkflowNavBar.js:67
 msgid "js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.visibility.private"
 msgstr ""
 
 #. default-message: Public
-#: assets/js/WorkflowNavBar.js:65
+#: assets/js/WorkflowNavBar.js:67
 msgid "js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.visibility.public"
 msgstr ""
 
 #. default-message: Duplicate
-#: assets/js/WorkflowNavBar.js:206
+#: assets/js/WorkflowNavBar.js:208
 msgid "js.WorkflowNavBar.duplicate.button"
 msgstr ""
 
 #. default-message: Share
-#: assets/js/WorkflowNavBar.js:208
+#: assets/js/WorkflowNavBar.js:210
 msgid "js.WorkflowNavBar.share.shareButton"
 msgstr ""
 
 #. default-message: Sign in
-#: assets/js/WorkflowNavBar.js:175
+#: assets/js/WorkflowNavBar.js:177
 msgid "js.WorkflowNavBar.signIn.accountLink"
 msgstr ""
 
@@ -622,23 +623,28 @@ msgid "js.Workflows.WorkflowLists.workflowsWillAppearHere"
 msgstr ""
 
 #. default-message: Change privacy
-#: assets/js/Workflows/WorkflowMetadata.js:47
+#: assets/js/Workflows/WorkflowMetadata.js:50
 msgid "js.Workflows.WorkflowMetadata.changePrivacy.button"
 msgstr ""
 
+#. default-message: by {owner}
+#: assets/js/Workflows/WorkflowMetadata.js:41
+msgid "js.Workflows.WorkflowMetadata.owner"
+msgstr ""
+
 #. The parameter will contain a time difference (i.e. something like '5h ago')
-#. default-message: Updated {0}
-#: assets/js/Workflows/WorkflowMetadata.js:57
+#. default-message: Updated {timeAgo}
+#: assets/js/Workflows/WorkflowMetadata.js:64
 msgid "js.Workflows.WorkflowMetadata.update"
 msgstr ""
 
 #. default-message: private
-#: assets/js/Workflows/WorkflowMetadata.js:48
+#: assets/js/Workflows/WorkflowMetadata.js:54
 msgid "js.Workflows.WorkflowMetadata.visibility.private"
 msgstr ""
 
 #. default-message: public
-#: assets/js/Workflows/WorkflowMetadata.js:48
+#: assets/js/Workflows/WorkflowMetadata.js:52
 msgid "js.Workflows.WorkflowMetadata.visibility.public"
 msgstr ""
 

@@ -8,18 +8,20 @@ import io
 import json
 import math
 import pathlib
+import shutil
 import sys
-from yajl import YajlParser, YajlContentHandler, YajlError
 from typing import Dict, List, Optional, Tuple, Union
+import cchardet as chardet
 import pandas as pd
+import xlrd
+from yajl import YajlParser, YajlContentHandler, YajlError
 from cjwkernel import settings
+from cjwkernel.util import tempfile_context
 from .moduleutils import (
-    detect_encoding,
     wrap_text,
     uniquize_colnames,
     autocast_series_dtype,
-    turn_header_into_first_row,
-    parse_bytesio as bad_parse_bytesio,
+    autocast_dtypes_in_place,
 )
 
 
@@ -558,6 +560,28 @@ def open_path_with_autodetected_charset(path: pathlib.Path):
             yield textio
 
 
+def detect_encoding(bytesio: io.BytesIO):
+    """
+    Detect charset, as Python-friendly encoding string.
+
+    Peculiarities:
+
+    * Reads file by CHARDET_CHUNK_SIZE defined in settings.py
+    * Stops seeking when detector.done flag True
+    * Seeks back to beginning of file for downstream usage
+    """
+    detector = chardet.UniversalDetector()
+    while not detector.done:
+        chunk = bytesio.read(settings.CHARDET_CHUNK_SIZE)
+        if not chunk:
+            break  # EOF
+        detector.feed(chunk)
+
+    detector.close()
+    bytesio.seek(0)
+    return detector.result["encoding"]
+
+
 def parse_text(textio, ext, has_header):
     dialect = _detect_dialect(textio, ext)
     parse_table_result = parse_table(textio, dialect)
@@ -660,27 +684,33 @@ def parse_json_bytesio(bytesio, encoding: Optional[str]):
         return parse_utf8_json(utf8_bytesio)
 
 
-def parse_wrongly(bytesio, encoding: Optional[str], mime_type: str, has_header: bool):
+def parse_xls_bytesio(bytesio: io.BytesIO) -> pd.DataFrame:
     """
-    Delegate to modules.utils.parse_bytesio(), which is wrong.
+    Build a pd.DataFrame from xlsx bytes or raise parse error.
 
-    It's wrong because we parse as though `has_header` is True and then we
-    break everything by calling turn_header_into_first_row() if `has_header`
-    is False.
+    Peculiarities:
+
+    * Error can be xlrd.XLRDError or pandas error
+    * We read the entire file contents into memory before parsing
+
+    TODO change signature to require `Path`, not `io.BytesIO`. The way things
+    are, we're copying tempfiles gratuitously.
     """
-    result = bad_parse_bytesio(bytesio, mime_type, encoding)
-    result.truncate_in_place_if_too_big()
-    dataframe = result.dataframe
-    error = result.error
-    if not has_header:
-        dataframe = turn_header_into_first_row(dataframe)
-    if error:
-        if dataframe.empty:
-            return error
-        else:
-            return {"dataframe": dataframe, "error": error}
-    else:
-        return dataframe
+    # Use xlrd.open_workbook(): if we call pandas.read_excel(bytesio) it
+    # will read the entire file into RAM.
+    with tempfile_context() as path:
+        with path.open("wb") as tmp:
+            shutil.copyfileobj(bytesio, tmp)
+        # dtype='category' crashes as of 2018-09-11
+        try:
+            workbook = xlrd.open_workbook(str(path))
+            data = pd.read_excel(workbook, engine="xlrd", dtype=object)
+        except xlrd.XLRDError as err:
+            return f"Error reading Excel file: %s" % str(err)
+
+    data.columns = [str(c) for c in data.columns]
+    autocast_dtypes_in_place(data)
+    return data
 
 
 def parse_file(path: pathlib.Path, has_header: bool):
@@ -708,6 +738,9 @@ def parse_bytesio(
     return _do_parse_bytesio(bytesio, encoding, mime_type, has_header)
 
 
+parse_xlsx_bytesio = parse_xls_bytesio
+
+
 def _do_parse_bytesio(
     bytesio: io.BytesIO, encoding: Optional[str], mime_type: MimeType, has_header: bool
 ):
@@ -715,5 +748,9 @@ def _do_parse_bytesio(
         return parse_text_bytesio(bytesio, encoding, mime_type, has_header)
     elif mime_type == MimeType.JSON:
         return parse_json_bytesio(bytesio, encoding)
+    elif mime_type == MimeType.XLS:
+        return parse_xls_bytesio(bytesio)
+    elif mime_type == MimeType.XLSX:
+        return parse_xlsx_bytesio(bytesio)
     else:
-        return parse_wrongly(bytesio, encoding, mime_type.value, has_header)
+        return "Unhandled MIME type %r" % mime_type

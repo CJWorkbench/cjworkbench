@@ -17,13 +17,13 @@ spec:
     spec:
       containers:
         - name: database
-          image: "postgres:10.4"
+          image: "postgres:10.10"
           resources:
             requests:
-              cpu: 0.75
+              cpu: 0.5
               memory: 2Gi
             limits:
-              cpu: 0.75
+              cpu: 0.5
               memory: 2Gi
           env:
             # PGDATA should be a subdir of the mount, so there's no lost+found.

@@ -10,9 +10,9 @@ services:
     volumes:
       - ./:/app/:cached
       - virtualenvs:/root/.local/share/virtualenvs/:rw
-    environment:
+    environment: &django-env
       PYTHONUNBUFFERED: '1'
-      ASGI_THREADS: '5'
+      ASGI_THREADS: '3'
       CJW_DB_HOST: database
       CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq
       CJW_DB_PASSWORD: cjworkbench
@@ -43,17 +43,9 @@ services:
       - virtualenvs:/root/.local/share/virtualenvs/:rw
     security_opt:
       - seccomp=docker/forkserver-seccomp-profile.json
+    cap_add: [ SYS_ADMIN ] # for cjwkernel.kernel to overlay-mount chroots (on k8s we use an init container instead)
     environment:
-      PYTHONUNBUFFERED: '1'
-      ASGI_THREADS: '5'
-      CJW_DB_HOST: database
-      CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq
-      CJW_DB_PASSWORD: cjworkbench
-      CJW_SECRET_KEY: cjw-secret-key
-      MINIO_ACCESS_KEY: minio_access
-      MINIO_SECRET_KEY: minio_secret
-      MINIO_URL: http://minio:9000
-      MINIO_BUCKET_PREFIX: dev
+      <<: *django-env
     networks: [ 'dev' ]
     depends_on: [ 'database', 'rabbitmq', 'minio' ]
 
@@ -70,17 +62,11 @@ services:
       - virtualenvs:/root/.local/share/virtualenvs/:rw
     security_opt:
       - seccomp=docker/forkserver-seccomp-profile.json
+    cap_add:
+      - SYS_ADMIN # for cjwkernel.kernel to overlay-mount chroots (on k8s we use an init container instead)
+      - NET_ADMIN # for forkserver to create new network namespace without access to private network
     environment:
-      PYTHONUNBUFFERED: '1'
-      ASGI_THREADS: '2'
-      CJW_DB_HOST: database
-      CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq
-      CJW_DB_PASSWORD: cjworkbench
-      CJW_SECRET_KEY: cjw-secret-key
-      MINIO_ACCESS_KEY: minio_access
-      MINIO_SECRET_KEY: minio_secret
-      MINIO_URL: http://minio:9000
-      MINIO_BUCKET_PREFIX: dev
+      <<: *django-env
     networks: [ 'dev' ]
 
   unittest:
@@ -97,17 +83,14 @@ services:
       - virtualenvs:/root/.local/share/virtualenvs/:rw
     security_opt:
       - seccomp=docker/forkserver-seccomp-profile.json
+    cap_add:
+      - SYS_ADMIN # for cjwkernel.kernel to overlay-mount chroots (on k8s we use an init container instead)
+      - NET_ADMIN # for forkserver to create new network namespace without access to private network
     environment:
-      PYTHONUNBUFFERED: '1'
-      ASGI_THREADS: '5'
+      <<: *django-env
       CJW_DB_HOST: testdatabase
       CJW_RABBITMQ_HOST: amqp://guest:guest@testrabbitmq
-      CJW_DB_PASSWORD: cjworkbench
-      CJW_SECRET_KEY: cjw-secret-key
-      MINIO_ACCESS_KEY: minio_access
-      MINIO_SECRET_KEY: minio_secret
       MINIO_URL: http://testminio:9000
-      MINIO_BUCKET_PREFIX: test
     networks: [ 'test' ]
     depends_on: [ 'testdatabase', 'testrabbitmq', 'testminio' ]
-    command: [ 'sh', '-c', 'while ! curl --silent -I $$MINIO_URL >/dev/null; do sleep 0.1; done; mc config host add workbench $$MINIO_URL minio_root_access minio_root_secret && mc admin user add workbench $$MINIO_ACCESS_KEY $$MINIO_SECRET_KEY && mc admin policy set workbench readwrite $$MINIO_ACCESS_KEY && pipenv run python ./manage.py test' ]
+    entrypoint: 'bin/unittest-entrypoint.sh'

@@ -1,10 +1,60 @@
+import builtins
 import itertools
 from formulas import Parser
+from typing import Any, Dict
 import numpy as np
 import pandas as pd
 from pandas.api.types import is_numeric_dtype, is_datetime64_dtype
 from schedula import DispatcherError
-from cjwkernel.pandas.moduleutils import autocast_series_dtype, build_globals_for_eval
+from cjwkernel.pandas.moduleutils import autocast_series_dtype
+
+
+class PythonFeatureDisabledError(Exception):
+    def __init__(self, name):
+        super().__init__(self)
+        self.name = name
+        self.message = f"builtins.{name} is disabled"
+
+    def __str__(self):
+        return self.message
+
+
+def build_builtins_for_eval() -> Dict[str, Any]:
+    """
+    Build a __builtins__ for use in custom code.
+
+    Call ``exec(code, {'__builtins__': retval}, {})`` to use it.
+    """
+    # Start with _this_ module's __builtins__
+    eval_builtins = dict(builtins.__dict__)
+
+    # Disable "dangerous" builtins.
+    #
+    # This doesn't increase security: it just helps module authors.
+    def disable_func(name):
+        def _disabled(*args, **kwargs):
+            raise PythonFeatureDisabledError(name)
+
+        return _disabled
+
+    to_disable = ["__import__", "breakpoint", "compile", "eval", "exec", "open"]
+    for name in to_disable:
+        eval_builtins[name] = disable_func(name)
+
+    return eval_builtins
+
+
+def build_globals_for_eval() -> Dict[str, Any]:
+    """Builds a __globals__ for use in custom code.
+    """
+    eval_builtins = build_builtins_for_eval()
+
+    # Hard-code modules we provide the user
+    import math
+    import pandas as pd
+    import numpy as np
+
+    return {"__builtins__": eval_builtins, "math": math, "np": np, "pd": pd}
 
 
 def sanitize_series(series: pd.Series) -> pd.Series:

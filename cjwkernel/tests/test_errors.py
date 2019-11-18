@@ -37,6 +37,13 @@ class FormatForUserDebuggingTests(unittest.TestCase):
             format_for_user_debugging(ModuleExitedError(-9, "")), "SIGKILL"
         )
 
+    def test_exited_sigsys(self):
+        self.assertEqual(
+            # SIGSYS usually means "seccomp killed you"
+            format_for_user_debugging(ModuleExitedError(-31, "")),
+            "SIGSYS",
+        )
+
     def test_exited_stack_trace(self):
         self.assertEqual(
             format_for_user_debugging(

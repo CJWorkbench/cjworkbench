@@ -18,21 +18,33 @@ urlpatterns = [
     url(r"^$", redirect("/workflows")),
     # list all workflows
     url(r"^workflows/$", workflows.Index.as_view(), name="workflows"),
-    url(r"^lessons$", lessons.render_lesson_list),
-    url(r"^lessons/$", redirect("/lessons")),
-    url(r"^lessons/(?P<slug>[-a-z0-9]+)$", lessons.render_lesson_detail),
-    url(r"^lessons/(?P<slug>[-a-z0-9]+)/$", redirect("/lessons/%(slug)s")),
-    url(r"^courses/?$", redirect("/lessons")),
-    url(r"^courses/(?P<course_slug>[-a-z0-9]+)$", lessons.render_course),
+    url(r"^lessons/?$", redirect("/lessons/en")),
+    url(r"^lessons/(?P<locale_id>[a-z]+)$", lessons.render_lesson_list),
+    url(r"^lessons/(?P<locale_id>[a-z]+)/$", redirect("/lessons/%(locale_id)s")),
     url(
-        r"^courses/(?P<course_slug>[-a-z0-9]+)/$", redirect("/courses/%(course_slug)s")
+        r"^lessons/(?P<locale_id>[a-z]+)/(?P<slug>[-a-z0-9]+)$",
+        lessons.render_lesson_detail,
     ),
     url(
-        r"^courses/(?P<course_slug>[-a-z0-9]+)/(?P<lesson_slug>[-a-z0-9]+)$",
+        r"^lessons/(?P<locale_id>[a-z]+)/(?P<slug>[-a-z0-9]+)/$",
+        redirect("/lessons/%(locale_id)s/%(slug)s"),
+    ),
+    url(r"^courses/?$", redirect("/lessons/en")),
+    url(r"^courses/(?P<locale_id>[a-z]+)/?$", redirect("/lessons/%(locale_id)s")),
+    url(
+        r"^courses/(?P<locale_id>[a-z]+)/(?P<course_slug>[-\w]+)$",
+        lessons.render_course,
+    ),
+    url(
+        r"^courses/(?P<locale_id>[a-z]+)/(?P<course_slug>[-\w]+)/$",
+        redirect("/courses/%(course_slug)s"),
+    ),
+    url(
+        r"^courses/(?P<locale_id>[a-z]+)/(?P<course_slug>[-\w]+)/(?P<lesson_slug>[-\w]+)$",
         lessons.render_course_lesson_detail,
     ),
     url(
-        r"^courses/(?P<course_slug>[-a-z0-9]+)/(?P<lesson_slug>[-a-z0-9]+)/$",
+        r"^courses/(?P<locale_id>[a-z]+)/(?P<course_slug>[-\w]+)/(?P<lesson_slug>[-\w]+)/$",
         redirect("/courses/%(course_slug)s/%(lesson_slug)s"),
     ),
     # workflows

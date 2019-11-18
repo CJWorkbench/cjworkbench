@@ -70,6 +70,11 @@ module.exports = {
           limit: 40000,
           name: '[name]-[contenthash].[ext]'
         }
+      },
+      {
+        // i18n translations
+        test: /\.po$/,
+        loader: '@lingui/loader'
       }
     ]
   },
