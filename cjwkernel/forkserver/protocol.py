@@ -4,26 +4,14 @@ from dataclasses import dataclass, replace
 import pickle
 from typing import Any, List, Type, TypeVar
 from multiprocessing.reduction import sendfds, recvfds
-import shutil
 import socket
 from .sandbox import NetworkConfig, SandboxConfig
 
 
-__all__ = [
-    "NetworkConfig",
-    "SandboxConfig",
-    "ImportModules",
-    "SpawnChild",
-    "SpawnedChild",
-]
+__all__ = ["NetworkConfig", "SandboxConfig", "SpawnChild", "SpawnedChild"]
 
 
 _MessageType = TypeVar("T", bound="Message")
-
-
-assert (
-    shutil.rmtree.avoids_symlink_attacks
-), "chroot is unusable: a child's symlinks can make a parent delete files"
 
 
 class Message:
@@ -81,18 +69,6 @@ class MessageToChild(Message):
 
 class MessageToParent(Message):
     pass
-
-
-@dataclass(frozen=True)
-class ImportModules(MessageToChild):
-    """
-    Tell child to import modules (in its own process).
-
-    Whatever is imported here will be available to all spawned children.
-    Don't import any module that might hold a reference to a secret!
-    """
-
-    modules: List[str]
 
 
 @dataclass(frozen=True)

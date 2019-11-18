@@ -5,10 +5,16 @@ import errno
 import os
 import os.path
 from pathlib import Path
+import shutil
 import threading
 from typing import Callable, ContextManager, Iterator, List, Tuple
 from cjwkernel.util import tempdir_context, tempfile_context
 from cjwkernel.errors import ModuleExitedError
+
+
+assert (
+    shutil.rmtree.avoids_symlink_attacks
+), "chroot is unusable: a child's symlinks can make a parent delete files"
 
 
 def _walk_and_delete_upper_files(

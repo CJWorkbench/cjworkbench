@@ -129,18 +129,18 @@ def spawn_child(sock: socket.socket, message: protocol.SpawnChild) -> None:
     clone_fds = None
 
 
-def forkserver_main(_child_main: str, socket_fd: int) -> None:
+def forkserver_main(_child_main: str, preload_imports_str: str, socket_fd: int) -> None:
     """
     Start the forkserver.
 
     The init protocol ("a" means "parent" [class ForkServer], "b" means,
     "forkserver" [forkserver_main()]; "c" means, "child" [run_child()]):
 
-    1a. Parent invokes forkserver_main(), passing AF_UNIX fd as argument.
-    1b. Forkserver calls socket.fromfd(), establishing a socket connection.
-    2a. Parent sends ImportModules.
+    1a. Parent invokes forkserver_main(), passing imports and AF_UNIX fd as
+        arguments.
     2b. Forkserver imports modules in its main (and only) thread.
-    3b. Forkserver waits for a message from parent.
+    3b. Forkserver calls socket.fromfd(), establishing a socket connection. It
+        waits for messages from parent.
     4a. Parent sends a message with spawn parameters.
     4b. Forkserver opens pipes for file descriptors, calls clone(), and sends
         a response to Parent with pid and (stdin, stdout, stderr) descriptors.
@@ -164,7 +164,12 @@ def forkserver_main(_child_main: str, socket_fd: int) -> None:
     child_main_module = importlib.import_module(child_main_module_name)
     child_main = child_main_module.__dict__[child_main_name]
 
-    # 1b. Forkserver establishes socket connection
+    # 2b. Forkserver imports modules in its main (and only) thread
+    for im in preload_imports_str.split(","):
+        if im:
+            __import__(im)
+
+    # 3b. Forkserver establishes socket connection
     #
     # Note: we don't put this in a `with` block, because that would add a
     # finalizer. Finalizers would run in the "child" process; but our child
@@ -174,11 +179,6 @@ def forkserver_main(_child_main: str, socket_fd: int) -> None:
     # (As a rule, forkserver shouldn't use try/finally or context managers.)
     global sock  # see GLOBAL VARIABLES comment
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM, fileno=socket_fd)
-
-    # 2b. Forkserver imports modules in its main (and only) thread
-    imports = protocol.ImportModules.recv_on_socket(sock)
-    for im in imports.modules:
-        __import__(im)
 
     while True:
         # 4a. Parent sends a message with spawn parameters.

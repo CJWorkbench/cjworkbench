@@ -27,6 +27,13 @@ class ChildProcess:
         return os.waitpid(self.pid, options)
 
 
+def _encode_module_name_list(l: List[str]) -> str:
+    for s in l:
+        if '"' in s or "," in s or " " in s:
+            raise ValueError("Module name %r is illegal" % s)
+    return ",".join(l)
+
+
 class Forkserver:
     """
     Launch Python quickly, sharing most memory pages.
@@ -57,7 +64,7 @@ class Forkserver:
     * The caller interacts with the forkserver process via _unnamed_ AF_UNIX
       socket, rather than a named socket. (`multiprocessing` writes a pipe
       to /tmp.) No messing with hmac. Instead, we mess with locks. ("Aren't
-      locks worse?" -- [2019-09-30, adamhooper] probably not, because os.fork()
+      locks worse?" -- [2019-09-30, adamhooper] probably not, because clone()
       is fast; and multiprocessing and asyncio have a race in Python 3.7.4 that
       causes forkserver children to exit with status code 255, so their
       named-pipe+hmac approach does not inspire confidence.)
@@ -72,15 +79,18 @@ class Forkserver:
     ):
         # We rely on Python's os.fork() internals to close FDs and run a child
         # process.
-        self._pid = os.getpid()
         self._socket, child_socket = socket.socketpair(socket.AF_UNIX)
         self._process = subprocess.Popen(
             [
                 sys.executable,
                 "-u",  # PYTHONUNBUFFERED: parents read children's data sooner
                 "-c",
-                'import cjwkernel.forkserver.main; cjwkernel.forkserver.main.forkserver_main("%s", %d)'
-                % (child_main, child_socket.fileno()),
+                'import cjwkernel.forkserver.main; cjwkernel.forkserver.main.forkserver_main("%s", "%s", %d)'
+                % (
+                    child_main,
+                    _encode_module_name_list(preload_imports),
+                    child_socket.fileno(),
+                ),
             ],
             # SECURITY: children inherit these values
             env=environment,
@@ -92,10 +102,13 @@ class Forkserver:
         )
         child_socket.close()
         self._lock = threading.Lock()
+        self._closed = False
 
-        with self._lock:
-            message = protocol.ImportModules(preload_imports)
-            message.send_on_socket(self._socket)
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args):
+        self.close()
 
     def spawn_child(
         self,
@@ -144,5 +157,8 @@ class Forkserver:
         Spawned processes continue to run -- they are entirely disconnected
         from their forkserver.
         """
-        self._socket.close()  # inspire self._process to exit of its own accord
-        self._process.wait()
+        with self._lock:
+            if not self._closed:
+                self._socket.close()  # inspire self._process to exit of its own accord
+                self._process.wait()
+                self._closed = True
