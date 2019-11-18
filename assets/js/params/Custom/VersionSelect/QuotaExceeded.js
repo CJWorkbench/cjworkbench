@@ -38,9 +38,9 @@ const QuotaExceeded = React.memo(function QuotaExceeded ({ workflowId, wfModuleI
         </Trans>
       </p>
       <p>
-        <Trans id='workflow.quotasteps'>Here are the steps that count against your limit.
-        Adjust their update times or set them to manual, then click
-        "Retry" above.
+        <Trans id='js.params.Custom.VersionSelect.QuotaExceeded.quotasteps'>
+          Here are the steps that count against your limit.
+          Adjust their update times or set them to manual, then click "Retry" above.
         </Trans>
       </p>
       <table>

@@ -154,7 +154,7 @@ msgstr "This workflow is currently private"
 
 #: assets/js/Report/Dashboard.js:11
 msgid "js.Report.Dashboard.addChartstoTabs"
-msgstr "Add charts to tabs, and they\\'ll appear here."
+msgstr "Add charts to tabs, and they'll appear here."
 
 #: assets/js/Report/ShareCard.js:21
 msgid "js.Report.ShareCard.accessibilityDescription.private"
@@ -894,9 +894,8 @@ msgstr "Fingerprint"
 msgid "js.params.Custom.RefineClusterer.Algorithms.levenshtein.description"
 msgstr ""
 "Groups values if the number of characters added, edited or deleted to get"
-" from one value to the other is equal or inferior to \\'Maximum "
-"distance\\'. For instance, the distance between \"Cafés\" and \"cafe\" is"
-" 3."
+" from one value to the other is equal or inferior to 'Maximum distance'. "
+"For instance, the distance between \"Cafés\" and \"cafe\" is 3."
 
 #: assets/js/params/Custom/Refine/RefineClusterer.js:21
 msgid "js.params.Custom.RefineClusterer.Algorithms.levenshtein.name"
@@ -1190,6 +1189,12 @@ msgstr "#/day"
 #: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:79
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.otherStep.fetchesPerDay"
 msgstr "Step {0} on {1} makes {2} updates per day."
+
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:41
+msgid "js.params.Custom.VersionSelect.QuotaExceeded.quotasteps"
+msgstr ""
+"Here are the steps that count against your limit. Adjust their update "
+"times or set them to manual, then click \"Retry\" above."
 
 #. The tag is a mailto url
 #: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:90
@@ -1543,6 +1548,11 @@ msgstr ""
 msgid "js.table.TableInfo.columns"
 msgstr "Columns"
 
+#. This should be all-caps for styling reasons
+#: assets/js/table/TableInfo.js:61
+msgid "js.table.TableInfo.export"
+msgstr "EXPORT"
+
 #: assets/js/table/TableInfo.js:41
 msgid "js.table.TableInfo.rows"
 msgstr "Rows"
@@ -1578,17 +1588,6 @@ msgstr "{years}y ago"
 #: assets/js/utils.js:55
 msgid "js.util.timeDifference.now"
 msgstr "just now"
-
-#. This should be all-caps for styling reasons
-#: assets/js/table/TableInfo.js:61
-msgid "tableinfo.export"
-msgstr "EXPORT"
-
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:41
-msgid "workflow.quotasteps"
-msgstr ""
-"Here are the steps that count against your limit. Adjust their update "
-"times or set them to manual, then click \"Retry\" above."
 
 #: cjworkbench/forms/signup.py:24
 msgid "py.forms.signup.firstName.placeholder"

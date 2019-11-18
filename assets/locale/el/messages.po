@@ -1149,6 +1149,10 @@ msgstr ""
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.otherStep.fetchesPerDay"
 msgstr ""
 
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:41
+msgid "js.params.Custom.VersionSelect.QuotaExceeded.quotasteps"
+msgstr ""
+
 #. The tag is a mailto url
 #: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:90
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.requestLift"
@@ -1493,6 +1497,11 @@ msgstr ""
 msgid "js.table.TableInfo.columns"
 msgstr ""
 
+#. This should be all-caps for styling reasons
+#: assets/js/table/TableInfo.js:61
+msgid "js.table.TableInfo.export"
+msgstr ""
+
 #: assets/js/table/TableInfo.js:41
 msgid "js.table.TableInfo.rows"
 msgstr ""
@@ -1527,15 +1536,6 @@ msgstr ""
 
 #: assets/js/utils.js:55
 msgid "js.util.timeDifference.now"
-msgstr ""
-
-#. This should be all-caps for styling reasons
-#: assets/js/table/TableInfo.js:61
-msgid "tableinfo.export"
-msgstr ""
-
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:41
-msgid "workflow.quotasteps"
 msgstr ""
 
 #: cjworkbench/forms/signup.py:24

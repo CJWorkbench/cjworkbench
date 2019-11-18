@@ -58,7 +58,7 @@ export default class TableInfo extends React.PureComponent {
           <>
             <div className='export-table' onClick={this.handleClickExport}>
               <i className='icon-download' />
-              <span><Trans id='tableinfo.export' description='This should be all-caps for styling reasons'>EXPORT</Trans></span>
+              <span><Trans id='js.table.TableInfo.export' description='This should be all-caps for styling reasons'>EXPORT</Trans></span>
             </div>
             <ExportModal
               open={isExportModalOpen}

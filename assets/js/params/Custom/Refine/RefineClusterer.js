@@ -19,7 +19,7 @@ const Algorithms = [
   {
     name: 'levenshtein',
     selectName: t('js.params.Custom.RefineClusterer.Algorithms.levenshtein.name')`Edit distance`,
-    description: t('js.params.Custom.RefineClusterer.Algorithms.levenshtein.description')`Groups values if the number of characters added, edited or deleted to get from one value to the other is equal or inferior to \'Maximum distance\'. For instance, the distance between "Cafés" and "cafe" is 3.`,
+    description: t('js.params.Custom.RefineClusterer.Algorithms.levenshtein.description')`Groups values if the number of characters added, edited or deleted to get from one value to the other is equal or inferior to 'Maximum distance'. For instance, the distance between "Cafés" and "cafe" is 3.`,
     defaultOptions: { maxDistance: 3 },
     optionFields: (handlers, options) => (
       <div className='form-group'>

@@ -165,7 +165,7 @@ msgstr ""
 msgid "js.OutputIframe.private.workflowIsPrivate"
 msgstr ""
 
-#. default-message: Add charts to tabs, and they\'ll appear here.
+#. default-message: Add charts to tabs, and they'll appear here.
 #: assets/js/Report/Dashboard.js:11
 msgid "js.Report.Dashboard.addChartstoTabs"
 msgstr ""
@@ -1067,7 +1067,7 @@ msgstr ""
 msgid "js.params.Custom.RefineClusterer.Algorithms.fingerprint.name"
 msgstr ""
 
-#. default-message: Groups values if the number of characters added, edited or deleted to get from one value to the other is equal or inferior to \'Maximum distance\'. For instance, the distance between "Cafés" and "cafe" is 3.
+#. default-message: Groups values if the number of characters added, edited or deleted to get from one value to the other is equal or inferior to 'Maximum distance'. For instance, the distance between "Cafés" and "cafe" is 3.
 #: assets/js/params/Custom/Refine/RefineClusterer.js:22
 msgid "js.params.Custom.RefineClusterer.Algorithms.levenshtein.description"
 msgstr ""
@@ -1399,6 +1399,11 @@ msgstr ""
 #. default-message: Step {0} on {1} makes {2} updates per day.
 #: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:79
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.otherStep.fetchesPerDay"
+msgstr ""
+
+#. default-message: Here are the steps that count against your limit. Adjust their update times or set them to manual, then click "Retry" above.
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:41
+msgid "js.params.Custom.VersionSelect.QuotaExceeded.quotasteps"
 msgstr ""
 
 #. The tag is a mailto url
@@ -1828,6 +1833,12 @@ msgstr ""
 msgid "js.table.TableInfo.columns"
 msgstr ""
 
+#. This should be all-caps for styling reasons
+#. default-message: EXPORT
+#: assets/js/table/TableInfo.js:61
+msgid "js.table.TableInfo.export"
+msgstr ""
+
 #. default-message: Rows
 #: assets/js/table/TableInfo.js:41
 msgid "js.table.TableInfo.rows"
@@ -1871,17 +1882,6 @@ msgstr ""
 #. default-message: just now
 #: assets/js/utils.js:55
 msgid "js.util.timeDifference.now"
-msgstr ""
-
-#. This should be all-caps for styling reasons
-#. default-message: EXPORT
-#: assets/js/table/TableInfo.js:61
-msgid "tableinfo.export"
-msgstr ""
-
-#. default-message: Here are the steps that count against your limit. Adjust their update times or set them to manual, then click "Retry" above.
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:41
-msgid "workflow.quotasteps"
 msgstr ""
 
 #. default-message: First name

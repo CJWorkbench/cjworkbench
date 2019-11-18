@@ -8,7 +8,7 @@ function EmptyReport () {
   return (
     <article className='report'>
       <p className='empty-report'>
-        <Trans id='js.Report.Dashboard.addChartstoTabs'>Add charts to tabs, and they\'ll appear here.</Trans>
+        <Trans id='js.Report.Dashboard.addChartstoTabs'>Add charts to tabs, and they'll appear here.</Trans>
       </p>
     </article>
   )
