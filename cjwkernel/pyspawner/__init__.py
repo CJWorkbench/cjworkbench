@@ -1,16 +1,16 @@
 """
-Entrypoint for using pycloner.
+Entrypoint for using pyspawner.
 
 Usage:
 
-    # pycloner.Client() is slow; ideally, you'll just call it during startup.
-    with pycloner.Client(
+    # pyspawner.Client() is slow; ideally, you'll just call it during startup.
+    with pyspawner.Client(
         child_main="mymodule.main",
         environment={"LC_ALL": "C.UTF-8"},
         preload_imports=["pandas"],
     ) as cloner:
         # cloner.spawn_child() is fast; call it as many times as you like.
-        child_process: pycloner.ChildProcess = cloner.spawn_child(
+        child_process: pyspawner.ChildProcess = cloner.spawn_child(
             args=["arg1", "arg2"],  # List of picklable Python objects
             process_name="child-1",
             sandbox_config=SandboxConfig(

@@ -800,7 +800,7 @@
 			],
 			"action": "SCMP_ACT_ALLOW",
 			"args": [],
-			"comment": "So cjwkernel.pycloner can sandbox module_main()",
+			"comment": "So cjwkernel.pyspawner can sandbox module_main()",
 			"includes": {},
 			"excludes": {}
 		},

@@ -68,7 +68,7 @@ services:
         consistency: cached
       - virtualenvs:/root/.local/share/virtualenvs/:rw
     security_opt:
-      - seccomp=docker/pycloner-seccomp-profile.json
+      - seccomp=docker/pyspawner-seccomp-profile.json
     cap_add: [ SYS_ADMIN ] # for setup-sandboxes.sh to overlay-mount chroots (on k8s we use an init container instead)
     environment: &django-env
       PYTHONUNBUFFERED: '1'
@@ -106,10 +106,10 @@ services:
         consistency: cached
       - virtualenvs:/root/.local/share/virtualenvs/:rw
     security_opt:
-      - seccomp=docker/pycloner-seccomp-profile.json
+      - seccomp=docker/pyspawner-seccomp-profile.json
     cap_add:
       - SYS_ADMIN # for setup-sandboxes.sh to overlay-mount chroots (on k8s we use an init container instead)
-      - NET_ADMIN # for pycloner to create new network namespace without access to private network
+      - NET_ADMIN # for pyspawner to create new network namespace without access to private network
     environment:
       <<: *django-env
     depends_on: [ 'database', 'rabbitmq', 'minio' ]
@@ -135,10 +135,10 @@ services:
         consistency: cached
       - virtualenvs:/root/.local/share/virtualenvs/:rw
     security_opt:
-      - seccomp=docker/pycloner-seccomp-profile.json
+      - seccomp=docker/pyspawner-seccomp-profile.json
     cap_add:
       - SYS_ADMIN # for setup-sandboxes.sh to overlay-mount chroots (on k8s we use an init container instead)
-      - NET_ADMIN # for pycloner to create new network namespace without access to private network
+      - NET_ADMIN # for pyspawner to create new network namespace without access to private network
     environment:
       <<: *django-env
     depends_on: [ 'database', 'rabbitmq', 'minio' ]

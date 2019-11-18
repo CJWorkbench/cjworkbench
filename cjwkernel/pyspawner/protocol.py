@@ -1,5 +1,5 @@
 """
-Communications between parent and pycloner.
+Communications between parent and pyspawner.
 
 We assume trust between these two processes. (The SpawnChild message is
 transmitted in Python's pickle format.)

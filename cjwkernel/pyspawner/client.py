@@ -48,11 +48,11 @@ class Client:
     soon as a child starts running we can't trust it. Starting Python with lots
     of imports like Pyarrow+Pandas can take ~2s and cost ~100MB RAM.
 
-    The solution: start up a mini-server, the "pycloner", which preloads
+    The solution: start up a mini-server, the "pyspawner", which preloads
     Python modules. clone() each time we need a subprocess. clone() is
     near-instantaneous. Beware: since clone() copies all memory, the
-    "pycloner" shouldn't load anything sensitive before clone(). (No Django:
-    it reads secrets!). Also, the "pycloner"'s child should close everything
+    "pyspawner" shouldn't load anything sensitive before clone(). (No Django:
+    it reads secrets!). Also, the "pyspawner"'s child should close everything
     children before executing user code so it can't fiddle with the control
     socket.
 
@@ -60,14 +60,14 @@ class Client:
 
     * Children are not managed. It's up to the caller to kill and wait for the
       process. Children are direct children of the _caller_, not of the
-      pycloner. (We use CLONE_PARENT.)
+      pyspawner. (We use CLONE_PARENT.)
     * asyncio-safe: we don't listen for SIGCHLD, because asyncio's
       subprocess-management routines override the signal handler.
     * Thread-safe: multiple threads may spawn multiple children, and they may
       all run concurrently (unless child code writes files or uses networking).
     * No `multiprocessing.context`. This Client is the context.
     * No `Connection` (or other high-level constructs).
-    * The caller interacts with the pycloner process via _unnamed_ AF_UNIX
+    * The caller interacts with the pyspawner process via _unnamed_ AF_UNIX
       socket, rather than a named socket. (`multiprocessing` writes a pipe
       to /tmp.) No messing with hmac. Instead, we mess with locks. ("Aren't
       locks worse?" -- [2019-09-30, adamhooper] probably not, because clone()
@@ -91,7 +91,7 @@ class Client:
                 sys.executable,
                 "-u",  # PYTHONUNBUFFERED: parents read children's data sooner
                 "-c",
-                'import cjwkernel.pycloner.main; cjwkernel.pycloner.main.pycloner_main("%s", "%s", %d)'
+                'import cjwkernel.pyspawner.main; cjwkernel.pyspawner.main.pyspawner_main("%s", "%s", %d)'
                 % (
                     child_main,
                     _encode_module_name_list(preload_imports),
@@ -157,10 +157,10 @@ class Client:
 
     def close(self) -> None:
         """
-        Kill the pycloner.
+        Kill the pyspawner.
 
         Spawned processes continue to run -- they are entirely disconnected
-        from their pycloner.
+        from their pyspawner.
         """
         with self._lock:
             if not self._closed:

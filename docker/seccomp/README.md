@@ -9,4 +9,4 @@ Usage:
 2. Run `./run-with-docker.sh` to overwrite `rules.bpf`
 3. Use the resulting BPF struct as a syscall -- you can just pass the
    bytes as a void*. (We copy it to
-   `cjwkernel/pycloner/sandbox-seccomp.bpf`)
+   `cjwkernel/pyspawner/sandbox-seccomp.bpf`)

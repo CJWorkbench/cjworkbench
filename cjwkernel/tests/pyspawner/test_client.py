@@ -9,7 +9,7 @@ from textwrap import dedent
 from typing import Any, ContextManager, FrozenSet, List, Optional, Tuple
 import unittest
 from cjwkernel.chroot import EDITABLE_CHROOT
-from cjwkernel import pycloner  # test the public API
+from cjwkernel import pyspawner  # test the public API
 from cjwkernel.util import tempfile_context
 
 
@@ -24,12 +24,12 @@ def child_main(indented_code: str) -> None:
 
 @contextlib.contextmanager
 def _spawned_child_context(
-    server: pycloner.Client,
+    server: pyspawner.Client,
     args: List[Any] = [],
-    sandbox_config: pycloner.SandboxConfig = pycloner.SandboxConfig(),
-) -> ContextManager[pycloner.ChildProcess]:
+    sandbox_config: pyspawner.SandboxConfig = pyspawner.SandboxConfig(),
+) -> ContextManager[pyspawner.ChildProcess]:
     subprocess = server.spawn_child(
-        args, process_name="pycloner-test", sandbox_config=sandbox_config
+        args, process_name="pyspawner-test", sandbox_config=sandbox_config
     )
     try:
         yield subprocess
@@ -52,22 +52,22 @@ def _spawned_child_context(
             pass
 
 
-class PyclonerTest(unittest.TestCase):
+class PyspawnerTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls._pycloner = pycloner.Client(
-            child_main="cjwkernel.tests.pycloner.test_init.child_main",
+        cls._pyspawner = pyspawner.Client(
+            child_main="cjwkernel.tests.pyspawner.test_client.child_main",
             environment={"LC_CTYPE": "C.UTF-8", "TEST_ENV": "yes"},
         )
 
     @classmethod
     def tearDownClass(cls):
-        cls._pycloner.close()
-        del cls._pycloner
+        cls._pyspawner.close()
+        del cls._pyspawner
 
     def setUp(self):
         super().setUp()
-        self.chroot_dir = Path(tempfile.mkdtemp(prefix="pycloner-test-chroot-"))
+        self.chroot_dir = Path(tempfile.mkdtemp(prefix="pyspawner-test-chroot-"))
         self.chroot_dir.chmod(0o777)  # so subprocesses can play in their chroots
 
     def tearDown(self):
@@ -79,7 +79,7 @@ class PyclonerTest(unittest.TestCase):
         indented_code: str,
         stdin: bytes = b"",
         chroot_dir: Optional[Path] = None,
-        network_config: Optional[pycloner.NetworkConfig] = None,
+        network_config: Optional[pyspawner.NetworkConfig] = None,
         skip_sandbox_except: FrozenSet[str] = frozenset(),
     ) -> Tuple[int, bytes, bytes]:
         """
@@ -88,9 +88,9 @@ class PyclonerTest(unittest.TestCase):
         This will never error.
         """
         with _spawned_child_context(
-            self._pycloner,
+            self._pyspawner,
             args=[indented_code],
-            sandbox_config=pycloner.SandboxConfig(
+            sandbox_config=pyspawner.SandboxConfig(
                 chroot_dir=chroot_dir,
                 network=network_config,
                 skip_sandbox_except=skip_sandbox_except,
@@ -113,7 +113,7 @@ class PyclonerTest(unittest.TestCase):
         self,
         indented_code: str,
         chroot_dir: Optional[Path] = None,
-        network_config: Optional[pycloner.NetworkConfig] = None,
+        network_config: Optional[pyspawner.NetworkConfig] = None,
         skip_sandbox_except: FrozenSet[str] = frozenset(),
     ) -> None:
         """
@@ -213,7 +213,7 @@ class PyclonerTest(unittest.TestCase):
                     assert err.errno == errno.ECONNREFUSED
                 """
                 % (host_ip, port),
-                network_config=pycloner.NetworkConfig(),
+                network_config=pyspawner.NetworkConfig(),
             )
 
     def test_SECURITY_private_network_is_off_limits(self):
@@ -235,7 +235,7 @@ class PyclonerTest(unittest.TestCase):
                 assert err.errno == errno.ECONNREFUSED
             """
             % (postgres_ip, port),
-            network_config=pycloner.NetworkConfig(),
+            network_config=pyspawner.NetworkConfig(),
         )
 
     def test_SECURITY_network_none_means_no_networking(self):
@@ -264,7 +264,7 @@ class PyclonerTest(unittest.TestCase):
     #         socket.gethostbyname("example.com")  # don't crash
     #         """,
     #         chroot_dir=READONLY_CHROOT.root,  # for /etc/resolv.conf et al
-    #         network_config=pycloner.NetworkConfig(),
+    #         network_config=pyspawner.NetworkConfig(),
     #     )
     #
     # def test_network_external_ip(self):
@@ -275,7 +275,7 @@ class PyclonerTest(unittest.TestCase):
     #             s.settimeout(5)  # in case the test fails, fail fast
     #             s.connect(("1.1.1.1", 53))  # don't crash or timeout
     #         """,
-    #         network_config=pycloner.NetworkConfig(),
+    #         network_config=pyspawner.NetworkConfig(),
     #     )
 
     def test_SECURITY_no_capabilities(self):

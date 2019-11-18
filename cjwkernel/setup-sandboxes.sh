@@ -2,7 +2,7 @@
 #
 # Called before Workbench start (in dev/unittest/integration-test) or by an
 # init container (in staging/production) to create sandbox environments for
-# pycloner. It's called just once per container.
+# pyspawner. It's called just once per container.
 #
 # This requires CAP_SYS_ADMIN privilege, and seccomp must allow the "mount"
 # system call. DO NOT grant CAP_SYS_ADMIN willy-nilly in production. In
@@ -12,7 +12,7 @@
 # and production don't. If you're messing with sandboxes, test on staging.
 #
 # This is _one_ chroot environment, suitable for _one_ command. Assume
-# pycloner never runs two commands at once.
+# pyspawner never runs two commands at once.
 #
 # We use overlay mounts:
 #
@@ -75,7 +75,7 @@ LAYERS=/var/lib/cjwkernel/chroot-layers
 EDITABLE_CHROOT_SIZE=20G  # max size of user edits in EDITABLE_CHROOT
 VENV_PATH="/root/.local/share/virtualenvs" # only exits in dev
 
-# NetworkConfig mimics cjwkernel/pycloner/protocol.py
+# NetworkConfig mimics cjwkernel/pyspawner/protocol.py
 KERNEL_VETH=cjw-veth-kernel
 CHILD_VETH_IP4="192.168.123.2"
 

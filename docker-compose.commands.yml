@@ -42,7 +42,7 @@ services:
         read_only: true
       - virtualenvs:/root/.local/share/virtualenvs/:rw
     security_opt:
-      - seccomp=docker/pycloner-seccomp-profile.json
+      - seccomp=docker/pyspawner-seccomp-profile.json
     cap_add: [ SYS_ADMIN ] # for cjwkernel.kernel to overlay-mount chroots (on k8s we use an init container instead)
     environment:
       <<: *django-env
@@ -61,10 +61,10 @@ services:
         consistency: cached
       - virtualenvs:/root/.local/share/virtualenvs/:rw
     security_opt:
-      - seccomp=docker/pycloner-seccomp-profile.json
+      - seccomp=docker/pyspawner-seccomp-profile.json
     cap_add:
       - SYS_ADMIN # for cjwkernel.kernel to overlay-mount chroots (on k8s we use an init container instead)
-      - NET_ADMIN # for pycloner to create new network namespace without access to private network
+      - NET_ADMIN # for pyspawner to create new network namespace without access to private network
     environment:
       <<: *django-env
     networks: [ 'dev' ]
@@ -82,10 +82,10 @@ services:
         consistency: cached
       - virtualenvs:/root/.local/share/virtualenvs/:rw
     security_opt:
-      - seccomp=docker/pycloner-seccomp-profile.json
+      - seccomp=docker/pyspawner-seccomp-profile.json
     cap_add:
       - SYS_ADMIN # for cjwkernel.kernel to overlay-mount chroots (on k8s we use an init container instead)
-      - NET_ADMIN # for pycloner to create new network namespace without access to private network
+      - NET_ADMIN # for pyspawner to create new network namespace without access to private network
     environment:
       <<: *django-env
       CJW_DB_HOST: testdatabase

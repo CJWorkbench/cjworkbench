@@ -6,20 +6,20 @@ import os
 @dataclass(frozen=True)
 class CloneFds:
     """
-    File descriptors cloned by pycloner into child during spawn.
+    File descriptors cloned by pyspawner into child during spawn.
 
     These are a sequence of read/write pairs. Here's how they're all used.
-    (Glossary: here, "parent" is pycloner's parent; "pycloner" is the main
+    (Glossary: here, "parent" is pyspawner's parent; "pyspawner" is the main
     process; and "child" is a newly-spawned child. We only spawn once at a
     time.)
 
-        * stdin: the child process's stdin. pycloner sends `stdin_w` to
+        * stdin: the child process's stdin. pyspawner sends `stdin_w` to
                  parent. child moves `stdin_r` to become fd 0.
-        * stdout: the child process's stdout. pycloner sends `stdout_r` to
+        * stdout: the child process's stdout. pyspawner sends `stdout_r` to
                   parent. child moves `stdout_r` to become fd 1.
-        * stderr: the child process's stderr. pycloner sends `stderr_r` to
+        * stderr: the child process's stderr. pyspawner sends `stderr_r` to
                   parent. child moves `stderr_r` to become fd 1.
-        * is_namespace_ready: a simple semaphore. pycloner closes
+        * is_namespace_ready: a simple semaphore. pyspawner closes
                               `is_namespace_ready_w` when it's finished with
                               bookkeeping. child waits for
                               `is_namespare_ready_r` to be closed before
@@ -29,11 +29,11 @@ class CloneFds:
     our contract with child code. (stdin_r, stdout_w and stderr_w should be
     dup2()d to fds 0, 1 and 2 first.)
 
-    SANITY: all these file descriptors must be closed in pycloner: otherwise,
+    SANITY: all these file descriptors must be closed in pyspawner: otherwise,
     they will leak to future children.
 
     To be abundantly clear: these file descriptors are all opened once. Then
-    there's a clone() call. They must be closed *twice*: once by pycloner,
+    there's a clone() call. They must be closed *twice*: once by pyspawner,
     once by the child.
 
     Here's an illustration:
@@ -41,9 +41,9 @@ class CloneFds:
         PYCLONER:
             clone_fds = CloneFds.create()
             child_pid = clone() [spawning CHILD _and_ continuing]
-            pycloner_fds = clone_fds.become_pycloner()
+            pyspawner_fds = clone_fds.become_pyspawner()
             prepare_namespace_for_child(child_pid)
-            parent_fds = pycloner_fds.signal_namespace_is_ready()
+            parent_fds = pyspawner_fds.signal_namespace_is_ready()
             send_fds_to_parent(parent_fds)
             parent_fds.close()
             # Now all the fds are closed
@@ -84,9 +84,9 @@ class CloneFds:
 
     def become_child(self) -> ChildFds:
         """
-        Close file descriptors owned by pycloner.
+        Close file descriptors owned by pyspawner.
 
-        (clone() copied all these file descriptors, but pycloner and child
+        (clone() copied all these file descriptors, but pyspawner and child
         need to divvy them up and close the ones they don't own.
         """
         for fd in (
@@ -100,11 +100,11 @@ class CloneFds:
             self.stdin_r, self.stdout_w, self.stderr_w, self.is_namespace_ready_r
         )
 
-    def become_pycloner(self) -> PyclonerFds:
+    def become_pyspawner(self) -> PyspawnerFds:
         """
         Close file descriptors owned by the child.
 
-        (clone() copied all these file descriptors, but pycloner and child
+        (clone() copied all these file descriptors, but pyspawner and child
         need to divvy them up and close the ones they don't own.
         """
         for fd in (
@@ -114,7 +114,7 @@ class CloneFds:
             self.is_namespace_ready_r,
         ):
             os.close(fd)
-        return PyclonerFds(
+        return PyspawnerFds(
             self.stdin_w, self.stdout_r, self.stderr_r, self.is_namespace_ready_w
         )
 
@@ -158,10 +158,10 @@ class ChildStdFds:
         Close the original FDs.
 
         After this, `sys.stdin`, `sys.stdout` and `sys.stderr` will use our
-        new descriptors. there will be no way to access pycloner's file
+        new descriptors. there will be no way to access pyspawner's file
         descriptors (the original fds 0, 1 and 2) -- those will be closed.
         """
-        # Be careful: if we close stdin on pycloner, then os.pipe() may
+        # Be careful: if we close stdin on pyspawner, then os.pipe() may
         # reuse fd 0. Ditto stdout/stderr.
         #
         # This if-statement algorithm is compatible with any fd numbers (even
@@ -180,11 +180,11 @@ class ChildStdFds:
 
 
 @dataclass(frozen=True)
-class PyclonerFds:
+class PyspawnerFds:
     """
-    File descriptors owned by the pycloner process.
+    File descriptors owned by the pyspawner process.
 
-    The pycloner must call fds.signal_namespace_is_ready() to progress.
+    The pyspawner must call fds.signal_namespace_is_ready() to progress.
     """
 
     stdin_w: int
@@ -200,9 +200,9 @@ class PyclonerFds:
 @dataclass(frozen=True)
 class ParentFds:
     """
-    File descriptors pycloner must pass to the parent process.
+    File descriptors pyspawner must pass to the parent process.
 
-    After passing them, the pycloner must call fds.close() to progress.
+    After passing them, the pyspawner must call fds.close() to progress.
     """
 
     stdin_w: int

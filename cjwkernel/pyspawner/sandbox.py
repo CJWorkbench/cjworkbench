@@ -127,24 +127,24 @@ class SandboxConfig:
     """
 
 
-def sandbox_child_from_pycloner(child_pid: int, config: SandboxConfig) -> None:
+def sandbox_child_from_pyspawner(child_pid: int, config: SandboxConfig) -> None:
     """
-    Sandbox the child process from the pycloner side of things.
+    Sandbox the child process from the pyspawner side of things.
 
     The child must wait for this to complete before it embarks upon its own
     sandboxing adventure.
     """
     _write_namespace_uidgid(child_pid)
     if config.network is not None:
-        _setup_network_namespace_from_pycloner(config.network, child_pid)
+        _setup_network_namespace_from_pyspawner(config.network, child_pid)
 
 
 def sandbox_child_self(config: SandboxConfig) -> None:
     """
     Sandbox our own process.
 
-    This must not be called before pycloner finishes calling
-    sandbox_child_from_pycloner().
+    This must not be called before pyspawner finishes calling
+    sandbox_child_from_pyspawner().
     """
     _Sandbox(config).run()
 
@@ -174,8 +174,8 @@ class _Sandbox:
         tasks with rationale ('[x]' means, "unit-tested"):
 
         [x] bring up external network
-        [x] wait for pycloner to write uid_map
-        [x] close `sock` (so "pycloner" does not misbehave)
+        [x] wait for pyspawner to write uid_map
+        [x] close `sock` (so "pyspawner" does not misbehave)
         [x] drop capabilities (like cap_sys_admin)
         [x] set seccomp filter
         [x] setuid to 1000
@@ -210,7 +210,7 @@ def _write_namespace_uidgid(child_pid: int) -> None:
     Path(f"/proc/{child_pid}/gid_map").write_text("0 100000 65536")
 
 
-def _setup_network_namespace_from_pycloner(
+def _setup_network_namespace_from_pyspawner(
     config: NetworkConfig, child_pid: int
 ) -> None:
     """
@@ -287,7 +287,7 @@ def _chroot(root: Path) -> None:
 
 def _install_network(config: NetworkConfig) -> None:
     """
-    Set up networking, assuming pycloner passed us a network interface.
+    Set up networking, assuming pyspawner passed us a network interface.
 
     Set ip address of veth interface, then bring it up.
 
@@ -357,7 +357,7 @@ def _install_seccomp(bpf_bytes):
     use on prod.
 
     To maintain our whitelist, read `docker/seccomp/README.md`. The compiled
-    file, for x86-64, belongs in `cjwkernel/pycloner/sandbox-seccomp.bpf`.
+    file, for x86-64, belongs in `cjwkernel/pyspawner/sandbox-seccomp.bpf`.
 
     Requires `no_new_privs` sandbox (or CAP_SYS_ADMIN).
     """

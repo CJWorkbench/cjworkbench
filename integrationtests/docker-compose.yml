@@ -78,7 +78,7 @@ services:
     command: [ 'sh', '-c', '/app/cjwkernel/setup-sandboxes.sh all && exec ./manage.py fetcher' ]
     depends_on: [ 'db', 'rabbitmq', 'minio' ]
     security_opt:
-      - seccomp=docker/pycloner-seccomp-profile.json
+      - seccomp=docker/pyspawner-seccomp-profile.json
     privileged: true  # for setup-sandboxes.sh
     environment: *common_env
 
@@ -88,7 +88,7 @@ services:
     command: [ 'sh', '-c', '/app/cjwkernel/setup-sandboxes.sh all && exec ./manage.py renderer' ]
     depends_on: [ 'db', 'rabbitmq', 'minio' ]
     security_opt:
-      - seccomp=docker/pycloner-seccomp-profile.json
+      - seccomp=docker/pyspawner-seccomp-profile.json
     privileged: true  # for setup-sandboxes.sh
     environment: *common_env
     volumes:
@@ -107,7 +107,7 @@ services:
     command: [ 'sh', '-c', '/app/cjwkernel/setup-sandboxes.sh only-readonly && exec daphne -b 0.0.0.0 -p 8080 --application-close-timeout 180 cjworkbench.asgi:application' ]
     depends_on: [ 'db', 'rabbitmq', 'minio' ]
     security_opt:
-      - seccomp=docker/pycloner-seccomp-profile.json
+      - seccomp=docker/pyspawner-seccomp-profile.json
     privileged: true  # for setup-sandboxes.sh
     environment:
       <<: *common_env
