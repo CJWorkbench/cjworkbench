@@ -1,8 +1,14 @@
+"""
+Communications between parent and forkserver.
+
+We assume trust between these two processes. (The SpawnChild message is
+transmitted in Python's pickle format.)
+"""
 from __future__ import annotations
 import array
-from dataclasses import dataclass, replace
+from dataclasses import dataclass
 import pickle
-from typing import Any, List, Type, TypeVar
+from typing import Any, List
 from multiprocessing.reduction import sendfds, recvfds
 import socket
 from .sandbox import NetworkConfig, SandboxConfig
@@ -11,21 +17,58 @@ from .sandbox import NetworkConfig, SandboxConfig
 __all__ = ["NetworkConfig", "SandboxConfig", "SpawnChild", "SpawnedChild"]
 
 
-_MessageType = TypeVar("T", bound="Message")
-
-
 class Message:
+    def send_on_socket(self, sock: socket.socket):
+        raise NotImplementedError
+
+    @classmethod
+    def recv_on_socket(cls, sock: socket.socket):
+        raise NotImplementedError
+
+
+def _send_i(sock: socket.socket, i: int) -> None:
+    sock.sendall(array.array("i", [i]).tobytes())
+
+
+def _recv_i(sock: socket.socket) -> int:
+    arr = array.array("i")
+    blob = sock.recv(arr.itemsize)
+    if blob == b"":
+        raise EOFError
+    if len(blob) != arr.itemsize:
+        raise RuntimeError(
+            "recv() returned partial length integer. We do not handle this."
+        )
+    arr.frombytes(blob)
+    return arr[0]
+
+
+@dataclass(frozen=True)
+class SpawnChild:
+    """
+    Tell child to fork(), close this socket, and run child code.
+    """
+
+    process_name: str
+    """Process name to display in 'ps' and server logs."""
+
+    args: List[Any]
+    """Arguments to pass to `child_main(*args)`."""
+
+    sandbox_config: SandboxConfig
+    """Restrictions to place on the child's abilities."""
+
     def send_on_socket(self, sock: socket.socket) -> None:
         """
         Write this message to a UNIX socket.
         """
         blob = pickle.dumps(self)
         # Send length and then bytes
-        sock.sendall(array.array("i", [len(blob)]).tobytes())
+        _send_i(sock, len(blob))
         sock.sendall(blob)
 
     @classmethod
-    def recv_on_socket(cls: Type[_MessageType], sock: socket.socket) -> _MessageType:
+    def recv_on_socket(cls, sock: socket.socket) -> SpawnChild:
         """
         Read a message of this type from a UNIX socket.
 
@@ -33,16 +76,7 @@ class Message:
 
         Raise EOFError if the socket is closed mid-read.
         """
-        len_array = array.array("i")
-        len_blob = sock.recv(len_array.itemsize)
-        if len_blob == b"":
-            raise EOFError
-        if len(len_blob) != len_array.itemsize:
-            raise RuntimeError(
-                "recv() returned partial length integer. We do not handle this."
-            )
-        len_array.frombytes(len_blob)
-        n_bytes_to_read = len_array[0]
+        n_bytes_to_read = _recv_i(sock)
 
         # there's no sock.recvall(). https://bugs.python.org/issue1103213
         blobs = []
@@ -63,32 +97,8 @@ class Message:
         return retval
 
 
-class MessageToChild(Message):
-    pass
-
-
-class MessageToParent(Message):
-    pass
-
-
 @dataclass(frozen=True)
-class SpawnChild(MessageToChild):
-    """
-    Tell child to fork(), close this socket, and run child code.
-    """
-
-    process_name: str
-    """Process name to display in 'ps' and server logs."""
-
-    args: List[Any]
-    """Arguments to pass to `child_main(*args)`."""
-
-    sandbox_config: SandboxConfig
-    """Restrictions to place on the child's abilities."""
-
-
-@dataclass(frozen=True)
-class SpawnedChild(MessageToParent):
+class SpawnedChild(Message):
     """
     Respond to SpawnChild with a child process's information.
     """
@@ -104,12 +114,12 @@ class SpawnedChild(MessageToParent):
         Write this message to a UNIX socket.
 
         As this message includes file descriptors, the recipient will need to
-        receive different integers than the sender sends. First we send the
-        sender's view of `self` using `pickle`; then we send the file
+        receive different integers than the sender sends. We send file
         descriptors using `sock.sendmsg()`.
         """
 
-        super().send_on_socket(sock)
+        # Send PID
+        _send_i(sock, self.pid)
         # Now send the file descriptors.
         # https://docs.python.org/3/library/socket.html#socket.socket.sendmsg
         #
@@ -120,8 +130,6 @@ class SpawnedChild(MessageToParent):
     # override
     @classmethod
     def recv_on_socket(cls, sock: socket.socket) -> SpawnedChild:
-        raw_message = super().recv_on_socket(sock)
+        pid = _recv_i(sock)
         stdin_fd, stdout_fd, stderr_fd = recvfds(sock, 3)
-        return replace(
-            raw_message, stdin_fd=stdin_fd, stdout_fd=stdout_fd, stderr_fd=stderr_fd
-        )
+        return cls(pid, stdin_fd, stdout_fd, stderr_fd)
