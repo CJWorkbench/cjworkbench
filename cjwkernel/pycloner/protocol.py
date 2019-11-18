@@ -49,11 +49,11 @@ class SpawnChild:
     Tell child to fork(), close this socket, and run child code.
     """
 
-    process_name: str
-    """Process name to display in 'ps' and server logs."""
-
     args: List[Any]
     """Arguments to pass to `child_main(*args)`."""
+
+    process_name: Optional[str]
+    """Process name to display in 'ps' and server logs."""
 
     sandbox_config: SandboxConfig
     """Restrictions to place on the child's abilities."""

@@ -12,7 +12,7 @@ import thrift.protocol.TBinaryProtocol
 import thrift.transport.TTransport
 from cjwkernel.chroot import ChrootContext, READONLY_CHROOT_CONTEXT
 from cjwkernel.errors import ModuleCompileError, ModuleTimeoutError, ModuleExitedError
-from cjwkernel.pycloner import Pycloner
+from cjwkernel import pycloner
 from cjwkernel.pycloner.protocol import NetworkConfig, SandboxConfig
 from cjwkernel.thrift import ttypes
 from cjwkernel.types import (
@@ -139,7 +139,7 @@ class Kernel:
         self.migrate_params_timeout = migrate_params_timeout
         self.fetch_timeout = fetch_timeout
         self.render_timeout = render_timeout
-        self._pycloner = Pycloner(
+        self._pycloner = pycloner.Client(
             child_main="cjwkernel.pandas.main.main",
             environment={
                 # SECURITY: children inherit these values
@@ -403,8 +403,8 @@ class Kernel:
         limit_time = time.time() + timeout
 
         module_process = self._pycloner.spawn_child(
-            process_name=compiled_module.module_slug,
             args=[compiled_module, function, args],
+            process_name=compiled_module.module_slug,
             sandbox_config=SandboxConfig(
                 chroot_dir=chroot_context.chroot.root, network=network_config
             ),

@@ -9,8 +9,7 @@ from textwrap import dedent
 from typing import Any, ContextManager, FrozenSet, List, Optional, Tuple
 import unittest
 from cjwkernel.chroot import EDITABLE_CHROOT
-from cjwkernel import pycloner
-from cjwkernel.pycloner import protocol
+from cjwkernel import pycloner  # test the public API
 from cjwkernel.util import tempfile_context
 
 
@@ -25,12 +24,12 @@ def child_main(indented_code: str) -> None:
 
 @contextlib.contextmanager
 def _spawned_child_context(
-    server: pycloner.Pycloner,
+    server: pycloner.Client,
     args: List[Any] = [],
-    sandbox_config: protocol.SandboxConfig = protocol.SandboxConfig(),
+    sandbox_config: pycloner.SandboxConfig = pycloner.SandboxConfig(),
 ) -> ContextManager[pycloner.ChildProcess]:
     subprocess = server.spawn_child(
-        "pycloner-test", args, sandbox_config=sandbox_config
+        args, process_name="pycloner-test", sandbox_config=sandbox_config
     )
     try:
         yield subprocess
@@ -56,7 +55,7 @@ def _spawned_child_context(
 class PyclonerTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls._pycloner = pycloner.Pycloner(
+        cls._pycloner = pycloner.Client(
             child_main="cjwkernel.tests.pycloner.test_init.child_main",
             environment={"LC_CTYPE": "C.UTF-8", "TEST_ENV": "yes"},
         )
@@ -80,7 +79,7 @@ class PyclonerTest(unittest.TestCase):
         indented_code: str,
         stdin: bytes = b"",
         chroot_dir: Optional[Path] = None,
-        network_config: Optional[protocol.NetworkConfig] = None,
+        network_config: Optional[pycloner.NetworkConfig] = None,
         skip_sandbox_except: FrozenSet[str] = frozenset(),
     ) -> Tuple[int, bytes, bytes]:
         """
@@ -91,7 +90,7 @@ class PyclonerTest(unittest.TestCase):
         with _spawned_child_context(
             self._pycloner,
             args=[indented_code],
-            sandbox_config=protocol.SandboxConfig(
+            sandbox_config=pycloner.SandboxConfig(
                 chroot_dir=chroot_dir,
                 network=network_config,
                 skip_sandbox_except=skip_sandbox_except,
@@ -114,7 +113,7 @@ class PyclonerTest(unittest.TestCase):
         self,
         indented_code: str,
         chroot_dir: Optional[Path] = None,
-        network_config: Optional[protocol.NetworkConfig] = None,
+        network_config: Optional[pycloner.NetworkConfig] = None,
         skip_sandbox_except: FrozenSet[str] = frozenset(),
     ) -> None:
         """
@@ -214,7 +213,7 @@ class PyclonerTest(unittest.TestCase):
                     assert err.errno == errno.ECONNREFUSED
                 """
                 % (host_ip, port),
-                network_config=protocol.NetworkConfig(),
+                network_config=pycloner.NetworkConfig(),
             )
 
     def test_SECURITY_private_network_is_off_limits(self):
@@ -236,7 +235,7 @@ class PyclonerTest(unittest.TestCase):
                 assert err.errno == errno.ECONNREFUSED
             """
             % (postgres_ip, port),
-            network_config=protocol.NetworkConfig(),
+            network_config=pycloner.NetworkConfig(),
         )
 
     def test_SECURITY_network_none_means_no_networking(self):
@@ -265,7 +264,7 @@ class PyclonerTest(unittest.TestCase):
     #         socket.gethostbyname("example.com")  # don't crash
     #         """,
     #         chroot_dir=READONLY_CHROOT.root,  # for /etc/resolv.conf et al
-    #         network_config=protocol.NetworkConfig(),
+    #         network_config=pycloner.NetworkConfig(),
     #     )
     #
     # def test_network_external_ip(self):
@@ -276,7 +275,7 @@ class PyclonerTest(unittest.TestCase):
     #             s.settimeout(5)  # in case the test fails, fail fast
     #             s.connect(("1.1.1.1", 53))  # don't crash or timeout
     #         """,
-    #         network_config=protocol.NetworkConfig(),
+    #         network_config=pycloner.NetworkConfig(),
     #     )
 
     def test_SECURITY_no_capabilities(self):
