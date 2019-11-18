@@ -79,7 +79,7 @@ class Client:
     def __init__(
         self,
         *,
-        child_main: str = "cjwkernel.pandas.main.main",
+        child_main: str,
         environment: Dict[str, Any] = {},
         preload_imports: List[str] = [],
     ):
