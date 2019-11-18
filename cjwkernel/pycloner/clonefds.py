@@ -38,7 +38,7 @@ class CloneFds:
 
     Here's an illustration:
 
-        FORKSERVER:
+        PYCLONER:
             clone_fds = CloneFds.create()
             child_pid = clone() [spawning CHILD _and_ continuing]
             pycloner_fds = clone_fds.become_pycloner()
@@ -100,7 +100,7 @@ class CloneFds:
             self.stdin_r, self.stdout_w, self.stderr_w, self.is_namespace_ready_r
         )
 
-    def become_pycloner(self) -> ForkserverFds:
+    def become_pycloner(self) -> PyclonerFds:
         """
         Close file descriptors owned by the child.
 
@@ -114,7 +114,7 @@ class CloneFds:
             self.is_namespace_ready_r,
         ):
             os.close(fd)
-        return ForkserverFds(
+        return PyclonerFds(
             self.stdin_w, self.stdout_r, self.stderr_r, self.is_namespace_ready_w
         )
 
@@ -180,7 +180,7 @@ class ChildStdFds:
 
 
 @dataclass(frozen=True)
-class ForkserverFds:
+class PyclonerFds:
     """
     File descriptors owned by the pycloner process.
 

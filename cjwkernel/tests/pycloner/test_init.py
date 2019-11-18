@@ -25,7 +25,7 @@ def child_main(indented_code: str) -> None:
 
 @contextlib.contextmanager
 def _spawned_child_context(
-    server: pycloner.Forkserver,
+    server: pycloner.Pycloner,
     args: List[Any] = [],
     sandbox_config: protocol.SandboxConfig = protocol.SandboxConfig(),
 ) -> ContextManager[pycloner.ChildProcess]:
@@ -53,10 +53,10 @@ def _spawned_child_context(
             pass
 
 
-class ForkserverTest(unittest.TestCase):
+class PyclonerTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls._pycloner = pycloner.Forkserver(
+        cls._pycloner = pycloner.Pycloner(
             child_main="cjwkernel.tests.pycloner.test_init.child_main",
             environment={"LC_CTYPE": "C.UTF-8", "TEST_ENV": "yes"},
         )

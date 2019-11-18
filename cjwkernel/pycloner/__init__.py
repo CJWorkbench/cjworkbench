@@ -34,7 +34,7 @@ def _encode_module_name_list(l: List[str]) -> str:
     return ",".join(l)
 
 
-class Forkserver:
+class Pycloner:
     """
     Launch Python quickly, sharing most memory pages.
 
@@ -59,7 +59,7 @@ class Forkserver:
       subprocess-management routines override the signal handler.
     * Thread-safe: multiple threads may spawn multiple children, and they may
       all run concurrently (unless child code writes files or uses networking).
-    * No `multiprocessing.context`. This Forkserver is the context.
+    * No `multiprocessing.context`. This Pycloner is the context.
     * No `Connection` (or other high-level constructs).
     * The caller interacts with the pycloner process via _unnamed_ AF_UNIX
       socket, rather than a named socket. (`multiprocessing` writes a pipe
