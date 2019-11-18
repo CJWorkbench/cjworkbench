@@ -106,8 +106,10 @@ case "$COMMAND" in
 
   "extract-messages")
     docker_compose_with_commands run --rm -e PYTHONPATH=. pydev pipenv run python cjworkbench/i18n/catalogs/merge.py prepare
-
-    docker_compose run --rm webpack npm run extract -- --clean
+    
+    # We use `--clean` so that the resulting `message.po` files only have the js translations 
+    # We use `--overwrite` so that new default messages will be written to the `message.po` of the source locale 
+    docker_compose run --rm webpack npm run extract -- --clean --overwrite
 
     # linguijs creates files we don't want. Why does it leave them behind?
     # dunno. Clean up after it.
