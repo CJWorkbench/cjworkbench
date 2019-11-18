@@ -13,7 +13,7 @@ import thrift.transport.TTransport
 from cjwkernel.chroot import ChrootContext, READONLY_CHROOT_CONTEXT
 from cjwkernel.errors import ModuleCompileError, ModuleTimeoutError, ModuleExitedError
 from cjwkernel.forkserver import Forkserver
-from cjwkernel.forkserver.protocol import NetworkConfig
+from cjwkernel.forkserver.protocol import NetworkConfig, SandboxConfig
 from cjwkernel.thrift import ttypes
 from cjwkernel.types import (
     ArrowTable,
@@ -404,9 +404,10 @@ class Kernel:
 
         module_process = self._forkserver.spawn_child(
             process_name=compiled_module.module_slug,
-            chroot_dir=chroot_context.chroot.root,
-            network_config=network_config,
             args=[compiled_module, function, args],
+            sandbox_config=SandboxConfig(
+                chroot_dir=chroot_context.chroot.root, network=network_config
+            ),
         )
 
         # stdout is Thrift package; stderr is logs

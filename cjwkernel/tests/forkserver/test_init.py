@@ -27,16 +27,10 @@ def child_main(indented_code: str) -> None:
 def _spawned_child_context(
     server: forkserver.Forkserver,
     args: List[Any] = [],
-    chroot_dir: Optional[Path] = None,
-    network_config: Optional[protocol.NetworkConfig] = None,
-    skip_sandbox_except: FrozenSet[str] = frozenset(),
+    sandbox_config: protocol.SandboxConfig = protocol.SandboxConfig(),
 ) -> ContextManager[forkserver.ChildProcess]:
     subprocess = server.spawn_child(
-        "forkserver-test",
-        args,
-        chroot_dir=chroot_dir,
-        network_config=network_config,
-        skip_sandbox_except=skip_sandbox_except,
+        "forkserver-test", args, sandbox_config=sandbox_config
     )
     try:
         yield subprocess
@@ -97,9 +91,11 @@ class ForkserverTest(unittest.TestCase):
         with _spawned_child_context(
             self._forkserver,
             args=[indented_code],
-            chroot_dir=chroot_dir,
-            network_config=network_config,
-            skip_sandbox_except=skip_sandbox_except,
+            sandbox_config=protocol.SandboxConfig(
+                chroot_dir=chroot_dir,
+                network=network_config,
+                skip_sandbox_except=skip_sandbox_except,
+            ),
         ) as subprocess:
             subprocess.stdin.write(stdin)
             subprocess.stdin.close()

@@ -1,12 +1,11 @@
 from dataclasses import dataclass
 import logging
 import os
-from pathlib import Path
 import socket
 import subprocess
 import sys
 import threading
-from typing import Any, BinaryIO, Dict, FrozenSet, List, Optional, Tuple
+from typing import Any, BinaryIO, Dict, List, Tuple
 from . import protocol
 
 
@@ -103,9 +102,7 @@ class Forkserver:
         process_name: str,
         args: List[Any],
         *,
-        chroot_dir: Optional[Path] = None,
-        network_config: Optional[protocol.NetworkConfig] = None,
-        skip_sandbox_except: FrozenSet[str] = frozenset(),
+        sandbox_config: protocol.SandboxConfig,
     ) -> ChildProcess:
         """
         Make our server spawn a process, and return it.
@@ -127,11 +124,7 @@ class Forkserver:
         only for unit tests. See `protocol.SpawnChild` for details.
         """
         message = protocol.SpawnChild(
-            process_name=process_name,
-            args=args,
-            chroot_dir=chroot_dir,
-            network_config=network_config,
-            skip_sandbox_except=skip_sandbox_except,
+            process_name=process_name, args=args, sandbox_config=sandbox_config
         )
         with self._lock:
             message.send_on_socket(self._socket)
