@@ -54,10 +54,10 @@ services:
     command: [ 'sh', '-c', '/app/cjwkernel/setup-sandboxes.sh all && sleep 10 && exec ./manage.py test -v2' ]
     depends_on: [ 'testdb', 'testrabbitmq', 'testminio', 'addminiouser' ]
     security_opt:
-      - seccomp=docker/forkserver-seccomp-profile.json
+      - seccomp=docker/pycloner-seccomp-profile.json
     cap_add:
       - SYS_ADMIN # for /app/cjwkernel/setup-sandboxes.sh (on k8s we use an init container instead)
-      - NET_ADMIN # for forkserver to create new network namespace without access to private network
+      - NET_ADMIN # for pycloner to create new network namespace without access to private network
     # WHY privileged? Woe is we! SYS_ADMIN and special seccomp aren't enough to
     # make /app/cjwkernel/setup-sandboxes.sh work on Cloud Build servers. But
     # [2019-11-06, adamhooper] they work on my machine. The big difference

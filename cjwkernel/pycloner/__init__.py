@@ -42,11 +42,11 @@ class Forkserver:
     soon as a child starts running we can't trust it. Starting Python with lots
     of imports like Pyarrow+Pandas can take ~2s and cost ~100MB RAM.
 
-    The solution: start up a mini-server, the "forkserver", which preloads
+    The solution: start up a mini-server, the "pycloner", which preloads
     Python modules. clone() each time we need a subprocess. clone() is
     near-instantaneous. Beware: since clone() copies all memory, the
-    "forkserver" shouldn't load anything sensitive before clone(). (No Django:
-    it reads secrets!). Also, the "forkserver"'s child should close everything
+    "pycloner" shouldn't load anything sensitive before clone(). (No Django:
+    it reads secrets!). Also, the "pycloner"'s child should close everything
     children before executing user code so it can't fiddle with the control
     socket.
 
@@ -54,14 +54,14 @@ class Forkserver:
 
     * Children are not managed. It's up to the caller to kill and wait for the
       process. Children are direct children of the _caller_, not of the
-      forkserver. (We use CLONE_PARENT.)
+      pycloner. (We use CLONE_PARENT.)
     * asyncio-safe: we don't listen for SIGCHLD, because asyncio's
       subprocess-management routines override the signal handler.
     * Thread-safe: multiple threads may spawn multiple children, and they may
       all run concurrently (unless child code writes files or uses networking).
-    * No `multiprocessing.context`. This forkserver is the context.
+    * No `multiprocessing.context`. This Forkserver is the context.
     * No `Connection` (or other high-level constructs).
-    * The caller interacts with the forkserver process via _unnamed_ AF_UNIX
+    * The caller interacts with the pycloner process via _unnamed_ AF_UNIX
       socket, rather than a named socket. (`multiprocessing` writes a pipe
       to /tmp.) No messing with hmac. Instead, we mess with locks. ("Aren't
       locks worse?" -- [2019-09-30, adamhooper] probably not, because clone()
@@ -85,7 +85,7 @@ class Forkserver:
                 sys.executable,
                 "-u",  # PYTHONUNBUFFERED: parents read children's data sooner
                 "-c",
-                'import cjwkernel.forkserver.main; cjwkernel.forkserver.main.forkserver_main("%s", "%s", %d)'
+                'import cjwkernel.pycloner.main; cjwkernel.pycloner.main.pycloner_main("%s", "%s", %d)'
                 % (
                     child_main,
                     _encode_module_name_list(preload_imports),
@@ -152,10 +152,10 @@ class Forkserver:
 
     def close(self) -> None:
         """
-        Kill the forkserver.
+        Kill the pycloner.
 
         Spawned processes continue to run -- they are entirely disconnected
-        from their forkserver.
+        from their pycloner.
         """
         with self._lock:
             if not self._closed:

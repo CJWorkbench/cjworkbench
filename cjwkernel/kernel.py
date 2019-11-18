@@ -12,8 +12,8 @@ import thrift.protocol.TBinaryProtocol
 import thrift.transport.TTransport
 from cjwkernel.chroot import ChrootContext, READONLY_CHROOT_CONTEXT
 from cjwkernel.errors import ModuleCompileError, ModuleTimeoutError, ModuleExitedError
-from cjwkernel.forkserver import Forkserver
-from cjwkernel.forkserver.protocol import NetworkConfig, SandboxConfig
+from cjwkernel.pycloner import Forkserver
+from cjwkernel.pycloner.protocol import NetworkConfig, SandboxConfig
 from cjwkernel.thrift import ttypes
 from cjwkernel.types import (
     ArrowTable,
@@ -117,7 +117,7 @@ class Kernel:
     the entire process must be killed: otherwise, the module may leak one
     workflow's data into another workflow (intentionally or not).
 
-    The solution: "forkserver". One "forkserver" process loads 100MB of Python
+    The solution: "pycloner". One "pycloner" process loads 100MB of Python
     deps and then idles. The "compile" method compiles a user's module, then
     forks and evaluates it in a child process to ensure sanity. The
     "migrate_params", "render" and "fetch" methods fork, evaluate the user's
@@ -139,7 +139,7 @@ class Kernel:
         self.migrate_params_timeout = migrate_params_timeout
         self.fetch_timeout = fetch_timeout
         self.render_timeout = render_timeout
-        self._forkserver = Forkserver(
+        self._pycloner = Forkserver(
             child_main="cjwkernel.pandas.main.main",
             environment={
                 # SECURITY: children inherit these values
@@ -233,7 +233,7 @@ class Kernel:
         )
 
     def __del__(self):
-        self._forkserver.close()
+        self._pycloner.close()
 
     def compile(self, path: Path, module_slug: str) -> CompiledModule:
         """
@@ -402,7 +402,7 @@ class Kernel:
         """
         limit_time = time.time() + timeout
 
-        module_process = self._forkserver.spawn_child(
+        module_process = self._pycloner.spawn_child(
             process_name=compiled_module.module_slug,
             args=[compiled_module, function, args],
             sandbox_config=SandboxConfig(

@@ -6,20 +6,20 @@ import os
 @dataclass(frozen=True)
 class CloneFds:
     """
-    File descriptors cloned by forkserver into child during spawn.
+    File descriptors cloned by pycloner into child during spawn.
 
     These are a sequence of read/write pairs. Here's how they're all used.
-    (Glossary: here, "parent" is forkserver's parent; "forkserver" is the main
+    (Glossary: here, "parent" is pycloner's parent; "pycloner" is the main
     process; and "child" is a newly-spawned child. We only spawn once at a
     time.)
 
-        * stdin: the child process's stdin. forkserver sends `stdin_w` to
+        * stdin: the child process's stdin. pycloner sends `stdin_w` to
                  parent. child moves `stdin_r` to become fd 0.
-        * stdout: the child process's stdout. forkserver sends `stdout_r` to
+        * stdout: the child process's stdout. pycloner sends `stdout_r` to
                   parent. child moves `stdout_r` to become fd 1.
-        * stderr: the child process's stderr. forkserver sends `stderr_r` to
+        * stderr: the child process's stderr. pycloner sends `stderr_r` to
                   parent. child moves `stderr_r` to become fd 1.
-        * is_namespace_ready: a simple semaphore. forkserver closes
+        * is_namespace_ready: a simple semaphore. pycloner closes
                               `is_namespace_ready_w` when it's finished with
                               bookkeeping. child waits for
                               `is_namespare_ready_r` to be closed before
@@ -29,11 +29,11 @@ class CloneFds:
     our contract with child code. (stdin_r, stdout_w and stderr_w should be
     dup2()d to fds 0, 1 and 2 first.)
 
-    SANITY: all these file descriptors must be closed in forkserver: otherwise,
+    SANITY: all these file descriptors must be closed in pycloner: otherwise,
     they will leak to future children.
 
     To be abundantly clear: these file descriptors are all opened once. Then
-    there's a clone() call. They must be closed *twice*: once by forkserver,
+    there's a clone() call. They must be closed *twice*: once by pycloner,
     once by the child.
 
     Here's an illustration:
@@ -41,9 +41,9 @@ class CloneFds:
         FORKSERVER:
             clone_fds = CloneFds.create()
             child_pid = clone() [spawning CHILD _and_ continuing]
-            forkserver_fds = clone_fds.become_forkserver()
+            pycloner_fds = clone_fds.become_pycloner()
             prepare_namespace_for_child(child_pid)
-            parent_fds = forkserver_fds.signal_namespace_is_ready()
+            parent_fds = pycloner_fds.signal_namespace_is_ready()
             send_fds_to_parent(parent_fds)
             parent_fds.close()
             # Now all the fds are closed
@@ -84,9 +84,9 @@ class CloneFds:
 
     def become_child(self) -> ChildFds:
         """
-        Close file descriptors owned by forkserver.
+        Close file descriptors owned by pycloner.
 
-        (clone() copied all these file descriptors, but forkserver and child
+        (clone() copied all these file descriptors, but pycloner and child
         need to divvy them up and close the ones they don't own.
         """
         for fd in (
@@ -100,11 +100,11 @@ class CloneFds:
             self.stdin_r, self.stdout_w, self.stderr_w, self.is_namespace_ready_r
         )
 
-    def become_forkserver(self) -> ForkserverFds:
+    def become_pycloner(self) -> ForkserverFds:
         """
         Close file descriptors owned by the child.
 
-        (clone() copied all these file descriptors, but forkserver and child
+        (clone() copied all these file descriptors, but pycloner and child
         need to divvy them up and close the ones they don't own.
         """
         for fd in (
@@ -158,13 +158,13 @@ class ChildStdFds:
         Close the original FDs.
 
         After this, `sys.stdin`, `sys.stdout` and `sys.stderr` will use our
-        new descriptors. there will be no way to access forkserver's file
+        new descriptors. there will be no way to access pycloner's file
         descriptors (the original fds 0, 1 and 2) -- those will be closed.
         """
-        # Be careful: if we close stdin on forkserver, then os.pipe() may
+        # Be careful: if we close stdin on pycloner, then os.pipe() may
         # reuse fd 0. Ditto stdout/stderr.
         #
-        # Our if-statement algorithm is compatible with any fd numbers (even
+        # This if-statement algorithm is compatible with any fd numbers (even
         # 0, 1 and 2) ... so long as stdin_r < stdout_w < stderr_w.
         assert self.stdin_r < self.stdout_w
         assert self.stdout_w < self.stderr_w
@@ -182,9 +182,9 @@ class ChildStdFds:
 @dataclass(frozen=True)
 class ForkserverFds:
     """
-    File descriptors owned by the forkserver process.
+    File descriptors owned by the pycloner process.
 
-    The forkserver must call fds.signal_namespace_is_ready() to progress.
+    The pycloner must call fds.signal_namespace_is_ready() to progress.
     """
 
     stdin_w: int
@@ -200,9 +200,9 @@ class ForkserverFds:
 @dataclass(frozen=True)
 class ParentFds:
     """
-    File descriptors forkserver must pass to the parent process.
+    File descriptors pycloner must pass to the parent process.
 
-    After passing them, the forkserver must call fds.close() to progress.
+    After passing them, the pycloner must call fds.close() to progress.
     """
 
     stdin_w: int

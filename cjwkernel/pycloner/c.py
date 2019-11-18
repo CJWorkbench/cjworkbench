@@ -139,7 +139,7 @@ def libc_clone(run_child: Callable[[], None]) -> int:
 
     The caller gets no control over the clone() flags. They are:
 
-        * CLONE_PARENT -- parent, not forkserver, owns the subprocess.
+        * CLONE_PARENT -- parent, not pycloner, owns the subprocess.
         * CLONE_NEWNS -- new mount namespace
         * CLONE_NEWCGROUP -- new cgroup
         * CLONE_NEWUTS -- new UTS (hostname) namespace

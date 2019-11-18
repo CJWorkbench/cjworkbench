@@ -207,7 +207,7 @@ class KernelTests(unittest.TestCase):
         self.assertEquals(cm.exception.exit_code, 1)  # Python exit code
         self.assertRegex(cm.exception.log, r"\bRuntimeError\b")
         self.assertRegex(cm.exception.log, r"\bfail\b")
-        # Regression test: [2019-10-02], the "forkserver_main()->spawn_child()"
+        # Regression test: [2019-10-02], the "pycloner_main()->spawn_child()"
         # process would raise _another_ exception while exiting. It would try to
         # close an already-closed socket.
         self.assertNotRegex(cm.exception.log, r"Bad file descriptor")

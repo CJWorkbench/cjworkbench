@@ -21,7 +21,7 @@ DEFAULT_PROFILE_URL = (
     "https://raw.githubusercontent.com/moby/moby/master/profiles/seccomp/default.json"
 )
 
-CUSTOM_PROFILE_PATH = "docker/forkserver-seccomp-profile.json"
+CUSTOM_PROFILE_PATH = "docker/pycloner-seccomp-profile.json"
 
 
 def generate_profile() -> str:
@@ -33,7 +33,7 @@ def generate_profile() -> str:
             "names": ["clone"],
             "action": "SCMP_ACT_ALLOW",
             "args": [],
-            "comment": "So cjwkernel.forkserver can sandbox child_main()",
+            "comment": "So pycloner can sandbox child_main()",
             "includes": {},
             "excludes": {},
         }

@@ -14,7 +14,7 @@ FROM python:3.7.4-slim-buster AS pybase
 #        of our Python deps shells to it
 #
 # We do want:
-# libcap2: used by forkserver (via ctypes) to drop capabilities
+# libcap2: used by pycloner (via ctypes) to drop capabilities
 # iproute2: used by setup-sandboxes.sh to find our IP for NAT
 # iptables: used by setup-sandboxes.sh to set up NAT and firewall
 RUN mkdir -p /usr/share/man/man1 /usr/share/man/man7 \

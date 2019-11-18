@@ -15,7 +15,7 @@ spec:
         # setup-sandboxes.sh needs special privileges; run it in an init container.
         #
         # We run this command separately because it runs with privileged: true.
-        # (forkserver shouldn't have permission to fiddle with the mount
+        # (pycloner shouldn't have permission to fiddle with the mount
         # namespace, lest malicious code use that permission to somehow escape
         # its sandbox.)
         #

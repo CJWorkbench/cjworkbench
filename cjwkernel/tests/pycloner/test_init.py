@@ -9,8 +9,8 @@ from textwrap import dedent
 from typing import Any, ContextManager, FrozenSet, List, Optional, Tuple
 import unittest
 from cjwkernel.chroot import EDITABLE_CHROOT
-from cjwkernel import forkserver
-from cjwkernel.forkserver import protocol
+from cjwkernel import pycloner
+from cjwkernel.pycloner import protocol
 from cjwkernel.util import tempfile_context
 
 
@@ -25,12 +25,12 @@ def child_main(indented_code: str) -> None:
 
 @contextlib.contextmanager
 def _spawned_child_context(
-    server: forkserver.Forkserver,
+    server: pycloner.Forkserver,
     args: List[Any] = [],
     sandbox_config: protocol.SandboxConfig = protocol.SandboxConfig(),
-) -> ContextManager[forkserver.ChildProcess]:
+) -> ContextManager[pycloner.ChildProcess]:
     subprocess = server.spawn_child(
-        "forkserver-test", args, sandbox_config=sandbox_config
+        "pycloner-test", args, sandbox_config=sandbox_config
     )
     try:
         yield subprocess
@@ -56,19 +56,19 @@ def _spawned_child_context(
 class ForkserverTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls._forkserver = forkserver.Forkserver(
-            child_main="cjwkernel.tests.forkserver.test_init.child_main",
+        cls._pycloner = pycloner.Forkserver(
+            child_main="cjwkernel.tests.pycloner.test_init.child_main",
             environment={"LC_CTYPE": "C.UTF-8", "TEST_ENV": "yes"},
         )
 
     @classmethod
     def tearDownClass(cls):
-        cls._forkserver.close()
-        del cls._forkserver
+        cls._pycloner.close()
+        del cls._pycloner
 
     def setUp(self):
         super().setUp()
-        self.chroot_dir = Path(tempfile.mkdtemp(prefix="forkserver-test-chroot-"))
+        self.chroot_dir = Path(tempfile.mkdtemp(prefix="pycloner-test-chroot-"))
         self.chroot_dir.chmod(0o777)  # so subprocesses can play in their chroots
 
     def tearDown(self):
@@ -89,7 +89,7 @@ class ForkserverTest(unittest.TestCase):
         This will never error.
         """
         with _spawned_child_context(
-            self._forkserver,
+            self._pycloner,
             args=[indented_code],
             sandbox_config=protocol.SandboxConfig(
                 chroot_dir=chroot_dir,

@@ -4,24 +4,24 @@ import socket
 import traceback
 from typing import Callable, Optional
 from . import c, clonefds, protocol
-from .sandbox import sandbox_child_from_forkserver, sandbox_child_self
+from .sandbox import sandbox_child_from_pycloner, sandbox_child_self
 
 
 # GLOBAL VARIABLES
 #
-# SECURITY: _any_ variable in "forkserver" is accessible to a child it spawns.
+# SECURITY: _any_ variable in "pycloner" is accessible to a child it spawns.
 # `del` will not delete the data.
 #
-# Our calling convention is: "forkserver uses global variables; child can see
+# Our calling convention is: "pycloner uses global variables; child can see
 # them." Rationale: to a malicious child, all variables are global anyway.
-# "forkserver" should use very few variables, and they are all listed here.
+# "pycloner" should use very few variables, and they are all listed here.
 #
 # This data must all be harmless when in the hands of a malicious user. (For
 # instance: a closed file descriptor is harmless.)
 child_main: Optional[Callable[..., None]] = None
 """Function to call after sandboxing, with *message.args."""
 sock: Optional[socket.socket] = None
-"""Socket "forkserver" uses to communicate with its parent."""
+"""Socket "pycloner" uses to communicate with its parent."""
 message: Optional[protocol.SpawnChild] = None
 """Arguments passed to the spawned child."""
 clone_fds: Optional[clonefds.CloneFds] = None
@@ -50,7 +50,7 @@ def run_child() -> None:
 
     # Wait before sandboxing; and replace all our file descriptors.
     #
-    # Before this, messages to stdout/stderr go wherever forkserver's
+    # Before this, messages to stdout/stderr go wherever pycloner's
     # stdout/stderr go.
     #
     # After this, messages to stdout/stderr must be read by the parent process.
@@ -68,7 +68,7 @@ def run_child() -> None:
     # developer error, and it's best to show the developer the problem --
     # exactly what `stderr` is for. So we log exceptions to stderr. (This is
     # the stderr that the parent process must read, remember. We closed
-    # forkserver's stderr.)
+    # pycloner's stderr.)
     #
     # SECURITY: it's possible for a child to try and fiddle with the stack or
     # heap to execute anything in memory. (Think "goto"). child_main() might
@@ -96,7 +96,7 @@ def spawn_child(sock: socket.socket, message: protocol.SpawnChild) -> None:
     * "parent": the Python process that holds a ForkServer handle. It sent
                 `SpawnChild` on `sock` and expects a response of `SpawnedChild`
                 (with "child_pid").
-    * "forkserver": the forkserver_main() process. It called this function. It
+    * "pycloner": the pycloner_main() process. It called this function. It
                     has few file handles open -- by design. It spawns "child",
                     and sends "parent" the "child_pid" over `sock`.
     * "child": invokes `child_main()`.
@@ -108,16 +108,16 @@ def spawn_child(sock: socket.socket, message: protocol.SpawnChild) -> None:
 
     child_pid = c.libc_clone(run_child)
 
-    # Sandbox the child from the forkserver side of things. (To avoid races,
+    # Sandbox the child from the pycloner side of things. (To avoid races,
     # the child waits for us to close is_namespace_ready_write_fd before
     # continuing with its own sandboxing.)
     #
     # Do this sandboxing before returning the PID to the parent process.
     # Otherwise, the parent could kill the process before we're done sandboxing
     # it (and we'd need to recover from that race).
-    forkserver_fds = clone_fds.become_forkserver()
-    sandbox_child_from_forkserver(child_pid, message.sandbox_config)
-    parent_fds = forkserver_fds.signal_namespace_is_ready()
+    pycloner_fds = clone_fds.become_pycloner()
+    sandbox_child_from_pycloner(child_pid, message.sandbox_config)
+    parent_fds = pycloner_fds.signal_namespace_is_ready()
 
     # Send our lovely new process to the caller (parent process)
     spawned_child = protocol.SpawnedChild(
@@ -129,14 +129,14 @@ def spawn_child(sock: socket.socket, message: protocol.SpawnChild) -> None:
     clone_fds = None
 
 
-def forkserver_main(_child_main: str, preload_imports_str: str, socket_fd: int) -> None:
+def pycloner_main(_child_main: str, preload_imports_str: str, socket_fd: int) -> None:
     """
-    Start the forkserver.
+    Start the pycloner.
 
     The init protocol ("a" means "parent" [class ForkServer], "b" means,
-    "forkserver" [forkserver_main()]; "c" means, "child" [run_child()]):
+    "pycloner" [pycloner_main()]; "c" means, "child" [run_child()]):
 
-    1a. Parent invokes forkserver_main(), passing imports and AF_UNIX fd as
+    1a. Parent invokes pycloner_main(), passing imports and AF_UNIX fd as
         arguments.
     2b. Forkserver imports modules in its main (and only) thread.
     3b. Forkserver calls socket.fromfd(), establishing a socket connection. It
@@ -144,7 +144,7 @@ def forkserver_main(_child_main: str, preload_imports_str: str, socket_fd: int) 
     4a. Parent sends a message with spawn parameters.
     4b. Forkserver opens pipes for file descriptors, calls clone(), and sends
         a response to Parent with pid and (stdin, stdout, stderr) descriptors.
-    4c. Child waits for forkserver to close its file descriptors.
+    4c. Child waits for pycloner to close its file descriptors.
     5a. Parent receives PID and descriptors from Forkserver.
     5b. Forkserver closes its file descriptors and waits for parent again.
     5c. Child sandboxes itself and calls child code with stdin/stdout/stderr.
@@ -176,7 +176,7 @@ def forkserver_main(_child_main: str, preload_imports_str: str, socket_fd: int) 
     # closes the socket as a security precaution, so the finalizer would
     # crash.
     #
-    # (As a rule, forkserver shouldn't use try/finally or context managers.)
+    # (As a rule, pycloner shouldn't use try/finally or context managers.)
     global sock  # see GLOBAL VARIABLES comment
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM, fileno=socket_fd)
 

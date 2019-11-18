@@ -1,5 +1,5 @@
 """
-Communications between parent and forkserver.
+Communications between parent and pycloner.
 
 We assume trust between these two processes. (The SpawnChild message is
 transmitted in Python's pickle format.)
