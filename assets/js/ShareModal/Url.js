@@ -37,7 +37,7 @@ class Url extends React.PureComponent {
 
   renderSocialLinks = () => {
     const { url, i18n } = this.props
-    const workbenchMention = '@cjworkbench'
+    const workbenchMention = '@workbenchdata'
     const shareText = i18n._(
       /* i18n: The parameter will be a mention to workbench account (i.e. "@cjworkbench") */
       t('js.ShareModal.Url.socialLinks.shareText')`Check out this chart I made using ${workbenchMention}:`

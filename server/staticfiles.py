@@ -22,9 +22,9 @@ class LessonSupportDataFinder(BaseFinder):
 
     # override
     def list(self, ignore_patterns):
-        for path in self.root.glob("lessons/*/*.*"):
+        for path in self.root.glob("lessons/*/*/*.*"):
             if not matches_patterns(path.name, ignore_patterns):
                 yield str(path.relative_to(self.root)), self.storage
-        for path in self.root.glob("courses/*/*/*.*"):
+        for path in self.root.glob("courses/*/*/*/*.*"):
             if not matches_patterns(path.name, ignore_patterns):
                 yield str(path.relative_to(self.root)), self.storage

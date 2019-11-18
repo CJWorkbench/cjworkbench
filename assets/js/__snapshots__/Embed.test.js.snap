@@ -62,7 +62,7 @@ exports[`Embed Available workflow Renders the embed widget with the correct info
                 rel="noopener noreferrer"
                 target="_blank"
               >
-                Updated {0}
+                Updated {timeAgo}
               </a>
             </li>
           </ul>
@@ -124,7 +124,7 @@ exports[`Embed Unavailable workflow Renders the embed widget with the correct in
     <h1>
       <WithI18n
         defaults="This workflow is not available"
-        id="js.Embed.workflowNotAvailable"
+        id="js.Embed.workflowNotAvailable.title"
       />
     </h1>
   </div>
@@ -144,8 +144,9 @@ exports[`Embed Unavailable workflow Renders the embed widget with the correct in
     >
       <h1>
         <WithI18n
-          defaults="This workflow is not available"
-          id="js.Embed.workflowNotAvailable.footer"
+          defaults="WORKBENCH"
+          description="This should be all-caps for styling reasons"
+          id="js.Embed.workflowNotAvailable.footer.logo"
         />
       </h1>
     </div>

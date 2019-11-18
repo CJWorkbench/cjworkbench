@@ -14,26 +14,27 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.7.0\n"
 
-#: assets/js/Embed.js:94
+#: assets/js/Embed.js:99
 msgid "js.Embed.embedCode"
 msgstr ""
 
 #. This should be all-caps for styling reasons
-#: assets/js/Embed.js:93
+#: assets/js/Embed.js:98
 msgid "js.Embed.embedThisChart"
 msgstr ""
 
-#. The parameter will contain a time difference (i.e. something like '4h ago')
-#: assets/js/Embed.js:79
+#. {timeAgo} will contain a time difference (i.e. something like '4h ago')
+#: assets/js/Embed.js:84
 msgid "js.Embed.metadata.updated"
 msgstr ""
 
-#: assets/js/Embed.js:29
-msgid "js.Embed.workflowNotAvailable"
+#. This should be all-caps for styling reasons
+#: assets/js/Embed.js:37
+msgid "js.Embed.workflowNotAvailable.footer.logo"
 msgstr ""
 
-#: assets/js/Embed.js:36
-msgid "js.Embed.workflowNotAvailable.footer"
+#: assets/js/Embed.js:29
+msgid "js.Embed.workflowNotAvailable.title"
 msgstr ""
 
 #: assets/js/ErrorBoundary.js:23
@@ -83,31 +84,31 @@ msgstr ""
 msgid "js.ExportModal.type.JSON"
 msgstr ""
 
-#: assets/js/ImportModuleFromGitHub.js:122
+#: assets/js/ImportModuleFromGitHub.js:124
 msgid "js.ImportModuleFromGithub.footer.closeButton"
 msgstr ""
 
-#: assets/js/ImportModuleFromGitHub.js:96
+#: assets/js/ImportModuleFromGitHub.js:98
 msgid "js.ImportModuleFromGithub.footer.importButton"
 msgstr ""
 
-#: assets/js/ImportModuleFromGitHub.js:112
+#: assets/js/ImportModuleFromGitHub.js:114
 msgid "js.ImportModuleFromGithub.public.buildingModuleTutorialLink"
 msgstr ""
 
-#: assets/js/ImportModuleFromGitHub.js:108
+#: assets/js/ImportModuleFromGitHub.js:110
 msgid "js.ImportModuleFromGithub.public.header.title"
 msgstr ""
 
-#: assets/js/ImportModuleFromGitHub.js:85
+#: assets/js/ImportModuleFromGitHub.js:87
 msgid "js.ImportModuleFromGithub.staff.buildingModuleTutorialLink"
 msgstr ""
 
-#: assets/js/ImportModuleFromGitHub.js:65
+#: assets/js/ImportModuleFromGitHub.js:67
 msgid "js.ImportModuleFromGithub.staff.header.title"
 msgstr ""
 
-#: assets/js/ImportModuleFromGitHub.js:45
+#: assets/js/ImportModuleFromGitHub.js:47
 msgid "js.ImportModuleFromGithub.status.importedModule"
 msgstr ""
 
@@ -473,32 +474,32 @@ msgstr ""
 msgid "js.WorkflowEditor.wfmodule.wfModuleContextMenu.exportData"
 msgstr ""
 
-#. The parameter will contain something like '4h ago'
-#: assets/js/WorkflowNavBar.js:57
+#. {timeAgo} will contain something like '4h ago'
+#: assets/js/WorkflowNavBar.js:59
 msgid "js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.lastUpdated"
 msgstr ""
 
-#: assets/js/WorkflowNavBar.js:52
+#: assets/js/WorkflowNavBar.js:54
 msgid "js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.owner"
 msgstr ""
 
-#: assets/js/WorkflowNavBar.js:65
+#: assets/js/WorkflowNavBar.js:67
 msgid "js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.visibility.private"
 msgstr ""
 
-#: assets/js/WorkflowNavBar.js:65
+#: assets/js/WorkflowNavBar.js:67
 msgid "js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.visibility.public"
 msgstr ""
 
-#: assets/js/WorkflowNavBar.js:206
+#: assets/js/WorkflowNavBar.js:208
 msgid "js.WorkflowNavBar.duplicate.button"
 msgstr ""
 
-#: assets/js/WorkflowNavBar.js:208
+#: assets/js/WorkflowNavBar.js:210
 msgid "js.WorkflowNavBar.share.shareButton"
 msgstr ""
 
-#: assets/js/WorkflowNavBar.js:175
+#: assets/js/WorkflowNavBar.js:177
 msgid "js.WorkflowNavBar.signIn.accountLink"
 msgstr ""
 
@@ -564,20 +565,24 @@ msgstr ""
 msgid "js.Workflows.WorkflowLists.workflowsWillAppearHere"
 msgstr ""
 
-#: assets/js/Workflows/WorkflowMetadata.js:47
+#: assets/js/Workflows/WorkflowMetadata.js:50
 msgid "js.Workflows.WorkflowMetadata.changePrivacy.button"
 msgstr ""
 
+#: assets/js/Workflows/WorkflowMetadata.js:41
+msgid "js.Workflows.WorkflowMetadata.owner"
+msgstr ""
+
 #. The parameter will contain a time difference (i.e. something like '5h ago')
-#: assets/js/Workflows/WorkflowMetadata.js:57
+#: assets/js/Workflows/WorkflowMetadata.js:64
 msgid "js.Workflows.WorkflowMetadata.update"
 msgstr ""
 
-#: assets/js/Workflows/WorkflowMetadata.js:48
+#: assets/js/Workflows/WorkflowMetadata.js:54
 msgid "js.Workflows.WorkflowMetadata.visibility.private"
 msgstr ""
 
-#: assets/js/Workflows/WorkflowMetadata.js:48
+#: assets/js/Workflows/WorkflowMetadata.js:52
 msgid "js.Workflows.WorkflowMetadata.visibility.public"
 msgstr ""
 
@@ -1542,34 +1547,34 @@ msgid "py.forms.signup.lastName.placeholder"
 msgstr ""
 
 #: templates/account/login.html:4 templates/account/login.html:10
-msgid "py.account.login.title"
+msgid "py.templates.account.login.title"
 msgstr ""
 
 #: templates/account/login.html:43
-msgid "py.account.login.forgotPasswordPrompt"
+msgid "py.templates.account.login.forgotPasswordPrompt"
 msgstr ""
 
 #: templates/account/login.html:45
-msgid "py.account.login.submitButton"
+msgid "py.templates.account.login.submitButton"
 msgstr ""
 
 #: templates/account/signup.html:4
-msgid "py.account.signup.title"
+msgid "py.templates.account.signup.title"
 msgstr ""
 
 #: templates/account/signup.html:12
-msgid "py.account.signup.signIn"
+msgid "py.templates.account.signup.signIn"
 msgstr ""
 
 #: templates/account/signup.html:26
-msgid "py.account.signup.loginPrompt"
+msgid "py.templates.account.signup.loginPrompt"
 msgstr ""
 
 #: templates/account/email/password_reset_key_subject.txt:3
-msgid "py.account.email.password_reset_key_subject"
+msgid "py.templates.account.email.password_reset_key_subject"
 msgstr ""
 
 #: templates/notifications/new_data_version_subject.txt:3
-msgid "py.notifications.new_data_version_subject"
+msgid "py.templates.notifications.new_data_version_subject"
 msgstr ""
 

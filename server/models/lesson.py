@@ -9,6 +9,7 @@ import yaml
 from django.conf import settings
 import html5lib
 import jsonschema
+from itertools import groupby
 
 
 # Load and parse the spec that defines the format of the initial workflow JSON
@@ -30,8 +31,9 @@ def _build_inner_html(el: ElementTree, base_href: str) -> str:
 
         * It modifies img src starting with `./` to start with `{base_href}/`
         * It prepends STATIC_URL to img src
-        * It replaces `{{LESSON_FILES_URL}}` with `{base_href}`. (We assume
-          `base_href` has no reserved HTML characters.)
+        * It replaces `{{LESSON_FILES_URL}}` with
+          `{LESSON_FILES_URL}/{base_href}` (Assumes `base_href` has no reserved
+          HTML characters.)
 
     Params:
 
@@ -53,7 +55,7 @@ def _build_inner_html(el: ElementTree, base_href: str) -> str:
     close_tag_begin = outer_html.rindex("<")
     inner_html = outer_html[(open_tag_end + 1) : close_tag_begin]
     inner_html = inner_html.replace(
-        "{{LESSON_FILES_URL}}", settings.STATIC_URL + base_href
+        "{{LESSON_FILES_URL}}", f"{settings.LESSON_FILES_URL}/{base_href}"
     )
 
     return inner_html
@@ -111,7 +113,7 @@ class LessonSectionStep:
     "Test" JavaScript that determines whether the step is complete.
 
     When parsing HTML, LessonSectionStep will replace `{{LESSON_FILES_URL}}`
-    with the lesson's base URL. So you can write a test like:
+    with the lesson-files URL. So you can write a test like:
 
         return (
             workflow.tabs[0].wfModules[0].params.url
@@ -140,7 +142,7 @@ class LessonSectionStep:
                 "missing data-test attribute, which must be JavaScript"
             )
         test_js = test_js.replace(
-            "{{LESSON_FILES_URL}}", settings.STATIC_URL + base_href
+            "{{LESSON_FILES_URL}}", f"{settings.LESSON_FILES_URL}/{base_href}"
         )
 
         return cls(html, highlight, test_js)
@@ -219,6 +221,7 @@ class LessonParseError(Exception):
 class Lesson:
     course: Optional["Course"]
     slug: str
+    locale_id: str
     header: LessonHeader = LessonHeader()
     sections: List[LessonSection] = field(default_factory=list)
     footer: LessonFooter = LessonFooter()
@@ -231,18 +234,21 @@ class Lesson:
     @classmethod
     def load_from_path(cls, course: Optional["Course"], path: pathlib.Path) -> Lesson:
         slug = path.stem
+        locale_id = path.parent.stem
         html = path.read_text()
         try:
-            return cls.parse(course, slug, html)
+            return cls.parse(course, slug, locale_id, html)
         except LessonParseError as err:
             raise LessonParseError("In %s: %s" % (str(path), str(err)))
 
     @classmethod
-    def parse(cls, course: Optional["Course"], slug: str, html: str) -> Lesson:
+    def parse(
+        cls, course: Optional["Course"], slug: str, locale_id: str, html: str
+    ) -> Lesson:
         if course:
-            base_href = f"courses/{course.slug}/{slug}"
+            base_href = f"courses/{locale_id}/{course.slug}/{slug}"
         else:
-            base_href = f"lessons/{slug}"
+            base_href = f"lessons/{locale_id}/{slug}"
 
         parser = html5lib.HTMLParser(strict=True, namespaceHTMLElements=False)
         try:
@@ -280,6 +286,7 @@ class Lesson:
         return cls(
             course,
             slug,
+            locale_id,
             lesson_header,
             lesson_sections,
             lesson_footer,
@@ -292,12 +299,20 @@ class Lesson:
 
 AllLessons = [
     Lesson.load_from_path(None, path)
-    for path in ((pathlib.Path(__file__).parent.parent).glob("lessons/*.html"))
+    for path in ((pathlib.Path(__file__).parent.parent).glob("lessons/*/*.html"))
 ]
-AllLessons.sort(key=lambda lesson: lesson.header.title)
+AllLessonsByLocale = {
+    locale_id: sorted(lessons, key=lambda lesson: lesson.header.title)
+    for locale_id, lessons in groupby(
+        sorted(AllLessons, key=lambda lesson: lesson.locale_id),
+        lambda lesson: lesson.locale_id,
+    )
+}
 
-
-LessonLookup = dict((lesson.slug, lesson) for lesson in AllLessons)
+LessonLookup = dict(
+    (lesson.locale_id + "/" + lesson.slug, lesson) for lesson in AllLessons
+)
 # add "hidden" lessons to LessonLookup. They do not appear in AllLessons.
-for _path in (pathlib.Path(__file__).parent.parent).glob("lessons/hidden/*.html"):
-    LessonLookup[_path.stem] = Lesson.load_from_path(None, _path)
+for _path in (pathlib.Path(__file__).parent.parent).glob("lessons/hidden/*/*.html"):
+    lesson = Lesson.load_from_path(None, _path)
+    LessonLookup[lesson.locale_id + "/" + lesson.slug] = lesson

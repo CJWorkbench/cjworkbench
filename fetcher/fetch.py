@@ -9,10 +9,9 @@ from typing import Any, ContextManager, Dict, Optional, Tuple
 from django.conf import settings
 from django.db import DatabaseError, InterfaceError
 from django.utils import timezone
-from cjwkernel import parquet
+from cjwkernel.chroot import EDITABLE_CHROOT, ChrootContext
 from cjwkernel.errors import ModuleError, format_for_user_debugging
 from cjwkernel.types import FetchResult, I18nMessage, Params, RenderError, TableMetadata
-from cjwkernel.util import tempdir_context, tempfile_context
 from cjworkbench.sync import database_sync_to_async
 from cjwstate.models import (
     CachedRenderResult,
@@ -21,10 +20,11 @@ from cjwstate.models import (
     WfModule,
     Workflow,
 )
+from cjwkernel.chroot import EDITABLE_CHROOT
 from cjwstate.modules.loaded_module import LoadedModule
 from cjwstate import rendercache, storedobjects
 import fetcher.secrets
-from . import fetchprep, save
+from . import fetchprep, save, versions
 
 
 logger = logging.getLogger(__name__)
@@ -162,6 +162,7 @@ def _stored_object_to_fetch_result(
 
 def fetch_or_wrap_error(
     ctx: contextlib.ExitStack,
+    chroot_context: ChrootContext,
     basedir: Path,
     wf_module: WfModule,
     module_version: ModuleVersion,
@@ -193,7 +194,6 @@ def fetch_or_wrap_error(
     * Module migrate_params() returns invalid data (`ValueError`)
     * input_crr points to a nonexistent file (`FileNotFoundError`)
     """
-
     # module_version=None is allowed
     try:
         loaded_module = LoadedModule.for_module_version(module_version)
@@ -247,6 +247,7 @@ def fetch_or_wrap_error(
     # actually fetch
     try:
         return loaded_module.fetch(
+            chroot_context=chroot_context,
             basedir=basedir,
             params=params,
             secrets=secrets,
@@ -349,9 +350,10 @@ async def fetch(
         now = timezone.now()
 
     with contextlib.ExitStack() as ctx:
-        basedir = ctx.enter_context(tempdir_context(prefix="fetch-"))
+        chroot_context = ctx.enter_context(EDITABLE_CHROOT.acquire_context())
+        basedir = ctx.enter_context(chroot_context.tempdir_context(prefix="fetch-"))
         output_path = ctx.enter_context(
-            tempfile_context(prefix="fetch-result-", dir=basedir)
+            chroot_context.tempfile_context(prefix="fetch-result-", dir=basedir)
         )
         # get last_fetch_result (This can't error.)
         last_fetch_result = _stored_object_to_fetch_result(
@@ -361,6 +363,7 @@ async def fetch(
             None,
             fetch_or_wrap_error,
             ctx,
+            chroot_context,
             basedir,
             wf_module,
             module_version,
@@ -372,10 +375,8 @@ async def fetch(
 
         try:
             with crash_on_database_error():
-                if (
-                    last_fetch_result is not None
-                    and result.errors == last_fetch_result.errors
-                    and parquet.are_files_equal(last_fetch_result.path, result.path)
+                if last_fetch_result is not None and versions.are_fetch_results_equal(
+                    last_fetch_result, result
                 ):
                     await save.mark_result_unchanged(workflow_id, wf_module, now)
                 else:

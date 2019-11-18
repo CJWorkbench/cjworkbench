@@ -13,6 +13,24 @@ spec:
       labels:
         app: renderer-app
     spec:
+      initContainers:
+        # setup-sandboxes.sh needs special privileges; run it in an init container.
+        #
+        # We run this command separately because it runs with privileged: true.
+        # (forkserver shouldn't have permission to fiddle with the mount
+        # namespace, lest malicious code use that permission to somehow escape
+        # its sandbox.)
+        #
+        # See https://itnext.io/using-overlay-mounts-with-kubernetes-960375c05959
+        - name: setup-sandboxes
+          image: "gcr.io/cj-workbench/migrate:latest"
+          securityContext:
+            privileged: true  # so it can run mount and iptables
+          command: [ "bash", "-x", "/app/cjwkernel/setup-sandboxes.sh", "all" ]
+          volumeMounts:
+            - mountPath: /var/lib/cjwkernel/chroot
+              name: chroot
+              mountPropagation: Bidirectional  # expose mounts to main app
       containers:
         - name: renderer
           image: "gcr.io/cj-workbench/renderer:latest"
@@ -21,10 +39,10 @@ spec:
             # synchronous.
             requests:
               cpu: 1
-              memory: 8Gi
+              memory: 5.5Gi
             limits:
               cpu: 1
-              memory: 8Gi
+              memory: 5.5Gi
           env:
             - name: CJW_PRODUCTION
               value: 'True'
@@ -32,8 +50,6 @@ spec:
               value: '1'
             - name: ASGI_THREADS
               value: '2'
-            - name: CJW_N_RENDERERS
-              value: '1'
             - name: CJW_DB_HOST
               value: database-service
             - name: CJW_DB_PASSWORD
@@ -79,3 +95,30 @@ spec:
                   key: rabbitmq-pass
             - name: CJW_RABBITMQ_HOST
               value: "amqp://rabbit:$(_RABBITMQ_PASSWORD)@rabbitmq-1-rabbitmq-svc/"
+          volumeMounts:
+            - mountPath: /var/lib/cjwkernel/chroot
+              name: chroot
+          securityContext:
+            capabilities:
+              add:
+                # TODO ban render() from networking. Period. Then nix NET_ADMIN priv.
+                - NET_ADMIN # To create network interface for sandbox in cjwkernel
+        - name: teardown-sandboxes
+          # "any volume mounts created by Containers in Pods must be destroyed
+          # (unmounted) by the Containers on termination"
+          # -- https://kubernetes.io/docs/concepts/storage/volumes/#mount-propagation
+          image: "gcr.io/cj-workbench/migrate:latest"
+          command: ["sh", "-c", "sleep infinity"]  # do nothing, until exit. (sh responds to INT signal)
+          securityContext:
+            privileged: true  # so it can unmount
+          lifecycle:
+            preStop:
+              exec:
+                command: ["bash", "-x", "/app/cjwkernel/teardown-sandboxes.sh"]
+          volumeMounts:
+            - mountPath: /var/lib/cjwkernel/chroot
+              name: chroot
+              mountPropagation: Bidirectional  # expose mounts to main app
+      volumes:
+        - name: chroot
+          emptyDir: {}

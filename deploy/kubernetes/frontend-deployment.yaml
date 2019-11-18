@@ -11,6 +11,24 @@ spec:
       labels:
         app: frontend-app
     spec:
+      initContainers:
+        # setup-sandboxes.sh needs special privileges; run it in an init container.
+        #
+        # We run this command separately because it runs with privileged: true.
+        # (forkserver shouldn't have permission to fiddle with the mount
+        # namespace, lest malicious code use that permission to somehow escape
+        # its sandbox.)
+        #
+        # See https://itnext.io/using-overlay-mounts-with-kubernetes-960375c05959
+        - name: setup-sandboxes
+          image: "gcr.io/cj-workbench/migrate:latest"
+          securityContext:
+            privileged: true  # so it can run mount
+          command: [ "bash", "-x", "/app/cjwkernel/setup-sandboxes.sh", "only-readonly" ]
+          volumeMounts:
+            - mountPath: /var/lib/cjwkernel/chroot
+              name: chroot
+              mountPropagation: Bidirectional  # expose mounts to main app
       containers:
         - name: frontend
           image: "gcr.io/cj-workbench/frontend:latest"
@@ -24,6 +42,11 @@ spec:
           ports:
             - name: http
               containerPort: 8080
+          readinessProbe:
+            # During rolling upgrade, don't delete old pods until new ones are responsive
+            httpGet:
+              path: /
+              port: 8080
           env:
             - name: CJW_PRODUCTION
               value: 'True'
@@ -118,28 +141,52 @@ spec:
             - mountPath: /app/secrets/twitter-oauth-secret
               name: twitter-oauth-secret
               readOnly: true
+            - mountPath: /var/lib/cjwkernel/chroot
+              name: chroot
+        - name: teardown-sandboxes
+          # "any volume mounts created by Containers in Pods must be destroyed
+          # (unmounted) by the Containers on termination"
+          # -- https://kubernetes.io/docs/concepts/storage/volumes/#mount-propagation
+          image: "gcr.io/cj-workbench/migrate:latest"
+          command: ["sh", "-c", "sleep infinity"]  # do nothing, until exit. (sh responds to INT signal)
+          securityContext:
+            privileged: true  # so it can unmount
+          lifecycle:
+            preStop:
+              exec:
+                command: ["bash", "-x", "/app/cjwkernel/teardown-sandboxes.sh"]
+          volumeMounts:
+            - mountPath: /var/lib/cjwkernel/chroot
+              name: chroot
+              mountPropagation: Bidirectional  # expose mounts to main app
       volumes:
         - name: google-oauth-secret
           secret:
             secretName: google-oauth-secret
+            defaultMode: 0400
             items:
               - key: json
                 path: google-oauth-secret.json
         - name: intercom-oauth-secret
           secret:
             secretName: intercom-oauth-secret
+            defaultMode: 0400
             items:
               - key: json
                 path: intercom-oauth-secret.json
         - name: socialaccount-secrets
           secret:
             secretName: socialaccount-secrets
+            defaultMode: 0400
             items:
               - key: json
                 path: socialaccount-secrets.json
         - name: twitter-oauth-secret
           secret:
             secretName: twitter-oauth-secret
+            defaultMode: 0400
             items:
               - key: json
                 path: twitter-oauth-secret.json
+        - name: chroot
+          emptyDir: {}

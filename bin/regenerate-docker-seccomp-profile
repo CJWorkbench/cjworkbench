@@ -15,7 +15,6 @@
 
 import json
 from pathlib import Path
-import sys
 from urllib.request import urlopen
 
 DEFAULT_PROFILE_URL = (
@@ -34,7 +33,29 @@ def generate_profile() -> str:
             "names": ["clone"],
             "action": "SCMP_ACT_ALLOW",
             "args": [],
-            "comment": "So cjwkernel.forkserver can sandbox module_main()",
+            "comment": "So cjwkernel.forkserver can sandbox child_main()",
+            "includes": {},
+            "excludes": {},
+        }
+    )
+
+    profile["syscalls"].append(
+        {
+            "names": ["mount"],
+            "action": "SCMP_ACT_ALLOW",
+            "args": [],
+            "comment": "So cjwkernel can set up chroot directories",
+            "includes": {},
+            "excludes": {},
+        }
+    )
+
+    profile["syscalls"].append(
+        {
+            "names": ["unshare"],
+            "action": "SCMP_ACT_ALLOW",
+            "args": [],
+            "comment": "For 'docker exec'-style testing using /usr/bin/unshare (unused in our own code)",
             "includes": {},
             "excludes": {},
         }

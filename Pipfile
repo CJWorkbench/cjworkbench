@@ -45,6 +45,7 @@ babel = "*"
 thrift = "~=0.11.0"
 yajl-py = "*"
 six = "*"  # yajl-py depends on it but doesn't declare so. https://github.com/pykler/yajl-py/issues/21
+pyroute2 = "*"
 
 [dev-packages]
 watchdog = "*"
