@@ -35,7 +35,7 @@ export function MaybeNotYourWorkflow (props) {
     className = 'is-anonymous'
     inner = (
       <>
-        <h3>Demo workflow -</h3>
+        <h3><Trans id='js.Workflow.isAnonymous'>Demo workflow</Trans> -</h3>
         <p className='message' />
         {suggestion}
       </>

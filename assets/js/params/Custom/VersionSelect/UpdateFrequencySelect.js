@@ -4,7 +4,7 @@ import UpdateFrequencySelectModal from './UpdateFrequencySelectModal'
 import { timeDifference } from '../../../utils'
 import { trySetWfModuleAutofetchAction, setWfModuleNotificationsAction } from '../../../workflow-reducer'
 import { connect } from 'react-redux'
-import { Trans } from '@lingui/macro'
+import { Trans, t } from '@lingui/macro'
 import { withI18n } from '@lingui/react'
 
 export const UpdateFrequencySelect = withI18n()(class UpdateFrequencySelect extends React.PureComponent {
@@ -66,7 +66,7 @@ export const UpdateFrequencySelect = withI18n()(class UpdateFrequencySelect exte
           <span className='version-box-option'><Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelect.update'>Update</Trans> </span>
           <a
             href='#'
-            title='change auto-update settings'
+            title={i18n._(t('js.params.Custom.VersionSelect.UpdateFrequencySelect.changeUpdateSettings.hoverText')`change auto-update settings`)}
             className='content-1 ml-1 action-link'
             onClick={this.handleClickOpenModal}
           >

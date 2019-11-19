@@ -5,22 +5,22 @@ import memoize from 'memoize-one'
 import { setDataVersionAction, setWfModuleNotificationsAction } from '../workflow-reducer'
 import { connect } from 'react-redux'
 import { createSelector } from 'reselect'
-import { Trans } from '@lingui/macro'
+import { Trans, t } from '@lingui/macro'
+import { withI18n } from '@lingui/react'
 
 const Months = [
-  // AP style
-  'Jan.',
-  'Feb.',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'Aug.',
-  'Sept.',
-  'Oct.',
-  'Nov.',
-  'Dec.'
+  /* i18n: AP style month name */t('js.WorkflowEditor.DataVersionModal.Months.Jan')`Jan.`,
+  /* i18n: AP style month name */t('js.WorkflowEditor.DataVersionModal.Months.Feb')`Feb.`,
+  /* i18n: AP style month name */t('js.WorkflowEditor.DataVersionModal.Months.March')`March`,
+  /* i18n: AP style month name */t('js.WorkflowEditor.DataVersionModal.Months.April')`April`,
+  /* i18n: AP style month name */t('js.WorkflowEditor.DataVersionModal.Months.May')`May`,
+  /* i18n: AP style month name */t('js.WorkflowEditor.DataVersionModal.Months.June')`June`,
+  /* i18n: AP style month name */t('js.WorkflowEditor.DataVersionModal.Months.July')`July`,
+  /* i18n: AP style month name */t('js.WorkflowEditor.DataVersionModal.Months.Aug')`Aug.`,
+  /* i18n: AP style month name */t('js.WorkflowEditor.DataVersionModal.Months.Sept')`Sept.`,
+  /* i18n: AP style month name */t('js.WorkflowEditor.DataVersionModal.Months.Oct')`Oct.`,
+  /* i18n: AP style month name */t('js.WorkflowEditor.DataVersionModal.Months.Nov')`Nov.`,
+  /* i18n: AP style month name */t('js.WorkflowEditor.DataVersionModal.Months.Dec')`Dec.`
 ]
 
 // Always print as if our time zone is UTC, when testing
@@ -36,16 +36,16 @@ export function formatDateUTCForTesting () {
  *
  * For instance: "June 22, 2018 – 10:35 a.m."
  */
-function formatDate (date) {
+function formatDate (date, i18n) {
   let mon, dd, yyyy, hh, mm
   if (_formatDateUTCforTesting) {
-    mon = Months[date.getUTCMonth()]
+    mon = i18n._(Months[date.getUTCMonth()])
     dd = date.getUTCDate()
     yyyy = date.getUTCFullYear()
     hh = date.getUTCHours()
     mm = String(100 + date.getUTCMinutes()).slice(1) // 0-padded
   } else {
-    mon = Months[date.getMonth()]
+    mon = i18n._(Months[date.getMonth()])
     dd = date.getDate()
     yyyy = date.getFullYear()
     hh = date.getHours()
@@ -68,13 +68,17 @@ function formatDate (date) {
 /**
  * Form <input type="radio">. Calls onSelect on change.
  */
-class FetchVersion extends React.PureComponent {
+const FetchVersion = withI18n()(class FetchVersion extends React.PureComponent {
   static propTypes = {
     id: PropTypes.string.isRequired, // version ID
     date: PropTypes.instanceOf(Date).isRequired, // version date
     isSelected: PropTypes.bool.isRequired,
     isSeen: PropTypes.bool.isRequired, // has user selected this version ever
-    onSelect: PropTypes.func.isRequired // func(versionId) => undefined
+    onSelect: PropTypes.func.isRequired, // func(versionId) => undefined
+    i18n: PropTypes.shape({
+      // i18n object injected by LinguiJS withI18n()
+      _: PropTypes.func.isRequired
+    })
   }
 
   handleChange = (ev) => {
@@ -84,7 +88,7 @@ class FetchVersion extends React.PureComponent {
   }
 
   render () {
-    const { id, date, isSeen, isSelected } = this.props
+    const { id, date, isSeen, isSelected, i18n } = this.props
 
     let className = isSeen ? 'seen' : 'unseen'
     if (isSelected) className += ' selected'
@@ -92,11 +96,11 @@ class FetchVersion extends React.PureComponent {
     return (
       <label className={className}>
         <input type='radio' name='data-version' value={id} checked={isSelected} onChange={this.handleChange} />
-        <time time={date.toISOString()}>{formatDate(date)}</time>
+        <time time={date.toISOString()}>{formatDate(date, i18n)}</time>
       </label>
     )
   }
-}
+})
 
 /**
  * Form that calls onSubmit(wantNotifications).
@@ -200,7 +204,9 @@ export class DataVersionModal extends React.PureComponent {
 
     return (
       <Modal className='data-versions-modal' isOpen fade={false} toggle={onClose}>
-        <ModalHeader toggle={onClose}>Data Versions</ModalHeader>
+        <ModalHeader toggle={onClose}>
+          <Trans id='js.WorkflowEditor.DataVersionModal.ModalHeader'>Data Versions</Trans>
+        </ModalHeader>
         <ModalBody>
           <form onSubmit={this.handleSubmit} onCancel={onClose}>
             <ol>
@@ -228,7 +234,8 @@ export class DataVersionModal extends React.PureComponent {
               name='load'
               disabled={this.state.selectedFetchVersionId === this.props.selectedFetchVersionId}
               onClick={this.handleSubmit}
-            >Load
+            >
+              <Trans id='js.WorkflowEditor.DataVersionModal.ModalFooter.actions.loadButton'>Load</Trans>
             </button>
           </div>
         </ModalFooter>

@@ -309,7 +309,7 @@ const RefineGroup = withI18n()(class RefineGroup extends React.Component { // us
             className='select'
             name={`select[${group.name}]`}
             type='checkbox'
-            title='Select these rows'
+            title={i18n._(t('js.params.Refine.RefineGroup.selectTheseRows')`Select these rows`)}
             checked={group.isSelected}
             onChange={this.handleChangeIsSelected}
           />

@@ -25,7 +25,7 @@ function ApiToken ({ workflowId, wfModuleSlug, apiTokenState, clearApiToken, res
 }
 
 function ApiTokenLoading () {
-  return <div className='state-loading'>Loading</div>
+  return <div className='state-loading'><Trans id='js.params.File.UploadApiModal.ApiTokenLoading'>Loading</Trans></div>
 }
 
 function ApiTokenSending () {

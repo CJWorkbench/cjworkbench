@@ -5,15 +5,15 @@ import UploadedFileSelect from './UploadedFileSelect'
 import { Trans, t } from '@lingui/macro'
 import { withI18n } from '@lingui/react'
 
-const UploadProgress = React.memo(function UploadProgress ({ nBytesTotal, nBytesUploaded }) {
+const UploadProgress = React.memo(withI18n()(function UploadProgress ({ nBytesTotal, nBytesUploaded, i18n }) {
   const percent = (nBytesUploaded || 0) / nBytesTotal * 100
-  const title = nBytesUploaded === null ? '' : `${percent.toFixed(1) + '% uploaded'}`
+  const title = nBytesUploaded === null ? '' : i18n._(t('js.params.File.UploadProgress.hoverText')`${percent.toFixed(1)}% uploaded`)
   return (
     <div className='upload-progress' title={title}>
       <div className='value' style={{ width: `${percent}%` }} />
     </div>
   )
-})
+}))
 
 const FeatureFlagUploadApi = /(^#|;)feature:uploadapi($|;)/.test(window.location.hash)
 

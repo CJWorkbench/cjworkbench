@@ -2,7 +2,8 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from '../../../components/Modal'
 import QuotaExceeded from './QuotaExceeded'
-import { Trans } from '@lingui/macro'
+import { withI18n } from '@lingui/react'
+import { Trans, t } from '@lingui/macro'
 
 const TimeUnits = {
   seconds: 1,
@@ -30,7 +31,7 @@ function calculateFetchInterval ({ wantTimeUnitCount, timeUnit }) {
   }
 }
 
-export default class UpdateFrequencySelectModal extends React.PureComponent {
+class UpdateFrequencySelectModal extends React.PureComponent {
   static propTypes = {
     workflowId: PropTypes.number.isRequired,
     wfModuleId: PropTypes.number.isRequired,
@@ -39,7 +40,11 @@ export default class UpdateFrequencySelectModal extends React.PureComponent {
     isEmailUpdates: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired, // func() => undefined
     setEmailUpdates: PropTypes.func.isRequired, // func(isEmailUpdates) => undefined
-    trySetAutofetch: PropTypes.func.isRequired // func(isAutofetch, fetchInterval) => Promise[Optional[quotaExceeded]]
+    trySetAutofetch: PropTypes.func.isRequired, // func(isAutofetch, fetchInterval) => Promise[Optional[quotaExceeded]]
+    i18n: PropTypes.shape({
+      // i18n object injected by LinguiJS withI18n()
+      _: PropTypes.func.isRequired
+    })
   }
 
   state = {
@@ -126,7 +131,7 @@ export default class UpdateFrequencySelectModal extends React.PureComponent {
   }
 
   render () {
-    const { isEmailUpdates, onClose, workflowId, wfModuleId } = this.props
+    const { isEmailUpdates, onClose, workflowId, wfModuleId, i18n } = this.props
     const { wantAutofetch, wantTimeUnitCount, isSettingAutofetch, quotaExceeded, timeUnit } = this.state
 
     return (
@@ -239,9 +244,13 @@ export default class UpdateFrequencySelectModal extends React.PureComponent {
           </div>
         </ModalBody>
         <ModalFooter>
-          <button type='button' className='close' title='Close' onClick={onClose}><Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.footer.closeButton'>Close</Trans></button>
+          <button type='button' className='close' title={i18n._(t('js.params.Custom.VersionSelect.UpdateFrequencySelectModal.footer.close.placeholder')`Close`)} onClick={onClose}>
+            <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.footer.closeButton'>Close</Trans>
+          </button>
         </ModalFooter>
       </Modal>
     )
   }
 }
+
+export default withI18n()(UpdateFrequencySelectModal)

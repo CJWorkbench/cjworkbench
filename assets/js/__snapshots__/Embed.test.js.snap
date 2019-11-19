@@ -52,8 +52,15 @@ exports[`Embed Available workflow Renders the embed widget with the correct info
                 rel="noopener noreferrer"
                 target="_blank"
               >
-                by 
-                Workflow Owner Name
+                <WithI18n
+                  defaults="by {0}"
+                  id="js.Embed.metadata.author"
+                  values={
+                    Object {
+                      "0": "Workflow Owner Name",
+                    }
+                  }
+                />
               </a>
             </li>
             <li>

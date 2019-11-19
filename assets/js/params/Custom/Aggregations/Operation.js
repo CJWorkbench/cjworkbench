@@ -14,14 +14,14 @@ export default function Operation ({ isReadOnly, name, value, onChange }) {
       onChange={onChange}
       readOnly={isReadOnly}
     >
-      {<option value='size'><Trans id='js.params.Custom.Operation.count.option'>Count</Trans></option>}
-      {<option value='nunique'><Trans id='js.params.Custom.Operation.countUnique.option'>Count unique</Trans></option>}
-      {<option value='sum'><Trans id='js.params.Custom.Operation.sum.option'>Sum</Trans></option>}
-      {<option value='mean'><Trans id='js.params.Custom.Operation.mean.option'>Average (Mean)</Trans></option>}
-      {<option value='median'><Trans id='js.params.Custom.Operation.median.option'>Median</Trans></option>}
-      {<option value='min'><Trans id='js.params.Custom.Operation.minimum.option'>Minimum</Trans></option>}
-      {<option value='max'><Trans id='js.params.Custom.Operation.maximum.option'>Maximum</Trans></option>}
-      {<option value='first'><Trans id='js.params.Custom.Operation.first.option'>First</Trans></option>}
+      <option value='size'><Trans id='js.params.Custom.Aggregations.Operation.count.option'>Count</Trans></option>
+      <option value='nunique'><Trans id='js.params.Custom.Aggregations.Operation.countUnique.option'>Count unique</Trans></option>
+      <option value='sum'><Trans id='js.params.Custom.Aggregations.Operation.sum.option'>Sum</Trans></option>
+      <option value='mean'><Trans id='js.params.Custom.Aggregations.Operation.mean.option'>Average (Mean)</Trans></option>
+      <option value='median'><Trans id='js.params.Custom.Aggregations.Operation.median.option'>Median</Trans></option>
+      <option value='min'><Trans id='js.params.Custom.Aggregations.Operation.minimum.option'>Minimum</Trans></option>
+      <option value='max'><Trans id='js.params.Custom.Aggregations.Operation.maximum.option'>Maximum</Trans></option>
+      <option value='first'><Trans id='js.params.Custom.Aggregations.Operation.first.option'>First</Trans></option>
     </select>
   )
 }

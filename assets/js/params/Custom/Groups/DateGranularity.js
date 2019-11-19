@@ -25,7 +25,7 @@ export default class DateGranularity extends React.PureComponent {
 
     return (
       <label className='date-granularity'>
-        <h5>Granularity of “{colname}”</h5>
+        <h5><Trans id='js.params.Custom.Groups.DateGranularity.heading.title'>Granularity of “{colname}”</Trans></h5>
         <select
           className='custom-select'
           name={name}

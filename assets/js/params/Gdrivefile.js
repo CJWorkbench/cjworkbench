@@ -1,7 +1,8 @@
 /* globals gapi, google */
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Trans } from '@lingui/macro'
+import { Trans, t } from '@lingui/macro'
+import { withI18n } from '@lingui/react'
 
 const MimeTypesString = [
   'application/vnd.google-apps.spreadsheet',
@@ -88,7 +89,7 @@ class PickerFactory {
   }
 }
 
-function FileInfo ({ id, name, url }) {
+const FileInfo = withI18n()(function ({ id, name, url, i18n }) {
   if (!id) {
     return (
       <a className='file-info empty'><Trans id='js.params.Gdrivefile.FileInfo.chooseFile'>(please choose a file)</Trans></a>
@@ -97,7 +98,10 @@ function FileInfo ({ id, name, url }) {
     return (
       <a
         className='file-info'
-        title={`Open in Google Sheets: ${name}`}
+        title={i18n._(
+          /* i18n: {name} is the name of a file */
+          t('js.params.Gdrivefile.FileInfo.openInGoogleSheets')`Open in Google Sheets: ${name}`
+        )}
         target='_blank'
         rel='noopener noreferrer'
         href={url}
@@ -105,7 +109,7 @@ function FileInfo ({ id, name, url }) {
       </a>
     )
   }
-}
+})
 
 let googleApiLoadedPromise = null
 /**

@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import ReactSelect from './common/react-select'
 import { components } from 'react-select'
 import { MaybeLabel } from './util'
-import { t } from '@lingui/macro'
+import { t, Trans } from '@lingui/macro'
 import { withI18n } from '@lingui/react'
 
 class MenuList extends React.PureComponent {
@@ -34,7 +34,7 @@ class MenuList extends React.PureComponent {
             onClick={this.handleClickSelectAll}
             className='multicolumn-select-all'
           >
-            Select all
+            <Trans id='js.params.Multicolumn.MenuList.selectAllButton'>Select all</Trans>
           </button>
           <button
             name={`${name}-select-none`}
@@ -42,7 +42,7 @@ class MenuList extends React.PureComponent {
             onClick={this.handleClickSelectNone}
             className='multicolumn-select-none'
           >
-            clear
+            <Trans id='js.params.Multicolumn.MenuList.clearButton'>clear</Trans>
           </button>
         </div>
         {this.props.children}

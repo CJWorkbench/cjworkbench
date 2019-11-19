@@ -2,8 +2,10 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import Operation from './Operation'
 import ColumnParam from '../../Column'
+import { Trans, t } from '@lingui/macro'
+import { withI18n } from '@lingui/react'
 
-export default class Aggregation extends React.PureComponent {
+class Aggregation extends React.PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired,
     name: PropTypes.string.isRequired, // for <input name=...>
@@ -16,7 +18,11 @@ export default class Aggregation extends React.PureComponent {
     onDelete: PropTypes.func, // func(index) => undefined, or null if delete not allowed
     operation: PropTypes.oneOf(['size', 'nunique', 'sum', 'mean', 'median', 'min', 'max', 'first']).isRequired,
     colname: PropTypes.string.isRequired,
-    outname: PropTypes.string.isRequired // may be empty
+    outname: PropTypes.string.isRequired, // may be empty
+    i18n: PropTypes.shape({
+      // i18n object injected by LinguiJS withI18n()
+      _: PropTypes.func.isRequired
+    })
   }
 
   handleChangeOperation = (ev) => {
@@ -41,9 +47,9 @@ export default class Aggregation extends React.PureComponent {
 
   get placeholder () {
     // Duplicated from grroupby/groupby.py
-    const { operation, colname } = this.props
+    const { operation, colname, i18n } = this.props
 
-    if (operation === 'size') return 'Group Size'
+    if (operation === 'size') return i18n._(t('js.params.Custom.Aggregations.Aggregation.placeholder.size')`Group Size`)
 
     if (colname === '') {
       // reduce clutter -- groupby.py won't add this operation anyway
@@ -51,19 +57,19 @@ export default class Aggregation extends React.PureComponent {
     }
 
     switch (operation) {
-      case 'nunique': return `Unique count of ${colname}`
-      case 'sum': return `Sum of ${colname}`
-      case 'mean': return `Average of ${colname}`
-      case 'median': return `Median of ${colname}`
-      case 'min': return `Minimum of ${colname}`
-      case 'max': return `Maximum of ${colname}`
-      case 'first': return `First of ${colname}`
-      default: return '(default)'
+      case 'nunique': return i18n._(t('js.params.Custom.Aggregations.Aggregation.placeholder.nunique')`Unique count of ${colname}`)
+      case 'sum': return i18n._(t('js.params.Custom.Aggregations.Aggregation.placeholder.sum')`Sum of ${colname}`)
+      case 'mean': return i18n._(t('js.params.Custom.Aggregations.Aggregation.placeholder.mean')`Average of ${colname}`)
+      case 'median': return i18n._(t('js.params.Custom.Aggregations.Aggregation.placeholder.median')`Median of ${colname}`)
+      case 'min': return i18n._(t('js.params.Custom.Aggregations.Aggregation.placeholder.min')`Minimum of ${colname}`)
+      case 'max': return i18n._(t('js.params.Custom.Aggregations.Aggregation.placeholder.max')`Maximum of ${colname}`)
+      case 'first': return i18n._(t('js.params.Custom.Aggregations.Aggregation.placeholder.first')`First of ${colname}`)
+      default: return i18n._(t('js.params.Custom.Aggregations.Aggregation.placeholder.default')`(default)`)
     }
   }
 
   render () {
-    const { name, fieldId, onDelete, operation, colname, outname, inputColumns, isReadOnly } = this.props
+    const { name, fieldId, onDelete, operation, colname, outname, inputColumns, isReadOnly, i18n } = this.props
 
     return (
       <li className='aggregation'>
@@ -79,14 +85,14 @@ export default class Aggregation extends React.PureComponent {
             name={`${name}[colname]`}
             fieldId={`${fieldId}_colname`}
             value={colname}
-            prompt='Select a column'
+            prompt={i18n._(t('js.params.custom.Aggregations.Aggregation.ColumnParam.prompt')`Select a column`)}
             isReadOnly={isReadOnly}
             inputColumns={inputColumns}
             onChange={this.handleChangeColname}
           />
         )}
         <label className='outname'>
-          <span className='name'>Name</span>
+          <span className='name'><Trans id='js.params.custom.Aggregations.Aggregation.outname'>Name</Trans></span>
           <input
             className='outname'
             name={`${name}[outname]`}
@@ -112,3 +118,5 @@ export default class Aggregation extends React.PureComponent {
     )
   }
 }
+
+export default withI18n()(Aggregation)

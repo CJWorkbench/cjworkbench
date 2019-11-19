@@ -74,7 +74,7 @@ export class Embed extends React.Component {
                 <ul>
                   <li>
                     <a href={'/workflows/' + this.props.workflow.id} target='_blank' rel='noopener noreferrer'>
-                    by {this.props.workflow.owner_name}
+                      <Trans id='js.Embed.metadata.author'>by {this.props.workflow.owner_name}</Trans>
                     </a>
                   </li>
                   <li>

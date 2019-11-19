@@ -98,7 +98,7 @@ class UploadedFileSelectModal extends React.PureComponent {
   }
 }
 
-const UploadedFileSelect = React.memo(function UploadedFileSelect ({ value, files, onChange }) {
+const UploadedFileSelect = React.memo(function UploadedFileSelect ({ value, files, onChange, i18n }) {
   const [isOpen, setOpen] = React.useState(false)
   const open = React.useCallback(() => setOpen(true))
   const close = React.useCallback(() => setOpen(false))
@@ -110,7 +110,7 @@ const UploadedFileSelect = React.memo(function UploadedFileSelect ({ value, file
 
   return (
     <>
-      <button className='uploaded-file-select' onClick={open} title={canOpen ? this.props._(t('js.params.File.UploadedFileSelect.choosePreviousFile.hoverText')`Choose a previously-uploaded file`) : undefined} disabled={!canOpen}>
+      <button className='uploaded-file-select' onClick={open} title={canOpen ? i18n._(t('js.params.File.UploadedFileSelect.choosePreviousFile.hoverText')`Choose a previously-uploaded file`) : undefined} disabled={!canOpen}>
         <Trans id='js.params.File.UploadedFileSelect.choosePreviousFile.text' description='The first parameter is the number of the file (or js.params.File.UploadedFileSelect.choosePreviousFile.none) and the second is the total number of files'>
             File {valueIndex === -1 ? <Trans id='js.params.File.UploadedFileSelect.choosePreviousFile.none'>[NONE]</Trans> : (valueIndex + 1)} of {files.length}
         </Trans>

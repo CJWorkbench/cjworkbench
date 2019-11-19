@@ -23,6 +23,10 @@ msgstr ""
 msgid "js.Embed.embedThisChart"
 msgstr ""
 
+#: assets/js/Embed.js:77
+msgid "js.Embed.metadata.author"
+msgstr ""
+
 #. {timeAgo} will contain a time difference (i.e. something like '4h ago')
 #: assets/js/Embed.js:84
 msgid "js.Embed.metadata.updated"
@@ -116,37 +120,41 @@ msgstr ""
 msgid "js.ImportModuleFromGithub.status.processing"
 msgstr ""
 
-#: assets/js/OutputIframe.js:146
+#: assets/js/OutputIframe.js:147
 msgid "js.OutputIframe.embed.embedCode"
 msgstr ""
 
 #. This should be all-caps for styling reasons
-#: assets/js/OutputIframe.js:139
+#: assets/js/OutputIframe.js:140
 msgid "js.OutputIframe.embed.header.title"
 msgstr ""
 
-#: assets/js/OutputIframe.js:156
+#: assets/js/OutputIframe.js:157
 msgid "js.OutputIframe.footer.OKButton"
 msgstr ""
 
-#: assets/js/OutputIframe.js:122
+#: assets/js/OutputIframe.js:123
 msgid "js.OutputIframe.footer.cancelButton"
 msgstr ""
 
-#: assets/js/OutputIframe.js:125
+#: assets/js/OutputIframe.js:126
 msgid "js.OutputIframe.footer.setPublicButton"
 msgstr ""
 
+#: assets/js/OutputIframe.js:178
+msgid "js.OutputIframe.getEmbeddableUrl.hoverText"
+msgstr ""
+
 #. This should be all-caps for styling reasons
-#: assets/js/OutputIframe.js:105
+#: assets/js/OutputIframe.js:106
 msgid "js.OutputIframe.private.header.title"
 msgstr ""
 
-#: assets/js/OutputIframe.js:115
+#: assets/js/OutputIframe.js:116
 msgid "js.OutputIframe.private.setToPublic"
 msgstr ""
 
-#: assets/js/OutputIframe.js:112
+#: assets/js/OutputIframe.js:113
 msgid "js.OutputIframe.private.workflowIsPrivate"
 msgstr ""
 
@@ -316,6 +324,10 @@ msgstr ""
 msgid "js.WfHamburgerMenu.toggle.hoverText"
 msgstr ""
 
+#: assets/js/Workflow.js:38
+msgid "js.Workflow.isAnonymous"
+msgstr ""
+
 #: assets/js/Workflow.js:47
 msgid "js.Workflow.isShared"
 msgstr ""
@@ -355,29 +367,97 @@ msgstr ""
 msgid "js.WorkflowEditor.AddData.button"
 msgstr ""
 
-#: assets/js/WorkflowEditor/DataVersionModal.js:138
+#: assets/js/WorkflowEditor/DataVersionModal.js:238
+msgid "js.WorkflowEditor.DataVersionModal.ModalFooter.actions.loadButton"
+msgstr ""
+
+#: assets/js/WorkflowEditor/DataVersionModal.js:208
+msgid "js.WorkflowEditor.DataVersionModal.ModalHeader"
+msgstr ""
+
+#. AP style month name
+#: assets/js/WorkflowEditor/DataVersionModal.js:15
+msgid "js.WorkflowEditor.DataVersionModal.Months.April"
+msgstr ""
+
+#. AP style month name
+#: assets/js/WorkflowEditor/DataVersionModal.js:19
+msgid "js.WorkflowEditor.DataVersionModal.Months.Aug"
+msgstr ""
+
+#. AP style month name
+#: assets/js/WorkflowEditor/DataVersionModal.js:23
+msgid "js.WorkflowEditor.DataVersionModal.Months.Dec"
+msgstr ""
+
+#. AP style month name
+#: assets/js/WorkflowEditor/DataVersionModal.js:13
+msgid "js.WorkflowEditor.DataVersionModal.Months.Feb"
+msgstr ""
+
+#. AP style month name
+#: assets/js/WorkflowEditor/DataVersionModal.js:12
+msgid "js.WorkflowEditor.DataVersionModal.Months.Jan"
+msgstr ""
+
+#. AP style month name
+#: assets/js/WorkflowEditor/DataVersionModal.js:18
+msgid "js.WorkflowEditor.DataVersionModal.Months.July"
+msgstr ""
+
+#. AP style month name
+#: assets/js/WorkflowEditor/DataVersionModal.js:17
+msgid "js.WorkflowEditor.DataVersionModal.Months.June"
+msgstr ""
+
+#. AP style month name
+#: assets/js/WorkflowEditor/DataVersionModal.js:14
+msgid "js.WorkflowEditor.DataVersionModal.Months.March"
+msgstr ""
+
+#. AP style month name
+#: assets/js/WorkflowEditor/DataVersionModal.js:16
+msgid "js.WorkflowEditor.DataVersionModal.Months.May"
+msgstr ""
+
+#. AP style month name
+#: assets/js/WorkflowEditor/DataVersionModal.js:22
+msgid "js.WorkflowEditor.DataVersionModal.Months.Nov"
+msgstr ""
+
+#. AP style month name
+#: assets/js/WorkflowEditor/DataVersionModal.js:21
+msgid "js.WorkflowEditor.DataVersionModal.Months.Oct"
+msgstr ""
+
+#. AP style month name
+#: assets/js/WorkflowEditor/DataVersionModal.js:20
+msgid "js.WorkflowEditor.DataVersionModal.Months.Sept"
+msgstr ""
+
+#: assets/js/WorkflowEditor/DataVersionModal.js:142
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.description.emailOnOutputChange"
 msgstr ""
 
-#: assets/js/WorkflowEditor/DataVersionModal.js:139
+#: assets/js/WorkflowEditor/DataVersionModal.js:143
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.description.turnAlertsOn"
 msgstr ""
 
-#: assets/js/WorkflowEditor/DataVersionModal.js:146
+#: assets/js/WorkflowEditor/DataVersionModal.js:150
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.options.turnOff"
 msgstr ""
 
-#: assets/js/WorkflowEditor/DataVersionModal.js:146
+#: assets/js/WorkflowEditor/DataVersionModal.js:150
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.options.turnOn"
 msgstr ""
 
 #. The tag adds emphasis
-#: assets/js/WorkflowEditor/DataVersionModal.js:133
+#: assets/js/WorkflowEditor/DataVersionModal.js:137
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.status.alertsOff"
 msgstr ""
 
 #. The tag adds emphasis
-#: assets/js/WorkflowEditor/DataVersionModal.js:132
+#: assets/js/WorkflowEditor/DataVersionModal.js:136
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.status.alertsOn"
 msgstr ""
 
@@ -405,6 +485,10 @@ msgstr ""
 #. This is a link to a report
 #: assets/js/WorkflowEditor/PaneSelect.js:20
 msgid "js.WorkflowEditor.PaneSelect.nav.report"
+msgstr ""
+
+#: assets/js/WorkflowEditor/PaneSelect.js:15
+msgid "js.WorkflowEditor.PaneSelect.nav.reportPlaceholder"
 msgstr ""
 
 #: assets/js/WorkflowEditor/Tabs/NewTabPrompt.js:14
@@ -472,6 +556,10 @@ msgstr ""
 
 #: assets/js/WorkflowEditor/wfmodule/WfModuleContextMenu.js:21
 msgid "js.WorkflowEditor.wfmodule.wfModuleContextMenu.exportData"
+msgstr ""
+
+#: assets/js/WorkflowNavBar.js:22
+msgid "js.WorkflowNavBar.LessonCourse.Lesson.title"
 msgstr ""
 
 #. {timeAgo} will contain something like '4h ago'
@@ -636,6 +724,88 @@ msgstr ""
 msgid "js.params.Column.select.placeholder"
 msgstr ""
 
+#: assets/js/params/Custom/Aggregations/Aggregation.js:67
+msgid "js.params.Custom.Aggregations.Aggregation.placeholder.default"
+msgstr ""
+
+#: assets/js/params/Custom/Aggregations/Aggregation.js:66
+msgid "js.params.Custom.Aggregations.Aggregation.placeholder.first"
+msgstr ""
+
+#: assets/js/params/Custom/Aggregations/Aggregation.js:65
+msgid "js.params.Custom.Aggregations.Aggregation.placeholder.max"
+msgstr ""
+
+#: assets/js/params/Custom/Aggregations/Aggregation.js:62
+msgid "js.params.Custom.Aggregations.Aggregation.placeholder.mean"
+msgstr ""
+
+#: assets/js/params/Custom/Aggregations/Aggregation.js:63
+msgid "js.params.Custom.Aggregations.Aggregation.placeholder.median"
+msgstr ""
+
+#: assets/js/params/Custom/Aggregations/Aggregation.js:64
+msgid "js.params.Custom.Aggregations.Aggregation.placeholder.min"
+msgstr ""
+
+#: assets/js/params/Custom/Aggregations/Aggregation.js:60
+msgid "js.params.Custom.Aggregations.Aggregation.placeholder.nunique"
+msgstr ""
+
+#: assets/js/params/Custom/Aggregations/Aggregation.js:52
+msgid "js.params.Custom.Aggregations.Aggregation.placeholder.size"
+msgstr ""
+
+#: assets/js/params/Custom/Aggregations/Aggregation.js:61
+msgid "js.params.Custom.Aggregations.Aggregation.placeholder.sum"
+msgstr ""
+
+#: assets/js/params/Custom/Aggregations/Operation.js:17
+msgid "js.params.Custom.Aggregations.Operation.count.option"
+msgstr ""
+
+#: assets/js/params/Custom/Aggregations/Operation.js:18
+msgid "js.params.Custom.Aggregations.Operation.countUnique.option"
+msgstr ""
+
+#: assets/js/params/Custom/Aggregations/Operation.js:24
+msgid "js.params.Custom.Aggregations.Operation.first.option"
+msgstr ""
+
+#: assets/js/params/Custom/Aggregations/Operation.js:23
+msgid "js.params.Custom.Aggregations.Operation.maximum.option"
+msgstr ""
+
+#: assets/js/params/Custom/Aggregations/Operation.js:20
+msgid "js.params.Custom.Aggregations.Operation.mean.option"
+msgstr ""
+
+#: assets/js/params/Custom/Aggregations/Operation.js:21
+msgid "js.params.Custom.Aggregations.Operation.median.option"
+msgstr ""
+
+#: assets/js/params/Custom/Aggregations/Operation.js:22
+msgid "js.params.Custom.Aggregations.Operation.minimum.option"
+msgstr ""
+
+#: assets/js/params/Custom/Aggregations/Operation.js:19
+msgid "js.params.Custom.Aggregations.Operation.sum.option"
+msgstr ""
+
+#: assets/js/params/Custom/Aggregations/index.js:94
+msgid "js.params.Custom.Aggregations.addButton"
+msgstr ""
+
+#: assets/js/params/Custom/Aggregations/index.js:70
+msgid "js.params.Custom.Aggregations.operations"
+msgstr ""
+
+#. The parameters contain either code or names of libraries. The tags are
+#. either <kbd> formatting or URLs.
+#: assets/js/params/Custom/Code/AceEditor.js:79
+msgid "js.params.Custom.Code.AceEditor.help"
+msgstr ""
+
 #. The parameter will the the name of the custom type
 #: assets/js/params/Custom/index.js:36
 msgid "js.params.Custom.ComponentNotFound.error"
@@ -676,6 +846,16 @@ msgstr ""
 
 #: assets/js/params/File/File.js:203 assets/js/params/File/File.js:227
 msgid "js.params.Custom.File.uploadApi.hoverText"
+msgstr ""
+
+#. This is the logical AND function.
+#: assets/js/params/Custom/Filters/AddFilter.js:18
+msgid "js.params.Custom.Filters.AddFilter.and"
+msgstr ""
+
+#. This is the logical OR function.
+#: assets/js/params/Custom/Filters/AddFilter.js:28
+msgid "js.params.Custom.Filters.AddFilter.or"
 msgstr ""
 
 #: assets/js/params/Custom/Filters/Condition.js:27
@@ -766,6 +946,28 @@ msgstr ""
 msgid "js.params.Custom.Filters.Condition.textMatchesRegexExactly"
 msgstr ""
 
+#. This is the logical AND function.
+#: assets/js/params/Custom/Filters/FilterOperator.js:22
+msgid "js.params.Custom.Filters.FilterOperator.OneOperator.and"
+msgstr ""
+
+#. This is the logical OR function.
+#: assets/js/params/Custom/Filters/FilterOperator.js:23
+msgid "js.params.Custom.Filters.FilterOperator.OneOperator.or"
+msgstr ""
+
+#: assets/js/params/Custom/Filters/Subfilter.js:80
+msgid "js.params.Custom.Filters.Subfilter.Column.placeholder"
+msgstr ""
+
+#: assets/js/params/Custom/Filters/Subfilter.js:101
+msgid "js.params.Custom.Filters.Subfilter.SingleLineString.placeholder"
+msgstr ""
+
+#: assets/js/params/Custom/Filters/Subfilter.js:121
+msgid "js.params.Custom.Filters.Subfilter.matchCase"
+msgstr ""
+
 #: assets/js/params/Custom/Groups/DateGranularities.js:72
 msgid "js.params.Custom.Groups.DateGranularities.convertColumns"
 msgstr ""
@@ -810,36 +1012,25 @@ msgstr ""
 msgid "js.params.Custom.Groups.DateGranularity.byYear.option"
 msgstr ""
 
-#: assets/js/params/Custom/Aggregations/Operation.js:17
-msgid "js.params.Custom.Operation.count.option"
+#: assets/js/params/Custom/Groups/DateGranularity.js:28
+msgid "js.params.Custom.Groups.DateGranularity.heading.title"
 msgstr ""
 
-#: assets/js/params/Custom/Aggregations/Operation.js:18
-msgid "js.params.Custom.Operation.countUnique.option"
+#: assets/js/params/Custom/Groups/index.js:68
+msgid "js.params.Custom.Groups.groupDates"
 msgstr ""
 
-#: assets/js/params/Custom/Aggregations/Operation.js:24
-msgid "js.params.Custom.Operation.first.option"
+#: assets/js/params/Custom/JoinColumns.js:82
+msgid "js.params.Custom.JoinColumns.addColumns"
 msgstr ""
 
-#: assets/js/params/Custom/Aggregations/Operation.js:23
-msgid "js.params.Custom.Operation.maximum.option"
+#: assets/js/params/Custom/JoinColumns.js:71
+msgid "js.params.Custom.JoinColumns.joinOn"
 msgstr ""
 
-#: assets/js/params/Custom/Aggregations/Operation.js:20
-msgid "js.params.Custom.Operation.mean.option"
-msgstr ""
-
-#: assets/js/params/Custom/Aggregations/Operation.js:21
-msgid "js.params.Custom.Operation.median.option"
-msgstr ""
-
-#: assets/js/params/Custom/Aggregations/Operation.js:22
-msgid "js.params.Custom.Operation.minimum.option"
-msgstr ""
-
-#: assets/js/params/Custom/Aggregations/Operation.js:19
-msgid "js.params.Custom.Operation.sum.option"
+#. The parameter will contain a tab name
+#: assets/js/params/Custom/JoinColumns.js:74
+msgid "js.params.Custom.JoinColumns.noColumnToJoin"
 msgstr ""
 
 #: assets/js/params/Custom/Refine/RefineBins.js:62
@@ -934,11 +1125,23 @@ msgstr ""
 msgid "js.params.Custom.ReorderHistory.to.heading"
 msgstr ""
 
-#: assets/js/params/Custom/SortColumn/SortColumn.js:65
+#: assets/js/params/Custom/SortColumn/SortColumn.js:10
+msgid "js.params.Custom.SortColumn.AscendingParam.ascending"
+msgstr ""
+
+#: assets/js/params/Custom/SortColumn/SortColumn.js:11
+msgid "js.params.Custom.SortColumn.AscendingParam.descending"
+msgstr ""
+
+#: assets/js/params/Custom/SortColumn/index.js:91
+msgid "js.params.Custom.SortColumn.add"
+msgstr ""
+
+#: assets/js/params/Custom/SortColumn/SortColumn.js:71
 msgid "js.params.Custom.SortColumn.by.label"
 msgstr ""
 
-#: assets/js/params/Custom/SortColumn/SortColumn.js:65
+#: assets/js/params/Custom/SortColumn/SortColumn.js:71
 msgid "js.params.Custom.SortColumn.thenBy.label"
 msgstr ""
 
@@ -1184,6 +1387,10 @@ msgstr ""
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.auto"
 msgstr ""
 
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:69
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.changeUpdateSettings.hoverText"
+msgstr ""
+
 #. The parameter is a time difference (i.e. something like '4h ago'. The tag is
 #. a <time> tag.
 #: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:78
@@ -1198,64 +1405,68 @@ msgstr ""
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.update"
 msgstr ""
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:192
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:197
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.apply"
 msgstr ""
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:158
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:163
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.auto.description"
 msgstr ""
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:155
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:160
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.auto.label"
 msgstr ""
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:180
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:185
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.days.option"
 msgstr ""
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:181
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:186
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.hours.option"
 msgstr ""
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:159
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:164
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.label"
 msgstr ""
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:182
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:187
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.minutes.option"
 msgstr ""
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:183
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:188
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.seconds.option"
 msgstr ""
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:179
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:184
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.weeks.option"
 msgstr ""
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:237
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:242
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.emailUpdates.label"
 msgstr ""
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:242
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:247
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.footer.close.placeholder"
+msgstr ""
+
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:248
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.footer.closeButton"
 msgstr ""
 
 #. This should be all-caps for styling reasons
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:135
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:140
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title"
 msgstr ""
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:220
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:225
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual.description"
 msgstr ""
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:217
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:222
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual.label"
 msgstr ""
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:192
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:197
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.retry"
 msgstr ""
 
@@ -1263,13 +1474,16 @@ msgstr ""
 msgid "js.params.Custom.code.loadingEditor"
 msgstr ""
 
-#. The parameter will contain a tab name
-#: assets/js/params/Custom/JoinColumns.js:74
-msgid "js.params.Custom.joinColumns.noColumnToJoin"
+#: assets/js/params/File/UploadApiModal.js:28
+msgid "js.params.File.UploadApiModal.ApiTokenLoading"
 msgstr ""
 
 #: assets/js/params/File/UploadApiModal.js:41
 msgid "js.params.File.UploadApiModal.ApiTokenOk.apiToken"
+msgstr ""
+
+#: assets/js/params/File/File.js:10
+msgid "js.params.File.UploadProgress.hoverText"
 msgstr ""
 
 #: assets/js/params/File/UploadedFileSelect.js:93
@@ -1309,28 +1523,37 @@ msgstr ""
 msgid "js.params.File.UploadedFileSelect.choosePreviousFile.text"
 msgstr ""
 
-#: assets/js/params/Gdrivefile.js:94
+#: assets/js/params/Gdrivefile.js:95
 msgid "js.params.Gdrivefile.FileInfo.chooseFile"
 msgstr ""
 
-#: assets/js/params/Gdrivefile.js:283
+#. {name} is the name of a file
+#: assets/js/params/Gdrivefile.js:103
+msgid "js.params.Gdrivefile.FileInfo.openInGoogleSheets"
+msgstr ""
+
+#: assets/js/params/Gdrivefile.js:287
 msgid "js.params.Gdrivefile.change.button"
 msgstr ""
 
-#: assets/js/params/Gdrivefile.js:283
+#: assets/js/params/Gdrivefile.js:287
 msgid "js.params.Gdrivefile.choose.button"
 msgstr ""
 
-#: assets/js/params/Gdrivefile.js:263
+#: assets/js/params/Gdrivefile.js:267
 msgid "js.params.Gdrivefile.status.failureRecconect"
 msgstr ""
 
-#: assets/js/params/Gdrivefile.js:259
+#: assets/js/params/Gdrivefile.js:263
 msgid "js.params.Gdrivefile.status.loading"
 msgstr ""
 
-#: assets/js/params/Gdrivefile.js:267
+#: assets/js/params/Gdrivefile.js:271
 msgid "js.params.Gdrivefile.status.pleaseSignin"
+msgstr ""
+
+#: assets/js/params/List.js:149
+msgid "js.params.List.add"
 msgstr ""
 
 #: assets/js/params/Multichartseries/ColorPicker.js:247
@@ -1349,12 +1572,55 @@ msgstr ""
 msgid "js.params.Multichartseries.removeLastColumn.hoverText"
 msgstr ""
 
+#: assets/js/params/Multicolumn.js:45
+msgid "js.params.Multicolumn.MenuList.clearButton"
+msgstr ""
+
+#: assets/js/params/Multicolumn.js:37
+msgid "js.params.Multicolumn.MenuList.selectAllButton"
+msgstr ""
+
 #: assets/js/params/Multicolumn.js:122
 msgid "js.params.Multicolumn.selectColumn.placeholder"
 msgstr ""
 
 #: assets/js/params/Multitab.js:43
 msgid "js.params.MultitabParam.selectTabs.placeholder"
+msgstr ""
+
+#. The parameter contains an example
+#: assets/js/params/NumberFormat.js:57
+msgid "js.params.NumberFormat.currency"
+msgstr ""
+
+#. The parameter contains an example
+#: assets/js/params/NumberFormat.js:27
+msgid "js.params.NumberFormat.decimal.default"
+msgstr ""
+
+#. The parameter contains an example
+#: assets/js/params/NumberFormat.js:20
+msgid "js.params.NumberFormat.decimal.fixed"
+msgstr ""
+
+#. The parameter contains an example
+#: assets/js/params/NumberFormat.js:34
+msgid "js.params.NumberFormat.decimal.noCommas"
+msgstr ""
+
+#. The parameter contains an example
+#: assets/js/params/NumberFormat.js:42
+msgid "js.params.NumberFormat.integer.default"
+msgstr ""
+
+#. The parameter contains an example
+#: assets/js/params/NumberFormat.js:49
+msgid "js.params.NumberFormat.integer.noCommas"
+msgstr ""
+
+#. The parameter contains an example
+#: assets/js/params/NumberFormat.js:64
+msgid "js.params.NumberFormat.percentage"
 msgstr ""
 
 #: assets/js/params/Custom/Refine/index.js:453
@@ -1379,6 +1645,10 @@ msgstr ""
 
 #: assets/js/params/Custom/Refine/index.js:264
 msgid "js.params.Refine.RefineGroup.expandStatus.notExpanded"
+msgstr ""
+
+#: assets/js/params/Custom/Refine/index.js:312
+msgid "js.params.Refine.RefineGroup.selectTheseRows"
 msgstr ""
 
 #: assets/js/params/Custom/Refine/index.js:133
@@ -1427,6 +1697,30 @@ msgstr ""
 
 #: assets/js/params/common/FacetSearch.js:28
 msgid "js.params.common.FacetSearch.searchFacets.placeholder"
+msgstr ""
+
+#: assets/js/params/common/react-select.js:131
+msgid "js.params.common.ReactSelect.noOptionsMessage"
+msgstr ""
+
+#: assets/js/params/common/ValueSortSelect.js:44
+msgid "js.params.common.ValueSortSelect.rows"
+msgstr ""
+
+#: assets/js/params/common/ValueSortSelect.js:33
+msgid "js.params.common.ValueSortSelect.value"
+msgstr ""
+
+#: assets/js/params/Custom/Aggregations/Aggregation.js:88
+msgid "js.params.custom.Aggregations.Aggregation.ColumnParam.prompt"
+msgstr ""
+
+#: assets/js/params/Custom/Aggregations/Aggregation.js:95
+msgid "js.params.custom.Aggregations.Aggregation.outname"
+msgstr ""
+
+#: assets/js/params/Custom/Filters/Filter.js:75
+msgid "js.params.custom.Filters.Filter.heading.title"
 msgstr ""
 
 #: assets/js/table/ColumnContextMenu.js:52
