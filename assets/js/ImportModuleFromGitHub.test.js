@@ -24,7 +24,7 @@ describe('ImportModuleFromGitHub', () => {
         id_name: 'b',
         author: 'Aut',
         name: 'yay',
-        category: 'Clean'
+        category: 'Other'
       }))
     }
     const store = mockStore({
@@ -41,7 +41,7 @@ describe('ImportModuleFromGitHub', () => {
     await tick()
     expect(store.getState().modules).toEqual({
       a: { foo: 'bar' },
-      b: { id_name: 'b', author: 'Aut', category: 'Clean', name: 'yay' }
+      b: { id_name: 'b', author: 'Aut', category: 'Other', name: 'yay' }
     })
 
     expect(w.find('.import-github-success').text()).toEqual('Imported module {module} under category {category}')

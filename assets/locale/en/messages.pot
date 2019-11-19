@@ -1879,6 +1879,11 @@ msgstr ""
 msgid "js.util.ModuleCategory.CategoryNames.Combine"
 msgstr ""
 
+#. default-message: Other
+#: assets/js/util/ModuleCategory.js:11
+msgid "js.util.ModuleCategory.CategoryNames.Other"
+msgstr ""
+
 #. default-message: Scrape
 #: assets/js/util/ModuleCategory.js:5
 msgid "js.util.ModuleCategory.CategoryNames.Scrape"

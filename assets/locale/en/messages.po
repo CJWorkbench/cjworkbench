@@ -1585,6 +1585,10 @@ msgstr "Code"
 msgid "js.util.ModuleCategory.CategoryNames.Combine"
 msgstr "Combine"
 
+#: assets/js/util/ModuleCategory.js:11
+msgid "js.util.ModuleCategory.CategoryNames.Other"
+msgstr "Other"
+
 #: assets/js/util/ModuleCategory.js:5
 msgid "js.util.ModuleCategory.CategoryNames.Scrape"
 msgstr "Scrape"

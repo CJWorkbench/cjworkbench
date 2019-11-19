@@ -7,7 +7,8 @@ const CategoryNames = {
   Analyze: t('js.util.ModuleCategory.CategoryNames.Analyze')`Analyze`,
   Visualize: t('js.util.ModuleCategory.CategoryNames.Visualize')`Visualize`,
   Code: t('js.util.ModuleCategory.CategoryNames.Code')`Code`,
-  'Add data': t('js.util.ModuleCategory.CategoryNames.AddData')`Add data`
+  'Add data': t('js.util.ModuleCategory.CategoryNames.AddData')`Add data`,
+  Other: t('js.util.ModuleCategory.CategoryNames.Other')`Other`
 }
 
 export function getCategoryName (i18n, category) {
