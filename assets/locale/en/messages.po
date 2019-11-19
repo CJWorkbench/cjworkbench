@@ -84,35 +84,35 @@ msgstr "CSV"
 msgid "js.ExportModal.type.JSON"
 msgstr "JSON FEED"
 
-#: assets/js/ImportModuleFromGitHub.js:124
+#: assets/js/ImportModuleFromGitHub.js:125
 msgid "js.ImportModuleFromGithub.footer.closeButton"
 msgstr "Close"
 
-#: assets/js/ImportModuleFromGitHub.js:98
+#: assets/js/ImportModuleFromGitHub.js:99
 msgid "js.ImportModuleFromGithub.footer.importButton"
 msgstr "Import"
 
-#: assets/js/ImportModuleFromGitHub.js:114
+#: assets/js/ImportModuleFromGitHub.js:115
 msgid "js.ImportModuleFromGithub.public.buildingModuleTutorialLink"
 msgstr "Learn about how to build your own module <0>here</0>"
 
-#: assets/js/ImportModuleFromGitHub.js:110
+#: assets/js/ImportModuleFromGitHub.js:111
 msgid "js.ImportModuleFromGithub.public.header.title"
 msgstr "Import Custom Module"
 
-#: assets/js/ImportModuleFromGitHub.js:87
+#: assets/js/ImportModuleFromGitHub.js:88
 msgid "js.ImportModuleFromGithub.staff.buildingModuleTutorialLink"
 msgstr "Learn about how to build your own module <0>here</0>"
 
-#: assets/js/ImportModuleFromGitHub.js:67
+#: assets/js/ImportModuleFromGitHub.js:68
 msgid "js.ImportModuleFromGithub.staff.header.title"
 msgstr "Import Custom Module"
 
-#: assets/js/ImportModuleFromGitHub.js:47
+#: assets/js/ImportModuleFromGitHub.js:48
 msgid "js.ImportModuleFromGithub.status.importedModule"
 msgstr "Imported module {module} under category {category}"
 
-#: assets/js/ImportModuleFromGitHub.js:32
+#: assets/js/ImportModuleFromGitHub.js:33
 msgid "js.ImportModuleFromGithub.status.processing"
 msgstr "Processing..."
 
@@ -1564,6 +1564,34 @@ msgstr "A maximum of 100 columns can be displayed"
 #: assets/js/table/TableView.js:67
 msgid "js.table.TableView.selectColumns.button"
 msgstr "Select columns"
+
+#: assets/js/util/ModuleCategory.js:10
+msgid "js.util.ModuleCategory.CategoryNames.AddData"
+msgstr "Add data"
+
+#: assets/js/util/ModuleCategory.js:7
+msgid "js.util.ModuleCategory.CategoryNames.Analyze"
+msgstr "Analyze"
+
+#: assets/js/util/ModuleCategory.js:6
+msgid "js.util.ModuleCategory.CategoryNames.Clean"
+msgstr "Clean"
+
+#: assets/js/util/ModuleCategory.js:9
+msgid "js.util.ModuleCategory.CategoryNames.Code"
+msgstr "Code"
+
+#: assets/js/util/ModuleCategory.js:4
+msgid "js.util.ModuleCategory.CategoryNames.Combine"
+msgstr "Combine"
+
+#: assets/js/util/ModuleCategory.js:5
+msgid "js.util.ModuleCategory.CategoryNames.Scrape"
+msgstr "Scrape"
+
+#: assets/js/util/ModuleCategory.js:8
+msgid "js.util.ModuleCategory.CategoryNames.Visualize"
+msgstr "Visualize"
 
 #: assets/js/utils.js:47
 msgid "js.util.timeDifference.ago.days"

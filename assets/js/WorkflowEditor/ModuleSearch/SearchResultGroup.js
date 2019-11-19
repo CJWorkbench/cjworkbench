@@ -1,8 +1,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import SearchResult from './SearchResult'
+import { withI18n } from '@lingui/react'
+import { getCategoryName } from '../../util/ModuleCategory'
 
-export default class ModuleSearchResultGroup extends React.PureComponent {
+class ModuleSearchResultGroup extends React.PureComponent {
   static propTypes = {
     name: PropTypes.string.isRequired,
     activeModule: PropTypes.string, // idName, null if none active
@@ -18,7 +20,7 @@ export default class ModuleSearchResultGroup extends React.PureComponent {
   }
 
   render () {
-    const { name, modules, activeModule } = this.props
+    const { name, modules, activeModule, i18n } = this.props
 
     const children = modules.map(module => (
       <SearchResult
@@ -32,9 +34,11 @@ export default class ModuleSearchResultGroup extends React.PureComponent {
 
     return (
       <li className='module-search-result-group' data-name={name}>
-        <h4>{name}</h4>
+        <h4>{getCategoryName(i18n, name)}</h4>
         <ul className='module-search-results'>{children}</ul>
       </li>
     )
   }
 }
+
+export default withI18n()(ModuleSearchResultGroup)
