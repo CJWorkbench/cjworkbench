@@ -131,8 +131,7 @@ def _merge_catalog(locale: str, source_catalog: Catalog, fuzzy: set = set()):
 
     for message in source_catalog:
         if message.id:  # ignore header
-            if find_corresponding_message(old, message):
-                message.string = find_corresponding_string(old, message)
+            message.string = find_corresponding_string(old, message) or ""
             catalog[message.id] = message
     for message in catalog:
         if message.id:  # ignore header
