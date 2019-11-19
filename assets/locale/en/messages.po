@@ -713,7 +713,13 @@ msgstr "OAuth Error"
 msgid "py.templates.oauth_token_request_denied.serverRefusedtoLogin"
 msgstr "The authorization server refused to let you log in."
 
-#: templates/oauth_token_request_denied.html:18
+#: templates/oauth_token_request_denied.html:14
+msgid "py.templates.oauth_token_request_denied.closeWindowandretry"
+msgstr ""
+"If this is your first time seeing this error, please close this window "
+"and retry."
+
+#: templates/oauth_token_request_denied.html:17
 msgid "py.templates.oauth_token_request_denied.contactus"
 msgstr "Otherwise, please contact us so we can figure out what's wrong."
 
