@@ -75,6 +75,10 @@ def _walk_and_delete_upper_files(
 
 @dataclass
 class Chroot:
+    """
+    Paths pointing to an overlayfs-backed chroot.
+    """
+
     root: Path
     """
     Path where we'll call `chroot`.
@@ -297,10 +301,4 @@ _base = Path("/var/lib/cjwkernel/chroot-layers/base")
 EDITABLE_CHROOT = Chroot(
     _chroots / "editable" / "root", _base, _chroots / "editable" / "upperfs" / "upper"
 )
-READONLY_CHROOT = Chroot(
-    _chroots / "readonly" / "root",
-    # TODO remove "base/upper" logic. Readonly chroot doesn't use/need them.
-    _base,
-    _chroots / "readonly" / "upper",
-)
-READONLY_CHROOT_CONTEXT = ChrootContext(READONLY_CHROOT)  # without locking
+READONLY_CHROOT_DIR = _chroots / "readonly" / "root"

@@ -11,7 +11,7 @@ import time
 from typing import Any, Dict, List, Optional
 import thrift.protocol.TBinaryProtocol
 import thrift.transport.TTransport
-from cjwkernel.chroot import ChrootContext, READONLY_CHROOT_CONTEXT
+from cjwkernel.chroot import ChrootContext, READONLY_CHROOT_DIR
 from cjwkernel.errors import ModuleCompileError, ModuleTimeoutError, ModuleExitedError
 from cjwkernel.thrift import ttypes
 from cjwkernel.types import (
@@ -258,7 +258,7 @@ class Kernel:
 
     def _validate(self, compiled_module: CompiledModule) -> None:
         self._run_in_child(
-            chroot_context=READONLY_CHROOT_CONTEXT,
+            chroot_dir=READONLY_CHROOT_DIR,
             network_config=None,
             compiled_module=compiled_module,
             timeout=self.validate_timeout,
@@ -275,7 +275,7 @@ class Kernel:
         """
         request = RawParams(params).to_thrift()
         response = self._run_in_child(
-            chroot_context=READONLY_CHROOT_CONTEXT,
+            chroot_dir=READONLY_CHROOT_DIR,
             network_config=None,
             compiled_module=compiled_module,
             timeout=self.migrate_params_timeout,
@@ -296,9 +296,8 @@ class Kernel:
         fetch_result: Optional[FetchResult],
         output_filename: str,
     ) -> RenderResult:
-        basedir_seen_by_module = Path("/") / basedir.relative_to(
-            chroot_context.chroot.root
-        )
+        chroot_dir = chroot_context.chroot.root
+        basedir_seen_by_module = Path("/") / basedir.relative_to(chroot_dir)
         request = ttypes.RenderRequest(
             str(basedir_seen_by_module),
             input_table.to_thrift(),
@@ -310,7 +309,7 @@ class Kernel:
         try:
             with chroot_context.writable_file(basedir / output_filename):
                 result = self._run_in_child(
-                    chroot_context=chroot_context,
+                    chroot_dir=chroot_dir,
                     network_config=pyspawner.NetworkConfig(),  # TODO disallow networking
                     compiled_module=compiled_module,
                     timeout=self.render_timeout,
@@ -342,9 +341,8 @@ class Kernel:
         input_parquet_filename: str,
         output_filename: str,
     ) -> FetchResult:
-        basedir_seen_by_module = Path("/") / basedir.relative_to(
-            chroot_context.chroot.root
-        )
+        chroot_dir = chroot_context.chroot.root
+        basedir_seen_by_module = Path("/") / basedir.relative_to(chroot_dir)
         request = ttypes.FetchRequest(
             str(basedir_seen_by_module),
             params.to_thrift(),
@@ -356,7 +354,7 @@ class Kernel:
         try:
             with chroot_context.writable_file(basedir / output_filename):
                 result = self._run_in_child(
-                    chroot_context=chroot_context,
+                    chroot_dir=chroot_dir,
                     network_config=pyspawner.NetworkConfig(),
                     compiled_module=compiled_module,
                     timeout=self.fetch_timeout,
@@ -379,7 +377,7 @@ class Kernel:
     def _run_in_child(
         self,
         *,
-        chroot_context: ChrootContext,
+        chroot_dir: Path,
         network_config: Optional[pyspawner.NetworkConfig],
         compiled_module: CompiledModule,
         timeout: float,
@@ -405,7 +403,7 @@ class Kernel:
             args=[compiled_module, function, args],
             process_name=compiled_module.module_slug,
             sandbox_config=pyspawner.SandboxConfig(
-                chroot_dir=chroot_context.chroot.root, network=network_config
+                chroot_dir=chroot_dir, network=network_config
             ),
         )
 
