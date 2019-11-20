@@ -17,16 +17,24 @@ FROM python:3.7.4-slim-buster AS pybase
 # libcap2: used by pyspawner (via ctypes) to drop capabilities
 # iproute2: used by setup-sandboxes.sh to find our IP for NAT
 # iptables: used by setup-sandboxes.sh to set up NAT and firewall
+# libicu63: used by PyICU
+# libsnappy1v5: used by pyarrow reading our Snappy-compressed Parquet files
+# libre2-5: used by fb-re2 (in modules)
+# libyajl2: used by yajl-py (parsing module specs)
 RUN mkdir -p /usr/share/man/man1 /usr/share/man/man7 \
     && apt-get update \
     && apt-get install --no-install-recommends -y \
+        curl \
         git \
-        postgresql-client \
-        libcap2 \
         iproute2 \
         iptables \
+        libcap2 \
+        libicu63 \
+        libre2-5 \
+        libsnappy1v5 \
+        libyajl2 \
+        postgresql-client \
         unzip \
-        curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Download NLTK stuff
@@ -61,15 +69,20 @@ FROM pybase AS pydev
 # * yajl-py
 # * fb-re2
 # * pysycopg2 (binaries are evil because psycopg2 links SSL -- as does Python)
-# * thrift-compiler (to generate cjwkernel/thrift/...)
+# * PyICU
+#
+# Need thrift-compiler to generate cjwkernel/thrift/...
+# Need pkg-config to build PyICU
 RUN mkdir -p /root/.local/share/virtualenvs \
     && apt-get update \
     && apt-get install --no-install-recommends -y \
       build-essential \
-      libsnappy-dev \
-      libre2-dev \
+      libicu-dev \
       libpq-dev \
+      libre2-dev \
+      libsnappy-dev \
       libyajl-dev \
+      pkg-config \
       thrift-compiler \
     && rm -rf /var/lib/apt/lists/*
 
@@ -128,7 +141,8 @@ COPY Pipfile Pipfile.lock /app/
 # * Twisted - https://twistedmatrix.com/trac/ticket/7945
 # * python-snappy
 # * yajl-py
-# * pysycopg2 (binaries are evil because psycopg2 links SSL -- as does Python)
+# * pysycopg2 (psycopg2-binary is evil because it links SSL -- as does Python)
+# * PyICU
 # ... and we want to keep libsnappy and yajl around after the fact, too
 #
 # Clean up after pipenv, because it leaves varbage in /root/.cache and
@@ -139,20 +153,22 @@ RUN true \
     && apt-get update \
     && apt-get install --no-install-recommends -y \
       build-essential \
-      libsnappy1v5 \
-      libsnappy-dev \
-      libre2-5 \
-      libre2-dev \
+      libicu-dev \
       libpq-dev \
-      libyajl2 \
+      libre2-dev \
+      libsnappy-dev \
       libyajl-dev \
+      pkg-config \
     && pipenv install --dev --system --deploy \
     && rm -rf /root/.cache/pipenv /root/.local/share/virtualenvs \
     && apt-get remove --purge -y \
       build-essential \
-      libsnappy-dev \
-      libre2-dev \
+      libicu-dev \
       libpq-dev \
+      libre2-dev \
+      libsnappy-dev \
+      libyajl-dev \
+      pkg-config \
     && apt-get autoremove --purge -y \
     && rm -rf /var/lib/apt/lists/*
 

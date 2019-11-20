@@ -47,6 +47,7 @@ yajl-py = "*"
 six = "*"  # yajl-py depends on it but doesn't declare so. https://github.com/pykler/yajl-py/issues/21
 pyroute2 = "*"
 pyspawner = "*"
+pyicu = "*"
 
 [dev-packages]
 watchdog = "*"
