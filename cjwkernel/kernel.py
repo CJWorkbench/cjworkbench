@@ -5,6 +5,7 @@ import marshal
 import os
 import os.path
 from pathlib import Path
+import pyspawner
 import selectors
 import time
 from typing import Any, Dict, List, Optional
@@ -12,8 +13,6 @@ import thrift.protocol.TBinaryProtocol
 import thrift.transport.TTransport
 from cjwkernel.chroot import ChrootContext, READONLY_CHROOT_CONTEXT
 from cjwkernel.errors import ModuleCompileError, ModuleTimeoutError, ModuleExitedError
-from cjwkernel import pyspawner
-from cjwkernel.pyspawner.protocol import NetworkConfig, SandboxConfig
 from cjwkernel.thrift import ttypes
 from cjwkernel.types import (
     ArrowTable,
@@ -312,7 +311,7 @@ class Kernel:
             with chroot_context.writable_file(basedir / output_filename):
                 result = self._run_in_child(
                     chroot_context=chroot_context,
-                    network_config=NetworkConfig(),  # TODO disallow networking
+                    network_config=pyspawner.NetworkConfig(),  # TODO disallow networking
                     compiled_module=compiled_module,
                     timeout=self.render_timeout,
                     result=ttypes.RenderResult(),
@@ -358,7 +357,7 @@ class Kernel:
             with chroot_context.writable_file(basedir / output_filename):
                 result = self._run_in_child(
                     chroot_context=chroot_context,
-                    network_config=NetworkConfig(),
+                    network_config=pyspawner.NetworkConfig(),
                     compiled_module=compiled_module,
                     timeout=self.fetch_timeout,
                     result=ttypes.FetchResult(),
@@ -381,7 +380,7 @@ class Kernel:
         self,
         *,
         chroot_context: ChrootContext,
-        network_config: Optional[NetworkConfig],
+        network_config: Optional[pyspawner.NetworkConfig],
         compiled_module: CompiledModule,
         timeout: float,
         result: Any,
@@ -405,7 +404,7 @@ class Kernel:
         module_process = self._pyspawner.spawn_child(
             args=[compiled_module, function, args],
             process_name=compiled_module.module_slug,
-            sandbox_config=SandboxConfig(
+            sandbox_config=pyspawner.SandboxConfig(
                 chroot_dir=chroot_context.chroot.root, network=network_config
             ),
         )

@@ -75,8 +75,8 @@ LAYERS=/var/lib/cjwkernel/chroot-layers
 EDITABLE_CHROOT_SIZE=20G  # max size of user edits in EDITABLE_CHROOT
 VENV_PATH="/root/.local/share/virtualenvs" # only exits in dev
 
-# NetworkConfig mimics cjwkernel/pyspawner/protocol.py
-KERNEL_VETH=cjw-veth-kernel
+# NetworkConfig mimics pyspawner/pyspawner/sandbox.py
+KERNEL_VETH=veth-pyspawn
 CHILD_VETH_IP4="192.168.123.2"
 
 
