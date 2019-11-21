@@ -20,7 +20,8 @@ FROM python:3.7.4-slim-buster AS pybase
 # libicu63: used by PyICU
 # libsnappy1v5: used by pyarrow reading our Snappy-compressed Parquet files
 # libre2-5: used by fb-re2 (in modules)
-# libyajl2: used by yajl-py (parsing module specs)
+# libyajl-dev: used by yajl-py (parsing module specs). (It uses "libyajl.so",
+#              not "libyajl.so.2", so we need libyajl-dev, not libyajl-2.)
 RUN mkdir -p /usr/share/man/man1 /usr/share/man/man7 \
     && apt-get update \
     && apt-get install --no-install-recommends -y \
@@ -32,7 +33,7 @@ RUN mkdir -p /usr/share/man/man1 /usr/share/man/man7 \
         libicu63 \
         libre2-5 \
         libsnappy1v5 \
-        libyajl2 \
+        libyajl-dev \
         postgresql-client \
         unzip \
     && rm -rf /var/lib/apt/lists/*
@@ -81,7 +82,6 @@ RUN mkdir -p /root/.local/share/virtualenvs \
       libpq-dev \
       libre2-dev \
       libsnappy-dev \
-      libyajl-dev \
       pkg-config \
       thrift-compiler \
     && rm -rf /var/lib/apt/lists/*
@@ -157,7 +157,6 @@ RUN true \
       libpq-dev \
       libre2-dev \
       libsnappy-dev \
-      libyajl-dev \
       pkg-config \
     && pipenv install --dev --system --deploy \
     && rm -rf /root/.cache/pipenv /root/.local/share/virtualenvs \
@@ -167,7 +166,6 @@ RUN true \
       libpq-dev \
       libre2-dev \
       libsnappy-dev \
-      libyajl-dev \
       pkg-config \
     && apt-get autoremove --purge -y \
     && rm -rf /var/lib/apt/lists/*
