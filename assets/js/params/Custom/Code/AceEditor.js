@@ -80,12 +80,10 @@ export default class WorkbenchAceEditor extends React.PureComponent {
               Define a <kbd>{hideFromTrans('process(table)')}</kbd> function that accepts
               a <kbd>{hideFromTrans('pd.DataFrame')}</kbd> and returns
               a <kbd>{hideFromTrans('pd.DataFrame')}</kbd>. You may use
-              the <a target='_blank' rel='noopener noreferrer' href='https://docs.python.org/3/library/math.html'><kbd>{hideFromTrans('math')}</kbd></a>,
-            {' '}<kbd>{hideFromTrans('pd')}</kbd>{' '}
-              (<a target='_blank' rel='noopener noreferrer' href='https://pandas.pydata.org/pandas-docs/stable/api.html#dataframe'>{hideFromTrans('Pandas')}</a>)
-            {' '}and <kbd>{hideFromTrans('np')}</kbd>{' '}
-              (<a target='_blank' rel='noopener noreferrer' href='https://docs.scipy.org/doc/numpy/reference/routines.html'>{hideFromTrans('Numpy')}</a>)
-            {' '}modules.
+              the <a target='_blank' rel='noopener noreferrer' href='https://docs.python.org/3/library/math.html'><kbd>{hideFromTrans('math')}</kbd></a>, <kbd>{hideFromTrans('pd')}</kbd>{' '}
+              (<a target='_blank' rel='noopener noreferrer' href='https://pandas.pydata.org/pandas-docs/stable/api.html#dataframe'>{hideFromTrans('Pandas')}</a>) {' '}
+              and <kbd>{hideFromTrans('np')}</kbd>{' '}
+              (<a target='_blank' rel='noopener noreferrer' href='https://docs.scipy.org/doc/numpy/reference/routines.html'>{hideFromTrans('Numpy')}</a>) modules.
           </Trans>
         </div>
         <div className='ace-aspect-ratio-container'>

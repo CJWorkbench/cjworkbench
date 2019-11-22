@@ -107,12 +107,14 @@ const UploadedFileSelect = React.memo(function UploadedFileSelect ({ value, file
 
   const valueIndex = files.findIndex(({ uuid }) => uuid === value)
   const canOpen = files.findIndex(({ uuid }) => uuid !== value) !== -1 // do not open when nothing to select
+  const nFiles = files.length
+  const fileNumber = valueIndex === -1 ? <Trans id='js.params.File.UploadedFileSelect.choosePreviousFile.none'>[NONE]</Trans> : (valueIndex + 1)
 
   return (
     <>
       <button className='uploaded-file-select' onClick={open} title={canOpen ? i18n._(t('js.params.File.UploadedFileSelect.choosePreviousFile.hoverText')`Choose a previously-uploaded file`) : undefined} disabled={!canOpen}>
-        <Trans id='js.params.File.UploadedFileSelect.choosePreviousFile.text' description='The first parameter is the number of the file (or js.params.File.UploadedFileSelect.choosePreviousFile.none) and the second is the total number of files'>
-            File {valueIndex === -1 ? <Trans id='js.params.File.UploadedFileSelect.choosePreviousFile.none'>[NONE]</Trans> : (valueIndex + 1)} of {files.length}
+        <Trans id='js.params.File.UploadedFileSelect.choosePreviousFile.text' description='The parameter {fileNumber} is the number of the file (or js.params.File.UploadedFileSelect.choosePreviousFile.none) and {nFiles} is the total number of files'>
+            File {fileNumber} of {nFiles}
         </Trans>
       </button>
       {isOpen ? (

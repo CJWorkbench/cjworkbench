@@ -1,7 +1,6 @@
 /* global describe, it, expect, jest */
 import React from 'react'
 import { Refine } from './index'
-// import { mount } from 'enzyme'
 import { mountWithI18n } from '../../../i18n/test-utils'
 
 const DefaultValue = { renames: {} }

@@ -27,15 +27,14 @@ export function AllNoneButtons ({ isReadOnly, onClickAll, onClickNone, i18n }) {
     </div>
   )
 }
-AllNoneButtons.propTypes =
-  {
-    i18n: PropTypes.shape({
-      // i18n object injected by LinguiJS withI18n()
-      _: PropTypes.func.isRequired
-    }),
-    isReadOnly: PropTypes.bool.isRequired,
-    onClickNone: PropTypes.func.isRequired, // func() => undefined
-    onClickAll: PropTypes.func.isRequired // func() => undefined
-  }
+AllNoneButtons.propTypes = {
+  i18n: PropTypes.shape({
+    // i18n object injected by LinguiJS withI18n()
+    _: PropTypes.func.isRequired
+  }),
+  isReadOnly: PropTypes.bool.isRequired,
+  onClickNone: PropTypes.func.isRequired, // func() => undefined
+  onClickAll: PropTypes.func.isRequired // func() => undefined
+}
 
 export default withI18n()(AllNoneButtons)

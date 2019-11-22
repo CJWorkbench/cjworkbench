@@ -93,7 +93,7 @@ exports[`DataVersionSelect should match snapshot 1`] = `
     >
       <WithI18n
         defaults="{0} of {nVersions}"
-        description="The first parameter will be the current version and the second will be the number of versions"
+        description="The parameter {0} will be the current version and {nVersions} will be the number of versions"
         id="js.params.Custom.VersionSelect.DataVersionSelect.versionCount"
         values={
           Object {
@@ -108,7 +108,7 @@ exports[`DataVersionSelect should match snapshot 1`] = `
         >
           <Trans
             defaults="{0} of {nVersions}"
-            description="The first parameter will be the current version and the second will be the number of versions"
+            description="The parameter {0} will be the current version and {nVersions} will be the number of versions"
             i18n={
               Object {
                 "_": [Function],
@@ -151,7 +151,6 @@ exports[`DataVersionSelect should match snapshot 1`] = `
           </Trans>
         </I18n>
       </WithI18n>
-      )}
     </button>
   </div>
 </DataVersionSelect>

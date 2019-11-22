@@ -156,7 +156,7 @@ exports[`ModuleSearch Popup matches snapshot 1`] = `
       <ul
         className="module-search-result-groups"
       >
-        <WithI18n
+        <ModuleSearchResultGroup
           activeModule={null}
           key="Add data"
           modules={
@@ -176,112 +176,100 @@ exports[`ModuleSearch Popup matches snapshot 1`] = `
           onClickModule={[Function]}
           onMouseEnterModule={[Function]}
         >
-          <I18n
-            update={true}
-            withHash={true}
+          <li
+            className="module-search-result-group"
+            data-name="Add data"
           >
-            <ModuleSearchResultGroup
-              activeModule={null}
-              i18n={
-                Object {
-                  "_": [Function],
-                  "_activeLanguageData": Object {
-                    "plurals": [Function],
-                  },
-                  "_activeMessages": Object {},
-                  "_catalogs": Object {
-                    "en": Object {
-                      "languageData": Object {},
-                      "messages": Object {},
-                    },
-                  },
-                  "_dev": Object {
-                    "compile": [Function],
-                    "loadLanguageData": [Function],
-                  },
-                  "_language": "en",
-                  "_locales": undefined,
-                  "_missing": undefined,
-                  "plural": [Function],
-                  "select": [Function],
-                  "selectOrdinal": [Function],
-                  "t": [Function],
-                }
-              }
-              modules={
-                Array [
-                  Object {
-                    "category": "Add data",
-                    "description": "Enigma description",
-                    "icon": "url",
-                    "idName": "enigma",
-                    "isLessonHighlight": true,
-                    "name": "Load from Enigma",
-                    "uses_data": true,
-                  },
-                ]
-              }
-              name="Add data"
-              onClickModule={[Function]}
-              onMouseEnterModule={[Function]}
-            >
-              <li
-                className="module-search-result-group"
-                data-name="Add data"
+            <h4>
+              <WithI18n
+                category="Add data"
               >
-                <h4>
-                  Add data
-                </h4>
-                <ul
-                  className="module-search-results"
+                <I18n
+                  update={true}
+                  withHash={true}
                 >
-                  <SearchResult
+                  <Component
                     category="Add data"
-                    description="Enigma description"
-                    icon="url"
-                    idName="enigma"
-                    isActive={false}
-                    isLessonHighlight={true}
-                    key="Load from Enigma"
-                    name="Load from Enigma"
-                    onClick={[Function]}
-                    onMouseEnter={[Function]}
-                    uses_data={true}
+                    i18n={
+                      Object {
+                        "_": [Function],
+                        "_activeLanguageData": Object {
+                          "plurals": [Function],
+                        },
+                        "_activeMessages": Object {},
+                        "_catalogs": Object {
+                          "en": Object {
+                            "languageData": Object {},
+                            "messages": Object {},
+                          },
+                        },
+                        "_dev": Object {
+                          "compile": [Function],
+                          "loadLanguageData": [Function],
+                        },
+                        "_language": "en",
+                        "_locales": undefined,
+                        "_missing": undefined,
+                        "plural": [Function],
+                        "select": [Function],
+                        "selectOrdinal": [Function],
+                        "t": [Function],
+                      }
+                    }
                   >
-                    <Manager>
-                      <li>
-                        <Reference>
-                          <InnerReference
-                            setReferenceNode={[Function]}
+                    Add data
+                  </Component>
+                </I18n>
+              </WithI18n>
+            </h4>
+            <ul
+              className="module-search-results"
+            >
+              <SearchResult
+                category="Add data"
+                description="Enigma description"
+                icon="url"
+                idName="enigma"
+                isActive={false}
+                isLessonHighlight={true}
+                key="Load from Enigma"
+                name="Load from Enigma"
+                onClick={[Function]}
+                onMouseEnter={[Function]}
+                uses_data={true}
+              >
+                <Manager>
+                  <li>
+                    <Reference>
+                      <InnerReference
+                        setReferenceNode={[Function]}
+                      >
+                        <button
+                          className="module-search-result lesson-highlight"
+                          data-module-name="Load from Enigma"
+                          data-module-slug="enigma"
+                          id="module-search-result-enigma"
+                          onClick={[Function]}
+                          onMouseEnter={[Function]}
+                        >
+                          <i
+                            className="icon-url"
+                          />
+                          <span
+                            className="name"
                           >
-                            <button
-                              className="module-search-result lesson-highlight"
-                              data-module-name="Load from Enigma"
-                              data-module-slug="enigma"
-                              id="module-search-result-enigma"
-                              onClick={[Function]}
-                              onMouseEnter={[Function]}
-                            >
-                              <i
-                                className="icon-url"
-                              />
-                              <span
-                                className="name"
-                              >
-                                Load from Enigma
-                              </span>
-                            </button>
-                          </InnerReference>
-                        </Reference>
-                      </li>
-                    </Manager>
-                  </SearchResult>
-                </ul>
-              </li>
-            </ModuleSearchResultGroup>
-          </I18n>
-        </WithI18n>
-        <WithI18n
+                            Load from Enigma
+                          </span>
+                        </button>
+                      </InnerReference>
+                    </Reference>
+                  </li>
+                </Manager>
+              </SearchResult>
+            </ul>
+          </li>
+        </ModuleSearchResultGroup>
+        <ModuleSearchResultGroup
           activeModule={null}
           key="Analyze"
           modules={
@@ -301,111 +289,99 @@ exports[`ModuleSearch Popup matches snapshot 1`] = `
           onClickModule={[Function]}
           onMouseEnterModule={[Function]}
         >
-          <I18n
-            update={true}
-            withHash={true}
+          <li
+            className="module-search-result-group"
+            data-name="Analyze"
           >
-            <ModuleSearchResultGroup
-              activeModule={null}
-              i18n={
-                Object {
-                  "_": [Function],
-                  "_activeLanguageData": Object {
-                    "plurals": [Function],
-                  },
-                  "_activeMessages": Object {},
-                  "_catalogs": Object {
-                    "en": Object {
-                      "languageData": Object {},
-                      "messages": Object {},
-                    },
-                  },
-                  "_dev": Object {
-                    "compile": [Function],
-                    "loadLanguageData": [Function],
-                  },
-                  "_language": "en",
-                  "_locales": undefined,
-                  "_missing": undefined,
-                  "plural": [Function],
-                  "select": [Function],
-                  "selectOrdinal": [Function],
-                  "t": [Function],
-                }
-              }
-              modules={
-                Array [
-                  Object {
-                    "category": "Analyze",
-                    "description": "Text description",
-                    "icon": "filter",
-                    "idName": "filter",
-                    "isLessonHighlight": false,
-                    "name": "Filter by Text",
-                    "uses_data": true,
-                  },
-                ]
-              }
-              name="Analyze"
-              onClickModule={[Function]}
-              onMouseEnterModule={[Function]}
-            >
-              <li
-                className="module-search-result-group"
-                data-name="Analyze"
+            <h4>
+              <WithI18n
+                category="Analyze"
               >
-                <h4>
-                  Analyze
-                </h4>
-                <ul
-                  className="module-search-results"
+                <I18n
+                  update={true}
+                  withHash={true}
                 >
-                  <SearchResult
+                  <Component
                     category="Analyze"
-                    description="Text description"
-                    icon="filter"
-                    idName="filter"
-                    isActive={false}
-                    isLessonHighlight={false}
-                    key="Filter by Text"
-                    name="Filter by Text"
-                    onClick={[Function]}
-                    onMouseEnter={[Function]}
-                    uses_data={true}
+                    i18n={
+                      Object {
+                        "_": [Function],
+                        "_activeLanguageData": Object {
+                          "plurals": [Function],
+                        },
+                        "_activeMessages": Object {},
+                        "_catalogs": Object {
+                          "en": Object {
+                            "languageData": Object {},
+                            "messages": Object {},
+                          },
+                        },
+                        "_dev": Object {
+                          "compile": [Function],
+                          "loadLanguageData": [Function],
+                        },
+                        "_language": "en",
+                        "_locales": undefined,
+                        "_missing": undefined,
+                        "plural": [Function],
+                        "select": [Function],
+                        "selectOrdinal": [Function],
+                        "t": [Function],
+                      }
+                    }
                   >
-                    <Manager>
-                      <li>
-                        <Reference>
-                          <InnerReference
-                            setReferenceNode={[Function]}
+                    Analyze
+                  </Component>
+                </I18n>
+              </WithI18n>
+            </h4>
+            <ul
+              className="module-search-results"
+            >
+              <SearchResult
+                category="Analyze"
+                description="Text description"
+                icon="filter"
+                idName="filter"
+                isActive={false}
+                isLessonHighlight={false}
+                key="Filter by Text"
+                name="Filter by Text"
+                onClick={[Function]}
+                onMouseEnter={[Function]}
+                uses_data={true}
+              >
+                <Manager>
+                  <li>
+                    <Reference>
+                      <InnerReference
+                        setReferenceNode={[Function]}
+                      >
+                        <button
+                          className="module-search-result"
+                          data-module-name="Filter by Text"
+                          data-module-slug="filter"
+                          id="module-search-result-filter"
+                          onClick={[Function]}
+                          onMouseEnter={[Function]}
+                        >
+                          <i
+                            className="icon-filter"
+                          />
+                          <span
+                            className="name"
                           >
-                            <button
-                              className="module-search-result"
-                              data-module-name="Filter by Text"
-                              data-module-slug="filter"
-                              id="module-search-result-filter"
-                              onClick={[Function]}
-                              onMouseEnter={[Function]}
-                            >
-                              <i
-                                className="icon-filter"
-                              />
-                              <span
-                                className="name"
-                              >
-                                Filter by Text
-                              </span>
-                            </button>
-                          </InnerReference>
-                        </Reference>
-                      </li>
-                    </Manager>
-                  </SearchResult>
-                </ul>
-              </li>
-            </ModuleSearchResultGroup>
-          </I18n>
-        </WithI18n>
+                            Filter by Text
+                          </span>
+                        </button>
+                      </InnerReference>
+                    </Reference>
+                  </li>
+                </Manager>
+              </SearchResult>
+            </ul>
+          </li>
+        </ModuleSearchResultGroup>
       </ul>
     </SearchResults>
   </div>

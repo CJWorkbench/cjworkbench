@@ -87,7 +87,7 @@ export default class SortColumns extends React.PureComponent {
             name={`${name}[add]`}
             onClick={this.handleClickAdd}
           >
-            <i className='icon-add' />
+            <i className='icon-add' /> {' '}
             <Trans id='js.params.Custom.SortColumn.add'>Add</Trans>
           </button>
         )}

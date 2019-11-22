@@ -64,7 +64,7 @@ export default class Groups extends React.PureComponent {
                 name={`${name}[group_dates]`}
                 checked={value.group_dates}
                 onChange={this.handleChangeGroupDates}
-              />
+              /> {' '}
               <Trans id='js.params.Custom.Groups.groupDates'>Group dates</Trans>
             </label>
           </div>

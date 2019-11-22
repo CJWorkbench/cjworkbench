@@ -44,7 +44,7 @@ export class DataVersionSelect extends React.PureComponent {
     } else if (isReadOnly) {
       inner = (
         <div className='read-only'>
-          <Trans id='js.params.Custom.VersionSelect.DataVersionSelect.readOnly.label'>
+          <Trans id='js.params.Custom.VersionSelect.DataVersionSelect.readOnly.label' description='The parameter {0} will be the current version and {nVersions} will be the number of versions'>
             Version {nVersions - currentVersionIndex} of {nVersions}
           </Trans>
         </div>
@@ -62,10 +62,9 @@ export class DataVersionSelect extends React.PureComponent {
             title={i18n._(t('js.params.Custom.VersionSelect.DataVersionSelect.selectVersion.hoverText')`Select version`)}
             onClick={this.handleClickOpenModal}
           >
-            <Trans id='js.params.Custom.VersionSelect.DataVersionSelect.versionCount' description='The first parameter will be the current version and the second will be the number of versions'>
+            <Trans id='js.params.Custom.VersionSelect.DataVersionSelect.versionCount' description='The parameter {0} will be the current version and {nVersions} will be the number of versions'>
               {nVersions - currentVersionIndex} of {nVersions}
             </Trans>
-            )}
           </button>
           {isDataVersionModalOpen ? (
             <DataVersionModal

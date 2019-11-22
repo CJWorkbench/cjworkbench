@@ -814,8 +814,8 @@ msgstr "Operations"
 msgid "js.params.Custom.Code.AceEditor.help"
 msgstr ""
 "Define a <0>{0}</0> function that accepts a <1>{1}</1> and returns a "
-"<2>{2}</2>. You may use the <3><4>{3}</4></3>,<5>{4}</5> (<6>{5}</6>) and"
-" <7>{6}</7> (<8>{7}</8>) modules."
+"<2>{2}</2>. You may use the <3><4>{3}</4></3>, <5>{4}</5> (<6>{5}</6>) "
+"and <7>{6}</7> (<8>{7}</8>) modules."
 
 #. The parameter will the the name of the custom type
 #: assets/js/params/Custom/index.js:36
@@ -1367,6 +1367,8 @@ msgstr "No values match your search"
 msgid "js.params.Custom.VersionSelect.DataVersionSelect.noVersions.label"
 msgstr "Version"
 
+#. The parameter {0} will be the current version and {nVersions} will be the
+#. number of versions
 #: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:47
 msgid "js.params.Custom.VersionSelect.DataVersionSelect.readOnly.label"
 msgstr "Version {0} of {nVersions}"
@@ -1379,7 +1381,7 @@ msgstr "Select version"
 msgid "js.params.Custom.VersionSelect.DataVersionSelect.selectVersion.label"
 msgstr "Version"
 
-#. The first parameter will be the current version and the second will be the
+#. The parameter {0} will be the current version and {nVersions} will be the
 #. number of versions
 #: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:65
 msgid "js.params.Custom.VersionSelect.DataVersionSelect.versionCount"
@@ -1560,20 +1562,20 @@ msgstr "You have not uploaded any files to this Step"
 msgid "js.params.File.UploadedFileSelect.UploadedFileSelectModal.uploaded_at"
 msgstr "Uploaded {0}"
 
-#: assets/js/params/File/UploadedFileSelect.js:113
+#: assets/js/params/File/UploadedFileSelect.js:115
 msgid "js.params.File.UploadedFileSelect.choosePreviousFile.hoverText"
 msgstr "Choose a previously-uploaded file"
 
-#: assets/js/params/File/UploadedFileSelect.js:115
+#: assets/js/params/File/UploadedFileSelect.js:111
 msgid "js.params.File.UploadedFileSelect.choosePreviousFile.none"
 msgstr "[NONE]"
 
-#. The first parameter is the number of the file (or
-#. js.params.File.UploadedFileSelect.choosePreviousFile.none) and the second is
+#. The parameter {fileNumber} is the number of the file (or
+#. js.params.File.UploadedFileSelect.choosePreviousFile.none) and {nFiles} is
 #. the total number of files
-#: assets/js/params/File/UploadedFileSelect.js:114
+#: assets/js/params/File/UploadedFileSelect.js:116
 msgid "js.params.File.UploadedFileSelect.choosePreviousFile.text"
-msgstr "File {0} of {1}"
+msgstr "File {fileNumber} of {nFiles}"
 
 #: assets/js/params/Gdrivefile.js:95
 msgid "js.params.Gdrivefile.FileInfo.chooseFile"
@@ -1862,35 +1864,35 @@ msgstr "A maximum of 100 columns can be displayed"
 msgid "js.table.TableView.selectColumns.button"
 msgstr "Select columns"
 
-#: assets/js/util/ModuleCategory.js:10
+#: assets/js/util/ModuleCategory.js:12
 msgid "js.util.ModuleCategory.CategoryNames.AddData"
 msgstr "Add data"
 
-#: assets/js/util/ModuleCategory.js:7
+#: assets/js/util/ModuleCategory.js:9
 msgid "js.util.ModuleCategory.CategoryNames.Analyze"
 msgstr "Analyze"
 
-#: assets/js/util/ModuleCategory.js:6
+#: assets/js/util/ModuleCategory.js:8
 msgid "js.util.ModuleCategory.CategoryNames.Clean"
 msgstr "Clean"
 
-#: assets/js/util/ModuleCategory.js:9
+#: assets/js/util/ModuleCategory.js:11
 msgid "js.util.ModuleCategory.CategoryNames.Code"
 msgstr "Code"
 
-#: assets/js/util/ModuleCategory.js:4
+#: assets/js/util/ModuleCategory.js:6
 msgid "js.util.ModuleCategory.CategoryNames.Combine"
 msgstr "Combine"
 
-#: assets/js/util/ModuleCategory.js:11
+#: assets/js/util/ModuleCategory.js:13
 msgid "js.util.ModuleCategory.CategoryNames.Other"
 msgstr "Other"
 
-#: assets/js/util/ModuleCategory.js:5
+#: assets/js/util/ModuleCategory.js:7
 msgid "js.util.ModuleCategory.CategoryNames.Scrape"
 msgstr "Scrape"
 
-#: assets/js/util/ModuleCategory.js:8
+#: assets/js/util/ModuleCategory.js:10
 msgid "js.util.ModuleCategory.CategoryNames.Visualize"
 msgstr "Visualize"
 

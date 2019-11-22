@@ -31,7 +31,7 @@ exports[`AceEditor matches snapshot 1`] = `
           />,
         ]
       }
-      defaults="Define a <0>{0}</0> function that accepts a <1>{1}</1> and returns a <2>{2}</2>. You may use the <3><4>{3}</4></3>,<5>{4}</5> (<6>{5}</6>) and <7>{6}</7> (<8>{7}</8>) modules."
+      defaults="Define a <0>{0}</0> function that accepts a <1>{1}</1> and returns a <2>{2}</2>. You may use the <3><4>{3}</4></3>, <5>{4}</5> (<6>{5}</6>) and <7>{6}</7> (<8>{7}</8>) modules."
       description="The parameters contain either code or names of libraries. The tags are either <kbd> formatting or URLs."
       id="js.params.Custom.Code.AceEditor.help"
       values={
