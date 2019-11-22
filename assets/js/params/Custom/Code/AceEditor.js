@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import AceEditor from 'react-ace/lib/ace'
 import memoize from 'memoize-one'
 import { Trans } from '@lingui/macro'
-import { hideFromTrans } from '../../../i18n/messages'
 
 import 'brace/mode/python'
 import 'brace/theme/xcode'
@@ -76,14 +75,14 @@ export default class WorkbenchAceEditor extends React.PureComponent {
     return (
       <>
         <div className='help'>
-          <Trans id='js.params.Custom.Code.AceEditor.help' description='The parameters contain either code or names of libraries. The tags are either <kbd> formatting or URLs.'>
-              Define a <kbd>{hideFromTrans('process(table)')}</kbd> function that accepts
-              a <kbd>{hideFromTrans('pd.DataFrame')}</kbd> and returns
-              a <kbd>{hideFromTrans('pd.DataFrame')}</kbd>. You may use
-              the <a target='_blank' rel='noopener noreferrer' href='https://docs.python.org/3/library/math.html'><kbd>{hideFromTrans('math')}</kbd></a>, <kbd>{hideFromTrans('pd')}</kbd>{' '}
-              (<a target='_blank' rel='noopener noreferrer' href='https://pandas.pydata.org/pandas-docs/stable/api.html#dataframe'>{hideFromTrans('Pandas')}</a>) {' '}
-              and <kbd>{hideFromTrans('np')}</kbd>{' '}
-              (<a target='_blank' rel='noopener noreferrer' href='https://docs.scipy.org/doc/numpy/reference/routines.html'>{hideFromTrans('Numpy')}</a>) modules.
+          <Trans id='js.params.Custom.Code.AceEditor.help' description='The tags <3>, <6>, and <8> are URLs. The rest are code formatting. Please keep code and names of libraries untranslated.'>
+              Define a <kbd>process(table)</kbd> function that accepts
+              a <kbd>pd.DataFrame</kbd> and returns
+              a <kbd>pd.DataFrame</kbd>. You may use
+              the <a target='_blank' rel='noopener noreferrer' href='https://docs.python.org/3/library/math.html'><kbd>math</kbd></a>, <kbd>pd</kbd>{' '}
+              (<a target='_blank' rel='noopener noreferrer' href='https://pandas.pydata.org/pandas-docs/stable/api.html#dataframe'>Pandas</a>) {' '}
+              and <kbd>np</kbd>{' '}
+              (<a target='_blank' rel='noopener noreferrer' href='https://docs.scipy.org/doc/numpy/reference/routines.html'>Numpy</a>) modules.
           </Trans>
         </div>
         <div className='ace-aspect-ratio-container'>
