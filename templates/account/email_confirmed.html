@@ -6,5 +6,5 @@
 
 {% block content %}
     <h1 class='t-d-gray title-1 text-center mb-3'>{% trans_html "py.templates.account.email_confirmed.emailConfirm.header" default="Email confirmed" %}</h1>
-    <p class='message-body'>{% trans_html "py.templates.account.email_confirmed.youConfirmeedEmail" default="You have confirmed <b0>{email}</b0>" arg_email=confirmation.email_address.email tag_b0="" comment="The tag adds emphasis"  %}</p>
+    <p class='message-body'>{% trans_html "py.templates.account.email_confirmed.youConfirmedEmail" default="You have confirmed <b0>{email}</b0>" arg_email=confirmation.email_address.email tag_b0="" comment="The tag adds emphasis"  %}</p>
 {% endblock %}

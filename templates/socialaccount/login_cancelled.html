@@ -10,6 +10,6 @@
 
 {% url 'account_login' as login_url %}
 
-<p>{% trans_html "py.templates.socialaccount.login_cancelled.youDecidedToCancelLogging" default="You decided to cancel logging in to our site using one of your existing accounts. If this was a mistake, please proceed to <a0>sign in</a0>." tag_a0_href=login_url comment="The tag is a link to the login page" %}</p>
+<p>{% trans_html "py.templates.socialaccount.login_cancelled.youCancelledLogin" default="You decided to cancel logging in to our site using one of your existing accounts. If this was a mistake, please proceed to <a0>sign in</a0>." tag_a0_href=login_url comment="The tag is a link to the login page" %}</p>
 
 {% endblock %}

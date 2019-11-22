@@ -21,7 +21,7 @@ behavior more clear, and we should contribute a fix and a pull request.
 
 {% else %}
 
-    <p class='content-1 t-d-gray text-center mb-5'>{% trans_html "py.templates.socialaccount.signup.specificAccountToLogin" default="You are about to use your {provider_name} account to login to {site_name}. As a final step, please complete the following form: "  arg_provider_name=account.get_provider.name arg_site_name=site.name %}</p>
+    <p class='content-1 t-d-gray text-center mb-5'>{% trans_html "py.templates.socialaccount.signup.specificAccountToLogin" default="You are about to use your {provider_name} account to login to {site_name}. As a final step, please complete the following form:"  arg_provider_name=account.get_provider.name arg_site_name=site.name %}</p>
 
     <form class="signup" id="signup_form" method="post" action="{% url 'socialaccount_signup' %}">
       {% csrf_token %}

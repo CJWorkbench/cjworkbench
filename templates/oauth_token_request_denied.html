@@ -2,19 +2,19 @@
 {% load i18n_icu %}
 
 {% block title %}
-   {% trans_html "py.templates.oauth_token_request_denied.error.Title" default="OAuth Error" %} 
+   {% trans_html "py.templates.oauth_token_request_denied.title" default="OAuth Error" %} 
 {% endblock %}
 
 {% block body %}
   <div class="oauth-error">
     <p>
-      {% trans_html "py.templates.oauth_token_request_denied.serverRefusedtoLogin" default="The authorization server refused to let you log in." %}
+      {% trans_html "py.templates.oauth_token_request_denied.description" default="The authorization server refused to let you log in." %}
     </p>
     <p>
-      {% trans_html "py.templates.oauth_token_request_denied.closeWindowandretry" default="If this is your first time seeing this error, please close this window and retry." %}
+      {% trans_html "py.templates.oauth_token_request_denied.suggestRetry" default="If this is your first time seeing this error, please close this window and retry." %}
     </p>
     <p>
-      {% trans_html "py.templates.oauth_token_request_denied.contactus" default="Otherwise, please contact us so we can figure out what's wrong." %}
+      {% trans_html "py.templates.oauth_token_request_denied.contactUs" default="Otherwise, please contact us so we can figure out what's wrong." %}
     </p>
   </div>
 {% endblock %}

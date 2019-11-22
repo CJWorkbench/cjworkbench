@@ -48,7 +48,7 @@
         <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
     {% endif %}
       <div class="consent">
-       {% trans_html "py.templates.account.signup.agreeToWorkbench" default="I agree to Workbench's <a0>Terms of service</a0> and <a1>Privacy policy</a1>." tag_a0_href="http://help.workbenchdata.com/terms-of-service-and-privacy-policy/terms-of-service" tag_a0_class="t-white-u" tag_a1_href="http://help.workbenchdata.com/terms-of-service-and-privacy-policy/privacy-policy" tag_a1_class="t-white-u" comment="The tags are urls to the respective pages" %} 
+       {% trans_html "py.templates.account.signup.agreeToTerms" default="I agree to Workbench's <a0>Terms of service</a0> and <a1>Privacy policy</a1>." tag_a0_href="http://help.workbenchdata.com/terms-of-service-and-privacy-policy/terms-of-service" tag_a0_class="t-white-u" tag_a1_href="http://help.workbenchdata.com/terms-of-service-and-privacy-policy/privacy-policy" tag_a1_class="t-white-u" comment="The tags are urls to the respective pages" %} 
       </div>
     <button type="submit" class="button-white--fill action-button mx-auto mb-3">{% trans_html "py.templates.account.signup.registerButton" default="Register" %}</button>
   </form>
