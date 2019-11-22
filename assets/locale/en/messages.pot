@@ -89,37 +89,37 @@ msgid "js.ExportModal.type.JSON"
 msgstr ""
 
 #. default-message: Close
-#: assets/js/ImportModuleFromGitHub.js:125
+#: assets/js/ImportModuleFromGitHub.js:123
 msgid "js.ImportModuleFromGithub.footer.closeButton"
 msgstr ""
 
 #. default-message: Import
-#: assets/js/ImportModuleFromGitHub.js:99
+#: assets/js/ImportModuleFromGitHub.js:97
 msgid "js.ImportModuleFromGithub.footer.importButton"
 msgstr ""
 
 #. default-message: Learn about how to build your own module <0>here</0>
-#: assets/js/ImportModuleFromGitHub.js:115
+#: assets/js/ImportModuleFromGitHub.js:113
 msgid "js.ImportModuleFromGithub.public.buildingModuleTutorialLink"
 msgstr ""
 
 #. default-message: Import Custom Module
-#: assets/js/ImportModuleFromGitHub.js:111
+#: assets/js/ImportModuleFromGitHub.js:109
 msgid "js.ImportModuleFromGithub.public.header.title"
 msgstr ""
 
 #. default-message: Learn about how to build your own module <0>here</0>
-#: assets/js/ImportModuleFromGitHub.js:88
+#: assets/js/ImportModuleFromGitHub.js:86
 msgid "js.ImportModuleFromGithub.staff.buildingModuleTutorialLink"
 msgstr ""
 
 #. default-message: Import Custom Module
-#: assets/js/ImportModuleFromGitHub.js:68
+#: assets/js/ImportModuleFromGitHub.js:66
 msgid "js.ImportModuleFromGithub.staff.header.title"
 msgstr ""
 
 #. default-message: Imported module {module} under category {category}
-#: assets/js/ImportModuleFromGitHub.js:48
+#: assets/js/ImportModuleFromGitHub.js:47
 msgid "js.ImportModuleFromGithub.status.importedModule"
 msgstr ""
 
