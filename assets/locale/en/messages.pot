@@ -843,30 +843,30 @@ msgstr ""
 
 #. default-message: OAuth Error
 #: templates/oauth_token_request_denied.html:5
-msgid "py.templates.oauth_token_request_denied.error.Title"
+msgid "py.templates.oauth_token_request_denied.title"
 msgstr ""
 
 #. default-message: The authorization server refused to let you log in.
 #: templates/oauth_token_request_denied.html:11
-msgid "py.templates.oauth_token_request_denied.serverRefusedtoLogin"
+msgid "py.templates.oauth_token_request_denied.description"
 msgstr ""
 
 #. default-message: If this is your first time seeing this error, please close this window and retry.
 #: templates/oauth_token_request_denied.html:14
-msgid "py.templates.oauth_token_request_denied.closeWindowandretry"
+msgid "py.templates.oauth_token_request_denied.suggestRetry"
 msgstr ""
 
 #. default-message: Otherwise, please contact us so we can figure out what's wrong.
 #: templates/oauth_token_request_denied.html:17
-msgid "py.templates.oauth_token_request_denied.contactus"
+msgid "py.templates.oauth_token_request_denied.contactUs"
 msgstr ""
 
-#. default-message: by {workflowowner}
+#. default-message: by {workflowOwner}
 #: templates/report.html:18
 msgid "py.templates.report.author"
 msgstr ""
 
-#. default-message: Updated <time0>{workflowupdates}</time0> ago
+#. default-message: Updated <time0>{timeAgo}</time0> ago
 #: templates/report.html:19
 msgid "py.templates.report.updated"
 msgstr ""
@@ -898,7 +898,7 @@ msgstr ""
 
 #. default-message: Experience optimized for web browsers
 #: templates/workflow.html:36
-msgid "py.templates.workflow.optimizedForbrowsers"
+msgid "py.templates.workflow.optimizedForDesktop"
 msgstr ""
 
 #. default-message: Signup
@@ -947,8 +947,8 @@ msgstr ""
 msgid "py.templates.account.email_confirmation_sent.header"
 msgstr ""
 
-#. The b0 tag adds emphasis. The a0 tag is a mailto link for the contactMail
-#. default-message: We have sent an email to <b0>{email}</b0> for verification. If you do not receive it within a few minutes, contact us at <a0>{contactMail}</a0>
+#. The b0 tag adds emphasis. The a0 tag is a mailto link for the contactMail.
+#. default-message: We have sent an email to <b0>{email}</b0> for verification. If you do not receive it within a few minutes, contact us at <a0>{contactMail}</a0>.
 #: templates/account/email_confirmation_sent.html:10
 msgid "py.templates.account.email_confirmation_sent.verificationEmail"
 msgstr ""
@@ -971,7 +971,7 @@ msgstr ""
 #. The tag adds emphasis
 #. default-message: You have confirmed <b0>{email}</b0>
 #: templates/account/email_confirmed.html:9
-msgid "py.templates.account.email_confirmed.youConfirmeedEmail"
+msgid "py.templates.account.email_confirmed.youConfirmedEmail"
 msgstr ""
 
 #. default-message: Sign in
@@ -981,7 +981,7 @@ msgstr ""
 
 #. default-message: Sign up
 #: templates/account/login.html:12
-msgid "accounts.sign_in.linkToSignUp"
+msgid "py.templates.account.login.linkToSignUp"
 msgstr ""
 
 #. default-message: Forgot Password?
@@ -1041,12 +1041,12 @@ msgstr ""
 
 #. default-message: Send me instructions
 #: templates/account/password_reset.html:17
-msgid "py.templates.account.password_reset.sendMeinstructions.button"
+msgid "py.templates.account.password_reset.sendMeInstructions.button"
 msgstr ""
 
 #. default-message: Back to login
 #: templates/account/password_reset.html:25
-msgid "py.templates.account.password_reset.backToLogIn.link"
+msgid "py.templates.account.password_reset.backToLogin.link"
 msgstr ""
 
 #. default-message: Password reset sent
@@ -1061,7 +1061,7 @@ msgstr ""
 
 #. default-message: Check your email to reset your password.
 #: templates/account/password_reset_done.html:11
-msgid "py.templates.account.password_reset_done.checkYourEMail"
+msgid "py.templates.account.password_reset_done.checkYourEmail"
 msgstr ""
 
 #. The a0 tag is a mailto link to the email
@@ -1072,7 +1072,7 @@ msgstr ""
 
 #. default-message: Back to login
 #: templates/account/password_reset_done.html:16
-msgid "py.templates.account.password_reset_done.backToLogIn.link"
+msgid "py.templates.account.password_reset_done.backToLogin.link"
 msgstr ""
 
 #. default-message: Change Password
@@ -1118,7 +1118,7 @@ msgstr ""
 
 #. default-message: Back to login
 #: templates/account/password_reset_from_key_done.html:9
-msgid "py.templates.account.password_reset_from_key_done.backToLogIn.link"
+msgid "py.templates.account.password_reset_from_key_done.backToLogin.link"
 msgstr ""
 
 #. default-message: Account
@@ -1161,7 +1161,7 @@ msgstr ""
 #. The tags are urls to the respective pages
 #. default-message: I agree to Workbench's <a0>Terms of service</a0> and <a1>Privacy policy</a1>.
 #: templates/account/signup.html:51
-msgid "py.templates.account.signup.agreeToWorkbench"
+msgid "py.templates.account.signup.agreeToTerms"
 msgstr ""
 
 #. default-message: Register
@@ -1186,11 +1186,16 @@ msgstr ""
 
 #. default-message: Back to login
 #: templates/account/verification_sent.html:10
-msgid "py.templates.account.verification_sent.backToLogIn.link"
+msgid "py.templates.account.verification_sent.backToLogin.link"
 msgstr ""
 
-#. default-message: Welcome to Workbench! Please confirm your email address by clicking the link below. If you didn't sign up, you can safely ignore this email.
-#: templates/account/email/email_confirmation_message.txt:5
+#. default-message: Welcome to Workbench!
+#: templates/account/email/email_confirmation_message.txt:6
+msgid "py.templates.account.email.email_confirmation_message.welcome"
+msgstr ""
+
+#. default-message: Please confirm your email address by clicking the link below. If you didn't sign up, you can safely ignore this email.
+#: templates/account/email/email_confirmation_message.txt:7
 msgid "py.templates.account.email.email_confirmation_message.confirmYourEmail"
 msgstr ""
 
@@ -1214,9 +1219,14 @@ msgstr ""
 msgid "py.templates.account.email.password_reset_key_subject"
 msgstr ""
 
-#. The tag is a url
-#. default-message: Hi {userName}, Your workflow <a0>{workflowName}</a0> has been updated with new data on {date}. Its {moduleName} module has new output.
+#. default-message: Hi {userName},
 #: templates/notifications/new_data_version.txt:2
+msgid "py.templates.notifications.new_data_version.hello"
+msgstr ""
+
+#. The tag is a url
+#. default-message: Your workflow <a0>{workflowName}</a0> has been updated with new data on {date}. Its {moduleName} module has new output.
+#: templates/notifications/new_data_version.txt:3
 msgid "py.templates.notifications.new_data_version.workflowHasBeenUpdated"
 msgstr ""
 
@@ -1303,7 +1313,7 @@ msgstr ""
 #. The tag is a link to the login page
 #. default-message: You decided to cancel logging in to our site using one of your existing accounts. If this was a mistake, please proceed to <a0>sign in</a0>.
 #: templates/socialaccount/login_cancelled.html:13
-msgid "py.templates.socialaccount.login_cancelled.youDecidedToCancelLogging"
+msgid "py.templates.socialaccount.login_cancelled.youCancelledLogin"
 msgstr ""
 
 #. default-message: Signup

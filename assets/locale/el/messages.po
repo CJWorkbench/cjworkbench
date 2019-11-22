@@ -696,19 +696,19 @@ msgid "py.templates.minimum.title"
 msgstr ""
 
 #: templates/oauth_token_request_denied.html:5
-msgid "py.templates.oauth_token_request_denied.error.Title"
+msgid "py.templates.oauth_token_request_denied.title"
 msgstr ""
 
 #: templates/oauth_token_request_denied.html:11
-msgid "py.templates.oauth_token_request_denied.serverRefusedtoLogin"
+msgid "py.templates.oauth_token_request_denied.description"
 msgstr ""
 
 #: templates/oauth_token_request_denied.html:14
-msgid "py.templates.oauth_token_request_denied.closeWindowandretry"
+msgid "py.templates.oauth_token_request_denied.suggestRetry"
 msgstr ""
 
 #: templates/oauth_token_request_denied.html:17
-msgid "py.templates.oauth_token_request_denied.contactus"
+msgid "py.templates.oauth_token_request_denied.contactUs"
 msgstr ""
 
 #: templates/report.html:18
@@ -740,7 +740,7 @@ msgid "py.templates.workflow.minimumRequirement"
 msgstr ""
 
 #: templates/workflow.html:36
-msgid "py.templates.workflow.optimizedForbrowsers"
+msgid "py.templates.workflow.optimizedForDesktop"
 msgstr ""
 
 #: templates/workflow.html:37
@@ -780,7 +780,7 @@ msgstr ""
 msgid "py.templates.account.email_confirmation_sent.header"
 msgstr ""
 
-#. The b0 tag adds emphasis. The a0 tag is a mailto link for the contactMail
+#. The b0 tag adds emphasis. The a0 tag is a mailto link for the contactMail.
 #: templates/account/email_confirmation_sent.html:10
 msgid "py.templates.account.email_confirmation_sent.verificationEmail"
 msgstr ""
@@ -799,7 +799,7 @@ msgstr ""
 
 #. The tag adds emphasis
 #: templates/account/email_confirmed.html:9
-msgid "py.templates.account.email_confirmed.youConfirmeedEmail"
+msgid "py.templates.account.email_confirmed.youConfirmedEmail"
 msgstr ""
 
 #: templates/account/login.html:4 templates/account/login.html:10
@@ -807,7 +807,7 @@ msgid "py.templates.account.login.title"
 msgstr ""
 
 #: templates/account/login.html:12
-msgid "accounts.sign_in.linkToSignUp"
+msgid "py.templates.account.login.linkToSignUp"
 msgstr ""
 
 #: templates/account/login.html:43
@@ -855,11 +855,11 @@ msgid "py.templates.account.password_reset.formHeader"
 msgstr ""
 
 #: templates/account/password_reset.html:17
-msgid "py.templates.account.password_reset.sendMeinstructions.button"
+msgid "py.templates.account.password_reset.sendMeInstructions.button"
 msgstr ""
 
 #: templates/account/password_reset.html:25
-msgid "py.templates.account.password_reset.backToLogIn.link"
+msgid "py.templates.account.password_reset.backToLogin.link"
 msgstr ""
 
 #: templates/account/password_reset_done.html:6
@@ -871,7 +871,7 @@ msgid "py.templates.account.password_reset_done.header"
 msgstr ""
 
 #: templates/account/password_reset_done.html:11
-msgid "py.templates.account.password_reset_done.checkYourEMail"
+msgid "py.templates.account.password_reset_done.checkYourEmail"
 msgstr ""
 
 #. The a0 tag is a mailto link to the email
@@ -880,7 +880,7 @@ msgid "py.templates.account.password_reset_done.weHaveResentThePass"
 msgstr ""
 
 #: templates/account/password_reset_done.html:16
-msgid "py.templates.account.password_reset_done.backToLogIn.link"
+msgid "py.templates.account.password_reset_done.backToLogin.link"
 msgstr ""
 
 #: templates/account/password_reset_from_key.html:4
@@ -917,7 +917,7 @@ msgid "py.templates.account.password_reset_from_key_done.description"
 msgstr ""
 
 #: templates/account/password_reset_from_key_done.html:9
-msgid "py.templates.account.password_reset_from_key_done.backToLogIn.link"
+msgid "py.templates.account.password_reset_from_key_done.backToLogin.link"
 msgstr ""
 
 #: templates/account/settings.html:6
@@ -952,7 +952,7 @@ msgstr ""
 
 #. The tags are urls to the respective pages
 #: templates/account/signup.html:51
-msgid "py.templates.account.signup.agreeToWorkbench"
+msgid "py.templates.account.signup.agreeToTerms"
 msgstr ""
 
 #: templates/account/signup.html:53
@@ -972,10 +972,14 @@ msgid "py.templates.account.verification_sent.description"
 msgstr ""
 
 #: templates/account/verification_sent.html:10
-msgid "py.templates.account.verification_sent.backToLogIn.link"
+msgid "py.templates.account.verification_sent.backToLogin.link"
 msgstr ""
 
-#: templates/account/email/email_confirmation_message.txt:5
+#: templates/account/email/email_confirmation_message.txt:6
+msgid "py.templates.account.email.email_confirmation_message.welcome"
+msgstr ""
+
+#: templates/account/email/email_confirmation_message.txt:7
 msgid "py.templates.account.email.email_confirmation_message.confirmYourEmail"
 msgstr ""
 
@@ -995,8 +999,12 @@ msgstr ""
 msgid "py.templates.account.email.password_reset_key_subject"
 msgstr ""
 
-#. The tag is a url
 #: templates/notifications/new_data_version.txt:2
+msgid "py.templates.notifications.new_data_version.hello"
+msgstr ""
+
+#. The tag is a url
+#: templates/notifications/new_data_version.txt:3
 msgid "py.templates.notifications.new_data_version.workflowHasBeenUpdated"
 msgstr ""
 
@@ -1066,7 +1074,7 @@ msgstr ""
 
 #. The tag is a link to the login page
 #: templates/socialaccount/login_cancelled.html:13
-msgid "py.templates.socialaccount.login_cancelled.youDecidedToCancelLogging"
+msgid "py.templates.socialaccount.login_cancelled.youCancelledLogin"
 msgstr ""
 
 #: templates/socialaccount/signup.html:5
