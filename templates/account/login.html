@@ -9,7 +9,7 @@
         <div class="mt-3 mb-5">
             <div class='sign-in'>{% trans_html "py.templates.account.login.title" default="Sign in" %}</div>
               <div class='switch mt-1 d-flex justify-content-center'>
-                  <a href="/account/signup">Sign up</a>
+                  <a href="/account/signup">{% trans_html "py.templates.account.login.linkToSignUp" default="Sign up" %}</a>
               </div>
         </div>
         {% get_providers as socialaccount_providers %}

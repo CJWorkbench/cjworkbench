@@ -7,9 +7,9 @@
 
   <form method="post" class="account_form" action='' onsubmit="this.querySelector('button').disabled = true">
     <div class="mt-3 mb-5">
-        <div class='title-1 t-d-gray text-center'>Signup</div>
+        <div class='title-1 t-d-gray text-center'>{% trans_html "py.templates.account.signup.title" default="Signup" %}</div>
           <div class='switch mt-1 d-flex justify-content-center'>
-              <a href="/account/login" class='t-white-u content-2'>{% trans_html "py.templates.account.signup.signIn" default="Sign in" %}</a>
+              <a href="/account/login" class='t-white-u content-2'>{% trans_html "py.templates.account.signup.linkToSignIn" default="Sign in" %}</a>
           </div>
     </div>
 
@@ -23,7 +23,7 @@
       {% include "socialaccount/snippets/login_extra.html" %}
     {% else %}
       <p>
-        {% trans_html "py.templates.account.signup.loginPrompt" default='If you have already created an account, then please <a0>log in</a0>.' tag_a0_href=login_url %}
+        {% trans_html "py.templates.account.signup.loginPrompt" default='If you have already created an account, then please <a0>log in</a0>.' tag_a0_href=login_url comment="The a0 tag is a link to the login page" %}
       </p>
     {% endif %}
 
@@ -41,16 +41,16 @@
 
     <div class="newsletter">
       {{form.get_newsletter}}
-      <label for="{{ form.get_newsletter.id_for_label }}" class="">It's ok to send me occasional news</label>
+      <label for="{{ form.get_newsletter.id_for_label }}" class="">{% trans_html "py.templates.account.signup.sendMeNews.label" default="It's ok to send me occasional news" %}</label>
     </div>
     {{form.get_newsletter.errors}}
     {% if redirect_field_value %}
         <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
     {% endif %}
       <div class="consent">
-        I agree to Workbench's <a href="http://help.workbenchdata.com/terms-of-service-and-privacy-policy/terms-of-service" class='t-white-u'>Terms of service</a> and <a href="http://help.workbenchdata.com/terms-of-service-and-privacy-policy/privacy-policy" class='t-white-u'>Privacy policy</a>.
+       {% trans_html "py.templates.account.signup.agreeToTerms" default="I agree to Workbench's <a0>Terms of service</a0> and <a1>Privacy policy</a1>." tag_a0_href="http://help.workbenchdata.com/terms-of-service-and-privacy-policy/terms-of-service" tag_a0_class="t-white-u" tag_a1_href="http://help.workbenchdata.com/terms-of-service-and-privacy-policy/privacy-policy" tag_a1_class="t-white-u" comment="The tags are urls to the respective pages" %} 
       </div>
-    <button type="submit" class="button-white--fill action-button mx-auto mb-3">Register</button>
+    <button type="submit" class="button-white--fill action-button mx-auto mb-3">{% trans_html "py.templates.account.signup.registerButton" default="Register" %}</button>
   </form>
 
 {% endblock %}

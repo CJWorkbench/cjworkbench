@@ -1,2 +1,4 @@
-Hi {{ user_name }},
-Your workflow <a href="{{ workflow_url }}">{{ workflow_name }}</a> has been updated with new data on {{ date }}. Its "{{ module_name }}" module has new output.
+{% load i18n_icu %}
+{% trans_html "py.templates.notifications.new_data_version.hello" default="Hi {userName}," arg_userName=user_name %}
+{% trans_html "py.templates.notifications.new_data_version.workflowHasBeenUpdated" default="Your workflow <a0>{workflowName}</a0> has been updated with new data on {date}. Its {moduleName} module has new output." arg_date=date arg_moduleName=module_name arg_workflowName=workflow_name tag_a0_href=workflow_url comment="The tag is a url" %}
+

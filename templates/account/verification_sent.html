@@ -1,11 +1,11 @@
 {% extends "account/base.html" %}
 
-{% load i18n %}
+{% load i18n_icu %}
 
-{% block head_title %}{% trans "Verify Your E-mail Address" %}{% endblock %}
+{% block head_title %}{% trans_html "py.templates.account.verification_sent.title" default="Verify Your E-mail Address" %}{% endblock %}
 
 {% block content %}
-    <h1 class="t-d-gray title-1 text-center mb-3">{% trans "Verify Your E-mail Address" %}</h1>
-    <p class="t-d-gray content-1 mb-5">{% blocktrans %}We have sent you an e-mail to verify your account. Contact us if you do not receive it within a few minutes.{% endblocktrans %}</p>
-    <a href="/account/login/" class="button-white action-button mx-auto">Back to login</a>
+    <h1 class="t-d-gray title-1 text-center mb-3">{% trans_html "py.templates.account.verification_sent.header" default="Verify Your E-mail Address" %}</h1>
+    <p class="t-d-gray content-1 mb-5">{% trans_html "py.templates.account.verification_sent.description" default="We have sent you an e-mail to verify your account. Contact us if you do not receive it within a few minutes." %}</p>
+    <a href="/account/login/" class="button-white action-button mx-auto">{% trans_html "py.templates.account.verification_sent.backToLogin.link"  default="Back to login" %}</a>
 {% endblock %}

@@ -1,8 +1,8 @@
 {%  extends 'base_no_intercom.html' %}
-{% load account i18n %}
+{% load account i18n_icu %}
 
 {% block title %}
-    404 Page not found
+     {% trans_html "py.templates.404.title" default="404 Page not found" %}
 {% endblock %}
 
 {% block body %}
@@ -10,8 +10,8 @@
     <div class="background"></div>
     <div class="account-card">
       <div class="error-number">404<div>
-      <div class="title-1 text-center mb-5 t-white">Not the number you're looking for</div>
-      <a href="{% url "account_login" %}" style="width:200px" class="button-white action-button mx-auto mb-3">{% trans "Back to workspace" %}</a>
+      <div class="title-1 text-center mb-5 t-white">{% trans_html "py.templates.404.description" default="Not the number you're looking for" %}</div>
+      <a href="{% url "account_login" %}" style="width:200px" class="button-white action-button mx-auto mb-3">{% trans_html "py.templates.404.backToWorkspace.link" default="Back to workspace" %}</a>
     </div>
   <div>
 {% endblock %}

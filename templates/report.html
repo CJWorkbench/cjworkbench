@@ -1,5 +1,6 @@
 {% extends 'minimum.html' %}
 {% load render_bundle from webpack_loader %}
+{% load i18n_icu %}
 
 {% block title %}
   {{ workflow.name }} | Workbench
@@ -14,10 +15,10 @@
     <header>
       <h1><i class="icon icon-chart"></i>{{workflow.name}}</h1>
       <p class="metadata">
-        <span class="author"><a rel="author">by {{workflow.owner_name}}</a></span>
-        <span class="updated-at">Updated <time datetime="{{workflow.updated_at|date:"c"}}">{{workflow.updated_at|timesince}}</time> ago</span>
+        <span class="author"><a rel="author">{% trans_html "py.templates.report.author" default="by {workflowOwner}" arg_workflowOwner=workflow.owner_name %}</a></span>
+        <span class="updated-at">{% trans_html "py.templates.report.updated" default="Updated <time0>{timeAgo}</time0> ago" arg_timeAgo=workflow.updated_at|timesince tag_time0_datetime=workflow.updated_at|date:"c" %}</span>
         <!-- target=_parent in case this report is displayed within an iframe -->
-        <a target="_parent" href="/workflows/{{workflow.id}}/">Source data</a>
+        <a target="_parent" href="/workflows/{{workflow.id}}/">{% trans_html "py.templates.report.sourceDataLink.link" default="Source data" %}</a>
       </div>
     </header>
     {% for tab in workflow.tabs %}
@@ -32,7 +33,7 @@
       </section>
     {% endfor %}
     {% if not workflow.tabs %}
-      <p class="empty">Add charts to tabs, and they'll appear here.</p>
+      <p class="empty">{% trans_html "py.templates.report.addChartsTitle" default="Add charts to tabs, and they'll appear here." %}</p>
     {% endif %}
   </article>
 {% endblock %}
