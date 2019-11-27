@@ -18,6 +18,32 @@ exports[`DataVersionModal matches snapshot 1`] = `
   }
   fetchWfModuleId={123}
   fetchWfModuleName="fetch"
+  i18n={
+    Object {
+      "_": [Function],
+      "_activeLanguageData": Object {
+        "plurals": [Function],
+      },
+      "_activeMessages": Object {},
+      "_catalogs": Object {
+        "en": Object {
+          "languageData": Object {},
+          "messages": Object {},
+        },
+      },
+      "_dev": Object {
+        "compile": [Function],
+        "loadLanguageData": [Function],
+      },
+      "_language": "en",
+      "_locales": undefined,
+      "_missing": undefined,
+      "plural": [Function],
+      "select": [Function],
+      "selectOrdinal": [Function],
+      "t": [Function],
+    }
+  }
   isAnonymous={false}
   notificationsEnabled={false}
   onChangeFetchVersionId={[MockFunction]}
@@ -63,7 +89,7 @@ exports[`DataVersionModal matches snapshot 1`] = `
                     <h5
                       class="modal-title"
                     >
-                      Data Versions
+                      js.WorkflowEditor.DataVersionModal.ModalHeader
                     </h5>
                     <button
                       aria-label="Close"
@@ -164,7 +190,7 @@ exports[`DataVersionModal matches snapshot 1`] = `
                         disabled=""
                         name="load"
                       >
-                        Load
+                        js.WorkflowEditor.DataVersionModal.ModalFooter.actions.loadButton
                       </button>
                     </div>
                   </div>
@@ -200,7 +226,52 @@ exports[`DataVersionModal matches snapshot 1`] = `
                   <h5
                     className="modal-title"
                   >
-                    Data Versions
+                    <WithI18n
+                      defaults="Data Versions"
+                      id="js.WorkflowEditor.DataVersionModal.ModalHeader"
+                    >
+                      <I18n
+                        update={true}
+                        withHash={true}
+                      >
+                        <Trans
+                          defaults="Data Versions"
+                          i18n={
+                            Object {
+                              "_": [Function],
+                              "_activeLanguageData": Object {
+                                "plurals": [Function],
+                              },
+                              "_activeMessages": Object {},
+                              "_catalogs": Object {
+                                "en": Object {
+                                  "languageData": Object {},
+                                  "messages": Object {},
+                                },
+                              },
+                              "_dev": Object {
+                                "compile": [Function],
+                                "loadLanguageData": [Function],
+                              },
+                              "_language": "en",
+                              "_locales": undefined,
+                              "_missing": undefined,
+                              "plural": [Function],
+                              "select": [Function],
+                              "selectOrdinal": [Function],
+                              "t": [Function],
+                            }
+                          }
+                          id="js.WorkflowEditor.DataVersionModal.ModalHeader"
+                        >
+                          <Render
+                            value="js.WorkflowEditor.DataVersionModal.ModalHeader"
+                          >
+                            js.WorkflowEditor.DataVersionModal.ModalHeader
+                          </Render>
+                        </Trans>
+                      </I18n>
+                    </WithI18n>
                   </h5>
                   <button
                     aria-label="Close"
@@ -228,58 +299,136 @@ exports[`DataVersionModal matches snapshot 1`] = `
                       <li
                         key="2000"
                       >
-                        <FetchVersion
+                        <WithI18n
                           date={1970-01-03T17:09:27.890Z}
                           id="2000"
                           isSeen={false}
                           isSelected={false}
                           onSelect={[Function]}
                         >
-                          <label
-                            className="unseen"
+                          <I18n
+                            update={true}
+                            withHash={true}
                           >
-                            <input
-                              checked={false}
-                              name="data-version"
-                              onChange={[Function]}
-                              type="radio"
-                              value="2000"
-                            />
-                            <time
-                              time="1970-01-03T17:09:27.890Z"
+                            <FetchVersion
+                              date={1970-01-03T17:09:27.890Z}
+                              i18n={
+                                Object {
+                                  "_": [Function],
+                                  "_activeLanguageData": Object {
+                                    "plurals": [Function],
+                                  },
+                                  "_activeMessages": Object {},
+                                  "_catalogs": Object {
+                                    "en": Object {
+                                      "languageData": Object {},
+                                      "messages": Object {},
+                                    },
+                                  },
+                                  "_dev": Object {
+                                    "compile": [Function],
+                                    "loadLanguageData": [Function],
+                                  },
+                                  "_language": "en",
+                                  "_locales": undefined,
+                                  "_missing": undefined,
+                                  "plural": [Function],
+                                  "select": [Function],
+                                  "selectOrdinal": [Function],
+                                  "t": [Function],
+                                }
+                              }
+                              id="2000"
+                              isSeen={false}
+                              isSelected={false}
+                              onSelect={[Function]}
                             >
-                              Jan. 3, 1970 – 5:09 p.m.
-                            </time>
-                          </label>
-                        </FetchVersion>
+                              <label
+                                className="unseen"
+                              >
+                                <input
+                                  checked={false}
+                                  name="data-version"
+                                  onChange={[Function]}
+                                  type="radio"
+                                  value="2000"
+                                />
+                                <time
+                                  time="1970-01-03T17:09:27.890Z"
+                                >
+                                  Jan. 3, 1970 – 5:09 p.m.
+                                </time>
+                              </label>
+                            </FetchVersion>
+                          </I18n>
+                        </WithI18n>
                       </li>
                       <li
                         key="1000"
                       >
-                        <FetchVersion
+                        <WithI18n
                           date={1970-01-02T10:17:36.789Z}
                           id="1000"
                           isSeen={true}
                           isSelected={true}
                           onSelect={[Function]}
                         >
-                          <label
-                            className="seen selected"
+                          <I18n
+                            update={true}
+                            withHash={true}
                           >
-                            <input
-                              checked={true}
-                              name="data-version"
-                              onChange={[Function]}
-                              type="radio"
-                              value="1000"
-                            />
-                            <time
-                              time="1970-01-02T10:17:36.789Z"
+                            <FetchVersion
+                              date={1970-01-02T10:17:36.789Z}
+                              i18n={
+                                Object {
+                                  "_": [Function],
+                                  "_activeLanguageData": Object {
+                                    "plurals": [Function],
+                                  },
+                                  "_activeMessages": Object {},
+                                  "_catalogs": Object {
+                                    "en": Object {
+                                      "languageData": Object {},
+                                      "messages": Object {},
+                                    },
+                                  },
+                                  "_dev": Object {
+                                    "compile": [Function],
+                                    "loadLanguageData": [Function],
+                                  },
+                                  "_language": "en",
+                                  "_locales": undefined,
+                                  "_missing": undefined,
+                                  "plural": [Function],
+                                  "select": [Function],
+                                  "selectOrdinal": [Function],
+                                  "t": [Function],
+                                }
+                              }
+                              id="1000"
+                              isSeen={true}
+                              isSelected={true}
+                              onSelect={[Function]}
                             >
-                              Jan. 2, 1970 – 10:17 a.m.
-                            </time>
-                          </label>
-                        </FetchVersion>
+                              <label
+                                className="seen selected"
+                              >
+                                <input
+                                  checked={true}
+                                  name="data-version"
+                                  onChange={[Function]}
+                                  type="radio"
+                                  value="1000"
+                                />
+                                <time
+                                  time="1970-01-02T10:17:36.789Z"
+                                >
+                                  Jan. 2, 1970 – 10:17 a.m.
+                                </time>
+                              </label>
+                            </FetchVersion>
+                          </I18n>
+                        </WithI18n>
                       </li>
                     </ol>
                   </form>
@@ -328,6 +477,32 @@ exports[`DataVersionModal matches snapshot 1`] = `
                                 }
                                 defaults="Alerts are <0>off</0>"
                                 description="The tag adds emphasis"
+                                i18n={
+                                  Object {
+                                    "_": [Function],
+                                    "_activeLanguageData": Object {
+                                      "plurals": [Function],
+                                    },
+                                    "_activeMessages": Object {},
+                                    "_catalogs": Object {
+                                      "en": Object {
+                                        "languageData": Object {},
+                                        "messages": Object {},
+                                      },
+                                    },
+                                    "_dev": Object {
+                                      "compile": [Function],
+                                      "loadLanguageData": [Function],
+                                    },
+                                    "_language": "en",
+                                    "_locales": undefined,
+                                    "_missing": undefined,
+                                    "plural": [Function],
+                                    "select": [Function],
+                                    "selectOrdinal": [Function],
+                                    "t": [Function],
+                                  }
+                                }
                                 id="js.WorkflowEditor.DataVersionModal.NotificationsForm.status.alertsOff"
                               >
                                 <Render
@@ -352,6 +527,32 @@ exports[`DataVersionModal matches snapshot 1`] = `
                             >
                               <Trans
                                 defaults="Turn alerts ON to receive an email if the output of this module changes"
+                                i18n={
+                                  Object {
+                                    "_": [Function],
+                                    "_activeLanguageData": Object {
+                                      "plurals": [Function],
+                                    },
+                                    "_activeMessages": Object {},
+                                    "_catalogs": Object {
+                                      "en": Object {
+                                        "languageData": Object {},
+                                        "messages": Object {},
+                                      },
+                                    },
+                                    "_dev": Object {
+                                      "compile": [Function],
+                                      "loadLanguageData": [Function],
+                                    },
+                                    "_language": "en",
+                                    "_locales": undefined,
+                                    "_missing": undefined,
+                                    "plural": [Function],
+                                    "select": [Function],
+                                    "selectOrdinal": [Function],
+                                    "t": [Function],
+                                  }
+                                }
                                 id="js.WorkflowEditor.DataVersionModal.NotificationsForm.description.turnAlertsOn"
                               >
                                 <Render
@@ -387,6 +588,32 @@ exports[`DataVersionModal matches snapshot 1`] = `
                               >
                                 <Trans
                                   defaults="Turn on"
+                                  i18n={
+                                    Object {
+                                      "_": [Function],
+                                      "_activeLanguageData": Object {
+                                        "plurals": [Function],
+                                      },
+                                      "_activeMessages": Object {},
+                                      "_catalogs": Object {
+                                        "en": Object {
+                                          "languageData": Object {},
+                                          "messages": Object {},
+                                        },
+                                      },
+                                      "_dev": Object {
+                                        "compile": [Function],
+                                        "loadLanguageData": [Function],
+                                      },
+                                      "_language": "en",
+                                      "_locales": undefined,
+                                      "_missing": undefined,
+                                      "plural": [Function],
+                                      "select": [Function],
+                                      "selectOrdinal": [Function],
+                                      "t": [Function],
+                                    }
+                                  }
                                   id="js.WorkflowEditor.DataVersionModal.NotificationsForm.options.turnOn"
                                 >
                                   <Render
@@ -410,7 +637,52 @@ exports[`DataVersionModal matches snapshot 1`] = `
                       name="load"
                       onClick={[Function]}
                     >
-                      Load
+                      <WithI18n
+                        defaults="Load"
+                        id="js.WorkflowEditor.DataVersionModal.ModalFooter.actions.loadButton"
+                      >
+                        <I18n
+                          update={true}
+                          withHash={true}
+                        >
+                          <Trans
+                            defaults="Load"
+                            i18n={
+                              Object {
+                                "_": [Function],
+                                "_activeLanguageData": Object {
+                                  "plurals": [Function],
+                                },
+                                "_activeMessages": Object {},
+                                "_catalogs": Object {
+                                  "en": Object {
+                                    "languageData": Object {},
+                                    "messages": Object {},
+                                  },
+                                },
+                                "_dev": Object {
+                                  "compile": [Function],
+                                  "loadLanguageData": [Function],
+                                },
+                                "_language": "en",
+                                "_locales": undefined,
+                                "_missing": undefined,
+                                "plural": [Function],
+                                "select": [Function],
+                                "selectOrdinal": [Function],
+                                "t": [Function],
+                              }
+                            }
+                            id="js.WorkflowEditor.DataVersionModal.ModalFooter.actions.loadButton"
+                          >
+                            <Render
+                              value="js.WorkflowEditor.DataVersionModal.ModalFooter.actions.loadButton"
+                            >
+                              js.WorkflowEditor.DataVersionModal.ModalFooter.actions.loadButton
+                            </Render>
+                          </Trans>
+                        </I18n>
+                      </WithI18n>
                     </button>
                   </div>
                 </div>

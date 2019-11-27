@@ -1,10 +1,10 @@
 /* globals describe, expect, it, jest */
 import React from 'react'
 import Aggregations from './index'
-import { mount } from 'enzyme'
+import { mountWithI18n } from '../../../i18n/test-utils'
 
 describe('Aggregations', () => {
-  const wrapper = (extraProps = {}) => mount(
+  const wrapper = (extraProps = {}) => mountWithI18n(
     <Aggregations
       isReadOnly={false}
       name='aggregations'

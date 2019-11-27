@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import Confetti from 'react-dom-confetti'
+import { Trans } from '@lingui/macro'
 
 const ConfettiConfig = {
   colors: [
@@ -37,7 +38,7 @@ export default class LessonFooter extends React.PureComponent {
 
     return (
       <section className={`lesson-footer ${isCurrent ? 'current' : 'not-current'}`}>
-        <a href='/lessons/' className='backToLessons'>Training</a>
+        <a href='/lessons/' className='backToLessons'><Trans id='js.lessons.LessonFooter.training.link'>Training</Trans></a>
         <h2>{title}</h2>
         <div className='description' dangerouslySetInnerHTML={({ __html: html })} />
         <Confetti active={isFinished} config={ConfettiConfig} className='confetti' />

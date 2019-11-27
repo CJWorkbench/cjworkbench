@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import Aggregation from './Aggregation'
+import { Trans } from '@lingui/macro'
 
 const DefaultValue = [{ operation: 'size', colname: '', outname: '' }]
 const DefaultAddValue = { operation: 'sum', colname: '', outname: '' }
@@ -66,7 +67,7 @@ export default class Aggregations extends React.PureComponent {
 
     return (
       <>
-        <label>Operations</label>
+        <label><Trans id='js.params.Custom.Aggregations.operations'>Operations</Trans></label>
         <ul>
           {value.map((aggregation, index) => (
             <Aggregation
@@ -89,7 +90,8 @@ export default class Aggregations extends React.PureComponent {
             name={`${name}[add]`}
             onClick={this.handleClickAdd}
           >
-            <i className='icon-add' /> Add
+            <i className='icon-add' /> {' '}
+            <Trans id='js.params.Custom.Aggregations.addButton'>Add</Trans>
           </button>
         )}
       </>

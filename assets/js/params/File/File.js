@@ -2,16 +2,18 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import UploadApiModal from './UploadApiModal'
 import UploadedFileSelect from './UploadedFileSelect'
+import { Trans, t } from '@lingui/macro'
+import { withI18n } from '@lingui/react'
 
-const UploadProgress = React.memo(function UploadProgress ({ nBytesTotal, nBytesUploaded }) {
+const UploadProgress = React.memo(withI18n()(function UploadProgress ({ nBytesTotal, nBytesUploaded, i18n }) {
   const percent = (nBytesUploaded || 0) / nBytesTotal * 100
-  const title = nBytesUploaded === null ? '' : `${percent.toFixed(1) + '% uploaded'}`
+  const title = nBytesUploaded === null ? '' : i18n._(t('js.params.File.UploadProgress.hoverText')`${percent.toFixed(1)}% uploaded`)
   return (
     <div className='upload-progress' title={title}>
       <div className='value' style={{ width: `${percent}%` }} />
     </div>
   )
-})
+}))
 
 const FeatureFlagUploadApi = /(^#|;)feature:uploadapi($|;)/.test(window.location.hash)
 
@@ -31,8 +33,12 @@ const FeatureFlagUploadApi = /(^#|;)feature:uploadapi($|;)/.test(window.location
  * After changing `value`, we auto-submit our new params.
  * Prompts user when `value` is not in `files`.
  */
-export default class File extends React.PureComponent {
+export class File extends React.PureComponent {
   static propTypes = {
+    i18n: PropTypes.shape({
+      // i18n object injected by LinguiJS withI18n()
+      _: PropTypes.func.isRequired
+    }),
     isReadOnly: PropTypes.bool.isRequired,
     onChange: PropTypes.func.isRequired, // onChange(n) => undefined
     onSubmit: PropTypes.func.isRequired, // onSubmit() => undefined
@@ -152,7 +158,7 @@ export default class File extends React.PureComponent {
   }
 
   render () {
-    const { workflowId, wfModuleId, wfModuleSlug, name, value, files, inProgressUpload, fieldId, isReadOnly } = this.props
+    const { workflowId, wfModuleId, wfModuleSlug, name, value, files, inProgressUpload, fieldId, isReadOnly, i18n } = this.props
     const { isUploadApiModalOpen } = this.state
     const file = files.find(f => f.uuid === value)
 
@@ -178,8 +184,8 @@ export default class File extends React.PureComponent {
               <div className='filename'>{inProgressUpload.name}</div>
               <div className='status'>
                 <UploadedFileSelect isReadOnly value={value} files={files} onChange={this.handleChange} />
-                <button type='button' onClick={this.handleClickCancelUpload} name='cancel-upload' title='Cancel upload'>
-                  Cancel Upload
+                <button type='button' onClick={this.handleClickCancelUpload} name='cancel-upload' title={i18n._(t('js.params.Custom.File.cancelUpload.hoverText')`Cancel upload`)}>
+                  <Trans id='js.params.Custom.File.cancelUpload.button'>Cancel Upload</Trans>
                 </button>
               </div>
               <UploadProgress
@@ -194,12 +200,12 @@ export default class File extends React.PureComponent {
                 <UploadedFileSelect isReadOnly={isReadOnly} value={value} files={files} onChange={this.handleChange} />
                 <p className='file-select-button'>
                   {FeatureFlagUploadApi ? (
-                    <button type='button' onClick={this.handleClickOpenUploadApiModal} name='open-upload-api' title='Open upload API instructions'>
-                      API
+                    <button type='button' onClick={this.handleClickOpenUploadApiModal} name='open-upload-api' title={i18n._(t('js.params.Custom.File.uploadApi.hoverText')`Open upload API instructions`)}>
+                      <Trans id='js.params.Custom.File.uploadApi.button'>API</Trans>
                     </button>
                   ) : null}
                   <label htmlFor={fieldId}>
-                    Replace
+                    <Trans id='js.params.Custom.File.replace'>Replace</Trans>
                   </label>
                   <input
                     name={name}
@@ -214,16 +220,16 @@ export default class File extends React.PureComponent {
             </div>
           ) : (
             <div className='no-file'>
-              <p>Drag file here</p>
-              <p>or</p>
+              <p><Trans id='js.params.Custom.File.dragfilehere'>Drag file here</Trans></p>
+              <p><Trans id='js.params.Custom.File.or' description='This is shown after js.params.Custom.File.dragfilehere'>or</Trans></p>
               <p className='file-select-button'>
                 {FeatureFlagUploadApi ? (
-                  <button type='button' onClick={this.handleClickOpenUploadApiModal} name='open-upload-api' title='Open upload API instructions'>
-                    API
+                  <button type='button' onClick={this.handleClickOpenUploadApiModal} name='open-upload-api' title={i18n._(t('js.params.Custom.File.uploadApi.hoverText')`Open upload API instructions`)}>
+                    <Trans id='js.params.Custom.File.uploadApi.button'>API</Trans>
                   </button>
                 ) : null}
                 <label htmlFor={fieldId}>
-                  Browse
+                  <Trans id='js.params.Custom.File.browse.label'>Browse</Trans>
                 </label>
                 <input
                   name={name}
@@ -236,10 +242,11 @@ export default class File extends React.PureComponent {
             </div>
           ))}
           <div className='drop-here'>
-            <p>Drop file here</p>
+            <p><Trans id='js.params.Custom.File.dropFileHere'>Drop file here</Trans> </p>
           </div>
         </div>
       </>
     )
   }
 }
+export default withI18n()(File)

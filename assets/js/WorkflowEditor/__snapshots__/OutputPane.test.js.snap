@@ -4,7 +4,7 @@ exports[`OutputPane matches snapshot 1`] = `
 <div
   className="outputpane module-ok"
 >
-  <Connect(OutputIframe)
+  <Connect(WithI18n)
     deltaId={1}
     isPublic={false}
     key="iframe"
@@ -27,7 +27,7 @@ exports[`OutputPane renders when no module id 1`] = `
 <div
   className="outputpane module-unreachable"
 >
-  <Connect(OutputIframe)
+  <Connect(WithI18n)
     deltaId={null}
     isPublic={false}
     key="iframe"

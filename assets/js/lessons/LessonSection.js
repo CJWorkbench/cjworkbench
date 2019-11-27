@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import LessonStep from './LessonStep'
+import { Trans } from '@lingui/macro'
 
 export default class LessonSection extends React.PureComponent {
   static ropTypes = {
@@ -66,7 +67,7 @@ export default class LessonSection extends React.PureComponent {
 
     return (
       <section className={isCurrent ? 'current' : 'not-current'}>
-        <a href='/lessons/' className='backToLessons'>Training</a>
+        <a href='/lessons/' className='backToLessons'><Trans id='js.lessons.LessonSection.training.link'>Training</Trans></a>
         <h2>{title}</h2>
         <div className='description' dangerouslySetInnerHTML={({ __html: html })} />
         {this.renderSteps(steps)}

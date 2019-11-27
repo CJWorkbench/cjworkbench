@@ -4,6 +4,7 @@ import { FilterPropType } from './PropTypes'
 import Subfilter from './Subfilter'
 import AddFilter from './AddFilter'
 import FilterOperator from './FilterOperator'
+import { Trans } from '@lingui/macro'
 
 const DefaultSubfilter = {
   colname: '',
@@ -71,7 +72,7 @@ export default class Filter extends React.PureComponent {
     return (
       <div className='filter'>
         <div className='filter-heading'>
-          <h5>If</h5>
+          <h5><Trans id='js.params.custom.Filters.Filter.heading.title'>If</Trans></h5>
           {onDelete ? (
             <button
               type='button'

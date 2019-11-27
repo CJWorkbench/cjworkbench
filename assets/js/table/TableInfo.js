@@ -38,11 +38,12 @@ export default class TableInfo extends React.PureComponent {
       <div className='outputpane-header'>
         <div className='table-info-container'>
           <div className='table-info'>
-            <div className='data'>{<Trans id='js.table.TableInfo.rows'>Rows</Trans>}</div>
+            <div className='data'><Trans id='js.table.TableInfo.rows'>Rows</Trans></div>
             <div className='value'>{nRowsString}</div>
           </div>
           <div className='table-info'>
-            <div className='data'>{<Trans id='js.table.TableInfo.columns'>Columns</Trans>}</div>
+            <div className='data'><Trans id='js.table.TableInfo.columns'>Columns</Trans></div>
+
             <div className='value'>{nColumnsString}</div>
           </div>
           {isReadOnly ? null : (
@@ -57,7 +58,7 @@ export default class TableInfo extends React.PureComponent {
           <>
             <div className='export-table' onClick={this.handleClickExport}>
               <i className='icon-download' />
-              <span>EXPORT</span>
+              <span><Trans id='js.table.TableInfo.export' description='This should be all-caps for styling reasons'>EXPORT</Trans></span>
             </div>
             <ExportModal
               open={isExportModalOpen}

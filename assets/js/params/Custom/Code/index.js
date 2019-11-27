@@ -1,5 +1,7 @@
 import React, { lazy, Suspense } from 'react'
 import ErrorBoundary from '../../../ErrorBoundary'
+import { Trans } from '@lingui/macro'
+
 const WorkbenchAceEditor = lazy(() => import('./AceEditor'))
 
 /**
@@ -11,7 +13,7 @@ const WorkbenchAceEditor = lazy(() => import('./AceEditor'))
 export default function LazyAceEditor (props) {
   return (
     <ErrorBoundary>
-      <Suspense fallback={<div className='loading-ace-editor'>Loading editor...</div>}>
+      <Suspense fallback={<div className='loading-ace-editor'><Trans id='js.params.Custom.code.loadingEditor'>Loading editor...</Trans></div>}>
         <WorkbenchAceEditor {...props} />
       </Suspense>
     </ErrorBoundary>

@@ -4,6 +4,8 @@ import { SubfilterPropType } from './PropTypes'
 import Column from '../../Column'
 import Condition from './Condition'
 import SingleLineString from '../../String/SingleLineString'
+import { withI18n } from '@lingui/react'
+import { t, Trans } from '@lingui/macro'
 
 const CaseSensitiveOperations = [
   'text_contains',
@@ -22,7 +24,7 @@ const ConditionsNeedingNoValue = [
   'cell_is_not_empty_str_or_null'
 ]
 
-export default class Subfilter extends React.PureComponent {
+class Subfilter extends React.PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired,
     name: PropTypes.string.isRequired, // <input name=...>
@@ -75,7 +77,7 @@ export default class Subfilter extends React.PureComponent {
           name={`${name}[colname]`}
           fieldId={`${fieldId}_colname`}
           value={value.colname}
-          placeholder='Select column'
+          placeholder={this.props.i18n._(t('js.params.Custom.Filters.Subfilter.Column.placeholder')`Select column`)}
           inputColumns={inputColumns}
           onChange={this.handleChangeColname}
         />
@@ -96,7 +98,7 @@ export default class Subfilter extends React.PureComponent {
               label=''
               name={`${name}[value]`}
               fieldId={`${fieldId}_value`}
-              placeholder='Value'
+              placeholder={this.props.i18n._(t('js.params.Custom.Filters.Subfilter.SingleLineString.placeholder')`Value`)}
               value={value.value}
               upstreamValue={value.value}
               onChange={this.handleChangeValue}
@@ -116,7 +118,7 @@ export default class Subfilter extends React.PureComponent {
               checked={value.case_sensitive}
               onChange={this.handleChangeCaseSensitive}
             />
-            Match case
+            <Trans id='js.params.Custom.Filters.Subfilter.matchCase'>Match case</Trans>
           </label>
         ) : null}
         {onDelete ? (
@@ -132,3 +134,5 @@ export default class Subfilter extends React.PureComponent {
     )
   }
 }
+
+export default withI18n()(Subfilter)

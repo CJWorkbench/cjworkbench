@@ -1,11 +1,11 @@
 /* global describe, it, expect, jest */
 import React from 'react'
 import Multichartseries from './index'
-import { mount } from 'enzyme'
+import { mountWithI18n } from '../../i18n/test-utils'
 
 describe('Multichartseries', () => {
   function wrapper (props = {}) {
-    return mount(
+    return mountWithI18n(
       <Multichartseries
         name='multiseries'
         fieldId='multiseries'

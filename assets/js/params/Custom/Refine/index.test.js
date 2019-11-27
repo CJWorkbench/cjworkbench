@@ -1,13 +1,13 @@
 /* global describe, it, expect, jest */
 import React from 'react'
 import { Refine } from './index'
-import { mount } from 'enzyme'
+import { mountWithI18n } from '../../../i18n/test-utils'
 
 const DefaultValue = { renames: {} }
 
 describe('Refine', () => {
   const wrapper = (props = {}) => {
-    const ret = mount(
+    const ret = mountWithI18n(
       <Refine
         valueCounts={{}}
         loading={false}

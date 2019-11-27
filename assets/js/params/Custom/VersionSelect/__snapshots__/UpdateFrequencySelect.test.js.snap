@@ -90,7 +90,53 @@ exports[`UpdateFrequencySelect shallow matches snapshot 1`] = `
           <span
             className="version-box-option"
           >
-            Update 
+            <WithI18n
+              defaults="Update"
+              id="js.params.Custom.VersionSelect.UpdateFrequencySelect.update"
+            >
+              <I18n
+                update={true}
+                withHash={true}
+              >
+                <Trans
+                  defaults="Update"
+                  i18n={
+                    Object {
+                      "_": [Function],
+                      "_activeLanguageData": Object {
+                        "plurals": [Function],
+                      },
+                      "_activeMessages": Object {},
+                      "_catalogs": Object {
+                        "en": Object {
+                          "languageData": Object {},
+                          "messages": Object {},
+                        },
+                      },
+                      "_dev": Object {
+                        "compile": [Function],
+                        "loadLanguageData": [Function],
+                      },
+                      "_language": "en",
+                      "_locales": undefined,
+                      "_missing": undefined,
+                      "plural": [Function],
+                      "select": [Function],
+                      "selectOrdinal": [Function],
+                      "t": [Function],
+                    }
+                  }
+                  id="js.params.Custom.VersionSelect.UpdateFrequencySelect.update"
+                >
+                  <Render
+                    value="js.params.Custom.VersionSelect.UpdateFrequencySelect.update"
+                  >
+                    js.params.Custom.VersionSelect.UpdateFrequencySelect.update
+                  </Render>
+                </Trans>
+              </I18n>
+            </WithI18n>
+             
           </span>
           <a
             className="content-1 ml-1 action-link"
@@ -98,18 +144,129 @@ exports[`UpdateFrequencySelect shallow matches snapshot 1`] = `
             onClick={[Function]}
             title="change auto-update settings"
           >
-            Manual
+            <WithI18n
+              defaults="Manual"
+              id="js.params.Custom.VersionSelect.UpdateFrequencySelect.manual"
+            >
+              <I18n
+                update={true}
+                withHash={true}
+              >
+                <Trans
+                  defaults="Manual"
+                  i18n={
+                    Object {
+                      "_": [Function],
+                      "_activeLanguageData": Object {
+                        "plurals": [Function],
+                      },
+                      "_activeMessages": Object {},
+                      "_catalogs": Object {
+                        "en": Object {
+                          "languageData": Object {},
+                          "messages": Object {},
+                        },
+                      },
+                      "_dev": Object {
+                        "compile": [Function],
+                        "loadLanguageData": [Function],
+                      },
+                      "_language": "en",
+                      "_locales": undefined,
+                      "_missing": undefined,
+                      "plural": [Function],
+                      "select": [Function],
+                      "selectOrdinal": [Function],
+                      "t": [Function],
+                    }
+                  }
+                  id="js.params.Custom.VersionSelect.UpdateFrequencySelect.manual"
+                >
+                  <Render
+                    value="js.params.Custom.VersionSelect.UpdateFrequencySelect.manual"
+                  >
+                    js.params.Custom.VersionSelect.UpdateFrequencySelect.manual
+                  </Render>
+                </Trans>
+              </I18n>
+            </WithI18n>
           </a>
         </div>
         <div
           className="last-checked"
         >
-          Checked 
-          <time
-            dateTime="2018-05-28T19:00:54.154Z"
+          <WithI18n
+            components={
+              Array [
+                <time
+                  dateTime="2018-05-28T19:00:54.154Z"
+                />,
+              ]
+            }
+            defaults="Checked <0>{0}</0>"
+            description="The parameter is a time difference (i.e. something like '4h ago'. The tag is a <time> tag."
+            id="js.params.Custom.VersionSelect.UpdateFrequencySelect.lastChecked"
+            values={
+              Object {
+                "0": "{minutes}m ago",
+              }
+            }
           >
-            {minutes}m ago
-          </time>
+            <I18n
+              update={true}
+              withHash={true}
+            >
+              <Trans
+                components={
+                  Array [
+                    <time
+                      dateTime="2018-05-28T19:00:54.154Z"
+                    />,
+                  ]
+                }
+                defaults="Checked <0>{0}</0>"
+                description="The parameter is a time difference (i.e. something like '4h ago'. The tag is a <time> tag."
+                i18n={
+                  Object {
+                    "_": [Function],
+                    "_activeLanguageData": Object {
+                      "plurals": [Function],
+                    },
+                    "_activeMessages": Object {},
+                    "_catalogs": Object {
+                      "en": Object {
+                        "languageData": Object {},
+                        "messages": Object {},
+                      },
+                    },
+                    "_dev": Object {
+                      "compile": [Function],
+                      "loadLanguageData": [Function],
+                    },
+                    "_language": "en",
+                    "_locales": undefined,
+                    "_missing": undefined,
+                    "plural": [Function],
+                    "select": [Function],
+                    "selectOrdinal": [Function],
+                    "t": [Function],
+                  }
+                }
+                id="js.params.Custom.VersionSelect.UpdateFrequencySelect.lastChecked"
+                values={
+                  Object {
+                    "0": "{minutes}m ago",
+                  }
+                }
+              >
+                <Render
+                  value="js.params.Custom.VersionSelect.UpdateFrequencySelect.lastChecked"
+                >
+                  js.params.Custom.VersionSelect.UpdateFrequencySelect.lastChecked
+                </Render>
+              </Trans>
+            </I18n>
+          </WithI18n>
         </div>
       </div>
     </UpdateFrequencySelect>

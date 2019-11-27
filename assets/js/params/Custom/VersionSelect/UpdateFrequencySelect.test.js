@@ -95,7 +95,9 @@ describe('UpdateFrequencySelect', () => {
           />
         </Provider>
       )
-      expect(wrapper.find('time').prop('dateTime')).toEqual('2018-05-28T19:00:54.154Z')
+      const time = wrapper.find('Trans[id="js.params.Custom.VersionSelect.UpdateFrequencySelect.lastChecked"]').prop('components')[0]
+      expect(time.type).toEqual('time')
+      expect(time.props.dateTime).toEqual('2018-05-28T19:00:54.154Z')
       wrapper.find('a[title="change auto-update settings"]').simulate('click')
       const modal = wrapper.find('UpdateFrequencySelectModal')
       expect(modal.prop('fetchInterval')).toBe(3600)

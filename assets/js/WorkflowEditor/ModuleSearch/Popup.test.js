@@ -33,7 +33,7 @@ describe('ModuleSearch Popup', () => {
       idName: 'filter',
       name: 'Filter by Text',
       description: 'Text description',
-      category: 'Filter',
+      category: 'Analyze',
       uses_data: true,
       icon: 'filter',
       isLessonHighlight: false

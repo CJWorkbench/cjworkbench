@@ -6,6 +6,8 @@ import AllNoneButtons from '../common/AllNoneButtons'
 import FacetSearch from '../common/FacetSearch'
 import ValueSortSelect from '../common/ValueSortSelect'
 import memoize from 'memoize-one'
+import { t } from '@lingui/macro'
+import { withI18n } from '@lingui/react'
 
 const NumberFormatter = new Intl.NumberFormat()
 const ValueCollator = new Intl.Collator() // in the user's locale
@@ -30,7 +32,7 @@ function formatCount (count) {
 /**
  * Displays a list item of check box, name (of item), and count
  */
-class ValueItem extends React.PureComponent {
+const ValueItem = withI18n()(class ValueItem extends React.PureComponent {
   static propTypes = {
     item: PropTypes.string, // new value -- may be empty string
     count: PropTypes.number.isRequired, // number, strictly greater than 0
@@ -43,14 +45,14 @@ class ValueItem extends React.PureComponent {
   }
 
   render () {
-    const { count, item, isSelected } = this.props
+    const { count, item, isSelected, i18n } = this.props
 
     return (
       <label className='value'>
         <input
           name={`include[${item}]`}
           type='checkbox'
-          title='Include these rows'
+          title={i18n._(t('js.params.Custom.ValueSelect.ValueItem.includeTheseRows')`Include these rows`)}
           checked={isSelected}
           onChange={this.handleChangeItem}
         />
@@ -59,7 +61,7 @@ class ValueItem extends React.PureComponent {
       </label>
     )
   }
-}
+})
 
 class ListRow extends React.PureComponent {
   // extend PureComponent so we get a shouldComponentUpdate() function
@@ -95,7 +97,7 @@ class ListRow extends React.PureComponent {
   }
 }
 
-class ValueList extends React.PureComponent {
+const ValueList = withI18n()(class ValueList extends React.PureComponent {
   static propTypes = {
     valueCounts: PropTypes.object, // or null if loading or no column selected -- passed to <ListRow>
     loading: PropTypes.bool.isRequired,
@@ -110,17 +112,17 @@ class ValueList extends React.PureComponent {
   _itemKey = (index, data) => data.items[index]
 
   innerRender () {
-    const { valueCounts, loading, items, nItemsTotal, maxHeight, itemHeight } = this.props
+    const { valueCounts, loading, items, nItemsTotal, maxHeight, itemHeight, i18n } = this.props
 
     if (!valueCounts && !loading) {
       // Waiting for user to select a column
       return null
     } else if (loading) {
-      return 'Loading values…'
+      return i18n._(t('js.params.Custom.ValueSelect.ValueList.loadingValues')`Loading values…`)
     } else if (nItemsTotal === 0) {
-      return 'Column does not have any values'
+      return i18n._(t('js.params.Custom.ValueSelect.ValueList.noValuesInColumn')`Column does not have any values`)
     } else if (items.length === 0) {
-      return 'No values match your search'
+      return i18n._(t('js.params.Custom.ValueSelect.ValueList.noValuesMatchSearch')`No values match your search`)
     } else {
       const height = Math.min(maxHeight, items.length * itemHeight)
       return (
@@ -145,7 +147,7 @@ class ValueList extends React.PureComponent {
       <div className='value-list' ref={outerRef}>{this.innerRender()}</div>
     )
   }
-}
+})
 
 /**
  * ValueList, with itemHeight and maxHeight calculated automatically.

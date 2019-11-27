@@ -5,7 +5,8 @@ import { setWfModuleParamsAction } from './workflow-reducer'
 import { setWorkflowPublicAction } from './ShareModal/actions'
 import { connect } from 'react-redux'
 import { escapeHtml } from './utils'
-import { Trans } from '@lingui/macro'
+import { Trans, t } from '@lingui/macro'
+import { withI18n } from '@lingui/react'
 
 export class OutputIframe extends React.PureComponent {
   static propTypes = {
@@ -161,7 +162,7 @@ export class OutputIframe extends React.PureComponent {
   }
 
   render () {
-    const { wfModuleId, deltaId, visible } = this.props
+    const { wfModuleId, deltaId, visible, i18n } = this.props
     const { heightFromIframe } = this.state
     const src = `/api/wfmodules/${wfModuleId}/output#revision=${deltaId}`
 
@@ -174,7 +175,7 @@ export class OutputIframe extends React.PureComponent {
           <>
             <iframe src={src} />
             <div className='outputpane-iframe-control-overlay'>
-              <button name='embed' className='btn' title='Get an embeddable URL' onClick={this.handleClickOpenEmbedModal}>
+              <button name='embed' className='btn' title={i18n._(t('js.OutputIframe.getEmbeddableUrl.hoverText')`Get an embeddable URL`)} onClick={this.handleClickOpenEmbedModal}>
                 <i className='icon icon-code' />
               </button>
             </div>
@@ -203,4 +204,4 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(OutputIframe)
+)(withI18n()(OutputIframe))

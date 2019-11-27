@@ -80,7 +80,7 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
                 className="icon-note"
               />
             </button>
-            <Memo(WfModuleContextMenu)
+            <WithI18n
               id={999}
               removeModule={[Function]}
             />

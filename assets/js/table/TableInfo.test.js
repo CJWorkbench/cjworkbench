@@ -1,6 +1,6 @@
 /* globals describe, expect, it, jest */
 import React from 'react'
-import { mount } from 'enzyme'
+import { mountWithI18n } from '../i18n/test-utils'
 import configureStore from 'redux-mock-store'
 import { Provider } from 'react-redux'
 import TableInfo from './TableInfo'
@@ -12,7 +12,7 @@ describe('TableInfo', () => {
     // mock store for <SelectedRowsActions>, a descendent
     const store = mockStore({ modules: {} })
 
-    return mount(
+    return mountWithI18n(
       <Provider store={store}>
         <TableInfo
           nRows={10}

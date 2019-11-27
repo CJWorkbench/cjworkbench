@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { OperatorPropType } from './PropTypes'
+import { Trans } from '@lingui/macro'
 
 export default function AddFilter ({ isReadOnly, name, operator, nFilters, onClickAddAnd, onClickAddOr }) {
   if (isReadOnly) return null
@@ -14,7 +15,7 @@ export default function AddFilter ({ isReadOnly, name, operator, nFilters, onCli
           className='and'
           onClick={onClickAddAnd}
         >
-         AND
+          <Trans id='js.params.Custom.Filters.AddFilter.and' description='This is the logical AND function.'>AND</Trans>
         </button>
       ) : null}
       {(nFilters <= 1 || operator === 'or') ? (
@@ -24,7 +25,7 @@ export default function AddFilter ({ isReadOnly, name, operator, nFilters, onCli
           className='or'
           onClick={onClickAddOr}
         >
-        OR
+          <Trans id='js.params.Custom.Filters.AddFilter.or' description='This is the logical OR function.'>OR</Trans>
         </button>
       ) : null}
     </div>

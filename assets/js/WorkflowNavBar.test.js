@@ -42,7 +42,7 @@ describe('WorkflowNavBar', () => {
 
     const a = wrapper.find('.course a')
     expect(a.prop('href')).toEqual('/lessons/en')
-    expect(a.text()).toEqual('Training') // hard-coded
+    expect(a.find('Trans').prop('defaults')).toEqual('Training') // hard-coded
   })
 
   it('should link back to /courses/slug when viewing a lesson in a course', () => {

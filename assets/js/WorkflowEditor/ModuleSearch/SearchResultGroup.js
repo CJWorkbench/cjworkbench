@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import SearchResult from './SearchResult'
+import { CategoryName } from '../../util/ModuleCategory'
 
 export default class ModuleSearchResultGroup extends React.PureComponent {
   static propTypes = {
@@ -32,7 +33,7 @@ export default class ModuleSearchResultGroup extends React.PureComponent {
 
     return (
       <li className='module-search-result-group' data-name={name}>
-        <h4>{name}</h4>
+        <h4><CategoryName category={name} /></h4>
         <ul className='module-search-results'>{children}</ul>
       </li>
     )

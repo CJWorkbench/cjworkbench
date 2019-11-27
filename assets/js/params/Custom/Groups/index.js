@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import Multicolumn from '../../Multicolumn'
 import DateGranularities from './DateGranularities'
+import { Trans } from '@lingui/macro'
 
 export default class Groups extends React.PureComponent {
   static propTypes = {
@@ -63,7 +64,8 @@ export default class Groups extends React.PureComponent {
                 name={`${name}[group_dates]`}
                 checked={value.group_dates}
                 onChange={this.handleChangeGroupDates}
-              /> Group dates
+              /> {' '}
+              <Trans id='js.params.Custom.Groups.groupDates'>Group dates</Trans>
             </label>
           </div>
         )}
