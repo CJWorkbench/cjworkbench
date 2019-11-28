@@ -1807,36 +1807,36 @@ msgstr "A maximum of 100 columns can be displayed"
 msgid "js.table.TableView.selectColumns.button"
 msgstr "Select columns"
 
-#: assets/js/util/ModuleCategory.js:12
-msgid "js.util.ModuleCategory.CategoryNames.AddData"
+#: assets/js/ModuleCategoryName.js:12
+msgid "js.util.ModuleCategoryName.CategoryNames.AddData"
 msgstr "Add data"
 
-#: assets/js/util/ModuleCategory.js:9
-msgid "js.util.ModuleCategory.CategoryNames.Analyze"
+#: assets/js/ModuleCategoryName.js:9
+msgid "js.util.ModuleCategoryName.CategoryNames.Analyze"
 msgstr "Analyze"
 
-#: assets/js/util/ModuleCategory.js:8
-msgid "js.util.ModuleCategory.CategoryNames.Clean"
+#: assets/js/ModuleCategoryName.js:8
+msgid "js.util.ModuleCategoryName.CategoryNames.Clean"
 msgstr "Clean"
 
-#: assets/js/util/ModuleCategory.js:11
-msgid "js.util.ModuleCategory.CategoryNames.Code"
+#: assets/js/ModuleCategoryName.js:11
+msgid "js.util.ModuleCategoryName.CategoryNames.Code"
 msgstr "Code"
 
-#: assets/js/util/ModuleCategory.js:6
-msgid "js.util.ModuleCategory.CategoryNames.Combine"
+#: assets/js/ModuleCategoryName.js:6
+msgid "js.util.ModuleCategoryName.CategoryNames.Combine"
 msgstr "Combine"
 
-#: assets/js/util/ModuleCategory.js:13
-msgid "js.util.ModuleCategory.CategoryNames.Other"
+#: assets/js/ModuleCategoryName.js:13
+msgid "js.util.ModuleCategoryName.CategoryNames.Other"
 msgstr "Other"
 
-#: assets/js/util/ModuleCategory.js:7
-msgid "js.util.ModuleCategory.CategoryNames.Scrape"
+#: assets/js/ModuleCategoryName.js:7
+msgid "js.util.ModuleCategoryName.CategoryNames.Scrape"
 msgstr "Scrape"
 
-#: assets/js/util/ModuleCategory.js:10
-msgid "js.util.ModuleCategory.CategoryNames.Visualize"
+#: assets/js/ModuleCategoryName.js:10
+msgid "js.util.ModuleCategoryName.CategoryNames.Visualize"
 msgstr "Visualize"
 
 #: assets/js/utils.js:47

@@ -5,7 +5,7 @@ import { updateModuleAction } from './workflow-reducer'
 import { connect } from 'react-redux'
 import { Trans, t } from '@lingui/macro'
 import { withI18n } from '@lingui/react'
-import { CategoryName } from './util/ModuleCategory'
+import ModuleCategoryName from './ModuleCategoryName'
 
 class StaffImportModuleFromGitHub extends React.PureComponent {
   static propTypes = {
@@ -41,7 +41,7 @@ class StaffImportModuleFromGitHub extends React.PureComponent {
   onImportSuccess = (data) => {
     this.props.addModuleToState(data)
     const module = data.name
-    const category = <CategoryName category={data.category} />
+    const category = <ModuleCategoryName category={data.category} />
     this.setState({
       status: {
         message: <Trans id='js.ImportModuleFromGithub.status.importedModule'>Imported module {module} under category {category}</Trans>
