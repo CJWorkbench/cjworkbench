@@ -373,97 +373,37 @@ msgstr "Search…"
 msgid "js.WorkflowEditor.AddData.button"
 msgstr "ADD DATA"
 
-#: assets/js/WorkflowEditor/DataVersionModal.js:238
+#: assets/js/WorkflowEditor/DataVersionModal.js:196
 msgid "js.WorkflowEditor.DataVersionModal.ModalFooter.actions.loadButton"
 msgstr "Load"
 
-#: assets/js/WorkflowEditor/DataVersionModal.js:208
+#: assets/js/WorkflowEditor/DataVersionModal.js:166
 msgid "js.WorkflowEditor.DataVersionModal.ModalHeader"
 msgstr "Data Versions"
 
-#. AP style month name
-#: assets/js/WorkflowEditor/DataVersionModal.js:15
-msgid "js.WorkflowEditor.DataVersionModal.Months.April"
-msgstr "April"
-
-#. AP style month name
-#: assets/js/WorkflowEditor/DataVersionModal.js:19
-msgid "js.WorkflowEditor.DataVersionModal.Months.Aug"
-msgstr "Aug."
-
-#. AP style month name
-#: assets/js/WorkflowEditor/DataVersionModal.js:23
-msgid "js.WorkflowEditor.DataVersionModal.Months.Dec"
-msgstr "Dec."
-
-#. AP style month name
-#: assets/js/WorkflowEditor/DataVersionModal.js:13
-msgid "js.WorkflowEditor.DataVersionModal.Months.Feb"
-msgstr "Feb."
-
-#. AP style month name
-#: assets/js/WorkflowEditor/DataVersionModal.js:12
-msgid "js.WorkflowEditor.DataVersionModal.Months.Jan"
-msgstr "Jan."
-
-#. AP style month name
-#: assets/js/WorkflowEditor/DataVersionModal.js:18
-msgid "js.WorkflowEditor.DataVersionModal.Months.July"
-msgstr "July"
-
-#. AP style month name
-#: assets/js/WorkflowEditor/DataVersionModal.js:17
-msgid "js.WorkflowEditor.DataVersionModal.Months.June"
-msgstr "June"
-
-#. AP style month name
-#: assets/js/WorkflowEditor/DataVersionModal.js:14
-msgid "js.WorkflowEditor.DataVersionModal.Months.March"
-msgstr "March"
-
-#. AP style month name
-#: assets/js/WorkflowEditor/DataVersionModal.js:16
-msgid "js.WorkflowEditor.DataVersionModal.Months.May"
-msgstr "May"
-
-#. AP style month name
-#: assets/js/WorkflowEditor/DataVersionModal.js:22
-msgid "js.WorkflowEditor.DataVersionModal.Months.Nov"
-msgstr "Nov."
-
-#. AP style month name
-#: assets/js/WorkflowEditor/DataVersionModal.js:21
-msgid "js.WorkflowEditor.DataVersionModal.Months.Oct"
-msgstr "Oct."
-
-#. AP style month name
-#: assets/js/WorkflowEditor/DataVersionModal.js:20
-msgid "js.WorkflowEditor.DataVersionModal.Months.Sept"
-msgstr "Sept."
-
-#: assets/js/WorkflowEditor/DataVersionModal.js:142
+#: assets/js/WorkflowEditor/DataVersionModal.js:100
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.description.emailOnOutputChange"
 msgstr "You will receive and email if the output of this module changes"
 
-#: assets/js/WorkflowEditor/DataVersionModal.js:143
+#: assets/js/WorkflowEditor/DataVersionModal.js:101
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.description.turnAlertsOn"
 msgstr "Turn alerts ON to receive an email if the output of this module changes"
 
-#: assets/js/WorkflowEditor/DataVersionModal.js:150
+#: assets/js/WorkflowEditor/DataVersionModal.js:108
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.options.turnOff"
 msgstr "Turn off"
 
-#: assets/js/WorkflowEditor/DataVersionModal.js:150
+#: assets/js/WorkflowEditor/DataVersionModal.js:108
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.options.turnOn"
 msgstr "Turn on"
 
 #. The tag adds emphasis
-#: assets/js/WorkflowEditor/DataVersionModal.js:137
+#: assets/js/WorkflowEditor/DataVersionModal.js:95
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.status.alertsOff"
 msgstr "Alerts are <0>off</0>"
 
 #. The tag adds emphasis
-#: assets/js/WorkflowEditor/DataVersionModal.js:136
+#: assets/js/WorkflowEditor/DataVersionModal.js:94
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.status.alertsOn"
 msgstr "Alerts are <0>on</0>"
 
@@ -1844,18 +1784,20 @@ msgstr ""
 "{0, plural, =0 {No rows selected} one {# row selected} other {# rows "
 "selected}}"
 
+#. This should be all-caps for styling reasons
 #: assets/js/table/TableInfo.js:45
 msgid "js.table.TableInfo.columns"
-msgstr "Columns"
+msgstr "COLUMNS"
 
 #. This should be all-caps for styling reasons
-#: assets/js/table/TableInfo.js:61
+#: assets/js/table/TableInfo.js:60
 msgid "js.table.TableInfo.export"
 msgstr "EXPORT"
 
+#. This should be all-caps for styling reasons
 #: assets/js/table/TableInfo.js:41
 msgid "js.table.TableInfo.rows"
-msgstr "Rows"
+msgstr "ROWS"
 
 #: assets/js/table/TableView.js:65
 msgid "js.table.TableView.maxOf100ColumnsCanbeDIsplayed"
@@ -1865,36 +1807,36 @@ msgstr "A maximum of 100 columns can be displayed"
 msgid "js.table.TableView.selectColumns.button"
 msgstr "Select columns"
 
-#: assets/js/util/ModuleCategory.js:12
-msgid "js.util.ModuleCategory.CategoryNames.AddData"
+#: assets/js/ModuleCategoryName.js:12
+msgid "js.util.ModuleCategoryName.CategoryNames.AddData"
 msgstr "Add data"
 
-#: assets/js/util/ModuleCategory.js:9
-msgid "js.util.ModuleCategory.CategoryNames.Analyze"
+#: assets/js/ModuleCategoryName.js:9
+msgid "js.util.ModuleCategoryName.CategoryNames.Analyze"
 msgstr "Analyze"
 
-#: assets/js/util/ModuleCategory.js:8
-msgid "js.util.ModuleCategory.CategoryNames.Clean"
+#: assets/js/ModuleCategoryName.js:8
+msgid "js.util.ModuleCategoryName.CategoryNames.Clean"
 msgstr "Clean"
 
-#: assets/js/util/ModuleCategory.js:11
-msgid "js.util.ModuleCategory.CategoryNames.Code"
+#: assets/js/ModuleCategoryName.js:11
+msgid "js.util.ModuleCategoryName.CategoryNames.Code"
 msgstr "Code"
 
-#: assets/js/util/ModuleCategory.js:6
-msgid "js.util.ModuleCategory.CategoryNames.Combine"
+#: assets/js/ModuleCategoryName.js:6
+msgid "js.util.ModuleCategoryName.CategoryNames.Combine"
 msgstr "Combine"
 
-#: assets/js/util/ModuleCategory.js:13
-msgid "js.util.ModuleCategory.CategoryNames.Other"
+#: assets/js/ModuleCategoryName.js:13
+msgid "js.util.ModuleCategoryName.CategoryNames.Other"
 msgstr "Other"
 
-#: assets/js/util/ModuleCategory.js:7
-msgid "js.util.ModuleCategory.CategoryNames.Scrape"
+#: assets/js/ModuleCategoryName.js:7
+msgid "js.util.ModuleCategoryName.CategoryNames.Scrape"
 msgstr "Scrape"
 
-#: assets/js/util/ModuleCategory.js:10
-msgid "js.util.ModuleCategory.CategoryNames.Visualize"
+#: assets/js/ModuleCategoryName.js:10
+msgid "js.util.ModuleCategoryName.CategoryNames.Visualize"
 msgstr "Visualize"
 
 #: assets/js/utils.js:47
@@ -2243,10 +2185,13 @@ msgstr "Account"
 msgid "py.templates.account.settings.saveButton"
 msgstr "Save"
 
-#. default-message: Signup
-#: templates/account/signup.html:4 templates/account/signup.html:10
+#: templates/account/signup.html:4
 msgid "py.templates.account.signup.title"
 msgstr "Sign Up"
+
+#: templates/account/signup.html:10
+msgid "py.templates.account.signup.header.title"
+msgstr "Signup"
 
 #: templates/account/signup.html:12
 msgid "py.templates.account.signup.linkToSignIn"
@@ -2290,11 +2235,11 @@ msgstr ""
 msgid "py.templates.account.verification_sent.backToLogin.link"
 msgstr "Back to login"
 
-#: templates/account/email/email_confirmation_message.txt:6
+#: templates/account/email/email_confirmation_message.txt:3
 msgid "py.templates.account.email.email_confirmation_message.welcome"
 msgstr "Welcome to Workbench!"
 
-#: templates/account/email/email_confirmation_message.txt:7
+#: templates/account/email/email_confirmation_message.txt:4
 msgid "py.templates.account.email.email_confirmation_message.confirmYourEmail"
 msgstr ""
 "Please confirm your email address by clicking the link below. If you "
@@ -2304,14 +2249,14 @@ msgstr ""
 msgid "py.templates.account.email.email_confirmation_subject.pleaseConfirmEmailaddress"
 msgstr "Please Confirm Your E-mail Address"
 
-#: templates/account/email/password_reset_key_message.txt:1
+#: templates/account/email/password_reset_key_message.txt:3
 msgid "py.templates.account.email.password_reset_key_message.passwordRequest"
 msgstr ""
 "You're receiving this e-mail because you or someone else has requested a "
 "password for your user account. It can be safely ignored if you did not "
 "request a password reset. Click the link below to reset your password."
 
-#: templates/account/email/password_reset_key_message.txt:5
+#: templates/account/email/password_reset_key_message.txt:7
 msgid "py.templates.account.email.password_reset_key_message.forgotUsername"
 msgstr "In case you forgot, your username is {username}."
 
@@ -2319,18 +2264,18 @@ msgstr "In case you forgot, your username is {username}."
 msgid "py.templates.account.email.password_reset_key_subject"
 msgstr "Password Reset E-mail"
 
-#: templates/notifications/new_data_version.txt:2
+#: templates/notifications/new_data_version.txt:1
 msgid "py.templates.notifications.new_data_version.hello"
 msgstr "Hi {userName},"
 
 #. The tag is a url
-#: templates/notifications/new_data_version.txt:3
+#: templates/notifications/new_data_version.txt:2
 msgid "py.templates.notifications.new_data_version.workflowHasBeenUpdated"
 msgstr ""
 "Your workflow <a0>{workflowName}</a0> has been updated with new data on "
 "{date}. Its {moduleName} module has new output."
 
-#: templates/notifications/new_data_version_subject.txt:3
+#: templates/notifications/new_data_version_subject.txt:1
 msgid "py.templates.notifications.new_data_version_subject"
 msgstr "New data available in {workflow_name}"
 

@@ -38,12 +38,11 @@ export default class TableInfo extends React.PureComponent {
       <div className='outputpane-header'>
         <div className='table-info-container'>
           <div className='table-info'>
-            <div className='data'><Trans id='js.table.TableInfo.rows'>Rows</Trans></div>
+            <div className='data'><Trans id='js.table.TableInfo.rows' description='This should be all-caps for styling reasons'>ROWS</Trans></div>
             <div className='value'>{nRowsString}</div>
           </div>
           <div className='table-info'>
-            <div className='data'><Trans id='js.table.TableInfo.columns'>Columns</Trans></div>
-
+            <div className='data'><Trans id='js.table.TableInfo.columns' description='This should be all-caps for styling reasons'>COLUMNS</Trans></div>
             <div className='value'>{nColumnsString}</div>
           </div>
           {isReadOnly ? null : (

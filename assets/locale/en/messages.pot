@@ -433,116 +433,44 @@ msgid "js.WorkflowEditor.AddData.button"
 msgstr ""
 
 #. default-message: Load
-#: assets/js/WorkflowEditor/DataVersionModal.js:238
+#: assets/js/WorkflowEditor/DataVersionModal.js:196
 msgid "js.WorkflowEditor.DataVersionModal.ModalFooter.actions.loadButton"
 msgstr ""
 
 #. default-message: Data Versions
-#: assets/js/WorkflowEditor/DataVersionModal.js:208
+#: assets/js/WorkflowEditor/DataVersionModal.js:166
 msgid "js.WorkflowEditor.DataVersionModal.ModalHeader"
 msgstr ""
 
-#. AP style month name
-#. default-message: April
-#: assets/js/WorkflowEditor/DataVersionModal.js:15
-msgid "js.WorkflowEditor.DataVersionModal.Months.April"
-msgstr ""
-
-#. AP style month name
-#. default-message: Aug.
-#: assets/js/WorkflowEditor/DataVersionModal.js:19
-msgid "js.WorkflowEditor.DataVersionModal.Months.Aug"
-msgstr ""
-
-#. AP style month name
-#. default-message: Dec.
-#: assets/js/WorkflowEditor/DataVersionModal.js:23
-msgid "js.WorkflowEditor.DataVersionModal.Months.Dec"
-msgstr ""
-
-#. AP style month name
-#. default-message: Feb.
-#: assets/js/WorkflowEditor/DataVersionModal.js:13
-msgid "js.WorkflowEditor.DataVersionModal.Months.Feb"
-msgstr ""
-
-#. AP style month name
-#. default-message: Jan.
-#: assets/js/WorkflowEditor/DataVersionModal.js:12
-msgid "js.WorkflowEditor.DataVersionModal.Months.Jan"
-msgstr ""
-
-#. AP style month name
-#. default-message: July
-#: assets/js/WorkflowEditor/DataVersionModal.js:18
-msgid "js.WorkflowEditor.DataVersionModal.Months.July"
-msgstr ""
-
-#. AP style month name
-#. default-message: June
-#: assets/js/WorkflowEditor/DataVersionModal.js:17
-msgid "js.WorkflowEditor.DataVersionModal.Months.June"
-msgstr ""
-
-#. AP style month name
-#. default-message: March
-#: assets/js/WorkflowEditor/DataVersionModal.js:14
-msgid "js.WorkflowEditor.DataVersionModal.Months.March"
-msgstr ""
-
-#. AP style month name
-#. default-message: May
-#: assets/js/WorkflowEditor/DataVersionModal.js:16
-msgid "js.WorkflowEditor.DataVersionModal.Months.May"
-msgstr ""
-
-#. AP style month name
-#. default-message: Nov.
-#: assets/js/WorkflowEditor/DataVersionModal.js:22
-msgid "js.WorkflowEditor.DataVersionModal.Months.Nov"
-msgstr ""
-
-#. AP style month name
-#. default-message: Oct.
-#: assets/js/WorkflowEditor/DataVersionModal.js:21
-msgid "js.WorkflowEditor.DataVersionModal.Months.Oct"
-msgstr ""
-
-#. AP style month name
-#. default-message: Sept.
-#: assets/js/WorkflowEditor/DataVersionModal.js:20
-msgid "js.WorkflowEditor.DataVersionModal.Months.Sept"
-msgstr ""
-
 #. default-message: You will receive and email if the output of this module changes
-#: assets/js/WorkflowEditor/DataVersionModal.js:142
+#: assets/js/WorkflowEditor/DataVersionModal.js:100
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.description.emailOnOutputChange"
 msgstr ""
 
 #. default-message: Turn alerts ON to receive an email if the output of this module changes
-#: assets/js/WorkflowEditor/DataVersionModal.js:143
+#: assets/js/WorkflowEditor/DataVersionModal.js:101
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.description.turnAlertsOn"
 msgstr ""
 
 #. default-message: Turn off
-#: assets/js/WorkflowEditor/DataVersionModal.js:150
+#: assets/js/WorkflowEditor/DataVersionModal.js:108
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.options.turnOff"
 msgstr ""
 
 #. default-message: Turn on
-#: assets/js/WorkflowEditor/DataVersionModal.js:150
+#: assets/js/WorkflowEditor/DataVersionModal.js:108
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.options.turnOn"
 msgstr ""
 
 #. The tag adds emphasis
 #. default-message: Alerts are <0>off</0>
-#: assets/js/WorkflowEditor/DataVersionModal.js:137
+#: assets/js/WorkflowEditor/DataVersionModal.js:95
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.status.alertsOff"
 msgstr ""
 
 #. The tag adds emphasis
 #. default-message: Alerts are <0>on</0>
-#: assets/js/WorkflowEditor/DataVersionModal.js:136
+#: assets/js/WorkflowEditor/DataVersionModal.js:94
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.status.alertsOn"
 msgstr ""
 
@@ -2191,18 +2119,20 @@ msgstr ""
 msgid "js.table.SelectedRowsActions.numberOfSelectedRows"
 msgstr ""
 
-#. default-message: Columns
+#. This should be all-caps for styling reasons
+#. default-message: COLUMNS
 #: assets/js/table/TableInfo.js:45
 msgid "js.table.TableInfo.columns"
 msgstr ""
 
 #. This should be all-caps for styling reasons
 #. default-message: EXPORT
-#: assets/js/table/TableInfo.js:61
+#: assets/js/table/TableInfo.js:60
 msgid "js.table.TableInfo.export"
 msgstr ""
 
-#. default-message: Rows
+#. This should be all-caps for styling reasons
+#. default-message: ROWS
 #: assets/js/table/TableInfo.js:41
 msgid "js.table.TableInfo.rows"
 msgstr ""
@@ -2218,43 +2148,43 @@ msgid "js.table.TableView.selectColumns.button"
 msgstr ""
 
 #. default-message: Add data
-#: assets/js/util/ModuleCategory.js:12
-msgid "js.util.ModuleCategory.CategoryNames.AddData"
+#: assets/js/ModuleCategoryName.js:12
+msgid "js.util.ModuleCategoryName.CategoryNames.AddData"
 msgstr ""
 
 #. default-message: Analyze
-#: assets/js/util/ModuleCategory.js:9
-msgid "js.util.ModuleCategory.CategoryNames.Analyze"
+#: assets/js/ModuleCategoryName.js:9
+msgid "js.util.ModuleCategoryName.CategoryNames.Analyze"
 msgstr ""
 
 #. default-message: Clean
-#: assets/js/util/ModuleCategory.js:8
-msgid "js.util.ModuleCategory.CategoryNames.Clean"
+#: assets/js/ModuleCategoryName.js:8
+msgid "js.util.ModuleCategoryName.CategoryNames.Clean"
 msgstr ""
 
 #. default-message: Code
-#: assets/js/util/ModuleCategory.js:11
-msgid "js.util.ModuleCategory.CategoryNames.Code"
+#: assets/js/ModuleCategoryName.js:11
+msgid "js.util.ModuleCategoryName.CategoryNames.Code"
 msgstr ""
 
 #. default-message: Combine
-#: assets/js/util/ModuleCategory.js:6
-msgid "js.util.ModuleCategory.CategoryNames.Combine"
+#: assets/js/ModuleCategoryName.js:6
+msgid "js.util.ModuleCategoryName.CategoryNames.Combine"
 msgstr ""
 
 #. default-message: Other
-#: assets/js/util/ModuleCategory.js:13
-msgid "js.util.ModuleCategory.CategoryNames.Other"
+#: assets/js/ModuleCategoryName.js:13
+msgid "js.util.ModuleCategoryName.CategoryNames.Other"
 msgstr ""
 
 #. default-message: Scrape
-#: assets/js/util/ModuleCategory.js:7
-msgid "js.util.ModuleCategory.CategoryNames.Scrape"
+#: assets/js/ModuleCategoryName.js:7
+msgid "js.util.ModuleCategoryName.CategoryNames.Scrape"
 msgstr ""
 
 #. default-message: Visualize
-#: assets/js/util/ModuleCategory.js:10
-msgid "js.util.ModuleCategory.CategoryNames.Visualize"
+#: assets/js/ModuleCategoryName.js:10
+msgid "js.util.ModuleCategoryName.CategoryNames.Visualize"
 msgstr ""
 
 #. default-message: {days}d ago
@@ -2678,10 +2608,14 @@ msgstr ""
 msgid "py.templates.account.settings.saveButton"
 msgstr ""
 
-#. default-message: Signup
 #. default-message: Sign Up
-#: templates/account/signup.html:4 templates/account/signup.html:10
+#: templates/account/signup.html:4
 msgid "py.templates.account.signup.title"
+msgstr ""
+
+#. default-message: Signup
+#: templates/account/signup.html:10
+msgid "py.templates.account.signup.header.title"
 msgstr ""
 
 #. default-message: Sign in
@@ -2732,12 +2666,12 @@ msgid "py.templates.account.verification_sent.backToLogin.link"
 msgstr ""
 
 #. default-message: Welcome to Workbench!
-#: templates/account/email/email_confirmation_message.txt:6
+#: templates/account/email/email_confirmation_message.txt:3
 msgid "py.templates.account.email.email_confirmation_message.welcome"
 msgstr ""
 
 #. default-message: Please confirm your email address by clicking the link below. If you didn't sign up, you can safely ignore this email.
-#: templates/account/email/email_confirmation_message.txt:7
+#: templates/account/email/email_confirmation_message.txt:4
 msgid "py.templates.account.email.email_confirmation_message.confirmYourEmail"
 msgstr ""
 
@@ -2747,12 +2681,12 @@ msgid "py.templates.account.email.email_confirmation_subject.pleaseConfirmEmaila
 msgstr ""
 
 #. default-message: You're receiving this e-mail because you or someone else has requested a password for your user account. It can be safely ignored if you did not request a password reset. Click the link below to reset your password.
-#: templates/account/email/password_reset_key_message.txt:1
+#: templates/account/email/password_reset_key_message.txt:3
 msgid "py.templates.account.email.password_reset_key_message.passwordRequest"
 msgstr ""
 
 #. default-message: In case you forgot, your username is {username}.
-#: templates/account/email/password_reset_key_message.txt:5
+#: templates/account/email/password_reset_key_message.txt:7
 msgid "py.templates.account.email.password_reset_key_message.forgotUsername"
 msgstr ""
 
@@ -2762,18 +2696,18 @@ msgid "py.templates.account.email.password_reset_key_subject"
 msgstr ""
 
 #. default-message: Hi {userName},
-#: templates/notifications/new_data_version.txt:2
+#: templates/notifications/new_data_version.txt:1
 msgid "py.templates.notifications.new_data_version.hello"
 msgstr ""
 
 #. The tag is a url
 #. default-message: Your workflow <a0>{workflowName}</a0> has been updated with new data on {date}. Its {moduleName} module has new output.
-#: templates/notifications/new_data_version.txt:3
+#: templates/notifications/new_data_version.txt:2
 msgid "py.templates.notifications.new_data_version.workflowHasBeenUpdated"
 msgstr ""
 
 #. default-message: New data available in {workflow_name}
-#: templates/notifications/new_data_version_subject.txt:3
+#: templates/notifications/new_data_version_subject.txt:1
 msgid "py.templates.notifications.new_data_version_subject"
 msgstr ""
 

@@ -120,7 +120,7 @@ exports[`DataVersionModal matches snapshot 1`] = `
                             <time
                               time="1970-01-03T17:09:27.890Z"
                             >
-                              Jan. 3, 1970 – 5:09 p.m.
+                              Jan 3, 1970, 5:09 PM
                             </time>
                           </label>
                         </li>
@@ -137,7 +137,7 @@ exports[`DataVersionModal matches snapshot 1`] = `
                             <time
                               time="1970-01-02T10:17:36.789Z"
                             >
-                              Jan. 2, 1970 – 10:17 a.m.
+                              Jan 2, 1970, 10:17 AM
                             </time>
                           </label>
                         </li>
@@ -299,136 +299,188 @@ exports[`DataVersionModal matches snapshot 1`] = `
                       <li
                         key="2000"
                       >
-                        <WithI18n
+                        <FetchVersion
                           date={1970-01-03T17:09:27.890Z}
                           id="2000"
                           isSeen={false}
                           isSelected={false}
                           onSelect={[Function]}
                         >
-                          <I18n
-                            update={true}
-                            withHash={true}
+                          <label
+                            className="unseen"
                           >
-                            <FetchVersion
-                              date={1970-01-03T17:09:27.890Z}
-                              i18n={
-                                Object {
-                                  "_": [Function],
-                                  "_activeLanguageData": Object {
-                                    "plurals": [Function],
-                                  },
-                                  "_activeMessages": Object {},
-                                  "_catalogs": Object {
-                                    "en": Object {
-                                      "languageData": Object {},
-                                      "messages": Object {},
-                                    },
-                                  },
-                                  "_dev": Object {
-                                    "compile": [Function],
-                                    "loadLanguageData": [Function],
-                                  },
-                                  "_language": "en",
-                                  "_locales": undefined,
-                                  "_missing": undefined,
-                                  "plural": [Function],
-                                  "select": [Function],
-                                  "selectOrdinal": [Function],
-                                  "t": [Function],
-                                }
-                              }
-                              id="2000"
-                              isSeen={false}
-                              isSelected={false}
-                              onSelect={[Function]}
+                            <input
+                              checked={false}
+                              name="data-version"
+                              onChange={[Function]}
+                              type="radio"
+                              value="2000"
+                            />
+                            <time
+                              time="1970-01-03T17:09:27.890Z"
                             >
-                              <label
-                                className="unseen"
+                              <WithI18n
+                                format={
+                                  Object {
+                                    "day": "numeric",
+                                    "hour": "numeric",
+                                    "hour12": true,
+                                    "minute": "numeric",
+                                    "month": "short",
+                                    "timeZone": "UTC",
+                                    "year": "numeric",
+                                  }
+                                }
+                                value={1970-01-03T17:09:27.890Z}
                               >
-                                <input
-                                  checked={false}
-                                  name="data-version"
-                                  onChange={[Function]}
-                                  type="radio"
-                                  value="2000"
-                                />
-                                <time
-                                  time="1970-01-03T17:09:27.890Z"
+                                <I18n
+                                  update={true}
+                                  withHash={true}
                                 >
-                                  Jan. 3, 1970 – 5:09 p.m.
-                                </time>
-                              </label>
-                            </FetchVersion>
-                          </I18n>
-                        </WithI18n>
+                                  <Component
+                                    format={
+                                      Object {
+                                        "day": "numeric",
+                                        "hour": "numeric",
+                                        "hour12": true,
+                                        "minute": "numeric",
+                                        "month": "short",
+                                        "timeZone": "UTC",
+                                        "year": "numeric",
+                                      }
+                                    }
+                                    i18n={
+                                      Object {
+                                        "_": [Function],
+                                        "_activeLanguageData": Object {
+                                          "plurals": [Function],
+                                        },
+                                        "_activeMessages": Object {},
+                                        "_catalogs": Object {
+                                          "en": Object {
+                                            "languageData": Object {},
+                                            "messages": Object {},
+                                          },
+                                        },
+                                        "_dev": Object {
+                                          "compile": [Function],
+                                          "loadLanguageData": [Function],
+                                        },
+                                        "_language": "en",
+                                        "_locales": undefined,
+                                        "_missing": undefined,
+                                        "plural": [Function],
+                                        "select": [Function],
+                                        "selectOrdinal": [Function],
+                                        "t": [Function],
+                                      }
+                                    }
+                                    value={1970-01-03T17:09:27.890Z}
+                                  >
+                                    <Render
+                                      value="Jan 3, 1970, 5:09 PM"
+                                    >
+                                      Jan 3, 1970, 5:09 PM
+                                    </Render>
+                                  </Component>
+                                </I18n>
+                              </WithI18n>
+                            </time>
+                          </label>
+                        </FetchVersion>
                       </li>
                       <li
                         key="1000"
                       >
-                        <WithI18n
+                        <FetchVersion
                           date={1970-01-02T10:17:36.789Z}
                           id="1000"
                           isSeen={true}
                           isSelected={true}
                           onSelect={[Function]}
                         >
-                          <I18n
-                            update={true}
-                            withHash={true}
+                          <label
+                            className="seen selected"
                           >
-                            <FetchVersion
-                              date={1970-01-02T10:17:36.789Z}
-                              i18n={
-                                Object {
-                                  "_": [Function],
-                                  "_activeLanguageData": Object {
-                                    "plurals": [Function],
-                                  },
-                                  "_activeMessages": Object {},
-                                  "_catalogs": Object {
-                                    "en": Object {
-                                      "languageData": Object {},
-                                      "messages": Object {},
-                                    },
-                                  },
-                                  "_dev": Object {
-                                    "compile": [Function],
-                                    "loadLanguageData": [Function],
-                                  },
-                                  "_language": "en",
-                                  "_locales": undefined,
-                                  "_missing": undefined,
-                                  "plural": [Function],
-                                  "select": [Function],
-                                  "selectOrdinal": [Function],
-                                  "t": [Function],
-                                }
-                              }
-                              id="1000"
-                              isSeen={true}
-                              isSelected={true}
-                              onSelect={[Function]}
+                            <input
+                              checked={true}
+                              name="data-version"
+                              onChange={[Function]}
+                              type="radio"
+                              value="1000"
+                            />
+                            <time
+                              time="1970-01-02T10:17:36.789Z"
                             >
-                              <label
-                                className="seen selected"
+                              <WithI18n
+                                format={
+                                  Object {
+                                    "day": "numeric",
+                                    "hour": "numeric",
+                                    "hour12": true,
+                                    "minute": "numeric",
+                                    "month": "short",
+                                    "timeZone": "UTC",
+                                    "year": "numeric",
+                                  }
+                                }
+                                value={1970-01-02T10:17:36.789Z}
                               >
-                                <input
-                                  checked={true}
-                                  name="data-version"
-                                  onChange={[Function]}
-                                  type="radio"
-                                  value="1000"
-                                />
-                                <time
-                                  time="1970-01-02T10:17:36.789Z"
+                                <I18n
+                                  update={true}
+                                  withHash={true}
                                 >
-                                  Jan. 2, 1970 – 10:17 a.m.
-                                </time>
-                              </label>
-                            </FetchVersion>
-                          </I18n>
-                        </WithI18n>
+                                  <Component
+                                    format={
+                                      Object {
+                                        "day": "numeric",
+                                        "hour": "numeric",
+                                        "hour12": true,
+                                        "minute": "numeric",
+                                        "month": "short",
+                                        "timeZone": "UTC",
+                                        "year": "numeric",
+                                      }
+                                    }
+                                    i18n={
+                                      Object {
+                                        "_": [Function],
+                                        "_activeLanguageData": Object {
+                                          "plurals": [Function],
+                                        },
+                                        "_activeMessages": Object {},
+                                        "_catalogs": Object {
+                                          "en": Object {
+                                            "languageData": Object {},
+                                            "messages": Object {},
+                                          },
+                                        },
+                                        "_dev": Object {
+                                          "compile": [Function],
+                                          "loadLanguageData": [Function],
+                                        },
+                                        "_language": "en",
+                                        "_locales": undefined,
+                                        "_missing": undefined,
+                                        "plural": [Function],
+                                        "select": [Function],
+                                        "selectOrdinal": [Function],
+                                        "t": [Function],
+                                      }
+                                    }
+                                    value={1970-01-02T10:17:36.789Z}
+                                  >
+                                    <Render
+                                      value="Jan 2, 1970, 10:17 AM"
+                                    >
+                                      Jan 2, 1970, 10:17 AM
+                                    </Render>
+                                  </Component>
+                                </I18n>
+                              </WithI18n>
+                            </time>
+                          </label>
+                        </FetchVersion>
                       </li>
                     </ol>
                   </form>

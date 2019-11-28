@@ -5,23 +5,8 @@ import memoize from 'memoize-one'
 import { setDataVersionAction, setWfModuleNotificationsAction } from '../workflow-reducer'
 import { connect } from 'react-redux'
 import { createSelector } from 'reselect'
-import { Trans, t } from '@lingui/macro'
-import { withI18n } from '@lingui/react'
-
-const Months = [
-  /* i18n: AP style month name */t('js.WorkflowEditor.DataVersionModal.Months.Jan')`Jan.`,
-  /* i18n: AP style month name */t('js.WorkflowEditor.DataVersionModal.Months.Feb')`Feb.`,
-  /* i18n: AP style month name */t('js.WorkflowEditor.DataVersionModal.Months.March')`March`,
-  /* i18n: AP style month name */t('js.WorkflowEditor.DataVersionModal.Months.April')`April`,
-  /* i18n: AP style month name */t('js.WorkflowEditor.DataVersionModal.Months.May')`May`,
-  /* i18n: AP style month name */t('js.WorkflowEditor.DataVersionModal.Months.June')`June`,
-  /* i18n: AP style month name */t('js.WorkflowEditor.DataVersionModal.Months.July')`July`,
-  /* i18n: AP style month name */t('js.WorkflowEditor.DataVersionModal.Months.Aug')`Aug.`,
-  /* i18n: AP style month name */t('js.WorkflowEditor.DataVersionModal.Months.Sept')`Sept.`,
-  /* i18n: AP style month name */t('js.WorkflowEditor.DataVersionModal.Months.Oct')`Oct.`,
-  /* i18n: AP style month name */t('js.WorkflowEditor.DataVersionModal.Months.Nov')`Nov.`,
-  /* i18n: AP style month name */t('js.WorkflowEditor.DataVersionModal.Months.Dec')`Dec.`
-]
+import { Trans } from '@lingui/macro'
+import { DateFormat } from '@lingui/react'
 
 // Always print as if our time zone is UTC, when testing
 // (all other solutions are worse, including env vars and pre-adjusted test data)
@@ -31,54 +16,15 @@ export function formatDateUTCForTesting () {
 }
 
 /**
- * Return AP-style date in the user's time zone, but with the date before the
- * time.
- *
- * For instance: "June 22, 2018 – 10:35 a.m."
- */
-function formatDate (date, i18n) {
-  let mon, dd, yyyy, hh, mm
-  if (_formatDateUTCforTesting) {
-    mon = i18n._(Months[date.getUTCMonth()])
-    dd = date.getUTCDate()
-    yyyy = date.getUTCFullYear()
-    hh = date.getUTCHours()
-    mm = String(100 + date.getUTCMinutes()).slice(1) // 0-padded
-  } else {
-    mon = i18n._(Months[date.getMonth()])
-    dd = date.getDate()
-    yyyy = date.getFullYear()
-    hh = date.getHours()
-    mm = String(100 + date.getMinutes()).slice(1) // 0-padded
-  }
-  let ampm = 'a.m.'
-
-  if (hh === 0) {
-    hh = 12
-  } else if (hh === 12) {
-    ampm = 'p.m.'
-  } else if (hh > 12) {
-    ampm = 'p.m.'
-    hh -= 12
-  }
-
-  return `${mon} ${dd}, ${yyyy} – ${hh}:${mm} ${ampm}`
-}
-
-/**
  * Form <input type="radio">. Calls onSelect on change.
  */
-const FetchVersion = withI18n()(class FetchVersion extends React.PureComponent {
+const FetchVersion = class FetchVersion extends React.PureComponent {
   static propTypes = {
     id: PropTypes.string.isRequired, // version ID
     date: PropTypes.instanceOf(Date).isRequired, // version date
     isSelected: PropTypes.bool.isRequired,
     isSeen: PropTypes.bool.isRequired, // has user selected this version ever
-    onSelect: PropTypes.func.isRequired, // func(versionId) => undefined
-    i18n: PropTypes.shape({
-      // i18n object injected by LinguiJS withI18n()
-      _: PropTypes.func.isRequired
-    })
+    onSelect: PropTypes.func.isRequired // func(versionId) => undefined
   }
 
   handleChange = (ev) => {
@@ -88,7 +34,7 @@ const FetchVersion = withI18n()(class FetchVersion extends React.PureComponent {
   }
 
   render () {
-    const { id, date, isSeen, isSelected, i18n } = this.props
+    const { id, date, isSeen, isSelected } = this.props
 
     let className = isSeen ? 'seen' : 'unseen'
     if (isSelected) className += ' selected'
@@ -96,11 +42,23 @@ const FetchVersion = withI18n()(class FetchVersion extends React.PureComponent {
     return (
       <label className={className}>
         <input type='radio' name='data-version' value={id} checked={isSelected} onChange={this.handleChange} />
-        <time time={date.toISOString()}>{formatDate(date, i18n)}</time>
+        <time time={date.toISOString()}>
+          <DateFormat
+            value={date} format={{
+              month: 'short',
+              day: 'numeric',
+              year: 'numeric',
+              hour: 'numeric',
+              minute: 'numeric',
+              hour12: true,
+              timeZone: _formatDateUTCforTesting ? 'UTC' : undefined
+            }}
+          />
+        </time>
       </label>
     )
   }
-})
+}
 
 /**
  * Form that calls onSubmit(wantNotifications).
