@@ -367,97 +367,37 @@ msgstr ""
 msgid "js.WorkflowEditor.AddData.button"
 msgstr ""
 
-#: assets/js/WorkflowEditor/DataVersionModal.js:238
+#: assets/js/WorkflowEditor/DataVersionModal.js:196
 msgid "js.WorkflowEditor.DataVersionModal.ModalFooter.actions.loadButton"
 msgstr ""
 
-#: assets/js/WorkflowEditor/DataVersionModal.js:208
+#: assets/js/WorkflowEditor/DataVersionModal.js:166
 msgid "js.WorkflowEditor.DataVersionModal.ModalHeader"
 msgstr ""
 
-#. AP style month name
-#: assets/js/WorkflowEditor/DataVersionModal.js:15
-msgid "js.WorkflowEditor.DataVersionModal.Months.April"
-msgstr ""
-
-#. AP style month name
-#: assets/js/WorkflowEditor/DataVersionModal.js:19
-msgid "js.WorkflowEditor.DataVersionModal.Months.Aug"
-msgstr ""
-
-#. AP style month name
-#: assets/js/WorkflowEditor/DataVersionModal.js:23
-msgid "js.WorkflowEditor.DataVersionModal.Months.Dec"
-msgstr ""
-
-#. AP style month name
-#: assets/js/WorkflowEditor/DataVersionModal.js:13
-msgid "js.WorkflowEditor.DataVersionModal.Months.Feb"
-msgstr ""
-
-#. AP style month name
-#: assets/js/WorkflowEditor/DataVersionModal.js:12
-msgid "js.WorkflowEditor.DataVersionModal.Months.Jan"
-msgstr ""
-
-#. AP style month name
-#: assets/js/WorkflowEditor/DataVersionModal.js:18
-msgid "js.WorkflowEditor.DataVersionModal.Months.July"
-msgstr ""
-
-#. AP style month name
-#: assets/js/WorkflowEditor/DataVersionModal.js:17
-msgid "js.WorkflowEditor.DataVersionModal.Months.June"
-msgstr ""
-
-#. AP style month name
-#: assets/js/WorkflowEditor/DataVersionModal.js:14
-msgid "js.WorkflowEditor.DataVersionModal.Months.March"
-msgstr ""
-
-#. AP style month name
-#: assets/js/WorkflowEditor/DataVersionModal.js:16
-msgid "js.WorkflowEditor.DataVersionModal.Months.May"
-msgstr ""
-
-#. AP style month name
-#: assets/js/WorkflowEditor/DataVersionModal.js:22
-msgid "js.WorkflowEditor.DataVersionModal.Months.Nov"
-msgstr ""
-
-#. AP style month name
-#: assets/js/WorkflowEditor/DataVersionModal.js:21
-msgid "js.WorkflowEditor.DataVersionModal.Months.Oct"
-msgstr ""
-
-#. AP style month name
-#: assets/js/WorkflowEditor/DataVersionModal.js:20
-msgid "js.WorkflowEditor.DataVersionModal.Months.Sept"
-msgstr ""
-
-#: assets/js/WorkflowEditor/DataVersionModal.js:142
+#: assets/js/WorkflowEditor/DataVersionModal.js:100
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.description.emailOnOutputChange"
 msgstr ""
 
-#: assets/js/WorkflowEditor/DataVersionModal.js:143
+#: assets/js/WorkflowEditor/DataVersionModal.js:101
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.description.turnAlertsOn"
 msgstr ""
 
-#: assets/js/WorkflowEditor/DataVersionModal.js:150
+#: assets/js/WorkflowEditor/DataVersionModal.js:108
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.options.turnOff"
 msgstr ""
 
-#: assets/js/WorkflowEditor/DataVersionModal.js:150
+#: assets/js/WorkflowEditor/DataVersionModal.js:108
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.options.turnOn"
 msgstr ""
 
 #. The tag adds emphasis
-#: assets/js/WorkflowEditor/DataVersionModal.js:137
+#: assets/js/WorkflowEditor/DataVersionModal.js:95
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.status.alertsOff"
 msgstr ""
 
 #. The tag adds emphasis
-#: assets/js/WorkflowEditor/DataVersionModal.js:136
+#: assets/js/WorkflowEditor/DataVersionModal.js:94
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.status.alertsOn"
 msgstr ""
 

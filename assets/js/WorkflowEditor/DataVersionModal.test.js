@@ -48,8 +48,8 @@ describe('DataVersionModal', () => {
 
   it('displays versions', () => {
     const w = wrapper()
-    expect(w.find('label.seen.selected time').text()).toEqual('Jan. 2, 1970 – 10:17 a.m.')
-    expect(w.find('label.unseen time').text()).toEqual('Jan. 3, 1970 – 5:09 p.m.')
+    expect(w.find('label.seen.selected time').text()).toEqual('Jan 2, 1970, 10:17 AM')
+    expect(w.find('label.unseen time').text()).toEqual('Jan 3, 1970, 5:09 PM')
   })
 
   it('selects a version', () => {
