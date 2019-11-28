@@ -2223,11 +2223,11 @@ msgstr ""
 msgid "py.templates.account.verification_sent.backToLogin.link"
 msgstr ""
 
-#: templates/account/email/email_confirmation_message.txt:6
+#: templates/account/email/email_confirmation_message.txt:3
 msgid "py.templates.account.email.email_confirmation_message.welcome"
 msgstr ""
 
-#: templates/account/email/email_confirmation_message.txt:7
+#: templates/account/email/email_confirmation_message.txt:4
 msgid "py.templates.account.email.email_confirmation_message.confirmYourEmail"
 msgstr ""
 
@@ -2235,11 +2235,11 @@ msgstr ""
 msgid "py.templates.account.email.email_confirmation_subject.pleaseConfirmEmailaddress"
 msgstr ""
 
-#: templates/account/email/password_reset_key_message.txt:1
+#: templates/account/email/password_reset_key_message.txt:3
 msgid "py.templates.account.email.password_reset_key_message.passwordRequest"
 msgstr ""
 
-#: templates/account/email/password_reset_key_message.txt:5
+#: templates/account/email/password_reset_key_message.txt:7
 msgid "py.templates.account.email.password_reset_key_message.forgotUsername"
 msgstr ""
 
@@ -2247,16 +2247,16 @@ msgstr ""
 msgid "py.templates.account.email.password_reset_key_subject"
 msgstr ""
 
-#: templates/notifications/new_data_version.txt:2
+#: templates/notifications/new_data_version.txt:1
 msgid "py.templates.notifications.new_data_version.hello"
 msgstr ""
 
 #. The tag is a url
-#: templates/notifications/new_data_version.txt:3
+#: templates/notifications/new_data_version.txt:2
 msgid "py.templates.notifications.new_data_version.workflowHasBeenUpdated"
 msgstr ""
 
-#: templates/notifications/new_data_version_subject.txt:3
+#: templates/notifications/new_data_version_subject.txt:1
 msgid "py.templates.notifications.new_data_version_subject"
 msgstr ""
 

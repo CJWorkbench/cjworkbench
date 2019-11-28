@@ -2290,11 +2290,11 @@ msgstr ""
 msgid "py.templates.account.verification_sent.backToLogin.link"
 msgstr "Back to login"
 
-#: templates/account/email/email_confirmation_message.txt:6
+#: templates/account/email/email_confirmation_message.txt:3
 msgid "py.templates.account.email.email_confirmation_message.welcome"
 msgstr "Welcome to Workbench!"
 
-#: templates/account/email/email_confirmation_message.txt:7
+#: templates/account/email/email_confirmation_message.txt:4
 msgid "py.templates.account.email.email_confirmation_message.confirmYourEmail"
 msgstr ""
 "Please confirm your email address by clicking the link below. If you "
@@ -2304,14 +2304,14 @@ msgstr ""
 msgid "py.templates.account.email.email_confirmation_subject.pleaseConfirmEmailaddress"
 msgstr "Please Confirm Your E-mail Address"
 
-#: templates/account/email/password_reset_key_message.txt:1
+#: templates/account/email/password_reset_key_message.txt:3
 msgid "py.templates.account.email.password_reset_key_message.passwordRequest"
 msgstr ""
 "You're receiving this e-mail because you or someone else has requested a "
 "password for your user account. It can be safely ignored if you did not "
 "request a password reset. Click the link below to reset your password."
 
-#: templates/account/email/password_reset_key_message.txt:5
+#: templates/account/email/password_reset_key_message.txt:7
 msgid "py.templates.account.email.password_reset_key_message.forgotUsername"
 msgstr "In case you forgot, your username is {username}."
 
@@ -2319,18 +2319,18 @@ msgstr "In case you forgot, your username is {username}."
 msgid "py.templates.account.email.password_reset_key_subject"
 msgstr "Password Reset E-mail"
 
-#: templates/notifications/new_data_version.txt:2
+#: templates/notifications/new_data_version.txt:1
 msgid "py.templates.notifications.new_data_version.hello"
 msgstr "Hi {userName},"
 
 #. The tag is a url
-#: templates/notifications/new_data_version.txt:3
+#: templates/notifications/new_data_version.txt:2
 msgid "py.templates.notifications.new_data_version.workflowHasBeenUpdated"
 msgstr ""
 "Your workflow <a0>{workflowName}</a0> has been updated with new data on "
 "{date}. Its {moduleName} module has new output."
 
-#: templates/notifications/new_data_version_subject.txt:3
+#: templates/notifications/new_data_version_subject.txt:1
 msgid "py.templates.notifications.new_data_version_subject"
 msgstr "New data available in {workflow_name}"
 
