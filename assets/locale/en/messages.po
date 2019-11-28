@@ -1844,18 +1844,20 @@ msgstr ""
 "{0, plural, =0 {No rows selected} one {# row selected} other {# rows "
 "selected}}"
 
+#. This should be all-caps for styling reasons
 #: assets/js/table/TableInfo.js:45
 msgid "js.table.TableInfo.columns"
-msgstr "Columns"
+msgstr "COLUMNS"
 
 #. This should be all-caps for styling reasons
-#: assets/js/table/TableInfo.js:61
+#: assets/js/table/TableInfo.js:60
 msgid "js.table.TableInfo.export"
 msgstr "EXPORT"
 
+#. This should be all-caps for styling reasons
 #: assets/js/table/TableInfo.js:41
 msgid "js.table.TableInfo.rows"
-msgstr "Rows"
+msgstr "ROWS"
 
 #: assets/js/table/TableView.js:65
 msgid "js.table.TableView.maxOf100ColumnsCanbeDIsplayed"

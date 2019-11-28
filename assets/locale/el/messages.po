@@ -1789,15 +1789,17 @@ msgstr ""
 msgid "js.table.SelectedRowsActions.numberOfSelectedRows"
 msgstr ""
 
+#. This should be all-caps for styling reasons
 #: assets/js/table/TableInfo.js:45
 msgid "js.table.TableInfo.columns"
 msgstr ""
 
 #. This should be all-caps for styling reasons
-#: assets/js/table/TableInfo.js:61
+#: assets/js/table/TableInfo.js:60
 msgid "js.table.TableInfo.export"
 msgstr ""
 
+#. This should be all-caps for styling reasons
 #: assets/js/table/TableInfo.js:41
 msgid "js.table.TableInfo.rows"
 msgstr ""
