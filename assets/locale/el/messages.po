@@ -2122,9 +2122,12 @@ msgstr ""
 msgid "py.templates.account.settings.saveButton"
 msgstr ""
 
-#. default-message: Signup
-#: templates/account/signup.html:4 templates/account/signup.html:10
+#: templates/account/signup.html:4
 msgid "py.templates.account.signup.title"
+msgstr ""
+
+#: templates/account/signup.html:10
+msgid "py.templates.account.signup.header.title"
 msgstr ""
 
 #: templates/account/signup.html:12
