@@ -72,13 +72,13 @@ def _safe_parse(
     try:
         return ProcessResult.coerce(parser(bytesio))
     except BadInput as err:
-        return ProcessResult(error=str(err))
+        return ProcessResult.coerce(str(err))
     except json.decoder.JSONDecodeError as err:
-        return ProcessResult(error=str(err))
+        return ProcessResult.coerce(str(err))
     except pd.errors.EmptyDataError:
         return ProcessResult()
     except pd.errors.ParserError as err:
-        return ProcessResult(error=str(err))
+        return ProcessResult.coerce(str(err))
 
 
 @contextmanager

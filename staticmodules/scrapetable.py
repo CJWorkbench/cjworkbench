@@ -77,7 +77,7 @@ async def fetch(params):
     tablenum: int = params["tablenum"] - 1  # 1-based for user
 
     if tablenum < 0:
-        return ProcessResult(error="Table number must be at least 1")
+        return ProcessResult.coerce("Table number must be at least 1")
 
     result = None
 
@@ -107,27 +107,27 @@ async def fetch(params):
                     dtype=str,  # do not autoconvert
                 )
     except asyncio.TimeoutError:
-        return ProcessResult(error=f"Timeout fetching {url}")
+        return ProcessResult.coerce("Timeout fetching {url}")
     except aiohttp.InvalidURL:
-        return ProcessResult(error=f"Invalid URL")
+        return ProcessResult.coerce("Invalid URL")
     except aiohttp.ClientResponseError as err:
-        return ProcessResult(
-            error=("Error from server: %d %s" % (err.status, err.message))
+        return ProcessResult.coerce(
+            "Error from server: %d %s" % (err.status, err.message)
         )
     except aiohttp.ClientError as err:
-        return ProcessResult(error=str(err))
+        return ProcessResult.coerce(str(err))
     except ValueError:
-        return ProcessResult(error="Did not find any <table> tags on that page")
+        return ProcessResult.coerce("Did not find any <table> tags on that page")
     except IndexError:
         # pandas.read_html() gives this unhelpful error message....
-        return ProcessResult(error="Table has no columns")
+        return ProcessResult.coerce("Table has no columns")
 
     if not tables:
-        return ProcessResult(error="Did not find any <table> tags on that page")
+        return ProcessResult.coerce("Did not find any <table> tags on that page")
 
     if tablenum >= len(tables):
-        return ProcessResult(
-            error=(f"The maximum table number on this page is {len(tables)}")
+        return ProcessResult.coerce(
+            f"The maximum table number on this page is {len(tables)}"
         )
 
     # pd.read_html() guarantees unique colnames

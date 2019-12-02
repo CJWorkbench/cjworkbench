@@ -513,6 +513,14 @@ def _i18n_argument_to_thrift(value: Union[str, int, float]) -> ttypes.I18nArgume
         raise RuntimeError("Unhandled value for I18nArgument: %r" % value)
 
 
+I18nMessageDict = Dict[str, Any]
+"""
+A dict that can be converted to (and from) a `I18nMessage`.
+Must have and "id" that maps to `str` and an "arguments" that maps to `Dict[str, Union[str, int, float]]`
+# If we move to python 3.8, we can use `typing.TypedDict` to define `atypes.I18nMessageDict` more accurately
+"""
+
+
 @dataclass(frozen=True)
 class I18nMessage:
     """Translation key and arguments."""
@@ -547,11 +555,17 @@ class I18nMessage:
         return cls("TODO_i18n", {"text": text})
 
     @classmethod
-    def from_dict(cls, value: Dict[str, Any]) -> I18nMessage:
+    def from_dict(cls, value: I18nMessageDict) -> I18nMessage:
         return cls(value["id"], value["arguments"])
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> I18nMessageDict:
         return {"id": self.id, "arguments": self.args}
+
+    def localize(self, locale_id: str) -> str:
+        if self.id == "TODO_i18n":
+            return self.args["text"]
+        else:
+            raise RuntimeError("TODO translate i18n-ready messages")
 
 
 ParamValue = Optional[
@@ -791,6 +805,16 @@ class RenderError:
             "message": self.message.to_dict(),
             "quickFixes": [qf.to_dict() for qf in self.quick_fixes],
         }
+
+    def to_pandas_error(self):
+        return (
+            {
+                "message": (self.message.id, self.message.args),
+                "quickFixes": [qf.to_dict() for qf in self.quick_fixes],
+            }
+            if self.quick_fixes
+            else (self.message.id, self.message.args)
+        )
 
 
 @dataclass(frozen=True)

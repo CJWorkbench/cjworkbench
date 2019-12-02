@@ -243,13 +243,15 @@ class RenderTests(unittest.TestCase):
 
     def test_render_fetch_error(self):
         result = render(
-            pd.DataFrame(), P(), fetch_result=ProcessResult(error="please log in")
+            pd.DataFrame(), P(), fetch_result=ProcessResult.coerce("please log in")
         )
         assert_process_result_equal(result, "please log in")
 
     def test_render_fetch_warning(self):
         result = render(
-            pd.DataFrame(), P(), fetch_result=ProcessResult(expected_table, "truncated")
+            pd.DataFrame(),
+            P(),
+            fetch_result=ProcessResult.coerce((expected_table, "truncated")),
         )
         assert_process_result_equal(result, (expected_table, "truncated"))
 

@@ -270,7 +270,7 @@ class RenderTests(unittest.TestCase):
         assert_process_result_equal(result, pd.DataFrame({"0": ["A", "1", "2"]}))
 
     def test_render_error_process_result(self):
-        result = render(pd.DataFrame(), P(), fetch_result=ProcessResult(error="hi"))
+        result = render(pd.DataFrame(), P(), fetch_result=ProcessResult.coerce("hi"))
         assert_process_result_equal(result, "hi")
 
     def test_render_empty_process_result(self):
