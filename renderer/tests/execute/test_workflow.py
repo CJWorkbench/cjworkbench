@@ -198,8 +198,7 @@ class WorkflowTests(DbTestCase):
                 "updateWfModules": {
                     str(wf_module3.id): {
                         "output_status": "unreachable",
-                        "quick_fixes": [],
-                        "output_error": "",
+                        "output_errors": [],
                         "output_columns": [],
                         "output_n_rows": 0,
                         "cached_render_result_delta_id": delta_id,

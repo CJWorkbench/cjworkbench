@@ -34,6 +34,7 @@ from cjwstate.modules.loaded_module import LoadedModule
 from cjwstate.tests.utils import DbTestCase
 from fetcher import fetch, fetchprep, save
 from server import websockets
+from typing import Union
 
 
 def async_value(v):
@@ -173,9 +174,16 @@ class FetchOrWrapErrorTests(unittest.TestCase):
         self.ctx.close()
         super().tearDown()
 
-    def _err(self, message: str) -> FetchResult:
+    def _err(self, message: Union[str, I18nMessage]) -> FetchResult:
         return FetchResult(
-            self.output_path, [RenderError(I18nMessage.TODO_i18n(message))]
+            self.output_path,
+            [
+                RenderError(
+                    message
+                    if isinstance(message, I18nMessage)
+                    else I18nMessage.TODO_i18n(message)
+                )
+            ],
         )
 
     def _bug_err(self, message: str) -> FetchResult:

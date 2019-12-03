@@ -766,6 +766,12 @@ class QuickFix:
             "action": self.action.to_dict(),
         }
 
+    def localize(self, locale_id: str):
+        return {
+            "buttonText": self.button_text.localize(locale_id),
+            "action": self.action.to_dict(),
+        }
+
 
 @dataclass(frozen=True)
 class RenderError:
@@ -815,6 +821,12 @@ class RenderError:
             if self.quick_fixes
             else (self.message.id, self.message.args)
         )
+
+    def localize(self, locale_id: str):
+        return {
+            "message": self.message.localize(locale_id),
+            "quickFixes": [qf.localize(locale_id) for qf in self.quick_fixes],
+        }
 
 
 @dataclass(frozen=True)
@@ -885,12 +897,22 @@ class RenderResult:
         )
 
     @classmethod
-    def from_deprecated_error(
-        cls, message: str, *, quick_fixes: List[QuickFix] = []
-    ) -> RenderError:
+    def from_error(
+        cls, message: I18nMessage, *, quick_fixes: List[QuickFix] = []
+    ) -> RenderResult:
+        errors = [RenderError(message, quick_fixes)]
+        return cls(errors=errors)
+
+    @classmethod
+    def from_errors(
+        cls, errors: List[Union[I18nMessage, Tuple[I18nMessage, List[QuickFix]]]]
+    ) -> RenderResult:
         return cls(
             errors=[
-                RenderError(I18nMessage("TODO_i18n", {"text": message}), quick_fixes)
+                RenderError(error[0], error[1])
+                if isinstance(error, tuple)
+                else RenderError(error)
+                for error in errors
             ]
         )
 

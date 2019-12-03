@@ -90,7 +90,7 @@ class PromptingError(Exception):
         def best_wanted_type_name(self):
             return TypeNames[self.best_wanted_type_id]
 
-        def as_error_str(self):
+        def as_error_message(self):
             """Build a message to prompt the user to use a quick fix."""
             # TODO make each quick fix get its own paragraph. (For now, quick
             # fixes are nothing but buttons.)
@@ -113,14 +113,16 @@ class PromptingError(Exception):
 
             if self.should_be_text:
                 # Convert to Text
-                return f"{columns_str} must be converted to Text."
+                return I18nMessage.TODO_i18n(
+                    f"{columns_str} must be converted to Text."
+                )
             else:
-                return (
+                return I18nMessage.TODO_i18n(
                     f"{columns_str} must be converted "
                     f"from {self.found_type_name} to {self.best_wanted_type_name}."
                 )
 
-        def as_quick_fix(self):
+        def as_quick_fixes(self):
             """Build a QuickFix that would resolve this error."""
             if self.should_be_text:
                 prompt = f"Convert to {self.best_wanted_type_name}"
@@ -139,10 +141,12 @@ class PromptingError(Exception):
             else:
                 raise RuntimeError(f"Unhandled wanted_types: {self.wanted_types}")
 
-            return QuickFix(
-                I18nMessage.TODO_i18n(prompt),
-                QuickFixAction.PrependStep(module_id, params),
-            )
+            return [
+                QuickFix(
+                    I18nMessage.TODO_i18n(prompt),
+                    QuickFixAction.PrependStep(module_id, params),
+                )
+            ]
 
     def __init__(self, errors: List[PromptingError.WrongColumnType]):
         super().__init__("user must change something before we render")
@@ -151,9 +155,5 @@ class PromptingError(Exception):
     def __eq__(self, other):
         return isinstance(other, self.type) and other.errors == self.errors
 
-    def as_error_str(self) -> str:
-        return "\n\n".join(err.as_error_str() for err in self.errors)
-
-    def as_quick_fixes(self) -> List[QuickFix]:
-        """Build a List of QuickFix: one per error."""
-        return [err.as_quick_fix() for err in self.errors]
+    def as_errors_with_fixes(self) -> List[Tuple[I18nMessage, List[QuickFix]]]:
+        return [(err.as_error_message(), err.as_quick_fixes()) for err in self.errors]
