@@ -608,10 +608,7 @@ class MergeTest(CatalogTest):
     def test_merge_catalog_add_from_js(self):
         js_catalog = Catalog()
         js_catalog.add(
-            "id1",
-            string="",
-            locations=[("file1", "1")],
-            auto_comments=["some comment"],
+            "id1", string="", locations=[("file1", "1")], auto_comments=["some comment"]
         )
         python_catalog = Catalog()
         old_catalog = Catalog()
@@ -621,10 +618,7 @@ class MergeTest(CatalogTest):
 
         expected_catalog = Catalog()
         expected_catalog.add(
-            "id1",
-            string="",
-            locations=[("file1", "1")],
-            auto_comments=['some comment'],
+            "id1", string="", locations=[("file1", "1")], auto_comments=["some comment"]
         )
         self.assertCatalogsDeeplyEqual(new_catalog, expected_catalog)
 
