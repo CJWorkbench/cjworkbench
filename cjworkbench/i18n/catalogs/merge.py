@@ -6,6 +6,9 @@ from cjworkbench.i18n.catalogs.util import (
     read_po_catalog,
     write_po_catalog,
     message_unique_identifier,
+    find_fuzzy_messages,
+    fill_catalog,
+    mark_fuzzy,
 )
 from cjworkbench.i18n.catalogs import (
     catalog_path,
@@ -65,37 +68,51 @@ def merge():
     We compare the old and new default messages.
     If they are (non-empty and) different, we will mark them as fuzzy in message catalogs (of non-default locales).
     """
-    (python_source_catalog, fuzzy) = _merge_source_catalog()
-    print("Found %s new fuzzy messages" % len(fuzzy))
-    for locale in supported_locales:
-        if locale != default_locale:
-            _merge_catalog(locale, python_source_catalog, fuzzy)
-
-
-def _merge_source_catalog():
-    """ Read the message files extracted from js and python for the default locale and merge them.
-    
-    Return 
-        - a catalog with the new messages extracted from python code
-        - a set with the unique identifiers (in the sense of `message_unique_identifier`) of fuzzy messages
-    """
-    target_catalog_path = catalog_path(default_locale, CATALOG_FILENAME)
-    print("Merging catalog for %s at %s" % (default_locale, target_catalog_path))
+    # First, merge the js and python catalogs for the default locale and find fuzzy messages
+    print(
+        "Merging catalog for %s at %s"
+        % (default_locale, catalog_path(default_locale, CATALOG_FILENAME))
+    )
     old_source_catalog = read_po_catalog(
         catalog_path(default_locale, MID_EXTRACT_CATALOG_FILENAME)
     )
     js_catalog = read_po_catalog(catalog_path(default_locale, CATALOG_FILENAME))
-    fuzzy = set()
-    # Find fuzzy in js translations
-    for message in js_catalog:
-        if message.id:
-            if find_corresponding_string(old_source_catalog, message) != message.string:
-                fuzzy.add(message_unique_identifier(message))
 
-    # Update default messages in python translations and find fuzzy
     python_catalog = read_po_catalog(
         catalog_path(default_locale, TEMPLATE_CATALOG_FILENAME)
     )
+
+    (catalog, python_source_catalog, fuzzy) = _merge_source_catalog(
+        js_catalog, python_catalog, old_source_catalog
+    )
+
+    write_po_catalog(
+        catalog_path(default_locale, CATALOG_FILENAME), catalog, ignore_obsolete=True
+    )
+    print("Found %s new fuzzy messages" % len(fuzzy))
+
+    # Then, add the new python messages to the catalogs for the other locales and mark fuzzy messages
+    for locale in supported_locales:
+        if locale != default_locale:
+            target_catalog_path = catalog_path(locale, CATALOG_FILENAME)
+            print("Merging catalog for %s at %s" % (locale, target_catalog_path))
+            js_catalog = read_po_catalog(target_catalog_path)
+            old = read_po_catalog(catalog_path(locale, MID_EXTRACT_CATALOG_FILENAME))
+
+            catalog = _merge_catalog(js_catalog, python_source_catalog, old, fuzzy)
+
+            write_po_catalog(target_catalog_path, catalog, ignore_obsolete=True)
+
+
+def _merge_source_catalog(js_catalog, python_catalog, old_source_catalog):
+    """ Read the message catalogs extracted from js and python for the default locale and merge them.
+    
+    Return 
+        - the new merged catalog for the default locale
+        - a catalog with the new messages extracted from python code
+        - a set with the unique identifiers (in the sense of `message_unique_identifier`) of fuzzy messages
+    """
+
     for message in python_catalog:
         if message.id:
             for comment in message.auto_comments:
@@ -105,43 +122,32 @@ def _merge_source_catalog():
                     message.auto_comments.remove(comment)
                     message.string = default_message
 
-            if find_corresponding_string(old_source_catalog, message) != message.string:
-                fuzzy.add(message_unique_identifier(message))
-            js_catalog[message.id] = message
+    fill_catalog(js_catalog, python_catalog, python_catalog)
 
-    write_po_catalog(
-        catalog_path(default_locale, CATALOG_FILENAME), js_catalog, ignore_obsolete=True
+    return (
+        js_catalog,
+        python_catalog,
+        find_fuzzy_messages(new_catalog=js_catalog, old_catalog=old_source_catalog),
     )
-    return (python_catalog, frozenset(fuzzy))
 
 
-def _merge_catalog(locale: str, source_catalog: Catalog, fuzzy: set = set()):
-    """ Add the messages of `source_catalog` in the catalog for `locale` and write the result to a file.
+def _merge_catalog(
+    js_catalog: Catalog, python_messages: Catalog, old: Catalog, fuzzy: set = set()
+):
+    """ Add the messages of `python_messages` in the `js_catalog`.
 
-    Message strings will be populated using backup catalogs.
+    Message strings will be populated using the `old` catalog.
     
     A message string of the resulting catalog will be marked as fuzzy if 
-     - it was fuzzy before, or
+     - it was fuzzy in the `old` catalog, or
      - it is non-empty and its unique identifier (in the sense of `message_unique_identifier`) is in `fuzzy`.
     """
-    target_catalog_path = catalog_path(locale, CATALOG_FILENAME)
-    print("Merging catalog for %s at %s" % (locale, target_catalog_path))
-    catalog = read_po_catalog(target_catalog_path)
-    old = read_po_catalog(catalog_path(locale, MID_EXTRACT_CATALOG_FILENAME))
 
-    for message in source_catalog:
-        if message.id:  # ignore header
-            message.string = find_corresponding_string(old, message) or ""
-            catalog[message.id] = message
-    for message in catalog:
-        if message.id:  # ignore header
-            old_message = find_corresponding_message(old, message)
-            if (old_message and old_message.fuzzy) or (
-                message.string and message_unique_identifier(message) in fuzzy
-            ):
-                message.flags.add("fuzzy")
+    fill_catalog(js_catalog, js_catalog, old)
+    fill_catalog(js_catalog, python_messages, old)
+    mark_fuzzy(js_catalog, fuzzy, old)
 
-    write_po_catalog(target_catalog_path, catalog, ignore_obsolete=True)
+    return js_catalog
 
 
 def clean():
