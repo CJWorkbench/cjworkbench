@@ -3,11 +3,12 @@ import React from 'react'
 import { act } from 'react-dom/test-utils'
 import ConnectedWfModule, { WfModule } from './WfModule'
 import DataVersionModal from '../DataVersionModal'
+import { mockStore } from '../../test-utils'
 import { shallowWithI18n, mountWithI18n } from '../../i18n/test-utils'
 import deepEqual from 'fast-deep-equal'
 import { createStore } from 'redux'
 import { Provider } from 'react-redux'
-import { mockStore } from '../../test-utils'
+
 import { generateSlug } from '../../utils'
 import lessonSelector from '../../lessons/lessonSelector'
 import StatusLine from './StatusLine'
@@ -38,7 +39,8 @@ describe('WfModule, not read-only mode', () => {
       menu_select: 1
     },
     secrets: {},
-    files: []
+    files: [],
+    output_errors: []
   }
 
   function pspec (idName, type, extraProps = {}) {
@@ -228,7 +230,8 @@ describe('WfModule, not read-only mode', () => {
         b: 'B'
       },
       secrets: {},
-      files: []
+      files: [],
+      output_errors: []
     }
     const aModule = {
       ...module,
@@ -280,7 +283,8 @@ describe('WfModule, not read-only mode', () => {
         version_select: 'B'
       },
       secrets: {},
-      files: []
+      files: [],
+      output_errors: []
     }
     const setWfModuleParams = jest.fn(() => ({ then: jest.fn() })) // dummy promise
     const aModule = {
@@ -309,7 +313,7 @@ describe('WfModule, not read-only mode', () => {
     mockApi.addModule = jest.fn(() => Promise.resolve(null))
     generateSlug.mockImplementation(prefix => prefix + 'X')
     const quickFix = {
-      buttonText: { id: 'TODO_i18n', arguments: { text: 'Fix it' } },
+      buttonText: 'Fix it',
       action: { type: 'prependStep', moduleSlug: 'dosomething', partialParams: { A: 'B' } }
     }
     const store = mockStore({
@@ -352,7 +356,7 @@ describe('WfModule, not read-only mode', () => {
           isZenMode={false}
           isZenModeAllowed={false}
           index={1}
-          wfModule={{ id: 20, module: 'loadurl', is_collapsed: false, status: 'error', params: {}, secrets: {}, error: 'foo', files: [], quick_fixes: [quickFix] }}
+          wfModule={{ id: 20, module: 'loadurl', is_collapsed: false, status: 'error', params: {}, secrets: {}, output_errors: [{ message: 'foo', quickFixes: [quickFix] }], files: [] }}
           isSelected
           isAfterSelected={false}
           onDragStart={jest.fn()}
@@ -423,7 +427,7 @@ describe('WfModule, not read-only mode', () => {
             isZenMode={false}
             isZenModeAllowed={false}
             index={1}
-            wfModule={{ id: 20, module: 'loadurl', is_collapsed: false, status: 'error', params: {}, secrets: {}, error: 'foo', files: [], quick_fixes: [] }}
+            wfModule={{ id: 20, module: 'loadurl', is_collapsed: false, status: 'error', params: {}, secrets: {}, output_errors: [{ message: 'foo', quickFixes: [] }], files: [] }}
             isSelected
             isAfterSelected={false}
             onDragStart={jest.fn()}

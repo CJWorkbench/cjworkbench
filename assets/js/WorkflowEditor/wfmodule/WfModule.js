@@ -479,8 +479,7 @@ export class WfModule extends React.PureComponent {
                 module={module}
                 isReadOnly={isReadOnly}
                 status={this.wfModuleStatus}
-                error={wfModule.output_error || ''}
-                quickFixes={wfModule.quick_fixes || []}
+                errors={wfModule.output_errors || []}
                 applyQuickFix={this.applyQuickFix}
               />
               {this.props.module && !wfModule.is_collapsed ? (
@@ -506,7 +505,7 @@ export class WfModule extends React.PureComponent {
                     workflowId={this.props.workflowId}
                     wfModuleId={this.props.wfModule ? this.props.wfModule.id : null}
                     wfModuleSlug={this.props.wfModule ? this.props.wfModule.slug : null}
-                    wfModuleOutputError={this.props.wfModule ? this.props.wfModule.output_error : null}
+                    wfModuleOutputErrors={this.props.wfModule ? this.props.wfModule.output_errors.map(error => error.message) : null}
                     isWfModuleBusy={this.wfModuleStatus === 'busy'}
                     inputWfModuleId={inputWfModule ? inputWfModule.id : null}
                     inputDeltaId={inputWfModule ? (inputWfModule.cached_render_result_delta_id || null) : null}

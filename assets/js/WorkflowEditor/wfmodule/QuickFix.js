@@ -1,12 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import I18nMessage from '../I18nMessage'
 
 export const QuickFixPropTypes = {
-  buttonText: PropTypes.shape({
-    id: PropTypes.string.isRequired, // message ID
-    arguments: PropTypes.object.isRequired // arguments
-  }).isRequired,
+  buttonText: PropTypes.string.isRequired,
   action: PropTypes.oneOfType([
     PropTypes.exact({
       type: PropTypes.oneOf(['prependStep']).isRequired,
@@ -37,7 +33,7 @@ export default class QuickFix extends React.PureComponent {
         className='quick-fix action-button button-orange'
         onClick={this.handleClick}
       >
-        <I18nMessage {...buttonText} />
+        {buttonText}
       </button>
     )
   }

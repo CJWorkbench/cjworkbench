@@ -47,7 +47,7 @@ export default class ParamsForm extends React.PureComponent {
     workflowId: PropTypes.number.isRequired,
     wfModuleId: PropTypes.number, // `null` if the server hasn't been contacted; otherwise, ID
     wfModuleSlug: PropTypes.string, // should be .isRequired but WfModule.js does not handle placeholders yet
-    wfModuleOutputError: PropTypes.string, // `null` if no wfModule, '' if no error
+    wfModuleOutputErrors: PropTypes.arrayOf(PropTypes.string), // `null` if no wfModule, empty if no error
     isWfModuleBusy: PropTypes.bool.isRequired,
     inputWfModuleId: PropTypes.number, // or `null`
     inputDeltaId: PropTypes.number, // or `null` ... TODO nix by making 0 fields depend on it
@@ -195,7 +195,7 @@ export default class ParamsForm extends React.PureComponent {
 
   render () {
     const {
-      api, isReadOnly, isZenMode, workflowId, wfModuleId, wfModuleSlug, wfModuleOutputError, isWfModuleBusy,
+      api, isReadOnly, isZenMode, workflowId, wfModuleId, wfModuleSlug, wfModuleOutputErrors, isWfModuleBusy,
       inputWfModuleId, inputDeltaId, inputColumns, tabs, currentTab, applyQuickFix,
       startCreateSecret, deleteSecret, submitSecret, fields, files, secrets
     } = this.props
@@ -250,7 +250,7 @@ export default class ParamsForm extends React.PureComponent {
                 workflowId={workflowId}
                 wfModuleId={wfModuleId}
                 wfModuleSlug={wfModuleSlug}
-                wfModuleOutputError={wfModuleOutputError}
+                wfModuleOutputErrors={wfModuleOutputErrors}
                 isWfModuleBusy={isWfModuleBusy}
                 inputWfModuleId={inputWfModuleId}
                 inputDeltaId={inputDeltaId}

@@ -96,7 +96,7 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
       >
         <Memo(StatusLine)
           applyQuickFix={[Function]}
-          error=""
+          errors={Array []}
           isReadOnly={false}
           module={
             Object {
@@ -125,7 +125,6 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
               ],
             }
           }
-          quickFixes={Array []}
           status="ok"
         />
         <ErrorBoundary>
@@ -180,6 +179,7 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
               }
             }
             wfModuleId={999}
+            wfModuleOutputErrors={Array []}
             wfModuleSlug="step-1"
             workflowId={99}
           />
