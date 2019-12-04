@@ -14,6 +14,8 @@ from cjworkbench.i18n.catalogs.merge import _merge_source_catalog, _merge_catalo
 class CatalogTest(SimpleTestCase):
     def assertCatalogsDeeplyEqual(self, catalog: Catalog, other_catalog: Catalog):
         """ Assert that the two catalogs contain the same messages, where message equality is deep.
+        
+        Ignores header message.
         """
         self.assertCatalogDeeplyContainsCatalog(catalog, other_catalog)
         self.assertCatalogDeeplyContainsCatalog(other_catalog, catalog)
@@ -22,7 +24,10 @@ class CatalogTest(SimpleTestCase):
         self, catalog: Catalog, other_catalog: Catalog
     ):
         """ Assert that `other_catalog` contains all the messages of `catalog`, where message equality is deep.
+        
+        Ignores header message.
         """
+        self.assertEqual(catalog.locale, other_catalog.locale)
         for message in catalog:
             if message.id:  # ignore header
                 other_message = find_corresponding_message(other_catalog, message)
@@ -56,6 +61,7 @@ class UtilTest(CatalogTest):
         corresponding = find_corresponding_message(catalog, Message("id"))
         self.assertTrue(corresponding)
         self.assertMessageDeeplyEqual(corresponding, catalog.get("id"))
+        self.assertEqual(find_corresponding_string(catalog, Message("id")), "Text")
 
     def test_find_corresponding_message_with_context_exists(self):
         catalog = Catalog()
@@ -65,14 +71,16 @@ class UtilTest(CatalogTest):
         )
         self.assertTrue(corresponding)
         self.assertMessageDeeplyEqual(corresponding, catalog.get("id", context="ctxt"))
+        self.assertEqual(
+            find_corresponding_string(catalog, Message("id", context="ctxt")), "Text"
+        )
 
     def test_find_corresponding_message_not_exists(self):
         catalog = Catalog()
         catalog.add("id", string="Text")
-        corresponding = find_corresponding_message(
-            catalog, Message("other id", context="ctxt")
-        )
+        corresponding = find_corresponding_message(catalog, Message("other id"))
         self.assertIsNone(corresponding)
+        self.assertIsNone(find_corresponding_string(catalog, Message("other id")))
 
     def test_find_corresponding_message_with_context_not_exists(self):
         catalog = Catalog()
@@ -81,6 +89,9 @@ class UtilTest(CatalogTest):
             catalog, Message("id", context="ctxt")
         )
         self.assertIsNone(corresponding)
+        self.assertIsNone(
+            find_corresponding_string(catalog, Message("other id", context="ctxt"))
+        )
 
     def test_find_fuzzy_messages_fuzzy(self):
         old_catalog = Catalog()
@@ -310,27 +321,27 @@ class UtilTest(CatalogTest):
 
 class MergeTest(CatalogTest):
     def test_merge_source_catalog_parse_python_special_comments(self):
-        js_catalog = Catalog()
-        python_catalog = Catalog()
+        js_catalog = Catalog("en")
+        python_catalog = Catalog("en")
         python_catalog.add(
             "id1",
             locations=[("file1", "1")],
             auto_comments=["default-message: Text1", "some comment"],
         )
-        old_source_catalog = Catalog()
+        old_source_catalog = Catalog("en")
 
         new_js_catalog, new_python_catalog, fuzzy = _merge_source_catalog(
             js_catalog, python_catalog, old_source_catalog
         )
 
-        expected_python_catalog = Catalog()
+        expected_python_catalog = Catalog("en")
         expected_python_catalog.add(
             "id1",
             string="Text1",
             locations=[("file1", "1")],
             auto_comments=["some comment"],
         )
-        expected_js_catalog = Catalog()
+        expected_js_catalog = Catalog("en")
         expected_js_catalog.add(
             "id1",
             string="Text1",
@@ -342,33 +353,33 @@ class MergeTest(CatalogTest):
         self.assertEqual(fuzzy, frozenset())
 
     def test_merge_source_catalog_add_js_and_python(self):
-        js_catalog = Catalog()
+        js_catalog = Catalog("en")
         js_catalog.add(
             "id0",
             string="Text0",
             locations=[("file0", "2")],
             auto_comments=["some js comment"],
         )
-        python_catalog = Catalog()
+        python_catalog = Catalog("en")
         python_catalog.add(
             "id1",
             locations=[("file1", "1")],
             auto_comments=["default-message: Text1", "some comment"],
         )
-        old_source_catalog = Catalog()
+        old_source_catalog = Catalog("en")
 
         new_js_catalog, new_python_catalog, fuzzy = _merge_source_catalog(
             js_catalog, python_catalog, old_source_catalog
         )
 
-        expected_python_catalog = Catalog()
+        expected_python_catalog = Catalog("en")
         expected_python_catalog.add(
             "id1",
             string="Text1",
             locations=[("file1", "1")],
             auto_comments=["some comment"],
         )
-        expected_js_catalog = Catalog()
+        expected_js_catalog = Catalog("en")
         expected_js_catalog.add(
             "id0",
             string="Text0",
@@ -386,20 +397,20 @@ class MergeTest(CatalogTest):
         self.assertEqual(fuzzy, frozenset())
 
     def test_merge_source_catalog_update_existing_old(self):
-        js_catalog = Catalog()
+        js_catalog = Catalog("en")
         js_catalog.add(
             "id0",
             string="Text0",
             locations=[("file0", "2")],
             auto_comments=["some js comment"],
         )
-        python_catalog = Catalog()
+        python_catalog = Catalog("en")
         python_catalog.add(
             "id1",
             locations=[("file1", "1")],
             auto_comments=["default-message: Text1", "some comment"],
         )
-        old_source_catalog = Catalog()
+        old_source_catalog = Catalog("en")
         old_source_catalog.add(
             "id0",
             string="Text0",
@@ -417,14 +428,14 @@ class MergeTest(CatalogTest):
             js_catalog, python_catalog, old_source_catalog
         )
 
-        expected_python_catalog = Catalog()
+        expected_python_catalog = Catalog("en")
         expected_python_catalog.add(
             "id1",
             string="Text1",
             locations=[("file1", "1")],
             auto_comments=["some comment"],
         )
-        expected_js_catalog = Catalog()
+        expected_js_catalog = Catalog("en")
         expected_js_catalog.add(
             "id0",
             string="Text0",
@@ -442,17 +453,17 @@ class MergeTest(CatalogTest):
         self.assertEqual(fuzzy, frozenset())
 
     def test_merge_source_catalog_remove_deprecated_old(self):
-        js_catalog = Catalog()
+        js_catalog = Catalog("en")
         js_catalog.add(
             "id0", locations=[("file0", "2")], auto_comments=["some js comment"]
         )
-        python_catalog = Catalog()
+        python_catalog = Catalog("en")
         python_catalog.add(
             "id1",
             locations=[("file1", "1")],
             auto_comments=["default-message: Text1", "some comment"],
         )
-        old_source_catalog = Catalog()
+        old_source_catalog = Catalog("en")
         old_source_catalog.add(
             "id2", locations=[("file1", "1")], auto_comments=["some comment"]
         )
@@ -461,14 +472,14 @@ class MergeTest(CatalogTest):
             js_catalog, python_catalog, old_source_catalog
         )
 
-        expected_python_catalog = Catalog()
+        expected_python_catalog = Catalog("en")
         expected_python_catalog.add(
             "id1",
             string="Text1",
             locations=[("file1", "1")],
             auto_comments=["some comment"],
         )
-        expected_js_catalog = Catalog()
+        expected_js_catalog = Catalog("en")
         expected_js_catalog.add(
             "id0", locations=[("file0", "2")], auto_comments=["some js comment"]
         )
@@ -483,14 +494,14 @@ class MergeTest(CatalogTest):
         self.assertEqual(fuzzy, frozenset())
 
     def test_merge_source_catalog_fuzzy_in_python(self):
-        js_catalog = Catalog()
-        python_catalog = Catalog()
+        js_catalog = Catalog("en")
+        python_catalog = Catalog("en")
         python_catalog.add(
             "id1",
             locations=[("file1", "1")],
             auto_comments=["default-message: Text1", "some comment"],
         )
-        old_source_catalog = Catalog()
+        old_source_catalog = Catalog("en")
         old_source_catalog.add(
             "id1",
             string="Text0",
@@ -502,14 +513,14 @@ class MergeTest(CatalogTest):
             js_catalog, python_catalog, old_source_catalog
         )
 
-        expected_python_catalog = Catalog()
+        expected_python_catalog = Catalog("en")
         expected_python_catalog.add(
             "id1",
             string="Text1",
             locations=[("file1", "1")],
             auto_comments=["some comment"],
         )
-        expected_js_catalog = Catalog()
+        expected_js_catalog = Catalog("en")
         expected_js_catalog.add(
             "id1",
             string="Text1",
@@ -521,15 +532,15 @@ class MergeTest(CatalogTest):
         self.assertEqual(fuzzy, frozenset(["id1"]))
 
     def test_merge_source_catalog_fuzzy_in_js(self):
-        js_catalog = Catalog()
+        js_catalog = Catalog("en")
         js_catalog.add(
             "id1",
             string="Text1",
             locations=[("file1", "1")],
             auto_comments=["some comment"],
         )
-        python_catalog = Catalog()
-        old_source_catalog = Catalog()
+        python_catalog = Catalog("en")
+        old_source_catalog = Catalog("en")
         old_source_catalog.add(
             "id1",
             string="Text0",
@@ -541,8 +552,8 @@ class MergeTest(CatalogTest):
             js_catalog, python_catalog, old_source_catalog
         )
 
-        expected_python_catalog = Catalog()
-        expected_js_catalog = Catalog()
+        expected_python_catalog = Catalog("en")
+        expected_js_catalog = Catalog("en")
         expected_js_catalog.add(
             "id1",
             string="Text1",
@@ -554,20 +565,20 @@ class MergeTest(CatalogTest):
         self.assertEqual(fuzzy, frozenset(["id1"]))
 
     def test_merge_catalog_add_from_python(self):
-        js_catalog = Catalog()
-        python_catalog = Catalog()
+        js_catalog = Catalog("el")
+        python_catalog = Catalog("en")
         python_catalog.add(
             "id1",
             string="Text0",
             locations=[("file2", "1")],
             auto_comments=["some new comment"],
         )
-        old_catalog = Catalog()
+        old_catalog = Catalog("el")
         fuzzy = frozenset()
 
         new_catalog = _merge_catalog(js_catalog, python_catalog, old_catalog, fuzzy)
 
-        expected_catalog = Catalog()
+        expected_catalog = Catalog("el")
         expected_catalog.add(
             "id1",
             string="",
@@ -577,15 +588,15 @@ class MergeTest(CatalogTest):
         self.assertCatalogsDeeplyEqual(new_catalog, expected_catalog)
 
     def test_merge_catalog_update_from_python(self):
-        js_catalog = Catalog()
-        python_catalog = Catalog()
+        js_catalog = Catalog("el")
+        python_catalog = Catalog("en")
         python_catalog.add(
             "id1",
             string="Text1",
             locations=[("file2", "1")],
             auto_comments=["some new comment"],
         )
-        old_catalog = Catalog()
+        old_catalog = Catalog("el")
         old_catalog.add(
             "id1",
             string="Text0",
@@ -596,7 +607,7 @@ class MergeTest(CatalogTest):
 
         new_catalog = _merge_catalog(js_catalog, python_catalog, old_catalog, fuzzy)
 
-        expected_catalog = Catalog()
+        expected_catalog = Catalog("el")
         expected_catalog.add(
             "id1",
             string="Text0",
@@ -606,32 +617,32 @@ class MergeTest(CatalogTest):
         self.assertCatalogsDeeplyEqual(new_catalog, expected_catalog)
 
     def test_merge_catalog_add_from_js(self):
-        js_catalog = Catalog()
+        js_catalog = Catalog("el")
         js_catalog.add(
             "id1", string="", locations=[("file1", "1")], auto_comments=["some comment"]
         )
-        python_catalog = Catalog()
-        old_catalog = Catalog()
+        python_catalog = Catalog("en")
+        old_catalog = Catalog("el")
         fuzzy = frozenset()
 
         new_catalog = _merge_catalog(js_catalog, python_catalog, old_catalog, fuzzy)
 
-        expected_catalog = Catalog()
+        expected_catalog = Catalog("el")
         expected_catalog.add(
             "id1", string="", locations=[("file1", "1")], auto_comments=["some comment"]
         )
         self.assertCatalogsDeeplyEqual(new_catalog, expected_catalog)
 
     def test_merge_catalog_update_from_js(self):
-        js_catalog = Catalog()
+        js_catalog = Catalog("el")
         js_catalog.add(
             "id1",
             string="",
             locations=[("file2", "2")],
             auto_comments=["some new comment"],
         )
-        python_catalog = Catalog()
-        old_catalog = Catalog()
+        python_catalog = Catalog("en")
+        old_catalog = Catalog("el")
         old_catalog.add(
             "id1",
             string="Text2",
@@ -642,7 +653,7 @@ class MergeTest(CatalogTest):
 
         new_catalog = _merge_catalog(js_catalog, python_catalog, old_catalog, fuzzy)
 
-        expected_catalog = Catalog()
+        expected_catalog = Catalog("el")
         expected_catalog.add(
             "id1",
             string="Text2",
@@ -652,15 +663,15 @@ class MergeTest(CatalogTest):
         self.assertCatalogsDeeplyEqual(new_catalog, expected_catalog)
 
     def test_merge_catalog_update_from_python_fuzzy_old(self):
-        js_catalog = Catalog()
-        python_catalog = Catalog()
+        js_catalog = Catalog("el")
+        python_catalog = Catalog("en")
         python_catalog.add(
             "id1",
             string="Text2",
             locations=[("file2", "1")],
             auto_comments=["some new comment"],
         )
-        old_catalog = Catalog()
+        old_catalog = Catalog("el")
         old_catalog.add(
             "id1",
             string="Text0",
@@ -672,7 +683,7 @@ class MergeTest(CatalogTest):
 
         new_catalog = _merge_catalog(js_catalog, python_catalog, old_catalog, fuzzy)
 
-        expected_catalog = Catalog()
+        expected_catalog = Catalog("el")
         expected_catalog.add(
             "id1",
             string="Text0",
@@ -683,15 +694,15 @@ class MergeTest(CatalogTest):
         self.assertCatalogsDeeplyEqual(new_catalog, expected_catalog)
 
     def test_merge_catalog_update_from_python_fuzzy_new(self):
-        js_catalog = Catalog()
-        python_catalog = Catalog()
+        js_catalog = Catalog("el")
+        python_catalog = Catalog("en")
         python_catalog.add(
             "id1",
             string="Text0",
             locations=[("file2", "1")],
             auto_comments=["some new comment"],
         )
-        old_catalog = Catalog()
+        old_catalog = Catalog("el")
         old_catalog.add(
             "id1",
             string="Text2",
@@ -702,7 +713,7 @@ class MergeTest(CatalogTest):
 
         new_catalog = _merge_catalog(js_catalog, python_catalog, old_catalog, fuzzy)
 
-        expected_catalog = Catalog()
+        expected_catalog = Catalog("el")
         expected_catalog.add(
             "id1",
             string="Text2",
@@ -713,15 +724,15 @@ class MergeTest(CatalogTest):
         self.assertCatalogsDeeplyEqual(new_catalog, expected_catalog)
 
     def test_merge_catalog_update_from_python_fuzzy_empty(self):
-        js_catalog = Catalog()
-        python_catalog = Catalog()
+        js_catalog = Catalog("el")
+        python_catalog = Catalog("en")
         python_catalog.add(
             "id1",
             string="Text0",
             locations=[("file2", "1")],
             auto_comments=["some new comment"],
         )
-        old_catalog = Catalog()
+        old_catalog = Catalog("el")
         old_catalog.add(
             "id1", string="", locations=[("file1", "1")], auto_comments=["some comment"]
         )
@@ -729,7 +740,7 @@ class MergeTest(CatalogTest):
 
         new_catalog = _merge_catalog(js_catalog, python_catalog, old_catalog, fuzzy)
 
-        expected_catalog = Catalog()
+        expected_catalog = Catalog("el")
         expected_catalog.add(
             "id1",
             string="",
@@ -739,15 +750,15 @@ class MergeTest(CatalogTest):
         self.assertCatalogsDeeplyEqual(new_catalog, expected_catalog)
 
     def test_merge_catalog_update_from_js_fuzzy_old(self):
-        js_catalog = Catalog()
+        js_catalog = Catalog("el")
         js_catalog.add(
             "id1",
             string="",
             locations=[("file2", "1")],
             auto_comments=["some new comment"],
         )
-        python_catalog = Catalog()
-        old_catalog = Catalog()
+        python_catalog = Catalog("en")
+        old_catalog = Catalog("el")
         old_catalog.add(
             "id1",
             string="Text0",
@@ -759,7 +770,7 @@ class MergeTest(CatalogTest):
 
         new_catalog = _merge_catalog(js_catalog, python_catalog, old_catalog, fuzzy)
 
-        expected_catalog = Catalog()
+        expected_catalog = Catalog("el")
         expected_catalog.add(
             "id1",
             string="Text0",
@@ -770,15 +781,15 @@ class MergeTest(CatalogTest):
         self.assertCatalogsDeeplyEqual(new_catalog, expected_catalog)
 
     def test_merge_catalog_update_from_js_fuzzy_new(self):
-        js_catalog = Catalog()
+        js_catalog = Catalog("el")
         js_catalog.add(
             "id1",
             string="",
             locations=[("file2", "1")],
             auto_comments=["some new comment"],
         )
-        python_catalog = Catalog()
-        old_catalog = Catalog()
+        python_catalog = Catalog("en")
+        old_catalog = Catalog("el")
         old_catalog.add(
             "id1",
             string="Text2",
@@ -789,7 +800,7 @@ class MergeTest(CatalogTest):
 
         new_catalog = _merge_catalog(js_catalog, python_catalog, old_catalog, fuzzy)
 
-        expected_catalog = Catalog()
+        expected_catalog = Catalog("el")
         expected_catalog.add(
             "id1",
             string="Text2",
@@ -800,15 +811,15 @@ class MergeTest(CatalogTest):
         self.assertCatalogsDeeplyEqual(new_catalog, expected_catalog)
 
     def test_merge_catalog_update_from_js_fuzzy_empty(self):
-        js_catalog = Catalog()
+        js_catalog = Catalog("el")
         js_catalog.add(
             "id1",
             string="",
             locations=[("file2", "1")],
             auto_comments=["some new comment"],
         )
-        python_catalog = Catalog()
-        old_catalog = Catalog()
+        python_catalog = Catalog("en")
+        old_catalog = Catalog("el")
         old_catalog.add(
             "id1", string="", locations=[("file1", "1")], auto_comments=["some comment"]
         )
@@ -816,7 +827,7 @@ class MergeTest(CatalogTest):
 
         new_catalog = _merge_catalog(js_catalog, python_catalog, old_catalog, fuzzy)
 
-        expected_catalog = Catalog()
+        expected_catalog = Catalog("el")
         expected_catalog.add(
             "id1",
             string="",

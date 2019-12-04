@@ -1,8 +1,6 @@
 from babel.messages.catalog import Catalog
 from cjworkbench.i18n import default_locale, supported_locales
 from cjworkbench.i18n.catalogs.util import (
-    find_corresponding_string,
-    find_corresponding_message,
     read_po_catalog,
     write_po_catalog,
     message_unique_identifier,
@@ -137,6 +135,10 @@ def _merge_catalog(
     """ Add the messages of `python_messages` in the `js_catalog`.
 
     Message strings will be populated using the `old` catalog.
+    
+    Assumes:
+        - The strings in `js_catalog` are either empty or the same as the corresponding ones in `old_source_catalog`
+        - The strings in `python_messages` are in a different language
     
     A message string of the resulting catalog will be marked as fuzzy if 
      - it was fuzzy in the `old` catalog, or
