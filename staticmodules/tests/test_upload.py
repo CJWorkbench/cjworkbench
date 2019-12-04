@@ -1,25 +1,68 @@
-import pandas as pd
+import contextlib
+from pathlib import Path
 import unittest
-from pandas.testing import assert_frame_equal
 from staticmodules import upload
-from cjwkernel.tests.util import MockPath
+from cjwkernel.tests.util import assert_arrow_table_equals
+from cjwkernel.types import ArrowTable, I18nMessage, RenderError
+from cjwkernel.util import tempfile_context
 
 
 # See UploadFileViewTests for that
 class UploadTest(unittest.TestCase):
+    def setUp(self):
+        self.ctx = contextlib.ExitStack()
+        self.output_path = self.ctx.enter_context(tempfile_context(suffix=".arrow"))
+
+    def tearDown(self):
+        self.ctx.close()
+
+    def _file(self, b: bytes, *, suffix) -> Path:
+        path = self.ctx.enter_context(tempfile_context(suffix=suffix))
+        path.write_bytes(b)
+        return path
+
     def test_render_no_file(self):
-        result = upload.render(pd.DataFrame(), {"file": None, "has_header": True})
-        assert_frame_equal(result, pd.DataFrame())
+        result = upload.render_arrow(
+            ArrowTable(),
+            {"file": None, "has_header": True},
+            "tab-x",
+            None,
+            self.output_path,
+        )
+        assert_arrow_table_equals(result.table, {})
+        self.assertEqual(result.errors, [])
 
     def test_render_success(self):
-        result = upload.render(
-            pd.DataFrame(),
-            {"file": MockPath(["x.csv"], b"A,B\na,b"), "has_header": True},
+        path = self._file(b"A,B\nx,y", suffix=".csv")
+        result = upload.render_arrow(
+            ArrowTable(),
+            {"file": path, "has_header": True},
+            "tab-x",
+            None,
+            self.output_path,
         )
-        assert_frame_equal(result, pd.DataFrame({"A": ["a"], "B": ["b"]}))
+        assert_arrow_table_equals(result.table, {"A": ["x"], "B": ["y"]})
+        self.assertEqual(result.errors, [])
 
     def test_render_error(self):
-        result = upload.render(
-            pd.DataFrame(), {"file": MockPath(["x.csv"], b""), "has_header": True}
+        path = self._file(b"A,B\nx,y", suffix=".json")
+        result = upload.render_arrow(
+            ArrowTable(),
+            {"file": path, "has_header": True},
+            "tab-x",
+            None,
+            self.output_path,
         )
-        self.assertEqual(result, "This file is empty")
+        assert_arrow_table_equals(result.table, {})
+        self.assertEqual(
+            result.errors,
+            [
+                RenderError(
+                    message=I18nMessage(
+                        id="TODO_i18n",
+                        args={"text": "JSON parse error at byte 0: Invalid value."},
+                    ),
+                    quick_fixes=[],
+                )
+            ],
+        )

@@ -1,18 +1,27 @@
-import json
-from typing import Any, Dict
-import aiohttp
 import asyncio
+import json
+from pathlib import Path
+from typing import Any, Dict, List, Optional
 from oauthlib import oauth2
-import pandas as pd
-from cjwkernel.pandas.types import Tuple, Union
-from cjwkernel.pandas.parse_util import parse_bytesio
-from cjwkernel.pandas.moduleutils import (
-    spooled_data_from_url,
-    turn_header_into_first_row,
+from cjwkernel.pandas.http import httpfile
+from cjwkernel.pandas.parse import MimeType, parse_file
+from cjwkernel.pandas.types import ProcessResult
+from cjwkernel.pandas import moduleutils
+from cjwkernel import parquet
+from cjwkernel.types import (
+    ArrowTable,
+    FetchResult,
+    I18nMessage,
+    RenderError,
+    RenderResult,
 )
 
 
 _Secret = Dict[str, Any]
+
+
+GDRIVE_API_URL = "https://www.googleapis.com/drive/v3"  # unit tests override this
+SSL_CONTEXT = None  # unit tests override this
 
 
 def _generate_google_sheet_url(sheet_id: str) -> str:
@@ -28,10 +37,7 @@ def _generate_google_sheet_url(sheet_id: str) -> str:
     
     So the caller should ignore the content-type Google returns.
     """
-    return (
-        f"https://www.googleapis.com/drive/v3/files/"
-        f"{sheet_id}/export?mimeType=text%2Fcsv"
-    )
+    return f"{GDRIVE_API_URL}/files/{sheet_id}/export?mimeType=text%2Fcsv"
 
 
 def _generate_gdrive_file_url(sheet_id: str) -> str:
@@ -41,20 +47,22 @@ def _generate_gdrive_file_url(sheet_id: str) -> str:
     This discards Content-Type, including charset. GDrive doesn't know the
     charset anyway.
     """
-    return f"https://www.googleapis.com/drive/v3/files/{sheet_id}?alt=media"
+    return f"{GDRIVE_API_URL}/files/{sheet_id}?alt=media"
 
 
-async def download_data_frame(
-    sheet_id: str, sheet_mime_type: str, oauth2_client: oauth2.Client
-) -> Union[pd.DataFrame, str, Tuple[pd.DataFrame, str]]:
-    """Download spreadsheet from Google, or return a str error message.
+def TODO_i18n_fetch_error(message: str):
+    return FetchResult(None, [RenderError(I18nMessage.TODO_i18n(message))])
 
-    Arguments decide how the download and parse will occur:
 
-    * If `secret` is not set, return an error.
-    * If `sheet_mime_type` is 'application/vnd.google-apps.spreadsheet', use
-      GDrive API to _export_ a text/csv, then parse it. Otherwise, use GDrive
-      API to _download_ the file, and parse it according to its mime type.
+async def do_download(
+    sheet_id: str, sheet_mime_type: str, oauth2_client: oauth2.Client, output_path: Path
+) -> FetchResult:
+    """
+    Download spreadsheet from Google.
+
+    If `sheet_mime_type` is 'application/vnd.google-apps.spreadsheet', use
+    GDrive API to _export_ a text/csv. Otherwise, use GDrive API to _download_
+    the file.
     """
     if sheet_mime_type == "application/vnd.google-apps.spreadsheet":
         url = _generate_google_sheet_url(sheet_id)
@@ -66,56 +74,109 @@ async def download_data_frame(
     url, headers, _ = oauth2_client.add_token(url, headers={})
 
     try:
-        async with spooled_data_from_url(url, headers) as (blobio, _, __):
-            # TODO store raw bytes and then parse in render(), like in
-            # [2019-10-31] loadurl module.
-            #
-            # For now, we hard-code questionable params:
-            #
-            # * encoding=None: because GDrive doesn't know the charset, and it
-            #                  returns the wrong charset sometimes.
-            # * has_header=True: legacy (and buggy). When we store raw bytes,
-            #                    we'll use the user's preference.
-            return parse_bytesio(
-                blobio, encoding=None, content_type=sheet_mime_type, has_header=True
+        await httpfile.download(url, output_path, headers=headers, ssl=SSL_CONTEXT)
+    except httpfile.HttpError.ClientResponseError as err:
+        cause = err.__cause__
+        if cause.status == 401:
+            return TODO_i18n_fetch_error(
+                "Invalid credentials. Please reconnect to Google Drive."
             )
-    except aiohttp.ClientResponseError as err:
-        if err.status == 401:
-            return "Invalid credentials. Please reconnect to Google Drive."
-        elif err.status == 403:
-            return "You chose a file your logged-in user cannot access. Please reconnect to Google Drive or choose a different file."
-        elif err.status == 404:
-            return "File not found. Please choose a different file."
+        elif cause.status == 403:
+            return TODO_i18n_fetch_error(
+                "You chose a file your logged-in user cannot access. Please reconnect to Google Drive or choose a different file."
+            )
+        elif cause.status == 404:
+            return TODO_i18n_fetch_error(
+                "File not found. Please choose a different file."
+            )
         else:
-            return "GDrive responded with HTTP %d %s" % (err.status, err.message)
-    except aiohttp.ClientError as err:
-        return "Error during GDrive request: %s" % str(err)
-    except asyncio.TimeoutError:
-        return "Timeout during GDrive request"
+            return TODO_i18n_fetch_error(
+                "GDrive responded with HTTP %d %s" % (cause.status, cause.message)
+            )
+    except httpfile.HttpError as err:
+        return FetchResult(None, errors=[RenderError(err.i18n_message)])
+
+    return FetchResult(output_path)
 
 
-def render(_unused_table, params, *, fetch_result, **kwargs):
+def _render_deprecated_parquet(
+    input_path: Path,
+    errors: List[RenderError],
+    output_path: Path,
+    params: Dict[str, Any],
+) -> RenderResult:
+    parquet.convert_parquet_file_to_arrow_file(input_path, output_path)
+    result = RenderResult(ArrowTable.from_arrow_file(output_path), errors)
+
+    if result.table.metadata.n_rows > 0 and not params["has_header"]:
+        pandas_result = ProcessResult.from_arrow(result)
+        dataframe = moduleutils.turn_header_into_first_row(pandas_result.dataframe)
+        return ProcessResult(dataframe).to_arrow(output_path)
+
+    return result
+
+
+def _calculate_mime_type(content_type: str) -> MimeType:
+    for mime_type in MimeType:
+        if content_type.startswith(mime_type.value):
+            return mime_type
+    # If we get here, we downloaded a MIME type we couldn't handle ... even
+    # though we explicitly requested a MIME type we can handle. Undefined
+    # behavior.
+    raise RuntimeError("Unsupported content_type %s" % content_type)
+
+
+def _render_file(path: Path, params: Dict[str, Any], output_path: Path):
+    with httpfile.read(path) as (body_path, url, headers):
+        content_type = httpfile.extract_first_header_from_str(headers, "Content-Type")
+        mime_type = _calculate_mime_type(content_type)
+        # Ignore Google-reported charset. Google's headers imply latin-1 when
+        # their data is utf-8.
+        return parse_file(
+            body_path,
+            encoding=None,
+            mime_type=mime_type,
+            has_header=params["has_header"],
+            output_path=output_path,
+        )
+
+
+def render_arrow(
+    table, params, tab_name, fetch_result: Optional[FetchResult], output_path: Path
+) -> RenderResult:
     # Must perform header operation here in the event the header checkbox
     # state changes
-    if not fetch_result:
-        return pd.DataFrame()  # user hasn't fetched yet
-
-    if fetch_result.status == "error":
-        return fetch_result.error
-
-    table = fetch_result.dataframe
-
-    has_header: bool = params["has_header"]
-    if not has_header:
-        table = turn_header_into_first_row(table)
-
-    if fetch_result.error:
-        return (table, fetch_result.error)
+    if fetch_result is None:
+        # empty table
+        return RenderResult(ArrowTable())
+    elif fetch_result.path is not None and parquet.file_has_parquet_magic_number(
+        fetch_result.path
+    ):
+        # Deprecated files: we used to parse in fetch() and store the result
+        # as Parquet. Now we've lost the original file data, and we need to
+        # support our oldest users.
+        #
+        # In this deprecated format, parse errors were written as
+        # fetch_result.errors.
+        return _render_deprecated_parquet(
+            fetch_result.path, fetch_result.errors, output_path, params
+        )
+    elif fetch_result.errors:
+        # We've never stored errors+data. If there are errors, assume
+        # there's no data.
+        return RenderResult(ArrowTable(), fetch_result.errors)
     else:
-        return table
+        assert not fetch_result.errors  # we've never stored errors+data.
+        return _render_file(fetch_result.path, params, output_path)
 
 
-async def fetch(params, *, secrets, **kwargs):
+def fetch_arrow(
+    params: Dict[str, Any],
+    secrets: Dict[str, Any],
+    last_fetch_result,
+    input_table_parquet_path,
+    output_path: Path,
+) -> FetchResult:
     file_meta = params["file"]
     if not file_meta:
         return None
@@ -133,10 +194,11 @@ async def fetch(params, *, secrets, **kwargs):
 
     secret = secrets.get("google_credentials")
     if not secret:
-        return "Please connect to Google Drive."
+        return TODO_i18n_fetch_error("Please connect to Google Drive.")
     if "error" in secret:
-        assert secret["error"]["id"] == "TODO_i18n"
-        return secret["error"]["arguments"][0]
+        return FetchResult(
+            None, errors=[RenderError(I18nMessage.from_dict(secret["error"]))]
+        )
     assert "secret" in secret
     oauth2_client = oauth2.Client(
         client_id=None,  # unneeded
@@ -144,7 +206,9 @@ async def fetch(params, *, secrets, **kwargs):
         access_token=secret["secret"]["access_token"],
     )
 
-    return await download_data_frame(sheet_id, sheet_mime_type, oauth2_client)
+    return asyncio.run(
+        do_download(sheet_id, sheet_mime_type, oauth2_client, output_path)
+    )
 
 
 def _migrate_params_v0_to_v1(params):

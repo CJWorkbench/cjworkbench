@@ -311,6 +311,18 @@ class TableMetadata:
         return ttypes.TableMetadata(self.n_rows, [c.to_thrift() for c in self.columns])
 
 
+def _pyarrow_type_to_column_type(dtype: pyarrow.DataType) -> ColumnType:
+    if pyarrow.types.is_floating(dtype) or pyarrow.types.is_integer(dtype):
+        return ColumnType.Number()
+    if pyarrow.types.is_string(dtype) or (
+        pyarrow.types.is_dictionary(dtype) and pyarrow.types.is_string(dtype.value_type)
+    ):
+        return ColumnType.Text()
+    if pyarrow.types.is_timestamp(dtype):
+        return ColumnType.Datetime()
+    return ValueError("Unknown pyarrow type %r" % dtype)
+
+
 @dataclass(frozen=True)
 class ArrowTable:
     """
@@ -434,6 +446,19 @@ class ArrowTable:
         else:
             path = None
         return cls(path, TableMetadata.from_thrift(value.metadata))
+
+    @classmethod
+    def from_arrow_file(cls, path: Path) -> ArrowTable:
+        reader = pyarrow.ipc.open_file(path)
+        schema = reader.schema
+        n_rows = sum(
+            reader.get_batch(i).num_rows for i in range(reader.num_record_batches)
+        )
+        columns = [
+            Column(name, _pyarrow_type_to_column_type(dtype))
+            for name, dtype in zip(schema.names, schema.types)
+        ]
+        return ArrowTable(path, TableMetadata(n_rows, columns))
 
     def to_thrift(self) -> ttypes.ArrowTable:
         return ttypes.ArrowTable(

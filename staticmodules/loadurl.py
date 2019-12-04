@@ -4,13 +4,10 @@ Fetch data using HTTP, then parse it.
 Behavior
 --------
 
-1. Fetch
-    a. Perform an HTTP request and log traffic (gzipped) to output_file
-    b. If the server responds with a redirect, truncate output_file and restart
-    c. If there's an error or timeout, truncate output_file and return error
+1. Fetch: use httpfile.download() to store in httpfile format.
 2. Render
     a. If file is in Parquet format, mangle it (has_header) and return it
-    b. Otherwise, file is a gzipped HTTP traffic log. Extract file contents from
+    b. Otherwise, file is in httpfile format. Extract file contents from
        the data and use HTTP headers to determine charset and file format.
        Return parse result (which may be an error).
 
@@ -22,55 +19,33 @@ Old versions of loadurl processed during fetch; they produced Parquet files
 supported forevermore. All these files were parsed with `has_header=True` and
 types were auto-detected. There is no way to recover the original data.
 
-The new format is simpler. In case of success, a special HTTP log is written to
-a _gzipped_ file:
-
-    {"url":"https://example.com/test.csv"}\r\n
-    200 OK\r\n
-    Response-Header-1: X\r\n
-    Response-Header-2: Y\r\n
-    \r\n
-    All body bytes
-
-`Transfer-Encoding`, `Content-Encoding` and `Content-Length` headers are
-renamed `Cjw-Original-Transfer-Encoding`, `Cjw-Original-Content-Encoding`
-and `Cjw-Original-Content-Length`. (The body in the HTTP log is dechunked
-and decompressed, because Python's ecosystem doesn't have nice options for
-storing raw HTTP traffic and dechunking from a file.)
-
-The params in the first line are UTF-8-encoded with no added whitespace
-(so: "\r\n" cannot ever appear); status is ASCII-encoded; headers are
-latin1-encoded; the body is raw. (Rationale: each encoding is the content's
-native encoding.)
-
-Rationale for storing params: it avoids a race in which we render with new
-params but an old fetch result. We only store the "fetch params" ("url"),
-not the "render params" ("has_header"), so the file is byte-for-byte identical
-when we fetch an unchanged URL with new render params.
-
-In case of redirect, only the last request is logged.
+Newer versions of loadurl (2019-11-01 onwards) store fetched data in "httpfile"
+format, which is more akin to actual HTTP traffic.
 """
 import asyncio
-import gzip
-import json
 from pathlib import Path
 import re
-import shutil
-from typing import Optional, Union
-import aiohttp  # for consistency with other Workbench modules
+from typing import Any, Dict, List, Optional
+from cjwkernel import parquet
 from cjwkernel.pandas import moduleutils
-from cjwkernel.pandas.parse_util import parse_bytesio
+from cjwkernel.pandas.http import httpfile
+from cjwkernel.pandas.parse import parse_file, MimeType
 from cjwkernel.pandas.types import ProcessResult  # deprecated
-from cjwkernel.types import FetchResult
-from cjwkernel.util import tempfile_context
+from cjwkernel.types import (
+    ArrowTable,
+    FetchResult,
+    I18nMessage,
+    RenderError,
+    RenderResult,
+)
 
 
 ExtensionMimeTypes = {
-    ".xls": "application/vnd.ms-excel",
-    ".xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    ".csv": "text/csv",
-    ".tsv": "text/tab-separated-values",
-    ".json": "application/json",
+    ".xls": MimeType.XLS,
+    ".xlsx": MimeType.XLSX,
+    ".csv": MimeType.CSV,
+    ".tsv": MimeType.TSV,
+    ".json": MimeType.JSON,
 }
 
 
@@ -78,18 +53,18 @@ AllowedMimeTypes = list(ExtensionMimeTypes.values())
 
 
 NonstandardMimeTypes = {
-    "application/csv": "text/csv",
+    "application/csv": MimeType.CSV,
     # http://samplecsvs.s3.amazonaws.com/SacramentocrimeJanuary2006.csv
-    "application/x-csv": "text/csv",
+    "application/x-csv": MimeType.CSV,
 }
 
 
-def guess_mime_type_or_none(content_type: str, url: str) -> str:
+def guess_mime_type_or_none(content_type: str, url: str) -> MimeType:
     """Infer MIME type from Content-Type header or URL, or return None."""
     # First, accept "Content-Type" but clean it: "text/csv; charset=utf-8"
     # becomes "text/csv"
     for mime_type in AllowedMimeTypes:
-        if content_type.startswith(mime_type):
+        if content_type.startswith(mime_type.value) and mime_type != MimeType.TXT:
             return mime_type
 
     # No match? Then try to "correct" the MIME type.
@@ -103,6 +78,10 @@ def guess_mime_type_or_none(content_type: str, url: str) -> str:
     for extension, mime_type in ExtensionMimeTypes.items():
         if extension in url:
             return mime_type
+
+    # We ignored MimeType.TXT before. Check for it now.
+    if content_type.startswith(MimeType.TXT.value):
+        return MimeType.TXT
 
     return None
 
@@ -123,153 +102,91 @@ def guess_charset_or_none(content_type: str) -> str:
         return None
 
 
-def _render_deprecated_parquet(fetch_result: ProcessResult, params):
-    if fetch_result.error:
-        # Error means no data, always.
-        return fetch_result.error
+def _render_deprecated_parquet(
+    input_path: Path,
+    errors: List[RenderError],
+    output_path: Path,
+    params: Dict[str, Any],
+) -> RenderResult:
+    parquet.convert_parquet_file_to_arrow_file(input_path, output_path)
+    result = RenderResult(ArrowTable.from_arrow_file(output_path), errors)
 
-    table = fetch_result.dataframe
-    has_header: bool = params["has_header"]
-    if not has_header and len(table) >= 1:
-        table = moduleutils.turn_header_into_first_row(table)
-    return table
+    if result.table.metadata.n_rows > 0 and not params["has_header"]:
+        pandas_result = ProcessResult.from_arrow(result)
+        dataframe = moduleutils.turn_header_into_first_row(pandas_result.dataframe)
+        return ProcessResult(dataframe).to_arrow(output_path)
+
+    return result
 
 
-def _render_file(path: Path, params):
-    with tempfile_context(prefix="body-") as tf:
-        # Parse file into headers + tempfile
-        with path.open("rb") as f:
-            with gzip.GzipFile(mode="rb", fileobj=f) as zf:
-                # read params (line 1)
-                fetch_params_json = zf.readline()
-                fetch_params = json.loads(fetch_params_json)
-                # read and skip status (line 2)
-                zf.readline()
+def _render_file(path: Path, output_path: Path, params: Dict[str, Any]):
+    with httpfile.read(path) as (body_path, url, headers):
+        content_type = httpfile.extract_first_header_from_str(headers, "Content-Type")
 
-                # Read headers and find key values
-                # (Just content-type matters for now; but we must read all
-                # headers to arrive at the body.)
-                content_type = ""
-                while True:
-                    line = zf.readline().decode("latin1")
-                    if not line.strip():
-                        # We just read the last line. The rest is body!
-                        break
-                    else:
-                        # Assume header is well-formed: otherwise we wouldn't have
-                        # written it to the file
-                        header, value = line.split(":", 1)
-                        value = value.strip()
-                        if header.upper() == "CONTENT-TYPE":
-                            content_type = value
-
-                # Read body
-                with tf.open("wb") as body_f:
-                    shutil.copyfileobj(zf, body_f)
-
-        mime_type = guess_mime_type_or_none(content_type, fetch_params["url"])
+        mime_type = guess_mime_type_or_none(content_type, url)
         if not mime_type:
-            return (
-                "Server responded with unhandled Content-Type %r."
-                "Please use a different URL."
-            ) % content_type
+            return RenderResult(
+                errors=[
+                    RenderError(
+                        I18nMessage.TODO_i18n(
+                            (
+                                "Server responded with unhandled Content-Type %r. "
+                                "Please use a different URL."
+                            )
+                            % content_type
+                        )
+                    )
+                ]
+            )
         maybe_charset = guess_charset_or_none(content_type)
 
-        with tf.open("rb") as bytesio:
-            return parse_bytesio(
-                bytesio, maybe_charset, mime_type, params["has_header"]
-            )
+        return parse_file(
+            body_path,
+            output_path=output_path,
+            encoding=maybe_charset,
+            mime_type=mime_type,
+            has_header=params["has_header"],
+        )
 
 
-def render(table, params, *, fetch_result: Optional[Union[FetchResult, ProcessResult]]):
+def render_arrow(
+    table, params, tab_name, fetch_result: Optional[FetchResult], output_path: Path
+) -> RenderResult:
     if fetch_result is None:
-        return table  # no-op
-    elif isinstance(fetch_result, ProcessResult):
-        # This includes empty file, which Workbench treats as ProcessResult
-        # with empty dataframe.
-        return _render_deprecated_parquet(fetch_result, params)
+        # empty table
+        return RenderResult(ArrowTable())
+    elif fetch_result.path is not None and parquet.file_has_parquet_magic_number(
+        fetch_result.path
+    ):
+        # Deprecated files: we used to parse in fetch() and store the result
+        # as Parquet. Now we've lost the original file data, and we need to
+        # support our oldest users.
+        return _render_deprecated_parquet(
+            fetch_result.path, fetch_result.errors, output_path, params
+        )
+    elif fetch_result.errors:
+        # We've never stored errors+data. If there are errors, assume
+        # there's no data.
+        return RenderResult(ArrowTable(), fetch_result.errors)
     else:
         assert not fetch_result.errors  # we've never stored errors+data.
-        return _render_file(fetch_result.path, params)
+        return _render_file(fetch_result.path, output_path, params)
 
 
-async def fetch(params, *, output_path: Path) -> Union[Path, str]:
+def fetch_arrow(
+    params: Dict[str, Any],
+    secrets,
+    last_fetch_result,
+    input_table_parquet_path,
+    output_path: Path,
+) -> FetchResult:
     url: str = params["url"].strip()
-
-    mimetypes = ",".join(AllowedMimeTypes)
+    mimetypes = ",".join(v.value for v in AllowedMimeTypes)
     headers = {"Accept": mimetypes}
-    timeout = aiohttp.ClientTimeout(total=5 * 60, connect=30)
 
     try:
-        async with moduleutils.spooled_data_from_url(url, headers, timeout) as (
-            bytesio,
-            headers,
-            charset,
-        ):
-            # This shouldn't be a context manager. Oh well. Ignore the fact
-            # that bytesio is backed by a file. It's safe to read the file
-            # after we exit the context and the file is deleted.
-            pass
-    except asyncio.TimeoutError:
-        output_path.write_bytes(b"")  # truncate file
-        return f"Timeout fetching {url}"
-    except aiohttp.InvalidURL:
-        return f"Invalid URL"
-    except aiohttp.TooManyRedirects:
-        return "The server redirected us too many times. Please try a different URL."
-    except aiohttp.ClientResponseError as err:
-        return "Error from server: %d %s" % (err.status, err.message)
-    except aiohttp.ClientError as err:
-        return str(err)
+        asyncio.run(httpfile.download(url, output_path, headers=headers))
+    except httpfile.HttpError as err:
+        return FetchResult(None, errors=[RenderError(err.i18n_message)])
 
-    # The following shouldn't ever error.
-    with output_path.open("wb") as f:
-        # set gzip mtime=0 so we can write the exact same file given the exact
-        # same data. (This helps with testing and versioning.)
-        with gzip.GzipFile(mode="wb", filename="", fileobj=f, mtime=0) as zf:
-            # Write URL -- original URL, not redirected URL
-            zf.write(
-                json.dumps(
-                    {"url": params["url"]},
-                    ensure_ascii=False,
-                    allow_nan=False,
-                    separators=(",", ":"),
-                    sort_keys=True,
-                ).encode("utf-8")
-                + b"\r\n"
-            )
-            # Write status line -- INCORRECT but oh well
-            zf.write(b"200 OK\r\n")
-            # Write response headers.
-            #
-            # Ideally we'd be using raw headers. But moduleutils gives
-            # parsed headers. Let's not bother with purity: just
-            # re-encode the parsed headers.
-            for k, v in headers.items():
-                # bytesio is already dechunked and decompressed. Mangle
-                # these headers to make file consistent with itself.
-                if k.lower() in {
-                    "transfer-encoding",
-                    "content-encoding",
-                    "content-length",
-                }:
-                    k = "Cjw-Original-" + k
-                elif k.lower() not in {"content-type", "content-disposition", "server"}:
-                    # Skip writing most headers. This is a HACK: we skip the
-                    # `Date` header so fetcher will see a byte-for-byte
-                    # identical output file given byte-for-byte identical
-                    # input. That will convince fetcher to ignore the result.
-                    # See `fetcher.versions`. TODO redefine "versions" and
-                    # revisit this logic: the user probably _expects_ us to
-                    # store headers every fetch, though body may not change.
-                    continue
-                # There's no way to put \r\n in an HTTP header name or value.
-                # Good thing: if a server could do that, this file format would
-                # be unreadable.
-                assert "\n" not in k and "\n" not in v
-                zf.write(f"{k}: {v}\r\n".encode("latin1"))
-            zf.write(b"\r\n")
-
-            # Write body
-            shutil.copyfileobj(bytesio, zf)
-    return output_path
+    return FetchResult(output_path)

@@ -225,7 +225,7 @@ class Kernel:
                 "cjwkernel.pandas.main",
                 "cjwkernel.pandas.module",
                 "cjwkernel.pandas.moduleutils",
-                "cjwkernel.pandas.parse_util",
+                "cjwkernel.pandas.parse",
                 "cjwkernel.parquet",
                 *ENCODING_IMPORTS,
             ],
