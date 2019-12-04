@@ -27,6 +27,14 @@ def find_corresponding_string(catalog: Catalog, message: Message) -> Optional[st
     return corresponding_message.string if corresponding_message else None
 
 
+def remove_strings(catalog: Catalog):
+    """ Convert the text of all messages (except header) to empty string.
+    """
+    for message in catalog:
+        if message.id:
+            message.string = ""
+
+
 def find_fuzzy_messages(
     *, old_catalog: Catalog, new_catalog: Catalog
 ) -> FrozenSet[MessageUID]:

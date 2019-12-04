@@ -7,6 +7,7 @@ from cjworkbench.i18n.catalogs.util import (
     find_fuzzy_messages,
     fill_catalog,
     mark_fuzzy,
+    remove_strings,
 )
 from cjworkbench.i18n.catalogs import (
     catalog_path,
@@ -168,7 +169,7 @@ def clean():
         message.auto_comments.append(
             COMMENT_TAG_FOR_DEFAULT_MESSAGE + ": " + message.string
         )
-        message.string = ""
+    remove_strings(catalog)
     write_po_catalog(
         catalog_path(default_locale, TEMPLATE_CATALOG_FILENAME),
         catalog,

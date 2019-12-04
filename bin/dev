@@ -42,6 +42,7 @@ print_usage() {
   echo 'Where COMMAND is one of:' >&2
   echo '  clean -- wipe all data' >&2
   echo '  develop-module DIR -- run "./manage.py develop-module DIR"' >&2
+  echo '  extract-module-messages DIR -- run "./manage.py extract-module-messages DIR"' >&2
   echo '  npm ARGS -- run "npm ARGS..." in a Node environment' >&2
   echo '  pipenv ARGS -- run "pipenv ARGS..." in a Python environment' >&2
   echo '  python ARGS -- run "pipenv run python ARGS..." in a Python environment' >&2
@@ -140,6 +141,11 @@ case "$COMMAND" in
 
   "develop-module")
     MODULE="$1" docker_compose_with_commands run --rm develop-module sh -c "/app/cjwkernel/setup-sandboxes.sh only-readonly && pipenv run python ./manage.py develop-module ../$1"
+    exit 1
+    ;;
+
+  "extract-module-messages")
+    MODULE="$1" docker_compose_with_commands run --rm develop-module sh -c "/app/cjwkernel/setup-sandboxes.sh all && pipenv run python ./manage.py extract-module-messages ../$1"
     exit 1
     ;;
 

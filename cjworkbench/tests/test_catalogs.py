@@ -7,6 +7,7 @@ from cjworkbench.i18n.catalogs.util import (
     find_fuzzy_messages,
     fill_catalog,
     mark_fuzzy,
+    remove_strings,
 )
 from cjworkbench.i18n.catalogs.merge import _merge_source_catalog, _merge_catalog
 
@@ -92,6 +93,16 @@ class UtilTest(CatalogTest):
         self.assertIsNone(
             find_corresponding_string(catalog, Message("other id", context="ctxt"))
         )
+
+    def test_remove_strings(self):
+        old_catalog = Catalog()
+        old_catalog.add("id1", string="Text1")
+        old_catalog.add("id2", string="Text1", context="ctxt")
+        remove_strings(old_catalog)
+        expected_catalog = Catalog()
+        expected_catalog.add("id1", string="")
+        expected_catalog.add("id2", string="", context="ctxt")
+        self.assertCatalogsDeeplyEqual(old_catalog, expected_catalog)
 
     def test_find_fuzzy_messages_fuzzy(self):
         old_catalog = Catalog()
