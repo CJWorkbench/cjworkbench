@@ -1,6 +1,7 @@
 from babel.messages.pofile import read_po, write_po
 from babel.messages.catalog import Catalog, Message
 from typing import Optional, FrozenSet, Any, Union, Tuple
+import pathlib
 
 MessageUID = Union[str, Tuple[str, str]]
 
@@ -107,5 +108,6 @@ def write_po_catalog(filename: str, catalog: Catalog, **kwargs):
     """ Try to write a po catalog to the given path.
     Throw on failure.
     """
+    pathlib.Path(filename).parent.mkdir(parents=True, exist_ok=True)
     with open(filename, "wb") as catalog_file:
         write_po(catalog_file, catalog, **kwargs)
