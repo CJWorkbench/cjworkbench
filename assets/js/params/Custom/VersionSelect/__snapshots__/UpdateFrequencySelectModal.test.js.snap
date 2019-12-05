@@ -1,8 +1,34 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
-<UpdateFrequencySelectModal
+<WithI18n
   fetchInterval={3600}
+  i18n={
+    Object {
+      "_": [Function],
+      "_activeLanguageData": Object {
+        "plurals": [Function],
+      },
+      "_activeMessages": Object {},
+      "_catalogs": Object {
+        "en": Object {
+          "languageData": Object {},
+          "messages": Object {},
+        },
+      },
+      "_dev": Object {
+        "compile": [Function],
+        "loadLanguageData": [Function],
+      },
+      "_language": "en",
+      "_locales": undefined,
+      "_missing": undefined,
+      "plural": [Function],
+      "select": [Function],
+      "selectOrdinal": [Function],
+      "t": [Function],
+    }
+  }
   isAutofetch={false}
   isEmailUpdates={false}
   onClose={[MockFunction]}
@@ -11,428 +37,892 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
   wfModuleId={234}
   workflowId={123}
 >
-  <Modal
-    className="update-frequency-modal"
-    isOpen={true}
-    toggle={[MockFunction]}
+  <I18n
+    update={true}
+    withHash={true}
   >
-    <OpenModal
-      className="update-frequency-modal"
-      toggle={[MockFunction]}
+    <UpdateFrequencySelectModal
+      fetchInterval={3600}
+      i18n={
+        Object {
+          "_": [Function],
+          "_activeLanguageData": Object {
+            "plurals": [Function],
+          },
+          "_activeMessages": Object {},
+          "_catalogs": Object {
+            "en": Object {
+              "languageData": Object {},
+              "messages": Object {},
+            },
+          },
+          "_dev": Object {
+            "compile": [Function],
+            "loadLanguageData": [Function],
+          },
+          "_language": "en",
+          "_locales": undefined,
+          "_missing": undefined,
+          "plural": [Function],
+          "select": [Function],
+          "selectOrdinal": [Function],
+          "t": [Function],
+        }
+      }
+      isAutofetch={false}
+      isEmailUpdates={false}
+      onClose={[MockFunction]}
+      setEmailUpdates={[MockFunction]}
+      trySetAutofetch={[MockFunction]}
+      wfModuleId={234}
+      workflowId={123}
     >
-      <Portal
-        containerInfo={
-          <body
-            class="modal-open"
-          >
-            <div
-              class="modal-backdrop"
-            />
-            <div
-              class="modal update-frequency-modal"
-              role="dialog"
-              tabindex="-1"
-            >
-              <div
-                class="modal-dialog"
-                role="document"
+      <Modal
+        className="update-frequency-modal"
+        isOpen={true}
+        toggle={[MockFunction]}
+      >
+        <OpenModal
+          className="update-frequency-modal"
+          toggle={[MockFunction]}
+        >
+          <Portal
+            containerInfo={
+              <body
+                class="modal-open"
               >
                 <div
-                  class="modal-content"
+                  class="modal-backdrop"
+                />
+                <div
+                  class="modal update-frequency-modal"
+                  role="dialog"
+                  tabindex="-1"
                 >
                   <div
-                    class="modal-header"
+                    class="modal-dialog"
+                    role="document"
                   >
-                    <h5
-                      class="modal-title"
-                    >
-                      WORKFLOW UPDATE
-                    </h5>
-                    <button
-                      aria-label="Close"
-                      class="close"
-                      type="button"
-                    >
-                      <span
-                        aria-hidden="true"
-                      >
-                        ×
-                      </span>
-                    </button>
-                  </div>
-                  <div
-                    class="modal-body"
-                  >
-                    <form
-                      action="#"
-                      class="autofetch"
-                      method="post"
-                    >
-                      <fieldset
-                        class="autofetch"
-                      >
-                        <div
-                          class="big-radio big-radio-auto-update-true big-radio-unchecked"
-                        >
-                          <label>
-                            <input
-                              name="isAutofetch"
-                              type="radio"
-                              value="true"
-                            />
-                            <div
-                              class="radio"
-                            >
-                              Auto
-                            </div>
-                          </label>
-                          <div
-                            class="big-radio-details"
-                          >
-                            <p>
-                              Automatically update this workflow with the newest data (old versions will be saved).
-                            </p>
-                            <label
-                              for="updateFrequencySelectTimeUnitCount"
-                            >
-                              Check for update every
-                            </label>
-                            <fieldset
-                              class="fetch-interval"
-                              disabled=""
-                            >
-                              <div
-                                class="input-group"
-                              >
-                                <div
-                                  class="input-group-prepend"
-                                >
-                                  <input
-                                    class="form-control"
-                                    id="updateFrequencySelectTimeUnitCount"
-                                    min="1"
-                                    name="timeUnitCount"
-                                    type="number"
-                                    value="1"
-                                  />
-                                </div>
-                                <select
-                                  class="custom-select"
-                                  name="timeUnit"
-                                >
-                                  <option
-                                    value="weeks"
-                                  >
-                                    weeks
-                                  </option>
-                                  <option
-                                    value="days"
-                                  >
-                                    days
-                                  </option>
-                                  <option
-                                    value="hours"
-                                  >
-                                    hours
-                                  </option>
-                                  <option
-                                    value="minutes"
-                                  >
-                                    minutes
-                                  </option>
-                                  <option
-                                    value="seconds"
-                                  >
-                                    seconds
-                                  </option>
-                                </select>
-                                <div
-                                  class="input-group-append"
-                                >
-                                  <button
-                                    class="form-control"
-                                    name="apply"
-                                    type="submit"
-                                  >
-                                    Apply
-                                  </button>
-                                </div>
-                              </div>
-                            </fieldset>
-                          </div>
-                        </div>
-                        <div
-                          class="big-radio big-radio-auto-update-false big-radio-checked"
-                        >
-                          <label>
-                            <input
-                              checked=""
-                              name="isAutofetch"
-                              type="radio"
-                              value="false"
-                            />
-                            <div
-                              class="radio"
-                            >
-                              Manual
-                            </div>
-                          </label>
-                          <div
-                            class="big-radio-details"
-                          >
-                            <p>
-                              Check for new data manually.
-                            </p>
-                          </div>
-                        </div>
-                      </fieldset>
-                    </form>
                     <div
-                      class="email-updates"
-                    >
-                      <input
-                        id="update-frequency-select-modal-is-email-updates-checkbox"
-                        name="isEmailUpdates"
-                        type="checkbox"
-                      />
-                      <label
-                        for="update-frequency-select-modal-is-email-updates-checkbox"
-                      >
-                        Email me when data changes
-                      </label>
-                    </div>
-                  </div>
-                  <div
-                    class="modal-footer"
-                  >
-                    <button
-                      class="close"
-                      title="Close"
-                      type="button"
-                    >
-                      Close
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </body>
-        }
-      >
-        <div
-          className="modal-backdrop"
-        />
-        <div
-          className="modal update-frequency-modal"
-          onKeyDown={[Function]}
-          onMouseDown={[Function]}
-          role="dialog"
-          tabIndex="-1"
-        >
-          <div
-            className="modal-dialog"
-            role="document"
-          >
-            <div
-              className="modal-content"
-            >
-              <ModalHeader>
-                <div
-                  className="modal-header"
-                >
-                  <h5
-                    className="modal-title"
-                  >
-                    WORKFLOW UPDATE
-                  </h5>
-                  <button
-                    aria-label="Close"
-                    className="close"
-                    onClick={[MockFunction]}
-                    type="button"
-                  >
-                    <span
-                      aria-hidden="true"
-                    >
-                      ×
-                    </span>
-                  </button>
-                </div>
-              </ModalHeader>
-              <ModalBody>
-                <div
-                  className="modal-body"
-                >
-                  <form
-                    action="#"
-                    className="autofetch"
-                    method="post"
-                    onSubmit={[Function]}
-                  >
-                    <fieldset
-                      className="autofetch"
-                      disabled={false}
+                      class="modal-content"
                     >
                       <div
-                        className="big-radio big-radio-auto-update-true big-radio-unchecked"
+                        class="modal-header"
                       >
-                        <label>
-                          <input
-                            checked={false}
-                            name="isAutofetch"
-                            onChange={[Function]}
-                            type="radio"
-                            value="true"
-                          />
-                          <div
-                            className="radio"
-                          >
-                            Auto
-                          </div>
-                        </label>
-                        <div
-                          className="big-radio-details"
+                        <h5
+                          class="modal-title"
                         >
-                          <p>
-                            Automatically update this workflow with the newest data (old versions will be saved).
-                          </p>
-                          <label
-                            htmlFor="updateFrequencySelectTimeUnitCount"
+                          js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title
+                        </h5>
+                        <button
+                          aria-label="Close"
+                          class="close"
+                          type="button"
+                        >
+                          <span
+                            aria-hidden="true"
                           >
-                            Check for update every
-                          </label>
+                            ×
+                          </span>
+                        </button>
+                      </div>
+                      <div
+                        class="modal-body"
+                      >
+                        <form
+                          action="#"
+                          class="autofetch"
+                          method="post"
+                        >
                           <fieldset
-                            className="fetch-interval"
-                            disabled={true}
+                            class="autofetch"
                           >
                             <div
-                              className="input-group"
+                              class="big-radio big-radio-auto-update-true big-radio-unchecked"
                             >
-                              <div
-                                className="input-group-prepend"
-                              >
+                              <label>
                                 <input
-                                  className="form-control"
-                                  id="updateFrequencySelectTimeUnitCount"
-                                  min="1"
-                                  name="timeUnitCount"
-                                  onChange={[Function]}
-                                  type="number"
-                                  value="1"
+                                  name="isAutofetch"
+                                  type="radio"
+                                  value="true"
                                 />
-                              </div>
-                              <select
-                                className="custom-select"
-                                name="timeUnit"
-                                onChange={[Function]}
-                                value="hours"
-                              >
-                                <option
-                                  value="weeks"
+                                <div
+                                  class="radio"
                                 >
-                                  weeks
-                                </option>
-                                <option
-                                  value="days"
-                                >
-                                  days
-                                </option>
-                                <option
-                                  value="hours"
-                                >
-                                  hours
-                                </option>
-                                <option
-                                  value="minutes"
-                                >
-                                  minutes
-                                </option>
-                                <option
-                                  value="seconds"
-                                >
-                                  seconds
-                                </option>
-                              </select>
+                                  js.params.Custom.VersionSelect.UpdateFrequencySelectModal.auto.label
+                                </div>
+                              </label>
                               <div
-                                className="input-group-append"
+                                class="big-radio-details"
                               >
-                                <button
-                                  className="form-control"
-                                  disabled={false}
-                                  name="apply"
-                                  type="submit"
+                                <p>
+                                  js.params.Custom.VersionSelect.UpdateFrequencySelectModal.auto.description
+                                </p>
+                                <label
+                                  for="updateFrequencySelectTimeUnitCount"
                                 >
-                                  Apply
-                                </button>
+                                  js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.label
+                                </label>
+                                <fieldset
+                                  class="fetch-interval"
+                                  disabled=""
+                                >
+                                  <div
+                                    class="input-group"
+                                  >
+                                    <div
+                                      class="input-group-prepend"
+                                    >
+                                      <input
+                                        class="form-control"
+                                        id="updateFrequencySelectTimeUnitCount"
+                                        min="1"
+                                        name="timeUnitCount"
+                                        type="number"
+                                        value="1"
+                                      />
+                                    </div>
+                                    <select
+                                      class="custom-select"
+                                      name="timeUnit"
+                                    >
+                                      <option
+                                        value="weeks"
+                                      >
+                                        [object Object]
+                                      </option>
+                                      <option
+                                        value="days"
+                                      >
+                                        [object Object]
+                                      </option>
+                                      <option
+                                        value="hours"
+                                      >
+                                        [object Object]
+                                      </option>
+                                      <option
+                                        value="minutes"
+                                      >
+                                        [object Object]
+                                      </option>
+                                      <option
+                                        value="seconds"
+                                      >
+                                        [object Object]
+                                      </option>
+                                    </select>
+                                    <div
+                                      class="input-group-append"
+                                    >
+                                      <button
+                                        class="form-control"
+                                        name="apply"
+                                        type="submit"
+                                      >
+                                        js.params.Custom.VersionSelect.UpdateFrequencySelectModal.apply
+                                      </button>
+                                    </div>
+                                  </div>
+                                </fieldset>
+                              </div>
+                            </div>
+                            <div
+                              class="big-radio big-radio-auto-update-false big-radio-checked"
+                            >
+                              <label>
+                                <input
+                                  checked=""
+                                  name="isAutofetch"
+                                  type="radio"
+                                  value="false"
+                                />
+                                <div
+                                  class="radio"
+                                >
+                                  js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual.label
+                                </div>
+                              </label>
+                              <div
+                                class="big-radio-details"
+                              >
+                                <p>
+                                  js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual.description
+                                </p>
                               </div>
                             </div>
                           </fieldset>
+                        </form>
+                        <div
+                          class="email-updates"
+                        >
+                          <input
+                            id="update-frequency-select-modal-is-email-updates-checkbox"
+                            name="isEmailUpdates"
+                            type="checkbox"
+                          />
+                          <label
+                            for="update-frequency-select-modal-is-email-updates-checkbox"
+                          >
+                            js.params.Custom.VersionSelect.UpdateFrequencySelectModal.emailUpdates.label
+                          </label>
                         </div>
                       </div>
                       <div
-                        className="big-radio big-radio-auto-update-false big-radio-checked"
+                        class="modal-footer"
                       >
-                        <label>
-                          <input
-                            checked={true}
-                            name="isAutofetch"
-                            onChange={[Function]}
-                            type="radio"
-                            value="false"
-                          />
-                          <div
-                            className="radio"
-                          >
-                            Manual
-                          </div>
-                        </label>
-                        <div
-                          className="big-radio-details"
+                        <button
+                          class="close"
+                          title="Close"
+                          type="button"
                         >
-                          <p>
-                            Check for new data manually.
-                          </p>
-                        </div>
+                          js.params.Custom.VersionSelect.UpdateFrequencySelectModal.footer.closeButton
+                        </button>
                       </div>
-                    </fieldset>
-                  </form>
-                  <div
-                    className="email-updates"
-                  >
-                    <input
-                      checked={false}
-                      id="update-frequency-select-modal-is-email-updates-checkbox"
-                      name="isEmailUpdates"
-                      onChange={[Function]}
-                      type="checkbox"
-                    />
-                    <label
-                      htmlFor="update-frequency-select-modal-is-email-updates-checkbox"
-                    >
-                      Email me when data changes
-                    </label>
+                    </div>
                   </div>
                 </div>
-              </ModalBody>
-              <ModalFooter>
+              </body>
+            }
+          >
+            <div
+              className="modal-backdrop"
+            />
+            <div
+              className="modal update-frequency-modal"
+              onKeyDown={[Function]}
+              onMouseDown={[Function]}
+              role="dialog"
+              tabIndex="-1"
+            >
+              <div
+                className="modal-dialog"
+                role="document"
+              >
                 <div
-                  className="modal-footer"
+                  className="modal-content"
                 >
-                  <button
-                    className="close"
-                    onClick={[MockFunction]}
-                    title="Close"
-                    type="button"
-                  >
-                    Close
-                  </button>
+                  <ModalHeader>
+                    <div
+                      className="modal-header"
+                    >
+                      <h5
+                        className="modal-title"
+                      >
+                        <WithI18n
+                          defaults="WORKFLOW UPDATE"
+                          description="This should be all-caps for styling reasons"
+                          id="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title"
+                        >
+                          <I18n
+                            update={true}
+                            withHash={true}
+                          >
+                            <Trans
+                              defaults="WORKFLOW UPDATE"
+                              description="This should be all-caps for styling reasons"
+                              i18n={
+                                Object {
+                                  "_": [Function],
+                                  "_activeLanguageData": Object {
+                                    "plurals": [Function],
+                                  },
+                                  "_activeMessages": Object {},
+                                  "_catalogs": Object {
+                                    "en": Object {
+                                      "languageData": Object {},
+                                      "messages": Object {},
+                                    },
+                                  },
+                                  "_dev": Object {
+                                    "compile": [Function],
+                                    "loadLanguageData": [Function],
+                                  },
+                                  "_language": "en",
+                                  "_locales": undefined,
+                                  "_missing": undefined,
+                                  "plural": [Function],
+                                  "select": [Function],
+                                  "selectOrdinal": [Function],
+                                  "t": [Function],
+                                }
+                              }
+                              id="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title"
+                            >
+                              <Render
+                                value="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title"
+                              >
+                                js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title
+                              </Render>
+                            </Trans>
+                          </I18n>
+                        </WithI18n>
+                      </h5>
+                      <button
+                        aria-label="Close"
+                        className="close"
+                        onClick={[MockFunction]}
+                        type="button"
+                      >
+                        <span
+                          aria-hidden="true"
+                        >
+                          ×
+                        </span>
+                      </button>
+                    </div>
+                  </ModalHeader>
+                  <ModalBody>
+                    <div
+                      className="modal-body"
+                    >
+                      <form
+                        action="#"
+                        className="autofetch"
+                        method="post"
+                        onSubmit={[Function]}
+                      >
+                        <fieldset
+                          className="autofetch"
+                          disabled={false}
+                        >
+                          <div
+                            className="big-radio big-radio-auto-update-true big-radio-unchecked"
+                          >
+                            <label>
+                              <input
+                                checked={false}
+                                name="isAutofetch"
+                                onChange={[Function]}
+                                type="radio"
+                                value="true"
+                              />
+                              <div
+                                className="radio"
+                              >
+                                <WithI18n
+                                  defaults="Auto"
+                                  id="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.auto.label"
+                                >
+                                  <I18n
+                                    update={true}
+                                    withHash={true}
+                                  >
+                                    <Trans
+                                      defaults="Auto"
+                                      i18n={
+                                        Object {
+                                          "_": [Function],
+                                          "_activeLanguageData": Object {
+                                            "plurals": [Function],
+                                          },
+                                          "_activeMessages": Object {},
+                                          "_catalogs": Object {
+                                            "en": Object {
+                                              "languageData": Object {},
+                                              "messages": Object {},
+                                            },
+                                          },
+                                          "_dev": Object {
+                                            "compile": [Function],
+                                            "loadLanguageData": [Function],
+                                          },
+                                          "_language": "en",
+                                          "_locales": undefined,
+                                          "_missing": undefined,
+                                          "plural": [Function],
+                                          "select": [Function],
+                                          "selectOrdinal": [Function],
+                                          "t": [Function],
+                                        }
+                                      }
+                                      id="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.auto.label"
+                                    >
+                                      <Render
+                                        value="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.auto.label"
+                                      >
+                                        js.params.Custom.VersionSelect.UpdateFrequencySelectModal.auto.label
+                                      </Render>
+                                    </Trans>
+                                  </I18n>
+                                </WithI18n>
+                              </div>
+                            </label>
+                            <div
+                              className="big-radio-details"
+                            >
+                              <p>
+                                <WithI18n
+                                  defaults="Automatically update this workflow with the newest data (old versions will be saved)."
+                                  id="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.auto.description"
+                                >
+                                  <I18n
+                                    update={true}
+                                    withHash={true}
+                                  >
+                                    <Trans
+                                      defaults="Automatically update this workflow with the newest data (old versions will be saved)."
+                                      i18n={
+                                        Object {
+                                          "_": [Function],
+                                          "_activeLanguageData": Object {
+                                            "plurals": [Function],
+                                          },
+                                          "_activeMessages": Object {},
+                                          "_catalogs": Object {
+                                            "en": Object {
+                                              "languageData": Object {},
+                                              "messages": Object {},
+                                            },
+                                          },
+                                          "_dev": Object {
+                                            "compile": [Function],
+                                            "loadLanguageData": [Function],
+                                          },
+                                          "_language": "en",
+                                          "_locales": undefined,
+                                          "_missing": undefined,
+                                          "plural": [Function],
+                                          "select": [Function],
+                                          "selectOrdinal": [Function],
+                                          "t": [Function],
+                                        }
+                                      }
+                                      id="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.auto.description"
+                                    >
+                                      <Render
+                                        value="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.auto.description"
+                                      >
+                                        js.params.Custom.VersionSelect.UpdateFrequencySelectModal.auto.description
+                                      </Render>
+                                    </Trans>
+                                  </I18n>
+                                </WithI18n>
+                              </p>
+                              <label
+                                htmlFor="updateFrequencySelectTimeUnitCount"
+                              >
+                                <WithI18n
+                                  defaults="Check for update every"
+                                  id="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.label"
+                                >
+                                  <I18n
+                                    update={true}
+                                    withHash={true}
+                                  >
+                                    <Trans
+                                      defaults="Check for update every"
+                                      i18n={
+                                        Object {
+                                          "_": [Function],
+                                          "_activeLanguageData": Object {
+                                            "plurals": [Function],
+                                          },
+                                          "_activeMessages": Object {},
+                                          "_catalogs": Object {
+                                            "en": Object {
+                                              "languageData": Object {},
+                                              "messages": Object {},
+                                            },
+                                          },
+                                          "_dev": Object {
+                                            "compile": [Function],
+                                            "loadLanguageData": [Function],
+                                          },
+                                          "_language": "en",
+                                          "_locales": undefined,
+                                          "_missing": undefined,
+                                          "plural": [Function],
+                                          "select": [Function],
+                                          "selectOrdinal": [Function],
+                                          "t": [Function],
+                                        }
+                                      }
+                                      id="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.label"
+                                    >
+                                      <Render
+                                        value="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.label"
+                                      >
+                                        js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.label
+                                      </Render>
+                                    </Trans>
+                                  </I18n>
+                                </WithI18n>
+                              </label>
+                              <fieldset
+                                className="fetch-interval"
+                                disabled={true}
+                              >
+                                <div
+                                  className="input-group"
+                                >
+                                  <div
+                                    className="input-group-prepend"
+                                  >
+                                    <input
+                                      className="form-control"
+                                      id="updateFrequencySelectTimeUnitCount"
+                                      min="1"
+                                      name="timeUnitCount"
+                                      onChange={[Function]}
+                                      type="number"
+                                      value="1"
+                                    />
+                                  </div>
+                                  <select
+                                    className="custom-select"
+                                    name="timeUnit"
+                                    onChange={[Function]}
+                                    value="hours"
+                                  >
+                                    <option
+                                      value="weeks"
+                                    >
+                                      <WithI18n
+                                        defaults="weeks"
+                                        id="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.weeks.option"
+                                      />
+                                    </option>
+                                    <option
+                                      value="days"
+                                    >
+                                      <WithI18n
+                                        defaults="days"
+                                        id="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.days.option"
+                                      />
+                                    </option>
+                                    <option
+                                      value="hours"
+                                    >
+                                      <WithI18n
+                                        defaults="hours"
+                                        id="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.hours.option"
+                                      />
+                                    </option>
+                                    <option
+                                      value="minutes"
+                                    >
+                                      <WithI18n
+                                        defaults="minutes"
+                                        id="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.minutes.option"
+                                      />
+                                    </option>
+                                    <option
+                                      value="seconds"
+                                    >
+                                      <WithI18n
+                                        defaults="seconds"
+                                        id="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.seconds.option"
+                                      />
+                                    </option>
+                                  </select>
+                                  <div
+                                    className="input-group-append"
+                                  >
+                                    <button
+                                      className="form-control"
+                                      disabled={false}
+                                      name="apply"
+                                      type="submit"
+                                    >
+                                      <WithI18n
+                                        defaults="Apply"
+                                        id="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.apply"
+                                      >
+                                        <I18n
+                                          update={true}
+                                          withHash={true}
+                                        >
+                                          <Trans
+                                            defaults="Apply"
+                                            i18n={
+                                              Object {
+                                                "_": [Function],
+                                                "_activeLanguageData": Object {
+                                                  "plurals": [Function],
+                                                },
+                                                "_activeMessages": Object {},
+                                                "_catalogs": Object {
+                                                  "en": Object {
+                                                    "languageData": Object {},
+                                                    "messages": Object {},
+                                                  },
+                                                },
+                                                "_dev": Object {
+                                                  "compile": [Function],
+                                                  "loadLanguageData": [Function],
+                                                },
+                                                "_language": "en",
+                                                "_locales": undefined,
+                                                "_missing": undefined,
+                                                "plural": [Function],
+                                                "select": [Function],
+                                                "selectOrdinal": [Function],
+                                                "t": [Function],
+                                              }
+                                            }
+                                            id="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.apply"
+                                          >
+                                            <Render
+                                              value="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.apply"
+                                            >
+                                              js.params.Custom.VersionSelect.UpdateFrequencySelectModal.apply
+                                            </Render>
+                                          </Trans>
+                                        </I18n>
+                                      </WithI18n>
+                                    </button>
+                                  </div>
+                                </div>
+                              </fieldset>
+                            </div>
+                          </div>
+                          <div
+                            className="big-radio big-radio-auto-update-false big-radio-checked"
+                          >
+                            <label>
+                              <input
+                                checked={true}
+                                name="isAutofetch"
+                                onChange={[Function]}
+                                type="radio"
+                                value="false"
+                              />
+                              <div
+                                className="radio"
+                              >
+                                <WithI18n
+                                  defaults="Manual"
+                                  id="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual.label"
+                                >
+                                  <I18n
+                                    update={true}
+                                    withHash={true}
+                                  >
+                                    <Trans
+                                      defaults="Manual"
+                                      i18n={
+                                        Object {
+                                          "_": [Function],
+                                          "_activeLanguageData": Object {
+                                            "plurals": [Function],
+                                          },
+                                          "_activeMessages": Object {},
+                                          "_catalogs": Object {
+                                            "en": Object {
+                                              "languageData": Object {},
+                                              "messages": Object {},
+                                            },
+                                          },
+                                          "_dev": Object {
+                                            "compile": [Function],
+                                            "loadLanguageData": [Function],
+                                          },
+                                          "_language": "en",
+                                          "_locales": undefined,
+                                          "_missing": undefined,
+                                          "plural": [Function],
+                                          "select": [Function],
+                                          "selectOrdinal": [Function],
+                                          "t": [Function],
+                                        }
+                                      }
+                                      id="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual.label"
+                                    >
+                                      <Render
+                                        value="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual.label"
+                                      >
+                                        js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual.label
+                                      </Render>
+                                    </Trans>
+                                  </I18n>
+                                </WithI18n>
+                              </div>
+                            </label>
+                            <div
+                              className="big-radio-details"
+                            >
+                              <p>
+                                <WithI18n
+                                  defaults="Check for new data manually."
+                                  id="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual.description"
+                                >
+                                  <I18n
+                                    update={true}
+                                    withHash={true}
+                                  >
+                                    <Trans
+                                      defaults="Check for new data manually."
+                                      i18n={
+                                        Object {
+                                          "_": [Function],
+                                          "_activeLanguageData": Object {
+                                            "plurals": [Function],
+                                          },
+                                          "_activeMessages": Object {},
+                                          "_catalogs": Object {
+                                            "en": Object {
+                                              "languageData": Object {},
+                                              "messages": Object {},
+                                            },
+                                          },
+                                          "_dev": Object {
+                                            "compile": [Function],
+                                            "loadLanguageData": [Function],
+                                          },
+                                          "_language": "en",
+                                          "_locales": undefined,
+                                          "_missing": undefined,
+                                          "plural": [Function],
+                                          "select": [Function],
+                                          "selectOrdinal": [Function],
+                                          "t": [Function],
+                                        }
+                                      }
+                                      id="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual.description"
+                                    >
+                                      <Render
+                                        value="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual.description"
+                                      >
+                                        js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual.description
+                                      </Render>
+                                    </Trans>
+                                  </I18n>
+                                </WithI18n>
+                              </p>
+                            </div>
+                          </div>
+                        </fieldset>
+                      </form>
+                      <div
+                        className="email-updates"
+                      >
+                        <input
+                          checked={false}
+                          id="update-frequency-select-modal-is-email-updates-checkbox"
+                          name="isEmailUpdates"
+                          onChange={[Function]}
+                          type="checkbox"
+                        />
+                        <label
+                          htmlFor="update-frequency-select-modal-is-email-updates-checkbox"
+                        >
+                          <WithI18n
+                            defaults="Email me when data changes"
+                            id="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.emailUpdates.label"
+                          >
+                            <I18n
+                              update={true}
+                              withHash={true}
+                            >
+                              <Trans
+                                defaults="Email me when data changes"
+                                i18n={
+                                  Object {
+                                    "_": [Function],
+                                    "_activeLanguageData": Object {
+                                      "plurals": [Function],
+                                    },
+                                    "_activeMessages": Object {},
+                                    "_catalogs": Object {
+                                      "en": Object {
+                                        "languageData": Object {},
+                                        "messages": Object {},
+                                      },
+                                    },
+                                    "_dev": Object {
+                                      "compile": [Function],
+                                      "loadLanguageData": [Function],
+                                    },
+                                    "_language": "en",
+                                    "_locales": undefined,
+                                    "_missing": undefined,
+                                    "plural": [Function],
+                                    "select": [Function],
+                                    "selectOrdinal": [Function],
+                                    "t": [Function],
+                                  }
+                                }
+                                id="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.emailUpdates.label"
+                              >
+                                <Render
+                                  value="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.emailUpdates.label"
+                                >
+                                  js.params.Custom.VersionSelect.UpdateFrequencySelectModal.emailUpdates.label
+                                </Render>
+                              </Trans>
+                            </I18n>
+                          </WithI18n>
+                        </label>
+                      </div>
+                    </div>
+                  </ModalBody>
+                  <ModalFooter>
+                    <div
+                      className="modal-footer"
+                    >
+                      <button
+                        className="close"
+                        onClick={[MockFunction]}
+                        title="Close"
+                        type="button"
+                      >
+                        <WithI18n
+                          defaults="Close"
+                          id="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.footer.closeButton"
+                        >
+                          <I18n
+                            update={true}
+                            withHash={true}
+                          >
+                            <Trans
+                              defaults="Close"
+                              i18n={
+                                Object {
+                                  "_": [Function],
+                                  "_activeLanguageData": Object {
+                                    "plurals": [Function],
+                                  },
+                                  "_activeMessages": Object {},
+                                  "_catalogs": Object {
+                                    "en": Object {
+                                      "languageData": Object {},
+                                      "messages": Object {},
+                                    },
+                                  },
+                                  "_dev": Object {
+                                    "compile": [Function],
+                                    "loadLanguageData": [Function],
+                                  },
+                                  "_language": "en",
+                                  "_locales": undefined,
+                                  "_missing": undefined,
+                                  "plural": [Function],
+                                  "select": [Function],
+                                  "selectOrdinal": [Function],
+                                  "t": [Function],
+                                }
+                              }
+                              id="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.footer.closeButton"
+                            >
+                              <Render
+                                value="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.footer.closeButton"
+                              >
+                                js.params.Custom.VersionSelect.UpdateFrequencySelectModal.footer.closeButton
+                              </Render>
+                            </Trans>
+                          </I18n>
+                        </WithI18n>
+                      </button>
+                    </div>
+                  </ModalFooter>
                 </div>
-              </ModalFooter>
+              </div>
             </div>
-          </div>
-        </div>
-      </Portal>
-    </OpenModal>
-  </Modal>
-</UpdateFrequencySelectModal>
+          </Portal>
+        </OpenModal>
+      </Modal>
+    </UpdateFrequencySelectModal>
+  </I18n>
+</WithI18n>
 `;

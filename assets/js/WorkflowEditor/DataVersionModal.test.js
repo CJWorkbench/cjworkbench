@@ -1,6 +1,6 @@
 /* globals afterEach, describe, expect, it, jest */
 import React from 'react'
-import { mount } from 'enzyme'
+import { mountWithI18n } from '../i18n/test-utils'
 import ConnectedDataVersionModal, { DataVersionModal, formatDateUTCForTesting } from './DataVersionModal'
 import { Provider } from 'react-redux'
 import configureMockStore from 'redux-mock-store'
@@ -24,7 +24,7 @@ describe('DataVersionModal', () => {
   })
 
   const wrapper = (extraProps) => {
-    _wrapper = mount(
+    _wrapper = mountWithI18n(
       <DataVersionModal
         fetchWfModuleId={123}
         fetchWfModuleName='fetch'
@@ -48,8 +48,8 @@ describe('DataVersionModal', () => {
 
   it('displays versions', () => {
     const w = wrapper()
-    expect(w.find('label.seen.selected time').text()).toEqual('Jan. 2, 1970 – 10:17 a.m.')
-    expect(w.find('label.unseen time').text()).toEqual('Jan. 3, 1970 – 5:09 p.m.')
+    expect(w.find('label.seen.selected time').text()).toEqual('Jan 2, 1970, 10:17 AM')
+    expect(w.find('label.unseen time').text()).toEqual('Jan 3, 1970, 5:09 PM')
   })
 
   it('selects a version', () => {
@@ -133,7 +133,7 @@ describe('DataVersionModal', () => {
 
     const connectedWrapper = (state) => {
       const store = configureMockStore([])(state)
-      _wrapper = mount(
+      _wrapper = mountWithI18n(
         <Provider store={store}>
           <ConnectedDataVersionModal
             wfModuleId={124}

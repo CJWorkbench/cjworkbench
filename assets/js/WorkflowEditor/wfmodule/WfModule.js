@@ -26,7 +26,7 @@ import deepEqual from 'fast-deep-equal'
 import lessonSelector from '../../lessons/lessonSelector'
 import { createSelector } from 'reselect'
 import { withI18n } from '@lingui/react'
-import { Trans, t } from '@lingui/macro'
+import { t } from '@lingui/macro'
 
 const numberFormat = new Intl.NumberFormat()
 
@@ -236,7 +236,7 @@ export class WfModule extends React.PureComponent {
     if (!isZenModeAllowed) return null
 
     const className = `toggle-zen-mode ${isZenMode ? 'is-zen-mode' : 'not-zen-mode'}`
-    const title = isZenMode ? <Trans id='js.WorkflowEditor.wfmodule.ZenMode.exit'>exit Zen mode</Trans> : <Trans id='js.WorkflowEditor.wfmodule.ZenMode.enter'>enter Zen mode</Trans>
+    const title = isZenMode ? this.props.i18n._(t('js.WorkflowEditor.wfmodule.ZenMode.exit')`exit Zen mode`) : this.props.i18n._(t('js.WorkflowEditor.wfmodule.ZenMode.enter')`enter Zen mode`)
 
     return (
       <label className={className} title={title}>

@@ -1,12 +1,13 @@
 {%  extends 'base.html' %}
 {% load render_bundle from webpack_loader %}
 {% load account %}
+{% load i18n_icu %}
 
 {% block html_tag_attrs %}
     class="embed_container"
 {% endblock %}
 
 {% block body %}
-    <h1>This workflow is not available :(</h1>
+    <h1>{% trans_html "py.templates.embed_404.notAvailable.header" default="This workflow is not available :(" %}(</h1>
     {% render_bundle 'login' 'js' %}
 {% endblock %}

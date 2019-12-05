@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { OperatorPropType } from './PropTypes'
+import { Trans } from '@lingui/macro'
 
 class OneOperator extends React.PureComponent {
   static propTypes = {
@@ -17,7 +18,9 @@ class OneOperator extends React.PureComponent {
 
   render () {
     const { name, operator, checked } = this.props
-    const text = operator === 'and' ? 'AND' : 'OR'
+    const text = operator === 'and'
+      ? <Trans id='js.params.Custom.Filters.FilterOperator.OneOperator.and' description='This is the logical AND function.'>AND</Trans>
+      : <Trans id='js.params.Custom.Filters.FilterOperator.OneOperator.or' description='This is the logical OR function.'>OR</Trans>
 
     return checked ? (
       <span className='selected-operator'>{text}</span>

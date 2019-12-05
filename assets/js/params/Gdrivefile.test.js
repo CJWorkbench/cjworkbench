@@ -1,7 +1,8 @@
 /* globals describe, expect, it, jest */
 import React from 'react'
 import Gdrivefile from './Gdrivefile'
-import { mount } from 'enzyme'
+// import { mount } from 'enzyme'
+import { mountWithI18n } from '../i18n/test-utils'
 
 const tick = async () => new Promise(resolve => setTimeout(resolve, 0))
 
@@ -22,7 +23,7 @@ describe('Gdrivefile', () => {
       close: jest.fn()
     }
 
-    return mount(
+    return mountWithI18n(
       <Gdrivefile
         createOauthAccessToken={jest.fn(() => Promise.resolve('access-token'))}
         isReadOnly={false}
@@ -92,7 +93,7 @@ describe('Gdrivefile', () => {
     await tick()
     w.update()
     expect(w.find('button')).toHaveLength(1)
-    expect(w.find('button').text()).toEqual('Change')
+    expect(w.find('button Trans[id="js.params.Gdrivefile.change.button"]')).toHaveLength(1)
 
     pickerFactory.open.mockImplementation((accessToken, onPick, onCancel) => {
       expect(accessToken).toEqual('access-token')
@@ -133,7 +134,7 @@ describe('Gdrivefile', () => {
     const w = wrapper({ value: null })
     await tick()
     w.update()
-    expect(w.find('button').text()).toEqual('Choose')
+    expect(w.find('button Trans[id="js.params.Gdrivefile.choose.button"]')).toHaveLength(1)
   })
 
   it('closes on unmount', async () => {

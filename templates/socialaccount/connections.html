@@ -1,19 +1,19 @@
 {% extends "socialaccount/base.html" %}
 
-{% load i18n %}
+{% load i18n_icu %}
 
-{% block head_title %}{% trans "Account Connections" %}{% endblock %}
+{% block head_title %}{% trans_html "py.templates.socialaccount.connections.title" default="Account Connections" %}{% endblock %}
 
 {% block content %}
 
 {% if form.accounts %}
-<div class='title-1 t-d-gray text-center mb-3'>{% blocktrans %}Account linked!{% endblocktrans %}</div>
+<div class='title-1 t-d-gray text-center mb-3'>{% trans_html "py.templates.socialaccount.connections.accountLinked" default="Account linked!" %}</div>
 <div class="d-flex justify-content-center">
-  <a href="{% url "account_login" %}" style="text-decoration:none"class="content-1 button-white action-button mb-5">{% trans "Sign in" %}</a>
+  <a href="{% url "account_login" %}" style="text-decoration:none"class="content-1 button-white action-button mb-5">{% trans_html "py.templates.socialaccount.connections.signInLink" default="Sign in" %}</a>
 </div>
 
 
-<div class='content-1 t-d-gray text-center mb-3'>{% blocktrans %}Remove linked accounts{% endblocktrans %}</div>
+<div class='content-1 t-d-gray text-center mb-3'>{% trans_html "py.templates.socialaccount.connections.removeLinkedAccount" default="Remove linked accounts"%}</div>
 
 <form method="post" action="{% url 'socialaccount_connections' %}">
 {% csrf_token %}
@@ -38,7 +38,7 @@
 {% endfor %}
 
 <div class="text-center">
-  <button class="remove-account" type="submit">{% trans 'Remove' %}</button>
+  <button class="remove-account" type="submit">{% trans_html "py.templates.socialaccount.connections.removeButton" default="Remove" %}</button>
 </div>
 
 </fieldset>
@@ -46,10 +46,10 @@
 </form>
 
 {% else %}
-<p>{% trans 'You currently have no social network accounts connected to this account.' %}</p>
+<p>{% trans_html "py.templates.socialaccount.connections.noSocialAccounts" default="You currently have no social network accounts connected to this account." %}</p>
 {% endif %}
 
-<div class='content-1 t-d-gray text-center mt-4 mb-4'>{% trans 'Add another account' %}</div>
+<div class='content-1 t-d-gray text-center mt-4 mb-4'>{% trans_html "py.templates.socialaccount.connections.addAnotherAccount" default="Add another account" %}</div>
 
 <div class="socialaccount_providers mx-auto">
 {% include "socialaccount/snippets/provider_list.html" with process="connect" %}

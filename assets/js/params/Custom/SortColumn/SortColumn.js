@@ -2,12 +2,15 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import ColumnParam from '../../Column'
 import RadioParam from '../../Radio.js'
+import { Trans, t } from '@lingui/macro'
+import { withI18n } from '@lingui/react'
 
-const AscendingParamOptions = [
-  { value: true, label: 'Ascending' },
-  { value: false, label: 'Descending' }
-]
-function AscendingParam (props) {
+const AscendingParam = withI18n()(function ({ i18n, ...props }) {
+  const AscendingParamOptions = [
+    { value: true, label: i18n._(t('js.params.Custom.SortColumn.AscendingParam.ascending')`Ascending`) },
+    { value: false, label: i18n._(t('js.params.Custom.SortColumn.AscendingParam.descending')`Descending`) }
+  ]
+
   return (
     // TODO find a better way to simulate .param-radio?
     <div className='param param-radio'>
@@ -17,17 +20,22 @@ function AscendingParam (props) {
       />
     </div>
   )
-}
+})
 AscendingParam.propTypes = {
   isReadOnly: PropTypes.bool.isRequired,
   name: PropTypes.string.isRequired, // for <input name=...>
   fieldId: PropTypes.string.isRequired, // <input id=...>
   onChange: PropTypes.func.isRequired, // func(index, value) => undefined
-  value: PropTypes.bool.isRequired
+  value: PropTypes.bool.isRequired,
+  i18n: PropTypes.shape({
+    // i18n object injected by LinguiJS withI18n()
+    _: PropTypes.func.isRequired
+  })
 }
 
 export default class SortColumn extends React.PureComponent {
   static propTypes = {
+
     isReadOnly: PropTypes.bool.isRequired,
     index: PropTypes.number.isRequired,
     name: PropTypes.string.isRequired, // for <input name=...>
@@ -60,7 +68,7 @@ export default class SortColumn extends React.PureComponent {
 
   render () {
     const { index, value, name, fieldId, onDelete, isReadOnly, inputColumns } = this.props
-    const label = index === 0 ? 'By' : 'Then by'
+    const label = index === 0 ? <Trans id='js.params.Custom.SortColumn.by.label'>By</Trans> : <Trans id='js.params.Custom.SortColumn.thenBy.label'>Then by</Trans>
 
     return (
       <li>

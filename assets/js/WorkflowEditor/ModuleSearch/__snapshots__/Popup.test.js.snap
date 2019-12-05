@@ -34,7 +34,7 @@ exports[`ModuleSearch Popup matches snapshot 1`] = `
   modules={
     Array [
       Object {
-        "category": "Filter",
+        "category": "Analyze",
         "description": "Text description",
         "icon": "filter",
         "idName": "filter",
@@ -131,7 +131,7 @@ exports[`ModuleSearch Popup matches snapshot 1`] = `
       modules={
         Array [
           Object {
-            "category": "Filter",
+            "category": "Analyze",
             "description": "Text description",
             "icon": "filter",
             "idName": "filter",
@@ -181,7 +181,46 @@ exports[`ModuleSearch Popup matches snapshot 1`] = `
             data-name="Add data"
           >
             <h4>
-              Add data
+              <WithI18n
+                category="Add data"
+              >
+                <I18n
+                  update={true}
+                  withHash={true}
+                >
+                  <Component
+                    category="Add data"
+                    i18n={
+                      Object {
+                        "_": [Function],
+                        "_activeLanguageData": Object {
+                          "plurals": [Function],
+                        },
+                        "_activeMessages": Object {},
+                        "_catalogs": Object {
+                          "en": Object {
+                            "languageData": Object {},
+                            "messages": Object {},
+                          },
+                        },
+                        "_dev": Object {
+                          "compile": [Function],
+                          "loadLanguageData": [Function],
+                        },
+                        "_language": "en",
+                        "_locales": undefined,
+                        "_missing": undefined,
+                        "plural": [Function],
+                        "select": [Function],
+                        "selectOrdinal": [Function],
+                        "t": [Function],
+                      }
+                    }
+                  >
+                    Add data
+                  </Component>
+                </I18n>
+              </WithI18n>
             </h4>
             <ul
               className="module-search-results"
@@ -232,11 +271,11 @@ exports[`ModuleSearch Popup matches snapshot 1`] = `
         </ModuleSearchResultGroup>
         <ModuleSearchResultGroup
           activeModule={null}
-          key="Filter"
+          key="Analyze"
           modules={
             Array [
               Object {
-                "category": "Filter",
+                "category": "Analyze",
                 "description": "Text description",
                 "icon": "filter",
                 "idName": "filter",
@@ -246,22 +285,61 @@ exports[`ModuleSearch Popup matches snapshot 1`] = `
               },
             ]
           }
-          name="Filter"
+          name="Analyze"
           onClickModule={[Function]}
           onMouseEnterModule={[Function]}
         >
           <li
             className="module-search-result-group"
-            data-name="Filter"
+            data-name="Analyze"
           >
             <h4>
-              Filter
+              <WithI18n
+                category="Analyze"
+              >
+                <I18n
+                  update={true}
+                  withHash={true}
+                >
+                  <Component
+                    category="Analyze"
+                    i18n={
+                      Object {
+                        "_": [Function],
+                        "_activeLanguageData": Object {
+                          "plurals": [Function],
+                        },
+                        "_activeMessages": Object {},
+                        "_catalogs": Object {
+                          "en": Object {
+                            "languageData": Object {},
+                            "messages": Object {},
+                          },
+                        },
+                        "_dev": Object {
+                          "compile": [Function],
+                          "loadLanguageData": [Function],
+                        },
+                        "_language": "en",
+                        "_locales": undefined,
+                        "_missing": undefined,
+                        "plural": [Function],
+                        "select": [Function],
+                        "selectOrdinal": [Function],
+                        "t": [Function],
+                      }
+                    }
+                  >
+                    Analyze
+                  </Component>
+                </I18n>
+              </WithI18n>
             </h4>
             <ul
               className="module-search-results"
             >
               <SearchResult
-                category="Filter"
+                category="Analyze"
                 description="Text description"
                 icon="filter"
                 idName="filter"

@@ -6,22 +6,7 @@ import { setDataVersionAction, setWfModuleNotificationsAction } from '../workflo
 import { connect } from 'react-redux'
 import { createSelector } from 'reselect'
 import { Trans } from '@lingui/macro'
-
-const Months = [
-  // AP style
-  'Jan.',
-  'Feb.',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'Aug.',
-  'Sept.',
-  'Oct.',
-  'Nov.',
-  'Dec.'
-]
+import { DateFormat } from '@lingui/react'
 
 // Always print as if our time zone is UTC, when testing
 // (all other solutions are worse, including env vars and pre-adjusted test data)
@@ -31,44 +16,9 @@ export function formatDateUTCForTesting () {
 }
 
 /**
- * Return AP-style date in the user's time zone, but with the date before the
- * time.
- *
- * For instance: "June 22, 2018 – 10:35 a.m."
- */
-function formatDate (date) {
-  let mon, dd, yyyy, hh, mm
-  if (_formatDateUTCforTesting) {
-    mon = Months[date.getUTCMonth()]
-    dd = date.getUTCDate()
-    yyyy = date.getUTCFullYear()
-    hh = date.getUTCHours()
-    mm = String(100 + date.getUTCMinutes()).slice(1) // 0-padded
-  } else {
-    mon = Months[date.getMonth()]
-    dd = date.getDate()
-    yyyy = date.getFullYear()
-    hh = date.getHours()
-    mm = String(100 + date.getMinutes()).slice(1) // 0-padded
-  }
-  let ampm = 'a.m.'
-
-  if (hh === 0) {
-    hh = 12
-  } else if (hh === 12) {
-    ampm = 'p.m.'
-  } else if (hh > 12) {
-    ampm = 'p.m.'
-    hh -= 12
-  }
-
-  return `${mon} ${dd}, ${yyyy} – ${hh}:${mm} ${ampm}`
-}
-
-/**
  * Form <input type="radio">. Calls onSelect on change.
  */
-class FetchVersion extends React.PureComponent {
+const FetchVersion = class FetchVersion extends React.PureComponent {
   static propTypes = {
     id: PropTypes.string.isRequired, // version ID
     date: PropTypes.instanceOf(Date).isRequired, // version date
@@ -92,7 +42,19 @@ class FetchVersion extends React.PureComponent {
     return (
       <label className={className}>
         <input type='radio' name='data-version' value={id} checked={isSelected} onChange={this.handleChange} />
-        <time time={date.toISOString()}>{formatDate(date)}</time>
+        <time time={date.toISOString()}>
+          <DateFormat
+            value={date} format={{
+              month: 'short',
+              day: 'numeric',
+              year: 'numeric',
+              hour: 'numeric',
+              minute: 'numeric',
+              hour12: true,
+              timeZone: _formatDateUTCforTesting ? 'UTC' : undefined
+            }}
+          />
+        </time>
       </label>
     )
   }
@@ -200,7 +162,9 @@ export class DataVersionModal extends React.PureComponent {
 
     return (
       <Modal className='data-versions-modal' isOpen fade={false} toggle={onClose}>
-        <ModalHeader toggle={onClose}>Data Versions</ModalHeader>
+        <ModalHeader toggle={onClose}>
+          <Trans id='js.WorkflowEditor.DataVersionModal.ModalHeader'>Data Versions</Trans>
+        </ModalHeader>
         <ModalBody>
           <form onSubmit={this.handleSubmit} onCancel={onClose}>
             <ol>
@@ -228,7 +192,8 @@ export class DataVersionModal extends React.PureComponent {
               name='load'
               disabled={this.state.selectedFetchVersionId === this.props.selectedFetchVersionId}
               onClick={this.handleSubmit}
-            >Load
+            >
+              <Trans id='js.WorkflowEditor.DataVersionModal.ModalFooter.actions.loadButton'>Load</Trans>
             </button>
           </div>
         </ModalFooter>

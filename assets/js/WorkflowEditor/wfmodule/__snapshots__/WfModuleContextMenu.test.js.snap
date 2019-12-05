@@ -1,58 +1,121 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`WfModuleContextMenu should match snapshot 1`] = `
-<Memo(WfModuleContextMenu)
+<WithI18n
   className="menu-test-class"
+  i18n={
+    Object {
+      "_": [Function],
+      "_activeLanguageData": Object {
+        "plurals": [Function],
+      },
+      "_activeMessages": Object {},
+      "_catalogs": Object {
+        "en": Object {
+          "languageData": Object {},
+          "messages": Object {},
+        },
+      },
+      "_dev": Object {
+        "compile": [Function],
+        "loadLanguageData": [Function],
+      },
+      "_language": "en",
+      "_locales": undefined,
+      "_missing": undefined,
+      "plural": [Function],
+      "select": [Function],
+      "selectOrdinal": [Function],
+      "t": [Function],
+    }
+  }
   id={415}
   removeModule={[MockFunction]}
 >
-  <UncontrolledDropdown>
-    <Dropdown
-      isOpen={false}
-      toggle={[Function]}
+  <I18n
+    update={true}
+    withHash={true}
+  >
+    <Memo(WfModuleContextMenu)
+      className="menu-test-class"
+      i18n={
+        Object {
+          "_": [Function],
+          "_activeLanguageData": Object {
+            "plurals": [Function],
+          },
+          "_activeMessages": Object {},
+          "_catalogs": Object {
+            "en": Object {
+              "languageData": Object {},
+              "messages": Object {},
+            },
+          },
+          "_dev": Object {
+            "compile": [Function],
+            "loadLanguageData": [Function],
+          },
+          "_language": "en",
+          "_locales": undefined,
+          "_missing": undefined,
+          "plural": [Function],
+          "select": [Function],
+          "selectOrdinal": [Function],
+          "t": [Function],
+        }
+      }
+      id={415}
+      removeModule={[MockFunction]}
     >
-      <Manager
-        tag={false}
-      >
-        <div
-          className="dropdown"
+      <UncontrolledDropdown>
+        <Dropdown
+          isOpen={false}
+          toggle={[Function]}
         >
-          <DropdownToggle
-            className="context-button"
-            title="more"
+          <Manager
+            tag={false}
           >
-            <Reference>
-              <InnerReference
-                setReferenceNode={[Function]}
+            <div
+              className="dropdown"
+            >
+              <DropdownToggle
+                className="context-button"
+                title="more"
               >
-                <button
-                  aria-expanded={false}
-                  className="btn btn-secondary context-button"
-                  disabled={false}
-                  onClick={[Function]}
-                  title="more"
-                >
-                  <i
-                    className="icon-more"
-                  />
-                </button>
-              </InnerReference>
-            </Reference>
-          </DropdownToggle>
-          <DropdownMenu />
-          <ExportModal
-            open={false}
-            toggle={[Function]}
-            wfModuleId={415}
-          >
-            <Modal
-              isOpen={false}
-              toggle={[Function]}
-            />
-          </ExportModal>
-        </div>
-      </Manager>
-    </Dropdown>
-  </UncontrolledDropdown>
-</Memo(WfModuleContextMenu)>
+                <Reference>
+                  <InnerReference
+                    setReferenceNode={[Function]}
+                  >
+                    <button
+                      aria-expanded={false}
+                      className="btn btn-secondary context-button"
+                      disabled={false}
+                      onClick={[Function]}
+                      title="more"
+                    >
+                      <i
+                        className="icon-more"
+                      />
+                    </button>
+                  </InnerReference>
+                </Reference>
+              </DropdownToggle>
+              <DropdownMenu />
+              <ExportModal
+                open={false}
+                toggle={[Function]}
+                wfModuleId={415}
+              >
+                <Modal
+                  isOpen={false}
+                  toggle={[Function]}
+                />
+              </ExportModal>
+            </div>
+          </Manager>
+        </Dropdown>
+      </UncontrolledDropdown>
+    </Memo(WfModuleContextMenu)>
+  </I18n>
+</WithI18n>
 `;

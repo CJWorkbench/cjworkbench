@@ -1,9 +1,10 @@
 {% load static %}
+{% load i18n_icu %}
 <!DOCTYPE html>
 <html lang="{{ i18n.locale_id }}">
   <head>
     <meta charset="utf-8">
-    <title>{% block title %}Workbench{% endblock %}</title>
+    <title>{% block title %}{% trans_html "py.templates.minimum.title" default="Workbench" %}{% endblock %}</title>
     <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/app-icons/apple-touch-icon.png' %}">
     <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/app-icons/favicon-32x32.png' %}">
     <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/app-icons/favicon-16x16.png' %}">

@@ -1,9 +1,15 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import Multicolumn from '../Multicolumn'
+import { t } from '@lingui/macro'
+import { withI18n } from '@lingui/react'
 
-export default class JoinColumns extends React.PureComponent {
+export class JoinColumns extends React.PureComponent {
   static propTypes = {
+    i18n: PropTypes.shape({
+      // i18n object injected by LinguiJS withI18n()
+      _: PropTypes.func.isRequired
+    }),
     isReadOnly: PropTypes.bool.isRequired,
     onChange: PropTypes.func.isRequired, // func({ on: '...', right: '...' }) => undefined
     fieldId: PropTypes.string.isRequired, // <input id=...>
@@ -45,7 +51,7 @@ export default class JoinColumns extends React.PureComponent {
   }
 
   render () {
-    const { isReadOnly, name, value, inputColumns, fieldId, tabs, selectedTab } = this.props
+    const { isReadOnly, name, value, inputColumns, fieldId, tabs, selectedTab, i18n } = this.props
     const rightTab = tabs.find(({ slug }) => selectedTab === slug)
 
     const inputColnames = (inputColumns || []).map(({ name }) => name)
@@ -62,10 +68,10 @@ export default class JoinColumns extends React.PureComponent {
           name={`${name}[on]`}
           fieldId={`${fieldId}_on`}
           onChange={this.handleChangeOn}
-          label='Join on'
+          label={i18n._(t('js.params.Custom.JoinColumns.joinOn')`Join on`)}
           inputColumns={bothColumns}
           addMenuListClassName='join-on'
-          noOptionsMessage={rightTab ? `There is no column to join on in "${rightTab.name}". Columns in both tabs must have identical names and capitalization. Please edit column names.` : undefined}
+          noOptionsMessage={rightTab ? i18n._(/* i18n: The parameter will contain a tab name */t('js.params.Custom.JoinColumns.noColumnToJoin')`There is no column to join on in ${rightTab.name}. Columns in both tabs must have identical names and capitalization. Please edit column names.`) : undefined}
           value={value.on}
         />
         <Multicolumn
@@ -73,7 +79,7 @@ export default class JoinColumns extends React.PureComponent {
           name={`${name}[right]`}
           fieldId={`${fieldId}_right`}
           onChange={this.handleChangeRight}
-          label='Add columns'
+          label={i18n._(t('js.params.Custom.JoinColumns.addColumns')`Add columns`)}
           inputColumns={rightColumnsNotInOn}
           value={value.right}
         />
@@ -81,3 +87,5 @@ export default class JoinColumns extends React.PureComponent {
     )
   }
 }
+
+export default withI18n()(JoinColumns)

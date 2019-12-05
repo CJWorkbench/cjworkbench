@@ -1,5 +1,6 @@
 {% load socialaccount %}
 {% load static %}
+{% load i18n_icu %}
 
 {% get_providers as socialaccount_providers %}
 
@@ -18,7 +19,7 @@
         <a href="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}">
             <div class="socialLoginButton t-d-gray d-flex align-items-center ">
                 <img src="{% get_static_prefix %}images/{{provider.name|slugify}}-small.png" width="25" class="mr-3"/>
-                <div title="{{provider.name}}" class="{{provider.id}}">Use {{provider.name}} account</div>
+                <div title="{{provider.name}}" class="{{provider.id}}">{% trans_html "py.templates.socialaccount.snippets.provider_list.useAccount" default="Use {providerName} account" arg_providerName=provider.name %}</div>
             </div>
         </a>
     </div>

@@ -1,5 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { t } from '@lingui/macro'
+import { withI18n } from '@lingui/react'
 
 /**
  * A search input box.
@@ -8,7 +10,7 @@ import PropTypes from 'prop-types'
  * user presses Escape. The caller is expected to manage the `value` of the
  * search input.
  */
-export default function FacetSearch ({ onChange, onReset, value }) {
+export function FacetSearch ({ onChange, onReset, value, i18n }) {
   const onKeyDown = React.useCallback(ev => {
     switch (ev.key) {
       case 'Escape':
@@ -23,7 +25,7 @@ export default function FacetSearch ({ onChange, onReset, value }) {
     <fieldset className='facet-search' onReset={onReset}>
       <input
         type='search'
-        placeholder='Search facets...'
+        placeholder={i18n._(t('js.params.common.FacetSearch.searchFacets.placeholder')`Search facets...`)}
         autoComplete='off'
         value={value}
         onChange={onChangeCallback}
@@ -33,7 +35,7 @@ export default function FacetSearch ({ onChange, onReset, value }) {
         type='button'
         onClick={onReset}
         className='close'
-        title='Clear Search'
+        title={i18n._(t('js.params.common.FacetSearch.clearSearch.hoverText')`Clear Search`)}
       >
         <i className='icon-close' />
       </button>
@@ -41,7 +43,13 @@ export default function FacetSearch ({ onChange, onReset, value }) {
   )
 }
 FacetSearch.propTypes = {
+  i18n: PropTypes.shape({
+    // i18n object injected by LinguiJS withI18n()
+    _: PropTypes.func.isRequired
+  }),
   onReset: PropTypes.func.isRequired, // func() => undefined
   onChange: PropTypes.func.isRequired, // func(value) => undefined
   value: PropTypes.string.isRequired // current input
 }
+
+export default withI18n()(FacetSearch)

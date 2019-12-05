@@ -1,11 +1,11 @@
 /* global describe, it, expect, jest */
 import React from 'react'
-import { mount } from 'enzyme'
+import { mountWithI18n } from '../../i18n/test-utils'
 import { ValueSelect } from './ValueSelect'
 
 describe('ValueSelect', () => {
   const wrapper = (props = {}) => {
-    const ret = mount(
+    const ret = mountWithI18n(
       <ValueSelect
         valueCounts={{}}
         loading={false}

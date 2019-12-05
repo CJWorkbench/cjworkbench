@@ -21,7 +21,6 @@
 
       .data {
         @extend .content-2;
-        text-transform: uppercase;
         color: $labels;
         cursor: default;
       }

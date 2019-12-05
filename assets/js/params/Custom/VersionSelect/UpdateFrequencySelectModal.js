@@ -2,6 +2,8 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from '../../../components/Modal'
 import QuotaExceeded from './QuotaExceeded'
+import { withI18n } from '@lingui/react'
+import { Trans, t } from '@lingui/macro'
 
 const TimeUnits = {
   seconds: 1,
@@ -29,7 +31,7 @@ function calculateFetchInterval ({ wantTimeUnitCount, timeUnit }) {
   }
 }
 
-export default class UpdateFrequencySelectModal extends React.PureComponent {
+class UpdateFrequencySelectModal extends React.PureComponent {
   static propTypes = {
     workflowId: PropTypes.number.isRequired,
     wfModuleId: PropTypes.number.isRequired,
@@ -38,7 +40,11 @@ export default class UpdateFrequencySelectModal extends React.PureComponent {
     isEmailUpdates: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired, // func() => undefined
     setEmailUpdates: PropTypes.func.isRequired, // func(isEmailUpdates) => undefined
-    trySetAutofetch: PropTypes.func.isRequired // func(isAutofetch, fetchInterval) => Promise[Optional[quotaExceeded]]
+    trySetAutofetch: PropTypes.func.isRequired, // func(isAutofetch, fetchInterval) => Promise[Optional[quotaExceeded]]
+    i18n: PropTypes.shape({
+      // i18n object injected by LinguiJS withI18n()
+      _: PropTypes.func.isRequired
+    })
   }
 
   state = {
@@ -125,12 +131,14 @@ export default class UpdateFrequencySelectModal extends React.PureComponent {
   }
 
   render () {
-    const { isEmailUpdates, onClose, workflowId, wfModuleId } = this.props
+    const { isEmailUpdates, onClose, workflowId, wfModuleId, i18n } = this.props
     const { wantAutofetch, wantTimeUnitCount, isSettingAutofetch, quotaExceeded, timeUnit } = this.state
 
     return (
       <Modal isOpen className='update-frequency-modal' toggle={onClose}>
-        <ModalHeader>WORKFLOW UPDATE</ModalHeader>
+        <ModalHeader>
+          <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title' description='This should be all-caps for styling reasons'>WORKFLOW UPDATE</Trans>
+        </ModalHeader>
         <ModalBody>
           <form
             className='autofetch'
@@ -149,11 +157,11 @@ export default class UpdateFrequencySelectModal extends React.PureComponent {
                     checked={wantAutofetch}
                     onChange={this.handleChangeAutofetch}
                   />
-                  <div className='radio'>Auto</div>
+                  <div className='radio'><Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.auto.label'>Auto</Trans></div>
                 </label>
                 <div className='big-radio-details'>
-                  <p>Automatically update this workflow with the newest data (old versions will be saved).</p>
-                  <label htmlFor='updateFrequencySelectTimeUnitCount'>Check for update every</label>
+                  <p><Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.auto.description'>Automatically update this workflow with the newest data (old versions will be saved).</Trans></p>
+                  <label htmlFor='updateFrequencySelectTimeUnitCount'><Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.label'>Check for update every</Trans></label>
                   <fieldset className='fetch-interval' disabled={!wantAutofetch}>
                     <div className='input-group'>
                       <div className='input-group-prepend'>
@@ -173,11 +181,11 @@ export default class UpdateFrequencySelectModal extends React.PureComponent {
                         value={timeUnit}
                         onChange={this.handleChangeTimeUnit}
                       >
-                        <option value='weeks'>weeks</option>
-                        <option value='days'>days</option>
-                        <option value='hours'>hours</option>
-                        <option value='minutes'>minutes</option>
-                        <option value='seconds'>seconds</option>
+                        <option value='weeks'><Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.weeks.option'>weeks</Trans></option>
+                        <option value='days'><Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.days.option'>days</Trans></option>
+                        <option value='hours'><Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.hours.option'>hours</Trans></option>
+                        <option value='minutes'><Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.minutes.option'>minutes</Trans></option>
+                        <option value='seconds'><Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.seconds.option'>seconds</Trans></option>
                       </select>
                       <div className='input-group-append'>
                         <button
@@ -186,7 +194,7 @@ export default class UpdateFrequencySelectModal extends React.PureComponent {
                           name='apply'
                           disabled={!this.isFetchIntervalSubmittable}
                         >
-                          {quotaExceeded ? 'Retry' : 'Apply'}
+                          {quotaExceeded ? <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.retry'>Retry</Trans> : <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.apply'>Apply</Trans>}
                         </button>
                       </div>
                     </div>{/* input-group */}
@@ -211,10 +219,10 @@ export default class UpdateFrequencySelectModal extends React.PureComponent {
                     checked={!wantAutofetch}
                     onChange={this.handleChangeAutofetch}
                   />
-                  <div className='radio'>Manual</div>
+                  <div className='radio'><Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual.label'>Manual</Trans></div>
                 </label>
                 <div className='big-radio-details'>
-                  <p>Check for new data manually.</p>
+                  <p><Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual.description'>Check for new data manually.</Trans></p>
                 </div>
               </div>
             </fieldset>
@@ -231,14 +239,18 @@ export default class UpdateFrequencySelectModal extends React.PureComponent {
             <label
               htmlFor='update-frequency-select-modal-is-email-updates-checkbox'
             >
-              Email me when data changes
+              <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.emailUpdates.label'>Email me when data changes</Trans>
             </label>
           </div>
         </ModalBody>
         <ModalFooter>
-          <button type='button' className='close' title='Close' onClick={onClose}>Close</button>
+          <button type='button' className='close' title={i18n._(t('js.params.Custom.VersionSelect.UpdateFrequencySelectModal.footer.close.placeholder')`Close`)} onClick={onClose}>
+            <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.footer.closeButton'>Close</Trans>
+          </button>
         </ModalFooter>
       </Modal>
     )
   }
 }
+
+export default withI18n()(UpdateFrequencySelectModal)

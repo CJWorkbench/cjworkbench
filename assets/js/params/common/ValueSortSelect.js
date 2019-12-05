@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { Trans } from '@lingui/macro'
 
 function SortIndicator ({ isActive, isAscending }) {
   if (!isActive) return null
@@ -29,7 +30,7 @@ export default function ValueSortSelect ({ value, onChange }) {
   return (
     <div className='value-sort-select'>
       <button className={by === 'value' ? 'active' : ''} name='by-value' type='button' onClick={onClickValue}>
-        Value
+        <Trans id='js.params.common.ValueSortSelect.value'>Value</Trans>
         <SortIndicator
           isActive={by === 'value'}
           isAscending={isAscending}
@@ -40,7 +41,7 @@ export default function ValueSortSelect ({ value, onChange }) {
           isActive={by === 'count'}
           isAscending={isAscending}
         />
-        Rows
+        <Trans id='js.params.common.ValueSortSelect.rows'>Rows</Trans>
       </button>
     </div>
   )

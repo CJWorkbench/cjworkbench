@@ -19,7 +19,7 @@ function LessonCourse ({ localeId, course }) {
     title = course.title
   } else {
     path = `/lessons/${localeId}`
-    title = 'Training'
+    title = <Trans id='js.WorkflowNavBar.LessonCourse.Lesson.title'>Training</Trans>
   }
 
   return (

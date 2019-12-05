@@ -4,6 +4,7 @@ import UpdateFrequencySelectModal from './UpdateFrequencySelectModal'
 import { timeDifference } from '../../../utils'
 import { trySetWfModuleAutofetchAction, setWfModuleNotificationsAction } from '../../../workflow-reducer'
 import { connect } from 'react-redux'
+import { Trans, t } from '@lingui/macro'
 import { withI18n } from '@lingui/react'
 
 export const UpdateFrequencySelect = withI18n()(class UpdateFrequencySelect extends React.PureComponent {
@@ -62,19 +63,21 @@ export const UpdateFrequencySelect = withI18n()(class UpdateFrequencySelect exte
     return (
       <div className='update-frequency-select'>
         <div className='update-option'>
-          <span className='version-box-option'>Update </span>
+          <span className='version-box-option'><Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelect.update'>Update</Trans> </span>
           <a
             href='#'
-            title='change auto-update settings'
+            title={i18n._(t('js.params.Custom.VersionSelect.UpdateFrequencySelect.changeUpdateSettings.hoverText')`change auto-update settings`)}
             className='content-1 ml-1 action-link'
             onClick={this.handleClickOpenModal}
           >
-            {isAutofetch ? 'Auto' : 'Manual'}
+            {isAutofetch ? <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelect.auto'>Auto</Trans> : <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelect.manual'>Manual</Trans>}
           </a>
         </div>
         {lastCheckDate ? (
           <div className='last-checked'>
-            Checked <time dateTime={this.props.lastCheckDate.toISOString()}>{timeDifference(lastCheckDate, Date.now(), i18n)}</time>
+            <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelect.lastChecked' description="The parameter is a time difference (i.e. something like '4h ago'. The tag is a <time> tag.">
+                Checked <time dateTime={this.props.lastCheckDate.toISOString()}>{timeDifference(lastCheckDate, Date.now(), i18n)}</time>
+            </Trans>
           </div>
         ) : null}
         {isModalOpen ? (

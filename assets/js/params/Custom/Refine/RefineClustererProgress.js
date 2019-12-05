@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { Trans } from '@lingui/macro'
 
 export default class RefineClustererProgress extends React.PureComponent {
   static propTypes = {
@@ -10,7 +11,7 @@ export default class RefineClustererProgress extends React.PureComponent {
     return (
       <div className='refine-clusterer-progress'>
         <progress value={this.props.progress} />
-        <div className='message'>Finding clusters…</div>
+        <div className='message'><Trans id='js.params.Custom.RefineClustererProgress.findingClusters'>Finding clusters…</Trans></div>
       </div>
     )
   }

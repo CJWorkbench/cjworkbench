@@ -1,10 +1,10 @@
 /* globals describe, expect, it, jest */
 import React from 'react'
 import Multicolumn from './Multicolumn'
-import { mount } from 'enzyme'
+import { mountWithI18n } from '../i18n/test-utils.js'
 
 describe('Multicolumn', () => {
-  const wrapper = (extraProps = {}) => mount(
+  const wrapper = (extraProps = {}) => mountWithI18n(
     <Multicolumn
       onChange={jest.fn()}
       name='columns'
@@ -55,7 +55,7 @@ describe('Multicolumn', () => {
     })
 
     it('should sort the selected columns in order', () => {
-      const w = mount(
+      const w = mountWithI18n(
         <Multicolumn
           onChange={jest.fn()}
           name='column'

@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load render_bundle from webpack_loader %}
-
-{% block title %}Workbench Training{% endblock %}
+{% load i18n_icu %}
+{% block title %}{% trans_html "py.templates.course.workbenchTraining.title" default="Workbench Training" %}{% endblock %}
 
 {% block body %}
   <div id="root">
@@ -12,7 +12,7 @@
           <ul>
             <!-- "Training" has a special URL -->
             <li class="{% if not course.slug %}active{% endif %}">
-              <a href="/lessons/{{course.locale_id}}">TUTORIALS</a>
+              <a href="/lessons/{{course.locale_id}}">{% trans_html "py.templates.course.tutorials.link" default="TUTORIALS" comment="This must be all-caps for styling reasons" %}</a>
             </li>
             {% for c in courses %}
               <li class="{% if c is course %}active{% endif %}">

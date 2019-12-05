@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import DateGranularity from './DateGranularity'
+import { Trans } from '@lingui/macro'
 
 function DateGranularityList ({ isReadOnly, name, colnames, value, onChange }) {
   return (
@@ -61,18 +62,18 @@ export default class DateGranularities extends React.PureComponent {
           <div className='no-date-selected'>
             {(dateColnames !== null && dateColnames.length === 0) ? (
               <>
-                <p>There are no Date and Time columns to group by date</p>
+                <p><Trans id='js.params.Custom.Groups.DateGranularities.noDateAndTimeToGroup'>There are no Date and Time columns to group by date </Trans></p>
                 <button
                   type='button'
                   name={`${name}[add-module]`}
                   className='quick-fix action-button button-blue'
                   onClick={addConvertToDateModule}
                 >
-                  Convert columns
+                  <Trans id='js.params.Custom.Groups.DateGranularities.convertColumns'>Convert columns</Trans>
                 </button>
               </>
             ) : (
-              <p>Select a Date and Time column to group it by date</p>
+              <p><Trans id='js.params.Custom.Groups.DateGranularities.selectDateAndTimeToGroup'>Select a Date and Time column to group it by date</Trans></p>
             )}
           </div>
         )}

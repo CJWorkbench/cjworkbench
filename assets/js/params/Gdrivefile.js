@@ -1,6 +1,8 @@
 /* globals gapi, google */
 import React from 'react'
 import PropTypes from 'prop-types'
+import { Trans, t } from '@lingui/macro'
+import { withI18n } from '@lingui/react'
 
 const MimeTypesString = [
   'application/vnd.google-apps.spreadsheet',
@@ -87,16 +89,19 @@ class PickerFactory {
   }
 }
 
-function FileInfo ({ id, name, url }) {
+const FileInfo = withI18n()(function ({ id, name, url, i18n }) {
   if (!id) {
     return (
-      <a className='file-info empty'>(please choose a file)</a>
+      <a className='file-info empty'><Trans id='js.params.Gdrivefile.FileInfo.chooseFile'>(please choose a file)</Trans></a>
     )
   } else {
     return (
       <a
         className='file-info'
-        title={`Open in Google Sheets: ${name}`}
+        title={i18n._(
+          /* i18n: {name} is the name of a file */
+          t('js.params.Gdrivefile.FileInfo.openInGoogleSheets')`Open in Google Sheets: ${name}`
+        )}
         target='_blank'
         rel='noopener noreferrer'
         href={url}
@@ -104,7 +109,7 @@ function FileInfo ({ id, name, url }) {
       </a>
     )
   }
-}
+})
 
 let googleApiLoadedPromise = null
 /**
@@ -255,15 +260,15 @@ export default class Gdrivefile extends React.PureComponent {
     if (!isReadOnly) {
       if (loadingAccessToken || !pickerFactory) {
         return (
-          <a className='file-info'><p className='loading'>Loading...</p></a>
+          <a className='file-info'><p className='loading'><Trans id='js.params.Gdrivefile.status.loading'>Loading...</Trans></p></a>
         )
       } else if (unauthenticated) {
         return (
-          <a className='file-info'><p className='sign-in-error'>failure: please reconnect</p></a>
+          <a className='file-info'><p className='sign-in-error'><Trans id='js.params.Gdrivefile.status.failureRecconect'>failure: please reconnect</Trans></p></a>
         )
       } else if (!secretMetadata) {
         return (
-          <a className='file-info'><p className='not-signed-in'>(please sign in)</p></a>
+          <a className='file-info'><p className='not-signed-in'><Trans id='js.params.Gdrivefile.status.pleaseSignin'>(please sign in)</Trans></p></a>
         )
       }
     }
@@ -279,7 +284,7 @@ export default class Gdrivefile extends React.PureComponent {
             className='change-file'
             onClick={this.handleClickOpenPicker}
           >
-            {value ? 'Change' : 'Choose'}
+            {value ? <Trans id='js.params.Gdrivefile.change.button'>Change</Trans> : <Trans id='js.params.Gdrivefile.choose.button'>Choose</Trans>}
           </button>
         ) : null}
       </>

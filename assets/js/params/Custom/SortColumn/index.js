@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import SortColumn from './SortColumn.js'
+import { Trans } from '@lingui/macro'
 
 const DefaultValue = [{ colname: '', is_ascending: true }]
 
@@ -86,7 +87,8 @@ export default class SortColumns extends React.PureComponent {
             name={`${name}[add]`}
             onClick={this.handleClickAdd}
           >
-            <i className='icon-add' /> Add
+            <i className='icon-add' /> {' '}
+            <Trans id='js.params.Custom.SortColumn.add'>Add</Trans>
           </button>
         )}
       </>

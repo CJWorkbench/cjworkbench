@@ -5,60 +5,36 @@ exports[`AceEditor matches snapshot 1`] = `
   <div
     className="help"
   >
-    Define a 
-    <kbd>
-      process(table)
-    </kbd>
-     function that accepts a 
-    <kbd>
-      pd.DataFrame
-    </kbd>
-     and returns a 
-    <kbd>
-      pd.DataFrame
-    </kbd>
-    . You may use the 
-    <a
-      href="https://docs.python.org/3/library/math.html"
-      rel="noopener noreferrer"
-      target="_blank"
-    >
-      <kbd>
-        math
-      </kbd>
-    </a>
-    ,
-     
-    <kbd>
-      pd
-    </kbd>
-     
-    (
-    <a
-      href="https://pandas.pydata.org/pandas-docs/stable/api.html#dataframe"
-      rel="noopener noreferrer"
-      target="_blank"
-    >
-      Pandas
-    </a>
-    )
-     
-    and 
-    <kbd>
-      np
-    </kbd>
-     
-    (
-    <a
-      href="https://docs.scipy.org/doc/numpy/reference/routines.html"
-      rel="noopener noreferrer"
-      target="_blank"
-    >
-      Numpy
-    </a>
-    )
-     
-    modules.
+    <WithI18n
+      components={
+        Array [
+          <kbd />,
+          <kbd />,
+          <kbd />,
+          <a
+            href="https://docs.python.org/3/library/math.html"
+            rel="noopener noreferrer"
+            target="_blank"
+          />,
+          <kbd />,
+          <kbd />,
+          <a
+            href="https://pandas.pydata.org/pandas-docs/stable/api.html#dataframe"
+            rel="noopener noreferrer"
+            target="_blank"
+          />,
+          <kbd />,
+          <a
+            href="https://docs.scipy.org/doc/numpy/reference/routines.html"
+            rel="noopener noreferrer"
+            target="_blank"
+          />,
+        ]
+      }
+      defaults="Define a <0>process(table)</0> function that accepts a <1>pd.DataFrame</1> and returns a <2>pd.DataFrame</2>. You may use the <3><4>math</4></3>, <5>pd</5> (<6>Pandas</6>) and <7>np</7> (<8>Numpy</8>) modules."
+      description="The tags <3>, <6>, and <8> are URLs. The rest are code formatting. Please keep code and names of libraries untranslated."
+      id="js.params.Custom.Code.AceEditor.help"
+    />
   </div>
   <div
     className="ace-aspect-ratio-container"

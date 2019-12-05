@@ -1,8 +1,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import ChartSeriesSelect from './ChartSeriesSelect'
+import { Trans, t } from '@lingui/macro'
+import { withI18n } from '@lingui/react'
 
-export default class Multichartseries extends React.PureComponent {
+export class Multichartseries extends React.PureComponent {
   static propTypes = {
     value: PropTypes.arrayOf(PropTypes.shape({
       column: PropTypes.string.isRequired,
@@ -50,7 +52,7 @@ export default class Multichartseries extends React.PureComponent {
 
   renderButtons () {
     const { isAddingPlaceholder } = this.state
-    const { inputColumns, value, isReadOnly } = this.props
+    const { inputColumns, value, isReadOnly, i18n } = this.props
 
     const showAddButton = !isReadOnly && !isAddingPlaceholder && value.length < (inputColumns || []).length
     const showRemoveButton = !isReadOnly && (value.length > 1 || (value.length === 1 && isAddingPlaceholder))
@@ -59,13 +61,13 @@ export default class Multichartseries extends React.PureComponent {
       return null
     } else {
       const addButton = !showAddButton ? null : (
-        <button type='button' title='add another column' onClick={this.handleClickAddPlaceholder}>
+        <button type='button' title={i18n._(t('js.params.Multichartseries.addColumn.hoverText')`add another column`)} onClick={this.handleClickAddPlaceholder}>
           <i className='icon-addc' />
         </button>
       )
 
       const removeButton = !showRemoveButton ? null : (
-        <button type='button' title='remove last column' onClick={this.handleClickRemoveLast}>
+        <button type='button' title={i18n._(t('js.params.Multichartseries.removeLastColumn.hoverText')`remove last column`)} onClick={this.handleClickRemoveLast}>
           <i className='icon-removec' />
         </button>
       )
@@ -83,7 +85,7 @@ export default class Multichartseries extends React.PureComponent {
     const { inputColumns, value, placeholder, isReadOnly, name, fieldId } = this.props
 
     if (inputColumns === null) {
-      return <p className='loading'>Loading…</p>
+      return <p className='loading'><Trans id='js.params.Multichartseries.loading'>Loading…</Trans></p>
     }
 
     const pickedColumns = value.map(x => x.column)
@@ -138,3 +140,5 @@ export default class Multichartseries extends React.PureComponent {
     )
   }
 }
+
+export default withI18n()(Multichartseries)
