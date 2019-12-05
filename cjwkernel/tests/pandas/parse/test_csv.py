@@ -450,3 +450,29 @@ class ParseCsvInternalTests(unittest.TestCase):
                     ],
                 ),
             )
+
+    def test_has_header_when_n_rows_is_1(self):
+        with _temp_csv("A,B") as path:
+            assert_csv_result_equals(
+                _internal_parse_csv(path, has_header=True),
+                ParseCsvResult(
+                    pa.table(
+                        {"A": pa.array([], pa.utf8()), "B": pa.array([], pa.utf8())}
+                    ),
+                    [],
+                ),
+            )
+
+    def test_has_header_when_n_rows_is_0(self):
+        with _temp_csv("") as path:
+            assert_csv_result_equals(
+                _internal_parse_csv(path, has_header=True),
+                ParseCsvResult(pa.table({}), []),
+            )
+
+    def test_n_rows_is_0(self):
+        with _temp_csv("") as path:
+            assert_csv_result_equals(
+                _internal_parse_csv(path, has_header=False),
+                ParseCsvResult(pa.table({}), []),
+            )
