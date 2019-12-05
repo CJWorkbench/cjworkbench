@@ -226,16 +226,10 @@ class FetchTests(unittest.TestCase):
 
     def test_missing_secret_error(self):
         with fetch(P(), secrets=secrets(None)) as result:
+            self.assertEqual(result.path.read_bytes(), b"")
             self.assertEqual(
-                result,
-                FetchResult(
-                    None,
-                    [
-                        RenderError(
-                            I18nMessage.TODO_i18n("Please connect to Google Drive.")
-                        )
-                    ],
-                ),
+                result.errors,
+                [RenderError(I18nMessage.TODO_i18n("Please connect to Google Drive."))],
             )
         # Should not make any request
         self.assertIsNone(self.last_http_requestline)
@@ -243,53 +237,47 @@ class FetchTests(unittest.TestCase):
     def test_invalid_auth_error(self):
         self.mock_http_response = MockHttpResponse(401)
         with fetch(P(), secrets=secrets(DEFAULT_SECRET)) as result:
+            self.assertEqual(result.path.read_bytes(), b"")
             self.assertEqual(
-                result,
-                FetchResult(
-                    None,
-                    [
-                        RenderError(
-                            I18nMessage.TODO_i18n(
-                                "Invalid credentials. Please reconnect to Google Drive."
-                            )
+                result.errors,
+                [
+                    RenderError(
+                        I18nMessage.TODO_i18n(
+                            "Invalid credentials. Please reconnect to Google Drive."
                         )
-                    ],
-                ),
+                    )
+                ],
             )
 
     def test_not_found(self):
         self.mock_http_response = MockHttpResponse(404)
         with fetch(P(), secrets=secrets(DEFAULT_SECRET)) as result:
+            self.assertEqual(result.path.read_bytes(), b"")
             self.assertEqual(
-                result,
-                FetchResult(
-                    None,
-                    [
-                        RenderError(
-                            I18nMessage.TODO_i18n(
-                                "File not found. Please choose a different file."
-                            )
+                result.errors,
+                [
+                    RenderError(
+                        I18nMessage.TODO_i18n(
+                            "File not found. Please choose a different file."
                         )
-                    ],
-                ),
+                    )
+                ],
             )
 
     def test_no_access_error(self):
         self.mock_http_response = MockHttpResponse(403)
         with fetch(P(), secrets=secrets(DEFAULT_SECRET)) as result:
+            self.assertEqual(result.path.read_bytes(), b"")
             self.assertEqual(
-                result,
-                FetchResult(
-                    None,
-                    [
-                        RenderError(
-                            I18nMessage.TODO_i18n(
-                                "You chose a file your logged-in user cannot access. "
-                                "Please reconnect to Google Drive or choose a different file."
-                            )
+                result.errors,
+                [
+                    RenderError(
+                        I18nMessage.TODO_i18n(
+                            "You chose a file your logged-in user cannot access. "
+                            "Please reconnect to Google Drive or choose a different file."
                         )
-                    ],
-                ),
+                    )
+                ],
             )
 
     def test_unhandled_http_error(self):
@@ -298,19 +286,17 @@ class FetchTests(unittest.TestCase):
             b"hi", headers=[("Content-Encoding", "gzip")]
         )
         with fetch(P(), secrets=secrets(DEFAULT_SECRET)) as result:
+            self.assertEqual(result.path.read_bytes(), b"")
             self.assertEqual(
-                result,
-                FetchResult(
-                    None,
-                    [
-                        RenderError(
-                            I18nMessage.TODO_i18n(
-                                # googlesheet should pass through aiohttp's message
-                                "Error during HTTP request: 400, message='Can not decode content-encoding: gzip'"
-                            )
+                result.errors,
+                [
+                    RenderError(
+                        I18nMessage.TODO_i18n(
+                            # googlesheet should pass through aiohttp's message
+                            "Error during HTTP request: 400, message='Can not decode content-encoding: gzip'"
                         )
-                    ],
-                ),
+                    )
+                ],
             )
 
 
@@ -329,9 +315,14 @@ class RenderTests(unittest.TestCase):
 
     def test_render_fetch_error(self):
         errors = [RenderResult(I18nMessage("x", {"y": "z"}))]
-        result = render_arrow(
-            ArrowTable(), P(), "tab-x", FetchResult(None, errors), self.output_path
-        )
+        with tempfile_context() as empty_path:
+            result = render_arrow(
+                ArrowTable(),
+                P(),
+                "tab-x",
+                FetchResult(empty_path, errors),
+                self.output_path,
+            )
         assert_arrow_table_equals(result.table, ArrowTable())
         self.assertEqual(result.errors, errors)
 
