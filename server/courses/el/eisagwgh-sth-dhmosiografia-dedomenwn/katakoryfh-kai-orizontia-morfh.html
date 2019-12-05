@@ -1,0 +1,106 @@
+<header>
+  <h1>Κατακόρυφη και οριζόντια μορφή</h1>
+  <p>Μάθετε τη διαφορά ανάμεσα στην κατακόρυφη και την οριζόντια μορφή ενός πίνακα και πώς να μετατρέπετε από τη μία μορφή στην άλλη.</p><img src="./banner.svg"></header>
+
+<section class="fullscreen">
+  <h2>Εισαγωγή</h2>
+  <p>Τα δεδομένα μπορούν να οργανωθούν σε πίνακες με διάφορους τρόπους. Στο ακόλουθο μάθημα, θα μάθετε να αναγνωρίζετε μεταξύ &quot;μακράς&quot; (κατακόρυφης) μορφής και &quot;πλατιάς&quot; (οριζόντιας) μορφής των πινάκων και να μετατρέπετε από τη μία μορφή στην άλλη, κάτι που καλείται αναδιαμόρφωση.</p>
+  <p>Θα εργαστούμε με έναν μήνα από τα ίδια δεδομένα που χρησιμοποιήσαμε στα <a href='/courses/el/eisagwgh-sth-dhmosiografia-dedomenwn/typoi-dedomenwn' className="info-1">δύο προηγούμενα μαθήματα</a>, για τα αστυνομικά συμβάντα στην Πόλη της Νέας Υόρκης.</section>
+<script id="initialWorkflow">
+tabs:
+- name: Lesson
+  wfModules:
+  - module: loadurl
+    slug: step-loadurl
+    params:
+      url: './NYC-incidents-2018-wide.csv'
+    collapsed: true
+    note: "Source: City of New York"
+  - module: convert-date
+    slug: step-convert-date
+    params:
+      colnames: [ "Complaint date" ]
+    collapsed: true
+</script>
+<section>
+  <h2>Δημιουργία της κατακόρυφης μορφής</h2>
+  <p>Για να γίνει κατανοητή η διαφορά ανάμεσα στην κατακόρυφη και την οριζόντια μορφή, ας δημιουργήσουμε έναν κατακόρυφο πίνακα.</p>
+  <p>Ας αναλύσουμε τα δεδομένα περαιτέρω, για να ανακαλύψουμε πόσα συμβάντα καταγράφονται καθημερινά σε κάθε δήμο.</p>
+  <h3 class="instructions">Οδηγίες</h3>
+  <ol class="steps">
+    <li
+      data-test="
+        if (workflow.tabs[0].wfModuleSlugs[2] !== 'groupby') return false
+        const params = workflow.tabs[0].wfModules[2].params
+        return (
+          params.groups.colnames.sort().join('|') === 'Borough|Complaint date'
+          && params.aggregations[0]
+          && params.aggregations[0].operation === 'size'
+          && params.aggregations[0].outname === 'Number of incidents'
+        )
+      ">Προσθέστε ένα βήμα <kbd>Ομαδοποίηση</kbd> ως Βήμα 3 και κάντε ομαδοποίηση με <kbd>Borough (Δήμος)</kbd> και <kbd>Complaint date (Ημερομηνία καταγγελίας)</kbd> στον ίδιο επιλογέα στηλών. Διαλέξτε τη λειτουργία <kbd>Πλήθος</kbd> και ονομάστε τη στήλη εξόδου <kbd>Number of incidents</kbd> (Αριθμός συμβάντων).<p class="instruction-detail">Ο πίνακας εμφανίζει τώρα λεπτομερή μέτρηση των συμβάντων.</p>
+      <p class="instruction-detail">Ωστόσο, επειδή υπάρχει τώρα ομαδοποίηση σε δύο στήλες, ο πίνακας περιέχει επαναλαμβανόμενες τιμές στις στήλες <kbd>Complaint date</kbd> και <kbd>Borough</kbd> . Δυσκολεύει την ανάγνωση και τη σχεδίαση.</p>
+      <p class="instruction-detail">Αυτός ο πίνακας είναι σε &quot;μακρά&quot; (κατακόρυφη) μορφή. Ας μάθουμε περισσότερα γι&apos; αυτό.</p>
+    </li>
+  </ol>
+</section>
+<section class="fullscreen">
+  <h2> </h2>
+  <p>Οι πίνακες <strong>μακράς μορφής</strong> περιέχουν μόνο μία στήλη με τιμές μέτρησης, σε αυτή την περίπτωση <kbd>Count of incidents (Αριθμός συμβάντων)</kbd>. Όλες οι άλλες στήλες είναι μεταβλητές που περιγράφουν τι μετριέται.</p>
+  <p>Κάθε σειρά είναι μια μοναδική μέτρηση. Σε αυτή την περίπτωση, κάθε μοναδική <kbd>Complaint date</kbd> συνδυάζεται με κάθε μοναδικό <kbd>Borough</kbd>.</p>
+  <figure><img class="no-border half-width" alt="Εξέταση στοιχείου" src="./long-table.png"></figure>
+  <p>Σε έναν πίνακα <strong>πλατιάς μορφής</strong>, τα ίδια δεδομένα οργανώνονται διαφορετικά. Είναι δυνατό να υπάρχουν μία ή περισσότερες στήλες μετρήσεων και αυτό που μετριέται περιγράφεται από τα ονόματα των στηλών.</p>
+  <figure><img class="no-border full-width" alt="Εξέταση στοιχείου" src="./wide-table.png"></figure>
+
+</section>
+<section>
+  <h2>Μετατροπή σε οριζόντια (&quot;πλατιά&quot;) μορφή </h2>
+  <p>Ο σκοπός μας είναι να οπτικοποιήσουμε το πλήθος των συμβάντων που καταγράφηκαν σε κάθε δήμο για κάθε μέρα.</p>
+  <p>Όλες οι ημερομηνίες πρέπει να βρίσκονται σε μία στήλη έτσι ώστε να μπορούμε να τις διαλέξουμε όλες μαζί και να τις εμφανίσουμε στον άξονα X και κάθε δήμος πρέπει να είναι στη δική του στήλη έτσι ώστε να μπορούμε να σχεδιάσουμε οποιονδήποτε από αυτούς στον άξονα Y.</p>
+  <h3 class="instructions">Οδηγίες</h3>
+  <ol class="steps">
+    <li
+      data-test="
+        return workflow.tabs[0].wfModuleSlugs[3] === 'reshape' &&
+               workflow.tabs[0].wfModules[3].params.direction === 'longtowide'
+      ">Προσθέστε ένα βήμα <kbd>Αναδιαμόρφωση</kbd> και επιλέξτε <kbd>Από κατακόρυφο σε οριζόντιο</kbd></li>
+    <li
+      data-test="return workflow.tabs[0].wfModules[3].params.colnames === 'Complaint date'"
+      >Επιλέξτε τη στήλη <kbd>Complaint date</kbd> ως τη <kbd>Μεταβλητή σειράς</kbd></li>
+    <li
+      data-test="
+        return workflow.tabs[0].wfModules[3].params.varcol == 'Borough'"
+      >Επιλέξτε τη στήλη <kbd>Borough</kbd>ως <kbd>Μεταβλητή στήλης</kbd></li>
+  </ol>
+</section>
+<section>
+  <h2>Οπτικοποίηση</h2>
+  <p>Ο πίνακας είναι έτοιμος για να οπτικοποιήσουμε τα ομαδοποιημένα δεδομένα αστυνομικών συμβάντων.</p>
+  <p>Ας συγκρίνουμε με την οπτικοποίηση το πλήθος των καταγραμμένων αστυνομικών συμβάντων στους διαφορετικούς δήμους χρησιμοποιώντας γραμμικό γράφημα.</p>
+  <ol class="steps">
+    <li
+      data-test="
+        return (
+          workflow.tabs[0].wfModuleSlugs[4] === 'linechart'
+          && workflow.tabs[0].wfModules[4].params.x_column === 'Complaint date'
+          && workflow.tabs[0].wfModules[4].params.y_columns[0]
+          && workflow.tabs[0].wfModules[4].params.y_columns[0].column
+        )
+      ">Προσθέστε ένα βήμα <kbd>Γραμμικό γράφημα</kbd>. Διαλέξτε τη στήλη <kbd>Complaint date</kbd> για τον άξονα X και οποιονδήποτε δήμο για τον άξονα Y.</li>
+    <li
+      data-test="return workflow.tabs[0].wfModules[4].params.y_columns.length >= 2"
+      >Κάντε κλικ στο <span><img class="icon-insert" src="images/lesson-icons/add.svg" alt="προσθήκη"></span> για να προσθέσετε από μία στήλη στον άξονα Y για κάθε επιπλέον δήμο που θέλετε να συγκρίνετε</li>
+  </ol>
+</section>
+<footer>
+  <h2>Εδώ τελειώνει το μάθημα!</h2>
+  <div class="completed">
+    <p class="summary">Σε αυτό το γράφημα συγκρίνουμε πλήθος συμβάντων μεταξύ δήμων με πολύ διαφορετικούς πληθυσμούς. Στο επόμενο μάθημα, θα δούμε πώς θα συγκρίνουμε δεδομένα κατά κεφαλή.</p>
+  </div>
+  <div class="next">
+    <h2>Επόμενο</h2>
+    <ol>
+      <li><a href="kata-kefalh">Κατά κεφαλή</a></li>
+    </ol>
+  </div>
+</footer>
