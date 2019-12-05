@@ -20,7 +20,7 @@ set -e
 #set -x
 
 docker_compose() {
-  docker-compose "$@"
+  DOCKER_BUILDKIT=1 COMPOSE_DOCKER_CLI_BUILD=1 docker-compose "$@"
 }
 
 cd "$(dirname "$0")"/..
@@ -30,10 +30,7 @@ cd "$(dirname "$0")"/..
 # https://github.com/docker/compose/issues/1896 gives docker-compose's rationale
 # for keeping our 'migrate' and 'test' runners outside of docker-compose.yml.
 docker_compose_with_commands() {
-  docker-compose \
-    -f docker-compose.yml \
-    -f docker-compose.commands.yml \
-    "$@"
+  docker_compose -f docker-compose.yml -f docker-compose.commands.yml "$@"
 }
 
 print_usage() {
