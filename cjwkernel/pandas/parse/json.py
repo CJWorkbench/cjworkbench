@@ -136,7 +136,10 @@ def parse_json(
 
     metadata = infer_table_metadata(result.table)
 
-    arrow_table = ArrowTable(output_path, metadata)
+    if len(metadata.columns) == 0:
+        arrow_table = ArrowTable()
+    else:
+        arrow_table = ArrowTable(output_path, metadata)
     if result.warnings:
         # TODO when we support i18n, this will be even simpler....
         en_message = "\n".join([str(warning) for warning in result.warnings])
