@@ -31,7 +31,7 @@ tabs:
     <li
       data-highlight='[{"type":"WfModule","moduleIdName":"dropna"}]'
       data-test="const colnames = workflow.tabs[0].wfModules[1].params.colnames.sort().join('|'); return colnames === 'date|subject_race'"
-      >Επιλέξτε τις στήλες <kbd>date</kbd> και <kbd>subject_race</kbd>.</li>
+      >Επιλέξτε τις στήλες <kbd>date (ημερομηνία)</kbd> και <kbd>subject_race (φυλή_οδηγών)</kbd>.</li>
   </ol>
 </section>
 <section>
@@ -54,7 +54,7 @@ tabs:
         const sort_columns = params.sort_columns || []
         const is_ascending = sort_columns[0].is_ascending || false
         return is_ascending === false"
-  >Για να δείτε την τελευταία ημερομηνία, επιλέξτε <kbd>Φθίνουσα</kbd> στο βήμα <kbd>Ταξινόμηση</kbd> . Πρέπει να είναι η <kbd>4/11/2013</kbd>.</li>
+  >Για να δείτε την τελευταία ημερομηνία, επιλέξτε <kbd>Φθίνουσα</kbd> στο βήμα <kbd>Ταξινόμηση</kbd> . Πρέπει να είναι η <kbd>2013-11-04</kbd>.</li>
   </ol>
 </section>
 <section>
@@ -102,18 +102,18 @@ tabs:
             && filters[1].subfilters[0].value === '2013-11-01'
           )
         )"
-      >Τώρα κάντε κλικ στο <kbd>ΚΑΙ</kbd> ακριβώς κάτω από το πλαίσιο εισαγωγής κειμένου της πρώτης συνθήκης για να προσθέσετε άλλη μία. Επιλέξτε τη στήλη <kbd>ημερομηνία</kbd>, διαλέξτε τη συνθήκη <kbd>Η ημερομηνία είναι πριν από</kbd><br/> και πληκτρολογήστε την τιμή <kbd>2013-11-01</kbd>.</li>
+      >Τώρα κάντε κλικ στο <kbd>ΚΑΙ</kbd> ακριβώς κάτω από το πλαίσιο εισαγωγής κειμένου της πρώτης συνθήκης για να προσθέσετε άλλη μία. Επιλέξτε τη στήλη <kbd>date</kbd>, διαλέξτε τη συνθήκη <kbd>Η ημερομηνία είναι πριν από</kbd><br/> και πληκτρολογήστε την τιμή <kbd>2013-11-01</kbd>.</li>
   </ol>
 </section>
 <section>
   <h2>4. Ανεύρεση ελέγχων ανά μήνα βάσει φυλής</h2>
-  <p>Τώρα είμαστε έτοιμοι να τους ομαδοποιήσουμε με κριτήρια <kbd>ημερομηνία</kbd> και <kbd>φυλή οδηγών</kbd> για να καθορίσουμε πόσοι έλεγχοι έγιναν ανά μήνα για κάθε φυλή.</p>
+  <p>Τώρα είμαστε έτοιμοι να ομαδοποιήσουμε με κριτήρια <kbd>date</kbd> και <kbd>subject_race</kbd> για να καθορίσουμε πόσοι έλεγχοι έγιναν ανά μήνα για κάθε φυλή.</p>
   <h3 class="instructions">Οδηγίες</h3>
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":5,"id_name":"groupby"}]'
       data-test="return workflow.tabs[0].wfModuleSlugs[5] === 'groupby'"
-      >Προσθέστε το βήμα «Ομαδοποίηση».</li>
+      >Προσθέστε το βήμα &quot;Ομαδοποίηση&quot;.</li>
     <li
       data-highlight='[{"type": "WfModule", "moduleIdName": "groupby"}]'
       data-test="return workflow.tabs[0].wfModules[5].params.groups.colnames.join('|') === 'date|subject_race'"
@@ -124,7 +124,7 @@ tabs:
         const groups = workflow.tabs[0].wfModules[5].params.groups
         return groups.group_dates &&
         ['M'].includes(groups.date_granularities['date'])"
-      >Επιλέξτε <kbd>Ομαδοποίηση κατά ημερομηνία</kbd> και κάτω από τις <kbd>Λεπτομέρειες ημερομηνίας</kbd> επιλέξτε <kbd>βάσει μήνα</kbd>.</li>
+      >Τσεκάρετε την <kbd>Ομαδοποίηση ημερομηνιών</kbd> και κάτω από τις <kbd>Λεπτομέρειες ημερομηνίας</kbd> επιλέξτε <kbd>βάσει μήνα</kbd>.</li>
   </ol>
 </section>
 <section>
@@ -142,7 +142,7 @@ tabs:
       data-test="
         const params = workflow.tabs[0].wfModules[6].params
         return params.direction === 'longtowide' && params.colnames === 'date' && params.varcol === 'subject_race'"
-      >Επιλέξτε <kbd>Από κατακόρυφο σε οριζόντιο</kbd>, ορίστε τη <kbd>Μεταβλητή σειράς</kbd> στη στήλη <kbd>date</kbd> και τη <kbd>Μεταβλητή στήλης</kbd> σε <kbd>subject_race</kbd>.</li>
+      >Επιλέξτε <kbd>Από κατακόρυφο σε οριζόντιο</kbd>, ορίστε για <kbd>Μεταβλητή σειράς</kbd> τη στήλη <kbd>date</kbd> και για <kbd>Μεταβλητή στήλης</kbd> τη στήλη <kbd>subject_race</kbd>.</li>
     <li
       data-highlight='[{"type":"Module","index":7,"id_name":"linechart"}]'
       data-test="return workflow.tabs[0].wfModuleSlugs[7] === 'linechart'"
@@ -155,7 +155,7 @@ tabs:
         const lines = []
         p.y_columns.forEach(obj => lines.push(obj.column))
         return p.y_columns.length === 5 && lines.sort().join('|') === 'NA|asian/pacific islander|black|other/unknown|white'"
-      >Επιλέξτε <kbd>ημερομηνία</kbd> για τον άξονα X και προσθέστε τις υπόλοιπες στήλες ως γραμμές στον άξονα Y.</li>
+      >Επιλέξτε <kbd>date</kbd> για τον άξονα X και προσθέστε τις υπόλοιπες στήλες ως γραμμές στον άξονα Y.</li>
     <li
       data-highlight='[{"type":"WfModule","moduleIdName":"linechart"}]'
       data-test="const p = workflow.tabs[0].wfModules[7].params; return !!p.title && !!p.x_axis_label && !!p.y_axis_label"

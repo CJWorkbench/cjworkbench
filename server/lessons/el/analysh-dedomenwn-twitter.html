@@ -14,11 +14,11 @@
   <li
     data-highlight='[{"type":"Module","index":0,"id_name":"twitter"}]'
     data-test="return workflow.tabs[0].wfModuleSlugs[0] === 'twitter'"
-    >Προσθέστε την πηγή δεδομένων «Twitter»</li>
+    >Προσθέστε την πηγή δεδομένων &quot;Twitter&quot;</li>
   <li
     data-highlight='[{"type":"WfModule","id_name":"twitter"}]'
     data-test="const cred = workflow.tabs[0].wfModules[0].params.twitter_credentials; return cred && cred.name && cred.name.indexOf('@') !== -1;"
-    >Κάνε κλικ στο <kbd>Σύνδεση λογαριασμού</kbd>. Στο ακόλουθο αναδυόμενο παράθυρο, κάντε κλικ στο <kbd>Εξουσιοδότηση εφαρμογής</kbd>.</li>
+    >Κάνε κλικ στη <kbd>Σύνδεση λογαριασμού</kbd>. Στο ακόλουθο αναδυόμενο παράθυρο, κάντε κλικ στην <kbd>Εξουσιοδότηση εφαρμογής</kbd>.</li>
 
 </ol>
 </section>
@@ -30,12 +30,12 @@
   <li
     data-highlight='[{"type":"WfModule","moduleIdName":"twitter"}]'
     data-test="const params = workflow.tabs[0].wfModules[0].params; return params.querytype === 'user_timeline' && ['neiltyson', '@neiltyson'].indexOf(params.username) !== -1"
-    >Διαλέξτε «Τουίτ χρήστη» στο πρώτο αναπτυσσόμενο μενού και επικολλήστε το όνομα χρήστη<div class="copy-txt">neiltyson</div>
+    >Διαλέξτε &quot;Τουίτ χρήστη&quot; στο πρώτο αναπτυσσόμενο μενού και επικολλήστε το όνομα χρήστη<div class="copy-txt">neiltyson</div>
   </li>
   <li
     data-highlight='[{"type":"WfModule","moduleIdName":"twitter"}]'
     data-test="const param = workflow.tabs[0].wfModules[0].params.username; return (param || '').toLowerCase() === 'neiltyson'"
-    >Κάντε κλικ στην «Ενημέρωση» για να φορτώσετε τουίτ από τον συγκεκριμένο λογαριασμό.<p class="instruction-detail">Λόγω των περιορισμών του <a class="highlight" href='https://developer.twitter.com/en/docs/basics/rate-limiting.html' target="_blank" className="backToLessons info-1">Twitter API</a>, υπάρχει όριο στον αριθμό των τουίτ που μπορείτε να συλλέξετε από έναν συγκεκριμένο χρήστη. Θα πρέπει να μπορέσετε να φορτώσετε περίπου 3.000 τουίτ, που είναι μια καλή αρχή.</p>
+    >Κάντε κλικ στην &quot;Ενημέρωση&quot; για να φορτώσετε τουίτ από τον συγκεκριμένο λογαριασμό.<p class="instruction-detail">Λόγω των περιορισμών του <a class="highlight" href='https://developer.twitter.com/en/docs/basics/rate-limiting.html' target="_blank" className="backToLessons info-1">Twitter API</a>, υπάρχει όριο στον αριθμό των τουίτ που μπορείτε να συλλέξετε από έναν συγκεκριμένο χρήστη. Θα πρέπει να μπορέσετε να φορτώσετε περίπου 3.000 τουίτ, που είναι μια καλή αρχή.</p>
   </li>
 </ol>
 </section>
@@ -61,16 +61,16 @@
         && subfilter.value.toLowerCase() === 'science'
       )
     "
-    >Επιλέξτε τη στήλη <kbd>text</kbd> για το φιλτράρισμα. Επιλέξτε <kbd>Το κείμενο περιέχει</kbd> ως συνθήκη και αναζητήστε <code>science</code>.<p class="instruction-detail">Ας ομαδοποιήσουμε τώρα βάσει ημερομηνίας τα τουίτ που προέκυψαν.</p>
+    >Επιλέξτε τη στήλη <kbd>text (κείμενο)</kbd> για το φιλτράρισμα. Επιλέξτε <kbd>Το κείμενο περιέχει</kbd> ως συνθήκη και αναζητήστε <code>science</code>.<p class="instruction-detail">Ας ομαδοποιήσουμε τώρα βάσει ημερομηνίας τα τουίτ που προέκυψαν.</p>
   </li>
   <li
     data-highlight='[{"type":"Module","index":2,"id_name":"groupby"}]'
     data-test="return workflow.tabs[0].wfModuleSlugs[2] === 'groupby'"
-    >Προσθέστε το βήμα «Ομαδοποίηση».</li>
+    >Προσθέστε το βήμα &quot;Ομαδοποίηση&quot;.</li>
   <li
     data-highlight='[{"type":"WfModule","moduleIdName":"groupby"}]'
     data-test="const params = workflow.tabs[0].wfModules[2].params; return params.groups.colnames.join('|') === 'created_at' && params.groups.group_dates && params.groups.date_granularities.created_at === 'Y' && params.aggregations.length === 1 && params.aggregations[0].operation === 'size' && params.aggregations[0].outname.toLowerCase() === 'number of tweets'"
-    >Επιλέξτε <kbd>created_at</kbd> ως στήλη ημερομηνίας. Επιλέξτε <kbd>Ομαδοποίηση κατά ημερομηνία</kbd> και ομαδοποιήστε <kbd>βάσει έτους</kbd>. Ορίστε το όνομα της στήλης εξόδου &quot;Πλήθος&quot; σε <code>Number of tweets</code></li>
+    >Επιλέξτε <kbd>created_at (που_δημιουργήθηκαν_στις)</kbd> ως στήλη ημερομηνίας. Τσεκάρετε την <kbd>Ομαδοποίηση ημερομηνιών</kbd> και ομαδοποιήστε τις σειρές <kbd>βάσει έτους</kbd>. Ορίστε το όνομα της στήλης εξόδου &quot;Count&quot; (Πλήθος) σε <code>Number of tweets</code></li>
 </ol>
 </section>
 <section>
@@ -81,11 +81,11 @@
   <li
     data-highlight='[{"type":"Module","index":3,"id_name":"linechart"}]'
     data-test="return workflow.tabs[0].wfModuleSlugs[3] === 'linechart'"
-    >Προσθέστε το βήμα &quot;Γράφημα γραμμής&quot;.</li>
+    >Προσθέστε το βήμα &quot;Γραμμικό γράφημα&quot;.</li>
   <li
     data-highlight='[{"type":"WfModule","moduleIdName":"linechart"}]'
     data-test="const p = workflow.tabs[0].wfModules[3].params; return p.x_column === 'created_at' && (p.y_columns[0] && p.y_columns[0].column || '').toLowerCase() === 'number of tweets'"
-    >Επιλέξτε <kbd>created_at</kbd> για τον άξονα Χ και <kbd>Αριθμός των τουίτ</kbd> για τον άξονα Y.</li>
+    >Επιλέξτε <kbd>created_at (που_δημιουργήθηκαν_στις)</kbd> για τον άξονα Χ και <kbd>Number of tweets (Αριθμός των τουίτ)</kbd> για τον άξονα Y.</li>
   <li
     data-highlight='[{"type":"WfModule","moduleIdName":"linechart"}]'
     data-test="const p = workflow.tabs[0].wfModules[3].params; return !!p.title"
