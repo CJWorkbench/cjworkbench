@@ -186,13 +186,20 @@ def fetch_arrow(
 ) -> FetchResult:
     file_meta = params["file"]
     if not file_meta:
-        return None
+        return FetchResult(
+            output_path,
+            errors=[RenderError(I18nMessage.TODO_i18n("Please choose a file"))],
+        )
 
     # Ignore file_meta['url']. That's for the client's web browser, not for
     # an API request.
     sheet_id = file_meta["id"]
     if not sheet_id:
-        return None
+        # [adamhooper, 2019-12-06] has this ever happened?
+        return FetchResult(
+            output_path,
+            errors=[RenderError(I18nMessage.TODO_i18n("Please choose a file"))],
+        )
 
     # backwards-compat for old entries without 'mimeType', 2018-06-13
     sheet_mime_type = file_meta.get(

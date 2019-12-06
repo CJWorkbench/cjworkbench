@@ -127,6 +127,13 @@ class FetchTests(unittest.TestCase):
         googlesheets.SSL_CONTEXT = self.old_ssl_context
         super().tearDown()
 
+    def test_fetch_nothing(self):
+        with fetch(P(file=None), secrets={}) as result:
+            self.assertEqual(
+                result.errors,
+                [RenderError(I18nMessage.TODO_i18n("Please choose a file"))],
+            )
+
     def test_fetch_native_sheet(self):
         body = b"A,B\nx,y\nz,a"
         self.mock_http_response = MockHttpResponse.ok(
