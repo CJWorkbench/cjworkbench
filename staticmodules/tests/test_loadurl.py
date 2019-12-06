@@ -141,6 +141,7 @@ class FetchTests(unittest.TestCase):
         self.mock_http_response = MockHttpResponse(404, [("Content-Length", 0)])
         url = self.build_url("/not-found")
         with fetch(url) as result:
+            self.assertEqual(result.path.read_bytes(), b"")
             self.assertEqual(
                 result.errors,
                 [
@@ -149,22 +150,19 @@ class FetchTests(unittest.TestCase):
                     )
                 ],
             )
-            self.assertEqual(result.path, None)
 
     def test_fetch_invalid_url(self):
         with fetch("htt://blah") as result:
+            self.assertEqual(result.path.read_bytes(), b"")
             self.assertEqual(
-                result,
-                FetchResult(
-                    None,
-                    [
-                        RenderError(
-                            I18nMessage.TODO_i18n(
-                                "Invalid URL. Please supply a valid URL, starting with http:// or https://."
-                            )
+                result.errors,
+                [
+                    RenderError(
+                        I18nMessage.TODO_i18n(
+                            "Invalid URL. Please supply a valid URL, starting with http:// or https://."
                         )
-                    ],
-                ),
+                    )
+                ],
             )
 
     def test_fetch_follow_redirect(self):
@@ -197,18 +195,16 @@ class FetchTests(unittest.TestCase):
             ]
         )
         with fetch(url1) as result:
+            self.assertEqual(result.path.read_bytes(), b"")
             self.assertEqual(
-                result,
-                FetchResult(
-                    None,
-                    [
-                        RenderError(
-                            I18nMessage.TODO_i18n(
-                                "HTTP server(s) redirected us too many times. Please try a different URL."
-                            )
+                result.errors,
+                [
+                    RenderError(
+                        I18nMessage.TODO_i18n(
+                            "HTTP server(s) redirected us too many times. Please try a different URL."
                         )
-                    ],
-                ),
+                    )
+                ],
             )
 
 
@@ -227,9 +223,14 @@ class RenderTests(unittest.TestCase):
 
     def test_render_fetch_error(self):
         errors = [RenderResult(I18nMessage("x", {"y": "z"}))]
-        result = render_arrow(
-            ArrowTable(), P(), "tab-x", FetchResult(None, errors), self.output_path
-        )
+        with tempfile_context() as empty_path:
+            result = render_arrow(
+                ArrowTable(),
+                P(),
+                "tab-x",
+                FetchResult(empty_path, errors),
+                self.output_path,
+            )
         assert_arrow_table_equals(result.table, ArrowTable())
         self.assertEqual(result.errors, errors)
 

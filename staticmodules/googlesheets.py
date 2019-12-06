@@ -1,6 +1,7 @@
 import asyncio
 import json
 from pathlib import Path
+import os
 from typing import Any, Dict, List, Optional
 from oauthlib import oauth2
 from cjwkernel.pandas.http import httpfile
@@ -50,8 +51,9 @@ def _generate_gdrive_file_url(sheet_id: str) -> str:
     return f"{GDRIVE_API_URL}/files/{sheet_id}?alt=media"
 
 
-def TODO_i18n_fetch_error(message: str):
-    return FetchResult(None, [RenderError(I18nMessage.TODO_i18n(message))])
+def TODO_i18n_fetch_error(output_path: Path, message: str):
+    os.truncate(output_path, 0)
+    return FetchResult(output_path, [RenderError(I18nMessage.TODO_i18n(message))])
 
 
 async def do_download(
@@ -79,22 +81,25 @@ async def do_download(
         cause = err.__cause__
         if cause.status == 401:
             return TODO_i18n_fetch_error(
-                "Invalid credentials. Please reconnect to Google Drive."
+                output_path, "Invalid credentials. Please reconnect to Google Drive."
             )
         elif cause.status == 403:
             return TODO_i18n_fetch_error(
-                "You chose a file your logged-in user cannot access. Please reconnect to Google Drive or choose a different file."
+                output_path,
+                "You chose a file your logged-in user cannot access. Please reconnect to Google Drive or choose a different file.",
             )
         elif cause.status == 404:
             return TODO_i18n_fetch_error(
-                "File not found. Please choose a different file."
+                output_path, "File not found. Please choose a different file."
             )
         else:
             return TODO_i18n_fetch_error(
-                "GDrive responded with HTTP %d %s" % (cause.status, cause.message)
+                output_path,
+                "GDrive responded with HTTP %d %s" % (cause.status, cause.message),
             )
     except httpfile.HttpError as err:
-        return FetchResult(None, errors=[RenderError(err.i18n_message)])
+        os.truncate(output_path, 0)
+        return FetchResult(output_path, errors=[RenderError(err.i18n_message)])
 
     return FetchResult(output_path)
 
@@ -196,10 +201,10 @@ def fetch_arrow(
 
     secret = secrets.get("google_credentials")
     if not secret:
-        return TODO_i18n_fetch_error("Please connect to Google Drive.")
+        return TODO_i18n_fetch_error(output_path, "Please connect to Google Drive.")
     if "error" in secret:
         return FetchResult(
-            None, errors=[RenderError(I18nMessage.from_dict(secret["error"]))]
+            output_path, errors=[RenderError(I18nMessage.from_dict(secret["error"]))]
         )
     assert "secret" in secret
     oauth2_client = oauth2.Client(

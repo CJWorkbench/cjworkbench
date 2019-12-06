@@ -189,6 +189,6 @@ def fetch_arrow(
     try:
         asyncio.run(httpfile.download(url, output_path, headers=headers))
     except httpfile.HttpError as err:
-        return FetchResult(None, errors=[RenderError(err.i18n_message)])
+        return FetchResult(output_path, errors=[RenderError(err.i18n_message)])
 
     return FetchResult(output_path)
