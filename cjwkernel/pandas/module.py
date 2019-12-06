@@ -166,11 +166,12 @@ def render_arrow(
             fetch_result.path
         ):
             fetched_table = __parquet_to_pandas(fetch_result.path)
-            pandas_fetch_result = ptypes.ProcessResult.coerce(
-                (
-                    fetched_table,
-                    [error.to_pandas_error() for error in fetch_result.errors],
-                )
+            pandas_fetch_result = ptypes.ProcessResult(
+                fetched_table,
+                [
+                    ptypes.ProcessResultError.from_arrow(error)
+                    for error in fetch_result.errors
+                ],
             )
         else:
             pandas_fetch_result = fetch_result
