@@ -1,7 +1,9 @@
+import logging
+import re
 from django.test import SimpleTestCase
-from server.templatetags.i18n_icu import trans_html
 from cjworkbench.i18n import default_locale
 from cjworkbench.tests.test_trans import mock_message_id
+from server.templatetags.i18n_icu import trans_html
 
 
 def mock_context(**kwargs):
@@ -83,4 +85,27 @@ class TransTemplateTagTests(SimpleTestCase):
                 arg_second="&",
             ),
             '<em>Hello</em> <span id="hi">hello</span> &amp; <a href="/you">you</a> &lt; <a class="red big" href="/there?a=b&amp;c=d">there&lt;</a>!',
+        )
+
+    def test_trans_html_with_missing_context_i18n(self):
+        # context[i18n] needs to be managed by the caller. And sometimes, the
+        # caller has a bug. (Seen 2019-08-2019-12-06 01:57:19.327 GMT.) We want
+        # Django's exception-handling code to be able to call trans_html().
+        #
+        # Calling trans_html without a context[i18n] is always a bug. So let's
+        # test that it's logged.
+        with self.assertLogs(level=logging.ERROR) as cm:
+            result = trans_html(
+                {"invalid-context": "yup"}, mock_message_id, default="Show the message"
+            )
+        self.assertEqual(result, "Show the message")
+        self.assertRegex(
+            cm.output[0],
+            re.escape(
+                (
+                    "ERROR:server.templatetags.i18n_icu:"
+                    "Missing context['i18n']['locale_id'] translating message_id "
+                )
+                + mock_message_id
+            ),
         )
