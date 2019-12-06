@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Trans, t } from '@lingui/macro'
+import { t } from '@lingui/macro'
 import { withI18n } from '@lingui/react'
 
 export function Operation ({ i18n, isReadOnly, name, value, onChange }) {
