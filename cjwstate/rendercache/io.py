@@ -149,7 +149,9 @@ def load_cached_render_result(crr: CachedRenderResult, path: Path) -> RenderResu
     if not crr.table_metadata.columns:
         # Zero-column tables aren't written to cache
         return RenderResult(
-            ArrowTable(None, TableMetadata(crr.table_metadata.n_rows, [])),
+            ArrowTable.from_zero_column_metadata(
+                TableMetadata(crr.table_metadata.n_rows, [])
+            ),
             crr.errors,
             crr.json,
         )
@@ -162,7 +164,7 @@ def load_cached_render_result(crr: CachedRenderResult, path: Path) -> RenderResu
         except pyarrow.ArrowIOError as err:
             raise CorruptCacheError from err
     # TODO handle validation errors => CorruptCacheError
-    arrow_table = ArrowTable(path, crr.table_metadata)
+    arrow_table = ArrowTable.from_trusted_file(path, crr.table_metadata)
     return RenderResult(arrow_table, crr.errors, crr.json)
 
 
@@ -186,7 +188,9 @@ def open_cached_render_result(crr: CachedRenderResult) -> ContextManager[RenderR
     if not crr.table_metadata.columns:
         # Zero-column tables aren't written to cache
         yield RenderResult(
-            ArrowTable(None, TableMetadata(crr.table_metadata.n_rows, [])),
+            ArrowTable.from_zero_column_metadata(
+                TableMetadata(crr.table_metadata.n_rows, [])
+            ),
             crr.errors,
             crr.json,
         )

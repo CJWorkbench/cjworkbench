@@ -1,4 +1,5 @@
 import datetime
+import pyarrow as pa
 from cjwkernel.tests.util import arrow_table, assert_render_result_equals
 from cjwkernel.types import (
     RenderError,
@@ -91,7 +92,12 @@ class RendercacheIoTests(DbTestCase):
         ]
         result = RenderResult(
             arrow_table(
-                {"A": [1], "B": [datetime.datetime.now()], "C": ["x"]}, columns=columns
+                {
+                    "A": [1],
+                    "B": pa.array([datetime.datetime.now()], pa.timestamp("ns")),
+                    "C": ["x"],
+                },
+                columns=columns,
             )
         )
         cache_render_result(self.workflow, self.wf_module, self.delta.id, result)

@@ -106,7 +106,9 @@ def _render_deprecated_parquet(
     params: Dict[str, Any],
 ) -> RenderResult:
     parquet.convert_parquet_file_to_arrow_file(input_path, output_path)
-    result = RenderResult(ArrowTable.from_arrow_file(output_path), errors)
+    result = RenderResult(
+        ArrowTable.from_arrow_file_with_inferred_metadata(output_path), errors
+    )
 
     if result.table.metadata.n_rows > 0 and not params["has_header"]:
         pandas_result = ProcessResult.from_arrow(result)

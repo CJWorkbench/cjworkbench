@@ -23,7 +23,7 @@ from cjwkernel.types import (
     RenderResult,
     Tab,
 )
-from cjwkernel.validate import validate
+from cjwkernel.validate import ValidateError
 
 
 logger = logging.getLogger(__name__)
@@ -296,6 +296,11 @@ class Kernel:
         fetch_result: Optional[FetchResult],
         output_filename: str,
     ) -> RenderResult:
+        """
+        Run the module's `render_thrift()` function and return its result.
+
+        Raise ModuleError if the module has a bug.
+        """
         chroot_dir = chroot_context.chroot.root
         basedir_seen_by_module = Path("/") / basedir.relative_to(chroot_dir)
         request = ttypes.RenderRequest(
@@ -323,11 +328,14 @@ class Kernel:
         if result.table.filename and result.table.filename != output_filename:
             raise ModuleExitedError(0, "Module wrote to wrong output file")
 
-        # RenderResult.from_thrift() verifies all filenames passed by the
-        # module are in the directory the module has access to.
-        render_result = RenderResult.from_thrift(result, basedir)
-        if render_result.table.table is not None:
-            validate(render_result.table.table, render_result.table.metadata)
+        try:
+            # RenderResult.from_thrift() verifies all filenames passed by the
+            # module are in the directory the module has access to. It assumes
+            # the Arrow file (if there is one) is untrusted, so it can raise
+            # ValidateError
+            render_result = RenderResult.from_thrift(result, basedir)
+        except ValidateError as err:
+            raise ModuleExitedError(0, "Module produced invalid data: %s" % str(err))
         return render_result
 
     def fetch(
@@ -341,6 +349,11 @@ class Kernel:
         input_parquet_filename: str,
         output_filename: str,
     ) -> FetchResult:
+        """
+        Run the module's `fetch_thrift()` function and return its result.
+
+        Raise ModuleError if the module has a bug.
+        """
         chroot_dir = chroot_context.chroot.root
         basedir_seen_by_module = Path("/") / basedir.relative_to(chroot_dir)
         request = ttypes.FetchRequest(

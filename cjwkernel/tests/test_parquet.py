@@ -3,7 +3,7 @@ from pathlib import Path
 import math
 import unittest
 import numpy as np
-import pyarrow
+import pyarrow as pa
 from cjwkernel import parquet
 from cjwkernel.tests.util import arrow_table, assert_arrow_table_equals, parquet_file
 from cjwkernel.util import create_tempfile, tempfile_context
@@ -93,39 +93,34 @@ class ParquetTest(unittest.TestCase):
         )
 
     def test_read_write_float64_all_null(self):
-        self._test_read_write_table(
-            {"A": pyarrow.array([None], type=pyarrow.float64())}
-        )
+        self._test_read_write_table({"A": pa.array([None], pa.float64())})
 
     def test_read_write_text(self):
         self._test_read_write_table({"A": ["x", None, "y"]})
 
     def test_read_write_text_all_null(self):
-        self._test_read_write_table({"A": pyarrow.array([None], type=pyarrow.string())})
+        self._test_read_write_table({"A": pa.array([None], pa.string())})
 
     def test_read_write_text_categorical(self):
-        table = pyarrow.table(
-            {"A": pyarrow.array(["x", None, "y", "x"]).dictionary_encode()}
-        )
+        table = pa.table({"A": pa.array(["x", None, "y", "x"]).dictionary_encode()})
         self._test_read_write_table(table)
 
     def test_read_write_datetime(self):
-        self._test_read_write_table({"A": [datetime.now(), None, datetime.now()]})
+        self._test_read_write_table(
+            {"A": pa.array([datetime.now(), None, datetime.now()], pa.timestamp("ns"))}
+        )
 
     def test_na_only_categorical_has_object_dtype(self):
         # Start with a Categorical with no values. (In Workbench, all
         # Categoricals are text.)
-        table = pyarrow.table(
-            {"A": pyarrow.array([None], type=pyarrow.string()).dictionary_encode()}
-        )
+        table = pa.table({"A": pa.array([None], pa.string()).dictionary_encode()})
         self._test_read_write_table(table)
 
     def test_empty_categorical_has_object_dtype(self):
-        table = pyarrow.table(
+        table = pa.table(
             {
-                "A": pyarrow.DictionaryArray.from_arrays(
-                    pyarrow.array([], type=pyarrow.int32()),
-                    pyarrow.array([], type=pyarrow.string()),
+                "A": pa.DictionaryArray.from_arrays(
+                    pa.array([], pa.int32()), pa.array([], pa.string())
                 )
             }
         )
@@ -138,17 +133,13 @@ class ParquetTest(unittest.TestCase):
 
         # In this example, `pyarrow.string()` is equivalent to
         # `pyarrow.dictionary(pyarrow.int32(), pyarrow.string())`
-        table = pyarrow.Table.from_batches(
-            [], schema=pyarrow.schema([("A", pyarrow.string())])
-        )
+        table = pa.Table.from_batches([], schema=pa.schema([("A", pa.string())]))
         self._test_read_write_table(table)
 
 
 class ReadPydictTests(unittest.TestCase):
     def test_pydict_zero_row_groups(self):
-        table = pyarrow.Table.from_batches(
-            [], schema=pyarrow.schema([("A", pyarrow.string())])
-        )
+        table = pa.Table.from_batches([], schema=pa.schema([("A", pa.string())]))
         with parquet_file(table) as path:
             self.assertEqual(parquet.read_pydict(path, range(1), range(0)), {"A": []})
 
@@ -157,15 +148,14 @@ class ReadPydictTests(unittest.TestCase):
             # ensure at least 1 row group
             parquet.write(
                 path,
-                pyarrow.table(
+                pa.table(
                     {
-                        "A": pyarrow.array([], type=pyarrow.string()),
-                        "B": pyarrow.DictionaryArray.from_arrays(
-                            pyarrow.array([], type=pyarrow.int32()),
-                            pyarrow.array([], type=pyarrow.string()),
+                        "A": pa.array([], pa.string()),
+                        "B": pa.DictionaryArray.from_arrays(
+                            pa.array([], pa.int32()), pa.array([], pa.string())
                         ),
-                        "C": pyarrow.array([], type=pyarrow.timestamp("ns")),
-                        "D": pyarrow.array([], type=pyarrow.float64()),
+                        "C": pa.array([], pa.timestamp("ns")),
+                        "D": pa.array([], pa.float64()),
                     }
                 ),
             )
@@ -180,8 +170,8 @@ class ReadPydictTests(unittest.TestCase):
         with parquet_file(
             {
                 "str": ["x", "y", None, "z"],
-                "cat": pyarrow.array(["x", "y", None, "x"]).dictionary_encode(),
-                "dt": [dt1, None, dt2, None],
+                "cat": pa.array(["x", "y", None, "x"]).dictionary_encode(),
+                "dt": pa.array([dt1, None, dt2, None], pa.timestamp("ns")),
                 "int32": [1, 2, 3, 2 ** 31],
                 "float": [1.1, 2.2, 3.3, 4.4],
             }
@@ -199,7 +189,7 @@ class ReadPydictTests(unittest.TestCase):
 
     def test_pydict_nan(self):
         with parquet_file(
-            {"A": pyarrow.array([1.1, float("nan"), None], type=pyarrow.float64())}
+            {"A": pa.array([1.1, float("nan"), None], pa.float64())}
         ) as path:
             result = parquet.read_pydict(path, range(1), range(3))
             self.assertEqual(result["A"][0], 1.1)

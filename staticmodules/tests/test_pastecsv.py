@@ -2,7 +2,7 @@ import unittest
 from staticmodules import pastecsv
 from cjwkernel.util import tempfile_context
 from cjwkernel.tests.util import assert_arrow_table_equals
-from cjwkernel.types import ArrowTable, I18nMessage, RenderError
+from cjwkernel.types import ArrowTable
 
 
 def P(csv="", has_header_row=True):

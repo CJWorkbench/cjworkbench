@@ -4,6 +4,7 @@ import json
 from unittest.mock import patch
 from django.contrib.auth.models import User
 from django.test import override_settings
+import pyarrow as pa
 from rest_framework.test import APIRequestFactory
 from rest_framework import status
 from rest_framework.test import force_authenticate
@@ -146,7 +147,14 @@ class WfModuleTests(LoggedInTestCase):
             self.wf_module2,
             self.wf_module2.last_relevant_delta_id,
             RenderResult(
-                arrow_table({"A": [dt(2019, 1, 2, 3, 4, 5, 6007, None), None]})
+                arrow_table(
+                    {
+                        "A": pa.array(
+                            [dt(2019, 1, 2, 3, 4, 5, 6007, None), None],
+                            pa.timestamp("ns"),
+                        )
+                    }
+                )
             ),
         )
 

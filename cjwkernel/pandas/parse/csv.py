@@ -5,7 +5,7 @@ import os
 from pathlib import Path
 import re
 import subprocess
-from typing import List, Optional
+from typing import List, Optional, Tuple
 import pandas as pd
 import pyarrow
 from cjwkernel import settings
@@ -61,6 +61,43 @@ class ParseCsvWarningTruncatedValues(ParseCsvWarning):
 
 
 @dataclass(frozen=True)
+class ParseCsvWarningTruncatedColumnNamesAndMaybeDeleted(ParseCsvWarning):
+    n_names: int
+    first_name: int
+    n_columns_deleted: int
+    """
+    If we truncating a column name leads to a duplicate column name, we delete.
+    """
+
+    def __str__(self):  # TODO nix when we support i18n
+        if self.n_columns_deleted:
+            return (
+                "Truncated %d column names (to %d bytes each; see \u201c%s\u201d). "
+                "Deleted %d columns with duplicate names."
+            ) % (
+                self.n_names,
+                settings.MAX_BYTES_PER_COLUMN_NAME,
+                self.first_name,
+                self.n_columns_deleted,
+            )
+        else:
+            return (
+                "Truncated %d column names (to %d bytes each; see \u201c%s\u201d)"
+            ) % (self.n_names, settings.MAX_BYTES_PER_COLUMN_NAME, self.first_name)
+
+
+@dataclass(frozen=True)
+class ParseCsvWarningRemovedControlCharactersFromColumnNames(ParseCsvWarning):
+    n_names: int
+    first_name: str
+
+    def __str__(self):  # TODO nix when we support i18n
+        return (
+            "Removed special characters from %d column names (see \u201c%s\u201d)"
+        ) % (self.n_names, self.first_name)
+
+
+@dataclass(frozen=True)
 class ParseCsvWarningRepairedValues(ParseCsvWarning):
     n_values_repaired: int
     first_value_row: int
@@ -111,8 +148,15 @@ ParseCsvWarning.SkippedColumns = ParseCsvWarningSkippedColumns
 ParseCsvWarning.SkippedRows = ParseCsvWarningSkippedRows
 ParseCsvWarning.TruncatedFile = ParseCsvWarningTruncatedFile
 ParseCsvWarning.TruncatedValues = ParseCsvWarningTruncatedValues
+ParseCsvWarning.RemovedControlCharactersFromColumnNames = (
+    ParseCsvWarningRemovedControlCharactersFromColumnNames
+)
+ParseCsvWarning.TruncatedColumnNamesAndMaybeDeleted = (
+    ParseCsvWarningTruncatedColumnNamesAndMaybeDeleted
+)
 
 
+_PATTERN_CONTROL_CHARACTERS = re.compile("[\x00-\x1f]")
 _PATTERN_SKIPPED_ROWS = re.compile(r"^skipped (\d+) rows \(after row limit of (\d+)\)$")
 _PATTERN_SKIPPED_COLUMNS = re.compile(
     r"^skipped (\d+) columns \(after column limit of (\d+)\)$"
@@ -170,23 +214,90 @@ def _parse_csv_to_arrow_warnings(text: str) -> List[ParseCsvWarning]:
     return [_parse_csv_to_arrow_warning(line) for line in text.split("\n") if line]
 
 
-def _postprocess_name_columns(table: pyarrow.Table, has_header: bool) -> pyarrow.Table:
+def _postprocess_name_columns(
+    table: pyarrow.Table, has_header: bool
+) -> Tuple[pyarrow.Table, List[ParseCsvWarning]]:
     """
     Return `table`, with final column names but still String values.
     """
+    warnings = []
     if has_header and table.num_rows > 0:
+        n_cleaned = 0
+        first_cleaned = None
+        n_truncated = 0
+        first_truncated = None
+        n_deleted = 0
+
+        def clean_name(name: Optional[str], index: int) -> str:
+            if name is not None:
+                ret = _PATTERN_CONTROL_CHARACTERS.sub("", name)
+                if len(ret) < len(name):
+                    nonlocal n_cleaned, first_cleaned
+                    if n_cleaned == 0:
+                        first_cleaned = ret
+                    n_cleaned += 1
+            else:
+                ret = ""
+            return ret or f"Column {index + 1}"
+
+        def truncate(name: str) -> str:
+            if len(name) > settings.MAX_BYTES_PER_COLUMN_NAME:
+                name = name[: settings.MAX_BYTES_PER_COLUMN_NAME]
+                nonlocal n_truncated, first_truncated
+                if n_truncated == 0:
+                    first_truncated = name
+                n_truncated += 1
+            return name
+
         column_names = list(
             uniquize_colnames(
-                (c[0].as_py() or f"Column {i + 1}") for i, c in enumerate(table.columns)
+                clean_name(c[0].as_py(), i) for i, c in enumerate(table.columns)
             )
         )
+
+        # Truncate _after_ uniquize_colnames(), because uniquize_colnames()
+        # adds an undefined number of characters. If we get too long, just
+        # delete the entire column! Rationale: when there are too many bytes,
+        # the user made a mistake; our job is to help the user fix it.
+        column_names = list(truncate(c) for c in column_names)
+
+        column_names_or_none = []  # None means, "delete the column"
+        seen = set()
+        for name in column_names:
+            if name in seen:
+                n_deleted += 1
+                column_names_or_none.append(None)
+            else:
+                seen.add(name)
+                column_names_or_none.append(name)
+
+        if n_cleaned:
+            warnings.append(
+                ParseCsvWarning.RemovedControlCharactersFromColumnNames(
+                    n_cleaned, first_cleaned
+                )
+            )
+        if n_truncated:
+            warnings.append(
+                ParseCsvWarning.TruncatedColumnNamesAndMaybeDeleted(
+                    n_truncated, first_truncated, n_deleted
+                )
+            )
+
         # Remove header (zero-copy: builds new pa.Table with same backing data)
         table = table.slice(1)
     else:
-        column_names = [f"Column {i + 1}" for i in range(len(table.columns))]
+        column_names_or_none = [f"Column {i + 1}" for i in range(len(table.columns))]
 
-    return pyarrow.table(
-        {column_names[i]: table.columns[i] for i in range(len(table.columns))}
+    return (
+        pyarrow.table(
+            {
+                name: table.column(i)
+                for i, name in enumerate(column_names_or_none)
+                if name is not None
+            }
+        ),
+        warnings,
     )
 
 
@@ -240,7 +351,7 @@ def _postprocess_autocast_columns(table: pyarrow.Table) -> pyarrow.Table:
 
 def _postprocess_table(
     table: pyarrow.Table, has_header: bool, autoconvert_text_to_numbers: bool
-) -> pyarrow.Table:
+) -> Tuple[pyarrow.Table, List[ParseCsvWarning]]:
     """
     Transform `raw_table` to meet our standards:
 
@@ -255,11 +366,11 @@ def _postprocess_table(
       numbers CSV can represent accurately that int/double cannot.
       TODO auto-conversion optional.)
     """
-    table = _postprocess_name_columns(table, has_header)
+    table, warnings = _postprocess_name_columns(table, has_header)
     table = dictionary_encode_columns(table)
     if autoconvert_text_to_numbers:
         table = _postprocess_autocast_columns(table)
-    return table
+    return table, warnings
 
 
 def detect_delimiter(path: Path):
@@ -373,8 +484,10 @@ def _parse_csv(
             reader = pyarrow.ipc.open_file(arrow_path.as_posix())
             raw_table = reader.read_all()  # efficient -- RAM is mmapped
 
-    table = _postprocess_table(raw_table, has_header, autoconvert_text_to_numbers)
-    return ParseCsvResult(table, warnings)
+    table, more_warnings = _postprocess_table(
+        raw_table, has_header, autoconvert_text_to_numbers
+    )
+    return ParseCsvResult(table, warnings + more_warnings)
 
 
 def parse_csv(
@@ -403,7 +516,7 @@ def parse_csv(
     if len(metadata.columns) == 0:
         arrow_table = ArrowTable()
     else:
-        arrow_table = ArrowTable(output_path, metadata)
+        arrow_table = ArrowTable(output_path, result.table, metadata)
     if result.warnings:
         # TODO when we support i18n, this will be even simpler....
         en_message = "\n".join([str(warning) for warning in result.warnings])

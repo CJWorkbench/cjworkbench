@@ -2,6 +2,7 @@ from contextlib import ExitStack
 from datetime import datetime
 from pathlib import Path
 import uuid
+import pyarrow as pa
 from cjwkernel.types import RenderResult, Tab, TabOutput
 from cjwkernel.tests.util import arrow_table
 from cjwkernel.util import tempdir_context
@@ -212,7 +213,9 @@ class CleanValueTests(DbTestCase):
 
     def test_list_prompting_error_concatenate_different_type(self):
         context = self._render_context(
-            input_table=arrow_table({"A": ["1"], "B": [datetime.now()]})
+            input_table=arrow_table(
+                {"A": ["1"], "B": pa.array([datetime.now()], pa.timestamp("ns"))}
+            )
         )
         schema = ParamDType.List(
             inner_dtype=ParamDType.Column(column_types=frozenset({"number"}))
@@ -232,7 +235,9 @@ class CleanValueTests(DbTestCase):
 
     def test_list_prompting_error_concatenate_different_type_to_text(self):
         context = self._render_context(
-            input_table=arrow_table({"A": [1], "B": [datetime.now()]})
+            input_table=arrow_table(
+                {"A": [1], "B": pa.array([datetime.now()], pa.timestamp("ns"))}
+            )
         )
         schema = ParamDType.List(
             inner_dtype=ParamDType.Column(column_types=frozenset({"text"}))
@@ -286,7 +291,9 @@ class CleanValueTests(DbTestCase):
 
     def test_dict_prompting_error_concatenate_different_types(self):
         context = self._render_context(
-            input_table=arrow_table({"A": ["1"], "B": [datetime.now()]})
+            input_table=arrow_table(
+                {"A": ["1"], "B": pa.array([datetime.now()], pa.timestamp("ns"))}
+            )
         )
         schema = ParamDType.Dict(
             {
@@ -326,7 +333,13 @@ class CleanValueTests(DbTestCase):
         # TODO make this _automatic_ instead of quick-fix?
         # ... but for now: prompt for a Quick Fix.
         context = self._render_context(
-            input_table=arrow_table({"A": [1], "B": [datetime.now()], "C": ["x"]})
+            input_table=arrow_table(
+                {
+                    "A": [1],
+                    "B": pa.array([datetime.now()], pa.timestamp("ns")),
+                    "C": ["x"],
+                }
+            )
         )
         with self.assertRaises(PromptingError) as cm:
             schema = ParamDType.Multicolumn(column_types=frozenset({"text"}))
@@ -353,7 +366,9 @@ class CleanValueTests(DbTestCase):
 
     def test_clean_multichartseries_non_number_is_prompting_error(self):
         context = self._render_context(
-            input_table=arrow_table({"A": ["a"], "B": [datetime.now()]})
+            input_table=arrow_table(
+                {"A": ["a"], "B": pa.array([datetime.now()], pa.timestamp("ns"))}
+            )
         )
         value = [
             {"column": "A", "color": "#aaaaaa"},

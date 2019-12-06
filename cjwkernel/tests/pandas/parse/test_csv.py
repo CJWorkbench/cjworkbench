@@ -476,3 +476,24 @@ class ParseCsvInternalTests(unittest.TestCase):
                 _internal_parse_csv(path, has_header=False),
                 ParseCsvResult(pa.table({}), []),
             )
+
+    def test_omit_ascii_control_characters_from_column_names(self):
+        with _temp_csv("A\tB,AB,C\na,b,c") as path:
+            assert_csv_result_equals(
+                _internal_parse_csv(path, has_header=True),
+                ParseCsvResult(
+                    pa.table({"AB": ["a"], "AB 2": ["b"], "C": ["c"]}),
+                    [ParseCsvWarning.RemovedControlCharactersFromColumnNames(1, "AB")],
+                ),
+            )
+
+    @override_settings(MAX_BYTES_PER_COLUMN_NAME=4)
+    def test_truncate_column_names(self):
+        with _temp_csv("ABC,ABCD,ABCDE,BCDEF\na,b,c,d") as path:
+            assert_csv_result_equals(
+                _internal_parse_csv(path, has_header=True),
+                ParseCsvResult(
+                    pa.table({"ABC": ["a"], "ABCD": ["b"], "BCDE": ["d"]}),
+                    [ParseCsvWarning.TruncatedColumnNamesAndMaybeDeleted(2, "ABCD", 1)],
+                ),
+            )

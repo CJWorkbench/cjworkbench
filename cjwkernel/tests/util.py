@@ -64,8 +64,11 @@ def arrow_table_context(
         ]
     metadata = TableMetadata(table.num_rows, columns)
 
-    with arrow_file(table, dir=dir) as filename:
-        yield ArrowTable(pathlib.Path(filename), metadata)
+    if metadata.columns:
+        with arrow_file(table, dir=dir) as path:
+            yield ArrowTable(path, table, metadata)
+    else:
+        yield ArrowTable(None, None, metadata)
 
 
 def arrow_table(
@@ -132,16 +135,18 @@ def parquet_file(
     """
     Yield a filename with `table` written to a Parquet file.
     """
-    atable = arrow_table(table)
+    if isinstance(table, dict):
+        table = pyarrow.table(table)
+
     with tempfile_context(dir=dir) as parquet_path:
         pyarrow.parquet.write_table(
-            atable.table,
+            table,
             parquet_path,
             version="2.0",
             compression="SNAPPY",
             use_dictionary=[
                 name.encode("utf-8")
-                for name, column in zip(atable.table.column_names, atable.table.columns)
+                for name, column in zip(table.column_names, table.columns)
                 if pyarrow.types.is_dictionary(column.type)
             ],
         )

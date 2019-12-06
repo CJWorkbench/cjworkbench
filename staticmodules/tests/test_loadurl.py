@@ -5,7 +5,7 @@ import io
 import itertools
 from pathlib import Path
 import threading
-from typing import Any, ContextManager, Dict
+from typing import ContextManager
 import unittest
 import zlib
 import pyarrow
