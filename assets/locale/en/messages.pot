@@ -355,27 +355,32 @@ msgid "js.UnhandledErrorReport.helpText.pleaseDescribeYourActions"
 msgstr ""
 
 #. default-message: Home
-#: assets/js/WfHamburgerMenu.js:56
+#: assets/js/WfHamburgerMenu.js:64
 msgid "js.WfHamburgerMenu.menu.home"
 msgstr ""
 
 #. default-message: Import Module
-#: assets/js/WfHamburgerMenu.js:53
+#: assets/js/WfHamburgerMenu.js:61
 msgid "js.WfHamburgerMenu.menu.importModule"
 msgstr ""
 
+#. default-message: Languages
+#: assets/js/WfHamburgerMenu.js:67
+msgid "js.WfHamburgerMenu.menu.languages"
+msgstr ""
+
 #. default-message: Log Out
-#: assets/js/WfHamburgerMenu.js:59
+#: assets/js/WfHamburgerMenu.js:70
 msgid "js.WfHamburgerMenu.menu.logout"
 msgstr ""
 
 #. default-message: My Workflows
-#: assets/js/WfHamburgerMenu.js:52
+#: assets/js/WfHamburgerMenu.js:60
 msgid "js.WfHamburgerMenu.menu.myWorkflows"
 msgstr ""
 
 #. default-message: menu
-#: assets/js/WfHamburgerMenu.js:45
+#: assets/js/WfHamburgerMenu.js:53
 msgid "js.WfHamburgerMenu.toggle.hoverText"
 msgstr ""
 
@@ -765,14 +770,15 @@ msgstr ""
 msgid "js.Workflows.training.title"
 msgstr ""
 
-#. default-message: Greek
-#: assets/js/i18n/locales.js:5
-msgid "js.i18n.locales.el"
+#. default-message: This option will change the language of Workbench's interface. To submit translations for your language, visit <0>this</0> page.
+#: assets/js/i18n/LocaleSwitcher.js:33
+msgid "js.i18n.LocaleSwitcher.body.description"
 msgstr ""
 
-#. default-message: English
-#: assets/js/i18n/locales.js:4
-msgid "js.i18n.locales.en"
+#. This should be all-caps for styling reasons
+#. default-message: LANGUAGES
+#: assets/js/i18n/LocaleSwitcher.js:27
+msgid "js.i18n.LocaleSwitcher.header.title"
 msgstr ""
 
 #. default-message: Training

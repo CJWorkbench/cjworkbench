@@ -304,23 +304,27 @@ msgstr ""
 msgid "js.UnhandledErrorReport.helpText.pleaseDescribeYourActions"
 msgstr ""
 
-#: assets/js/WfHamburgerMenu.js:56
+#: assets/js/WfHamburgerMenu.js:64
 msgid "js.WfHamburgerMenu.menu.home"
 msgstr ""
 
-#: assets/js/WfHamburgerMenu.js:53
+#: assets/js/WfHamburgerMenu.js:61
 msgid "js.WfHamburgerMenu.menu.importModule"
 msgstr ""
 
-#: assets/js/WfHamburgerMenu.js:59
+#: assets/js/WfHamburgerMenu.js:67
+msgid "js.WfHamburgerMenu.menu.languages"
+msgstr ""
+
+#: assets/js/WfHamburgerMenu.js:70
 msgid "js.WfHamburgerMenu.menu.logout"
 msgstr ""
 
-#: assets/js/WfHamburgerMenu.js:52
+#: assets/js/WfHamburgerMenu.js:60
 msgid "js.WfHamburgerMenu.menu.myWorkflows"
 msgstr ""
 
-#: assets/js/WfHamburgerMenu.js:45
+#: assets/js/WfHamburgerMenu.js:53
 msgid "js.WfHamburgerMenu.toggle.hoverText"
 msgstr ""
 
@@ -636,12 +640,13 @@ msgstr ""
 msgid "js.Workflows.training.title"
 msgstr ""
 
-#: assets/js/i18n/locales.js:5
-msgid "js.i18n.locales.el"
+#: assets/js/i18n/LocaleSwitcher.js:33
+msgid "js.i18n.LocaleSwitcher.body.description"
 msgstr ""
 
-#: assets/js/i18n/locales.js:4
-msgid "js.i18n.locales.en"
+#. This should be all-caps for styling reasons
+#: assets/js/i18n/LocaleSwitcher.js:27
+msgid "js.i18n.LocaleSwitcher.header.title"
 msgstr ""
 
 #: assets/js/lessons/LessonFooter.js:41
