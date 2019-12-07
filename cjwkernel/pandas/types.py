@@ -776,6 +776,14 @@ class ProcessResultError:
             [QuickFix.from_arrow(qf) for qf in value.quick_fixes],
         )
 
+    @classmethod
+    def module_exception(cls, description) -> ProcessResultError:
+        return cls(
+            I18nMessage.TODO_i18n(
+                "There is a bug in this module. Error code: %s" % description
+            )
+        )
+
 
 @dataclass
 class ProcessResult:
@@ -942,10 +950,9 @@ class ProcessResult:
             except (ValueError, TypeError) as e:
                 return cls(
                     errors=[
-                        ProcessResultError(
-                            I18nMessage.TODO_i18n(
-                                "There is a bug in this module: The list given cannot be parsed as an error list."
-                            )
+                        ProcessResultError.module_exception(
+                            "The list given cannot be parsed as an error/warning list: %s"
+                            % e
                         )
                     ]
                 )
@@ -1027,32 +1034,26 @@ class ProcessResult:
                     dataframe, error = value
                     if dataframe is None:
                         dataframe = pd.DataFrame()
+                    elif not isinstance(dataframe, pd.DataFrame):
+                        return cls(
+                            errors=[
+                                ProcessResultError.module_exception(
+                                    "Expected Dataframe, got %s"
+                                    % type(dataframe).__name__
+                                )
+                            ]
+                        )
                     try:
                         errors = (
                             ProcessResultError.coerce_list(error)
                             if isinstance(error, list)
                             else ([ProcessResultError.coerce(error)] if error else [])
                         )
-                    except (TypeError, ValueError):
-                        # we handle it below
-                        errors = None
-                    if not isinstance(dataframe, pd.DataFrame) or errors is None:
+                    except (TypeError, ValueError) as e:
                         return cls(
                             errors=[
-                                ProcessResultError(
-                                    I18nMessage.TODO_i18n(
-                                        (
-                                            "There is a bug in this module: expected "
-                                            "(DataFrame, %s) return type, got (%s,%s)"
-                                        )
-                                        % (
-                                            repr(mtypes.ModuleErrorResult).replace(
-                                                "typing.", ""
-                                            ),
-                                            type(dataframe).__name__,
-                                            type(error).__name__,
-                                        )
-                                    )
+                                ProcessResultError.module_exception(
+                                    "Error/warning can't be parsed: %s" % e
                                 )
                             ]
                         )
@@ -1067,17 +1068,9 @@ class ProcessResult:
                     except (TypeError, ValueError) as e:
                         return cls(
                             errors=[
-                                ProcessResultError(
-                                    I18nMessage.TODO_i18n(
-                                        (
-                                            "There is a bug in this module: expected "
-                                            "(str, dict) return value, got (%s, %s)"
-                                        )
-                                        % (
-                                            type(value[0]).__name__,
-                                            type(value[1]).__name__,
-                                        )
-                                    )
+                                ProcessResultError.module_exception(
+                                    "Expected (str, dict) error/warning, got (%s, %s)"
+                                    % (type(value[0]).__name__, type(value[1]).__name__)
                                 )
                             ]
                         )
@@ -1085,40 +1078,35 @@ class ProcessResult:
                 dataframe, error, json = value
                 if dataframe is None:
                     dataframe = pd.DataFrame()
+                elif not isinstance(dataframe, pd.DataFrame):
+                    return cls(
+                        errors=[
+                            ProcessResultError.module_exception(
+                                "Expected DataFrame got %s" % type(dataframe).__name__
+                            )
+                        ]
+                    )
+                if json is None:
+                    json = {}
+                elif not isinstance(json, dict):
+                    return cls(
+                        errors=[
+                            ProcessResultError.module_exception(
+                                "Expected JSON dict, got %s" % type(json).__name__
+                            )
+                        ]
+                    )
                 try:
                     errors = (
                         ProcessResultError.coerce_list(error)
                         if isinstance(error, list)
                         else ([ProcessResultError.coerce(error)] if error else [])
                     )
-                except (TypeError, ValueError):
-                    # we handle it below
-                    errors = None
-                if json is None:
-                    json = {}
-                if (
-                    not isinstance(dataframe, pd.DataFrame)
-                    or errors is None
-                    or not isinstance(json, dict)
-                ):
+                except (TypeError, ValueError) as e:
                     return cls(
                         errors=[
-                            ProcessResultError(
-                                I18nMessage.TODO_i18n(
-                                    (
-                                        "There is a bug in this module: expected "
-                                        "(DataFrame, %s, dict) return value, got "
-                                        "(%s, %s, %s)"
-                                    )
-                                    % (
-                                        repr(mtypes.ModuleErrorResult).replace(
-                                            "typing.", ""
-                                        ),
-                                        type(dataframe).__name__,
-                                        type(error).__name__,
-                                        type(json).__name__,
-                                    )
-                                )
+                            ProcessResultError.module_exception(
+                                "Error/warning can't be parsed: %s" % e
                             )
                         ]
                     )
@@ -1129,25 +1117,17 @@ class ProcessResult:
                 )
             return cls(
                 errors=[
-                    ProcessResultError(
-                        I18nMessage.TODO_i18n(
-                            (
-                                "There is a bug in this module: expected 2-tuple or 3-tuple "
-                                "return value; got %d-tuple "
-                            )
-                            % len(value)
-                        )
+                    ProcessResultError.module_exception(
+                        ("Expected 2-tuple or 3-tuple return value; got %d-tuple")
+                        % len(value)
                     )
                 ]
             )
 
         return cls(
             errors=[
-                ProcessResultError(
-                    I18nMessage.TODO_i18n(
-                        "There is a bug in this module: invalid return type %s"
-                        % type(value).__name__
-                    )
+                ProcessResultError.module_exception(
+                    "Invalid return type %s" % type(value).__name__
                 )
             ]
         )
