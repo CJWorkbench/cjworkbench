@@ -1,0 +1,18 @@
+{% load i18n_icu %}
+
+{# if i18n.show_switcher #}
+  <form method="POST" action="/locale">
+    <input type="hidden" name="next" value="{{ request.get_full_path }}" />
+    {% csrf_token %}
+    <select name="new_locale" onchange="this.form.submit()">
+      {% for locale_data in i18n.locales_data %}
+        <option 
+          {% if locale_data.locale_id == i18n.locale_id %}selected="selected"{% endif %} 
+          value="{{ locale_data.locale_id }}"
+        >
+          {{ locale_data.locale_name }}
+        </option>
+      {% endfor %}
+    </select>
+  </form>
+{# endif #}
