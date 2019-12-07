@@ -1,8 +1,7 @@
 import * as React from 'react'
 import PropTypes from 'prop-types'
 import { Trans } from '@lingui/macro'
-import { withI18n } from '@lingui/react'
-import { supportedLocales, supportedLocaleIds, currentLocale } from './locales'
+import { supportedLocalesData, currentLocale } from './locales'
 import { csrfToken } from '../utils'
 import { Modal, ModalHeader, ModalBody } from '../components/Modal'
 
@@ -16,7 +15,7 @@ export const enableLocaleSwitcher = window.i18nConfig && window.i18nConfig.showS
 /**
  * A menu for the user to select a locale.
  */
-class LocaleSwitcher extends React.PureComponent {
+export default class LocaleSwitcher extends React.PureComponent {
   handleLocaleChange (ev) {
     ev.target.form.submit()
   }
@@ -38,16 +37,16 @@ class LocaleSwitcher extends React.PureComponent {
           <form method='POST' action='/locale'>
             <input type='hidden' name='next' value={window.location.href} />
             <input type='hidden' name='csrfmiddlewaretoken' value={csrfToken} />
-            {supportedLocaleIds.map((locale) => (
-              <label key={locale}>
+            {supportedLocalesData.map((localeData) => (
+              <label key={localeData.locale_id}>
                 <input
                   type='radio'
                   name='new_locale'
-                  value={locale}
-                  checked={locale === currentLocale}
+                  value={localeData.locale_id}
+                  checked={localeData.locale_id === currentLocale}
                   onChange={this.handleLocaleChange}
                 />
-                {this.props.i18n._(supportedLocales[locale])}
+                {localeData.locale_name}
               </label>
             ))}
           </form>
@@ -58,12 +57,5 @@ class LocaleSwitcher extends React.PureComponent {
 }
 
 LocaleSwitcher.propTypes = {
-  closeModal: PropTypes.func.isRequired,
-  i18n: PropTypes.shape({
-    // i18n object injected by LinguiJS withI18n()
-    language: PropTypes.oneOf(supportedLocaleIds),
-    _: PropTypes.func.isRequired
-  })
+  closeModal: PropTypes.func.isRequired
 }
-
-export default withI18n()(LocaleSwitcher)

@@ -6,7 +6,7 @@
 {% block headscripts %}
   <script>
     window.initState = {{initState|json_in_script_tag}}
-    window.i18nConfig = {locale: '{{ i18n.locale_id }}', showSwitcher: {{ i18n.show_switcher|yesno:"true, false" }}}
+    window.i18nConfig = {locale: '{{ i18n.locale_id }}', showSwitcher: {{ i18n.show_switcher|yesno:"true, false" }}, localesData: {{ i18n.locales_data|json_in_script_tag }}}
     window.STATIC_URL = '{% get_static_prefix %}'
   </script>
 {% endblock %}
