@@ -319,11 +319,18 @@ def _autocast_column(data: pyarrow.ChunkedArray) -> pyarrow.ChunkedArray:
         return data
     try:
         # Try to cast to numbers
-        numbers = pyarrow.chunked_array([pd.to_numeric(series).values])
+        number_values = pd.to_numeric(series).values
     except (ValueError, TypeError):
         return data
 
+    # pd.to_numeric("") gives np.nan. We want None. Use from_pandas=True.
+    number_array = pyarrow.array(number_values, from_pandas=True)
+    numbers = pyarrow.chunked_array([number_array])
+
     # Downcast integers, when possible.
+    #
+    # We even downcast float to int. Workbench semantics say a Number is a
+    # Number; so we might as well store it efficiently.
     try:
         # Shrink as far as we can, until pyarrow complains.
         #

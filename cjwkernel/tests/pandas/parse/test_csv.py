@@ -71,7 +71,7 @@ class ParseCsvInternalTests(unittest.TestCase):
         # Column 2: [1, 2, x, 10] (should not convert)
         # Column 3: [2, 3, 7, 11] (should convert)
         # Column 4: [3, 4, 8, null] (should convert)
-        with _temp_csv("A,1,2,3\n1,2,3,4\n5,x,7,8\n9,10,11") as path:
+        with _temp_csv("A,1,2,3\n1,2,3,4\n5,x,7.1,8\n9,10,11") as path:
             result = _internal_parse_csv(
                 path, has_header=False, autoconvert_text_to_numbers=True
             )
@@ -82,9 +82,8 @@ class ParseCsvInternalTests(unittest.TestCase):
                         {
                             "Column 1": ["A", "1", "5", "9"],
                             "Column 2": ["1", "2", "x", "10"],
-                            "Column 3": pa.array([2, 3, 7, 11], pa.int8()),
-                            # Col 4 ought to be int8, but pandas to_numeric() foils us
-                            "Column 4": pa.array([3, 4, 8, np.nan], pa.float64()),
+                            "Column 3": pa.array([2, 3, 7.1, 11], pa.float64()),
+                            "Column 4": pa.array([3, 4, 8, None], pa.int8()),
                         }
                     ),
                     [],
@@ -128,7 +127,7 @@ class ParseCsvInternalTests(unittest.TestCase):
                     pa.table(
                         {
                             "A": ["a", "b", "c"],
-                            "B": pa.array([np.nan, np.nan, np.nan], pa.float64()),
+                            "B": pa.array([None, None, None], pa.int8()),
                         }
                     ),
                     [],
