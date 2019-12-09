@@ -35,7 +35,7 @@ consumed while parsing a CSV. (RAM fragmentation leads us to consume more
 than this in the worst case.)
 """
 
-MAX_BYTES_TEXT_DATA = 1 * 1024 * 1024  # 1GB
+MAX_BYTES_TEXT_DATA = 1 * 1024 * 1024 * 1024  # 1GB
 """
 Maximum number of bytes of UTF-8 text data to hold in memory.
 
