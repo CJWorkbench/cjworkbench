@@ -4,7 +4,6 @@ import WfHamburgerMenu from '../WfHamburgerMenu'
 import { Trans } from '@lingui/macro'
 import { currentLocale } from '../i18n/locales'
 
-
 function getActiveSection () {
   return window.location.pathname.startsWith('/workflows') ? 'workflows' : 'lessons'
 }
