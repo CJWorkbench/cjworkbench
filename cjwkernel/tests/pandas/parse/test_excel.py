@@ -61,3 +61,34 @@ class ParseOtherTests(unittest.TestCase):
                 )
             ],
         )
+
+    def test_xlsx_nix_control_characters_from_colnames(self):
+        path = TestDataPath / "headers-have-control-characters.xlsx"
+        with tempfile_context(suffix=".arrow") as output_path:
+            result = parse_xlsx_file(
+                path, output_path=output_path, has_header=True, autoconvert_types=False
+            )
+        assert_arrow_table_equals(result.table, {"AB": ["a"], "C": ["b"]})
+        self.assertEqual(result.errors, [])
+
+    def test_xlsx_uniquify_colnames(self):
+        path = TestDataPath / "headers-have-duplicate-colnames.xlsx"
+        with tempfile_context(suffix=".arrow") as output_path:
+            result = parse_xlsx_file(
+                path, output_path=output_path, has_header=True, autoconvert_types=False
+            )
+        # Should be:
+        # assert_arrow_table_equals(result.table, {"A": ["a"], "A 2": ["b"]})
+        assert_arrow_table_equals(result.table, {"A": ["a"], "A.1": ["b"]})
+        self.assertEqual(result.errors, [])
+
+    def test_xlsx_replace_empty_colnames(self):
+        path = TestDataPath / "headers-empty.xlsx"
+        with tempfile_context(suffix=".arrow") as output_path:
+            result = parse_xlsx_file(
+                path, output_path=output_path, has_header=True, autoconvert_types=False
+            )
+        # Should be:
+        # assert_arrow_table_equals(result.table, {"A": ["a"], "Column 2": ["b"]})
+        assert_arrow_table_equals(result.table, {"A": ["a"], "Unnamed: 1": ["b"]})
+        self.assertEqual(result.errors, [])
