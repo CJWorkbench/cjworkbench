@@ -1,0 +1,56 @@
+<header>
+  <h1>VII. Συλλογή πολλαπλών σελίδων από έναν ιστότοπο</h1>
+  <p>Συλλέξτε μια λίστα ή έναν πίνακα που αναπτύσσεται σε πολλές σελίδες</p><img src="./banner.svg" alt=""></header>
+<section class="fullscreen">
+  <h2>Επισκόπηση</h2>
+  <p>Ας υποθέσουμε ότι θέλουμε να συλλέξουμε αυτή τη λίστα των οικονομικών εκθέσεων από την πολιτειακή αρχή του Κολοράντο (<a href="https://leg.colorado.gov/audit-search" class="highlight" target="_blank">Colorado state government</a>). Στο μάθημα <a href="https://app.workbenchdata.com/lessons/scrape-using-xpath" class="highlight">Συλλογή περιεχομένου από ιστοσελίδα και παρακολούθησή του</a> μάθαμε να απομονώνουμε τους τίτλους, την ημερομηνία έκδοσης και τους αριθμούς των εκθέσεων χρησιμοποιώντας το SelectorGadget.</p>
+  <p>Υπάρχει ωστόσο ένα πρόβλημα:</p>
+  <figure><img class="full-width" alt="Εξέταση στοιχείου" src="./multiple-pages.svg"></figure>
+  <p>Η λίστα αυτή καλύπτει πολλές σελίδες, στις οποίες έχουμε πρόσβαση με το κουμπί Επόμενο στο κάτω μέρος. Αν επικολλήσουμε τη διεύθυνση <code>https://leg.colorado.gov/audit-search</code> στη <b>Συλλογή HTML</b>, θα πάρουμε μόνο την πρώτη σελίδα των αποτελεσμάτων.</p>
+  <p class="instruction-detail">Ευτυχώς, είναι δυνατή η συλλογή περιεχομένου από πολλαπλές σελίδες αν ο αριθμός σελίδας περιέχεται στη διεύθυνση URL.</p>
+</section>
+<section>
+  <h2>Συλλογή HTML από πολλαπλές σελίδες</h2>
+  <p>Μεταβείτε στη <a href="https://leg.colorado.gov/audit-search" target="_blank" class="highlight">σελίδα</a> και πιέστε <kbd>Επόμενο</kbd> στο κάτω μέρος της σελίδας.</p>
+  <p>Παρατηρήστε ότι το URL αλλάζει σε: <br><code>https://leg.colorado.gov/audit-search?page=1</code><p>Όπως πολλοί ιστότοποι (αλλά όχι όλοι) αυτός ο ιστότοπος αρχίζει τη σελιδαρίθμηση από το μηδέν, οπότε, όταν πας στη δεύτερη σελίδα, η διεύθυνση URL τελειώνει με <code>page=1</code>.</p>
+  <h3 class="instructions">Οδηγίες</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"Module","index":0,"id_name":"urlscraper"}]'
+      data-test="
+        const wfm = workflow.tabs[0].wfModules[0]
+        return (
+          !!wfm
+          && wfm.moduleSlug === 'urlscraper'
+          && wfm.params.urlsource === 'paged'
+          && wfm.params.pagedurl === 'https://leg.colorado.gov/audit-search?page='
+          && wfm.params.addpagenumbers
+          && wfm.params.startpage === 0
+          && wfm.params.endpage === 9
+        )
+      "
+    >Προσθέστε τον <kbd>Συλλέκτη HTML</kbd> και επικολλήστε τη διεύθυνση URL χωρίς τον αριθμό σελίδας στο πεδίο  <kbd>URL</kbd> . Τσεκάρετε το κουτάκι με την ένδειξη <kbd>Σειρά αριθμημένων σελίδων</kbd> και συλλέξτε τις σελίδες από <kbd>0</kbd> έως <kbd>9</kbd> (Το όριο είναι 10 σελίδες.) Πατήστε  <kbd>Συλλογή</kbd>.<figure><img alt="Εξέταση στοιχείου" src="./url-numbers.svg"></figure>
+    </li>
+  </ol>
+</section>
+<section>
+  <h2>Εξαγωγή δεδομένων από πολλαπλές σελίδες HTML</h2>
+  <p>Το Workbench κατέβασε ένα αρχείο HTML ανά σελίδα (κάτι που μπορεί να πήρε μερικά λεπτά) και δημιούργησε έναν πίνακα με μια σειρά για κάθε σελίδα.</p>
+  <ul>
+    <li><kbd>URL</kbd>: Ποια URL συλλέχθηκαν</li>
+    <li><kbd>Ημερομηνία</kbd>: Πότε συλλέχθηκαν</li>
+    <li><kbd>Κατάσταση</kbd>: Καταγραφή κατάστασης Το <code>200</code> σημαίνει &quot;χωρίς σφάλματα&quot;</li>
+    <li><kbd>HTML</kbd>: Η ανεπεξέργαστη HTML</li>
+  </ul>
+  <p>Παραμένει η ανάγκη να κάνουμε εξαγωγή των πληροφοριών που θέλουμε από όλον αυτόν τον πηγαίο κώδικα. Αυτό μπορούμε να το κάνουμε με το <b>Από HTML σε πίνακα</b>. Θα συνδυάσει αυτόματα σε έναν πίνακα τα αποτελέσματα από όλες τις σελίδες.<p class="instruction-detail">Μάθετε πώς να χρησιμοποιείτε το <b>Από HTML σε πίνακα</b> και το XPath στο μάθημα:<br> <a href="/lessons/el/syllogh-me-xpath" class="highlight">Συλλέξτε περιεχόμενο από μια ιστοσελίδα και παρακολουθήστε το</a></section>
+<footer>
+  <h2>Το προϊόν της συλλογής είναι έτοιμο για την εξαγωγή δεδομένων.</h2>
+  <div class="next">
+    <h4>Συνεχίστε τα μαθήματα</h4>
+      <ul>
+        <li><a class="highlight" href="/lessons/el/prosarmosmenes-eidopoihseis/">Συλλέξτε περιεχόμενο από μια ιστοσελίδα και παρακολουθήστε το</a>.</li>
+        <li><a class="highlight" href="/lessons/el/prosarmosmenes-eidopoihseis/">Ορίστε προσαρμοσμένες ειδοποιήσεις</a> για να παίρνετε ηλ. μηνύματα όταν πληρούνται συγκεκριμένες συνθήκες.</li>
+        <li><a class="highlight" href="/lessons/el/kathariste-vromika-dedomena/">Καθαρίστε και τυποποιήστε δεδομένα</a>.</li>
+      </ul>
+  </div>
+</footer>

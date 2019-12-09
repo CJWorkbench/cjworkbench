@@ -1,0 +1,125 @@
+<header>
+  <h1>IV. Αναλύστε ζωντανά δεδομένα από το Twitter</h1>
+  <p>Δημιουργήστε ένα ζωντανό διάγραμμα για να οπτικοποιήσετε πόσο συχνά ένας συγκεκριμένος λογαριασμός τουιτάρει μια συγκεκριμένη λέξη </p><img src="./banner.svg" alt=""></header>
+<section>
+  <h2>Επισκόπηση</h2>
+  <p>Σε αυτό το μάθημα θα μάθετε πώς να χρησιμοποιήσετε το Twitter API για να φορτώσετε τουίτ και συσχετισμένα μεταδεδομένα από τον λογαριασμό κάποιου χρήστη.</p>
+  <p>Στη συνέχεια, θα χρησιμοποιήσετε αυτά τα μεταδεδομένα για να μάθετε πόσο συχνά ο λογαριασμός τουιτάρει μια συγκεκριμένη λέξη και να οπτικοποιήσετε το αποτέλεσμα σε ένα ζωντανό γράφημα που θα ενημερώνεται κάθε φορά που θα τουιτάρεται η λέξη-κλειδί.</p>
+</section>
+<section>
+<h2>1. Σύνδεση στον λογαριασμό σας στο Twitter</h2>
+<p>Θα χρειαστείτε έναν λογαριασμό στο Twitter για να παρακολουθήσετε αυτό το μάθημα. Αν δεν έχετε λογαριασμό, μπορείτε να τον δημιουργήσετε <a href="https://twitter.com/i/flow/signup?lang=en" class="highlight" target="_blank">εδώ</a>.</p>
+<h3 class="instructions">Οδηγίες</h3>
+<ol class="steps">
+  <li
+    data-highlight='[{"type":"Module","index":0,"id_name":"twitter"}]'
+    data-test="return workflow.tabs[0].wfModuleSlugs[0] === 'twitter'"
+    >Προσθέστε την πηγή δεδομένων &quot;Twitter&quot;</li>
+  <li
+    data-highlight='[{"type":"WfModule","id_name":"twitter"}]'
+    data-test="const cred = workflow.tabs[0].wfModules[0].params.twitter_credentials; return cred && cred.name && cred.name.indexOf('@') !== -1;"
+    >Κάνε κλικ στη <kbd>Σύνδεση λογαριασμού</kbd>. Στο ακόλουθο αναδυόμενο παράθυρο, κάντε κλικ στην <kbd>Εξουσιοδότηση εφαρμογής</kbd>.</li>
+
+</ol>
+</section>
+<section>
+<h2>2. Φορτώστε τουίτ από έναν λογαριασμό χρήστη</h2>
+<p>Θα ξεκινήσουμε φορτώνοντας τα πιο πρόσφατα τουίτ από τον λογαριασμό του <a class="highlight" href='https://en.wikipedia.org/wiki/Neil_deGrasse_Tyson' target="_blank" className="backToLessons info-1">Neil Degrasse Tyson</a>.</p>
+<h3 class="instructions">Οδηγίες</h3>
+<ol class="steps">
+  <li
+    data-highlight='[{"type":"WfModule","moduleIdName":"twitter"}]'
+    data-test="const params = workflow.tabs[0].wfModules[0].params; return params.querytype === 'user_timeline' && ['neiltyson', '@neiltyson'].indexOf(params.username) !== -1"
+    >Διαλέξτε &quot;Τουίτ χρήστη&quot; στο πρώτο αναπτυσσόμενο μενού και επικολλήστε το όνομα χρήστη<div class="copy-txt">neiltyson</div>
+  </li>
+  <li
+    data-highlight='[{"type":"WfModule","moduleIdName":"twitter"}]'
+    data-test="const param = workflow.tabs[0].wfModules[0].params.username; return (param || '').toLowerCase() === 'neiltyson'"
+    >Κάντε κλικ στην &quot;Ενημέρωση&quot; για να φορτώσετε τουίτ από τον συγκεκριμένο λογαριασμό.<p class="instruction-detail">Λόγω των περιορισμών του <a class="highlight" href='https://developer.twitter.com/en/docs/basics/rate-limiting.html' target="_blank" className="backToLessons info-1">Twitter API</a>, υπάρχει όριο στον αριθμό των τουίτ που μπορείτε να συλλέξετε από έναν συγκεκριμένο χρήστη. Θα πρέπει να μπορέσετε να φορτώσετε περίπου 3.000 τουίτ, που είναι μια καλή αρχή.</p>
+  </li>
+</ol>
+</section>
+<section>
+<h2>3. Φιλτράρισμα και ομαδοποίηση των τουίτ</h2>
+<p>Ας εξακριβώσουμε πόσο συχνά ο χρήστης μας χρησιμοποιεί τη συγκεκριμένη λέξη.</p>
+<h3 class="instructions">Οδηγίες</h3>
+<p class="instruction-detail">Πρώτα, φιλτράρουμε τα τουίτ για να ανακαλύψουμε ποια περιέχουν τη λέξη &quot;science&quot;.</p>
+<ol class="steps">
+  <li
+    data-highlight='[{"type":"Module","index":1,"id_name":"filter"}]'
+    data-test="return workflow.tabs[0].wfModuleSlugs[1] === 'filter'"
+    >Προσθέστε το βήμα &quot;Φιλτράρισμα βάσει συνθήκης&quot;.</li>
+  <li
+    data-highlight='[{"type":"WfModule","moduleIdName":"filter"}]'
+    data-test="
+      const filters = workflow.tabs[0].wfModules[1].params.filters.filters
+      if (filters.length !== 1 || filters[0].subfilters.length !== 1) return false
+      const subfilter = filters[0].subfilters[0]
+      return (
+        subfilter.colname === 'text'
+        && subfilter.condition === 'text_contains'
+        && subfilter.value.toLowerCase() === 'science'
+      )
+    "
+    >Επιλέξτε τη στήλη <kbd>text (κείμενο)</kbd> για το φιλτράρισμα. Επιλέξτε <kbd>Το κείμενο περιέχει</kbd> ως συνθήκη και αναζητήστε <code>science</code>.<p class="instruction-detail">Ας ομαδοποιήσουμε τώρα βάσει ημερομηνίας τα τουίτ που προέκυψαν.</p>
+  </li>
+  <li
+    data-highlight='[{"type":"Module","index":2,"id_name":"groupby"}]'
+    data-test="return workflow.tabs[0].wfModuleSlugs[2] === 'groupby'"
+    >Προσθέστε το βήμα &quot;Ομαδοποίηση&quot;.</li>
+  <li
+    data-highlight='[{"type":"WfModule","moduleIdName":"groupby"}]'
+    data-test="const params = workflow.tabs[0].wfModules[2].params; return params.groups.colnames.join('|') === 'created_at' && params.groups.group_dates && params.groups.date_granularities.created_at === 'Y' && params.aggregations.length === 1 && params.aggregations[0].operation === 'size' && params.aggregations[0].outname.toLowerCase() === 'number of tweets'"
+    >Επιλέξτε <kbd>created_at (που_δημιουργήθηκαν_στις)</kbd> ως στήλη ημερομηνίας. Τσεκάρετε την <kbd>Ομαδοποίηση ημερομηνιών</kbd> και ομαδοποιήστε τις σειρές <kbd>βάσει έτους</kbd>. Ορίστε το όνομα της στήλης εξόδου &quot;Count&quot; (Πλήθος) σε <code>Number of tweets</code></li>
+</ol>
+</section>
+<section>
+<h2>4. Οπτικοποίηση των τουίτ σε χρονογραμμή</h2>
+<p>Μπορούμε τώρα να τοποθετήσουμε τα τουίτ σε μια χρονογραμμή χρησιμοποιώντας ένα γράφημα στηλών.</p>
+<h3 class="instructions">Οδηγίες</h3>
+<ol class="steps">
+  <li
+    data-highlight='[{"type":"Module","index":3,"id_name":"linechart"}]'
+    data-test="return workflow.tabs[0].wfModuleSlugs[3] === 'linechart'"
+    >Προσθέστε το βήμα &quot;Γραμμικό γράφημα&quot;.</li>
+  <li
+    data-highlight='[{"type":"WfModule","moduleIdName":"linechart"}]'
+    data-test="const p = workflow.tabs[0].wfModules[3].params; return p.x_column === 'created_at' && (p.y_columns[0] && p.y_columns[0].column || '').toLowerCase() === 'number of tweets'"
+    >Επιλέξτε <kbd>created_at (που_δημιουργήθηκαν_στις)</kbd> για τον άξονα Χ και <kbd>Number of tweets (Αριθμός των τουίτ)</kbd> για τον άξονα Y.</li>
+  <li
+    data-highlight='[{"type":"WfModule","moduleIdName":"linechart"}]'
+    data-test="const p = workflow.tabs[0].wfModules[3].params; return !!p.title"
+    >Προσθέστε <kbd>τίτλο</kbd> στο γράφημα.<p class="instruction-detail">Στη συνέχεια, ας κάνουμε αυτό το γράφημα να ενημερώνεται κάθε φορά που τα τουίτ των χρηστών μας περιέχουν τη λέξη που επιλέξαμε.</p>
+  </li>
+</ol>
+</section>
+<section>
+  <h2>5. Αυτόματες ενημερώσεις</h2>
+  <p>Ας ορίσουμε ότι η ροή εργασίας θα ενημερώνεται όταν δημοσιεύονται νέα τουίτ.</p>
+  <h3 class="instructions">Οδηγίες</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"WfModule","moduleIdName":"twitter"}]'
+      data-test="const wfModule = workflow.tabs[0].wfModules[0]; return wfModule.updateInterval === '5h'"
+      >Πίσω στην ενότητα &quot;Twitter&quot;, κάνουμε κλικ στο <kbd>μη αυτόματο</kbd> για να ανοίξουμε το παράθυρο &quot;Ενημέρωση ροής εργασίας&quot;. Ορίστε τη λειτουργία στην επιλογή<kbd>Αυτόματο</kbd>, ορίστε τη συχνότητα σε <kbd>5 ώρες</kbd>, και κάντε κλικ στο <kbd>Εφαρμογή</kbd>.</li>
+    <li
+      data-highlight='[{"type":"WfModule","moduleIdName":"twitter"}]'
+      data-test="return workflow.tabs[0].wfModules[0].params.accumulate === true"
+      >Βεβαιωθείτε ότι η επιλογή <kbd>Συγκέντρωση τουίτ</kbd> είναι τσεκαρισμένη, έτσι ώστε να προστίθενται νέα δεδομένα στον υπάρχοντα πίνακα.</li>
+  </ol>
+</section>
+<footer>
+  <h2>Εδώ τελειώνει το μάθημα!</h2>
+  <div class="completed">
+    <p class="summary">Η ροή εργασίας είναι ενεργή! Αν και όταν δημοσιευτούν νέα τουίτ, θα ειδοποιηθείτε με ηλ. μήνυμα και τα βήματα θα ενημερωθούν για να αντικατοπτρίσουν τις αλλαγές των δεδομένων.</p>
+  </div>
+  <div class="next">
+    <h4>Επόμενο</h4>
+    <p>Αποκτήστε τον κώδικα ενσωμάτωσης για να δημοσιεύσετε το γράφημα κάνοντας κλικ στο κουμπί <img class="icon-insert" src="./embed_button.svg" /> στο επάνω δεξιό μέρος του πίνακα γραφημάτων.</p>
+    <h4>Συνεχίστε τα μαθήματα:</h4>
+    <ol>
+      <li><a href="/lessons/el/prosarmosmenes-eidopoihseis/">Παρακολουθήστε δεδομένα και ορίστε προσαρμοσμένες ειδοποιήσεις</a></li>
+      <li><a href="/lessons/el/kathariste-vromika-dedomena/">Συλλέξτε περιεχόμενο από μια ιστοσελίδα και παρακολουθήστε το</a></li>
+    </ol>
+  </div>
+</footer>

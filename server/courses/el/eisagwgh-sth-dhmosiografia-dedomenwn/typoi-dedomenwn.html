@@ -1,0 +1,105 @@
+<header>
+  <h1>Εισαγωγή στους τύπους δεδομένων.</h1>
+  <p>Η κατανόηση των τύπων δεδομένων είναι απαραίτητη. Ορισμένες λειτουργίες ισχύουν μόνο για συγκεκριμένους τύπους δεδομένων.</p><img src="./banner.svg" alt=""></header>
+
+<section class="fullscreen">
+  <h2>Εισαγωγή</h2>
+  <p>Οι τύποι των δεδομένων χρησιμοποιούνται για να πουν στον υπολογιστή πώς να ερμηνεύσει και να χρησιμοποιήσει τις τιμές.</p>
+  <p>Διαφορετικές στήλες μπορούν να περιέχουν διαφορετικούς τύπους: κείμενο, αριθμούς. ημερομηνίες, τοποθεσίες κ.λπ. Ορισμένες λειτουργίες ισχύουν μόνο για συγκεκριμένους τύπους δεδομένων. Για παράδειγμα, δεν μπορείτε να αφαιρέσετε κείμενο από έναν αριθμό.</p>
+  <p>Σε αυτό το μάθημα θα χρησιμοποιήσουμε δεδομένα σχετικά με συμβάντα που καταγράφονται από την αστυνομία της Πόλης της Νέας Υόρκης με σκοπό να μάθουμε πώς να μετατρέπουμε στήλες από έναν τύπο σε έναν άλλο.</p>
+</section><!-- Section 1 --><script id="initialWorkflow">
+tabs:
+- name: Lesson
+  wfModules:
+  - module: loadurl
+    slug: step-loadurl
+    params:
+      url: './nyc-incidents-2018.csv'
+    collapsed: true
+    note: "Source: City of New York."
+- name: Data dictionary
+  wfModules:
+  - module: loadurl
+    slug: step-loaddictionary
+    params:
+      url: './nypd-complaint-ytd-data-dictionary.csv'
+    collapsed: true
+    note: "Source: City of New York."
+</script>
+
+<section>
+  <h2>Δεδομένα</h2>
+  <p>Ο πίνακας που φορτώθηκε στο βήμα 1 περιγράφει όλα τα αδικήματα που καταγράφηκαν από την αστυνομία της Πόλης της Νέας Υόρκης για τους μήνες Ιανουάριο και Φεβρουάριο 2018. Το πρωτότυπο δημοσιεύτηκε <a class="highlight" href='https://data.cityofnewyork.us/Public-Safety/NYPD-Complaint-Data-Current-Year-To-Date-/5uac-w243/data' target="_blank" className="info-1">εδώ</a> μαζί με λεξικό δεδομένων.</p>
+  <p class="instruction-detail">Ας κάνουμε πάλι τις βασικές ερωτήσεις:</p>
+  <ul>
+    <li>Τι αντιπροσωπεύει κάθε σειρά;</li>
+    <li>Τι υπάρχει σε κάθε στήλη;</li>
+    <li>Υπάρχουν στήλες, τιμές ή κωδικοί που δεν καταλαβαίνετε;</li>
+    <li>Υπάρχουν κενές ή εμφανώς λανθασμένες τιμές;</li>
+    <li>Χρειάζεται να καθαριστούν τα δεδομένα;</li>
+  </ul>
+</section>
+<section>
+  <h2>Καθάρισμα</h2>
+  <p>Υπάρχουν πολλά που θα θέλατε να εξερευνήσετε σε αυτά τα δεδομένα. Στο επόμενο μάθημα θα εξετάσουμε ένα μεγάλο δείγμα και θα απαντήσουμε το ερώτημα: &quot;Πόσα συμβάντα καταγράφηκαν κάθε μήνα σε κάθε δήμο;&quot;</p>
+  <p>Προς το παρόν, ας το περιορίσουμε στις στήλες που χρειαζόμαστε και ας ορίσουμε σωστά τους τύπους των στηλών.</p>
+  <h3 class="instructions">Οδηγίες</h3>
+  <ol class="steps">
+    <li
+      data-test="
+        return workflow.tabs[0].wfModuleSlugs[1] === 'selectcolumns' &&
+               workflow.tabs[0].wfModules[1].params.colnames.sort().join('|') === 'boro_nm|cmplnt_fr_dt'"
+    >Προσθέστε την <kbd>Επιλογή στηλών</kbd>, και κρατήστε μόνο τις στήλες <kbd>boro_nm</kbd> και <kbd>cmplnt_fr_dt</kbd></li>
+    <li
+      data-test="
+        const wfm = workflow.tabs[0].wfModules[2]
+        return wfm && wfm.moduleSlug === 'renamecolumns' &&
+               !wfm.params.custom_list &&
+               wfm.params.renames.boro_nm.toLowerCase() === 'borough' &&
+               wfm.params.renames.cmplnt_fr_dt.toLowerCase() === 'complaint date'"
+      >Μετονομάστε αυτές τις δύο στήλες αντίστοιχα σε <kbd>Borough</kbd> (Δήμος) και <kbd>Complaint date</kbd> (Ημερομηνία καταγγελίας).<p class="instruction-detail">Πριν προχωρήσουμε, ας μάθουμε λίγα πράγματα ακόμα για τους τύπους δεδομένων.</p>
+    </li>
+  </ol>
+</section>
+<section class="fullscreen">
+  <h2>Τύποι δεδομένων</h2>
+  <p>Το Workbench υποστηρίζει τρεις τύπους δεδομένων. Ο τύπος κάθε στήλης εμφανίζεται κάτω από το όνομα της στήλης:</p>
+  <figure><img class="half-width" alt="Εξέταση στοιχείου" src="./type-header.png"></figure>
+  <h3>Κείμενο</h3>
+  <p>Γνωστός και σαν &quot;συμβολοσειρά&quot; ή &quot;αλφαριθμητικό&quot;, αυτός ο τύπος μπορεί να περιέχει οποιονδήποτε χαρακτήρα και μπορεί να έχει οποιοδήποτε μήκος. Το κείμενο είναι ό,τι πρέπει για ονόματα, περιγραφές, σημειώσεις και κατηγορίες.</p>
+  <h3>Αριθμός</h3>
+  <p>Αυτός ο τύπος χρησιμοποιείται για ακέραιους αριθμούς (π.χ. 8, 22 ή 268) και δεκαδικούς (π.χ. 1.5 ή 3.14). Οι αριθμοί είναι ό,τι πρέπει για ταξινόμηση και αριθμητικές πράξεις,</p>
+  <h3>Ημερομηνία &amp; ώρα</h3>
+  <p>Αυτός ο τύπος αποθηκεύει τον χρόνο με ακρίβεια νανοδευτερολέπτου, Τα δεδομένα τύπου ημερομηνία &amp; ώρα είναι κατάλληλα για την ταξινόμηση και ομαδοποίηση δεδομένων.</p>
+  <p>Μια τιμή τύπου &quot;Ημερομηνία και ώρα&quot; μπορεί να γραφτεί με διαφορετικές μορφές, όπως &quot;23 January 2019 11:42&quot;. Προς το παρόν, η ημερομηνία και ώρα στο Workbench εμφανίζεται με τη μορφή &quot;2019&ndash;01-23 11:42:00&quot;.</p>
+  <p>Το Workbench δεν υποστηρίζει ακόμη ζώνες ώρας.</p>
+</section>
+<section>
+  <h2>Μετατροπή ημερομηνιών</h2>
+  <p>Αν και η στήλη <kbd>Complaint date (Ημερομηνία καταγγελίας)</kbd> μοιάζει με ημερομηνία, μπορείτε να δείτε ότι έχει φορτωθεί σαν κείμενο.</p>
+  <figure class="half-width"><img alt="Εξέταση στοιχείου" src="./type.png"></figure>
+  <p>Ας καθαρίσουμε αυτά τα δεδομένα ορίζοντας τον τύπο της στήλης <kbd>Complaint date</kbd> σε ημερομηνία &amp; ώρα.</p>
+  <h3 class="instructions">Οδηγίες</h3>
+  <ol class="steps">
+    <li
+      data-test="
+        const wfm = workflow.tabs[0].wfModules[3]
+        return wfm && wfm.moduleSlug === 'convert-date' &&
+               wfm.params.colnames.join('|').toLowerCase() === 'complaint date'
+               && wfm.params.input_format === 'auto'"
+      >Στο μενού στήλης<span><img class="icon-insert" src="images/lesson-icons/menu.svg"></span> για τη στήλη <kbd>Complaint date</kbd> επιλέξτε <kbd>Μετατροπή σε ημερομηνία &amp; ώρα</kbd>. Αυτό θα προσθέσει ένα ακόμα βήμα μετατροπής.<p class="instruction-detail">Τώρα η στήλη αυτή είναι του τύπου &quot;Ημερομηνία &amp; ώρα&quot;. Θα χρησιμοποιήσουμε αυτή την τακτοποιημένη στήλη στο επόμενο μάθημα.</p>
+    </li>
+  </ol>
+</section>
+<footer>
+  <h2>Εδώ τελειώνει το μάθημα!</h2>
+  <div class="completed">
+    <p class="summary">Στο επόμενο, θα μάθουμε για την ομαδοποίηση βάσει ημερομηνιών και την ομαδοποίηση με πολλές στήλες.</p>
+  </div>
+  <div class="next">
+    <h2>Επόμενο</h2>
+    <ol>
+      <li><a href="omadopoihsh-hmeromhniwn">Ομαδοποίηση βάσει ημερομηνιών</a></li>
+    </ol>
+  </div>
+</footer>

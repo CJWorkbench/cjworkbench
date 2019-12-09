@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="187px" height="35px" viewBox="0 0 187 35" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 53.2 (72643) - https://sketchapp.com -->
+    <title>Lesson-3</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="31.1819672%" y1="50%" x2="119.702609%" y2="50%" id="linearGradient-1">
+            <stop stop-color="#7DD9E4" offset="0%"></stop>
+            <stop stop-color="#0C93C0" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Lesson-3" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <rect id="Rectangle-Copy" fill="url(#linearGradient-1)" x="0" y="0" width="187" height="45"></rect>
+        <g id="Group-3" transform="translate(10.000000, 9.000000)" fill="#FFFFFF">
+            <g id="Icon-/-line-chart-/-white" transform="translate(85.000000, 0.000000)">
+                <g id="Group-2" stroke-width="1" transform="translate(1.200000, 13.200000)">
+                    <g id="Group" transform="translate(0.694737, 0.694737)">
+                        <polygon id="Rectangle-path" points="0 0.631578947 14.2105263 0.631578947 14.2105263 2.05856518 0 2.05856518"></polygon>
+                    </g>
+                </g>
+                <polygon id="Path-13" points="1.89600005 9.3911499 2.87952515 10.8966312 6.57661321 8.55791016 11.0874519 11.9904602 16.1040002 3.28939819 14.5169116 2.4 10.5430096 9.30534668 6.68072774 6.3694519"></polygon>
+            </g>
+            <g id="Icon-/-Chart-/-white" transform="translate(0.000000, 1.000000)">
+                <g id="Group-2" transform="translate(1.133333, 1.133333)">
+                    <g id="Group" transform="translate(0.656140, 0.656140)">
+                        <polygon id="Rectangle-path" points="7.45614035 1.54040979 9.69298246 1.54040979 9.69298246 10.0759015 7.45614035 10.0759015"></polygon>
+                        <rect id="Rectangle-path" x="11.1842105" y="0" width="2.23684211" height="10.3324373"></rect>
+                        <polygon id="Rectangle-path" points="0 11.9298246 13.4210526 11.9298246 13.4210526 13.2775338 0 13.2775338"></polygon>
+                        <polygon id="Rectangle-path" points="0 2.98245614 2.23684211 2.98245614 2.23684211 10.1702386 0 10.1702386"></polygon>
+                        <rect id="Rectangle-path" x="3.72807018" y="4.23582823" width="2.23684211" height="5.84007328"></rect>
+                    </g>
+                </g>
+            </g>
+            <g id="Icon/Transpose/white" transform="translate(45.500000, 3.000000)">
+                <g id="gray">
+                    <polygon id="Path" fill-rule="nonzero" points="2.99565217 3.97267081 9.39103736 3.97267081 9.39103736 6.95217391 13 3.5348287 9.39103736 0 9.39103736 2.97950311 2.99565217 2.97950311"></polygon>
+                    <polygon id="Path" fill-rule="nonzero" points="3.97267081 3.50434783 3.97267081 9.3927708 6.95217391 9.3927708 3.5348287 13 0 9.3927708 2.97950311 9.3927708 2.97950311 3.50434783"></polygon>
+                </g>
+            </g>
+        </g>
+        <g id="Group-2" transform="translate(35.250000, 14.000000)" fill="#FFFFFF">
+            <rect id="Rectangle-3-Copy-5" x="3.2" y="0.186666667" width="1.49333333" height="7.46666667"></rect>
+            <polygon id="Rectangle-3-Copy-4" transform="translate(3.946667, 3.733333) rotate(-270.000000) translate(-3.946667, -3.733333) " points="3.2 -4.59780362e-14 4.69333333 -4.59780362e-14 4.69333333 7.46666667 3.2 7.46666667"></polygon>
+        </g>
+        <g id="Group-2-Copy" transform="translate(78.750000, 14.000000)" fill="#FFFFFF">
+            <rect id="Rectangle-3-Copy-5" x="3.2" y="0.186666667" width="1.49333333" height="7.46666667"></rect>
+            <polygon id="Rectangle-3-Copy-4" transform="translate(3.946667, 3.733333) rotate(-270.000000) translate(-3.946667, -3.733333) " points="3.2 -4.57411886e-14 4.69333333 -4.57411886e-14 4.69333333 7.46666667 3.2 7.46666667"></polygon>
+        </g>
+    </g>
+</svg>
