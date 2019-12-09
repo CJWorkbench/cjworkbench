@@ -187,14 +187,14 @@ class ReadPydictTests(unittest.TestCase):
                 },
             )
 
-    def test_pydict_nan(self):
+    def test_pydict_nan_and_none(self):
         with parquet_file(
             {"A": pa.array([1.1, float("nan"), None], pa.float64())}
         ) as path:
             result = parquet.read_pydict(path, range(1), range(3))
             self.assertEqual(result["A"][0], 1.1)
             self.assert_(math.isnan(result["A"][1]))
-            self.assert_(math.isnan(result["A"][2]))
+            self.assertIsNone(result["A"][2])
 
     def test_pydict_ignore_missing_columns(self):
         with parquet_file({"A": [1]}) as path:
