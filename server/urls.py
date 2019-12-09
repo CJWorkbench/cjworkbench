@@ -18,34 +18,46 @@ urlpatterns = [
     url(r"^$", redirect("/workflows")),
     # list all workflows
     url(r"^workflows/$", workflows.Index.as_view(), name="workflows"),
-    url(r"^lessons/?$", redirect("/lessons/en")),
-    url(r"^lessons/(?P<locale_id>[a-z]+)$", lessons.render_lesson_list),
-    url(r"^lessons/(?P<locale_id>[a-z]+)/$", redirect("/lessons/%(locale_id)s")),
+    # lessons and courses
+    url(r"^lessons/(?P<locale_id>[a-z]{2})$", lessons.render_lesson_list),
+    url(r"^lessons/(?P<locale_id>[a-z]{2})/$", redirect("/lessons/%(locale_id)s")),
     url(
-        r"^lessons/(?P<locale_id>[a-z]+)/(?P<slug>[-a-z0-9]+)$",
+        r"^lessons/(?P<locale_id>[a-z]{2})/(?P<slug>[-a-z0-9]+)$",
         lessons.render_lesson_detail,
     ),
     url(
-        r"^lessons/(?P<locale_id>[a-z]+)/(?P<slug>[-a-z0-9]+)/$",
+        r"^lessons/(?P<locale_id>[a-z]{2})/(?P<slug>[-a-z0-9]+)/$",
         redirect("/lessons/%(locale_id)s/%(slug)s"),
     ),
-    url(r"^courses/?$", redirect("/lessons/en")),
-    url(r"^courses/(?P<locale_id>[a-z]+)/?$", redirect("/lessons/%(locale_id)s")),
+    url(r"^courses/(?P<locale_id>[a-z]{2})/?$", redirect("/lessons/%(locale_id)s")),
     url(
-        r"^courses/(?P<locale_id>[a-z]+)/(?P<course_slug>[-\w]+)$",
+        r"^courses/(?P<locale_id>[a-z]{2})/(?P<course_slug>[-\w]+)$",
         lessons.render_course,
     ),
     url(
-        r"^courses/(?P<locale_id>[a-z]+)/(?P<course_slug>[-\w]+)/$",
+        r"^courses/(?P<locale_id>[a-z]{2})/(?P<course_slug>[-\w]+)/$",
         redirect("/courses/%(course_slug)s"),
     ),
     url(
-        r"^courses/(?P<locale_id>[a-z]+)/(?P<course_slug>[-\w]+)/(?P<lesson_slug>[-\w]+)$",
+        r"^courses/(?P<locale_id>[a-z]{2})/(?P<course_slug>[-\w]+)/(?P<lesson_slug>[-\w]+)$",
         lessons.render_course_lesson_detail,
     ),
     url(
-        r"^courses/(?P<locale_id>[a-z]+)/(?P<course_slug>[-\w]+)/(?P<lesson_slug>[-\w]+)/$",
+        r"^courses/(?P<locale_id>[a-z]{2})/(?P<course_slug>[-\w]+)/(?P<lesson_slug>[-\w]+)/$",
         redirect("/courses/%(course_slug)s/%(lesson_slug)s"),
+    ),
+    # backwards-compat URLs: /courses/intro-to-data-journalism, /lessons/scrape-using-xpath
+    url(r"^courses/?$", redirect("/lessons/en")),
+    url(
+        r"^courses/(?P<course_slug>[-\w]+)/?$", redirect("/courses/en/%(course_slug)s")
+    ),
+    url(
+        r"^courses/(?P<course_slug>[-\w]+)/(?P<lesson_slug>[-\w]+)/?$",
+        redirect("/courses/en/%(course_slug)s/%(lesson_slug)s"),
+    ),
+    url(r"^lessons/?$", redirect("/lessons/en")),
+    url(
+        r"^lessons/(?P<lesson_slug>[-\w]+)/?$", redirect("/lessons/en/%(lesson_slug)s")
     ),
     # workflows
     url(
