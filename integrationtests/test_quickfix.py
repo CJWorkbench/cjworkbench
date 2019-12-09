@@ -5,7 +5,7 @@ class TestQuickFix(LoggedInIntegrationTest):
     def _blur(self):
         self.browser.click_whatever(".module-name", text="Paste data")
 
-    def _create_simple_workflow(self, *, csv_data, expected_colname_and_type):
+    def _create_simple_workflow(self, *, csv_data, expected_colnames_and_types):
         b = self.browser
 
         b.click_button("Create Workflow")
@@ -20,7 +20,8 @@ class TestQuickFix(LoggedInIntegrationTest):
         self.submit_wf_module()
 
         # Wait for table to load
-        b.assert_element(".column-key", text=expected_colname_and_type, wait=True)
+        for expected_colname_and_type in expected_colnames_and_types:
+            b.assert_element(".column-key", text=expected_colname_and_type, wait=True)
 
     def test_quick_fix_convert_to_date(self):
         """
@@ -29,7 +30,7 @@ class TestQuickFix(LoggedInIntegrationTest):
         # https://www.pivotaltracker.com/story/show/160700316
         self._create_simple_workflow(
             csv_data="A,B\n2012-01-01,1\n2012-02-03,3\n2012-01-01,2",
-            expected_colname_and_type="A text",
+            expected_colnames_and_types=["A text"],
         )
 
         self.import_module("converttodate")
@@ -65,7 +66,7 @@ class TestQuickFix(LoggedInIntegrationTest):
 
         # "Accidentally" create a column, 'Num' of type Text.
         self._create_simple_workflow(
-            csv_data="T,Num\nX,$1\nY,$2\nZ,$3", expected_colname_and_type="T text"
+            csv_data="T,Num\nX,$1\nY,$2\nZ,$3", expected_colnames_and_types=["T text"]
         )
 
         # Try to format numbers. (It won't work because the input is text.)
@@ -91,3 +92,39 @@ class TestQuickFix(LoggedInIntegrationTest):
         # Now, the "Format numbers" module will have the correct output.
         b.click_whatever(".module-name", text="Format numbers")
         b.assert_element(".cell-number", text="$2.00", wait=True)
+
+    def test_multiple_errors_with_quick_fix(self):
+        b = self.browser
+
+        # "Accidentally" create two column, 'Num' and 'Num2', of type Text.
+        self._create_simple_workflow(
+            csv_data="T,Num1,Num2\nX,$1,$3\nY,$2,$5\nZ,$3,$7",
+            expected_colnames_and_types=["Num1 text", "Num2 text"],
+        )
+
+        # 'Accidentally' convert 'Num2' to Date & Time.
+        self.import_module("converttodate")
+        self.add_wf_module("Convert to date & time")
+        self.select_column("Convert to date & time", "colnames", "Num2")
+        self.submit_wf_module()
+
+        # Try to format numbers. (It won't work because the inputs are text and datetime.)
+        self.add_wf_module("Format numbers")
+        self.select_column("Format numbers", "colnames", "Num1")
+        self.select_column("Format numbers", "colnames", "Num2")
+        b.select("format", "Currency")
+        self.submit_wf_module()
+
+        # Wait for errors
+        b.assert_element(
+            ".wf-module-error-msg",
+            text="The column “Num1” must be converted from Text to Numbers.",
+            wait=True,
+        )
+        b.assert_element("button", text="Convert Text to Numbers")
+        b.assert_element(
+            ".wf-module-error-msg",
+            text="The column “Num2” must be converted from Dates & Times to Numbers.",
+            wait=True,
+        )
+        b.assert_element("button", "Convert Dates & Times to Numbers")
