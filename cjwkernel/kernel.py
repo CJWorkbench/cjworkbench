@@ -3,13 +3,15 @@ import io
 import logging
 import marshal
 import os
+import os.path
 from pathlib import Path
+import pyspawner
 import selectors
 import time
-from typing import Any, Dict, Optional
-import thrift.protocol
-import thrift.transport
-from cjwkernel.forkserver import Forkserver
+from typing import Any, Dict, List, Optional
+import thrift.protocol.TBinaryProtocol
+import thrift.transport.TTransport
+from cjwkernel.chroot import ChrootContext, READONLY_CHROOT_DIR
 from cjwkernel.errors import ModuleCompileError, ModuleTimeoutError, ModuleExitedError
 from cjwkernel.thrift import ttypes
 from cjwkernel.types import (
@@ -21,7 +23,7 @@ from cjwkernel.types import (
     RenderResult,
     Tab,
 )
-from cjwkernel.validate import validate
+from cjwkernel.validate import ValidateError
 
 
 logger = logging.getLogger(__name__)
@@ -34,6 +36,13 @@ LOG_BUFFER_MAX_BYTES = 100 * 1024  # waaaay too much log output
 OUTPUT_BUFFER_MAX_BYTES = (
     2 * 1024 * 1024
 )  # a huge migrate_params() return value, perhaps?
+
+# Import all encodings. Some modules (e.g., loadurl) encounter weird stuff
+ENCODING_IMPORTS = [
+    "encodings." + p.stem
+    for p in Path("/usr/local/lib/python3.7/encodings").glob("*.py")
+    if p.stem not in {"cp65001", "mbcs", "oem"}  # un-importable
+]
 
 
 @dataclass
@@ -107,7 +116,7 @@ class Kernel:
     the entire process must be killed: otherwise, the module may leak one
     workflow's data into another workflow (intentionally or not).
 
-    The solution: "forkserver". One "forkserver" process loads 100MB of Python
+    The solution: "pyspawner". One "pyspawner" process loads 100MB of Python
     deps and then idles. The "compile" method compiles a user's module, then
     forks and evaluates it in a child process to ensure sanity. The
     "migrate_params", "render" and "fetch" methods fork, evaluate the user's
@@ -129,35 +138,101 @@ class Kernel:
         self.migrate_params_timeout = migrate_params_timeout
         self.fetch_timeout = fetch_timeout
         self.render_timeout = render_timeout
-        self._forkserver = Forkserver(
-            module_main="cjwkernel.pandas.main.main",
-            forkserver_preload=[
+        self._pyspawner = pyspawner.Client(
+            child_main="cjwkernel.pandas.main.main",
+            environment={
+                # SECURITY: children inherit these values
+                "LANG": "C.UTF-8",
+                "HOME": "/",
+                # [adamhooper, 2019-10-19] rrrgh, OpenBLAS....
+                #
+                # If we preload numpy, we're in trouble. Numpy loads OpenBLAS,
+                # and OpenBLAS starts a whole threading subsystem ... which
+                # breaks fork() in our modules. (We use fork() to open Parquet
+                # files....) OPENBLAS_NUM_THREADS=1 disables the thread pool.
+                #
+                # I'm frustrated.
+                "OPENBLAS_NUM_THREADS": "1",
+            },
+            preload_imports=[
+                "_strptime",
+                "abc",
                 "asyncio",
+                "base64",
+                "collections",
+                "concurrent",
+                "concurrent.futures",
+                "concurrent.futures.thread",
                 "dataclasses",
+                "datetime",
+                "enum",
+                "functools",
+                "inspect",
+                "itertools",
+                "json",
+                "math",
+                "multiprocessing",
+                "multiprocessing.connection",
+                "multiprocessing.popen_fork",
+                "os.path",
                 "re",
+                "sqlite3",
+                "ssl",
+                "string",
                 "typing",
+                "urllib.parse",
+                "warnings",
                 "aiohttp",
+                "bs4",
                 "formulas",
+                "formulas.functions.operators",
                 "formulas.parser",
+                "html5lib",
+                "html5lib.constants",
+                "html5lib.filters",
+                "html5lib.filters.whitespace",
+                "html5lib.treewalkers.etree",
+                "idna.uts46data",
+                "lxml",
+                "lxml.etree",
+                "lxml.html",
+                "lxml.html.html5parser",
+                "networkx",
                 "numpy",
                 "nltk",
+                "nltk.corpus",
+                "nltk.sentiment.vader",
                 "oauthlib",
                 "oauthlib.oauth1",
                 "oauthlib.oauth2",
                 "pandas",
+                "pandas.core",
+                "pandas.core.apply",
+                "pandas.core.computation.expressions",
+                "pandas.core.groupby.categorical",
                 "pyarrow",
+                "pyarrow.pandas_compat",
                 "pyarrow.parquet",
                 "re2",
                 "requests",
+                "schedula.dispatcher",
+                "schedula.utils.blue",
+                "schedula.utils.sol",
+                "thrift.protocol.TBinaryProtocol",
+                "thrift.transport.TTransport",
                 "xlrd",
                 "yajl",
                 "cjwkernel.pandas.main",
                 "cjwkernel.pandas.module",
+                "cjwkernel.pandas.moduleutils",
+                "cjwkernel.pandas.parse",
+                "cjwkernel.parquet",
+                *ENCODING_IMPORTS,
             ],
         )
 
     def __del__(self):
-        self._forkserver.close()
+        self._pyspawner.close()
 
     def compile(self, path: Path, module_slug: str) -> CompiledModule:
         """
@@ -183,28 +258,37 @@ class Kernel:
 
     def _validate(self, compiled_module: CompiledModule) -> None:
         self._run_in_child(
-            compiled_module,
-            self.validate_timeout,
-            ttypes.ValidateModuleResult(),
-            "validate_thrift",
+            chroot_dir=READONLY_CHROOT_DIR,
+            network_config=None,
+            compiled_module=compiled_module,
+            timeout=self.validate_timeout,
+            result=ttypes.ValidateModuleResult(),
+            function="validate_thrift",
+            args=[],
         )
 
     def migrate_params(
         self, compiled_module: CompiledModule, params: Dict[str, Any]
     ) -> None:
+        """
+        Call a module's migrate_params().
+        """
         request = RawParams(params).to_thrift()
         response = self._run_in_child(
-            compiled_module,
-            self.migrate_params_timeout,
-            ttypes.RawParams(),
-            "migrate_params_thrift",
-            request,
+            chroot_dir=READONLY_CHROOT_DIR,
+            network_config=None,
+            compiled_module=compiled_module,
+            timeout=self.migrate_params_timeout,
+            result=ttypes.RawParams(),
+            function="migrate_params_thrift",
+            args=[request],
         )
         return RawParams.from_thrift(response).params
 
     def render(
         self,
         compiled_module: CompiledModule,
+        chroot_context: ChrootContext,
         basedir: Path,
         input_table: ArrowTable,
         params: Params,
@@ -212,31 +296,52 @@ class Kernel:
         fetch_result: Optional[FetchResult],
         output_filename: str,
     ) -> RenderResult:
+        """
+        Run the module's `render_thrift()` function and return its result.
+
+        Raise ModuleError if the module has a bug.
+        """
+        chroot_dir = chroot_context.chroot.root
+        basedir_seen_by_module = Path("/") / basedir.relative_to(chroot_dir)
         request = ttypes.RenderRequest(
-            str(basedir),
+            str(basedir_seen_by_module),
             input_table.to_thrift(),
             params.to_thrift(),
             tab.to_thrift(),
             None if fetch_result is None else fetch_result.to_thrift(),
             output_filename,
         )
-        result = self._run_in_child(
-            compiled_module,
-            self.render_timeout,
-            ttypes.RenderResult(),
-            "render_thrift",
-            request,
-        )
-        # RenderResult.from_thrift() verifies all filenames passed by the
-        # module are in the directory the module has access to.
-        render_result = RenderResult.from_thrift(result, basedir)
-        if render_result.table.table is not None:
-            validate(render_result.table.table, render_result.table.metadata)
+        try:
+            with chroot_context.writable_file(basedir / output_filename):
+                result = self._run_in_child(
+                    chroot_dir=chroot_dir,
+                    network_config=pyspawner.NetworkConfig(),  # TODO disallow networking
+                    compiled_module=compiled_module,
+                    timeout=self.render_timeout,
+                    result=ttypes.RenderResult(),
+                    function="render_thrift",
+                    args=[request],
+                )
+        finally:
+            chroot_context.clear_unowned_edits()
+
+        if result.table.filename and result.table.filename != output_filename:
+            raise ModuleExitedError(0, "Module wrote to wrong output file")
+
+        try:
+            # RenderResult.from_thrift() verifies all filenames passed by the
+            # module are in the directory the module has access to. It assumes
+            # the Arrow file (if there is one) is untrusted, so it can raise
+            # ValidateError
+            render_result = RenderResult.from_thrift(result, basedir)
+        except ValidateError as err:
+            raise ModuleExitedError(0, "Module produced invalid data: %s" % str(err))
         return render_result
 
     def fetch(
         self,
         compiled_module: CompiledModule,
+        chroot_context: ChrootContext,
         basedir: Path,
         params: Params,
         secrets: Dict[str, Any],
@@ -244,31 +349,54 @@ class Kernel:
         input_parquet_filename: str,
         output_filename: str,
     ) -> FetchResult:
+        """
+        Run the module's `fetch_thrift()` function and return its result.
+
+        Raise ModuleError if the module has a bug.
+        """
+        chroot_dir = chroot_context.chroot.root
+        basedir_seen_by_module = Path("/") / basedir.relative_to(chroot_dir)
         request = ttypes.FetchRequest(
-            str(basedir),
+            str(basedir_seen_by_module),
             params.to_thrift(),
             RawParams(secrets).to_thrift(),
             None if last_fetch_result is None else last_fetch_result.to_thrift(),
             input_parquet_filename,
             output_filename,
         )
-        result = self._run_in_child(
-            compiled_module,
-            self.fetch_timeout,
-            ttypes.FetchResult(),
-            "fetch_thrift",
-            request,
-        )
-        # TODO ensure result is truncated
+        try:
+            with chroot_context.writable_file(basedir / output_filename):
+                result = self._run_in_child(
+                    chroot_dir=chroot_dir,
+                    network_config=pyspawner.NetworkConfig(),
+                    compiled_module=compiled_module,
+                    timeout=self.fetch_timeout,
+                    result=ttypes.FetchResult(),
+                    function="fetch_thrift",
+                    args=[request],
+                )
+        finally:
+            chroot_context.clear_unowned_edits()
+
+        if result.filename and result.filename != output_filename:
+            raise ModuleExitedError(0, "Module wrote to wrong output file")
+
+        # TODO validate result isn't too large. If result is dataframe it makes
+        # sense to truncate; but fetch results aren't necessarily data frames.
+        # It's up to the module to enforce this logic ... but we need to set a
+        # maximum file size.
         return FetchResult.from_thrift(result, basedir)
 
     def _run_in_child(
         self,
+        *,
+        chroot_dir: Path,
+        network_config: Optional[pyspawner.NetworkConfig],
         compiled_module: CompiledModule,
         timeout: float,
         result: Any,
         function: str,
-        *args,
+        args: List[Any],
     ) -> None:
         """
         Fork a child process to run `function` with `args`.
@@ -284,9 +412,12 @@ class Kernel:
         """
         limit_time = time.time() + timeout
 
-        module_process = self._forkserver.spawn_module(
-            process_name=compiled_module.module_slug,
+        module_process = self._pyspawner.spawn_child(
             args=[compiled_module, function, args],
+            process_name=compiled_module.module_slug,
+            sandbox_config=pyspawner.SandboxConfig(
+                chroot_dir=chroot_dir, network=network_config
+            ),
         )
 
         # stdout is Thrift package; stderr is logs

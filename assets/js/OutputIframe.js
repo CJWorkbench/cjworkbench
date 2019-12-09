@@ -5,6 +5,8 @@ import { setWfModuleParamsAction } from './workflow-reducer'
 import { setWorkflowPublicAction } from './ShareModal/actions'
 import { connect } from 'react-redux'
 import { escapeHtml } from './utils'
+import { Trans, t } from '@lingui/macro'
+import { withI18n } from '@lingui/react'
 
 export class OutputIframe extends React.PureComponent {
   static propTypes = {
@@ -100,15 +102,29 @@ export class OutputIframe extends React.PureComponent {
     return (
       <Modal isOpen={this.isModalOpen('public')} toggle={this.closeModal}>
         <ModalHeader toggle={this.closeModal}>
-          <div className='modal-title'>SHARE THIS WORKFLOW</div>
+          <div className='modal-title'>
+            <Trans id='js.OutputIframe.private.header.title' description='This should be all-caps for styling reasons'>
+                SHARE THIS WORKFLOW
+            </Trans>
+          </div>
         </ModalHeader>
         <ModalBody>
-          <div className='title-3 mb-3'>This workflow is currently private</div>
-          <div className='info-3 t-d-gray'>Set this workflow to Public in order to share it? Anyone with the URL will be able to access and duplicate it.</div>
+          <div className='title-3 mb-3'>
+            <Trans id='js.OutputIframe.private.workflowIsPrivate'>This workflow is currently private</Trans>
+          </div>
+          <div className='info-3 t-d-gray'>
+            <Trans id='js.OutputIframe.private.setToPublic'>
+                Set this workflow to Public in order to share it? Anyone with the URL will be able to access and duplicate it.
+            </Trans>
+          </div>
         </ModalBody>
         <ModalFooter>
-          <div onClick={this.handleClickModalClose} className='button-gray action-button mr-4'>Cancel</div>
-          <div onClick={this.handleClickSetWorkflowPublic} className='button-blue action-button test-public-button'>Set public</div>
+          <div onClick={this.handleClickModalClose} className='button-gray action-button mr-4'>
+            <Trans id='js.OutputIframe.footer.cancelButton'>Cancel</Trans>
+          </div>
+          <div onClick={this.handleClickSetWorkflowPublic} className='button-blue action-button test-public-button'>
+            <Trans id='js.OutputIframe.footer.setPublicButton'>Set public</Trans>
+          </div>
         </ModalFooter>
       </Modal>
     )
@@ -120,10 +136,16 @@ export class OutputIframe extends React.PureComponent {
     return (
       <Modal isOpen={this.isModalOpen('embed')} toggle={this.closeModal}>
         <ModalHeader toggle={this.closeModal}>
-          <div className='modal-title'>EMBED THIS CHART</div>
+          <div className='modal-title'>
+            <Trans id='js.OutputIframe.embed.header.title' description='This should be all-caps for styling reasons'>
+                EMBED THIS CHART
+            </Trans>
+          </div>
         </ModalHeader>
         <ModalBody>
-          <p className='info'>Paste this code into any webpage HTML</p>
+          <p className='info'>
+            <Trans id='js.OutputIframe.embed.embedCode'>Paste this code into any webpage HTML</Trans>
+          </p>
           <div className='code-snippet'>
             <code className='chart-embed'>
               {iframeCode}
@@ -131,14 +153,16 @@ export class OutputIframe extends React.PureComponent {
           </div>
         </ModalBody>
         <div className='modal-footer'>
-          <div onClick={this.handleClickModalClose} className='button-gray action-button'>OK</div>
+          <div onClick={this.handleClickModalClose} className='button-gray action-button'>
+            <Trans id='js.OutputIframe.footer.OKButton'>OK</Trans>
+          </div>
         </div>
       </Modal>
     )
   }
 
   render () {
-    const { wfModuleId, deltaId, visible } = this.props
+    const { wfModuleId, deltaId, visible, i18n } = this.props
     const { heightFromIframe } = this.state
     const src = `/api/wfmodules/${wfModuleId}/output#revision=${deltaId}`
 
@@ -151,7 +175,7 @@ export class OutputIframe extends React.PureComponent {
           <>
             <iframe src={src} />
             <div className='outputpane-iframe-control-overlay'>
-              <button name='embed' className='btn' title='Get an embeddable URL' onClick={this.handleClickOpenEmbedModal}>
+              <button name='embed' className='btn' title={i18n._(t('js.OutputIframe.getEmbeddableUrl.hoverText')`Get an embeddable URL`)} onClick={this.handleClickOpenEmbedModal}>
                 <i className='icon icon-code' />
               </button>
             </div>
@@ -180,4 +204,4 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(OutputIframe)
+)(withI18n()(OutputIframe))

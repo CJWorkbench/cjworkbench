@@ -2,9 +2,15 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import DataVersionModal from '../../../WorkflowEditor/DataVersionModal'
 import { connect } from 'react-redux'
+import { t, Trans } from '@lingui/macro'
+import { withI18n } from '@lingui/react'
 
 export class DataVersionSelect extends React.PureComponent {
   static propTypes = {
+    i18n: PropTypes.shape({
+      // i18n object injected by LinguiJS withI18n()
+      _: PropTypes.func.isRequired
+    }),
     wfModuleId: PropTypes.number.isRequired,
     currentVersionIndex: PropTypes.number, // or null for no selected version
     nVersions: PropTypes.number.isRequired, // may be 0
@@ -19,7 +25,7 @@ export class DataVersionSelect extends React.PureComponent {
   handleCloseModal = () => this.setState({ isDataVersionModalOpen: false })
 
   render () {
-    const { wfModuleId, currentVersionIndex, nVersions, isReadOnly } = this.props
+    const { wfModuleId, currentVersionIndex, nVersions, isReadOnly, i18n } = this.props
     const { isDataVersionModalOpen } = this.state
 
     let inner
@@ -27,19 +33,39 @@ export class DataVersionSelect extends React.PureComponent {
     if (nVersions === 0) {
       inner = (
         <>
-          <div className='label'>Version</div>
+          <div className='label'>
+            <Trans id='js.params.Custom.VersionSelect.DataVersionSelect.noVersions.label'>
+                Version
+            </Trans>
+          </div>
           <div className='no-versions'>–</div>
         </>
       )
     } else if (isReadOnly) {
       inner = (
-        <div className='read-only'>Version {nVersions - currentVersionIndex} of {nVersions}</div>
+        <div className='read-only'>
+          <Trans id='js.params.Custom.VersionSelect.DataVersionSelect.readOnly.label' description='The parameter {0} will be the current version and {nVersions} will be the number of versions'>
+            Version {nVersions - currentVersionIndex} of {nVersions}
+          </Trans>
+        </div>
       )
     } else {
       inner = (
         <>
-          <div className='label'>Version</div>
-          <button type='button' title='Select version' onClick={this.handleClickOpenModal}>{nVersions - currentVersionIndex} of {nVersions}</button>
+          <div className='label'>
+            <Trans id='js.params.Custom.VersionSelect.DataVersionSelect.selectVersion.label'>
+                Version
+            </Trans>
+          </div>
+          <button
+            type='button'
+            title={i18n._(t('js.params.Custom.VersionSelect.DataVersionSelect.selectVersion.hoverText')`Select version`)}
+            onClick={this.handleClickOpenModal}
+          >
+            <Trans id='js.params.Custom.VersionSelect.DataVersionSelect.versionCount' description='The parameter {0} will be the current version and {nVersions} will be the number of versions'>
+              {nVersions - currentVersionIndex} of {nVersions}
+            </Trans>
+          </button>
           {isDataVersionModalOpen ? (
             <DataVersionModal
               wfModuleId={wfModuleId}
@@ -82,4 +108,4 @@ function mapStateToProps (state, { wfModuleId }) {
 
 export default connect(
   mapStateToProps
-)(DataVersionSelect)
+)(withI18n()(DataVersionSelect))

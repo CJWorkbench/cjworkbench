@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
+import { Trans } from '@lingui/macro'
 
 export function UnhandledErrorReport ({ error }) {
   if (!error) return null
@@ -16,8 +17,8 @@ export function UnhandledErrorReport ({ error }) {
   if (typeof window.Intercom === 'function') {
     helpText = (
       <ol>
-        <li>We opened a messaging window and included details for our developers to fix the issue. <em>Please send the message</em>.</li>
-        <li>It helps if you can describe what you were doing before you ran into the bug.</li>
+        <li><Trans id='js.UnhandledErrorReport.Intercom.helpText.weOpenedAWindow' description='The tag adds emphasis'>We opened a messaging window and included details for our developers to fix the issue. <em>Please send the message</em>.</Trans></li>
+        <li><Trans id='js.UnhandledErrorReport.helpText.pleaseDescribeYourActions'>It helps if you can describe what you were doing before you ran into the bug.</Trans></li>
       </ol>
     )
     React.useEffect(() => {
@@ -31,18 +32,27 @@ export function UnhandledErrorReport ({ error }) {
       )
     }, [])
   } else {
-    const url = 'mailto:hello@workbenchdata.com' +
+    const email = 'hello@workbenchdata.com'
+    const url = `mailto:${email}` +
       '?subject=' + encodeURIComponent('I encountered an error') +
       '&body=' + encodeURIComponent([
-      'Hi there,',
-      'I encountered an error while I was using Workbench.',
-      '[PLEASE DESCRIBE WHAT YOU WERE DOING HERE]',
-      'Debugging details (for Workbench developers):\n' + bugReportText
-    ].join('\n\n'))
+        'Hi there,',
+        'I encountered an error while I was using Workbench.',
+        '[PLEASE DESCRIBE WHAT YOU WERE DOING HERE]',
+        'Debugging details (for Workbench developers):\n' + bugReportText
+      ].join('\n\n'))
     helpText = (
       <ol>
-        <li>Copy the debugging details below and send them to <a href={url} target='_blank' rel='noopener noreferrer'>hello@workbenchdata.com</a>.</li>
-        <li>It helps if you can describe what you were doing before you ran into the bug.</li>
+        <li>
+          <Trans id='js.UnhandledErrorReport.helpText.debuggingDetails' description="The parameter is an email address and the tag is a 'mailto:' url">
+                Copy the debugging details below and send them to <a href={url} target='_blank' rel='noopener noreferrer'>{email}</a>.
+          </Trans>
+        </li>
+        <li>
+          <Trans id='js.UnhandledErrorReport.helpText.pleaseDescribeYourActions'>
+                It helps if you can describe what you were doing before you ran into the bug.
+          </Trans>
+        </li>
       </ol>
     )
   }
@@ -50,15 +60,15 @@ export function UnhandledErrorReport ({ error }) {
   return (
     <div className='unhandled-error-report'>
       <div className='content'>
-        <h2>Oops! Something isn't right.</h2>
-        <p>Please follow these simple steps to help us fix the issue.</p>
+        <h2><Trans id='js.UnhandledErrorReport.content.oops'>Oops! Something isn't right.</Trans></h2>
+        <p><Trans id='js.UnhandledErrorReport.content.pleaseFollowSteps'>Please follow these simple steps to help us fix the issue.</Trans></p>
         <div className='help-us-debug'>{helpText}</div>
-        <p>THANK YOU! Refresh this page to return to your Workflow.</p>
-        <p>Debugging details (please send):</p>
+        <p><Trans id='js.UnhandledErrorReport.content.thankYou'>THANK YOU! Refresh this page to return to your Workflow.</Trans></p>
+        <p><Trans id='js.UnhandledErrorReport.content.debuggingDetails'>Debugging details (please send):</Trans></p>
         <pre>{bugReportText}</pre>
         <div className='actions'>
           <button type='button' onClick={() => window.location.reload()}>
-            Refresh page
+            <Trans id='js.UnhandledErrorReport.actions.refreshPageButton'>Refresh page</Trans>
           </button>
         </div>
       </div>

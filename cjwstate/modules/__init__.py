@@ -1,3 +1,4 @@
+import cjwkernel.chroot
 import cjwkernel.kernel
 import cjwstate.modules.staticregistry
 

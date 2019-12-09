@@ -1,11 +1,11 @@
 /* globals afterEach, beforeEach, describe, expect, it, jest */
 import React from 'react'
 import StringParam from './String'
-import { mount } from 'enzyme'
+import { mountWithI18n } from '../../i18n/test-utils'
 
 describe('Secret/String', () => {
   const wrapper = (extraProps = {}) => {
-    return mount(
+    return mountWithI18n(
       <StringParam
         isReadOnly={false}
         name='x'

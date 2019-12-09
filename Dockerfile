@@ -1,5 +1,6 @@
 # 0.1 parquet-to-arrow: executables we use in Workbench
-FROM workbenchdata/parquet-to-arrow:v0.2.0 AS parquet-to-arrow
+FROM workbenchdata/parquet-to-arrow:v1.0.0 AS parquet-to-arrow
+FROM workbenchdata/arrow-tools:v0.0.6 AS arrow-tools
 
 # 0.2 pybase: Python and tools we use in dev and production
 FROM python:3.7.4-slim-buster AS pybase
@@ -9,20 +10,33 @@ FROM python:3.7.4-slim-buster AS pybase
 # * on prod before ./manage.py migrate
 # * on unittest before ./manage.py test
 # git: used for importmodulefromgithub
-# curl: handy for testing, NLTK download, Watchman download; not worth uninstalling each time
-# unzip: to build Watchman ... and [adamhooper, 2019-02-21] I'm afraid
-#        to uninstall it after build, in case one of our Python deps shells to it
+# curl: handy for testing, NLTK download; not worth uninstalling each time
+# unzip: [adamhooper, 2019-02-21] I'm afraid to uninstall it, in case one
+#        of our Python deps shells to it
 #
 # We do want:
-# libcap-ng0: used by forkserver (via ctypes) to drop capabilities
+# libcap2: used by pyspawner (via ctypes) to drop capabilities
+# iproute2: used by setup-sandboxes.sh to find our IP for NAT
+# iptables: used by setup-sandboxes.sh to set up NAT and firewall
+# libicu63: used by PyICU
+# libsnappy1v5: used by pyarrow reading our Snappy-compressed Parquet files
+# libre2-5: used by fb-re2 (in modules)
+# libyajl-dev: used by yajl-py (parsing module specs). (It uses "libyajl.so",
+#              not "libyajl.so.2", so we need libyajl-dev, not libyajl-2.)
 RUN mkdir -p /usr/share/man/man1 /usr/share/man/man7 \
     && apt-get update \
     && apt-get install --no-install-recommends -y \
-        git \
-        postgresql-client \
-        libcap-ng0 \
-        unzip \
         curl \
+        git \
+        iproute2 \
+        iptables \
+        libcap2 \
+        libicu63 \
+        libre2-5 \
+        libsnappy1v5 \
+        libyajl-dev \
+        postgresql-client \
+        unzip \
     && rm -rf /var/lib/apt/lists/*
 
 # Download NLTK stuff
@@ -36,6 +50,9 @@ RUN mkdir -p /usr/share/nltk_data \
 
 RUN pip install pipenv==2018.11.26
 
+COPY --from=arrow-tools /usr/bin/arrow-validate /usr/bin/arrow-validate
+COPY --from=arrow-tools /usr/bin/csv-to-arrow /usr/bin/csv-to-arrow
+COPY --from=arrow-tools /usr/bin/json-to-arrow /usr/bin/json-to-arrow
 COPY --from=parquet-to-arrow /usr/bin/parquet-diff /usr/bin/parquet-diff
 COPY --from=parquet-to-arrow /usr/bin/parquet-to-arrow /usr/bin/parquet-to-arrow
 COPY --from=parquet-to-arrow /usr/bin/parquet-to-arrow-slice /usr/bin/parquet-to-arrow-slice
@@ -46,67 +63,48 @@ RUN mkdir /app
 WORKDIR /app
 
 # 0.2 Pydev: just for the development environment
+FROM workbenchdata/watchman-bin:v0.0.1-buster-slim AS watchman-bin
+FROM minio/mc:RELEASE.2019-10-09T22-54-57Z AS mc
 FROM pybase AS pydev
 
 # Need build-essential for:
 # * regex (TODO nix the dep or make it support manylinux .whl)
 # * Twisted - https://twistedmatrix.com/trac/ticket/7945
-# * fastparquet
 # * python-snappy
 # * yajl-py
 # * fb-re2
-# * watchman (until someone packages binaries)
 # * pysycopg2 (binaries are evil because psycopg2 links SSL -- as does Python)
-# * thrift-compiler (to generate cjwkernel/thrift/...)
+# * PyICU
 #
-# Also:
-# * socat: for our dev environment: fetcher uses http://localhost:8000 for in-lesson files
+# Need thrift-compiler to generate cjwkernel/thrift/...
+# Need pkg-config to build PyICU
 RUN mkdir -p /root/.local/share/virtualenvs \
     && apt-get update \
     && apt-get install --no-install-recommends -y \
       build-essential \
-      libsnappy-dev \
-      libre2-dev \
+      libicu-dev \
       libpq-dev \
-      libyajl-dev \
-      socat \
+      libre2-dev \
+      libsnappy-dev \
+      pkg-config \
       thrift-compiler \
     && rm -rf /var/lib/apt/lists/*
 
-# build watchman. Someday let's hope someone publishes binaries
-# https://facebook.github.io/watchman/docs/install.html
-RUN cd /tmp \
-    && curl -L https://github.com/facebook/watchman/archive/v4.9.0.zip > watchman-4.9.0.zip \
-    && unzip watchman-4.9.0.zip \
-    && cd watchman-4.9.0 \
-    && apt-get update \
-    && apt-get install --no-install-recommends -y \
-      libssl-dev \
-      autoconf \
-      automake \
-      libtool \
-      libpcre3-dev \
-      pkg-config \
-    && ./autogen.sh \
-    && ./configure --prefix=/usr --enable-lenient \
-    && make -j4 \
-    && make install \
-    && cd /tmp \
-    && rm -rf /tmp/watchman-4.9.0* \
-    && apt-get remove --purge -y \
-      libssl-dev \
-      autoconf \
-      automake \
-      libtool \
-      libpcre3-dev \
-      pkg-config \
-    && apt-get autoremove --purge -y \
-    && rm -rf /var/lib/apt/lists/*
+# Add "watchman" command -- we use it in dev mode to monitor for source code changes
+COPY --from=watchman-bin /usr/bin/watchman /usr/bin/watchman
+COPY --from=watchman-bin /usr/var/run/watchman /usr/var/run/watchman
 
 # Add "mc" command, so we can create a non-root user in minio (for STS).
-RUN true \
-    && curl https://dl.min.io/client/mc/release/linux-amd64/archive/mc.RELEASE.2019-09-24T01-36-20Z -o /usr/bin/mc \
-    && chmod +x /usr/bin/mc
+COPY --from=mc /usr/bin/mc /usr/bin/mc
+
+COPY cjwkernel/setup-chroot-layers.sh /tmp/setup-chroot-layers.sh
+RUN /tmp/setup-chroot-layers.sh && rm /tmp/setup-chroot-layers.sh
+
+COPY bin/unittest-entrypoint.sh /app/bin/unittest-entrypoint.sh
+
+# Let chroots overlay the root FS -- meaning they must be on another FS.
+# see cjwkernel/setup-sandboxes.sh
+VOLUME /var/lib/cjwkernel/chroot
 
 # Add a Python wrapper that will help PyCharm cooperate with pipenv
 # See https://blog.jetbrains.com/pycharm/2015/12/using-docker-in-pycharm/ for
@@ -145,30 +143,44 @@ COPY Pipfile Pipfile.lock /app/
 # Need build-essential for:
 # * regex (TODO nix the dep or make it support manylinux .whl)
 # * Twisted - https://twistedmatrix.com/trac/ticket/7945
-# * fastparquet
 # * python-snappy
 # * yajl-py
-# * pysycopg2 (binaries are evil because psycopg2 links SSL -- as does Python)
+# * pysycopg2 (psycopg2-binary is evil because it links SSL -- as does Python)
+# * PyICU
 # ... and we want to keep libsnappy and yajl around after the fact, too
+#
+# Clean up after pipenv, because it leaves varbage in /root/.cache and
+# /root/.local/share/virtualenvs, even when --deploy is used. (We test for
+# presence of /root/.local/share/virtualenvs to decide whether we need a
+# bind-mount in dev mode; so it can't exist in production.)
 RUN true \
     && apt-get update \
     && apt-get install --no-install-recommends -y \
       build-essential \
-      libsnappy1v5 \
-      libsnappy-dev \
-      libre2-5 \
-      libre2-dev \
+      libicu-dev \
       libpq-dev \
-      libyajl2 \
-      libyajl-dev \
+      libre2-dev \
+      libsnappy-dev \
+      pkg-config \
     && pipenv install --dev --system --deploy \
+    && rm -rf /root/.cache/pipenv /root/.local/share/virtualenvs \
     && apt-get remove --purge -y \
       build-essential \
-      libsnappy-dev \
-      libre2-dev \
+      libicu-dev \
       libpq-dev \
+      libre2-dev \
+      libsnappy-dev \
+      pkg-config \
     && apt-get autoremove --purge -y \
     && rm -rf /var/lib/apt/lists/*
+
+# Set up chroot-layers ASAP, so they're cached in a rarely-changing
+# Docker layer.
+COPY cjwkernel/setup-chroot-layers.sh /tmp/setup-chroot-layers.sh
+RUN /tmp/setup-chroot-layers.sh && rm /tmp/setup-chroot-layers.sh
+# Let chroots overlay the root FS -- meaning they must be on another FS.
+# see cjwkernel/setup-sandboxes.sh
+VOLUME /var/lib/cjwkernel/chroot
 
 
 # 2. Node deps -- completely independent
@@ -184,7 +196,7 @@ FROM jsbase AS jsbuild
 COPY package.json package-lock.json /app/
 RUN npm install
 
-COPY webpack.config.js setupJest.js /app/
+COPY webpack.config.js setupJest.js lingui.config.js /app/
 COPY __mocks__/ /app/__mocks__/
 COPY assets/ /app/assets/
 # Inject unit tests into our continuous integration

@@ -1,42 +1,237 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`WorkflowMetadata renders private workflow correctly 1`] = `
-<ul
-  className="metadata-container"
+<WorkflowMetadata
+  i18n={
+    Object {
+      "_": [Function],
+      "_activeLanguageData": Object {
+        "plurals": [Function],
+      },
+      "_activeMessages": Object {},
+      "_catalogs": Object {
+        "en": Object {
+          "languageData": Object {},
+          "messages": Object {},
+        },
+      },
+      "_dev": Object {
+        "compile": [Function],
+        "loadLanguageData": [Function],
+      },
+      "_language": "en",
+      "_locales": undefined,
+      "_missing": undefined,
+      "plural": [Function],
+      "select": [Function],
+      "selectOrdinal": [Function],
+      "t": [Function],
+    }
+  }
+  openShareModal={[MockFunction]}
+  test_now={2017-09-20T21:03:52.000Z}
+  workflow={
+    Object {
+      "id": 100,
+      "last_update": 1505941432000,
+      "owner_name": "Harry Harrison",
+      "public": false,
+      "read_only": false,
+    }
+  }
 >
-  <li
-    className="attribution"
+  <ul
+    className="metadata-container"
   >
-    <span
-      className="metadata"
+    <li
+      className="attribution"
     >
-      by 
-      Harry Harrison
-    </span>
-    <span
-      className="separator"
-    >
-      -
-    </span>
-  </li>
-  <li>
-    Updated 
-    just now
-  </li>
-  <li>
-    <span
-      className="separator"
-    >
-      -
-    </span>
-    <button
-      className="public-private"
-      onClick={[Function]}
-      title="Change privacy"
-      type="button"
-    >
-      private
-    </button>
-  </li>
-</ul>
+      <span
+        className="metadata"
+      >
+        <WithI18n
+          defaults="by {owner}"
+          id="js.Workflows.WorkflowMetadata.owner"
+          values={
+            Object {
+              "owner": "Harry Harrison",
+            }
+          }
+        >
+          <I18n
+            update={true}
+            withHash={true}
+          >
+            <Trans
+              defaults="by {owner}"
+              i18n={
+                Object {
+                  "_": [Function],
+                  "_activeLanguageData": Object {
+                    "plurals": [Function],
+                  },
+                  "_activeMessages": Object {},
+                  "_catalogs": Object {
+                    "en": Object {
+                      "languageData": Object {},
+                      "messages": Object {},
+                    },
+                  },
+                  "_dev": Object {
+                    "compile": [Function],
+                    "loadLanguageData": [Function],
+                  },
+                  "_language": "en",
+                  "_locales": undefined,
+                  "_missing": undefined,
+                  "plural": [Function],
+                  "select": [Function],
+                  "selectOrdinal": [Function],
+                  "t": [Function],
+                }
+              }
+              id="js.Workflows.WorkflowMetadata.owner"
+              values={
+                Object {
+                  "owner": "Harry Harrison",
+                }
+              }
+            >
+              <Render
+                value="js.Workflows.WorkflowMetadata.owner"
+              >
+                js.Workflows.WorkflowMetadata.owner
+              </Render>
+            </Trans>
+          </I18n>
+        </WithI18n>
+      </span>
+      <span
+        className="separator"
+      >
+        -
+      </span>
+    </li>
+    <li>
+      <WithI18n
+        defaults="Updated {timeAgo}"
+        description="The parameter will contain a time difference (i.e. something like '5h ago')"
+        id="js.Workflows.WorkflowMetadata.update"
+        values={
+          Object {
+            "timeAgo": "just now",
+          }
+        }
+      >
+        <I18n
+          update={true}
+          withHash={true}
+        >
+          <Trans
+            defaults="Updated {timeAgo}"
+            description="The parameter will contain a time difference (i.e. something like '5h ago')"
+            i18n={
+              Object {
+                "_": [Function],
+                "_activeLanguageData": Object {
+                  "plurals": [Function],
+                },
+                "_activeMessages": Object {},
+                "_catalogs": Object {
+                  "en": Object {
+                    "languageData": Object {},
+                    "messages": Object {},
+                  },
+                },
+                "_dev": Object {
+                  "compile": [Function],
+                  "loadLanguageData": [Function],
+                },
+                "_language": "en",
+                "_locales": undefined,
+                "_missing": undefined,
+                "plural": [Function],
+                "select": [Function],
+                "selectOrdinal": [Function],
+                "t": [Function],
+              }
+            }
+            id="js.Workflows.WorkflowMetadata.update"
+            values={
+              Object {
+                "timeAgo": "just now",
+              }
+            }
+          >
+            <Render
+              value="js.Workflows.WorkflowMetadata.update"
+            >
+              js.Workflows.WorkflowMetadata.update
+            </Render>
+          </Trans>
+        </I18n>
+      </WithI18n>
+    </li>
+    <li>
+      <span
+        className="separator"
+      >
+        -
+      </span>
+      <button
+        className="public-private"
+        onClick={[Function]}
+        title="Change privacy"
+        type="button"
+      >
+        <WithI18n
+          defaults="private"
+          id="js.Workflows.WorkflowMetadata.visibility.private"
+        >
+          <I18n
+            update={true}
+            withHash={true}
+          >
+            <Trans
+              defaults="private"
+              i18n={
+                Object {
+                  "_": [Function],
+                  "_activeLanguageData": Object {
+                    "plurals": [Function],
+                  },
+                  "_activeMessages": Object {},
+                  "_catalogs": Object {
+                    "en": Object {
+                      "languageData": Object {},
+                      "messages": Object {},
+                    },
+                  },
+                  "_dev": Object {
+                    "compile": [Function],
+                    "loadLanguageData": [Function],
+                  },
+                  "_language": "en",
+                  "_locales": undefined,
+                  "_missing": undefined,
+                  "plural": [Function],
+                  "select": [Function],
+                  "selectOrdinal": [Function],
+                  "t": [Function],
+                }
+              }
+              id="js.Workflows.WorkflowMetadata.visibility.private"
+            >
+              <Render
+                value="js.Workflows.WorkflowMetadata.visibility.private"
+              >
+                js.Workflows.WorkflowMetadata.visibility.private
+              </Render>
+            </Trans>
+          </I18n>
+        </WithI18n>
+      </button>
+    </li>
+  </ul>
+</WorkflowMetadata>
 `;

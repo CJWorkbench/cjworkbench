@@ -1,16 +1,10 @@
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
-import os
 from django.db import connection, connections
-from django.conf import settings
 from django.contrib.auth.models import User
 from django.test import SimpleTestCase
 from cjworkbench.sync import WorkbenchDatabaseSyncToAsync
 from cjwstate import minio
-
-# --- Test data ----
-
-mock_xlsx_path = os.path.join(settings.BASE_DIR, "server/tests/test_data/test.xlsx")
 
 # Connect to the database, on the main thread, and remember that connection
 main_thread_connections = {name: connections[name] for name in connections}

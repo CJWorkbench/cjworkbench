@@ -6,7 +6,7 @@ import unittest
 from unittest.mock import patch
 import pandas as pd
 from pandas.testing import assert_frame_equal
-import pyarrow
+import pyarrow as pa
 from cjwkernel.tests.util import (
     arrow_table,
     arrow_table_context,
@@ -174,13 +174,34 @@ class RenderTests(unittest.TestCase):
         with self.assertRaisesRegexp(ValueError, "unsupported dtype"):
             self._test_render(render)
 
-    def test_render_with_fetch_result(self):
+    def test_render_with_parquet_fetch_result(self):
         def render(*args, fetch_result):
             return fetch_result
 
         with parquet_file({"A": ["fetched"]}, dir=self.basedir) as pf:
-            self._test_render(render, fetch_result=FetchResult(pf))
-            # TODO test when fetch result is _not_ Parquet-formatted?
+            result = self._test_render(render, fetch_result=FetchResult(pf))
+            assert_render_result_equals(
+                result, RenderResult(arrow_table({"A": ["fetched"]}))
+            )
+
+    def test_render_with_non_parquet_fetch_result(self):
+        def render(*args, fetch_result):
+            return pd.DataFrame({"A": [fetch_result.path.read_text()]})
+
+        with tempfile_context(dir=self.basedir) as tf:
+            tf.write_bytes(b"abcd")
+            result = self._test_render(render, fetch_result=FetchResult(tf))
+            assert_render_result_equals(
+                result, RenderResult(arrow_table({"A": ["abcd"]}))
+            )
+
+    def test_render_empty_file_fetch_result_is_parquet(self):
+        def render(*args, fetch_result):
+            return fetch_result.dataframe
+
+        with tempfile_context(dir=self.basedir) as tf:
+            result = self._test_render(render, fetch_result=FetchResult(tf))
+            assert_render_result_equals(result, RenderResult(arrow_table({})))
 
     def test_render_with_input_columns(self):
         def render(*args, input_columns):
@@ -194,7 +215,7 @@ class RenderTests(unittest.TestCase):
             )
 
         with arrow_table_context(
-            {"A": ["x"], "B": [1], "C": [datetime.now()]},
+            {"A": ["x"], "B": [1], "C": pa.array([datetime.now()], pa.timestamp("ns"))},
             columns=[
                 Column("A", ColumnType.Text()),
                 Column("B", ColumnType.Number("{:,.3f}")),
@@ -329,7 +350,7 @@ class FetchTests(unittest.TestCase):
         # Why an error? So module authors can handle it. They _created_ the
         # problem, after all. Let's help them detect it.
         async def fetch(params, *, get_stored_dataframe):
-            with self.assertRaises(pyarrow.ArrowIOError):
+            with self.assertRaises(pa.ArrowIOError):
                 await get_stored_dataframe()
 
         with tempfile_context(dir=self.basedir) as parquet_path:
@@ -395,8 +416,31 @@ class FetchTests(unittest.TestCase):
 
             self.assertEqual(result.path, outfile)
             self.assertEqual(result.errors, [])
-            arrow_table = pyarrow.parquet.read_table(str(outfile), use_threads=False)
+            arrow_table = pa.parquet.read_table(str(outfile), use_threads=False)
             assert_arrow_table_equals(arrow_table, {"A": [1, 2, 3]})
+
+    def test_fetch_return_path(self):
+        with tempfile_context(dir=self.basedir) as outfile:
+
+            async def fetch(params):
+                outfile.write_text("xyz")
+                return outfile
+
+            result = self._test_fetch(fetch, output_filename=outfile.name)
+
+            self.assertEqual(result.path, outfile)
+            self.assertEqual(result.errors, [])
+            self.assertEqual(result.path.read_text(), "xyz")
+
+    def test_fetch_return_tuple_path_and_error(self):
+        with tempfile_context(dir=self.basedir) as outfile:
+
+            async def fetch(params):
+                outfile.write_text("xyz")
+                return outfile, "foo"
+
+            result = self._test_fetch(fetch, output_filename=outfile.name)
+            self.assertEqual(result.errors, [RenderError(I18nMessage.TODO_i18n("foo"))])
 
     @override_settings(MAX_ROWS_PER_TABLE=2)
     def test_fetch_truncate(self):
@@ -413,7 +457,7 @@ class FetchTests(unittest.TestCase):
                     )
                 ],
             )
-            arrow_table = pyarrow.parquet.read_table(str(outfile), use_threads=False)
+            arrow_table = pa.parquet.read_table(str(outfile), use_threads=False)
             assert_arrow_table_equals(arrow_table, {"A": [1, 2]})
 
     def test_fetch_return_error(self):
@@ -451,5 +495,5 @@ class FetchTests(unittest.TestCase):
 
             self.assertEqual(result.path, outfile)
             self.assertEqual(result.errors, [])
-            arrow_table = pyarrow.parquet.read_table(str(outfile), use_threads=False)
+            arrow_table = pa.parquet.read_table(str(outfile), use_threads=False)
             assert_arrow_table_equals(arrow_table, {"A": [1, 2, 3]})

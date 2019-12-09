@@ -33,10 +33,10 @@ export default class Navbar extends React.Component {
           </div>
           <div className='links'>
             <a {...propsForLink(activeSection, 'workflows')}>
-              <Trans id='workflows.navbar.workflows' description='This is used in navigation bar. It should be all-caps for styling reasons.'>WORKFLOWS</Trans>
+              <Trans id='js.Workflows.NavBar.links.workflows' description='This is used in navigation bar. It should be all-caps for styling reasons.'>WORKFLOWS</Trans>
             </a>
             <a {...propsForLink(activeSection, 'lessons')}>
-              <Trans id='workflows.navbar.training' description='This is used in navigation bar. It should be all-caps for styling reasons.'>TRAINING</Trans>
+              <Trans id='js.Workflows.NavBar.links.training' description='This is used in navigation bar. It should be all-caps for styling reasons.'>TRAINING</Trans>
             </a>
           </div>
           <WfHamburgerMenu user={user} />

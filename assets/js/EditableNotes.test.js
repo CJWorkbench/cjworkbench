@@ -1,7 +1,7 @@
 /* globals beforeEach, describe, expect, it, jest */
 import React from 'react'
-import { shallow } from 'enzyme'
 import EditableNotes from './EditableNotes'
+import { shallowWithI18n } from './i18n/test-utils'
 
 describe('EditableNotes', () => {
   let wrapper
@@ -10,7 +10,7 @@ describe('EditableNotes', () => {
 
   describe('read-only', () => {
     beforeEach(() => {
-      wrapper = shallow(
+      wrapper = shallowWithI18n(
         <EditableNotes
           isReadOnly
           placeholder='placeholder'
@@ -36,7 +36,7 @@ describe('EditableNotes', () => {
     beforeEach(() => {
       inputRef = React.createRef()
 
-      wrapper = shallow(
+      wrapper = shallowWithI18n(
         <EditableNotes
           isReadOnly={false}
           placeholder='placeholder'

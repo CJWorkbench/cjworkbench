@@ -2,27 +2,15 @@ import asyncio
 import contextlib
 import logging
 from unittest.mock import patch
-import pandas as pd
 from cjwkernel.types import RenderResult
-from cjwkernel.tests.util import (
-    arrow_table,
-    assert_render_result_equals,
-    tempfile_context,
-)
+from cjwkernel.tests.util import arrow_table, assert_render_result_equals
+from cjwkernel.chroot import EDITABLE_CHROOT
 from cjwstate import minio, rendercache
 from cjwstate.models import ModuleVersion, Workflow
 from cjwstate.models.param_spec import ParamDType
 from cjwstate.modules.loaded_module import LoadedModule
 from cjwstate.tests.utils import DbTestCase
 from renderer.execute.tab import execute_tab_flow, ExecuteStep, TabFlow
-
-
-table_csv = "A,B\n1,2\n3,4"
-table_dataframe = pd.DataFrame({"A": [1, 3], "B": [2, 4]})
-
-
-future_none = asyncio.Future()
-future_none.set_result(None)
 
 
 async def fake_send(*args, **kwargs):
@@ -32,12 +20,18 @@ async def fake_send(*args, **kwargs):
 class TabTests(DbTestCase):
     @contextlib.contextmanager
     def _execute(self, workflow, flow, tab_results, expect_log_level=logging.DEBUG):
-        with tempfile_context(prefix="execute-tab-output", suffix=".arrow") as out_path:
-            with self.assertLogs(level=expect_log_level):
-                result = self.run_with_async_db(
-                    execute_tab_flow(workflow, flow, tab_results, out_path)
-                )
-                yield result
+        with EDITABLE_CHROOT.acquire_context() as chroot_context:
+            with chroot_context.tempdir_context(prefix="test_tab") as tempdir:
+                with chroot_context.tempfile_context(
+                    prefix="execute-tab-output", suffix=".arrow", dir=tempdir
+                ) as out_path:
+                    with self.assertLogs(level=expect_log_level):
+                        result = self.run_with_async_db(
+                            execute_tab_flow(
+                                chroot_context, workflow, flow, tab_results, out_path
+                            )
+                        )
+                        yield result
 
     def test_execute_empty_tab(self):
         workflow = Workflow.create_and_init()

@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { Trans } from '@lingui/macro'
 
 export default function DeprecationMessage ({ helpUrl, message }) {
   if (!message) return null
@@ -7,7 +8,9 @@ export default function DeprecationMessage ({ helpUrl, message }) {
   return (
     <div className='module-deprecated'>
       <p>{message}</p>
-      <a target='_blank' rel='noopener noreferrer' href={helpUrl}>Learn how to replace this step</a>
+      <a target='_blank' rel='noopener noreferrer' href={helpUrl}>
+        <Trans id='js.WorkflowEditor.wfmodule.DeprecationNotice.learnHowToReplace'>Learn how to replace this step</Trans>
+      </a>
     </div>
   )
 }

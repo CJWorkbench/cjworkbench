@@ -1,13 +1,13 @@
 /* global describe, it, expect, jest */
 import React from 'react'
-import { shallow } from 'enzyme'
 import { OutputPane } from './OutputPane'
 import OutputIframe from '../OutputIframe'
 import DelayedTableSwitcher from '../table/DelayedTableSwitcher'
+import { shallowWithI18n } from '../i18n/test-utils'
 
 describe('OutputPane', () => {
   const wrapper = function (extraProps = {}) {
-    return shallow(
+    return shallowWithI18n(
       <OutputPane
         loadRows={jest.fn()}
         workflowId={123}

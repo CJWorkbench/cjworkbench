@@ -1,11 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { Trans } from '@lingui/macro'
 
 const Description = ({ isPublic }) => {
   const message = isPublic
-    ? 'Anyone on the Internet may view and duplicate this Workflow.'
-    : 'Only collaborators can view this Workflow.'
-
+    ? <Trans id='js.ShareModal.PublicPrivate.description.public'>Anyone on the Internet may view and duplicate this Workflow.</Trans>
+    : <Trans id='js.ShareModal.PublicPrivate.description.private'>Only collaborators can view this Workflow.</Trans>
   return (
     <p>{message}</p>
   )
@@ -14,7 +14,11 @@ const Description = ({ isPublic }) => {
 const DescriptionWithToggle = ({ isPublic, onChange }) => (
   <label className='checkbox'>
     <input type='checkbox' checked={isPublic} onChange={onChange} />
-    <span>Anyone can view and duplicate this workflow, and see your email.</span>
+    <span>
+      <Trans id='js.ShareModal.PublicPrivate.descriptionWithToggle'>
+            Anyone can view and duplicate this workflow, and see your email.
+      </Trans>
+    </span>
   </label>
 )
 

@@ -1,12 +1,19 @@
+import logging
 from django import template
 from django.utils.safestring import mark_safe
+from cjworkbench.i18n import default_locale
 from cjworkbench.i18n.trans import trans_html as do_trans_html
 import re
+
+logger = logging.getLogger(__name__)
 
 register = template.Library()
 
 trans_tag_re = re.compile(
     r"^tag_(?P<placeholder>(?P<name>[a-zA-Z]+)\d+)_(?P<attr>[a-zA-Z]+)$", re.ASCII
+)
+trans_tag_without_attribute_re = re.compile(
+    r"^tag_(?P<placeholder>(?P<name>[a-zA-Z]+)\d+)$", re.ASCII
 )
 trans_param_re = re.compile(r"arg_(?P<arg>\w+)", re.ASCII)
 
@@ -28,7 +35,7 @@ def trans_html(
         - Each attribute is provided (only once) with key `tag_{placeholder}_{attribute_name}`,
           so in order to replace `<a0>...</a0>` with `<a href="/hello" class="red small">...</a>`, 
           you need to provide `tag_a0_href="/hello"` and `tag_a0_class="red small"` 
-        - At this point, tags without attributes are not supported
+        - Tags without attributes (for example `tag_b0`) are supported; you must map them to some value, which will be ignored
         - Tags and their attributes can't contain dashes, so data attributes are not supported
     Nested HTML tags are forbidden; in fact, at this point, the inner ones will be escaped, but you should not rely on this.
     Non-nested tags that have not been mapped in this way will be ignored; in fact, at this point, they will replaced by their escaped contents, but you should not rely on this.
@@ -62,7 +69,7 @@ def trans_html(
           returns None
           When the code is parsed, the default will be added to the message catalog.
           
-        - `{% trans_html "messages.hello" default="<span0>Hello</span0> <span1>you</span1>" tag_span0_class="red big" tag_span1_class="small yellow" tag_span1_id="you" %}` 
+        - `{% trans_html "messages.hello" default="<span0>Hello</span0> <span1>you</span1>" tag_span0_class="red big" tag_span1_class="small yellow" tag_span1_id="you" tag_em0="" %}` 
           looks up `messages.hello` in the catalog for the current locale and replaces the placeholders with the info in `tag_*` arguments;
           for example, the default message would become `'<span class="red big">Hello</span> <span class="small yellow" id="you">you</span>'` 
           When the code is parsed, the default will be added to the message catalog.
@@ -90,10 +97,30 @@ def trans_html(
                 tags[placeholder] = {"tag": tag_name, "attrs": {}}
             tags[placeholder]["attrs"][tag_attr] = kwargs[arg]
             continue
+        match_tag = trans_tag_without_attribute_re.match(arg)
+        if match_tag:
+            placeholder = match_tag.group("placeholder")
+            tag_name = match_tag.group("name")
+            if not (placeholder in tags):
+                tags[placeholder] = {"tag": tag_name, "attrs": {}}
+            continue
+
+    try:
+        locale_id = context["i18n"]["locale_id"]
+    except KeyError as err:
+        # context[i18n] needs to be managed by the caller. And sometimes, the
+        # caller has a bug. (Seen 2019-08-2019-12-06 01:57:19.327 GMT.) We want
+        # Django's exception-handling code to be able to call trans_html().
+        #
+        # Log the message ID. This should help us with debugging.
+        logger.exception(
+            "Missing context['i18n']['locale_id'] translating message_id %s", message_id
+        )
+        locale_id = default_locale
 
     return mark_safe(
         do_trans_html(
-            context["i18n"]["locale_id"],
+            locale_id,
             message_id,
             default=default,
             context=ctxt,

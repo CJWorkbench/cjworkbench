@@ -1,4 +1,5 @@
 import contextlib
+import io
 import logging
 from pathlib import Path
 import subprocess
@@ -9,6 +10,45 @@ from cjwkernel.util import tempfile_context
 
 
 logger = logging.getLogger(__name__)
+
+
+def file_has_parquet_magic_number(path: Path) -> bool:
+    """
+    Detect Parquet.
+
+    A Parquet file starts and ends with "PAR1" (ASCII-encoded).
+    """
+    with path.open("rb", buffering=0) as f:
+        if f.read(4) != b"PAR1":
+            return False
+
+        # fseek(-4, SEEK_END) shouldn't error EINVAL: we know the file is >=4
+        # bytes long because we'd have returned above if it were shorter.
+        if f.seek(-4, io.SEEK_END) < 16:
+            # The file may start and end with "PAR1" (or it may _be_ "PAR1" on
+            # its own, if f.seek() returns 0); but it's too small to be a
+            # Parquet file.
+            #
+            # Parquet file has a certain amount of Thrift; let's ignore Thrift
+            # overhead and picture the minimum file:
+            #
+            #     "PAR1" magic number (4)
+            #     File metadata:
+            #         i32 version (4)
+            #         i64 number of rows (8)
+            #     i32 length of file metadata (4)
+            #     "PAR1" magic number (4)
+            #
+            # An inane empty Parquet file -- impossible because Thrift adds
+            # overhead -- would be 20 bytes long.
+            #
+            # So if we seeked to 4 bytes from the end and we aren't at _least_
+            # 16 bytes in, we know for sure the file isn't Parquet.
+            return False
+        if f.read(4) != b"PAR1":
+            return False
+
+    return True
 
 
 def convert_parquet_file_to_arrow_file(parquet_path: Path, arrow_path: Path) -> None:
@@ -139,14 +179,7 @@ def _read_pylist(column: pyarrow.ChunkedArray) -> List[Any]:
         #
         # If someone complains, then we should change our API to pass int64
         # instead of datetime.datetime.
-        pylist = [None if v is None else v.to_pydatetime() for v in pylist]
-    elif pyarrow.types.is_floating(dtype):
-        # Pandas does not differentiate between NaN and None; so in effect,
-        # neither do we. Numeric tables can have NaN and never None;
-        # timestamp and String columns can have None and never NaT; int
-        # columns cannot have NaN or None.
-        nan = float("nan")
-        pylist = [nan if v is None else v for v in pylist]
+        pylist = [None if v is None else v.to_pydatetime(warn=False) for v in pylist]
     return pylist
 
 
@@ -165,7 +198,8 @@ def read_pydict(
 
     Missing rows and columns are ignored.
 
-    `NaN` is returned as float("nan").
+    `NaN` is returned as `float("nan")`, but `None` is returned as `None`.
+    Caller beware: a Parquet column can contain both!
     """
     assert only_columns.step == 1
     assert only_columns.start >= 0

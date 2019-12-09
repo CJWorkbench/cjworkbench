@@ -1,14 +1,14 @@
 /* globals beforeEach, describe, expect, it */
 import React from 'react'
-import Embed from './Embed'
-import { shallow } from 'enzyme'
+import { Embed } from './Embed'
+import { shallowWithI18n } from './i18n/test-utils'
 
 describe('Embed', () => {
   let wrapper
 
   describe('Available workflow', () => {
     beforeEach(() => {
-      wrapper = shallow(
+      wrapper = shallowWithI18n(
         <Embed
           wf_module={{
             id: 1
@@ -35,7 +35,7 @@ describe('Embed', () => {
 
   describe('Unavailable workflow', () => {
     beforeEach(() => {
-      wrapper = shallow(
+      wrapper = shallowWithI18n(
         <Embed
           wf_module={null}
           workflow={null}

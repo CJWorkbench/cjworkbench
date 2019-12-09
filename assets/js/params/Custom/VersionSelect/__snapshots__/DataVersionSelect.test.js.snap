@@ -1,22 +1,157 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`DataVersionSelect should match snapshot 1`] = `
-<div
-  className="version-item"
+<DataVersionSelect
+  currentVersionIndex={0}
+  i18n={
+    Object {
+      "_": [Function],
+      "_activeLanguageData": Object {
+        "plurals": [Function],
+      },
+      "_activeMessages": Object {},
+      "_catalogs": Object {
+        "en": Object {
+          "languageData": Object {},
+          "messages": Object {},
+        },
+      },
+      "_dev": Object {
+        "compile": [Function],
+        "loadLanguageData": [Function],
+      },
+      "_language": "en",
+      "_locales": undefined,
+      "_missing": undefined,
+      "plural": [Function],
+      "select": [Function],
+      "selectOrdinal": [Function],
+      "t": [Function],
+    }
+  }
+  isReadOnly={false}
+  nVersions={7}
+  wfModuleId={123}
 >
   <div
-    className="label"
+    className="version-item"
   >
-    Version
+    <div
+      className="label"
+    >
+      <WithI18n
+        defaults="Version"
+        id="js.params.Custom.VersionSelect.DataVersionSelect.selectVersion.label"
+      >
+        <I18n
+          update={true}
+          withHash={true}
+        >
+          <Trans
+            defaults="Version"
+            i18n={
+              Object {
+                "_": [Function],
+                "_activeLanguageData": Object {
+                  "plurals": [Function],
+                },
+                "_activeMessages": Object {},
+                "_catalogs": Object {
+                  "en": Object {
+                    "languageData": Object {},
+                    "messages": Object {},
+                  },
+                },
+                "_dev": Object {
+                  "compile": [Function],
+                  "loadLanguageData": [Function],
+                },
+                "_language": "en",
+                "_locales": undefined,
+                "_missing": undefined,
+                "plural": [Function],
+                "select": [Function],
+                "selectOrdinal": [Function],
+                "t": [Function],
+              }
+            }
+            id="js.params.Custom.VersionSelect.DataVersionSelect.selectVersion.label"
+          >
+            <Render
+              value="js.params.Custom.VersionSelect.DataVersionSelect.selectVersion.label"
+            >
+              js.params.Custom.VersionSelect.DataVersionSelect.selectVersion.label
+            </Render>
+          </Trans>
+        </I18n>
+      </WithI18n>
+    </div>
+    <button
+      onClick={[Function]}
+      title="Select version"
+      type="button"
+    >
+      <WithI18n
+        defaults="{0} of {nVersions}"
+        description="The parameter {0} will be the current version and {nVersions} will be the number of versions"
+        id="js.params.Custom.VersionSelect.DataVersionSelect.versionCount"
+        values={
+          Object {
+            "0": 7,
+            "nVersions": 7,
+          }
+        }
+      >
+        <I18n
+          update={true}
+          withHash={true}
+        >
+          <Trans
+            defaults="{0} of {nVersions}"
+            description="The parameter {0} will be the current version and {nVersions} will be the number of versions"
+            i18n={
+              Object {
+                "_": [Function],
+                "_activeLanguageData": Object {
+                  "plurals": [Function],
+                },
+                "_activeMessages": Object {},
+                "_catalogs": Object {
+                  "en": Object {
+                    "languageData": Object {},
+                    "messages": Object {},
+                  },
+                },
+                "_dev": Object {
+                  "compile": [Function],
+                  "loadLanguageData": [Function],
+                },
+                "_language": "en",
+                "_locales": undefined,
+                "_missing": undefined,
+                "plural": [Function],
+                "select": [Function],
+                "selectOrdinal": [Function],
+                "t": [Function],
+              }
+            }
+            id="js.params.Custom.VersionSelect.DataVersionSelect.versionCount"
+            values={
+              Object {
+                "0": 7,
+                "nVersions": 7,
+              }
+            }
+          >
+            <Render
+              value="js.params.Custom.VersionSelect.DataVersionSelect.versionCount"
+            >
+              js.params.Custom.VersionSelect.DataVersionSelect.versionCount
+            </Render>
+          </Trans>
+        </I18n>
+      </WithI18n>
+    </button>
   </div>
-  <button
-    onClick={[Function]}
-    title="Select version"
-    type="button"
-  >
-    7
-     of 
-    7
-  </button>
-</div>
+</DataVersionSelect>
 `;

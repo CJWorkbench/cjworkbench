@@ -1,12 +1,12 @@
 {% extends "account/base.html" %}
 
-{% load i18n %}
+{% load i18n_icu %}
 
-{% block title %}{% trans "Confirmation Email Sent" %}{% endblock %}
+{% block title %}{% trans_html "py.templates.account.email_confirmation_sent.title" default="Confirmation Email Sent" %}{% endblock %}
 
 {% block content %}
-    <h2 class='t-d-gray title-2 text-center mb-3'>{% trans "Confirm your email address" %}</h2>
+    <h2 class='t-d-gray title-2 text-center mb-3'>{% trans_html "py.templates.account.email_confirmation_sent.header" default="Confirm your email address"  %}</h2>
 
-    <p class='message-body'>{% blocktrans %}We have sent an email to <b>{{ email }}</b> for verification. If you do not receive it within a few minutes, contact us at <a href="mailto:{{ THEME_CONTACT_EMAIL }}">{{ THEME_CONTACT_EMAIL }}</a>.{% endblocktrans %}</p>
-    <p><a href="{{ success_url }}" class='button-white action-button mx-auto mt-3'>{% trans "Go back" %}</a></p>
+    <p class='message-body'>{% trans_html "py.templates.account.email_confirmation_sent.verificationEmail" default='We have sent an email to <b0>{email}</b0> for verification. If you do not receive it within a few minutes, contact us at <a0>{contactMail}</a0>.' arg_email=email tag_b0='' tag_a0_href="mailto:hello@workbenchdata.com" arg_contactMail="hello@workbenchdata.com" comment="The b0 tag adds emphasis. The a0 tag is a mailto link for the contactMail." %}</p>
+    <p><a href="{{ success_url }}" class='button-white action-button mx-auto mt-3'>{% trans_html "py.templates.account.email_confirmation_sent.goBack.link" default="Go back" %}</a></p>
 {% endblock %}

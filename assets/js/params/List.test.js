@@ -1,7 +1,7 @@
 /* globals describe, expect, it, jest */
 import React from 'react'
-import { mount } from 'enzyme' // mount, not shallow, because we test integration a bit
 import List from './List'
+import { mountWithI18n } from '../i18n/test-utils.js'
 
 describe('List', () => {
   it('should change when sub-params change', () => {
@@ -25,7 +25,7 @@ describe('List', () => {
      * should prevent us from regressing and trying to fix the `name` while
      * we still depend on it in event handlers.
      */
-    const w = mount(
+    const w = mountWithI18n(
       <List
         isReadOnly={false}
         label='List'

@@ -1,13 +1,13 @@
 {% extends 'account/base.html' %}
-{% load i18n %}
+{% load i18n_icu %}
 
 {% block content %}
-    <h1 class='t-d-gray title-1 text-center mb-3'>{% trans "Delete Account" %}</h1>
+    <h1 class='t-d-gray title-1 text-center mb-3'>{% trans_html "py.templates.account.delete.deleteAccount.header" default="Delete Account" %}</h1>
 
-    <p class='message-body'>{% blocktrans %}If you go ahead and delete your account, your information will be <b>expunged within {{ ACCOUNT_DELETION_EXPUNGE_HOURS }} hours</b>.{% endblocktrans %}</p>
+    <p class='message-body'>{% trans_html "py.templates.account.delete.accountDeletionExpungeHours" default='If you go ahead and delete your account, your information will be <b0>expunged within {hours} hours</b0>.' arg_hours=ACCOUNT_DELETION_EXPUNGE_HOURS tag_b0='' comment="The tag adds emphasis" %}</p>
 
     <form method="post" action="{% url "account_delete" %}" autocapitalize="off">
         {% csrf_token %}
-        <button type="submit" class="button-blue action-button mx-auto mt-3">{% trans "Delete My Account" %}</button>
+        <button type="submit" class="button-blue action-button mx-auto mt-3">{% trans_html "py.templates.account.delete.deleteMyAccount" default="Delete My Account" %}</button>
     </form>
 {% endblock %}

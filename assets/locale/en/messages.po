@@ -14,72 +14,2375 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.7.0\n"
 
-#: assets/js/i18n/locales.js:7
-msgid "locales.el"
-msgstr "Greek"
+#: assets/js/Embed.js:99
+msgid "js.Embed.embedCode"
+msgstr "Paste this code into any webpage HTML"
 
-#: assets/js/i18n/locales.js:6
-msgid "locales.en"
-msgstr "English"
+#. This should be all-caps for styling reasons
+#: assets/js/Embed.js:98
+msgid "js.Embed.embedThisChart"
+msgstr "EMBED THIS CHART"
 
-#: assets/js/table/SelectedRowsActions.js:105
-msgid "selectedRow.numberOfRows"
+#: assets/js/Embed.js:77
+msgid "js.Embed.metadata.author"
+msgstr "by {0}"
+
+#. {timeAgo} will contain a time difference (i.e. something like '4h ago')
+#: assets/js/Embed.js:84
+msgid "js.Embed.metadata.updated"
+msgstr "Updated {timeAgo}"
+
+#. This should be all-caps for styling reasons
+#: assets/js/Embed.js:37
+msgid "js.Embed.workflowNotAvailable.footer.logo"
+msgstr "WORKBENCH"
+
+#: assets/js/Embed.js:29
+msgid "js.Embed.workflowNotAvailable.title"
+msgstr "This workflow is not available"
+
+#: assets/js/ErrorBoundary.js:23
+msgid "js.ErrorBoundary.pleaseRefreshPage"
+msgstr "Please refresh the page."
+
+#: assets/js/ErrorBoundary.js:21
+msgid "js.ErrorBoundary.somethingIsWrong"
+msgstr "Something is wrong."
+
+#. This should be all-caps for styling reasons
+#: assets/js/ExportModal.js:62
+msgid "js.ExportModal.csvCopyLink.copiedToClipboard"
+msgstr "CSV LINK COPIED TO CLIPBOARD"
+
+#. This should be all-caps for styling reasons
+#: assets/js/ExportModal.js:71
+msgid "js.ExportModal.csvCopyLink.copyLiveLink"
+msgstr "COPY LIVE LINK"
+
+#: assets/js/ExportModal.js:153
+msgid "js.ExportModal.footer.doneButton"
+msgstr "Done"
+
+#. This should be all-caps for styling reasons
+#: assets/js/ExportModal.js:111
+msgid "js.ExportModal.header.title"
+msgstr "EXPORT DATA"
+
+#. This should be all-caps for styling reasons
+#: assets/js/ExportModal.js:84
+msgid "js.ExportModal.jsonCopyLink.copiedToClipboard"
+msgstr "JSON FEED LINK COPIED TO CLIPBOARD"
+
+#. This should be all-caps for styling reasons
+#: assets/js/ExportModal.js:93
+msgid "js.ExportModal.jsonCopyLink.copyLiveLink"
+msgstr "COPY LIVE LINK"
+
+#. This should be all-caps for styling reasons
+#: assets/js/ExportModal.js:118
+msgid "js.ExportModal.type.CSV"
+msgstr "CSV"
+
+#. This should be all-caps for styling reasons
+#: assets/js/ExportModal.js:135
+msgid "js.ExportModal.type.JSON"
+msgstr "JSON FEED"
+
+#: assets/js/ImportModuleFromGitHub.js:123
+msgid "js.ImportModuleFromGithub.footer.closeButton"
+msgstr "Close"
+
+#: assets/js/ImportModuleFromGitHub.js:97
+msgid "js.ImportModuleFromGithub.footer.importButton"
+msgstr "Import"
+
+#: assets/js/ImportModuleFromGitHub.js:113
+msgid "js.ImportModuleFromGithub.public.buildingModuleTutorialLink"
+msgstr "Learn about how to build your own module <0>here</0>"
+
+#: assets/js/ImportModuleFromGitHub.js:109
+msgid "js.ImportModuleFromGithub.public.header.title"
+msgstr "Import Custom Module"
+
+#: assets/js/ImportModuleFromGitHub.js:86
+msgid "js.ImportModuleFromGithub.staff.buildingModuleTutorialLink"
+msgstr "Learn about how to build your own module <0>here</0>"
+
+#: assets/js/ImportModuleFromGitHub.js:66
+msgid "js.ImportModuleFromGithub.staff.header.title"
+msgstr "Import Custom Module"
+
+#: assets/js/ImportModuleFromGitHub.js:47
+msgid "js.ImportModuleFromGithub.status.importedModule"
+msgstr "Imported module {module} under category {category}"
+
+#: assets/js/ImportModuleFromGitHub.js:33
+msgid "js.ImportModuleFromGithub.status.processing"
+msgstr "Processing..."
+
+#: assets/js/OutputIframe.js:147
+msgid "js.OutputIframe.embed.embedCode"
+msgstr "Paste this code into any webpage HTML"
+
+#. This should be all-caps for styling reasons
+#: assets/js/OutputIframe.js:140
+msgid "js.OutputIframe.embed.header.title"
+msgstr "EMBED THIS CHART"
+
+#: assets/js/OutputIframe.js:157
+msgid "js.OutputIframe.footer.OKButton"
+msgstr "OK"
+
+#: assets/js/OutputIframe.js:123
+msgid "js.OutputIframe.footer.cancelButton"
+msgstr "Cancel"
+
+#: assets/js/OutputIframe.js:126
+msgid "js.OutputIframe.footer.setPublicButton"
+msgstr "Set public"
+
+#: assets/js/OutputIframe.js:178
+msgid "js.OutputIframe.getEmbeddableUrl.hoverText"
+msgstr "Get an embeddable URL"
+
+#. This should be all-caps for styling reasons
+#: assets/js/OutputIframe.js:106
+msgid "js.OutputIframe.private.header.title"
+msgstr "SHARE THIS WORKFLOW"
+
+#: assets/js/OutputIframe.js:116
+msgid "js.OutputIframe.private.setToPublic"
 msgstr ""
-"{0, plural, =0 {No rows selected} one {# row selected} other {# rows "
-"selected}}"
+"Set this workflow to Public in order to share it? Anyone with the URL "
+"will be able to access and duplicate it."
 
-#: assets/js/WorkflowNavBar.js:62
-msgid "workflow.visibility.private"
+#: assets/js/OutputIframe.js:113
+msgid "js.OutputIframe.private.workflowIsPrivate"
+msgstr "This workflow is currently private"
+
+#: assets/js/Report/Dashboard.js:11
+msgid "js.Report.Dashboard.addChartstoTabs"
+msgstr "Add charts to tabs, and they'll appear here."
+
+#: assets/js/Report/ShareCard.js:21
+msgid "js.Report.ShareCard.accessibilityDescription.private"
+msgstr "Only collaborators can view this report"
+
+#: assets/js/Report/ShareCard.js:19
+msgid "js.Report.ShareCard.accessibilityDescription.public"
+msgstr "Anyone can view this report"
+
+#: assets/js/Report/ShareCard.js:24
+msgid "js.Report.ShareCard.editPrivacy.sharebutton"
+msgstr "Edit privacy"
+
+#: assets/js/Report/ShareCard.js:27
+msgid "js.Report.ShareCard.reportUrl.header"
+msgstr "Report URL"
+
+#: assets/js/Report/ShareCard.js:14
+msgid "js.Report.ShareCard.sharingStatus.private"
+msgstr "This workflow is private"
+
+#: assets/js/Report/ShareCard.js:12
+msgid "js.Report.ShareCard.sharingStatus.public"
+msgstr "This workflow is public"
+
+#: assets/js/ShareModal/Modal.js:47
+msgid "js.ShareModal.Modal.collaborators"
+msgstr "Collaborators"
+
+#: assets/js/ShareModal/Modal.js:68
+msgid "js.ShareModal.Modal.footer.closeButton"
+msgstr "Close"
+
+#. This should be all-caps for styling reasons
+#: assets/js/ShareModal/Modal.js:35
+msgid "js.ShareModal.Modal.header.title"
+msgstr "SHARING SETTINGS"
+
+#: assets/js/ShareModal/Modal.js:40
+msgid "js.ShareModal.Modal.shareWithTheWorld"
+msgstr "Share with the world"
+
+#: assets/js/ShareModal/NewAclEntry.js:43
+msgid "js.ShareModal.NewAclEntry.grantAccess"
+msgstr "Grant access"
+
+#: assets/js/ShareModal/OwnerAclEntry.js:8
+msgid "js.ShareModal.OwnerAclEntry.owner"
+msgstr "Owner"
+
+#: assets/js/ShareModal/PublicPrivate.js:8
+msgid "js.ShareModal.PublicPrivate.description.private"
+msgstr "Only collaborators can view this Workflow."
+
+#: assets/js/ShareModal/PublicPrivate.js:7
+msgid "js.ShareModal.PublicPrivate.description.public"
+msgstr "Anyone on the Internet may view and duplicate this Workflow."
+
+#: assets/js/ShareModal/PublicPrivate.js:18
+msgid "js.ShareModal.PublicPrivate.descriptionWithToggle"
+msgstr "Anyone can view and duplicate this workflow, and see your email."
+
+#: assets/js/ShareModal/Role.js:8 assets/js/ShareModal/Role.js:15
+#: assets/js/ShareModal/Role.js:19
+msgid "js.ShareModal.Role.canEdit"
+msgstr "Can edit"
+
+#: assets/js/ShareModal/Role.js:8 assets/js/ShareModal/Role.js:15
+#: assets/js/ShareModal/Role.js:18
+msgid "js.ShareModal.Role.canView"
+msgstr "Can view"
+
+#: assets/js/ShareModal/ShareButton.js:23
+msgid "js.ShareModal.ShareButton.button.hoverText"
+msgstr "Change Workflow sharing"
+
+#: assets/js/ShareModal/Url.js:77
+msgid "js.ShareModal.Url.copyToClipboardButton"
+msgstr "Copy to clipboard"
+
+#: assets/js/ShareModal/Url.js:69
+msgid "js.ShareModal.Url.heading.private"
+msgstr "Private link (only accessible to collaborators)"
+
+#: assets/js/ShareModal/Url.js:68
+msgid "js.ShareModal.Url.heading.public"
+msgstr "Public link (accessible to anyone)"
+
+#: assets/js/ShareModal/Url.js:57
+msgid "js.ShareModal.Url.socialLinks.facebook"
+msgstr "Share"
+
+#. The parameter will be a mention to workbench account (i.e. "@cjworkbench")
+#: assets/js/ShareModal/Url.js:43
+msgid "js.ShareModal.Url.socialLinks.shareText"
+msgstr "Check out this chart I made using {workbenchMention}:"
+
+#: assets/js/ShareModal/Url.js:52
+msgid "js.ShareModal.Url.socialLinks.twitter"
+msgstr "Share"
+
+#: assets/js/UndoRedoButtons.js:63
+msgid "js.UndoRedoButtons.redo.hoverText"
+msgstr "Redo"
+
+#: assets/js/UndoRedoButtons.js:62
+msgid "js.UndoRedoButtons.undo.hoverText"
+msgstr "Undo"
+
+#. The tag adds emphasis
+#: assets/js/UnhandledErrorReport.js:20
+msgid "js.UnhandledErrorReport.Intercom.helpText.weOpenedAWindow"
+msgstr ""
+"We opened a messaging window and included details for our developers to "
+"fix the issue. <0>Please send the message</0>."
+
+#: assets/js/UnhandledErrorReport.js:71
+msgid "js.UnhandledErrorReport.actions.refreshPageButton"
+msgstr "Refresh page"
+
+#: assets/js/UnhandledErrorReport.js:67
+msgid "js.UnhandledErrorReport.content.debuggingDetails"
+msgstr "Debugging details (please send):"
+
+#: assets/js/UnhandledErrorReport.js:63
+msgid "js.UnhandledErrorReport.content.oops"
+msgstr "Oops! Something isn't right."
+
+#: assets/js/UnhandledErrorReport.js:64
+msgid "js.UnhandledErrorReport.content.pleaseFollowSteps"
+msgstr "Please follow these simple steps to help us fix the issue."
+
+#: assets/js/UnhandledErrorReport.js:66
+msgid "js.UnhandledErrorReport.content.thankYou"
+msgstr "THANK YOU! Refresh this page to return to your Workflow."
+
+#. The parameter is an email address and the tag is a 'mailto:' url
+#: assets/js/UnhandledErrorReport.js:47
+msgid "js.UnhandledErrorReport.helpText.debuggingDetails"
+msgstr "Copy the debugging details below and send them to <0>{email}</0>."
+
+#: assets/js/UnhandledErrorReport.js:21 assets/js/UnhandledErrorReport.js:52
+msgid "js.UnhandledErrorReport.helpText.pleaseDescribeYourActions"
+msgstr ""
+"It helps if you can describe what you were doing before you ran into the "
+"bug."
+
+#: assets/js/WfHamburgerMenu.js:56
+msgid "js.WfHamburgerMenu.menu.home"
+msgstr "Home"
+
+#: assets/js/WfHamburgerMenu.js:53
+msgid "js.WfHamburgerMenu.menu.importModule"
+msgstr "Import Module"
+
+#: assets/js/WfHamburgerMenu.js:59
+msgid "js.WfHamburgerMenu.menu.logout"
+msgstr "Log Out"
+
+#: assets/js/WfHamburgerMenu.js:52
+msgid "js.WfHamburgerMenu.menu.myWorkflows"
+msgstr "My Workflows"
+
+#: assets/js/WfHamburgerMenu.js:45
+msgid "js.WfHamburgerMenu.toggle.hoverText"
+msgstr "menu"
+
+#: assets/js/Workflow.js:38
+msgid "js.Workflow.isAnonymous"
+msgstr "Demo workflow"
+
+#: assets/js/Workflow.js:47
+msgid "js.Workflow.isShared"
+msgstr "You are viewing a shared workflow"
+
+#: assets/js/Workflow.js:20
+msgid "js.Workflow.suggestion.duplicateToSaveChanges"
+msgstr "Duplicate it to save your changes"
+
+#. The tag is a link to the login page
+#: assets/js/Workflow.js:26
+msgid "js.Workflow.suggestion.signInToSaveChanges"
+msgstr "<0>Sign in</0> to save your changes"
+
+#: assets/js/WorkflowEditor/AddData/Modal.js:26
+msgid "js.WorkflowEditor.AddData.Modal.closeButton.hoverText"
+msgstr "Close"
+
+#. This should be all-caps for styling reasons
+#: assets/js/WorkflowEditor/AddData/Modal.js:21
+msgid "js.WorkflowEditor.AddData.Modal.header.title"
+msgstr "CHOOSE A DATA SOURCE"
+
+#: assets/js/WorkflowEditor/AddData/Modules.js:15
+msgid "js.WorkflowEditor.AddData.Modules.noModulesFound"
+msgstr "No data connectors match your search."
+
+#: assets/js/WorkflowEditor/AddData/Search.js:24
+msgid "js.WorkflowEditor.AddData.Search.clearButton.hoverText"
+msgstr "Clear Search"
+
+#: assets/js/WorkflowEditor/AddData/Search.js:16
+msgid "js.WorkflowEditor.AddData.Search.placeholder"
+msgstr "Search…"
+
+#. This should be all-caps for styling reasons
+#: assets/js/WorkflowEditor/AddData/Button.js:26
+msgid "js.WorkflowEditor.AddData.button"
+msgstr "ADD DATA"
+
+#: assets/js/WorkflowEditor/DataVersionModal.js:196
+msgid "js.WorkflowEditor.DataVersionModal.ModalFooter.actions.loadButton"
+msgstr "Load"
+
+#: assets/js/WorkflowEditor/DataVersionModal.js:166
+msgid "js.WorkflowEditor.DataVersionModal.ModalHeader"
+msgstr "Data Versions"
+
+#: assets/js/WorkflowEditor/DataVersionModal.js:100
+msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.description.emailOnOutputChange"
+msgstr "You will receive and email if the output of this module changes"
+
+#: assets/js/WorkflowEditor/DataVersionModal.js:101
+msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.description.turnAlertsOn"
+msgstr "Turn alerts ON to receive an email if the output of this module changes"
+
+#: assets/js/WorkflowEditor/DataVersionModal.js:108
+msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.options.turnOff"
+msgstr "Turn off"
+
+#: assets/js/WorkflowEditor/DataVersionModal.js:108
+msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.options.turnOn"
+msgstr "Turn on"
+
+#. The tag adds emphasis
+#: assets/js/WorkflowEditor/DataVersionModal.js:95
+msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.status.alertsOff"
+msgstr "Alerts are <0>off</0>"
+
+#. The tag adds emphasis
+#: assets/js/WorkflowEditor/DataVersionModal.js:94
+msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.status.alertsOn"
+msgstr "Alerts are <0>on</0>"
+
+#. This should be all-caps for styling reasons
+#: assets/js/WorkflowEditor/ModuleSearch/Button.js:43
+msgid "js.WorkflowEditor.ModuleSearch.Button.addStep"
+msgstr "ADD STEP"
+
+#: assets/js/WorkflowEditor/ModuleSearch/Prompt.js:49
+msgid "js.WorkflowEditor.ModuleSearch.Prompt.closeButton.hoverText"
+msgstr "Close Search"
+
+#: assets/js/WorkflowEditor/ModuleSearch/Prompt.js:41
+msgid "js.WorkflowEditor.ModuleSearch.Prompt.placeholder"
+msgstr "Search…"
+
+#: assets/js/WorkflowEditor/ModuleStack.js:138
+msgid "js.WorkflowEditor.ModuleStack.EmptyReadOnlyModuleStack"
+msgstr "This Tab has no Steps."
+
+#: assets/js/WorkflowEditor/OutputPane.js:104
+msgid "js.WorkflowEditor.OutputPane.showingInput.becauseError"
+msgstr ""
+"This was the data that led to an error. Please correct the error in the "
+"left pane."
+
+#. This is a link to a report
+#: assets/js/WorkflowEditor/PaneSelect.js:20
+msgid "js.WorkflowEditor.PaneSelect.nav.report"
+msgstr "Report"
+
+#: assets/js/WorkflowEditor/PaneSelect.js:15
+msgid "js.WorkflowEditor.PaneSelect.nav.reportPlaceholder"
+msgstr "Report"
+
+#: assets/js/WorkflowEditor/Tabs/NewTabPrompt.js:14
+msgid "js.WorkflowEditor.Tabs.NewTabPrompt.createTab.title"
+msgstr "Create tab"
+
+#: assets/js/WorkflowEditor/Tabs/TabDropdown.js:20
+msgid "js.WorkflowEditor.Tabs.TabDropdown.menu.delete"
+msgstr "Delete"
+
+#: assets/js/WorkflowEditor/Tabs/TabDropdown.js:17
+msgid "js.WorkflowEditor.Tabs.TabDropdown.menu.duplicate"
+msgstr "Duplicate"
+
+#: assets/js/WorkflowEditor/Tabs/TabDropdown.js:14
+msgid "js.WorkflowEditor.Tabs.TabDropdown.menu.rename"
+msgstr "Rename"
+
+#. The tab prefix will be used as the first part of the default name of tabs,
+#. i.e. if the tab prefix is 'Tab', the default names can be 'Tab 1', 'Tab 2',
+#. etc
+#: assets/js/WorkflowEditor/Tabs/Tabs.js:33
+msgid "js.WorkflowEditor.Tabs.create.defaultPrefix"
+msgstr "Tab"
+
+#: assets/js/WorkflowEditor/wfmodule/DeprecationNotice.js:12
+msgid "js.WorkflowEditor.wfmodule.DeprecationNotice.learnHowToReplace"
+msgstr "Learn how to replace this step"
+
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:354
+msgid "js.WorkflowEditor.wfmodule.EditableNotes.placeholder"
+msgstr "Type a note..."
+
+#: assets/js/WorkflowEditor/wfmodule/WfModuleContextMenu.js:17
+msgid "js.WorkflowEditor.wfmodule.WfModuleContextMenu.more"
+msgstr "more"
+
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:239
+msgid "js.WorkflowEditor.wfmodule.ZenMode.enter"
+msgstr "enter Zen mode"
+
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:239
+msgid "js.WorkflowEditor.wfmodule.ZenMode.exit"
+msgstr "exit Zen mode"
+
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:371
+msgid "js.WorkflowEditor.wfmodule.alert.disabled"
+msgstr "Email alerts disabled"
+
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:371
+msgid "js.WorkflowEditor.wfmodule.alert.enabled"
+msgstr "Email alerts enabled"
+
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:383
+msgid "js.WorkflowEditor.wfmodule.help.hoverText"
+msgstr "Help for this module"
+
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:393
+msgid "js.WorkflowEditor.wfmodule.notes.edit.hoverText"
+msgstr "Edit Note"
+
+#: assets/js/WorkflowEditor/wfmodule/WfModuleContextMenu.js:22
+msgid "js.WorkflowEditor.wfmodule.wfModuleContextMenu.delete"
+msgstr "Delete"
+
+#: assets/js/WorkflowEditor/wfmodule/WfModuleContextMenu.js:21
+msgid "js.WorkflowEditor.wfmodule.wfModuleContextMenu.exportData"
+msgstr "Export data"
+
+#: assets/js/WorkflowNavBar.js:22
+msgid "js.WorkflowNavBar.LessonCourse.Lesson.title"
+msgstr "Training"
+
+#. {timeAgo} will contain something like '4h ago'
+#: assets/js/WorkflowNavBar.js:59
+msgid "js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.lastUpdated"
+msgstr "Updated {timeAgo}"
+
+#: assets/js/WorkflowNavBar.js:54
+msgid "js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.owner"
+msgstr "by {owner}"
+
+#: assets/js/WorkflowNavBar.js:67
+msgid "js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.visibility.private"
 msgstr "Private"
 
-#: assets/js/WorkflowNavBar.js:62
-msgid "workflow.visibility.public"
+#: assets/js/WorkflowNavBar.js:67
+msgid "js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.visibility.public"
 msgstr "Public"
+
+#: assets/js/WorkflowNavBar.js:208
+msgid "js.WorkflowNavBar.duplicate.button"
+msgstr "Duplicate"
+
+#: assets/js/WorkflowNavBar.js:210
+msgid "js.WorkflowNavBar.share.shareButton"
+msgstr "Share"
+
+#: assets/js/WorkflowNavBar.js:177
+msgid "js.WorkflowNavBar.signIn.accountLink"
+msgstr "Sign in"
 
 #. This is used in navigation bar. It should be all-caps for styling reasons.
 #: assets/js/Workflows/Navbar.js:39
-msgid "workflows.navbar.training"
+msgid "js.Workflows.NavBar.links.training"
 msgstr "TRAINING"
 
 #. This is used in navigation bar. It should be all-caps for styling reasons.
 #: assets/js/Workflows/Navbar.js:36
-msgid "workflows.navbar.workflows"
+msgid "js.Workflows.NavBar.links.workflows"
 msgstr "WORKFLOWS"
 
+#: assets/js/Workflows/SortMenu.js:34
+msgid "js.Workflows.SortMenu.alphabetical.dropdownItem"
+msgstr "Alphabetical"
+
+#: assets/js/Workflows/SortMenu.js:31
+msgid "js.Workflows.SortMenu.lastModified.dropdownItem"
+msgstr "Last modified"
+
+#: assets/js/Workflows/SortMenu.js:32
+msgid "js.Workflows.SortMenu.oldestModified.dropdownItem"
+msgstr "Oldest modified"
+
+#: assets/js/Workflows/SortMenu.js:35
+msgid "js.Workflows.SortMenu.reverseAlphabet.dropdownItem"
+msgstr "Reverse alphabetical"
+
+#: assets/js/Workflows/SortMenu.js:28
+msgid "js.Workflows.SortMenu.sort.DropdownTitle"
+msgstr "Sort"
+
+#: assets/js/Workflows/WorkflowContextMenu.js:40
+msgid "js.Workflows.WorkflowContextMenu.delete"
+msgstr "Delete"
+
+#: assets/js/Workflows/WorkflowContextMenu.js:35
+msgid "js.Workflows.WorkflowContextMenu.duplicate"
+msgstr "Duplicate"
+
+#: assets/js/Workflows/WorkflowLists.js:51
+msgid "js.Workflows.WorkflowLists.createYourFirtsWorkflow.button"
+msgstr "Create your first workflow"
+
+#: assets/js/Workflows/WorkflowLists.js:111
+msgid "js.Workflows.WorkflowLists.nav.myWorkflows"
+msgstr "My workflows"
+
+#: assets/js/Workflows/WorkflowLists.js:113
+msgid "js.Workflows.WorkflowLists.nav.recipes"
+msgstr "Recipes"
+
+#: assets/js/Workflows/WorkflowLists.js:112
+msgid "js.Workflows.WorkflowLists.nav.sharedWithMe"
+msgstr "Shared with me"
+
+#: assets/js/Workflows/WorkflowLists.js:76
+msgid "js.Workflows.WorkflowLists.publisheNewRecipes"
+msgstr "Publishe new recipes via the Django admin"
+
+#: assets/js/Workflows/WorkflowLists.js:64
+msgid "js.Workflows.WorkflowLists.workflowsWillAppearHere"
+msgstr "Workflows shared with you as collaborator will appear here"
+
+#: assets/js/Workflows/WorkflowMetadata.js:50
+msgid "js.Workflows.WorkflowMetadata.changePrivacy.button"
+msgstr "Change privacy"
+
+#: assets/js/Workflows/WorkflowMetadata.js:41
+msgid "js.Workflows.WorkflowMetadata.owner"
+msgstr "by {owner}"
+
+#. The parameter will contain a time difference (i.e. something like '5h ago')
+#: assets/js/Workflows/WorkflowMetadata.js:64
+msgid "js.Workflows.WorkflowMetadata.update"
+msgstr "Updated {timeAgo}"
+
+#: assets/js/Workflows/WorkflowMetadata.js:54
+msgid "js.Workflows.WorkflowMetadata.visibility.private"
+msgstr "private"
+
+#: assets/js/Workflows/WorkflowMetadata.js:52
+msgid "js.Workflows.WorkflowMetadata.visibility.public"
+msgstr "public"
+
+#: assets/js/Workflows/index.js:203
+msgid "js.Workflows.createWorkflowButton"
+msgstr "Create Workflow"
+
+#: assets/js/Workflows/index.js:95
+msgid "js.Workflows.delete.permanentyDeleteWarning"
+msgstr "Permanently delete this workflow?"
+
+#: assets/js/Workflows/index.js:200
+msgid "js.Workflows.learnHowToWorkWithData"
+msgstr "Learn how to work with data without coding"
+
+#. This should be all-caps for styling reasons
+#: assets/js/Workflows/index.js:194
+msgid "js.Workflows.new"
+msgstr "NEW"
+
+#. This should be all-caps for styling reasons
+#: assets/js/Workflows/index.js:197
+msgid "js.Workflows.training.title"
+msgstr "TRAINING"
+
+#: assets/js/i18n/locales.js:5
+msgid "js.i18n.locales.el"
+msgstr "Greek"
+
+#: assets/js/i18n/locales.js:4
+msgid "js.i18n.locales.en"
+msgstr "English"
+
+#: assets/js/lessons/LessonFooter.js:41
+msgid "js.lessons.LessonFooter.training.link"
+msgstr "Training"
+
+#: assets/js/lessons/LessonNav.js:54
+msgid "js.lessons.LessonNav.next.button"
+msgstr "Next"
+
+#: assets/js/lessons/LessonNav.js:39
+msgid "js.lessons.LessonNav.previous.button"
+msgstr "Previous"
+
+#: assets/js/lessons/LessonSection.js:70
+msgid "js.lessons.LessonSection.training.link"
+msgstr "Training"
+
+#: assets/js/params/Column.js:46
+msgid "js.params.Column.select.placeholder"
+msgstr "Select"
+
+#: assets/js/params/Custom/Aggregations/Aggregation.js:67
+msgid "js.params.Custom.Aggregations.Aggregation.placeholder.default"
+msgstr "(default)"
+
+#: assets/js/params/Custom/Aggregations/Aggregation.js:66
+msgid "js.params.Custom.Aggregations.Aggregation.placeholder.first"
+msgstr "First of {colname}"
+
+#: assets/js/params/Custom/Aggregations/Aggregation.js:65
+msgid "js.params.Custom.Aggregations.Aggregation.placeholder.max"
+msgstr "Maximum of {colname}"
+
+#: assets/js/params/Custom/Aggregations/Aggregation.js:62
+msgid "js.params.Custom.Aggregations.Aggregation.placeholder.mean"
+msgstr "Average of {colname}"
+
+#: assets/js/params/Custom/Aggregations/Aggregation.js:63
+msgid "js.params.Custom.Aggregations.Aggregation.placeholder.median"
+msgstr "Median of {colname}"
+
+#: assets/js/params/Custom/Aggregations/Aggregation.js:64
+msgid "js.params.Custom.Aggregations.Aggregation.placeholder.min"
+msgstr "Minimum of {colname}"
+
+#: assets/js/params/Custom/Aggregations/Aggregation.js:60
+msgid "js.params.Custom.Aggregations.Aggregation.placeholder.nunique"
+msgstr "Unique count of {colname}"
+
+#: assets/js/params/Custom/Aggregations/Aggregation.js:52
+msgid "js.params.Custom.Aggregations.Aggregation.placeholder.size"
+msgstr "Group Size"
+
+#: assets/js/params/Custom/Aggregations/Aggregation.js:61
+msgid "js.params.Custom.Aggregations.Aggregation.placeholder.sum"
+msgstr "Sum of {colname}"
+
+#: assets/js/params/Custom/Aggregations/Operation.js:17
+msgid "js.params.Custom.Aggregations.Operation.count.option"
+msgstr "Count"
+
+#: assets/js/params/Custom/Aggregations/Operation.js:18
+msgid "js.params.Custom.Aggregations.Operation.countUnique.option"
+msgstr "Count unique"
+
+#: assets/js/params/Custom/Aggregations/Operation.js:24
+msgid "js.params.Custom.Aggregations.Operation.first.option"
+msgstr "First"
+
+#: assets/js/params/Custom/Aggregations/Operation.js:23
+msgid "js.params.Custom.Aggregations.Operation.maximum.option"
+msgstr "Maximum"
+
+#: assets/js/params/Custom/Aggregations/Operation.js:20
+msgid "js.params.Custom.Aggregations.Operation.mean.option"
+msgstr "Average (Mean)"
+
+#: assets/js/params/Custom/Aggregations/Operation.js:21
+msgid "js.params.Custom.Aggregations.Operation.median.option"
+msgstr "Median"
+
+#: assets/js/params/Custom/Aggregations/Operation.js:22
+msgid "js.params.Custom.Aggregations.Operation.minimum.option"
+msgstr "Minimum"
+
+#: assets/js/params/Custom/Aggregations/Operation.js:19
+msgid "js.params.Custom.Aggregations.Operation.sum.option"
+msgstr "Sum"
+
+#: assets/js/params/Custom/Aggregations/index.js:94
+msgid "js.params.Custom.Aggregations.addButton"
+msgstr "Add"
+
+#: assets/js/params/Custom/Aggregations/index.js:70
+msgid "js.params.Custom.Aggregations.operations"
+msgstr "Operations"
+
+#. The tags <3>, <6>, and <8> are URLs. The rest are code formatting. Please
+#. keep code and names of libraries untranslated.
+#: assets/js/params/Custom/Code/AceEditor.js:78
+msgid "js.params.Custom.Code.AceEditor.help"
+msgstr ""
+"Define a <0>process(table)</0> function that accepts a "
+"<1>pd.DataFrame</1> and returns a <2>pd.DataFrame</2>. You may use the "
+"<3><4>math</4></3>, <5>pd</5> (<6>Pandas</6>) and <7>np</7> "
+"(<8>Numpy</8>) modules."
+
+#. The parameter will the the name of the custom type
+#: assets/js/params/Custom/index.js:36
+msgid "js.params.Custom.ComponentNotFound.error"
+msgstr "Custom type {name} not handled"
+
+#: assets/js/params/File/File.js:232
+msgid "js.params.Custom.File.browse.label"
+msgstr "Browse"
+
+#: assets/js/params/File/File.js:188
+msgid "js.params.Custom.File.cancelUpload.button"
+msgstr "Cancel Upload"
+
+#: assets/js/params/File/File.js:187
+msgid "js.params.Custom.File.cancelUpload.hoverText"
+msgstr "Cancel upload"
+
+#: assets/js/params/File/File.js:223
+msgid "js.params.Custom.File.dragfilehere"
+msgstr "Drag file here"
+
+#: assets/js/params/File/File.js:245
+msgid "js.params.Custom.File.dropFileHere"
+msgstr "Drop file here"
+
+#. This is shown after js.params.Custom.File.dragfilehere
+#: assets/js/params/File/File.js:224
+msgid "js.params.Custom.File.or"
+msgstr "or"
+
+#: assets/js/params/File/File.js:208
+msgid "js.params.Custom.File.replace"
+msgstr "Replace"
+
+#: assets/js/params/File/File.js:204 assets/js/params/File/File.js:228
+msgid "js.params.Custom.File.uploadApi.button"
+msgstr "API"
+
+#: assets/js/params/File/File.js:203 assets/js/params/File/File.js:227
+msgid "js.params.Custom.File.uploadApi.hoverText"
+msgstr "Open upload API instructions"
+
+#. This is the logical AND function.
+#: assets/js/params/Custom/Filters/AddFilter.js:18
+msgid "js.params.Custom.Filters.AddFilter.and"
+msgstr "AND"
+
+#. This is the logical OR function.
+#: assets/js/params/Custom/Filters/AddFilter.js:28
+msgid "js.params.Custom.Filters.AddFilter.or"
+msgstr "OR"
+
+#: assets/js/params/Custom/Filters/Condition.js:27
+msgid "js.params.Custom.Filters.Condition.NumberIsGreaterOrEqual"
+msgstr "Number is greater than or equals"
+
+#: assets/js/params/Custom/Filters/Condition.js:33
+msgid "js.params.Custom.Filters.Condition.cellIsNotnull"
+msgstr "Cell is not null"
+
+#: assets/js/params/Custom/Filters/Condition.js:34
+msgid "js.params.Custom.Filters.Condition.cellIsempty"
+msgstr "Cell is empty"
+
+#: assets/js/params/Custom/Filters/Condition.js:35
+msgid "js.params.Custom.Filters.Condition.cellIsnotEmpty"
+msgstr "Cell is not empty"
+
+#: assets/js/params/Custom/Filters/Condition.js:32
+msgid "js.params.Custom.Filters.Condition.cellIsnull"
+msgstr "Cell is null"
+
+#: assets/js/params/Custom/Filters/Condition.js:18
+msgid "js.params.Custom.Filters.Condition.dateIs"
+msgstr "Date is"
+
+#: assets/js/params/Custom/Filters/Condition.js:21
+msgid "js.params.Custom.Filters.Condition.dateIsAfter"
+msgstr "Date is after"
+
+#: assets/js/params/Custom/Filters/Condition.js:20
+msgid "js.params.Custom.Filters.Condition.dateIsBefore"
+msgstr "Date is before"
+
+#: assets/js/params/Custom/Filters/Condition.js:19
+msgid "js.params.Custom.Filters.Condition.dateIsNot"
+msgstr "Date is not"
+
+#: assets/js/params/Custom/Filters/Condition.js:24
+msgid "js.params.Custom.Filters.Condition.numberIs"
+msgstr "Number is"
+
+#: assets/js/params/Custom/Filters/Condition.js:26
+msgid "js.params.Custom.Filters.Condition.numberIsGreaterThan"
+msgstr "Number is greater than"
+
+#: assets/js/params/Custom/Filters/Condition.js:29
+msgid "js.params.Custom.Filters.Condition.numberIsLessOrequal"
+msgstr "Number is less than or equals"
+
+#: assets/js/params/Custom/Filters/Condition.js:28
+msgid "js.params.Custom.Filters.Condition.numberIsLessthan"
+msgstr "Number is less than"
+
+#: assets/js/params/Custom/Filters/Condition.js:25
+msgid "js.params.Custom.Filters.Condition.numberIsNot"
+msgstr "Number is not"
+
+#: assets/js/params/Custom/Filters/Condition.js:67
+msgid "js.params.Custom.Filters.Condition.selectCondition"
+msgstr "Select condition"
+
+#: assets/js/params/Custom/Filters/Condition.js:9
+msgid "js.params.Custom.Filters.Condition.textContains"
+msgstr "Text contains"
+
+#: assets/js/params/Custom/Filters/Condition.js:13
+msgid "js.params.Custom.Filters.Condition.textContainsRegex"
+msgstr "Text contains regex"
+
+#: assets/js/params/Custom/Filters/Condition.js:10
+msgid "js.params.Custom.Filters.Condition.textDoesNotContain"
+msgstr "Text does not contain"
+
+#: assets/js/params/Custom/Filters/Condition.js:14
+msgid "js.params.Custom.Filters.Condition.textDoesntContainRegex"
+msgstr "Text does not contain regex"
+
+#: assets/js/params/Custom/Filters/Condition.js:11
+msgid "js.params.Custom.Filters.Condition.textIsExactly"
+msgstr "Text is exactly"
+
+#: assets/js/params/Custom/Filters/Condition.js:12
+msgid "js.params.Custom.Filters.Condition.textIsNotExactly"
+msgstr "Text is not exactly"
+
+#: assets/js/params/Custom/Filters/Condition.js:15
+msgid "js.params.Custom.Filters.Condition.textMatchesRegexExactly"
+msgstr "Text matches regex exactly"
+
+#. This is the logical AND function.
+#: assets/js/params/Custom/Filters/FilterOperator.js:22
+msgid "js.params.Custom.Filters.FilterOperator.OneOperator.and"
+msgstr "AND"
+
+#. This is the logical OR function.
+#: assets/js/params/Custom/Filters/FilterOperator.js:23
+msgid "js.params.Custom.Filters.FilterOperator.OneOperator.or"
+msgstr "OR"
+
+#: assets/js/params/Custom/Filters/Subfilter.js:80
+msgid "js.params.Custom.Filters.Subfilter.Column.placeholder"
+msgstr "Select column"
+
+#: assets/js/params/Custom/Filters/Subfilter.js:101
+msgid "js.params.Custom.Filters.Subfilter.SingleLineString.placeholder"
+msgstr "Value"
+
+#: assets/js/params/Custom/Filters/Subfilter.js:121
+msgid "js.params.Custom.Filters.Subfilter.matchCase"
+msgstr "Match case"
+
+#: assets/js/params/Custom/Groups/DateGranularities.js:72
+msgid "js.params.Custom.Groups.DateGranularities.convertColumns"
+msgstr "Convert columns"
+
+#: assets/js/params/Custom/Groups/DateGranularities.js:65
+msgid "js.params.Custom.Groups.DateGranularities.noDateAndTimeToGroup"
+msgstr "There are no Date and Time columns to group by date"
+
+#: assets/js/params/Custom/Groups/DateGranularities.js:76
+msgid "js.params.Custom.Groups.DateGranularities.selectDateAndTimeToGroup"
+msgstr "Select a Date and Time column to group it by date"
+
+#: assets/js/params/Custom/Groups/DateGranularity.js:36
+msgid "js.params.Custom.Groups.DateGranularity.asIs.option"
+msgstr "as is"
+
+#: assets/js/params/Custom/Groups/DateGranularity.js:40
+msgid "js.params.Custom.Groups.DateGranularity.byDay.option"
+msgstr "by day"
+
+#: assets/js/params/Custom/Groups/DateGranularity.js:39
+msgid "js.params.Custom.Groups.DateGranularity.byHour.option"
+msgstr "by hour"
+
+#: assets/js/params/Custom/Groups/DateGranularity.js:38
+msgid "js.params.Custom.Groups.DateGranularity.byMinute.option"
+msgstr "by minute"
+
+#: assets/js/params/Custom/Groups/DateGranularity.js:41
+msgid "js.params.Custom.Groups.DateGranularity.byMonth.option"
+msgstr "by month"
+
+#: assets/js/params/Custom/Groups/DateGranularity.js:42
+msgid "js.params.Custom.Groups.DateGranularity.byQuarter.option"
+msgstr "by quarter"
+
+#: assets/js/params/Custom/Groups/DateGranularity.js:37
+msgid "js.params.Custom.Groups.DateGranularity.bySecond.option"
+msgstr "by second"
+
+#: assets/js/params/Custom/Groups/DateGranularity.js:43
+msgid "js.params.Custom.Groups.DateGranularity.byYear.option"
+msgstr "by year"
+
+#: assets/js/params/Custom/Groups/DateGranularity.js:28
+msgid "js.params.Custom.Groups.DateGranularity.heading.title"
+msgstr "Granularity of “{colname}”"
+
+#: assets/js/params/Custom/Groups/index.js:68
+msgid "js.params.Custom.Groups.groupDates"
+msgstr "Group dates"
+
+#: assets/js/params/Custom/JoinColumns.js:82
+msgid "js.params.Custom.JoinColumns.addColumns"
+msgstr "Add columns"
+
+#: assets/js/params/Custom/JoinColumns.js:71
+msgid "js.params.Custom.JoinColumns.joinOn"
+msgstr "Join on"
+
+#. The parameter will contain a tab name
+#: assets/js/params/Custom/JoinColumns.js:74
+msgid "js.params.Custom.JoinColumns.noColumnToJoin"
+msgstr ""
+"There is no column to join on in {0}. Columns in both tabs must have "
+"identical names and capitalization. Please edit column names."
+
+#: assets/js/params/Custom/Refine/RefineBins.js:62
+msgid "js.params.Custom.RefineBins.RefineBin.newValue.placeholder"
+msgstr "New Value"
+
+#: assets/js/params/Custom/Refine/RefineBins.js:119
+msgid "js.params.Custom.RefineBins.clusterSize.heading"
+msgstr "Cluster size"
+
+#: assets/js/params/Custom/Refine/RefineBins.js:121
+msgid "js.params.Custom.RefineBins.countRows.heading"
+msgstr "# rows"
+
+#: assets/js/params/Custom/Refine/RefineBins.js:122
+msgid "js.params.Custom.RefineBins.newValue.heading"
+msgstr "New value"
+
+#: assets/js/params/Custom/Refine/RefineBins.js:52
+msgid "js.params.Custom.RefineBins.newValue.placeholder"
+msgstr "New Value"
+
+#: assets/js/params/Custom/Refine/RefineBins.js:108
+msgid "js.params.Custom.RefineBins.noClustersFound"
+msgstr "No clusters found. Try different settings."
+
+#: assets/js/params/Custom/Refine/RefineBins.js:120
+msgid "js.params.Custom.RefineBins.values.heading"
+msgstr "Values"
+
+#: assets/js/params/Custom/Refine/RefineClusterer.js:14
+msgid "js.params.Custom.RefineClusterer.Algorithms.fingerprint.description"
+msgstr ""
+"Group values by fingerprint. This method is effective when values are "
+"capitalized irregularly or if special characters are used in some and not"
+" others. For instance, \"café\" and \"Cafe\" both have the same "
+"fingerprint, \"cafe\"."
+
+#: assets/js/params/Custom/Refine/RefineClusterer.js:13
+msgid "js.params.Custom.RefineClusterer.Algorithms.fingerprint.name"
+msgstr "Fingerprint"
+
+#: assets/js/params/Custom/Refine/RefineClusterer.js:22
+msgid "js.params.Custom.RefineClusterer.Algorithms.levenshtein.description"
+msgstr ""
+"Groups values if the number of characters added, edited or deleted to get"
+" from one value to the other is equal or inferior to 'Maximum distance'. "
+"For instance, the distance between \"Cafés\" and \"cafe\" is 3."
+
+#: assets/js/params/Custom/Refine/RefineClusterer.js:21
+msgid "js.params.Custom.RefineClusterer.Algorithms.levenshtein.name"
+msgstr "Edit distance"
+
+#: assets/js/params/Custom/Refine/RefineClusterer.js:26
+msgid "js.params.Custom.RefineClusterer.Algorithms.levenshtein.options.maxDistance.label"
+msgstr "Maximum distance"
+
+#: assets/js/params/Custom/Refine/RefineClusterer.js:179
+msgid "js.params.Custom.RefineClusterer.method"
+msgstr "Method"
+
+#: assets/js/params/Custom/Refine/RefineClustererProgress.js:14
+msgid "js.params.Custom.RefineClustererProgress.findingClusters"
+msgstr "Finding clusters…"
+
+#: assets/js/params/Custom/Refine/RefineModal.js:82
+msgid "js.params.Custom.RefineModal.footer.cancelButton"
+msgstr "Cancel"
+
+#: assets/js/params/Custom/Refine/RefineModal.js:90
+msgid "js.params.Custom.RefineModal.footer.mergeSelectedButton"
+msgstr "Merge selected"
+
+#. This should be all-caps for styling reasons
+#: assets/js/params/Custom/Refine/RefineModal.js:65
+msgid "js.params.Custom.RefineModal.header.title"
+msgstr "CLUSTER"
+
+#: assets/js/params/Custom/Refine/RefineStatus.js:21
+msgid "js.params.Custom.RefineStatus.clustering"
+msgstr "Clustering"
+
+#: assets/js/params/Custom/Refine/RefineStatus.js:23
+msgid "js.params.Custom.RefineStatus.numberOfClustersFound"
+msgstr "{nBinsTotal, plural, one {# cluster found} other {# clusters found}}"
+
+#. This should be all-caps for styling reasons
+#: assets/js/params/Custom/ReorderHistory.js:24
+msgid "js.params.Custom.ReorderHistory.column.heading"
+msgstr "COLUMN"
+
+#. This should be all-caps for styling reasons
+#: assets/js/params/Custom/ReorderHistory.js:25
+msgid "js.params.Custom.ReorderHistory.from.heading"
+msgstr "FROM"
+
+#. This should be all-caps for styling reasons
+#: assets/js/params/Custom/ReorderHistory.js:26
+msgid "js.params.Custom.ReorderHistory.to.heading"
+msgstr "TO"
+
+#: assets/js/params/Custom/SortColumn/SortColumn.js:10
+msgid "js.params.Custom.SortColumn.AscendingParam.ascending"
+msgstr "Ascending"
+
+#: assets/js/params/Custom/SortColumn/SortColumn.js:11
+msgid "js.params.Custom.SortColumn.AscendingParam.descending"
+msgstr "Descending"
+
+#: assets/js/params/Custom/SortColumn/index.js:91
+msgid "js.params.Custom.SortColumn.add"
+msgstr "Add"
+
+#: assets/js/params/Custom/SortColumn/SortColumn.js:71
+msgid "js.params.Custom.SortColumn.by.label"
+msgstr "By"
+
+#: assets/js/params/Custom/SortColumn/SortColumn.js:71
+msgid "js.params.Custom.SortColumn.thenBy.label"
+msgstr "Then by"
+
+#: assets/js/params/File/UploadApiModal.js:44
+msgid "js.params.Custom.UploadApiModal.ApiTokenOk.disableApi"
+msgstr "Disable API"
+
+#: assets/js/params/File/UploadApiModal.js:58
+msgid "js.params.Custom.UploadApiModal.ApiTokenOk.enableApi"
+msgstr "Enable API"
+
+#: assets/js/params/File/UploadApiModal.js:57
+msgid "js.params.Custom.UploadApiModal.ApiTokenOk.noApiToken"
+msgstr "No API token"
+
+#: assets/js/params/File/UploadApiModal.js:43
+msgid "js.params.Custom.UploadApiModal.ApiTokenOk.resetApiToken"
+msgstr "Reset API token"
+
+#: assets/js/params/File/UploadApiModal.js:51
+msgid "js.params.Custom.UploadApiModal.ApiTokenOk.stepId"
+msgstr "Step ID"
+
+#: assets/js/params/File/UploadApiModal.js:47
+msgid "js.params.Custom.UploadApiModal.ApiTokenOk.workflowId"
+msgstr "Workflow ID"
+
+#. The tags are links to external info. The parameter is the name of a library.
+#: assets/js/params/File/UploadApiModal.js:136
+msgid "js.params.Custom.UploadApiModal.Instructions.dependencies.boto3"
+msgstr ""
+"<0>{0}</0> is the AWS SDK for Python. There is an <1>AWS SDK</1> for most"
+" any programming language; and there are dozens of third-party libraries "
+"that are compatible with Workbench. Use any library that supports custom "
+"endpoints, session tokens and \"path\" addressing style."
+
+#. The tags are links to external info. The parameters are names of libraries.
+#: assets/js/params/File/UploadApiModal.js:141
+msgid "js.params.Custom.UploadApiModal.Instructions.dependencies.requestsHttpLib"
+msgstr ""
+"<0>{0}</0> is an HTTP library with simpler requests than Python's built-"
+"in <1>{1}</1>."
+
+#: assets/js/params/File/UploadApiModal.js:132
+msgid "js.params.Custom.UploadApiModal.Instructions.dependencies.title"
+msgstr "Install and load dependencies"
+
+#: assets/js/params/File/UploadApiModal.js:133
+msgid "js.params.Custom.UploadApiModal.Instructions.dependencies.yourProgramWillneed"
+msgstr "Your program will need to make HTTP requests and upload to S3."
+
+#. The tag is a link to Amazon s3
+#: assets/js/params/File/UploadApiModal.js:118
+msgid "js.params.Custom.UploadApiModal.Instructions.eachFileBelongs"
+msgstr ""
+"Each file you upload belongs in a unique <0>Amazon S3</0>-compatible "
+"endpoint. You cannot reuse the same endpoint for two files: to replace a "
+"file, you must follow all these steps again."
+
+#: assets/js/params/File/UploadApiModal.js:196
+msgid "js.params.Custom.UploadApiModal.Instructions.finishUploadAndGiveFilename"
+msgstr "Tell Workbench to finish the upload, and give it a filename"
+
+#: assets/js/params/File/UploadApiModal.js:198
+msgid "js.params.Custom.UploadApiModal.Instructions.finishUploadAndGiveFilename.workflowUploadModal"
+msgstr "In your workflow, this Step will be updated to use the new file."
+
+#: assets/js/params/File/UploadApiModal.js:128
+msgid "js.params.Custom.UploadApiModal.Instructions.goodWaytoStart"
+msgstr ""
+"A good way to start your project is to copy and paste all this code into "
+"a script (one step at a time), and then edit."
+
+#. The parameters contain code. The tags wrap them for correct presentation.
+#: assets/js/params/File/UploadApiModal.js:154
+msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.postRequest"
+msgstr ""
+"Send an HTTP POST request to <0>{postUrl}</0>. It should have no "
+"parameters or content. (Do not upload the file to this URL.) It must have"
+" an <1>{0}</1> header that looks like <2>{1}</2>."
+
+#: assets/js/params/File/UploadApiModal.js:176
+msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.s3Config.bucket"
+msgstr "S3 bucket name where your file should be uploaded"
+
+#. The parameters contain code. The tags wrap them for correct presentation.
+#: assets/js/params/File/UploadApiModal.js:182
+msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.s3Config.credentials"
+msgstr "Dictionary with <0>{0}</0>, <1>{1}</1> and <2>{2}</2> keys"
+
+#: assets/js/params/File/UploadApiModal.js:166
+msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.s3Config.endpoint"
+msgstr "URL of S3-compatible upload server"
+
+#: assets/js/params/File/UploadApiModal.js:186
+msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.s3Config.finishUrl"
+msgstr "(non-S3) URL to notify when we're done using the S3 API"
+
+#: assets/js/params/File/UploadApiModal.js:180
+msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.s3Config.key"
+msgstr "S3 key name where your file should be uploaded"
+
+#: assets/js/params/File/UploadApiModal.js:171
+msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.s3Config.region"
+msgstr "S3-compatible region code"
+
+#. The parameter contains code. The tag wraps it for correct presentation.
+#: assets/js/params/File/UploadApiModal.js:160
+msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.s3Config.root"
+msgstr "<0>{0}</0> will be a dictionary with the following keys:"
+
+#. The parameters are 'bucket' and 'key' respectively. The tags wrap them for
+#. correct presentation.
+#: assets/js/params/File/UploadApiModal.js:189
+msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.theCredsAllowBucketKey"
+msgstr ""
+"The credentials will only allow you to upload your file to the specified "
+"<0>{0}</0> and <1>{1}</1>. The credentials will expire in a few hours."
+
+#: assets/js/params/File/UploadApiModal.js:152
+msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.title"
+msgstr "Query Workbench for upload credentials"
+
+#. The tag adds emphasis
+#: assets/js/params/File/UploadApiModal.js:148
+msgid "js.params.Custom.UploadApiModal.Instructions.storeVariablesAndsecrets.notShareApitoken"
+msgstr ""
+"<0>Do not share the API token or commit it to any code repository.</0> "
+"Anybody with access to the token can alter this step. Keep it safe. If "
+"you suspect your API token has been compromised, reset the API token."
+
+#: assets/js/params/File/UploadApiModal.js:145
+msgid "js.params.Custom.UploadApiModal.Instructions.storeVariablesAndsecrets.title"
+msgstr "Store variables and secrets"
+
+#: assets/js/params/File/UploadApiModal.js:123
+msgid "js.params.Custom.UploadApiModal.Instructions.theseInstructionsUsepython"
+msgstr ""
+"These instructions use Python 3, for illustration. You may use any "
+"programming language."
+
+#: assets/js/params/File/UploadApiModal.js:116
+msgid "js.params.Custom.UploadApiModal.Instructions.title"
+msgstr "How to upload"
+
+#. The tag is a URL to external info
+#: assets/js/params/File/UploadApiModal.js:195
+msgid "js.params.Custom.UploadApiModal.Instructions.uploadS3CompatibleBucket.seeAwsSdkDocumentation"
+msgstr ""
+"See the <0>AWS SDK documentation</0> for your library to learn how to "
+"upload a file."
+
+#: assets/js/params/File/UploadApiModal.js:193
+msgid "js.params.Custom.UploadApiModal.Instructions.uploadS3CompatibleBucket.title"
+msgstr "Upload to S3-compatible bucket"
+
+#: assets/js/params/File/UploadApiModal.js:227
+msgid "js.params.Custom.UploadApiModal.fileuploadApiStatus.disabled"
+msgstr "The file-upload API is disabled. Please enable it to allow uploading."
+
+#. The tag adds emphasis
+#: assets/js/params/File/UploadApiModal.js:225
+msgid "js.params.Custom.UploadApiModal.fileuploadApiStatus.enabled"
+msgstr "The file-upload API is <0>enabled</0>."
+
+#: assets/js/params/File/UploadApiModal.js:246
+msgid "js.params.Custom.UploadApiModal.footer.closeButton"
+msgstr "Close"
+
+#. This should be all-caps for styling reasons
+#: assets/js/params/File/UploadApiModal.js:220
+msgid "js.params.Custom.UploadApiModal.header.title"
+msgstr "UPLOAD BY API"
+
+#: assets/js/params/File/UploadApiModal.js:222
+msgid "js.params.Custom.UploadApiModal.programmerInstructions"
+msgstr "These instructions are for programmers."
+
+#: assets/js/params/File/UploadApiModal.js:223
+msgid "js.params.Custom.UploadApiModal.theFileUploadApiIsPerfect"
+msgstr ""
+"The file-upload API is perfect for loading data from cronjobs or other "
+"external scripts. You can send data to Workbench using any programming "
+"language."
+
+#: assets/js/params/Custom/ValueSelect.js:55
+msgid "js.params.Custom.ValueSelect.ValueItem.includeTheseRows"
+msgstr "Include these rows"
+
+#: assets/js/params/Custom/ValueSelect.js:121
+msgid "js.params.Custom.ValueSelect.ValueList.loadingValues"
+msgstr "Loading values…"
+
+#: assets/js/params/Custom/ValueSelect.js:123
+msgid "js.params.Custom.ValueSelect.ValueList.noValuesInColumn"
+msgstr "Column does not have any values"
+
+#: assets/js/params/Custom/ValueSelect.js:125
+msgid "js.params.Custom.ValueSelect.ValueList.noValuesMatchSearch"
+msgstr "No values match your search"
+
+#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:37
+msgid "js.params.Custom.VersionSelect.DataVersionSelect.noVersions.label"
+msgstr "Version"
+
+#. The parameter {0} will be the current version and {nVersions} will be the
+#. number of versions
+#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:47
+msgid "js.params.Custom.VersionSelect.DataVersionSelect.readOnly.label"
+msgstr "Version {0} of {nVersions}"
+
+#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:62
+msgid "js.params.Custom.VersionSelect.DataVersionSelect.selectVersion.hoverText"
+msgstr "Select version"
+
+#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:56
+msgid "js.params.Custom.VersionSelect.DataVersionSelect.selectVersion.label"
+msgstr "Version"
+
+#. The parameter {0} will be the current version and {nVersions} will be the
+#. number of versions
+#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:65
+msgid "js.params.Custom.VersionSelect.DataVersionSelect.versionCount"
+msgstr "{0} of {nVersions}"
+
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:68
+msgid "js.params.Custom.VersionSelect.QuotaExceeded.editWorkflow"
+msgstr "Edit workflow"
+
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:49
+msgid "js.params.Custom.VersionSelect.QuotaExceeded.fetchesPerDay.heading"
+msgstr "#/day"
+
+#. The {1} argument is a tab name
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:79
+msgid "js.params.Custom.VersionSelect.QuotaExceeded.otherStep.fetchesPerDay"
+msgstr "Step {0} on {1} makes {2} updates per day."
+
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:41
+msgid "js.params.Custom.VersionSelect.QuotaExceeded.quotasteps"
+msgstr ""
+"Here are the steps that count against your limit. Adjust their update "
+"times or set them to manual, then click \"Retry\" above."
+
+#. The tag is a mailto url
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:90
+msgid "js.params.Custom.VersionSelect.QuotaExceeded.requestLift"
+msgstr "Need a higher limit? Send us a short <0>email</0>."
+
+#. The two tags add emphasis
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:33
+msgid "js.params.Custom.VersionSelect.QuotaExceeded.requestsVsLimit"
+msgstr ""
+"You're requesting <0>{0}</0> updates per day across all your workflows. "
+"Your daily limit is <1>{1}</1>."
+
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:77
+msgid "js.params.Custom.VersionSelect.QuotaExceeded.thisStep.fetchesPerDay"
+msgstr "You asked for this step to make {0} updates per day."
+
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:63
+msgid "js.params.Custom.VersionSelect.QuotaExceeded.thisWorkflow"
+msgstr "This workflow"
+
+#. This must be all-caps for styling reasons
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:31
+msgid "js.params.Custom.VersionSelect.QuotaExceeded.title"
+msgstr "AUTO-UPDATE QUOTA EXCEEDED"
+
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:50
+msgid "js.params.Custom.VersionSelect.QuotaExceeded.workFlow.heading"
+msgstr "Workflow"
+
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:73
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.auto"
+msgstr "Auto"
+
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:69
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.changeUpdateSettings.hoverText"
+msgstr "change auto-update settings"
+
+#. The parameter is a time difference (i.e. something like '4h ago'. The tag is
+#. a <time> tag.
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:78
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.lastChecked"
+msgstr "Checked <0>{0}</0>"
+
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:73
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.manual"
+msgstr "Manual"
+
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:66
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.update"
+msgstr "Update"
+
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:197
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.apply"
+msgstr "Apply"
+
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:163
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.auto.description"
+msgstr ""
+"Automatically update this workflow with the newest data (old versions "
+"will be saved)."
+
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:160
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.auto.label"
+msgstr "Auto"
+
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:185
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.days.option"
+msgstr "days"
+
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:186
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.hours.option"
+msgstr "hours"
+
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:164
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.label"
+msgstr "Check for update every"
+
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:187
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.minutes.option"
+msgstr "minutes"
+
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:188
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.seconds.option"
+msgstr "seconds"
+
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:184
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.weeks.option"
+msgstr "weeks"
+
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:242
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.emailUpdates.label"
+msgstr "Email me when data changes"
+
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:247
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.footer.close.placeholder"
+msgstr "Close"
+
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:248
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.footer.closeButton"
+msgstr "Close"
+
+#. This should be all-caps for styling reasons
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:140
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title"
+msgstr "WORKFLOW UPDATE"
+
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:225
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual.description"
+msgstr "Check for new data manually."
+
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:222
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual.label"
+msgstr "Manual"
+
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:197
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.retry"
+msgstr "Retry"
+
+#: assets/js/params/Custom/Code/index.js:16
+msgid "js.params.Custom.code.loadingEditor"
+msgstr "Loading editor..."
+
+#: assets/js/params/File/UploadApiModal.js:28
+msgid "js.params.File.UploadApiModal.ApiTokenLoading"
+msgstr "Loading"
+
+#: assets/js/params/File/UploadApiModal.js:41
+msgid "js.params.File.UploadApiModal.ApiTokenOk.apiToken"
+msgstr "API Token"
+
+#: assets/js/params/File/File.js:10
+msgid "js.params.File.UploadProgress.hoverText"
+msgstr "{0}% uploaded"
+
+#: assets/js/params/File/UploadedFileSelect.js:93
+msgid "js.params.File.UploadedFileSelect.UploadedFileSelectModal.footer.cancelButton"
+msgstr "Cancel"
+
+#: assets/js/params/File/UploadedFileSelect.js:86
+msgid "js.params.File.UploadedFileSelect.UploadedFileSelectModal.footer.loadButton"
+msgstr "Load"
+
+#. This should be all-caps for styling reasons
+#: assets/js/params/File/UploadedFileSelect.js:57
+msgid "js.params.File.UploadedFileSelect.UploadedFileSelectModal.header.title"
+msgstr "FILE HISTORY"
+
+#: assets/js/params/File/UploadedFileSelect.js:60
+msgid "js.params.File.UploadedFileSelect.UploadedFileSelectModal.noFiles"
+msgstr "You have not uploaded any files to this Step"
+
+#. The parameter will contain a specific date
+#: assets/js/params/File/UploadedFileSelect.js:71
+msgid "js.params.File.UploadedFileSelect.UploadedFileSelectModal.uploaded_at"
+msgstr "Uploaded {0}"
+
+#: assets/js/params/File/UploadedFileSelect.js:115
+msgid "js.params.File.UploadedFileSelect.choosePreviousFile.hoverText"
+msgstr "Choose a previously-uploaded file"
+
+#: assets/js/params/File/UploadedFileSelect.js:111
+msgid "js.params.File.UploadedFileSelect.choosePreviousFile.none"
+msgstr "[NONE]"
+
+#. The parameter {fileNumber} is the number of the file (or
+#. js.params.File.UploadedFileSelect.choosePreviousFile.none) and {nFiles} is
+#. the total number of files
+#: assets/js/params/File/UploadedFileSelect.js:116
+msgid "js.params.File.UploadedFileSelect.choosePreviousFile.text"
+msgstr "File {fileNumber} of {nFiles}"
+
+#: assets/js/params/Gdrivefile.js:95
+msgid "js.params.Gdrivefile.FileInfo.chooseFile"
+msgstr "(please choose a file)"
+
+#. {name} is the name of a file
+#: assets/js/params/Gdrivefile.js:103
+msgid "js.params.Gdrivefile.FileInfo.openInGoogleSheets"
+msgstr "Open in Google Sheets: {name}"
+
+#: assets/js/params/Gdrivefile.js:287
+msgid "js.params.Gdrivefile.change.button"
+msgstr "Change"
+
+#: assets/js/params/Gdrivefile.js:287
+msgid "js.params.Gdrivefile.choose.button"
+msgstr "Choose"
+
+#: assets/js/params/Gdrivefile.js:267
+msgid "js.params.Gdrivefile.status.failureRecconect"
+msgstr "failure: please reconnect"
+
+#: assets/js/params/Gdrivefile.js:263
+msgid "js.params.Gdrivefile.status.loading"
+msgstr "Loading..."
+
+#: assets/js/params/Gdrivefile.js:271
+msgid "js.params.Gdrivefile.status.pleaseSignin"
+msgstr "(please sign in)"
+
+#: assets/js/params/List.js:149
+msgid "js.params.List.add"
+msgstr "Add"
+
+#: assets/js/params/Multichartseries/ColorPicker.js:247
+msgid "js.params.Multichartseries.ColorPicker.pickColor.hoverText"
+msgstr "Pick color"
+
+#: assets/js/params/Multichartseries/index.js:64
+msgid "js.params.Multichartseries.addColumn.hoverText"
+msgstr "add another column"
+
+#: assets/js/params/Multichartseries/index.js:88
+msgid "js.params.Multichartseries.loading"
+msgstr "Loading…"
+
+#: assets/js/params/Multichartseries/index.js:70
+msgid "js.params.Multichartseries.removeLastColumn.hoverText"
+msgstr "remove last column"
+
+#: assets/js/params/Multicolumn.js:45
+msgid "js.params.Multicolumn.MenuList.clearButton"
+msgstr "clear"
+
+#: assets/js/params/Multicolumn.js:37
+msgid "js.params.Multicolumn.MenuList.selectAllButton"
+msgstr "Select all"
+
+#: assets/js/params/Multicolumn.js:122
+msgid "js.params.Multicolumn.selectColumn.placeholder"
+msgstr "Select columns"
+
+#: assets/js/params/Multitab.js:43
+msgid "js.params.MultitabParam.selectTabs.placeholder"
+msgstr "Select Tabs"
+
+#. The parameter contains an example
+#: assets/js/params/NumberFormat.js:57
+msgid "js.params.NumberFormat.currency"
+msgstr "Currency: {0}"
+
+#. The parameter contains an example
+#: assets/js/params/NumberFormat.js:27
+msgid "js.params.NumberFormat.decimal.default"
+msgstr "Decimal: {0}"
+
+#. The parameter contains an example
+#: assets/js/params/NumberFormat.js:20
+msgid "js.params.NumberFormat.decimal.fixed"
+msgstr "Decimal, fixed precision: {0}"
+
+#. The parameter contains an example
+#: assets/js/params/NumberFormat.js:34
+msgid "js.params.NumberFormat.decimal.noCommas"
+msgstr "Decimal, no commas: {0}"
+
+#. The parameter contains an example
+#: assets/js/params/NumberFormat.js:42
+msgid "js.params.NumberFormat.integer.default"
+msgstr "Integer: {0}"
+
+#. The parameter contains an example
+#: assets/js/params/NumberFormat.js:49
+msgid "js.params.NumberFormat.integer.noCommas"
+msgstr "Integer, no commas: {0}"
+
+#. The parameter contains an example
+#: assets/js/params/NumberFormat.js:64
+msgid "js.params.NumberFormat.percentage"
+msgstr "Percentage: {0}"
+
+#: assets/js/params/Custom/Refine/index.js:453
+msgid "js.params.Refine.GroupList.loadingValues"
+msgstr "Loading values…"
+
+#: assets/js/params/Custom/Refine/index.js:455
+msgid "js.params.Refine.GroupList.noValuesInColumn"
+msgstr "This column does not have any values"
+
+#: assets/js/params/Custom/Refine/index.js:457
+msgid "js.params.Refine.GroupList.noValuesMatchSearch"
+msgstr "No values match your search"
+
+#: assets/js/params/Custom/Refine/index.js:276
+msgid "js.params.Refine.RefineGroup.cancelEdits"
+msgstr "Cancel edits of these values"
+
+#: assets/js/params/Custom/Refine/index.js:264
+msgid "js.params.Refine.RefineGroup.expandStatus.expanded"
+msgstr "Hide original values"
+
+#: assets/js/params/Custom/Refine/index.js:264
+msgid "js.params.Refine.RefineGroup.expandStatus.notExpanded"
+msgstr "Show original values"
+
+#: assets/js/params/Custom/Refine/index.js:312
+msgid "js.params.Refine.RefineGroup.selectTheseRows"
+msgstr "Select these rows"
+
+#: assets/js/params/Custom/Refine/index.js:133
+msgid "js.params.Refine.RefineModalPrompt.findClusters.button"
+msgstr "Find clusters..."
+
+#: assets/js/params/Custom/Refine/index.js:808
+msgid "js.params.Refine.mergeFacets.button"
+msgstr "Merge facets"
+
+#: assets/js/params/Secret/OAuth.js:42
+msgid "js.params.Secret.OAuth.connectAccount.button"
+msgstr "Connect account"
+
+#: assets/js/params/Secret/OAuth.js:37
+msgid "js.params.Secret.OAuth.signOut.button"
+msgstr "Sign out"
+
+#: assets/js/params/Secret/String.js:93
+msgid "js.params.Secret.String.StringDisplay.clear.button"
+msgstr "Clear"
+
+#: assets/js/params/Tab.js:47
+msgid "js.params.Tab.selectTab.placeholder"
+msgstr "Select Tab"
+
+#: assets/js/params/common/AllNoneButtons.js:16
+msgid "js.params.common.AllNoneButtons.selectAll.button"
+msgstr "All"
+
+#: assets/js/params/common/AllNoneButtons.js:13
+msgid "js.params.common.AllNoneButtons.selectAll.hoverText"
+msgstr "Select All"
+
+#: assets/js/params/common/AllNoneButtons.js:25
+msgid "js.params.common.AllNoneButtons.selectNone.button"
+msgstr "None"
+
+#: assets/js/params/common/AllNoneButtons.js:22
+msgid "js.params.common.AllNoneButtons.selectNone.hoverText"
+msgstr "Select None"
+
+#: assets/js/params/common/FacetSearch.js:38
+msgid "js.params.common.FacetSearch.clearSearch.hoverText"
+msgstr "Clear Search"
+
+#: assets/js/params/common/FacetSearch.js:28
+msgid "js.params.common.FacetSearch.searchFacets.placeholder"
+msgstr "Search facets..."
+
+#: assets/js/params/common/react-select.js:131
+msgid "js.params.common.ReactSelect.noOptionsMessage"
+msgstr "No options"
+
+#: assets/js/params/common/ValueSortSelect.js:44
+msgid "js.params.common.ValueSortSelect.rows"
+msgstr "Rows"
+
+#: assets/js/params/common/ValueSortSelect.js:33
+msgid "js.params.common.ValueSortSelect.value"
+msgstr "Value"
+
+#: assets/js/params/Custom/Aggregations/Aggregation.js:88
+msgid "js.params.custom.Aggregations.Aggregation.ColumnParam.prompt"
+msgstr "Select a column"
+
+#: assets/js/params/Custom/Aggregations/Aggregation.js:95
+msgid "js.params.custom.Aggregations.Aggregation.outname"
+msgstr "Name"
+
+#: assets/js/params/Custom/Filters/Filter.js:75
+msgid "js.params.custom.Filters.Filter.heading.title"
+msgstr "If"
+
+#: assets/js/table/ColumnContextMenu.js:52
+msgid "js.table.ColumnContextMenu.cleanText"
+msgstr "Clean Text"
+
+#: assets/js/table/ColumnContextMenu.js:54
+msgid "js.table.ColumnContextMenu.convertToDateTime"
+msgstr "Convert to date & time"
+
+#: assets/js/table/ColumnContextMenu.js:55
+msgid "js.table.ColumnContextMenu.convertToNumbers"
+msgstr "Convert to numbers"
+
+#: assets/js/table/ColumnContextMenu.js:56
+msgid "js.table.ColumnContextMenu.convertToText"
+msgstr "Convert to text"
+
+#: assets/js/table/ColumnContextMenu.js:60
+msgid "js.table.ColumnContextMenu.deleteColumn"
+msgstr "Delete column"
+
+#: assets/js/table/ColumnContextMenu.js:46
+msgid "js.table.ColumnContextMenu.duplicate"
+msgstr "Duplicate"
+
+#: assets/js/table/ColumnContextMenu.js:51
+msgid "js.table.ColumnContextMenu.filter"
+msgstr "Filter"
+
+#: assets/js/table/ColumnContextMenu.js:58
+msgid "js.table.ColumnContextMenu.formatNumbers"
+msgstr "Format numbers"
+
+#: assets/js/table/ColumnContextMenu.js:45
+msgid "js.table.ColumnContextMenu.rename."
+msgstr "Rename"
+
+#: assets/js/table/ColumnContextMenu.js:48
+msgid "js.table.ColumnContextMenu.sortAscending"
+msgstr "Sort ascending"
+
+#: assets/js/table/ColumnContextMenu.js:49
+msgid "js.table.ColumnContextMenu.sortDescending"
+msgstr "Sort descending"
+
+#: assets/js/table/ColumnHeader.js:13
+msgid "js.table.ColumnHeader.types.dateAndtime"
+msgstr "date & time"
+
+#: assets/js/table/ColumnHeader.js:12
+msgid "js.table.ColumnHeader.types.number"
+msgstr "number"
+
+#: assets/js/table/ColumnHeader.js:11
+msgid "js.table.ColumnHeader.types.text"
+msgstr "text"
+
+#: assets/js/table/SelectedRowsActions.js:105
+msgid "js.table.SelectedRowsActions.menu"
+msgstr "menu"
+
+#: assets/js/table/SelectedRowsActions.js:106
+msgid "js.table.SelectedRowsActions.numberOfSelectedRows"
+msgstr ""
+"{0, plural, =0 {No rows selected} one {# row selected} other {# rows "
+"selected}}"
+
+#. This should be all-caps for styling reasons
+#: assets/js/table/TableInfo.js:45
+msgid "js.table.TableInfo.columns"
+msgstr "COLUMNS"
+
+#. This should be all-caps for styling reasons
+#: assets/js/table/TableInfo.js:60
+msgid "js.table.TableInfo.export"
+msgstr "EXPORT"
+
+#. This should be all-caps for styling reasons
+#: assets/js/table/TableInfo.js:41
+msgid "js.table.TableInfo.rows"
+msgstr "ROWS"
+
+#: assets/js/table/TableView.js:65
+msgid "js.table.TableView.maxOf100ColumnsCanbeDIsplayed"
+msgstr "A maximum of 100 columns can be displayed"
+
+#: assets/js/table/TableView.js:67
+msgid "js.table.TableView.selectColumns.button"
+msgstr "Select columns"
+
+#: assets/js/ModuleCategoryName.js:12
+msgid "js.util.ModuleCategoryName.CategoryNames.AddData"
+msgstr "Add data"
+
+#: assets/js/ModuleCategoryName.js:9
+msgid "js.util.ModuleCategoryName.CategoryNames.Analyze"
+msgstr "Analyze"
+
+#: assets/js/ModuleCategoryName.js:8
+msgid "js.util.ModuleCategoryName.CategoryNames.Clean"
+msgstr "Clean"
+
+#: assets/js/ModuleCategoryName.js:11
+msgid "js.util.ModuleCategoryName.CategoryNames.Code"
+msgstr "Code"
+
+#: assets/js/ModuleCategoryName.js:6
+msgid "js.util.ModuleCategoryName.CategoryNames.Combine"
+msgstr "Combine"
+
+#: assets/js/ModuleCategoryName.js:13
+msgid "js.util.ModuleCategoryName.CategoryNames.Other"
+msgstr "Other"
+
+#: assets/js/ModuleCategoryName.js:7
+msgid "js.util.ModuleCategoryName.CategoryNames.Scrape"
+msgstr "Scrape"
+
+#: assets/js/ModuleCategoryName.js:10
+msgid "js.util.ModuleCategoryName.CategoryNames.Visualize"
+msgstr "Visualize"
+
+#: assets/js/utils.js:47
+msgid "js.util.timeDifference.ago.days"
+msgstr "{days}d ago"
+
+#: assets/js/utils.js:49
+msgid "js.util.timeDifference.ago.hours"
+msgstr "{hours}h ago"
+
+#: assets/js/utils.js:51
+msgid "js.util.timeDifference.ago.minutes"
+msgstr "{minutes}m ago"
+
+#: assets/js/utils.js:53
+msgid "js.util.timeDifference.ago.seconds"
+msgstr "{seconds}s ago"
+
+#: assets/js/utils.js:45
+msgid "js.util.timeDifference.ago.years"
+msgstr "{years}y ago"
+
+#: assets/js/utils.js:55
+msgid "js.util.timeDifference.now"
+msgstr "just now"
+
 #: cjworkbench/forms/signup.py:24
-msgid "accounts.sign_up.fields.first_name.placeholder"
+msgid "py.forms.signup.firstName.placeholder"
 msgstr "First name"
 
-#: cjworkbench/forms/signup.py:32
-msgid "accounts.sign_up.fields.last_name.placeholder"
+#: cjworkbench/forms/signup.py:31
+msgid "py.forms.signup.lastName.placeholder"
 msgstr "Last name"
 
+#: templates/403.html:5
+msgid "py.templates.403.title"
+msgstr "403 Forbidden"
+
+#: templates/403.html:13
+msgid "py.templates.403.description"
+msgstr "The account you are logged in does not have access to this page"
+
+#: templates/403.html:14
+msgid "py.templates.403.goBack.link"
+msgstr "Go back to my workspace"
+
+#: templates/404.html:5
+msgid "py.templates.404.title"
+msgstr "404 Page not found"
+
+#: templates/404.html:13
+msgid "py.templates.404.description"
+msgstr "Not the number you're looking for"
+
+#: templates/404.html:14
+msgid "py.templates.404.backToWorkspace.link"
+msgstr "Back to workspace"
+
+#: templates/_base.html:14
+msgid "py.templates._base.message"
+msgstr "Messages:"
+
+#: templates/_base.html:24
+msgid "py.templates._base.menu"
+msgstr "Menu:"
+
+#: templates/_base.html:27
+msgid "py.templates._base.changeMail"
+msgstr "Change E-mail"
+
+#: templates/_base.html:28
+msgid "py.templates._base.signOut"
+msgstr "Sign Out"
+
+#: templates/_base.html:30
+msgid "py.templates._base.signIn"
+msgstr "Sign In"
+
+#: templates/_base.html:31
+msgid "py.templates._base.signUp"
+msgstr "Sign Up"
+
+#: templates/course.html:4
+msgid "py.templates.course.workbenchTraining.title"
+msgstr "Workbench Training"
+
+#. This must be all-caps for styling reasons
+#: templates/course.html:15
+msgid "py.templates.course.tutorials.link"
+msgstr "TUTORIALS"
+
+#: templates/embed_404.html:11
+msgid "py.templates.embed_404.notAvailable.header"
+msgstr "This workflow is not available :("
+
+#: templates/index.html:3
+msgid "py.templates.title"
+msgstr "Workbench"
+
+#: templates/minimum.html:7
+msgid "py.templates.minimum.title"
+msgstr "Workbench"
+
+#: templates/oauth_token_request_denied.html:5
+msgid "py.templates.oauth_token_request_denied.title"
+msgstr "OAuth Error"
+
+#: templates/oauth_token_request_denied.html:11
+msgid "py.templates.oauth_token_request_denied.description"
+msgstr "The authorization server refused to let you log in."
+
+#: templates/oauth_token_request_denied.html:14
+msgid "py.templates.oauth_token_request_denied.suggestRetry"
+msgstr ""
+"If this is your first time seeing this error, please close this window "
+"and retry."
+
+#: templates/oauth_token_request_denied.html:17
+msgid "py.templates.oauth_token_request_denied.contactUs"
+msgstr "Otherwise, please contact us so we can figure out what's wrong."
+
+#: templates/report.html:18
+msgid "py.templates.report.author"
+msgstr "by {workflowOwner}"
+
+#: templates/report.html:19
+msgid "py.templates.report.updated"
+msgstr "Updated <time0>{timeAgo}</time0> ago"
+
+#: templates/report.html:21
+msgid "py.templates.report.sourceDataLink.link"
+msgstr "Source data"
+
+#: templates/report.html:36
+msgid "py.templates.report.addChartsTitle"
+msgstr "Add charts to tabs, and they'll appear here."
+
+#: templates/workflow.html:5
+msgid "py.templates.workflow.title"
+msgstr "Workbench"
+
+#: templates/workflow.html:34
+msgid "py.templates.workflow.widerScreen"
+msgstr "You need a wider screen to enjoy Workbench"
+
+#: templates/workflow.html:35
+msgid "py.templates.workflow.minimumRequirement"
+msgstr "Min 650px wide"
+
+#: templates/workflow.html:36
+msgid "py.templates.workflow.optimizedForDesktop"
+msgstr "Experience optimized for web browsers"
+
+#: templates/workflow.html:37
+msgid "py.templates.workflow.signupLink.link"
+msgstr "Signup"
+
+#: templates/account/delete.html:5
+msgid "py.templates.account.delete.deleteAccount.header"
+msgstr "Delete Account"
+
+#. The tag adds emphasis
+#: templates/account/delete.html:7
+msgid "py.templates.account.delete.accountDeletionExpungeHours"
+msgstr ""
+"If you go ahead and delete your account, your information will be "
+"<b0>expunged within {hours} hours</b0>."
+
+#: templates/account/delete.html:11
+msgid "py.templates.account.delete.deleteMyAccount"
+msgstr "Delete My Account"
+
+#: templates/account/email_confirm.html:5
+msgid "py.templates.account.email_confirm.confirmEmail.title"
+msgstr "Confirm Email"
+
+#: templates/account/email_confirm.html:9
+msgid "py.templates.account.email_confirm.confirmEmail"
+msgstr "Confirm Email"
+
+#: templates/account/email_confirm.html:13
+msgid "py.templates.account.email_confirm.confirm.button"
+msgstr "Confirm"
+
+#: templates/account/email_confirmation_sent.html:5
+msgid "py.templates.account.email_confirmation_sent.title"
+msgstr "Confirmation Email Sent"
+
+#: templates/account/email_confirmation_sent.html:8
+msgid "py.templates.account.email_confirmation_sent.header"
+msgstr "Confirm your email address"
+
+#. The b0 tag adds emphasis. The a0 tag is a mailto link for the contactMail.
+#: templates/account/email_confirmation_sent.html:10
+msgid "py.templates.account.email_confirmation_sent.verificationEmail"
+msgstr ""
+"We have sent an email to <b0>{email}</b0> for verification. If you do not"
+" receive it within a few minutes, contact us at <a0>{contactMail}</a0>."
+
+#: templates/account/email_confirmation_sent.html:11
+msgid "py.templates.account.email_confirmation_sent.goBack.link"
+msgstr "Go back"
+
+#: templates/account/email_confirmed.html:5
+msgid "py.templates.account.email_confirmed.title"
+msgstr "Email confirmed"
+
+#: templates/account/email_confirmed.html:8
+msgid "py.templates.account.email_confirmed.emailConfirm.header"
+msgstr "Email confirmed"
+
+#. The tag adds emphasis
+#: templates/account/email_confirmed.html:9
+msgid "py.templates.account.email_confirmed.youConfirmedEmail"
+msgstr "You have confirmed <b0>{email}</b0>"
+
 #: templates/account/login.html:4 templates/account/login.html:10
-#: templates/account/signup.html:12
-msgid "accounts.sign_in.title"
+msgid "py.templates.account.login.title"
 msgstr "Sign in"
 
+#: templates/account/login.html:12
+msgid "py.templates.account.login.linkToSignUp"
+msgstr "Sign up"
+
 #: templates/account/login.html:43
-msgid "accounts.sign_in.forgot_password_prompt"
+msgid "py.templates.account.login.forgotPasswordPrompt"
 msgstr "Forgot Password?"
 
 #: templates/account/login.html:45
-msgid "accounts.sign_in.button"
+msgid "py.templates.account.login.submitButton"
 msgstr "Sign In"
 
+#: templates/account/logout.html:5
+msgid "py.templates.account.logout.title"
+msgstr "Log out"
+
+#: templates/account/logout.html:9
+msgid "py.templates.account.logout.formHeader"
+msgstr "Log out"
+
+#: templates/account/logout.html:12
+msgid "py.templates.account.logout.confirmation"
+msgstr "Are you sure you want to log out?"
+
+#: templates/account/logout.html:13
+msgid "py.templates.account.logout.button"
+msgstr "Log out"
+
+#: templates/account/password_change.html:5
+msgid "py.templates.account.password_change.title"
+msgstr "Change password"
+
+#: templates/account/password_change.html:9
+msgid "py.templates.account.password_change.formHeader"
+msgstr "Change password"
+
+#: templates/account/password_change.html:13
+msgid "py.templates.account.password_change.saveButton"
+msgstr "Save"
+
+#: templates/account/password_reset.html:6
+msgid "py.templates.account.password_reset.title"
+msgstr "Password reset"
+
+#: templates/account/password_reset.html:12
+msgid "py.templates.account.password_reset.formHeader"
+msgstr "Forgot your password?"
+
+#: templates/account/password_reset.html:17
+msgid "py.templates.account.password_reset.sendMeInstructions.button"
+msgstr "Send me instructions"
+
+#: templates/account/password_reset.html:25
+msgid "py.templates.account.password_reset.backToLogin.link"
+msgstr "Back to login"
+
+#: templates/account/password_reset_done.html:6
+msgid "py.templates.account.password_reset_done.title"
+msgstr "Password reset sent"
+
+#: templates/account/password_reset_done.html:9
+msgid "py.templates.account.password_reset_done.header"
+msgstr "Instructions sent!"
+
+#: templates/account/password_reset_done.html:11
+msgid "py.templates.account.password_reset_done.checkYourEmail"
+msgstr "Check your email to reset your password."
+
+#. The a0 tag is a mailto link to the email
+#: templates/account/password_reset_done.html:14
+msgid "py.templates.account.password_reset_done.weHaveResentThePass"
+msgstr ""
+"We have resent the password email. If you do not receive it within a few "
+"minutes, contact us at <a0>{email}</a0>."
+
+#: templates/account/password_reset_done.html:16
+msgid "py.templates.account.password_reset_done.backToLogin.link"
+msgstr "Back to login"
+
+#: templates/account/password_reset_from_key.html:4
+msgid "py.templates.account.password_reset_from_key.title"
+msgstr "Change Password"
+
+#: templates/account/password_reset_from_key.html:7
+msgid "py.templates.account.password_reset_from_key.invalidLink"
+msgstr "Invalid link"
+
+#: templates/account/password_reset_from_key.html:7
+msgid "py.templates.account.password_reset_from_key.changePass"
+msgstr "Change Password"
+
+#. The a0 tag is a url to another page
+#: templates/account/password_reset_from_key.html:10
+msgid "py.templates.account.password_reset_from_key.notValidAnymore"
+msgstr "This link is not valid anymore. Request a <a0>new password reset</a0>."
+
+#: templates/account/password_reset_from_key.html:20
+msgid "account.password_reset_from_key.input.changePassword.placeholder"
+msgstr "change password"
+
+#: templates/account/password_reset_from_key.html:24
+msgid "py.templates.account.password_reset_from_key.newPassIsSet"
+msgstr "Your new password is set."
+
+#: templates/account/password_reset_from_key_done.html:4
+msgid "py.templates.account.password_reset_from_key_done.title"
+msgstr "Change Password"
+
+#: templates/account/password_reset_from_key_done.html:7
+msgid "py.templates.account.password_reset_from_key_done.description"
+msgstr "Your new password is set!"
+
+#: templates/account/password_reset_from_key_done.html:9
+msgid "py.templates.account.password_reset_from_key_done.backToLogin.link"
+msgstr "Back to login"
+
+#: templates/account/settings.html:6
+msgid "py.templates.account.settings.title"
+msgstr "Account"
+
+#: templates/account/settings.html:10
+msgid "py.templates.account.settings.header"
+msgstr "Account"
+
+#: templates/account/settings.html:13
+msgid "py.templates.account.settings.saveButton"
+msgstr "Save"
+
 #: templates/account/signup.html:4
-msgid "accounts.sign_up.title"
+msgid "py.templates.account.signup.title"
 msgstr "Sign Up"
 
+#: templates/account/signup.html:10
+msgid "py.templates.account.signup.header.title"
+msgstr "Signup"
+
+#: templates/account/signup.html:12
+msgid "py.templates.account.signup.linkToSignIn"
+msgstr "Sign in"
+
+#. The a0 tag is a link to the login page
 #: templates/account/signup.html:26
-msgid "accounts.sign_up.login_prompt"
+msgid "py.templates.account.signup.loginPrompt"
 msgstr "If you have already created an account, then please <a0>log in</a0>."
 
+#: templates/account/signup.html:44
+msgid "py.templates.account.signup.sendMeNews.label"
+msgstr "It's ok to send me occasional news"
+
+#. The tags are urls to the respective pages
+#: templates/account/signup.html:51
+msgid "py.templates.account.signup.agreeToTerms"
+msgstr ""
+"I agree to Workbench's <a0>Terms of service</a0> and <a1>Privacy "
+"policy</a1>."
+
+#: templates/account/signup.html:53
+msgid "py.templates.account.signup.registerButton"
+msgstr "Register"
+
+#: templates/account/verification_sent.html:5
+msgid "py.templates.account.verification_sent.title"
+msgstr "Verify Your E-mail Address"
+
+#: templates/account/verification_sent.html:8
+msgid "py.templates.account.verification_sent.header"
+msgstr "Verify Your E-mail Address"
+
+#: templates/account/verification_sent.html:9
+msgid "py.templates.account.verification_sent.description"
+msgstr ""
+"We have sent you an e-mail to verify your account. Contact us if you do "
+"not receive it within a few minutes."
+
+#: templates/account/verification_sent.html:10
+msgid "py.templates.account.verification_sent.backToLogin.link"
+msgstr "Back to login"
+
+#: templates/account/email/email_confirmation_message.txt:3
+msgid "py.templates.account.email.email_confirmation_message.welcome"
+msgstr "Welcome to Workbench!"
+
+#: templates/account/email/email_confirmation_message.txt:4
+msgid "py.templates.account.email.email_confirmation_message.confirmYourEmail"
+msgstr ""
+"Please confirm your email address by clicking the link below. If you "
+"didn't sign up, you can safely ignore this email."
+
+#: templates/account/email/email_confirmation_subject.txt:3
+msgid "py.templates.account.email.email_confirmation_subject.pleaseConfirmEmailaddress"
+msgstr "Please Confirm Your E-mail Address"
+
+#: templates/account/email/password_reset_key_message.txt:3
+msgid "py.templates.account.email.password_reset_key_message.passwordRequest"
+msgstr ""
+"You're receiving this e-mail because you or someone else has requested a "
+"password for your user account. It can be safely ignored if you did not "
+"request a password reset. Click the link below to reset your password."
+
+#: templates/account/email/password_reset_key_message.txt:7
+msgid "py.templates.account.email.password_reset_key_message.forgotUsername"
+msgstr "In case you forgot, your username is {username}."
+
 #: templates/account/email/password_reset_key_subject.txt:3
-msgid "accounts.emails.password_reset.subject"
+msgid "py.templates.account.email.password_reset_key_subject"
 msgstr "Password Reset E-mail"
 
-#: templates/notifications/new_data_version_subject.txt:3
-msgid "notifications.new_data_version.subject"
+#: templates/notifications/new_data_version.txt:1
+msgid "py.templates.notifications.new_data_version.hello"
+msgstr "Hi {userName},"
+
+#. The tag is a url
+#: templates/notifications/new_data_version.txt:2
+msgid "py.templates.notifications.new_data_version.workflowHasBeenUpdated"
+msgstr ""
+"Your workflow <a0>{workflowName}</a0> has been updated with new data on "
+"{date}. Its {moduleName} module has new output."
+
+#: templates/notifications/new_data_version_subject.txt:1
+msgid "py.templates.notifications.new_data_version_subject"
 msgstr "New data available in {workflow_name}"
+
+#: templates/openid/login.html:5
+msgid "py.templates.openid.login.title"
+msgstr "OpenID Sign In"
+
+#: templates/openid/login.html:9
+msgid "py.templates.openid.login.header"
+msgstr "OpenID Sign In"
+
+#: templates/openid/login.html:15
+msgid "py.templates.openid.login.signInButton"
+msgstr "Sign In"
+
+#: templates/socialaccount/authentication_error.html:5
+msgid "py.templates.socialaccount.authentication_error.title"
+msgstr "Social Network Login Failure"
+
+#: templates/socialaccount/authentication_error.html:8
+msgid "py.templates.socialaccount.authentication_error.header"
+msgstr "Social Network Login Failure"
+
+#: templates/socialaccount/authentication_error.html:10
+msgid "py.templates.socialaccount.authentication_error.description"
+msgstr ""
+"An error occurred while attempting to login via your social network "
+"account."
+
+#: templates/socialaccount/connections.html:5
+msgid "py.templates.socialaccount.connections.title"
+msgstr "Account Connections"
+
+#: templates/socialaccount/connections.html:10
+msgid "py.templates.socialaccount.connections.accountLinked"
+msgstr "Account linked!"
+
+#: templates/socialaccount/connections.html:12
+msgid "py.templates.socialaccount.connections.signInLink"
+msgstr "Sign in"
+
+#: templates/socialaccount/connections.html:16
+msgid "py.templates.socialaccount.connections.removeLinkedAccount"
+msgstr "Remove linked accounts"
+
+#: templates/socialaccount/connections.html:41
+msgid "py.templates.socialaccount.connections.removeButton"
+msgstr "Remove"
+
+#: templates/socialaccount/connections.html:49
+msgid "py.templates.socialaccount.connections.noSocialAccounts"
+msgstr "You currently have no social network accounts connected to this account."
+
+#: templates/socialaccount/connections.html:52
+msgid "py.templates.socialaccount.connections.addAnotherAccount"
+msgstr "Add another account"
+
+#: templates/socialaccount/login_cancelled.html:5
+msgid "py.templates.socialaccount.login_cancelled.title"
+msgstr "Login Cancelled"
+
+#: templates/socialaccount/login_cancelled.html:9
+msgid "py.templates.socialaccount.login_cancelled.header"
+msgstr "Login Cancelled"
+
+#. The tag is a link to the login page
+#: templates/socialaccount/login_cancelled.html:13
+msgid "py.templates.socialaccount.login_cancelled.youCancelledLogin"
+msgstr ""
+"You decided to cancel logging in to our site using one of your existing "
+"accounts. If this was a mistake, please proceed to <a0>sign in</a0>."
+
+#: templates/socialaccount/signup.html:5
+msgid "py.templates.socialaccount.signup.title"
+msgstr "Signup"
+
+#: templates/socialaccount/signup.html:17
+msgid "py.templates.socialaccount.signup.thereIsAlreadyAccount"
+msgstr "There is already an account registered with that email address."
+
+#: templates/socialaccount/signup.html:19
+msgid "py.templates.socialaccount.signup.connectExistingAccount"
+msgstr "Sign in and connect your existing account."
+
+#: templates/socialaccount/signup.html:24
+msgid "py.templates.socialaccount.signup.specificAccountToLogin"
+msgstr ""
+"You are about to use your {provider_name} account to login to "
+"{site_name}. As a final step, please complete the following form:"
+
+#: templates/socialaccount/signup.html:32
+msgid "py.templates.socialaccount.signup.button"
+msgstr "Sign Up"
+
+#: templates/socialaccount/messages/account_connected.txt:2
+msgid "py.templates.socialaccount.messages.account_connected.text"
+msgstr "The social account has been connected."
+
+#: templates/socialaccount/messages/account_connected_other.txt:2
+msgid "py.templates.socialaccount.messages.account_connected_other.text"
+msgstr "The social account is already connected to a different account."
+
+#: templates/socialaccount/messages/account_disconnected.txt:2
+msgid "py.templates.socialaccount.messages.account_disconnected.text"
+msgstr "The social account has been disconnected."
+
+#: templates/socialaccount/snippets/provider_list.html:22
+msgid "py.templates.socialaccount.snippets.provider_list.useAccount"
+msgstr "Use {providerName} account"
 

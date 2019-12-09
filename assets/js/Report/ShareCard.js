@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import ShareButton from '../ShareModal/ShareButton'
+import { Trans } from '@lingui/macro'
 
 export default function ShareCard ({ workflowId, isPublic }) {
   return (
@@ -8,22 +9,22 @@ export default function ShareCard ({ workflowId, isPublic }) {
       <div className='prompt'>
         <span className='status'>
           {isPublic ? (
-            'This workflow is public'
+            <Trans id='js.Report.ShareCard.sharingStatus.public'>This workflow is public</Trans>
           ) : (
-            'This workflow is private'
+            <Trans id='js.Report.ShareCard.sharingStatus.private'>This workflow is private</Trans>
           )}
         </span>
         <p className='accessible-to'>
           {isPublic ? (
-            'Anyone can view this report'
+            <Trans id='js.Report.ShareCard.accessibilityDescription.public'>Anyone can view this report</Trans>
           ) : (
-            'Only collaborators can view this report'
+            <Trans id='js.Report.ShareCard.accessibilityDescription.private'>Only collaborators can view this report</Trans>
           )}
         </p>
-        <ShareButton>Edit privacy</ShareButton>
+        <ShareButton><Trans id='js.Report.ShareCard.editPrivacy.sharebutton'>Edit privacy</Trans></ShareButton>
       </div>
       <div className='url'>
-        <h4>Report URL</h4>
+        <h4><Trans id='js.Report.ShareCard.reportUrl.header'>Report URL</Trans></h4>
         <div className='copy'>
           {window.location.origin}/workflows/{workflowId}/report
         </div>

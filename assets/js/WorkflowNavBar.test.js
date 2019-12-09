@@ -1,7 +1,8 @@
 /* globals beforeEach, describe, expect, it, jest */
 import React from 'react'
-import WorkflowNavBar from './WorkflowNavBar'
-import { shallowWithI18n, mountWithI18n, tick } from './test-utils'
+import { WorkflowNavBar } from './WorkflowNavBar'
+import { tick } from './test-utils'
+import { shallowWithI18n, mountWithI18n } from './i18n/test-utils'
 
 import Utils from './utils'
 
@@ -24,7 +25,7 @@ describe('WorkflowNavBar', () => {
 
     const lesson = {
       course: null,
-      locale_id: 'en',
+      localeId: 'en',
       header: { title: 'A Lesson' }
     }
 
@@ -41,7 +42,7 @@ describe('WorkflowNavBar', () => {
 
     const a = wrapper.find('.course a')
     expect(a.prop('href')).toEqual('/lessons/en')
-    expect(a.text()).toEqual('Training') // hard-coded
+    expect(a.find('Trans').prop('defaults')).toEqual('Training') // hard-coded
   })
 
   it('should link back to /courses/slug when viewing a lesson in a course', () => {
@@ -56,7 +57,7 @@ describe('WorkflowNavBar', () => {
       course: {
         title: 'A Course',
         slug: 'a-course',
-        locale_id: 'en'
+        localeId: 'en'
       },
       header: { title: 'A Lesson' }
     }

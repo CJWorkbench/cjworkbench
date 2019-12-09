@@ -1,15 +1,15 @@
 {% extends "account/base.html" %}
 
-{% load i18n %}
+{% load i18n_icu %}
 {% load bootstrap %}
 
-{% block title %}{% trans "Account" %}{% endblock %}
+{% block title %}{% trans_html "py.templates.account.settings.title" default="Account" %}{% endblock %}
 
 {% block body %}
     <form method="POST" action="{% url "account_settings" %}">
-        <legend class='title-1 t-d-gray text-center mb-3'>{% trans "Account" %}</legend>
+        <legend class='title-1 t-d-gray text-center mb-3'>{% trans_html "py.templates.account.settings.header" default="Account" %}</legend>
         {% csrf_token %}
         {{ form }}
-        <button class="button-blue action-button mx-auto mt-3" type="submit">{% trans "Save" %}</button>
+        <button class="button-blue action-button mx-auto mt-3" type="submit">{% trans_html "py.templates.account.settings.saveButton" default="Save" %}</button>
     </form>
 {% endblock %}

@@ -1,10 +1,10 @@
 {% extends "account/base.html" %}
 
-{% load i18n %}
+{% load i18n_icu %}
 
-{% block title %}{% trans "Email confirmed" %}{% endblock %}
+{% block title %}{% trans_html "py.templates.account.email_confirmed.title" default="Email confirmed" %}{% endblock %}
 
 {% block content %}
-    <h1 class='t-d-gray title-1 text-center mb-3'>{% trans "Email confirmed" %}</h1>
-    <p class='message-body'>{% blocktrans with email=confirmation.email_address.email %}You have confirmed <b>{{ email }}</b>{% endblocktrans %}</p>
+    <h1 class='t-d-gray title-1 text-center mb-3'>{% trans_html "py.templates.account.email_confirmed.emailConfirm.header" default="Email confirmed" %}</h1>
+    <p class='message-body'>{% trans_html "py.templates.account.email_confirmed.youConfirmedEmail" default="You have confirmed <b0>{email}</b0>" arg_email=confirmation.email_address.email tag_b0="" comment="The tag adds emphasis"  %}</p>
 {% endblock %}

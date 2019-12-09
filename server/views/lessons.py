@@ -5,6 +5,7 @@ from django.conf import settings
 from django.db import transaction
 from django.http import Http404
 from django.http.response import HttpResponseServerError
+from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from server import rabbitmq
 import server.utils
@@ -221,7 +222,7 @@ def _render_course(request, course, lesson_url_prefix):
 
 
 # Even allowed for logged-out users
-def render_lesson_list(request, locale_id=None):
+def render_lesson_list(request, locale_id):
     # Make a "fake" Course to encompass Lessons
     #
     # Do not build this Course using LessonLookup: LessonLookup contains
@@ -230,7 +231,7 @@ def render_lesson_list(request, locale_id=None):
     try:
         lessons = AllLessonsByLocale[locale_id]
     except KeyError:
-        raise Http404("No lessons exist for this language")
+        return redirect("/lessons/en")
     course = Course(
         title="Lessons",
         locale_id=locale_id,

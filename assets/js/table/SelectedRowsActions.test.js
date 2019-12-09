@@ -1,6 +1,6 @@
 /* globals beforeEach, describe, expect, it, jest */
 import React from 'react'
-import { mount } from 'enzyme'
+import { mountWithI18n } from '../i18n/test-utils'
 import { Provider } from 'react-redux'
 import { mockStore, tick } from '../test-utils'
 import { generateSlug } from '../utils'
@@ -11,7 +11,7 @@ jest.mock('../utils')
 describe('SelectedRowsActions', () => {
   describe('standalone', () => {
     const wrapper = (extraProps = {}) => {
-      return mount(
+      return mountWithI18n(
         <SelectedRowsActions
           selectedRowIndexes={[3, 1, 4]}
           wfModuleId={99}
@@ -27,7 +27,7 @@ describe('SelectedRowsActions', () => {
 
     it('should render number of selected columns', () => {
       const w = wrapper({ selectedRowIndexes: [2, 5, 6] })
-      expect(w.text()).toMatch(/selectedRow.numberOfRows/)
+      expect(w.find('Trans[id="js.table.SelectedRowsActions.numberOfSelectedRows"]').prop('values')).toEqual({ 0: '3' })
     })
 
     it('should invoke an action with rows as a string, 1-based', () => {
@@ -51,7 +51,7 @@ describe('SelectedRowsActions', () => {
 
     const wrapper = (state, extraProps = {}) => {
       const store = mockStore(state, api)
-      return mount(
+      return mountWithI18n(
         <Provider store={store}>
           <ConnectedSelectedRowsActions
             selectedRowIndexes={[3, 1, 4]}

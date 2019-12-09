@@ -2,7 +2,7 @@
 import { mockStore } from '../../../test-utils'
 import React from 'react'
 import ConnectedUpdateFrequencySelect, { UpdateFrequencySelect } from './UpdateFrequencySelect'
-import { shallow, mount } from 'enzyme'
+import { mountWithI18n } from '../../../i18n/test-utils'
 import { Provider } from 'react-redux'
 
 describe('UpdateFrequencySelect', () => {
@@ -27,7 +27,7 @@ describe('UpdateFrequencySelect', () => {
     afterEach(() => dateSpy.mockRestore())
 
     const wrapper = (extraProps) => {
-      return shallow(
+      return mountWithI18n(
         <UpdateFrequencySelect
           {...defaultProps}
           {...extraProps}
@@ -87,7 +87,7 @@ describe('UpdateFrequencySelect', () => {
         dispatch: jest.fn(),
         subscribe: jest.fn()
       }
-      wrapper = mount(
+      wrapper = mountWithI18n(
         <Provider store={store}>
           <ConnectedUpdateFrequencySelect
             wfModuleId={212}
@@ -95,7 +95,9 @@ describe('UpdateFrequencySelect', () => {
           />
         </Provider>
       )
-      expect(wrapper.find('time').prop('dateTime')).toEqual('2018-05-28T19:00:54.154Z')
+      const time = wrapper.find('Trans[id="js.params.Custom.VersionSelect.UpdateFrequencySelect.lastChecked"]').prop('components')[0]
+      expect(time.type).toEqual('time')
+      expect(time.props.dateTime).toEqual('2018-05-28T19:00:54.154Z')
       wrapper.find('a[title="change auto-update settings"]').simulate('click')
       const modal = wrapper.find('UpdateFrequencySelectModal')
       expect(modal.prop('fetchInterval')).toBe(3600)
@@ -111,7 +113,7 @@ describe('UpdateFrequencySelect', () => {
         dispatch: jest.fn(),
         subscribe: jest.fn()
       }
-      wrapper = mount(
+      wrapper = mountWithI18n(
         <Provider store={store}>
           <ConnectedUpdateFrequencySelect
             wfModuleId={212}
@@ -127,7 +129,7 @@ describe('UpdateFrequencySelect', () => {
         trySetWfModuleAutofetch: jest.fn(() => Promise.resolve({ isAutofetch: true, fetchInterval: 7200 }))
       }
       const store = mockStore(sampleState, api)
-      wrapper = mount(
+      wrapper = mountWithI18n(
         <Provider store={store}>
           <ConnectedUpdateFrequencySelect
             wfModuleId={212}
@@ -146,7 +148,7 @@ describe('UpdateFrequencySelect', () => {
         setWfModuleNotifications: jest.fn(() => Promise.resolve(null))
       }
       const store = mockStore(sampleState, api)
-      wrapper = mount(
+      wrapper = mountWithI18n(
         <Provider store={store}>
           <ConnectedUpdateFrequencySelect
             wfModuleId={212}

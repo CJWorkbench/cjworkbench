@@ -8,6 +8,7 @@ from unittest.mock import patch
 from dateutil import parser
 from django.utils import timezone
 import pyarrow.parquet
+from cjwkernel.chroot import EDITABLE_CHROOT
 from cjwkernel.errors import ModuleExitedError
 from cjwkernel.param_dtype import ParamDType
 from cjwkernel.types import (
@@ -158,12 +159,15 @@ class LoadDatabaseObjectsTests(DbTestCase):
         self.assertEqual(result.input_cached_render_result, None)
 
 
-class FetchTests(unittest.TestCase):
+class FetchOrWrapErrorTests(unittest.TestCase):
     def setUp(self):
         super().setUp()
         self.ctx = contextlib.ExitStack()
-        self.basedir = self.ctx.enter_context(tempdir_context())
-        self.output_path = self.ctx.enter_context(tempfile_context(dir=self.basedir))
+        self.chroot_context = self.ctx.enter_context(EDITABLE_CHROOT.acquire_context())
+        self.basedir = self.ctx.enter_context(self.chroot_context.tempdir_context())
+        self.output_path = self.ctx.enter_context(
+            self.chroot_context.tempfile_context(dir=self.basedir)
+        )
 
     def tearDown(self):
         self.ctx.close()
@@ -184,6 +188,7 @@ class FetchTests(unittest.TestCase):
         with self.assertLogs(level=logging.INFO):
             result = fetch.fetch_or_wrap_error(
                 self.ctx,
+                self.chroot_context,
                 self.basedir,
                 WfModule(),
                 None,
@@ -201,6 +206,7 @@ class FetchTests(unittest.TestCase):
         with self.assertLogs(level=logging.INFO):
             result = fetch.fetch_or_wrap_error(
                 self.ctx,
+                self.chroot_context,
                 self.basedir,
                 WfModule(),
                 MockModuleVersion("missing"),
@@ -218,6 +224,7 @@ class FetchTests(unittest.TestCase):
         with self.assertLogs(level=logging.ERROR):
             result = fetch.fetch_or_wrap_error(
                 self.ctx,
+                self.chroot_context,
                 self.basedir,
                 WfModule(),
                 MockModuleVersion("bad"),
@@ -235,6 +242,7 @@ class FetchTests(unittest.TestCase):
         load_module.return_value.fetch.return_value = FetchResult(self.output_path, [])
         result = fetch.fetch_or_wrap_error(
             self.ctx,
+            self.chroot_context,
             self.basedir,
             WfModule(params={"A": "input"}, secrets={"C": "wrong"}),
             MockModuleVersion(
@@ -248,6 +256,7 @@ class FetchTests(unittest.TestCase):
         self.assertEqual(result, FetchResult(self.output_path, []))
         load_module.return_value.migrate_params.assert_called_with({"A": "input"})
         load_module.return_value.fetch.assert_called_with(
+            chroot_context=self.chroot_context,
             basedir=self.basedir,
             params=Params({"A": "B"}),
             secrets={"C": "D"},
@@ -268,6 +277,7 @@ class FetchTests(unittest.TestCase):
         input_crr = CachedRenderResult(1, 2, 3, "ok", [], {}, input_metadata)
         fetch.fetch_or_wrap_error(
             self.ctx,
+            self.chroot_context,
             self.basedir,
             WfModule(),
             MockModuleVersion(),
@@ -301,6 +311,7 @@ class FetchTests(unittest.TestCase):
         input_crr = CachedRenderResult(1, 2, 3, "ok", [], {}, input_metadata)
         fetch.fetch_or_wrap_error(
             self.ctx,
+            self.chroot_context,
             self.basedir,
             WfModule(),
             MockModuleVersion(),
@@ -327,6 +338,7 @@ class FetchTests(unittest.TestCase):
         load_module.return_value.fetch.return_value = FetchResult(result_path, [])
         fetch.fetch_or_wrap_error(
             self.ctx,
+            self.chroot_context,
             self.basedir,
             WfModule(fetch_error=""),
             MockModuleVersion(),
@@ -348,6 +360,7 @@ class FetchTests(unittest.TestCase):
         with self.assertLogs(level=logging.ERROR):
             result = fetch.fetch_or_wrap_error(
                 self.ctx,
+                self.chroot_context,
                 self.basedir,
                 WfModule(),
                 MockModuleVersion(),
@@ -357,6 +370,67 @@ class FetchTests(unittest.TestCase):
                 self.output_path,
             )
         self.assertEqual(result, self._bug_err("exit code 1: bad"))
+
+
+class FetchTests(DbTestCase):
+    @patch.object(websockets, "queue_render_if_listening")
+    @patch.object(websockets, "ws_client_send_delta_async")
+    def test_fetch_integration(self, send_delta, queue_render):
+        queue_render.side_effect = async_value(None)
+        send_delta.side_effect = async_value(None)
+        workflow = Workflow.create_and_init()
+        ModuleVersion.create_or_replace_from_spec(
+            {"id_name": "mod", "name": "Mod", "category": "Clean", "parameters": []},
+            source_version_hash="abc123",
+        )
+        wf_module = workflow.tabs.first().wf_modules.create(
+            order=0, slug="step-1", module_id_name="mod"
+        )
+        minio.put_bytes(
+            minio.ExternalModulesBucket,
+            "mod/abc123/code.py",
+            b"import pandas as pd\ndef fetch(params): return pd.DataFrame({'A': [1]})\ndef render(table, params): return table",
+        )
+        cjwstate.modules.init_module_system()
+        now = timezone.now()
+        with self.assertLogs(level=logging.INFO):
+            self.run_with_async_db(
+                fetch.fetch(workflow_id=workflow.id, wf_module_id=wf_module.id, now=now)
+            )
+        wf_module.refresh_from_db()
+        so = wf_module.stored_objects.get(stored_at=wf_module.stored_data_version)
+        with minio.temporarily_download(so.bucket, so.key) as parquet_path:
+            table = pyarrow.parquet.read_table(str(parquet_path), use_threads=False)
+            assert_arrow_table_equals(table, {"A": [1]})
+
+        workflow.refresh_from_db()
+        queue_render.assert_called_with(workflow.id, workflow.last_delta_id)
+        send_delta.assert_called()
+
+    @patch.object(save, "create_result")
+    def test_fetch_integration_tempfiles_are_on_disk(self, create_result):
+        # /tmp is RAM; /var/tmp is disk. Assert big files go on disk.
+        workflow = Workflow.create_and_init()
+        ModuleVersion.create_or_replace_from_spec(
+            {"id_name": "mod", "name": "Mod", "category": "Clean", "parameters": []},
+            source_version_hash="abc123",
+        )
+        wf_module = workflow.tabs.first().wf_modules.create(
+            order=0, slug="step-1", module_id_name="mod"
+        )
+        minio.put_bytes(
+            minio.ExternalModulesBucket,
+            "mod/abc123/code.py",
+            b"import pandas as pd\ndef fetch(params): return pd.DataFrame({'A': [1]})\ndef render(table, params): return table",
+        )
+        with self.assertLogs(level=logging.INFO):
+            cjwstate.modules.init_module_system()
+            self.run_with_async_db(
+                fetch.fetch(workflow_id=workflow.id, wf_module_id=wf_module.id)
+            )
+        create_result.assert_called()
+        saved_result: FetchResult = create_result.call_args[0][2]
+        self.assertRegex(str(saved_result.path), r"/var/tmp/")
 
 
 class UpdateNextUpdateTimeTests(DbTestCase):
@@ -447,64 +521,3 @@ class UpdateNextUpdateTimeTests(DbTestCase):
                 workflow.id, wf_module, parser.parse("2001-01-01T02:59Z")
             )
         )
-
-
-class FetchIntegrationTests(DbTestCase):
-    @patch.object(websockets, "queue_render_if_listening")
-    @patch.object(websockets, "ws_client_send_delta_async")
-    def test_fetch_integration(self, send_delta, queue_render):
-        queue_render.side_effect = async_value(None)
-        send_delta.side_effect = async_value(None)
-        workflow = Workflow.create_and_init()
-        ModuleVersion.create_or_replace_from_spec(
-            {"id_name": "mod", "name": "Mod", "category": "Clean", "parameters": []},
-            source_version_hash="abc123",
-        )
-        wf_module = workflow.tabs.first().wf_modules.create(
-            order=0, slug="step-1", module_id_name="mod"
-        )
-        minio.put_bytes(
-            minio.ExternalModulesBucket,
-            "mod/abc123/code.py",
-            b"import pandas as pd\ndef fetch(params): return pd.DataFrame({'A': [1]})\ndef render(table, params): return table",
-        )
-        cjwstate.modules.init_module_system()
-        now = timezone.now()
-        with self.assertLogs(level=logging.INFO):
-            self.run_with_async_db(
-                fetch.fetch(workflow_id=workflow.id, wf_module_id=wf_module.id, now=now)
-            )
-        wf_module.refresh_from_db()
-        so = wf_module.stored_objects.get(stored_at=wf_module.stored_data_version)
-        with minio.temporarily_download(so.bucket, so.key) as parquet_path:
-            table = pyarrow.parquet.read_table(str(parquet_path), use_threads=False)
-            assert_arrow_table_equals(table, {"A": [1]})
-
-        workflow.refresh_from_db()
-        queue_render.assert_called_with(workflow.id, workflow.last_delta_id)
-        send_delta.assert_called()
-
-    @patch.object(save, "create_result")
-    def test_fetch_tempfiles_are_on_disk(self, create_result):
-        # /tmp is RAM; /var/tmp is disk. Assert big files go on disk.
-        workflow = Workflow.create_and_init()
-        ModuleVersion.create_or_replace_from_spec(
-            {"id_name": "mod", "name": "Mod", "category": "Clean", "parameters": []},
-            source_version_hash="abc123",
-        )
-        wf_module = workflow.tabs.first().wf_modules.create(
-            order=0, slug="step-1", module_id_name="mod"
-        )
-        minio.put_bytes(
-            minio.ExternalModulesBucket,
-            "mod/abc123/code.py",
-            b"import pandas as pd\ndef fetch(params): return pd.DataFrame({'A': [1]})\ndef render(table, params): return table",
-        )
-        with self.assertLogs(level=logging.INFO):
-            cjwstate.modules.init_module_system()
-            self.run_with_async_db(
-                fetch.fetch(workflow_id=workflow.id, wf_module_id=wf_module.id)
-            )
-        create_result.assert_called()
-        saved_result: FetchResult = create_result.call_args[0][2]
-        self.assertRegex(str(saved_result.path), r"^/var/tmp/")

@@ -5,6 +5,8 @@ import PropTypes from 'prop-types'
 import DelayedTableSwitcher from '../table/DelayedTableSwitcher'
 import OutputIframe from '../OutputIframe'
 import { connect } from 'react-redux'
+import { withI18n } from '@lingui/react'
+import { t } from '@lingui/macro'
 
 export class OutputPane extends React.Component {
   static propTypes = {
@@ -32,7 +34,11 @@ export class OutputPane extends React.Component {
       nRows: PropTypes.number // or null
     }), // or null if no selection
     isPublic: PropTypes.bool.isRequired,
-    isReadOnly: PropTypes.bool.isRequired
+    isReadOnly: PropTypes.bool.isRequired,
+    i18n: PropTypes.shape({
+      // i18n object injected by LinguiJS withI18n()
+      _: PropTypes.func.isRequired
+    })
   }
 
   /**
@@ -95,7 +101,7 @@ export class OutputPane extends React.Component {
           key='error'
           className='showing-input-because-error'
         >
-          This was the data that led to an error. Please correct the error in the left pane.
+          {this.props.i18n._(t('js.WorkflowEditor.OutputPane.showingInput.becauseError')`This was the data that led to an error. Please correct the error in the left pane.`)}
         </p>
       )
     } else {
@@ -217,4 +223,4 @@ function mapDispatchToProps (dispatch) {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(OutputPane)
+)(withI18n()(OutputPane))

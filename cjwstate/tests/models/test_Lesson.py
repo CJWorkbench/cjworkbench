@@ -87,7 +87,7 @@ class LessonTests(SimpleTestCase):
             """,
             )
 
-    @override_settings(STATIC_URL="https://static/")
+    @override_settings(LESSON_FILES_URL="https://files")
     def test_parse_section_step_lesson_files_url(self):
         result = Lesson.parse(
             None,
@@ -103,7 +103,7 @@ class LessonTests(SimpleTestCase):
         )
         self.assertEquals(
             result.sections[0].steps[0].test_js,
-            "window.x == 'https://static/lessons/%s/a-slug/x.csv'" % "en",
+            "window.x == 'https://files/lessons/en/a-slug/x.csv'",
         )
 
     def test_parse_invalid_html(self):
@@ -269,8 +269,7 @@ class LessonTests(SimpleTestCase):
         """,
         )
         self.assertEquals(
-            result.header.html,
-            '<p><img src="//static/lessons/%s/a-slug/foo.png"></p>' % "en",
+            result.header.html, '<p><img src="//static/lessons/en/a-slug/foo.png"></p>'
         )
 
     @override_settings(STATIC_URL="//static/")
@@ -286,10 +285,10 @@ class LessonTests(SimpleTestCase):
         )
         self.assertEquals(
             result.header.html,
-            '<p><img src="//static/courses/%s/a-course/a-slug/foo.png"></p>' % "en",
+            '<p><img src="//static/courses/en/a-course/a-slug/foo.png"></p>',
         )
 
-    @override_settings(STATIC_URL="https://static/")
+    @override_settings(LESSON_FILES_URL="https://files")
     def test_parse_header_lesson_files_url_with_course(self):
         result = Lesson.parse(
             Course("a-course"),
@@ -302,10 +301,10 @@ class LessonTests(SimpleTestCase):
         )
         self.assertEquals(
             result.header.html,
-            "<p><i>https://static/courses/%s/a-course/a-slug/x.csv</i></p>" % "en",
+            "<p><i>https://files/courses/en/a-course/a-slug/x.csv</i></p>",
         )
 
-    @override_settings(STATIC_URL="https://static/")
+    @override_settings(LESSON_FILES_URL="https://files")
     def test_parse_header_lesson_files_url_without_course(self):
         result = Lesson.parse(
             None,
@@ -317,8 +316,7 @@ class LessonTests(SimpleTestCase):
         """,
         )
         self.assertEquals(
-            result.header.html,
-            "<p><i>https://static/lessons/%s/a-slug/x.csv</i></p>" % "en",
+            result.header.html, "<p><i>https://files/lessons/en/a-slug/x.csv</i></p>"
         )
 
     @override_settings(STATIC_URL="//static/")
@@ -363,7 +361,7 @@ class LessonTests(SimpleTestCase):
         )
         self.assertEquals(
             result.sections[0].html,
-            '<p><img src="//static/lessons/%s/a-slug/foo.png"></p>' % "en",
+            '<p><img src="//static/lessons/en/a-slug/foo.png"></p>',
         )
 
     @override_settings(STATIC_URL="//static/")
@@ -378,8 +376,7 @@ class LessonTests(SimpleTestCase):
         """,
         )
         self.assertEquals(
-            result.footer.html,
-            '<p><img src="//static/lessons/%s/a-slug/foo.png"></p>' % "en",
+            result.footer.html, '<p><img src="//static/lessons/en/a-slug/foo.png"></p>'
         )
 
     def test_parse_initial_workflow(self):

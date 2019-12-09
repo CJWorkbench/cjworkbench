@@ -1,16 +1,16 @@
 {% extends 'account/base.html' %}
 
-{% load i18n %}
+{% load i18n_icu %}
 
-{% block title %}{% trans "Confirm Email" %}{% endblock %}
+{% block title %}{% trans_html "py.templates.account.email_confirm.confirmEmail.title" default="Confirm Email" %}{% endblock %}
 
 {% block content %}
     <form method="post" action="{% url "account_confirm_email" key=confirmation.key %}">
-        <legend class='t-d-gray title-1 text-center mb-3'>{% trans "Confirm Email" %}</legend>
+        <legend class='t-d-gray title-1 text-center mb-3'>{% trans_html "py.templates.account.email_confirm.confirmEmail" default="Confirm Email" %}</legend>
         <fieldset>
             {% csrf_token %}
-            <p class='message-body'>{% blocktrans with email=confirmation.email_address.email %}<b>{{ email }}</b>{% endblocktrans %}</p>
-            <button type="submit" class="button-white action-button mx-auto mt-3">{% trans "Confirm" %}</button>
+            <p class='message-body'><b>{{ confirmation.email_address.email }}</b></p>
+            <button type="submit" class="button-white action-button mx-auto mt-3">{% trans_html "py.templates.account.email_confirm.confirm.button" default="Confirm" %}</button>
         </fieldset>
     </form>
 {% endblock %}

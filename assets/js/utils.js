@@ -1,6 +1,7 @@
 // ---- Utilities ---
 import * as Cookies from 'js-cookie'
 import { fromByteArray as base64Encode } from 'base64-js'
+import { t } from '@lingui/macro'
 
 export function goToUrl (url) {
   window.location.href = url
@@ -32,7 +33,7 @@ export function logUserEvent (name, metadata) {
   window.Intercom('trackEvent', name, metadata)
 }
 
-export function timeDifference (start, end) {
+export function timeDifference (start, end, i18n) {
   const ms = new Date(end) - new Date(start)
   const seconds = Math.floor(ms / 1000)
   const minutes = Math.floor(seconds / 60)
@@ -41,17 +42,17 @@ export function timeDifference (start, end) {
   const years = Math.floor(days / 365.25)
 
   if (years > 0) {
-    return years + 'y ago'
+    return i18n._(t('js.util.timeDifference.ago.years')`${years}y ago`)
   } else if (days > 0) {
-    return days + 'd ago'
+    return i18n._(t('js.util.timeDifference.ago.days')`${days}d ago`)
   } else if (hours > 0) {
-    return hours + 'h ago'
+    return i18n._(t('js.util.timeDifference.ago.hours')`${hours}h ago`)
   } else if (minutes > 0) {
-    return minutes + 'm ago'
+    return i18n._(t('js.util.timeDifference.ago.minutes')`${minutes}m ago`)
   } else if (seconds > 0) {
-    return seconds + 's ago'
+    return i18n._(t('js.util.timeDifference.ago.seconds')`${seconds}s ago`)
   } else {
-    return 'just now'
+    return i18n._(t('js.util.timeDifference.now')`just now`)
   }
 }
 

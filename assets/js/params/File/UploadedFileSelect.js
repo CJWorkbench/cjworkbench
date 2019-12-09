@@ -2,6 +2,8 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from '../../components/Modal'
 import filesize from 'filesize'
+import { t, Trans } from '@lingui/macro'
+import { withI18n } from '@lingui/react'
 
 const FilesizeOptions = { standard: 'iec', round: 1 }
 function formatNBytes (nBytes) {
@@ -52,10 +54,10 @@ class UploadedFileSelectModal extends React.PureComponent {
 
     return (
       <Modal className='uploaded-file-select-modal' isOpen toggle={close}>
-        <ModalHeader>FILE HISTORY</ModalHeader>
+        <ModalHeader><Trans id='js.params.File.UploadedFileSelect.UploadedFileSelectModal.header.title' description='This should be all-caps for styling reasons'>FILE HISTORY</Trans></ModalHeader>
         <ModalBody>
           {files.length === 0 ? (
-            <p className='no-files'>You have not uploaded any files to this Step</p>
+            <p className='no-files'><Trans id='js.params.File.UploadedFileSelect.UploadedFileSelectModal.noFiles'>You have not uploaded any files to this Step</Trans></p>
           ) : (
             <ol className='files'>
               {files.map(({ uuid, size, name, createdAt }) => (
@@ -66,7 +68,7 @@ class UploadedFileSelectModal extends React.PureComponent {
                       <abbr className='size' title={`${numberFormat.format(size)} bytes`}>
                         {formatNBytes(size)}
                       </abbr>
-                      <time className='created-at' dateTime={createdAt} title={createdAt}>Uploaded {dateFormat.format(new Date(createdAt))}</time>
+                      <time className='created-at' dateTime={createdAt} title={createdAt}><Trans id='js.params.File.UploadedFileSelect.UploadedFileSelectModal.uploaded_at' description='The parameter will contain a specific date'>Uploaded {dateFormat.format(new Date(createdAt))}</Trans></time>
                     </div>
                   </a>
                 </li>
@@ -81,14 +83,14 @@ class UploadedFileSelectModal extends React.PureComponent {
             onClick={this.handleClickSelect}
             disabled={newValue === value}
           >
-            Load
+            <Trans id='js.params.File.UploadedFileSelect.UploadedFileSelectModal.footer.loadButton'>Load</Trans>
           </button>
           <button
             type='button'
             name='close'
             onClick={close}
           >
-            Cancel
+            <Trans id='js.params.File.UploadedFileSelect.UploadedFileSelectModal.footer.cancelButton'>Cancel</Trans>
           </button>
         </ModalFooter>
       </Modal>
@@ -96,7 +98,7 @@ class UploadedFileSelectModal extends React.PureComponent {
   }
 }
 
-const UploadedFileSelect = React.memo(function UploadedFileSelect ({ value, files, onChange }) {
+const UploadedFileSelect = React.memo(function UploadedFileSelect ({ value, files, onChange, i18n }) {
   const [isOpen, setOpen] = React.useState(false)
   const open = React.useCallback(() => setOpen(true))
   const close = React.useCallback(() => setOpen(false))
@@ -105,11 +107,15 @@ const UploadedFileSelect = React.memo(function UploadedFileSelect ({ value, file
 
   const valueIndex = files.findIndex(({ uuid }) => uuid === value)
   const canOpen = files.findIndex(({ uuid }) => uuid !== value) !== -1 // do not open when nothing to select
+  const nFiles = files.length
+  const fileNumber = valueIndex === -1 ? <Trans id='js.params.File.UploadedFileSelect.choosePreviousFile.none'>[NONE]</Trans> : (valueIndex + 1)
 
   return (
     <>
-      <button className='uploaded-file-select' onClick={open} title={canOpen ? 'Choose a previously-uploaded file' : undefined} disabled={!canOpen}>
-        {`File ${valueIndex === -1 ? '[NONE]' : (valueIndex + 1)} of ${files.length}`}
+      <button className='uploaded-file-select' onClick={open} title={canOpen ? i18n._(t('js.params.File.UploadedFileSelect.choosePreviousFile.hoverText')`Choose a previously-uploaded file`) : undefined} disabled={!canOpen}>
+        <Trans id='js.params.File.UploadedFileSelect.choosePreviousFile.text' description='The parameter {fileNumber} is the number of the file (or js.params.File.UploadedFileSelect.choosePreviousFile.none) and {nFiles} is the total number of files'>
+            File {fileNumber} of {nFiles}
+        </Trans>
       </button>
       {isOpen ? (
         <UploadedFileSelectModal
@@ -132,4 +138,4 @@ UploadedFileSelect.propTypes = {
   }).isRequired).isRequired,
   onChange: PropTypes.func.isRequired // func(uuid) => undefined
 }
-export default UploadedFileSelect
+export default withI18n()(UploadedFileSelect)

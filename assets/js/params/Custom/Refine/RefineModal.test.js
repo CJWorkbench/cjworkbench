@@ -1,14 +1,14 @@
 /* global describe, it, expect, jest */
 import React from 'react'
-import { mount } from 'enzyme'
 import { tick } from '../../../test-utils'
 import RefineModal from './RefineModal'
+import { mountWithI18n } from '../../../i18n/test-utils.js'
 
 describe('RefineModal', () => {
   // These are kinda integration-test-y. See RefineClusterer.test.js and
   // RefineBins.test.js for unit tests.
 
-  const wrapper = (extraProps = {}) => mount(
+  const wrapper = (extraProps = {}) => mountWithI18n(
     <RefineModal
       bucket={{ a: 1, b: 1 }}
       onClose={jest.fn()}

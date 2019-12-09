@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom'
 import PropTypes from 'prop-types'
 import Select from 'react-select'
 import { Popper } from 'react-popper'
+import { withI18n } from '@lingui/react'
+import { t } from '@lingui/macro'
 
 // react-select includes a funky CSS engine we don't want. Disable
 // _all_ its styles using its 'styles' parameter.
@@ -94,7 +96,7 @@ const DefaultOverrideComponents = {
   MenuPortal: PopperMenuPortal
 }
 
-export default class ReactSelect extends React.PureComponent {
+class ReactSelect extends React.PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired,
     name: PropTypes.string.isRequired, // <input name="...">
@@ -114,7 +116,11 @@ export default class ReactSelect extends React.PureComponent {
     addMenuListClassName: PropTypes.string, // default undefined. Queried by MenuList in Multicolumn.js
     noOptionsMessage: PropTypes.string, // default 'No options'
     components: PropTypes.object, // or undefined -- overrides react-select components
-    onChange: PropTypes.func.isRequired // func(value|null or [values]) => undefined
+    onChange: PropTypes.func.isRequired, // func(value|null or [values]) => undefined
+    i18n: PropTypes.shape({
+      // i18n object injected by LinguiJS withI18n()
+      _: PropTypes.func.isRequired
+    })
   }
 
   components = {
@@ -122,7 +128,7 @@ export default class ReactSelect extends React.PureComponent {
     ...(this.props.components || {})
   }
 
-  noOptionsMessage = () => this.props.noOptionsMessage || 'No options'
+  noOptionsMessage = () => this.props.noOptionsMessage || this.props.i18n._(t('js.params.common.ReactSelect.noOptionsMessage')`No options`)
 
   handleChange = (reactSelectValue) => {
     const { isMulti, onChange } = this.props
@@ -176,3 +182,5 @@ export default class ReactSelect extends React.PureComponent {
     )
   }
 }
+
+export default withI18n()(ReactSelect)

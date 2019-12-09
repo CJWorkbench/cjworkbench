@@ -134,7 +134,7 @@ exports[`Workflow list page renders correctly 1`] = `
               <WithI18n
                 defaults="WORKFLOWS"
                 description="This is used in navigation bar. It should be all-caps for styling reasons."
-                id="workflows.navbar.workflows"
+                id="js.Workflows.NavBar.links.workflows"
               >
                 <I18n
                   update={true}
@@ -169,12 +169,12 @@ exports[`Workflow list page renders correctly 1`] = `
                         "t": [Function],
                       }
                     }
-                    id="workflows.navbar.workflows"
+                    id="js.Workflows.NavBar.links.workflows"
                   >
                     <Render
-                      value="workflows.navbar.workflows"
+                      value="js.Workflows.NavBar.links.workflows"
                     >
-                      workflows.navbar.workflows
+                      js.Workflows.NavBar.links.workflows
                     </Render>
                   </Trans>
                 </I18n>
@@ -187,7 +187,7 @@ exports[`Workflow list page renders correctly 1`] = `
               <WithI18n
                 defaults="TRAINING"
                 description="This is used in navigation bar. It should be all-caps for styling reasons."
-                id="workflows.navbar.training"
+                id="js.Workflows.NavBar.links.training"
               >
                 <I18n
                   update={true}
@@ -222,99 +222,138 @@ exports[`Workflow list page renders correctly 1`] = `
                         "t": [Function],
                       }
                     }
-                    id="workflows.navbar.training"
+                    id="js.Workflows.NavBar.links.training"
                   >
                     <Render
-                      value="workflows.navbar.training"
+                      value="js.Workflows.NavBar.links.training"
                     >
-                      workflows.navbar.training
+                      js.Workflows.NavBar.links.training
                     </Render>
                   </Trans>
                 </I18n>
               </WithI18n>
             </a>
           </div>
-          <WfHamburgerMenu
+          <WithI18n
             user={
               Object {
                 "id": 1,
               }
             }
           >
-            <WithI18n>
-              <I18n
-                update={true}
-                withHash={true}
-              >
-                <Memo(LocaleSwitcher)
-                  i18n={
-                    Object {
-                      "_": [Function],
-                      "_activeLanguageData": Object {
-                        "plurals": [Function],
+            <I18n
+              update={true}
+              withHash={true}
+            >
+              <WfHamburgerMenu
+                i18n={
+                  Object {
+                    "_": [Function],
+                    "_activeLanguageData": Object {
+                      "plurals": [Function],
+                    },
+                    "_activeMessages": Object {},
+                    "_catalogs": Object {
+                      "en": Object {
+                        "languageData": Object {},
+                        "messages": Object {},
                       },
-                      "_activeMessages": Object {},
-                      "_catalogs": Object {
-                        "en": Object {
-                          "languageData": Object {},
-                          "messages": Object {},
-                        },
-                      },
-                      "_dev": Object {
-                        "compile": [Function],
-                        "loadLanguageData": [Function],
-                      },
-                      "_language": "en",
-                      "_locales": undefined,
-                      "_missing": undefined,
-                      "plural": [Function],
-                      "select": [Function],
-                      "selectOrdinal": [Function],
-                      "t": [Function],
-                    }
+                    },
+                    "_dev": Object {
+                      "compile": [Function],
+                      "loadLanguageData": [Function],
+                    },
+                    "_language": "en",
+                    "_locales": undefined,
+                    "_missing": undefined,
+                    "plural": [Function],
+                    "select": [Function],
+                    "selectOrdinal": [Function],
+                    "t": [Function],
                   }
-                />
-              </I18n>
-            </WithI18n>
-            <UncontrolledDropdown>
-              <Dropdown
-                isOpen={false}
-                toggle={[Function]}
+                }
+                user={
+                  Object {
+                    "id": 1,
+                  }
+                }
               >
-                <Manager
-                  tag={false}
-                >
-                  <div
-                    className="dropdown"
+                <WithI18n>
+                  <I18n
+                    update={true}
+                    withHash={true}
                   >
-                    <DropdownToggle
-                      className="context-button"
-                      title="menu"
+                    <Memo(LocaleSwitcher)
+                      i18n={
+                        Object {
+                          "_": [Function],
+                          "_activeLanguageData": Object {
+                            "plurals": [Function],
+                          },
+                          "_activeMessages": Object {},
+                          "_catalogs": Object {
+                            "en": Object {
+                              "languageData": Object {},
+                              "messages": Object {},
+                            },
+                          },
+                          "_dev": Object {
+                            "compile": [Function],
+                            "loadLanguageData": [Function],
+                          },
+                          "_language": "en",
+                          "_locales": undefined,
+                          "_missing": undefined,
+                          "plural": [Function],
+                          "select": [Function],
+                          "selectOrdinal": [Function],
+                          "t": [Function],
+                        }
+                      }
+                    />
+                  </I18n>
+                </WithI18n>
+                <UncontrolledDropdown>
+                  <Dropdown
+                    isOpen={false}
+                    toggle={[Function]}
+                  >
+                    <Manager
+                      tag={false}
                     >
-                      <Reference>
-                        <InnerReference
-                          setReferenceNode={[Function]}
+                      <div
+                        className="dropdown"
+                      >
+                        <DropdownToggle
+                          className="context-button"
+                          title="menu"
                         >
-                          <button
-                            aria-expanded={false}
-                            className="btn btn-secondary context-button"
-                            disabled={false}
-                            onClick={[Function]}
-                            title="menu"
-                          >
-                            <i
-                              className="icon-more"
-                            />
-                          </button>
-                        </InnerReference>
-                      </Reference>
-                    </DropdownToggle>
-                    <DropdownMenu />
-                  </div>
-                </Manager>
-              </Dropdown>
-            </UncontrolledDropdown>
-          </WfHamburgerMenu>
+                          <Reference>
+                            <InnerReference
+                              setReferenceNode={[Function]}
+                            >
+                              <button
+                                aria-expanded={false}
+                                className="btn btn-secondary context-button"
+                                disabled={false}
+                                onClick={[Function]}
+                                title="menu"
+                              >
+                                <i
+                                  className="icon-more"
+                                />
+                              </button>
+                            </InnerReference>
+                          </Reference>
+                        </DropdownToggle>
+                        <DropdownMenu />
+                      </div>
+                    </Manager>
+                  </Dropdown>
+                </UncontrolledDropdown>
+              </WfHamburgerMenu>
+            </I18n>
+          </WithI18n>
         </nav>
       </div>
     </Navbar>
@@ -364,7 +403,7 @@ exports[`Workflow list page renders correctly 1`] = `
         </button>
       </form>
     </CreateWorkflowButton>
-    <Memo(WorkflowLists)
+    <WithI18n
       deleteWorkflow={[Function]}
       duplicateWorkflow={[Function]}
       openShareModal={[Function]}
@@ -427,134 +466,43 @@ exports[`Workflow list page renders correctly 1`] = `
         }
       }
     >
-      <div
-        className="workflow-lists"
+      <I18n
+        update={true}
+        withHash={true}
       >
-        <div
-          className="nav"
-        >
-          <ul
-            className="workflow-tabs"
-            id="workflow-tabs"
-            role="tablist"
-          >
-            <Memo(Tab)
-              isActive={true}
-              name="owned"
-              setIsActive={[Function]}
-            >
-              <li
-                className="nav-item active"
-              >
-                <a
-                  aria-controls="workflow-tab-owned"
-                  aria-selected={true}
-                  className="nav-link active"
-                  href="#owned"
-                  id="workflow-tab-link-owned"
-                  onClick={[Function]}
-                >
-                  My workflows
-                </a>
-              </li>
-            </Memo(Tab)>
-            <Memo(Tab)
-              isActive={false}
-              name="shared"
-              setIsActive={[Function]}
-            >
-              <li
-                className="nav-item"
-              >
-                <a
-                  aria-controls="workflow-tab-shared"
-                  aria-selected={false}
-                  className="nav-link"
-                  href="#shared"
-                  id="workflow-tab-link-shared"
-                  onClick={[Function]}
-                >
-                  Shared with me
-                </a>
-              </li>
-            </Memo(Tab)>
-            <Memo(Tab)
-              isActive={false}
-              name="templates"
-              setIsActive={[Function]}
-            >
-              <li
-                className="nav-item"
-              >
-                <a
-                  aria-controls="workflow-tab-templates"
-                  aria-selected={false}
-                  className="nav-link"
-                  href="#templates"
-                  id="workflow-tab-link-templates"
-                  onClick={[Function]}
-                >
-                  Recipes
-                </a>
-              </li>
-            </Memo(Tab)>
-          </ul>
-          <SortMenu
-            comparator="last_update|descending"
-            setComparator={[Function]}
-          >
-            <div
-              className="sort-menu"
-            >
-              <UncontrolledDropdown>
-                <Dropdown
-                  isOpen={false}
-                  toggle={[Function]}
-                >
-                  <Manager
-                    tag={false}
-                  >
-                    <div
-                      className="dropdown"
-                    >
-                      <DropdownToggle>
-                        <Reference>
-                          <InnerReference
-                            setReferenceNode={[Function]}
-                          >
-                            <button
-                              aria-expanded={false}
-                              className="btn btn-secondary"
-                              disabled={false}
-                              onClick={[Function]}
-                            >
-                              Sort 
-                              <i
-                                className="icon-caret-down"
-                              />
-                            </button>
-                          </InnerReference>
-                        </Reference>
-                      </DropdownToggle>
-                      <DropdownMenu />
-                    </div>
-                  </Manager>
-                </Dropdown>
-              </UncontrolledDropdown>
-            </div>
-          </SortMenu>
-        </div>
-        <div
-          className="tab-content"
-        >
-          <Memo(OwnedWorkflowList)
-            comparator="last_update|descending"
-            deleteWorkflow={[Function]}
-            duplicateWorkflow={[Function]}
-            isActive={true}
-            openShareModal={[Function]}
-            workflows={
-              Array [
+        <WorkflowLists
+          deleteWorkflow={[Function]}
+          duplicateWorkflow={[Function]}
+          i18n={
+            Object {
+              "_": [Function],
+              "_activeLanguageData": Object {
+                "plurals": [Function],
+              },
+              "_activeMessages": Object {},
+              "_catalogs": Object {
+                "en": Object {
+                  "languageData": Object {},
+                  "messages": Object {},
+                },
+              },
+              "_dev": Object {
+                "compile": [Function],
+                "loadLanguageData": [Function],
+              },
+              "_language": "en",
+              "_locales": undefined,
+              "_missing": undefined,
+              "plural": [Function],
+              "select": [Function],
+              "selectOrdinal": [Function],
+              "t": [Function],
+            }
+          }
+          openShareModal={[Function]}
+          workflows={
+            Object {
+              "owned": Array [
                 Object {
                   "id": 1,
                   "is_owner": true,
@@ -579,441 +527,8 @@ exports[`Workflow list page renders correctly 1`] = `
                   "owner_name": "Fred Frederson",
                   "public": false,
                 },
-              ]
-            }
-          >
-            <Memo(TabPane)
-              isActive={true}
-              name="owned"
-            >
-              <div
-                aria-labelledby="workflow-tab-link-owned"
-                className="tab-pane show active"
-                id="workflow-tab-owned"
-                role="tabpanel"
-              >
-                <Memo(WorkflowList)
-                  comparator="last_update|descending"
-                  deleteWorkflow={[Function]}
-                  duplicateWorkflow={[Function]}
-                  openShareModal={[Function]}
-                  workflows={
-                    Array [
-                      Object {
-                        "id": 1,
-                        "is_owner": true,
-                        "last_update": "2010-10-18T00:30:00",
-                        "name": "Cleaning",
-                        "owner_name": "Fred Frederson",
-                        "public": true,
-                      },
-                      Object {
-                        "id": 2,
-                        "is_owner": true,
-                        "last_update": "2010-10-18T00:20:00",
-                        "name": "Charting",
-                        "owner_name": "Fred Frederson",
-                        "public": false,
-                      },
-                      Object {
-                        "id": 3,
-                        "is_owner": true,
-                        "last_update": "2010-10-18T07:45:00",
-                        "name": "Analysis",
-                        "owner_name": "Fred Frederson",
-                        "public": false,
-                      },
-                    ]
-                  }
-                >
-                  <div
-                    className="workflow-list"
-                  >
-                    <Memo(Workflow)
-                      deleteWorkflow={[Function]}
-                      duplicateWorkflow={[Function]}
-                      key="3"
-                      openShareModal={[Function]}
-                      workflow={
-                        Object {
-                          "id": 3,
-                          "is_owner": true,
-                          "last_update": "2010-10-18T07:45:00",
-                          "name": "Analysis",
-                          "owner_name": "Fred Frederson",
-                          "public": false,
-                        }
-                      }
-                    >
-                      <div
-                        className="workflow"
-                      >
-                        <a
-                          href="/workflows/3"
-                        >
-                          <div
-                            className="workflow-title"
-                          >
-                            Analysis
-                          </div>
-                          <WorkflowMetadata
-                            openShareModal={[Function]}
-                            workflow={
-                              Object {
-                                "id": 3,
-                                "is_owner": true,
-                                "last_update": "2010-10-18T07:45:00",
-                                "name": "Analysis",
-                                "owner_name": "Fred Frederson",
-                                "public": false,
-                              }
-                            }
-                          >
-                            <ul
-                              className="metadata-container"
-                            >
-                              <li
-                                className="attribution"
-                              >
-                                <span
-                                  className="metadata"
-                                >
-                                  by 
-                                  Fred Frederson
-                                </span>
-                                <span
-                                  className="separator"
-                                >
-                                  -
-                                </span>
-                              </li>
-                              <li>
-                                Updated 
-                                9y ago
-                              </li>
-                              <li>
-                                <span
-                                  className="separator"
-                                >
-                                  -
-                                </span>
-                                <button
-                                  className="public-private"
-                                  onClick={[Function]}
-                                  title="Change privacy"
-                                  type="button"
-                                >
-                                  private
-                                </button>
-                              </li>
-                            </ul>
-                          </WorkflowMetadata>
-                        </a>
-                        <WorkflowContextMenu
-                          deleteWorkflow={[Function]}
-                          duplicateWorkflow={[Function]}
-                          workflowId={3}
-                        >
-                          <UncontrolledDropdown>
-                            <Dropdown
-                              isOpen={false}
-                              toggle={[Function]}
-                            >
-                              <Manager
-                                tag={false}
-                              >
-                                <div
-                                  className="dropdown"
-                                >
-                                  <DropdownToggle
-                                    className="context-button"
-                                  >
-                                    <Reference>
-                                      <InnerReference
-                                        setReferenceNode={[Function]}
-                                      >
-                                        <button
-                                          aria-expanded={false}
-                                          className="btn btn-secondary context-button"
-                                          disabled={false}
-                                          onClick={[Function]}
-                                        >
-                                          <i
-                                            className="icon-more"
-                                          />
-                                        </button>
-                                      </InnerReference>
-                                    </Reference>
-                                  </DropdownToggle>
-                                  <DropdownMenu />
-                                </div>
-                              </Manager>
-                            </Dropdown>
-                          </UncontrolledDropdown>
-                        </WorkflowContextMenu>
-                      </div>
-                    </Memo(Workflow)>
-                    <Memo(Workflow)
-                      deleteWorkflow={[Function]}
-                      duplicateWorkflow={[Function]}
-                      key="1"
-                      openShareModal={[Function]}
-                      workflow={
-                        Object {
-                          "id": 1,
-                          "is_owner": true,
-                          "last_update": "2010-10-18T00:30:00",
-                          "name": "Cleaning",
-                          "owner_name": "Fred Frederson",
-                          "public": true,
-                        }
-                      }
-                    >
-                      <div
-                        className="workflow"
-                      >
-                        <a
-                          href="/workflows/1"
-                        >
-                          <div
-                            className="workflow-title"
-                          >
-                            Cleaning
-                          </div>
-                          <WorkflowMetadata
-                            openShareModal={[Function]}
-                            workflow={
-                              Object {
-                                "id": 1,
-                                "is_owner": true,
-                                "last_update": "2010-10-18T00:30:00",
-                                "name": "Cleaning",
-                                "owner_name": "Fred Frederson",
-                                "public": true,
-                              }
-                            }
-                          >
-                            <ul
-                              className="metadata-container"
-                            >
-                              <li
-                                className="attribution"
-                              >
-                                <span
-                                  className="metadata"
-                                >
-                                  by 
-                                  Fred Frederson
-                                </span>
-                                <span
-                                  className="separator"
-                                >
-                                  -
-                                </span>
-                              </li>
-                              <li>
-                                Updated 
-                                9y ago
-                              </li>
-                              <li>
-                                <span
-                                  className="separator"
-                                >
-                                  -
-                                </span>
-                                <button
-                                  className="public-private"
-                                  onClick={[Function]}
-                                  title="Change privacy"
-                                  type="button"
-                                >
-                                  public
-                                </button>
-                              </li>
-                            </ul>
-                          </WorkflowMetadata>
-                        </a>
-                        <WorkflowContextMenu
-                          deleteWorkflow={[Function]}
-                          duplicateWorkflow={[Function]}
-                          workflowId={1}
-                        >
-                          <UncontrolledDropdown>
-                            <Dropdown
-                              isOpen={false}
-                              toggle={[Function]}
-                            >
-                              <Manager
-                                tag={false}
-                              >
-                                <div
-                                  className="dropdown"
-                                >
-                                  <DropdownToggle
-                                    className="context-button"
-                                  >
-                                    <Reference>
-                                      <InnerReference
-                                        setReferenceNode={[Function]}
-                                      >
-                                        <button
-                                          aria-expanded={false}
-                                          className="btn btn-secondary context-button"
-                                          disabled={false}
-                                          onClick={[Function]}
-                                        >
-                                          <i
-                                            className="icon-more"
-                                          />
-                                        </button>
-                                      </InnerReference>
-                                    </Reference>
-                                  </DropdownToggle>
-                                  <DropdownMenu />
-                                </div>
-                              </Manager>
-                            </Dropdown>
-                          </UncontrolledDropdown>
-                        </WorkflowContextMenu>
-                      </div>
-                    </Memo(Workflow)>
-                    <Memo(Workflow)
-                      deleteWorkflow={[Function]}
-                      duplicateWorkflow={[Function]}
-                      key="2"
-                      openShareModal={[Function]}
-                      workflow={
-                        Object {
-                          "id": 2,
-                          "is_owner": true,
-                          "last_update": "2010-10-18T00:20:00",
-                          "name": "Charting",
-                          "owner_name": "Fred Frederson",
-                          "public": false,
-                        }
-                      }
-                    >
-                      <div
-                        className="workflow"
-                      >
-                        <a
-                          href="/workflows/2"
-                        >
-                          <div
-                            className="workflow-title"
-                          >
-                            Charting
-                          </div>
-                          <WorkflowMetadata
-                            openShareModal={[Function]}
-                            workflow={
-                              Object {
-                                "id": 2,
-                                "is_owner": true,
-                                "last_update": "2010-10-18T00:20:00",
-                                "name": "Charting",
-                                "owner_name": "Fred Frederson",
-                                "public": false,
-                              }
-                            }
-                          >
-                            <ul
-                              className="metadata-container"
-                            >
-                              <li
-                                className="attribution"
-                              >
-                                <span
-                                  className="metadata"
-                                >
-                                  by 
-                                  Fred Frederson
-                                </span>
-                                <span
-                                  className="separator"
-                                >
-                                  -
-                                </span>
-                              </li>
-                              <li>
-                                Updated 
-                                9y ago
-                              </li>
-                              <li>
-                                <span
-                                  className="separator"
-                                >
-                                  -
-                                </span>
-                                <button
-                                  className="public-private"
-                                  onClick={[Function]}
-                                  title="Change privacy"
-                                  type="button"
-                                >
-                                  private
-                                </button>
-                              </li>
-                            </ul>
-                          </WorkflowMetadata>
-                        </a>
-                        <WorkflowContextMenu
-                          deleteWorkflow={[Function]}
-                          duplicateWorkflow={[Function]}
-                          workflowId={2}
-                        >
-                          <UncontrolledDropdown>
-                            <Dropdown
-                              isOpen={false}
-                              toggle={[Function]}
-                            >
-                              <Manager
-                                tag={false}
-                              >
-                                <div
-                                  className="dropdown"
-                                >
-                                  <DropdownToggle
-                                    className="context-button"
-                                  >
-                                    <Reference>
-                                      <InnerReference
-                                        setReferenceNode={[Function]}
-                                      >
-                                        <button
-                                          aria-expanded={false}
-                                          className="btn btn-secondary context-button"
-                                          disabled={false}
-                                          onClick={[Function]}
-                                        >
-                                          <i
-                                            className="icon-more"
-                                          />
-                                        </button>
-                                      </InnerReference>
-                                    </Reference>
-                                  </DropdownToggle>
-                                  <DropdownMenu />
-                                </div>
-                              </Manager>
-                            </Dropdown>
-                          </UncontrolledDropdown>
-                        </WorkflowContextMenu>
-                      </div>
-                    </Memo(Workflow)>
-                  </div>
-                </Memo(WorkflowList)>
-              </div>
-            </Memo(TabPane)>
-          </Memo(OwnedWorkflowList)>
-          <Memo(SharedWorkflowList)
-            comparator="last_update|descending"
-            deleteWorkflow={[Function]}
-            duplicateWorkflow={[Function]}
-            isActive={false}
-            openShareModal={[Function]}
-            workflows={
-              Array [
+              ],
+              "shared": Array [
                 Object {
                   "id": 7,
                   "is_owner": false,
@@ -1030,309 +545,8 @@ exports[`Workflow list page renders correctly 1`] = `
                   "owner_name": "Sally Sallerson",
                   "public": true,
                 },
-              ]
-            }
-          >
-            <Memo(TabPane)
-              isActive={false}
-              name="shared"
-            >
-              <div
-                aria-labelledby="workflow-tab-link-shared"
-                className="tab-pane"
-                id="workflow-tab-shared"
-                role="tabpanel"
-              >
-                <Memo(WorkflowList)
-                  comparator="last_update|descending"
-                  deleteWorkflow={null}
-                  duplicateWorkflow={[Function]}
-                  openShareModal={[Function]}
-                  workflows={
-                    Array [
-                      Object {
-                        "id": 7,
-                        "is_owner": false,
-                        "last_update": "2010-10-18T00:30:00",
-                        "name": "Messy data cleanup",
-                        "owner_name": "John Johnson",
-                        "public": false,
-                      },
-                      Object {
-                        "id": 8,
-                        "is_owner": false,
-                        "last_update": "2010-10-18T00:45:00",
-                        "name": "Document search",
-                        "owner_name": "Sally Sallerson",
-                        "public": true,
-                      },
-                    ]
-                  }
-                >
-                  <div
-                    className="workflow-list"
-                  >
-                    <Memo(Workflow)
-                      deleteWorkflow={null}
-                      duplicateWorkflow={[Function]}
-                      key="8"
-                      openShareModal={[Function]}
-                      workflow={
-                        Object {
-                          "id": 8,
-                          "is_owner": false,
-                          "last_update": "2010-10-18T00:45:00",
-                          "name": "Document search",
-                          "owner_name": "Sally Sallerson",
-                          "public": true,
-                        }
-                      }
-                    >
-                      <div
-                        className="workflow"
-                      >
-                        <a
-                          href="/workflows/8"
-                        >
-                          <div
-                            className="workflow-title"
-                          >
-                            Document search
-                          </div>
-                          <WorkflowMetadata
-                            openShareModal={[Function]}
-                            workflow={
-                              Object {
-                                "id": 8,
-                                "is_owner": false,
-                                "last_update": "2010-10-18T00:45:00",
-                                "name": "Document search",
-                                "owner_name": "Sally Sallerson",
-                                "public": true,
-                              }
-                            }
-                          >
-                            <ul
-                              className="metadata-container"
-                            >
-                              <li
-                                className="attribution"
-                              >
-                                <span
-                                  className="metadata"
-                                >
-                                  by 
-                                  Sally Sallerson
-                                </span>
-                                <span
-                                  className="separator"
-                                >
-                                  -
-                                </span>
-                              </li>
-                              <li>
-                                Updated 
-                                9y ago
-                              </li>
-                              <li>
-                                <span
-                                  className="separator"
-                                >
-                                  -
-                                </span>
-                                <button
-                                  className="public-private"
-                                  onClick={[Function]}
-                                  title="Change privacy"
-                                  type="button"
-                                >
-                                  public
-                                </button>
-                              </li>
-                            </ul>
-                          </WorkflowMetadata>
-                        </a>
-                        <WorkflowContextMenu
-                          deleteWorkflow={null}
-                          duplicateWorkflow={[Function]}
-                          workflowId={8}
-                        >
-                          <UncontrolledDropdown>
-                            <Dropdown
-                              isOpen={false}
-                              toggle={[Function]}
-                            >
-                              <Manager
-                                tag={false}
-                              >
-                                <div
-                                  className="dropdown"
-                                >
-                                  <DropdownToggle
-                                    className="context-button"
-                                  >
-                                    <Reference>
-                                      <InnerReference
-                                        setReferenceNode={[Function]}
-                                      >
-                                        <button
-                                          aria-expanded={false}
-                                          className="btn btn-secondary context-button"
-                                          disabled={false}
-                                          onClick={[Function]}
-                                        >
-                                          <i
-                                            className="icon-more"
-                                          />
-                                        </button>
-                                      </InnerReference>
-                                    </Reference>
-                                  </DropdownToggle>
-                                  <DropdownMenu />
-                                </div>
-                              </Manager>
-                            </Dropdown>
-                          </UncontrolledDropdown>
-                        </WorkflowContextMenu>
-                      </div>
-                    </Memo(Workflow)>
-                    <Memo(Workflow)
-                      deleteWorkflow={null}
-                      duplicateWorkflow={[Function]}
-                      key="7"
-                      openShareModal={[Function]}
-                      workflow={
-                        Object {
-                          "id": 7,
-                          "is_owner": false,
-                          "last_update": "2010-10-18T00:30:00",
-                          "name": "Messy data cleanup",
-                          "owner_name": "John Johnson",
-                          "public": false,
-                        }
-                      }
-                    >
-                      <div
-                        className="workflow"
-                      >
-                        <a
-                          href="/workflows/7"
-                        >
-                          <div
-                            className="workflow-title"
-                          >
-                            Messy data cleanup
-                          </div>
-                          <WorkflowMetadata
-                            openShareModal={[Function]}
-                            workflow={
-                              Object {
-                                "id": 7,
-                                "is_owner": false,
-                                "last_update": "2010-10-18T00:30:00",
-                                "name": "Messy data cleanup",
-                                "owner_name": "John Johnson",
-                                "public": false,
-                              }
-                            }
-                          >
-                            <ul
-                              className="metadata-container"
-                            >
-                              <li
-                                className="attribution"
-                              >
-                                <span
-                                  className="metadata"
-                                >
-                                  by 
-                                  John Johnson
-                                </span>
-                                <span
-                                  className="separator"
-                                >
-                                  -
-                                </span>
-                              </li>
-                              <li>
-                                Updated 
-                                9y ago
-                              </li>
-                              <li>
-                                <span
-                                  className="separator"
-                                >
-                                  -
-                                </span>
-                                <button
-                                  className="public-private"
-                                  onClick={[Function]}
-                                  title="Change privacy"
-                                  type="button"
-                                >
-                                  private
-                                </button>
-                              </li>
-                            </ul>
-                          </WorkflowMetadata>
-                        </a>
-                        <WorkflowContextMenu
-                          deleteWorkflow={null}
-                          duplicateWorkflow={[Function]}
-                          workflowId={7}
-                        >
-                          <UncontrolledDropdown>
-                            <Dropdown
-                              isOpen={false}
-                              toggle={[Function]}
-                            >
-                              <Manager
-                                tag={false}
-                              >
-                                <div
-                                  className="dropdown"
-                                >
-                                  <DropdownToggle
-                                    className="context-button"
-                                  >
-                                    <Reference>
-                                      <InnerReference
-                                        setReferenceNode={[Function]}
-                                      >
-                                        <button
-                                          aria-expanded={false}
-                                          className="btn btn-secondary context-button"
-                                          disabled={false}
-                                          onClick={[Function]}
-                                        >
-                                          <i
-                                            className="icon-more"
-                                          />
-                                        </button>
-                                      </InnerReference>
-                                    </Reference>
-                                  </DropdownToggle>
-                                  <DropdownMenu />
-                                </div>
-                              </Manager>
-                            </Dropdown>
-                          </UncontrolledDropdown>
-                        </WorkflowContextMenu>
-                      </div>
-                    </Memo(Workflow)>
-                  </div>
-                </Memo(WorkflowList)>
-              </div>
-            </Memo(TabPane)>
-          </Memo(SharedWorkflowList)>
-          <Memo(TemplatesWorkflowList)
-            comparator="last_update|descending"
-            deleteWorkflow={[Function]}
-            duplicateWorkflow={[Function]}
-            isActive={false}
-            openShareModal={[Function]}
-            workflows={
-              Array [
+              ],
+              "templates": Array [
                 Object {
                   "id": 10,
                   "is_owner": false,
@@ -1341,172 +555,2473 @@ exports[`Workflow list page renders correctly 1`] = `
                   "owner_name": "Workbench",
                   "public": false,
                 },
-              ]
+              ],
             }
+          }
+        >
+          <div
+            className="workflow-lists"
           >
-            <Memo(TabPane)
-              isActive={false}
-              name="templates"
+            <div
+              className="nav"
             >
-              <div
-                aria-labelledby="workflow-tab-link-templates"
-                className="tab-pane"
-                id="workflow-tab-templates"
-                role="tabpanel"
+              <ul
+                className="workflow-tabs"
+                id="workflow-tabs"
+                role="tablist"
               >
-                <Memo(WorkflowList)
-                  comparator="last_update|descending"
-                  deleteWorkflow={null}
-                  duplicateWorkflow={[Function]}
-                  openShareModal={[Function]}
-                  workflows={
-                    Array [
-                      Object {
-                        "id": 10,
-                        "is_owner": false,
-                        "last_update": "2010-10-18T00:30:00",
-                        "name": "Demo 1",
-                        "owner_name": "Workbench",
-                        "public": false,
-                      },
-                    ]
-                  }
+                <Memo(Tab)
+                  isActive={true}
+                  name="owned"
+                  setIsActive={[Function]}
+                >
+                  <li
+                    className="nav-item active"
+                  >
+                    <a
+                      aria-controls="workflow-tab-owned"
+                      aria-selected={true}
+                      className="nav-link active"
+                      href="#owned"
+                      id="workflow-tab-link-owned"
+                      onClick={[Function]}
+                    >
+                      <WithI18n
+                        defaults="My workflows"
+                        id="js.Workflows.WorkflowLists.nav.myWorkflows"
+                      >
+                        <I18n
+                          update={true}
+                          withHash={true}
+                        >
+                          <Trans
+                            defaults="My workflows"
+                            i18n={
+                              Object {
+                                "_": [Function],
+                                "_activeLanguageData": Object {
+                                  "plurals": [Function],
+                                },
+                                "_activeMessages": Object {},
+                                "_catalogs": Object {
+                                  "en": Object {
+                                    "languageData": Object {},
+                                    "messages": Object {},
+                                  },
+                                },
+                                "_dev": Object {
+                                  "compile": [Function],
+                                  "loadLanguageData": [Function],
+                                },
+                                "_language": "en",
+                                "_locales": undefined,
+                                "_missing": undefined,
+                                "plural": [Function],
+                                "select": [Function],
+                                "selectOrdinal": [Function],
+                                "t": [Function],
+                              }
+                            }
+                            id="js.Workflows.WorkflowLists.nav.myWorkflows"
+                          >
+                            <Render
+                              value="js.Workflows.WorkflowLists.nav.myWorkflows"
+                            >
+                              js.Workflows.WorkflowLists.nav.myWorkflows
+                            </Render>
+                          </Trans>
+                        </I18n>
+                      </WithI18n>
+                    </a>
+                  </li>
+                </Memo(Tab)>
+                <Memo(Tab)
+                  isActive={false}
+                  name="shared"
+                  setIsActive={[Function]}
+                >
+                  <li
+                    className="nav-item"
+                  >
+                    <a
+                      aria-controls="workflow-tab-shared"
+                      aria-selected={false}
+                      className="nav-link"
+                      href="#shared"
+                      id="workflow-tab-link-shared"
+                      onClick={[Function]}
+                    >
+                      <WithI18n
+                        defaults="Shared with me"
+                        id="js.Workflows.WorkflowLists.nav.sharedWithMe"
+                      >
+                        <I18n
+                          update={true}
+                          withHash={true}
+                        >
+                          <Trans
+                            defaults="Shared with me"
+                            i18n={
+                              Object {
+                                "_": [Function],
+                                "_activeLanguageData": Object {
+                                  "plurals": [Function],
+                                },
+                                "_activeMessages": Object {},
+                                "_catalogs": Object {
+                                  "en": Object {
+                                    "languageData": Object {},
+                                    "messages": Object {},
+                                  },
+                                },
+                                "_dev": Object {
+                                  "compile": [Function],
+                                  "loadLanguageData": [Function],
+                                },
+                                "_language": "en",
+                                "_locales": undefined,
+                                "_missing": undefined,
+                                "plural": [Function],
+                                "select": [Function],
+                                "selectOrdinal": [Function],
+                                "t": [Function],
+                              }
+                            }
+                            id="js.Workflows.WorkflowLists.nav.sharedWithMe"
+                          >
+                            <Render
+                              value="js.Workflows.WorkflowLists.nav.sharedWithMe"
+                            >
+                              js.Workflows.WorkflowLists.nav.sharedWithMe
+                            </Render>
+                          </Trans>
+                        </I18n>
+                      </WithI18n>
+                    </a>
+                  </li>
+                </Memo(Tab)>
+                <Memo(Tab)
+                  isActive={false}
+                  name="templates"
+                  setIsActive={[Function]}
+                >
+                  <li
+                    className="nav-item"
+                  >
+                    <a
+                      aria-controls="workflow-tab-templates"
+                      aria-selected={false}
+                      className="nav-link"
+                      href="#templates"
+                      id="workflow-tab-link-templates"
+                      onClick={[Function]}
+                    >
+                      <WithI18n
+                        defaults="Recipes"
+                        id="js.Workflows.WorkflowLists.nav.recipes"
+                      >
+                        <I18n
+                          update={true}
+                          withHash={true}
+                        >
+                          <Trans
+                            defaults="Recipes"
+                            i18n={
+                              Object {
+                                "_": [Function],
+                                "_activeLanguageData": Object {
+                                  "plurals": [Function],
+                                },
+                                "_activeMessages": Object {},
+                                "_catalogs": Object {
+                                  "en": Object {
+                                    "languageData": Object {},
+                                    "messages": Object {},
+                                  },
+                                },
+                                "_dev": Object {
+                                  "compile": [Function],
+                                  "loadLanguageData": [Function],
+                                },
+                                "_language": "en",
+                                "_locales": undefined,
+                                "_missing": undefined,
+                                "plural": [Function],
+                                "select": [Function],
+                                "selectOrdinal": [Function],
+                                "t": [Function],
+                              }
+                            }
+                            id="js.Workflows.WorkflowLists.nav.recipes"
+                          >
+                            <Render
+                              value="js.Workflows.WorkflowLists.nav.recipes"
+                            >
+                              js.Workflows.WorkflowLists.nav.recipes
+                            </Render>
+                          </Trans>
+                        </I18n>
+                      </WithI18n>
+                    </a>
+                  </li>
+                </Memo(Tab)>
+              </ul>
+              <SortMenu
+                comparator="last_update|descending"
+                setComparator={[Function]}
+              >
+                <div
+                  className="sort-menu"
+                >
+                  <UncontrolledDropdown>
+                    <Dropdown
+                      isOpen={false}
+                      toggle={[Function]}
+                    >
+                      <Manager
+                        tag={false}
+                      >
+                        <div
+                          className="dropdown"
+                        >
+                          <DropdownToggle>
+                            <Reference>
+                              <InnerReference
+                                setReferenceNode={[Function]}
+                              >
+                                <button
+                                  aria-expanded={false}
+                                  className="btn btn-secondary"
+                                  disabled={false}
+                                  onClick={[Function]}
+                                >
+                                  <WithI18n
+                                    defaults="Sort"
+                                    id="js.Workflows.SortMenu.sort.DropdownTitle"
+                                  >
+                                    <I18n
+                                      update={true}
+                                      withHash={true}
+                                    >
+                                      <Trans
+                                        defaults="Sort"
+                                        i18n={
+                                          Object {
+                                            "_": [Function],
+                                            "_activeLanguageData": Object {
+                                              "plurals": [Function],
+                                            },
+                                            "_activeMessages": Object {},
+                                            "_catalogs": Object {
+                                              "en": Object {
+                                                "languageData": Object {},
+                                                "messages": Object {},
+                                              },
+                                            },
+                                            "_dev": Object {
+                                              "compile": [Function],
+                                              "loadLanguageData": [Function],
+                                            },
+                                            "_language": "en",
+                                            "_locales": undefined,
+                                            "_missing": undefined,
+                                            "plural": [Function],
+                                            "select": [Function],
+                                            "selectOrdinal": [Function],
+                                            "t": [Function],
+                                          }
+                                        }
+                                        id="js.Workflows.SortMenu.sort.DropdownTitle"
+                                      >
+                                        <Render
+                                          value="js.Workflows.SortMenu.sort.DropdownTitle"
+                                        >
+                                          js.Workflows.SortMenu.sort.DropdownTitle
+                                        </Render>
+                                      </Trans>
+                                    </I18n>
+                                  </WithI18n>
+                                   
+                                  <i
+                                    className="icon-caret-down"
+                                  />
+                                </button>
+                              </InnerReference>
+                            </Reference>
+                          </DropdownToggle>
+                          <DropdownMenu />
+                        </div>
+                      </Manager>
+                    </Dropdown>
+                  </UncontrolledDropdown>
+                </div>
+              </SortMenu>
+            </div>
+            <div
+              className="tab-content"
+            >
+              <Memo(OwnedWorkflowList)
+                comparator="last_update|descending"
+                deleteWorkflow={[Function]}
+                duplicateWorkflow={[Function]}
+                isActive={true}
+                openShareModal={[Function]}
+                workflows={
+                  Array [
+                    Object {
+                      "id": 1,
+                      "is_owner": true,
+                      "last_update": "2010-10-18T00:30:00",
+                      "name": "Cleaning",
+                      "owner_name": "Fred Frederson",
+                      "public": true,
+                    },
+                    Object {
+                      "id": 2,
+                      "is_owner": true,
+                      "last_update": "2010-10-18T00:20:00",
+                      "name": "Charting",
+                      "owner_name": "Fred Frederson",
+                      "public": false,
+                    },
+                    Object {
+                      "id": 3,
+                      "is_owner": true,
+                      "last_update": "2010-10-18T07:45:00",
+                      "name": "Analysis",
+                      "owner_name": "Fred Frederson",
+                      "public": false,
+                    },
+                  ]
+                }
+              >
+                <Memo(TabPane)
+                  isActive={true}
+                  name="owned"
                 >
                   <div
-                    className="workflow-list"
+                    aria-labelledby="workflow-tab-link-owned"
+                    className="tab-pane show active"
+                    id="workflow-tab-owned"
+                    role="tabpanel"
                   >
-                    <Memo(Workflow)
-                      deleteWorkflow={null}
+                    <Memo(WorkflowList)
+                      comparator="last_update|descending"
+                      deleteWorkflow={[Function]}
                       duplicateWorkflow={[Function]}
-                      key="10"
                       openShareModal={[Function]}
-                      workflow={
-                        Object {
-                          "id": 10,
-                          "is_owner": false,
-                          "last_update": "2010-10-18T00:30:00",
-                          "name": "Demo 1",
-                          "owner_name": "Workbench",
-                          "public": false,
-                        }
+                      workflows={
+                        Array [
+                          Object {
+                            "id": 1,
+                            "is_owner": true,
+                            "last_update": "2010-10-18T00:30:00",
+                            "name": "Cleaning",
+                            "owner_name": "Fred Frederson",
+                            "public": true,
+                          },
+                          Object {
+                            "id": 2,
+                            "is_owner": true,
+                            "last_update": "2010-10-18T00:20:00",
+                            "name": "Charting",
+                            "owner_name": "Fred Frederson",
+                            "public": false,
+                          },
+                          Object {
+                            "id": 3,
+                            "is_owner": true,
+                            "last_update": "2010-10-18T07:45:00",
+                            "name": "Analysis",
+                            "owner_name": "Fred Frederson",
+                            "public": false,
+                          },
+                        ]
                       }
                     >
                       <div
-                        className="workflow"
+                        className="workflow-list"
                       >
-                        <a
-                          href="/workflows/10"
+                        <Memo(Workflow)
+                          deleteWorkflow={[Function]}
+                          duplicateWorkflow={[Function]}
+                          key="3"
+                          openShareModal={[Function]}
+                          workflow={
+                            Object {
+                              "id": 3,
+                              "is_owner": true,
+                              "last_update": "2010-10-18T07:45:00",
+                              "name": "Analysis",
+                              "owner_name": "Fred Frederson",
+                              "public": false,
+                            }
+                          }
                         >
                           <div
-                            className="workflow-title"
+                            className="workflow"
                           >
-                            Demo 1
-                          </div>
-                          <WorkflowMetadata
-                            openShareModal={[Function]}
-                            workflow={
-                              Object {
-                                "id": 10,
-                                "is_owner": false,
-                                "last_update": "2010-10-18T00:30:00",
-                                "name": "Demo 1",
-                                "owner_name": "Workbench",
-                                "public": false,
-                              }
-                            }
-                          >
-                            <ul
-                              className="metadata-container"
+                            <a
+                              href="/workflows/3"
                             >
-                              <li
-                                className="attribution"
+                              <div
+                                className="workflow-title"
                               >
-                                <span
-                                  className="metadata"
+                                Analysis
+                              </div>
+                              <WithI18n
+                                openShareModal={[Function]}
+                                workflow={
+                                  Object {
+                                    "id": 3,
+                                    "is_owner": true,
+                                    "last_update": "2010-10-18T07:45:00",
+                                    "name": "Analysis",
+                                    "owner_name": "Fred Frederson",
+                                    "public": false,
+                                  }
+                                }
+                              >
+                                <I18n
+                                  update={true}
+                                  withHash={true}
                                 >
-                                  by 
-                                  Workbench
-                                </span>
-                                <span
-                                  className="separator"
+                                  <WorkflowMetadata
+                                    i18n={
+                                      Object {
+                                        "_": [Function],
+                                        "_activeLanguageData": Object {
+                                          "plurals": [Function],
+                                        },
+                                        "_activeMessages": Object {},
+                                        "_catalogs": Object {
+                                          "en": Object {
+                                            "languageData": Object {},
+                                            "messages": Object {},
+                                          },
+                                        },
+                                        "_dev": Object {
+                                          "compile": [Function],
+                                          "loadLanguageData": [Function],
+                                        },
+                                        "_language": "en",
+                                        "_locales": undefined,
+                                        "_missing": undefined,
+                                        "plural": [Function],
+                                        "select": [Function],
+                                        "selectOrdinal": [Function],
+                                        "t": [Function],
+                                      }
+                                    }
+                                    openShareModal={[Function]}
+                                    workflow={
+                                      Object {
+                                        "id": 3,
+                                        "is_owner": true,
+                                        "last_update": "2010-10-18T07:45:00",
+                                        "name": "Analysis",
+                                        "owner_name": "Fred Frederson",
+                                        "public": false,
+                                      }
+                                    }
+                                  >
+                                    <ul
+                                      className="metadata-container"
+                                    >
+                                      <li
+                                        className="attribution"
+                                      >
+                                        <span
+                                          className="metadata"
+                                        >
+                                          <WithI18n
+                                            defaults="by {owner}"
+                                            id="js.Workflows.WorkflowMetadata.owner"
+                                            values={
+                                              Object {
+                                                "owner": "Fred Frederson",
+                                              }
+                                            }
+                                          >
+                                            <I18n
+                                              update={true}
+                                              withHash={true}
+                                            >
+                                              <Trans
+                                                defaults="by {owner}"
+                                                i18n={
+                                                  Object {
+                                                    "_": [Function],
+                                                    "_activeLanguageData": Object {
+                                                      "plurals": [Function],
+                                                    },
+                                                    "_activeMessages": Object {},
+                                                    "_catalogs": Object {
+                                                      "en": Object {
+                                                        "languageData": Object {},
+                                                        "messages": Object {},
+                                                      },
+                                                    },
+                                                    "_dev": Object {
+                                                      "compile": [Function],
+                                                      "loadLanguageData": [Function],
+                                                    },
+                                                    "_language": "en",
+                                                    "_locales": undefined,
+                                                    "_missing": undefined,
+                                                    "plural": [Function],
+                                                    "select": [Function],
+                                                    "selectOrdinal": [Function],
+                                                    "t": [Function],
+                                                  }
+                                                }
+                                                id="js.Workflows.WorkflowMetadata.owner"
+                                                values={
+                                                  Object {
+                                                    "owner": "Fred Frederson",
+                                                  }
+                                                }
+                                              >
+                                                <Render
+                                                  value="js.Workflows.WorkflowMetadata.owner"
+                                                >
+                                                  js.Workflows.WorkflowMetadata.owner
+                                                </Render>
+                                              </Trans>
+                                            </I18n>
+                                          </WithI18n>
+                                        </span>
+                                        <span
+                                          className="separator"
+                                        >
+                                          -
+                                        </span>
+                                      </li>
+                                      <li>
+                                        <WithI18n
+                                          defaults="Updated {timeAgo}"
+                                          description="The parameter will contain a time difference (i.e. something like '5h ago')"
+                                          id="js.Workflows.WorkflowMetadata.update"
+                                          values={
+                                            Object {
+                                              "timeAgo": "{years}y ago",
+                                            }
+                                          }
+                                        >
+                                          <I18n
+                                            update={true}
+                                            withHash={true}
+                                          >
+                                            <Trans
+                                              defaults="Updated {timeAgo}"
+                                              description="The parameter will contain a time difference (i.e. something like '5h ago')"
+                                              i18n={
+                                                Object {
+                                                  "_": [Function],
+                                                  "_activeLanguageData": Object {
+                                                    "plurals": [Function],
+                                                  },
+                                                  "_activeMessages": Object {},
+                                                  "_catalogs": Object {
+                                                    "en": Object {
+                                                      "languageData": Object {},
+                                                      "messages": Object {},
+                                                    },
+                                                  },
+                                                  "_dev": Object {
+                                                    "compile": [Function],
+                                                    "loadLanguageData": [Function],
+                                                  },
+                                                  "_language": "en",
+                                                  "_locales": undefined,
+                                                  "_missing": undefined,
+                                                  "plural": [Function],
+                                                  "select": [Function],
+                                                  "selectOrdinal": [Function],
+                                                  "t": [Function],
+                                                }
+                                              }
+                                              id="js.Workflows.WorkflowMetadata.update"
+                                              values={
+                                                Object {
+                                                  "timeAgo": "{years}y ago",
+                                                }
+                                              }
+                                            >
+                                              <Render
+                                                value="js.Workflows.WorkflowMetadata.update"
+                                              >
+                                                js.Workflows.WorkflowMetadata.update
+                                              </Render>
+                                            </Trans>
+                                          </I18n>
+                                        </WithI18n>
+                                      </li>
+                                      <li>
+                                        <span
+                                          className="separator"
+                                        >
+                                          -
+                                        </span>
+                                        <button
+                                          className="public-private"
+                                          onClick={[Function]}
+                                          title="Change privacy"
+                                          type="button"
+                                        >
+                                          <WithI18n
+                                            defaults="private"
+                                            id="js.Workflows.WorkflowMetadata.visibility.private"
+                                          >
+                                            <I18n
+                                              update={true}
+                                              withHash={true}
+                                            >
+                                              <Trans
+                                                defaults="private"
+                                                i18n={
+                                                  Object {
+                                                    "_": [Function],
+                                                    "_activeLanguageData": Object {
+                                                      "plurals": [Function],
+                                                    },
+                                                    "_activeMessages": Object {},
+                                                    "_catalogs": Object {
+                                                      "en": Object {
+                                                        "languageData": Object {},
+                                                        "messages": Object {},
+                                                      },
+                                                    },
+                                                    "_dev": Object {
+                                                      "compile": [Function],
+                                                      "loadLanguageData": [Function],
+                                                    },
+                                                    "_language": "en",
+                                                    "_locales": undefined,
+                                                    "_missing": undefined,
+                                                    "plural": [Function],
+                                                    "select": [Function],
+                                                    "selectOrdinal": [Function],
+                                                    "t": [Function],
+                                                  }
+                                                }
+                                                id="js.Workflows.WorkflowMetadata.visibility.private"
+                                              >
+                                                <Render
+                                                  value="js.Workflows.WorkflowMetadata.visibility.private"
+                                                >
+                                                  js.Workflows.WorkflowMetadata.visibility.private
+                                                </Render>
+                                              </Trans>
+                                            </I18n>
+                                          </WithI18n>
+                                        </button>
+                                      </li>
+                                    </ul>
+                                  </WorkflowMetadata>
+                                </I18n>
+                              </WithI18n>
+                            </a>
+                            <WorkflowContextMenu
+                              deleteWorkflow={[Function]}
+                              duplicateWorkflow={[Function]}
+                              workflowId={3}
+                            >
+                              <UncontrolledDropdown>
+                                <Dropdown
+                                  isOpen={false}
+                                  toggle={[Function]}
                                 >
-                                  -
-                                </span>
-                              </li>
-                              <li>
-                                Updated 
-                                9y ago
-                              </li>
-                              <li>
-                                <span
-                                  className="separator"
+                                  <Manager
+                                    tag={false}
+                                  >
+                                    <div
+                                      className="dropdown"
+                                    >
+                                      <DropdownToggle
+                                        className="context-button"
+                                      >
+                                        <Reference>
+                                          <InnerReference
+                                            setReferenceNode={[Function]}
+                                          >
+                                            <button
+                                              aria-expanded={false}
+                                              className="btn btn-secondary context-button"
+                                              disabled={false}
+                                              onClick={[Function]}
+                                            >
+                                              <i
+                                                className="icon-more"
+                                              />
+                                            </button>
+                                          </InnerReference>
+                                        </Reference>
+                                      </DropdownToggle>
+                                      <DropdownMenu />
+                                    </div>
+                                  </Manager>
+                                </Dropdown>
+                              </UncontrolledDropdown>
+                            </WorkflowContextMenu>
+                          </div>
+                        </Memo(Workflow)>
+                        <Memo(Workflow)
+                          deleteWorkflow={[Function]}
+                          duplicateWorkflow={[Function]}
+                          key="1"
+                          openShareModal={[Function]}
+                          workflow={
+                            Object {
+                              "id": 1,
+                              "is_owner": true,
+                              "last_update": "2010-10-18T00:30:00",
+                              "name": "Cleaning",
+                              "owner_name": "Fred Frederson",
+                              "public": true,
+                            }
+                          }
+                        >
+                          <div
+                            className="workflow"
+                          >
+                            <a
+                              href="/workflows/1"
+                            >
+                              <div
+                                className="workflow-title"
+                              >
+                                Cleaning
+                              </div>
+                              <WithI18n
+                                openShareModal={[Function]}
+                                workflow={
+                                  Object {
+                                    "id": 1,
+                                    "is_owner": true,
+                                    "last_update": "2010-10-18T00:30:00",
+                                    "name": "Cleaning",
+                                    "owner_name": "Fred Frederson",
+                                    "public": true,
+                                  }
+                                }
+                              >
+                                <I18n
+                                  update={true}
+                                  withHash={true}
                                 >
-                                  -
-                                </span>
-                                <button
-                                  className="public-private"
-                                  onClick={[Function]}
-                                  title="Change privacy"
-                                  type="button"
+                                  <WorkflowMetadata
+                                    i18n={
+                                      Object {
+                                        "_": [Function],
+                                        "_activeLanguageData": Object {
+                                          "plurals": [Function],
+                                        },
+                                        "_activeMessages": Object {},
+                                        "_catalogs": Object {
+                                          "en": Object {
+                                            "languageData": Object {},
+                                            "messages": Object {},
+                                          },
+                                        },
+                                        "_dev": Object {
+                                          "compile": [Function],
+                                          "loadLanguageData": [Function],
+                                        },
+                                        "_language": "en",
+                                        "_locales": undefined,
+                                        "_missing": undefined,
+                                        "plural": [Function],
+                                        "select": [Function],
+                                        "selectOrdinal": [Function],
+                                        "t": [Function],
+                                      }
+                                    }
+                                    openShareModal={[Function]}
+                                    workflow={
+                                      Object {
+                                        "id": 1,
+                                        "is_owner": true,
+                                        "last_update": "2010-10-18T00:30:00",
+                                        "name": "Cleaning",
+                                        "owner_name": "Fred Frederson",
+                                        "public": true,
+                                      }
+                                    }
+                                  >
+                                    <ul
+                                      className="metadata-container"
+                                    >
+                                      <li
+                                        className="attribution"
+                                      >
+                                        <span
+                                          className="metadata"
+                                        >
+                                          <WithI18n
+                                            defaults="by {owner}"
+                                            id="js.Workflows.WorkflowMetadata.owner"
+                                            values={
+                                              Object {
+                                                "owner": "Fred Frederson",
+                                              }
+                                            }
+                                          >
+                                            <I18n
+                                              update={true}
+                                              withHash={true}
+                                            >
+                                              <Trans
+                                                defaults="by {owner}"
+                                                i18n={
+                                                  Object {
+                                                    "_": [Function],
+                                                    "_activeLanguageData": Object {
+                                                      "plurals": [Function],
+                                                    },
+                                                    "_activeMessages": Object {},
+                                                    "_catalogs": Object {
+                                                      "en": Object {
+                                                        "languageData": Object {},
+                                                        "messages": Object {},
+                                                      },
+                                                    },
+                                                    "_dev": Object {
+                                                      "compile": [Function],
+                                                      "loadLanguageData": [Function],
+                                                    },
+                                                    "_language": "en",
+                                                    "_locales": undefined,
+                                                    "_missing": undefined,
+                                                    "plural": [Function],
+                                                    "select": [Function],
+                                                    "selectOrdinal": [Function],
+                                                    "t": [Function],
+                                                  }
+                                                }
+                                                id="js.Workflows.WorkflowMetadata.owner"
+                                                values={
+                                                  Object {
+                                                    "owner": "Fred Frederson",
+                                                  }
+                                                }
+                                              >
+                                                <Render
+                                                  value="js.Workflows.WorkflowMetadata.owner"
+                                                >
+                                                  js.Workflows.WorkflowMetadata.owner
+                                                </Render>
+                                              </Trans>
+                                            </I18n>
+                                          </WithI18n>
+                                        </span>
+                                        <span
+                                          className="separator"
+                                        >
+                                          -
+                                        </span>
+                                      </li>
+                                      <li>
+                                        <WithI18n
+                                          defaults="Updated {timeAgo}"
+                                          description="The parameter will contain a time difference (i.e. something like '5h ago')"
+                                          id="js.Workflows.WorkflowMetadata.update"
+                                          values={
+                                            Object {
+                                              "timeAgo": "{years}y ago",
+                                            }
+                                          }
+                                        >
+                                          <I18n
+                                            update={true}
+                                            withHash={true}
+                                          >
+                                            <Trans
+                                              defaults="Updated {timeAgo}"
+                                              description="The parameter will contain a time difference (i.e. something like '5h ago')"
+                                              i18n={
+                                                Object {
+                                                  "_": [Function],
+                                                  "_activeLanguageData": Object {
+                                                    "plurals": [Function],
+                                                  },
+                                                  "_activeMessages": Object {},
+                                                  "_catalogs": Object {
+                                                    "en": Object {
+                                                      "languageData": Object {},
+                                                      "messages": Object {},
+                                                    },
+                                                  },
+                                                  "_dev": Object {
+                                                    "compile": [Function],
+                                                    "loadLanguageData": [Function],
+                                                  },
+                                                  "_language": "en",
+                                                  "_locales": undefined,
+                                                  "_missing": undefined,
+                                                  "plural": [Function],
+                                                  "select": [Function],
+                                                  "selectOrdinal": [Function],
+                                                  "t": [Function],
+                                                }
+                                              }
+                                              id="js.Workflows.WorkflowMetadata.update"
+                                              values={
+                                                Object {
+                                                  "timeAgo": "{years}y ago",
+                                                }
+                                              }
+                                            >
+                                              <Render
+                                                value="js.Workflows.WorkflowMetadata.update"
+                                              >
+                                                js.Workflows.WorkflowMetadata.update
+                                              </Render>
+                                            </Trans>
+                                          </I18n>
+                                        </WithI18n>
+                                      </li>
+                                      <li>
+                                        <span
+                                          className="separator"
+                                        >
+                                          -
+                                        </span>
+                                        <button
+                                          className="public-private"
+                                          onClick={[Function]}
+                                          title="Change privacy"
+                                          type="button"
+                                        >
+                                          <WithI18n
+                                            defaults="public"
+                                            id="js.Workflows.WorkflowMetadata.visibility.public"
+                                          >
+                                            <I18n
+                                              update={true}
+                                              withHash={true}
+                                            >
+                                              <Trans
+                                                defaults="public"
+                                                i18n={
+                                                  Object {
+                                                    "_": [Function],
+                                                    "_activeLanguageData": Object {
+                                                      "plurals": [Function],
+                                                    },
+                                                    "_activeMessages": Object {},
+                                                    "_catalogs": Object {
+                                                      "en": Object {
+                                                        "languageData": Object {},
+                                                        "messages": Object {},
+                                                      },
+                                                    },
+                                                    "_dev": Object {
+                                                      "compile": [Function],
+                                                      "loadLanguageData": [Function],
+                                                    },
+                                                    "_language": "en",
+                                                    "_locales": undefined,
+                                                    "_missing": undefined,
+                                                    "plural": [Function],
+                                                    "select": [Function],
+                                                    "selectOrdinal": [Function],
+                                                    "t": [Function],
+                                                  }
+                                                }
+                                                id="js.Workflows.WorkflowMetadata.visibility.public"
+                                              >
+                                                <Render
+                                                  value="js.Workflows.WorkflowMetadata.visibility.public"
+                                                >
+                                                  js.Workflows.WorkflowMetadata.visibility.public
+                                                </Render>
+                                              </Trans>
+                                            </I18n>
+                                          </WithI18n>
+                                        </button>
+                                      </li>
+                                    </ul>
+                                  </WorkflowMetadata>
+                                </I18n>
+                              </WithI18n>
+                            </a>
+                            <WorkflowContextMenu
+                              deleteWorkflow={[Function]}
+                              duplicateWorkflow={[Function]}
+                              workflowId={1}
+                            >
+                              <UncontrolledDropdown>
+                                <Dropdown
+                                  isOpen={false}
+                                  toggle={[Function]}
                                 >
-                                  private
-                                </button>
-                              </li>
-                            </ul>
-                          </WorkflowMetadata>
-                        </a>
-                        <WorkflowContextMenu
+                                  <Manager
+                                    tag={false}
+                                  >
+                                    <div
+                                      className="dropdown"
+                                    >
+                                      <DropdownToggle
+                                        className="context-button"
+                                      >
+                                        <Reference>
+                                          <InnerReference
+                                            setReferenceNode={[Function]}
+                                          >
+                                            <button
+                                              aria-expanded={false}
+                                              className="btn btn-secondary context-button"
+                                              disabled={false}
+                                              onClick={[Function]}
+                                            >
+                                              <i
+                                                className="icon-more"
+                                              />
+                                            </button>
+                                          </InnerReference>
+                                        </Reference>
+                                      </DropdownToggle>
+                                      <DropdownMenu />
+                                    </div>
+                                  </Manager>
+                                </Dropdown>
+                              </UncontrolledDropdown>
+                            </WorkflowContextMenu>
+                          </div>
+                        </Memo(Workflow)>
+                        <Memo(Workflow)
+                          deleteWorkflow={[Function]}
+                          duplicateWorkflow={[Function]}
+                          key="2"
+                          openShareModal={[Function]}
+                          workflow={
+                            Object {
+                              "id": 2,
+                              "is_owner": true,
+                              "last_update": "2010-10-18T00:20:00",
+                              "name": "Charting",
+                              "owner_name": "Fred Frederson",
+                              "public": false,
+                            }
+                          }
+                        >
+                          <div
+                            className="workflow"
+                          >
+                            <a
+                              href="/workflows/2"
+                            >
+                              <div
+                                className="workflow-title"
+                              >
+                                Charting
+                              </div>
+                              <WithI18n
+                                openShareModal={[Function]}
+                                workflow={
+                                  Object {
+                                    "id": 2,
+                                    "is_owner": true,
+                                    "last_update": "2010-10-18T00:20:00",
+                                    "name": "Charting",
+                                    "owner_name": "Fred Frederson",
+                                    "public": false,
+                                  }
+                                }
+                              >
+                                <I18n
+                                  update={true}
+                                  withHash={true}
+                                >
+                                  <WorkflowMetadata
+                                    i18n={
+                                      Object {
+                                        "_": [Function],
+                                        "_activeLanguageData": Object {
+                                          "plurals": [Function],
+                                        },
+                                        "_activeMessages": Object {},
+                                        "_catalogs": Object {
+                                          "en": Object {
+                                            "languageData": Object {},
+                                            "messages": Object {},
+                                          },
+                                        },
+                                        "_dev": Object {
+                                          "compile": [Function],
+                                          "loadLanguageData": [Function],
+                                        },
+                                        "_language": "en",
+                                        "_locales": undefined,
+                                        "_missing": undefined,
+                                        "plural": [Function],
+                                        "select": [Function],
+                                        "selectOrdinal": [Function],
+                                        "t": [Function],
+                                      }
+                                    }
+                                    openShareModal={[Function]}
+                                    workflow={
+                                      Object {
+                                        "id": 2,
+                                        "is_owner": true,
+                                        "last_update": "2010-10-18T00:20:00",
+                                        "name": "Charting",
+                                        "owner_name": "Fred Frederson",
+                                        "public": false,
+                                      }
+                                    }
+                                  >
+                                    <ul
+                                      className="metadata-container"
+                                    >
+                                      <li
+                                        className="attribution"
+                                      >
+                                        <span
+                                          className="metadata"
+                                        >
+                                          <WithI18n
+                                            defaults="by {owner}"
+                                            id="js.Workflows.WorkflowMetadata.owner"
+                                            values={
+                                              Object {
+                                                "owner": "Fred Frederson",
+                                              }
+                                            }
+                                          >
+                                            <I18n
+                                              update={true}
+                                              withHash={true}
+                                            >
+                                              <Trans
+                                                defaults="by {owner}"
+                                                i18n={
+                                                  Object {
+                                                    "_": [Function],
+                                                    "_activeLanguageData": Object {
+                                                      "plurals": [Function],
+                                                    },
+                                                    "_activeMessages": Object {},
+                                                    "_catalogs": Object {
+                                                      "en": Object {
+                                                        "languageData": Object {},
+                                                        "messages": Object {},
+                                                      },
+                                                    },
+                                                    "_dev": Object {
+                                                      "compile": [Function],
+                                                      "loadLanguageData": [Function],
+                                                    },
+                                                    "_language": "en",
+                                                    "_locales": undefined,
+                                                    "_missing": undefined,
+                                                    "plural": [Function],
+                                                    "select": [Function],
+                                                    "selectOrdinal": [Function],
+                                                    "t": [Function],
+                                                  }
+                                                }
+                                                id="js.Workflows.WorkflowMetadata.owner"
+                                                values={
+                                                  Object {
+                                                    "owner": "Fred Frederson",
+                                                  }
+                                                }
+                                              >
+                                                <Render
+                                                  value="js.Workflows.WorkflowMetadata.owner"
+                                                >
+                                                  js.Workflows.WorkflowMetadata.owner
+                                                </Render>
+                                              </Trans>
+                                            </I18n>
+                                          </WithI18n>
+                                        </span>
+                                        <span
+                                          className="separator"
+                                        >
+                                          -
+                                        </span>
+                                      </li>
+                                      <li>
+                                        <WithI18n
+                                          defaults="Updated {timeAgo}"
+                                          description="The parameter will contain a time difference (i.e. something like '5h ago')"
+                                          id="js.Workflows.WorkflowMetadata.update"
+                                          values={
+                                            Object {
+                                              "timeAgo": "{years}y ago",
+                                            }
+                                          }
+                                        >
+                                          <I18n
+                                            update={true}
+                                            withHash={true}
+                                          >
+                                            <Trans
+                                              defaults="Updated {timeAgo}"
+                                              description="The parameter will contain a time difference (i.e. something like '5h ago')"
+                                              i18n={
+                                                Object {
+                                                  "_": [Function],
+                                                  "_activeLanguageData": Object {
+                                                    "plurals": [Function],
+                                                  },
+                                                  "_activeMessages": Object {},
+                                                  "_catalogs": Object {
+                                                    "en": Object {
+                                                      "languageData": Object {},
+                                                      "messages": Object {},
+                                                    },
+                                                  },
+                                                  "_dev": Object {
+                                                    "compile": [Function],
+                                                    "loadLanguageData": [Function],
+                                                  },
+                                                  "_language": "en",
+                                                  "_locales": undefined,
+                                                  "_missing": undefined,
+                                                  "plural": [Function],
+                                                  "select": [Function],
+                                                  "selectOrdinal": [Function],
+                                                  "t": [Function],
+                                                }
+                                              }
+                                              id="js.Workflows.WorkflowMetadata.update"
+                                              values={
+                                                Object {
+                                                  "timeAgo": "{years}y ago",
+                                                }
+                                              }
+                                            >
+                                              <Render
+                                                value="js.Workflows.WorkflowMetadata.update"
+                                              >
+                                                js.Workflows.WorkflowMetadata.update
+                                              </Render>
+                                            </Trans>
+                                          </I18n>
+                                        </WithI18n>
+                                      </li>
+                                      <li>
+                                        <span
+                                          className="separator"
+                                        >
+                                          -
+                                        </span>
+                                        <button
+                                          className="public-private"
+                                          onClick={[Function]}
+                                          title="Change privacy"
+                                          type="button"
+                                        >
+                                          <WithI18n
+                                            defaults="private"
+                                            id="js.Workflows.WorkflowMetadata.visibility.private"
+                                          >
+                                            <I18n
+                                              update={true}
+                                              withHash={true}
+                                            >
+                                              <Trans
+                                                defaults="private"
+                                                i18n={
+                                                  Object {
+                                                    "_": [Function],
+                                                    "_activeLanguageData": Object {
+                                                      "plurals": [Function],
+                                                    },
+                                                    "_activeMessages": Object {},
+                                                    "_catalogs": Object {
+                                                      "en": Object {
+                                                        "languageData": Object {},
+                                                        "messages": Object {},
+                                                      },
+                                                    },
+                                                    "_dev": Object {
+                                                      "compile": [Function],
+                                                      "loadLanguageData": [Function],
+                                                    },
+                                                    "_language": "en",
+                                                    "_locales": undefined,
+                                                    "_missing": undefined,
+                                                    "plural": [Function],
+                                                    "select": [Function],
+                                                    "selectOrdinal": [Function],
+                                                    "t": [Function],
+                                                  }
+                                                }
+                                                id="js.Workflows.WorkflowMetadata.visibility.private"
+                                              >
+                                                <Render
+                                                  value="js.Workflows.WorkflowMetadata.visibility.private"
+                                                >
+                                                  js.Workflows.WorkflowMetadata.visibility.private
+                                                </Render>
+                                              </Trans>
+                                            </I18n>
+                                          </WithI18n>
+                                        </button>
+                                      </li>
+                                    </ul>
+                                  </WorkflowMetadata>
+                                </I18n>
+                              </WithI18n>
+                            </a>
+                            <WorkflowContextMenu
+                              deleteWorkflow={[Function]}
+                              duplicateWorkflow={[Function]}
+                              workflowId={2}
+                            >
+                              <UncontrolledDropdown>
+                                <Dropdown
+                                  isOpen={false}
+                                  toggle={[Function]}
+                                >
+                                  <Manager
+                                    tag={false}
+                                  >
+                                    <div
+                                      className="dropdown"
+                                    >
+                                      <DropdownToggle
+                                        className="context-button"
+                                      >
+                                        <Reference>
+                                          <InnerReference
+                                            setReferenceNode={[Function]}
+                                          >
+                                            <button
+                                              aria-expanded={false}
+                                              className="btn btn-secondary context-button"
+                                              disabled={false}
+                                              onClick={[Function]}
+                                            >
+                                              <i
+                                                className="icon-more"
+                                              />
+                                            </button>
+                                          </InnerReference>
+                                        </Reference>
+                                      </DropdownToggle>
+                                      <DropdownMenu />
+                                    </div>
+                                  </Manager>
+                                </Dropdown>
+                              </UncontrolledDropdown>
+                            </WorkflowContextMenu>
+                          </div>
+                        </Memo(Workflow)>
+                      </div>
+                    </Memo(WorkflowList)>
+                  </div>
+                </Memo(TabPane)>
+              </Memo(OwnedWorkflowList)>
+              <Memo(SharedWorkflowList)
+                comparator="last_update|descending"
+                deleteWorkflow={[Function]}
+                duplicateWorkflow={[Function]}
+                isActive={false}
+                openShareModal={[Function]}
+                workflows={
+                  Array [
+                    Object {
+                      "id": 7,
+                      "is_owner": false,
+                      "last_update": "2010-10-18T00:30:00",
+                      "name": "Messy data cleanup",
+                      "owner_name": "John Johnson",
+                      "public": false,
+                    },
+                    Object {
+                      "id": 8,
+                      "is_owner": false,
+                      "last_update": "2010-10-18T00:45:00",
+                      "name": "Document search",
+                      "owner_name": "Sally Sallerson",
+                      "public": true,
+                    },
+                  ]
+                }
+              >
+                <Memo(TabPane)
+                  isActive={false}
+                  name="shared"
+                >
+                  <div
+                    aria-labelledby="workflow-tab-link-shared"
+                    className="tab-pane"
+                    id="workflow-tab-shared"
+                    role="tabpanel"
+                  >
+                    <Memo(WorkflowList)
+                      comparator="last_update|descending"
+                      deleteWorkflow={null}
+                      duplicateWorkflow={[Function]}
+                      openShareModal={[Function]}
+                      workflows={
+                        Array [
+                          Object {
+                            "id": 7,
+                            "is_owner": false,
+                            "last_update": "2010-10-18T00:30:00",
+                            "name": "Messy data cleanup",
+                            "owner_name": "John Johnson",
+                            "public": false,
+                          },
+                          Object {
+                            "id": 8,
+                            "is_owner": false,
+                            "last_update": "2010-10-18T00:45:00",
+                            "name": "Document search",
+                            "owner_name": "Sally Sallerson",
+                            "public": true,
+                          },
+                        ]
+                      }
+                    >
+                      <div
+                        className="workflow-list"
+                      >
+                        <Memo(Workflow)
                           deleteWorkflow={null}
                           duplicateWorkflow={[Function]}
-                          workflowId={10}
+                          key="8"
+                          openShareModal={[Function]}
+                          workflow={
+                            Object {
+                              "id": 8,
+                              "is_owner": false,
+                              "last_update": "2010-10-18T00:45:00",
+                              "name": "Document search",
+                              "owner_name": "Sally Sallerson",
+                              "public": true,
+                            }
+                          }
                         >
-                          <UncontrolledDropdown>
-                            <Dropdown
-                              isOpen={false}
-                              toggle={[Function]}
+                          <div
+                            className="workflow"
+                          >
+                            <a
+                              href="/workflows/8"
                             >
-                              <Manager
-                                tag={false}
+                              <div
+                                className="workflow-title"
                               >
-                                <div
-                                  className="dropdown"
+                                Document search
+                              </div>
+                              <WithI18n
+                                openShareModal={[Function]}
+                                workflow={
+                                  Object {
+                                    "id": 8,
+                                    "is_owner": false,
+                                    "last_update": "2010-10-18T00:45:00",
+                                    "name": "Document search",
+                                    "owner_name": "Sally Sallerson",
+                                    "public": true,
+                                  }
+                                }
+                              >
+                                <I18n
+                                  update={true}
+                                  withHash={true}
                                 >
-                                  <DropdownToggle
-                                    className="context-button"
+                                  <WorkflowMetadata
+                                    i18n={
+                                      Object {
+                                        "_": [Function],
+                                        "_activeLanguageData": Object {
+                                          "plurals": [Function],
+                                        },
+                                        "_activeMessages": Object {},
+                                        "_catalogs": Object {
+                                          "en": Object {
+                                            "languageData": Object {},
+                                            "messages": Object {},
+                                          },
+                                        },
+                                        "_dev": Object {
+                                          "compile": [Function],
+                                          "loadLanguageData": [Function],
+                                        },
+                                        "_language": "en",
+                                        "_locales": undefined,
+                                        "_missing": undefined,
+                                        "plural": [Function],
+                                        "select": [Function],
+                                        "selectOrdinal": [Function],
+                                        "t": [Function],
+                                      }
+                                    }
+                                    openShareModal={[Function]}
+                                    workflow={
+                                      Object {
+                                        "id": 8,
+                                        "is_owner": false,
+                                        "last_update": "2010-10-18T00:45:00",
+                                        "name": "Document search",
+                                        "owner_name": "Sally Sallerson",
+                                        "public": true,
+                                      }
+                                    }
                                   >
-                                    <Reference>
-                                      <InnerReference
-                                        setReferenceNode={[Function]}
+                                    <ul
+                                      className="metadata-container"
+                                    >
+                                      <li
+                                        className="attribution"
                                       >
-                                        <button
-                                          aria-expanded={false}
-                                          className="btn btn-secondary context-button"
-                                          disabled={false}
-                                          onClick={[Function]}
+                                        <span
+                                          className="metadata"
                                         >
-                                          <i
-                                            className="icon-more"
-                                          />
+                                          <WithI18n
+                                            defaults="by {owner}"
+                                            id="js.Workflows.WorkflowMetadata.owner"
+                                            values={
+                                              Object {
+                                                "owner": "Sally Sallerson",
+                                              }
+                                            }
+                                          >
+                                            <I18n
+                                              update={true}
+                                              withHash={true}
+                                            >
+                                              <Trans
+                                                defaults="by {owner}"
+                                                i18n={
+                                                  Object {
+                                                    "_": [Function],
+                                                    "_activeLanguageData": Object {
+                                                      "plurals": [Function],
+                                                    },
+                                                    "_activeMessages": Object {},
+                                                    "_catalogs": Object {
+                                                      "en": Object {
+                                                        "languageData": Object {},
+                                                        "messages": Object {},
+                                                      },
+                                                    },
+                                                    "_dev": Object {
+                                                      "compile": [Function],
+                                                      "loadLanguageData": [Function],
+                                                    },
+                                                    "_language": "en",
+                                                    "_locales": undefined,
+                                                    "_missing": undefined,
+                                                    "plural": [Function],
+                                                    "select": [Function],
+                                                    "selectOrdinal": [Function],
+                                                    "t": [Function],
+                                                  }
+                                                }
+                                                id="js.Workflows.WorkflowMetadata.owner"
+                                                values={
+                                                  Object {
+                                                    "owner": "Sally Sallerson",
+                                                  }
+                                                }
+                                              >
+                                                <Render
+                                                  value="js.Workflows.WorkflowMetadata.owner"
+                                                >
+                                                  js.Workflows.WorkflowMetadata.owner
+                                                </Render>
+                                              </Trans>
+                                            </I18n>
+                                          </WithI18n>
+                                        </span>
+                                        <span
+                                          className="separator"
+                                        >
+                                          -
+                                        </span>
+                                      </li>
+                                      <li>
+                                        <WithI18n
+                                          defaults="Updated {timeAgo}"
+                                          description="The parameter will contain a time difference (i.e. something like '5h ago')"
+                                          id="js.Workflows.WorkflowMetadata.update"
+                                          values={
+                                            Object {
+                                              "timeAgo": "{years}y ago",
+                                            }
+                                          }
+                                        >
+                                          <I18n
+                                            update={true}
+                                            withHash={true}
+                                          >
+                                            <Trans
+                                              defaults="Updated {timeAgo}"
+                                              description="The parameter will contain a time difference (i.e. something like '5h ago')"
+                                              i18n={
+                                                Object {
+                                                  "_": [Function],
+                                                  "_activeLanguageData": Object {
+                                                    "plurals": [Function],
+                                                  },
+                                                  "_activeMessages": Object {},
+                                                  "_catalogs": Object {
+                                                    "en": Object {
+                                                      "languageData": Object {},
+                                                      "messages": Object {},
+                                                    },
+                                                  },
+                                                  "_dev": Object {
+                                                    "compile": [Function],
+                                                    "loadLanguageData": [Function],
+                                                  },
+                                                  "_language": "en",
+                                                  "_locales": undefined,
+                                                  "_missing": undefined,
+                                                  "plural": [Function],
+                                                  "select": [Function],
+                                                  "selectOrdinal": [Function],
+                                                  "t": [Function],
+                                                }
+                                              }
+                                              id="js.Workflows.WorkflowMetadata.update"
+                                              values={
+                                                Object {
+                                                  "timeAgo": "{years}y ago",
+                                                }
+                                              }
+                                            >
+                                              <Render
+                                                value="js.Workflows.WorkflowMetadata.update"
+                                              >
+                                                js.Workflows.WorkflowMetadata.update
+                                              </Render>
+                                            </Trans>
+                                          </I18n>
+                                        </WithI18n>
+                                      </li>
+                                      <li>
+                                        <span
+                                          className="separator"
+                                        >
+                                          -
+                                        </span>
+                                        <button
+                                          className="public-private"
+                                          onClick={[Function]}
+                                          title="Change privacy"
+                                          type="button"
+                                        >
+                                          <WithI18n
+                                            defaults="public"
+                                            id="js.Workflows.WorkflowMetadata.visibility.public"
+                                          >
+                                            <I18n
+                                              update={true}
+                                              withHash={true}
+                                            >
+                                              <Trans
+                                                defaults="public"
+                                                i18n={
+                                                  Object {
+                                                    "_": [Function],
+                                                    "_activeLanguageData": Object {
+                                                      "plurals": [Function],
+                                                    },
+                                                    "_activeMessages": Object {},
+                                                    "_catalogs": Object {
+                                                      "en": Object {
+                                                        "languageData": Object {},
+                                                        "messages": Object {},
+                                                      },
+                                                    },
+                                                    "_dev": Object {
+                                                      "compile": [Function],
+                                                      "loadLanguageData": [Function],
+                                                    },
+                                                    "_language": "en",
+                                                    "_locales": undefined,
+                                                    "_missing": undefined,
+                                                    "plural": [Function],
+                                                    "select": [Function],
+                                                    "selectOrdinal": [Function],
+                                                    "t": [Function],
+                                                  }
+                                                }
+                                                id="js.Workflows.WorkflowMetadata.visibility.public"
+                                              >
+                                                <Render
+                                                  value="js.Workflows.WorkflowMetadata.visibility.public"
+                                                >
+                                                  js.Workflows.WorkflowMetadata.visibility.public
+                                                </Render>
+                                              </Trans>
+                                            </I18n>
+                                          </WithI18n>
                                         </button>
-                                      </InnerReference>
-                                    </Reference>
-                                  </DropdownToggle>
-                                  <DropdownMenu />
-                                </div>
-                              </Manager>
-                            </Dropdown>
-                          </UncontrolledDropdown>
-                        </WorkflowContextMenu>
+                                      </li>
+                                    </ul>
+                                  </WorkflowMetadata>
+                                </I18n>
+                              </WithI18n>
+                            </a>
+                            <WorkflowContextMenu
+                              deleteWorkflow={null}
+                              duplicateWorkflow={[Function]}
+                              workflowId={8}
+                            >
+                              <UncontrolledDropdown>
+                                <Dropdown
+                                  isOpen={false}
+                                  toggle={[Function]}
+                                >
+                                  <Manager
+                                    tag={false}
+                                  >
+                                    <div
+                                      className="dropdown"
+                                    >
+                                      <DropdownToggle
+                                        className="context-button"
+                                      >
+                                        <Reference>
+                                          <InnerReference
+                                            setReferenceNode={[Function]}
+                                          >
+                                            <button
+                                              aria-expanded={false}
+                                              className="btn btn-secondary context-button"
+                                              disabled={false}
+                                              onClick={[Function]}
+                                            >
+                                              <i
+                                                className="icon-more"
+                                              />
+                                            </button>
+                                          </InnerReference>
+                                        </Reference>
+                                      </DropdownToggle>
+                                      <DropdownMenu />
+                                    </div>
+                                  </Manager>
+                                </Dropdown>
+                              </UncontrolledDropdown>
+                            </WorkflowContextMenu>
+                          </div>
+                        </Memo(Workflow)>
+                        <Memo(Workflow)
+                          deleteWorkflow={null}
+                          duplicateWorkflow={[Function]}
+                          key="7"
+                          openShareModal={[Function]}
+                          workflow={
+                            Object {
+                              "id": 7,
+                              "is_owner": false,
+                              "last_update": "2010-10-18T00:30:00",
+                              "name": "Messy data cleanup",
+                              "owner_name": "John Johnson",
+                              "public": false,
+                            }
+                          }
+                        >
+                          <div
+                            className="workflow"
+                          >
+                            <a
+                              href="/workflows/7"
+                            >
+                              <div
+                                className="workflow-title"
+                              >
+                                Messy data cleanup
+                              </div>
+                              <WithI18n
+                                openShareModal={[Function]}
+                                workflow={
+                                  Object {
+                                    "id": 7,
+                                    "is_owner": false,
+                                    "last_update": "2010-10-18T00:30:00",
+                                    "name": "Messy data cleanup",
+                                    "owner_name": "John Johnson",
+                                    "public": false,
+                                  }
+                                }
+                              >
+                                <I18n
+                                  update={true}
+                                  withHash={true}
+                                >
+                                  <WorkflowMetadata
+                                    i18n={
+                                      Object {
+                                        "_": [Function],
+                                        "_activeLanguageData": Object {
+                                          "plurals": [Function],
+                                        },
+                                        "_activeMessages": Object {},
+                                        "_catalogs": Object {
+                                          "en": Object {
+                                            "languageData": Object {},
+                                            "messages": Object {},
+                                          },
+                                        },
+                                        "_dev": Object {
+                                          "compile": [Function],
+                                          "loadLanguageData": [Function],
+                                        },
+                                        "_language": "en",
+                                        "_locales": undefined,
+                                        "_missing": undefined,
+                                        "plural": [Function],
+                                        "select": [Function],
+                                        "selectOrdinal": [Function],
+                                        "t": [Function],
+                                      }
+                                    }
+                                    openShareModal={[Function]}
+                                    workflow={
+                                      Object {
+                                        "id": 7,
+                                        "is_owner": false,
+                                        "last_update": "2010-10-18T00:30:00",
+                                        "name": "Messy data cleanup",
+                                        "owner_name": "John Johnson",
+                                        "public": false,
+                                      }
+                                    }
+                                  >
+                                    <ul
+                                      className="metadata-container"
+                                    >
+                                      <li
+                                        className="attribution"
+                                      >
+                                        <span
+                                          className="metadata"
+                                        >
+                                          <WithI18n
+                                            defaults="by {owner}"
+                                            id="js.Workflows.WorkflowMetadata.owner"
+                                            values={
+                                              Object {
+                                                "owner": "John Johnson",
+                                              }
+                                            }
+                                          >
+                                            <I18n
+                                              update={true}
+                                              withHash={true}
+                                            >
+                                              <Trans
+                                                defaults="by {owner}"
+                                                i18n={
+                                                  Object {
+                                                    "_": [Function],
+                                                    "_activeLanguageData": Object {
+                                                      "plurals": [Function],
+                                                    },
+                                                    "_activeMessages": Object {},
+                                                    "_catalogs": Object {
+                                                      "en": Object {
+                                                        "languageData": Object {},
+                                                        "messages": Object {},
+                                                      },
+                                                    },
+                                                    "_dev": Object {
+                                                      "compile": [Function],
+                                                      "loadLanguageData": [Function],
+                                                    },
+                                                    "_language": "en",
+                                                    "_locales": undefined,
+                                                    "_missing": undefined,
+                                                    "plural": [Function],
+                                                    "select": [Function],
+                                                    "selectOrdinal": [Function],
+                                                    "t": [Function],
+                                                  }
+                                                }
+                                                id="js.Workflows.WorkflowMetadata.owner"
+                                                values={
+                                                  Object {
+                                                    "owner": "John Johnson",
+                                                  }
+                                                }
+                                              >
+                                                <Render
+                                                  value="js.Workflows.WorkflowMetadata.owner"
+                                                >
+                                                  js.Workflows.WorkflowMetadata.owner
+                                                </Render>
+                                              </Trans>
+                                            </I18n>
+                                          </WithI18n>
+                                        </span>
+                                        <span
+                                          className="separator"
+                                        >
+                                          -
+                                        </span>
+                                      </li>
+                                      <li>
+                                        <WithI18n
+                                          defaults="Updated {timeAgo}"
+                                          description="The parameter will contain a time difference (i.e. something like '5h ago')"
+                                          id="js.Workflows.WorkflowMetadata.update"
+                                          values={
+                                            Object {
+                                              "timeAgo": "{years}y ago",
+                                            }
+                                          }
+                                        >
+                                          <I18n
+                                            update={true}
+                                            withHash={true}
+                                          >
+                                            <Trans
+                                              defaults="Updated {timeAgo}"
+                                              description="The parameter will contain a time difference (i.e. something like '5h ago')"
+                                              i18n={
+                                                Object {
+                                                  "_": [Function],
+                                                  "_activeLanguageData": Object {
+                                                    "plurals": [Function],
+                                                  },
+                                                  "_activeMessages": Object {},
+                                                  "_catalogs": Object {
+                                                    "en": Object {
+                                                      "languageData": Object {},
+                                                      "messages": Object {},
+                                                    },
+                                                  },
+                                                  "_dev": Object {
+                                                    "compile": [Function],
+                                                    "loadLanguageData": [Function],
+                                                  },
+                                                  "_language": "en",
+                                                  "_locales": undefined,
+                                                  "_missing": undefined,
+                                                  "plural": [Function],
+                                                  "select": [Function],
+                                                  "selectOrdinal": [Function],
+                                                  "t": [Function],
+                                                }
+                                              }
+                                              id="js.Workflows.WorkflowMetadata.update"
+                                              values={
+                                                Object {
+                                                  "timeAgo": "{years}y ago",
+                                                }
+                                              }
+                                            >
+                                              <Render
+                                                value="js.Workflows.WorkflowMetadata.update"
+                                              >
+                                                js.Workflows.WorkflowMetadata.update
+                                              </Render>
+                                            </Trans>
+                                          </I18n>
+                                        </WithI18n>
+                                      </li>
+                                      <li>
+                                        <span
+                                          className="separator"
+                                        >
+                                          -
+                                        </span>
+                                        <button
+                                          className="public-private"
+                                          onClick={[Function]}
+                                          title="Change privacy"
+                                          type="button"
+                                        >
+                                          <WithI18n
+                                            defaults="private"
+                                            id="js.Workflows.WorkflowMetadata.visibility.private"
+                                          >
+                                            <I18n
+                                              update={true}
+                                              withHash={true}
+                                            >
+                                              <Trans
+                                                defaults="private"
+                                                i18n={
+                                                  Object {
+                                                    "_": [Function],
+                                                    "_activeLanguageData": Object {
+                                                      "plurals": [Function],
+                                                    },
+                                                    "_activeMessages": Object {},
+                                                    "_catalogs": Object {
+                                                      "en": Object {
+                                                        "languageData": Object {},
+                                                        "messages": Object {},
+                                                      },
+                                                    },
+                                                    "_dev": Object {
+                                                      "compile": [Function],
+                                                      "loadLanguageData": [Function],
+                                                    },
+                                                    "_language": "en",
+                                                    "_locales": undefined,
+                                                    "_missing": undefined,
+                                                    "plural": [Function],
+                                                    "select": [Function],
+                                                    "selectOrdinal": [Function],
+                                                    "t": [Function],
+                                                  }
+                                                }
+                                                id="js.Workflows.WorkflowMetadata.visibility.private"
+                                              >
+                                                <Render
+                                                  value="js.Workflows.WorkflowMetadata.visibility.private"
+                                                >
+                                                  js.Workflows.WorkflowMetadata.visibility.private
+                                                </Render>
+                                              </Trans>
+                                            </I18n>
+                                          </WithI18n>
+                                        </button>
+                                      </li>
+                                    </ul>
+                                  </WorkflowMetadata>
+                                </I18n>
+                              </WithI18n>
+                            </a>
+                            <WorkflowContextMenu
+                              deleteWorkflow={null}
+                              duplicateWorkflow={[Function]}
+                              workflowId={7}
+                            >
+                              <UncontrolledDropdown>
+                                <Dropdown
+                                  isOpen={false}
+                                  toggle={[Function]}
+                                >
+                                  <Manager
+                                    tag={false}
+                                  >
+                                    <div
+                                      className="dropdown"
+                                    >
+                                      <DropdownToggle
+                                        className="context-button"
+                                      >
+                                        <Reference>
+                                          <InnerReference
+                                            setReferenceNode={[Function]}
+                                          >
+                                            <button
+                                              aria-expanded={false}
+                                              className="btn btn-secondary context-button"
+                                              disabled={false}
+                                              onClick={[Function]}
+                                            >
+                                              <i
+                                                className="icon-more"
+                                              />
+                                            </button>
+                                          </InnerReference>
+                                        </Reference>
+                                      </DropdownToggle>
+                                      <DropdownMenu />
+                                    </div>
+                                  </Manager>
+                                </Dropdown>
+                              </UncontrolledDropdown>
+                            </WorkflowContextMenu>
+                          </div>
+                        </Memo(Workflow)>
                       </div>
-                    </Memo(Workflow)>
+                    </Memo(WorkflowList)>
                   </div>
-                </Memo(WorkflowList)>
-              </div>
-            </Memo(TabPane)>
-          </Memo(TemplatesWorkflowList)>
-        </div>
-      </div>
-    </Memo(WorkflowLists)>
+                </Memo(TabPane)>
+              </Memo(SharedWorkflowList)>
+              <Memo(TemplatesWorkflowList)
+                comparator="last_update|descending"
+                deleteWorkflow={[Function]}
+                duplicateWorkflow={[Function]}
+                isActive={false}
+                openShareModal={[Function]}
+                workflows={
+                  Array [
+                    Object {
+                      "id": 10,
+                      "is_owner": false,
+                      "last_update": "2010-10-18T00:30:00",
+                      "name": "Demo 1",
+                      "owner_name": "Workbench",
+                      "public": false,
+                    },
+                  ]
+                }
+              >
+                <Memo(TabPane)
+                  isActive={false}
+                  name="templates"
+                >
+                  <div
+                    aria-labelledby="workflow-tab-link-templates"
+                    className="tab-pane"
+                    id="workflow-tab-templates"
+                    role="tabpanel"
+                  >
+                    <Memo(WorkflowList)
+                      comparator="last_update|descending"
+                      deleteWorkflow={null}
+                      duplicateWorkflow={[Function]}
+                      openShareModal={[Function]}
+                      workflows={
+                        Array [
+                          Object {
+                            "id": 10,
+                            "is_owner": false,
+                            "last_update": "2010-10-18T00:30:00",
+                            "name": "Demo 1",
+                            "owner_name": "Workbench",
+                            "public": false,
+                          },
+                        ]
+                      }
+                    >
+                      <div
+                        className="workflow-list"
+                      >
+                        <Memo(Workflow)
+                          deleteWorkflow={null}
+                          duplicateWorkflow={[Function]}
+                          key="10"
+                          openShareModal={[Function]}
+                          workflow={
+                            Object {
+                              "id": 10,
+                              "is_owner": false,
+                              "last_update": "2010-10-18T00:30:00",
+                              "name": "Demo 1",
+                              "owner_name": "Workbench",
+                              "public": false,
+                            }
+                          }
+                        >
+                          <div
+                            className="workflow"
+                          >
+                            <a
+                              href="/workflows/10"
+                            >
+                              <div
+                                className="workflow-title"
+                              >
+                                Demo 1
+                              </div>
+                              <WithI18n
+                                openShareModal={[Function]}
+                                workflow={
+                                  Object {
+                                    "id": 10,
+                                    "is_owner": false,
+                                    "last_update": "2010-10-18T00:30:00",
+                                    "name": "Demo 1",
+                                    "owner_name": "Workbench",
+                                    "public": false,
+                                  }
+                                }
+                              >
+                                <I18n
+                                  update={true}
+                                  withHash={true}
+                                >
+                                  <WorkflowMetadata
+                                    i18n={
+                                      Object {
+                                        "_": [Function],
+                                        "_activeLanguageData": Object {
+                                          "plurals": [Function],
+                                        },
+                                        "_activeMessages": Object {},
+                                        "_catalogs": Object {
+                                          "en": Object {
+                                            "languageData": Object {},
+                                            "messages": Object {},
+                                          },
+                                        },
+                                        "_dev": Object {
+                                          "compile": [Function],
+                                          "loadLanguageData": [Function],
+                                        },
+                                        "_language": "en",
+                                        "_locales": undefined,
+                                        "_missing": undefined,
+                                        "plural": [Function],
+                                        "select": [Function],
+                                        "selectOrdinal": [Function],
+                                        "t": [Function],
+                                      }
+                                    }
+                                    openShareModal={[Function]}
+                                    workflow={
+                                      Object {
+                                        "id": 10,
+                                        "is_owner": false,
+                                        "last_update": "2010-10-18T00:30:00",
+                                        "name": "Demo 1",
+                                        "owner_name": "Workbench",
+                                        "public": false,
+                                      }
+                                    }
+                                  >
+                                    <ul
+                                      className="metadata-container"
+                                    >
+                                      <li
+                                        className="attribution"
+                                      >
+                                        <span
+                                          className="metadata"
+                                        >
+                                          <WithI18n
+                                            defaults="by {owner}"
+                                            id="js.Workflows.WorkflowMetadata.owner"
+                                            values={
+                                              Object {
+                                                "owner": "Workbench",
+                                              }
+                                            }
+                                          >
+                                            <I18n
+                                              update={true}
+                                              withHash={true}
+                                            >
+                                              <Trans
+                                                defaults="by {owner}"
+                                                i18n={
+                                                  Object {
+                                                    "_": [Function],
+                                                    "_activeLanguageData": Object {
+                                                      "plurals": [Function],
+                                                    },
+                                                    "_activeMessages": Object {},
+                                                    "_catalogs": Object {
+                                                      "en": Object {
+                                                        "languageData": Object {},
+                                                        "messages": Object {},
+                                                      },
+                                                    },
+                                                    "_dev": Object {
+                                                      "compile": [Function],
+                                                      "loadLanguageData": [Function],
+                                                    },
+                                                    "_language": "en",
+                                                    "_locales": undefined,
+                                                    "_missing": undefined,
+                                                    "plural": [Function],
+                                                    "select": [Function],
+                                                    "selectOrdinal": [Function],
+                                                    "t": [Function],
+                                                  }
+                                                }
+                                                id="js.Workflows.WorkflowMetadata.owner"
+                                                values={
+                                                  Object {
+                                                    "owner": "Workbench",
+                                                  }
+                                                }
+                                              >
+                                                <Render
+                                                  value="js.Workflows.WorkflowMetadata.owner"
+                                                >
+                                                  js.Workflows.WorkflowMetadata.owner
+                                                </Render>
+                                              </Trans>
+                                            </I18n>
+                                          </WithI18n>
+                                        </span>
+                                        <span
+                                          className="separator"
+                                        >
+                                          -
+                                        </span>
+                                      </li>
+                                      <li>
+                                        <WithI18n
+                                          defaults="Updated {timeAgo}"
+                                          description="The parameter will contain a time difference (i.e. something like '5h ago')"
+                                          id="js.Workflows.WorkflowMetadata.update"
+                                          values={
+                                            Object {
+                                              "timeAgo": "{years}y ago",
+                                            }
+                                          }
+                                        >
+                                          <I18n
+                                            update={true}
+                                            withHash={true}
+                                          >
+                                            <Trans
+                                              defaults="Updated {timeAgo}"
+                                              description="The parameter will contain a time difference (i.e. something like '5h ago')"
+                                              i18n={
+                                                Object {
+                                                  "_": [Function],
+                                                  "_activeLanguageData": Object {
+                                                    "plurals": [Function],
+                                                  },
+                                                  "_activeMessages": Object {},
+                                                  "_catalogs": Object {
+                                                    "en": Object {
+                                                      "languageData": Object {},
+                                                      "messages": Object {},
+                                                    },
+                                                  },
+                                                  "_dev": Object {
+                                                    "compile": [Function],
+                                                    "loadLanguageData": [Function],
+                                                  },
+                                                  "_language": "en",
+                                                  "_locales": undefined,
+                                                  "_missing": undefined,
+                                                  "plural": [Function],
+                                                  "select": [Function],
+                                                  "selectOrdinal": [Function],
+                                                  "t": [Function],
+                                                }
+                                              }
+                                              id="js.Workflows.WorkflowMetadata.update"
+                                              values={
+                                                Object {
+                                                  "timeAgo": "{years}y ago",
+                                                }
+                                              }
+                                            >
+                                              <Render
+                                                value="js.Workflows.WorkflowMetadata.update"
+                                              >
+                                                js.Workflows.WorkflowMetadata.update
+                                              </Render>
+                                            </Trans>
+                                          </I18n>
+                                        </WithI18n>
+                                      </li>
+                                      <li>
+                                        <span
+                                          className="separator"
+                                        >
+                                          -
+                                        </span>
+                                        <button
+                                          className="public-private"
+                                          onClick={[Function]}
+                                          title="Change privacy"
+                                          type="button"
+                                        >
+                                          <WithI18n
+                                            defaults="private"
+                                            id="js.Workflows.WorkflowMetadata.visibility.private"
+                                          >
+                                            <I18n
+                                              update={true}
+                                              withHash={true}
+                                            >
+                                              <Trans
+                                                defaults="private"
+                                                i18n={
+                                                  Object {
+                                                    "_": [Function],
+                                                    "_activeLanguageData": Object {
+                                                      "plurals": [Function],
+                                                    },
+                                                    "_activeMessages": Object {},
+                                                    "_catalogs": Object {
+                                                      "en": Object {
+                                                        "languageData": Object {},
+                                                        "messages": Object {},
+                                                      },
+                                                    },
+                                                    "_dev": Object {
+                                                      "compile": [Function],
+                                                      "loadLanguageData": [Function],
+                                                    },
+                                                    "_language": "en",
+                                                    "_locales": undefined,
+                                                    "_missing": undefined,
+                                                    "plural": [Function],
+                                                    "select": [Function],
+                                                    "selectOrdinal": [Function],
+                                                    "t": [Function],
+                                                  }
+                                                }
+                                                id="js.Workflows.WorkflowMetadata.visibility.private"
+                                              >
+                                                <Render
+                                                  value="js.Workflows.WorkflowMetadata.visibility.private"
+                                                >
+                                                  js.Workflows.WorkflowMetadata.visibility.private
+                                                </Render>
+                                              </Trans>
+                                            </I18n>
+                                          </WithI18n>
+                                        </button>
+                                      </li>
+                                    </ul>
+                                  </WorkflowMetadata>
+                                </I18n>
+                              </WithI18n>
+                            </a>
+                            <WorkflowContextMenu
+                              deleteWorkflow={null}
+                              duplicateWorkflow={[Function]}
+                              workflowId={10}
+                            >
+                              <UncontrolledDropdown>
+                                <Dropdown
+                                  isOpen={false}
+                                  toggle={[Function]}
+                                >
+                                  <Manager
+                                    tag={false}
+                                  >
+                                    <div
+                                      className="dropdown"
+                                    >
+                                      <DropdownToggle
+                                        className="context-button"
+                                      >
+                                        <Reference>
+                                          <InnerReference
+                                            setReferenceNode={[Function]}
+                                          >
+                                            <button
+                                              aria-expanded={false}
+                                              className="btn btn-secondary context-button"
+                                              disabled={false}
+                                              onClick={[Function]}
+                                            >
+                                              <i
+                                                className="icon-more"
+                                              />
+                                            </button>
+                                          </InnerReference>
+                                        </Reference>
+                                      </DropdownToggle>
+                                      <DropdownMenu />
+                                    </div>
+                                  </Manager>
+                                </Dropdown>
+                              </UncontrolledDropdown>
+                            </WorkflowContextMenu>
+                          </div>
+                        </Memo(Workflow)>
+                      </div>
+                    </Memo(WorkflowList)>
+                  </div>
+                </Memo(TabPane)>
+              </Memo(TemplatesWorkflowList)>
+            </div>
+          </div>
+        </WorkflowLists>
+      </I18n>
+    </WithI18n>
   </div>
 </Workflows>
 `;

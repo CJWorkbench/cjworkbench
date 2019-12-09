@@ -1,11 +1,11 @@
 /* global describe, it, expect, jest */
 import React from 'react'
 import ChartSeriesSelect from './ChartSeriesSelect'
-import { mount } from 'enzyme'
+import { mountWithI18n } from '../../i18n/test-utils'
 
 describe('ChartSeriesSelect', () => {
   function wrapper (props = {}) {
-    return mount(
+    return mountWithI18n(
       <ChartSeriesSelect
         index={2}
         name='series[2]'

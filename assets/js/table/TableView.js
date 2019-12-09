@@ -8,6 +8,7 @@ import DataGrid from './DataGrid'
 import TableInfo from './TableInfo'
 import { connect } from 'react-redux'
 import { updateTableAction } from './UpdateTableAction'
+import { Trans } from '@lingui/macro'
 
 export const NMaxColumns = 100
 
@@ -61,9 +62,9 @@ export class TableView extends React.PureComponent {
         <div className='overlay'>
           <div>
             <div className='text'>
-              A maximum of 100 columns can be displayed
+              <Trans id='js.table.TableView.maxOf100ColumnsCanbeDIsplayed'>A maximum of 100 columns can be displayed</Trans>
             </div>
-            <button className='add-select-module' onClick={this.handleClickSelectColumns}>Select columns</button>
+            <button className='add-select-module' onClick={this.handleClickSelectColumns}><Trans id='js.table.TableView.selectColumns.button'>Select columns</Trans></button>
           </div>
         </div>
       )

@@ -274,7 +274,7 @@ class LessonDetailTests(DbTestCase):
         wf_module = next(iter(state["wfModules"].values()))
         self.assertEqual(
             wf_module["params"],
-            {"url": "http://localhost:8000/static/lessons/%s/a-lesson/foo.txt" % "en"},
+            {"url": "http://localhost:8000/static/lessons/en/a-lesson/foo.txt"},
         )
 
     @patch("server.rabbitmq.queue_fetch")

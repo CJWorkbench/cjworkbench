@@ -1,11 +1,12 @@
 /* globals describe, expect, it, jest */
 import React from 'react'
-import { mount } from 'enzyme'
+// import { mount } from 'enzyme'
 import AclEntry from './AclEntry'
+import { mountWithI18n } from '../i18n/test-utils'
 
 describe('AclEntry', () => {
   // We mount() because we're testing both Role and AclEntry together.
-  const wrapper = (props = {}) => mount(
+  const wrapper = (props = {}) => mountWithI18n(
     <AclEntry
       isReadOnly={false}
       email='user@example.org'
@@ -19,7 +20,7 @@ describe('AclEntry', () => {
   it('should render the email and role', () => {
     const w = wrapper({ email: 'a@example.com', canEdit: true })
     expect(w.find('.email').text()).toEqual('a@example.com')
-    expect(w.find('button.dropdown-toggle').text()).toEqual('Can edit')
+    expect(w.find('button.dropdown-toggle Trans[id="js.ShareModal.Role.canEdit"]')).toHaveLength(1)
   })
 
   it('should change editor to viewer', () => {
@@ -58,7 +59,7 @@ describe('AclEntry', () => {
 
   it('should render read-only', () => {
     const w = wrapper({ isReadOnly: true, canEdit: true })
-    expect(w.find('.role').text()).toEqual('Can edit')
+    expect(w.find('.role Trans[id="js.shareModal.Role.canEdit"]')).toHaveLength(0)
     expect(w.find('button')).toHaveLength(0)
   })
 })

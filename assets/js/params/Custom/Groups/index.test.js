@@ -1,10 +1,11 @@
 /* globals describe, expect, it, jest */
 import React from 'react'
 import Groups from './index'
-import { mount } from 'enzyme'
+// import { mount } from 'enzyme'
+import { mountWithI18n } from '../../../i18n/test-utils.js'
 
 describe('Groups', () => {
-  const wrapper = (extraProps = {}) => mount(
+  const wrapper = (extraProps = {}) => mountWithI18n(
     <Groups
       isReadOnly={false}
       name='groups'

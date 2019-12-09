@@ -104,10 +104,6 @@ def _pydict_to_json_records(
                 (None if v is None else (v.isoformat() + "Z"))
                 for v in pydict[column.name]
             ]
-        elif isinstance(column.type, ColumnType.Number):
-            converted[column.name] = [
-                (None if math.isnan(v) else v) for v in pydict[column.name]
-            ]
         else:
             converted[column.name] = pydict[column.name]
     # Transpose into JSON records

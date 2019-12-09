@@ -1,7 +1,7 @@
 /* globals describe, expect, it, jest */
 import React from 'react'
-import WorkflowMetadata from './WorkflowMetadata'
-import { shallow } from 'enzyme'
+import { WorkflowMetadata } from './WorkflowMetadata'
+import { mountWithI18n } from '../i18n/test-utils'
 
 describe('WorkflowMetadata', () => {
   const today = new Date('Fri Sep 22 2017 17:03:52 GMT-0400 (EDT)')
@@ -17,7 +17,7 @@ describe('WorkflowMetadata', () => {
 
   const wrapper = (extraProps = {}, workflowExtraProps = {}) => {
     const workflow = { ...defaultWorkflow, ...workflowExtraProps }
-    return shallow(
+    return mountWithI18n(
       <WorkflowMetadata
         workflow={workflow}
         test_now={today}

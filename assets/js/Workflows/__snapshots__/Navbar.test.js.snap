@@ -27,7 +27,7 @@ exports[`Navbar Renders correctly 1`] = `
         <WithI18n
           defaults="WORKFLOWS"
           description="This is used in navigation bar. It should be all-caps for styling reasons."
-          id="workflows.navbar.workflows"
+          id="js.Workflows.NavBar.links.workflows"
         />
       </a>
       <a
@@ -37,11 +37,11 @@ exports[`Navbar Renders correctly 1`] = `
         <WithI18n
           defaults="TRAINING"
           description="This is used in navigation bar. It should be all-caps for styling reasons."
-          id="workflows.navbar.training"
+          id="js.Workflows.NavBar.links.training"
         />
       </a>
     </div>
-    <WfHamburgerMenu />
+    <WithI18n />
   </nav>
 </div>
 `;

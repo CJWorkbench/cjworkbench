@@ -1,12 +1,12 @@
 /* globals describe, expect, it, jest */
 import React from 'react'
 import UpdateFrequencySelectModal from './UpdateFrequencySelectModal'
-import { mount } from 'enzyme'
+import { mountWithI18n } from '../../../i18n/test-utils'
 import { tick } from '../../../test-utils'
 
 describe('UpdateFrequencySelectModal', () => {
   const wrapper = (props = {}) => {
-    return mount(
+    return mountWithI18n(
       <UpdateFrequencySelectModal
         workflowId={123}
         wfModuleId={234}

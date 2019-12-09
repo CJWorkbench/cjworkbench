@@ -79,16 +79,16 @@
       margin-top: 2rem;
       &:empty { display: none; }
       @include content-3;
-      padding: 2rem 3rem;
+      padding: 1rem 3rem; // p,h3 vertical margin is 2rem
       border-radius: 10px;
       margin-bottom: 2rem;
 
       p {
-        margin-bottom: 0;
+        margin: 2rem 0;
       }
 
       h3 {
-        margin:1rem 0 1.5rem 2rem;
+        margin: 2rem 0 1.5rem 2rem;
       }
     }
 

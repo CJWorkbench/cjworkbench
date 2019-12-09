@@ -1,24 +1,22 @@
+---
+apiVersion: networking.gke.io/v1beta1
+kind: ManagedCertificate
+metadata:
+  name: production-user-files-cert
+spec:
+  domains:
+    - production-user-files.workbenchdata.com
+---
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: minio-ingress
   namespace: production
   annotations:
-    kubernetes.io/tls-acme: "true"
-    kubernetes.io/ingress.class: nginx
-    # Stream requests straight into minio -- no buffering or limiting
-    nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
-    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+    kubernetes.io/ingress.global-static-ip-name: production-user-files
+    networking.gke.io/managed-certificates: production-user-files-cert
+    kubernetes.io/ingress.allow-http: "false"
 spec:
-  tls:
-    - hosts:
-      - production-user-files.workbenchdata.com
-      secretName: production-user-files.workbenchdata.com-secret
-  rules:
-    - host: production-user-files.workbenchdata.com
-      http:
-        paths:
-          - path: /
-            backend:
-              serviceName: minio-service
-              servicePort: 80
+  backend:
+    serviceName: minio-service
+    servicePort: 80

@@ -117,13 +117,13 @@ kubectl -n "$ENV" apply -f "$DIR"/minio-deployment.yaml
 kubectl -n "$ENV" run minio-adduser \
   -i --rm=true \
   --restart=Never \
-  --image=minio/mc:RELEASE.2019-09-24T01-36-20Z \
+  --image=minio/mc:RELEASE.2019-10-09T22-54-57Z \
   --overrides='
     {
       "spec": {
         "containers": [{
           "name": "minio-adduser",
-          "image": "minio/mc:RELEASE.2019-09-24T01-36-20Z",
+          "image": "minio/mc:RELEASE.2019-10-09T22-54-57Z",
           "command": [
             "sh", "-c",
             "while ! nc -z minio-service 80; do sleep 0.1; done; mc config host add workbench http://minio-service \"$ROOT_ACCESS_KEY\" \"$ROOT_SECRET_KEY\" && mc admin user add workbench \"$ACCESS_KEY\" \"$SECRET_KEY\" && mc admin policy set workbench readwrite user=\"$ACCESS_KEY\""
@@ -137,3 +137,14 @@ kubectl -n "$ENV" run minio-adduser \
         }]
       }
     }'
+
+# Set up load balancer
+kubectl -n "$ENV" apply -f "$DIR"/minio-service.yaml
+gcloud compute addresses create $ENV-user-files --global
+kubectl -n "$ENV" apply -f "$DIR"/minio-$ENV-ingress.yaml
+
+# Set up DNS
+STATIC_IP=$(gcloud compute addresses describe $ENV-user-files --global | grep address: | cut -b10-)
+gcloud dns record-sets transaction start --zone=workbenchdata-com
+gcloud dns record-sets transaction add --zone=workbenchdata-com --name $ENV-user-files.workbenchdata.com. --ttl 7200 --type A $STATIC_IP
+gcloud dns record-sets transaction execute --zone=workbenchdata-com

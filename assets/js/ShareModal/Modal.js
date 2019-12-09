@@ -4,6 +4,7 @@ import { Modal, ModalHeader, ModalBody, ModalFooter } from '../components/Modal'
 import PublicPrivate from './PublicPrivate'
 import Acl from './Acl'
 import Url from './Url'
+import { Trans } from '@lingui/macro'
 
 export default class _Modal extends React.PureComponent {
   static propTypes = {
@@ -30,16 +31,20 @@ export default class _Modal extends React.PureComponent {
 
     return (
       <Modal className='share-modal' isOpen toggle={onClickClose}>
-        <ModalHeader>SHARING SETTINGS</ModalHeader>
+        <ModalHeader>
+          <Trans id='js.ShareModal.Modal.header.title' description='This should be all-caps for styling reasons'>
+                SHARING SETTINGS
+          </Trans>
+        </ModalHeader>
         <ModalBody>
-          <h6>Share with the world</h6>
+          <h6><Trans id='js.ShareModal.Modal.shareWithTheWorld'>Share with the world</Trans></h6>
           <PublicPrivate
             isReadOnly={isReadOnly}
             isPublic={isPublic}
             setIsPublic={setIsPublic}
           />
 
-          <h6>Collaborators</h6>
+          <h6><Trans id='js.ShareModal.Modal.collaborators'>Collaborators</Trans></h6>
           <Acl
             isReadOnly={isReadOnly}
             ownerEmail={ownerEmail}
@@ -60,7 +65,7 @@ export default class _Modal extends React.PureComponent {
               name='close'
               className='action-button button-gray'
               onClick={onClickClose}
-            >Close
+            ><Trans id='js.ShareModal.Modal.footer.closeButton'>Close</Trans>
             </button>
           </div>
         </ModalFooter>

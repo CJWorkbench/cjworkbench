@@ -3,8 +3,10 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import ReactSelect from './common/react-select'
 import { MaybeLabel } from './util'
+import { t } from '@lingui/macro'
+import { withI18n } from '@lingui/react'
 
-export default class ColumnParam extends React.PureComponent {
+export class ColumnParam extends React.PureComponent {
   static propTypes = {
     name: PropTypes.string.isRequired,
     value: PropTypes.string, // or null
@@ -17,7 +19,7 @@ export default class ColumnParam extends React.PureComponent {
   }
 
   render () {
-    const { inputColumns, isReadOnly, placeholder, fieldId, label, name, value, onChange } = this.props
+    const { inputColumns, isReadOnly, placeholder, fieldId, label, name, value, onChange, i18n } = this.props
     const isLoading = (inputColumns === null)
 
     // Set dropdown list to 1 option of 'loading' as we wait. When clicked, onChange passes null to callback
@@ -41,9 +43,10 @@ export default class ColumnParam extends React.PureComponent {
           isLoading={isLoading}
           onChange={onChange}
           isReadOnly={isReadOnly}
-          placeholder={placeholder || 'Select'}
+          placeholder={placeholder || i18n._(t('js.params.Column.select.placeholder')`Select`)}
         />
       </>
     )
   }
 }
+export default withI18n()(ColumnParam)

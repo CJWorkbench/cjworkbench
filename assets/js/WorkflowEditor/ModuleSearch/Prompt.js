@@ -1,7 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { t } from '@lingui/macro'
+import { withI18n } from '@lingui/react'
 
-export default class Prompt extends React.PureComponent {
+export class Prompt extends React.PureComponent {
   static propTypes = {
     value: PropTypes.string.isRequired, // may be empty
     cancel: PropTypes.func.isRequired, // func() => undefined -- should close this prompt
@@ -32,18 +34,22 @@ export default class Prompt extends React.PureComponent {
 
     return (
       <form className='module-search-field' onSubmit={this.handleSubmit} onReset={cancel}>
+
         <input
           type='search'
           name='moduleQ'
-          placeholder='Search…'
+          placeholder={this.props.i18n._(t('js.WorkflowEditor.ModuleSearch.Prompt.placeholder')`Search…`)}
           autoComplete='off'
           ref={this.inputRef}
           value={value}
           onChange={this.handleChange}
           onKeyDown={this.handleKeyDown}
         />
-        <button type='reset' className='reset' title='Close Search'><i className='icon-close' /></button>
+
+        <button type='reset' className='reset' title={this.props.i18n._(t('js.WorkflowEditor.ModuleSearch.Prompt.closeButton.hoverText')`Close Search`)}><i className='icon-close' /></button>
+
       </form>
     )
   }
 }
+export default withI18n()(Prompt)

@@ -1,15 +1,15 @@
 {% extends "socialaccount/base.html" %}
 
-{% load i18n %}
+{% load i18n_icu %}
 
-{% block head_title %}{% trans "Login Cancelled" %}{% endblock %}
+{% block head_title %}{% trans_html "py.templates.socialaccount.login_cancelled.title" default="Login Cancelled" %}{% endblock %}
 
 {% block content %}
 
-<h1>{% trans "Login Cancelled" %}</h1>
+<h1>{% trans_html "py.templates.socialaccount.login_cancelled.header" default="Login Cancelled" %}</h1>
 
 {% url 'account_login' as login_url %}
 
-<p>{% blocktrans %}You decided to cancel logging in to our site using one of your existing accounts. If this was a mistake, please proceed to <a href="{{login_url}}">sign in</a>.{% endblocktrans %}</p>
+<p>{% trans_html "py.templates.socialaccount.login_cancelled.youCancelledLogin" default="You decided to cancel logging in to our site using one of your existing accounts. If this was a mistake, please proceed to <a0>sign in</a0>." tag_a0_href=login_url comment="The tag is a link to the login page" %}</p>
 
 {% endblock %}

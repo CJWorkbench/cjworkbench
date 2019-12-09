@@ -13,6 +13,7 @@ import ReorderHistory from './ReorderHistory'
 import SortColumns from './SortColumn'
 import ValueSelect from './ValueSelect'
 import VersionSelect, { VersionSelectSimpler } from './VersionSelect'
+import { Trans } from '@lingui/macro'
 
 const Components = {
   aggregations: Aggregations,
@@ -32,7 +33,7 @@ const Components = {
 }
 
 const ComponentNotFound = ({ name }) => (
-  <p className='error'>Custom type {name} not handled</p>
+  <p className='error'><Trans id='js.params.Custom.ComponentNotFound.error' description='The parameter will the the name of the custom type'>Custom type {name} not handled</Trans></p>
 )
 
 export default function Custom (props) {

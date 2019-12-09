@@ -2,8 +2,10 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import ReactSelect from './common/react-select'
 import { MaybeLabel } from './util'
+import { t } from '@lingui/macro'
+import { withI18n } from '@lingui/react'
 
-export default class TabParam extends React.PureComponent {
+export class TabParam extends React.PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired,
     onChange: PropTypes.func.isRequired, // func(tabSlugOrEmptyString) => undefined
@@ -25,7 +27,7 @@ export default class TabParam extends React.PureComponent {
   }
 
   render () {
-    const { name, value, upstreamValue, placeholder, isReadOnly, fieldId, label, tabs, currentTab, onChange } = this.props
+    const { name, value, upstreamValue, placeholder, isReadOnly, fieldId, label, tabs, currentTab, onChange, i18n } = this.props
 
     const tabOptions = tabs
       .filter(({ slug }) => slug !== currentTab)
@@ -42,9 +44,10 @@ export default class TabParam extends React.PureComponent {
           value={value || ''}
           onChange={onChange}
           isReadOnly={isReadOnly}
-          placeholder={placeholder || 'Select Tab'}
+          placeholder={placeholder || i18n._(t('js.params.Tab.selectTab.placeholder')`Select Tab`)}
         />
       </>
     )
   }
 }
+export default withI18n()(TabParam)

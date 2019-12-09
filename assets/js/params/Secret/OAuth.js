@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { Trans } from '@lingui/macro'
 
 export default class OAuth extends React.PureComponent {
   static propTypes = {
@@ -33,12 +34,12 @@ export default class OAuth extends React.PureComponent {
       contents = (
         <>
           <p className='secret-name'>{secretMetadata.name}</p>
-          <button type='button' className='disconnect' onClick={this.handleClickDisconnect}>Sign out</button>
+          <button type='button' className='disconnect' onClick={this.handleClickDisconnect}><Trans id='js.params.Secret.OAuth.signOut.button'>Sign out</Trans></button>
         </>
       )
     } else {
       contents = (
-        <button type='button' className='connect' onClick={this.handleClickConnect}>Connect account</button>
+        <button type='button' className='connect' onClick={this.handleClickConnect}><Trans id='js.params.Secret.OAuth.connectAccount.button'>Connect account</Trans></button>
       )
     }
 

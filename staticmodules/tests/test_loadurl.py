@@ -1,196 +1,462 @@
+import contextlib
+import gzip
+from http.server import HTTPServer, BaseHTTPRequestHandler
 import io
+import itertools
+from pathlib import Path
+import threading
+from typing import ContextManager
 import unittest
-from unittest.mock import Mock, patch
-import aiohttp
-import aiohttp.client
-from asgiref.sync import async_to_sync
-import pandas as pd
-from pandas.testing import assert_frame_equal
-import requests
-from cjwkernel.pandas.types import ProcessResult
-from cjwstate.tests.utils import mock_xlsx_path
-from staticmodules import loadurl
-from .util import MockParams
+import zlib
+import pyarrow
+from cjwkernel.pandas.http import httpfile
+from cjwkernel.util import tempfile_context
+from cjwkernel.tests.util import assert_arrow_table_equals, parquet_file
+from cjwkernel.types import (
+    ArrowTable,
+    FetchResult,
+    I18nMessage,
+    RenderError,
+    RenderResult,
+)
+from staticmodules.loadurl import fetch_arrow, render_arrow
+from .util import MockHttpResponse, MockParams
+
+TestDataPath = Path(__file__).parent / "test_data"
 
 XLSX_MIME_TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-
-mock_csv_raw = b"Month,Amount\nJan,10\nFeb,20"
-mock_csv_table = pd.DataFrame({"Month": ["Jan", "Feb"], "Amount": [10, 20]})
-
-
-class fake_spooled_data_from_url:
-    def __init__(self, data=b"", content_type="", charset="utf-8", error=None):
-        self.data = io.BytesIO(data)
-        self.headers = {"Content-Type": content_type}
-        self.charset = charset
-        self.error = error
-
-    def __call__(self, *args, **kwargs):
-        return self
-
-    async def __aenter__(self):
-        if self.error:
-            raise self.error
-        else:
-            return (self.data, self.headers, self.charset)
-        return self
-
-    async def __aexit__(self, *args):
-        return
-
-
-def mock_text_response(text, content_type):
-    response = Mock(aiohttp.ClientResponse)
-    response.encoding = "utf-8"
-    response.headers["Content-Type"] = content_type
-    # In requests, `response.raw` does not behave like a file-like object
-    # as we would expect. But it does happen to give us a correct
-    # `response.content` in the code that uses that.
-    response.raw = io.BytesIO(text.encode("utf-8"))
-    response.reason = "OK"
-    response.status_code = 200
-    return response
-
-
-def mock_bytes_response(b, content_type):
-    response = Mock(aiohttp.ClientResponse)
-    response.headers["Content-Type"] = content_type
-    response.raw = io.BytesIO(b)
-    response.reason = "OK"
-    response.status_code = 200
-    return response
-
-
-def respond(str_or_bytes, content_type):
-    def r(*args, **kwargs):
-        if isinstance(str_or_bytes, str):
-            return mock_text_response(str_or_bytes, content_type)
-        else:
-            return mock_bytes_response(str_or_bytes, content_type)
-
-    return r
-
-
 P = MockParams.factory(url="", has_header=True)
 
 
-def fetch(**kwargs):
-    params = P(**kwargs)
-    return async_to_sync(loadurl.fetch)(params)
-
-
-class LoadUrlTests(unittest.TestCase):
-    @patch(
-        "cjwkernel.pandas.moduleutils.spooled_data_from_url",
-        fake_spooled_data_from_url(mock_csv_raw, "text/csv"),
-    )
-    def test_fetch_csv(self):
-        result = fetch(url="http://test.com/the.csv")
-        assert_frame_equal(result, mock_csv_table)
-
-    @patch(
-        "cjwkernel.pandas.moduleutils.spooled_data_from_url",
-        fake_spooled_data_from_url(b'a\n"b', "text/csv"),
-    )
-    def test_fetch_invalid_csv(self):
-        # It would be great to report "warnings" on invalid input. But Python's
-        # `csv` module won't do that: it forces us to choose between mangling
-        # input and raising an exception. Both are awful; mangling input is
-        # slightly preferable, so that's what we do.
-        result = fetch(url="http://test.com/the.csv")
-        assert_frame_equal(result, pd.DataFrame({"a": ["b"]}))
-
-    @patch(
-        "cjwkernel.pandas.moduleutils.spooled_data_from_url",
-        fake_spooled_data_from_url(mock_csv_raw, "text/plain"),
-    )
-    def test_fetch_csv_use_ext_given_bad_content_type(self):
-        # return text/plain type and rely on filename detection, as
-        # https://raw.githubusercontent.com/ does
-        result = fetch(url="http://test.com/the.csv")
-        assert_frame_equal(result, mock_csv_table)
-
-    @patch(
-        "cjwkernel.pandas.moduleutils.spooled_data_from_url",
-        fake_spooled_data_from_url(mock_csv_raw, "application/csv"),
-    )
-    def test_fetch_csv_handle_nonstandard_mime_type(self):
-        """
-        Transform 'application/csv' into 'text/csv', etc.
-
-        Sysadmins sometimes invent MIME types and we can infer exactly what
-        they _mean_, even if they didn't say it.
-        """
-        result = fetch(url="http://test.com/the.data?format=csv&foo=bar")
-        assert_frame_equal(result, mock_csv_table)
-
-    @patch(
-        "cjwkernel.pandas.moduleutils.spooled_data_from_url",
-        fake_spooled_data_from_url(b'[{"A":1}]', "application/json", "utf-8"),
-    )
-    def test_fetch_json(self):
-        result = fetch(url="http://test.com/the.json")
-        assert_frame_equal(result, pd.DataFrame({"A": [1]}))
-
-    @patch(
-        "cjwkernel.pandas.moduleutils.spooled_data_from_url",
-        fake_spooled_data_from_url(b"not json", "application/json"),
-    )
-    def test_fetch_json_invalid_json(self):
-        result = fetch(url="http://test.com/the.json")
-        self.assertEqual(
-            result["error"], "JSON lexical error: invalid string in json text."
+@contextlib.contextmanager
+def fetch(url: str = "", has_header: bool = True) -> ContextManager[FetchResult]:
+    with tempfile_context(prefix="output-") as output_path:
+        yield fetch_arrow(
+            {"url": url, "has_header": has_header}, {}, None, None, output_path
         )
 
-    def test_fetch_xlsx(self):
-        with open(mock_xlsx_path, "rb") as f:
-            xlsx_bytes = f.read()
-            xlsx_table = pd.read_excel(mock_xlsx_path)
 
-        with patch(
-            "cjwkernel.pandas.moduleutils.spooled_data_from_url",
-            fake_spooled_data_from_url(xlsx_bytes, XLSX_MIME_TYPE, None),
-        ):
-            result = fetch(url="http://test.com/x.xlsx")
-        assert_frame_equal(result, xlsx_table)
+class FetchTests(unittest.TestCase):
+    def setUp(self):
+        super().setUp()
+        self.http_requestlines = []
+        self.mock_http_response = None
 
-    @patch(
-        "cjwkernel.pandas.moduleutils.spooled_data_from_url",
-        fake_spooled_data_from_url(b"hi", XLSX_MIME_TYPE, None),
-    )
-    def test_fetch_xlsx_bad_content(self):
-        result = fetch(url="http://test.com/x.xlsx")
+        class Handler(BaseHTTPRequestHandler):
+            def do_GET(self2):
+                self.http_requestlines.append(self2.requestline)
+                r = self.mock_http_response
+                if hasattr(r, "__next__"):
+                    r = next(r)
+                if r is None:
+                    raise RuntimeError("Tests must overwrite self.mock_http_response")
+
+                self2.send_response_only(r.status_code)
+                for header, value in r.headers:
+                    self2.send_header(header, value)
+                self2.end_headers()
+                write = self2.wfile.write
+                if isinstance(r.body, list):
+                    # chunked encoding
+                    for chunk in r.body:
+                        write(("%x\r\n" % len(chunk)).encode("ascii"))
+                        write(chunk)
+                        write(b"\r\n")
+                    write(b"0\r\n\r\n")
+                else:
+                    # just write the bytes
+                    write(r.body)
+
+        self.server = HTTPServer(("127.0.0.1", 0), Handler)
+        self.server_thread = threading.Thread(
+            target=self.server.serve_forever, kwargs={"poll_interval": 0.005}
+        )
+        self.server_thread.setDaemon(True)
+        self.server_thread.start()
+
+    def tearDown(self):
+        self.server.shutdown()
+        self.server_thread.join()
+        super().tearDown()
+
+    def build_url(self, path: str) -> str:
+        """
+        Build a URL that points to our HTTP server.
+        """
+        return "http://%s:%d%s" % (*self.server.server_address, path)
+
+    def test_fetch_csv(self):
+        body = b"A,B\nx,y\nz,a"
+        url = self.build_url("/path/to.csv")
+        self.mock_http_response = MockHttpResponse.ok(
+            body, [("Content-Type", "text/csv; charset=utf-8")]
+        )
+        with fetch(url) as result:
+            self.assertEqual(result.errors, [])
+            with httpfile.read(result.path) as (body_path, url, headers):
+                self.assertEqual(body_path.read_bytes(), body)
+                self.assertEqual(
+                    headers,
+                    "Content-Type: text/csv; charset=utf-8\r\nContent-Length: 11\r\n",
+                )
+
+    def test_fetch_gzip_encoded_csv(self):
+        body = b"A,B\nx,y\nz,a"
+        url = self.build_url("/path/to.csv.gz")
+        self.mock_http_response = MockHttpResponse.ok(
+            gzip.compress(body),
+            [("Content-Type", "text/csv; charset=utf-8"), ("Content-Encoding", "gzip")],
+        )
+        with fetch(url) as result:
+            self.assertEqual(result.errors, [])
+            with httpfile.read(result.path) as (body_path, url, headers):
+                self.assertEqual(body_path.read_bytes(), body)
+
+    def test_fetch_deflate_encoded_csv(self):
+        body = b"A,B\nx,y\nz,a"
+        url = self.build_url("/path/to.csv.gz")
+        self.mock_http_response = MockHttpResponse.ok(
+            zlib.compress(body),
+            [
+                ("Content-Type", "text/csv; charset=utf-8"),
+                ("Content-Encoding", "deflate"),
+            ],
+        )
+        with fetch(url) as result:
+            self.assertEqual(result.errors, [])
+            with httpfile.read(result.path) as (body_path, url, headers):
+                self.assertEqual(body_path.read_bytes(), body)
+
+    def test_fetch_chunked_csv(self):
+        self.mock_http_response = MockHttpResponse.ok(
+            [b"A,B\nx", b",y\nz,", b"a"], [("Content-Type", "text/csv; charset=utf-8")]
+        )
+        url = self.build_url("/path/to.csv.chunks")
+        with fetch(url) as result:
+            self.assertEqual(result.errors, [])
+            with httpfile.read(result.path) as (body_path, url, headers):
+                self.assertEqual(body_path.read_bytes(), b"A,B\nx,y\nz,a")
+
+    def test_fetch_http_404(self):
+        self.mock_http_response = MockHttpResponse(404, [("Content-Length", 0)])
+        url = self.build_url("/not-found")
+        with fetch(url) as result:
+            self.assertEqual(result.path.read_bytes(), b"")
+            self.assertEqual(
+                result.errors,
+                [
+                    RenderError(
+                        I18nMessage.TODO_i18n("Error from server: HTTP 404 Not Found")
+                    )
+                ],
+            )
+
+    def test_fetch_invalid_url(self):
+        with fetch("htt://blah") as result:
+            self.assertEqual(result.path.read_bytes(), b"")
+            self.assertEqual(
+                result.errors,
+                [
+                    RenderError(
+                        I18nMessage.TODO_i18n(
+                            "Invalid URL. Please supply a valid URL, starting with http:// or https://."
+                        )
+                    )
+                ],
+            )
+
+    def test_fetch_follow_redirect(self):
+        url1 = self.build_url("/url1.csv")
+        url2 = self.build_url("/url2.csv")
+        url3 = self.build_url("/url3.csv")
+        self.mock_http_response = iter(
+            [
+                MockHttpResponse(302, [("Location", url2)]),
+                MockHttpResponse(302, [("Location", url3)]),
+                MockHttpResponse.ok(b"A,B\n1,2", [("Content-Type", "text/csv")]),
+            ]
+        )
+        with fetch(url1) as result:
+            self.assertEqual(result.errors, [])
+            with httpfile.read(result.path) as (body_path, url, headers):
+                self.assertEqual(body_path.read_bytes(), b"A,B\n1,2")
+                self.assertEqual(url, url1)
+        self.assertIn("/url1.csv", self.http_requestlines[0])
+        self.assertIn("/url2.csv", self.http_requestlines[1])
+        self.assertIn("/url3.csv", self.http_requestlines[2])
+
+    def test_redirect_loop(self):
+        url1 = self.build_url("/url1.csv")
+        url2 = self.build_url("/url2.csv")
+        self.mock_http_response = itertools.cycle(
+            [
+                MockHttpResponse(302, [("Location", url2)]),
+                MockHttpResponse(302, [("Location", url1)]),
+            ]
+        )
+        with fetch(url1) as result:
+            self.assertEqual(result.path.read_bytes(), b"")
+            self.assertEqual(
+                result.errors,
+                [
+                    RenderError(
+                        I18nMessage.TODO_i18n(
+                            "HTTP server(s) redirected us too many times. Please try a different URL."
+                        )
+                    )
+                ],
+            )
+
+
+class RenderTests(unittest.TestCase):
+    def setUp(self):
+        self.ctx = contextlib.ExitStack()
+        self.output_path = self.ctx.enter_context(tempfile_context(suffix="output-"))
+
+    def tearDown(self):
+        self.ctx.close()
+
+    def test_render_no_file(self):
+        result = render_arrow(ArrowTable(), P(), "tab-x", None, self.output_path)
+        assert_arrow_table_equals(result.table, ArrowTable())
+        self.assertEqual(result.errors, [])
+
+    def test_render_fetch_error(self):
+        errors = [RenderResult(I18nMessage("x", {"y": "z"}))]
+        with tempfile_context() as empty_path:
+            result = render_arrow(
+                ArrowTable(),
+                P(),
+                "tab-x",
+                FetchResult(empty_path, errors),
+                self.output_path,
+            )
+        assert_arrow_table_equals(result.table, ArrowTable())
+        self.assertEqual(result.errors, errors)
+
+    def test_render_deprecated_parquet(self):
+        with parquet_file({"A": [1, 2], "B": [3, 4]}) as fetched_path:
+            result = render_arrow(
+                ArrowTable(), P(), "tab-x", FetchResult(fetched_path), self.output_path
+            )
+        assert_arrow_table_equals(result.table, {"A": [1, 2], "B": [3, 4]})
+        self.assertEqual(result.errors, [])
+
+    def test_render_deprecated_parquet_warning(self):
+        errors = [RenderError(I18nMessage.TODO_i18n("truncated table"))]
+        with parquet_file({"A": [1, 2], "B": [3, 4]}) as fetched_path:
+            result = render_arrow(
+                ArrowTable(),
+                P(),
+                "tab-x",
+                FetchResult(fetched_path, errors=errors),
+                self.output_path,
+            )
+        assert_arrow_table_equals(result.table, {"A": [1, 2], "B": [3, 4]})
+        self.assertEqual(result.errors, errors)
+
+    def test_render_deprecated_parquet_has_header_false(self):
+        # This behavior is totally awful, but we support it for backwards
+        # compatibility.
+        #
+        # Back in the day, we parsed during fetch. But has_header can change
+        # between fetch and render. We were lazy, so we made fetch() follow the
+        # most-common path: has_header=True. Then, in render(), we would "undo"
+        # the change if has_header=False. This was lossy. It took a lot of time
+        # to figure it out. It was _never_ wise to code this. Now we need to
+        # support these lossy, mangled files.
+        with parquet_file({"A": [1, 2], "B": [3, 4]}) as fetched_path:
+            result = render_arrow(
+                ArrowTable(),
+                P(has_header=False),
+                "tab-x",
+                FetchResult(fetched_path),
+                self.output_path,
+            )
+        assert_arrow_table_equals(
+            result.table, {"0": ["A", "1", "2"], "1": ["B", "3", "4"]}
+        )
+        self.assertEqual(result.errors, [])
+
+    def test_render_has_header_true(self):
+        with tempfile_context("http") as http_path:
+            with http_path.open("wb") as http_f:
+                httpfile.write(
+                    http_f,
+                    "https://blah",
+                    {"Content-Type": "text/csv"},
+                    io.BytesIO(b"A,B\na,b"),
+                )
+            result = render_arrow(
+                ArrowTable(),
+                P(has_header=True),
+                "tab-x",
+                FetchResult(http_path),
+                self.output_path,
+            )
+        assert_arrow_table_equals(result.table, {"A": ["a"], "B": ["b"]})
+        self.assertEqual(result.errors, [])
+
+    def test_render_has_header_false(self):
+        with tempfile_context("http") as http_path:
+            with http_path.open("wb") as http_f:
+                httpfile.write(
+                    http_f,
+                    "https://blah",
+                    {"Content-Type": "text/csv"},
+                    io.BytesIO(b"1,2\n3,4"),
+                )
+            result = render_arrow(
+                ArrowTable(),
+                P(has_header=False),
+                "tab-x",
+                FetchResult(http_path),
+                self.output_path,
+            )
+        assert_arrow_table_equals(
+            result.table,
+            {
+                "Column 1": pyarrow.array([1, 3], pyarrow.int8()),
+                "Column 2": pyarrow.array([2, 4], pyarrow.int8()),
+            },
+        )
+        self.assertEqual(result.errors, [])
+
+    def test_render_missing_fetch_result_returns_empty(self):
+        result = render_arrow(ArrowTable(), P(), "tab-x", None, self.output_path)
+        assert_arrow_table_equals(result.table, {})
+        self.assertEqual(result.errors, [])
+
+    def test_render_csv_use_url_ext_given_bad_content_type(self):
+        # Use text/plain type and rely on filename detection, as
+        # https://raw.githubusercontent.com/ does
+        with tempfile_context(prefix="fetch-") as http_path:
+            with http_path.open("wb") as http_f:
+                httpfile.write(
+                    http_f,
+                    "https://blah/file.csv",
+                    {"Content-Type": "text/plain"},
+                    # bytes will prove we used "csv" explicitly -- we didn't
+                    # take "text/plain" and decide to use a CSV sniffer to
+                    # find the delimiter.
+                    io.BytesIO(b"A;B\na;b"),
+                )
+            result = render_arrow(
+                ArrowTable(),
+                P(has_header=True),
+                "tab-x",
+                FetchResult(http_path),
+                self.output_path,
+            )
+        assert_arrow_table_equals(result.table, {"A;B": ["a;b"]})
+        self.assertEqual(result.errors, [])
+
+    def test_render_text_plain(self):
+        # guess_mime_type_or_none() treats text/plain specially.
+        with tempfile_context(prefix="fetch-") as http_path:
+            with http_path.open("wb") as http_f:
+                httpfile.write(
+                    http_f,
+                    "https://blah/file.unknownext",
+                    {"Content-Type": "text/plain"},
+                    io.BytesIO(b"A;B\na;b"),
+                )
+            result = render_arrow(
+                ArrowTable(),
+                P(has_header=True),
+                "tab-x",
+                FetchResult(http_path),
+                self.output_path,
+            )
+        self.assertEqual(result.errors, [])
+        assert_arrow_table_equals(result.table, {"A": ["a"], "B": ["b"]})
+
+    def test_render_csv_handle_nonstandard_mime_type(self):
+        # Transform 'application/csv' into 'text/csv', etc.
+        #
+        # Sysadmins sometimes invent MIME types. We hard-code to rewrite fake
+        # MIME types we've seen in the wild that seem unambiguous.
+        with tempfile_context(prefix="fetch-") as http_path:
+            with http_path.open("wb") as http_f:
+                httpfile.write(
+                    http_f,
+                    "https://blah",
+                    {"Content-Type": "application/x-csv"},
+                    io.BytesIO(b"A,B\na,b"),
+                )
+            result = render_arrow(
+                ArrowTable(),
+                P(has_header=True),
+                "tab-x",
+                FetchResult(http_path),
+                self.output_path,
+            )
+        assert_arrow_table_equals(result.table, {"A": ["a"], "B": ["b"]})
+        self.assertEqual(result.errors, [])
+
+    def test_render_json(self):
+        with tempfile_context("fetch-") as http_path:
+            with http_path.open("wb") as http_f:
+                httpfile.write(
+                    http_f,
+                    "https://blah",
+                    {"Content-Type": "application/json"},
+                    io.BytesIO(b'[{"A": "a"}]'),
+                )
+            result = render_arrow(
+                ArrowTable(),
+                P(has_header=True),
+                "tab-x",
+                FetchResult(http_path),
+                self.output_path,
+            )
+        self.assertEqual(result.errors, [])
+        assert_arrow_table_equals(result.table, {"A": ["a"]})
+
+    def test_render_xlsx(self):
+        with tempfile_context("fetch-") as http_path:
+            with http_path.open("wb") as http_f, (TestDataPath / "example.xlsx").open(
+                "rb"
+            ) as xlsx_f:
+                httpfile.write(
+                    http_f, "https://blah", {"Content-Type": XLSX_MIME_TYPE}, xlsx_f
+                )
+            result = render_arrow(
+                ArrowTable(),
+                P(has_header=True),
+                "tab-x",
+                FetchResult(http_path),
+                self.output_path,
+            )
+        self.assertEqual(result.errors, [])
+        assert_arrow_table_equals(result.table, {"foo": [1, 2], "bar": [2, 3]})
+
+    def test_render_xlsx_bad_content(self):
+        with tempfile_context("fetch-") as http_path:
+            with http_path.open("wb") as http_f:
+                httpfile.write(
+                    http_f,
+                    "https://blah",
+                    {"Content-Type": XLSX_MIME_TYPE},
+                    io.BytesIO("ceçi n'est pas une .xlsx".encode("utf-8")),
+                )
+            result = render_arrow(
+                ArrowTable(),
+                P(has_header=True),
+                "tab-x",
+                FetchResult(http_path),
+                self.output_path,
+            )
         self.assertEqual(
             result,
-            (
-                "Error reading Excel file: Unsupported format, or corrupt "
-                "file: Expected BOF record; found b'hi'"
+            RenderResult(
+                ArrowTable(),
+                [
+                    RenderError(
+                        I18nMessage.TODO_i18n(
+                            'Error reading Excel file: Unsupported format, or corrupt file: Expected BOF record; found b"ce\\xc3\\xa7i n\'"'
+                        )
+                    )
+                ],
             ),
         )
-
-    @patch(
-        "cjwkernel.pandas.moduleutils.spooled_data_from_url",
-        fake_spooled_data_from_url(
-            error=aiohttp.ClientResponseError(
-                aiohttp.client.RequestInfo(
-                    url="http://example.com",
-                    method="GET",
-                    headers={},
-                    real_url="http://example.com",
-                ),
-                (),
-                status=404,
-                message="Not Found",
-            )
-        ),
-    )
-    def test_load_404(self):
-        # 404 error should put module in error state
-        fetch_result = fetch(url="http://example.org/x.csv")
-        self.assertEqual(
-            fetch_result, ProcessResult(error="Error from server: 404 Not Found")
-        )
-
-    def test_bad_url(self):
-        fetch_result = fetch(url="not a url")
-        self.assertEqual(fetch_result, ProcessResult(error="Invalid URL"))

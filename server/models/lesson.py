@@ -31,8 +31,9 @@ def _build_inner_html(el: ElementTree, base_href: str) -> str:
 
         * It modifies img src starting with `./` to start with `{base_href}/`
         * It prepends STATIC_URL to img src
-        * It replaces `{{LESSON_FILES_URL}}` with `{base_href}`. (We assume
-          `base_href` has no reserved HTML characters.)
+        * It replaces `{{LESSON_FILES_URL}}` with
+          `{LESSON_FILES_URL}/{base_href}` (Assumes `base_href` has no reserved
+          HTML characters.)
 
     Params:
 
@@ -54,7 +55,7 @@ def _build_inner_html(el: ElementTree, base_href: str) -> str:
     close_tag_begin = outer_html.rindex("<")
     inner_html = outer_html[(open_tag_end + 1) : close_tag_begin]
     inner_html = inner_html.replace(
-        "{{LESSON_FILES_URL}}", settings.STATIC_URL + base_href
+        "{{LESSON_FILES_URL}}", f"{settings.LESSON_FILES_URL}/{base_href}"
     )
 
     return inner_html
@@ -112,7 +113,7 @@ class LessonSectionStep:
     "Test" JavaScript that determines whether the step is complete.
 
     When parsing HTML, LessonSectionStep will replace `{{LESSON_FILES_URL}}`
-    with the lesson's base URL. So you can write a test like:
+    with the lesson-files URL. So you can write a test like:
 
         return (
             workflow.tabs[0].wfModules[0].params.url
@@ -141,7 +142,7 @@ class LessonSectionStep:
                 "missing data-test attribute, which must be JavaScript"
             )
         test_js = test_js.replace(
-            "{{LESSON_FILES_URL}}", settings.STATIC_URL + base_href
+            "{{LESSON_FILES_URL}}", f"{settings.LESSON_FILES_URL}/{base_href}"
         )
 
         return cls(html, highlight, test_js)
