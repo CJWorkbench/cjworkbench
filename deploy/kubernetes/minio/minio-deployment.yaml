@@ -81,6 +81,18 @@ spec:
         - name: etcd-certs
           mountPath: /etc/minio/etcd-ssl
           readOnly: true
+        livenessProbe:
+          httpGet:
+            path: /minio/health/live
+            port: 9000
+          initialDelaySeconds: 20
+          periodSeconds: 20
+        readinessProbe:
+          httpGet:
+            path: /minio/health/ready
+            port: 9000
+          initialDelaySeconds: 20
+          periodSeconds: 20
       volumes:
       - name: minio-gcs-credentials
         secret:
