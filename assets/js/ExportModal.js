@@ -150,7 +150,7 @@ export default class ExportModal extends React.PureComponent {
         </ModalBody>
         <ModalFooter>
           <button type='button' onClick={this.handleClickClose} className='button-blue action-button test-done-button'>
-            <Trans id='js.ExportModal.footer.doneButton'>Done</Trans>
+            <Trans id='js.ExportModal.footer.doneButton' description='Acts as closing button'>Done</Trans>
           </button>
         </ModalFooter>
       </Modal>

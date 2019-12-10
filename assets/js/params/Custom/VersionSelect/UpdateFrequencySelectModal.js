@@ -157,7 +157,7 @@ class UpdateFrequencySelectModal extends React.PureComponent {
                     checked={wantAutofetch}
                     onChange={this.handleChangeAutofetch}
                   />
-                  <div className='radio'><Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.auto.label'>Auto</Trans></div>
+                  <div className='radio'><Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.auto.label' description="Refers to 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title'">Auto</Trans></div>
                 </label>
                 <div className='big-radio-details'>
                   <p><Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.auto.description'>Automatically update this workflow with the newest data (old versions will be saved).</Trans></p>
@@ -219,7 +219,7 @@ class UpdateFrequencySelectModal extends React.PureComponent {
                     checked={!wantAutofetch}
                     onChange={this.handleChangeAutofetch}
                   />
-                  <div className='radio'><Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual.label'>Manual</Trans></div>
+                  <div className='radio'><Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual.label' description="Refers to 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title'">Manual</Trans></div>
                 </label>
                 <div className='big-radio-details'>
                   <p><Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual.description'>Check for new data manually.</Trans></p>

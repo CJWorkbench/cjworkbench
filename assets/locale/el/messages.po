@@ -16,2293 +16,2466 @@ msgstr ""
 
 #: assets/js/Embed.js:99
 msgid "js.Embed.embedCode"
-msgstr ""
+msgstr "Επικολλήστε αυτόν τον κώδικα στην HTML οποιασδήποτε ιστοσελίδας"
 
 #. This should be all-caps for styling reasons
 #: assets/js/Embed.js:98
 msgid "js.Embed.embedThisChart"
-msgstr ""
+msgstr "ΕΝΣΩΜΑΤΩΣΗ ΑΥΤΟΥ ΤΟΥ ΓΡΑΦΗΜΑΤΟΣ"
 
 #: assets/js/Embed.js:77
 msgid "js.Embed.metadata.author"
-msgstr ""
+msgstr "από τον/την {0}"
 
 #. {timeAgo} will contain a time difference (i.e. something like '4h ago')
 #: assets/js/Embed.js:84
 msgid "js.Embed.metadata.updated"
-msgstr ""
+msgstr "Ενημερώθηκε {timeAgo}"
 
 #. This should be all-caps for styling reasons
 #: assets/js/Embed.js:37
 msgid "js.Embed.workflowNotAvailable.footer.logo"
-msgstr ""
+msgstr "WORKBENCH"
 
 #: assets/js/Embed.js:29
 msgid "js.Embed.workflowNotAvailable.title"
-msgstr ""
+msgstr "Αυτή η ροή εργασιών δεν είναι διαθέσιμη"
 
 #: assets/js/ErrorBoundary.js:23
 msgid "js.ErrorBoundary.pleaseRefreshPage"
-msgstr ""
+msgstr "Ανανεώστε τη σελίδα."
 
 #: assets/js/ErrorBoundary.js:21
 msgid "js.ErrorBoundary.somethingIsWrong"
-msgstr ""
+msgstr "Υπάρχει κάποιο πρόβλημα."
 
 #. This should be all-caps for styling reasons
 #: assets/js/ExportModal.js:62
 msgid "js.ExportModal.csvCopyLink.copiedToClipboard"
-msgstr ""
+msgstr "Ο ΣΥΝΔΕΣΜΟΣ ΤΟΥ CSV ΑΝΤΙΓΡΑΦΗΚΕ ΣΤΟ ΠΡΟΧΕΙΡΟ"
 
 #. This should be all-caps for styling reasons
 #: assets/js/ExportModal.js:71
 msgid "js.ExportModal.csvCopyLink.copyLiveLink"
-msgstr ""
+msgstr "ΑΝΤΙΓΡΑΦΗ ΔΥΝΑΜΙΚΟΥ ΣΥΝΔΕΣΜΟΥ"
 
+#. Acts as closing button
 #: assets/js/ExportModal.js:153
 msgid "js.ExportModal.footer.doneButton"
-msgstr ""
+msgstr "Ολοκληρώθηκε"
 
 #. This should be all-caps for styling reasons
 #: assets/js/ExportModal.js:111
 msgid "js.ExportModal.header.title"
-msgstr ""
+msgstr "ΕΞΑΓΩΓΗ ΔΕΔΟΜΕΝΩΝ"
 
 #. This should be all-caps for styling reasons
 #: assets/js/ExportModal.js:84
 msgid "js.ExportModal.jsonCopyLink.copiedToClipboard"
-msgstr ""
+msgstr "Ο ΣΥΝΔΕΣΜΟΣ ΤΗΣ ΡΟΗΣ JSON ΑΝΤΙΓΡΑΦΗΚΕ ΣΤΟ ΠΡΟΧΕΙΡΟ"
 
 #. This should be all-caps for styling reasons
 #: assets/js/ExportModal.js:93
 msgid "js.ExportModal.jsonCopyLink.copyLiveLink"
-msgstr ""
+msgstr "ΑΝΤΙΓΡΑΦΗ ΔΥΝΑΜΙΚΟΥ ΣΥΝΔΕΣΜΟΥ"
 
 #. This should be all-caps for styling reasons
 #: assets/js/ExportModal.js:118
 msgid "js.ExportModal.type.CSV"
-msgstr ""
+msgstr "CSV"
 
 #. This should be all-caps for styling reasons
 #: assets/js/ExportModal.js:135
 msgid "js.ExportModal.type.JSON"
-msgstr ""
+msgstr "ΡΟΗ JSON"
 
 #: assets/js/ImportModuleFromGitHub.js:123
 msgid "js.ImportModuleFromGithub.footer.closeButton"
-msgstr ""
+msgstr "Κλείσιμο"
 
 #: assets/js/ImportModuleFromGitHub.js:97
 msgid "js.ImportModuleFromGithub.footer.importButton"
-msgstr ""
+msgstr "Εισαγωγή"
 
 #: assets/js/ImportModuleFromGitHub.js:113
 msgid "js.ImportModuleFromGithub.public.buildingModuleTutorialLink"
-msgstr ""
+msgstr "Μάθετε πώς μπορείτε να δημιουργήσετε τη δική σας μονάδα (module) <0>εδώ</0>"
 
 #: assets/js/ImportModuleFromGitHub.js:109
 msgid "js.ImportModuleFromGithub.public.header.title"
-msgstr ""
+msgstr "Εισαγωγή Προσαρμοσμένης Μονάδας (Module)"
 
 #: assets/js/ImportModuleFromGitHub.js:86
 msgid "js.ImportModuleFromGithub.staff.buildingModuleTutorialLink"
-msgstr ""
+msgstr "Μάθετε πώς μπορείτε να δημιουργήσετε τη δική σας μονάδα (module) <0>εδώ</0>"
 
 #: assets/js/ImportModuleFromGitHub.js:66
 msgid "js.ImportModuleFromGithub.staff.header.title"
-msgstr ""
+msgstr "Εισαγωγή Προσαρμοσμένης Μονάδας (Module)"
 
+#. This is a success message
 #: assets/js/ImportModuleFromGitHub.js:47
 msgid "js.ImportModuleFromGithub.status.importedModule"
-msgstr ""
+msgstr "Έγινε εισαγωγή της μονάδας {module} στην κατηγορία {category}"
 
 #: assets/js/ImportModuleFromGitHub.js:33
 msgid "js.ImportModuleFromGithub.status.processing"
-msgstr ""
+msgstr "Γίνεται επεξεργασία..."
 
 #: assets/js/OutputIframe.js:147
 msgid "js.OutputIframe.embed.embedCode"
-msgstr ""
+msgstr "Επικολλήστε αυτόν τον κώδικα στην HTML οποιασδήποτε ιστοσελίδας"
 
 #. This should be all-caps for styling reasons
 #: assets/js/OutputIframe.js:140
 msgid "js.OutputIframe.embed.header.title"
-msgstr ""
+msgstr "ΕΝΣΩΜΑΤΩΣΗ ΑΥΤΟΥ ΤΟΥ ΓΡΑΦΗΜΑΤΟΣ"
 
 #: assets/js/OutputIframe.js:157
 msgid "js.OutputIframe.footer.OKButton"
-msgstr ""
+msgstr "OK"
 
 #: assets/js/OutputIframe.js:123
 msgid "js.OutputIframe.footer.cancelButton"
-msgstr ""
+msgstr "Ακύρωση"
 
 #: assets/js/OutputIframe.js:126
 msgid "js.OutputIframe.footer.setPublicButton"
-msgstr ""
+msgstr "Ορισμός ως δημόσιας"
 
 #: assets/js/OutputIframe.js:178
 msgid "js.OutputIframe.getEmbeddableUrl.hoverText"
-msgstr ""
+msgstr "Απόκτηση ενσωματώσιμης διεύθυνσης URL"
 
 #. This should be all-caps for styling reasons
 #: assets/js/OutputIframe.js:106
 msgid "js.OutputIframe.private.header.title"
-msgstr ""
+msgstr "ΚΟΙΝΟΠΟΙΗΣΗ ΑΥΤΗΣ ΤΗΣ ΡΟΗΣ ΕΡΓΑΣΙΩΝ"
 
 #: assets/js/OutputIframe.js:116
 msgid "js.OutputIframe.private.setToPublic"
 msgstr ""
+"Θα ρυθμίσετε αυτή τη ροή εργασιών ως Δημόσια για να την κοινοποιήσετε; "
+"Όποιος διαθέτει αυτή τη διεύθυνση URL θα μπορεί να έχει πρόσβαση και να "
+"την αντιγράψει."
 
 #: assets/js/OutputIframe.js:113
 msgid "js.OutputIframe.private.workflowIsPrivate"
-msgstr ""
+msgstr "Αυτή η ροή εργασιών είναι αυτή τη στιγμή ιδιωτική"
 
 #: assets/js/Report/Dashboard.js:11
 msgid "js.Report.Dashboard.addChartstoTabs"
-msgstr ""
+msgstr "Προσθέστε γραφήματα σε καρτέλες και θα εμφανιστούν εδώ."
 
 #: assets/js/Report/ShareCard.js:21
 msgid "js.Report.ShareCard.accessibilityDescription.private"
-msgstr ""
+msgstr "Μόνο συνεργάτες μπορούν να δουν αυτή την έκθεση"
 
 #: assets/js/Report/ShareCard.js:19
 msgid "js.Report.ShareCard.accessibilityDescription.public"
-msgstr ""
+msgstr "Οποιοσδήποτε μπορεί να δει αυτή την έκθεση"
 
+#. As in 'Edit privacy settings'
 #: assets/js/Report/ShareCard.js:24
 msgid "js.Report.ShareCard.editPrivacy.sharebutton"
-msgstr ""
+msgstr "Επεξεργασία απορρήτου"
 
+#. As in 'URL of report'
 #: assets/js/Report/ShareCard.js:27
 msgid "js.Report.ShareCard.reportUrl.header"
-msgstr ""
+msgstr "Διεύθυνση URL αναφοράς"
 
 #: assets/js/Report/ShareCard.js:14
 msgid "js.Report.ShareCard.sharingStatus.private"
-msgstr ""
+msgstr "Αυτή η ροή εργασιών είναι ιδιωτική"
 
 #: assets/js/Report/ShareCard.js:12
 msgid "js.Report.ShareCard.sharingStatus.public"
-msgstr ""
+msgstr "Αυτή η ροή εργασιών είναι δημόσια"
 
 #: assets/js/ShareModal/Modal.js:47
 msgid "js.ShareModal.Modal.collaborators"
-msgstr ""
+msgstr "Συνεργάτες"
 
 #: assets/js/ShareModal/Modal.js:68
 msgid "js.ShareModal.Modal.footer.closeButton"
-msgstr ""
+msgstr "Κλείσιμο"
 
 #. This should be all-caps for styling reasons
 #: assets/js/ShareModal/Modal.js:35
 msgid "js.ShareModal.Modal.header.title"
-msgstr ""
+msgstr "ΡΥΘΜΙΣΕΙΣ ΚΟΙΝΟΠΟΙΗΣΗΣ"
 
 #: assets/js/ShareModal/Modal.js:40
 msgid "js.ShareModal.Modal.shareWithTheWorld"
-msgstr ""
+msgstr "Κοινοποίηση σε όλους"
 
 #: assets/js/ShareModal/NewAclEntry.js:43
 msgid "js.ShareModal.NewAclEntry.grantAccess"
-msgstr ""
+msgstr "Επιτρέψτε πρόσβαση"
 
 #: assets/js/ShareModal/OwnerAclEntry.js:8
 msgid "js.ShareModal.OwnerAclEntry.owner"
-msgstr ""
+msgstr "Ιδιοκτήτης"
 
 #: assets/js/ShareModal/PublicPrivate.js:8
 msgid "js.ShareModal.PublicPrivate.description.private"
-msgstr ""
+msgstr "Μόνο συνεργάτες μπορούν να δουν αυτή τη ροή εργασιών."
 
 #: assets/js/ShareModal/PublicPrivate.js:7
 msgid "js.ShareModal.PublicPrivate.description.public"
 msgstr ""
+"Οποιοσδήποτε στο διαδίκτυο μπορεί να δει και να αντιγράψει αυτή τη ροή "
+"εργασιών."
 
 #: assets/js/ShareModal/PublicPrivate.js:18
 msgid "js.ShareModal.PublicPrivate.descriptionWithToggle"
 msgstr ""
+"Οποιοσδήποτε μπορεί να δει και να αντιγράψει αυτή τη ροή εργασιών, και να"
+" δει το email σας."
 
 #: assets/js/ShareModal/Role.js:8 assets/js/ShareModal/Role.js:15
 #: assets/js/ShareModal/Role.js:19
 msgid "js.ShareModal.Role.canEdit"
-msgstr ""
+msgstr "Μπορεί να επεξεργαστεί"
 
 #: assets/js/ShareModal/Role.js:8 assets/js/ShareModal/Role.js:15
 #: assets/js/ShareModal/Role.js:18
 msgid "js.ShareModal.Role.canView"
-msgstr ""
+msgstr "Μπορεί να δει"
 
 #: assets/js/ShareModal/ShareButton.js:23
 msgid "js.ShareModal.ShareButton.button.hoverText"
-msgstr ""
+msgstr "Αλλαγή κοινής χρήσης ροής εργασιών"
 
 #: assets/js/ShareModal/Url.js:77
 msgid "js.ShareModal.Url.copyToClipboardButton"
-msgstr ""
+msgstr "Αντιγραφή στο πρόχειρο"
 
 #: assets/js/ShareModal/Url.js:69
 msgid "js.ShareModal.Url.heading.private"
-msgstr ""
+msgstr "Ιδιωτικός σύνδεσμος (μόνο για συνεργάτες)"
 
 #: assets/js/ShareModal/Url.js:68
 msgid "js.ShareModal.Url.heading.public"
-msgstr ""
+msgstr "Δημόσιος σύνδεσμος (προσβάσιμος σε όλους)"
 
 #: assets/js/ShareModal/Url.js:57
 msgid "js.ShareModal.Url.socialLinks.facebook"
-msgstr ""
+msgstr "Κοινοποίηση"
 
 #. The parameter will be a mention to workbench account (i.e. "@cjworkbench")
 #: assets/js/ShareModal/Url.js:43
 msgid "js.ShareModal.Url.socialLinks.shareText"
 msgstr ""
+"Δείτε αυτό το γράφημα που δημιούργησα χρησιμοποιώντας το "
+"{workbenchMention}:"
 
 #: assets/js/ShareModal/Url.js:52
 msgid "js.ShareModal.Url.socialLinks.twitter"
-msgstr ""
+msgstr "Κοινοποίηση"
 
 #: assets/js/UndoRedoButtons.js:63
 msgid "js.UndoRedoButtons.redo.hoverText"
-msgstr ""
+msgstr "Επανάληψη"
 
 #: assets/js/UndoRedoButtons.js:62
 msgid "js.UndoRedoButtons.undo.hoverText"
-msgstr ""
+msgstr "Αναίρεση"
 
 #. The tag adds emphasis
 #: assets/js/UnhandledErrorReport.js:20
 msgid "js.UnhandledErrorReport.Intercom.helpText.weOpenedAWindow"
 msgstr ""
+"Ανοίξαμε ένα παράθυρο μηνύματος και συμπεριλάβαμε λεπτομέρειες για τους "
+"προγραμματιστές μας για να διορθώσουν το πρόβλημα. <0>Στείλτε το "
+"μήνυμα<0>."
 
 #: assets/js/UnhandledErrorReport.js:71
 msgid "js.UnhandledErrorReport.actions.refreshPageButton"
-msgstr ""
+msgstr "Ανανέωση σελίδας"
 
 #: assets/js/UnhandledErrorReport.js:67
 msgid "js.UnhandledErrorReport.content.debuggingDetails"
-msgstr ""
+msgstr "Στοιχεία αποσφαλμάτωσης (για αποστολή):"
 
 #: assets/js/UnhandledErrorReport.js:63
 msgid "js.UnhandledErrorReport.content.oops"
-msgstr ""
+msgstr "Υπάρχει πρόβλημα."
 
 #: assets/js/UnhandledErrorReport.js:64
 msgid "js.UnhandledErrorReport.content.pleaseFollowSteps"
 msgstr ""
+"Ακολουθήστε αυτά τα απλά βήματα για να μας βοηθήσετε να διορθώσουμε το "
+"πρόβλημα."
 
 #: assets/js/UnhandledErrorReport.js:66
 msgid "js.UnhandledErrorReport.content.thankYou"
 msgstr ""
+"ΣΑΣ ΕΥΧΑΡΙΣΤΩ! Ανανεώστε τη σελίδα για να επιστρέψετε στη ροή εργασιών "
+"σας."
 
 #. The parameter is an email address and the tag is a 'mailto:' url
 #: assets/js/UnhandledErrorReport.js:47
 msgid "js.UnhandledErrorReport.helpText.debuggingDetails"
 msgstr ""
+"Αντιγράψτε τις λεπτομέρειες εντοπισμού σφαλμάτων παρακάτω και στείλτε τις"
+" στο <0>{email}<0>."
 
 #: assets/js/UnhandledErrorReport.js:21 assets/js/UnhandledErrorReport.js:52
 msgid "js.UnhandledErrorReport.helpText.pleaseDescribeYourActions"
 msgstr ""
+"Βοηθά αν μπορείτε να περιγράψετε τι κάνατε προτού εμφανιστεί αυτό το "
+"σφάλμα."
 
 #: assets/js/WfHamburgerMenu.js:56
 msgid "js.WfHamburgerMenu.menu.home"
-msgstr ""
+msgstr "Αρχική"
 
 #: assets/js/WfHamburgerMenu.js:53
 msgid "js.WfHamburgerMenu.menu.importModule"
-msgstr ""
+msgstr "Εισαγωγή Μονάδας (Module)"
 
 #: assets/js/WfHamburgerMenu.js:59
 msgid "js.WfHamburgerMenu.menu.logout"
-msgstr ""
+msgstr "Αποσυνδέση"
 
 #: assets/js/WfHamburgerMenu.js:52
 msgid "js.WfHamburgerMenu.menu.myWorkflows"
-msgstr ""
+msgstr "Οι ροές εργασιών μου"
 
 #: assets/js/WfHamburgerMenu.js:45
 msgid "js.WfHamburgerMenu.toggle.hoverText"
-msgstr ""
+msgstr "μενού"
 
 #: assets/js/Workflow.js:38
 msgid "js.Workflow.isAnonymous"
-msgstr ""
+msgstr "Δοκιμαστική ροή εργασιών"
 
 #: assets/js/Workflow.js:47
 msgid "js.Workflow.isShared"
-msgstr ""
+msgstr "Παρακολουθείτε μια ροή εργασιών σε κοινή χρήση με άλλους"
 
 #: assets/js/Workflow.js:20
 msgid "js.Workflow.suggestion.duplicateToSaveChanges"
-msgstr ""
+msgstr "Δημιουργία αντιγράφου για αποθήκευση των αλλαγών"
 
 #. The tag is a link to the login page
 #: assets/js/Workflow.js:26
 msgid "js.Workflow.suggestion.signInToSaveChanges"
-msgstr ""
+msgstr "<0>Συνδεθείτε</0> για να αποθηκεύσετε τις αλλαγές σας"
 
 #: assets/js/WorkflowEditor/AddData/Modal.js:26
 msgid "js.WorkflowEditor.AddData.Modal.closeButton.hoverText"
-msgstr ""
+msgstr "Κλείσιμο"
 
 #. This should be all-caps for styling reasons
 #: assets/js/WorkflowEditor/AddData/Modal.js:21
 msgid "js.WorkflowEditor.AddData.Modal.header.title"
-msgstr ""
+msgstr "ΕΠΙΛΕΞΤΕ ΠΗΓΗ ΔΕΔΟΜΕΝΩΝ"
 
 #: assets/js/WorkflowEditor/AddData/Modules.js:15
 msgid "js.WorkflowEditor.AddData.Modules.noModulesFound"
-msgstr ""
+msgstr "Δεν υπάρχει σύνδεση δεδομένων που να αντιστοιχεί στην αναζήτησή σας."
 
 #: assets/js/WorkflowEditor/AddData/Search.js:24
 msgid "js.WorkflowEditor.AddData.Search.clearButton.hoverText"
-msgstr ""
+msgstr "Καθαρισμός αναζήτησης"
 
 #: assets/js/WorkflowEditor/AddData/Search.js:16
 msgid "js.WorkflowEditor.AddData.Search.placeholder"
-msgstr ""
+msgstr "Αναζήτηση…"
 
 #. This should be all-caps for styling reasons
 #: assets/js/WorkflowEditor/AddData/Button.js:26
 msgid "js.WorkflowEditor.AddData.button"
-msgstr ""
+msgstr "ΠΡΟΣΘΗΚΗ ΔΕΔΟΜΕΝΩΝ"
 
 #: assets/js/WorkflowEditor/DataVersionModal.js:196
 msgid "js.WorkflowEditor.DataVersionModal.ModalFooter.actions.loadButton"
-msgstr ""
+msgstr "Φόρτωση"
 
 #: assets/js/WorkflowEditor/DataVersionModal.js:166
 msgid "js.WorkflowEditor.DataVersionModal.ModalHeader"
-msgstr ""
+msgstr "Εκδόσεις δεδομένων"
 
 #: assets/js/WorkflowEditor/DataVersionModal.js:100
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.description.emailOnOutputChange"
-msgstr ""
+msgstr "Θα πάρετε μήνυμα ηλ. ταχυδρομείου εάν αλλάξει η έξοδος αυτής της μονάδας"
 
 #: assets/js/WorkflowEditor/DataVersionModal.js:101
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.description.turnAlertsOn"
 msgstr ""
+"Ενεργοποιήστε τις ειδοποιήσεις για να παίρνετε μήνυμα ηλ. ταχυδρομείου "
+"όταν αλλάζει η έξοδος αυτής της μονάδας"
 
 #: assets/js/WorkflowEditor/DataVersionModal.js:108
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.options.turnOff"
-msgstr ""
+msgstr "Απενεργοποίηση"
 
 #: assets/js/WorkflowEditor/DataVersionModal.js:108
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.options.turnOn"
-msgstr ""
+msgstr "Ενεργοποίηση"
 
 #. The tag adds emphasis
 #: assets/js/WorkflowEditor/DataVersionModal.js:95
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.status.alertsOff"
-msgstr ""
+msgstr "Οι ειδοποιήσεις είναι <0>απενεργοποιημένες</0>"
 
 #. The tag adds emphasis
 #: assets/js/WorkflowEditor/DataVersionModal.js:94
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.status.alertsOn"
-msgstr ""
+msgstr "Οι ειδοποιήσεις είναι <0>ενεργοποιημένες</0>"
 
 #. This should be all-caps for styling reasons
 #: assets/js/WorkflowEditor/ModuleSearch/Button.js:43
 msgid "js.WorkflowEditor.ModuleSearch.Button.addStep"
-msgstr ""
+msgstr "ΠΡΟΣΘΗΚΗ ΒΗΜΑΤΟΣ"
 
 #: assets/js/WorkflowEditor/ModuleSearch/Prompt.js:49
 msgid "js.WorkflowEditor.ModuleSearch.Prompt.closeButton.hoverText"
-msgstr ""
+msgstr "Κλείσιμο αναζήτησης"
 
 #: assets/js/WorkflowEditor/ModuleSearch/Prompt.js:41
 msgid "js.WorkflowEditor.ModuleSearch.Prompt.placeholder"
-msgstr ""
+msgstr "Αναζήτηση…"
 
 #: assets/js/WorkflowEditor/ModuleStack.js:138
 msgid "js.WorkflowEditor.ModuleStack.EmptyReadOnlyModuleStack"
-msgstr ""
+msgstr "Αυτή η καρτέλα δεν έχει βήματα."
 
 #: assets/js/WorkflowEditor/OutputPane.js:104
 msgid "js.WorkflowEditor.OutputPane.showingInput.becauseError"
 msgstr ""
+"Αυτά ήταν τα δεδομένα που οδήγησαν σε σφάλμα. Διορθώστε το σφάλμα στο "
+"αριστερό πλαίσιο."
 
 #. This is a link to a report
 #: assets/js/WorkflowEditor/PaneSelect.js:20
 msgid "js.WorkflowEditor.PaneSelect.nav.report"
-msgstr ""
+msgstr "Αναφορά"
 
 #: assets/js/WorkflowEditor/PaneSelect.js:15
 msgid "js.WorkflowEditor.PaneSelect.nav.reportPlaceholder"
-msgstr ""
+msgstr "Αναφορά"
 
 #: assets/js/WorkflowEditor/Tabs/NewTabPrompt.js:14
 msgid "js.WorkflowEditor.Tabs.NewTabPrompt.createTab.title"
-msgstr ""
+msgstr "Δημιουργία καρτέλας"
 
 #: assets/js/WorkflowEditor/Tabs/TabDropdown.js:20
 msgid "js.WorkflowEditor.Tabs.TabDropdown.menu.delete"
-msgstr ""
+msgstr "Διαγραφή"
 
 #: assets/js/WorkflowEditor/Tabs/TabDropdown.js:17
 msgid "js.WorkflowEditor.Tabs.TabDropdown.menu.duplicate"
-msgstr ""
+msgstr "Δημιουργία αντιγράφου"
 
 #: assets/js/WorkflowEditor/Tabs/TabDropdown.js:14
 msgid "js.WorkflowEditor.Tabs.TabDropdown.menu.rename"
-msgstr ""
+msgstr "Μετονομασία"
 
 #. The tab prefix will be used as the first part of the default name of tabs,
 #. i.e. if the tab prefix is 'Tab', the default names can be 'Tab 1', 'Tab 2',
 #. etc
 #: assets/js/WorkflowEditor/Tabs/Tabs.js:33
 msgid "js.WorkflowEditor.Tabs.create.defaultPrefix"
-msgstr ""
+msgstr "Καρτέλα"
 
 #: assets/js/WorkflowEditor/wfmodule/DeprecationNotice.js:12
 msgid "js.WorkflowEditor.wfmodule.DeprecationNotice.learnHowToReplace"
-msgstr ""
+msgstr "Μάθετε πώς να αντικαταστήσετε αυτό το βήμα"
 
 #: assets/js/WorkflowEditor/wfmodule/WfModule.js:354
 msgid "js.WorkflowEditor.wfmodule.EditableNotes.placeholder"
-msgstr ""
+msgstr "Πληκτρολογήστε μια σημείωση..."
 
+#. When clicked, this opens a menu with more actions.
 #: assets/js/WorkflowEditor/wfmodule/WfModuleContextMenu.js:17
-msgid "js.WorkflowEditor.wfmodule.WfModuleContextMenu.more"
-msgstr ""
+msgid "js.WorkflowEditor.wfmodule.WfModuleContextMenu.more.hoverText"
+msgstr "περισσότερα"
 
 #: assets/js/WorkflowEditor/wfmodule/WfModule.js:239
 msgid "js.WorkflowEditor.wfmodule.ZenMode.enter"
-msgstr ""
+msgstr "είσοδος σε λειτουργία Zen"
 
 #: assets/js/WorkflowEditor/wfmodule/WfModule.js:239
 msgid "js.WorkflowEditor.wfmodule.ZenMode.exit"
-msgstr ""
+msgstr "έξοδος από λειτουργία Zen"
 
 #: assets/js/WorkflowEditor/wfmodule/WfModule.js:371
 msgid "js.WorkflowEditor.wfmodule.alert.disabled"
-msgstr ""
+msgstr "Οι ειδοποιήσεις ηλ. ταχυδρομείου έχουν απενεργοποιηθεί"
 
 #: assets/js/WorkflowEditor/wfmodule/WfModule.js:371
 msgid "js.WorkflowEditor.wfmodule.alert.enabled"
-msgstr ""
+msgstr "Οι ειδοποιήσεις ηλ. ταχυδρομείου είναι ενεργοποιημένες"
 
 #: assets/js/WorkflowEditor/wfmodule/WfModule.js:383
 msgid "js.WorkflowEditor.wfmodule.help.hoverText"
-msgstr ""
+msgstr "Βοήθεια για αυτή τη μονάδα (module)"
 
 #: assets/js/WorkflowEditor/wfmodule/WfModule.js:393
 msgid "js.WorkflowEditor.wfmodule.notes.edit.hoverText"
-msgstr ""
+msgstr "Επεξεργασία σημείωσης"
 
 #: assets/js/WorkflowEditor/wfmodule/WfModuleContextMenu.js:22
 msgid "js.WorkflowEditor.wfmodule.wfModuleContextMenu.delete"
-msgstr ""
+msgstr "Διαγραφή"
 
 #: assets/js/WorkflowEditor/wfmodule/WfModuleContextMenu.js:21
 msgid "js.WorkflowEditor.wfmodule.wfModuleContextMenu.exportData"
-msgstr ""
+msgstr "Εξαγωγή δεδομένων"
 
 #: assets/js/WorkflowNavBar.js:22
 msgid "js.WorkflowNavBar.LessonCourse.Lesson.title"
-msgstr ""
+msgstr "Εκπαίδευση"
 
 #. {timeAgo} will contain something like '4h ago'
 #: assets/js/WorkflowNavBar.js:59
 msgid "js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.lastUpdated"
-msgstr ""
+msgstr "Ενημερώθηκε {timeAgo}"
 
 #: assets/js/WorkflowNavBar.js:54
 msgid "js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.owner"
-msgstr ""
+msgstr "από {owner}"
 
 #: assets/js/WorkflowNavBar.js:67
 msgid "js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.visibility.private"
-msgstr ""
+msgstr "Ιδιωτική"
 
 #: assets/js/WorkflowNavBar.js:67
 msgid "js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.visibility.public"
-msgstr ""
+msgstr "Δημόσια"
 
 #: assets/js/WorkflowNavBar.js:208
 msgid "js.WorkflowNavBar.duplicate.button"
-msgstr ""
+msgstr "Δημιουργία αντιγράφου"
 
 #: assets/js/WorkflowNavBar.js:210
 msgid "js.WorkflowNavBar.share.shareButton"
-msgstr ""
+msgstr "Κοινοποίηση"
 
 #: assets/js/WorkflowNavBar.js:177
 msgid "js.WorkflowNavBar.signIn.accountLink"
-msgstr ""
+msgstr "Σύνδεση"
 
 #. This is used in navigation bar. It should be all-caps for styling reasons.
-#: assets/js/Workflows/Navbar.js:39
+#: assets/js/Workflows/Navbar.js:40
 msgid "js.Workflows.NavBar.links.training"
-msgstr ""
+msgstr "ΕΚΠΑΙΔΕΥΣΗ"
 
 #. This is used in navigation bar. It should be all-caps for styling reasons.
-#: assets/js/Workflows/Navbar.js:36
+#: assets/js/Workflows/Navbar.js:37
 msgid "js.Workflows.NavBar.links.workflows"
-msgstr ""
+msgstr "ΡΟΕΣ ΕΡΓΑΣΙΩΝ"
 
 #: assets/js/Workflows/SortMenu.js:34
 msgid "js.Workflows.SortMenu.alphabetical.dropdownItem"
-msgstr ""
+msgstr "Αλφαβητική"
 
+#. Last update descending
 #: assets/js/Workflows/SortMenu.js:31
 msgid "js.Workflows.SortMenu.lastModified.dropdownItem"
-msgstr ""
+msgstr "Πιο πρόσφατη τροποποίηση"
 
+#. Last update ascending
 #: assets/js/Workflows/SortMenu.js:32
 msgid "js.Workflows.SortMenu.oldestModified.dropdownItem"
-msgstr ""
+msgstr "Λιγότερο πρόσφατη τροποποίηση"
 
 #: assets/js/Workflows/SortMenu.js:35
 msgid "js.Workflows.SortMenu.reverseAlphabet.dropdownItem"
-msgstr ""
+msgstr "Αντίστροφη αλφαβητική"
 
 #: assets/js/Workflows/SortMenu.js:28
 msgid "js.Workflows.SortMenu.sort.DropdownTitle"
-msgstr ""
+msgstr "Ταξινόμηση"
 
 #: assets/js/Workflows/WorkflowContextMenu.js:40
 msgid "js.Workflows.WorkflowContextMenu.delete"
-msgstr ""
+msgstr "Διαγραφή"
 
 #: assets/js/Workflows/WorkflowContextMenu.js:35
 msgid "js.Workflows.WorkflowContextMenu.duplicate"
-msgstr ""
+msgstr "Δημιουργία αντιγράφου"
 
 #: assets/js/Workflows/WorkflowLists.js:51
 msgid "js.Workflows.WorkflowLists.createYourFirtsWorkflow.button"
-msgstr ""
+msgstr "Δημιουργήστε την πρώτη σας ροή εργασιών"
 
 #: assets/js/Workflows/WorkflowLists.js:111
 msgid "js.Workflows.WorkflowLists.nav.myWorkflows"
-msgstr ""
+msgstr "Οι ροές εργασιών μου"
 
 #: assets/js/Workflows/WorkflowLists.js:113
 msgid "js.Workflows.WorkflowLists.nav.recipes"
-msgstr ""
+msgstr "Συνταγές"
 
+#. As in 'Workflows shared with me'
 #: assets/js/Workflows/WorkflowLists.js:112
 msgid "js.Workflows.WorkflowLists.nav.sharedWithMe"
-msgstr ""
+msgstr "Κοινοποιημένες σε μένα"
 
 #: assets/js/Workflows/WorkflowLists.js:76
-msgid "js.Workflows.WorkflowLists.publisheNewRecipes"
-msgstr ""
+msgid "js.Workflows.WorkflowLists.publishNewRecipes"
+msgstr "Δημοσίευση νέων συνταγών μέσω του διαχειριστή Django"
 
 #: assets/js/Workflows/WorkflowLists.js:64
 msgid "js.Workflows.WorkflowLists.workflowsWillAppearHere"
-msgstr ""
+msgstr "Οι ροές εργασιών στις οποίες έχετε συνεργαστεί θα εμφανίζονται εδώ"
 
 #: assets/js/Workflows/WorkflowMetadata.js:50
 msgid "js.Workflows.WorkflowMetadata.changePrivacy.button"
-msgstr ""
+msgstr "Αλλαγή απορρήτου"
 
 #: assets/js/Workflows/WorkflowMetadata.js:41
 msgid "js.Workflows.WorkflowMetadata.owner"
-msgstr ""
+msgstr "από {owner}"
 
 #. The parameter will contain a time difference (i.e. something like '5h ago')
 #: assets/js/Workflows/WorkflowMetadata.js:64
 msgid "js.Workflows.WorkflowMetadata.update"
-msgstr ""
+msgstr "Ενημερώθηκε {timeAgo}"
 
 #: assets/js/Workflows/WorkflowMetadata.js:54
 msgid "js.Workflows.WorkflowMetadata.visibility.private"
-msgstr ""
+msgstr "ιδιωτική"
 
 #: assets/js/Workflows/WorkflowMetadata.js:52
 msgid "js.Workflows.WorkflowMetadata.visibility.public"
-msgstr ""
+msgstr "δημόσια"
 
 #: assets/js/Workflows/index.js:203
 msgid "js.Workflows.createWorkflowButton"
-msgstr ""
+msgstr "Δημιουργία ροής εργασιών"
 
 #: assets/js/Workflows/index.js:95
 msgid "js.Workflows.delete.permanentyDeleteWarning"
-msgstr ""
+msgstr "Να διαγραφεί μόνιμα αυτή η ροή εργασιών;"
 
 #: assets/js/Workflows/index.js:200
 msgid "js.Workflows.learnHowToWorkWithData"
-msgstr ""
+msgstr "Μάθετε πώς να εργάζεστε με δεδομένα χωρίς κωδικοποίηση"
 
 #. This should be all-caps for styling reasons
 #: assets/js/Workflows/index.js:194
 msgid "js.Workflows.new"
-msgstr ""
+msgstr "ΝΕΟ"
 
 #. This should be all-caps for styling reasons
 #: assets/js/Workflows/index.js:197
 msgid "js.Workflows.training.title"
-msgstr ""
+msgstr "ΕΚΠΑΙΔΕΥΣΗ"
 
 #: assets/js/i18n/locales.js:5
 msgid "js.i18n.locales.el"
-msgstr ""
+msgstr "Ελληνικά"
 
 #: assets/js/i18n/locales.js:4
 msgid "js.i18n.locales.en"
-msgstr ""
+msgstr "Αγγλικά"
 
 #: assets/js/lessons/LessonFooter.js:41
 msgid "js.lessons.LessonFooter.training.link"
-msgstr ""
+msgstr "Εκπαίδευση"
 
+#. As in 'next step'
 #: assets/js/lessons/LessonNav.js:54
 msgid "js.lessons.LessonNav.next.button"
-msgstr ""
+msgstr "Επόμενο"
 
+#. As in 'previous step'
 #: assets/js/lessons/LessonNav.js:39
 msgid "js.lessons.LessonNav.previous.button"
-msgstr ""
+msgstr "Προηγούμενο"
 
 #: assets/js/lessons/LessonSection.js:70
 msgid "js.lessons.LessonSection.training.link"
-msgstr ""
+msgstr "Εκπαίδευση"
 
 #: assets/js/params/Column.js:46
 msgid "js.params.Column.select.placeholder"
-msgstr ""
+msgstr "Επιλογή"
 
 #: assets/js/params/Custom/Aggregations/Aggregation.js:67
 msgid "js.params.Custom.Aggregations.Aggregation.placeholder.default"
-msgstr ""
+msgstr "(Προεπιλογή)"
 
 #: assets/js/params/Custom/Aggregations/Aggregation.js:66
 msgid "js.params.Custom.Aggregations.Aggregation.placeholder.first"
-msgstr ""
+msgstr "Πρώτο στη στήλη {colname}"
 
 #: assets/js/params/Custom/Aggregations/Aggregation.js:65
 msgid "js.params.Custom.Aggregations.Aggregation.placeholder.max"
-msgstr ""
+msgstr "Μέγιστο της στήλης {colname}"
 
 #: assets/js/params/Custom/Aggregations/Aggregation.js:62
 msgid "js.params.Custom.Aggregations.Aggregation.placeholder.mean"
-msgstr ""
+msgstr "Μέση τιμή της στήλης {colname}"
 
 #: assets/js/params/Custom/Aggregations/Aggregation.js:63
 msgid "js.params.Custom.Aggregations.Aggregation.placeholder.median"
-msgstr ""
+msgstr "Διάμεσος της στήλης {colname}"
 
 #: assets/js/params/Custom/Aggregations/Aggregation.js:64
 msgid "js.params.Custom.Aggregations.Aggregation.placeholder.min"
-msgstr ""
+msgstr "Ελάχιστο της στήλης {colname}"
 
 #: assets/js/params/Custom/Aggregations/Aggregation.js:60
 msgid "js.params.Custom.Aggregations.Aggregation.placeholder.nunique"
-msgstr ""
+msgstr "Πλήθος μοναδικών εγγραφών της στήλης {colname}"
 
 #: assets/js/params/Custom/Aggregations/Aggregation.js:52
 msgid "js.params.Custom.Aggregations.Aggregation.placeholder.size"
-msgstr ""
+msgstr "Μέγεθος ομάδας"
 
 #: assets/js/params/Custom/Aggregations/Aggregation.js:61
 msgid "js.params.Custom.Aggregations.Aggregation.placeholder.sum"
-msgstr ""
-
-#: assets/js/params/Custom/Aggregations/Operation.js:17
-msgid "js.params.Custom.Aggregations.Operation.count.option"
-msgstr ""
+msgstr "Άθροισμα της στήλης {colname}"
 
 #: assets/js/params/Custom/Aggregations/Operation.js:18
-msgid "js.params.Custom.Aggregations.Operation.countUnique.option"
-msgstr ""
-
-#: assets/js/params/Custom/Aggregations/Operation.js:24
-msgid "js.params.Custom.Aggregations.Operation.first.option"
-msgstr ""
-
-#: assets/js/params/Custom/Aggregations/Operation.js:23
-msgid "js.params.Custom.Aggregations.Operation.maximum.option"
-msgstr ""
-
-#: assets/js/params/Custom/Aggregations/Operation.js:20
-msgid "js.params.Custom.Aggregations.Operation.mean.option"
-msgstr ""
-
-#: assets/js/params/Custom/Aggregations/Operation.js:21
-msgid "js.params.Custom.Aggregations.Operation.median.option"
-msgstr ""
-
-#: assets/js/params/Custom/Aggregations/Operation.js:22
-msgid "js.params.Custom.Aggregations.Operation.minimum.option"
-msgstr ""
+msgid "js.params.Custom.Aggregations.Operation.count.option"
+msgstr "Πλήθος"
 
 #: assets/js/params/Custom/Aggregations/Operation.js:19
+msgid "js.params.Custom.Aggregations.Operation.countUnique.option"
+msgstr "Πλήθος μοναδικών"
+
+#: assets/js/params/Custom/Aggregations/Operation.js:25
+msgid "js.params.Custom.Aggregations.Operation.first.option"
+msgstr "Πρώτο"
+
+#: assets/js/params/Custom/Aggregations/Operation.js:24
+msgid "js.params.Custom.Aggregations.Operation.maximum.option"
+msgstr "Μέγιστο"
+
+#: assets/js/params/Custom/Aggregations/Operation.js:21
+msgid "js.params.Custom.Aggregations.Operation.mean.option"
+msgstr "Μέση τιμή (Μέσος όρος)"
+
+#: assets/js/params/Custom/Aggregations/Operation.js:22
+msgid "js.params.Custom.Aggregations.Operation.median.option"
+msgstr "Διάμεσος"
+
+#: assets/js/params/Custom/Aggregations/Operation.js:23
+msgid "js.params.Custom.Aggregations.Operation.minimum.option"
+msgstr "Ελάχιστο"
+
+#: assets/js/params/Custom/Aggregations/Operation.js:20
 msgid "js.params.Custom.Aggregations.Operation.sum.option"
-msgstr ""
+msgstr "Άθροισμα"
 
 #: assets/js/params/Custom/Aggregations/index.js:94
 msgid "js.params.Custom.Aggregations.addButton"
-msgstr ""
+msgstr "Προσθήκη"
 
+#. As in mathematical operations
 #: assets/js/params/Custom/Aggregations/index.js:70
 msgid "js.params.Custom.Aggregations.operations"
-msgstr ""
+msgstr "Πράξεις"
 
 #. The tags <3>, <6>, and <8> are URLs. The rest are code formatting. Please
 #. keep code and names of libraries untranslated.
 #: assets/js/params/Custom/Code/AceEditor.js:78
 msgid "js.params.Custom.Code.AceEditor.help"
 msgstr ""
+"Ορίστε μια συνάρτηση <0>process(table)</0> η οποία δέχεται ένα "
+"<1>pd.DataFrame</1> και επιστρέφει ένα <2>pd.DataFrame</2>. Μπορείτε να "
+"χρησιμοποιήσετε τις μονάδες (modules) <3> <4>math</4></3>, <5>pd</5> "
+"(<6>Pandas</6>) και <7>np</7> (<8>Numpy</8>)."
 
 #. The parameter will the the name of the custom type
 #: assets/js/params/Custom/index.js:36
 msgid "js.params.Custom.ComponentNotFound.error"
-msgstr ""
+msgstr "Δεν έγινε επεξεργασία του προσαρμοσμένου τύπου {name}"
 
 #: assets/js/params/File/File.js:232
 msgid "js.params.Custom.File.browse.label"
-msgstr ""
+msgstr "Αναζήτηση"
 
 #: assets/js/params/File/File.js:188
 msgid "js.params.Custom.File.cancelUpload.button"
-msgstr ""
+msgstr "Ακύρωση ανεβάσματος"
 
 #: assets/js/params/File/File.js:187
 msgid "js.params.Custom.File.cancelUpload.hoverText"
-msgstr ""
+msgstr "Ακύρωση ανεβάσματος"
 
 #: assets/js/params/File/File.js:223
 msgid "js.params.Custom.File.dragfilehere"
-msgstr ""
+msgstr "Σύρσιμο του αρχείου εδώ"
 
 #: assets/js/params/File/File.js:245
 msgid "js.params.Custom.File.dropFileHere"
-msgstr ""
+msgstr "Απόθεση του αρχείου εδώ"
 
 #. This is shown after js.params.Custom.File.dragfilehere
 #: assets/js/params/File/File.js:224
 msgid "js.params.Custom.File.or"
-msgstr ""
+msgstr "ή"
 
 #: assets/js/params/File/File.js:208
 msgid "js.params.Custom.File.replace"
-msgstr ""
+msgstr "Αντικατάσταση"
 
 #: assets/js/params/File/File.js:204 assets/js/params/File/File.js:228
 msgid "js.params.Custom.File.uploadApi.button"
-msgstr ""
+msgstr "API"
 
 #: assets/js/params/File/File.js:203 assets/js/params/File/File.js:227
 msgid "js.params.Custom.File.uploadApi.hoverText"
-msgstr ""
+msgstr "Ανοίξτε τις οδηγίες για API ανεβάσματος"
 
 #. This is the logical AND function.
 #: assets/js/params/Custom/Filters/AddFilter.js:18
 msgid "js.params.Custom.Filters.AddFilter.and"
-msgstr ""
+msgstr "ΚΑΙ"
 
 #. This is the logical OR function.
 #: assets/js/params/Custom/Filters/AddFilter.js:28
 msgid "js.params.Custom.Filters.AddFilter.or"
-msgstr ""
+msgstr "Ή"
 
 #: assets/js/params/Custom/Filters/Condition.js:27
 msgid "js.params.Custom.Filters.Condition.NumberIsGreaterOrEqual"
-msgstr ""
+msgstr "Ο αριθμός είναι μεγαλύτερος από ή ίσος με"
 
 #: assets/js/params/Custom/Filters/Condition.js:33
 msgid "js.params.Custom.Filters.Condition.cellIsNotnull"
-msgstr ""
+msgstr "Το κελί δεν είναι μηδενικό"
 
 #: assets/js/params/Custom/Filters/Condition.js:34
 msgid "js.params.Custom.Filters.Condition.cellIsempty"
-msgstr ""
+msgstr "Το κελί είναι κενό"
 
 #: assets/js/params/Custom/Filters/Condition.js:35
 msgid "js.params.Custom.Filters.Condition.cellIsnotEmpty"
-msgstr ""
+msgstr "Το κελί δεν είναι κενό"
 
 #: assets/js/params/Custom/Filters/Condition.js:32
 msgid "js.params.Custom.Filters.Condition.cellIsnull"
-msgstr ""
+msgstr "Το κελί είναι μηδενικό"
 
 #: assets/js/params/Custom/Filters/Condition.js:18
 msgid "js.params.Custom.Filters.Condition.dateIs"
-msgstr ""
+msgstr "Η ημερομηνία είναι"
 
 #: assets/js/params/Custom/Filters/Condition.js:21
 msgid "js.params.Custom.Filters.Condition.dateIsAfter"
-msgstr ""
+msgstr "Η ημερομηνία είναι μετά από"
 
 #: assets/js/params/Custom/Filters/Condition.js:20
 msgid "js.params.Custom.Filters.Condition.dateIsBefore"
-msgstr ""
+msgstr "Η ημερομηνία είναι πριν από"
 
 #: assets/js/params/Custom/Filters/Condition.js:19
 msgid "js.params.Custom.Filters.Condition.dateIsNot"
-msgstr ""
+msgstr "Η ημερομηνία δεν είναι"
 
 #: assets/js/params/Custom/Filters/Condition.js:24
 msgid "js.params.Custom.Filters.Condition.numberIs"
-msgstr ""
+msgstr "Ο αριθμός είναι"
 
 #: assets/js/params/Custom/Filters/Condition.js:26
 msgid "js.params.Custom.Filters.Condition.numberIsGreaterThan"
-msgstr ""
+msgstr "Ο αριθμός είναι μεγαλύτερος από"
 
 #: assets/js/params/Custom/Filters/Condition.js:29
 msgid "js.params.Custom.Filters.Condition.numberIsLessOrequal"
-msgstr ""
+msgstr "Ο αριθμός είναι μικρότερος από ή ίσος με"
 
 #: assets/js/params/Custom/Filters/Condition.js:28
 msgid "js.params.Custom.Filters.Condition.numberIsLessthan"
-msgstr ""
+msgstr "Ο αριθμός είναι μικρότερος από"
 
 #: assets/js/params/Custom/Filters/Condition.js:25
 msgid "js.params.Custom.Filters.Condition.numberIsNot"
-msgstr ""
+msgstr "Ο αριθμός δεν είναι"
 
+#. As in 'select a condition relative to which we will filter'. Condition here
+#. is something of the form 'IF something IS like that'.
 #: assets/js/params/Custom/Filters/Condition.js:67
 msgid "js.params.Custom.Filters.Condition.selectCondition"
-msgstr ""
+msgstr "Επιλογή συνθήκης"
 
 #: assets/js/params/Custom/Filters/Condition.js:9
 msgid "js.params.Custom.Filters.Condition.textContains"
-msgstr ""
+msgstr "Το κείμενο περιέχει"
 
 #: assets/js/params/Custom/Filters/Condition.js:13
 msgid "js.params.Custom.Filters.Condition.textContainsRegex"
-msgstr ""
+msgstr "Το κείμενο περιέχει regex"
 
 #: assets/js/params/Custom/Filters/Condition.js:10
 msgid "js.params.Custom.Filters.Condition.textDoesNotContain"
-msgstr ""
+msgstr "Το κείμενο δεν περιέχει"
 
 #: assets/js/params/Custom/Filters/Condition.js:14
 msgid "js.params.Custom.Filters.Condition.textDoesntContainRegex"
-msgstr ""
+msgstr "Το κείμενο δεν περιέχει regex"
 
 #: assets/js/params/Custom/Filters/Condition.js:11
 msgid "js.params.Custom.Filters.Condition.textIsExactly"
-msgstr ""
+msgstr "Το κείμενο είναι ακριβώς"
 
 #: assets/js/params/Custom/Filters/Condition.js:12
 msgid "js.params.Custom.Filters.Condition.textIsNotExactly"
-msgstr ""
+msgstr "Το κείμενο δεν είναι ακριβώς"
 
 #: assets/js/params/Custom/Filters/Condition.js:15
 msgid "js.params.Custom.Filters.Condition.textMatchesRegexExactly"
-msgstr ""
+msgstr "Το κείμενο αντιστοιχεί ακριβώς στη regex"
 
 #. This is the logical AND function.
 #: assets/js/params/Custom/Filters/FilterOperator.js:22
 msgid "js.params.Custom.Filters.FilterOperator.OneOperator.and"
-msgstr ""
+msgstr "ΚΑΙ"
 
 #. This is the logical OR function.
 #: assets/js/params/Custom/Filters/FilterOperator.js:23
 msgid "js.params.Custom.Filters.FilterOperator.OneOperator.or"
-msgstr ""
+msgstr "Ή"
 
 #: assets/js/params/Custom/Filters/Subfilter.js:80
 msgid "js.params.Custom.Filters.Subfilter.Column.placeholder"
-msgstr ""
+msgstr "Επιλογή στήλης"
 
 #: assets/js/params/Custom/Filters/Subfilter.js:101
 msgid "js.params.Custom.Filters.Subfilter.SingleLineString.placeholder"
-msgstr ""
+msgstr "Τιμή"
 
 #: assets/js/params/Custom/Filters/Subfilter.js:121
 msgid "js.params.Custom.Filters.Subfilter.matchCase"
-msgstr ""
+msgstr "Ταίριασμα πεζών-κεφαλαίων"
 
 #: assets/js/params/Custom/Groups/DateGranularities.js:72
 msgid "js.params.Custom.Groups.DateGranularities.convertColumns"
-msgstr ""
+msgstr "Μετατροπή στηλών"
 
 #: assets/js/params/Custom/Groups/DateGranularities.js:65
 msgid "js.params.Custom.Groups.DateGranularities.noDateAndTimeToGroup"
-msgstr ""
+msgstr "Δεν υπάρχουν στήλες ημερομηνίας & ώρας για ομαδοποίηση κατά ημερομηνία"
 
 #: assets/js/params/Custom/Groups/DateGranularities.js:76
 msgid "js.params.Custom.Groups.DateGranularities.selectDateAndTimeToGroup"
-msgstr ""
-
-#: assets/js/params/Custom/Groups/DateGranularity.js:36
-msgid "js.params.Custom.Groups.DateGranularity.asIs.option"
-msgstr ""
-
-#: assets/js/params/Custom/Groups/DateGranularity.js:40
-msgid "js.params.Custom.Groups.DateGranularity.byDay.option"
-msgstr ""
-
-#: assets/js/params/Custom/Groups/DateGranularity.js:39
-msgid "js.params.Custom.Groups.DateGranularity.byHour.option"
-msgstr ""
+msgstr "Επιλέξτε στήλη Ημερομηνίας & ώρας για να την ομαδοποιήσετε κατά ημερομηνία"
 
 #: assets/js/params/Custom/Groups/DateGranularity.js:38
-msgid "js.params.Custom.Groups.DateGranularity.byMinute.option"
-msgstr ""
-
-#: assets/js/params/Custom/Groups/DateGranularity.js:41
-msgid "js.params.Custom.Groups.DateGranularity.byMonth.option"
-msgstr ""
+msgid "js.params.Custom.Groups.DateGranularity.asIs.option"
+msgstr "ως έχει"
 
 #: assets/js/params/Custom/Groups/DateGranularity.js:42
-msgid "js.params.Custom.Groups.DateGranularity.byQuarter.option"
-msgstr ""
+msgid "js.params.Custom.Groups.DateGranularity.byDay.option"
+msgstr "κατά ημέρα"
 
-#: assets/js/params/Custom/Groups/DateGranularity.js:37
-msgid "js.params.Custom.Groups.DateGranularity.bySecond.option"
-msgstr ""
+#: assets/js/params/Custom/Groups/DateGranularity.js:41
+msgid "js.params.Custom.Groups.DateGranularity.byHour.option"
+msgstr "κατά ώρα"
+
+#: assets/js/params/Custom/Groups/DateGranularity.js:40
+msgid "js.params.Custom.Groups.DateGranularity.byMinute.option"
+msgstr "κατά λεπτό"
 
 #: assets/js/params/Custom/Groups/DateGranularity.js:43
-msgid "js.params.Custom.Groups.DateGranularity.byYear.option"
-msgstr ""
+msgid "js.params.Custom.Groups.DateGranularity.byMonth.option"
+msgstr "κατά μήνα"
 
-#: assets/js/params/Custom/Groups/DateGranularity.js:28
+#: assets/js/params/Custom/Groups/DateGranularity.js:44
+msgid "js.params.Custom.Groups.DateGranularity.byQuarter.option"
+msgstr "κατά τρίμηνο"
+
+#: assets/js/params/Custom/Groups/DateGranularity.js:39
+msgid "js.params.Custom.Groups.DateGranularity.bySecond.option"
+msgstr "κατά δευτερόλεπτο"
+
+#: assets/js/params/Custom/Groups/DateGranularity.js:45
+msgid "js.params.Custom.Groups.DateGranularity.byYear.option"
+msgstr "κατά έτος"
+
+#: assets/js/params/Custom/Groups/DateGranularity.js:30
 msgid "js.params.Custom.Groups.DateGranularity.heading.title"
-msgstr ""
+msgstr "Λεπτομέρεια της στήλης “{colname}”"
 
 #: assets/js/params/Custom/Groups/index.js:68
 msgid "js.params.Custom.Groups.groupDates"
-msgstr ""
+msgstr "Ομαδοποίηση ημερομηνιών"
 
 #: assets/js/params/Custom/JoinColumns.js:82
 msgid "js.params.Custom.JoinColumns.addColumns"
-msgstr ""
+msgstr "Προσθήκη στηλών"
 
+#. This refers to a join operation, as the term join is used in SQL database
+#. language. It is followed by one or more column names.
 #: assets/js/params/Custom/JoinColumns.js:71
 msgid "js.params.Custom.JoinColumns.joinOn"
-msgstr ""
+msgstr "Συνένωση βάσει"
 
 #. The parameter will contain a tab name
 #: assets/js/params/Custom/JoinColumns.js:74
 msgid "js.params.Custom.JoinColumns.noColumnToJoin"
 msgstr ""
+"Δεν υπάρχει στήλη για να ενωθεί στην {0}. Οι στήλες και στις δύο καρτέλες"
+" πρέπει να έχουν ίδια ονόματα και κεφαλαιογραφή. Επεξεργαστείτε τις "
+"ονομασίες των στηλών."
 
 #: assets/js/params/Custom/Refine/RefineBins.js:62
 msgid "js.params.Custom.RefineBins.RefineBin.newValue.placeholder"
-msgstr ""
+msgstr "Νέα τιμή"
 
 #: assets/js/params/Custom/Refine/RefineBins.js:119
 msgid "js.params.Custom.RefineBins.clusterSize.heading"
-msgstr ""
+msgstr "Μέγεθος συμπλέγματος (cluster)"
 
 #: assets/js/params/Custom/Refine/RefineBins.js:121
 msgid "js.params.Custom.RefineBins.countRows.heading"
-msgstr ""
+msgstr "# σειρές"
 
 #: assets/js/params/Custom/Refine/RefineBins.js:122
 msgid "js.params.Custom.RefineBins.newValue.heading"
-msgstr ""
+msgstr "Νέα τιμή"
 
 #: assets/js/params/Custom/Refine/RefineBins.js:52
 msgid "js.params.Custom.RefineBins.newValue.placeholder"
-msgstr ""
+msgstr "Νέα τιμή"
 
 #: assets/js/params/Custom/Refine/RefineBins.js:108
 msgid "js.params.Custom.RefineBins.noClustersFound"
-msgstr ""
+msgstr "Δεν βρέθηκαν συμπλέγματα. Δοκιμάστε διαφορετικές ρυθμίσεις."
 
 #: assets/js/params/Custom/Refine/RefineBins.js:120
 msgid "js.params.Custom.RefineBins.values.heading"
-msgstr ""
+msgstr "Τιμές"
 
 #: assets/js/params/Custom/Refine/RefineClusterer.js:14
 msgid "js.params.Custom.RefineClusterer.Algorithms.fingerprint.description"
 msgstr ""
+"Ομαδοποίηση τιμών βάσει αποτυπώματος. Αυτή η μέθοδος είναι αποτελεσματική"
+" όταν οι τιμές κεφαλαιογραφούνται ακανόνιστα ή όταν χρησιμοποιούνται "
+"ειδικοί χαρακτήρες σε μερικές τιμές και όχι σε άλλες. Για παράδειγμα, τα "
+"\" café\" και \"Cafe\" έχουν και τα δύο το ίδιο αποτύπωμα, \"cafe\"."
 
 #: assets/js/params/Custom/Refine/RefineClusterer.js:13
 msgid "js.params.Custom.RefineClusterer.Algorithms.fingerprint.name"
-msgstr ""
+msgstr "Αποτύπωμα"
 
 #: assets/js/params/Custom/Refine/RefineClusterer.js:22
 msgid "js.params.Custom.RefineClusterer.Algorithms.levenshtein.description"
 msgstr ""
+"Ομαδοποίηση τιμών εάν ο αριθμός των χαρακτήρων που προστίθενται, αλλάζουν"
+" ή διαγράφονται για να φτάσουμε από τη μια τιμή στην άλλη είναι ίσος ή "
+"μικρότερος από τη \"Μέγιστη απόσταση\". Για παράδειγμα, η απόσταση μεταξύ"
+" \"Cafés\" και \"cafe\" είναι 3."
 
+#. This is not an editing action. It's a short description of how the
+#. levenstein algorithm works (i.e. it compares strings relative to the number
+#. of characters in which they differ, hence the term edit distance).
 #: assets/js/params/Custom/Refine/RefineClusterer.js:21
 msgid "js.params.Custom.RefineClusterer.Algorithms.levenshtein.name"
-msgstr ""
+msgstr "Απόσταση διόρθωσης"
 
 #: assets/js/params/Custom/Refine/RefineClusterer.js:26
 msgid "js.params.Custom.RefineClusterer.Algorithms.levenshtein.options.maxDistance.label"
-msgstr ""
+msgstr "Μέγιστη απόσταση"
 
 #: assets/js/params/Custom/Refine/RefineClusterer.js:179
 msgid "js.params.Custom.RefineClusterer.method"
-msgstr ""
+msgstr "Μέθοδος"
 
 #: assets/js/params/Custom/Refine/RefineClustererProgress.js:14
 msgid "js.params.Custom.RefineClustererProgress.findingClusters"
-msgstr ""
+msgstr "Εύρεση συμπλεγμάτων…"
 
 #: assets/js/params/Custom/Refine/RefineModal.js:82
 msgid "js.params.Custom.RefineModal.footer.cancelButton"
-msgstr ""
+msgstr "Ακύρωση"
 
 #: assets/js/params/Custom/Refine/RefineModal.js:90
 msgid "js.params.Custom.RefineModal.footer.mergeSelectedButton"
-msgstr ""
+msgstr "Συγχώνευση επιλεγμένων"
 
 #. This should be all-caps for styling reasons
 #: assets/js/params/Custom/Refine/RefineModal.js:65
 msgid "js.params.Custom.RefineModal.header.title"
-msgstr ""
+msgstr "ΣΥΜΠΛΕΓΜΑ (CLUSTER)"
 
 #: assets/js/params/Custom/Refine/RefineStatus.js:21
 msgid "js.params.Custom.RefineStatus.clustering"
-msgstr ""
+msgstr "Δημιουργία συμπλέγματος (cluster)"
 
 #: assets/js/params/Custom/Refine/RefineStatus.js:23
 msgid "js.params.Custom.RefineStatus.numberOfClustersFound"
 msgstr ""
+"{nBinsTotal, plural, one {Βρέθηκε # σύμπλεγμα} other {Βρέθηκαν # "
+"συμπλέγματα}}"
 
 #. This should be all-caps for styling reasons
 #: assets/js/params/Custom/ReorderHistory.js:24
 msgid "js.params.Custom.ReorderHistory.column.heading"
-msgstr ""
+msgstr "ΣΤΗΛΗ"
 
 #. This should be all-caps for styling reasons
 #: assets/js/params/Custom/ReorderHistory.js:25
 msgid "js.params.Custom.ReorderHistory.from.heading"
-msgstr ""
+msgstr "ΑΠΟ"
 
 #. This should be all-caps for styling reasons
 #: assets/js/params/Custom/ReorderHistory.js:26
 msgid "js.params.Custom.ReorderHistory.to.heading"
-msgstr ""
+msgstr "ΠΡΟΣ"
 
 #: assets/js/params/Custom/SortColumn/SortColumn.js:10
 msgid "js.params.Custom.SortColumn.AscendingParam.ascending"
-msgstr ""
+msgstr "Αύξουσα"
 
 #: assets/js/params/Custom/SortColumn/SortColumn.js:11
 msgid "js.params.Custom.SortColumn.AscendingParam.descending"
-msgstr ""
+msgstr "Φθίνουσα"
 
 #: assets/js/params/Custom/SortColumn/index.js:91
 msgid "js.params.Custom.SortColumn.add"
-msgstr ""
+msgstr "Προσθήκη"
 
 #: assets/js/params/Custom/SortColumn/SortColumn.js:71
 msgid "js.params.Custom.SortColumn.by.label"
-msgstr ""
+msgstr "Κατά"
 
 #: assets/js/params/Custom/SortColumn/SortColumn.js:71
 msgid "js.params.Custom.SortColumn.thenBy.label"
-msgstr ""
+msgstr "Κατόπιν, κατά"
 
 #: assets/js/params/File/UploadApiModal.js:44
 msgid "js.params.Custom.UploadApiModal.ApiTokenOk.disableApi"
-msgstr ""
+msgstr "Απενεργοποίηση του API"
 
 #: assets/js/params/File/UploadApiModal.js:58
 msgid "js.params.Custom.UploadApiModal.ApiTokenOk.enableApi"
-msgstr ""
+msgstr "Ενεργοποίηση API"
 
 #: assets/js/params/File/UploadApiModal.js:57
 msgid "js.params.Custom.UploadApiModal.ApiTokenOk.noApiToken"
-msgstr ""
+msgstr "Δεν υπάρχει διακριτικό API"
 
 #: assets/js/params/File/UploadApiModal.js:43
 msgid "js.params.Custom.UploadApiModal.ApiTokenOk.resetApiToken"
-msgstr ""
+msgstr "Δημιουργία νέου αναγνωριστικού API"
 
 #: assets/js/params/File/UploadApiModal.js:51
 msgid "js.params.Custom.UploadApiModal.ApiTokenOk.stepId"
-msgstr ""
+msgstr "ID βήματος"
 
 #: assets/js/params/File/UploadApiModal.js:47
 msgid "js.params.Custom.UploadApiModal.ApiTokenOk.workflowId"
-msgstr ""
+msgstr "ID ροής εργασιών"
 
 #. The tags are links to external info. The parameter is the name of a library.
 #: assets/js/params/File/UploadApiModal.js:136
 msgid "js.params.Custom.UploadApiModal.Instructions.dependencies.boto3"
 msgstr ""
+"Το <0>{0}</0> είναι το AWS SDK για την Python. Υπάρχει ένα <1>AWS SDK</1>"
+" για τις περισσότερες γλώσσες προγραμματισμού, και δεκάδες βιβλιοθήκες "
+"τρίτων που είναι συμβατές με το Workbench. Χρησιμοποιήστε βιβλιοθήκη που "
+"υποστηρίζει προσαρμοζόμενα τελικά σημεία (endpoints), διακριτικά περιόδων"
+" λειτουργίας (session tokens) και σύστημα διευθύνσεων διαδρομής (path "
+"addressing)."
 
 #. The tags are links to external info. The parameters are names of libraries.
 #: assets/js/params/File/UploadApiModal.js:141
 msgid "js.params.Custom.UploadApiModal.Instructions.dependencies.requestsHttpLib"
 msgstr ""
+"Η <0>{0}</0> είναι μια βιβλιοθήκη HTTP με απλούστερα αιτήματα (requests) "
+"από την ενσωματωμένη <1>{1}</1> της Python."
 
 #: assets/js/params/File/UploadApiModal.js:132
 msgid "js.params.Custom.UploadApiModal.Instructions.dependencies.title"
-msgstr ""
+msgstr "Εγκατάσταση και φόρτωση εξαρτήσεων"
 
 #: assets/js/params/File/UploadApiModal.js:133
 msgid "js.params.Custom.UploadApiModal.Instructions.dependencies.yourProgramWillneed"
 msgstr ""
+"Το πρόγραμμά σας θα χρειαστεί να κάνει αιτήματα HTTP και να ανεβάσει "
+"αρχεία στο S3."
 
 #. The tag is a link to Amazon s3
 #: assets/js/params/File/UploadApiModal.js:118
 msgid "js.params.Custom.UploadApiModal.Instructions.eachFileBelongs"
 msgstr ""
+"Κάθε αρχείο που ανεβάζετε ανήκει σε ένα μοναδικό τελικό σημείο (endpoint)"
+" συμβατό με <0>Amazon S3</0>. Δεν μπορείτε να ξαναχρησιμοποιήσετε το ίδιο"
+" τελικό σημείο για άλλο αρχείο: για να αντικαταστήσετε ένα αρχείο, πρέπει"
+" να ακολουθήσετε όλα αυτά τα βήματα ξανά."
 
 #: assets/js/params/File/UploadApiModal.js:196
 msgid "js.params.Custom.UploadApiModal.Instructions.finishUploadAndGiveFilename"
 msgstr ""
+"Ενημερώστε το Workbench να ολοκληρώσει τη μεταφόρτωση και να δώσει όνομα "
+"αρχείου"
 
 #: assets/js/params/File/UploadApiModal.js:198
 msgid "js.params.Custom.UploadApiModal.Instructions.finishUploadAndGiveFilename.workflowUploadModal"
 msgstr ""
+"Στη ροή εργασιών σας, αυτό το βήμα θα ενημερωθεί για να χρησιμοποιήσει το"
+" νέο αρχείο."
 
 #: assets/js/params/File/UploadApiModal.js:128
 msgid "js.params.Custom.UploadApiModal.Instructions.goodWaytoStart"
 msgstr ""
+"Ένας καλός τρόπος για να ξεκινήσετε το έργο σας είναι να αντιγράψετε και "
+"να επικολλήσετε όλον αυτόν τον κώδικα σε ένα σενάριο (script), βήμα προς "
+"βήμα, και στη συνέχεια να τον επεξεργαστείτε."
 
 #. The parameters contain code. The tags wrap them for correct presentation.
 #: assets/js/params/File/UploadApiModal.js:154
 msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.postRequest"
 msgstr ""
+"Στείλτε ένα αίτημα HTTP POST στο <0>{postUrl}<0>. Δεν πρέπει να έχει "
+"παραμέτρους ή περιεχόμενο. (Μην ανεβάσετε το αρχείο σε αυτή τη διεύθυνση "
+"URL.) Πρέπει να έχει κεφαλίδα <1>{0}</1> που μοιάζει με <2>{1}</2>."
 
 #: assets/js/params/File/UploadApiModal.js:176
 msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.s3Config.bucket"
-msgstr ""
+msgstr "Όνομα κάδου S3 όπου θα πρέπει να ανεβάσετε το αρχείο σας"
 
 #. The parameters contain code. The tags wrap them for correct presentation.
 #: assets/js/params/File/UploadApiModal.js:182
 msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.s3Config.credentials"
-msgstr ""
+msgstr "Λεξικό με κλειδιά <0>{0}</0>, <1>{1}</1> και <2>{2}</2>"
 
 #: assets/js/params/File/UploadApiModal.js:166
 msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.s3Config.endpoint"
-msgstr ""
+msgstr "Διεύθυνση URL διακομιστή για ανεβάσματα συμβατού με S3"
 
 #: assets/js/params/File/UploadApiModal.js:186
 msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.s3Config.finishUrl"
-msgstr ""
+msgstr "URL (μη S3) για να ειδοποιήσουμε όταν πάψουμε να χρησιμοποιούμε το S3 API"
 
 #: assets/js/params/File/UploadApiModal.js:180
 msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.s3Config.key"
-msgstr ""
+msgstr "Όνομα κλειδιού S3 όπου θα πρέπει να ανεβάσετε το αρχείο σας"
 
 #: assets/js/params/File/UploadApiModal.js:171
 msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.s3Config.region"
-msgstr ""
+msgstr "Κωδικός περιοχής συμβατός με S3"
 
 #. The parameter contains code. The tag wraps it for correct presentation.
 #: assets/js/params/File/UploadApiModal.js:160
 msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.s3Config.root"
-msgstr ""
+msgstr "Το <0>{0}</0> θα είναι ένα λεξικό με τα ακόλουθα κλειδιά:"
 
 #. The parameters are 'bucket' and 'key' respectively. The tags wrap them for
 #. correct presentation.
 #: assets/js/params/File/UploadApiModal.js:189
 msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.theCredsAllowBucketKey"
 msgstr ""
+"Τα διαπιστευτήρια θα επιτρέπουν μόνο το ανέβασμα του αρχείου σας στα "
+"καθορισμένα <0>{0}</0> και <1>{1}</1>. Τα διαπιστευτήρια θα λήξουν σε "
+"λίγες ώρες."
 
 #: assets/js/params/File/UploadApiModal.js:152
 msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.title"
 msgstr ""
+"Εκτέλεση ερωτήματος προς το Workbench για διαπιστευτήρια ανεβάσματος "
+"αρχείων"
 
 #. The tag adds emphasis
 #: assets/js/params/File/UploadApiModal.js:148
 msgid "js.params.Custom.UploadApiModal.Instructions.storeVariablesAndsecrets.notShareApitoken"
 msgstr ""
+"<0>Μην κοινοποιείτε το διακριτικό του API ούτε να το καταθέτετε σε "
+"αποθετήριο κωδικών.</0> Οποιοσδήποτε έχει πρόσβαση στο διακριτικό μπορεί "
+"να αλλάξει αυτό το βήμα. Μην το αποκαλύπτετε. Αν υποψιαστείτε ότι το "
+"διακριτικό σας έχει γίνει γνωστό, φροντίστε να δημιουργήσετε νέο "
+"διακριτικό API."
 
 #: assets/js/params/File/UploadApiModal.js:145
 msgid "js.params.Custom.UploadApiModal.Instructions.storeVariablesAndsecrets.title"
-msgstr ""
+msgstr "Αποθήκευση μεταβλητών και μυστικών"
 
 #: assets/js/params/File/UploadApiModal.js:123
 msgid "js.params.Custom.UploadApiModal.Instructions.theseInstructionsUsepython"
 msgstr ""
+"Αυτές οι οδηγίες χρησιμοποιούν Python 3 για τα παραδείγματα. Μπορείτε να "
+"χρησιμοποιήσετε οποιαδήποτε γλώσσα προγραμματισμού."
 
 #: assets/js/params/File/UploadApiModal.js:116
 msgid "js.params.Custom.UploadApiModal.Instructions.title"
-msgstr ""
+msgstr "Πώς να ανεβάσετε αρχείο"
 
 #. The tag is a URL to external info
 #: assets/js/params/File/UploadApiModal.js:195
 msgid "js.params.Custom.UploadApiModal.Instructions.uploadS3CompatibleBucket.seeAwsSdkDocumentation"
 msgstr ""
+"Ανατρέξτε στην <0>τεκμηρίωση AWS SDK</0> για τη βιβλιοθήκη σας για να "
+"μάθετε πώς μπορείτε να ανεβάσετε ένα αρχείο."
 
 #: assets/js/params/File/UploadApiModal.js:193
 msgid "js.params.Custom.UploadApiModal.Instructions.uploadS3CompatibleBucket.title"
-msgstr ""
+msgstr "Ανέβασμα σε κάδο συμβατό με S3"
 
 #: assets/js/params/File/UploadApiModal.js:227
 msgid "js.params.Custom.UploadApiModal.fileuploadApiStatus.disabled"
 msgstr ""
+"Το API ανεβάσματος αρχείων είναι απενεργοποιημένο. Ενεργοποιήστε το για "
+"να επιτραπεί το ανέβασμα."
 
 #. The tag adds emphasis
 #: assets/js/params/File/UploadApiModal.js:225
 msgid "js.params.Custom.UploadApiModal.fileuploadApiStatus.enabled"
-msgstr ""
+msgstr "Το API ανεβάσματος αρχείων είναι <0>ενεργοποιημένο</0>."
 
 #: assets/js/params/File/UploadApiModal.js:246
 msgid "js.params.Custom.UploadApiModal.footer.closeButton"
-msgstr ""
+msgstr "Κλείσιμο"
 
 #. This should be all-caps for styling reasons
 #: assets/js/params/File/UploadApiModal.js:220
 msgid "js.params.Custom.UploadApiModal.header.title"
-msgstr ""
+msgstr "ΑΝΕΒΑΣΜΑ ΜΕΣΩ API"
 
 #: assets/js/params/File/UploadApiModal.js:222
 msgid "js.params.Custom.UploadApiModal.programmerInstructions"
-msgstr ""
+msgstr "Αυτές οι οδηγίες απευθύνονται σε προγραμματιστές."
 
 #: assets/js/params/File/UploadApiModal.js:223
 msgid "js.params.Custom.UploadApiModal.theFileUploadApiIsPerfect"
 msgstr ""
+"Το API ανεβάσματος αρχείων είναι ιδανικό για τη φόρτωση δεδομένων από "
+"cronjobs ή άλλα εξωτερικά σενάρια. Μπορείτε να στείλετε δεδομένα στο "
+"Workbench χρησιμοποιώντας οποιαδήποτε γλώσσα προγραμματισμού."
 
 #: assets/js/params/Custom/ValueSelect.js:55
 msgid "js.params.Custom.ValueSelect.ValueItem.includeTheseRows"
-msgstr ""
+msgstr "Συμπεριλάβετε αυτές τις σειρές"
 
 #: assets/js/params/Custom/ValueSelect.js:121
 msgid "js.params.Custom.ValueSelect.ValueList.loadingValues"
-msgstr ""
+msgstr "Φόρτωση τιμών…"
 
 #: assets/js/params/Custom/ValueSelect.js:123
 msgid "js.params.Custom.ValueSelect.ValueList.noValuesInColumn"
-msgstr ""
+msgstr "Η στήλη δεν έχει τιμές"
 
 #: assets/js/params/Custom/ValueSelect.js:125
 msgid "js.params.Custom.ValueSelect.ValueList.noValuesMatchSearch"
-msgstr ""
+msgstr "Δεν υπάρχουν τιμές που να αντιστοιχούν στην αναζήτησή σας"
 
 #: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:37
 msgid "js.params.Custom.VersionSelect.DataVersionSelect.noVersions.label"
-msgstr ""
+msgstr "Έκδοση"
 
 #. The parameter {0} will be the current version and {nVersions} will be the
 #. number of versions
 #: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:47
 msgid "js.params.Custom.VersionSelect.DataVersionSelect.readOnly.label"
-msgstr ""
+msgstr "Έκδοση {0} από {nVersions}"
 
 #: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:62
 msgid "js.params.Custom.VersionSelect.DataVersionSelect.selectVersion.hoverText"
-msgstr ""
+msgstr "Επιλογή έκδοσης"
 
 #: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:56
 msgid "js.params.Custom.VersionSelect.DataVersionSelect.selectVersion.label"
-msgstr ""
+msgstr "Έκδοση"
 
 #. The parameter {0} will be the current version and {nVersions} will be the
 #. number of versions
 #: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:65
 msgid "js.params.Custom.VersionSelect.DataVersionSelect.versionCount"
-msgstr ""
+msgstr "{0} από {nVersions}"
 
 #: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:68
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.editWorkflow"
-msgstr ""
+msgstr "Επεξεργασία ροής εργασιών"
 
 #: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:49
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.fetchesPerDay.heading"
-msgstr ""
+msgstr "#/ημέρα"
 
 #. The {1} argument is a tab name
 #: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:79
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.otherStep.fetchesPerDay"
-msgstr ""
+msgstr "Το βήμα {0} στο {1} κάνει {2} ενημερώσεις κάθε ημέρα."
 
 #: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:41
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.quotasteps"
 msgstr ""
+"Αυτά εδώ είναι τα βήματα που καταλογίζονται στο όριο σας. Ρυθμίστε τους "
+"χρόνους ενημέρωσής τους ή ρυθμίστε τους σε μη αυτόματους και, στη "
+"συνέχεια, κάντε κλικ στην \"Επανάληψη\" παραπάνω."
 
 #. The tag is a mailto url
 #: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:90
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.requestLift"
-msgstr ""
+msgstr "Χρειάζεστε υψηλότερο όριο; Στείλτε μας ένα σύντομο <0>email</0>."
 
 #. The two tags add emphasis
 #: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:33
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.requestsVsLimit"
 msgstr ""
+"Ζητάτε <0>{0}</0> ενημερώσεις κάθε ημέρα σε όλες τις ροές εργασιών σας. "
+"Το ημερήσιο όριο είναι <1>{1}</1>."
 
 #: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:77
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.thisStep.fetchesPerDay"
-msgstr ""
+msgstr "Ζητήσατε να γίνονται {0} ενημερώσεις την ημέρα για αυτό το βήμα."
 
 #: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:63
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.thisWorkflow"
-msgstr ""
+msgstr "Αυτή η ροή εργασιών"
 
 #. This must be all-caps for styling reasons
 #: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:31
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.title"
-msgstr ""
+msgstr "ΞΕΠΕΡΑΣΤΗΚΕ ΤΟ ΟΡΙΟ ΤΩΝ ΑΥΤΟΜΑΤΩΝ ΕΝΗΜΕΡΩΣΕΩΝ"
 
 #: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:50
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.workFlow.heading"
-msgstr ""
+msgstr "Ροή εργασιών"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:73
+#. Appears just after
+#. 'js.params.Custom.VersionSelect.UpdateFrequencySelect.update'
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:74
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.auto"
-msgstr ""
+msgstr "Αυτόματη"
 
 #: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:69
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.changeUpdateSettings.hoverText"
-msgstr ""
+msgstr "αλλαγή ρυθμίσεων αυτόματης ενημέρωσης"
 
 #. The parameter is a time difference (i.e. something like '4h ago'. The tag is
 #. a <time> tag.
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:78
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:80
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.lastChecked"
-msgstr ""
+msgstr "Ελέγχθηκε <0>{0}</0>"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:73
+#. Appears just after
+#. 'js.params.Custom.VersionSelect.UpdateFrequencySelect.update'
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:75
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.manual"
-msgstr ""
+msgstr "Μη αυτόματο"
 
 #: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:66
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.update"
-msgstr ""
+msgstr "Ενημέρωση"
 
 #: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:197
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.apply"
-msgstr ""
+msgstr "Εφαρμογή"
 
 #: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:163
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.auto.description"
 msgstr ""
+"Αυτόματη ενημέρωση αυτής της ροής εργασιών με τα πιο πρόσφατα δεδομένα "
+"(οι παλιότερες εκδόσεις θα αποθηκευτούν)."
 
+#. Refers to
+#. 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title'
 #: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:160
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.auto.label"
-msgstr ""
+msgstr "Αυτόματη"
 
 #: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:185
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.days.option"
-msgstr ""
+msgstr "ημέρες"
 
 #: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:186
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.hours.option"
-msgstr ""
+msgstr "ώρες"
 
 #: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:164
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.label"
-msgstr ""
+msgstr "Ελέγξτε για ενημέρωση κάθε"
 
 #: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:187
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.minutes.option"
-msgstr ""
+msgstr "λεπτά"
 
 #: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:188
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.seconds.option"
-msgstr ""
+msgstr "δευτερόλεπτα"
 
 #: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:184
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.weeks.option"
-msgstr ""
+msgstr "εβδομάδες"
 
 #: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:242
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.emailUpdates.label"
-msgstr ""
+msgstr "Να μου στέλνετε ηλ. μήνυμα κάθε φορά που αλλάζουν τα δεδομένα"
 
 #: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:247
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.footer.close.placeholder"
-msgstr ""
+msgstr "Κλείσιμο"
 
 #: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:248
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.footer.closeButton"
-msgstr ""
+msgstr "Κλείσιμο"
 
 #. This should be all-caps for styling reasons
 #: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:140
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title"
-msgstr ""
+msgstr "ΕΝΗΜΕΡΩΣΗ ΡΟΗΣ ΕΡΓΑΣΙΩΝ"
 
 #: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:225
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual.description"
-msgstr ""
+msgstr "Ελέγξτε τα νέα δεδομένα με μη αυτόματο τρόπο."
 
+#. Refers to
+#. 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title'
 #: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:222
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual.label"
-msgstr ""
+msgstr "Μη αυτόματο"
 
 #: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:197
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.retry"
-msgstr ""
+msgstr "Προσπαθήστε ξανά"
 
 #: assets/js/params/Custom/Code/index.js:16
 msgid "js.params.Custom.code.loadingEditor"
-msgstr ""
+msgstr "Φόρτωση επεξεργαστή..."
 
 #: assets/js/params/File/UploadApiModal.js:28
 msgid "js.params.File.UploadApiModal.ApiTokenLoading"
-msgstr ""
+msgstr "Φορτώνω"
 
 #: assets/js/params/File/UploadApiModal.js:41
 msgid "js.params.File.UploadApiModal.ApiTokenOk.apiToken"
-msgstr ""
+msgstr "Διακριτικό API"
 
 #: assets/js/params/File/File.js:10
 msgid "js.params.File.UploadProgress.hoverText"
-msgstr ""
+msgstr "{0}% έχει ανέβει"
 
 #: assets/js/params/File/UploadedFileSelect.js:93
 msgid "js.params.File.UploadedFileSelect.UploadedFileSelectModal.footer.cancelButton"
-msgstr ""
+msgstr "Ακύρωση"
 
 #: assets/js/params/File/UploadedFileSelect.js:86
 msgid "js.params.File.UploadedFileSelect.UploadedFileSelectModal.footer.loadButton"
-msgstr ""
+msgstr "Φόρτωση"
 
 #. This should be all-caps for styling reasons
 #: assets/js/params/File/UploadedFileSelect.js:57
 msgid "js.params.File.UploadedFileSelect.UploadedFileSelectModal.header.title"
-msgstr ""
+msgstr "ΙΣΤΟΡΙΚΟ ΑΡΧΕΙΟΥ"
 
 #: assets/js/params/File/UploadedFileSelect.js:60
 msgid "js.params.File.UploadedFileSelect.UploadedFileSelectModal.noFiles"
-msgstr ""
+msgstr "Δεν έχετε ανεβάσει κανένα αρχείο σε αυτό το βήμα"
 
 #. The parameter will contain a specific date
 #: assets/js/params/File/UploadedFileSelect.js:71
 msgid "js.params.File.UploadedFileSelect.UploadedFileSelectModal.uploaded_at"
-msgstr ""
+msgstr "Ανέβηκε στις {0}"
 
 #: assets/js/params/File/UploadedFileSelect.js:115
 msgid "js.params.File.UploadedFileSelect.choosePreviousFile.hoverText"
-msgstr ""
+msgstr "Επιλέξτε αρχείο που έχει ανεβεί"
 
+#. Means 'no file'
 #: assets/js/params/File/UploadedFileSelect.js:111
 msgid "js.params.File.UploadedFileSelect.choosePreviousFile.none"
-msgstr ""
+msgstr "[ΚΑΝΕΝΑ]"
 
 #. The parameter {fileNumber} is the number of the file (or
 #. js.params.File.UploadedFileSelect.choosePreviousFile.none) and {nFiles} is
 #. the total number of files
 #: assets/js/params/File/UploadedFileSelect.js:116
 msgid "js.params.File.UploadedFileSelect.choosePreviousFile.text"
-msgstr ""
+msgstr "Αρχείο {fileNumber} από {nFiles}"
 
 #: assets/js/params/Gdrivefile.js:95
 msgid "js.params.Gdrivefile.FileInfo.chooseFile"
-msgstr ""
+msgstr "(επιλέξτε ένα αρχείο)"
 
 #. {name} is the name of a file
 #: assets/js/params/Gdrivefile.js:103
 msgid "js.params.Gdrivefile.FileInfo.openInGoogleSheets"
-msgstr ""
+msgstr "Ανοίξτε στα Φύλλα Google: {name}"
 
 #: assets/js/params/Gdrivefile.js:287
 msgid "js.params.Gdrivefile.change.button"
-msgstr ""
+msgstr "Αλλαγή"
 
 #: assets/js/params/Gdrivefile.js:287
 msgid "js.params.Gdrivefile.choose.button"
-msgstr ""
+msgstr "Επιλογή"
 
 #: assets/js/params/Gdrivefile.js:267
 msgid "js.params.Gdrivefile.status.failureRecconect"
-msgstr ""
+msgstr "αποτυχία: επανασυνδεθείτε"
 
 #: assets/js/params/Gdrivefile.js:263
 msgid "js.params.Gdrivefile.status.loading"
-msgstr ""
+msgstr "Φορτώνω..."
 
 #: assets/js/params/Gdrivefile.js:271
 msgid "js.params.Gdrivefile.status.pleaseSignin"
-msgstr ""
+msgstr "(Παρακαλώ, συνδεθείτε)"
 
 #: assets/js/params/List.js:149
 msgid "js.params.List.add"
-msgstr ""
+msgstr "Προσθήκη"
 
 #: assets/js/params/Multichartseries/ColorPicker.js:247
 msgid "js.params.Multichartseries.ColorPicker.pickColor.hoverText"
-msgstr ""
+msgstr "Επιλογή χρώματος"
 
 #: assets/js/params/Multichartseries/index.js:64
 msgid "js.params.Multichartseries.addColumn.hoverText"
-msgstr ""
+msgstr "προσθήκη άλλης στήλης"
 
 #: assets/js/params/Multichartseries/index.js:88
 msgid "js.params.Multichartseries.loading"
-msgstr ""
+msgstr "Φορτώνω…"
 
 #: assets/js/params/Multichartseries/index.js:70
 msgid "js.params.Multichartseries.removeLastColumn.hoverText"
-msgstr ""
+msgstr "αφαίρεση τελευταίας στήλης"
 
 #: assets/js/params/Multicolumn.js:45
 msgid "js.params.Multicolumn.MenuList.clearButton"
-msgstr ""
+msgstr "καθαρισμός"
 
 #: assets/js/params/Multicolumn.js:37
 msgid "js.params.Multicolumn.MenuList.selectAllButton"
-msgstr ""
+msgstr "Επιλογή όλων"
 
 #: assets/js/params/Multicolumn.js:122
 msgid "js.params.Multicolumn.selectColumn.placeholder"
-msgstr ""
+msgstr "Επιλογή στηλών"
 
 #: assets/js/params/Multitab.js:43
 msgid "js.params.MultitabParam.selectTabs.placeholder"
-msgstr ""
+msgstr "Επιλογή καρτελών"
 
 #. The parameter contains an example
 #: assets/js/params/NumberFormat.js:57
 msgid "js.params.NumberFormat.currency"
-msgstr ""
+msgstr "Νόμισμα: {0}"
 
 #. The parameter contains an example
 #: assets/js/params/NumberFormat.js:27
 msgid "js.params.NumberFormat.decimal.default"
-msgstr ""
+msgstr "Δεκαδικός: {0}"
 
 #. The parameter contains an example
 #: assets/js/params/NumberFormat.js:20
 msgid "js.params.NumberFormat.decimal.fixed"
-msgstr ""
+msgstr "Δεκαδικός, σταθερά δεκαδικά: {0}"
 
 #. The parameter contains an example
 #: assets/js/params/NumberFormat.js:34
 msgid "js.params.NumberFormat.decimal.noCommas"
-msgstr ""
+msgstr "Δεκαδικός, χωρίς διαχωριστικά χιλιάδων: {0}"
 
 #. The parameter contains an example
 #: assets/js/params/NumberFormat.js:42
 msgid "js.params.NumberFormat.integer.default"
-msgstr ""
+msgstr "Ακέραιος: {0}"
 
 #. The parameter contains an example
 #: assets/js/params/NumberFormat.js:49
 msgid "js.params.NumberFormat.integer.noCommas"
-msgstr ""
+msgstr "Ακέραιος, χωρίς διαχωριστικά χιλιάδων: {0}"
 
 #. The parameter contains an example
 #: assets/js/params/NumberFormat.js:64
 msgid "js.params.NumberFormat.percentage"
-msgstr ""
+msgstr "Ποσοστό: {0}"
 
 #: assets/js/params/Custom/Refine/index.js:453
 msgid "js.params.Refine.GroupList.loadingValues"
-msgstr ""
+msgstr "Φόρτωση τιμών…"
 
 #: assets/js/params/Custom/Refine/index.js:455
 msgid "js.params.Refine.GroupList.noValuesInColumn"
-msgstr ""
+msgstr "Αυτή η στήλη δεν έχει τιμές"
 
 #: assets/js/params/Custom/Refine/index.js:457
 msgid "js.params.Refine.GroupList.noValuesMatchSearch"
-msgstr ""
+msgstr "Δεν υπάρχουν τιμές που να αντιστοιχούν στην αναζήτησή σας"
 
 #: assets/js/params/Custom/Refine/index.js:276
 msgid "js.params.Refine.RefineGroup.cancelEdits"
-msgstr ""
+msgstr "Ακύρωση αλλαγών αυτών των τιμών"
 
 #: assets/js/params/Custom/Refine/index.js:264
 msgid "js.params.Refine.RefineGroup.expandStatus.expanded"
-msgstr ""
+msgstr "Απόκρυψη αρχικών τιμών"
 
 #: assets/js/params/Custom/Refine/index.js:264
 msgid "js.params.Refine.RefineGroup.expandStatus.notExpanded"
-msgstr ""
+msgstr "Εμφάνιση αρχικών τιμών"
 
 #: assets/js/params/Custom/Refine/index.js:312
 msgid "js.params.Refine.RefineGroup.selectTheseRows"
-msgstr ""
+msgstr "Επιλέξτε αυτές τις σειρές"
 
 #: assets/js/params/Custom/Refine/index.js:133
 msgid "js.params.Refine.RefineModalPrompt.findClusters.button"
-msgstr ""
+msgstr "Εύρεση συμπλεγμάτων..."
 
 #: assets/js/params/Custom/Refine/index.js:808
 msgid "js.params.Refine.mergeFacets.button"
-msgstr ""
+msgstr "Συγχώνευση πτυχών"
 
 #: assets/js/params/Secret/OAuth.js:42
 msgid "js.params.Secret.OAuth.connectAccount.button"
-msgstr ""
+msgstr "Σύνδεση λογαριασμού"
 
 #: assets/js/params/Secret/OAuth.js:37
 msgid "js.params.Secret.OAuth.signOut.button"
-msgstr ""
+msgstr "Αποσύνδεση"
 
 #: assets/js/params/Secret/String.js:93
 msgid "js.params.Secret.String.StringDisplay.clear.button"
-msgstr ""
+msgstr "Καθαρισμός"
 
 #: assets/js/params/Tab.js:47
 msgid "js.params.Tab.selectTab.placeholder"
-msgstr ""
+msgstr "Επιλογή καρτέλας"
 
+#. Usually meaning 'All values'
 #: assets/js/params/common/AllNoneButtons.js:16
 msgid "js.params.common.AllNoneButtons.selectAll.button"
-msgstr ""
+msgstr "Όλες"
 
+#. Usually meaning 'Select all values'
 #: assets/js/params/common/AllNoneButtons.js:13
 msgid "js.params.common.AllNoneButtons.selectAll.hoverText"
-msgstr ""
+msgstr "Επιλογή όλων"
 
+#. Usually meaning 'No value'
 #: assets/js/params/common/AllNoneButtons.js:25
 msgid "js.params.common.AllNoneButtons.selectNone.button"
-msgstr ""
+msgstr "Καμία"
 
+#. Usually meaning 'Select no value'
 #: assets/js/params/common/AllNoneButtons.js:22
 msgid "js.params.common.AllNoneButtons.selectNone.hoverText"
-msgstr ""
+msgstr "Καμία επιλογή"
 
 #: assets/js/params/common/FacetSearch.js:38
 msgid "js.params.common.FacetSearch.clearSearch.hoverText"
-msgstr ""
+msgstr "Καθαρισμός αναζήτησης"
 
 #: assets/js/params/common/FacetSearch.js:28
 msgid "js.params.common.FacetSearch.searchFacets.placeholder"
-msgstr ""
+msgstr "Αναζήτηση πτυχών..."
 
 #: assets/js/params/common/react-select.js:131
 msgid "js.params.common.ReactSelect.noOptionsMessage"
-msgstr ""
+msgstr "Δεν υπάρχουν επιλογές"
 
 #: assets/js/params/common/ValueSortSelect.js:44
 msgid "js.params.common.ValueSortSelect.rows"
-msgstr ""
+msgstr "Σειρές"
 
 #: assets/js/params/common/ValueSortSelect.js:33
 msgid "js.params.common.ValueSortSelect.value"
-msgstr ""
+msgstr "Τιμή"
 
 #: assets/js/params/Custom/Aggregations/Aggregation.js:88
 msgid "js.params.custom.Aggregations.Aggregation.ColumnParam.prompt"
-msgstr ""
+msgstr "Επιλέξτε στήλη"
 
 #: assets/js/params/Custom/Aggregations/Aggregation.js:95
 msgid "js.params.custom.Aggregations.Aggregation.outname"
-msgstr ""
+msgstr "Όνομα"
 
 #: assets/js/params/Custom/Filters/Filter.js:75
 msgid "js.params.custom.Filters.Filter.heading.title"
-msgstr ""
+msgstr "Αν"
 
 #: assets/js/table/ColumnContextMenu.js:52
 msgid "js.table.ColumnContextMenu.cleanText"
-msgstr ""
+msgstr "Καθάρισμα κειμένου"
 
 #: assets/js/table/ColumnContextMenu.js:54
 msgid "js.table.ColumnContextMenu.convertToDateTime"
-msgstr ""
+msgstr "Μετατροπή σε ημερομηνία & ώρα"
 
 #: assets/js/table/ColumnContextMenu.js:55
 msgid "js.table.ColumnContextMenu.convertToNumbers"
-msgstr ""
+msgstr "Μετατροπή σε αριθμούς"
 
 #: assets/js/table/ColumnContextMenu.js:56
 msgid "js.table.ColumnContextMenu.convertToText"
-msgstr ""
+msgstr "Μετατροπή σε κείμενο"
 
 #: assets/js/table/ColumnContextMenu.js:60
 msgid "js.table.ColumnContextMenu.deleteColumn"
-msgstr ""
+msgstr "Διαγραφή στήλης"
 
 #: assets/js/table/ColumnContextMenu.js:46
 msgid "js.table.ColumnContextMenu.duplicate"
-msgstr ""
+msgstr "Δημιουργία αντιγράφου"
 
 #: assets/js/table/ColumnContextMenu.js:51
 msgid "js.table.ColumnContextMenu.filter"
-msgstr ""
+msgstr "Φίλτρο"
 
 #: assets/js/table/ColumnContextMenu.js:58
 msgid "js.table.ColumnContextMenu.formatNumbers"
-msgstr ""
+msgstr "Μορφοποίηση αριθμών"
 
 #: assets/js/table/ColumnContextMenu.js:45
 msgid "js.table.ColumnContextMenu.rename."
-msgstr ""
+msgstr "Μετονομασία"
 
 #: assets/js/table/ColumnContextMenu.js:48
 msgid "js.table.ColumnContextMenu.sortAscending"
-msgstr ""
+msgstr "Αύξουσα ταξινόμηση"
 
 #: assets/js/table/ColumnContextMenu.js:49
 msgid "js.table.ColumnContextMenu.sortDescending"
-msgstr ""
+msgstr "Φθίνουσα ταξινόμηση"
 
 #: assets/js/table/ColumnHeader.js:13
 msgid "js.table.ColumnHeader.types.dateAndtime"
-msgstr ""
+msgstr "ημερομηνία & ώρα"
 
 #: assets/js/table/ColumnHeader.js:12
 msgid "js.table.ColumnHeader.types.number"
-msgstr ""
+msgstr "αριθμός"
 
 #: assets/js/table/ColumnHeader.js:11
 msgid "js.table.ColumnHeader.types.text"
-msgstr ""
+msgstr "κείμενο"
 
 #: assets/js/table/SelectedRowsActions.js:105
 msgid "js.table.SelectedRowsActions.menu"
-msgstr ""
+msgstr "μενού"
 
 #: assets/js/table/SelectedRowsActions.js:106
 msgid "js.table.SelectedRowsActions.numberOfSelectedRows"
 msgstr ""
+"{0, plural, =0 {Δεν επιλέχτηκαν σειρές} one {Επιλέχτηκε # σειρά} other "
+"{Επιλέχτηκαν # σειρές}}"
 
 #. This should be all-caps for styling reasons
 #: assets/js/table/TableInfo.js:45
 msgid "js.table.TableInfo.columns"
-msgstr ""
+msgstr "ΣΤΗΛΕΣ"
 
 #. This should be all-caps for styling reasons
 #: assets/js/table/TableInfo.js:60
 msgid "js.table.TableInfo.export"
-msgstr ""
+msgstr "ΕΞΑΓΩΓΗ"
 
 #. This should be all-caps for styling reasons
 #: assets/js/table/TableInfo.js:41
 msgid "js.table.TableInfo.rows"
-msgstr ""
+msgstr "ΣΕΙΡΕΣ"
 
 #: assets/js/table/TableView.js:65
 msgid "js.table.TableView.maxOf100ColumnsCanbeDIsplayed"
-msgstr ""
+msgstr "Μπορούν να εμφανιστούν 100 στήλες το πολύ"
 
 #: assets/js/table/TableView.js:67
 msgid "js.table.TableView.selectColumns.button"
-msgstr ""
+msgstr "Επιλογή στηλών"
 
 #: assets/js/ModuleCategoryName.js:12
 msgid "js.util.ModuleCategoryName.CategoryNames.AddData"
-msgstr ""
+msgstr "Προσθήκη δεδομένων"
 
 #: assets/js/ModuleCategoryName.js:9
 msgid "js.util.ModuleCategoryName.CategoryNames.Analyze"
-msgstr ""
+msgstr "Ανάλυση"
 
 #: assets/js/ModuleCategoryName.js:8
 msgid "js.util.ModuleCategoryName.CategoryNames.Clean"
-msgstr ""
+msgstr "Καθάρισμα"
 
 #: assets/js/ModuleCategoryName.js:11
 msgid "js.util.ModuleCategoryName.CategoryNames.Code"
-msgstr ""
+msgstr "Κώδικας"
 
 #: assets/js/ModuleCategoryName.js:6
 msgid "js.util.ModuleCategoryName.CategoryNames.Combine"
-msgstr ""
+msgstr "Συνδυασμός"
 
 #: assets/js/ModuleCategoryName.js:13
 msgid "js.util.ModuleCategoryName.CategoryNames.Other"
-msgstr ""
+msgstr "Άλλο"
 
 #: assets/js/ModuleCategoryName.js:7
 msgid "js.util.ModuleCategoryName.CategoryNames.Scrape"
-msgstr ""
+msgstr "Συλλογή (Scrape)"
 
 #: assets/js/ModuleCategoryName.js:10
 msgid "js.util.ModuleCategoryName.CategoryNames.Visualize"
-msgstr ""
+msgstr "Οπτικοποίηση"
 
 #: assets/js/utils.js:47
 msgid "js.util.timeDifference.ago.days"
-msgstr ""
+msgstr "{days}ημ πριν"
 
 #: assets/js/utils.js:49
 msgid "js.util.timeDifference.ago.hours"
-msgstr ""
+msgstr "{hours}ώρ πριν"
 
 #: assets/js/utils.js:51
 msgid "js.util.timeDifference.ago.minutes"
-msgstr ""
+msgstr "{minutes}λε πριν"
 
 #: assets/js/utils.js:53
 msgid "js.util.timeDifference.ago.seconds"
-msgstr ""
+msgstr "{seconds}δευτ πριν"
 
 #: assets/js/utils.js:45
 msgid "js.util.timeDifference.ago.years"
-msgstr ""
+msgstr "{years}έτη πριν"
 
 #: assets/js/utils.js:55
 msgid "js.util.timeDifference.now"
-msgstr ""
+msgstr "μόλις τώρα"
 
 #: cjworkbench/forms/signup.py:24
 msgid "py.forms.signup.firstName.placeholder"
-msgstr ""
+msgstr "Όνομα"
 
 #: cjworkbench/forms/signup.py:31
 msgid "py.forms.signup.lastName.placeholder"
-msgstr ""
+msgstr "Επώνυμο"
 
 #: templates/403.html:5
 msgid "py.templates.403.title"
-msgstr ""
+msgstr "403 Απαγορεύεται η πρόσβαση"
 
 #: templates/403.html:13
 msgid "py.templates.403.description"
 msgstr ""
+"Ο λογαριασμός στον οποίο έχετε συνδεθεί δεν έχει πρόσβαση σε αυτή τη "
+"σελίδα"
 
 #: templates/403.html:14
 msgid "py.templates.403.goBack.link"
-msgstr ""
+msgstr "Επιστροφή στον χώρο εργασίας μου"
 
 #: templates/404.html:5
 msgid "py.templates.404.title"
-msgstr ""
+msgstr "404 Η σελίδα δεν βρέθηκε"
 
 #: templates/404.html:13
 msgid "py.templates.404.description"
-msgstr ""
+msgstr "Όχι ο αριθμός που ψάχνετε"
 
 #: templates/404.html:14
 msgid "py.templates.404.backToWorkspace.link"
-msgstr ""
+msgstr "Επιστροφή στον χώρο εργασίας"
 
 #: templates/_base.html:14
 msgid "py.templates._base.message"
-msgstr ""
+msgstr "Μηνύματα:"
 
 #: templates/_base.html:24
 msgid "py.templates._base.menu"
-msgstr ""
+msgstr "Μενού:"
 
 #: templates/_base.html:27
 msgid "py.templates._base.changeMail"
-msgstr ""
+msgstr "Αλλαγή email"
 
 #: templates/_base.html:28
 msgid "py.templates._base.signOut"
-msgstr ""
+msgstr "Αποσύνδεση"
 
 #: templates/_base.html:30
 msgid "py.templates._base.signIn"
-msgstr ""
+msgstr "Σύνδεση"
 
 #: templates/_base.html:31
 msgid "py.templates._base.signUp"
-msgstr ""
+msgstr "Εγγραφή"
 
 #: templates/course.html:4
 msgid "py.templates.course.workbenchTraining.title"
-msgstr ""
+msgstr "Εκπαίδευση στο Workbench"
 
 #. This must be all-caps for styling reasons
 #: templates/course.html:15
 msgid "py.templates.course.tutorials.link"
-msgstr ""
+msgstr "ΜΑΘΗΜΑΤΑ"
 
 #: templates/embed_404.html:11
 msgid "py.templates.embed_404.notAvailable.header"
-msgstr ""
+msgstr "Αυτή η ροή εργασιών δεν είναι διαθέσιμη :("
 
 #: templates/index.html:3
 msgid "py.templates.title"
-msgstr ""
+msgstr "Workbench"
 
 #: templates/minimum.html:7
 msgid "py.templates.minimum.title"
-msgstr ""
+msgstr "Workbench"
 
 #: templates/oauth_token_request_denied.html:5
 msgid "py.templates.oauth_token_request_denied.title"
-msgstr ""
+msgstr "Σφάλμα OAuth"
 
 #: templates/oauth_token_request_denied.html:11
 msgid "py.templates.oauth_token_request_denied.description"
-msgstr ""
+msgstr "Ο διακομιστής εξουσιοδότησης αρνήθηκε να σας επιτρέψει σύνδεση."
 
 #: templates/oauth_token_request_denied.html:14
 msgid "py.templates.oauth_token_request_denied.suggestRetry"
 msgstr ""
+"Αν βλέπετε αυτό το σφάλμα για πρώτη φορά, κλείστε αυτό το παράθυρο και "
+"προσπαθήστε ξανά."
 
 #: templates/oauth_token_request_denied.html:17
 msgid "py.templates.oauth_token_request_denied.contactUs"
-msgstr ""
+msgstr "Διαφορετικά, επικοινωνήστε μαζί μας για να καταλάβουμε τι συμβαίνει."
 
 #: templates/report.html:18
 msgid "py.templates.report.author"
-msgstr ""
+msgstr "από {workflowOwner}"
 
 #: templates/report.html:19
 msgid "py.templates.report.updated"
-msgstr ""
+msgstr "Ενημερώθηκε πριν από <time0>{timeAgo}</time0>"
 
+#. This is a link to a workflow
 #: templates/report.html:21
 msgid "py.templates.report.sourceDataLink.link"
-msgstr ""
+msgstr "Δεδομένα προέλευσης"
 
 #: templates/report.html:36
 msgid "py.templates.report.addChartsTitle"
-msgstr ""
+msgstr "Προσθέστε γραφήματα σε καρτέλες και θα εμφανιστούν εδώ."
 
 #: templates/workflow.html:5
 msgid "py.templates.workflow.title"
-msgstr ""
+msgstr "Workbench"
 
 #: templates/workflow.html:34
 msgid "py.templates.workflow.widerScreen"
-msgstr ""
+msgstr "Χρειάζεστε μια ευρύτερη οθόνη για να απολαύσετε το Workbench"
 
 #: templates/workflow.html:35
 msgid "py.templates.workflow.minimumRequirement"
-msgstr ""
+msgstr "Ελάχιστο πλάτος 650px"
 
 #: templates/workflow.html:36
 msgid "py.templates.workflow.optimizedForDesktop"
-msgstr ""
+msgstr "Εμπειρία βελτιστοποιημένη για προγράμματα περιήγησης"
 
 #: templates/workflow.html:37
 msgid "py.templates.workflow.signupLink.link"
-msgstr ""
+msgstr "Εγγραφή"
 
 #: templates/account/delete.html:5
 msgid "py.templates.account.delete.deleteAccount.header"
-msgstr ""
+msgstr "Διαγραφή λογαριασμού"
 
 #. The tag adds emphasis
 #: templates/account/delete.html:7
 msgid "py.templates.account.delete.accountDeletionExpungeHours"
 msgstr ""
+"Αν προχωρήσετε και διαγράψετε τον λογαριασμό σας, οι πληροφορίες σας "
+"<b0>θα εξαλειφθούν μέσα σε {hours} ώρες</b0>."
 
 #: templates/account/delete.html:11
 msgid "py.templates.account.delete.deleteMyAccount"
-msgstr ""
+msgstr "Διαγραφή του λογαριασμού μου"
 
 #: templates/account/email_confirm.html:5
 msgid "py.templates.account.email_confirm.confirmEmail.title"
-msgstr ""
+msgstr "Επιβεβαίωση email"
 
 #: templates/account/email_confirm.html:9
 msgid "py.templates.account.email_confirm.confirmEmail"
-msgstr ""
+msgstr "Επιβεβαίωση email"
 
 #: templates/account/email_confirm.html:13
 msgid "py.templates.account.email_confirm.confirm.button"
-msgstr ""
+msgstr "Επιβεβαίωση"
 
 #: templates/account/email_confirmation_sent.html:5
 msgid "py.templates.account.email_confirmation_sent.title"
-msgstr ""
+msgstr "Στάλθηκε email επιβεβαίωσης"
 
 #: templates/account/email_confirmation_sent.html:8
 msgid "py.templates.account.email_confirmation_sent.header"
-msgstr ""
+msgstr "Επιβεβαιώστε το email σας"
 
 #. The b0 tag adds emphasis. The a0 tag is a mailto link for the contactMail.
 #: templates/account/email_confirmation_sent.html:10
 msgid "py.templates.account.email_confirmation_sent.verificationEmail"
 msgstr ""
+"Έχουμε στείλει μήνυμα ηλ. ταχυδρομείου στη διεύθυνση <b0>{email}</b0> για"
+" επαλήθευση. Εάν δεν το λάβετε μέσα στα επόμενα λεπτά, επικοινωνήστε μαζί"
+" μας στη διεύθυνση <a0>{contactMail}</a0>."
 
 #: templates/account/email_confirmation_sent.html:11
 msgid "py.templates.account.email_confirmation_sent.goBack.link"
-msgstr ""
+msgstr "Επιστροφή"
 
 #: templates/account/email_confirmed.html:5
 msgid "py.templates.account.email_confirmed.title"
-msgstr ""
+msgstr "Το email επιβεβαιώθηκε"
 
 #: templates/account/email_confirmed.html:8
 msgid "py.templates.account.email_confirmed.emailConfirm.header"
-msgstr ""
+msgstr "Το email επιβεβαιώθηκε"
 
 #. The tag adds emphasis
 #: templates/account/email_confirmed.html:9
 msgid "py.templates.account.email_confirmed.youConfirmedEmail"
-msgstr ""
+msgstr "Έχετε επιβεβαιώσει το <b0>{email}</b0>"
 
 #: templates/account/login.html:4 templates/account/login.html:10
 msgid "py.templates.account.login.title"
-msgstr ""
+msgstr "Σύνδεση"
 
 #: templates/account/login.html:12
 msgid "py.templates.account.login.linkToSignUp"
-msgstr ""
+msgstr "Εγγραφή"
 
 #: templates/account/login.html:43
 msgid "py.templates.account.login.forgotPasswordPrompt"
-msgstr ""
+msgstr "Ξεχάσατε τον κωδικό;"
 
 #: templates/account/login.html:45
 msgid "py.templates.account.login.submitButton"
-msgstr ""
+msgstr "Σύνδεση"
 
 #: templates/account/logout.html:5
 msgid "py.templates.account.logout.title"
-msgstr ""
+msgstr "Αποσυνδέση"
 
 #: templates/account/logout.html:9
 msgid "py.templates.account.logout.formHeader"
-msgstr ""
+msgstr "Αποσυνδέση"
 
 #: templates/account/logout.html:12
 msgid "py.templates.account.logout.confirmation"
-msgstr ""
+msgstr "Είστε βέβαιος ότι θέλετε να αποσυνδεθείτε;"
 
 #: templates/account/logout.html:13
 msgid "py.templates.account.logout.button"
-msgstr ""
+msgstr "Αποσυνδέση"
 
 #: templates/account/password_change.html:5
 msgid "py.templates.account.password_change.title"
-msgstr ""
+msgstr "Αλλαγή κωδικού"
 
 #: templates/account/password_change.html:9
 msgid "py.templates.account.password_change.formHeader"
-msgstr ""
+msgstr "Αλλαγή κωδικού"
 
 #: templates/account/password_change.html:13
 msgid "py.templates.account.password_change.saveButton"
-msgstr ""
+msgstr "Αποθήκευση"
 
 #: templates/account/password_reset.html:6
 msgid "py.templates.account.password_reset.title"
-msgstr ""
+msgstr "Δημιουργία νέου κωδικού"
 
 #: templates/account/password_reset.html:12
 msgid "py.templates.account.password_reset.formHeader"
-msgstr ""
+msgstr "Ξεχάσατε τον κωδικό σας;"
 
 #: templates/account/password_reset.html:17
 msgid "py.templates.account.password_reset.sendMeInstructions.button"
-msgstr ""
+msgstr "Στείλτε μου οδηγίες"
 
 #: templates/account/password_reset.html:25
 msgid "py.templates.account.password_reset.backToLogin.link"
-msgstr ""
+msgstr "Επιστροφή στη σελίδα σύνδεσης"
 
 #: templates/account/password_reset_done.html:6
 msgid "py.templates.account.password_reset_done.title"
-msgstr ""
+msgstr "Στάλθηκε η ανανέωση κωδικού πρόσβασης"
 
 #: templates/account/password_reset_done.html:9
 msgid "py.templates.account.password_reset_done.header"
-msgstr ""
+msgstr "Στάλθηκαν οδηγίες!"
 
 #: templates/account/password_reset_done.html:11
 msgid "py.templates.account.password_reset_done.checkYourEmail"
-msgstr ""
+msgstr "Ελέγξτε το ηλ. ταχυδρομείο σας για να δημιουργήσετε νέο κωδικό πρόσβασης."
 
 #. The a0 tag is a mailto link to the email
 #: templates/account/password_reset_done.html:14
 msgid "py.templates.account.password_reset_done.weHaveResentThePass"
 msgstr ""
+"Στείλαμε ξανά το ηλ. μήνυμα με τον κωδικό πρόσβασης. Εάν δεν το λάβετε "
+"μέσα σε λίγα λεπτά, επικοινωνήστε μαζί μας στη διεύθυνση "
+"<a0>{email}</a0>."
 
 #: templates/account/password_reset_done.html:16
 msgid "py.templates.account.password_reset_done.backToLogin.link"
-msgstr ""
+msgstr "Επιστροφή στη σελίδα σύνδεσης"
 
 #: templates/account/password_reset_from_key.html:4
 msgid "py.templates.account.password_reset_from_key.title"
-msgstr ""
+msgstr "Αλλαγή κωδικού"
 
 #: templates/account/password_reset_from_key.html:7
 msgid "py.templates.account.password_reset_from_key.invalidLink"
-msgstr ""
+msgstr "Άκυρος σύνδεσμος"
 
 #: templates/account/password_reset_from_key.html:7
 msgid "py.templates.account.password_reset_from_key.changePass"
-msgstr ""
+msgstr "Αλλαγή κωδικού"
 
 #. The a0 tag is a url to another page
 #: templates/account/password_reset_from_key.html:10
 msgid "py.templates.account.password_reset_from_key.notValidAnymore"
 msgstr ""
+"Αυτός ο σύνδεσμος δεν ισχύει πια. Ζητήστε τη <a0>δημιουργία νέου κωδικού "
+"πρόσβασης</a0>."
 
 #: templates/account/password_reset_from_key.html:20
 msgid "account.password_reset_from_key.input.changePassword.placeholder"
-msgstr ""
+msgstr "Αλλαγή κωδικού"
 
 #: templates/account/password_reset_from_key.html:24
 msgid "py.templates.account.password_reset_from_key.newPassIsSet"
-msgstr ""
+msgstr "Έχει οριστεί ο νέος σας κωδικός πρόσβασης."
 
 #: templates/account/password_reset_from_key_done.html:4
 msgid "py.templates.account.password_reset_from_key_done.title"
-msgstr ""
+msgstr "Αλλαγή κωδικού"
 
 #: templates/account/password_reset_from_key_done.html:7
 msgid "py.templates.account.password_reset_from_key_done.description"
-msgstr ""
+msgstr "Έχει οριστεί ο νέος σας κωδικός πρόσβασης!"
 
 #: templates/account/password_reset_from_key_done.html:9
 msgid "py.templates.account.password_reset_from_key_done.backToLogin.link"
-msgstr ""
+msgstr "Επιστροφή στη σελίδα σύνδεσης"
 
 #: templates/account/settings.html:6
 msgid "py.templates.account.settings.title"
-msgstr ""
+msgstr "Λογαριασμός"
 
 #: templates/account/settings.html:10
 msgid "py.templates.account.settings.header"
-msgstr ""
+msgstr "Λογαριασμός"
 
 #: templates/account/settings.html:13
 msgid "py.templates.account.settings.saveButton"
-msgstr ""
+msgstr "Αποθήκευση"
 
 #: templates/account/signup.html:4
 msgid "py.templates.account.signup.title"
-msgstr ""
+msgstr "Εγγραφή"
 
 #: templates/account/signup.html:10
 msgid "py.templates.account.signup.header.title"
-msgstr ""
+msgstr "Εγγραφή"
 
 #: templates/account/signup.html:12
 msgid "py.templates.account.signup.linkToSignIn"
-msgstr ""
+msgstr "Σύνδεση"
 
 #. The a0 tag is a link to the login page
 #: templates/account/signup.html:26
 msgid "py.templates.account.signup.loginPrompt"
 msgstr ""
+"Αν έχετε ήδη δημιουργήσει λογαριασμό, τότε παρακαλούμε να "
+"<a0>συνδεθείτε</a0>."
 
 #: templates/account/signup.html:44
 msgid "py.templates.account.signup.sendMeNews.label"
-msgstr ""
+msgstr "Δέχομαι να μου στέλνετε ειδήσεις κατά καιρούς"
 
 #. The tags are urls to the respective pages
 #: templates/account/signup.html:51
 msgid "py.templates.account.signup.agreeToTerms"
 msgstr ""
+"Συμφωνώ με τους <a0>Όρους Παροχής Υπηρεσιών</a0> και την <a1>Πολιτική "
+"Απορρήτου</a1> του Workbench."
 
 #: templates/account/signup.html:53
 msgid "py.templates.account.signup.registerButton"
-msgstr ""
+msgstr "Εγγραφή"
 
 #: templates/account/verification_sent.html:5
 msgid "py.templates.account.verification_sent.title"
-msgstr ""
+msgstr "Επιβεβαιώστε τη διεύθυνση του ηλ. ταχυδρομείου σας"
 
 #: templates/account/verification_sent.html:8
 msgid "py.templates.account.verification_sent.header"
-msgstr ""
+msgstr "Επιβεβαιώστε τη διεύθυνση του ηλ. ταχυδρομείου σας"
 
 #: templates/account/verification_sent.html:9
 msgid "py.templates.account.verification_sent.description"
 msgstr ""
+"Σας έχουμε στείλει μήνυμα ηλ. ταχυδρομείου για την επαλήθευση του "
+"λογαριασμού σας. Επικοινωνήστε μαζί μας αν δεν το λάβετε μέσα στα επόμενα"
+" λεπτά."
 
 #: templates/account/verification_sent.html:10
 msgid "py.templates.account.verification_sent.backToLogin.link"
-msgstr ""
+msgstr "Επιστροφή στη σελίδα σύνδεσης"
 
 #: templates/account/email/email_confirmation_message.txt:3
 msgid "py.templates.account.email.email_confirmation_message.welcome"
-msgstr ""
+msgstr "Καλώς ήλθατε στο Workbench!"
 
 #: templates/account/email/email_confirmation_message.txt:4
 msgid "py.templates.account.email.email_confirmation_message.confirmYourEmail"
 msgstr ""
+"Επιβεβαιώστε τη διεύθυνση του ηλ. ταχυδρομείου σας κάνοντας κλικ στον "
+"παρακάτω σύνδεσμο. Αν δεν έχετε κάνει εσείς εγγραφή, μπορείτε να "
+"αγνοήσετε το παρόν μήνυμα."
 
 #: templates/account/email/email_confirmation_subject.txt:3
 msgid "py.templates.account.email.email_confirmation_subject.pleaseConfirmEmailaddress"
 msgstr ""
+"Παρακαλούμε να επιβεβαιώσετε τη διεύθυνση του ηλεκτρονικού ταχυδρομείου "
+"σας"
 
 #: templates/account/email/password_reset_key_message.txt:3
 msgid "py.templates.account.email.password_reset_key_message.passwordRequest"
 msgstr ""
+"Λαμβάνετε αυτό το μήνυμα ηλεκτρονικού ταχυδρομείου επειδή εσείς ή κάποιος"
+" άλλος έχετε ζητήσει κωδικό πρόσβασης για τον λογαριασμό χρήστη που "
+"έχετε. Μπορείτε να αγνοήσετε το μήνυμα αν δεν ζητήσατε τη δημιουργία νέου"
+" κωδικού πρόσβασης. Κάντε κλικ στον παρακάτω σύνδεσμο για τη δημιουργία "
+"νέου κωδικού."
 
 #: templates/account/email/password_reset_key_message.txt:7
 msgid "py.templates.account.email.password_reset_key_message.forgotUsername"
-msgstr ""
+msgstr "Σε περίπτωση που έχετε ξεχάσει, το όνομα χρήστη σας είναι {username}."
 
 #: templates/account/email/password_reset_key_subject.txt:3
 msgid "py.templates.account.email.password_reset_key_subject"
-msgstr ""
+msgstr "Μήνυμα δημιουργίας νέου κωδικού πρόσβασης"
 
 #: templates/notifications/new_data_version.txt:1
 msgid "py.templates.notifications.new_data_version.hello"
-msgstr ""
+msgstr "Γεια σας, {userName},"
 
 #. The tag is a url
 #: templates/notifications/new_data_version.txt:2
 msgid "py.templates.notifications.new_data_version.workflowHasBeenUpdated"
 msgstr ""
+"Η ροή εργασιών σας <a0>{workflowName}</a0> ενημερώθηκε με νέα δεδομένα "
+"στις {date}. Η μονάδα {moduleName} έχει νέα έξοδο."
 
 #: templates/notifications/new_data_version_subject.txt:1
 msgid "py.templates.notifications.new_data_version_subject"
-msgstr ""
+msgstr "Νέα δεδομένα διαθέσιμα στο {workflow_name}"
 
 #: templates/openid/login.html:5
 msgid "py.templates.openid.login.title"
-msgstr ""
+msgstr "Σύνδεση OpenID"
 
 #: templates/openid/login.html:9
 msgid "py.templates.openid.login.header"
-msgstr ""
+msgstr "Σύνδεση OpenID"
 
 #: templates/openid/login.html:15
 msgid "py.templates.openid.login.signInButton"
-msgstr ""
+msgstr "Σύνδεση"
 
 #: templates/socialaccount/authentication_error.html:5
 msgid "py.templates.socialaccount.authentication_error.title"
-msgstr ""
+msgstr "Αποτυχία σύνδεσης με το κοινωνικό δίκτυο"
 
 #: templates/socialaccount/authentication_error.html:8
 msgid "py.templates.socialaccount.authentication_error.header"
-msgstr ""
+msgstr "Αποτυχία σύνδεσης με το κοινωνικό δίκτυο"
 
 #: templates/socialaccount/authentication_error.html:10
 msgid "py.templates.socialaccount.authentication_error.description"
 msgstr ""
+"Παρουσιάστηκε σφάλμα κατά την προσπάθεια σύνδεσης μέσω του λογαριασμού "
+"σας κοινωνικής δικτύωσης."
 
 #: templates/socialaccount/connections.html:5
 msgid "py.templates.socialaccount.connections.title"
-msgstr ""
+msgstr "Συνδέσεις λογαριασμού"
 
+#. Short for 'The account has been linked!'
 #: templates/socialaccount/connections.html:10
 msgid "py.templates.socialaccount.connections.accountLinked"
-msgstr ""
+msgstr "Ο λογαριασμός συνδέθηκε!"
 
 #: templates/socialaccount/connections.html:12
 msgid "py.templates.socialaccount.connections.signInLink"
-msgstr ""
+msgstr "Σύνδεση"
 
 #: templates/socialaccount/connections.html:16
 msgid "py.templates.socialaccount.connections.removeLinkedAccount"
-msgstr ""
+msgstr "Κατάργηση συνδεδεμένων λογαριασμών"
 
 #: templates/socialaccount/connections.html:41
 msgid "py.templates.socialaccount.connections.removeButton"
-msgstr ""
+msgstr "Αφαίρεση"
 
 #: templates/socialaccount/connections.html:49
 msgid "py.templates.socialaccount.connections.noSocialAccounts"
 msgstr ""
+"Αυτή τη στιγμή δεν έχετε λογαριασμούς κοινωνικής δικτύωσης συνδεδεμένους "
+"με αυτόν τον λογαριασμό."
 
 #: templates/socialaccount/connections.html:52
 msgid "py.templates.socialaccount.connections.addAnotherAccount"
-msgstr ""
+msgstr "Προσθήκη άλλου λογαριασμού"
 
 #: templates/socialaccount/login_cancelled.html:5
 msgid "py.templates.socialaccount.login_cancelled.title"
-msgstr ""
+msgstr "Ακύρωση σύνδεσης"
 
 #: templates/socialaccount/login_cancelled.html:9
 msgid "py.templates.socialaccount.login_cancelled.header"
-msgstr ""
+msgstr "Ακύρωση σύνδεσης"
 
 #. The tag is a link to the login page
 #: templates/socialaccount/login_cancelled.html:13
 msgid "py.templates.socialaccount.login_cancelled.youCancelledLogin"
 msgstr ""
+"Αποφασίσατε να ακυρώσετε την είσοδο στον ιστότοπό μας με τη χρήση ενός "
+"από τους λογαριασμούς σας. Αν αυτό έγινε κατά λάθος, προχωρήστε στη "
+"<a0>σύνδεση</a0>."
 
 #: templates/socialaccount/signup.html:5
 msgid "py.templates.socialaccount.signup.title"
-msgstr ""
+msgstr "Εγγραφή"
 
 #: templates/socialaccount/signup.html:17
 msgid "py.templates.socialaccount.signup.thereIsAlreadyAccount"
 msgstr ""
+"Υπάρχει ήδη ένας λογαριασμός που έχει καταχωρηθεί με τη συγκεκριμένη "
+"διεύθυνση ηλ. ταχυδρομείου."
 
 #: templates/socialaccount/signup.html:19
 msgid "py.templates.socialaccount.signup.connectExistingAccount"
-msgstr ""
+msgstr "Συνδεθείτε με τον υπάρχοντα λογαριασμό σας."
 
 #: templates/socialaccount/signup.html:24
 msgid "py.templates.socialaccount.signup.specificAccountToLogin"
 msgstr ""
+"Πρόκειται να χρησιμοποιήσετε το λογαριασμό σας {provider_name} για να "
+"συνδεθείτε στο {site_name}. Ως τελικό βήμα, συμπληρώστε την παρακάτω "
+"φόρμα:"
 
 #: templates/socialaccount/signup.html:32
 msgid "py.templates.socialaccount.signup.button"
-msgstr ""
+msgstr "Εγγραφή"
 
 #: templates/socialaccount/messages/account_connected.txt:2
 msgid "py.templates.socialaccount.messages.account_connected.text"
-msgstr ""
+msgstr "Ο λογαριασμός κοινωνικής δικτύωσης έχει συνδεθεί."
 
 #: templates/socialaccount/messages/account_connected_other.txt:2
 msgid "py.templates.socialaccount.messages.account_connected_other.text"
 msgstr ""
+"Ο λογαριασμός κοινωνικής δικτύωσης είναι ήδη συνδεδεμένος με διαφορετικό "
+"λογαριασμό."
 
 #: templates/socialaccount/messages/account_disconnected.txt:2
 msgid "py.templates.socialaccount.messages.account_disconnected.text"
-msgstr ""
+msgstr "Ο λογαριασμός κοινωνικής δικτύωσης έχει αποσυνδεθεί."
 
 #: templates/socialaccount/snippets/provider_list.html:22
 msgid "py.templates.socialaccount.snippets.provider_list.useAccount"
-msgstr ""
+msgstr "Χρησιμοποιήστε τον λογαριασμό {providerName}"
 

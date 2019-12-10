@@ -28,8 +28,8 @@ export default class SortMenu extends React.Component {
             <Trans id='js.Workflows.SortMenu.sort.DropdownTitle'>Sort</Trans> <i className={this.icon} />
           </DropdownToggle>
           <DropdownMenu>
-            <DropdownItem data-comparator='last_update|descending' onClick={this.handleClickComparator}><Trans id='js.Workflows.SortMenu.lastModified.dropdownItem'>Last modified</Trans></DropdownItem>
-            <DropdownItem data-comparator='last_update|ascending' onClick={this.handleClickComparator}><Trans id='js.Workflows.SortMenu.oldestModified.dropdownItem'>Oldest modified</Trans></DropdownItem>
+            <DropdownItem data-comparator='last_update|descending' onClick={this.handleClickComparator}><Trans id='js.Workflows.SortMenu.lastModified.dropdownItem' description='Last update descending'>Last modified</Trans></DropdownItem>
+            <DropdownItem data-comparator='last_update|ascending' onClick={this.handleClickComparator}><Trans id='js.Workflows.SortMenu.oldestModified.dropdownItem' description='Last update ascending'>Oldest modified</Trans></DropdownItem>
             <DropdownDivider />
             <DropdownItem data-comparator='name|ascending' onClick={this.handleClickComparator}><Trans id='js.Workflows.SortMenu.alphabetical.dropdownItem'>Alphabetical</Trans></DropdownItem>
             <DropdownItem data-comparator='name|descending' onClick={this.handleClickComparator}><Trans id='js.Workflows.SortMenu.reverseAlphabet.dropdownItem'>Reverse alphabetical</Trans></DropdownItem>

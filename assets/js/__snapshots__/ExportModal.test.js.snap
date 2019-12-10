@@ -542,6 +542,7 @@ exports[`ExportModal should match snapshot 1`] = `
                   >
                     <WithI18n
                       defaults="Done"
+                      description="Acts as closing button"
                       id="js.ExportModal.footer.doneButton"
                     >
                       <I18n
@@ -550,6 +551,7 @@ exports[`ExportModal should match snapshot 1`] = `
                       >
                         <Trans
                           defaults="Done"
+                          description="Acts as closing button"
                           i18n={
                             Object {
                               "_": [Function],

@@ -146,6 +146,7 @@ exports[`UpdateFrequencySelect shallow matches snapshot 1`] = `
           >
             <WithI18n
               defaults="Manual"
+              description="Appears just after 'js.params.Custom.VersionSelect.UpdateFrequencySelect.update'"
               id="js.params.Custom.VersionSelect.UpdateFrequencySelect.manual"
             >
               <I18n
@@ -154,6 +155,7 @@ exports[`UpdateFrequencySelect shallow matches snapshot 1`] = `
               >
                 <Trans
                   defaults="Manual"
+                  description="Appears just after 'js.params.Custom.VersionSelect.UpdateFrequencySelect.update'"
                   i18n={
                     Object {
                       "_": [Function],
