@@ -21,7 +21,7 @@
   </li>
   <li
     data-highlight='[{"type":"WfModule","id_name":"twitter"}]'
-    data-test="const cred = workflow.tabs[0].wfModules[0].params.twitter_credentials; return cred && cred.name && cred.name.indexOf('@') !== -1;"
+    data-test="const cred = workflow.tabs[0].wfModules[0].secrets.twitter_credentials; return cred && cred.name && cred.name.indexOf('@') !== -1;"
     >Click <kbd>Connect account</kbd>. In the following pop up window, click <kbd>Authorize app</kbd>.
   </li>
 
