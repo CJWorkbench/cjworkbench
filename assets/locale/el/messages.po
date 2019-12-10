@@ -1446,7 +1446,7 @@ msgstr "αλλαγή ρυθμίσεων αυτόματης ενημέρωσης"
 #. a <time> tag.
 #: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:80
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.lastChecked"
-msgstr "Ελέγχθηκε <0>{0}<0>"
+msgstr "Ελέγχθηκε <0>{0}</0>"
 
 #. Appears just after
 #. 'js.params.Custom.VersionSelect.UpdateFrequencySelect.update'
