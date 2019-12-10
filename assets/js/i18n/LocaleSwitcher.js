@@ -10,7 +10,7 @@ import { Modal, ModalHeader, ModalBody } from '../components/Modal'
  *
  * Uses window.i18nConfig, which is injected by Django in the base template
  */
-export const enableLocaleSwitcher = window.i18nConfig && window.i18nConfig.showSwitcher
+export const isLocaleSwitcherEnabled = window.i18nConfig && window.i18nConfig.showSwitcher
 
 /**
  * A menu for the user to select a locale.

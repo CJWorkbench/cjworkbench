@@ -14,10 +14,7 @@ def get_i18n_context(locale=None, user=None) -> dict:
             "locale_id": current_locale_id,
             "show_switcher": getattr(user, "is_staff", False) if user else False,
             "locales_data": [
-                {
-                    "id": locale_id,
-                    "name": get_locale_name(locale_id, current_locale_id),
-                }
+                {"id": locale_id, "name": get_locale_name(locale_id, current_locale_id)}
                 for locale_id in supported_locales
             ],
         }

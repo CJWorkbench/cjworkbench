@@ -4,7 +4,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from './components/Dropdown'
 import ImportModuleFromGitHub from './ImportModuleFromGitHub'
-import LocaleSwitcher, { enableLocaleSwitcher } from './i18n/LocaleSwitcher'
+import LocaleSwitcher, { isLocaleSwitcherEnabled } from './i18n/LocaleSwitcher'
 import { Trans, t } from '@lingui/macro'
 import { withI18n } from '@lingui/react'
 
@@ -63,7 +63,7 @@ export class WfHamburgerMenu extends React.Component {
             ) : (
               <DropdownItem href='//workbenchdata.com'><Trans id='js.WfHamburgerMenu.menu.home'>Home</Trans></DropdownItem>
             )}
-            {enableLocaleSwitcher ? (
+            {isLocaleSwitcherEnabled ? (
               <DropdownItem onClick={this.handleClickOpenLocaleSwitcher}><Trans id='js.WfHamburgerMenu.menu.languages'>Languages</Trans></DropdownItem>
             ) : null}
             {loggedIn ? (
@@ -77,7 +77,7 @@ export class WfHamburgerMenu extends React.Component {
             api={api}
           />
         ) : null}
-        {enableLocaleSwitcher && this.state.localeSwitcherOpen ? (
+        {isLocaleSwitcherEnabled && this.state.localeSwitcherOpen ? (
           <LocaleSwitcher
             closeModal={this.closeLocaleSwitcher}
           />
