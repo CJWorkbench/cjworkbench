@@ -6,13 +6,6 @@ import { csrfToken } from '../utils'
 import { Modal, ModalHeader, ModalBody } from '../components/Modal'
 
 /**
- * Decides whether to enable locale switching.
- *
- * Uses window.i18nConfig, which is injected by Django in the base template
- */
-export const isLocaleSwitcherEnabled = window.i18nConfig && window.i18nConfig.showSwitcher
-
-/**
  * A menu for the user to select a locale.
  */
 export default class LocaleSwitcher extends React.PureComponent {

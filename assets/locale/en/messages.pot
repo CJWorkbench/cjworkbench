@@ -365,12 +365,12 @@ msgid "js.WfHamburgerMenu.menu.importModule"
 msgstr ""
 
 #. default-message: Languages
-#: assets/js/WfHamburgerMenu.js:67
+#: assets/js/WfHamburgerMenu.js:66
 msgid "js.WfHamburgerMenu.menu.languages"
 msgstr ""
 
 #. default-message: Log Out
-#: assets/js/WfHamburgerMenu.js:70
+#: assets/js/WfHamburgerMenu.js:68
 msgid "js.WfHamburgerMenu.menu.logout"
 msgstr ""
 
@@ -771,13 +771,13 @@ msgid "js.Workflows.training.title"
 msgstr ""
 
 #. default-message: This option will change the language of Workbench's interface. To submit translations for your language, visit <0>this</0> page.
-#: assets/js/i18n/LocaleSwitcher.js:33
+#: assets/js/i18n/LocaleSwitcher.js:26
 msgid "js.i18n.LocaleSwitcher.body.description"
 msgstr ""
 
 #. This should be all-caps for styling reasons
 #. default-message: LANGUAGES
-#: assets/js/i18n/LocaleSwitcher.js:27
+#: assets/js/i18n/LocaleSwitcher.js:20
 msgid "js.i18n.LocaleSwitcher.header.title"
 msgstr ""
 
