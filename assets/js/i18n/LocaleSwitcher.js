@@ -1,7 +1,7 @@
 import * as React from 'react'
 import PropTypes from 'prop-types'
 import { Trans } from '@lingui/macro'
-import { supportedLocalesData, currentLocale } from './locales'
+import { supportedLocalesData, currentLocaleId } from './locales'
 import { csrfToken } from '../utils'
 import { Modal, ModalHeader, ModalBody } from '../components/Modal'
 
@@ -43,7 +43,7 @@ export default class LocaleSwitcher extends React.PureComponent {
                   type='radio'
                   name='new_locale'
                   value={localeData.id}
-                  checked={localeData.id === currentLocale}
+                  checked={localeData.id === currentLocaleId}
                   onChange={this.handleLocaleChange}
                 />
                 {localeData.name}
