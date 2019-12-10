@@ -121,6 +121,20 @@ describe('DoneHelpers', () => {
       expect(wfModule.params).toEqual({})
     })
 
+    it('should have secrets', () => {
+      const wfModule = new WorkflowModuleWithHelpers({
+        secrets: { twitter_credentials: { name: '@hello' } }
+      })
+      expect(wfModule.secrets).toEqual({
+        twitter_credentials: { name: '@hello' }
+      })
+    })
+
+    it('should have empty secrets on placeholder', () => {
+      const wfModule = new WorkflowModuleWithHelpers(null, {})
+      expect(wfModule.secrets).toEqual({})
+    })
+
     it('should have moduleName=null and moduleSlug=null when placeholder', () => {
       const wfModule = new WorkflowModuleWithHelpers(null, { modules: {} })
       expect(wfModule.moduleName).toBe(null)
