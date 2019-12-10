@@ -1,0 +1,86 @@
+<header>
+  <h1>I. Φορτώστε δημόσια δεδομένα και δημιουργήστε ένα γράφημα</h1>
+  <p>Φορτώστε δεδομένα από δημόσιο URL και δημιουργήστε ένα ενσωματωμένο γράφημα</p><img src="./banner.svg" alt=""></header>
+<section>
+  <h2>Επισκόπηση</h2>
+  <p>Σε αυτό το μάθημα θα εργαστείτε με ανοιχτά δεδομένα που αφορούν την οικονομικά προσιτή στέγαση και δημοσιεύτηκαν από την Πόλη του Σαν Φρανσίσκο.</p>
+  <p>Θα φορτώσετε δεδομένα από μια δημόσια διεύθυνση URL, θα τα φιλτράρετε και θα οπτικοποιήσετε πόσα ακίνητα σε προσιτές τιμές και τιμές αγοράς σχεδιάζεται να κατασκευαστούν σε κάθε συνοικία.</p>
+</section>
+<section>
+  <h2>Φορτώστε δημόσια δεδομένα βάσει URL</h2>
+  <p>Ας ξεκινήσουμε προσθέτοντας μια πηγή δεδομένων στη ροή εργασίας μας και σχολιάζοντάς την.</p>
+  <h3 class="instructions">Οδηγίες</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"Module","index":0,"id_name":"loadurl"}]'
+      data-test="return workflow.tabs[0].wfModuleSlugs[0] === 'loadurl'"
+      >Προσθέστε την πηγή δεδομένων &quot;Προσθήκη από URL&quot;</li>
+    <li
+      data-highlight='[{"type":"WfModule","moduleIdName":"loadurl"}]'
+      data-test="const wfModule = workflow.tabs[0].wfModules[0]; return wfModule && wfModule.params.url === '{{LESSON_FILES_URL}}/affordable_housing_1.csv' && wfModule.selectedVersion"
+      >Επικολλήστε τη διεύθυνση URL του συνόλου δεδομένων στο πεδίο. Κάνε κλικ στο<kbd>Ενημέρωση</kbd>για να φορτωθούν τα δεδομένα.<div class="copy-txt">{{LESSON_FILES_URL}}/affordable_housing_1.csv</div>
+    </li>
+    <li
+      data-highlight='[{"type":"WfModuleContextButton","moduleIdName":"loadurl","button":"notes"},{"type":"EditableNotes"}]'
+      data-test="return !!workflow.tabs[0].wfModules[0].note"
+      >Προσθέστε μια σημείωση <span><img class="icon-insert" src="./note_button.svg"></span> στο βήμα, για παράδειγμα:<div class="copy-txt">Δεδομένα από datasf.org</div>
+    </li>
+    <li
+      data-highlight='[{"type":"WfModuleContextButton","moduleIdName":"loadurl","button":"collapse"}]'
+      data-test="return workflow.tabs[0].wfModules[0].isCollapsed"
+      >Συμπτύξτε <span><img class="icon-insert" src="./collapse_button.svg"></span> το &quot;Προσθήκη από URL&quot;.</li>
+  </ol>
+</section>
+<section>
+  <h2>Δημιουργία γραφήματος στηλών</h2>
+  <p>Ας προσθέσουμε ένα γράφημα στηλών για να οπτικοποιήσουμε τα δεδομένα.</p>
+  <h3 class="instructions">Οδηγίες</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"Module","index":1,"id_name":"columnchart"}]'
+      data-test="return workflow.tabs[0].wfModuleSlugs[workflow.tabs[0].wfModules.length - 1] === 'columnchart'"
+      >Προσθέστε το βήμα &quot;Γράφημα στηλών&quot;</li>
+    <li
+      data-highlight='[{"type":"WfModule","moduleIdName":"columnchart"}]'
+      data-test="const wfModule = workflow.tabs[0].wfModules[workflow.tabs[0].wfModules.length - 1]; const p = wfModule.params; if (p.x_column !== 'city_neighborhood') return false; return p.y_columns.length === 1 && p.y_columns[0].column === 'affordable_units'"
+      >Επιλέξτε <kbd>city_neighborhood</kbd> για τον άξονα Χ και <kbd>affordable_units</kbd> για τον άξονα Y.</li>
+    <li
+      data-highlight='[{"type":"WfModule","moduleIdName":"columnchart"}]'
+      data-test="const wfModule = workflow.tabs[0].wfModules[workflow.tabs[0].wfModules.length - 1]; const p = wfModule.params; return !!p.title && !!p.x_axis_label && !!p.y_axis_label"
+      >Προσθέστε στο γράφημα τίτλο, ετικέτα του άξονα X και ετικέτα του άξονα Y.</li>
+  </ol>
+</section>
+<section>
+  <h2>Φιλτράρισμα με συνθήκη</h2>
+  <p>Ας κάνουμε το γράφημά μας πιο ευανάγνωστο χρησιμοποιώντας μόνο εκείνα τα έργα που περιλαμβάνουν περισσότερα από 200 ακίνητα με προσιτή τιμή.</p>
+  <h3 class="instructions">Οδηγίες</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"Module","index":1,"id_name":"filter"}]'
+      data-test="return workflow.tabs[0].wfModules.length > 2 && workflow.tabs[0].wfModuleSlugs[1] === 'filter'"
+      >Προσθέστε το βήμα &quot;Φιλτράρισμα βάσει συνθήκης&quot; μεταξύ του &quot;Προσθήκη από URL&quot; και &quot;Γράφημα στηλών&quot;</li>
+    <li
+      data-highlight='[{"type":"WfModule","moduleIdName":"filter"}]'
+      data-test="const p = workflow.tabs[0].wfModules[1].params; if (!p.filters.filters[0] || !p.filters.filters[0].subfilters[0]) return false; const sf = p.filters.filters[0].subfilters[0]; return sf.colname === 'affordable_units' && sf.condition === 'number_is_greater_than' && sf.value === '200' && p.keep"
+      >Διαλέξτε τη στήλη <kbd>affordable_units</kbd>, διαλέξτε τη συνθήκη <kbd>Μεγαλύτερο από</kbd><br/> και πληκτρολογήστε την τιμή <kbd>200</kbd>.</li>
+    <li
+      data-highlight='[{"type":"WfModule","moduleIdName":"columnchart"}]'
+      data-test="return state.selectedWfModule && state.selectedWfModule.moduleSlug === 'columnchart'"
+      >Κάντε πάλι κλικ στο βήμα &quot;Γράφημα στηλών&quot; για να δείτε το ενημερωμένο γράφημα.</li>
+  </ol>
+</section>
+<footer>
+  <h2>Εδώ τελειώνει το μάθημα!</h2>
+  <div class="completed">
+    <p class="summary">Δημιουργήσατε το πρώτο σας γράφημα και μάθατε τα βασικά στοιχεία της ροής εργασίας.</p>
+  </div>
+  <div class="next">
+    <h4>Επόμενο</h4>
+    <p>Αποκτήστε τον κώδικα ενσωμάτωσης για να δημοσιεύσετε το γράφημα κάνοντας κλικ στο κουμπί <img class="icon-insert" src="./embed_button.svg" /> στο επάνω δεξιό μέρος του πίνακα γραφημάτων.</p>
+    <h4>Συνεχίστε τα μαθήματα:</h4>
+    <ol>
+      <li><a href="/lessons/el/kathariste-vromika-dedomena">Καθαρίστε και τυποποιήστε δεδομένα</a></li>
+      <li><a href="/lessons/el/kathariste-vromika-dedomena">Συλλέξτε περιεχόμενο από μια ιστοσελίδα και παρακολουθήστε το</a></li>
+    </ol>
+  </div>
+</footer>

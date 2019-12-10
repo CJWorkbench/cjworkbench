@@ -18,7 +18,7 @@ const Algorithms = [
   },
   {
     name: 'levenshtein',
-    selectName: t('js.params.Custom.RefineClusterer.Algorithms.levenshtein.name')`Edit distance`,
+    selectName: /* i18n: This is not an editing action. It's a short description of how the levenstein algorithm works (i.e. it compares strings relative to the number of characters in which they differ, hence the term edit distance). */t('js.params.Custom.RefineClusterer.Algorithms.levenshtein.name')`Edit distance`,
     description: t('js.params.Custom.RefineClusterer.Algorithms.levenshtein.description')`Groups values if the number of characters added, edited or deleted to get from one value to the other is equal or inferior to 'Maximum distance'. For instance, the distance between "Cafés" and "cafe" is 3.`,
     defaultOptions: { maxDistance: 3 },
     optionFields: (handlers, options) => (

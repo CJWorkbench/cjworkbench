@@ -1,7 +1,9 @@
+from pathlib import Path
+import subprocess
 from typing import Optional
-import numpy as np
 import pyarrow
 from .types import ColumnType, TableMetadata
+from . import settings
 
 
 class ValidateError(ValueError):
@@ -10,19 +12,30 @@ class ValidateError(ValueError):
     """
 
 
-class TableShouldBeNone(ValueError):
+class InvalidArrowFile(ValidateError):
+    """
+    arrow-validate of a path failed.
+
+    Run arrow-validate before opening an Arrow file in Python, for SECURITY.
+    """
+
+    def __init__(self, text):
+        super().__init__("arrow-validate: " + text)
+
+
+class TableShouldBeNone(ValidateError):
     def __init__(self):
         super().__init__(
             "Table must be None because metadata says there are no columns"
         )
 
 
-class TableHasTooManyRecordBatches(ValueError):
+class TableHasTooManyRecordBatches(ValidateError):
     def __init__(self, actual: int):
         super().__init__("Table has %d record batches; we only support 1" % actual)
 
 
-class WrongColumnName(ValueError):
+class WrongColumnName(ValidateError):
     def __init__(self, position: int, expected: str, actual: str):
         super().__init__(
             "Table column %d has wrong name: metadata says '%s', table says '%s'"
@@ -30,7 +43,7 @@ class WrongColumnName(ValueError):
         )
 
 
-class DuplicateColumnName(ValueError):
+class DuplicateColumnName(ValidateError):
     def __init__(self, name: str, position1: int, position2: int):
         super().__init__(
             "Table has two columns named '%s': column %d and column %d"
@@ -38,34 +51,7 @@ class DuplicateColumnName(ValueError):
         )
 
 
-class ColumnNameIsInvalidUtf8(ValueError):
-    def __init__(self, position: int):
-        super().__init__("Table column %d has invalid UTF-8 name" % (position,))
-
-
-class ColumnDataIsInvalidUtf8(ValueError):
-    def __init__(self, column: str, row: int):
-        super().__init__(
-            "Table column '%s' has invalid UTF-8 data on row %d" % (column, row)
-        )
-
-
-class DictionaryColumnHasUnusedEntry(ValueError):
-    def __init__(self, column: str, entry: str):
-        super().__init__(
-            "Table column '%s' has unused dictionary entry '%s'" % (column, entry)
-        )
-
-
-class DictionaryColumnHasInvalidIndex(ValueError):
-    def __init__(self, column: str, row: int, index: int):
-        super().__Init__(
-            "Table column '%s' has invalid dictionary index %d at row %d"
-            % (column, index, row)
-        )
-
-
-class WrongColumnType(ValueError):
+class WrongColumnType(ValidateError):
     def __init__(self, name: str, expected: ColumnType, actual: pyarrow.DataType):
         super().__init__(
             "Table column '%s' has wrong type: expected %r, got %r"
@@ -73,7 +59,7 @@ class WrongColumnType(ValueError):
         )
 
 
-class DatetimeTimezoneNotAllowed(ValueError):
+class DatetimeTimezoneNotAllowed(ValidateError):
     def __init__(self, name: str, dtype: pyarrow.TimestampType):
         super().__init__(
             "Table column '%s' (%r) has a time zone, but Workbench does not support time zones"
@@ -81,7 +67,7 @@ class DatetimeTimezoneNotAllowed(ValueError):
         )
 
 
-class DatetimeUnitNotAllowed(ValueError):
+class DatetimeUnitNotAllowed(ValidateError):
     def __init__(self, name: str, dtype: pyarrow.TimestampType):
         super().__init__(
             "Table column '%s' (%r) has unit '%s', but Workbench only supports 'ns'"
@@ -89,7 +75,7 @@ class DatetimeUnitNotAllowed(ValueError):
         )
 
 
-class WrongColumnCount(ValueError):
+class WrongColumnCount(ValidateError):
     def __init__(self, expect: int, actual: int):
         super().__init__(
             "Table has wrong column count (metadata says %d, table has %d)"
@@ -97,7 +83,7 @@ class WrongColumnCount(ValueError):
         )
 
 
-class WrongRowCount(ValueError):
+class WrongRowCount(ValidateError):
     def __init__(self, expect: int, actual: int):
         super().__init__(
             "Table has wrong row count (metadata says %d, table has %d)"
@@ -105,19 +91,52 @@ class WrongRowCount(ValueError):
         )
 
 
-def _validate_strings_are_utf8(array: pyarrow.StringArray, column_name: str) -> None:
+def validate_arrow_file(path: Path) -> None:
+    """
+    Validate that `table` can be loaded at all.
+
+    Raise InvalidArrowFile if:
+
+    * The file is empty or has no Arrow header
+    * Text columns' offsets are invalid
+    * A column name has invalid UTF-8
+    * A column name is too long (see settings.MAX_BYTES_PER_COLUMN_NAME)
+    * A column name contains ASCII control characters (a newline, for example)
+    * Some text data has invalid UTF-8
+    * A float is NaN or Infinity.
+    * A dictionary column's dictionary contains nulls or unused values
+    """
     try:
-        for row, value in enumerate(array):
-            value.as_py()  # decode utf-8
-    except UnicodeDecodeError:
-        raise ColumnDataIsInvalidUtf8(column_name, row)
+        subprocess.run(
+            [
+                "/usr/bin/arrow-validate",
+                "--check-column-name-control-characters",
+                f"--check-column-name-max-bytes={settings.MAX_BYTES_PER_COLUMN_NAME}",
+                "--check-dictionary-values-all-used",
+                "--check-dictionary-values-not-null",
+                "--check-dictionary-values-unique",
+                "--check-floats-all-finite",
+                "--check-offsets-dont-overflow",
+                "--check-utf8",
+                path.as_posix(),
+            ],
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            encoding="utf-8",
+        )
+    except subprocess.CalledProcessError as err:
+        message = err.stdout[:-1]  # strip trailing "\n"
+        raise InvalidArrowFile(message) from None
 
 
-def validate(table: Optional[pyarrow.Table], metadata: TableMetadata) -> None:
+def validate_table_metadata(
+    table: Optional[pyarrow.Table], metadata: TableMetadata
+) -> None:
     """
     Validate that `table` matches `metadata` and Workbench's assumptions.
 
-    Raise ValueError if:
+    Raise ValidateError if:
 
     * `table is not None` and `metadata.columns` is empty
     * `table is None` and `metadata.columns` is not empty
@@ -125,11 +144,13 @@ def validate(table: Optional[pyarrow.Table], metadata: TableMetadata) -> None:
     * table and metadata have different numbers of columns or rows
     * table column names do not match metadata column names
     * table column names have duplicates
-    * table column names are not valid UTF-8
     * table column types are not compatible with metadata column types
       (e.g., Numbers column in metadata, Datetime table type)
-    - table text values are not valid UTF-8
-    - dictionary has unused entries
+
+    Be sure the Arrow file backing the table was validated with
+    `validate_arrow_file()` first. Otherwise, you may experience a
+    UnicodeError while printing error messages, or subsequent code may
+    read memory outside the Arrow file.
     """
     if table is None:
         if metadata.columns:
@@ -137,21 +158,12 @@ def validate(table: Optional[pyarrow.Table], metadata: TableMetadata) -> None:
     else:
         if not metadata.columns:
             raise TableShouldBeNone
+
         if metadata.n_rows != table.num_rows:
             raise WrongRowCount(metadata.n_rows, table.num_rows)
         seen_column_names = {}
         for position, expected in enumerate(metadata.columns):
-            try:
-                # pyarrow 0.15 will try to decode the column name when it
-                # reads the ChunkedArray -- so it can store `retval._name`.
-                # It's an odd API, for legacy reasons: previously, Arrow's API
-                # included a "Column" type with `.name`.
-                #
-                # We'll use the `._name` in our code: we rely on this oddity
-                # to raise ColumnNameIsInvalidUtf8.
-                actual = table.column(position)
-            except UnicodeDecodeError:
-                raise ColumnNameIsInvalidUtf8(position)
+            actual = table.column(position)
             actual_name = actual._name
             if position == 0 and actual.num_chunks > 1:
                 raise TableHasTooManyRecordBatches(actual.num_chunks)
@@ -173,31 +185,6 @@ def validate(table: Optional[pyarrow.Table], metadata: TableMetadata) -> None:
                     )
                 ):
                     raise WrongColumnType(actual_name, expected.type, actual.type)
-                # Validate string values are UTF-8
-                for i, chunk in enumerate(actual.chunks):
-                    if pyarrow.types.is_string(chunk.type):
-                        _validate_strings_are_utf8(chunk, actual_name)
-                    else:
-                        dictionary = chunk.dictionary
-                        _validate_strings_are_utf8(dictionary, actual_name)
-                        # Now check that all indices are used and valid.
-                        # We want this check, which is why we raise
-                        # TableHasTooManyRecordBatches
-                        used_indices = np.zeros(len(dictionary), dtype=np.bool)
-                        try:
-                            for row, dict_index in enumerate(chunk.indices):
-                                if dict_index is not pyarrow.NULL:
-                                    used_indices[dict_index.as_py()] = True
-                        except IndexError:
-                            raise DictionaryColumnHasInvalidIndex(
-                                actual_name, row, dict_index
-                            )
-                        # np.where() gives tuple of arrays, one for each axis
-                        unused_indices = np.where(~used_indices)[0]
-                        if unused_indices:
-                            raise DictionaryColumnHasUnusedEntry(
-                                actual_name, dictionary[unused_indices[0]]
-                            )
             elif isinstance(expected.type, ColumnType.Number):
                 if not (
                     pyarrow.types.is_floating(actual.type)

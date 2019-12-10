@@ -1,38 +1,38 @@
 @font-face {
-  font-family: 'Nunito Sans';
-  font-weight: 200;
+  font-family: 'Roboto';
+  font-weight: 300;
   font-style: normal;
-  src: url('../fonts/NunitoSans-ExtraLight.woff2') format('woff2');
+  src: url('../fonts/Roboto-Light.woff2') format('woff2');
 }
 
 @font-face {
-  font-family: 'Nunito Sans';
-  font-weight: 400;
+  font-family: 'Roboto';
+  font-weight: normal;
   font-style: normal;
-  src: url('../fonts/NunitoSans-Regular.woff2') format('woff2');
+  src: url('../fonts/Roboto-Regular.woff2') format('woff2');
 }
 
 @font-face {
-  font-family: 'Nunito Sans';
-  font-weight: 600;
+  font-family: 'Roboto';
+  font-weight: 700;
   font-style: bold;
-  src: url('../fonts/NunitoSans-Bold.woff2') format('woff2');
+  src: url('../fonts/Roboto-Bold.woff2') format('woff2');
 }
 
-@mixin font-nunito-extra-light {
-  font-family: 'Nunito Sans', sans-serif;
-  font-weight: 200;
+@mixin font-sans-light {
+  font-family: $font-family-sans-serif;
+  font-weight: 300;
   font-style: normal;
 }
 
-@mixin font-nunito-regular {
-  font-family: 'Nunito Sans', sans-serif;
+@mixin font-sans-regular {
+  font-family: $font-family-sans-serif;
   font-weight: normal;
   font-style: normal;
 }
 
-@mixin font-nunito-bold {
-  font-family: 'Nunito Sans', sans-serif;
+@mixin font-sans-bold {
+  font-family: $font-family-sans-serif;
   font-style: normal;
   font-weight: bold;
 }

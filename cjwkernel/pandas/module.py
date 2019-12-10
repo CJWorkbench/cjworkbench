@@ -204,7 +204,9 @@ def render_thrift(request: ttypes.RenderRequest) -> ttypes.RenderResult:
     function.
     """
     basedir = Path(request.basedir)
-    arrow_table = types.ArrowTable.from_thrift(request.input_table, basedir)
+    arrow_table = types.ArrowTable.from_thrift(
+        request.input_table, basedir, trusted=True
+    )
     params = types.Params.from_thrift(request.params, basedir)
     params_dict = params.params
     if request.fetch_result is None:

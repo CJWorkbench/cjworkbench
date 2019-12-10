@@ -7,7 +7,7 @@
 {% block content %}
 
 {% if form.accounts %}
-<div class='title-1 t-d-gray text-center mb-3'>{% trans_html "py.templates.socialaccount.connections.accountLinked" default="Account linked!" %}</div>
+<div class='title-1 t-d-gray text-center mb-3'>{% trans_html "py.templates.socialaccount.connections.accountLinked" default="Account linked!" comment="Short for 'The account has been linked!'" %}</div>
 <div class="d-flex justify-content-center">
   <a href="{% url "account_login" %}" style="text-decoration:none"class="content-1 button-white action-button mb-5">{% trans_html "py.templates.socialaccount.connections.signInLink" default="Sign in" %}</a>
 </div>

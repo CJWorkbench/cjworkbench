@@ -669,7 +669,7 @@ class ProcessResultTests(unittest.TestCase):
             self.assertEqual(
                 result,
                 atypes.RenderResult(
-                    atypes.ArrowTable(None, atypes.TableMetadata(0, [])),
+                    atypes.ArrowTable(None, None, atypes.TableMetadata(0, [])),
                     [
                         atypes.RenderError(
                             atypes.I18nMessage.TODO_i18n("bad, bad error"), []
@@ -752,6 +752,7 @@ class ProcessResultTests(unittest.TestCase):
                 atypes.RenderResult(
                     atypes.ArrowTable(
                         Path(filename),
+                        pyarrow.table({"A": [1, 2]}),
                         atypes.TableMetadata(
                             2,
                             [
@@ -770,8 +771,6 @@ class ProcessResultTests(unittest.TestCase):
                     {},
                 ),
             )
-            arrow_table = result.table.table
-            self.assertEqual(arrow_table.to_pydict(), {"A": [1, 2]})
         finally:
             os.unlink(filename)
 

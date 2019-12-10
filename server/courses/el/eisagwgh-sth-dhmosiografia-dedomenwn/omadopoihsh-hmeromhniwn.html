@@ -1,0 +1,130 @@
+<header>
+  <h1>Ομαδοποίηση βάσει ημερομηνιών</h1>
+  <p>Οι ημερομηνίες μπορούν να χρησιμοποιηθούν για την ομαδοποίηση γεγονότων σε χρονικά πλαίσια. Ανά ώρα, ημέρα, μήνα ή τρίμηνο κ.λπ.</p><img src="./banner.svg"></header>
+
+<section class="fullscreen">
+  <h2>Εισαγωγή</h2>
+  <p>Στο προηγούμενο μάθημα μάθαμε τι πρέπει να κάνουμε ώστε μια στήλη να έχει τον σωστό τύπο &quot;Ημερομηνία &amp; ώρα&quot;. Τώρα είμαστε έτοιμοι να κάνουμε ομαδοποίηση βάσει ημερομηνίας χρησιμοποιώντας τα ίδια δεδομένα για αστυνομικά συμβάντα από την Πόλη της Νέας Υόρκης.</p>
+  <p>Θα απαντήσουμε την ερώτηση: Πόσα αδικήματα καταγράφηκαν κάθε μήνα στην Πόλη της Νέας Υόρκης;</p>
+</section>
+
+<script id="initialWorkflow">
+tabs:
+- name: Lesson
+  wfModules:
+  - module: loadurl
+    slug: step-loadurl
+    params:
+      url: ./NYC-incidents-2018.csv
+    collapsed: true
+    note: "Source: City of New York."
+  - module: selectcolumns
+    slug: step-selectcolumns
+    params:
+      colnames: [ boro_nm, cmplnt_fr_dt ]
+    collapsed: true
+  - module: renamecolumns
+    slug: step-renamecolumns
+    params:
+      renames: { "boro_nm": "Borough", "cmplnt_fr_dt": "Complaint date" }
+    collapsed: true
+  - module: convert-date
+    slug: step-convert-date
+    params:
+      colnames: [ "Complaint date" ]
+    collapsed: true
+- name: Data dictionary
+  wfModules:
+  - module: loadurl
+    slug: step-loaddictionary
+    params:
+      url: './nypd-complaint-ytd-data-dictionary.csv'
+    collapsed: true
+    note: "Source: City of New York."
+</script>
+
+
+<section>
+  <h2>Ομαδοποίηση βάσει ημερομηνιών</h2>
+  <p>Ο πίνακας που φορτώθηκε στο βήμα 1 περιγράφει όλα τα αδικήματα που καταγράφηκαν από την αστυνομία της Πόλης της Νέας Υόρκης για τους μήνες Ιανουάριο και Φεβρουάριο 2018. Το πρωτότυπο δημοσιεύτηκε <a class="highlight" href='https://data.cityofnewyork.us/Public-Safety/NYPD-Complaint-Data-Current-Year-To-Date-/5uac-w243/data' target="_blank" className="info-1">εδώ</a> μαζί με λεξικό δεδομένων.</p>
+  <p>Η πρώτη μας ερώτηση είναι &quot;Πόσα συμβάντα καταγράφηκαν κάθε μήνα σε ολόκληρη την πόλη;&quot;</p>
+  <h3 class="instructions">Οδηγίες</h3>
+  <ol class="steps">
+    <li
+      data-test="
+        if (workflow.tabs[0].wfModuleSlugs[4] !== 'groupby') return false
+
+        // Ensure 'Complaint date' is in the colnames, but allow other cols too, so that
+        // the 'add Borough' step in the last section doesn't undo this test.
+        // (Every test for the entire lesson is evaluated in order)
+        return workflow.tabs[0].wfModules[4].params.groups.colnames.includes('Complaint date')
+      ">Προσθέστε την <kbd>Ομαδοποίηση</kbd> και επιλέξτε τη στήλη <kbd>Complaint date</kbd></li>
+    <li
+      data-test="
+        const groups = workflow.tabs[0].wfModules[4].params.groups
+        // You would think we'd want to check for month granularity here, but we can't
+        // because it will break in the next section where we ask user to switch to day granularity.
+        // (Every test for the entire lesson is evaluated in order)
+        return (
+          groups.group_dates
+          && ['M', 'D'].includes(groups.date_granularities['Complaint date'])
+        )
+      ">Στο βήμα <kbd>Ομαδοποίηση</kbd> , τσεκάρετε την επιλογή <kbd>Ομαδοποίηση ημερομηνιών</kbd> και επιλέξτε <kbd>ανά μήνα</kbd> ως προς τη λεπτομέρεια</li>
+    <li
+      data-test="
+        const agg = workflow.tabs[0].wfModules[4].params.aggregations
+        return (
+          agg[0]
+          && agg[0].operation === 'size'
+          && agg[0].outname.toLowerCase() === 'count of incidents'
+        )
+      ">Ονομάστε τη στήλη εξόδου <kbd>Count of incidents</kbd></li>
+  </ol>
+</section>
+<section>
+  <h2>Granularity (Λεπτομέρεια)</h2>
+  <p>Ας οπτικοποιήσουμε αυτά τα δεδομένα σε γραμμικό γράφημα.</p>
+  <h3 class="instructions">Οδηγίες</h3>
+  <ol class="steps">
+    <li
+      data-test="
+        if (workflow.tabs[0].wfModuleSlugs[5] !== 'linechart') return false
+
+        const params = workflow.tabs[0].wfModules[5].params
+        return (
+          params.x_column === 'Complaint date'
+          && params.y_columns[0]
+          && params.y_columns[0].column.toLowerCase() === 'count of incidents'
+        )
+      ">Δημιουργήστε ένα γραμμικό γράφημα. Επιλέξτε <kbd>Complaint date</kbd> για τον άξονα Χ και σχεδιάστε <kbd>Count of incidents (Αριθμός συμβάντων)</kbd> στον άξονα Y.<p class="instruction-detail">Τα γραφήματα με δύο σημεία δεδομένων δεν είναι πολύ ενημερωτικά. Για να οπτικοποιήσουμε τα ίδια δεδομένα αλλά για κάθε μέρα, μπορούμε να αλλάξουμε το επίπεδο λεπτομέρειας της ομάδας.</p>
+    </li>
+    <li
+      data-test="
+        const params = workflow.tabs[0].wfModules[4].params
+        return (
+          params.groups.date_granularities['Complaint date'] === 'D'
+          // We test for day granularity ... _BUT_ later in the lesson we'll ask the
+          // user to switch back to month; so we'll need to test: either the user
+          // chose 'D', or the user is further along in the lesson
+          || params.groups.colnames.includes('Borough')
+        )
+      ">Στην Ομαδοποίηση στο βήμα 5, αλλάξτε τη Λεπτομέρεια σε <kbd>ανά ημέρα</kbd><p class="instruction-detail">Επιλέξτε το βήμα 6 για να εμφανιστεί το νέο σας γράφημα.</p>
+    </li>
+  </ol>
+</section>
+<footer>
+  <h2>Εδώ τελειώνει το μάθημα!</h2>
+  <div class="completed"><!-- <p> After being grouped by more than one column the table contains a lot of repeated values in both <kbd>Complaint date</kbd> and <kbd>Borough</kbd>.
+    </p>
+    <p>
+      We also can't visualize data from a specific borough. That would require all the values for that borough to be
+      in their own column.
+    </p> --><p class="summary">Στο επόμενο μάθημα θα μάθουμε πώς να αναδιαμορφώνουμε πίνακες μεταξύ κατακόρυφης και οριζόντιας μορφής έτσι ώστε να έχουμε πρόσβαση σε οποιαδήποτε μεταβλητή χρειαζόμαστε.</p>
+  </div>
+  <div class="next">
+    <h2>Επόμενο</h2>
+    <ol>
+      <li><a href="katakoryfh-kai-orizontia-morfh">Κατακόρυφη και οριζόντια μορφή</a></li>
+    </ol>
+  </div>
+</footer>

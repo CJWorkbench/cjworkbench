@@ -618,6 +618,7 @@ exports[`Workflow list page renders correctly 1`] = `
                     >
                       <WithI18n
                         defaults="Shared with me"
+                        description="As in 'Workflows shared with me'"
                         id="js.Workflows.WorkflowLists.nav.sharedWithMe"
                       >
                         <I18n
@@ -626,6 +627,7 @@ exports[`Workflow list page renders correctly 1`] = `
                         >
                           <Trans
                             defaults="Shared with me"
+                            description="As in 'Workflows shared with me'"
                             i18n={
                               Object {
                                 "_": [Function],

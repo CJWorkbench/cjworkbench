@@ -54,6 +54,7 @@ def run_in_sandbox(
     module = cjwkernel.pandas.module
     for fn in (
         "fetch",
+        "fetch_arrow",
         "fetch_pandas",
         "fetch_thrift",
         "migrate_params",

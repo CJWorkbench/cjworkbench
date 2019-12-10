@@ -58,7 +58,7 @@ class LessonDetailTests(DbTestCase):
 
     def test_get_invalid_slug(self):
         self.log_in()
-        response = self.client.get("/lessons/load-public-dat-whoops-a-typooo")
+        response = self.client.get("/lessons/en/load-public-dat-whoops-a-typooo")
         self.assertEqual(response.status_code, 404)
 
     def test_get_missing_workflow(self):

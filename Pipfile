@@ -40,7 +40,7 @@ rfc3987 = "*"  # for jsonschema 'uri' format
 aioamqp = "*"
 pyyaml = "*"
 boto3 = "*"
-pyarrow = "~=0.15.0"
+pyarrow = "==0.15.1"
 babel = "*"
 thrift = "~=0.11.0"
 yajl-py = "*"

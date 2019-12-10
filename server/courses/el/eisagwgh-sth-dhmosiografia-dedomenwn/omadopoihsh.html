@@ -1,0 +1,116 @@
+<header>
+  <h1>Ομαδοποίηση σειρών (συγκεντρωτικοί πίνακες)</h1>
+  <p>Ομαδοποιήστε σειρές για να συνοψίσετε γρήγορα μεγάλους όγκους δεδομένων.</p><img src="./banner.svg"></header>
+
+<section class="fullscreen">
+  <h2>Εισαγωγή</h2>
+  <p>Η ομαδοποίηση σειρών είναι ένας ισχυρός τρόπος κατανόησης των δεδομένων. Η λειτουργία αυτή ονομάζεται μερικές φορές &quot;συγκεντρωτικοί πίνακες&quot; ή &quot;ομαδοποίηση βάσει&quot;. Σκοπός της είναι να συνοψίσει γρήγορα μεγάλους όγκους δεδομένων.</p>
+  <p>Σε αυτό το μάθημα θα συνεχίσουμε να δουλεύουμε με τα δεδομένα για τις κατοικίες του Σαν Φρανσίσκο ώστε να αναλύσουμε πόσες κατοικίες σε προσιτή τιμή προβλέπονται για κάθε γειτονιά της πόλης.</p>
+</section><!-- Section 1 --><script id="initialWorkflow">
+tabs:
+- name: Lesson
+  wfModules:
+  - module: loadurl
+    slug: step-loadurl
+    params:
+      url: ./affordable-housing-pipeline.csv
+    collapsed: true
+    note: "Source: City of San Francisco."
+  - module: selectcolumns
+    slug: step-selectcolumns
+    params:
+      colnames: [ "Project Status", "Planning Neighborhood", "Project Units", "Affordable Units", "% Affordable" ]
+    collapsed: true
+  - module: filter
+    slug: step-filter
+    params:
+      filters:
+        operator: 'and'
+        filters:
+        - operator: 'and'
+          subfilters:
+          - colname: '% Affordable'
+            condition: number_is_greater_than
+            value: '50'
+            case_sensitive: false
+          - colname: 'Project Units'
+            condition: number_is_greater_than
+            value: '100'
+            case_sensitive: false
+    collapsed: true
+- name: Data dictionary
+  wfModules:
+  - module: loadurl
+    slug: step-loaddictionary
+    params:
+      url: ./dataDictionary-affordable-housing-pipeline.csv
+    collapsed: true
+    note: "Source: City of San Francisco."
+</script>
+
+<section>
+  <h2>Ομαδοποίηση και μέτρηση</h2>
+  <p>Στο <a href='/courses/el/eisagwgh-sth-dhmosiografia-dedomenwn/filtrarisma' className="info-1">προηγούμενο μάθημα</a>, φιλτράραμε <a class="highlight" href='https://data.sfgov.org/Housing-and-Buildings/Affordable-Housing-Pipeline/aaxw-2cb8' target="_blank" className="info-1">τα δεδομένα για τις κατοικίες του Σαν Φρανσίσκο</a> για να αποκαλύψουμε τα νέα οικοδομικά έργα που περιέχουν μεγάλο ποσοστό κατοικιών σε προσιτή τιμή.</p>
+  <p>Ας ξεκινήσουμε από εκεί και ας ανακαλύψουμε πόσα από αυτά τα έργα βρίσκονται σε κάθε συνοικία.</p>
+  <h3 class="instructions">Οδηγίες</h3>
+  <ol class="steps">
+    <li
+      data-test="return workflow.tabs[0].wfModuleSlugs[3] === 'groupby' && workflow.tabs[0].wfModules[3].params.groups.colnames.join('|') === 'Planning Neighborhood'"
+      >Ας προσθέσουμε την &quot;Ομαδοποίηση&quot; στην 4η θέση και ας επιλέξουμε τη στήλη <kbd>Planning Neighborhood</kbd></li>
+    <li
+      data-test="const aggs = workflow.tabs[0].wfModules[3].params.aggregations; return aggs.length === 0 /* no aggregations means 'count' */ || aggs[0].operation === 'size'"
+      >Διατηρήστε την πρώτη λειτουργία στο <kbd>Πλήθος</kbd>. Θα μετρήσει όλες τις σειρές που βρίσκονται σε κάθε ομάδα.<p class ="instruction-detail">Δεδομένου ότι κάθε σειρά αντιστοιχεί σε ένα έργο και οι σειρές ομαδοποιούνται σε συνοικίες, ο πίνακας αποτελεσμάτων αποτελεί μια μέτρηση έργων ανά συνοικία.</p>
+    </li>
+    <li
+      data-test="
+        const aggs = workflow.tabs[0].wfModules[3].params.aggregations;
+        return aggs.length > 0 && aggs[0].outname.toLowerCase() === 'number of projects'"
+      >Ονομάστε τη νέα στήλη <kbd>Number of projects</kbd> (Αριθμός έργων)</li>
+  </ol>
+</section>
+<section>
+  <h2>Πράξεις εντός ομάδων</h2>
+  <p>Η απλή μέτρηση των έργων μάς δίνει ελάχιστες πληροφορίες για τον αριθμό των νέων κατοικιών.</p>
+  <p>Αντ&apos; αυτού ας αθροίσουμε τον αριθμό κατοικιών σε προσιτή τιμή για όλα τα έργα που προγραμματίζονται σε κάθε συνοικία.</p>
+  <h3 class="instructions">Οδηγίες</h3>
+  <ol class="steps">
+    <li
+      data-test="
+        const aggs = workflow.tabs[0].wfModules[3].params.aggregations
+        return aggs.length > 1"
+      >Στο υπάρχον βήμα Ομαδοποίηση, προσθέστε άλλη μια λειτουργία κάτω από το <kbd>Πλήθος</kbd> κάνοντας κλικ στην +ΠΡΟΣΘΗΚΗ<li
+      data-test="
+        const aggs = workflow.tabs[0].wfModules[3].params.aggregations
+        return aggs[1].operation === 'sum' && aggs[1].colname === 'Affordable Units'"
+      >Επιλέξτε <kbd>Άθροισμα:</kbd> για τη νέα λειτουργία και επιλέξτε τη στήλη <kbd>Affordable Units</kbd> .</li>
+    <li
+      data-test="
+        const aggs = workflow.tabs[0].wfModules[3].params.aggregations;
+        return aggs[1].outname.toLowerCase() === 'number of affordable units'"
+      >Ονομάστε τη νέα στήλη <kbd>Number of affordable units</kbd> (Αριθμός κατοικιών σε προσιτή τιμή)<p class="instruction-detail">Εκτός από τη μέτρηση έργων ανά συνοικία, υπολογίζουμε τώρα τον συνολικό αριθμό κατοικιών σε προσιτή τιμή σε καθεμιά από αυτές. Ας οπτικοποιήσουμε αυτά τα δεδομένα.</p>
+    </li>
+    <li
+      data-test="
+        const wfm = workflow.tabs[0].wfModules[4]
+        if (!wfm || wfm.moduleSlug !== 'columnchart')
+          return false
+        const p = wfm.params
+        return p.x_column === 'Planning Neighborhood' &&
+               p.y_columns[0] &&
+               p.y_columns[0].column.toLowerCase() === 'number of affordable units'"
+      >Προσθέστε ένα βήμα Γράφημα Στηλών. Επιλέξτε <kbd>Planning Neighborhood</kbd>για τον άξονα Χ και <kbd>Number of affordable units</kbd>για τον άξονα Y.</li>
+  </ol>
+</section>
+
+<footer>
+  <h2>Εδώ τελειώνει το μάθημα!</h2>
+  <div class="completed">
+    <p class="summary">Στη συνέχεια, θα εξετάσουμε κι άλλες προχωρημένες τεχνικές καθαρισμού δεδομένων και θα εφαρμόσουμε ό,τι έχουμε μάθει ως τώρα για να αναλύσουμε τα δεδομένα χρηματοδότησης μιας προεκλογικής εκστρατείας.</p>
+  </div>
+  <div class="next">
+    <h2>Επόμενο</h2>
+    <ol>
+      <li><a href="katharismos-dedomenwn-xrhmatodothshs">Καθαρισμός δεδομένων χρηματοδότησης εκστρατείας και ανάλυση της προέλευσης των δωρεών</a></li>
+    </ol>
+  </div>
+</footer>
