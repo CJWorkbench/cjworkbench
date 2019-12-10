@@ -70,7 +70,9 @@ export const UpdateFrequencySelect = withI18n()(class UpdateFrequencySelect exte
             className='content-1 ml-1 action-link'
             onClick={this.handleClickOpenModal}
           >
-            {isAutofetch ? <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelect.auto'>Auto</Trans> : <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelect.manual'>Manual</Trans>}
+            {isAutofetch
+              ? <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelect.auto' description="Appears just after 'js.params.Custom.VersionSelect.UpdateFrequencySelect.update'">Auto</Trans>
+              : <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelect.manual' description="Appears just after 'js.params.Custom.VersionSelect.UpdateFrequencySelect.update'">Manual</Trans>}
           </a>
         </div>
         {lastCheckDate ? (

@@ -402,6 +402,7 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                               >
                                 <WithI18n
                                   defaults="Auto"
+                                  description="Refers to 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title'"
                                   id="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.auto.label"
                                 >
                                   <I18n
@@ -410,6 +411,7 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                                   >
                                     <Trans
                                       defaults="Auto"
+                                      description="Refers to 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title'"
                                       i18n={
                                         Object {
                                           "_": [Function],
@@ -678,6 +680,7 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                               >
                                 <WithI18n
                                   defaults="Manual"
+                                  description="Refers to 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title'"
                                   id="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual.label"
                                 >
                                   <I18n
@@ -686,6 +689,7 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                                   >
                                     <Trans
                                       defaults="Manual"
+                                      description="Refers to 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title'"
                                       i18n={
                                         Object {
                                           "_": [Function],

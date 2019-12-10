@@ -59,6 +59,7 @@ msgstr ""
 msgid "js.ExportModal.csvCopyLink.copyLiveLink"
 msgstr ""
 
+#. Acts as closing button
 #: assets/js/ExportModal.js:153
 msgid "js.ExportModal.footer.doneButton"
 msgstr ""
@@ -112,6 +113,7 @@ msgstr ""
 msgid "js.ImportModuleFromGithub.staff.header.title"
 msgstr ""
 
+#. This is a success message
 #: assets/js/ImportModuleFromGitHub.js:47
 msgid "js.ImportModuleFromGithub.status.importedModule"
 msgstr ""
@@ -170,10 +172,12 @@ msgstr ""
 msgid "js.Report.ShareCard.accessibilityDescription.public"
 msgstr ""
 
+#. As in 'Edit privacy settings'
 #: assets/js/Report/ShareCard.js:24
 msgid "js.Report.ShareCard.editPrivacy.sharebutton"
 msgstr ""
 
+#. As in 'URL of report'
 #: assets/js/Report/ShareCard.js:27
 msgid "js.Report.ShareCard.reportUrl.header"
 msgstr ""
@@ -462,8 +466,9 @@ msgstr ""
 msgid "js.WorkflowEditor.wfmodule.EditableNotes.placeholder"
 msgstr ""
 
+#. When clicked, this opens a menu with more actions.
 #: assets/js/WorkflowEditor/wfmodule/WfModuleContextMenu.js:17
-msgid "js.WorkflowEditor.wfmodule.WfModuleContextMenu.more"
+msgid "js.WorkflowEditor.wfmodule.WfModuleContextMenu.more.hoverText"
 msgstr ""
 
 #: assets/js/WorkflowEditor/wfmodule/WfModule.js:239
@@ -532,12 +537,12 @@ msgid "js.WorkflowNavBar.signIn.accountLink"
 msgstr ""
 
 #. This is used in navigation bar. It should be all-caps for styling reasons.
-#: assets/js/Workflows/Navbar.js:39
+#: assets/js/Workflows/Navbar.js:40
 msgid "js.Workflows.NavBar.links.training"
 msgstr ""
 
 #. This is used in navigation bar. It should be all-caps for styling reasons.
-#: assets/js/Workflows/Navbar.js:36
+#: assets/js/Workflows/Navbar.js:37
 msgid "js.Workflows.NavBar.links.workflows"
 msgstr ""
 
@@ -545,10 +550,12 @@ msgstr ""
 msgid "js.Workflows.SortMenu.alphabetical.dropdownItem"
 msgstr ""
 
+#. Last update descending
 #: assets/js/Workflows/SortMenu.js:31
 msgid "js.Workflows.SortMenu.lastModified.dropdownItem"
 msgstr ""
 
+#. Last update ascending
 #: assets/js/Workflows/SortMenu.js:32
 msgid "js.Workflows.SortMenu.oldestModified.dropdownItem"
 msgstr ""
@@ -581,12 +588,13 @@ msgstr ""
 msgid "js.Workflows.WorkflowLists.nav.recipes"
 msgstr ""
 
+#. As in 'Workflows shared with me'
 #: assets/js/Workflows/WorkflowLists.js:112
 msgid "js.Workflows.WorkflowLists.nav.sharedWithMe"
 msgstr ""
 
 #: assets/js/Workflows/WorkflowLists.js:76
-msgid "js.Workflows.WorkflowLists.publisheNewRecipes"
+msgid "js.Workflows.WorkflowLists.publishNewRecipes"
 msgstr ""
 
 #: assets/js/Workflows/WorkflowLists.js:64
@@ -648,10 +656,12 @@ msgstr ""
 msgid "js.lessons.LessonFooter.training.link"
 msgstr ""
 
+#. As in 'next step'
 #: assets/js/lessons/LessonNav.js:54
 msgid "js.lessons.LessonNav.next.button"
 msgstr ""
 
+#. As in 'previous step'
 #: assets/js/lessons/LessonNav.js:39
 msgid "js.lessons.LessonNav.previous.button"
 msgstr ""
@@ -700,35 +710,35 @@ msgstr ""
 msgid "js.params.Custom.Aggregations.Aggregation.placeholder.sum"
 msgstr ""
 
-#: assets/js/params/Custom/Aggregations/Operation.js:17
+#: assets/js/params/Custom/Aggregations/Operation.js:18
 msgid "js.params.Custom.Aggregations.Operation.count.option"
 msgstr ""
 
-#: assets/js/params/Custom/Aggregations/Operation.js:18
+#: assets/js/params/Custom/Aggregations/Operation.js:19
 msgid "js.params.Custom.Aggregations.Operation.countUnique.option"
 msgstr ""
 
-#: assets/js/params/Custom/Aggregations/Operation.js:24
+#: assets/js/params/Custom/Aggregations/Operation.js:25
 msgid "js.params.Custom.Aggregations.Operation.first.option"
 msgstr ""
 
-#: assets/js/params/Custom/Aggregations/Operation.js:23
+#: assets/js/params/Custom/Aggregations/Operation.js:24
 msgid "js.params.Custom.Aggregations.Operation.maximum.option"
 msgstr ""
 
-#: assets/js/params/Custom/Aggregations/Operation.js:20
+#: assets/js/params/Custom/Aggregations/Operation.js:21
 msgid "js.params.Custom.Aggregations.Operation.mean.option"
 msgstr ""
 
-#: assets/js/params/Custom/Aggregations/Operation.js:21
+#: assets/js/params/Custom/Aggregations/Operation.js:22
 msgid "js.params.Custom.Aggregations.Operation.median.option"
 msgstr ""
 
-#: assets/js/params/Custom/Aggregations/Operation.js:22
+#: assets/js/params/Custom/Aggregations/Operation.js:23
 msgid "js.params.Custom.Aggregations.Operation.minimum.option"
 msgstr ""
 
-#: assets/js/params/Custom/Aggregations/Operation.js:19
+#: assets/js/params/Custom/Aggregations/Operation.js:20
 msgid "js.params.Custom.Aggregations.Operation.sum.option"
 msgstr ""
 
@@ -736,6 +746,7 @@ msgstr ""
 msgid "js.params.Custom.Aggregations.addButton"
 msgstr ""
 
+#. As in mathematical operations
 #: assets/js/params/Custom/Aggregations/index.js:70
 msgid "js.params.Custom.Aggregations.operations"
 msgstr ""
@@ -854,6 +865,8 @@ msgstr ""
 msgid "js.params.Custom.Filters.Condition.numberIsNot"
 msgstr ""
 
+#. As in 'select a condition relative to which we will filter'. Condition here
+#. is something of the form 'IF something IS like that'.
 #: assets/js/params/Custom/Filters/Condition.js:67
 msgid "js.params.Custom.Filters.Condition.selectCondition"
 msgstr ""
@@ -920,39 +933,39 @@ msgstr ""
 msgid "js.params.Custom.Groups.DateGranularities.selectDateAndTimeToGroup"
 msgstr ""
 
-#: assets/js/params/Custom/Groups/DateGranularity.js:36
+#: assets/js/params/Custom/Groups/DateGranularity.js:38
 msgid "js.params.Custom.Groups.DateGranularity.asIs.option"
 msgstr ""
 
-#: assets/js/params/Custom/Groups/DateGranularity.js:40
+#: assets/js/params/Custom/Groups/DateGranularity.js:42
 msgid "js.params.Custom.Groups.DateGranularity.byDay.option"
 msgstr ""
 
-#: assets/js/params/Custom/Groups/DateGranularity.js:39
+#: assets/js/params/Custom/Groups/DateGranularity.js:41
 msgid "js.params.Custom.Groups.DateGranularity.byHour.option"
 msgstr ""
 
-#: assets/js/params/Custom/Groups/DateGranularity.js:38
+#: assets/js/params/Custom/Groups/DateGranularity.js:40
 msgid "js.params.Custom.Groups.DateGranularity.byMinute.option"
 msgstr ""
 
-#: assets/js/params/Custom/Groups/DateGranularity.js:41
+#: assets/js/params/Custom/Groups/DateGranularity.js:43
 msgid "js.params.Custom.Groups.DateGranularity.byMonth.option"
 msgstr ""
 
-#: assets/js/params/Custom/Groups/DateGranularity.js:42
+#: assets/js/params/Custom/Groups/DateGranularity.js:44
 msgid "js.params.Custom.Groups.DateGranularity.byQuarter.option"
 msgstr ""
 
-#: assets/js/params/Custom/Groups/DateGranularity.js:37
+#: assets/js/params/Custom/Groups/DateGranularity.js:39
 msgid "js.params.Custom.Groups.DateGranularity.bySecond.option"
 msgstr ""
 
-#: assets/js/params/Custom/Groups/DateGranularity.js:43
+#: assets/js/params/Custom/Groups/DateGranularity.js:45
 msgid "js.params.Custom.Groups.DateGranularity.byYear.option"
 msgstr ""
 
-#: assets/js/params/Custom/Groups/DateGranularity.js:28
+#: assets/js/params/Custom/Groups/DateGranularity.js:30
 msgid "js.params.Custom.Groups.DateGranularity.heading.title"
 msgstr ""
 
@@ -964,6 +977,8 @@ msgstr ""
 msgid "js.params.Custom.JoinColumns.addColumns"
 msgstr ""
 
+#. This refers to a join operation, as the term join is used in SQL database
+#. language. It is followed by one or more column names.
 #: assets/js/params/Custom/JoinColumns.js:71
 msgid "js.params.Custom.JoinColumns.joinOn"
 msgstr ""
@@ -1013,6 +1028,9 @@ msgstr ""
 msgid "js.params.Custom.RefineClusterer.Algorithms.levenshtein.description"
 msgstr ""
 
+#. This is not an editing action. It's a short description of how the
+#. levenstein algorithm works (i.e. it compares strings relative to the number
+#. of characters in which they differ, hence the term edit distance).
 #: assets/js/params/Custom/Refine/RefineClusterer.js:21
 msgid "js.params.Custom.RefineClusterer.Algorithms.levenshtein.name"
 msgstr ""
@@ -1325,7 +1343,9 @@ msgstr ""
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.workFlow.heading"
 msgstr ""
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:73
+#. Appears just after
+#. 'js.params.Custom.VersionSelect.UpdateFrequencySelect.update'
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:74
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.auto"
 msgstr ""
 
@@ -1335,11 +1355,13 @@ msgstr ""
 
 #. The parameter is a time difference (i.e. something like '4h ago'. The tag is
 #. a <time> tag.
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:78
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:80
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.lastChecked"
 msgstr ""
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:73
+#. Appears just after
+#. 'js.params.Custom.VersionSelect.UpdateFrequencySelect.update'
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:75
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.manual"
 msgstr ""
 
@@ -1355,6 +1377,8 @@ msgstr ""
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.auto.description"
 msgstr ""
 
+#. Refers to
+#. 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title'
 #: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:160
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.auto.label"
 msgstr ""
@@ -1404,6 +1428,8 @@ msgstr ""
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual.description"
 msgstr ""
 
+#. Refers to
+#. 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title'
 #: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:222
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual.label"
 msgstr ""
@@ -1454,6 +1480,7 @@ msgstr ""
 msgid "js.params.File.UploadedFileSelect.choosePreviousFile.hoverText"
 msgstr ""
 
+#. Means 'no file'
 #: assets/js/params/File/UploadedFileSelect.js:111
 msgid "js.params.File.UploadedFileSelect.choosePreviousFile.none"
 msgstr ""
@@ -1617,18 +1644,22 @@ msgstr ""
 msgid "js.params.Tab.selectTab.placeholder"
 msgstr ""
 
+#. Usually meaning 'All values'
 #: assets/js/params/common/AllNoneButtons.js:16
 msgid "js.params.common.AllNoneButtons.selectAll.button"
 msgstr ""
 
+#. Usually meaning 'Select all values'
 #: assets/js/params/common/AllNoneButtons.js:13
 msgid "js.params.common.AllNoneButtons.selectAll.hoverText"
 msgstr ""
 
+#. Usually meaning 'No value'
 #: assets/js/params/common/AllNoneButtons.js:25
 msgid "js.params.common.AllNoneButtons.selectNone.button"
 msgstr ""
 
+#. Usually meaning 'Select no value'
 #: assets/js/params/common/AllNoneButtons.js:22
 msgid "js.params.common.AllNoneButtons.selectNone.hoverText"
 msgstr ""
@@ -1909,6 +1940,7 @@ msgstr ""
 msgid "py.templates.report.updated"
 msgstr ""
 
+#. This is a link to a workflow
 #: templates/report.html:21
 msgid "py.templates.report.sourceDataLink.link"
 msgstr ""
@@ -2233,6 +2265,7 @@ msgstr ""
 msgid "py.templates.socialaccount.connections.title"
 msgstr ""
 
+#. Short for 'The account has been linked!'
 #: templates/socialaccount/connections.html:10
 msgid "py.templates.socialaccount.connections.accountLinked"
 msgstr ""
