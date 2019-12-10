@@ -7,10 +7,10 @@
     <select name="new_locale" onchange="this.form.submit()">
       {% for locale_data in i18n.locales_data %}
         <option 
-          {% if locale_data.locale_id == i18n.locale_id %}selected="selected"{% endif %} 
-          value="{{ locale_data.locale_id }}"
+          {% if locale_data.id == i18n.locale_id %}selected="selected"{% endif %} 
+          value="{{ locale_data.id }}"
         >
-          {{ locale_data.locale_name }}
+          {{ locale_data.name }}
         </option>
       {% endfor %}
     </select>

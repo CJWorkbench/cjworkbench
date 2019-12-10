@@ -38,15 +38,15 @@ export default class LocaleSwitcher extends React.PureComponent {
             <input type='hidden' name='next' value={window.location.href} />
             <input type='hidden' name='csrfmiddlewaretoken' value={csrfToken} />
             {supportedLocalesData.map((localeData) => (
-              <label key={localeData.locale_id}>
+              <label key={localeData.id}>
                 <input
                   type='radio'
                   name='new_locale'
-                  value={localeData.locale_id}
-                  checked={localeData.locale_id === currentLocale}
+                  value={localeData.id}
+                  checked={localeData.id === currentLocale}
                   onChange={this.handleLocaleChange}
                 />
-                {localeData.locale_name}
+                {localeData.name}
               </label>
             ))}
           </form>

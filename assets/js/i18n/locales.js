@@ -1,9 +1,9 @@
 
 export const supportedLocalesData = window && window.i18nConfig && window.i18nConfig.localesData ? window.i18nConfig.localesData : [
-  { locale_id: 'en', locale_name: 'English' }
+  { id: 'en', name: 'English' }
 ]
 
-export const supportedLocaleIds = supportedLocalesData.map(localeData => localeData.locale_id)
+export const supportedLocaleIds = supportedLocalesData.map(localeData => localeData.id)
 
 const defaultLocale = 'en'
 
