@@ -9,7 +9,7 @@ import { Modal, ModalHeader, ModalBody } from '../components/Modal'
  * A menu for the user to select a locale.
  */
 export default function LocaleSwitcher ({ closeModal }) {
-  const [ newLocaleId, setNewLocaleId ] = React.useState(null); // null, "en", "fr", etc., ..., true if we don't know
+  const [newLocaleId, setNewLocaleId] = React.useState(null) // null, "en", "fr", etc., ..., true if we don't know
   const handleSubmit = React.useCallback(ev => {
     if (newLocaleId !== null) {
       // we're already submitting. Ignore.
@@ -19,20 +19,20 @@ export default function LocaleSwitcher ({ closeModal }) {
       // Grab new locale ID from the <button> we clicked.
       // (This isn't defensively programmed. It can probably set
       // newLocaleId to just about anything truthy. That's okay.)
-      setNewLocaleId(document.activeElement && document.activeElement.value || true)
+      setNewLocaleId((document.activeElement && document.activeElement.value) || true)
       // and continue submitting
     }
   })
 
   return (
-    <Modal isOpen className="locale-switcher" toggle={closeModal}>
+    <Modal isOpen className='locale-switcher' toggle={closeModal}>
       <ModalHeader toggle={closeModal}>
         <Trans id='js.i18n.LocaleSwitcher.header.title' description='This should be all-caps for styling reasons'>
           LANGUAGE
         </Trans>
       </ModalHeader>
       <ModalBody>
-        <p className="description">
+        <p className='description'>
           <Trans id='js.i18n.LocaleSwitcher.body.description'>
             Choose the language of Workbench’s interface. Data is not affected.
           </Trans>
