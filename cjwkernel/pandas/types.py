@@ -947,190 +947,152 @@ class ProcessResult:
         elif isinstance(value, list):
             try:
                 return cls(errors=ProcessResultError.coerce_list(value))
-            except (ValueError, TypeError) as e:
-                return cls(
-                    errors=[
-                        ProcessResultError.module_exception(
-                            "The list given cannot be parsed as an error/warning list: %s"
-                            % e
-                        )
-                    ]
-                )
+            except TypeError as e:
+                raise ValueError(e) from e
         elif isinstance(value, pd.DataFrame):
             validate_dataframe(value)
             columns = _infer_columns(value, {}, try_fallback_columns)
             return cls(dataframe=value, columns=columns)
         elif isinstance(value, dict):
-            if "message" in value and "quickFixes" in value:
-                try:
-                    return cls(errors=[ProcessResultError.coerce(value)])
-                except TypeError as e:
-                    raise ValueError(e) from e
-            else:
-                value = dict(value)  # shallow copy
-                # Coerce quick_fixes and old-style error, if it's there
-                old_error = {}
-                try:
-                    old_error["quick_fixes"] = [
-                        QuickFix.coerce(v) for v in value.pop("quick_fixes")
-                    ]
-                except KeyError:
-                    pass
-
-                try:
-                    old_error["error"] = I18nMessage.coerce(value.pop("error"))
-                except KeyError:
-                    pass
-                except (TypeError, ValueError) as e:
-                    raise ValueError("Invalid 'error' property") from e
-
-                try:
-                    errors = (
-                        [
-                            ProcessResultError(
-                                old_error.pop("error"), old_error.pop("quick_fixes", [])
-                            )
-                        ]
-                        if old_error
-                        else []
-                    )
-                except KeyError:
-                    raise ValueError("You cannot return quick fixes without an error")
-
-                try:
-                    errors = errors + ProcessResultError.coerce_list(
-                        value.pop("errors")
-                    )
-                except KeyError:
-                    pass
-                except (TypeError, ValueError) as e:
-                    raise ValueError("Invalid 'errors' property") from e
-
-                dataframe = value.pop("dataframe", pd.DataFrame())
-                validate_dataframe(dataframe)
-
-                try:
-                    column_formats = value.pop("column_formats")
-                    value["columns"] = _infer_columns(
-                        dataframe, column_formats, try_fallback_columns
-                    )
-                except KeyError:
-                    pass
-
-                try:
-                    return cls(dataframe=dataframe, errors=errors, **value)
-                except TypeError as err:
-                    raise ValueError(
-                        (
-                            "ProcessResult input must only contain {dataframe, "
-                            "error, errors, json, quick_fixes, column_formats} keys"
-                        )
-                    ) from err
+            return cls._coerce_dict(value, try_fallback_columns)
         elif isinstance(value, tuple):
             if len(value) == 2:
-                if (
-                    isinstance(value[0], pd.DataFrame) or value[0] is None
-                ):  # we expect (DataFrame, ModuleError)
-                    dataframe, error = value
-                    if dataframe is None:
-                        dataframe = pd.DataFrame()
-                    elif not isinstance(dataframe, pd.DataFrame):
-                        return cls(
-                            errors=[
-                                ProcessResultError.module_exception(
-                                    "Expected Dataframe, got %s"
-                                    % type(dataframe).__name__
-                                )
-                            ]
-                        )
-                    try:
-                        errors = (
-                            ProcessResultError.coerce_list(error)
-                            if isinstance(error, list)
-                            else ([ProcessResultError.coerce(error)] if error else [])
-                        )
-                    except (TypeError, ValueError) as e:
-                        return cls(
-                            errors=[
-                                ProcessResultError.module_exception(
-                                    "Error/warning can't be parsed: %s" % e
-                                )
-                            ]
-                        )
-                    validate_dataframe(dataframe)
-                    columns = _infer_columns(dataframe, {}, try_fallback_columns)
-                    return cls(dataframe=dataframe, errors=errors)
-                else:  # we expect (message_id, message_args)
-                    try:
-                        return cls(
-                            errors=[ProcessResultError(I18nMessage.coerce(value))]
-                        )
-                    except (TypeError, ValueError) as e:
-                        return cls(
-                            errors=[
-                                ProcessResultError.module_exception(
-                                    "Expected (str, dict) error/warning, got (%s, %s)"
-                                    % (type(value[0]).__name__, type(value[1]).__name__)
-                                )
-                            ]
-                        )
+                return cls._coerce_2tuple(value, try_fallback_columns)
             elif len(value) == 3:
-                dataframe, error, json = value
-                if dataframe is None:
-                    dataframe = pd.DataFrame()
-                elif not isinstance(dataframe, pd.DataFrame):
-                    return cls(
-                        errors=[
-                            ProcessResultError.module_exception(
-                                "Expected DataFrame got %s" % type(dataframe).__name__
-                            )
-                        ]
-                    )
-                if json is None:
-                    json = {}
-                elif not isinstance(json, dict):
-                    return cls(
-                        errors=[
-                            ProcessResultError.module_exception(
-                                "Expected JSON dict, got %s" % type(json).__name__
-                            )
-                        ]
-                    )
-                try:
-                    errors = (
-                        ProcessResultError.coerce_list(error)
-                        if isinstance(error, list)
-                        else ([ProcessResultError.coerce(error)] if error else [])
-                    )
-                except (TypeError, ValueError) as e:
-                    return cls(
-                        errors=[
-                            ProcessResultError.module_exception(
-                                "Error/warning can't be parsed: %s" % e
-                            )
-                        ]
-                    )
-                validate_dataframe(dataframe)
-                columns = _infer_columns(dataframe, {}, try_fallback_columns)
-                return cls(
-                    dataframe=dataframe, errors=errors, json=json, columns=columns
+                return cls._coerce_3tuple(value, try_fallback_columns)
+            else:
+                raise ValueError(
+                    "Expected 2-tuple or 3-tuple return value; got %d-tuple"
+                    % len(value)
                 )
-            return cls(
-                errors=[
-                    ProcessResultError.module_exception(
-                        ("Expected 2-tuple or 3-tuple return value; got %d-tuple")
-                        % len(value)
-                    )
-                ]
-            )
+        else:
+            raise ValueError("Invalid return type %s" % type(value).__name__)
 
-        return cls(
-            errors=[
-                ProcessResultError.module_exception(
-                    "Invalid return type %s" % type(value).__name__
+    @classmethod
+    def _coerce_2tuple(
+        cls, value, try_fallback_columns: Iterable[Column] = []
+    ) -> ProcessResult:
+        if (
+            isinstance(value[0], pd.DataFrame) or value[0] is None
+        ):  # we expect (DataFrame, ModuleError)
+            dataframe, error = value
+            if dataframe is None:
+                dataframe = pd.DataFrame()
+            elif not isinstance(dataframe, pd.DataFrame):
+                raise ValueError(
+                    "Expected Dataframe, got %s" % type(dataframe).__name__
                 )
-            ]
-        )
+
+            try:
+                errors = (
+                    ProcessResultError.coerce_list(error)
+                    if isinstance(error, list)
+                    else ([ProcessResultError.coerce(error)] if error else [])
+                )
+            except TypeError as e:
+                raise ValueError(e) from e
+
+            validate_dataframe(dataframe)
+            columns = _infer_columns(dataframe, {}, try_fallback_columns)
+            return cls(dataframe=dataframe, errors=errors)
+        else:  # we expect (message_id, message_args)
+            try:
+                return cls(errors=[ProcessResultError(I18nMessage.coerce(value))])
+            except TypeError as e:
+                raise ValueError(e) from e
+
+    @classmethod
+    def _coerce_3tuple(
+        cls, value, try_fallback_columns: Iterable[Column] = []
+    ) -> ProcessResult:
+        dataframe, error, json = value
+        if dataframe is None:
+            dataframe = pd.DataFrame()
+        elif not isinstance(dataframe, pd.DataFrame):
+            raise ValueError("Expected DataFrame got %s" % type(dataframe).__name__)
+        if json is None:
+            json = {}
+        elif not isinstance(json, dict):
+            raise ValueError("Expected JSON dict, got %s" % type(json).__name__)
+        try:
+            errors = (
+                ProcessResultError.coerce_list(error)
+                if isinstance(error, list)
+                else ([ProcessResultError.coerce(error)] if error else [])
+            )
+        except TypeError as e:
+            raise ValueError(e) from e
+        validate_dataframe(dataframe)
+        columns = _infer_columns(dataframe, {}, try_fallback_columns)
+        return cls(dataframe=dataframe, errors=errors, json=json, columns=columns)
+
+    @classmethod
+    def _coerce_dict(
+        cls, value, try_fallback_columns: Iterable[Column] = []
+    ) -> ProcessResult:
+        if "message" in value and "quickFixes" in value:
+            try:
+                return cls(errors=[ProcessResultError.coerce(value)])
+            except TypeError as e:
+                raise ValueError(e) from e
+        else:
+            value = dict(value)  # shallow copy
+            # Coerce quick_fixes and old-style error, if it's there
+            old_error = {}
+            try:
+                old_error["quick_fixes"] = [
+                    QuickFix.coerce(v) for v in value.pop("quick_fixes")
+                ]
+            except KeyError:
+                pass
+
+            try:
+                old_error["error"] = I18nMessage.coerce(value.pop("error"))
+            except KeyError:
+                pass
+            except (TypeError, ValueError) as e:
+                raise ValueError("Invalid 'error' property") from e
+
+            try:
+                errors = (
+                    [
+                        ProcessResultError(
+                            old_error.pop("error"), old_error.pop("quick_fixes", [])
+                        )
+                    ]
+                    if old_error
+                    else []
+                )
+            except KeyError:
+                raise ValueError("You cannot return quick fixes without an error")
+
+            try:
+                errors = errors + ProcessResultError.coerce_list(value.pop("errors"))
+            except KeyError:
+                pass
+            except (TypeError, ValueError) as e:
+                raise ValueError("Invalid 'errors' property") from e
+
+            dataframe = value.pop("dataframe", pd.DataFrame())
+            validate_dataframe(dataframe)
+
+            try:
+                column_formats = value.pop("column_formats")
+                value["columns"] = _infer_columns(
+                    dataframe, column_formats, try_fallback_columns
+                )
+            except KeyError:
+                pass
+
+            try:
+                return cls(dataframe=dataframe, errors=errors, **value)
+            except TypeError as err:
+                raise ValueError(
+                    (
+                        "ProcessResult input must only contain {dataframe, "
+                        "error, errors, json, quick_fixes, column_formats} keys"
+                    )
+                ) from err
 
     @classmethod
     def from_arrow(self, value: atypes.RenderResult) -> ProcessResult:

@@ -775,12 +775,12 @@ class ProcessResultTests(unittest.TestCase):
         self.assertEqual(result, expected)
 
     def test_coerce_bad_tuple(self):
-        result = ProcessResult.coerce(("foo", "bar", "baz", "moo"))
-        self.assertTrue(result.errors)
+        with self.assertRaises(ValueError):
+            result = ProcessResult.coerce(("foo", "bar", "baz", "moo"))
 
     def test_coerce_2tuple_no_dataframe(self):
-        result = ProcessResult.coerce(("foo", "bar"))
-        self.assertTrue(result.errors)
+        with self.assertRaises(ValueError):
+            result = ProcessResult.coerce(("foo", "bar"))
 
     def test_coerce_2tuple_i18n(self):
         expected = ProcessResult(
@@ -790,12 +790,12 @@ class ProcessResultTests(unittest.TestCase):
         self.assertEqual(result, expected)
 
     def test_coerce_2tuple_bad_i18n_error(self):
-        result = ProcessResult.coerce(("message_id", None))
-        self.assertTrue(result.errors)
+        with self.assertRaises(ValueError):
+            result = ProcessResult.coerce(("message_id", None))
 
     def test_coerce_3tuple_no_dataframe(self):
-        result = ProcessResult.coerce(("foo", "bar", {"a": "b"}))
-        self.assertTrue(result.errors)
+        with self.assertRaises(ValueError):
+            result = ProcessResult.coerce(("foo", "bar", {"a": "b"}))
 
     def test_coerce_dict_i18n(self):
         expected = ProcessResult(
@@ -1122,8 +1122,8 @@ class ProcessResultTests(unittest.TestCase):
         self.assertEqual(result, expected)
 
     def test_coerce_invalid_value(self):
-        result = ProcessResult.coerce([None, "foo"])
-        self.assertTrue(result.errors)
+        with self.assertRaises(ValueError):
+            result = ProcessResult.coerce([None, "foo"])
 
     def test_status_ok(self):
         result = ProcessResult(pd.DataFrame({"A": [1]}), [])
