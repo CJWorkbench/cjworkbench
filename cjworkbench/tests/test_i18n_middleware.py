@@ -15,11 +15,15 @@ def mock_response(request):
     return response
 
 
+class MockUserProfile:
+    def __init__(self, locale_preference=None):
+        self.locale_id = locale_preference
+
+
 class MockUser:
     def __init__(self, locale_preference=None):
         self.is_authenticated = True
-        if locale_preference:
-            self.locale_id = locale_preference
+        self.user_profile = MockUserProfile(locale_preference)
 
 
 class SetCurrentLocaleMiddlewareTest(SimpleTestCase):
