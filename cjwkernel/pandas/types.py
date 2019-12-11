@@ -413,10 +413,10 @@ class I18nMessage:
 
     @classmethod
     def from_arrow(cls, value: atypes.I18nMessage) -> I18nMessage:
-        return cls(value.id, {k: v for k, v in value.args.items()})
+        return cls(value.id, value.args)
 
-    def to_arrow(self) -> ttypes.I18nMessage:
-        return atypes.I18nMessage(self.id, {k: v for k, v in self.args.items()})
+    def to_arrow(self) -> atypes.I18nMessage:
+        return atypes.I18nMessage(self.id, self.args)
 
     @classmethod
     def TODO_i18n(cls, text: str) -> I18nMessage:
@@ -503,16 +503,16 @@ class QuickFix:
             except TypeError as err:
                 raise ValueError(str(err))
 
-            qf = dict(value)  # shallow copy
+            kwargs = dict(value)  # shallow copy
             try:
-                qf["text"] = I18nMessage.coerce(qf["text"])
+                kwargs["text"] = I18nMessage.coerce(kwargs["text"])
             except KeyError as err:
                 raise ValueError("Missing text from quick fix")
             except TypeError as err:
                 raise ValueError("Invalid text value for quick fix") from err
 
             try:
-                return QuickFix(**qf)
+                return QuickFix(**kwargs)
             except TypeError as err:
                 raise ValueError(str(err))
         elif isinstance(value, tuple) or isinstance(value, list):
@@ -964,16 +964,15 @@ class ProcessResult:
     def _coerce_2tuple(
         cls, value, try_fallback_columns: Iterable[Column] = []
     ) -> ProcessResult:
-        if (
-            isinstance(value[0], pd.DataFrame) or value[0] is None
-        ):  # we expect (DataFrame, ModuleError)
+        if isinstance(value[0], str) and isinstance(value[1], dict):
+            try:
+                return cls(errors=[ProcessResultError(I18nMessage.coerce(value))])
+            except TypeError as e:
+                raise ValueError(e) from e
+        elif isinstance(value[0], pd.DataFrame) or value[0] is None:
             dataframe, error = value
             if dataframe is None:
                 dataframe = pd.DataFrame()
-            elif not isinstance(dataframe, pd.DataFrame):
-                raise ValueError(
-                    "Expected Dataframe, got %s" % type(dataframe).__name__
-                )
 
             try:
                 errors = ProcessResultError.coerce_list(error)
@@ -983,11 +982,11 @@ class ProcessResult:
             validate_dataframe(dataframe)
             columns = _infer_columns(dataframe, {}, try_fallback_columns)
             return cls(dataframe=dataframe, errors=errors)
-        else:  # we expect (message_id, message_args)
-            try:
-                return cls(errors=[ProcessResultError(I18nMessage.coerce(value))])
-            except TypeError as e:
-                raise ValueError(e) from e
+        else:
+            raise ValueError(
+                "Expected (Dataframe, RenderError) or (str, dict) return type; got (%s,%s)"
+                % (type(value[0]).__name__, type(value[1]).__name__)
+            )
 
     @classmethod
     def _coerce_3tuple(
@@ -1021,41 +1020,34 @@ class ProcessResult:
                 raise ValueError(e) from e
         else:
             value = dict(value)  # shallow copy
-            # Coerce quick_fixes and old-style error, if it's there
-            old_error = {}
             try:
-                old_error["quick_fixes"] = [
-                    QuickFix.coerce(v) for v in value.pop("quick_fixes")
-                ]
+                errors = ProcessResultError.coerce_list(value.pop("errors"))
             except KeyError:
-                pass
+                errors = []
+            except (TypeError, ValueError) as e:
+                raise ValueError("Invalid 'errors' property") from e
 
+            # Coerce old-style error and quick_fixes, if it's there
             try:
-                old_error["error"] = I18nMessage.coerce(value.pop("error"))
+                legacy_error_message = I18nMessage.coerce(value.pop("error"))
             except KeyError:
-                pass
+                legacy_error_message = None
             except (TypeError, ValueError) as e:
                 raise ValueError("Invalid 'error' property") from e
 
             try:
-                errors = (
-                    [
-                        ProcessResultError(
-                            old_error.pop("error"), old_error.pop("quick_fixes", [])
-                        )
-                    ]
-                    if old_error
-                    else []
-                )
+                legacy_error_quick_fixes = [
+                    QuickFix.coerce(v) for v in value.pop("quick_fixes")
+                ]
             except KeyError:
-                raise ValueError("You cannot return quick fixes without an error")
+                legacy_error_quick_fixes = []
 
-            try:
-                errors = errors + ProcessResultError.coerce_list(value.pop("errors"))
-            except KeyError:
-                pass
-            except (TypeError, ValueError) as e:
-                raise ValueError("Invalid 'errors' property") from e
+            if legacy_error_quick_fixes and not legacy_error_message:
+                raise ValueError("You cannot return quick fixes without an error")
+            if legacy_error_message:
+                errors.append(
+                    ProcessResultError(legacy_error_message, legacy_error_quick_fixes)
+                )
 
             dataframe = value.pop("dataframe", pd.DataFrame())
             validate_dataframe(dataframe)
