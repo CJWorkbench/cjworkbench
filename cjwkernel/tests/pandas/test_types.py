@@ -426,16 +426,19 @@ class ProcessResultErrorTests(unittest.TestCase):
         self.assertEqual(ProcessResultError.coerce_list(None), [])
 
     def test_list_from_string(self):
-        with self.assertRaises(TypeError):
-            ProcessResultError.coerce_list("hello")
+        result = ProcessResultError.coerce_list("hello")
+        expected = [ProcessResultError(I18nMessage.TODO_i18n("hello"))]
+        self.assertEqual(result, expected)
 
     def test_list_from_tuple(self):
-        with self.assertRaises(TypeError):
-            ProcessResultError.coerce_list(("id", {"arg": "1"}))
+        result = ProcessResultError.coerce_list(("id", {"arg": "1"}))
+        expected = [ProcessResultError(I18nMessage("id", {"arg": "1"}))]
+        self.assertEqual(result, expected)
 
     def test_list_from_dict(self):
-        with self.assertRaises(TypeError):
-            ProcessResultError.coerce_list({"message": "error", "quickFixes": []})
+        result = ProcessResultError.coerce_list({"message": "error", "quickFixes": []})
+        expected = [ProcessResultError(I18nMessage.TODO_i18n("error"))]
+        self.assertEqual(result, expected)
 
     def test_to_arrow(self):
         self.assertEqual(

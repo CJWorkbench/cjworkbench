@@ -430,7 +430,7 @@ class I18nMessage:
         return cls("TODO_i18n", {"text": text})
 
     @classmethod
-    def coerce(cls, value: Union[str, mtypes.ModuleI18nMessage]) -> I18nMessage:
+    def coerce(cls, value: mtypes.Message) -> I18nMessage:
         """ Convert an internationalized message as return from modules to an object of this dataclass.
         
         Raises:
@@ -709,7 +709,7 @@ class ProcessResultError:
 
     @classmethod
     def coerce_list(
-        cls, value: Optional[mtypes.ModuleErrorsWithQuickFixes]
+        cls, error_or_errors: Optional[mtypes.RenderErrors]
     ) -> List[ProcessResultError]:
         """Convert a list of errors as returned by module to a list of members of this dataclass.
         
@@ -717,21 +717,21 @@ class ProcessResultError:
         - TypeError, if the value is not a list
         - ValueError, if some element of the list cannot be coerced to a member of this dataclass
         """
-        if value is None:
+        if not error_or_errors:
             return []
-        elif not isinstance(value, list):
-            raise TypeError("Expected a list, got %s" % type(value).__name__)
-        else:
+        elif isinstance(error_or_errors, list):
             try:
                 # collect the results for each item in a single list of tuples
-                return [cls.coerce(val) for val in value]
+                return [cls.coerce(error) for error in error_or_errors]
             except (ValueError, TypeError) as e:
                 raise ValueError(
-                    "The list %s cannot be coerced to module error" % value
+                    "The list %s cannot be coerced to module error" % error_or_errors
                 ) from e
+        else:
+            return [cls.coerce(error_or_errors)]
 
     @classmethod
-    def coerce(cls, value: mtypes.ModuleErrorWithQuickFixes) -> ProcessResultError:
+    def coerce(cls, value: mtypes.RenderError) -> ProcessResultError:
         """Convert an error as returned by module to a member of this dataclass.
         
         Raises:
@@ -774,14 +774,6 @@ class ProcessResultError:
         return cls(
             I18nMessage.from_arrow(value.message),
             [QuickFix.from_arrow(qf) for qf in value.quick_fixes],
-        )
-
-    @classmethod
-    def module_exception(cls, description) -> ProcessResultError:
-        return cls(
-            I18nMessage.TODO_i18n(
-                "There is a bug in this module. Error code: %s" % description
-            )
         )
 
 
@@ -984,11 +976,7 @@ class ProcessResult:
                 )
 
             try:
-                errors = (
-                    ProcessResultError.coerce_list(error)
-                    if isinstance(error, list)
-                    else ([ProcessResultError.coerce(error)] if error else [])
-                )
+                errors = ProcessResultError.coerce_list(error)
             except TypeError as e:
                 raise ValueError(e) from e
 
@@ -1015,11 +1003,7 @@ class ProcessResult:
         elif not isinstance(json, dict):
             raise ValueError("Expected JSON dict, got %s" % type(json).__name__)
         try:
-            errors = (
-                ProcessResultError.coerce_list(error)
-                if isinstance(error, list)
-                else ([ProcessResultError.coerce(error)] if error else [])
-            )
+            errors = ProcessResultError.coerce_list(error)
         except TypeError as e:
             raise ValueError(e) from e
         validate_dataframe(dataframe)
