@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import { Trans } from '@lingui/macro'
 import { supportedLocalesData, currentLocaleId } from './locales'
@@ -8,45 +8,56 @@ import { Modal, ModalHeader, ModalBody } from '../components/Modal'
 /**
  * A menu for the user to select a locale.
  */
-export default class LocaleSwitcher extends React.PureComponent {
-  handleLocaleChange (ev) {
-    ev.target.form.submit()
-  }
+export default function LocaleSwitcher ({ closeModal }) {
+  const [ newLocaleId, setNewLocaleId ] = React.useState(null); // null, "en", "fr", etc., ..., true if we don't know
+  const handleSubmit = React.useCallback(ev => {
+    if (newLocaleId !== null) {
+      // we're already submitting. Ignore.
+      ev.preventDefault()
+      ev.stopPropagation()
+    } else {
+      // Grab new locale ID from the <button> we clicked.
+      // (This isn't defensively programmed. It can probably set
+      // newLocaleId to just about anything truthy. That's okay.)
+      setNewLocaleId(document.activeElement && document.activeElement.value || true)
+      // and continue submitting
+    }
+  })
 
-  render () {
-    return (
-      <Modal isOpen toggle={this.props.closeModal}>
-        <ModalHeader toggle={this.props.closeModal}>
-          <Trans id='js.i18n.LocaleSwitcher.header.title' description='This should be all-caps for styling reasons'>
-            LANGUAGES
+  return (
+    <Modal isOpen className="locale-switcher" toggle={closeModal}>
+      <ModalHeader toggle={closeModal}>
+        <Trans id='js.i18n.LocaleSwitcher.header.title' description='This should be all-caps for styling reasons'>
+          LANGUAGE
+        </Trans>
+      </ModalHeader>
+      <ModalBody>
+        <p className="description">
+          <Trans id='js.i18n.LocaleSwitcher.body.description'>
+            Choose the language of Workbench’s interface. Data is not affected.
           </Trans>
-        </ModalHeader>
-        <ModalBody>
-          <p>
-            <Trans id='js.i18n.LocaleSwitcher.body.description'>
-              This option will change the language of Workbench's interface. To submit translations for your language, visit <a href='#'>this</a> page.
-            </Trans>
-          </p>
-          <form method='POST' action='/locale'>
-            <input type='hidden' name='next' value={window.location.href} />
-            <input type='hidden' name='csrfmiddlewaretoken' value={csrfToken} />
-            {supportedLocalesData.map((localeData) => (
-              <label key={localeData.id}>
-                <input
-                  type='radio'
-                  name='new_locale'
-                  value={localeData.id}
-                  checked={localeData.id === currentLocaleId}
-                  onChange={this.handleLocaleChange}
-                />
-                {localeData.name}
-              </label>
+        </p>
+        <form method='POST' action='/locale' onSubmit={handleSubmit}>
+          <input type='hidden' name='next' value={window.location.href} />
+          <input type='hidden' name='csrfmiddlewaretoken' value={csrfToken} />
+          <fieldset>
+            {supportedLocalesData.map(({ id, name }) => (
+              <button
+                key={id}
+                className={id === newLocaleId ? 'submitting' : undefined}
+                disabled={id === currentLocaleId}
+                type='submit'
+                name='new_locale'
+                value={id}
+              >
+                {name}
+              </button>
             ))}
-          </form>
-        </ModalBody>
-      </Modal>
-    )
-  }
+          </fieldset>
+        </form>
+      </ModalBody>
+    </Modal>
+  )
 }
 
 LocaleSwitcher.propTypes = {

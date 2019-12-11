@@ -18,17 +18,13 @@
   }
 
   .container {
-    z-index: 5;
+    position: relative; // show up atop background
 
     .account-bigbrand {
+      text-align: center;
       margin-bottom: 1rem;
-      display: flex;
-      justify-content: center;
-
-
       .logo-container {
-
-
+        display: inline-block;
         .logo {
           max-width: 32rem;
         }
@@ -42,12 +38,10 @@
       padding: 3rem 5rem;
       border: none;
       border-radius: 5px;
-      display: flex;
-      align-items: center;
-      flex-direction: column;
 
-      .action-link {
-        color:$white!important;
+      .social-account-action-link {
+        text-align: center;
+        color: $white !important;
         &:hover {
           text-decoration: underline;
         }
@@ -55,8 +49,8 @@
 
       .remove-account {
         @include content-1;
-        @extend .action-button;
-        @extend .button-white;
+        @include action-button;
+        @include button-white;
         margin:auto;
         margin-bottom: 2rem;
         margin-top: 1rem;
@@ -71,36 +65,28 @@
 
       /* Registration form */
 
-      .account_form input[type="text"], .account_form input[type="password"], .account_form input[type="email"], .code-field {
-        width: 100%;
-        height:4rem;
-        padding-left:1rem;
-        margin-bottom:1rem;
-        font-size: 1.5rem;
-        background-color: #fff;
-        border:0px;
-        border-radius:3px;
-      }
+      form.account_form {
+        input[type="text"], input[type="password"], input[type="email"] {
+          display: block;
+          width: 100%;
+          height: 4rem;
+          padding-left: 1rem;
+          margin-bottom: 1rem;
+          font-size: 1.5rem;
+          background-color: #fff;
+          border: 0;
+          border-radius: 3px;
+        }
 
-      .account_form label{
-        font-size: 1.2rem;
-        margin-bottom: 0;
-      }
+        label {
+          display: block;
+          font-size: 1.2rem;
+          margin-bottom: 0;
+        }
 
-      .account_form input:active {
-        box-shadow: 0 0 0px 1px $brand-workspace;
-      }
-
-      .account_form input[type="checkbox"] {
-        display:inline-block;
-        width: 1.5rem;
-      }
-
-      form {
-        display: flex;
-        align-items: center;
-        flex-direction: column;
-        width: 100%;
+        input:active {
+          box-shadow: 0 0 0px 1px $brand-workspace;
+        }
 
         .newsletter {
           align-self: flex-start;
@@ -111,29 +97,42 @@
         .consent {
           width: 100%;
           @include content-1;
-          color:$brand-text--dark;
+          color: $brand-text--dark;
           margin-top: 1rem;
           margin-bottom: 2rem;
         }
 
-        .account_form .action-button {
+        .action-button {
           margin-top: 3rem;
         }
       }
     }
 
+    form.locale-switcher {
+      margin: 1rem auto;
+      text-align: center;
+
+      .dropdown {
+        display: inline-block;
+        text-align: left;
+      }
+
+      .dropdown-toggle {
+        background-color: white;
+        border-color: white;
+      }
+    }
+
     .sign-in {
-      @extend .title-1;
+      @include title-1;
       text-align: center;
       color: $brand-text--dark
     }
 
     a {
       @include content-1;
-      color:$white;
+      color: $white;
     }
-
-    input {cursor: pointer;}
 
     // Social logins //
     .socialLoginWrap{
@@ -160,24 +159,17 @@
         }
       }
     }
-
-    .byline{
-      @extend .title-1;
-      color:$white;
-      text-align:center;
-      margin:3rem 0;
-    }
-
-
   }
 
   //404 , 403
   .account-card {
-    z-index: 2;
-
     .error-number {
       z-index: 5;
-      @extend .font404;
+      @include font-sans-bold;
+      font-size: 14rem;
+      line-height: 14rem;
+      letter-spacing: -0.3px;
+      margin-bottom: 0.1rem;
       text-align:center;
       margin-top: .5rem;
       margin-bottom: 1rem;
@@ -206,8 +198,6 @@
       display: inline-block;
     }
   }
-
-
 
   .account-card :-webkit-input-placeholder {
     color: #ccc

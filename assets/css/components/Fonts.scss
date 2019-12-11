@@ -1,11 +1,3 @@
-.font404 {
-	@include font-sans-bold;
-	font-size: 14rem;
-	line-height: 14rem;
-  letter-spacing: -0.3px;
-	margin-bottom: 0.1rem;
-}
-
 @mixin title-1 { // used in text
 	@include font-sans-regular;
 	font-size: 2.5rem;

@@ -40,6 +40,15 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /bootstrap\.native/,
+        use: {
+          loader: 'bootstrap.native-loader',
+          options: {
+            only: ['dropdown']
+          }
+        }
+      },
+      {
         test: /\.jsx?$/,
         exclude: /node_modules/,
         loader: 'babel-loader', // config is in package.json
