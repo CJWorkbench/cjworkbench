@@ -173,6 +173,8 @@ INSTALLED_APPS = [
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
+    "allauth.socialaccount.providers.facebook",
+    "allauth.socialaccount.providers.google",
     "cjworkbench",
     "cron",
     "fetcher",
@@ -439,10 +441,6 @@ if os.path.isfile(CJW_SOCIALACCOUNT_SECRETS_PATH):
         )
     except ValueError:
         CJW_SOCIALACCOUNT_SECRETS = []
-
-    for provider in CJW_SOCIALACCOUNT_SECRETS:
-
-        INSTALLED_APPS.append("allauth.socialaccount.providers." + provider["provider"])
 else:
     CJW_SOCIALACCOUNT_SECRETS = []
 
