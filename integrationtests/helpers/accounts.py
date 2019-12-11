@@ -210,6 +210,13 @@ class AccountAdmin:
                         %(is_staff)s, %(is_superuser)s
                     )
                     RETURNING id, email
+                ),
+                v AS (
+                    INSERT INTO cjworkbench_userprofile (
+                        get_newsletter, user_id, max_fetches_per_day, locale_id
+                    )
+                    SELECT FALSE, u.id, 100, 'en'
+                    FROM u
                 )
                 INSERT INTO account_emailaddress (
                     verified, "primary", user_id, email
