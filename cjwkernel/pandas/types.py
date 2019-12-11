@@ -434,8 +434,7 @@ class I18nMessage:
         """ Convert an internationalized message as return from modules to an object of this dataclass.
         
         Raises:
-        - ValueError, if the value is a list of the wrong length
-        - TypeError, if the value is of a non-supported type
+        - ValueError, if the value is a list of the wrong length or if the value is of a non-supported type
         
         """
         if isinstance(value, str):
@@ -446,16 +445,16 @@ class I18nMessage:
                     "This tuple cannot be coerced to I18nMessage: %s" % value
                 )
             if not isinstance(value[0], str):
-                raise TypeError(
+                raise ValueError(
                     "Message ID must be string, got %s" % type(value[0]).__name__
                 )
             if not isinstance(value[1], dict):
-                raise TypeError(
+                raise ValueError(
                     "Message arguments must be a dict, got %s" % type(value[1]).__name__
                 )
             return cls(value[0], value[1])
         else:
-            raise TypeError(
+            raise ValueError(
                 "%s if of type %s, which cannot be coerced to I18nMessage"
                 % (value, type(value).__name__)
             )
@@ -508,7 +507,7 @@ class QuickFix:
                 kwargs["text"] = I18nMessage.coerce(kwargs["text"])
             except KeyError as err:
                 raise ValueError("Missing text from quick fix")
-            except TypeError as err:
+            except ValueError as err:
                 raise ValueError("Invalid text value for quick fix") from err
 
             try:
@@ -711,22 +710,14 @@ class ProcessResultError:
     def coerce_list(
         cls, error_or_errors: Optional[mtypes.RenderErrors]
     ) -> List[ProcessResultError]:
-        """Convert a list of errors as returned by module to a list of members of this dataclass.
+        """Convert a single error or a list of errors as returned by module to a list of members of this dataclass.
         
-        Raises:
-        - TypeError, if the value is not a list
-        - ValueError, if some element of the list cannot be coerced to a member of this dataclass
+        Raises ValueError, if some element of the list cannot be coerced to a member of this dataclass
         """
         if not error_or_errors:
             return []
         elif isinstance(error_or_errors, list):
-            try:
-                # collect the results for each item in a single list of tuples
-                return [cls.coerce(error) for error in error_or_errors]
-            except (ValueError, TypeError) as e:
-                raise ValueError(
-                    "The list %s cannot be coerced to module error" % error_or_errors
-                ) from e
+            return [cls.coerce(error) for error in error_or_errors]
         else:
             return [cls.coerce(error_or_errors)]
 
@@ -734,9 +725,7 @@ class ProcessResultError:
     def coerce(cls, value: mtypes.RenderError) -> ProcessResultError:
         """Convert an error as returned by module to a member of this dataclass.
         
-        Raises:
-        - TypeError, if the value is of incorrect type
-        - ValueError, if the value cannot be converted to a member of this dataclass
+        Raises ValueError, if the value cannot be converted to a member of this dataclass
         """
         if not value:
             raise ValueError("Error cannot be empty")
@@ -747,19 +736,19 @@ class ProcessResultError:
                 message = I18nMessage.coerce(value["message"])
             except KeyError:
                 raise ValueError("Missing 'message' in %s" % value)
-            except (TypeError, ValueError) as err:
+            except ValueError as err:
                 raise ValueError("Invalid error message") from err
 
             try:
                 quick_fixes = [QuickFix.coerce(qf) for qf in value["quickFixes"]]
             except KeyError:
                 raise ValueError("Missing 'quickFixes' in %s" % value)
-            except (TypeError, ValueError) as err:
+            except ValueError as err:
                 raise ValueError("Invalid quick fix") from err
 
             return cls(message, quick_fixes)
         else:
-            raise TypeError(
+            raise ValueError(
                 "Values of type %s cannot be coerced to module errors"
                 % type(value).__name__
             )
@@ -937,10 +926,7 @@ class ProcessResult:
         elif isinstance(value, str):
             return cls(errors=[ProcessResultError(I18nMessage.coerce(value))])
         elif isinstance(value, list):
-            try:
-                return cls(errors=ProcessResultError.coerce_list(value))
-            except TypeError as e:
-                raise ValueError(e) from e
+            return cls(errors=ProcessResultError.coerce_list(value))
         elif isinstance(value, pd.DataFrame):
             validate_dataframe(value)
             columns = _infer_columns(value, {}, try_fallback_columns)
@@ -965,19 +951,13 @@ class ProcessResult:
         cls, value, try_fallback_columns: Iterable[Column] = []
     ) -> ProcessResult:
         if isinstance(value[0], str) and isinstance(value[1], dict):
-            try:
-                return cls(errors=[ProcessResultError(I18nMessage.coerce(value))])
-            except TypeError as e:
-                raise ValueError(e) from e
+            return cls(errors=[ProcessResultError(I18nMessage.coerce(value))])
         elif isinstance(value[0], pd.DataFrame) or value[0] is None:
             dataframe, error = value
             if dataframe is None:
                 dataframe = pd.DataFrame()
 
-            try:
-                errors = ProcessResultError.coerce_list(error)
-            except TypeError as e:
-                raise ValueError(e) from e
+            errors = ProcessResultError.coerce_list(error)
 
             validate_dataframe(dataframe)
             columns = _infer_columns(dataframe, {}, try_fallback_columns)
@@ -1001,10 +981,9 @@ class ProcessResult:
             json = {}
         elif not isinstance(json, dict):
             raise ValueError("Expected JSON dict, got %s" % type(json).__name__)
-        try:
-            errors = ProcessResultError.coerce_list(error)
-        except TypeError as e:
-            raise ValueError(e) from e
+
+        errors = ProcessResultError.coerce_list(error)
+
         validate_dataframe(dataframe)
         columns = _infer_columns(dataframe, {}, try_fallback_columns)
         return cls(dataframe=dataframe, errors=errors, json=json, columns=columns)
@@ -1014,17 +993,14 @@ class ProcessResult:
         cls, value, try_fallback_columns: Iterable[Column] = []
     ) -> ProcessResult:
         if "message" in value and "quickFixes" in value:
-            try:
-                return cls(errors=[ProcessResultError.coerce(value)])
-            except TypeError as e:
-                raise ValueError(e) from e
+            return cls(errors=[ProcessResultError.coerce(value)])
         else:
             value = dict(value)  # shallow copy
             try:
                 errors = ProcessResultError.coerce_list(value.pop("errors"))
             except KeyError:
                 errors = []
-            except (TypeError, ValueError) as e:
+            except ValueError as e:
                 raise ValueError("Invalid 'errors' property") from e
 
             # Coerce old-style error and quick_fixes, if it's there
@@ -1032,7 +1008,7 @@ class ProcessResult:
                 legacy_error_message = I18nMessage.coerce(value.pop("error"))
             except KeyError:
                 legacy_error_message = None
-            except (TypeError, ValueError) as e:
+            except ValueError as e:
                 raise ValueError("Invalid 'error' property") from e
 
             try:

@@ -232,7 +232,7 @@ class I18nMessageTests(unittest.TestCase):
         )
 
     def test_coerce_from_dict(self):
-        with self.assertRaises(TypeError):
+        with self.assertRaises(ValueError):
             I18nMessage.coerce({"id": "my_id", "arguments": {"hello": "there"}})
 
     def test_to_arrow(self):
@@ -332,7 +332,7 @@ class ProcessResultErrorTests(unittest.TestCase):
         )
 
     def test_from_list(self):
-        with self.assertRaises(TypeError):
+        with self.assertRaises(ValueError):
             ProcessResultError.coerce(
                 [{"id": "my_id", "arguments": {"hello": "there"}}]
             )
