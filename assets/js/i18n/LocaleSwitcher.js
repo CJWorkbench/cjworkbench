@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { Trans } from '@lingui/macro'
 import { supportedLocalesData, currentLocaleId } from './locales'
 import { csrfToken } from '../utils'
-import { Modal, ModalHeader, ModalBody } from '../components/Modal'
+import { Modal, ModalHeader, ModalBody, ModalFooter } from '../components/Modal'
 
 /**
  * A menu for the user to select a locale.
@@ -56,6 +56,11 @@ export default function LocaleSwitcher ({ closeModal }) {
           </fieldset>
         </form>
       </ModalBody>
+      <ModalFooter>
+        <button className='action-button button-gray' onClick={closeModal}>
+          <Trans id='js.i18n.LocaleSwitcher.footer.close' description='Close the dialog box'>Close</Trans>
+        </button>
+      </ModalFooter>
     </Modal>
   )
 }
