@@ -173,6 +173,11 @@ INSTALLED_APPS = [
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
+    # These providers appear in _ALL ENVIRONMENTS_ for now.
+    # see https://github.com/pennersr/django-allauth/issues/2343
+    # ... so don't add a provider that doesn't belong on production!
+    # (On dev/unittest/integrationtest, the buttons will appear but
+    # clicking one will get a 404 page unless the SocialApp is added.)
     "allauth.socialaccount.providers.facebook",
     "allauth.socialaccount.providers.google",
     "cjworkbench",
