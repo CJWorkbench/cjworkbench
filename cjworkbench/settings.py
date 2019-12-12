@@ -431,25 +431,6 @@ _maybe_load_oauth_service(
     "twitter", "CJW_TWITTER_CLIENT_SECRETS", "twitter_secret.json", _parse_twitter_oauth
 )
 
-# Various services for django-allauth
-
-CJW_SOCIALACCOUNT_SECRETS_PATH = os.environ.get("CJW_SOCIALACCOUNT_SECRETS", False)
-if not CJW_SOCIALACCOUNT_SECRETS_PATH:
-    CJW_SOCIALACCOUNT_SECRETS_PATH = "socialaccounts_secrets.json"
-
-CJW_SOCIALACCOUNT_SECRETS_PATH = os.path.join(BASE_DIR, CJW_SOCIALACCOUNT_SECRETS_PATH)
-
-if os.path.isfile(CJW_SOCIALACCOUNT_SECRETS_PATH):
-    try:
-        CJW_SOCIALACCOUNT_SECRETS = json.loads(
-            open(CJW_SOCIALACCOUNT_SECRETS_PATH, "r").read()
-        )
-    except ValueError:
-        CJW_SOCIALACCOUNT_SECRETS = []
-else:
-    CJW_SOCIALACCOUNT_SECRETS = []
-
-
 # Knowledge base root url, used as a default for missing help links
 KB_ROOT_URL = "http://help.workbenchdata.com/"
 
