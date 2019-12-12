@@ -68,7 +68,7 @@
     "style-loader": "^1.0.0",
     "svg-react-loader": "^0.4.6",
     "url-loader": "^2.1.0",
-    "webpack": "^4.39.2",
+    "webpack": "^4.41.2",
     "webpack-bundle-tracker": "^0.4.2-beta",
     "webpack-cli": "^3.3.7"
   },
