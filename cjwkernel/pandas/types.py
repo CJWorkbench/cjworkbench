@@ -507,8 +507,6 @@ class QuickFix:
                 kwargs["text"] = I18nMessage.coerce(kwargs["text"])
             except KeyError as err:
                 raise ValueError("Missing text from quick fix")
-            except ValueError as err:
-                raise ValueError("Invalid text value for quick fix") from err
 
             try:
                 return QuickFix(**kwargs)
@@ -714,7 +712,7 @@ class ProcessResultError:
         
         Raises ValueError, if some element of the list cannot be coerced to a member of this dataclass
         """
-        if not error_or_errors:
+        if error_or_errors is None or error_or_errors is "":
             return []
         elif isinstance(error_or_errors, list):
             return [cls.coerce(error) for error in error_or_errors]
@@ -736,15 +734,11 @@ class ProcessResultError:
                 message = I18nMessage.coerce(value["message"])
             except KeyError:
                 raise ValueError("Missing 'message' in %s" % value)
-            except ValueError as err:
-                raise ValueError("Invalid error message") from err
 
             try:
                 quick_fixes = [QuickFix.coerce(qf) for qf in value["quickFixes"]]
             except KeyError:
                 raise ValueError("Missing 'quickFixes' in %s" % value)
-            except ValueError as err:
-                raise ValueError("Invalid quick fix") from err
 
             return cls(message, quick_fixes)
         else:
@@ -996,45 +990,27 @@ class ProcessResult:
             return cls(errors=[ProcessResultError.coerce(value)])
         else:
             value = dict(value)  # shallow copy
-            try:
-                errors = ProcessResultError.coerce_list(value.pop("errors"))
-            except KeyError:
-                errors = []
-            except ValueError as e:
-                raise ValueError("Invalid 'errors' property") from e
+            errors = ProcessResultError.coerce_list(value.pop("errors", []))
 
             # Coerce old-style error and quick_fixes, if it's there
-            try:
+            if "error" in value:
                 legacy_error_message = I18nMessage.coerce(value.pop("error"))
-            except KeyError:
-                legacy_error_message = None
-            except ValueError as e:
-                raise ValueError("Invalid 'error' property") from e
-
-            try:
                 legacy_error_quick_fixes = [
-                    QuickFix.coerce(v) for v in value.pop("quick_fixes")
+                    QuickFix.coerce(v) for v in value.pop("quick_fixes", [])
                 ]
-            except KeyError:
-                legacy_error_quick_fixes = []
-
-            if legacy_error_quick_fixes and not legacy_error_message:
-                raise ValueError("You cannot return quick fixes without an error")
-            if legacy_error_message:
                 errors.append(
                     ProcessResultError(legacy_error_message, legacy_error_quick_fixes)
                 )
+            elif "quick_fixes" in value:
+                raise ValueError("You cannot return quick fixes without an error")
 
             dataframe = value.pop("dataframe", pd.DataFrame())
             validate_dataframe(dataframe)
 
-            try:
-                column_formats = value.pop("column_formats")
-                value["columns"] = _infer_columns(
-                    dataframe, column_formats, try_fallback_columns
-                )
-            except KeyError:
-                pass
+            column_formats = value.pop("column_formats", {})
+            value["columns"] = _infer_columns(
+                dataframe, column_formats, try_fallback_columns
+            )
 
             try:
                 return cls(dataframe=dataframe, errors=errors, **value)
@@ -1042,7 +1018,7 @@ class ProcessResult:
                 raise ValueError(
                     (
                         "ProcessResult input must only contain {dataframe, "
-                        "error, errors, json, quick_fixes, column_formats} keys"
+                        "errors, json, column_formats} keys"
                     )
                 ) from err
 

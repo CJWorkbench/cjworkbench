@@ -425,7 +425,10 @@ class ProcessResultErrorTests(unittest.TestCase):
     def test_list_from_none(self):
         self.assertEqual(ProcessResultError.coerce_list(None), [])
 
-    def test_list_from_string(self):
+    def test_list_from_empty_string(self):
+        self.assertEqual(ProcessResultError.coerce_list(""), [])
+
+    def test_list_from_nonempty_string(self):
         result = ProcessResultError.coerce_list("hello")
         expected = [ProcessResultError(I18nMessage.TODO_i18n("hello"))]
         self.assertEqual(result, expected)
