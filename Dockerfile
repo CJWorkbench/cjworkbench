@@ -76,7 +76,6 @@ FROM pybase AS pydev
 # * pysycopg2 (binaries are evil because psycopg2 links SSL -- as does Python)
 # * PyICU
 #
-# Need thrift-compiler to generate cjwkernel/thrift/...
 # Need pkg-config to build PyICU
 RUN mkdir -p /root/.local/share/virtualenvs \
     && apt-get update \
@@ -87,7 +86,6 @@ RUN mkdir -p /root/.local/share/virtualenvs \
       libre2-dev \
       libsnappy-dev \
       pkg-config \
-      thrift-compiler \
     && rm -rf /var/lib/apt/lists/*
 
 # Add "watchman" command -- we use it in dev mode to monitor for source code changes
