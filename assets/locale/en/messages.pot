@@ -778,14 +778,14 @@ msgstr ""
 msgid "js.Workflows.training.title"
 msgstr ""
 
-#. default-message: This option will change the language of Workbench's interface. To submit translations for your language, visit <0>this</0> page.
-#: assets/js/i18n/LocaleSwitcher.js:26
+#. default-message: Choose the language of Workbench’s interface. Data is not affected.
+#: assets/js/i18n/LocaleSwitcher.js:36
 msgid "js.i18n.LocaleSwitcher.body.description"
 msgstr ""
 
 #. This should be all-caps for styling reasons
-#. default-message: LANGUAGES
-#: assets/js/i18n/LocaleSwitcher.js:20
+#. default-message: LANGUAGE
+#: assets/js/i18n/LocaleSwitcher.js:30
 msgid "js.i18n.LocaleSwitcher.header.title"
 msgstr ""
 

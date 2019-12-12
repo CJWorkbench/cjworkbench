@@ -12,6 +12,10 @@ def get_i18n_context(locale=None, user=None) -> dict:
     return {
         "i18n": {
             "locale_id": current_locale_id,
+            "locale_data": {
+                "id": current_locale_id,
+                "name": get_locale_name(current_locale_id, current_locale_id),
+            },
             "locales_data": [
                 {"id": locale_id, "name": get_locale_name(locale_id)}
                 for locale_id in supported_locales

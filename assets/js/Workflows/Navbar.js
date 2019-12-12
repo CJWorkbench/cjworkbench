@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import WfHamburgerMenu from '../WfHamburgerMenu'
 import { Trans } from '@lingui/macro'
-import { currentLocale } from '../i18n/locales'
+import { currentLocaleId } from '../i18n/locales'
 
 function getActiveSection () {
   return window.location.pathname.startsWith('/workflows') ? 'workflows' : 'lessons'
@@ -36,7 +36,7 @@ export default class Navbar extends React.Component {
             <a {...propsForLink(activeSection, 'workflows', '/workflows')}>
               <Trans id='js.Workflows.NavBar.links.workflows' description='This is used in navigation bar. It should be all-caps for styling reasons.'>WORKFLOWS</Trans>
             </a>
-            <a {...propsForLink(activeSection, 'lessons', `/lessons/${currentLocale}`)}>
+            <a {...propsForLink(activeSection, 'lessons', `/lessons/${currentLocaleId}`)}>
               <Trans id='js.Workflows.NavBar.links.training' description='This is used in navigation bar. It should be all-caps for styling reasons.'>TRAINING</Trans>
             </a>
           </div>

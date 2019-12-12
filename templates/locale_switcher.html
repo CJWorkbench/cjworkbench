@@ -1,16 +1,24 @@
 {% load i18n_icu %}
 
-<form method="POST" action="/locale">
+<form class="locale-switcher" method="POST" action="/locale">
   <input type="hidden" name="next" value="{{ request.get_full_path }}" />
   {% csrf_token %}
-  <select name="new_locale" onchange="this.form.submit()">
-    {% for locale_data in i18n.locales_data %}
-      <option 
-        {% if locale_data.id == i18n.locale_id %}selected="selected"{% endif %} 
-        value="{{ locale_data.id }}"
-      >
-        {{ locale_data.name }}
-      </option>
-    {% endfor %}
-  </select>
+
+  <div class="dropdown">
+    {# btn-warning is black-on-yellow -- a good start for our stylesheet, because we want black-on-white #}
+    <button type="button" class="btn btn-warning dropdown-toggle" id="locale-switcher-dropdown">{{ i18n.locale_data.name }}</button>
+    <div class="dropdown-menu" aria-labelledby="locale-switcher-dropdown">
+      {% for locale_data in i18n.locales_data %}
+        <button
+          class="dropdown-item"
+          type="submit"
+          name="new_locale"
+          value="{{locale_data.id}}"
+          {% if locale_data.id == i18n.locale_id %}disabled{% endif %}
+        >
+          {{locale_data.name}}
+        </button>
+      {% endfor %}
+    </div>
+  </div>
 </form>
