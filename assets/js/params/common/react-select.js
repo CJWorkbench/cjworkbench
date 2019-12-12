@@ -13,7 +13,7 @@ import { t } from '@lingui/macro'
 // to position the menu -- react-select's positioning is broken. That's
 // https://www.pivotaltracker.com/story/show/163066332
 const NoStyle = {}
-export const NoStyles = {
+const NoStyles = {
   clearIndicator: () => NoStyle,
   container: () => NoStyle,
   control: () => NoStyle,
@@ -135,7 +135,7 @@ class ReactSelect extends React.PureComponent {
 
     let value
     if (isMulti) {
-      value = reactSelectValue.map(({ value }) => value)
+      value = (reactSelectValue || []).map(({ value }) => value)
     } else {
       value = reactSelectValue ? reactSelectValue.value : null
     }
