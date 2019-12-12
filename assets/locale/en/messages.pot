@@ -783,6 +783,12 @@ msgstr ""
 msgid "js.i18n.LocaleSwitcher.body.description"
 msgstr ""
 
+#. Close the dialog box
+#. default-message: Close
+#: assets/js/i18n/LocaleSwitcher.js:61
+msgid "js.i18n.LocaleSwitcher.footer.close"
+msgstr ""
+
 #. This should be all-caps for styling reasons
 #. default-message: LANGUAGE
 #: assets/js/i18n/LocaleSwitcher.js:30

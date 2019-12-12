@@ -660,6 +660,11 @@ msgstr "TRAINING"
 msgid "js.i18n.LocaleSwitcher.body.description"
 msgstr "Choose the language of Workbench’s interface. Data is not affected."
 
+#. Close the dialog box
+#: assets/js/i18n/LocaleSwitcher.js:61
+msgid "js.i18n.LocaleSwitcher.footer.close"
+msgstr "Close"
+
 #. This should be all-caps for styling reasons
 #: assets/js/i18n/LocaleSwitcher.js:30
 msgid "js.i18n.LocaleSwitcher.header.title"
