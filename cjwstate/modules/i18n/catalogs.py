@@ -30,23 +30,23 @@ def update_module_catalogs(directory: pathlib.Path):
     if not catalogs_are_same(source_catalog, old_source_catalog):
         write_po_catalog(po_path, source_catalog)
 
-        fuzzy = find_fuzzy_messages(
-            old_catalog=old_source_catalog, new_catalog=source_catalog
-        )
+    fuzzy = find_fuzzy_messages(
+        old_catalog=old_source_catalog, new_catalog=source_catalog
+    )
 
-        for locale_id in supported_locales:
-            if locale_id != default_locale:
-                po_path = _po_path(directory, locale_id)
-                try:
-                    old_catalog = read_po_catalog(po_path)
-                except FileNotFoundError:
-                    old_catalog = Catalog(locale_id)
-                catalog = _merge_nonsource_catalog(
-                    locale_id, old_catalog, source_catalog, fuzzy
-                )
+    for locale_id in supported_locales:
+        if locale_id != default_locale:
+            po_path = _po_path(directory, locale_id)
+            try:
+                old_catalog = read_po_catalog(po_path)
+            except FileNotFoundError:
+                old_catalog = Catalog(locale_id)
+            catalog = _merge_nonsource_catalog(
+                locale_id, old_catalog, source_catalog, fuzzy
+            )
 
-                if not catalogs_are_same(catalog, old_catalog):
-                    write_po_catalog(po_path, catalog)
+            if not catalogs_are_same(catalog, old_catalog):
+                write_po_catalog(po_path, catalog)
 
 
 def _po_path(basepath: pathlib.Path, locale_id: str) -> pathlib.Path:
