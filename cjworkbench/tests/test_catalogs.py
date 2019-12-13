@@ -5,6 +5,8 @@ from cjworkbench.i18n.catalogs.util import (
     find_corresponding_message,
     find_corresponding_string,
     find_fuzzy_messages,
+    copy_message,
+    add_or_update_message,
     fill_catalog,
     mark_fuzzy,
     remove_strings,
@@ -190,6 +192,62 @@ class UtilTest(CatalogTest):
             frozenset(),
         )
 
+    def test_copy_message_copies(self):
+        old_message = Message("id", string="a", locations=[("file1", "2")])
+        new_message = copy_message(old_message)
+        expected_message = Message("id", string="a", locations=[("file1", "2")])
+        self.assertMessageDeeplyEqual(new_message, expected_message)
+
+    def test_copy_message_replaces_string(self):
+        old_message = Message("id", string="a", locations=[("file1", "2")])
+        new_message = copy_message(old_message, string="b")
+        expected_message = Message("id", string="b", locations=[("file1", "2")])
+        self.assertMessageDeeplyEqual(new_message, expected_message)
+
+    def test_add_or_update_message_add(self):
+        target_catalog = Catalog()
+        target_catalog.add("id1", string="Text1")
+
+        add_or_update_message(target_catalog, Message("id2", string="Text2"))
+
+        expected_catalog = Catalog()
+        expected_catalog.add("id1", string="Text1")
+        expected_catalog.add("id2", string="Text2")
+
+    def test_add_or_update_message_add_with_context(self):
+        target_catalog = Catalog()
+        target_catalog.add("id1", string="Text1")
+
+        add_or_update_message(
+            target_catalog, Message("id2", string="Text2", context="ctxt2")
+        )
+
+        expected_catalog = Catalog()
+        expected_catalog.add("id1", string="Text1")
+        expected_catalog.add("id2", string="Text2", context="ctxt2")
+
+    def test_add_or_update_message_update(self):
+        target_catalog = Catalog()
+        target_catalog.add("id1", string="Text1")
+
+        add_or_update_message(target_catalog, Message("id1", string="Text2"))
+
+        expected_catalog = Catalog()
+        expected_catalog.add("id1", string="Text2")
+
+    def test_add_or_update_message_add_with_context(self):
+        target_catalog = Catalog()
+        target_catalog.add("id1", string="Text1", context="ctxt")
+
+        add_or_update_message(
+            target_catalog, Message("id1", string="Text2", context="ctxt")
+        )
+
+        expected_catalog = Catalog()
+        expected_catalog.add("id1", string="Text2", context="ctxt")
+
+        self.assertCatalogsDeeplyEqual(target_catalog, expected_catalog)
+
     def test_fill_catalog_preserve_old(self):
         target_catalog = Catalog()
         target_catalog.add("id1", string="Text1")
@@ -202,6 +260,23 @@ class UtilTest(CatalogTest):
 
         expected_catalog = Catalog()
         expected_catalog.add("id1", string="Text1")
+
+        self.assertCatalogsDeeplyEqual(target_catalog, expected_catalog)
+
+    def test_fill_catalog_update_message(self):
+        target_catalog = Catalog()
+        target_catalog.add("id1", string="Text1")
+
+        source_catalog = Catalog()
+        source_catalog.add("id1", string="Text1")
+
+        string_source_catalog = Catalog()
+        string_source_catalog.add("id1", string="Text2")
+
+        fill_catalog(target_catalog, source_catalog, string_source_catalog)
+
+        expected_catalog = Catalog()
+        expected_catalog.add("id1", string="Text2")
 
         self.assertCatalogsDeeplyEqual(target_catalog, expected_catalog)
 
@@ -278,11 +353,47 @@ class UtilTest(CatalogTest):
         fill_catalog(target_catalog, source_catalog, string_source_catalog)
 
         expected_catalog = Catalog()
-        expected_catalog.add(
-            "id1", string="Text1", auto_comments=["comment", "new comment"]
-        )
+        expected_catalog.add("id1", string="Text1", auto_comments=["new comment"])
 
         self.assertCatalogsDeeplyEqual(target_catalog, expected_catalog)
+
+    def test_fill_catalog_protects_sources(self):
+        target_catalog = Catalog()
+        target_catalog.add("id1", string="Text1")
+
+        source_catalog = Catalog()
+        source_catalog.add("id1", string="Text1ignore", auto_comments=["comment"])
+        source_catalog.add("id2", string="Text2ignore", locations=[("file1", "1")])
+
+        string_source_catalog = Catalog()
+        string_source_catalog.add(
+            "id1",
+            string="Text1new",
+            auto_comments=["comment2"],
+            locations=[("file2", "1")],
+        )
+
+        fill_catalog(target_catalog, source_catalog, string_source_catalog)
+
+        expected_source_catalog = Catalog()
+        expected_source_catalog.add(
+            "id1", string="Text1ignore", auto_comments=["comment"]
+        )
+        expected_source_catalog.add(
+            "id2", string="Text2ignore", locations=[("file1", "1")]
+        )
+        self.assertCatalogsDeeplyEqual(source_catalog, expected_source_catalog)
+
+        expected_string_source_catalog = Catalog()
+        expected_string_source_catalog.add(
+            "id1",
+            string="Text1new",
+            auto_comments=["comment2"],
+            locations=[("file2", "1")],
+        )
+        self.assertCatalogsDeeplyEqual(
+            string_source_catalog, expected_string_source_catalog
+        )
 
     def test_mark_fuzzy_mark_new(self):
         target_catalog = Catalog()
