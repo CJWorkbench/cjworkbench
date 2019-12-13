@@ -2,8 +2,12 @@ import logging
 import re
 from django.test import SimpleTestCase
 from cjworkbench.i18n import default_locale
-from cjworkbench.tests.test_trans import mock_message_id
 from server.templatetags.i18n_icu import trans_html
+
+
+mock_message_id = (
+    "some+crazy+id+that+will+never+be+actually+used+in+real+translation+files"
+)
 
 
 def mock_context(**kwargs):
