@@ -141,9 +141,6 @@ kubectl -n production create secret generic intercom-oauth-secret --from-file=js
 [ -f twitter-oauth-secret.json ] # we're set -e, so this will exit if missing
 kubectl -n production create secret generic twitter-oauth-secret --from-file=json=twitter-oauth-secret.json
 
-[ -f socialaccount-secrets.json ] # we're set -e, so this will exit if missing
-kubectl -n production create secret generic socialaccount-secrets --from-file=json=socialaccount-secrets.json
-
 # 4. Migrate database
 kubectl -n production apply -f migrate.yaml
 

@@ -19,7 +19,7 @@ Instead, edit `cjwkernel/thrift.thrift`. Then run this command to regenerate
 the files in this directory:
 
 ```
-bin/dev thrift --strict --gen py:slots --out . cjwkernel/thrift.thrift
+bin/dev thrift-compile
 ```
 
 Q&A

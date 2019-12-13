@@ -108,7 +108,7 @@ const UploadedFileSelect = React.memo(function UploadedFileSelect ({ value, file
   const valueIndex = files.findIndex(({ uuid }) => uuid === value)
   const canOpen = files.findIndex(({ uuid }) => uuid !== value) !== -1 // do not open when nothing to select
   const nFiles = files.length
-  const fileNumber = valueIndex === -1 ? <Trans id='js.params.File.UploadedFileSelect.choosePreviousFile.none'>[NONE]</Trans> : (valueIndex + 1)
+  const fileNumber = valueIndex === -1 ? <Trans id='js.params.File.UploadedFileSelect.choosePreviousFile.none' description="Means 'no file'">[NONE]</Trans> : (valueIndex + 1)
 
   return (
     <>

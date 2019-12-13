@@ -67,7 +67,7 @@ class ReorderColumnDropZone extends React.PureComponent {
   }
 }
 
-export const EditableColumnName = withI18n()(class EditableColumnName extends React.Component {
+export const EditableColumnName = withI18n({ withRef: true /* so parent can call getWrappedInstance() */ })(class EditableColumnName extends React.Component {
   static propTypes = {
     columnKey: PropTypes.string.isRequired,
     columnType: PropTypes.string.isRequired,
@@ -198,7 +198,7 @@ export class ColumnHeader extends React.PureComponent {
   }
 
   startRename = () => {
-    this.inputRef.current.handleEnterEditMode()
+    this.inputRef.current.getWrappedInstance().handleEnterEditMode()
   }
 
   handleRename = ({ prevName, newName }) => {

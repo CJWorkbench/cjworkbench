@@ -1,0 +1,31 @@
+.locale-switcher {
+  .modal-body {
+    font-size: 1.4rem;
+
+    p.description {
+      @include content-1;
+      color: $text-muted;
+    }
+
+    button {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      display: block;
+      width: 100%;
+      border: 0;
+      background: white;
+      text-align: left;
+      padding: 1rem 0;
+      color: $brand-workspace;
+
+      &:disabled, &.submitting {
+        color: $brand-text--darker;
+        font-weight: bold;
+      }
+
+      &:not(:disabled):hover, &.submitting {
+        text-decoration: underline;
+      }
+    }
+  }
+}

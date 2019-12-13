@@ -56,13 +56,13 @@ iframe {
       }
 
       .title {
-        @include font-nunito-regular;
+        @include font-sans-regular;
         font-size: 1.3rem;
         line-height: 1.4rem;
       }
 
       .metadata {
-        @include font-nunito-regular;
+        @include font-sans-regular;
         margin: .3rem 0 0;
         font-size: 1.4rem;
         line-height: 2rem;
@@ -81,7 +81,7 @@ iframe {
 
           &:not(:first-child)::before {
             // add " - " in between items
-            @include font-nunito-extra-light;
+            @include font-sans-light;
             content: '-';
             padding: 0 .5rem;
             display: inline-block;

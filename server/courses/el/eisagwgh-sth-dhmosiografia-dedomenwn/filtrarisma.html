@@ -1,0 +1,177 @@
+<header>
+  <h1>Φιλτράρισμα δεδομένων για τη λαϊκή στέγη</h1>
+  <p>Το φιλτράρισμα είναι μια ισχυρή τεχνική ανάλυσης. Μάθετε πώς να φιλτράρετε βάσει συνθήκης και βάσει τιμής για να εξερευνήσετε τα δεδομένα σας.</p><img src="./banner.svg"></header>
+
+<section class="fullscreen">
+  <h2>Εισαγωγή</h2>
+  <p>Το φιλτράρισμα των δεδομένων είναι μια συνηθισμένη και οπωσδήποτε ισχυρή τεχνική ανάλυσης. Μπορείτε να τη χρησιμοποιήσετε για να απαντήσετε ερωτήσεις όπως &quot;Ποιες πόλεις δαπάνησαν πέρυσι περισσότερα από 5 εκατομμύρια δολάρια για την υποδομή των μέσων μαζικής μεταφοράς;&quot;</p>
+  <p>Το φιλτράρισμα είναι επίσης ένα βασικό ενδιάμεσο βήμα σε πολλές αναλύσεις ή για την εξερεύνηση δεδομένων με τα οποία αρχίζετε να εργάζεστε.</p>
+  <p>Σε αυτό το μάθημα θα εργαστούμε με δημόσια δεδομένα από την Πόλη του Σαν Φρανσίσκο σχετικά με την προγραμματισμένη λαϊκή στέγη.</p>
+</section><!-- Section 1 --><script id="initialWorkflow">
+tabs:
+- name: Lesson
+  wfModules:
+  - module: loadurl
+    slug: step-loadurl
+    params:
+      url: ./affordable-housing-pipeline.csv
+    collapsed: true
+- name: Λεξικό δεδομένων
+  wfModules:
+  - module: loadurl
+    slug: step-loaddictionary
+    params:
+      url: ./dataDictionary-affordable-housing-pipeline.csv
+    collapsed: true
+    note: "Source: City of San Francisco."
+</script>
+
+<section>
+  <h2>Δεδομένα</h2>
+  <p>Τα δεδομένα που χρησιμοποιούμε σε αυτό το μάθημα, τα οποία φορτώνονται στο βήμα 1, είναι μια τριμηνιαία απεικόνιση κάθε οικιστικού έργου υπό κατασκευή στο Σαν Φρανσίσκο. Κάθε σειρά αφορά ένα έργο υπό κατασκευή.</p>
+  <p>Τα δεδομένα αυτά δημοσιεύονται από την Πόλη του Σαν Φρανσίσκο <a class="highlight" href='https://data.sfgov.org/Housing-and-Buildings/Affordable-Housing-Pipeline/aaxw-2cb8' target="_blank" className="info-1">εδώ</a>, μαζί με ένα λεξικό δεδομένων που εξηγεί τη σημασία κάθε στήλης, το οποίο και φορτώσαμε στην καρτέλα <kbd>Λεξικό δεδομένων</kbd>.</p>
+  <h3 class="instructions">Οδηγίες</h3>
+  <p class="instruction-detail">Ας κάνουμε πάλι τις βασικές ερωτήσεις:</p>
+  <ul>
+    <li
+      >Τι αντιπροσωπεύει κάθε σειρά;</li>
+    <li
+      >Τι υπάρχει σε κάθε στήλη;</li>
+    <li
+      >Υπάρχουν στήλες, τιμές ή κωδικοί που δεν καταλαβαίνετε;</li>
+    <li
+      >Υπάρχουν κενές ή εμφανώς λανθασμένες τιμές;</li>
+    <li
+      >Χρειάζεται να καθαριστούν τα δεδομένα;</li>
+  </ul>
+</section>
+<section>
+  <h2>Καθάρισμα</h2>
+  <p>Αυτός ο πίνακας περιέχει πολλές στήλες, γεγονός που καθιστά δύσκολη την πλοήγηση. Ας την περιορίσουμε στα δεδομένα που μας ενδιαφέρουν.</p>
+  <p>Ας προσθέσουμε και μια σημείωση σχετικά με την πηγή δεδομένων.</p>
+  <h3 class="instructions">Οδηγίες</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"WfModuleContextButton","moduleIdName":"loadurl","button":"notes"}]'
+      data-test="return !!workflow.tabs[0].wfModules[0].note"
+      >Στο 1ο βήμα, προσθέστε μια σημείωση <span><img class="icon-insert" src="images/lesson-icons/note.svg"></span> για να καθορίσετε την προέλευση των δεδομένων:<div class="copy-txt">Πηγή: Πόλη του Σαν Φρανσίσκο</div>
+    </li>
+    <li
+      data-test="
+        if (workflow.tabs[0].wfModuleSlugs[1] !== 'selectcolumns' || !workflow.tabs[0].wfModules[1].params.keep) return false
+
+        const want_cols = '% Affordable,Affordable Units,Planning Neighborhood,Project Status,Project Units'
+        const have_cols = workflow.tabs[0].wfModules[1].params.colnames
+
+        return have_cols.sort().join(',') === want_cols"
+    >Προσθέστε ένα βήμα <kbd>Επιλογή στηλών</kbd> και διατηρήστε τις ακόλουθες στήλες (Αρχίστε να γράφετε τα ονόματα των στηλών για να τις βρείτε πιο γρήγορα)<p><kbd>Planning Neighborhood</kbd><br> <kbd>Project Status</kbd><br> <kbd>Project Units</kbd><br> <kbd>Affordable Units</kbd><br> <kbd>% Affordable</kbd><br></p>
+    </li>
+  </ol>
+</section>
+<section>
+  <h2>Φιλτράρισμα των σειρών βάσει συνθήκης</h2>
+  <p>Ας ανακαλύψουμε πόσα έργα περιλαμβάνουν κατοικίες σε προσιτή τιμή σε ποσοστό μεγαλύτερο από 50%.</p>
+  <p>Αντί να ταξινομήσουμε τη στήλη <kbd>% Affordable</kbd>, θα διατηρήσουμε μόνο τα έργα που ικανοποιούν τη συνθήκη μας, έτσι ώστε να μπορούμε να τα μετρήσουμε και να συνεχίσουμε την εργασία με αυτό το υποσύνολο.</p>
+  <h3 class="instructions">Οδηγίες</h3>
+  <ol class="steps">
+    <li
+      data-test="return workflow.tabs[0].wfModuleSlugs[2] === 'filter'"
+      >Προσθέστε <kbd>Φιλτράρισμα βάσει συνθήκης</kbd></li>
+    <li
+      data-test="
+        const filter = workflow.tabs[0].wfModules[2].params.filters.filters[0]
+        return (
+          filter
+          && filter.subfilters[0]
+          && filter.subfilters[0].colname === '% Affordable'
+        )
+      ">Επιλέξτε τη στήλη <kbd>% Affordable</kbd></li>
+    <li
+      data-test="
+        const filter = workflow.tabs[0].wfModules[2].params.filters.filters[0]
+        const subfilter = filter.subfilters[0]
+        return (
+          subfilter.condition === 'number_is_greater_than'
+          && subfilter.value === '50'
+        )
+      ">Ορίστε τη συνθήκη στην επιλογή <kbd>Ο αριθμός να είναι μεγαλύτερος από</kbd> και ορίστε την τιμή σε <kbd>50</kbd><p class ="instruction-detail">Στο πάνω αριστερό μέρος του πίνακα βλέπουμε ότι έχουν μείνει 119 σειρές. Αυτό σημαίνει ότι 119 έργα περιλαμβάνουν κατοικίες σε προσιτή τιμή σε ποσοστό μεγαλύτερο από 50%.</p><!-- <p class ="instruction-detail">
+        How many projects include more than 50% affordable units?
+        <div class="copy-txt">
+          Your answer
+        </div>
+      </p> --></li>
+  </ol>
+</section>
+<section>
+  <h2>Πολλαπλές συνθήκες</h2>
+  <p>Τώρα μπορούμε να δούμε τα έργα με τις περισσότερες κατοικίες σε προσιτή τιμή. Ας συνεχίσουμε την έρευνά μας με την ερώτηση: Πόσα από αυτά τα έργα περιλαμβάνουν τουλάχιστον 100 κατοικίες σε προσιτή τιμή;</p>
+  <p>Μπορούμε να προσθέσουμε άλλη μια συνθήκη για να κρατήσουμε μόνο τα έργα που περιλαμβάνουν έναν ελάχιστο αριθμό κατοικιών σε προσιτή τιμή.</p>
+  <h3 class="instructions">Οδηγίες</h3>
+  <ol class="steps">
+    <li
+      data-test="
+        const filters = workflow.tabs[0].wfModules[2].params.filters
+
+        // true if user added AND inside the first subfilter
+        return (
+          (
+            filters.filters.length === 1
+            && filters.filters[0].subfilters.length === 2
+            && filters.filters[0].operator == 'and'
+          )
+          || (
+            filters.operator === 'and'
+            && filters.filters.length === 2
+            && filters.filters[0].subfilters.length === 1
+            && filters.filters[1].subfilters.length === 1
+          )
+        )
+      ">Στο Φιλτράρισμα του 3ου βήματος, κάντε κλικ στο <kbd>ΚΑΙ</kbd> για να προσθέσετε μια νέα συνθήκη στο φίλτρο.</li>
+    <li
+      data-test="
+        const filters = workflow.tabs[0].wfModules[2].params.filters.filters
+        // Accept condition either at subfilter or main filter level
+        const subfilter = filters[1] ? filters[1].subfilters[0] : filters[0].subfilters[1]
+        return (
+          subfilter.colname === 'Affordable Units'
+          && subfilter.condition === 'number_is_greater_than_or_equals'
+          && subfilter.value === '100'
+        )
+      ">Ορίστε αυτή τη συνθήκη ώστε &quot;<kbd>Οι κατοικίες σε προσιτή τιμή</kbd> (Affordable Units) να είναι <kbd>περισσότερες από ή ίσες με</kbd> <kbd>100</kbd>&quot;<p class ="instruction-detail">Ο πίνακας εμφανίζει τώρα όλα τα έργα που περιλαμβάνουν κατοικίες σε προσιτή τιμή σε ποσοστό μεγαλύτερο από 50% και τουλάχιστον 100 κατοικίες σε προσιτή τιμή.</p>
+    </li>
+  </ol>
+</section>
+<section>
+  <h2>Φιλτράρισμα των σειρών βάσει τιμής</h2>
+  <p>Μπορούμε επίσης να φιλτράρουμε τις σειρές επιλέγοντας ποιες τιμές να συμπεριλάβουμε και ποιες να εξαιρέσουμε σε μια συγκεκριμένη στήλη.</p>
+  <p>Ας βρούμε έργα που είναι πιθανό να έχουν ολοκληρωθεί κοιτάζοντας τη στήλη <kbd>Project Status</kbd>.</p>
+  <h3 class="instructions">Οδηγίες</h3>
+  <ol class="steps">
+    <li
+      data-test="return workflow.tabs[0].wfModuleSlugs[3] === 'valuefilter'"
+      >Προσθέστε το βήμα <kbd>Φιλτράρισμα βάσει τιμής</kbd></li>
+    <li
+      data-test="return workflow.tabs[0].wfModules[3].params.column === 'Project Status'"
+      >Επιλέξτε τη στήλη <kbd>Project Status</kbd><p class ="instruction-detail">Όλες οι μοναδικές τιμές στη στήλη <kbd>Project Status</kbd> απαριθμούνται στο βήμα, καθώς και πόσες σειρές χρησιμοποιούν κάθε τιμή.</p>
+    </li>
+    <li
+      data-test="return workflow.tabs[0].wfModules[3].params.valueselect.includes('(3) Design with Entitlements Approved')"
+      >Στο &quot;Φιλτράρισμα βάσει τιμής&quot; επιλέξτε <kbd>(3) Design with Entitlements Approved</kbd> για να δείτε μόνο τα έργα που έχουν πάρει έγκριση μελέτης αλλά δεν έχει ακόμα αρχίσει η κατασκευή τους.</li>
+    <li
+      data-test="return workflow.tabs[0].wfModules[3].params.valueselect.includes('(4) Site Work Permit Issued')"
+      >Επιλέξτε επίσης <kbd>(4) Site Work Permit Issued</kbd> για να προσθέσετε έργα μετά την έκδοση της οικοδομικής άδειας.<p class ="instruction-detail">Αλλάζοντας τις επιλεγμένες τιμές στο <kbd>Φιλτράρισμα βάσει τιμής</kbd> μπορείτε να αντιληφθείτε γρήγορα ποια έργα βρίσκονται σε ποιο στάδιο εξέλιξης.</p>
+    </li>
+  </ol>
+</section>
+<footer>
+  <h2>Εδώ τελειώνει το μάθημα!</h2>
+  <div class="completed">
+    <p class="summary">Στη συνέχεια, θα συνεχίσουμε να εργαζόμαστε με αυτά τα δεδομένα και θα μάθουμε για το ισχυρό βήμα της Ομαδοποίησης.</p>
+  </div>
+  <div class="next">
+    <h2>Επόμενο</h2>
+    <ol>
+      <li><a href="omadopoihsh">Συνόψιση δεδομένων με ομαδοποίηση</a></li>
+    </ol>
+  </div>
+</footer>

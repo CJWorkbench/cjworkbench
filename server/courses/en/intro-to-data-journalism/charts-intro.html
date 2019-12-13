@@ -81,7 +81,7 @@ tabs:
     <li
       data-test="
         return (
-          workflow.tabs[0].wfModuleNames[1] === 'Select columns'
+          workflow.tabs[0].wfModuleSlugs[1] === 'selectcolumns'
           && workflow.tabs[0].wfModules[1].params.colnames.join('|') === 'Continent'
           && !workflow.tabs[0].wfModules[1].params.keep
         )
@@ -92,7 +92,7 @@ tabs:
       and choose<kbd>Delete column</kbd>
     </li>
     <li
-      data-test="return (workflow.tabs[0].wfModuleNames[2] === 'Transpose') &&
+      data-test="return (workflow.tabs[0].wfModuleSlugs[2] === 'transpose') &&
                         (workflow.tabs[0].wfModules[2].params.firstcolname.toLowerCase() ==='year')"
       >Add a Transpose step and name the new leftmost column<kbd>Year</kbd>
       <p class="instruction-detail">

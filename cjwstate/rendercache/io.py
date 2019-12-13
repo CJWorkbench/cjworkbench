@@ -1,9 +1,10 @@
 import contextlib
+import math
 from pathlib import Path
 from typing import Any, ContextManager, Dict, List
 import pyarrow
 from cjwkernel import parquet
-from cjwkernel.types import ArrowTable, RenderResult, TableMetadata
+from cjwkernel.types import ArrowTable, ColumnType, RenderResult, TableMetadata
 from cjwkernel.util import json_encode, tempfile_context
 from cjwstate import minio
 from cjwstate.models import WfModule, Workflow, CachedRenderResult
@@ -149,7 +150,9 @@ def load_cached_render_result(crr: CachedRenderResult, path: Path) -> RenderResu
     if not crr.table_metadata.columns:
         # Zero-column tables aren't written to cache
         return RenderResult(
-            ArrowTable(None, TableMetadata(crr.table_metadata.n_rows, [])),
+            ArrowTable.from_zero_column_metadata(
+                TableMetadata(crr.table_metadata.n_rows, [])
+            ),
             crr.errors,
             crr.json,
         )
@@ -162,7 +165,7 @@ def load_cached_render_result(crr: CachedRenderResult, path: Path) -> RenderResu
         except pyarrow.ArrowIOError as err:
             raise CorruptCacheError from err
     # TODO handle validation errors => CorruptCacheError
-    arrow_table = ArrowTable(path, crr.table_metadata)
+    arrow_table = ArrowTable.from_trusted_file(path, crr.table_metadata)
     return RenderResult(arrow_table, crr.errors, crr.json)
 
 
@@ -186,7 +189,9 @@ def open_cached_render_result(crr: CachedRenderResult) -> ContextManager[RenderR
     if not crr.table_metadata.columns:
         # Zero-column tables aren't written to cache
         yield RenderResult(
-            ArrowTable(None, TableMetadata(crr.table_metadata.n_rows, [])),
+            ArrowTable.from_zero_column_metadata(
+                TableMetadata(crr.table_metadata.n_rows, [])
+            ),
             crr.errors,
             crr.json,
         )
@@ -211,7 +216,7 @@ def read_cached_render_result_pydict(
 
     Missing rows and columns are ignored.
 
-    `NaN` is returned as float("nan").
+    `NaN` is returned as `None`.
 
     Raise CorruptCacheError if the cached data does not match `crr`. That can
     mean:
@@ -228,9 +233,18 @@ def read_cached_render_result_pydict(
 
     try:
         with downloaded_parquet_file(crr) as parquet_path:
-            return parquet.read_pydict(parquet_path, only_columns, only_rows)
+            ret = parquet.read_pydict(parquet_path, only_columns, only_rows)
     except (pyarrow.ArrowIOError, FileNotFoundError):  # FIXME unit-test
         raise CorruptCacheError
+
+    for i, column in enumerate(crr.table_metadata.columns):
+        if i in only_columns:
+            if isinstance(column.type, ColumnType.Number):
+                unclean = ret[column.name]  # may contain nan
+                ret[column.name] = [
+                    None if (v is None or math.isnan(v)) else v for v in unclean
+                ]
+    return ret
 
 
 def delete_parquet_files_for_wf_module(workflow_id: int, wf_module_id: int) -> None:

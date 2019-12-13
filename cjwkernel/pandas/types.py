@@ -680,8 +680,11 @@ def dataframe_to_arrow_table(
             writer.write_table(arrow_table)
     else:
         path = None
+        arrow_table = None
 
-    return atypes.ArrowTable(path, atypes.TableMetadata(len(dataframe), arrow_columns))
+    return atypes.ArrowTable(
+        path, arrow_table, atypes.TableMetadata(len(dataframe), arrow_columns)
+    )
 
 
 def arrow_table_to_dataframe(

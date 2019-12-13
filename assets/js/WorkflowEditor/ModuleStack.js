@@ -368,7 +368,7 @@ const mapStateToProps = (state) => {
     wfModules,
     modules,
     isReadOnly: state.workflow.read_only,
-    testLessonHighlightIndex: (index) => testHighlight({ type: 'Module', name: null, index: index })
+    testLessonHighlightIndex: (index) => testHighlight({ type: 'Module', id_name: null, index: index })
   }
 }
 

@@ -1,8 +1,6 @@
-@import 'variables';
+@import 'variables'; // including $font-family-sans-serif
 @import 'fonts';
 @import './Icons.scss';
-
-$font-family-sans-serif: 'Nunito Sans', sans-serif; // for Bootstrap; imported in _fonts.scss
 
 // margin-horiz will be added to textual elements only (not the whole page --
 // we don't want it on charts)
@@ -27,7 +25,7 @@ $margin-horiz: 1rem;
 body {
   padding: 2rem 0;
   background: white;
-  @include font-nunito-regular;
+  @include font-sans-regular;
   color: $brand-text--darker;
 }
 
@@ -54,7 +52,7 @@ h1, h2, p {
 }
 
 h1, h2 {
-  @include font-nunito-bold;
+  @include font-sans-bold;
 }
 
 h1 {

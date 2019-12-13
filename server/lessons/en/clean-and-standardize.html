@@ -17,29 +17,29 @@
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      data-highlight='[{"type":"Module","index":0,"id_name":"loadurl"}]'
+      data-test="return workflow.tabs[0].wfModuleSlugs[0] === 'loadurl'"
       >Add the data source 'Add from URL'.
     </li>
     <li
-      data-highlight='[{"type":"WfModule","moduleName":"Add from URL"}]'
+      data-highlight='[{"type":"WfModule","moduleIdName":"loadurl"}]'
       data-test="const wfModule = workflow.tabs[0].wfModules[0]; return wfModule.params.url === '{{LESSON_FILES_URL}}/population_growth_data.csv' && wfModule.selectedVersion"
       >Paste in the following URL and click <kbd>Update</kbd> to load the data.
       <div class="copy-txt">{{LESSON_FILES_URL}}/population_growth_data.csv</div>
       <p class="instruction-detail">The two columns at the far right of the dataset are empty.</p>
     </li>
     <li
-      data-highlight='[{"type":"Module","index":1,"name":"Drop empty columns"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[1] === 'Drop empty columns'"
+      data-highlight='[{"type":"Module","index":1,"id_name":"nulldropper"}]'
+      data-test="return workflow.tabs[0].wfModuleSlugs[1] === 'nulldropper'"
       >Add the step 'Drop empty columns.'
     </li>
     <li
-      data-highlight='[{"type":"Module","index":2,"name":"Drop empty rows"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[2] === 'Drop empty rows'"
+      data-highlight='[{"type":"Module","index":2,"id_name":"dropna"}]'
+      data-test="return workflow.tabs[0].wfModuleSlugs[2] === 'dropna'"
       >Add the step 'Drop empty rows'.
     </li>
     <li
-      data-highlight='[{"type":"WfModule","moduleName":"Drop empty rows"}]'
+      data-highlight='[{"type":"WfModule","moduleIdName":"dropna"}]'
       data-test="const colnames = workflow.tabs[0].wfModules[2].params.colnames.sort().join('|'); return colnames === 'MetroArea|Population'"
       >In Drop empty rows, select columns <kbd>MetroArea</kbd> and <kbd>Population</kbd>. The rows missing values in those columns will be deleted.
     </li>
@@ -51,14 +51,14 @@
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type": "WfModule","moduleName": "Convert to date & time"},{"type":"Module","index":3,"name":"Convert to date & time"}]'
+      data-highlight='[{"type": "WfModule","moduleIdName": "convert-date"},{"type":"Module","index":3,"id_name":"convert-date"}]'
       data-test="const wfModule = workflow.tabs[0].wfModules[3] || {}; return wfModule.moduleSlug === 'convert-date' && wfModule.params.colnames.join('|') === 'Date'"
       > In the table header, click open the menu <span>
         <img class="icon-insert" src="images/lesson-icons/menu.svg">
       </span> of the column <kbd>Date</kbd> and select <kbd>Convert to date & time</kbd>.
     </li>
     <li
-      data-highlight='[{"type": "WfModule", "moduleName": "Convert to numbers"},{"type":"Module","index":4,"name":"Convert to numbers"}]'
+      data-highlight='[{"type": "WfModule", "moduleIdName":"converttexttonumber"},{"type":"Module","index":4,"id_name":"converttexttonumber"}]'
       data-test="
         const wfModule = workflow.tabs[0].wfModules[4] || {}
         const params = wfModule.params || {}
@@ -75,11 +75,11 @@
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"Module","index":5,"name":"Refine"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[5] === 'Refine'"
+      data-highlight='[{"type":"Module","index":5,"id_name":"refine"}]'
+      data-test="return workflow.tabs[0].wfModuleSlugs[5] === 'refine'"
       >Add the step 'Refine' using the search.</li>
     <li
-      data-highlight='[{"type":"WfModule","moduleName":"Refine"}]'
+      data-highlight='[{"type":"WfModule","moduleIdName":"refine"}]'
       data-test="const params = workflow.tabs[0].wfModules[5].params; if (params.column !== 'MetroArea') return false; const renames = params.refine.renames; return (renames['Austin'] && renames['DallasFORTHWorth'])"
       >Select the column <kbd>MetroArea</kbd>. Edit values in the list until there are five left.
       <figure>
@@ -105,21 +105,21 @@
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"Module","index":6,"name":"Reshape" }]'
-      data-test="return workflow.tabs[0].wfModuleNames[6] === 'Reshape'"
+      data-highlight='[{"type":"Module","index":6,"id_name":"reshape" }]'
+      data-test="return workflow.tabs[0].wfModuleSlugs[6] === 'reshape'"
       >Add the step ‘Reshape’.
     </li>
     <li
-      data-highlight='[{"type":"WfModule","moduleName":"Reshape"}]'
+      data-highlight='[{"type":"WfModule","moduleIdName":"reshape"}]'
       data-test="return workflow.tabs[0].wfModules[6].params.direction === 'longtowide'"
       >Select <kbd>Long to wide</kbd>.
     </li>
     <li
-      data-highlight='[{"type":"WfModule","moduleName":"Reshape"}]'
+      data-highlight='[{"type":"WfModule","moduleIdName":"reshape"}]'
       data-test="return workflow.tabs[0].wfModules[6].params.colnames == 'Date'"
       >Choose <kbd>Date</kbd> as the Row variable. Those values will be displayed in leftmost column in the wide table.</li>
     <li
-      data-highlight='[{"type":"WfModule","moduleName":"Reshape"}]'
+      data-highlight='[{"type":"WfModule","moduleIdName":"reshape"}]'
       data-test="return workflow.tabs[0].wfModules[6].params.varcol == 'MetroArea'"
       >Choose <kbd>MetroArea</kbd> as the Column variable. Those values will be used in the column header in the wide table.
     </li>
@@ -134,10 +134,10 @@
     <h4>Continue learning:</h4>
     <ol>
       <li>
-        <a href="/lessons/scrape-using-xpath/">Scrape and monitor content on a web page</a>
+        <a href="scrape-using-xpath">Scrape and monitor content on a web page</a>
       </li>
       <li>
-        <a href="/lessons/custom-alerts/">Monitor data and set custom alerts</a>
+        <a href="custom-alerts">Monitor data and set custom alerts</a>
       </li>
     </ol>
   </div>

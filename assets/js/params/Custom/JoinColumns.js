@@ -68,7 +68,7 @@ export class JoinColumns extends React.PureComponent {
           name={`${name}[on]`}
           fieldId={`${fieldId}_on`}
           onChange={this.handleChangeOn}
-          label={i18n._(t('js.params.Custom.JoinColumns.joinOn')`Join on`)}
+          label={i18n._(/* i18n: This refers to a join operation, as the term join is used in SQL database language. It is followed by one or more column names. */t('js.params.Custom.JoinColumns.joinOn')`Join on`)}
           inputColumns={bothColumns}
           addMenuListClassName='join-on'
           noOptionsMessage={rightTab ? i18n._(/* i18n: The parameter will contain a tab name */t('js.params.Custom.JoinColumns.noColumnToJoin')`There is no column to join on in ${rightTab.name}. Columns in both tabs must have identical names and capitalization. Please edit column names.`) : undefined}

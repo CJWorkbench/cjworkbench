@@ -18,7 +18,7 @@ article.report {
     margin-right: 2rem;
     border-radius: .5rem;
     background: $item-border;
-    @include font-nunito-bold;
+    @include font-sans-bold;
     font-size: 1.4rem;
     line-height: 1.8rem;
 
@@ -36,7 +36,7 @@ article.report {
       button {
         @include action-button;
         @include button-orange--fill;
-        @include font-nunito-bold;
+        @include font-sans-bold;
       }
     }
 
@@ -49,7 +49,7 @@ article.report {
 
     .url {
       .copy {
-        @include font-nunito-regular;
+        @include font-sans-regular;
         border-radius: .3rem;
         background: white;
         padding: .8rem 1rem;

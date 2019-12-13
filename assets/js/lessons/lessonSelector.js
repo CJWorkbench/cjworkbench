@@ -5,7 +5,7 @@ import { matchLessonHighlight } from '../util/LessonHighlight'
 
 function isStepDone (sectionTitle, stepIndex, stateWithHelpers, step) {
   // Canonical example testJs:
-  // `return workflow.selectedWfModule.moduleName === 'Add from URL'`
+  // `return workflow.selectedWfModule.moduleSlug === 'loadurl'`
   const fn = new Function('state', 'workflow', '"use strict"; ' + step.testJs)
   // Give our function a name: makes it easy to debug crashes
   Object.defineProperty(fn, 'name', {

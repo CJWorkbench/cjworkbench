@@ -6,7 +6,7 @@ import unittest
 from unittest.mock import patch
 import pandas as pd
 from pandas.testing import assert_frame_equal
-import pyarrow
+import pyarrow as pa
 from cjwkernel.tests.util import (
     arrow_table,
     arrow_table_context,
@@ -215,7 +215,7 @@ class RenderTests(unittest.TestCase):
             )
 
         with arrow_table_context(
-            {"A": ["x"], "B": [1], "C": [datetime.now()]},
+            {"A": ["x"], "B": [1], "C": pa.array([datetime.now()], pa.timestamp("ns"))},
             columns=[
                 Column("A", ColumnType.Text()),
                 Column("B", ColumnType.Number("{:,.3f}")),
@@ -350,7 +350,7 @@ class FetchTests(unittest.TestCase):
         # Why an error? So module authors can handle it. They _created_ the
         # problem, after all. Let's help them detect it.
         async def fetch(params, *, get_stored_dataframe):
-            with self.assertRaises(pyarrow.ArrowIOError):
+            with self.assertRaises(pa.ArrowIOError):
                 await get_stored_dataframe()
 
         with tempfile_context(dir=self.basedir) as parquet_path:
@@ -416,7 +416,7 @@ class FetchTests(unittest.TestCase):
 
             self.assertEqual(result.path, outfile)
             self.assertEqual(result.errors, [])
-            arrow_table = pyarrow.parquet.read_table(str(outfile), use_threads=False)
+            arrow_table = pa.parquet.read_table(str(outfile), use_threads=False)
             assert_arrow_table_equals(arrow_table, {"A": [1, 2, 3]})
 
     def test_fetch_return_path(self):
@@ -457,7 +457,7 @@ class FetchTests(unittest.TestCase):
                     )
                 ],
             )
-            arrow_table = pyarrow.parquet.read_table(str(outfile), use_threads=False)
+            arrow_table = pa.parquet.read_table(str(outfile), use_threads=False)
             assert_arrow_table_equals(arrow_table, {"A": [1, 2]})
 
     def test_fetch_return_error(self):
@@ -495,5 +495,5 @@ class FetchTests(unittest.TestCase):
 
             self.assertEqual(result.path, outfile)
             self.assertEqual(result.errors, [])
-            arrow_table = pyarrow.parquet.read_table(str(outfile), use_threads=False)
+            arrow_table = pa.parquet.read_table(str(outfile), use_threads=False)
             assert_arrow_table_equals(arrow_table, {"A": [1, 2, 3]})

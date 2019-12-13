@@ -345,7 +345,6 @@ definitions:
                 <<: *common_param_spec_properties
                 type: { const: custom }
                 name: { $ref: '#/definitions/param_specs/_lib/name' }
-                placeholder: { $ref: '#/definitions/param_specs/_lib/placeholder' }
         list:
             <<: *common_param_spec
             required: [ id_name, type, child_parameters ]

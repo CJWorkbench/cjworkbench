@@ -357,14 +357,14 @@ export class PopperPopup extends React.PureComponent {
 const mapStateToProps = (state, ownProps) => {
   const { testHighlight } = lessonSelector(state)
   return {
-    isLessonHighlight: testHighlight({ type: 'Module', name: null, index: ownProps.index }),
+    isLessonHighlight: testHighlight({ type: 'Module', id_name: null, index: ownProps.index }),
     modules: Object.values(state.modules)
       .filter(m => m.uses_data)
       .filter(m => !m.deprecated)
       .map(module => {
         return {
           idName: module.id_name,
-          isLessonHighlight: testHighlight({ type: 'Module', name: module.name, index: ownProps.index }),
+          isLessonHighlight: testHighlight({ type: 'Module', id_name: module.id_name, index: ownProps.index }),
           name: module.name,
           description: module.description,
           category: module.category,
