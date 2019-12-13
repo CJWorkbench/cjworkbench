@@ -16,7 +16,7 @@ import pathlib
 
 def update_module_catalogs(directory: pathlib.Path, spec: ModuleSpec):
     source_catalog = _build_source_catalog(spec)
-    po_path = _po_path(directory, default_locale, spec.id_name)
+    po_path = _po_path(directory, default_locale)
     try:
         old_source_catalog = read_po_catalog(po_path)
     except FileNotFoundError:
@@ -27,7 +27,7 @@ def update_module_catalogs(directory: pathlib.Path, spec: ModuleSpec):
     write_po_catalog(po_path, source_catalog)
 
     for locale_id in supported_locales:
-        po_path = _po_path(directory, locale_id, spec.id_name)
+        po_path = _po_path(directory, locale_id)
         try:
             old_catalog = read_po_catalog(po_path)
         except FileNotFoundError:
@@ -38,10 +38,8 @@ def update_module_catalogs(directory: pathlib.Path, spec: ModuleSpec):
         )
 
 
-def _po_path(
-    basepath: pathlib.Path, locale_id: str, module_id_name: str
-) -> pathlib.Path:
-    return basepath / "locale" / locale_id / f"{module_id_name}.po"
+def _po_path(basepath: pathlib.Path, locale_id: str) -> pathlib.Path:
+    return basepath / "locale" / locale_id / "messages.po"
 
 
 def _build_source_catalog(spec: ModuleSpec) -> Catalog:
