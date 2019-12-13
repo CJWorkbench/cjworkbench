@@ -712,7 +712,9 @@ class ProcessResultError:
         
         Raises ValueError, if some element of the list cannot be coerced to a member of this dataclass
         """
-        if error_or_errors is None or error_or_errors is "":
+        if error_or_errors is None or (
+            isinstance(error_or_errors, str) and not error_or_errors
+        ):
             return []
         elif isinstance(error_or_errors, list):
             return [cls.coerce(error) for error in error_or_errors]
