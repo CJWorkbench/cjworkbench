@@ -32,8 +32,7 @@ def assert_process_result_equal(actual, expected) -> None:
         )
 
     tc = unittest.TestCase()
-    tc.assertEqual(actual.error, expected.error)
+    tc.assertEqual(actual.errors, expected.errors)
     tc.assertEqual(actual.columns, expected.columns)
     assert_frame_equal(actual.dataframe, expected.dataframe)
     tc.assertEqual(actual.json, expected.json)
-    tc.assertEqual(actual.quick_fixes, expected.quick_fixes)
