@@ -22,7 +22,7 @@ class BuildSourceCatalogTest(CatalogTest):
         )
         result = _build_source_catalog(spec)
         expected = Catalog("en")
-        expected.add("modules.testme._spec.name", string="Test Module")
+        expected.add("_spec.name", string="Test Module")
         self.assertCatalogsDeeplyEqual(result, expected)
 
     def test_everything_except_parameters(self):
@@ -50,16 +50,10 @@ class BuildSourceCatalogTest(CatalogTest):
         )
         result = _build_source_catalog(spec)
         expected = Catalog("en")
-        expected.add("modules.testme._spec.name", string="Test Module")
-        expected.add("modules.testme._spec.description", string="I do that")
-        expected.add(
-            "modules.testme._spec.deprecated.message",
-            string="Please use something else",
-        )
-        expected.add(
-            "modules.testme._spec.row_action_menu_entry_title",
-            string="Solve your problem",
-        )
+        expected.add("_spec.name", string="Test Module")
+        expected.add("_spec.description", string="I do that")
+        expected.add("_spec.deprecated.message", string="Please use something else")
+        expected.add("_spec.row_action_menu_entry_title", string="Solve your problem")
         self.assertCatalogsDeeplyEqual(result, expected)
 
     def test_parameter_type_statictext(self):
@@ -75,10 +69,8 @@ class BuildSourceCatalogTest(CatalogTest):
         )
         result = _build_source_catalog(spec)
         expected = Catalog("en")
-        expected.add("modules.testme._spec.name", string="Test Module")
-        expected.add(
-            "modules.testme._spec.parameters.hello.name", string="Hello there!"
-        )
+        expected.add("_spec.name", string="Test Module")
+        expected.add("_spec.parameters.hello.name", string="Hello there!")
         self.assertCatalogsDeeplyEqual(result, expected)
 
     def test_parameter_type_string(self):
@@ -101,12 +93,10 @@ class BuildSourceCatalogTest(CatalogTest):
         )
         result = _build_source_catalog(spec)
         expected = Catalog("en")
-        expected.add("modules.testme._spec.name", string="Test Module")
-        expected.add(
-            "modules.testme._spec.parameters.hello.name", string="Hello there!"
-        )
-        expected.add("modules.testme._spec.parameters.hello.placeholder", string="Hey")
-        expected.add("modules.testme._spec.parameters.hello.default", string="H")
+        expected.add("_spec.name", string="Test Module")
+        expected.add("_spec.parameters.hello.name", string="Hello there!")
+        expected.add("_spec.parameters.hello.placeholder", string="Hey")
+        expected.add("_spec.parameters.hello.default", string="H")
         self.assertCatalogsDeeplyEqual(result, expected)
 
     def test_parameter_type_integer(self):
@@ -128,11 +118,9 @@ class BuildSourceCatalogTest(CatalogTest):
         )
         result = _build_source_catalog(spec)
         expected = Catalog("en")
-        expected.add("modules.testme._spec.name", string="Test Module")
-        expected.add(
-            "modules.testme._spec.parameters.hello.name", string="Hello there!"
-        )
-        expected.add("modules.testme._spec.parameters.hello.placeholder", string="Hey")
+        expected.add("_spec.name", string="Test Module")
+        expected.add("_spec.parameters.hello.name", string="Hello there!")
+        expected.add("_spec.parameters.hello.placeholder", string="Hey")
         self.assertCatalogsDeeplyEqual(result, expected)
 
     def test_parameter_type_float(self):
@@ -154,11 +142,9 @@ class BuildSourceCatalogTest(CatalogTest):
         )
         result = _build_source_catalog(spec)
         expected = Catalog("en")
-        expected.add("modules.testme._spec.name", string="Test Module")
-        expected.add(
-            "modules.testme._spec.parameters.hello.name", string="Hello there!"
-        )
-        expected.add("modules.testme._spec.parameters.hello.placeholder", string="Hey")
+        expected.add("_spec.name", string="Test Module")
+        expected.add("_spec.parameters.hello.name", string="Hello there!")
+        expected.add("_spec.parameters.hello.placeholder", string="Hey")
         self.assertCatalogsDeeplyEqual(result, expected)
 
     def test_parameter_type_checkbox(self):
@@ -179,10 +165,8 @@ class BuildSourceCatalogTest(CatalogTest):
         )
         result = _build_source_catalog(spec)
         expected = Catalog("en")
-        expected.add("modules.testme._spec.name", string="Test Module")
-        expected.add(
-            "modules.testme._spec.parameters.hello.name", string="Hello there!"
-        )
+        expected.add("_spec.name", string="Test Module")
+        expected.add("_spec.parameters.hello.name", string="Hello there!")
         self.assertCatalogsDeeplyEqual(result, expected)
 
     def test_parameter_type_menu(self):
@@ -209,21 +193,11 @@ class BuildSourceCatalogTest(CatalogTest):
         )
         result = _build_source_catalog(spec)
         expected = Catalog("en")
-        expected.add("modules.testme._spec.name", string="Test Module")
-        expected.add(
-            "modules.testme._spec.parameters.hello.name", string="Hello there!"
-        )
-        expected.add(
-            "modules.testme._spec.parameters.hello.placeholder",
-            string="Choose something...",
-        )
-        expected.add(
-            "modules.testme._spec.parameters.hello.options.first.label", string="First"
-        )
-        expected.add(
-            "modules.testme._spec.parameters.hello.options.second.label",
-            string="Second",
-        )
+        expected.add("_spec.name", string="Test Module")
+        expected.add("_spec.parameters.hello.name", string="Hello there!")
+        expected.add("_spec.parameters.hello.placeholder", string="Choose something...")
+        expected.add("_spec.parameters.hello.options.first.label", string="First")
+        expected.add("_spec.parameters.hello.options.second.label", string="Second")
         self.assertCatalogsDeeplyEqual(result, expected)
 
     def test_parameter_type_radio(self):
@@ -249,20 +223,11 @@ class BuildSourceCatalogTest(CatalogTest):
         )
         result = _build_source_catalog(spec)
         expected = Catalog("en")
-        expected.add("modules.testme._spec.name", string="Test Module")
-        expected.add(
-            "modules.testme._spec.parameters.hello.name", string="Hello there!"
-        )
-        expected.add(
-            "modules.testme._spec.parameters.hello.placeholder",
-            string="Choose something...",
-        )
-        expected.add(
-            "modules.testme._spec.parameters.hello.options.first.label", string="First"
-        )
-        expected.add(
-            "modules.testme._spec.parameters.hello.options.True.label", string="Second"
-        )
+        expected.add("_spec.name", string="Test Module")
+        expected.add("_spec.parameters.hello.name", string="Hello there!")
+        expected.add("_spec.parameters.hello.placeholder", string="Choose something...")
+        expected.add("_spec.parameters.hello.options.first.label", string="First")
+        expected.add("_spec.parameters.hello.options.True.label", string="Second")
         self.assertCatalogsDeeplyEqual(result, expected)
 
     def test_parameter_type_radio(self):
@@ -278,10 +243,8 @@ class BuildSourceCatalogTest(CatalogTest):
         )
         result = _build_source_catalog(spec)
         expected = Catalog("en")
-        expected.add("modules.testme._spec.name", string="Test Module")
-        expected.add(
-            "modules.testme._spec.parameters.hello.name", string="Hello there!"
-        )
+        expected.add("_spec.name", string="Test Module")
+        expected.add("_spec.parameters.hello.name", string="Hello there!")
         self.assertCatalogsDeeplyEqual(result, expected)
 
     def test_parameter_type_numberformat(self):
@@ -302,13 +265,9 @@ class BuildSourceCatalogTest(CatalogTest):
         )
         result = _build_source_catalog(spec)
         expected = Catalog("en")
-        expected.add("modules.testme._spec.name", string="Test Module")
-        expected.add(
-            "modules.testme._spec.parameters.hello.name", string="Hello there!"
-        )
-        expected.add(
-            "modules.testme._spec.parameters.hello.placeholder", string="Fill me"
-        )
+        expected.add("_spec.name", string="Test Module")
+        expected.add("_spec.parameters.hello.name", string="Hello there!")
+        expected.add("_spec.parameters.hello.placeholder", string="Fill me")
         self.assertCatalogsDeeplyEqual(result, expected)
 
     def test_parameter_type_column(self):
@@ -332,16 +291,10 @@ class BuildSourceCatalogTest(CatalogTest):
         )
         result = _build_source_catalog(spec)
         expected = Catalog("en")
-        expected.add("modules.testme._spec.name", string="Test Module")
-        expected.add(
-            "modules.testme._spec.parameters.hello.name", string="Hello there!"
-        )
-        expected.add(
-            "modules.testme._spec.parameters.hello.placeholder", string="Fill me"
-        )
-        expected.add(
-            "modules.testme._spec.parameters.tab.name", string="Hello there 2!"
-        )
+        expected.add("_spec.name", string="Test Module")
+        expected.add("_spec.parameters.hello.name", string="Hello there!")
+        expected.add("_spec.parameters.hello.placeholder", string="Fill me")
+        expected.add("_spec.parameters.tab.name", string="Hello there 2!")
         self.assertCatalogsDeeplyEqual(result, expected)
 
     def test_parameter_type_multicolumn(self):
@@ -365,16 +318,10 @@ class BuildSourceCatalogTest(CatalogTest):
         )
         result = _build_source_catalog(spec)
         expected = Catalog("en")
-        expected.add("modules.testme._spec.name", string="Test Module")
-        expected.add(
-            "modules.testme._spec.parameters.hello.name", string="Hello there!"
-        )
-        expected.add(
-            "modules.testme._spec.parameters.hello.placeholder", string="Fill me"
-        )
-        expected.add(
-            "modules.testme._spec.parameters.tab.name", string="Hello there 2!"
-        )
+        expected.add("_spec.name", string="Test Module")
+        expected.add("_spec.parameters.hello.name", string="Hello there!")
+        expected.add("_spec.parameters.hello.placeholder", string="Fill me")
+        expected.add("_spec.parameters.tab.name", string="Hello there 2!")
         self.assertCatalogsDeeplyEqual(result, expected)
 
     def test_parameter_type_tab(self):
@@ -395,13 +342,9 @@ class BuildSourceCatalogTest(CatalogTest):
         )
         result = _build_source_catalog(spec)
         expected = Catalog("en")
-        expected.add("modules.testme._spec.name", string="Test Module")
-        expected.add(
-            "modules.testme._spec.parameters.hello.name", string="Hello there!"
-        )
-        expected.add(
-            "modules.testme._spec.parameters.hello.placeholder", string="Fill me"
-        )
+        expected.add("_spec.name", string="Test Module")
+        expected.add("_spec.parameters.hello.name", string="Hello there!")
+        expected.add("_spec.parameters.hello.placeholder", string="Fill me")
         self.assertCatalogsDeeplyEqual(result, expected)
 
     def test_parameter_type_multitab(self):
@@ -422,13 +365,9 @@ class BuildSourceCatalogTest(CatalogTest):
         )
         result = _build_source_catalog(spec)
         expected = Catalog("en")
-        expected.add("modules.testme._spec.name", string="Test Module")
-        expected.add(
-            "modules.testme._spec.parameters.hello.name", string="Hello there!"
-        )
-        expected.add(
-            "modules.testme._spec.parameters.hello.placeholder", string="Fill me"
-        )
+        expected.add("_spec.name", string="Test Module")
+        expected.add("_spec.parameters.hello.name", string="Hello there!")
+        expected.add("_spec.parameters.hello.placeholder", string="Fill me")
         self.assertCatalogsDeeplyEqual(result, expected)
 
     def test_parameter_type_multichartseries(self):
@@ -448,10 +387,8 @@ class BuildSourceCatalogTest(CatalogTest):
         )
         result = _build_source_catalog(spec)
         expected = Catalog("en")
-        expected.add("modules.testme._spec.name", string="Test Module")
-        expected.add(
-            "modules.testme._spec.parameters.hello.name", string="Hello there!"
-        )
+        expected.add("_spec.name", string="Test Module")
+        expected.add("_spec.parameters.hello.name", string="Hello there!")
         self.assertCatalogsDeeplyEqual(result, expected)
 
     def test_parameter_type_secret_string(self):
@@ -479,20 +416,15 @@ class BuildSourceCatalogTest(CatalogTest):
         )
         result = _build_source_catalog(spec)
         expected = Catalog("en")
-        expected.add("modules.testme._spec.name", string="Test Module")
+        expected.add("_spec.name", string="Test Module")
+        expected.add("_spec.parameters.hello.secret_logic.label", string="Secret")
+        expected.add("_spec.parameters.hello.secret_logic.help", string="Find it there")
         expected.add(
-            "modules.testme._spec.parameters.hello.secret_logic.label", string="Secret"
-        )
-        expected.add(
-            "modules.testme._spec.parameters.hello.secret_logic.help",
-            string="Find it there",
-        )
-        expected.add(
-            "modules.testme._spec.parameters.hello.secret_logic.help_url_prompt",
+            "_spec.parameters.hello.secret_logic.help_url_prompt",
             string="Take me there",
         )
         expected.add(
-            "modules.testme._spec.parameters.hello.secret_logic.help_url",
+            "_spec.parameters.hello.secret_logic.help_url",
             string="https://example.com/get_secret",
         )
         self.assertCatalogsDeeplyEqual(result, expected)
@@ -514,7 +446,7 @@ class BuildSourceCatalogTest(CatalogTest):
         )
         result = _build_source_catalog(spec)
         expected = Catalog("en")
-        expected.add("modules.googlesheets._spec.name", string="Test Module")
+        expected.add("_spec.name", string="Test Module")
         self.assertCatalogsDeeplyEqual(result, expected)
 
     def test_parameter_type_secret_oauth1a(self):
@@ -534,7 +466,7 @@ class BuildSourceCatalogTest(CatalogTest):
         )
         result = _build_source_catalog(spec)
         expected = Catalog("en")
-        expected.add("modules.twitter._spec.name", string="Test Module")
+        expected.add("_spec.name", string="Test Module")
         self.assertCatalogsDeeplyEqual(result, expected)
 
     def test_parameter_type_gdrivefile(self):
@@ -559,7 +491,7 @@ class BuildSourceCatalogTest(CatalogTest):
         )
         result = _build_source_catalog(spec)
         expected = Catalog("en")
-        expected.add("modules.googlesheets._spec.name", string="Test Module")
+        expected.add("_spec.name", string="Test Module")
 
         self.assertCatalogsDeeplyEqual(result, expected)
 
@@ -574,7 +506,7 @@ class BuildSourceCatalogTest(CatalogTest):
         )
         result = _build_source_catalog(spec)
         expected = Catalog("en")
-        expected.add("modules.testme._spec.name", string="Test Module")
+        expected.add("_spec.name", string="Test Module")
         self.assertCatalogsDeeplyEqual(result, expected)
 
     def test_parameter_type_custom(self):
@@ -595,13 +527,9 @@ class BuildSourceCatalogTest(CatalogTest):
         )
         result = _build_source_catalog(spec)
         expected = Catalog("en")
-        expected.add("modules.testme._spec.name", string="Test Module")
-        expected.add(
-            "modules.testme._spec.parameters.hello.name", string="Hello there!"
-        )
-        expected.add(
-            "modules.testme._spec.parameters.hello.placeholder", string="Fill me"
-        )
+        expected.add("_spec.name", string="Test Module")
+        expected.add("_spec.parameters.hello.name", string="Hello there!")
+        expected.add("_spec.parameters.hello.placeholder", string="Fill me")
         self.assertCatalogsDeeplyEqual(result, expected)
 
     def test_parameter_type_list(self):
@@ -628,12 +556,10 @@ class BuildSourceCatalogTest(CatalogTest):
         )
         result = _build_source_catalog(spec)
         expected = Catalog("en")
-        expected.add("modules.testme._spec.name", string="Test Module")
+        expected.add("_spec.name", string="Test Module")
+        expected.add("_spec.parameters.hello.name", string="Hello there!")
         expected.add(
-            "modules.testme._spec.parameters.hello.name", string="Hello there!"
-        )
-        expected.add(
-            "modules.testme._spec.parameters.hello.child_parameters.hello2.name",
+            "_spec.parameters.hello.child_parameters.hello2.name",
             string="Hello there 2!",
         )
         self.assertCatalogsDeeplyEqual(result, expected)

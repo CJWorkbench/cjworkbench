@@ -68,18 +68,15 @@ def _merge_nonsource_catalog(
 
 
 def _find_spec_messages(spec: ModuleSpec) -> Catalog:
-    prefix = f"modules.{spec.id_name}._spec"
     messages = {
-        f"{prefix}.name": spec.get("name"),
-        f"{prefix}.description": spec.get("description"),
-        f"{prefix}.row_action_menu_entry_title": spec.get(
-            "row_action_menu_entry_title"
-        ),
-        f"{prefix}.deprecated.message": spec.get("deprecated", {}).get("message"),
+        "_spec.name": spec.get("name"),
+        "_spec.description": spec.get("description"),
+        "_spec.row_action_menu_entry_title": spec.get("row_action_menu_entry_title"),
+        "_spec.deprecated.message": spec.get("deprecated", {}).get("message"),
     }
     for param in spec.parameters:
         messages = {
-            **_find_param_messages(param, f"{prefix}.parameters.{param['id_name']}"),
+            **_find_param_messages(param, f"_spec.parameters.{param['id_name']}"),
             **messages,
         }
     return messages
