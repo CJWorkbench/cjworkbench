@@ -13,9 +13,9 @@ def test_render(in_table, patch_json, out_table=pd.DataFrame(), out_error=""):
     result = editcells.render(in_table, P(celledits=patch_json))
     result = ProcessResult.coerce(result)
 
-    expected = ProcessResult(out_table, out_error)
+    expected = ProcessResult.coerce((out_table, out_error))
 
-    assert result.error == expected.error
+    assert result.errors == expected.errors
     assert_frame_equal(result.dataframe, expected.dataframe)
 
 

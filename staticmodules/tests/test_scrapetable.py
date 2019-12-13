@@ -106,7 +106,7 @@ class ScrapeTableTest(unittest.TestCase):
         url = "http:INVALID:URL"  # we should never even validate the URL
         fetch_result = fetch(url=url, tablenum=0)
         self.assertEqual(
-            fetch_result, ProcessResult(error="Table number must be at least 1")
+            fetch_result, ProcessResult.coerce("Table number must be at least 1")
         )
 
     @patch(
@@ -117,7 +117,7 @@ class ScrapeTableTest(unittest.TestCase):
         fetch_result = fetch(url="http://example.org", tablenum=2)
         self.assertEqual(
             fetch_result,
-            ProcessResult(error="The maximum table number on this page is 1"),
+            ProcessResult.coerce("The maximum table number on this page is 1"),
         )
 
     @patch(
@@ -171,7 +171,7 @@ class ScrapeTableTest(unittest.TestCase):
         fetch_result = fetch(url="http://example.org")
 
         self.assertEqual(
-            fetch_result, ProcessResult(error="Error from server: 500 Server Error")
+            fetch_result, ProcessResult.coerce("Error from server: 500 Server Error")
         )
 
     @patch(
@@ -185,7 +185,7 @@ class ScrapeTableTest(unittest.TestCase):
 
         self.assertEqual(
             fetch_result,
-            ProcessResult(error="Did not find any <table> tags on that page"),
+            ProcessResult.coerce("Did not find any <table> tags on that page"),
         )
 
     @patch(
@@ -207,7 +207,7 @@ class ScrapeTableTest(unittest.TestCase):
     def test_404(self):
         fetch_result = fetch(url="http://example.org")
         self.assertEqual(
-            fetch_result, ProcessResult(error="Error from server: 404 Not Found")
+            fetch_result, ProcessResult.coerce("Error from server: 404 Not Found")
         )
 
     @patch(
