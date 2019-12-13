@@ -86,7 +86,7 @@ class SetCurrentLocaleMiddlewareTest(SimpleTestCase):
             get_language(), locale, msg="Django locale is not set correctly"
         )
         self.assertEqual(
-            request.user.locale_id,
+            request.user.user_profile.locale_id,
             old_preference,
             msg="User settings have been modified",
         )
