@@ -12,7 +12,7 @@ from babel.messages.catalog import Catalog
 from cjwstate.modules.module_loader import ModuleFiles, ModuleSpec
 from typing import FrozenSet, Dict
 import pathlib
-from cjwstate.modules.i18n.spec_messages import find_spec_messages
+from cjwstate.modules.i18n.spec import find_spec_messages
 
 
 def update_module_catalogs(directory: pathlib.Path):

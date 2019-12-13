@@ -1,36 +1,44 @@
 from cjwstate.models.param_spec import ParamSpec, MenuOptionEnum
 from functools import singledispatch
-from typing import Dict
+from typing import Dict, Union
 from cjwstate.modules.module_loader import ModuleSpec
 
 
 def find_spec_messages(spec: ModuleSpec) -> Dict[str, str]:
-    messages = {
-        "_spec.name": spec.get("name") or None,
-        "_spec.description": spec.get("description") or None,
-        "_spec.row_action_menu_entry_title": spec.get("row_action_menu_entry_title")
-        or None,
-        "_spec.deprecated.message": spec.get("deprecated", {}).get("message") or None,
-    }
+    messages = {}
+    prefix = "_spec"
+    _add_if_set(messages, spec, prefix, "name")
+    _add_if_set(messages, spec, prefix, "description")
+    _add_if_set(messages, spec, prefix, "row_action_menu_entry_title")
+    if "deprecated" in spec:
+        _add_if_set(messages, spec["deprecated"], f"{prefix}.deprecated", "message")
     for param_dict in spec.parameters:
         param_spec = ParamSpec.from_dict(param_dict)
         messages.update(
-            extract_param_messages(param_spec, f"_spec.parameters.{param_spec.id_name}")
+            extract_param_messages(
+                param_spec, f"{prefix}.parameters.{param_spec.id_name}"
+            )
         )
     return messages
+
+
+def _add_if_set(
+    messages: Dict[str, str],
+    spec: Union[object, ModuleSpec, Dict[str, str]],
+    prefix: str,
+    key: str,
+) -> Dict[str, str]:
+    if isinstance(spec, ModuleSpec) or isinstance(spec, dict):
+        value = spec.get(key)
+    else:
+        value = getattr(spec, key)
+    if value:
+        messages.update({f"{prefix}.{key}": value})
 
 
 @singledispatch
 def extract_param_messages(spec: ParamSpec, prefix: str) -> Dict[str, str]:
     return {}
-
-
-def _add_if_set(
-    messages: Dict[str, str], spec: object, prefix: str, key: str
-) -> Dict[str, str]:
-    value = getattr(spec, key)
-    if value:
-        messages.update({f"{prefix}.{key}": value})
 
 
 @extract_param_messages.register(ParamSpec.String)
