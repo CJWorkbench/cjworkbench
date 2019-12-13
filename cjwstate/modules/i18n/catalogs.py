@@ -16,7 +16,7 @@ import pathlib
 from cjwstate.modules.i18n.spec import find_spec_messages
 
 
-def update_module_catalogs(directory: pathlib.Path):
+def extract_module_messages(directory: pathlib.Path):
     module_files = ModuleFiles.load_from_dirpath(directory)  # raise ValueError
     source_catalog = _build_source_catalog(ModuleSpec.load_from_path(module_files.spec))
 
