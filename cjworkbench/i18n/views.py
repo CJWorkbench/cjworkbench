@@ -25,5 +25,5 @@ def set_locale(request):
         request.session["locale_id"] = locale
         if request.user.is_authenticated:
             request.user.user_profile.locale_id = locale
-            request.user.user_profile.save()
+            request.user.user_profile.save(update_fields=["locale_id"])
     return HttpResponseRedirect(next)

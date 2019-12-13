@@ -16,14 +16,14 @@ def mock_response(request):
 
 
 class MockUserProfile:
-    def __init__(self, locale_preference=None):
-        self.locale_id = locale_preference
+    def __init__(self, locale_id=None):
+        self.locale_id = locale_id
 
 
 class MockUser:
-    def __init__(self, locale_preference=None):
+    def __init__(self, user_profile__locale_id=None):
         self.is_authenticated = True
-        self.user_profile = MockUserProfile(locale_preference)
+        self.user_profile = MockUserProfile(user_profile__locale_id)
 
 
 class SetCurrentLocaleMiddlewareTest(SimpleTestCase):
@@ -150,7 +150,7 @@ class SetCurrentLocaleMiddlewareTest(SimpleTestCase):
     def test_registered_user_default(self):
         # registered #4
         request = self._process_request(
-            user=MockUser(locale_preference=unsupported_locale)
+            user=MockUser(user_profile__locale_id=unsupported_locale)
         )
         self._assert_registered(
             request, default_locale, old_preference=unsupported_locale
@@ -159,7 +159,7 @@ class SetCurrentLocaleMiddlewareTest(SimpleTestCase):
     def test_registered_user_no_session(self):
         # registered, session is ignored
         request = self._process_request(
-            user=MockUser(locale_preference=unsupported_locale),
+            user=MockUser(user_profile__locale_id=unsupported_locale),
             session_locale=non_default_locale,
         )
         self._assert_registered(
@@ -169,7 +169,7 @@ class SetCurrentLocaleMiddlewareTest(SimpleTestCase):
     def test_registered_user_header_supported(self):
         # registered #3, supported locale
         request = self._process_request(
-            user=MockUser(locale_preference=unsupported_locale),
+            user=MockUser(user_profile__locale_id=unsupported_locale),
             accept_language_header=non_default_locale,
         )
         self._assert_registered(
@@ -179,7 +179,7 @@ class SetCurrentLocaleMiddlewareTest(SimpleTestCase):
     def test_registered_user_header_nonsupported(self):
         # registered #3, non-supported locale
         request = self._process_request(
-            user=MockUser(locale_preference=unsupported_locale),
+            user=MockUser(user_profile__locale_id=unsupported_locale),
             accept_language_header=unsupported_locale,
         )
         self._assert_registered(
@@ -189,7 +189,7 @@ class SetCurrentLocaleMiddlewareTest(SimpleTestCase):
     def test_registered_user_preferences(self):
         # registered #2
         request = self._process_request(
-            user=MockUser(locale_preference=non_default_locale),
+            user=MockUser(user_profile__locale_id=non_default_locale),
             accept_language_header=default_locale,
         )
         self._assert_registered(
@@ -199,7 +199,7 @@ class SetCurrentLocaleMiddlewareTest(SimpleTestCase):
     def test_registered_user_request_supported(self):
         # registered #1, supported locale
         request = self._process_request(
-            user=MockUser(locale_preference=non_default_locale),
+            user=MockUser(user_profile__locale_id=non_default_locale),
             request_locale=default_locale,
         )
         self._assert_registered(
@@ -209,7 +209,7 @@ class SetCurrentLocaleMiddlewareTest(SimpleTestCase):
     def test_registered_user_request_unsupported(self):
         # registered #1, non-supported locale
         request = self._process_request(
-            user=MockUser(locale_preference=non_default_locale),
+            user=MockUser(user_profile__locale_id=non_default_locale),
             request_locale=unsupported_locale,
         )
         self._assert_registered(

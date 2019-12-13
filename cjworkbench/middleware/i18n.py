@@ -64,11 +64,11 @@ class SetCurrentLocaleMiddleware:
             locale = request.session.get("locale_id")
             return locale if is_supported(locale) else None
         else:
-            locale = getattr(request.user.user_profile, "locale_id", None)
+            locale = request.user.user_profile.locale_id
             return locale if is_supported(locale) else None
 
     def _use_session(self, user):
-        return not user.is_authenticated or not hasattr(user.user_profile, "locale_id")
+        return not user.is_authenticated
 
     def _get_locale_from_language_header(self, request):
         # Copied from django.utils.translation.real_trans.get_language_from_request
