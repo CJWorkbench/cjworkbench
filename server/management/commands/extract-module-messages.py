@@ -19,10 +19,7 @@ def main(directory):
 
     logger.info(f"Extracting...")
 
-    module_files = ModuleFiles.load_from_dirpath(path)  # raise ValueError
-    spec = ModuleSpec.load_from_path(module_files.spec)  # raise ValueError
-
-    update_module_catalogs(path, spec)
+    update_module_catalogs(path)
 
 
 class Command(BaseCommand):
