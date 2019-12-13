@@ -211,7 +211,6 @@ class BuildSourceCatalogTest(CatalogTest):
                         "id_name": "hello",
                         "type": "radio",
                         "name": "Hello there!",
-                        "placeholder": "Choose something...",
                         "options": [
                             {"label": "First", "value": "first"},
                             {"label": True, "value": "second"},
@@ -225,7 +224,6 @@ class BuildSourceCatalogTest(CatalogTest):
         expected = Catalog("en")
         expected.add("_spec.name", string="Test Module")
         expected.add("_spec.parameters.hello.name", string="Hello there!")
-        expected.add("_spec.parameters.hello.placeholder", string="Choose something...")
         expected.add("_spec.parameters.hello.options.first.label", string="First")
         expected.add("_spec.parameters.hello.options.True.label", string="Second")
         self.assertCatalogsDeeplyEqual(result, expected)
@@ -516,12 +514,7 @@ class BuildSourceCatalogTest(CatalogTest):
                 "name": "Test Module",
                 "category": "Clean",
                 "parameters": [
-                    {
-                        "id_name": "hello",
-                        "type": "custom",
-                        "name": "Hello there!",
-                        "placeholder": "Fill me",
-                    }
+                    {"id_name": "hello", "type": "custom", "name": "Hello there!"}
                 ],
             }
         )
@@ -529,7 +522,6 @@ class BuildSourceCatalogTest(CatalogTest):
         expected = Catalog("en")
         expected.add("_spec.name", string="Test Module")
         expected.add("_spec.parameters.hello.name", string="Hello there!")
-        expected.add("_spec.parameters.hello.placeholder", string="Fill me")
         self.assertCatalogsDeeplyEqual(result, expected)
 
     def test_parameter_type_list(self):
