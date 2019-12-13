@@ -104,7 +104,7 @@ def read_po_catalog(filename: str) -> Catalog:
         return read_po(catalog_file)
 
 
-def write_po_catalog(filename: str, catalog: Catalog, **kwargs):
+def write_po_catalog(filename: Union[str, pathlib.Path], catalog: Catalog, **kwargs):
     """ Try to write a po catalog to the given path.
     Throw on failure.
     """

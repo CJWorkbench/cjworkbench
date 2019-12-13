@@ -10,11 +10,11 @@ from cjworkbench.i18n.catalogs.util import (
 )
 from babel.messages.catalog import Catalog
 from cjwstate.modules.module_loader import ModuleFiles, ModuleSpec
-import os.path
 from typing import FrozenSet
+import pathlib
 
 
-def update_module_catalogs(spec: ModuleSpec):
+def update_module_catalogs(directory: pathlib.Path, spec: ModuleSpec):
     source_catalog = _build_source_catalog(spec)
     po_path = _po_path(directory, default_locale, spec.id_name)
     try:
@@ -33,12 +33,15 @@ def update_module_catalogs(spec: ModuleSpec):
         except FileNotFoundError:
             old_catalog = Catalog(locale_id)
         write_po_catalog(
-            po_path, _merge_nonsource_catalog(old_catalog, source_catalog, fuzzy)
+            po_path,
+            _merge_nonsource_catalog(locale_id, old_catalog, source_catalog, fuzzy),
         )
 
 
-def _po_path(basepath: os.path, locale_id: str, module_id_name: str) -> os.path:
-    return os.path.join(basepath, "locale", locale_id, f"{module_id_name}.po")
+def _po_path(
+    basepath: pathlib.Path, locale_id: str, module_id_name: str
+) -> pathlib.Path:
+    return basepath / "locale" / locale_id / f"{module_id_name}.po"
 
 
 def _build_source_catalog(spec: ModuleSpec) -> Catalog:
@@ -53,7 +56,10 @@ def _build_source_catalog(spec: ModuleSpec) -> Catalog:
 
 
 def _merge_nonsource_catalog(
-    old_catalog: Catalog, source_catalog: Catalog, fuzzy: FrozenSet[MessageUID]
+    locale_id: str,
+    old_catalog: Catalog,
+    source_catalog: Catalog,
+    fuzzy: FrozenSet[MessageUID],
 ) -> Catalog:
     catalog = Catalog(locale_id)
     fill_catalog(catalog, source_catalog, old_catalog)

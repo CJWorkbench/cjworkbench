@@ -15,22 +15,14 @@ logger = logging.getLogger(__name__)
 
 def main(directory):
     cjwstate.modules.init_module_system()
+    path = pathlib.Path(directory)
 
     logger.info(f"Extracting...")
 
-    with tempfile.TemporaryDirectory() as tmpdir:
-        importdir = os.path.join(tmpdir, "importme")
-        shutil.copytree(directory, importdir)
-        shutil.rmtree(os.path.join(importdir, ".git"), ignore_errors=True)
-        shutil.rmtree(os.path.join(importdir, ".eggs"), ignore_errors=True)
-        shutil.rmtree(os.path.join(importdir, "node_modules"), ignore_errors=True)
+    module_files = ModuleFiles.load_from_dirpath(path)  # raise ValueError
+    spec = ModuleSpec.load_from_path(module_files.spec)  # raise ValueError
 
-        module_files = ModuleFiles.load_from_dirpath(
-            pathlib.Path(importdir)
-        )  # raise ValueError
-        spec = ModuleSpec.load_from_path(module_files.spec)  # raise ValueError
-
-    update_module_catalogs(spec)
+    update_module_catalogs(path, spec)
 
 
 class Command(BaseCommand):
