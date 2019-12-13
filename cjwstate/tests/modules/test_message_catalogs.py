@@ -1,7 +1,7 @@
 from cjworkbench.tests.test_catalogs import CatalogTest
 from babel.messages.catalog import Catalog
 from cjwstate.modules.module_loader import ModuleSpec, validate_module_spec
-from cjwstate.modules.message_catalogs import _build_source_catalog
+from cjwstate.modules.i18n import _build_source_catalog
 from typing import Dict, Any
 
 

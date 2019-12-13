@@ -6,7 +6,7 @@ import tempfile
 import time
 from django.core.management.base import BaseCommand
 from cjwstate.modules.module_loader import ModuleFiles, ModuleSpec
-from cjwstate.modules.message_catalogs import update_module_catalogs
+from cjwstate.modules.i18n import update_module_catalogs
 import cjwstate.modules
 
 
