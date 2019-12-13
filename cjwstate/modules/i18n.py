@@ -16,7 +16,7 @@ import pathlib
 
 def update_module_catalogs(directory: pathlib.Path):
     module_files = ModuleFiles.load_from_dirpath(directory)  # raise ValueError
-    source_catalog = _build_source_catalog(module_files)
+    source_catalog = _build_source_catalog(ModuleSpec.load_from_path(module_files.spec))
 
     po_path = _po_path(directory, default_locale)
     try:
@@ -44,8 +44,7 @@ def _po_path(basepath: pathlib.Path, locale_id: str) -> pathlib.Path:
     return basepath / "locale" / locale_id / "messages.po"
 
 
-def _build_source_catalog(module_files: ModuleFiles) -> Catalog:
-    spec = ModuleSpec.load_from_path(module_files.spec)  # raise ValueError
+def _build_source_catalog(spec: ModuleSpec) -> Catalog:
     messages = _find_spec_messages(spec)
     # TODO: also find messages in module code
     source_catalog = Catalog(default_locale)

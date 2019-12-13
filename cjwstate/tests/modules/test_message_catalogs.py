@@ -534,7 +534,7 @@ class BuildSourceCatalogTest(CatalogTest):
         )
         result = _build_source_catalog(spec)
         expected = Catalog("en")
-        expected.add("modules.testme._spec.name", string="Test Module")
+        expected.add("modules.twitter._spec.name", string="Test Module")
         self.assertCatalogsDeeplyEqual(result, expected)
 
     def test_parameter_type_gdrivefile(self):
@@ -559,7 +559,7 @@ class BuildSourceCatalogTest(CatalogTest):
         )
         result = _build_source_catalog(spec)
         expected = Catalog("en")
-        expected.add("modules.testme._spec.name", string="Test Module")
+        expected.add("modules.googlesheets._spec.name", string="Test Module")
 
         self.assertCatalogsDeeplyEqual(result, expected)
 
