@@ -1,0 +1,115 @@
+<header>
+  <h1>II. Καθαρίστε &quot;βρόμικα&quot; δεδομένα</h1>
+  <p>Βρείτε και διορθώστε ορθογραφικά και τυπογραφικά λάθη σε δευτερόλεπτα Μορφοποιήστε τον πίνακά σας για να τον οπτικοποιήσετε</p><img src="./banner.svg" alt=""></header>
+<section>
+  <h2>Επισκόπηση</h2>
+  <p>Σε αυτό το μάθημα θα δουλέψετε με &quot;ακαθάριστα&quot; δεδομένα για να συγκρίνετε την αύξηση του πληθυσμού σε μεγάλα αστικά κέντρα των ΗΠΑ.</p>
+  <p>Θα καθαρίσετε στήλες και σειρές, θα τυποποιήσετε τις τιμές για να αποκτήσουν τα δεδομένα σας πρακτική αξία και θα αναδιαμορφώσετε τον πίνακα από κατακόρυφη σε οριζόντια διεύθυνση για να τον &quot;διαβάσετε&quot; καλύτερα και να δημιουργήσετε μια σειρά γραφημάτων.</p>
+  <ol class="steps">
+
+  </ol>
+</section>
+<section>
+  <h2>Διαγραφή κενών σειρών και στηλών</h2>
+  <p>Για τους σκοπούς αυτού του μαθήματος, τα δεδομένα φιλοξενούνται στο Workbench.</p>
+  <h3 class="instructions">Οδηγίες</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"Module","index":0,"id_name":"loadurl"}]'
+      data-test="return workflow.tabs[0].wfModuleSlugs[0] === 'loadurl'"
+      >Προσθέστε την πηγή δεδομένων &quot;Προσθήκη από URL&quot;</li>
+    <li
+      data-highlight='[{"type":"WfModule","moduleIdName":"loadurl"}]'
+      data-test="const wfModule = workflow.tabs[0].wfModules[0]; return wfModule.params.url === '{{LESSON_FILES_URL}}/population_growth_data.csv' && wfModule.selectedVersion"
+      >Επικολλήστε το ακόλουθο URL και κάντε κλικ στην  <kbd>Ενημέρωση</kbd> για να φορτωθούν τα δεδομένα.<div class="copy-txt">{{LESSON_FILES_URL}}/population_growth_data.csv</div>
+      <p class="instruction-detail">Οι δύο στήλες στην άκρα δεξιά του συνόλου δεδομένων είναι κενές.</p>
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":1,"id_name":"nulldropper"}]'
+      data-test="return workflow.tabs[0].wfModuleSlugs[1] === 'nulldropper'"
+      >Προσθέστε το βήμα &quot;Διαγραφή κενών στηλών&quot;.</li>
+    <li
+      data-highlight='[{"type":"Module","index":2,"id_name":"dropna"}]'
+      data-test="return workflow.tabs[0].wfModuleSlugs[2] === 'dropna'"
+      >Προσθέστε το βήμα &quot;Διαγραφή κενών σειρών&quot;.</li>
+    <li
+      data-highlight='[{"type":"WfModule","moduleIdName":"dropna"}]'
+      data-test="const colnames = workflow.tabs[0].wfModules[2].params.colnames.sort().join('|'); return colnames === 'MetroArea|Population'"
+      >Στη &quot;Διαγραφή κενών σειρών&quot;, επιλέξτε τις στήλες <kbd>MetroArea</kbd> και <kbd>Population</kbd>. Οι σειρές χωρίς τιμές στις συγκεκριμένες στήλες θα διαγραφούν.</li>
+  </ol>
+</section>
+<section>
+  <h2>Μετατροπή τύπων</h2>
+  <p>Οι τύποι των δεδομένων χρησιμοποιούνται για να πουν στον υπολογιστή πώς να ερμηνεύσει και να χρησιμοποιήσει τα δεδομένα. Οι στήλες <kbd>Date</kbd> και <kbd>Population</kbd> είναι κείμενο, επομένως το Wokbench δεν μπορεί να τις επεξεργαστεί μαθηματικά. Θα έπρεπε να είναι <kbd>Ημερομηνία &amp; Ώρα</kbd> και <kbd>Αριθμός</kbd>, αντίστοιχα.</p>
+  <h3 class="instructions">Οδηγίες</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type": "WfModule","moduleIdName": "convert-date"},{"type":"Module","index":3,"id_name":"convert-date"}]'
+      data-test="const wfModule = workflow.tabs[0].wfModules[3] || {}; return wfModule.moduleSlug === 'convert-date' && wfModule.params.colnames.join('|') === 'Date'"
+      >Στην κεφαλίδα του πίνακα ανοίξτε με κλικ το μενού <span><img class="icon-insert" src="images/lesson-icons/menu.svg"></span> της στήλης <kbd>Date</kbd> και επιλέξτε <kbd>Μετατροπή σε ημερομηνία &amp; ώρα</kbd>.</li>
+    <li
+      data-highlight='[{"type": "WfModule", "moduleIdName":"converttexttonumber"},{"type":"Module","index":4,"id_name":"converttexttonumber"}]'
+      data-test="
+        const wfModule = workflow.tabs[0].wfModules[4] || {}
+        const params = wfModule.params || {}
+        const colnames = params.colnames || []
+        return wfModule.moduleSlug === 'converttexttonumber' && colnames.join('|') === 'Population'
+      ">Ομοίως, χρησιμοποιήστε το μενού <span><img class="icon-insert" src="images/lesson-icons/menu.svg"></span> της στήλης <kbd>Population</kbd> για να διαλέξετε <kbd>Μετατροπή σε αριθμούς</kbd>.</ol>
+</section>
+<section>
+  <h2>Τυποποίηση των τιμών στηλών</h2>
+  <p>Στη στήλη <kbd>MetroArea</kbd> οι τιμές είναι μερικές φορές γραμμένες διαφορετικά ή δεν έχουν κεφαλαία τα ίδια γράμματα. Π.χ.: &quot;Dallas - Fort Worth&quot; και &quot;DallasFORTHWorth&quot;</p>
+  <h3 class="instructions">Οδηγίες</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"Module","index":5,"id_name":"refine"}]'
+      data-test="return workflow.tabs[0].wfModuleSlugs[5] === 'refine'"
+      >Προσθέστε το βήμα &quot;Βελτίωση&quot;</li>
+    <li
+      data-highlight='[{"type":"WfModule","moduleIdName":"refine"}]'
+      data-test="const params = workflow.tabs[0].wfModules[5].params; if (params.column !== 'MetroArea') return false; const renames = params.refine.renames; return (renames['Austin'] && renames['DallasFORTHWorth'])"
+      >Επιλέξτε τη στήλη <kbd>MetroArea</kbd>. Επιλέξτε τις τιμές της λίστας μέχρι να μείνουν μόνο πέντε.<figure><img alt="Εξέταση στοιχείου" src="./1_refine_row.png"></figure>
+      <p class="instruction-detail">Όταν θα έχετε τελειώσει, η λίστα θα πρέπει να είναι όπως στην εικόνα:</p>
+      <figure><img alt="Εξέταση στοιχείου" src="./2_refine_results.png"></figure>
+    </li>
+  </ol>
+</section>
+<section>
+  <h2>Αναδιαμόρφωση πίνακα</h2>
+  <p>Ο πίνακας βρίσκεται προς το παρόν σε &quot;κατακόρυφη&quot; μορφή, όπου κάθε σειρά είναι ένας μοναδικός συνδυασμός μεταβλητών (Date, MetroArea) και τιμών (Population).</p>
+  <p>Για να τον κάνουμε πιο ευανάγνωστο, πρέπει να τον εμφανίσουμε σε &quot;οριζόντια&quot; μορφή, όπως συνηθίζεται στα υπολογιστικά φύλλα.</p>
+  <p>Στην &quot;οριζόντια μορφή&quot; μια μεταβλητή χρησιμοποιείται ως &quot;Μεταβλητή σειράς&quot; και μια άλλη μεταβλητή ως &quot;Μεταβλητή στήλης&quot;. Όλα τα υπόλοιπα κελιά συμπληρώνονται με αντίστοιχες τιμές.</p>
+  <figure><img alt="Εξέταση στοιχείου" src="./3_reshape_long_wide.png"></figure>
+  <h3 class="instructions">Οδηγίες</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"Module","index":6,"id_name":"reshape" }]'
+      data-test="return workflow.tabs[0].wfModuleSlugs[6] === 'reshape'"
+      >Προσθέστε το βήμα &quot;Αναδιαμόρφωση&quot;.</li>
+    <li
+      data-highlight='[{"type":"WfModule","moduleIdName":"reshape"}]'
+      data-test="return workflow.tabs[0].wfModules[6].params.direction === 'longtowide'"
+      >Επιλέξτε <kbd>Από κατακόρυφο σε οριζόντιο</kbd>.</li>
+    <li
+      data-highlight='[{"type":"WfModule","moduleIdName":"reshape"}]'
+      data-test="return workflow.tabs[0].wfModules[6].params.colnames == 'Date'"
+      >Επιλέξτε <kbd>Date</kbd> ως Μεταβλητή σειράς. Αυτές οι τιμές θα εμφανίζονται στην αριστερή στήλη του οριζόντιου πίνακα.</li>
+    <li
+      data-highlight='[{"type":"WfModule","moduleIdName":"reshape"}]'
+      data-test="return workflow.tabs[0].wfModules[6].params.varcol == 'MetroArea'"
+      >Επιλέξτε <kbd>MetroArea</kbd> ως Μεταβλητή στήλης. Αυτές οι τιμές θα χρησιμοποιούνται στην κεφαλίδα της στήλης του οριζόντιου πίνακα.</li>
+  </ol>
+</section>
+<footer>
+  <h2>Εδώ τελειώνει το μάθημα!</h2>
+  <div class="completed">
+    <p class="summary">Τα δεδομένα σας είναι καθαρά και έτοιμα για ανάλυση.</p>
+  </div>
+  <div class="next">
+    <h4>Συνεχίστε τα μαθήματα:</h4>
+    <ol>
+      <li><a href="syllogh-me-xpath">Συλλέξτε και παρακολουθήστε το περιεχόμενο μιας ιστοσελίδας</a></li>
+      <li><a href="prosarmosmenes-eidopoihseis">Παρακολουθήστε δεδομένα και ορίστε προσαρμοσμένες ειδοποιήσεις</a></li>
+    </ol>
+  </div>
+</footer>

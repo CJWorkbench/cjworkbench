@@ -339,7 +339,7 @@
           padding: 0 1rem;
 
           .number-prefix, .number-suffix {
-            @include font-nunito-extra-light;
+            @include font-sans-light;
           }
 
           .number-suffix {
@@ -368,7 +368,7 @@
           // .cell-null is sometimes added to .cell-text, .cell-datetime and .cell-number
           &::before {
             // Add 'null' text in CSS, not React, so copy/paste won't copy it
-            @include font-nunito-extra-light;
+            @include font-sans-light;
             content: 'null';
             color: lighten($brand-text--dark, 30%);
             font-style: italic; // FIXME we don't ship this font as italic

@@ -16,7 +16,7 @@ behavior more clear, and we should contribute a fix and a pull request.
     {% with provider_slug=account.get_provider.get_slug provider_name=account.get_provider.name site_name=site.name %}
         <p class='content-1 t-d-gray text-center mb-4'>{% trans_html "py.templates.socialaccount.signup.thereIsAlreadyAccount" default="There is already an account registered with that email address." %}</p>
         {# TODO: Come up with a more elegant way to do this #}
-        <a class="content-1 text-center action-link white" href="/account/login?next=/account/{{provider_slug}}/login?process=connect">{% trans_html "py.templates.socialaccount.signup.connectExistingAccount" default="Sign in and connect your existing account." %}</a>
+        <a class="content-1 social-account-action-link" href="/account/login?next=/account/{{provider_slug}}/login?process=connect">{% trans_html "py.templates.socialaccount.signup.connectExistingAccount" default="Sign in and connect your existing account." %}</a>
     {%  endwith %}
 
 {% else %}

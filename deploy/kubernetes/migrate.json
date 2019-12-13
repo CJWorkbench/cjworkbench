@@ -44,10 +44,6 @@
 						"value": "True"
 					},
 					{
-						"name": "CJW_SOCIALACCOUNT_SECRETS",
-						"value": "secrets/socialaccount-secrets/socialaccount-secrets.json"
-					},
-					{
 						"name": "MINIO_ACCESS_KEY",
 						"valueFrom": {
 							"secretKeyRef": {
@@ -90,28 +86,7 @@
 						"name": "MINIO_BUCKET_SUFFIX",
 						"value": ".workbenchdata.com"
 					}
-				],
-				"volumeMounts": [
-					{
-						"mountPath": "/app/secrets/socialaccount-secrets",
-						"name": "socialaccount-secrets",
-						"readOnly": true
-					}
 				]
-			}
-		],
-		"volumes": [
-			{
-				"name": "socialaccount-secrets",
-				"secret": {
-					"secretName": "socialaccount-secrets",
-					"items": [
-						{
-							"key": "json",
-							"path": "socialaccount-secrets.json"
-						}
-					]
-				}
 			}
 		]
 	}

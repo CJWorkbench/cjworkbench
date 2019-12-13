@@ -5,7 +5,7 @@
 {% block title %}{% trans_html "py.templates.account.email_confirm.confirmEmail.title" default="Confirm Email" %}{% endblock %}
 
 {% block content %}
-    <form method="post" action="{% url "account_confirm_email" key=confirmation.key %}">
+    <form class="account_form" method="post" action="{% url "account_confirm_email" key=confirmation.key %}">
         <legend class='t-d-gray title-1 text-center mb-3'>{% trans_html "py.templates.account.email_confirm.confirmEmail" default="Confirm Email" %}</legend>
         <fieldset>
             {% csrf_token %}

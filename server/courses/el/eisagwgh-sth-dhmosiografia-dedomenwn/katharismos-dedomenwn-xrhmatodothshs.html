@@ -1,0 +1,169 @@
+<header>
+  <h1>Καθαρισμός και ανάλυση δεδομένων χρηματοδότησης προεκλογικής εκστρατείας</h1>
+  <p>Πόσα χρήματα είχαν προέλευση έξω από την πολιτεία στην εκστρατεία επανεκλογής του κυβερνήτη της Νέας Υόρκης το 2014;</p><img src="./banner.svg" alt="" /></header>
+
+<script id="initialWorkflow">
+tabs:
+- name: Lesson
+  wfModules:
+  - module: loadurl
+    slug: step-loadurl
+    params:
+      url: ./cuomo-contributions.csv
+    collapsed: true
+    note: "Source: Board of Election of the State of New York. Amounts are in U.S. Dollars"
+</script>
+
+<section class="fullscreen">
+  <h2>Εισαγωγή</h2>
+  <p>Η χρηματοδότηση των προεκλογικών εκστρατειών είναι ένα κλασικό θέμα στη δημοσιογραφία δεδομένων. Δυστυχώς, απαιτεί συχνά πολύ καθαρισμό πριν μπορέσει κανείς να απαντήσει βασικά ερωτήματα όπως &quot;Ποιος συνεισέφερε τα περισσότερα χρήματα;&quot;.</p>
+  <p>Στο μάθημα αυτό θα χρησιμοποιήσουμε δεδομένα σχετικά με τις δωρεές στην προεκλογική εκστρατεία στην Πολιτεία της Νέας Υόρκης. Θα εξαγάγουμε την πληροφορία για την πολιτεία από τις διευθύνσεις των δωρητών, για να υπολογίσουμε πόσα χρήματα είχαν προέλευση έξω από την πολιτεία και από πού. Αυτό απαιτεί να σπάσουμε στα δύο μια στήλη κειμένου και να αφαιρέσουμε κάποιους χαρακτήρες, κάτι που συνιστά μια δεξιότητα καθαρισμού που θα σας χρησιμεύσει πολλές φορές.</p>
+</section>
+
+<section>
+  <h2>Δεδομένα</h2>
+  <p>Ας αναλύσουμε τις δωρεές στην εκστρατεία επανεκλογής του Andrew Cuomo το 2014 στην Πολιτεία της Νέας Υόρκης. Τα δεδομένα που φορτώθηκαν στο 1ο βήμα δημοσιεύονται από την Επιτροπή Εκλογών της Πολιτείας της Νέας Υόρκης, <a class="highlight" href='https://www.elections.ny.gov/CFViewReports.html#Query' target="_blank" className="info-1">εδώ</a>. Τα ποσά είναι σε δολάρια ΗΠΑ.</p>
+  <p>Στόχος μας είναι να βρούμε ποια πολιτεία έκανε τις μεγαλύτερες δωρεές στην εκστρατεία του. Οι δωρεές που είχαν προέλευση έξω από την πολιτεία θα μπορούσαν να αποκαλύψουν επιχειρηματικές ή πολιτικές διασυνδέσεις που ως τώρα παρέμεναν κρυφές.</p>
+  <p>Όπως και πριν, διατρέξτε τη λίστα των ερωτημάτων σας και βεβαιωθείτε ότι καταλαβαίνετε κάθε στήλη.</p>
+  <p>Για παράδειγμα, πού μπορούμε να βρούμε την πολιτεία του δωρητή;</p>
+  <h3 class="instructions">Οδηγίες</h3>
+  <ul>
+    <li
+      >Τι αντιπροσωπεύει κάθε σειρά;</li>
+    <li
+      >Τι υπάρχει σε κάθε στήλη;</li>
+    <li
+      >Υπάρχουν στήλες, τιμές ή κωδικοί που δεν καταλαβαίνετε;</li>
+    <li
+      >Υπάρχουν κενές ή εμφανώς λανθασμένες τιμές;</li>
+    <li
+      >Χρειάζεται να καθαριστούν τα δεδομένα;</li>
+  </ul>
+</section>
+<section>
+  <h2>Διαίρεση στηλών</h2>
+  <p>Απαιτείται να αποθηκεύσουμε την πολιτεία χωριστά σε μια νέα στήλη, έτσι ώστε να μπορέσουμε να εφαρμόσουμε Ομαδοποίηση σε αυτήν την επιλογή και να πάρουμε ανάλυση των δωρεών ανά πολιτεία.</p>
+  <p>Η πρώτη μας δουλειά είναι να κάνουμε εξαγωγή των δύο γραμμάτων των συντομογραφιών των πολιτειών στη στήλη <kbd>Contributor (Δωρητής)</kbd> . Για παράδειγμα, θέλουμε να κάνουμε εξαγωγή το <kbd>NC</kbd> από το:</p>
+  <div class="copy-txt">FELL, STEPHEN MPO BOX 56POLLOCKSVILLE, NC 28573</div>
+  <h3 class="instructions">Οδηγίες</h3>
+  <ol class="steps">
+    <li
+      data-test="
+        if (workflow.tabs[0].wfModuleSlugs[1] !== 'selectcolumns' || !workflow.tabs[0].wfModules[1].params.keep) return false
+        const colnames = workflow.tabs[0].wfModules[1].params.colnames
+        return colnames.sort().join('|') === 'Amt|Contributor'
+    ">Προσθέστε ένα βήμα <kbd>Επιλογή στηλών</kbd> και κρατήστε μόνο τις στήλες <kbd>Contributor (Δωρητής)</kbd> και <kbd>Amt (Ποσό)</kbd></li>
+    <li
+      data-test="return workflow.tabs[0].wfModuleSlugs[2] === 'splitcolumn' &&
+                        workflow.tabs[0].wfModules[2].params.column === 'Contributor'"
+      >Προσθέστε τη <kbd>Διαίρεση στήλης</kbd> και επιλέξτε τη στήλη <kbd>Contributor (Δωρητής)</kbd></li>
+    <li
+      data-test="return workflow.tabs[0].wfModules[2].params.method === 'right'"
+      >Επιλέξτε να γίνει διαχωρισμός <kbd>X χαρακτήρες από τα δεξιά</kbd><p class="instruction-detail">Ο συνολικός αριθμός των χαρακτήρων που χρησιμοποιείται από τον ταχυδρομικό κωδικό (5), τη συντομογραφία της πολιτείας (2) και το μεταξύ τους διάστημα (1) είναι <kbd>8</kbd>.</p>
+    </li>
+    <li
+      data-test="return workflow.tabs[0].wfModules[2].params.numchars == 8"
+      >Ορίστε τον <kbd>Αριθμό χαρακτήρων</kbd> σε <kbd>8</kbd></li>
+  </ol>
+</section>
+<section>
+  <h2>Τακτοποίηση κειμένου</h2>
+  <p>Τώρα έχουμε τον ταχυδρομικό κωδικό μαζί με την πολιτεία στη στήλη <kbd>Contributor 2</kbd>.</p>
+  <p>Υπάρχουν διάφοροι τρόποι για να αφαιρέσετε τον ταχυδρομικό κωδικό, αλλά ο πιο απλός εδώ είναι να κρατήσετε μόνο τα γράμματα.</p>
+  <h3 class="instructions">Οδηγίες</h3>
+  <ol class="steps">
+    <li
+      data-test="return workflow.tabs[0].wfModuleSlugs[3] === 'clean-text' &&
+                        workflow.tabs[0].wfModules[3].params.colnames.join('|') === 'Contributor 2'"
+      >Προσθέστε την επιλογή <kbd>Τακτοποίηση κειμένου</kbd>, και εφαρμόστε την στη στήλη <kbd>Contributor 2</kbd> .</li>
+    <li
+      data-test="
+        const params = workflow.tabs[0].wfModules[3].params
+        return  params.type_char && params.letter &&
+                !params.number && !params.punc && !params.custom"
+      >Στην ενότητα &quot;Χαρακτήρες&quot; της Τακτοποίησης κειμένου, επιλέξτε να <kbd>κρατήστε</kbd> μόνο <kbd>γράμματα</kbd>. Αν διαλέγατε να διαγράψετε τους αριθμούς, θα σας έμενε το κενό διάστημα!</li>
+    <li
+      data-test="return workflow.tabs[0].wfModuleSlugs[4] === 'renamecolumns' &&
+                        (workflow.tabs[0].wfModules[4].params.renames['Contributor 2'] || '').toLowerCase() === 'state' &&
+                        (workflow.tabs[0].wfModules[4].params.renames['Amt'] || '').toLowerCase() === 'amount'&&
+                        (workflow.tabs[0].wfModules[4].params.renames['Contributor 1'] || '').toLowerCase() === 'contributor' "
+      >Μετονομάστε τις στήλες <kbd>Contributor 1</kbd>, <kbd>Contributor 2</kbd> και <kbd>Amt</kbd> αντιστοίχως σε <kbd>Contributor</kbd>, <kbd>State</kbd> (Πολιτεία) και <kbd>Amount</kbd> (Ποσό) με επεξεργασία των ονομασιών των στηλών στην κεφαλίδα του πίνακα.<p class="instruction-detail">Τώρα έχουμε μια καθαρή στήλη State. Ο πίνακάς μας είναι έτοιμος για ανάλυση.</p>
+    </li>
+  </ol>
+</section>
+<section>
+  <h2>Ομαδοποίηση</h2>
+  <p>Στη συνέχεια, ας υπολογίσουμε τα ποσά που δωρήθηκαν από κάθε πολιτεία, με χρήση της εντολής Ομαδοποίηση.</p>
+  <h3 class="instructions">Οδηγίες</h3>
+  <ol class="steps">
+    <li
+      data-test="return workflow.tabs[0].wfModuleSlugs[5] === 'groupby' &&
+                        workflow.tabs[0].wfModules[5].params.groups.colnames.join('|').toLowerCase() === 'state'"
+      >Προσθέστε ένα βήμα <kbd>Ομαδοποίηση</kbd> και εφαρμόστε το στη στήλη <kbd>State (Πολιτεία)</kbd></li>
+    <li
+      data-test="
+        const agg = workflow.tabs[0].wfModules[5].params.aggregations
+        return agg.length==1 &&
+               agg[0].colname.toLowerCase()==='amount' &&
+               agg[0].operation==='sum'"
+      >Ορίστε τη λειτουργία σε <kbd>Άθροισμα</kbd>, και επιλέξτε τη στήλη <kbd>Amount (Ποσό)</kbd> ως τον στόχο.</li>
+    <li
+      data-test="
+        const agg = workflow.tabs[0].wfModules[5].params.aggregations
+        return agg.length==1 &&
+               agg[0].outname.toLowerCase() === 'total amount'"
+      >Ονομάστε τη νέα στήλη <kbd>Total amount</kbd> (Συνολικό ποσό)<p class="instruction-detail">Μπορούμε τώρα να δούμε το συνολικό ποσό που δώρισαν οι δωρητές από κάθε πολιτεία.</p>
+    </li>
+  </ol>
+</section>
+<section>
+  <h2>Ταξινόμηση και γράφημα</h2>
+  <p>Ας οπτικοποιήσουμε αυτά τα αποτελέσματα. Πρώτα, ας διαγράψουμε τις δωρεές από την Πολιτεία της Νέας Υόρκης αφού δεν αποτελούν αντικείμενο της έρευνάς μας.</p>
+  <h3 class="instructions">Οδηγίες</h3>
+  <ol class="steps">
+    <li
+      data-test="
+        if (workflow.tabs[0].wfModuleSlugs[6] !== 'sort') return false
+
+        const sort_columns = workflow.tabs[0].wfModules[6].params.sort_columns
+        return (
+          sort_columns.length >= 1
+          && sort_columns[0].colname.toLowerCase() === 'total amount'
+          && !sort_columns[0].is_ascending
+        )
+      ">Επιλέξτε <kbd>Φθίνουσα ταξινόμηση</kbd> από το μενού της στήλης <kbd>Total amount</kbd> . <span><img class="icon-insert" src="images/lesson-icons/menu.svg"></span></li>
+    <li
+      data-test="return workflow.tabs[0].wfModuleSlugs[7] === 'droprowsbyposition' &&
+                        workflow.tabs[0].wfModules[7].params.rows === '1'"
+      >Επιλέξτε τη σειρά 1 και διαλέξτε <kbd>Διαγραφή επιλεγμένων σειρών</kbd> στο μενού ενεργειών της κεφαλίδας του πίνακα, όπου λέει &quot;Επιλέχτηκε 1 στήλη&quot;.</li>
+    <li
+      data-test="return workflow.tabs[0].wfModuleSlugs[8] === 'columnchart'"
+    >Προσθέστε ένα βήμα <kbd>Γράφημα στηλών</kbd></li>
+    <li
+      data-test="
+        const params = workflow.tabs[0].wfModules[8].params
+        return (
+          params.x_column.toLowerCase() == 'state'
+          && params.y_columns.length >= 1
+          && params.y_columns[0].column.toLowerCase() == 'total amount'
+        )
+      ">Ορίστε τον άξονα X σε <kbd>State</kbd> και τον άξονα Y σε <kbd>Total Amount</kbd><p class="instruction-detail">
+
+      </p>
+    </li>
+  </ol>
+</section>
+<footer>
+  <h2>Εδώ τελειώνει το μάθημα!</h2>
+  <div class="completed">
+    <p>Η Καλιφόρνια ήταν η πολιτεία με τις μεγαλύτερες συνολικά δωρεές &ndash;εκτός Νέας Υόρκης&ndash; στην προεκλογική εκστρατεία του κυβερνήτη Cuomo. Ποιοι είναι αυτοί οι δωρητές; Γιατί ενδιαφέρονται τόσο πολύ για μια εκλογή στην Πολιτεία της Νέας Υόρκης;</p>
+    <p>Αυτό μπορεί να είναι η αρχή μόνο της έρευνάς σας.</p>
+    <p>Στη συνέχεια θα μάθουμε για τους τύπους των δεδομένων.</p>
+  </div>
+  <div class="next">
+    <h2>Επόμενο</h2>
+    <ol>
+      <li><a href="typoi-dedomenwn">Εισαγωγή στους τύπους δεδομένων.</a></li>
+    </ol>
+  </div>
+</footer>

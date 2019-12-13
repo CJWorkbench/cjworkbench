@@ -35,6 +35,7 @@
       <div class="detail">{% trans_html "py.templates.workflow.minimumRequirement" default="Min 650px wide" %}</div>
       <div class="detail">{% trans_html "py.templates.workflow.optimizedForDesktop" default="Experience optimized for web browsers" %}</div>
       <a href="{% url "account_login" %}" class="button-white--fill action-button mx-auto">{% trans_html "py.templates.workflow.signupLink.link" default="Signup" %}</a>
+      {% include "locale_switcher.html" %}
     </div>
     <div class="background"></div>
   </div>

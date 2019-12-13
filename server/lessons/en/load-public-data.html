@@ -14,17 +14,17 @@
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[0] === 'Add from URL'"
+      data-highlight='[{"type":"Module","index":0,"id_name":"loadurl"}]'
+      data-test="return workflow.tabs[0].wfModuleSlugs[0] === 'loadurl'"
       >Add the data source ‘Add from URL’.</li>
     <li
-      data-highlight='[{"type":"WfModule","moduleName":"Add from URL"}]'
+      data-highlight='[{"type":"WfModule","moduleIdName":"loadurl"}]'
       data-test="const wfModule = workflow.tabs[0].wfModules[0]; return wfModule && wfModule.params.url === '{{LESSON_FILES_URL}}/affordable_housing_1.csv' && wfModule.selectedVersion"
       >Paste the URL of the dataset in the field. Click<kbd>Update</kbd>to load the data.
       <div class="copy-txt">{{LESSON_FILES_URL}}/affordable_housing_1.csv</div>
     </li>
     <li
-      data-highlight='[{"type":"WfModuleContextButton","moduleName":"Add from URL","button":"notes"},{"type":"EditableNotes"}]'
+      data-highlight='[{"type":"WfModuleContextButton","moduleIdName":"loadurl","button":"notes"},{"type":"EditableNotes"}]'
       data-test="return !!workflow.tabs[0].wfModules[0].note"
       >Add a note
       <span>
@@ -34,7 +34,7 @@
       <div class="copy-txt">Data from datasf.org</div>
     </li>
     <li
-      data-highlight='[{"type":"WfModuleContextButton","moduleName":"Add from URL","button":"collapse"}]'
+      data-highlight='[{"type":"WfModuleContextButton","moduleIdName":"loadurl","button":"collapse"}]'
       data-test="return workflow.tabs[0].wfModules[0].isCollapsed"
       >Collapse
       <span>
@@ -49,16 +49,16 @@
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"Module","index":1,"name":"Column Chart"}]'
-      data-test="return workflow.tabs[0].wfModuleNames[workflow.tabs[0].wfModules.length - 1] === 'Column Chart'"
+      data-highlight='[{"type":"Module","index":1,"id_name":"columnchart"}]'
+      data-test="return workflow.tabs[0].wfModuleSlugs[workflow.tabs[0].wfModules.length - 1] === 'columnchart'"
       >Add the step ‘Column Chart’ using the search</li>
     <li
-      data-highlight='[{"type":"WfModule","moduleName":"Column Chart"}]'
+      data-highlight='[{"type":"WfModule","moduleIdName":"columnchart"}]'
       data-test="const wfModule = workflow.tabs[0].wfModules[workflow.tabs[0].wfModules.length - 1]; const p = wfModule.params; if (p.x_column !== 'city_neighborhood') return false; return p.y_columns.length === 1 && p.y_columns[0].column === 'affordable_units'"
       >
       Select <kbd>city_neighborhood</kbd> for the X axis and <kbd>affordable_units</kbd> for the Y axis.</li>
     <li
-      data-highlight='[{"type":"WfModule","moduleName":"Column Chart"}]'
+      data-highlight='[{"type":"WfModule","moduleIdName":"columnchart"}]'
       data-test="const wfModule = workflow.tabs[0].wfModules[workflow.tabs[0].wfModules.length - 1]; const p = wfModule.params; return !!p.title && !!p.x_axis_label && !!p.y_axis_label"
       >Add a title, X-axis label and Y-axis label to the chart.</li>
   </ol>
@@ -69,16 +69,16 @@
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"Module","index":1,"name":"Filter by condition"}]'
-      data-test="return workflow.tabs[0].wfModules.length > 2 && workflow.tabs[0].wfModuleNames[1] === 'Filter by condition'"
+      data-highlight='[{"type":"Module","index":1,"id_name":"filter"}]'
+      data-test="return workflow.tabs[0].wfModules.length > 2 && workflow.tabs[0].wfModuleSlugs[1] === 'filter'"
       >Add the step ‘Filter by condition’ between 'Add from URL' and 'Column Chart'.</li>
     <li
-      data-highlight='[{"type":"WfModule","moduleName":"Filter by condition"}]'
+      data-highlight='[{"type":"WfModule","moduleIdName":"filter"}]'
       data-test="const p = workflow.tabs[0].wfModules[1].params; if (!p.filters.filters[0] || !p.filters.filters[0].subfilters[0]) return false; const sf = p.filters.filters[0].subfilters[0]; return sf.colname === 'affordable_units' && sf.condition === 'number_is_greater_than' && sf.value === '200' && p.keep"
       >Select the column <kbd>affordable_units</kbd>, choose the condition <kbd>Greater than</kbd><br/> and enter the value <kbd>200</kbd>.</li>
     <li
-      data-highlight='[{"type":"WfModule","moduleName":"Column Chart"}]'
-      data-test="return state.selectedWfModule && state.selectedWfModule.moduleName === 'Column Chart'"
+      data-highlight='[{"type":"WfModule","moduleIdName":"columnchart"}]'
+      data-test="return state.selectedWfModule && state.selectedWfModule.moduleSlug === 'columnchart'"
       >Click the ‘Column chart’ step back to see the updated chart.
     </li>
   </ol>
@@ -96,9 +96,9 @@
       button at the top right of the chart panel.
     </p>
     <h4>Continue learning:</h4>
-    <ol>
-      <li><a href="/lessons/clean-and-standardize/">Clean and standardize data</a></li>
-      <li><a href="/lessons/clean-and-standardize/">Scrape a webpage to extract or monitor content</a></li>
-    </ol>
+    <ul>
+      <li><a href="clean-and-standardize">Clean and standardize data</a></li>
+      <li><a href="scrape-using-xpath">Scrape a webpage to extract or monitor content</a></li>
+    </ul>
   </div>
 </footer>

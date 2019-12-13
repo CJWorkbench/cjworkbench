@@ -1,4 +1,6 @@
 import datetime
+import numpy as np
+import pyarrow as pa
 from cjwkernel.tests.util import arrow_table, assert_render_result_equals
 from cjwkernel.types import (
     RenderError,
@@ -23,6 +25,7 @@ from cjwstate.rendercache.io import (
     open_cached_render_result,
     clear_cached_render_result_for_wf_module,
     crr_parquet_key,
+    read_cached_render_result_pydict,
 )
 
 
@@ -91,7 +94,12 @@ class RendercacheIoTests(DbTestCase):
         ]
         result = RenderResult(
             arrow_table(
-                {"A": [1], "B": [datetime.datetime.now()], "C": ["x"]}, columns=columns
+                {
+                    "A": [1],
+                    "B": pa.array([datetime.datetime.now()], pa.timestamp("ns")),
+                    "C": ["x"],
+                },
+                columns=columns,
             )
         )
         cache_render_result(self.workflow, self.wf_module, self.delta.id, result)
@@ -112,3 +120,53 @@ class RendercacheIoTests(DbTestCase):
         with tempfile_context() as arrow_path:
             with self.assertRaises(CorruptCacheError):
                 load_cached_render_result(crr, arrow_path)
+
+    def test_read_cached_render_result_pydict_float_nan_is_none(self):
+        result = RenderResult(
+            arrow_table(
+                {
+                    "A": [
+                        1.1,
+                        # np.nan is DEPRECATED but [2019-12-09] it isn't worth
+                        # clearing all caches just to wipe this out.
+                        np.nan,
+                        # None is the _correct_ way of storing Pandas NaN.
+                        # (It's consistent with the way we store int, timestamp
+                        # and string. We don't have a special meaning for
+                        # np.nan.)
+                        None,
+                    ],
+                    "B": [1, None, None],
+                },
+                columns=[
+                    Column("A", ColumnType.Number(format="{:,.2f}")),
+                    Column("B", ColumnType.Number(format="{:,d}")),
+                ],
+            )
+        )
+        cache_render_result(self.workflow, self.wf_module, self.delta.id, result)
+        crr = self.wf_module.cached_render_result
+        self.assertEqual(
+            read_cached_render_result_pydict(crr, range(2), range(3)),
+            {"A": [1.1, None, None], "B": [1, None, None]},
+        )
+
+    def test_read_cached_render_result_pydict_datetime(self):
+        result = RenderResult(
+            arrow_table(
+                {"A": pa.array([2134213412341232967, None], pa.timestamp("ns"))},
+                columns=[Column("A", ColumnType.Datetime())],
+            )
+        )
+        cache_render_result(self.workflow, self.wf_module, self.delta.id, result)
+        crr = self.wf_module.cached_render_result
+        self.assertEqual(
+            read_cached_render_result_pydict(crr, range(2), range(3)),
+            # We lose the "967" (nanosecond digits) because Python dates only
+            # store microseconds.
+            #
+            # [2019-12-09] it would be great to enforce the rule, "all dates
+            # must be in 'us' resolution." But Pandas enforces the rule, "all
+            # dates must be in 'ns' resolution. Ouch.
+            {"A": [datetime.datetime(2037, 8, 18, 13, 3, 32, 341232), None]},
+        )

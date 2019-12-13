@@ -22,7 +22,8 @@ export class WfHamburgerMenu extends React.Component {
   }
 
   state = {
-    importModalOpen: false
+    importModalOpen: false,
+    localeSwitcherOpen: false
   }
 
   handleClickOpenImportModal = () => {
@@ -33,13 +34,20 @@ export class WfHamburgerMenu extends React.Component {
     this.setState({ importModalOpen: false })
   }
 
+  handleClickOpenLocaleSwitcher = () => {
+    this.setState({ localeSwitcherOpen: true })
+  }
+
+  closeLocaleSwitcher = () => {
+    this.setState({ localeSwitcherOpen: false })
+  }
+
   render () {
     const { api, workflowId, user, i18n } = this.props
     const loggedIn = !!user
 
     return (
       <>
-        <LocaleSwitcher />
         <UncontrolledDropdown>
 
           <DropdownToggle title={i18n._(t('js.WfHamburgerMenu.toggle.hoverText')`menu`)} className='context-button'>
@@ -55,6 +63,7 @@ export class WfHamburgerMenu extends React.Component {
             ) : (
               <DropdownItem href='//workbenchdata.com'><Trans id='js.WfHamburgerMenu.menu.home'>Home</Trans></DropdownItem>
             )}
+            <DropdownItem onClick={this.handleClickOpenLocaleSwitcher}><Trans id='js.WfHamburgerMenu.menu.languages'>Languages</Trans></DropdownItem>
             {loggedIn ? (
               <DropdownItem href='/account/logout'><Trans id='js.WfHamburgerMenu.menu.logout'>Log Out</Trans></DropdownItem>
             ) : null}
@@ -64,6 +73,11 @@ export class WfHamburgerMenu extends React.Component {
           <ImportModuleFromGitHub
             closeModal={this.closeImportModal}
             api={api}
+          />
+        ) : null}
+        {this.state.localeSwitcherOpen ? (
+          <LocaleSwitcher
+            closeModal={this.closeLocaleSwitcher}
           />
         ) : null}
       </>

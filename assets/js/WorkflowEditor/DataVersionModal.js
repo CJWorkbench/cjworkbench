@@ -97,7 +97,7 @@ class NotificationsForm extends React.PureComponent {
           </p>
           <p className='description'>{
             checked
-              ? <Trans id='js.WorkflowEditor.DataVersionModal.NotificationsForm.description.emailOnOutputChange'>You will receive and email if the output of this module changes</Trans>
+              ? <Trans id='js.WorkflowEditor.DataVersionModal.NotificationsForm.description.emailOnOutputChange'>You will receive an email if the output of this module changes</Trans>
               : <Trans id='js.WorkflowEditor.DataVersionModal.NotificationsForm.description.turnAlertsOn'>Turn alerts ON to receive an email if the output of this module changes</Trans>
           }
           </p>

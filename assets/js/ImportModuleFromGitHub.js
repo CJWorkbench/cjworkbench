@@ -44,7 +44,7 @@ class StaffImportModuleFromGitHub extends React.PureComponent {
     const category = <ModuleCategoryName category={data.category} />
     this.setState({
       status: {
-        message: <Trans id='js.ImportModuleFromGithub.status.importedModule'>Imported module {module} under category {category}</Trans>
+        message: <Trans id='js.ImportModuleFromGithub.status.importedModule' description='This is a success message'>Imported module {module} under category {category}</Trans>
       }
     })
   }

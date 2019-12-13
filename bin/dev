@@ -1,17 +1,12 @@
 #!/bin/bash
 #
-# Run a Dockerized development environment:
+# Run a Dockerized development environment.
 #
-# * ./bin/dev-in-docker start: migrate once and start all services
-# * ./bin/dev-in-docker python ./manage.py migrate: migrate database
-# * ./bin/dev-in-docker pipenv install foo: run pipenv
-# * ./bin/dev-in-docker test: run unit tests
-# * ./bin/dev-in-docker npm install foo: run npm
-# * ./bin/dev-in-docker stop: kill everything
+# Run `bin/dev` for help.
 #
 # In broad strokes:
 #
-# * Each service is its own process, prefixed with "cjworkbench_dev"
+# * Each service is its own process, prefixed with "cjworkbench_"
 # * We volume-mount excessively: for instance, node_modules is mounted
 # * Running ./manage.py or npm creates a new container that mounts the same
 #   volumes.
@@ -20,7 +15,7 @@ set -e
 #set -x
 
 docker_compose() {
-  docker-compose "$@"
+  DOCKER_BUILDKIT=1 COMPOSE_DOCKER_CLI_BUILD=1 docker-compose "$@"
 }
 
 cd "$(dirname "$0")"/..
@@ -30,10 +25,7 @@ cd "$(dirname "$0")"/..
 # https://github.com/docker/compose/issues/1896 gives docker-compose's rationale
 # for keeping our 'migrate' and 'test' runners outside of docker-compose.yml.
 docker_compose_with_commands() {
-  docker-compose \
-    -f docker-compose.yml \
-    -f docker-compose.commands.yml \
-    "$@"
+  docker_compose -f docker-compose.yml -f docker-compose.commands.yml "$@"
 }
 
 print_usage() {
@@ -55,6 +47,7 @@ print_usage() {
   echo '  start -- start database, RabbitMQ, Webpack and Django' >&2
   echo '  stop -- stop services created by start' >&2
   echo '  test-sql -- open a psql prompt in the test database (it must be up)' >&2
+  echo '  thrift-compile -- recompile .thrift files' >&2
   echo '  thrift ARGS -- run "thrift ARGS..." (see cjwkernel/thrift/)' >&2
   echo '  unittest ARGS -- run "./manage.py test ARGS..."' >&2
 }
@@ -147,6 +140,19 @@ case "$COMMAND" in
   "extract-module-messages")
     MODULE="$1" docker_compose_with_commands run --rm develop-module sh -c "/app/cjwkernel/setup-sandboxes.sh only-readonly && pipenv run python ./manage.py extract-module-messages ../$1"
     exit 1
+    ;;
+
+  "thrift-compile")
+    set -x
+    docker build --pull docker/thrift  # slow, and shows progress
+    thrift_image="$(docker build -q docker/thrift)"  # same line again -- now it's cached
+    echo $thrift_image
+    docker run -it --rm \
+      -v "$(pwd)/cjwkernel":/cjwkernel \
+      --workdir / \
+      "$thrift_image" \
+      thrift --strict --gen py:slots --out . cjwkernel/thrift.thrift
+    exit 0
     ;;
 
   "sql")

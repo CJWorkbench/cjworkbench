@@ -64,7 +64,7 @@ export class Condition extends React.PureComponent {
         value={value}
         onChange={this.handleChange}
       >
-        <option value=''> {i18n._(t('js.params.Custom.Filters.Condition.selectCondition')`Select condition`)}</option>
+        <option value=''>{i18n._(/* i18n: As in 'select a condition relative to which we will filter'. Condition here is something of the form 'IF something IS like that'. */t('js.params.Custom.Filters.Condition.selectCondition')`Select condition`)}</option>
         {options.map(({ name, label }) => (
           <option key={name} value={name}>{i18n._(label)}</option>
         ))}

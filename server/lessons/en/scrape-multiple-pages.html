@@ -6,7 +6,7 @@
 <section class="fullscreen">
   <h2>Overview</h2>
   <p>
-    Suppose we want to scrape this list of audit reports from the <a href="https://leg.colorado.gov/audit-search" class="highlight" target="_blank">Colorado state government</a>. We've learned in the tutorial <a href="https://app.workbenchdata.com/lessons/scrape-using-xpath" class="highlight">Scrape a webpage to extract or monitor content</a> to isolate the titles, release date and report numbers using Selector Gadget.
+    Suppose we want to scrape this list of audit reports from the <a href="https://leg.colorado.gov/audit-search" class="highlight" target="_blank">Colorado state government</a>. We've learned in the tutorial <a href="scrape-using-xpath" class="highlight">Scrape a webpage to extract or monitor content</a> to isolate the titles, release date and report numbers using Selector Gadget.
   </p>
   <p>
     But there’s a problem:
@@ -34,7 +34,7 @@
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"Module","index":0,"name":"HTML scraper"}]'
+      data-highlight='[{"type":"Module","index":0,"id_name":"urlscraper"}]'
       data-test="
         const wfm = workflow.tabs[0].wfModules[0]
         return (
@@ -77,22 +77,16 @@
   <p>
     We still need to extract the information we want from all this source code. We can do so with <b>HTML to Table</b>. It will automatically combine the results from all pages into one table.
   <p class="instruction-detail">
-    Learn how to use <b>HTML to Table</b> and XPath in this tutorial:<br> <a href="https://app.workbenchdata.com/lessons/scrape-using-xpath" class="highlight">Scrape a webpage to extract or monitor content</a>
+    Learn how to use <b>HTML to Table</b> and XPath in this tutorial:<br><a href="scrape-using-xpath" class="highlight">Scrape a webpage to extract or monitor content</a>
 </section>
 <footer>
   <h2>Your scrape is ready for data extraction!</h2>
   <div class="next">
     <h4>Continue learning</h4>
-      <ul>
-        <li>
-          <a class="highlight" href="/lessons/custom-alerts/">Scrape a webpage to extract or monitor content</a>.
-        </li>
-        <li>
-          <a class="highlight" href="/lessons/custom-alerts/">Set up custom alerts</a> to receive emails if conditions are met.
-        </li>
-        <li>
-          <a class="highlight" href="/lessons/clean-and-standardize/">Clean and standardize data</a>.
-        </li>
-      </ul>
+    <ul>
+      <li><a href="scrape-using-xpath">Scrape a webpage to extract or monitor content</a>.</li>
+      <li><a href="custom-alerts">Set up custom alerts</a> to receive emails if conditions are met.</li>
+      <li><a href="clean-and-standardize">Clean and standardize data</a>.</li>
+    </ul>
   </div>
 </footer>

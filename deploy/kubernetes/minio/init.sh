@@ -137,3 +137,14 @@ kubectl -n "$ENV" run minio-adduser \
         }]
       }
     }'
+
+# Set up load balancer
+kubectl -n "$ENV" apply -f "$DIR"/minio-service.yaml
+gcloud compute addresses create $ENV-user-files --global
+kubectl -n "$ENV" apply -f "$DIR"/minio-$ENV-ingress.yaml
+
+# Set up DNS
+STATIC_IP=$(gcloud compute addresses describe $ENV-user-files --global | grep address: | cut -b10-)
+gcloud dns record-sets transaction start --zone=workbenchdata-com
+gcloud dns record-sets transaction add --zone=workbenchdata-com --name $ENV-user-files.workbenchdata.com. --ttl 7200 --type A $STATIC_IP
+gcloud dns record-sets transaction execute --zone=workbenchdata-com

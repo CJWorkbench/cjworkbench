@@ -36,8 +36,8 @@ describe('SortColumns', () => {
 
   it('Should call onChange when params added', () => {
     const w = wrapper({})
-    w.find('.react-select__dropdown-indicator').simulate('mousedown', { type: 'mousedown', button: 0 }) // open menu
-    w.find('.react-select__option').at(0).simulate('click') // Select column 'A'
+    w.find('div.react-select__dropdown-indicator').simulate('mousedown', { type: 'mousedown', button: 0 }) // open menu
+    w.find('div.react-select__option').at(0).simulate('click') // Select column 'A'
 
     expect(w.prop('onChange')).toHaveBeenCalledWith([{ colname: 'A', is_ascending: true }])
   })

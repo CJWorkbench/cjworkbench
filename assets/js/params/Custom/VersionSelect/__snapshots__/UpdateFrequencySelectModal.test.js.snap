@@ -189,27 +189,27 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                                       <option
                                         value="weeks"
                                       >
-                                        [object Object]
+                                        weeks
                                       </option>
                                       <option
                                         value="days"
                                       >
-                                        [object Object]
+                                        days
                                       </option>
                                       <option
                                         value="hours"
                                       >
-                                        [object Object]
+                                        hours
                                       </option>
                                       <option
                                         value="minutes"
                                       >
-                                        [object Object]
+                                        minutes
                                       </option>
                                       <option
                                         value="seconds"
                                       >
-                                        [object Object]
+                                        seconds
                                       </option>
                                     </select>
                                     <div
@@ -402,6 +402,7 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                               >
                                 <WithI18n
                                   defaults="Auto"
+                                  description="Refers to 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title'"
                                   id="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.auto.label"
                                 >
                                   <I18n
@@ -410,6 +411,7 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                                   >
                                     <Trans
                                       defaults="Auto"
+                                      description="Refers to 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title'"
                                       i18n={
                                         Object {
                                           "_": [Function],
@@ -578,42 +580,27 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                                     <option
                                       value="weeks"
                                     >
-                                      <WithI18n
-                                        defaults="weeks"
-                                        id="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.weeks.option"
-                                      />
+                                      weeks
                                     </option>
                                     <option
                                       value="days"
                                     >
-                                      <WithI18n
-                                        defaults="days"
-                                        id="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.days.option"
-                                      />
+                                      days
                                     </option>
                                     <option
                                       value="hours"
                                     >
-                                      <WithI18n
-                                        defaults="hours"
-                                        id="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.hours.option"
-                                      />
+                                      hours
                                     </option>
                                     <option
                                       value="minutes"
                                     >
-                                      <WithI18n
-                                        defaults="minutes"
-                                        id="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.minutes.option"
-                                      />
+                                      minutes
                                     </option>
                                     <option
                                       value="seconds"
                                     >
-                                      <WithI18n
-                                        defaults="seconds"
-                                        id="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.seconds.option"
-                                      />
+                                      seconds
                                     </option>
                                   </select>
                                   <div
@@ -693,6 +680,7 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                               >
                                 <WithI18n
                                   defaults="Manual"
+                                  description="Refers to 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title'"
                                   id="js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual.label"
                                 >
                                   <I18n
@@ -701,6 +689,7 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                                   >
                                     <Trans
                                       defaults="Manual"
+                                      description="Refers to 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title'"
                                       i18n={
                                         Object {
                                           "_": [Function],

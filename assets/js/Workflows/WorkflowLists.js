@@ -73,7 +73,7 @@ const TemplatesWorkflowList = React.memo(function TemplatesWorkflowList ({ workf
       {workflows.length > 0 ? (
         <WorkflowList workflows={workflows} {...props} deleteWorkflow={null} />
       ) : (
-        <div className='placeholder'><Trans id='js.Workflows.WorkflowLists.publisheNewRecipes'>Publishe new recipes via the Django admin</Trans> </div>
+        <div className='placeholder'><Trans id='js.Workflows.WorkflowLists.publishNewRecipes'>Publish new recipes via the Django admin</Trans> </div>
       )}
     </TabPane>
   )
@@ -109,7 +109,7 @@ function WorkflowLists ({ workflows, deleteWorkflow, duplicateWorkflow, openShar
       <div className='nav'>
         <ul className='workflow-tabs' id='workflow-tabs' role='tablist'>
           <Tab {...tabProps('owned')}><Trans id='js.Workflows.WorkflowLists.nav.myWorkflows'>My workflows</Trans></Tab>
-          <Tab {...tabProps('shared')}><Trans id='js.Workflows.WorkflowLists.nav.sharedWithMe'>Shared with me</Trans></Tab>
+          <Tab {...tabProps('shared')}><Trans id='js.Workflows.WorkflowLists.nav.sharedWithMe' description="As in 'Workflows shared with me'">Shared with me</Trans></Tab>
           <Tab {...tabProps('templates')}><Trans id='js.Workflows.WorkflowLists.nav.recipes'>Recipes</Trans></Tab>
         </ul>
         <SortMenu comparator={comparator} setComparator={setComparator} />

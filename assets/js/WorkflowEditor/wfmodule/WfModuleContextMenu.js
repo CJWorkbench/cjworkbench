@@ -14,7 +14,7 @@ const WfModuleContextMenu = React.memo(function WfModuleContextMenu ({ i18n, rem
 
   return (
     <UncontrolledDropdown>
-      <DropdownToggle title={i18n._(t('js.WorkflowEditor.wfmodule.WfModuleContextMenu.more')`more`)} className='context-button'>
+      <DropdownToggle title={i18n._(/* i18n: When clicked, this opens a menu with more actions. */t('js.WorkflowEditor.wfmodule.WfModuleContextMenu.more.hoverText')`more`)} className='context-button'>
         <i className='icon-more' />
       </DropdownToggle>
       <DropdownMenu>

@@ -179,14 +179,7 @@ def _read_pylist(column: pyarrow.ChunkedArray) -> List[Any]:
         #
         # If someone complains, then we should change our API to pass int64
         # instead of datetime.datetime.
-        pylist = [None if v is None else v.to_pydatetime() for v in pylist]
-    elif pyarrow.types.is_floating(dtype):
-        # Pandas does not differentiate between NaN and None; so in effect,
-        # neither do we. Numeric tables can have NaN and never None;
-        # timestamp and String columns can have None and never NaT; int
-        # columns cannot have NaN or None.
-        nan = float("nan")
-        pylist = [nan if v is None else v for v in pylist]
+        pylist = [None if v is None else v.to_pydatetime(warn=False) for v in pylist]
     return pylist
 
 
@@ -205,7 +198,8 @@ def read_pydict(
 
     Missing rows and columns are ignored.
 
-    `NaN` is returned as float("nan").
+    `NaN` is returned as `float("nan")`, but `None` is returned as `None`.
+    Caller beware: a Parquet column can contain both!
     """
     assert only_columns.step == 1
     assert only_columns.start >= 0

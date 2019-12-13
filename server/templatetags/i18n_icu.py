@@ -1,7 +1,11 @@
+import logging
 from django import template
 from django.utils.safestring import mark_safe
+from cjworkbench.i18n import default_locale
 from cjworkbench.i18n.trans import trans_html as do_trans_html
 import re
+
+logger = logging.getLogger(__name__)
 
 register = template.Library()
 
@@ -101,9 +105,22 @@ def trans_html(
                 tags[placeholder] = {"tag": tag_name, "attrs": {}}
             continue
 
+    try:
+        locale_id = context["i18n"]["locale_id"]
+    except KeyError as err:
+        # context[i18n] needs to be managed by the caller. And sometimes, the
+        # caller has a bug. (Seen 2019-08-2019-12-06 01:57:19.327 GMT.) We want
+        # Django's exception-handling code to be able to call trans_html().
+        #
+        # Log the message ID. This should help us with debugging.
+        logger.exception(
+            "Missing context['i18n']['locale_id'] translating message_id %s", message_id
+        )
+        locale_id = default_locale
+
     return mark_safe(
         do_trans_html(
-            context["i18n"]["locale_id"],
+            locale_id,
             message_id,
             default=default,
             context=ctxt,
