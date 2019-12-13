@@ -10,7 +10,7 @@ def _make_module_spec(spec: Dict[str, Any]):
     return ModuleSpec(**spec)
 
 
-class BuildSourceCatalogTest(CatalogTest):
+class BuildSourceCatalogSpecTest(CatalogTest):
     def test_only_required(self):
         spec = _make_module_spec(
             {
@@ -554,4 +554,37 @@ class BuildSourceCatalogTest(CatalogTest):
             "_spec.parameters.hello.child_parameters.hello2.name",
             string="Hello there 2!",
         )
+        self.assertCatalogsDeeplyEqual(result, expected)
+
+    def test_ignore_empty(self):
+        spec = _make_module_spec(
+            {
+                "id_name": "testme",
+                "name": "Test Module",
+                "description": "",
+                "category": "Clean",
+                "parameters": [
+                    {
+                        "id_name": "hello",
+                        "type": "list",
+                        "name": "",
+                        "child_parameters": [
+                            {"id_name": "hello2", "type": "statictext", "name": ""}
+                        ],
+                    },
+                    {
+                        "id_name": "hello3",
+                        "type": "string",
+                        "name": "Hello there!",
+                        "placeholder": "",
+                        "multiline": True,
+                        "default": "",
+                    },
+                ],
+            }
+        )
+        result = _build_source_catalog(spec)
+        expected = Catalog("en")
+        expected.add("_spec.name", string="Test Module")
+        expected.add("_spec.parameters.hello3.name", string="Hello there!")
         self.assertCatalogsDeeplyEqual(result, expected)
