@@ -4,8 +4,8 @@ import AceEditor from 'react-ace/lib/ace'
 import memoize from 'memoize-one'
 import { Trans } from '@lingui/macro'
 
-import 'brace/mode/python'
-import 'brace/theme/xcode'
+import 'ace-builds/src-noconflict/mode-python'
+import 'ace-builds/src-noconflict/theme-xcode'
 
 // Globals -- so each render(), they're equal according to ===
 const EditorProps = {
@@ -17,7 +17,7 @@ export default class WorkbenchAceEditor extends React.PureComponent {
   static propTypes = {
     // When isZenMode changes, we'll call componentDidUpdate()
     isZenMode: PropTypes.bool.isRequired,
-    wfModuleError: PropTypes.string, // hopefully null or empty
+    wfModuleOutputError: PropTypes.string, // hopefully null or empty
     name: PropTypes.string.isRequired,
     value: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired // func(value) => undefined
@@ -53,8 +53,8 @@ export default class WorkbenchAceEditor extends React.PureComponent {
     })
   }
 
-  getAnnotations = memoize(wfModuleError => {
-    const m = /^Line (\d+): (.*)/.exec(wfModuleError)
+  getAnnotations = memoize(wfModuleOutputError => {
+    const m = /^Line (\d+): (.*)/.exec(wfModuleOutputError)
     if (!m) {
       return []
     } else {
@@ -70,7 +70,7 @@ export default class WorkbenchAceEditor extends React.PureComponent {
 
   // Render editor
   render () {
-    const { value, onChange, isZenMode, wfModuleError } = this.props
+    const { value, onChange, isZenMode, wfModuleOutputError } = this.props
 
     return (
       <>
@@ -94,8 +94,8 @@ export default class WorkbenchAceEditor extends React.PureComponent {
               mode='python'
               theme='xcode'
               wrapEnabled
-              annotations={this.getAnnotations(wfModuleError)}
-              showGutter={isZenMode}
+              annotations={this.getAnnotations(wfModuleOutputError)}
+              showGutter={isZenMode /* false hides annotations */}
               name='code-editor'
               onChange={onChange}
               value={value}

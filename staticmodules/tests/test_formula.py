@@ -179,9 +179,9 @@ class FormulaTests(unittest.TestCase):
         expected_error: str = "",
     ):
         result = ProcessResult.coerce(formula.render(table, P(**params)))
-        expected = ProcessResult(expected_table, expected_error)
+        expected = ProcessResult.coerce((expected_table, expected_error))
 
-        self.assertEqual(result.error, expected.error)
+        self.assertEqual(result.errors, expected.errors)
         assert_frame_equal(result.dataframe, expected.dataframe)
 
     def test_python_formula_int_output(self):

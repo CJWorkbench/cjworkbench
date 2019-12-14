@@ -98,6 +98,7 @@ spec:
             - status
           initialDelaySeconds: 60
           timeoutSeconds: 30
+          periodSeconds: 90  # rabbitmqctl costs mad CPU
         readinessProbe:
           exec:
             command:
@@ -105,6 +106,7 @@ spec:
             - status
           initialDelaySeconds: 20
           timeoutSeconds: 30
+          periodSeconds: 90  # rabbitmqctl costs mad CPU
         lifecycle:
           postStart:
             exec:

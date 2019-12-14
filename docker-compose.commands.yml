@@ -39,7 +39,6 @@ services:
         source: ../${MODULE:-x}/
         target: /${MODULE:-x}/
         consistency: cached
-        read_only: true
       - virtualenvs:/root/.local/share/virtualenvs/:rw
     security_opt:
       - seccomp=docker/pyspawner-seccomp-profile.json

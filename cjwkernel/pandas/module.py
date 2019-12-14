@@ -166,12 +166,13 @@ def render_arrow(
             fetch_result.path
         ):
             fetched_table = __parquet_to_pandas(fetch_result.path)
-            if fetch_result.errors:
-                assert fetch_result.errors[0].message.id == "TODO_i18n"
-                error = fetch_result.errors[0].message.args["text"]
-            else:
-                error = ""
-            pandas_fetch_result = ptypes.ProcessResult(fetched_table, error)
+            pandas_fetch_result = ptypes.ProcessResult(
+                fetched_table,
+                [
+                    ptypes.ProcessResultError.from_arrow(error)
+                    for error in fetch_result.errors
+                ],
+            )
         else:
             pandas_fetch_result = fetch_result
     else:
