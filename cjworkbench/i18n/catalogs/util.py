@@ -55,6 +55,28 @@ def find_fuzzy_messages(
     return frozenset(fuzzy)
 
 
+def copy_message(message: Message, **kwargs) -> Message:
+    """Copies a message, replacing any of its attributes given in kwargs
+    """
+    return Message(
+        **{
+            "id": kwargs.get("id", message.id),
+            "context": kwargs.get("context", message.context),
+            "string": kwargs.get("string", message.string),
+            "flags": kwargs.get("flags", message.flags),
+            "locations": kwargs.get("locations", message.locations),
+            "user_comments": kwargs.get("user_comments", message.user_comments),
+            "auto_comments": kwargs.get("auto_comments", message.auto_comments),
+        }
+    )
+
+
+def add_or_update_message(catalog: Catalog, message: Message):
+    if find_corresponding_message(catalog, message):
+        catalog.delete(message.id, context=message.context)
+    catalog[message.id] = message
+
+
 def fill_catalog(
     target_catalog: Catalog,
     id_source_catalog: Catalog,
@@ -66,6 +88,8 @@ def fill_catalog(
     except for its string which will be taken 
       - from string_source_catalog if not empty
       - else from target_catalog itself
+      
+    Only target catalog is modified
     """
     for message in id_source_catalog:
         if message.id:  # ignore header
@@ -74,8 +98,9 @@ def fill_catalog(
                 or find_corresponding_string(target_catalog, message)
                 or ""
             )
-            target_catalog[message.id] = message
-            target_catalog[message.id].string = new_string
+            add_or_update_message(
+                target_catalog, copy_message(message, string=new_string)
+            )
 
 
 def mark_fuzzy(
