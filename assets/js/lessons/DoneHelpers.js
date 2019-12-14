@@ -127,6 +127,11 @@ export class WorkflowModuleWithHelpers {
     return this.wfModule.params
   }
 
+  get secrets () {
+    if (!this.wfModule) return {}
+    return this.wfModule.secrets
+  }
+
   get selectedVersion () {
     if (!this.wfModule) return null
     const versions = this.wfModule.versions

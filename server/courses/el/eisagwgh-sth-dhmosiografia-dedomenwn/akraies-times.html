@@ -1,0 +1,108 @@
+<header>
+  <h1>Ανεύρεση των μεγαλύτερων παραγωγών εκπομπών CO2</h1>
+  <p>Επεξεργαστείτε τα δεδομένα για τις διεθνείς εκπομπές CO<sub>2</sub> και μάθετε πώς να βρίσκετε τις μεγαλύτερες και τις μικρότερες τιμές στα δεδομένα σας.</p><img src="./banner.svg"></header>
+
+<section class="fullscreen">
+  <h2> </h2>
+  <p>Πολλές ιστορίες βασίζονται σε μέγιστες και ελάχιστες τιμές. Αυτή είναι η ιδέα πίσω από ερωτήματα όπως: Ποιο είναι το πιο ακριβό στοιχείο του προϋπολογισμού; Ποια είναι η ασφαλέστερη πόλη; Ποιο σχολείο έχει τις καλύτερες επιδόσεις στις εξετάσεις;</p>
+  <p>Επεξεργαστείτε τα δεδομένα για τις διεθνείς εκπομπές CO<sub>2</sub> και μάθετε πώς να βρίσκετε τις μεγαλύτερες και τις μικρότερες τιμές στα δεδομένα σας.</p>
+</section>
+
+<script id="initialWorkflow">
+tabs:
+- name: Lesson
+  wfModules:
+  - module: loadurl
+    slug: step-loadurl
+    params:
+      url: ./international-CO2-emission.csv
+    collapsed: true
+    note: "Source: U.S. Energy Information Administration. Units: Million Metric Tons"
+</script>
+
+<section>
+  <h2>Δεδομένα</h2>
+  <p>Ο πίνακας που φορτώθηκε στο 1ο βήμα είναι ένα μεγαλύτερο δείγμα του συνόλου δεδομένων για τις διεθνείς εκπομπές CO<sub>2</sub> που χρησιμοποιήσαμε στο προηγούμενο μάθημα. Τα δεδομένα δημοσιεύτηκαν από την Αμερικάνικη Υπηρεσία Ενεργειακής Πληροφόρησης <a class="highlight" href='https://www.eia.gov/beta/international/data/browser/#/?pa=00000000000000000000000000000000000000000000000000000001&amp;c=ruvvvvvfvtvnvv1urvvvvfvvvvvvfvvvou20evvvvvvvvvnvvuvs&amp;ct=0&amp;tl_id=40-A&amp;vs=INTL.4008-8-AFG-MMTCD.A&amp;cy=2014&amp;vo=0&amp;v=C&amp;end=2016' target="_blank" className="info-1">εδώ</a>. Η μονάδα μέτρησης είναι η MMT (Million Metric Tons = εκατομμύρια μετρικοί τόνοι).</p>
+  <p>Ποια είναι η μεγαλύτερη ποσότητα CO<sub>2</sub> που εξέπεμψε κάθε χώρα στη διάρκεια ενός έτους;</p>
+  <h3 class="instructions">Οδηγίες</h3>
+  <ol class="steps">
+    <li
+      data-test="return workflow.tabs[0].wfModuleSlugs[1] === 'calculate'"
+      >Προσθέστε ένα βήμα <kbd>Υπολογισμός</kbd> .</li>
+    <li
+      data-test="return workflow.tabs[0].wfModules[1].params.operation === 'maximum'"
+      >Ορίστε τη λειτουργία στην επιλογή <kbd>Μέγιστο</kbd></li>
+    <li
+      data-test="
+        const want_cols = '2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016'
+        const have_cols = workflow.tabs[0].wfModules[1].params.colnames
+
+        return have_cols.sort().join(',') === want_cols"
+      >Διαλέξτε όλες τις στήλες ετών που είναι διαθέσιμες</li>
+    <li
+      data-test="return workflow.tabs[0].wfModules[1].params.outcolname.toLowerCase() === 'maximum 2000-2016'"
+      >Ορίστε το όνομα της στήλης εξόδου ως <kbd>Maximum 2000-2016</kbd><p class="instruction-detail">Η νέα στήλη εμφανίζεται στο δεξιό άκρο του πίνακα. Δείχνει τη μέγιστη τιμή κάθε σειράς, έτσι ώστε να έχετε τη μέγιστη τιμή για κάθε χώρα.</p>
+    </li>
+  </ol>
+</section>
+<section>
+  <h2>Ταξινόμηση</h2>
+  <p>Με το βήμα Υπολογισμός μπορούμε να βρούμε τις ακραίες τιμές σειρών. Για να βρείτε τις ακραίες τιμές μιας στήλης, μπορείτε απλώς να ταξινομήσετε τον πίνακα.</p>
+  <p>Ποια χώρα είχε τις μεγαλύτερες τιμές εκπομπών στη διάρκεια ενός έτους;</p>
+
+  <h3 class="instructions">Οδηγίες</h3>
+  <p class="instruction-detail">Πρώτα απ&apos; όλα, ας κάνουμε ευκολότερη την πλοήγηση στον πίνακα.</p>
+  <ol class="steps">
+    <li
+      data-test="
+        const tab = workflow.tabs[0]
+        return (
+          tab.wfModuleSlugs[2] === 'selectcolumns'
+          && tab.wfModules[2].params.colnames.sort().join('|').toLowerCase() === 'continent|country|maximum 2000-2016'
+        )
+      ">Προσθέστε <kbd>Επιλογή στηλών</kbd>. Διατηρήστε τις στήλες <kbd>Country</kbd>, <kbd>Continent</kbd> και <kbd>Maximum 2000-2016</kbd></li>
+    <li
+      data-test="
+        if (workflow.tabs[0].wfModuleSlugs[3] !== 'sort')
+          return false
+
+        const sort_columns = workflow.tabs[0].wfModules[3].params.sort_columns
+        return sort_columns.length >= 1 &&
+               !sort_columns[0].is_ascending"
+      >Χρησιμοποιώντας το μενού στηλών <span><img class="icon-insert" src="images/lesson-icons/menu.svg"></span>, ταξινομήστε τη στήλη <kbd>Maximum 2000-2016</kbd> σε φθίνουσα σειρά.</li>
+  </ol>
+</section>
+<section>
+  <h2>Ταξινόμηση βάσει πολλαπλών στηλών</h2>
+  <p>Σε κάθε ήπειρο, ποια χώρα εκπέμπει τη μεγαλύτερη ποσότητα CO<sub>2</sub>; Για να το ανακαλύψουμε θα πρέπει να ταξινομήσουμε πρώτα βάσει Ηπείρου και κατόπιν βάσει Χώρας.</p>
+  <h3 class="instructions">Οδηγίες</h3>
+  <ol class="steps">
+    <li
+      data-test="
+        const sort_columns = workflow.tabs[0].wfModules[3].params.sort_columns
+        return sort_columns[0] && sort_columns[0].colname === 'Continent'"
+      >Στην υπάρχουσα ταξινόμηση του 4ου βήματος, επεξεργαστείτε τη ρύθμισή σας για να ταξινομήσετε βάσει <kbd>Continent</kbd></li>
+    <li
+      data-test="
+        const sort_columns = workflow.tabs[0].wfModules[3].params.sort_columns
+        return sort_columns.length > 1 &&
+               sort_columns[1].colname.toLowerCase() === 'maximum 2000-2016' &&
+               !sort_columns[1].is_ascending"
+      >Προσθέστε δεύτερη ταξινόμηση κάνοντας κλικ στην +ΠΡΟΣΘΗΚΗ και αυτή τη φορά ταξινομήστε βάσει <kbd>Maximum 2000-2016</kbd> σε φθίνουσα σειρά.</li>
+    <li
+      data-test="return workflow.tabs[0].wfModules[3].params.keep_top === '1'"
+      >Κρατήστε <kbd>την 1η πάνω σειρά</kbd> κάτω από τη δεύτερη ταξινόμηση για να κρατήσετε μία χώρα ανά ήπειρο.</li>
+  </ol>
+</section>
+<footer>
+  <h2>Εδώ τελειώνει το μάθημα!</h2>
+  <div class="completed">
+    <p class="summary">Στη συνέχεια, ας κοιτάξουμε μερικούς τύπους γραφημάτων και ας οπτικοποιήσουμε τα δεδομένα.</p>
+  </div>
+  <div class="next">
+    <h2>Επόμενο</h2>
+    <ol>
+      <li><a href="grafhmata">Γραφήματα στηλών και γραφήματα γραμμών</a></li>
+    </ol>
+  </div>
+</footer>

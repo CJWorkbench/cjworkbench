@@ -1,0 +1,116 @@
+<header>
+  <h1>Πρώτη ιστορία</h1>
+  <p>Μάθετε για τις πρώτες ερωτήσεις που θα πρέπει να απευθύνετε στα δεδομένα σας πριν ξεκινήσετε την ανάλυσή σας και δημιουργήσετε το πρώτο σας γράφημα.</p><img src="./banner.svg" ></header>
+
+<script id="initialWorkflow">
+tabs:
+- name: Lesson
+  wfModules:
+  - module: loadurl
+    slug: step-loadurl
+    params:
+      url: ./largest-co2-producers.csv
+    collapsed: true
+    note: "Source: U.S. Energy Information Administration. Units: Million Metric Tons"
+</script>
+
+<section class="fullscreen">
+  <h2>Καλωσορίσατε!</h2>
+  <p>Σε αυτό το πρώτο μάθημα θα εξετάσουμε τις πρώτες ερωτήσεις που θα πρέπει να κάνετε σχετικά με όλα τα δεδομένα προτού ξεκινήσετε την ανάλυσή σας. Στη συνέχεια θα χρησιμοποιήσουμε τα δεδομένα για τις διεθνείς εκπομπές CO<sub>2</sub> για να δημιουργήσουμε μια πλήρη ιστορία, η οποία θα περιλαμβάνει ανάλυση και οπτικοποίηση.</p>
+  <figure><img class="full-width" alt="Εξέταση στοιχείου" src="./end-result.jpg"></figure>
+</section>
+
+<section>
+  <h2>Ανάλυση των δεδομένων</h2>
+  <p>Στο 1ο βήμα, κάναμε προφόρτωση δεδομένων για τις διεθνείς εκπομπές CO<sub>2</sub> τα οποία δημοσιεύτηκαν από την Αμερικάνικη Υπηρεσία Πληροφόρησης για την Ενέργεια (U.S. Energy Information Administration) <a class="highlight" href='https://www.eia.gov/beta/international/data/browser/#/?pa=00000000000000000000000000000000000000000000000000000001&amp;c=ruvvvvvfvtvnvv1urvvvvfvvvvvvfvvvou20evvvvvvvvvnvvuvs&amp;ct=0&amp;tl_id=40-A&amp;vs=INTL.4008-8-AFG-MMTCD.A&amp;cy=2014&amp;vo=0&amp;v=C&amp;end=2016' target="_blank" className="info-1">εδώ</a>. Η μονάδα μέτρησης είναι η MMT (Million Metric Tons = εκατομμύρια μετρικοί τόνοι).</p>
+  <h3 class="instructions">Οδηγίες</h3>
+  <p class="instruction-detail">Κοιτάξτε αυτόν τον πίνακα και απαντήστε τις ακόλουθες ερωτήσεις για δικό σας λογαριασμό:</p>
+  <ul>
+    <li>Τι αντιπροσωπεύει κάθε σειρά;</li>
+    <li>Τι υπάρχει σε κάθε στήλη;</li>
+    <li>Υπάρχουν στήλες, τιμές ή κωδικοί που δεν καταλαβαίνετε;</li>
+    <li>Υπάρχουν κενές ή εμφανώς λανθασμένες τιμές;</li>
+    <li>Χρειάζεται να καθαριστούν τα δεδομένα;</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Καθάρισμα</h2>
+  <p>Υπάρχει μια κενή τιμή στη στήλη <kbd>Continent (Ήπειρος)</kbd> . Μπορείτε να προσθέσετε ή να επεξεργαστείτε δεδομένα με διπλό κλικ σε ένα κελί.</p>
+  <h3 class="instructions">Οδηγίες</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[]'
+      data-test="
+        const wfm = workflow.tabs[0].wfModules[1];
+        if (!wfm || wfm.moduleSlug !== 'editcells')
+          return false;
+        const edits = wfm.params.celledits;
+        return edits.find((e) => e.row === 3 && e.col === 'Continent' && e.value === 'AS')"
+      >Στον πίνακα κάντε διπλό κλικ στο κενό κελί δίπλα στην <kbd>India</kbd> και πληκτρολογήστε τον κωδικό για την Ασία, που είναι <kbd>AS</kbd> σε αυτό το σύνολο δεδομένων.<p class="instruction-detail">Σημειώστε ότι το νέο βήμα προστέθηκε στη ροή εργασίας σας στη θέση 2, με καταγραφή των τροποποιήσεων που κάνατε.</p>
+    <p class="instruction-detail">Το Workbench καταγράφει κάθε τροποποίηση που γίνεται για να μπορείτε να επαναφέρετε μια προηγούμενη έκδοση. Για να δείτε τα δεδομένα πριν από την πρόσφατη τροποποίηση, κάντε κλικ στο βήμα 1.</p>
+    </li>
+  </ol>
+</section>
+<section>
+  <h2>Μέσες τιμές</h2>
+  <p>Ένα από τα πιο βασικά πράγματα που μπορείτε να κάνετε με τα δεδομένα είναι να τα περιγράψετε ή να τα συνοψίσετε. Ο μέσος όρος είναι ένας τρόπος υπολογισμού μιας &quot;τυπικής&quot; τιμής.</p>
+  <p>Έστω ότι ρωτάμε &quot;Ποιος είναι ο όγκος CO<sub>2</sub> που εκπέμπει κάθε χώρα στη διάρκεια ενός έτους;&quot; Οι εκπομπές CO<sub>2</sub> κυμαίνονται και έτσι, αντί να χρησιμοποιήσουμε μόνο τα δεδομένα του τελευταίου έτους, θα υπολογίσουμε τον μέσο όρο για τα τελευταία τέσσερα χρόνια που διαθέτουμε.</p>
+  <p>Ο μέσος όρος είναι το άθροισμα όλων των τιμών όταν διαιρείται με το πλήθος των τιμών:</p>
+  <div class="copy-txt">=(Τιμή 1+Τιμή 2+...+Τιμή N) / N</div>
+  <p class="instruction-detail">Σε αυτό το μάθημα θα χρησιμοποιήσουμε ένα βήμα υπολογισμού για να εφαρμόσουμε αυτόν τον τύπο χωρίς να χρειάζεται να τον πληκτρολογήσουμε.</p>
+  <h3 class="instructions">Οδηγίες</h3>
+
+  <ol class="steps">
+    <li
+      data-highlight='[]'
+      data-test="return workflow.tabs[0].wfModuleSlugs[2] === 'calculate'"
+      >Κάνε κλικ στην <kbd>Προσθήκη βήματος</kbd>, πληκτρολογήστε <kbd>Υπολογισμός</kbd> στο πλαίσιο αναζήτησης και επιλέξτε το βήμα</li>
+    <li
+      data-highlight='[]'
+      data-test="return workflow.tabs[0].wfModules[2].params.operation === 'mean'"
+      >Ορίστε τη λειτουργία στην επιλογή <kbd>Μέσος όρος:</kbd><p class="instruction-detail">Κάντε κλικ στο κουμπί <span><img class="icon-insert" src="images/lesson-icons/play.svg"></span> για να εφαρμόσετε τις αλλαγές όταν χρειάζεται.</p>
+    </li>
+    <li
+      data-highlight='[]'
+      data-test="return workflow.tabs[0].wfModules[2].params.colnames.sort().join(',') === '2013,2014,2015,2016'"
+      >Κατά το βήμα Υπολογισμός επιλέξετε τις στήλες <kbd>2013</kbd>, <kbd>2014</kbd>,<kbd>2015</kbd> και <kbd>2016</kbd>.</li>
+    <li
+      data-highlight='[]'
+      data-test="return workflow.tabs[0].wfModules[2].params.outcolname.toLowerCase() === 'μέσος όρος 2013-2016'"
+      >Ονομάστε τη στήλη εξόδου <kbd>Μέσος όρος 2013-2016</kbd><p class="instruction-detail">Η νέα στήλη θα εμφανιστεί στο δεξιό άκρο του πίνακα.</p>
+    </li>
+  </ol>
+</section>
+<section>
+  <h2>Πρώτο γράφημα</h2>
+  <p>Πολλές ιστορίες βασισμένες σε δεδομένα χρησιμοποιούν γραφήματα. Μπορείτε να προσθέσετε ένα βήμα Γράφημα για να δείτε τα περιεχόμενα ενός πίνακα με τη μορφή γραφήματος.</p>
+  <p>Ας οπτικοποιήσουμε τους μέσους όρους που μόλις υπολογίσαμε.</p>
+  <h3 class="instructions">Οδηγίες</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[]'
+      data-test="return workflow.tabs[0].wfModuleSlugs[3] === 'columnchart'"
+      >Κάνε κλικ στο <kbd>Προσθήκη βήματος</kbd> και επιλέξτε <kbd>Γράφημα στηλών</kbd></li>
+    <li
+      data-highlight='[]'
+      data-test="return workflow.tabs[0].wfModules[3].params.x_column === 'Country'"
+      >Επιλέξτε τη στήλη <kbd>Country</kbd> για τον άξονα X.</li>
+    <li
+      data-highlight='[]'
+      data-test="return (workflow.tabs[0].wfModules[3].params.y_columns[0] || {column:''}).column.toLowerCase() === 'μέσος όρος 2013-2016'"
+      >Επιλέξτε τη στήλη <kbd>Μέσος όρος 2013-2016</kbd> για τον άξονα Y.</li>
+  </ol>
+</section>
+<footer>
+  <h2>Εδώ τελειώνει το μάθημα!</h2>
+  <div class="completed">
+    <p class="summary">Συγχαρητήρια, ολοκληρώσατε την πρώτη ιστορία που βασίζεται σε δεδομένα. <br><br> Στα επόμενα μαθήματα, θα μάθετε πώς να κάνετε εξαγωγή ζωντανών γραφημάτων και να δημιουργείτε πιο προχωρημένες οπτικοποιήσεις.<br><br> Στο αμέσως επόμενο, ας μάθουμε για τις ακραίες τιμές.</p>
+  </div>
+  <div class="next">
+    <h3>Επόμενο</h3>
+    <ol>
+      <li><a href="akraies-times">Ακραίες και μέσες τιμές</a></li>
+    </ol>
+  </div>
+</footer>

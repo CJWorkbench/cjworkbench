@@ -446,33 +446,33 @@ describe('WfModule, not read-only mode', () => {
     })
 
     it('highlights a WfModule', () => {
-      highlight([{ type: 'WfModule', index: 1, moduleName: 'Load from URL' }])
+      highlight([{ type: 'WfModule', index: 1, moduleIdName: 'loadurl' }])
       expect(wrapper.find('.wf-module').prop('className')).toMatch(/\blesson-highlight\b/)
     })
 
     it('unhighlights a WfModule', () => {
       // wrong name
-      highlight([{ type: 'WfModule', index: 1, moduleName: 'TestModule2' }])
+      highlight([{ type: 'WfModule', index: 1, moduleIdName: 'TestModule2' }])
       expect(wrapper.find('.wf-module').prop('className')).not.toMatch(/\blesson-highlight\b/)
     })
 
     it('highlights the "collapse" button', () => {
-      highlight([{ type: 'WfModuleContextButton', index: 1, moduleName: 'Load from URL', button: 'collapse' }])
+      highlight([{ type: 'WfModuleContextButton', index: 1, moduleIdName: 'loadurl', button: 'collapse' }])
       expect(wrapper.find('i.context-collapse-button').prop('className')).toMatch(/\blesson-highlight\b/)
     })
 
     it('unhighlights the "collapse" button', () => {
-      // wrong moduleName
-      highlight([{ type: 'WfModuleContextButton', index: 1, moduleName: 'TestModule2', button: 'collapse' }])
+      // wrong moduleIdName
+      highlight([{ type: 'WfModuleContextButton', index: 1, moduleIdName: 'TestModule2', button: 'collapse' }])
       expect(wrapper.find('i.context-collapse-button').prop('className')).not.toMatch(/\blesson-highlight\b/)
 
       // wrong button
-      highlight([{ type: 'WfModuleContextButton', index: 1, moduleName: 'Load from URL', button: 'notes' }])
+      highlight([{ type: 'WfModuleContextButton', index: 1, moduleIdName: 'loadurl', button: 'notes' }])
       expect(wrapper.find('i.context-collapse-button').prop('className')).not.toMatch(/\blesson-highlight\b/)
     })
 
     it('highlights the notes button', () => {
-      highlight([{ type: 'WfModuleContextButton', index: 1, moduleName: 'Load from URL', button: 'notes' }])
+      highlight([{ type: 'WfModuleContextButton', index: 1, moduleIdName: 'loadurl', button: 'notes' }])
       expect(wrapper.find('button.edit-note').prop('className')).toMatch(/\blesson-highlight\b/)
     })
 

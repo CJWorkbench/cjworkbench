@@ -608,7 +608,6 @@ function mapStateToProps (state, ownProps) {
   const { index } = ownProps
   const moduleIdName = ownProps.wfModule.module || null
   const module = moduleIdName ? state.modules[moduleIdName] : null
-  const moduleName = module ? module.name : null
   const fetchIndex = firstFetchIndex(state)
 
   return {
@@ -616,9 +615,9 @@ function mapStateToProps (state, ownProps) {
     tabs: getTabs(state),
     currentTab: getCurrentTab(state).slug,
     isZenModeAllowed: module ? !!module.has_zen_mode : false,
-    isLessonHighlight: testHighlight({ type: 'WfModule', index, moduleName }),
-    isLessonHighlightCollapse: testHighlight({ type: 'WfModuleContextButton', button: 'collapse', index, moduleName }),
-    isLessonHighlightNotes: testHighlight({ type: 'WfModuleContextButton', button: 'notes', index, moduleName }),
+    isLessonHighlight: testHighlight({ type: 'WfModule', index, moduleIdName }),
+    isLessonHighlightCollapse: testHighlight({ type: 'WfModuleContextButton', button: 'collapse', index, moduleIdName }),
+    isLessonHighlightNotes: testHighlight({ type: 'WfModuleContextButton', button: 'notes', index, moduleIdName }),
     isReadOnly: state.workflow.read_only,
     isAnonymous: state.workflow.is_anonymous,
     workflowId: state.workflow.id,

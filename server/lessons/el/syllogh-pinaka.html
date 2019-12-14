@@ -1,0 +1,57 @@
+<header>
+  <h1>III. Συλλογή πίνακα από ιστοσελίδα</h1>
+  <p>Φορτώστε και αποθηκεύστε πίνακες HTML χρησιμοποιώντας το URL της σελίδας και τη θέση</p><img src="./banner.svg" alt=""></header>
+<section>
+  <h2>Επισκόπηση</h2>
+  <p>Σε αυτό το μάθημα θα μάθετε πώς να συλλέγετε πίνακες HTML που δεν διατίθενται για κατέβασμα, χρησιμοποιώντας τη διεύθυνση URL και τη θέση τους στη σελίδα.</p>
+</section>
+<section>
+  <h2>1. Φόρτωση πίνακα HTML</h2>
+  <p>Ας συλλέξουμε το σύνολο δεδομένων <a href="https://en.wikipedia.org/wiki/Global_Gender_Gap_Report" class="highlight" target="_blank">Global Gender Gap Index rankings</a>, το οποίο δημοσιεύεται στη Wikipedia μαζί με τη σχετική τεκμηρίωση.</p>
+  <h3 class="instructions">Οδηγίες</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"Module","index":0,"id_name":"scrapetable"}]'
+      data-test="return workflow.tabs[0].wfModuleSlugs[0] === 'scrapetable'"
+      >Προσθέστε την πηγή δεδομένων &quot;Συλλογή πίνακα&quot;</li>
+    <li
+      data-highlight='[{"type":"WfModule","moduleIdName":"scrapetable"}]'
+      data-test="const url = workflow.tabs[0].wfModules[0].params.url; return url === 'https://en.wikipedia.org/wiki/Global_Gender_Gap_Report' || url === 'https://en.wikipedia.org/wiki/List_of_countries_by_GDP_(nominal)'"
+      >Επικολλήστε το URL της ιστοσελίδας όπου δημοσιεύεται ο πίνακας.<div class="copy-txt">https://en.wikipedia.org/wiki/Global_Gender_Gap_Report</div>
+      <p class="instruction-detail">Στη σελίδα αυτή υπάρχουν πολλοί πίνακες. Ο πίνακας που θέλετε να συλλέξετε (να &quot;σκραπάρετε&quot;) είναι ο <code>WEF Global Gender Gap Index rankings</code>, ο οποίος είναι ο τρίτος από την αρχή της σελίδας.</p>
+    </li>
+    <li
+      data-highlight='[{"type":"WfModule","moduleIdName":"scrapetable"}]'
+      data-test="return workflow.tabs[0].wfModules[0].params.tablenum === 3"
+      >Ορίστε τη θέση του πίνακα στη σελίδα με <code>3</code> και κάντε κλικ στο <kbd>Συλλογή</kbd><p class="instruction-detail">Όταν φορτώνονται τα δεδομένα, αποθηκεύονται στον Συλλέκτη ως συγκεκριμένη έκδοση. Θα παραμείνουν προσπελάσιμα ακόμα κι αν εξαφανιστεί η ιστοσελίδα με τον πίνακα.</p>
+    </li>
+  </ol>
+</section>
+<section>
+  <h2>2. Καθαρίστε τις διπλές σειρές κεφαλίδων</h2>
+  <p>Ο <a href="https://en.wikipedia.org/wiki/Global_Gender_Gap_Report" class="highlight" target="_blank">πρωτότυπος πίνακας</a> έχει δύο σειρές κεφαλίδων να εμπερικλείονται σε μία:</p>
+  <figure><img alt="Εξέταση στοιχείου" src="./double_header.png"></figure>
+  <p>Όταν συλλέγει δεδομένα από έναν πίνακα HTML, το Workbench συμπτύσσει όλες τις πολλαπλές κεφαλίδες σε μονές κεφαλίδες συνενώνοντας το περιεχόμενο κάθε στήλης.</p>
+  <h3 class="instructions">Οδηγίες</h3>
+  <p>Μετονομάστε την κεφαλίδα μιας στήλης για να είναι ευανάγνωστη</p>
+  <ol class="steps">
+    <li
+      data-highlight='[]'
+      data-test="return workflow.tabs[0].wfModuleSlugs[1] === 'renamecolumns'"
+      >Κάντε κλικ στο όνομα μιας στήλης στην κεφαλίδα του πίνακα για να δώσετε ένα πιο ευανάγνωστο όνομα.<p>Για παράδειγμα: Επεξεργαστείτε το <code>Year[note 1] - 2006</code> σε <code>2006</code>.</p>
+    </li>
+  </ol>
+</section>
+<footer>
+  <h2>Εδώ τελειώνει το μάθημα!</h2>
+  <div class="completed">
+    <p class="summary">Συλλέξατε τους πρώτους σας πίνακες HTML!</p>
+  </div>
+  <div class="next">
+    <h4>Συνεχίστε τα μαθήματα:</h4>
+    <ul>
+      <li><a href="kathariste-vromika-dedomena">Καθαρίστε και τυποποιήστε δεδομένα</a></li>
+      <li><a href="syllogh-me-xpath">Συλλέξτε περιεχόμενο από μια ιστοσελίδα και παρακολουθήστε το</a></li>
+    </ul>
+  </div>
+</footer>

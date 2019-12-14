@@ -59,6 +59,7 @@ msgstr "CSV LINK COPIED TO CLIPBOARD"
 msgid "js.ExportModal.csvCopyLink.copyLiveLink"
 msgstr "COPY LIVE LINK"
 
+#. Acts as closing button
 #: assets/js/ExportModal.js:153
 msgid "js.ExportModal.footer.doneButton"
 msgstr "Done"
@@ -112,6 +113,7 @@ msgstr "Learn about how to build your own module <0>here</0>"
 msgid "js.ImportModuleFromGithub.staff.header.title"
 msgstr "Import Custom Module"
 
+#. This is a success message
 #: assets/js/ImportModuleFromGitHub.js:47
 msgid "js.ImportModuleFromGithub.status.importedModule"
 msgstr "Imported module {module} under category {category}"
@@ -172,10 +174,12 @@ msgstr "Only collaborators can view this report"
 msgid "js.Report.ShareCard.accessibilityDescription.public"
 msgstr "Anyone can view this report"
 
+#. As in 'Edit privacy settings'
 #: assets/js/Report/ShareCard.js:24
 msgid "js.Report.ShareCard.editPrivacy.sharebutton"
 msgstr "Edit privacy"
 
+#. As in 'URL of report'
 #: assets/js/Report/ShareCard.js:27
 msgid "js.Report.ShareCard.reportUrl.header"
 msgstr "Report URL"
@@ -310,23 +314,27 @@ msgstr ""
 "It helps if you can describe what you were doing before you ran into the "
 "bug."
 
-#: assets/js/WfHamburgerMenu.js:56
+#: assets/js/WfHamburgerMenu.js:64
 msgid "js.WfHamburgerMenu.menu.home"
 msgstr "Home"
 
-#: assets/js/WfHamburgerMenu.js:53
+#: assets/js/WfHamburgerMenu.js:61
 msgid "js.WfHamburgerMenu.menu.importModule"
 msgstr "Import Module"
 
-#: assets/js/WfHamburgerMenu.js:59
+#: assets/js/WfHamburgerMenu.js:66
+msgid "js.WfHamburgerMenu.menu.languages"
+msgstr "Languages"
+
+#: assets/js/WfHamburgerMenu.js:68
 msgid "js.WfHamburgerMenu.menu.logout"
 msgstr "Log Out"
 
-#: assets/js/WfHamburgerMenu.js:52
+#: assets/js/WfHamburgerMenu.js:60
 msgid "js.WfHamburgerMenu.menu.myWorkflows"
 msgstr "My Workflows"
 
-#: assets/js/WfHamburgerMenu.js:45
+#: assets/js/WfHamburgerMenu.js:53
 msgid "js.WfHamburgerMenu.toggle.hoverText"
 msgstr "menu"
 
@@ -383,7 +391,7 @@ msgstr "Data Versions"
 
 #: assets/js/WorkflowEditor/DataVersionModal.js:100
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.description.emailOnOutputChange"
-msgstr "You will receive and email if the output of this module changes"
+msgstr "You will receive an email if the output of this module changes"
 
 #: assets/js/WorkflowEditor/DataVersionModal.js:101
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.description.turnAlertsOn"
@@ -470,8 +478,9 @@ msgstr "Learn how to replace this step"
 msgid "js.WorkflowEditor.wfmodule.EditableNotes.placeholder"
 msgstr "Type a note..."
 
+#. When clicked, this opens a menu with more actions.
 #: assets/js/WorkflowEditor/wfmodule/WfModuleContextMenu.js:17
-msgid "js.WorkflowEditor.wfmodule.WfModuleContextMenu.more"
+msgid "js.WorkflowEditor.wfmodule.WfModuleContextMenu.more.hoverText"
 msgstr "more"
 
 #: assets/js/WorkflowEditor/wfmodule/WfModule.js:239
@@ -540,12 +549,12 @@ msgid "js.WorkflowNavBar.signIn.accountLink"
 msgstr "Sign in"
 
 #. This is used in navigation bar. It should be all-caps for styling reasons.
-#: assets/js/Workflows/Navbar.js:39
+#: assets/js/Workflows/Navbar.js:40
 msgid "js.Workflows.NavBar.links.training"
 msgstr "TRAINING"
 
 #. This is used in navigation bar. It should be all-caps for styling reasons.
-#: assets/js/Workflows/Navbar.js:36
+#: assets/js/Workflows/Navbar.js:37
 msgid "js.Workflows.NavBar.links.workflows"
 msgstr "WORKFLOWS"
 
@@ -553,10 +562,12 @@ msgstr "WORKFLOWS"
 msgid "js.Workflows.SortMenu.alphabetical.dropdownItem"
 msgstr "Alphabetical"
 
+#. Last update descending
 #: assets/js/Workflows/SortMenu.js:31
 msgid "js.Workflows.SortMenu.lastModified.dropdownItem"
 msgstr "Last modified"
 
+#. Last update ascending
 #: assets/js/Workflows/SortMenu.js:32
 msgid "js.Workflows.SortMenu.oldestModified.dropdownItem"
 msgstr "Oldest modified"
@@ -589,13 +600,14 @@ msgstr "My workflows"
 msgid "js.Workflows.WorkflowLists.nav.recipes"
 msgstr "Recipes"
 
+#. As in 'Workflows shared with me'
 #: assets/js/Workflows/WorkflowLists.js:112
 msgid "js.Workflows.WorkflowLists.nav.sharedWithMe"
 msgstr "Shared with me"
 
 #: assets/js/Workflows/WorkflowLists.js:76
-msgid "js.Workflows.WorkflowLists.publisheNewRecipes"
-msgstr "Publishe new recipes via the Django admin"
+msgid "js.Workflows.WorkflowLists.publishNewRecipes"
+msgstr "Publish new recipes via the Django admin"
 
 #: assets/js/Workflows/WorkflowLists.js:64
 msgid "js.Workflows.WorkflowLists.workflowsWillAppearHere"
@@ -644,22 +656,30 @@ msgstr "NEW"
 msgid "js.Workflows.training.title"
 msgstr "TRAINING"
 
-#: assets/js/i18n/locales.js:5
-msgid "js.i18n.locales.el"
-msgstr "Greek"
+#: assets/js/i18n/LocaleSwitcher.js:36
+msgid "js.i18n.LocaleSwitcher.body.description"
+msgstr "Choose the language of Workbench’s interface. Data is not affected."
 
-#: assets/js/i18n/locales.js:4
-msgid "js.i18n.locales.en"
-msgstr "English"
+#. Close the dialog box
+#: assets/js/i18n/LocaleSwitcher.js:61
+msgid "js.i18n.LocaleSwitcher.footer.close"
+msgstr "Close"
+
+#. This should be all-caps for styling reasons
+#: assets/js/i18n/LocaleSwitcher.js:30
+msgid "js.i18n.LocaleSwitcher.header.title"
+msgstr "LANGUAGE"
 
 #: assets/js/lessons/LessonFooter.js:41
 msgid "js.lessons.LessonFooter.training.link"
 msgstr "Training"
 
+#. As in 'next step'
 #: assets/js/lessons/LessonNav.js:54
 msgid "js.lessons.LessonNav.next.button"
 msgstr "Next"
 
+#. As in 'previous step'
 #: assets/js/lessons/LessonNav.js:39
 msgid "js.lessons.LessonNav.previous.button"
 msgstr "Previous"
@@ -708,35 +728,35 @@ msgstr "Group Size"
 msgid "js.params.Custom.Aggregations.Aggregation.placeholder.sum"
 msgstr "Sum of {colname}"
 
-#: assets/js/params/Custom/Aggregations/Operation.js:17
+#: assets/js/params/Custom/Aggregations/Operation.js:18
 msgid "js.params.Custom.Aggregations.Operation.count.option"
 msgstr "Count"
 
-#: assets/js/params/Custom/Aggregations/Operation.js:18
+#: assets/js/params/Custom/Aggregations/Operation.js:19
 msgid "js.params.Custom.Aggregations.Operation.countUnique.option"
 msgstr "Count unique"
 
-#: assets/js/params/Custom/Aggregations/Operation.js:24
+#: assets/js/params/Custom/Aggregations/Operation.js:25
 msgid "js.params.Custom.Aggregations.Operation.first.option"
 msgstr "First"
 
-#: assets/js/params/Custom/Aggregations/Operation.js:23
+#: assets/js/params/Custom/Aggregations/Operation.js:24
 msgid "js.params.Custom.Aggregations.Operation.maximum.option"
 msgstr "Maximum"
 
-#: assets/js/params/Custom/Aggregations/Operation.js:20
+#: assets/js/params/Custom/Aggregations/Operation.js:21
 msgid "js.params.Custom.Aggregations.Operation.mean.option"
 msgstr "Average (Mean)"
 
-#: assets/js/params/Custom/Aggregations/Operation.js:21
+#: assets/js/params/Custom/Aggregations/Operation.js:22
 msgid "js.params.Custom.Aggregations.Operation.median.option"
 msgstr "Median"
 
-#: assets/js/params/Custom/Aggregations/Operation.js:22
+#: assets/js/params/Custom/Aggregations/Operation.js:23
 msgid "js.params.Custom.Aggregations.Operation.minimum.option"
 msgstr "Minimum"
 
-#: assets/js/params/Custom/Aggregations/Operation.js:19
+#: assets/js/params/Custom/Aggregations/Operation.js:20
 msgid "js.params.Custom.Aggregations.Operation.sum.option"
 msgstr "Sum"
 
@@ -744,6 +764,7 @@ msgstr "Sum"
 msgid "js.params.Custom.Aggregations.addButton"
 msgstr "Add"
 
+#. As in mathematical operations
 #: assets/js/params/Custom/Aggregations/index.js:70
 msgid "js.params.Custom.Aggregations.operations"
 msgstr "Operations"
@@ -866,6 +887,8 @@ msgstr "Number is less than"
 msgid "js.params.Custom.Filters.Condition.numberIsNot"
 msgstr "Number is not"
 
+#. As in 'select a condition relative to which we will filter'. Condition here
+#. is something of the form 'IF something IS like that'.
 #: assets/js/params/Custom/Filters/Condition.js:67
 msgid "js.params.Custom.Filters.Condition.selectCondition"
 msgstr "Select condition"
@@ -932,39 +955,39 @@ msgstr "There are no Date and Time columns to group by date"
 msgid "js.params.Custom.Groups.DateGranularities.selectDateAndTimeToGroup"
 msgstr "Select a Date and Time column to group it by date"
 
-#: assets/js/params/Custom/Groups/DateGranularity.js:36
+#: assets/js/params/Custom/Groups/DateGranularity.js:38
 msgid "js.params.Custom.Groups.DateGranularity.asIs.option"
 msgstr "as is"
 
-#: assets/js/params/Custom/Groups/DateGranularity.js:40
+#: assets/js/params/Custom/Groups/DateGranularity.js:42
 msgid "js.params.Custom.Groups.DateGranularity.byDay.option"
 msgstr "by day"
 
-#: assets/js/params/Custom/Groups/DateGranularity.js:39
+#: assets/js/params/Custom/Groups/DateGranularity.js:41
 msgid "js.params.Custom.Groups.DateGranularity.byHour.option"
 msgstr "by hour"
 
-#: assets/js/params/Custom/Groups/DateGranularity.js:38
+#: assets/js/params/Custom/Groups/DateGranularity.js:40
 msgid "js.params.Custom.Groups.DateGranularity.byMinute.option"
 msgstr "by minute"
 
-#: assets/js/params/Custom/Groups/DateGranularity.js:41
+#: assets/js/params/Custom/Groups/DateGranularity.js:43
 msgid "js.params.Custom.Groups.DateGranularity.byMonth.option"
 msgstr "by month"
 
-#: assets/js/params/Custom/Groups/DateGranularity.js:42
+#: assets/js/params/Custom/Groups/DateGranularity.js:44
 msgid "js.params.Custom.Groups.DateGranularity.byQuarter.option"
 msgstr "by quarter"
 
-#: assets/js/params/Custom/Groups/DateGranularity.js:37
+#: assets/js/params/Custom/Groups/DateGranularity.js:39
 msgid "js.params.Custom.Groups.DateGranularity.bySecond.option"
 msgstr "by second"
 
-#: assets/js/params/Custom/Groups/DateGranularity.js:43
+#: assets/js/params/Custom/Groups/DateGranularity.js:45
 msgid "js.params.Custom.Groups.DateGranularity.byYear.option"
 msgstr "by year"
 
-#: assets/js/params/Custom/Groups/DateGranularity.js:28
+#: assets/js/params/Custom/Groups/DateGranularity.js:30
 msgid "js.params.Custom.Groups.DateGranularity.heading.title"
 msgstr "Granularity of “{colname}”"
 
@@ -976,6 +999,8 @@ msgstr "Group dates"
 msgid "js.params.Custom.JoinColumns.addColumns"
 msgstr "Add columns"
 
+#. This refers to a join operation, as the term join is used in SQL database
+#. language. It is followed by one or more column names.
 #: assets/js/params/Custom/JoinColumns.js:71
 msgid "js.params.Custom.JoinColumns.joinOn"
 msgstr "Join on"
@@ -1034,6 +1059,9 @@ msgstr ""
 " from one value to the other is equal or inferior to 'Maximum distance'. "
 "For instance, the distance between \"Cafés\" and \"cafe\" is 3."
 
+#. This is not an editing action. It's a short description of how the
+#. levenstein algorithm works (i.e. it compares strings relative to the number
+#. of characters in which they differ, hence the term edit distance).
 #: assets/js/params/Custom/Refine/RefineClusterer.js:21
 msgid "js.params.Custom.RefineClusterer.Algorithms.levenshtein.name"
 msgstr "Edit distance"
@@ -1376,7 +1404,9 @@ msgstr "AUTO-UPDATE QUOTA EXCEEDED"
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.workFlow.heading"
 msgstr "Workflow"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:73
+#. Appears just after
+#. 'js.params.Custom.VersionSelect.UpdateFrequencySelect.update'
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:74
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.auto"
 msgstr "Auto"
 
@@ -1386,11 +1416,13 @@ msgstr "change auto-update settings"
 
 #. The parameter is a time difference (i.e. something like '4h ago'. The tag is
 #. a <time> tag.
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:78
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:80
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.lastChecked"
 msgstr "Checked <0>{0}</0>"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:73
+#. Appears just after
+#. 'js.params.Custom.VersionSelect.UpdateFrequencySelect.update'
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:75
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.manual"
 msgstr "Manual"
 
@@ -1408,6 +1440,8 @@ msgstr ""
 "Automatically update this workflow with the newest data (old versions "
 "will be saved)."
 
+#. Refers to
+#. 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title'
 #: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:160
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.auto.label"
 msgstr "Auto"
@@ -1457,6 +1491,8 @@ msgstr "WORKFLOW UPDATE"
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual.description"
 msgstr "Check for new data manually."
 
+#. Refers to
+#. 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title'
 #: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:222
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual.label"
 msgstr "Manual"
@@ -1507,6 +1543,7 @@ msgstr "Uploaded {0}"
 msgid "js.params.File.UploadedFileSelect.choosePreviousFile.hoverText"
 msgstr "Choose a previously-uploaded file"
 
+#. Means 'no file'
 #: assets/js/params/File/UploadedFileSelect.js:111
 msgid "js.params.File.UploadedFileSelect.choosePreviousFile.none"
 msgstr "[NONE]"
@@ -1670,18 +1707,22 @@ msgstr "Clear"
 msgid "js.params.Tab.selectTab.placeholder"
 msgstr "Select Tab"
 
+#. Usually meaning 'All values'
 #: assets/js/params/common/AllNoneButtons.js:16
 msgid "js.params.common.AllNoneButtons.selectAll.button"
 msgstr "All"
 
+#. Usually meaning 'Select all values'
 #: assets/js/params/common/AllNoneButtons.js:13
 msgid "js.params.common.AllNoneButtons.selectAll.hoverText"
 msgstr "Select All"
 
+#. Usually meaning 'No value'
 #: assets/js/params/common/AllNoneButtons.js:25
 msgid "js.params.common.AllNoneButtons.selectNone.button"
 msgstr "None"
 
+#. Usually meaning 'Select no value'
 #: assets/js/params/common/AllNoneButtons.js:22
 msgid "js.params.common.AllNoneButtons.selectNone.hoverText"
 msgstr "Select None"
@@ -1966,6 +2007,7 @@ msgstr "by {workflowOwner}"
 msgid "py.templates.report.updated"
 msgstr "Updated <time0>{timeAgo}</time0> ago"
 
+#. This is a link to a workflow
 #: templates/report.html:21
 msgid "py.templates.report.sourceDataLink.link"
 msgstr "Source data"
@@ -2309,6 +2351,7 @@ msgstr ""
 msgid "py.templates.socialaccount.connections.title"
 msgstr "Account Connections"
 
+#. Short for 'The account has been linked!'
 #: templates/socialaccount/connections.html:10
 msgid "py.templates.socialaccount.connections.accountLinked"
 msgstr "Account linked!"

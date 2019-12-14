@@ -25,7 +25,7 @@ $medium-gray: #a2a2a2;
 $dark-gray: #8b8b8b;
 $Vlight-gray: lighten($dark-gray,39%);
 
-$font-family-sans-serif: 'Nunito Sans', sans-serif; // override Bootstrap
+$font-family-sans-serif: Roboto, Helvetica, sans-serif; // override Bootstrap
 $modal-footer: $WF-background;
 $dark-orange:#F88630;
 $document-blue--light: lighten($document-blue, 13%);

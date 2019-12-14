@@ -1,0 +1,111 @@
+<header>
+  <h1>Υπολογισμός των ποσοστών εγκληματικότητας κατά κεφαλή στις ΗΠΑ</h1>
+  <p>Πολλοί αριθμοί ερμηνεύονται καλύτερα αν τους συγκρίνουμε με τον συνολικό πληθυσμό, δίνοντας ένα ποσοστό ανά άτομο.</p><img src="./banner.svg" alt="" /></header>
+
+<section class="fullscreen">
+  <h2>Εισαγωγή</h2>
+  <p>Ποια πολιτεία των ΗΠΑ έχει τον υψηλότερο δείκτη εγκληματικότητας; Η Καλιφόρνια είναι η πολιτεία με τον μεγαλύτερο πληθυσμό, επομένως πιθανότατα έχει τον υψηλότερο συνολικό αριθμό εγκλημάτων. Ωστόσο, οι μικρότερες πολιτείες ενδέχεται να έχουν περισσότερα εγκλήματα ανά άτομο.</p>
+  <p>Ερμηνεύουμε πολλούς αριθμούς καλύτερα αν τους συγκρίνουμε με τον συνολικό πληθυσμό, δίνοντας ένα ποσοστό ανά άτομο. Αυτό το ποσοστό είναι γνωστό σαν &quot;κατά κεφαλή&quot;. (Αντιστοιχεί στο λατινικής προέλευσης &quot;per capita&quot;.)</p>
+  <p>Σε αυτό το μάθημα, θα μάθετε να χρησιμοποιείτε έναν απλό τύπο για να υπολογίζετε τα κατά κεφαλήν ποσοστά από τα δεδομένα του FBI.</p>
+
+</section>
+
+<script id="initialWorkflow">
+tabs:
+- name: Lesson
+  wfModules:
+  - module: loadurl
+    slug: step-loadurl
+    params:
+      url: './fbi-uniform-crimes-2017.csv'
+    collapsed: true
+    note: "Source: U.S. Federal Bureau of Investigation"
+</script>
+
+<section>
+  <h2>Δεδομένα</h2>
+  <p>Ο πίνακας στο βήμα 1 προέρχεται από τα δεδομένα της έκθεσης του FBI για την Εγκληματικότητα για το έτος 2017, που δημοσιεύτηκε <a class="highlight" href='https://ucr.fbi.gov/crime-in-the-u.s/2017/crime-in-the-u.s.-2017/tables/table-5' target="_blank" className="info-1">εδώ</a>.</p>
+  <h3 class="instructions">Οδηγίες</h3>
+  <p class="instruction-detail">Κοιτάξτε αυτόν τον πίνακα και απαντήστε τις ακόλουθες ερωτήσεις για δικό σας λογαριασμό:</p>
+  <ul>
+    <li>Τι αντιπροσωπεύει κάθε σειρά;</li>
+    <li>Τι υπάρχει σε κάθε στήλη;</li>
+    <li>Υπάρχουν στήλες, τιμές ή κωδικοί που δεν καταλαβαίνετε;</li>
+    <li>Υπάρχουν κενές ή εμφανώς λανθασμένες τιμές;</li>
+    <li>Χρειάζεται να καθαριστούν τα δεδομένα;</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Εγκλήματα σε απόλυτους αριθμούς</h2>
+  <p>Ας ξεκινήσουμε με μια απλή ερώτηση: Ποια πολιτεία είχε τον μεγαλύτερο αριθμό βίαιων εγκλημάτων το 2017;</p>
+  <h3 class="instructions">Οδηγίες</h3>
+  <ol class="steps">
+    <li
+      data-test="const wfm = workflow.tabs[0].wfModules[1]; return wfm && wfm.moduleSlug === 'sort' && wfm.params.keep_top === '' && wfm.params.sort_columns[0] && wfm.params.sort_columns[0].colname === 'Violent crime' && !wfm.params.sort_columns[0].is_ascending"
+      >Ταξινομήστε τη στήλη <kbd>Violent crime (Βίαιο έγκλημα)</kbd> σε φθίνουσα σειρά.<p class="instruction-detail">Η Καλιφόρνια είναι στην κορυφή με 177.627 βίαια εγκλήματα. Αλλά η Καλιφόρνια είναι επίσης η πολιτεία με τον μεγαλύτερο πληθυσμό, άρα αυτό το αποτέλεσμα δεν μας λέει κάτι περισσότερο.<br></p>
+      <p class="instruction-detail">Αντ&apos; αυτού, ας συγκρίνουμε τις πολιτείες χρησιμοποιώντας αριθμούς κατά κεφαλή.</p>
+    </li>
+  </ol>
+</section>
+
+<section>
+  <h2>Εγκλήματα ανά κάτοικο</h2>
+  <p>Αν αναδιατυπώσουμε την ερώτηση: Ποια πολιτεία έχει τα περισσότερα βίαια εγκλήματα ανά κάτοικο;</p>
+  <p>Ο τύπος για να υπολογίσουμε τον αριθμό των Χ ανά Υ είναι το Χ διαιρούμενο από το Υ ή</p>
+  <div class="copy-txt">=(X/Y)</div>
+  <h3 class="instructions">Οδηγίες</h3>
+  <ol class="steps">
+    <li
+      data-test="return workflow.tabs[0].wfModuleSlugs[2] === 'formula'"
+      >Προσθέστε το βήμα Τύπος<p class="instruction-detail">Οι τύποι πρέπει να γράφονται με αναφορές σε κελιά χρησιμοποιώντας τα γράμματα των στηλών και τους αριθμούς των σειρών.</p>
+    </li>
+    <li
+      data-test="
+        const p = workflow.tabs[0].wfModules[2].params
+        return p.syntax === 'excel' &&
+               p.all_rows &&
+               (p.formula_excel.replace(/ /g, '') === '=C1/B1' || p.formula_excel.replace(/ /g, '') === '=C1/B1*100000')"
+      >Πληκτρολογήστε:<div class="copy-txt">=C1/B1</div>
+    </li>
+    <li
+      data-test="return workflow.tabs[0].wfModules[2].params.out_column.toLowerCase() === 'violent crime rate'"
+      >Ονομάστε την έξοδο του τύπου <kbd>Violent crime rate</kbd> (Ποσοστό βίαιων εγκλημάτων)</li>
+    <li
+      data-test="
+        const wfm = workflow.tabs[0].wfModules[3]
+        return wfm && wfm.moduleSlug === 'sort' &&
+               wfm.params.keep_top === '' &&
+               wfm.params.sort_columns[0] &&
+               wfm.params.sort_columns[0].colname.toLowerCase() === 'violent crime rate' &&
+               !wfm.params.sort_columns[0].is_ascending"
+      >Ταξινομήστε αυτή τη νέα στήλη με φθίνουσα σειρά<p class="instruction-detail">Στην κορυφή βρίσκεται τώρα η Αλάσκα, με 6.133 βίαια εγκλήματα σε συνολικό πληθυσμό 739.795 &mdash; ή 0,008 βίαια εγκλήματα ανά κάτοικο. Αυτό το ποσοστό είναι διπλάσιο από της Καλιφόρνιας, η οποία βρίσκεται τώρα στη θέση #15.</p>
+    </li>
+  </ol>
+</section>
+<section>
+  <h2>Ποσοστά καταγραμμένων εγκλημάτων</h2>
+  <p>Τα κατά κεφαλήν ποσοστά εγκληματικότητας είναι μικρά: Η Αλάσκα έχει μόνο 0,008 βίαια εγκλήματα ανά άτομο. Είναι δύσκολο να βγάλεις συμπεράσματα από τόσο μικρούς αριθμούς.</p>
+  <p>Γι&apos; αυτόν τον λόγο, η εγκληματικότητα περιγράφεται συνήθως σαν &quot;εγκλήματα ανά 100.000 κατοίκους&quot;.</p>
+  <h3 class="instructions">Οδηγίες</h3>
+  <ol class="steps">
+    <li
+      data-test="const p = workflow.tabs[0].wfModules[2].params; return p.syntax === 'excel' && p.all_rows && p.formula_excel.replace(/ /g, '') === '=C1/B1*100000'"
+      >Τροποποιήστε τον τύπο σας στο βήμα 3 σε<div class="copy-txt">=C1/B1*100000</div>
+      <p class="instruction-detail">Κάντε κλικ στο βήμα <kbd>Ταξινόμηση</kbd> για να γίνει αναταξινόμηση των αριθμών. Η σειρά δεν έχει αλλάξει αφού πολλαπλασιάσαμε όλες τις τιμές με τον ίδιο αριθμό.</p>
+      <p class="instruction-detail">Οι εκδόσεις του ίδιου του FBI αναφέρουν αυτούς τους αριθμούς, τους οποίους μπορείτε να βρείτε στα <a class="highlight" href='https://ucr.fbi.gov/crime-in-the-u.s/2017/crime-in-the-u.s.-2017/tables/table-5' target="_blank" className="info-1">source data (πρωτογενή στοιχεία)</a>.</p>
+    </li>
+  </ol>
+</section>
+<footer>
+  <h2>Εδώ τελειώνει το μάθημα!</h2>
+  <div class="completed">
+    <p class="summary">Στη συνέχεια θα εξετάσουμε άλλους χρήσιμους τρόπους για τη σύγκριση αριθμών.</p>
+  </div>
+  <div class="next">
+    <h2>Επόμενο</h2>
+    <ol>
+      <li><a href="sygkrish-arithmwn">Σύγκριση αριθμών</a></li>
+    </ol>
+  </div>
+</footer>

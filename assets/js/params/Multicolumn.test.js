@@ -22,7 +22,7 @@ describe('Multicolumn', () => {
         isReadOnly: true,
         value: ['A', 'C']
       })
-      expect(w.find('.react-select__control').text()).toMatch(/A.*C/)
+      expect(w.find('div.react-select__control').text()).toMatch(/A.*C/)
     })
   })
 
@@ -35,7 +35,7 @@ describe('Multicolumn', () => {
 
     it('selects all columns when "select all" is clicked', () => {
       const w = wrapper()
-      w.find('.react-select__dropdown-indicator')
+      w.find('div.react-select__dropdown-indicator')
         .simulate('mousedown', { type: 'mousedown', button: 0 }) // open menu
       w.find('button.multicolumn-select-all').simulate('click')
       expect(w.prop('onChange')).toHaveBeenCalledWith(['A', 'B', 'C', 'D'])
@@ -43,7 +43,7 @@ describe('Multicolumn', () => {
 
     it('deselects all columns when "select none" is clicked', () => {
       const w = wrapper()
-      w.find('.react-select__dropdown-indicator')
+      w.find('div.react-select__dropdown-indicator')
         .simulate('mousedown', { type: 'mousedown', button: 0 }) // open menu
       w.find('button.multicolumn-select-none').simulate('click')
       expect(w.prop('onChange')).toHaveBeenCalledWith([])
@@ -78,7 +78,7 @@ describe('Multicolumn', () => {
         value: ['A'],
         inputColumns: [{ name: 'A' }, { name: 'B' }, { name: 'C' }]
       })
-      w.find('.react-select__dropdown-indicator')
+      w.find('div.react-select__dropdown-indicator')
         .simulate('mousedown', { type: 'mousedown', button: 0 }) // open menu
       w.find('.react-select__option').at(0).simulate('click')
       expect(w.prop('onChange')).toHaveBeenCalledWith(['A', 'B'])
@@ -89,7 +89,7 @@ describe('Multicolumn', () => {
         value: 'A,B',
         inputColumns: [{ name: 'A' }, { name: 'B' }, { name: 'C' }]
       })
-      w.find('.react-select__dropdown-indicator')
+      w.find('div.react-select__dropdown-indicator')
         .simulate('mousedown', { type: 'mousedown', button: 0 }) // open menu
       w.find('.react-select__option').at(0).simulate('click')
       expect(w.prop('onChange')).toHaveBeenCalledWith('A,B,C')

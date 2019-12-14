@@ -173,6 +173,13 @@ INSTALLED_APPS = [
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
+    # These providers appear in _ALL ENVIRONMENTS_ for now.
+    # see https://github.com/pennersr/django-allauth/issues/2343
+    # ... so don't add a provider that doesn't belong on production!
+    # (On dev/unittest/integrationtest, the buttons will appear but
+    # clicking one will get a 404 page unless the SocialApp is added.)
+    "allauth.socialaccount.providers.facebook",
+    "allauth.socialaccount.providers.google",
     "cjworkbench",
     "cron",
     "fetcher",
@@ -423,29 +430,6 @@ def _parse_twitter_oauth(d):
 _maybe_load_oauth_service(
     "twitter", "CJW_TWITTER_CLIENT_SECRETS", "twitter_secret.json", _parse_twitter_oauth
 )
-
-# Various services for django-allauth
-
-CJW_SOCIALACCOUNT_SECRETS_PATH = os.environ.get("CJW_SOCIALACCOUNT_SECRETS", False)
-if not CJW_SOCIALACCOUNT_SECRETS_PATH:
-    CJW_SOCIALACCOUNT_SECRETS_PATH = "socialaccounts_secrets.json"
-
-CJW_SOCIALACCOUNT_SECRETS_PATH = os.path.join(BASE_DIR, CJW_SOCIALACCOUNT_SECRETS_PATH)
-
-if os.path.isfile(CJW_SOCIALACCOUNT_SECRETS_PATH):
-    try:
-        CJW_SOCIALACCOUNT_SECRETS = json.loads(
-            open(CJW_SOCIALACCOUNT_SECRETS_PATH, "r").read()
-        )
-    except ValueError:
-        CJW_SOCIALACCOUNT_SECRETS = []
-
-    for provider in CJW_SOCIALACCOUNT_SECRETS:
-
-        INSTALLED_APPS.append("allauth.socialaccount.providers." + provider["provider"])
-else:
-    CJW_SOCIALACCOUNT_SECRETS = []
-
 
 # Knowledge base root url, used as a default for missing help links
 KB_ROOT_URL = "http://help.workbenchdata.com/"

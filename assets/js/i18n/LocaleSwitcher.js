@@ -1,43 +1,70 @@
-import * as React from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
-import { withI18n } from '@lingui/react'
-import { supportedLocales, supportedLocaleIds } from './locales'
+import { Trans } from '@lingui/macro'
+import { supportedLocalesData, currentLocaleId } from './locales'
 import { csrfToken } from '../utils'
+import { Modal, ModalHeader, ModalBody, ModalFooter } from '../components/Modal'
 
 /**
  * A menu for the user to select a locale.
- *
- * Uses window.i18nConfig, which is injected by Django in the base template
  */
-const LocaleSwitcher = React.memo(function LocaleSwitcher ({ i18n }) {
-  const onChangeLocale = React.useCallback(ev => {
-    ev.target.form.submit()
+export default function LocaleSwitcher ({ closeModal }) {
+  const [newLocaleId, setNewLocaleId] = React.useState(null) // null, "en", "fr", etc., ..., true if we don't know
+  const handleSubmit = React.useCallback(ev => {
+    if (newLocaleId !== null) {
+      // we're already submitting. Ignore.
+      ev.preventDefault()
+      ev.stopPropagation()
+    } else {
+      // Grab new locale ID from the <button> we clicked.
+      // (This isn't defensively programmed. It can probably set
+      // newLocaleId to just about anything truthy. That's okay.)
+      setNewLocaleId((document.activeElement && document.activeElement.value) || true)
+      // and continue submitting
+    }
   })
 
-  if (window.i18nConfig && window.i18nConfig.showSwitcher) {
-    return (
-      <form method='POST' action='/locale'>
-        <input type='hidden' name='next' value={window.location.href} />
-        <input type='hidden' name='csrfmiddlewaretoken' value={csrfToken} />
-        <select value={i18n.language} name='new_locale' onChange={onChangeLocale}>
-          {supportedLocaleIds.map((locale) => (
-            <option key={locale} value={locale}>
-              {i18n._(supportedLocales[locale])}
-            </option>
-          ))}
-        </select>
-      </form>
-    )
-  } else {
-    return null
-  }
-})
-LocaleSwitcher.propTypes = {
-  i18n: PropTypes.shape({
-    // i18n object injected by LinguiJS withI18n()
-    language: PropTypes.oneOf(supportedLocaleIds),
-    _: PropTypes.func.isRequired
-  })
+  return (
+    <Modal isOpen className='locale-switcher' toggle={closeModal}>
+      <ModalHeader toggle={closeModal}>
+        <Trans id='js.i18n.LocaleSwitcher.header.title' description='This should be all-caps for styling reasons'>
+          LANGUAGE
+        </Trans>
+      </ModalHeader>
+      <ModalBody>
+        <p className='description'>
+          <Trans id='js.i18n.LocaleSwitcher.body.description'>
+            Choose the language of Workbench’s interface. Data is not affected.
+          </Trans>
+        </p>
+        <form method='POST' action='/locale' onSubmit={handleSubmit}>
+          <input type='hidden' name='next' value={window.location.href} />
+          <input type='hidden' name='csrfmiddlewaretoken' value={csrfToken} />
+          <fieldset>
+            {supportedLocalesData.map(({ id, name }) => (
+              <button
+                key={id}
+                className={id === newLocaleId ? 'submitting' : undefined}
+                disabled={id === currentLocaleId}
+                type='submit'
+                name='new_locale'
+                value={id}
+              >
+                {name}
+              </button>
+            ))}
+          </fieldset>
+        </form>
+      </ModalBody>
+      <ModalFooter>
+        <button className='action-button button-gray' onClick={closeModal}>
+          <Trans id='js.i18n.LocaleSwitcher.footer.close' description='Close the dialog box'>Close</Trans>
+        </button>
+      </ModalFooter>
+    </Modal>
+  )
 }
 
-export default withI18n()(LocaleSwitcher)
+LocaleSwitcher.propTypes = {
+  closeModal: PropTypes.func.isRequired
+}

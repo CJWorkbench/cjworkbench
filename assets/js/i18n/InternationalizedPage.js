@@ -1,15 +1,15 @@
 import React from 'react'
 import { I18nProvider } from '@lingui/react'
 import fetchCatalog from './catalogs'
-import { currentLocale } from './locales'
+import { currentLocaleId } from './locales'
 
 export class InternationalizedPage extends React.Component {
   render () {
     const catalogs = {
-      [currentLocale]: fetchCatalog(currentLocale)
+      [currentLocaleId]: fetchCatalog(currentLocaleId)
     }
     return (
-      <I18nProvider language={currentLocale} catalogs={catalogs}>
+      <I18nProvider language={currentLocaleId} catalogs={catalogs}>
         {this.props.children}
       </I18nProvider>
     )

@@ -10,13 +10,13 @@ import pyarrow
 from cjwkernel.pandas.types import (
     Column,
     ColumnType,
+    I18nMessage,
+    ProcessResultError,
     ProcessResult,
     QuickFix,
     TableShape,
     arrow_table_to_dataframe,
     dataframe_to_arrow_table,
-    _coerce_to_i18n_message_dict,
-    _coerce_to_process_result_error,
 )
 import cjwkernel.types as atypes
 from cjwkernel.util import create_tempfile
@@ -218,48 +218,60 @@ class TableShapeTests(unittest.TestCase):
         )
 
 
-class I18nMessageDictCoercing(unittest.TestCase):
+class I18nMessageTests(unittest.TestCase):
+    def test_coerce_from_string(self):
+        self.assertEqual(
+            I18nMessage.coerce("some string"),
+            I18nMessage("TODO_i18n", {"text": "some string"}),
+        )
+
+    def test_coerce_from_tuple(self):
+        self.assertEqual(
+            I18nMessage.coerce(("my_id", {"hello": "there"})),
+            I18nMessage("my_id", {"hello": "there"}),
+        )
+
+    def test_coerce_from_dict(self):
+        with self.assertRaises(ValueError):
+            I18nMessage.coerce({"id": "my_id", "arguments": {"hello": "there"}})
+
+    def test_to_arrow(self):
+        self.assertEqual(
+            I18nMessage("my_id", {"hello": "there"}).to_arrow(),
+            atypes.I18nMessage("my_id", {"hello": "there"}),
+        )
+
+    def test_from_arrow(self):
+        self.assertEqual(
+            I18nMessage.from_arrow(atypes.I18nMessage("my_id", {"hello": "there"})),
+            I18nMessage("my_id", {"hello": "there"}),
+        )
+
+
+class ProcessResultErrorTests(unittest.TestCase):
     def test_from_string(self):
         self.assertEqual(
-            _coerce_to_i18n_message_dict("some string"),
-            atypes.I18nMessage.TODO_i18n("some string").to_dict(),
+            ProcessResultError.coerce("some string"),
+            ProcessResultError(I18nMessage.TODO_i18n("some string")),
         )
 
-    def test_from_tuple(self):
-        self.assertEqual(
-            _coerce_to_i18n_message_dict(("my_id", {"hello": "there"})),
-            atypes.I18nMessage("my_id", {"hello": "there"}).to_dict(),
-        )
-
-    def test_from_dict(self):
-        with self.assertRaises(TypeError):
-            _coerce_to_i18n_message_dict(
-                {"id": "my_id", "arguments": {"hello": "there"}}
-            )
-
-
-class ProcessResultErrorCoercing(unittest.TestCase):
-    def test_from_string(self):
-        self.assertEqual(
-            _coerce_to_process_result_error("some string"),
-            [(atypes.I18nMessage.TODO_i18n("some string").to_dict(), [])],
-        )
+    def test_from_none(self):
+        with self.assertRaises(ValueError):
+            ProcessResultError.coerce(None),
 
     def test_from_message_tuple(self):
         self.assertEqual(
-            _coerce_to_process_result_error(("my_id", {"hello": "there"})),
-            [(atypes.I18nMessage("my_id", {"hello": "there"}).to_dict(), [])],
+            ProcessResultError.coerce(("my_id", {"hello": "there"})),
+            ProcessResultError(I18nMessage("my_id", {"hello": "there"})),
         )
 
     def test_from_dict(self):
         with self.assertRaises(ValueError):
-            _coerce_to_process_result_error(
-                {"id": "my_id", "arguments": {"hello": "there"}}
-            )
+            ProcessResultError.coerce({"id": "my_id", "arguments": {"hello": "there"}})
 
     def test_from_string_with_quick_fix(self):
         self.assertEqual(
-            _coerce_to_process_result_error(
+            ProcessResultError.coerce(
                 {
                     "message": "error",
                     "quickFixes": [
@@ -271,23 +283,21 @@ class ProcessResultErrorCoercing(unittest.TestCase):
                     ],
                 }
             ),
-            [
-                (
-                    atypes.I18nMessage.TODO_i18n("error").to_dict(),
-                    [
-                        QuickFix(
-                            atypes.I18nMessage.TODO_i18n("button text").to_dict(),
-                            "prependModule",
-                            [["converttotext", {"colnames": ["A", "B"]}]],
-                        )
-                    ],
-                )
-            ],
+            ProcessResultError(
+                I18nMessage.TODO_i18n("error"),
+                [
+                    QuickFix(
+                        I18nMessage.TODO_i18n("button text"),
+                        "prependModule",
+                        [["converttotext", {"colnames": ["A", "B"]}]],
+                    )
+                ],
+            ),
         )
 
     def test_from_tuple_with_quick_fixes(self):
         self.assertEqual(
-            _coerce_to_process_result_error(
+            ProcessResultError.coerce(
                 {
                     "message": ("my id", {}),
                     "quickFixes": [
@@ -304,49 +314,53 @@ class ProcessResultErrorCoercing(unittest.TestCase):
                     ],
                 }
             ),
-            [
-                (
-                    atypes.I18nMessage("my id", {}).to_dict(),
-                    [
-                        QuickFix(
-                            atypes.I18nMessage.TODO_i18n("button text").to_dict(),
-                            "prependModule",
-                            [["converttotext", {"colnames": ["A", "B"]}]],
-                        ),
-                        QuickFix(
-                            atypes.I18nMessage("other button text id", {}).to_dict(),
-                            "prependModule",
-                            [["converttonumber", {"colnames": ["C", "D"]}]],
-                        ),
-                    ],
-                )
-            ],
+            ProcessResultError(
+                I18nMessage("my id"),
+                [
+                    QuickFix(
+                        I18nMessage.TODO_i18n("button text"),
+                        "prependModule",
+                        [["converttotext", {"colnames": ["A", "B"]}]],
+                    ),
+                    QuickFix(
+                        I18nMessage("other button text id"),
+                        "prependModule",
+                        [["converttonumber", {"colnames": ["C", "D"]}]],
+                    ),
+                ],
+            ),
         )
 
-    def test_from_empty_list(self):
-        self.assertEqual(_coerce_to_process_result_error([]), [])
+    def test_from_list(self):
+        with self.assertRaises(ValueError):
+            ProcessResultError.coerce(
+                [{"id": "my_id", "arguments": {"hello": "there"}}]
+            )
 
-    def test_from_list_of_string(self):
+    def test_list_from_empty_list(self):
+        self.assertEqual(ProcessResultError.coerce_list([]), [])
+
+    def test_list_from_list_of_string(self):
         self.assertEqual(
-            _coerce_to_process_result_error(["error"]),
-            [(atypes.I18nMessage.TODO_i18n("error").to_dict(), [])],
+            ProcessResultError.coerce_list(["error"]),
+            [ProcessResultError(I18nMessage.TODO_i18n("error"))],
         )
 
-    def test_from_list_of_string_and_tuples(self):
+    def test_list_from_list_of_string_and_tuples(self):
         self.assertEqual(
-            _coerce_to_process_result_error(
+            ProcessResultError.coerce_list(
                 ["error", ("my_id", {}), ("my_other_id", {"this": "one"})]
             ),
             [
-                (atypes.I18nMessage.TODO_i18n("error").to_dict(), []),
-                (atypes.I18nMessage("my_id", {}).to_dict(), []),
-                (atypes.I18nMessage("my_other_id", {"this": "one"}).to_dict(), []),
+                ProcessResultError(I18nMessage.TODO_i18n("error")),
+                ProcessResultError(I18nMessage("my_id")),
+                ProcessResultError(I18nMessage("my_other_id", {"this": "one"})),
             ],
         )
 
-    def test_from_list_with_quick_fixes(self):
+    def test_list_from_list_with_quick_fixes(self):
         self.assertEqual(
-            _coerce_to_process_result_error(
+            ProcessResultError.coerce_list(
                 [
                     {
                         "message": ("my id", {}),
@@ -376,30 +390,26 @@ class ProcessResultErrorCoercing(unittest.TestCase):
                 ]
             ),
             [
-                (
-                    atypes.I18nMessage("my id", {}).to_dict(),
+                ProcessResultError(
+                    I18nMessage("my id"),
                     [
                         QuickFix(
-                            atypes.I18nMessage.TODO_i18n("button text").to_dict(),
+                            I18nMessage.TODO_i18n("button text"),
                             "prependModule",
                             [["converttotext", {"colnames": ["A", "B"]}]],
                         )
                     ],
                 ),
-                (
-                    atypes.I18nMessage("my other id", {"other": "this"}).to_dict(),
+                ProcessResultError(
+                    I18nMessage("my other id", {"other": "this"}),
                     [
                         QuickFix(
-                            atypes.I18nMessage(
-                                "quick fix id", {"fix": "that"}
-                            ).to_dict(),
+                            I18nMessage("quick fix id", {"fix": "that"}),
                             "prependModule",
                             [["converttodate", {"colnames": ["C", "D"]}]],
                         ),
                         QuickFix(
-                            atypes.I18nMessage(
-                                "another quick fix id", {"fix": "that"}
-                            ).to_dict(),
+                            I18nMessage("another quick fix id", {"fix": "that"}),
                             "prependModule",
                             [["converttonumber", {"colnames": ["E", "F"]}]],
                         ),
@@ -408,16 +418,89 @@ class ProcessResultErrorCoercing(unittest.TestCase):
             ],
         )
 
-    def test_from_list_of_lists(self):
+    def test_list_from_list_of_lists(self):
         with self.assertRaises(ValueError):
-            _coerce_to_process_result_error([["hello"]])
+            ProcessResultError.coerce_list([["hello"]])
+
+    def test_list_from_none(self):
+        self.assertEqual(ProcessResultError.coerce_list(None), [])
+
+    def test_list_from_empty_string(self):
+        self.assertEqual(ProcessResultError.coerce_list(""), [])
+
+    def test_list_from_nonempty_string(self):
+        result = ProcessResultError.coerce_list("hello")
+        expected = [ProcessResultError(I18nMessage.TODO_i18n("hello"))]
+        self.assertEqual(result, expected)
+
+    def test_list_from_tuple(self):
+        result = ProcessResultError.coerce_list(("id", {"arg": "1"}))
+        expected = [ProcessResultError(I18nMessage("id", {"arg": "1"}))]
+        self.assertEqual(result, expected)
+
+    def test_list_from_dict(self):
+        result = ProcessResultError.coerce_list({"message": "error", "quickFixes": []})
+        expected = [ProcessResultError(I18nMessage.TODO_i18n("error"))]
+        self.assertEqual(result, expected)
+
+    def test_to_arrow(self):
+        self.assertEqual(
+            ProcessResultError(
+                I18nMessage("my_id", {"hello": "there"}),
+                [
+                    QuickFix(
+                        I18nMessage.TODO_i18n("button text"),
+                        "prependModule",
+                        ["converttotext", {"colnames": ["A", "B"]}],
+                    )
+                ],
+            ).to_arrow(),
+            atypes.RenderError(
+                atypes.I18nMessage("my_id", {"hello": "there"}),
+                [
+                    atypes.QuickFix(
+                        atypes.I18nMessage.TODO_i18n("button text"),
+                        atypes.QuickFixAction.PrependStep(
+                            "converttotext", {"colnames": ["A", "B"]}
+                        ),
+                    )
+                ],
+            ),
+        )
+
+    def test_from_arrow(self):
+        self.assertEqual(
+            ProcessResultError.from_arrow(
+                atypes.RenderError(
+                    atypes.I18nMessage("my_id", {"hello": "there"}),
+                    [
+                        atypes.QuickFix(
+                            atypes.I18nMessage.TODO_i18n("button text"),
+                            atypes.QuickFixAction.PrependStep(
+                                "converttotext", {"colnames": ["A", "B"]}
+                            ),
+                        )
+                    ],
+                )
+            ),
+            ProcessResultError(
+                I18nMessage("my_id", {"hello": "there"}),
+                [
+                    QuickFix(
+                        I18nMessage.TODO_i18n("button text"),
+                        "prependModule",
+                        ["converttotext", {"colnames": ["A", "B"]}],
+                    )
+                ],
+            ),
+        )
 
 
 class QuickFixTests(unittest.TestCase):
     def test_to_arrow(self):
         self.assertEqual(
             QuickFix(
-                atypes.I18nMessage.TODO_i18n("button text").to_dict(),
+                I18nMessage.TODO_i18n("button text"),
                 "prependModule",
                 ["converttotext", {"colnames": ["A", "B"]}],
             ).to_arrow(),
@@ -569,7 +652,9 @@ class ProcessResultTests(unittest.TestCase):
         self.assertEqual(result, expected)
 
     def test_coerce_str(self):
-        expected = ProcessResult(errors=_coerce_to_process_result_error("yay"))
+        expected = ProcessResult(
+            errors=[ProcessResultError(I18nMessage.TODO_i18n("yay"))]
+        )
         result = ProcessResult.coerce("yay")
         self.assertEqual(result, expected)
 
@@ -582,28 +667,30 @@ class ProcessResultTests(unittest.TestCase):
     def test_coerce_tuple_dataframe_str(self):
         df = pd.DataFrame({"foo": ["bar"]})
         expected = ProcessResult(
-            dataframe=df, errors=_coerce_to_process_result_error("hi")
+            dataframe=df, errors=[ProcessResultError(I18nMessage.TODO_i18n("hi"))]
         )
         result = ProcessResult.coerce((df, "hi"))
         self.assertEqual(result, expected)
 
-    def test_coerce_tuple_dataframe_internationalized(self):
+    def test_coerce_tuple_dataframe_i18n(self):
         df = pd.DataFrame({"foo": ["bar"]})
         expected = ProcessResult(
             dataframe=df,
-            errors=_coerce_to_process_result_error(("message.id", {"param1": "a"})),
+            errors=[ProcessResultError(I18nMessage("message.id", {"param1": "a"}))],
         )
         result = ProcessResult.coerce((df, ("message.id", {"param1": "a"})))
         self.assertEqual(result, expected)
 
     def test_coerce_tuple_none_str(self):
-        expected = ProcessResult(errors=_coerce_to_process_result_error("hi"))
+        expected = ProcessResult(
+            errors=[ProcessResultError(I18nMessage.TODO_i18n("hi"))]
+        )
         result = ProcessResult.coerce((None, "hi"))
         self.assertEqual(result, expected)
 
-    def test_coerce_tuple_none_internationalized(self):
+    def test_coerce_tuple_none_i18n(self):
         expected = ProcessResult(
-            errors=_coerce_to_process_result_error(("message.id", {"param1": "a"}))
+            errors=[ProcessResultError(I18nMessage("message.id", {"param1": "a"}))]
         )
         result = ProcessResult.coerce((None, ("message.id", {"param1": "a"})))
         self.assertEqual(result, expected)
@@ -611,16 +698,16 @@ class ProcessResultTests(unittest.TestCase):
     def test_coerce_tuple_dataframe_str_dict(self):
         df = pd.DataFrame({"foo": ["bar"]})
         expected = ProcessResult(
-            df, _coerce_to_process_result_error("hi"), json={"a": "b"}
+            df, [ProcessResultError(I18nMessage.TODO_i18n("hi"))], json={"a": "b"}
         )
         result = ProcessResult.coerce((df, "hi", {"a": "b"}))
         self.assertEqual(result, expected)
 
-    def test_coerce_tuple_dataframe_internationalized_dict(self):
+    def test_coerce_tuple_dataframe_i18n_dict(self):
         df = pd.DataFrame({"foo": ["bar"]})
         expected = ProcessResult(
             df,
-            _coerce_to_process_result_error(("message.id", {"param1": "a"})),
+            [ProcessResultError(I18nMessage("message.id", {"param1": "a"}))],
             json={"a": "b"},
         )
         result = ProcessResult.coerce((df, ("message.id", {"param1": "a"}), {"a": "b"}))
@@ -628,14 +715,14 @@ class ProcessResultTests(unittest.TestCase):
 
     def test_coerce_tuple_dataframe_str_none(self):
         df = pd.DataFrame({"foo": ["bar"]})
-        expected = ProcessResult(df, _coerce_to_process_result_error("hi"))
+        expected = ProcessResult(df, [ProcessResultError(I18nMessage.TODO_i18n("hi"))])
         result = ProcessResult.coerce((df, "hi", None))
         self.assertEqual(result, expected)
 
-    def test_coerce_tuple_dataframe_internationalized_none(self):
+    def test_coerce_tuple_dataframe_i18n_none(self):
         df = pd.DataFrame({"foo": ["bar"]})
         expected = ProcessResult(
-            df, _coerce_to_process_result_error(("message.id", {"param1": "a"}))
+            df, [ProcessResultError(I18nMessage("message.id", {"param1": "a"}))]
         )
         result = ProcessResult.coerce((df, ("message.id", {"param1": "a"}), None))
         self.assertEqual(result, expected)
@@ -654,14 +741,14 @@ class ProcessResultTests(unittest.TestCase):
 
     def test_coerce_tuple_none_str_dict(self):
         expected = ProcessResult(
-            errors=_coerce_to_process_result_error("hi"), json={"a": "b"}
+            errors=[ProcessResultError(I18nMessage.TODO_i18n("hi"))], json={"a": "b"}
         )
         result = ProcessResult.coerce((None, "hi", {"a": "b"}))
         self.assertEqual(result, expected)
 
-    def test_coerce_tuple_none_internationalized_dict(self):
+    def test_coerce_tuple_none_i18n_dict(self):
         expected = ProcessResult(
-            errors=_coerce_to_process_result_error(("message.id", {"param1": "a"})),
+            errors=[ProcessResultError(I18nMessage("message.id", {"param1": "a"}))],
             json={"a": "b"},
         )
         result = ProcessResult.coerce(
@@ -670,13 +757,15 @@ class ProcessResultTests(unittest.TestCase):
         self.assertEqual(result, expected)
 
     def test_coerce_tuple_none_str_none(self):
-        expected = ProcessResult(errors=_coerce_to_process_result_error("hi"))
+        expected = ProcessResult(
+            errors=[ProcessResultError(I18nMessage.TODO_i18n("hi"))]
+        )
         result = ProcessResult.coerce((None, "hi", None))
         self.assertEqual(result, expected)
 
-    def test_coerce_tuple_none_internationalized_none(self):
+    def test_coerce_tuple_none_i18n_none(self):
         expected = ProcessResult(
-            errors=_coerce_to_process_result_error(("message.id", {"param1": "a"}))
+            errors=[ProcessResultError(I18nMessage("message.id", {"param1": "a"}))]
         )
         result = ProcessResult.coerce((None, ("message.id", {"param1": "a"}), None))
         self.assertEqual(result, expected)
@@ -692,40 +781,36 @@ class ProcessResultTests(unittest.TestCase):
         self.assertEqual(result, expected)
 
     def test_coerce_bad_tuple(self):
-        result = ProcessResult.coerce(("foo", "bar", "baz", "moo"))
-        self.assertIsNotNone(result.errors)
-        self.assertTrue(result.errors)
+        with self.assertRaises(ValueError):
+            result = ProcessResult.coerce(("foo", "bar", "baz", "moo"))
 
     def test_coerce_2tuple_no_dataframe(self):
-        result = ProcessResult.coerce(("foo", "bar"))
-        self.assertIsNotNone(result.errors)
-        self.assertTrue(result.errors)
+        with self.assertRaises(ValueError):
+            result = ProcessResult.coerce(("foo", "bar"))
 
-    def test_coerce_2tuple_internationalized(self):
+    def test_coerce_2tuple_i18n(self):
         expected = ProcessResult(
-            errors=_coerce_to_process_result_error(("message_id", {"param1": "a"}))
+            errors=[ProcessResultError(I18nMessage("message_id", {"param1": "a"}))]
         )
         result = ProcessResult.coerce(("message_id", {"param1": "a"}))
         self.assertEqual(result, expected)
 
-    def test_coerce_2tuple_bad_internationalized_error(self):
-        result = ProcessResult.coerce(("message_id", None))
-        self.assertIsNotNone(result.errors)
-        self.assertTrue(result.errors)
+    def test_coerce_2tuple_bad_i18n_error(self):
+        with self.assertRaises(ValueError):
+            result = ProcessResult.coerce(("message_id", None))
 
     def test_coerce_3tuple_no_dataframe(self):
-        result = ProcessResult.coerce(("foo", "bar", {"a": "b"}))
-        self.assertIsNotNone(result.errors)
-        self.assertTrue(result.errors)
+        with self.assertRaises(ValueError):
+            result = ProcessResult.coerce(("foo", "bar", {"a": "b"}))
 
-    def test_coerce_dict_internationalized(self):
+    def test_coerce_dict_i18n(self):
         expected = ProcessResult(
             errors=[
-                (
-                    atypes.I18nMessage.TODO_i18n("an error").to_dict(),
+                ProcessResultError(
+                    I18nMessage.TODO_i18n("an error"),
                     [
                         QuickFix(
-                            atypes.I18nMessage("message.id", {}).to_dict(),
+                            I18nMessage("message.id"),
                             "prependModule",
                             ["texttodate", {"column": "created_at"}],
                         )
@@ -751,7 +836,7 @@ class ProcessResultTests(unittest.TestCase):
     def test_coerce_dict_legacy_with_quickfix_tuple(self):
         dataframe = pd.DataFrame({"A": [1, 2]})
         quick_fix = QuickFix(
-            atypes.I18nMessage.TODO_i18n("Hi").to_dict(),
+            I18nMessage.TODO_i18n("Hi"),
             "prependModule",
             ["texttodate", {"column": "created_at"}],
         )
@@ -767,7 +852,7 @@ class ProcessResultTests(unittest.TestCase):
         )
         expected = ProcessResult(
             dataframe,
-            [(atypes.I18nMessage.TODO_i18n("an error").to_dict(), [quick_fix])],
+            [ProcessResultError(I18nMessage.TODO_i18n("an error"), [quick_fix])],
             json={"foo": "bar"},
         )
         self.assertEqual(result, expected)
@@ -775,7 +860,7 @@ class ProcessResultTests(unittest.TestCase):
     def test_coerce_dict_with_quickfix_tuple(self):
         dataframe = pd.DataFrame({"A": [1, 2]})
         quick_fix = QuickFix(
-            atypes.I18nMessage("message.id", {}).to_dict(),
+            I18nMessage("message.id"),
             "prependModule",
             ["texttodate", {"column": "created_at"}],
         )
@@ -800,7 +885,7 @@ class ProcessResultTests(unittest.TestCase):
         )
         expected = ProcessResult(
             dataframe,
-            [(atypes.I18nMessage.TODO_i18n("an error").to_dict(), [quick_fix])],
+            [ProcessResultError(I18nMessage.TODO_i18n("an error"), [quick_fix])],
             json={"foo": "bar"},
         )
         self.assertEqual(result, expected)
@@ -826,7 +911,7 @@ class ProcessResultTests(unittest.TestCase):
 
     def test_coerce_dict_with_quickfix_tuple_not_json_serializable(self):
         dataframe = pd.DataFrame({"A": [1, 2]})
-        with self.assertRaisesRegex(ValueError, "cannot be coerced"):
+        with self.assertRaises(ValueError):
             ProcessResult.coerce(
                 {
                     "dataframe": dataframe,
@@ -850,7 +935,7 @@ class ProcessResultTests(unittest.TestCase):
     def test_coerce_dict_legacy_with_quickfix_dict(self):
         dataframe = pd.DataFrame({"A": [1, 2]})
         quick_fix = QuickFix(
-            atypes.I18nMessage.TODO_i18n("Hi").to_dict(),
+            I18nMessage.TODO_i18n("Hi"),
             "prependModule",
             ["texttodate", {"column": "created_at"}],
         )
@@ -870,7 +955,7 @@ class ProcessResultTests(unittest.TestCase):
         )
         expected = ProcessResult(
             dataframe,
-            errors=[(atypes.I18nMessage.TODO_i18n("an error").to_dict(), [quick_fix])],
+            errors=[ProcessResultError(I18nMessage.TODO_i18n("an error"), [quick_fix])],
             json={"foo": "bar"},
         )
         self.assertEqual(result, expected)
@@ -878,7 +963,7 @@ class ProcessResultTests(unittest.TestCase):
     def test_coerce_dict_with_quickfix_dict(self):
         dataframe = pd.DataFrame({"A": [1, 2]})
         quick_fix = QuickFix(
-            atypes.I18nMessage.TODO_i18n("Hi").to_dict(),
+            I18nMessage.TODO_i18n("Hi"),
             "prependModule",
             ["texttodate", {"column": "created_at"}],
         )
@@ -902,7 +987,7 @@ class ProcessResultTests(unittest.TestCase):
         )
         expected = ProcessResult(
             dataframe,
-            errors=[(atypes.I18nMessage.TODO_i18n("an error").to_dict(), [quick_fix])],
+            errors=[ProcessResultError(I18nMessage.TODO_i18n("an error"), [quick_fix])],
             json={"foo": "bar"},
         )
         self.assertEqual(result, expected)
@@ -911,12 +996,12 @@ class ProcessResultTests(unittest.TestCase):
         dataframe = pd.DataFrame({"A": [1, 2]})
         quick_fixes = [
             QuickFix(
-                atypes.I18nMessage.TODO_i18n("Hi").to_dict(),
+                I18nMessage.TODO_i18n("Hi"),
                 "prependModule",
                 ["texttodate", {"column": "created_at"}],
             ),
             QuickFix(
-                atypes.I18nMessage("message.id", {}).to_dict(),
+                I18nMessage("message.id"),
                 "prependModule",
                 ["texttodate", {"column": "created_at"}],
             ),
@@ -949,8 +1034,8 @@ class ProcessResultTests(unittest.TestCase):
         expected = ProcessResult(
             dataframe,
             errors=[
-                (atypes.I18nMessage.TODO_i18n("an error").to_dict(), quick_fixes),
-                (atypes.I18nMessage.TODO_i18n("other error").to_dict(), []),
+                ProcessResultError(I18nMessage.TODO_i18n("an error"), quick_fixes),
+                ProcessResultError(I18nMessage.TODO_i18n("other error")),
             ],
             json={"foo": "bar"},
         )
@@ -1012,7 +1097,7 @@ class ProcessResultTests(unittest.TestCase):
             )
 
     def test_coerce_dict_quickfix_dict_has_class_not_json(self):
-        with self.assertRaisesRegex(ValueError, "cannot be coerced"):
+        with self.assertRaises(ValueError):
             ProcessResult.coerce(
                 {
                     "errors": [
@@ -1043,9 +1128,8 @@ class ProcessResultTests(unittest.TestCase):
         self.assertEqual(result, expected)
 
     def test_coerce_invalid_value(self):
-        result = ProcessResult.coerce([None, "foo"])
-        self.assertIsNotNone(result.errors)
-        self.assertTrue(result.errors)
+        with self.assertRaises(ValueError):
+            result = ProcessResult.coerce([None, "foo"])
 
     def test_status_ok(self):
         result = ProcessResult(pd.DataFrame({"A": [1]}), [])
@@ -1073,11 +1157,8 @@ class ProcessResultTests(unittest.TestCase):
         expected = ProcessResult(
             dataframe=expected_df,
             errors=[
-                (
-                    atypes.I18nMessage.TODO_i18n(
-                        "Truncated output from 3 rows to 2"
-                    ).to_dict(),
-                    [],
+                ProcessResultError(
+                    I18nMessage.TODO_i18n("Truncated output from 3 rows to 2")
                 )
             ],
         )
@@ -1094,20 +1175,16 @@ class ProcessResultTests(unittest.TestCase):
         expected = ProcessResult(
             dataframe=expected_df,
             errors=[
-                (atypes.I18nMessage.TODO_i18n("Some error").to_dict(), []),
-                (
-                    atypes.I18nMessage.TODO_i18n(
-                        "Truncated output from 3 rows to 2"
-                    ).to_dict(),
-                    [],
+                ProcessResultError(I18nMessage.TODO_i18n("Some error")),
+                ProcessResultError(
+                    I18nMessage.TODO_i18n("Truncated output from 3 rows to 2")
                 ),
             ],
         )
 
         result_df = pd.DataFrame({"foo": ["bar", "baz", "moo"]})
         result = ProcessResult(
-            result_df,
-            errors=[(atypes.I18nMessage.TODO_i18n("Some error").to_dict(), [])],
+            result_df, errors=[ProcessResultError(I18nMessage.TODO_i18n("Some error"))]
         )
         result.truncate_in_place_if_too_big()
 
@@ -1178,7 +1255,7 @@ class ProcessResultTests(unittest.TestCase):
             self.assertEqual(
                 result,
                 atypes.RenderResult(
-                    atypes.ArrowTable(None, atypes.TableMetadata(0, [])),
+                    atypes.ArrowTable(None, None, atypes.TableMetadata(0, [])),
                     [
                         atypes.RenderError(
                             atypes.I18nMessage.TODO_i18n("bad, bad error"), []
@@ -1204,16 +1281,16 @@ class ProcessResultTests(unittest.TestCase):
         try:
             result = ProcessResult(
                 errors=[
-                    (
-                        atypes.I18nMessage.TODO_i18n("bad, bad error").to_dict(),
+                    ProcessResultError(
+                        I18nMessage.TODO_i18n("bad, bad error"),
                         [
                             QuickFix(
-                                atypes.I18nMessage.TODO_i18n("button foo").to_dict(),
+                                I18nMessage.TODO_i18n("button foo"),
                                 "prependModule",
                                 ["converttotext", {"colnames": ["A", "B"]}],
                             ),
                             QuickFix(
-                                atypes.I18nMessage.TODO_i18n("button bar").to_dict(),
+                                I18nMessage.TODO_i18n("button bar"),
                                 "prependModule",
                                 ["converttonumber", {"colnames": ["A", "B"]}],
                             ),
@@ -1265,6 +1342,7 @@ class ProcessResultTests(unittest.TestCase):
                 atypes.RenderResult(
                     atypes.ArrowTable(
                         Path(filename),
+                        pyarrow.table({"A": [1, 2]}),
                         atypes.TableMetadata(
                             2,
                             [
@@ -1283,8 +1361,6 @@ class ProcessResultTests(unittest.TestCase):
                     {},
                 ),
             )
-            arrow_table = result.table.table
-            self.assertEqual(arrow_table.to_pydict(), {"A": [1, 2]})
         finally:
             os.unlink(filename)
 

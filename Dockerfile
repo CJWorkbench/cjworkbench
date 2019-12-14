@@ -1,5 +1,6 @@
 # 0.1 parquet-to-arrow: executables we use in Workbench
-FROM workbenchdata/parquet-to-arrow:v0.2.0 AS parquet-to-arrow
+FROM workbenchdata/parquet-to-arrow:v1.0.0 AS parquet-to-arrow
+FROM workbenchdata/arrow-tools:v0.0.6 AS arrow-tools
 
 # 0.2 pybase: Python and tools we use in dev and production
 FROM python:3.7.4-slim-buster AS pybase
@@ -49,6 +50,9 @@ RUN mkdir -p /usr/share/nltk_data \
 
 RUN pip install pipenv==2018.11.26
 
+COPY --from=arrow-tools /usr/bin/arrow-validate /usr/bin/arrow-validate
+COPY --from=arrow-tools /usr/bin/csv-to-arrow /usr/bin/csv-to-arrow
+COPY --from=arrow-tools /usr/bin/json-to-arrow /usr/bin/json-to-arrow
 COPY --from=parquet-to-arrow /usr/bin/parquet-diff /usr/bin/parquet-diff
 COPY --from=parquet-to-arrow /usr/bin/parquet-to-arrow /usr/bin/parquet-to-arrow
 COPY --from=parquet-to-arrow /usr/bin/parquet-to-arrow-slice /usr/bin/parquet-to-arrow-slice
@@ -72,7 +76,6 @@ FROM pybase AS pydev
 # * pysycopg2 (binaries are evil because psycopg2 links SSL -- as does Python)
 # * PyICU
 #
-# Need thrift-compiler to generate cjwkernel/thrift/...
 # Need pkg-config to build PyICU
 RUN mkdir -p /root/.local/share/virtualenvs \
     && apt-get update \
@@ -83,7 +86,6 @@ RUN mkdir -p /root/.local/share/virtualenvs \
       libre2-dev \
       libsnappy-dev \
       pkg-config \
-      thrift-compiler \
     && rm -rf /var/lib/apt/lists/*
 
 # Add "watchman" command -- we use it in dev mode to monitor for source code changes

@@ -1,5 +1,8 @@
 import asyncio
 import aiohttp
+from contextlib import contextmanager
+import io
+from typing import Optional
 import pandas as pd
 from cjwkernel.pandas.types import ProcessResult
 from cjwkernel.pandas import moduleutils
@@ -67,6 +70,20 @@ def render(table, params, *, fetch_result):
         return table
 
 
+@contextmanager
+def wrap_text(bytesio: io.BytesIO, text_encoding: Optional[str]):
+    """Yields the given BytesIO as a TextIO.
+
+    Peculiarities:
+
+    * The file encoding defaults to UTF-8.
+    * Encoding errors are converted to unicode replacement characters.
+    """
+    encoding = text_encoding or "utf-8"
+    with io.TextIOWrapper(bytesio, encoding=encoding, errors="replace") as textio:
+        yield textio
+
+
 async def fetch(params):
     # We delve into pd.read_html()'s innards, below. Part of that means some
     # first-use initialization.
@@ -86,7 +103,7 @@ async def fetch(params):
             # pandas.read_html() does automatic type conversion, but we prefer
             # our own. Delve into its innards so we can pass all the conversion
             # kwargs we want.
-            with moduleutils.wrap_text(spool, charset) as textio:
+            with wrap_text(spool, charset) as textio:
                 tables = pd.io.html._parse(
                     # Positional arguments:
                     flavor="html5lib",  # force algorithm, for reproducibility

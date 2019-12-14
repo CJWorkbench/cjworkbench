@@ -23,6 +23,7 @@ describe('DoneHelpers', () => {
       })
 
       expect(workflow.selectedTab.wfModules.map(wfm => wfm.moduleName)).toEqual(['Foo', 'Bar'])
+      expect(workflow.selectedTab.wfModules.map(wfm => wfm.moduleSlug)).toEqual(['foo', 'bar'])
     })
 
     it('should give wfModuleNames', () => {
@@ -86,6 +87,7 @@ describe('DoneHelpers', () => {
       })
 
       expect(workflow.selectedTab.wfModuleNames).toEqual([null, null, null])
+      expect(workflow.selectedTab.wfModuleSlugs).toEqual(['blah', null, null])
     })
   })
 
@@ -119,9 +121,24 @@ describe('DoneHelpers', () => {
       expect(wfModule.params).toEqual({})
     })
 
-    it('should have moduleName=null when placeholder', () => {
+    it('should have secrets', () => {
+      const wfModule = new WorkflowModuleWithHelpers({
+        secrets: { twitter_credentials: { name: '@hello' } }
+      })
+      expect(wfModule.secrets).toEqual({
+        twitter_credentials: { name: '@hello' }
+      })
+    })
+
+    it('should have empty secrets on placeholder', () => {
+      const wfModule = new WorkflowModuleWithHelpers(null, {})
+      expect(wfModule.secrets).toEqual({})
+    })
+
+    it('should have moduleName=null and moduleSlug=null when placeholder', () => {
       const wfModule = new WorkflowModuleWithHelpers(null, { modules: {} })
       expect(wfModule.moduleName).toBe(null)
+      expect(wfModule.moduleSlug).toBe(null)
     })
 
     it('should have selectedVersion', () => {
@@ -208,6 +225,7 @@ describe('DoneHelpers', () => {
       })
 
       expect(state.selectedTab.wfModuleNames).toEqual(['Foo', 'Bar'])
+      expect(state.selectedTab.wfModuleSlugs).toEqual(['foo', 'bar'])
     })
 
     it('should have a .selectedWfModule', () => {
@@ -231,6 +249,7 @@ describe('DoneHelpers', () => {
       })
 
       expect(state.selectedWfModule.moduleName).toEqual('Bar')
+      expect(state.selectedWfModule.moduleSlug).toEqual('bar')
     })
   })
 })

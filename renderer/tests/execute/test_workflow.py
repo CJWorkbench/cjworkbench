@@ -3,7 +3,6 @@ from collections import namedtuple
 import logging
 import unittest
 from unittest.mock import Mock, patch
-import pandas as pd
 from cjwkernel.errors import ModuleExitedError
 from cjwkernel.types import I18nMessage, Params, RenderError, RenderResult
 from cjwkernel.tests.util import arrow_table, assert_render_result_equals
@@ -14,14 +13,6 @@ from cjwstate.modules.loaded_module import LoadedModule
 from cjwstate.tests.utils import DbTestCase
 from renderer.execute.types import UnneededExecution
 from renderer.execute.workflow import execute_workflow, partition_ready_and_dependent
-
-
-table_csv = "A,B\n1,2\n3,4"
-table_dataframe = pd.DataFrame({"A": [1, 3], "B": [2, 4]})
-
-
-future_none = asyncio.Future()
-future_none.set_result(None)
 
 
 async def fake_send(*args, **kwargs):
@@ -140,6 +131,8 @@ class WorkflowTests(DbTestCase):
     @patch.object(LoadedModule, "for_module_version")
     @patch("server.websockets.ws_client_send_delta_async")
     def test_execute_mark_unreachable(self, send_delta_async, fake_load_module):
+        future_none = asyncio.Future()
+        future_none.set_result(None)
         send_delta_async.return_value = future_none
 
         workflow = Workflow.create_and_init()

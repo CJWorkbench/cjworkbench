@@ -1,7 +1,8 @@
-from contextlib import contextmanager, asynccontextmanager
+from contextlib import asynccontextmanager
 import io
 import json
 import re
+import ssl
 from typing import Dict, Callable, Iterator, Optional
 import aiohttp
 import numpy as np
@@ -81,20 +82,6 @@ def _safe_parse(
         return ProcessResult.coerce(str(err))
 
 
-@contextmanager
-def wrap_text(bytesio: io.BytesIO, text_encoding: _TextEncoding):
-    """Yields the given BytesIO as a TextIO.
-
-    Peculiarities:
-
-    * The file encoding defaults to UTF-8.
-    * Encoding errors are converted to unicode replacement characters.
-    """
-    encoding = text_encoding or "utf-8"
-    with io.TextIOWrapper(bytesio, encoding=encoding, errors="replace") as textio:
-        yield textio
-
-
 # Move dataframe column names into the first row of data, and replace column
 # names with numbers. Used to undo first row of data incorrectly read as header
 def turn_header_into_first_row(table: pd.DataFrame) -> pd.DataFrame:
@@ -121,10 +108,17 @@ def turn_header_into_first_row(table: pd.DataFrame) -> pd.DataFrame:
 
 @asynccontextmanager
 async def spooled_data_from_url(
-    url: str, headers: Dict[str, str] = {}, timeout: aiohttp.ClientTimeout = None
+    url: str,
+    headers: Dict[str, str] = {},
+    timeout: aiohttp.ClientTimeout = None,
+    *,
+    ssl: Optional[ssl.SSLContext] = None,
 ):
     """
     Download `url` to a tempfile and yield `(bytesio, headers, charset)`.
+
+    `bytesio` is backed by a temporary file: the file at path `bytesio.name`
+    will exist within this context.
 
     Raise aiohttp.ClientError on generic error. Subclasses of note:
     * aiohttp.InvalidURL on invalid URL
@@ -146,7 +140,9 @@ async def spooled_data_from_url(
     with tempfile_context(prefix="loadurl") as spool_path:
         async with aiohttp.ClientSession() as session:
             # raise aiohttp.ClientError, asyncio.TimeoutError
-            async with session.get(url, headers=headers, timeout=timeout) as response:
+            async with session.get(
+                url, headers=headers, timeout=timeout, ssl=ssl
+            ) as response:
                 # raise aiohttp.ClientResponseError
                 response.raise_for_status()
                 headers = response.headers

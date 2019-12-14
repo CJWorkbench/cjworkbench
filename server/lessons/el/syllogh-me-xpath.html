@@ -1,0 +1,135 @@
+<header>
+  <h1>VI. Συλλέξτε περιεχόμενο από μια ιστοσελίδα και παρακολουθήστε το</h1>
+  <p>Συλλέξτε περιεχόμενο από μια ενότητα ενός ιστότοπου βάσει χρονοδιαγράμματος και λάβετε ειδοποιήσεις όταν το περιεχόμενό του αλλάζει</p><img src="./banner.svg" alt=""></header>
+<section>
+  <h2>Επισκόπηση</h2>
+  <p>Σε αυτό το μάθημα θα χρησιμοποιήσουμε την ιστοσελίδα <a href="http://www.atlaudit.org/audit-reports.html" class="highlight" target="_blank">City&apos;s auditor Office website of the City of Atlanta</a>. Ο στόχος μας είναι να παίρνουμε ειδοποίηση κάθε φορά που δημοσιεύεται νέα έκθεση ελέγχου.</p>
+</section>
+<section>
+  <h2>Συλλογή περιεχομένου ιστοσελίδας με μορφή HTML</h2>
+  <p>Για να φορτώσουμε δεδομένα από μια εξωτερική ιστοσελίδα, χρησιμοποιούμε δύο βήματα.</p>
+  <p>Πρώτα, συλλέγουμε το περιεχόμενο της ιστοσελίδας (τη &quot;σκραπάρουμε&quot;) με μορφή HTML. Στη συνέχεια, εξάγουμε από την HTML τα δεδομένα που θέλουμε.</p>
+  <p>Όλες οι ιστοσελίδες είναι αρχεία κειμένου. Το κείμενό τους είναι σε ειδική μορφή που ονομάζεται &quot;HyperText Markup Language&quot;, ή &quot;HTML&quot;, την οποία καταλαβαίνουν τα προγράμματα περιήγησης &mdash; αλλά και το Workbench.</p>
+  <h3 class="instructions">Οδηγίες</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"Module","index":0,"id_name":"urlscraper"}]'
+      data-test="return workflow.tabs[0].wfModuleSlugs[0] === 'urlscraper'"
+    >Αρχίστε με την πηγή δεδομένων για τον <kbd>Συλλέκτη HTML</kbd> .</li>
+    <li
+      data-highlight='[{"type":"WfModule","moduleIdName":"urlscraper"}]'
+      data-test="return workflow.tabs[0].wfModules[0].params.pagedurl.trim() === 'http://www.atlaudit.org/audit-reports.html'"
+      >Επικολλήστε το ακόλουθο URL της ιστοσελίδας όπου απαριθμούνται όλες οι δημόσιες εκθέσεις και πατήστε <kbd>Συλλογή</kbd><div class="copy-txt">http://www.atlaudit.org/audit-reports.html</div>
+      <p class="instruction-detail">Στη συνέχεια, ας κάνουμε εξαγωγή των δεδομένων μας.</p>
+    </li>
+  </ol>
+</section>
+<section>
+  <h2>Εξαγωγή δεδομένων από την HTML</h2>
+  <p>Τώρα, πρέπει να εξαγάγουμε συγκεκριμένα δεδομένα από την HTML που μόλις αποθηκεύσαμε και να τα αποθηκεύσουμε σε έναν νέο πίνακα με τον οποίο θα μπορέσουμε να εργαστούμε.</p>
+  <p>Για να το επιτύχουμε αυτό, θα χρησιμοποιήσουμε το βήμα <kbd>Από HTML σε πίνακα</kbd> .</p>
+  <h3 class="instructions">Οδηγίες</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"Module","index":1,"id_name":"xpathextractor"}]'
+      data-test="return workflow.tabs[0].wfModuleSlugs[1] === 'xpathextractor'"
+    >Προσθέστε το βήμα <kbd>Από HTML σε πίνακα</kbd> .</li>
+  </ol>
+</section>
+<section class="fullscreen">
+  <h2>Πάρτε τον Επιλογέα XPath για να κάνετε εξαγωγή της λίστας.</h2>
+  <p>Η XPath είναι μια γλώσσα για την επιλογή στοιχείων από έγγραφα HTML. Λέγεται &quot;διαδρομή&quot; (path) επειδή ταυτοποιεί τα στοιχεία ανάλογα με τη &quot;διαδρομή&quot; που θα ακολουθήσετε για να φτάσετε σε κάθε στοιχείο από τη ρίζα του <a href="http://web.simmons.edu/~grabiner/comm244/weekfour/document-tree.html" class="highlight" target="_blank">δέντρου HTML</a>.</p>
+  <p>Προτείνουμε τη χρήση της επέκτασης του προγράμματος περιήγησης Chrome <a href="https://selectorgadget.com/" class="highlight" target="_blank">SelectorGadget</a>. Είναι μια διεπαφή τύπου &quot;δείχνω και επιλέγω&quot; (point and click) για την οπτική επιλογή στοιχείων στη σελίδα και τη δημιουργία επιλογέων XPath.</p>
+    <ul>
+      <li>Εγκαταστήστε την επέκταση του Chrome <a href="https://chrome.google.com/webstore/detail/selectorgadget/mhjhnkcfbdhnjickkkdbjoemdmbfginb" class="highlight" target="_blank">εδώ</a>. Μπορείτε επίσης να την εγκαταστήσετε σε άλλα προγράμματα περιήγησης <a href="https://selectorgadget.com/" class="highlight" target="_blank">ως σελιδοδείκτη</a>.</li>
+    </ul>
+    <p>Παρακολουθήστε το βίντεο διάρκειας 30 δευτερολέπτων για να μάθετε πώς να χρησιμοποιείτε το SelectorGadget. Τα ίδια βήματα αναφέρονται παρακάτω. <iframe src="https://player.vimeo.com/video/331870253" width="640" height="360" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe></p>
+    <ul>
+      <li>Μεταβείτε στην <a href="http://www.atlaudit.org/audit-reports.html" class="highlight" target="_blank">ιστοσελίδα</a> και ενεργοποιήστε το SelectorGadget κάνοντας κλικ στο εικονίδιο μεγεθυντικού φακού επάνω δεξιά (στο Chrome) ή επιλέγοντας τον σελιδοδείκτη (σε άλλα προγράμματα περιήγησης).</li>
+      <li>Κάντε κλικ στο πρώτο στοιχείο της λίστας δημοσιευμάτων. Θα δείτε ότι όλοι οι τίτλοι δημοσιευμάτων κιτρινίζουν για να φανεί ότι έχουν επιλεγεί, αλλά το ίδιο ισχύει και για κάποιους άλλους συνδέσμους στη σελίδα.</li>
+      <li>Κάντε κλικ στο κόκκινο περιθώριο γύρω από τους συνδέσμους που δεν θέλετε, για να τους αφαιρέσετε από την επιλογή, ωσότου μείνουν κιτρινισμένοι μόνο οι τίτλοι δημοσιευμάτων.</li>
+      <li>Κάντε κλικ στο κουμπί <kbd>XPath</kbd> στη γραμμή εργαλείων στο κάτω μέρος. Αυτό θα σας δώσει μια διαδρομή xpath για αντιγραφή.</li>
+    </ul>
+</section>
+<section>
+  <h2>Εξαγωγή των δεδομένων</h2>
+  <p>Μπορούμε τώρα να κάνουμε εξαγωγή των δεδομένων και να τα αποθηκεύσουμε σε μια νέα στήλη.</p>
+  <h3 class="instructions">Οδηγίες</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"WfModule","moduleIdName":"xpathextractor"}]'
+      data-test="
+        const cols = workflow.tabs[0].wfModules[1].params.colselectors;
+        return (
+          cols.length >= 1
+          && cols[0].colxpath === '//*[(@id = &quot;wsite-content&quot;)]//li//a'
+          && cols[0].colname.toLowerCase() === 'document title'
+        )
+      ">Επικολλήστε τον επιλογέα xpath που μόλις αντιγράψατε στο πεδίο <kbd>Επιλογέας στήλης</kbd> και πληκτρολογήστε <code>Document title</code> ως όνομα στήλης. Πατήστε για εφαρμογή των ρυθμίσεών σας <img class="icon-insert" src="images/lesson-icons/play.svg">.</li>
+  </ol>
+</section>
+<section class="fullscreen">
+  <h2>Επεξεργασία του XPath</h2>
+  <p>Τώρα που έχουμε μια λίστα όλων των εγγράφων, ας κάνουμε εξαγωγή των διευθύνσεων URL των εγγράφων. Πρώτα ας δούμε τη δομή της HTML της σελίδας μας για να καταλάβουμε πώς λειτουργούν όλα αυτά.</p>
+  <p>Επιστρέψτε στην <a href="http://www.atlaudit.org/audit-reports.html" class="highlight" target="_blank">ιστοσελίδα</a> με το Google Chrome ή το Firefox.<p>Στην ιστοσελίδα, μετακινηθείτε προς τα κάτω στη λίστα με όλα τα δημοσιεύματα που έχει εκδώσει το City Auditor&apos;s Office. Κάντε δεξί κλικ στον πρώτο σύνδεσμο της λίστας και επιλέξτε <kbd>Εξέταση</kbd> στο μενού για να ανοίξετε το πλαίσιο εξέτασης.</p>
+   <figure><img class="full-width" alt="Εξέταση στοιχείου" src="./inspect_list.svg"><figcaption>Κάντε δεξί κλικ για να εξετάσετε έναν σύνδεσμο στο πλαίσιο εξέτασης.</figcaption>
+   </figure>
+   <p>Ας κοιτάξουμε από κοντά το στοιχείο HTML στο πλαίσιο εξέτασης του προγράμματος περιήγησης. Στο πλαίσιο εξέτασης, επισημαίνεται το στοιχείο <code>&lt;a&gt;</code> που αντιστοιχεί στον σύνδεσμο που εξετάζετε.</p>
+   <figure><img class="full-width" src="./html_element_zoom.svg"><figcaption>Στην HTML τα στοιχεία εμπερικλείονται το ένα μέσα στο άλλο.</figcaption>
+   </figure>
+   <p>Η XPath είναι μια γλώσσα για την επιλογή στοιχείων από έγγραφα HTML. Λέγεται &quot;διαδρομή&quot; (path) επειδή ταυτοποιεί τα στοιχεία ανάλογα με τη &quot;διαδρομή&quot; που θα ακολουθήσετε για να φτάσετε σε κάθε στοιχείο από τη ρίζα του <a href="http://web.simmons.edu/~grabiner/comm244/weekfour/document-tree.html" class="highlight" target="_blank">δέντρου HTML</a>.</p>
+    <p>Στο πλαίσιο εξέτασης, μπορούμε να δούμε ότι το στοιχείο <code>&lt;a&gt;</code> που διαλέξαμε περικλείεται σε ένα στοιχείο <code>&lt;li&gt;</code>, το οποίο περικλείεται σε ένα στοιχείο <code>&lt;ul&gt;</code>. Τώρα κοιτάξτε καλύτερα τον επιλογέα XPath που δημιουργήθηκε μέσα στο πλαίσιο εξέτασης:</p>
+  <div class="code-block">//*[(@id = &quot;wsite-content&quot;)]//li//a</div>
+    <ul>
+      <li><span class="highlight">//*[(@id = &quot;wsite-content&quot;)]</span> σημαίνει &quot;Μέσα στη σελίδα διαλέξτε το στοιχείο με id <code>wsite-content</code> &quot;.</li>
+      <li><span class="highlight">//li</span> σημαίνει &quot;Μέσα σε αυτά τα στοιχεία διαλέξτε όλα τα στοιχεία <code>li</code> &quot;.</li>
+      <li>Το τελευταίο <span class="highlight">//a</span> σημαίνει &quot;Μέσα σε αυτό διαλέξτε όλα τα στοιχεία <code>a</code> &quot;. Τα στοιχεία αυτά είναι σύνδεσμοι.</li>
+    </ul>
+  <p>Για να πάρουμε τη διεύθυνση URL του συνδέσμου και όχι μόνο το στοιχείο, πρέπει να προσθέσουμε στον κώδικα μια ακόμα ενότητα, η οποία είναι ορατή στο πλαίσιο επιθεώρησης αλλά όχι στο Selector Gadget: <code>/@href</code>. Το <code>@</code> σημαίνει ότι επιλέγουμε το <em>attribute</em> href του στοιχείου <code>a</code>, όπως φαίνεται στο παραπάνω στιγμιότυπο οθόνης.</p>
+</section>
+<section>
+  <h2>Εξαγωγή δεύτερης στήλης</h2>
+  <p>Ας κάνουμε εξαγωγή τις διευθύνσεις URL που συσχετίζονται με κάθε σύνδεσμο και ας τις αποθηκεύσουμε σε μια νέα στήλη.</p>
+  <h3 class="instructions">Οδηγίες</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"WfModule","moduleIdName":"xpathextractor"}]'
+      data-test="
+        const cols = workflow.tabs[0].wfModules[1].params.colselectors;
+        return (
+          cols.length == 2
+          && cols[1].colxpath === '//*[(@id = &quot;wsite-content&quot;)]//li//a/@href'
+          && cols[1].colname.toLowerCase() === 'url'
+        )
+      ">Χρησιμοποιήστε το κουμπί <kbd>+ΠΡΟΣΘΗΚΗ</kbd> για να δημιουργήσετε νέα στήλη. <br><br>Αντιγράψτε και επικολλήστε το XPath που καταχωρήσατε στον πρώτο <kbd>Επιλογέα στήλης</kbd>, επικολλήστε τον σε έναν καινούριο και προσθέστε <code>/@href</code> στο τέλος του για να στοχεύσετε τη διεύθυνση URL.<br><br>Ονομάστε αυτή τη στήλη <code>URL</code> και επικυρώστε τις ρυθμίσεις σας <img class="icon-insert" src="images/lesson-icons/play.svg"></li>
+  </ol>
+</section>
+<section>
+  <h2>Ορίστε την ειδοποίηση</h2>
+  <p class="instruction-detail">Ας ρυθμίσουμε τον Συλλέκτη να παρακολουθεί την ιστοσελίδα και να σας στέλνει ηλ. μήνυμα όταν δημοσιεύονται νέα δεδομένα.</p>
+  <h3 class="instructions">Οδηγίες</h3>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"WfModule","moduleIdName":"xpathextractor"}]'
+      data-test="return workflow.tabs[0].wfModules[0].updateInterval !== null"
+      >Στον Συλλέκτη HTML, κάντε κλικ στο <kbd>μη αυτόματο</kbd> για να ανοίξετε το παράθυρο &quot;Ενημέρωση ροής εργασίας&quot;. Ορίστε τη λειτουργία στην επιλογή <kbd>Αυτόματο</kbd>. Κάνε κλικ στην <kbd>Εφαρμογή</kbd>.</li>
+    <li
+      data-highlight='[{"type":"WfModule","moduleIdName":"xpathextractor"}]'
+      data-test="return workflow.tabs[0].wfModules[1].isEmailUpdates"
+      >Στην επιλογή &quot;Από HTML σε πίνακα&quot;, κάντε κλικ στο εικονίδιο της ειδοποίησης <span><img class="icon-insert" src="images/lesson-icons/notification.svg"></span> και κάντε κλικ στην <kbd>Ενεργοποίηση</kbd> για να παίρνετε ηλ. μήνυμα όταν αλλάζει η έξοδος αυτού του βήματος.</li>
+  </ol>
+</section>
+<footer>
+  <h2>Ο συλλέκτης σας έχει ρυθμιστεί!</h2>
+  <div class="completed">
+    <p class="summary">Όταν δημοσιεύονται νέα δεδομένα, θα εξάγονται τα νέα έγγραφα και οι διευθύνσεις URL και θα παίρνετε μήνυμα ηλεκτρονικού ταχυδρομείου.</p>
+  </div>
+  <div class="next">
+    <h4>Συνεχίστε τα μαθήματα</h4>
+    <ul>
+      <li>Οι διευθύνσεις URL που μόλις συλλέξατε είναι &quot;σχετικές&quot;. Χρειάζεται να προστεθεί το <kbd>http://www.atlaudit.org/</kbd> σε καθεμιά κατά την επικόλληση στο πρόγραμμα περιήγησης. <a href="/workflows/15533/" class="highlight">Μάθετε πώς να το διορθώνετε αυτό</a>.</li>
+      <li>Μάθετε πώς να <a href="kathariste-vromika-dedomena/" class="highlight">καθαρίζετε και να τυποποιείτε γεγονότα</a>.</li>
+      <li>Μάθετε πώς να <a href="syllogh-pollaplwn-selidwn" class="highlight">συλλέγετε πολλαπλές σελίδες από έναν ιστότοπο</a>.</li>
+    </ul>
+  </div>
+</footer>

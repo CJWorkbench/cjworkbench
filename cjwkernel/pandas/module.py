@@ -166,11 +166,12 @@ def render_arrow(
             fetch_result.path
         ):
             fetched_table = __parquet_to_pandas(fetch_result.path)
-            pandas_fetch_result = ptypes.ProcessResult.coerce(
-                (
-                    fetched_table,
-                    [error.to_pandas_error() for error in fetch_result.errors],
-                )
+            pandas_fetch_result = ptypes.ProcessResult(
+                fetched_table,
+                [
+                    ptypes.ProcessResultError.from_arrow(error)
+                    for error in fetch_result.errors
+                ],
             )
         else:
             pandas_fetch_result = fetch_result
@@ -204,7 +205,9 @@ def render_thrift(request: ttypes.RenderRequest) -> ttypes.RenderResult:
     function.
     """
     basedir = Path(request.basedir)
-    arrow_table = types.ArrowTable.from_thrift(request.input_table, basedir)
+    arrow_table = types.ArrowTable.from_thrift(
+        request.input_table, basedir, trusted=True
+    )
     params = types.Params.from_thrift(request.params, basedir)
     params_dict = params.params
     if request.fetch_result is None:

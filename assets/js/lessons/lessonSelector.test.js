@@ -14,7 +14,7 @@ describe('lessonSelector', () => {
         html: '<p>Section One HTML</p>',
         steps: [
           { html: 'Step One-Ay', highlight: [{ type: 'EditableNotes' }], testJs: 'return false' },
-          { html: 'Step One-<strong>Bee</strong>', highlight: [{ type: 'WfModule', moduleName: 'Foo' }], testJs: 'return false' }
+          { html: 'Step One-<strong>Bee</strong>', highlight: [{ type: 'WfModule', moduleIdName: 'foo' }], testJs: 'return false' }
         ]
       },
       {
@@ -22,7 +22,7 @@ describe('lessonSelector', () => {
         html: '<p>Section Two HTML</p>',
         steps: [
           { html: 'Step Two-Ay', highlight: [{ type: 'EditableNotes' }], testJs: 'return false' },
-          { html: 'Step Two-<strong>Bee</strong>', highlight: [{ type: 'WfModule', moduleName: 'Foo' }], testJs: 'return false' }
+          { html: 'Step Two-<strong>Bee</strong>', highlight: [{ type: 'WfModule', moduleIdName: 'foo' }], testJs: 'return false' }
         ]
       },
       {
@@ -30,7 +30,7 @@ describe('lessonSelector', () => {
         html: '<p>Section Three HTML</p>',
         steps: [
           { html: 'Step Three-Ay', highlight: [{ type: 'EditableNotes' }], testJs: 'return false' },
-          { html: 'Step Three-<strong>Bee</strong>', highlight: [{ type: 'WfModule', moduleName: 'Foo' }], testJs: 'return false' }
+          { html: 'Step Three-<strong>Bee</strong>', highlight: [{ type: 'WfModule', moduleIdName: 'foo' }], testJs: 'return false' }
         ]
       }
     ]
@@ -168,8 +168,8 @@ describe('lessonSelector', () => {
         sections: [
           {
             steps: [
-              { testJs: 'return workflow.selectedTab.wfModuleNames[0] === "Foo"' },
-              { testJs: 'return workflow.selectedTab.wfModuleNames[1] === "Foo"' }
+              { testJs: 'return workflow.selectedTab.wfModuleSlugs[0] === "foo"' },
+              { testJs: 'return workflow.selectedTab.wfModuleSlugs[1] === "foo"' }
             ]
           },
           ...lessonFixture.sections.slice(1)
@@ -202,8 +202,8 @@ describe('lessonSelector', () => {
         sections: [
           {
             steps: [
-              { testJs: 'return state.selectedTab.wfModuleNames[0] === "Foo"' },
-              { testJs: 'return state.selectedTab.wfModuleNames[1] === "Foo"' }
+              { testJs: 'return state.selectedTab.wfModuleSlugs[0] === "foo"' },
+              { testJs: 'return state.selectedTab.wfModuleSlugs[1] === "foo"' }
             ]
           },
           ...lessonFixture.sections.slice(1)
@@ -245,7 +245,7 @@ describe('lessonSelector', () => {
           sections: [
             {
               steps: [
-                { testJs: 'return state.selectedWfModule.moduleName === "foo"' }
+                { testJs: 'return state.selectedWfModule.moduleSlug === "foo"' }
               ]
             }
           ]
