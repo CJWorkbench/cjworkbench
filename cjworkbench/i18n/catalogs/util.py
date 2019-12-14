@@ -121,6 +121,37 @@ def mark_fuzzy(
                 message.flags.add("fuzzy")
 
 
+def catalogs_are_same(catalog_1: Catalog, catalog_2: Catalog) -> bool:
+    return (
+        catalog_1.locale == catalog_2.locale
+        and catalog_included_in(catalog_1, catalog_2)
+        and catalog_included_in(catalog_2, catalog_1)
+    )
+
+
+def messages_are_same(message: Message, other_message: Message) -> bool:
+    return (
+        message == other_message  # this compares id and context
+        and message.string == other_message.string
+        and message.flags == other_message.flags
+        and message.auto_comments == other_message.auto_comments
+        and message.user_comments == other_message.user_comments
+        and message.locations == other_message.locations
+    )
+
+
+def catalog_included_in(catalog: Catalog, other_catalog: Catalog) -> bool:
+    for message in catalog:
+        if message.id:  # ignore header
+            other_message = find_corresponding_message(other_catalog, message)
+            if other_message:
+                if not messages_are_same(message, other_message):
+                    return False
+            else:
+                return False
+    return True
+
+
 def read_po_catalog(filename: str) -> Catalog:
     """ Try to read a po catalog from the given path.
     Throw on failure.
@@ -129,10 +160,14 @@ def read_po_catalog(filename: str) -> Catalog:
         return read_po(catalog_file)
 
 
-def write_po_catalog(filename: str, catalog: Catalog, **kwargs):
+def write_po_catalog(filename: Union[str, pathlib.Path], catalog: Catalog, **kwargs):
     """ Try to write a po catalog to the given path.
+    Build the directories and the file mentioned in the path if they do not exist.
     Throw on failure.
     """
+    # Build parent directories if needed
     pathlib.Path(filename).parent.mkdir(parents=True, exist_ok=True)
+
+    # Write the file
     with open(filename, "wb") as catalog_file:
         write_po(catalog_file, catalog, **kwargs)
