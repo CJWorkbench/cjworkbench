@@ -11,7 +11,7 @@ import pyarrow
 from cjwkernel import settings
 from cjwkernel.types import ArrowTable, I18nMessage, RenderError, RenderResult
 from cjwkernel.util import tempfile_context
-from cjwkernel.pandas.moduleutils import uniquize_colnames
+from cjwmodule.util.colnames import gen_unique_clean_colnames
 from .postprocess import dictionary_encode_columns, infer_table_metadata
 from .text import transcode_to_utf8_and_warn
 
@@ -87,14 +87,40 @@ class ParseCsvWarningTruncatedColumnNamesAndMaybeDeleted(ParseCsvWarning):
 
 
 @dataclass(frozen=True)
-class ParseCsvWarningRemovedControlCharactersFromColumnNames(ParseCsvWarning):
+class ParseCsvWarningCleanedAsciiColumnNames(ParseCsvWarning):
     n_names: int
     first_name: str
 
     def __str__(self):  # TODO nix when we support i18n
-        return (
-            "Removed special characters from %d column names (see \u201c%s\u201d)"
-        ) % (self.n_names, self.first_name)
+        return ("Removed special characters from %d column names (see “%s”)") % (
+            self.n_names,
+            self.first_name,
+        )
+
+
+@dataclass(frozen=True)
+class ParseCsvWarningNumberedColumnNames(ParseCsvWarning):
+    n_names: int
+    first_name: str
+
+    def __str__(self):  # TODO nix when we support i18n
+        return "Renamed %d duplicate column names (see “%s”)" % (
+            self.n_names,
+            self.first_name,
+        )
+
+
+@dataclass(frozen=True)
+class ParseCsvWarningTruncatedColumnNames(ParseCsvWarning):
+    n_names: int
+    first_name: str
+
+    def __str__(self):  # TODO nix when we support i18n
+        return "Truncated %d column names (to %d bytes each; see “%s”)" % (
+            self.n_names,
+            settings.MAX_BYTES_PER_COLUMN_NAME,
+            self.first_name,
+        )
 
 
 @dataclass(frozen=True)
@@ -148,15 +174,11 @@ ParseCsvWarning.SkippedColumns = ParseCsvWarningSkippedColumns
 ParseCsvWarning.SkippedRows = ParseCsvWarningSkippedRows
 ParseCsvWarning.TruncatedFile = ParseCsvWarningTruncatedFile
 ParseCsvWarning.TruncatedValues = ParseCsvWarningTruncatedValues
-ParseCsvWarning.RemovedControlCharactersFromColumnNames = (
-    ParseCsvWarningRemovedControlCharactersFromColumnNames
-)
-ParseCsvWarning.TruncatedColumnNamesAndMaybeDeleted = (
-    ParseCsvWarningTruncatedColumnNamesAndMaybeDeleted
-)
+ParseCsvWarning.CleanedAsciiColumnNames = ParseCsvWarningCleanedAsciiColumnNames
+ParseCsvWarning.NumberedColumnNames = ParseCsvWarningNumberedColumnNames
+ParseCsvWarning.TruncatedColumnNames = ParseCsvWarningTruncatedColumnNames
 
 
-_PATTERN_CONTROL_CHARACTERS = re.compile("[\x00-\x1f]")
 _PATTERN_SKIPPED_ROWS = re.compile(r"^skipped (\d+) rows \(after row limit of (\d+)\)$")
 _PATTERN_SKIPPED_COLUMNS = re.compile(
     r"^skipped (\d+) columns \(after column limit of (\d+)\)$"
@@ -222,81 +244,58 @@ def _postprocess_name_columns(
     """
     warnings = []
     if has_header and table.num_rows > 0:
-        n_cleaned = 0
-        first_cleaned = None
+        n_ascii_cleaned = 0
+        first_ascii_cleaned = None
         n_truncated = 0
         first_truncated = None
-        n_deleted = 0
+        n_numbered = 0
+        first_numbered = None
 
-        def clean_name(name: Optional[str], index: int) -> str:
-            if name is not None:
-                ret = _PATTERN_CONTROL_CHARACTERS.sub("", name)
-                if len(ret) < len(name):
-                    nonlocal n_cleaned, first_cleaned
-                    if n_cleaned == 0:
-                        first_cleaned = ret
-                    n_cleaned += 1
-            else:
-                ret = ""
-            return ret or f"Column {index + 1}"
-
-        def truncate(name: str) -> str:
-            if len(name) > settings.MAX_BYTES_PER_COLUMN_NAME:
-                name = name[: settings.MAX_BYTES_PER_COLUMN_NAME]
-                nonlocal n_truncated, first_truncated
+        names = []
+        for colname in gen_unique_clean_colnames(
+            list(("" if c[0] is pyarrow.NULL else c[0].as_py()) for c in table.columns),
+            settings=settings,
+        ):
+            names.append(colname.name)
+            if colname.is_ascii_cleaned:
+                if n_ascii_cleaned == 0:
+                    first_ascii_cleaned = colname.name
+                n_ascii_cleaned += 1
+            if colname.is_truncated:
                 if n_truncated == 0:
-                    first_truncated = name
+                    first_truncated = colname.name
                 n_truncated += 1
-            return name
+            if colname.is_numbered:
+                if n_numbered == 0:
+                    first_numbered = colname.name
+                n_numbered += 1
+            # Unicode can't be fixed, because we assume valid UTF-8 input
+            assert not colname.is_unicode_fixed
+            # Stay silent if colname.is_default. Users expect us to
+            # auto-generate default column names.
 
-        column_names = list(
-            uniquize_colnames(
-                clean_name(c[0].as_py(), i) for i, c in enumerate(table.columns)
-            )
-        )
-
-        # Truncate _after_ uniquize_colnames(), because uniquize_colnames()
-        # adds an undefined number of characters. If we get too long, just
-        # delete the entire column! Rationale: when there are too many bytes,
-        # the user made a mistake; our job is to help the user fix it.
-        column_names = list(truncate(c) for c in column_names)
-
-        column_names_or_none = []  # None means, "delete the column"
-        seen = set()
-        for name in column_names:
-            if name in seen:
-                n_deleted += 1
-                column_names_or_none.append(None)
-            else:
-                seen.add(name)
-                column_names_or_none.append(name)
-
-        if n_cleaned:
+        if n_ascii_cleaned:
             warnings.append(
-                ParseCsvWarning.RemovedControlCharactersFromColumnNames(
-                    n_cleaned, first_cleaned
+                ParseCsvWarning.CleanedAsciiColumnNames(
+                    n_ascii_cleaned, first_ascii_cleaned
                 )
             )
         if n_truncated:
             warnings.append(
-                ParseCsvWarning.TruncatedColumnNamesAndMaybeDeleted(
-                    n_truncated, first_truncated, n_deleted
-                )
+                ParseCsvWarning.TruncatedColumnNames(n_truncated, first_truncated)
+            )
+        if n_numbered:
+            warnings.append(
+                ParseCsvWarning.NumberedColumnNames(n_numbered, first_numbered)
             )
 
         # Remove header (zero-copy: builds new pa.Table with same backing data)
         table = table.slice(1)
     else:
-        column_names_or_none = [f"Column {i + 1}" for i in range(len(table.columns))]
+        names = [f"Column {i + 1}" for i in range(len(table.columns))]
 
     return (
-        pyarrow.table(
-            {
-                name: table.column(i)
-                for i, name in enumerate(column_names_or_none)
-                if name is not None
-            }
-        ),
+        pyarrow.table({name: table.column(i) for i, name in enumerate(names)}),
         warnings,
     )
 

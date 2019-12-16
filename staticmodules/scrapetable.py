@@ -6,6 +6,7 @@ from typing import Optional
 import pandas as pd
 from cjwkernel.pandas.types import ProcessResult
 from cjwkernel.pandas import moduleutils
+from cjwmodule.util.colnames import gen_unique_clean_colnames
 
 
 def merge_colspan_headers_in_place(table) -> None:
@@ -40,7 +41,7 @@ def merge_colspan_headers_in_place(table) -> None:
         else:
             newcols.append(c)
     # newcols can contain duplicates. Rename them.
-    table.columns = list(moduleutils.uniquize_colnames(newcols))
+    table.columns = [c.name for c in gen_unique_clean_colnames(newcols)]
 
 
 def render(table, params, *, fetch_result):
@@ -54,12 +55,11 @@ def render(table, params, *, fetch_result):
 
     has_header: bool = params["first_row_is_header"]
     if has_header and len(table) >= 1:  # if len == 0, no-op
-        table.columns = list(
-            moduleutils.uniquize_colnames(
-                str(c) or ("Column %d" % (i + 1))
-                for i, c in enumerate(table.iloc[0, :])
-            )
-        )
+        # TODO inform user of column-rename warnings
+        table.columns = [
+            uccn.name
+            for uccn in gen_unique_clean_colnames([str(c) for c in table.iloc[0, :]])
+        ]
         table.drop(index=0, inplace=True)
         table.reset_index(drop=True, inplace=True)
         moduleutils.autocast_dtypes_in_place(table)

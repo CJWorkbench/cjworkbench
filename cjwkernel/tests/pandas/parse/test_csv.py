@@ -166,7 +166,7 @@ class ParseCsvInternalTests(unittest.TestCase):
                             "Column 5": ["d"],  # rewritten
                         }
                     ),
-                    [],
+                    [ParseCsvWarning.NumberedColumnNames(2, "A 2")],
                 ),
             )
 
@@ -477,12 +477,12 @@ class ParseCsvInternalTests(unittest.TestCase):
             )
 
     def test_omit_ascii_control_characters_from_column_names(self):
-        with _temp_csv("A\tB,AB,C\na,b,c") as path:
+        with _temp_csv("A\tB,C\na\tb,c") as path:
             assert_csv_result_equals(
                 _internal_parse_csv(path, has_header=True),
                 ParseCsvResult(
-                    pa.table({"AB": ["a"], "AB 2": ["b"], "C": ["c"]}),
-                    [ParseCsvWarning.RemovedControlCharactersFromColumnNames(1, "AB")],
+                    pa.table({"AB": ["a\tb"], "C": ["c"]}),
+                    [ParseCsvWarning.CleanedAsciiColumnNames(1, "AB")],
                 ),
             )
 
@@ -492,7 +492,12 @@ class ParseCsvInternalTests(unittest.TestCase):
             assert_csv_result_equals(
                 _internal_parse_csv(path, has_header=True),
                 ParseCsvResult(
-                    pa.table({"ABC": ["a"], "ABCD": ["b"], "BCDE": ["d"]}),
-                    [ParseCsvWarning.TruncatedColumnNamesAndMaybeDeleted(2, "ABCD", 1)],
+                    pa.table(
+                        {"ABC": ["a"], "ABCD": ["b"], "AB 2": ["c"], "BCDE": ["d"]}
+                    ),
+                    [
+                        ParseCsvWarning.TruncatedColumnNames(2, "AB 2"),
+                        ParseCsvWarning.NumberedColumnNames(1, "AB 2"),
+                    ],
                 ),
             )
