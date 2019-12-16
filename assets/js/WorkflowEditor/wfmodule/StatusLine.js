@@ -18,6 +18,7 @@ const StatusLine = React.memo(function StatusLine ({ status, error, quickFixes, 
   useEffect(() => setClickedQuickFix(false), [status, error, quickFixes])
 
   if (!error && !quickFixes.length) return null
+  if (status === 'busy' || status === 'unreachable') return null
 
   return (
     <div className='wf-module-error-msg'>

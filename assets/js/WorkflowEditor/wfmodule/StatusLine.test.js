@@ -111,4 +111,9 @@ describe('Status line', () => {
     const w = wrapper({ status: 'ok', error: '' })
     expect(w.html()).toEqual('')
   })
+
+  it('renders null when busy', () => {
+    const w = wrapper({ status: 'busy', error: 'hi' })
+    expect(w.html()).toEqual('')
+  })
 })
