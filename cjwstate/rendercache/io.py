@@ -16,8 +16,6 @@ BUCKET = minio.CachedRenderResultsBucket
 WF_MODULE_FIELDS = [
     "cached_render_result_delta_id",
     "cached_render_result_errors",
-    "cached_render_result_error",  # DELETEME
-    "cached_render_result_quick_fixes",  # DELETEME
     "cached_render_result_json",
     "cached_render_result_columns",
     "cached_render_result_status",
@@ -80,8 +78,6 @@ def cache_render_result(
 
     wf_module.cached_render_result_delta_id = delta_id
     wf_module.cached_render_result_errors = result.errors
-    wf_module.cached_render_result_error = ""  # DELETEME
-    wf_module.cached_render_result_quick_fixes = []  # DELETEME
     wf_module.cached_render_result_status = status
     wf_module.cached_render_result_json = json_bytes
     wf_module.cached_render_result_columns = result.table.metadata.columns
@@ -271,9 +267,7 @@ def clear_cached_render_result_for_wf_module(wf_module: WfModule) -> None:
 
     wf_module.cached_render_result_delta_id = None
     wf_module.cached_render_result_errors = []
-    wf_module.cached_render_result_error = ""
     wf_module.cached_render_result_json = b"null"
-    wf_module.cached_render_result_quick_fixes = []
     wf_module.cached_render_result_status = None
     wf_module.cached_render_result_columns = None
     wf_module.cached_render_result_nrows = None

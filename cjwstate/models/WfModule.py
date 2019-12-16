@@ -141,10 +141,6 @@ class WfModule(models.Model):
     )
     cached_render_result_errors = RenderErrorsField(blank=True, default=list)
 
-    # Backwards-compatibility errors. TODO migrate to cached_render_result_errors.
-    cached_render_result_error = models.TextField(blank=True)
-    cached_render_result_quick_fixes = JSONField(blank=True, default=list)
-
     # should be JSONField but we need backwards-compatibility
     cached_render_result_json = models.BinaryField(blank=True)
     cached_render_result_columns = ColumnsField(null=True, blank=True)
@@ -372,15 +368,7 @@ class WfModule(models.Model):
         if cached_result is not None and self.tab.name == to_tab.name:
             # assuming file-copy succeeds, copy cached results.
             new_wfm.cached_render_result_delta_id = new_wfm.last_relevant_delta_id
-            for attr in (
-                "status",
-                "error",
-                "errors",
-                "json",
-                "quick_fixes",
-                "columns",
-                "nrows",
-            ):
+            for attr in ("status", "errors", "json", "columns", "nrows"):
                 full_attr = f"cached_render_result_{attr}"
                 setattr(new_wfm, full_attr, getattr(self, full_attr))
 
@@ -519,42 +507,15 @@ class WfModule(models.Model):
         delta_id = self.cached_render_result_delta_id
         status = self.cached_render_result_status
         columns = self.cached_render_result_columns
+        errors = self.cached_render_result_errors
         nrows = self.cached_render_result_nrows
-
-        # TODO [2019-01-24] once we've deployed and wiped all caches, nix this
-        # 'columns' check and assume 'columns' is always set when we get here
-        if columns is None:
-            # this cached value is stale because _Workbench_ has been updated
-            # and doesn't support it any more
-            return None
 
         # cached_render_result_json is sometimes a memoryview
         json_bytes = bytes(self.cached_render_result_json)
-        try:
+        if json_bytes:
             json_dict = json.loads(json_bytes)
-        except ValueError:
-            # Backwards-compat: json.loads(b'')
-            json_dict = {}
-
-        if self.cached_render_result_errors:
-            errors = self.cached_render_result_errors
         else:
-            # Compatibility. TODO migrate, then delete these columns
-            error = self.cached_render_result_error
-            if error:
-                quick_fixes = self.cached_render_result_quick_fixes
-                if not quick_fixes:
-                    quick_fixes = []
-                # Coerce from dict to QuickFixes
-                quick_fixes = [ptypes.QuickFix(**qf) for qf in quick_fixes]
-                errors = [
-                    RenderError(
-                        I18nMessage.TODO_i18n(error),
-                        [qf.to_arrow() for qf in quick_fixes],
-                    )
-                ]
-            else:
-                errors = []
+            json_dict = {}
 
         return CachedRenderResult(
             workflow_id=self.workflow_id,
