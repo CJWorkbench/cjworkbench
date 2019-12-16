@@ -988,4 +988,24 @@ class Migration(migrations.Migration):
         migrations.AlterUniqueTogether(
             name="aclentry", unique_together={("workflow", "email")}
         ),
+        # [adamhooper, 2019-12-16] we really need to use django 2.2's
+        # meta-uniqueness. In the meantime, this was copy/pasted from a prior
+        # migration.
+        migrations.RunSQL(
+            [
+                """
+                CREATE UNIQUE INDEX unique_workflow_copy_by_session
+                ON server_workflow (anonymous_owner_session_key,
+                                    original_workflow_id)
+                WHERE anonymous_owner_session_key IS NOT NULL
+                  AND original_workflow_id IS NOT NULL
+                """,
+                """
+                CREATE UNIQUE INDEX unique_workflow_copy_by_user
+                ON server_workflow (owner_id, original_workflow_id)
+                WHERE owner_id IS NOT NULL
+                  AND original_workflow_id IS NOT NULL
+                """,
+            ]
+        ),
     ]
