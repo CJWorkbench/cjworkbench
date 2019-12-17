@@ -111,15 +111,34 @@
     form.locale-switcher {
       margin: 1rem auto;
       text-align: center;
+      font-size: 1.4rem;
 
       .dropdown {
         display: inline-block;
         text-align: left;
       }
 
+      .dropdown-item {
+        font-size: 1.4rem;
+      }
+
       .dropdown-toggle {
-        background-color: white;
+        background: transparent;
         border-color: white;
+
+        &:active {
+          color: white;
+          background: rgba(255, 255, 255, 0.2);
+          border-color: white;
+        }
+      }
+
+      &.show .dropdown-toggle {
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      &:not(.show) .dropdown-toggle:focus {
+        outline: 1px dotted white;
       }
     }
 
