@@ -3,7 +3,6 @@ from cjworkbench.i18n import default_locale, supported_locales
 from cjworkbench.i18n.catalogs.util import (
     read_po_catalog,
     write_po_catalog,
-    message_unique_identifier,
     find_fuzzy_messages,
     fill_catalog,
     mark_fuzzy,
@@ -15,10 +14,11 @@ from cjworkbench.i18n.catalogs import (
     TEMPLATE_CATALOG_FILENAME,
     COMMENT_TAG_FOR_DEFAULT_MESSAGE,
 )
-import re
-import sys
 from os import remove
+import re
 from shutil import copyfile
+import sys
+from typing import List, FrozenSet
 
 
 MID_EXTRACT_CATALOG_FILENAME = "old.po"
@@ -98,7 +98,7 @@ def merge():
             js_catalog = read_po_catalog(target_catalog_path)
             old = read_po_catalog(catalog_path(locale, MID_EXTRACT_CATALOG_FILENAME))
 
-            catalog = _merge_catalog(js_catalog, python_source_catalog, old, fuzzy)
+            catalog = _merge_catalogs([js_catalog, python_source_catalog], old, fuzzy)
 
             write_po_catalog(target_catalog_path, catalog, ignore_obsolete=True)
 
@@ -130,27 +130,40 @@ def _merge_source_catalog(js_catalog, python_catalog, old_source_catalog):
     )
 
 
-def _merge_catalog(
-    js_catalog: Catalog, python_messages: Catalog, old: Catalog, fuzzy: set = set()
-):
-    """ Add the messages of `python_messages` in the `js_catalog`.
+def _merge_catalogs(catalogs: List[Catalog], old: Catalog, fuzzy: FrozenSet):
+    """
+    Merge `catalogs` into one big catalog.
 
     Message strings will be populated using the `old` catalog.
-    
-    Assumes:
-        - The strings in `js_catalog` are either empty or the same as the corresponding ones in `old_source_catalog`
-        - The strings in `python_messages` are in a different language
-    
-    A message string of the resulting catalog will be marked as fuzzy if 
-     - it was fuzzy in the `old` catalog, or
-     - it is non-empty and its unique identifier (in the sense of `message_unique_identifier`) is in `fuzzy`.
+
+    The strings in `catalogs` must be either empty or in the same language as
+    `old`.
+
+    A message string of the resulting catalog will be marked as fuzzy if:
+
+    * it was fuzzy in the `old` catalog; or
+    * it is non-empty and its unique identifier (in the sense of
+      `message_unique_identifier`) is in `fuzzy`
     """
 
-    fill_catalog(js_catalog, js_catalog, old)
-    fill_catalog(js_catalog, python_messages, old)
-    mark_fuzzy(js_catalog, fuzzy, old)
+    ret = Catalog(
+        locale=old.locale,
+        header_comment=old.header_comment,
+        project=old.project,
+        version=old.version,
+        copyright_holder=old.copyright_holder,
+        msgid_bugs_address=old.msgid_bugs_address,
+        creation_date=old.creation_date,
+        revision_date=old.revision_date,
+        last_translator=old.last_translator,
+        language_team=old.language_team,
+        fuzzy=old.fuzzy,
+    )
+    for catalog in catalogs:
+        fill_catalog(ret, catalog, old)
+    mark_fuzzy(ret, fuzzy, old)
 
-    return js_catalog
+    return ret
 
 
 def clean():

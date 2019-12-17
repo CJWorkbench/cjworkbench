@@ -341,7 +341,7 @@ msgid "js.WfHamburgerMenu.menu.importModule"
 msgstr "Εισαγωγή Μονάδας (Module)"
 
 #: assets/js/WfHamburgerMenu.js:66
-msgid "js.WfHamburgerMenu.menu.languages"
+msgid "js.WfHamburgerMenu.menu.language"
 msgstr ""
 
 #: assets/js/WfHamburgerMenu.js:68

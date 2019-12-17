@@ -368,9 +368,9 @@ msgstr ""
 msgid "js.WfHamburgerMenu.menu.importModule"
 msgstr ""
 
-#. default-message: Languages
+#. default-message: Language
 #: assets/js/WfHamburgerMenu.js:66
-msgid "js.WfHamburgerMenu.menu.languages"
+msgid "js.WfHamburgerMenu.menu.language"
 msgstr ""
 
 #. default-message: Log Out

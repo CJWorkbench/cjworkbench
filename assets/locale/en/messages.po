@@ -323,8 +323,8 @@ msgid "js.WfHamburgerMenu.menu.importModule"
 msgstr "Import Module"
 
 #: assets/js/WfHamburgerMenu.js:66
-msgid "js.WfHamburgerMenu.menu.languages"
-msgstr "Languages"
+msgid "js.WfHamburgerMenu.menu.language"
+msgstr "Language"
 
 #: assets/js/WfHamburgerMenu.js:68
 msgid "js.WfHamburgerMenu.menu.logout"
