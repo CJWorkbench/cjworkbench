@@ -1,4 +1,4 @@
-from django.test import SimpleTestCase
+import unittest
 from cjwstate.modules.module_loader import ModuleSpec, validate_module_spec
 from cjwstate.modules.i18n.spec import find_spec_messages
 from typing import Dict, Any
@@ -9,7 +9,7 @@ def _make_module_spec(spec: Dict[str, Any]):
     return ModuleSpec(**spec)
 
 
-class FindSpecMessagesTest(SimpleTestCase):
+class FindSpecMessagesTest(unittest.TestCase):
     def test_only_required(self):
         spec = _make_module_spec(
             {

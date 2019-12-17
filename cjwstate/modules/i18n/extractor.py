@@ -13,27 +13,34 @@ _default_message_re = re.compile(r"\s*default-message:\s*(.*)\s*")
 def find_messages_in_module_code(
     code_path: pathlib.Path, root_path: pathlib.Path
 ) -> Dict[str, Dict[str, Any]]:
-    messages = {}
     with open(code_path, "rb") as code_file:
-        messages_data = extract(
-            _extract_module_code,
-            code_file,
-            keywords={"trans": (1, 2)},
-            comment_tags=["i18n"],
+        return _find_messages_in_module_code(
+            code_file, str(code_path.relative_to(root_path))
         )
-        relative_path_name = str(code_path.relative_to(root_path))
-        for lineno, message_id, comments, context in messages_data:
-            default_message = ""
-            for comment in comments:
-                match = _default_message_re.match(comment)
-                if match:
-                    default_message = match.group(1).strip()
-                    comments.remove(comment)
-            messages[message_id] = {
-                "string": default_message,
-                "comments": comments,
-                "locations": [(relative_path_name, lineno)],
-            }
+
+
+def _find_messages_in_module_code(
+    code_file, relative_path_name: str
+) -> Dict[str, Dict[str, Any]]:
+    messages_data = extract(
+        _extract_module_code,
+        code_file,
+        keywords={"trans": (1, 2)},
+        comment_tags=["i18n"],
+    )
+    messages = {}
+    for lineno, message_id, comments, context in messages_data:
+        default_message = ""
+        for comment in comments:
+            match = _default_message_re.match(comment)
+            if match:
+                default_message = match.group(1).strip()
+                comments.remove(comment)
+        messages[message_id] = {
+            "string": default_message,
+            "comments": comments,
+            "locations": [(relative_path_name, lineno)],
+        }
     return messages
 
 
