@@ -48,7 +48,7 @@ six = "*"  # yajl-py depends on it but doesn't declare so. https://github.com/py
 pyroute2 = "*"
 pyspawner = "*"
 pyicu = "*"
-cjwmodule = "==1.1.2"
+cjwmodule = "~=1.1.3"
 
 [dev-packages]
 watchdog = "*"
