@@ -1,5 +1,5 @@
 import unittest
-from cjwstate.modules.i18n.extractor import _find_messages_in_module_code
+from cjwstate.modules.i18n.catalogs.extract.code import _find_messages_in_module_code
 from io import BytesIO
 
 

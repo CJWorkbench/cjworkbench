@@ -1,6 +1,6 @@
 import unittest
 from cjwstate.modules.module_loader import ModuleSpec, validate_module_spec
-from cjwstate.modules.i18n.spec import find_spec_messages
+from cjwstate.modules.i18n.catalogs.extract.spec import find_spec_messages
 from typing import Dict, Any
 
 

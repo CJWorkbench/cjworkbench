@@ -13,8 +13,8 @@ from babel.messages.catalog import Catalog
 from cjwstate.modules.module_loader import ModuleFiles, ModuleSpec
 from typing import FrozenSet, Dict
 import pathlib
-from cjwstate.modules.i18n.spec import find_spec_messages
-from cjwstate.modules.i18n.extractor import find_messages_in_module_code
+from cjwstate.modules.i18n.catalogs.extract.spec import find_spec_messages
+from cjwstate.modules.i18n.catalogs.extract.code import find_messages_in_module_code
 
 
 def extract_module_messages(directory: pathlib.Path):
