@@ -14,6 +14,7 @@ from cjwstate.modules.module_loader import ModuleFiles, ModuleSpec
 from typing import FrozenSet, Dict
 import pathlib
 from cjwstate.modules.i18n.spec import find_spec_messages
+from cjwstate.modules.i18n.extractor import find_messages_in_module_code
 
 
 def extract_module_messages(directory: pathlib.Path):
@@ -65,7 +66,7 @@ def _build_source_catalog(
     source_catalog = Catalog(default_locale)
     for message_id, source_string in find_spec_messages(spec).items():
         source_catalog.add(message_id, string=source_string)
-    for message_id, message_properties in extract(
+    for message_id, message_properties in find_messages_in_module_code(
         module_code_path, module_root_directory
     ).items():
         source_catalog.add(
