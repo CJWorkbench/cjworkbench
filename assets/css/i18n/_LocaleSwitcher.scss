@@ -16,10 +16,10 @@
       background: white;
       text-align: left;
       padding: 1rem 0;
-      color: $brand-workspace;
+      color: $brand-text--darker;
 
       &:disabled, &.submitting {
-        color: $brand-text--darker;
+        color: $brand-workspace;
         font-weight: bold;
       }
 
