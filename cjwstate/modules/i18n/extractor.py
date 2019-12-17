@@ -36,11 +36,15 @@ def _find_messages_in_module_code(
             if match:
                 default_message = match.group(1).strip()
                 comments.remove(comment)
-        messages[message_id] = {
-            "string": default_message,
-            "comments": comments,
-            "locations": [(relative_path_name, lineno)],
-        }
+        if message_id in messages:
+            messages[message_id]["comments"].extend(comments)
+            messages[message_id]["locations"].append((relative_path_name, lineno))
+        else:
+            messages[message_id] = {
+                "string": default_message,
+                "comments": comments,
+                "locations": [(relative_path_name, lineno)],
+            }
     return messages
 
 
@@ -137,7 +141,18 @@ def _extract_module_code(fileobj, keywords, comment_tags, options):
                     # `messages` will have all the string parameters to our function
                     # As we specify in the documentation of `trans`,
                     # the first will be the message ID and the second will be the default message.
-                    if len(messages) > 1 and messages[1]:
+                    # If the message ID is a string (i.e. not a variable),
+                    # then we require the default message to also be a string.
+
+                    if messages[0] is not None:
+                        if messages[1] is None:
+                            error = SyntaxError(
+                                "Default message must not be passed as a variable"
+                            )
+                            error.lineno = message_lineno
+                            error.filename = "Module code"
+                            raise error
+
                         # If we have a default, add it as a special comment
                         # that will be processed by our `merge_catalogs` script
                         translator_comments.append(
