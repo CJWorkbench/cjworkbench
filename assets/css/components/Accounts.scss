@@ -131,6 +131,11 @@
           background: rgba(255, 255, 255, 0.2);
           border-color: white;
         }
+
+        i.icon {
+          vertical-align: -2px;
+          margin-right: .75rem;
+        }
       }
 
       &.show .dropdown-toggle {
