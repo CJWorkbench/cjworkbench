@@ -314,23 +314,23 @@ msgstr ""
 "It helps if you can describe what you were doing before you ran into the "
 "bug."
 
-#: assets/js/WfHamburgerMenu.js:64
+#: assets/js/WfHamburgerMenu.js:66
 msgid "js.WfHamburgerMenu.menu.home"
 msgstr "Home"
 
-#: assets/js/WfHamburgerMenu.js:61
+#: assets/js/WfHamburgerMenu.js:63
 msgid "js.WfHamburgerMenu.menu.importModule"
 msgstr "Import Module"
 
-#: assets/js/WfHamburgerMenu.js:66
+#: assets/js/WfHamburgerMenu.js:58
 msgid "js.WfHamburgerMenu.menu.language"
 msgstr "Language"
 
-#: assets/js/WfHamburgerMenu.js:68
+#: assets/js/WfHamburgerMenu.js:69
 msgid "js.WfHamburgerMenu.menu.logout"
 msgstr "Log Out"
 
-#: assets/js/WfHamburgerMenu.js:60
+#: assets/js/WfHamburgerMenu.js:62
 msgid "js.WfHamburgerMenu.menu.myWorkflows"
 msgstr "My Workflows"
 

@@ -332,23 +332,23 @@ msgstr ""
 "Βοηθά αν μπορείτε να περιγράψετε τι κάνατε προτού εμφανιστεί αυτό το "
 "σφάλμα."
 
-#: assets/js/WfHamburgerMenu.js:64
+#: assets/js/WfHamburgerMenu.js:66
 msgid "js.WfHamburgerMenu.menu.home"
 msgstr "Αρχική"
 
-#: assets/js/WfHamburgerMenu.js:61
+#: assets/js/WfHamburgerMenu.js:63
 msgid "js.WfHamburgerMenu.menu.importModule"
 msgstr "Εισαγωγή Μονάδας (Module)"
 
-#: assets/js/WfHamburgerMenu.js:66
+#: assets/js/WfHamburgerMenu.js:58
 msgid "js.WfHamburgerMenu.menu.language"
 msgstr ""
 
-#: assets/js/WfHamburgerMenu.js:68
+#: assets/js/WfHamburgerMenu.js:69
 msgid "js.WfHamburgerMenu.menu.logout"
 msgstr "Αποσυνδέση"
 
-#: assets/js/WfHamburgerMenu.js:60
+#: assets/js/WfHamburgerMenu.js:62
 msgid "js.WfHamburgerMenu.menu.myWorkflows"
 msgstr "Οι ροές εργασιών μου"
 

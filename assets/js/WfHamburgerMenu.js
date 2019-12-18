@@ -2,7 +2,7 @@
 
 import React from 'react'
 import PropTypes from 'prop-types'
-import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from './components/Dropdown'
+import { UncontrolledDropdown, DropdownDivider, DropdownToggle, DropdownMenu, DropdownItem } from './components/Dropdown'
 import ImportModuleFromGitHub from './ImportModuleFromGitHub'
 import LocaleSwitcher from './i18n/LocaleSwitcher'
 import { Trans, t } from '@lingui/macro'
@@ -55,6 +55,8 @@ export class WfHamburgerMenu extends React.Component {
           </DropdownToggle>
 
           <DropdownMenu>
+            <DropdownItem onClick={this.handleClickOpenLocaleSwitcher}><i className="icon icon-language"></i><Trans id='js.WfHamburgerMenu.menu.language'>Language</Trans></DropdownItem>
+            <DropdownDivider />
             {loggedIn && workflowId ? (
               <>
                 <DropdownItem href='/workflows/'><Trans id='js.WfHamburgerMenu.menu.myWorkflows'>My Workflows</Trans></DropdownItem>
@@ -63,7 +65,6 @@ export class WfHamburgerMenu extends React.Component {
             ) : (
               <DropdownItem href='//workbenchdata.com'><Trans id='js.WfHamburgerMenu.menu.home'>Home</Trans></DropdownItem>
             )}
-            <DropdownItem onClick={this.handleClickOpenLocaleSwitcher}><Trans id='js.WfHamburgerMenu.menu.languages'>Languages</Trans></DropdownItem>
             {loggedIn ? (
               <DropdownItem href='/account/logout'><Trans id='js.WfHamburgerMenu.menu.logout'>Log Out</Trans></DropdownItem>
             ) : null}

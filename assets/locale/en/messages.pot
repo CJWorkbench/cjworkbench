@@ -359,27 +359,27 @@ msgid "js.UnhandledErrorReport.helpText.pleaseDescribeYourActions"
 msgstr ""
 
 #. default-message: Home
-#: assets/js/WfHamburgerMenu.js:64
+#: assets/js/WfHamburgerMenu.js:66
 msgid "js.WfHamburgerMenu.menu.home"
 msgstr ""
 
 #. default-message: Import Module
-#: assets/js/WfHamburgerMenu.js:61
+#: assets/js/WfHamburgerMenu.js:63
 msgid "js.WfHamburgerMenu.menu.importModule"
 msgstr ""
 
 #. default-message: Language
-#: assets/js/WfHamburgerMenu.js:66
+#: assets/js/WfHamburgerMenu.js:58
 msgid "js.WfHamburgerMenu.menu.language"
 msgstr ""
 
 #. default-message: Log Out
-#: assets/js/WfHamburgerMenu.js:68
+#: assets/js/WfHamburgerMenu.js:69
 msgid "js.WfHamburgerMenu.menu.logout"
 msgstr ""
 
 #. default-message: My Workflows
-#: assets/js/WfHamburgerMenu.js:60
+#: assets/js/WfHamburgerMenu.js:62
 msgid "js.WfHamburgerMenu.menu.myWorkflows"
 msgstr ""
 
