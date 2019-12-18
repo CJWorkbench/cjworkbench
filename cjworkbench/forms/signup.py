@@ -43,3 +43,5 @@ class WorkbenchSignupForm(forms.ModelForm):
         profile, created = UserProfile.objects.get_or_create(user=user)
         profile.get_newsletter = self.cleaned_data["get_newsletter"]
         profile.save()
+        user.user_profile.locale_id = request.locale_id
+        user.user_profile.save(update_fields=["locale_id"])
