@@ -1,10 +1,14 @@
 from allauth.account.adapter import DefaultAccountAdapter
 from cjworkbench.i18n.templates import context_processor
 from django.contrib.sites.shortcuts import get_current_site
+from django.conf import settings
+from django.template.loader import render_to_string
+from django.template import TemplateDoesNotExist
+from django.contrib import messages
 
 
 class AccountAdapter(DefaultAccountAdapter):
-    # allauth builds its own context (both in send_confirmation email and in other places),
+    # allauth builds its own context (in `send_confirmation email`, in `add_message` and maybe in other places),
     # which does not include the context injected by the context processors in settings.
     # Since we always need our i18n context for translation tags in templates,
     # we have to inject it here.
@@ -30,3 +34,21 @@ class AccountAdapter(DefaultAccountAdapter):
         else:
             email_template = "account/email/email_confirmation"
         self.send_mail(email_template, emailconfirmation.email_address.email, ctx)
+
+    def add_message(
+        self, request, level, message_template, message_context=None, extra_tags=""
+    ):
+        """
+        Wrapper of `django.contrib.messages.add_message`, that reads
+        the message text from a template.
+        """
+        if "django.contrib.messages" in settings.INSTALLED_APPS:
+            try:
+                if message_context is None:
+                    message_context = {}
+                message_context.update(context_processor(request))
+                message = render_to_string(message_template, message_context).strip()
+                if message:
+                    messages.add_message(request, level, message, extra_tags=extra_tags)
+            except TemplateDoesNotExist:
+                pass
