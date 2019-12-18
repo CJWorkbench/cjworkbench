@@ -48,19 +48,30 @@ def _clear_minio():
                 raise err
 
 
-def login(browser: Browser, email: str, password: str) -> None:
+def login(
+    browser: Browser,
+    email: str,
+    password: str,
+    locale_id: str = "en",
+    after_login_locale_id: str = "en",
+) -> None:
     """Log in through `/account/login` as the given user."""
     browser.visit("/account/login")
     browser.fill_in("login", email)
     browser.fill_in("password", password)
-    browser.click_button("Sign In")
-    browser.wait_for_element("a", text="MY WORKFLOWS", wait=True)
+    login_button_text = {"en": "Sign In", "el": "Σύνδεση"}
+    browser.click_button(login_button_text[locale_id])
+    my_workflows_text = {"en": "MY WORKFLOWS", "el": "ΟΙ ΡΟΈΣ ΕΡΓΑΣΙΏΝ ΜΟΥ"}
+    browser.wait_for_element(
+        "a", text=my_workflows_text[after_login_locale_id], wait=True
+    )
 
 
-def logout(browser: Browser) -> None:
+def logout(browser: Browser, locale_id: str = "en") -> None:
     """Log out through `/account/logout` as the given user."""
     browser.visit("/account/logout")
-    browser.click_button("Log out")
+    logout_button_text = {"en": "Log out", "el": "Αποσύνδεση"}
+    browser.click_button(logout_button_text[locale_id])
 
 
 def _close_connection(conn):
