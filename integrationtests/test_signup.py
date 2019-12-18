@@ -72,4 +72,4 @@ class TestSignup(LocaleSwitcherIntegrationTest):
         b.fill_in("login", "user-el@example.org", wait=True)
         b.fill_in("password", "?P455W0rd!")
         b.click_button("Σύνδεση")
-        b.wait_for_element("a", text="ΟΙ ΡΟΈΣ ΕΡΓΑΣΊΑΣ ΜΟΥ", wait=True)
+        b.wait_for_element("a", text="ΟΙ ΡΟΈΣ ΕΡΓΑΣΙΏΝ ΜΟΥ", wait=True)
