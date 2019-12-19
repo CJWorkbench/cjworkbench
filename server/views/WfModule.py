@@ -232,13 +232,15 @@ def wfmodule_value_counts(request: HttpRequest, wf_module: WfModule):
         # and this response is going to be ignored.)
         return JsonResponse({"error": f'column "{colname}" not found'}, status=404)
 
-    # Assume type is text. (We checked column.type is ColumnType.Text above.)
-    chunked_array = chunked_array.dictionary_encode()  # may be redundant
     if chunked_array.num_chunks == 0:
         value_counts = {}
     else:
         assert chunked_array.num_chunks == 1
+
+        # Assume type is text. (We checked column.type is ColumnType.Text above.)
         chunk = chunked_array.chunks[0]
+        if not hasattr(chunk, "dictionary"):
+            chunk = chunk.dictionary_encode()
 
         try:
             max_index = max(v.as_py() for v in chunk.indices if v is not pa.NULL)

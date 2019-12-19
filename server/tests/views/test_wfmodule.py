@@ -243,6 +243,27 @@ class WfModuleTests(LoggedInTestCase):
             json.loads(response.content), {"values": {"a": 2, "b": 2, "c": 1}}
         )
 
+    def test_value_counts_dictionary(self):
+        cache_render_result(
+            self.workflow,
+            self.wf_module2,
+            self.wf_module2.last_relevant_delta_id,
+            RenderResult(
+                arrow_table(
+                    {"A": pa.array(["a", "b", "b", "a", "c", None]).dictionary_encode()}
+                )
+            ),
+        )
+
+        response = self.client.get(
+            f"/api/wfmodules/{self.wf_module2.id}/value-counts?column=A"
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            json.loads(response.content), {"values": {"a": 2, "b": 2, "c": 1}}
+        )
+
     def test_value_counts_corrupt_cache(self):
         # https://www.pivotaltracker.com/story/show/161988744
         cache_render_result(
