@@ -1,6 +1,6 @@
 from babel.messages.pofile import read_po, write_po
 from babel.messages.catalog import Catalog, Message
-from typing import Optional, FrozenSet, Any, Union, Tuple
+from typing import Optional, FrozenSet, Union, Tuple
 import pathlib
 
 MessageUID = Union[str, Tuple[str, str]]

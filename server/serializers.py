@@ -257,7 +257,6 @@ class WfModuleSerializer(serializers.ModelSerializer):
             "is_busy",
             "output_errors",
             "output_status",
-            "fetch_error",
             "files",
             "params",
             "secrets",

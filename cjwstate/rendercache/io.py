@@ -16,8 +16,6 @@ BUCKET = minio.CachedRenderResultsBucket
 WF_MODULE_FIELDS = [
     "cached_render_result_delta_id",
     "cached_render_result_errors",
-    "cached_render_result_error",  # DELETEME
-    "cached_render_result_quick_fixes",  # DELETEME
     "cached_render_result_json",
     "cached_render_result_columns",
     "cached_render_result_status",
@@ -80,8 +78,6 @@ def cache_render_result(
 
     wf_module.cached_render_result_delta_id = delta_id
     wf_module.cached_render_result_errors = result.errors
-    wf_module.cached_render_result_error = ""  # DELETEME
-    wf_module.cached_render_result_quick_fixes = []  # DELETEME
     wf_module.cached_render_result_status = status
     wf_module.cached_render_result_json = json_bytes
     wf_module.cached_render_result_columns = result.table.metadata.columns
@@ -204,19 +200,13 @@ def open_cached_render_result(crr: CachedRenderResult) -> ContextManager[RenderR
         yield result
 
 
-def read_cached_render_result_pydict(
-    crr: CachedRenderResult, only_columns: range, only_rows: range
-) -> Dict[str, List[Any]]:
+def read_cached_render_result_slice_as_text(
+    crr: CachedRenderResult, format: str, only_columns: range, only_rows: range
+) -> str:
     """
-    Return a dict mapping column name to data (Python objects).
+    Call `parquet-to-text-stream` and return its output.
 
-    Python data consumes RAM, so you must specify columns and rows.
-
-    `retval.keys()` is in table-column order (not `only_columns` order).
-
-    Missing rows and columns are ignored.
-
-    `NaN` is returned as `None`.
+    Ignore out-of-range rows and columns.
 
     Raise CorruptCacheError if the cached data does not match `crr`. That can
     mean:
@@ -226,6 +216,14 @@ def read_cached_render_result_pydict(
         * `crr` is stale -- the cached result is for a different delta. This
           could be detected by a `Workflow.cooperative_lock()`, too, should the
           caller want to distinguish this error from the others.
+
+    To limit the amount of text stored in RAM, use relatively small ranges for
+    `only_columns` and `only_rows`.
+
+    This uses `parquet-to-text-stream` with `--row-range` and `--column-range`.
+    Read `parquet-to-text-stream` documentation to see how nulls and floats are
+    handled in your chosen format (`csv` or `json`). (In a nutshell: it's
+    mostly non-lossy, though CSV can't represent `null`.)
     """
     if not crr.table_metadata.columns:
         # Zero-column tables aren't written to cache
@@ -233,18 +231,11 @@ def read_cached_render_result_pydict(
 
     try:
         with downloaded_parquet_file(crr) as parquet_path:
-            ret = parquet.read_pydict(parquet_path, only_columns, only_rows)
+            return parquet.read_slice_as_text(
+                parquet_path, format, only_columns, only_rows
+            )
     except (pyarrow.ArrowIOError, FileNotFoundError):  # FIXME unit-test
         raise CorruptCacheError
-
-    for i, column in enumerate(crr.table_metadata.columns):
-        if i in only_columns:
-            if isinstance(column.type, ColumnType.Number):
-                unclean = ret[column.name]  # may contain nan
-                ret[column.name] = [
-                    None if (v is None or math.isnan(v)) else v for v in unclean
-                ]
-    return ret
 
 
 def delete_parquet_files_for_wf_module(workflow_id: int, wf_module_id: int) -> None:
@@ -271,9 +262,7 @@ def clear_cached_render_result_for_wf_module(wf_module: WfModule) -> None:
 
     wf_module.cached_render_result_delta_id = None
     wf_module.cached_render_result_errors = []
-    wf_module.cached_render_result_error = ""
     wf_module.cached_render_result_json = b"null"
-    wf_module.cached_render_result_quick_fixes = []
     wf_module.cached_render_result_status = None
     wf_module.cached_render_result_columns = None
     wf_module.cached_render_result_nrows = None

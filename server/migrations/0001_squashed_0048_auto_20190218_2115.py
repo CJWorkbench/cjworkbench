@@ -39,6 +39,7 @@ import cjwstate.models.module_version
 
 
 class Migration(migrations.Migration):
+
     initial = True
 
     dependencies = [
@@ -51,9 +52,9 @@ class Migration(migrations.Migration):
         migrations.RunSQL(
             sql=[
                 """
-            UPDATE django_site
-            SET domain = 'app.workbenchdata.com', name = 'Workbench';
-            """
+                UPDATE django_site
+                SET domain = 'app.workbenchdata.com', name = 'Workbench';
+                """
             ]
         ),
         migrations.CreateModel(

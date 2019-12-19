@@ -7,68 +7,7 @@ from cjwkernel.types import I18nMessage, RenderError, RenderResult
 from cjwkernel import settings
 from ..types import ProcessResult
 from ..moduleutils import autocast_dtypes_in_place
-
-
-_PATTERN_CONTROL_CHARACTERS = re.compile("[\x00-\x1f]")
-
-
-def _uniquify(colnames: List[str]) -> List[str]:
-    """
-    Return `colnames`, renaming non-unique names to be unique.
-
-    The logic: walk the list from left to right. When we see a column name,
-    for the first time, blacklist it. If we see a blacklisted column name,
-    rename it by adding a unique digit and blacklist the new name.
-    """
-    seen = set()
-    ret = []
-
-    for colname in colnames:
-        if colname in seen:
-            # Modify `colname` by adding a number to it.
-            for n in itertools.count():
-                try_colname = f"{colname} {n + 1}"
-                if try_colname not in seen:
-                    colname = try_colname
-                    break
-        ret.append(colname)
-        seen.add(colname)
-
-    return ret
-
-
-def _truncate_string_to_max_bytes(s: str, max_bytes: int):
-    b = s.encode("utf-8")
-    if len(b) <= max_bytes:
-        return s
-
-    while True:
-        b = b[:max_bytes]
-        try:
-            return b.decode("utf-8")
-        except UnicodeDecodeError:
-            # We nixed a continuation byte. Nix more bytes until we fit.
-            max_bytes -= 1
-
-
-def _clean_column_name(colname: Any, index: int) -> str:
-    # Convert to string! Pandas can produce non-string colnames.
-    colname = str(colname)
-
-    # Strip control characters
-    colname = _PATTERN_CONTROL_CHARACTERS.sub("", colname)
-
-    # Reduce number of characters -- adding a 4-byte buffer for
-    # uniquify_colnames().
-    colname = _truncate_string_to_max_bytes(
-        colname, settings.MAX_BYTES_PER_COLUMN_NAME - 4
-    )
-
-    # Do not allow empty-string column name
-    if not colname:
-        colname = f"Column {index + 1}"
-
-    return colname
+from cjwmodule.util.colnames import gen_unique_clean_colnames
 
 
 def parse_xls_file(
@@ -105,11 +44,14 @@ def parse_xls_file(
         # etc. This is hard to fix. We'd need to stop using pd.read_excel().
         # [2019-12-09, adamhooper] Not today.
         #
-        # We still need to call _uniquify(), because _clean_column_name() can
-        # map different strings to the same string.
-        table.columns = _uniquify(
-            [_clean_column_name(c, i) for i, c in enumerate(table.columns)]
-        )
+        # In the meantime, ensure valid colnames so at least the user sees
+        # _something_. Ignore all warnings.
+        table.columns = [
+            cn.name
+            for cn in gen_unique_clean_colnames(
+                [str(c) for c in table.columns], settings=settings
+            )
+        ]
     else:
         table.columns = [f"Column {i + 1}" for i in range(len(table.columns))]
 

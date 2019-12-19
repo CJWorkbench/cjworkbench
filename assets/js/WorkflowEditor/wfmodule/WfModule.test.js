@@ -356,7 +356,7 @@ describe('WfModule, not read-only mode', () => {
           isZenMode={false}
           isZenModeAllowed={false}
           index={1}
-          wfModule={{ id: 20, module: 'loadurl', is_collapsed: false, status: 'error', params: {}, secrets: {}, output_errors: [{ message: 'foo', quickFixes: [quickFix] }], files: [] }}
+          wfModule={{ id: 20, module: 'loadurl', is_collapsed: false, output_status: 'error', params: {}, secrets: {}, output_errors: [{ message: 'foo', quickFixes: [quickFix] }], files: [] }}
           isSelected
           isAfterSelected={false}
           onDragStart={jest.fn()}
@@ -427,7 +427,7 @@ describe('WfModule, not read-only mode', () => {
             isZenMode={false}
             isZenModeAllowed={false}
             index={1}
-            wfModule={{ id: 20, module: 'loadurl', is_collapsed: false, status: 'error', params: {}, secrets: {}, output_errors: [{ message: 'foo', quickFixes: [] }], files: [] }}
+            wfModule={{ id: 20, module: 'loadurl', is_collapsed: false, output_status: 'error', params: {}, secrets: {}, output_errors: [{ message: 'foo', quickFixes: [] }], files: [] }}
             isSelected
             isAfterSelected={false}
             onDragStart={jest.fn()}

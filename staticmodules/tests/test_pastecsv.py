@@ -2,7 +2,7 @@ import unittest
 from staticmodules import pastecsv
 from cjwkernel.util import tempfile_context
 from cjwkernel.tests.util import assert_arrow_table_equals
-from cjwkernel.types import ArrowTable
+from cjwkernel.types import ArrowTable, I18nMessage, RenderError
 
 
 def P(csv="", has_header_row=True):
@@ -61,7 +61,16 @@ class PasteCSVTests(unittest.TestCase):
     def test_duplicate_column_names_renamed(self):
         result = render_arrow(P(csv="A,A\na,b", has_header_row=True))
         assert_arrow_table_equals(result.table, {"A": ["a"], "A 2": ["b"]})
-        self.assertEqual(result.errors, [])
+        self.assertEqual(
+            result.errors,
+            [
+                RenderError(
+                    I18nMessage.TODO_i18n(
+                        "Renamed 1 duplicate column names (see “A 2”)"
+                    )
+                )
+            ],
+        )
 
     def test_empty_column_name_gets_automatic_name(self):
         result = render_arrow(P(csv="A,,B\na,b,c", has_header_row=True))

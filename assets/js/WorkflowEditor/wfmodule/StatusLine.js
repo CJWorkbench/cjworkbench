@@ -18,6 +18,7 @@ const StatusLine = React.memo(function StatusLine ({ status, errors, applyQuickF
   useEffect(() => setClickedQuickFix(false), [status, errors])
 
   if (!errors.length) return null
+  if (status === 'busy' || status === 'unreachable') return null
 
   return (
     <>

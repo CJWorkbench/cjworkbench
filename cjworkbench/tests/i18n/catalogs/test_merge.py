@@ -1,10 +1,7 @@
 import unittest
 from babel.messages.catalog import Catalog
-from cjworkbench.i18n.catalogs.merge import _merge_source_catalog, _merge_catalog
-from cjworkbench.tests.i18n.catalogs.util import (
-    assert_catalogs_deeply_equal,
-    assert_messages_deeply_equal,
-)
+from cjworkbench.i18n.catalogs.merge import _merge_source_catalog, _merge_catalogs
+from cjworkbench.tests.i18n.catalogs.util import assert_catalogs_deeply_equal
 
 
 class MergeTest(unittest.TestCase):
@@ -264,7 +261,7 @@ class MergeTest(unittest.TestCase):
         old_catalog = Catalog("el")
         fuzzy = frozenset()
 
-        new_catalog = _merge_catalog(js_catalog, python_catalog, old_catalog, fuzzy)
+        new_catalog = _merge_catalogs([js_catalog, python_catalog], old_catalog, fuzzy)
 
         expected_catalog = Catalog("el")
         expected_catalog.add(
@@ -293,7 +290,7 @@ class MergeTest(unittest.TestCase):
         )
         fuzzy = frozenset()
 
-        new_catalog = _merge_catalog(js_catalog, python_catalog, old_catalog, fuzzy)
+        new_catalog = _merge_catalogs([js_catalog, python_catalog], old_catalog, fuzzy)
 
         expected_catalog = Catalog("el")
         expected_catalog.add(
@@ -313,7 +310,7 @@ class MergeTest(unittest.TestCase):
         old_catalog = Catalog("el")
         fuzzy = frozenset()
 
-        new_catalog = _merge_catalog(js_catalog, python_catalog, old_catalog, fuzzy)
+        new_catalog = _merge_catalogs([js_catalog, python_catalog], old_catalog, fuzzy)
 
         expected_catalog = Catalog("el")
         expected_catalog.add(
@@ -339,7 +336,7 @@ class MergeTest(unittest.TestCase):
         )
         fuzzy = frozenset()
 
-        new_catalog = _merge_catalog(js_catalog, python_catalog, old_catalog, fuzzy)
+        new_catalog = _merge_catalogs([js_catalog, python_catalog], old_catalog, fuzzy)
 
         expected_catalog = Catalog("el")
         expected_catalog.add(
@@ -369,7 +366,7 @@ class MergeTest(unittest.TestCase):
         )
         fuzzy = frozenset()
 
-        new_catalog = _merge_catalog(js_catalog, python_catalog, old_catalog, fuzzy)
+        new_catalog = _merge_catalogs([js_catalog, python_catalog], old_catalog, fuzzy)
 
         expected_catalog = Catalog("el")
         expected_catalog.add(
@@ -399,7 +396,7 @@ class MergeTest(unittest.TestCase):
         )
         fuzzy = frozenset(["id1"])
 
-        new_catalog = _merge_catalog(js_catalog, python_catalog, old_catalog, fuzzy)
+        new_catalog = _merge_catalogs([js_catalog, python_catalog], old_catalog, fuzzy)
 
         expected_catalog = Catalog("el")
         expected_catalog.add(
@@ -426,7 +423,7 @@ class MergeTest(unittest.TestCase):
         )
         fuzzy = frozenset(["id1"])
 
-        new_catalog = _merge_catalog(js_catalog, python_catalog, old_catalog, fuzzy)
+        new_catalog = _merge_catalogs([js_catalog, python_catalog], old_catalog, fuzzy)
 
         expected_catalog = Catalog("el")
         expected_catalog.add(
@@ -456,7 +453,7 @@ class MergeTest(unittest.TestCase):
         )
         fuzzy = frozenset()
 
-        new_catalog = _merge_catalog(js_catalog, python_catalog, old_catalog, fuzzy)
+        new_catalog = _merge_catalogs([js_catalog, python_catalog], old_catalog, fuzzy)
 
         expected_catalog = Catalog("el")
         expected_catalog.add(
@@ -486,7 +483,7 @@ class MergeTest(unittest.TestCase):
         )
         fuzzy = frozenset(["id1"])
 
-        new_catalog = _merge_catalog(js_catalog, python_catalog, old_catalog, fuzzy)
+        new_catalog = _merge_catalogs([js_catalog, python_catalog], old_catalog, fuzzy)
 
         expected_catalog = Catalog("el")
         expected_catalog.add(
@@ -513,7 +510,7 @@ class MergeTest(unittest.TestCase):
         )
         fuzzy = frozenset(["id1"])
 
-        new_catalog = _merge_catalog(js_catalog, python_catalog, old_catalog, fuzzy)
+        new_catalog = _merge_catalogs([js_catalog, python_catalog], old_catalog, fuzzy)
 
         expected_catalog = Catalog("el")
         expected_catalog.add(

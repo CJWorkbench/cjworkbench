@@ -632,12 +632,7 @@ class WfModuleTest(HandlerTestCase):
         self.assertEqual(wf_module.is_busy, True)
         queue_fetch.assert_called_with(workflow.id, wf_module.id)
         send_delta.assert_called_with(
-            workflow.id,
-            {
-                "updateWfModules": {
-                    str(wf_module.id): {"is_busy": True, "fetch_error": ""}
-                }
-            },
+            workflow.id, {"updateWfModules": {str(wf_module.id): {"is_busy": True}}}
         )
 
     def test_fetch_viewer_access_denied(self):

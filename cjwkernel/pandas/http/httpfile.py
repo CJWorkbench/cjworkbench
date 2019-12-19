@@ -137,7 +137,7 @@ async def download(
             pass
     except asyncio.TimeoutError:
         output_path.write_bytes(b"")  # truncate file
-        raise HttpError.TimeoutError
+        raise HttpError.Timeout
     except aiohttp.InvalidURL:
         raise HttpError.InvalidUrl
     except aiohttp.TooManyRedirects:

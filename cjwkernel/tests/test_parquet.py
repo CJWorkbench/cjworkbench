@@ -89,7 +89,7 @@ class ParquetTest(unittest.TestCase):
 
     def test_read_write_float64(self):
         self._test_read_write_table(
-            {"A": [1.0, 2.2, 3.0, np.nan, None]}, {"A": [1.0, 2.2, 3.0, np.nan, np.nan]}
+            {"A": [1.0, 2.2, 3.0, None]}, {"A": [1.0, 2.2, 3.0, None]}
         )
 
     def test_read_write_float64_all_null(self):
@@ -137,13 +137,18 @@ class ParquetTest(unittest.TestCase):
         self._test_read_write_table(table)
 
 
-class ReadPydictTests(unittest.TestCase):
-    def test_pydict_zero_row_groups(self):
+class ReadSliceAsText(unittest.TestCase):
+    def test_slice_zero_row_groups(self):
         table = pa.Table.from_batches([], schema=pa.schema([("A", pa.string())]))
         with parquet_file(table) as path:
-            self.assertEqual(parquet.read_pydict(path, range(1), range(0)), {"A": []})
+            self.assertEqual(
+                parquet.read_slice_as_text(path, "csv", range(1), range(0)), "A"
+            )
+            self.assertEqual(
+                parquet.read_slice_as_text(path, "json", range(1), range(0)), "[]"
+            )
 
-    def test_pydict_zero_rows(self):
+    def test_slice_zero_rows(self):
         with tempfile_context() as path:
             # ensure at least 1 row group
             parquet.write(
@@ -160,54 +165,74 @@ class ReadPydictTests(unittest.TestCase):
                 ),
             )
             self.assertEqual(
-                parquet.read_pydict(path, range(4), range(0)),
-                {"A": [], "B": [], "C": [], "D": []},
+                parquet.read_slice_as_text(path, "csv", range(4), range(0)), "A,B,C,D"
+            )
+            self.assertEqual(
+                parquet.read_slice_as_text(path, "json", range(4), range(0)), "[]"
             )
 
-    def test_pydict_lots_of_types(self):
-        dt1 = datetime.now()
-        dt2 = datetime.now()
+    def test_slice_lots_of_types(self):
+        dt1 = datetime(2019, 12, 18, 23, 33, 55, 123000)
+        dt2 = datetime(2019, 12, 18)
         with parquet_file(
             {
-                "str": ["x", "y", None, "z"],
-                "cat": pa.array(["x", "y", None, "x"]).dictionary_encode(),
+                "str": ["x", "y", None, ""],
+                "cat": pa.array(["x", "y", None, ""]).dictionary_encode(),
                 "dt": pa.array([dt1, None, dt2, None], pa.timestamp("ns")),
-                "int32": [1, 2, 3, 2 ** 31],
-                "float": [1.1, 2.2, 3.3, 4.4],
+                "int32": [1, 2, None, 2 ** 31],
+                "float": [1.1, None, 3.3, 4.4],
             }
         ) as path:
             self.assertEqual(
-                parquet.read_pydict(path, range(5), range(4)),
-                {
-                    "str": ["x", "y", None, "z"],
-                    "cat": ["x", "y", None, "x"],
-                    "dt": [dt1, None, dt2, None],
-                    "int32": [1, 2, 3, 2 ** 31],
-                    "float": [1.1, 2.2, 3.3, 4.4],
-                },
+                parquet.read_slice_as_text(path, "csv", range(5), range(4)),
+                "\n".join(
+                    [
+                        "str,cat,dt,int32,float",
+                        "x,x,2019-12-18T23:33:55.123Z,1,1.1",
+                        "y,y,,2,",
+                        ",,2019-12-18,,3.3",
+                        ",,,2147483648,4.4",
+                    ]
+                ),
+            )
+            self.assertEqual(
+                parquet.read_slice_as_text(path, "json", range(5), range(4)),
+                "".join(
+                    [
+                        "[",
+                        '{"str":"x","cat":"x","dt":"2019-12-18T23:33:55.123Z","int32":1,"float":1.1},',
+                        '{"str":"y","cat":"y","dt":null,"int32":2,"float":null},',
+                        '{"str":null,"cat":null,"dt":"2019-12-18","int32":null,"float":3.3},',
+                        '{"str":"","cat":"","dt":null,"int32":2147483648,"float":4.4}',
+                        "]",
+                    ]
+                ),
             )
 
-    def test_pydict_nan_and_none(self):
-        with parquet_file(
-            {"A": pa.array([1.1, float("nan"), None], pa.float64())}
-        ) as path:
-            result = parquet.read_pydict(path, range(1), range(3))
-            self.assertEqual(result["A"][0], 1.1)
-            self.assert_(math.isnan(result["A"][1]))
-            self.assertIsNone(result["A"][2])
-
-    def test_pydict_ignore_missing_columns(self):
+    def test_slice_ignore_missing_columns(self):
         with parquet_file({"A": [1]}) as path:
-            self.assertEqual(parquet.read_pydict(path, range(3), range(1)), {"A": [1]})
+            self.assertEqual(
+                parquet.read_slice_as_text(path, "csv", range(3), range(1)), "A\n1"
+            )
+            self.assertEqual(
+                parquet.read_slice_as_text(path, "json", range(3), range(1)),
+                '[{"A":1}]',
+            )
 
-    def test_pydict_only_rows(self):
+    def test_slice_rows(self):
         with parquet_file({"A": [0, 1, 2, 3, 4, 5, 6, 7]}) as path:
             self.assertEqual(
-                parquet.read_pydict(path, range(1), range(2, 5)), {"A": [2, 3, 4]}
+                parquet.read_slice_as_text(path, "csv", range(1), range(2, 5)),
+                "A\n2\n3\n4",
+            )
+            self.assertEqual(
+                parquet.read_slice_as_text(path, "json", range(1), range(2, 5)),
+                '[{"A":2},{"A":3},{"A":4}]',
             )
 
-    def test_pydict_ignore_missing_rows(self):
+    def test_slice_ignore_missing_rows(self):
         with parquet_file({"A": [0, 1, 2, 3]}) as path:
             self.assertEqual(
-                parquet.read_pydict(path, range(1), range(2, 5)), {"A": [2, 3]}
+                parquet.read_slice_as_text(path, "csv", range(1), range(2, 5)),
+                "A\n2\n3",
             )
