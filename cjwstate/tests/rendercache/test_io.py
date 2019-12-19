@@ -25,7 +25,7 @@ from cjwstate.rendercache.io import (
     open_cached_render_result,
     clear_cached_render_result_for_wf_module,
     crr_parquet_key,
-    read_cached_render_result_pydict,
+    read_cached_render_result_slice_as_text,
 )
 
 
@@ -121,37 +121,7 @@ class RendercacheIoTests(DbTestCase):
             with self.assertRaises(CorruptCacheError):
                 load_cached_render_result(crr, arrow_path)
 
-    def test_read_cached_render_result_pydict_float_nan_is_none(self):
-        result = RenderResult(
-            arrow_table(
-                {
-                    "A": [
-                        1.1,
-                        # np.nan is DEPRECATED but [2019-12-09] it isn't worth
-                        # clearing all caches just to wipe this out.
-                        np.nan,
-                        # None is the _correct_ way of storing Pandas NaN.
-                        # (It's consistent with the way we store int, timestamp
-                        # and string. We don't have a special meaning for
-                        # np.nan.)
-                        None,
-                    ],
-                    "B": [1, None, None],
-                },
-                columns=[
-                    Column("A", ColumnType.Number(format="{:,.2f}")),
-                    Column("B", ColumnType.Number(format="{:,d}")),
-                ],
-            )
-        )
-        cache_render_result(self.workflow, self.wf_module, self.delta.id, result)
-        crr = self.wf_module.cached_render_result
-        self.assertEqual(
-            read_cached_render_result_pydict(crr, range(2), range(3)),
-            {"A": [1.1, None, None], "B": [1, None, None]},
-        )
-
-    def test_read_cached_render_result_pydict_datetime(self):
+    def test_read_cached_render_result_slice_as_text_datetime(self):
         result = RenderResult(
             arrow_table(
                 {"A": pa.array([2134213412341232967, None], pa.timestamp("ns"))},
@@ -161,12 +131,6 @@ class RendercacheIoTests(DbTestCase):
         cache_render_result(self.workflow, self.wf_module, self.delta.id, result)
         crr = self.wf_module.cached_render_result
         self.assertEqual(
-            read_cached_render_result_pydict(crr, range(2), range(3)),
-            # We lose the "967" (nanosecond digits) because Python dates only
-            # store microseconds.
-            #
-            # [2019-12-09] it would be great to enforce the rule, "all dates
-            # must be in 'us' resolution." But Pandas enforces the rule, "all
-            # dates must be in 'ns' resolution. Ouch.
-            {"A": [datetime.datetime(2037, 8, 18, 13, 3, 32, 341232), None]},
+            read_cached_render_result_slice_as_text(crr, "csv", range(2), range(3)),
+            "A\n2037-08-18T13:03:32.341232967Z\n",
         )

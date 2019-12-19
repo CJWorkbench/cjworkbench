@@ -4,7 +4,6 @@ from typing import Any, Dict, Optional, Union
 from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.db.models import Q
-from cjwkernel.pandas import types as ptypes
 from cjwkernel.types import I18nMessage, RenderError, TableMetadata
 from cjwstate import minio
 from .fields import ColumnsField, RenderErrorsField
