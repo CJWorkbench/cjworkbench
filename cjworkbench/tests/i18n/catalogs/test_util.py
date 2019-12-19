@@ -185,7 +185,7 @@ class UtilTest(unittest.TestCase):
 
         assert_catalogs_deeply_equal(target_catalog, expected_catalog)
 
-    def test_add_or_update_message_add_with_context(self):
+    def test_add_or_update_add_message_add_with_context(self):
         target_catalog = Catalog()
         target_catalog.add("id1", string="Text1")
 
@@ -199,18 +199,7 @@ class UtilTest(unittest.TestCase):
 
         assert_catalogs_deeply_equal(target_catalog, expected_catalog)
 
-    def test_add_or_update_message_update(self):
-        target_catalog = Catalog()
-        target_catalog.add("id1", string="Text1")
-
-        add_or_update_message(target_catalog, Message("id1", string="Text2"))
-
-        expected_catalog = Catalog()
-        expected_catalog.add("id1", string="Text2")
-
-        assert_catalogs_deeply_equal(target_catalog, expected_catalog)
-
-    def test_add_or_update_message_add_with_context(self):
+    def test_add_or_update_update_message_add_with_context(self):
         target_catalog = Catalog()
         target_catalog.add("id1", string="Text1", context="ctxt")
 
@@ -220,6 +209,17 @@ class UtilTest(unittest.TestCase):
 
         expected_catalog = Catalog()
         expected_catalog.add("id1", string="Text2", context="ctxt")
+
+        assert_catalogs_deeply_equal(target_catalog, expected_catalog)
+
+    def test_add_or_update_message_update(self):
+        target_catalog = Catalog()
+        target_catalog.add("id1", string="Text1")
+
+        add_or_update_message(target_catalog, Message("id1", string="Text2"))
+
+        expected_catalog = Catalog()
+        expected_catalog.add("id1", string="Text2")
 
         assert_catalogs_deeply_equal(target_catalog, expected_catalog)
 

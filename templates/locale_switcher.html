@@ -6,7 +6,7 @@
 
   <div class="dropdown">
     {# btn-warning is black-on-yellow -- a good start for our stylesheet, because we want black-on-white #}
-    <button type="button" class="btn btn-warning dropdown-toggle" id="locale-switcher-dropdown">{{ i18n.locale_data.name }}</button>
+    <a href="#" class="btn btn-warning dropdown-toggle" id="locale-switcher-dropdown"><i class="icon icon-language"></i>{{ i18n.locale_data.name }}</a>
     <div class="dropdown-menu" aria-labelledby="locale-switcher-dropdown">
       {% for locale_data in i18n.locales_data %}
         <button
