@@ -20,12 +20,7 @@ def find_messages_in_module_code(
 def _find_messages_in_module_code(
     code_file, relative_path_name: str
 ) -> Dict[str, Dict[str, Any]]:
-    messages_data = extract(
-        extract_module_code,
-        code_file,
-        keywords={"trans": (1, 2)},
-        comment_tags=["i18n"],
-    )
+    messages_data = extract(extract_module_code, code_file)
     messages = {}
     for lineno, message_id, comments, context in messages_data:
         default_message = ""
