@@ -101,13 +101,75 @@ def extract_django(fileobj, keywords, comment_tags, options):
 
 
 def extract_python(fileobj, keywords, comment_tags, options):
+    def process(funcname, messages, translator_comments, message_lineno):
+        if funcname in ["trans", "trans_lazy"]:
+            # `messages` will have all the string parameters to our function
+            # As we specify in the documentation of `trans`,
+            # the first will be the message ID, the second will be the default message
+            # and the (optional) third will be the message context
+            if len(messages) > 1 and messages[1]:
+                # If we have a default, add it as a special comment
+                # that will be processed by our `merge_catalogs` script
+                translator_comments.append(
+                    (message_lineno, "default-message: " + messages[1])
+                )
+
+            if len(messages) > 2 and isinstance(messages[2], str):
+                context = messages[2]
+            else:
+                context = None
+
+            if context:
+                # if we have a context, trick pybabel to use `pgettext`
+                # so that it adds the context to the translation file
+                funcname = "pgettext"
+                messages = [context, messages[0]]
+            else:
+                funcname = None
+        return funcname, messages, translator_comments, message_lineno
+
+    return _parse_and_extract_python(fileobj, keywords, comment_tags, options, process)
+
+
+def extract_module_code(fileobj, keywords, comment_tags, options):
+    def process(funcname, messages, translator_comments, message_lineno):
+        if funcname == "trans":
+            # `messages` will have all the string parameters to our function
+            # As we specify in the documentation of `trans`,
+            # the first will be the message ID and the second will be the default message.
+            # If the message ID is a string (i.e. not a variable),
+            # then we require the default message to also be a string.
+
+            if messages[0] is not None:
+                if messages[1] is None:
+                    error = SyntaxError(
+                        "Default message must not be passed as a variable"
+                    )
+                    error.lineno = message_lineno
+                    error.filename = "Module code"
+                    raise error
+
+                # If we have a default, add it as a special comment
+                # that will be processed by our `merge_catalogs` script
+                translator_comments.append(
+                    (message_lineno, "default-message: " + messages[1])
+                )
+
+            funcname = None
+        return funcname, messages, translator_comments, message_lineno
+
+    return _parse_and_extract_python(fileobj, keywords, comment_tags, options, process)
+
+
+def _parse_and_extract_python(fileobj, keywords, comment_tags, options, process):
     """Extract messages from Python source code.
     It returns an iterator yielding tuples in the following form ``(lineno,
     funcname, message, comments)``.
     
-    Adapted from the corresponding pybabel built-in function,
-    so that it understands the syntax of our custom `trans`/`trans_lazy` function
-    and correctly parses the default message and the context.
+    Adapted from the pybabel built-in `extract_python` function.
+    The difference is that `process` argument has been added,
+    so that it can understand the syntax of our custom translation functions
+    and correctly parse the default message (and anything else we want).
     
     :param fileobj: the seekable, file-like object the messages should be
                     extracted from
@@ -116,6 +178,11 @@ def extract_python(fileobj, keywords, comment_tags, options):
     :param comment_tags: a list of translator tags to search for and include
                          in the results
     :param options: a dictionary of additional options (optional)
+    :param process: a callable that accepts funcname, messages, translator_comments, message_lineno
+                     and returns them (maybe modifying them), depending on the special syntax
+                     it wants to support; 
+                     for example, it can add default message to translator_comments
+                     or support different syntax per `funcname`
     :rtype: ``iterator``
     """
     funcname = lineno = message_lineno = None
@@ -189,30 +256,9 @@ def extract_python(fileobj, keywords, comment_tags, options):
                     translator_comments = []
 
                 ### HERE start our modifications to pybabel's script
-                if funcname in ["trans", "trans_lazy"]:
-                    # `messages` will have all the string parameters to our function
-                    # As we specify in the documentation of `trans`,
-                    # the first will be the message ID, the second will be the default message
-                    # and the (optional) third will be the message context
-                    if len(messages) > 1 and messages[1]:
-                        # If we have a default, add it as a special comment
-                        # that will be processed by our `merge_catalogs` script
-                        translator_comments.append(
-                            (message_lineno, "default-message: " + messages[1])
-                        )
-
-                    if len(messages) > 2 and isinstance(messages[2], str):
-                        context = messages[2]
-                    else:
-                        context = None
-
-                    if context:
-                        # if we have a context, trick pybabel to use `pgettext`
-                        # so that it adds the context to the translation file
-                        funcname = "pgettext"
-                        messages = [context, messages[0]]
-                    else:
-                        funcname = None
+                funcname, messages, translator_comments, message_lineno = process(
+                    funcname, messages, translator_comments, message_lineno
+                )
                 ### HERE end our modifications to pybabel's script
 
                 yield (
