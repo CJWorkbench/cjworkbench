@@ -164,10 +164,13 @@ class WfModuleSerializer(serializers.ModelSerializer):
     output_errors = serializers.SerializerMethodField()
 
     def get_output_errors(self, wfm):
-        return [
-            RenderError.from_dict(error).to_js_value_unwrapping_TODO_i18n()
-            for error in wfm.output_errors or []
-        ]
+        if wfm.cached_render_result is None:
+            return []
+        else:
+            return [
+                error.to_js_value_unwrapping_TODO_i18n()
+                for error in wfm.cached_render_result.errors
+            ]
 
     def get_html_output(self, wfm):
         if wfm.module_version is not None:

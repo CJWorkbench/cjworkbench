@@ -259,14 +259,6 @@ class WfModule(models.Model):
         else:
             return crr.status
 
-    @property
-    def output_errors(self):
-        crr = self.cached_render_result
-        if crr is None:
-            return []
-        else:
-            return [err.to_dict() for err in crr.errors]
-
     # ---- Authorization ----
     # User can access wf_module if they can access workflow
     def request_authorized_read(self, request):
