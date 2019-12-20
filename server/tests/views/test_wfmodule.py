@@ -243,6 +243,27 @@ class WfModuleTests(LoggedInTestCase):
             json.loads(response.content), {"values": {"a": 2, "b": 2, "c": 1}}
         )
 
+    def test_value_counts_dictionary(self):
+        cache_render_result(
+            self.workflow,
+            self.wf_module2,
+            self.wf_module2.last_relevant_delta_id,
+            RenderResult(
+                arrow_table(
+                    {"A": pa.array(["a", "b", "b", "a", "c", None]).dictionary_encode()}
+                )
+            ),
+        )
+
+        response = self.client.get(
+            f"/api/wfmodules/{self.wf_module2.id}/value-counts?column=A"
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            json.loads(response.content), {"values": {"a": 2, "b": 2, "c": 1}}
+        )
+
     def test_value_counts_corrupt_cache(self):
         # https://www.pivotaltracker.com/story/show/161988744
         cache_render_result(
@@ -268,7 +289,7 @@ class WfModuleTests(LoggedInTestCase):
             json.loads(response.content), {"error": 'column "A" not found'}
         )
 
-    def test_value_counts_convert_to_text(self):
+    def test_value_counts_disallow_non_text(self):
         cache_render_result(
             self.workflow,
             self.wf_module2,
@@ -286,9 +307,7 @@ class WfModuleTests(LoggedInTestCase):
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(
-            json.loads(response.content), {"values": {"1.00": 2, "2.00": 2, "3.00": 1}}
-        )
+        self.assertEqual(json.loads(response.content), {"values": {}})
 
     def test_value_counts_param_invalid(self):
         response = self.client.get(f"/api/wfmodules/{self.wf_module2.id}/value-counts")

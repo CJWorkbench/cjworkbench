@@ -251,7 +251,7 @@ class ColumnTypeDatetime(ColumnType):
 
 
 # Aliases to help with import. e.g.:
-# from cjwkernel.pandas.types import Column, ColumnType
+# from cjwkernel.types import Column, ColumnType
 # column = Column('A', ColumnType.Number('{:,.2f}'))
 ColumnType.Text = ColumnTypeText
 ColumnType.Number = ColumnTypeNumber
