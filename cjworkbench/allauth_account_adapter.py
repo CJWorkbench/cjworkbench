@@ -46,7 +46,7 @@ class AccountAdapter(DefaultAccountAdapter):
             try:
                 if message_context is None:
                     message_context = {}
-                message_context.update(context_processor(request))
+                message_context = {**message_context, **context_processor(request)}
                 message = render_to_string(message_template, message_context).strip()
                 if message:
                     messages.add_message(request, level, message, extra_tags=extra_tags)
