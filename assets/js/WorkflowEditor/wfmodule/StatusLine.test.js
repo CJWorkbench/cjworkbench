@@ -1,11 +1,11 @@
 /* globals describe, expect, it, jest */
 import React from 'react'
 import StatusLine from './StatusLine'
-import { mountWithI18n } from '../../i18n/test-utils'
+import { mount } from 'enzyme'
 
 describe('Status line', () => {
   const wrapper = (extraProps = {}) => {
-    return mountWithI18n(
+    return mount(
       <StatusLine
         isReadOnly={false}
         module={{ help_url: 'modules/foo' }}
@@ -18,7 +18,7 @@ describe('Status line', () => {
   }
 
   it('renders an error message', () => {
-    const w = wrapper({ status: 'error', errors: [{ message: 'foo' }] })
+    const w = wrapper({ status: 'error', errors: [{ message: 'foo', quickFixes: [] }] })
     expect(w.find('p').text()).toEqual('foo')
   })
 
@@ -120,7 +120,7 @@ describe('Status line', () => {
   })
 
   it('renders null when busy', () => {
-    const w = wrapper({ status: 'busy', error: 'hi' })
+    const w = wrapper({ status: 'busy', errors: [{ message: 'hi', quickFixes: [] }] })
     expect(w.html()).toEqual('')
   })
 })
