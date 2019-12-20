@@ -505,7 +505,7 @@ export class WfModule extends React.PureComponent {
                     workflowId={this.props.workflowId}
                     wfModuleId={this.props.wfModule ? this.props.wfModule.id : null}
                     wfModuleSlug={this.props.wfModule ? this.props.wfModule.slug : null}
-                    wfModuleOutputErrors={this.props.wfModule ? this.props.wfModule.output_errors.map(error => error.message) : null}
+                    wfModuleOutputErrors={this.props.wfModule ? this.props.wfModule.output_errors : []}
                     isWfModuleBusy={this.wfModuleStatus === 'busy'}
                     inputWfModuleId={inputWfModule ? inputWfModule.id : null}
                     inputDeltaId={inputWfModule ? (inputWfModule.cached_render_result_delta_id || null) : null}

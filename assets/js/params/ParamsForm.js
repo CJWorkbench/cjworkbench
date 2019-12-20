@@ -4,6 +4,7 @@ import Param from './Param'
 import ParamsFormFooter from './ParamsFormFooter'
 import deepEqual from 'fast-deep-equal'
 import { paramFieldToParamProps } from './util'
+import { QuickFixPropTypes } from '../WorkflowEditor/wfmodule/QuickFix'
 
 /**
  * Displays Params and user's "edits".
@@ -47,7 +48,7 @@ export default class ParamsForm extends React.PureComponent {
     workflowId: PropTypes.number.isRequired,
     wfModuleId: PropTypes.number, // `null` if the server hasn't been contacted; otherwise, ID
     wfModuleSlug: PropTypes.string, // should be .isRequired but WfModule.js does not handle placeholders yet
-    wfModuleOutputErrors: PropTypes.arrayOf(PropTypes.string), // `null` if no wfModule, empty if no error
+    wfModuleOutputErrors: PropTypes.arrayOf(PropTypes.shape({ message: PropTypes.string.isRequired, quickFixes: PropTypes.arrayOf(PropTypes.shape(QuickFixPropTypes)).isRequired }).isRequired).isRequired, // may be empty
     isWfModuleBusy: PropTypes.bool.isRequired,
     inputWfModuleId: PropTypes.number, // or `null`
     inputDeltaId: PropTypes.number, // or `null` ... TODO nix by making 0 fields depend on it
