@@ -33,8 +33,12 @@ class SetCurrentLocaleMiddleware:
 
         # Code to be executed for each request/response after
         # the view is called.
-        if resolve(request.path_info).url_name != "set_locale":
-            response.set_cookie(COOKIE_NAME, locale)
+
+        # Save current locale in a cookie.
+        # Notice that we use `request.locale_id` instead of `locale`;
+        # this is because there is (at least) one case when `request.locale_id`
+        # is changed by the view: the locale-changing endpoint.
+        response.set_cookie(COOKIE_NAME, request.locale_id, max_age=365 * 86400)
 
         return response
 

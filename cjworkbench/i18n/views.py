@@ -3,7 +3,6 @@ from cjworkbench.i18n import is_supported
 from urllib.parse import unquote
 from django.utils.http import is_safe_url
 import json
-from cjworkbench.middleware.i18n import COOKIE_NAME
 
 
 def set_locale(request):
@@ -24,7 +23,8 @@ def set_locale(request):
     response = HttpResponseRedirect(next)
     locale = request.POST.get("new_locale")
     if is_supported(locale):
-        response.set_cookie(COOKIE_NAME, locale)
+        request.locale_id = locale
+        # The new locale is saved in cookies by the i18n middleware
         if request.user.is_authenticated:
             request.user.user_profile.locale_id = locale
             request.user.user_profile.save(update_fields=["locale_id"])

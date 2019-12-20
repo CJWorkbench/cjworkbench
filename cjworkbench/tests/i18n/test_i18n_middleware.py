@@ -16,6 +16,14 @@ def mock_response(request):
     return response
 
 
+def mock_set_locale_response(new_locale_id):
+    def mock_response_edited(request):
+        request.locale_id = new_locale_id
+        return mock_response(request)
+
+    return mock_response_edited
+
+
 class MockUserProfile:
     def __init__(self, locale_id=None):
         self.locale_id = locale_id
@@ -235,4 +243,31 @@ class SetCurrentLocaleMiddlewareTest(SimpleTestCase):
         )
         self._assert_registered(
             response, non_default_locale, old_preference=non_default_locale
+        )
+
+    def test_locale_changed_by_view(self):
+        # Sometimes (i.e., when the locale-changed view has been called),
+        # the view changes `request.locale_id`.
+        # In that case, we want the final request and cookie to respect the change.
+        response = SetCurrentLocaleMiddleware(
+            mock_set_locale_response(non_default_locale)
+        )(
+            self._mock_request(
+                accept_language_header=default_locale,
+                cookie_locale=default_locale,
+                request_locale=default_locale,
+            )
+        )
+        self.assertEqual(
+            response.request.locale_id,
+            non_default_locale,
+            msg="Request locale is not set correctly",
+        )
+        self.assertTrue(
+            response.cookies.get(COOKIE_NAME), msg="Cookie locale is not set"
+        )
+        self.assertEqual(
+            response.cookies.get(COOKIE_NAME).value,
+            non_default_locale,
+            msg="Cookie locale is not set correctly",
         )
