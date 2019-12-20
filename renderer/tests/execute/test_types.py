@@ -1,5 +1,5 @@
 import unittest
-from cjwkernel.types import I18nMessage, QuickFix, QuickFixAction
+from cjwkernel.types import I18nMessage, QuickFix, QuickFixAction, RenderError
 from renderer.execute.types import PromptingError
 
 
@@ -13,11 +13,11 @@ class PromptingErrorTest(unittest.TestCase):
                 ),
             ]
         )
-        result = err.as_errors_with_fixes()
+        result = err.as_render_errors()
         self.assertEqual(
             result,
             [
-                (
+                RenderError(
                     I18nMessage.TODO_i18n(
                         "The column “A” must be converted from Text to Numbers."
                     ),
@@ -30,7 +30,7 @@ class PromptingErrorTest(unittest.TestCase):
                         )
                     ],
                 ),
-                (
+                RenderError(
                     I18nMessage.TODO_i18n(
                         "The columns “B” and “C” must be converted from Dates & Times to Numbers."
                     ),
@@ -50,11 +50,11 @@ class PromptingErrorTest(unittest.TestCase):
         err = PromptingError(
             [PromptingError.WrongColumnType(["A", "B"], None, frozenset({"text"}))]
         )
-        result = err.as_errors_with_fixes()
+        result = err.as_render_errors()
         self.assertEqual(
             result,
             [
-                (
+                RenderError(
                     I18nMessage.TODO_i18n(
                         "The columns “A” and “B” must be converted to Text."
                     ),

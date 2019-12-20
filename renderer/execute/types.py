@@ -1,8 +1,8 @@
 from __future__ import annotations
-
+from functools import reduce
 from dataclasses import dataclass
 from typing import FrozenSet, List, Optional
-from cjwkernel.types import I18nMessage, QuickFix, QuickFixAction
+from cjwkernel.types import I18nMessage, QuickFix, QuickFixAction, RenderError
 
 
 TypeNames = {"text": "Text", "number": "Numbers", "datetime": "Dates & Times"}
@@ -90,7 +90,40 @@ class PromptingError(Exception):
         def best_wanted_type_name(self):
             return TypeNames[self.best_wanted_type_id]
 
-        def as_error_message(self):
+        def as_render_errors(self) -> List[RenderError]:
+            """Build RenderError(s) that describe this error. 
+            
+            Render errors will include a QuickFix that would resolve this error."""
+            if self.should_be_text:
+                prompt = f"Convert to {self.best_wanted_type_name}"
+            else:
+                prompt = (
+                    f"Convert {self.found_type_name} to {self.best_wanted_type_name}"
+                )
+            params = {"colnames": self.column_names}
+
+            if "text" in self.wanted_types:
+                module_id = "converttotext"
+            elif "number" in self.wanted_types:
+                module_id = "converttexttonumber"
+            elif "datetime" in self.wanted_types:
+                module_id = "convert-date"
+            else:
+                raise RuntimeError(f"Unhandled wanted_types: {self.wanted_types}")
+
+            return [
+                RenderError(
+                    self._as_i18n_message(),
+                    [
+                        QuickFix(
+                            I18nMessage.TODO_i18n(prompt),
+                            QuickFixAction.PrependStep(module_id, params),
+                        )
+                    ],
+                )
+            ]
+
+        def _as_i18n_message(self) -> I18nMessage:
             """Build a message to prompt the user to use a quick fix."""
             # TODO make each quick fix get its own paragraph. (For now, quick
             # fixes are nothing but buttons.)
@@ -122,32 +155,6 @@ class PromptingError(Exception):
                     f"from {self.found_type_name} to {self.best_wanted_type_name}."
                 )
 
-        def as_quick_fixes(self):
-            """Build a QuickFix that would resolve this error."""
-            if self.should_be_text:
-                prompt = f"Convert to {self.best_wanted_type_name}"
-            else:
-                prompt = (
-                    f"Convert {self.found_type_name} to {self.best_wanted_type_name}"
-                )
-            params = {"colnames": self.column_names}
-
-            if "text" in self.wanted_types:
-                module_id = "converttotext"
-            elif "number" in self.wanted_types:
-                module_id = "converttexttonumber"
-            elif "datetime" in self.wanted_types:
-                module_id = "convert-date"
-            else:
-                raise RuntimeError(f"Unhandled wanted_types: {self.wanted_types}")
-
-            return [
-                QuickFix(
-                    I18nMessage.TODO_i18n(prompt),
-                    QuickFixAction.PrependStep(module_id, params),
-                )
-            ]
-
     def __init__(self, errors: List[PromptingError.WrongColumnType]):
         super().__init__("user must change something before we render")
         self.errors = errors
@@ -155,5 +162,7 @@ class PromptingError(Exception):
     def __eq__(self, other):
         return isinstance(other, self.type) and other.errors == self.errors
 
-    def as_errors_with_fixes(self) -> List[Tuple[I18nMessage, List[QuickFix]]]:
-        return [(err.as_error_message(), err.as_quick_fixes()) for err in self.errors]
+    def as_render_errors(self) -> List[RenderError]:
+        return reduce(
+            lambda errors, error: errors + error.as_render_errors(), self.errors, []
+        )
