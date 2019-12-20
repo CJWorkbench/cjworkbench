@@ -128,12 +128,10 @@ def _wrap_render_errors(render_call):
     try:
         return render_call()
     except ModuleError as err:
-        return RenderResult.from_error(
-            I18nMessage.TODO_i18n(
-                "Something unexpected happened. We have been notified and are "
-                "working to fix it. If this persists, contact us. Error code: "
-                + format_for_user_debugging(err)
-            )
+        return RenderResult.from_deprecated_error(
+            "Something unexpected happened. We have been notified and are "
+            "working to fix it. If this persists, contact us. Error code: "
+            + format_for_user_debugging(err)
         )
 
 
@@ -285,25 +283,19 @@ async def _render_wfmodule(
                 tab_results,
             )
         except TabCycleError:
-            return RenderResult.from_error(
-                I18nMessage.TODO_i18n(
-                    "The chosen tab depends on this one. Please choose another tab."
-                )
+            return RenderResult.from_deprecated_error(
+                "The chosen tab depends on this one. Please choose another tab."
             )
         except TabOutputUnreachableError:
-            return RenderResult.from_error(
-                I18nMessage.TODO_i18n(
-                    "The chosen tab has no output. Please select another one."
-                )
+            return RenderResult.from_deprecated_error(
+                "The chosen tab has no output. Please select another one."
             )
         except PromptingError as err:
-            return RenderResult.from_errors(err.as_errors_with_fixes())
+            return RenderResult(errors=err.as_render_errors())
 
         if loaded_module is None:
-            return RenderResult.from_error(
-                I18nMessage.TODO_i18n(
-                    "Please delete this step: an administrator uninstalled its code."
-                )
+            return RenderResult.from_deprecated_error(
+                "Please delete this step: an administrator uninstalled its code."
             )
 
         # Render may take a while. run_in_executor to push that slowdown to a

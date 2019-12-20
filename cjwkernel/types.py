@@ -962,24 +962,10 @@ class RenderResult:
         )
 
     @classmethod
-    def from_error(
-        cls, message: I18nMessage, *, quick_fixes: List[QuickFix] = []
+    def from_deprecated_error(
+        cls, message: str, *, quick_fixes: List[QuickFix] = []
     ) -> RenderResult:
-        errors = [RenderError(message, quick_fixes)]
-        return cls(errors=errors)
-
-    @classmethod
-    def from_errors(
-        cls, errors: List[Union[I18nMessage, Tuple[I18nMessage, List[QuickFix]]]]
-    ) -> RenderResult:
-        return cls(
-            errors=[
-                RenderError(error[0], error[1])
-                if isinstance(error, tuple)
-                else RenderError(error)
-                for error in errors
-            ]
-        )
+        return cls(errors=[RenderError(I18nMessage.TODO_i18n(message), quick_fixes)])
 
     def to_thrift(self) -> ttypes.RenderResult:
         return ttypes.RenderResult(
