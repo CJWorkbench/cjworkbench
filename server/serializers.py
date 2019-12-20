@@ -9,7 +9,6 @@ from cjwstate.models import Workflow, WfModule, ModuleVersion, StoredObject, Tab
 from cjwstate.params import get_migrated_params
 from server.settingsutils import workbench_user_display
 from cjwstate.models.param_spec import ParamSpec
-from cjworkbench.i18n import default_locale
 from cjwkernel.types import RenderError
 
 User = get_user_model()
@@ -166,7 +165,7 @@ class WfModuleSerializer(serializers.ModelSerializer):
 
     def get_output_errors(self, wfm):
         return [
-            RenderError.from_dict(error).localize(default_locale)
+            RenderError.from_dict(error).to_js_value_unwrapping_TODO_i18n()
             for error in wfm.output_errors or []
         ]
 

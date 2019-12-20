@@ -29,7 +29,6 @@ from .types import (
     PromptingError,
 )
 from . import renderprep
-from cjworkbench.i18n import default_locale
 
 
 logger = logging.getLogger(__name__)
@@ -408,8 +407,9 @@ async def execute_wfmodule(
 def build_status_dict(result: RenderResult, delta_id: int) -> Dict[str, Any]:
     return {
         "output_columns": [c.to_dict() for c in result.table.metadata.columns],
-        # TODO don't localize in here; build_status_dict should return a Delta which should be localized elsewhere
-        "output_errors": [error.localize(default_locale) for error in result.errors],
+        "output_errors": [
+            error.to_js_value_unwrapping_TODO_i18n() for error in result.errors
+        ],
         "output_status": result.status,
         "output_n_rows": result.table.metadata.n_rows,
         "cached_render_result_delta_id": delta_id,
