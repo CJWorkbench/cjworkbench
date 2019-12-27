@@ -45,15 +45,16 @@ class SetCurrentLocaleAsgiMiddleware:
         self.app = app
 
     def __call__(self, scope):
-        scope["locale_id"] = LocaleDecider(
-            user=scope["user"],
-            cookies=scope["cookies"],
-            accept_language_header=dict(scope["headers"])
-            .get(b"accept-language", "")
-            .decode("utf8"),
-        ).decide()
-
         async def inner(receive, send):
+            # We modify the scope within `inner`,
+            # because only then is `scope["user"]` accessible
+            scope["locale_id"] = LocaleDecider(
+                user=scope["user"],
+                cookies=scope["cookies"],
+                accept_language_header=dict(scope["headers"])
+                .get(b"accept-language", b"")
+                .decode("utf8"),
+            ).decide()
             return await self.app(scope)(receive, send)
 
         return inner
