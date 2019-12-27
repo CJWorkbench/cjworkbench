@@ -323,8 +323,8 @@ msgid "js.WfHamburgerMenu.menu.importModule"
 msgstr "Import Module"
 
 #: assets/js/WfHamburgerMenu.js:66
-msgid "js.WfHamburgerMenu.menu.language"
-msgstr "Language"
+msgid "js.WfHamburgerMenu.menu.languages"
+msgstr "Languages"
 
 #: assets/js/WfHamburgerMenu.js:68
 msgid "js.WfHamburgerMenu.menu.logout"
@@ -2102,6 +2102,11 @@ msgstr "Sign in"
 #: templates/account/login.html:12
 msgid "py.templates.account.login.linkToSignUp"
 msgstr "Sign up"
+
+#. As in 'Login with Google account or login with simple account'
+#: templates/account/login.html:27
+msgid "py.templates.account.login.socialSimpleSeparator"
+msgstr "or"
 
 #: templates/account/login.html:43
 msgid "py.templates.account.login.forgotPasswordPrompt"

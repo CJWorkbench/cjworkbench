@@ -341,7 +341,7 @@ msgid "js.WfHamburgerMenu.menu.importModule"
 msgstr "Εισαγωγή Μονάδας (Module)"
 
 #: assets/js/WfHamburgerMenu.js:66
-msgid "js.WfHamburgerMenu.menu.language"
+msgid "js.WfHamburgerMenu.menu.languages"
 msgstr ""
 
 #: assets/js/WfHamburgerMenu.js:68
@@ -2147,6 +2147,11 @@ msgstr "Σύνδεση"
 #: templates/account/login.html:12
 msgid "py.templates.account.login.linkToSignUp"
 msgstr "Εγγραφή"
+
+#. As in 'Login with Google account or login with simple account'
+#: templates/account/login.html:27
+msgid "py.templates.account.login.socialSimpleSeparator"
+msgstr ""
 
 #: templates/account/login.html:43
 msgid "py.templates.account.login.forgotPasswordPrompt"

@@ -368,9 +368,9 @@ msgstr ""
 msgid "js.WfHamburgerMenu.menu.importModule"
 msgstr ""
 
-#. default-message: Language
+#. default-message: Languages
 #: assets/js/WfHamburgerMenu.js:66
-msgid "js.WfHamburgerMenu.menu.language"
+msgid "js.WfHamburgerMenu.menu.languages"
 msgstr ""
 
 #. default-message: Log Out
@@ -2498,6 +2498,12 @@ msgstr ""
 #. default-message: Sign up
 #: templates/account/login.html:12
 msgid "py.templates.account.login.linkToSignUp"
+msgstr ""
+
+#. As in 'Login with Google account or login with simple account'
+#. default-message: or
+#: templates/account/login.html:27
+msgid "py.templates.account.login.socialSimpleSeparator"
 msgstr ""
 
 #. default-message: Forgot Password?
