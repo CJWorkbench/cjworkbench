@@ -5,7 +5,7 @@ from django.utils.translation.trans_real import (
     get_supported_language_variant,
     parse_accept_lang_header,
 )
-from django.urls import resolve
+from typing import Dict, Any, Optional
 
 
 class SetCurrentLocaleMiddleware:
@@ -16,7 +16,13 @@ class SetCurrentLocaleMiddleware:
     def __call__(self, request):
         # Code to be executed for each request before
         # the view (and later middleware) are called.
-        locale = self._decide_locale(request)
+
+        locale = LocaleDecider(
+            user=request.user,
+            cookies=request.COOKIES,
+            accept_language_header=request.META.get("HTTP_ACCEPT_LANGUAGE", ""),
+            request_locale_override=request.GET.get("locale"),
+        ).decide()
 
         request.locale_id = locale
         # We set the locale of django, in order to
@@ -33,7 +39,42 @@ class SetCurrentLocaleMiddleware:
 
         return response
 
-    def _decide_locale(self, request):
+
+class SetCurrentLocaleAsgiMiddleware:
+    def __init__(self, app):
+        self.app = app
+
+    async def __call__(self, scope):
+        scope["locale_id"] = LocaleDecider(
+            user=scope["user"],
+            cookies=scope["cookies"],
+            accept_language_header=scope["headers"].get(b"accept-language"),
+        ).decide()
+
+        async def callback(receive, send):
+            return await self.app(scope)(receive, send)
+
+        return callback
+
+
+class LocaleDecider:
+    def __init__(
+        self,
+        *,
+        user,
+        cookies: Dict[str, Any] = {},
+        accept_language_header: str = "",
+        request_locale_override: str = None,
+    ):
+        self.user = user
+        self.cookie = cookies.get(LANGUAGE_COOKIE_NAME)
+        self.accept_language_header = accept_language_header
+        self.request_locale_override = request_locale_override
+
+    def _only_if_supported(self, locale_id: Optional[str]) -> Optional[str]:
+        return locale_id if is_supported(locale_id) else None
+
+    def decide(self) -> str:
         """ Search for the locale to use.
         
         We search in the following places, in order
@@ -45,36 +86,28 @@ class SetCurrentLocaleMiddleware:
          4. The default locale
          
          If the locale found at some step is not supported, we proceed to the next step
-         
-         If the user is not logged in or has never set a locale preference, the selected locale is saved in session
         """
-        locale = (
-            self._get_locale_from_query(request)
-            or self._get_locale_from_current_user(request)
-            or self._get_locale_from_language_header(request)
+        return (
+            self._get_locale_from_request_override()
+            or self._get_locale_from_current_user()
+            or self._get_locale_from_language_header()
+            or default_locale
         )
 
-        return locale if is_supported(locale) else default_locale
+    def _get_locale_from_request_override(self) -> Optional[str]:
+        return self._only_if_supported(self.request_locale_override)
 
-    def _get_locale_from_query(self, request):
-        locale = request.GET.get("locale")
-        return locale if is_supported(locale) else None
-
-    def _get_locale_from_current_user(self, request):
-        if self._use_cookie(request.user):
-            locale = request.COOKIES.get(LANGUAGE_COOKIE_NAME)
-            return locale if is_supported(locale) else None
+    def _get_locale_from_current_user(self) -> Optional[str]:
+        if not self.user.is_authenticated:
+            return self._only_if_supported(self.cookie)
         else:
-            locale = request.user.user_profile.locale_id
-            return locale if is_supported(locale) else None
+            return self._only_if_supported(self.user.user_profile.locale_id)
 
-    def _use_cookie(self, user):
-        return not user.is_authenticated
-
-    def _get_locale_from_language_header(self, request):
-        # Copied from django.utils.translation.real_trans.get_language_from_request
-        accept = request.META.get("HTTP_ACCEPT_LANGUAGE", "")
-        for accept_lang, unused in parse_accept_lang_header(accept):
+    def _get_locale_from_language_header(self) -> Optional[str]:
+        # Logic adapted from django.utils.translation.real_trans.get_language_from_request
+        for accept_lang, unused in parse_accept_lang_header(
+            self.accept_language_header
+        ):
             if accept_lang == "*":
                 break
 
@@ -82,7 +115,12 @@ class SetCurrentLocaleMiddleware:
                 continue
 
             try:
-                return get_supported_language_variant(accept_lang)
+                locale_id = get_supported_language_variant(accept_lang)
             except LookupError:
+                continue
+
+            if is_supported(locale_id):
+                return locale_id
+            else:
                 continue
         return None
