@@ -1,4 +1,4 @@
-from cjworkbench.i18n import default_locale, is_supported
+from cjworkbench.i18n import default_locale, is_supported, LANGUAGE_COOKIE_NAME
 from django.utils.translation import activate
 from django.utils.translation.trans_real import (
     language_code_re,
@@ -6,9 +6,6 @@ from django.utils.translation.trans_real import (
     parse_accept_lang_header,
 )
 from django.urls import resolve
-
-
-COOKIE_NAME = "workbench_locale"
 
 
 class SetCurrentLocaleMiddleware:
@@ -33,12 +30,6 @@ class SetCurrentLocaleMiddleware:
 
         # Code to be executed for each request/response after
         # the view is called.
-
-        # Save current locale in a cookie.
-        # Notice that we use `request.locale_id` instead of `locale`;
-        # this is because there is (at least) one case when `request.locale_id`
-        # is changed by the view: the locale-changing endpoint.
-        response.set_cookie(COOKIE_NAME, request.locale_id, max_age=365 * 86400)
 
         return response
 
@@ -71,7 +62,7 @@ class SetCurrentLocaleMiddleware:
 
     def _get_locale_from_current_user(self, request):
         if self._use_cookie(request.user):
-            locale = request.COOKIES.get(COOKIE_NAME)
+            locale = request.COOKIES.get(LANGUAGE_COOKIE_NAME)
             return locale if is_supported(locale) else None
         else:
             locale = request.user.user_profile.locale_id

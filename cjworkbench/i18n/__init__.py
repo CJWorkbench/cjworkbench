@@ -4,6 +4,13 @@ supported_locales = ["en", "el"]
 default_locale = "en"
 
 
+LANGUAGE_COOKIE_NAME = "workbench_locale"
+
+
+def set_language_cookie(response, locale):
+    response.set_cookie(LANGUAGE_COOKIE_NAME, locale, max_age=365 * 86400)
+
+
 def is_supported(locale_id: str) -> bool:
     return locale_id and locale_id in supported_locales
 
