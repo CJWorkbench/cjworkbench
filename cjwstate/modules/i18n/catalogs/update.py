@@ -13,12 +13,17 @@ from babel.messages.catalog import Catalog
 from cjwstate.modules.module_loader import ModuleFiles, ModuleSpec
 from typing import FrozenSet, Dict
 import pathlib
-from cjwstate.modules.i18n.spec import find_spec_messages
+from cjwstate.modules.i18n.catalogs.extract.spec import find_spec_messages
+from cjwstate.modules.i18n.catalogs.extract.code import find_messages_in_module_code
 
 
 def extract_module_messages(directory: pathlib.Path):
     module_files = ModuleFiles.load_from_dirpath(directory)  # raise ValueError
-    source_catalog = _build_source_catalog(ModuleSpec.load_from_path(module_files.spec))
+    source_catalog = _build_source_catalog(
+        ModuleSpec.load_from_path(module_files.spec),
+        pathlib.Path(module_files.code),
+        directory,
+    )
 
     po_path = _po_path(directory, default_locale)
 
@@ -53,12 +58,23 @@ def _po_path(basepath: pathlib.Path, locale_id: str) -> pathlib.Path:
     return basepath / "locale" / locale_id / "messages.po"
 
 
-def _build_source_catalog(spec: ModuleSpec) -> Catalog:
-    messages = find_spec_messages(spec)
-    # TODO: also find messages in module code
+def _build_source_catalog(
+    spec: ModuleSpec,
+    module_code_path: pathlib.Path,
+    module_root_directory: pathlib.Path,
+) -> Catalog:
     source_catalog = Catalog(default_locale)
-    for message_id, source_string in messages.items():
+    for message_id, source_string in find_spec_messages(spec).items():
         source_catalog.add(message_id, string=source_string)
+    for message_id, message_properties in find_messages_in_module_code(
+        module_code_path, module_root_directory
+    ).items():
+        source_catalog.add(
+            message_id,
+            string=message_properties["string"],
+            auto_comments=message_properties["comments"],
+            locations=message_properties["locations"],
+        )
 
     return source_catalog
 

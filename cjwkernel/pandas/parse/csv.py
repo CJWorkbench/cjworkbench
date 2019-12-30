@@ -61,32 +61,6 @@ class ParseCsvWarningTruncatedValues(ParseCsvWarning):
 
 
 @dataclass(frozen=True)
-class ParseCsvWarningTruncatedColumnNamesAndMaybeDeleted(ParseCsvWarning):
-    n_names: int
-    first_name: int
-    n_columns_deleted: int
-    """
-    If we truncating a column name leads to a duplicate column name, we delete.
-    """
-
-    def __str__(self):  # TODO nix when we support i18n
-        if self.n_columns_deleted:
-            return (
-                "Truncated %d column names (to %d bytes each; see \u201c%s\u201d). "
-                "Deleted %d columns with duplicate names."
-            ) % (
-                self.n_names,
-                settings.MAX_BYTES_PER_COLUMN_NAME,
-                self.first_name,
-                self.n_columns_deleted,
-            )
-        else:
-            return (
-                "Truncated %d column names (to %d bytes each; see \u201c%s\u201d)"
-            ) % (self.n_names, settings.MAX_BYTES_PER_COLUMN_NAME, self.first_name)
-
-
-@dataclass(frozen=True)
 class ParseCsvWarningCleanedAsciiColumnNames(ParseCsvWarning):
     n_names: int
     first_name: str
