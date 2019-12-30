@@ -48,6 +48,7 @@ describe('List', () => {
         applyQuickFix={jest.fn()}
         startCreateSecret={jest.fn()}
         deleteSecret={jest.fn()}
+        wfModuleOutputErrors={[]}
         currentTab=''
         tabs={[]}
         isWfModuleBusy={false}

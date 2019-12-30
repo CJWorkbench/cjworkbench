@@ -259,19 +259,6 @@ class WfModule(models.Model):
         else:
             return crr.status
 
-    @property
-    def output_error(self):
-        crr = self.cached_render_result
-        if crr is None:
-            return ""
-        else:
-            parts = []
-            for err in crr.errors:
-                if err.message.id != "TODO_i18n":
-                    raise RuntimeError("TODO support i18n messages")
-                parts.append(err.message.args["text"])
-            return "\n\n".join(parts)
-
     # ---- Authorization ----
     # User can access wf_module if they can access workflow
     def request_authorized_read(self, request):

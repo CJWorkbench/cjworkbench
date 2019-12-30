@@ -34,6 +34,7 @@ from cjwstate.modules.loaded_module import LoadedModule
 from cjwstate.tests.utils import DbTestCase
 from fetcher import fetch, fetchprep, save
 from server import websockets
+from typing import Union
 
 
 def async_value(v):

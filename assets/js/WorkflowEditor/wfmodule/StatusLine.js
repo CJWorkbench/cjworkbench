@@ -6,7 +6,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import QuickFix, { QuickFixPropTypes } from './QuickFix'
 
-const StatusLine = React.memo(function StatusLine ({ status, error, quickFixes, applyQuickFix, isReadOnly }) {
+const StatusLine = React.memo(function StatusLine ({ status, errors, applyQuickFix, isReadOnly }) {
   const [clickedAnyQuickFix, setClickedQuickFix] = useState(false)
   const doApplyQuickFix = useCallback((...args) => {
     setClickedQuickFix(true)
@@ -15,37 +15,38 @@ const StatusLine = React.memo(function StatusLine ({ status, error, quickFixes, 
 
   // after props change (remember: we're in React.memo), assume the quick fix
   // suggestions are not-yet-clicked.
-  useEffect(() => setClickedQuickFix(false), [status, error, quickFixes])
+  useEffect(() => setClickedQuickFix(false), [status, errors])
 
-  if (!error && !quickFixes.length) return null
+  if (!errors.length) return null
   if (status === 'busy' || status === 'unreachable') return null
 
   return (
-    <div className='wf-module-error-msg'>
-      {error ? (
-        <p>{error}</p>
-      ) : null}
-      {quickFixes.length && !isReadOnly ? (
-        <ul className='quick-fixes'>
-          {quickFixes.map((quickFix, i) => (
-            <li key={i}>
-              <QuickFix
-                disabled={clickedAnyQuickFix}
-                applyQuickFix={doApplyQuickFix}
-                {...quickFix}
-              />
-            </li>
-          ))}
-        </ul>
-      ) : null}
-    </div>
+    <>
+      {errors.map(({ message, quickFixes }, j) => (
+        <div className='wf-module-error-msg' key={j}>
+          <p>{message}</p>
+          {quickFixes.length && !isReadOnly ? (
+            <ul className='quick-fixes'>
+              {quickFixes.map((quickFix, i) => (
+                <li key={i}>
+                  <QuickFix
+                    disabled={clickedAnyQuickFix}
+                    applyQuickFix={doApplyQuickFix}
+                    {...quickFix}
+                  />
+                </li>
+              ))}
+            </ul>
+          ) : null}
+        </div>
+      ))}
+    </>
   )
 })
 StatusLine.propTypes = {
   status: PropTypes.oneOf(['ok', 'busy', 'error', 'unreachable']).isRequired,
   isReadOnly: PropTypes.bool.isRequired, // if true, cannot apply quick fixes
-  error: PropTypes.string, // may be empty string
-  quickFixes: PropTypes.arrayOf(PropTypes.shape(QuickFixPropTypes).isRequired).isRequired,
+  errors: PropTypes.arrayOf(PropTypes.shape({ message: PropTypes.string.isRequired, quickFixes: PropTypes.arrayOf(PropTypes.shape(QuickFixPropTypes)).isRequired }).isRequired).isRequired, // may be empty
   applyQuickFix: PropTypes.func.isRequired // func(action, args) => undefined
 }
 

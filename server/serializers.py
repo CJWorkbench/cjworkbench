@@ -9,6 +9,7 @@ from cjwstate.models import Workflow, WfModule, ModuleVersion, StoredObject, Tab
 from cjwstate.params import get_migrated_params
 from server.settingsutils import workbench_user_display
 from cjwstate.models.param_spec import ParamSpec
+from cjwkernel.types import RenderError
 
 User = get_user_model()
 
@@ -158,9 +159,18 @@ class WfModuleSerializer(serializers.ModelSerializer):
     html_output = serializers.SerializerMethodField()
     versions = serializers.SerializerMethodField()
     files = serializers.SerializerMethodField()
-    quick_fixes = serializers.SerializerMethodField()
     module = serializers.SerializerMethodField()
     last_update_check = serializers.DateTimeField(format="iso-8601")
+    output_errors = serializers.SerializerMethodField()
+
+    def get_output_errors(self, wfm):
+        if wfm.cached_render_result is None:
+            return []
+        else:
+            return [
+                error.to_js_value_unwrapping_TODO_i18n()
+                for error in wfm.cached_render_result.errors
+            ]
 
     def get_html_output(self, wfm):
         if wfm.module_version is not None:
@@ -207,13 +217,6 @@ class WfModuleSerializer(serializers.ModelSerializer):
 
         return data
 
-    def get_quick_fixes(self, wfm):
-        crr = wfm.cached_render_result
-        if crr is None:
-            return []
-        else:
-            return [qf.to_dict() for err in crr.errors for qf in err.quick_fixes]
-
     def to_representation(self, wfm):
         ret = super().to_representation(wfm)
         ret.update(self.get_cached_render_result_data(wfm))
@@ -254,7 +257,7 @@ class WfModuleSerializer(serializers.ModelSerializer):
             "module",
             "tab_slug",
             "is_busy",
-            "output_error",
+            "output_errors",
             "output_status",
             "files",
             "params",
@@ -269,7 +272,6 @@ class WfModuleSerializer(serializers.ModelSerializer):
             "html_output",
             "versions",
             "last_relevant_delta_id",
-            "quick_fixes",
         )
 
 
