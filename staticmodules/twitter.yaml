@@ -3,7 +3,7 @@
   "id_name": "twitter",
   "category" : "Add data",
   "icon" : "twitter",
-  "description" : "Load tweets and metadata for a user, a list of users or by searching Twitter for keywords.",
+  "description" : "Load tweets and metadata for a user, a list of users or keyword search.",
   "loads_data": true,
   "help_url":"modules/add-data/twitter",
   "parameters_version": 1,

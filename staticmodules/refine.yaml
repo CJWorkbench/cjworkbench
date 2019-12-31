@@ -2,7 +2,7 @@ id_name: refine
 name: Refine
 category: Clean
 icon: clean
-description: 'Clean inconsistencies and typos across values in seconds using algorithms, or standardize facets manually.'
+description: 'Clean inconsistencies and typos across values in seconds using algorithms, or standardize values manually.'
 has_zen_mode: true
 help_url: steps/clean/refine
 param_schema: # we have a custom param, "refine"

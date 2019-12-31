@@ -1,9 +1,9 @@
 {
-  "name": "Edit Cells",
+  "name": "Edit cells",
   "id_name": "editcells" ,
   "category" : "Clean",
   "icon" : "edit",
-  "description" : "Edit cells and keep a log of all changes",
+  "description" : "Overwrite table values one at a time.",
   "help_url":"modules/clean/edit-cells",
   "param_schema": {
     "celledits": {

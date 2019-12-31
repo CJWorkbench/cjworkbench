@@ -3,7 +3,7 @@
   "id_name": "renamecolumns",
   "category": "Clean",
   "icon": "edit",
-  "description": "Rename columns and log all edits.",
+  "description": "Edit column names.",
   "help_url":"modules/clean/rename-columns",
   "param_schema": {
     "custom_list": { "type": "boolean" },
@@ -23,7 +23,7 @@
       "id_name": "list_string",
       "type": "string",
       "multiline": true,
-      "placeholder":"Paste values of column names (comma or newline separated)",
+      "placeholder": "Paste column names (comma- or newline-separated)",
       "visible_if": {
         "id_name": "custom_list",
         "value": true

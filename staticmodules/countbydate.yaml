@@ -3,7 +3,7 @@
   "id_name": "countbydate",
   "category" : "Analyze",
   "icon" : "group",
-  "description": "Group rows by date and time. Count rows and calculate the sum, average, max and min values in each group.",
+  "description": "Group rows by dates and times within columns (also called pivot table). Calculate sum, averages, Min, Max and more between columns for each group.",
   "help_url":"modules/analyze/count-by-date",
   "parameters_version": 1,
   "parameters": [

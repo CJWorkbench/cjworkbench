@@ -3,7 +3,7 @@
   "id_name": "pythoncode",
   "category": "Code",
   "icon": "code",
-  "description": "Python code editor with console",
+  "description": "Edit the table with your own Python script.",
   "has_zen_mode": true,
   "html_output": true,
   "loads_data": true,

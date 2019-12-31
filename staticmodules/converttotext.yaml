@@ -3,7 +3,7 @@ id_name: converttotext
 category: Clean
 help_url: steps/clean/convert-to-text
 icon: text
-description: Convert column types to text.
+description: Convert number and date & time columns to text.
 parameters_version: 1
 parameters:
 - id_name: colnames
