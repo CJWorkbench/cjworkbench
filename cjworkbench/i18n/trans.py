@@ -109,9 +109,9 @@ class MessageTranslator:
       - our HTML placeholder construct.
     """
 
-    def __init__(self, locale):
-        self.locale = locale
-        self.catalog = load_catalog(locale)
+    def __init__(self, locale_id):
+        self.icu_locale = Locale.createFromName(locale_id)
+        self.catalog = load_catalog(locale_id)
 
     def trans(self, message_id, default=None, context=None, parameters={}):
         """Find the message corresponding to the given ID in the catalog and format it according to the given parameters.
@@ -152,11 +152,11 @@ class MessageTranslator:
         if message:
             try:
                 return self._format_message(
-                    message, parameters=parameters, do_escape=False
+                    message, parameters=parameters, html_escape=False
                 )
             except (ICUError, InvalidICUParameters):
                 pass
-        return self._format_message(fallback, parameters=parameters, do_escape=False)
+        return self._format_message(fallback, parameters=parameters, html_escape=False)
 
     def _process_html_message(self, message, fallback, parameters={}, tags={}):
         if message:
@@ -164,12 +164,12 @@ class MessageTranslator:
                 return self._format_message(
                     self._replace_tags(message, tags),
                     parameters=parameters,
-                    do_escape=True,
+                    html_escape=True,
                 )
             except (ICUError, InvalidICUParameters):
                 pass
         return self._format_message(
-            self._replace_tags(fallback, tags), parameters=parameters, do_escape=True
+            self._replace_tags(fallback, tags), parameters=parameters, html_escape=True
         )
 
     def _replace_tags(self, target_message, tags):
@@ -180,7 +180,7 @@ class MessageTranslator:
         """
         return restore_tags(target_message, tag_mapping=tags)
 
-    def _format_message(self, message, parameters={}, do_escape=True):
+    def _format_message(self, message, parameters={}, html_escape=True):
         """Substitute parameters into ICU-style message.
         You can have variable substitution, plurals, selects and nested messages.
         
@@ -188,16 +188,14 @@ class MessageTranslator:
         """
         if not message:
             return message
-        message_format = MessageFormat(
-            UnicodeString(message), Locale.createFromName(self.locale)
-        )
+        message_format = MessageFormat(UnicodeString(message), self.icu_locale)
         if isinstance(parameters, dict):
             try:
                 return message_format.format(
                     [UnicodeString(x) for x in list(parameters.keys())],
                     [
                         Formattable(
-                            escape(x) if do_escape and isinstance(x, str) else x
+                            escape(x) if html_escape and isinstance(x, str) else x
                         )
                         for x in list(parameters.values())
                     ],
