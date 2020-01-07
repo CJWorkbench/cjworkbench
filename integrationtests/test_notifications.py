@@ -54,7 +54,15 @@ class TestNotifications(LoggedInIntegrationTest):
             if not message:
                 return False
             # Get payload at index 1: the text/html payload
-            body = message.get_payload()[1].get_payload()
+            #
+            # There is a chance that an old signup message will be fetched
+            # before the new notification is written to disk;
+            # the signup message will have a `str` at index 1, resulting in
+            # an `AttributeError` for the second `get_payload`
+            try:
+                body = message.get_payload()[1].get_payload()
+            except AttributeError:
+                return False
             return path in body and "has been updated with new data" in body
 
         timeout = b.default_wait_timeout
