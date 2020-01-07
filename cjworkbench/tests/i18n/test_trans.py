@@ -65,13 +65,13 @@ class TransTest(SimpleTestCase):
         message = (
             "Hello {a}, you have {g, select,"
             "   male {{n, plural,"
-            "       =0 {no boys} one {# little boy} other {# little boys}"
+            "       =0 {no boys} one {# boy} other {# boys}"
             "   }}"
             "   female {{n, plural,"
-            "       =0 {no girls} one {# little girl} other {# little girls}"
+            "       =0 {no girls} one {# girl} other {# girls}"
             "   }}"
             "   other {{n, plural,"
-            "       =0 {no children} one {# little child} other {# little children}"
+            "       =0 {no children} one {# child} other {# children}"
             "   }}"
             "}"
         )
@@ -81,7 +81,7 @@ class TransTest(SimpleTestCase):
                 default=message,
                 parameters={"a": "there", "g": "male", "n": 17},
             ),
-            "Hello there, you have 17 little boys",
+            "Hello there, you have 17 boys",
         )
         self.assertEqual(
             trans(
@@ -89,7 +89,7 @@ class TransTest(SimpleTestCase):
                 default=message,
                 parameters={"a": "there", "g": "female", "n": 18},
             ),
-            "Hello there, you have 18 little girls",
+            "Hello there, you have 18 girls",
         )
         self.assertEqual(
             trans(
@@ -270,13 +270,13 @@ class TransHtmlTest(SimpleTestCase):
         message = (
             "Hello {a}, you have {g, select,"
             "   male {{n, plural,"
-            "       =0 {<em0>no</em0> boys} one {# little boy} other {# little boys}"
+            "       =0 {<em0>no</em0> boys} one {# boy} other {# boys}"
             "   }}"
             "   female {{n, plural,"
-            "       =0 {<em0>no</em0> girls} one {# little girl} other {# little girls}"
+            "       =0 {<em0>no</em0> girls} one {# girl} other {# girls}"
             "   }}"
             "   other {{n, plural,"
-            "       =0 {<em0>no</em0> children} one {# little child} other {# little children}"
+            "       =0 {<em0>no</em0> children} one {# child} other {# children}"
             "   }}"
             "}"
         )
@@ -288,7 +288,7 @@ class TransHtmlTest(SimpleTestCase):
                 parameters={"a": "there", "g": "male", "n": 17},
                 tags={"em0": {"tag": "em", "attrs": {}}},
             ),
-            "Hello there, you have 17 little boys",
+            "Hello there, you have 17 boys",
         )
         self.assertEqual(
             trans_html(
@@ -298,7 +298,7 @@ class TransHtmlTest(SimpleTestCase):
                 parameters={"a": "there", "g": "female", "n": 18},
                 tags={"em0": {"tag": "em", "attrs": {}}},
             ),
-            "Hello there, you have 18 little girls",
+            "Hello there, you have 18 girls",
         )
         self.assertEqual(
             trans_html(
