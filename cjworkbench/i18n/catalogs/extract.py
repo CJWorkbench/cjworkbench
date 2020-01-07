@@ -114,7 +114,7 @@ def extract_python(
     :param options: a dictionary of additional options (optional)
     :rtype: ``iterator``
     """
-    keywords = {"trans": (), "trans_lazy": ()}
+    keywords = ["trans", "trans_lazy"]
     comment_tags = ["i18n"]
     for (message_lineno, funcname, messages, translator_comments) in _parse_python(
         fileobj, keywords, comment_tags, options
@@ -164,7 +164,7 @@ def extract_module_code(
     :param options: a dictionary of additional options (optional)
     :rtype: ``iterator``
     """
-    keywords = {"trans": (1, 2)}
+    keywords = ["trans"]
     comment_tags = ["i18n"]
     for (message_lineno, funcname, messages, translator_comments) in _parse_python(
         fileobj, keywords, comment_tags, options
@@ -201,7 +201,7 @@ def extract_module_code(
 
 def _parse_python(
     fileobj: BytesIO,
-    keywords: Dict[str, Tuple[int]],
+    keywords: List[str],
     comment_tags: List[str],
     options: Dict[Any, Any],
 ) -> Generator[Tuple[int, str, List[Any], List[Tuple[int, str]]], None, None]:
