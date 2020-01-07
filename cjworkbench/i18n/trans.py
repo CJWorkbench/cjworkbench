@@ -6,6 +6,14 @@ from cjworkbench.i18n import default_locale
 from cjworkbench.i18n.catalogs import load_catalog
 from string import Formatter
 from cjworkbench.i18n.exceptions import UnsupportedLocaleError, BadCatalogsError
+from icu import (
+    Formattable,
+    Locale,
+    MessageFormat,
+    UnicodeString,
+    ResourceBundle,
+    ICUError,
+)
 
 
 class InvalidICUParameters(Exception):
@@ -38,7 +46,24 @@ def trans(message_id, *, default, context=None, parameters={}):
     For code parsing reasons, respect the following order when passing keyword arguments:
         `message_id` and then `default` and then `context` and then everything else
     """
-    return _get_translations(get_language()).trans(
+    return do_trans(
+        get_language(),
+        message_id,
+        default=default,
+        context=context,
+        parameters=parameters,
+    )
+
+
+def do_trans(locale_id, message_id, *, default, context=None, parameters={}):
+    """Translate the given message ID to the given locale
+    
+    HTML is not escaped.
+    
+    For code parsing reasons, respect the following order when passing keyword arguments:
+        `message_id` and then `default` and then `context` and then everything else
+    """
+    return _get_translations(locale_id).trans(
         message_id, default=default, context=context, parameters=parameters
     )
 
@@ -146,7 +171,7 @@ class MessageTranslator:
                 return self._format_message(
                     message, parameters=parameters, do_escape=False
                 )
-            except Exception:
+            except (ICUError, InvalidICUParameters):
                 pass
         return self._format_message(fallback, parameters=parameters, do_escape=False)
 
@@ -158,7 +183,7 @@ class MessageTranslator:
                     parameters=parameters,
                     do_escape=True,
                 )
-            except Exception:
+            except (ICUError, InvalidICUParameters):
                 pass
         return self._format_message(
             self._replace_tags(fallback, tags), parameters=parameters, do_escape=True
@@ -174,25 +199,25 @@ class MessageTranslator:
 
     def _format_message(self, message, parameters={}, do_escape=True):
         """Substitute parameters into ICU-style message.
-        At this point, ICU is not actually supported (i.e. you can have no plurals, secects, etc).
-        Only variable substitution is supported.
+        You can have variable substitution, plurals, selects and nested messages.
         
         The parameters must be a dict
         """
         if not message:
             return message
+        message_format = MessageFormat(
+            UnicodeString(message), Locale.createFromName(self.locale)
+        )
         if isinstance(parameters, dict):
             try:
-                return formatter.format(
-                    message,
-                    **{
-                        key: (
-                            escape(parameters[key])
-                            if do_escape and isinstance(parameters[key], str)
-                            else parameters[key]
+                return message_format.format(
+                    [UnicodeString(x) for x in list(parameters.keys())],
+                    [
+                        Formattable(
+                            escape(x) if do_escape and isinstance(x, str) else x
                         )
-                        for key in parameters
-                    },
+                        for x in list(parameters.values())
+                    ],
                 )
             except Exception as error:
                 raise InvalidICUParameters(
@@ -211,15 +236,3 @@ class MessageTranslator:
         else:
             message = self.catalog.get(message_id)
         return message.string if message else None
-
-
-class PartialFormatter(Formatter):
-    def get_field(self, field_name, args, kwargs):
-        # Handle a key not found
-        try:
-            return super().get_field(field_name, args, kwargs)
-        except (KeyError, AttributeError):
-            return "{%s}" % field_name, field_name
-
-
-formatter = PartialFormatter()

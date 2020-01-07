@@ -41,7 +41,7 @@ class TransTemplateTagTests(SimpleTestCase):
             "Hello you there {c}!",
         )
 
-        with self.assertRaises(Exception):
+        self.assertEqual(
             trans_html(
                 mock_context(),
                 mock_message_id,
@@ -50,6 +50,8 @@ class TransTemplateTagTests(SimpleTestCase):
                 arg_0="!",
                 arg_b="2",
             ),
+            "Hello you ! 2",
+        )
 
     def test_trans_tag_without_attributes(self):
         self.assertEqual(
