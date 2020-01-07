@@ -6,21 +6,7 @@ from cjworkbench.i18n import default_locale
 from cjworkbench.i18n.catalogs import load_catalog
 from string import Formatter
 from cjworkbench.i18n.exceptions import UnsupportedLocaleError, BadCatalogsError
-from icu import (
-    Formattable,
-    Locale,
-    MessageFormat,
-    UnicodeString,
-    ResourceBundle,
-    ICUError,
-)
-
-
-class InvalidICUParameters(Exception):
-    """The parameters passed for a message are not valid
-    
-    For example, you may have passed a string in the place of an integer.
-    """
+from icu import Formattable, Locale, MessageFormat
 
 
 _translators = {}
@@ -154,7 +140,7 @@ class MessageTranslator:
                 return self._format_message(
                     message, parameters=parameters, html_escape=False
                 )
-            except (ICUError, InvalidICUParameters):
+            except Exception:
                 pass
         return self._format_message(fallback, parameters=parameters, html_escape=False)
 
@@ -166,7 +152,7 @@ class MessageTranslator:
                     parameters=parameters,
                     html_escape=True,
                 )
-            except (ICUError, InvalidICUParameters):
+            except Exception:
                 pass
         return self._format_message(
             self._replace_tags(fallback, tags), parameters=parameters, html_escape=True
@@ -188,24 +174,14 @@ class MessageTranslator:
         """
         if not message:
             return message
-        message_format = MessageFormat(UnicodeString(message), self.icu_locale)
-        if isinstance(parameters, dict):
-            try:
-                return message_format.format(
-                    [UnicodeString(x) for x in list(parameters.keys())],
-                    [
-                        Formattable(
-                            escape(x) if html_escape and isinstance(x, str) else x
-                        )
-                        for x in list(parameters.values())
-                    ],
-                )
-            except Exception as error:
-                raise InvalidICUParameters(
-                    "The given parameters are invalid for the given message"
-                ) from error
-        else:
-            raise InvalidICUParameters("The given parameters are not a dict") from error
+        message_format = MessageFormat(message, self.icu_locale)
+        return message_format.format(
+            list(parameters.keys()),
+            [
+                Formattable(escape(x) if html_escape and isinstance(x, str) else x)
+                for x in parameters.values()
+            ],
+        )
 
     def get_message(self, message_id, context=None):
         """Find the message corresponding to the given ID in the catalog.
