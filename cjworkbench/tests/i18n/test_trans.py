@@ -1,6 +1,7 @@
 from django.test import SimpleTestCase
 from cjworkbench.i18n.trans import trans_html, trans, MessageTranslator
 from cjworkbench.i18n import default_locale
+from icu import ICUError
 
 
 mock_message_id = (
@@ -22,8 +23,26 @@ class TransTest(SimpleTestCase):
             "Hello you there {c}!",
         )
 
+    # Tests that a programmer will break the system by including an invalid parameter
+    def test_programmer_invalid_parameter_syntax(self):
+        with self.assertRaises(ICUError):
+            trans(
+                mock_message_id,
+                default="Hello {a b}",
+                parameters={"a": "you", "b": "2"},
+            )
+
+    # Tests that a translator can't break our system by including an invalid parameter
+    def test_translator_invalid_parameter_syntax(self):
+        self.assertEqual(
+            MessageTranslator(default_locale)._process_simple_message(
+                "Hello {a b}", "Hello {a} {b}", parameters={"a": "you", "b": "!"}
+            ),
+            "Hello you !",
+        )
+
     # Tests that a programmer can include a numeric variable in the message
-    def test_format_invalid_default(self):
+    def test_programmer_numeric_parameter(self):
         self.assertEqual(
             trans(
                 mock_message_id,
@@ -33,20 +52,24 @@ class TransTest(SimpleTestCase):
             "Hello you ! 2",
         )
 
-    # Tests that a translator can't break our system by including a numeric variable in the message
-    def test_format_invalid_message(self):
-        self.assertTrue(
+    # Tests that a translator can use a numeric variable in the message
+    def test_translator_numeric_parameter(self):
+        self.assertEqual(
             MessageTranslator(default_locale)._process_simple_message(
-                "Hello {a} {0} {b}", "Hello {a} {b}", parameters={"a": "you", "b": "!"}
-            )
+                "Hey {a} {0} {b}",
+                "Hello {a} {0} {b}",
+                parameters={"a": "you", "b": "!", "0": "there"},
+            ),
+            "Hey you there !",
         )
 
     # Tests that a translator can't break our system by adding or removing variables in the message
-    def test_format_translator_parameters(self):
-        self.assertTrue(
+    def test_translator_different_parameters(self):
+        self.assertEqual(
             MessageTranslator(default_locale)._process_simple_message(
-                "Hello {a} {c}", "Hello {a} {b}", parameters={"a": "you", "b": "!"}
-            )
+                "Hey {a} {c}", "Hello {a} {b}", parameters={"a": "you", "b": "!"}
+            ),
+            "Hey you {c}",
         )
 
     # Tests that HTML is not escaped
@@ -117,7 +140,7 @@ class TransHtmlTest(SimpleTestCase):
         )
 
     # Tests that a programmer can include a numeric variable in the message
-    def test_format_invalid_default(self):
+    def test_programmer_numeric_parameter_html(self):
         self.assertEqual(
             trans_html(
                 default_locale,
@@ -128,20 +151,24 @@ class TransHtmlTest(SimpleTestCase):
             "Hello you ! 2",
         )
 
-    # Tests that a translator can't break our system by including a numeric variable in the message
-    def test_format_invalid_message(self):
-        self.assertTrue(
+    # Tests that a translator can use a numeric variable in the message
+    def test_translator_numeric_parameter_html(self):
+        self.assertEqual(
             MessageTranslator(default_locale)._process_html_message(
-                "Hello {a} {0} {b}", "Hello {a} {b}", parameters={"a": "you", "b": "!"}
-            )
+                "Hey {a} {0} {b}",
+                "Hello {a} {0} {b}",
+                parameters={"a": "you", "b": "!", "0": "there"},
+            ),
+            "Hey you there !",
         )
 
     # Tests that a translator can't break our system by adding or removing variables in the message
-    def test_format_translator_parameters(self):
-        self.assertTrue(
+    def test_translator_different_parameters_html(self):
+        self.assertEqual(
             MessageTranslator(default_locale)._process_html_message(
-                "Hello {a} {c}", "Hello {a} {b}", parameters={"a": "you", "b": "!"}
-            )
+                "Hey {a} {c}", "Hello {a} {b}", parameters={"a": "you", "b": "!"}
+            ),
+            "Hey you {c}",
         )
 
     # Tests that tags in messages are replaced correctly.
