@@ -46,37 +46,20 @@ def trans(message_id, *, default, context=None, parameters={}):
     For code parsing reasons, respect the following order when passing keyword arguments:
         `message_id` and then `default` and then `context` and then everything else
     """
-    return do_trans(
-        get_language(),
-        message_id,
-        default=default,
-        context=context,
-        parameters=parameters,
-    )
-
-
-def do_trans(locale_id, message_id, *, default, context=None, parameters={}):
-    """Translate the given message ID to the given locale
-    
-    HTML is not escaped.
-    
-    For code parsing reasons, respect the following order when passing keyword arguments:
-        `message_id` and then `default` and then `context` and then everything else
-    """
-    return _get_translations(locale_id).trans(
+    return _get_translations(get_language()).trans(
         message_id, default=default, context=context, parameters=parameters
     )
 
 
-def trans_html(locale, message_id, *, default, context=None, parameters={}, tags={}):
-    """Translate the given message ID to the current locale
+def trans_html(locale_id, message_id, *, default, context=None, parameters={}, tags={}):
+    """Translate the given message ID to the given locale
     
     HTML is escaped in the message, as well as in parameters and tag attributes.
     
     For code parsing reasons, respect the following order when passing keyword arguments:
         `message_id` and then `default` and then `context` and then everything else
     """
-    return _get_translations(locale).trans_html(
+    return _get_translations(locale_id).trans_html(
         message_id, default=default, context=context, parameters=parameters, tags=tags
     )
 
