@@ -214,9 +214,7 @@ def _parse_python(
     :param fileobj: the seekable, file-like object the messages should be
                     extracted from
     :param keywords: a list of keywords (i.e. function names) that should be
-                     recognized as translation functions; each keyword is mapped to
-                     a tuple of its arguments we want to consider,
-                     e.g. `{"trans": (1,2)}` means we want the first two arguments of `trans`
+                     recognized as translation functions
     :param comment_tags: a list of translator tags to search for and include
                          in the results
     :param options: a dictionary of additional options (optional)
