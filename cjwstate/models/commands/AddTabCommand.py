@@ -1,7 +1,6 @@
 from django.db import models
 from django.db.models import F
 from cjwstate.models import Delta, Tab, Workflow
-from server.serializers import TabSerializer
 
 
 class AddTabCommand(Delta):
@@ -38,15 +37,19 @@ class AddTabCommand(Delta):
     tab = models.ForeignKey(Tab, on_delete=models.PROTECT)
     old_selected_tab_position = models.IntegerField()
 
-    def load_ws_data(self):
-        data = super().load_ws_data()
-        if self.tab.is_deleted:
-            data["clearTabSlugs"] = [self.tab.slug]
-        else:
-            data["updateTabs"] = {self.tab.slug: TabSerializer(self.tab).data}
-        data["updateWorkflow"]["tab_slugs"] = list(
-            self.workflow.live_tabs.values_list("slug", flat=True)
+    # override
+    def load_clientside_update(self):
+        data = (
+            super()
+            .load_clientside_update()
+            .update_workflow(
+                tab_slugs=list(self.workflow.live_tabs.values_list("slug", flat=True))
+            )
         )
+        if self.tab.is_deleted:
+            data = data.clear_tab(self.tab.slug)
+        else:
+            data = data.replace_tab(self.tab.slug, self.tab.to_clientside())
         return data
 
     def forward(self):

@@ -1,4 +1,5 @@
 import json
+import logging
 import secrets
 from typing import Any, Dict, Optional, Union
 from django.contrib.postgres.fields import JSONField
@@ -11,6 +12,10 @@ from .CachedRenderResult import CachedRenderResult
 from .module_version import ModuleVersion
 from .Tab import Tab
 from .workflow import Workflow
+from cjwstate import clientside
+
+
+logger = logging.getLogger(__name__)
 
 
 class WfModule(models.Model):
@@ -523,3 +528,61 @@ class WfModule(models.Model):
             "wf-%d/wfm-%d/" % (self.workflow_id, self.id),
         )
         super().delete(*args, **kwargs)
+
+    def to_clientside(self) -> clientside.StepUpdate:
+        # params
+        if self.module_version:
+            from cjwstate.params import get_migrated_params
+
+            param_schema = self.module_version.param_schema
+            params = get_migrated_params(self)  # raise ModuleError
+            try:
+                param_schema.validate(params)
+            except ValueError:
+                logger.exception(
+                    "%s.migrate_params() gave invalid output: %r",
+                    self.module_id_name,
+                    params,
+                )
+                params = param_schema.coerce(params)
+        else:
+            params = {}
+
+        crr = self._build_cached_render_result_fresh_or_not()
+        if crr is None:
+            crr = clientside.Null
+
+        return clientside.StepUpdate(
+            id=self.id,
+            slug=self.slug,
+            module_slug=self.module_id_name,
+            tab_slug=self.tab_slug,
+            render_result=crr,
+            files=[
+                clientside.UploadedFile(
+                    name=name, uuid=uuid, size=size, created_at=created_at
+                )
+                for name, uuid, size, created_at in self.uploaded_files.order_by(
+                    "-created_at"
+                ).values_list("name", "uuid", "size", "created_at")
+            ],
+            params=params,
+            secrets=self.secret_metadata,
+            is_collapsed=self.is_collapsed,
+            notes=self.notes,
+            is_auto_fetch=self.auto_update_data,
+            fetch_interval=self.update_interval,
+            last_fetched_at=self.last_update_check,
+            is_notify_on_change=self.notifications,
+            has_unseen_notification=self.has_unseen_notification,
+            last_relevant_delta_id=self.last_relevant_delta_id,
+            versions=clientside.FetchedVersionList(
+                versions=[
+                    clientside.FetchedVersion(created_at=created_at, is_seen=is_seen)
+                    for created_at, is_seen in self.stored_objects.order_by(
+                        "-stored_at"
+                    ).values_list("stored_at", "read")
+                ],
+                selected=self.stored_data_version,
+            ),
+        )

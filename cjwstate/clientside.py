@@ -13,9 +13,10 @@ instead. (For instance: AclEntry and UploadedFile.) Long-term, we'll move
 away from Django ORM; once we do, we can nix these models and use ORM objects
 instead.
 """
-from dataclasses import dataclass, field
+from __future__ import annotations
+from dataclasses import dataclass, field, replace
 import datetime
-from typing import Optional
+from typing import Any, Dict, FrozenSet, Iterable, List, Optional, Union
 from cjwkernel.types import RenderError
 from cjwstate.modules.module_loader import ModuleSpec
 
@@ -49,18 +50,23 @@ class UploadedFile:
 
 
 @dataclass(frozen=True)
-class FetchVersion:
+class FetchedVersion:
     created_at: datetime.datetime
     is_seen: bool
 
 
 @dataclass(frozen=True)
-class FetchVersionList:
-    versions: List[FetchVersion]
+class FetchedVersionList:
+    versions: List[FetchedVersion]
     selected: Optional[datetime.datetime]
 
 
 @dataclass(frozen=True)
+class Module:
+    spec: ModuleSpec
+    js_module: str
+
+
 @dataclass(frozen=True)
 class WorkflowUpdate:
     """
@@ -68,19 +74,49 @@ class WorkflowUpdate:
 
     The following fields cannot be represented here:
 
-    * `id`: cannot be updated
-    * `url_id`: cannot be updated
-    * `is_anonymous`: cannot be updated
-    * `owner_email`: cannot be updated
-    * `owner_name`: cannot be updated
     * `read_only`: has a different value for different users
     * `is_owner`: has a different value for different users
     * `selected_tab_position`: has a different value for different users
 
     Every field of an Update is Optional, default `None`. `None` means there
     is no update, and the client should keep whichever value it already had.
-    A value of type Optional[Union[Null, ...]] can be set to `Null`, which
+    A value of type Optional[Union[_Null, ...]] can be set to `Null`, which
     indicates that the client should change its value to `null`.
+    """
+
+    id: Optional[int] = None
+    """
+    ID of the workflow in the database.
+
+    Required for init, and must be None afterwards.
+    """
+
+    url_id: Optional[int] = None
+    """
+    ID of the workflow in URLs.
+
+    Required for init, and must be None afterwards.
+    """
+
+    owner: Optional["User"] = None
+    """
+    Workflow owner, maybe anonymous. (Django model -- TODO use something else.)
+
+    Required for init, and must be None afterwards.
+
+    This does not follow the `Optional[_Null, ...]]` convention. The `owner` is
+    useful during `Init` and it must be `None` during `Update`. (An anonymous
+    workflow may have `owner is None`.)
+    """
+
+    is_example: Optional[bool] = None
+    """True if this is an 'example' workflow."""
+
+    selected_tab_position: Optional[int] = None
+    """
+    Position of initial tab for the user to display.
+
+    Required for init, and must be None afterwards.
     """
 
     name: Optional[str] = None
@@ -92,7 +128,7 @@ class WorkflowUpdate:
     public: Optional[bool] = None
     """True means anybody can see it."""
 
-    last_update: Optional[datetime.datetime] = None
+    updated_at: Optional[datetime.datetime] = None
     """Time of last modification."""
 
     acl: Optional[List[AclEntry]] = None
@@ -103,16 +139,25 @@ class WorkflowUpdate:
 class StepUpdate:
     """
     Data for a new or existing Step with the given id (TODO use slug, nix id).
+
+    Every field of an Update is Optional, default `None`. `None` means there
+    is no update, and the client should keep whichever value it already had.
+    A value of type Optional[Union[_Null, ...]] can be set to `Null`, which
+    indicates that the client should change its value to `null`.
     """
 
-    id: int
+    id: Optional[int] = None
     """
     Step identifier. TODO nix this and use slug as identifier.
+
+    Required for creation, and must be None afterwards.
     """
 
-    slug: str
+    slug: Optional[str] = None
     """
     Step identifier.
+
+    Required for creation, and must be None afterwards.
     """
 
     module_slug: Optional[str] = None
@@ -143,7 +188,7 @@ class StepUpdate:
     This may get out of sync with cached_render_result_delta_id.
     """
 
-    render_result: Optional[Union[Null, CachedRenderResult]] = None
+    render_result: Optional[Union[_Null, "CachedRenderResult"]] = None
     """
     Cached, maybe-stale render result.
 
@@ -194,12 +239,12 @@ class StepUpdate:
     does become set.)
     """
 
-    last_fetched_at: Optional[Union[Null, datetime.datetime]] = None
+    last_fetched_at: Optional[Union[_Null, datetime.datetime]] = None
     """
     Time of last fetch, or Null.
 
-    This time may be more recent than the latest FetchVersion, if we polled a
-    website and then decided not to create a new FetchVersion.
+    This time may be more recent than the latest FetchedVersion, if we polled a
+    website and then decided not to create a new FetchedVersion.
     """
 
     is_notify_on_change: Optional[bool] = None
@@ -214,7 +259,7 @@ class StepUpdate:
     TODO revisit this feature. It's not multi-user friendly.
     """
 
-    versions: Optional[FetchVersion]
+    versions: Optional[FetchedVersionList] = None
     """
     Information about fetched versions.
 
@@ -231,11 +276,18 @@ class StepUpdate:
 class TabUpdate:
     """
     Data for a new or existing Tab with the given slug.
+
+    Every field of an Update is Optional, default `None`. `None` means there
+    is no update, and the client should keep whichever value it already had.
+    A value of type Optional[Union[_Null, ...]] can be set to `Null`, which
+    indicates that the client should change its value to `null`.
     """
 
-    slug: str
+    slug: Optional[str] = None
     """
     Tab identifier.
+
+    Required for creation, and must be None afterwards.
     """
 
     name: Optional[str] = None
@@ -266,24 +318,89 @@ class Update:
 
     Every field of an Update is Optional, default `None`. `None` means there
     is no update, and the client should keep whichever value it already had.
-    A value of type Optional[Union[Null, ...]] can be set to `Null`, which
+    A value of type Optional[Union[_Null, ...]] can be set to `Null`, which
     indicates that the client should change its value to `null`.
+
+    This object is immutable. The update_xxx(), replace_xxx() and clear_xxx()
+    methods return new objects. They do not modify the existing object.
     """
 
     workflow: Optional[WorkflowUpdate] = None
     """Workflow-wide data to replace."""
 
-    modules: Dict[str, ModuleSpec] = field(default_factory=dict)
+    modules: Dict[str, Module] = field(default_factory=dict)
     """Modules to add or replace, keyed by slug."""
 
     steps: Dict[int, StepUpdate] = field(default_factory=dict)
-    """Steps to add or update, keyed by ID. TODO use slugs, not IDs."""
+    """Steps to add or update, keyed by ID. TODO key by slug, not ID."""
 
     tabs: Dict[str, TabUpdate] = field(default_factory=dict)
     """Tabs to add or update, keyed by slug."""
 
-    clear_tabs: List[str] = field(default_factory=list)
+    clear_tab_slugs: FrozenSet[str] = field(default_factory=frozenset)
     """Tab slugs the client should forget about."""
 
-    clear_steps: List[int] = field(default_factory=list)
+    clear_step_ids: FrozenSet[int] = field(default_factory=frozenset)
     """Step IDs the client should forget about. TODO use slugs, not IDs."""
+
+    def update_tab(self, slug: str, **kwargs) -> Update:
+        """Return an Update with added/modified tab values."""
+        tabs = dict(self.tabs)  # shallow copy
+        old_tab = tabs.get(slug, TabUpdate(slug=slug))
+        tabs[slug] = replace(old_tab, **kwargs)
+        return replace(self, tabs=tabs)
+
+    def update_step(self, id: int, **kwargs) -> Update:
+        """Return an Update with added/modified step values. TODO key by slug, not id."""
+        steps = dict(self.steps)  # shallow copy
+        old_step = steps.get(id, StepUpdate(id=id))
+        steps[id] = replace(old_step, **kwargs)
+        return replace(self, steps=steps)
+
+    def update_workflow(self, **kwargs) -> Update:
+        """Return an Update with modified workflow values."""
+        return replace(self, workflow=replace(self.workflow, **kwargs))
+
+    def replace_tab(self, slug: str, update: TabUpdate) -> Update:
+        """Return an Update with a new Tab."""
+        assert slug == update.slug
+        return replace(self, tabs={**self.tabs, update.slug: update})
+
+    def replace_step(self, id: int, update: StepUpdate) -> Update:
+        """Return an Update with a new Step."""
+        assert id == update.id
+        return replace(self, steps={**self.steps, id: update})
+
+    def replace_steps(self, updates: Dict[int, StepUpdate]) -> Update:
+        """Return an Update with new or replaced Steps. TODO key by slug, not id."""
+        return replace(self, steps={**self.steps, **updates})
+
+    def clear_tab(self, slug: str) -> Update:
+        """Return an Update that clears a Tab."""
+        return replace(self, clear_tab_slugs=self.clear_tab_slugs.union([slug]))
+
+    def clear_step(self, id: int) -> Update:
+        """Return an Update that clears a Step. TODO key by slug, not id."""
+        return replace(self, clear_step_ids=self.clear_step_ids.union([id]))
+
+    def clear_steps(self, ids: Iterable[int]) -> Update:
+        """Return an Update that clears Steps. TODO key by slug, not id."""
+        return replace(self, clear_step_ids=self.clear_step_ids.union(ids))
+
+
+@dataclass(frozen=True)
+class Init:
+    """
+    Initial state to pass to the client.
+
+    This is modeled after `Update`, with these differences:
+
+    * There are no `clear_xxx` fields (because this is the initial state, so
+      there's no state to clear).
+    * The creator must ensure no Update values are `None`.
+    """
+
+    workflow: WorkflowUpdate
+    modules: Dict[str, Module]
+    steps: Dict[int, StepUpdate]  # TODO key by slug, not ID
+    tabs: Dict[str, TabUpdate]

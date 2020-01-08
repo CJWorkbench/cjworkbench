@@ -4,18 +4,20 @@
 from collections import namedtuple
 import json
 import logging
+import pickle
 from typing import Dict, Any
-from django.core.serializers.json import DjangoJSONEncoder
 from channels.layers import get_channel_layer
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from channels.exceptions import DenyConnection
 from cjworkbench.sync import database_sync_to_async
-from server import handlers, rabbitmq
+from cjwstate import clientside
 from cjwstate.models import WfModule, Workflow
-from server.serializers import WorkflowSerializer, TabSerializer, WfModuleSerializer
+from server import handlers, rabbitmq
+from server.serializers import JsonizeContext, jsonize_clientside_update
 
 logger = logging.getLogger(__name__)
 RequestWrapper = namedtuple("RequestWrapper", ("user", "session"))
+WorkflowUpdateData = namedtuple("WorkflowUpdateData", ("update", "delta_id"))
 
 
 def _workflow_channel_name(workflow_id: int) -> str:
@@ -28,11 +30,6 @@ def _workflow_channel_name(workflow_id: int) -> str:
 
 
 class WorkflowConsumer(AsyncJsonWebsocketConsumer):
-    # Override Channels JSON-dumping to support datetime
-    @classmethod
-    async def encode_json(cls, data: Any) -> str:
-        return json.dumps(data, cls=DjangoJSONEncoder)
-
     @property
     def workflow_id(self):
         return int(self.scope["url_route"]["kwargs"]["workflow_id"])
@@ -73,38 +70,28 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
             return False
 
     @database_sync_to_async
-    def get_workflow_as_delta_and_needs_render(self):
+    def get_workflow_as_clientside_update(self) -> WorkflowUpdateData:
         """
-        Return (apply-delta dict, needs_render), or raise Workflow.DoesNotExist
+        Return (clientside.Update, delta_id), or raise Workflow.DoesNotExist
 
-        needs_render is a (workflow_id, delta_id) pair.
+        The purpose of this method is to hide races from users who disconnect
+        and reconnect while changes are being made. It's okay for things to be
+        slightly off. (Long-term, we can investigate better synchronization
+        strategies.)
         """
         with Workflow.authorized_lookup_and_cooperative_lock(
             "read", self.scope["user"], self.scope["session"], pk=self.workflow_id
         ) as workflow_lock:
             workflow = workflow_lock.workflow
-            request = RequestWrapper(self.scope["user"], self.scope["session"])
-            ret = {
-                "updateWorkflow": (
-                    WorkflowSerializer(workflow, context={"request": request}).data
-                )
-            }
-
-            tabs = list(workflow.live_tabs)
-            ret["updateTabs"] = dict(
-                (tab.slug, TabSerializer(tab).data) for tab in tabs
+            update = clientside.Update(
+                workflow=workflow.to_clientside(),
+                tabs={tab.slug: tab.to_clientside() for tab in workflow.live_tabs},
+                steps={
+                    step.id: step.to_clientside()
+                    for step in WfModule.live_in_workflow(workflow)
+                },
             )
-            wf_modules = list(WfModule.live_in_workflow(workflow.id))
-            ret["updateWfModules"] = dict(
-                (str(wfm.id), WfModuleSerializer(wfm).data) for wfm in wf_modules
-            )
-
-            if workflow.are_all_render_results_fresh():
-                needs_render = None
-            else:
-                needs_render = (workflow.id, workflow.last_delta_id)
-
-            return (ret, needs_render)
+            return WorkflowUpdateData(update, workflow.last_delta_id)
 
     async def connect(self):
         if not await self.authorize("read"):
@@ -144,35 +131,47 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
 
     async def send_whole_workflow_to_client(self):
         try:
-            delta, needs_render = await self.get_workflow_as_delta_and_needs_render()
-            await self.send_data_to_workflow_client(
-                {
-                    "data": {  # TODO why the nesting?
-                        "type": "apply-delta",
-                        "data": delta,
-                    }
-                }
-            )
-            if needs_render:
-                # Solve a problem: what if, when the user reconnects, the
-                # workflow isn't rendered?
-                #
-                # Usually, a render is happening. But sometimes not. Perhaps we
-                # cleared the cache. Or perhaps we deployed a new version of
-                # Workbench that doesn't use the same cache format -- making
-                # every workflow's cache invalid. In those cases, we should
-                # cause a render just by dint of a user reconnecting.
-                workflow_id, delta_id = needs_render
-                logger.debug("Queue render of Workflow %d v%d", workflow_id, delta_id)
-                await rabbitmq.queue_render(workflow_id, delta_id)
+            update, delta_id = await self.get_workflow_as_clientside_update()
         except Workflow.DoesNotExist:
-            pass
+            return
+
+        await self.send_update(update)
+        if any(
+            step.render_result is None
+            or (step.render_result.delta_id != step.last_relevant_delta_id)
+            for step in update.steps.values()
+        ):
+            # Solve a problem: what if, when the user reconnects, the
+            # workflow isn't rendered?
+            #
+            # Usually, a render is happening. But sometimes not. Perhaps we
+            # cleared the cache. Or perhaps we deployed a new version of
+            # Workbench that doesn't use the same cache format -- making
+            # every workflow's cache invalid. In those cases, we should
+            # cause a render just by dint of a user reconnecting.
+            workflow_id = update.workflow.id
+            logger.debug("Queue render of Workflow %d v%d", workflow_id, delta_id)
+            await rabbitmq.queue_render(workflow_id, delta_id)
 
     async def send_data_to_workflow_client(self, message):
         logger.debug(
             "Send %s to Workflow %d", message["data"]["type"], self.workflow_id
         )
         await self.send_json(message["data"])
+
+    async def send_pickled_update(self, message: Dict[str, Any]) -> None:
+        # It's a bit of a security concern that we use pickle to send
+        # dataclasses, through RabbitMQ, as opposed to protobuf. It's also
+        # inefficient and makes for races when deploying new versions. But
+        # it's _so_ much less code!  Let's only add complexity if we detect
+        # a problem.
+        await self.send_update(pickle.loads(message["pickled_update"]))
+
+    async def send_update(self, update: clientside.Update) -> None:
+        logger.debug("Send update to Workflow %d", self.workflow_id)
+        ctx = JsonizeContext(self.scope["user"], self.scope["session"], "TODO_i18n")
+        json_dict = jsonize_clientside_update(update, ctx)
+        await self.send_json({"type": "apply-delta", "data": json_dict})
 
     async def queue_render(self, message):
         """
@@ -259,4 +258,20 @@ async def queue_render_if_listening(workflow_id: int, delta_id: int):
             "type": "queue_render",
             "data": {"workflow_id": workflow_id, "delta_id": delta_id},
         },
+    )
+
+
+async def send_update_to_workflow_clients(
+    workflow_id: int, update: clientside.Update
+) -> None:
+    channel_name = _workflow_channel_name(workflow_id)
+    channel_layer = get_channel_layer()
+    logger.debug("Queue %s to Workflow %d", "send_pickled_update", workflow_id)
+    # It's a bit of a security concern that we use pickle to send dataclasses,
+    # through RabbitMQ, as opposed to protobuf. It's also inefficient and makes
+    # for races when deploying new versions. But it's _so_ much less code!
+    # Let's only add complexity if we detect a problem.
+    await channel_layer.group_send(
+        channel_name,
+        {"type": "send_pickled_update", "pickled_update": pickle.dumps(update)},
     )

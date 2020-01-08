@@ -156,7 +156,7 @@ function wfModuleStatus (wfModule) {
 }
 
 function mapStateToProps (state) {
-  const { workflow, wfModules, tabs } = state
+  const { workflow, wfModules, tabs, modules } = state
   const tabSlug = workflow.tab_slugs[workflow.selected_tab_position]
   const tab = tabs[tabSlug]
   const wfModuleArray = tab.wf_module_ids.map(id => wfModules[String(id)])
@@ -173,7 +173,7 @@ function mapStateToProps (state) {
     // to give TableSwitcher a "busy"-status WfModule).
     wfModule = {
       id: -1,
-      html_output: false,
+      module_id_name: "",
       status: 'busy',
       cached_render_result_delta_id: null,
       columns: null,
@@ -198,7 +198,7 @@ function mapStateToProps (state) {
     workflowId: workflow.id,
     wfModule: wfModule ? {
       id: wfModule.id,
-      htmlOutput: wfModule.html_output,
+      htmlOutput: modules[wfModule.module] ? modules[wfModule.module].has_html_output : false,
       status,
       deltaId: wfModule.cached_render_result_delta_id,
       columns: wfModule.output_columns,

@@ -2,6 +2,7 @@ import functools
 from typing import Any, Dict
 import uuid as uuidgen
 from cjworkbench.sync import database_sync_to_async
+from cjwstate import clientside
 from cjwstate.models import Workflow, WfModule, InProgressUpload
 from server import serializers, websockets
 from .decorators import register_websockets_handler, websockets_handler
@@ -80,7 +81,7 @@ async def create_upload(workflow: Workflow, wf_module: WfModule, **kwargs):
 @database_sync_to_async
 def _do_finish_upload(
     workflow: Workflow, wf_module: WfModule, uuid: uuidgen.UUID, filename: str
-) -> Dict[str, Any]:
+) -> clientside.Update:
     with workflow.cooperative_lock():
         wf_module.refresh_from_db()
         try:
@@ -100,7 +101,13 @@ def _do_finish_upload(
                 "BadRequest: file not found. "
                 "You must upload the file before calling finish_upload."
             )
-        return serializers.WfModuleSerializer(wf_module).data
+        return clientside.Update(
+            steps={
+                wf_module.id: clientside.StepUpdate(
+                    files=wf_module.to_clientside().files
+                )
+            }
+        )
 
 
 @register_websockets_handler
@@ -113,8 +120,6 @@ async def finish_upload(
         uuid = InProgressUpload.upload_key_to_uuid(key)
     except ValueError as err:
         raise HandlerError(str(err))
-    wf_module_data = await _do_finish_upload(workflow, wf_module, uuid, filename)
-    await websockets.ws_client_send_delta_async(
-        workflow.id, {"updateWfModules": {str(wf_module.id): wf_module_data}}
-    )
+    update = await _do_finish_upload(workflow, wf_module, uuid, filename)
+    await websockets.send_update_to_workflow_clients(workflow.id, update)
     return {"uuid": str(uuid)}

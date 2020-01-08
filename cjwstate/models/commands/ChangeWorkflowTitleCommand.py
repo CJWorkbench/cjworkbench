@@ -18,6 +18,10 @@ class ChangeWorkflowTitleCommand(Delta):
         self.workflow.name = self.old_value
         self.workflow.save(update_fields=["name"])
 
+    # override
+    def load_clientside_update(self):
+        return super().load_clientside_update().update_workflow(name=self.workflow.name)
+
     @classmethod
     def amend_create_kwargs(cls, *, workflow, new_value, **kwargs):
         return {

@@ -16,9 +16,7 @@ export class WfHamburgerMenu extends React.Component {
     }),
     api: PropTypes.object, // not required: WorkflowListNavBar doesn't allow import from github
     workflowId: PropTypes.number, // not required: WorkflowListNavBar has no workflow
-    user: PropTypes.shape({
-      id: PropTypes.number.isRequired
-    }) // if null/undefined, user is not logged in
+    user: PropTypes.object // if null/undefined, user is not logged in
   }
 
   state = {

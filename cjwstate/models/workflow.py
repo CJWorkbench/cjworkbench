@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 from django.http import HttpRequest
 from django.urls import reverse
 from django.utils import timezone
-from cjwstate import minio
+from cjwstate import clientside, minio
 
 
 class WorkflowCooperativeLock:
@@ -30,8 +30,9 @@ class WorkflowCooperativeLock:
                     workflow = workflow_lock.workflow
                     workflow.name = "Changed"
                     workflow.save(update_fields=["name"])
-                    new_json = serializers.WorkflowSerializer(workflow).data
+                    update = workflow.to_clientside()  # uses DB
                     def notify_websockets():
+                        new_json = jsonize_clientside_workflow(update, ctx)
                         async_to_sync(async_notify_websockets)(workflow.id, new_json)
                     workflow_lock.after_commit(notify_websockets)
                     return True  # Timing 3
@@ -376,15 +377,6 @@ class Workflow(models.Model):
             mask = Q(anonymous_owner_session_key=session.session_key)
         return cls.objects.filter(mask)
 
-    def read_only(self, user):
-        warnings.warn("FIXME read_only() should be request_read_only()")
-        return user != self.owner
-
-    def last_update(self):
-        if not self.last_delta:
-            return self.creation_date
-        return self.last_delta.datetime
-
     @classmethod
     @contextmanager
     def lookup_and_cooperative_lock(cls, **kwargs):
@@ -580,6 +572,30 @@ class Workflow(models.Model):
             minio.remove_recursive(minio.UserFilesBucket, f"wf-{self.id}/")
 
         super().delete(*args, **kwargs)
+
+    def to_clientside(
+        self, *, include_tab_slugs: bool = True
+    ) -> clientside.WorkflowUpdate:
+        if include_tab_slugs:
+            tab_slugs = list(self.live_tabs.values_list("slug", flat=True))
+        else:
+            tab_slugs = None  # faster (for index page)
+
+        return clientside.WorkflowUpdate(
+            id=self.id,
+            url_id=self.url_id,
+            owner=self.owner,
+            is_example=self.example,
+            selected_tab_position=self.selected_tab_position,
+            name=self.name,
+            tab_slugs=tab_slugs,
+            public=self.public,
+            updated_at=self.last_delta.datetime,
+            acl=[
+                clientside.AclEntry(email=e.email, can_edit=e.can_edit)
+                for e in self.acl.all()
+            ],
+        )
 
 
 @dataclass(frozen=True)

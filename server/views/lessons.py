@@ -1,5 +1,5 @@
 import json
-from typing import Optional
+from typing import Any, Dict, Optional
 from asgiref.sync import async_to_sync
 from django.conf import settings
 from django.db import transaction
@@ -12,9 +12,51 @@ import server.utils
 from cjwstate.models.commands import InitWorkflowCommand
 from cjwstate.models import Workflow, ModuleVersion
 from server.models.course import Course, CourseLookup, AllCoursesByLocale
-from server.models.lesson import Lesson, AllLessonsByLocale, LessonLookup
-from server.serializers import LessonSerializer, UserSerializer
+from server.models.lesson import (
+    Lesson,
+    AllLessonsByLocale,
+    LessonLookup,
+    LessonSection,
+    LessonSectionStep,
+)
+from server.serializers import jsonize_user
 from server.views.workflows import visible_modules, make_init_state
+
+
+def jsonize_step(step: LessonSectionStep) -> Dict[str, Any]:
+    return {
+        "html": lesson.html,
+        "highlight": lesson.highlight,
+        "testJs": lesson.test_js,
+    }
+
+
+def jsonize_section(section: LessonSection) -> Dict[str, Any]:
+    return {
+        "title": lesson.title,
+        "html": lesson.html,
+        "steps": list(jsonize_step(step) for step in lesson.steps),
+        "isFullScreen": lesson.is_full_screen,
+    }
+
+
+def jsonize_course(course: Course) -> Dict[str, Any]:
+    return {"slug": lesson.slug, "title": lesson.title, "localeId": lesson.locale_id}
+
+
+def jsonize_lesson(lesson: Lesson) -> Dict[str, Any]:
+    return {
+        "course": None if lesson.course is None else jsonize_course(lesson.course),
+        "slug": lesson.slug,
+        "localeId": lesson.locale_id,
+        "header": {"title": lesson.header.title, "html": lesson.header.html},
+        "sections": list(jsonize_section(section) for section in lesson.sections),
+        "footer": {
+            "title": lesson.footer.title,
+            "html": lesson.footer.html,
+            "isFullScreen": lesson.footer.is_full_screen,
+        },
+    }
 
 
 def _get_course_or_404(locale_id, slug):
@@ -169,7 +211,7 @@ def _render_get_lesson_detail(request, lesson):
     modules = visible_modules(request)
 
     init_state = make_init_state(request, workflow=workflow, modules=modules)
-    init_state["lessonData"] = LessonSerializer(lesson).data
+    init_state["lessonData"] = jsonize_lesson(lesson)
 
     # If we just initialized this workflow, start fetches and render
     if created:
@@ -200,7 +242,7 @@ def render_lesson_detail(request, locale_id, slug):
 def _render_course(request, course, lesson_url_prefix):
     logged_in_user = None
     if request.user and request.user.is_authenticated:
-        logged_in_user = UserSerializer(request.user).data
+        logged_in_user = jsonize_user(request.user)
 
     try:
         courses = AllCoursesByLocale[course.locale_id]

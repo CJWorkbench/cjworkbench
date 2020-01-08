@@ -5,6 +5,7 @@
 from django.db import connection, models
 import django.utils
 from polymorphic.models import PolymorphicModel
+from cjwstate import clientside
 
 
 # Base class of a single undoable/redoable action
@@ -13,7 +14,7 @@ from polymorphic.models import PolymorphicModel
 # To derive a command from Delta:
 #
 #   - implement @classmethod amend_create_kwargs() -- a database-sync method.
-#   - implement load_ws_data() -- a database-sync method.
+#   - implement load_clientside_update() -- a database-sync method.
 #   - implement forward() and backward() -- database-sync methods.
 #
 # Create Deltas using `cjwstate.commands.do()`. This will call these
@@ -39,26 +40,21 @@ class Delta(PolymorphicModel):
 
     datetime = models.DateTimeField("datetime", default=django.utils.timezone.now)
 
-    def _load_workflow_ws_data(self):
+    def load_clientside_update(self) -> clientside.Update:
         """
-        Load the 'updateWorkflow' component of any WebSockets message.
-        """
-        workflow = self.workflow
-        return {
-            "name": workflow.name,
-            "public": workflow.public,
-            "last_update": workflow.last_update().isoformat(),
-        }
+        Build state updates for the client to receive over Websockets.
 
-    def load_ws_data(self):
-        """
-        Create a dict to send over WebSockets so the client gets new state.
+        This is called synchronously. It may access the database. When
+        overriding, be sure to call super() to update the most basic data.
 
-        This is called synchronously. It may access the database. It should
-        return `{'updateWorkflow': self._load_workflow_ws_data()}` at the very
-        least, because that holds metadata about the delta itself.
+        This must be called in a `workflow.cooperative_lock()`.
         """
-        return {"updateWorkflow": self._load_workflow_ws_data()}
+        return clientside.Update(
+            workflow=clientside.WorkflowUpdate(
+                # self.workflow.last_delta may not be `self`
+                updated_at=self.workflow.last_delta.datetime
+            )
+        )
 
     def get_modifies_render_output(self) -> bool:
         """
