@@ -63,7 +63,7 @@ export class WfHamburgerMenu extends React.Component {
             ) : (
               <DropdownItem href='//workbenchdata.com'><Trans id='js.WfHamburgerMenu.menu.home'>Home</Trans></DropdownItem>
             )}
-            <DropdownItem onClick={this.handleClickOpenLocaleSwitcher}><Trans id='js.WfHamburgerMenu.menu.languages'>Languages</Trans></DropdownItem>
+            <DropdownItem className='locale-switcher-show' onClick={this.handleClickOpenLocaleSwitcher}><Trans id='js.WfHamburgerMenu.menu.languages'>Languages</Trans></DropdownItem>
             {loggedIn ? (
               <DropdownItem href='/account/logout'><Trans id='js.WfHamburgerMenu.menu.logout'>Log Out</Trans></DropdownItem>
             ) : null}

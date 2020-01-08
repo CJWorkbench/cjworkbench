@@ -57,7 +57,7 @@ export default function LocaleSwitcher ({ closeModal }) {
         </form>
       </ModalBody>
       <ModalFooter>
-        <button className='action-button button-gray' onClick={closeModal}>
+        <button className='action-button button-gray close-button' onClick={closeModal}>
           <Trans id='js.i18n.LocaleSwitcher.footer.close' description='Close the dialog box'>Close</Trans>
         </button>
       </ModalFooter>

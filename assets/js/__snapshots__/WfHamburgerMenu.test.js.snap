@@ -99,7 +99,7 @@ exports[`WfHamburgerMenu renders logged in, non-read only 1`] = `
                           js.WfHamburgerMenu.menu.importModule
                         </button>
                         <button
-                          class="dropdown-item"
+                          class="dropdown-item locale-switcher-show"
                           role="menuitem"
                           tabindex="0"
                         >
@@ -282,10 +282,11 @@ exports[`WfHamburgerMenu renders logged in, non-read only 1`] = `
                           </button>
                         </DropdownItem>
                         <DropdownItem
+                          className="locale-switcher-show"
                           onClick={[Function]}
                         >
                           <button
-                            className="dropdown-item"
+                            className="dropdown-item locale-switcher-show"
                             onClick={[Function]}
                             role="menuitem"
                             tabIndex={0}

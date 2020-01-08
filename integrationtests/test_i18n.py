@@ -2,38 +2,47 @@ from integrationtests.utils import WorkbenchBase, find_url_in_email
 from integrationtests.browser import Browser
 
 
-_locale_names = {"en": "English", "el": "Ελληνικά"}
-
-
-def login(
-    browser: Browser,
-    email: str,
-    password: str,
-    locale_id: str = "en",
-    after_login_locale_id: str = "en",
-) -> None:
+def login(browser: Browser, email: str, password: str) -> None:
     """Log in through `/account/login` as the given user.
     The login page must be in `locale_id`, while the workflows page must be in `after_login_locale_id`
     """
     browser.visit("/account/login")
     browser.fill_in("login", email)
     browser.fill_in("password", password)
-    login_button_text = {"en": "Sign In", "el": "Σύνδεση"}
-    browser.click_button(login_button_text[locale_id])
-    my_workflows_text = {"en": "MY WORKFLOWS", "el": "ΟΙ ΡΟΈΣ ΕΡΓΑΣΙΏΝ ΜΟΥ"}
-    browser.wait_for_element(
-        "a", text=my_workflows_text[after_login_locale_id], wait=True
-    )
+    browser.click_whatever('.account_form.login button[type="submit"]')
+    browser.wait_for_element(".create-workflow")
 
 
-def logout(browser: Browser, locale_id: str = "en") -> None:
+def logout(browser: Browser) -> None:
     """Log out through `/account/logout` as the given user.
     
     The logout page must be in `locale_id`
     """
     browser.visit("/account/logout")
-    logout_button_text = {"en": "Log out", "el": "Αποσύνδεση"}
-    browser.click_button(logout_button_text[locale_id])
+    browser.click_whatever('.account_form button[type="submit"]')
+    browser.wait_for_element(".account_form.login")
+
+
+def switch_locale_django(browser: Browser, to_locale_name: str):
+    browser.click_whatever("a#locale-switcher-dropdown", wait=True)
+    browser.click_button(to_locale_name, wait=True)
+
+    # check that the language has indeed changed
+    browser.wait_for_element("a#locale-switcher-dropdown", text=to_locale_name)
+
+
+def switch_locale_react(browser: Browser, to_locale_name: str):
+    browser.click_whatever(".navbar .dropdown button", wait=True)
+    browser.click_whatever(".locale-switcher-show", wait=True)
+    browser.click_button(to_locale_name, wait=True)
+
+    # check that the language has indeed changed
+    browser.click_whatever(".navbar .dropdown button", wait=True)
+    browser.click_whatever(".locale-switcher-show", wait=True)
+    browser.wait_for_element(
+        ".modal.locale-switcher form button[disabled]", text=to_locale_name
+    )
+    browser.click_whatever(".modal.locale-switcher .modal-footer .close-button")
 
 
 class TestI18n(WorkbenchBase):
@@ -41,29 +50,6 @@ class TestI18n(WorkbenchBase):
         super().setUp()
         self.user = self.account_admin.create_user(
             "user@example.org", first_name="Jane", last_name="Doe"
-        )
-
-    def switch_locale_django(self, to_locale_id: str):
-        b = self.browser
-
-        old_locale_name = b.text("a#locale-switcher-dropdown", wait=True)
-        b.click_link(old_locale_name)
-        b.click_button(_locale_names[to_locale_id], wait=True)
-        b.wait_for_element(
-            "a#locale-switcher-dropdown", text=_locale_names[to_locale_id], wait=True
-        )
-
-    def switch_locale_react(self, from_locale_id, to_locale_id: str):
-        b = self.browser
-        hamburger_menu_title = {"en": "menu", "el": "μενού"}
-        language_menu_label = {"en": "Languages", "el": "Languages"}
-
-        b.click_button(hamburger_menu_title[from_locale_id], wait=True)
-        b.click_button(language_menu_label[from_locale_id], wait=True)
-        b.click_button(_locale_names[to_locale_id], wait=True)
-        b.assert_element(
-            'button.context-button[title="%s"]' % hamburger_menu_title[to_locale_id],
-            wait=True,
         )
 
     def test_js_english_interpolation(self):
@@ -86,7 +72,7 @@ class TestI18n(WorkbenchBase):
         b.assert_element('input[name="password"][placeholder="Password"]', wait=True)
         b.assert_element('button[type="submit"]', text="Sign In")
         # Change locale to el
-        self.switch_locale_django("el")
+        switch_locale_django(b, "Ελληνικά")
         b.assert_element('input[name="password"][placeholder="Συνθηματικό"]', wait=True)
         b.assert_element('button[type="submit"]', text="Σύνδεση")
         # Move to another page and confirm it's in el too
@@ -94,7 +80,7 @@ class TestI18n(WorkbenchBase):
         b.assert_element('input[name="first_name"][placeholder="Όνομα"]', wait=True)
         b.assert_element('button[type="submit"]', text="Εγγραφή")
         # Change locale to en again
-        self.switch_locale_django("en")
+        switch_locale_django(b, "English")
         b.assert_element(
             'input[name="first_name"][placeholder="First name"]', wait=True
         )
@@ -113,7 +99,7 @@ class TestI18n(WorkbenchBase):
             wait=True,
         )
         # Change locale to el
-        self.switch_locale_react("en", "el")
+        switch_locale_react(b, "Ελληνικά")
         b.assert_element(
             'form.create-workflow button[type="submit"]',
             text="Δημιουργία ροής εργασιών",
@@ -123,13 +109,13 @@ class TestI18n(WorkbenchBase):
         b.click_link("ΕΚΠΑΙΔΕΥΣΗ")
         b.assert_element("a", text="ΜΑΘΗΜΑΤΑ", wait=True)
         # Change locale to en again
-        self.switch_locale_react("el", "en")
+        switch_locale_react(b, "English")
         b.assert_element("a", text="TUTORIALS", wait=True)
 
     def test_signup_el(self):
         b = self.browser
         b.visit(self.live_server_url + "/account/signup/")
-        self.switch_locale_django("el")
+        switch_locale_django(b, "Ελληνικά")
 
         # self.assertTrue(b.is_element_present_by_text('Use Facebook account'))
         # self.assertTrue(b.is_element_present_by_text('Use Google account'))
@@ -161,12 +147,12 @@ class TestI18n(WorkbenchBase):
         b.fill_in("login", "user-el@example.org", wait=True)
         b.fill_in("password", "?P455W0rd!")
         b.click_button("Σύνδεση")
-        b.wait_for_element("a", text="ΟΙ ΡΟΈΣ ΕΡΓΑΣΙΏΝ ΜΟΥ", wait=True)
+        b.wait_for_element("a", text="ΟΙ ΡΟΈΣ ΕΡΓΑΣΙΏΝ ΜΟΥ")
 
     def test_remember_signup_locale(self):
         b = self.browser
         b.visit(self.live_server_url + "/account/signup/")
-        self.switch_locale_django("el")
+        switch_locale_django(b, "Ελληνικά")
 
         # self.assertTrue(b.is_element_present_by_text('Use Facebook account'))
         # self.assertTrue(b.is_element_present_by_text('Use Google account'))
@@ -194,7 +180,7 @@ class TestI18n(WorkbenchBase):
         b.click_button("Επιβεβαίωση", wait=True)
 
         # Change locale to English and browse
-        self.switch_locale_django("en")
+        switch_locale_django(b, "English")
         b.click_link("Sign up", wait=True)
         b.assert_element(
             'input[name="first_name"][placeholder="First name"]', wait=True
@@ -207,10 +193,10 @@ class TestI18n(WorkbenchBase):
         b.fill_in("login", "user-el@example.org", wait=True)
         b.fill_in("password", "?P455W0rd!")
         b.click_button("Sign In")
-        b.wait_for_element("a", text="ΟΙ ΡΟΈΣ ΕΡΓΑΣΙΏΝ ΜΟΥ", wait=True)
+        b.wait_for_element("a", text="ΟΙ ΡΟΈΣ ΕΡΓΑΣΙΏΝ ΜΟΥ")
 
         # After logout, page must still be in Greek.
-        logout(b, "el")
+        logout(b)
         b.assert_element('input[name="password"][placeholder="Συνθηματικό"]', wait=True)
         b.assert_element('button[type="submit"]', text="Σύνδεση")
 
@@ -230,14 +216,14 @@ class TestI18n(WorkbenchBase):
         )
 
         # Switch to Greek and then logout. After logout, page must still be in Greek.
-        self.switch_locale_react("en", "el")
-        logout(b, "el")
+        switch_locale_react(b, "Ελληνικά")
+        logout(b)
         b.assert_element('input[name="password"][placeholder="Συνθηματικό"]', wait=True)
         b.assert_element('button[type="submit"]', text="Σύνδεση")
 
         # Switch to English and then login. After login, page must be in Greek.
-        self.switch_locale_django("en")
-        login(b, self.user.email, self.user.email, "en", "el")
+        switch_locale_django(b, "English")
+        login(b, self.user.email, self.user.email)
         b.assert_element(
             'form.create-workflow button[type="submit"]',
             text="Δημιουργία ροής εργασιών",
