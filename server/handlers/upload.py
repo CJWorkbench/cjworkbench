@@ -75,7 +75,17 @@ async def create_upload(workflow: Workflow, wf_module: WfModule, **kwargs):
     """
     Prepare a key and credentials for the caller to upload a file.
     """
-    return await _do_create_upload(workflow, wf_module)
+    result = await _do_create_upload(workflow, wf_module)
+    result = {
+        **result,
+        "credentials": {
+            **result["credentials"],
+            "expiration": serializers.jsonize_datetime(
+                result["credentials"]["expiration"]
+            ),
+        },
+    }
+    return result
 
 
 @database_sync_to_async
