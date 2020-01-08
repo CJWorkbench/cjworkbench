@@ -1,6 +1,6 @@
 from django.test import SimpleTestCase
 from cjworkbench.i18n.trans import MessageTranslator
-from icu import ICUError
+from icu import ICUError, InvalidArgsError
 from babel.messages.catalog import Catalog
 
 
@@ -19,6 +19,33 @@ class TransTest(SimpleTestCase):
             ),
             "Hey you there {c}!",
         )
+
+    # Tests that passing a list as parameters will raise an exception
+    def test_parameters_list(self):
+        catalog = Catalog()
+        catalog.add("id", string="Hey {0} {1}!")
+        with self.assertRaises(AttributeError):
+            MessageTranslator("en", catalog).trans(
+                "id", default="Hello {0} {1}!", parameters=["you", "there"]
+            )
+
+    # Tests that passing a tuple as parameters will raise an exception
+    def test_parameters_tuple(self):
+        catalog = Catalog()
+        catalog.add("id", string="Hey {0} {1}!")
+        with self.assertRaises(AttributeError):
+            MessageTranslator("en", catalog).trans(
+                "id", default="Hello {0} {1}!", parameters=("you", "there")
+            )
+
+    # Tests that passing a list as a value for a parameter will raise an exception
+    def test_parameter_list(self):
+        catalog = Catalog()
+        catalog.add("id", string="Hey {0} {1}!")
+        with self.assertRaises(InvalidArgsError):
+            MessageTranslator("en", catalog).trans(
+                "id", default="Hello {0}!", parameters={"0": ["you ", "there"]}
+            )
 
     # Tests that a badly formatted parameter in a default message will break the system
     def test_default_invalid_parameter_syntax(self):
@@ -143,6 +170,33 @@ class TransHtmlTest(SimpleTestCase):
             ),
             "Hey you there {c}!",
         )
+
+    # Tests that passing a list as parameters will raise an exception
+    def test_parameters_list(self):
+        catalog = Catalog()
+        catalog.add("id", string="Hey {0} {1}!")
+        with self.assertRaises(AttributeError):
+            MessageTranslator("en", catalog).trans_html(
+                "id", default="Hello {0} {1}!", parameters=["you", "there"]
+            )
+
+    # Tests that passing a tuple as parameters will raise an exception
+    def test_parameters_tuple(self):
+        catalog = Catalog()
+        catalog.add("id", string="Hey {0} {1}!")
+        with self.assertRaises(AttributeError):
+            MessageTranslator("en", catalog).trans_html(
+                "id", default="Hello {0} {1}!", parameters=("you", "there")
+            )
+
+    # Tests that passing a list as a value for a parameter will raise an exception
+    def test_parameter_list(self):
+        catalog = Catalog()
+        catalog.add("id", string="Hey {0} {1}!")
+        with self.assertRaises(InvalidArgsError):
+            MessageTranslator("en", catalog).trans_html(
+                "id", default="Hello {0}!", parameters={"0": ["you ", "there"]}
+            )
 
     # Tests that a badly formatted parameter in a default message will break the system
     def test_default_invalid_parameter_syntax(self):
