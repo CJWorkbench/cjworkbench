@@ -173,7 +173,7 @@ function mapStateToProps (state) {
     // to give TableSwitcher a "busy"-status WfModule).
     wfModule = {
       id: -1,
-      module_id_name: "",
+      module_id_name: '',
       status: 'busy',
       cached_render_result_delta_id: null,
       columns: null,
