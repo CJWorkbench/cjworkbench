@@ -131,15 +131,24 @@ def jsonize_param_spec(p: ParamSpec, ctx: JsonizeContext) -> Dict[str, Any]:
 def _ctx_authorized_write(
     workflow: clientside.WorkflowUpdate, ctx: JsonizeContext
 ) -> bool:
-    # mimics models.Workflow.user_session_authorized_write
     owner = workflow.owner
     user = ctx.user
 
     if user.is_anonymous:
-        return False  # 'user.email' would fail
+        # We got this far, so an anonymous user has read access. How? We'll
+        # reverse-engineer.
+        #
+        # * It's a public, non-example workflow => then the user does not have
+        #   write access.
+        # * It's a private, non-example workflow => then it's an anonymous
+        #   workflow _owned by this anonymous user_. The user has write access.
+        # * It's an example workflow => this can't happen! We never serialize
+        #   example workflows. We duplicate them and serialize the duplicates
+        #   ... which are private, non-example workfows.
+        return workflow.public is False
 
     return _ctx_authorized_owner(workflow, ctx) or any(
-        entry.email == user.email for entry in workflow.acl
+        entry.can_edit and entry.email == user.email for entry in workflow.acl
     )
 
 

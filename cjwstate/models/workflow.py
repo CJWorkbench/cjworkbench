@@ -302,11 +302,6 @@ class Workflow(models.Model):
         """True if the Django request may write workflow data."""
         return self.user_session_authorized_owner(request.user, request.session)
 
-    def request_read_only(self, request: HttpRequest) -> bool:
-        return self.request_authorized_read(
-            request
-        ) and not self.request_authorized_write(request)
-
     @property
     def is_anonymous(self) -> bool:
         """
