@@ -3,9 +3,8 @@
 # with database.
 FROM python:3.7.4-slim-buster AS deps
 
-# Install Firefox deps (and curl, xvfb, vnc). Debian Buster has Firefox v60,
-# which is way too old; but we'll install 60's dependencies and hope they
-# satisfy Firefox v67
+# Install Firefox deps (and curl, xvfb, vnc). Debian Buster has Firefox v68;
+# we'll install its dependencies and hope they satisfy _our_ Firefox version.
 RUN apt-get update \
     && bash -c 'apt-get install -y --no-install-recommends $(apt-cache depends firefox-esr | awk "/Depends:/{print\$2}")' \
     && apt-get install --no-install-recommends -y \
@@ -17,12 +16,12 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Firefox. It's a separate step so it's easier to resume docker build.
-RUN curl -L https://download-installer.cdn.mozilla.net/pub/firefox/releases/67.0/linux-x86_64/en-US/firefox-67.0.tar.bz2 \
+RUN curl -L https://download-installer.cdn.mozilla.net/pub/firefox/releases/71.0/linux-x86_64/en-US/firefox-71.0.tar.bz2 \
         | tar jx -C /opt \
         && ln -s /opt/firefox/firefox /usr/bin/firefox
 
 # Install geckodriver. It's a separate step so it's easier to resume docker build.
-RUN curl -L https://github.com/mozilla/geckodriver/releases/download/v0.24.0/geckodriver-v0.24.0-linux64.tar.gz \
+RUN curl -L https://github.com/mozilla/geckodriver/releases/download/v0.26.0/geckodriver-v0.26.0-linux64.tar.gz \
         | tar zx -C /usr/bin/ \
         && chmod +x /usr/bin/geckodriver
 

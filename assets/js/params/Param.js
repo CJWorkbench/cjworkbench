@@ -19,6 +19,7 @@ import StaticText from './StaticText'
 import String_ from './String'
 import Tab from './Tab'
 import List from './List'
+import { QuickFixPropTypes } from '../WorkflowEditor/wfmodule/QuickFix'
 
 function onDragStartPreventDrag (dragEvent) {
   dragEvent.preventDefault()
@@ -50,7 +51,7 @@ export default class Param extends React.PureComponent {
     upstreamValue: PropTypes.any, // `null` if server hasn't been contacted or if actual value is `null`
     value: PropTypes.any, // local value: `null` if server hasn't been contacted or if actual value is `null`
     wfModuleId: PropTypes.number, // `null` if the server hasn't been contacted; otherwise, ID
-    wfModuleOutputError: PropTypes.string, // `null` if no wfModule, '' if no error
+    wfModuleOutputErrors: PropTypes.arrayOf(PropTypes.shape({ message: PropTypes.string.isRequired, quickFixes: PropTypes.arrayOf(PropTypes.shape(QuickFixPropTypes)).isRequired }).isRequired).isRequired, // may be empty
     isWfModuleBusy: PropTypes.bool.isRequired,
     inputWfModuleId: PropTypes.number, // or `null`
     inputDeltaId: PropTypes.number, // or `null` ... TODO nix by making 0 fields depend on it

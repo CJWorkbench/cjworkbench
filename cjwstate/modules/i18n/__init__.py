@@ -1,1 +1,1 @@
-from cjwstate.modules.i18n.catalogs import extract_module_messages
+from cjwstate.modules.i18n.catalogs.update import extract_module_messages

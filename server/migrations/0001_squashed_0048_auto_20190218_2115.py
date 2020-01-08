@@ -39,6 +39,7 @@ import cjwstate.models.module_version
 
 
 class Migration(migrations.Migration):
+
     initial = True
 
     dependencies = [

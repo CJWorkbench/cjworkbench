@@ -168,39 +168,25 @@ def read(parquet_path: Path) -> pyarrow.Table:
         return table
 
 
-def _read_pylist(column: pyarrow.ChunkedArray) -> List[Any]:
-    dtype = column.type
-
-    pylist = column.to_pylist()
-    if pyarrow.types.is_timestamp(dtype) and dtype.unit == "ns":
-        # pyarrow returns timestamps as pandas.Timestamp values (because
-        # that has higher resolution than datetime.datetime). But we want
-        # datetime.datetime. We'll truncate to microseconds.
-        #
-        # If someone complains, then we should change our API to pass int64
-        # instead of datetime.datetime.
-        pylist = [None if v is None else v.to_pydatetime(warn=False) for v in pylist]
-    return pylist
-
-
-def read_pydict(
-    parquet_path: Path, only_columns: range, only_rows: range
-) -> Dict[str, List[Any]]:
+def read_slice_as_text(
+    parquet_path: Path, format: str, only_columns: range, only_rows: range
+) -> str:
     """
-    Return a dict mapping column name to data (Python objects).
+    Format a slice of the Parquet file as CSV or JSON text.
+
+    Ignore out-of-range rows and columns.
 
     Raise pyarrow.ArrowIOError if processing fails.
 
-    Python data consumes RAM, so the caller must specify columns and rows.
-    Specify them with integer keys.
+    To limit the amount of text stored in RAM, use relatively small ranges for
+    `only_columns` and `only_rows`.
 
-    `retval.keys()` is in table-column order (not `only_columns` order).
-
-    Missing rows and columns are ignored.
-
-    `NaN` is returned as `float("nan")`, but `None` is returned as `None`.
-    Caller beware: a Parquet column can contain both!
+    This uses `parquet-to-text-stream` with `--row-range` and `--column-range`.
+    Read `parquet-to-text-stream` documentation to see how nulls and floats are
+    handled in your chosen format (`csv` or `json`). (In a nutshell: it's
+    mostly non-lossy, though CSV can't represent `null`.)
     """
+    assert format in {"csv", "json"}
     assert only_columns.step == 1
     assert only_columns.start >= 0
     assert only_columns.stop >= only_columns.start
@@ -210,27 +196,27 @@ def read_pydict(
 
     with tempfile_context(prefix="read_pydict-", suffix=".arrow") as arrow_path:
         try:
-            subprocess.check_output(
+            result = subprocess.run(
                 [
-                    "/usr/bin/parquet-to-arrow-slice",
-                    str(parquet_path),
+                    "/usr/bin/parquet-to-text-stream",
+                    "--column-range",
                     "%d-%d" % (only_columns.start, only_columns.stop),
+                    "--row-range",
                     "%d-%d" % (only_rows.start, only_rows.stop),
-                    str(arrow_path),
-                ]
+                    str(parquet_path),
+                    format,
+                ],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                check=True,
             )
         except subprocess.CalledProcessError as err:
             raise pyarrow.ArrowIOError(
                 "Conversion failed with status %d: %s"
                 % (
                     err.returncode,
-                    (err.output or b"").decode("utf-8", errors="replace"),
+                    (err.stderr + err.stdout).decode("utf-8", errors="replace"),
                 )
             )
 
-        reader = pyarrow.ipc.open_file(str(arrow_path))
-        table = reader.read_all()
-        return {
-            name: _read_pylist(chunks)
-            for name, chunks in zip(table.column_names, table.columns)
-        }
+    return result.stdout.decode("utf-8", errors="replace")

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import AceEditor from 'react-ace/lib/ace'
 import memoize from 'memoize-one'
 import { Trans } from '@lingui/macro'
+import { QuickFixPropTypes } from '../../../WorkflowEditor/wfmodule/QuickFix'
 
 import 'ace-builds/src-noconflict/mode-python'
 import 'ace-builds/src-noconflict/theme-xcode'
@@ -17,7 +18,7 @@ export default class WorkbenchAceEditor extends React.PureComponent {
   static propTypes = {
     // When isZenMode changes, we'll call componentDidUpdate()
     isZenMode: PropTypes.bool.isRequired,
-    wfModuleOutputError: PropTypes.string, // hopefully null or empty
+    wfModuleOutputErrors: PropTypes.arrayOf(PropTypes.shape({ message: PropTypes.string.isRequired, quickFixes: PropTypes.arrayOf(PropTypes.shape(QuickFixPropTypes)).isRequired }).isRequired).isRequired, // may (hopefully) be empty
     name: PropTypes.string.isRequired,
     value: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired // func(value) => undefined
@@ -53,24 +54,24 @@ export default class WorkbenchAceEditor extends React.PureComponent {
     })
   }
 
-  getAnnotations = memoize(wfModuleOutputError => {
-    const m = /^Line (\d+): (.*)/.exec(wfModuleOutputError)
-    if (!m) {
-      return []
-    } else {
-      return [
-        {
+  getAnnotations = memoize(wfModuleOutputErrors => {
+    return wfModuleOutputErrors.map(error => {
+      const m = /^Line (\d+): (.*)/.exec(error.message)
+      if (m) {
+        return {
           row: +m[1] - 1,
           type: 'error',
           text: m[2]
         }
-      ]
-    }
+      } else {
+        return null
+      }
+    }).filter(x => x)
   })
 
   // Render editor
   render () {
-    const { value, onChange, isZenMode, wfModuleOutputError } = this.props
+    const { value, onChange, isZenMode, wfModuleOutputErrors } = this.props
 
     return (
       <>
@@ -94,7 +95,7 @@ export default class WorkbenchAceEditor extends React.PureComponent {
               mode='python'
               theme='xcode'
               wrapEnabled
-              annotations={this.getAnnotations(wfModuleOutputError)}
+              annotations={this.getAnnotations(wfModuleOutputErrors)}
               showGutter={isZenMode /* false hides annotations */}
               name='code-editor'
               onChange={onChange}

@@ -251,7 +251,7 @@ class ColumnTypeDatetime(ColumnType):
 
 
 # Aliases to help with import. e.g.:
-# from cjwkernel.pandas.types import Column, ColumnType
+# from cjwkernel.types import Column, ColumnType
 # column = Column('A', ColumnType.Number('{:,.2f}'))
 ColumnType.Text = ColumnTypeText
 ColumnType.Number = ColumnTypeNumber
@@ -622,6 +622,18 @@ class I18nMessage:
     def to_dict(self) -> Dict[str, Any]:
         return {"id": self.id, "arguments": self.args}
 
+    def to_js_value_unwrapping_TODO_i18n(self) -> str:
+        """Unpack the string in a TODO_i18n I18nMessage. Raise RuntimeError if the I18nMessage is not a TODO_i18n.
+        
+        TODO nix this method. Our JavaScript values must go through i18n,
+        and we can't do i18n in this module because callers don't know
+        users' locales.
+        """
+        if self.id == "TODO_i18n":
+            return self.args["text"]
+        else:
+            raise RuntimeError("Pending localization")
+
 
 ParamValue = Optional[
     Union[
@@ -821,6 +833,15 @@ class QuickFix:
             "action": self.action.to_dict(),
         }
 
+    def to_js_value_unwrapping_TODO_i18n(self) -> Dict[str, Any]:
+        """Unpack the string in a TODO_i18n text of this QuickFix. Raise RuntimeError if the text is not a TODO_i18n.
+        This is a function that will soon be removed. 
+        """
+        return {
+            "buttonText": self.button_text.to_js_value_unwrapping_TODO_i18n(),
+            "action": self.action.to_dict(),
+        }
+
 
 @dataclass(frozen=True)
 class RenderError:
@@ -859,6 +880,17 @@ class RenderError:
         return {
             "message": self.message.to_dict(),
             "quickFixes": [qf.to_dict() for qf in self.quick_fixes],
+        }
+
+    def to_js_value_unwrapping_TODO_i18n(self) -> Dict[str, Any]:
+        """Unpack the strings TODO_i18n I18nMessages in the RenderError (message and texts of quick fixes). Raise RuntimeError if any of the I18nMessages is not a TODO_i18n.
+        This is a function that will soon be removed. 
+        """
+        return {
+            "message": self.message.to_js_value_unwrapping_TODO_i18n(),
+            "quickFixes": [
+                qf.to_js_value_unwrapping_TODO_i18n() for qf in self.quick_fixes
+            ],
         }
 
 
@@ -932,12 +964,8 @@ class RenderResult:
     @classmethod
     def from_deprecated_error(
         cls, message: str, *, quick_fixes: List[QuickFix] = []
-    ) -> RenderError:
-        return cls(
-            errors=[
-                RenderError(I18nMessage("TODO_i18n", {"text": message}), quick_fixes)
-            ]
-        )
+    ) -> RenderResult:
+        return cls(errors=[RenderError(I18nMessage.TODO_i18n(message), quick_fixes)])
 
     def to_thrift(self) -> ttypes.RenderResult:
         return ttypes.RenderResult(

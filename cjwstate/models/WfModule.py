@@ -4,7 +4,6 @@ from typing import Any, Dict, Optional, Union
 from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.db.models import Q
-from cjwkernel.pandas import types as ptypes
 from cjwkernel.types import I18nMessage, RenderError, TableMetadata
 from cjwstate import minio
 from .fields import ColumnsField, RenderErrorsField
@@ -259,19 +258,6 @@ class WfModule(models.Model):
             return "busy"
         else:
             return crr.status
-
-    @property
-    def output_error(self):
-        crr = self.cached_render_result
-        if crr is None:
-            return ""
-        else:
-            parts = []
-            for err in crr.errors:
-                if err.message.id != "TODO_i18n":
-                    raise RuntimeError("TODO support i18n messages")
-                parts.append(err.message.args["text"])
-            return "\n\n".join(parts)
 
     # ---- Authorization ----
     # User can access wf_module if they can access workflow

@@ -128,16 +128,10 @@ def _wrap_render_errors(render_call):
     try:
         return render_call()
     except ModuleError as err:
-        return RenderResult(
-            errors=[
-                RenderError(
-                    I18nMessage.TODO_i18n(
-                        "Something unexpected happened. We have been notified and are "
-                        "working to fix it. If this persists, contact us. Error code: "
-                        + format_for_user_debugging(err)
-                    )
-                )
-            ]
+        return RenderResult.from_deprecated_error(
+            "Something unexpected happened. We have been notified and are "
+            "working to fix it. If this persists, contact us. Error code: "
+            + format_for_user_debugging(err)
         )
 
 
@@ -297,9 +291,7 @@ async def _render_wfmodule(
                 "The chosen tab has no output. Please select another one."
             )
         except PromptingError as err:
-            return RenderResult.from_deprecated_error(
-                err.as_error_str(), quick_fixes=err.as_quick_fixes()
-            )
+            return RenderResult(errors=err.as_render_errors())
 
         if loaded_module is None:
             return RenderResult.from_deprecated_error(
@@ -405,19 +397,11 @@ async def execute_wfmodule(
 
 
 def build_status_dict(result: RenderResult, delta_id: int) -> Dict[str, Any]:
-    if result.errors:
-        if result.errors[0].message.id != "TODO_i18n":
-            raise RuntimeError("TODO serialize i18n-ready messages")
-        error = result.errors[0].message.args["text"]
-        quick_fixes = [qf.to_dict() for qf in result.errors[0].quick_fixes]
-    else:
-        error = ""
-        quick_fixes = []
-
     return {
-        "quick_fixes": quick_fixes,
         "output_columns": [c.to_dict() for c in result.table.metadata.columns],
-        "output_error": error,
+        "output_errors": [
+            error.to_js_value_unwrapping_TODO_i18n() for error in result.errors
+        ],
         "output_status": result.status,
         "output_n_rows": result.table.metadata.n_rows,
         "cached_render_result_delta_id": delta_id,

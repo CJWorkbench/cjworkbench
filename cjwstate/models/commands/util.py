@@ -155,9 +155,8 @@ class ChangesWfModuleOutputs:
             "updateWfModules": {
                 str(wfm_id): {
                     "last_relevant_delta_id": delta_id,
-                    "quick_fixes": [],
                     "output_columns": [],
-                    "output_error": "",
+                    "output_errors": [],
                     "output_status": "busy",
                     "output_n_rows": 0,
                 }

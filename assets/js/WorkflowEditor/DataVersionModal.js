@@ -18,7 +18,7 @@ export function formatDateUTCForTesting () {
 /**
  * Form <input type="radio">. Calls onSelect on change.
  */
-const FetchVersion = class FetchVersion extends React.PureComponent {
+class FetchVersion extends React.PureComponent {
   static propTypes = {
     id: PropTypes.string.isRequired, // version ID
     date: PropTypes.instanceOf(Date).isRequired, // version date
