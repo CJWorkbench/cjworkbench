@@ -134,6 +134,10 @@ def _ctx_authorized_write(
     # mimics models.Workflow.user_session_authorized_write
     owner = workflow.owner
     user = ctx.user
+
+    if user.is_anonymous:
+        return False  # 'user.email' would fail
+
     return _ctx_authorized_owner(workflow, ctx) or any(
         entry.email == user.email for entry in workflow.acl
     )
