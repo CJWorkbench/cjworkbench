@@ -122,23 +122,23 @@ class DeleteTabCommandTest(DbTestCase):
         self.assertEqual(tab1.is_deleted, False)
 
     @patch.object(commands, "websockets_notify")
-    def test_ws_data(self, send_delta):
+    def test_clientside_update(self, send_update):
         future_none = asyncio.Future()
         future_none.set_result(None)
-        send_delta.return_value = future_none
+        send_update.return_value = future_none
 
         workflow = Workflow.create_and_init(selected_tab_position=0)  # tab-1
         tab2 = workflow.tabs.create(position=1, slug="tab-2")
         cmd = self.run_with_async_db(
             commands.do(DeleteTabCommand, workflow_id=workflow.id, tab=tab2)
         )
-        delta1 = send_delta.call_args[0][1]
-        self.assertEqual(delta1["updateWorkflow"]["tab_slugs"], ["tab-1"])
-        self.assertFalse("updateTabs" in delta1)
-        self.assertEqual(delta1["clearTabSlugs"], ["tab-2"])
+        delta1 = send_update.call_args[0][1]
+        self.assertEqual(delta1.workflow.tab_slugs, ["tab-1"])
+        self.assertFalse(delta1.tabs)
+        self.assertEqual(delta1.clear_tab_slugs, frozenset(["tab-2"]))
 
         self.run_with_async_db(commands.undo(cmd))
-        delta2 = send_delta.call_args[0][1]
-        self.assertEqual(delta2["updateWorkflow"]["tab_slugs"], ["tab-1", "tab-2"])
-        self.assertEqual(list(delta2["updateTabs"].keys()), ["tab-2"])
-        self.assertFalse("clearTabSlugs" in delta2)
+        delta2 = send_update.call_args[0][1]
+        self.assertEqual(delta2.workflow.tab_slugs, ["tab-1", "tab-2"])
+        self.assertEqual(list(delta2.tabs.keys()), ["tab-2"])
+        self.assertFalse(delta2.clear_tab_slugs)

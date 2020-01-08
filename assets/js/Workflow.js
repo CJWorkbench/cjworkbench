@@ -65,7 +65,7 @@ export class Workflow extends React.PureComponent {
     isAnonymous: PropTypes.bool.isRequired,
     workflow: PropTypes.object.isRequired,
     lesson: PropTypes.object, // or undefined
-    loggedInUser: PropTypes.object // undefined if no one logged in (viewing public wf)
+    loggedInUser: PropTypes.object // null if no one logged in (viewing public wf)
   }
 
   render () {

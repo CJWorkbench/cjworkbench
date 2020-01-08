@@ -114,7 +114,7 @@ class ReorderTabsCommandTest(DbTestCase):
 
     @patch.object(commands, "websockets_notify")
     @patch.object(commands, "queue_render", async_noop)
-    def test_ws_data(self, send_delta):
+    def test_clientside_update(self, send_delta):
         send_delta.return_value = async_noop()
 
         # initial tab slug: tab-1
@@ -131,9 +131,7 @@ class ReorderTabsCommandTest(DbTestCase):
         )
 
         delta = send_delta.call_args[0][1]
-        self.assertEqual(
-            delta["updateWorkflow"]["tab_slugs"], ["tab-3", "tab-1", "tab-2"]
-        )
+        self.assertEqual(delta.workflow.tab_slugs, ["tab-3", "tab-1", "tab-2"])
 
     def test_disallow_duplicate_tab_slug(self):
         workflow = Workflow.create_and_init()  # tab 1 slug: tab-1

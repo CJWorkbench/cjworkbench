@@ -50,7 +50,7 @@ class DuplicateTabCommand(Delta):
                 # tab.live_wf_modules can be nonempty even when tab.is_deleted
                 self.tab.live_wf_modules.values_list("id", flat=True)
             )
-            return data.clear_tab(self.tab.slug).clear_step_ids(step_ids)
+            return data.clear_tab(self.tab.slug).clear_steps(step_ids)
         else:
             return data.replace_tab(
                 self.tab.slug, self.tab.to_clientside()

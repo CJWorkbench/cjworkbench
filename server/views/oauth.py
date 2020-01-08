@@ -10,7 +10,7 @@ from django.http import (
 )
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
-from cjwstate import oauth
+from cjwstate import clientside, oauth
 from cjwstate.models import ModuleVersion, WfModule, Workflow
 from cjwstate.models.param_spec import ParamSpec
 from .. import websockets
@@ -184,12 +184,6 @@ def finish_authorize(request: HttpRequest) -> HttpResponse:
                 scope.param: {"name": username, "secret": offline_token},
             }
             wf_module.save(update_fields=["secrets"])
-
-            delta_json = {
-                "updateWfModules": {
-                    str(wf_module.id): {"secrets": wf_module.secret_metadata}
-                }
-            }
     except Workflow.DoesNotExist as err:
         # Possibilities:
         # str(err) = 'owner access denied'
@@ -198,7 +192,11 @@ def finish_authorize(request: HttpRequest) -> HttpResponse:
     except (ModuleVersion.DoesNotExist, WfModule.DoesNotExist):
         return HttpResponseNotFound("Step or parameter was deleted.")
 
-    async_to_sync(websockets.ws_client_send_delta_async)(workflow.id, delta_json)
+    update = clientside.Update(
+        steps={wf_module.id: clientside.StepUpdate(secrets=wf_module.secret_metadata)}
+    )
+    async_to_sync(websockets.send_update_to_workflow_clients)(workflow.id, update)
+
     response = HttpResponse(
         b"""<!DOCTYPE html>
             <html lang="en-US">

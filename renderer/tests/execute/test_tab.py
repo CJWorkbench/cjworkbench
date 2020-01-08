@@ -41,7 +41,7 @@ class TabTests(DbTestCase):
             assert_render_result_equals(result, RenderResult())
 
     @patch.object(LoadedModule, "for_module_version")
-    @patch("server.websockets.ws_client_send_delta_async", fake_send)
+    @patch("server.websockets.send_update_to_workflow_clients", fake_send)
     def test_execute_cache_hit(self, fake_module):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
@@ -80,7 +80,7 @@ class TabTests(DbTestCase):
         fake_module.assert_not_called()
 
     @patch.object(LoadedModule, "for_module_version")
-    @patch("server.websockets.ws_client_send_delta_async", fake_send)
+    @patch("server.websockets.send_update_to_workflow_clients", fake_send)
     def test_execute_cache_miss(self, fake_load_module):
         ModuleVersion.create_or_replace_from_spec(
             {"id_name": "mod", "name": "Mod", "category": "Clean", "parameters": []}
@@ -123,7 +123,7 @@ class TabTests(DbTestCase):
         )
 
     @patch.object(LoadedModule, "for_module_version")
-    @patch("server.websockets.ws_client_send_delta_async", fake_send)
+    @patch("server.websockets.send_update_to_workflow_clients", fake_send)
     def test_execute_partial_cache_hit(self, fake_load_module):
         ModuleVersion.create_or_replace_from_spec(
             {"id_name": "mod", "name": "Mod", "category": "Clean", "parameters": []}
@@ -180,7 +180,7 @@ class TabTests(DbTestCase):
         )
 
     @patch.object(LoadedModule, "for_module_version")
-    @patch("server.websockets.ws_client_send_delta_async", fake_send)
+    @patch("server.websockets.send_update_to_workflow_clients", fake_send)
     def test_resume_backtrack_on_corrupt_cache_error(self, fake_load_module):
         ModuleVersion.create_or_replace_from_spec(
             {"id_name": "mod", "name": "Mod", "category": "Clean", "parameters": []}

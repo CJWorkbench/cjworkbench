@@ -313,14 +313,14 @@ class UploadTest(DbTestCase):
         error = json.loads(response.content)["error"]
         self.assertEqual(error["code"], "file-not-uploaded")
 
-    @patch("server.websockets.ws_client_send_delta_async")
+    @patch("server.websockets.send_update_to_workflow_clients")
     @patch("server.rabbitmq.queue_render")
     @patch(
         "cjwstate.modules.loaded_module.LoadedModule.for_module_version",
         MockLoadedModule,
     )
-    def test_complete_happy_path(self, queue_render, send_delta):
-        send_delta.return_value = async_noop()
+    def test_complete_happy_path(self, queue_render, send_update):
+        send_update.return_value = async_noop()
         queue_render.return_value = async_noop()
         _init_module("x")
         workflow = Workflow.create_and_init()
@@ -360,5 +360,5 @@ class UploadTest(DbTestCase):
         self.assertEqual(data["name"], "test.csv")
         self.assertEqual(data["size"], 7)
         # Send deltas
-        send_delta.assert_called()
+        send_update.assert_called()
         queue_render.assert_called()

@@ -346,20 +346,24 @@ class Update:
     def update_tab(self, slug: str, **kwargs) -> Update:
         """Return an Update with added/modified tab values."""
         tabs = dict(self.tabs)  # shallow copy
-        old_tab = tabs.get(slug, TabUpdate(slug=slug))
+        old_tab = tabs.get(slug, TabUpdate())
         tabs[slug] = replace(old_tab, **kwargs)
         return replace(self, tabs=tabs)
 
     def update_step(self, id: int, **kwargs) -> Update:
         """Return an Update with added/modified step values. TODO key by slug, not id."""
         steps = dict(self.steps)  # shallow copy
-        old_step = steps.get(id, StepUpdate(id=id))
+        old_step = steps.get(id, StepUpdate())
         steps[id] = replace(old_step, **kwargs)
         return replace(self, steps=steps)
 
     def update_workflow(self, **kwargs) -> Update:
         """Return an Update with modified workflow values."""
-        return replace(self, workflow=replace(self.workflow, **kwargs))
+        if self.workflow is None:
+            workflow = WorkflowUpdate()
+        else:
+            workflow = self.workflow
+        return replace(self, workflow=replace(workflow, **kwargs))
 
     def replace_tab(self, slug: str, update: TabUpdate) -> Update:
         """Return an Update with a new Tab."""

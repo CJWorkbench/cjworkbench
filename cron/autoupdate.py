@@ -4,6 +4,7 @@ from django.utils import timezone
 from cjworkbench.pg_render_locker import PgRenderLocker, WorkflowAlreadyLocked
 from cjworkbench.sync import database_sync_to_async
 from server import rabbitmq, websockets
+from cjwstate import clientside
 from cjwstate.models import WfModule
 
 
@@ -62,13 +63,11 @@ async def queue_fetches(pg_render_locker: PgRenderLocker):
 
             logger.info("Queue fetch of wf_module(%d, %d)", workflow_id, wf_module.id)
             await set_wf_module_busy(wf_module)
-            await websockets.ws_client_send_delta_async(
+            await websockets.send_update_to_workflow_clients(
                 workflow_id,
-                {
-                    "updateWfModules": {
-                        str(wf_module.id): {"is_busy": True, "fetch_error": ""}
-                    }
-                },
+                clientside.Update(
+                    steps={wf_module.id: clientside.StepUpdate(is_busy=True)}
+                ),
             )
             await rabbitmq.queue_fetch(workflow_id, wf_module.id)
         except WorkflowAlreadyLocked:

@@ -6,10 +6,11 @@ from unittest.mock import Mock, patch
 from cjwkernel.errors import ModuleExitedError
 from cjwkernel.types import I18nMessage, Params, RenderError, RenderResult
 from cjwkernel.tests.util import arrow_table, assert_render_result_equals
-from cjwstate.rendercache import cache_render_result, open_cached_render_result
+from cjwstate import clientside
 from cjwstate.models import ModuleVersion, Workflow
 from cjwstate.models.commands import InitWorkflowCommand
 from cjwstate.modules.loaded_module import LoadedModule
+from cjwstate.rendercache import cache_render_result, open_cached_render_result
 from cjwstate.tests.utils import DbTestCase
 from renderer.execute.types import UnneededExecution
 from renderer.execute.workflow import execute_workflow, partition_ready_and_dependent
@@ -33,7 +34,7 @@ class WorkflowTests(DbTestCase):
             self.run_with_async_db(execute_workflow(workflow, workflow.last_delta_id))
 
     @patch.object(LoadedModule, "for_module_version")
-    @patch("server.websockets.ws_client_send_delta_async", fake_send)
+    @patch("server.websockets.send_update_to_workflow_clients", fake_send)
     def test_execute_new_revision(self, fake_load_module):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
@@ -69,7 +70,7 @@ class WorkflowTests(DbTestCase):
             assert_render_result_equals(result, result2)
 
     @patch.object(LoadedModule, "for_module_version")
-    @patch("server.websockets.ws_client_send_delta_async", fake_send)
+    @patch("server.websockets.send_update_to_workflow_clients", fake_send)
     def test_execute_tempdir_not_in_tmpfs(self, fake_load_module):
         # /tmp is RAM; /var/tmp is disk. Assert big files go on disk.
         workflow = Workflow.create_and_init()
@@ -129,11 +130,11 @@ class WorkflowTests(DbTestCase):
             self._execute(workflow)
 
     @patch.object(LoadedModule, "for_module_version")
-    @patch("server.websockets.ws_client_send_delta_async")
-    def test_execute_mark_unreachable(self, send_delta_async, fake_load_module):
+    @patch("server.websockets.send_update_to_workflow_clients")
+    def test_execute_mark_unreachable(self, send_update, fake_load_module):
         future_none = asyncio.Future()
         future_none.set_result(None)
-        send_delta_async.return_value = future_none
+        send_update.return_value = future_none
 
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
@@ -185,23 +186,19 @@ class WorkflowTests(DbTestCase):
         with open_cached_render_result(wf_module3.cached_render_result) as result:
             assert_render_result_equals(result, RenderResult())
 
-        send_delta_async.assert_called_with(
+        send_update.assert_called_with(
             workflow.id,
-            {
-                "updateWfModules": {
-                    str(wf_module3.id): {
-                        "output_status": "unreachable",
-                        "output_errors": [],
-                        "output_columns": [],
-                        "output_n_rows": 0,
-                        "cached_render_result_delta_id": delta_id,
-                    }
+            clientside.Update(
+                steps={
+                    wf_module3.id: clientside.StepUpdate(
+                        render_result=wf_module3.cached_render_result
+                    )
                 }
-            },
+            ),
         )
 
     @patch.object(LoadedModule, "for_module_version")
-    @patch("server.websockets.ws_client_send_delta_async", fake_send)
+    @patch("server.websockets.send_update_to_workflow_clients", fake_send)
     def test_execute_migrate_params_invalid_params_are_coerced(self, fake_load_module):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
@@ -233,7 +230,7 @@ class WorkflowTests(DbTestCase):
         fake_load_module.return_value.render.assert_called()
 
     @patch.object(LoadedModule, "for_module_version")
-    @patch("server.websockets.ws_client_send_delta_async", fake_send)
+    @patch("server.websockets.send_update_to_workflow_clients", fake_send)
     def test_execute_migrate_params_module_error_gives_default_params(
         self, fake_load_module
     ):
@@ -268,7 +265,7 @@ class WorkflowTests(DbTestCase):
         fake_load_module.return_value.render.assert_called()
 
     @patch.object(LoadedModule, "for_module_version")
-    @patch("server.websockets.ws_client_send_delta_async", fake_send)
+    @patch("server.websockets.send_update_to_workflow_clients", fake_send)
     def test_execute_cache_hit(self, fake_module):
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
@@ -291,7 +288,7 @@ class WorkflowTests(DbTestCase):
         fake_module.assert_not_called()
 
     @patch.object(LoadedModule, "for_module_version")
-    @patch("server.websockets.ws_client_send_delta_async", fake_send)
+    @patch("server.websockets.send_update_to_workflow_clients", fake_send)
     def test_resume_without_rerunning_unneeded_renders(self, fake_load_module):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
@@ -333,7 +330,7 @@ class WorkflowTests(DbTestCase):
             assert_render_result_equals(actual, result2)
 
     @patch.object(LoadedModule, "for_module_version")
-    @patch("server.websockets.ws_client_send_delta_async", fake_send)
+    @patch("server.websockets.send_update_to_workflow_clients", fake_send)
     @patch("renderer.notifications.email_output_delta")
     def test_email_delta(self, email, fake_load_module):
         workflow = Workflow.objects.create()
@@ -368,7 +365,7 @@ class WorkflowTests(DbTestCase):
         email.assert_called()
 
     @patch.object(LoadedModule, "for_module_version")
-    @patch("server.websockets.ws_client_send_delta_async", fake_send)
+    @patch("server.websockets.send_update_to_workflow_clients", fake_send)
     @patch("renderer.notifications.email_output_delta")
     def test_email_no_delta_when_not_changed(self, email, fake_load_module):
         workflow = Workflow.objects.create()
@@ -403,7 +400,7 @@ class WorkflowTests(DbTestCase):
         email.assert_not_called()
 
     @patch.object(LoadedModule, "for_module_version")
-    @patch("server.websockets.ws_client_send_delta_async", fake_send)
+    @patch("server.websockets.send_update_to_workflow_clients", fake_send)
     @patch("renderer.notifications.email_output_delta")
     def test_email_no_delta_when_no_cached_render_result(self, email, fake_load_module):
         # No cached render result means one of two things:

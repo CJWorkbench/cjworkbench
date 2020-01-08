@@ -360,7 +360,7 @@ def jsonize_clientside_init(
     some i18n code invoked here.)
     """
     return {
-        "loggedInUser": jsonize_user(ctx.user),
+        "loggedInUser": None if ctx.user.is_anonymous else jsonize_user(ctx.user),
         "modules": {
             k: jsonize_clientside_module(v, ctx) for k, v in state.modules.items()
         },

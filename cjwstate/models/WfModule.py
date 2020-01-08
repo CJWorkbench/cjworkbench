@@ -557,6 +557,7 @@ class WfModule(models.Model):
             slug=self.slug,
             module_slug=self.module_id_name,
             tab_slug=self.tab_slug,
+            is_busy=self.is_busy,
             render_result=crr,
             files=[
                 clientside.UploadedFile(

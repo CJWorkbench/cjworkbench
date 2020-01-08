@@ -1,12 +1,13 @@
 from __future__ import annotations
 from dataclasses import dataclass
 import datetime
+import json
 from typing import Iterable, List, Optional
 from asgiref.sync import async_to_sync
 from django.contrib.auth.decorators import login_required
 import django.db
 from django.db.models import Q
-from django.http import Http404, HttpRequest, JsonResponse
+from django.http import Http404, HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.utils import timezone
@@ -30,7 +31,11 @@ from server.serializers import (
 )
 import server.utils
 from server.settingsutils import workbench_user_display
-from .auth import lookup_workflow_for_write, loads_workflow_for_read
+from .auth import (
+    lookup_workflow_for_write,
+    loads_workflow_for_read,
+    loads_workflow_for_write,
+)
 from cjworkbench.i18n import default_locale
 
 
@@ -203,7 +208,10 @@ def render_workflow(request: HttpRequest, workflow: Workflow):
         modules = visible_modules(request)
         init_state = make_init_state(request, workflow=workflow, modules=modules)
 
-        if not workflow.are_all_render_results_fresh():
+        if any(
+            step["last_relevant_delta_id"] != step["cached_render_result_delta_id"]
+            for step in init_state["wfModules"].values()
+        ):
             # We're returning a Workflow that may have stale WfModules. That's
             # fine, but are we _sure_ the renderer is about to render them?
             # Let's double-check. This will handle edge cases such as "we wiped
@@ -218,31 +226,48 @@ def render_workflow(request: HttpRequest, workflow: Workflow):
 
 # Retrieve or delete a workflow instance.
 # Or reorder modules
-@api_view(["POST", "DELETE"])
-@renderer_classes((JSONRenderer,))
-def workflow_detail(request, workflow_id, format=None):
-    if request.method == "POST":
-        workflow = lookup_workflow_for_write(workflow_id, request)
 
-        valid_fields = {"public"}
-        if not set(request.data.keys()).intersection(valid_fields):
-            return JsonResponse(
-                {"message": "Unknown fields: %r" % request.data, "status_code": 400},
+
+class ApiDetail(View):
+    @method_decorator(loads_workflow_for_write)
+    def post(self, request: HttpRequest, workflow: Workflow):
+        if request.content_type != "application/json":
+            return HttpResponse(
+                "request must have type application/json",
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        if "public" in request.data:
-            workflow.public = bool(request.data["public"])
-            workflow.save(update_fields=["public"])
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        try:
+            body = json.loads(request.body)
+        except ValueError:
+            return JsonResponse(
+                {"message": "request is invalid JSON"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if (
+            type(body) != dict
+            or len(body) != 1
+            or "public" not in body
+            or type(body["public"]) != bool
+        ):
+            return JsonResponse(
+                {
+                    "message": 'request JSON must be an Object with a "public" property of type Boolean'
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        workflow.public = body["public"]
+        workflow.save(update_fields=["public"])
+        return HttpResponse(status=status.HTTP_204_NO_CONTENT)
 
-    elif request.method == "DELETE":
+    @method_decorator(login_required)
+    def delete(self, request: HttpRequest, workflow_id: int):
         try:
             with Workflow.authorized_lookup_and_cooperative_lock(
                 "owner", request.user, request.session, pk=workflow_id
             ) as workflow_lock:
                 workflow = workflow_lock.workflow
                 workflow.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
+            return HttpResponse(status=status.HTTP_204_NO_CONTENT)
         except Workflow.DoesNotExist as err:
             if err.args[0] == "owner access denied":
                 return JsonResponse(

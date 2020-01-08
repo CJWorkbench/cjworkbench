@@ -65,9 +65,9 @@ class LessonDetailTests(DbTestCase):
         self.log_in()
 
         # Add non-matching Workflows -- to test we _don't_ load them
-        Workflow.objects.create(owner=self.user, lesson_slug="some-other-lesson")
-        Workflow.objects.create(owner=self.user, lesson_slug=None)
-        Workflow.objects.create(
+        Workflow.create_and_init(owner=self.user, lesson_slug="some-other-lesson")
+        Workflow.create_and_init(owner=self.user, lesson_slug=None)
+        Workflow.create_and_init(
             owner=self.other_user, lesson_slug="load-public-data", public=True
         )
 
@@ -80,7 +80,7 @@ class LessonDetailTests(DbTestCase):
     def test_get_lesson_with_workflow(self):
         self.log_in()
 
-        Workflow.objects.create(owner=self.user, lesson_slug="load-public-data")
+        Workflow.create_and_init(owner=self.user, lesson_slug="load-public-data")
         response = self.client.get("/lessons/en/load-public-data")
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed("workflow.html")
@@ -88,7 +88,7 @@ class LessonDetailTests(DbTestCase):
     def test_get_course_lesson_with_workflow(self):
         self.log_in()
 
-        Workflow.objects.create(
+        Workflow.create_and_init(
             owner=self.user, lesson_slug="intro-to-data-journalism/filter"
         )
         response = self.client.get("/courses/en/intro-to-data-journalism/filter")
@@ -101,7 +101,7 @@ class LessonDetailTests(DbTestCase):
 
     def test_get_with_existing(self):
         self.log_in()
-        Workflow.objects.create(owner=self.user, lesson_slug="load-public-data")
+        Workflow.create_and_init(owner=self.user, lesson_slug="load-public-data")
         self.client.get("/lessons/en/load-public-data")
         self.assertEqual(Workflow.objects.count(), 1)  # don't create duplicate
 
@@ -109,9 +109,9 @@ class LessonDetailTests(DbTestCase):
         self.log_in()
 
         # Add non-matching Workflows -- to test we ignore them
-        Workflow.objects.create(owner=self.user, lesson_slug="other-lesson")
-        Workflow.objects.create(owner=self.user, lesson_slug=None)
-        Workflow.objects.create(
+        Workflow.create_and_init(owner=self.user, lesson_slug="other-lesson")
+        Workflow.create_and_init(owner=self.user, lesson_slug=None)
+        Workflow.create_and_init(
             owner=self.other_user, lesson_slug="load-public-data", public=True
         )
 
@@ -136,7 +136,7 @@ class LessonDetailTests(DbTestCase):
     def test_get_workflow_with_lesson_slug(self):
         self.log_in()
 
-        workflow = Workflow.objects.create(
+        workflow = Workflow.create_and_init(
             owner=self.user, lesson_slug="load-public-data"
         )
         response = self.client.get(workflow.get_absolute_url())
@@ -145,7 +145,7 @@ class LessonDetailTests(DbTestCase):
     def test_get_public_workflow_with_lesson_slug(self):
         self.log_in()
 
-        workflow = Workflow.objects.create(
+        workflow = Workflow.create_and_init(
             owner=self.other_user, lesson_slug="load-public-data", public=True
         )  # not 404
         workflow.save()
@@ -156,7 +156,7 @@ class LessonDetailTests(DbTestCase):
     def test_get_workflow_with_missing_lesson_slug(self):
         self.log_in()
 
-        workflow = Workflow.objects.create(
+        workflow = Workflow.create_and_init(
             owner=self.user, lesson_slug="missing-lesson"
         )
         response = self.client.get(workflow.get_absolute_url())
@@ -166,7 +166,7 @@ class LessonDetailTests(DbTestCase):
     def test_get_workflow_with_missing_course_lesson_slug(self):
         self.log_in()
 
-        workflow = Workflow.objects.create(
+        workflow = Workflow.create_and_init(
             owner=self.user, lesson_slug="course/missing-lesson"
         )
         response = self.client.get(workflow.get_absolute_url())
@@ -175,7 +175,7 @@ class LessonDetailTests(DbTestCase):
 
     def test_get_workflow_with_course_slug(self):
         self.log_in()
-        workflow = Workflow.objects.create(
+        workflow = Workflow.create_and_init(
             owner=self.user, lesson_slug="intro-to-data-journalism/filter"
         )
         response = self.client.get(workflow.get_absolute_url())

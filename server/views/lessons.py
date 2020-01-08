@@ -24,24 +24,20 @@ from server.views.workflows import visible_modules, make_init_state
 
 
 def jsonize_step(step: LessonSectionStep) -> Dict[str, Any]:
-    return {
-        "html": lesson.html,
-        "highlight": lesson.highlight,
-        "testJs": lesson.test_js,
-    }
+    return {"html": step.html, "highlight": step.highlight, "testJs": step.test_js}
 
 
 def jsonize_section(section: LessonSection) -> Dict[str, Any]:
     return {
-        "title": lesson.title,
-        "html": lesson.html,
-        "steps": list(jsonize_step(step) for step in lesson.steps),
-        "isFullScreen": lesson.is_full_screen,
+        "title": section.title,
+        "html": section.html,
+        "steps": list(jsonize_step(step) for step in section.steps),
+        "isFullScreen": section.is_full_screen,
     }
 
 
 def jsonize_course(course: Course) -> Dict[str, Any]:
-    return {"slug": lesson.slug, "title": lesson.title, "localeId": lesson.locale_id}
+    return {"slug": course.slug, "title": course.title, "localeId": course.locale_id}
 
 
 def jsonize_lesson(lesson: Lesson) -> Dict[str, Any]:

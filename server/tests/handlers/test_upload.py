@@ -44,8 +44,8 @@ class UploadTest(HandlerTestCase):
         self.assertEqual(response.data["key"], in_progress_upload.get_upload_key())
         self.assertIn("credentials", response.data)
 
-    @patch("server.websockets.ws_client_send_delta_async")
-    def test_finish_upload_happy_path(self, send_delta):
+    @patch("server.websockets.send_update_to_workflow_clients")
+    def test_finish_upload_happy_path(self, send_update):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
         wf_module = workflow.tabs.first().wf_modules.create(
@@ -56,7 +56,7 @@ class UploadTest(HandlerTestCase):
         )
         key = in_progress_upload.get_upload_key()
         minio.put_bytes(in_progress_upload.Bucket, key, b"1234567")
-        send_delta.side_effect = async_noop
+        send_update.side_effect = async_noop
         response = self.run_handler(
             finish_upload,
             user=user,
@@ -90,7 +90,7 @@ class UploadTest(HandlerTestCase):
             "attachment; filename*=UTF-8''test%20sheet.csv",
         )
         # wf_module is updated
-        send_delta.assert_called()
+        send_update.assert_called()
 
     def test_finish_upload_error_not_started(self):
         user = User.objects.create(username="a", email="a@example.org")

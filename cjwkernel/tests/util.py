@@ -3,6 +3,7 @@ import io
 import pathlib
 from typing import Any, ContextManager, Dict, Iterable, List, Optional, Union
 import unittest
+import unittest.mock
 from numpy.testing import assert_equal  # [None, "x"] == [None, "x"]
 import pyarrow
 import pyarrow.parquet

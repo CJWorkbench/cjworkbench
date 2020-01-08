@@ -2,7 +2,7 @@ import contextlib
 from django.utils import timezone
 from cjworkbench.sync import database_sync_to_async
 from cjwkernel.types import FetchResult
-from cjwstate import commands, storedobjects
+from cjwstate import clientside, commands, storedobjects
 from server import websockets
 from cjwstate.models import WfModule, Workflow
 from cjwstate.models.commands import ChangeDataVersionCommand
@@ -31,16 +31,14 @@ async def _notify_websockets(workflow_id: int, wf_module: WfModule) -> None:
     """
     Send delta to client, syncing all `wf_module` fields fetcher can edit.
     """
-    updates = {
-        "is_busy": wf_module.is_busy,
-        "fetch_error": wf_module.fetch_error,
-        "last_update_check": (
-            wf_module.last_update_check.isoformat().replace("+00:00", "Z")
-        ),
-    }
-
-    delta = {"updateWfModules": {str(wf_module.id): updates}}
-    await websockets.ws_client_send_delta_async(workflow_id, delta)
+    update = clientside.Update(
+        steps={
+            wf_module.id: clientside.StepUpdate(
+                is_busy=wf_module.is_busy, last_fetched_at=wf_module.last_update_check
+            )
+        }
+    )
+    await websockets.send_update_to_workflow_clients(workflow_id, update)
 
 
 @database_sync_to_async

@@ -161,9 +161,6 @@ class WorkflowTests(DbTestCase):
         workflow.delete()
         self.assertTrue(True)  # no crash
 
-    @patch("server.rabbitmq.queue_render", async_noop)
-    @patch("server.websockets.ws_client_send_delta_async", async_noop)
-    @patch.object(LoadedModule, "for_module_version", MockLoadedModule)
     def test_delete_remove_leaked_stored_objects_and_uploaded_files(self):
         workflow = Workflow.create_and_init()
         # If the user deletes a workflow, all data associated with that
