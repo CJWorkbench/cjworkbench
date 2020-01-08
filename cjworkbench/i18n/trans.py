@@ -20,7 +20,7 @@ def _get_translations(locale):
     """
     if locale in _translators:
         return _translators[locale]
-    _translators[locale] = MessageTranslator(locale)
+    _translators[locale] = MessageTranslator.for_application_messages(locale)
     return _translators[locale]
 
 
@@ -86,18 +86,22 @@ def restore_tags(message, tag_mapping):
 
 
 class MessageTranslator:
-    """Load the message catalogs for a given locale and provide helper methods for message translation.
+    """Hold a message catalog for a given locale and provide helper methods for message localization with ICU.
     It uses plaintext messages with variables in `{var}` placeholders, e.g. in `"Hello {name}"`, `name` is a variable.
     
     Essentially, it is a wrapper for the combination of 
-      - Babel (for loading PO files)
-      - variable substitution
+      - Babel (for reading messages of PO files)
+      - variable substitution with ICU
       - our HTML placeholder construct.
     """
 
-    def __init__(self, locale_id):
+    def __init__(self, locale_id, catalog):
         self.icu_locale = Locale.createFromName(locale_id)
-        self.catalog = load_catalog(locale_id)
+        self.catalog = catalog
+
+    @classmethod
+    def for_application_messages(cls, locale_id: str):
+        return cls(locale_id, load_catalog(locale_id))
 
     def trans(self, message_id, default=None, context=None, parameters={}):
         """Find the message corresponding to the given ID in the catalog and format it according to the given parameters.
