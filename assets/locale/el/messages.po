@@ -2148,7 +2148,7 @@ msgstr "Σύνδεση"
 msgid "py.templates.account.login.linkToSignUp"
 msgstr "Εγγραφή"
 
-#. As in 'Login with Google account or login with simple account'
+#. The 'or' in 'Log in with [Google/Facebook buttons] *or* [username/password]'
 #: templates/account/login.html:27
 msgid "py.templates.account.login.socialSimpleSeparator"
 msgstr ""

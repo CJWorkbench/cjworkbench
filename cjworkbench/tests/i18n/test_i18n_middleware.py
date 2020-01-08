@@ -17,14 +17,6 @@ def mock_response(request):
     return response
 
 
-def mock_set_locale_response(new_locale_id):
-    def mock_response_edited(request):
-        request.locale_id = new_locale_id
-        return mock_response(request)
-
-    return mock_response_edited
-
-
 class MockUserProfile:
     def __init__(self, locale_id=None):
         self.locale_id = locale_id

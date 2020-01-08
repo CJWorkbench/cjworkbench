@@ -2500,7 +2500,7 @@ msgstr ""
 msgid "py.templates.account.login.linkToSignUp"
 msgstr ""
 
-#. As in 'Login with Google account or login with simple account'
+#. The 'or' in 'Log in with [Google/Facebook buttons] *or* [username/password]'
 #. default-message: or
 #: templates/account/login.html:27
 msgid "py.templates.account.login.socialSimpleSeparator"
