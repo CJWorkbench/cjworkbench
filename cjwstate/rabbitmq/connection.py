@@ -331,7 +331,7 @@ class RetryingConnection:
         )
 
     async def queue_render_if_consumers_are_listening(
-        workflow_id: int, delta_id: int
+        self, workflow_id: int, delta_id: int
     ) -> None:
         """
         Tell workflow consumers to call `queue_render(workflow_id, delta_id)`.

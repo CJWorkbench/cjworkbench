@@ -182,3 +182,5 @@ async def queue_render_if_consumers_are_listening(
     (Renderers will ignore spurious calls. And there are no consumers,
     queue_render() won't be called.)
     """
+    connection = await _get_connection_async()
+    await connection.queue_render_if_consumers_are_listening(workflow_id, delta_id)

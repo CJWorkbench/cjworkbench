@@ -7,8 +7,8 @@ from django.http import Http404
 from django.http.response import HttpResponseServerError
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
-from server import rabbitmq
 import server.utils
+from cjwstate import rabbitmq
 from cjwstate.models.commands import InitWorkflowCommand
 from cjwstate.models import Workflow, ModuleVersion
 from server.models.course import Course, CourseLookup, AllCoursesByLocale

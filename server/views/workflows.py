@@ -18,9 +18,8 @@ from rest_framework.decorators import api_view
 from rest_framework.decorators import renderer_classes
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
-from server import rabbitmq
+from cjwstate import clientside, rabbitmq
 from cjwstate.models import ModuleVersion, Workflow, WfModule, Tab
-from cjwstate import clientside
 from server.models.course import CourseLookup
 from server.models.lesson import LessonLookup
 from server.serializers import (

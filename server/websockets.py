@@ -10,9 +10,9 @@ from channels.layers import get_channel_layer
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from channels.exceptions import DenyConnection
 from cjworkbench.sync import database_sync_to_async
-from cjwstate import clientside
+from cjwstate import clientside, rabbitmq
 from cjwstate.models import WfModule, Workflow
-from server import handlers, rabbitmq
+from server import handlers
 from server.serializers import JsonizeContext, jsonize_clientside_update
 
 logger = logging.getLogger(__name__)

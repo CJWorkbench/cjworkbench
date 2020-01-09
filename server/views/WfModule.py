@@ -27,6 +27,7 @@ from rest_framework.decorators import api_view, renderer_classes
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from cjwkernel.types import Column, ColumnType
+from cjwstate import rabbitmq
 from cjwstate.rendercache import (
     CorruptCacheError,
     downloaded_parquet_file,
@@ -35,7 +36,6 @@ from cjwstate.rendercache import (
 )
 from cjwstate.models import Tab, WfModule, Workflow
 from cjwstate.modules.loaded_module import module_get_html_bytes
-from server import rabbitmq
 
 
 _MaxNRowsPerRequest = 300
