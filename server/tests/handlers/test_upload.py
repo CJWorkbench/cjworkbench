@@ -3,7 +3,7 @@ import hashlib
 from unittest.mock import patch
 from django.contrib.auth.models import User
 from django.utils import timezone
-from cjwstate import minio
+from cjwstate import minio, rabbitmq
 from server.handlers.upload import create_upload, finish_upload, abort_upload
 from cjwstate.models import Workflow
 from .util import HandlerTestCase
@@ -44,7 +44,7 @@ class UploadTest(HandlerTestCase):
         self.assertEqual(response.data["key"], in_progress_upload.get_upload_key())
         self.assertIn("credentials", response.data)
 
-    @patch("server.websockets.send_update_to_workflow_clients")
+    @patch.object(rabbitmq, "send_update_to_workflow_clients")
     def test_finish_upload_happy_path(self, send_update):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)

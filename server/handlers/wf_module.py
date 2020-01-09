@@ -8,8 +8,7 @@ from django.conf import settings
 from django.db import transaction
 from django.utils import timezone
 from cjworkbench.sync import database_sync_to_async
-from server import rabbitmq, websockets
-from cjwstate import clientside, commands, oauth
+from cjwstate import clientside, commands, oauth, rabbitmq
 from cjwstate.models import Workflow, WfModule
 from cjwstate.models.commands import (
     ChangeParametersCommand,
@@ -324,7 +323,7 @@ def _set_wf_module_busy(wf_module):
 async def fetch(workflow: Workflow, wf_module: WfModule, **kwargs):
     await _set_wf_module_busy(wf_module)
     await rabbitmq.queue_fetch(workflow.id, wf_module.id)
-    await websockets.send_update_to_workflow_clients(
+    await rabbitmq.send_update_to_workflow_clients(
         workflow.id,
         clientside.Update(steps={wf_module.id: clientside.StepUpdate(is_busy=True)}),
     )
@@ -450,7 +449,7 @@ def _wf_module_delete_secret_and_build_delta(
 async def delete_secret(workflow: Workflow, wf_module: WfModule, param: str, **kwargs):
     update = await _wf_module_delete_secret_and_build_delta(workflow, wf_module, param)
     if update:
-        await websockets.send_update_to_workflow_clients(workflow.id, update)
+        await rabbitmq.send_update_to_workflow_clients(workflow.id, update)
 
 
 @database_sync_to_async
@@ -525,7 +524,7 @@ async def set_secret(
     )
 
     if update:
-        await websockets.send_update_to_workflow_clients(workflow.id, update)
+        await rabbitmq.send_update_to_workflow_clients(workflow.id, update)
 
 
 @database_sync_to_async

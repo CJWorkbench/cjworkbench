@@ -27,13 +27,12 @@ from cjwkernel.tests.util import (
     assert_arrow_table_equals,
     parquet_file,
 )
-from cjwstate import minio, rendercache, storedobjects
+from cjwstate import minio, rabbitmq, rendercache, storedobjects
 from cjwstate.models import CachedRenderResult, ModuleVersion, WfModule, Workflow
 import cjwstate.modules
 from cjwstate.modules.loaded_module import LoadedModule
 from cjwstate.tests.utils import DbTestCase
 from fetcher import fetch, fetchprep, save
-from server import websockets
 from typing import Union
 
 
@@ -374,8 +373,8 @@ class FetchOrWrapErrorTests(unittest.TestCase):
 
 
 class FetchTests(DbTestCase):
-    @patch.object(websockets, "queue_render_if_listening")
-    @patch.object(websockets, "send_update_to_workflow_clients")
+    @patch.object(rabbitmq, "queue_render_if_consumers_are_listening")
+    @patch.object(rabbitmq, "send_update_to_workflow_clients")
     def test_fetch_integration(self, send_update, queue_render):
         queue_render.side_effect = async_value(None)
         send_update.side_effect = async_value(None)

@@ -1,6 +1,6 @@
 import json
 from unittest.mock import patch
-from cjwstate import minio
+from cjwstate import minio, rabbitmq
 from cjwstate.models import ModuleVersion, Workflow
 from cjwstate.tests.utils import DbTestCase
 
@@ -313,8 +313,8 @@ class UploadTest(DbTestCase):
         error = json.loads(response.content)["error"]
         self.assertEqual(error["code"], "file-not-uploaded")
 
-    @patch("server.websockets.send_update_to_workflow_clients")
-    @patch("server.rabbitmq.queue_render")
+    @patch.object(rabbitmq, "send_update_to_workflow_clients")
+    @patch.object(rabbitmq, "queue_render")
     @patch(
         "cjwstate.modules.loaded_module.LoadedModule.for_module_version",
         MockLoadedModule,

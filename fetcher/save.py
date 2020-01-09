@@ -2,8 +2,7 @@ import contextlib
 from django.utils import timezone
 from cjworkbench.sync import database_sync_to_async
 from cjwkernel.types import FetchResult
-from cjwstate import clientside, commands, storedobjects
-from server import websockets
+from cjwstate import clientside, commands, rabbitmq, storedobjects
 from cjwstate.models import WfModule, Workflow
 from cjwstate.models.commands import ChangeDataVersionCommand
 
@@ -38,7 +37,7 @@ async def _notify_websockets(workflow_id: int, wf_module: WfModule) -> None:
             )
         }
     )
-    await websockets.send_update_to_workflow_clients(workflow_id, update)
+    await rabbitmq.send_update_to_workflow_clients(workflow_id, update)
 
 
 @database_sync_to_async

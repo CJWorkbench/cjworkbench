@@ -2,9 +2,9 @@ import functools
 from typing import Any, Dict
 import uuid as uuidgen
 from cjworkbench.sync import database_sync_to_async
-from cjwstate import clientside
+from cjwstate import clientside, rabbitmq
 from cjwstate.models import Workflow, WfModule, InProgressUpload
-from server import serializers, websockets
+from server import serializers
 from .decorators import register_websockets_handler, websockets_handler
 from .types import HandlerError
 
@@ -131,5 +131,5 @@ async def finish_upload(
     except ValueError as err:
         raise HandlerError(str(err))
     update = await _do_finish_upload(workflow, wf_module, uuid, filename)
-    await websockets.send_update_to_workflow_clients(workflow.id, update)
+    await rabbitmq.send_update_to_workflow_clients(workflow.id, update)
     return {"uuid": str(uuid)}

@@ -1,18 +1,17 @@
 from typing import Any, Dict, Optional, Tuple
 from cjworkbench.sync import database_sync_to_async
-from cjwstate.clientside import Update
+from cjwstate import clientside, rabbitmq
 from cjwstate.models import Delta, WfModule, Workflow
 from cjwstate.models.commands import ChangeDataVersionCommand
-from server import rabbitmq, websockets
 
 
-async def websockets_notify(workflow_id: int, update: Update) -> None:
+async def websockets_notify(workflow_id: int, update: clientside.Update) -> None:
     """
     Notify Websockets clients of `update`; return immediately.
 
     This is an alias; its main purpose is for white-box unit testing.
     """
-    await websockets.send_update_to_workflow_clients(workflow_id, update)
+    await rabbitmq.send_update_to_workflow_clients(workflow_id, update)
 
 
 async def queue_render(workflow_id: int, delta_id: int) -> None:
@@ -73,7 +72,9 @@ async def _maybe_queue_render(
         if await _workflow_has_notifications(workflow_id):
             await queue_render(workflow_id, relevant_delta_id)
         else:
-            await websockets.queue_render_if_listening(workflow_id, relevant_delta_id)
+            await rabbitmq.queue_render_if_consumers_are_listening(
+                workflow_id, relevant_delta_id
+            )
     else:
         # Normal case: the Delta says we need a render. Assume there's a user
         # waiting for this render -- otherwise, how did the Delta get here?
@@ -83,7 +84,7 @@ async def _maybe_queue_render(
 @database_sync_to_async
 def _first_forward_and_save_returning_clientside_update(
     cls, workflow_id: int, **kwargs
-) -> Tuple[Optional[Delta], Optional[Update], bool]:
+) -> Tuple[Optional[Delta], Optional[clientside.Update], bool]:
     """
     Create and execute `cls` command; return `(Delta, WebSocket data, render?)`.
 
@@ -133,7 +134,9 @@ def _first_forward_and_save_returning_clientside_update(
 
 
 @database_sync_to_async
-def _call_forward_and_load_clientside_update(delta: Delta) -> Tuple[Update, bool]:
+def _call_forward_and_load_clientside_update(
+    delta: Delta
+) -> Tuple[clientside.Update, bool]:
     with Workflow.lookup_and_cooperative_lock(id=delta.workflow_id):
         delta.forward()
         delta.workflow.last_delta = delta
@@ -143,7 +146,9 @@ def _call_forward_and_load_clientside_update(delta: Delta) -> Tuple[Update, bool
 
 
 @database_sync_to_async
-def _call_backward_and_load_clientside_update(delta: Delta) -> Tuple[Update, bool]:
+def _call_backward_and_load_clientside_update(
+    delta: Delta
+) -> Tuple[clientside.Update, bool]:
     with Workflow.lookup_and_cooperative_lock(id=delta.workflow_id):
         delta.backward()
 
@@ -162,7 +167,7 @@ async def do(cls, *, workflow_id: int, **kwargs) -> Delta:
 
     If `amend_create_kwargs()` returns `None`, no-op.
 
-    If Delta suggests sending websockets data, send it over Websockets
+    If Delta suggests sending a clientside.Update data, send it over RabbitMQ
     and possibly schedule a render.
 
     Keyword arguments vary by cls, but `workflow_id` is always required.
@@ -175,7 +180,7 @@ async def do(cls, *, workflow_id: int, **kwargs) -> Delta:
             # ... other kwargs
         )
         # now delta has been applied and committed to the database, and
-        # websockets users have been notified.
+        # websockets updates have been queued for each consumer.
     """
     delta, update, want_render = await _first_forward_and_save_returning_clientside_update(
         cls, workflow_id, **kwargs

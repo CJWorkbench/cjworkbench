@@ -6,6 +6,7 @@ from server.handlers.workflow import (
     set_tab_order,
     set_selected_tab,
 )
+from cjwstate import rabbitmq
 from cjwstate.models import Workflow
 from cjwstate.models.commands import ChangeWorkflowTitleCommand
 from .util import HandlerTestCase
@@ -16,7 +17,7 @@ async def async_noop(*args, **kwargs):
 
 
 class WorkflowTest(HandlerTestCase):
-    @patch("server.websockets.send_update_to_workflow_clients", async_noop)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
     def test_set_name(self):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user, name="A")
@@ -37,7 +38,7 @@ class WorkflowTest(HandlerTestCase):
         response = self.run_handler(set_name, workflow=workflow, name="B")
         self.assertResponse(response, error="AuthError: no write access to workflow")
 
-    @patch("server.websockets.send_update_to_workflow_clients", async_noop)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
     def test_set_name_coerce_to_str(self):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user, name="A")
@@ -138,7 +139,7 @@ class WorkflowTest(HandlerTestCase):
         )
         self.assertResponse(response, error="Invalid tab slug")
 
-    @patch("server.websockets.send_update_to_workflow_clients", async_noop)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
     def test_set_tab_order(self):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)  # initial tab: tab-1

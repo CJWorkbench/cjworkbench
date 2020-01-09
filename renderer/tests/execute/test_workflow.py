@@ -6,7 +6,7 @@ from unittest.mock import Mock, patch
 from cjwkernel.errors import ModuleExitedError
 from cjwkernel.types import I18nMessage, Params, RenderError, RenderResult
 from cjwkernel.tests.util import arrow_table, assert_render_result_equals
-from cjwstate import clientside
+from cjwstate import clientside, rabbitmq
 from cjwstate.models import ModuleVersion, Workflow
 from cjwstate.models.commands import InitWorkflowCommand
 from cjwstate.modules.loaded_module import LoadedModule
@@ -34,7 +34,7 @@ class WorkflowTests(DbTestCase):
             self.run_with_async_db(execute_workflow(workflow, workflow.last_delta_id))
 
     @patch.object(LoadedModule, "for_module_version")
-    @patch("server.websockets.send_update_to_workflow_clients", fake_send)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", fake_send)
     def test_execute_new_revision(self, fake_load_module):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
@@ -70,7 +70,7 @@ class WorkflowTests(DbTestCase):
             assert_render_result_equals(result, result2)
 
     @patch.object(LoadedModule, "for_module_version")
-    @patch("server.websockets.send_update_to_workflow_clients", fake_send)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", fake_send)
     def test_execute_tempdir_not_in_tmpfs(self, fake_load_module):
         # /tmp is RAM; /var/tmp is disk. Assert big files go on disk.
         workflow = Workflow.create_and_init()
@@ -130,7 +130,7 @@ class WorkflowTests(DbTestCase):
             self._execute(workflow)
 
     @patch.object(LoadedModule, "for_module_version")
-    @patch("server.websockets.send_update_to_workflow_clients")
+    @patch.object(rabbitmq, "send_update_to_workflow_clients")
     def test_execute_mark_unreachable(self, send_update, fake_load_module):
         future_none = asyncio.Future()
         future_none.set_result(None)
@@ -198,7 +198,7 @@ class WorkflowTests(DbTestCase):
         )
 
     @patch.object(LoadedModule, "for_module_version")
-    @patch("server.websockets.send_update_to_workflow_clients", fake_send)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", fake_send)
     def test_execute_migrate_params_invalid_params_are_coerced(self, fake_load_module):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
@@ -230,7 +230,7 @@ class WorkflowTests(DbTestCase):
         fake_load_module.return_value.render.assert_called()
 
     @patch.object(LoadedModule, "for_module_version")
-    @patch("server.websockets.send_update_to_workflow_clients", fake_send)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", fake_send)
     def test_execute_migrate_params_module_error_gives_default_params(
         self, fake_load_module
     ):
@@ -265,7 +265,7 @@ class WorkflowTests(DbTestCase):
         fake_load_module.return_value.render.assert_called()
 
     @patch.object(LoadedModule, "for_module_version")
-    @patch("server.websockets.send_update_to_workflow_clients", fake_send)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", fake_send)
     def test_execute_cache_hit(self, fake_module):
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
@@ -288,7 +288,7 @@ class WorkflowTests(DbTestCase):
         fake_module.assert_not_called()
 
     @patch.object(LoadedModule, "for_module_version")
-    @patch("server.websockets.send_update_to_workflow_clients", fake_send)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", fake_send)
     def test_resume_without_rerunning_unneeded_renders(self, fake_load_module):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
@@ -330,7 +330,7 @@ class WorkflowTests(DbTestCase):
             assert_render_result_equals(actual, result2)
 
     @patch.object(LoadedModule, "for_module_version")
-    @patch("server.websockets.send_update_to_workflow_clients", fake_send)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", fake_send)
     @patch("renderer.notifications.email_output_delta")
     def test_email_delta(self, email, fake_load_module):
         workflow = Workflow.objects.create()
@@ -365,7 +365,7 @@ class WorkflowTests(DbTestCase):
         email.assert_called()
 
     @patch.object(LoadedModule, "for_module_version")
-    @patch("server.websockets.send_update_to_workflow_clients", fake_send)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", fake_send)
     @patch("renderer.notifications.email_output_delta")
     def test_email_no_delta_when_not_changed(self, email, fake_load_module):
         workflow = Workflow.objects.create()
@@ -400,7 +400,7 @@ class WorkflowTests(DbTestCase):
         email.assert_not_called()
 
     @patch.object(LoadedModule, "for_module_version")
-    @patch("server.websockets.send_update_to_workflow_clients", fake_send)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", fake_send)
     @patch("renderer.notifications.email_output_delta")
     def test_email_no_delta_when_no_cached_render_result(self, email, fake_load_module):
         # No cached render result means one of two things:

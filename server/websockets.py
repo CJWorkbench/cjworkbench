@@ -16,14 +16,14 @@ from server import handlers, rabbitmq
 from server.serializers import JsonizeContext, jsonize_clientside_update
 
 logger = logging.getLogger(__name__)
-RequestWrapper = namedtuple("RequestWrapper", ("user", "session"))
 WorkflowUpdateData = namedtuple("WorkflowUpdateData", ("update", "delta_id"))
 
 
-def _workflow_channel_name(workflow_id: int) -> str:
-    """Given a workflow ID, return a channel_layer channel name.
+def _workflow_group_name(workflow_id: int) -> str:
+    """
+    Build a channel_layer group name, given a workflow ID.
 
-    Messages sent to this channel name will be sent to all clients connected to
+    Messages sent to this group will be sent to all clients connected to
     this workflow.
     """
     return f"workflow-{str(workflow_id)}"
@@ -36,7 +36,7 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
 
     @property
     def workflow_channel_name(self):
-        return _workflow_channel_name(self.workflow_id)
+        return _workflow_group_name(self.workflow_id)
 
     def get_workflow_sync(self):
         """The current user's Workflow, if exists and authorized; else None"""
@@ -76,8 +76,8 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
 
         The purpose of this method is to hide races from users who disconnect
         and reconnect while changes are being made. It's okay for things to be
-        slightly off. (Long-term, we can investigate better synchronization
-        strategies.)
+        slightly off, as long as users don't notice. (Long-term, we can build
+        better a more-correct synchronization strategy.)
         """
         with Workflow.authorized_lookup_and_cooperative_lock(
             "read", self.scope["user"], self.scope["session"], pk=self.workflow_id
@@ -153,12 +153,6 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
             logger.debug("Queue render of Workflow %d v%d", workflow_id, delta_id)
             await rabbitmq.queue_render(workflow_id, delta_id)
 
-    async def send_data_to_workflow_client(self, message):
-        logger.debug(
-            "Send %s to Workflow %d", message["data"]["type"], self.workflow_id
-        )
-        await self.send_json(message["data"])
-
     async def send_pickled_update(self, message: Dict[str, Any]) -> None:
         # It's a bit of a security concern that we use pickle to send
         # dataclasses, through RabbitMQ, as opposed to protobuf. It's also
@@ -181,11 +175,9 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
         somebody wants to see the render." Well, `self` is here representing a
         user who has the workflow open and wants to see the render.
         """
-        data = message["data"]
-        workflow_id = data["workflow_id"]
-        delta_id = data["delta_id"]
-        logger.debug("Queue render of Workflow %d v%d", workflow_id, delta_id)
-        await rabbitmq.queue_render(workflow_id, delta_id)
+        delta_id = message["delta_id"]
+        logger.debug("Queue render of Workflow %d v%d", self.workflow_id, delta_id)
+        await rabbitmq.queue_render(self.workflow_id, delta_id)
 
     async def receive_json(self, content):
         """
@@ -224,54 +216,3 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
         response = await handlers.handle(request)
 
         await self.send_json({"response": response.to_dict()})
-
-
-async def _workflow_group_send(workflow_id: int, message_dict: Dict[str, Any]) -> None:
-    """Send message_dict as JSON to all clients connected to the workflow."""
-    channel_name = _workflow_channel_name(workflow_id)
-    channel_layer = get_channel_layer()
-    logger.debug("Queue %s to Workflow %d", message_dict["type"], workflow_id)
-    await channel_layer.group_send(
-        channel_name, {"type": "send_data_to_workflow_client", "data": message_dict}
-    )
-
-
-async def ws_client_send_delta_async(workflow_id: int, delta: Dict[str, Any]) -> None:
-    """Tell clients how to modify their `workflow` and `wfModules` state."""
-    message = {"type": "apply-delta", "data": delta}
-    await _workflow_group_send(workflow_id, message)
-
-
-async def queue_render_if_listening(workflow_id: int, delta_id: int):
-    """
-    Tell workflow communicators to queue a render of `workflow`.
-
-    In other words: "queue a render, but only if somebody has this workflow
-    open in a web browser."
-    """
-    channel_name = _workflow_channel_name(workflow_id)
-    channel_layer = get_channel_layer()
-    logger.debug("Suggest render of Workflow %d v%d", workflow_id, delta_id)
-    await channel_layer.group_send(
-        channel_name,
-        {
-            "type": "queue_render",
-            "data": {"workflow_id": workflow_id, "delta_id": delta_id},
-        },
-    )
-
-
-async def send_update_to_workflow_clients(
-    workflow_id: int, update: clientside.Update
-) -> None:
-    channel_name = _workflow_channel_name(workflow_id)
-    channel_layer = get_channel_layer()
-    logger.debug("Queue %s to Workflow %d", "send_pickled_update", workflow_id)
-    # It's a bit of a security concern that we use pickle to send dataclasses,
-    # through RabbitMQ, as opposed to protobuf. It's also inefficient and makes
-    # for races when deploying new versions. But it's _so_ much less code!
-    # Let's only add complexity if we detect a problem.
-    await channel_layer.group_send(
-        channel_name,
-        {"type": "send_pickled_update", "pickled_update": pickle.dumps(update)},
-    )

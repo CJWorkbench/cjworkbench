@@ -2,21 +2,20 @@ from unittest.mock import patch
 from django.utils import timezone
 from cjwkernel.types import FetchResult
 from cjwkernel.tests.util import parquet_file
-from cjwstate import clientside, storedobjects
+from cjwstate import clientside, rabbitmq, storedobjects
 from cjwstate.models import WfModule, Workflow
 from cjwstate.models.commands import ChangeDataVersionCommand
 from cjwstate.tests.utils import DbTestCase
 from fetcher import save
-from server import websockets
 
 
 async def async_noop(*args, **kwargs):
     pass
 
 
-@patch.object(websockets, "queue_render_if_listening", async_noop)
+@patch.object(rabbitmq, "queue_render_if_consumers_are_listening", async_noop)
 class SaveTests(DbTestCase):
-    @patch.object(websockets, "send_update_to_workflow_clients")
+    @patch.object(rabbitmq, "send_update_to_workflow_clients")
     def test_create_result(self, send_update):
         send_update.side_effect = async_noop
 
@@ -56,7 +55,7 @@ class SaveTests(DbTestCase):
         workflow.refresh_from_db()
         self.assertIsInstance(workflow.last_delta, ChangeDataVersionCommand)
 
-    @patch.object(websockets, "send_update_to_workflow_clients")
+    @patch.object(rabbitmq, "send_update_to_workflow_clients")
     def test_mark_result_unchanged(self, send_update):
         send_update.side_effect = async_noop
         workflow = Workflow.create_and_init()
@@ -87,7 +86,7 @@ class SaveTests(DbTestCase):
             ),
         )
 
-    @patch.object(websockets, "send_update_to_workflow_clients", async_noop)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
     @patch.object(storedobjects, "enforce_storage_limits")
     def test_storage_limits(self, limit):
         workflow = Workflow.create_and_init()

@@ -1,8 +1,8 @@
 import asyncio
-from cjworkbench import rabbitmq
+from cjwstate import rabbitmq
 
 
-async def get_connection():
+async def get_connection_async():
     """
     Ensure rabbitmq is initialized.
 
@@ -27,7 +27,7 @@ async def queue_render(workflow_id: int, delta_id: int):
     Spurious renders are fine: these messages are tiny, and renderers ignore
     them gracefully.
     """
-    connection = await get_connection()
+    connection = await get_connection_async()
     await connection.queue_render(workflow_id, delta_id)
 
 
@@ -44,5 +44,5 @@ async def queue_fetch(workflow_id: int, wf_module_id: int):
     _before_ queue_fetch() or we could leak the message; can't set it _after_
     or the fetcher could finish first.)
     """
-    connection = await get_connection()
+    connection = await get_connection_async()
     await connection.queue_fetch(workflow_id, wf_module_id)

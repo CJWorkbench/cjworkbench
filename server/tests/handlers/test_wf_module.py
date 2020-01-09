@@ -5,7 +5,7 @@ from dateutil.parser import isoparse
 from django.contrib.auth.models import User
 from django.test import override_settings
 from django.utils import timezone
-from cjwstate import clientside, oauth
+from cjwstate import clientside, oauth, rabbitmq
 from cjwstate.models import ModuleVersion, Workflow
 from cjwstate.models.commands import (
     ChangeParametersCommand,
@@ -66,8 +66,8 @@ TestStringSecret = {
 
 
 class WfModuleTest(HandlerTestCase):
-    @patch("server.websockets.send_update_to_workflow_clients", async_noop)
-    @patch("server.rabbitmq.queue_render", async_noop)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
+    @patch.object(rabbitmq, "queue_render", async_noop)
     @patch(
         "cjwstate.modules.loaded_module.LoadedModule.for_module_version",
         MockLoadedModule,
@@ -103,8 +103,8 @@ class WfModuleTest(HandlerTestCase):
         self.assertEquals(command.wf_module_id, wf_module.id)
         self.assertEquals(command.workflow_id, workflow.id)
 
-    @patch("server.websockets.send_update_to_workflow_clients", async_noop)
-    @patch("server.rabbitmq.queue_render", async_noop)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
+    @patch.object(rabbitmq, "queue_render", async_noop)
     @patch(
         "cjwstate.modules.loaded_module.LoadedModule.for_module_version",
         MockLoadedModule,
@@ -140,8 +140,8 @@ class WfModuleTest(HandlerTestCase):
             ),
         )
 
-    @patch("server.websockets.send_update_to_workflow_clients", async_noop)
-    @patch("server.rabbitmq.queue_render", async_noop)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
+    @patch.object(rabbitmq, "queue_render", async_noop)
     @patch(
         "cjwstate.modules.loaded_module.LoadedModule.for_module_version",
         MockLoadedModule,
@@ -173,8 +173,8 @@ class WfModuleTest(HandlerTestCase):
         command = ChangeParametersCommand.objects.first()
         self.assertEquals(command.new_values, {"foo": "br"})
 
-    @patch("server.websockets.send_update_to_workflow_clients", async_noop)
-    @patch("server.rabbitmq.queue_render", async_noop)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
+    @patch.object(rabbitmq, "queue_render", async_noop)
     def test_set_params_no_module(self):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
@@ -234,8 +234,8 @@ class WfModuleTest(HandlerTestCase):
         )
         self.assertResponse(response, error="DoesNotExist: WfModule not found")
 
-    @patch("server.websockets.send_update_to_workflow_clients", async_noop)
-    @patch("server.rabbitmq.queue_render", async_noop)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
+    @patch.object(rabbitmq, "queue_render", async_noop)
     def test_delete(self):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
@@ -271,8 +271,8 @@ class WfModuleTest(HandlerTestCase):
         )
         self.assertResponse(response, error="DoesNotExist: WfModule not found")
 
-    @patch("server.websockets.send_update_to_workflow_clients", async_noop)
-    @patch("server.websockets.queue_render_if_listening", async_noop)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
+    @patch.object(rabbitmq, "queue_render_if_consumers_are_listening", async_noop)
     def test_set_stored_data_version(self):
         version = "2018-12-12T21:30:00.000Z"
         user = User.objects.create(username="a", email="a@example.org")
@@ -291,8 +291,8 @@ class WfModuleTest(HandlerTestCase):
         wf_module.refresh_from_db()
         self.assertEqual(wf_module.stored_data_version, isoparse(version))
 
-    @patch("server.websockets.send_update_to_workflow_clients", async_noop)
-    @patch("server.websockets.queue_render_if_listening", async_noop)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
+    @patch.object(rabbitmq, "queue_render_if_consumers_are_listening", async_noop)
     def test_set_stored_data_version_command_set_read(self):
         version = "2018-12-12T21:30:00.000Z"
         user = User.objects.create(username="a", email="a@example.org")
@@ -313,8 +313,8 @@ class WfModuleTest(HandlerTestCase):
         so.refresh_from_db()
         self.assertEqual(so.read, True)
 
-    @patch("server.websockets.send_update_to_workflow_clients", async_noop)
-    @patch("server.websockets.queue_render_if_listening", async_noop)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
+    @patch.object(rabbitmq, "queue_render_if_consumers_are_listening", async_noop)
     def test_set_stored_data_version_microsecond_date(self):
         version_precise = "2018-12-12T21:30:00.000123Z"
         version_js = "2018-12-12T21:30:00.000Z"
@@ -366,8 +366,8 @@ class WfModuleTest(HandlerTestCase):
         )
         self.assertResponse(response, error="AuthError: no write access to workflow")
 
-    @patch("server.websockets.send_update_to_workflow_clients", async_noop)
-    @patch("server.rabbitmq.queue_render", async_noop)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
+    @patch.object(rabbitmq, "queue_render", async_noop)
     def test_set_notes(self):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
@@ -400,8 +400,8 @@ class WfModuleTest(HandlerTestCase):
         )
         self.assertResponse(response, error="AuthError: no write access to workflow")
 
-    @patch("server.websockets.send_update_to_workflow_clients", async_noop)
-    @patch("server.rabbitmq.queue_render", async_noop)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
+    @patch.object(rabbitmq, "queue_render", async_noop)
     def test_set_notes_forces_str(self):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
@@ -610,8 +610,8 @@ class WfModuleTest(HandlerTestCase):
         wf_module.refresh_from_db()
         self.assertEqual(wf_module.update_interval, 600)
 
-    @patch("server.websockets.send_update_to_workflow_clients")
-    @patch("server.rabbitmq.queue_fetch")
+    @patch.object(rabbitmq, "send_update_to_workflow_clients")
+    @patch.object(rabbitmq, "queue_fetch")
     def test_fetch(self, queue_fetch, send_update):
         future_none = asyncio.Future()
         future_none.set_result(None)
@@ -936,7 +936,7 @@ class WfModuleTest(HandlerTestCase):
         "cjwstate.modules.loaded_module.LoadedModule.for_module_version",
         MockLoadedModule,
     )
-    @patch("server.websockets.send_update_to_workflow_clients")
+    @patch.object(rabbitmq, "send_update_to_workflow_clients")
     def test_delete_secret_happy_path(self, send_update):
         send_update.return_value = async_noop()
 
@@ -1035,7 +1035,7 @@ class WfModuleTest(HandlerTestCase):
         "cjwstate.modules.loaded_module.LoadedModule.for_module_version",
         MockLoadedModule,
     )
-    @patch("server.websockets.send_update_to_workflow_clients")
+    @patch.object(rabbitmq, "send_update_to_workflow_clients")
     def test_set_secret_happy_path(self, send_update):
         send_update.return_value = async_noop()
 

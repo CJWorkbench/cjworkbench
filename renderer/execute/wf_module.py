@@ -18,10 +18,9 @@ from cjwkernel.types import (
     Tab,
 )
 from cjwkernel.util import tempfile_context
-from cjwstate import clientside, minio, rendercache
+from cjwstate import clientside, minio, rabbitmq, rendercache
 from cjwstate.models import StoredObject, WfModule, Workflow
 from cjwstate.modules.loaded_module import LoadedModule
-from server import websockets
 from renderer import notifications
 from .types import (
     TabCycleError,
@@ -381,7 +380,7 @@ async def execute_wfmodule(
     update = clientside.Update(
         steps={wf_module.id: clientside.StepUpdate(render_result=crr)}
     )
-    await websockets.send_update_to_workflow_clients(workflow.id, update)
+    await rabbitmq.send_update_to_workflow_clients(workflow.id, update)
 
     # Email notification if data has changed. Do this outside of the database
     # lock, because SMTP can be slow, and Django's email backend is

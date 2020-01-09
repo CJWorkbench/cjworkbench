@@ -2,23 +2,31 @@ import asyncio
 from dataclasses import dataclass
 import functools
 import logging
-import types
+import pickle
 from typing import Any, Callable, Dict, Optional
+import types
 import aioamqp
-from aioamqp.exceptions import AmqpClosedConnection
+from aioamqp.exceptions import AmqpClosedConnection, PublishFailed
 from django.conf import settings
 import msgpack
+from .. import clientside
 
 
 _loop_to_connection = {}
 logger = logging.getLogger(__name__)
 
 
-Render = "render"
-Fetch = "fetch"
+def _workflow_group_name(workflow_id: int) -> str:
+    """
+    Build a channel_layer group name, given a workflow ID.
+
+    Messages sent to this group will be sent to all clients connected to
+    this workflow.
+    """
+    return f"workflow-{str(workflow_id)}"
 
 
-@dataclass
+@dataclass(frozen=True)
 class DeclaredQueueConsume:
     name: str
     callback: Optional[Callable] = None
@@ -27,75 +35,6 @@ class DeclaredQueueConsume:
 
     If `None`, just _declare_ the queue but never consume from it.
     """
-
-
-def acking_callback(fn):
-    """
-    Decorate a callback to ack when finished or close the connection on error.
-
-    Usage:
-
-        @rabbitmq.acking_callback
-        async def handle_render_message(message: Dict[str, Any]):
-            pass
-
-        # Begin consuming
-        await connection.consume(rabbitmq.Render, handle_render_message, 3)
-    """
-
-    @functools.wraps(fn)
-    async def inner(channel, body, envelope, properties):
-        try:
-            message = msgpack.unpackb(body, raw=False)
-            await fn(message)
-        finally:
-            await channel.basic_client_ack(envelope.delivery_tag)
-
-    return inner
-
-
-def manual_acking_callback(fn):
-    """
-    Decode `message` and supply a no-arg `ack()` function to a callback.
-
-    Usage:
-
-        @rabbitmq.manual_acking_callback
-        async def handle_render_message(message: Dict[str, Any],
-                                        ack: Callable[[], Awaitable[None]]):
-            # You _must_ ack. If you do not, a RuntimeError will be raised.
-            await ack()
-
-        # Begin consuming
-        await connection.consume(rabbitmq.Render, handle_render_message, 3)
-    """
-
-    @functools.wraps(fn)
-    async def inner(channel, body, envelope, properties):
-        acked = False
-
-        async def ack():
-            nonlocal acked
-            if acked:
-                try:
-                    raise RuntimeError
-                except RuntimeError:
-                    logger.exception("You called `ack()` twice")
-            await channel.basic_client_ack(envelope.delivery_tag)
-            acked = True
-
-        try:
-            message = msgpack.unpackb(body, raw=False)
-            await fn(message, ack)
-        finally:
-            if not acked:
-                try:
-                    raise RuntimeError
-                except RuntimeError:
-                    logger.exception("You did not call ack()")
-                await ack()
-
-    return inner
 
 
 class RetryingConnection:
@@ -156,12 +95,12 @@ class RetryingConnection:
         while not self.is_closed:
             await self.connect()  # raise if connect() fails over and over
 
-            # What happens on error? One of two things:
+            # What happens on error? One of these cases:
             #
             # 1. RabbitMQ closes self._channel. Why would it do this? Well,
-            #    that's not for us to ask. The most common case is:
+            #    that's not for us to ask.
             # 2. RabbitMQ closes self._protocol. If it does, self._protocol
-            #    will go and close self._channel.
+            #    will close self._channel.
             # 3. Network error. self._protocol.worker will return in that
             #    case.
             #
@@ -271,6 +210,13 @@ class RetryingConnection:
                 self._make_callback_not_block(queue.callback), queue_name=queue.name
             )
 
+        # _declared_exchanges: exchanges we have declared since our most recent
+        # successful connect.
+        #
+        # When we send to an exchange we haven't sent to before, we declare it
+        # first.
+        self._declared_exchanges = set()
+
         logger.info("Connected to RabbitMQ")
 
     async def close(self) -> None:
@@ -316,15 +262,55 @@ class RetryingConnection:
         """
         self._declared_queues.append(DeclaredQueueConsume(queue))
 
-    async def publish(self, queue: str, message: Dict[str, Any]) -> None:
+    async def publish(
+        self, queue: str, message: Dict[str, Any], *, exchange: str = ""
+    ) -> None:
         """
         Publish `message` onto `queue`, reconnecting if needed.
+
+        (`queue` is really a "routing_key" in AMQP lingo. One can't publish
+        directly to a queue. See
+        https://www.rabbitmq.com/tutorials/amqp-concepts.html#exchange-default)
         """
         packed_message = msgpack.packb(message, use_bin_type=True)
 
         await self._connected
-        await self._channel.publish(packed_message, "", routing_key=queue)
-        # On error, we'll set self.
+        if exchange and exchange not in self._declared_exchanges:
+            await self._channel.exchange_declare(exchange, "direct")
+            self._declared_exchanges.add(exchange)
+
+        # Raise on error
+        await self._channel.publish(packed_message, exchange, routing_key=queue)
+
+    async def publish_to_django_channels_group(
+        self, group_name: str, message: Dict[str, Any]
+    ) -> None:
+        """
+        Publish `message` for Django Channels consumers.
+
+        This sends on a RabbitMQ topic exchange called "groups". (That magic
+        string is described at
+        https://github.com/CJWorkbench/channels_rabbitmq#groups_exchange.)
+        RabbitMQ will deliver the message to each matching queue.
+
+        If one of those queues is full, we may warn about a PublishFailed
+        error. The message will still be delivered to other queues. (See
+        https://www.rabbitmq.com/maxlength.html#overflow-behaviour.) Since
+        "full queue" usually means "shaky HTTP connection" or "stalled web
+        browser", the user probably won't notice that we drop the message.
+        """
+        full_message = {**message, "__asgi_group__": group_name}
+        # exchange="groups" magic string is defined here:
+        # https://github.com/CJWorkbench/channels_rabbitmq#groups_exchange
+        exchange = "groups"
+        try:
+            await self.publish(group_name, full_message, exchange=exchange)
+        except PublishFailed:
+            logger.warning(
+                "Did not deliver to all queues on group %r: a queue is at capacity",
+                group_name,
+            )
+            pass
 
     # Workbench-specific methods follow:
 
@@ -334,6 +320,32 @@ class RetryingConnection:
     async def queue_fetch(self, workflow_id: int, wf_module_id: int) -> None:
         await self.publish(
             "fetch", {"workflow_id": workflow_id, "wf_module_id": wf_module_id}
+        )
+
+    async def send_update_to_workflow_clients(
+        self, workflow_id: int, update: clientside.Update
+    ) -> None:
+        await self.publish_to_django_channels_group(
+            _workflow_group_name(workflow_id),
+            {"type": "send_pickled_update", "pickled_update": pickle.dumps(update)},
+        )
+
+    async def queue_render_if_consumers_are_listening(
+        workflow_id: int, delta_id: int
+    ) -> None:
+        """
+        Tell workflow consumers to call `queue_render(workflow_id, delta_id)`.
+
+        In other words: "queue a render, but only if somebody has this workflow
+        open in a web browser."
+
+        Django Channels will call Websockets consumers' `queue_render()` method.
+        (If there are no listeners, that method won't be called.) Each consumer
+        will (presumably) call `rabbitmq.RetryingConnection.queue_render()`.
+        """
+        await self.publish_to_django_channels_group(
+            _workflow_group_name(workflow_id),
+            {"type": "queue_render", "delta_id": delta_id},
         )
 
 

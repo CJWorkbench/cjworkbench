@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 import logging
 from unittest.mock import patch
 from dateutil import parser
+from cjwstate import rabbitmq
 from cjwstate.models import Workflow
 from cjwstate.tests.utils import DbTestCase
 from cron import autoupdate
@@ -31,9 +32,9 @@ class SuccessfulRenderLock:
 
 
 class UpdatesTests(DbTestCase):
-    @patch("server.rabbitmq.queue_fetch")
-    @patch(
-        "server.websockets.send_update_to_workflow_clients", lambda _1, _2: future_none
+    @patch.object(rabbitmq, "queue_fetch")
+    @patch.object(
+        rabbitmq, "send_update_to_workflow_clients", lambda _1, _2: future_none
     )
     @patch("django.utils.timezone.now", lambda: parser.parse("Aug 28 1999 2:35PM UTC"))
     def test_queue_fetches(self, mock_queue_fetch):
