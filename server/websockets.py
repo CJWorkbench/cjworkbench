@@ -29,6 +29,35 @@ def _workflow_group_name(workflow_id: int) -> str:
     return f"workflow-{str(workflow_id)}"
 
 
+@database_sync_to_async
+def _get_workflow_as_clientside_update(
+    user, session, workflow_id: int
+) -> WorkflowUpdateData:
+    """
+    Return (clientside.Update, delta_id).
+
+    Raise Workflow.DoesNotExist if a race deletes the Workflow.
+
+    The purpose of this method is to hide races from users who disconnect
+    and reconnect while changes are being made. It's okay for things to be
+    slightly off, as long as users don't notice. (Long-term, we can build
+    better a more-correct synchronization strategy.)
+    """
+    with Workflow.authorized_lookup_and_cooperative_lock(
+        "read", user, session, pk=workflow_id
+    ) as workflow_lock:
+        workflow = workflow_lock.workflow
+        update = clientside.Update(
+            workflow=workflow.to_clientside(),
+            tabs={tab.slug: tab.to_clientside() for tab in workflow.live_tabs},
+            steps={
+                step.id: step.to_clientside()
+                for step in WfModule.live_in_workflow(workflow)
+            },
+        )
+        return WorkflowUpdateData(update, workflow.last_delta_id)
+
+
 class WorkflowConsumer(AsyncJsonWebsocketConsumer):
     @property
     def workflow_id(self):
@@ -69,30 +98,6 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
         except Workflow.DoesNotExist:
             return False
 
-    @database_sync_to_async
-    def get_workflow_as_clientside_update(self) -> WorkflowUpdateData:
-        """
-        Return (clientside.Update, delta_id), or raise Workflow.DoesNotExist
-
-        The purpose of this method is to hide races from users who disconnect
-        and reconnect while changes are being made. It's okay for things to be
-        slightly off, as long as users don't notice. (Long-term, we can build
-        better a more-correct synchronization strategy.)
-        """
-        with Workflow.authorized_lookup_and_cooperative_lock(
-            "read", self.scope["user"], self.scope["session"], pk=self.workflow_id
-        ) as workflow_lock:
-            workflow = workflow_lock.workflow
-            update = clientside.Update(
-                workflow=workflow.to_clientside(),
-                tabs={tab.slug: tab.to_clientside() for tab in workflow.live_tabs},
-                steps={
-                    step.id: step.to_clientside()
-                    for step in WfModule.live_in_workflow(workflow)
-                },
-            )
-            return WorkflowUpdateData(update, workflow.last_delta_id)
-
     async def connect(self):
         if not await self.authorize("read"):
             raise DenyConnection()
@@ -131,13 +136,15 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
 
     async def send_whole_workflow_to_client(self):
         try:
-            update, delta_id = await self.get_workflow_as_clientside_update()
+            update, delta_id = await _get_workflow_as_clientside_update(
+                self.scope["user"], self.scope["session"], self.workflow_id
+            )
         except Workflow.DoesNotExist:
             return
 
         await self.send_update(update)
         if any(
-            step.render_result is None
+            step.render_result == clientside.Null
             or (step.render_result.delta_id != step.last_relevant_delta_id)
             for step in update.steps.values()
         ):
