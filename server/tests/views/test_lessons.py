@@ -223,17 +223,17 @@ class LessonDetailTests(DbTestCase):
         self.assertEqual(tab1["slug"], "tab-1")
         self.assertEqual(tab1["name"], "Tab X")
         wf_modules = state["wfModules"]
-        wfm1 = list(wf_modules.values())[0]
-        self.assertEqual(wfm1["module"], "amodule")
-        self.assertEqual(wfm1["slug"], "step-X")
-        self.assertEqual(wfm1["params"], {"foo": "bar"})
-        self.assertEqual(wfm1["notes"], "You're gonna love this data!")
-        self.assertEqual(wfm1["is_collapsed"], True)
-        self.assertEqual(wfm1["is_busy"], False)
+        step1 = list(wf_modules.values())[0]
+        self.assertEqual(step1["module"], "amodule")
+        self.assertEqual(step1["slug"], "step-X")
+        self.assertEqual(step1["params"], {"foo": "bar"})
+        self.assertEqual(step1["notes"], "You're gonna love this data!")
+        self.assertEqual(step1["is_collapsed"], True)
+        self.assertEqual(step1["is_busy"], False)
 
         # We should be rendering the modules
         render.assert_called_with(
-            state["workflow"]["id"], wfm1["last_relevant_delta_id"]
+            state["workflow"]["id"], step1["last_relevant_delta_id"]
         )
 
     @patch("server.rabbitmq.queue_render")
@@ -314,11 +314,11 @@ class LessonDetailTests(DbTestCase):
         response = self.client.get("/lessons/en/a-lesson")
         state = response.context_data["initState"]
         wf_modules = state["wfModules"]
-        wfm1 = list(wf_modules.values())[0]
-        self.assertEqual(wfm1["is_busy"], True)  # because we sent a fetch
+        step1 = list(wf_modules.values())[0]
+        self.assertEqual(step1["is_busy"], True)  # because we sent a fetch
 
         # We should be rendering the modules
-        fetch.assert_called_with(state["workflow"]["id"], wfm1["id"])
+        fetch.assert_called_with(state["workflow"]["id"], step1["id"])
         render.assert_not_called()
 
     @patch.dict(

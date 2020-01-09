@@ -111,7 +111,7 @@ export class OutputPane extends React.Component {
 
   render () {
     const { isReadOnly, loadRows, wfModule } = this.props
-    const wfm = this.wfModuleForTable
+    const step = this.wfModuleForTable
     const className = 'outputpane module-' + (wfModule ? wfModule.status : 'unreachable')
 
     return (
@@ -120,11 +120,11 @@ export class OutputPane extends React.Component {
         {this.renderShowingInput()}
         <DelayedTableSwitcher
           key='table'
-          wfModuleId={wfm ? wfm.id : null}
-          status={wfm ? wfm.status : null}
-          deltaId={wfm ? wfm.deltaId : null}
-          columns={wfm ? wfm.columns : null}
-          nRows={wfm ? wfm.nRows : null}
+          wfModuleId={step ? step.id : null}
+          status={step ? step.status : null}
+          deltaId={step ? step.deltaId : null}
+          columns={step ? step.columns : null}
+          nRows={step ? step.nRows : null}
           isReadOnly={isReadOnly}
           loadRows={loadRows}
         />

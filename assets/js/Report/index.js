@@ -9,9 +9,9 @@ function mapStateToProps (state) {
       const wfModulesWithIframe = tab.wf_module_ids
         .map(id => wfModules[String(id)])
         .filter(s => !!s && modules[s.module] && modules[s.module].has_html_output)
-        .map(wfm => ({
-          id: wfm.id,
-          deltaId: wfm.last_relevant_delta_id
+        .map(step => ({
+          id: step.id,
+          deltaId: step.last_relevant_delta_id
         }))
       return {
         slug: tab.slug,

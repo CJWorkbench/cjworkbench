@@ -176,12 +176,12 @@ class VersionsTests(DbTestCase):
 
         # Now add a new command. It should remove cmd2, cmd3 from the redo
         # stack and delete them from the db
-        wfm = all_modules.first()
+        step = all_modules.first()
         cmd4 = self.run_with_async_db(
             commands.do(
                 ChangeWfModuleNotesCommand,
                 workflow_id=workflow.id,
-                wf_module=wfm,
+                wf_module=step,
                 new_value="Note of no note",
             )
         )

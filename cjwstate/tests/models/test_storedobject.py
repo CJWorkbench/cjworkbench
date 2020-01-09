@@ -9,16 +9,18 @@ class StoredObjectTests(DbTestCase):
         super().setUp()
 
         self.workflow = Workflow.create_and_init()
-        self.wfm1 = self.workflow.tabs.first().wf_modules.create(order=0, slug="step-1")
+        self.step1 = self.workflow.tabs.first().wf_modules.create(
+            order=0, slug="step-1"
+        )
 
     def test_duplicate_bytes(self):
-        key = f"{self.workflow.id}/{self.wfm1.id}/{uuid1()}"
+        key = f"{self.workflow.id}/{self.step1.id}/{uuid1()}"
         minio.put_bytes(minio.StoredObjectsBucket, key, b"12345")
-        self.wfm2 = self.wfm1.tab.wf_modules.create(order=1, slug="step-2")
-        so1 = self.wfm1.stored_objects.create(
+        self.step2 = self.step1.tab.wf_modules.create(order=1, slug="step-2")
+        so1 = self.step1.stored_objects.create(
             bucket=minio.StoredObjectsBucket, key=key, size=5
         )
-        so2 = so1.duplicate(self.wfm2)
+        so2 = so1.duplicate(self.step2)
 
         # new StoredObject should have same time,
         # different file with same contents

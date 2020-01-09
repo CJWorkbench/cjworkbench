@@ -278,13 +278,13 @@ class DependencyGraphTests(DbTestCase):
             }
         )
 
-        wfm1 = tab1.wf_modules.create(
+        step1 = tab1.wf_modules.create(
             order=0, slug="step-1", module_id_name="simple", params={"str": "A"}
         )
-        wfm2 = tab1.wf_modules.create(
+        step2 = tab1.wf_modules.create(
             order=1, slug="step-2", module_id_name="tabby", params={"tab": "tab-2"}
         )
-        wfm3 = tab2.wf_modules.create(
+        step3 = tab2.wf_modules.create(
             order=0, slug="step-3", module_id_name="simple", params={"str": "B"}
         )
 
@@ -292,15 +292,15 @@ class DependencyGraphTests(DbTestCase):
         self.assertEqual(
             graph.tabs,
             [
-                DependencyGraph.Tab("tab-1", [wfm1.id, wfm2.id]),
-                DependencyGraph.Tab("tab-2", [wfm3.id]),
+                DependencyGraph.Tab("tab-1", [step1.id, step2.id]),
+                DependencyGraph.Tab("tab-2", [step3.id]),
             ],
         )
         self.assertEqual(
             graph.steps,
             {
-                wfm1.id: DependencyGraph.Step(set()),
-                wfm2.id: DependencyGraph.Step(set(["tab-2"])),
-                wfm3.id: DependencyGraph.Step(set()),
+                step1.id: DependencyGraph.Step(set()),
+                step2.id: DependencyGraph.Step(set(["tab-2"])),
+                step3.id: DependencyGraph.Step(set()),
             },
         )

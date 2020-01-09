@@ -72,19 +72,19 @@ def _load_tab_flows(workflow: Workflow, delta_id: int) -> List[TabFlow]:
         for tab_model in workflow.live_tabs.all():
             steps = [
                 ExecuteStep(
-                    wfm,
+                    step,
                     (
-                        wfm.module_version.param_schema
-                        if wfm.module_version is not None
+                        step.module_version.param_schema
+                        if step.module_version is not None
                         else ParamDType.Dict({})
                     ),
                     # We need to invoke the kernel and migrate _all_ modules'
                     # params (WfModule.get_params), because we can only check
                     # for tab cycles after migrating (and before calling any
                     # render()).
-                    _get_migrated_params(wfm),
+                    _get_migrated_params(step),
                 )
-                for wfm in tab_model.live_wf_modules.all()
+                for step in tab_model.live_wf_modules.all()
             ]
             ret.append(TabFlow(Tab(tab_model.slug, tab_model.name), steps))
     return ret

@@ -125,16 +125,16 @@ def _init_workflow_for_lesson(workflow, lesson):
             selected_wf_module_position=len(tab_dict["wfModules"]) - 1,
         )
 
-        for order, wfm in enumerate(tab_dict["wfModules"]):
-            _add_wf_module_to_tab(wfm, order, tab, workflow.last_delta_id, lesson)
+        for order, step in enumerate(tab_dict["wfModules"]):
+            _add_wf_module_to_tab(step, order, tab, workflow.last_delta_id, lesson)
 
 
-def _add_wf_module_to_tab(wfm_dict, order, tab, delta_id, lesson):
+def _add_wf_module_to_tab(step_dict, order, tab, delta_id, lesson):
     """
     Deserialize a WfModule from lesson initial_workflow
     """
-    id_name = wfm_dict["module"]
-    slug = wfm_dict["slug"]
+    id_name = step_dict["module"]
+    slug = step_dict["slug"]
 
     # 500 error if bad module id name
     module_version = ModuleVersion.objects.latest(id_name)
@@ -142,7 +142,7 @@ def _add_wf_module_to_tab(wfm_dict, order, tab, delta_id, lesson):
     # All params not set in json get default values
     # Also, we must have a dict with all param values set or we can't migrate
     # params later
-    params = {**module_version.default_params, **wfm_dict["params"]}
+    params = {**module_version.default_params, **step_dict["params"]}
 
     # Rewrite 'url' params: if the spec has them as relative, make them the
     # absolute path -- relative to the lesson URL.
@@ -173,8 +173,8 @@ def _add_wf_module_to_tab(wfm_dict, order, tab, delta_id, lesson):
         is_busy=module_version.loads_data,  # assume we'll send a fetch
         last_relevant_delta_id=delta_id,
         params=params,
-        is_collapsed=wfm_dict.get("collapsed", False),
-        notes=wfm_dict.get("note", None),
+        is_collapsed=step_dict.get("collapsed", False),
+        notes=step_dict.get("note", None),
     )
 
 
@@ -183,13 +183,13 @@ def _queue_workflow_updates(workflow: Workflow) -> None:
     have_a_fetch_module = False
 
     for tab in workflow.tabs.all():
-        for wfm in tab.wf_modules.all():
+        for step in tab.wf_modules.all():
             have_a_module = True
             # If this module fetches, do the fetch now (so e.g. Loadurl loads
             # immediately)
-            if wfm.is_busy:
+            if step.is_busy:
                 have_a_fetch_module = True
-                async_to_sync(rabbitmq.queue_fetch)(workflow.id, wfm.id)
+                async_to_sync(rabbitmq.queue_fetch)(workflow.id, step.id)
 
     if have_a_module and not have_a_fetch_module:
         # Render. (e.g., pastecsv)

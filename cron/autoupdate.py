@@ -16,8 +16,8 @@ def load_pending_wf_modules() -> List[Tuple[int, WfModule]]:
     now = timezone.now()
     # WfModule.workflow_id is a database operation
     return [
-        (wfm.workflow_id, wfm)
-        for wfm in WfModule.objects.filter(
+        (step.workflow_id, step)
+        for step in WfModule.objects.filter(
             is_deleted=False,
             tab__is_deleted=False,
             is_busy=False,  # not already scheduled

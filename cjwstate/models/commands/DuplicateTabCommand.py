@@ -96,8 +96,8 @@ class DuplicateTabCommand(Delta):
         This must be called in a `workflow.cooperative_lock()`.
         """
         return not self.tab.is_deleted and any(
-            wfm.last_relevant_delta_id != wfm.cached_render_result_delta_id
-            for wfm in self.tab.live_wf_modules.all()
+            step.last_relevant_delta_id != step.cached_render_result_delta_id
+            for step in self.tab.live_wf_modules.all()
         )
 
     @classmethod
