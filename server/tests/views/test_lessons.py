@@ -1,6 +1,7 @@
 import asyncio
 from typing import Any, Dict, List
 from unittest.mock import patch
+from cjwstate import rabbitmq
 from cjwstate.models import Workflow, ModuleVersion
 from cjwstate.modules.loaded_module import LoadedModule
 from server.models.lesson import Lesson, LessonLookup, LessonInitialWorkflow
@@ -181,7 +182,7 @@ class LessonDetailTests(DbTestCase):
         response = self.client.get(workflow.get_absolute_url())
         self.assertRedirects(response, "/courses/en/intro-to-data-journalism/filter")
 
-    @patch("server.rabbitmq.queue_render")
+    @patch.object(rabbitmq, "queue_render")
     @patch.dict(
         LessonLookup,
         {
@@ -236,7 +237,7 @@ class LessonDetailTests(DbTestCase):
             state["workflow"]["id"], step1["last_relevant_delta_id"]
         )
 
-    @patch("server.rabbitmq.queue_render")
+    @patch.object(rabbitmq, "queue_render")
     @patch.dict(
         LessonLookup,
         {
@@ -277,8 +278,8 @@ class LessonDetailTests(DbTestCase):
             {"url": "http://localhost:8000/static/lessons/en/a-lesson/foo.txt"},
         )
 
-    @patch("server.rabbitmq.queue_fetch")
-    @patch("server.rabbitmq.queue_render")
+    @patch.object(rabbitmq, "queue_fetch")
+    @patch.object(rabbitmq, "queue_render")
     @patch.dict(
         LessonLookup,
         {

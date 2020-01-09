@@ -7,7 +7,7 @@ from channels.testing import WebsocketCommunicator
 from django.contrib.auth.models import AnonymousUser, User
 from cjworkbench.asgi import create_url_router
 from server import handlers
-from cjwstate import clientside
+from cjwstate import clientside, rabbitmq
 from cjwstate.models import Workflow
 from cjwstate.rabbitmq import (
     send_update_to_workflow_clients,
@@ -177,7 +177,7 @@ class ChannelTests(DbTestCase):
         await comm.receive_from()  # ignore initial workflow delta
         self.assertTrue(await comm.receive_nothing())
 
-    @patch("server.rabbitmq.queue_render")
+    @patch.object(rabbitmq, "queue_render")
     @async_test
     async def test_queue_render_if_listening(self, communicate, queue_render):
         future_args = asyncio.get_event_loop().create_future()
@@ -195,7 +195,7 @@ class ChannelTests(DbTestCase):
         args = await asyncio.wait_for(future_args, 0.005)
         self.assertEqual(args, (self.workflow.id, 123))
 
-    @patch("server.rabbitmq.queue_render")
+    @patch.object(rabbitmq, "queue_render")
     @async_test
     async def test_queue_render_if_not_listening(self, communicate, queue_render):
         future_args = asyncio.get_event_loop().create_future()
@@ -312,7 +312,7 @@ class ChannelTests(DbTestCase):
             },
         )
 
-    @patch("server.rabbitmq.queue_render")
+    @patch.object(rabbitmq, "queue_render")
     @async_test
     async def test_connect_queues_render_if_needed(self, communicate, queue_render):
         """

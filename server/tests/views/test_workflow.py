@@ -7,9 +7,9 @@ from django.contrib.auth.models import AnonymousUser, User
 from django.test import RequestFactory
 from rest_framework import status
 from rest_framework.test import APIRequestFactory, force_authenticate
-from server import rabbitmq
 from cjwkernel.tests.util import arrow_table
 from cjwkernel.types import RenderResult
+from cjwstate import rabbitmq
 from cjwstate.rendercache import cache_render_result
 from cjwstate.models import ModuleVersion, Workflow
 from cjwstate.models.commands import InitWorkflowCommand
