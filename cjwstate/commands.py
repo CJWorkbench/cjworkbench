@@ -1,8 +1,12 @@
+import logging
 from typing import Any, Dict, Optional, Tuple
 from cjworkbench.sync import database_sync_to_async
 from cjwstate import clientside, rabbitmq
 from cjwstate.models import Delta, WfModule, Workflow
 from cjwstate.models.commands import ChangeDataVersionCommand
+
+
+logger = logging.getLogger(__name__)
 
 
 async def websockets_notify(workflow_id: int, update: clientside.Update) -> None:
@@ -182,6 +186,8 @@ async def do(cls, *, workflow_id: int, **kwargs) -> Delta:
         # now delta has been applied and committed to the database, and
         # websockets updates have been queued for each consumer.
     """
+    logger.debug("do %s(workflow_id=%d)", cls.__name__, workflow_id)
+
     delta, update, want_render = await _first_forward_and_save_returning_clientside_update(
         cls, workflow_id, **kwargs
     )
@@ -201,6 +207,7 @@ async def redo(delta: Delta) -> None:
     """
     Call delta.forward(); notify websockets and renderer.
     """
+    logger.debug("redo %s(workflow_id=%d)", type(delta).__name__, delta.workflow_id)
     # updates delta.workflow.last_delta_id (so querying it won't cause a DB lookup)
     update, want_render = await _call_forward_and_load_clientside_update(delta)
     await websockets_notify(delta.workflow_id, update)
@@ -213,6 +220,7 @@ async def undo(delta: Delta) -> None:
     """
     Call delta.backward(); notify websockets and renderer.
     """
+    logger.debug("undo %s(workflow_id=%d)", type(delta).__name__, delta.workflow_id)
     # updates delta.workflow.last_delta_id (so querying it won't cause a DB lookup)
     update, want_render = await _call_backward_and_load_clientside_update(delta)
     await websockets_notify(delta.workflow_id, update)
