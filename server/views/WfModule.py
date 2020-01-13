@@ -18,23 +18,24 @@ from django.http import (
     JsonResponse,
 )
 from django.shortcuts import get_object_or_404
+from django.utils.cache import add_never_cache_headers
 from django.views.decorators.clickjacking import xframe_options_exempt
-import pyarrow
+import numpy as np
+import pyarrow as pa
 from rest_framework import status
 from rest_framework.decorators import api_view, renderer_classes
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
-from cjwkernel.pandas import types as ptypes
 from cjwkernel.types import Column, ColumnType
+from cjwstate import rabbitmq
 from cjwstate.rendercache import (
     CorruptCacheError,
     downloaded_parquet_file,
     open_cached_render_result,
-    read_cached_render_result_pydict,
+    read_cached_render_result_slice_as_text,
 )
 from cjwstate.models import Tab, WfModule, Workflow
 from cjwstate.modules.loaded_module import module_get_html_bytes
-from server import rabbitmq
 
 
 _MaxNRowsPerRequest = 300
@@ -84,32 +85,6 @@ def _with_wf_module_for_read(fn):
 TimestampUnits = {"us": 1000000, "s": 1, "ms": 1000, "ns": 1000000000}  # most common
 
 
-def _pydict_to_json_records(
-    # need to pass n_rows in case len(columns) == 0
-    pydict: Dict[str, List[Any]],
-    columns: List[Column],
-    n_rows: int,
-) -> List[Dict[str, Any]]:
-    """
-    Converts column-wise `pydict` to JSON records.
-
-    String values become Strings; Number values become int/float; Datetime
-    values become ISO8601-encoded Strings.
-    """
-    # Convert datetime to str
-    converted = {}
-    for column in columns:
-        if isinstance(column.type, ColumnType.Datetime):
-            converted[column.name] = [
-                (None if v is None else (v.isoformat() + "Z"))
-                for v in pydict[column.name]
-            ]
-        else:
-            converted[column.name] = pydict[column.name]
-    # Transpose into JSON records
-    return [{k: v[i] for k, v in converted.items()} for i in range(n_rows)]
-
-
 # Helper method that produces json output for a table + start/end row
 # Also silently clips row indices
 # Now reading a maximum of 101 columns directly from cache parquet
@@ -126,22 +101,15 @@ def _make_render_tuple(cached_result, startrow=None, endrow=None):
     )
 
     # raise CorruptCacheError
-    data = read_cached_render_result_pydict(
+    record_json = read_cached_render_result_slice_as_text(
         cached_result,
+        "json",
         # Return one row more than configured, so the client knows there
         # are "too many rows".
         only_columns=range(settings.MAX_COLUMNS_PER_CLIENT_REQUEST + 1),
         only_rows=range(startrow, endrow),
     )
-    records = _pydict_to_json_records(
-        data,
-        cached_result.table_metadata.columns[
-            0 : settings.MAX_COLUMNS_PER_CLIENT_REQUEST + 1
-        ],
-        endrow - startrow,
-    )
-
-    return (startrow, endrow, records)
+    return (startrow, endrow, record_json)
 
 
 def int_or_none(x):
@@ -172,14 +140,19 @@ def wfmodule_render(request: HttpRequest, wf_module: WfModule, format=None):
             return JsonResponse({"start_row": 0, "end_row": 0, "rows": []})
 
         try:
-            startrow, endrow, records = _make_render_tuple(
+            startrow, endrow, record_json = _make_render_tuple(
                 cached_result, startrow, endrow
             )
         except CorruptCacheError:
             # assume we'll get another request after execute finishes
             return JsonResponse({"start_row": 0, "end_row": 0, "rows": []})
 
-        return JsonResponse({"start_row": startrow, "end_row": endrow, "rows": records})
+    data = '{"start_row":%d,"end_row":%d,"rows":%s}' % (startrow, endrow, record_json)
+    response = HttpResponse(
+        data.encode("utf-8"), content_type="application/json", charset="utf-8"
+    )
+    add_never_cache_headers(response)
+    return response
 
 
 _html_head_start_re = re.compile(rb"<\s*head[^>]*>", re.IGNORECASE)
@@ -237,14 +210,21 @@ def wfmodule_value_counts(request: HttpRequest, wf_module: WfModule):
     except StopIteration:
         return JsonResponse({"error": f'column "{colname}" not found'}, status=404)
 
-    # raise CorruptCacheError
+    if not isinstance(column.type, ColumnType.Text):
+        # We only return text values.
+        #
+        # Rationale: this is only used in Refine and Filter by Value. Both
+        # force text. The user can query a column before it's converted to
+        # text; but if he/she does, we shouldn't format as text unless we have
+        # a viable workflow that needs it. (Better would be to force the user
+        # to convert to text before doing anything else, no?)
+        return JsonResponse({"values": {}})
+
     try:
+        # raise CorruptCacheError
         with open_cached_render_result(cached_result) as result:
             arrow_table = result.table.table
-            # series may be of any type, not just str/categorical
-            series = arrow_table.column(column_index).to_pandas(
-                deduplicate_objects=True, ignore_metadata=True
-            )
+            chunked_array = arrow_table.column(column_index)
     except CorruptCacheError:
         # We _could_ return an empty result set; but our only goal here is
         # "don't crash" and this 404 seems to be the simplest implementation.
@@ -252,13 +232,31 @@ def wfmodule_value_counts(request: HttpRequest, wf_module: WfModule):
         # and this response is going to be ignored.)
         return JsonResponse({"error": f'column "{colname}" not found'}, status=404)
 
-    # We only handle string. If it's not string, convert to string. (Rationale:
-    # this is used in Refine and Filter by Value, which are both solely
-    # String-based for now. Excel and Google Sheets only filter by String
-    # values, so we're in good company.) Remember: in JavaScript, Object keys
-    # must be String.
-    series = ptypes.ColumnType.from_arrow(column.type).format_series(series)
-    value_counts = series.value_counts().to_dict()
+    if chunked_array.num_chunks == 0:
+        value_counts = {}
+    else:
+        assert chunked_array.num_chunks == 1
+
+        # Assume type is text. (We checked column.type is ColumnType.Text above.)
+        chunk = chunked_array.chunks[0]
+        if not hasattr(chunk, "dictionary"):
+            chunk = chunk.dictionary_encode()
+
+        try:
+            max_index = max(v.as_py() for v in chunk.indices if v is not pa.NULL)
+        except ValueError:
+            # all nulls. Hack with "-1" makes the algorithm not-crash.
+            max_index = -1
+
+        counts = np.zeros(
+            max_index + 1, dtype=int
+        )  # if max_index = -1, counts is empty
+        for v in chunk.indices:
+            if v is not pa.NULL:
+                counts[v.as_py()] += 1
+        value_counts = {
+            value.as_py(): int(count) for value, count in zip(chunk.dictionary, counts)
+        }
 
     return JsonResponse({"values": value_counts})
 

@@ -1,7 +1,11 @@
 from django.template.response import TemplateResponse
 from django.views.decorators.clickjacking import xframe_options_exempt
 from cjwstate.models import WfModule
-from server.serializers import WorkflowSerializerLite, WfModuleSerializer
+from server.serializers import (
+    JsonizeContext,
+    jsonize_clientside_workflow,
+    jsonize_clientside_step,
+)
 
 
 @xframe_options_exempt
@@ -20,16 +24,16 @@ def embed(request, wfmodule_id):
         wf_module = None
 
     if wf_module:
-        workflow_module_serializer = WfModuleSerializer(wf_module)
-        workflow_serializer = WorkflowSerializerLite(
-            wf_module.workflow, context={"request": request}
-        )
+        ctx = JsonizeContext(request.user, request.session, request.locale_id)
         init_state = {
-            "workflow": workflow_serializer.data,
-            "wf_module": workflow_module_serializer.data,
+            "workflow": jsonize_clientside_workflow(
+                wf_module.workflow.to_clientside(include_tab_slugs=False),
+                ctx,
+                is_init=True,
+            ),
+            "wf_module": jsonize_clientside_step(wf_module.to_clientside(), ctx),
         }
     else:
         init_state = {"workflow": None, "wf_module": None}
 
-    response = TemplateResponse(request, "embed.html", {"initState": init_state})
-    return response
+    return TemplateResponse(request, "embed.html", {"initState": init_state})

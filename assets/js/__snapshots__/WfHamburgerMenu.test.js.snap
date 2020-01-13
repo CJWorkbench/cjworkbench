@@ -83,6 +83,19 @@ exports[`WfHamburgerMenu renders logged in, non-read only 1`] = `
                         class="dropdown-menu"
                         role="menu"
                       >
+                        <button
+                          class="dropdown-item"
+                          role="menuitem"
+                          tabindex="0"
+                        >
+                          <i
+                            class="icon icon-language"
+                          />
+                          js.WfHamburgerMenu.menu.language
+                        </button>
+                        <div
+                          class="dropdown-divider"
+                        />
                         <a
                           class="dropdown-item"
                           href="/workflows/"
@@ -97,13 +110,6 @@ exports[`WfHamburgerMenu renders logged in, non-read only 1`] = `
                           tabindex="0"
                         >
                           js.WfHamburgerMenu.menu.importModule
-                        </button>
-                        <button
-                          class="dropdown-item"
-                          role="menuitem"
-                          tabindex="0"
-                        >
-                          js.WfHamburgerMenu.menu.languages
                         </button>
                         <a
                           class="dropdown-item"
@@ -167,6 +173,71 @@ exports[`WfHamburgerMenu renders logged in, non-read only 1`] = `
                         className="dropdown-menu"
                         role="menu"
                       >
+                        <DropdownItem
+                          onClick={[Function]}
+                        >
+                          <button
+                            className="dropdown-item"
+                            onClick={[Function]}
+                            role="menuitem"
+                            tabIndex={0}
+                          >
+                            <i
+                              className="icon icon-language"
+                            />
+                            <WithI18n
+                              defaults="Language"
+                              id="js.WfHamburgerMenu.menu.language"
+                            >
+                              <I18n
+                                update={true}
+                                withHash={true}
+                              >
+                                <Trans
+                                  defaults="Language"
+                                  i18n={
+                                    Object {
+                                      "_": [Function],
+                                      "_activeLanguageData": Object {
+                                        "plurals": [Function],
+                                      },
+                                      "_activeMessages": Object {},
+                                      "_catalogs": Object {
+                                        "en": Object {
+                                          "languageData": Object {},
+                                          "messages": Object {},
+                                        },
+                                      },
+                                      "_dev": Object {
+                                        "compile": [Function],
+                                        "loadLanguageData": [Function],
+                                      },
+                                      "_language": "en",
+                                      "_locales": undefined,
+                                      "_missing": undefined,
+                                      "plural": [Function],
+                                      "select": [Function],
+                                      "selectOrdinal": [Function],
+                                      "t": [Function],
+                                    }
+                                  }
+                                  id="js.WfHamburgerMenu.menu.language"
+                                >
+                                  <Render
+                                    value="js.WfHamburgerMenu.menu.language"
+                                  >
+                                    js.WfHamburgerMenu.menu.language
+                                  </Render>
+                                </Trans>
+                              </I18n>
+                            </WithI18n>
+                          </button>
+                        </DropdownItem>
+                        <DropdownDivider>
+                          <div
+                            className="dropdown-divider"
+                          />
+                        </DropdownDivider>
                         <DropdownItem
                           href="/workflows/"
                         >
@@ -275,63 +346,6 @@ exports[`WfHamburgerMenu renders logged in, non-read only 1`] = `
                                     value="js.WfHamburgerMenu.menu.importModule"
                                   >
                                     js.WfHamburgerMenu.menu.importModule
-                                  </Render>
-                                </Trans>
-                              </I18n>
-                            </WithI18n>
-                          </button>
-                        </DropdownItem>
-                        <DropdownItem
-                          onClick={[Function]}
-                        >
-                          <button
-                            className="dropdown-item"
-                            onClick={[Function]}
-                            role="menuitem"
-                            tabIndex={0}
-                          >
-                            <WithI18n
-                              defaults="Languages"
-                              id="js.WfHamburgerMenu.menu.languages"
-                            >
-                              <I18n
-                                update={true}
-                                withHash={true}
-                              >
-                                <Trans
-                                  defaults="Languages"
-                                  i18n={
-                                    Object {
-                                      "_": [Function],
-                                      "_activeLanguageData": Object {
-                                        "plurals": [Function],
-                                      },
-                                      "_activeMessages": Object {},
-                                      "_catalogs": Object {
-                                        "en": Object {
-                                          "languageData": Object {},
-                                          "messages": Object {},
-                                        },
-                                      },
-                                      "_dev": Object {
-                                        "compile": [Function],
-                                        "loadLanguageData": [Function],
-                                      },
-                                      "_language": "en",
-                                      "_locales": undefined,
-                                      "_missing": undefined,
-                                      "plural": [Function],
-                                      "select": [Function],
-                                      "selectOrdinal": [Function],
-                                      "t": [Function],
-                                    }
-                                  }
-                                  id="js.WfHamburgerMenu.menu.languages"
-                                >
-                                  <Render
-                                    value="js.WfHamburgerMenu.menu.languages"
-                                  >
-                                    js.WfHamburgerMenu.menu.languages
                                   </Render>
                                 </Trans>
                               </I18n>

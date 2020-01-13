@@ -108,7 +108,7 @@ export class WorkflowNavBar extends React.Component {
       }).isRequired
     }), // optional -- no lesson means we're not in the "lessons" interface
     isReadOnly: PropTypes.bool.isRequired,
-    loggedInUser: PropTypes.object // undefined if no user logged in
+    loggedInUser: PropTypes.object // null if no user logged in
   }
 
   state = {

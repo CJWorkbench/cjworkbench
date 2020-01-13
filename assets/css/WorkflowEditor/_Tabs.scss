@@ -1,8 +1,17 @@
 .tabs {
-  // Beware: these values must be edited both here and in _PaneSelect.scss
-  $tab-button-padding: .8rem .5rem .6rem .1rem;
+  // If you're editing these, consider editing paddings and widths in
+  // _PaneSelect.scss.
+  $tab-button-padding: .8rem .5rem .6rem;
   $tab-name-padding: .8rem .5rem .6rem 1.5rem;
+  $tab-button-width: 3rem; // for an absolute-positioning hack
   $overlap-width: 3px;
+
+  display: flex;
+  overflow: hidden; // we're in a wider flexbox and must shrink to fit
+
+  // We do some clever stuff with margin-left: -1px further down. Ensure the
+  // first tab renders completely when its margin-left is -1px.
+  padding-left: 1px;
 
   // list of tabs
   &>ul {
@@ -11,78 +20,81 @@
     list-style: none;
     display: contents;
 
+    // Single tab: ul > li > div.tab
     &>li {
       display: inline-block;
       position: relative; // for .dropping-left and .dropping-right
-    }
 
-    // single tab
-    &>li {
       .tab {
-        display: inline-flex; // editor + dropdown-menu
-        white-space: nowrap;
+        // We'll use .size-calculator to calculate size, and then we'll position
+        // input[name=tab-name] and .dropdown absolutely.
+        //
+        // The structure:
+        // <div class="tab">
+        //   <span class="size-calculator"/>
+        //   <input name="tab-name"/>
+        //   <div class="dropdown">...</div>
+        // </div>
+        position: relative;
+        cursor: pointer;
+
         background: $pane-select-tab-bg;
         color: $pane-select-tab-fg;
         border-top-left-radius: .5rem;
         border-top-right-radius: .5rem;
-        margin-right: 1px; // 1px more than when we're li.selected....
-        margin-left: 0; // 1px more than when we're li.selected...
 
-        .tab-name {
-          font-size: 1.4rem;
-          line-height: 1.5;
+        font-size: 1.4rem;
+        line-height: 1.5;
+
+        .size-calculator, input[name="tab-name"] {
           white-space: pre; // do not collapse whitespace
-          cursor: pointer;
           padding: $tab-name-padding;
-          // Contains a <span> (styled like .tab-name) and a <input>.
-          // Make the <input> position:absolute so the width is auto-calculated
-          // by the <span>.
-          display: block;
-          position: relative;
+        }
 
-          span.size-calculator {
-            opacity: 0;
-            display: block; // so it has the same height even when it contains no text
+        .size-calculator {
+          opacity: 0;
+          display: block; // so it has the same height even when it contains no text
+          padding-right: $tab-button-width; // _exclude_ $tab-name-padding
 
-            &:empty::before {
-              // Never let size-calculator be empty: that will change the height
-              // of the <span>, which will affect the height of the <input>
-              content: '…';
-            }
+          &:empty::before {
+            // Never let size-calculator be empty: that will change the height
+            // of the <span>, which will affect the height of the <input>
+            content: '…';
           }
+        }
+
+        input[name="tab-name"] {
+          display: block;
+          font: inherit;
+          line-height: inherit;
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: transparent;
+          border: 0;
+          outline: 0;
 
           ::placeholder {
             color: white;
           }
 
-          input {
-            display: block;
-            font: inherit;
-            line-height: inherit;
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            padding: $tab-name-padding;
-            // Instead of width:100%, use right:-1px. Some widths are fractional,
-            // and if we round the wrong way the <input> will be drag-to-scroll.
-            padding-right: nth($tab-name-padding, 2) - .1rem;
-            background: transparent;
-            border: 0;
-            outline: 0;
-
-            &:disabled {
-              // Every unselected tab's input is :disabled. That lets the user
-              // drag by the _parent_.
-              color: inherit;
-              background: inherit;
-              pointer-events: none;
-            }
+          &:disabled {
+            // Every unselected tab's input is :disabled. That lets the user
+            // drag by the _parent_.
+            color: inherit;
+            background: inherit;
+            pointer-events: none;
           }
         }
 
         .dropdown {
+          position: absolute;
+          right: 0;
+          top: 0;
+          height: 100%;
+
           button.toggle {
             cursor: pointer;
             border: 0;
@@ -114,6 +126,35 @@
               background-color: $dark-accent--soft;
               opacity: 1;
             }
+          }
+        }
+      }
+
+      &:not(.selected) {
+        flex-shrink: 1; // too many tabs? Shrink unselected ones
+        overflow: hidden; // to shrink within the flexbox
+
+        // flex-shrink doesn't _really_ do what we'd like. Ideally, we'd shrink
+        // only the largest boxes. But _actually_, flex-shrink will shrink _all_
+        // boxes in proportion with their length. One-char tab names shrink to
+        // 0.5 chars. Prevent this problem with min-width.
+        //
+        // This increases the likelihood of "failure" -- meaning, tabs are too
+        // wide to all fit on the screen. So we're improving a common case and
+        // worsening a less-common case. [2020-01-11, adamhooper] I think this
+        // is worth it; we can revisit later.
+        min-width: 5.5rem;
+
+        .tab {
+          overflow: hidden; // too many tabs? Shrink unselected ones
+          margin-right: 1px; // 1px more than when we're li.selected....
+          margin-left: 0; // 1px more than when we're li.selected...
+
+          .dropdown {
+            // If the tab has been shrunk to fit, truncate its
+            // <input name="tab-name"> text by drawing a gradient background
+            // on top.
+            background: linear-gradient(90deg, rgba($pane-select-tab-bg, 0) 0%, $pane-select-tab-bg 30%);
           }
         }
       }
@@ -170,6 +211,8 @@
   }
 
   button.new-tab {
+    flex: 0 0 auto;
+    align-self: center;
     font-size: 1.2rem;
     margin-left: .8rem;
     border: 0;
@@ -177,7 +220,7 @@
     width: 1.8rem;
     height: 1.8rem;
     background: $pane-select-new-tab-button-bg;
-    color: $wf-header;
+    color: $pane-select-new-tab-button-fg;
     padding: 0;
     cursor: pointer;
     opacity: .8;

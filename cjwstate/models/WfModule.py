@@ -1,10 +1,10 @@
 import json
+import logging
 import secrets
 from typing import Any, Dict, Optional, Union
 from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.db.models import Q
-from cjwkernel.pandas import types as ptypes
 from cjwkernel.types import I18nMessage, RenderError, TableMetadata
 from cjwstate import minio
 from .fields import ColumnsField, RenderErrorsField
@@ -12,6 +12,10 @@ from .CachedRenderResult import CachedRenderResult
 from .module_version import ModuleVersion
 from .Tab import Tab
 from .workflow import Workflow
+from cjwstate import clientside
+
+
+logger = logging.getLogger(__name__)
 
 
 class WfModule(models.Model):
@@ -260,19 +264,6 @@ class WfModule(models.Model):
         else:
             return crr.status
 
-    @property
-    def output_error(self):
-        crr = self.cached_render_result
-        if crr is None:
-            return ""
-        else:
-            parts = []
-            for err in crr.errors:
-                if err.message.id != "TODO_i18n":
-                    raise RuntimeError("TODO support i18n messages")
-                parts.append(err.message.args["text"])
-            return "\n\n".join(parts)
-
     # ---- Authorization ----
     # User can access wf_module if they can access workflow
     def request_authorized_read(self, request):
@@ -336,7 +327,7 @@ class WfModule(models.Model):
 
     def _duplicate_with_slug_and_delta_id(self, to_tab, slug, last_relevant_delta_id):
         # Initialize but don't save
-        new_wfm = WfModule(
+        new_step = WfModule(
             tab=to_tab,
             slug=slug,
             module_id_name=self.module_id_name,
@@ -367,21 +358,21 @@ class WfModule(models.Model):
         cached_result = self.cached_render_result
         if cached_result is not None and self.tab.name == to_tab.name:
             # assuming file-copy succeeds, copy cached results.
-            new_wfm.cached_render_result_delta_id = new_wfm.last_relevant_delta_id
+            new_step.cached_render_result_delta_id = new_step.last_relevant_delta_id
             for attr in ("status", "errors", "json", "columns", "nrows"):
                 full_attr = f"cached_render_result_{attr}"
-                setattr(new_wfm, full_attr, getattr(self, full_attr))
+                setattr(new_step, full_attr, getattr(self, full_attr))
 
-            new_wfm.save()  # so there is a new_wfm.id for parquet_key
+            new_step.save()  # so there is a new_step.id for parquet_key
 
-            # Now new_wfm.cached_render_result will return a
+            # Now new_step.cached_render_result will return a
             # CachedRenderResult, because all the DB values are set. It'll have
             # a .parquet_key ... but there won't be a file there (because we
             # never wrote it).
             from cjwstate.rendercache.io import BUCKET, crr_parquet_key
 
             old_parquet_key = crr_parquet_key(cached_result)
-            new_parquet_key = crr_parquet_key(new_wfm.cached_render_result)
+            new_parquet_key = crr_parquet_key(new_step.cached_render_result)
 
             try:
                 minio.copy(
@@ -395,12 +386,12 @@ class WfModule(models.Model):
                 # like `cached_result`.
                 pass
         else:
-            new_wfm.save()
+            new_step.save()
 
         # Duplicate the current stored data only, not the history
         if self.stored_data_version is not None:
             self.stored_objects.get(stored_at=self.stored_data_version).duplicate(
-                new_wfm
+                new_step
             )
 
         # Duplicate the "selected" file, if there is one; otherwise, duplicate
@@ -416,7 +407,7 @@ class WfModule(models.Model):
             uploaded_file = self.uploaded_files.filter(uuid=uuid).first()
             if uploaded_file is not None:
                 new_key = uploaded_file.key.replace(
-                    self.uploaded_file_prefix, new_wfm.uploaded_file_prefix
+                    self.uploaded_file_prefix, new_step.uploaded_file_prefix
                 )
                 assert new_key != uploaded_file.key
                 # TODO handle file does not exist
@@ -425,7 +416,7 @@ class WfModule(models.Model):
                     new_key,
                     f"{uploaded_file.bucket}/{uploaded_file.key}",
                 )
-                new_wfm.uploaded_files.create(
+                new_step.uploaded_files.create(
                     created_at=uploaded_file.created_at,
                     name=uploaded_file.name,
                     size=uploaded_file.size,
@@ -434,7 +425,7 @@ class WfModule(models.Model):
                     key=new_key,
                 )
 
-        return new_wfm
+        return new_step
 
     @property
     def cached_render_result(self) -> CachedRenderResult:
@@ -537,3 +528,62 @@ class WfModule(models.Model):
             "wf-%d/wfm-%d/" % (self.workflow_id, self.id),
         )
         super().delete(*args, **kwargs)
+
+    def to_clientside(self) -> clientside.StepUpdate:
+        # params
+        if self.module_version:
+            from cjwstate.params import get_migrated_params
+
+            param_schema = self.module_version.param_schema
+            params = get_migrated_params(self)  # raise ModuleError
+            try:
+                param_schema.validate(params)
+            except ValueError:
+                logger.exception(
+                    "%s.migrate_params() gave invalid output: %r",
+                    self.module_id_name,
+                    params,
+                )
+                params = param_schema.coerce(params)
+        else:
+            params = {}
+
+        crr = self._build_cached_render_result_fresh_or_not()
+        if crr is None:
+            crr = clientside.Null
+
+        return clientside.StepUpdate(
+            id=self.id,
+            slug=self.slug,
+            module_slug=self.module_id_name,
+            tab_slug=self.tab_slug,
+            is_busy=self.is_busy,
+            render_result=crr,
+            files=[
+                clientside.UploadedFile(
+                    name=name, uuid=uuid, size=size, created_at=created_at
+                )
+                for name, uuid, size, created_at in self.uploaded_files.order_by(
+                    "-created_at"
+                ).values_list("name", "uuid", "size", "created_at")
+            ],
+            params=params,
+            secrets=self.secret_metadata,
+            is_collapsed=self.is_collapsed,
+            notes=self.notes,
+            is_auto_fetch=self.auto_update_data,
+            fetch_interval=self.update_interval,
+            last_fetched_at=self.last_update_check,
+            is_notify_on_change=self.notifications,
+            has_unseen_notification=self.has_unseen_notification,
+            last_relevant_delta_id=self.last_relevant_delta_id,
+            versions=clientside.FetchedVersionList(
+                versions=[
+                    clientside.FetchedVersion(created_at=created_at, is_seen=is_seen)
+                    for created_at, is_seen in self.stored_objects.order_by(
+                        "-stored_at"
+                    ).values_list("stored_at", "read")
+                ],
+                selected=self.stored_data_version,
+            ),
+        )

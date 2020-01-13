@@ -1,7 +1,7 @@
 from unittest.mock import patch
 from cjwkernel.types import RenderResult
 from cjwkernel.tests.util import arrow_table
-from cjwstate import commands
+from cjwstate import clientside, commands
 from cjwstate.rendercache.io import cache_render_result
 from cjwstate.models import Workflow
 from cjwstate.models.commands import DuplicateTabCommand
@@ -15,8 +15,8 @@ async def async_noop(*args, **kwargs):
 class DuplicateTabCommandTest(DbTestCase):
     @patch.object(commands, "queue_render")
     @patch.object(commands, "websockets_notify")
-    def test_duplicate_empty_tab(self, ws_notify, queue_render):
-        ws_notify.side_effect = async_noop
+    def test_duplicate_empty_tab(self, send_update, queue_render):
+        send_update.side_effect = async_noop
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
 
@@ -35,68 +35,56 @@ class DuplicateTabCommandTest(DbTestCase):
         self.assertFalse(cmd.tab.is_deleted)
         self.assertEqual(cmd.tab.slug, "tab-2")
         self.assertEqual(cmd.tab.name, "Tab 2")
-        ws_notify.assert_called_with(
+        send_update.assert_called_with(
             workflow.id,
-            {
-                "updateWorkflow": {
-                    "name": workflow.name,
-                    "public": False,
-                    "last_update": cmd.datetime.isoformat(),
-                    "tab_slugs": ["tab-1", "tab-2"],
+            clientside.Update(
+                workflow=clientside.WorkflowUpdate(
+                    updated_at=cmd.datetime, tab_slugs=["tab-1", "tab-2"]
+                ),
+                tabs={
+                    "tab-2": clientside.TabUpdate(
+                        slug="tab-2",
+                        name="Tab 2",
+                        step_ids=[],
+                        selected_step_index=None,
+                    )
                 },
-                "updateTabs": {
-                    "tab-2": {
-                        "slug": "tab-2",
-                        "name": "Tab 2",
-                        "wf_module_ids": [],
-                        "selected_wf_module_position": None,
-                    }
-                },
-                "updateWfModules": {},
-            },
+            ),
         )
 
         # Backward: should delete tab
         self.run_with_async_db(commands.undo(cmd))
         cmd.tab.refresh_from_db()
         self.assertTrue(cmd.tab.is_deleted)
-        ws_notify.assert_called_with(
+        send_update.assert_called_with(
             workflow.id,
-            {
-                "updateWorkflow": {
-                    "name": workflow.name,
-                    "public": False,
-                    "last_update": workflow.last_delta.datetime.isoformat(),
-                    "tab_slugs": ["tab-1"],
-                },
-                "clearTabSlugs": ["tab-2"],
-                "clearWfModuleIds": [],
-            },
+            clientside.Update(
+                workflow=clientside.WorkflowUpdate(
+                    updated_at=cmd.prev_delta.datetime, tab_slugs=["tab-1"]
+                ),
+                clear_tab_slugs=frozenset(["tab-2"]),
+            ),
         )
 
         # Forward: should bring us back
         self.run_with_async_db(commands.redo(cmd))
         cmd.tab.refresh_from_db()
         self.assertFalse(cmd.tab.is_deleted)
-        ws_notify.assert_called_with(
+        send_update.assert_called_with(
             workflow.id,
-            {
-                "updateWorkflow": {
-                    "name": workflow.name,
-                    "public": False,
-                    "last_update": cmd.datetime.isoformat(),
-                    "tab_slugs": ["tab-1", "tab-2"],
+            clientside.Update(
+                workflow=clientside.WorkflowUpdate(
+                    updated_at=cmd.datetime, tab_slugs=["tab-1", "tab-2"]
+                ),
+                tabs={
+                    "tab-2": clientside.TabUpdate(
+                        slug="tab-2",
+                        name="Tab 2",
+                        step_ids=[],
+                        selected_step_index=None,
+                    )
                 },
-                "updateTabs": {
-                    "tab-2": {
-                        "slug": "tab-2",
-                        "name": "Tab 2",
-                        "wf_module_ids": [],
-                        "selected_wf_module_position": None,
-                    }
-                },
-                "updateWfModules": {},
-            },
+            ),
         )
 
         # There should never be a render: we aren't changing any module
@@ -105,18 +93,18 @@ class DuplicateTabCommandTest(DbTestCase):
 
     @patch.object(commands, "queue_render")
     @patch.object(commands, "websockets_notify")
-    def test_duplicate_nonempty_unrendered_tab(self, ws_notify, queue_render):
-        ws_notify.side_effect = async_noop
+    def test_duplicate_nonempty_unrendered_tab(self, send_update, queue_render):
+        send_update.side_effect = async_noop
         queue_render.side_effect = async_noop
         workflow = Workflow.create_and_init()
         init_delta_id = workflow.last_delta_id
         tab = workflow.tabs.first()
         tab.selected_wf_module_position = 1
         tab.save(update_fields=["selected_wf_module_position"])
-        # wfm1 and wfm2 have not yet been rendered. (But while we're
+        # step1 and step2 have not yet been rendered. (But while we're
         # duplicating, conceivably a render could be running; so when we
         # duplicate them, we need to queue a render.)
-        wfm1 = tab.wf_modules.create(
+        step1 = tab.wf_modules.create(
             order=0,
             slug="step-1",
             module_id_name="x",
@@ -143,38 +131,32 @@ class DuplicateTabCommandTest(DbTestCase):
 
         # Adds new tab
         cmd.tab.refresh_from_db()
-        [wfm1dup, wfm2dup] = list(cmd.tab.live_wf_modules.all())
+        [step1dup, step2dup] = list(cmd.tab.live_wf_modules.all())
         self.assertFalse(cmd.tab.is_deleted)
         self.assertEqual(cmd.tab.slug, "tab-2")
         self.assertEqual(cmd.tab.name, "Tab 2")
         self.assertEqual(cmd.tab.selected_wf_module_position, 1)
-        self.assertEqual(wfm1dup.order, 0)
-        self.assertEqual(wfm1dup.module_id_name, "x")
-        self.assertEqual(wfm1dup.params, {"p": "s1"})
+        self.assertEqual(step1dup.order, 0)
+        self.assertEqual(step1dup.module_id_name, "x")
+        self.assertEqual(step1dup.params, {"p": "s1"})
         self.assertEqual(
-            wfm1dup.last_relevant_delta_id,
+            step1dup.last_relevant_delta_id,
             # `cmd.id` would be intuitive, but that would be hard
             # to implement (and we assume we don't need to).
             # (Duplicate also duplicates _cache values_, which
-            # means it's expensive to tweak wfm1's delta ID.)
-            wfm1.last_relevant_delta_id,
+            # means it's expensive to tweak step1's delta ID.)
+            step1.last_relevant_delta_id,
         )
-        self.assertEqual(wfm2dup.order, 1)
-        self.assertEqual(wfm2dup.module_id_name, "y")
-        self.assertEqual(wfm2dup.params, {"p": "s2"})
-        self.assertNotEqual(wfm1dup.id, wfm1.id)
-        delta = ws_notify.mock_calls[0][1][1]
+        self.assertEqual(step2dup.order, 1)
+        self.assertEqual(step2dup.module_id_name, "y")
+        self.assertEqual(step2dup.params, {"p": "s2"})
+        self.assertNotEqual(step1dup.id, step1.id)
+        delta = send_update.mock_calls[0][1][1]
+        self.assertEqual(delta.tabs["tab-2"].step_ids, [step1dup.id, step2dup.id])
+        self.assertEqual(set(delta.steps.keys()), set([step1dup.id, step2dup.id]))
+        step1update = delta.steps[step1dup.id]
         self.assertEqual(
-            delta["updateTabs"]["tab-2"]["wf_module_ids"], [wfm1dup.id, wfm2dup.id]
-        )
-        self.assertEqual(
-            list(delta["updateWfModules"].keys()),
-            # dict preserves order
-            [str(wfm1dup.id), str(wfm2dup.id)],
-        )
-        wfm1update = delta["updateWfModules"][str(wfm1dup.id)]
-        self.assertEqual(
-            wfm1update["last_relevant_delta_id"], wfm1.last_relevant_delta_id
+            step1update.last_relevant_delta_id, step1.last_relevant_delta_id
         )
         # We should call render: we don't know whether there's a render queued;
         # and these new steps are in need of render.
@@ -185,13 +167,9 @@ class DuplicateTabCommandTest(DbTestCase):
         self.run_with_async_db(commands.undo(cmd))
         cmd.tab.refresh_from_db()
         self.assertTrue(cmd.tab.is_deleted)
-        delta = ws_notify.mock_calls[1][1][1]
-        self.assertEqual(delta["clearTabSlugs"], ["tab-2"])
-        self.assertEqual(
-            delta["clearWfModuleIds"],
-            # dict preserves order
-            [str(wfm1dup.id), str(wfm2dup.id)],
-        )
+        delta = send_update.mock_calls[1][1][1]
+        self.assertEqual(delta.clear_tab_slugs, frozenset(["tab-2"]))
+        self.assertEqual(delta.clear_step_ids, frozenset([step1dup.id, step2dup.id]))
         # No need to call render(): these modules can't possibly have changed,
         # and nobody cares what's in their cache.
         queue_render.assert_not_called()
@@ -203,16 +181,16 @@ class DuplicateTabCommandTest(DbTestCase):
 
     @patch.object(commands, "queue_render")
     @patch.object(commands, "websockets_notify")
-    def test_duplicate_nonempty_rendered_tab(self, ws_notify, queue_render):
-        ws_notify.side_effect = async_noop
+    def test_duplicate_nonempty_rendered_tab(self, send_update, queue_render):
+        send_update.side_effect = async_noop
         queue_render.side_effect = async_noop
         workflow = Workflow.create_and_init()
         init_delta_id = workflow.last_delta_id
         tab = workflow.tabs.first()
-        # wfm1 and wfm2 have not yet been rendered. (But while we're
+        # step1 and step2 have not yet been rendered. (But while we're
         # duplicating, conceivably a render could be running; so when we
         # duplicate them, we need to queue a render.)
-        wfm1 = tab.wf_modules.create(
+        step1 = tab.wf_modules.create(
             order=0,
             slug="step-1",
             module_id_name="x",
@@ -220,7 +198,7 @@ class DuplicateTabCommandTest(DbTestCase):
             last_relevant_delta_id=init_delta_id,
         )
         render_result = RenderResult(arrow_table({"A": [1]}))
-        cache_render_result(workflow, wfm1, init_delta_id, render_result)
+        cache_render_result(workflow, step1, init_delta_id, render_result)
 
         cmd = self.run_with_async_db(
             commands.do(
@@ -233,11 +211,11 @@ class DuplicateTabCommandTest(DbTestCase):
         )
         tab2 = workflow.tabs.last()
         self.assertNotEqual(tab2.id, tab.id)
-        wfm2 = tab2.wf_modules.last()
+        step2 = tab2.wf_modules.last()
         # We need to render: render() in Steps in the second Tab will be called
         # with different `tab_name` than in the first Tab, meaning their output
         # may be different.
-        self.assertIsNone(wfm2.cached_render_result)
+        self.assertIsNone(step2.cached_render_result)
         queue_render.assert_called_with(workflow.id, cmd.id)
 
     def test_tab_name_conflict_is_valueerror(self):

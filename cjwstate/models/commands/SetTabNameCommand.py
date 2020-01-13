@@ -20,10 +20,13 @@ class SetTabNameCommand(ChangesWfModuleOutputs, Delta):
     new_name = models.TextField()
     wf_module_delta_ids = ChangesWfModuleOutputs.wf_module_delta_ids
 
-    def load_ws_data(self):
-        data = super().load_ws_data()
-        data["updateTabs"] = {self.tab.slug: {"name": self.tab.name}}
-        return data
+    # override
+    def load_clientside_update(self):
+        return (
+            super()
+            .load_clientside_update()
+            .update_tab(self.tab.slug, name=self.tab.name)
+        )
 
     def forward(self):
         self.tab.name = self.new_name

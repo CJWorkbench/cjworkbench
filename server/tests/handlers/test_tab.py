@@ -8,6 +8,7 @@ from server.handlers.tab import (
     duplicate,
     set_name,
 )
+from cjwstate import rabbitmq
 from cjwstate.models import ModuleVersion, Workflow
 from cjwstate.models.commands import AddModuleCommand, ReorderModulesCommand
 from .util import HandlerTestCase
@@ -34,8 +35,8 @@ class TabTest(HandlerTestCase):
         "cjwstate.modules.loaded_module.LoadedModule.for_module_version",
         MockLoadedModule,
     )
-    @patch("server.websockets.ws_client_send_delta_async", async_noop)
-    @patch("server.rabbitmq.queue_render", async_noop)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
+    @patch.object(rabbitmq, "queue_render", async_noop)
     @patch("server.utils.log_user_event_from_scope", noop)
     def test_add_module(self):
         user = User.objects.create(username="a", email="a@example.org")
@@ -209,21 +210,21 @@ class TabTest(HandlerTestCase):
         )
         self.assertResponse(response, error="BadRequest: module does not exist")
 
-    @patch("server.websockets.ws_client_send_delta_async", async_noop)
-    @patch("server.rabbitmq.queue_render", async_noop)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
+    @patch.object(rabbitmq, "queue_render", async_noop)
     def test_reorder_modules(self):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)  # tab-1
         tab = workflow.tabs.first()  # tab-1
-        wfm1 = tab.wf_modules.create(order=0, slug="step-1")
-        wfm2 = tab.wf_modules.create(order=1, slug="step-2")
+        step1 = tab.wf_modules.create(order=0, slug="step-1")
+        step2 = tab.wf_modules.create(order=1, slug="step-2")
 
         response = self.run_handler(
             reorder_modules,
             user=user,
             workflow=workflow,
             tabSlug="tab-1",
-            wfModuleIds=[wfm2.id, wfm1.id],
+            wfModuleIds=[step2.id, step1.id],
         )
         self.assertResponse(response, data=None)
 
@@ -234,14 +235,14 @@ class TabTest(HandlerTestCase):
     def test_reorder_modules_viewer_denied_access(self):
         workflow = Workflow.create_and_init(public=True)
         tab = workflow.tabs.first()  # tab-1
-        wfm1 = tab.wf_modules.create(order=0, slug="step-1")
-        wfm2 = tab.wf_modules.create(order=1, slug="step-2")
+        step1 = tab.wf_modules.create(order=0, slug="step-1")
+        step2 = tab.wf_modules.create(order=1, slug="step-2")
 
         response = self.run_handler(
             reorder_modules,
             workflow=workflow,
             tabSlug="tab-1",
-            wfModuleIds=[wfm2.id, wfm1.id],
+            wfModuleIds=[step2.id, step1.id],
         )
         self.assertResponse(response, error="AuthError: no write access to workflow")
 
@@ -249,21 +250,21 @@ class TabTest(HandlerTestCase):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
         tab = workflow.tabs.first()  # tab-1
-        wfm1 = tab.wf_modules.create(order=0, slug="step-1")
-        wfm2 = tab.wf_modules.create(order=1, slug="step-2")
+        step1 = tab.wf_modules.create(order=0, slug="step-1")
+        step2 = tab.wf_modules.create(order=1, slug="step-2")
 
         response = self.run_handler(
             reorder_modules,
             user=user,
             workflow=workflow,
             tabSlug="tab-1",
-            wfModuleIds=[wfm2.id, wfm1.id, 2],
+            wfModuleIds=[step2.id, step1.id, 2],
         )
         self.assertResponse(
             response, error="new_order does not have the expected elements"
         )
 
-    @patch("server.websockets.ws_client_send_delta_async", async_noop)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
     def test_create(self):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
@@ -281,7 +282,7 @@ class TabTest(HandlerTestCase):
         response = self.run_handler(create, workflow=workflow)
         self.assertResponse(response, error="AuthError: no write access to workflow")
 
-    @patch("server.websockets.ws_client_send_delta_async", async_noop)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
     def test_delete(self):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
@@ -319,8 +320,8 @@ class TabTest(HandlerTestCase):
         self.assertResponse(response, data=None)
         self.assertEqual(workflow.live_tabs.count(), 1)
 
-    @patch("server.websockets.ws_client_send_delta_async", async_noop)
-    @patch("server.rabbitmq.queue_render", async_noop)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
+    @patch.object(rabbitmq, "queue_render", async_noop)
     def test_duplicate(self):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
@@ -375,7 +376,7 @@ class TabTest(HandlerTestCase):
             response, error='BadRequest: tab slug "tab-2" is already used'
         )
 
-    @patch("server.websockets.ws_client_send_delta_async", async_noop)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
     def test_set_name(self):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)

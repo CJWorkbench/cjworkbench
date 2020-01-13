@@ -25,10 +25,10 @@ class TestTabs(WorkbenchBase):
         # that text is _invisible_, used only to size the <input>.
         b = self.browser
         b.click_whatever(
-            "div.tabs>ul>li:not(.pending) .tab-name",
+            "div.tabs>ul>li:not(.pending)>.tab",
             text=tab_name,
             visible=False,
-            wait=True,
+            wait=True,  # in case it was .pending
         )
 
     def test_tabs_have_distinct_modules(self):
@@ -50,8 +50,7 @@ class TestTabs(WorkbenchBase):
         self.add_data_step("Add from URL")
 
         # Switch to Tab 1
-        # visible=False again
-        b.click_whatever(".tab-name", text="Tab 1", visible=False)
+        self._select_tab("Tab 1")
         b.assert_element('.wf-module[data-module-name="Paste data"]')
         b.assert_no_element('.wf-module[data-module-name="Add from URL"]')
 

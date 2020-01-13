@@ -35,15 +35,22 @@ class AddModuleCommand(ChangesWfModuleOutputs, Delta):
     wf_module = models.ForeignKey(WfModule, on_delete=models.PROTECT)
     wf_module_delta_ids = ChangesWfModuleOutputs.wf_module_delta_ids
 
-    def load_ws_data(self):
-        data = super().load_ws_data()
-        data["updateTabs"] = {
-            self.wf_module.tab.slug: {
-                "wf_module_ids": list(
+    # override
+    def load_clientside_update(self):
+        data = (
+            super()
+            .load_clientside_update()
+            .update_tab(
+                self.wf_module.tab_slug,
+                step_ids=list(
                     self.wf_module.tab.live_wf_modules.values_list("id", flat=True)
-                )
-            }
-        }
+                ),
+            )
+        )
+        if self.wf_module.is_deleted:
+            data = data.clear_step(self.wf_module.id)
+        else:
+            data = data.replace_step(self.wf_module.id, self.wf_module.to_clientside())
         return data
 
     @classmethod

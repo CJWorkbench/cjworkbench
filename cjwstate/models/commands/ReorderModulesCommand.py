@@ -17,16 +17,16 @@ class ReorderModulesCommand(ChangesWfModuleOutputs, Delta):
     new_order = models.TextField()
     wf_module_delta_ids = ChangesWfModuleOutputs.wf_module_delta_ids
 
-    def load_ws_data(self):
-        data = super().load_ws_data()
-        data["updateTabs"] = {
-            self.tab.slug: {
-                "wf_module_ids": list(
-                    self.tab.live_wf_modules.values_list("id", flat=True)
-                )
-            }
-        }
-        return data
+    # override
+    def load_clientside_update(self):
+        return (
+            super()
+            .load_clientside_update()
+            .update_tab(
+                self.tab.slug,
+                step_ids=list(self.tab.live_wf_modules.values_list("id", flat=True)),
+            )
+        )
 
     def apply_order(self, order):
         # We validated Workflow IDs back in `.amend_create_args()`

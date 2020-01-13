@@ -61,18 +61,18 @@ export class TabWithHelpers {
   }
 
   get wfModules () {
-    return this.tab.wf_module_ids.map(wfmId => {
-      const wfModule = this.state.wfModules[String(wfmId)] || null
+    return this.tab.wf_module_ids.map(stepId => {
+      const wfModule = this.state.wfModules[String(stepId)] || null
       return new WorkflowModuleWithHelpers(wfModule, this.state)
     })
   }
 
   get wfModuleNames () {
-    return this.wfModules.map(wfm => wfm.moduleName)
+    return this.wfModules.map(step => step.moduleName)
   }
 
   get wfModuleSlugs () {
-    return this.wfModules.map(wfm => wfm.moduleSlug)
+    return this.wfModules.map(step => step.moduleSlug)
   }
 
   get selectedWfModule () {

@@ -1,5 +1,5 @@
 # 0.1 parquet-to-arrow: executables we use in Workbench
-FROM workbenchdata/parquet-to-arrow:v1.0.0 AS parquet-to-arrow
+FROM workbenchdata/parquet-to-arrow:v1.1.0 AS parquet-to-arrow
 FROM workbenchdata/arrow-tools:v0.0.6 AS arrow-tools
 
 # 0.2 pybase: Python and tools we use in dev and production
@@ -183,7 +183,7 @@ VOLUME /var/lib/cjwkernel/chroot
 
 # 2. Node deps -- completely independent
 # 2.1 jsbase: what we use in dev-in-docker
-FROM node:12.9.0-buster-slim as jsbase
+FROM node:12.14.1-buster-slim as jsbase
 
 RUN mkdir /app
 WORKDIR /app

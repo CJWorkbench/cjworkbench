@@ -4,11 +4,11 @@ import logging
 import os
 from typing import Any, Awaitable, Callable, Dict
 from django.db import DatabaseError, InterfaceError
-from cjworkbench import rabbitmq
+from cjwstate import rabbitmq
+from cjwstate.models import Workflow
 from cjworkbench.pg_render_locker import PgRenderLocker, WorkflowAlreadyLocked
 from cjworkbench.sync import database_sync_to_async
 from cjworkbench.util import benchmark
-from cjwstate.models import Workflow
 from . import execute
 
 

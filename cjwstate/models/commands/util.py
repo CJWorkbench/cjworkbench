@@ -4,7 +4,6 @@ from django.db import models
 from django.db.models import Q
 from cjwstate.models import Tab, WfModule
 from cjwstate.models.workflow import DependencyGraph
-from server.serializers import WfModuleSerializer
 
 
 class ChangesWfModuleOutputs:
@@ -149,35 +148,25 @@ class ChangesWfModuleOutputs:
         self._changed_wf_module_versions = prev_ids
 
     # override Delta
-    def load_ws_data(self):
-        data = {
-            "updateWorkflow": self._load_workflow_ws_data(),
-            "updateWfModules": {
-                str(wfm_id): {
-                    "last_relevant_delta_id": delta_id,
-                    "quick_fixes": [],
-                    "output_columns": [],
-                    "output_error": "",
-                    "output_status": "busy",
-                    "output_n_rows": 0,
-                }
-                for wfm_id, delta_id in self._changed_wf_module_versions
-            },
-        }
+    def load_clientside_update(self):
+        data = super().load_clientside_update()
+        for step_id, delta_id in self._changed_wf_module_versions:
+            data = data.update_step(step_id, last_relevant_delta_id=delta_id)
 
         if hasattr(self, "wf_module"):
             if self.wf_module.is_deleted or self.wf_module.tab.is_deleted:
                 # When we did or undid this command, we removed the
                 # WfModule from the Workflow.
-                data["clearWfModuleIds"] = [self.wf_module_id]
+                data = data.clear_step(self.wf_module.id)
             else:
                 # Serialize _everything_, including params
                 #
                 # TODO consider serializing only what's changed, so when Alice
                 # changes 'has_header' it doesn't overwrite Bob's 'url' while
                 # he's editing it.
-                step_data = WfModuleSerializer(self.wf_module).data
-                data["updateWfModules"][str(self.wf_module_id)] = step_data
+                data = data.replace_step(
+                    self.wf_module.id, self.wf_module.to_clientside()
+                )
 
         return data
 

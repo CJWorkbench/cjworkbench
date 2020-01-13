@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 import logging
 from unittest.mock import patch
 from dateutil import parser
+from cjwstate import rabbitmq
 from cjwstate.models import Workflow
 from cjwstate.tests.utils import DbTestCase
 from cron import autoupdate
@@ -31,18 +32,20 @@ class SuccessfulRenderLock:
 
 
 class UpdatesTests(DbTestCase):
-    @patch("server.rabbitmq.queue_fetch")
-    @patch("server.websockets.ws_client_send_delta_async", lambda _1, _2: future_none)
+    @patch.object(rabbitmq, "queue_fetch")
+    @patch.object(
+        rabbitmq, "send_update_to_workflow_clients", lambda _1, _2: future_none
+    )
     @patch("django.utils.timezone.now", lambda: parser.parse("Aug 28 1999 2:35PM UTC"))
     def test_queue_fetches(self, mock_queue_fetch):
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
 
-        # wfm1 does not auto-update
-        wfm1 = tab.wf_modules.create(order=0, slug="step-1", auto_update_data=False)
+        # step1 does not auto-update
+        step1 = tab.wf_modules.create(order=0, slug="step-1", auto_update_data=False)
 
-        # wfm2 is ready to update
-        wfm2 = tab.wf_modules.create(
+        # step2 is ready to update
+        step2 = tab.wf_modules.create(
             order=1,
             slug="step-2",
             auto_update_data=True,
@@ -51,8 +54,8 @@ class UpdatesTests(DbTestCase):
             update_interval=600,
         )
 
-        # wfm3 has a few more minutes before it should update
-        wfm3 = tab.wf_modules.create(
+        # step3 has a few more minutes before it should update
+        step3 = tab.wf_modules.create(
             order=2,
             slug="step-3",
             auto_update_data=True,
@@ -68,10 +71,10 @@ class UpdatesTests(DbTestCase):
             self.run_with_async_db(autoupdate.queue_fetches(SuccessfulRenderLock()))
 
         self.assertEqual(mock_queue_fetch.call_count, 1)
-        mock_queue_fetch.assert_called_with(workflow.id, wfm2.id)
+        mock_queue_fetch.assert_called_with(workflow.id, step2.id)
 
-        wfm2.refresh_from_db()
-        self.assertTrue(wfm2.is_busy)
+        step2.refresh_from_db()
+        self.assertTrue(step2.is_busy)
 
         # Second call shouldn't fetch again, because it's busy
         self.run_with_async_db(autoupdate.queue_fetches(SuccessfulRenderLock()))

@@ -12,7 +12,7 @@ from cjwkernel.tests.util import (
     parquet_file,
     assert_arrow_table_equals,
 )
-from cjwstate import minio, rendercache
+from cjwstate import minio, rabbitmq, rendercache
 from cjwstate.storedobjects import create_stored_object
 from cjwstate.models import ModuleVersion, Workflow
 from cjwstate.modules.loaded_module import LoadedModule
@@ -51,7 +51,7 @@ class WfModuleTests(DbTestCase):
         with patch.object(LoadedModule, "for_module_version", lambda *a: mock_module):
             yield
 
-    @patch("server.websockets.ws_client_send_delta_async", noop)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", noop)
     def test_deleted_module(self):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
@@ -86,7 +86,7 @@ class WfModuleTests(DbTestCase):
         wf_module.refresh_from_db()
         self.assertEqual(wf_module.cached_render_result.errors, expected.errors)
 
-    @patch("server.websockets.ws_client_send_delta_async", noop)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", noop)
     @patch.object(notifications, "email_output_delta")
     def test_email_delta(self, email_delta):
         workflow = Workflow.create_and_init()
@@ -134,7 +134,7 @@ class WfModuleTests(DbTestCase):
         self.assertEqual(delta.old_result, RenderResult(arrow_table({"A": [1]})))
         self.assertEqual(delta.new_result, RenderResult(arrow_table({"A": [2]})))
 
-    @patch("server.websockets.ws_client_send_delta_async", noop)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", noop)
     @patch.object(rendercache, "open_cached_render_result")
     @patch.object(notifications, "email_output_delta")
     def test_email_delta_ignore_corrupt_cache_error(self, email_delta, read_cache):
@@ -182,7 +182,7 @@ class WfModuleTests(DbTestCase):
 
         email_delta.assert_not_called()
 
-    @patch("server.websockets.ws_client_send_delta_async", noop)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", noop)
     def test_fetch_result_happy_path(self):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
@@ -222,7 +222,7 @@ class WfModuleTests(DbTestCase):
                 )
             )
 
-    @patch("server.websockets.ws_client_send_delta_async", noop)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", noop)
     def test_fetch_result_deleted_file_means_none(self):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
@@ -257,7 +257,7 @@ class WfModuleTests(DbTestCase):
                 )
             )
 
-    @patch("server.websockets.ws_client_send_delta_async", noop)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", noop)
     def test_fetch_result_deleted_stored_object_means_none(self):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
@@ -289,7 +289,7 @@ class WfModuleTests(DbTestCase):
                 )
             )
 
-    @patch("server.websockets.ws_client_send_delta_async", noop)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", noop)
     def test_fetch_result_no_stored_object_means_none(self):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
@@ -318,7 +318,7 @@ class WfModuleTests(DbTestCase):
                 )
             )
 
-    @patch("server.websockets.ws_client_send_delta_async", noop)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", noop)
     def test_fetch_result_no_bucket_or_key_stored_object_means_none(self):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
@@ -355,7 +355,7 @@ class WfModuleTests(DbTestCase):
                 )
             )
 
-    @patch("server.websockets.ws_client_send_delta_async", noop)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", noop)
     def test_report_module_error(self):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()

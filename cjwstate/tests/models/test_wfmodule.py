@@ -22,39 +22,39 @@ class WfModuleTests(DbTestCase):
 
     def test_wf_module_duplicate(self):
         workflow = Workflow.create_and_init()
-        wfm1 = workflow.tabs.first().wf_modules.create(order=0, slug="step-1")
+        step1 = workflow.tabs.first().wf_modules.create(order=0, slug="step-1")
 
         # store data to test that it is duplicated
         with tempfile_context() as path1:
             path1.write_bytes(b"12345")
-            create_stored_object(workflow.id, wfm1.id, path1)
+            create_stored_object(workflow.id, step1.id, path1)
         with tempfile_context() as path2:
             path1.write_bytes(b"23456")
-            so2 = create_stored_object(workflow.id, wfm1.id, path2)
-        wfm1.secrets = {"do not copy": {"name": "evil", "secret": "evil"}}
-        wfm1.stored_data_version = so2.stored_at
-        wfm1.save(update_fields=["stored_data_version"])
+            so2 = create_stored_object(workflow.id, step1.id, path2)
+        step1.secrets = {"do not copy": {"name": "evil", "secret": "evil"}}
+        step1.stored_data_version = so2.stored_at
+        step1.save(update_fields=["stored_data_version"])
 
         # duplicate into another workflow, as we would do when duplicating a workflow
         workflow2 = Workflow.create_and_init()
         tab2 = workflow2.tabs.first()
-        wfm1d = wfm1.duplicate_into_new_workflow(tab2)
-        wfm1d.refresh_from_db()  # test what we actually have in the db
+        step1d = step1.duplicate_into_new_workflow(tab2)
+        step1d.refresh_from_db()  # test what we actually have in the db
 
-        self.assertEqual(wfm1d.slug, "step-1")
-        self.assertEqual(wfm1d.workflow, workflow2)
-        self.assertEqual(wfm1d.module_version, wfm1.module_version)
-        self.assertEqual(wfm1d.order, wfm1.order)
-        self.assertEqual(wfm1d.notes, wfm1.notes)
-        self.assertEqual(wfm1d.last_update_check, wfm1.last_update_check)
-        self.assertEqual(wfm1d.is_collapsed, wfm1.is_collapsed)
-        self.assertEqual(wfm1d.params, wfm1.params)
-        self.assertEqual(wfm1d.secrets, {})
+        self.assertEqual(step1d.slug, "step-1")
+        self.assertEqual(step1d.workflow, workflow2)
+        self.assertEqual(step1d.module_version, step1.module_version)
+        self.assertEqual(step1d.order, step1.order)
+        self.assertEqual(step1d.notes, step1.notes)
+        self.assertEqual(step1d.last_update_check, step1.last_update_check)
+        self.assertEqual(step1d.is_collapsed, step1.is_collapsed)
+        self.assertEqual(step1d.params, step1.params)
+        self.assertEqual(step1d.secrets, {})
 
         # Stored data should contain a clone of content only, not complete version history
-        self.assertEqual(wfm1d.stored_objects.count(), 1)
-        self.assertEqual(wfm1d.stored_data_version, wfm1.stored_data_version)
-        so2d = wfm1d.stored_objects.first()
+        self.assertEqual(step1d.stored_objects.count(), 1)
+        self.assertEqual(step1d.stored_data_version, step1.stored_data_version)
+        so2d = step1d.stored_objects.first()
         # The StoredObject was copied byte for byte into a different file
         self.assertNotEqual(so2d.key, so2.key)
         self.assertEqual(

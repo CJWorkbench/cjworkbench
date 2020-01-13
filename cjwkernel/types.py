@@ -251,7 +251,7 @@ class ColumnTypeDatetime(ColumnType):
 
 
 # Aliases to help with import. e.g.:
-# from cjwkernel.pandas.types import Column, ColumnType
+# from cjwkernel.types import Column, ColumnType
 # column = Column('A', ColumnType.Number('{:,.2f}'))
 ColumnType.Text = ColumnTypeText
 ColumnType.Number = ColumnTypeNumber
@@ -932,12 +932,8 @@ class RenderResult:
     @classmethod
     def from_deprecated_error(
         cls, message: str, *, quick_fixes: List[QuickFix] = []
-    ) -> RenderError:
-        return cls(
-            errors=[
-                RenderError(I18nMessage("TODO_i18n", {"text": message}), quick_fixes)
-            ]
-        )
+    ) -> RenderResult:
+        return cls(errors=[RenderError(I18nMessage.TODO_i18n(message), quick_fixes)])
 
     def to_thrift(self) -> ttypes.RenderResult:
         return ttypes.RenderResult(

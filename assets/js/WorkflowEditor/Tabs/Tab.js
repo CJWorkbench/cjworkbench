@@ -1,6 +1,5 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import TabName from './TabName'
 import TabDropdown from './TabDropdown'
 
 export default class Tab extends React.PureComponent {
@@ -25,6 +24,10 @@ export default class Tab extends React.PureComponent {
     select: PropTypes.func.isRequired // func(slug) => undefined
   }
 
+  state = {
+    name: null
+  }
+
   inputRef = React.createRef()
 
   liRef = React.createRef()
@@ -36,9 +39,33 @@ export default class Tab extends React.PureComponent {
     this.inputRef.current.select()
   }
 
-  handleSubmitName = (name) => {
-    const { setName, slug } = this.props
-    setName(slug, name)
+  handleNameChange = (ev) => {
+    this.setState({ name: ev.target.value })
+  }
+
+  handleNameKeyDown = (ev) => {
+    switch (ev.key) {
+      case 'Enter':
+        this.props.setName(this.props.slug, this.state.name)
+        this.setState({ name: null }) // for handleNameBlur()
+        this.inputRef.current.blur()
+        return
+      case 'Escape':
+        this.setState({ name: null }) // for handleNameBlur()
+        this.inputRef.current.blur()
+    }
+  }
+
+  handleNameBlur = () => {
+    // handleKeyDown may have set value=null. If it did, we'll only detect that
+    // within the setState() _callback_.
+    this.setState(({ name }) => {
+      if (name === null) {
+        // handleKeyDown already handled this (or there was no edit)
+      } else {
+        this.props.setName(this.props.slug, name)
+      }
+    })
   }
 
   handleClickDelete = () => {
@@ -144,8 +171,9 @@ export default class Tab extends React.PureComponent {
   }
 
   render () {
-    const { isPending, isReadOnly, isSelected, name } = this.props
+    const { isPending, isReadOnly, isSelected } = this.props
     const droppingClassName = this.droppingClassName
+    const name = this.state.name === null ? this.props.name : this.state.name
 
     const classNames = []
     if (isPending) classNames.push('pending')
@@ -153,6 +181,12 @@ export default class Tab extends React.PureComponent {
     if (droppingClassName) classNames.push(droppingClassName)
     if (this.isDragging) classNames.push('dragging')
 
+    /*
+     * Two equivalent representations of the same value:
+     *
+     * <span>: the text, not editable, used by CSS to compute size
+     * <input>: what the user sees
+     */
     return (
       <li
         ref={this.liRef}
@@ -167,12 +201,16 @@ export default class Tab extends React.PureComponent {
           onDragEnd={this.handleDragEnd}
           onDrop={this.handleDrop}
         >
-          <TabName
+          <span className='size-calculator'>{name}</span>
+          <input
+            name='tab-name'
+            placeholder='…'
+            ref={this.inputRef}
             value={name}
-            inputRef={this.inputRef}
-            isReadOnly={isReadOnly}
-            isSelected={isSelected}
-            onSubmit={this.handleSubmitName}
+            disabled={isReadOnly || !isSelected}
+            onChange={this.handleNameChange}
+            onKeyDown={this.handleNameKeyDown}
+            onBlur={this.handleNameBlur}
           />
           <TabDropdown
             onClickRename={this.handleClickRename}

@@ -1,7 +1,7 @@
 import asyncio
 from unittest.mock import patch
 from django.utils import timezone
-from cjwstate import commands, minio
+from cjwstate import commands, minio, rabbitmq
 from cjwstate.models import Workflow
 from cjwstate.models.commands import ChangeDataVersionCommand
 from cjwstate.tests.utils import DbTestCase
@@ -30,7 +30,7 @@ class ChangeDataVersionCommandTests(DbTestCase):
             key="fake", bucket=minio.StoredObjectsBucket, size=10
         ).stored_at
 
-    @patch("server.websockets.queue_render_if_listening", async_noop)
+    @patch.object(rabbitmq, "queue_render_if_consumers_are_listening", async_noop)
     def test_change_data_version(self):
         # Create two data versions, use the second
         date1 = self._store_fetched_table()
@@ -68,7 +68,7 @@ class ChangeDataVersionCommandTests(DbTestCase):
         self.assertEqual(self.wf_module.last_relevant_delta_id, v2)
         self.assertEqual(self.wf_module.stored_data_version, date1)
 
-    @patch("server.rabbitmq.queue_render")
+    @patch.object(rabbitmq, "queue_render")
     def test_change_version_queue_render_if_notifying(self, queue_render):
         queue_render.return_value = future_none
 
@@ -90,8 +90,8 @@ class ChangeDataVersionCommandTests(DbTestCase):
 
         queue_render.assert_called_with(self.wf_module.workflow_id, delta.id)
 
-    @patch("server.websockets.queue_render_if_listening", async_noop)
-    @patch("server.rabbitmq.queue_render", async_noop)
+    @patch.object(rabbitmq, "queue_render_if_consumers_are_listening", async_noop)
+    @patch.object(rabbitmq, "queue_render", async_noop)
     def test_accept_deleted_version(self):
         """
         Let the user choose whichever version is desired, even if it does not
@@ -125,8 +125,8 @@ class ChangeDataVersionCommandTests(DbTestCase):
         self.wf_module.refresh_from_db()
         self.assertEqual(self.wf_module.stored_data_version, date2)
 
-    @patch("server.websockets.queue_render_if_listening")
-    @patch("server.rabbitmq.queue_render")
+    @patch.object(rabbitmq, "queue_render_if_consumers_are_listening")
+    @patch.object(rabbitmq, "queue_render")
     def test_change_version_queue_render_if_listening_and_no_notification(
         self, queue_render, queue_render_if_listening
     ):

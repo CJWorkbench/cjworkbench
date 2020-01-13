@@ -1,6 +1,7 @@
 from django.db import models
 from .workflow import Workflow
 from cjwkernel.types import Tab as ArrowTab
+from cjwstate import clientside
 
 
 class Tab(models.Model):
@@ -54,3 +55,11 @@ class Tab(models.Model):
 
     def to_arrow(self) -> ArrowTab:
         return ArrowTab(self.slug, self.name)
+
+    def to_clientside(self) -> clientside.TabUpdate:
+        return clientside.TabUpdate(
+            slug=self.slug,
+            name=self.name,
+            selected_step_index=self.selected_wf_module_position,
+            step_ids=list(self.live_wf_modules.values_list("id", flat=True)),
+        )

@@ -8,8 +8,7 @@ from django.conf import settings
 from django.db import transaction
 from django.utils import timezone
 from cjworkbench.sync import database_sync_to_async
-from server import rabbitmq, websockets
-from cjwstate import commands, oauth
+from cjwstate import clientside, commands, oauth, rabbitmq
 from cjwstate.models import Workflow, WfModule
 from cjwstate.models.commands import (
     ChangeParametersCommand,
@@ -324,8 +323,9 @@ def _set_wf_module_busy(wf_module):
 async def fetch(workflow: Workflow, wf_module: WfModule, **kwargs):
     await _set_wf_module_busy(wf_module)
     await rabbitmq.queue_fetch(workflow.id, wf_module.id)
-    await websockets.ws_client_send_delta_async(
-        workflow.id, {"updateWfModules": {str(wf_module.id): {"is_busy": True}}}
+    await rabbitmq.send_update_to_workflow_clients(
+        workflow.id,
+        clientside.Update(steps={wf_module.id: clientside.StepUpdate(is_busy=True)}),
     )
 
 
@@ -415,12 +415,11 @@ async def generate_secret_access_token(
 @database_sync_to_async
 def _wf_module_delete_secret_and_build_delta(
     workflow: Workflow, wf_module: WfModule, param: str
-) -> Optional[Dict[str, Any]]:
+) -> Optional[clientside.Update]:
     """
     Write a new secret (or `None`) to `wf_module`, or raise.
 
-    Return a "delta" for websockets.ws_client_send_delta_async(), or `None` if
-    the database has not been modified.
+    Return a `clientside.Update`, or `None` if the database is not modified.
 
     Raise Workflow.DoesNotExist if the Workflow was deleted.
     """
@@ -437,31 +436,30 @@ def _wf_module_delete_secret_and_build_delta(
         del wf_module.secrets[param]
         wf_module.save(update_fields=["secrets"])
 
-        return {
-            "updateWfModules": {
-                str(wf_module.id): {"secrets": wf_module.secret_metadata}
+        return clientside.Update(
+            steps={
+                wf_module.id: clientside.StepUpdate(secrets=wf_module.secret_metadata)
             }
-        }
+        )
 
 
 @register_websockets_handler
 @websockets_handler("owner")
 @_loading_wf_module
 async def delete_secret(workflow: Workflow, wf_module: WfModule, param: str, **kwargs):
-    delta = await _wf_module_delete_secret_and_build_delta(workflow, wf_module, param)
-    if delta:
-        await websockets.ws_client_send_delta_async(workflow.id, delta)
+    update = await _wf_module_delete_secret_and_build_delta(workflow, wf_module, param)
+    if update:
+        await rabbitmq.send_update_to_workflow_clients(workflow.id, update)
 
 
 @database_sync_to_async
 def _wf_module_set_secret_and_build_delta(
     workflow: Workflow, wf_module: WfModule, param: str, secret: str
-) -> Optional[Dict[str, Any]]:
+) -> Optional[clientside.Update]:
     """
     Write a new secret to `wf_module`, or raise.
 
-    Return a "delta" for websockets.ws_client_send_delta_async(), or `None` if
-    the database is not modified.
+    Return a `clientside.Update`, or `None` if the database is not modified.
 
     Raise Workflow.DoesNotExist if the Workflow was deleted.
     """
@@ -497,11 +495,11 @@ def _wf_module_set_secret_and_build_delta(
         }
         wf_module.save(update_fields=["secrets"])
 
-        return {
-            "updateWfModules": {
-                str(wf_module.id): {"secrets": wf_module.secret_metadata}
+        return clientside.Update(
+            steps={
+                wf_module.id: clientside.StepUpdate(secrets=wf_module.secret_metadata)
             }
-        }
+        )
 
 
 @register_websockets_handler
@@ -521,12 +519,12 @@ async def set_secret(
     # Be safe with types
     param = str(param)
     secret = str(secret)
-    delta = await _wf_module_set_secret_and_build_delta(
+    update = await _wf_module_set_secret_and_build_delta(
         workflow, wf_module, param, secret
     )
 
-    if delta:
-        await websockets.ws_client_send_delta_async(workflow.id, delta)
+    if update:
+        await rabbitmq.send_update_to_workflow_clients(workflow.id, update)
 
 
 @database_sync_to_async

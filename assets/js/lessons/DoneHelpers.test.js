@@ -22,8 +22,8 @@ describe('DoneHelpers', () => {
         }
       })
 
-      expect(workflow.selectedTab.wfModules.map(wfm => wfm.moduleName)).toEqual(['Foo', 'Bar'])
-      expect(workflow.selectedTab.wfModules.map(wfm => wfm.moduleSlug)).toEqual(['foo', 'bar'])
+      expect(workflow.selectedTab.wfModules.map(step => step.moduleName)).toEqual(['Foo', 'Bar'])
+      expect(workflow.selectedTab.wfModules.map(step => step.moduleSlug)).toEqual(['foo', 'bar'])
     })
 
     it('should give wfModuleNames', () => {
