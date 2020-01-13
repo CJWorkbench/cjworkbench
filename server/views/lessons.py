@@ -1,5 +1,5 @@
 import json
-from typing import Optional
+from typing import Any, Dict, Optional
 from asgiref.sync import async_to_sync
 from django.conf import settings
 from django.db import transaction
@@ -7,14 +7,52 @@ from django.http import Http404
 from django.http.response import HttpResponseServerError
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
-from server import rabbitmq
 import server.utils
+from cjwstate import rabbitmq
 from cjwstate.models.commands import InitWorkflowCommand
 from cjwstate.models import Workflow, ModuleVersion
 from server.models.course import Course, CourseLookup, AllCoursesByLocale
-from server.models.lesson import Lesson, AllLessonsByLocale, LessonLookup
-from server.serializers import LessonSerializer, UserSerializer
+from server.models.lesson import (
+    Lesson,
+    AllLessonsByLocale,
+    LessonLookup,
+    LessonSection,
+    LessonSectionStep,
+)
+from server.serializers import jsonize_user
 from server.views.workflows import visible_modules, make_init_state
+
+
+def jsonize_step(step: LessonSectionStep) -> Dict[str, Any]:
+    return {"html": step.html, "highlight": step.highlight, "testJs": step.test_js}
+
+
+def jsonize_section(section: LessonSection) -> Dict[str, Any]:
+    return {
+        "title": section.title,
+        "html": section.html,
+        "steps": list(jsonize_step(step) for step in section.steps),
+        "isFullScreen": section.is_full_screen,
+    }
+
+
+def jsonize_course(course: Course) -> Dict[str, Any]:
+    return {"slug": course.slug, "title": course.title, "localeId": course.locale_id}
+
+
+def jsonize_lesson(lesson: Lesson) -> Dict[str, Any]:
+    return {
+        "course": None if lesson.course is None else jsonize_course(lesson.course),
+        "slug": lesson.slug,
+        "localeId": lesson.locale_id,
+        "header": {"title": lesson.header.title, "html": lesson.header.html},
+        "sections": list(jsonize_section(section) for section in lesson.sections),
+        "footer": {
+            "title": lesson.footer.title,
+            "html": lesson.footer.html,
+            "isFullScreen": lesson.footer.is_full_screen,
+        },
+    }
 
 
 def _get_course_or_404(locale_id, slug):
@@ -87,16 +125,16 @@ def _init_workflow_for_lesson(workflow, lesson):
             selected_wf_module_position=len(tab_dict["wfModules"]) - 1,
         )
 
-        for order, wfm in enumerate(tab_dict["wfModules"]):
-            _add_wf_module_to_tab(wfm, order, tab, workflow.last_delta_id, lesson)
+        for order, step in enumerate(tab_dict["wfModules"]):
+            _add_wf_module_to_tab(step, order, tab, workflow.last_delta_id, lesson)
 
 
-def _add_wf_module_to_tab(wfm_dict, order, tab, delta_id, lesson):
+def _add_wf_module_to_tab(step_dict, order, tab, delta_id, lesson):
     """
     Deserialize a WfModule from lesson initial_workflow
     """
-    id_name = wfm_dict["module"]
-    slug = wfm_dict["slug"]
+    id_name = step_dict["module"]
+    slug = step_dict["slug"]
 
     # 500 error if bad module id name
     module_version = ModuleVersion.objects.latest(id_name)
@@ -104,7 +142,7 @@ def _add_wf_module_to_tab(wfm_dict, order, tab, delta_id, lesson):
     # All params not set in json get default values
     # Also, we must have a dict with all param values set or we can't migrate
     # params later
-    params = {**module_version.default_params, **wfm_dict["params"]}
+    params = {**module_version.default_params, **step_dict["params"]}
 
     # Rewrite 'url' params: if the spec has them as relative, make them the
     # absolute path -- relative to the lesson URL.
@@ -135,8 +173,8 @@ def _add_wf_module_to_tab(wfm_dict, order, tab, delta_id, lesson):
         is_busy=module_version.loads_data,  # assume we'll send a fetch
         last_relevant_delta_id=delta_id,
         params=params,
-        is_collapsed=wfm_dict.get("collapsed", False),
-        notes=wfm_dict.get("note", None),
+        is_collapsed=step_dict.get("collapsed", False),
+        notes=step_dict.get("note", None),
     )
 
 
@@ -145,13 +183,13 @@ def _queue_workflow_updates(workflow: Workflow) -> None:
     have_a_fetch_module = False
 
     for tab in workflow.tabs.all():
-        for wfm in tab.wf_modules.all():
+        for step in tab.wf_modules.all():
             have_a_module = True
             # If this module fetches, do the fetch now (so e.g. Loadurl loads
             # immediately)
-            if wfm.is_busy:
+            if step.is_busy:
                 have_a_fetch_module = True
-                async_to_sync(rabbitmq.queue_fetch)(workflow.id, wfm.id)
+                async_to_sync(rabbitmq.queue_fetch)(workflow.id, step.id)
 
     if have_a_module and not have_a_fetch_module:
         # Render. (e.g., pastecsv)
@@ -169,7 +207,7 @@ def _render_get_lesson_detail(request, lesson):
     modules = visible_modules(request)
 
     init_state = make_init_state(request, workflow=workflow, modules=modules)
-    init_state["lessonData"] = LessonSerializer(lesson).data
+    init_state["lessonData"] = jsonize_lesson(lesson)
 
     # If we just initialized this workflow, start fetches and render
     if created:
@@ -200,7 +238,7 @@ def render_lesson_detail(request, locale_id, slug):
 def _render_course(request, course, lesson_url_prefix):
     logged_in_user = None
     if request.user and request.user.is_authenticated:
-        logged_in_user = UserSerializer(request.user).data
+        logged_in_user = jsonize_user(request.user)
 
     try:
         courses = AllCoursesByLocale[course.locale_id]

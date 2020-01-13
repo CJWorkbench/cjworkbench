@@ -1,4 +1,4 @@
-from cjworkbench import rabbitmq
+from cjwstate import rabbitmq
 from .fetch import handle_fetch
 
 

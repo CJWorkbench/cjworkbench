@@ -77,7 +77,7 @@ urlpatterns = [
     # Not-really-an-API API endpoints
     # TODO rename all these so they don't start with `/api`. (The only way to
     # use them is as a logged-in user.)
-    url(r"^api/workflows/(?P<workflow_id>[0-9]+)/?$", workflows.workflow_detail),
+    url(r"^api/workflows/(?P<workflow_id>[0-9]+)/?$", workflows.ApiDetail.as_view()),
     url(
         r"^api/workflows/(?P<workflow_id>[0-9]+)/duplicate/?$",
         workflows.Duplicate.as_view(),

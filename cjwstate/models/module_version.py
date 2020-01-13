@@ -7,7 +7,7 @@ from django.db.models.signals import post_delete
 from django.dispatch import receiver
 from django.utils import timezone
 from cjwkernel.param_dtype import ParamDType
-from cjwstate import minio
+from cjwstate import clientside, minio
 from cjwstate.modules.module_loader import validate_module_spec
 import cjwstate.modules.staticregistry
 from .param_spec import ParamSpec
@@ -226,6 +226,9 @@ class ModuleVersion(models.Model):
             return "v%d" % self.spec["parameters_version"]
         else:
             return self.source_version_hash
+
+    def to_clientside(self) -> clientside.Module:
+        return clientside.Module(spec=self.spec, js_module=self.js_module)
 
     def __str__(self):
         return "%s#%s" % (self.id_name, self.source_version_hash)

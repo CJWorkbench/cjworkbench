@@ -225,7 +225,7 @@ export class ModuleStack extends React.Component {
   static getDerivedStateFromProps (props, state) {
     // If we delete a zen-mode while in zen mode, exit zen mode
     const zenId = state.zenModeWfModuleId
-    if (zenId && !props.wfModules.find(wfm => wfm.id === zenId)) {
+    if (zenId && !props.wfModules.find(step => step.id === zenId)) {
       return { zenModeWfModuleId: null }
     } else {
       return null

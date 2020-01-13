@@ -284,8 +284,8 @@ class ChangeParametersCommandTest(DbTestCase):
     @patch.object(LoadedModule, "for_module_version", MockLoadedModule)
     def test_change_parameters_update_tab_delta_ids(self):
         workflow = Workflow.create_and_init()
-        # tab1's wfm1 depends on tab2's wfm2
-        wfm1 = workflow.tabs.first().wf_modules.create(
+        # tab1's step1 depends on tab2's step2
+        step1 = workflow.tabs.first().wf_modules.create(
             order=0,
             slug="step-1",
             module_id_name="tabby",
@@ -293,7 +293,7 @@ class ChangeParametersCommandTest(DbTestCase):
             params={"tab": "tab-2"},
         )
         tab2 = workflow.tabs.create(position=1, slug="tab-2")
-        wfm2 = tab2.wf_modules.create(
+        step2 = tab2.wf_modules.create(
             order=0,
             slug="step-1",
             module_id_name="x",
@@ -323,12 +323,12 @@ class ChangeParametersCommandTest(DbTestCase):
             commands.do(
                 ChangeParametersCommand,
                 workflow_id=workflow.id,
-                wf_module=wfm2,
+                wf_module=step2,
                 new_values={"x": 2},
             )
         )
 
-        wfm1.refresh_from_db()
-        wfm2.refresh_from_db()
-        self.assertEqual(wfm1.last_relevant_delta_id, cmd.id)
-        self.assertEqual(wfm2.last_relevant_delta_id, cmd.id)
+        step1.refresh_from_db()
+        step2.refresh_from_db()
+        self.assertEqual(step1.last_relevant_delta_id, cmd.id)
+        self.assertEqual(step2.last_relevant_delta_id, cmd.id)

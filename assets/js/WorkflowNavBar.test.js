@@ -37,7 +37,8 @@ describe('WorkflowNavBar', () => {
         api={api}
         lesson={lesson}
         isReadOnly={false}
-      /> // no loggedInUser prop
+        loggedInUser={null}
+      />
     )
 
     const a = wrapper.find('.course a')
@@ -70,7 +71,8 @@ describe('WorkflowNavBar', () => {
         api={api}
         lesson={lesson}
         isReadOnly={false}
-      /> // no loggedInUser prop
+        loggedInUser={null}
+      />
     )
 
     const a = wrapper.find('.course a')
@@ -136,7 +138,8 @@ describe('WorkflowNavBar', () => {
         workflow={workflow}
         api={api}
         isReadOnly={false}
-      /> // no loggedInUser prop
+        loggedInUser={null}
+      />
     )
 
     expect(wrapper).toMatchSnapshot()

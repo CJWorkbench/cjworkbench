@@ -444,7 +444,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
             }
         )
 
-        wfm1 = self.workflow.tabs.first().wf_modules.create(
+        step1 = self.workflow.tabs.first().wf_modules.create(
             order=0,
             slug="step-1",
             module_id_name="tabby",
@@ -468,8 +468,8 @@ class AddDeleteModuleCommandTests(DbTestCase):
         )
 
         # Tab1's "tabby" module depends on tab2, so it should update.
-        wfm1.refresh_from_db()
-        self.assertEqual(wfm1.last_relevant_delta_id, cmd.id)
+        step1.refresh_from_db()
+        self.assertEqual(step1.last_relevant_delta_id, cmd.id)
 
     # We had a bug where add then delete caused an error when deleting
     # workflow, since both commands tried to delete the WfModule

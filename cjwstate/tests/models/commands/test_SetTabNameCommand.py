@@ -1,5 +1,5 @@
 from unittest.mock import patch
-from cjwstate import commands
+from cjwstate import clientside, commands
 from cjwstate.models import ModuleVersion, Workflow
 from cjwstate.models.commands import SetTabNameCommand
 from cjwstate.modules.loaded_module import LoadedModule
@@ -112,7 +112,7 @@ class SetTabNameCommandTest(DbTestCase):
 
     @patch.object(commands, "websockets_notify")
     @patch.object(commands, "queue_render", async_noop)
-    def test_ws_data(self, send_delta):
+    def test_clientside_update(self, send_delta):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
         tab.name = "foo"
@@ -126,12 +126,12 @@ class SetTabNameCommandTest(DbTestCase):
         )
         send_delta.assert_called()
         delta1 = send_delta.call_args[0][1]
-        self.assertEqual(delta1["updateTabs"], {tab.slug: {"name": "bar"}})
+        self.assertEqual(delta1.tabs[tab.slug], clientside.TabUpdate(name="bar"))
 
         send_delta.return_value = async_noop()
         self.run_with_async_db(commands.undo(cmd))
         delta2 = send_delta.call_args[0][1]
-        self.assertEqual(delta2["updateTabs"], {tab.slug: {"name": "foo"}})
+        self.assertEqual(delta2.tabs[tab.slug], clientside.TabUpdate(name="foo"))
 
     def test_no_op(self):
         workflow = Workflow.create_and_init()

@@ -32,13 +32,13 @@ class ReorderModulesCommandTest(DbTestCase):
         all_modules = self.tab.live_wf_modules
         v1 = self.delta.id
 
-        wfm1 = self.tab.wf_modules.create(
+        step1 = self.tab.wf_modules.create(
             last_relevant_delta_id=v1, order=0, slug="step-1"
         )
-        wfm2 = self.tab.wf_modules.create(
+        step2 = self.tab.wf_modules.create(
             last_relevant_delta_id=v1, order=1, slug="step-2"
         )
-        wfm3 = self.tab.wf_modules.create(
+        step3 = self.tab.wf_modules.create(
             last_relevant_delta_id=v1, order=2, slug="step-3"
         )
 
@@ -47,33 +47,36 @@ class ReorderModulesCommandTest(DbTestCase):
                 ReorderModulesCommand,
                 workflow_id=self.workflow.id,
                 tab=self.tab,
-                new_order=[wfm1.id, wfm3.id, wfm2.id],
+                new_order=[step1.id, step3.id, step2.id],
             )
         )
         v2 = cmd.id
         self.assertWfModuleVersions([v1, v2, v2])
-        wfm2.refresh_from_db()
-        wfm3.refresh_from_db()
+        step2.refresh_from_db()
+        step3.refresh_from_db()
         self.assertEqual(
-            list(all_modules.values_list("id", flat=True)), [wfm1.id, wfm3.id, wfm2.id]
+            list(all_modules.values_list("id", flat=True)),
+            [step1.id, step3.id, step2.id],
         )
 
         # undo
         self.run_with_async_db(commands.undo(cmd))
         self.assertWfModuleVersions([v1, v1, v1])
-        wfm2.refresh_from_db()
-        wfm3.refresh_from_db()
+        step2.refresh_from_db()
+        step3.refresh_from_db()
         self.assertEqual(
-            list(all_modules.values_list("id", flat=True)), [wfm1.id, wfm2.id, wfm3.id]
+            list(all_modules.values_list("id", flat=True)),
+            [step1.id, step2.id, step3.id],
         )
 
         # redo
         self.run_with_async_db(commands.redo(cmd))
         self.assertWfModuleVersions([v1, v2, v2])
-        wfm2.refresh_from_db()
-        wfm3.refresh_from_db()
+        step2.refresh_from_db()
+        step3.refresh_from_db()
         self.assertEqual(
-            list(all_modules.values_list("id", flat=True)), [wfm1.id, wfm3.id, wfm2.id]
+            list(all_modules.values_list("id", flat=True)),
+            [step1.id, step3.id, step2.id],
         )
 
     def test_reorder_modules_reject_other_tabs(self):
@@ -85,15 +88,17 @@ class ReorderModulesCommandTest(DbTestCase):
         but let's be absolutely sure by testing.)
         """
         v1 = self.delta.id
-        wfm1 = self.tab.wf_modules.create(
+        step1 = self.tab.wf_modules.create(
             last_relevant_delta_id=v1, order=0, slug="step-1"
         )
-        wfm2 = self.tab.wf_modules.create(
+        step2 = self.tab.wf_modules.create(
             last_relevant_delta_id=v1, order=1, slug="step-2"
         )
 
         tab2 = self.workflow.tabs.create(position=1, slug="tab-2")
-        wfm3 = tab2.wf_modules.create(last_relevant_delta_id=v1, order=2, slug="step-3")
+        step3 = tab2.wf_modules.create(
+            last_relevant_delta_id=v1, order=2, slug="step-3"
+        )
 
         with self.assertRaises(ValueError):
             self.run_with_async_db(
@@ -101,12 +106,12 @@ class ReorderModulesCommandTest(DbTestCase):
                     ReorderModulesCommand,
                     workflow_id=self.workflow.id,
                     tab=self.tab,
-                    new_order=[wfm1.id, wfm3.id, wfm2.id],
+                    new_order=[step1.id, step3.id, step2.id],
                 )
             )
 
     def test_missing_wf_module_valueerror(self):
-        wfm1 = self.tab.wf_modules.create(
+        step1 = self.tab.wf_modules.create(
             last_relevant_delta_id=self.delta.id, order=0, slug="step-1"
         )
         with self.assertRaises(ValueError):
@@ -115,7 +120,7 @@ class ReorderModulesCommandTest(DbTestCase):
                     ReorderModulesCommand,
                     workflow_id=self.workflow.id,
                     tab=self.tab,
-                    new_order=[wfm1.id + 1],
+                    new_order=[step1.id + 1],
                 )
             )
 
@@ -131,7 +136,7 @@ class ReorderModulesCommandTest(DbTestCase):
             )
 
     def test_not_enough_wfmodules_valueerror(self):
-        wfm1 = self.tab.wf_modules.create(
+        step1 = self.tab.wf_modules.create(
             order=0, slug="step-1", last_relevant_delta_id=self.delta.id
         )
         self.tab.wf_modules.create(
@@ -144,12 +149,12 @@ class ReorderModulesCommandTest(DbTestCase):
                     ReorderModulesCommand,
                     workflow_id=self.workflow.id,
                     tab=self.tab,
-                    new_order=[wfm1.id],
+                    new_order=[step1.id],
                 )
             )
 
     def test_repeated_wfmodules_valueerror(self):
-        wfm1 = self.tab.wf_modules.create(
+        step1 = self.tab.wf_modules.create(
             order=0, slug="step-1", last_relevant_delta_id=self.delta.id
         )
         self.tab.wf_modules.create(
@@ -162,15 +167,15 @@ class ReorderModulesCommandTest(DbTestCase):
                     ReorderModulesCommand,
                     workflow_id=self.workflow.id,
                     tab=self.tab,
-                    new_order=[wfm1.id, wfm1.id],
+                    new_order=[step1.id, step1.id],
                 )
             )
 
     def test_no_change_does_nothing(self):
-        wfm1 = self.tab.wf_modules.create(
+        step1 = self.tab.wf_modules.create(
             order=0, slug="step-1", last_relevant_delta_id=self.delta.id
         )
-        wfm2 = self.tab.wf_modules.create(
+        step2 = self.tab.wf_modules.create(
             order=1, slug="step-2", last_relevant_delta_id=self.delta.id
         )
 
@@ -179,7 +184,7 @@ class ReorderModulesCommandTest(DbTestCase):
                 ReorderModulesCommand,
                 workflow_id=self.workflow.id,
                 tab=self.tab,
-                new_order=[wfm1.id, wfm2.id],
+                new_order=[step1.id, step2.id],
             )
         )
         self.assertIsNone(cmd)

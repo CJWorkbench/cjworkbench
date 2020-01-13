@@ -17,12 +17,15 @@ class ReorderTabsCommand(ChangesWfModuleOutputs, Delta):
     new_order = ArrayField(models.IntegerField())
     wf_module_delta_ids = ChangesWfModuleOutputs.wf_module_delta_ids
 
-    def load_ws_data(self):
-        data = super().load_ws_data()
-        data["updateWorkflow"]["tab_slugs"] = list(
-            self.workflow.live_tabs.values_list("slug", flat=True)
+    # override
+    def load_clientside_update(self):
+        return (
+            super()
+            .load_clientside_update()
+            .update_workflow(
+                tab_slugs=list(self.workflow.live_tabs.values_list("slug", flat=True))
+            )
         )
-        return data
 
     def _write_order(self, tab_ids):
         """Write `tab.position` for all tabs so they are in the given order."""

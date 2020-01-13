@@ -7,8 +7,12 @@ from channels.testing import WebsocketCommunicator
 from django.contrib.auth.models import AnonymousUser, User
 from cjworkbench.asgi import create_url_router
 from server import handlers
+from cjwstate import clientside, rabbitmq
 from cjwstate.models import Workflow
-from server.websockets import ws_client_send_delta_async, queue_render_if_listening
+from cjwstate.rabbitmq import (
+    send_update_to_workflow_clients,
+    queue_render_if_consumers_are_listening,
+)
 from cjwstate.tests.utils import DbTestCase
 
 
@@ -145,7 +149,7 @@ class ChannelTests(DbTestCase):
         connected, _ = await comm.connect()
         self.assertTrue(connected)
         await comm.receive_from()  # ignore initial workflow delta
-        await ws_client_send_delta_async(self.workflow.id, {})
+        await send_update_to_workflow_clients(self.workflow.id, clientside.Update())
         response = await comm.receive_from()
         self.assertEqual(json.loads(response), {"type": "apply-delta", "data": {}})
 
@@ -159,7 +163,7 @@ class ChannelTests(DbTestCase):
         connected2, _ = await comm2.connect()
         self.assertTrue(connected2)
         await comm2.receive_from()  # ignore initial workflow delta
-        await ws_client_send_delta_async(self.workflow.id, {})
+        await send_update_to_workflow_clients(self.workflow.id, clientside.Update())
         response1 = await comm1.receive_from()
         self.assertEqual(json.loads(response1), {"type": "apply-delta", "data": {}})
         response2 = await comm2.receive_from()
@@ -173,7 +177,7 @@ class ChannelTests(DbTestCase):
         await comm.receive_from()  # ignore initial workflow delta
         self.assertTrue(await comm.receive_nothing())
 
-    @patch("server.rabbitmq.queue_render")
+    @patch.object(rabbitmq, "queue_render")
     @async_test
     async def test_queue_render_if_listening(self, communicate, queue_render):
         future_args = asyncio.get_event_loop().create_future()
@@ -187,11 +191,11 @@ class ChannelTests(DbTestCase):
         connected, _ = await comm.connect()
         self.assertTrue(connected)
         await comm.receive_from()  # ignore initial workflow delta
-        await queue_render_if_listening(self.workflow.id, 123)
+        await queue_render_if_consumers_are_listening(self.workflow.id, 123)
         args = await asyncio.wait_for(future_args, 0.005)
         self.assertEqual(args, (self.workflow.id, 123))
 
-    @patch("server.rabbitmq.queue_render")
+    @patch.object(rabbitmq, "queue_render")
     @async_test
     async def test_queue_render_if_not_listening(self, communicate, queue_render):
         future_args = asyncio.get_event_loop().create_future()
@@ -308,7 +312,7 @@ class ChannelTests(DbTestCase):
             },
         )
 
-    @patch("server.rabbitmq.queue_render")
+    @patch.object(rabbitmq, "queue_render")
     @async_test
     async def test_connect_queues_render_if_needed(self, communicate, queue_render):
         """

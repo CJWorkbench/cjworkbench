@@ -1,6 +1,7 @@
 import asyncio
 from typing import Any, Dict, List
 from unittest.mock import patch
+from cjwstate import rabbitmq
 from cjwstate.models import Workflow, ModuleVersion
 from cjwstate.modules.loaded_module import LoadedModule
 from server.models.lesson import Lesson, LessonLookup, LessonInitialWorkflow
@@ -65,9 +66,9 @@ class LessonDetailTests(DbTestCase):
         self.log_in()
 
         # Add non-matching Workflows -- to test we _don't_ load them
-        Workflow.objects.create(owner=self.user, lesson_slug="some-other-lesson")
-        Workflow.objects.create(owner=self.user, lesson_slug=None)
-        Workflow.objects.create(
+        Workflow.create_and_init(owner=self.user, lesson_slug="some-other-lesson")
+        Workflow.create_and_init(owner=self.user, lesson_slug=None)
+        Workflow.create_and_init(
             owner=self.other_user, lesson_slug="load-public-data", public=True
         )
 
@@ -80,7 +81,7 @@ class LessonDetailTests(DbTestCase):
     def test_get_lesson_with_workflow(self):
         self.log_in()
 
-        Workflow.objects.create(owner=self.user, lesson_slug="load-public-data")
+        Workflow.create_and_init(owner=self.user, lesson_slug="load-public-data")
         response = self.client.get("/lessons/en/load-public-data")
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed("workflow.html")
@@ -88,7 +89,7 @@ class LessonDetailTests(DbTestCase):
     def test_get_course_lesson_with_workflow(self):
         self.log_in()
 
-        Workflow.objects.create(
+        Workflow.create_and_init(
             owner=self.user, lesson_slug="intro-to-data-journalism/filter"
         )
         response = self.client.get("/courses/en/intro-to-data-journalism/filter")
@@ -101,7 +102,7 @@ class LessonDetailTests(DbTestCase):
 
     def test_get_with_existing(self):
         self.log_in()
-        Workflow.objects.create(owner=self.user, lesson_slug="load-public-data")
+        Workflow.create_and_init(owner=self.user, lesson_slug="load-public-data")
         self.client.get("/lessons/en/load-public-data")
         self.assertEqual(Workflow.objects.count(), 1)  # don't create duplicate
 
@@ -109,9 +110,9 @@ class LessonDetailTests(DbTestCase):
         self.log_in()
 
         # Add non-matching Workflows -- to test we ignore them
-        Workflow.objects.create(owner=self.user, lesson_slug="other-lesson")
-        Workflow.objects.create(owner=self.user, lesson_slug=None)
-        Workflow.objects.create(
+        Workflow.create_and_init(owner=self.user, lesson_slug="other-lesson")
+        Workflow.create_and_init(owner=self.user, lesson_slug=None)
+        Workflow.create_and_init(
             owner=self.other_user, lesson_slug="load-public-data", public=True
         )
 
@@ -136,7 +137,7 @@ class LessonDetailTests(DbTestCase):
     def test_get_workflow_with_lesson_slug(self):
         self.log_in()
 
-        workflow = Workflow.objects.create(
+        workflow = Workflow.create_and_init(
             owner=self.user, lesson_slug="load-public-data"
         )
         response = self.client.get(workflow.get_absolute_url())
@@ -145,7 +146,7 @@ class LessonDetailTests(DbTestCase):
     def test_get_public_workflow_with_lesson_slug(self):
         self.log_in()
 
-        workflow = Workflow.objects.create(
+        workflow = Workflow.create_and_init(
             owner=self.other_user, lesson_slug="load-public-data", public=True
         )  # not 404
         workflow.save()
@@ -156,7 +157,7 @@ class LessonDetailTests(DbTestCase):
     def test_get_workflow_with_missing_lesson_slug(self):
         self.log_in()
 
-        workflow = Workflow.objects.create(
+        workflow = Workflow.create_and_init(
             owner=self.user, lesson_slug="missing-lesson"
         )
         response = self.client.get(workflow.get_absolute_url())
@@ -166,7 +167,7 @@ class LessonDetailTests(DbTestCase):
     def test_get_workflow_with_missing_course_lesson_slug(self):
         self.log_in()
 
-        workflow = Workflow.objects.create(
+        workflow = Workflow.create_and_init(
             owner=self.user, lesson_slug="course/missing-lesson"
         )
         response = self.client.get(workflow.get_absolute_url())
@@ -175,13 +176,13 @@ class LessonDetailTests(DbTestCase):
 
     def test_get_workflow_with_course_slug(self):
         self.log_in()
-        workflow = Workflow.objects.create(
+        workflow = Workflow.create_and_init(
             owner=self.user, lesson_slug="intro-to-data-journalism/filter"
         )
         response = self.client.get(workflow.get_absolute_url())
         self.assertRedirects(response, "/courses/en/intro-to-data-journalism/filter")
 
-    @patch("server.rabbitmq.queue_render")
+    @patch.object(rabbitmq, "queue_render")
     @patch.dict(
         LessonLookup,
         {
@@ -223,20 +224,20 @@ class LessonDetailTests(DbTestCase):
         self.assertEqual(tab1["slug"], "tab-1")
         self.assertEqual(tab1["name"], "Tab X")
         wf_modules = state["wfModules"]
-        wfm1 = list(wf_modules.values())[0]
-        self.assertEqual(wfm1["module"], "amodule")
-        self.assertEqual(wfm1["slug"], "step-X")
-        self.assertEqual(wfm1["params"], {"foo": "bar"})
-        self.assertEqual(wfm1["notes"], "You're gonna love this data!")
-        self.assertEqual(wfm1["is_collapsed"], True)
-        self.assertEqual(wfm1["is_busy"], False)
+        step1 = list(wf_modules.values())[0]
+        self.assertEqual(step1["module"], "amodule")
+        self.assertEqual(step1["slug"], "step-X")
+        self.assertEqual(step1["params"], {"foo": "bar"})
+        self.assertEqual(step1["notes"], "You're gonna love this data!")
+        self.assertEqual(step1["is_collapsed"], True)
+        self.assertEqual(step1["is_busy"], False)
 
         # We should be rendering the modules
         render.assert_called_with(
-            state["workflow"]["id"], wfm1["last_relevant_delta_id"]
+            state["workflow"]["id"], step1["last_relevant_delta_id"]
         )
 
-    @patch("server.rabbitmq.queue_render")
+    @patch.object(rabbitmq, "queue_render")
     @patch.dict(
         LessonLookup,
         {
@@ -277,8 +278,8 @@ class LessonDetailTests(DbTestCase):
             {"url": "http://localhost:8000/static/lessons/en/a-lesson/foo.txt"},
         )
 
-    @patch("server.rabbitmq.queue_fetch")
-    @patch("server.rabbitmq.queue_render")
+    @patch.object(rabbitmq, "queue_fetch")
+    @patch.object(rabbitmq, "queue_render")
     @patch.dict(
         LessonLookup,
         {
@@ -314,11 +315,11 @@ class LessonDetailTests(DbTestCase):
         response = self.client.get("/lessons/en/a-lesson")
         state = response.context_data["initState"]
         wf_modules = state["wfModules"]
-        wfm1 = list(wf_modules.values())[0]
-        self.assertEqual(wfm1["is_busy"], True)  # because we sent a fetch
+        step1 = list(wf_modules.values())[0]
+        self.assertEqual(step1["is_busy"], True)  # because we sent a fetch
 
         # We should be rendering the modules
-        fetch.assert_called_with(state["workflow"]["id"], wfm1["id"])
+        fetch.assert_called_with(state["workflow"]["id"], step1["id"])
         render.assert_not_called()
 
     @patch.dict(

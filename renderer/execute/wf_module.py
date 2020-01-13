@@ -1,4 +1,5 @@
 import asyncio
+from collections import namedtuple
 import contextlib
 import datetime
 from functools import partial
@@ -17,10 +18,9 @@ from cjwkernel.types import (
     Tab,
 )
 from cjwkernel.util import tempfile_context
-from cjwstate import minio, rendercache
+from cjwstate import clientside, minio, rabbitmq, rendercache
 from cjwstate.models import StoredObject, WfModule, Workflow
 from cjwstate.modules.loaded_module import LoadedModule
-from server import websockets
 from renderer import notifications
 from .types import (
     TabCycleError,
@@ -32,6 +32,9 @@ from . import renderprep
 
 
 logger = logging.getLogger(__name__)
+
+
+SaveResult = namedtuple("SaveResult", ["cached_render_result", "maybe_delta"])
 
 
 @contextlib.contextmanager
@@ -192,7 +195,7 @@ def _execute_wfmodule_pre(
 @database_sync_to_async
 def _execute_wfmodule_save(
     workflow: Workflow, wf_module: WfModule, result: RenderResult
-) -> notifications.OutputDelta:
+) -> SaveResult:
     """
     Call rendercache.cache_render_result() and build notifications.OutputDelta.
 
@@ -238,7 +241,7 @@ def _execute_wfmodule_save(
         ):
             safe_wf_module.has_unseen_notification = True
             safe_wf_module.save(update_fields=["has_unseen_notification"])
-            return notifications.OutputDelta(
+            maybe_delta = notifications.OutputDelta(
                 safe_wf_module.workflow.owner,
                 safe_wf_module.workflow,
                 safe_wf_module,
@@ -246,7 +249,8 @@ def _execute_wfmodule_save(
                 result,
             )
         else:
-            return None  # nothing to email
+            maybe_delta = None  # nothing to email
+        return SaveResult(safe_wf_module.cached_render_result, maybe_delta)
 
 
 async def _render_wfmodule(
@@ -371,12 +375,12 @@ async def execute_wfmodule(
     )
 
     # may raise UnneededExecution
-    output_delta = await _execute_wfmodule_save(workflow, wf_module, result)
+    crr, output_delta = await _execute_wfmodule_save(workflow, wf_module, result)
 
-    await websockets.ws_client_send_delta_async(
-        workflow.id,
-        {"updateWfModules": {str(wf_module.id): build_status_dict(result, delta_id)}},
+    update = clientside.Update(
+        steps={wf_module.id: clientside.StepUpdate(render_result=crr)}
     )
+    await rabbitmq.send_update_to_workflow_clients(workflow.id, update)
 
     # Email notification if data has changed. Do this outside of the database
     # lock, because SMTP can be slow, and Django's email backend is

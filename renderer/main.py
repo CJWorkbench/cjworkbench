@@ -1,4 +1,4 @@
-from cjworkbench import rabbitmq
+from cjwstate import rabbitmq
 from cjworkbench.pg_render_locker import PgRenderLocker
 from .render import handle_render
 

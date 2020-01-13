@@ -4,42 +4,68 @@
 from collections import namedtuple
 import json
 import logging
+import pickle
 from typing import Dict, Any
-from django.core.serializers.json import DjangoJSONEncoder
 from channels.layers import get_channel_layer
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from channels.exceptions import DenyConnection
 from cjworkbench.sync import database_sync_to_async
-from server import handlers, rabbitmq
+from cjwstate import clientside, rabbitmq
 from cjwstate.models import WfModule, Workflow
-from server.serializers import WorkflowSerializer, TabSerializer, WfModuleSerializer
+from server import handlers
+from server.serializers import JsonizeContext, jsonize_clientside_update
 
 logger = logging.getLogger(__name__)
-RequestWrapper = namedtuple("RequestWrapper", ("user", "session"))
+WorkflowUpdateData = namedtuple("WorkflowUpdateData", ("update", "delta_id"))
 
 
-def _workflow_channel_name(workflow_id: int) -> str:
-    """Given a workflow ID, return a channel_layer channel name.
+def _workflow_group_name(workflow_id: int) -> str:
+    """
+    Build a channel_layer group name, given a workflow ID.
 
-    Messages sent to this channel name will be sent to all clients connected to
+    Messages sent to this group will be sent to all clients connected to
     this workflow.
     """
     return f"workflow-{str(workflow_id)}"
 
 
-class WorkflowConsumer(AsyncJsonWebsocketConsumer):
-    # Override Channels JSON-dumping to support datetime
-    @classmethod
-    async def encode_json(cls, data: Any) -> str:
-        return json.dumps(data, cls=DjangoJSONEncoder)
+@database_sync_to_async
+def _get_workflow_as_clientside_update(
+    user, session, workflow_id: int
+) -> WorkflowUpdateData:
+    """
+    Return (clientside.Update, delta_id).
 
+    Raise Workflow.DoesNotExist if a race deletes the Workflow.
+
+    The purpose of this method is to hide races from users who disconnect
+    and reconnect while changes are being made. It's okay for things to be
+    slightly off, as long as users don't notice. (Long-term, we can build
+    better a more-correct synchronization strategy.)
+    """
+    with Workflow.authorized_lookup_and_cooperative_lock(
+        "read", user, session, pk=workflow_id
+    ) as workflow_lock:
+        workflow = workflow_lock.workflow
+        update = clientside.Update(
+            workflow=workflow.to_clientside(),
+            tabs={tab.slug: tab.to_clientside() for tab in workflow.live_tabs},
+            steps={
+                step.id: step.to_clientside()
+                for step in WfModule.live_in_workflow(workflow)
+            },
+        )
+        return WorkflowUpdateData(update, workflow.last_delta_id)
+
+
+class WorkflowConsumer(AsyncJsonWebsocketConsumer):
     @property
     def workflow_id(self):
         return int(self.scope["url_route"]["kwargs"]["workflow_id"])
 
     @property
     def workflow_channel_name(self):
-        return _workflow_channel_name(self.workflow_id)
+        return _workflow_group_name(self.workflow_id)
 
     def get_workflow_sync(self):
         """The current user's Workflow, if exists and authorized; else None"""
@@ -71,40 +97,6 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
                 return True
         except Workflow.DoesNotExist:
             return False
-
-    @database_sync_to_async
-    def get_workflow_as_delta_and_needs_render(self):
-        """
-        Return (apply-delta dict, needs_render), or raise Workflow.DoesNotExist
-
-        needs_render is a (workflow_id, delta_id) pair.
-        """
-        with Workflow.authorized_lookup_and_cooperative_lock(
-            "read", self.scope["user"], self.scope["session"], pk=self.workflow_id
-        ) as workflow_lock:
-            workflow = workflow_lock.workflow
-            request = RequestWrapper(self.scope["user"], self.scope["session"])
-            ret = {
-                "updateWorkflow": (
-                    WorkflowSerializer(workflow, context={"request": request}).data
-                )
-            }
-
-            tabs = list(workflow.live_tabs)
-            ret["updateTabs"] = dict(
-                (tab.slug, TabSerializer(tab).data) for tab in tabs
-            )
-            wf_modules = list(WfModule.live_in_workflow(workflow.id))
-            ret["updateWfModules"] = dict(
-                (str(wfm.id), WfModuleSerializer(wfm).data) for wfm in wf_modules
-            )
-
-            if workflow.are_all_render_results_fresh():
-                needs_render = None
-            else:
-                needs_render = (workflow.id, workflow.last_delta_id)
-
-            return (ret, needs_render)
 
     async def connect(self):
         if not await self.authorize("read"):
@@ -144,35 +136,43 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
 
     async def send_whole_workflow_to_client(self):
         try:
-            delta, needs_render = await self.get_workflow_as_delta_and_needs_render()
-            await self.send_data_to_workflow_client(
-                {
-                    "data": {  # TODO why the nesting?
-                        "type": "apply-delta",
-                        "data": delta,
-                    }
-                }
+            update, delta_id = await _get_workflow_as_clientside_update(
+                self.scope["user"], self.scope["session"], self.workflow_id
             )
-            if needs_render:
-                # Solve a problem: what if, when the user reconnects, the
-                # workflow isn't rendered?
-                #
-                # Usually, a render is happening. But sometimes not. Perhaps we
-                # cleared the cache. Or perhaps we deployed a new version of
-                # Workbench that doesn't use the same cache format -- making
-                # every workflow's cache invalid. In those cases, we should
-                # cause a render just by dint of a user reconnecting.
-                workflow_id, delta_id = needs_render
-                logger.debug("Queue render of Workflow %d v%d", workflow_id, delta_id)
-                await rabbitmq.queue_render(workflow_id, delta_id)
         except Workflow.DoesNotExist:
-            pass
+            return
 
-    async def send_data_to_workflow_client(self, message):
-        logger.debug(
-            "Send %s to Workflow %d", message["data"]["type"], self.workflow_id
-        )
-        await self.send_json(message["data"])
+        await self.send_update(update)
+        if any(
+            step.render_result == clientside.Null
+            or (step.render_result.delta_id != step.last_relevant_delta_id)
+            for step in update.steps.values()
+        ):
+            # Solve a problem: what if, when the user reconnects, the
+            # workflow isn't rendered?
+            #
+            # Usually, a render is happening. But sometimes not. Perhaps we
+            # cleared the cache. Or perhaps we deployed a new version of
+            # Workbench that doesn't use the same cache format -- making
+            # every workflow's cache invalid. In those cases, we should
+            # cause a render just by dint of a user reconnecting.
+            workflow_id = update.workflow.id
+            logger.debug("Queue render of Workflow %d v%d", workflow_id, delta_id)
+            await rabbitmq.queue_render(workflow_id, delta_id)
+
+    async def send_pickled_update(self, message: Dict[str, Any]) -> None:
+        # It's a bit of a security concern that we use pickle to send
+        # dataclasses, through RabbitMQ, as opposed to protobuf. It's also
+        # inefficient and makes for races when deploying new versions. But
+        # it's _so_ much less code!  Let's only add complexity if we detect
+        # a problem.
+        await self.send_update(pickle.loads(message["pickled_update"]))
+
+    async def send_update(self, update: clientside.Update) -> None:
+        logger.debug("Send update to Workflow %d", self.workflow_id)
+        ctx = JsonizeContext(self.scope["user"], self.scope["session"], "TODO_i18n")
+        json_dict = jsonize_clientside_update(update, ctx)
+        await self.send_json({"type": "apply-delta", "data": json_dict})
 
     async def queue_render(self, message):
         """
@@ -182,11 +182,9 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
         somebody wants to see the render." Well, `self` is here representing a
         user who has the workflow open and wants to see the render.
         """
-        data = message["data"]
-        workflow_id = data["workflow_id"]
-        delta_id = data["delta_id"]
-        logger.debug("Queue render of Workflow %d v%d", workflow_id, delta_id)
-        await rabbitmq.queue_render(workflow_id, delta_id)
+        delta_id = message["delta_id"]
+        logger.debug("Queue render of Workflow %d v%d", self.workflow_id, delta_id)
+        await rabbitmq.queue_render(self.workflow_id, delta_id)
 
     async def receive_json(self, content):
         """
@@ -225,38 +223,3 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
         response = await handlers.handle(request)
 
         await self.send_json({"response": response.to_dict()})
-
-
-async def _workflow_group_send(workflow_id: int, message_dict: Dict[str, Any]) -> None:
-    """Send message_dict as JSON to all clients connected to the workflow."""
-    channel_name = _workflow_channel_name(workflow_id)
-    channel_layer = get_channel_layer()
-    logger.debug("Queue %s to Workflow %d", message_dict["type"], workflow_id)
-    await channel_layer.group_send(
-        channel_name, {"type": "send_data_to_workflow_client", "data": message_dict}
-    )
-
-
-async def ws_client_send_delta_async(workflow_id: int, delta: Dict[str, Any]) -> None:
-    """Tell clients how to modify their `workflow` and `wfModules` state."""
-    message = {"type": "apply-delta", "data": delta}
-    await _workflow_group_send(workflow_id, message)
-
-
-async def queue_render_if_listening(workflow_id: int, delta_id: int):
-    """
-    Tell workflow communicators to queue a render of `workflow`.
-
-    In other words: "queue a render, but only if somebody has this workflow
-    open in a web browser."
-    """
-    channel_name = _workflow_channel_name(workflow_id)
-    channel_layer = get_channel_layer()
-    logger.debug("Suggest render of Workflow %d v%d", workflow_id, delta_id)
-    await channel_layer.group_send(
-        channel_name,
-        {
-            "type": "queue_render",
-            "data": {"workflow_id": workflow_id, "delta_id": delta_id},
-        },
-    )

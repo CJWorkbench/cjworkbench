@@ -27,13 +27,12 @@ from cjwkernel.tests.util import (
     assert_arrow_table_equals,
     parquet_file,
 )
-from cjwstate import minio, rendercache, storedobjects
+from cjwstate import minio, rabbitmq, rendercache, storedobjects
 from cjwstate.models import CachedRenderResult, ModuleVersion, WfModule, Workflow
 import cjwstate.modules
 from cjwstate.modules.loaded_module import LoadedModule
 from cjwstate.tests.utils import DbTestCase
 from fetcher import fetch, fetchprep, save
-from server import websockets
 from typing import Union
 
 
@@ -374,11 +373,11 @@ class FetchOrWrapErrorTests(unittest.TestCase):
 
 
 class FetchTests(DbTestCase):
-    @patch.object(websockets, "queue_render_if_listening")
-    @patch.object(websockets, "ws_client_send_delta_async")
-    def test_fetch_integration(self, send_delta, queue_render):
+    @patch.object(rabbitmq, "queue_render_if_consumers_are_listening")
+    @patch.object(rabbitmq, "send_update_to_workflow_clients")
+    def test_fetch_integration(self, send_update, queue_render):
         queue_render.side_effect = async_value(None)
-        send_delta.side_effect = async_value(None)
+        send_update.side_effect = async_value(None)
         workflow = Workflow.create_and_init()
         ModuleVersion.create_or_replace_from_spec(
             {"id_name": "mod", "name": "Mod", "category": "Clean", "parameters": []},
@@ -406,7 +405,7 @@ class FetchTests(DbTestCase):
 
         workflow.refresh_from_db()
         queue_render.assert_called_with(workflow.id, workflow.last_delta_id)
-        send_delta.assert_called()
+        send_update.assert_called()
 
     @patch.object(save, "create_result")
     def test_fetch_integration_tempfiles_are_on_disk(self, create_result):
