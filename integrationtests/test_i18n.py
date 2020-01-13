@@ -33,7 +33,7 @@ def switch_locale_django(browser: Browser, to_locale_name: str):
 
 def switch_locale_react(browser: Browser, to_locale_name: str):
     browser.click_whatever(".navbar .dropdown button")
-    browser.click_whatever(".locale-switcher-show", wait=True)
+    browser.click_whatever(".dropdown-item i.icon-language", wait=True)
     browser.click_button(to_locale_name, wait=True)
 
     # wait for page reload
