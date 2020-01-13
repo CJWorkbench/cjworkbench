@@ -771,7 +771,7 @@ msgstr "Operations"
 
 #. The tags <3>, <6>, and <8> are URLs. The rest are code formatting. Please
 #. keep code and names of libraries untranslated.
-#: assets/js/params/Custom/Code/AceEditor.js:78
+#: assets/js/params/Custom/Code/AceEditor.js:79
 msgid "js.params.Custom.Code.AceEditor.help"
 msgstr ""
 "Define a <0>process(table)</0> function that accepts a "
@@ -2102,6 +2102,11 @@ msgstr "Sign in"
 #: templates/account/login.html:12
 msgid "py.templates.account.login.linkToSignUp"
 msgstr "Sign up"
+
+#. The 'or' in 'Log in with [Google/Facebook buttons] *or* [username/password]'
+#: templates/account/login.html:27
+msgid "py.templates.account.login.socialSimpleSeparator"
+msgstr "or"
 
 #: templates/account/login.html:43
 msgid "py.templates.account.login.forgotPasswordPrompt"

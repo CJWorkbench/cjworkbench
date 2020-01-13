@@ -1,10 +1,11 @@
-from cjworkbench.i18n import default_locale, is_supported
+from cjworkbench.i18n import default_locale, is_supported, LANGUAGE_COOKIE_NAME
 from django.utils.translation import activate
 from django.utils.translation.trans_real import (
     language_code_re,
     get_supported_language_variant,
     parse_accept_lang_header,
 )
+from django.urls import resolve
 
 
 class SetCurrentLocaleMiddleware:
@@ -39,7 +40,7 @@ class SetCurrentLocaleMiddleware:
          1. In the current request attributes, so that the user can change it any time.
             This is meant for testing purposes and does not affect the preferences of logged-in users.
          2. If the user is logged in and has ever set a locale preference, in the user's profile;
-            otherwise, in the current session.
+            otherwise, in our language cookie.
          3. In the Accept-Language header sent by the browser
          4. The default locale
          
@@ -60,14 +61,14 @@ class SetCurrentLocaleMiddleware:
         return locale if is_supported(locale) else None
 
     def _get_locale_from_current_user(self, request):
-        if self._use_session(request.user):
-            locale = request.session.get("locale_id")
+        if self._use_cookie(request.user):
+            locale = request.COOKIES.get(LANGUAGE_COOKIE_NAME)
             return locale if is_supported(locale) else None
         else:
             locale = request.user.user_profile.locale_id
             return locale if is_supported(locale) else None
 
-    def _use_session(self, user):
+    def _use_cookie(self, user):
         return not user.is_authenticated
 
     def _get_locale_from_language_header(self, request):

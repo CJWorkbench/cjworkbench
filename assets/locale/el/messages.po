@@ -346,7 +346,7 @@ msgstr ""
 
 #: assets/js/WfHamburgerMenu.js:69
 msgid "js.WfHamburgerMenu.menu.logout"
-msgstr "Αποσυνδέση"
+msgstr "Αποσύνδεση"
 
 #: assets/js/WfHamburgerMenu.js:62
 msgid "js.WfHamburgerMenu.menu.myWorkflows"
@@ -791,7 +791,7 @@ msgstr "Πράξεις"
 
 #. The tags <3>, <6>, and <8> are URLs. The rest are code formatting. Please
 #. keep code and names of libraries untranslated.
-#: assets/js/params/Custom/Code/AceEditor.js:78
+#: assets/js/params/Custom/Code/AceEditor.js:79
 msgid "js.params.Custom.Code.AceEditor.help"
 msgstr ""
 "Ορίστε μια συνάρτηση <0>process(table)</0> η οποία δέχεται ένα "
@@ -2148,6 +2148,11 @@ msgstr "Σύνδεση"
 msgid "py.templates.account.login.linkToSignUp"
 msgstr "Εγγραφή"
 
+#. The 'or' in 'Log in with [Google/Facebook buttons] *or* [username/password]'
+#: templates/account/login.html:27
+msgid "py.templates.account.login.socialSimpleSeparator"
+msgstr ""
+
 #: templates/account/login.html:43
 msgid "py.templates.account.login.forgotPasswordPrompt"
 msgstr "Ξεχάσατε τον κωδικό;"
@@ -2158,11 +2163,11 @@ msgstr "Σύνδεση"
 
 #: templates/account/logout.html:5
 msgid "py.templates.account.logout.title"
-msgstr "Αποσυνδέση"
+msgstr "Αποσύνδεση"
 
 #: templates/account/logout.html:9
 msgid "py.templates.account.logout.formHeader"
-msgstr "Αποσυνδέση"
+msgstr "Αποσύνδεση"
 
 #: templates/account/logout.html:12
 msgid "py.templates.account.logout.confirmation"
@@ -2170,7 +2175,7 @@ msgstr "Είστε βέβαιος ότι θέλετε να αποσυνδεθε�
 
 #: templates/account/logout.html:13
 msgid "py.templates.account.logout.button"
-msgstr "Αποσυνδέση"
+msgstr "Αποσύνδεση"
 
 #: templates/account/password_change.html:5
 msgid "py.templates.account.password_change.title"
