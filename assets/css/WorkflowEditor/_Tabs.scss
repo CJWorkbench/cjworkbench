@@ -150,15 +150,10 @@
           margin-right: 1px; // 1px more than when we're li.selected....
           margin-left: 0; // 1px more than when we're li.selected...
 
-          .tab-name {
-            // When shrinking, shrink the name.
-            flex-shrink: 1;
-            overflow: hidden;
-          }
-
           .dropdown {
-            // If the tab has been shrunk to fit, cut off its text by drawing the
-            // background on top, as a gradient.
+            // If the tab has been shrunk to fit, truncate its
+            // <input name="tab-name"> text by drawing a gradient background
+            // on top.
             background: linear-gradient(90deg, rgba($pane-select-tab-bg, 0) 0%, $pane-select-tab-bg 30%);
           }
         }
