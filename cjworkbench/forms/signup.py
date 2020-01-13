@@ -40,7 +40,7 @@ class WorkbenchSignupForm(forms.ModelForm):
         user.last_name = self.cleaned_data["last_name"]
         user.save()
         # User profile
-        profile, created = UserProfile.objects.update_or_create(
+        UserProfile.objects.update_or_create(
             user=user,
             defaults={
                 "get_newsletter": self.cleaned_data["get_newsletter"],
