@@ -3,7 +3,7 @@ name: 'Convert to date & time'
 category: Clean
 help_url: modules/convert-to-date-time
 icon: calendar
-description: 'Convert Text columns to Date & time.'
+description: 'Convert text columns to date & time.'
 parameters:
 - id_name: colnames
   name: ''

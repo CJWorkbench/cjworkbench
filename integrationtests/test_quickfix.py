@@ -84,9 +84,9 @@ class TestQuickFix(LoggedInIntegrationTest):
         # Fix the error by clicking the "Quick Fix" button.
         b.click_button("Convert Text to Numbers")
         # Wait for module to appear
-        b.assert_element(".module-name", text="Convert to numbers", wait=True)
+        b.assert_element(".module-name", text="Convert to number", wait=True)
         # The conversion won't work until we check an option.
-        b.check("Find numbers in text")
+        b.check("Ignore non-numeric characters")
         self.submit_wf_module()
 
         # Now, the "Format numbers" module will have the correct output.

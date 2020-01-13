@@ -52,7 +52,7 @@ export default class ColumnContextMenu extends React.Component {
           <DropdownItem onClick={this.handleCleanText} className='clean-text' icon='icon-clean'><Trans id='js.table.ColumnContextMenu.cleanText'>Clean Text</Trans></DropdownItem>
           <DropdownDivider />
           <DropdownItem onClick={this.handleConvertDate} className='convert-date' icon='icon-calendar'><Trans id='js.table.ColumnContextMenu.convertToDateTime'>Convert to date & time</Trans></DropdownItem>
-          <DropdownItem onClick={this.handleExtractNumbers} className='converttexttonumber' icon='icon-number'><Trans id='js.table.ColumnContextMenu.convertToNumbers'>Convert to numbers</Trans></DropdownItem>
+          <DropdownItem onClick={this.handleExtractNumbers} className='converttexttonumber' icon='icon-number'><Trans id='js.table.ColumnContextMenu.convertToNumbers'>Convert to number</Trans></DropdownItem>
           <DropdownItem onClick={this.handleConvertText} className='converttotext' icon='icon-text'><Trans id='js.table.ColumnContextMenu.convertToText'>Convert to text</Trans></DropdownItem>
           <DropdownDivider />
           <DropdownItem onClick={this.handleFormatNumbers} className='formatnumbers' icon='icon-number' disabled={columnType !== 'number'}><Trans id='js.table.ColumnContextMenu.formatNumbers'>Format numbers</Trans></DropdownItem>

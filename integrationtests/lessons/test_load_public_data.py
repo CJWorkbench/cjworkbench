@@ -26,9 +26,9 @@ class TestLesson(LessonTest):
 
         # 2. Load Public Data by URL
         self.expect_highlight(0)
-        self.add_data_step("Add from URL")
+        self.add_data_step("Load from URL")
 
-        self.expect_highlight(1, '.wf-module[data-module-name="Add from URL"]')
+        self.expect_highlight(1, '.wf-module[data-module-name="Load from URL"]')
         b.fill_in("url", DataUrl, wait=True)  # wait for module to load
         b.click_button("Update")
 

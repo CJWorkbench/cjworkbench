@@ -442,6 +442,15 @@ class TestRender(unittest.TestCase):
         expected = self.table[[False, True, False, False, True]].reset_index(drop=True)
         assert_frame_equal(result, expected)
 
+    def test_datetime_before(self):
+        table = pd.DataFrame(
+            {"date": ["2019-01-01T04:59+0500", "2019-01-01T05:01+0500"]}
+        )
+        params = simple_params("date", "date_is_before", "2019-01-01")
+        result = render(table, params)
+        expected = pd.DataFrame({"date": ["2019-01-01T04:59+0500"]})
+        assert_frame_equal(result, expected)
+
     def test_compare_int_with_str_condition(self):
         params = simple_params("A", "text_is_exactly", " ")
         result = render(pd.DataFrame({"A": []}), params)

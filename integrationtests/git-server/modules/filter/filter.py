@@ -101,7 +101,7 @@ def series_to_datetime(series):
             # seconds since 1970
             raise ValueError("Refusing to convert numbers to dates")
 
-        return pd.to_datetime(series)
+        return pd.to_datetime(series, utc=True)
     except ValueError:
         raise UserVisibleError("Column is not dates. Please convert to dates.")
 
@@ -111,7 +111,7 @@ def value_to_datetime(value):
     Convert to datetime, or raise UserVisibleError.
     """
     try:
-        return pd.to_datetime(value)
+        return pd.to_datetime(value, utc=True)
     except ValueError:
         raise UserVisibleError("Value is not a date. Please enter a date and time.")
 

@@ -37,11 +37,11 @@ class TestLesson(LessonTest):
 
         # 2. Drop empty rows and columns
         self.expect_highlight(0, "a[name=loadurl]")
-        self.add_data_step("Add from URL")
+        self.add_data_step("Load from URL")
 
         # Wait for module to load
         self.expect_highlight(
-            1, '.wf-module[data-module-name="Add from URL"]', wait=True
+            1, '.wf-module[data-module-name="Load from URL"]', wait=True
         )
         b.fill_in("url", DataUrl, wait=True)  # wait for module to load
         b.click_button("Update")
@@ -84,8 +84,8 @@ class TestLesson(LessonTest):
             ".in-between-modules:last-child button.search",
             wait=True,  # wait for last exec to happen?
         )
-        self.add_wf_module("Convert to numbers")
-        self.select_column("Convert to numbers", "colnames", "Population")
+        self.add_wf_module("Convert to number")
+        self.select_column("Convert to number", "colnames", "Population")
         self.submit_wf_module()
 
         self.expect_highlight_next()

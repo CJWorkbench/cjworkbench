@@ -154,7 +154,7 @@ describe('DoneHelpers', () => {
     it('should have .selectedVersion even when placeholder', () => {
       const wfModule = new WorkflowModuleWithHelpers({
         placeholder: true,
-        name: 'Add from URL'
+        name: 'Load from URL'
       })
       expect(wfModule.selectedVersion).toBe(null)
     })

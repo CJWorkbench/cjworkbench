@@ -359,32 +359,32 @@ msgid "js.UnhandledErrorReport.helpText.pleaseDescribeYourActions"
 msgstr ""
 
 #. default-message: Home
-#: assets/js/WfHamburgerMenu.js:66
+#: assets/js/WfHamburgerMenu.js:64
 msgid "js.WfHamburgerMenu.menu.home"
 msgstr ""
 
 #. default-message: Import Module
-#: assets/js/WfHamburgerMenu.js:63
+#: assets/js/WfHamburgerMenu.js:61
 msgid "js.WfHamburgerMenu.menu.importModule"
 msgstr ""
 
 #. default-message: Language
-#: assets/js/WfHamburgerMenu.js:58
+#: assets/js/WfHamburgerMenu.js:56
 msgid "js.WfHamburgerMenu.menu.language"
 msgstr ""
 
 #. default-message: Log Out
-#: assets/js/WfHamburgerMenu.js:69
+#: assets/js/WfHamburgerMenu.js:67
 msgid "js.WfHamburgerMenu.menu.logout"
 msgstr ""
 
 #. default-message: My Workflows
-#: assets/js/WfHamburgerMenu.js:62
+#: assets/js/WfHamburgerMenu.js:60
 msgid "js.WfHamburgerMenu.menu.myWorkflows"
 msgstr ""
 
 #. default-message: menu
-#: assets/js/WfHamburgerMenu.js:53
+#: assets/js/WfHamburgerMenu.js:51
 msgid "js.WfHamburgerMenu.toggle.hoverText"
 msgstr ""
 
@@ -921,7 +921,7 @@ msgstr ""
 #. The tags <3>, <6>, and <8> are URLs. The rest are code formatting. Please
 #. keep code and names of libraries untranslated.
 #. default-message: Define a <0>process(table)</0> function that accepts a <1>pd.DataFrame</1> and returns a <2>pd.DataFrame</2>. You may use the <3><4>math</4></3>, <5>pd</5> (<6>Pandas</6>) and <7>np</7> (<8>Numpy</8>) modules.
-#: assets/js/params/Custom/Code/AceEditor.js:78
+#: assets/js/params/Custom/Code/AceEditor.js:79
 msgid "js.params.Custom.Code.AceEditor.help"
 msgstr ""
 
@@ -2092,7 +2092,7 @@ msgstr ""
 msgid "js.table.ColumnContextMenu.convertToDateTime"
 msgstr ""
 
-#. default-message: Convert to numbers
+#. default-message: Convert to number
 #: assets/js/table/ColumnContextMenu.js:55
 msgid "js.table.ColumnContextMenu.convertToNumbers"
 msgstr ""

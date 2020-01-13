@@ -1,7 +1,7 @@
 id_name: dropna
 name: Drop empty rows
 category: Clean
-description: Drop row if specified columns are empty
+description: Drop row if the values in specific columns are empty.
 icon: filter
 help_url: modules/clean/drop-empty-rows
 parameters:
