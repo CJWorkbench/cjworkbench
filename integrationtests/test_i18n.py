@@ -24,7 +24,7 @@ def logout(browser: Browser) -> None:
 
 
 def switch_locale_django(browser: Browser, to_locale_name: str):
-    browser.click_whatever("a#locale-switcher-dropdown", wait=True)
+    browser.click_whatever("a#locale-switcher-dropdown")
     browser.click_button(to_locale_name, wait=True)
 
     # check that the language has indeed changed
@@ -32,17 +32,15 @@ def switch_locale_django(browser: Browser, to_locale_name: str):
 
 
 def switch_locale_react(browser: Browser, to_locale_name: str):
-    browser.click_whatever(".navbar .dropdown button", wait=True)
+    browser.click_whatever(".navbar .dropdown button")
     browser.click_whatever(".locale-switcher-show", wait=True)
     browser.click_button(to_locale_name, wait=True)
 
-    # check that the language has indeed changed
-    browser.click_whatever(".navbar .dropdown button", wait=True)
-    browser.click_whatever(".locale-switcher-show", wait=True)
-    browser.wait_for_element(
-        ".modal.locale-switcher form button[disabled]", text=to_locale_name
-    )
-    browser.click_whatever(".modal.locale-switcher .modal-footer .close-button")
+    # wait for page reload
+    # 1. wait for the existing page to go away (by testing the modal is gone)
+    browser.assert_no_element(".modal.locale-switcher", wait=True)
+    # 2. wait for an element on the new page
+    browser.assert_element(".navbar .dropdown button", wait=True)
 
 
 class TestI18n(WorkbenchBase):

@@ -53,7 +53,7 @@ export class WfHamburgerMenu extends React.Component {
           </DropdownToggle>
 
           <DropdownMenu>
-            <DropdownItem className='locale-switcher-show' onClick={this.handleClickOpenLocaleSwitcher}><i className='icon icon-language' /><Trans id='js.WfHamburgerMenu.menu.language'>Language</Trans></DropdownItem>
+            <DropdownItem onClick={this.handleClickOpenLocaleSwitcher}><i className='icon icon-language' /><Trans id='js.WfHamburgerMenu.menu.language'>Language</Trans></DropdownItem>
             <DropdownDivider />
             {loggedIn && workflowId ? (
               <>
