@@ -6,7 +6,7 @@ from cjworkbench.i18n import default_locale
 from cjworkbench.i18n.catalogs import load_catalog
 from string import Formatter
 from cjworkbench.i18n.exceptions import UnsupportedLocaleError, BadCatalogsError
-from icu import Formattable, Locale, MessageFormat
+from icu import Formattable, Locale, MessageFormat, ICUError
 import logging
 
 
