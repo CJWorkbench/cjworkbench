@@ -7,9 +7,13 @@ from cjworkbench.i18n.catalogs import load_catalog
 from string import Formatter
 from cjworkbench.i18n.exceptions import UnsupportedLocaleError, BadCatalogsError
 from icu import Formattable, Locale, MessageFormat
+import logging
 
 
 _translators = {}
+
+
+logger = logging.getLogger(__name__)
 
 
 def _get_translations(locale):
@@ -98,6 +102,7 @@ class MessageTranslator:
     def __init__(self, locale_id, catalog):
         self.icu_locale = Locale.createFromName(locale_id)
         self.catalog = catalog
+        self.locale_id = locale_id
 
     @classmethod
     def for_application_messages(cls, locale_id: str):
@@ -144,8 +149,11 @@ class MessageTranslator:
                 return self._format_message(
                     message, parameters=parameters, html_escape=False
                 )
-            except Exception:
-                pass
+            except ICUError as err:
+                logger.exception(
+                    f"Error in po file for locale {self.locale_id} and message {message}: {err}"
+                )
+                # ... and fall through to default
         return self._format_message(fallback, parameters=parameters, html_escape=False)
 
     def _process_html_message(self, message, fallback, parameters={}, tags={}):
@@ -156,8 +164,11 @@ class MessageTranslator:
                     parameters=parameters,
                     html_escape=True,
                 )
-            except Exception:
-                pass
+            except ICUError as err:
+                logger.exception(
+                    f"Error in po file for locale {self.locale_id} and message {message}: {err}"
+                )
+                # ... and fall through to default
         return self._format_message(
             self._replace_tags(fallback, tags), parameters=parameters, html_escape=True
         )
