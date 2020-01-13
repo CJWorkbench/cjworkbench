@@ -16,7 +16,7 @@
     <li
       data-highlight='[{"type":"Module","index":0,"id_name":"loadurl"}]'
       data-test="return workflow.tabs[0].wfModuleSlugs[0] === 'loadurl'"
-      >Add the data source ‘Add from URL’.</li>
+      >Add the data source ‘Load from URL’.</li>
     <li
       data-highlight='[{"type":"WfModule","moduleIdName":"loadurl"}]'
       data-test="const wfModule = workflow.tabs[0].wfModules[0]; return wfModule && wfModule.params.url === '{{LESSON_FILES_URL}}/affordable_housing_1.csv' && wfModule.selectedVersion"
@@ -40,7 +40,7 @@
       <span>
         <img class="icon-insert" src="./collapse_button.svg">
       </span>
-      the 'Add from URL'.</li>
+      the 'Load from URL'.</li>
   </ol>
 </section>
 <section>
@@ -71,7 +71,7 @@
     <li
       data-highlight='[{"type":"Module","index":1,"id_name":"filter"}]'
       data-test="return workflow.tabs[0].wfModules.length > 2 && workflow.tabs[0].wfModuleSlugs[1] === 'filter'"
-      >Add the step ‘Filter by condition’ between 'Add from URL' and 'Column Chart'.</li>
+      >Add the step ‘Filter by condition’ between 'Load from URL' and 'Column Chart'.</li>
     <li
       data-highlight='[{"type":"WfModule","moduleIdName":"filter"}]'
       data-test="const p = workflow.tabs[0].wfModules[1].params; if (!p.filters.filters[0] || !p.filters.filters[0].subfilters[0]) return false; const sf = p.filters.filters[0].subfilters[0]; return sf.colname === 'affordable_units' && sf.condition === 'number_is_greater_than' && sf.value === '200' && p.keep"

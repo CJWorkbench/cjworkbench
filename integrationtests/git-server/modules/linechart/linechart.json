@@ -3,7 +3,7 @@
   "id_name": "linechart",
   "category" : "Visualize",
   "icon" : "linechart",
-  "description" : "Visualize data in a line chart.",
+  "description" : "Visualize data as a series of points connected by straight lines.",
   "html_output": true,
   "help_url":"modules/visualize/line-chart",
   "parameters": [

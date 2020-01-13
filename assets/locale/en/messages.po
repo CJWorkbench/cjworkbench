@@ -314,27 +314,27 @@ msgstr ""
 "It helps if you can describe what you were doing before you ran into the "
 "bug."
 
-#: assets/js/WfHamburgerMenu.js:66
+#: assets/js/WfHamburgerMenu.js:64
 msgid "js.WfHamburgerMenu.menu.home"
 msgstr "Home"
 
-#: assets/js/WfHamburgerMenu.js:63
+#: assets/js/WfHamburgerMenu.js:61
 msgid "js.WfHamburgerMenu.menu.importModule"
 msgstr "Import Module"
 
-#: assets/js/WfHamburgerMenu.js:58
+#: assets/js/WfHamburgerMenu.js:56
 msgid "js.WfHamburgerMenu.menu.language"
 msgstr "Language"
 
-#: assets/js/WfHamburgerMenu.js:69
+#: assets/js/WfHamburgerMenu.js:67
 msgid "js.WfHamburgerMenu.menu.logout"
 msgstr "Log Out"
 
-#: assets/js/WfHamburgerMenu.js:62
+#: assets/js/WfHamburgerMenu.js:60
 msgid "js.WfHamburgerMenu.menu.myWorkflows"
 msgstr "My Workflows"
 
-#: assets/js/WfHamburgerMenu.js:53
+#: assets/js/WfHamburgerMenu.js:51
 msgid "js.WfHamburgerMenu.toggle.hoverText"
 msgstr "menu"
 
@@ -1769,7 +1769,7 @@ msgstr "Convert to date & time"
 
 #: assets/js/table/ColumnContextMenu.js:55
 msgid "js.table.ColumnContextMenu.convertToNumbers"
-msgstr "Convert to numbers"
+msgstr "Convert to number"
 
 #: assets/js/table/ColumnContextMenu.js:56
 msgid "js.table.ColumnContextMenu.convertToText"

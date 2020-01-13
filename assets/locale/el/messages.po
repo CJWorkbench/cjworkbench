@@ -332,27 +332,27 @@ msgstr ""
 "Βοηθά αν μπορείτε να περιγράψετε τι κάνατε προτού εμφανιστεί αυτό το "
 "σφάλμα."
 
-#: assets/js/WfHamburgerMenu.js:66
+#: assets/js/WfHamburgerMenu.js:64
 msgid "js.WfHamburgerMenu.menu.home"
 msgstr "Αρχική"
 
-#: assets/js/WfHamburgerMenu.js:63
+#: assets/js/WfHamburgerMenu.js:61
 msgid "js.WfHamburgerMenu.menu.importModule"
 msgstr "Εισαγωγή Μονάδας (Module)"
 
-#: assets/js/WfHamburgerMenu.js:58
+#: assets/js/WfHamburgerMenu.js:56
 msgid "js.WfHamburgerMenu.menu.language"
 msgstr ""
 
-#: assets/js/WfHamburgerMenu.js:69
+#: assets/js/WfHamburgerMenu.js:67
 msgid "js.WfHamburgerMenu.menu.logout"
 msgstr "Αποσύνδεση"
 
-#: assets/js/WfHamburgerMenu.js:62
+#: assets/js/WfHamburgerMenu.js:60
 msgid "js.WfHamburgerMenu.menu.myWorkflows"
 msgstr "Οι ροές εργασιών μου"
 
-#: assets/js/WfHamburgerMenu.js:53
+#: assets/js/WfHamburgerMenu.js:51
 msgid "js.WfHamburgerMenu.toggle.hoverText"
 msgstr "μενού"
 
@@ -1810,6 +1810,7 @@ msgid "js.table.ColumnContextMenu.convertToDateTime"
 msgstr "Μετατροπή σε ημερομηνία & ώρα"
 
 #: assets/js/table/ColumnContextMenu.js:55
+#, fuzzy
 msgid "js.table.ColumnContextMenu.convertToNumbers"
 msgstr "Μετατροπή σε αριθμούς"
 

@@ -1,5 +1,5 @@
 {
-  "name": "HTML scraper",
+  "name": "Load HTML from URL",
   "id_name": "urlscraper" ,
   "category" : "Scrape",
   "icon" : "scraper",
@@ -34,7 +34,7 @@
       "id_name": "urllist",
       "type": "string",
       "multiline": true,
-      "placeholder": "Enter URLs here, each on one line.",
+      "placeholder": "Enter URLs here, newline-separated.",
       "visible_if": {
         "id_name": "urlsource",
         "value": [ "list" ]

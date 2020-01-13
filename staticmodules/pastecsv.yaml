@@ -4,7 +4,7 @@
   "category" : "Add data",
   "icon" : "doc",
   "loads_data": true,
-  "description" : "Enter data manually or copy and paste data from a spreadsheet or CSV.",
+  "description" : "Enter data manually, or copy and paste data from a spreadsheet or CSV.",
   "help_url":"modules/add-data/paste-data",
   "parameters_version": 1,
   "parameters": [
@@ -13,7 +13,7 @@
       "id_name": "csv",
       "type": "string",
       "multiline": true,
-      "placeholder":"Paste data from a spreadsheet, or a CSV"
+      "placeholder": "Paste data from a spreadsheet or CSV"
     },
     {
       "name": "Has header row",

@@ -1,5 +1,5 @@
 id_name: duplicatecolumns
-name: Duplicate Columns
+name: Duplicate columns
 category: Clean
 description: Duplicate columns with all their values.
 help_url: steps/clean/Duplicate-columns

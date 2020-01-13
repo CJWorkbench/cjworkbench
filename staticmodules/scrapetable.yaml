@@ -1,11 +1,11 @@
 {
-  "name": "Scrape table",
+  "name": "Scrape HTML table",
   "id_name": "scrapetable" ,
-  "category" : "Scrape",
-  "icon" : "scraper",
-  "description" : "Scrape and load a table from a webpage and get updates if it changes.",
+  "category": "Scrape",
+  "icon": "scraper",
+  "description": "Load a table from a webpage and update it when the webpage changes.",
   "loads_data": true,
-  "help_url":"modules/scrape/scrape-table",
+  "help_url": "modules/scrape/scrape-table",
   "parameters_version": 0,
   "parameters": [
     {

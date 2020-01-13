@@ -4,7 +4,7 @@
   "category" : "Analyze",
   "icon": "filter",
   "help_url":"modules/analyse/filter",
-  "description": "Filter rows by combining simple conditions such as 'if text contains..' or 'if number is greater than..'",
+  "description": "Filter rows by combining simple conditions such as 'if text contains...' or 'if number is greater than...'",
   "param_schema": {
     "keep": { "type": "boolean", "default": true },
     "filters": {

@@ -3,7 +3,7 @@
   "id_name": "nulldropper",
   "category" : "Clean",
   "icon": "transform",
-  "description": "Drop all empty columns",
+  "description": "Drop all columns that contain no values",
   "help_url":"modules/clean/drop-empty-columns",
   "parameters": [
     {

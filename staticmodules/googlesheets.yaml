@@ -3,7 +3,7 @@
   "id_name": "googlesheets" ,
   "category" : "Add data",
   "icon" : "google-drive",
-  "description" : "Load CSV, Google Sheets and Excel files directly from your account and get updates when new data is available.",
+  "description" : "Load CSV, Google Sheets and Excel files from your Google Drive and update when new data is available.",
   "help_url":"modules/add-data/google-drive",
   "loads_data": true,
   "parameters_version": 1,

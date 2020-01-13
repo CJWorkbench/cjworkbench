@@ -2,9 +2,9 @@ id_name: columnchart
 name: Column Chart
 category: Visualize
 icon: chart
-description: Visualize data in a column chart.
+description: Visualize categorical data with bars proportional to the values they represent.
 html_output: true
-help_url: modules/visualize/column-chart
+help_url: en/articles/1484224
 parameters:
 - id_name: title
   type: string

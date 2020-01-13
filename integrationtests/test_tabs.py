@@ -47,12 +47,12 @@ class TestTabs(WorkbenchBase):
         b.assert_no_element('.wf-module[data-module-name="Paste data"]')
 
         # Add a module that should not appear on Tab 1
-        self.add_data_step("Add from URL")
+        self.add_data_step("Load from URL")
 
         # Switch to Tab 1
         self._select_tab("Tab 1")
         b.assert_element('.wf-module[data-module-name="Paste data"]')
-        b.assert_no_element('.wf-module[data-module-name="Add from URL"]')
+        b.assert_no_element('.wf-module[data-module-name="Load from URL"]')
 
     def test_tab_deps(self):
         b = self.browser

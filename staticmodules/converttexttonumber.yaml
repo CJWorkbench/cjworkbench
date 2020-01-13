@@ -1,35 +1,36 @@
 id_name: converttexttonumber
-name: Convert to numbers
+name: Convert to number
 category: Clean
 icon: number
 help_url: steps/clean/convert-to-numbers
-description: Convert text to numbers.
+description: Convert text columns to number columns.
 parameters_version: 2
 parameters:
 - id_name: colnames
   type: multicolumn
   name: ''
   column_types: [ text, number ]  # we also convert numbers to numbers
-- id_name: input_locale
-  type: menu
-  default: us
-  name: Format of numbers to convert
-  options:
-  - { value: us, label: 'United States: 1,500.00' }
-  - { value: eu, label: 'Europe: 1.500,00' }
 - id_name: input_number_type
+  name: Integer or decimal
   type: menu
   default: any
   options:
   - { value: any, label: Any number }
-  - { value: int, label: Any integer }
-  - { value: float, label: Any decimal }
+  - { value: int, label: Only integer }
+  - { value: float, label: Only decimal }
+- id_name: input_locale
+  name: Thousand and decimal separators
+  type: menu
+  default: us
+  options:
+  - { value: us, label: 'United States: 1,500.00' }
+  - { value: eu, label: 'Europe: 1.500,00' }
 - id_name: extract
   type: checkbox
-  name: Find numbers in text
+  name: Ignore non-numeric characters
   default: false
 - id_name: error_means_null
-  name: 'Convert non-numbers to null'
+  name: Convert errors to null
   type: checkbox
   default: true
 - id_name: output_format

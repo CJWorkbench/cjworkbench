@@ -3,7 +3,7 @@
   "id_name": "sort",
   "category" : "Analyze",
   "icon" : "transform-v",
-  "description": "Sort rows by column",
+  "description": "Sort rows by selected columns' values.",
   "help_url":"modules/analyze/sort",
   "param_schema": {
     "sort_columns": {
@@ -33,7 +33,7 @@
       "name": "Keep top",
       "id_name": "keep_top",
       "type": "string",
-      "placeholder": "Enter how many rows to keep"
+      "placeholder": "Number of rows"
     }
   ]
 }

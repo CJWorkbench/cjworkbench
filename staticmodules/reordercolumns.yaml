@@ -3,7 +3,7 @@
   "id_name": "reordercolumns",
   "category": "Clean",
   "icon": "transform",
-  "description": "Change the order of columns in the table, and log all changes.",
+  "description": "Change the order of columns in the table.",
   "help_url":"modules/clean/reorder-columns",
   "parameters_version": 2,
   "parameters": [

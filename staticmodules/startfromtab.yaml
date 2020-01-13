@@ -4,7 +4,7 @@
   "category": "Add data",
   "icon": "import-tab",
   "help_url": "modules/add-data/startfromtab",
-  "description": "Use the output of another tab as the data source for this tab.",
+  "description": "Copy another tab’s output table.",
   "loads_data": true,
   "parameters_version": 1,
   "parameters": [

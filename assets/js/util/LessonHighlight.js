@@ -53,13 +53,13 @@ const matchOneLessonHighlight = (lessonHighlight, test) => {
  * // What we're saying we want to highlight
  * // (e.g., from redux store)
  * const lessonHighlight = [
- *   { type: 'WfModule', moduleName: 'Add from URL' },
+ *   { type: 'WfModule', moduleName: 'Load from URL' },
  *   { type: 'Module', name: 'Filter', index: 0 },
  * ]
  *
  * // What we're rendering
  * // (e.g., within WfModule.js)
- * const test = { type: 'WfModule', moduleName: 'Add from URL' }
+ * const test = { type: 'WfModule', moduleName: 'Load from URL' }
  *
  * matchLessonHighlight(lessonHighlight, test) // true
  * ```
