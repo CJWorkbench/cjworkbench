@@ -5,7 +5,7 @@ metadata:
   name: user-files-cert
 spec:
   domains:
-    - user-files.workbenchdata.com
+    - user-files.$DOMAIN
 ---
 apiVersion: extensions/v1beta1
 kind: Ingress
