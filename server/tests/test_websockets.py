@@ -85,7 +85,9 @@ class ChannelTests(DbTestCase):
 
         self.user = User.objects.create(username="usual", email="usual@example.org")
         self.workflow = Workflow.create_and_init(name="Workflow 1", owner=self.user)
-        self.application = self.mock_auth_middleware(create_url_router())
+        self.application = self.mock_i18n_middleware(
+            self.mock_auth_middleware(create_url_router())
+        )
 
         self.communicators = []
 
@@ -93,6 +95,13 @@ class ChannelTests(DbTestCase):
         def inner(scope):
             scope["user"] = self.user
             scope["session"] = FakeSession("a-key")
+            return application(scope)
+
+        return inner
+
+    def mock_i18n_middleware(self, application, locale_id="en"):
+        def inner(scope):
+            scope["locale_id"] = locale_id
             return application(scope)
 
         return inner

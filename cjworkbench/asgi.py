@@ -21,6 +21,7 @@ from django.conf.urls import url
 
 from server.websockets import WorkflowConsumer
 import cjwstate.modules
+from cjworkbench.middleware.i18n import SetCurrentLocaleAsgiMiddleware
 
 
 def create_url_router() -> AuthMiddlewareStack:
@@ -42,7 +43,13 @@ def create_application() -> ProtocolTypeRouter:
     #    request.
     cjwstate.modules.init_module_system()
 
-    return ProtocolTypeRouter({"websocket": AuthMiddlewareStack(create_url_router())})
+    return ProtocolTypeRouter(
+        {
+            "websocket": AuthMiddlewareStack(
+                SetCurrentLocaleAsgiMiddleware(create_url_router())
+            )
+        }
+    )
 
 
 application = create_application()
