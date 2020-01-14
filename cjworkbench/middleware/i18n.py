@@ -40,22 +40,21 @@ class SetCurrentLocaleMiddleware:
 
 
 class SetCurrentLocaleAsgiMiddleware:
-    def __init__(self, app):
-        self.app = app
+    def __init__(self, inner):
+        self.inner = inner
 
     def __call__(self, scope):
-        scope = dict(scope)
-        scope["locale_id"] = LocaleDecider(
-            cookies=scope["cookies"],
-            accept_language_header=dict(scope["headers"])
-            .get(b"accept-language", b"")
-            .decode("utf8"),
-        ).decide()
-
-        async def inner(receive, send):
-            return await self.app(scope)(receive, send)
-
-        return inner
+        return self.inner(
+            dict(
+                scope,
+                locale_id=LocaleDecider(
+                    cookies=scope["cookies"],
+                    accept_language_header=dict(scope["headers"])
+                    .get(b"accept-language", b"")
+                    .decode("utf8"),
+                ).decide(),
+            )
+        )
 
 
 class LocaleDecider:
