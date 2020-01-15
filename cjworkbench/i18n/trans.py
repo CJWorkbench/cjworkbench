@@ -28,36 +28,33 @@ def _get_translations(locale):
     return _translators[locale]
 
 
-def trans(message_id, *, default, context=None, parameters={}):
-    """Translate the given message ID to the current locale
-    
-    HTML is not escaped.
+def trans(message_id, *, default, parameters={}):
+    """Mark a message for translation and localize it to the current locale, not escaping HTML.
     
     For code parsing reasons, respect the following order when passing keyword arguments:
-        `message_id` and then `default` and then `context` and then everything else
+        `message_id` and then `default` and then everything else
     """
     return _get_translations(get_language()).trans(
-        message_id, default=default, context=context, parameters=parameters
-    )
-
-
-def trans_html(locale_id, message_id, *, default, context=None, parameters={}, tags={}):
-    """Translate the given message ID to the given locale
-    
-    HTML is escaped in the message, as well as in parameters and tag attributes.
-    
-    For code parsing reasons, respect the following order when passing keyword arguments:
-        `message_id` and then `default` and then `context` and then everything else
-    """
-    return _get_translations(locale_id).trans_html(
-        message_id, default=default, context=context, parameters=parameters, tags=tags
+        message_id, default=default, parameters=parameters
     )
 
 
 trans_lazy = lazy(trans)
-"""Mark a string for translation, but actually translate it when it has to be used.
-   See the documentation of `trans` for more details on the parameters.
+"""Mark a string for translation, but actually localize it when it has to be used.
+   See the documentation of `trans` for more details on the function and its parameters.
 """
+
+
+def localize_html(
+    locale_id, message_id, *, default, context=None, parameters={}, tags={}
+):
+    """Localize the given message ID to the given locale, escaping HTML.
+    
+    HTML is escaped in the message, as well as in parameters and tag attributes.
+    """
+    return _get_translations(locale_id).trans_html(
+        message_id, default=default, context=context, parameters=parameters, tags=tags
+    )
 
 
 def restore_tags(message, tag_mapping):
@@ -118,9 +115,7 @@ class MessageTranslator:
         they are handled so as to not raise an exception; at this point, the default message is used instead, but you should not rely on this behaviour
         """
         return self._process_simple_message(
-            self.get_message(message_id, context=context),
-            default or message_id,
-            parameters,
+            self.get_message(message_id, context=context), default, parameters
         )
 
     def trans_html(
@@ -137,10 +132,7 @@ class MessageTranslator:
         HTML-like tags in the message used are replaced by their counterpart in `tags`, as specified in `restore_tags`
         """
         return self._process_html_message(
-            self.get_message(message_id, context=context),
-            default or message_id,
-            parameters,
-            tags,
+            self.get_message(message_id, context=context), default, parameters, tags
         )
 
     def _process_simple_message(self, message, fallback, parameters={}):

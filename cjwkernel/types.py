@@ -616,6 +616,21 @@ class I18nMessage:
         return cls("TODO_i18n", {"text": text})
 
     @classmethod
+    def trans(
+        cls,
+        message_id: str,
+        *,
+        default: str,
+        parameters: Dict[str, Union[int, float, str]] = {},
+    ) -> I18nMessage:
+        """
+        Build an I18nMessage.
+
+        The `default` argument is ignored at runtime, it's only used when parsing code.
+        """
+        return cls(message_id, parameters)
+
+    @classmethod
     def from_dict(cls, value: Dict[str, Any]) -> I18nMessage:
         return cls(value["id"], value["arguments"])
 
