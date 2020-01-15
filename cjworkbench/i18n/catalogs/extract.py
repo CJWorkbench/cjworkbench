@@ -119,35 +119,23 @@ def extract_python(
     for (message_lineno, funcname, messages, translator_comments) in _parse_python(
         fileobj, keywords, comment_tags, options
     ):
-        if funcname in ["trans", "trans_lazy"]:
-            # `messages` will have all the string parameters to our function
-            # As we specify in the documentation of `trans`,
-            # the first will be the message ID, the second will be the default message
-            # and the (optional) third will be the message context
-            if len(messages) > 1 and messages[1]:
-                # If we have a default, add it as a special comment
-                # that will be processed by our `merge_catalogs` script
-                translator_comments.append(
-                    (message_lineno, "default-message: " + messages[1])
-                )
+        # `messages` will have all the string parameters to our function
+        # As we specify in the documentation of `trans`,
+        # the first will be the message ID, the second will be the default message
+        if len(messages) > 1 and messages[1]:
+            # If we have a default, add it as a special comment
+            # that will be processed by our `merge_catalogs` script
+            translator_comments.append(
+                (message_lineno, "default-message: " + messages[1])
+            )
 
-            if len(messages) > 2 and isinstance(messages[2], str):
-                context = messages[2]
-            else:
-                context = None
+        # Pybabel expects a `funcname` of the `gettext` family, or `None`.
+        funcname = None
 
-            if context:
-                # if we have a context, trick pybabel to use `pgettext`
-                # so that it adds the context to the translation file
-                funcname = "pgettext"
-                messages = [context, messages[0]]
-            else:
-                # Pybabel expects a `funcname` of the `gettext` family, or `None`.
-                funcname = None
         yield (
             message_lineno,
             funcname,
-            messages,
+            messages[0],
             [comment[1] for comment in translator_comments],
         )
 
