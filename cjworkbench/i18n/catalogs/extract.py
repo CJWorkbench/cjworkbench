@@ -122,7 +122,6 @@ def extract_python(
         # `messages` will have all the string parameters to our function
         # As we specify in the documentation of `trans`,
         # the first will be the message ID, the second will be the default message
-        # and the (optional) third will be the message context
         if len(messages) > 1 and messages[1]:
             # If we have a default, add it as a special comment
             # that will be processed by our `merge_catalogs` script

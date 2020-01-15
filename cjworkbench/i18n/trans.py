@@ -29,7 +29,7 @@ def _get_translations(locale):
 
 
 def trans(message_id, *, default, parameters={}):
-    """Mark a message for translation and localize it to the current locale, not escaping HTML.
+    """Mark a message for translation and localize it to the current locale.
     
     For code parsing reasons, respect the following order when passing keyword arguments:
         `message_id` and then `default` and then everything else
