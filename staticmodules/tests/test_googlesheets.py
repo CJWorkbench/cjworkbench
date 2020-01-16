@@ -1,18 +1,17 @@
 import contextlib
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import io
+import logging
 from pathlib import Path
 import unittest
 import ssl
 import threading
 from typing import Any, ContextManager, Dict, Optional
-from aiohttp import web
 import pandas as pd
 import pyarrow
 from staticmodules import googlesheets
 from staticmodules.googlesheets import fetch_arrow, render_arrow, migrate_params
 from .util import MockHttpResponse, MockParams
-from cjwkernel.pandas.http import httpfile
 from cjwkernel.types import (
     ArrowTable,
     I18nMessage,
@@ -22,6 +21,7 @@ from cjwkernel.types import (
 )
 from cjwkernel.tests.util import assert_arrow_table_equals, parquet_file
 from cjwkernel.util import tempfile_context
+from cjwmodule.http import httpfile
 
 expected_table = pd.DataFrame({"foo": [1, 2], "bar": [2, 3]})
 
@@ -49,27 +49,6 @@ def secrets(secret: Optional[Dict[str, Any]]) -> Dict[str, Any]:
         return {"google_credentials": secret}
     else:
         return {}
-
-
-@contextlib.contextmanager
-def fetch(
-    params: Dict[str, Any], secrets: Dict[str, Any]
-) -> ContextManager[FetchResult]:
-    with tempfile_context(prefix="output-") as output_path:
-        yield fetch_arrow(params, secrets, None, None, output_path)
-
-
-MOCK_ROUTES = {
-    "csv": (
-        "aushwyhtbndh7365YHALsdfsdf987IBHJB98uc9uisdj",
-        "/drive/v3/files/aushwyhtbndh7365YHALsdfsdf987IBHJB98uc9uisdj?alt=media",
-        web.Response(body=b"foocsv,bar\n1,2\n2,3"),
-        pd.DataFrame({"foocsv": [1, 2], "bar": [2, 3]}),
-    ),
-    "tsv": (),
-    "xls": (),
-    "xlsx": (),
-}
 
 
 class FetchTests(unittest.TestCase):
@@ -127,8 +106,17 @@ class FetchTests(unittest.TestCase):
         googlesheets.SSL_CONTEXT = self.old_ssl_context
         super().tearDown()
 
+    @contextlib.contextmanager
+    def fetch(
+        self, params: Dict[str, Any], secrets: Dict[str, Any]
+    ) -> ContextManager[FetchResult]:
+        with tempfile_context(prefix="output-") as output_path:
+            with self.assertLogs(level=logging.DEBUG) as cm:
+                yield fetch_arrow(params, secrets, None, None, output_path)
+
     def test_fetch_nothing(self):
-        with fetch(P(file=None), secrets={}) as result:
+        with tempfile_context(prefix="output-") as output_path:
+            result = fetch_arrow(P(file=None), {}, None, None, output_path)
             self.assertEqual(
                 result.errors,
                 [RenderError(I18nMessage.TODO_i18n("Please choose a file"))],
@@ -139,12 +127,12 @@ class FetchTests(unittest.TestCase):
         self.mock_http_response = MockHttpResponse.ok(
             body, [("Content-Type", "text/csv")]
         )
-        with fetch(P(), secrets(DEFAULT_SECRET)) as result:
+        with self.fetch(P(), secrets(DEFAULT_SECRET)) as result:
             self.assertEqual(result.errors, [])
-            with httpfile.read(result.path) as (body_path, url, headers):
+            with httpfile.read(result.path) as (_, __, headers, body_path):
                 self.assertEqual(body_path.read_bytes(), body)
                 self.assertEqual(
-                    headers, "Content-Type: text/csv\r\nContent-Length: 11\r\n"
+                    headers, [("content-type", "text/csv"), ("content-length", "11")]
                 )
         self.assertRegex(
             self.last_http_requestline, "/files/.*/export\?mimeType=text%2Fcsv"
@@ -155,14 +143,14 @@ class FetchTests(unittest.TestCase):
         self.mock_http_response = MockHttpResponse.ok(
             body, [("Content-Type", "text/csv")]
         )
-        with fetch(
+        with self.fetch(
             P(file={**default_file, "mimeType": "text/csv"}), secrets(DEFAULT_SECRET)
         ) as result:
             self.assertEqual(result.errors, [])
-            with httpfile.read(result.path) as (body_path, url, headers):
+            with httpfile.read(result.path) as (_, __, headers, body_path):
                 self.assertEqual(body_path.read_bytes(), body)
                 self.assertEqual(
-                    headers, "Content-Type: text/csv\r\nContent-Length: 11\r\n"
+                    headers, [("content-type", "text/csv"), ("content-length", "11")]
                 )
         self.assertRegex(self.last_http_requestline, "/files/.*?alt=media")
 
@@ -171,16 +159,19 @@ class FetchTests(unittest.TestCase):
         self.mock_http_response = MockHttpResponse.ok(
             body, [("Content-Type", "text/tab-separated-values")]
         )
-        with fetch(
+        with self.fetch(
             P(file={**default_file, "mimeType": "text/tab-separated-values"}),
             secrets(DEFAULT_SECRET),
         ) as result:
             self.assertEqual(result.errors, [])
-            with httpfile.read(result.path) as (body_path, url, headers):
+            with httpfile.read(result.path) as (_, __, headers, body_path):
                 self.assertEqual(body_path.read_bytes(), body)
                 self.assertEqual(
                     headers,
-                    "Content-Type: text/tab-separated-values\r\nContent-Length: 11\r\n",
+                    [
+                        ("content-type", "text/tab-separated-values"),
+                        ("content-length", "11"),
+                    ],
                 )
         self.assertRegex(self.last_http_requestline, "/files/.*?alt=media")
 
@@ -189,16 +180,19 @@ class FetchTests(unittest.TestCase):
         self.mock_http_response = MockHttpResponse.ok(
             body, [("Content-Type", "application/vnd.ms-excel")]
         )
-        with fetch(
+        with self.fetch(
             P(file={**default_file, "mimeType": "application/vnd.ms-excel"}),
             secrets(DEFAULT_SECRET),
         ) as result:
             self.assertEqual(result.errors, [])
-            with httpfile.read(result.path) as (body_path, url, headers):
+            with httpfile.read(result.path) as (_, __, headers, body_path):
                 self.assertEqual(body_path.read_bytes(), body)
                 self.assertEqual(
                     headers,
-                    "Content-Type: application/vnd.ms-excel\r\nContent-Length: 4\r\n",
+                    [
+                        ("content-type", "application/vnd.ms-excel"),
+                        ("content-length", "4"),
+                    ],
                 )
         self.assertRegex(self.last_http_requestline, "/files/.*?alt=media")
 
@@ -213,7 +207,7 @@ class FetchTests(unittest.TestCase):
                 )
             ],
         )
-        with fetch(
+        with self.fetch(
             P(
                 file={
                     **default_file,
@@ -223,16 +217,23 @@ class FetchTests(unittest.TestCase):
             secrets(DEFAULT_SECRET),
         ) as result:
             self.assertEqual(result.errors, [])
-            with httpfile.read(result.path) as (body_path, url, headers):
+            with httpfile.read(result.path) as (_, __, headers, body_path):
                 self.assertEqual(body_path.read_bytes(), body)
                 self.assertEqual(
                     headers,
-                    "Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet\r\nContent-Length: 4\r\n",
+                    [
+                        (
+                            "content-type",
+                            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                        ),
+                        ("content-length", "4"),
+                    ],
                 )
         self.assertRegex(self.last_http_requestline, "/files/.*?alt=media")
 
     def test_missing_secret_error(self):
-        with fetch(P(), secrets=secrets(None)) as result:
+        with tempfile_context() as output_path:
+            result = fetch_arrow(P(), secrets(None), None, None, output_path)
             self.assertEqual(result.path.read_bytes(), b"")
             self.assertEqual(
                 result.errors,
@@ -243,7 +244,7 @@ class FetchTests(unittest.TestCase):
 
     def test_invalid_auth_error(self):
         self.mock_http_response = MockHttpResponse(401)
-        with fetch(P(), secrets=secrets(DEFAULT_SECRET)) as result:
+        with self.fetch(P(), secrets=secrets(DEFAULT_SECRET)) as result:
             self.assertEqual(result.path.read_bytes(), b"")
             self.assertEqual(
                 result.errors,
@@ -258,7 +259,7 @@ class FetchTests(unittest.TestCase):
 
     def test_not_found(self):
         self.mock_http_response = MockHttpResponse(404)
-        with fetch(P(), secrets=secrets(DEFAULT_SECRET)) as result:
+        with self.fetch(P(), secrets=secrets(DEFAULT_SECRET)) as result:
             self.assertEqual(result.path.read_bytes(), b"")
             self.assertEqual(
                 result.errors,
@@ -273,7 +274,7 @@ class FetchTests(unittest.TestCase):
 
     def test_no_access_error(self):
         self.mock_http_response = MockHttpResponse(403)
-        with fetch(P(), secrets=secrets(DEFAULT_SECRET)) as result:
+        with self.fetch(P(), secrets=secrets(DEFAULT_SECRET)) as result:
             self.assertEqual(result.path.read_bytes(), b"")
             self.assertEqual(
                 result.errors,
@@ -292,7 +293,7 @@ class FetchTests(unittest.TestCase):
         self.mock_http_response = MockHttpResponse.ok(
             b"hi", headers=[("Content-Encoding", "gzip")]
         )
-        with fetch(P(), secrets=secrets(DEFAULT_SECRET)) as result:
+        with self.fetch(P(), secrets=secrets(DEFAULT_SECRET)) as result:
             self.assertEqual(result.path.read_bytes(), b"")
             self.assertEqual(
                 result.errors,
@@ -300,7 +301,7 @@ class FetchTests(unittest.TestCase):
                     RenderError(
                         I18nMessage.TODO_i18n(
                             # googlesheet should pass through aiohttp's message
-                            "Error during HTTP request: 400, message='Can not decode content-encoding: gzip'"
+                            "Error during HTTP request: DecodingError"
                         )
                     )
                 ],
@@ -379,13 +380,13 @@ class RenderTests(unittest.TestCase):
 
     def test_render_has_header_true(self):
         with tempfile_context("http") as http_path:
-            with http_path.open("wb") as http_f:
-                httpfile.write(
-                    http_f,
-                    "https://blah",
-                    {"Content-Type": "text/csv"},
-                    io.BytesIO(b"A,B\na,b"),
-                )
+            httpfile.write(
+                http_path,
+                {"url": "https://blah"},
+                "200 OK",
+                [("content-type", "text/csv")],
+                io.BytesIO(b"A,B\na,b"),
+            )
             result = render_arrow(
                 ArrowTable(),
                 P(has_header=True),
@@ -398,13 +399,13 @@ class RenderTests(unittest.TestCase):
 
     def test_render_has_header_false(self):
         with tempfile_context("http") as http_path:
-            with http_path.open("wb") as http_f:
-                httpfile.write(
-                    http_f,
-                    "https://blah",
-                    {"Content-Type": "text/csv"},
-                    io.BytesIO(b"1,2\n3,4"),
-                )
+            httpfile.write(
+                http_path,
+                {"url": "https://blah"},
+                "200 OK",
+                [("content-type", "text/csv")],
+                io.BytesIO(b"1,2\n3,4"),
+            )
             result = render_arrow(
                 ArrowTable(),
                 P(has_header=False),

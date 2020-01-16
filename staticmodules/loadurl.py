@@ -1,4 +1,4 @@
-r"""
+"""
 Fetch data using HTTP, then parse it.
 
 Behavior
@@ -28,7 +28,6 @@ import re
 from typing import Any, Dict, List, Optional
 from cjwkernel import parquet
 from cjwkernel.pandas import moduleutils
-from cjwkernel.pandas.http import httpfile
 from cjwkernel.pandas.parse import parse_file, MimeType
 from cjwkernel.pandas.types import ProcessResult  # deprecated
 from cjwkernel.types import (
@@ -38,6 +37,7 @@ from cjwkernel.types import (
     RenderError,
     RenderResult,
 )
+from cjwmodule.http import httpfile, HttpError
 
 
 ExtensionMimeTypes = {
@@ -76,7 +76,7 @@ def guess_mime_type_or_none(content_type: str, url: str) -> MimeType:
     # No match? Check for a known extension in the URL.
     # ".csv" becomes "text/csv".
     for extension, mime_type in ExtensionMimeTypes.items():
-        if extension in url:
+        if url.split("?", 1)[0].endswith(extension):
             return mime_type
 
     # We ignored MimeType.TXT before. Check for it now.
@@ -122,10 +122,10 @@ def _render_deprecated_parquet(
 
 
 def _render_file(path: Path, output_path: Path, params: Dict[str, Any]):
-    with httpfile.read(path) as (body_path, url, headers):
-        content_type = httpfile.extract_first_header_from_str(headers, "Content-Type")
+    with httpfile.read(path) as (parameters, status_line, headers, body_path):
+        content_type = httpfile.extract_first_header(headers, "Content-Type")
 
-        mime_type = guess_mime_type_or_none(content_type, url)
+        mime_type = guess_mime_type_or_none(content_type, parameters["url"])
         if not mime_type:
             return RenderResult(
                 errors=[
@@ -184,11 +184,15 @@ def fetch_arrow(
 ) -> FetchResult:
     url: str = params["url"].strip()
     mimetypes = ",".join(v.value for v in AllowedMimeTypes)
-    headers = {"Accept": mimetypes}
+    headers = [("Accept", mimetypes)]
 
     try:
         asyncio.run(httpfile.download(url, output_path, headers=headers))
-    except httpfile.HttpError as err:
-        return FetchResult(output_path, errors=[RenderError(err.i18n_message)])
+    except HttpError as err:
+        # HACK: *err.i18n_message because i18n_message is a tuple
+        # compatible with I18nMessage() ctor
+        return FetchResult(
+            output_path, errors=[RenderError(I18nMessage(*err.i18n_message))]
+        )
 
     return FetchResult(output_path)

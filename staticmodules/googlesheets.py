@@ -4,7 +4,7 @@ from pathlib import Path
 import os
 from typing import Any, Dict, List, Optional
 from oauthlib import oauth2
-from cjwkernel.pandas.http import httpfile
+from cjwmodule.http import httpfile, HttpError
 from cjwkernel.pandas.parse import MimeType, parse_file
 from cjwkernel.pandas.types import ProcessResult
 from cjwkernel.pandas import moduleutils
@@ -77,29 +77,33 @@ async def do_download(
 
     try:
         await httpfile.download(url, output_path, headers=headers, ssl=SSL_CONTEXT)
-    except httpfile.HttpError.ClientResponseError as err:
-        cause = err.__cause__
-        if cause.status == 401:
+    except HttpError.NotSuccess as err:
+        response = err.response
+        if response.status_code == 401:
             return TODO_i18n_fetch_error(
                 output_path, "Invalid credentials. Please reconnect to Google Drive."
             )
-        elif cause.status == 403:
+        elif response.status_code == 403:
             return TODO_i18n_fetch_error(
                 output_path,
                 "You chose a file your logged-in user cannot access. Please reconnect to Google Drive or choose a different file.",
             )
-        elif cause.status == 404:
+        elif response.status_code == 404:
             return TODO_i18n_fetch_error(
                 output_path, "File not found. Please choose a different file."
             )
         else:
-            return TODO_i18n_fetch_error(
-                output_path,
-                "GDrive responded with HTTP %d %s" % (cause.status, cause.message),
+            # HACK: *err.i18n_message because i18n_message is a tuple
+            # compatible with I18nMessage() ctor
+            return FetchResult(
+                output_path, errors=[RenderError(I18nMessage(*err.i18n_message))]
             )
-    except httpfile.HttpError as err:
-        os.truncate(output_path, 0)
-        return FetchResult(output_path, errors=[RenderError(err.i18n_message)])
+    except HttpError as err:
+        # HACK: *err.i18n_message because i18n_message is a tuple
+        # compatible with I18nMessage() ctor
+        return FetchResult(
+            output_path, errors=[RenderError(I18nMessage(*err.i18n_message))]
+        )
 
     return FetchResult(output_path)
 
@@ -134,8 +138,8 @@ def _calculate_mime_type(content_type: str) -> MimeType:
 
 
 def _render_file(path: Path, params: Dict[str, Any], output_path: Path):
-    with httpfile.read(path) as (body_path, url, headers):
-        content_type = httpfile.extract_first_header_from_str(headers, "Content-Type")
+    with httpfile.read(path) as (parameters, status_line, headers, body_path):
+        content_type = httpfile.extract_first_header(headers, "Content-Type")
         mime_type = _calculate_mime_type(content_type)
         # Ignore Google-reported charset. Google's headers imply latin-1 when
         # their data is utf-8.
