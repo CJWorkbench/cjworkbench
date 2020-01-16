@@ -2,7 +2,7 @@ import logging
 from django import template
 from django.utils.safestring import mark_safe
 from cjworkbench.i18n import default_locale
-from cjworkbench.i18n.trans import trans_html as do_trans_html
+from cjworkbench.i18n.trans import localize_html
 import re
 
 logger = logging.getLogger(__name__)
@@ -119,7 +119,7 @@ def trans_html(
         locale_id = default_locale
 
     return mark_safe(
-        do_trans_html(
+        localize_html(
             locale_id,
             message_id,
             default=default,

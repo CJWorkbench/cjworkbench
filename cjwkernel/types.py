@@ -616,6 +616,23 @@ class I18nMessage:
         return cls("TODO_i18n", {"text": text})
 
     @classmethod
+    def trans(
+        cls,
+        message_id: str,
+        *,
+        default: str,
+        args: Dict[str, Union[int, float, str]] = {},
+    ) -> I18nMessage:
+        """
+        Build an I18nMessage, marking it for translation.
+        
+        Use this method (instead of constructing `I18nMessage` directly) when you wish to mark a string for translation. Workbench's tooling will extract messages from all `I18nMessage.trans()` calls and send them to translators.
+
+        The `default` argument is ignored at runtime, it's only used when parsing code.
+        """
+        return cls(message_id, args)
+
+    @classmethod
     def from_dict(cls, value: Dict[str, Any]) -> I18nMessage:
         return cls(value["id"], value["arguments"])
 
