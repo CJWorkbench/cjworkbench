@@ -203,6 +203,14 @@ struct I18nMessage {
    * For instance, `{"nColumns": 3, "exampleColumn": "Column X"}`
    */
   2: map<string, I18nArgument> arguments
+  
+  /**
+   * An indication of where the message is coming from.
+   * - An empty map means it's coming from workbench itself
+   * - A map with key `"module_id"` means it's coming from a module
+   * - A map with key `"library"` indicates it's coming from some of our supported libraries (e.g. `"cjwmodule"`)
+   */
+  3: map<string, string> source
 }
 
 /** Instruction that upon clicking a button, Workbench should create a Step. */

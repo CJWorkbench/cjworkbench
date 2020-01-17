@@ -118,6 +118,7 @@ class PrepareSecretOauth1aTests(unittest.TestCase):
                 "error": {
                     "id": "TODO_i18n",
                     "arguments": {"text": "Service 'twitter' is no longer configured"},
+                    "source": {},
                 },
             },
         )
@@ -218,6 +219,7 @@ class PrepareSecretOauth2(AioHTTPTestCase):
                 "error": {
                     "id": "TODO_i18n",
                     "arguments": {"text": "Service 'google' is no longer configured"},
+                    "source": {},
                 },
             },
         )
@@ -311,6 +313,7 @@ class PrepareSecretOauth2(AioHTTPTestCase):
                         "arguments": {
                             "text": "google responded with HTTP 418 I'm a teapot: 'tea time?'"
                         },
+                        "source": {},
                     },
                 },
             )

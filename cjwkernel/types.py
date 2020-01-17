@@ -592,16 +592,26 @@ class I18nMessage:
     args: Dict[str, Union[int, float, str]] = field(default_factory=dict)
     """Arguments (empty if message does not need any -- which is common)."""
 
+    source: Dict[str, str] = field(default_factory=dict)
+    """An indication of where the message is coming from.
+        - An empty dict means it's coming from workbench itself
+        - A dict with key `module_id` means it's coming from a module
+        - A dict with key `library` indicates it's coming from some of our supported libraries (e.g. `cjwmodule`)
+    """
+
     @classmethod
     def from_thrift(cls, value: ttypes.I18nMessage) -> I18nMessage:
         return cls(
             value.id,
             {k: _i18n_argument_from_thrift(v) for k, v in value.arguments.items()},
+            value.source,
         )
 
     def to_thrift(self) -> ttypes.I18nMessage:
         return ttypes.I18nMessage(
-            self.id, {k: _i18n_argument_to_thrift(v) for k, v in self.args.items()}
+            self.id,
+            {k: _i18n_argument_to_thrift(v) for k, v in self.args.items()},
+            self.source,
         )
 
     @classmethod
@@ -634,10 +644,10 @@ class I18nMessage:
 
     @classmethod
     def from_dict(cls, value: Dict[str, Any]) -> I18nMessage:
-        return cls(value["id"], value["arguments"])
+        return cls(value["id"], value["arguments"], value["source"])
 
     def to_dict(self) -> Dict[str, Any]:
-        return {"id": self.id, "arguments": self.args}
+        return {"id": self.id, "arguments": self.args, "source": self.source}
 
 
 ParamValue = Optional[

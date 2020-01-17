@@ -411,12 +411,19 @@ class I18nMessage:
     args: Dict[str, Union[int, float, str]] = field(default_factory=dict)
     """Arguments (empty if message does not need any -- which is common)."""
 
+    source: Dict[str, str] = field(default_factory=dict)
+    """An indication of where the message is coming from.
+        - An empty dict means it's coming from workbench itself
+        - A dict with key `"module_id"` means it's coming from a module
+        - A dict with key `"library"` indicates it's coming from some of our supported libraries (e.g. `"cjwmodule"`)
+    """
+
     @classmethod
     def from_arrow(cls, value: atypes.I18nMessage) -> I18nMessage:
-        return cls(value.id, value.args)
+        return cls(value.id, value.args, value.source)
 
     def to_arrow(self) -> atypes.I18nMessage:
-        return atypes.I18nMessage(self.id, self.args)
+        return atypes.I18nMessage(self.id, self.args, self.source)
 
     @classmethod
     def TODO_i18n(cls, text: str) -> I18nMessage:
@@ -431,7 +438,7 @@ class I18nMessage:
 
     @classmethod
     def coerce(cls, value: mtypes.Message) -> I18nMessage:
-        """ Convert an internationalized message as return from modules to an object of this dataclass.
+        """ Convert an internationalized message as returned from modules to an object of this dataclass.
         
         Raises:
         - ValueError, if the value is a list of the wrong length or if the value is of a non-supported type
@@ -440,7 +447,7 @@ class I18nMessage:
         if isinstance(value, str):
             return cls.TODO_i18n(value)
         elif isinstance(value, tuple):
-            if len(value) != 2:
+            if len(value) < 2 or len(value) > 2:
                 raise ValueError(
                     "This tuple cannot be coerced to I18nMessage: %s" % value
                 )
@@ -452,7 +459,9 @@ class I18nMessage:
                 raise ValueError(
                     "Message arguments must be a dict, got %s" % type(value[1]).__name__
                 )
-            return cls(value[0], value[1])
+            source = value[2] if len(value) == 3 else {}
+            # TODO: maybe validate source (i.e. check that it has no unsupported keys/values)
+            return cls(value[0], value[1], source)
         else:
             raise ValueError(
                 "%s if of type %s, which cannot be coerced to I18nMessage"

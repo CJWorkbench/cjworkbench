@@ -294,15 +294,22 @@ class ThriftConvertersTest(unittest.TestCase):
                         "b": ttypes.I18nArgument(i32_value=12345678),
                         "c": ttypes.I18nArgument(double_value=0.123),
                     },
+                    {"module_id": "testmodule"},
                 )
             ),
-            types.I18nMessage("modules.x.y", {"a": "s", "b": 12345678, "c": 0.123}),
+            types.I18nMessage(
+                "modules.x.y",
+                {"a": "s", "b": 12345678, "c": 0.123},
+                {"module_id": "testmodule"},
+            ),
         )
 
     def test_i18n_message_to_thrift(self):
         self.assertEqual(
             types.I18nMessage(
-                "modules.x.y", {"a": "s", "b": 12345678, "c": 0.123}
+                "modules.x.y",
+                {"a": "s", "b": 12345678, "c": 0.123},
+                {"module_id": "testmodule"},
             ).to_thrift(),
             ttypes.I18nMessage(
                 "modules.x.y",
@@ -311,21 +318,34 @@ class ThriftConvertersTest(unittest.TestCase):
                     "b": ttypes.I18nArgument(i32_value=12345678),
                     "c": ttypes.I18nArgument(double_value=0.123),
                 },
+                {"module_id": "testmodule"},
             ),
         )
 
     def test_i18n_message_from_dict(self):
         self.assertEqual(
             types.I18nMessage.from_dict(
-                {"id": "modules.x.y", "arguments": ["s", 12345678, 0.123]}
+                {
+                    "id": "modules.x.y",
+                    "arguments": ["s", 12345678, 0.123],
+                    "source": {"module_id": "testmodule"},
+                }
             ),
-            types.I18nMessage("modules.x.y", ["s", 12345678, 0.123]),
+            types.I18nMessage(
+                "modules.x.y", ["s", 12345678, 0.123], {"module_id": "testmodule"}
+            ),
         )
 
     def test_i18n_message_to_dict(self):
         self.assertEqual(
-            types.I18nMessage("modules.x.y", ["s", 12345678, 0.123]).to_dict(),
-            {"id": "modules.x.y", "arguments": ["s", 12345678, 0.123]},
+            types.I18nMessage(
+                "modules.x.y", ["s", 12345678, 0.123], {"module_id": "testmodule"}
+            ).to_dict(),
+            {
+                "id": "modules.x.y",
+                "arguments": ["s", 12345678, 0.123],
+                "source": {"module_id": "testmodule"},
+            },
         )
 
     def test_prepend_step_quick_fix_action_from_thrift(self):
@@ -376,7 +396,7 @@ class ThriftConvertersTest(unittest.TestCase):
         self.assertEqual(
             types.QuickFix.from_thrift(
                 ttypes.QuickFix(
-                    ttypes.I18nMessage("click", {}),
+                    ttypes.I18nMessage("click", {}, {}),
                     ttypes.QuickFixAction(
                         prepend_step=ttypes.PrependStepQuickFixAction(
                             "filter", ttypes.RawParams('{"x":"y"}')
@@ -397,7 +417,7 @@ class ThriftConvertersTest(unittest.TestCase):
                 types.QuickFixAction.PrependStep("filter", {"x": "y"}),
             ).to_thrift(),
             ttypes.QuickFix(
-                ttypes.I18nMessage("click", {}),
+                ttypes.I18nMessage("click", {}, {}),
                 ttypes.QuickFixAction(
                     prepend_step=ttypes.PrependStepQuickFixAction(
                         "filter", ttypes.RawParams('{"x":"y"}')
@@ -410,7 +430,7 @@ class ThriftConvertersTest(unittest.TestCase):
         self.assertEqual(
             types.QuickFix.from_dict(
                 {
-                    "buttonText": {"id": "click", "arguments": {}},
+                    "buttonText": {"id": "click", "arguments": {}, "source": {}},
                     "action": {
                         "type": "prependStep",
                         "moduleSlug": "filter",
@@ -431,7 +451,7 @@ class ThriftConvertersTest(unittest.TestCase):
                 types.QuickFixAction.PrependStep("filter", {"x": "y"}),
             ).to_dict(),
             {
-                "buttonText": {"id": "click", "arguments": {}},
+                "buttonText": {"id": "click", "arguments": {}, "source": {}},
                 "action": {
                     "type": "prependStep",
                     "moduleSlug": "filter",
@@ -444,10 +464,10 @@ class ThriftConvertersTest(unittest.TestCase):
         self.assertEqual(
             types.RenderError.from_thrift(
                 ttypes.RenderError(
-                    ttypes.I18nMessage("foo", {}),
+                    ttypes.I18nMessage("foo", {}, {}),
                     [
                         ttypes.QuickFix(
-                            ttypes.I18nMessage("click", {}),
+                            ttypes.I18nMessage("click", {}, {}),
                             ttypes.QuickFixAction(
                                 prepend_step=ttypes.PrependStepQuickFixAction(
                                     "filter", ttypes.RawParams('{"x":"y"}')
@@ -480,10 +500,10 @@ class ThriftConvertersTest(unittest.TestCase):
                 ],
             ).to_thrift(),
             ttypes.RenderError(
-                ttypes.I18nMessage("foo", {}),
+                ttypes.I18nMessage("foo", {}, {}),
                 [
                     ttypes.QuickFix(
-                        ttypes.I18nMessage("click", {}),
+                        ttypes.I18nMessage("click", {}, {}),
                         ttypes.QuickFixAction(
                             prepend_step=ttypes.PrependStepQuickFixAction(
                                 "filter", ttypes.RawParams('{"x":"y"}')
@@ -498,10 +518,14 @@ class ThriftConvertersTest(unittest.TestCase):
         self.assertEqual(
             types.RenderError.from_dict(
                 {
-                    "message": {"id": "err", "arguments": {}},
+                    "message": {"id": "err", "arguments": {}, "source": {}},
                     "quickFixes": [
                         {
-                            "buttonText": {"id": "click", "arguments": {}},
+                            "buttonText": {
+                                "id": "click",
+                                "arguments": {},
+                                "source": {"library": "cjwmodule"},
+                            },
                             "action": {
                                 "type": "prependStep",
                                 "moduleSlug": "filter",
@@ -515,7 +539,7 @@ class ThriftConvertersTest(unittest.TestCase):
                 types.I18nMessage("err", {}),
                 [
                     types.QuickFix(
-                        types.I18nMessage("click"),
+                        types.I18nMessage("click", {}, {"library": "cjwmodule"}),
                         types.QuickFixAction.PrependStep("filter", {"x": "y"}),
                     )
                 ],
@@ -528,16 +552,20 @@ class ThriftConvertersTest(unittest.TestCase):
                 types.I18nMessage("err", {}),
                 [
                     types.QuickFix(
-                        types.I18nMessage("click"),
+                        types.I18nMessage("click", {}, {"library": "cjwmodule"}),
                         types.QuickFixAction.PrependStep("filter", {"x": "y"}),
                     )
                 ],
             ).to_dict(),
             {
-                "message": {"id": "err", "arguments": {}},
+                "message": {"id": "err", "arguments": {}, "source": {}},
                 "quickFixes": [
                     {
-                        "buttonText": {"id": "click", "arguments": {}},
+                        "buttonText": {
+                            "id": "click",
+                            "arguments": {},
+                            "source": {"library": "cjwmodule"},
+                        },
                         "action": {
                             "type": "prependStep",
                             "moduleSlug": "filter",
