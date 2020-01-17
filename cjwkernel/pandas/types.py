@@ -447,7 +447,7 @@ class I18nMessage:
         if isinstance(value, str):
             return cls.TODO_i18n(value)
         elif isinstance(value, tuple):
-            if len(value) < 2 or len(value) > 2:
+            if len(value) < 2 or len(value) > 3:
                 raise ValueError(
                     "This tuple cannot be coerced to I18nMessage: %s" % value
                 )
@@ -480,7 +480,7 @@ class I18nMessage:
             return cls(value[0], value[1], source)
         else:
             raise ValueError(
-                "%s if of type %s, which cannot be coerced to I18nMessage"
+                "%s is of type %s, which cannot be coerced to I18nMessage"
                 % (value, type(value).__name__)
             )
 
