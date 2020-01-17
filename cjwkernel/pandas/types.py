@@ -459,8 +459,24 @@ class I18nMessage:
                 raise ValueError(
                     "Message arguments must be a dict, got %s" % type(value[1]).__name__
                 )
-            source = value[2] if len(value) == 3 else {}
-            # TODO: maybe validate source (i.e. check that it has no unsupported keys/values)
+            if len(value) == 3:
+                source = value[2] or {}
+                if not isinstance(source, dict):
+                    raise ValueError(
+                        "Message source must be a dict, got %s" % type(source).__name__
+                    )
+                if len(source) > 1:
+                    raise ValueError(
+                        "Message can only have a single source, got %s" % source
+                    )
+                supported_source_keys = {"module_id", "library"}
+                if len(source) == 1 and set(source.keys()) - supported_source_keys:
+                    raise ValueError(
+                        "Unknown message source kind %s. Supported kinds: %s."
+                        % (source.keys(), supported_source_keys)
+                    )
+            else:
+                source = {}
             return cls(value[0], value[1], source)
         else:
             raise ValueError(
