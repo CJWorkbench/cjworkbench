@@ -422,30 +422,28 @@ class I18nMessage:
 
     @classmethod
     def from_arrow(cls, value: atypes.I18nMessage) -> I18nMessage:
-        if not value.source:
-            return cls(value.id, value.args)
-        if isinstance(value.source, atypes.I18nMessageSource.Module):
-            return cls(value.id, value.args, {"module": value.source.module_id})
-        if isinstance(value.source, atypes.I18nMessageSource.Library):
-            return cls(value.id, value.args, {"library": value.source.library})
-        raise ValueError("Unknown I18nMessage source")
+        if value.source:
+            if isinstance(value.source, atypes.I18nMessageSource.Module):
+                return cls(value.id, value.args, {"module": value.source.module_id})
+            if isinstance(value.source, atypes.I18nMessageSource.Library):
+                return cls(value.id, value.args, {"library": value.source.library})
+        return cls(value.id, value.args)
 
     def to_arrow(self) -> atypes.I18nMessage:
-        if not self.source:
-            return atypes.I18nMessage(self.id, self.args, self.source)
-        if "module" in self.source:
-            return atypes.I18nMessage(
-                self.id,
-                self.args,
-                atypes.I18nMessageSource.Module(self.source["module"]),
-            )
-        if "library" in self.source:
-            return atypes.I18nMessage(
-                self.id,
-                self.args,
-                atypes.I18nMessageSource.Library(self.source["library"]),
-            )
-        raise ValueError("Unknown I18nMessage source")
+        if self.source:
+            if "module" in self.source:
+                return atypes.I18nMessage(
+                    self.id,
+                    self.args,
+                    atypes.I18nMessageSource.Module(self.source["module"]),
+                )
+            if "library" in self.source:
+                return atypes.I18nMessage(
+                    self.id,
+                    self.args,
+                    atypes.I18nMessageSource.Library(self.source["library"]),
+                )
+        return atypes.I18nMessage(self.id, self.args)
 
     @classmethod
     def TODO_i18n(cls, text: str) -> I18nMessage:
@@ -487,19 +485,21 @@ class I18nMessage:
                     raise ValueError(
                         "Message source must be a dict, got %s" % type(source).__name__
                     )
+                if not source:
+                    raise ValueError("Message source can't be empty if present")
                 if len(source) > 1:
                     raise ValueError(
                         "Message can only have a single source, got %s" % source
                     )
                 supported_source_keys = {"module", "library"}
-                if len(source) == 1 and set(source.keys()) - supported_source_keys:
+                if set(source.keys()) - supported_source_keys:
                     raise ValueError(
                         "Unknown message source kind %s. Supported kinds: %s."
                         % (source.keys(), supported_source_keys)
                     )
             else:
                 source = None
-            return cls(value[0], value[1], source or None)
+            return cls(value[0], value[1], source)
         else:
             raise ValueError(
                 "%s is of type %s, which cannot be coerced to I18nMessage"
