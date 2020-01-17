@@ -2,14 +2,16 @@ from typing import Any, Dict, Iterable, List, Optional, Union, Tuple
 
 I18nMessageSource = Dict[str, str]
 """ Indicates which catalog we should search to find the text of the message.
-    - A dict with key `"module_id"` means it's coming from a module
-    - A dict with key `"library"` indicates it's coming from some of our supported libraries (e.g. `"cjwmodule"`)
+    - A dict with key `"module"` means it's coming from a module;
+      for example `{"module": "mymodule"}` means, "search the mymodule module's catalog"
+    - A dict with key `"library"` indicates it's coming from some of our supported libraries;
+      for example `{"library": "cjwmodule"}` means, "search the cjwmodule library's catalog"
 """
 # We can define the dict more precisely in python 3.8 using a `TypedDict`
 
 
 I18nMessage = Union[
-    Tuple[str, Dict[str, Any]], Tuple[str, Dict[str, Any], Optional[I18nMessageSource]]
+    Tuple[str, Dict[str, Any]], Tuple[str, Dict[str, Any], I18nMessageSource]
 ]
 Message = Union[str, I18nMessage]
 

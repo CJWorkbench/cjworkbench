@@ -192,6 +192,22 @@ union I18nArgument {
   3: double double_value
 }
 
+/** Source of a translatable string. 
+    If none of the values are set, this means it's coming from workbench itself
+*/
+union I18nMessageSource {
+  /**
+   * If `"library"` is set, this means it's coming from some of our supported libraries
+   */
+  1: string library,
+  
+  /**
+   * If `"module_id"` is set, this means it's coming from a module
+   * `"module"` is reserved in thrift, that's why we added a `"_"`
+   */
+  2: string module_id
+}
+
 /** Translation key and arguments. */
 struct I18nMessage {
   /** Message ID. For instance, `modules.renamecolumns.duplicateColname` */
@@ -206,11 +222,8 @@ struct I18nMessage {
   
   /**
    * An indication of where the message is coming from.
-   * - An empty map means it's coming from workbench itself
-   * - A map with key `"module_id"` means it's coming from a module
-   * - A map with key `"library"` indicates it's coming from some of our supported libraries (e.g. `"cjwmodule"`)
    */
-  3: map<string, string> source
+  3: I18nMessageSource source
 }
 
 /** Instruction that upon clicking a button, Workbench should create a Step. */

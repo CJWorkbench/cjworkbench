@@ -1163,6 +1163,90 @@ class I18nArgument(object):
         return not (self == other)
 
 
+class I18nMessageSource(object):
+    """
+    Source of a translatable string.
+    If none of the values are set, this means it's coming from workbench itself
+
+    Attributes:
+     - library: If `"library"` is set, this means it's coming from some of our supported libraries
+     - module_id: If `"module_id"` is set, this means it's coming from a module
+    `"module"` is reserved in thrift, that's why we added a `"_"`
+
+    """
+
+    __slots__ = (
+        'library',
+        'module_id',
+    )
+
+
+    def __init__(self, library=None, module_id=None,):
+        self.library = library
+        self.module_id = module_id
+
+    def read(self, iprot):
+        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
+            return
+        iprot.readStructBegin()
+        while True:
+            (fname, ftype, fid) = iprot.readFieldBegin()
+            if ftype == TType.STOP:
+                break
+            if fid == 1:
+                if ftype == TType.STRING:
+                    self.library = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                else:
+                    iprot.skip(ftype)
+            elif fid == 2:
+                if ftype == TType.STRING:
+                    self.module_id = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                else:
+                    iprot.skip(ftype)
+            else:
+                iprot.skip(ftype)
+            iprot.readFieldEnd()
+        iprot.readStructEnd()
+
+    def write(self, oprot):
+        if oprot._fast_encode is not None and self.thrift_spec is not None:
+            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
+            return
+        oprot.writeStructBegin('I18nMessageSource')
+        if self.library is not None:
+            oprot.writeFieldBegin('library', TType.STRING, 1)
+            oprot.writeString(self.library.encode('utf-8') if sys.version_info[0] == 2 else self.library)
+            oprot.writeFieldEnd()
+        if self.module_id is not None:
+            oprot.writeFieldBegin('module_id', TType.STRING, 2)
+            oprot.writeString(self.module_id.encode('utf-8') if sys.version_info[0] == 2 else self.module_id)
+            oprot.writeFieldEnd()
+        oprot.writeFieldStop()
+        oprot.writeStructEnd()
+
+    def validate(self):
+        return
+
+    def __repr__(self):
+        L = ['%s=%r' % (key, getattr(self, key))
+             for key in self.__slots__]
+        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+    def __eq__(self, other):
+        if not isinstance(other, self.__class__):
+            return False
+        for attr in self.__slots__:
+            my_val = getattr(self, attr)
+            other_val = getattr(other, attr)
+            if my_val != other_val:
+                return False
+        return True
+
+    def __ne__(self, other):
+        return not (self == other)
+
+
 class I18nMessage(object):
     """
     Translation key and arguments.
@@ -1173,9 +1257,6 @@ class I18nMessage(object):
 
     For instance, `{"nColumns": 3, "exampleColumn": "Column X"}`
      - source: An indication of where the message is coming from.
-    - An empty map means it's coming from workbench itself
-    - A map with key `"module_id"` means it's coming from a module
-    - A map with key `"library"` indicates it's coming from some of our supported libraries (e.g. `"cjwmodule"`)
 
     """
 
@@ -1218,14 +1299,9 @@ class I18nMessage(object):
                 else:
                     iprot.skip(ftype)
             elif fid == 3:
-                if ftype == TType.MAP:
-                    self.source = {}
-                    (_ktype31, _vtype32, _size30) = iprot.readMapBegin()
-                    for _i34 in range(_size30):
-                        _key35 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
-                        _val36 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
-                        self.source[_key35] = _val36
-                    iprot.readMapEnd()
+                if ftype == TType.STRUCT:
+                    self.source = I18nMessageSource()
+                    self.source.read(iprot)
                 else:
                     iprot.skip(ftype)
             else:
@@ -1245,18 +1321,14 @@ class I18nMessage(object):
         if self.arguments is not None:
             oprot.writeFieldBegin('arguments', TType.MAP, 2)
             oprot.writeMapBegin(TType.STRING, TType.STRUCT, len(self.arguments))
-            for kiter37, viter38 in self.arguments.items():
-                oprot.writeString(kiter37.encode('utf-8') if sys.version_info[0] == 2 else kiter37)
-                viter38.write(oprot)
+            for kiter30, viter31 in self.arguments.items():
+                oprot.writeString(kiter30.encode('utf-8') if sys.version_info[0] == 2 else kiter30)
+                viter31.write(oprot)
             oprot.writeMapEnd()
             oprot.writeFieldEnd()
         if self.source is not None:
-            oprot.writeFieldBegin('source', TType.MAP, 3)
-            oprot.writeMapBegin(TType.STRING, TType.STRING, len(self.source))
-            for kiter39, viter40 in self.source.items():
-                oprot.writeString(kiter39.encode('utf-8') if sys.version_info[0] == 2 else kiter39)
-                oprot.writeString(viter40.encode('utf-8') if sys.version_info[0] == 2 else viter40)
-            oprot.writeMapEnd()
+            oprot.writeFieldBegin('source', TType.STRUCT, 3)
+            self.source.write(oprot)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -1564,11 +1636,11 @@ class RenderError(object):
             elif fid == 2:
                 if ftype == TType.LIST:
                     self.quick_fixes = []
-                    (_etype44, _size41) = iprot.readListBegin()
-                    for _i45 in range(_size41):
-                        _elem46 = QuickFix()
-                        _elem46.read(iprot)
-                        self.quick_fixes.append(_elem46)
+                    (_etype35, _size32) = iprot.readListBegin()
+                    for _i36 in range(_size32):
+                        _elem37 = QuickFix()
+                        _elem37.read(iprot)
+                        self.quick_fixes.append(_elem37)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
@@ -1589,8 +1661,8 @@ class RenderError(object):
         if self.quick_fixes is not None:
             oprot.writeFieldBegin('quick_fixes', TType.LIST, 2)
             oprot.writeListBegin(TType.STRUCT, len(self.quick_fixes))
-            for iter47 in self.quick_fixes:
-                iter47.write(oprot)
+            for iter38 in self.quick_fixes:
+                iter38.write(oprot)
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
@@ -1691,12 +1763,12 @@ class FetchRequest(object):
             elif fid == 2:
                 if ftype == TType.MAP:
                     self.params = {}
-                    (_ktype49, _vtype50, _size48) = iprot.readMapBegin()
-                    for _i52 in range(_size48):
-                        _key53 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
-                        _val54 = ParamValue()
-                        _val54.read(iprot)
-                        self.params[_key53] = _val54
+                    (_ktype40, _vtype41, _size39) = iprot.readMapBegin()
+                    for _i43 in range(_size39):
+                        _key44 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                        _val45 = ParamValue()
+                        _val45.read(iprot)
+                        self.params[_key44] = _val45
                     iprot.readMapEnd()
                 else:
                     iprot.skip(ftype)
@@ -1739,9 +1811,9 @@ class FetchRequest(object):
         if self.params is not None:
             oprot.writeFieldBegin('params', TType.MAP, 2)
             oprot.writeMapBegin(TType.STRING, TType.STRUCT, len(self.params))
-            for kiter55, viter56 in self.params.items():
-                oprot.writeString(kiter55.encode('utf-8') if sys.version_info[0] == 2 else kiter55)
-                viter56.write(oprot)
+            for kiter46, viter47 in self.params.items():
+                oprot.writeString(kiter46.encode('utf-8') if sys.version_info[0] == 2 else kiter46)
+                viter47.write(oprot)
             oprot.writeMapEnd()
             oprot.writeFieldEnd()
         if self.secrets is not None:
@@ -1839,11 +1911,11 @@ class FetchResult(object):
             elif fid == 2:
                 if ftype == TType.LIST:
                     self.errors = []
-                    (_etype60, _size57) = iprot.readListBegin()
-                    for _i61 in range(_size57):
-                        _elem62 = RenderError()
-                        _elem62.read(iprot)
-                        self.errors.append(_elem62)
+                    (_etype51, _size48) = iprot.readListBegin()
+                    for _i52 in range(_size48):
+                        _elem53 = RenderError()
+                        _elem53.read(iprot)
+                        self.errors.append(_elem53)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
@@ -1864,8 +1936,8 @@ class FetchResult(object):
         if self.errors is not None:
             oprot.writeFieldBegin('errors', TType.LIST, 2)
             oprot.writeListBegin(TType.STRUCT, len(self.errors))
-            for iter63 in self.errors:
-                iter63.write(oprot)
+            for iter54 in self.errors:
+                iter54.write(oprot)
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
@@ -1969,12 +2041,12 @@ class RenderRequest(object):
             elif fid == 3:
                 if ftype == TType.MAP:
                     self.params = {}
-                    (_ktype65, _vtype66, _size64) = iprot.readMapBegin()
-                    for _i68 in range(_size64):
-                        _key69 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
-                        _val70 = ParamValue()
-                        _val70.read(iprot)
-                        self.params[_key69] = _val70
+                    (_ktype56, _vtype57, _size55) = iprot.readMapBegin()
+                    for _i59 in range(_size55):
+                        _key60 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                        _val61 = ParamValue()
+                        _val61.read(iprot)
+                        self.params[_key60] = _val61
                     iprot.readMapEnd()
                 else:
                     iprot.skip(ftype)
@@ -2016,9 +2088,9 @@ class RenderRequest(object):
         if self.params is not None:
             oprot.writeFieldBegin('params', TType.MAP, 3)
             oprot.writeMapBegin(TType.STRING, TType.STRUCT, len(self.params))
-            for kiter71, viter72 in self.params.items():
-                oprot.writeString(kiter71.encode('utf-8') if sys.version_info[0] == 2 else kiter71)
-                viter72.write(oprot)
+            for kiter62, viter63 in self.params.items():
+                oprot.writeString(kiter62.encode('utf-8') if sys.version_info[0] == 2 else kiter62)
+                viter63.write(oprot)
             oprot.writeMapEnd()
             oprot.writeFieldEnd()
         if self.tab is not None:
@@ -2108,11 +2180,11 @@ class RenderResult(object):
             elif fid == 2:
                 if ftype == TType.LIST:
                     self.errors = []
-                    (_etype76, _size73) = iprot.readListBegin()
-                    for _i77 in range(_size73):
-                        _elem78 = RenderError()
-                        _elem78.read(iprot)
-                        self.errors.append(_elem78)
+                    (_etype67, _size64) = iprot.readListBegin()
+                    for _i68 in range(_size64):
+                        _elem69 = RenderError()
+                        _elem69.read(iprot)
+                        self.errors.append(_elem69)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
@@ -2138,8 +2210,8 @@ class RenderResult(object):
         if self.errors is not None:
             oprot.writeFieldBegin('errors', TType.LIST, 2)
             oprot.writeListBegin(TType.STRUCT, len(self.errors))
-            for iter79 in self.errors:
-                iter79.write(oprot)
+            for iter70 in self.errors:
+                iter70.write(oprot)
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         if self.json is not None:
@@ -2245,12 +2317,18 @@ I18nArgument.thrift_spec = (
     (2, TType.I32, 'i32_value', None, None, ),  # 2
     (3, TType.DOUBLE, 'double_value', None, None, ),  # 3
 )
+all_structs.append(I18nMessageSource)
+I18nMessageSource.thrift_spec = (
+    None,  # 0
+    (1, TType.STRING, 'library', 'UTF8', None, ),  # 1
+    (2, TType.STRING, 'module_id', 'UTF8', None, ),  # 2
+)
 all_structs.append(I18nMessage)
 I18nMessage.thrift_spec = (
     None,  # 0
     (1, TType.STRING, 'id', 'UTF8', None, ),  # 1
     (2, TType.MAP, 'arguments', (TType.STRING, 'UTF8', TType.STRUCT, [I18nArgument, None], False), None, ),  # 2
-    (3, TType.MAP, 'source', (TType.STRING, 'UTF8', TType.STRING, 'UTF8', False), None, ),  # 3
+    (3, TType.STRUCT, 'source', [I18nMessageSource, None], None, ),  # 3
 )
 all_structs.append(PrependStepQuickFixAction)
 PrependStepQuickFixAction.thrift_spec = (
