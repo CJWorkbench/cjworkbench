@@ -654,7 +654,7 @@ class I18nMessage:
     """Arguments (empty if message does not need any -- which is common)."""
 
     source: Optional[I18nMessageSource] = None
-    """An indication of where the message is coming from. `None` means it's coming from workbench itself."""
+    """Where the message comes from, or `None` if it comes from Workbench proper."""
 
     @classmethod
     def from_thrift(cls, value: ttypes.I18nMessage) -> I18nMessage:
@@ -832,11 +832,11 @@ class QuickFixAction(ABC):
         else:
             raise ValueError("Unhandled type in QuickFixAction: %r", value)
 
-    @abstractmethod
+    # override
     def to_thrift(self) -> ttypes.QuickFixAction:
         pass
 
-    @abstractmethod
+    # override
     def to_dict(self) -> Dict[str, Any]:
         """
         Convert to Dict.

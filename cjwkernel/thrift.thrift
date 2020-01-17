@@ -193,17 +193,18 @@ union I18nArgument {
 }
 
 /** Source of a translatable string. 
-    If none of the values are set, this means it's coming from workbench itself
-*/
+ *
+ *  If none of the values are set, this means it's coming from workbench itself
+ */
 union I18nMessageSource {
   /**
-   * If `"library"` is set, this means it's coming from some of our supported libraries
+   * The message comes from the "library" library
    */
   1: string library,
   
   /**
-   * If `"module_id"` is set, this means it's coming from a module
-   * `"module"` is reserved in thrift, that's why we added a `"_"`
+   * The message comes from the "module_id" module
+   * `"module"` is reserved in thrift, that's why we added `"_id"`
    */
   2: string module_id
 }
@@ -221,7 +222,7 @@ struct I18nMessage {
   2: map<string, I18nArgument> arguments
   
   /**
-   * An indication of where the message is coming from.
+   * An indication of where the message comes from.
    */
   3: I18nMessageSource source
 }

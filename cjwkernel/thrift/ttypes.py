@@ -1166,12 +1166,13 @@ class I18nArgument(object):
 class I18nMessageSource(object):
     """
     Source of a translatable string.
+
     If none of the values are set, this means it's coming from workbench itself
 
     Attributes:
-     - library: If `"library"` is set, this means it's coming from some of our supported libraries
-     - module_id: If `"module_id"` is set, this means it's coming from a module
-    `"module"` is reserved in thrift, that's why we added a `"_"`
+     - library: The message comes from the "library" library
+     - module_id: The message comes from the "module_id" module
+    `"module"` is reserved in thrift, that's why we added `"_id"`
 
     """
 
@@ -1256,7 +1257,7 @@ class I18nMessage(object):
      - arguments: Arguments (if Message ID takes any).
 
     For instance, `{"nColumns": 3, "exampleColumn": "Column X"}`
-     - source: An indication of where the message is coming from.
+     - source: An indication of where the message comes from.
 
     """
 
