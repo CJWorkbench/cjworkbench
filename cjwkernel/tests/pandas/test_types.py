@@ -235,6 +235,52 @@ class I18nMessageTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             I18nMessage.coerce({"id": "my_id", "arguments": {"hello": "there"}})
 
+    def test_coerce_with_source_none(self):
+        with self.assertRaises(ValueError):
+            I18nMessage.coerce(("my_id", {"hello": "there"}, None)),
+
+    def test_coerce_with_source_empty(self):
+        with self.assertRaises(ValueError):
+            I18nMessage.coerce(("my_id", {"hello": "there"}, {})),
+
+    def test_coerce_with_source_module(self):
+        self.assertEqual(
+            I18nMessage.coerce(("my_id", {"hello": "there"}, {"module": "testmodule"})),
+            I18nMessage("my_id", {"hello": "there"}, {"module": "testmodule"}),
+        )
+
+    def test_coerce_with_source_library(self):
+        self.assertEqual(
+            I18nMessage.coerce(("my_id", {"hello": "there"}, {"library": "cjwmodule"})),
+            I18nMessage("my_id", {"hello": "there"}, {"library": "cjwmodule"}),
+        )
+
+    def test_coerce_with_source_error_many_sources(self):
+        with self.assertRaises(ValueError):
+            I18nMessage.coerce(
+                (
+                    "my_id",
+                    {"hello": "there"},
+                    {"library": "cjwmodule", "module": "testmodule"},
+                )
+            )
+
+    def test_coerce_with_source_error_unsupported_source_kind(self):
+        with self.assertRaises(ValueError):
+            I18nMessage.coerce(
+                ("my_id", {"hello": "there"}, {"mygreatsource": "cjwmodule"})
+            )
+
+    def test_coerce_with_source_error_type_tuple(self):
+        with self.assertRaises(ValueError):
+            I18nMessage.coerce(
+                ("my_id", {"hello": "there"}, ("cjwmodule", "testmodule"))
+            )
+
+    def test_coerce_with_source_error_type_string(self):
+        with self.assertRaises(ValueError):
+            I18nMessage.coerce(("my_id", {"hello": "there"}, "cjwmodule"))
+
     def test_to_arrow(self):
         self.assertEqual(
             I18nMessage("my_id", {"hello": "there"}).to_arrow(),
@@ -245,6 +291,54 @@ class I18nMessageTests(unittest.TestCase):
         self.assertEqual(
             I18nMessage.from_arrow(atypes.I18nMessage("my_id", {"hello": "there"})),
             I18nMessage("my_id", {"hello": "there"}),
+        )
+
+    def test_to_arrow_with_source_module(self):
+        self.assertEqual(
+            I18nMessage(
+                "my_id", {"hello": "there"}, {"module": "testmodule"}
+            ).to_arrow(),
+            atypes.I18nMessage(
+                "my_id",
+                {"hello": "there"},
+                atypes.I18nMessageSource.Module("testmodule"),
+            ),
+        )
+
+    def test_from_arrow_with_source_module(self):
+        self.assertEqual(
+            I18nMessage.from_arrow(
+                atypes.I18nMessage(
+                    "my_id",
+                    {"hello": "there"},
+                    atypes.I18nMessageSource.Module("testmodule"),
+                )
+            ),
+            I18nMessage("my_id", {"hello": "there"}, {"module": "testmodule"}),
+        )
+
+    def test_to_arrow_with_source_library(self):
+        self.assertEqual(
+            I18nMessage(
+                "my_id", {"hello": "there"}, {"library": "cjwmodule"}
+            ).to_arrow(),
+            atypes.I18nMessage(
+                "my_id",
+                {"hello": "there"},
+                atypes.I18nMessageSource.Library("cjwmodule"),
+            ),
+        )
+
+    def test_from_arrow_with_source_library(self):
+        self.assertEqual(
+            I18nMessage.from_arrow(
+                atypes.I18nMessage(
+                    "my_id",
+                    {"hello": "there"},
+                    atypes.I18nMessageSource.Library("cjwmodule"),
+                )
+            ),
+            I18nMessage("my_id", {"hello": "there"}, {"library": "cjwmodule"}),
         )
 
 
