@@ -24,9 +24,7 @@ class AutoupdateTest(DbTestCase):
 
     def test_list_autofetches_gets_user_max_fetches_per_day(self):
         user = User.objects.create(username="a", email="a@example.org")
-        UserProfile.objects.update_or_create(
-            user=user, defaults={"max_fetches_per_day": 6000}
-        )
+        UserProfile.objects.create(user=user, max_fetches_per_day=6000)
         Workflow.create_and_init(owner=user)
         result = list_autofetches_json({"user": user, "session": None})
         self.assertEqual(
