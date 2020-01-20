@@ -18,12 +18,10 @@ from django.conf.urls import include, url
 from django.contrib import admin
 from django.views.generic.base import RedirectView
 from cjworkbench.i18n.views import set_locale
-from cjworkbench.views.login import LoginView
 
 urlpatterns = [
     url(r"^admin/?", admin.site.urls),
     url(r"^account/signup/$", SignupView.as_view(), name="account_signup"),
-    url(r"^account/login/$", LoginView.as_view(), name="account_login"),
     url(
         r"^xyzzy/signup/$",
         RedirectView.as_view(url="/account/signup/", permanent=True),
