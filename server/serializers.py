@@ -15,6 +15,8 @@ from server.settingsutils import workbench_user_display
 from cjwstate.models.param_spec import ParamSpec
 from cjwstate import clientside
 from cjwkernel.types import RenderError
+from cjworkbench.i18n import default_locale
+from cjworkbench.i18n.trans import localize
 
 User = get_user_model()
 
@@ -265,10 +267,15 @@ def jsonize_clientside_tab(tab: clientside.TabUpdate) -> Dict[str, Any]:
 
 
 def jsonize_i18n_message(message: I18nMessage, ctx: JsonizeContext) -> str:
+    assert message.source is None
     if message.id == "TODO_i18n":
         return message.args["text"]
     else:
-        raise RuntimeError("TODO_i18n")
+        return localize(
+            ctx.locale_id, message.id, default=None, parameters=message.args
+        ) or localize(
+            default_locale, message.id, default=message.id, parameters=message.args
+        )
 
 
 def jsonize_quick_fix(quick_fix: QuickFix, ctx: JsonizeContext) -> Dict[str, Any]:

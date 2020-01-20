@@ -45,6 +45,13 @@ trans_lazy = lazy(trans)
 """
 
 
+def localize(locale_id, message_id, *, default, parameters={}):
+    """Localize the given message ID to the given locale."""
+    return _get_translations(locale_id).trans(
+        message_id, default=default, parameters=parameters
+    )
+
+
 def localize_html(
     locale_id, message_id, *, default, context=None, parameters={}, tags={}
 ):
