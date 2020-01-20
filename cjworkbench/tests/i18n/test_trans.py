@@ -1,7 +1,8 @@
-from django.test import SimpleTestCase
-from cjworkbench.i18n.trans import MessageTranslator
-from icu import ICUError, InvalidArgsError
+import logging
 from babel.messages.catalog import Catalog
+from django.test import SimpleTestCase
+from icu import ICUError, InvalidArgsError
+from cjworkbench.i18n.trans import MessageTranslator
 
 
 class TransTest(SimpleTestCase):
@@ -59,12 +60,11 @@ class TransTest(SimpleTestCase):
     def test_message_invalid_parameter_syntax(self):
         catalog = Catalog()
         catalog.add("id", string="Hey {a b}!")
-        self.assertEqual(
-            MessageTranslator("en", catalog).trans(
+        with self.assertLogs(level=logging.ERROR):
+            result = MessageTranslator("en", catalog).trans(
                 "id", default="Hello {a} {b}", parameters={"a": "you", "b": "!"}
-            ),
-            "Hello you !",
-        )
+            )
+        self.assertEqual(result, "Hello you !")
 
     # Tests that a default message can include a numeric variable
     def test_default_numeric_parameter(self):
@@ -210,12 +210,11 @@ class TransHtmlTest(SimpleTestCase):
     def test_message_invalid_parameter_syntax(self):
         catalog = Catalog()
         catalog.add("id", string="Hey {a b}!")
-        self.assertEqual(
-            MessageTranslator("en", catalog).trans_html(
+        with self.assertLogs(level=logging.ERROR):
+            result = MessageTranslator("en", catalog).trans_html(
                 "id", default="Hello {a} {b}", parameters={"a": "you", "b": "!"}
-            ),
-            "Hello you !",
-        )
+            )
+        self.assertEqual(result, "Hello you !")
 
     # Tests that a default message can include a numeric variable
     def test_default_numeric_parameter(self):

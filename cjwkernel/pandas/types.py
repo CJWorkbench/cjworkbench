@@ -411,11 +411,38 @@ class I18nMessage:
     args: Dict[str, Union[int, float, str]] = field(default_factory=dict)
     """Arguments (empty if message does not need any -- which is common)."""
 
+    source: Optional[Dict[str, str]] = None
+    """An indication of where the message is coming from.
+        - `None` means it's coming from workbench itself
+        - A dict with key `"module"` means it's coming from a module
+          for example `{"module": "mymodule"}` means, "search the mymodule module's catalog"
+        - A dict with key `"library"` indicates it's coming from some of our supported libraries;
+          for example `{"library": "cjwmodule"}` means, "search the cjwmodule library's catalog"
+    """
+
     @classmethod
     def from_arrow(cls, value: atypes.I18nMessage) -> I18nMessage:
+        if value.source:
+            if isinstance(value.source, atypes.I18nMessageSource.Module):
+                return cls(value.id, value.args, {"module": value.source.module_id})
+            if isinstance(value.source, atypes.I18nMessageSource.Library):
+                return cls(value.id, value.args, {"library": value.source.library})
         return cls(value.id, value.args)
 
     def to_arrow(self) -> atypes.I18nMessage:
+        if self.source:
+            if "module" in self.source:
+                return atypes.I18nMessage(
+                    self.id,
+                    self.args,
+                    atypes.I18nMessageSource.Module(self.source["module"]),
+                )
+            if "library" in self.source:
+                return atypes.I18nMessage(
+                    self.id,
+                    self.args,
+                    atypes.I18nMessageSource.Library(self.source["library"]),
+                )
         return atypes.I18nMessage(self.id, self.args)
 
     @classmethod
@@ -431,7 +458,7 @@ class I18nMessage:
 
     @classmethod
     def coerce(cls, value: mtypes.Message) -> I18nMessage:
-        """ Convert an internationalized message as return from modules to an object of this dataclass.
+        """ Convert an internationalized message as returned from modules to an object of this dataclass.
         
         Raises:
         - ValueError, if the value is a list of the wrong length or if the value is of a non-supported type
@@ -440,7 +467,7 @@ class I18nMessage:
         if isinstance(value, str):
             return cls.TODO_i18n(value)
         elif isinstance(value, tuple):
-            if len(value) != 2:
+            if len(value) < 2 or len(value) > 3:
                 raise ValueError(
                     "This tuple cannot be coerced to I18nMessage: %s" % value
                 )
@@ -452,10 +479,30 @@ class I18nMessage:
                 raise ValueError(
                     "Message arguments must be a dict, got %s" % type(value[1]).__name__
                 )
-            return cls(value[0], value[1])
+            if len(value) == 3:
+                source = value[2]
+                if not isinstance(source, dict):
+                    raise ValueError(
+                        "Message source must be a dict, got %s" % type(source).__name__
+                    )
+                if not source:
+                    raise ValueError("Message source can't be empty if present")
+                if len(source) > 1:
+                    raise ValueError(
+                        "Message can only have a single source, got %s" % source
+                    )
+                supported_source_keys = {"module", "library"}
+                if set(source.keys()) - supported_source_keys:
+                    raise ValueError(
+                        "Unknown message source kind %s. Supported kinds: %s."
+                        % (source.keys(), supported_source_keys)
+                    )
+            else:
+                source = None
+            return cls(value[0], value[1], source)
         else:
             raise ValueError(
-                "%s if of type %s, which cannot be coerced to I18nMessage"
+                "%s is of type %s, which cannot be coerced to I18nMessage"
                 % (value, type(value).__name__)
             )
 
