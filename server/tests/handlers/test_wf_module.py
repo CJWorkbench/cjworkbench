@@ -29,6 +29,7 @@ from server.handlers.wf_module import (
     clear_file_upload_api_token,
 )
 from .util import HandlerTestCase
+from cjworkbench.models.userprofile import UserProfile
 
 
 async def async_noop(*args, **kwargs):
@@ -564,8 +565,9 @@ class WfModuleTest(HandlerTestCase):
 
     def test_try_set_autofetch_exceed_quota(self):
         user = User.objects.create(username="a", email="a@example.org")
-        user.user_profile.max_fetches_per_day = 10
-        user.user_profile.save()
+        UserProfile.objects.update_or_create(
+            user=user, defaults={"max_fetches_per_day": 10}
+        )
         workflow = Workflow.create_and_init(owner=user)
         wf_module = workflow.tabs.first().wf_modules.create(order=0, slug="step-1")
         response = self.run_handler(
@@ -588,8 +590,9 @@ class WfModuleTest(HandlerTestCase):
 
     def test_try_set_autofetch_allow_exceed_quota_when_reducing(self):
         user = User.objects.create(username="a", email="a@example.org")
-        user.user_profile.max_fetches_per_day = 10
-        user.user_profile.save()
+        UserProfile.objects.update_or_create(
+            user=user, defaults={"max_fetches_per_day": 10}
+        )
         workflow = Workflow.create_and_init(owner=user)
         wf_module = workflow.tabs.first().wf_modules.create(
             order=0,
