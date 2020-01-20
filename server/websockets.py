@@ -170,7 +170,9 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
 
     async def send_update(self, update: clientside.Update) -> None:
         logger.debug("Send update to Workflow %d", self.workflow_id)
-        ctx = JsonizeContext(self.scope["user"], self.scope["session"], "TODO_i18n")
+        ctx = JsonizeContext(
+            self.scope["user"], self.scope["session"], self.scope["locale_id"]
+        )
         json_dict = jsonize_clientside_update(update, ctx)
         await self.send_json({"type": "apply-delta", "data": json_dict})
 
