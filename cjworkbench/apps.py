@@ -6,4 +6,4 @@ class ServerConfig(AppConfig):
     name = "cjworkbench"
 
     def ready(self):
-        pass
+        import cjworkbench.signals
