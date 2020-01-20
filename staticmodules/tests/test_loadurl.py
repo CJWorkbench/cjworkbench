@@ -3,13 +3,13 @@ import gzip
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import io
 import itertools
+import logging
 from pathlib import Path
 import threading
 from typing import ContextManager
 import unittest
 import zlib
 import pyarrow
-from cjwkernel.pandas.http import httpfile
 from cjwkernel.util import tempfile_context
 from cjwkernel.tests.util import assert_arrow_table_equals, parquet_file
 from cjwkernel.types import (
@@ -19,6 +19,7 @@ from cjwkernel.types import (
     RenderError,
     RenderResult,
 )
+from cjwmodule.http import httpfile
 from staticmodules.loadurl import fetch_arrow, render_arrow
 from .util import MockHttpResponse, MockParams
 
@@ -26,14 +27,6 @@ TestDataPath = Path(__file__).parent / "test_data"
 
 XLSX_MIME_TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 P = MockParams.factory(url="", has_header=True)
-
-
-@contextlib.contextmanager
-def fetch(url: str = "", has_header: bool = True) -> ContextManager[FetchResult]:
-    with tempfile_context(prefix="output-") as output_path:
-        yield fetch_arrow(
-            {"url": url, "has_header": has_header}, {}, None, None, output_path
-        )
 
 
 class FetchTests(unittest.TestCase):
@@ -79,6 +72,16 @@ class FetchTests(unittest.TestCase):
         self.server_thread.join()
         super().tearDown()
 
+    @contextlib.contextmanager
+    def fetch(
+        self, url: str = "", has_header: bool = True
+    ) -> ContextManager[FetchResult]:
+        with tempfile_context(prefix="output-") as output_path:
+            with self.assertLogs(level=logging.DEBUG):
+                yield fetch_arrow(
+                    {"url": url, "has_header": has_header}, {}, None, None, output_path
+                )
+
     def build_url(self, path: str) -> str:
         """
         Build a URL that points to our HTTP server.
@@ -91,13 +94,16 @@ class FetchTests(unittest.TestCase):
         self.mock_http_response = MockHttpResponse.ok(
             body, [("Content-Type", "text/csv; charset=utf-8")]
         )
-        with fetch(url) as result:
+        with self.fetch(url) as result:
             self.assertEqual(result.errors, [])
-            with httpfile.read(result.path) as (body_path, url, headers):
+            with httpfile.read(result.path) as (_, __, headers, body_path):
                 self.assertEqual(body_path.read_bytes(), body)
                 self.assertEqual(
                     headers,
-                    "Content-Type: text/csv; charset=utf-8\r\nContent-Length: 11\r\n",
+                    [
+                        ("content-type", "text/csv; charset=utf-8"),
+                        ("content-length", "11"),
+                    ],
                 )
 
     def test_fetch_gzip_encoded_csv(self):
@@ -107,24 +113,26 @@ class FetchTests(unittest.TestCase):
             gzip.compress(body),
             [("Content-Type", "text/csv; charset=utf-8"), ("Content-Encoding", "gzip")],
         )
-        with fetch(url) as result:
+        with self.fetch(url) as result:
             self.assertEqual(result.errors, [])
-            with httpfile.read(result.path) as (body_path, url, headers):
+            with httpfile.read(result.path) as (_, __, headers, body_path):
                 self.assertEqual(body_path.read_bytes(), body)
 
     def test_fetch_deflate_encoded_csv(self):
         body = b"A,B\nx,y\nz,a"
+        zo = zlib.compressobj(wbits=-zlib.MAX_WBITS)
+        zbody = zo.compress(body) + zo.flush()
         url = self.build_url("/path/to.csv.gz")
         self.mock_http_response = MockHttpResponse.ok(
-            zlib.compress(body),
+            zbody,
             [
                 ("Content-Type", "text/csv; charset=utf-8"),
                 ("Content-Encoding", "deflate"),
             ],
         )
-        with fetch(url) as result:
+        with self.fetch(url) as result:
             self.assertEqual(result.errors, [])
-            with httpfile.read(result.path) as (body_path, url, headers):
+            with httpfile.read(result.path) as (_, __, headers, body_path):
                 self.assertEqual(body_path.read_bytes(), body)
 
     def test_fetch_chunked_csv(self):
@@ -132,15 +140,15 @@ class FetchTests(unittest.TestCase):
             [b"A,B\nx", b",y\nz,", b"a"], [("Content-Type", "text/csv; charset=utf-8")]
         )
         url = self.build_url("/path/to.csv.chunks")
-        with fetch(url) as result:
+        with self.fetch(url) as result:
             self.assertEqual(result.errors, [])
-            with httpfile.read(result.path) as (body_path, url, headers):
+            with httpfile.read(result.path) as (_, __, headers, body_path):
                 self.assertEqual(body_path.read_bytes(), b"A,B\nx,y\nz,a")
 
     def test_fetch_http_404(self):
         self.mock_http_response = MockHttpResponse(404, [("Content-Length", 0)])
         url = self.build_url("/not-found")
-        with fetch(url) as result:
+        with self.fetch(url) as result:
             self.assertEqual(result.path.read_bytes(), b"")
             self.assertEqual(
                 result.errors,
@@ -152,7 +160,10 @@ class FetchTests(unittest.TestCase):
             )
 
     def test_fetch_invalid_url(self):
-        with fetch("htt://blah") as result:
+        with tempfile_context(prefix="output-") as output_path:
+            result = fetch_arrow(
+                {"url": "htt://blah", "has_header": False}, {}, None, None, output_path
+            )
             self.assertEqual(result.path.read_bytes(), b"")
             self.assertEqual(
                 result.errors,
@@ -176,11 +187,11 @@ class FetchTests(unittest.TestCase):
                 MockHttpResponse.ok(b"A,B\n1,2", [("Content-Type", "text/csv")]),
             ]
         )
-        with fetch(url1) as result:
+        with self.fetch(url1) as result:
             self.assertEqual(result.errors, [])
-            with httpfile.read(result.path) as (body_path, url, headers):
+            with httpfile.read(result.path) as (parameters, __, headers, body_path):
                 self.assertEqual(body_path.read_bytes(), b"A,B\n1,2")
-                self.assertEqual(url, url1)
+                self.assertEqual(parameters, {"url": url1})
         self.assertIn("/url1.csv", self.http_requestlines[0])
         self.assertIn("/url2.csv", self.http_requestlines[1])
         self.assertIn("/url3.csv", self.http_requestlines[2])
@@ -194,7 +205,7 @@ class FetchTests(unittest.TestCase):
                 MockHttpResponse(302, [("Location", url1)]),
             ]
         )
-        with fetch(url1) as result:
+        with self.fetch(url1) as result:
             self.assertEqual(result.path.read_bytes(), b"")
             self.assertEqual(
                 result.errors,
@@ -280,13 +291,13 @@ class RenderTests(unittest.TestCase):
 
     def test_render_has_header_true(self):
         with tempfile_context("http") as http_path:
-            with http_path.open("wb") as http_f:
-                httpfile.write(
-                    http_f,
-                    "https://blah",
-                    {"Content-Type": "text/csv"},
-                    io.BytesIO(b"A,B\na,b"),
-                )
+            httpfile.write(
+                http_path,
+                {"url": "http://example.com/hello"},
+                "200 OK",
+                [("content-type", "text/csv")],
+                io.BytesIO(b"A,B\na,b"),
+            )
             result = render_arrow(
                 ArrowTable(),
                 P(has_header=True),
@@ -299,13 +310,13 @@ class RenderTests(unittest.TestCase):
 
     def test_render_has_header_false(self):
         with tempfile_context("http") as http_path:
-            with http_path.open("wb") as http_f:
-                httpfile.write(
-                    http_f,
-                    "https://blah",
-                    {"Content-Type": "text/csv"},
-                    io.BytesIO(b"1,2\n3,4"),
-                )
+            httpfile.write(
+                http_path,
+                {"url": "http://example.com/hello"},
+                "200 OK",
+                [("content-type", "text/csv")],
+                io.BytesIO(b"1,2\n3,4"),
+            )
             result = render_arrow(
                 ArrowTable(),
                 P(has_header=False),
@@ -331,16 +342,16 @@ class RenderTests(unittest.TestCase):
         # Use text/plain type and rely on filename detection, as
         # https://raw.githubusercontent.com/ does
         with tempfile_context(prefix="fetch-") as http_path:
-            with http_path.open("wb") as http_f:
-                httpfile.write(
-                    http_f,
-                    "https://blah/file.csv",
-                    {"Content-Type": "text/plain"},
-                    # bytes will prove we used "csv" explicitly -- we didn't
-                    # take "text/plain" and decide to use a CSV sniffer to
-                    # find the delimiter.
-                    io.BytesIO(b"A;B\na;b"),
-                )
+            httpfile.write(
+                http_path,
+                {"url": "http://example.com/file.csv"},
+                "200 OK",
+                [("content-type", "text/plain")],
+                # bytes will prove we used "csv" explicitly -- we didn't
+                # take "text/plain" and decide to use a CSV sniffer to
+                # find the delimiter.
+                io.BytesIO(b"A;B\na;b"),
+            )
             result = render_arrow(
                 ArrowTable(),
                 P(has_header=True),
@@ -354,13 +365,13 @@ class RenderTests(unittest.TestCase):
     def test_render_text_plain(self):
         # guess_mime_type_or_none() treats text/plain specially.
         with tempfile_context(prefix="fetch-") as http_path:
-            with http_path.open("wb") as http_f:
-                httpfile.write(
-                    http_f,
-                    "https://blah/file.unknownext",
-                    {"Content-Type": "text/plain"},
-                    io.BytesIO(b"A;B\na;b"),
-                )
+            httpfile.write(
+                http_path,
+                {"url": "http://example.com/file.unknownext"},
+                "200 OK",
+                [("content-type", "text/plain")],
+                io.BytesIO(b"A;B\na;b"),
+            )
             result = render_arrow(
                 ArrowTable(),
                 P(has_header=True),
@@ -377,13 +388,13 @@ class RenderTests(unittest.TestCase):
         # Sysadmins sometimes invent MIME types. We hard-code to rewrite fake
         # MIME types we've seen in the wild that seem unambiguous.
         with tempfile_context(prefix="fetch-") as http_path:
-            with http_path.open("wb") as http_f:
-                httpfile.write(
-                    http_f,
-                    "https://blah",
-                    {"Content-Type": "application/x-csv"},
-                    io.BytesIO(b"A,B\na,b"),
-                )
+            httpfile.write(
+                http_path,
+                {"url": "http://example.com/hello"},
+                "200 OK",
+                [("content-type", "application/x-csv")],
+                io.BytesIO(b"A,B\na,b"),
+            )
             result = render_arrow(
                 ArrowTable(),
                 P(has_header=True),
@@ -396,13 +407,13 @@ class RenderTests(unittest.TestCase):
 
     def test_render_json(self):
         with tempfile_context("fetch-") as http_path:
-            with http_path.open("wb") as http_f:
-                httpfile.write(
-                    http_f,
-                    "https://blah",
-                    {"Content-Type": "application/json"},
-                    io.BytesIO(b'[{"A": "a"}]'),
-                )
+            httpfile.write(
+                http_path,
+                {"url": "http://example.com/hello"},
+                "200 OK",
+                [("content-type", "application/json")],
+                io.BytesIO(b'[{"A": "a"}]'),
+            )
             result = render_arrow(
                 ArrowTable(),
                 P(has_header=True),
@@ -415,11 +426,13 @@ class RenderTests(unittest.TestCase):
 
     def test_render_xlsx(self):
         with tempfile_context("fetch-") as http_path:
-            with http_path.open("wb") as http_f, (TestDataPath / "example.xlsx").open(
-                "rb"
-            ) as xlsx_f:
+            with (TestDataPath / "example.xlsx").open("rb") as xlsx_f:
                 httpfile.write(
-                    http_f, "https://blah", {"Content-Type": XLSX_MIME_TYPE}, xlsx_f
+                    http_path,
+                    {"url": "http://example.com/hello"},
+                    "200 OK",
+                    [("content-type", XLSX_MIME_TYPE)],
+                    xlsx_f,
                 )
             result = render_arrow(
                 ArrowTable(),
@@ -433,13 +446,13 @@ class RenderTests(unittest.TestCase):
 
     def test_render_xlsx_bad_content(self):
         with tempfile_context("fetch-") as http_path:
-            with http_path.open("wb") as http_f:
-                httpfile.write(
-                    http_f,
-                    "https://blah",
-                    {"Content-Type": XLSX_MIME_TYPE},
-                    io.BytesIO("ceçi n'est pas une .xlsx".encode("utf-8")),
-                )
+            httpfile.write(
+                http_path,
+                {"url": "http://example.com/hello"},
+                "200 OK",
+                [("content-type", XLSX_MIME_TYPE)],
+                io.BytesIO("ceçi n'est pas une .xlsx".encode("utf-8")),
+            )
             result = render_arrow(
                 ArrowTable(),
                 P(has_header=True),
