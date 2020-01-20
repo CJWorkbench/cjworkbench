@@ -192,20 +192,16 @@ union I18nArgument {
   3: double double_value
 }
 
-/** Source of a translatable string. 
+/**
+ * Source of a translatable string.
  *
- *  If none of the values are set, this means it's coming from workbench itself
+ * If no field is set, the source is Workbench's own catalog.
  */
 union I18nMessageSource {
-  /**
-   * The message comes from the "library" library
-   */
+  /** The message comes from the "library" library. */
   1: string library,
-  
-  /**
-   * The message comes from the "module_id" module
-   * `"module"` is reserved in thrift, that's why we added `"_id"`
-   */
+
+  /** The message comes from the "module_id" module.  */
   2: string module_id
 }
 
@@ -220,10 +216,8 @@ struct I18nMessage {
    * For instance, `{"nColumns": 3, "exampleColumn": "Column X"}`
    */
   2: map<string, I18nArgument> arguments
-  
-  /**
-   * An indication of where the message comes from.
-   */
+
+  /** Pointer to code repository whose catalog translates the message. */
   3: I18nMessageSource source
 }
 
