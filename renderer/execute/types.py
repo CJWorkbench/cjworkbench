@@ -146,7 +146,7 @@ class PromptingError(Exception):
                     default="{ columns, plural, offset:2"
                     " =1 {The column “{0}” must be converted to Text.}"
                     " =2 {The columns “{0}” and “{1}” must be converted to Text.}"
-                    " one {The columns “{0}”, “{1}” and “{2}” must be converted to Text.}"
+                    " =3 {The columns “{0}”, “{1}” and “{2}” must be converted to Text.}"
                     " other {The columns “{0}”, “{1}” and # others must be converted to Text.}}",
                     args=icu_args,
                 )
@@ -159,7 +159,7 @@ class PromptingError(Exception):
                     default="{ columns, plural, offset:2"
                     " =1 {The column “{0}” must be converted from { found_type, select, text {Text} number {Numbers} datetime {Dates & Times} other {}} to {best_wanted_type, select, text {Text} number {Numbers} datetime {Dates & Times} other {}}.}"
                     " =2 {The columns “{0}” and “{1}” must be converted from { found_type, select, text {Text} number {Numbers} datetime {Dates & Times} other {}} to {best_wanted_type, select, text {Text} number {Numbers} datetime {Dates & Times}  other{}}.}"
-                    " one {The columns “{0}”, “{1}” and “{2}” must be converted from { found_type, select, text {Text} number {Numbers} datetime {Dates & Times} other {}} to {best_wanted_type, select, text {Text} number {Numbers} datetime {Dates & Times} other{}}.}"
+                    " =3 {The columns “{0}”, “{1}” and “{2}” must be converted from { found_type, select, text {Text} number {Numbers} datetime {Dates & Times} other {}} to {best_wanted_type, select, text {Text} number {Numbers} datetime {Dates & Times} other{}}.}"
                     " other {The columns “{0}”, “{1}” and # others must be converted from { found_type, select, text {Text} number {Numbers} datetime {Dates & Times} other {}} to {best_wanted_type, select, text {Text} number {Numbers} datetime {Dates & Times} other{}}.}}",
                     args=icu_args,
                 )
