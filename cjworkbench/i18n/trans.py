@@ -4,9 +4,12 @@ from django.utils.html import escape
 from django.utils.translation import get_language
 from cjworkbench.i18n import default_locale
 from cjworkbench.i18n.catalogs import load_catalog
+from cjworkbench.i18n.catalogs.util import find_string
 from string import Formatter
 from cjworkbench.i18n.exceptions import UnsupportedLocaleError, BadCatalogsError
 from icu import Formattable, Locale, MessageFormat, ICUError
+from babel.messages.catalog import Catalog, Message
+from typing import Dict, Union, Optional
 import logging
 
 
@@ -16,27 +19,32 @@ _translators = {}
 logger = logging.getLogger(__name__)
 
 
-def _get_translations(locale):
-    """Return a singleton MessageTranslator for the given locale.
-    
-    In order to parse the message catalogs only once per locale,
-    uses the _translators dict to store the created MessageTranslator for each locale.
-    """
-    if locale in _translators:
-        return _translators[locale]
-    _translators[locale] = MessageTranslator.for_application_messages(locale)
-    return _translators[locale]
+_TagAttributes = Dict[str, str]
+""" Each attribute name is mapped to its value
+"""
+_Tag = Dict[str, Union[str, _TagAttributes]]
+""" Has two keys: 'name': str, and 'attrs': _TagAttributes. 'attrs' is optional
+"""
+# We can define `_Tag` more precisely in python 3.8 used a `TypedDict`
+_TagMapping = Dict[str, _Tag]
+""" Maps each tag to its data
+"""
+
+_Parameters = Dict[str, Union[int, float, str]]
 
 
-def trans(message_id, *, default, parameters={}):
+def trans(
+    message_id: str, *, default: str, parameters: _Parameters = {}
+) -> Optional[str]:
     """Mark a message for translation and localize it to the current locale.
+
+    `default` is only considered when parsing code for message extraction.
+    If the message is not found in the catalog for the current or the default locale, return `None`.
     
     For code parsing reasons, respect the following order when passing keyword arguments:
         `message_id` and then `default` and then everything else
     """
-    return _get_translations(get_language()).trans(
-        message_id, default=default, parameters=parameters
-    )
+    return localize(get_language(), message_id, parameters=parameters)
 
 
 trans_lazy = lazy(trans)
@@ -45,26 +53,39 @@ trans_lazy = lazy(trans)
 """
 
 
-def localize(locale_id, message_id, *, default, parameters={}):
-    """Localize the given message ID to the given locale."""
+def localize(
+    locale_id: str, message_id: str, parameters: _Parameters = {}
+) -> Optional[str]:
+    """Localize the given message ID to the given locale.
+
+    If the message is not found in the catalog for the given or the default locale, return `None`.
+    """
     return _get_translations(locale_id).trans(
-        message_id, default=default, parameters=parameters
-    )
+        message_id, parameters=parameters
+    ) or _get_translations(default_locale).trans(message_id, parameters=parameters)
 
 
 def localize_html(
-    locale_id, message_id, *, default, context=None, parameters={}, tags={}
-):
+    locale_id: str,
+    message_id: str,
+    context: Optional[str] = None,
+    parameters: _Parameters = {},
+    tags: _TagMapping = {},
+) -> Optional[str]:
     """Localize the given message ID to the given locale, escaping HTML.
+    
+    If the message is not found in the catalog for the given or the default locale, return `None`.
     
     HTML is escaped in the message, as well as in parameters and tag attributes.
     """
     return _get_translations(locale_id).trans_html(
-        message_id, default=default, context=context, parameters=parameters, tags=tags
+        message_id, context=context, parameters=parameters, tags=tags
+    ) or _get_translations(default_locale).trans_html(
+        message_id, context=context, parameters=parameters, tags=tags
     )
 
 
-def restore_tags(message, tag_mapping):
+def restore_tags(message: str, tag_mapping: _TagMapping) -> str:
     """Replace the HTML tags and attributes in a message.
     
     `tag_mapping` is a dict that for each tag name contains a new name `name` and new attributes `attrs`
@@ -103,7 +124,7 @@ class MessageTranslator:
       - our HTML placeholder construct.
     """
 
-    def __init__(self, locale_id, catalog):
+    def __init__(self, locale_id: str, catalog: Catalog):
         self.icu_locale = Locale.createFromName(locale_id)
         self.catalog = catalog
         self.locale_id = locale_id
@@ -112,37 +133,42 @@ class MessageTranslator:
     def for_application_messages(cls, locale_id: str):
         return cls(locale_id, load_catalog(locale_id))
 
-    def trans(self, message_id, default=None, context=None, parameters={}):
+    def trans(
+        self,
+        message_id: str,
+        context: Optional[str] = None,
+        parameters: _Parameters = {},
+    ) -> Optional[str]:
         """Find the message corresponding to the given ID in the catalog and format it according to the given parameters.
-        If the message is either not found or empty and a non-empty `default` is provided, the `default` is used instead.
+        If the message is either not found or empty or incorrectly formatted, `None` is returned.
         
-        See `self._format_message` for acceptable types of the parameters argument.
-        
-        In case a message from the catalogs is used, if the message contains illegal (i.e. numeric) variables, 
-        they are handled so as to not raise an exception; at this point, the default message is used instead, but you should not rely on this behaviour
+        See `self._format_message` for acceptable types of the `parameters` argument.
         """
         return self._process_simple_message(
-            self.get_message(message_id, context=context), default, parameters
+            message_id, self.get_message(message_id, context=context), parameters
         )
 
     def trans_html(
-        self, message_id, default=None, context=None, parameters={}, tags={}
-    ):
+        self,
+        message_id: str,
+        context: Optional[str] = None,
+        parameters: _Parameters = {},
+        tags: _TagMapping = {},
+    ) -> Optional[str]:
         """Find the message corresponding to the given ID in the catalog and format it according to the given parameters.
-        If the message is either not found or empty and a non-empty `default` is provided, the `default` is used instead.
+        If the message is either not found or empty or incorrectly formatted, `None` is returned.
         
         See `self._format_message` for acceptable types of the parameters argument.
-        
-        In case a message from the catalogs is used, if the message contains illegal (i.e. numeric) variables, 
-        they are handled so as to not raise an exception; at this point, the default message is used instead, but you should not rely on this behaviour
         
         HTML-like tags in the message used are replaced by their counterpart in `tags`, as specified in `restore_tags`
         """
         return self._process_html_message(
-            self.get_message(message_id, context=context), default, parameters, tags
+            message_id, self.get_message(message_id, context=context), parameters, tags
         )
 
-    def _process_simple_message(self, message, fallback, parameters={}):
+    def _process_simple_message(
+        self, message_id: str, message: Optional[str], parameters: _Parameters = {}
+    ) -> Optional[str]:
         if message:
             try:
                 return self._format_message(
@@ -150,12 +176,18 @@ class MessageTranslator:
                 )
             except ICUError as err:
                 logger.exception(
-                    f"Error in po file for locale {self.locale_id} and message {message}: {err}"
+                    f"Error in po file for locale {self.locale_id} and message {message_id}: {err}"
                 )
                 # ... and fall through to default
-        return self._format_message(fallback, parameters=parameters, html_escape=False)
+        return None
 
-    def _process_html_message(self, message, fallback, parameters={}, tags={}):
+    def _process_html_message(
+        self,
+        message_id: str,
+        message: Optional[str],
+        parameters: _Parameters = {},
+        tags: _TagMapping = {},
+    ) -> Optional[str]:
         if message:
             try:
                 return self._format_message(
@@ -165,14 +197,12 @@ class MessageTranslator:
                 )
             except ICUError as err:
                 logger.exception(
-                    f"Error in po file for locale {self.locale_id} and message {message}: {err}"
+                    f"Error in po file for locale {self.locale_id} and message {message_id}: {err}"
                 )
                 # ... and fall through to default
-        return self._format_message(
-            self._replace_tags(fallback, tags), parameters=parameters, html_escape=True
-        )
+        return None
 
-    def _replace_tags(self, target_message, tags):
+    def _replace_tags(self, target_message: str, tags: _TagMapping) -> str:
         """Replace non-nested tag names and attributes of the `target_message` with the corresponding ones in `tags`
         
         `tags` must be a dict that maps each placeholder in `target_message` to its original tag and attrs,
@@ -180,14 +210,14 @@ class MessageTranslator:
         """
         return restore_tags(target_message, tag_mapping=tags)
 
-    def _format_message(self, message, parameters={}, html_escape=True):
+    def _format_message(
+        self, message: str, parameters: _Parameters = {}, html_escape: bool = True
+    ) -> str:
         """Substitute parameters into ICU-style message.
         You can have variable substitution, plurals, selects and nested messages.
         
         The parameters must be a dict
         """
-        if not message:
-            return message
         message_format = MessageFormat(message, self.icu_locale)
         return message_format.format(
             list(parameters.keys()),
@@ -197,13 +227,23 @@ class MessageTranslator:
             ],
         )
 
-    def get_message(self, message_id, context=None):
+    def get_message(
+        self, message_id: str, context: Optional[str] = None
+    ) -> Optional[str]:
         """Find the message corresponding to the given ID in the catalog.
         
         If the message is not found, `None` is returned.
         """
-        if context:
-            message = self.catalog.get(message_id, context)
-        else:
-            message = self.catalog.get(message_id)
-        return message.string if message else None
+        return find_string(self.catalog, message_id, context=context)
+
+
+def _get_translations(locale: str) -> MessageTranslator:
+    """Return a singleton MessageTranslator for the given locale.
+    
+    In order to parse the message catalogs only once per locale,
+    uses the _translators dict to store the created MessageTranslator for each locale.
+    """
+    if locale in _translators:
+        return _translators[locale]
+    _translators[locale] = MessageTranslator.for_application_messages(locale)
+    return _translators[locale]

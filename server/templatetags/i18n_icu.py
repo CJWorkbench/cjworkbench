@@ -41,6 +41,7 @@ def trans_html(
     Non-nested tags that have not been mapped in this way will be ignored; in fact, at this point, they will replaced by their escaped contents, but you should not rely on this.
     
     The locale will be taken from context.
+    The `default` argument will only be used in code parsing for message extraction.
     
     For code parsing reasons, respect the following order when passing more than one of `default`, `ctxt`, and `comment` arguments:
         `default` before `ctxt` before `comment`
@@ -52,17 +53,20 @@ def trans_html(
     Examples:
         - `{% trans_html "messages.hello" default="Hello" comment="This can be all caps if you really want it to be" %}` 
           Looks up `messages.hello` in the catalog for the current locale; 
-          if not found, returns `"Hello"`.
+          if not found, looks up `messages.hello` in the catalog for the default locale;
+          if not found, returns `messages.hello`.
           When the code is parsed, the comment and the default will be added to the message catalog.
           
         - `{% trans_html "messages.hello" default="Hello {name}" arg_name="Adam"%}` 
           looks up `messages.hello` in the catalog for the current locale and provides `"Adam"` as a value for `name`; 
-          if not found, returns `"Hello Adam"`
+          if not found, looks up `messages.hello` in the catalog for the default locale;
+          if not found, returns `messages.hello`.
           When the code is parsed, the default will be added to the message catalog.
           
         - `{% trans_html "messages.hello" default="Hello {name}" ctxt="dashboard" arg_name="Adam"%}` 
           looks up `messages.hello` with context `dashboard` in the catalog for the current locale and provides `"Adam"` as a value for `name`; 
-          if not found, returns `"Hello Adam"`
+          if not found, looks up `messages.hello` in the catalog for the default locale;
+          if not found, returns `messages.hello`.
           When the code is parsed, the context and the default will be added to the message catalog.
           
         - `{% trans_html "messages.hello" noop=True default="Hello" %}` 
@@ -75,7 +79,8 @@ def trans_html(
           When the code is parsed, the default will be added to the message catalog.
           
         - `{% trans_html some_var default="the default" %}`
-          Looks up the content of `some_var` in the catalog. If found, returns it, else returns the default.
+          Looks up the content of `some_var` in the catalogs (first for the current and then for the default locale). 
+          If found, returns it, else returns the content of `some_var`.
           When the code is parsed for message extraction, this will be ignored.
     """
     if noop is True:
@@ -118,13 +123,7 @@ def trans_html(
         )
         locale_id = default_locale
 
-    return mark_safe(
-        localize_html(
-            locale_id,
-            message_id,
-            default=default,
-            context=ctxt,
-            tags=tags,
-            parameters=params,
-        )
+    result = localize_html(
+        locale_id, message_id, context=ctxt or None, tags=tags, parameters=params
     )
+    return mark_safe(result) if result else None

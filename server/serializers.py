@@ -266,23 +266,13 @@ def jsonize_clientside_tab(tab: clientside.TabUpdate) -> Dict[str, Any]:
     return d
 
 
-def jsonize_i18n_message(message: I18nMessage, ctx: JsonizeContext) -> str:
+def jsonize_i18n_message(message: I18nMessage, ctx: JsonizeContext) -> Optional[str]:
     assert message.source is None
     if message.id == "TODO_i18n":
         return message.args["text"]
     else:
         # Attempt to localize in the locale given by `ctx`.
-        #
-        # There may be no message in that locale for the id we are searching,
-        # in which case the `default` we pass (i.e. `None`) will be returned
-        # and we will ask for the message to be localized in the default locale.
-        # If there is no message for the default locale either,
-        # we opt to return the message id.
-        return localize(
-            ctx.locale_id, message.id, default=None, parameters=message.args
-        ) or localize(
-            default_locale, message.id, default=message.id, parameters=message.args
-        )
+        return localize(ctx.locale_id, message.id, parameters=message.args)
 
 
 def jsonize_quick_fix(quick_fix: QuickFix, ctx: JsonizeContext) -> Dict[str, Any]:

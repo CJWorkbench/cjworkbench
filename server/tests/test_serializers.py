@@ -24,10 +24,9 @@ class JsonizeI18nMessageTest(unittest.TestCase):
             catalog = Catalog()
             if locale == "en":
                 catalog.add("id", string="Hello")
-                return MessageTranslator(locale, catalog)
             else:
                 catalog.add("id", string="Hey")
-                return MessageTranslator(locale, catalog)
+            return MessageTranslator(locale, catalog)
 
         with patch("cjworkbench.i18n.trans._get_translations", mock_get_translations):
             self.assertEqual(
@@ -42,9 +41,7 @@ class JsonizeI18nMessageTest(unittest.TestCase):
             catalog = Catalog()
             if locale == "en":
                 catalog.add("id", string="Hello")
-                return MessageTranslator(locale, catalog)
-            else:
-                return MessageTranslator(locale, catalog)
+            return MessageTranslator(locale, catalog)
 
         with patch("cjworkbench.i18n.trans._get_translations", mock_get_translations):
             self.assertEqual(
@@ -59,9 +56,8 @@ class JsonizeI18nMessageTest(unittest.TestCase):
             return MessageTranslator(locale, Catalog())
 
         with patch("cjworkbench.i18n.trans._get_translations", mock_get_translations):
-            self.assertEqual(
+            self.assertIsNone(
                 jsonize_i18n_message(
                     I18nMessage("id"), mock_jsonize_context(locale_id="el")
-                ),
-                "id",
+                )
             )
