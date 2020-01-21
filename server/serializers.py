@@ -271,6 +271,13 @@ def jsonize_i18n_message(message: I18nMessage, ctx: JsonizeContext) -> str:
     if message.id == "TODO_i18n":
         return message.args["text"]
     else:
+        # Attempt to localize in the locale given by `ctx`.
+        #
+        # There may be no message in that locale for the id we are searching,
+        # in which case the `default` we pass (i.e. `None`) will be returned
+        # and we will ask for the message to be localized in the default locale.
+        # If there is no message for the default locale either,
+        # we opt to return the message id.
         return localize(
             ctx.locale_id, message.id, default=None, parameters=message.args
         ) or localize(
