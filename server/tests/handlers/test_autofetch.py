@@ -4,6 +4,7 @@ from django.utils import timezone
 from server.handlers.autofetch import list_autofetches_json, isoformat
 from cjwstate.models import Workflow
 from cjwstate.tests.utils import DbTestCase
+from cjworkbench.models.userprofile import UserProfile
 
 
 IsoDate1 = "2019-06-18T19:35:57.123Z"
@@ -23,8 +24,7 @@ class AutoupdateTest(DbTestCase):
 
     def test_list_autofetches_gets_user_max_fetches_per_day(self):
         user = User.objects.create(username="a", email="a@example.org")
-        user.user_profile.max_fetches_per_day = 6000
-        user.user_profile.save(update_fields=["max_fetches_per_day"])
+        UserProfile.objects.create(user=user, max_fetches_per_day=6000)
         Workflow.create_and_init(owner=user)
         result = list_autofetches_json({"user": user, "session": None})
         self.assertEqual(
@@ -36,7 +36,7 @@ class AutoupdateTest(DbTestCase):
         # it is. So here we are -- sometimes it doesn't exist.
         user = User.objects.create(username="a", email="a@example.org")
         Workflow.create_and_init(owner=user)
-        user.user_profile.delete()
+        UserProfile.objects.filter(user=user).delete()
         user.refresh_from_db()
         result = list_autofetches_json({"user": user, "session": None})
         self.assertEqual(
