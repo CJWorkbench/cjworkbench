@@ -80,29 +80,6 @@ class ModuleSpec:
                 )
             )
 
-    @classmethod
-    def load_from_path(self, path: Path) -> ModuleSpec:
-        """
-        Parse from a path.
-
-        Raise ValueError on syntax or semantic error.
-        """
-
-        text = path.read_text(encoding="utf-8")
-        if path.suffix == ".json":
-            try:
-                data = json.loads(text)
-            except ValueError as err:
-                raise ValueError("JSON syntax error in %s: %s" % (path.name, str(err)))
-        else:
-            try:
-                data = yaml.safe_load(text)
-            except yaml.YAMLError as err:
-                raise ValueError("YAML syntax error in %s: %s" % (path.name, str(err)))
-
-        validate_module_spec(data)  # raises ValueError
-        return ModuleSpec(**data)
-
 
 @dataclass(frozen=True)
 class ModuleZipfile:

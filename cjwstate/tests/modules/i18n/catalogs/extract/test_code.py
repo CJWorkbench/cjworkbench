@@ -1,5 +1,5 @@
 import unittest
-from cjwstate.modules.i18n.catalogs.extract.code import _find_messages_in_module_code
+from cjwstate.modules.i18n.catalogs.extract.code import find_messages_in_module_code
 from io import BytesIO
 
 
@@ -11,7 +11,7 @@ def render(table):
     return table
         """
         )
-        result = _find_messages_in_module_code(code, "module.py")
+        result = find_messages_in_module_code(code, "module.py")
         expected = {}
         self.assertEqual(result, expected)
 
@@ -24,7 +24,7 @@ def render(table):
     return (table, i18n.trans('message.id', 'Default message'))
         """
         )
-        result = _find_messages_in_module_code(code, "module.py")
+        result = find_messages_in_module_code(code, "module.py")
         expected = {
             "message.id": {
                 "string": "Default message",
@@ -48,7 +48,7 @@ def render(table):
     )
         """
         )
-        result = _find_messages_in_module_code(code, "module.py")
+        result = find_messages_in_module_code(code, "module.py")
         expected = {
             "message.id": {
                 "string": "Default message",
@@ -70,7 +70,7 @@ def render(table):
     )
         """
         )
-        result = _find_messages_in_module_code(code, "module.py")
+        result = find_messages_in_module_code(code, "module.py")
         expected = {
             "message.id": {
                 "string": "Default message",
@@ -92,7 +92,7 @@ def render(table):
     )
         """
         )
-        result = _find_messages_in_module_code(code, "module.py")
+        result = find_messages_in_module_code(code, "module.py")
         expected = {
             "message.id": {
                 "string": "Default message with {parameter}",
@@ -119,7 +119,7 @@ def render(table):
         )
         """
         )
-        result = _find_messages_in_module_code(code, "module.py")
+        result = find_messages_in_module_code(code, "module.py")
         expected = {
             "message.id": {
                 "string": "Default message with {parameter}",
@@ -151,7 +151,7 @@ def render(table):
         )
         """
         )
-        result = _find_messages_in_module_code(code, "module.py")
+        result = find_messages_in_module_code(code, "module.py")
         expected = {
             "message.id": {
                 "string": "Default message",
@@ -178,7 +178,7 @@ def render(table):
     )
         """
         )
-        result = _find_messages_in_module_code(code, "module.py")
+        result = find_messages_in_module_code(code, "module.py")
         expected = {}
         self.assertEqual(result, expected)
 
@@ -195,7 +195,7 @@ def render(table):
         """
         )
         with self.assertRaises(SyntaxError):
-            result = _find_messages_in_module_code(code, "module.py")
+            result = find_messages_in_module_code(code, "module.py")
 
     def test_translation_with_nonstring_id_and_default(self):
         code = BytesIO(
@@ -210,7 +210,7 @@ def render(table):
     )
         """
         )
-        result = _find_messages_in_module_code(code, "module.py")
+        result = find_messages_in_module_code(code, "module.py")
         expected = {}
         self.assertEqual(result, expected)
 
@@ -226,7 +226,7 @@ def render(table):
     )
         """
         )
-        result = _find_messages_in_module_code(code, "module.py")
+        result = find_messages_in_module_code(code, "module.py")
         expected = {
             "message.id": {
                 "string": "Default message",

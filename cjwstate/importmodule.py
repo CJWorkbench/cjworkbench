@@ -1,9 +1,11 @@
+import contextlib
 import hashlib
 import logging
 import json
 from pathlib import Path
 import re
 import shutil
+from typing import ContextManager
 import zipfile
 import httpx
 import pathspec
@@ -90,7 +92,7 @@ def _download_github_module(owner: str, repo: str, sha1: str, dest: Path) -> Non
     _download_url("https://github.com/%s/%s/archive/%s.zip" % (owner, repo, sha1), dest)
 
 
-def _validate_zipfile(module_zipfile: ModuleZipfile) -> None:
+def validate_zipfile(module_zipfile: ModuleZipfile) -> None:
     """
     Ensure `path` points to a valid ModuleZipfile.
 
@@ -135,7 +137,7 @@ def import_zipfile(path: Path) -> clientside.Module:
     Otherwise, do not raise any errors one can sensibly recover from.
     """
     temp_zipfile = ModuleZipfile(path)
-    _validate_zipfile(temp_zipfile)  # raise WorkbenchModuleImportError
+    validate_zipfile(temp_zipfile)  # raise WorkbenchModuleImportError
     module_id = temp_zipfile.module_id
     version = temp_zipfile.version
     module_spec = temp_zipfile.get_spec()
@@ -242,6 +244,22 @@ def import_module_from_directory(dirpath: Path):
 
     Raise `WorkbenchModuleImportError` if import fails.
     """
+    with directory_loaded_as_zipfile_path(dirpath) as zip_path:
+        return import_zipfile(zip_path)
+
+
+@contextlib.contextmanager
+def directory_loaded_as_zipfile_path(dirpath: Path) -> ContextManager[Path]:
+    """
+    Yield -- but do not save -- a zipfile using the files in a directory.
+
+    Use `dirpath.name` as `module_id`. Use "dir-{hex-sha1sum of zipfile}" as
+    `version`.
+
+    Respect `.gitignore` to avoid importing too many files.
+
+    The ModuleZipfile may not be valid. Use `validate_zipfile()` to test it.
+    """
     try:
         with (dirpath / ".gitignore").open("rt", encoding="utf-8") as f:
             gitignore = pathspec.PathSpec.from_lines(
@@ -261,6 +279,7 @@ def import_module_from_directory(dirpath: Path):
                         zf.write(path, relative_path)
 
         version = "dir-" + _hexsha1(unversioned_zip_path)
-        zip_path = f"{module_id}.{version}.zip"
+        zip_path = tempdir / f"{module_id}.{version}.zip"
+
         shutil.move(unversioned_zip_path, zip_path)
-        return import_zipfile(zip_path)
+        yield zip_path
