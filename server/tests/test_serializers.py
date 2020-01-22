@@ -1,4 +1,5 @@
 import unittest
+import logging
 from cjwkernel.types import I18nMessage, QuickFix, QuickFixAction, RenderError
 from server.serializers import jsonize_i18n_message, JsonizeContext
 from cjworkbench.i18n.trans import MessageTranslator
@@ -56,7 +57,22 @@ class JsonizeI18nMessageTest(unittest.TestCase):
             return MessageTranslator(locale, Catalog())
 
         with patch("cjworkbench.i18n.trans._get_translations", mock_get_translations):
-            with self.assertRaises(KeyError):
-                jsonize_i18n_message(
-                    I18nMessage("id"), mock_jsonize_context(locale_id="el")
+            with self.assertLogs(level=logging.ERROR):
+                result = jsonize_i18n_message(
+                    I18nMessage("messageid"), mock_jsonize_context(locale_id="el")
                 )
+                self.assertRegex(result, "messageid")
+
+    def test_source_None_default_message_incorrect_format(self):
+        def mock_get_translations(locale):
+            catalog = Catalog()
+            if locale == "en":
+                catalog.add("id", string="Hello {a b}")
+            return MessageTranslator(locale, catalog)
+
+        with patch("cjworkbench.i18n.trans._get_translations", mock_get_translations):
+            with self.assertLogs(level=logging.ERROR):
+                result = jsonize_i18n_message(
+                    I18nMessage("messageid"), mock_jsonize_context(locale_id="el")
+                )
+                self.assertRegex(result, "messageid")

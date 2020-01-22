@@ -3,6 +3,7 @@ import contextlib
 import datetime
 import logging
 import re
+import json
 from typing import Any, Dict, Iterable, List, Optional, Union
 from allauth.account.utils import user_display
 from django.contrib.auth import get_user_model
@@ -17,6 +18,7 @@ from cjwstate import clientside
 from cjwkernel.types import RenderError
 from cjworkbench.i18n import default_locale
 from cjworkbench.i18n.trans import localize
+from icu import ICUError
 
 User = get_user_model()
 
@@ -278,7 +280,20 @@ def jsonize_i18n_message(message: I18nMessage, ctx: JsonizeContext) -> str:
         return message.args["text"]
     else:
         # Attempt to localize in the locale given by `ctx`.
-        return localize(ctx.locale_id, message.id, parameters=message.args)
+        try:
+            return localize(ctx.locale_id, message.id, parameters=message.args)
+        except ICUError as err:
+            # `localize` handles `ICUError` for the given locale.
+            # Hence, if we get here, it means that the message is badly formatted in the default locale.
+            logger.exception(
+                f"I18nMessage badly formatted in default locale. id: {message.id}, source: {message.source}"
+            )
+        except KeyError as err:
+            logger.exception(
+                f"I18nMessage not found. id: {message.id}, source: {message.source}"
+            )
+
+        return json.dumps(message.to_dict())
 
 
 def jsonize_quick_fix(quick_fix: QuickFix, ctx: JsonizeContext) -> Dict[str, Any]:
