@@ -69,6 +69,7 @@ services:
       - virtualenvs:/root/.local/share/virtualenvs/:rw
     security_opt:
       - seccomp=docker/pyspawner-seccomp-profile.json
+    privileged: true
     cap_add: [ SYS_ADMIN ] # for setup-sandboxes.sh to overlay-mount chroots (on k8s we use an init container instead)
     environment: &django-env
       PYTHONUNBUFFERED: '1'
@@ -107,6 +108,7 @@ services:
       - virtualenvs:/root/.local/share/virtualenvs/:rw
     security_opt:
       - seccomp=docker/pyspawner-seccomp-profile.json
+    privileged: true
     cap_add:
       - SYS_ADMIN # for setup-sandboxes.sh to overlay-mount chroots (on k8s we use an init container instead)
       - NET_ADMIN # for pyspawner to create new network namespace without access to private network
@@ -136,6 +138,7 @@ services:
       - virtualenvs:/root/.local/share/virtualenvs/:rw
     security_opt:
       - seccomp=docker/pyspawner-seccomp-profile.json
+    privileged: true
     cap_add:
       - SYS_ADMIN # for setup-sandboxes.sh to overlay-mount chroots (on k8s we use an init container instead)
       - NET_ADMIN # for pyspawner to create new network namespace without access to private network

@@ -56,16 +56,24 @@ trans_lazy = lazy(trans)
 def localize(locale_id: str, message_id: str, parameters: _Parameters = {}) -> str:
     """Localize the given message ID to the given locale.
 
-    If the message is not found in the catalog for the given or the default locale, return `None`,
-    raise `KeyError`.
+    Raise `KeyError` if the message is not found (neither in the catalogs of the given and of the default locale).
+    Raise `ICUError` if the message in the default locale is incorrectly formatted.
     """
-    message = _get_translations(locale_id).trans(
+
+    if locale_id != default_locale:
+        try:
+            return _get_translations(locale_id).get_and_format_message(
+                message_id, parameters=parameters
+            )
+        except ICUError as err:
+            logger.exception(
+                f"Error in po file for locale {locale_id} and message {message_id}: {err}"
+            )
+        except KeyError as err:
+            pass
+    return _get_translations(default_locale).get_and_format_message(
         message_id, parameters=parameters
-    ) or _get_translations(default_locale).trans(message_id, parameters=parameters)
-    if message:
-        return message
-    else:
-        raise KeyError(message_id)
+    )
 
 
 def localize_html(
@@ -77,20 +85,25 @@ def localize_html(
 ) -> str:
     """Localize the given message ID to the given locale, escaping HTML.
     
-    If the message is not found in the catalog for the given or the default locale,
-    raise `KeyError`.
+    Raise `KeyError` if the message is not found (neither in the catalogs of the given and of the default locale).
+    Raise `ICUError` if the message in the default locale is incorrectly formatted.
     
     HTML is escaped in the message, as well as in parameters and tag attributes.
     """
-    message = _get_translations(locale_id).trans_html(
-        message_id, context=context, parameters=parameters, tags=tags
-    ) or _get_translations(default_locale).trans_html(
+    if locale_id != default_locale:
+        try:
+            return _get_translations(locale_id).get_and_format_html_message(
+                message_id, context=context, parameters=parameters, tags=tags
+            )
+        except ICUError as err:
+            logger.exception(
+                f"Error in po file for locale {locale_id} and message {message_id}: {err}"
+            )
+        except KeyError as err:
+            pass
+    return _get_translations(default_locale).get_and_format_html_message(
         message_id, context=context, parameters=parameters, tags=tags
     )
-    if message:
-        return message
-    else:
-        raise KeyError(message_id)
 
 
 def restore_tags(message: str, tag_mapping: _TagMapping) -> str:
@@ -135,80 +148,57 @@ class MessageTranslator:
     def __init__(self, locale_id: str, catalog: Catalog):
         self.icu_locale = Locale.createFromName(locale_id)
         self.catalog = catalog
-        self.locale_id = locale_id
 
     @classmethod
     def for_application_messages(cls, locale_id: str):
         return cls(locale_id, load_catalog(locale_id))
 
-    def trans(
+    def get_and_format_message(
         self,
         message_id: str,
         context: Optional[str] = None,
         parameters: _Parameters = {},
-    ) -> Optional[str]:
+    ) -> str:
         """Find the message corresponding to the given ID in the catalog and format it according to the given parameters.
-        If the message is either not found or empty or incorrectly formatted, `None` is returned.
+        If the message is either not found or empty, a `KeyError` is raised.
+        If the message is incorrectly formatted, an `ICUError` is raised.
         
         See `self._format_message` for acceptable types of the `parameters` argument.
         """
         return self._process_simple_message(
-            message_id, self.get_message(message_id, context=context), parameters
+            self.get_message(message_id, context=context), parameters
         )
 
-    def trans_html(
+    def get_and_format_html_message(
         self,
         message_id: str,
         context: Optional[str] = None,
         parameters: _Parameters = {},
         tags: _TagMapping = {},
-    ) -> Optional[str]:
+    ) -> str:
         """Find the message corresponding to the given ID in the catalog and format it according to the given parameters.
-        If the message is either not found or empty or incorrectly formatted, `None` is returned.
+        If the message is either not found or empty, a `KeyError` is raised.
+        If the message is incorrectly formatted, an `ICUError` is raised.
         
         See `self._format_message` for acceptable types of the parameters argument.
         
         HTML-like tags in the message used are replaced by their counterpart in `tags`, as specified in `restore_tags`
         """
         return self._process_html_message(
-            message_id, self.get_message(message_id, context=context), parameters, tags
+            self.get_message(message_id, context=context), parameters, tags
         )
 
     def _process_simple_message(
-        self, message_id: str, message: Optional[str], parameters: _Parameters = {}
-    ) -> Optional[str]:
-        if message:
-            try:
-                return self._format_message(
-                    message, parameters=parameters, html_escape=False
-                )
-            except ICUError as err:
-                logger.exception(
-                    f"Error in po file for locale {self.locale_id} and message {message_id}: {err}"
-                )
-                # ... and fall through to default
-        return None
+        self, message: str, parameters: _Parameters = {}
+    ) -> str:
+        return self._format_message(message, parameters=parameters, html_escape=False)
 
     def _process_html_message(
-        self,
-        message_id: str,
-        message: Optional[str],
-        parameters: _Parameters = {},
-        tags: _TagMapping = {},
-    ) -> Optional[str]:
-        if message:
-            try:
-                return self._format_message(
-                    self._replace_tags(message, tags),
-                    parameters=parameters,
-                    html_escape=True,
-                )
-            except ICUError as err:
-                logger.exception(
-                    f"Error in po file for locale {self.locale_id} and message {message_id}: {err}"
-                )
-                # ... and fall through to default
-        return None
+        self, message: str, parameters: _Parameters = {}, tags: _TagMapping = {}
+    ) -> str:
+        return self._format_message(
+            self._replace_tags(message, tags), parameters=parameters, html_escape=True
+        )
 
     def _replace_tags(self, target_message: str, tags: _TagMapping) -> str:
         """Replace non-nested tag names and attributes of the `target_message` with the corresponding ones in `tags`
@@ -224,10 +214,11 @@ class MessageTranslator:
         """Substitute parameters into ICU-style message.
         You can have variable substitution, plurals, selects and nested messages.
         
+        Raises `ICUError` in case of incorrectly formatted message.
+        
         The parameters must be a dict
         """
-        message_format = MessageFormat(message, self.icu_locale)
-        return message_format.format(
+        return MessageFormat(message, self.icu_locale).format(
             list(parameters.keys()),
             [
                 Formattable(escape(x) if html_escape and isinstance(x, str) else x)
@@ -235,14 +226,16 @@ class MessageTranslator:
             ],
         )
 
-    def get_message(
-        self, message_id: str, context: Optional[str] = None
-    ) -> Optional[str]:
+    def get_message(self, message_id: str, context: Optional[str] = None) -> str:
         """Find the message corresponding to the given ID in the catalog.
         
         If the message is not found, `None` is returned.
         """
-        return find_string(self.catalog, message_id, context=context)
+        message = find_string(self.catalog, message_id, context=context)
+        if message:
+            return message
+        else:
+            raise KeyError(message_id)
 
 
 _get_translations = lru_cache(maxsize=len(supported_locales))(
