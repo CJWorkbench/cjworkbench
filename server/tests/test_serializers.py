@@ -56,8 +56,7 @@ class JsonizeI18nMessageTest(unittest.TestCase):
             return MessageTranslator(locale, Catalog())
 
         with patch("cjworkbench.i18n.trans._get_translations", mock_get_translations):
-            self.assertIsNone(
+            with self.assertRaises(KeyError):
                 jsonize_i18n_message(
                     I18nMessage("id"), mock_jsonize_context(locale_id="el")
                 )
-            )

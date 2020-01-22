@@ -33,13 +33,12 @@ _TagMapping = Dict[str, _Tag]
 _Parameters = Dict[str, Union[int, float, str]]
 
 
-def trans(
-    message_id: str, *, default: str, parameters: _Parameters = {}
-) -> Optional[str]:
+def trans(message_id: str, *, default: str, parameters: _Parameters = {}) -> str:
     """Mark a message for translation and localize it to the current locale.
 
     `default` is only considered when parsing code for message extraction.
-    If the message is not found in the catalog for the current or the default locale, return `None`.
+    If the message is not found in the catalog for the current or the default locale, return `None`,
+    raise `KeyError`.
     
     For code parsing reasons, respect the following order when passing keyword arguments:
         `message_id` and then `default` and then everything else
@@ -53,16 +52,19 @@ trans_lazy = lazy(trans)
 """
 
 
-def localize(
-    locale_id: str, message_id: str, parameters: _Parameters = {}
-) -> Optional[str]:
+def localize(locale_id: str, message_id: str, parameters: _Parameters = {}) -> str:
     """Localize the given message ID to the given locale.
 
-    If the message is not found in the catalog for the given or the default locale, return `None`.
+    If the message is not found in the catalog for the given or the default locale, return `None`,
+    raise `KeyError`.
     """
-    return _get_translations(locale_id).trans(
+    message = _get_translations(locale_id).trans(
         message_id, parameters=parameters
     ) or _get_translations(default_locale).trans(message_id, parameters=parameters)
+    if message:
+        return message
+    else:
+        raise KeyError(message_id)
 
 
 def localize_html(
@@ -71,18 +73,23 @@ def localize_html(
     context: Optional[str] = None,
     parameters: _Parameters = {},
     tags: _TagMapping = {},
-) -> Optional[str]:
+) -> str:
     """Localize the given message ID to the given locale, escaping HTML.
     
-    If the message is not found in the catalog for the given or the default locale, return `None`.
+    If the message is not found in the catalog for the given or the default locale,
+    raise `KeyError`.
     
     HTML is escaped in the message, as well as in parameters and tag attributes.
     """
-    return _get_translations(locale_id).trans_html(
+    message = _get_translations(locale_id).trans_html(
         message_id, context=context, parameters=parameters, tags=tags
     ) or _get_translations(default_locale).trans_html(
         message_id, context=context, parameters=parameters, tags=tags
     )
+    if message:
+        return message
+    else:
+        raise KeyError(message_id)
 
 
 def restore_tags(message: str, tag_mapping: _TagMapping) -> str:

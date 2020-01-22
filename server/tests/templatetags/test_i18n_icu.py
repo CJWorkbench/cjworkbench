@@ -97,7 +97,8 @@ class TransTemplateTagTests(SimpleTestCase):
             return MessageTranslator(locale, Catalog())
 
         with patch("cjworkbench.i18n.trans._get_translations", mock_get_translations):
-            self.assertIsNone(trans_html(mock_context(), "id", default="Hello"))
+            with self.assertRaises(KeyError):
+                trans_html(mock_context(), "id", default="Hello")
 
     # Tests the combination of properties of placeholder tags and of message parameters.
     # 0) In settings where there are multiple tags, some of which have to be deleted, all of them are processed

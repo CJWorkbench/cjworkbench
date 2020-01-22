@@ -389,7 +389,8 @@ class LocalizeTest(SimpleTestCase):
             return MessageTranslator(locale, Catalog())
 
         with patch("cjworkbench.i18n.trans._get_translations", mock_get_translations):
-            self.assertIsNone(localize("el", "id"))
+            with self.assertRaises(KeyError):
+                localize("el", "id")
 
     # Tests that badly formatted parameter in a catalog can't break our system
     def test_message_invalid_parameter_syntax(self):
@@ -435,7 +436,8 @@ class LocalizeHtmlTest(SimpleTestCase):
             return MessageTranslator(locale, Catalog())
 
         with patch("cjworkbench.i18n.trans._get_translations", mock_get_translations):
-            self.assertIsNone(localize_html("el", "id"))
+            with self.assertRaises(KeyError):
+                localize_html("el", "id")
 
     # Tests that badly formatted parameter in a catalog can't break our system
     def test_message_invalid_parameter_syntax(self):

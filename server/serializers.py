@@ -266,7 +266,13 @@ def jsonize_clientside_tab(tab: clientside.TabUpdate) -> Dict[str, Any]:
     return d
 
 
-def jsonize_i18n_message(message: I18nMessage, ctx: JsonizeContext) -> Optional[str]:
+def jsonize_i18n_message(message: I18nMessage, ctx: JsonizeContext) -> str:
+    """Localize (or unwrap, if it's a TODO_i18n) an `I18nMessage`
+    
+    Uses `locale_id` from `ctx`
+    
+    Raises `KeyError` if the message text cannot be found in the catalogs.
+    """
     assert message.source is None
     if message.id == "TODO_i18n":
         return message.args["text"]

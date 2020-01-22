@@ -126,4 +126,4 @@ def trans_html(
     result = localize_html(
         locale_id, message_id, context=ctxt or None, tags=tags, parameters=params
     )
-    return mark_safe(result) if result else None
+    return mark_safe(result)
