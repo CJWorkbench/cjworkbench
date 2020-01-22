@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 from django.utils.functional import lazy
 from django.utils.html import escape
 from django.utils.translation import get_language
-from cjworkbench.i18n import default_locale
+from cjworkbench.i18n import default_locale, supported_locales
 from cjworkbench.i18n.catalogs import load_catalog
 from cjworkbench.i18n.catalogs.util import find_string
 from string import Formatter
@@ -11,6 +11,7 @@ from icu import Formattable, Locale, MessageFormat, ICUError
 from babel.messages.catalog import Catalog, Message
 from typing import Dict, Union, Optional
 import logging
+from functools import lru_cache
 
 
 _translators = {}
@@ -244,13 +245,10 @@ class MessageTranslator:
         return find_string(self.catalog, message_id, context=context)
 
 
-def _get_translations(locale: str) -> MessageTranslator:
-    """Return a singleton MessageTranslator for the given locale.
-    
-    In order to parse the message catalogs only once per locale,
-    uses the _translators dict to store the created MessageTranslator for each locale.
-    """
-    if locale in _translators:
-        return _translators[locale]
-    _translators[locale] = MessageTranslator.for_application_messages(locale)
-    return _translators[locale]
+_get_translations = lru_cache(maxsize=len(supported_locales))(
+    MessageTranslator.for_application_messages
+)
+"""Return a `MessageTranslator` for the given locale.
+
+Uses lru_cache in order to parse the message catalogs only once per locale.
+"""
