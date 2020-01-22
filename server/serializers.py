@@ -281,7 +281,7 @@ def jsonize_i18n_message(message: I18nMessage, ctx: JsonizeContext) -> str:
     else:
         # Attempt to localize in the locale given by `ctx`.
         try:
-            return localize(ctx.locale_id, message.id, parameters=message.args)
+            return localize(ctx.locale_id, message.id, arguments=message.args)
         except ICUError as err:
             # `localize` handles `ICUError` for the given locale.
             # Hence, if we get here, it means that the message is badly formatted in the default locale.

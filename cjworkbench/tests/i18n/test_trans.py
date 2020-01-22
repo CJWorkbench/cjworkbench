@@ -13,7 +13,7 @@ class MessageTranslatorFormatTest(SimpleTestCase):
         with self.assertRaises(KeyError):
             MessageTranslator("en", catalog).get_and_format_message("id")
 
-    # Tests that `parameters` argument replaces variables in the message.
+    # Tests that `arguments` argument replaces variables in the message.
     # 1) Parameters that do not exist in the message are ignored.
     # 2) Variables in the message for which no parameter has been given are ignored.
     def test_trans_params(self):
@@ -21,27 +21,27 @@ class MessageTranslatorFormatTest(SimpleTestCase):
         catalog.add("id", string="Hey {a} {param_b} {c}!")
         self.assertEqual(
             MessageTranslator("en", catalog).get_and_format_message(
-                "id", parameters={"param_b": "there", "a": "you", "d": "tester"}
+                "id", arguments={"param_b": "there", "a": "you", "d": "tester"}
             ),
             "Hey you there {c}!",
         )
 
-    # Tests that passing a list as parameters will raise an exception
-    def test_parameters_list(self):
+    # Tests that passing a list as arguments will raise an exception
+    def test_arguments_list(self):
         catalog = Catalog()
         catalog.add("id", string="Hey {0} {1}!")
         with self.assertRaises(AttributeError):
             MessageTranslator("en", catalog).get_and_format_message(
-                "id", parameters=["you", "there"]
+                "id", arguments=["you", "there"]
             )
 
-    # Tests that passing a tuple as parameters will raise an exception
-    def test_parameters_tuple(self):
+    # Tests that passing a tuple as arguments will raise an exception
+    def test_arguments_tuple(self):
         catalog = Catalog()
         catalog.add("id", string="Hey {0} {1}!")
         with self.assertRaises(AttributeError):
             MessageTranslator("en", catalog).get_and_format_message(
-                "id", parameters=("you", "there")
+                "id", arguments=("you", "there")
             )
 
     # Tests that passing a list as a value for a parameter will raise an exception
@@ -50,7 +50,7 @@ class MessageTranslatorFormatTest(SimpleTestCase):
         catalog.add("id", string="Hey {0} {1}!")
         with self.assertRaises(InvalidArgsError):
             MessageTranslator("en", catalog).get_and_format_message(
-                "id", parameters={"0": ["you ", "there"]}
+                "id", arguments={"0": ["you ", "there"]}
             )
 
     # Tests that badly formatted parameter in a catalog raises `ICUError`
@@ -59,7 +59,7 @@ class MessageTranslatorFormatTest(SimpleTestCase):
         catalog.add("id", string="Hey {a b}!")
         with self.assertRaises(ICUError):
             result = MessageTranslator("en", catalog).get_and_format_message(
-                "id", parameters={"a": "you", "b": "!"}
+                "id", arguments={"a": "you", "b": "!"}
             )
 
     # Tests that a message in catalogs can use a numeric variable
@@ -68,18 +68,18 @@ class MessageTranslatorFormatTest(SimpleTestCase):
         catalog.add("id", string="Hey {a} {0} {b}")
         self.assertEqual(
             MessageTranslator("en", catalog).get_and_format_message(
-                "id", parameters={"a": "you", "b": "!", "0": "there"}
+                "id", arguments={"a": "you", "b": "!", "0": "there"}
             ),
             "Hey you there !",
         )
 
     # Tests that a message in the catalogs can't break our system by having more or missing variables relative to the default
-    def test_message_different_parameters(self):
+    def test_message_different_arguments(self):
         catalog = Catalog()
         catalog.add("id", string="Hey {a} {0} {c}")
         self.assertEqual(
             MessageTranslator("en", catalog).get_and_format_message(
-                "id", parameters={"a": "you", "b": "!"}
+                "id", arguments={"a": "you", "b": "!"}
             ),
             "Hey you {0} {c}",
         )
@@ -92,7 +92,7 @@ class MessageTranslatorFormatTest(SimpleTestCase):
         )
         self.assertEqual(
             MessageTranslator("en", catalog).get_and_format_message(
-                "id", parameters={"param_b": "> there"}
+                "id", arguments={"param_b": "> there"}
             ),
             'Hello <a href="/you?a=n&b=e">you > > there</a> my & friend',
         )
@@ -118,19 +118,19 @@ class MessageTranslatorFormatTest(SimpleTestCase):
         )
         self.assertEqual(
             MessageTranslator("en", catalog).get_and_format_message(
-                "id", parameters={"a": "there", "g": "male", "n": 17}
+                "id", arguments={"a": "there", "g": "male", "n": 17}
             ),
             "Hello there, you have 17 boys",
         )
         self.assertEqual(
             MessageTranslator("en", catalog).get_and_format_message(
-                "id", parameters={"a": "there", "g": "female", "n": 18}
+                "id", arguments={"a": "there", "g": "female", "n": 18}
             ),
             "Hello there, you have 18 girls",
         )
         self.assertEqual(
             MessageTranslator("en", catalog).get_and_format_message(
-                "id", parameters={"a": "there", "g": "other", "n": 0}
+                "id", arguments={"a": "there", "g": "other", "n": 0}
             ),
             "Hello there, you have no children",
         )
@@ -143,7 +143,7 @@ class MessageTranslatorFormatHtmlTest(SimpleTestCase):
         with self.assertRaises(KeyError):
             MessageTranslator("en", catalog).get_and_format_html_message("id")
 
-    # Tests that `parameters` argument replaces variables in the message.
+    # Tests that `arguments` argument replaces variables in the message.
     # 1) Parameters that do not exist in the message are ignored.
     # 2) Variables in the message for which no parameter has been given are ignored.
     def test_trans_params(self):
@@ -151,27 +151,27 @@ class MessageTranslatorFormatHtmlTest(SimpleTestCase):
         catalog.add("id", string="Hey {a} {param_b} {c}!")
         self.assertEqual(
             MessageTranslator("en", catalog).get_and_format_html_message(
-                "id", parameters={"param_b": "there", "a": "you", "d": "tester"}
+                "id", arguments={"param_b": "there", "a": "you", "d": "tester"}
             ),
             "Hey you there {c}!",
         )
 
-    # Tests that passing a list as parameters will raise an exception
-    def test_parameters_list(self):
+    # Tests that passing a list as arguments will raise an exception
+    def test_arguments_list(self):
         catalog = Catalog()
         catalog.add("id", string="Hey {0} {1}!")
         with self.assertRaises(AttributeError):
             MessageTranslator("en", catalog).get_and_format_html_message(
-                "id", parameters=["you", "there"]
+                "id", arguments=["you", "there"]
             )
 
-    # Tests that passing a tuple as parameters will raise an exception
-    def test_parameters_tuple(self):
+    # Tests that passing a tuple as arguments will raise an exception
+    def test_arguments_tuple(self):
         catalog = Catalog()
         catalog.add("id", string="Hey {0} {1}!")
         with self.assertRaises(AttributeError):
             MessageTranslator("en", catalog).get_and_format_html_message(
-                "id", parameters=("you", "there")
+                "id", arguments=("you", "there")
             )
 
     # Tests that passing a list as a value for a parameter will raise an exception
@@ -180,7 +180,7 @@ class MessageTranslatorFormatHtmlTest(SimpleTestCase):
         catalog.add("id", string="Hey {0} {1}!")
         with self.assertRaises(InvalidArgsError):
             MessageTranslator("en", catalog).get_and_format_html_message(
-                "id", parameters={"0": ["you ", "there"]}
+                "id", arguments={"0": ["you ", "there"]}
             )
 
     # Tests that badly formatted parameter in a catalog raises `ICUError`
@@ -189,7 +189,7 @@ class MessageTranslatorFormatHtmlTest(SimpleTestCase):
         catalog.add("id", string="Hey {a b}!")
         with self.assertRaises(ICUError):
             result = MessageTranslator("en", catalog).get_and_format_html_message(
-                "id", parameters={"a": "you", "b": "!"}
+                "id", arguments={"a": "you", "b": "!"}
             )
 
     # Tests that a message in catalogs can use a numeric variable
@@ -198,18 +198,18 @@ class MessageTranslatorFormatHtmlTest(SimpleTestCase):
         catalog.add("id", string="Hey {a} {0} {b}")
         self.assertEqual(
             MessageTranslator("en", catalog).get_and_format_html_message(
-                "id", parameters={"a": "you", "b": "!", "0": "there"}
+                "id", arguments={"a": "you", "b": "!", "0": "there"}
             ),
             "Hey you there !",
         )
 
     # Tests that a message in the catalogs can't break our system by having more or missing variables relative to the default
-    def test_message_different_parameters(self):
+    def test_message_different_arguments(self):
         catalog = Catalog()
         catalog.add("id", string="Hey {a} {0} {c}")
         self.assertEqual(
             MessageTranslator("en", catalog).get_and_format_html_message(
-                "id", parameters={"a": "you", "b": "!"}
+                "id", arguments={"a": "you", "b": "!"}
             ),
             "Hey you {0} {c}",
         )
@@ -225,7 +225,7 @@ class MessageTranslatorFormatHtmlTest(SimpleTestCase):
         self.assertEqual(
             MessageTranslator("en", catalog).get_and_format_html_message(
                 "id",
-                parameters={"a": "you"},
+                arguments={"a": "you"},
                 tags={
                     "a0": {
                         "tag": "a",
@@ -249,7 +249,7 @@ class MessageTranslatorFormatHtmlTest(SimpleTestCase):
         self.assertEqual(
             MessageTranslator("en", catalog).get_and_format_html_message(
                 "id",
-                parameters={"a": "you"},
+                arguments={"a": "you"},
                 tags={
                     "a0": {"tag": "a", "attrs": {"href": "/you"}},
                     "b0": {"tag": "b", "attrs": {"id": "hi"}},
@@ -258,14 +258,14 @@ class MessageTranslatorFormatHtmlTest(SimpleTestCase):
             '<a href="/you">Helloyouthere</a>',
         )
 
-    # Tests that parameters are substituted within tags
+    # Tests that arguments are substituted within tags
     def test_params_in_tags(self):
         catalog = Catalog()
         catalog.add("id", string="<a0>Hello {name}</a0>{test}")
         self.assertEqual(
             MessageTranslator("en", catalog).get_and_format_html_message(
                 "id",
-                parameters={"name": "you", "test": "!"},
+                arguments={"name": "you", "test": "!"},
                 tags={"a0": {"tag": "a", "attrs": {"href": "/you"}}},
             ),
             '<a href="/you">Hello you</a>!',
@@ -282,14 +282,14 @@ class MessageTranslatorFormatHtmlTest(SimpleTestCase):
             '<a href="/you">Hello &amp;&amp;</a>&gt;',
         )
 
-    # Tests that message parameters are escaped
+    # Tests that message arguments are escaped
     def test_escapes_params(self):
         catalog = Catalog()
         catalog.add("id", string="<a0>Hey {name}</a0>{test}")
         self.assertEqual(
             MessageTranslator("en", catalog).get_and_format_html_message(
                 "id",
-                parameters={"name": "<b>you</b>", "test": "<b>there</b>"},
+                arguments={"name": "<b>you</b>", "test": "<b>there</b>"},
                 tags={"a0": {"tag": "a", "attrs": {"href": "/you"}}},
             ),
             '<a href="/you">Hey &lt;b&gt;you&lt;/b&gt;</a>&lt;b&gt;there&lt;/b&gt;',
@@ -306,7 +306,7 @@ class MessageTranslatorFormatHtmlTest(SimpleTestCase):
             '<a href="/you?a=b&amp;c=d">Hey</a>',
         )
 
-    # Tests the combination of properties of placeholder tags and of message parameters.
+    # Tests the combination of properties of placeholder tags and of message arguments.
     # 0) In settings where there are multiple tags, some of which have to be deleted, all of them are processed
     # 1) the `tags` argument is used to replace placeholders and they are escaped correctly
     # 2) Tags or tag placeholders that have no counterpart in the arguments are removed
@@ -323,7 +323,7 @@ class MessageTranslatorFormatHtmlTest(SimpleTestCase):
         self.assertEqual(
             MessageTranslator("en", catalog).get_and_format_html_message(
                 "id",
-                parameters={"a": "you", "first": "hello", "second": "&"},
+                arguments={"a": "you", "first": "hello", "second": "&"},
                 tags={
                     "a0": {"tag": "a", "attrs": {"href": "/you"}},
                     "a1": {
@@ -357,19 +357,19 @@ class MessageTranslatorFormatHtmlTest(SimpleTestCase):
         )
         self.assertEqual(
             MessageTranslator("en", catalog).get_and_format_html_message(
-                "id", parameters={"a": "there", "g": "male", "n": 17}
+                "id", arguments={"a": "there", "g": "male", "n": 17}
             ),
             "Hello there, you have 17 boys",
         )
         self.assertEqual(
             MessageTranslator("en", catalog).get_and_format_html_message(
-                "id", parameters={"a": "there", "g": "female", "n": 18}
+                "id", arguments={"a": "there", "g": "female", "n": 18}
             ),
             "Hello there, you have 18 girls",
         )
         self.assertEqual(
             MessageTranslator("en", catalog).get_and_format_html_message(
-                "id", parameters={"a": "there", "g": "other", "n": 0}
+                "id", arguments={"a": "there", "g": "other", "n": 0}
             ),
             "Hello there, you have no children",
         )
@@ -418,7 +418,7 @@ class LocalizeTest(SimpleTestCase):
 
         with patch("cjworkbench.i18n.trans._get_translations", mock_get_translations):
             with self.assertLogs(level=logging.ERROR):
-                result = localize("el", "id", parameters={"a": "you", "b": "!"})
+                result = localize("el", "id", arguments={"a": "you", "b": "!"})
             self.assertEqual(result, "Hello you !")
 
     # Tests that badly formatted parameter in the default catalog will break our system
@@ -431,7 +431,7 @@ class LocalizeTest(SimpleTestCase):
 
         with patch("cjworkbench.i18n.trans._get_translations", mock_get_translations):
             with self.assertRaises(ICUError):
-                localize("el", "id", parameters={"a": "you", "b": "!"})
+                localize("el", "id", arguments={"a": "you", "b": "!"})
 
     def test_message_invalid_parameter_syntax_in_both(self):
         def mock_get_translations(locale):
@@ -445,7 +445,7 @@ class LocalizeTest(SimpleTestCase):
         with patch("cjworkbench.i18n.trans._get_translations", mock_get_translations):
             with self.assertLogs(level=logging.ERROR):
                 with self.assertRaises(ICUError):
-                    localize("el", "id", parameters={"a": "you", "b": "!"})
+                    localize("el", "id", arguments={"a": "you", "b": "!"})
 
 
 class LocalizeHtmlTest(SimpleTestCase):
@@ -491,7 +491,7 @@ class LocalizeHtmlTest(SimpleTestCase):
 
         with patch("cjworkbench.i18n.trans._get_translations", mock_get_translations):
             with self.assertLogs(level=logging.ERROR):
-                result = localize_html("el", "id", parameters={"a": "you", "b": "!"})
+                result = localize_html("el", "id", arguments={"a": "you", "b": "!"})
             self.assertEqual(result, "Hello you !")
 
     # Tests that badly formatted parameter in the default catalog will break our system
@@ -504,7 +504,7 @@ class LocalizeHtmlTest(SimpleTestCase):
 
         with patch("cjworkbench.i18n.trans._get_translations", mock_get_translations):
             with self.assertRaises(ICUError):
-                localize_html("el", "id", parameters={"a": "you", "b": "!"})
+                localize_html("el", "id", arguments={"a": "you", "b": "!"})
 
     def test_message_invalid_parameter_syntax_in_both(self):
         def mock_get_translations(locale):
@@ -518,4 +518,4 @@ class LocalizeHtmlTest(SimpleTestCase):
         with patch("cjworkbench.i18n.trans._get_translations", mock_get_translations):
             with self.assertLogs(level=logging.ERROR):
                 with self.assertRaises(ICUError):
-                    localize_html("el", "id", parameters={"a": "you", "b": "!"})
+                    localize_html("el", "id", arguments={"a": "you", "b": "!"})
