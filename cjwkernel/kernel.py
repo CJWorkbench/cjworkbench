@@ -1,7 +1,6 @@
 from dataclasses import dataclass, field
 import io
 import logging
-import marshal
 import os
 import os.path
 from pathlib import Path
@@ -12,7 +11,7 @@ from typing import Any, Dict, List, Optional
 import thrift.protocol.TBinaryProtocol
 import thrift.transport.TTransport
 from cjwkernel.chroot import ChrootContext, READONLY_CHROOT_DIR
-from cjwkernel.errors import ModuleCompileError, ModuleTimeoutError, ModuleExitedError
+from cjwkernel.errors import ModuleTimeoutError, ModuleExitedError
 from cjwkernel.thrift import ttypes
 from cjwkernel.types import (
     ArrowTable,
@@ -222,41 +221,28 @@ class Kernel:
                 "thrift.transport.TTransport",
                 "xlrd",
                 "yajl",
+                *ENCODING_IMPORTS,
                 "cjwkernel.pandas.main",
                 "cjwkernel.pandas.module",
                 "cjwkernel.pandas.moduleutils",
                 "cjwkernel.pandas.parse",
                 "cjwkernel.parquet",
-                *ENCODING_IMPORTS,
+                "cjwmodule",
+                "cjwmodule.i18n",
+                "cjwmodule.http.httpfile",
+                "cjwmodule.util",
             ],
         )
 
     def __del__(self):
         self._pyspawner.close()
 
-    def compile(self, path: Path, module_slug: str) -> CompiledModule:
+    def validate(self, compiled_module: CompiledModule) -> None:
         """
         Detect common errors in the user's code.
 
-        Raise ModuleCompileError, ModuleExitedError or ModuleTimeoutError on
-        error.
+        Raise ModuleExitedError or ModuleTimeoutError on error.
         """
-        code = path.read_text()
-        try:
-            code_object = compile(
-                code,
-                filename=f"{module_slug}.py",
-                mode="exec",
-                dont_inherit=True,
-                optimize=0,  # keep assertions -- we use them!
-            )
-        except SyntaxError as err:
-            raise ModuleCompileError from err
-        ret = CompiledModule(module_slug, marshal.dumps(code_object))
-        self._validate(ret)
-        return ret
-
-    def _validate(self, compiled_module: CompiledModule) -> None:
         self._run_in_child(
             chroot_dir=READONLY_CHROOT_DIR,
             network_config=None,

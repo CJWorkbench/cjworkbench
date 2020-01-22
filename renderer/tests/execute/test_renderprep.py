@@ -8,7 +8,7 @@ from cjwkernel.tests.util import arrow_table
 from cjwkernel.util import tempdir_context
 from cjwstate import minio
 from cjwstate.models import Workflow, UploadedFile
-from cjwstate.models.param_spec import ParamDType
+from cjwstate.modules.param_dtype import ParamDType
 from cjwstate.tests.utils import DbTestCase
 from renderer.execute.renderprep import clean_value, RenderContext
 from renderer.execute.types import (

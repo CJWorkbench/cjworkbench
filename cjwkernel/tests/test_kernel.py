@@ -3,7 +3,7 @@ import textwrap
 import unittest
 from unittest.mock import patch
 import pyarrow
-from cjwkernel.errors import ModuleCompileError, ModuleExitedError, ModuleTimeoutError
+from cjwkernel.errors import ModuleExitedError, ModuleTimeoutError
 from cjwkernel.kernel import Kernel
 from cjwkernel.tests.util import arrow_table_context, MockPath
 from cjwkernel.chroot import EDITABLE_CHROOT
@@ -34,12 +34,6 @@ class KernelTests(unittest.TestCase):
     def tearDown(self):
         self.ctx.close()
         super().tearDown()
-
-    def test_compile_syntax_error(self):
-        with self.assertRaises(ModuleCompileError):
-            self.kernel.compile(
-                MockPath(["foo.py"], b"de render(table, params): return table"), "foo"
-            )
 
     def test_compile_validate_exited_error(self):
         with self.assertRaises(ModuleExitedError) as cm:

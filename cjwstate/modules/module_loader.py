@@ -7,15 +7,12 @@ Steps to loading a module:
     2. Load its spec. (deliverable: ModuleSpec instance)
     3. Load its Python code. (deliverable: cjwkernel.types.CompiledModule)
 """
-
-
 from __future__ import annotations
 
 from dataclasses import dataclass
-import json
 from pathlib import Path
 import jsonschema
-from typing import List, Optional, Set
+from typing import Any, Dict, List, Optional, Set
 import yaml
 
 
@@ -78,7 +75,7 @@ def _validate_secret_param(module_id_name, param) -> None:
         )
 
 
-def validate_module_spec(spec):
+def validate_module_spec(spec: Dict[str, Any]) -> None:
     """
     Validate that the spec is valid.
 
@@ -287,85 +284,3 @@ class ModuleFiles:
             raise ValueError('Missing ".py" module-code file. ' "Please write one.")
 
         return cls(spec, code, html, javascript)
-
-
-class ModuleSpec:
-    """
-    Dict-like object representing a valid module spec.
-
-    See `module_spec_schema.yaml` for the spec definition, or look to
-    `staticmodules/` for example JSON and YAML files.
-
-    You may pass this to `ModuleVersion.create_or_replace_from_spec()`.
-    """
-
-    def __init__(
-        self,
-        id_name: str,
-        name: str,
-        category: str,
-        parameters: List[object] = [],
-        **kwargs,
-    ):
-        self.data = {
-            "id_name": id_name,
-            "name": name,
-            "category": category,
-            "parameters": parameters,
-            **kwargs,
-        }
-        self.id_name = id_name
-        self.name = name
-        self.category = category
-        self.parameters = parameters
-
-    # duck-type dict
-    def __contains__(self, key):
-        return self.data.__contains__(key)
-
-    # duck-type dict
-    def __getitem__(self, key):
-        return self.data.__getitem__(key)
-
-    # duck-type dict
-    def get(self, key, default=None):
-        return self.data.get(key, default)
-
-    # duck-type dict
-    def keys(self):
-        return self.data.keys()
-
-    # duck-type dict
-    def values(self):
-        return self.data.values()
-
-    # duck-type dict
-    def items(self):
-        return self.data.items()
-
-    # duck-type dict
-    def __iter__(self):
-        return self.data.__iter__()
-
-    @classmethod
-    def load_from_path(self, path: Path) -> ModuleSpec:
-        """
-        Parse from a path.
-
-        Raise ValueError on syntax or semantic error.
-        """
-
-        text = path.read_text(encoding="utf-8")
-        if path.suffix == ".json":
-            try:
-                data = json.loads(text)
-            except ValueError as err:
-                raise ValueError("JSON syntax error in %s: %s" % (path.name, str(err)))
-        else:
-            try:
-                data = yaml.safe_load(text)
-            except yaml.YAMLError as err:
-                raise ValueError("YAML syntax error in %s: %s" % (path.name, str(err)))
-
-        validate_module_spec(data)  # raises ValueError
-        return ModuleSpec(**data)

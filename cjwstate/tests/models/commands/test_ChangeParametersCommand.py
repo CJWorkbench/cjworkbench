@@ -1,9 +1,9 @@
 from unittest.mock import patch
-from cjwkernel.param_dtype import ParamDType
 from cjwstate import commands
 from cjwstate.models import ModuleVersion, Workflow
 from cjwstate.models.commands import InitWorkflowCommand, ChangeParametersCommand
 from cjwstate.modules.loaded_module import LoadedModule
+from cjwstate.modules.param_dtype import ParamDType
 from cjwstate.tests.utils import DbTestCase
 
 

@@ -1,6 +1,6 @@
 import unittest
 from cjwkernel.types import Column, ColumnType, TableMetadata
-from cjwstate.models.param_spec import ParamDType
+from cjwstate.modules.param_dtype import ParamDType
 from fetcher.fetchprep import clean_value
 from renderer.execute.types import PromptingError
 

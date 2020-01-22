@@ -362,7 +362,7 @@ def download(bucket: str, key: str, path: pathlib.Path) -> None:
     """
     Copy a file from S3 to a pathlib.Path.
 
-    Raise FileNotFound if the key is not on S3.
+    Raise FileNotFoundError if the key is not on S3.
     """
     try:
         transfer.download_file(bucket, key, str(path))

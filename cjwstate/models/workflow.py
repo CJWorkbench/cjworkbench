@@ -2,7 +2,6 @@ from __future__ import annotations
 from contextlib import contextmanager
 from dataclasses import dataclass
 from typing import Callable, Dict, List, Optional, Set, Tuple, FrozenSet
-import warnings
 from django.db import models, transaction
 from django.db.models import Q
 from django.contrib.auth.models import User
@@ -10,6 +9,7 @@ from django.http import HttpRequest
 from django.urls import reverse
 from django.utils import timezone
 from cjwstate import clientside, minio
+from cjwstate.modules.param_spec import ParamDType
 
 
 class WorkflowCooperativeLock:
@@ -635,8 +635,17 @@ class DependencyGraph:
     steps: Dict[int, Step]  # keyed by wf_module_id
 
     @classmethod
-    def load_from_workflow(cls, workflow: Workflow) -> "DependencyGraph":
-        from cjwstate.models.param_spec import ParamDType
+    def load_from_workflow(cls, workflow: Workflow) -> DependencyGraph:
+        """
+        Create a DependencyGraph using the database.
+
+        Must be called within a `workflow.cooperative_lock()`.
+
+        Missing or deleted modules are deemed to have no dependencies.
+        """
+        from cjwstate.models.module_registry import MODULE_REGISTRY
+
+        module_zipfiles = MODULE_REGISTRY.all_latest()
 
         tabs = []
         steps = {}
@@ -646,12 +655,14 @@ class DependencyGraph:
 
             for wf_module in tab.live_wf_modules:
                 tab_wf_module_ids.append(wf_module.id)
-                module_version = wf_module.module_version
-                if module_version is None:
+                try:
+                    module_zipfile = module_zipfiles[wf_module.module_id_name]
+                except KeyError:
                     steps[wf_module.id] = cls.Step(set())
                     continue
 
-                schema = module_version.param_schema
+                module_spec = module_zipfile.get_spec()
+                schema = module_spec.get_param_schema()
                 if all(
                     (
                         (

@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Optional
 import aiohttp
 from cjwkernel.types import I18nMessage
 from cjwstate import oauth
-from cjwstate.models.param_spec import ParamSpec, ParamSpecSecret
+from cjwstate.modules.param_spec import ParamSpec, ParamSpecSecret
 
 
 UserProvidedSecret = Optional[Dict[str, Any]]

@@ -6,11 +6,14 @@ Concept
 Integration tests shouldn't rely on GitHub: we can't pin versions so our
 tests might pass one day and fail the next.
 
-Instead, we set up our own git server. HTTP is the easiest way.
+Instead, we set up our own zipfile server. HTTP is the easiest way.
 
 When developing, we put module code in, say, `modules/columnchart`.
 
-An integration test can import `http://git-server/columnchart.git`.
+An integration test can import `http://module-zipfile-server/columnchart.git`.
+
+(`module-zipfile-server` is an HTTP server running in a background thread of
+the Python integration-test runner.)
 
 
 To Add/Update A Module

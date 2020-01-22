@@ -2,8 +2,7 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from rest_framework import status
 from rest_framework.decorators import api_view
-from cjwkernel.errors import ModuleError
-from server.importmodulefromgithub import import_module_from_github
+from cjwstate.importmodule import WorkbenchModuleImportError, import_module_from_url
 from server.serializers import JsonizeContext, jsonize_clientside_module
 
 
@@ -17,11 +16,11 @@ def import_from_github(request):
         )
 
     try:
-        module = import_module_from_github(request.data["url"])
+        clientside_module = import_module_from_url(request.data["url"])
         ctx = JsonizeContext(request.user, request.session, request.locale_id)
-        data = jsonize_clientside_module(module.to_clientside(), ctx)
+        data = jsonize_clientside_module(clientside_module, ctx)
         return JsonResponse(data, status=status.HTTP_201_CREATED)
-    except (RuntimeError, ValueError, ModuleError) as err:
+    except WorkbenchModuleImportError as err:
         # Respond with 200 OK so the client side can read the error message.
         # TODO make the client smarter
         return JsonResponse({"error": str(err)}, status=status.HTTP_200_OK)

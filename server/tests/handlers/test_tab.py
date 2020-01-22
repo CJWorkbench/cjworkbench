@@ -41,7 +41,7 @@ class TabTest(HandlerTestCase):
     def test_add_module(self):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)  # with tab-1
-        module_version = ModuleVersion.create_or_replace_from_spec(
+        ModuleVersion.create_or_replace_from_spec(
             {
                 "id_name": "amodule",
                 "name": "A Module",
@@ -64,7 +64,7 @@ class TabTest(HandlerTestCase):
 
         command = AddModuleCommand.objects.first()
         self.assertEquals(command.wf_module.order, 3)
-        self.assertEquals(command.wf_module.module_version, module_version)
+        self.assertEquals(command.wf_module.module_id_name, "amodule")
         self.assertEquals(command.wf_module.params["foo"], "bar")
         self.assertEquals(command.wf_module.tab.slug, "tab-1")
         self.assertEquals(command.workflow_id, workflow.id)

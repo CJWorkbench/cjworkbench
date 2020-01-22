@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 import os
-from cjwkernel.errors import ModuleCompileError
+from cjwkernel.errors import ModuleExitedError
 from cjwkernel.tests.util import MockDir
 from cjwstate.models import ModuleVersion
 from cjwstate.tests.utils import DbTestCase
@@ -21,7 +21,7 @@ class ImportFromGitHubTest(DbTestCase):
     def test_validate_detect_python_syntax_errors(self):
         test_dir = MockDir(
             {
-                "badpy.json": json.dumps(
+                "badpy.yaml": json.dumps(
                     dict(
                         name="Syntax-error Python",
                         id_name="badpy",
@@ -32,7 +32,24 @@ class ImportFromGitHubTest(DbTestCase):
                 "badpy.py": b'def render(table, params):\n  cols = split(","',
             }
         )
-        with self.assertRaises(ModuleCompileError):
+        with self.assertRaises(SyntaxError):
+            import_module_from_directory("123456", test_dir)
+
+    def test_validate_detect_exec_error(self):
+        test_dir = MockDir(
+            {
+                "badpy.yaml": json.dumps(
+                    dict(
+                        name="Exec-error Python",
+                        id_name="badpy",
+                        category="Clean",
+                        parameters=[],
+                    )
+                ).encode("utf-8"),
+                "badpy.py": b"print(badname)",
+            }
+        )
+        with self.assertRaises(ModuleExitedError):
             import_module_from_directory("123456", test_dir)
 
     def test_load_twice_fails(self):

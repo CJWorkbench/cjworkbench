@@ -1,14 +1,13 @@
-import asyncio
 import contextlib
 import logging
 from unittest.mock import patch
+from cjwkernel.chroot import EDITABLE_CHROOT
 from cjwkernel.types import RenderResult
 from cjwkernel.tests.util import arrow_table, assert_render_result_equals
-from cjwkernel.chroot import EDITABLE_CHROOT
 from cjwstate import minio, rabbitmq, rendercache
 from cjwstate.models import ModuleVersion, Workflow
-from cjwstate.models.param_spec import ParamDType
 from cjwstate.modules.loaded_module import LoadedModule
+from cjwstate.modules.param_dtype import ParamDType
 from cjwstate.tests.utils import DbTestCase
 from renderer.execute.tab import execute_tab_flow, ExecuteStep, TabFlow
 

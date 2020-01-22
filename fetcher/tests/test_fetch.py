@@ -10,7 +10,6 @@ from django.utils import timezone
 import pyarrow.parquet
 from cjwkernel.chroot import EDITABLE_CHROOT
 from cjwkernel.errors import ModuleExitedError
-from cjwkernel.param_dtype import ParamDType
 from cjwkernel.types import (
     Column,
     ColumnType,
@@ -21,7 +20,7 @@ from cjwkernel.types import (
     RenderResult,
     TableMetadata,
 )
-from cjwkernel.util import tempdir_context, tempfile_context
+from cjwkernel.util import tempfile_context
 from cjwkernel.tests.util import (
     arrow_table_context,
     assert_arrow_table_equals,
@@ -31,9 +30,9 @@ from cjwstate import minio, rabbitmq, rendercache, storedobjects
 from cjwstate.models import CachedRenderResult, ModuleVersion, WfModule, Workflow
 import cjwstate.modules
 from cjwstate.modules.loaded_module import LoadedModule
+from cjwstate.modules.param_dtype import ParamDType
 from cjwstate.tests.utils import DbTestCase
 from fetcher import fetch, fetchprep, save
-from typing import Union
 
 
 def async_value(v):
@@ -53,7 +52,7 @@ class MockModuleVersion:
 class LoadDatabaseObjectsTests(DbTestCase):
     def test_load_simple(self):
         workflow = Workflow.create_and_init()
-        module_version = ModuleVersion.create_or_replace_from_spec(
+        ModuleVersion.create_or_replace_from_spec(
             {"id_name": "foo", "name": "Foo", "category": "Clean", "parameters": []}
         )
         wf_module = workflow.tabs.first().wf_modules.create(
@@ -62,12 +61,11 @@ class LoadDatabaseObjectsTests(DbTestCase):
         result = self.run_with_async_db(
             fetch.load_database_objects(workflow.id, wf_module.id)
         )
-        self.assertEqual(result[0], wf_module)
         self.assertEqual(result.wf_module, wf_module)
-        self.assertEqual(result[1], module_version)
-        self.assertEqual(result.module_version, module_version)
-        self.assertIsNone(result[2])
-        self.assertIsNone(result[3])
+        self.assertEqual(result.module_zipfile.module_id, "foo")
+        self.assertEqual(result.migrated_params, {})
+        self.assertIsNone(result.stored_object)
+        self.assertIsNone(result.input_cached_render_result)
 
     def test_load_deleted_wf_module_raises(self):
         workflow = Workflow.create_and_init()
@@ -199,42 +197,6 @@ class FetchOrWrapErrorTests(unittest.TestCase):
             )
         self.assertEqual(self.output_path.stat().st_size, 0)
         self.assertEqual(result, self._err("Cannot fetch: module was deleted"))
-
-    @patch.object(LoadedModule, "for_module_version")
-    def test_load_module_missing(self, load_module):
-        load_module.side_effect = FileNotFoundError
-        with self.assertLogs(level=logging.INFO):
-            result = fetch.fetch_or_wrap_error(
-                self.ctx,
-                self.chroot_context,
-                self.basedir,
-                WfModule(),
-                MockModuleVersion("missing"),
-                {},
-                None,
-                None,
-                self.output_path,
-            )
-        self.assertEqual(self.output_path.stat().st_size, 0)
-        self.assertEqual(result, self._bug_err("FileNotFoundError"))
-
-    @patch.object(LoadedModule, "for_module_version")
-    def test_load_module_compile_error(self, load_module):
-        load_module.side_effect = ModuleExitedError(1, "log")
-        with self.assertLogs(level=logging.ERROR):
-            result = fetch.fetch_or_wrap_error(
-                self.ctx,
-                self.chroot_context,
-                self.basedir,
-                WfModule(),
-                MockModuleVersion("bad"),
-                {},
-                None,
-                None,
-                self.output_path,
-            )
-        self.assertEqual(self.output_path.stat().st_size, 0)
-        self.assertEqual(result, self._bug_err("exit code 1: log (during load)"))
 
     @patch.object(LoadedModule, "for_module_version")
     def test_simple(self, load_module):

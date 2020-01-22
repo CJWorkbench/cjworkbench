@@ -5,7 +5,6 @@ import unittest
 from unittest.mock import patch
 from cjwkernel.chroot import EDITABLE_CHROOT
 from cjwkernel.errors import ModuleExitedError
-from cjwkernel.param_dtype import ParamDType
 from cjwkernel.types import Params, RenderResult, Tab
 from cjwkernel.tests.util import (
     arrow_table,
@@ -15,6 +14,7 @@ from cjwkernel.tests.util import (
 from cjwstate import minio
 from cjwstate.modules import init_module_system
 from cjwstate.modules.loaded_module import LoadedModule, load_external_module
+from cjwstate.modules.param_dtype import ParamDType
 from cjwstate.tests.utils import clear_minio
 
 

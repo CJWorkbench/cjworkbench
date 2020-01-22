@@ -2,7 +2,7 @@ from functools import partial, singledispatch
 import pathlib
 from typing import Any, Dict, List, Optional, Union
 from cjwkernel.types import TableMetadata
-from cjwstate.models.param_spec import ParamDType
+from cjwstate.modules.param_dtype import ParamDType
 from renderer.execute.renderprep import PromptErrorAggregator
 from renderer.execute.types import PromptingError
 

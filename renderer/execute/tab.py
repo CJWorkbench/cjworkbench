@@ -8,7 +8,8 @@ from cjwkernel.chroot import ChrootContext
 from cjwkernel.types import RenderResult, Tab
 from cjwstate.rendercache import load_cached_render_result, CorruptCacheError
 from cjwstate.models import WfModule, Workflow
-from cjwstate.models.param_spec import ParamDType
+from cjwstate.modules.param_dtype import ParamDType
+from cjwstate.modules.types import ModuleZipfile
 from .wf_module import execute_wfmodule, locked_wf_module
 
 
@@ -37,7 +38,7 @@ class cached_property:
 @dataclass(frozen=True)
 class ExecuteStep:
     wf_module: WfModule
-    schema: ParamDType.Dict
+    module_zipfile: Optional[ModuleZipfile]
     params: Dict[str, Any]
 
 
@@ -105,7 +106,7 @@ class TabFlow:
         """
         ret = set()
         for step in self.steps:
-            schema = step.schema
+            schema = step.module_zipfile.get_spec().get_param_schema()
             slugs = set(schema.find_leaf_values_with_dtype(ParamDType.Tab, step.params))
             ret.update(slugs)
         return frozenset(ret)
@@ -229,6 +230,7 @@ async def execute_tab_flow(
                 chroot_context,
                 workflow,
                 step.wf_module,
+                step.module_zipfile,
                 step.params,
                 flow.tab,
                 last_result,

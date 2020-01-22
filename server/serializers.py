@@ -1,20 +1,15 @@
 from collections import namedtuple
-import contextlib
 import datetime
 import logging
 import re
 from typing import Any, Dict, Iterable, List, Optional, Union
 from allauth.account.utils import user_display
 from django.contrib.auth import get_user_model
-from rest_framework import serializers
 from cjwkernel.types import I18nMessage, QuickFix, RenderError
 from cjworkbench.settings import KB_ROOT_URL
-from cjwstate.models import Workflow, WfModule, ModuleVersion, StoredObject, Tab
-from cjwstate.params import get_migrated_params
 from server.settingsutils import workbench_user_display
-from cjwstate.models.param_spec import ParamSpec
+from cjwstate.modules.param_spec import ParamSpec
 from cjwstate import clientside
-from cjwkernel.types import RenderError
 
 User = get_user_model()
 
@@ -131,7 +126,6 @@ def jsonize_param_spec(p: ParamSpec, ctx: JsonizeContext) -> Dict[str, Any]:
 def _ctx_authorized_write(
     workflow: clientside.WorkflowUpdate, ctx: JsonizeContext
 ) -> bool:
-    owner = workflow.owner
     user = ctx.user
 
     if user.is_anonymous:
@@ -222,7 +216,7 @@ def jsonize_clientside_module(
 ) -> Dict[str, Any]:
     spec = module.spec
 
-    help_url = spec.get("help_url", "")
+    help_url = spec.help_url
     if help_url and not (
         help_url.startswith("http://")
         or help_url.startswith("https://")
@@ -231,24 +225,20 @@ def jsonize_clientside_module(
         help_url = KB_ROOT_URL + help_url
 
     return {
-        "id_name": spec["id_name"],
-        "name": spec["name"],  # TODO i18n
-        "category": spec["category"],
-        "description": spec.get("description", ""),  # TODO i18n
-        "deprecated": spec.get("deprecated"),  # TODO i18n
-        "icon": spec.get("icon", "url"),
-        "loads_data": spec.get("loads_data", False),
-        "uses_data": spec.get("uses_data", not spec.get("loads_data", False)),
-        "help_url": spec.get("help_url", ""),
-        "has_zen_mode": spec.get("has_zen_mode", False),
-        "has_html_output": spec.get("html_output", False),
-        "row_action_menu_entry_title": (
-            spec.get("row_action_menu_entry_title", "")  # TODO i18n
-        ),
+        "id_name": spec.id_name,
+        "name": spec.name,  # TODO i18n
+        "category": spec.category,
+        "description": spec.description,  # TODO i18n
+        "deprecated": spec.deprecated,  # TODO i18n
+        "icon": spec.icon or "url",
+        "loads_data": spec.loads_data,
+        "uses_data": spec.get_uses_data(),
+        "help_url": help_url,
+        "has_zen_mode": spec.has_zen_mode,
+        "has_html_output": spec.html_output,
+        "row_action_menu_entry_title": spec.row_action_menu_entry_title,  # TODO i18n
         "js_module": module.js_module,
-        "param_fields": [
-            jsonize_param_spec(ParamSpec.from_dict(p), ctx) for p in spec["parameters"]
-        ],
+        "param_fields": [jsonize_param_spec(field, ctx) for field in spec.param_fields],
     }
 
 

@@ -1,11 +1,11 @@
 import asyncio
-from collections import namedtuple
 import contextlib
 from datetime import timedelta
 import logging
 import os
 from pathlib import Path
-from typing import Any, ContextManager, Dict, Optional, Tuple
+import time
+from typing import Any, ContextManager, Dict, NamedTuple, Optional
 from django.conf import settings
 from django.db import DatabaseError, InterfaceError
 from django.utils import timezone
@@ -13,15 +13,10 @@ from cjwkernel.chroot import EDITABLE_CHROOT, ChrootContext
 from cjwkernel.errors import ModuleError, format_for_user_debugging
 from cjwkernel.types import FetchResult, I18nMessage, Params, RenderError, TableMetadata
 from cjworkbench.sync import database_sync_to_async
-from cjwstate.models import (
-    CachedRenderResult,
-    ModuleVersion,
-    StoredObject,
-    WfModule,
-    Workflow,
-)
-from cjwkernel.chroot import EDITABLE_CHROOT
-from cjwstate.modules.loaded_module import LoadedModule
+from cjwstate.models import CachedRenderResult, StoredObject, WfModule, Workflow
+from cjwstate.models.module_registry import MODULE_REGISTRY
+from cjwstate.modules.types import ModuleZipfile
+import cjwstate.params
 from cjwstate import rendercache, storedobjects
 import fetcher.secrets
 from . import fetchprep, save, versions
@@ -30,47 +25,121 @@ from . import fetchprep, save, versions
 logger = logging.getLogger(__name__)
 
 
-DatabaseObjects = namedtuple(
+def invoke_fetch(
+    module_zipfile: ModuleZipfile,
+    *,
+    chroot_context: ChrootContext,
+    basedir: Path,
+    params: Params,
+    secrets: Dict[str, Any],
+    last_fetch_result: Optional[FetchResult],
+    input_parquet_filename: Optional[str],
+    output_filename: str,
+) -> FetchResult:
+    """
+    Use kernel to invoke module `fetch(...)` method and build a `FetchResult`.
+
+    Raise `ModuleError` on error. (This is usually the module author's fault.)
+
+    Log any ModuleError. Also log success.
+
+    This synchronous method can be slow for complex modules, large datasets
+    or slow network requests. Consider calling it from an executor.
+    """
+    time1 = time.time()
+    status = "???"
+
+    logger.info("%s:fetch() begin", module_zipfile.path.name)
+    compiled_module = module_zipfile.compile_code_without_executing()
+
+    try:
+        ret = cjwstate.modules.kernel.fetch(
+            compiled_module,
+            chroot_context,
+            basedir,
+            params,
+            secrets,
+            last_fetch_result,
+            input_parquet_filename,
+            output_filename,
+        )
+        status = "%0.1fMB" % (ret.path.stat().st_size / 1024 / 1024)
+        return ret
+    except ModuleError as err:
+        logger.exception("Exception in %s:fetch", module_zipfile.path.name)
+        status = type(err).__name__
+        raise
+    finally:
+        time2 = time.time()
+        logger.info(
+            "%s:fetch() => %s in %dms",
+            module_zipfile.path.name,
+            status,
+            int((time2 - time1) * 1000),
+        )
+
+
+DatabaseObjects = NamedTuple(
     "DatabaseObjects",
-    ["wf_module", "module_version", "stored_object", "input_cached_render_result"],
+    [
+        ("wf_module", WfModule),
+        ("module_zipfile", Optional[ModuleZipfile]),
+        ("migrated_params", Dict[str, Any]),
+        ("stored_object", Optional[StoredObject]),
+        ("input_cached_render_result", Optional[CachedRenderResult]),
+    ],
 )
 
 
 @database_sync_to_async
 def load_database_objects(workflow_id: int, wf_module_id: int) -> DatabaseObjects:
     """
-    Query WfModule info or raise WfModule.DoesNotExist/Workflow.DoesNotExist.
+    Query WfModule info.
+    
+    Raise `WfModule.DoesNotExist` or `Workflow.DoesNotExist` if the step was
+    deleted.
 
-    Return tuple containing:
-
-        * wf_module: cjwstate.models.WfModule
-        * module_version: Optional[cjwstate.models.ModuleVersion]
-        * stored_object: Optional[cjwstate.models.StoredObject]
-        * input_cached_render_result: Optional[cjwstate.models.CachedRenderResult]
-                                      of previous module in tab
+    Raise `ModuleError` if params cannot be migrated.
     """
     with Workflow.lookup_and_cooperative_lock(id=workflow_id) as workflow_lock:
         # raise WfModule.DoesNotExist
         wf_module = WfModule.live_in_workflow(workflow_lock.workflow).get(
             id=wf_module_id
         )
+
+        # module_zipfile
         try:
-            module_version = ModuleVersion.objects.latest(wf_module.module_id_name)
-        except ModuleVersion.DoesNotExist:
-            module_version = None
+            module_zipfile = MODULE_REGISTRY.latest(wf_module.module_id_name)
+        except KeyError:
+            module_zipfile = None
+
+        # migrated_params
+        if module_zipfile is None:
+            migrated_params = {}
+        else:
+            migrated_params = cjwstate.params.get_migrated_params(
+                wf_module, module_zipfile=module_zipfile
+            )  # raise ModuleError
+
+        # stored_object
         try:
             stored_object = wf_module.stored_objects.get(
                 stored_at=wf_module.stored_data_version
             )
         except StoredObject.DoesNotExist:
             stored_object = None
+
+        # input_crr
         try:
             # raise WfModule.DoesNotExist -- but we'll catch this one
             prev_module = wf_module.tab.live_wf_modules.get(order=wf_module.order - 1)
             input_crr = prev_module.cached_render_result  # may be None
         except WfModule.DoesNotExist:
             input_crr = None
-        return DatabaseObjects(wf_module, module_version, stored_object, input_crr)
+
+        return DatabaseObjects(
+            wf_module, module_zipfile, migrated_params, stored_object, input_crr
+        )
 
 
 @database_sync_to_async
@@ -115,22 +184,28 @@ def user_visible_bug_fetch_result(output_path: Path, message: str) -> FetchResul
     )
 
 
-def _with_downloaded_cached_render_result(
+DownloadedCachedRenderResult = NamedTuple(
+    "DownloadedCachedRenderResult",
+    [("maybe_path", Optional[Path]), ("table_metadata", TableMetadata)],
+)
+
+
+def _download_cached_render_result(
     ctx: contextlib.ExitStack, maybe_crr: Optional[CachedRenderResult], dir: Path
-) -> Tuple[Optional[Path], TableMetadata]:
+) -> DownloadedCachedRenderResult:
     if maybe_crr is None:
-        return (None, TableMetadata())
+        return DownloadedCachedRenderResult(None, TableMetadata())
     else:
         try:
             parquet_path = ctx.enter_context(
                 rendercache.downloaded_parquet_file(maybe_crr, dir=dir)
             )
-            return (parquet_path, maybe_crr.table_metadata)
+            return DownloadedCachedRenderResult(parquet_path, maybe_crr.table_metadata)
         except rendercache.CorruptCacheError:
             # This is probably a race. That's okay. Treat missing
             # cache as, "there is no input". (This is user-visible
             # but likely uncommon.)
-            return (None, TableMetadata())
+            return DownloadedCachedRenderResult(None, TableMetadata())
 
 
 def _stored_object_to_fetch_result(
@@ -165,7 +240,8 @@ def fetch_or_wrap_error(
     chroot_context: ChrootContext,
     basedir: Path,
     wf_module: WfModule,
-    module_version: ModuleVersion,
+    module_zipfile: ModuleZipfile,
+    migrated_params: Dict[str, Any],
     secrets: Dict[str, Any],
     last_fetch_result: Optional[FetchResult],
     maybe_input_crr: Optional[CachedRenderResult],
@@ -177,76 +253,53 @@ def fetch_or_wrap_error(
     Exceptions are wrapped -- the result is a FetchResult with `.errors`.
 
     This function is slow indeed. Perhaps call it from
-    EventLoop.run_in_executor(). (Why not make it async? Because all the
-    logic inside -- compile module, migrate_params() and fetch() -- is
-    sandboxed, meaning it gets its own processes. We may eventually avoid
-    asyncio entirely in `fetcher`.
+    EventLoop.run_in_executor(). (Why not make it async? Because all the logic
+    inside -- compile module, fetch() -- is sandboxed, meaning it gets its own
+    processes. We may eventually avoid asyncio entirely in `fetcher`.
 
     These problems are all handled:
 
-    * Module was deleted (`module_version is None`)
-    * Module file has gone missing
-    * Module does not compile (`cjwkernel.errors.ModuleCompileError`)
-    * Module times out (`cjwkernel.errors.ModuleTimeoutError`), either in
-      migrate_params() or in fetch().
-    * Module crashes (`cjwkernel.errors.ModuleExitedError`), either in
-      migrate_params() or in fetch().
-    * Module migrate_params() returns invalid data (`ValueError`)
+    * Module was deleted (`module_zipfile is None`)
+    * Module times out (`cjwkernel.errors.ModuleTimeoutError`), in `fetch()`.
+    * Module crashes (`cjwkernel.errors.ModuleExitedError`), in `fetch()`.
+    * migrated_params is invalid (`ValueError`)
     * input_crr points to a nonexistent file (`FileNotFoundError`)
     """
-    # module_version=None is allowed
-    try:
-        loaded_module = LoadedModule.for_module_version(module_version)
-    except FileNotFoundError:
-        logger.exception("Module %s code disappeared", module_version.id_name)
-        return user_visible_bug_fetch_result(output_path, "FileNotFoundError")
-    except ModuleError as err:
-        logger.exception("Error loading module %s", module_version.id_name)
-        return user_visible_bug_fetch_result(
-            output_path, format_for_user_debugging(err) + " (during load)"
-        )
-
-    if loaded_module is None:
+    # module_zipfile=None is allowed
+    if module_zipfile is None:
         logger.info("fetch() deleted module '%s'", wf_module.module_id_name)
         return FetchResult(
             output_path,
             [RenderError(I18nMessage.TODO_i18n("Cannot fetch: module was deleted"))],
         )
+    module_spec = module_zipfile.get_spec()
+    param_schema = module_spec.get_param_schema()
 
-    # Migrate params, so fetch() gets newest values
     try:
-        # TODO use params.get_migrated_params(). (Remember to use a
-        # Workflow.cooperative_lock().)
-        params = loaded_module.migrate_params(wf_module.params)
-    except ModuleError as err:
-        logger.exception("Error calling %s.migrate_params()", module_version.id_name)
-        return user_visible_bug_fetch_result(
-            output_path, format_for_user_debugging(err)
-        )
-    try:
-        module_version.param_schema.validate(params)
+        param_schema.validate(migrated_params)
     except ValueError:
         logger.exception(
-            "Invalid return value from %s.migrate_params()", module_version.id_name
+            "Invalid return value from %s:migrate_params()", module_zipfile.path.name
         )
         return user_visible_bug_fetch_result(
             output_path,
-            "%s.migrate_params() output invalid params" % module_version.id_name,
+            "%s:migrate_params() output invalid params" % module_zipfile.path.name,
         )
 
     # get input_metadata, input_parquet_path. (This can't error.)
-    input_parquet_path, input_metadata = _with_downloaded_cached_render_result(
+    input_parquet_path, input_metadata = _download_cached_render_result(
         ctx, maybe_input_crr, dir=basedir
     )
 
     # Clean params, so they're of the correct type. (This can't error.)
     params = Params(
-        fetchprep.clean_value(module_version.param_schema, params, input_metadata)
+        fetchprep.clean_value(param_schema, migrated_params, input_metadata)
     )
 
     # actually fetch
     try:
-        return loaded_module.fetch(
+        return invoke_fetch(
+            module_zipfile,
             chroot_context=chroot_context,
             basedir=basedir,
             params=params,
@@ -258,7 +311,7 @@ def fetch_or_wrap_error(
             output_filename=output_path.name,
         )
     except ModuleError as err:
-        logger.exception("Error calling %s.fetch()", module_version.id_name)
+        logger.exception("Error calling %s:fetch()", module_zipfile.path.name)
         return user_visible_bug_fetch_result(
             output_path, format_for_user_debugging(err)
         )
@@ -302,15 +355,11 @@ async def fetch(
     # 1. Load database objects
     #    - missing WfModule? Return prematurely
     #    - database error? _exit(1)
+    #    - module_zipfile missing/invalid? user-visible error
+    #    - migrate_params() fails? user-visible error
     # 2. Calculate result
-    #    2a. Load module
-    #       - no module? Result is user-visible error
-    #       - load error? Result is user-visible error
-    #       - compile error? Result is user-visible error
-    #    2b. Build fetch kwargs
-    #       - migrate_params() module error? Result is user-visible error
-    #       - migrate_params() validation error? Result is user-visible error
-    #    2c. Call fetch (no errors possible -- LoadedModule catches them)
+    #    2a. Build fetch kwargs
+    #    2b. Call fetch (no errors possible -- LoadedModule catches them)
     # 3. Save result (and send delta)
     #    - database errors? _exit(1)
     #    - other error (bug in `save`)? Log exception and ignore
@@ -324,7 +373,8 @@ async def fetch(
         try:
             (
                 wf_module,
-                module_version,
+                module_zipfile,
+                migrated_params,
                 stored_object,
                 input_crr,
             ) = await load_database_objects(workflow_id, wf_module_id)
@@ -339,11 +389,12 @@ async def fetch(
     # This can involve, e.g., HTTP request to OAuth2 token servers.
     #
     # TODO unit-test this code path
-    if module_version is None:
+    if module_zipfile is None:
         secrets = {}
     else:
+        module_spec = module_zipfile.get_spec()
         secrets = await fetcher.secrets.prepare_secrets(
-            module_version.param_fields, wf_module.secrets
+            module_spec.param_fields, wf_module.secrets
         )
 
     if now is None:
@@ -366,7 +417,8 @@ async def fetch(
             chroot_context,
             basedir,
             wf_module,
-            module_version,
+            module_zipfile,
+            migrated_params,
             secrets,
             last_fetch_result,
             input_crr,

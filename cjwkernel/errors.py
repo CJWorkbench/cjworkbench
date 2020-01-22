@@ -5,15 +5,6 @@ class ModuleError(Exception):
     """The module has a bug."""
 
 
-class ModuleCompileError(ModuleError):
-    """The module does not compile."""
-
-    def user_visible_error_code(self):
-        return "Compile error: %s" % str(
-            self.__cause__ or self.__context__ or "unknown"
-        )
-
-
 class ModuleTimeoutError(ModuleError):
     """The module took too long to execute."""
 
@@ -46,10 +37,7 @@ def format_for_user_debugging(err: ModuleError) -> str:
     hint of an error message greatly helps us talk with our users our debugging
     effort.
     """
-    if isinstance(err, ModuleCompileError) and err.__cause__ is not None:
-        # "SyntaxError: unexpected EOF while parsing ..."
-        return "%s: %s" % (str(type(err.__cause__).__name__), str(err.__cause__))
-    elif isinstance(err, ModuleTimeoutError):
+    if isinstance(err, ModuleTimeoutError):
         return "timed out"
     elif isinstance(err, ModuleExitedError):
         try:

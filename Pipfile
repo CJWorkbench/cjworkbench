@@ -49,6 +49,7 @@ pyroute2 = "*"
 pyspawner = "*"
 pyicu = "*"
 cjwmodule = "==1.2.1"
+pathspec = "*"
 
 [dev-packages]
 watchdog = "*"

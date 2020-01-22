@@ -1,6 +1,7 @@
 from django.db import models
 from django.db.models import F
-from cjwstate.models import Delta, ModuleVersion, WfModule
+from cjwstate.models import Delta, WfModule
+from cjwstate.models.module_registry import MODULE_REGISTRY
 from .util import ChangesWfModuleOutputs
 
 
@@ -134,22 +135,26 @@ class AddModuleCommand(ChangesWfModuleOutputs, Delta):
         """
         Add a step to the tab.
 
-        Raise ModuleVersion.DoesNotExist if `module_id_name` is invalid.
+        Raise KeyError if `module_id_name` is invalid.
+
+        Raise RuntimeError (unrecoverable) if minio holds invalid module data.
+
         Raise ValueError if `param_values` do not match the module's spec.
         """
         # ensure slug is unique, or raise ValueError
         if WfModule.objects.filter(tab__workflow_id=workflow.id, slug=slug).count() > 0:
             raise ValueError("slug is not unique. Please pass a unique slug.")
 
-        # raises ModuleVersion.DoesNotExist
-        module_version = ModuleVersion.objects.latest(module_id_name)
+        # raise KeyError, RuntimeError
+        module_zipfile = MODULE_REGISTRY.latest(module_id_name)
+        module_spec = module_zipfile.get_spec()
 
         # Set _all_ params (not just the user-specified ones). Our
         # dropdown-menu actions only specify the relevant params and expect us
         # to set the others to defaults.
-        params = {**module_version.default_params, **param_values}
+        params = {**module_spec.default_params, **param_values}
 
-        module_version.param_schema.validate(params)  # raises ValueError
+        module_spec.get_param_schema().validate(params)  # raises ValueError
 
         # wf_module starts off "deleted" and gets un-deleted in forward().
         wf_module = tab.wf_modules.create(
@@ -159,7 +164,7 @@ class AddModuleCommand(ChangesWfModuleOutputs, Delta):
             is_deleted=True,
             params=params,
             cached_migrated_params=params,
-            cached_migrated_params_module_version=module_version.param_schema_version,
+            cached_migrated_params_module_version=module_zipfile.get_param_schema_version(),
             secrets={},
         )
 

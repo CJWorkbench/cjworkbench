@@ -1,7 +1,7 @@
-from cjwstate.models.param_spec import ParamSpec, MenuOptionEnum
 from functools import singledispatch
 from typing import Dict, Union
 from cjwstate.modules.module_loader import ModuleSpec
+from cjwstate.modules.param_spec import ParamSpec, MenuOptionEnum
 
 
 def find_spec_messages(spec: ModuleSpec) -> Dict[str, str]:

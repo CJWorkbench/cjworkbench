@@ -3,7 +3,7 @@ import re2
 from abc import ABC, abstractmethod
 from dataclasses import asdict, dataclass, field
 from typing import Any, Dict, FrozenSet, List, Optional, Union
-from cjwkernel.param_dtype import ParamDType
+from cjwstate.modules.param_dtype import ParamDType
 
 
 VisibleIf = Optional[Dict[str, Dict[str, Any]]]

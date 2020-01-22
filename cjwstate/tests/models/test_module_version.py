@@ -1,5 +1,5 @@
 from cjwstate.models.module_version import ModuleVersion
-from cjwstate.models.param_spec import ParamDType
+from cjwstate.modules.param_spec import ParamDType
 from cjwstate.tests.utils import DbTestCase
 
 
