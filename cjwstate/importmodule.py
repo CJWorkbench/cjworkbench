@@ -1,4 +1,5 @@
 import contextlib
+from dataclasses import asdict
 import hashlib
 import logging
 import json
@@ -30,10 +31,10 @@ class WorkbenchModuleImportError(Exception):
 
 
 GITHUB_URL_PATTERN = re.compile(
-    "^https?://github.com/(?P<owner>[^/+])/(?P<repo>[^.]+)(?:.git)?$"
+    r"^https?://github.com/(?P<owner>[^/]+)/(?P<repo>[^.]+)(?:\.git)?$"
 )
 TEST_ZIP_URL_PATTERN = re.compile(
-    "^http://module-zipfile-server/(?P<zipfile>[a-z][a-z0-9]*\.[a-f0-9]+\.zip)$"
+    r"^http://module-zipfile-server/(?P<zipfile>[a-z][a-z0-9]*\.[a-f0-9]+\.zip)$"
 )
 
 
@@ -103,7 +104,7 @@ def validate_zipfile(module_zipfile: ModuleZipfile) -> None:
         module_zipfile.get_spec()  # raise KeyError, ValueError, BadZipFile
         # raise KeyError, UnicodeDecodeError, SyntaxError, BadZipFile
         compiled_module = module_zipfile.compile_code_without_executing()
-        cjwstate.models.kernel.validate(compiled_module)  # raise ModuleError
+        cjwstate.modules.kernel.validate(compiled_module)  # raise ModuleError
         module_zipfile.get_optional_html()  # raise UnicodeError, BadZipFile
         module_zipfile.get_optional_js_module()  # raise UnicodeError, BadZipFile
     except zipfile.BadZipFile as err:
@@ -147,7 +148,7 @@ def import_zipfile(path: Path) -> clientside.Module:
     ModuleVersion.objects.update_or_create(
         id_name=module_id,
         source_version_hash=version,
-        spec=temp_zipfile.get_spec().data,
+        spec=asdict(temp_zipfile.get_spec()),
         js_module=js_module,
     )
 
