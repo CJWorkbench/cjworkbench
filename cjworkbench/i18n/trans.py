@@ -2,12 +2,16 @@ from bs4 import BeautifulSoup
 from django.utils.functional import lazy
 from django.utils.html import escape
 from django.utils.translation import get_language
-from cjworkbench.i18n import default_locale
+from cjworkbench.i18n import default_locale, supported_locales
 from cjworkbench.i18n.catalogs import load_catalog
+from cjworkbench.i18n.catalogs.util import find_string
 from string import Formatter
 from cjworkbench.i18n.exceptions import UnsupportedLocaleError, BadCatalogsError
 from icu import Formattable, Locale, MessageFormat, ICUError
+from babel.messages.catalog import Catalog, Message
+from typing import Dict, Union, Optional
 import logging
+from functools import lru_cache
 
 
 _translators = {}
@@ -16,48 +20,93 @@ _translators = {}
 logger = logging.getLogger(__name__)
 
 
-def _get_translations(locale):
-    """Return a singleton MessageTranslator for the given locale.
-    
-    In order to parse the message catalogs only once per locale,
-    uses the _translators dict to store the created MessageTranslator for each locale.
-    """
-    if locale in _translators:
-        return _translators[locale]
-    _translators[locale] = MessageTranslator.for_application_messages(locale)
-    return _translators[locale]
+_TagAttributes = Dict[str, str]
+""" Each attribute name is mapped to its value
+"""
+_Tag = Dict[str, Union[str, _TagAttributes]]
+""" Has two keys: 'name': str, and 'attrs': _TagAttributes. 'attrs' is optional
+"""
+# We can define `_Tag` more precisely in python 3.8 used a `TypedDict`
+_TagMapping = Dict[str, _Tag]
+""" Maps each tag to its data
+"""
+
+_MessageArguments = Dict[str, Union[int, float, str]]
 
 
-def trans(message_id, *, default, parameters={}):
+def trans(message_id: str, *, default: str, arguments: _MessageArguments = {}) -> str:
     """Mark a message for translation and localize it to the current locale.
+
+    `default` is only considered when parsing code for message extraction.
+    If the message is not found in the catalog for the current or the default locale, return `None`,
+    raise `KeyError`.
     
     For code parsing reasons, respect the following order when passing keyword arguments:
         `message_id` and then `default` and then everything else
     """
-    return _get_translations(get_language()).trans(
-        message_id, default=default, parameters=parameters
-    )
+    return localize(get_language(), message_id, arguments=arguments)
 
 
 trans_lazy = lazy(trans)
 """Mark a string for translation, but actually localize it when it has to be used.
-   See the documentation of `trans` for more details on the function and its parameters.
+   See the documentation of `trans` for more details on the function and its arguments.
 """
 
 
-def localize_html(
-    locale_id, message_id, *, default, context=None, parameters={}, tags={}
-):
-    """Localize the given message ID to the given locale, escaping HTML.
-    
-    HTML is escaped in the message, as well as in parameters and tag attributes.
+def localize(locale_id: str, message_id: str, arguments: _MessageArguments = {}) -> str:
+    """Localize the given message ID to the given locale.
+
+    Raise `KeyError` if the message is not found (neither in the catalogs of the given and of the default locale).
+    Raise `ICUError` if the message in the default locale is incorrectly formatted.
     """
-    return _get_translations(locale_id).trans_html(
-        message_id, default=default, context=context, parameters=parameters, tags=tags
+
+    if locale_id != default_locale:
+        try:
+            return _get_translations(locale_id).get_and_format_message(
+                message_id, arguments=arguments
+            )
+        except ICUError as err:
+            logger.exception(
+                f"Error in po file for locale {locale_id} and message {message_id}: {err}"
+            )
+        except KeyError as err:
+            pass
+    return _get_translations(default_locale).get_and_format_message(
+        message_id, arguments=arguments
     )
 
 
-def restore_tags(message, tag_mapping):
+def localize_html(
+    locale_id: str,
+    message_id: str,
+    context: Optional[str] = None,
+    arguments: _MessageArguments = {},
+    tags: _TagMapping = {},
+) -> str:
+    """Localize the given message ID to the given locale, escaping HTML.
+    
+    Raise `KeyError` if the message is not found (neither in the catalogs of the given and of the default locale).
+    Raise `ICUError` if the message in the default locale is incorrectly formatted.
+    
+    HTML is escaped in the message, as well as in arguments and tag attributes.
+    """
+    if locale_id != default_locale:
+        try:
+            return _get_translations(locale_id).get_and_format_html_message(
+                message_id, context=context, arguments=arguments, tags=tags
+            )
+        except ICUError as err:
+            logger.exception(
+                f"Error in po file for locale {locale_id} and message {message_id}: {err}"
+            )
+        except KeyError as err:
+            pass
+    return _get_translations(default_locale).get_and_format_html_message(
+        message_id, context=context, arguments=arguments, tags=tags
+    )
+
+
+def restore_tags(message: str, tag_mapping: _TagMapping) -> str:
     """Replace the HTML tags and attributes in a message.
     
     `tag_mapping` is a dict that for each tag name contains a new name `name` and new attributes `attrs`
@@ -96,76 +145,62 @@ class MessageTranslator:
       - our HTML placeholder construct.
     """
 
-    def __init__(self, locale_id, catalog):
+    def __init__(self, locale_id: str, catalog: Catalog):
         self.icu_locale = Locale.createFromName(locale_id)
         self.catalog = catalog
-        self.locale_id = locale_id
 
     @classmethod
     def for_application_messages(cls, locale_id: str):
         return cls(locale_id, load_catalog(locale_id))
 
-    def trans(self, message_id, default=None, context=None, parameters={}):
-        """Find the message corresponding to the given ID in the catalog and format it according to the given parameters.
-        If the message is either not found or empty and a non-empty `default` is provided, the `default` is used instead.
+    def get_and_format_message(
+        self,
+        message_id: str,
+        context: Optional[str] = None,
+        arguments: _MessageArguments = {},
+    ) -> str:
+        """Find the message corresponding to the given ID in the catalog and format it according to the given arguments.
+        If the message is either not found or empty, a `KeyError` is raised.
+        If the message is incorrectly formatted, an `ICUError` is raised.
         
-        See `self._format_message` for acceptable types of the parameters argument.
-        
-        In case a message from the catalogs is used, if the message contains illegal (i.e. numeric) variables, 
-        they are handled so as to not raise an exception; at this point, the default message is used instead, but you should not rely on this behaviour
+        See `self._format_message` for acceptable types of the `arguments` argument.
         """
         return self._process_simple_message(
-            self.get_message(message_id, context=context), default, parameters
+            self.get_message(message_id, context=context), arguments
         )
 
-    def trans_html(
-        self, message_id, default=None, context=None, parameters={}, tags={}
-    ):
-        """Find the message corresponding to the given ID in the catalog and format it according to the given parameters.
-        If the message is either not found or empty and a non-empty `default` is provided, the `default` is used instead.
+    def get_and_format_html_message(
+        self,
+        message_id: str,
+        context: Optional[str] = None,
+        arguments: _MessageArguments = {},
+        tags: _TagMapping = {},
+    ) -> str:
+        """Find the message corresponding to the given ID in the catalog and format it according to the given arguments.
+        If the message is either not found or empty, a `KeyError` is raised.
+        If the message is incorrectly formatted, an `ICUError` is raised.
         
-        See `self._format_message` for acceptable types of the parameters argument.
-        
-        In case a message from the catalogs is used, if the message contains illegal (i.e. numeric) variables, 
-        they are handled so as to not raise an exception; at this point, the default message is used instead, but you should not rely on this behaviour
+        See `self._format_message` for acceptable types of the arguments argument.
         
         HTML-like tags in the message used are replaced by their counterpart in `tags`, as specified in `restore_tags`
         """
         return self._process_html_message(
-            self.get_message(message_id, context=context), default, parameters, tags
+            self.get_message(message_id, context=context), arguments, tags
         )
 
-    def _process_simple_message(self, message, fallback, parameters={}):
-        if message:
-            try:
-                return self._format_message(
-                    message, parameters=parameters, html_escape=False
-                )
-            except ICUError as err:
-                logger.exception(
-                    f"Error in po file for locale {self.locale_id} and message {message}: {err}"
-                )
-                # ... and fall through to default
-        return self._format_message(fallback, parameters=parameters, html_escape=False)
+    def _process_simple_message(
+        self, message: str, arguments: _MessageArguments = {}
+    ) -> str:
+        return self._format_message(message, arguments=arguments, html_escape=False)
 
-    def _process_html_message(self, message, fallback, parameters={}, tags={}):
-        if message:
-            try:
-                return self._format_message(
-                    self._replace_tags(message, tags),
-                    parameters=parameters,
-                    html_escape=True,
-                )
-            except ICUError as err:
-                logger.exception(
-                    f"Error in po file for locale {self.locale_id} and message {message}: {err}"
-                )
-                # ... and fall through to default
+    def _process_html_message(
+        self, message: str, arguments: _MessageArguments = {}, tags: _TagMapping = {}
+    ) -> str:
         return self._format_message(
-            self._replace_tags(fallback, tags), parameters=parameters, html_escape=True
+            self._replace_tags(message, tags), arguments=arguments, html_escape=True
         )
 
-    def _replace_tags(self, target_message, tags):
+    def _replace_tags(self, target_message: str, tags: _TagMapping) -> str:
         """Replace non-nested tag names and attributes of the `target_message` with the corresponding ones in `tags`
         
         `tags` must be a dict that maps each placeholder in `target_message` to its original tag and attrs,
@@ -173,30 +208,40 @@ class MessageTranslator:
         """
         return restore_tags(target_message, tag_mapping=tags)
 
-    def _format_message(self, message, parameters={}, html_escape=True):
-        """Substitute parameters into ICU-style message.
+    def _format_message(
+        self, message: str, arguments: _MessageArguments = {}, html_escape: bool = True
+    ) -> str:
+        """Substitute arguments into ICU-style message.
         You can have variable substitution, plurals, selects and nested messages.
         
-        The parameters must be a dict
+        Raises `ICUError` in case of incorrectly formatted message.
+        
+        The arguments must be a dict
         """
-        if not message:
-            return message
-        message_format = MessageFormat(message, self.icu_locale)
-        return message_format.format(
-            list(parameters.keys()),
+        return MessageFormat(message, self.icu_locale).format(
+            list(arguments.keys()),
             [
                 Formattable(escape(x) if html_escape and isinstance(x, str) else x)
-                for x in parameters.values()
+                for x in arguments.values()
             ],
         )
 
-    def get_message(self, message_id, context=None):
+    def get_message(self, message_id: str, context: Optional[str] = None) -> str:
         """Find the message corresponding to the given ID in the catalog.
         
         If the message is not found, `None` is returned.
         """
-        if context:
-            message = self.catalog.get(message_id, context)
+        message = find_string(self.catalog, message_id, context=context)
+        if message:
+            return message
         else:
-            message = self.catalog.get(message_id)
-        return message.string if message else None
+            raise KeyError(message_id)
+
+
+_get_translations = lru_cache(maxsize=len(supported_locales))(
+    MessageTranslator.for_application_messages
+)
+"""Return a `MessageTranslator` for the given locale.
+
+Uses lru_cache in order to parse the message catalogs only once per locale.
+"""

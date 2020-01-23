@@ -18,12 +18,21 @@ class PromptingErrorTest(unittest.TestCase):
             result,
             [
                 RenderError(
-                    I18nMessage.TODO_i18n(
-                        "The column “A” must be converted from Text to Numbers."
+                    I18nMessage(
+                        "py.renderer.execute.types.PromptingError.WrongColumnType.as_error_message.general",
+                        {
+                            "columns": 1,
+                            "0": "A",
+                            "found_type": "text",
+                            "best_wanted_type": "number",
+                        },
                     ),
                     [
                         QuickFix(
-                            I18nMessage.TODO_i18n("Convert Text to Numbers"),
+                            I18nMessage(
+                                "py.renderer.execute.types.PromptingError.WrongColumnType.as_quick_fixes.general",
+                                {"found_type": "text", "best_wanted_type": "number"},
+                            ),
                             QuickFixAction.PrependStep(
                                 "converttexttonumber", {"colnames": ["A"]}
                             ),
@@ -31,12 +40,25 @@ class PromptingErrorTest(unittest.TestCase):
                     ],
                 ),
                 RenderError(
-                    I18nMessage.TODO_i18n(
-                        "The columns “B” and “C” must be converted from Dates & Times to Numbers."
+                    I18nMessage(
+                        "py.renderer.execute.types.PromptingError.WrongColumnType.as_error_message.general",
+                        {
+                            "columns": 2,
+                            "0": "B",
+                            "1": "C",
+                            "found_type": "datetime",
+                            "best_wanted_type": "number",
+                        },
                     ),
                     [
                         QuickFix(
-                            I18nMessage.TODO_i18n("Convert Dates & Times to Numbers"),
+                            I18nMessage(
+                                "py.renderer.execute.types.PromptingError.WrongColumnType.as_quick_fixes.general",
+                                {
+                                    "found_type": "datetime",
+                                    "best_wanted_type": "number",
+                                },
+                            ),
                             QuickFixAction.PrependStep(
                                 "converttexttonumber", {"colnames": ["B", "C"]}
                             ),
@@ -55,12 +77,15 @@ class PromptingErrorTest(unittest.TestCase):
             result,
             [
                 RenderError(
-                    I18nMessage.TODO_i18n(
-                        "The columns “A” and “B” must be converted to Text."
+                    I18nMessage(
+                        "py.renderer.execute.types.PromptingError.WrongColumnType.as_error_message.shouldBeText",
+                        {"columns": 2, "0": "A", "1": "B"},
                     ),
                     [
                         QuickFix(
-                            I18nMessage.TODO_i18n("Convert to Text"),
+                            I18nMessage(
+                                "py.renderer.execute.types.PromptingError.WrongColumnType.as_quick_fixes.shouldBeText"
+                            ),
                             QuickFixAction.PrependStep(
                                 "converttotext", {"colnames": ["A", "B"]}
                             ),

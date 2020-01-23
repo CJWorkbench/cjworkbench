@@ -47,8 +47,3 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return user_display(self.user) + " (" + self.user.email + ")"
-
-    @receiver(post_save, sender=User)
-    def handle_user_save(sender, instance, created, **kwargs):
-        if created:
-            UserProfile.objects.get_or_create(user=instance)

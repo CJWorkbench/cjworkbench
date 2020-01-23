@@ -14,18 +14,30 @@ def message_unique_identifier(message: Message) -> MessageUID:
     return message.id if not message.context else (message.id, message.context)
 
 
+def find_message(
+    catalog: Catalog, message_id: str, context: Optional[str] = None
+) -> Optional[Message]:
+    message = catalog.get(message_id, context=context)
+    return message if message else None
+
+
+def find_string(
+    catalog: Catalog, message_id: str, context: Optional[str] = None
+) -> Optional[Message]:
+    message = find_message(catalog, message_id, context=context)
+    return message.string if message else None
+
+
 def find_corresponding_message(catalog: Catalog, message: Message) -> Optional[Message]:
     """ Search the catalog for a message with the same ID (and context) and return it.
     """
-    message = catalog.get(message.id, context=message.context)
-    return message if message else None
+    return find_message(catalog, message.id, context=message.context)
 
 
 def find_corresponding_string(catalog: Catalog, message: Message) -> Optional[str]:
     """ Search the catalog for a message with the same ID (and context) and return its string.
     """
-    corresponding_message = find_corresponding_message(catalog, message)
-    return corresponding_message.string if corresponding_message else None
+    return find_string(catalog, message.id, context=message.context)
 
 
 def remove_strings(catalog: Catalog):
