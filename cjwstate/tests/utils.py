@@ -9,7 +9,6 @@ from concurrent.futures import ThreadPoolExecutor
 from django.db import connection, connections
 from django.contrib.auth.models import User
 from django.test import SimpleTestCase
-from cjwkernel.types import RenderResult, FetchResult
 from cjworkbench.sync import WorkbenchDatabaseSyncToAsync
 from cjwstate import minio
 from cjwstate.models.module_version import ModuleVersion
@@ -97,6 +96,13 @@ def create_test_user(
     username="username", email="user@example.org", password="password"
 ):
     return User.objects.create(username=username, email=email, password=password)
+
+
+class DbTestCaseWithModuleRegistry(DbTestCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cjwstate.modules.init_module_system()  # create module tempdir
 
 
 class DbTestCaseWithModuleRegistryAndMockKernel(DbTestCase):
