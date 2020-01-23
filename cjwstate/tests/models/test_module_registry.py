@@ -7,6 +7,7 @@ from cjwstate import minio
 from cjwstate.models.module_registry import MODULE_REGISTRY
 from cjwstate.models.module_version import ModuleVersion
 from cjwstate.modules import init_module_system
+from cjwstate.modules.types import ModuleSpec
 from cjwstate.tests.utils import DbTestCase
 
 
@@ -62,7 +63,7 @@ class ModuleRegistryTest(DbTestCase):
         )
 
         zf = MODULE_REGISTRY.latest("regtest1")
-        self.assertEqual(zf.get_spec().data, v2.spec)
+        self.assertEqual(zf.get_spec(), ModuleSpec(**v2.spec))
 
     def test_db_minio_latest_load_deprecated_simple(self):
         mv = ModuleVersion.create_or_replace_from_spec(
@@ -86,7 +87,7 @@ class ModuleRegistryTest(DbTestCase):
         )
 
         zf = MODULE_REGISTRY.latest("regtest2")
-        self.assertEqual(zf.get_spec().data, mv.spec)
+        self.assertEqual(zf.get_spec(), ModuleSpec(**mv.spec))
         self.assertIsNone(zf.get_optional_html())
 
     def test_db_minio_latest_load_deprecated_html(self):
@@ -298,4 +299,4 @@ class ModuleRegistryTest(DbTestCase):
         )
 
         zf = MODULE_REGISTRY.all_latest()["regtest6"]
-        self.assertEqual(zf.get_spec().data, v2.spec)
+        self.assertEqual(zf.get_spec(), ModuleSpec(**v2.spec))

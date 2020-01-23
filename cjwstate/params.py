@@ -60,12 +60,17 @@ def get_migrated_params(
         wf_module.cached_migrated_params_module_version = (
             module_zipfile.get_param_schema_version()
         )
-        wf_module.save(
-            update_fields=[
-                "cached_migrated_params",
-                "cached_migrated_params_module_version",
-            ]
-        )
+        try:
+            wf_module.save(
+                update_fields=[
+                    "cached_migrated_params",
+                    "cached_migrated_params_module_version",
+                ]
+            )
+        except ValueError:
+            # WfModule was deleted, so we get:
+            # "ValueError: Cannot force an update in save() with no primary key."
+            pass
         return params
 
 

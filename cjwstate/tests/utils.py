@@ -1,10 +1,21 @@
 import asyncio
+import hashlib
+import io
+import json
+from typing import Any, Dict, Optional
+from unittest.mock import Mock
+import zipfile
 from concurrent.futures import ThreadPoolExecutor
 from django.db import connection, connections
 from django.contrib.auth.models import User
 from django.test import SimpleTestCase
+from cjwkernel.types import RenderResult, FetchResult
 from cjworkbench.sync import WorkbenchDatabaseSyncToAsync
 from cjwstate import minio
+from cjwstate.models.module_version import ModuleVersion
+from cjwstate.models.module_registry import MODULE_REGISTRY
+import cjwstate.modules
+from cjwstate.modules.types import ModuleZipfile
 
 # Connect to the database, on the main thread, and remember that connection
 main_thread_connections = {name: connections[name] for name in connections}
@@ -31,6 +42,8 @@ class DbTestCase(SimpleTestCase):
     )
 
     def setUp(self):
+        super().setUp()
+
         clear_db()
         clear_minio()
 
@@ -46,6 +59,8 @@ class DbTestCase(SimpleTestCase):
         # database will be running setUp() anyway, so extra clearing will only cost
         # time.
         WorkbenchDatabaseSyncToAsync.executor = self._old_executor
+
+        super().tearDown()
 
     def run_with_async_db(self, task):
         """
@@ -82,6 +97,82 @@ def create_test_user(
     username="username", email="user@example.org", password="password"
 ):
     return User.objects.create(username=username, email=email, password=password)
+
+
+class DbTestCaseWithModuleRegistryAndMockKernel(DbTestCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cjwstate.modules.init_module_system()  # create module tempdir
+
+    def setUp(self):
+        super().setUp()
+
+        self._old_kernel = cjwstate.modules.kernel
+        self.kernel = cjwstate.modules.kernel = Mock()
+        self.kernel.validate.return_value = None  # assume all modules are valid
+        # default migrate_params() returns {}. If we wrote
+        # `self.kernel.migrate_params.side_effect = lambda m, p: p`, then
+        # callers couldn't use `self.kernel.migrate_params.return_value = ...`
+        self.kernel.migrate_params.return_value = {}
+        # No default implementation of self.kernel.fetch
+        # No default implementation of self.kernel.render
+
+    def tearDown(self):
+        cjwstate.modules.kernel = self._old_kernel
+
+        super().tearDown()
+
+
+def create_module_zipfile(
+    module_id: str = "testmodule",
+    *,
+    version: Optional[str] = None,
+    spec_kwargs: Dict[str, Any] = {},
+    python_code: str = "",
+    html: Optional[str] = None,
+    js_module: str = "",
+) -> ModuleZipfile:
+    """
+    Create a ModuleZipfile, stored in the database and minio.
+
+    If `version` is not supplied, generate one using the sha1 of the zipfile.
+    This is usually what you want: minio reads on overwrites are _eventually_
+    consistent, so if you 1. write a file; 2. overwrite it; and 3. read it, the
+    read might result in the file from step 1 or the file from step 2. A sha1
+    version means overwrites will never modify data, solving the problem.
+    """
+    spec = {
+        "id_name": module_id,
+        "name": "Test Module",
+        "category": "Clean",
+        "parameters": [],
+        **spec_kwargs,
+    }
+
+    bio = io.BytesIO()
+    with zipfile.ZipFile(bio, mode="w") as zf:
+        zf.writestr(module_id + ".yaml", json.dumps(spec))
+        zf.writestr(module_id + ".py", python_code.encode("utf-8"))
+        if html is not None:
+            zf.writestr(module_id + ".html", html.encode("utf-8"))
+        if js_module:
+            zf.writestr(module_id + ".js", js_module.encode("utf-8"))
+    data = bytes(bio.getbuffer())
+    if version is None:
+        sha1 = hashlib.sha1()
+        sha1.update(data)
+        version = sha1.hexdigest()
+
+    minio.put_bytes(
+        minio.ExternalModulesBucket,
+        "%s/%s.%s.zip" % (module_id, module_id, version),
+        data,
+    )
+    ModuleVersion.objects.create(
+        id_name=module_id, source_version_hash=version, spec=spec, js_module=js_module
+    )
+    return MODULE_REGISTRY.latest(module_id)
 
 
 _Tables = [
