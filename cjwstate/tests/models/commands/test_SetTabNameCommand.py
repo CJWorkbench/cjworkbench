@@ -1,24 +1,18 @@
 from unittest.mock import patch
 from cjwstate import clientside, commands
-from cjwstate.models import ModuleVersion, Workflow
+from cjwstate.models import Workflow
 from cjwstate.models.commands import SetTabNameCommand
-from cjwstate.modules.loaded_module import LoadedModule
-from cjwstate.tests.utils import DbTestCase
+from cjwstate.tests.utils import (
+    DbTestCaseWithModuleRegistryAndMockKernel,
+    create_module_zipfile,
+)
 
 
 async def async_noop(*args, **kwargs):
     return
 
 
-class MockLoadedModule:
-    def __init__(self, *args, **kwargs):
-        pass
-
-    def migrate_params(self, params):
-        return params  # no-op
-
-
-class SetTabNameCommandTest(DbTestCase):
+class SetTabNameCommandTest(DbTestCaseWithModuleRegistryAndMockKernel):
     @patch.object(commands, "websockets_notify", async_noop)
     @patch.object(commands, "queue_render", async_noop)
     def test_set_name(self):
@@ -45,7 +39,6 @@ class SetTabNameCommandTest(DbTestCase):
 
     @patch.object(commands, "websockets_notify", async_noop)
     @patch.object(commands, "queue_render", async_noop)
-    @patch.object(LoadedModule, "for_module_version", MockLoadedModule)
     def test_change_last_relevant_delta_ids_of_dependent_wf_modules(self):
         workflow = Workflow.create_and_init()
         delta_id = workflow.last_delta_id
@@ -53,20 +46,17 @@ class SetTabNameCommandTest(DbTestCase):
         tab2 = workflow.tabs.create(position=1, slug="tab-2", name="Tab 2")
 
         # Add a WfModule that depends on tab1
-        ModuleVersion.create_or_replace_from_spec(
-            {
-                "id_name": "x",
-                "name": "x",
-                "category": "Clean",
-                "parameters": [{"id_name": "tab", "type": "tab"}],
-            }
+        module_zipfile = create_module_zipfile(
+            "x", spec_kwargs={"parameters": [{"id_name": "tab", "type": "tab"}]}
         )
         wf_module = tab2.wf_modules.create(
             order=0,
             slug="step-1",
             module_id_name="x",
-            params={"tab": tab1.slug},
             last_relevant_delta_id=delta_id,
+            params={"tab": tab1.slug},
+            cached_migrated_params={"tab": tab1.slug},
+            cached_migrated_params_module_version=module_zipfile.version,
         )
 
         cmd = self.run_with_async_db(
@@ -82,19 +72,12 @@ class SetTabNameCommandTest(DbTestCase):
 
     @patch.object(commands, "websockets_notify", async_noop)
     @patch.object(commands, "queue_render", async_noop)
-    @patch.object(LoadedModule, "for_module_version", MockLoadedModule)
     def test_change_last_relevant_delta_ids_of_self_wf_modules(self):
-        """
-        Module render() accepts a `tab_name` argument: test it sees a new one.
-        """
         workflow = Workflow.create_and_init()
         delta_id = workflow.last_delta_id
         tab = workflow.tabs.first()
 
-        # Add a WfModule that relies on `tab.name` through its 'render' method.
-        ModuleVersion.create_or_replace_from_spec(
-            {"id_name": "x", "name": "x", "category": "Clean", "parameters": []}
-        )
+        # Pretend module "x"'s render() relies on tab.name
         wf_module = tab.wf_modules.create(
             order=0, slug="step-1", module_id_name="x", last_relevant_delta_id=delta_id
         )
