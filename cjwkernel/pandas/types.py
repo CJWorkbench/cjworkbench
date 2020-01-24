@@ -886,8 +886,17 @@ class ProcessResult:
             self.dataframe.drop(
                 range(settings.MAX_ROWS_PER_TABLE, old_len), inplace=True
             )
-            warning = "Truncated output from %d rows to %d" % (old_len, new_len)
-            self.errors.append(ProcessResultError(I18nMessage.TODO_i18n(warning)))
+            self.errors.append(
+                ProcessResultError(
+                    I18nMessage.from_arrow(
+                        atypes.I18nMessage.trans(
+                            "py.cjwkernel.pandas.types.ProcessResult.truncate_in_place_if_too_big.warning",
+                            default="Truncated output from {old_number} rows to {new_number}",
+                            args={"old_number": old_len, "new_number": new_len},
+                        )
+                    )
+                )
+            )
             self.dataframe.reset_index(inplace=True, drop=True)
             # Nix unused categories
             for column in self.dataframe:

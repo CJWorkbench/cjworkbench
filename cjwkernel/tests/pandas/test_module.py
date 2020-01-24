@@ -259,7 +259,14 @@ class RenderTests(unittest.TestCase):
         assert_arrow_table_equals(result.table, {"A": [1, 2]})
         self.assertEqual(
             result.errors,
-            [RenderError(I18nMessage.TODO_i18n("Truncated output from 3 rows to 2"))],
+            [
+                RenderError(
+                    I18nMessage(
+                        "py.cjwkernel.pandas.types.ProcessResult.truncate_in_place_if_too_big.warning",
+                        {"old_number": 3, "new_number": 2},
+                    )
+                )
+            ],
         )
 
     def test_render_using_tab_output(self):
@@ -453,7 +460,10 @@ class FetchTests(unittest.TestCase):
                 result.errors,
                 [
                     RenderError(
-                        I18nMessage.TODO_i18n("Truncated output from 3 rows to 2")
+                        I18nMessage(
+                            "py.cjwkernel.pandas.types.ProcessResult.truncate_in_place_if_too_big.warning",
+                            {"old_number": 3, "new_number": 2},
+                        )
                     )
                 ],
             )

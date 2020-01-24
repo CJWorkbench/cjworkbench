@@ -131,10 +131,17 @@ def _wrap_render_errors(render_call):
     try:
         return render_call()
     except ModuleError as err:
-        return RenderResult.from_deprecated_error(
-            "Something unexpected happened. We have been notified and are "
-            "working to fix it. If this persists, contact us. Error code: "
-            + format_for_user_debugging(err)
+        return RenderResult(
+            errors=[
+                RenderError(
+                    I18nMessage.trans(
+                        "py.renderer.execute.wf_module.wrap_render_errors",
+                        default="Something unexpected happened. We have been notified and are "
+                        "working to fix it. If this persists, contact us. Error code: {error_code}",
+                        args={"error_code": format_for_user_debugging(err)},
+                    )
+                )
+            ]
         )
 
 
@@ -287,19 +294,40 @@ async def _render_wfmodule(
                 tab_results,
             )
         except TabCycleError:
-            return RenderResult.from_deprecated_error(
-                "The chosen tab depends on this one. Please choose another tab."
+            return RenderResult(
+                errors=[
+                    RenderError(
+                        I18nMessage.trans(
+                            "py.renderer.execute.wf_module._render_module.TabCycleError",
+                            default="The chosen tab depends on this one. Please choose another tab.",
+                        )
+                    )
+                ]
             )
         except TabOutputUnreachableError:
-            return RenderResult.from_deprecated_error(
-                "The chosen tab has no output. Please select another one."
+            return RenderResult(
+                errors=[
+                    RenderError(
+                        I18nMessage.trans(
+                            "py.renderer.execute.wf_module._render_module.TabOutputUnreachableError",
+                            default="The chosen tab has no output. Please select another one.",
+                        )
+                    )
+                ]
             )
         except PromptingError as err:
             return RenderResult(errors=err.as_render_errors())
 
         if loaded_module is None:
-            return RenderResult.from_deprecated_error(
-                "Please delete this step: an administrator uninstalled its code."
+            return RenderResult(
+                errors=[
+                    RenderError(
+                        I18nMessage.trans(
+                            "py.renderer.execute.wf_module._render_module.noLoadedModule",
+                            default="Please delete this step: an administrator uninstalled its code.",
+                        )
+                    )
+                ]
             )
 
         # Render may take a while. run_in_executor to push that slowdown to a

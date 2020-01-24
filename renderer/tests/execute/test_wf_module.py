@@ -76,8 +76,8 @@ class WfModuleTests(DbTestCase):
         expected = RenderResult(
             errors=[
                 RenderError(
-                    I18nMessage.TODO_i18n(
-                        "Please delete this step: an administrator uninstalled its code."
+                    I18nMessage(
+                        "py.renderer.execute.wf_module._render_module.noLoadedModule"
                     )
                 )
             ]
@@ -387,10 +387,9 @@ class WfModuleTests(DbTestCase):
             RenderResult(
                 errors=[
                     RenderError(
-                        I18nMessage.TODO_i18n(
-                            "Something unexpected happened. We have been notified and are "
-                            "working to fix it. If this persists, contact us. Error code: "
-                            "SIGKILL"
+                        I18nMessage(
+                            "py.renderer.execute.wf_module.wrap_render_errors",
+                            {"error_code": "SIGKILL"},
                         )
                     )
                 ]

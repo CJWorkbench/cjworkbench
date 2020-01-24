@@ -1252,7 +1252,10 @@ class ProcessResultTests(unittest.TestCase):
             dataframe=expected_df,
             errors=[
                 ProcessResultError(
-                    I18nMessage.TODO_i18n("Truncated output from 3 rows to 2")
+                    I18nMessage(
+                        "py.cjwkernel.pandas.types.ProcessResult.truncate_in_place_if_too_big.warning",
+                        {"old_number": 3, "new_number": 2},
+                    )
                 )
             ],
         )
@@ -1271,7 +1274,10 @@ class ProcessResultTests(unittest.TestCase):
             errors=[
                 ProcessResultError(I18nMessage.TODO_i18n("Some error")),
                 ProcessResultError(
-                    I18nMessage.TODO_i18n("Truncated output from 3 rows to 2")
+                    I18nMessage(
+                        "py.cjwkernel.pandas.types.ProcessResult.truncate_in_place_if_too_big.warning",
+                        {"old_number": 3, "new_number": 2},
+                    )
                 ),
             ],
         )
