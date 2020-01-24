@@ -2260,6 +2260,11 @@ msgstr ""
 msgid "js.util.timeDifference.now"
 msgstr ""
 
+#. default-message: Truncated output from {old_number} rows to {new_number}
+#: cjwkernel/pandas/types.py:892
+msgid "py.cjwkernel.pandas.types.ProcessResult.truncate_in_place_if_too_big.warning"
+msgstr ""
+
 #. default-message: First name
 #: cjworkbench/forms/signup.py:24
 msgid "py.forms.signup.firstName.placeholder"
@@ -2268,6 +2273,41 @@ msgstr ""
 #. default-message: Last name
 #: cjworkbench/forms/signup.py:31
 msgid "py.forms.signup.lastName.placeholder"
+msgstr ""
+
+#. default-message:
+#: fetcher/fetch.py:110
+msgid "py.fetcher.fetch.user_visible_bug_fetch_result"
+msgstr ""
+
+#. default-message: Cannot fetch: module was deleted
+#: fetcher/fetch.py:218
+msgid "py.fetcher.fetch.fetch_or_wrap_error.no_loaded_module"
+msgstr ""
+
+#. default-message: Service {service} is no longer configured
+#: fetcher/secrets.py:15
+msgid "py.fetcher.secrets._service_no_longer_configured_error"
+msgstr ""
+
+#. default-message: Token server responded with {status_number}: {error} ({description})
+#: fetcher/secrets.py:170
+msgid "py.fetcher.secrets._refresh_oauth2_token.error.general"
+msgstr ""
+
+#. default-message: {service_id} responded with HTTP {status_number} {error}: {description}
+#: fetcher/secrets.py:177
+msgid "py.fetcher.secrets._refresh_oauth2_token.server_error.general"
+msgstr ""
+
+#. default-message: Timeout during OAuth2 token refresh
+#: fetcher/secrets.py:194
+msgid "py.fetcher.secrets._refresh_oauth2_token.timeout_error"
+msgstr ""
+
+#. default-message: HTTP error during OAuth2 token refresh: {error}
+#: fetcher/secrets.py:204
+msgid "py.fetcher.secrets._refresh_oauth2_token.client_error"
 msgstr ""
 
 #. default-message: Convert to Text.
@@ -2286,7 +2326,7 @@ msgstr ""
 #. i18n: The parameter {columns} will contain the total number of columns that
 #. need to be converted; you will also receive the column names as {0}, {1},
 #. {2}, etc.
-#. default-message: { columns, plural, offset:2 =1 {The column “{0}” must be converted to Text.} =2 {The columns “{0}” and “{1}” must be converted to Text.} one {The columns “{0}”, “{1}” and “{2}” must be converted to Text.} other {The columns “{0}”, “{1}” and # others must be converted to Text.}}
+#. default-message: { columns, plural, offset:2 =1 {The column “{0}” must be converted to Text.} =2 {The columns “{0}” and “{1}” must be converted to Text.} =3 {The columns “{0}”, “{1}” and “{2}” must be converted to Text.} other {The columns “{0}”, “{1}” and # others must be converted to Text.}}
 #: renderer/execute/types.py:144
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_error_message.shouldBeText"
 msgstr ""
@@ -2296,9 +2336,29 @@ msgstr ""
 #. etc. The parameters {found_type} and {best_wanted_type} will have values
 #. among "text", "number", "datetime"; however, including a (possibly empty)
 #. "other" case is mandatory.
-#. default-message: { columns, plural, offset:2 =1 {The column “{0}” must be converted from { found_type, select, text {Text} number {Numbers} datetime {Dates & Times} other {}} to {best_wanted_type, select, text {Text} number {Numbers} datetime {Dates & Times} other {}}.} =2 {The columns “{0}” and “{1}” must be converted from { found_type, select, text {Text} number {Numbers} datetime {Dates & Times} other {}} to {best_wanted_type, select, text {Text} number {Numbers} datetime {Dates & Times}  other{}}.} one {The columns “{0}”, “{1}” and “{2}” must be converted from { found_type, select, text {Text} number {Numbers} datetime {Dates & Times} other {}} to {best_wanted_type, select, text {Text} number {Numbers} datetime {Dates & Times} other{}}.} other {The columns “{0}”, “{1}” and # others must be converted from { found_type, select, text {Text} number {Numbers} datetime {Dates & Times} other {}} to {best_wanted_type, select, text {Text} number {Numbers} datetime {Dates & Times} other{}}.}}
+#. default-message: { columns, plural, offset:2 =1 {The column “{0}” must be converted from { found_type, select, text {Text} number {Numbers} datetime {Dates & Times} other {}} to {best_wanted_type, select, text {Text} number {Numbers} datetime {Dates & Times} other {}}.} =2 {The columns “{0}” and “{1}” must be converted from { found_type, select, text {Text} number {Numbers} datetime {Dates & Times} other {}} to {best_wanted_type, select, text {Text} number {Numbers} datetime {Dates & Times}  other{}}.} =3 {The columns “{0}”, “{1}” and “{2}” must be converted from { found_type, select, text {Text} number {Numbers} datetime {Dates & Times} other {}} to {best_wanted_type, select, text {Text} number {Numbers} datetime {Dates & Times} other{}}.} other {The columns “{0}”, “{1}” and # others must be converted from { found_type, select, text {Text} number {Numbers} datetime {Dates & Times} other {}} to {best_wanted_type, select, text {Text} number {Numbers} datetime {Dates & Times} other{}}.}}
 #: renderer/execute/types.py:157
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_error_message.general"
+msgstr ""
+
+#. default-message: Something unexpected happened. We have been notified and are working to fix it. If this persists, contact us. Error code: {error_code}
+#: renderer/execute/wf_module.py:141
+msgid "py.renderer.execute.wf_module.wrap_render_errors"
+msgstr ""
+
+#. default-message: The chosen tab depends on this one. Please choose another tab.
+#: renderer/execute/wf_module.py:300
+msgid "py.renderer.execute.wf_module._render_module.TabCycleError"
+msgstr ""
+
+#. default-message: The chosen tab has no output. Please select another one.
+#: renderer/execute/wf_module.py:311
+msgid "py.renderer.execute.wf_module._render_module.TabOutputUnreachableError"
+msgstr ""
+
+#. default-message: Please delete this step: an administrator uninstalled its code.
+#: renderer/execute/wf_module.py:325
+msgid "py.renderer.execute.wf_module._render_module.noLoadedModule"
 msgstr ""
 
 #. default-message: 403 Forbidden

@@ -1904,6 +1904,10 @@ msgstr "{years}y ago"
 msgid "js.util.timeDifference.now"
 msgstr "just now"
 
+#: cjwkernel/pandas/types.py:892
+msgid "py.cjwkernel.pandas.types.ProcessResult.truncate_in_place_if_too_big.warning"
+msgstr "Truncated output from {old_number} rows to {new_number}"
+
 #: cjworkbench/forms/signup.py:24
 msgid "py.forms.signup.firstName.placeholder"
 msgstr "First name"
@@ -1911,6 +1915,34 @@ msgstr "First name"
 #: cjworkbench/forms/signup.py:31
 msgid "py.forms.signup.lastName.placeholder"
 msgstr "Last name"
+
+#: fetcher/fetch.py:110
+msgid "py.fetcher.fetch.user_visible_bug_fetch_result"
+msgstr ""
+
+#: fetcher/fetch.py:218
+msgid "py.fetcher.fetch.fetch_or_wrap_error.no_loaded_module"
+msgstr "Cannot fetch: module was deleted"
+
+#: fetcher/secrets.py:15
+msgid "py.fetcher.secrets._service_no_longer_configured_error"
+msgstr "Service {service} is no longer configured"
+
+#: fetcher/secrets.py:170
+msgid "py.fetcher.secrets._refresh_oauth2_token.error.general"
+msgstr "Token server responded with {status_number}: {error} ({description})"
+
+#: fetcher/secrets.py:177
+msgid "py.fetcher.secrets._refresh_oauth2_token.server_error.general"
+msgstr "{service_id} responded with HTTP {status_number} {error}: {description}"
+
+#: fetcher/secrets.py:194
+msgid "py.fetcher.secrets._refresh_oauth2_token.timeout_error"
+msgstr "Timeout during OAuth2 token refresh"
+
+#: fetcher/secrets.py:204
+msgid "py.fetcher.secrets._refresh_oauth2_token.client_error"
+msgstr "HTTP error during OAuth2 token refresh: {error}"
 
 #: renderer/execute/types.py:95
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_quick_fixes.shouldBeText"
@@ -1933,7 +1965,7 @@ msgstr ""
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_error_message.shouldBeText"
 msgstr ""
 "{ columns, plural, offset:2 =1 {The column “{0}” must be converted to "
-"Text.} =2 {The columns “{0}” and “{1}” must be converted to Text.} one "
+"Text.} =2 {The columns “{0}” and “{1}” must be converted to Text.} =3 "
 "{The columns “{0}”, “{1}” and “{2}” must be converted to Text.} other "
 "{The columns “{0}”, “{1}” and # others must be converted to Text.}}"
 
@@ -1952,13 +1984,31 @@ msgstr ""
 "“{1}” must be converted from { found_type, select, text {Text} number "
 "{Numbers} datetime {Dates & Times} other {}} to {best_wanted_type, "
 "select, text {Text} number {Numbers} datetime {Dates & Times}  other{}}.}"
-" one {The columns “{0}”, “{1}” and “{2}” must be converted from { "
+" =3 {The columns “{0}”, “{1}” and “{2}” must be converted from { "
 "found_type, select, text {Text} number {Numbers} datetime {Dates & Times}"
 " other {}} to {best_wanted_type, select, text {Text} number {Numbers} "
 "datetime {Dates & Times} other{}}.} other {The columns “{0}”, “{1}” and #"
 " others must be converted from { found_type, select, text {Text} number "
 "{Numbers} datetime {Dates & Times} other {}} to {best_wanted_type, "
 "select, text {Text} number {Numbers} datetime {Dates & Times} other{}}.}}"
+
+#: renderer/execute/wf_module.py:141
+msgid "py.renderer.execute.wf_module.wrap_render_errors"
+msgstr ""
+"Something unexpected happened. We have been notified and are working to "
+"fix it. If this persists, contact us. Error code: {error_code}"
+
+#: renderer/execute/wf_module.py:300
+msgid "py.renderer.execute.wf_module._render_module.TabCycleError"
+msgstr "The chosen tab depends on this one. Please choose another tab."
+
+#: renderer/execute/wf_module.py:311
+msgid "py.renderer.execute.wf_module._render_module.TabOutputUnreachableError"
+msgstr "The chosen tab has no output. Please select another one."
+
+#: renderer/execute/wf_module.py:325
+msgid "py.renderer.execute.wf_module._render_module.noLoadedModule"
+msgstr "Please delete this step: an administrator uninstalled its code."
 
 #: templates/403.html:5
 msgid "py.templates.403.title"
