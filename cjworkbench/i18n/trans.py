@@ -98,7 +98,7 @@ class MessageLocalizer:
                 )
             except ICUError as err:
                 logger.exception(
-                    f"Error in po file for locale {locale_id} and message {message_id}: {err}"
+                    f"Error in po file for locale {self.locale_id} and message {message_id}: {err}"
                 )
             except KeyError as err:
                 pass
@@ -114,7 +114,7 @@ class MessageLocalizer:
                 )
             except ICUError as err:
                 logger.exception(
-                    f"Error in po file for locale {locale_id} and message {message_id}: {err}"
+                    f"Error in po file for locale {self.locale_id} and message {message_id}: {err}"
                 )
             except KeyError as err:
                 pass

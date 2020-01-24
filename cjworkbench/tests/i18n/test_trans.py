@@ -2,16 +2,21 @@ import logging
 from babel.messages.catalog import Catalog
 from django.test import SimpleTestCase
 from icu import ICUError, InvalidArgsError
-from cjworkbench.i18n.trans import MessageTranslator, localize, localize_html
+from cjworkbench.i18n.trans import (
+    MessageFormatter,
+    MessageLocalizer,
+    localize,
+    localize_html,
+)
 from unittest.mock import patch
 
 
-class MessageTranslatorFormatTest(SimpleTestCase):
+class MessageFormatterFormatTest(SimpleTestCase):
     # Tests that nonexisting message raises a `KeyError`.
     def test_missing_message(self):
         catalog = Catalog()
         with self.assertRaises(KeyError):
-            MessageTranslator("en", catalog).get_and_format_message("id")
+            MessageFormatter("en", catalog).get_and_format_message("id")
 
     # Tests that `arguments` argument replaces variables in the message.
     # 1) Parameters that do not exist in the message are ignored.
@@ -20,7 +25,7 @@ class MessageTranslatorFormatTest(SimpleTestCase):
         catalog = Catalog()
         catalog.add("id", string="Hey {a} {param_b} {c}!")
         self.assertEqual(
-            MessageTranslator("en", catalog).get_and_format_message(
+            MessageFormatter("en", catalog).get_and_format_message(
                 "id", arguments={"param_b": "there", "a": "you", "d": "tester"}
             ),
             "Hey you there {c}!",
@@ -31,7 +36,7 @@ class MessageTranslatorFormatTest(SimpleTestCase):
         catalog = Catalog()
         catalog.add("id", string="Hey {0} {1}!")
         with self.assertRaises(AttributeError):
-            MessageTranslator("en", catalog).get_and_format_message(
+            MessageFormatter("en", catalog).get_and_format_message(
                 "id", arguments=["you", "there"]
             )
 
@@ -40,7 +45,7 @@ class MessageTranslatorFormatTest(SimpleTestCase):
         catalog = Catalog()
         catalog.add("id", string="Hey {0} {1}!")
         with self.assertRaises(AttributeError):
-            MessageTranslator("en", catalog).get_and_format_message(
+            MessageFormatter("en", catalog).get_and_format_message(
                 "id", arguments=("you", "there")
             )
 
@@ -49,7 +54,7 @@ class MessageTranslatorFormatTest(SimpleTestCase):
         catalog = Catalog()
         catalog.add("id", string="Hey {0} {1}!")
         with self.assertRaises(InvalidArgsError):
-            MessageTranslator("en", catalog).get_and_format_message(
+            MessageFormatter("en", catalog).get_and_format_message(
                 "id", arguments={"0": ["you ", "there"]}
             )
 
@@ -58,7 +63,7 @@ class MessageTranslatorFormatTest(SimpleTestCase):
         catalog = Catalog()
         catalog.add("id", string="Hey {a b}!")
         with self.assertRaises(ICUError):
-            result = MessageTranslator("en", catalog).get_and_format_message(
+            result = MessageFormatter("en", catalog).get_and_format_message(
                 "id", arguments={"a": "you", "b": "!"}
             )
 
@@ -67,7 +72,7 @@ class MessageTranslatorFormatTest(SimpleTestCase):
         catalog = Catalog()
         catalog.add("id", string="Hey {a} {0} {b}")
         self.assertEqual(
-            MessageTranslator("en", catalog).get_and_format_message(
+            MessageFormatter("en", catalog).get_and_format_message(
                 "id", arguments={"a": "you", "b": "!", "0": "there"}
             ),
             "Hey you there !",
@@ -78,7 +83,7 @@ class MessageTranslatorFormatTest(SimpleTestCase):
         catalog = Catalog()
         catalog.add("id", string="Hey {a} {0} {c}")
         self.assertEqual(
-            MessageTranslator("en", catalog).get_and_format_message(
+            MessageFormatter("en", catalog).get_and_format_message(
                 "id", arguments={"a": "you", "b": "!"}
             ),
             "Hey you {0} {c}",
@@ -91,7 +96,7 @@ class MessageTranslatorFormatTest(SimpleTestCase):
             "id", string='Hello <a href="/you?a=n&b=e">you > {param_b}</a> my & friend'
         )
         self.assertEqual(
-            MessageTranslator("en", catalog).get_and_format_message(
+            MessageFormatter("en", catalog).get_and_format_message(
                 "id", arguments={"param_b": "> there"}
             ),
             'Hello <a href="/you?a=n&b=e">you > > there</a> my & friend',
@@ -117,31 +122,31 @@ class MessageTranslatorFormatTest(SimpleTestCase):
             ),
         )
         self.assertEqual(
-            MessageTranslator("en", catalog).get_and_format_message(
+            MessageFormatter("en", catalog).get_and_format_message(
                 "id", arguments={"a": "there", "g": "male", "n": 17}
             ),
             "Hello there, you have 17 boys",
         )
         self.assertEqual(
-            MessageTranslator("en", catalog).get_and_format_message(
+            MessageFormatter("en", catalog).get_and_format_message(
                 "id", arguments={"a": "there", "g": "female", "n": 18}
             ),
             "Hello there, you have 18 girls",
         )
         self.assertEqual(
-            MessageTranslator("en", catalog).get_and_format_message(
+            MessageFormatter("en", catalog).get_and_format_message(
                 "id", arguments={"a": "there", "g": "other", "n": 0}
             ),
             "Hello there, you have no children",
         )
 
 
-class MessageTranslatorFormatHtmlTest(SimpleTestCase):
+class MessageFormatterFormatHtmlTest(SimpleTestCase):
     # Tests that nonexisting message raises a `KeyError`.
     def test_missing_message(self):
         catalog = Catalog()
         with self.assertRaises(KeyError):
-            MessageTranslator("en", catalog).get_and_format_html_message("id")
+            MessageFormatter("en", catalog).get_and_format_html_message("id")
 
     # Tests that `arguments` argument replaces variables in the message.
     # 1) Parameters that do not exist in the message are ignored.
@@ -150,7 +155,7 @@ class MessageTranslatorFormatHtmlTest(SimpleTestCase):
         catalog = Catalog()
         catalog.add("id", string="Hey {a} {param_b} {c}!")
         self.assertEqual(
-            MessageTranslator("en", catalog).get_and_format_html_message(
+            MessageFormatter("en", catalog).get_and_format_html_message(
                 "id", arguments={"param_b": "there", "a": "you", "d": "tester"}
             ),
             "Hey you there {c}!",
@@ -161,7 +166,7 @@ class MessageTranslatorFormatHtmlTest(SimpleTestCase):
         catalog = Catalog()
         catalog.add("id", string="Hey {0} {1}!")
         with self.assertRaises(AttributeError):
-            MessageTranslator("en", catalog).get_and_format_html_message(
+            MessageFormatter("en", catalog).get_and_format_html_message(
                 "id", arguments=["you", "there"]
             )
 
@@ -170,7 +175,7 @@ class MessageTranslatorFormatHtmlTest(SimpleTestCase):
         catalog = Catalog()
         catalog.add("id", string="Hey {0} {1}!")
         with self.assertRaises(AttributeError):
-            MessageTranslator("en", catalog).get_and_format_html_message(
+            MessageFormatter("en", catalog).get_and_format_html_message(
                 "id", arguments=("you", "there")
             )
 
@@ -179,7 +184,7 @@ class MessageTranslatorFormatHtmlTest(SimpleTestCase):
         catalog = Catalog()
         catalog.add("id", string="Hey {0} {1}!")
         with self.assertRaises(InvalidArgsError):
-            MessageTranslator("en", catalog).get_and_format_html_message(
+            MessageFormatter("en", catalog).get_and_format_html_message(
                 "id", arguments={"0": ["you ", "there"]}
             )
 
@@ -188,7 +193,7 @@ class MessageTranslatorFormatHtmlTest(SimpleTestCase):
         catalog = Catalog()
         catalog.add("id", string="Hey {a b}!")
         with self.assertRaises(ICUError):
-            result = MessageTranslator("en", catalog).get_and_format_html_message(
+            result = MessageFormatter("en", catalog).get_and_format_html_message(
                 "id", arguments={"a": "you", "b": "!"}
             )
 
@@ -197,7 +202,7 @@ class MessageTranslatorFormatHtmlTest(SimpleTestCase):
         catalog = Catalog()
         catalog.add("id", string="Hey {a} {0} {b}")
         self.assertEqual(
-            MessageTranslator("en", catalog).get_and_format_html_message(
+            MessageFormatter("en", catalog).get_and_format_html_message(
                 "id", arguments={"a": "you", "b": "!", "0": "there"}
             ),
             "Hey you there !",
@@ -208,7 +213,7 @@ class MessageTranslatorFormatHtmlTest(SimpleTestCase):
         catalog = Catalog()
         catalog.add("id", string="Hey {a} {0} {c}")
         self.assertEqual(
-            MessageTranslator("en", catalog).get_and_format_html_message(
+            MessageFormatter("en", catalog).get_and_format_html_message(
                 "id", arguments={"a": "you", "b": "!"}
             ),
             "Hey you {0} {c}",
@@ -223,7 +228,7 @@ class MessageTranslatorFormatHtmlTest(SimpleTestCase):
         catalog = Catalog()
         catalog.add("id", string='<a0 id="nope">Hello</a0><b0>you</b0><div>there</div>')
         self.assertEqual(
-            MessageTranslator("en", catalog).get_and_format_html_message(
+            MessageFormatter("en", catalog).get_and_format_html_message(
                 "id",
                 arguments={"a": "you"},
                 tags={
@@ -247,7 +252,7 @@ class MessageTranslatorFormatHtmlTest(SimpleTestCase):
         catalog = Catalog()
         catalog.add("id", string="<a0>Hello<b0>you</b0><div>there</div></a0>")
         self.assertEqual(
-            MessageTranslator("en", catalog).get_and_format_html_message(
+            MessageFormatter("en", catalog).get_and_format_html_message(
                 "id",
                 arguments={"a": "you"},
                 tags={
@@ -263,7 +268,7 @@ class MessageTranslatorFormatHtmlTest(SimpleTestCase):
         catalog = Catalog()
         catalog.add("id", string="<a0>Hello {name}</a0>{test}")
         self.assertEqual(
-            MessageTranslator("en", catalog).get_and_format_html_message(
+            MessageFormatter("en", catalog).get_and_format_html_message(
                 "id",
                 arguments={"name": "you", "test": "!"},
                 tags={"a0": {"tag": "a", "attrs": {"href": "/you"}}},
@@ -276,7 +281,7 @@ class MessageTranslatorFormatHtmlTest(SimpleTestCase):
         catalog = Catalog()
         catalog.add("id", string="<a0>Hello &<b>&</b></a0>>")
         self.assertEqual(
-            MessageTranslator("en", catalog).get_and_format_html_message(
+            MessageFormatter("en", catalog).get_and_format_html_message(
                 "id", tags={"a0": {"tag": "a", "attrs": {"href": "/you"}}}
             ),
             '<a href="/you">Hello &amp;&amp;</a>&gt;',
@@ -287,7 +292,7 @@ class MessageTranslatorFormatHtmlTest(SimpleTestCase):
         catalog = Catalog()
         catalog.add("id", string="<a0>Hey {name}</a0>{test}")
         self.assertEqual(
-            MessageTranslator("en", catalog).get_and_format_html_message(
+            MessageFormatter("en", catalog).get_and_format_html_message(
                 "id",
                 arguments={"name": "<b>you</b>", "test": "<b>there</b>"},
                 tags={"a0": {"tag": "a", "attrs": {"href": "/you"}}},
@@ -300,7 +305,7 @@ class MessageTranslatorFormatHtmlTest(SimpleTestCase):
         catalog = Catalog()
         catalog.add("id", string="<a0>Hey</a0>")
         self.assertEqual(
-            MessageTranslator("en", catalog).get_and_format_html_message(
+            MessageFormatter("en", catalog).get_and_format_html_message(
                 "id", tags={"a0": {"tag": "a", "attrs": {"href": "/you?a=b&c=d"}}}
             ),
             '<a href="/you?a=b&amp;c=d">Hey</a>',
@@ -321,7 +326,7 @@ class MessageTranslatorFormatHtmlTest(SimpleTestCase):
             string='<span0 class="nope">Hey {first}</span0><span1></span1> <span0>{second}</span0> <a0>{a}<b></b></a0> < <a1>there<</a1>!<br /><script type="text/javascript" src="mybadscript.js"></script>',
         )
         self.assertEqual(
-            MessageTranslator("en", catalog).get_and_format_html_message(
+            MessageFormatter("en", catalog).get_and_format_html_message(
                 "id",
                 arguments={"a": "you", "first": "hello", "second": "&"},
                 tags={
@@ -356,19 +361,19 @@ class MessageTranslatorFormatHtmlTest(SimpleTestCase):
             ),
         )
         self.assertEqual(
-            MessageTranslator("en", catalog).get_and_format_html_message(
+            MessageFormatter("en", catalog).get_and_format_html_message(
                 "id", arguments={"a": "there", "g": "male", "n": 17}
             ),
             "Hello there, you have 17 boys",
         )
         self.assertEqual(
-            MessageTranslator("en", catalog).get_and_format_html_message(
+            MessageFormatter("en", catalog).get_and_format_html_message(
                 "id", arguments={"a": "there", "g": "female", "n": 18}
             ),
             "Hello there, you have 18 girls",
         )
         self.assertEqual(
-            MessageTranslator("en", catalog).get_and_format_html_message(
+            MessageFormatter("en", catalog).get_and_format_html_message(
                 "id", arguments={"a": "there", "g": "other", "n": 0}
             ),
             "Hello there, you have no children",
@@ -376,146 +381,154 @@ class MessageTranslatorFormatHtmlTest(SimpleTestCase):
 
 
 class LocalizeTest(SimpleTestCase):
+    def setUp(self):
+        super().setUp()
+        MessageLocalizer.for_application_messages.cache_clear()
+
     def test_message_exists_in_given_locale(self):
-        def mock_get_translations(locale):
+        def mock_app_catalogs(locale):
             catalog = Catalog()
             if locale == "en":
                 catalog.add("id", string="Hello")
             else:
                 catalog.add("id", string="Hey")
-            return MessageTranslator(locale, catalog)
+            return catalog
 
-        with patch("cjworkbench.i18n.trans._get_translations", mock_get_translations):
+        with patch("cjworkbench.i18n.trans.load_catalog", mock_app_catalogs):
             self.assertEqual(localize("el", "id"), "Hey")
 
     def test_message_exists_only_in_default_locale(self):
-        def mock_get_translations(locale):
+        def mock_app_catalogs(locale):
             catalog = Catalog()
             if locale == "en":
                 catalog.add("id", string="Hello")
-            return MessageTranslator(locale, catalog)
+            return catalog
 
-        with patch("cjworkbench.i18n.trans._get_translations", mock_get_translations):
+        with patch("cjworkbench.i18n.trans.load_catalog", mock_app_catalogs):
             self.assertEqual(localize("el", "id"), "Hello")
 
     def test_message_exists_in_no_locales(self):
-        def mock_get_translations(locale):
-            return MessageTranslator(locale, Catalog())
+        def mock_app_catalogs(locale):
+            return Catalog()
 
-        with patch("cjworkbench.i18n.trans._get_translations", mock_get_translations):
+        with patch("cjworkbench.i18n.trans.load_catalog", mock_app_catalogs):
             with self.assertRaises(KeyError):
                 localize("el", "id")
 
     # Tests that badly formatted parameter in a catalog can't break our system
     def test_message_invalid_parameter_syntax(self):
-        def mock_get_translations(locale):
+        def mock_app_catalogs(locale):
             catalog = Catalog()
             if locale == "en":
                 catalog.add("id", string="Hello {a} {b}")
             else:
                 catalog.add("id", string="Hey {a b}!")
-            return MessageTranslator(locale, catalog)
+            return catalog
 
-        with patch("cjworkbench.i18n.trans._get_translations", mock_get_translations):
+        with patch("cjworkbench.i18n.trans.load_catalog", mock_app_catalogs):
             with self.assertLogs(level=logging.ERROR):
                 result = localize("el", "id", arguments={"a": "you", "b": "!"})
             self.assertEqual(result, "Hello you !")
 
     # Tests that badly formatted parameter in the default catalog will break our system
     def test_message_invalid_parameter_syntax_in_default(self):
-        def mock_get_translations(locale):
+        def mock_app_catalogs(locale):
             catalog = Catalog()
             if locale == "en":
                 catalog.add("id", string="Hello {a b}")
-            return MessageTranslator(locale, catalog)
+            return catalog
 
-        with patch("cjworkbench.i18n.trans._get_translations", mock_get_translations):
+        with patch("cjworkbench.i18n.trans.load_catalog", mock_app_catalogs):
             with self.assertRaises(ICUError):
                 localize("el", "id", arguments={"a": "you", "b": "!"})
 
     def test_message_invalid_parameter_syntax_in_both(self):
-        def mock_get_translations(locale):
+        def mock_app_catalogs(locale):
             catalog = Catalog()
             if locale == "en":
                 catalog.add("id", string="Hello {a b}")
             else:
                 catalog.add("id", string="Hello {a b}")
-            return MessageTranslator(locale, catalog)
+            return catalog
 
-        with patch("cjworkbench.i18n.trans._get_translations", mock_get_translations):
+        with patch("cjworkbench.i18n.trans.load_catalog", mock_app_catalogs):
             with self.assertLogs(level=logging.ERROR):
                 with self.assertRaises(ICUError):
                     localize("el", "id", arguments={"a": "you", "b": "!"})
 
 
 class LocalizeHtmlTest(SimpleTestCase):
+    def setUp(self):
+        super().setUp()
+        MessageLocalizer.for_application_messages.cache_clear()
+
     def test_message_exists_in_given_locale(self):
-        def mock_get_translations(locale):
+        def mock_app_catalogs(locale):
             catalog = Catalog()
             if locale == "en":
                 catalog.add("id", string="Hello")
             else:
                 catalog.add("id", string="Hey")
-            return MessageTranslator(locale, catalog)
+            return catalog
 
-        with patch("cjworkbench.i18n.trans._get_translations", mock_get_translations):
+        with patch("cjworkbench.i18n.trans.load_catalog", mock_app_catalogs):
             self.assertEqual(localize_html("el", "id"), "Hey")
 
     def test_message_exists_only_in_default_locale(self):
-        def mock_get_translations(locale):
+        def mock_app_catalogs(locale):
             catalog = Catalog()
             if locale == "en":
                 catalog.add("id", string="Hello")
-            return MessageTranslator(locale, catalog)
+            return catalog
 
-        with patch("cjworkbench.i18n.trans._get_translations", mock_get_translations):
+        with patch("cjworkbench.i18n.trans.load_catalog", mock_app_catalogs):
             self.assertEqual(localize_html("el", "id"), "Hello")
 
     def test_message_exists_in_no_locales(self):
-        def mock_get_translations(locale):
-            return MessageTranslator(locale, Catalog())
+        def mock_app_catalogs(locale):
+            return Catalog()
 
-        with patch("cjworkbench.i18n.trans._get_translations", mock_get_translations):
+        with patch("cjworkbench.i18n.trans.load_catalog", mock_app_catalogs):
             with self.assertRaises(KeyError):
                 localize_html("el", "id")
 
     # Tests that badly formatted parameter in a catalog can't break our system
     def test_message_invalid_parameter_syntax(self):
-        def mock_get_translations(locale):
+        def mock_app_catalogs(locale):
             catalog = Catalog()
             if locale == "en":
                 catalog.add("id", string="Hello {a} {b}")
             else:
                 catalog.add("id", string="Hey {a b}!")
-            return MessageTranslator(locale, catalog)
+            return catalog
 
-        with patch("cjworkbench.i18n.trans._get_translations", mock_get_translations):
+        with patch("cjworkbench.i18n.trans.load_catalog", mock_app_catalogs):
             with self.assertLogs(level=logging.ERROR):
                 result = localize_html("el", "id", arguments={"a": "you", "b": "!"})
             self.assertEqual(result, "Hello you !")
 
     # Tests that badly formatted parameter in the default catalog will break our system
     def test_message_invalid_parameter_syntax_in_default(self):
-        def mock_get_translations(locale):
+        def mock_app_catalogs(locale):
             catalog = Catalog()
             if locale == "en":
                 catalog.add("id", string="Hello {a b}")
-            return MessageTranslator(locale, catalog)
+            return catalog
 
-        with patch("cjworkbench.i18n.trans._get_translations", mock_get_translations):
+        with patch("cjworkbench.i18n.trans.load_catalog", mock_app_catalogs):
             with self.assertRaises(ICUError):
                 localize_html("el", "id", arguments={"a": "you", "b": "!"})
 
     def test_message_invalid_parameter_syntax_in_both(self):
-        def mock_get_translations(locale):
+        def mock_app_catalogs(locale):
             catalog = Catalog()
             if locale == "en":
                 catalog.add("id", string="Hello {a b}")
             else:
                 catalog.add("id", string="Hello {a b}")
-            return MessageTranslator(locale, catalog)
+            return catalog
 
-        with patch("cjworkbench.i18n.trans._get_translations", mock_get_translations):
+        with patch("cjworkbench.i18n.trans.load_catalog", mock_app_catalogs):
             with self.assertLogs(level=logging.ERROR):
                 with self.assertRaises(ICUError):
                     localize_html("el", "id", arguments={"a": "you", "b": "!"})
