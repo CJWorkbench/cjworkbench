@@ -6,6 +6,7 @@ from server.serializers import (
     JsonizeContext,
     jsonize_clientside_workflow,
     jsonize_clientside_step,
+    collect_i18n_message_sources,
 )
 
 
@@ -30,7 +31,12 @@ def embed(request, wfmodule_id):
                 wf_module = None
 
     if wf_module:
-        ctx = JsonizeContext(request.user, request.session, request.locale_id)
+        ctx = JsonizeContext(
+            request.user,
+            request.session,
+            request.locale_id,
+            collect_i18n_message_sources(request.locale_id),
+        )
         init_state = {
             "workflow": jsonize_clientside_workflow(
                 wf_module.workflow.to_clientside(include_tab_slugs=False),

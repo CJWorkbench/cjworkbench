@@ -25,6 +25,7 @@ from server.serializers import (
     jsonize_clientside_init,
     jsonize_user,
     jsonize_clientside_workflow,
+    collect_i18n_message_sources,
 )
 import server.utils
 from server.settingsutils import workbench_user_display
@@ -65,7 +66,12 @@ def make_init_state(
     except Workflow.DoesNotExist:
         raise Http404("Workflow was recently deleted")
 
-    ctx = JsonizeContext(request.user, request.session, request.locale_id)
+    ctx = JsonizeContext(
+        request.user,
+        request.session,
+        request.locale_id,
+        collect_i18n_message_sources(request.locale_id),
+    )
     return jsonize_clientside_init(state, ctx)
 
 
@@ -82,7 +88,12 @@ class Index(View):
     def get(self, request: HttpRequest):
         """Render workflow-list page."""
 
-        ctx = JsonizeContext(request.user, request.session, request.locale_id)
+        ctx = JsonizeContext(
+            request.user,
+            request.session,
+            request.locale_id,
+            collect_i18n_message_sources(request.locale_id),
+        )
 
         def list_workflows_as_json(**kwargs) -> List[Dict[str, Any]]:
             workflows = (
@@ -283,7 +294,12 @@ class Duplicate(View):
     @method_decorator(loads_workflow_for_read)
     def post(self, request: HttpRequest, workflow: Workflow):
         workflow2 = workflow.duplicate(request.user)
-        ctx = JsonizeContext(request.user, request.session, request.locale_id)
+        ctx = JsonizeContext(
+            request.user,
+            request.session,
+            request.locale_id,
+            collect_i18n_message_sources(request.locale_id),
+        )
         json_dict = jsonize_clientside_workflow(
             workflow2.to_clientside(), ctx, is_init=True
         )
