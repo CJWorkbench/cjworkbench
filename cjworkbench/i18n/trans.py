@@ -12,6 +12,7 @@ from babel.messages.catalog import Catalog, Message
 from typing import Dict, Union, Optional
 import logging
 from functools import lru_cache
+from cjwstate.modules.types import ModuleZipfile
 
 
 _translators = {}
@@ -59,19 +60,7 @@ def localize(locale_id: str, message_id: str, arguments: _MessageArguments = {})
     Raise `KeyError` if the message is not found (neither in the catalogs of the given and of the default locale).
     Raise `ICUError` if the message in the default locale is incorrectly formatted.
     """
-
-    if locale_id != default_locale:
-        try:
-            return _get_translations(locale_id).get_and_format_message(
-                message_id, arguments=arguments
-            )
-        except ICUError as err:
-            logger.exception(
-                f"Error in po file for locale {locale_id} and message {message_id}: {err}"
-            )
-        except KeyError as err:
-            pass
-    return _get_translations(default_locale).get_and_format_message(
+    return MessageLocalizer.for_application_messages(locale_id).localize(
         message_id, arguments=arguments
     )
 
@@ -90,20 +79,65 @@ def localize_html(
     
     HTML is escaped in the message, as well as in arguments and tag attributes.
     """
-    if locale_id != default_locale:
-        try:
-            return _get_translations(locale_id).get_and_format_html_message(
-                message_id, context=context, arguments=arguments, tags=tags
-            )
-        except ICUError as err:
-            logger.exception(
-                f"Error in po file for locale {locale_id} and message {message_id}: {err}"
-            )
-        except KeyError as err:
-            pass
-    return _get_translations(default_locale).get_and_format_html_message(
-        message_id, context=context, arguments=arguments, tags=tags
+    return MessageLocalizer.for_application_messages(locale_id).localize_html(
+        message_id, arguments=arguments, tags=tags, context=context
     )
+
+
+class MessageLocalizer:
+    def __init__(self, locale_id: str, catalog: Catalog, default_catalog: Catalog):
+        self.locale_id = locale_id
+        self.formatter = MessageFormatter(locale_id, catalog)
+        self.default_formatter = MessageFormatter(default_locale, default_catalog)
+
+    def localize(self, message_id, arguments={}) -> str:
+        if self.locale_id != default_locale:
+            try:
+                return self.formatter.get_and_format_message(
+                    message_id, arguments=arguments
+                )
+            except ICUError as err:
+                logger.exception(
+                    f"Error in po file for locale {locale_id} and message {message_id}: {err}"
+                )
+            except KeyError as err:
+                pass
+        return self.default_formatter.get_and_format_message(
+            message_id, arguments=arguments
+        )
+
+    def localize_html(self, message_id, *, context, arguments, tags) -> str:
+        if self.locale_id != default_locale:
+            try:
+                return self.formatter.get_and_format_html_message(
+                    message_id, context=context, arguments=arguments, tags=tags
+                )
+            except ICUError as err:
+                logger.exception(
+                    f"Error in po file for locale {locale_id} and message {message_id}: {err}"
+                )
+            except KeyError as err:
+                pass
+        return self.default_formatter.get_and_format_html_message(
+            message_id, context=context, arguments=arguments, tags=tags
+        )
+
+    @classmethod
+    @lru_cache(maxsize=len(supported_locales))
+    def for_application_messages(cls, locale_id: str):
+        """Return a `MessageLocalizer` for the application internal messages in the given locale.
+
+        Uses lru_cache in order to parse the message catalogs only once per locale.
+        """
+        return cls(locale_id, load_catalog(locale_id), load_catalog(default_locale))
+
+    @classmethod
+    def for_module(cls, module_zip: ModuleZipfile, locale_id: str):
+        return cls(
+            locale_id,
+            module_zip.get_message_catalog(locale_id),
+            module_zip.get_message_catalog(default_locale),
+        )
 
 
 def restore_tags(message: str, tag_mapping: _TagMapping) -> str:
@@ -135,7 +169,7 @@ def restore_tags(message: str, tag_mapping: _TagMapping) -> str:
     return str(soup)
 
 
-class MessageTranslator:
+class MessageFormatter:
     """Hold a message catalog for a given locale and provide helper methods for message localization with ICU.
     It uses plaintext messages with variables in `{var}` placeholders, e.g. in `"Hello {name}"`, `name` is a variable.
     
@@ -148,10 +182,6 @@ class MessageTranslator:
     def __init__(self, locale_id: str, catalog: Catalog):
         self.icu_locale = Locale.createFromName(locale_id)
         self.catalog = catalog
-
-    @classmethod
-    def for_application_messages(cls, locale_id: str):
-        return cls(locale_id, load_catalog(locale_id))
 
     def get_and_format_message(
         self,
@@ -236,12 +266,3 @@ class MessageTranslator:
             return message
         else:
             raise KeyError(message_id)
-
-
-_get_translations = lru_cache(maxsize=len(supported_locales))(
-    MessageTranslator.for_application_messages
-)
-"""Return a `MessageTranslator` for the given locale.
-
-Uses lru_cache in order to parse the message catalogs only once per locale.
-"""
