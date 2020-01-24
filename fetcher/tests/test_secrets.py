@@ -116,8 +116,8 @@ class PrepareSecretOauth1aTests(unittest.TestCase):
             {
                 "name": "@testy",
                 "error": {
-                    "id": "TODO_i18n",
-                    "arguments": {"text": "Service 'twitter' is no longer configured"},
+                    "id": "py.fetcher.secrets._service_no_longer_configured_error",
+                    "arguments": {"service": "twitter"},
                 },
             },
         )
@@ -216,8 +216,8 @@ class PrepareSecretOauth2(AioHTTPTestCase):
             {
                 "name": "a@example.com",
                 "error": {
-                    "id": "TODO_i18n",
-                    "arguments": {"text": "Service 'google' is no longer configured"},
+                    "id": "py.fetcher.secrets._service_no_longer_configured_error",
+                    "arguments": {"service": "google"},
                 },
             },
         )
@@ -307,9 +307,12 @@ class PrepareSecretOauth2(AioHTTPTestCase):
                 {
                     "name": "a@example.com",
                     "error": {
-                        "id": "TODO_i18n",
+                        "id": "py.fetcher.secrets._refresh_oauth2_token.server_error.general",
                         "arguments": {
-                            "text": "google responded with HTTP 418 I'm a teapot: 'tea time?'"
+                            "service_id": "google",
+                            "status_number": 418,
+                            "error": "I'm a teapot",
+                            "description": "tea time?",
                         },
                     },
                 },

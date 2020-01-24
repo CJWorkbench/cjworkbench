@@ -105,10 +105,13 @@ def user_visible_bug_fetch_result(output_path: Path, message: str) -> FetchResul
         path=output_path,  # empty
         errors=[
             RenderError(
-                I18nMessage.TODO_i18n(
-                    "Something unexpected happened. We have been notified and are "
-                    "working to fix it. If this persists, contact us. Error code: "
-                    + message
+                I18nMessage.trans(
+                    "py.fetcher.fetch.user_visible_bug_fetch_result",
+                    default=(
+                        "Something unexpected happened. We have been notified and are "
+                        "working to fix it. If this persists, contact us. Error code: {message}"
+                    ),
+                    args={"message": message},
                 )
             )
         ],
@@ -210,7 +213,14 @@ def fetch_or_wrap_error(
         logger.info("fetch() deleted module '%s'", wf_module.module_id_name)
         return FetchResult(
             output_path,
-            [RenderError(I18nMessage.TODO_i18n("Cannot fetch: module was deleted"))],
+            [
+                RenderError(
+                    I18nMessage.trans(
+                        "py.fetcher.fetch.fetch_or_wrap_error.no_loaded_module",
+                        default="Cannot fetch: module was deleted",
+                    )
+                )
+            ],
         )
 
     # Migrate params, so fetch() gets newest values
