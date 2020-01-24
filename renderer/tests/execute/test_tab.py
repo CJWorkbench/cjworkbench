@@ -6,9 +6,8 @@ from cjwkernel.types import RenderResult
 from cjwkernel.tests.util import arrow_table, assert_render_result_equals
 from cjwstate import minio, rabbitmq, rendercache
 from cjwstate.models import ModuleVersion, Workflow
-from cjwstate.modules.loaded_module import LoadedModule
 from cjwstate.modules.param_dtype import ParamDType
-from cjwstate.tests.utils import DbTestCase
+from cjwstate.tests.utils import DbTestCaseWithModuleRegistry, create_module_zipfile
 from renderer.execute.tab import execute_tab_flow, ExecuteStep, TabFlow
 
 
@@ -16,7 +15,7 @@ async def fake_send(*args, **kwargs):
     pass
 
 
-class TabTests(DbTestCase):
+class TabTests(DbTestCaseWithModuleRegistry):
     @contextlib.contextmanager
     def _execute(self, workflow, flow, tab_results, expect_log_level=logging.DEBUG):
         with EDITABLE_CHROOT.acquire_context() as chroot_context:
@@ -39,7 +38,6 @@ class TabTests(DbTestCase):
         with self._execute(workflow, tab_flow, {}) as result:
             assert_render_result_equals(result, RenderResult())
 
-    @patch.object(LoadedModule, "for_module_version")
     @patch.object(rabbitmq, "send_update_to_workflow_clients", fake_send)
     def test_execute_cache_hit(self, fake_module):
         workflow = Workflow.create_and_init()
@@ -78,9 +76,8 @@ class TabTests(DbTestCase):
 
         fake_module.assert_not_called()
 
-    @patch.object(LoadedModule, "for_module_version")
     @patch.object(rabbitmq, "send_update_to_workflow_clients", fake_send)
-    def test_execute_cache_miss(self, fake_load_module):
+    def test_execute_cache_miss(self):
         ModuleVersion.create_or_replace_from_spec(
             {"id_name": "mod", "name": "Mod", "category": "Clean", "parameters": []}
         )
@@ -121,9 +118,8 @@ class TabTests(DbTestCase):
             r"execute-tab-output.*\.arrow",
         )
 
-    @patch.object(LoadedModule, "for_module_version")
     @patch.object(rabbitmq, "send_update_to_workflow_clients", fake_send)
-    def test_execute_partial_cache_hit(self, fake_load_module):
+    def test_execute_partial_cache_hit(self):
         ModuleVersion.create_or_replace_from_spec(
             {"id_name": "mod", "name": "Mod", "category": "Clean", "parameters": []}
         )
@@ -178,9 +174,8 @@ class TabTests(DbTestCase):
             r"execute-tab-output.*\.arrow",
         )
 
-    @patch.object(LoadedModule, "for_module_version")
     @patch.object(rabbitmq, "send_update_to_workflow_clients", fake_send)
-    def test_resume_backtrack_on_corrupt_cache_error(self, fake_load_module):
+    def test_resume_backtrack_on_corrupt_cache_error(self):
         ModuleVersion.create_or_replace_from_spec(
             {"id_name": "mod", "name": "Mod", "category": "Clean", "parameters": []}
         )

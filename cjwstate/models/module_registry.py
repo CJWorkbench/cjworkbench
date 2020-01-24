@@ -135,6 +135,16 @@ class ModuleRegistry:
             # Release the lock. If another caller is waiting for us to release
             # the lock, now it should check self._cache again.
 
+    def clear(self):
+        """
+        Empty the cache.
+
+        This is great for unit tests. It isn't production-ready.
+        """
+        self._cache.clear()
+        for path in self.tempdir.glob("*.zip"):
+            path.unlink()
+
 
 def _download_module_zipfile_modern(
     output_path: Path, module_id: ModuleId, version: ModuleVersion

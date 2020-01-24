@@ -51,9 +51,9 @@ class ModuleSpec:
 
     def get_uses_data(self):
         if self.uses_data is None:
-            return self.uses_data
-        else:
             return not self.loads_data
+        else:
+            return self.uses_data
 
     @property
     def default_params(self) -> Dict[str, Any]:
@@ -79,29 +79,6 @@ class ModuleSpec:
                     if f.dtype is not None
                 )
             )
-
-    @classmethod
-    def load_from_path(self, path: Path) -> ModuleSpec:
-        """
-        Parse from a path.
-
-        Raise ValueError on syntax or semantic error.
-        """
-
-        text = path.read_text(encoding="utf-8")
-        if path.suffix == ".json":
-            try:
-                data = json.loads(text)
-            except ValueError as err:
-                raise ValueError("JSON syntax error in %s: %s" % (path.name, str(err)))
-        else:
-            try:
-                data = yaml.safe_load(text)
-            except yaml.YAMLError as err:
-                raise ValueError("YAML syntax error in %s: %s" % (path.name, str(err)))
-
-        validate_module_spec(data)  # raises ValueError
-        return ModuleSpec(**data)
 
 
 @dataclass(frozen=True)
@@ -155,6 +132,11 @@ class ModuleZipfile:
         zipfile.
         """
         with zipfile.ZipFile(self.path) as zf:  # raise FileNotFoundError, BadZipFile
+            info1 = zf.infolist()[0]
+            if info1.is_dir():
+                # GitHub-style zipfile entries are all in a subdirectory.
+                # Prepend the subdirectory name.
+                path = info1.filename + path
             return zf.read(path)  # raise KeyError, BadZipFile
 
     def _read_text(self, path: str) -> str:

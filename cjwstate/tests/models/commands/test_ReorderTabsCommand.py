@@ -1,9 +1,11 @@
 from unittest.mock import patch
 from cjwstate import commands
-from cjwstate.models import ModuleVersion, Workflow
+from cjwstate.models import Workflow
 from cjwstate.models.commands import ReorderTabsCommand
-from cjwstate.modules.loaded_module import LoadedModule
-from cjwstate.tests.utils import DbTestCase
+from cjwstate.tests.utils import (
+    DbTestCaseWithModuleRegistryAndMockKernel,
+    create_module_zipfile,
+)
 
 
 async def async_noop(*args, **kwargs):
@@ -18,7 +20,7 @@ class MockLoadedModule:
         return params  # no-op
 
 
-class ReorderTabsCommandTest(DbTestCase):
+class ReorderTabsCommandTest(DbTestCaseWithModuleRegistryAndMockKernel):
     @patch.object(commands, "websockets_notify", async_noop)
     @patch.object(commands, "queue_render", async_noop)
     def test_reorder_slugs(self):
@@ -78,7 +80,6 @@ class ReorderTabsCommandTest(DbTestCase):
 
     @patch.object(commands, "websockets_notify", async_noop)
     @patch.object(commands, "queue_render", async_noop)
-    @patch.object(LoadedModule, "for_module_version", MockLoadedModule)
     def test_change_dependent_wf_modules(self):
         # tab slug: tab-1
         workflow = Workflow.create_and_init(selected_tab_position=2)
@@ -86,13 +87,8 @@ class ReorderTabsCommandTest(DbTestCase):
         workflow.tabs.create(position=2, slug="tab-3")
 
         # Create `wf_module` depending on tabs 2+3 (and their order)
-        ModuleVersion.create_or_replace_from_spec(
-            {
-                "id_name": "x",
-                "name": "X",
-                "category": "Clean",
-                "parameters": [{"id_name": "tabs", "type": "multitab"}],
-            }
+        module_zipfile = create_module_zipfile(
+            "x", spec_kwargs={"parameters": [{"id_name": "tabs", "type": "multitab"}]}
         )
         wf_module = workflow.tabs.first().wf_modules.create(
             order=0,
@@ -100,6 +96,8 @@ class ReorderTabsCommandTest(DbTestCase):
             module_id_name="x",
             params={"tabs": ["tab-2", "tab-3"]},
             last_relevant_delta_id=workflow.last_delta_id,
+            cached_migrated_params={"tabs": ["tab-2", "tab-3"]},
+            cached_migrated_params_module_version=module_zipfile.version,
         )
 
         cmd = self.run_with_async_db(
