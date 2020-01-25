@@ -317,18 +317,18 @@ def _(
 def _(spec: ParamSpec.Secret, ctx: JsonizeModuleContext, prefix: str) -> Dict[str, Any]:
     ret = _camelize_dict(spec.to_dict())
     if spec.secret_logic.provider == "string":
-        ret["secret_logic"]["label"] = _localize_module_message(
+        ret["secretLogic"]["label"] = _localize_module_message(
             f"{prefix}.secret_logic.label", default=spec.secret_logic.label, ctx=ctx
         )
-        ret["secret_logic"]["help"] = _localize_module_message(
+        ret["secretLogic"]["help"] = _localize_module_message(
             f"{prefix}.secret_logic.help", default=spec.secret_logic.help, ctx=ctx
         )
-        ret["secret_logic"]["helpUrl"] = _localize_module_message(
+        ret["secretLogic"]["helpUrl"] = _localize_module_message(
             f"{prefix}.secret_logic.help_url",
             default=spec.secret_logic.help_url,
             ctx=ctx,
         )
-        ret["secret_logic"]["helpUrlPrompt"] = _localize_module_message(
+        ret["secretLogic"]["helpUrlPrompt"] = _localize_module_message(
             f"{prefix}.secret_logic.help_url_prompt",
             default=spec.secret_logic.help_url_prompt,
             ctx=ctx,
@@ -347,14 +347,14 @@ def _(spec: ParamSpec.Custom, ctx: JsonizeModuleContext, prefix: str) -> Dict[st
 def _(spec: ParamSpec.List, ctx: JsonizeModuleContext, prefix: str) -> Dict[str, Any]:
     ret = _camelize_dict(spec.to_dict())
     ret["name"] = _localize_module_message(f"{prefix}.name", default=spec.name, ctx=ctx)
-    ret["childDefault"] = p.dtype.inner_dtype.default
+    ret["childDefault"] = spec.dtype.inner_dtype.default
     ret["childParameters"] = [
         _jsonize_param_spec(
             child_spec, ctx, f"{prefix}.child_parameters.{child_spec.id_name}"
         )
         for child_spec in spec.child_parameters
     ]
-    return result
+    return ret
 
 
 def _ctx_authorized_write(
@@ -506,8 +506,24 @@ def jsonize_clientside_tab(tab: clientside.TabUpdate) -> Dict[str, Any]:
 
 
 def _localize_module_message(
-    message_id: str, *, default: str, ctx: JsonizeModuleContext, arguments={}
+    message_id: str,
+    *,
+    default: Optional[str],
+    ctx: JsonizeModuleContext,
+    arguments={},
+    log_not_found=False,
 ) -> str:
+    """Search the module catalogs for the message with the given id and localize it.
+    
+    If the message is not found or is incorrectly formatted, `default` is returned.
+    
+    In addition, if `default` is empty, `default` is returned.
+    This is in order to make sure that module spec values not defined in the spec file
+    cannot be overriden by message catalogs.
+    """
+    if not default:
+        return default
+
     try:
         localizer = ctx.localizers[f"module.{ctx.module_id}"]
     except KeyError:
@@ -524,9 +540,10 @@ def _localize_module_message(
         )
         # Fall through
     except KeyError as err:
-        logger.exception(
-            f"I18nMessage not found in module catalogs. id: {message_id}, module: {ctx.module_id}"
-        )
+        if log_not_found:
+            logger.exception(
+                f"I18nMessage not found in module catalogs. id: {message_id}, module: {ctx.module_id}"
+            )
         # Fall through
 
     return default
@@ -560,7 +577,8 @@ def jsonize_i18n_message(message: I18nMessage, ctx: JsonizeContext) -> str:
             message.id,
             arguments=message.args,
             default=json.dumps(message.to_dict()),
-            ctx=_add_module_to_ctx(ctx, message.source.module),
+            ctx=_add_module_to_ctx(ctx, message.source.module_id),
+            log_not_found=True,
         )
     else:  # if isinstance(message.source, I18nMessageSource.Library)
         raise RuntimeError("TODO_i18n")
