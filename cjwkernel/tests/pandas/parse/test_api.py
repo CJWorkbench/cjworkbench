@@ -125,8 +125,9 @@ class ApiTests(unittest.TestCase):
             result.errors,
             [
                 RenderError(
-                    I18nMessage.TODO_i18n(
-                        "Unknown file extension '.bin'. Please try a different file."
+                    I18nMessage(
+                        "py.cjwkernel.pandas.parse.api.parse_file.UknownExtension",
+                        args={"ext": ".bin"},
                     )
                 )
             ],

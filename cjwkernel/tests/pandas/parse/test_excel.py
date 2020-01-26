@@ -54,9 +54,11 @@ class ParseOtherTests(unittest.TestCase):
             result.errors,
             [
                 RenderError(
-                    I18nMessage.TODO_i18n(
-                        "Error reading Excel file: Unsupported format, "
-                        "or corrupt file: Expected BOF record; found b'not an x'"
+                    I18nMessage(
+                        "py.cjwkernel.pandas.parse.excel.parse_xls_file.XLRDError",
+                        {
+                            "error": "Unsupported format, or corrupt file: Expected BOF record; found b'not an x'"
+                        },
                     )
                 )
             ],

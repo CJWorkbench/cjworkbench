@@ -1951,6 +1951,54 @@ msgstr "μόλις τώρα"
 msgid "py.cjwkernel.pandas.types.ProcessResult.truncate_in_place_if_too_big.warning"
 msgstr ""
 
+#: cjwkernel/pandas/parse/api.py:26
+msgid "py.cjwkernel.pandas.parse.api.parse_file.UknownExtension"
+msgstr ""
+
+#: cjwkernel/pandas/parse/csv.py:30
+msgid "py.cjwkernell.pandas.parse.csv.ParseCsvWarningSkippedRows.message"
+msgstr ""
+
+#: cjwkernel/pandas/parse/csv.py:43
+msgid "py.cjwkernell.pandas.parse.csv.ParseCsvWarningSkippedColumns.message"
+msgstr ""
+
+#: cjwkernel/pandas/parse/csv.py:61
+msgid "py.cjwkernell.pandas.parse.csv.ParseCsvWarningTruncatedValues.message"
+msgstr ""
+
+#: cjwkernel/pandas/parse/csv.py:79
+msgid "py.cjwkernell.pandas.parse.csv.ParseCsvWarningCleanedAsciiColumnNames.message"
+msgstr ""
+
+#: cjwkernel/pandas/parse/csv.py:92
+msgid "py.cjwkernell.pandas.parse.csv.ParseCsvWarningNumberedColumnNames.message"
+msgstr ""
+
+#: cjwkernel/pandas/parse/csv.py:105
+msgid "py.cjwkernell.pandas.parse.csv.ParseCsvWarningTruncatedColumnNames.message"
+msgstr ""
+
+#: cjwkernel/pandas/parse/csv.py:123
+msgid "py.cjwkernell.pandas.parse.csv.ParseCsvWarningRepairedValues.message"
+msgstr ""
+
+#: cjwkernel/pandas/parse/csv.py:137
+msgid "py.cjwkernell.pandas.parse.csv.ParseCsvWarningRepairedEndOfFile.message"
+msgstr ""
+
+#: cjwkernel/pandas/parse/csv.py:149
+msgid "py.cjwkernell.pandas.parse.csv.ParseCsvWarningTruncatedFile.message"
+msgstr ""
+
+#: cjwkernel/pandas/parse/excel.py:40
+msgid "py.cjwkernel.pandas.parse.excel.parse_xls_file.XLRDError"
+msgstr ""
+
+#: cjwkernel/pandas/parse/util.py:12
+msgid "py.cjwkernell.pandas.parse.util.invalid_encoding_i18n_message"
+msgstr ""
+
 #: cjworkbench/forms/signup.py:24
 msgid "py.forms.signup.firstName.placeholder"
 msgstr "Όνομα"

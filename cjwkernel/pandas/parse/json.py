@@ -8,6 +8,7 @@ from cjwkernel.types import ArrowTable, I18nMessage, RenderError, RenderResult
 from cjwkernel.util import tempfile_context
 from .postprocess import dictionary_encode_columns, infer_table_metadata
 from .text import transcode_to_utf8_and_warn
+from .util import invalid_encoding_i18n_message
 
 
 class ParseJsonWarning:
@@ -20,19 +21,21 @@ class ParseJsonWarningRepairedEncoding(ParseJsonWarning):
     first_invalid_byte: int
     first_invalid_byte_position: int
 
-    def __str__(self):  # TODO nix when we support i18n
-        return (
-            "Encoding error: byte 0x%02X is invalid %s at byte %d. "
-            "We replaced invalid bytes with “�”."
-        ) % (self.first_invalid_byte, self.encoding, self.first_invalid_byte_position)
+    def message(self):
+        return invalid_encoding_i18n_message(
+            self.first_invalid_byte,
+            self.first_invalid_byte_position,
+            self.encoding,
+            "�",
+        )
 
 
 @dataclass(frozen=True)
 class ParseJsonWarningTODO_i18n:
     text: str
 
-    def __str__(self):  # TODO nix when we support i18n
-        return self.text
+    def message(self):
+        return I18nMessage.TODO_i18n(self.text)
 
 
 ParseJsonWarning.RepairedEncoding = ParseJsonWarningRepairedEncoding
@@ -141,9 +144,7 @@ def parse_json(
     else:
         arrow_table = ArrowTable(output_path, result.table, metadata)
     if result.warnings:
-        # TODO when we support i18n, this will be even simpler....
-        en_message = "\n".join([str(warning) for warning in result.warnings])
-        errors = [RenderError(I18nMessage.TODO_i18n(en_message))]
+        errors = [RenderError(warning.message()) for warning in result.warnings]
     else:
         errors = []
 
