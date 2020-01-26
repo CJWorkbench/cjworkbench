@@ -19,7 +19,7 @@ from cjwstate.modules.i18n.catalogs.extract.spec import find_spec_messages
 from cjwstate.modules.i18n.catalogs.extract.code import find_messages_in_module_code
 
 
-def extract_module_messages(directory: pathlib.Path):
+def extract_module_messages(directory: pathlib.Path, force_update: bool = False):
     module_files = ModuleFiles.load_from_dirpath(directory)  # raise ValueError
     source_catalog = _build_source_catalog(
         ModuleSpec.load_from_path(module_files.spec),
@@ -34,7 +34,7 @@ def extract_module_messages(directory: pathlib.Path):
     except FileNotFoundError:
         old_source_catalog = Catalog(default_locale)
 
-    if not catalogs_are_same(source_catalog, old_source_catalog):
+    if force_update or not catalogs_are_same(source_catalog, old_source_catalog):
         write_po_catalog(po_path, source_catalog)
 
         # Update template file for default locale
@@ -63,7 +63,7 @@ def extract_module_messages(directory: pathlib.Path):
                 locale_id, old_catalog, source_catalog, fuzzy
             )
 
-            if not catalogs_are_same(catalog, old_catalog):
+            if force_update or not catalogs_are_same(catalog, old_catalog):
                 write_po_catalog(po_path, catalog)
 
 
