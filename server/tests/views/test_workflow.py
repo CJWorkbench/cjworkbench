@@ -1,19 +1,17 @@
-import asyncio
-from collections import namedtuple
 import json
 from unittest.mock import patch
-from allauth.account.utils import user_display
-from django.contrib.auth.models import AnonymousUser, User
-from django.test import RequestFactory
+from django.contrib.auth.models import User
 from rest_framework import status
-from rest_framework.test import APIRequestFactory, force_authenticate
 from cjwkernel.tests.util import arrow_table
 from cjwkernel.types import RenderResult
 from cjwstate import rabbitmq
 from cjwstate.rendercache import cache_render_result
-from cjwstate.models import ModuleVersion, Workflow
+from cjwstate.models import Workflow
 from cjwstate.models.commands import InitWorkflowCommand
-from cjwstate.tests.utils import DbTestCase
+from cjwstate.tests.utils import (
+    DbTestCaseWithModuleRegistryAndMockKernel,
+    create_module_zipfile,
+)
 from server.views.workflows import Index, render_workflow
 
 
@@ -24,18 +22,14 @@ async def async_noop(*args, **kwargs):
     pass
 
 
-future_none = asyncio.Future()
-future_none.set_result(None)
-
-
 @patch("cjwstate.commands.websockets_notify", async_noop)
-class WorkflowViewTests(DbTestCase):
+class WorkflowViewTests(DbTestCaseWithModuleRegistryAndMockKernel):
     def setUp(self):
         super().setUp()
 
         self.queue_render_patcher = patch.object(rabbitmq, "queue_render")
         self.queue_render = self.queue_render_patcher.start()
-        self.queue_render.return_value = future_none
+        self.queue_render.side_effect = async_noop
 
         self.log_patcher = patch("server.utils.log_user_event_from_request")
         self.log_patch = self.log_patcher.start()
@@ -47,14 +41,7 @@ class WorkflowViewTests(DbTestCase):
         self.workflow1 = Workflow.create_and_init(name="Workflow 1", owner=self.user)
         self.delta = self.workflow1.last_delta
         self.tab1 = self.workflow1.tabs.first()
-        self.module_version1 = ModuleVersion.create_or_replace_from_spec(
-            {
-                "id_name": "module1",
-                "name": "Module 1",
-                "category": "Clean",
-                "parameters": [],
-            }
-        )
+        self.module_zipfile1 = create_module_zipfile("module1")
 
         # Add another user, with one public and one private workflow
         self.otheruser = User.objects.create(
@@ -94,9 +81,7 @@ class WorkflowViewTests(DbTestCase):
         self.assertEqual(workflows["owned"][0]["read_only"], False)  # user is owner
         self.assertEqual(workflows["owned"][0]["is_owner"], True)  # user is owner
         self.assertIsNotNone(workflows["owned"][0]["last_update"])
-        self.assertEqual(
-            workflows["owned"][0]["owner_name"], user_display(self.workflow2.owner)
-        )
+        self.assertEqual(workflows["owned"][0]["owner_name"], "user@example.com")
 
         self.assertEqual(workflows["owned"][1]["name"], "Workflow 1")
         self.assertEqual(workflows["owned"][1]["id"], self.workflow1.id)
@@ -253,7 +238,6 @@ class WorkflowViewTests(DbTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         self.assertContains(response, '"loggedInUser"')
-        self.assertContains(response, user_display(self.user))
         self.assertContains(response, self.user.email)
 
         self.assertContains(response, '"workflow"')
@@ -302,16 +286,6 @@ class WorkflowViewTests(DbTestCase):
             owner=self.otheruser,
             public=True,
             example=True,
-        )
-
-        # Also ensure the anonymous users can't access the Python module; first we need to load it
-        ModuleVersion.create_or_replace_from_spec(
-            {
-                "id_name": "pythoncode",
-                "name": "Python",
-                "category": "Clean",
-                "parameters": [],
-            }
         )
 
         # don't log in
