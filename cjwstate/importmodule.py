@@ -108,25 +108,27 @@ def validate_zipfile(module_zipfile: ModuleZipfile) -> None:
         module_zipfile.get_optional_html()  # raise UnicodeError, BadZipFile
         module_zipfile.get_optional_js_module()  # raise UnicodeError, BadZipFile
     except zipfile.BadZipFile as err:
-        raise WorkbenchModuleImportError("Bad zipfile: %s" % str(err))
+        raise WorkbenchModuleImportError("Bad zipfile: %s" % str(err)) from err
     except ValueError as err:
-        raise WorkbenchModuleImportError("Module .yaml is invalid: %s" % str(err))
+        raise WorkbenchModuleImportError(
+            "Module .yaml is invalid: %s" % str(err)
+        ) from err
     except KeyError as err:
         raise WorkbenchModuleImportError(
             "Zipfile is missing a required file: %s" % str(err)
-        )
+        ) from err
     except SyntaxError as err:
         raise WorkbenchModuleImportError(
             "Module Python code has a syntax error: %s" % str(err)
-        )
+        ) from err
     except UnicodeError as err:
         raise WorkbenchModuleImportError(
             "Module Python, HTML or JS code is invalid UTF-8: %s" % str(err)
-        )
+        ) from err
     except ModuleError as err:
         raise WorkbenchModuleImportError(
             "Module Python code failed to run: %s" % str(err)
-        )
+        ) from err
 
 
 def import_zipfile(path: Path) -> clientside.Module:

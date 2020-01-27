@@ -1,34 +1,27 @@
 import json
+import logging
 from unittest.mock import patch
 from cjwstate import minio, rabbitmq
 from cjwstate.models import ModuleVersion, Workflow
-from cjwstate.tests.utils import DbTestCase
+from cjwstate.tests.utils import (
+    DbTestCaseWithModuleRegistry,
+    DbTestCaseWithModuleRegistryAndMockKernel,
+    create_module_zipfile,
+)
 
 
 async def async_noop(*args, **kwargs):
     pass
 
 
-class MockLoadedModule:
-    def __init__(self, *args):
-        pass
-
-    def migrate_params(self, values):
-        return values
-
-
 def _init_module(id_name, param_id_name="file", param_type="file"):
-    ModuleVersion.create_or_replace_from_spec(
-        {
-            "id_name": id_name,
-            "name": id_name,
-            "category": "Clean",
-            "parameters": [{"id_name": param_id_name, "type": param_type}],
-        }
+    create_module_zipfile(
+        id_name,
+        spec_kwargs={"parameters": [{"id_name": param_id_name, "type": param_type}]},
     )
 
 
-class LoadsWfModuleForApiTest(DbTestCase):
+class LoadsWfModuleForApiTest(DbTestCaseWithModuleRegistry):
     # All these tests _test_ loads_wf_module_for_api_upload, but the mechanism
     # is UploadList.put() -- which we assume uses the decorator.
     def test_authorization_header_missing(self):
@@ -75,7 +68,7 @@ class LoadsWfModuleForApiTest(DbTestCase):
         _init_module("x")
         workflow = Workflow.create_and_init()
         workflow.tabs.first().wf_modules.create(
-            order=0, slug="step-123", module_id_name="x"
+            order=0, slug="step-123", module_id_name="x", params={"file": None}
         )
         response = self.client.post(
             f"/api/v1/workflows/{workflow.id}/steps/step-123/uploads",
@@ -89,7 +82,11 @@ class LoadsWfModuleForApiTest(DbTestCase):
     def test_step_has_no_module_version(self):
         workflow = Workflow.create_and_init()
         workflow.tabs.first().wf_modules.create(
-            order=0, slug="step-123", module_id_name="x", file_upload_api_token="abc123"
+            order=0,
+            slug="step-123",
+            module_id_name="x",
+            file_upload_api_token="abc123",
+            params={"file": None},
         )
         response = self.client.post(
             f"/api/v1/workflows/{workflow.id}/steps/step-123/uploads",
@@ -104,7 +101,11 @@ class LoadsWfModuleForApiTest(DbTestCase):
         _init_module("x", param_type="string")
         workflow = Workflow.create_and_init()
         workflow.tabs.first().wf_modules.create(
-            order=0, slug="step-123", module_id_name="x", file_upload_api_token="abc123"
+            order=0,
+            slug="step-123",
+            module_id_name="x",
+            file_upload_api_token="abc123",
+            params={"file": None},
         )
         response = self.client.post(
             f"/api/v1/workflows/{workflow.id}/steps/step-123/uploads",
@@ -119,7 +120,11 @@ class LoadsWfModuleForApiTest(DbTestCase):
         _init_module("x")
         workflow = Workflow.create_and_init()
         workflow.tabs.first().wf_modules.create(
-            order=0, slug="step-123", module_id_name="x", file_upload_api_token="abc123"
+            order=0,
+            slug="step-123",
+            module_id_name="x",
+            file_upload_api_token="abc123",
+            params={"file": None},
         )
         response = self.client.post(
             f"/api/v1/workflows/{workflow.id}/steps/step-123/uploads",
@@ -132,12 +137,16 @@ class LoadsWfModuleForApiTest(DbTestCase):
         )
 
 
-class UploadListTest(DbTestCase):
+class UploadListTest(DbTestCaseWithModuleRegistry):
     def test_create_in_progress_upload(self):
         workflow = Workflow.create_and_init()
         _init_module("x")
         wf_module = workflow.tabs.first().wf_modules.create(
-            order=0, slug="step-123", module_id_name="x", file_upload_api_token="abc123"
+            order=0,
+            slug="step-123",
+            module_id_name="x",
+            file_upload_api_token="abc123",
+            params={"file": None},
         )
         response = self.client.post(
             f"/api/v1/workflows/{workflow.id}/steps/step-123/uploads",
@@ -153,12 +162,16 @@ class UploadListTest(DbTestCase):
         self.assertRegexpMatches(data["finishUrl"], str(upload.id) + "$")
 
 
-class UploadTest(DbTestCase):
+class UploadTest(DbTestCaseWithModuleRegistryAndMockKernel):
     def test_abort_missing_upload_is_404(self):
         _init_module("x")
         workflow = Workflow.create_and_init()
         wf_module = workflow.tabs.first().wf_modules.create(
-            order=0, slug="step-123", module_id_name="x", file_upload_api_token="abc123"
+            order=0,
+            slug="step-123",
+            module_id_name="x",
+            file_upload_api_token="abc123",
+            params={"file": None},
         )
         upload = wf_module.in_progress_uploads.create()
         key = upload.get_upload_key()
@@ -176,7 +189,11 @@ class UploadTest(DbTestCase):
         _init_module("x")
         workflow = Workflow.create_and_init()
         wf_module = workflow.tabs.first().wf_modules.create(
-            order=0, slug="step-123", module_id_name="x", file_upload_api_token="abc123"
+            order=0,
+            slug="step-123",
+            module_id_name="x",
+            file_upload_api_token="abc123",
+            params={"file": None},
         )
         upload = wf_module.in_progress_uploads.create(is_completed=True)
         response = self.client.delete(
@@ -192,7 +209,11 @@ class UploadTest(DbTestCase):
         _init_module("x")
         workflow = Workflow.create_and_init()
         wf_module = workflow.tabs.first().wf_modules.create(
-            order=0, slug="step-123", module_id_name="x", file_upload_api_token="abc123"
+            order=0,
+            slug="step-123",
+            module_id_name="x",
+            file_upload_api_token="abc123",
+            params={"file": None},
         )
         upload = wf_module.in_progress_uploads.create()
         key = upload.get_upload_key()
@@ -211,7 +232,11 @@ class UploadTest(DbTestCase):
         _init_module("x")
         workflow = Workflow.create_and_init()
         wf_module = workflow.tabs.first().wf_modules.create(
-            order=0, slug="step-123", module_id_name="x", file_upload_api_token="abc123"
+            order=0,
+            slug="step-123",
+            module_id_name="x",
+            file_upload_api_token="abc123",
+            params={"file": None},
         )
         upload = wf_module.in_progress_uploads.create()
         response = self.client.post(
@@ -228,7 +253,11 @@ class UploadTest(DbTestCase):
         _init_module("x")
         workflow = Workflow.create_and_init()
         wf_module = workflow.tabs.first().wf_modules.create(
-            order=0, slug="step-123", module_id_name="x", file_upload_api_token="abc123"
+            order=0,
+            slug="step-123",
+            module_id_name="x",
+            file_upload_api_token="abc123",
+            params={"file": None},
         )
         upload = wf_module.in_progress_uploads.create()
         response = self.client.post(
@@ -245,7 +274,11 @@ class UploadTest(DbTestCase):
         _init_module("x")
         workflow = Workflow.create_and_init()
         wf_module = workflow.tabs.first().wf_modules.create(
-            order=0, slug="step-123", module_id_name="x", file_upload_api_token="abc123"
+            order=0,
+            slug="step-123",
+            module_id_name="x",
+            file_upload_api_token="abc123",
+            params={"file": None},
         )
         upload = wf_module.in_progress_uploads.create()
         key = upload.get_upload_key()
@@ -265,7 +298,11 @@ class UploadTest(DbTestCase):
         _init_module("x")
         workflow = Workflow.create_and_init()
         workflow.tabs.first().wf_modules.create(
-            order=0, slug="step-123", module_id_name="x", file_upload_api_token="abc123"
+            order=0,
+            slug="step-123",
+            module_id_name="x",
+            file_upload_api_token="abc123",
+            params={"file": None},
         )
         response = self.client.post(
             f"/api/v1/workflows/{workflow.id}/steps/step-123/uploads/dcc00084-812d-4769-bf77-94518f18ff3d",
@@ -282,7 +319,11 @@ class UploadTest(DbTestCase):
         _init_module("x")
         workflow = Workflow.create_and_init()
         wf_module = workflow.tabs.first().wf_modules.create(
-            order=0, slug="step-123", module_id_name="x", file_upload_api_token="abc123"
+            order=0,
+            slug="step-123",
+            module_id_name="x",
+            file_upload_api_token="abc123",
+            params={"file": None},
         )
         upload = wf_module.in_progress_uploads.create(is_completed=True)
         response = self.client.post(
@@ -300,7 +341,11 @@ class UploadTest(DbTestCase):
         _init_module("x")
         workflow = Workflow.create_and_init()
         wf_module = workflow.tabs.first().wf_modules.create(
-            order=0, slug="step-123", module_id_name="x", file_upload_api_token="abc123"
+            order=0,
+            slug="step-123",
+            module_id_name="x",
+            file_upload_api_token="abc123",
+            params={"file": None},
         )
         upload = wf_module.in_progress_uploads.create()
         response = self.client.post(
@@ -315,28 +360,31 @@ class UploadTest(DbTestCase):
 
     @patch.object(rabbitmq, "send_update_to_workflow_clients")
     @patch.object(rabbitmq, "queue_render")
-    @patch(
-        "cjwstate.modules.loaded_module.LoadedModule.for_module_version",
-        MockLoadedModule,
-    )
     def test_complete_happy_path(self, queue_render, send_update):
         send_update.return_value = async_noop()
         queue_render.return_value = async_noop()
         _init_module("x")
+        self.kernel.migrate_params.side_effect = lambda m, p: p
         workflow = Workflow.create_and_init()
         wf_module = workflow.tabs.first().wf_modules.create(
-            order=0, slug="step-123", module_id_name="x", file_upload_api_token="abc123"
+            order=0,
+            slug="step-123",
+            module_id_name="x",
+            file_upload_api_token="abc123",
+            params={"file": None},
         )
         upload = wf_module.in_progress_uploads.create()
         uuid = str(upload.id)
         key = upload.get_upload_key()
         minio.put_bytes(upload.Bucket, key, b"1234567")
-        response = self.client.post(
-            f"/api/v1/workflows/{workflow.id}/steps/step-123/uploads/{upload.id}",
-            {"filename": "test.csv"},
-            content_type="application/json",
-            HTTP_AUTHORIZATION="Bearer abc123",
-        )
+        with self.assertLogs(level=logging.INFO):
+            # Logs ChangeParametersCommand's migrate_params()
+            response = self.client.post(
+                f"/api/v1/workflows/{workflow.id}/steps/step-123/uploads/{upload.id}",
+                {"filename": "test.csv"},
+                content_type="application/json",
+                HTTP_AUTHORIZATION="Bearer abc123",
+            )
         self.assertEqual(response.status_code, 200)
         # Upload and its S3 data were deleted
         self.assertFalse(minio.exists(upload.Bucket, key))
@@ -359,6 +407,9 @@ class UploadTest(DbTestCase):
         self.assertEqual(data["uuid"], uuid)
         self.assertEqual(data["name"], "test.csv")
         self.assertEqual(data["size"], 7)
+        # ChangeParametersCommand ran
+        wf_module.refresh_from_db()
+        self.assertEqual(wf_module.params, {"file": uuid})
         # Send deltas
         send_update.assert_called()
         queue_render.assert_called()
