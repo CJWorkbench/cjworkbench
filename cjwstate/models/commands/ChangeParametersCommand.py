@@ -82,13 +82,25 @@ class ChangeParametersCommand(ChangesWfModuleOutputs, Delta):
         # Old values: store exactly what we had
         old_values = wf_module.params
 
+        module_spec = module_zipfile.get_spec()
+        param_schema = module_spec.get_param_schema()
+
         # New values: store _migrated_ old_values, with new_values applied on
         # top
         migrated_old_values = invoke_migrate_params(module_zipfile, old_values)
+        # Ensure migrate_params() didn't generate buggy _old_ values before we
+        # add _new_ values. This sanity check may protect users' params by
+        # raising an error early. It's also a way to catch bugs in unit tests.
+        # (DbTestCaseWithModuleRegistryAndMockKernel default migrate_params
+        # returns `{}` -- which is often invalid -- and then the `**new_values`
+        # below overwrites the invalid data. So without this validate(), a unit
+        # test with an invalid migrate_params() may pass, which is wrong.)
+        #
+        # If you're seeing this because your unit test failed, try this:
+        #     self.kernel.migrate_params.side_effect = lambda m, p: p
+        param_schema.validate(migrated_old_values)  # raises ValueError
         new_values = {**migrated_old_values, **new_values}
-
-        module_spec = module_zipfile.get_spec()
-        module_spec.get_param_schema().validate(new_values)  # raises ValueError
+        param_schema.validate(new_values)  # raises ValueError
 
         return {
             **kwargs,
