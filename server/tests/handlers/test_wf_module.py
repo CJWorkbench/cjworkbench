@@ -73,7 +73,7 @@ class WfModuleTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
         )
         self.kernel.migrate_params.side_effect = lambda m, p: p
         wf_module = workflow.tabs.first().wf_modules.create(
-            order=0, slug="step-1", module_id_name="x"
+            order=0, slug="step-1", module_id_name="x", params={"foo": ""}
         )
 
         with self.assertLogs(level=logging.INFO):
@@ -88,7 +88,7 @@ class WfModuleTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
 
         command = ChangeParametersCommand.objects.first()
         self.assertEquals(command.new_values, {"foo": "bar"})
-        self.assertEquals(command.old_values, {})
+        self.assertEquals(command.old_values, {"foo": ""})
         self.assertEquals(command.wf_module_id, wf_module.id)
         self.assertEquals(command.workflow_id, workflow.id)
         wf_module.refresh_from_db()
@@ -103,7 +103,7 @@ class WfModuleTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
         )
         self.kernel.migrate_params.side_effect = lambda m, p: p
         wf_module = workflow.tabs.first().wf_modules.create(
-            order=0, slug="step-1", module_id_name="x"
+            order=0, slug="step-1", module_id_name="x", params={"foo": ""}
         )
 
         with self.assertLogs(level=logging.INFO):
@@ -117,7 +117,7 @@ class WfModuleTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
         self.assertResponse(
             response,
             error=(
-                "ValueError: Value {'foo1': 'bar'} has wrong names: "
+                "ValueError: Value {'foo': '', 'foo1': 'bar'} has wrong names: "
                 "expected names {'foo'}"
             ),
         )
@@ -132,7 +132,7 @@ class WfModuleTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
         )
         self.kernel.migrate_params.side_effect = lambda m, p: p
         wf_module = workflow.tabs.first().wf_modules.create(
-            order=0, slug="step-1", module_id_name="x"
+            order=0, slug="step-1", module_id_name="x", params={"foo": ""}
         )
 
         with self.assertLogs(level=logging.INFO):
