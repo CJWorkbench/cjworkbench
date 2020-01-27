@@ -13,6 +13,7 @@ from django.views.decorators.csrf import csrf_exempt
 from cjwstate import commands
 from cjwstate.models import InProgressUpload, Workflow, WfModule
 from cjwstate.models.commands import ChangeParametersCommand
+from cjwstate.models.module_registry import MODULE_REGISTRY
 from cjwstate.models.workflow import WorkflowCooperativeLock
 
 
@@ -68,15 +69,16 @@ def loads_wf_module_for_api_upload(f):
                 except WfModule.DoesNotExist:
                     return ErrorResponse(404, "step-not-found")
 
-                module_version = wf_module.module_version
-                if module_version is None:
+                try:
+                    module_zipfile = MODULE_REGISTRY.latest(wf_module.module_id_name)
+                except KeyError:
                     return ErrorResponse(400, "step-module-deleted")
 
                 try:
                     file_param_id_name = next(
                         iter(
                             pf.id_name
-                            for pf in module_version.param_fields
+                            for pf in module_zipfile.get_spec().param_fields
                             if pf.type == "file"
                         )
                     )
