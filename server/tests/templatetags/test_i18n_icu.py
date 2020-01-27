@@ -18,8 +18,8 @@ class TransTemplateTagTests(SimpleTestCase):
         MessageLocalizer.for_application_messages.cache_clear()
 
     def tearDown(self):
-        super().tearDown()
         MessageLocalizer.for_application_messages.cache_clear()
+        super().tearDown()
 
     # Tests that `noop=True` returns `None`
     def test_trans_noop(self):

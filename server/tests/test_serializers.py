@@ -1413,8 +1413,8 @@ class JsonizeI18nMessageTest(unittest.TestCase):
         MessageLocalizer.for_application_messages.cache_clear()
 
     def tearDown(self):
-        super().tearDown()
         MessageLocalizer.for_application_messages.cache_clear()
+        super().tearDown()
 
     def test_TODO_i18n(self):
         self.assertEqual(

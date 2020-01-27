@@ -386,8 +386,8 @@ class LocalizeTest(SimpleTestCase):
         MessageLocalizer.for_application_messages.cache_clear()
 
     def tearDown(self):
-        super().tearDown()
         MessageLocalizer.for_application_messages.cache_clear()
+        super().tearDown()
 
     def test_message_exists_in_given_locale(self):
         def mock_app_catalogs(locale):
@@ -467,8 +467,8 @@ class LocalizeHtmlTest(SimpleTestCase):
         MessageLocalizer.for_application_messages.cache_clear()
 
     def tearDown(self):
-        super().tearDown()
         MessageLocalizer.for_application_messages.cache_clear()
+        super().tearDown()
 
     def test_message_exists_in_given_locale(self):
         def mock_app_catalogs(locale):
