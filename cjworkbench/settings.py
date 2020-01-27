@@ -110,6 +110,7 @@ CHANNEL_LAYERS = {
 
 # For django-allauth
 ACCOUNT_ADAPTER = "cjworkbench.allauth_account_adapter.AccountAdapter"
+SOCIALACCOUNT_ADAPTER = "cjworkbench.allauth_account_adapter.SocialAccountAdapter"
 
 # EMAIL_BACKEND
 #
