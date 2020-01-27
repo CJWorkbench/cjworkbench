@@ -56,6 +56,8 @@ DEFAULT_SERIALIZED_MODULE = {
     "param_fields": [],
 }
 
+DEFAULT_SERIALIZED_MODULE_PARAM = {"idName": None, "type": None, "visibleIf": None}
+
 
 class JsonizeClientsideModuleTest(unittest.TestCase):
     def test_with_js(self):
@@ -278,21 +280,15 @@ class JsonizeClientsideModuleTest(unittest.TestCase):
                 },
             ),
         )
-        expected = {
-            **DEFAULT_SERIALIZED_MODULE,
-            "id_name": "testme",
-            "name": "Test Module",
-            "category": "Clean",
-            "param_fields": [
-                {
-                    "idName": "hello",
-                    "type": "statictext",
-                    "name": "Hello translated",
-                    "visibleIf": None,
-                }
-            ],
-        }
-        self.assertDictEqual(result, expected)
+        expected = [
+            {
+                **DEFAULT_SERIALIZED_MODULE_PARAM,
+                "idName": "hello",
+                "type": "statictext",
+                "name": "Hello translated",
+            }
+        ]
+        self.assertEqual(result["param_fields"], expected)
 
     def test_parameter_type_string(self):
         module = Module(
@@ -328,24 +324,18 @@ class JsonizeClientsideModuleTest(unittest.TestCase):
                 },
             ),
         )
-        expected = {
-            **DEFAULT_SERIALIZED_MODULE,
-            "id_name": "testme",
-            "name": "Test Module",
-            "category": "Clean",
-            "param_fields": [
-                {
-                    "idName": "hello",
-                    "type": "string",
-                    "name": "Hello translated",
-                    "placeholder": "Fill me",
-                    "multiline": False,
-                    "default": "Default",
-                    "visibleIf": None,
-                }
-            ],
-        }
-        self.assertDictEqual(result, expected)
+        expected = [
+            {
+                **DEFAULT_SERIALIZED_MODULE_PARAM,
+                "idName": "hello",
+                "type": "string",
+                "name": "Hello translated",
+                "placeholder": "Fill me",
+                "multiline": False,
+                "default": "Default",
+            }
+        ]
+        self.assertEqual(result["param_fields"], expected)
 
     def test_parameter_type_integer(self):
         module = Module(
@@ -379,23 +369,17 @@ class JsonizeClientsideModuleTest(unittest.TestCase):
                 },
             ),
         )
-        expected = {
-            **DEFAULT_SERIALIZED_MODULE,
-            "id_name": "testme",
-            "name": "Test Module",
-            "category": "Clean",
-            "param_fields": [
-                {
-                    "idName": "hello",
-                    "type": "integer",
-                    "name": "Hello translated",
-                    "placeholder": "Fill me",
-                    "default": 3,
-                    "visibleIf": None,
-                }
-            ],
-        }
-        self.assertDictEqual(result, expected)
+        expected = [
+            {
+                **DEFAULT_SERIALIZED_MODULE_PARAM,
+                "idName": "hello",
+                "type": "integer",
+                "name": "Hello translated",
+                "placeholder": "Fill me",
+                "default": 3,
+            }
+        ]
+        self.assertEqual(result["param_fields"], expected)
 
     def test_parameter_type_float(self):
         module = Module(
@@ -429,23 +413,17 @@ class JsonizeClientsideModuleTest(unittest.TestCase):
                 },
             ),
         )
-        expected = {
-            **DEFAULT_SERIALIZED_MODULE,
-            "id_name": "testme",
-            "name": "Test Module",
-            "category": "Clean",
-            "param_fields": [
-                {
-                    "idName": "hello",
-                    "type": "float",
-                    "name": "Hello translated",
-                    "placeholder": "Fill me",
-                    "default": 3.4,
-                    "visibleIf": None,
-                }
-            ],
-        }
-        self.assertDictEqual(result, expected)
+        expected = [
+            {
+                **DEFAULT_SERIALIZED_MODULE_PARAM,
+                "idName": "hello",
+                "type": "float",
+                "name": "Hello translated",
+                "placeholder": "Fill me",
+                "default": 3.4,
+            }
+        ]
+        self.assertEqual(result["param_fields"], expected)
 
     def test_parameter_type_checkbox(self):
         module = Module(
@@ -477,22 +455,16 @@ class JsonizeClientsideModuleTest(unittest.TestCase):
                 },
             ),
         )
-        expected = {
-            **DEFAULT_SERIALIZED_MODULE,
-            "id_name": "testme",
-            "name": "Test Module",
-            "category": "Clean",
-            "param_fields": [
-                {
-                    "idName": "hello",
-                    "type": "checkbox",
-                    "name": "Hello translated",
-                    "default": True,
-                    "visibleIf": None,
-                }
-            ],
-        }
-        self.assertDictEqual(result, expected)
+        expected = [
+            {
+                **DEFAULT_SERIALIZED_MODULE_PARAM,
+                "idName": "hello",
+                "type": "checkbox",
+                "name": "Hello translated",
+                "default": True,
+            }
+        ]
+        self.assertEqual(result["param_fields"], expected)
 
     def test_parameter_type_menu(self):
         module = Module(
@@ -540,28 +512,22 @@ class JsonizeClientsideModuleTest(unittest.TestCase):
                 },
             ),
         )
-        expected = {
-            **DEFAULT_SERIALIZED_MODULE,
-            "id_name": "testme",
-            "name": "Test Module",
-            "category": "Clean",
-            "param_fields": [
-                {
-                    "idName": "hello",
-                    "type": "menu",
-                    "name": "Hello translated",
-                    "placeholder": "Fill me",
-                    "options": [
-                        {"label": "First translated", "value": "first"},
-                        "separator",
-                        {"label": "Second default", "value": "second"},
-                    ],
-                    "default": "first",
-                    "visibleIf": None,
-                }
-            ],
-        }
-        self.assertDictEqual(result, expected)
+        expected = [
+            {
+                **DEFAULT_SERIALIZED_MODULE_PARAM,
+                "idName": "hello",
+                "type": "menu",
+                "name": "Hello translated",
+                "placeholder": "Fill me",
+                "options": [
+                    {"label": "First translated", "value": "first"},
+                    "separator",
+                    {"label": "Second default", "value": "second"},
+                ],
+                "default": "first",
+            }
+        ]
+        self.assertEqual(result["param_fields"], expected)
 
     def test_parameter_type_radio(self):
         module = Module(
@@ -606,26 +572,20 @@ class JsonizeClientsideModuleTest(unittest.TestCase):
                 },
             ),
         )
-        expected = {
-            **DEFAULT_SERIALIZED_MODULE,
-            "id_name": "testme",
-            "name": "Test Module",
-            "category": "Clean",
-            "param_fields": [
-                {
-                    "idName": "hello",
-                    "type": "radio",
-                    "name": "Hello translated",
-                    "options": [
-                        {"label": "First translated", "value": "first"},
-                        {"label": "Second default", "value": True},
-                    ],
-                    "default": "first",
-                    "visibleIf": None,
-                }
-            ],
-        }
-        self.assertDictEqual(result, expected)
+        expected = [
+            {
+                **DEFAULT_SERIALIZED_MODULE_PARAM,
+                "idName": "hello",
+                "type": "radio",
+                "name": "Hello translated",
+                "options": [
+                    {"label": "First translated", "value": "first"},
+                    {"label": "Second default", "value": True},
+                ],
+                "default": "first",
+            }
+        ]
+        self.assertEqual(result["param_fields"], expected)
 
     def test_parameter_type_numberformat(self):
         module = Module(
@@ -660,23 +620,17 @@ class JsonizeClientsideModuleTest(unittest.TestCase):
                 },
             ),
         )
-        expected = {
-            **DEFAULT_SERIALIZED_MODULE,
-            "id_name": "testme",
-            "name": "Test Module",
-            "category": "Clean",
-            "param_fields": [
-                {
-                    "idName": "hello",
-                    "type": "numberformat",
-                    "name": "Hello translated",
-                    "placeholder": "Fill me default",
-                    "visibleIf": None,
-                    "default": "{:,}",
-                }
-            ],
-        }
-        self.assertDictEqual(result, expected)
+        expected = [
+            {
+                **DEFAULT_SERIALIZED_MODULE_PARAM,
+                "idName": "hello",
+                "type": "numberformat",
+                "name": "Hello translated",
+                "placeholder": "Fill me default",
+                "default": "{:,}",
+            }
+        ]
+        self.assertEqual(result["param_fields"], expected)
 
     def test_parameter_type_column(self):
         module = Module(
@@ -714,31 +668,25 @@ class JsonizeClientsideModuleTest(unittest.TestCase):
                 },
             ),
         )
-        expected = {
-            **DEFAULT_SERIALIZED_MODULE,
-            "id_name": "testme",
-            "name": "Test Module",
-            "category": "Clean",
-            "param_fields": [
-                {
-                    "idName": "hello",
-                    "type": "column",
-                    "name": "Hello translated",
-                    "placeholder": "Fill me default",
-                    "columnTypes": ["text"],
-                    "tabParameter": "tab",
-                    "visibleIf": None,
-                },
-                {
-                    "idName": "tab",
-                    "type": "tab",
-                    "name": "Hello there 2!",
-                    "placeholder": "",
-                    "visibleIf": None,
-                },
-            ],
-        }
-        self.assertDictEqual(result, expected)
+        expected = [
+            {
+                **DEFAULT_SERIALIZED_MODULE_PARAM,
+                "idName": "hello",
+                "type": "column",
+                "name": "Hello translated",
+                "placeholder": "Fill me default",
+                "columnTypes": ["text"],
+                "tabParameter": "tab",
+            },
+            {
+                **DEFAULT_SERIALIZED_MODULE_PARAM,
+                "idName": "tab",
+                "type": "tab",
+                "name": "Hello there 2!",
+                "placeholder": "",
+            },
+        ]
+        self.assertEqual(result["param_fields"], expected)
 
     def test_parameter_type_multicolumn(self):
         module = Module(
@@ -776,31 +724,25 @@ class JsonizeClientsideModuleTest(unittest.TestCase):
                 },
             ),
         )
-        expected = {
-            **DEFAULT_SERIALIZED_MODULE,
-            "id_name": "testme",
-            "name": "Test Module",
-            "category": "Clean",
-            "param_fields": [
-                {
-                    "idName": "hello",
-                    "type": "multicolumn",
-                    "name": "Hello translated",
-                    "placeholder": "Fill me default",
-                    "columnTypes": ["text"],
-                    "tabParameter": "tab",
-                    "visibleIf": None,
-                },
-                {
-                    "idName": "tab",
-                    "type": "tab",
-                    "name": "Hello there 2!",
-                    "placeholder": "",
-                    "visibleIf": None,
-                },
-            ],
-        }
-        self.assertDictEqual(result, expected)
+        expected = [
+            {
+                **DEFAULT_SERIALIZED_MODULE_PARAM,
+                "idName": "hello",
+                "type": "multicolumn",
+                "name": "Hello translated",
+                "placeholder": "Fill me default",
+                "columnTypes": ["text"],
+                "tabParameter": "tab",
+            },
+            {
+                **DEFAULT_SERIALIZED_MODULE_PARAM,
+                "idName": "tab",
+                "type": "tab",
+                "name": "Hello there 2!",
+                "placeholder": "",
+            },
+        ]
+        self.assertEqual(result["param_fields"], expected)
 
     def test_parameter_type_tab(self):
         module = Module(
@@ -835,22 +777,16 @@ class JsonizeClientsideModuleTest(unittest.TestCase):
                 },
             ),
         )
-        expected = {
-            **DEFAULT_SERIALIZED_MODULE,
-            "id_name": "testme",
-            "name": "Test Module",
-            "category": "Clean",
-            "param_fields": [
-                {
-                    "idName": "hello",
-                    "type": "tab",
-                    "name": "Hello translated",
-                    "placeholder": "Fill me default",
-                    "visibleIf": None,
-                }
-            ],
-        }
-        self.assertDictEqual(result, expected)
+        expected = [
+            {
+                **DEFAULT_SERIALIZED_MODULE_PARAM,
+                "idName": "hello",
+                "type": "tab",
+                "name": "Hello translated",
+                "placeholder": "Fill me default",
+            }
+        ]
+        self.assertEqual(result["param_fields"], expected)
 
     def test_parameter_type_multitab(self):
         module = Module(
@@ -885,22 +821,16 @@ class JsonizeClientsideModuleTest(unittest.TestCase):
                 },
             ),
         )
-        expected = {
-            **DEFAULT_SERIALIZED_MODULE,
-            "id_name": "testme",
-            "name": "Test Module",
-            "category": "Clean",
-            "param_fields": [
-                {
-                    "idName": "hello",
-                    "type": "multitab",
-                    "name": "Hello translated",
-                    "placeholder": "Fill me default",
-                    "visibleIf": None,
-                }
-            ],
-        }
-        self.assertDictEqual(result, expected)
+        expected = [
+            {
+                **DEFAULT_SERIALIZED_MODULE_PARAM,
+                "idName": "hello",
+                "type": "multitab",
+                "name": "Hello translated",
+                "placeholder": "Fill me default",
+            }
+        ]
+        self.assertEqual(result["param_fields"], expected)
 
     def test_parameter_type_multichartseries(self):
         module = Module(
@@ -931,22 +861,16 @@ class JsonizeClientsideModuleTest(unittest.TestCase):
                 },
             ),
         )
-        expected = {
-            **DEFAULT_SERIALIZED_MODULE,
-            "id_name": "testme",
-            "name": "Test Module",
-            "category": "Clean",
-            "param_fields": [
-                {
-                    "idName": "hello",
-                    "type": "multichartseries",
-                    "placeholder": "",
-                    "name": "Hello translated",
-                    "visibleIf": None,
-                }
-            ],
-        }
-        self.assertDictEqual(result, expected)
+        expected = [
+            {
+                **DEFAULT_SERIALIZED_MODULE_PARAM,
+                "idName": "hello",
+                "type": "multichartseries",
+                "placeholder": "",
+                "name": "Hello translated",
+            }
+        ]
+        self.assertEqual(result["param_fields"], expected)
 
     def test_parameter_type_secret_string(self):
         module = Module(
@@ -1008,29 +932,23 @@ class JsonizeClientsideModuleTest(unittest.TestCase):
                 },
             ),
         )
-        expected = {
-            **DEFAULT_SERIALIZED_MODULE,
-            "id_name": "testme",
-            "name": "Test Module",
-            "category": "Clean",
-            "param_fields": [
-                {
-                    "idName": "hello",
-                    "type": "secret",
-                    "secretLogic": {
-                        "provider": "string",
-                        "label": "Label translated",
-                        "pattern": "[A-Z]{10,12}",
-                        "placeholder": "AAAAAAAAAAAA",
-                        "help": "Help translated",
-                        "helpUrlPrompt": "Help URL prompt translated",
-                        "helpUrl": "Help URL default",
-                    },
-                    "visibleIf": None,
-                }
-            ],
-        }
-        self.assertDictEqual(result, expected)
+        expected = [
+            {
+                **DEFAULT_SERIALIZED_MODULE_PARAM,
+                "idName": "hello",
+                "type": "secret",
+                "secretLogic": {
+                    "provider": "string",
+                    "label": "Label translated",
+                    "pattern": "[A-Z]{10,12}",
+                    "placeholder": "AAAAAAAAAAAA",
+                    "help": "Help translated",
+                    "helpUrlPrompt": "Help URL prompt translated",
+                    "helpUrl": "Help URL default",
+                },
+            }
+        ]
+        self.assertEqual(result["param_fields"], expected)
 
     def test_parameter_type_secret_oauth2(self):
         module = Module(
@@ -1059,21 +977,15 @@ class JsonizeClientsideModuleTest(unittest.TestCase):
                 },
             ),
         )
-        expected = {
-            **DEFAULT_SERIALIZED_MODULE,
-            "id_name": "testme",
-            "name": "Test Module",
-            "category": "Clean",
-            "param_fields": [
-                {
-                    "idName": "hello",
-                    "type": "secret",
-                    "secretLogic": {"provider": "oauth2", "service": "google"},
-                    "visibleIf": None,
-                }
-            ],
-        }
-        self.assertDictEqual(result, expected)
+        expected = [
+            {
+                **DEFAULT_SERIALIZED_MODULE_PARAM,
+                "idName": "hello",
+                "type": "secret",
+                "secretLogic": {"provider": "oauth2", "service": "google"},
+            }
+        ]
+        self.assertEqual(result["param_fields"], expected)
 
     def test_parameter_type_secret_oauth1a(self):
         module = Module(
@@ -1102,21 +1014,15 @@ class JsonizeClientsideModuleTest(unittest.TestCase):
                 },
             ),
         )
-        expected = {
-            **DEFAULT_SERIALIZED_MODULE,
-            "id_name": "testme",
-            "name": "Test Module",
-            "category": "Clean",
-            "param_fields": [
-                {
-                    "idName": "hello",
-                    "type": "secret",
-                    "secretLogic": {"provider": "oauth1a", "service": "twitter"},
-                    "visibleIf": None,
-                }
-            ],
-        }
-        self.assertDictEqual(result, expected)
+        expected = [
+            {
+                **DEFAULT_SERIALIZED_MODULE_PARAM,
+                "idName": "hello",
+                "type": "secret",
+                "secretLogic": {"provider": "oauth1a", "service": "twitter"},
+            }
+        ]
+        self.assertEqual(result["param_fields"], expected)
 
     def test_parameter_type_gdrivefile(self):
         module = Module(
@@ -1150,28 +1056,22 @@ class JsonizeClientsideModuleTest(unittest.TestCase):
                 },
             ),
         )
-        expected = {
-            **DEFAULT_SERIALIZED_MODULE,
-            "id_name": "testme",
-            "name": "Test Module",
-            "category": "Clean",
-            "param_fields": [
-                {
-                    "idName": "google",
-                    "type": "secret",
-                    "secretLogic": {"provider": "oauth2", "service": "google"},
-                    "visibleIf": None,
-                },
-                {
-                    "idName": "hello2",
-                    "type": "gdrivefile",
-                    "name": "",
-                    "secretParameter": "google",
-                    "visibleIf": None,
-                },
-            ],
-        }
-        self.assertDictEqual(result, expected)
+        expected = [
+            {
+                **DEFAULT_SERIALIZED_MODULE_PARAM,
+                "idName": "google",
+                "type": "secret",
+                "secretLogic": {"provider": "oauth2", "service": "google"},
+            },
+            {
+                **DEFAULT_SERIALIZED_MODULE_PARAM,
+                "idName": "hello2",
+                "type": "gdrivefile",
+                "name": "",
+                "secretParameter": "google",
+            },
+        ]
+        self.assertEqual(result["param_fields"], expected)
 
     def test_parameter_type_file(self):
         module = Module(
@@ -1194,14 +1094,10 @@ class JsonizeClientsideModuleTest(unittest.TestCase):
                 },
             ),
         )
-        expected = {
-            **DEFAULT_SERIALIZED_MODULE,
-            "id_name": "testme",
-            "name": "Test Module",
-            "category": "Clean",
-            "param_fields": [{"idName": "hello", "type": "file", "visibleIf": None}],
-        }
-        self.assertDictEqual(result, expected)
+        expected = [
+            {**DEFAULT_SERIALIZED_MODULE_PARAM, "idName": "hello", "type": "file"}
+        ]
+        self.assertEqual(result["param_fields"], expected)
 
     def test_parameter_type_custom(self):
         module = Module(
@@ -1228,22 +1124,16 @@ class JsonizeClientsideModuleTest(unittest.TestCase):
                 },
             ),
         )
-        expected = {
-            **DEFAULT_SERIALIZED_MODULE,
-            "id_name": "testme",
-            "name": "Test Module",
-            "category": "Clean",
-            "param_fields": [
-                {
-                    "idName": "hello",
-                    "type": "custom",
-                    "default": "",
-                    "name": "Hello translated",
-                    "visibleIf": None,
-                }
-            ],
-        }
-        self.assertDictEqual(result, expected)
+        expected = [
+            {
+                **DEFAULT_SERIALIZED_MODULE_PARAM,
+                "idName": "hello",
+                "type": "custom",
+                "default": "",
+                "name": "Hello translated",
+            }
+        ]
+        self.assertEqual(result["param_fields"], expected)
 
     def test_parameter_type_list(self):
         module = Module(
@@ -1285,30 +1175,24 @@ class JsonizeClientsideModuleTest(unittest.TestCase):
                 },
             ),
         )
-        expected = {
-            **DEFAULT_SERIALIZED_MODULE,
-            "id_name": "testme",
-            "name": "Test Module",
-            "category": "Clean",
-            "param_fields": [
-                {
-                    "idName": "hello",
-                    "type": "list",
-                    "name": "Hello translated",
-                    "childDefault": {},
-                    "childParameters": [
-                        {
-                            "idName": "hello2",
-                            "type": "statictext",
-                            "name": "Hello2 default",
-                            "visibleIf": None,
-                        }
-                    ],
-                    "visibleIf": None,
-                }
-            ],
-        }
-        self.assertDictEqual(result, expected)
+        expected = [
+            {
+                **DEFAULT_SERIALIZED_MODULE_PARAM,
+                "idName": "hello",
+                "type": "list",
+                "name": "Hello translated",
+                "childDefault": {},
+                "childParameters": [
+                    {
+                        **DEFAULT_SERIALIZED_MODULE_PARAM,
+                        "idName": "hello2",
+                        "type": "statictext",
+                        "name": "Hello2 default",
+                    }
+                ],
+            }
+        ]
+        self.assertEqual(result["param_fields"], expected)
 
 
 class JsonizeI18nMessageTest(unittest.TestCase):
