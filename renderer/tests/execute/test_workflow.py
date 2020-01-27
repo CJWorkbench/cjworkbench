@@ -15,7 +15,7 @@ from cjwkernel.tests.util import (
     assert_render_result_equals,
 )
 from cjwstate import clientside, rabbitmq
-from cjwstate.models import ModuleVersion, Workflow
+from cjwstate.models import Workflow
 from cjwstate.models.commands import InitWorkflowCommand
 from cjwstate.rendercache import cache_render_result, open_cached_render_result
 from cjwstate.tests.utils import DbTestCaseWithModuleRegistry, create_module_zipfile
