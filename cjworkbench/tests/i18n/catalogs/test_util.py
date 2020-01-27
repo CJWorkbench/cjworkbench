@@ -10,6 +10,8 @@ from cjworkbench.i18n.catalogs.util import (
     fill_catalog,
     mark_fuzzy,
     remove_strings,
+    copy_catalog,
+    move_strings_to_comments,
 )
 from cjworkbench.tests.i18n.catalogs.util import (
     assert_catalogs_deeply_equal,
@@ -172,6 +174,23 @@ class UtilTest(unittest.TestCase):
         new_message = copy_message(old_message, string="b")
         expected_message = Message("id", string="b", locations=[("file1", "2")])
         assert_messages_deeply_equal(new_message, expected_message)
+
+    def test_copy_catalog_copies(self):
+        old_catalog = Catalog()
+        old_catalog.add("id1", string="Text1")
+        new_catalog = copy_catalog(old_catalog)
+        assert_catalogs_deeply_equal(old_catalog, new_catalog)
+
+    def test_copy_catalog_replaces_messages(self):
+        old_catalog = Catalog()
+        old_catalog.add("id", string="Text1")
+        # Copy catalog
+        new_catalog = copy_catalog(old_catalog)
+        # And then change strings in the old catalog
+        for message in old_catalog:
+            message.string = "Text2"
+        # Copy should be unaffected
+        self.assertEqual(new_catalog.get("id").string, "Text1")
 
     def test_add_or_update_message_add(self):
         target_catalog = Catalog()
@@ -414,3 +433,13 @@ class UtilTest(unittest.TestCase):
         expected_catalog.add("id1", string="")
 
         assert_catalogs_deeply_equal(target_catalog, expected_catalog)
+
+    def test_move_strings_to_comments(self):
+        catalog = Catalog()
+        catalog.add("id", string="Text1")
+        move_strings_to_comments(catalog, comment_tag="default-message")
+
+        expected = Catalog()
+        expected.add("id", string="", auto_comments=["default-message: Text1"])
+
+        assert_catalogs_deeply_equal(catalog, expected)

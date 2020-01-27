@@ -8,6 +8,8 @@ from cjworkbench.i18n.catalogs.util import (
     mark_fuzzy,
     MessageUID,
     catalogs_are_same,
+    move_strings_to_comments,
+    copy_catalog,
 )
 from babel.messages.catalog import Catalog
 from cjwstate.modules.module_loader import ModuleFiles, ModuleSpec
@@ -32,8 +34,26 @@ def extract_module_messages(directory: pathlib.Path):
     except FileNotFoundError:
         old_source_catalog = Catalog(default_locale)
 
+    # Update file for default locale
     if not catalogs_are_same(source_catalog, old_source_catalog):
         write_po_catalog(po_path, source_catalog)
+
+    # Update template file
+    template_catalog = copy_catalog(source_catalog)
+    move_strings_to_comments(template_catalog, comment_tag="default-message")
+    pot_path = _pot_path(directory)
+    try:
+        old_template_catalog = read_po_catalog(pot_path)
+    except FileNotFoundError:
+        old_template_catalog = Catalog(default_locale)
+    if not catalogs_are_same(template_catalog, old_template_catalog):
+        write_po_catalog(
+            pot_path,
+            template_catalog,
+            ignore_obsolete=True,
+            width=10000000,  # we set a huge value for width, so that special comments do not wrap
+            omit_header=True,
+        )
 
     fuzzy = find_fuzzy_messages(
         old_catalog=old_source_catalog, new_catalog=source_catalog
@@ -56,6 +76,10 @@ def extract_module_messages(directory: pathlib.Path):
 
 def _po_path(basepath: pathlib.Path, locale_id: str) -> pathlib.Path:
     return basepath / "locale" / locale_id / "messages.po"
+
+
+def _pot_path(basepath: pathlib.Path) -> pathlib.Path:
+    return basepath / "locale" / default_locale / "messages.pot"
 
 
 def _build_source_catalog(
