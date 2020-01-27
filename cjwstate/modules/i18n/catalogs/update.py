@@ -19,7 +19,7 @@ from cjwstate.modules.i18n.catalogs.extract.spec import find_spec_messages
 from cjwstate.modules.i18n.catalogs.extract.code import find_messages_in_module_code
 
 
-def extract_module_messages(directory: pathlib.Path, force_update: bool = False):
+def extract_module_messages(directory: pathlib.Path):
     module_files = ModuleFiles.load_from_dirpath(directory)  # raise ValueError
     source_catalog = _build_source_catalog(
         ModuleSpec.load_from_path(module_files.spec),
@@ -34,14 +34,21 @@ def extract_module_messages(directory: pathlib.Path, force_update: bool = False)
     except FileNotFoundError:
         old_source_catalog = Catalog(default_locale)
 
-    if force_update or not catalogs_are_same(source_catalog, old_source_catalog):
+    # Update file for default locale
+    if not catalogs_are_same(source_catalog, old_source_catalog):
         write_po_catalog(po_path, source_catalog)
 
-        # Update template file for default locale
-        template_catalog = copy_catalog(source_catalog)
-        move_strings_to_comments(template_catalog, comment_tag="default-message")
+    # Update template file
+    template_catalog = copy_catalog(source_catalog)
+    move_strings_to_comments(template_catalog, comment_tag="default-message")
+    pot_path = _pot_path(directory)
+    try:
+        old_template_catalog = read_po_catalog(pot_path)
+    except FileNotFoundError:
+        old_template_catalog = Catalog(default_locale)
+    if not catalogs_are_same(template_catalog, old_template_catalog):
         write_po_catalog(
-            _pot_path(directory),
+            pot_path,
             template_catalog,
             ignore_obsolete=True,
             width=10000000,  # we set a huge value for width, so that special comments do not wrap
@@ -63,7 +70,7 @@ def extract_module_messages(directory: pathlib.Path, force_update: bool = False)
                 locale_id, old_catalog, source_catalog, fuzzy
             )
 
-            if force_update or not catalogs_are_same(catalog, old_catalog):
+            if not catalogs_are_same(catalog, old_catalog):
                 write_po_catalog(po_path, catalog)
 
 
