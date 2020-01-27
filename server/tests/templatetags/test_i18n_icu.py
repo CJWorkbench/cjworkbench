@@ -17,6 +17,10 @@ class TransTemplateTagTests(SimpleTestCase):
         super().setUp()
         MessageLocalizer.for_application_messages.cache_clear()
 
+    def tearDown(self):
+        super().tearDown()
+        MessageLocalizer.for_application_messages.cache_clear()
+
     # Tests that `noop=True` returns `None`
     def test_trans_noop(self):
         def mock_app_catalogs(locale):
