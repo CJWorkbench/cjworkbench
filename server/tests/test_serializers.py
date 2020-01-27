@@ -255,6 +255,102 @@ class JsonizeClientsideModuleTest(unittest.TestCase):
         }
         self.assertDictEqual(result, expected)
 
+    def test_everything_with_parameters(self):
+        module = Module(
+            ModuleSpec(
+                id_name="testme",
+                name="Test Module",
+                category="Clean",
+                parameters=[
+                    {
+                        "id_name": "hello",
+                        "type": "list",
+                        "name": "Hello there!",
+                        "child_parameters": [
+                            {
+                                "id_name": "hello2",
+                                "type": "statictext",
+                                "name": "Hello there 2!",
+                            }
+                        ],
+                    }
+                ],
+                description="I do that",
+                deprecated={
+                    "message": "Please use something else",
+                    "end_date": "2030-12-31",
+                },
+                icon="url",
+                link="http://example.com/module",
+                loads_data=False,
+                uses_data=True,
+                html_output=False,
+                has_zen_mode=True,
+                row_action_menu_entry_title="Solve your problem",
+                help_url="testme",
+                parameters_version=3,
+            ),
+            "",
+        )
+        catalog = Catalog()
+        catalog.add("_spec.name", string="Name translated")
+        catalog.add("_spec.description", string="Description translated")
+        catalog.add("_spec.parameters.hello.name", string="Hello translated")
+        default_catalog = Catalog()
+        default_catalog.add("_spec.name", string="Name default")
+        default_catalog.add("_spec.description", string="Description default")
+        default_catalog.add("_spec.deprecated.message", string="Deprecated default")
+        default_catalog.add(
+            "_spec.row_action_menu_entry_title", string="Action default"
+        )
+        default_catalog.add("_spec.parameters.hello.name", string="Hello default")
+        default_catalog.add(
+            "_spec.parameters.hello.child_parameters.hello2.name",
+            string="Hello2 default",
+        )
+        result = jsonize_clientside_module(
+            module,
+            mock_jsonize_context(
+                locale_id="el",
+                localizers={
+                    "module.testme": MessageLocalizer("el", catalog, default_catalog)
+                },
+            ),
+        )
+        expected = {
+            **DEFAULT_SERIALIZED_MODULE,
+            "id_name": "testme",
+            "name": "Name translated",
+            "category": "Clean",
+            "param_fields": [
+                {
+                    **DEFAULT_SERIALIZED_MODULE_PARAM,
+                    "idName": "hello",
+                    "type": "list",
+                    "name": "Hello translated",
+                    "childDefault": {},
+                    "childParameters": [
+                        {
+                            **DEFAULT_SERIALIZED_MODULE_PARAM,
+                            "idName": "hello2",
+                            "type": "statictext",
+                            "name": "Hello2 default",
+                        }
+                    ],
+                }
+            ],
+            "description": "Description translated",
+            "deprecated": {"message": "Deprecated default", "end_date": "2030-12-31"},
+            "icon": "url",
+            "loads_data": False,
+            "uses_data": True,
+            "has_html_output": False,
+            "has_zen_mode": True,
+            "row_action_menu_entry_title": "Action default",
+            "help_url": "http://help.workbenchdata.com/testme",
+        }
+        self.assertDictEqual(result, expected)
+
     def test_parameter_type_statictext(self):
         module = Module(
             ModuleSpec(
