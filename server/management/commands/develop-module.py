@@ -9,6 +9,7 @@ from watchdog.events import RegexMatchingEventHandler
 from watchdog.observers import Observer
 from server.importmodulefromgithub import import_module_from_directory
 import cjwstate.modules
+from cjworkbench.i18n.trans import MESSAGE_LOCALIZER_REGISTRY
 
 
 logger = logging.getLogger(__name__)
@@ -31,6 +32,7 @@ def main(directory):
                 import_module_from_directory(
                     "develop", pathlib.Path(importdir), force_reload=True
                 )
+                MESSAGE_LOCALIZER_REGISTRY.update_supported_modules()
             except Exception:
                 logger.exception("Error loading module")
 

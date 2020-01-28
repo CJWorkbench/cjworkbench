@@ -13,11 +13,7 @@ from cjwkernel.types import CompiledModule
 from cjwstate.modules.param_dtype import ParamDType
 from .module_loader import validate_module_spec
 from .param_spec import ParamSpec
-from cjworkbench.i18n import supported_locales
-from babel.messages.pofile import read_po, PoFileError
-from babel.messages.catalog import Catalog
 import logging
-from io import BytesIO
 
 
 logger = logging.getLogger(__name__)
@@ -283,16 +279,8 @@ class ModuleZipfile:
             # sha1, a new version forces migrate_params().
             return self.version
 
-    @lru_cache(maxsize=len(supported_locales))
-    def get_message_catalog(self, locale_id: str) -> Catalog:
+    def read_messages_po_for_locale(self, locale_id: str) -> bytes:
         try:
-            po = self._read_bytes(f"locale/{locale_id}/messages.po")
+            return self._read_bytes(f"locale/{locale_id}/messages.po")
         except KeyError:
-            return Catalog()
-        try:
-            return read_po(BytesIO(po), abort_invalid=True)
-        except PoFileError as err:
-            logger.exception(
-                f"Invalid po file for module {self.module_id_and_version} in locale {locale_id}: {err}"
-            )
-            return Catalog()
+            return b""

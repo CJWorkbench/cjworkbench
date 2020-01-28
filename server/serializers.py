@@ -15,7 +15,7 @@ from cjwstate.modules.param_spec import ParamSpec, MenuOptionEnum
 from cjwstate import clientside
 from cjwkernel.types import RenderError
 from cjworkbench.i18n import default_locale
-from cjworkbench.i18n.trans import localize, MessageLocalizer
+from cjworkbench.i18n.trans import localize, MESSAGE_LOCALIZER_REGISTRY
 from icu import ICUError
 
 User = get_user_model()
@@ -71,29 +71,16 @@ def _camelize_value(v: Any) -> Any:
         return v
 
 
-JsonizeContext = namedtuple(
-    "JsonizeContext", ["user", "session", "locale_id", "localizers"]
-)
+JsonizeContext = namedtuple("JsonizeContext", ["user", "session", "locale_id"])
 JsonizeModuleContext = namedtuple(
-    "JsonizeModuleContext", ["user", "session", "locale_id", "module_id", "localizers"]
+    "JsonizeModuleContext", ["user", "session", "locale_id", "module_id"]
 )
 
 
 def _add_module_to_ctx(ctx: JsonizeContext, module_id: str) -> JsonizeModuleContext:
     return JsonizeModuleContext(
-        user=ctx.user,
-        session=ctx.session,
-        locale_id=ctx.locale_id,
-        module_id=module_id,
-        localizers=ctx.localizers,
+        user=ctx.user, session=ctx.session, locale_id=ctx.locale_id, module_id=module_id
     )
-
-
-def collect_i18n_message_sources(locale_id: str):
-    return {
-        f"module.{module_id}": MessageLocalizer.for_module(module_zip, locale_id)
-        for module_id, module_zip in MODULE_REGISTRY.all_latest().items()
-    }
 
 
 def jsonize_datetime(dt_or_none: Optional[datetime.datetime]) -> str:
@@ -525,13 +512,13 @@ def _localize_module_message(
         return default
 
     try:
-        localizer = ctx.localizers[f"module.{ctx.module_id}"]
+        localizer = MESSAGE_LOCALIZER_REGISTRY.for_module_id(ctx.module_id)
     except KeyError:
         logger.exception(f"Unsupported module as I18nMessage source: {ctx.module_id}")
         return default
 
     try:
-        return localizer.localize(message_id, arguments=arguments)
+        return localizer.localize(ctx.locale_id, message_id, arguments=arguments)
     except ICUError as err:
         # `localize` handles `ICUError` for the given locale.
         # Hence, if we get here, it means that the message is badly formatted in the default locale.
@@ -552,7 +539,7 @@ def _localize_module_message(
 def jsonize_i18n_message(message: I18nMessage, ctx: JsonizeContext) -> str:
     """Localize (or unwrap, if it's a TODO_i18n) an `I18nMessage`
     
-    Uses `locale_id` and `localizers` from `ctx`
+    Uses `locale_id` from `ctx`
     """
     if message.source is None:
         if message.id == "TODO_i18n":

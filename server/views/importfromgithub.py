@@ -3,11 +3,8 @@ from django.contrib.auth.decorators import login_required
 from rest_framework import status
 from rest_framework.decorators import api_view
 from cjwstate.importmodule import WorkbenchModuleImportError, import_module_from_url
-from server.serializers import (
-    JsonizeContext,
-    collect_i18n_message_sources,
-    jsonize_clientside_module,
-)
+from server.serializers import JsonizeContext, jsonize_clientside_module
+from cjworkbench.i18n.trans import MESSAGE_LOCALIZER_REGISTRY
 
 
 @api_view(["POST"])
@@ -21,12 +18,8 @@ def import_from_github(request):
 
     try:
         clientside_module = import_module_from_url(request.data["url"])
-        ctx = JsonizeContext(
-            request.user,
-            request.session,
-            request.locale_id,
-            collect_i18n_message_sources(request.locale_id),
-        )
+        MESSAGE_LOCALIZER_REGISTRY.update_supported_modules()
+        ctx = JsonizeContext(request.user, request.session, request.locale_id)
         data = jsonize_clientside_module(clientside_module, ctx)
         return JsonResponse(data, status=status.HTTP_201_CREATED)
     except WorkbenchModuleImportError as err:

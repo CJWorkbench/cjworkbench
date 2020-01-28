@@ -1,5 +1,6 @@
 from django.core.management.base import BaseCommand
 from server.importmodulefromgithub import import_module_from_github
+from cjworkbench.i18n.trans import MESSAGE_LOCALIZER_REGISTRY
 
 
 class Command(BaseCommand):
@@ -13,3 +14,4 @@ class Command(BaseCommand):
             import_module_from_github(
                 "https://github.com/CJWorkbench/%s.git" % slug, force_reload=True
             )
+        MESSAGE_LOCALIZER_REGISTRY.update_supported_modules()

@@ -13,11 +13,7 @@ from cjworkbench.sync import database_sync_to_async
 from cjwstate import clientside, rabbitmq
 from cjwstate.models import WfModule, Workflow
 from server import handlers
-from server.serializers import (
-    JsonizeContext,
-    jsonize_clientside_update,
-    collect_i18n_message_sources,
-)
+from server.serializers import JsonizeContext, jsonize_clientside_update
 
 logger = logging.getLogger(__name__)
 WorkflowUpdateData = namedtuple("WorkflowUpdateData", ("update", "delta_id"))
@@ -31,11 +27,6 @@ def _workflow_group_name(workflow_id: int) -> str:
     this workflow.
     """
     return f"workflow-{str(workflow_id)}"
-
-
-@database_sync_to_async
-def _collect_i18n_message_sources(locale_id: str) -> Dict[str, Any]:
-    return collect_i18n_message_sources(locale_id)
 
 
 @database_sync_to_async
@@ -180,10 +171,7 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
     async def send_update(self, update: clientside.Update) -> None:
         logger.debug("Send update to Workflow %d", self.workflow_id)
         ctx = JsonizeContext(
-            self.scope["user"],
-            self.scope["session"],
-            self.scope["locale_id"],
-            _collect_i18n_message_sources(self.scope["locale_id"]),
+            self.scope["user"], self.scope["session"], self.scope["locale_id"]
         )
         json_dict = jsonize_clientside_update(update, ctx)
         await self.send_json({"type": "apply-delta", "data": json_dict})
