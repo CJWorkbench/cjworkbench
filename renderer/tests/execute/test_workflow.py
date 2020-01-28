@@ -37,7 +37,7 @@ def mock_render(arrow_table_dict):
         params,
         tab,
         fetch_result,
-        output_filename
+        output_filename,
     ):
         output_path = basedir / output_filename
         with arrow_table_context(arrow_table_dict) as arrow_table:
