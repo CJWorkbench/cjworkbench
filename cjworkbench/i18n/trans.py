@@ -116,7 +116,7 @@ class MessageCatalogsRegistry:
         for locale_id in supported_locales:
             try:
                 catalogs[locale_id] = read_po(
-                    BytesIO(module_zip.read_messages_po_for_locale(locale_id)),
+                    BytesIO(module_zipfile.read_messages_po_for_locale(locale_id)),
                     abort_invalid=True,
                 )
             except PoFileError as err:
