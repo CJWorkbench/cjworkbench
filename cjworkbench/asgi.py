@@ -22,6 +22,7 @@ from django.conf.urls import url
 from server.websockets import WorkflowConsumer
 import cjwstate.modules
 from cjworkbench.middleware.i18n import SetCurrentLocaleAsgiMiddleware
+from cjworkbench.i18n.trans import MESSAGE_LOCALIZER_REGISTRY
 
 
 def create_url_router() -> AuthMiddlewareStack:
@@ -42,6 +43,8 @@ def create_application() -> ProtocolTypeRouter:
     #    cost during startup than to incur it when responding to some random
     #    request.
     cjwstate.modules.init_module_system()
+
+    MESSAGE_LOCALIZER_REGISTRY.update_supported_modules()
 
     return ProtocolTypeRouter(
         {
