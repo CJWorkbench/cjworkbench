@@ -229,6 +229,7 @@ class Kernel:
                 "cjwkernel.parquet",
                 "cjwmodule",
                 "cjwmodule.i18n",
+                "cjwmodule.http.client",
                 "cjwmodule.http.httpfile",
                 "cjwmodule.util",
             ],
