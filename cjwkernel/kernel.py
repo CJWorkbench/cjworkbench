@@ -332,7 +332,7 @@ class Kernel:
         params: Params,
         secrets: Dict[str, Any],
         last_fetch_result: Optional[FetchResult],
-        input_parquet_filename: str,
+        input_parquet_filename: Optional[str],
         output_filename: str,
     ) -> FetchResult:
         """
