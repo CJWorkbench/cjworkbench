@@ -83,6 +83,28 @@ def copy_message(message: Message, **kwargs) -> Message:
     )
 
 
+def copy_catalog(old: Catalog, **kwargs) -> Catalog:
+    """Copies a catalog and its messages, replacing any of the catalog attributes given in kwargs
+    """
+    catalog = Catalog(
+        locale=kwargs.get("locale", old.locale),
+        header_comment=kwargs.get("header_comment", old.header_comment),
+        project=kwargs.get("project", old.project),
+        version=kwargs.get("version", old.version),
+        copyright_holder=kwargs.get("copyright_holder", old.copyright_holder),
+        msgid_bugs_address=kwargs.get("msgid_bugs_address", old.msgid_bugs_address),
+        creation_date=kwargs.get("creation_date", old.creation_date),
+        revision_date=kwargs.get("revision_date", old.revision_date),
+        last_translator=kwargs.get("last_translator", old.last_translator),
+        language_team=kwargs.get("language_team", old.language_team),
+        fuzzy=kwargs.get("fuzzy", old.fuzzy),
+    )
+    for message in old:
+        if message.id:
+            add_or_update_message(catalog, copy_message(message))
+    return catalog
+
+
 def add_or_update_message(catalog: Catalog, message: Message):
     if find_corresponding_message(catalog, message):
         catalog.delete(message.id, context=message.context)
@@ -131,6 +153,13 @@ def mark_fuzzy(
                 message.string and message_unique_identifier(message) in fuzzy
             ):
                 message.flags.add("fuzzy")
+
+
+def move_strings_to_comments(catalog: Catalog, comment_tag: str):
+    for message in catalog:
+        if message.id:
+            message.auto_comments.append(f"{comment_tag}: {message.string}")
+    remove_strings(catalog)
 
 
 def catalogs_are_same(catalog_1: Catalog, catalog_2: Catalog) -> bool:
