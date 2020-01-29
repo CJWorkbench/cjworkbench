@@ -89,7 +89,10 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
             ),
             "var js = 1; console.log(js)",
         )
-        result = jsonize_clientside_module(module, mock_jsonize_context(locale_id="el"))
+        result = jsonize_clientside_module(
+            module,
+            mock_jsonize_context(locale_id="el", module_catalogs_data=[("testme", {})]),
+        )
         expected = {
             **DEFAULT_SERIALIZED_MODULE,
             "id_name": "testme",
@@ -127,7 +130,9 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
         }
         self.assertDictEqual(result, expected)
 
-    def test_no_params_translate_use_default_catalog(self):
+    def test_no_params_translate_message_empty_in_catalog_but_exists_in_default_catalog(
+        self
+    ):
         module = Module(
             ModuleSpec(
                 id_name="testme", name="Test Module", category="Clean", parameters=[]
@@ -135,8 +140,10 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
             "",
         )
         catalog = Catalog()
+        catalog.add("_spec.name", string="")
         default_catalog = Catalog()
         default_catalog.add("_spec.name", string="Default translated name")
+        # The following should NOT produce a log entry
         result = jsonize_clientside_module(
             module,
             mock_jsonize_context(
@@ -154,7 +161,7 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
         }
         self.assertDictEqual(result, expected)
 
-    def test_no_params_translate_empty_catalogs(self):
+    def test_no_params_translate_message_only_exists_in_default_catalog(self):
         module = Module(
             ModuleSpec(
                 id_name="testme", name="Test Module", category="Clean", parameters=[]
@@ -163,6 +170,8 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
         )
         catalog = Catalog()
         default_catalog = Catalog()
+        default_catalog.add("_spec.name", string="Default translated name")
+        # The following should NOT produce a log entry
         result = jsonize_clientside_module(
             module,
             mock_jsonize_context(
@@ -172,6 +181,101 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
                 ],
             ),
         )
+        expected = {
+            **DEFAULT_SERIALIZED_MODULE,
+            "id_name": "testme",
+            "name": "Default translated name",
+            "category": "Clean",
+        }
+        self.assertDictEqual(result, expected)
+
+    def test_no_params_translate_message_empty_in_all_catalogs(self):
+        module = Module(
+            ModuleSpec(
+                id_name="testme", name="Test Module", category="Clean", parameters=[]
+            ),
+            "",
+        )
+        catalog = Catalog()
+        catalog.add("_spec.name", string="")
+        default_catalog = Catalog()
+        default_catalog.add("_spec.name", string="")
+        with self.assertLogs(level=logging.ERROR):
+            result = jsonize_clientside_module(
+                module,
+                mock_jsonize_context(
+                    locale_id="el",
+                    module_catalogs_data=[
+                        ("testme", {"el": catalog, "en": default_catalog})
+                    ],
+                ),
+            )
+        expected = {
+            **DEFAULT_SERIALIZED_MODULE,
+            "id_name": "testme",
+            "name": "Test Module",
+            "category": "Clean",
+        }
+        self.assertDictEqual(result, expected)
+
+    def test_no_params_translate_empty_catalogs(self):
+        module = Module(
+            ModuleSpec(
+                id_name="testme", name="Test Module", category="Clean", parameters=[]
+            ),
+            "",
+        )
+        catalog = Catalog()
+        default_catalog = Catalog()
+        with self.assertLogs(level=logging.ERROR):
+            result = jsonize_clientside_module(
+                module,
+                mock_jsonize_context(
+                    locale_id="el",
+                    module_catalogs_data=[
+                        ("testme", {"el": catalog, "en": default_catalog})
+                    ],
+                ),
+            )
+        expected = {
+            **DEFAULT_SERIALIZED_MODULE,
+            "id_name": "testme",
+            "name": "Test Module",
+            "category": "Clean",
+        }
+        self.assertDictEqual(result, expected)
+
+    def test_no_params_translate_not_internationalized(self):
+        module = Module(
+            ModuleSpec(
+                id_name="testme", name="Test Module", category="Clean", parameters=[]
+            ),
+            "",
+        )
+        # The following should NOT produce a log entry
+        result = jsonize_clientside_module(
+            module,
+            mock_jsonize_context(locale_id="el", module_catalogs_data=[("testme", {})]),
+        )
+        expected = {
+            **DEFAULT_SERIALIZED_MODULE,
+            "id_name": "testme",
+            "name": "Test Module",
+            "category": "Clean",
+        }
+        self.assertDictEqual(result, expected)
+
+    def test_no_params_translate_not_in_context(self):
+        module = Module(
+            ModuleSpec(
+                id_name="testme", name="Test Module", category="Clean", parameters=[]
+            ),
+            "",
+        )
+        with self.assertLogs(level=logging.ERROR):
+            result = jsonize_clientside_module(
+                module, mock_jsonize_context(locale_id="el", module_catalogs_data=[])
+            )
         expected = {
             **DEFAULT_SERIALIZED_MODULE,
             "id_name": "testme",
@@ -190,6 +294,7 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
         )
         catalog = Catalog()
         default_catalog = Catalog()
+        default_catalog.add("_spec.name", string="Test Module")
         default_catalog.add("_spec.row_action_menu_entry_title", string="Title")
         result = jsonize_clientside_module(
             module,
@@ -380,6 +485,7 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
         catalog = Catalog()
         catalog.add("_spec.parameters.hello.name", string="Hello translated")
         default_catalog = Catalog()
+        default_catalog.add("_spec.name", string="Test Module")
         default_catalog.add("_spec.parameters.hello.name", string="Hello default")
         result = jsonize_clientside_module(
             module,
@@ -422,6 +528,7 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
         catalog = Catalog()
         catalog.add("_spec.parameters.hello.name", string="Hello translated")
         default_catalog = Catalog()
+        default_catalog.add("_spec.name", string="Test Module")
         default_catalog.add("_spec.parameters.hello.name", string="Hello default")
         default_catalog.add("_spec.parameters.hello.placeholder", string="Fill me")
         default_catalog.add("_spec.parameters.hello.default", string="Default")
@@ -468,6 +575,7 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
         catalog = Catalog()
         catalog.add("_spec.parameters.hello.name", string="Hello translated")
         default_catalog = Catalog()
+        default_catalog.add("_spec.name", string="Test Module")
         default_catalog.add("_spec.parameters.hello.name", string="Hello default")
         default_catalog.add("_spec.parameters.hello.placeholder", string="Fill me")
         result = jsonize_clientside_module(
@@ -512,6 +620,7 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
         catalog = Catalog()
         catalog.add("_spec.parameters.hello.name", string="Hello translated")
         default_catalog = Catalog()
+        default_catalog.add("_spec.name", string="Test Module")
         default_catalog.add("_spec.parameters.hello.name", string="Hello default")
         default_catalog.add("_spec.parameters.hello.placeholder", string="Fill me")
         result = jsonize_clientside_module(
@@ -555,6 +664,7 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
         catalog = Catalog()
         catalog.add("_spec.parameters.hello.name", string="Hello translated")
         default_catalog = Catalog()
+        default_catalog.add("_spec.name", string="Test Module")
         default_catalog.add("_spec.parameters.hello.name", string="Hello default")
         result = jsonize_clientside_module(
             module,
@@ -605,6 +715,7 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
             "_spec.parameters.hello.options.first.label", string="First translated"
         )
         default_catalog = Catalog()
+        default_catalog.add("_spec.name", string="Test Module")
         default_catalog.add("_spec.parameters.hello.name", string="Hello default")
         default_catalog.add("_spec.parameters.hello.placeholder", string="Fill me")
         default_catalog.add(
@@ -666,6 +777,7 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
             "_spec.parameters.hello.options.first.label", string="First translated"
         )
         default_catalog = Catalog()
+        default_catalog.add("_spec.name", string="Test Module")
         default_catalog.add("_spec.parameters.hello.name", string="Hello default")
         default_catalog.add(
             "_spec.parameters.hello.options.first.label", string="First default"
@@ -717,6 +829,7 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
         catalog = Catalog()
         catalog.add("_spec.parameters.hello.name", string="Hello translated")
         default_catalog = Catalog()
+        default_catalog.add("_spec.name", string="Test Module")
         default_catalog.add("_spec.parameters.hello.name", string="Hello default")
         default_catalog.add(
             "_spec.parameters.hello.placeholder", string="Fill me default"
@@ -765,6 +878,8 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
         catalog = Catalog()
         catalog.add("_spec.parameters.hello.name", string="Hello translated")
         default_catalog = Catalog()
+        default_catalog.add("_spec.name", string="Test Module")
+        default_catalog.add("_spec.parameters.tab.name", string="Hello there 2!")
         default_catalog.add("_spec.parameters.hello.name", string="Hello default")
         default_catalog.add(
             "_spec.parameters.hello.placeholder", string="Fill me default"
@@ -821,6 +936,8 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
         catalog = Catalog()
         catalog.add("_spec.parameters.hello.name", string="Hello translated")
         default_catalog = Catalog()
+        default_catalog.add("_spec.name", string="Test Module")
+        default_catalog.add("_spec.parameters.tab.name", string="Hello there 2!")
         default_catalog.add("_spec.parameters.hello.name", string="Hello default")
         default_catalog.add(
             "_spec.parameters.hello.placeholder", string="Fill me default"
@@ -874,6 +991,7 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
         catalog = Catalog()
         catalog.add("_spec.parameters.hello.name", string="Hello translated")
         default_catalog = Catalog()
+        default_catalog.add("_spec.name", string="Test Module")
         default_catalog.add("_spec.parameters.hello.name", string="Hello default")
         default_catalog.add(
             "_spec.parameters.hello.placeholder", string="Fill me default"
@@ -918,6 +1036,7 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
         catalog = Catalog()
         catalog.add("_spec.parameters.hello.name", string="Hello translated")
         default_catalog = Catalog()
+        default_catalog.add("_spec.name", string="Test Module")
         default_catalog.add("_spec.parameters.hello.name", string="Hello default")
         default_catalog.add(
             "_spec.parameters.hello.placeholder", string="Fill me default"
@@ -961,6 +1080,7 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
         catalog = Catalog()
         catalog.add("_spec.parameters.hello.name", string="Hello translated")
         default_catalog = Catalog()
+        default_catalog.add("_spec.name", string="Test Module")
         default_catalog.add("_spec.parameters.hello.name", string="Hello default")
         result = jsonize_clientside_module(
             module,
@@ -1019,6 +1139,7 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
             string="Help URL prompt translated",
         )
         default_catalog = Catalog()
+        default_catalog.add("_spec.name", string="Test Module")
         default_catalog.add("_spec.parameters.hello.name", string="Hello default")
         default_catalog.add(
             "_spec.parameters.hello.secret_logic.label", string="Label default"
@@ -1078,6 +1199,7 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
         )
         catalog = Catalog()
         default_catalog = Catalog()
+        default_catalog.add("_spec.name", string="Test Module")
         result = jsonize_clientside_module(
             module,
             mock_jsonize_context(
@@ -1115,6 +1237,7 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
         )
         catalog = Catalog()
         default_catalog = Catalog()
+        default_catalog.add("_spec.name", string="Test Module")
         result = jsonize_clientside_module(
             module,
             mock_jsonize_context(
@@ -1157,6 +1280,7 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
         )
         catalog = Catalog()
         default_catalog = Catalog()
+        default_catalog.add("_spec.name", string="Test Module")
         result = jsonize_clientside_module(
             module,
             mock_jsonize_context(
@@ -1195,6 +1319,7 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
         )
         catalog = Catalog()
         default_catalog = Catalog()
+        default_catalog.add("_spec.name", string="Test Module")
         result = jsonize_clientside_module(
             module,
             mock_jsonize_context(
@@ -1224,6 +1349,7 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
         catalog = Catalog()
         catalog.add("_spec.parameters.hello.name", string="Hello translated")
         default_catalog = Catalog()
+        default_catalog.add("_spec.name", string="Test Module")
         default_catalog.add("_spec.parameters.hello.name", string="Hello default")
         result = jsonize_clientside_module(
             module,
@@ -1271,6 +1397,7 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
         catalog = Catalog()
         catalog.add("_spec.parameters.hello.name", string="Hello translated")
         default_catalog = Catalog()
+        default_catalog.add("_spec.name", string="Test Module")
         default_catalog.add("_spec.parameters.hello.name", string="Hello default")
         default_catalog.add(
             "_spec.parameters.hello.child_parameters.hello2.name",
@@ -1432,18 +1559,22 @@ class JsonizeI18nMessageTest(DbTestCaseWithModuleRegistry):
             )
             self.assertRegex(result, "messageid")
 
-    def test_source_module_no_module_localizer_found(self):
-        catalog = Catalog()
-        default_catalog = Catalog()
-        default_catalog.add("id", string="Hello {a b}")
+    def test_source_module_module_not_internationalized(self):
+        with self.assertLogs(level=logging.ERROR):
+            result = jsonize_i18n_message(
+                I18nMessage("messageid", source=I18nMessageSource.Module("testme")),
+                mock_jsonize_context(
+                    locale_id="el", module_catalogs_data=[("testme", {})]
+                ),
+            )
+            self.assertRegex(result, "messageid")
+
+    def test_source_module_module_not_in_context(self):
         with self.assertLogs(level=logging.ERROR):
             result = jsonize_i18n_message(
                 I18nMessage("messageid", source=I18nMessageSource.Module("testother")),
                 mock_jsonize_context(
-                    locale_id="el",
-                    module_catalogs_data=[
-                        ("testme", {"el": catalog, "en": default_catalog})
-                    ],
+                    locale_id="el", module_catalogs_data=[("testme", {})]
                 ),
             )
             self.assertRegex(result, "messageid")
