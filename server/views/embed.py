@@ -30,7 +30,12 @@ def embed(request, wfmodule_id):
                 wf_module = None
 
     if wf_module:
-        ctx = JsonizeContext(request.user, request.session, request.locale_id)
+        ctx = JsonizeContext(
+            request.user,
+            request.session,
+            request.locale_id,
+            dict(MODULE_REGISTRY.all_latest()),
+        )
         init_state = {
             "workflow": jsonize_clientside_workflow(
                 wf_module.workflow.to_clientside(include_tab_slugs=False),

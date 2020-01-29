@@ -8,7 +8,6 @@ from typing import Any, Dict, Iterable, List, Optional, Union
 from allauth.account.utils import user_display
 from django.contrib.auth import get_user_model
 from cjwkernel.types import I18nMessage, I18nMessageSource, QuickFix, RenderError
-from cjwstate.models.module_registry import MODULE_REGISTRY
 from cjworkbench.settings import KB_ROOT_URL
 from server.settingsutils import workbench_user_display
 from cjwstate.modules.param_spec import ParamSpec, MenuOptionEnum
@@ -71,15 +70,22 @@ def _camelize_value(v: Any) -> Any:
         return v
 
 
-JsonizeContext = namedtuple("JsonizeContext", ["user", "session", "locale_id"])
+JsonizeContext = namedtuple(
+    "JsonizeContext", ["user", "session", "locale_id", "module_zipfiles"]
+)
 JsonizeModuleContext = namedtuple(
-    "JsonizeModuleContext", ["user", "session", "locale_id", "module_id"]
+    "JsonizeModuleContext",
+    ["user", "session", "locale_id", "module_id", "module_zipfiles"],
 )
 
 
 def _add_module_to_ctx(ctx: JsonizeContext, module_id: str) -> JsonizeModuleContext:
     return JsonizeModuleContext(
-        user=ctx.user, session=ctx.session, locale_id=ctx.locale_id, module_id=module_id
+        user=ctx.user,
+        session=ctx.session,
+        locale_id=ctx.locale_id,
+        module_id=module_id,
+        module_zipfiles=ctx.module_zipfiles,
     )
 
 
@@ -512,7 +518,9 @@ def _localize_module_message(
         return default
 
     try:
-        localizer = MESSAGE_LOCALIZER_REGISTRY.for_module_id(ctx.module_id)
+        localizer = MESSAGE_LOCALIZER_REGISTRY.for_module_zipfile(
+            ctx.module_zipfiles[ctx.module_id]
+        )
     except KeyError:
         logger.exception(f"Unsupported module as I18nMessage source: {ctx.module_id}")
         return default

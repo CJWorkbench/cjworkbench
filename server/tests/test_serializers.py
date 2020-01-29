@@ -14,20 +14,51 @@ from server.serializers import (
     jsonize_clientside_module,
     _jsonize_param_spec,
 )
-from cjworkbench.tests.i18n.util import mock_app_catalogs, mock_module_catalogs
+from cjworkbench.tests.i18n.util import mock_app_catalogs
+from cjwstate.tests.utils import DbTestCaseWithModuleRegistry, create_module_zipfile
 from babel.messages.catalog import Catalog
 from cjwstate.modules.types import ModuleSpec
 from cjwstate.clientside import Module
-from typing import Dict, Any
+from typing import Dict, Any, List, Tuple
+from io import BytesIO
+from babel.messages.pofile import write_po
 
 
-def mock_jsonize_context(user=None, session=None, locale_id=None, module_id=None):
+def mock_jsonize_context(
+    user=None,
+    session=None,
+    locale_id=None,
+    module_id=None,
+    module_catalogs_data: List[Tuple[str, Dict[str, Catalog]]] = [],
+):
+    module_zipfiles = {}
+    if module_catalogs_data:
+        for module_id_name, catalogs in module_catalogs_data:
+            extra_file_contents = {}
+            for catalog_locale_id, catalog in catalogs.items():
+                po = BytesIO()
+                write_po(po, catalog)
+                extra_file_contents[
+                    f"locale/{catalog_locale_id}/messages.po"
+                ] = po.getvalue()
+            module_zipfiles[module_id_name] = create_module_zipfile(
+                module_id_name, extra_file_contents=extra_file_contents
+            )
     if module_id:
         return JsonizeModuleContext(
-            user=user, session=session, locale_id=locale_id, module_id=module_id
+            user=user,
+            session=session,
+            locale_id=locale_id,
+            module_id=module_id,
+            module_zipfiles=module_zipfiles,
         )
     else:
-        return JsonizeContext(user=user, session=session, locale_id=locale_id)
+        return JsonizeContext(
+            user=user,
+            session=session,
+            locale_id=locale_id,
+            module_zipfiles=module_zipfiles,
+        )
 
 
 DEFAULT_SERIALIZED_MODULE = {
@@ -50,7 +81,7 @@ DEFAULT_SERIALIZED_MODULE = {
 DEFAULT_SERIALIZED_MODULE_PARAM = {"idName": None, "type": None, "visibleIf": None}
 
 
-class JsonizeClientsideModuleTest(unittest.TestCase):
+class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
     def test_with_js(self):
         module = Module(
             ModuleSpec(
@@ -58,10 +89,7 @@ class JsonizeClientsideModuleTest(unittest.TestCase):
             ),
             "var js = 1; console.log(js)",
         )
-        with mock_module_catalogs("testme", {"el": Catalog(), "en": Catalog()}):
-            result = jsonize_clientside_module(
-                module, mock_jsonize_context(locale_id="el")
-            )
+        result = jsonize_clientside_module(module, mock_jsonize_context(locale_id="el"))
         expected = {
             **DEFAULT_SERIALIZED_MODULE,
             "id_name": "testme",
@@ -82,10 +110,15 @@ class JsonizeClientsideModuleTest(unittest.TestCase):
         catalog.add("_spec.name", string="Translated name")
         default_catalog = Catalog()
         default_catalog.add("_spec.name", string="Default translated name")
-        with mock_module_catalogs("testme", {"el": catalog, "en": default_catalog}):
-            result = jsonize_clientside_module(
-                module, mock_jsonize_context(locale_id="el")
-            )
+        result = jsonize_clientside_module(
+            module,
+            mock_jsonize_context(
+                locale_id="el",
+                module_catalogs_data=[
+                    ("testme", {"el": catalog, "en": default_catalog})
+                ],
+            ),
+        )
         expected = {
             **DEFAULT_SERIALIZED_MODULE,
             "id_name": "testme",
@@ -104,10 +137,15 @@ class JsonizeClientsideModuleTest(unittest.TestCase):
         catalog = Catalog()
         default_catalog = Catalog()
         default_catalog.add("_spec.name", string="Default translated name")
-        with mock_module_catalogs("testme", {"el": catalog, "en": default_catalog}):
-            result = jsonize_clientside_module(
-                module, mock_jsonize_context(locale_id="el")
-            )
+        result = jsonize_clientside_module(
+            module,
+            mock_jsonize_context(
+                locale_id="el",
+                module_catalogs_data=[
+                    ("testme", {"el": catalog, "en": default_catalog})
+                ],
+            ),
+        )
         expected = {
             **DEFAULT_SERIALIZED_MODULE,
             "id_name": "testme",
@@ -125,10 +163,15 @@ class JsonizeClientsideModuleTest(unittest.TestCase):
         )
         catalog = Catalog()
         default_catalog = Catalog()
-        with mock_module_catalogs("testme", {"el": catalog, "en": default_catalog}):
-            result = jsonize_clientside_module(
-                module, mock_jsonize_context(locale_id="el")
-            )
+        result = jsonize_clientside_module(
+            module,
+            mock_jsonize_context(
+                locale_id="el",
+                module_catalogs_data=[
+                    ("testme", {"el": catalog, "en": default_catalog})
+                ],
+            ),
+        )
         expected = {
             **DEFAULT_SERIALIZED_MODULE,
             "id_name": "testme",
@@ -148,10 +191,15 @@ class JsonizeClientsideModuleTest(unittest.TestCase):
         catalog = Catalog()
         default_catalog = Catalog()
         default_catalog.add("_spec.row_action_menu_entry_title", string="Title")
-        with mock_module_catalogs("testme", {"el": catalog, "en": default_catalog}):
-            result = jsonize_clientside_module(
-                module, mock_jsonize_context(locale_id="el")
-            )
+        result = jsonize_clientside_module(
+            module,
+            mock_jsonize_context(
+                locale_id="el",
+                module_catalogs_data=[
+                    ("testme", {"el": catalog, "en": default_catalog})
+                ],
+            ),
+        )
         expected = {
             **DEFAULT_SERIALIZED_MODULE,
             "id_name": "testme",
@@ -194,10 +242,15 @@ class JsonizeClientsideModuleTest(unittest.TestCase):
         default_catalog.add(
             "_spec.row_action_menu_entry_title", string="Action default"
         )
-        with mock_module_catalogs("testme", {"el": catalog, "en": default_catalog}):
-            result = jsonize_clientside_module(
-                module, mock_jsonize_context(locale_id="el")
-            )
+        result = jsonize_clientside_module(
+            module,
+            mock_jsonize_context(
+                locale_id="el",
+                module_catalogs_data=[
+                    ("testme", {"el": catalog, "en": default_catalog})
+                ],
+            ),
+        )
         expected = {
             **DEFAULT_SERIALIZED_MODULE,
             "id_name": "testme",
@@ -269,10 +322,15 @@ class JsonizeClientsideModuleTest(unittest.TestCase):
             "_spec.parameters.hello.child_parameters.hello2.name",
             string="Hello2 default",
         )
-        with mock_module_catalogs("testme", {"el": catalog, "en": default_catalog}):
-            result = jsonize_clientside_module(
-                module, mock_jsonize_context(locale_id="el")
-            )
+        result = jsonize_clientside_module(
+            module,
+            mock_jsonize_context(
+                locale_id="el",
+                module_catalogs_data=[
+                    ("testme", {"el": catalog, "en": default_catalog})
+                ],
+            ),
+        )
         expected = {
             **DEFAULT_SERIALIZED_MODULE,
             "id_name": "testme",
@@ -323,10 +381,15 @@ class JsonizeClientsideModuleTest(unittest.TestCase):
         catalog.add("_spec.parameters.hello.name", string="Hello translated")
         default_catalog = Catalog()
         default_catalog.add("_spec.parameters.hello.name", string="Hello default")
-        with mock_module_catalogs("testme", {"el": catalog, "en": default_catalog}):
-            result = jsonize_clientside_module(
-                module, mock_jsonize_context(locale_id="el")
-            )
+        result = jsonize_clientside_module(
+            module,
+            mock_jsonize_context(
+                locale_id="el",
+                module_catalogs_data=[
+                    ("testme", {"el": catalog, "en": default_catalog})
+                ],
+            ),
+        )
         expected = [
             {
                 **DEFAULT_SERIALIZED_MODULE_PARAM,
@@ -362,10 +425,15 @@ class JsonizeClientsideModuleTest(unittest.TestCase):
         default_catalog.add("_spec.parameters.hello.name", string="Hello default")
         default_catalog.add("_spec.parameters.hello.placeholder", string="Fill me")
         default_catalog.add("_spec.parameters.hello.default", string="Default")
-        with mock_module_catalogs("testme", {"el": catalog, "en": default_catalog}):
-            result = jsonize_clientside_module(
-                module, mock_jsonize_context(locale_id="el")
-            )
+        result = jsonize_clientside_module(
+            module,
+            mock_jsonize_context(
+                locale_id="el",
+                module_catalogs_data=[
+                    ("testme", {"el": catalog, "en": default_catalog})
+                ],
+            ),
+        )
         expected = [
             {
                 **DEFAULT_SERIALIZED_MODULE_PARAM,
@@ -402,10 +470,15 @@ class JsonizeClientsideModuleTest(unittest.TestCase):
         default_catalog = Catalog()
         default_catalog.add("_spec.parameters.hello.name", string="Hello default")
         default_catalog.add("_spec.parameters.hello.placeholder", string="Fill me")
-        with mock_module_catalogs("testme", {"el": catalog, "en": default_catalog}):
-            result = jsonize_clientside_module(
-                module, mock_jsonize_context(locale_id="el")
-            )
+        result = jsonize_clientside_module(
+            module,
+            mock_jsonize_context(
+                locale_id="el",
+                module_catalogs_data=[
+                    ("testme", {"el": catalog, "en": default_catalog})
+                ],
+            ),
+        )
         expected = [
             {
                 **DEFAULT_SERIALIZED_MODULE_PARAM,
@@ -441,10 +514,15 @@ class JsonizeClientsideModuleTest(unittest.TestCase):
         default_catalog = Catalog()
         default_catalog.add("_spec.parameters.hello.name", string="Hello default")
         default_catalog.add("_spec.parameters.hello.placeholder", string="Fill me")
-        with mock_module_catalogs("testme", {"el": catalog, "en": default_catalog}):
-            result = jsonize_clientside_module(
-                module, mock_jsonize_context(locale_id="el")
-            )
+        result = jsonize_clientside_module(
+            module,
+            mock_jsonize_context(
+                locale_id="el",
+                module_catalogs_data=[
+                    ("testme", {"el": catalog, "en": default_catalog})
+                ],
+            ),
+        )
         expected = [
             {
                 **DEFAULT_SERIALIZED_MODULE_PARAM,
@@ -478,10 +556,15 @@ class JsonizeClientsideModuleTest(unittest.TestCase):
         catalog.add("_spec.parameters.hello.name", string="Hello translated")
         default_catalog = Catalog()
         default_catalog.add("_spec.parameters.hello.name", string="Hello default")
-        with mock_module_catalogs("testme", {"el": catalog, "en": default_catalog}):
-            result = jsonize_clientside_module(
-                module, mock_jsonize_context(locale_id="el")
-            )
+        result = jsonize_clientside_module(
+            module,
+            mock_jsonize_context(
+                locale_id="el",
+                module_catalogs_data=[
+                    ("testme", {"el": catalog, "en": default_catalog})
+                ],
+            ),
+        )
         expected = [
             {
                 **DEFAULT_SERIALIZED_MODULE_PARAM,
@@ -530,10 +613,15 @@ class JsonizeClientsideModuleTest(unittest.TestCase):
         default_catalog.add(
             "_spec.parameters.hello.options.second.label", string="Second default"
         )
-        with mock_module_catalogs("testme", {"el": catalog, "en": default_catalog}):
-            result = jsonize_clientside_module(
-                module, mock_jsonize_context(locale_id="el")
-            )
+        result = jsonize_clientside_module(
+            module,
+            mock_jsonize_context(
+                locale_id="el",
+                module_catalogs_data=[
+                    ("testme", {"el": catalog, "en": default_catalog})
+                ],
+            ),
+        )
         expected = [
             {
                 **DEFAULT_SERIALIZED_MODULE_PARAM,
@@ -585,10 +673,15 @@ class JsonizeClientsideModuleTest(unittest.TestCase):
         default_catalog.add(
             "_spec.parameters.hello.options.True.label", string="Second default"
         )
-        with mock_module_catalogs("testme", {"el": catalog, "en": default_catalog}):
-            result = jsonize_clientside_module(
-                module, mock_jsonize_context(locale_id="el")
-            )
+        result = jsonize_clientside_module(
+            module,
+            mock_jsonize_context(
+                locale_id="el",
+                module_catalogs_data=[
+                    ("testme", {"el": catalog, "en": default_catalog})
+                ],
+            ),
+        )
         expected = [
             {
                 **DEFAULT_SERIALIZED_MODULE_PARAM,
@@ -628,10 +721,15 @@ class JsonizeClientsideModuleTest(unittest.TestCase):
         default_catalog.add(
             "_spec.parameters.hello.placeholder", string="Fill me default"
         )
-        with mock_module_catalogs("testme", {"el": catalog, "en": default_catalog}):
-            result = jsonize_clientside_module(
-                module, mock_jsonize_context(locale_id="el")
-            )
+        result = jsonize_clientside_module(
+            module,
+            mock_jsonize_context(
+                locale_id="el",
+                module_catalogs_data=[
+                    ("testme", {"el": catalog, "en": default_catalog})
+                ],
+            ),
+        )
         expected = [
             {
                 **DEFAULT_SERIALIZED_MODULE_PARAM,
@@ -671,10 +769,15 @@ class JsonizeClientsideModuleTest(unittest.TestCase):
         default_catalog.add(
             "_spec.parameters.hello.placeholder", string="Fill me default"
         )
-        with mock_module_catalogs("testme", {"el": catalog, "en": default_catalog}):
-            result = jsonize_clientside_module(
-                module, mock_jsonize_context(locale_id="el")
-            )
+        result = jsonize_clientside_module(
+            module,
+            mock_jsonize_context(
+                locale_id="el",
+                module_catalogs_data=[
+                    ("testme", {"el": catalog, "en": default_catalog})
+                ],
+            ),
+        )
         expected = [
             {
                 **DEFAULT_SERIALIZED_MODULE_PARAM,
@@ -722,10 +825,15 @@ class JsonizeClientsideModuleTest(unittest.TestCase):
         default_catalog.add(
             "_spec.parameters.hello.placeholder", string="Fill me default"
         )
-        with mock_module_catalogs("testme", {"el": catalog, "en": default_catalog}):
-            result = jsonize_clientside_module(
-                module, mock_jsonize_context(locale_id="el")
-            )
+        result = jsonize_clientside_module(
+            module,
+            mock_jsonize_context(
+                locale_id="el",
+                module_catalogs_data=[
+                    ("testme", {"el": catalog, "en": default_catalog})
+                ],
+            ),
+        )
         expected = [
             {
                 **DEFAULT_SERIALIZED_MODULE_PARAM,
@@ -770,10 +878,15 @@ class JsonizeClientsideModuleTest(unittest.TestCase):
         default_catalog.add(
             "_spec.parameters.hello.placeholder", string="Fill me default"
         )
-        with mock_module_catalogs("testme", {"el": catalog, "en": default_catalog}):
-            result = jsonize_clientside_module(
-                module, mock_jsonize_context(locale_id="el")
-            )
+        result = jsonize_clientside_module(
+            module,
+            mock_jsonize_context(
+                locale_id="el",
+                module_catalogs_data=[
+                    ("testme", {"el": catalog, "en": default_catalog})
+                ],
+            ),
+        )
         expected = [
             {
                 **DEFAULT_SERIALIZED_MODULE_PARAM,
@@ -809,10 +922,15 @@ class JsonizeClientsideModuleTest(unittest.TestCase):
         default_catalog.add(
             "_spec.parameters.hello.placeholder", string="Fill me default"
         )
-        with mock_module_catalogs("testme", {"el": catalog, "en": default_catalog}):
-            result = jsonize_clientside_module(
-                module, mock_jsonize_context(locale_id="el")
-            )
+        result = jsonize_clientside_module(
+            module,
+            mock_jsonize_context(
+                locale_id="el",
+                module_catalogs_data=[
+                    ("testme", {"el": catalog, "en": default_catalog})
+                ],
+            ),
+        )
         expected = [
             {
                 **DEFAULT_SERIALIZED_MODULE_PARAM,
@@ -844,10 +962,15 @@ class JsonizeClientsideModuleTest(unittest.TestCase):
         catalog.add("_spec.parameters.hello.name", string="Hello translated")
         default_catalog = Catalog()
         default_catalog.add("_spec.parameters.hello.name", string="Hello default")
-        with mock_module_catalogs("testme", {"el": catalog, "en": default_catalog}):
-            result = jsonize_clientside_module(
-                module, mock_jsonize_context(locale_id="el")
-            )
+        result = jsonize_clientside_module(
+            module,
+            mock_jsonize_context(
+                locale_id="el",
+                module_catalogs_data=[
+                    ("testme", {"el": catalog, "en": default_catalog})
+                ],
+            ),
+        )
         expected = [
             {
                 **DEFAULT_SERIALIZED_MODULE_PARAM,
@@ -910,10 +1033,15 @@ class JsonizeClientsideModuleTest(unittest.TestCase):
             "_spec.parameters.hello.secret_logic.help_url_prompt",
             string="Help URL prompt default",
         )
-        with mock_module_catalogs("testme", {"el": catalog, "en": default_catalog}):
-            result = jsonize_clientside_module(
-                module, mock_jsonize_context(locale_id="el")
-            )
+        result = jsonize_clientside_module(
+            module,
+            mock_jsonize_context(
+                locale_id="el",
+                module_catalogs_data=[
+                    ("testme", {"el": catalog, "en": default_catalog})
+                ],
+            ),
+        )
         expected = [
             {
                 **DEFAULT_SERIALIZED_MODULE_PARAM,
@@ -950,10 +1078,15 @@ class JsonizeClientsideModuleTest(unittest.TestCase):
         )
         catalog = Catalog()
         default_catalog = Catalog()
-        with mock_module_catalogs("testme", {"el": catalog, "en": default_catalog}):
-            result = jsonize_clientside_module(
-                module, mock_jsonize_context(locale_id="el")
-            )
+        result = jsonize_clientside_module(
+            module,
+            mock_jsonize_context(
+                locale_id="el",
+                module_catalogs_data=[
+                    ("testme", {"el": catalog, "en": default_catalog})
+                ],
+            ),
+        )
         expected = [
             {
                 **DEFAULT_SERIALIZED_MODULE_PARAM,
@@ -982,10 +1115,15 @@ class JsonizeClientsideModuleTest(unittest.TestCase):
         )
         catalog = Catalog()
         default_catalog = Catalog()
-        with mock_module_catalogs("testme", {"el": catalog, "en": default_catalog}):
-            result = jsonize_clientside_module(
-                module, mock_jsonize_context(locale_id="el")
-            )
+        result = jsonize_clientside_module(
+            module,
+            mock_jsonize_context(
+                locale_id="el",
+                module_catalogs_data=[
+                    ("testme", {"el": catalog, "en": default_catalog})
+                ],
+            ),
+        )
         expected = [
             {
                 **DEFAULT_SERIALIZED_MODULE_PARAM,
@@ -1019,10 +1157,15 @@ class JsonizeClientsideModuleTest(unittest.TestCase):
         )
         catalog = Catalog()
         default_catalog = Catalog()
-        with mock_module_catalogs("testme", {"el": catalog, "en": default_catalog}):
-            result = jsonize_clientside_module(
-                module, mock_jsonize_context(locale_id="el")
-            )
+        result = jsonize_clientside_module(
+            module,
+            mock_jsonize_context(
+                locale_id="el",
+                module_catalogs_data=[
+                    ("testme", {"el": catalog, "en": default_catalog})
+                ],
+            ),
+        )
         expected = [
             {
                 **DEFAULT_SERIALIZED_MODULE_PARAM,
@@ -1052,10 +1195,15 @@ class JsonizeClientsideModuleTest(unittest.TestCase):
         )
         catalog = Catalog()
         default_catalog = Catalog()
-        with mock_module_catalogs("testme", {"el": catalog, "en": default_catalog}):
-            result = jsonize_clientside_module(
-                module, mock_jsonize_context(locale_id="el")
-            )
+        result = jsonize_clientside_module(
+            module,
+            mock_jsonize_context(
+                locale_id="el",
+                module_catalogs_data=[
+                    ("testme", {"el": catalog, "en": default_catalog})
+                ],
+            ),
+        )
         expected = [
             {**DEFAULT_SERIALIZED_MODULE_PARAM, "idName": "hello", "type": "file"}
         ]
@@ -1077,10 +1225,15 @@ class JsonizeClientsideModuleTest(unittest.TestCase):
         catalog.add("_spec.parameters.hello.name", string="Hello translated")
         default_catalog = Catalog()
         default_catalog.add("_spec.parameters.hello.name", string="Hello default")
-        with mock_module_catalogs("testme", {"el": catalog, "en": default_catalog}):
-            result = jsonize_clientside_module(
-                module, mock_jsonize_context(locale_id="el")
-            )
+        result = jsonize_clientside_module(
+            module,
+            mock_jsonize_context(
+                locale_id="el",
+                module_catalogs_data=[
+                    ("testme", {"el": catalog, "en": default_catalog})
+                ],
+            ),
+        )
         expected = [
             {
                 **DEFAULT_SERIALIZED_MODULE_PARAM,
@@ -1123,10 +1276,15 @@ class JsonizeClientsideModuleTest(unittest.TestCase):
             "_spec.parameters.hello.child_parameters.hello2.name",
             string="Hello2 default",
         )
-        with mock_module_catalogs("testme", {"el": catalog, "en": default_catalog}):
-            result = jsonize_clientside_module(
-                module, mock_jsonize_context(locale_id="el")
-            )
+        result = jsonize_clientside_module(
+            module,
+            mock_jsonize_context(
+                locale_id="el",
+                module_catalogs_data=[
+                    ("testme", {"el": catalog, "en": default_catalog})
+                ],
+            ),
+        )
         expected = [
             {
                 **DEFAULT_SERIALIZED_MODULE_PARAM,
@@ -1147,7 +1305,7 @@ class JsonizeClientsideModuleTest(unittest.TestCase):
         self.assertEqual(result["param_fields"], expected)
 
 
-class JsonizeI18nMessageTest(unittest.TestCase):
+class JsonizeI18nMessageTest(DbTestCaseWithModuleRegistry):
     def test_TODO_i18n(self):
         self.assertEqual(
             jsonize_i18n_message(
@@ -1213,61 +1371,79 @@ class JsonizeI18nMessageTest(unittest.TestCase):
         catalog.add("messageid", string="Translated")
         default_catalog = Catalog()
         default_catalog.add("messageid", string="Default")
-        with mock_module_catalogs("testme", {"el": catalog, "en": default_catalog}):
-            self.assertEqual(
-                jsonize_i18n_message(
-                    I18nMessage("messageid", source=I18nMessageSource.Module("testme")),
-                    mock_jsonize_context(locale_id="el"),
+        self.assertEqual(
+            jsonize_i18n_message(
+                I18nMessage("messageid", source=I18nMessageSource.Module("testme")),
+                mock_jsonize_context(
+                    locale_id="el",
+                    module_catalogs_data=[
+                        ("testme", {"el": catalog, "en": default_catalog})
+                    ],
                 ),
-                "Translated",
-            )
+            ),
+            "Translated",
+        )
 
     def test_source_module_message_exists_only_in_default_locale(self):
         catalog = Catalog()
         default_catalog = Catalog()
         default_catalog.add("messageid", string="Default")
-        with mock_module_catalogs("testme", {"el": catalog, "en": default_catalog}):
-            self.assertEqual(
-                jsonize_i18n_message(
-                    I18nMessage("messageid", source=I18nMessageSource.Module("testme")),
-                    mock_jsonize_context(locale_id="el"),
+        self.assertEqual(
+            jsonize_i18n_message(
+                I18nMessage("messageid", source=I18nMessageSource.Module("testme")),
+                mock_jsonize_context(
+                    locale_id="el",
+                    module_catalogs_data=[
+                        ("testme", {"el": catalog, "en": default_catalog})
+                    ],
                 ),
-                "Default",
-            )
+            ),
+            "Default",
+        )
 
     def test_source_module_message_exists_in_no_locales(self):
         catalog = Catalog()
         default_catalog = Catalog()
-        with mock_module_catalogs("testme", {"el": catalog, "en": default_catalog}):
-            with self.assertLogs(level=logging.ERROR):
-                result = jsonize_i18n_message(
-                    I18nMessage("messageid", source=I18nMessageSource.Module("testme")),
-                    mock_jsonize_context(locale_id="el"),
-                )
-                self.assertRegex(result, "messageid")
+        with self.assertLogs(level=logging.ERROR):
+            result = jsonize_i18n_message(
+                I18nMessage("messageid", source=I18nMessageSource.Module("testme")),
+                mock_jsonize_context(
+                    locale_id="el",
+                    module_catalogs_data=[
+                        ("testme", {"el": catalog, "en": default_catalog})
+                    ],
+                ),
+            )
+            self.assertRegex(result, "messageid")
 
     def test_source_module_default_message_incorrect_format(self):
         catalog = Catalog()
         default_catalog = Catalog()
         default_catalog.add("id", string="Hello {a b}")
-        with mock_module_catalogs("testme", {"el": catalog, "en": default_catalog}):
-            with self.assertLogs(level=logging.ERROR):
-                result = jsonize_i18n_message(
-                    I18nMessage("messageid", source=I18nMessageSource.Module("testme")),
-                    mock_jsonize_context(locale_id="el"),
-                )
-                self.assertRegex(result, "messageid")
+        with self.assertLogs(level=logging.ERROR):
+            result = jsonize_i18n_message(
+                I18nMessage("messageid", source=I18nMessageSource.Module("testme")),
+                mock_jsonize_context(
+                    locale_id="el",
+                    module_catalogs_data=[
+                        ("testme", {"el": catalog, "en": default_catalog})
+                    ],
+                ),
+            )
+            self.assertRegex(result, "messageid")
 
     def test_source_module_no_module_localizer_found(self):
         catalog = Catalog()
         default_catalog = Catalog()
         default_catalog.add("id", string="Hello {a b}")
-        with mock_module_catalogs("testme", {"el": catalog, "en": default_catalog}):
-            with self.assertLogs(level=logging.ERROR):
-                result = jsonize_i18n_message(
-                    I18nMessage(
-                        "messageid", source=I18nMessageSource.Module("testother")
-                    ),
-                    mock_jsonize_context(locale_id="el"),
-                )
-                self.assertRegex(result, "messageid")
+        with self.assertLogs(level=logging.ERROR):
+            result = jsonize_i18n_message(
+                I18nMessage("messageid", source=I18nMessageSource.Module("testother")),
+                mock_jsonize_context(
+                    locale_id="el",
+                    module_catalogs_data=[
+                        ("testme", {"el": catalog, "en": default_catalog})
+                    ],
+                ),
+            )
+            self.assertRegex(result, "messageid")

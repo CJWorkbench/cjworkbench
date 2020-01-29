@@ -14,7 +14,7 @@ from typing import Dict, Union, Optional
 import logging
 from cjwstate.models.module_registry import MODULE_REGISTRY
 from cjwstate.modules.types import ModuleZipfile
-from weakref import WeakKeyDictionary, WeakValueDictionary
+from weakref import WeakKeyDictionary
 import threading
 from io import BytesIO
 
@@ -87,6 +87,10 @@ def localize_html(
     )
 
 
+class NotInternationalizedError(Exception):
+    pass
+
+
 class MessageCatalogsRegistry:
     def __init__(self, catalogs: Dict[str, Catalog]):
         self.catalogs = catalogs
@@ -124,6 +128,10 @@ class MessageCatalogsRegistry:
                     f"Invalid po file for module {module_zipfile.module_id_and_version} in locale {locale_id}: {err}"
                 )
                 catalogs[locale_id] = Catalog()
+            except KeyError as err:
+                pass
+        if not catalogs:
+            raise NotInternationalizedError(module_zipfile.module_id)
         return cls(catalogs)
 
 
@@ -192,31 +200,53 @@ class MessageLocalizer:
 
 class MessageLocalizerRegistry:
     def __init__(self):
-        self._supported_modules = WeakValueDictionary()
         self._module_localizers = WeakKeyDictionary()
         self._module_localizers_lock = threading.Lock()
         self._app_localizer = MessageLocalizer.for_application()
 
-    def for_module_id(self, module_id: str) -> MessageLocalizer:
-        with self._module_localizers_lock:
-            return self._module_localizers[self._supported_modules[module_id]]
+    def for_module_zipfile(self, module_zipfile: ModuleZipfile) -> MessageLocalizer:
+        """Return a `MessageLocalizer` for the given `ModuleZipFile`
 
-    def for_application(self):
+        Raise `NotInternationalizedError` if the `ModuleZipFile` has no po files
+        
+        Caches the result for each `ModuleZipFile`.
+        """
+        # 1. Get without locking.
+        try:
+            result = self._module_localizers[module_zipfile]
+            if isinstance(result, NotInternationalizedError):
+                raise result
+            else:
+                return result
+        except KeyError:
+            pass  # fall through
+
+        # 2. Lock, and try again. (This prevents a race.)
+        with self._module_localizers_lock:
+            try:
+                result = self._module_localizers[module_zipfile]
+                if isinstance(result, NotInternationalizedError):
+                    raise result
+                else:
+                    return result
+            except KeyError:
+                pass  # we'll fetch it now
+
+            # 3. Update the cache, still holding the lock.
+            try:
+                localizer = MessageLocalizer.for_module_zipfile(module_zipfile)
+                self._module_localizers[module_zipfile] = localizer
+                return localizer
+            except NotInternationalizedError as err:
+                self._module_localizers[module_zipfile] = err
+                raise err
+
+            # Release the lock. If another caller is waiting for us to release
+            # the lock, now it should check self._cache again.
+
+    def for_application(self) -> MessageLocalizer:
+        """Return a `MessageLocalizer` for the application messages"""
         return self._app_localizer
-
-    def update_supported_modules(self):
-        with self._module_localizers_lock:
-            for module_id, module_zipfile in MODULE_REGISTRY.all_latest().items():
-                if module_zipfile not in self._module_localizers:
-                    self._supported_modules[module_id] = module_zipfile
-                    self._module_localizers[
-                        module_zipfile
-                    ] = MessageLocalizer.for_module_zipfile(module_zipfile)
-
-    def clear(self):
-        self._supported_modules.clear()
-        self._module_localizers.clear()
-        self._app_localizer = MessageLocalizer.for_application()
 
 
 MESSAGE_LOCALIZER_REGISTRY = MessageLocalizerRegistry()

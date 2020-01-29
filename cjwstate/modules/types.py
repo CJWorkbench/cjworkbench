@@ -280,7 +280,8 @@ class ModuleZipfile:
             return self.version
 
     def read_messages_po_for_locale(self, locale_id: str) -> bytes:
-        try:
-            return self._read_bytes(f"locale/{locale_id}/messages.po")
-        except KeyError:
-            return b""
+        """Return the contents of the po file for the given locale.
+        
+        Raise KeyError is no such file exists.
+        """
+        return self._read_bytes(f"locale/{locale_id}/messages.po")

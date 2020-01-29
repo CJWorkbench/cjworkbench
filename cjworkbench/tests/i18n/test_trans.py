@@ -3,7 +3,6 @@ from babel.messages.catalog import Catalog
 from django.test import SimpleTestCase
 from icu import ICUError, InvalidArgsError
 from cjworkbench.i18n.trans import (
-    MESSAGE_LOCALIZER_REGISTRY,
     localize,
     localize_html,
     icu_format_message,
