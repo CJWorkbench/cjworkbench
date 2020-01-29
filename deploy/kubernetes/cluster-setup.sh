@@ -19,35 +19,36 @@ ZONE_NAME="workbench-zone"
 APP_FQDN="app.$DOMAIN_NAME"
 APP_STATIC_IP_NAME="app-ip"
 
-# # Choose the GCloud project. We build one cluster per project.
-# gcloud config configurations create $PROJECT_NAME
-# gcloud config configurations activate $PROJECT_NAME
-# gcloud auth login
-# gcloud config set project $PROJECT_NAME
-# 
-# # Harden service account security
-# # https://cloud.google.com/kubernetes-engine/docs/how-to/hardening-your-cluster#use_least_privilege_sa
-# #
-# # Quoth https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity:
-# #
-# #     All Kubernetes service accounts that share a name, Namespace name, and
-# #     Identity Namespace share access to GSAs.
-# #
-# # ... so give each service account a different GSA
-# gcloud iam service-accounts create $CLUSTER_NAME-least-privilege-sa \
-#   --display-name=$CLUSTER_NAME-least-privilege-sa
-# 
-# gcloud projects add-iam-policy-binding $PROJECT_NAME \
-#   --member "serviceAccount:$CLUSTER_NAME-least-privilege-sa@$PROJECT_NAME.iam.gserviceaccount.com" \
-#   --role roles/logging.logWriter
-# 
-# gcloud projects add-iam-policy-binding $PROJECT_NAME \
-#   --member "serviceAccount:$CLUSTER_NAME-least-privilege-sa@$PROJECT_NAME.iam.gserviceaccount.com" \
-#   --role roles/monitoring.metricWriter
-# 
-# gcloud projects add-iam-policy-binding $PROJECT_NAME \
-#   --member "serviceAccount:$CLUSTER_NAME-least-privilege-sa@$PROJECT_NAME.iam.gserviceaccount.com" \
-#   --role roles/monitoring.viewer
+# Choose the GCloud project. We build one cluster per project.
+gcloud config configurations create $PROJECT_NAME
+gcloud config configurations activate $PROJECT_NAME
+gcloud auth login
+gcloud config set project $PROJECT_NAME
+gcloud config set container/cluster workbench
+
+# Harden service account security
+# https://cloud.google.com/kubernetes-engine/docs/how-to/hardening-your-cluster#use_least_privilege_sa
+#
+# Quoth https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity:
+#
+#     All Kubernetes service accounts that share a name, Namespace name, and
+#     Identity Namespace share access to GSAs.
+#
+# ... so give each service account a different GSA
+gcloud iam service-accounts create $CLUSTER_NAME-least-privilege-sa \
+  --display-name=$CLUSTER_NAME-least-privilege-sa
+
+gcloud projects add-iam-policy-binding $PROJECT_NAME \
+  --member "serviceAccount:$CLUSTER_NAME-least-privilege-sa@$PROJECT_NAME.iam.gserviceaccount.com" \
+  --role roles/logging.logWriter
+
+gcloud projects add-iam-policy-binding $PROJECT_NAME \
+  --member "serviceAccount:$CLUSTER_NAME-least-privilege-sa@$PROJECT_NAME.iam.gserviceaccount.com" \
+  --role roles/monitoring.metricWriter
+
+gcloud projects add-iam-policy-binding $PROJECT_NAME \
+  --member "serviceAccount:$CLUSTER_NAME-least-privilege-sa@$PROJECT_NAME.iam.gserviceaccount.com" \
+  --role roles/monitoring.viewer
 
 echo "Browse to https://console.cloud.google.com/apis/library/container.googleapis.com?project=workbench-staging"
 echo "to enable the Kubernetes Engine API"
@@ -106,7 +107,10 @@ gcloud beta container node-pools create main-pool \
   --max-nodes 9 \
   --node-labels=cloud.google.com/gke-smt-disabled=true \
   --metadata disable-legacy-endpoints=true \
-  --workload-metadata-from-node=GKE_METADATA_SERVER
+  --workload-metadata-from-node=GKE_METADATA_SERVER \
+  --zone=us-central1-b
+
+gcloud beta container node-pools delete default-pool --zone=us-central1-b
 
 # [STAGING ONLY] Grant Cloud Build the permissions to call kubectl:
 # In GCP Console, visit the IAM menu.
@@ -126,6 +130,9 @@ gcloud iam service-accounts create $CLUSTER_NAME-minio --display-name $CLUSTER_N
 # minio needs storage.buckets.list, or it prints lots of errors.
 # (which seems like a bug.... https://github.com/minio/mc/issues/2652)
 # Minio uses this permission to poll for bucket policies.
+gcloud iam roles create MinioStorageBucketsList \
+  --project=$PROJECT_NAME \
+  --permissions=storage.buckets.list
 gcloud projects add-iam-policy-binding $PROJECT_NAME \
   --member=serviceAccount:$CLUSTER_NAME-minio@$PROJECT_NAME.iam.gserviceaccount.com \
   --role=projects/$PROJECT_NAME/roles/MinioStorageBucketsList
@@ -134,14 +141,14 @@ gsutil mb gs://static.$DOMAIN_NAME
 gsutil mb gs://stored-objects.$DOMAIN_NAME
 gsutil mb gs://external-modules.$DOMAIN_NAME
 gsutil mb gs://cached-render-results.$DOMAIN_NAME
-gsutil acl set public-read gs://static.$DOMAIN
-gsutil acl ch -u $CLUSTER_NAME-minio@$PROJECT_NAME.iam.gserviceaccount.com:W gs://user-files.$DOMAIN
-gsutil acl ch -u $CLUSTER_NAME-minio@$PROJECT_NAME.iam.gserviceaccount.com:W gs://static.$DOMAIN
-gsutil acl ch -u $CLUSTER_NAME-minio@$PROJECT_NAME.iam.gserviceaccount.com:W gs://stored-objects.$DOMAIN
-gsutil acl ch -u $CLUSTER_NAME-minio@$PROJECT_NAME.iam.gserviceaccount.com:W gs://external-modules.$DOMAIN
-gsutil acl ch -u $CLUSTER_NAME-minio@$PROJECT_NAME.iam.gserviceaccount.com:W gs://cached-render-results.$DOMAIN
+gsutil acl set public-read gs://static.$DOMAIN_NAME
+gsutil acl ch -u $CLUSTER_NAME-minio@$PROJECT_NAME.iam.gserviceaccount.com:W gs://user-files.$DOMAIN_NAME
+gsutil acl ch -u $CLUSTER_NAME-minio@$PROJECT_NAME.iam.gserviceaccount.com:W gs://static.$DOMAIN_NAME
+gsutil acl ch -u $CLUSTER_NAME-minio@$PROJECT_NAME.iam.gserviceaccount.com:W gs://stored-objects.$DOMAIN_NAME
+gsutil acl ch -u $CLUSTER_NAME-minio@$PROJECT_NAME.iam.gserviceaccount.com:W gs://external-modules.$DOMAIN_NAME
+gsutil acl ch -u $CLUSTER_NAME-minio@$PROJECT_NAME.iam.gserviceaccount.com:W gs://cached-render-results.$DOMAIN_NAME
 echo '[{"origin":"*","method":"GET","maxAgeSeconds":3000}]' > static-cors.json \
-  && gsutil cors set static-cors.json gs://static.$DOMAIN \
+  && gsutil cors set static-cors.json gs://static.$DOMAIN_NAME \
   && rm -f static-cors.json
 gcloud dns record-sets transaction start --zone=$ZONE_NAME
 gcloud dns record-sets transaction add --zone $ZONE_NAME --name static.$DOMAIN_NAME. --ttl 7200 --type CNAME c.storage.googleapis.com.
@@ -186,7 +193,17 @@ kubectl create secret generic intercom-oauth-secret --from-file=json=intercom-oa
 kubectl create secret generic twitter-oauth-secret --from-file=json=twitter-oauth-secret.json
 
 # 4. Migrate database
-kubectl apply -f migrate.yaml
+kubectl create configmap workbench-config \
+  --from-literal=environment=$ENV \
+  --from-literal=domainName=$DOMAIN_NAME \
+  --from-literal=domainNameWithLeadingDot=.$DOMAIN_NAME \
+  --from-literal=appDomainName=$APP_FQDN \
+  --from-literal=canonicalUrl="https://$APP_FQDN"
+kubectl run migrate-cluster-setup \
+  --image="gcr.io/cj-workbench/migrate:latest" \
+  -i --rm --quiet \
+  --restart=Never \
+  --overrides="$(cat migrate.json | sed -e 's/$SHA/latest/')"
 
 # 5. Spin up server
 kubectl apply -f fetcher-deployment.yaml

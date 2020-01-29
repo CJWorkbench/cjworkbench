@@ -9,7 +9,7 @@
 		"containers": [
 			{
 				"name": "migrate",
-				"image": "gcr.io/cj-workbench/migrate:latest",
+				"image": "gcr.io/cj-workbench/migrate:$SHA",
 				"env": [
 					{
 						"name": "CJW_PRODUCTION",
@@ -63,20 +63,7 @@
 					},
 					{
 						"name": "MINIO_BUCKET_PREFIX",
-						"valueFrom": {
-							"fieldRef": {
-								"fieldPath": "metadata.namespace"
-							}
-						}
-					},
-					{
-						"name": "MINIO_EXTERNAL_URL",
-						"valueFrom": {
-							"secretKeyRef": {
-								"name": "minio-access-key",
-								"key": "external_url"
-							}
-						}
+						"value": ""
 					},
 					{
 						"name": "MINIO_URL",
@@ -84,7 +71,16 @@
 					},
 					{
 						"name": "MINIO_BUCKET_SUFFIX",
-						"value": ".workbenchdata.com"
+						"valueFrom": {
+              "configMapKeyRef": {
+                "name": "workbench-config",
+                "key": "domainNameWithLeadingDot"
+              }
+            }
+					},
+					{
+						"name": "MINIO_EXTERNAL_URL",
+            "value": "https://user-files$(MINIO_BUCKET_SUFFIX)"
 					}
 				]
 			}

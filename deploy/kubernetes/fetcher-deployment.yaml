@@ -86,18 +86,16 @@ spec:
                   name: minio-access-key
                   key: secret_key
             - name: MINIO_BUCKET_PREFIX
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.namespace
-            - name: MINIO_EXTERNAL_URL
-              valueFrom:
-                secretKeyRef:
-                  name: minio-access-key
-                  key: external_url
+              value: ""
             - name: MINIO_URL
               value: http://minio-service
             - name: MINIO_BUCKET_SUFFIX
-              value: '.workbenchdata.com'
+              valueFrom:
+                configMapKeyRef:
+                  name: workbench-config
+                  key: domainNameWithLeadingDot
+            - name: MINIO_EXTERNAL_URL
+              value: "https://user-files$(MINIO_BUCKET_SUFFIX)"
             - name: _RABBITMQ_PASSWORD
               valueFrom:
                 secretKeyRef:

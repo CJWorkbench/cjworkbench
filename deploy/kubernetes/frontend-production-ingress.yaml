@@ -5,7 +5,7 @@ metadata:
   name: app-cert
 spec:
   domains:
-    - app.workbenchdata-staging.com
+    - app.workbenchdata.com
 ---
 apiVersion: extensions/v1beta1
 kind: Ingress

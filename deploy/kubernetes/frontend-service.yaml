@@ -2,6 +2,8 @@ kind: Service
 apiVersion: v1
 metadata:
   name: frontend-service
+  annotations:
+    cloud.google.com/neg: '{"ingress": true}'  # https://cloud.google.com/kubernetes-engine/docs/how-to/container-native-load-balancing
 spec:
   selector:
     app: frontend-app

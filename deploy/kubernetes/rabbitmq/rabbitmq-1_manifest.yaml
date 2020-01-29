@@ -51,7 +51,7 @@ spec:
       node:
 
       ```
-      kubectl exec -it rabbitmq-1-rabbitmq-0 --namespace production -- rabbitmqctl cluster_status
+      kubectl exec -it rabbitmq-1-rabbitmq-0 --namespace default -- rabbitmqctl cluster_status
       ```
 
       # Authorization
@@ -60,7 +60,7 @@ spec:
 
       ```shell
       kubectl get secret/rabbitmq-1-rabbitmq-secret \
-        --namespace production \
+        --namespace default \
         --output=jsonpath='{.data.rabbitmq-pass}' | base64 --decode
       ```
 
@@ -71,7 +71,7 @@ spec:
 
       ```
       kubectl patch service/rabbitmq-1-rabbitmq-svc \
-        --namespace production \
+        --namespace default \
         --patch '{"spec": {"type": "LoadBalancer"}}'
       ```
 
@@ -84,7 +84,7 @@ spec:
 
       ```
       SERVICE_IP=$(kubectl get service/rabbitmq-1-rabbitmq-svc \
-        --namespace production \
+        --namespace default \
         --output jsonpath='{.status.loadBalancer.ingress[0].ip}')
 
       echo "http://${SERVICE_IP}:15672"
@@ -96,7 +96,7 @@ spec:
       **Option 2:** Use port forwarding:
 
       ```
-      kubectl port-forward svc/rabbitmq-1-rabbitmq-svc --namespace production 15672
+      kubectl port-forward svc/rabbitmq-1-rabbitmq-svc --namespace default 15672
       ```
 
       To access the RabbitMQ management UI, open [http://127.0.0.1:15672](http://127.0.0.1:15672).
@@ -181,8 +181,8 @@ metadata:
 type: Opaque
 data:
   # this value comes from schema.yaml or environment variable
-  rabbitmq-erlang-cookie: "VUl1ZFAwTFhINjdiQ2FkNmI5V3Y3MnFSTWRjREdKNWc="
-  rabbitmq-pass: "djJyaVBrd3pZb0Y0"
+  rabbitmq-erlang-cookie: "NHRKUlpWelBsa2VlZkNLQzI2RjN5cDEzT1ZHZlJuM0w="
+  rabbitmq-pass: "WEt0WmRBYVBGRnRa"
 ---
 # This headless service allows communication between RabbitMQ nodes via hostname instead of IP addresses.
 # The clusterIP is set to None.
@@ -263,7 +263,7 @@ spec:
       initContainers:
       # This init container copies the config files from read-only ConfigMap to writable location.
       - name: copy-rabbitmq-config
-        image: marketplace.gcr.io/google/rabbitmq/debian9@sha256:bb4497b201ab995d7f7f5f95adb48ab1d1b31e431dceb4ec23f55f9df2b7dfaf
+        image: marketplace.gcr.io/google/rabbitmq/debian9@sha256:ba0aeb356f903aa11853a388a6726f91fa8ee7e59dd6467cf7b0968366bd7f1f
         imagePullPolicy: Always
         command:
         - /bin/bash
@@ -286,7 +286,7 @@ spec:
           mountPath: /var/lib/rabbitmq
       containers:
       - name: rabbitmq
-        image: marketplace.gcr.io/google/rabbitmq@sha256:ebadd5c0ab7203da09d6d33d4a78d804e9d00369cceaa0978e47f507cfae1792
+        image: marketplace.gcr.io/google/rabbitmq@sha256:57231e287db26e4f78d1b8092c66ceb060a2c3a31ef4c757b9e303a6194eb68b
         imagePullPolicy: Always
         env:
         - name: MY_POD_NAME
@@ -296,11 +296,11 @@ spec:
         - name: RABBITMQ_USE_LONGNAME
           value: 'true'
         - name: RABBITMQ_NODENAME
-          value: 'rabbit@$(MY_POD_NAME).rabbitmq-1-rabbitmq-discovery.production.svc.cluster.local'
+          value: 'rabbit@$(MY_POD_NAME).rabbitmq-1-rabbitmq-discovery.default.svc.cluster.local'
         - name: K8S_SERVICE_NAME
           value: 'rabbitmq-1-rabbitmq-discovery'
         - name: K8S_HOSTNAME_SUFFIX
-          value: '.rabbitmq-1-rabbitmq-discovery.production.svc.cluster.local'
+          value: '.rabbitmq-1-rabbitmq-discovery.default.svc.cluster.local'
         - name: RABBITMQ_ERLANG_COOKIE
           valueFrom:
             secretKeyRef:

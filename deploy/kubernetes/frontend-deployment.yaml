@@ -1,3 +1,33 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frontend-http-redirect-config
+data:
+  haproxy.cfg: |
+      # We use haproxy to redirect HTTP to HTTPS. (Django is inefficient at this.)
+      global
+          nbproc 1
+          nbthread 1
+          log stdout format raw local0 info
+
+      defaults
+          log global
+          timeout connect 30s
+          timeout client 60s
+          timeout server 60s
+          mode http
+          option httplog
+
+      frontend httporhttps
+          bind *:8080
+          acl is_health_check path /healthz
+          acl is_forwarded_https req.hdr(x-forwarded-proto) https
+          http-request redirect scheme https if !is_health_check !is_forwarded_https
+          default_backend workbench
+
+      backend workbench
+          server workbench localhost:8081
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -32,6 +62,8 @@ spec:
       containers:
         - name: frontend
           image: "gcr.io/cj-workbench/frontend:latest"
+          # override port: pick 8081. (We'll use haproxy for 8080.)
+          command: [ "daphne", "-b", "0.0.0.0", "-p", "8081", "--application-close-timeout", "180", "cjworkbench.asgi:application" ]
           resources:
             requests:
               cpu: 0.75
@@ -41,12 +73,15 @@ spec:
               memory: 2Gi
           ports:
             - name: http
-              containerPort: 8080
-          readinessProbe:
-            # During rolling upgrade, don't delete old pods until new ones are responsive
-            httpGet:
-              path: /
-              port: 8080
+              containerPort: 8081
+          # readinessProbe *could* go here:
+          #   httpGet:
+          #     path: /healthz
+          #     port: 8081
+          # ... but it's better to put it on haproxy. The request ends up here
+          # anyway, and it tests more of the pod. (Readiness probes run on
+          # containers, but they _affect_ the entire pod. Not to be confused
+          # with _liveness_ probes, which restart containers.)
           env:
             - name: CJW_PRODUCTION
               value: 'True'
@@ -104,21 +139,19 @@ spec:
                 secretKeyRef:
                   name: minio-access-key
                   key: secret_key
-            - name: MINIO_EXTERNAL_URL
-              valueFrom:
-                secretKeyRef:
-                  name: minio-access-key
-                  key: external_url
             - name: MINIO_URL
               value: 'http://minio-service'
             - name: MINIO_BUCKET_PREFIX
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.namespace
+              value: ""
             - name: MINIO_BUCKET_SUFFIX
-              value: '.workbenchdata.com'
+              valueFrom:
+                configMapKeyRef:
+                  name: workbench-config
+                  key: domainNameWithLeadingDot
             - name: MINIO_STATIC_URL_PATTERN
-              value: 'https://storage.googleapis.com/{MINIO_BUCKET_PREFIX}-static.workbenchdata.com/'
+              value: 'https://storage.googleapis.com/production-static.workbenchdata.com/'
+            - name: MINIO_EXTERNAL_URL
+              value: "https://user-files$(MINIO_BUCKET_SUFFIX)"
             - name: _RABBITMQ_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -138,6 +171,26 @@ spec:
               readOnly: true
             - mountPath: /var/lib/cjwkernel/chroot
               name: chroot
+        - name: http-redirect
+          image: "haproxy:2.1.2"
+          command: [ "haproxy", "-f", "/usr/local/etc/haproxy/haproxy.cfg", "-m", "90", "-db" ]
+          resources:
+            requests:
+              cpu: 0.1
+              memory: 100Mi
+            limits:
+              memory: 100Mi
+          ports:
+            - name: http
+              containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+          volumeMounts:
+            - mountPath: /usr/local/etc/haproxy/haproxy.cfg
+              name: frontend-http-redirect-config
+              subPath: haproxy.cfg
         - name: teardown-sandboxes
           # "any volume mounts created by Containers in Pods must be destroyed
           # (unmounted) by the Containers on termination"
@@ -178,3 +231,6 @@ spec:
                 path: twitter-oauth-secret.json
         - name: chroot
           emptyDir: {}
+        - name: frontend-http-redirect-config
+          configMap:
+            name: frontend-http-redirect-config

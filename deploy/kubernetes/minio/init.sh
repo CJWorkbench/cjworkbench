@@ -4,7 +4,7 @@ set -ex
 
 DIR="$(dirname "$0")"
 ENV=${1:?"Usage: $0 ENVIRONMENT"}
-if [ "$ENV" = "staging" ]; then
+if [ "$ENV" = "production" ]; then
   DOMAIN="workbenchdata.com"
 else
   DOMAIN="workbenchdata-staging.com"
@@ -18,8 +18,8 @@ openssl req \
   -x509 \
   -days 99999 \
   -newkey rsa:2048 \
-  -keyout ca.key \
-  -out ca.crt \
+  -keyout "$DIR"/ca.key \
+  -out "$DIR"/ca.crt \
   -subj "/CN=ca.minio-etcd.default.cluster.local"
 
 for name in minio-etcd-0 minio-etcd-1 minio-etcd-2; do
@@ -29,18 +29,18 @@ for name in minio-etcd-0 minio-etcd-1 minio-etcd-2; do
     -sha256 \
     -newkey rsa:2048 \
     -days 99999 \
-    -keyout $name-peer.key \
-    -out $name-peer.csr \
+    -keyout "$DIR"/$name-peer.key \
+    -out "$DIR"/$name-peer.csr \
     -subj "/CN=$name.minio-etcd-peer.default.svc.cluster.local"
 
   openssl x509 \
     -sha256 \
-    -req -in $name-peer.csr \
+    -req -in "$DIR"/$name-peer.csr \
     -days 99999 \
-    -CA ca.crt \
-    -CAkey ca.key \
+    -CA "$DIR"/ca.crt \
+    -CAkey "$DIR"/ca.key \
     -CAcreateserial \
-    -out $name-peer.crt
+    -out "$DIR"/$name-peer.crt
 done
 
 # Generate server certificate, which points to service name
@@ -48,19 +48,19 @@ openssl req \
   -nodes \
   -sha256 \
   -newkey rsa:2048 \
-  -keyout server.key \
-  -out server.csr \
+  -keyout "$DIR"/server.key \
+  -out "$DIR"/server.csr \
   -days 99999 \
   -subj "/CN=minio-etcd.default.svc.cluster.local"
 
 openssl x509 \
-  -req -in server.csr \
+  -req -in "$DIR"/server.csr \
   -sha256 \
-  -CA ca.crt \
-  -CAkey ca.key \
+  -CA "$DIR"/ca.crt \
+  -CAkey "$DIR"/ca.key \
   -CAcreateserial \
   -days 99999 \
-  -out server.crt
+  -out "$DIR"/server.crt
 
 # Generate client certificate -- one that etcd is happy with
 # etcd likes to see "clientAuth" and doesn't care about DNS or IP addresses
@@ -69,38 +69,38 @@ openssl req \
   -nodes \
   -sha256 \
   -newkey rsa:2048 \
-  -keyout client.key \
-  -out client.csr \
+  -keyout "$DIR"/client.key \
+  -out "$DIR"/client.csr \
   -days 99999 \
   -subj "/CN=client"
 
 openssl x509 \
-  -req -in client.csr \
+  -req -in "$DIR"/client.csr \
   -sha256 \
-  -CA ca.crt \
-  -CAkey ca.key \
+  -CA "$DIR"/ca.crt \
+  -CAkey "$DIR"/ca.key \
   -CAcreateserial \
   -days 99999 \
   -extensions client_server_ssl \
   -extfile <(printf "[client_server_ssl]\nextendedKeyUsage=clientAuth") \
-  -out client.crt
+  -out "$DIR"/client.crt
 
 kubectl create secret generic minio-etcd-server-certs \
-  --from-file=ca.crt \
-  --from-file=minio-etcd-0-peer.crt=minio-etcd-0-peer.crt \
-  --from-file=minio-etcd-0-peer.key=minio-etcd-0-peer.key \
-  --from-file=minio-etcd-1-peer.crt=minio-etcd-1-peer.crt \
-  --from-file=minio-etcd-1-peer.key=minio-etcd-1-peer.key \
-  --from-file=minio-etcd-2-peer.crt=minio-etcd-2-peer.crt \
-  --from-file=minio-etcd-2-peer.key=minio-etcd-2-peer.key \
-  --from-file=server.crt=server.crt \
-  --from-file=server.key=server.key
+  --from-file="$DIR"/ca.crt \
+  --from-file=minio-etcd-0-peer.crt="$DIR"/minio-etcd-0-peer.crt \
+  --from-file=minio-etcd-0-peer.key="$DIR"/minio-etcd-0-peer.key \
+  --from-file=minio-etcd-1-peer.crt="$DIR"/minio-etcd-1-peer.crt \
+  --from-file=minio-etcd-1-peer.key="$DIR"/minio-etcd-1-peer.key \
+  --from-file=minio-etcd-2-peer.crt="$DIR"/minio-etcd-2-peer.crt \
+  --from-file=minio-etcd-2-peer.key="$DIR"/minio-etcd-2-peer.key \
+  --from-file=server.crt="$DIR"/server.crt \
+  --from-file=server.key="$DIR"/server.key
 
 kubectl create secret generic minio-etcd-client-certs \
-  --from-file=ca.crt=ca.crt \
-  --from-file=server.crt=server.crt \
-  --from-file=client.crt=client.crt \
-  --from-file=client.key=client.key
+  --from-file=ca.crt="$DIR"/ca.crt \
+  --from-file=server.crt="$DIR"/server.crt \
+  --from-file=client.crt="$DIR"/client.crt \
+  --from-file=client.key="$DIR"/client.key
 
 rm "$DIR"/*.{crt,csr,key,srl}
 
@@ -117,6 +117,7 @@ kubectl create secret generic minio-root-access-key \
   --from-literal=secret_key=$(openssl rand -base64 24 | base64)
 
 kubectl apply -f "$DIR"/minio-deployment.yaml
+kubectl apply -f "$DIR"/minio-service.yaml
 
 # Now use the root user to generate the non-root user.
 kubectl run minio-adduser \
