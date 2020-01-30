@@ -9,7 +9,7 @@
     "containers": [
       {
         "name": "migrate",
-        "image": "gcr.io/cj-workbench/migrate:$SHA",
+        "image": "gcr.io/workbenchdata-ci/migrate:$SHA",
         "env": [
           {
             "name": "CJW_PRODUCTION",

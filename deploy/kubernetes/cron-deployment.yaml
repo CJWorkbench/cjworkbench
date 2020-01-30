@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: cron
-          image: "gcr.io/cj-workbench/cron:latest"
+          image: "gcr.io/workbenchdata-ci/cron:latest"
           resources:
             requests:
               cpu: 0.1

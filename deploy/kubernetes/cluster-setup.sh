@@ -202,7 +202,7 @@ kubectl create configmap workbench-config \
   --from-literal=appDomainName=$APP_FQDN \
   --from-literal=canonicalUrl="https://$APP_FQDN"
 kubectl run migrate-cluster-setup \
-  --image="gcr.io/cj-workbench/migrate:latest" \
+  --image="gcr.io/workbenchdata-ci/migrate:latest" \
   -i --rm --quiet \
   --restart=Never \
   --overrides="$(cat migrate.json | sed -e 's/$SHA/latest/')"
