@@ -224,4 +224,4 @@ gcloud dns record-sets transaction add --zone=$ZONE_NAME --name $APP_FQDN. --ttl
 gcloud dns record-sets transaction execute --zone=$ZONE_NAME
 
 # 7. Backups
-backups/init.sh
+backups/init.sh "$ENV"
