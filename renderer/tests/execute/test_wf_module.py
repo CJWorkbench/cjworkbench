@@ -237,7 +237,7 @@ class WfModuleTests(DbTestCase):
         wf_module.stored_data_version = so.stored_at
         wf_module.save(update_fields=["stored_data_version"])
         # Now delete the file on S3 -- but leave the DB pointing to it.
-        minio.remove(so.bucket, so.key)
+        minio.remove(minio.StoredObjectsBucket, so.key)
 
         def render(*args, fetch_result, **kwargs):
             self.assertIsNone(fetch_result)

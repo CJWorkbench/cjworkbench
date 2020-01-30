@@ -129,6 +129,8 @@ class InProgressUploadTest(DbTestCase):
         # Complete the upload
         uploaded_file = ipu.convert_to_uploaded_file("test.csv")
         self.assertEqual(
-            minio.get_object_with_data(uploaded_file.bucket, uploaded_file.key)["Body"],
+            minio.get_object_with_data(minio.UserFilesBucket, uploaded_file.key)[
+                "Body"
+            ],
             b"1234567",
         )

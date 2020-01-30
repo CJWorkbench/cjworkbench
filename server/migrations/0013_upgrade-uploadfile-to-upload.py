@@ -19,7 +19,7 @@ def move_uploaded_file(workflow, wf_module, uploaded_file):
     """
     from cjwstate import minio
 
-    bucket = uploaded_file.bucket
+    bucket = minio.UserFilesBucket
     old_key = uploaded_file.key
     if "/" in old_key:
         return

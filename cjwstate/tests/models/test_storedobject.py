@@ -24,12 +24,12 @@ class StoredObjectTests(DbTestCase):
 
         # new StoredObject should have same time,
         # different file with same contents
-        self.assertEqual(so1.stored_at, so2.stored_at)
-        self.assertEqual(so1.size, so2.size)
-        self.assertEqual(so1.bucket, so2.bucket)
-        self.assertNotEqual(so1.key, so2.key)
+        self.assertEqual(so2.stored_at, so1.stored_at)
+        self.assertEqual(so2.size, so1.size)
+        self.assertNotEqual(so2.key, so1.key)
         self.assertEqual(
-            minio.get_object_with_data(so2.bucket, so2.key)["Body"], b"12345"
+            minio.get_object_with_data(minio.StoredObjectsBucket, so2.key)["Body"],
+            b"12345",
         )
 
     def test_delete_workflow_deletes_from_s3(self):

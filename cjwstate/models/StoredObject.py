@@ -44,12 +44,14 @@ class StoredObject(models.Model):
     def duplicate(self, to_wf_module):
         basename = self.key.split("/")[-1]
         key = f"{to_wf_module.workflow_id}/{to_wf_module.id}/{basename}"
-        minio.copy(self.bucket, key, f"{self.bucket}/{self.key}")
+        minio.copy(
+            minio.StoredObjectsBucket, key, f"{minio.StoredObjectsBucket}/{self.key}"
+        )
 
         return to_wf_module.stored_objects.create(
             stored_at=self.stored_at,
             hash=self.hash,
-            bucket=self.bucket,
+            bucket=minio.StoredObjectsBucket,
             key=key,
             size=self.size,
         )
@@ -65,5 +67,5 @@ def _delete_from_s3_pre_delete(sender, instance, **kwargs):
     deletion fails, we need the link to remain in our database -- that's how
     the user will know it isn't deleted.
     """
-    if instance.bucket and instance.key:
-        minio.remove(instance.bucket, instance.key)
+    if instance.key:
+        minio.remove(minio.StoredObjectsBucket, instance.key)

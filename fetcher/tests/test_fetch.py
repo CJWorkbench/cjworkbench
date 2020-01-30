@@ -21,7 +21,7 @@ from cjwkernel.types import (
     RenderResult,
     TableMetadata,
 )
-from cjwkernel.util import tempdir_context, tempfile_context
+from cjwkernel.util import tempfile_context
 from cjwkernel.tests.util import (
     arrow_table_context,
     assert_arrow_table_equals,
@@ -33,7 +33,6 @@ import cjwstate.modules
 from cjwstate.modules.loaded_module import LoadedModule
 from cjwstate.tests.utils import DbTestCase
 from fetcher import fetch, fetchprep, save
-from typing import Union
 
 
 def async_value(v):
@@ -399,7 +398,9 @@ class FetchTests(DbTestCase):
             )
         wf_module.refresh_from_db()
         so = wf_module.stored_objects.get(stored_at=wf_module.stored_data_version)
-        with minio.temporarily_download(so.bucket, so.key) as parquet_path:
+        with minio.temporarily_download(
+            minio.StoredObjectsBucket, so.key
+        ) as parquet_path:
             table = pyarrow.parquet.read_table(str(parquet_path), use_threads=False)
             assert_arrow_table_equals(table, {"A": [1]})
 

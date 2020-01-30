@@ -32,7 +32,7 @@ def downloaded_file(stored_object: StoredObject, dir=None) -> ContextManager[Pat
     else:
         # raises FileNotFoundError
         return minio.temporarily_download(
-            stored_object.bucket, stored_object.key, dir=dir
+            minio.StoredObjectsBucket, stored_object.key, dir=dir
         )
 
 

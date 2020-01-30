@@ -58,8 +58,8 @@ class WfModuleTests(DbTestCase):
         # The StoredObject was copied byte for byte into a different file
         self.assertNotEqual(so2d.key, so2.key)
         self.assertEqual(
-            minio.get_object_with_data(so2d.bucket, so2d.key)["Body"],
-            minio.get_object_with_data(so2.bucket, so2.key)["Body"],
+            minio.get_object_with_data(minio.StoredObjectsBucket, so2d.key)["Body"],
+            minio.get_object_with_data(minio.StoredObjectsBucket, so2.key)["Body"],
         )
 
     def test_wf_module_duplicate_disable_auto_update(self):
@@ -136,7 +136,7 @@ class WfModuleTests(DbTestCase):
         self.assertEqual(uploaded_file2.size, 7)
         self.assertEqual(uploaded_file2.created_at, uploaded_file.created_at)
         self.assertEqual(
-            minio.get_object_with_data(uploaded_file2.bucket, uploaded_file2.key)[
+            minio.get_object_with_data(minio.UserFilesBucket, uploaded_file2.key)[
                 "Body"
             ],
             b"1234567",
