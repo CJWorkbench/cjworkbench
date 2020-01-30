@@ -108,32 +108,6 @@ class MessageCatalogsRegistry:
         else:
             raise KeyError(message_id)
 
-    @classmethod
-    def for_application(cls):
-        return cls(
-            {locale_id: load_catalog(locale_id) for locale_id in supported_locales}
-        )
-
-    @classmethod
-    def for_module_zipfile(cls, module_zipfile: ModuleZipfile):
-        catalogs = {}
-        for locale_id in supported_locales:
-            try:
-                catalogs[locale_id] = read_po(
-                    BytesIO(module_zipfile.read_messages_po_for_locale(locale_id)),
-                    abort_invalid=True,
-                )
-            except PoFileError as err:
-                logger.exception(
-                    f"Invalid po file for module {module_zipfile.module_id_and_version} in locale {locale_id}: {err}"
-                )
-                catalogs[locale_id] = Catalog()
-            except KeyError as err:
-                pass
-        if not catalogs:
-            raise NotInternationalizedError(module_zipfile.module_id)
-        return cls(catalogs)
-
 
 class MessageLocalizer:
     def __init__(self, registry: MessageCatalogsRegistry):
@@ -185,24 +159,16 @@ class MessageLocalizer:
             default_locale, message, arguments=arguments, tags=tags
         )
 
-    @classmethod
-    def for_application(cls):
-        """Return a `MessageLocalizer` for the application internal messages.
-        """
-        return cls(MessageCatalogsRegistry.for_application())
-
-    @classmethod
-    def for_module_zipfile(cls, module_zipfile: ModuleZipfile):
-        """Return a `MessageLocalizer` for the messages of the given module.
-        """
-        return cls(MessageCatalogsRegistry.for_module_zipfile(module_zipfile))
-
 
 class MessageLocalizerRegistry:
     def __init__(self):
         self._module_localizers = WeakKeyDictionary()
         self._module_localizers_lock = threading.Lock()
-        self._app_localizer = MessageLocalizer.for_application()
+        self._app_localizer = MessageLocalizer(
+            MessageCatalogsRegistry(
+                {locale_id: load_catalog(locale_id) for locale_id in supported_locales}
+            )
+        )
 
     def for_module_zipfile(self, module_zipfile: ModuleZipfile) -> MessageLocalizer:
         """Return a `MessageLocalizer` for the given `ModuleZipFile`
@@ -234,7 +200,7 @@ class MessageLocalizerRegistry:
 
             # 3. Update the cache, still holding the lock.
             try:
-                localizer = MessageLocalizer.for_module_zipfile(module_zipfile)
+                localizer = self._create_localizer_for_module_zipfile(module_zipfile)
                 self._module_localizers[module_zipfile] = localizer
                 return localizer
             except NotInternationalizedError as err:
@@ -247,6 +213,27 @@ class MessageLocalizerRegistry:
     def for_application(self) -> MessageLocalizer:
         """Return a `MessageLocalizer` for the application messages"""
         return self._app_localizer
+
+    def _create_localizer_for_module_zipfile(
+        cls, module_zipfile: ModuleZipfile
+    ) -> MessageLocalizer:
+        catalogs = {}
+        for locale_id in supported_locales:
+            try:
+                catalogs[locale_id] = read_po(
+                    BytesIO(module_zipfile.read_messages_po_for_locale(locale_id)),
+                    abort_invalid=True,
+                )
+            except PoFileError as err:
+                logger.exception(
+                    f"Invalid po file for module {module_zipfile.module_id_and_version} in locale {locale_id}: {err}"
+                )
+                catalogs[locale_id] = Catalog()
+            except KeyError as err:
+                pass
+        if not catalogs:
+            raise NotInternationalizedError(module_zipfile.module_id)
+        return MessageLocalizer(MessageCatalogsRegistry(catalogs))
 
 
 MESSAGE_LOCALIZER_REGISTRY = MessageLocalizerRegistry()
