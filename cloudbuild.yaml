@@ -114,7 +114,7 @@ steps:
     - -e
     - -c
     - |
-      if [ "$BRANCH_NAME" = "master" ]; then
+      if [ "$BRANCH_NAME" != "master" ]; then
         echo 'Skipped deploy to staging: branch "$BRANCH_NAME" is not master' >&2
         exit 0
       fi
