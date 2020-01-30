@@ -91,7 +91,7 @@ def _load_fetch_result(
         )
     except StoredObject.DoesNotExist:
         return None
-    if not stored_object.bucket or not stored_object.key:
+    if not stored_object.key:
         return None
 
     with contextlib.ExitStack() as inner_stack:
@@ -100,7 +100,7 @@ def _load_fetch_result(
         )
 
         try:
-            minio.download(stored_object.bucket, stored_object.key, path)
+            minio.download(minio.StoredObjectsBucket, stored_object.key, path)
             # Download succeeded, so we no longer want to delete `path`
             # right _now_ ("now" means, "in inner_stack.close()"). Instead,
             # transfer ownership of `path` to exit_stack.
@@ -359,9 +359,6 @@ async def execute_wfmodule(
 
     Raises `UnneededExecution` when the input WfModule should not be rendered.
     """
-    # delta_id won't change throughout this function
-    delta_id = wf_module.last_relevant_delta_id
-
     # may raise UnneededExecution
     result = await _render_wfmodule(
         chroot_context,

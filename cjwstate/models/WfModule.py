@@ -5,7 +5,7 @@ from typing import Any, Dict, Optional, Union
 from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.db.models import Q
-from cjwkernel.types import I18nMessage, RenderError, TableMetadata
+from cjwkernel.types import TableMetadata
 from cjwstate import minio
 from .fields import ColumnsField, RenderErrorsField
 from .CachedRenderResult import CachedRenderResult
@@ -414,7 +414,7 @@ class WfModule(models.Model):
                 minio.copy(
                     minio.UserFilesBucket,
                     new_key,
-                    f"{uploaded_file.bucket}/{uploaded_file.key}",
+                    f"{minio.UserFilesBucket}/{uploaded_file.key}",
                 )
                 new_step.uploaded_files.create(
                     created_at=uploaded_file.created_at,
