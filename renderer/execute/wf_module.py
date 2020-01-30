@@ -175,13 +175,13 @@ def invoke_render(
     try:
         result = cjwstate.modules.kernel.render(
             module_zipfile.compile_code_without_executing(),
-            chroot_context,
-            basedir,
-            input_table,
-            params,
-            tab,
-            fetch_result,
-            output_filename,
+            chroot_context=chroot_context,
+            basedir=basedir,
+            input_table=input_table,
+            params=params,
+            tab=tab,
+            fetch_result=fetch_result,
+            output_filename=output_filename,
         )
         status = "(%drows, %dcols, %0.1fMB)" % (
             result.table.metadata.n_rows,
@@ -432,15 +432,15 @@ async def execute_wfmodule(
     """
     # may raise UnneededExecution
     result = await _render_wfmodule(
-        chroot_context,
-        workflow,
-        wf_module,
-        module_zipfile,
-        params,
-        tab,
-        input_result,
-        tab_results,
-        output_path,
+        chroot_context=chroot_context,
+        workflow=workflow,
+        wf_module=wf_module,
+        module_zipfile=module_zipfile,
+        raw_params=params,
+        tab=tab,
+        input_result=input_result,
+        tab_results=tab_results,
+        output_path=output_path,
     )
 
     # may raise UnneededExecution

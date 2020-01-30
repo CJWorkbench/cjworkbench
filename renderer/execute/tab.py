@@ -227,15 +227,15 @@ async def execute_tab_flow(
         for step, step_output_path in zip(flow.steps[step_index:], step_output_paths):
             step_output_path.write_bytes(b"")  # don't leak data from two steps ago
             next_result = await execute_wfmodule(
-                chroot_context,
-                workflow,
-                step.wf_module,
-                step.module_zipfile,
-                step.params,
-                flow.tab,
-                last_result,
-                tab_results,
-                step_output_path,
+                chroot_context=chroot_context,
+                workflow=workflow,
+                wf_module=step.wf_module,
+                module_zipfile=step.module_zipfile,
+                params=step.params,
+                tab=flow.tab,
+                input_result=last_result,
+                tab_results=tab_results,
+                output_path=step_output_path,
             )
             last_result = next_result
 

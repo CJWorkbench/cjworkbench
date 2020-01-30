@@ -1,11 +1,18 @@
 import contextlib
+from dataclasses import replace
 import logging
+import shutil
 from unittest.mock import patch
 from cjwkernel.chroot import EDITABLE_CHROOT
+from cjwkernel.kernel import Kernel
 from cjwkernel.types import RenderResult
-from cjwkernel.tests.util import arrow_table, assert_render_result_equals
+from cjwkernel.tests.util import (
+    arrow_table,
+    arrow_table_context,
+    assert_render_result_equals,
+)
 from cjwstate import minio, rabbitmq, rendercache
-from cjwstate.models import ModuleVersion, Workflow
+from cjwstate.models import Workflow
 from cjwstate.modules.param_dtype import ParamDType
 from cjwstate.tests.utils import DbTestCaseWithModuleRegistry, create_module_zipfile
 from renderer.execute.tab import execute_tab_flow, ExecuteStep, TabFlow
@@ -13,6 +20,26 @@ from renderer.execute.tab import execute_tab_flow, ExecuteStep, TabFlow
 
 async def fake_send(*args, **kwargs):
     pass
+
+
+def mock_render(arrow_table_dict):
+    def inner(
+        module_zipfile,
+        *,
+        chroot_context,
+        basedir,
+        input_table,
+        params,
+        tab,
+        fetch_result,
+        output_filename,
+    ):
+        output_path = basedir / output_filename
+        with arrow_table_context(arrow_table_dict) as arrow_table:
+            shutil.copy(arrow_table.path, output_path)
+            return RenderResult(table=replace(arrow_table, path=output_path))
+
+    return inner
 
 
 class TabTests(DbTestCaseWithModuleRegistry):
@@ -23,7 +50,7 @@ class TabTests(DbTestCaseWithModuleRegistry):
                 with chroot_context.tempfile_context(
                     prefix="execute-tab-output", suffix=".arrow", dir=tempdir
                 ) as out_path:
-                    with self.assertLogs(level=expect_log_level):
+                    with self.assertLogs("renderer.execute", level=expect_log_level):
                         result = self.run_with_async_db(
                             execute_tab_flow(
                                 chroot_context, workflow, flow, tab_results, out_path
@@ -39,7 +66,8 @@ class TabTests(DbTestCaseWithModuleRegistry):
             assert_render_result_equals(result, RenderResult())
 
     @patch.object(rabbitmq, "send_update_to_workflow_clients", fake_send)
-    def test_execute_cache_hit(self, fake_module):
+    def test_execute_cache_hit(self):
+        module_zipfile = create_module_zipfile("mod")
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
         step1 = tab.wf_modules.create(
@@ -64,23 +92,20 @@ class TabTests(DbTestCaseWithModuleRegistry):
         tab_flow = TabFlow(
             tab.to_arrow(),
             [
-                ExecuteStep(step1, ParamDType.Dict({}), {}),
-                ExecuteStep(step2, ParamDType.Dict({}), {}),
+                ExecuteStep(step1, module_zipfile, {}),
+                ExecuteStep(step2, module_zipfile, {}),
             ],
         )
 
-        with self._execute(workflow, tab_flow, {}) as result:
-            assert_render_result_equals(
-                result, RenderResult(arrow_table({"B": [2]}), [])
-            )
-
-        fake_module.assert_not_called()
+        with patch.object(Kernel, "render", side_effect=mock_render({"No": ["bad"]})):
+            with self._execute(workflow, tab_flow, {}) as result:
+                assert_render_result_equals(
+                    result, RenderResult(arrow_table({"B": [2]}), [])
+                )
 
     @patch.object(rabbitmq, "send_update_to_workflow_clients", fake_send)
     def test_execute_cache_miss(self):
-        ModuleVersion.create_or_replace_from_spec(
-            {"id_name": "mod", "name": "Mod", "category": "Clean", "parameters": []}
-        )
+        module_zipfile = create_module_zipfile("mod")
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
         step1 = tab.wf_modules.create(
@@ -99,30 +124,26 @@ class TabTests(DbTestCaseWithModuleRegistry):
         tab_flow = TabFlow(
             tab.to_arrow(),
             [
-                ExecuteStep(step1, ParamDType.Dict({}), {}),
-                ExecuteStep(step2, ParamDType.Dict({}), {}),
+                ExecuteStep(step1, module_zipfile, {}),
+                ExecuteStep(step2, module_zipfile, {}),
             ],
         )
 
-        expected = RenderResult(arrow_table({"B": [2]}))
-        fake_load_module.return_value.render.return_value = expected
-        with self._execute(workflow, tab_flow, {}) as result:
-            assert_render_result_equals(result, expected)
+        with patch.object(Kernel, "render", side_effect=mock_render({"B": [2]})):
+            with self._execute(workflow, tab_flow, {}) as result:
+                expected = RenderResult(arrow_table({"B": [2]}))
+                assert_render_result_equals(result, expected)
 
-        self.assertEqual(
-            fake_load_module.return_value.render.call_count, 2  # step2, not step1
-        )
-        self.assertRegex(
-            # Output is to the correct file
-            fake_load_module.return_value.render.call_args[1]["output_filename"],
-            r"execute-tab-output.*\.arrow",
-        )
+            self.assertEqual(Kernel.render.call_count, 2)  # step2, not step1
+            self.assertRegex(
+                # Output is to the correct file
+                Kernel.render.call_args[1]["output_filename"],
+                r"execute-tab-output.*\.arrow",
+            )
 
     @patch.object(rabbitmq, "send_update_to_workflow_clients", fake_send)
     def test_execute_partial_cache_hit(self):
-        ModuleVersion.create_or_replace_from_spec(
-            {"id_name": "mod", "name": "Mod", "category": "Clean", "parameters": []}
-        )
+        module_zipfile = create_module_zipfile("mod")
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
         # step1: cached result is fresh. Should not render.
@@ -157,28 +178,27 @@ class TabTests(DbTestCaseWithModuleRegistry):
         tab_flow = TabFlow(
             tab.to_arrow(),
             [
-                ExecuteStep(step1, ParamDType.Dict({}), {}),
-                ExecuteStep(step2, ParamDType.Dict({}), {}),
+                ExecuteStep(step1, module_zipfile, {}),
+                ExecuteStep(step2, module_zipfile, {}),
             ],
         )
 
-        expected = RenderResult(arrow_table({"B": [3]}))
-        fake_load_module.return_value.render.return_value = expected
-        with self._execute(workflow, tab_flow, {}) as result:
-            assert_render_result_equals(result, expected)
+        with patch.object(Kernel, "render", side_effect=mock_render({"B": [3]})):
+            with self._execute(workflow, tab_flow, {}) as result:
+                expected = RenderResult(arrow_table({"B": [3]}))
+                assert_render_result_equals(result, expected)
 
-        fake_load_module.return_value.render.assert_called_once()  # step2, not step1
-        self.assertRegex(
-            # Output is to the correct file
-            fake_load_module.return_value.render.call_args[1]["output_filename"],
-            r"execute-tab-output.*\.arrow",
-        )
+            Kernel.render.assert_called_once()  # step2, not step1
+
+            self.assertRegex(
+                # Output is to the correct file
+                Kernel.render.call_args[1]["output_filename"],
+                r"execute-tab-output.*\.arrow",
+            )
 
     @patch.object(rabbitmq, "send_update_to_workflow_clients", fake_send)
     def test_resume_backtrack_on_corrupt_cache_error(self):
-        ModuleVersion.create_or_replace_from_spec(
-            {"id_name": "mod", "name": "Mod", "category": "Clean", "parameters": []}
-        )
+        module_zipfile = create_module_zipfile("mod")
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
         # step1: cached result is fresh -- but CORRUPT
@@ -206,25 +226,25 @@ class TabTests(DbTestCaseWithModuleRegistry):
         tab_flow = TabFlow(
             tab.to_arrow(),
             [
-                ExecuteStep(step1, ParamDType.Dict({}), {}),
-                ExecuteStep(step2, ParamDType.Dict({}), {}),
+                ExecuteStep(step1, module_zipfile, {}),
+                ExecuteStep(step2, module_zipfile, {}),
             ],
         )
 
-        expected = RenderResult(arrow_table({"B": [2]}))
-        fake_load_module.return_value.render.return_value = expected
-        with self._execute(
-            workflow, tab_flow, {}, expect_log_level=logging.ERROR
-        ) as result:
-            assert_render_result_equals(result, expected)
+        with patch.object(Kernel, "render", side_effect=mock_render({"B": [2]})):
+            with self._execute(
+                workflow, tab_flow, {}, expect_log_level=logging.ERROR
+            ) as result:
+                expected = RenderResult(arrow_table({"B": [2]}))
+                assert_render_result_equals(result, expected)
 
-        self.assertEqual(
-            # called with step1, then step2
-            fake_load_module.return_value.render.call_count,
-            2,
-        )
-        self.assertRegex(
-            # Output is to the correct file
-            fake_load_module.return_value.render.call_args[1]["output_filename"],
-            r"execute-tab-output.*\.arrow",
-        )
+            self.assertEqual(
+                # called with step1, then step2
+                Kernel.render.call_count,
+                2,
+            )
+            self.assertRegex(
+                # Output is to the correct file
+                Kernel.render.call_args[1]["output_filename"],
+                r"execute-tab-output.*\.arrow",
+            )

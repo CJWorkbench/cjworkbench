@@ -5,7 +5,7 @@ import logging
 import os
 from pathlib import Path
 import time
-from typing import Any, ContextManager, Dict, NamedTuple, Optional
+from typing import Any, ContextManager, Dict, NamedTuple, Optional, Union
 from django.conf import settings
 from django.db import DatabaseError, InterfaceError
 from django.utils import timezone
@@ -54,14 +54,14 @@ def invoke_fetch(
 
     try:
         ret = cjwstate.modules.kernel.fetch(
-            compiled_module,
-            chroot_context,
-            basedir,
-            params,
-            secrets,
-            last_fetch_result,
-            input_parquet_filename,
-            output_filename,
+            compiled_module=compiled_module,
+            chroot_context=chroot_context,
+            basedir=basedir,
+            params=params,
+            secrets=secrets,
+            last_fetch_result=last_fetch_result,
+            input_parquet_filename=input_parquet_filename,
+            output_filename=output_filename,
         )
         status = "%0.1fMB" % (ret.path.stat().st_size / 1024 / 1024)
         return ret
@@ -84,7 +84,7 @@ DatabaseObjects = NamedTuple(
     [
         ("wf_module", WfModule),
         ("module_zipfile", Optional[ModuleZipfile]),
-        ("migrated_params", Dict[str, Any]),
+        ("migrated_params_or_error", Union[Dict[str, Any], ModuleError]),
         ("stored_object", Optional[StoredObject]),
         ("input_cached_render_result", Optional[CachedRenderResult]),
     ],
@@ -99,7 +99,8 @@ def load_database_objects(workflow_id: int, wf_module_id: int) -> DatabaseObject
     Raise `WfModule.DoesNotExist` or `Workflow.DoesNotExist` if the step was
     deleted.
 
-    Raise `ModuleError` if params cannot be migrated.
+    Catch a `ModuleError` from migrate_params() and return it as part of the
+    `DatabaseObjects`.
     """
     with Workflow.lookup_and_cooperative_lock(id=workflow_id) as workflow_lock:
         # raise WfModule.DoesNotExist
@@ -113,13 +114,16 @@ def load_database_objects(workflow_id: int, wf_module_id: int) -> DatabaseObject
         except KeyError:
             module_zipfile = None
 
-        # migrated_params
+        # migrated_params_or_error
         if module_zipfile is None:
-            migrated_params = {}
+            migrated_params_or_error = {}
         else:
-            migrated_params = cjwstate.params.get_migrated_params(
-                wf_module, module_zipfile=module_zipfile
-            )  # raise ModuleError
+            try:
+                migrated_params_or_error = cjwstate.params.get_migrated_params(
+                    wf_module, module_zipfile=module_zipfile
+                )  # raise ModuleError
+            except ModuleError as err:
+                migrated_params_or_error = err
 
         # stored_object
         try:
@@ -138,7 +142,11 @@ def load_database_objects(workflow_id: int, wf_module_id: int) -> DatabaseObject
             input_crr = None
 
         return DatabaseObjects(
-            wf_module, module_zipfile, migrated_params, stored_object, input_crr
+            wf_module,
+            module_zipfile,
+            migrated_params_or_error,
+            stored_object,
+            input_crr,
         )
 
 
@@ -239,16 +247,16 @@ def fetch_or_wrap_error(
     ctx: contextlib.ExitStack,
     chroot_context: ChrootContext,
     basedir: Path,
-    wf_module: WfModule,
+    module_id_name: str,
     module_zipfile: ModuleZipfile,
-    migrated_params: Dict[str, Any],
+    migrated_params_or_error: Union[Dict[str, Any], ModuleError],
     secrets: Dict[str, Any],
     last_fetch_result: Optional[FetchResult],
     maybe_input_crr: Optional[CachedRenderResult],
     output_path: Path,
 ):
     """
-    Fetch `wf_module`, and do not raise any exceptions worth catching.
+    Fetch, and do not raise any exceptions worth catching.
 
     Exceptions are wrapped -- the result is a FetchResult with `.errors`.
 
@@ -262,18 +270,33 @@ def fetch_or_wrap_error(
     * Module was deleted (`module_zipfile is None`)
     * Module times out (`cjwkernel.errors.ModuleTimeoutError`), in `fetch()`.
     * Module crashes (`cjwkernel.errors.ModuleExitedError`), in `fetch()`.
-    * migrated_params is invalid (`ValueError`)
+    * migrated_params_or_error is a `ModuleError`
+    * migrated_params_or_error is invalid (`ValueError`)
     * input_crr points to a nonexistent file (`FileNotFoundError`)
     """
     # module_zipfile=None is allowed
     if module_zipfile is None:
-        logger.info("fetch() deleted module '%s'", wf_module.module_id_name)
+        logger.info("fetch() deleted module '%s'", module_id_name)
         return FetchResult(
             output_path,
             [RenderError(I18nMessage.TODO_i18n("Cannot fetch: module was deleted"))],
         )
     module_spec = module_zipfile.get_spec()
     param_schema = module_spec.get_param_schema()
+
+    if isinstance(migrated_params_or_error, ModuleError):
+        # raise the exception so we can log it
+        try:
+            raise migrated_params_or_error
+        except ModuleError:
+            # We'll always get here
+            logger.exception(
+                "%s:migrate_params() raised error", module_zipfile.path.name
+            )
+        return user_visible_bug_fetch_result(
+            output_path, format_for_user_debugging(migrated_params_or_error)
+        )
+    migrated_params = migrated_params_or_error
 
     try:
         param_schema.validate(migrated_params)
@@ -416,7 +439,7 @@ async def fetch(
             ctx,
             chroot_context,
             basedir,
-            wf_module,
+            wf_module.module_id_name,
             module_zipfile,
             migrated_params,
             secrets,

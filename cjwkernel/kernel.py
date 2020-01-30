@@ -229,6 +229,7 @@ class Kernel:
                 "cjwkernel.parquet",
                 "cjwmodule",
                 "cjwmodule.i18n",
+                "cjwmodule.http.client",
                 "cjwmodule.http.httpfile",
                 "cjwmodule.util",
             ],
@@ -332,7 +333,7 @@ class Kernel:
         params: Params,
         secrets: Dict[str, Any],
         last_fetch_result: Optional[FetchResult],
-        input_parquet_filename: str,
+        input_parquet_filename: Optional[str],
         output_filename: str,
     ) -> FetchResult:
         """
