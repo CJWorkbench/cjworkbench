@@ -7,13 +7,14 @@
 set -e
 set -x
 
-ENV="staging"  # or "production", or....
-PROJECT_NAME="workbench-$ENV"  # Google Cloud Project
+ENV="production"  # or "production", or....
 CLUSTER_NAME="workbench"
 if [ "$ENV" = "staging" ]; then
   DOMAIN_NAME="workbenchdata-staging.com"
+  PROJECT_NAME="workbench-staging"
 else
   DOMAIN_NAME="workbenchdata.com"
+  PROJECT_NAME="workbenchdata-production"  # workbench-production was taken
 fi
 ZONE_NAME="workbench-zone"
 APP_FQDN="app.$DOMAIN_NAME"
@@ -23,6 +24,7 @@ APP_STATIC_IP_NAME="app-ip"
 gcloud config configurations create $PROJECT_NAME
 gcloud config configurations activate $PROJECT_NAME
 gcloud auth login
+gcloud projects create $PROJECT_NAME
 gcloud config set project $PROJECT_NAME
 gcloud config set container/cluster workbench
 
@@ -50,7 +52,7 @@ gcloud projects add-iam-policy-binding $PROJECT_NAME \
   --member "serviceAccount:$CLUSTER_NAME-least-privilege-sa@$PROJECT_NAME.iam.gserviceaccount.com" \
   --role roles/monitoring.viewer
 
-echo "Browse to https://console.cloud.google.com/apis/library/container.googleapis.com?project=workbench-staging"
+echo "Browse to https://console.cloud.google.com/apis/library/container.googleapis.com?project=$PROJECT_NAME"
 echo "to enable the Kubernetes Engine API"
 echo
 echo "When done, press Enter:"

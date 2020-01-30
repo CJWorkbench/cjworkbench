@@ -1,6 +1,8 @@
 How we migrate from one GCloud project to another
 =================================================
 
+These instructions were written and followed 2020-01-29.
+
 1 - Set up the new cluster
 --------------------------
 
@@ -22,8 +24,8 @@ that creates them).
 [Create a service account](https://cloud.google.com/docs/authentication/getting-started#creating_a_service_account):
 ```
 gcloud iam service-accounts create storage-migrate
-gcloud projects add-iam-policy-binding [PROJECT_ID] --member "serviceAccount:storage-migrate@[PROJECT_ID].iam.gserviceaccount.com" --role "roles/owner"
-gcloud iam service-accounts keys create GOOGLE_APPLICATION_CREDENTIALS.json --iam-account storage-migrate@[PROJECT_ID].iam.gserviceaccount.com
+gcloud projects add-iam-policy-binding $PROJECT_ID --member "serviceAccount:storage-migrate@$PROJECT_ID.iam.gserviceaccount.com" --role "roles/owner"
+gcloud iam service-accounts keys create GOOGLE_APPLICATION_CREDENTIALS.json --iam-account storage-migrate@$PROJECT_ID.iam.gserviceaccount.com
 ```
 
 Give the *Storage Transfer Service* account access to the minio buckets. (*NOT*
@@ -62,8 +64,8 @@ Switch to the new project and de-dump:
 ```
 gcloud config configurations activate workbench-staging
 kubectl config use-context gke_workbench-staging_us-central1-b_workbench
-kubectl cp to-migrate.psql database-deployment-7d7c5457f6-4krl8:/to-migrate.psql ./to-migrate.psql
-kubectl exec -it database-deployment-7d7c5457f6-4krl8 -- pg_dump -Ucjworkbench cjworkbench -Fc --quote-all-identifiers -f /to-migrate.psql
+kubectl cp to-migrate.psql database-deployment-7d7c5457f6-4krl8:/
+kubectl exec -it database-deployment-7d7c5457f6-4krl8 -- pg_restore -Ucjworkbench -dcjworkbench --no-owner /to-migrate.psql
 kubectl exec -it database-deployment-7d7c5457f6-4krl8 -- rm /to-migrate.psql
 ```
 
