@@ -6,15 +6,3 @@ metadata:
 spec:
   domains:
     - app.workbenchdata.com
----
-apiVersion: extensions/v1beta1
-kind: Ingress
-metadata:
-  name: frontend-ingress
-  annotations:
-    kubernetes.io/ingress.global-static-ip-name: app-ip
-    networking.gke.io/managed-certificates: app-cert
-spec:
-  backend:
-    serviceName: frontend-service
-    servicePort: 80

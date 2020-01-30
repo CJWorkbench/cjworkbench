@@ -130,23 +130,23 @@ gcloud iam service-accounts create $CLUSTER_NAME-minio --display-name $CLUSTER_N
 # minio needs storage.buckets.list, or it prints lots of errors.
 # (which seems like a bug.... https://github.com/minio/mc/issues/2652)
 # Minio uses this permission to poll for bucket policies.
-gcloud iam roles create MinioStorageBucketsList \
+gcloud iam roles create Minio \
   --project=$PROJECT_NAME \
-  --permissions=storage.buckets.list
+  --permissions=storage.buckets.list,storage.buckets.get,storage.objects.create,storage.objects.delete,storage.objects.get,storage.objects.list,storage.objects.update
 gcloud projects add-iam-policy-binding $PROJECT_NAME \
   --member=serviceAccount:$CLUSTER_NAME-minio@$PROJECT_NAME.iam.gserviceaccount.com \
-  --role=projects/$PROJECT_NAME/roles/MinioStorageBucketsList
+  --role=roles/storage.admin
 gsutil mb gs://user-files.$DOMAIN_NAME
 gsutil mb gs://static.$DOMAIN_NAME
 gsutil mb gs://stored-objects.$DOMAIN_NAME
 gsutil mb gs://external-modules.$DOMAIN_NAME
 gsutil mb gs://cached-render-results.$DOMAIN_NAME
-gsutil acl set public-read gs://static.$DOMAIN_NAME
-gsutil acl ch -u $CLUSTER_NAME-minio@$PROJECT_NAME.iam.gserviceaccount.com:W gs://user-files.$DOMAIN_NAME
-gsutil acl ch -u $CLUSTER_NAME-minio@$PROJECT_NAME.iam.gserviceaccount.com:W gs://static.$DOMAIN_NAME
-gsutil acl ch -u $CLUSTER_NAME-minio@$PROJECT_NAME.iam.gserviceaccount.com:W gs://stored-objects.$DOMAIN_NAME
-gsutil acl ch -u $CLUSTER_NAME-minio@$PROJECT_NAME.iam.gserviceaccount.com:W gs://external-modules.$DOMAIN_NAME
-gsutil acl ch -u $CLUSTER_NAME-minio@$PROJECT_NAME.iam.gserviceaccount.com:W gs://cached-render-results.$DOMAIN_NAME
+gsutil ubla set on gs://user-files.$DOMAIN_NAME
+gsutil ubla set on gs://static.$DOMAIN_NAME
+gsutil ubla set on gs://stored-objects.$DOMAIN_NAME
+gsutil ubla set on gs://external-modules.$DOMAIN_NAME
+gsutil ubla set on gs://cached-render-results.$DOMAIN_NAME
+gsutil iam ch allUsers:objectViewer gs://static.$DOMAIN_NAME
 echo '[{"origin":"*","method":"GET","maxAgeSeconds":3000}]' > static-cors.json \
   && gsutil cors set static-cors.json gs://static.$DOMAIN_NAME \
   && rm -f static-cors.json
@@ -209,6 +209,7 @@ kubectl run migrate-cluster-setup \
 kubectl apply -f fetcher-deployment.yaml
 kubectl apply -f renderer-deployment.yaml
 kubectl apply -f cron-deployment.yaml
+kubectl apply -f frontend-ingress-common.yaml
 kubectl apply -f frontend-service.yaml
 kubectl apply -f frontend-deployment.yaml
 

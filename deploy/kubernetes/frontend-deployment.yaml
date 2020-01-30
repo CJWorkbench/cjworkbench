@@ -15,6 +15,8 @@ data:
           timeout connect 30s
           timeout client 60s
           timeout server 60s
+          timeout tunnel 1h
+          timeout client-fin 30s
           mode http
           option httplog
 
@@ -149,7 +151,7 @@ spec:
                   name: workbench-config
                   key: domainNameWithLeadingDot
             - name: MINIO_STATIC_URL_PATTERN
-              value: 'https://storage.googleapis.com/production-static.workbenchdata.com/'
+              value: 'https://storage.googleapis.com/static$(MINIO_BUCKET_SUFFIX)/'
             - name: MINIO_EXTERNAL_URL
               value: "https://user-files$(MINIO_BUCKET_SUFFIX)"
             - name: _RABBITMQ_PASSWORD
