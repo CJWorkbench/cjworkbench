@@ -91,7 +91,7 @@ class NotInternationalizedError(Exception):
     pass
 
 
-class MessageCatalogsRegistry:
+class MessageLocalizer:
     def __init__(self, catalogs: Dict[str, Catalog]):
         self.catalogs = catalogs
 
@@ -108,25 +108,23 @@ class MessageCatalogsRegistry:
         else:
             raise KeyError(message_id)
 
-
-class MessageLocalizer:
-    def __init__(self, registry: MessageCatalogsRegistry):
-        self.catalogs_registry = registry
-
     def localize(
         self, locale_id: str, message_id: str, arguments: _MessageArguments = {}
     ) -> str:
         if locale_id != default_locale:
             try:
-                message = self.catalogs_registry.find_message(locale_id, message_id)
+                message = self.find_message(locale_id, message_id)
                 return icu_format_message(locale_id, message, arguments=arguments)
             except ICUError as err:
                 logger.exception(
-                    f"Error in po file for locale {locale_id} and message {message_id}: {err}"
+                    "Error in po file for locale %s and message %s: %s",
+                    locale_id,
+                    message_id,
+                    err,
                 )
             except KeyError as err:
                 pass
-        message = self.catalogs_registry.find_message(default_locale, message_id)
+        message = self.find_message(default_locale, message_id)
         return icu_format_message(default_locale, message, arguments=arguments)
 
     def localize_html(
@@ -140,21 +138,20 @@ class MessageLocalizer:
     ) -> str:
         if locale_id != default_locale:
             try:
-                message = self.catalogs_registry.find_message(
-                    locale_id, message_id, context=context
-                )
+                message = self.find_message(locale_id, message_id, context=context)
                 return icu_format_html_message(
                     locale_id, message, arguments=arguments, tags=tags
                 )
             except ICUError as err:
                 logger.exception(
-                    f"Error in po file for locale {locale_id} and message {message_id}: {err}"
+                    "Error in po file for locale %s and message %s: %s",
+                    locale_id,
+                    message_id,
+                    err,
                 )
             except KeyError as err:
                 pass
-        message = self.catalogs_registry.find_message(
-            default_locale, message_id, context=context
-        )
+        message = self.find_message(default_locale, message_id, context=context)
         return icu_format_html_message(
             default_locale, message, arguments=arguments, tags=tags
         )
@@ -165,9 +162,7 @@ class MessageLocalizerRegistry:
         self._module_localizers = WeakKeyDictionary()
         self._module_localizers_lock = threading.Lock()
         self._app_localizer = MessageLocalizer(
-            MessageCatalogsRegistry(
-                {locale_id: load_catalog(locale_id) for locale_id in supported_locales}
-            )
+            {locale_id: load_catalog(locale_id) for locale_id in supported_locales}
         )
 
     def for_module_zipfile(self, module_zipfile: ModuleZipfile) -> MessageLocalizer:
@@ -226,14 +221,17 @@ class MessageLocalizerRegistry:
                 )
             except PoFileError as err:
                 logger.exception(
-                    f"Invalid po file for module {module_zipfile.module_id_and_version} in locale {locale_id}: {err}"
+                    "Invalid po file for module %s in locale %s: %s",
+                    module_zipfile.module_id_and_version,
+                    locale_id,
+                    err,
                 )
                 pass
             except KeyError as err:
                 pass
         if not catalogs:
             raise NotInternationalizedError(module_zipfile.module_id)
-        return MessageLocalizer(MessageCatalogsRegistry(catalogs))
+        return MessageLocalizer(catalogs)
 
 
 MESSAGE_LOCALIZER_REGISTRY = MessageLocalizerRegistry()
