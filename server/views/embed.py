@@ -34,7 +34,7 @@ def embed(request, wfmodule_id):
             request.user,
             request.session,
             request.locale_id,
-            dict(MODULE_REGISTRY.all_latest()),
+            {module_zipfile.module_id: module_zipfile},
         )
         init_state = {
             "workflow": jsonize_clientside_workflow(

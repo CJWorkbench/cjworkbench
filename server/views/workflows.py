@@ -65,12 +65,7 @@ def make_init_state(
     except Workflow.DoesNotExist:
         raise Http404("Workflow was recently deleted")
 
-    ctx = JsonizeContext(
-        request.user,
-        request.session,
-        request.locale_id,
-        dict(MODULE_REGISTRY.all_latest()),
-    )
+    ctx = JsonizeContext(request.user, request.session, request.locale_id, modules)
     return jsonize_clientside_init(state, ctx)
 
 
@@ -87,12 +82,7 @@ class Index(View):
     def get(self, request: HttpRequest):
         """Render workflow-list page."""
 
-        ctx = JsonizeContext(
-            request.user,
-            request.session,
-            request.locale_id,
-            dict(MODULE_REGISTRY.all_latest()),
-        )
+        ctx = JsonizeContext(request.user, request.session, request.locale_id, {})
 
         def list_workflows_as_json(**kwargs) -> List[Dict[str, Any]]:
             workflows = (

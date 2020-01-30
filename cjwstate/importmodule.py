@@ -17,6 +17,7 @@ from cjwstate.models import ModuleVersion
 from cjwstate import clientside
 import cjwstate.modules
 from cjwstate.modules.types import ModuleZipfile
+from cjwstate.models.module_registry import MODULE_REGISTRY
 
 
 logger = logging.getLogger(__name__)
@@ -201,7 +202,7 @@ def import_module_from_url(url: str) -> clientside.Module:
     """
     Import zipfile from a URL.
 
-    Return a `clientside.Module` on success.
+    Return a `ModuleZipFile` on success.
 
     Raise `WorkbenchModuleImportError` if import fails, meaning:
 
@@ -211,14 +212,17 @@ def import_module_from_url(url: str) -> clientside.Module:
     """
     match = GITHUB_URL_PATTERN.match(url)
     if match:
-        return import_module_from_github(match.group("owner"), match.group("repo"))
+        clientside_module = import_module_from_github(
+            match.group("owner"), match.group("repo")
+        )
+    elif TEST_ZIP_URL_PATTERN.match(url):
+        clientside_module = import_module_from_test_zip_url(url)
+    else:
+        raise WorkbenchModuleImportError(
+            "Please supply a GitHub URL with owner=CJWorkbench"
+        )
 
-    if TEST_ZIP_URL_PATTERN.match(url):
-        return import_module_from_test_zip_url(url)
-
-    raise WorkbenchModuleImportError(
-        "Please supply a GitHub URL with owner=CJWorkbench"
-    )
+    return clientside_module, MODULE_REGISTRY.latest(clientside_module.spec.id_name)
 
 
 def _hexsha1(path: Path) -> str:

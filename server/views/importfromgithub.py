@@ -17,12 +17,12 @@ def import_from_github(request):
         )
 
     try:
-        clientside_module = import_module_from_url(request.data["url"])
+        clientside_module, module_zipfile = import_module_from_url(request.data["url"])
         ctx = JsonizeContext(
             request.user,
             request.session,
             request.locale_id,
-            dict(MODULE_REGISTRY.all_latest()),
+            {module_zipfile.module_id: module_zipfile},
         )
         data = jsonize_clientside_module(clientside_module, ctx)
         return JsonResponse(data, status=status.HTTP_201_CREATED)
