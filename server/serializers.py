@@ -15,9 +15,9 @@ from cjwstate import clientside
 from cjwkernel.types import RenderError
 from cjworkbench.i18n import default_locale
 from cjworkbench.i18n.trans import (
-    localize,
     MESSAGE_LOCALIZER_REGISTRY,
     NotInternationalizedError,
+    MessageLocalizer,
 )
 from icu import ICUError
 
@@ -81,6 +81,10 @@ JsonizeModuleContext = namedtuple(
     "JsonizeModuleContext",
     ["user", "session", "locale_id", "module_id", "module_zipfiles"],
 )
+
+
+class JsonizeContextError(Exception):
+    pass
 
 
 def _add_module_to_ctx(ctx: JsonizeContext, module_id: str) -> JsonizeModuleContext:
@@ -535,14 +539,42 @@ def _localize_module_spec_message(
         # `localize` handles `ICUError` for the given locale.
         # Hence, if we get here, it means that the message is badly formatted in the default locale.
         logger.exception(
-            f"I18nMessage badly formatted in default locale. id: {message_id}, module: {ctx.module_id}"
+            "I18nMessage badly formatted in default locale. id: %s, module: %s",
+            message_id,
+            ctx.module_id,
         )
         return spec_value
     except KeyError:
         logger.exception(
-            f"I18nMessage not found in module catalogs. id: {message_id}, module: {ctx.module_id}"
+            "I18nMessage not found in module catalogs. id: %s, module: %s",
+            message_id,
+            ctx.module_id,
         )
         return spec_value
+
+
+def _i18n_message_source_to_localizer(
+    message: I18nMessage, ctx: JsonizeContext
+) -> MessageLocalizer:
+    """Return a localizer for the source of the given `I18nMessage`.
+    
+    Raise `NotInternationalizedError` if the source is a non-internationalized module.
+    Raise `JsonizeContextError` if the source is a module that has no associated `ModuleZipFile`.
+    """
+    if message.source is None:
+        return MESSAGE_LOCALIZER_REGISTRY.for_application()
+    elif isinstance(message.source, I18nMessageSource.Module):
+        try:
+            module_zipfile = ctx.module_zipfiles[message.source.module_id]
+        except KeyError as err:
+            raise JsonizeContextError(
+                "No ModuleZipFile for module id %s" % message.source.module_id
+            ) from err
+        return MESSAGE_LOCALIZER_REGISTRY.for_module_zipfile(
+            module_zipfile
+        )  # Raises `NotInternationalizedError`
+    else:  # if isinstance(message.source, I18nMessageSource.Library)
+        raise RuntimeError("TODO_i18n")
 
 
 def jsonize_i18n_message(message: I18nMessage, ctx: JsonizeContext) -> str:
@@ -552,60 +584,44 @@ def jsonize_i18n_message(message: I18nMessage, ctx: JsonizeContext) -> str:
     
     If the message content is not found or is invalid, a representation of the `I18nMessage` is returned.
     """
-    default = json.dumps(message.to_dict())
-    if message.source is None:
-        if message.id == "TODO_i18n":
-            return message.args["text"]
-        # Attempt to localize in the locale given by `ctx`.
-        try:
-            return localize(ctx.locale_id, message.id, arguments=message.args)
-        except ICUError as err:
-            # `localize` handles `ICUError` for the given locale.
-            # Hence, if we get here, it means that the message is badly formatted in the default locale.
-            logger.exception(
-                f"I18nMessage badly formatted in default locale. id: {message.id}, source: {message.source}"
-            )
-            # Fall through
-        except KeyError as err:
-            logger.exception(
-                f"I18nMessage not found. id: {message.id}, source: {message.source}"
-            )
-            # Fall through
+    if message.source is None and message.id == "TODO_i18n":
+        return message.args["text"]
 
-        return default
-    elif isinstance(message.source, I18nMessageSource.Module):
-        if message.source.module_id not in ctx.module_zipfiles:
-            logger.exception(
-                f"Module {message.source.module_id} not in jsonize context"
-            )
-            return default
+    # Get localizer
+    try:
+        localizer = _i18n_message_source_to_localizer(message, ctx)
+    except NotInternationalizedError:
+        logger.exception(
+            "I18nMessageSource %s does not support localization", message.source
+        )
+        return json.dumps(message.to_dict())
+    except JsonizeContextError as err:
+        logger.exception(
+            "JsonizeContext not set properly for I18nMessageSource %s. Error: %s",
+            message.source,
+            err,
+        )
+        return json.dumps(message.to_dict())
 
-        try:
-            localizer = MESSAGE_LOCALIZER_REGISTRY.for_module_zipfile(
-                ctx.module_zipfiles[message.source.module_id]
-            )
-        except NotInternationalizedError:
-            logger.exception(
-                f"Module {message.source.module_id} not supported as a message source"
-            )
-            return default
-
-        try:
-            return localizer.localize(ctx.locale_id, message.id, arguments=message.args)
-        except ICUError as err:
-            # `localize` handles `ICUError` for the given locale.
-            # Hence, if we get here, it means that the message is badly formatted in the default locale.
-            logger.exception(
-                f"I18nMessage badly formatted in default locale. id: {message.id}, module: {message.source.module_id}"
-            )
-            return default
-        except KeyError as err:
-            logger.exception(
-                f"I18nMessage not found in module catalogs. id: {message.id}, module: {message.source.module_id}"
-            )
-            return default
-    else:  # if isinstance(message.source, I18nMessageSource.Library)
-        raise RuntimeError("TODO_i18n")
+    # Attempt to localize in the locale given by `ctx`.
+    try:
+        return localizer.localize(ctx.locale_id, message.id, arguments=message.args)
+    except ICUError as err:
+        # `localize` handles `ICUError` for the given locale.
+        # Hence, if we get here, it means that the message is badly formatted in the default locale.
+        logger.exception(
+            "I18nMessage badly formatted in default locale. id: %s, source: %s",
+            message.id,
+            message.source,
+        )
+        return json.dumps(message.to_dict())
+    except KeyError as err:
+        logger.exception(
+            "I18nMessage content not found in catalogs. id: %s, source: %s",
+            message.id,
+            message.source,
+        )
+        return json.dumps(message.to_dict())
 
 
 def jsonize_quick_fix(quick_fix: QuickFix, ctx: JsonizeContext) -> Dict[str, Any]:
