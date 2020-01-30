@@ -173,7 +173,7 @@ class MessageLocalizerRegistry:
     def for_module_zipfile(self, module_zipfile: ModuleZipfile) -> MessageLocalizer:
         """Return a `MessageLocalizer` for the given `ModuleZipFile`
 
-        Raise `NotInternationalizedError` if the `ModuleZipFile` has no po files
+        Raise `NotInternationalizedError` if the `ModuleZipFile` has no valid po files
         
         Caches the result for each `ModuleZipFile`.
         """
@@ -228,7 +228,7 @@ class MessageLocalizerRegistry:
                 logger.exception(
                     f"Invalid po file for module {module_zipfile.module_id_and_version} in locale {locale_id}: {err}"
                 )
-                catalogs[locale_id] = Catalog()
+                pass
             except KeyError as err:
                 pass
         if not catalogs:
