@@ -259,6 +259,10 @@ class I18nMessageTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             I18nMessage.coerce(("my_id", {"hello": "there"}, {"library": "cjwmodule"}))
 
+    def test_coerce_with_invalid_source(self):
+        with self.assertRaises(ValueError):
+            I18nMessage.coerce(("my_id", {"hello": "there"}, "random"))
+
     def test_to_arrow(self):
         self.assertEqual(
             I18nMessage("my_id", {"hello": "there"}).to_arrow(),

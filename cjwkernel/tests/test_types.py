@@ -384,6 +384,20 @@ class ThriftConvertersTest(unittest.TestCase):
             ),
         )
 
+    def test_i18n_message_from_thrift_invalid_source(self):
+        with self.assertRaises(ValueError):
+            types.I18nMessage.from_thrift(
+                ttypes.I18nMessage(
+                    "modules.x.y",
+                    {
+                        "a": ttypes.I18nArgument(string_value="s"),
+                        "b": ttypes.I18nArgument(i32_value=12345678),
+                        "c": ttypes.I18nArgument(double_value=0.123),
+                    },
+                    "random",
+                )
+            )
+
     def test_i18n_message_from_dict_source_library(self):
         self.assertEqual(
             types.I18nMessage.from_dict(
@@ -445,6 +459,16 @@ class ThriftConvertersTest(unittest.TestCase):
             types.I18nMessage("modules.x.y", ["s", 12345678, 0.123]).to_dict(),
             {"id": "modules.x.y", "arguments": ["s", 12345678, 0.123]},
         )
+
+    def test_i18n_message_from_dict_invalid_source(self):
+        with self.assertRaises(ValueError):
+            types.I18nMessage.from_dict(
+                {
+                    "id": "modules.x.y",
+                    "arguments": ["s", 12345678, 0.123],
+                    "source": "random",
+                }
+            )
 
     def test_prepend_step_quick_fix_action_from_thrift(self):
         self.assertEqual(

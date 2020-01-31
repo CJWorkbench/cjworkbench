@@ -595,6 +595,10 @@ class I18nMessage:
     source: Optional[str] = None
     """Where the message comes from (`"module"` or `"cjwmodule"`), or `None` if it comes from Workbench proper."""
 
+    def __post_init__(self):
+        if self.source is not None and self.source not in ["module", "cjwmodule"]:
+            raise ValueError("Invalid message source %s" % self.source)
+
     @classmethod
     def from_thrift(cls, value: ttypes.I18nMessage) -> I18nMessage:
         return cls(
