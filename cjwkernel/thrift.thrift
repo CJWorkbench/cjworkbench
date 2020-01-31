@@ -192,19 +192,6 @@ union I18nArgument {
   3: double double_value
 }
 
-/**
- * Source of a translatable string.
- *
- * If no field is set, the source is Workbench's own catalog.
- */
-union I18nMessageSource {
-  /** The message comes from the "library" library. */
-  1: string library,
-
-  /** The message comes from the "module_id" module.  */
-  2: string module_id
-}
-
 /** Translation key and arguments. */
 struct I18nMessage {
   /** Message ID. For instance, `modules.renamecolumns.duplicateColname` */
@@ -217,8 +204,8 @@ struct I18nMessage {
    */
   2: map<string, I18nArgument> arguments
 
-  /** Pointer to code repository whose catalog translates the message. */
-  3: I18nMessageSource source
+  /** Pointer to code repository whose catalog translates the message. "library" or "module" */
+  3: string source
 }
 
 /** Instruction that upon clicking a button, Workbench should create a Step. */

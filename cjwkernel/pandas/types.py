@@ -411,11 +411,14 @@ class I18nMessage:
     args: Dict[str, Union[int, float, str]] = field(default_factory=dict)
     """Arguments (empty if message does not need any -- which is common)."""
 
-    source: Optional[Dict[str, str]] = None
+    source: Optional[str] = None
     """An indication of where the message is coming from.
         - `None` means it's coming from workbench itself
+        - `"module"` means it's coming from a module;
+          when localizing, we will need to search the current context 
+          in order to find which module it is
         - A dict with key `"module"` means it's coming from a module
-          for example `{"module": "mymodule"}` means, "search the mymodule module's catalog"
+          for example `{"module": "mymodule"}` means, "search the mymodule module's catalog";
         - A dict with key `"library"` indicates it's coming from some of our supported libraries;
           for example `{"library": "cjwmodule"}` means, "search the cjwmodule library's catalog"
     """
@@ -423,26 +426,12 @@ class I18nMessage:
     @classmethod
     def from_arrow(cls, value: atypes.I18nMessage) -> I18nMessage:
         if value.source:
-            if isinstance(value.source, atypes.I18nMessageSource.Module):
-                return cls(value.id, value.args, {"module": value.source.module_id})
-            if isinstance(value.source, atypes.I18nMessageSource.Library):
-                return cls(value.id, value.args, {"library": value.source.library})
+            return cls(value.id, value.args, value.source)
         return cls(value.id, value.args)
 
     def to_arrow(self) -> atypes.I18nMessage:
         if self.source:
-            if "module" in self.source:
-                return atypes.I18nMessage(
-                    self.id,
-                    self.args,
-                    atypes.I18nMessageSource.Module(self.source["module"]),
-                )
-            if "library" in self.source:
-                return atypes.I18nMessage(
-                    self.id,
-                    self.args,
-                    atypes.I18nMessageSource.Library(self.source["library"]),
-                )
+            return atypes.I18nMessage(self.id, self.args, self.source)
         return atypes.I18nMessage(self.id, self.args)
 
     @classmethod
@@ -481,22 +470,13 @@ class I18nMessage:
                 )
             if len(value) == 3:
                 source = value[2]
-                if not isinstance(source, dict):
+                if not isinstance(source, str):
                     raise ValueError(
-                        "Message source must be a dict, got %s" % type(source).__name__
+                        "Message source must be a string, got %s"
+                        % type(source).__name__
                     )
-                if not source:
-                    raise ValueError("Message source can't be empty if present")
-                if len(source) > 1:
-                    raise ValueError(
-                        "Message can only have a single source, got %s" % source
-                    )
-                supported_source_keys = {"module", "library"}
-                if set(source.keys()) - supported_source_keys:
-                    raise ValueError(
-                        "Unknown message source kind %s. Supported kinds: %s."
-                        % (source.keys(), supported_source_keys)
-                    )
+                if source not in ["module", "cjwmodule"]:
+                    raise ValueError("Invalid i18n message source %s" % source)
             else:
                 source = None
             return cls(value[0], value[1], source)
