@@ -5,14 +5,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('server', '0002_auto_20191216_1735'),
-    ]
+    dependencies = [("server", "0002_auto_20191216_1735")]
 
     operations = [
         migrations.AlterField(
-            model_name='uploadedfile',
-            name='bucket',
-            field=models.CharField(blank=True, default='', max_length=255),
-        ),
+            model_name="uploadedfile",
+            name="bucket",
+            field=models.CharField(blank=True, default="", max_length=255),
+        )
     ]
