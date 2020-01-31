@@ -122,7 +122,7 @@ steps:
       # We overrode entrypoint; so we copy/paste its original stuff from
       # https://github.com/GoogleCloudPlatform/cloud-builders/blob/master/kubectl/kubectl.bash
       # Double up '$$' for cloudbuild escape syntax.
-      if [[ "$$(kubectl config current-context 2>/dev/null)" == "" ]]; then
+      if [[ "$$(kubectl.1.15 config current-context 2>/dev/null)" == "" ]]; then
         gcloud container clusters get-credentials \
           --project="$$CLOUDSDK_CORE_PROJECT" \
           --zone="$$CLOUDSDK_COMPUTE_ZONE" \
