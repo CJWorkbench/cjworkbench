@@ -17,6 +17,9 @@ from cjwstate.modules.types import ModuleZipfile
 from weakref import WeakKeyDictionary
 import threading
 from io import BytesIO
+import importlib.resources
+import importlib
+from functools import lru_cache
 
 _translators = {}
 
@@ -208,6 +211,34 @@ class MessageLocalizerRegistry:
     def for_application(self) -> MessageLocalizer:
         """Return a `MessageLocalizer` for the application messages"""
         return self._app_localizer
+
+    @lru_cache(1)
+    def for_cjwmodule(self) -> MessageLocalizer:
+        """Return a `MessageLocalizer` for the messages of `cjwmodule`"""
+        catalogs = {}
+
+        for locale_id in supported_locales:
+            try:
+                catalogs[locale_id] = read_po(
+                    importlib.resources.open_binary(
+                        importlib.import_module(f"cjwmodule.locale.{locale_id}"),
+                        "messages.po",
+                    ),
+                    abort_invalid=True,
+                )
+            except (FileNotFoundError, ModuleNotFoundError):
+                pass
+            except PoFileError as err:
+                logger.exception(
+                    "Invalid po file for module %s in locale %s: %s",
+                    module_zipfile.module_id_and_version,
+                    locale_id,
+                    err,
+                )
+                pass
+        if not catalogs:
+            raise NotInternationalizedError("cjwmodule")
+        return MessageLocalizer(catalogs)
 
     def _create_localizer_for_module_zipfile(
         cls, module_zipfile: ModuleZipfile

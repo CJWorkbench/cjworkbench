@@ -561,9 +561,7 @@ def _i18n_message_source_to_localizer(
     Raise `NotInternationalizedError` if the source is a non-internationalized module.
     Raise `JsonizeContextError` if the source is a module that has no associated `ModuleZipFile`.
     """
-    if message.source is None:
-        return MESSAGE_LOCALIZER_REGISTRY.for_application()
-    elif message.source == "module":
+    if message.source == "module":
         try:
             module_zipfile = ctx.module_zipfiles[ctx.module_id]
         except KeyError as err:
@@ -573,8 +571,10 @@ def _i18n_message_source_to_localizer(
         return MESSAGE_LOCALIZER_REGISTRY.for_module_zipfile(
             module_zipfile
         )  # Raises `NotInternationalizedError`
-    else:  # if message.source == "cjwmodule"
-        raise RuntimeError("TODO_i18n")
+    elif message.source == "cjwmodule":
+        return MESSAGE_LOCALIZER_REGISTRY.for_cjwmodule()
+    else:  # if message.source is None
+        return MESSAGE_LOCALIZER_REGISTRY.for_application()
 
 
 def jsonize_i18n_message(message: I18nMessage, ctx: JsonizeModuleContext) -> str:
@@ -584,7 +584,9 @@ def jsonize_i18n_message(message: I18nMessage, ctx: JsonizeModuleContext) -> str
     
     If the message content is not found or is invalid, a representation of the `I18nMessage` is returned.
     """
-    if message.source is None and message.id == "TODO_i18n":
+    if message.id == "TODO_i18n" and (
+        message.source is None or message.source == "cjwmodule"
+    ):
         return message.args["text"]
 
     # Get localizer
