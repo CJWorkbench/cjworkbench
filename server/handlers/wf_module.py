@@ -16,7 +16,8 @@ from cjwstate.models.commands import (
     ChangeDataVersionCommand,
     ChangeWfModuleNotesCommand,
 )
-from cjwstate.models.param_spec import ParamSpec
+from cjwstate.models.module_registry import MODULE_REGISTRY
+from cjwstate.modules.param_spec import ParamSpec
 import server.utils
 from . import autofetch
 from .types import HandlerError
@@ -336,10 +337,13 @@ def _lookup_service(wf_module: WfModule, param: str) -> oauth.OAuthService:
 
     Raise `HandlerError` if we cannot.
     """
-    module_version = wf_module.module_version
-    if module_version is None:
-        raise HandlerError(f"BadRequest: module {wf_module.module_id_name} not found")
-    for field in module_version.param_fields:
+    module_id = wf_module.module_id_name
+    try:
+        module_zipfile = MODULE_REGISTRY.latest(module_id)
+    except KeyError:
+        raise HandlerError(f"BadRequest: module {module_id} not found")
+    module_spec = module_zipfile.get_spec()
+    for field in module_spec.param_fields:
         if (
             field.id_name == param
             and isinstance(field, ParamSpec.Secret)
@@ -355,9 +359,7 @@ def _lookup_service(wf_module: WfModule, param: str) -> oauth.OAuthService:
                 raise HandlerError(f"AuthError: we only support {allowed_services}")
             return service
     else:
-        raise HandlerError(
-            f"Module {wf_module.module_id_name} has no oauth {param} parameter"
-        )
+        raise HandlerError(f"Module {module_id} has no oauth {param} parameter")
 
 
 @register_websockets_handler
@@ -472,12 +474,16 @@ def _wf_module_set_secret_and_build_delta(
         if wf_module.secrets.get(param, {}).get("secret") == secret:
             return None  # no-op
 
-        module_version = wf_module.module_version
-        if module_version is None:
-            raise HandlerError(f"BadRequest: ModuleVersion does not exist")
+        try:
+            module_zipfile = MODULE_REGISTRY.latest(wf_module.module_id_name)
+        except KeyError:
+            raise HandlerError(
+                f"BadRequest: ModuleZipfile {wf_module.module_id_name} does not exist"
+            )
+        module_spec = module_zipfile.get_spec()
         if not any(
             p.type == "secret" and p.secret_logic.provider == "string"
-            for p in module_version.param_fields
+            for p in module_spec.param_fields
         ):
             raise HandlerError(f"BadRequest: param is not a secret string parameter")
 

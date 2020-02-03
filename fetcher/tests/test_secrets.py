@@ -7,7 +7,7 @@ from aiohttp import web
 from aiohttp.test_utils import AioHTTPTestCase, unittest_run_loop
 from yarl import URL
 from cjwstate import oauth
-from cjwstate.models.param_spec import ParamSpec
+from cjwstate.modules.param_spec import ParamSpec
 from fetcher.secrets import prepare_secret
 
 

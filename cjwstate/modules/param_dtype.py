@@ -532,7 +532,7 @@ class ParamDTypeFile(ParamDType):
 
 
 # Aliases to help with import. e.g.:
-# from cjwkernel.param_dtype import ParamDType
+# from cjwstate.modules.param_dtype import ParamDType
 # dtype = ParamDType.String()
 ParamDType.String = ParamDTypeString
 ParamDType.Integer = ParamDTypeInteger

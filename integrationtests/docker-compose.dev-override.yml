@@ -7,9 +7,6 @@ services:
       context: ..
       target: migrate
 
-  git-server:
-    build: ./git-server
-
   fetcher:
     build:
       context: ..

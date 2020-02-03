@@ -9,9 +9,6 @@ services:
   migrate:
     image: 'gcr.io/${PROJECT_ID}/migrate:${COMMIT_SHA}'
 
-  git-server:
-    image: 'gcr.io/${PROJECT_ID}/git-server:${COMMIT_SHA}'  # we don't publish this one
-
   fetcher:
     image: 'gcr.io/${PROJECT_ID}/fetcher:${COMMIT_SHA}'
 

@@ -3,7 +3,8 @@ import re
 from typing import Any, Dict, List
 from cjworkbench.sync import database_sync_to_async
 from cjwstate import commands
-from cjwstate.models import ModuleVersion, Workflow, Tab
+from cjwstate.models import Workflow, Tab
+from cjwstate.models.module_registry import MODULE_REGISTRY
 from cjwstate.models.commands import (
     AddModuleCommand,
     ReorderModulesCommand,
@@ -12,6 +13,7 @@ from cjwstate.models.commands import (
     DuplicateTabCommand,
     SetTabNameCommand,
 )
+from cjwstate.modules.types import ModuleZipfile
 from .types import HandlerError
 from .decorators import register_websockets_handler, websockets_handler
 import server.utils
@@ -27,12 +29,12 @@ def _load_tab(workflow: Workflow, tab_slug: int) -> Tab:
 
 
 @database_sync_to_async
-def _load_module_version(module_id_name: str) -> Tab:
-    """Returns a ModuleVersion or raises HandlerError."""
+def _load_module_zipfile(module_id_name: str) -> ModuleZipfile:
+    """Return a ModuleZipfile or raise HandlerError."""
     try:
-        return ModuleVersion.objects.latest(module_id_name)
-    except ModuleVersion.DoesNotExist:
-        raise HandlerError("DoesNotExist: ModuleVersion not found")
+        return MODULE_REGISTRY.latest(module_id_name)
+    except KeyError:
+        raise HandlerError("KeyError: ModuleVersion not found")
 
 
 def _loading_tab(func):
@@ -82,18 +84,17 @@ async def add_module(
             position=position,
             param_values=paramValues,
         )
-    except ModuleVersion.DoesNotExist:
+    except KeyError:
         raise HandlerError("BadRequest: module does not exist")
     except ValueError as err:
         raise HandlerError("BadRequest: param validation failed: %s" % str(err))
 
     # TODO switch Intercom around and log by moduleIdName, not module name
     # (Currently, we end up with two events every time we change names)
-    module_version = await _load_module_version(moduleIdName)
+    module_zipfile = await _load_module_zipfile(moduleIdName)
+    name = module_zipfile.get_spec().name
     server.utils.log_user_event_from_scope(
-        scope,
-        f"ADD STEP {module_version.name}",
-        {"name": module_version.name, "id_name": moduleIdName},
+        scope, f"ADD STEP {name}", {"name": name, "id_name": moduleIdName}
     )
 
 

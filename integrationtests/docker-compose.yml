@@ -55,10 +55,6 @@ services:
     entrypoint: ''
     command: [ 'sh', '-c', 'while ! nc -z minio 9000; do sleep 0.1; done; mc config host add workbench http://minio:9000 minio_root_access minio_root_secret && mc admin user add workbench minio_access minio_secret && mc admin policy set workbench readwrite user=minio_access' ]
 
-  git-server:
-    #image:
-    #build:
-
   # In Kubernetes, we use sidecar processes to manage chroots. But we can't
   # mimic those in pure Docker, because we can't adjust mount propagation.
   # (Each container has its own mount namespace, and there's no way for
@@ -118,9 +114,12 @@ services:
   integration-test:
     #image:
     #build:
-    depends_on: [ 'db', 'fetcher', 'renderer', 'cron', 'frontend', 'git-server' ]
+    depends_on: [ 'db', 'fetcher', 'renderer', 'cron', 'frontend' ]
     command: [ "sh", "-c", "until curl --output /dev/null http://frontend:8080 --silent --head --fail; do sleep 1; done; xvfb-run -a -s '-screen 0 1200x768x24' python -m unittest discover -v integrationtests -f" ]
     shm_size: 2g # prevent Firefox crashing ~5% of startups
+    networks:
+      default:
+        aliases: [ 'module-zipfile-server' ]
     volumes:
       - local_mail:/app/local_mail
     environment:

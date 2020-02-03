@@ -1,17 +1,19 @@
+import logging
 import unittest
 from unittest.mock import patch
 import uuid
 from django.contrib.auth.models import User
 from cjwstate import commands, minio
-from cjwstate.models import ModuleVersion
 from cjwstate.models.workflow import Workflow, DependencyGraph
 from cjwstate.models.commands import (
     InitWorkflowCommand,
     AddModuleCommand,
     ChangeWorkflowTitleCommand,
 )
-from cjwstate.modules.loaded_module import LoadedModule
-from cjwstate.tests.utils import DbTestCase
+from cjwstate.tests.utils import (
+    DbTestCaseWithModuleRegistryAndMockKernel,
+    create_module_zipfile,
+)
 
 
 async def async_noop(*args, **kwargs):
@@ -41,18 +43,7 @@ class MockRequest:
         return MockRequest(None, None)
 
 
-# DependencyGraph.load_from_workflow needs to call migrate_params() so
-# it can check for tab values. That means it needs to load the 'tabby'
-# module.
-class MockLoadedModule:
-    def __init__(self, *args, **kwargs):
-        pass
-
-    def migrate_params(self, values):
-        return values
-
-
-class WorkflowTests(DbTestCase):
+class WorkflowTests(DbTestCaseWithModuleRegistryAndMockKernel):
     def setUp(self):
         super().setUp()
 
@@ -130,7 +121,6 @@ class WorkflowTests(DbTestCase):
 
     @patch.object(commands, "queue_render", async_noop)
     @patch.object(commands, "websockets_notify", async_noop)
-    @patch.object(LoadedModule, "for_module_version", MockLoadedModule)
     def test_delete_deltas_without_init_delta(self):
         workflow = Workflow.objects.create(name="A")
         tab = workflow.tabs.create(position=0)
@@ -139,9 +129,7 @@ class WorkflowTests(DbTestCase):
                 ChangeWorkflowTitleCommand, workflow_id=workflow.id, new_value="B"
             )
         )
-        ModuleVersion.create_or_replace_from_spec(
-            {"id_name": "x", "name": "x", "category": "Clean", "parameters": []}
-        )
+        create_module_zipfile("x")
         self.run_with_async_db(
             commands.do(
                 AddModuleCommand,
@@ -253,29 +241,17 @@ class SimpleDependencyGraphTests(unittest.TestCase):
         self.assertEqual(result, [2, 3])
 
 
-class DependencyGraphTests(DbTestCase):
-    @patch.object(LoadedModule, "for_module_version", MockLoadedModule)
+class DependencyGraphTests(DbTestCaseWithModuleRegistryAndMockKernel):
     def test_read_graph_happy_path(self):
         workflow = Workflow.objects.create()
         tab1 = workflow.tabs.create(position=0, slug="tab-1")
         tab2 = workflow.tabs.create(position=1, slug="tab-2")
 
-        ModuleVersion.create_or_replace_from_spec(
-            {
-                "id_name": "simple",
-                "name": "Simple",
-                "category": "Add data",
-                "parameters": [{"id_name": "str", "type": "string"}],
-            }
+        create_module_zipfile(
+            "simple", spec_kwargs={"parameters": [{"id_name": "str", "type": "string"}]}
         )
-
-        ModuleVersion.create_or_replace_from_spec(
-            {
-                "id_name": "tabby",
-                "name": "Tabby",
-                "category": "Add data",
-                "parameters": [{"id_name": "tab", "type": "tab"}],
-            }
+        create_module_zipfile(
+            "tabby", spec_kwargs={"parameters": [{"id_name": "tab", "type": "tab"}]}
         )
 
         step1 = tab1.wf_modules.create(
@@ -288,7 +264,9 @@ class DependencyGraphTests(DbTestCase):
             order=0, slug="step-3", module_id_name="simple", params={"str": "B"}
         )
 
-        graph = DependencyGraph.load_from_workflow(workflow)
+        self.kernel.migrate_params.side_effect = lambda m, p: p  # return input
+        with self.assertLogs(level=logging.INFO):
+            graph = DependencyGraph.load_from_workflow(workflow)
         self.assertEqual(
             graph.tabs,
             [

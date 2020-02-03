@@ -1,5 +1,5 @@
 import unittest
-from cjwstate.models.param_spec import ParamDType
+from cjwstate.modules.param_dtype import ParamDType
 
 
 DT = ParamDType

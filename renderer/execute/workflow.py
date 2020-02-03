@@ -3,9 +3,10 @@ from typing import Any, Dict, List, Optional, Tuple
 from cjworkbench.sync import database_sync_to_async
 from cjwkernel.chroot import EDITABLE_CHROOT
 from cjwkernel.errors import ModuleError
-from cjwkernel.param_dtype import ParamDType
 from cjwkernel.types import RenderResult, Tab
 from cjwstate.models import WfModule, Workflow
+from cjwstate.models.module_registry import MODULE_REGISTRY
+from cjwstate.modules.types import ModuleZipfile
 from cjwstate.params import get_migrated_params
 from .tab import ExecuteStep, TabFlow, execute_tab_flow
 from .types import UnneededExecution
@@ -14,7 +15,9 @@ from .types import UnneededExecution
 logger = logging.getLogger(__name__)
 
 
-def _get_migrated_params(wf_module: WfModule) -> Dict[str, Any]:
+def _get_migrated_params(
+    wf_module: WfModule, module_zipfile: ModuleZipfile
+) -> Dict[str, Any]:
     """
     Build the Params dict which will be passed to render().
 
@@ -29,31 +32,51 @@ def _get_migrated_params(wf_module: WfModule) -> Dict[str, Any]:
 
     Assume we are called within a `workflow.cooperative_lock()`.
     """
-    module_version = wf_module.module_version
-
-    if module_version is None:
+    if module_zipfile is None:
         # This is a deleted module. Renderer will pass the input through to
         # the output.
         return {}
 
+    module_spec = module_zipfile.get_spec()
+    param_schema = module_spec.get_param_schema()
+
     try:
-        result = get_migrated_params(wf_module)
+        result = get_migrated_params(wf_module, module_zipfile=module_zipfile)
     except ModuleError:
         # LoadedModule logged this error; no need to log it again.
-        return module_version.param_schema.coerce(None)
+        return param_schema.coerce(None)
 
     # Is the module buggy? It might be. Log that error, and return a valid
     # set of params anyway -- even if it isn't the params the user wants.
     try:
-        module_version.param_schema.validate(result)
+        param_schema.validate(result)
         return result
     except ValueError as err:
         logger.exception(
-            "%s.migrate_params() gave wrong retval: %s",
-            module_version.id_name,
+            "%s:migrate_params() gave wrong retval: %s",
+            module_zipfile.path.name,
             str(err),
         )
-        return module_version.param_schema.coerce(result)
+        return param_schema.coerce(result)
+
+
+def _build_execute_step(
+    step: WfModule, *, module_zipfiles: Dict[str, ModuleZipfile]
+) -> ExecuteStep:
+    try:
+        module_zipfile = module_zipfiles[step.module_id_name]
+    except KeyError:
+        module_zipfile = None
+
+    return ExecuteStep(
+        step,
+        module_zipfile,
+        # We need to invoke the kernel and migrate _all_ modules'
+        # params (WfModule.get_params), because we can only check
+        # for tab cycles after migrating (and before calling any
+        # render()).
+        _get_migrated_params(step, module_zipfile=module_zipfile),
+    )
 
 
 @database_sync_to_async
@@ -69,21 +92,11 @@ def _load_tab_flows(workflow: Workflow, delta_id: int) -> List[TabFlow]:
         if workflow.last_delta_id != delta_id:
             raise UnneededExecution
 
+        module_zipfiles = MODULE_REGISTRY.all_latest()
+
         for tab_model in workflow.live_tabs.all():
             steps = [
-                ExecuteStep(
-                    step,
-                    (
-                        step.module_version.param_schema
-                        if step.module_version is not None
-                        else ParamDType.Dict({})
-                    ),
-                    # We need to invoke the kernel and migrate _all_ modules'
-                    # params (WfModule.get_params), because we can only check
-                    # for tab cycles after migrating (and before calling any
-                    # render()).
-                    _get_migrated_params(step),
-                )
+                _build_execute_step(step, module_zipfiles=module_zipfiles)
                 for step in tab_model.live_wf_modules.all()
             ]
             ret.append(TabFlow(Tab(tab_model.slug, tab_model.name), steps))

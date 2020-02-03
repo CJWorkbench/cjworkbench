@@ -17,8 +17,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field, replace
 import datetime
 from typing import Any, Dict, FrozenSet, Iterable, List, Optional, Union
-from cjwkernel.types import RenderError
-from cjwstate.modules.module_loader import ModuleSpec
+from cjwstate.modules.types import ModuleSpec
 
 
 @dataclass(frozen=True)

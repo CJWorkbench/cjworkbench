@@ -1,22 +1,12 @@
-import datetime
 import io
 import json
-import math
 import re
 import selectors
 import subprocess
-from typing import Any, Dict, List
 from asgiref.sync import async_to_sync
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
-from django.http import (
-    FileResponse,
-    HttpRequest,
-    HttpResponse,
-    Http404,
-    HttpResponseNotFound,
-    JsonResponse,
-)
+from django.http import FileResponse, HttpRequest, HttpResponse, Http404, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.utils.cache import add_never_cache_headers
 from django.views.decorators.clickjacking import xframe_options_exempt
@@ -26,7 +16,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view, renderer_classes
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
-from cjwkernel.types import Column, ColumnType
+from cjwkernel.types import ColumnType
 from cjwstate import rabbitmq
 from cjwstate.rendercache import (
     CorruptCacheError,
@@ -35,7 +25,7 @@ from cjwstate.rendercache import (
     read_cached_render_result_slice_as_text,
 )
 from cjwstate.models import Tab, WfModule, Workflow
-from cjwstate.modules.loaded_module import module_get_html_bytes
+from cjwstate.models.module_registry import MODULE_REGISTRY
 
 
 _MaxNRowsPerRequest = 300
@@ -155,14 +145,15 @@ def wfmodule_render(request: HttpRequest, wf_module: WfModule, format=None):
     return response
 
 
-_html_head_start_re = re.compile(rb"<\s*head[^>]*>", re.IGNORECASE)
-
-
 @api_view(["GET"])
 @xframe_options_exempt
 @_with_wf_module_for_read
 def wfmodule_output(request: HttpRequest, wf_module: WfModule, format=None):
-    html = module_get_html_bytes(wf_module.module_version)
+    try:
+        module_zipfile = MODULE_REGISTRY.latest(wf_module.module_id_name)
+        html = module_zipfile.get_optional_html()
+    except KeyError:
+        html = None
     return HttpResponse(content=html)
 
 
@@ -259,62 +250,6 @@ def wfmodule_value_counts(request: HttpRequest, wf_module: WfModule):
         }
 
     return JsonResponse({"values": value_counts})
-
-
-N_ROWS_PER_TILE = 200
-N_COLUMNS_PER_TILE = 50
-
-
-@api_view(["GET"])
-@_with_wf_module_for_read
-def wfmodule_tile(
-    request: HttpRequest,
-    wf_module: WfModule,
-    delta_id: int,
-    tile_row: int,
-    tile_column: int,
-):
-    if wf_module.last_relevant_delta_id != delta_id:
-        return HttpResponseNotFound(
-            f"Requested delta {delta_id} but wf_module is "
-            f"at delta {wf_module.last_relevant_delta_id}"
-        )
-
-    if wf_module.status != "ok":
-        return HttpResponseNotFound(
-            f'Requested wf_module has status "{wf_module.status}" but '
-            'we only render "ok" modules'
-        )
-
-    cached_result = wf_module.cached_render_result
-
-    if cached_result is None:
-        return HttpResponseNotFound(f"This module has no cached result")
-
-    if cached_result.delta_id != delta_id:
-        return HttpResponseNotFound(
-            f"Requested delta {delta_id} but cached render result is "
-            f"at delta {cached_result.delta_id}"
-        )
-
-    # cbegin/cend: column indexes
-    cbegin = N_COLUMNS_PER_TILE * tile_column
-    cend = N_COLUMNS_PER_TILE * (tile_column + 1)
-    rbegin = N_ROWS_PER_TILE * tile_row
-    rend = N_ROWS_PER_TILE * (tile_row + 1)
-
-    try:
-        data = read_cached_render_result_pydict(
-            cached_result,
-            only_columns=range(cbegin, cend),
-            only_rows=range(rbegin, rend),
-        )
-        columns = cached_result.table_metadata.columns[cbegin:cend]
-        records = _pydict_to_json_records(data, columns, rend - rbegin)
-    except CorruptCacheError:
-        raise  # TODO handle this case!
-
-    return JsonResponse(records)
 
 
 class SubprocessOutputFileLike(io.RawIOBase):

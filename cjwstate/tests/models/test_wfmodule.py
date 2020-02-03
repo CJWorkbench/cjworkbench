@@ -4,7 +4,7 @@ from django.utils import timezone
 from cjwkernel.util import tempfile_context
 from cjwstate import minio
 from cjwstate.storedobjects import create_stored_object
-from cjwstate.models import ModuleVersion, Workflow
+from cjwstate.models import Workflow
 from cjwstate.models.commands import InitWorkflowCommand
 from cjwstate.tests.utils import DbTestCase
 
@@ -43,7 +43,7 @@ class WfModuleTests(DbTestCase):
 
         self.assertEqual(step1d.slug, "step-1")
         self.assertEqual(step1d.workflow, workflow2)
-        self.assertEqual(step1d.module_version, step1.module_version)
+        self.assertEqual(step1d.module_id_name, step1.module_id_name)
         self.assertEqual(step1d.order, step1.order)
         self.assertEqual(step1d.notes, step1.notes)
         self.assertEqual(step1d.last_update_check, step1.last_update_check)
@@ -178,25 +178,6 @@ class WfModuleTests(DbTestCase):
         self.assertEqual(wf_module2.uploaded_files.count(), 1)
         new_uf = wf_module2.uploaded_files.first()
         self.assertEqual(new_uf.uuid, uuid2)
-
-    def test_module_version_lookup(self):
-        workflow = Workflow.create_and_init()
-        module_version = ModuleVersion.create_or_replace_from_spec(
-            {"id_name": "floob", "name": "Floob", "category": "Clean", "parameters": []}
-        )
-        wf_module = workflow.tabs.first().wf_modules.create(
-            order=0, slug="step-1", module_id_name="floob"
-        )
-        self.assertEqual(wf_module.module_version, module_version)
-        # white-box testing: test that we work even from cache
-        self.assertEqual(wf_module.module_version, module_version)
-
-    def test_module_version_missing(self):
-        workflow = Workflow.create_and_init()
-        wf_module = workflow.tabs.first().wf_modules.create(
-            order=0, slug="step-1", module_id_name="floob"
-        )
-        self.assertIsNone(wf_module.module_version)
 
     def test_delete_inprogress_file_upload(self):
         workflow = Workflow.create_and_init()

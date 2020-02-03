@@ -47,8 +47,8 @@ steps:
         --tag gcr.io/$PROJECT_ID/integration-test:latest \
         .
       docker build \
-        --tag gcr.io/$PROJECT_ID/git-server:$COMMIT_SHA \
-        ./integrationtests/git-server
+        --tag gcr.io/$PROJECT_ID/module-zipfile-server:$COMMIT_SHA \
+        ./integrationtests/module-zipfile-server
 
 # Unit-test
 - name: 'docker/compose:1.25.3'

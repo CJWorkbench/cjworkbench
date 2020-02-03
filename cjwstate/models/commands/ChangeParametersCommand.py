@@ -2,7 +2,8 @@ import logging
 from django.contrib.postgres.fields import JSONField
 from django.db import models
 from .. import Delta, WfModule
-from cjwstate.modules import loaded_module
+from cjwstate.models.module_registry import MODULE_REGISTRY
+from cjwstate.params import invoke_migrate_params
 from .util import ChangesWfModuleOutputs
 
 
@@ -73,20 +74,33 @@ class ChangeParametersCommand(ChangesWfModuleOutputs, Delta):
         if cls.wf_module_is_deleted(wf_module):  # refreshes from DB
             return None
 
-        module_version = wf_module.module_version
-        if module_version is None:
+        try:
+            module_zipfile = MODULE_REGISTRY.latest(wf_module.module_id_name)
+        except KeyError:
             raise ValueError("Module %s does not exist" % wf_module.module_id_name)
 
         # Old values: store exactly what we had
         old_values = wf_module.params
 
+        module_spec = module_zipfile.get_spec()
+        param_schema = module_spec.get_param_schema()
+
         # New values: store _migrated_ old_values, with new_values applied on
         # top
-        lm = loaded_module.LoadedModule.for_module_version(module_version)
-        migrated_old_values = lm.migrate_params(old_values)
+        migrated_old_values = invoke_migrate_params(module_zipfile, old_values)
+        # Ensure migrate_params() didn't generate buggy _old_ values before we
+        # add _new_ values. This sanity check may protect users' params by
+        # raising an error early. It's also a way to catch bugs in unit tests.
+        # (DbTestCaseWithModuleRegistryAndMockKernel default migrate_params
+        # returns `{}` -- which is often invalid -- and then the `**new_values`
+        # below overwrites the invalid data. So without this validate(), a unit
+        # test with an invalid migrate_params() may pass, which is wrong.)
+        #
+        # If you're seeing this because your unit test failed, try this:
+        #     self.kernel.migrate_params.side_effect = lambda m, p: p
+        param_schema.validate(migrated_old_values)  # raises ValueError
         new_values = {**migrated_old_values, **new_values}
-
-        module_version.param_schema.validate(new_values)  # raises ValueError
+        param_schema.validate(new_values)  # raises ValueError
 
         return {
             **kwargs,

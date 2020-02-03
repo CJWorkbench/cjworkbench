@@ -9,7 +9,7 @@ from django.contrib.auth import get_user_model
 from cjwkernel.types import I18nMessage, QuickFix, RenderError
 from cjworkbench.settings import KB_ROOT_URL
 from server.settingsutils import workbench_user_display
-from cjwstate.models.param_spec import ParamSpec
+from cjwstate.modules.param_spec import ParamSpec
 from cjwstate import clientside
 from cjworkbench.i18n.trans import localize
 from icu import ICUError
@@ -219,7 +219,7 @@ def jsonize_clientside_module(
 ) -> Dict[str, Any]:
     spec = module.spec
 
-    help_url = spec.get("help_url", "")
+    help_url = spec.help_url
     if help_url and not (
         help_url.startswith("http://")
         or help_url.startswith("https://")
@@ -228,24 +228,20 @@ def jsonize_clientside_module(
         help_url = KB_ROOT_URL + help_url
 
     return {
-        "id_name": spec["id_name"],
-        "name": spec["name"],  # TODO i18n
-        "category": spec["category"],
-        "description": spec.get("description", ""),  # TODO i18n
-        "deprecated": spec.get("deprecated"),  # TODO i18n
-        "icon": spec.get("icon", "url"),
-        "loads_data": spec.get("loads_data", False),
-        "uses_data": spec.get("uses_data", not spec.get("loads_data", False)),
-        "help_url": spec.get("help_url", ""),
-        "has_zen_mode": spec.get("has_zen_mode", False),
-        "has_html_output": spec.get("html_output", False),
-        "row_action_menu_entry_title": (
-            spec.get("row_action_menu_entry_title", "")  # TODO i18n
-        ),
+        "id_name": spec.id_name,
+        "name": spec.name,  # TODO i18n
+        "category": spec.category,
+        "description": spec.description,  # TODO i18n
+        "deprecated": spec.deprecated,  # TODO i18n
+        "icon": spec.icon or "url",
+        "loads_data": spec.loads_data,
+        "uses_data": spec.get_uses_data(),
+        "help_url": help_url,
+        "has_zen_mode": spec.has_zen_mode,
+        "has_html_output": spec.html_output,
+        "row_action_menu_entry_title": spec.row_action_menu_entry_title,  # TODO i18n
         "js_module": module.js_module,
-        "param_fields": [
-            jsonize_param_spec(ParamSpec.from_dict(p), ctx) for p in spec["parameters"]
-        ],
+        "param_fields": [jsonize_param_spec(field, ctx) for field in spec.param_fields],
     }
 
 

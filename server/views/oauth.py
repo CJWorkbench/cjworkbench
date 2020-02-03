@@ -12,7 +12,8 @@ from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from cjwstate import clientside, oauth, rabbitmq
 from cjwstate.models import ModuleVersion, WfModule, Workflow
-from cjwstate.models.param_spec import ParamSpec
+from cjwstate.models.module_registry import MODULE_REGISTRY
+from cjwstate.modules.param_spec import ParamSpec
 
 
 logger = logging.getLogger(__name__)
@@ -39,19 +40,20 @@ def _load_wf_module_and_service(
 
     Raise WfModule.DoesNotExist if the WfModule is deleted or missing.
 
-    Raise ModuleVersion.DoesNotExist if the WfModule does not have the
-    given param.
+    Raise SecretDoesNotExist if the WfModule does not have the given param.
 
     Invoke this within a Workflow.cooperative_lock().
     """
     # raises WfModule.DoesNotExist
     wf_module = WfModule.live_in_workflow(workflow).get(pk=wf_module_id)
 
-    # raise ModuleVersion.DoesNotExist if ModuleVersion was deleted
-    module_version = wf_module.module_version
-    if module_version is None:
-        raise ModuleVersion.DoesNotExist
-    for field in module_version.param_fields:
+    # raises KeyError, RuntimeError
+    try:
+        module_zipfile = MODULE_REGISTRY.latest(wf_module.module_id_name)
+    except KeyError:
+        raise SecretDoesNotExist(f"Module {wf_module.module_id_name} does not exist")
+    module_spec = module_zipfile.get_spec()
+    for field in module_spec.param_fields:
         if (
             isinstance(field, ParamSpec.Secret)
             and field.id_name == param

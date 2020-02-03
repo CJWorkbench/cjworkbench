@@ -3,6 +3,8 @@ from dataclasses import dataclass, field
 from functools import partial
 import logging
 from pathlib import Path
+import shutil
+import textwrap
 import unittest
 from unittest.mock import patch
 from dateutil import parser
@@ -10,7 +12,6 @@ from django.utils import timezone
 import pyarrow.parquet
 from cjwkernel.chroot import EDITABLE_CHROOT
 from cjwkernel.errors import ModuleExitedError
-from cjwkernel.param_dtype import ParamDType
 from cjwkernel.types import (
     Column,
     ColumnType,
@@ -30,8 +31,13 @@ from cjwkernel.tests.util import (
 from cjwstate import minio, rabbitmq, rendercache, storedobjects
 from cjwstate.models import CachedRenderResult, ModuleVersion, WfModule, Workflow
 import cjwstate.modules
-from cjwstate.modules.loaded_module import LoadedModule
-from cjwstate.tests.utils import DbTestCase
+from cjwstate.modules.param_dtype import ParamDType
+from cjwstate.tests.utils import (
+    DbTestCase,
+    DbTestCaseWithModuleRegistry,
+    DbTestCaseWithModuleRegistryAndMockKernel,
+    create_module_zipfile,
+)
 from fetcher import fetch, fetchprep, save
 
 
@@ -49,24 +55,22 @@ class MockModuleVersion:
     param_schema: ParamDType.Dict = field(default_factory=partial(ParamDType.Dict, {}))
 
 
-class LoadDatabaseObjectsTests(DbTestCase):
+class LoadDatabaseObjectsTests(DbTestCaseWithModuleRegistry):
     def test_load_simple(self):
         workflow = Workflow.create_and_init()
-        module_version = ModuleVersion.create_or_replace_from_spec(
-            {"id_name": "foo", "name": "Foo", "category": "Clean", "parameters": []}
-        )
+        module_zipfile = create_module_zipfile("foo")
         wf_module = workflow.tabs.first().wf_modules.create(
             order=0, slug="step-1", module_id_name="foo"
         )
-        result = self.run_with_async_db(
-            fetch.load_database_objects(workflow.id, wf_module.id)
-        )
-        self.assertEqual(result[0], wf_module)
+        with self.assertLogs("cjwstate.params", level=logging.INFO):
+            result = self.run_with_async_db(
+                fetch.load_database_objects(workflow.id, wf_module.id)
+            )
         self.assertEqual(result.wf_module, wf_module)
-        self.assertEqual(result[1], module_version)
-        self.assertEqual(result.module_version, module_version)
-        self.assertIsNone(result[2])
-        self.assertIsNone(result[3])
+        self.assertEqual(result.module_zipfile, module_zipfile)
+        self.assertEqual(result.migrated_params_or_error, {})
+        self.assertIsNone(result.stored_object)
+        self.assertIsNone(result.input_cached_render_result)
 
     def test_load_deleted_wf_module_raises(self):
         workflow = Workflow.create_and_init()
@@ -95,15 +99,59 @@ class LoadDatabaseObjectsTests(DbTestCase):
                 fetch.load_database_objects(workflow.id + 1, wf_module.id)
             )
 
+    def test_load_migrate_params_even_when_invalid(self):
+        workflow = Workflow.create_and_init()
+        module_zipfile = create_module_zipfile(
+            "mod",
+            spec_kwargs={"parameters": [{"id_name": "a", "type": "string"}]},
+            python_code=textwrap.dedent(
+                """
+                def migrate_params(params):
+                    return {"x": "y"}  # does not validate
+                """
+            ),
+        )
+        wf_module = workflow.tabs.first().wf_modules.create(
+            order=0, slug="step-1", module_id_name="mod", params={"a": "b"}
+        )
+        with self.assertLogs("cjwstate.params", level=logging.INFO):
+            result = self.run_with_async_db(
+                fetch.load_database_objects(workflow.id, wf_module.id)
+            )
+        self.assertEqual(result.migrated_params_or_error, {"x": "y"})
+
+    def test_load_migrate_params_raise_module_error(self):
+        workflow = Workflow.create_and_init()
+        module_zipfile = create_module_zipfile(
+            "mod",
+            spec_kwargs={"parameters": [{"id_name": "a", "type": "string"}]},
+            python_code=textwrap.dedent(
+                """
+                def migrate_params(params):
+                    raise RuntimeError("bad")
+                """
+            ),
+        )
+        wf_module = workflow.tabs.first().wf_modules.create(
+            order=0, slug="step-1", module_id_name="mod", params={"a": "b"}
+        )
+        with self.assertLogs("cjwstate.params", level=logging.INFO):
+            result = self.run_with_async_db(
+                fetch.load_database_objects(workflow.id, wf_module.id)
+            )
+        self.assertIsInstance(result.migrated_params_or_error, ModuleExitedError)
+        self.assertRegex(result.migrated_params_or_error.log, ".*RuntimeError: bad")
+
     def test_load_deleted_module_version_is_none(self):
         workflow = Workflow.create_and_init()
         wf_module = workflow.tabs.first().wf_modules.create(
-            order=0, slug="step-1", module_id_name="foodeleted"
+            order=0, slug="step-1", module_id_name="foodeleted", params={"a": "b"}
         )
         result = self.run_with_async_db(
             fetch.load_database_objects(workflow.id, wf_module.id)
         )
-        self.assertIsNone(result.module_version)
+        self.assertIsNone(result.module_zipfile)
+        self.assertEqual(result.migrated_params_or_error, {})
 
     def test_load_selected_stored_object(self):
         workflow = Workflow.create_and_init()
@@ -121,7 +169,7 @@ class LoadDatabaseObjectsTests(DbTestCase):
         result = self.run_with_async_db(
             fetch.load_database_objects(workflow.id, wf_module.id)
         )
-        self.assertEqual(result[2], so2)
+        self.assertEqual(result[3], so2)
         self.assertEqual(result.stored_object, so2)
 
     def test_load_input_cached_render_result(self):
@@ -141,7 +189,7 @@ class LoadDatabaseObjectsTests(DbTestCase):
             )
             input_crr = step1.cached_render_result
             assert input_crr is not None
-            self.assertEqual(result[3], input_crr)
+            self.assertEqual(result[4], input_crr)
             self.assertEqual(result.input_cached_render_result, input_crr)
 
     def test_load_input_cached_render_result_is_none(self):
@@ -158,7 +206,7 @@ class LoadDatabaseObjectsTests(DbTestCase):
         self.assertEqual(result.input_cached_render_result, None)
 
 
-class FetchOrWrapErrorTests(unittest.TestCase):
+class FetchOrWrapErrorTests(DbTestCaseWithModuleRegistryAndMockKernel):
     def setUp(self):
         super().setUp()
         self.ctx = contextlib.ExitStack()
@@ -189,8 +237,9 @@ class FetchOrWrapErrorTests(unittest.TestCase):
                 self.ctx,
                 self.chroot_context,
                 self.basedir,
-                WfModule(),
+                "mod",
                 None,
+                {},
                 {},
                 None,
                 None,
@@ -199,196 +248,204 @@ class FetchOrWrapErrorTests(unittest.TestCase):
         self.assertEqual(self.output_path.stat().st_size, 0)
         self.assertEqual(result, self._err("Cannot fetch: module was deleted"))
 
-    @patch.object(LoadedModule, "for_module_version")
-    def test_load_module_missing(self, load_module):
-        load_module.side_effect = FileNotFoundError
-        with self.assertLogs(level=logging.INFO):
-            result = fetch.fetch_or_wrap_error(
-                self.ctx,
-                self.chroot_context,
-                self.basedir,
-                WfModule(),
-                MockModuleVersion("missing"),
-                {},
-                None,
-                None,
-                self.output_path,
-            )
-        self.assertEqual(self.output_path.stat().st_size, 0)
-        self.assertEqual(result, self._bug_err("FileNotFoundError"))
-
-    @patch.object(LoadedModule, "for_module_version")
-    def test_load_module_compile_error(self, load_module):
-        load_module.side_effect = ModuleExitedError(1, "log")
-        with self.assertLogs(level=logging.ERROR):
-            result = fetch.fetch_or_wrap_error(
-                self.ctx,
-                self.chroot_context,
-                self.basedir,
-                WfModule(),
-                MockModuleVersion("bad"),
-                {},
-                None,
-                None,
-                self.output_path,
-            )
-        self.assertEqual(self.output_path.stat().st_size, 0)
-        self.assertEqual(result, self._bug_err("exit code 1: log (during load)"))
-
-    @patch.object(LoadedModule, "for_module_version")
-    def test_simple(self, load_module):
-        load_module.return_value.migrate_params.return_value = {"A": "B"}
-        load_module.return_value.fetch.return_value = FetchResult(self.output_path, [])
-        result = fetch.fetch_or_wrap_error(
-            self.ctx,
-            self.chroot_context,
-            self.basedir,
-            WfModule(params={"A": "input"}, secrets={"C": "wrong"}),
-            MockModuleVersion(
-                id_name="A", param_schema=ParamDType.Dict({"A": ParamDType.String()})
-            ),
-            {"C": "D"},
-            None,
-            None,
-            self.output_path,
+    def test_simple(self):
+        self.kernel.fetch.return_value = FetchResult(self.output_path)
+        module_zipfile = create_module_zipfile(
+            "mod", spec_kwargs={"parameters": [{"id_name": "A", "type": "string"}]}
         )
+        with self.assertLogs("fetcher.fetch", level=logging.INFO):
+            result = fetch.fetch_or_wrap_error(
+                self.ctx,
+                self.chroot_context,
+                self.basedir,
+                "mod",
+                module_zipfile,
+                {"A": "B"},
+                {"C": "D"},
+                None,
+                None,
+                self.output_path,
+            )
         self.assertEqual(result, FetchResult(self.output_path, []))
-        load_module.return_value.migrate_params.assert_called_with({"A": "input"})
-        load_module.return_value.fetch.assert_called_with(
-            chroot_context=self.chroot_context,
-            basedir=self.basedir,
-            params=Params({"A": "B"}),
-            secrets={"C": "D"},
-            last_fetch_result=None,
-            input_parquet_filename=None,
-            output_filename=self.output_path.name,
+        self.assertEqual(
+            self.kernel.fetch.call_args[1]["compiled_module"],
+            module_zipfile.compile_code_without_executing(),
+        )
+        self.assertEqual(self.kernel.fetch.call_args[1]["params"], Params({"A": "B"}))
+        self.assertEqual(self.kernel.fetch.call_args[1]["secrets"], {"C": "D"})
+        self.assertIsNone(self.kernel.fetch.call_args[1]["last_fetch_result"])
+        self.assertIsNone(self.kernel.fetch.call_args[1]["input_parquet_filename"])
+
+    def test_migrated_params_is_error(self):
+        with self.assertLogs("fetcher.fetch", level=logging.ERROR):
+            result = fetch.fetch_or_wrap_error(
+                self.ctx,
+                self.chroot_context,
+                self.basedir,
+                "mod",
+                create_module_zipfile("mod"),
+                ModuleExitedError(1, "Traceback:\n\n\nRuntimeError: bad"),
+                {},
+                None,
+                None,
+                self.output_path,
+            )
+        self.assertEqual(result, self._bug_err("exit code 1: RuntimeError: bad"))
+
+    def test_migrated_params_is_invalid(self):
+        module_zipfile = create_module_zipfile(
+            "mod", spec_kwargs={"parameters": [{"id_name": "a", "type": "string"}]}
+        )
+        with self.assertLogs("fetcher.fetch", level=logging.ERROR):
+            result = fetch.fetch_or_wrap_error(
+                self.ctx,
+                self.chroot_context,
+                self.basedir,
+                "mod",
+                module_zipfile,
+                {"a": 2},  # invalid: should be string
+                {},
+                None,
+                None,
+                self.output_path,
+            )
+        self.assertEqual(
+            result,
+            self._bug_err(
+                "%s:migrate_params() output invalid params" % module_zipfile.path.name
+            ),
         )
 
-    @patch.object(LoadedModule, "for_module_version")
     @patch.object(fetchprep, "clean_value")
     @patch.object(rendercache, "downloaded_parquet_file")
-    def test_input_crr(self, downloaded_parquet_file, clean_value, load_module):
-        load_module.return_value.migrate_params.return_value = {}
-        load_module.return_value.fetch.return_value = FetchResult(self.output_path, [])
-        clean_value.return_value = {}
-        downloaded_parquet_file.return_value = Path("/path/to/x.parquet")
-        input_metadata = TableMetadata(3, [Column("A", ColumnType.Text())])
-        input_crr = CachedRenderResult(1, 2, 3, "ok", [], {}, input_metadata)
-        fetch.fetch_or_wrap_error(
-            self.ctx,
-            self.chroot_context,
-            self.basedir,
-            WfModule(),
-            MockModuleVersion(),
-            {},
-            None,
-            input_crr,
-            self.output_path,
-        )
-        # Passed file is downloaded from rendercache
-        downloaded_parquet_file.assert_called_with(input_crr, dir=self.basedir)
-        self.assertEqual(
-            load_module.return_value.fetch.call_args[1]["input_parquet_filename"],
-            "x.parquet",
-        )
-        # clean_value() is called with input metadata from CachedRenderResult
-        clean_value.assert_called()
-        self.assertEqual(clean_value.call_args[0][2], input_metadata)
+    def test_input_crr(self, downloaded_parquet_file, clean_value):
+        def do_fetch(
+            compiled_module,
+            chroot_context,
+            basedir,
+            params,
+            secrets,
+            last_fetch_result,
+            input_parquet_filename,
+            output_filename,
+        ):
+            shutil.copy(basedir / input_parquet_filename, basedir / output_filename)
+            return FetchResult(basedir / output_filename)
 
-    @patch.object(LoadedModule, "for_module_version")
+        self.kernel.fetch.side_effect = do_fetch
+        clean_value.return_value = {}
+
+        with tempfile_context(dir=self.basedir, suffix=".parquet") as parquet_path:
+            parquet_path.write_bytes(b"abc123")
+            downloaded_parquet_file.return_value = parquet_path
+
+            input_metadata = TableMetadata(3, [Column("A", ColumnType.Text())])
+            input_crr = CachedRenderResult(1, 2, 3, "ok", [], {}, input_metadata)
+            with self.assertLogs("fetcher.fetch", level=logging.INFO):
+                result = fetch.fetch_or_wrap_error(
+                    self.ctx,
+                    self.chroot_context,
+                    self.basedir,
+                    "mod",
+                    create_module_zipfile("mod"),
+                    {},
+                    {},
+                    None,
+                    input_crr,
+                    self.output_path,
+                )
+
+            # Passed file is downloaded from rendercache
+            self.assertEqual(result.path.read_bytes(), b"abc123")
+            # clean_value() is called with input metadata from CachedRenderResult
+            clean_value.assert_called()
+            self.assertEqual(clean_value.call_args[0][2], input_metadata)
+
     @patch.object(fetchprep, "clean_value", lambda *a: {})
     @patch.object(rendercache, "downloaded_parquet_file")
-    def test_input_crr_corrupt_cache_error_is_none(
-        self, downloaded_parquet_file, load_module
-    ):
-        load_module.return_value.migrate_params.return_value = {}
-        load_module.return_value.fetch.return_value = FetchResult(self.output_path, [])
+    def test_input_crr_corrupt_cache_error_is_none(self, downloaded_parquet_file):
+        self.kernel.fetch.return_value = FetchResult(self.output_path, [])
         downloaded_parquet_file.side_effect = rendercache.CorruptCacheError(
             "file not found"
         )
         input_metadata = TableMetadata(3, [Column("A", ColumnType.Text())])
         input_crr = CachedRenderResult(1, 2, 3, "ok", [], {}, input_metadata)
-        fetch.fetch_or_wrap_error(
-            self.ctx,
-            self.chroot_context,
-            self.basedir,
-            WfModule(),
-            MockModuleVersion(),
-            {},
-            None,
-            input_crr,
-            self.output_path,
-        )
+        with self.assertLogs("fetcher.fetch", level=logging.INFO):
+            fetch.fetch_or_wrap_error(
+                self.ctx,
+                self.chroot_context,
+                self.basedir,
+                "mod",
+                create_module_zipfile("mod"),
+                {},
+                {},
+                None,
+                input_crr,
+                self.output_path,
+            )
         # fetch is still called, with `None` as argument.
-        self.assertIsNone(
-            load_module.return_value.fetch.call_args[1]["input_parquet_filename"]
-        )
+        self.assertIsNone(self.kernel.fetch.call_args[1]["input_parquet_filename"])
 
-    @patch.object(LoadedModule, "for_module_version")
-    @patch.object(fetchprep, "clean_value", lambda *a: {})
     @patch.object(storedobjects, "downloaded_file")
-    def test_pass_last_fetch_result(self, downloaded_file, load_module):
+    def test_pass_last_fetch_result(self, downloaded_file):
         last_result_path = self.ctx.enter_context(
             tempfile_context(prefix="last-result")
         )
+
         result_path = self.ctx.enter_context(tempfile_context(prefix="result"))
 
-        load_module.return_value.migrate_params.return_value = {}
-        load_module.return_value.fetch.return_value = FetchResult(result_path, [])
-        fetch.fetch_or_wrap_error(
-            self.ctx,
-            self.chroot_context,
-            self.basedir,
-            WfModule(fetch_error=""),
-            MockModuleVersion(),
-            {},
-            FetchResult(last_result_path, []),
-            None,
-            self.output_path,
-        )
+        self.kernel.fetch.return_value = FetchResult(result_path, [])
+        with self.assertLogs("fetcher.fetch", level=logging.INFO):
+            fetch.fetch_or_wrap_error(
+                self.ctx,
+                self.chroot_context,
+                self.basedir,
+                "mod",
+                create_module_zipfile("mod"),
+                {},
+                {},
+                FetchResult(last_result_path, []),
+                None,
+                self.output_path,
+            )
         self.assertEqual(
-            load_module.return_value.fetch.call_args[1]["last_fetch_result"],
+            self.kernel.fetch.call_args[1]["last_fetch_result"],
             FetchResult(last_result_path, []),
         )
 
-    @patch.object(LoadedModule, "for_module_version")
-    @patch.object(fetchprep, "clean_value", lambda *a: {})
-    def test_fetch_module_error(self, load_module):
-        load_module.return_value.migrate_params.return_value = {}
-        load_module.return_value.fetch.side_effect = ModuleExitedError(1, "bad")
+    def test_fetch_module_error(self):
+        self.kernel.fetch.side_effect = ModuleExitedError(1, "RuntimeError: bad")
         with self.assertLogs(level=logging.ERROR):
             result = fetch.fetch_or_wrap_error(
                 self.ctx,
                 self.chroot_context,
                 self.basedir,
-                WfModule(),
-                MockModuleVersion(),
+                "mod",
+                create_module_zipfile("mod"),
+                {},
                 {},
                 None,
                 None,
                 self.output_path,
             )
-        self.assertEqual(result, self._bug_err("exit code 1: bad"))
+        self.assertEqual(result, self._bug_err("exit code 1: RuntimeError: bad"))
 
 
-class FetchTests(DbTestCase):
+class FetchTests(DbTestCaseWithModuleRegistry):
     @patch.object(rabbitmq, "queue_render_if_consumers_are_listening")
     @patch.object(rabbitmq, "send_update_to_workflow_clients")
     def test_fetch_integration(self, send_update, queue_render):
         queue_render.side_effect = async_value(None)
         send_update.side_effect = async_value(None)
         workflow = Workflow.create_and_init()
-        ModuleVersion.create_or_replace_from_spec(
-            {"id_name": "mod", "name": "Mod", "category": "Clean", "parameters": []},
-            source_version_hash="abc123",
+        create_module_zipfile(
+            "mod",
+            python_code=(
+                "import pandas as pd\ndef fetch(params): return pd.DataFrame({'A': [1]})\ndef render(table, params): return table"
+            ),
         )
         wf_module = workflow.tabs.first().wf_modules.create(
             order=0, slug="step-1", module_id_name="mod"
-        )
-        minio.put_bytes(
-            minio.ExternalModulesBucket,
-            "mod/abc123/code.py",
-            b"import pandas as pd\ndef fetch(params): return pd.DataFrame({'A': [1]})\ndef render(table, params): return table",
         )
         cjwstate.modules.init_module_system()
         now = timezone.now()
@@ -412,17 +469,14 @@ class FetchTests(DbTestCase):
     def test_fetch_integration_tempfiles_are_on_disk(self, create_result):
         # /tmp is RAM; /var/tmp is disk. Assert big files go on disk.
         workflow = Workflow.create_and_init()
-        ModuleVersion.create_or_replace_from_spec(
-            {"id_name": "mod", "name": "Mod", "category": "Clean", "parameters": []},
-            source_version_hash="abc123",
+        create_module_zipfile(
+            "mod",
+            python_code=(
+                "import pandas as pd\ndef fetch(params): return pd.DataFrame({'A': [1]})\ndef render(table, params): return table"
+            ),
         )
         wf_module = workflow.tabs.first().wf_modules.create(
             order=0, slug="step-1", module_id_name="mod"
-        )
-        minio.put_bytes(
-            minio.ExternalModulesBucket,
-            "mod/abc123/code.py",
-            b"import pandas as pd\ndef fetch(params): return pd.DataFrame({'A': [1]})\ndef render(table, params): return table",
         )
         with self.assertLogs(level=logging.INFO):
             cjwstate.modules.init_module_system()

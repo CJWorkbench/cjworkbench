@@ -1,8 +1,11 @@
+import pathlib
+from typing import FrozenSet
+import zipfile
+from babel.messages.catalog import Catalog
 from cjworkbench.i18n import supported_locales, default_locale
 from cjworkbench.i18n.catalogs.util import (
     read_po_catalog,
     write_po_catalog,
-    remove_strings,
     find_fuzzy_messages,
     fill_catalog,
     mark_fuzzy,
@@ -11,21 +14,16 @@ from cjworkbench.i18n.catalogs.util import (
     move_strings_to_comments,
     copy_catalog,
 )
-from babel.messages.catalog import Catalog
-from cjwstate.modules.module_loader import ModuleFiles, ModuleSpec
-from typing import FrozenSet, Dict
-import pathlib
+from cjwstate.modules.types import ModuleZipfile
+from cjwstate.importmodule import directory_loaded_as_zipfile_path
 from cjwstate.modules.i18n.catalogs.extract.spec import find_spec_messages
 from cjwstate.modules.i18n.catalogs.extract.code import find_messages_in_module_code
 
 
 def extract_module_messages(directory: pathlib.Path):
-    module_files = ModuleFiles.load_from_dirpath(directory)  # raise ValueError
-    source_catalog = _build_source_catalog(
-        ModuleSpec.load_from_path(module_files.spec),
-        pathlib.Path(module_files.code),
-        directory,
-    )
+    with directory_loaded_as_zipfile_path(directory) as zip_path:
+        module_zipfile = ModuleZipfile(zip_path)  # may be invalid
+        source_catalog = _build_source_catalog(module_zipfile)
 
     po_path = _po_path(directory, default_locale)
 
@@ -82,23 +80,24 @@ def _pot_path(basepath: pathlib.Path) -> pathlib.Path:
     return basepath / "locale" / default_locale / "messages.pot"
 
 
-def _build_source_catalog(
-    spec: ModuleSpec,
-    module_code_path: pathlib.Path,
-    module_root_directory: pathlib.Path,
-) -> Catalog:
+def _build_source_catalog(module_zipfile: ModuleZipfile) -> Catalog:
     source_catalog = Catalog(default_locale)
+    spec = module_zipfile.get_spec()
     for message_id, source_string in find_spec_messages(spec).items():
         source_catalog.add(message_id, string=source_string)
-    for message_id, message_properties in find_messages_in_module_code(
-        module_code_path, module_root_directory
-    ).items():
-        source_catalog.add(
-            message_id,
-            string=message_properties["string"],
-            auto_comments=message_properties["comments"],
-            locations=message_properties["locations"],
-        )
+    with zipfile.Zipfile(module_zipfile.path, mode="r") as zf:
+        for info in zf.infolist():
+            if info.filename.endswith(".py"):
+                with zf.open(info) as code_io:
+                    for message_id, message_properties in find_messages_in_module_code(
+                        code_io, info.filename
+                    ).items():
+                        source_catalog.add(
+                            message_id,
+                            string=message_properties["string"],
+                            auto_comments=message_properties["comments"],
+                            locations=message_properties["locations"],
+                        )
 
     return source_catalog
 

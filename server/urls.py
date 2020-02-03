@@ -89,10 +89,6 @@ urlpatterns = [
     ),
     url(r"^api/importfromgithub/?$", views.import_from_github),
     # WfModules (Modules applied in a workflow)
-    url(
-        r"^api/wfmodules/<int:wf_module_id>/tiles/v<int:delta_id>/r<int:tile_row>/c<int:tile_column>.json$",
-        views.wfmodule_tile,
-    ),
     # TODO: "render" and "output" are bad names. Differentiate them.
     path("api/wfmodules/<int:wf_module_id>/render", views.wfmodule_render),
     path("api/wfmodules/<int:wf_module_id>/output", views.wfmodule_output),

@@ -9,8 +9,9 @@ from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 import server.utils
 from cjwstate import rabbitmq
+from cjwstate.models import Workflow
 from cjwstate.models.commands import InitWorkflowCommand
-from cjwstate.models import Workflow, ModuleVersion
+from cjwstate.models.module_registry import MODULE_REGISTRY
 from server.models.course import Course, CourseLookup, AllCoursesByLocale
 from server.models.lesson import (
     Lesson,
@@ -131,18 +132,21 @@ def _init_workflow_for_lesson(workflow, lesson):
 
 def _add_wf_module_to_tab(step_dict, order, tab, delta_id, lesson):
     """
-    Deserialize a WfModule from lesson initial_workflow
+    Deserialize a WfModule from lesson initial_workflow.
+
+    Raise `KeyError` if a module ID is invalid.
     """
     id_name = step_dict["module"]
     slug = step_dict["slug"]
 
     # 500 error if bad module id name
-    module_version = ModuleVersion.objects.latest(id_name)
+    module_zipfile = MODULE_REGISTRY.latest(id_name)  # raise KeyError, RuntimeError
+    module_spec = module_zipfile.get_spec()
 
     # All params not set in json get default values
     # Also, we must have a dict with all param values set or we can't migrate
     # params later
-    params = {**module_version.default_params, **step_dict["params"]}
+    params = {**module_spec.default_params, **step_dict["params"]}
 
     # Rewrite 'url' params: if the spec has them as relative, make them the
     # absolute path -- relative to the lesson URL.
@@ -164,13 +168,13 @@ def _add_wf_module_to_tab(step_dict, order, tab, delta_id, lesson):
 
     # 500 error if params are invalid
     # TODO testme
-    module_version.param_schema.validate(params)  # raises ValueError
+    module_spec.get_param_schema().validate(params)  # raises ValueError
 
     return tab.wf_modules.create(
         order=order,
         slug=slug,
         module_id_name=id_name,
-        is_busy=module_version.loads_data,  # assume we'll send a fetch
+        is_busy=module_spec.loads_data,  # assume we'll send a fetch
         last_relevant_delta_id=delta_id,
         params=params,
         is_collapsed=step_dict.get("collapsed", False),
@@ -199,8 +203,10 @@ def _queue_workflow_updates(workflow: Workflow) -> None:
 def _render_get_lesson_detail(request, lesson):
     try:
         workflow, created = _ensure_workflow(request, lesson)
-    except ModuleVersion.DoesNotExist:
-        return HttpResponseServerError("initial_json asks for missing module")
+    except KeyError as err:
+        return HttpResponseServerError(
+            "initial_json asks for missing module: %s" % str(err)
+        )
     except ValueError as err:
         return HttpResponseServerError("initial_json has invalid params: " + str(err))
 
