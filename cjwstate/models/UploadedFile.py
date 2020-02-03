@@ -30,7 +30,7 @@ class UploadedFile(models.Model):
     name = models.CharField(max_length=255)
     size = models.IntegerField(default=0)
     uuid = models.CharField(max_length=255)
-    bucket = models.CharField(max_length=255, null=False, blank=True, default="")
+    bucket = models.CharField(max_length=255, null=True, blank=True, default="")
     key = models.CharField(max_length=255)
 
 

@@ -28,7 +28,7 @@ class StoredObject(models.Model):
     )
 
     # identification for file backing store
-    bucket = models.CharField(max_length=255, null=False, blank=True, default="")
+    bucket = models.CharField(max_length=255, null=True, blank=True, default="")
     key = models.CharField(max_length=255, null=False, blank=True, default="")
     stored_at = models.DateTimeField(default=timezone.now)
 
