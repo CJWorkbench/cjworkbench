@@ -34,7 +34,7 @@ GITHUB_URL_PATTERN = re.compile(
     r"^https?://github.com/(?P<owner>[^/]+)/(?P<repo>[^.]+)(?:\.git)?$"
 )
 TEST_ZIP_URL_PATTERN = re.compile(
-    r"^http://module-zipfile-server/(?P<zipfile>[a-z][a-z0-9]*\.[a-f0-9]+\.zip)$"
+    r"^http://module-zipfile-server:\d+/(?P<zipfile>[a-z][-a-z0-9]*\.[a-f0-9]+\.zip)$"
 )
 
 
@@ -183,7 +183,7 @@ def import_module_from_github(
         return import_zipfile(path)  # raise WorkbenchModuleImportError
 
 
-def import_module_from_test_zip_url(url: str, zipfile_name: str) -> clientside.Module:
+def import_module_from_test_zip_url(url: str) -> clientside.Module:
     """
     Download module data from a zipfile at a trusted URL.
 
@@ -191,6 +191,7 @@ def import_module_from_test_zip_url(url: str, zipfile_name: str) -> clientside.M
 
     Raise `WorkbenchModuleImportError` if import fails.
     """
+    zipfile_name = url.split("/")[-1]
     with tempdir_context(prefix="importmodule") as td:
         path = td / zipfile_name
         _download_url(url, path)  # raise WorkbenchModuleImportError

@@ -1,9 +1,9 @@
-id_name: deprecatetest
+id_name: deprecatedsoon
 name: Deprecation-test module
 category: Add data
 icon: twitter
 description: Do nothing -- soon
-help_url: steps/add-data/deprecatetest
+help_url: steps/add-data/deprecatedsoon
 deprecated:
   end_date: "2099-04-30"  # "January 30, 2099"
   message: Please delete this module.

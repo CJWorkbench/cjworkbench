@@ -38,7 +38,7 @@ steps:
           .
       done
 
-      # Build integration-test images -- first pulling from cache if it can be used
+      # Build integration-test image -- first pulling from cache if it can be used
       docker pull gcr.io/$PROJECT_ID/integration-test:latest || true
       docker build --pull \
         --file Dockerfile.integrationtest \
@@ -46,9 +46,6 @@ steps:
         --tag gcr.io/$PROJECT_ID/integration-test:$COMMIT_SHA \
         --tag gcr.io/$PROJECT_ID/integration-test:latest \
         .
-      docker build \
-        --tag gcr.io/$PROJECT_ID/module-zipfile-server:$COMMIT_SHA \
-        ./integrationtests/module-zipfile-server
 
 # Unit-test
 - name: 'docker/compose:1.25.3'
@@ -82,6 +79,7 @@ steps:
   args: [ '-f', 'integrationtests/docker-compose.yml',
           '-f', 'integrationtests/docker-compose.cloudbuild-override.yml',
           'run',
+          '--use-aliases',
           'integration-test'
         ]
   env:

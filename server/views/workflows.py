@@ -327,7 +327,10 @@ class Report(View):
                 Report.WfModuleWithIframe.from_wf_module(wf_module)
                 for wf_module in all_wf_modules
                 if wf_module.module_id_name in module_zipfiles
-                and wf_module.module_zipfile.get_optional_html() is not None
+                and (
+                    module_zipfiles[wf_module.module_id_name].get_optional_html()
+                    is not None
+                )
             ]
             return cls(slug=tab.slug, name=tab.name, wf_modules=wf_modules)
 
