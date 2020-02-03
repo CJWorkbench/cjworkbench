@@ -169,7 +169,7 @@ class ReactSelect extends React.PureComponent {
         isMulti={isMulti || false}
         className={classNames.join(' ')}
         classNamePrefix='react-select'
-        captureMenuScroll={false}  // https://www.pivotaltracker.com/story/show/170759719
+        captureMenuScroll={false} // https://www.pivotaltracker.com/story/show/170759719
         addMenuListClassName={addMenuListClassName}
         menuPortalTarget={document.body /* passed as props.appendTo to PopperMenuPortal */}
         styles={NoStyles}
