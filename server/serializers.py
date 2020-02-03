@@ -1,5 +1,4 @@
 from collections import namedtuple
-import contextlib
 import datetime
 import logging
 import re
@@ -7,16 +6,11 @@ import json
 from typing import Any, Dict, Iterable, List, Optional, Union
 from allauth.account.utils import user_display
 from django.contrib.auth import get_user_model
-from rest_framework import serializers
 from cjwkernel.types import I18nMessage, QuickFix, RenderError
 from cjworkbench.settings import KB_ROOT_URL
-from cjwstate.models import Workflow, WfModule, ModuleVersion, StoredObject, Tab
-from cjwstate.params import get_migrated_params
 from server.settingsutils import workbench_user_display
 from cjwstate.models.param_spec import ParamSpec
 from cjwstate import clientside
-from cjwkernel.types import RenderError
-from cjworkbench.i18n import default_locale
 from cjworkbench.i18n.trans import localize
 from icu import ICUError
 
@@ -135,7 +129,6 @@ def jsonize_param_spec(p: ParamSpec, ctx: JsonizeContext) -> Dict[str, Any]:
 def _ctx_authorized_write(
     workflow: clientside.WorkflowUpdate, ctx: JsonizeContext
 ) -> bool:
-    owner = workflow.owner
     user = ctx.user
 
     if user.is_anonymous:
@@ -282,13 +275,13 @@ def jsonize_i18n_message(message: I18nMessage, ctx: JsonizeContext) -> str:
         # Attempt to localize in the locale given by `ctx`.
         try:
             return localize(ctx.locale_id, message.id, arguments=message.args)
-        except ICUError as err:
+        except ICUError:
             # `localize` handles `ICUError` for the given locale.
             # Hence, if we get here, it means that the message is badly formatted in the default locale.
             logger.exception(
                 f"I18nMessage badly formatted in default locale. id: {message.id}, source: {message.source}"
             )
-        except KeyError as err:
+        except KeyError:
             logger.exception(
                 f"I18nMessage not found. id: {message.id}, source: {message.source}"
             )
