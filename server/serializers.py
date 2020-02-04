@@ -561,9 +561,7 @@ def _i18n_message_source_to_localizer(
         try:
             module_zipfile = ctx.module_zipfiles[ctx.module_id]
         except KeyError as err:
-            raise KeyError(
-                "No ModuleZipFile for module id %s" % ctx.module_id
-            ) from err
+            raise KeyError("No ModuleZipFile for module id %s" % ctx.module_id) from err
         return MESSAGE_LOCALIZER_REGISTRY.for_module_zipfile(
             module_zipfile
         )  # Raises `NotInternationalizedError`
