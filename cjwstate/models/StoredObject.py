@@ -28,7 +28,6 @@ class StoredObject(models.Model):
     )
 
     # identification for file backing store
-    bucket = models.CharField(max_length=255, null=True, blank=True, default="")
     key = models.CharField(max_length=255, null=False, blank=True, default="")
     stored_at = models.DateTimeField(default=timezone.now)
 
@@ -49,11 +48,7 @@ class StoredObject(models.Model):
         )
 
         return to_wf_module.stored_objects.create(
-            stored_at=self.stored_at,
-            hash=self.hash,
-            bucket=minio.StoredObjectsBucket,
-            key=key,
-            size=self.size,
+            stored_at=self.stored_at, hash=self.hash, key=key, size=self.size
         )
 
 

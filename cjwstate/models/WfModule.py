@@ -410,7 +410,6 @@ class WfModule(models.Model):
                     name=uploaded_file.name,
                     size=uploaded_file.size,
                     uuid=uploaded_file.uuid,
-                    bucket=minio.UserFilesBucket,
                     key=new_key,
                 )
 

@@ -63,7 +63,6 @@ def create_stored_object(
     stored_object = StoredObject.objects.create(
         stored_at=stored_at,
         wf_module_id=wf_module_id,
-        bucket=BUCKET,
         key=key,
         size=size,
         hash="unhashed",

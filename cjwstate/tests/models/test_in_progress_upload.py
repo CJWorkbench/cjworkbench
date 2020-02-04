@@ -52,11 +52,7 @@ class InProgressUploadTest(DbTestCase):
         key = wf_module.uploaded_file_prefix + str(ipu.id) + ".xlsx"
         minio.put_bytes(minio.UserFilesBucket, key, b"1234567")
         wf_module.uploaded_files.create(
-            name="text.xlsx",
-            size=7,
-            uuid=str(self.id),
-            bucket=minio.UserFilesBucket,
-            key=key,
+            name="text.xlsx", size=7, uuid=str(self.id), key=key
         )
         ipu.delete_s3_data()
         self.assertFalse(minio.exists(minio.UserFilesBucket, key))
