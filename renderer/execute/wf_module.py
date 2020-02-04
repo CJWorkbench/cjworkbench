@@ -94,7 +94,7 @@ def _load_fetch_result(
         )
     except StoredObject.DoesNotExist:
         return None
-    if not stored_object.bucket or not stored_object.key:
+    if not stored_object.key:
         return None
 
     with contextlib.ExitStack() as inner_stack:
@@ -103,7 +103,7 @@ def _load_fetch_result(
         )
 
         try:
-            minio.download(stored_object.bucket, stored_object.key, path)
+            minio.download(minio.StoredObjectsBucket, stored_object.key, path)
             # Download succeeded, so we no longer want to delete `path`
             # right _now_ ("now" means, "in inner_stack.close()"). Instead,
             # transfer ownership of `path` to exit_stack.

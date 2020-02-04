@@ -15,7 +15,7 @@ ZipfileEntry = NamedTuple("ZipfileEntry", [("name", str), ("body", bytes)])
 def _load_zipfile_entry(dirpath: Path) -> ZipfileEntry:
     module_id = dirpath.name
     bio = io.BytesIO()
-    with zipfile.open(fileobj=bio, mode="w") as zf:
+    with zipfile.ZipFile(bio, mode="w") as zf:
         for path in dirpath.glob("**/*"):
             if path.is_file():
                 zf.write(path, str(path.relative_to(dirpath)))
@@ -39,9 +39,9 @@ def _load_zipfile_entries() -> Dict[str, ZipfileEntry]:
 
 
 MODULES_ROOT = Path(__file__).parent.parent / "module-zipfile-server" / "modules"
-ZIPFILE_ENTRIES = _load_zipfile_entry()
+ZIPFILE_ENTRIES = _load_zipfile_entries()
 ZIPFILE_PATHS: Dict[str, str] = {
-    path.split(".", 1)[0]: path for path in ZIPFILE_ENTRIES.keys()
+    path[1:].split(".", 1)[0]: path for path in ZIPFILE_ENTRIES.keys()
 }
 
 
@@ -85,7 +85,7 @@ def import_workbench_module(browser: Browser, module_id: str) -> None:
         browser.click_button("menu")
     browser.click_button("Import Module")
     with browser.scope(".modal-dialog"):
-        browser.fill_in("url", f"http://module-zipfile-server:{port}/{path}", wait=True)
+        browser.fill_in("url", f"http://module-zipfile-server:{port}{path}", wait=True)
         browser.click_button("Import")
         browser.wait_for_element(".import-github-success", text="Imported", wait=True)
         browser.click_button("×")

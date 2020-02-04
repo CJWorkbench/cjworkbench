@@ -10,7 +10,7 @@ from ... import settings
 UNICODE_BOM = "\uFFFE"
 
 
-def detect_encoding(bytesio: io.BytesIO):
+def detect_encoding(bytesio: io.BytesIO) -> str:
     """
     Detect charset, as Python-friendly encoding string.
 
@@ -19,6 +19,8 @@ def detect_encoding(bytesio: io.BytesIO):
     * Reads file by CHARDET_CHUNK_SIZE defined in settings.py
     * Stops seeking when detector.done flag True
     * Seeks back to beginning of file for downstream usage
+    * Returns "utf-8" in case of empty file or ASCII -- since the parse
+      framework is designed to be UTF-native.
     """
     detector = chardet.UniversalDetector()
     while not detector.done:
@@ -29,7 +31,14 @@ def detect_encoding(bytesio: io.BytesIO):
 
     detector.close()
     bytesio.seek(0)
-    return detector.result["encoding"]
+    encoding = detector.result["encoding"]
+    if encoding is None:
+        # There isn't enough data for chardet
+        return "UTF-8"
+    elif encoding == "ASCII":
+        return "UTF-8"
+    else:
+        return encoding
 
 
 @dataclass(frozen=True)

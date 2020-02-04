@@ -455,7 +455,9 @@ class FetchTests(DbTestCaseWithModuleRegistry):
             )
         wf_module.refresh_from_db()
         so = wf_module.stored_objects.get(stored_at=wf_module.stored_data_version)
-        with minio.temporarily_download(so.bucket, so.key) as parquet_path:
+        with minio.temporarily_download(
+            minio.StoredObjectsBucket, so.key
+        ) as parquet_path:
             table = pyarrow.parquet.read_table(str(parquet_path), use_threads=False)
             assert_arrow_table_equals(table, {"A": [1]})
 

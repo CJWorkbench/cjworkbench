@@ -2,19 +2,18 @@
 apiVersion: networking.gke.io/v1beta1
 kind: ManagedCertificate
 metadata:
-  name: staging-user-files-cert
+  name: user-files-cert
 spec:
   domains:
-    - staging-user-files.workbenchdata.com
+    - user-files.workbenchdata-staging.com
 ---
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  namespace: staging
   name: minio-ingress
   annotations:
-    kubernetes.io/ingress.global-static-ip-name: staging-user-files
-    networking.gke.io/managed-certificates: staging-user-files-cert
+    kubernetes.io/ingress.global-static-ip-name: user-files
+    networking.gke.io/managed-certificates: user-files-cert
     kubernetes.io/ingress.allow-http: "false"
 spec:
   backend:

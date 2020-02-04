@@ -5,10 +5,8 @@ set -x
 
 DIR="$(dirname "$0")"
 
-ENV=${1:?"Usage: $0 ENVIRONMENT"}
-
 export APP_INSTANCE_NAME=rabbitmq-1
-export NAMESPACE="$ENV"
+export NAMESPACE="default"
 export REPLICAS=3
 export RABBITMQ_ERLANG_COOKIE=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1 | tr -d '\n' | base64)
 export RABBITMQ_DEFAULT_USER=rabbit

@@ -33,7 +33,7 @@ class TestQuickFix(LoggedInIntegrationTest):
             expected_colnames_and_types=["A text"],
         )
 
-        self.import_module("converttodate")
+        self.import_module("convert-date")
 
         self.add_wf_module("Group by date")
         self.select_column("Group by date", "column", "A")
@@ -103,7 +103,7 @@ class TestQuickFix(LoggedInIntegrationTest):
         )
 
         # 'Accidentally' convert 'Num2' to Date & Time.
-        self.import_module("converttodate")
+        self.import_module("convert-date")
         self.add_wf_module("Convert to date & time")
         self.select_column("Convert to date & time", "colnames", "Num2")
         self.submit_wf_module()
