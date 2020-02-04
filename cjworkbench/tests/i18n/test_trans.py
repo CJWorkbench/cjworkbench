@@ -109,7 +109,7 @@ class ICUFormatMessageTest(SimpleTestCase):
         )
 
 
-class ICUFormatMessageTest(SimpleTestCase):
+class ICUFormatHtmlMessageTest(SimpleTestCase):
     # Tests that `arguments` argument replaces variables in the message.
     # 1) Parameters that do not exist in the message are ignored.
     # 2) Variables in the message for which no parameter has been given are ignored.

@@ -83,10 +83,6 @@ JsonizeModuleContext = namedtuple(
 )
 
 
-class JsonizeContextError(Exception):
-    pass
-
-
 def _add_module_to_ctx(ctx: JsonizeContext, module_id: str) -> JsonizeModuleContext:
     return JsonizeModuleContext(
         user=ctx.user,
@@ -559,13 +555,13 @@ def _i18n_message_source_to_localizer(
     """Return a localizer for the source of the given `I18nMessage`.
     
     Raise `NotInternationalizedError` if the source is a non-internationalized module.
-    Raise `JsonizeContextError` if the source is a module that has no associated `ModuleZipFile`.
+    Raise `KeyError` if the source is a module that has no associated `ModuleZipFile`.
     """
     if message.source == "module":
         try:
             module_zipfile = ctx.module_zipfiles[ctx.module_id]
         except KeyError as err:
-            raise JsonizeContextError(
+            raise KeyError(
                 "No ModuleZipFile for module id %s" % ctx.module_id
             ) from err
         return MESSAGE_LOCALIZER_REGISTRY.for_module_zipfile(
@@ -597,7 +593,7 @@ def jsonize_i18n_message(message: I18nMessage, ctx: JsonizeModuleContext) -> str
             "I18nMessage source %s does not support localization", message.source
         )
         return json.dumps(message.to_dict())
-    except JsonizeContextError as err:
+    except KeyError as err:
         logger.exception(
             "JsonizeContext not set properly for I18nMessage source %s. Error: %s",
             message.source,

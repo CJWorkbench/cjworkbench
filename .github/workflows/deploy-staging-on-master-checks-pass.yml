@@ -1,0 +1,35 @@
+name: Deploy staging on master checks pass
+
+on:
+  check_suite:
+    branches: [master]
+    types: [completed]
+
+jobs:
+  kubectl-deploy:
+    name: Deploy to staging Kubernetes cluster
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        if: github.event.check_suite.conclusion == 'success'
+        uses: actions/checkout@master
+
+      - name: Install GCloud API
+        uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        if: success()
+        with:
+          version: '278.0.0'
+          service_account_email: ${{ secrets.GCP_SERVICE_ACCOUNT_EMAIL }}
+          service_account_key: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+
+      - name: Run kubectl
+        if: success()
+        env:
+          GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
+          GCP_REGION: ${{ secrets.GKE_REGION }}
+          GKE_CLUSTER: ${{ secrets.GKE_CLUSTER }}
+        run: |
+          gcloud container clusters get-credentials "$GKE_CLUSTER" \
+            --region "$GCP_REGION" \
+            --project "$GCP_PROJECT"
+          deploy/advanced-deploy staging "$GITHUB_SHA"
