@@ -65,7 +65,7 @@ def make_init_state(
     except Workflow.DoesNotExist:
         raise Http404("Workflow was recently deleted")
 
-    ctx = JsonizeContext(request.user, request.session, request.locale_id)
+    ctx = JsonizeContext(request.user, request.session, request.locale_id, modules)
     return jsonize_clientside_init(state, ctx)
 
 
@@ -82,7 +82,7 @@ class Index(View):
     def get(self, request: HttpRequest):
         """Render workflow-list page."""
 
-        ctx = JsonizeContext(request.user, request.session, request.locale_id)
+        ctx = JsonizeContext(request.user, request.session, request.locale_id, {})
 
         def list_workflows_as_json(**kwargs) -> List[Dict[str, Any]]:
             workflows = (
@@ -283,7 +283,12 @@ class Duplicate(View):
     @method_decorator(loads_workflow_for_read)
     def post(self, request: HttpRequest, workflow: Workflow):
         workflow2 = workflow.duplicate(request.user)
-        ctx = JsonizeContext(request.user, request.session, request.locale_id)
+        ctx = JsonizeContext(
+            request.user,
+            request.session,
+            request.locale_id,
+            dict(MODULE_REGISTRY.all_latest()),
+        )
         json_dict = jsonize_clientside_workflow(
             workflow2.to_clientside(), ctx, is_init=True
         )
@@ -327,7 +332,10 @@ class Report(View):
                 Report.WfModuleWithIframe.from_wf_module(wf_module)
                 for wf_module in all_wf_modules
                 if wf_module.module_id_name in module_zipfiles
-                and wf_module.module_zipfile.get_optional_html() is not None
+                and (
+                    module_zipfiles[wf_module.module_id_name].get_optional_html()
+                    is not None
+                )
             ]
             return cls(slug=tab.slug, name=tab.name, wf_modules=wf_modules)
 

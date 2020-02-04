@@ -5,14 +5,21 @@ set -e
 ENV=${1:?"Usage: $0 ENVIRONMENT SHA"}
 SHA=${2:?"Usage: $0 ENVIRONMENT SHA"}
 
+if [ "$ENV" = "staging" ]; then
+  CLUSTER="gke_workbench-staging_us-central1-b_workbench"
+else
+  CLUSTER="gke_workbenchdata-production_us-central1-b_workbench"
+fi
+
+KUBECTL="kubectl.1.15 --cluster $CLUSTER"
+
 run_migrations() {
   echo -n "Running migrations for $SHA on $ENV..." >&2
-  kubectl -n $ENV delete pod migrate-$SHA 2>/dev/null || true # delete if already running
+  $KUBECTL delete pod migrate-$SHA 2>/dev/null || true # delete if already running
   overrides=$(cat "$(dirname "$0")"/kubernetes/migrate.json | sed -e "s/\\\$SHA/$SHA/")
-  kubectl \
-    -n $ENV \
+  $KUBECTL \
     run migrate-$SHA \
-    --image="gcr.io/cj-workbench/migrate:$SHA" \
+    --image="gcr.io/workbenchdata-ci/migrate:$SHA" \
     -i --rm --quiet \
     --restart=Never \
     --overrides="$overrides"
@@ -22,23 +29,23 @@ run_migrations() {
 run_migrations >&2
 
 echo -n "Setting frontend, fetcher, renderer and cron images to $SHA on $ENV..." >&2
-repo="gcr.io/cj-workbench"
+repo="gcr.io/workbenchdata-ci"
 sandboxer="$repo/migrate:$SHA"
-kubectl -n $ENV set image deployment/fetcher-deployment fetcher=$repo/fetcher:$SHA setup-sandboxes=$sandboxer teardown-sandboxes=$sandboxer >/dev/null
-kubectl -n $ENV set image deployment/renderer-deployment renderer=$repo/renderer:$SHA setup-sandboxes=$sandboxer teardown-sandboxes=$sandboxer >/dev/null
-kubectl -n $ENV set image deployment/frontend-deployment frontend=$repo/frontend:$SHA setup-sandboxes=$sandboxer teardown-sandboxes=$sandboxer >/dev/null
-kubectl -n $ENV set image deployment/cron-deployment cron=$repo/cron:$SHA >/dev/null
+$KUBECTL set image deployment/fetcher-deployment fetcher=$repo/fetcher:$SHA setup-sandboxes=$sandboxer teardown-sandboxes=$sandboxer >/dev/null
+$KUBECTL set image deployment/renderer-deployment renderer=$repo/renderer:$SHA setup-sandboxes=$sandboxer teardown-sandboxes=$sandboxer >/dev/null
+$KUBECTL set image deployment/frontend-deployment frontend=$repo/frontend:$SHA setup-sandboxes=$sandboxer teardown-sandboxes=$sandboxer >/dev/null
+$KUBECTL set image deployment/cron-deployment cron=$repo/cron:$SHA >/dev/null
 echo ' done' >&2
 
 echo -n 'Waiting for rollout to finish...' >&2
-kubectl -n $ENV rollout status deployment/fetcher-deployment >/dev/null
+$KUBECTL rollout status deployment/fetcher-deployment >/dev/null
 echo -n '.' >&2
-kubectl -n $ENV rollout status deployment/renderer-deployment >/dev/null
+$KUBECTL rollout status deployment/renderer-deployment >/dev/null
 echo -n '.' >&2
-kubectl -n $ENV rollout status deployment/frontend-deployment >/dev/null
+$KUBECTL rollout status deployment/frontend-deployment >/dev/null
 echo -n '.' >&2
-kubectl -n $ENV rollout status deployment/cron-deployment >/dev/null
+$KUBECTL rollout status deployment/cron-deployment >/dev/null
 echo ' done' >&2
 
 echo >&2
-echo 'Inspect services at https://console.cloud.google.com/kubernetes/workload?project=cj-workbench' >&2
+echo 'Inspect services at https://console.cloud.google.com/kubernetes/workload?project=workbench-staging' >&2

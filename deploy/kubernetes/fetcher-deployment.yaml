@@ -23,7 +23,7 @@ spec:
         #
         # See https://itnext.io/using-overlay-mounts-with-kubernetes-960375c05959
         - name: setup-sandboxes
-          image: "gcr.io/cj-workbench/migrate:latest"
+          image: "gcr.io/workbenchdata-ci/migrate:latest"
           securityContext:
             privileged: true  # so it can run mount and iptables
           command: [ "bash", "-x", "/app/cjwkernel/setup-sandboxes.sh", "all" ]
@@ -33,7 +33,7 @@ spec:
               mountPropagation: Bidirectional  # expose mounts to main app
       containers:
         - name: fetcher
-          image: "gcr.io/cj-workbench/fetcher:latest"
+          image: "gcr.io/workbenchdata-ci/fetcher:latest"
           resources:
             # fetch() functions are usually network-constrained: CPU and RAM
             # usage are low.
@@ -86,18 +86,16 @@ spec:
                   name: minio-access-key
                   key: secret_key
             - name: MINIO_BUCKET_PREFIX
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.namespace
-            - name: MINIO_EXTERNAL_URL
-              valueFrom:
-                secretKeyRef:
-                  name: minio-access-key
-                  key: external_url
+              value: ""
             - name: MINIO_URL
               value: http://minio-service
             - name: MINIO_BUCKET_SUFFIX
-              value: '.workbenchdata.com'
+              valueFrom:
+                configMapKeyRef:
+                  name: workbench-config
+                  key: domainNameWithLeadingDot
+            - name: MINIO_EXTERNAL_URL
+              value: "https://user-files$(MINIO_BUCKET_SUFFIX)"
             - name: _RABBITMQ_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -125,7 +123,7 @@ spec:
           # "any volume mounts created by Containers in Pods must be destroyed
           # (unmounted) by the Containers on termination"
           # -- https://kubernetes.io/docs/concepts/storage/volumes/#mount-propagation
-          image: "gcr.io/cj-workbench/migrate:latest"
+          image: "gcr.io/workbenchdata-ci/migrate:latest"
           command: ["sh", "-c", "sleep infinity"]  # do nothing, until exit. (sh responds to INT signal)
           securityContext:
             privileged: true  # so it can unmount

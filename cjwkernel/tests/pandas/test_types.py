@@ -472,7 +472,7 @@ class ProcessResultErrorTests(unittest.TestCase):
                             (
                                 ("quick fix id", {"fix": "that"}),
                                 "prependModule",
-                                ["converttodate", {"colnames": ["C", "D"]}],
+                                ["convert-date", {"colnames": ["C", "D"]}],
                             ),
                             (
                                 ("another quick fix id", {"fix": "that"}),
@@ -500,7 +500,7 @@ class ProcessResultErrorTests(unittest.TestCase):
                         QuickFix(
                             I18nMessage("quick fix id", {"fix": "that"}),
                             "prependModule",
-                            [["converttodate", {"colnames": ["C", "D"]}]],
+                            [["convert-date", {"colnames": ["C", "D"]}]],
                         ),
                         QuickFix(
                             I18nMessage("another quick fix id", {"fix": "that"}),

@@ -4,7 +4,6 @@ import textwrap
 from unittest.mock import patch
 from django.utils import timezone
 from cjwkernel.chroot import EDITABLE_CHROOT
-from cjwkernel.errors import ModuleExitedError
 from cjwkernel.types import I18nMessage, RenderError, RenderResult, Tab
 from cjwkernel.tests.util import arrow_table, parquet_file
 from cjwstate import minio, rabbitmq, rendercache
@@ -232,7 +231,7 @@ class WfModuleTests(DbTestCaseWithModuleRegistry):
         wf_module.stored_data_version = so.stored_at
         wf_module.save(update_fields=["stored_data_version"])
         # Now delete the file on S3 -- but leave the DB pointing to it.
-        minio.remove(so.bucket, so.key)
+        minio.remove(minio.StoredObjectsBucket, so.key)
 
         def render(*args, fetch_result, **kwargs):
             self.assertIsNone(fetch_result)
@@ -356,11 +355,7 @@ class WfModuleTests(DbTestCaseWithModuleRegistry):
             stored_data_version=timezone.now(),
         )
         wf_module.stored_objects.create(
-            stored_at=wf_module.stored_data_version,
-            bucket="",
-            key="",
-            size=0,
-            hash="whatever",
+            stored_at=wf_module.stored_data_version, key="", size=0, hash="whatever"
         )
 
         module_zipfile = create_module_zipfile(

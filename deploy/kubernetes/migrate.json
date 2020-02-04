@@ -1,93 +1,89 @@
 {
-	"apiVersion": "v1",
-	"kind": "Pod",
-	"metadata": {
-		"name": "migrate-$SHA"
-	},
-	"spec": {
-		"restartPolicy": "Never",
-		"containers": [
-			{
-				"name": "migrate",
-				"image": "gcr.io/cj-workbench/migrate:latest",
-				"env": [
-					{
-						"name": "CJW_PRODUCTION",
-						"value": "True"
-					},
-					{
-						"name": "PYTHONUNBUFFERED",
-						"value": "1"
-					},
-					{
-						"name": "ASGI_THREADS",
-						"value": "5"
-					},
-					{
-						"name": "CJW_DB_HOST",
-						"value": "database-service"
-					},
-					{
-						"name": "CJW_RABBITMQ_HOST",
-						"value": "amqp://guest:guest@rabbitmq-service/"
-					},
-					{
-						"name": "CJW_DB_PASSWORD",
-						"value": "cjworkbench"
-					},
-					{
-						"name": "CJW_SECRET_KEY",
-						"value": "migrate-needs-no-secret-key"
-					},
-					{
-						"name": "CJW_MOCK_EMAIL",
-						"value": "True"
-					},
-					{
-						"name": "MINIO_ACCESS_KEY",
-						"valueFrom": {
-							"secretKeyRef": {
-								"name": "minio-access-key",
-								"key": "access_key"
-							}
-						}
-					},
-					{
-						"name": "MINIO_SECRET_KEY",
-						"valueFrom": {
-							"secretKeyRef": {
-								"name": "minio-access-key",
-								"key": "secret_key"
-							}
-						}
-					},
-					{
-						"name": "MINIO_BUCKET_PREFIX",
-						"valueFrom": {
-							"fieldRef": {
-								"fieldPath": "metadata.namespace"
-							}
-						}
-					},
-					{
-						"name": "MINIO_EXTERNAL_URL",
-						"valueFrom": {
-							"secretKeyRef": {
-								"name": "minio-access-key",
-								"key": "external_url"
-							}
-						}
-					},
-					{
-						"name": "MINIO_URL",
-						"value": "http://minio-service"
-					},
-					{
-						"name": "MINIO_BUCKET_SUFFIX",
-						"value": ".workbenchdata.com"
-					}
-				]
-			}
-		]
-	}
+  "apiVersion": "v1",
+  "kind": "Pod",
+  "metadata": {
+    "name": "migrate-$SHA"
+  },
+  "spec": {
+    "restartPolicy": "Never",
+    "containers": [
+      {
+        "name": "migrate",
+        "image": "gcr.io/workbenchdata-ci/migrate:$SHA",
+        "env": [
+          {
+            "name": "CJW_PRODUCTION",
+            "value": "True"
+          },
+          {
+            "name": "PYTHONUNBUFFERED",
+            "value": "1"
+          },
+          {
+            "name": "ASGI_THREADS",
+            "value": "5"
+          },
+          {
+            "name": "CJW_DB_HOST",
+            "value": "database-service"
+          },
+          {
+            "name": "CJW_RABBITMQ_HOST",
+            "value": "amqp://guest:guest@rabbitmq-service/"
+          },
+          {
+            "name": "CJW_DB_PASSWORD",
+            "value": "cjworkbench"
+          },
+          {
+            "name": "CJW_SECRET_KEY",
+            "value": "migrate-needs-no-secret-key"
+          },
+          {
+            "name": "CJW_MOCK_EMAIL",
+            "value": "True"
+          },
+          {
+            "name": "MINIO_ACCESS_KEY",
+            "valueFrom": {
+              "secretKeyRef": {
+                "name": "minio-access-key",
+                "key": "access_key"
+              }
+            }
+          },
+          {
+            "name": "MINIO_SECRET_KEY",
+            "valueFrom": {
+              "secretKeyRef": {
+                "name": "minio-access-key",
+                "key": "secret_key"
+              }
+            }
+          },
+          {
+            "name": "MINIO_BUCKET_PREFIX",
+            "value": ""
+          },
+          {
+            "name": "MINIO_URL",
+            "value": "http://minio-service"
+          },
+          {
+            "name": "MINIO_BUCKET_SUFFIX",
+            "valueFrom": {
+              "configMapKeyRef": {
+                "name": "workbench-config",
+                "key": "domainNameWithLeadingDot"
+              }
+            }
+          },
+          {
+            "name": "MINIO_EXTERNAL_URL",
+            "value": "https://user-files$(MINIO_BUCKET_SUFFIX)"
+          }
+        ]
+      }
+    ]
+  }
 }

@@ -211,11 +211,7 @@ class InProgressUpload(models.Model):
         # delete_s3_data() solves this.
         size = minio.stat(minio.UserFilesBucket, final_key).size
         uploaded_file = self.wf_module.uploaded_files.create(
-            name=filename,
-            size=size,
-            uuid=str(self.id),
-            bucket=minio.UserFilesBucket,
-            key=final_key,
+            name=filename, size=size, uuid=str(self.id), key=final_key
         )
         self.is_completed = True
         self.save(update_fields=["is_completed"])

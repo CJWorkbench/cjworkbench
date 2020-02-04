@@ -212,7 +212,7 @@ class FindSpecMessagesTest(unittest.TestCase):
                         "name": "Hello there!",
                         "options": [
                             {"label": "First", "value": "first"},
-                            {"label": True, "value": "second"},
+                            {"label": "Second", "value": True},
                         ],
                         "default": "first",
                     }
@@ -225,24 +225,6 @@ class FindSpecMessagesTest(unittest.TestCase):
             "_spec.parameters.hello.name": "Hello there!",
             "_spec.parameters.hello.options.first.label": "First",
             "_spec.parameters.hello.options.True.label": "Second",
-        }
-        self.assertDictEqual(result, expected)
-
-    def test_parameter_type_radio(self):
-        spec = ModuleSpec(
-            **{
-                "id_name": "testme",
-                "name": "Test Module",
-                "category": "Clean",
-                "parameters": [
-                    {"id_name": "hello", "type": "button", "name": "Hello there!"}
-                ],
-            }
-        )
-        result = find_spec_messages(spec)
-        expected = {
-            "_spec.name": "Test Module",
-            "_spec.parameters.hello.name": "Hello there!",
         }
         self.assertDictEqual(result, expected)
 

@@ -17,28 +17,24 @@ class StoredObjectTests(DbTestCase):
         key = f"{self.workflow.id}/{self.step1.id}/{uuid1()}"
         minio.put_bytes(minio.StoredObjectsBucket, key, b"12345")
         self.step2 = self.step1.tab.wf_modules.create(order=1, slug="step-2")
-        so1 = self.step1.stored_objects.create(
-            bucket=minio.StoredObjectsBucket, key=key, size=5
-        )
+        so1 = self.step1.stored_objects.create(key=key, size=5)
         so2 = so1.duplicate(self.step2)
 
         # new StoredObject should have same time,
         # different file with same contents
-        self.assertEqual(so1.stored_at, so2.stored_at)
-        self.assertEqual(so1.size, so2.size)
-        self.assertEqual(so1.bucket, so2.bucket)
-        self.assertNotEqual(so1.key, so2.key)
+        self.assertEqual(so2.stored_at, so1.stored_at)
+        self.assertEqual(so2.size, so1.size)
+        self.assertNotEqual(so2.key, so1.key)
         self.assertEqual(
-            minio.get_object_with_data(so2.bucket, so2.key)["Body"], b"12345"
+            minio.get_object_with_data(minio.StoredObjectsBucket, so2.key)["Body"],
+            b"12345",
         )
 
     def test_delete_workflow_deletes_from_s3(self):
         minio.put_bytes(minio.StoredObjectsBucket, "test.dat", b"abcd")
         workflow = Workflow.create_and_init()
         wf_module = workflow.tabs.first().wf_modules.create(order=0, slug="step-1")
-        wf_module.stored_objects.create(
-            size=4, bucket=minio.StoredObjectsBucket, key="test.dat"
-        )
+        wf_module.stored_objects.create(size=4, key="test.dat")
         workflow.delete()
         self.assertFalse(minio.exists(minio.StoredObjectsBucket, "test.dat"))
 
@@ -47,9 +43,7 @@ class StoredObjectTests(DbTestCase):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.create(position=1)
         wf_module = tab.wf_modules.create(order=0, slug="step-1")
-        wf_module.stored_objects.create(
-            size=4, bucket=minio.StoredObjectsBucket, key="test.dat"
-        )
+        wf_module.stored_objects.create(size=4, key="test.dat")
         tab.delete()
         self.assertFalse(minio.exists(minio.StoredObjectsBucket, "test.dat"))
 
@@ -57,9 +51,7 @@ class StoredObjectTests(DbTestCase):
         minio.put_bytes(minio.StoredObjectsBucket, "test.dat", b"abcd")
         workflow = Workflow.create_and_init()
         wf_module = workflow.tabs.first().wf_modules.create(order=0, slug="step-1")
-        wf_module.stored_objects.create(
-            size=4, bucket=minio.StoredObjectsBucket, key="test.dat"
-        )
+        wf_module.stored_objects.create(size=4, key="test.dat")
         wf_module.delete()
         self.assertFalse(minio.exists(minio.StoredObjectsBucket, "test.dat"))
 
@@ -67,9 +59,7 @@ class StoredObjectTests(DbTestCase):
         minio.put_bytes(minio.StoredObjectsBucket, "test.dat", b"abcd")
         workflow = Workflow.create_and_init()
         wf_module = workflow.tabs.first().wf_modules.create(order=0, slug="step-1")
-        so = wf_module.stored_objects.create(
-            size=4, bucket=minio.StoredObjectsBucket, key="test.dat"
-        )
+        so = wf_module.stored_objects.create(size=4, key="test.dat")
         so.delete()
         self.assertFalse(minio.exists(minio.StoredObjectsBucket, "test.dat"))
 
@@ -79,7 +69,5 @@ class StoredObjectTests(DbTestCase):
         """
         workflow = Workflow.create_and_init()
         wf_module = workflow.tabs.first().wf_modules.create(order=0, slug="step-1")
-        so = wf_module.stored_objects.create(
-            size=4, bucket=minio.StoredObjectsBucket, key="missing-key"
-        )
+        so = wf_module.stored_objects.create(size=4, key="missing-key")
         so.delete()

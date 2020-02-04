@@ -40,7 +40,7 @@ class UploadTest(HandlerTestCase):
         )
         self.assertLessEqual(in_progress_upload.updated_at, timezone.now())
         # Test that response has bucket+key+credentials
-        self.assertEqual(response.data["bucket"], in_progress_upload.Bucket)
+        self.assertEqual(response.data["bucket"], minio.UserFilesBucket)
         self.assertEqual(response.data["key"], in_progress_upload.get_upload_key())
         self.assertIn("credentials", response.data)
 
@@ -75,7 +75,6 @@ class UploadTest(HandlerTestCase):
         self.assertEqual(uploaded_file.name, "test sheet.csv")
         self.assertEqual(uploaded_file.size, 7)
         self.assertEqual(uploaded_file.uuid, "147a9f5d-5b3e-41c3-a968-a84a5a9d587f")
-        self.assertEqual(uploaded_file.bucket, in_progress_upload.Bucket)
         final_key = f"wf-{workflow.id}/wfm-{wf_module.id}/147a9f5d-5b3e-41c3-a968-a84a5a9d587f.csv"
         self.assertEqual(uploaded_file.key, final_key)
         # The file has the right bytes and metadata

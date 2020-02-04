@@ -275,6 +275,7 @@ exports[`ChartSeriesSelect should match snapshot 1`] = `
                 value="foo"
               >
                 <StateManager
+                  captureMenuScroll={false}
                   className="react-select single"
                   classNamePrefix="react-select"
                   components={

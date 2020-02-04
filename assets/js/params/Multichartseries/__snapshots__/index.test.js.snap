@@ -373,6 +373,7 @@ exports[`Multichartseries should match snapshot 1`] = `
                         value="A"
                       >
                         <StateManager
+                          captureMenuScroll={false}
                           className="react-select single"
                           classNamePrefix="react-select"
                           components={
@@ -2192,6 +2193,7 @@ exports[`Multichartseries should match snapshot 1`] = `
                         value="B"
                       >
                         <StateManager
+                          captureMenuScroll={false}
                           className="react-select single"
                           classNamePrefix="react-select"
                           components={

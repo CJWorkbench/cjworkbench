@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: database
-          image: "postgres:10.10"
+          image: "postgres:12.1"
           resources:
             requests:
               cpu: 0.5
@@ -32,7 +32,7 @@ spec:
             # (Upgrade moves data files instead of copying, if source and
             # destination are on same disk; that's the dream.)
             - name: PGDATA
-              value: /var/lib/postgresql/data/10
+              value: /var/lib/postgresql/data/12
             # Set user/password/db to cjworkbench. We only ever have one DB,
             # and every user has full access. (TODO implement user control.)
             - name: POSTGRES_USER

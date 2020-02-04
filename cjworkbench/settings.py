@@ -56,6 +56,9 @@ if "CJW_PRODUCTION" in os.environ:
 else:
     DEBUG = True
 
+if "CJW_FORCE_SSL" in os.environ:
+    SECURE_SSL_REDIRECT = bool(os.environ["CJW_FORCE_SSL"])
+
 DEFAULT_FROM_EMAIL = "Workbench <hello@workbenchdata.com>"
 
 # SECRET_KEY

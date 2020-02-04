@@ -2,9 +2,8 @@ import logging
 import re
 from django.test import SimpleTestCase
 from server.templatetags.i18n_icu import trans_html
-from unittest.mock import patch
 from babel.messages.catalog import Catalog
-from cjworkbench.i18n.trans import MessageTranslator
+from cjworkbench.tests.i18n.util import mock_app_catalogs
 from django.template import Context, Template
 
 
@@ -15,24 +14,18 @@ def mock_context(**kwargs):
 class TransTemplateTagTests(SimpleTestCase):
     # Tests that `noop=True` returns `None`
     def test_trans_noop(self):
-        def mock_get_translations(locale):
-            catalog = Catalog()
-            catalog.add("id", string="Hello {a} {b}!")
-            return MessageTranslator(locale, catalog)
-
-        with patch("cjworkbench.i18n.trans._get_translations", mock_get_translations):
+        catalog = Catalog()
+        catalog.add("id", string="Hello {a} {b}!")
+        with mock_app_catalogs({"en": catalog}):
             self.assertIsNone(
                 trans_html(mock_context(), "id", noop=True, default="Hello {a} {b}!")
             )
 
     # Tests that the default argument is ignored
     def test_default_is_ignored(self):
-        def mock_get_translations(locale):
-            catalog = Catalog()
-            catalog.add("id", string="Hello")
-            return MessageTranslator(locale, catalog)
-
-        with patch("cjworkbench.i18n.trans._get_translations", mock_get_translations):
+        catalog = Catalog()
+        catalog.add("id", string="Hello")
+        with mock_app_catalogs({"en": catalog}):
             self.assertEqual(
                 trans_html(mock_context(), "id", default="Nothing"), "Hello"
             )
@@ -41,12 +34,9 @@ class TransTemplateTagTests(SimpleTestCase):
     # The order of `arg` arguments is not important.
     # Numeric arguments work correctly
     def test_trans_params(self):
-        def mock_get_translations(locale):
-            catalog = Catalog()
-            catalog.add("id", string="Hello {a} {0} {b}")
-            return MessageTranslator(locale, catalog)
-
-        with patch("cjworkbench.i18n.trans._get_translations", mock_get_translations):
+        catalog = Catalog()
+        catalog.add("id", string="Hello {a} {0} {b}")
+        with mock_app_catalogs({"en": catalog}):
             self.assertEqual(
                 trans_html(
                     mock_context(),
@@ -61,12 +51,9 @@ class TransTemplateTagTests(SimpleTestCase):
 
     # Tests that tags without attributes are supported
     def test_trans_tag_without_attributes(self):
-        def mock_get_translations(locale):
-            catalog = Catalog()
-            catalog.add("id", string="Hello <b0>{param_b}</b0>!")
-            return MessageTranslator(locale, catalog)
-
-        with patch("cjworkbench.i18n.trans._get_translations", mock_get_translations):
+        catalog = Catalog()
+        catalog.add("id", string="Hello <b0>{param_b}</b0>!")
+        with mock_app_catalogs({"en": catalog}):
             self.assertEqual(
                 trans_html(
                     mock_context(),
@@ -80,23 +67,16 @@ class TransTemplateTagTests(SimpleTestCase):
 
     # Tests that when a message does not exist in the context locale, it is returned in the default locale
     def test_default_locale(self):
-        def mock_get_translations(locale):
-            catalog = Catalog()
-            if locale == "en":
-                catalog.add("id", "Hello")
-            return MessageTranslator(locale, catalog)
-
-        with patch("cjworkbench.i18n.trans._get_translations", mock_get_translations):
+        catalog = Catalog()
+        catalog.add("id", "Hello")
+        with mock_app_catalogs({"en": catalog, "el": Catalog()}):
             self.assertEqual(
                 trans_html(mock_context(locale_id="el"), "id", default="Hello"), "Hello"
             )
 
     # Tests that when a message does not exist in the catalogs, `None` is returned
     def test_missing_message(self):
-        def mock_get_translations(locale):
-            return MessageTranslator(locale, Catalog())
-
-        with patch("cjworkbench.i18n.trans._get_translations", mock_get_translations):
+        with mock_app_catalogs({"en": Catalog()}):
             with self.assertRaises(KeyError):
                 trans_html(mock_context(), "id", default="Hello")
 
@@ -110,15 +90,12 @@ class TransTemplateTagTests(SimpleTestCase):
     # 6) Nested tags are not tolerated
     # 7) `arg_XX` arguments are replaced correctly
     def test_trans_tag_placeholders(self):
-        def mock_get_translations(locale):
-            catalog = Catalog()
-            catalog.add(
-                "id",
-                string='<em0>Hello</em0> <span0 class="nope">{first}</span0><span1></span1> {second} <a0>{a}<b></b></a0> < <a1>there<</a1>!<br /><script type="text/javascript" src="mybadscript.js"></script>',
-            )
-            return MessageTranslator(locale, catalog)
-
-        with patch("cjworkbench.i18n.trans._get_translations", mock_get_translations):
+        catalog = Catalog()
+        catalog.add(
+            "id",
+            string='<em0>Hello</em0> <span0 class="nope">{first}</span0><span1></span1> {second} <a0>{a}<b></b></a0> < <a1>there<</a1>!<br /><script type="text/javascript" src="mybadscript.js"></script>',
+        )
+        with mock_app_catalogs({"en": catalog}):
             self.assertEqual(
                 trans_html(
                     mock_context(),
@@ -144,12 +121,9 @@ class TransTemplateTagTests(SimpleTestCase):
         #
         # Calling trans_html without a context[i18n] is always a bug. So let's
         # test that it's logged.
-        def mock_get_translations(locale):
-            catalog = Catalog()
-            catalog.add("id", string="Show the message")
-            return MessageTranslator(locale, catalog)
-
-        with patch("cjworkbench.i18n.trans._get_translations", mock_get_translations):
+        catalog = Catalog()
+        catalog.add("id", string="Show the message")
+        with mock_app_catalogs({"en": catalog}):
             with self.assertLogs(level=logging.ERROR) as cm:
                 result = trans_html(
                     {"invalid-context": "yup"}, "id", default="Show the message"

@@ -58,8 +58,8 @@ class WfModuleTests(DbTestCase):
         # The StoredObject was copied byte for byte into a different file
         self.assertNotEqual(so2d.key, so2.key)
         self.assertEqual(
-            minio.get_object_with_data(so2d.bucket, so2d.key)["Body"],
-            minio.get_object_with_data(so2.bucket, so2.key)["Body"],
+            minio.get_object_with_data(minio.StoredObjectsBucket, so2d.key)["Body"],
+            minio.get_object_with_data(minio.StoredObjectsBucket, so2.key)["Body"],
         )
 
     def test_wf_module_duplicate_disable_auto_update(self):
@@ -115,7 +115,7 @@ class WfModuleTests(DbTestCase):
         wf_module.params = {"file": uuid, "has_header": True}
         wf_module.save(update_fields=["params"])
         uploaded_file = wf_module.uploaded_files.create(
-            name="t.csv", uuid=uuid, bucket=minio.UserFilesBucket, key=key, size=7
+            name="t.csv", uuid=uuid, key=key, size=7
         )
 
         workflow2 = Workflow.create_and_init()
@@ -136,7 +136,7 @@ class WfModuleTests(DbTestCase):
         self.assertEqual(uploaded_file2.size, 7)
         self.assertEqual(uploaded_file2.created_at, uploaded_file.created_at)
         self.assertEqual(
-            minio.get_object_with_data(uploaded_file2.bucket, uploaded_file2.key)[
+            minio.get_object_with_data(minio.UserFilesBucket, uploaded_file2.key)[
                 "Body"
             ],
             b"1234567",
@@ -157,15 +157,9 @@ class WfModuleTests(DbTestCase):
         uuid3 = str(uuidgen.uuid4())
         key3 = f"{wf_module.uploaded_file_prefix}{uuid3}.csv"
         minio.put_bytes(minio.UserFilesBucket, key3, b"9999999")
-        wf_module.uploaded_files.create(
-            name="t1.csv", uuid=uuid1, bucket=minio.UserFilesBucket, key=key1, size=7
-        )
-        wf_module.uploaded_files.create(
-            name="t2.csv", uuid=uuid2, bucket=minio.UserFilesBucket, key=key2, size=7
-        )
-        wf_module.uploaded_files.create(
-            name="t3.csv", uuid=uuid3, bucket=minio.UserFilesBucket, key=key3, size=7
-        )
+        wf_module.uploaded_files.create(name="t1.csv", uuid=uuid1, key=key1, size=7)
+        wf_module.uploaded_files.create(name="t2.csv", uuid=uuid2, key=key2, size=7)
+        wf_module.uploaded_files.create(name="t3.csv", uuid=uuid3, key=key3, size=7)
         # Write the _middle_ uuid to the old module -- proving that we aren't
         # selecting by ordering
         wf_module.params = {"file": uuid2, "has_header": True}
@@ -200,7 +194,6 @@ class WfModuleTests(DbTestCase):
         minio.put_bytes(minio.UserFilesBucket, key, b"A\n1")
         # Don't create the UploadedFile. Simulates races during upload/delete
         # that could write a file on S3 but not in our database.
-        # wf_module.uploaded_files.create(name='t.csv', size=3, uuid=uuid,
-        #                                bucket=minio.UserFilesBucket, key=key)
+        # wf_module.uploaded_files.create(name='t.csv', size=3, uuid=uuid, key=key)
         wf_module.delete()  # do not crash
         self.assertFalse(minio.exists(minio.UserFilesBucket, key))

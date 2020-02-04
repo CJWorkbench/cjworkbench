@@ -2,19 +2,18 @@
 apiVersion: networking.gke.io/v1beta1
 kind: ManagedCertificate
 metadata:
-  name: production-user-files-cert
+  name: user-files-cert
 spec:
   domains:
-    - production-user-files.workbenchdata.com
+    - user-files.workbenchdata.com
 ---
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: minio-ingress
-  namespace: production
   annotations:
-    kubernetes.io/ingress.global-static-ip-name: production-user-files
-    networking.gke.io/managed-certificates: production-user-files-cert
+    kubernetes.io/ingress.global-static-ip-name: user-files
+    networking.gke.io/managed-certificates: user-files-cert
     kubernetes.io/ingress.allow-http: "false"
 spec:
   backend:

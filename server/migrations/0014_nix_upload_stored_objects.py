@@ -12,7 +12,7 @@ def delete_upload_stored_objects(apps, _):
 
     for obj in StoredObject.objects.filter(wf_module__module_id_name="upload").all():
         try:
-            minio.remove(obj.bucket, obj.key)
+            minio.remove(minio.StoredObjectsBucket, obj.key)
         except FileNotFoundError:
             # We're resuming, or the file never existed anyway. (We never
             # designed for errors, and we changed error behavior over time;
