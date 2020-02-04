@@ -26,7 +26,7 @@ jobs:
         if: success()
         env:
           GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
-          GCP_REGION: ${{ secrets.GKE_REGION }}
+          GCP_REGION: ${{ secrets.GCP_REGION }}
           GKE_CLUSTER: ${{ secrets.GKE_CLUSTER }}
         run: |
           gcloud container clusters get-credentials "$GKE_CLUSTER" \
