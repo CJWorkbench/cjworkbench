@@ -209,7 +209,7 @@ def _(
     )
     try:
         # Overwrite the file
-        minio.download(uploaded_file.bucket, uploaded_file.key, path)
+        minio.download(minio.UserFilesBucket, uploaded_file.key, path)
         return path
     except FileNotFoundError:
         # tempfile will be deleted by context.exit_stack

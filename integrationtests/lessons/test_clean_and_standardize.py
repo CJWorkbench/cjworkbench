@@ -29,7 +29,7 @@ class TestLesson(LessonTest):
         self.import_module("dropna")
         self.import_module("nulldropper")
         self.import_module("reshape")
-        self.import_module("converttodate")
+        self.import_module("convert-date")
 
         # 1. Introduction
         self.expect_highlight_next()

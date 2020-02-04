@@ -39,11 +39,12 @@ EOT
 if [ "$1" = "shell" ]; then
   docker_compose run --rm \
     --service-ports \
+    --use-aliases \
     integration-test \
     bash -c '/app/integrationtests/start-vnc & DISPLAY=:1 bash'
   exit 0
 elif [ "$1" = "resume" ]; then
-  if docker_compose run integration-test; then
+  if docker_compose run --use-aliases integration-test; then
     echo 'Tests passed! We left everything running because you resumed.' >&2
     exit 0
   else
@@ -69,7 +70,7 @@ echo 'Migrating (and starting database and RabbitMQ)…' >&2
 docker_compose run migrate
 
 echo 'Testing (and starting test environment)…' >&2
-if docker_compose run integration-test; then
+if docker_compose run --use-aliases integration-test; then
   echo 'Tests passed!' >&2
   docker_compose down -v
 else

@@ -106,6 +106,7 @@ exports[`Column matches snapshot 1`] = `
             value={null}
           >
             <StateManager
+              captureMenuScroll={false}
               className="react-select single"
               classNamePrefix="react-select"
               components={

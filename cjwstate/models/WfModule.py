@@ -403,14 +403,13 @@ class WfModule(models.Model):
                 minio.copy(
                     minio.UserFilesBucket,
                     new_key,
-                    f"{uploaded_file.bucket}/{uploaded_file.key}",
+                    f"{minio.UserFilesBucket}/{uploaded_file.key}",
                 )
                 new_step.uploaded_files.create(
                     created_at=uploaded_file.created_at,
                     name=uploaded_file.name,
                     size=uploaded_file.size,
                     uuid=uploaded_file.uuid,
-                    bucket=minio.UserFilesBucket,
                     key=new_key,
                 )
 
