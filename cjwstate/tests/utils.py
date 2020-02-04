@@ -138,6 +138,7 @@ def create_module_zipfile(
     python_code: str = "",
     html: Optional[str] = None,
     js_module: str = "",
+    extra_file_contents: Dict[str, bytes] = {},
 ) -> ModuleZipfile:
     """
     Create a ModuleZipfile, stored in the database and minio.
@@ -164,6 +165,8 @@ def create_module_zipfile(
             zf.writestr(module_id + ".html", html.encode("utf-8"))
         if js_module:
             zf.writestr(module_id + ".js", js_module.encode("utf-8"))
+        for path, content in extra_file_contents.items():
+            zf.writestr(path, content)
     data = bytes(bio.getbuffer())
     if version is None:
         sha1 = hashlib.sha1()

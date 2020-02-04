@@ -13,6 +13,10 @@ from cjwkernel.types import CompiledModule
 from cjwstate.modules.param_dtype import ParamDType
 from .module_loader import validate_module_spec
 from .param_spec import ParamSpec
+import logging
+
+
+logger = logging.getLogger(__name__)
 
 
 ModuleId = NewType("ModuleId", str)
@@ -274,3 +278,12 @@ class ModuleZipfile:
             # "develop" is handled specially in cjwstate/params.py. For GitHub
             # sha1, a new version forces migrate_params().
             return self.version
+
+    def read_messages_po_for_locale(self, locale_id: str) -> bytes:
+        """Return the contents of the po file for the given locale.
+        
+        Raise `KeyError` is no such file exists.
+        
+        Raise `FileNotFoundError` or `BadZipFile` if `self.path` is not a valid zipfile.
+        """
+        return self._read_bytes(f"locale/{locale_id}/messages.po")
