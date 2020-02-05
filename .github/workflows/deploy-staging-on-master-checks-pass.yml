@@ -31,4 +31,5 @@ jobs:
           gcloud container clusters get-credentials "$GKE_CLUSTER" \
             --region "$GCP_REGION" \
             --project "$GCP_PROJECT"
+          gcloud --quiet components install kubectl
           deploy/advanced-deploy staging "$GITHUB_SHA"
