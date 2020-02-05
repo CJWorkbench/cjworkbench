@@ -9,25 +9,24 @@ jobs:
   kubectl-deploy:
     name: Deploy to staging Kubernetes cluster
     runs-on: ubuntu-latest
+    if: github.event.check_suite.conclusion == 'success' && github.ref == 'master'
     steps:
       - name: Checkout
-        if: github.event.check_suite.conclusion == 'success'
         uses: actions/checkout@master
 
       - name: Install GCloud API
         uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
-        if: success()
         with:
           version: '278.0.0'
           service_account_email: ${{ secrets.GCP_SERVICE_ACCOUNT_EMAIL }}
           service_account_key: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
 
       - name: Run kubectl
-        if: success()
         env:
           GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
-          GCP_REGION: ${{ secrets.GKE_REGION }}
+          GCP_REGION: ${{ secrets.GCP_REGION }}
           GKE_CLUSTER: ${{ secrets.GKE_CLUSTER }}
+          GITHUB_SHA: ${{ github.sha }}
         run: |
           gcloud container clusters get-credentials "$GKE_CLUSTER" \
             --region "$GCP_REGION" \
