@@ -597,7 +597,7 @@ class I18nMessage:
 
     def __post_init__(self):
         if self.source not in [None, "module", "cjwmodule"]:
-            raise ValueError("Invalid message source %s" % self.source)
+            raise ValueError("Invalid message source %r" % self.source)
 
     @classmethod
     def from_thrift(cls, value: ttypes.I18nMessage) -> I18nMessage:
