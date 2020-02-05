@@ -17,8 +17,8 @@ from weakref import WeakKeyDictionary
 import threading
 from io import BytesIO
 import importlib.resources
-import importlib
 from functools import lru_cache
+import cjwmodule.i18n
 
 _translators = {}
 
@@ -220,8 +220,7 @@ class MessageLocalizerRegistry:
         for locale_id in supported_locales:
             try:
                 with importlib.resources.open_binary(
-                    importlib.import_module(f"cjwmodule.locale.{locale_id}"),
-                    "messages.po",
+                    cjwmodule.i18n, f"{locale_id}.po"
                 ) as pofile:
                     catalogs[locale_id] = read_po(pofile, abort_invalid=True)
             except (FileNotFoundError, ModuleNotFoundError) as err:
