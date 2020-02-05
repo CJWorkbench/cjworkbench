@@ -9,7 +9,7 @@ jobs:
   kubectl-deploy:
     name: Deploy to staging Kubernetes cluster
     runs-on: ubuntu-latest
-    if: github.event.check_suite.conclusion == 'success' && github.ref == 'master'
+    if: github.event.check_suite.conclusion == 'success'
     steps:
       - name: Checkout
         uses: actions/checkout@master
