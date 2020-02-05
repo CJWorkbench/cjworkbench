@@ -3,10 +3,9 @@ from django.utils.functional import lazy
 from django.utils.html import escape
 from django.utils.translation import get_language
 from cjworkbench.i18n import default_locale, supported_locales
-from cjworkbench.i18n.catalogs import load_catalog
-from cjworkbench.i18n.catalogs.util import find_string
+from cjworkbench.i18n.catalogs import catalog_path
+from cjworkbench.i18n.catalogs.util import find_string, read_po_catalog
 from string import Formatter
-from cjworkbench.i18n.exceptions import UnsupportedLocaleError, BadCatalogsError
 from icu import Formattable, Locale, MessageFormat, ICUError
 from babel.messages.catalog import Catalog, Message
 from babel.messages.pofile import read_po, PoFileError
@@ -164,9 +163,6 @@ class MessageLocalizerRegistry:
     def __init__(self):
         self._module_localizers = WeakKeyDictionary()
         self._module_localizers_lock = threading.Lock()
-        self._app_localizer = MessageLocalizer(
-            {locale_id: load_catalog(locale_id) for locale_id in supported_locales}
-        )
 
     def for_module_zipfile(self, module_zipfile: ModuleZipfile) -> MessageLocalizer:
         """Return a `MessageLocalizer` for the given `ModuleZipFile`
@@ -208,9 +204,13 @@ class MessageLocalizerRegistry:
             # Release the lock. If another caller is waiting for us to release
             # the lock, now it should check self._cache again.
 
+    @lru_cache(1)
     def for_application(self) -> MessageLocalizer:
         """Return a `MessageLocalizer` for the application messages"""
-        return self._app_localizer
+        catalogs = {}
+        for locale_id in supported_locales:
+            catalogs[locale_id] = read_po_catalog(catalog_path(locale_id))
+        return MessageLocalizer(catalogs)
 
     @lru_cache(1)
     def for_cjwmodule(self) -> MessageLocalizer:
@@ -219,25 +219,21 @@ class MessageLocalizerRegistry:
 
         for locale_id in supported_locales:
             try:
-                catalogs[locale_id] = read_po(
-                    importlib.resources.open_binary(
-                        importlib.import_module(f"cjwmodule.locale.{locale_id}"),
-                        "messages.po",
-                    ),
-                    abort_invalid=True,
-                )
-            except (FileNotFoundError, ModuleNotFoundError):
-                pass
-            except PoFileError as err:
-                logger.exception(
-                    "Invalid po file for module %s in locale %s: %s",
-                    module_zipfile.module_id_and_version,
-                    locale_id,
-                    err,
-                )
-                pass
-        if not catalogs:
-            raise NotInternationalizedError("cjwmodule")
+                with importlib.resources.open_binary(
+                    importlib.import_module(f"cjwmodule.locale.{locale_id}"),
+                    "messages.po",
+                ) as pofile:
+                    catalogs[locale_id] = read_po(pofile, abort_invalid=True)
+            except (FileNotFoundError, ModuleNotFoundError) as err:
+                if locale_id != default_locale:
+                    # This will help us support new languages out-of-order
+                    # i.e., translate `cjworkbench` before translating `cjwmodule`.
+                    logger.exception(
+                        "cjwmodule does not support locale %s: %s", locale_id, err
+                    )
+                    catalogs[locale_id] = Catalog(locale_id)
+                else:
+                    raise
         return MessageLocalizer(catalogs)
 
     def _create_localizer_for_module_zipfile(

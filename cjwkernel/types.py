@@ -596,7 +596,7 @@ class I18nMessage:
     """Where the message comes from (`"module"` or `"cjwmodule"`), or `None` if it comes from Workbench proper."""
 
     def __post_init__(self):
-        if self.source is not None and self.source not in ["module", "cjwmodule"]:
+        if self.source not in [None, "module", "cjwmodule"]:
             raise ValueError("Invalid message source %s" % self.source)
 
     @classmethod

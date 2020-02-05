@@ -7,7 +7,7 @@ I18nMessageSource = NewType("I18nMessageSource", str)
       when localizing, we should look into the current context to find which module it is
     - `"cjwmodule"` means it's coming from `cjwmodule`
 """
-
+# We should use a `typing.Literal` in python 3.8
 
 I18nMessage = Union[
     Tuple[str, Dict[str, Any]], Tuple[str, Dict[str, Any], I18nMessageSource]

@@ -417,10 +417,7 @@ class I18nMessage:
         - `"module"` means it's coming from a module;
           when localizing, we will need to search the current context 
           in order to find which module it is
-        - A dict with key `"module"` means it's coming from a module
-          for example `{"module": "mymodule"}` means, "search the mymodule module's catalog";
-        - A dict with key `"library"` indicates it's coming from some of our supported libraries;
-          for example `{"library": "cjwmodule"}` means, "search the cjwmodule library's catalog"
+        - `"cjwmodule"` means it's coming from `cjwmodule`
     """
 
     @classmethod
@@ -470,13 +467,8 @@ class I18nMessage:
                 )
             if len(value) == 3:
                 source = value[2]
-                if not isinstance(source, str):
-                    raise ValueError(
-                        "Message source must be a string, got %s"
-                        % type(source).__name__
-                    )
                 if source not in ["module", "cjwmodule"]:
-                    raise ValueError("Invalid i18n message source %s" % source)
+                    raise ValueError("Invalid i18n message source %r" % source)
             else:
                 source = None
             return cls(value[0], value[1], source)

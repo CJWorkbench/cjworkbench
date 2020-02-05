@@ -558,10 +558,7 @@ def _i18n_message_source_to_localizer(
     Raise `KeyError` if the source is a module that has no associated `ModuleZipFile`.
     """
     if message.source == "module":
-        try:
-            module_zipfile = ctx.module_zipfiles[ctx.module_id]
-        except KeyError as err:
-            raise KeyError("No ModuleZipFile for module id %s" % ctx.module_id) from err
+        module_zipfile = ctx.module_zipfiles[ctx.module_id]  # Raises `KeyError`
         return MESSAGE_LOCALIZER_REGISTRY.for_module_zipfile(
             module_zipfile
         )  # Raises `NotInternationalizedError`
@@ -687,14 +684,16 @@ def jsonize_clientside_step(
                 }
             )
         else:
-            ctx = _add_module_to_ctx(ctx, step.module_slug)
+            module_ctx = _add_module_to_ctx(ctx, step.module_slug)
             d.update(
                 {
                     "cached_render_result_delta_id": crr.delta_id,
                     "output_columns": [c.to_dict() for c in crr.table_metadata.columns],
                     "output_n_rows": crr.table_metadata.n_rows,
                     "output_status": crr.status,
-                    "output_errors": [jsonize_render_error(e, ctx) for e in crr.errors],
+                    "output_errors": [
+                        jsonize_render_error(e, module_ctx) for e in crr.errors
+                    ],
                 }
             )
     for files in _maybe_yield(step.files):
