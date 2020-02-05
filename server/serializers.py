@@ -563,9 +563,9 @@ def _i18n_message_source_to_localizer(
             module_zipfile
         )  # Raises `NotInternationalizedError`
     elif message.source == "cjwmodule":
-        return MESSAGE_LOCALIZER_REGISTRY.for_cjwmodule()
+        return MESSAGE_LOCALIZER_REGISTRY.cjwmodule_localizer
     else:  # if message.source is None
-        return MESSAGE_LOCALIZER_REGISTRY.for_application()
+        return MESSAGE_LOCALIZER_REGISTRY.application_localizer
 
 
 def jsonize_i18n_message(message: I18nMessage, ctx: JsonizeModuleContext) -> str:

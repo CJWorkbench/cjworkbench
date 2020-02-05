@@ -65,7 +65,7 @@ def localize(locale_id: str, message_id: str, arguments: _MessageArguments = {})
     Raise `KeyError` if the message is not found (neither in the catalogs of the given and of the default locale).
     Raise `ICUError` if the message in the default locale is incorrectly formatted.
     """
-    return MESSAGE_LOCALIZER_REGISTRY.for_application().localize(
+    return MESSAGE_LOCALIZER_REGISTRY.application_localizer.localize(
         locale_id, message_id, arguments=arguments
     )
 
@@ -84,7 +84,7 @@ def localize_html(
     
     HTML is escaped in the message, as well as in arguments and tag attributes.
     """
-    return MESSAGE_LOCALIZER_REGISTRY.for_application().localize_html(
+    return MESSAGE_LOCALIZER_REGISTRY.application_localizer.localize_html(
         locale_id, message_id, arguments=arguments, tags=tags, context=context
     )
 
@@ -161,6 +161,8 @@ class MessageLocalizer:
 
 class MessageLocalizerRegistry:
     def __init__(self):
+        self.application_localizer = self._for_application()
+        self.cjwmodule_localizer = self._for_cjwmodule()
         self._module_localizers = WeakKeyDictionary()
         self._module_localizers_lock = threading.Lock()
 
@@ -204,16 +206,14 @@ class MessageLocalizerRegistry:
             # Release the lock. If another caller is waiting for us to release
             # the lock, now it should check self._cache again.
 
-    @lru_cache(1)
-    def for_application(self) -> MessageLocalizer:
+    def _for_application(self) -> MessageLocalizer:
         """Return a `MessageLocalizer` for the application messages"""
         catalogs = {}
         for locale_id in supported_locales:
             catalogs[locale_id] = read_po_catalog(catalog_path(locale_id))
         return MessageLocalizer(catalogs)
 
-    @lru_cache(1)
-    def for_cjwmodule(self) -> MessageLocalizer:
+    def _for_cjwmodule(self) -> MessageLocalizer:
         """Return a `MessageLocalizer` for the messages of `cjwmodule`"""
         catalogs = {}
 
