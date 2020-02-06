@@ -7,7 +7,7 @@ import time
 from django.core.management.base import BaseCommand
 from watchdog.events import RegexMatchingEventHandler
 from watchdog.observers import Observer
-from server.importmodulefromgithub import import_module_from_directory
+from cjwstate.importmodule import import_module_from_directory
 import cjwstate.modules
 
 
@@ -28,9 +28,7 @@ def main(directory):
             shutil.rmtree(os.path.join(importdir, "node_modules"), ignore_errors=True)
 
             try:
-                import_module_from_directory(
-                    "develop", pathlib.Path(importdir), force_reload=True
-                )
+                import_module_from_directory(pathlib.Path(importdir))
             except Exception:
                 logger.exception("Error loading module")
 

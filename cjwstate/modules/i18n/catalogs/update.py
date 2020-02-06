@@ -85,7 +85,7 @@ def _build_source_catalog(module_zipfile: ModuleZipfile) -> Catalog:
     spec = module_zipfile.get_spec()
     for message_id, source_string in find_spec_messages(spec).items():
         source_catalog.add(message_id, string=source_string)
-    with zipfile.Zipfile(module_zipfile.path, mode="r") as zf:
+    with zipfile.ZipFile(module_zipfile.path, mode="r") as zf:
         for info in zf.infolist():
             if info.filename.endswith(".py"):
                 with zf.open(info) as code_io:
@@ -98,7 +98,6 @@ def _build_source_catalog(module_zipfile: ModuleZipfile) -> Catalog:
                             auto_comments=message_properties["comments"],
                             locations=message_properties["locations"],
                         )
-
     return source_catalog
 
 
