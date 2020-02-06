@@ -26,8 +26,8 @@ def downloaded_file(stored_object: StoredObject, dir=None) -> ContextManager[Pat
             # file does not exist....
     """
     if stored_object.size == 0:
-        # Some stored objects with size=0 do not have bucket/key. These are
-        # valid -- they represent empty files.
+        # Some stored objects with size=0 do not have key. These are valid:
+        # they represent empty files.
         return tempfile_context(prefix="storedobjects-empty-file", dir=dir)
     else:
         # raises FileNotFoundError

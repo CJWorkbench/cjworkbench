@@ -14,8 +14,8 @@ class StoredObject(models.Model):
     Ideally, a module's fetch() would store whatever it wants. Currently, we
     only allow storing data frames.
 
-    StoredObject links to an S3 bucket+key. The key must adhere to the format:
-    "{workflow_id}/{wf_module_id}/{uuidv1()}"
+    StoredObject links to an S3 key in minio.StoredObjectsBucket. The key must
+    adhere to the format: "{workflow_id}/{wf_module_id}/{uuidv1()}"
     """
 
     class Meta:
