@@ -77,7 +77,7 @@ def _po_path(basepath: pathlib.Path, locale_id: str) -> pathlib.Path:
 
 
 def _pot_path(basepath: pathlib.Path) -> pathlib.Path:
-    return basepath / "locale" / default_locale / "messages.pot"
+    return basepath / "locale" / "messages.pot"
 
 
 def _build_source_catalog(module_zipfile: ModuleZipfile) -> Catalog:
