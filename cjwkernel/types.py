@@ -583,67 +583,6 @@ def _i18n_argument_to_thrift(value: Union[str, int, float]) -> ttypes.I18nArgume
 
 
 @dataclass(frozen=True)
-class I18nMessageSource:
-    @classmethod
-    def from_thrift(
-        cls, value: ttypes.I18nMessageSource
-    ) -> Optional[I18nMessageSource]:
-        if value.module_id is not None:
-            return I18nMessageSource.Module(value.module_id)
-        elif value.library is not None:
-            return I18nMessageSource.Library(value.library)
-        else:
-            return None
-
-    @abstractmethod
-    def to_thrift(self) -> ttypes.I18nMessageSource:
-        pass
-
-    @classmethod
-    def from_dict(cls, value: Dict[str, Any]) -> Optional[I18nMessageSource]:
-        if value.get("module") is not None:
-            return I18nMessageSource.Module(value["module"])
-        elif value.get("library") is not None:
-            return I18nMessageSource.Library(value["library"])
-        else:
-            return None
-
-    @abstractmethod
-    def to_dict(self) -> Dict[str, Any]:
-        pass
-
-
-@dataclass(frozen=True)
-class I18nMessageSourceModule(I18nMessageSource):
-    """An indication that the message is coming from a module."""
-
-    module_id: str
-
-    def to_thrift(self) -> ttypes.I18nMessageSource:
-        return ttypes.I18nMessageSource(module_id=self.module_id)
-
-    def to_dict(self) -> Dict[str, Any]:
-        return {"module": self.module_id}
-
-
-@dataclass(frozen=True)
-class I18nMessageSourceLibrary(I18nMessageSource):
-    """An indication that the message is coming from some of our supported libraries."""
-
-    library: str
-
-    def to_thrift(self) -> ttypes.I18nMessageSource:
-        return ttypes.I18nMessageSource(library=self.library)
-
-    def to_dict(self) -> Dict[str, Any]:
-        return {"library": self.library}
-
-
-I18nMessageSource.Library = I18nMessageSourceLibrary
-I18nMessageSource.Module = I18nMessageSourceModule
-
-
-@dataclass(frozen=True)
 class I18nMessage:
     """Translation key and arguments."""
 
@@ -653,22 +592,26 @@ class I18nMessage:
     args: Dict[str, Union[int, float, str]] = field(default_factory=dict)
     """Arguments (empty if message does not need any -- which is common)."""
 
-    source: Optional[I18nMessageSource] = None
-    """Where the message comes from, or `None` if it comes from Workbench proper."""
+    source: Optional[str] = None
+    """Where the message comes from (`"module"` or `"cjwmodule"`), or `None` if it comes from Workbench proper."""
+
+    def __post_init__(self):
+        if self.source not in [None, "module", "cjwmodule"]:
+            raise ValueError("Invalid message source %r" % self.source)
 
     @classmethod
     def from_thrift(cls, value: ttypes.I18nMessage) -> I18nMessage:
         return cls(
             value.id,
             {k: _i18n_argument_from_thrift(v) for k, v in value.arguments.items()},
-            I18nMessageSource.from_thrift(value.source),
+            value.source,
         )
 
     def to_thrift(self) -> ttypes.I18nMessage:
         return ttypes.I18nMessage(
             self.id,
             {k: _i18n_argument_to_thrift(v) for k, v in self.args.items()},
-            self.source.to_thrift() if self.source else ttypes.I18nMessageSource(),
+            self.source,
         )
 
     @classmethod
@@ -701,19 +644,11 @@ class I18nMessage:
 
     @classmethod
     def from_dict(cls, value: Dict[str, Any]) -> I18nMessage:
-        return cls(
-            value["id"],
-            value["arguments"],
-            I18nMessageSource.from_dict(value.get("source", {})),
-        )
+        return cls(value["id"], value["arguments"], value.get("source"))
 
     def to_dict(self) -> Dict[str, Any]:
         if self.source:
-            return {
-                "id": self.id,
-                "arguments": self.args,
-                "source": self.source.to_dict(),
-            }
+            return {"id": self.id, "arguments": self.args, "source": self.source}
         else:
             return {"id": self.id, "arguments": self.args}
 

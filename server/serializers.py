@@ -7,7 +7,7 @@ from functools import lru_cache, singledispatch
 from typing import Any, Dict, Iterable, List, Optional, Union
 from allauth.account.utils import user_display
 from django.contrib.auth import get_user_model
-from cjwkernel.types import I18nMessage, I18nMessageSource, QuickFix, RenderError
+from cjwkernel.types import I18nMessage, QuickFix, RenderError
 from cjworkbench.settings import KB_ROOT_URL
 from server.settingsutils import workbench_user_display
 from cjwstate.modules.param_spec import ParamSpec, MenuOptionEnum
@@ -550,37 +550,34 @@ def _localize_module_spec_message(
 
 
 def _i18n_message_source_to_localizer(
-    message: I18nMessage, ctx: JsonizeContext
+    message: I18nMessage, ctx: JsonizeModuleContext
 ) -> MessageLocalizer:
     """Return a localizer for the source of the given `I18nMessage`.
     
     Raise `NotInternationalizedError` if the source is a non-internationalized module.
     Raise `KeyError` if the source is a module that has no associated `ModuleZipFile`.
     """
-    if message.source is None:
-        return MESSAGE_LOCALIZER_REGISTRY.for_application()
-    elif isinstance(message.source, I18nMessageSource.Module):
-        try:
-            module_zipfile = ctx.module_zipfiles[message.source.module_id]
-        except KeyError as err:
-            raise KeyError(
-                "No ModuleZipFile for module id %s" % message.source.module_id
-            ) from err
+    if message.source == "module":
+        module_zipfile = ctx.module_zipfiles[ctx.module_id]  # Raises `KeyError`
         return MESSAGE_LOCALIZER_REGISTRY.for_module_zipfile(
             module_zipfile
         )  # Raises `NotInternationalizedError`
-    else:  # if isinstance(message.source, I18nMessageSource.Library)
-        raise RuntimeError("TODO_i18n")
+    elif message.source == "cjwmodule":
+        return MESSAGE_LOCALIZER_REGISTRY.cjwmodule_localizer
+    else:  # if message.source is None
+        return MESSAGE_LOCALIZER_REGISTRY.application_localizer
 
 
-def jsonize_i18n_message(message: I18nMessage, ctx: JsonizeContext) -> str:
+def jsonize_i18n_message(message: I18nMessage, ctx: JsonizeModuleContext) -> str:
     """Localize (or unwrap, if it's a TODO_i18n) an `I18nMessage`
     
     Uses `locale_id` and `module_zipfiles` from `ctx`
     
     If the message content is not found or is invalid, a representation of the `I18nMessage` is returned.
     """
-    if message.source is None and message.id == "TODO_i18n":
+    if message.id == "TODO_i18n" and (
+        message.source is None or message.source == "cjwmodule"
+    ):
         return message.args["text"]
 
     # Get localizer
@@ -588,12 +585,12 @@ def jsonize_i18n_message(message: I18nMessage, ctx: JsonizeContext) -> str:
         localizer = _i18n_message_source_to_localizer(message, ctx)
     except NotInternationalizedError:
         logger.exception(
-            "I18nMessageSource %s does not support localization", message.source
+            "I18nMessage source %s does not support localization", message.source
         )
         return json.dumps(message.to_dict())
     except KeyError as err:
         logger.exception(
-            "JsonizeContext not set properly for I18nMessageSource %s. Error: %s",
+            "JsonizeContext not set properly for I18nMessage source %s. Error: %s",
             message.source,
             err,
         )
@@ -620,14 +617,16 @@ def jsonize_i18n_message(message: I18nMessage, ctx: JsonizeContext) -> str:
         return json.dumps(message.to_dict())
 
 
-def jsonize_quick_fix(quick_fix: QuickFix, ctx: JsonizeContext) -> Dict[str, Any]:
+def jsonize_quick_fix(quick_fix: QuickFix, ctx: JsonizeModuleContext) -> Dict[str, Any]:
     return {
         "buttonText": jsonize_i18n_message(quick_fix.button_text, ctx),
         "action": quick_fix.action.to_dict(),
     }
 
 
-def jsonize_render_error(error: RenderError, ctx: JsonizeContext) -> Dict[str, Any]:
+def jsonize_render_error(
+    error: RenderError, ctx: JsonizeModuleContext
+) -> Dict[str, Any]:
     return {
         "message": jsonize_i18n_message(error.message, ctx),
         "quickFixes": [jsonize_quick_fix(qf, ctx) for qf in error.quick_fixes],
@@ -685,13 +684,16 @@ def jsonize_clientside_step(
                 }
             )
         else:
+            module_ctx = _add_module_to_ctx(ctx, step.module_slug)
             d.update(
                 {
                     "cached_render_result_delta_id": crr.delta_id,
                     "output_columns": [c.to_dict() for c in crr.table_metadata.columns],
                     "output_n_rows": crr.table_metadata.n_rows,
                     "output_status": crr.status,
-                    "output_errors": [jsonize_render_error(e, ctx) for e in crr.errors],
+                    "output_errors": [
+                        jsonize_render_error(e, module_ctx) for e in crr.errors
+                    ],
                 }
             )
     for files in _maybe_yield(step.files):

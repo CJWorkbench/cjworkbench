@@ -1,17 +1,16 @@
 from babel.messages.catalog import Catalog
-from contextlib import contextmanager
 from typing import Dict
 from cjworkbench.i18n.trans import MESSAGE_LOCALIZER_REGISTRY, MessageLocalizer
+from unittest.mock import patch
 
 
-@contextmanager
 def mock_app_catalogs(catalogs: Dict[str, Catalog]):
-    # Code to acquire resource, e.g.:
-    old_localizer = MESSAGE_LOCALIZER_REGISTRY._app_localizer
-    try:
-        new_localizer = MessageLocalizer(catalogs)
-        MESSAGE_LOCALIZER_REGISTRY._app_localizer = new_localizer
-        yield new_localizer
-    finally:
-        # Code to release resource:
-        MESSAGE_LOCALIZER_REGISTRY._app_localizer = old_localizer
+    return patch.object(
+        MESSAGE_LOCALIZER_REGISTRY, "application_localizer", MessageLocalizer(catalogs)
+    )
+
+
+def mock_cjwmodule_catalogs(catalogs: Dict[str, Catalog]):
+    return patch.object(
+        MESSAGE_LOCALIZER_REGISTRY, "cjwmodule_localizer", MessageLocalizer(catalogs)
+    )
