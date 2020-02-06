@@ -282,7 +282,7 @@ def directory_loaded_as_zipfile_path(dirpath: Path) -> ContextManager[Path]:
         with zipfile.ZipFile(unversioned_zip_path, mode="w") as zf:
             for path in dirpath.glob("**/*"):
                 if path.is_file():
-                    relative_path = str(path.relative_to(path))
+                    relative_path = str(path.relative_to(dirpath))
                     if not gitignore.match_file(relative_path):
                         zf.write(path, relative_path)
 
