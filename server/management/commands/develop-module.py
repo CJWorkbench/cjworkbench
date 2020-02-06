@@ -1,8 +1,5 @@
 import logging
-import os.path
 import pathlib
-import shutil
-import tempfile
 import time
 from django.core.management.base import BaseCommand
 from watchdog.events import RegexMatchingEventHandler
@@ -20,17 +17,10 @@ def main(directory):
     def reload():
         logger.info(f"Reloading...")
 
-        with tempfile.TemporaryDirectory() as tmpdir:
-            importdir = os.path.join(tmpdir, os.path.basename(directory))
-            shutil.copytree(directory, importdir)
-            shutil.rmtree(os.path.join(importdir, ".git"), ignore_errors=True)
-            shutil.rmtree(os.path.join(importdir, ".eggs"), ignore_errors=True)
-            shutil.rmtree(os.path.join(importdir, "node_modules"), ignore_errors=True)
-
-            try:
-                import_module_from_directory(pathlib.Path(importdir))
-            except Exception:
-                logger.exception("Error loading module")
+        try:
+            import_module_from_directory(pathlib.Path(directory))
+        except Exception:
+            logger.exception("Error loading module")
 
     class ReloadEventHandler(RegexMatchingEventHandler):
         def on_any_event(self, ev):
