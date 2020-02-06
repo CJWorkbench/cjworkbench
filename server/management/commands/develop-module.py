@@ -21,7 +21,7 @@ def main(directory):
         logger.info(f"Reloading...")
 
         with tempfile.TemporaryDirectory() as tmpdir:
-            importdir = os.path.join(tmpdir, "importme")
+            importdir = os.path.join(tmpdir, os.path.basename(directory))
             shutil.copytree(directory, importdir)
             shutil.rmtree(os.path.join(importdir, ".git"), ignore_errors=True)
             shutil.rmtree(os.path.join(importdir, ".eggs"), ignore_errors=True)
