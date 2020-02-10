@@ -450,7 +450,14 @@ async def execute_wfmodule(
     crr, output_delta = await _execute_wfmodule_save(workflow, wf_module, result)
 
     update = clientside.Update(
-        steps={wf_module.id: clientside.StepUpdate(render_result=crr)}
+        steps={
+            wf_module.id: clientside.StepUpdate(
+                render_result=crr,
+                # We also add `module_slug`, in order for `I18nMessage`s with source `"module"`
+                # in `render_result` to be bound to their module
+                module_slug=wf_module.module_id_name,
+            )
+        }
     )
     await rabbitmq.send_update_to_workflow_clients(workflow.id, update)
 

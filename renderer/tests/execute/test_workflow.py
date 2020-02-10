@@ -195,7 +195,7 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
             clientside.Update(
                 steps={
                     wf_module3.id: clientside.StepUpdate(
-                        render_result=wf_module3.cached_render_result
+                        render_result=wf_module3.cached_render_result, module_slug="mod"
                     )
                 }
             ),

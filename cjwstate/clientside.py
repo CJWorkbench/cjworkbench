@@ -163,7 +163,8 @@ class StepUpdate:
     """
     Module identifier.
 
-    Required for creation, and must be None afterwards.
+    Required for creation, and must usually be None afterwards,
+    except when `render_result` is not empty.
     """
 
     tab_slug: Optional[str] = None
@@ -196,6 +197,10 @@ class StepUpdate:
     If the cached-result delta ID is different from the _relevant_ delta ID,
     then the result is obsolete. The client may render obsolete data plus a
     progress indicator.
+    
+    When a `render_result` is provided, you must also pass a `module_slug`.
+    This is so that `I18nMessage`s with source `"module"` in the result
+    can be interpreted relative to their source module.
     """
 
     files: Optional[List[UploadedFile]] = None
