@@ -168,7 +168,7 @@ class WfModuleTests(DbTestCaseWithModuleRegistry):
         email_delta.assert_not_called()
 
     @patch.object(rabbitmq, "send_update_to_workflow_clients", noop)
-    def test_fetch_result_happy_path(self):
+    def test_fetch_result_deprecated_fetch_error(self):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
         wf_module = tab.wf_modules.create(
@@ -194,6 +194,61 @@ class WfModuleTests(DbTestCaseWithModuleRegistry):
 
                 def render(table, params, *, fetch_result, **kwargs):
                     assert fetch_result.errors == [RenderError(I18nMessage.TODO_i18n("maybe an error"))]
+                    fetch_dataframe = pa.parquet.read_table(str(fetch_result.path))
+                    assert_frame_equal(fetch_dataframe, pd.DataFrame({"A": [1]}))
+                    return pd.DataFrame()
+                """
+            ),
+        )
+
+        with self.assertLogs(level=logging.INFO):
+            self.run_with_async_db(
+                execute_wfmodule(
+                    self.chroot_context,
+                    workflow,
+                    wf_module,
+                    module_zipfile,
+                    {},
+                    Tab(tab.slug, tab.name),
+                    RenderResult(),
+                    {},
+                    self.output_path,
+                )
+            )
+
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", noop)
+    def test_fetch_result_happy_path(self):
+        workflow = Workflow.create_and_init()
+        tab = workflow.tabs.first()
+        wf_module = tab.wf_modules.create(
+            order=0,
+            slug="step-1",
+            module_id_name="x",
+            last_relevant_delta_id=workflow.last_delta_id,
+            fetch_errors=[
+                RenderError(I18nMessage("foo", {}, "module")),
+                RenderError(I18nMessage("bar", {"x": "y"}, "cjwmodule")),
+            ],
+        )
+        with parquet_file({"A": [1]}) as path:
+            so = create_stored_object(workflow.id, wf_module.id, path)
+        wf_module.stored_data_version = so.stored_at
+        wf_module.save(update_fields=["stored_data_version"])
+
+        module_zipfile = create_module_zipfile(
+            "x",
+            python_code=textwrap.dedent(
+                """
+                import pyarrow as pa
+                import pandas as pd
+                from pandas.testing import assert_frame_equal
+                from cjwkernel.types import RenderError, I18nMessage
+
+                def render(table, params, *, fetch_result, **kwargs):
+                    assert fetch_result.errors == [
+                        RenderError(I18nMessage("foo", {}, "module")),
+                        RenderError(I18nMessage("bar", {"x": "y"}, "cjwmodule")),
+                    ]
                     fetch_dataframe = pa.parquet.read_table(str(fetch_result.path))
                     assert_frame_equal(fetch_dataframe, pd.DataFrame({"A": [1]}))
                     return pd.DataFrame()

@@ -153,8 +153,27 @@ class WfModule(models.Model):
     # be implied by the fact that the cached output revision is wrong.
     is_busy = models.BooleanField(default=False, null=False)
 
-    # There's fetch_error and there's cached_render_result_errors.
-    fetch_error = models.CharField("fetch_error", max_length=10000, blank=True)
+    fetch_error = models.CharField(
+        "fetch_error", null=True, max_length=10000, blank=True, default=None
+    )
+    """
+    Most recent untranslated error preventing StoredObject creation.
+
+    Ignored if `fetch_errors IS NOT NULL`. TODO delete this column.
+
+    For instance, HTTP error. This is always TODO_i18n. TODO delete.
+
+    See also `cached_render_result_errors`, which pertains to render().
+    """
+
+    fetch_errors = RenderErrorsField(null=True, default=list)
+    """
+    Most recent collection of errors preventing StoredObject creation.
+
+    For instance, HTTP errors.
+
+    See also `cached_render_result_errors`, which pertains to render().
+    """
 
     # Most-recent delta that may possibly affect the output of this module.
     # This isn't a ForeignKey because many deltas have a foreign key pointing

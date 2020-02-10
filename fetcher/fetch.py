@@ -5,7 +5,7 @@ import logging
 import os
 from pathlib import Path
 import time
-from typing import Any, ContextManager, Dict, NamedTuple, Optional, Union
+from typing import Any, ContextManager, Dict, List, NamedTuple, Optional, Union
 from django.conf import settings
 from django.db import DatabaseError, InterfaceError
 from django.utils import timezone
@@ -220,6 +220,7 @@ def _stored_object_to_fetch_result(
     ctx: contextlib.ExitStack,
     stored_object: Optional[StoredObject],
     wf_module_fetch_error: str,
+    wf_module_fetch_errors: List[RenderError],
     dir: Path,
 ) -> Optional[FetchResult]:
     """
@@ -235,9 +236,10 @@ def _stored_object_to_fetch_result(
                 storedobjects.downloaded_file(stored_object, dir=dir)
             )
             if wf_module_fetch_error:
+                # TODO_i18n once wf_module.fetch_error is always-empty
                 errors = [RenderError(I18nMessage.TODO_i18n(wf_module_fetch_error))]
             else:
-                errors = []
+                errors = wf_module_fetch_errors
             return FetchResult(last_fetch_path, errors)
         except FileNotFoundError:
             return None
@@ -431,7 +433,11 @@ async def fetch(
         )
         # get last_fetch_result (This can't error.)
         last_fetch_result = _stored_object_to_fetch_result(
-            ctx, stored_object, wf_module.fetch_error, dir=basedir
+            ctx,
+            stored_object,
+            wf_module.fetch_error,
+            wf_module.fetch_errors or [],  # TODO nix "or" when NOT NULL
+            dir=basedir,
         )
         result = await asyncio.get_event_loop().run_in_executor(
             None,

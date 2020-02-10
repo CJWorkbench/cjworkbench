@@ -295,15 +295,11 @@ def fetch_pandas(
     result = fetch(params, **kwargs)
     if asyncio.iscoroutine(result):
         result = asyncio.run(result)
-    if (
-        isinstance(result, tuple)
-        and len(result) == 2
-        and isinstance(result[0], Path)
-        and isinstance(result[1], str)
-    ):
-        return types.FetchResult(
-            result[0], [types.RenderError(types.I18nMessage.TODO_i18n(result[1]))]
-        )
+    if isinstance(result, tuple) and len(result) == 2 and isinstance(result[0], Path):
+        errors = [
+            e.to_arrow() for e in ptypes.ProcessResultError.coerce_list(result[1])
+        ]
+        return types.FetchResult(result[0], errors)
     elif isinstance(result, Path):
         return types.FetchResult(result)
     else:

@@ -125,6 +125,9 @@ def _load_fetch_result(
 
     if wf_module.fetch_error:
         errors = [RenderError(I18nMessage.TODO_i18n(wf_module.fetch_error))]
+    elif wf_module.fetch_errors:
+        # TODO_i18n make this the only case
+        errors = wf_module.fetch_errors
     else:
         errors = []
     return FetchResult(path, errors)

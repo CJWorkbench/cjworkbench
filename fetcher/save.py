@@ -54,25 +54,24 @@ def _do_create_result(
 
     Raise WfModule.DoesNotExist or Workflow.DoesNotExist in case of a race.
     """
-    error = ""
-    if result.errors:
-        if result.errors[0].message.id != "TODO_i18n":
-            raise RuntimeError("TODO handle i18n-ready fetch-result errors")
-        elif result.errors[0].quick_fixes:
-            raise RuntimeError("TODO handle quick fixes from fetches")
-        else:
-            error = result.errors[0].message.args["text"]
-
     with _locked_wf_module(workflow_id, wf_module):
         storedobjects.create_stored_object(
             workflow_id, wf_module.id, result.path, stored_at=now
         )
         storedobjects.enforce_storage_limits(wf_module)
 
-        wf_module.fetch_error = error
+        wf_module.fetch_error = None
+        wf_module.fetch_errors = result.errors
         wf_module.is_busy = False
         wf_module.last_update_check = now
-        wf_module.save(update_fields=["fetch_error", "is_busy", "last_update_check"])
+        wf_module.save(
+            update_fields=[
+                "fetch_error",
+                "fetch_errors",
+                "is_busy",
+                "last_update_check",
+            ]
+        )
 
 
 async def create_result(
@@ -81,7 +80,7 @@ async def create_result(
     """
     Store fetched table as storedobject..
 
-    Set `fetch_error` to `result.error`. Set `is_busy` to `False`. Set
+    Set `fetch_errors` to `result.error`. Set `is_busy` to `False`. Set
     `last_update_check`.
 
     Create (and run) a ChangeDataVersionCommand. This will kick off an execute
@@ -141,7 +140,7 @@ async def mark_result_unchanged(
     workflow_id: int, wf_module: WfModule, now: timezone.datetime
 ) -> None:
     """
-    Leave storedobjects and `wf_module.fetch_error` unchanged.
+    Leave storedobjects and `wf_module.fetch_errors` unchanged.
 
     Set wf_module.is_busy to False.
 

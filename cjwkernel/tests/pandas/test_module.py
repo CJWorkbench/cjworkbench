@@ -442,6 +442,25 @@ class FetchTests(unittest.TestCase):
             result = self._test_fetch(fetch, output_filename=outfile.name)
             self.assertEqual(result.errors, [RenderError(I18nMessage.TODO_i18n("foo"))])
 
+    def test_fetch_return_tuple_path_and_errors(self):
+        with tempfile_context(dir=self.basedir) as outfile:
+
+            async def fetch(params):
+                outfile.write_text("xyz")
+                return (
+                    outfile,
+                    [("foo", {"a": "b"}, "module"), ("bar", {"b": 1}, "cjwmodule")],
+                )
+
+            result = self._test_fetch(fetch, output_filename=outfile.name)
+            self.assertEqual(
+                result.errors,
+                [
+                    RenderError(I18nMessage("foo", {"a": "b"}, "module")),
+                    RenderError(I18nMessage("bar", {"b": 1}, "cjwmodule")),
+                ],
+            )
+
     @override_settings(MAX_ROWS_PER_TABLE=2)
     def test_fetch_truncate(self):
         def fetch(params):
