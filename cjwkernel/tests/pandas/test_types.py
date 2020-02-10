@@ -315,10 +315,16 @@ class ProcessResultErrorTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             ProcessResultError.coerce(None),
 
-    def test_from_message_tuple(self):
+    def test_from_message_2tuple(self):
         self.assertEqual(
             ProcessResultError.coerce(("my_id", {"hello": "there"})),
             ProcessResultError(I18nMessage("my_id", {"hello": "there"})),
+        )
+
+    def test_from_message_3tuple(self):
+        self.assertEqual(
+            ProcessResultError.coerce(("my_id", {"hello": "there"}, "cjwmodule")),
+            ProcessResultError(I18nMessage("my_id", {"hello": "there"}, "cjwmodule")),
         )
 
     def test_from_dict(self):

@@ -990,21 +990,33 @@ class ProcessResult:
     def _coerce_3tuple(
         cls, value, try_fallback_columns: Iterable[Column] = []
     ) -> ProcessResult:
-        dataframe, error, json = value
-        if dataframe is None:
-            dataframe = pd.DataFrame()
-        elif not isinstance(dataframe, pd.DataFrame):
-            raise ValueError("Expected DataFrame got %s" % type(dataframe).__name__)
-        if json is None:
-            json = {}
-        elif not isinstance(json, dict):
-            raise ValueError("Expected JSON dict, got %s" % type(json).__name__)
+        if isinstance(value[0], str) and isinstance(value[1], dict):
+            return cls(errors=[ProcessResultError(I18nMessage.coerce(value))])
+        elif isinstance(value[0], pd.DataFrame) or value[0] is None:
+            dataframe, error, json = value
+            if dataframe is None:
+                dataframe = pd.DataFrame()
+            elif not isinstance(dataframe, pd.DataFrame):
+                raise ValueError("Expected DataFrame got %s" % type(dataframe).__name__)
+            if json is None:
+                json = {}
+            elif not isinstance(json, dict):
+                raise ValueError("Expected JSON dict, got %s" % type(json).__name__)
 
-        errors = ProcessResultError.coerce_list(error)
+            errors = ProcessResultError.coerce_list(error)
 
-        validate_dataframe(dataframe)
-        columns = _infer_columns(dataframe, {}, try_fallback_columns)
-        return cls(dataframe=dataframe, errors=errors, json=json, columns=columns)
+            validate_dataframe(dataframe)
+            columns = _infer_columns(dataframe, {}, try_fallback_columns)
+            return cls(dataframe=dataframe, errors=errors, json=json, columns=columns)
+        else:
+            raise ValueError(
+                "Expected (Dataframe, RenderError, json) or I18nMessage return type; got (%s,%s, %s)"
+                % (
+                    type(value[0]).__name__,
+                    type(value[1]).__name__,
+                    type(value[2]).__name__,
+                )
+            )
 
     @classmethod
     def _coerce_dict(
