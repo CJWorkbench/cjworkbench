@@ -163,7 +163,11 @@ class StepUpdate:
     """
     Module identifier.
 
-    Required for creation, and must be None afterwards.
+    Required for creation, and must usually be None afterwards.
+    
+    When a `render_result` is provided, you must also pass a `module_slug`.
+    This is so that `I18nMessage`s with source `"module"` in the result
+    can be interpreted relative to their source module.
     """
 
     tab_slug: Optional[str] = None
