@@ -14,6 +14,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@master
 
+      - name: Notify Slack we are about to start
+        uses: CJWorkbench/slack-postmessage@master
+        env:
+          SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+        with:
+          message: '{"channel": "#staging-status", "text": "Deploying `${{ github.sha }}` to staging…"}'
+
       - name: Install GCloud API
         uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
@@ -33,3 +40,10 @@ jobs:
             --project "$GCP_PROJECT"
           gcloud --quiet components install kubectl
           deploy/advanced-deploy staging "$GITHUB_SHA"
+
+      - name: Notify Slack we did it
+        uses: CJWorkbench/slack-postmessage@master
+        env:
+          SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+        with:
+          message: '{"channel": "#staging-status", "text": "Deployed `${{ github.sha }}` to https://app.workbenchdata-staging.com"}'
