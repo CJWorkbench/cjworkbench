@@ -163,8 +163,7 @@ class StepUpdate:
     """
     Module identifier.
 
-    Required for creation, and must usually be None afterwards,
-    except when `render_result` is not empty.
+    Required for creation and whenever `render_result` is not empty.
     """
 
     tab_slug: Optional[str] = None
@@ -274,6 +273,10 @@ class StepUpdate:
     * We sometimes create new versions when users change parameters.
     * We sometimes create new versions when module code changes.
     """
+
+    def __post_init__(self):
+        if self.render_result is not None:
+            assert self.module_slug is not None  # (otherwise i18n will break)
 
 
 @dataclass(frozen=True)
