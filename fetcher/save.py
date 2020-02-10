@@ -80,7 +80,7 @@ async def create_result(
     """
     Store fetched table as storedobject..
 
-    Set `fetch_errors` to `result.error`. Set `is_busy` to `False`. Set
+    Set `fetch_errors` to `result.errors`. Set `is_busy` to `False`. Set
     `last_update_check`.
 
     Create (and run) a ChangeDataVersionCommand. This will kick off an execute
