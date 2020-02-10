@@ -313,12 +313,18 @@ class ProcessResultErrorTests(unittest.TestCase):
 
     def test_from_none(self):
         with self.assertRaises(ValueError):
-            ProcessResultError.coerce(None),
+            ProcessResultError.coerce(None)
 
-    def test_from_message_tuple(self):
+    def test_from_message_2tuple(self):
         self.assertEqual(
             ProcessResultError.coerce(("my_id", {"hello": "there"})),
             ProcessResultError(I18nMessage("my_id", {"hello": "there"})),
+        )
+
+    def test_from_message_3tuple(self):
+        self.assertEqual(
+            ProcessResultError.coerce(("my_id", {"hello": "there"}, "cjwmodule")),
+            ProcessResultError(I18nMessage("my_id", {"hello": "there"}, "cjwmodule")),
         )
 
     def test_from_dict(self):
@@ -858,6 +864,18 @@ class ProcessResultTests(unittest.TestCase):
     def test_coerce_3tuple_no_dataframe(self):
         with self.assertRaises(ValueError):
             result = ProcessResult.coerce(("foo", "bar", {"a": "b"}))
+
+    def test_coerce_3tuple_i18n(self):
+        self.assertEqual(
+            ProcessResult.coerce(("my_id", {"hello": "there"}, "cjwmodule")),
+            ProcessResult(
+                errors=[
+                    ProcessResultError(
+                        I18nMessage("my_id", {"hello": "there"}, "cjwmodule")
+                    )
+                ]
+            ),
+        )
 
     def test_coerce_dict_i18n(self):
         expected = ProcessResult(
