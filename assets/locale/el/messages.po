@@ -14,18 +14,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.8.0\n"
 
-#: renderer/execute/wf_module.py:300
-msgid "py.renderer.execute.wf_module._render_module.TabCycleError"
-msgstr ""
-
-#: renderer/execute/wf_module.py:311
-msgid "py.renderer.execute.wf_module._render_module.TabOutputUnreachableError"
-msgstr ""
-
-#: renderer/execute/wf_module.py:325
-msgid "py.renderer.execute.wf_module._render_module.noLoadedModule"
-msgstr ""
-
 #: assets/js/Embed.js:99
 msgid "js.Embed.embedCode"
 msgstr "Επικολλήστε αυτόν τον κώδικα στην HTML οποιασδήποτε ιστοσελίδας"
