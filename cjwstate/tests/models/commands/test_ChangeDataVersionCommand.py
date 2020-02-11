@@ -1,7 +1,7 @@
 import asyncio
 from unittest.mock import patch
 from django.utils import timezone
-from cjwstate import commands, minio, rabbitmq
+from cjwstate import commands, rabbitmq
 from cjwstate.models import Workflow
 from cjwstate.models.commands import ChangeDataVersionCommand
 from cjwstate.tests.utils import DbTestCase
@@ -26,9 +26,7 @@ class ChangeDataVersionCommandTests(DbTestCase):
         )
 
     def _store_fetched_table(self) -> timezone.datetime:
-        return self.wf_module.stored_objects.create(
-            key="fake", bucket=minio.StoredObjectsBucket, size=10
-        ).stored_at
+        return self.wf_module.stored_objects.create(key="fake", size=10).stored_at
 
     @patch.object(rabbitmq, "queue_render_if_consumers_are_listening", async_noop)
     def test_change_data_version(self):

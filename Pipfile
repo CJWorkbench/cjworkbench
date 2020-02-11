@@ -40,7 +40,7 @@ rfc3987 = "*"  # for jsonschema 'uri' format
 aioamqp = "*"
 pyyaml = "*"
 boto3 = "*"
-pyarrow = "==0.15.1"
+pyarrow = "==0.16.0"
 babel = "*"
 thrift = "~=0.13.0"
 yajl-py = "*"
@@ -48,7 +48,8 @@ six = "*"  # yajl-py depends on it but doesn't declare so. https://github.com/py
 pyroute2 = "*"
 pyspawner = "*"
 pyicu = "*"
-cjwmodule = "==1.2.1"
+cjwmodule = "==1.3.1"
+pathspec = "*"
 
 [dev-packages]
 watchdog = "*"

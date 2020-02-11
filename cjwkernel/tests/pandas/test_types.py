@@ -245,41 +245,23 @@ class I18nMessageTests(unittest.TestCase):
 
     def test_coerce_with_source_module(self):
         self.assertEqual(
-            I18nMessage.coerce(("my_id", {"hello": "there"}, {"module": "testmodule"})),
-            I18nMessage("my_id", {"hello": "there"}, {"module": "testmodule"}),
+            I18nMessage.coerce(("my_id", {"hello": "there"}, "module")),
+            I18nMessage("my_id", {"hello": "there"}, "module"),
         )
 
     def test_coerce_with_source_library(self):
         self.assertEqual(
-            I18nMessage.coerce(("my_id", {"hello": "there"}, {"library": "cjwmodule"})),
-            I18nMessage("my_id", {"hello": "there"}, {"library": "cjwmodule"}),
+            I18nMessage.coerce(("my_id", {"hello": "there"}, "cjwmodule")),
+            I18nMessage("my_id", {"hello": "there"}, "cjwmodule"),
         )
 
-    def test_coerce_with_source_error_many_sources(self):
+    def test_coerce_with_source_error_type_dict(self):
         with self.assertRaises(ValueError):
-            I18nMessage.coerce(
-                (
-                    "my_id",
-                    {"hello": "there"},
-                    {"library": "cjwmodule", "module": "testmodule"},
-                )
-            )
+            I18nMessage.coerce(("my_id", {"hello": "there"}, {"library": "cjwmodule"}))
 
-    def test_coerce_with_source_error_unsupported_source_kind(self):
+    def test_coerce_with_invalid_source(self):
         with self.assertRaises(ValueError):
-            I18nMessage.coerce(
-                ("my_id", {"hello": "there"}, {"mygreatsource": "cjwmodule"})
-            )
-
-    def test_coerce_with_source_error_type_tuple(self):
-        with self.assertRaises(ValueError):
-            I18nMessage.coerce(
-                ("my_id", {"hello": "there"}, ("cjwmodule", "testmodule"))
-            )
-
-    def test_coerce_with_source_error_type_string(self):
-        with self.assertRaises(ValueError):
-            I18nMessage.coerce(("my_id", {"hello": "there"}, "cjwmodule"))
+            I18nMessage.coerce(("my_id", {"hello": "there"}, "random"))
 
     def test_to_arrow(self):
         self.assertEqual(
@@ -295,50 +277,30 @@ class I18nMessageTests(unittest.TestCase):
 
     def test_to_arrow_with_source_module(self):
         self.assertEqual(
-            I18nMessage(
-                "my_id", {"hello": "there"}, {"module": "testmodule"}
-            ).to_arrow(),
-            atypes.I18nMessage(
-                "my_id",
-                {"hello": "there"},
-                atypes.I18nMessageSource.Module("testmodule"),
-            ),
+            I18nMessage("my_id", {"hello": "there"}, "module").to_arrow(),
+            atypes.I18nMessage("my_id", {"hello": "there"}, "module"),
         )
 
     def test_from_arrow_with_source_module(self):
         self.assertEqual(
             I18nMessage.from_arrow(
-                atypes.I18nMessage(
-                    "my_id",
-                    {"hello": "there"},
-                    atypes.I18nMessageSource.Module("testmodule"),
-                )
+                atypes.I18nMessage("my_id", {"hello": "there"}, "module")
             ),
-            I18nMessage("my_id", {"hello": "there"}, {"module": "testmodule"}),
+            I18nMessage("my_id", {"hello": "there"}, "module"),
         )
 
-    def test_to_arrow_with_source_library(self):
+    def test_to_arrow_with_source_cjwmodule(self):
         self.assertEqual(
-            I18nMessage(
-                "my_id", {"hello": "there"}, {"library": "cjwmodule"}
-            ).to_arrow(),
-            atypes.I18nMessage(
-                "my_id",
-                {"hello": "there"},
-                atypes.I18nMessageSource.Library("cjwmodule"),
-            ),
+            I18nMessage("my_id", {"hello": "there"}, "cjwmodule").to_arrow(),
+            atypes.I18nMessage("my_id", {"hello": "there"}, "cjwmodule"),
         )
 
     def test_from_arrow_with_source_library(self):
         self.assertEqual(
             I18nMessage.from_arrow(
-                atypes.I18nMessage(
-                    "my_id",
-                    {"hello": "there"},
-                    atypes.I18nMessageSource.Library("cjwmodule"),
-                )
+                atypes.I18nMessage("my_id", {"hello": "there"}, "cjwmodule")
             ),
-            I18nMessage("my_id", {"hello": "there"}, {"library": "cjwmodule"}),
+            I18nMessage("my_id", {"hello": "there"}, "cjwmodule"),
         )
 
 
@@ -351,12 +313,18 @@ class ProcessResultErrorTests(unittest.TestCase):
 
     def test_from_none(self):
         with self.assertRaises(ValueError):
-            ProcessResultError.coerce(None),
+            ProcessResultError.coerce(None)
 
-    def test_from_message_tuple(self):
+    def test_from_message_2tuple(self):
         self.assertEqual(
             ProcessResultError.coerce(("my_id", {"hello": "there"})),
             ProcessResultError(I18nMessage("my_id", {"hello": "there"})),
+        )
+
+    def test_from_message_3tuple(self):
+        self.assertEqual(
+            ProcessResultError.coerce(("my_id", {"hello": "there"}, "cjwmodule")),
+            ProcessResultError(I18nMessage("my_id", {"hello": "there"}, "cjwmodule")),
         )
 
     def test_from_dict(self):
@@ -472,7 +440,7 @@ class ProcessResultErrorTests(unittest.TestCase):
                             (
                                 ("quick fix id", {"fix": "that"}),
                                 "prependModule",
-                                ["converttodate", {"colnames": ["C", "D"]}],
+                                ["convert-date", {"colnames": ["C", "D"]}],
                             ),
                             (
                                 ("another quick fix id", {"fix": "that"}),
@@ -500,7 +468,7 @@ class ProcessResultErrorTests(unittest.TestCase):
                         QuickFix(
                             I18nMessage("quick fix id", {"fix": "that"}),
                             "prependModule",
-                            [["converttodate", {"colnames": ["C", "D"]}]],
+                            [["convert-date", {"colnames": ["C", "D"]}]],
                         ),
                         QuickFix(
                             I18nMessage("another quick fix id", {"fix": "that"}),
@@ -896,6 +864,18 @@ class ProcessResultTests(unittest.TestCase):
     def test_coerce_3tuple_no_dataframe(self):
         with self.assertRaises(ValueError):
             result = ProcessResult.coerce(("foo", "bar", {"a": "b"}))
+
+    def test_coerce_3tuple_i18n(self):
+        self.assertEqual(
+            ProcessResult.coerce(("my_id", {"hello": "there"}, "cjwmodule")),
+            ProcessResult(
+                errors=[
+                    ProcessResultError(
+                        I18nMessage("my_id", {"hello": "there"}, "cjwmodule")
+                    )
+                ]
+            ),
+        )
 
     def test_coerce_dict_i18n(self):
         expected = ProcessResult(

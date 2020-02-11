@@ -1163,91 +1163,6 @@ class I18nArgument(object):
         return not (self == other)
 
 
-class I18nMessageSource(object):
-    """
-    Source of a translatable string.
-
-    If none of the values are set, this means it's coming from workbench itself
-
-    Attributes:
-     - library: The message comes from the "library" library
-     - module_id: The message comes from the "module_id" module
-    `"module"` is reserved in thrift, that's why we added `"_id"`
-
-    """
-
-    __slots__ = (
-        'library',
-        'module_id',
-    )
-
-
-    def __init__(self, library=None, module_id=None,):
-        self.library = library
-        self.module_id = module_id
-
-    def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
-            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
-            return
-        iprot.readStructBegin()
-        while True:
-            (fname, ftype, fid) = iprot.readFieldBegin()
-            if ftype == TType.STOP:
-                break
-            if fid == 1:
-                if ftype == TType.STRING:
-                    self.library = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
-                else:
-                    iprot.skip(ftype)
-            elif fid == 2:
-                if ftype == TType.STRING:
-                    self.module_id = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
-                else:
-                    iprot.skip(ftype)
-            else:
-                iprot.skip(ftype)
-            iprot.readFieldEnd()
-        iprot.readStructEnd()
-
-    def write(self, oprot):
-        if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
-            return
-        oprot.writeStructBegin('I18nMessageSource')
-        if self.library is not None:
-            oprot.writeFieldBegin('library', TType.STRING, 1)
-            oprot.writeString(self.library.encode('utf-8') if sys.version_info[0] == 2 else self.library)
-            oprot.writeFieldEnd()
-        if self.module_id is not None:
-            oprot.writeFieldBegin('module_id', TType.STRING, 2)
-            oprot.writeString(self.module_id.encode('utf-8') if sys.version_info[0] == 2 else self.module_id)
-            oprot.writeFieldEnd()
-        oprot.writeFieldStop()
-        oprot.writeStructEnd()
-
-    def validate(self):
-        return
-
-    def __repr__(self):
-        L = ['%s=%r' % (key, getattr(self, key))
-             for key in self.__slots__]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
-
-    def __eq__(self, other):
-        if not isinstance(other, self.__class__):
-            return False
-        for attr in self.__slots__:
-            my_val = getattr(self, attr)
-            other_val = getattr(other, attr)
-            if my_val != other_val:
-                return False
-        return True
-
-    def __ne__(self, other):
-        return not (self == other)
-
-
 class I18nMessage(object):
     """
     Translation key and arguments.
@@ -1257,7 +1172,7 @@ class I18nMessage(object):
      - arguments: Arguments (if Message ID takes any).
 
     For instance, `{"nColumns": 3, "exampleColumn": "Column X"}`
-     - source: An indication of where the message comes from.
+     - source: Pointer to code repository whose catalog translates the message. "library" or "module"
 
     """
 
@@ -1300,9 +1215,8 @@ class I18nMessage(object):
                 else:
                     iprot.skip(ftype)
             elif fid == 3:
-                if ftype == TType.STRUCT:
-                    self.source = I18nMessageSource()
-                    self.source.read(iprot)
+                if ftype == TType.STRING:
+                    self.source = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
                 else:
                     iprot.skip(ftype)
             else:
@@ -1328,8 +1242,8 @@ class I18nMessage(object):
             oprot.writeMapEnd()
             oprot.writeFieldEnd()
         if self.source is not None:
-            oprot.writeFieldBegin('source', TType.STRUCT, 3)
-            self.source.write(oprot)
+            oprot.writeFieldBegin('source', TType.STRING, 3)
+            oprot.writeString(self.source.encode('utf-8') if sys.version_info[0] == 2 else self.source)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -2318,18 +2232,12 @@ I18nArgument.thrift_spec = (
     (2, TType.I32, 'i32_value', None, None, ),  # 2
     (3, TType.DOUBLE, 'double_value', None, None, ),  # 3
 )
-all_structs.append(I18nMessageSource)
-I18nMessageSource.thrift_spec = (
-    None,  # 0
-    (1, TType.STRING, 'library', 'UTF8', None, ),  # 1
-    (2, TType.STRING, 'module_id', 'UTF8', None, ),  # 2
-)
 all_structs.append(I18nMessage)
 I18nMessage.thrift_spec = (
     None,  # 0
     (1, TType.STRING, 'id', 'UTF8', None, ),  # 1
     (2, TType.MAP, 'arguments', (TType.STRING, 'UTF8', TType.STRUCT, [I18nArgument, None], False), None, ),  # 2
-    (3, TType.STRUCT, 'source', [I18nMessageSource, None], None, ),  # 3
+    (3, TType.STRING, 'source', 'UTF8', None, ),  # 3
 )
 all_structs.append(PrependStepQuickFixAction)
 PrependStepQuickFixAction.thrift_spec = (

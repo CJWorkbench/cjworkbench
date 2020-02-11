@@ -299,9 +299,11 @@ class FetchTests(unittest.TestCase):
                 result.errors,
                 [
                     RenderError(
-                        I18nMessage.TODO_i18n(
-                            # googlesheet should pass through aiohttp's message
-                            "Error during HTTP request: DecodingError"
+                        # googlesheet should pass through aiohttp's message
+                        I18nMessage(
+                            "http.errors.HttpErrorGeneric",
+                            {"type": "DecodingError"},
+                            "cjwmodule",
                         )
                     )
                 ],

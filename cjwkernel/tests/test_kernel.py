@@ -1,13 +1,22 @@
 import contextlib
+import marshal
 import textwrap
 import unittest
 from unittest.mock import patch
 import pyarrow
-from cjwkernel.errors import ModuleCompileError, ModuleExitedError, ModuleTimeoutError
+from cjwkernel.errors import ModuleExitedError, ModuleTimeoutError
 from cjwkernel.kernel import Kernel
-from cjwkernel.tests.util import arrow_table_context, MockPath
+from cjwkernel.tests.util import arrow_table_context
 from cjwkernel.chroot import EDITABLE_CHROOT
 from cjwkernel import types
+
+
+def _compile(module_id: str, code: str) -> types.CompiledModule:
+    filename = module_id + ".py"
+    code_object = compile(
+        code, filename=filename, mode="exec", dont_inherit=True, optimize=0
+    )
+    return types.CompiledModule(module_id, marshal.dumps(code_object))
 
 
 class KernelTests(unittest.TestCase):
@@ -35,121 +44,90 @@ class KernelTests(unittest.TestCase):
         self.ctx.close()
         super().tearDown()
 
-    def test_compile_syntax_error(self):
-        with self.assertRaises(ModuleCompileError):
-            self.kernel.compile(
-                MockPath(["foo.py"], b"de render(table, params): return table"), "foo"
-            )
-
-    def test_compile_validate_exited_error(self):
+    def test_validate_exited_error(self):
+        mod = _compile("foo", "undefined()")
         with self.assertRaises(ModuleExitedError) as cm:
             # The child will print an assertion error to stderr.
-            self.kernel.compile(MockPath(["foo.py"], b"undefined()"), "foo")
+            self.kernel.validate(mod)
         self.assertRegex(cm.exception.log, r"NameError")
         self.assertEqual(cm.exception.exit_code, 1)
 
-    def test_compile_validate_bad_render_signature(self):
+    def test_validate_bad_render_signature(self):
+        mod = _compile("foo", "def render(table, params, x): return table")
         with self.assertRaises(ModuleExitedError) as cm:
             # The child will print an assertion error to stderr.
-            self.kernel.compile(
-                MockPath(["foo.py"], b"def render(table, params, x): return table"),
-                "foo",
-            )
+            self.kernel.validate(mod)
         self.assertRegex(cm.exception.log, r"AssertionError")
         self.assertRegex(cm.exception.log, r"render must take two positional arguments")
         self.assertEqual(cm.exception.exit_code, 1)
 
     def test_compile_validate_bad_fetch_signature(self):
+        mod = _compile("foo", "def fetch(table, params): return table")
         with self.assertRaises(ModuleExitedError) as cm:
             # The child will print an assertion error to stderr.
-            self.kernel.compile(
-                MockPath(["foo.py"], b"def fetch(table, params): return table"), "foo"
-            )
+            self.kernel.validate(mod)
         self.assertRegex(cm.exception.log, r"AssertionError")
         self.assertRegex(cm.exception.log, r"fetch must take one positional argument")
         self.assertEqual(cm.exception.exit_code, 1)
 
     def test_compile_validate_render_arrow_instead_of_render(self):
-        result = self.kernel.compile(
-            MockPath(
-                ["foo.py"],
-                b"from cjwkernel.types import RenderResult\ndef render_arrow(table, params, _1, _2, _3, output_path): return RenderResult()",
-            ),
+        mod = _compile(
             "foo",
+            "from cjwkernel.types import RenderResult\ndef render_arrow(table, params, _1, _2, _3, output_path): return RenderResult()",
         )
-        self.assertEquals(result.module_slug, "foo")
-        self.assertIsInstance(result.marshalled_code_object, bytes)
+        self.kernel.validate(mod)  # do not raise
 
     def test_compile_validate_happy_path(self):
-        result = self.kernel.compile(
-            MockPath(["foo.py"], b"def render(table, params): return table"), "foo"
-        )
-        self.assertEquals(result.module_slug, "foo")
-        self.assertIsInstance(result.marshalled_code_object, bytes)
+        mod = _compile("foo", "def render(table, params): return table")
+        self.kernel.validate(mod)  # do not raise
 
     # def test_SECURITY_child_cannot_access_other_processes(self):
-    #     cm = self.kernel.compile(
-    #         MockPath(
-    #             ["foo.py"],
-    #             b"import os\ndef migrate_params(params): return {'x':[int(pid) for pid in os.listdir('/proc') if pid.isdigit()]}",
-    #         ),
+    #     cm = _compile(
     #         "foo",
+    #         "import os\ndef migrate_params(params): return {'x':[int(pid) for pid in os.listdir('/proc') if pid.isdigit()]}",
     #     )
     #     result = self.kernel.migrate_params(cm, {})
     #     self.assertEquals(result["x"], [1])
 
-    def test_compile_validate_works_with_dataclasses(self):
+    def test_validate_works_with_dataclasses(self):
         """
         Test we can compile @dataclass
 
         @dataclass inspects `sys.modules`, so the module needs to be in
         `sys.modules` when @dataclass is run.
         """
-        result = self.kernel.compile(
-            MockPath(
-                ["foo.py"],
-                textwrap.dedent(
-                    """
-                    from __future__ import annotations
-                    from dataclasses import dataclass
-
-                    def render(table, params):
-                        return table
-
-                    @dataclass
-                    class A:
-                        y: int
-                    """
-                ).encode("utf-8"),
-            ),
+        mod = _compile(
             "foo",
+            textwrap.dedent(
+                """
+                from __future__ import annotations
+                from dataclasses import dataclass
+
+                def render(table, params):
+                    return table
+
+                @dataclass
+                class A:
+                    y: int
+                """
+            ).encode("utf-8"),
         )
-        self.assertEquals(result.module_slug, "foo")
+        self.kernel.validate(mod)  # do not raise
 
     def test_migrate_params(self):
-        module = self.kernel.compile(
-            MockPath(
-                ["foo.py"], b"def migrate_params(params): return {'nested': params}"
-            ),
-            "foo",
-        )
-        result = self.kernel.migrate_params(module, {"foo": 123})
+        mod = _compile("foo", "def migrate_params(params): return {'nested': params}")
+        result = self.kernel.migrate_params(mod, {"foo": 123})
         self.assertEquals(result, {"nested": {"foo": 123}})
 
     def test_migrate_params_retval_not_thrift_ready(self):
-        module = self.kernel.compile(
-            MockPath(["foo.py"], b"def migrate_params(params): return range(2)"), "foo"
-        )
+        mod = _compile("foo", "def migrate_params(params): return range(2)")
         with self.assertRaises(ModuleExitedError):
-            self.kernel.migrate_params(module, {"foo": 123})
+            self.kernel.migrate_params(mod, {"foo": 123})
 
     def test_render_happy_path(self):
-        module = self.kernel.compile(
-            MockPath(
-                ["foo.py"],
-                b"import pandas as pd\ndef render(table, params): return pd.DataFrame({'A': table['A'] * params['m'], 'B': table['B'] + params['s']})",
-            ),
+        mod = _compile(
             "foo",
+            "import pandas as pd\ndef render(table, params): return pd.DataFrame({'A': table['A'] * params['m'], 'B': table['B'] + params['s']})",
         )
         with arrow_table_context(
             {"A": [1, 2, 3], "B": ["a", "b", "c"]},
@@ -164,7 +142,7 @@ class KernelTests(unittest.TestCase):
                 prefix="output-", dir=self.basedir
             ) as output_path:
                 result = self.kernel.render(
-                    module,
+                    mod,
                     self.chroot_context,
                     self.basedir,
                     input_table,
@@ -180,12 +158,8 @@ class KernelTests(unittest.TestCase):
                 )
 
     def test_render_exception(self):
-        module = self.kernel.compile(
-            MockPath(
-                ["foo.py"],
-                b"import os\ndef render(table, params): raise RuntimeError('fail')",
-            ),
-            "foo",
+        mod = _compile(
+            "foo.py", "import os\ndef render(table, params): raise RuntimeError('fail')"
         )
         with self.assertRaises(ModuleExitedError) as cm:
             with arrow_table_context({"A": [1]}, dir=self.basedir) as input_table:
@@ -194,7 +168,7 @@ class KernelTests(unittest.TestCase):
                     prefix="output-", dir=self.basedir
                 ) as output_path:
                     self.kernel.render(
-                        module,
+                        mod,
                         self.chroot_context,
                         self.basedir,
                         input_table,
@@ -264,11 +238,8 @@ class KernelTests(unittest.TestCase):
     #     self.assertEquals(cm.exception.log, "")
 
     def test_render_kill_timeout(self):
-        module = self.kernel.compile(
-            MockPath(
-                ["foo.py"], b"import time\ndef render(table, params):\n  time.sleep(2)"
-            ),
-            "foo",
+        mod = _compile(
+            "foo", "import time\ndef render(table, params):\n  time.sleep(2)"
         )
         with patch.object(self.kernel, "render_timeout", 0.001):
             with self.assertRaises(ModuleTimeoutError):
@@ -278,7 +249,7 @@ class KernelTests(unittest.TestCase):
                         prefix="output-", dir=self.basedir
                     ) as output_path:
                         self.kernel.render(
-                            module,
+                            mod,
                             self.chroot_context,
                             self.basedir,
                             input_table,
@@ -289,26 +260,23 @@ class KernelTests(unittest.TestCase):
                         )
 
     def test_fetch_happy_path(self):
-        module = self.kernel.compile(
-            MockPath(
-                ["foo.py"],
-                textwrap.dedent(
-                    """
-                    import pandas as pd
-
-                    def fetch(params):
-                        return pd.DataFrame({"A": [params["a"]]})
-                    """
-                ).encode("utf-8"),
-            ),
+        mod = _compile(
             "foo",
+            textwrap.dedent(
+                """
+                import pandas as pd
+
+                def fetch(params):
+                    return pd.DataFrame({"A": [params["a"]]})
+                """
+            ).encode("utf-8"),
         )
 
         with self.chroot_context.tempfile_context(
             prefix="output-", dir=self.basedir
         ) as output_path:
             result = self.kernel.fetch(
-                module,
+                mod,
                 self.chroot_context,
                 self.basedir,
                 types.Params({"a": 1}),
@@ -321,24 +289,3 @@ class KernelTests(unittest.TestCase):
             self.assertEquals(result.errors, [])
             table = pyarrow.parquet.read_pandas(str(result.path))
             self.assertEquals(table.to_pydict(), {"A": [1]})
-
-    def test_sandbox_no_open_file_descriptors(self):
-        self.kernel.compile(  # and validate!
-            MockPath(
-                ["foo.py"],
-                textwrap.dedent(
-                    """
-                    import errno
-                    import os
-
-                    for i in range(3, 100):
-                        try:
-                            os.fstat(i)
-                            assert False, f"We passed fd{i} which can be used to escape chroot"
-                        except OSError as err:
-                            assert err.errno == errno.EBADF, "we wanted EBADF; got %d" % err.errno
-                    """
-                ).encode("utf-8"),
-            ),
-            "foo",
-        )

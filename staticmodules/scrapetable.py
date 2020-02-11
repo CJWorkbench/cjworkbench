@@ -64,8 +64,8 @@ def render(table, params, *, fetch_result):
         table.reset_index(drop=True, inplace=True)
         moduleutils.autocast_dtypes_in_place(table)
 
-    if fetch_result.error:
-        return (table, fetch_result.error)
+    if fetch_result.errors:
+        return (table, fetch_result.errors)
     else:
         return table
 

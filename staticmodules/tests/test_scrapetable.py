@@ -7,7 +7,7 @@ import aiohttp.client
 from asgiref.sync import async_to_sync
 import pandas as pd
 from pandas.testing import assert_frame_equal
-from cjwkernel.pandas.types import ProcessResult
+from cjwkernel.pandas.types import I18nMessage, ProcessResult, ProcessResultError
 from staticmodules import scrapetable
 from .util import MockParams
 
@@ -243,10 +243,18 @@ class ScrapeTableTest(unittest.TestCase):
     def test_empty_table(self):
         fetch_result = fetch(url="http://example.org")
         assert_frame_equal(fetch_result.dataframe, pd.DataFrame({}))
-        # BUG: Pandas reports the wrong error message.
-        # self.assertEqual(fetch_result.error, 'Table is empty.')
+        # BUG: Pandas reports the wrong error message. (Should be "Table is
+        # empty")
         self.assertEqual(
-            fetch_result.error, "Did not find any <table> tags on that page"
+            fetch_result.errors,
+            [
+                ProcessResultError(
+                    I18nMessage(
+                        "TODO_i18n",
+                        {"text": "Did not find any <table> tags on that page"},
+                    )
+                )
+            ],
         )
 
     @patch(

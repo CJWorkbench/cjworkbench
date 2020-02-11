@@ -411,38 +411,24 @@ class I18nMessage:
     args: Dict[str, Union[int, float, str]] = field(default_factory=dict)
     """Arguments (empty if message does not need any -- which is common)."""
 
-    source: Optional[Dict[str, str]] = None
+    source: Optional[str] = None
     """An indication of where the message is coming from.
         - `None` means it's coming from workbench itself
-        - A dict with key `"module"` means it's coming from a module
-          for example `{"module": "mymodule"}` means, "search the mymodule module's catalog"
-        - A dict with key `"library"` indicates it's coming from some of our supported libraries;
-          for example `{"library": "cjwmodule"}` means, "search the cjwmodule library's catalog"
+        - `"module"` means it's coming from a module;
+          when localizing, we will need to search the current context 
+          in order to find which module it is
+        - `"cjwmodule"` means it's coming from `cjwmodule`
     """
 
     @classmethod
     def from_arrow(cls, value: atypes.I18nMessage) -> I18nMessage:
         if value.source:
-            if isinstance(value.source, atypes.I18nMessageSource.Module):
-                return cls(value.id, value.args, {"module": value.source.module_id})
-            if isinstance(value.source, atypes.I18nMessageSource.Library):
-                return cls(value.id, value.args, {"library": value.source.library})
+            return cls(value.id, value.args, value.source)
         return cls(value.id, value.args)
 
     def to_arrow(self) -> atypes.I18nMessage:
         if self.source:
-            if "module" in self.source:
-                return atypes.I18nMessage(
-                    self.id,
-                    self.args,
-                    atypes.I18nMessageSource.Module(self.source["module"]),
-                )
-            if "library" in self.source:
-                return atypes.I18nMessage(
-                    self.id,
-                    self.args,
-                    atypes.I18nMessageSource.Library(self.source["library"]),
-                )
+            return atypes.I18nMessage(self.id, self.args, self.source)
         return atypes.I18nMessage(self.id, self.args)
 
     @classmethod
@@ -481,22 +467,8 @@ class I18nMessage:
                 )
             if len(value) == 3:
                 source = value[2]
-                if not isinstance(source, dict):
-                    raise ValueError(
-                        "Message source must be a dict, got %s" % type(source).__name__
-                    )
-                if not source:
-                    raise ValueError("Message source can't be empty if present")
-                if len(source) > 1:
-                    raise ValueError(
-                        "Message can only have a single source, got %s" % source
-                    )
-                supported_source_keys = {"module", "library"}
-                if set(source.keys()) - supported_source_keys:
-                    raise ValueError(
-                        "Unknown message source kind %s. Supported kinds: %s."
-                        % (source.keys(), supported_source_keys)
-                    )
+                if source not in ["module", "cjwmodule"]:
+                    raise ValueError("Invalid i18n message source %r" % source)
             else:
                 source = None
             return cls(value[0], value[1], source)
@@ -1027,21 +999,33 @@ class ProcessResult:
     def _coerce_3tuple(
         cls, value, try_fallback_columns: Iterable[Column] = []
     ) -> ProcessResult:
-        dataframe, error, json = value
-        if dataframe is None:
-            dataframe = pd.DataFrame()
-        elif not isinstance(dataframe, pd.DataFrame):
-            raise ValueError("Expected DataFrame got %s" % type(dataframe).__name__)
-        if json is None:
-            json = {}
-        elif not isinstance(json, dict):
-            raise ValueError("Expected JSON dict, got %s" % type(json).__name__)
+        if isinstance(value[0], str) and isinstance(value[1], dict):
+            return cls(errors=[ProcessResultError(I18nMessage.coerce(value))])
+        elif isinstance(value[0], pd.DataFrame) or value[0] is None:
+            dataframe, error, json = value
+            if dataframe is None:
+                dataframe = pd.DataFrame()
+            elif not isinstance(dataframe, pd.DataFrame):
+                raise ValueError("Expected DataFrame got %s" % type(dataframe).__name__)
+            if json is None:
+                json = {}
+            elif not isinstance(json, dict):
+                raise ValueError("Expected JSON dict, got %s" % type(json).__name__)
 
-        errors = ProcessResultError.coerce_list(error)
+            errors = ProcessResultError.coerce_list(error)
 
-        validate_dataframe(dataframe)
-        columns = _infer_columns(dataframe, {}, try_fallback_columns)
-        return cls(dataframe=dataframe, errors=errors, json=json, columns=columns)
+            validate_dataframe(dataframe)
+            columns = _infer_columns(dataframe, {}, try_fallback_columns)
+            return cls(dataframe=dataframe, errors=errors, json=json, columns=columns)
+        else:
+            raise ValueError(
+                "Expected (Dataframe, RenderError, json) or I18nMessage return type; got (%s,%s, %s)"
+                % (
+                    type(value[0]).__name__,
+                    type(value[1]).__name__,
+                    type(value[2]).__name__,
+                )
+            )
 
     @classmethod
     def _coerce_dict(

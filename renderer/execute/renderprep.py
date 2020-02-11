@@ -8,7 +8,7 @@ from cjwkernel.types import ArrowTable, Params, RenderResult, Tab, TabOutput
 from cjwkernel.util import tempfile_context
 from cjwstate import minio
 from cjwstate.models import UploadedFile
-from cjwstate.models.param_spec import ParamDType
+from cjwstate.modules.param_dtype import ParamDType
 from .types import TabCycleError, TabOutputUnreachableError, PromptingError
 
 
@@ -209,7 +209,7 @@ def _(
     )
     try:
         # Overwrite the file
-        minio.download(uploaded_file.bucket, uploaded_file.key, path)
+        minio.download(minio.UserFilesBucket, uploaded_file.key, path)
         return path
     except FileNotFoundError:
         # tempfile will be deleted by context.exit_stack

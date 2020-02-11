@@ -1,12 +1,13 @@
 import asyncio
 import datetime
+import logging
 from unittest.mock import patch, Mock
 from dateutil.parser import isoparse
 from django.contrib.auth.models import User
 from django.test import override_settings
 from django.utils import timezone
 from cjwstate import clientside, oauth, rabbitmq
-from cjwstate.models import ModuleVersion, Workflow
+from cjwstate.models import Workflow
 from cjwstate.models.commands import (
     ChangeParametersCommand,
     ChangeWfModuleNotesCommand,
@@ -29,19 +30,15 @@ from server.handlers.wf_module import (
     clear_file_upload_api_token,
 )
 from .util import HandlerTestCase
+from cjwstate.tests.utils import (
+    DbTestCaseWithModuleRegistryAndMockKernel,
+    create_module_zipfile,
+)
 from cjworkbench.models.userprofile import UserProfile
 
 
 async def async_noop(*args, **kwargs):
     pass
-
-
-class MockLoadedModule:
-    def __init__(self, *args):
-        pass
-
-    def migrate_params(self, values):
-        return values
 
 
 TestGoogleSecret = {
@@ -66,110 +63,87 @@ TestStringSecret = {
 }
 
 
-class WfModuleTest(HandlerTestCase):
+class WfModuleTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
     @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
     @patch.object(rabbitmq, "queue_render", async_noop)
-    @patch(
-        "cjwstate.modules.loaded_module.LoadedModule.for_module_version",
-        MockLoadedModule,
-    )
     def test_set_params(self):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
+        create_module_zipfile(
+            "x", spec_kwargs={"parameters": [{"id_name": "foo", "type": "string"}]}
+        )
+        self.kernel.migrate_params.side_effect = lambda m, p: p
         wf_module = workflow.tabs.first().wf_modules.create(
-            order=0, slug="step-1", module_id_name="x"
+            order=0, slug="step-1", module_id_name="x", params={"foo": ""}
         )
 
-        ModuleVersion.create_or_replace_from_spec(
-            {
-                "id_name": "x",
-                "name": "x",
-                "category": "Clean",
-                "parameters": [{"id_name": "foo", "type": "string"}],
-            }
-        )
-
-        response = self.run_handler(
-            set_params,
-            user=user,
-            workflow=workflow,
-            wfModuleId=wf_module.id,
-            values={"foo": "bar"},
-        )
+        with self.assertLogs(level=logging.INFO):
+            response = self.run_handler(
+                set_params,
+                user=user,
+                workflow=workflow,
+                wfModuleId=wf_module.id,
+                values={"foo": "bar"},
+            )
         self.assertResponse(response, data=None)
 
         command = ChangeParametersCommand.objects.first()
         self.assertEquals(command.new_values, {"foo": "bar"})
-        self.assertEquals(command.old_values, {})
+        self.assertEquals(command.old_values, {"foo": ""})
         self.assertEquals(command.wf_module_id, wf_module.id)
         self.assertEquals(command.workflow_id, workflow.id)
+        wf_module.refresh_from_db()
 
     @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
     @patch.object(rabbitmq, "queue_render", async_noop)
-    @patch(
-        "cjwstate.modules.loaded_module.LoadedModule.for_module_version",
-        MockLoadedModule,
-    )
     def test_set_params_invalid_params(self):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
+        create_module_zipfile(
+            "x", spec_kwargs={"parameters": [{"id_name": "foo", "type": "string"}]}
+        )
+        self.kernel.migrate_params.side_effect = lambda m, p: p
         wf_module = workflow.tabs.first().wf_modules.create(
-            order=0, slug="step-1", module_id_name="x"
+            order=0, slug="step-1", module_id_name="x", params={"foo": ""}
         )
 
-        ModuleVersion.create_or_replace_from_spec(
-            {
-                "id_name": "x",
-                "name": "x",
-                "category": "Clean",
-                "parameters": [{"id_name": "foo", "type": "string"}],
-            }
-        )
-
-        response = self.run_handler(
-            set_params,
-            user=user,
-            workflow=workflow,
-            wfModuleId=wf_module.id,
-            values={"foo1": "bar"},
-        )
+        with self.assertLogs(level=logging.INFO):
+            response = self.run_handler(
+                set_params,
+                user=user,
+                workflow=workflow,
+                wfModuleId=wf_module.id,
+                values={"foo1": "bar"},
+            )
         self.assertResponse(
             response,
             error=(
-                "ValueError: Value {'foo1': 'bar'} has wrong names: "
+                "ValueError: Value {'foo': '', 'foo1': 'bar'} has wrong names: "
                 "expected names {'foo'}"
             ),
         )
 
     @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
     @patch.object(rabbitmq, "queue_render", async_noop)
-    @patch(
-        "cjwstate.modules.loaded_module.LoadedModule.for_module_version",
-        MockLoadedModule,
-    )
     def test_set_params_null_byte_in_json(self):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
+        create_module_zipfile(
+            "x", spec_kwargs={"parameters": [{"id_name": "foo", "type": "string"}]}
+        )
+        self.kernel.migrate_params.side_effect = lambda m, p: p
         wf_module = workflow.tabs.first().wf_modules.create(
-            order=0, slug="step-1", module_id_name="x"
+            order=0, slug="step-1", module_id_name="x", params={"foo": ""}
         )
 
-        ModuleVersion.create_or_replace_from_spec(
-            {
-                "id_name": "x",
-                "name": "x",
-                "category": "Clean",
-                "parameters": [{"id_name": "foo", "type": "string"}],
-            }
-        )
-
-        response = self.run_handler(
-            set_params,
-            user=user,
-            workflow=workflow,
-            wfModuleId=wf_module.id,
-            values={"foo": "b\x00\x00r"},
-        )
+        with self.assertLogs(level=logging.INFO):
+            response = self.run_handler(
+                set_params,
+                user=user,
+                workflow=workflow,
+                wfModuleId=wf_module.id,
+                values={"foo": "b\x00\x00r"},
+            )
         self.assertResponse(response, data=None)
         command = ChangeParametersCommand.objects.first()
         self.assertEquals(command.new_values, {"foo": "br"})
@@ -648,13 +622,8 @@ class WfModuleTest(HandlerTestCase):
         user = User.objects.create(email="write@example.org")
         workflow = Workflow.create_and_init(public=True)
         workflow.acl.create(email=user.email, can_edit=True)
-        ModuleVersion.create_or_replace_from_spec(
-            {
-                "id_name": "googlesheets",
-                "name": "g",
-                "category": "Clean",
-                "parameters": [TestGoogleSecret],
-            }
+        create_module_zipfile(
+            "googlesheets", spec_kwargs={"parameters": [TestGoogleSecret]}
         )
         wf_module = workflow.tabs.first().wf_modules.create(
             module_id_name="googlesheets", order=0, slug="step-1"
@@ -669,20 +638,11 @@ class WfModuleTest(HandlerTestCase):
         )
         self.assertResponse(response, error="AuthError: no owner access to workflow")
 
-    @patch(
-        "cjwstate.modules.loaded_module.LoadedModule.for_module_version",
-        MockLoadedModule,
-    )
     def test_generate_secret_access_token_no_value_gives_null(self):
         user = User.objects.create()
         workflow = Workflow.create_and_init(owner=user)
-        ModuleVersion.create_or_replace_from_spec(
-            {
-                "id_name": "googlesheets",
-                "name": "g",
-                "category": "Clean",
-                "parameters": [TestGoogleSecret],
-            }
+        create_module_zipfile(
+            "googlesheets", spec_kwargs={"parameters": [TestGoogleSecret]}
         )
         wf_module = workflow.tabs.first().wf_modules.create(
             module_id_name="googlesheets",
@@ -700,20 +660,11 @@ class WfModuleTest(HandlerTestCase):
         )
         self.assertResponse(response, data={"token": None})
 
-    @patch(
-        "cjwstate.modules.loaded_module.LoadedModule.for_module_version",
-        MockLoadedModule,
-    )
     def test_generate_secret_access_token_wrong_param_type_gives_null(self):
         user = User.objects.create()
         workflow = Workflow.create_and_init(owner=user)
-        ModuleVersion.create_or_replace_from_spec(
-            {
-                "id_name": "googlesheets",
-                "name": "g",
-                "category": "Clean",
-                "parameters": [TestGoogleSecret],
-            }
+        create_module_zipfile(
+            "googlesheets", spec_kwargs={"parameters": [TestGoogleSecret]}
         )
         wf_module = workflow.tabs.first().wf_modules.create(
             module_id_name="googlesheets",
@@ -731,20 +682,11 @@ class WfModuleTest(HandlerTestCase):
         )
         self.assertResponse(response, data={"token": None})
 
-    @patch(
-        "cjwstate.modules.loaded_module.LoadedModule.for_module_version",
-        MockLoadedModule,
-    )
     def test_generate_secret_access_token_wrong_param_name_gives_null(self):
         user = User.objects.create()
         workflow = Workflow.create_and_init(owner=user)
-        ModuleVersion.create_or_replace_from_spec(
-            {
-                "id_name": "googlesheets",
-                "name": "g",
-                "category": "Clean",
-                "parameters": [TestGoogleSecret],
-            }
+        create_module_zipfile(
+            "googlesheets", spec_kwargs={"parameters": [TestGoogleSecret]}
         )
         wf_module = workflow.tabs.first().wf_modules.create(
             module_id_name="googlesheets",
@@ -762,22 +704,13 @@ class WfModuleTest(HandlerTestCase):
         )
         self.assertResponse(response, data={"token": None})
 
-    @patch(
-        "cjwstate.modules.loaded_module.LoadedModule.for_module_version",
-        MockLoadedModule,
-    )
     @patch("cjwstate.oauth.OAuthService.lookup_or_none", lambda _: None)
     @override_settings(OAUTH_SERVICES={"twitter": {}})
     def test_generate_secret_access_token_no_service_gives_error(self):
         user = User.objects.create()
         workflow = Workflow.create_and_init(owner=user)
-        ModuleVersion.create_or_replace_from_spec(
-            {
-                "id_name": "googlesheets",
-                "name": "g",
-                "category": "Clean",
-                "parameters": [TestGoogleSecret],
-            }
+        create_module_zipfile(
+            "googlesheets", spec_kwargs={"parameters": [TestGoogleSecret]}
         )
         wf_module = workflow.tabs.first().wf_modules.create(
             module_id_name="googlesheets",
@@ -795,10 +728,6 @@ class WfModuleTest(HandlerTestCase):
         )
         self.assertResponse(response, error=("AuthError: we only support twitter"))
 
-    @patch(
-        "cjwstate.modules.loaded_module.LoadedModule.for_module_version",
-        MockLoadedModule,
-    )
     @patch("cjwstate.oauth.OAuthService.lookup_or_none")
     def test_generate_secret_access_token_auth_error_gives_error(self, factory):
         service = Mock(oauth.OAuth2)
@@ -807,13 +736,8 @@ class WfModuleTest(HandlerTestCase):
 
         user = User.objects.create()
         workflow = Workflow.create_and_init(owner=user)
-        ModuleVersion.create_or_replace_from_spec(
-            {
-                "id_name": "googlesheets",
-                "name": "g",
-                "category": "Clean",
-                "parameters": [TestGoogleSecret],
-            }
+        create_module_zipfile(
+            "googlesheets", spec_kwargs={"parameters": [TestGoogleSecret]}
         )
         wf_module = workflow.tabs.first().wf_modules.create(
             module_id_name="googlesheets",
@@ -831,10 +755,6 @@ class WfModuleTest(HandlerTestCase):
         )
         self.assertResponse(response, error="AuthError: an error")
 
-    @patch(
-        "cjwstate.modules.loaded_module.LoadedModule.for_module_version",
-        MockLoadedModule,
-    )
     @patch("cjwstate.oauth.OAuthService.lookup_or_none")
     def test_generate_secret_access_token_happy_path(self, factory):
         service = Mock(oauth.OAuth2)
@@ -846,13 +766,8 @@ class WfModuleTest(HandlerTestCase):
 
         user = User.objects.create()
         workflow = Workflow.create_and_init(owner=user)
-        ModuleVersion.create_or_replace_from_spec(
-            {
-                "id_name": "googlesheets",
-                "name": "g",
-                "category": "Clean",
-                "parameters": [TestGoogleSecret],
-            }
+        create_module_zipfile(
+            "googlesheets", spec_kwargs={"parameters": [TestGoogleSecret]}
         )
         wf_module = workflow.tabs.first().wf_modules.create(
             module_id_name="googlesheets",
@@ -874,13 +789,8 @@ class WfModuleTest(HandlerTestCase):
         user = User.objects.create(email="write@example.org")
         workflow = Workflow.create_and_init(public=True)
         workflow.acl.create(email=user.email, can_edit=True)
-        ModuleVersion.create_or_replace_from_spec(
-            {
-                "id_name": "googlesheets",
-                "name": "g",
-                "category": "Clean",
-                "parameters": [TestGoogleSecret],
-            }
+        create_module_zipfile(
+            "googlesheets", spec_kwargs={"parameters": [TestGoogleSecret]}
         )
         wf_module = workflow.tabs.first().wf_modules.create(
             module_id_name="googlesheets",
@@ -901,13 +811,8 @@ class WfModuleTest(HandlerTestCase):
     def test_delete_secret_ignore_non_secret(self):
         user = User.objects.create()
         workflow = Workflow.create_and_init(owner=user)
-        ModuleVersion.create_or_replace_from_spec(
-            {
-                "id_name": "googlesheets",
-                "name": "g",
-                "category": "Clean",
-                "parameters": [TestGoogleSecret, {"id_name": "foo", "type": "string"}],
-            }
+        create_module_zipfile(
+            "googlesheets", spec_kwargs={"parameters": [TestGoogleSecret]}
         )
         wf_module = workflow.tabs.first().wf_modules.create(
             module_id_name="googlesheets",
@@ -931,23 +836,14 @@ class WfModuleTest(HandlerTestCase):
             wf_module.secrets, {"google_credentials": {"name": "a", "secret": "hello"}}
         )
 
-    @patch(
-        "cjwstate.modules.loaded_module.LoadedModule.for_module_version",
-        MockLoadedModule,
-    )
     @patch.object(rabbitmq, "send_update_to_workflow_clients")
     def test_delete_secret_happy_path(self, send_update):
         send_update.return_value = async_noop()
 
         user = User.objects.create()
         workflow = Workflow.create_and_init(owner=user)
-        ModuleVersion.create_or_replace_from_spec(
-            {
-                "id_name": "googlesheets",
-                "name": "g",
-                "category": "Clean",
-                "parameters": [TestGoogleSecret],
-            }
+        create_module_zipfile(
+            "googlesheets", spec_kwargs={"parameters": [TestGoogleSecret]}
         )
         wf_module = workflow.tabs.first().wf_modules.create(
             module_id_name="googlesheets",
@@ -975,14 +871,7 @@ class WfModuleTest(HandlerTestCase):
         user = User.objects.create(email="write@example.org")
         workflow = Workflow.create_and_init(public=True)
         workflow.acl.create(email=user.email, can_edit=True)
-        ModuleVersion.create_or_replace_from_spec(
-            {
-                "id_name": "g",
-                "name": "g",
-                "category": "Clean",
-                "parameters": [TestStringSecret],
-            }
-        )
+        create_module_zipfile("g", spec_kwargs={"parameters": [TestStringSecret]})
         wf_module = workflow.tabs.first().wf_modules.create(
             module_id_name="g", order=0, slug="step-1"
         )
@@ -999,13 +888,11 @@ class WfModuleTest(HandlerTestCase):
     def test_set_secret_error_not_a_secret(self):
         user = User.objects.create()
         workflow = Workflow.create_and_init(owner=user)
-        ModuleVersion.create_or_replace_from_spec(
-            {
-                "id_name": "g",
-                "name": "g",
-                "category": "Clean",
-                "parameters": [{"id_name": "string_secret", "type": "string"}],
-            }
+        create_module_zipfile(
+            "g",
+            spec_kwargs={
+                "parameters": [{"id_name": "string_secret", "type": "string"}]
+            },
         )
         wf_module = workflow.tabs.first().wf_modules.create(
             module_id_name="g",
@@ -1030,24 +917,13 @@ class WfModuleTest(HandlerTestCase):
         self.assertEqual(wf_module.params, {"string_secret": "bar"})
         self.assertEqual(wf_module.secrets, {})
 
-    @patch(
-        "cjwstate.modules.loaded_module.LoadedModule.for_module_version",
-        MockLoadedModule,
-    )
     @patch.object(rabbitmq, "send_update_to_workflow_clients")
     def test_set_secret_happy_path(self, send_update):
         send_update.return_value = async_noop()
 
         user = User.objects.create()
         workflow = Workflow.create_and_init(owner=user)
-        ModuleVersion.create_or_replace_from_spec(
-            {
-                "id_name": "g",
-                "name": "g",
-                "category": "Clean",
-                "parameters": [TestStringSecret],
-            }
-        )
+        create_module_zipfile("g", spec_kwargs={"parameters": [TestStringSecret]})
         wf_module = workflow.tabs.first().wf_modules.create(
             module_id_name="g", order=0, slug="step-1"
         )

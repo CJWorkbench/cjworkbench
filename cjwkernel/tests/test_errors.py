@@ -1,6 +1,5 @@
 import unittest
 from cjwkernel.errors import (
-    ModuleCompileError,
     ModuleError,
     ModuleExitedError,
     ModuleTimeoutError,
@@ -9,26 +8,6 @@ from cjwkernel.errors import (
 
 
 class FormatForUserDebuggingTests(unittest.TestCase):
-    def test_compile_error(self):
-        # Build an error with "from"
-        try:
-            try:
-                compile("abcd(", "foo.py", "exec")
-            except SyntaxError as err:
-                raise ModuleCompileError from err
-        except ModuleCompileError as ex:
-            err = ex
-        self.assertEqual(
-            format_for_user_debugging(err),
-            "SyntaxError: unexpected EOF while parsing (foo.py, line 1)",
-        )
-
-    def test_broken_compile_error(self):
-        # don't crash
-        self.assertEqual(
-            format_for_user_debugging(ModuleCompileError()), "ModuleCompileError"
-        )
-
     def test_timeout_error(self):
         self.assertEqual(format_for_user_debugging(ModuleTimeoutError()), "timed out")
 

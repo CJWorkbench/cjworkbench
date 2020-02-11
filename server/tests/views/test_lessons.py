@@ -3,41 +3,20 @@ from typing import Any, Dict, List
 from unittest.mock import patch
 from cjwstate import rabbitmq
 from cjwstate.models import Workflow, ModuleVersion
-from cjwstate.modules.loaded_module import LoadedModule
 from server.models.lesson import Lesson, LessonLookup, LessonInitialWorkflow
-from cjwstate.tests.utils import DbTestCase, create_test_user
+from cjwstate.tests.utils import (
+    DbTestCaseWithModuleRegistryAndMockKernel,
+    create_test_user,
+    create_module_zipfile,
+)
 
 
 async def async_noop(*args, **kwargs):
     pass
 
 
-future_none = asyncio.Future()
-future_none.set_result(None)
-
-
-class MockLoadedModule:
-    """Make a valid migrate_params()"""
-
-    def migrate_params(self, params):
-        return params
-
-
-def create_module_version(id_name: str, parameters: List[Dict[str, Any]], **kwargs):
-    ModuleVersion.create_or_replace_from_spec(
-        {
-            "id_name": id_name,
-            "name": "something",
-            "category": "Clean",
-            "parameters": parameters,
-            **kwargs,
-        }
-    )
-
-
-@patch.object(LoadedModule, "for_module_version", lambda x: MockLoadedModule())
 @patch("server.utils.log_user_event_from_request", lambda *a: None)
-class LessonDetailTests(DbTestCase):
+class LessonDetailTests(DbTestCaseWithModuleRegistryAndMockKernel):
     def log_in(self):
         self.user = create_test_user()
         self.client.force_login(self.user)
@@ -89,6 +68,7 @@ class LessonDetailTests(DbTestCase):
     def test_get_course_lesson_with_workflow(self):
         self.log_in()
 
+        self.kernel.migrate_params.side_effect = lambda m, p: p
         Workflow.create_and_init(
             owner=self.user, lesson_slug="intro-to-data-journalism/filter"
         )
@@ -179,6 +159,7 @@ class LessonDetailTests(DbTestCase):
         workflow = Workflow.create_and_init(
             owner=self.user, lesson_slug="intro-to-data-journalism/filter"
         )
+        self.kernel.migrate_params.side_effect = lambda m, p: p
         response = self.client.get(workflow.get_absolute_url())
         self.assertRedirects(response, "/courses/en/intro-to-data-journalism/filter")
 
@@ -210,14 +191,19 @@ class LessonDetailTests(DbTestCase):
         },
     )
     def test_create_initial_workflow(self, render):
-        render.return_value = future_none
+        self.kernel.migrate_params.side_effect = lambda m, p: p
+        render.side_effect = async_noop
 
-        create_module_version(
-            "amodule", [{"id_name": "foo", "type": "string"}], loads_data=False
+        create_module_zipfile(
+            "amodule",
+            spec_kwargs=dict(
+                parameters=[{"id_name": "foo", "type": "string"}], loads_data=False
+            ),
         )
 
         self.log_in()
-        response = self.client.get("/lessons/en/a-lesson")
+        with self.assertLogs("cjwstate.params"):
+            response = self.client.get("/lessons/en/a-lesson")
         state = response.context_data["initState"]
         tabs = state["tabs"]
         tab1 = list(tabs.values())[0]
@@ -263,14 +249,19 @@ class LessonDetailTests(DbTestCase):
         },
     )
     def test_replace_static_url_in_initial_workflow(self, render):
-        render.return_value = future_none
+        render.side_effect = async_noop
 
-        create_module_version(
-            "amodule", [{"id_name": "url", "type": "string"}], loads_data=False
+        create_module_zipfile(
+            "amodule",
+            spec_kwargs=dict(
+                parameters=[{"id_name": "url", "type": "string"}], loads_data=False
+            ),
         )
+        self.kernel.migrate_params.side_effect = lambda m, p: p
 
         self.log_in()
-        response = self.client.get("/lessons/en/a-lesson")
+        with self.assertLogs("cjwstate.params"):
+            response = self.client.get("/lessons/en/a-lesson")
         state = response.context_data["initState"]
         wf_module = next(iter(state["wfModules"].values()))
         self.assertEqual(
@@ -305,14 +296,20 @@ class LessonDetailTests(DbTestCase):
         },
     )
     def test_fetch_initial_workflow(self, render, fetch):
-        fetch.return_value = future_none
+        render.side_effect = async_noop
+        fetch.side_effect = async_noop
 
-        create_module_version(
-            "amodule", [{"id_name": "foo", "type": "string"}], loads_data=True
+        create_module_zipfile(
+            "amodule",
+            spec_kwargs=dict(
+                parameters=[{"id_name": "foo", "type": "string"}], loads_data=True
+            ),
         )
+        self.kernel.migrate_params.side_effect = lambda m, p: p
 
         self.log_in()
-        response = self.client.get("/lessons/en/a-lesson")
+        with self.assertLogs("cjwstate.params"):
+            response = self.client.get("/lessons/en/a-lesson")
         state = response.context_data["initState"]
         wf_modules = state["wfModules"]
         step1 = list(wf_modules.values())[0]
@@ -347,6 +344,7 @@ class LessonDetailTests(DbTestCase):
         },
     )
     def test_fetch_initial_workflow_with_missing_module_raises_500(self):
+        self.kernel.migrate_params.side_effect = lambda m, p: p
         self.log_in()
         with self.assertLogs("django.request"):
             response = self.client.get("/lessons/en/a-lesson")
@@ -377,7 +375,11 @@ class LessonDetailTests(DbTestCase):
         },
     )
     def test_fetch_initial_workflow_with_invalid_params_raises_500(self):
-        create_module_version("amodule", [{"id_name": "foo", "type": "string"}])
+        create_module_zipfile(
+            "amodule",
+            spec_kwargs=dict(parameters=[{"id_name": "foo", "type": "string"}]),
+        )
+        self.kernel.migrate_params.side_effect = lambda m, p: p
 
         self.log_in()
         with self.assertLogs("django.request"):

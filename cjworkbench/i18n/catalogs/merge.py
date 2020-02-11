@@ -7,6 +7,8 @@ from cjworkbench.i18n.catalogs.util import (
     fill_catalog,
     mark_fuzzy,
     remove_strings,
+    copy_catalog,
+    move_strings_to_comments,
 )
 from cjworkbench.i18n.catalogs import (
     catalog_path,
@@ -146,19 +148,8 @@ def _merge_catalogs(catalogs: List[Catalog], old: Catalog, fuzzy: FrozenSet):
       `message_unique_identifier`) is in `fuzzy`
     """
 
-    ret = Catalog(
-        locale=old.locale,
-        header_comment=old.header_comment,
-        project=old.project,
-        version=old.version,
-        copyright_holder=old.copyright_holder,
-        msgid_bugs_address=old.msgid_bugs_address,
-        creation_date=old.creation_date,
-        revision_date=old.revision_date,
-        last_translator=old.last_translator,
-        language_team=old.language_team,
-        fuzzy=old.fuzzy,
-    )
+    ret = copy_catalog(old)
+    remove_strings(ret)
     for catalog in catalogs:
         fill_catalog(ret, catalog, old)
     mark_fuzzy(ret, fuzzy, old)
@@ -178,11 +169,7 @@ def clean():
 
     # Update template file for default locale
     catalog = read_po_catalog(catalog_path(default_locale, CATALOG_FILENAME))
-    for message in catalog:
-        message.auto_comments.append(
-            COMMENT_TAG_FOR_DEFAULT_MESSAGE + ": " + message.string
-        )
-    remove_strings(catalog)
+    move_strings_to_comments(catalog, comment_tag=COMMENT_TAG_FOR_DEFAULT_MESSAGE)
     write_po_catalog(
         catalog_path(default_locale, TEMPLATE_CATALOG_FILENAME),
         catalog,

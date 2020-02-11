@@ -26,13 +26,13 @@ def downloaded_file(stored_object: StoredObject, dir=None) -> ContextManager[Pat
             # file does not exist....
     """
     if stored_object.size == 0:
-        # Some stored objects with size=0 do not have bucket/key. These are
-        # valid -- they represent empty files.
+        # Some stored objects with size=0 do not have key. These are valid:
+        # they represent empty files.
         return tempfile_context(prefix="storedobjects-empty-file", dir=dir)
     else:
         # raises FileNotFoundError
         return minio.temporarily_download(
-            stored_object.bucket, stored_object.key, dir=dir
+            minio.StoredObjectsBucket, stored_object.key, dir=dir
         )
 
 
@@ -63,7 +63,6 @@ def create_stored_object(
     stored_object = StoredObject.objects.create(
         stored_at=stored_at,
         wf_module_id=wf_module_id,
-        bucket=BUCKET,
         key=key,
         size=size,
         hash="unhashed",

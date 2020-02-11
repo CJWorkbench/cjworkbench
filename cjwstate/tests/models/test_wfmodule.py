@@ -4,7 +4,7 @@ from django.utils import timezone
 from cjwkernel.util import tempfile_context
 from cjwstate import minio
 from cjwstate.storedobjects import create_stored_object
-from cjwstate.models import ModuleVersion, Workflow
+from cjwstate.models import Workflow
 from cjwstate.models.commands import InitWorkflowCommand
 from cjwstate.tests.utils import DbTestCase
 
@@ -43,7 +43,7 @@ class WfModuleTests(DbTestCase):
 
         self.assertEqual(step1d.slug, "step-1")
         self.assertEqual(step1d.workflow, workflow2)
-        self.assertEqual(step1d.module_version, step1.module_version)
+        self.assertEqual(step1d.module_id_name, step1.module_id_name)
         self.assertEqual(step1d.order, step1.order)
         self.assertEqual(step1d.notes, step1.notes)
         self.assertEqual(step1d.last_update_check, step1.last_update_check)
@@ -58,8 +58,8 @@ class WfModuleTests(DbTestCase):
         # The StoredObject was copied byte for byte into a different file
         self.assertNotEqual(so2d.key, so2.key)
         self.assertEqual(
-            minio.get_object_with_data(so2d.bucket, so2d.key)["Body"],
-            minio.get_object_with_data(so2.bucket, so2.key)["Body"],
+            minio.get_object_with_data(minio.StoredObjectsBucket, so2d.key)["Body"],
+            minio.get_object_with_data(minio.StoredObjectsBucket, so2.key)["Body"],
         )
 
     def test_wf_module_duplicate_disable_auto_update(self):
@@ -115,7 +115,7 @@ class WfModuleTests(DbTestCase):
         wf_module.params = {"file": uuid, "has_header": True}
         wf_module.save(update_fields=["params"])
         uploaded_file = wf_module.uploaded_files.create(
-            name="t.csv", uuid=uuid, bucket=minio.UserFilesBucket, key=key, size=7
+            name="t.csv", uuid=uuid, key=key, size=7
         )
 
         workflow2 = Workflow.create_and_init()
@@ -136,7 +136,7 @@ class WfModuleTests(DbTestCase):
         self.assertEqual(uploaded_file2.size, 7)
         self.assertEqual(uploaded_file2.created_at, uploaded_file.created_at)
         self.assertEqual(
-            minio.get_object_with_data(uploaded_file2.bucket, uploaded_file2.key)[
+            minio.get_object_with_data(minio.UserFilesBucket, uploaded_file2.key)[
                 "Body"
             ],
             b"1234567",
@@ -157,15 +157,9 @@ class WfModuleTests(DbTestCase):
         uuid3 = str(uuidgen.uuid4())
         key3 = f"{wf_module.uploaded_file_prefix}{uuid3}.csv"
         minio.put_bytes(minio.UserFilesBucket, key3, b"9999999")
-        wf_module.uploaded_files.create(
-            name="t1.csv", uuid=uuid1, bucket=minio.UserFilesBucket, key=key1, size=7
-        )
-        wf_module.uploaded_files.create(
-            name="t2.csv", uuid=uuid2, bucket=minio.UserFilesBucket, key=key2, size=7
-        )
-        wf_module.uploaded_files.create(
-            name="t3.csv", uuid=uuid3, bucket=minio.UserFilesBucket, key=key3, size=7
-        )
+        wf_module.uploaded_files.create(name="t1.csv", uuid=uuid1, key=key1, size=7)
+        wf_module.uploaded_files.create(name="t2.csv", uuid=uuid2, key=key2, size=7)
+        wf_module.uploaded_files.create(name="t3.csv", uuid=uuid3, key=key3, size=7)
         # Write the _middle_ uuid to the old module -- proving that we aren't
         # selecting by ordering
         wf_module.params = {"file": uuid2, "has_header": True}
@@ -178,25 +172,6 @@ class WfModuleTests(DbTestCase):
         self.assertEqual(wf_module2.uploaded_files.count(), 1)
         new_uf = wf_module2.uploaded_files.first()
         self.assertEqual(new_uf.uuid, uuid2)
-
-    def test_module_version_lookup(self):
-        workflow = Workflow.create_and_init()
-        module_version = ModuleVersion.create_or_replace_from_spec(
-            {"id_name": "floob", "name": "Floob", "category": "Clean", "parameters": []}
-        )
-        wf_module = workflow.tabs.first().wf_modules.create(
-            order=0, slug="step-1", module_id_name="floob"
-        )
-        self.assertEqual(wf_module.module_version, module_version)
-        # white-box testing: test that we work even from cache
-        self.assertEqual(wf_module.module_version, module_version)
-
-    def test_module_version_missing(self):
-        workflow = Workflow.create_and_init()
-        wf_module = workflow.tabs.first().wf_modules.create(
-            order=0, slug="step-1", module_id_name="floob"
-        )
-        self.assertIsNone(wf_module.module_version)
 
     def test_delete_inprogress_file_upload(self):
         workflow = Workflow.create_and_init()
@@ -219,7 +194,6 @@ class WfModuleTests(DbTestCase):
         minio.put_bytes(minio.UserFilesBucket, key, b"A\n1")
         # Don't create the UploadedFile. Simulates races during upload/delete
         # that could write a file on S3 but not in our database.
-        # wf_module.uploaded_files.create(name='t.csv', size=3, uuid=uuid,
-        #                                bucket=minio.UserFilesBucket, key=key)
+        # wf_module.uploaded_files.create(name='t.csv', size=3, uuid=uuid, key=key)
         wf_module.delete()  # do not crash
         self.assertFalse(minio.exists(minio.UserFilesBucket, key))

@@ -1,6 +1,6 @@
 from unittest.mock import patch
 from django.utils import timezone
-from cjwkernel.types import FetchResult
+from cjwkernel.types import FetchResult, I18nMessage, RenderError
 from cjwkernel.tests.util import parquet_file
 from cjwstate import clientside, rabbitmq, storedobjects
 from cjwstate.models import WfModule, Workflow
@@ -33,11 +33,13 @@ class SaveTests(DbTestCase):
             )
         self.assertEqual(wf_module.stored_objects.count(), 1)
 
-        self.assertEqual(wf_module.fetch_error, "")
+        self.assertEqual(wf_module.fetch_error, None)
+        self.assertEqual(wf_module.fetch_errors, [])
         self.assertEqual(wf_module.is_busy, False)
         self.assertEqual(wf_module.last_update_check, now)
         wf_module.refresh_from_db()
-        self.assertEqual(wf_module.fetch_error, "")
+        self.assertEqual(wf_module.fetch_error, None)
+        self.assertEqual(wf_module.fetch_errors, [])
         self.assertEqual(wf_module.is_busy, False)
         self.assertEqual(wf_module.last_update_check, now)
 
@@ -60,18 +62,25 @@ class SaveTests(DbTestCase):
         send_update.side_effect = async_noop
         workflow = Workflow.create_and_init()
         wf_module = workflow.tabs.first().wf_modules.create(
-            order=0, slug="step-1", is_busy=True, fetch_error="previous error"
+            order=0,
+            slug="step-1",
+            is_busy=True,
+            fetch_errors=[RenderError(I18nMessage("foo", {}, "module"))],
         )
         now = timezone.datetime(2019, 10, 22, 12, 22, tzinfo=timezone.utc)
 
         self.run_with_async_db(save.mark_result_unchanged(workflow.id, wf_module, now))
         self.assertEqual(wf_module.stored_objects.count(), 0)
 
-        self.assertEqual(wf_module.fetch_error, "previous error")
+        self.assertEqual(
+            wf_module.fetch_errors, [RenderError(I18nMessage("foo", {}, "module"))]
+        )
         self.assertEqual(wf_module.is_busy, False)
         self.assertEqual(wf_module.last_update_check, now)
         wf_module.refresh_from_db()
-        self.assertEqual(wf_module.fetch_error, "previous error")
+        self.assertEqual(
+            wf_module.fetch_errors, [RenderError(I18nMessage("foo", {}, "module"))]
+        )
         self.assertEqual(wf_module.is_busy, False)
         self.assertEqual(wf_module.last_update_check, now)
 

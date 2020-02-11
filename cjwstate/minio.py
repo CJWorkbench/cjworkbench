@@ -91,9 +91,16 @@ Usage:
 
 
 def _build_bucket_name(key: str) -> str:
-    return "".join(
-        [settings.MINIO_BUCKET_PREFIX, "-", key, settings.MINIO_BUCKET_SUFFIX]
-    )
+    if settings.MINIO_BUCKET_PREFIX:
+        # "production-user-files.workbenchdata.com" -- deprecated
+        # (staging: "staging-user-files.workbenchdata.com")
+        return "".join(
+            [settings.MINIO_BUCKET_PREFIX, "-", key, settings.MINIO_BUCKET_SUFFIX]
+        )
+    else:
+        # "user-files.workbenchdata.com" -- [2020-01-29] we want this everywhere
+        # (staging: "user-files.workbenchdata-staging.com")
+        return key + settings.MINIO_BUCKET_SUFFIX
 
 
 UserFilesBucket = _build_bucket_name("user-files")
@@ -362,7 +369,7 @@ def download(bucket: str, key: str, path: pathlib.Path) -> None:
     """
     Copy a file from S3 to a pathlib.Path.
 
-    Raise FileNotFound if the key is not on S3.
+    Raise FileNotFoundError if the key is not on S3.
     """
     try:
         transfer.download_file(bucket, key, str(path))

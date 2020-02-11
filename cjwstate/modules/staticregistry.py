@@ -14,7 +14,7 @@ Defining modules
 ================
 
 Modules are declared by a ".json" spec file, which must be named after the
-module id_name. The ".py" file must have the same name; a ".html" file is
+module id. The ".py" file must have the same name; a ".html" file is
 allowed, too.
 
 Each module may define one or both (preferably one) of the following functions:
@@ -42,25 +42,50 @@ their ``.json`` spec files.
 >>> import cjwstate.modules
 >>> from cjwstate.modules import staticregistry
 >>> cjwstate.modules.init_module_system()
->>> staticregistry.Lookup['pythoncode']  # dynamic lookup by id_name
+>>> staticregistry.Lookup['pythoncode']  # dynamic lookup by id
 """
 from pathlib import Path
+from typing import Dict
+import zipfile
 import staticmodules
-from .module_loader import ModuleSpec
+from .types import ModuleZipfile
 
 
-Lookup = {}
-Specs = {}
+Lookup: Dict[str, ModuleZipfile] = {}
+
+
+MODULE_TEMPDIR = Path("/var/tmp/cjwkernel-modules")
 
 
 def _setup(kernel):
+    MODULE_TEMPDIR.mkdir(exist_ok=True)
+
     spec_paths = list(Path(staticmodules.__file__).parent.glob("*.yaml"))
     for spec_path in spec_paths:
-        spec = ModuleSpec.load_from_path(spec_path)
+        module_id = spec_path.stem
+
+        # We leak these tempfiles ... but there's a fixed number of them and
+        # Workbench already runs on docker so the tempfiles won't pile up
+        # anywhere. TODO nix static modules, nixing this problem.
+        zip_path = MODULE_TEMPDIR / ("%s.internal.zip" % spec_path.stem)
+        with zipfile.ZipFile(zip_path, mode="w") as zf:
+            zf.write(spec_path, spec_path.name)
+
+            py_path = spec_path.with_suffix(".py")
+            zf.write(py_path, py_path.name)
+
+            html_path = spec_path.with_suffix(".html")
+            if html_path.exists():
+                zf.write(html_path, html_path.name)
+
+        module_zipfile = ModuleZipfile(zip_path)
+        spec = module_zipfile.get_spec()  # raise ValueError
         assert (
-            "parameters_version" in spec.data
+            spec.parameters_version is not None
         ), "Internal modules require a 'parameters_version'"
-        id_name = spec_path.stem
-        compiled_module = kernel.compile(spec_path.with_suffix(".py"), id_name)
-        Lookup[id_name] = compiled_module
-        Specs[id_name] = spec
+
+        # raise SyntaxError
+        compiled_module = module_zipfile.compile_code_without_executing()
+        kernel.validate(compiled_module)
+
+        Lookup[module_id] = module_zipfile

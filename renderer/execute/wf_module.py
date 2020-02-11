@@ -5,7 +5,8 @@ import datetime
 from functools import partial
 import logging
 from pathlib import Path
-from typing import Any, Dict, Optional, Tuple
+import time
+from typing import Any, Dict, NamedTuple, Optional
 from cjworkbench.sync import database_sync_to_async
 from cjwkernel.chroot import ChrootContext
 from cjwkernel.errors import ModuleError, format_for_user_debugging
@@ -13,6 +14,7 @@ from cjwkernel.types import (
     ArrowTable,
     FetchResult,
     I18nMessage,
+    Params,
     RenderError,
     RenderResult,
     Tab,
@@ -20,7 +22,8 @@ from cjwkernel.types import (
 from cjwkernel.util import tempfile_context
 from cjwstate import clientside, minio, rabbitmq, rendercache
 from cjwstate.models import StoredObject, WfModule, Workflow
-from cjwstate.modules.loaded_module import LoadedModule
+import cjwstate.modules
+from cjwstate.modules.types import ModuleZipfile
 from renderer import notifications
 from .types import (
     TabCycleError,
@@ -91,7 +94,7 @@ def _load_fetch_result(
         )
     except StoredObject.DoesNotExist:
         return None
-    if not stored_object.bucket or not stored_object.key:
+    if not stored_object.key:
         return None
 
     with contextlib.ExitStack() as inner_stack:
@@ -100,7 +103,7 @@ def _load_fetch_result(
         )
 
         try:
-            minio.download(stored_object.bucket, stored_object.key, path)
+            minio.download(minio.StoredObjectsBucket, stored_object.key, path)
             # Download succeeded, so we no longer want to delete `path`
             # right _now_ ("now" means, "in inner_stack.close()"). Instead,
             # transfer ownership of `path` to exit_stack.
@@ -122,6 +125,9 @@ def _load_fetch_result(
 
     if wf_module.fetch_error:
         errors = [RenderError(I18nMessage.TODO_i18n(wf_module.fetch_error))]
+    elif wf_module.fetch_errors:
+        # TODO_i18n make this the only case
+        errors = wf_module.fetch_errors
     else:
         errors = []
     return FetchResult(path, errors)
@@ -145,29 +151,95 @@ def _wrap_render_errors(render_call):
         )
 
 
+def invoke_render(
+    module_zipfile: ModuleZipfile,
+    *,
+    chroot_context: ChrootContext,
+    basedir: Path,
+    input_table: ArrowTable,
+    params: Params,
+    tab: Tab,
+    fetch_result: Optional[FetchResult],
+    output_filename: str,
+) -> RenderResult:
+    """
+    Use kernel to process `table` with module `render` function.
+
+    Raise `ModuleError` on error. (This is usually the module author's fault.)
+
+    Log any ModuleError. Also log success.
+
+    This synchronous method can be slow for complex modules or large
+    datasets. Consider calling it from an executor.
+    """
+    time1 = time.time()
+    begin_status_format = "%s:render() (%d rows, %d cols, %0.1fMB)"
+    begin_status_args = (
+        module_zipfile.path.name,
+        input_table.metadata.n_rows,
+        len(input_table.metadata.columns),
+        input_table.n_bytes_on_disk / 1024 / 1024,
+    )
+    logger.info(begin_status_format + " begin", *begin_status_args)
+    status = "???"
+    try:
+        result = cjwstate.modules.kernel.render(
+            module_zipfile.compile_code_without_executing(),
+            chroot_context=chroot_context,
+            basedir=basedir,
+            input_table=input_table,
+            params=params,
+            tab=tab,
+            fetch_result=fetch_result,
+            output_filename=output_filename,
+        )
+        status = "(%drows, %dcols, %0.1fMB)" % (
+            result.table.metadata.n_rows,
+            len(result.table.metadata.columns),
+            result.table.n_bytes_on_disk / 1024 / 1024,
+        )
+        return result
+    except ModuleError as err:
+        logger.exception("Exception in %s:render", module_zipfile.path.name)
+        status = type(err).__name__
+        raise
+    finally:
+        time2 = time.time()
+
+        logger.info(
+            begin_status_format + " => %s in %dms",
+            *begin_status_args,
+            status,
+            int((time2 - time1) * 1000),
+        )
+
+
+class ExecuteStepPreResult(NamedTuple):
+    fetch_result: Optional[FetchResult]
+    params: Dict[str, Any]
+
+
 @database_sync_to_async
 def _execute_wfmodule_pre(
     basedir: Path,
     exit_stack: contextlib.ExitStack,
     workflow: Workflow,
     wf_module: WfModule,
+    module_zipfile: ModuleZipfile,
     raw_params: Dict[str, Any],
     input_table: ArrowTable,
     tab_results: Dict[Tab, Optional[RenderResult]],
-) -> Tuple[Optional[LoadedModule], Optional[RenderResult], Dict[str, Any]]:
+) -> ExecuteStepPreResult:
     """
     First step of execute_wfmodule().
-
-    Return a Tuple in this order:
-        * loaded_module: a ModuleVersion for dispatching render
-        * fetch_result: optional FetchResult for dispatching render
-        * params: a Params for dispatching render
 
     Raise TabCycleError or TabOutputUnreachableError if the module depends on
     tabs with errors. (We won't call the render() method in that case.)
 
     Raise PromptingError if the module parameters are invalid. (We'll skip
     render() and prompt the user with quickfixes in that case.)
+
+    Raise UnneededExecution if `wf_module` has changed.
 
     All this runs synchronously within a database lock. (It's a separate
     function so that when we're done awaiting it, we can continue executing in
@@ -177,12 +249,10 @@ def _execute_wfmodule_pre(
     """
     # raises UnneededExecution
     with locked_wf_module(workflow, wf_module) as safe_wf_module:
-        module_version = safe_wf_module.module_version
-        loaded_module = LoadedModule.for_module_version(module_version)
-        if loaded_module is None:
-            # module was deleted. Skip other fetches.
-            return (None, None, {})
+        fetch_result = _load_fetch_result(safe_wf_module, basedir, exit_stack)
 
+        module_spec = module_zipfile.get_spec()
+        param_schema = module_spec.get_param_schema()
         render_context = renderprep.RenderContext(
             wf_module.id,
             input_table,
@@ -191,12 +261,10 @@ def _execute_wfmodule_pre(
             exit_stack,
             raw_params,  # ugh
         )
-        params = renderprep.get_param_values(
-            module_version.param_schema, raw_params, render_context
-        )
-        fetch_result = _load_fetch_result(safe_wf_module, basedir, exit_stack)
+        # raise TabCycleError, TabOutputUnreachableError, PromptingError
+        params = renderprep.get_param_values(param_schema, raw_params, render_context)
 
-        return (loaded_module, fetch_result, params)
+        return ExecuteStepPreResult(fetch_result, params)
 
 
 @database_sync_to_async
@@ -264,6 +332,7 @@ async def _render_wfmodule(
     chroot_context: ChrootContext,
     workflow: Workflow,
     wf_module: WfModule,
+    module_zipfile: Optional[ModuleZipfile],
     raw_params: Dict[str, Any],
     tab: Tab,
     input_result: RenderResult,
@@ -281,14 +350,29 @@ async def _render_wfmodule(
     if wf_module.order > 0 and input_result.status != "ok":
         return RenderResult()  # 'unreachable'
 
+    if module_zipfile is None:
+        return RenderResult(
+            errors=[
+                RenderError(
+                    I18nMessage.trans(
+                        "py.renderer.execute.wf_module._render_wfmodule.noModule",
+                        default="Please delete this step: an administrator uninstalled its code.",
+                    )
+                )
+            ]
+        )
+
     # exit_stack: stuff that gets deleted when the render is done
     with contextlib.ExitStack() as exit_stack:
         try:
-            loaded_module, fetch_result, params = await _execute_wfmodule_pre(
+            # raise UnneededExecution, TabCycleError, TabOutputUnreachableError,
+            # PromptingError
+            fetch_result, params = await _execute_wfmodule_pre(
                 basedir,
                 exit_stack,
                 workflow,
                 wf_module,
+                module_zipfile,
                 raw_params,
                 input_result.table,
                 tab_results,
@@ -298,7 +382,7 @@ async def _render_wfmodule(
                 errors=[
                     RenderError(
                         I18nMessage.trans(
-                            "py.renderer.execute.wf_module._render_module.TabCycleError",
+                            "py.renderer.execute.wf_module._render_wfmodule.TabCycleError",
                             default="The chosen tab depends on this one. Please choose another tab.",
                         )
                     )
@@ -309,7 +393,7 @@ async def _render_wfmodule(
                 errors=[
                     RenderError(
                         I18nMessage.trans(
-                            "py.renderer.execute.wf_module._render_module.TabOutputUnreachableError",
+                            "py.renderer.execute.wf_module._render_wfmodule.TabOutputUnreachableError",
                             default="The chosen tab has no output. Please select another one.",
                         )
                     )
@@ -318,18 +402,6 @@ async def _render_wfmodule(
         except PromptingError as err:
             return RenderResult(errors=err.as_render_errors())
 
-        if loaded_module is None:
-            return RenderResult(
-                errors=[
-                    RenderError(
-                        I18nMessage.trans(
-                            "py.renderer.execute.wf_module._render_module.noLoadedModule",
-                            default="Please delete this step: an administrator uninstalled its code.",
-                        )
-                    )
-                ]
-            )
-
         # Render may take a while. run_in_executor to push that slowdown to a
         # thread and keep our event loop responsive.
         loop = asyncio.get_event_loop()
@@ -337,7 +409,8 @@ async def _render_wfmodule(
             None,
             _wrap_render_errors,
             partial(
-                loaded_module.render,
+                invoke_render,
+                module_zipfile,
                 chroot_context=chroot_context,
                 basedir=basedir,
                 input_table=input_result.table,
@@ -353,6 +426,7 @@ async def execute_wfmodule(
     chroot_context: ChrootContext,
     workflow: Workflow,
     wf_module: WfModule,
+    module_zipfile: Optional[ModuleZipfile],
     params: Dict[str, Any],
     tab: Tab,
     input_result: RenderResult,
@@ -387,26 +461,28 @@ async def execute_wfmodule(
 
     Raises `UnneededExecution` when the input WfModule should not be rendered.
     """
-    # delta_id won't change throughout this function
-    delta_id = wf_module.last_relevant_delta_id
-
     # may raise UnneededExecution
     result = await _render_wfmodule(
-        chroot_context,
-        workflow,
-        wf_module,
-        params,
-        tab,
-        input_result,
-        tab_results,
-        output_path,
+        chroot_context=chroot_context,
+        workflow=workflow,
+        wf_module=wf_module,
+        module_zipfile=module_zipfile,
+        raw_params=params,
+        tab=tab,
+        input_result=input_result,
+        tab_results=tab_results,
+        output_path=output_path,
     )
 
     # may raise UnneededExecution
     crr, output_delta = await _execute_wfmodule_save(workflow, wf_module, result)
 
     update = clientside.Update(
-        steps={wf_module.id: clientside.StepUpdate(render_result=crr)}
+        steps={
+            wf_module.id: clientside.StepUpdate(
+                render_result=crr, module_slug=wf_module.module_id_name
+            )
+        }
     )
     await rabbitmq.send_update_to_workflow_clients(workflow.id, update)
 

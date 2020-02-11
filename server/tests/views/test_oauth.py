@@ -1,11 +1,11 @@
 from unittest.mock import Mock, patch
 from django.contrib.auth.models import User
 from cjwstate import oauth
-from cjwstate.models import Workflow, ModuleVersion
-from cjwstate.tests.utils import DbTestCase
+from cjwstate.models import Workflow
+from cjwstate.tests.utils import DbTestCaseWithModuleRegistry
 
 
-class OauthTest(DbTestCase):
+class OauthTest(DbTestCaseWithModuleRegistry):
     @patch("cjwstate.oauth.OAuthService.lookup_or_none")
     def test_oauth1a_token_request_denied(self, lookup):
         lookup.return_value = Mock(oauth.OAuthService)
@@ -13,20 +13,21 @@ class OauthTest(DbTestCase):
             "no!", {}
         )
 
-        ModuleVersion.create_or_replace_from_spec(
-            {
-                "id_name": "twitter",
-                "name": "",
-                "category": "Clean",
-                "parameters": [
-                    {
-                        "id_name": "twitter_credentials",
-                        "type": "secret",
-                        "secret_logic": {"provider": "oauth1a", "service": "twitter"},
-                    }
-                ],
-            }
-        )
+        # [2020-01-27] twitter is an internal module, so don't create it
+        # ModuleVersion.create_or_replace_from_spec(
+        #     {
+        #         "id_name": "twitter",
+        #         "name": "",
+        #         "category": "Clean",
+        #         "parameters": [
+        #             {
+        #                 "id_name": "twitter_credentials",
+        #                 "type": "secret",
+        #                 "secret_logic": {"provider": "oauth1a", "service": "twitter"},
+        #             }
+        #         ],
+        #     }
+        # )
 
         user = User.objects.create(username="a@example.org", email="a@example.org")
         self.client.force_login(user)

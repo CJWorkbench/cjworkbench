@@ -9,9 +9,13 @@ from server.handlers.tab import (
     set_name,
 )
 from cjwstate import rabbitmq
-from cjwstate.models import ModuleVersion, Workflow
+from cjwstate.models import Workflow
 from cjwstate.models.commands import AddModuleCommand, ReorderModulesCommand
 from .util import HandlerTestCase
+from cjwstate.tests.utils import (
+    DbTestCaseWithModuleRegistryAndMockKernel,
+    create_module_zipfile,
+)
 
 
 async def async_noop(*args, **kwargs):
@@ -22,32 +26,16 @@ def noop(*args, **kwargs):
     pass
 
 
-class MockLoadedModule:
-    def __init__(self, *args):
-        pass
-
-    def migrate_params(self, values):
-        return values
-
-
-class TabTest(HandlerTestCase):
-    @patch(
-        "cjwstate.modules.loaded_module.LoadedModule.for_module_version",
-        MockLoadedModule,
-    )
+class TabTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
     @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
     @patch.object(rabbitmq, "queue_render", async_noop)
     @patch("server.utils.log_user_event_from_scope", noop)
     def test_add_module(self):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)  # with tab-1
-        module_version = ModuleVersion.create_or_replace_from_spec(
-            {
-                "id_name": "amodule",
-                "name": "A Module",
-                "category": "Clean",
-                "parameters": [{"id_name": "foo", "type": "string"}],
-            }
+        create_module_zipfile(
+            "amodule",
+            spec_kwargs={"parameters": [{"id_name": "foo", "type": "string"}]},
         )
 
         response = self.run_handler(
@@ -64,20 +52,16 @@ class TabTest(HandlerTestCase):
 
         command = AddModuleCommand.objects.first()
         self.assertEquals(command.wf_module.order, 3)
-        self.assertEquals(command.wf_module.module_version, module_version)
+        self.assertEquals(command.wf_module.module_id_name, "amodule")
         self.assertEquals(command.wf_module.params["foo"], "bar")
         self.assertEquals(command.wf_module.tab.slug, "tab-1")
         self.assertEquals(command.workflow_id, workflow.id)
 
     def test_add_module_viewer_access_denied(self):
         workflow = Workflow.create_and_init(public=True)  # tab-1
-        ModuleVersion.create_or_replace_from_spec(
-            {
-                "id_name": "amodule",
-                "name": "A Module",
-                "category": "Clean",
-                "parameters": [{"id_name": "foo", "type": "string"}],
-            }
+        create_module_zipfile(
+            "amodule",
+            spec_kwargs={"parameters": [{"id_name": "foo", "type": "string"}]},
         )
         response = self.run_handler(
             add_module,
@@ -94,13 +78,9 @@ class TabTest(HandlerTestCase):
     def test_add_module_param_values_not_object(self):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)  # tab-1
-        ModuleVersion.create_or_replace_from_spec(
-            {
-                "id_name": "amodule",
-                "name": "A Module",
-                "category": "Clean",
-                "parameters": [{"id_name": "foo", "type": "string"}],
-            }
+        create_module_zipfile(
+            "amodule",
+            spec_kwargs={"parameters": [{"id_name": "foo", "type": "string"}]},
         )
 
         response = self.run_handler(
@@ -118,13 +98,9 @@ class TabTest(HandlerTestCase):
     def test_add_module_invalid_param_values(self):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)  # tab-1
-        ModuleVersion.create_or_replace_from_spec(
-            {
-                "id_name": "amodule",
-                "name": "A Module",
-                "category": "Clean",
-                "parameters": [{"id_name": "foo", "type": "string"}],
-            }
+        create_module_zipfile(
+            "amodule",
+            spec_kwargs={"parameters": [{"id_name": "foo", "type": "string"}]},
         )
 
         response = self.run_handler(
@@ -145,13 +121,9 @@ class TabTest(HandlerTestCase):
     def test_add_module_invalid_position(self):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)  # tab-1
-        ModuleVersion.create_or_replace_from_spec(
-            {
-                "id_name": "amodule",
-                "name": "A Module",
-                "category": "Clean",
-                "parameters": [{"id_name": "foo", "type": "string"}],
-            }
+        create_module_zipfile(
+            "amodule",
+            spec_kwargs={"parameters": [{"id_name": "foo", "type": "string"}]},
         )
 
         response = self.run_handler(
@@ -173,13 +145,9 @@ class TabTest(HandlerTestCase):
         # Create a "honeypot" tab -- make sure the module doesn't get inserted
         # in the other workflow's 'tab-2'!
         other_workflow.tabs.create(position=1, slug="tab-2")
-        ModuleVersion.create_or_replace_from_spec(
-            {
-                "id_name": "amodule",
-                "name": "A Module",
-                "category": "Clean",
-                "parameters": [{"id_name": "foo", "type": "string"}],
-            }
+        create_module_zipfile(
+            "amodule",
+            spec_kwargs={"parameters": [{"id_name": "foo", "type": "string"}]},
         )
 
         response = self.run_handler(

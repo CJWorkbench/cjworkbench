@@ -1,0 +1,21 @@
+---
+apiVersion: networking.gke.io/v1beta1
+kind: ManagedCertificate
+metadata:
+  name: user-files-cert
+spec:
+  domains:
+    - user-files.$DOMAIN
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: minio-ingress
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: user-files
+    networking.gke.io/managed-certificates: user-files-cert
+    kubernetes.io/ingress.allow-http: "false"
+spec:
+  backend:
+    serviceName: minio-service
+    servicePort: 80

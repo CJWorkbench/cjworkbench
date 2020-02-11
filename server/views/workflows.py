@@ -2,7 +2,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 import datetime
 import json
-from typing import Iterable, List, Optional
+from typing import Any, Dict, List, Optional
 from asgiref.sync import async_to_sync
 from django.contrib.auth.decorators import login_required
 import django.db
@@ -14,12 +14,10 @@ from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views import View
 from rest_framework import status
-from rest_framework.decorators import api_view
-from rest_framework.decorators import renderer_classes
-from rest_framework.response import Response
-from rest_framework.renderers import JSONRenderer
 from cjwstate import clientside, rabbitmq
-from cjwstate.models import ModuleVersion, Workflow, WfModule, Tab
+from cjwstate.models import Workflow, WfModule, Tab
+from cjwstate.models.module_registry import MODULE_REGISTRY
+from cjwstate.modules.types import ModuleZipfile
 from server.models.course import CourseLookup
 from server.models.lesson import LessonLookup
 from server.serializers import (
@@ -30,16 +28,12 @@ from server.serializers import (
 )
 import server.utils
 from server.settingsutils import workbench_user_display
-from .auth import (
-    lookup_workflow_for_write,
-    loads_workflow_for_read,
-    loads_workflow_for_write,
-)
+from .auth import loads_workflow_for_read, loads_workflow_for_write
 from cjworkbench.i18n import default_locale
 
 
 def make_init_state(
-    request, workflow: Workflow, modules: Iterable[ModuleVersion]
+    request, workflow: Workflow, modules: Dict[str, ModuleZipfile]
 ) -> Dict[str, Any]:
     """
     Build a dict to embed as JSON in `window.initState` in HTML.
@@ -48,8 +42,6 @@ def make_init_state(
 
     Side-effect: update workflow.last_viewed_at.
     """
-    ret = {}
-
     try:
         with workflow.cooperative_lock():  # raise DoesNotExist on race
             workflow.last_viewed_at = timezone.now()
@@ -62,12 +54,18 @@ def make_init_state(
                     step.id: step.to_clientside()
                     for step in WfModule.live_in_workflow(workflow)
                 },
-                modules={module.id_name: module.to_clientside() for module in modules},
+                modules={
+                    module_id: clientside.Module(
+                        spec=module.get_spec(),
+                        js_module=module.get_optional_js_module(),
+                    )
+                    for module_id, module in modules.items()
+                },
             )
     except Workflow.DoesNotExist:
         raise Http404("Workflow was recently deleted")
 
-    ctx = JsonizeContext(request.user, request.session, request.locale_id)
+    ctx = JsonizeContext(request.user, request.session, request.locale_id, modules)
     return jsonize_clientside_init(state, ctx)
 
 
@@ -84,7 +82,7 @@ class Index(View):
     def get(self, request: HttpRequest):
         """Render workflow-list page."""
 
-        ctx = JsonizeContext(request.user, request.session, request.locale_id)
+        ctx = JsonizeContext(request.user, request.session, request.locale_id, {})
 
         def list_workflows_as_json(**kwargs) -> List[Dict[str, Any]]:
             workflows = (
@@ -151,14 +149,14 @@ def _get_anonymous_workflow_for(workflow: Workflow, request: HttpRequest) -> Wor
         return new_workflow
 
 
-def visible_modules(request):
+def visible_modules(request) -> Dict[str, ModuleZipfile]:
     """
-    Load all ModuleVersions the user may use.
+    Load all ModuleZipfiles the user may use.
     """
-    ret = ModuleVersion.objects.get_all_latest()
+    ret = dict(MODULE_REGISTRY.all_latest())  # shallow copy
 
     if not request.user.is_authenticated:
-        ret = [mv for mv in ret if mv.id_name != "pythoncode"]
+        del ret["pythoncode"]
 
     return ret
 
@@ -285,7 +283,12 @@ class Duplicate(View):
     @method_decorator(loads_workflow_for_read)
     def post(self, request: HttpRequest, workflow: Workflow):
         workflow2 = workflow.duplicate(request.user)
-        ctx = JsonizeContext(request.user, request.session, request.locale_id)
+        ctx = JsonizeContext(
+            request.user,
+            request.session,
+            request.locale_id,
+            dict(MODULE_REGISTRY.all_latest()),
+        )
         json_dict = jsonize_clientside_workflow(
             workflow2.to_clientside(), ctx, is_init=True
         )
@@ -318,7 +321,9 @@ class Report(View):
         wf_modules: List[Report.WfModuleWithIframe]
 
         @classmethod
-        def from_tab(cls, tab: Tab) -> Report.TabWithIframes:
+        def from_tab(
+            cls, tab: Tab, module_zipfiles: Dict[str, ModuleZipfile]
+        ) -> Report.TabWithIframes:
             all_wf_modules = tab.live_wf_modules.only(
                 "id", "last_relevant_delta_id", "module_id_name"
             )
@@ -326,7 +331,11 @@ class Report(View):
             wf_modules = [
                 Report.WfModuleWithIframe.from_wf_module(wf_module)
                 for wf_module in all_wf_modules
-                if wf_module.module_version.html_output
+                if wf_module.module_id_name in module_zipfiles
+                and (
+                    module_zipfiles[wf_module.module_id_name].get_optional_html()
+                    is not None
+                )
             ]
             return cls(slug=tab.slug, name=tab.name, wf_modules=wf_modules)
 
@@ -340,11 +349,14 @@ class Report(View):
 
         @classmethod
         def from_workflow(cls, workflow: Workflow) -> Report.ReportWorkflow:
+            module_zipfiles = MODULE_REGISTRY.all_latest()
+
             # prefetch would be nice, but it's tricky because A) we need to
-            # filter out is_deleted; and B) we need to filter out
-            # ModuleVersions without .html_output.
+            # filter out is_deleted; and B) we need to filter for modules that
+            # have .html files.
             all_tabs = [
-                Report.TabWithIframes.from_tab(tab) for tab in workflow.live_tabs
+                Report.TabWithIframes.from_tab(tab, module_zipfiles)
+                for tab in workflow.live_tabs
             ]
             tabs = [tab for tab in all_tabs if tab.wf_modules]
             return cls(

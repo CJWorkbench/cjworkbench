@@ -5,7 +5,7 @@ from django.views.generic.base import RedirectView
 from django.urls import path
 from . import views
 from django.contrib.staticfiles import views as staticfiles_views
-from .views import acl, lessons, oauth, workflows, uploads
+from .views import acl, health, lessons, oauth, workflows, uploads
 
 
 def redirect(url: str):
@@ -89,10 +89,6 @@ urlpatterns = [
     ),
     url(r"^api/importfromgithub/?$", views.import_from_github),
     # WfModules (Modules applied in a workflow)
-    url(
-        r"^api/wfmodules/<int:wf_module_id>/tiles/v<int:delta_id>/r<int:tile_row>/c<int:tile_column>.json$",
-        views.wfmodule_tile,
-    ),
     # TODO: "render" and "output" are bad names. Differentiate them.
     path("api/wfmodules/<int:wf_module_id>/render", views.wfmodule_render),
     path("api/wfmodules/<int:wf_module_id>/output", views.wfmodule_output),
@@ -108,6 +104,7 @@ urlpatterns = [
     url(r"^oauth/?$", oauth.finish_authorize),
     # Embeds
     url(r"^embed/(?P<wfmodule_id>[0-9]+)/?$", views.embed),
+    url(r"^healthz$", health.healthz),
     # 404
     url(r"^404/$", TemplateView.as_view(template_name="404.html")),
     # 403

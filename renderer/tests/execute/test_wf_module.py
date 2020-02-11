@@ -1,22 +1,15 @@
 import contextlib
 import logging
-from unittest.mock import Mock, patch
+import textwrap
+from unittest.mock import patch
 from django.utils import timezone
-import pyarrow
 from cjwkernel.chroot import EDITABLE_CHROOT
-from cjwkernel.errors import ModuleExitedError
 from cjwkernel.types import I18nMessage, RenderError, RenderResult, Tab
-from cjwkernel.tests.util import (
-    arrow_table,
-    arrow_table_context,
-    parquet_file,
-    assert_arrow_table_equals,
-)
+from cjwkernel.tests.util import arrow_table, parquet_file
 from cjwstate import minio, rabbitmq, rendercache
 from cjwstate.storedobjects import create_stored_object
-from cjwstate.models import ModuleVersion, Workflow
-from cjwstate.modules.loaded_module import LoadedModule
-from cjwstate.tests.utils import DbTestCase
+from cjwstate.models import Workflow
+from cjwstate.tests.utils import DbTestCaseWithModuleRegistry, create_module_zipfile
 from renderer import notifications
 from renderer.execute.wf_module import execute_wfmodule
 
@@ -25,7 +18,7 @@ async def noop(*args, **kwargs):
     return
 
 
-class WfModuleTests(DbTestCase):
+class WfModuleTests(DbTestCaseWithModuleRegistry):
     def setUp(self):
         super().setUp()
         self.ctx = contextlib.ExitStack()
@@ -40,16 +33,6 @@ class WfModuleTests(DbTestCase):
     def tearDown(self):
         self.ctx.close()
         super().tearDown()
-
-    @contextlib.contextmanager
-    def _stub_module(self, render_fn):
-        mock_module = Mock(LoadedModule)
-        mock_module.render.side_effect = render_fn
-        ModuleVersion.create_or_replace_from_spec(
-            {"id_name": "x", "name": "X", "category": "Clean", "parameters": []}
-        )
-        with patch.object(LoadedModule, "for_module_version", lambda *a: mock_module):
-            yield
 
     @patch.object(rabbitmq, "send_update_to_workflow_clients", noop)
     def test_deleted_module(self):
@@ -66,6 +49,7 @@ class WfModuleTests(DbTestCase):
                 self.chroot_context,
                 workflow,
                 wf_module,
+                None,
                 {},
                 tab.to_arrow(),
                 RenderResult(),
@@ -77,7 +61,7 @@ class WfModuleTests(DbTestCase):
             errors=[
                 RenderError(
                     I18nMessage(
-                        "py.renderer.execute.wf_module._render_module.noLoadedModule"
+                        "py.renderer.execute.wf_module._render_wfmodule.noModule"
                     )
                 )
             ]
@@ -107,27 +91,27 @@ class WfModuleTests(DbTestCase):
         wf_module.last_relevant_delta_id = workflow.last_delta_id
         wf_module.save(update_fields=["last_relevant_delta_id"])
 
-        with arrow_table_context({"A": [2]}) as table2:
-
-            def render(*args, **kwargs):
-                return RenderResult(table2)
-
-            with self._stub_module(render):
-                self.run_with_async_db(
-                    execute_wfmodule(
-                        self.chroot_context,
-                        workflow,
-                        wf_module,
-                        {},
-                        Tab(tab.slug, tab.name),
-                        RenderResult(),
-                        {},
-                        self.output_path,
-                    )
+        module_zipfile = create_module_zipfile(
+            "x",
+            python_code='import pandas as pd\ndef render(table, params): return pd.DataFrame({"A": [2]})',
+        )
+        with self.assertLogs(level=logging.INFO):
+            self.run_with_async_db(
+                execute_wfmodule(
+                    self.chroot_context,
+                    workflow,
+                    wf_module,
+                    module_zipfile,
+                    {},
+                    Tab(tab.slug, tab.name),
+                    RenderResult(),
+                    {},
+                    self.output_path,
                 )
-
+            )
         email_delta.assert_called()
         delta = email_delta.call_args[0][0]
+
         self.assertEqual(delta.user, workflow.owner)
         self.assertEqual(delta.workflow, workflow)
         self.assertEqual(delta.wf_module, wf_module)
@@ -160,30 +144,31 @@ class WfModuleTests(DbTestCase):
         wf_module.last_relevant_delta_id = workflow.last_delta_id
         wf_module.save(update_fields=["last_relevant_delta_id"])
 
-        with arrow_table_context({"A": [2]}) as table2:
+        module_zipfile = create_module_zipfile(
+            "x",
+            # returns different data -- but CorruptCacheError means we won't care.
+            python_code='import pandas as pd\ndef render(table, params): return pd.DataFrame({"A": [2]})',
+        )
 
-            def render(*args, **kwargs):
-                return RenderResult(table2)
-
-            with self._stub_module(render):
-                with self.assertLogs(level=logging.ERROR):
-                    self.run_with_async_db(
-                        execute_wfmodule(
-                            self.chroot_context,
-                            workflow,
-                            wf_module,
-                            {},
-                            Tab(tab.slug, tab.name),
-                            RenderResult(),
-                            {},
-                            self.output_path,
-                        )
-                    )
+        with self.assertLogs(level=logging.ERROR):
+            self.run_with_async_db(
+                execute_wfmodule(
+                    self.chroot_context,
+                    workflow,
+                    wf_module,
+                    module_zipfile,
+                    {},
+                    Tab(tab.slug, tab.name),
+                    RenderResult(),
+                    {},
+                    self.output_path,
+                )
+            )
 
         email_delta.assert_not_called()
 
     @patch.object(rabbitmq, "send_update_to_workflow_clients", noop)
-    def test_fetch_result_happy_path(self):
+    def test_fetch_result_deprecated_fetch_error(self):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
         wf_module = tab.wf_modules.create(
@@ -198,22 +183,86 @@ class WfModuleTests(DbTestCase):
         wf_module.stored_data_version = so.stored_at
         wf_module.save(update_fields=["stored_data_version"])
 
-        def render(*args, fetch_result, **kwargs):
-            self.assertEqual(
-                fetch_result.errors,
-                [RenderError(I18nMessage.TODO_i18n("maybe an error"))],
-            )
-            assert_arrow_table_equals(
-                pyarrow.parquet.read_table(str(fetch_result.path)), {"A": [1]}
-            )
-            return RenderResult()
+        module_zipfile = create_module_zipfile(
+            "x",
+            python_code=textwrap.dedent(
+                """
+                import pyarrow as pa
+                import pandas as pd
+                from pandas.testing import assert_frame_equal
+                from cjwkernel.types import RenderError, I18nMessage
 
-        with self._stub_module(render):
+                def render(table, params, *, fetch_result, **kwargs):
+                    assert fetch_result.errors == [RenderError(I18nMessage.TODO_i18n("maybe an error"))]
+                    fetch_dataframe = pa.parquet.read_table(str(fetch_result.path))
+                    assert_frame_equal(fetch_dataframe, pd.DataFrame({"A": [1]}))
+                    return pd.DataFrame()
+                """
+            ),
+        )
+
+        with self.assertLogs(level=logging.INFO):
             self.run_with_async_db(
                 execute_wfmodule(
                     self.chroot_context,
                     workflow,
                     wf_module,
+                    module_zipfile,
+                    {},
+                    Tab(tab.slug, tab.name),
+                    RenderResult(),
+                    {},
+                    self.output_path,
+                )
+            )
+
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", noop)
+    def test_fetch_result_happy_path(self):
+        workflow = Workflow.create_and_init()
+        tab = workflow.tabs.first()
+        wf_module = tab.wf_modules.create(
+            order=0,
+            slug="step-1",
+            module_id_name="x",
+            last_relevant_delta_id=workflow.last_delta_id,
+            fetch_errors=[
+                RenderError(I18nMessage("foo", {}, "module")),
+                RenderError(I18nMessage("bar", {"x": "y"}, "cjwmodule")),
+            ],
+        )
+        with parquet_file({"A": [1]}) as path:
+            so = create_stored_object(workflow.id, wf_module.id, path)
+        wf_module.stored_data_version = so.stored_at
+        wf_module.save(update_fields=["stored_data_version"])
+
+        module_zipfile = create_module_zipfile(
+            "x",
+            python_code=textwrap.dedent(
+                """
+                import pyarrow as pa
+                import pandas as pd
+                from pandas.testing import assert_frame_equal
+                from cjwkernel.types import RenderError, I18nMessage
+
+                def render(table, params, *, fetch_result, **kwargs):
+                    assert fetch_result.errors == [
+                        RenderError(I18nMessage("foo", {}, "module")),
+                        RenderError(I18nMessage("bar", {"x": "y"}, "cjwmodule")),
+                    ]
+                    fetch_dataframe = pa.parquet.read_table(str(fetch_result.path))
+                    assert_frame_equal(fetch_dataframe, pd.DataFrame({"A": [1]}))
+                    return pd.DataFrame()
+                """
+            ),
+        )
+
+        with self.assertLogs(level=logging.INFO):
+            self.run_with_async_db(
+                execute_wfmodule(
+                    self.chroot_context,
+                    workflow,
+                    wf_module,
+                    module_zipfile,
                     {},
                     Tab(tab.slug, tab.name),
                     RenderResult(),
@@ -237,18 +286,31 @@ class WfModuleTests(DbTestCase):
         wf_module.stored_data_version = so.stored_at
         wf_module.save(update_fields=["stored_data_version"])
         # Now delete the file on S3 -- but leave the DB pointing to it.
-        minio.remove(so.bucket, so.key)
+        minio.remove(minio.StoredObjectsBucket, so.key)
 
         def render(*args, fetch_result, **kwargs):
             self.assertIsNone(fetch_result)
             return RenderResult()
 
-        with self._stub_module(render):
+        module_zipfile = create_module_zipfile(
+            "x",
+            python_code=textwrap.dedent(
+                """
+                import pandas as pd
+                def render(table, params, *, fetch_result, **kwargs):
+                    assert fetch_result is None
+                    return pd.DataFrame()
+                """
+            ),
+        )
+
+        with self.assertLogs(level=logging.INFO):
             self.run_with_async_db(
                 execute_wfmodule(
                     self.chroot_context,
                     workflow,
                     wf_module,
+                    module_zipfile,
                     {},
                     Tab(tab.slug, tab.name),
                     RenderResult(),
@@ -271,16 +333,25 @@ class WfModuleTests(DbTestCase):
             stored_data_version=timezone.now(),
         )
 
-        def render(*args, fetch_result, **kwargs):
-            self.assertIsNone(fetch_result)
-            return RenderResult()
+        module_zipfile = create_module_zipfile(
+            "x",
+            python_code=textwrap.dedent(
+                """
+                import pandas as pd
+                def render(table, params, *, fetch_result, **kwargs):
+                    assert fetch_result is None
+                    return pd.DataFrame()
+                """
+            ),
+        )
 
-        with self._stub_module(render):
+        with self.assertLogs(level=logging.INFO):
             self.run_with_async_db(
                 execute_wfmodule(
                     self.chroot_context,
                     workflow,
                     wf_module,
+                    module_zipfile,
                     {},
                     Tab(tab.slug, tab.name),
                     RenderResult(),
@@ -300,16 +371,25 @@ class WfModuleTests(DbTestCase):
             last_relevant_delta_id=workflow.last_delta_id,
         )
 
-        def render(*args, fetch_result, **kwargs):
-            self.assertIsNone(fetch_result)
-            return RenderResult()
+        module_zipfile = create_module_zipfile(
+            "x",
+            python_code=textwrap.dedent(
+                """
+                import pandas as pd
+                def render(table, params, *, fetch_result, **kwargs):
+                    assert fetch_result is None
+                    return pd.DataFrame()
+                """
+            ),
+        )
 
-        with self._stub_module(render):
+        with self.assertLogs(level=logging.INFO):
             self.run_with_async_db(
                 execute_wfmodule(
                     self.chroot_context,
                     workflow,
                     wf_module,
+                    module_zipfile,
                     {},
                     Tab(tab.slug, tab.name),
                     RenderResult(),
@@ -330,23 +410,28 @@ class WfModuleTests(DbTestCase):
             stored_data_version=timezone.now(),
         )
         wf_module.stored_objects.create(
-            stored_at=wf_module.stored_data_version,
-            bucket="",
-            key="",
-            size=0,
-            hash="whatever",
+            stored_at=wf_module.stored_data_version, key="", size=0, hash="whatever"
         )
 
-        def render(*args, fetch_result, **kwargs):
-            self.assertIsNone(fetch_result)
-            return RenderResult()
+        module_zipfile = create_module_zipfile(
+            "x",
+            python_code=textwrap.dedent(
+                """
+                import pandas as pd
+                def render(table, params, *, fetch_result, **kwargs):
+                    assert fetch_result is None
+                    return pd.DataFrame()
+                """
+            ),
+        )
 
-        with self._stub_module(render):
+        with self.assertLogs(level=logging.INFO):
             self.run_with_async_db(
                 execute_wfmodule(
                     self.chroot_context,
                     workflow,
                     wf_module,
+                    module_zipfile,
                     {},
                     Tab(tab.slug, tab.name),
                     RenderResult(),
@@ -366,15 +451,17 @@ class WfModuleTests(DbTestCase):
             last_relevant_delta_id=workflow.last_delta_id,
         )
 
-        def render(*args, fetch_result, **kwargs):
-            raise ModuleExitedError(-9, "")
+        module_zipfile = create_module_zipfile(
+            "x", python_code="def render(table, params):\n  undefined()"
+        )
 
-        with self._stub_module(render):
+        with self.assertLogs(level=logging.INFO):
             result = self.run_with_async_db(
                 execute_wfmodule(
                     self.chroot_context,
                     workflow,
                     wf_module,
+                    module_zipfile,
                     {},
                     Tab(tab.slug, tab.name),
                     RenderResult(),
@@ -389,7 +476,9 @@ class WfModuleTests(DbTestCase):
                     RenderError(
                         I18nMessage(
                             "py.renderer.execute.wf_module.wrap_render_errors",
-                            {"error_code": "SIGKILL"},
+                            {
+                                "error_code": "exit code 1: NameError: name 'undefined' is not defined"
+                            },
                         )
                     )
                 ]

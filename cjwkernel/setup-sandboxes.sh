@@ -99,7 +99,7 @@ mount -t overlay overlay -o dirsync,lowerdir=$LAYERS/base,upperdir=$CHROOT/reado
 if test -d "$VENV_PATH"; then
   mountpoint="$CHROOT/readonly/root$VENV_PATH"
   mkdir -p "$mountpoint"
-  mount --bind "$VENV_PATH" "$mountpoint"
+  mount --bind -o ro "$VENV_PATH" "$mountpoint"
 fi
 # Make readonly readonly (now that we don't need to mount on it any more)
 mount -o remount,ro "$CHROOT/readonly/root"
@@ -134,6 +134,17 @@ fi
 mkdir -p $CHROOT/editable/upperfs/{upper,work}
 mkdir -p $CHROOT/editable/root
 mount -t overlay overlay -o dirsync,lowerdir=$LAYERS/base,upperdir=$CHROOT/editable/upperfs/upper,workdir=$CHROOT/editable/upperfs/work $CHROOT/editable/root
+# Bind-mount /root/.local/share/virtualenvs in dev mode. (On production, the
+# Python environment is different and packages are installed in
+# /usr/local/lib/python3.7/site-packages, baked into the Docker image, so this
+# step isn't needed.)
+#
+# We set up a mount per chroot.
+if test -d "$VENV_PATH"; then
+  mountpoint="$CHROOT/editable/root$VENV_PATH"
+  mkdir -p "$mountpoint"
+  mount --bind -o ro "$VENV_PATH" "$mountpoint"
+fi
 
 
 # iptables

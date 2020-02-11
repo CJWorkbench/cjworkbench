@@ -5,11 +5,10 @@ from typing import Any, Dict, Optional, Union
 from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.db.models import Q
-from cjwkernel.types import I18nMessage, RenderError, TableMetadata
+from cjwkernel.types import TableMetadata
 from cjwstate import minio
 from .fields import ColumnsField, RenderErrorsField
 from .CachedRenderResult import CachedRenderResult
-from .module_version import ModuleVersion
 from .Tab import Tab
 from .workflow import Workflow
 from cjwstate import clientside
@@ -130,10 +129,10 @@ class WfModule(models.Model):
         max_length=200, blank=True, null=True
     )
     """
-    Module-version .source_version_hash that generated cached_migrated_params.
+    ModuleZipfile .version that generated cached_migrated_params.
 
-    For internal modules (which don't have .source_version_hashes), this is
-    `module_version.param_schema_version`.
+    For internal modules (which don't have .version), this is
+    `module_zipfile.get_param_schema_version()`.
     """
 
     cached_render_result_delta_id = models.IntegerField(null=True, blank=True)
@@ -154,8 +153,27 @@ class WfModule(models.Model):
     # be implied by the fact that the cached output revision is wrong.
     is_busy = models.BooleanField(default=False, null=False)
 
-    # There's fetch_error and there's cached_render_result_errors.
-    fetch_error = models.CharField("fetch_error", max_length=10000, blank=True)
+    fetch_error = models.CharField(
+        "fetch_error", null=True, max_length=10000, blank=True, default=None
+    )
+    """
+    Most recent untranslated error preventing StoredObject creation.
+
+    Ignored if `fetch_errors IS NOT NULL`. TODO delete this column.
+
+    For instance, HTTP error. This is always TODO_i18n. TODO delete.
+
+    See also `cached_render_result_errors`, which pertains to render().
+    """
+
+    fetch_errors = RenderErrorsField(null=True, default=list)
+    """
+    Most recent collection of errors preventing StoredObject creation.
+
+    For instance, HTTP errors.
+
+    See also `cached_render_result_errors`, which pertains to render().
+    """
 
     # Most-recent delta that may possibly affect the output of this module.
     # This isn't a ForeignKey because many deltas have a foreign key pointing
@@ -237,16 +255,6 @@ class WfModule(models.Model):
         return cls.objects.filter(
             tab__workflow_id=workflow_id, tab__is_deleted=False, is_deleted=False
         )
-
-    @property
-    def module_version(self):
-        if not hasattr(self, "_module_version"):
-            try:
-                self._module_version = ModuleVersion.objects.latest(self.module_id_name)
-            except ModuleVersion.DoesNotExist:
-                self._module_version = None
-
-        return self._module_version
 
     @property
     def output_status(self):
@@ -400,7 +408,7 @@ class WfModule(models.Model):
         # We special-case the 'upload' module because it's the only one that
         # has 'file' params right now. (If that ever changes, we'll want to
         # change a few things: upload paths should include param name, and this
-        # test will need to check module_version to find the param name of the
+        # test will need to check module_zipfile to find the param name of the
         # file.)
         if self.module_id_name == "upload":
             uuid = self.params["file"]
@@ -414,14 +422,13 @@ class WfModule(models.Model):
                 minio.copy(
                     minio.UserFilesBucket,
                     new_key,
-                    f"{uploaded_file.bucket}/{uploaded_file.key}",
+                    f"{minio.UserFilesBucket}/{uploaded_file.key}",
                 )
                 new_step.uploaded_files.create(
                     created_at=uploaded_file.created_at,
                     name=uploaded_file.name,
                     size=uploaded_file.size,
                     uuid=uploaded_file.uuid,
-                    bucket=minio.UserFilesBucket,
                     key=new_key,
                 )
 
@@ -531,11 +538,22 @@ class WfModule(models.Model):
 
     def to_clientside(self) -> clientside.StepUpdate:
         # params
-        if self.module_version:
+        from cjwstate.models.module_registry import MODULE_REGISTRY
+
+        try:
+            module_zipfile = MODULE_REGISTRY.latest(self.module_id_name)
+        except KeyError:
+            module_zipfile = None
+
+        if module_zipfile is None:
+            params = {}
+        else:
             from cjwstate.params import get_migrated_params
 
-            param_schema = self.module_version.param_schema
-            params = get_migrated_params(self)  # raise ModuleError
+            module_spec = module_zipfile.get_spec()
+            param_schema = module_spec.get_param_schema()
+            # raise ModuleError
+            params = get_migrated_params(self, module_zipfile=module_zipfile)
             try:
                 param_schema.validate(params)
             except ValueError:
@@ -545,8 +563,6 @@ class WfModule(models.Model):
                     params,
                 )
                 params = param_schema.coerce(params)
-        else:
-            params = {}
 
         crr = self._build_cached_render_result_fresh_or_not()
         if crr is None:

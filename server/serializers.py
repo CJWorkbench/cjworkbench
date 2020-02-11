@@ -1,23 +1,24 @@
 from collections import namedtuple
-import contextlib
 import datetime
 import logging
 import re
 import json
+from functools import lru_cache, singledispatch
 from typing import Any, Dict, Iterable, List, Optional, Union
 from allauth.account.utils import user_display
 from django.contrib.auth import get_user_model
-from rest_framework import serializers
 from cjwkernel.types import I18nMessage, QuickFix, RenderError
 from cjworkbench.settings import KB_ROOT_URL
-from cjwstate.models import Workflow, WfModule, ModuleVersion, StoredObject, Tab
-from cjwstate.params import get_migrated_params
 from server.settingsutils import workbench_user_display
-from cjwstate.models.param_spec import ParamSpec
+from cjwstate.modules.param_spec import ParamSpec, MenuOptionEnum
 from cjwstate import clientside
 from cjwkernel.types import RenderError
 from cjworkbench.i18n import default_locale
-from cjworkbench.i18n.trans import localize
+from cjworkbench.i18n.trans import (
+    MESSAGE_LOCALIZER_REGISTRY,
+    NotInternationalizedError,
+    MessageLocalizer,
+)
 from icu import ICUError
 
 User = get_user_model()
@@ -73,7 +74,23 @@ def _camelize_value(v: Any) -> Any:
         return v
 
 
-JsonizeContext = namedtuple("JsonizeContext", ["user", "session", "locale_id"])
+JsonizeContext = namedtuple(
+    "JsonizeContext", ["user", "session", "locale_id", "module_zipfiles"]
+)
+JsonizeModuleContext = namedtuple(
+    "JsonizeModuleContext",
+    ["user", "session", "locale_id", "module_id", "module_zipfiles"],
+)
+
+
+def _add_module_to_ctx(ctx: JsonizeContext, module_id: str) -> JsonizeModuleContext:
+    return JsonizeModuleContext(
+        user=ctx.user,
+        session=ctx.session,
+        locale_id=ctx.locale_id,
+        module_id=module_id,
+        module_zipfiles=ctx.module_zipfiles,
+    )
 
 
 def jsonize_datetime(dt_or_none: Optional[datetime.datetime]) -> str:
@@ -124,18 +141,220 @@ def jsonize_clientside_acl_entry(entry: clientside.AclEntry) -> Dict[str, Any]:
     return {"email": entry.email, "canEdit": entry.can_edit}
 
 
-def jsonize_param_spec(p: ParamSpec, ctx: JsonizeContext) -> Dict[str, Any]:
-    # TODO_i18n translate during output. May require a singledispatch.
-    ret = _camelize_dict(p.to_dict())
-    if isinstance(p, ParamSpec.List):
-        ret["childDefault"] = p.dtype.inner_dtype.default
+@singledispatch
+def _jsonize_param_spec(
+    spec: ParamSpec, ctx: JsonizeModuleContext, prefix: str
+) -> Dict[str, Any]:
+    return _camelize_dict(spec.to_dict())
+
+
+@_jsonize_param_spec.register(ParamSpec.String)
+def _(spec: ParamSpec.String, ctx: JsonizeModuleContext, prefix: str) -> Dict[str, Any]:
+    ret = _camelize_dict(spec.to_dict())
+    ret["name"] = _localize_module_spec_message(f"{prefix}.name", ctx, spec.name)
+    ret["placeholder"] = _localize_module_spec_message(
+        f"{prefix}.placeholder", ctx, spec.placeholder
+    )
+    ret["default"] = _localize_module_spec_message(
+        f"{prefix}.default", ctx, spec.default
+    )
+    return ret
+
+
+@_jsonize_param_spec.register(ParamSpec.Statictext)
+def _(
+    spec: ParamSpec.Statictext, ctx: JsonizeModuleContext, prefix: str
+) -> Dict[str, Any]:
+    ret = _camelize_dict(spec.to_dict())
+    ret["name"] = _localize_module_spec_message(f"{prefix}.name", ctx, spec.name)
+    return ret
+
+
+@_jsonize_param_spec.register(ParamSpec.Integer)
+def _(
+    spec: ParamSpec.Integer, ctx: JsonizeModuleContext, prefix: str
+) -> Dict[str, Any]:
+    ret = _camelize_dict(spec.to_dict())
+    ret["name"] = _localize_module_spec_message(f"{prefix}.name", ctx, spec.name)
+    ret["placeholder"] = _localize_module_spec_message(
+        f"{prefix}.placeholder", ctx, spec.placeholder
+    )
+    return ret
+
+
+@_jsonize_param_spec.register(ParamSpec.Float)
+def _(spec: ParamSpec.Float, ctx: JsonizeModuleContext, prefix: str) -> Dict[str, Any]:
+    ret = _camelize_dict(spec.to_dict())
+    ret["name"] = _localize_module_spec_message(f"{prefix}.name", ctx, spec.name)
+    ret["placeholder"] = _localize_module_spec_message(
+        f"{prefix}.placeholder", ctx, spec.placeholder
+    )
+    return ret
+
+
+@_jsonize_param_spec.register(ParamSpec.Checkbox)
+def _(
+    spec: ParamSpec.Checkbox, ctx: JsonizeModuleContext, prefix: str
+) -> Dict[str, Any]:
+    ret = _camelize_dict(spec.to_dict())
+    ret["name"] = _localize_module_spec_message(f"{prefix}.name", ctx, spec.name)
+    return ret
+
+
+@_jsonize_param_spec.register(ParamSpec.Menu)
+def _(spec: ParamSpec.Menu, ctx: JsonizeModuleContext, prefix: str) -> Dict[str, Any]:
+    ret = _camelize_dict(spec.to_dict())
+    ret["name"] = _localize_module_spec_message(f"{prefix}.name", ctx, spec.name)
+    ret["placeholder"] = _localize_module_spec_message(
+        f"{prefix}.placeholder", ctx, spec.placeholder
+    )
+    ret["options"] = [
+        "separator"
+        if option is ParamSpec.Menu.Option.Separator
+        else {
+            "value": option.value,
+            "label": _localize_module_spec_message(
+                f"{prefix}.options.{option.value}.label", ctx, option.label
+            ),
+        }
+        for option in spec.options
+    ]
+    return ret
+
+
+@_jsonize_param_spec.register(ParamSpec.Radio)
+def _(spec: ParamSpec.Radio, ctx: JsonizeModuleContext, prefix: str) -> Dict[str, Any]:
+    ret = _camelize_dict(spec.to_dict())
+    ret["name"] = _localize_module_spec_message(f"{prefix}.name", ctx, spec.name)
+    ret["options"] = [
+        {
+            "value": option.value,
+            "label": _localize_module_spec_message(
+                f"{prefix}.options.{option.value}.label", ctx, option.label
+            ),
+        }
+        for option in spec.options
+    ]
+    return ret
+
+
+@_jsonize_param_spec.register(ParamSpec.Button)
+def _(spec: ParamSpec.Button, ctx: JsonizeModuleContext, prefix: str) -> Dict[str, Any]:
+    ret = _camelize_dict(spec.to_dict())
+    ret["name"] = _localize_module_spec_message(f"{prefix}.name", ctx, spec.name)
+    return ret
+
+
+@_jsonize_param_spec.register(ParamSpec.NumberFormat)
+def _(
+    spec: ParamSpec.NumberFormat, ctx: JsonizeModuleContext, prefix: str
+) -> Dict[str, Any]:
+    ret = _camelize_dict(spec.to_dict())
+    ret["name"] = _localize_module_spec_message(f"{prefix}.name", ctx, spec.name)
+    ret["placeholder"] = _localize_module_spec_message(
+        f"{prefix}.placeholder", ctx, spec.placeholder
+    )
+    return ret
+
+
+@_jsonize_param_spec.register(ParamSpec.Column)
+def _(spec: ParamSpec.Column, ctx: JsonizeModuleContext, prefix: str) -> Dict[str, Any]:
+    ret = _camelize_dict(spec.to_dict())
+    ret["name"] = _localize_module_spec_message(f"{prefix}.name", ctx, spec.name)
+    ret["placeholder"] = _localize_module_spec_message(
+        f"{prefix}.placeholder", ctx, spec.placeholder
+    )
+    return ret
+
+
+@_jsonize_param_spec.register(ParamSpec.Multicolumn)
+def _(
+    spec: ParamSpec.Multicolumn, ctx: JsonizeModuleContext, prefix: str
+) -> Dict[str, Any]:
+    ret = _camelize_dict(spec.to_dict())
+    ret["name"] = _localize_module_spec_message(f"{prefix}.name", ctx, spec.name)
+    ret["placeholder"] = _localize_module_spec_message(
+        f"{prefix}.placeholder", ctx, spec.placeholder
+    )
+    return ret
+
+
+@_jsonize_param_spec.register(ParamSpec.Tab)
+def _(spec: ParamSpec.Tab, ctx: JsonizeModuleContext, prefix: str) -> Dict[str, Any]:
+    ret = _camelize_dict(spec.to_dict())
+    ret["name"] = _localize_module_spec_message(f"{prefix}.name", ctx, spec.name)
+    ret["placeholder"] = _localize_module_spec_message(
+        f"{prefix}.placeholder", ctx, spec.placeholder
+    )
+    return ret
+
+
+@_jsonize_param_spec.register(ParamSpec.Multitab)
+def _(
+    spec: ParamSpec.Multitab, ctx: JsonizeModuleContext, prefix: str
+) -> Dict[str, Any]:
+    ret = _camelize_dict(spec.to_dict())
+    ret["name"] = _localize_module_spec_message(f"{prefix}.name", ctx, spec.name)
+    ret["placeholder"] = _localize_module_spec_message(
+        f"{prefix}.placeholder", ctx, spec.placeholder
+    )
+    return ret
+
+
+@_jsonize_param_spec.register(ParamSpec.Multichartseries)
+def _(
+    spec: ParamSpec.Multichartseries, ctx: JsonizeModuleContext, prefix: str
+) -> Dict[str, Any]:
+    ret = _camelize_dict(spec.to_dict())
+    ret["name"] = _localize_module_spec_message(f"{prefix}.name", ctx, spec.name)
+    return ret
+
+
+@_jsonize_param_spec.register(ParamSpec.Secret)
+def _(spec: ParamSpec.Secret, ctx: JsonizeModuleContext, prefix: str) -> Dict[str, Any]:
+    ret = _camelize_dict(spec.to_dict())
+    if spec.secret_logic.provider == "string":
+        ret["secretLogic"]["label"] = _localize_module_spec_message(
+            f"{prefix}.secret_logic.label", ctx, spec.secret_logic.label
+        )
+        ret["secretLogic"]["help"] = _localize_module_spec_message(
+            f"{prefix}.secret_logic.help", ctx, spec.secret_logic.help
+        )
+        ret["secretLogic"]["helpUrl"] = _localize_module_spec_message(
+            f"{prefix}.secret_logic.help_url", ctx, spec.secret_logic.help_url
+        )
+        ret["secretLogic"]["helpUrlPrompt"] = _localize_module_spec_message(
+            f"{prefix}.secret_logic.help_url_prompt",
+            ctx,
+            spec.secret_logic.help_url_prompt,
+        )
+    return ret
+
+
+@_jsonize_param_spec.register(ParamSpec.Custom)
+def _(spec: ParamSpec.Custom, ctx: JsonizeModuleContext, prefix: str) -> Dict[str, Any]:
+    ret = _camelize_dict(spec.to_dict())
+    ret["name"] = _localize_module_spec_message(f"{prefix}.name", ctx, spec.name)
+    return ret
+
+
+@_jsonize_param_spec.register(ParamSpec.List)
+def _(spec: ParamSpec.List, ctx: JsonizeModuleContext, prefix: str) -> Dict[str, Any]:
+    ret = _camelize_dict(spec.to_dict())
+    ret["name"] = _localize_module_spec_message(f"{prefix}.name", ctx, spec.name)
+    ret["childDefault"] = spec.dtype.inner_dtype.default
+    ret["childParameters"] = [
+        _jsonize_param_spec(
+            child_spec, ctx, f"{prefix}.child_parameters.{child_spec.id_name}"
+        )
+        for child_spec in spec.child_parameters
+    ]
     return ret
 
 
 def _ctx_authorized_write(
     workflow: clientside.WorkflowUpdate, ctx: JsonizeContext
 ) -> bool:
-    owner = workflow.owner
     user = ctx.user
 
     if user.is_anonymous:
@@ -225,8 +444,9 @@ def jsonize_clientside_module(
     module: clientside.Module, ctx: JsonizeContext
 ) -> Dict[str, Any]:
     spec = module.spec
+    ctx = _add_module_to_ctx(ctx, spec.id_name)
 
-    help_url = spec.get("help_url", "")
+    help_url = spec.help_url
     if help_url and not (
         help_url.startswith("http://")
         or help_url.startswith("https://")
@@ -235,23 +455,33 @@ def jsonize_clientside_module(
         help_url = KB_ROOT_URL + help_url
 
     return {
-        "id_name": spec["id_name"],
-        "name": spec["name"],  # TODO i18n
-        "category": spec["category"],
-        "description": spec.get("description", ""),  # TODO i18n
-        "deprecated": spec.get("deprecated"),  # TODO i18n
-        "icon": spec.get("icon", "url"),
-        "loads_data": spec.get("loads_data", False),
-        "uses_data": spec.get("uses_data", not spec.get("loads_data", False)),
-        "help_url": spec.get("help_url", ""),
-        "has_zen_mode": spec.get("has_zen_mode", False),
-        "has_html_output": spec.get("html_output", False),
-        "row_action_menu_entry_title": (
-            spec.get("row_action_menu_entry_title", "")  # TODO i18n
+        "id_name": spec.id_name,
+        "name": _localize_module_spec_message("name", ctx, spec.name),
+        "category": spec.category,
+        "description": _localize_module_spec_message(
+            "description", ctx, spec.description
+        ),
+        "deprecated": {
+            "message": _localize_module_spec_message(
+                "deprecated.message", ctx, spec.deprecated["message"]
+            ),
+            "end_date": spec.deprecated["end_date"],
+        }
+        if spec.deprecated
+        else None,
+        "icon": spec.icon or "url",
+        "loads_data": spec.loads_data,
+        "uses_data": spec.get_uses_data(),
+        "help_url": help_url,
+        "has_zen_mode": spec.has_zen_mode,
+        "has_html_output": spec.html_output,
+        "row_action_menu_entry_title": _localize_module_spec_message(
+            "row_action_menu_entry_title", ctx, spec.row_action_menu_entry_title
         ),
         "js_module": module.js_module,
         "param_fields": [
-            jsonize_param_spec(ParamSpec.from_dict(p), ctx) for p in spec["parameters"]
+            _jsonize_param_spec(field, ctx, prefix=f"parameters.{field.id_name}")
+            for field in spec.param_fields
         ],
     }
 
@@ -268,42 +498,135 @@ def jsonize_clientside_tab(tab: clientside.TabUpdate) -> Dict[str, Any]:
     return d
 
 
-def jsonize_i18n_message(message: I18nMessage, ctx: JsonizeContext) -> str:
+def _localize_module_spec_message(
+    message_path: str, ctx: JsonizeModuleContext, spec_value: str
+) -> str:
+    """Search the module catalogs for the spec message with the given path and localize it.
+    
+    The path of the message is its translation key minus "_spec." at the beginning.
+    
+    If the message is not found or is incorrectly formatted, `spec_value` is returned.
+    
+    In addition, if `spec_value` is empty, `spec_value` is returned.
+    This is in order to make sure that module spec values not defined in the spec file
+    cannot be overriden by message catalogs.
+    
+    Uses `locale_id`, `module_id`, and `module_zipfiles` from `ctx`
+    """
+    if not spec_value:
+        return spec_value
+
+    message_id = f"_spec.{message_path}"
+
+    if ctx.module_id not in ctx.module_zipfiles:
+        logger.exception(f"Module {ctx.module_id} not in jsonize context")
+        return spec_value
+
+    try:
+        localizer = MESSAGE_LOCALIZER_REGISTRY.for_module_zipfile(
+            ctx.module_zipfiles[ctx.module_id]
+        )
+    except NotInternationalizedError:
+        return spec_value
+
+    try:
+        return localizer.localize(ctx.locale_id, message_id)
+    except ICUError:
+        # `localize` handles `ICUError` for the given locale.
+        # Hence, if we get here, it means that the message is badly formatted in the default locale.
+        logger.exception(
+            "I18nMessage badly formatted in default locale. id: %s, module: %s",
+            message_id,
+            ctx.module_id,
+        )
+        return spec_value
+    except KeyError:
+        logger.exception(
+            "I18nMessage not found in module catalogs. id: %s, module: %s",
+            message_id,
+            ctx.module_id,
+        )
+        return spec_value
+
+
+def _i18n_message_source_to_localizer(
+    message: I18nMessage, ctx: JsonizeModuleContext
+) -> MessageLocalizer:
+    """Return a localizer for the source of the given `I18nMessage`.
+    
+    Raise `NotInternationalizedError` if the source is a non-internationalized module.
+    Raise `KeyError` if the source is a module that has no associated `ModuleZipFile`.
+    """
+    if message.source == "module":
+        module_zipfile = ctx.module_zipfiles[ctx.module_id]  # Raises `KeyError`
+        return MESSAGE_LOCALIZER_REGISTRY.for_module_zipfile(
+            module_zipfile
+        )  # Raises `NotInternationalizedError`
+    elif message.source == "cjwmodule":
+        return MESSAGE_LOCALIZER_REGISTRY.cjwmodule_localizer
+    else:  # if message.source is None
+        return MESSAGE_LOCALIZER_REGISTRY.application_localizer
+
+
+def jsonize_i18n_message(message: I18nMessage, ctx: JsonizeModuleContext) -> str:
     """Localize (or unwrap, if it's a TODO_i18n) an `I18nMessage`
     
-    Uses `locale_id` from `ctx`
+    Uses `locale_id` and `module_zipfiles` from `ctx`
     
-    Raises `KeyError` if the message text cannot be found in the catalogs.
+    If the message content is not found or is invalid, a representation of the `I18nMessage` is returned.
     """
-    assert message.source is None
-    if message.id == "TODO_i18n":
+    if message.id == "TODO_i18n" and (
+        message.source is None or message.source == "cjwmodule"
+    ):
         return message.args["text"]
-    else:
-        # Attempt to localize in the locale given by `ctx`.
-        try:
-            return localize(ctx.locale_id, message.id, arguments=message.args)
-        except ICUError as err:
-            # `localize` handles `ICUError` for the given locale.
-            # Hence, if we get here, it means that the message is badly formatted in the default locale.
-            logger.exception(
-                f"I18nMessage badly formatted in default locale. id: {message.id}, source: {message.source}"
-            )
-        except KeyError as err:
-            logger.exception(
-                f"I18nMessage not found. id: {message.id}, source: {message.source}"
-            )
 
+    # Get localizer
+    try:
+        localizer = _i18n_message_source_to_localizer(message, ctx)
+    except NotInternationalizedError:
+        logger.exception(
+            "I18nMessage source %s does not support localization", message.source
+        )
+        return json.dumps(message.to_dict())
+    except KeyError as err:
+        logger.exception(
+            "JsonizeContext not set properly for I18nMessage source %s. Error: %s",
+            message.source,
+            err,
+        )
+        return json.dumps(message.to_dict())
+
+    # Attempt to localize in the locale given by `ctx`.
+    try:
+        return localizer.localize(ctx.locale_id, message.id, arguments=message.args)
+    except ICUError as err:
+        # `localize` handles `ICUError` for the given locale.
+        # Hence, if we get here, it means that the message is badly formatted in the default locale.
+        logger.exception(
+            "I18nMessage badly formatted in default locale. id: %s, source: %s",
+            message.id,
+            message.source,
+        )
+        return json.dumps(message.to_dict())
+    except KeyError as err:
+        logger.exception(
+            "I18nMessage content not found in catalogs. id: %s, source: %s",
+            message.id,
+            message.source,
+        )
         return json.dumps(message.to_dict())
 
 
-def jsonize_quick_fix(quick_fix: QuickFix, ctx: JsonizeContext) -> Dict[str, Any]:
+def jsonize_quick_fix(quick_fix: QuickFix, ctx: JsonizeModuleContext) -> Dict[str, Any]:
     return {
         "buttonText": jsonize_i18n_message(quick_fix.button_text, ctx),
         "action": quick_fix.action.to_dict(),
     }
 
 
-def jsonize_render_error(error: RenderError, ctx: JsonizeContext) -> Dict[str, Any]:
+def jsonize_render_error(
+    error: RenderError, ctx: JsonizeModuleContext
+) -> Dict[str, Any]:
     return {
         "message": jsonize_i18n_message(error.message, ctx),
         "quickFixes": [jsonize_quick_fix(qf, ctx) for qf in error.quick_fixes],
@@ -361,13 +684,16 @@ def jsonize_clientside_step(
                 }
             )
         else:
+            module_ctx = _add_module_to_ctx(ctx, step.module_slug)
             d.update(
                 {
                     "cached_render_result_delta_id": crr.delta_id,
                     "output_columns": [c.to_dict() for c in crr.table_metadata.columns],
                     "output_n_rows": crr.table_metadata.n_rows,
                     "output_status": crr.status,
-                    "output_errors": [jsonize_render_error(e, ctx) for e in crr.errors],
+                    "output_errors": [
+                        jsonize_render_error(e, module_ctx) for e in crr.errors
+                    ],
                 }
             )
     for files in _maybe_yield(step.files):

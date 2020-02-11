@@ -1,0 +1,49 @@
+name: Deploy staging on master checks pass
+
+on:
+  check_suite:
+    branches: [master]
+    types: [completed]
+
+jobs:
+  kubectl-deploy:
+    name: Deploy to staging Kubernetes cluster
+    runs-on: ubuntu-latest
+    if: github.event.check_suite.conclusion == 'success'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+
+      - name: Notify Slack we are about to start
+        uses: CJWorkbench/slack-postmessage@c47358f
+        env:
+          SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+        with:
+          message: '{"channel": "#staging-status", "text": "Deploying `${{ github.sha }}` to staging…"}'
+
+      - name: Install GCloud API
+        uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        with:
+          version: '278.0.0'
+          service_account_email: ${{ secrets.GCP_SERVICE_ACCOUNT_EMAIL }}
+          service_account_key: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+
+      - name: Run kubectl
+        env:
+          GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
+          GCP_REGION: ${{ secrets.GCP_REGION }}
+          GKE_CLUSTER: ${{ secrets.GKE_CLUSTER }}
+          GITHUB_SHA: ${{ github.sha }}
+        run: |
+          gcloud container clusters get-credentials "$GKE_CLUSTER" \
+            --region "$GCP_REGION" \
+            --project "$GCP_PROJECT"
+          gcloud --quiet components install kubectl
+          deploy/advanced-deploy staging "$GITHUB_SHA"
+
+      - name: Notify Slack we did it
+        uses: CJWorkbench/slack-postmessage@c47358f
+        env:
+          SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+        with:
+          message: '{"channel": "#staging-status", "text": "Deployed `${{ github.sha }}` to https://app.workbenchdata-staging.com"}'

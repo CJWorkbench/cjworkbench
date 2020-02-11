@@ -1,14 +1,16 @@
 import asyncio
 from unittest.mock import patch
 from cjwstate import commands
-from cjwstate.models import Delta, ModuleVersion, Workflow, WfModule
+from cjwstate.models import Delta, Workflow, WfModule
 from cjwstate.models.commands import (
     AddModuleCommand,
     DeleteModuleCommand,
     InitWorkflowCommand,
 )
-from cjwstate.modules.loaded_module import LoadedModule
-from cjwstate.tests.utils import DbTestCase
+from cjwstate.tests.utils import (
+    DbTestCaseWithModuleRegistryAndMockKernel,
+    create_module_zipfile,
+)
 
 
 async def async_noop(*args, **kwargs):
@@ -19,17 +21,9 @@ future_none = asyncio.Future()
 future_none.set_result(None)
 
 
-class MockLoadedModule:
-    def __init__(self, *args):
-        pass
-
-    def migrate_params(self, values):
-        return values
-
-
 @patch.object(commands, "queue_render", async_noop)
 @patch.object(commands, "websockets_notify", async_noop)
-class AddDeleteModuleCommandTests(DbTestCase):
+class AddDeleteModuleCommandTests(DbTestCaseWithModuleRegistryAndMockKernel):
     def assertWfModuleVersions(self, expected_versions):
         positions = list(self.tab.live_wf_modules.values_list("order", flat=True))
         self.assertEqual(positions, list(range(0, len(expected_versions))))
@@ -44,20 +38,17 @@ class AddDeleteModuleCommandTests(DbTestCase):
 
         self.workflow = Workflow.objects.create()
         self.tab = self.workflow.tabs.create(position=0)
-        self.module_version = ModuleVersion.create_or_replace_from_spec(
-            {
-                "id_name": "loadurl",
-                "name": "Load URL",
-                "category": "Clean",
-                "parameters": [{"id_name": "url", "type": "string"}],
-            },
-            source_version_hash="1.0",
+        self.module_zipfile = create_module_zipfile(
+            "loadsomething",
+            spec_kwargs={"parameters": [{"id_name": "url", "type": "string"}]},
+        )
+        self.kernel.migrate_params.side_effect = RuntimeError(
+            "AddModuleCommand and tests should cache migrated params correctly"
         )
 
         self.delta = InitWorkflowCommand.create(self.workflow)
 
     # Add another module, then undo, redo
-    @patch.object(LoadedModule, "for_module_version", MockLoadedModule)
     def test_add_module(self):
         existing_module = self.tab.wf_modules.create(
             order=0,
@@ -79,7 +70,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
                 workflow_id=self.workflow.id,
                 tab=self.workflow.tabs.first(),
                 slug="step-2",
-                module_id_name=self.module_version.id_name,
+                module_id_name=self.module_zipfile.module_id,
                 position=0,
                 param_values={"url": "https://x.com"},
             )
@@ -125,20 +116,16 @@ class AddDeleteModuleCommandTests(DbTestCase):
         with self.assertRaises(WfModule.DoesNotExist):
             all_modules.get(pk=added_module.id)  # should be gone
 
-    @patch.object(LoadedModule, "for_module_version", MockLoadedModule)
     def test_add_module_default_params(self):
         workflow = Workflow.create_and_init()
-        module_version = ModuleVersion.create_or_replace_from_spec(
-            {
-                "id_name": "blah",
-                "name": "Blah",
-                "category": "Clean",
+        create_module_zipfile(
+            "blah",
+            spec_kwargs={
                 "parameters": [
                     {"id_name": "a", "type": "string", "default": "x"},
                     {"id_name": "c", "type": "checkbox", "name": "C", "default": True},
-                ],
+                ]
             },
-            source_version_hash="1.0",
         )
 
         cmd = self.run_with_async_db(
@@ -147,7 +134,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
                 workflow_id=workflow.id,
                 tab=workflow.tabs.first(),
                 slug="step-1",
-                module_id_name=module_version.id_name,
+                module_id_name="blah",
                 position=0,
                 param_values={},
             )
@@ -173,9 +160,9 @@ class AddDeleteModuleCommandTests(DbTestCase):
                 )
             )
 
-    def test_add_module_raise_module_version_does_not_exist(self):
+    def test_add_module_raise_module_key_error(self):
         workflow = Workflow.create_and_init()
-        with self.assertRaises(ModuleVersion.DoesNotExist):
+        with self.assertRaises(KeyError):
             self.run_with_async_db(
                 commands.do(
                     AddModuleCommand,
@@ -190,14 +177,8 @@ class AddDeleteModuleCommandTests(DbTestCase):
 
     def test_add_module_validate_params(self):
         workflow = Workflow.create_and_init()
-        module_version = ModuleVersion.create_or_replace_from_spec(
-            {
-                "id_name": "blah",
-                "name": "Blah",
-                "category": "Clean",
-                "parameters": [{"id_name": "a", "type": "string"}],
-            },
-            source_version_hash="1.0",
+        create_module_zipfile(
+            "blah", spec_kwargs={"parameters": [{"id_name": "a", "type": "string"}]}
         )
 
         with self.assertRaises(ValueError):
@@ -207,7 +188,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
                     workflow_id=workflow.id,
                     tab=workflow.tabs.first(),
                     slug="step-1",
-                    module_id_name=module_version.id_name,
+                    module_id_name="blah",
                     position=0,
                     param_values={"a": 3},
                 )
@@ -215,7 +196,6 @@ class AddDeleteModuleCommandTests(DbTestCase):
 
     # Try inserting at various positions to make sure the renumbering works
     # right Then undo multiple times
-    @patch.object(LoadedModule, "for_module_version", MockLoadedModule)
     def test_add_many_modules(self):
         existing_module = self.tab.wf_modules.create(
             order=0,
@@ -237,7 +217,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
                 workflow_id=self.workflow.id,
                 tab=self.workflow.tabs.first(),
                 slug="step-2",
-                module_id_name=self.module_version.id_name,
+                module_id_name=self.module_zipfile.module_id,
                 position=0,
                 param_values={},
             )
@@ -256,7 +236,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
                 workflow_id=self.workflow.id,
                 tab=self.workflow.tabs.first(),
                 slug="step-3",
-                module_id_name=self.module_version.id_name,
+                module_id_name=self.module_zipfile.module_id,
                 position=2,
                 param_values={},
             )
@@ -273,7 +253,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
                 workflow_id=self.workflow.id,
                 tab=self.workflow.tabs.first(),
                 slug="step-4",
-                module_id_name=self.module_version.id_name,
+                module_id_name=self.module_zipfile.module_id,
                 position=2,
                 param_values={},
             )
@@ -373,16 +353,14 @@ class AddDeleteModuleCommandTests(DbTestCase):
 
         self.run_with_async_db(commands.undo(cmd))  # don't crash
 
-    @patch.object(LoadedModule, "for_module_version", MockLoadedModule)
     def test_undo_add_only_selected(self):
-        """Undoing the only add sets selection to None."""
         cmd = self.run_with_async_db(
             commands.do(
                 AddModuleCommand,
                 workflow_id=self.workflow.id,
                 tab=self.workflow.tabs.first(),
                 slug="step-1",
-                module_id_name=self.module_version.id_name,
+                module_id_name=self.module_zipfile.module_id,
                 position=0,
                 param_values={},
             )
@@ -399,9 +377,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
     # ensure that adding a module, selecting it, then undo add, prevents
     # dangling selected_wf_module (basically the AddModule equivalent of
     # test_delete_selected)
-    @patch.object(LoadedModule, "for_module_version", MockLoadedModule)
     def test_add_undo_selected(self):
-        """Undoing an add sets selection."""
         self.tab.wf_modules.create(
             order=0,
             slug="step-1",
@@ -419,7 +395,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
                 workflow_id=self.workflow.id,
                 tab=self.workflow.tabs.first(),
                 slug="step-2",
-                module_id_name=self.module_version.id_name,
+                module_id_name=self.module_zipfile.module_id,
                 position=1,
                 param_values={},
             )
@@ -433,15 +409,9 @@ class AddDeleteModuleCommandTests(DbTestCase):
         self.tab.refresh_from_db()
         self.assertEqual(self.tab.selected_wf_module_position, 0)
 
-    @patch.object(LoadedModule, "for_module_version", MockLoadedModule)
     def test_add_to_empty_tab_affects_dependent_tab_wf_modules(self):
-        ModuleVersion.create_or_replace_from_spec(
-            {
-                "id_name": "tabby",
-                "name": "Tabby",
-                "category": "Clean",
-                "parameters": [{"id_name": "tab", "type": "tab"}],
-            }
+        module_zipfile = create_module_zipfile(
+            "tabby", spec_kwargs={"parameters": [{"id_name": "tab", "type": "tab"}]}
         )
 
         step1 = self.workflow.tabs.first().wf_modules.create(
@@ -450,6 +420,8 @@ class AddDeleteModuleCommandTests(DbTestCase):
             module_id_name="tabby",
             last_relevant_delta_id=self.workflow.last_delta_id,
             params={"tab": "tab-2"},
+            cached_migrated_params={"tab": "tab-2"},
+            cached_migrated_params_module_version=module_zipfile.version,
         )
 
         tab2 = self.workflow.tabs.create(position=1, slug="tab-2")
@@ -461,7 +433,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
                 workflow_id=self.workflow.id,
                 tab=tab2,
                 slug="step-2",
-                module_id_name=self.module_version.id_name,
+                module_id_name=self.module_zipfile.module_id,
                 position=0,
                 param_values={"url": "https://x.com"},
             )
@@ -473,7 +445,6 @@ class AddDeleteModuleCommandTests(DbTestCase):
 
     # We had a bug where add then delete caused an error when deleting
     # workflow, since both commands tried to delete the WfModule
-    @patch.object(LoadedModule, "for_module_version", MockLoadedModule)
     def test_add_delete(self):
         cmda = self.run_with_async_db(
             commands.do(
@@ -481,7 +452,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
                 workflow_id=self.workflow.id,
                 tab=self.workflow.tabs.first(),
                 slug="step-1",
-                module_id_name=self.module_version.id_name,
+                module_id_name=self.module_zipfile.module_id,
                 position=0,
                 param_values={},
             )
@@ -496,7 +467,6 @@ class AddDeleteModuleCommandTests(DbTestCase):
         self.workflow.delete()
         self.assertTrue(True)  # we didn't crash! Yay, we pass
 
-    @patch.object(LoadedModule, "for_module_version", MockLoadedModule)
     def test_delete_if_workflow_delete_cascaded_to_wf_module_first(self):
         self.run_with_async_db(
             commands.do(
@@ -504,7 +474,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
                 workflow_id=self.workflow.id,
                 tab=self.workflow.tabs.first(),
                 slug="step-1",
-                module_id_name=self.module_version.id_name,
+                module_id_name=self.module_zipfile.module_id,
                 position=0,
                 param_values={},
             )
@@ -517,7 +487,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
                 workflow_id=self.workflow.id,
                 tab=self.workflow.tabs.first(),
                 slug="step-2",
-                module_id_name=self.module_version.id_name,
+                module_id_name=self.module_zipfile.module_id,
                 position=0,
                 param_values={},
             )
@@ -525,7 +495,6 @@ class AddDeleteModuleCommandTests(DbTestCase):
         self.workflow.delete()
         self.assertTrue(True)  # we didn't crash! Yay, we pass
 
-    @patch.object(LoadedModule, "for_module_version", MockLoadedModule)
     def test_delete_if_workflow_missing_init(self):
         self.workflow.last_delta_id = None
         self.workflow.save(update_fields=["last_delta_id"])
@@ -537,7 +506,7 @@ class AddDeleteModuleCommandTests(DbTestCase):
                 workflow_id=self.workflow.id,
                 tab=self.workflow.tabs.first(),
                 slug="step-1",
-                module_id_name=self.module_version.id_name,
+                module_id_name=self.module_zipfile.module_id,
                 position=0,
                 param_values={},
             )

@@ -77,7 +77,7 @@ def arrow_table(
     columns: Optional[List[Column]] = None,
 ) -> ArrowTable:
     """
-    Yield an ArrowTable (whose `.path` is a _deleted_ file).
+    Build an ArrowTable (whose `.path` is a _deleted_ file).
 
     Metadata is inferred. Number columns have format `{:,}`.
 

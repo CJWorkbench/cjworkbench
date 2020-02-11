@@ -154,7 +154,11 @@ class FetchTests(unittest.TestCase):
                 result.errors,
                 [
                     RenderError(
-                        I18nMessage.TODO_i18n("Error from server: HTTP 404 Not Found")
+                        I18nMessage(
+                            "http.errors.HttpErrorNotSuccess",
+                            {"status_code": 404, "reason": "Not Found"},
+                            "cjwmodule",
+                        )
                     )
                 ],
             )
@@ -169,9 +173,7 @@ class FetchTests(unittest.TestCase):
                 result.errors,
                 [
                     RenderError(
-                        I18nMessage.TODO_i18n(
-                            "Invalid URL. Please supply a valid URL, starting with http:// or https://."
-                        )
+                        I18nMessage("http.errors.HttpErrorInvalidUrl", {}, "cjwmodule")
                     )
                 ],
             )
@@ -211,8 +213,8 @@ class FetchTests(unittest.TestCase):
                 result.errors,
                 [
                     RenderError(
-                        I18nMessage.TODO_i18n(
-                            "HTTP server(s) redirected us too many times. Please try a different URL."
+                        I18nMessage(
+                            "http.errors.HttpErrorTooManyRedirects", {}, "cjwmodule"
                         )
                     )
                 ],

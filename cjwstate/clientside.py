@@ -17,8 +17,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field, replace
 import datetime
 from typing import Any, Dict, FrozenSet, Iterable, List, Optional, Union
-from cjwkernel.types import RenderError
-from cjwstate.modules.module_loader import ModuleSpec
+from cjwstate.modules.types import ModuleSpec
 
 
 @dataclass(frozen=True)
@@ -164,7 +163,7 @@ class StepUpdate:
     """
     Module identifier.
 
-    Required for creation, and must be None afterwards.
+    Required for creation and whenever `render_result` is not empty.
     """
 
     tab_slug: Optional[str] = None
@@ -197,6 +196,10 @@ class StepUpdate:
     If the cached-result delta ID is different from the _relevant_ delta ID,
     then the result is obsolete. The client may render obsolete data plus a
     progress indicator.
+    
+    When a `render_result` is provided, you must also pass a `module_slug`.
+    This is so that `I18nMessage`s with source `"module"` in the result
+    can be interpreted relative to their source module.
     """
 
     files: Optional[List[UploadedFile]] = None
@@ -270,6 +273,10 @@ class StepUpdate:
     * We sometimes create new versions when users change parameters.
     * We sometimes create new versions when module code changes.
     """
+
+    def __post_init__(self):
+        if self.render_result is not None:
+            assert self.module_slug is not None  # (otherwise i18n will break)
 
 
 @dataclass(frozen=True)

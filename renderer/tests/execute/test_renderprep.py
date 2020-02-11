@@ -8,7 +8,7 @@ from cjwkernel.tests.util import arrow_table
 from cjwkernel.util import tempdir_context
 from cjwstate import minio
 from cjwstate.models import Workflow, UploadedFile
-from cjwstate.models.param_spec import ParamDType
+from cjwstate.modules.param_dtype import ParamDType
 from cjwstate.tests.utils import DbTestCase
 from renderer.execute.renderprep import clean_value, RenderContext
 from renderer.execute.types import (
@@ -75,12 +75,7 @@ class CleanValueTests(DbTestCase):
         key = f"wf-${workflow.id}/wfm-${step.id}/${id}"
         minio.put_bytes(minio.UserFilesBucket, key, b"1234")
         UploadedFile.objects.create(
-            wf_module=step,
-            name="x.csv.gz",
-            size=4,
-            uuid=id,
-            bucket=minio.UserFilesBucket,
-            key=key,
+            wf_module=step, name="x.csv.gz", size=4, uuid=id, key=key
         )
         with ExitStack() as inner_stack:
             context = self._render_context(wf_module_id=step.id, exit_stack=inner_stack)
@@ -119,12 +114,7 @@ class CleanValueTests(DbTestCase):
         # Oops -- let's _not_ put the file!
         # minio.put_bytes(minio.UserFilesBucket, key, b'1234')
         UploadedFile.objects.create(
-            wf_module=step2,
-            name="x.csv.gz",
-            size=4,
-            uuid=id,
-            bucket=minio.UserFilesBucket,
-            key=key,
+            wf_module=step2, name="x.csv.gz", size=4, uuid=id, key=key
         )
         context = self._render_context(wf_module_id=step.id)
         result = clean_value(ParamDType.File(), id, context)
@@ -146,12 +136,7 @@ class CleanValueTests(DbTestCase):
         key = f"wf-${workflow.id}/wfm-${step.id}/${id}"
         minio.put_bytes(minio.UserFilesBucket, key, b"1234")
         UploadedFile.objects.create(
-            wf_module=step2,
-            name="x.csv.gz",
-            size=4,
-            uuid=id,
-            bucket=minio.UserFilesBucket,
-            key=key,
+            wf_module=step2, name="x.csv.gz", size=4, uuid=id, key=key
         )
         context = self._render_context(wf_module_id=step.id)
         result = clean_value(ParamDType.File(), id, context)
