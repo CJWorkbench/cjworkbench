@@ -23,10 +23,9 @@ def parse_file(
             return RenderResult(
                 errors=[
                     RenderError(
-                        I18nMessage.trans(
-                            "py.cjwkernel.pandas.parse.api.parse_file.UknownExtension",
-                            default="Unknown file extension {ext}. Please try a different file.",
-                            args={"ext": ext},
+                        I18nMessage.TODO_i18n(
+                            "Unknown file extension %r. Please try a different file."
+                            % ext
                         )
                     )
                 ]

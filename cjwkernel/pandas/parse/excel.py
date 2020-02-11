@@ -34,11 +34,7 @@ def parse_xls_file(
         return RenderResult(
             errors=[
                 RenderError(
-                    I18nMessage.trans(
-                        "py.cjwkernel.pandas.parse.excel.parse_xls_file.XLRDError",
-                        default="Error reading Excel file: {error}",
-                        args={"error": str(err)},
-                    )
+                    I18nMessage.TODO_i18n(f"Error reading Excel file: %s" % str(err))
                 )
             ]
         )

@@ -65,9 +65,8 @@ class PasteCSVTests(unittest.TestCase):
             result.errors,
             [
                 RenderError(
-                    I18nMessage(
-                        "py.cjwkernel.pandas.parse.csv.ParseCsvWarningNumberedColumnNames.message",
-                        {"number_names": 1, "name": "A 2"},
+                    I18nMessage.TODO_i18n(
+                        "Renamed 1 duplicate column names (see “A 2”)"
                     )
                 )
             ],

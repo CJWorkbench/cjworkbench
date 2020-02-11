@@ -14,7 +14,6 @@ from cjwkernel.util import tempfile_context
 from cjwmodule.util.colnames import gen_unique_clean_colnames
 from .postprocess import dictionary_encode_columns, infer_table_metadata
 from .text import transcode_to_utf8_and_warn
-from .util import invalid_encoding_i18n_message
 
 
 class ParseCsvWarning:
@@ -26,11 +25,10 @@ class ParseCsvWarningSkippedRows(ParseCsvWarning):
     n_rows_skipped: int
     max_n_rows: int
 
-    def message(self):
-        return I18nMessage.trans(
-            "py.cjwkernel.pandas.parse.csv.ParseCsvWarningSkippedRows.message",
-            default="Skipped {number_skipped} rows (after limit of {limit})",
-            args={"number_skipped": self.n_rows_skipped, "limit": self.max_n_rows},
+    def __str__(self):  # TODO nix when we support i18n
+        return "Skipped %d rows (after limit of %d)" % (
+            self.n_rows_skipped,
+            self.max_n_rows,
         )
 
 
@@ -39,14 +37,10 @@ class ParseCsvWarningSkippedColumns(ParseCsvWarning):
     n_columns_skipped: int
     max_n_columns: int
 
-    def message(self):
-        return I18nMessage.trans(
-            "py.cjwkernel.pandas.parse.csv.ParseCsvWarningSkippedColumns.message",
-            default="Skipped {number_skipped} columns (after limit of {limit})",
-            args={
-                "number_skipped": self.n_columns_skipped,
-                "limit": self.max_n_columns,
-            },
+    def __str__(self):  # TODO nix when we support i18n
+        return "Skipped %d columns (after limit of %d)" % (
+            self.n_columns_skipped,
+            self.max_n_columns,
         )
 
 
@@ -57,16 +51,12 @@ class ParseCsvWarningTruncatedValues(ParseCsvWarning):
     first_value_row: int
     first_value_column: int
 
-    def message(self):
-        return I18nMessage.trans(
-            "py.cjwkernel.pandas.parse.csv.ParseCsvWarningTruncatedValues.message",
-            default="Truncated {number_truncated} values (to {number_bytes} bytes each; see row {row} column {column})",
-            args={
-                "number_truncated": self.n_values_truncated,
-                "number_bytes": self.max_bytes_per_value,
-                "row": self.first_value_row,
-                "column": self.first_value_column,
-            },
+    def __str__(self):  # TODO nix when we support i18n
+        return "Truncated %d values (to %d bytes each; see row %d column %d)" % (
+            self.n_values_truncated,
+            self.max_bytes_per_value,
+            self.first_value_row,
+            self.first_value_column,
         )
 
 
@@ -75,11 +65,10 @@ class ParseCsvWarningCleanedAsciiColumnNames(ParseCsvWarning):
     n_names: int
     first_name: str
 
-    def message(self):
-        return I18nMessage.trans(
-            "py.cjwkernel.pandas.parse.csv.ParseCsvWarningCleanedAsciiColumnNames.message",
-            default="Removed special characters from {number_names} column names (see “{name}”)",
-            args={"number_names": self.n_names, "name": self.first_name},
+    def __str__(self):  # TODO nix when we support i18n
+        return ("Removed special characters from %d column names (see “%s”)") % (
+            self.n_names,
+            self.first_name,
         )
 
 
@@ -88,11 +77,10 @@ class ParseCsvWarningNumberedColumnNames(ParseCsvWarning):
     n_names: int
     first_name: str
 
-    def message(self):
-        return I18nMessage.trans(
-            "py.cjwkernel.pandas.parse.csv.ParseCsvWarningNumberedColumnNames.message",
-            default="Removed {number_names} duplicate column names (see “{name}”)",
-            args={"number_names": self.n_names, "name": self.first_name},
+    def __str__(self):  # TODO nix when we support i18n
+        return "Renamed %d duplicate column names (see “%s”)" % (
+            self.n_names,
+            self.first_name,
         )
 
 
@@ -101,15 +89,11 @@ class ParseCsvWarningTruncatedColumnNames(ParseCsvWarning):
     n_names: int
     first_name: str
 
-    def message(self):
-        return I18nMessage.trans(
-            "py.cjwkernel.pandas.parse.csv.ParseCsvWarningTruncatedColumnNames.message",
-            default="Truncated {number_truncated} column names (to {number_bytes} bytes each; see “{name}”)",
-            args={
-                "number_truncated": self.n_names,
-                "number_bytes": settings.MAX_BYTES_PER_COLUMN_NAME,
-                "name": self.first_name,
-            },
+    def __str__(self):  # TODO nix when we support i18n
+        return "Truncated %d column names (to %d bytes each; see “%s”)" % (
+            self.n_names,
+            settings.MAX_BYTES_PER_COLUMN_NAME,
+            self.first_name,
         )
 
 
@@ -119,25 +103,17 @@ class ParseCsvWarningRepairedValues(ParseCsvWarning):
     first_value_row: int
     first_value_column: int
 
-    def message(self):
-        return I18nMessage.trans(
-            "py.cjwkernel.pandas.parse.csv.ParseCsvWarningRepairedValues.message",
-            default="Repaired {number_repaired} values which misused quotation marks (see row {row} column {column})",
-            args={
-                "number_repaired": self.n_values_repaired,
-                "row": self.first_value_row,
-                "column": self.first_value_column,
-            },
+    def __str__(self):  # TODO nix when we support i18n
+        return (
+            "Repaired %d values which misused quotation marks (see row %d column %d)"
+            % (self.n_values_repaired, self.first_value_row, self.first_value_column)
         )
 
 
 @dataclass(frozen=True)
 class ParseCsvWarningRepairedEndOfFile(ParseCsvWarning):
-    def message(self):
-        return I18nMessage.trans(
-            "py.cjwkernel.pandas.parse.csv.ParseCsvWarningRepairedEndOfFile.message",
-            "Inserted missing quotation mark at end of file",
-        )
+    def __str__(self):  # TODO nix when we support i18n
+        return "Inserted missing quotation mark at end of file"
 
 
 @dataclass(frozen=True)
@@ -145,14 +121,10 @@ class ParseCsvWarningTruncatedFile(ParseCsvWarning):
     original_n_bytes: int
     max_n_bytes: int
 
-    def message(self):
-        return I18nMessage.trans(
-            "py.cjwkernel.pandas.parse.csv.ParseCsvWarningTruncatedFile.message",
-            default="Truncated {number_truncated} bytes from file (maximum is {max_bytes})",
-            args={
-                "number_truncated": self.original_n_bytes - self.max_n_bytes,
-                "max_bytes": self.max_n_bytes,
-            },
+    def __str__(self):  # TODO nix when we support i18n
+        return "Truncated %d bytes from file (maximum is %d bytes)" % (
+            self.original_n_bytes - self.max_n_bytes,
+            self.max_n_bytes,
         )
 
 
@@ -162,13 +134,11 @@ class ParseCsvWarningRepairedEncoding(ParseCsvWarning):
     first_invalid_byte: int
     first_invalid_byte_position: int
 
-    def message(self):
-        return invalid_encoding_i18n_message(
-            self.first_invalid_byte,
-            self.first_invalid_byte_position,
-            self.encoding,
-            "�",
-        )
+    def __str__(self):  # TODO nix when we support i18n
+        return (
+            "Encoding error: byte 0x%02X is invalid %s at byte %d. "
+            "We replaced invalid bytes with “�”."
+        ) % (self.first_invalid_byte, self.encoding, self.first_invalid_byte_position)
 
 
 ParseCsvWarning.RepairedEndOfFile = ParseCsvWarningRepairedEndOfFile
@@ -528,7 +498,9 @@ def parse_csv(
     else:
         arrow_table = ArrowTable(output_path, result.table, metadata)
     if result.warnings:
-        errors = [RenderError(warning.message()) for warning in result.warnings]
+        # TODO when we support i18n, this will be even simpler....
+        en_message = "\n".join([str(warning) for warning in result.warnings])
+        errors = [RenderError(I18nMessage.TODO_i18n(en_message))]
     else:
         errors = []
 
