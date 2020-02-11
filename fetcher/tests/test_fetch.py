@@ -39,6 +39,7 @@ from cjwstate.tests.utils import (
     create_module_zipfile,
 )
 from fetcher import fetch, fetchprep, save
+from typing import Union
 
 
 def async_value(v):
