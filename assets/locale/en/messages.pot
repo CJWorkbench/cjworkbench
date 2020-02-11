@@ -2295,7 +2295,7 @@ msgstr ""
 msgid "py.fetcher.secrets._refresh_oauth2_token.error.general"
 msgstr ""
 
-#. default-message: {service_id} responded with HTTP {status_code} {error}: {description}
+#. default-message: {service_id} responded with HTTP {status_code} {reason}: {description}
 #: fetcher/secrets.py:177
 msgid "py.fetcher.secrets._refresh_oauth2_token.server_error.general"
 msgstr ""

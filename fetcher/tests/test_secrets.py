@@ -311,7 +311,7 @@ class PrepareSecretOauth2(AioHTTPTestCase):
                         "arguments": {
                             "service_id": "google",
                             "status_code": 418,
-                            "error": "I'm a teapot",
+                            "reason": "I'm a teapot",
                             "description": "tea time?",
                         },
                     },

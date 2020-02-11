@@ -176,11 +176,11 @@ async def _refresh_oauth2_token(
                     raise _RefreshOauth2TokenError(
                         I18nMessage.trans(
                             "py.fetcher.secrets._refresh_oauth2_token.server_error.general",
-                            default="{service_id} responded with HTTP {status_code} {error}: {description}",
+                            default="{service_id} responded with HTTP {status_code} {reason}: {description}",
                             args={
                                 "service_id": service.service_id,
                                 "status_code": response.status,
-                                "error": response.reason,
+                                "reason": response.reason,
                                 "description": body,
                             },
                         )

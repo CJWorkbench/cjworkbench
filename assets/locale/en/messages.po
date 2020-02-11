@@ -1934,7 +1934,7 @@ msgstr "Token server responded with {status_code}: {error} ({description})"
 
 #: fetcher/secrets.py:177
 msgid "py.fetcher.secrets._refresh_oauth2_token.server_error.general"
-msgstr "{service_id} responded with HTTP {status_code} {error}: {description}"
+msgstr "{service_id} responded with HTTP {status_code} {reason}: {description}"
 
 #: fetcher/secrets.py:194
 msgid "py.fetcher.secrets._refresh_oauth2_token.timeout_error"
