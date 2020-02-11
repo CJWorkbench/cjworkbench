@@ -2272,47 +2272,47 @@ msgstr ""
 
 #. default-message: Skipped {number_skipped} rows (after limit of {limit})
 #: cjwkernel/pandas/parse/csv.py:30
-msgid "py.cjwkernell.pandas.parse.csv.ParseCsvWarningSkippedRows.message"
+msgid "py.cjwkernel.pandas.parse.csv.ParseCsvWarningSkippedRows.message"
 msgstr ""
 
 #. default-message: Skipped {number_skipped} columns (after limit of {limit})
 #: cjwkernel/pandas/parse/csv.py:43
-msgid "py.cjwkernell.pandas.parse.csv.ParseCsvWarningSkippedColumns.message"
+msgid "py.cjwkernel.pandas.parse.csv.ParseCsvWarningSkippedColumns.message"
 msgstr ""
 
 #. default-message: Truncated {number_truncated} values (to {number_bytes} bytes each; see row {row} column {column})
 #: cjwkernel/pandas/parse/csv.py:61
-msgid "py.cjwkernell.pandas.parse.csv.ParseCsvWarningTruncatedValues.message"
+msgid "py.cjwkernel.pandas.parse.csv.ParseCsvWarningTruncatedValues.message"
 msgstr ""
 
 #. default-message: Removed special characters from {number_names} column names (see “{name}”)
 #: cjwkernel/pandas/parse/csv.py:79
-msgid "py.cjwkernell.pandas.parse.csv.ParseCsvWarningCleanedAsciiColumnNames.message"
+msgid "py.cjwkernel.pandas.parse.csv.ParseCsvWarningCleanedAsciiColumnNames.message"
 msgstr ""
 
 #. default-message: Removed {number_names} duplicate column names (see “{name}”)
 #: cjwkernel/pandas/parse/csv.py:92
-msgid "py.cjwkernell.pandas.parse.csv.ParseCsvWarningNumberedColumnNames.message"
+msgid "py.cjwkernel.pandas.parse.csv.ParseCsvWarningNumberedColumnNames.message"
 msgstr ""
 
 #. default-message: Truncated {number_truncated} column names (to {number_bytes} bytes each; see “{name}”)
 #: cjwkernel/pandas/parse/csv.py:105
-msgid "py.cjwkernell.pandas.parse.csv.ParseCsvWarningTruncatedColumnNames.message"
+msgid "py.cjwkernel.pandas.parse.csv.ParseCsvWarningTruncatedColumnNames.message"
 msgstr ""
 
 #. default-message: Repaired {number_repaired} values which misused quotation marks (see row {row} column {column})
 #: cjwkernel/pandas/parse/csv.py:123
-msgid "py.cjwkernell.pandas.parse.csv.ParseCsvWarningRepairedValues.message"
+msgid "py.cjwkernel.pandas.parse.csv.ParseCsvWarningRepairedValues.message"
 msgstr ""
 
 #. default-message: Inserted missing quotation mark at end of file
 #: cjwkernel/pandas/parse/csv.py:137
-msgid "py.cjwkernell.pandas.parse.csv.ParseCsvWarningRepairedEndOfFile.message"
+msgid "py.cjwkernel.pandas.parse.csv.ParseCsvWarningRepairedEndOfFile.message"
 msgstr ""
 
 #. default-message: Truncated {number_truncated} bytes from file (maximum is {max_bytes})
 #: cjwkernel/pandas/parse/csv.py:149
-msgid "py.cjwkernell.pandas.parse.csv.ParseCsvWarningTruncatedFile.message"
+msgid "py.cjwkernel.pandas.parse.csv.ParseCsvWarningTruncatedFile.message"
 msgstr ""
 
 #. default-message: Error reading Excel file: {error}
@@ -2322,7 +2322,7 @@ msgstr ""
 
 #. default-message:
 #: cjwkernel/pandas/parse/util.py:12
-msgid "py.cjwkernell.pandas.parse.util.invalid_encoding_i18n_message"
+msgid "py.cjwkernel.pandas.parse.util.invalid_encoding_i18n_message"
 msgstr ""
 
 #. default-message: First name

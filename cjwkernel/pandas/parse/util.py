@@ -8,7 +8,7 @@ def invalid_encoding_i18n_message(
     replacement: str,
 ) -> I18nMessage:
     return I18nMessage.trans(
-        "py.cjwkernell.pandas.parse.util.invalid_encoding_i18n_message",
+        "py.cjwkernel.pandas.parse.util.invalid_encoding_i18n_message",
         default=(
             "Encoding error: byte {byte} is invalid {encoding} at byte {byte_position}. "
             "We replaced invalid bytes with “{replacement}”."

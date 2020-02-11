@@ -66,7 +66,7 @@ class PasteCSVTests(unittest.TestCase):
             [
                 RenderError(
                     I18nMessage(
-                        "py.cjwkernell.pandas.parse.csv.ParseCsvWarningNumberedColumnNames.message",
+                        "py.cjwkernel.pandas.parse.csv.ParseCsvWarningNumberedColumnNames.message",
                         {"number_names": 1, "name": "A 2"},
                     )
                 )
