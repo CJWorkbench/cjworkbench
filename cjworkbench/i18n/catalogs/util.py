@@ -83,9 +83,7 @@ def copy_message(message: Message, **kwargs) -> Message:
     )
 
 
-def copy_catalog(old: Catalog, **kwargs) -> Catalog:
-    """Copies a catalog and its messages, replacing any of the catalog attributes given in kwargs
-    """
+def new_catalog_from_metadata(old: Catalog, **kwargs) -> Catalog:
     catalog = Catalog(
         locale=kwargs.get("locale", old.locale),
         header_comment=kwargs.get("header_comment", old.header_comment),
@@ -99,6 +97,13 @@ def copy_catalog(old: Catalog, **kwargs) -> Catalog:
         language_team=kwargs.get("language_team", old.language_team),
         fuzzy=kwargs.get("fuzzy", old.fuzzy),
     )
+    return catalog
+
+
+def copy_catalog(old: Catalog, **kwargs) -> Catalog:
+    """Copies a catalog and its messages, replacing any of the catalog attributes given in kwargs
+    """
+    catalog = new_catalog_from_metadata(old, **kwargs)
     for message in old:
         if message.id:
             add_or_update_message(catalog, copy_message(message))
