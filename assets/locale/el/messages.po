@@ -1951,10 +1951,6 @@ msgstr "μόλις τώρα"
 msgid "py.cjwkernel.pandas.types.ProcessResult.truncate_in_place_if_too_big.warning"
 msgstr ""
 
-#: cjwkernel/pandas/parse/util.py:12
-msgid "py.cjwkernel.pandas.parse.util.invalid_encoding_i18n_message"
-msgstr ""
-
 #: cjworkbench/forms/signup.py:24
 msgid "py.forms.signup.firstName.placeholder"
 msgstr "Όνομα"

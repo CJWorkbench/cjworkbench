@@ -1908,10 +1908,6 @@ msgstr "just now"
 msgid "py.cjwkernel.pandas.types.ProcessResult.truncate_in_place_if_too_big.warning"
 msgstr "Truncated output from {old_number} rows to {new_number}"
 
-#: cjwkernel/pandas/parse/util.py:12
-msgid "py.cjwkernel.pandas.parse.util.invalid_encoding_i18n_message"
-msgstr ""
-
 #: cjworkbench/forms/signup.py:24
 msgid "py.forms.signup.firstName.placeholder"
 msgstr "First name"
