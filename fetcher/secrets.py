@@ -14,7 +14,7 @@ ModuleSecret = Optional[Dict[str, Any]]
 def _service_no_longer_configured_error(service: str):
     return I18nMessage.trans(
         "py.fetcher.secrets._service_no_longer_configured_error",
-        default="Service {service} is no longer configured",
+        default='Service "{service}" is no longer configured',
         args={"service": service},
     )
 
@@ -163,9 +163,9 @@ async def _refresh_oauth2_token(
                     raise _RefreshOauth2TokenError(
                         I18nMessage.trans(
                             "py.fetcher.secrets._refresh_oauth2_token.error.general",
-                            default="Token server responded with {status_number}: {error} ({description})",
+                            default="Token server responded with {status_code}: {error} ({description})",
                             args={
-                                "status_number": response.status,
+                                "status_code": response.status,
                                 "error": str(body["error"]),
                                 "description": body.get("error_description"),
                             },
@@ -176,10 +176,10 @@ async def _refresh_oauth2_token(
                     raise _RefreshOauth2TokenError(
                         I18nMessage.trans(
                             "py.fetcher.secrets._refresh_oauth2_token.server_error.general",
-                            default="{service_id} responded with HTTP {status_number} {error}: {description}",
+                            default="{service_id} responded with HTTP {status_code} {error}: {description}",
                             args={
                                 "service_id": service.service_id,
-                                "status_number": response.status,
+                                "status_code": response.status,
                                 "error": response.reason,
                                 "description": body,
                             },

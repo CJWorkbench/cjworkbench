@@ -141,10 +141,10 @@ def _wrap_render_errors(render_call):
             errors=[
                 RenderError(
                     I18nMessage.trans(
-                        "py.renderer.execute.wf_module.wrap_render_errors",
+                        "py.renderer.execute.wf_module.user_visible_bug_during_render",
                         default="Something unexpected happened. We have been notified and are "
-                        "working to fix it. If this persists, contact us. Error code: {error_code}",
-                        args={"error_code": format_for_user_debugging(err)},
+                        "working to fix it. If this persists, contact us. Error code: {message}",
+                        args={"message": format_for_user_debugging(err)},
                     )
                 )
             ]
@@ -355,7 +355,7 @@ async def _render_wfmodule(
             errors=[
                 RenderError(
                     I18nMessage.trans(
-                        "py.renderer.execute.wf_module._render_wfmodule.noModule",
+                        "py.renderer.execute.wf_module.noModule",
                         default="Please delete this step: an administrator uninstalled its code.",
                     )
                 )
@@ -382,7 +382,7 @@ async def _render_wfmodule(
                 errors=[
                     RenderError(
                         I18nMessage.trans(
-                            "py.renderer.execute.wf_module._render_wfmodule.TabCycleError",
+                            "py.renderer.execute.wf_module.TabCycleError",
                             default="The chosen tab depends on this one. Please choose another tab.",
                         )
                     )
@@ -393,7 +393,7 @@ async def _render_wfmodule(
                 errors=[
                     RenderError(
                         I18nMessage.trans(
-                            "py.renderer.execute.wf_module._render_wfmodule.TabOutputUnreachableError",
+                            "py.renderer.execute.wf_module.TabOutputUnreachableError",
                             default="The chosen tab has no output. Please select another one.",
                         )
                     )

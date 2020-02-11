@@ -1960,11 +1960,11 @@ msgid "py.forms.signup.lastName.placeholder"
 msgstr "Επώνυμο"
 
 #: fetcher/fetch.py:187
-msgid "py.fetcher.fetch.user_visible_bug_fetch_result"
+msgid "py.fetcher.fetch.user_visible_bug_during_fetch"
 msgstr ""
 
 #: fetcher/fetch.py:289
-msgid "py.fetcher.fetch.fetch_or_wrap_error.no_loaded_module"
+msgid "py.fetcher.fetch.no_loaded_module"
 msgstr ""
 
 #: fetcher/secrets.py:15
@@ -2015,19 +2015,19 @@ msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_error_message
 msgstr ""
 
 #: renderer/execute/wf_module.py:147
-msgid "py.renderer.execute.wf_module.wrap_render_errors"
+msgid "py.renderer.execute.wf_module.user_visible_bug_during_render"
 msgstr ""
 
 #: renderer/execute/wf_module.py:357
-msgid "py.renderer.execute.wf_module._render_wfmodule.noModule"
+msgid "py.renderer.execute.wf_module.noModule"
 msgstr ""
 
 #: renderer/execute/wf_module.py:384
-msgid "py.renderer.execute.wf_module._render_wfmodule.TabCycleError"
+msgid "py.renderer.execute.wf_module.TabCycleError"
 msgstr ""
 
 #: renderer/execute/wf_module.py:395
-msgid "py.renderer.execute.wf_module._render_wfmodule.TabOutputUnreachableError"
+msgid "py.renderer.execute.wf_module.TabOutputUnreachableError"
 msgstr ""
 
 #: templates/403.html:5

@@ -310,7 +310,7 @@ class PrepareSecretOauth2(AioHTTPTestCase):
                         "id": "py.fetcher.secrets._refresh_oauth2_token.server_error.general",
                         "arguments": {
                             "service_id": "google",
-                            "status_number": 418,
+                            "status_code": 418,
                             "error": "I'm a teapot",
                             "description": "tea time?",
                         },

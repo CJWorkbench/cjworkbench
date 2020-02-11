@@ -1917,24 +1917,24 @@ msgid "py.forms.signup.lastName.placeholder"
 msgstr "Last name"
 
 #: fetcher/fetch.py:187
-msgid "py.fetcher.fetch.user_visible_bug_fetch_result"
+msgid "py.fetcher.fetch.user_visible_bug_during_fetch"
 msgstr ""
 
 #: fetcher/fetch.py:289
-msgid "py.fetcher.fetch.fetch_or_wrap_error.no_loaded_module"
+msgid "py.fetcher.fetch.no_loaded_module"
 msgstr "Cannot fetch: module was deleted"
 
 #: fetcher/secrets.py:15
 msgid "py.fetcher.secrets._service_no_longer_configured_error"
-msgstr "Service {service} is no longer configured"
+msgstr "Service \"{service}\" is no longer configured"
 
 #: fetcher/secrets.py:170
 msgid "py.fetcher.secrets._refresh_oauth2_token.error.general"
-msgstr "Token server responded with {status_number}: {error} ({description})"
+msgstr "Token server responded with {status_code}: {error} ({description})"
 
 #: fetcher/secrets.py:177
 msgid "py.fetcher.secrets._refresh_oauth2_token.server_error.general"
-msgstr "{service_id} responded with HTTP {status_number} {error}: {description}"
+msgstr "{service_id} responded with HTTP {status_code} {error}: {description}"
 
 #: fetcher/secrets.py:194
 msgid "py.fetcher.secrets._refresh_oauth2_token.timeout_error"
@@ -1993,21 +1993,21 @@ msgstr ""
 "select, text {Text} number {Numbers} datetime {Dates & Times} other{}}.}}"
 
 #: renderer/execute/wf_module.py:147
-msgid "py.renderer.execute.wf_module.wrap_render_errors"
+msgid "py.renderer.execute.wf_module.user_visible_bug_during_render"
 msgstr ""
 "Something unexpected happened. We have been notified and are working to "
-"fix it. If this persists, contact us. Error code: {error_code}"
+"fix it. If this persists, contact us. Error code: {message}"
 
 #: renderer/execute/wf_module.py:357
-msgid "py.renderer.execute.wf_module._render_wfmodule.noModule"
+msgid "py.renderer.execute.wf_module.noModule"
 msgstr "Please delete this step: an administrator uninstalled its code."
 
 #: renderer/execute/wf_module.py:384
-msgid "py.renderer.execute.wf_module._render_wfmodule.TabCycleError"
+msgid "py.renderer.execute.wf_module.TabCycleError"
 msgstr "The chosen tab depends on this one. Please choose another tab."
 
 #: renderer/execute/wf_module.py:395
-msgid "py.renderer.execute.wf_module._render_wfmodule.TabOutputUnreachableError"
+msgid "py.renderer.execute.wf_module.TabOutputUnreachableError"
 msgstr "The chosen tab has no output. Please select another one."
 
 #: templates/403.html:5

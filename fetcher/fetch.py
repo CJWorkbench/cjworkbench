@@ -183,7 +183,7 @@ def user_visible_bug_fetch_result(output_path: Path, message: str) -> FetchResul
         errors=[
             RenderError(
                 I18nMessage.trans(
-                    "py.fetcher.fetch.user_visible_bug_fetch_result",
+                    "py.fetcher.fetch.user_visible_bug_during_fetch",
                     default=(
                         "Something unexpected happened. We have been notified and are "
                         "working to fix it. If this persists, contact us. Error code: {message}"
@@ -287,7 +287,7 @@ def fetch_or_wrap_error(
             [
                 RenderError(
                     I18nMessage.trans(
-                        "py.fetcher.fetch.fetch_or_wrap_error.no_loaded_module",
+                        "py.fetcher.fetch.no_loaded_module",
                         default="Cannot fetch: module was deleted",
                     )
                 )

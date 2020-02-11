@@ -2277,25 +2277,25 @@ msgstr ""
 
 #. default-message:
 #: fetcher/fetch.py:187
-msgid "py.fetcher.fetch.user_visible_bug_fetch_result"
+msgid "py.fetcher.fetch.user_visible_bug_during_fetch"
 msgstr ""
 
 #. default-message: Cannot fetch: module was deleted
 #: fetcher/fetch.py:289
-msgid "py.fetcher.fetch.fetch_or_wrap_error.no_loaded_module"
+msgid "py.fetcher.fetch.no_loaded_module"
 msgstr ""
 
-#. default-message: Service {service} is no longer configured
+#. default-message: Service "{service}" is no longer configured
 #: fetcher/secrets.py:15
 msgid "py.fetcher.secrets._service_no_longer_configured_error"
 msgstr ""
 
-#. default-message: Token server responded with {status_number}: {error} ({description})
+#. default-message: Token server responded with {status_code}: {error} ({description})
 #: fetcher/secrets.py:170
 msgid "py.fetcher.secrets._refresh_oauth2_token.error.general"
 msgstr ""
 
-#. default-message: {service_id} responded with HTTP {status_number} {error}: {description}
+#. default-message: {service_id} responded with HTTP {status_code} {error}: {description}
 #: fetcher/secrets.py:177
 msgid "py.fetcher.secrets._refresh_oauth2_token.server_error.general"
 msgstr ""
@@ -2341,24 +2341,24 @@ msgstr ""
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_error_message.general"
 msgstr ""
 
-#. default-message: Something unexpected happened. We have been notified and are working to fix it. If this persists, contact us. Error code: {error_code}
+#. default-message: Something unexpected happened. We have been notified and are working to fix it. If this persists, contact us. Error code: {message}
 #: renderer/execute/wf_module.py:147
-msgid "py.renderer.execute.wf_module.wrap_render_errors"
+msgid "py.renderer.execute.wf_module.user_visible_bug_during_render"
 msgstr ""
 
 #. default-message: Please delete this step: an administrator uninstalled its code.
 #: renderer/execute/wf_module.py:357
-msgid "py.renderer.execute.wf_module._render_wfmodule.noModule"
+msgid "py.renderer.execute.wf_module.noModule"
 msgstr ""
 
 #. default-message: The chosen tab depends on this one. Please choose another tab.
 #: renderer/execute/wf_module.py:384
-msgid "py.renderer.execute.wf_module._render_wfmodule.TabCycleError"
+msgid "py.renderer.execute.wf_module.TabCycleError"
 msgstr ""
 
 #. default-message: The chosen tab has no output. Please select another one.
 #: renderer/execute/wf_module.py:395
-msgid "py.renderer.execute.wf_module._render_wfmodule.TabOutputUnreachableError"
+msgid "py.renderer.execute.wf_module.TabOutputUnreachableError"
 msgstr ""
 
 #. default-message: 403 Forbidden

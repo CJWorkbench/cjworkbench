@@ -39,7 +39,6 @@ from cjwstate.tests.utils import (
     create_module_zipfile,
 )
 from fetcher import fetch, fetchprep, save
-from typing import Union
 
 
 def async_value(v):
@@ -221,22 +220,13 @@ class FetchOrWrapErrorTests(DbTestCaseWithModuleRegistryAndMockKernel):
         self.ctx.close()
         super().tearDown()
 
-    def _err(self, message: Union[str, I18nMessage]) -> FetchResult:
-        return FetchResult(
-            self.output_path,
-            [
-                RenderError(
-                    message
-                    if isinstance(message, I18nMessage)
-                    else I18nMessage.TODO_i18n(message)
-                )
-            ],
-        )
+    def _err(self, message: I18nMessage) -> FetchResult:
+        return FetchResult(self.output_path, [RenderError(message)])
 
     def _bug_err(self, message: str) -> FetchResult:
         return self._err(
             I18nMessage(
-                "py.fetcher.fetch.user_visible_bug_fetch_result", {"message": message}
+                "py.fetcher.fetch.user_visible_bug_during_fetch", {"message": message}
             )
         )
 
@@ -256,10 +246,7 @@ class FetchOrWrapErrorTests(DbTestCaseWithModuleRegistryAndMockKernel):
             )
         self.assertEqual(self.output_path.stat().st_size, 0)
         self.assertEqual(
-            result,
-            self._err(
-                I18nMessage("py.fetcher.fetch.fetch_or_wrap_error.no_loaded_module")
-            ),
+            result, self._err(I18nMessage("py.fetcher.fetch.no_loaded_module"))
         )
 
     def test_simple(self):

@@ -58,13 +58,7 @@ class WfModuleTests(DbTestCaseWithModuleRegistry):
             )
         )
         expected = RenderResult(
-            errors=[
-                RenderError(
-                    I18nMessage(
-                        "py.renderer.execute.wf_module._render_wfmodule.noModule"
-                    )
-                )
-            ]
+            errors=[RenderError(I18nMessage("py.renderer.execute.wf_module.noModule"))]
         )
         self.assertEqual(result, expected)
         wf_module.refresh_from_db()
@@ -475,9 +469,9 @@ class WfModuleTests(DbTestCaseWithModuleRegistry):
                 errors=[
                     RenderError(
                         I18nMessage(
-                            "py.renderer.execute.wf_module.wrap_render_errors",
+                            "py.renderer.execute.wf_module.user_visible_bug_during_render",
                             {
-                                "error_code": "exit code 1: NameError: name 'undefined' is not defined"
+                                "message": "exit code 1: NameError: name 'undefined' is not defined"
                             },
                         )
                     )
