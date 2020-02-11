@@ -15,7 +15,7 @@ jobs:
         uses: actions/checkout@master
 
       - name: Notify Slack we are about to start
-        uses: CJWorkbench/slack-postmessage@15dcfe7
+        uses: CJWorkbench/slack-postmessage@9a02891
         env:
           SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
         with:
@@ -42,7 +42,7 @@ jobs:
           deploy/advanced-deploy staging "$GITHUB_SHA"
 
       - name: Notify Slack we did it
-        uses: CJWorkbench/slack-postmessage@15dcfe7
+        uses: CJWorkbench/slack-postmessage@9a02891
         env:
           SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
         with:
