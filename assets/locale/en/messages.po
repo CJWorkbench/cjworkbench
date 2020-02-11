@@ -1904,7 +1904,7 @@ msgstr "{years}y ago"
 msgid "js.util.timeDifference.now"
 msgstr "just now"
 
-#: cjwkernel/pandas/types.py:892
+#: cjwkernel/pandas/types.py:864
 msgid "py.cjwkernel.pandas.types.ProcessResult.truncate_in_place_if_too_big.warning"
 msgstr "Truncated output from {old_number} rows to {new_number}"
 
@@ -1970,11 +1970,11 @@ msgstr "First name"
 msgid "py.forms.signup.lastName.placeholder"
 msgstr "Last name"
 
-#: fetcher/fetch.py:110
+#: fetcher/fetch.py:187
 msgid "py.fetcher.fetch.user_visible_bug_fetch_result"
 msgstr ""
 
-#: fetcher/fetch.py:218
+#: fetcher/fetch.py:289
 msgid "py.fetcher.fetch.fetch_or_wrap_error.no_loaded_module"
 msgstr "Cannot fetch: module was deleted"
 
@@ -2046,23 +2046,23 @@ msgstr ""
 "{Numbers} datetime {Dates & Times} other {}} to {best_wanted_type, "
 "select, text {Text} number {Numbers} datetime {Dates & Times} other{}}.}}"
 
-#: renderer/execute/wf_module.py:141
+#: renderer/execute/wf_module.py:147
 msgid "py.renderer.execute.wf_module.wrap_render_errors"
 msgstr ""
 "Something unexpected happened. We have been notified and are working to "
 "fix it. If this persists, contact us. Error code: {error_code}"
 
-#: renderer/execute/wf_module.py:300
-msgid "py.renderer.execute.wf_module._render_module.TabCycleError"
+#: renderer/execute/wf_module.py:357
+msgid "py.renderer.execute.wf_module._render_wfmodule.noModule"
+msgstr "Please delete this step: an administrator uninstalled its code."
+
+#: renderer/execute/wf_module.py:384
+msgid "py.renderer.execute.wf_module._render_wfmodule.TabCycleError"
 msgstr "The chosen tab depends on this one. Please choose another tab."
 
-#: renderer/execute/wf_module.py:311
-msgid "py.renderer.execute.wf_module._render_module.TabOutputUnreachableError"
+#: renderer/execute/wf_module.py:395
+msgid "py.renderer.execute.wf_module._render_wfmodule.TabOutputUnreachableError"
 msgstr "The chosen tab has no output. Please select another one."
-
-#: renderer/execute/wf_module.py:325
-msgid "py.renderer.execute.wf_module._render_module.noLoadedModule"
-msgstr "Please delete this step: an administrator uninstalled its code."
 
 #: templates/403.html:5
 msgid "py.templates.403.title"

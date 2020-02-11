@@ -14,6 +14,18 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.8.0\n"
 
+#: renderer/execute/wf_module.py:300
+msgid "py.renderer.execute.wf_module._render_module.TabCycleError"
+msgstr ""
+
+#: renderer/execute/wf_module.py:311
+msgid "py.renderer.execute.wf_module._render_module.TabOutputUnreachableError"
+msgstr ""
+
+#: renderer/execute/wf_module.py:325
+msgid "py.renderer.execute.wf_module._render_module.noLoadedModule"
+msgstr ""
+
 #: assets/js/Embed.js:99
 msgid "js.Embed.embedCode"
 msgstr "Επικολλήστε αυτόν τον κώδικα στην HTML οποιασδήποτε ιστοσελίδας"
@@ -1947,7 +1959,7 @@ msgstr "{years}έτη πριν"
 msgid "js.util.timeDifference.now"
 msgstr "μόλις τώρα"
 
-#: cjwkernel/pandas/types.py:892
+#: cjwkernel/pandas/types.py:864
 msgid "py.cjwkernel.pandas.types.ProcessResult.truncate_in_place_if_too_big.warning"
 msgstr ""
 
@@ -2007,11 +2019,11 @@ msgstr "Όνομα"
 msgid "py.forms.signup.lastName.placeholder"
 msgstr "Επώνυμο"
 
-#: fetcher/fetch.py:110
+#: fetcher/fetch.py:187
 msgid "py.fetcher.fetch.user_visible_bug_fetch_result"
 msgstr ""
 
-#: fetcher/fetch.py:218
+#: fetcher/fetch.py:289
 msgid "py.fetcher.fetch.fetch_or_wrap_error.no_loaded_module"
 msgstr ""
 
@@ -2062,20 +2074,20 @@ msgstr ""
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_error_message.general"
 msgstr ""
 
-#: renderer/execute/wf_module.py:141
+#: renderer/execute/wf_module.py:147
 msgid "py.renderer.execute.wf_module.wrap_render_errors"
 msgstr ""
 
-#: renderer/execute/wf_module.py:300
-msgid "py.renderer.execute.wf_module._render_module.TabCycleError"
+#: renderer/execute/wf_module.py:357
+msgid "py.renderer.execute.wf_module._render_wfmodule.noModule"
 msgstr ""
 
-#: renderer/execute/wf_module.py:311
-msgid "py.renderer.execute.wf_module._render_module.TabOutputUnreachableError"
+#: renderer/execute/wf_module.py:384
+msgid "py.renderer.execute.wf_module._render_wfmodule.TabCycleError"
 msgstr ""
 
-#: renderer/execute/wf_module.py:325
-msgid "py.renderer.execute.wf_module._render_module.noLoadedModule"
+#: renderer/execute/wf_module.py:395
+msgid "py.renderer.execute.wf_module._render_wfmodule.TabOutputUnreachableError"
 msgstr ""
 
 #: templates/403.html:5
