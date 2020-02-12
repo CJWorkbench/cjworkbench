@@ -20,7 +20,7 @@ FROM python:3.7.4-slim-buster AS pybase
 # iptables: used by setup-sandboxes.sh to set up NAT and firewall
 # libicu63: used by PyICU
 # libsnappy1v5: used by pyarrow reading our Snappy-compressed Parquet files
-# libre2-5: used by fb-re2 (in modules)
+# libre2-5: used by google-re2 (in modules)
 # libyajl-dev: used by yajl-py (parsing module specs). (It uses "libyajl.so",
 #              not "libyajl.so.2", so we need libyajl-dev, not libyajl-2.)
 RUN mkdir -p /usr/share/man/man1 /usr/share/man/man7 \
@@ -72,11 +72,13 @@ FROM pybase AS pydev
 # * Twisted - https://twistedmatrix.com/trac/ticket/7945
 # * python-snappy
 # * yajl-py
-# * fb-re2
+# * google-re2
 # * pysycopg2 (binaries are evil because psycopg2 links SSL -- as does Python)
 # * PyICU
 #
+# Need libre2-dev to build google-re2
 # Need pkg-config to build PyICU
+# Need pybind11-dev to build google-re2
 RUN mkdir -p /root/.local/share/virtualenvs \
     && apt-get update \
     && apt-get install --no-install-recommends -y \
@@ -86,6 +88,7 @@ RUN mkdir -p /root/.local/share/virtualenvs \
       libre2-dev \
       libsnappy-dev \
       pkg-config \
+      pybind11-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Add "watchman" command -- we use it in dev mode to monitor for source code changes
@@ -143,6 +146,7 @@ COPY Pipfile Pipfile.lock /app/
 # * Twisted - https://twistedmatrix.com/trac/ticket/7945
 # * python-snappy
 # * yajl-py
+# * google-re2
 # * pysycopg2 (psycopg2-binary is evil because it links SSL -- as does Python)
 # * PyICU
 # ... and we want to keep libsnappy and yajl around after the fact, too
@@ -160,6 +164,7 @@ RUN true \
       libre2-dev \
       libsnappy-dev \
       pkg-config \
+      pybind11-dev \
     && pipenv install --dev --system --deploy \
     && rm -rf /root/.cache/pipenv /root/.local/share/virtualenvs \
     && apt-get remove --purge -y \
@@ -169,6 +174,7 @@ RUN true \
       libre2-dev \
       libsnappy-dev \
       pkg-config \
+      pybind11-dev \
     && apt-get autoremove --purge -y \
     && rm -rf /var/lib/apt/lists/*
 
