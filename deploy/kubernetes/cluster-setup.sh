@@ -114,6 +114,44 @@ gcloud beta container node-pools create main-pool \
 
 gcloud beta container node-pools delete default-pool --zone=us-central1-b
 
+
+## Build a pre-emptible "worker" node pool for fetchers/renderers
+#
+# Workers run user code, so we dedicate CPU/RAM to them. And since they're
+# powered by a job queue, a pre-emption is no problem: another pod can always
+# spin up to restart a pre-empted job.
+#
+# (Pre-emptible node pools are ~75% cheaper.)
+#
+# * size 1-9 machines
+# * disable hyperthreading, because we run untrusted code
+#   see https://cloud.google.com/kubernetes-engine/docs/security-bulletins#may-14-2019
+# * 6-vCPU machines because after we disable hyperthreading, it's really 3.
+#   4-vCPU would prevent us from scheduling two renderers on the same node
+#   because we lose a bit of CPU to overhead. For instance, 4-vCPU would give
+#   ~1.75 CPUs for our own tasks (and a fetcher/renderer costs 1 CPU).
+# * 12GB RAM: [2019-11-06] we give renderer 5GB RAM; leave room for 2.
+# * no gvisor for now, since it'll take new deployment YAML
+# * $CLUSTER_NAME-least-privilege-sa: see
+#   https://cloud.google.com/kubernetes-engine/docs/how-to/hardening-your-cluster#use_least_privilege_sa
+# * Node taint preemptible=true: only pods tolerating the taint will run here
+#   (so database/RabbitMQ/frontend won't)
+gcloud beta container node-pools create worker-pool \
+  --cluster=$CLUSTER_NAME \
+  --service-account=$CLUSTER_NAME-least-privilege-sa@$PROJECT_NAME.iam.gserviceaccount.com \
+  --machine-type=custom-6-12288 \
+  --enable-autoupgrade \
+  --enable-autoscaling \
+  --preemptible \
+  --num-nodes 1 \
+  --min-nodes 1 \
+  --max-nodes 9 \
+  --node-labels=cloud.google.com/gke-smt-disabled=true \
+  --node-taints=preemptible=true:NoSchedule \
+  --metadata disable-legacy-endpoints=true \
+  --workload-metadata-from-node=GKE_METADATA_SERVER \
+  --zone=us-central1-b
+
 # [STAGING ONLY] Grant Cloud Build the permissions to call kubectl:
 # In GCP Console, visit the IAM menu.
 # From the list of service accounts, click the Roles drop-down menu beside the Cloud Build [YOUR-PROJECT-ID]@cloudbuild.gserviceaccount.com service account.

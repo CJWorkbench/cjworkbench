@@ -13,6 +13,22 @@ spec:
       labels:
         app: renderer-app
     spec:
+      nodeSelector: # Only schedule on nodes that disallow SMT. (Pod runs untrusted user code.)
+        cloud.google.com/gke-smt-disabled: "true"
+      tolerations: # Allow scheduling on preemptible nodes. (Work is expensive to run, cheap to retry.)
+      - key: preemptible
+        operator: Equal
+        value: "true"
+        effect: NoSchedule
+      affinity: # Move to preemptible nodes whenever one is available
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            preference:
+              matchExpressions:
+              - key: cloud.google.com/gke-preemptible
+                operator: In
+                values: [ "true" ]
       initContainers:
         # setup-sandboxes.sh needs special privileges; run it in an init container.
         #
