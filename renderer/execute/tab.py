@@ -106,8 +106,11 @@ class TabFlow:
         """
         ret = set()
         for step in self.steps:
-            schema = step.module_zipfile.get_spec().get_param_schema()
-            slugs = set(schema.find_leaf_values_with_dtype(ParamDType.Tab, step.params))
+            if step.module_zipfile is not None:
+                schema = step.module_zipfile.get_spec().get_param_schema()
+                slugs = set(
+                    schema.find_leaf_values_with_dtype(ParamDType.Tab, step.params)
+                )
             ret.update(slugs)
         return frozenset(ret)
 
