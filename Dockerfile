@@ -3,7 +3,7 @@ FROM workbenchdata/parquet-to-arrow:v1.1.0 AS parquet-to-arrow
 FROM workbenchdata/arrow-tools:v0.0.6 AS arrow-tools
 
 # 0.2 pybase: Python and tools we use in dev and production
-FROM python:3.7.4-slim-buster AS pybase
+FROM python:3.8.1-slim-buster AS pybase
 
 # We probably don't want these, long-term.
 # postgresql-client: because we poll the DB:
