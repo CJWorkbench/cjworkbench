@@ -12,6 +12,13 @@ async def async_noop(*args, **kwargs):
     pass
 
 
+def async_err(err):
+    async def inner(*args, **kwargs):
+        raise err
+
+    return inner
+
+
 class _RenderLock:
     def __init__(self):
         self.stalled = False
@@ -124,8 +131,17 @@ class RenderTest(DbTestCase):
                 )
                 self.assertRegex(
                     cm.output[0],
-                    "^ERROR:renderer.render:Error during render of workflow \d",
+                    r"^INFO:renderer.render:Start execute_workflow\(\d+, \d+\)",
                 )
+                self.assertRegex(
+                    cm.output[1],
+                    r"^INFO:renderer.render:End execute_workflow\(\d+, \d+\)",
+                )
+                self.assertRegex(
+                    cm.output[2],
+                    r"^ERROR:renderer.render:Error during render of workflow \d+\n",
+                )
+                self.assertEqual(len(cm.output), 3)
 
         self.run_with_async_db(inner())
         ack.assert_called()
@@ -156,7 +172,7 @@ class RenderTest(DbTestCase):
 
     @patch("renderer.execute.execute_workflow")
     def test_render_unneeded_execution_so_requeue(self, mock_execute):
-        mock_execute.side_effect = execute.UnneededExecution
+        mock_execute.side_effect = async_err(execute.UnneededExecution)
         workflow = Workflow.objects.create()
         delta = InitWorkflowCommand.create(workflow)
         ack = Mock(name="ack", side_effect=async_noop)
@@ -167,14 +183,17 @@ class RenderTest(DbTestCase):
                 await render_workflow_and_maybe_requeue(
                     SuccessfulRenderLocker(), workflow.id, delta.id, ack, requeue
                 )
-                self.assertEqual(
-                    cm.output,
-                    [
-                        (
-                            f"INFO:renderer.render:UnneededExecution in "
-                            f"execute_workflow({workflow.id}, {delta.id})"
-                        )
-                    ],
+                self.assertRegex(
+                    cm.output[0],
+                    r"^INFO:renderer.render:Start execute_workflow\(\d+, \d+\)",
+                )
+                self.assertRegex(
+                    cm.output[1],
+                    r"^INFO:renderer.render:End execute_workflow\(\d+, \d+\)",
+                )
+                self.assertRegex(
+                    cm.output[2],
+                    r"^INFO:renderer.render:UnneededExecution in execute_workflow\(\d+, \d+\)$",
                 )
 
         self.run_with_async_db(inner())

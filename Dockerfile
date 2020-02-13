@@ -55,7 +55,6 @@ COPY --from=arrow-tools /usr/bin/csv-to-arrow /usr/bin/csv-to-arrow
 COPY --from=arrow-tools /usr/bin/json-to-arrow /usr/bin/json-to-arrow
 COPY --from=parquet-to-arrow /usr/bin/parquet-diff /usr/bin/parquet-diff
 COPY --from=parquet-to-arrow /usr/bin/parquet-to-arrow /usr/bin/parquet-to-arrow
-COPY --from=parquet-to-arrow /usr/bin/parquet-to-arrow-slice /usr/bin/parquet-to-arrow-slice
 COPY --from=parquet-to-arrow /usr/bin/parquet-to-text-stream /usr/bin/parquet-to-text-stream
 
 # Set up /app
