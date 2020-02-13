@@ -20,11 +20,11 @@ spec:
           image: "postgres:12.1"
           resources:
             requests:
-              cpu: 0.5
-              memory: 2Gi
+              cpu: 1.2
+              memory: 5Gi
             limits:
-              cpu: 0.5
-              memory: 2Gi
+              cpu: 1.2
+              memory: 5Gi
           env:
             # PGDATA should be a subdir of the mount, so there's no lost+found.
             # Make it include version number, so we can pg_upgrade using

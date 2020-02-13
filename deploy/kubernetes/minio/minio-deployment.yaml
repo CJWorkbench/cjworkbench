@@ -16,6 +16,16 @@ spec:
         # Label is used as selector in the service.
         app: minio-app
     spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - minio-app
+            topologyKey: "kubernetes.io/hostname"
       containers:
       - name: minio
         # Pulls the default Minio image from Docker Hub

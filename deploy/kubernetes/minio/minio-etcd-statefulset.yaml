@@ -44,6 +44,16 @@ spec:
       labels:
         app: minio-etcd
     spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - minio-etcd
+            topologyKey: "kubernetes.io/hostname"
       subdomain: minio-etcd  # so each pod gets a DNS name, which we'll use for static clustering
       containers:
         - name: minio-etcd
