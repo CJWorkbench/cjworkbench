@@ -166,7 +166,7 @@ class WfModule(models.Model):
     See also `cached_render_result_errors`, which pertains to render().
     """
 
-    fetch_errors = RenderErrorsField(null=True, default=list)
+    fetch_errors = RenderErrorsField(default=list)
     """
     Most recent collection of errors preventing StoredObject creation.
 
