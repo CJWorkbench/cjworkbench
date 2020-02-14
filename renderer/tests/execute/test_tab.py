@@ -13,7 +13,6 @@ from cjwkernel.tests.util import (
 )
 from cjwstate import minio, rabbitmq, rendercache
 from cjwstate.models import Workflow
-from cjwstate.modules.param_dtype import ParamDType
 from cjwstate.tests.utils import DbTestCaseWithModuleRegistry, create_module_zipfile
 from renderer.execute.tab import execute_tab_flow, ExecuteStep, TabFlow
 

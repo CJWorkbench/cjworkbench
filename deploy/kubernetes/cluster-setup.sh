@@ -89,6 +89,69 @@ kubectl create -f \
 ## Build a node pool with all the settings we want
 #
 # * size 1-9 machines
+# * n1-standard-2: good all-around machines ([2020-02-12] n2-standard-2 is not yet in us-central1-b)
+# * no gvisor for now, since it'll take new deployment YAML
+# * $CLUSTER_NAME-least-privilege-sa: see
+#   https://cloud.google.com/kubernetes-engine/docs/how-to/hardening-your-cluster#use_least_privilege_sa
+gcloud beta container node-pools create main-pool-v2 \
+  --cluster=$CLUSTER_NAME \
+  --service-account=$CLUSTER_NAME-least-privilege-sa@$PROJECT_NAME.iam.gserviceaccount.com \
+  --machine-type=n1-standard-2 \
+  --enable-autoupgrade \
+  --enable-autoscaling \
+  --num-nodes 1 \
+  --min-nodes 1 \
+  --max-nodes 9 \
+  --metadata disable-legacy-endpoints=true \
+  --workload-metadata-from-node=GKE_METADATA_SERVER \
+  --zone=us-central1-b
+
+gcloud beta container node-pools delete default-pool --zone=us-central1-b
+
+
+## Build a pre-emptible "web" node pool for web servers
+#
+# Web servers run user code, so they must run with SMT disabled. Also, we
+# allocate CPU/RAM such that a one pod == one node, to cut costs. (No-SMT is
+# expensive.)
+#
+# * size 1-9 machines
+# * disable hyperthreading, because we run untrusted code
+#   see https://cloud.google.com/kubernetes-engine/docs/security-bulletins#may-14-2019
+# * 4-vCPU machines because after we disable hyperthreading, it's really 2.
+#   (With SMT disabled, 2-vCPU becomes 1-vCPU. After Kubernetes overhead, that
+#   leaves 0.7 of a CPU available. That's not tolerable.)
+# * 3GB RAM: [2020-02-12] our limit is 2GB.
+# * no gvisor for now, since it'll take new deployment YAML
+# * $CLUSTER_NAME-least-privilege-sa: see
+#   https://cloud.google.com/kubernetes-engine/docs/how-to/hardening-your-cluster#use_least_privilege_sa
+# * Node taint no-smt=true: only pods tolerating the taint will run here
+#   (so database/RabbitMQ/frontend won't)
+gcloud beta container node-pools create web-pool \
+  --cluster=$CLUSTER_NAME \
+  --service-account=$CLUSTER_NAME-least-privilege-sa@$PROJECT_NAME.iam.gserviceaccount.com \
+  --machine-type=custom-4-3840 \
+  --enable-autoupgrade \
+  --enable-autoscaling \
+  --num-nodes 1 \
+  --min-nodes 1 \
+  --max-nodes 9 \
+  --node-labels=cloud.google.com/gke-smt-disabled=true \
+  --node-taints=no-smt=true:NoSchedule \
+  --metadata disable-legacy-endpoints=true \
+  --workload-metadata-from-node=GKE_METADATA_SERVER \
+  --zone=us-central1-b
+
+
+## Build a pre-emptible "worker" node pool for fetchers/renderers
+#
+# Workers run user code, so we dedicate CPU/RAM to them. And since they're
+# powered by a job queue, a pre-emption is no problem: another pod can always
+# spin up to restart a pre-empted job.
+#
+# (Pre-emptible node pools are ~75% cheaper.)
+#
+# * size 1-9 machines
 # * disable hyperthreading, because we run untrusted code
 #   see https://cloud.google.com/kubernetes-engine/docs/security-bulletins#may-14-2019
 # * 6-vCPU machines because after we disable hyperthreading, it's really 3.
@@ -99,20 +162,23 @@ kubectl create -f \
 # * no gvisor for now, since it'll take new deployment YAML
 # * $CLUSTER_NAME-least-privilege-sa: see
 #   https://cloud.google.com/kubernetes-engine/docs/how-to/hardening-your-cluster#use_least_privilege_sa
-gcloud beta container node-pools create main-pool \
+# * Node taint preemptible=true: only pods tolerating the taint will run here
+#   (so database/RabbitMQ/frontend won't)
+gcloud beta container node-pools create worker-pool \
   --cluster=$CLUSTER_NAME \
   --service-account=$CLUSTER_NAME-least-privilege-sa@$PROJECT_NAME.iam.gserviceaccount.com \
   --machine-type=custom-6-12288 \
   --enable-autoupgrade \
   --enable-autoscaling \
+  --preemptible \
+  --num-nodes 1 \
   --min-nodes 1 \
   --max-nodes 9 \
   --node-labels=cloud.google.com/gke-smt-disabled=true \
+  --node-taints=preemptible=true:NoSchedule \
   --metadata disable-legacy-endpoints=true \
   --workload-metadata-from-node=GKE_METADATA_SERVER \
   --zone=us-central1-b
-
-gcloud beta container node-pools delete default-pool --zone=us-central1-b
 
 # [STAGING ONLY] Grant Cloud Build the permissions to call kubectl:
 # In GCP Console, visit the IAM menu.

@@ -43,6 +43,13 @@ spec:
       labels:
         app: frontend-app
     spec:
+      nodeSelector: # Only schedule on nodes that disallow SMT. (Pod runs untrusted user code.)
+        cloud.google.com/gke-smt-disabled: "true"
+      tolerations: # Allow scheduling on expensive nodes. (no-SMT is expensive.)
+      - key: "no-smt"
+        operator: Equal
+        value: "true"
+        effect: NoSchedule
       initContainers:
         # setup-sandboxes.sh needs special privileges; run it in an init container.
         #
@@ -68,10 +75,11 @@ spec:
           command: [ "daphne", "-b", "0.0.0.0", "-p", "8081", "--application-close-timeout", "180", "cjworkbench.asgi:application" ]
           resources:
             requests:
-              cpu: 0.75
+              # We have no SMT, and we want 1 pod per node. Pods have ~1.5 CPUs
+              cpu: 1.4
               memory: 2Gi
             limits:
-              cpu: 0.75
+              cpu: 1.4
               memory: 2Gi
           ports:
             - name: http

@@ -18,6 +18,20 @@ spec:
     metadata:
       labels: *RabbitMQDeploymentLabels
     spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app.kubernetes.io/name
+                operator: In
+                values:
+                - $APP_INSTANCE_NAME
+              - key: app.kubernetes.io/component
+                operator: In
+                values:
+                - rabbitmq-server
+            topologyKey: "kubernetes.io/hostname"
       serviceAccountName: $RABBITMQ_SERVICE_ACCOUNT
       terminationGracePeriodSeconds: 180
       initContainers:

@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "a3caeedff4d93bafc1d1e0fbe2ca8351997e3d9676be6a8c519272946e26cbc8"
+            "sha256": "334b85ac68142ea351622dae16d4627fdbc0771b931d1784d85c6d5df6074959"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -373,13 +373,6 @@
             ],
             "version": "==0.15.2"
         },
-        "fb-re2": {
-            "hashes": [
-                "sha256:83b2c2cd58d3874e6e3a784cf4cf2f1a57ce1969e50180f92b010eea24ef26cf"
-            ],
-            "index": "pypi",
-            "version": "==1.0.7"
-        },
         "formulas": {
             "hashes": [
                 "sha256:3d4769258fbc63008de1370213242ea5d39e405365dd24146c901a711ab73840",
@@ -402,6 +395,13 @@
             ],
             "index": "pypi",
             "version": "==2.1.11"
+        },
+        "google-re2": {
+            "hashes": [
+                "sha256:6e8d7bf8272603170a823d6b85ca317f4616ee41cd2b22a4c1c9c1bcac7d9651"
+            ],
+            "index": "pypi",
+            "version": "==0.0.4"
         },
         "h11": {
             "hashes": [

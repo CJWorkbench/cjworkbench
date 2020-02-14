@@ -44,11 +44,15 @@ their ``.json`` spec files.
 >>> cjwstate.modules.init_module_system()
 >>> staticregistry.Lookup['pythoncode']  # dynamic lookup by id
 """
+import logging
 from pathlib import Path
 from typing import Dict
 import zipfile
 import staticmodules
 from .types import ModuleZipfile
+
+
+logger = logging.getLogger(__name__)
 
 
 Lookup: Dict[str, ModuleZipfile] = {}
@@ -62,6 +66,7 @@ def _setup(kernel):
 
     spec_paths = list(Path(staticmodules.__file__).parent.glob("*.yaml"))
     for spec_path in spec_paths:
+        logger.info("Importing %s...", spec_path)
         module_id = spec_path.stem
 
         # We leak these tempfiles ... but there's a fixed number of them and
