@@ -220,7 +220,6 @@ class Kernel:
                 "thrift.protocol.TBinaryProtocol",
                 "thrift.transport.TTransport",
                 "xlrd",
-                "yajl",
                 *ENCODING_IMPORTS,
                 "cjwkernel.pandas.main",
                 "cjwkernel.pandas.module",
