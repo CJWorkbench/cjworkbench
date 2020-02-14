@@ -13,10 +13,10 @@ find_latest_passing_sha1_on_master() {
   commits=$(curl -s 'https://api.github.com/repos/CJWorkbench/cjworkbench/commits' | jq -r '.[] | .sha')
 
   for commit in $commits; do
-    echo -n "  google-container-builder result for $commit:" >&2
-    result=$(curl -s --header 'Accept: application/vnd.github.antiope-preview+json' "https://api.github.com/repos/CJWorkbench/cjworkbench/commits/$commit/check-runs" | jq -r '.check_runs[0].conclusion')
-    echo " $result" >&2
-    if [ "$result" = "success" ]; then
+    echo -n "  google-container-builder conclusion for $commit:" >&2
+    conclusion=$(curl -s --header 'Accept: application/vnd.github.antiope-preview+json' "https://api.github.com/repos/CJWorkbench/cjworkbench/commits/$commit/check-runs" | jq -r '.check_runs[] | select(.app.slug == "google-cloud-build") | .conclusion')
+    echo " $conclusion" >&2
+    if [ "$conclusion" = "success" ]; then
       echo $commit
       return
     fi
