@@ -21,7 +21,10 @@ class SaveTests(DbTestCase):
 
         workflow = Workflow.create_and_init()
         wf_module = workflow.tabs.first().wf_modules.create(
-            order=0, slug="step-1", is_busy=True, fetch_error="previous error"
+            order=0,
+            slug="step-1",
+            is_busy=True,
+            fetch_errors=[RenderError(I18nMessage("foo", {}, "module"))],
         )
         now = timezone.datetime(2019, 10, 22, 12, 22, tzinfo=timezone.utc)
 
@@ -33,12 +36,10 @@ class SaveTests(DbTestCase):
             )
         self.assertEqual(wf_module.stored_objects.count(), 1)
 
-        self.assertEqual(wf_module.fetch_error, None)
         self.assertEqual(wf_module.fetch_errors, [])
         self.assertEqual(wf_module.is_busy, False)
         self.assertEqual(wf_module.last_update_check, now)
         wf_module.refresh_from_db()
-        self.assertEqual(wf_module.fetch_error, None)
         self.assertEqual(wf_module.fetch_errors, [])
         self.assertEqual(wf_module.is_busy, False)
         self.assertEqual(wf_module.last_update_check, now)
