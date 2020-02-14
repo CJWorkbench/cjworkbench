@@ -36,21 +36,22 @@ def extract_module_messages(directory: pathlib.Path):
     if not catalogs_are_same(source_catalog, old_source_catalog):
         write_po_catalog(po_path, source_catalog)
 
-    # Update template file
-    template_catalog = copy_catalog(source_catalog)
+    # Update template catalog
+    # We will have no specific locale in the template catalog
+    template_catalog = copy_catalog(source_catalog, locale=None)
     move_strings_to_comments(template_catalog, comment_tag="default-message")
     pot_path = _pot_path(directory)
     try:
         old_template_catalog = read_po_catalog(pot_path)
     except FileNotFoundError:
-        old_template_catalog = Catalog(default_locale)
+        old_template_catalog = Catalog()
     if not catalogs_are_same(template_catalog, old_template_catalog):
         write_po_catalog(
             pot_path,
             template_catalog,
             ignore_obsolete=True,
             width=10000000,  # we set a huge value for width, so that special comments do not wrap
-            omit_header=True,
+            omit_header=True,  # removes locale and other info from the output file
         )
 
     fuzzy = find_fuzzy_messages(
