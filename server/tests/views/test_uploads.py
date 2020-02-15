@@ -361,8 +361,8 @@ class UploadTest(DbTestCaseWithModuleRegistryAndMockKernel):
     @patch.object(rabbitmq, "send_update_to_workflow_clients")
     @patch.object(rabbitmq, "queue_render")
     def test_complete_happy_path(self, queue_render, send_update):
-        send_update.return_value = async_noop()
-        queue_render.return_value = async_noop()
+        send_update.side_effect = async_noop
+        queue_render.side_effect = async_noop
         _init_module("x")
         self.kernel.migrate_params.side_effect = lambda m, p: p
         workflow = Workflow.create_and_init()

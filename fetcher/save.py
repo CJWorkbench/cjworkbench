@@ -60,18 +60,10 @@ def _do_create_result(
         )
         storedobjects.enforce_storage_limits(wf_module)
 
-        wf_module.fetch_error = None
         wf_module.fetch_errors = result.errors
         wf_module.is_busy = False
         wf_module.last_update_check = now
-        wf_module.save(
-            update_fields=[
-                "fetch_error",
-                "fetch_errors",
-                "is_busy",
-                "last_update_check",
-            ]
-        )
+        wf_module.save(update_fields=["fetch_errors", "is_busy", "last_update_check"])
 
 
 async def create_result(

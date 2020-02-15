@@ -3,13 +3,12 @@ FROM workbenchdata/parquet-to-arrow:v1.1.0 AS parquet-to-arrow
 FROM workbenchdata/arrow-tools:v0.0.6 AS arrow-tools
 
 # 0.2 pybase: Python and tools we use in dev and production
-FROM python:3.7.4-slim-buster AS pybase
+FROM python:3.8.1-slim-buster AS pybase
 
 # We probably don't want these, long-term.
 # postgresql-client: because we poll the DB:
 # * on prod before ./manage.py migrate
 # * on unittest before ./manage.py test
-# git: used for importmodulefromgithub
 # curl: handy for testing, NLTK download; not worth uninstalling each time
 # unzip: [adamhooper, 2019-02-21] I'm afraid to uninstall it, in case one
 #        of our Python deps shells to it
@@ -19,22 +18,16 @@ FROM python:3.7.4-slim-buster AS pybase
 # iproute2: used by setup-sandboxes.sh to find our IP for NAT
 # iptables: used by setup-sandboxes.sh to set up NAT and firewall
 # libicu63: used by PyICU
-# libsnappy1v5: used by pyarrow reading our Snappy-compressed Parquet files
 # libre2-5: used by google-re2 (in modules)
-# libyajl-dev: used by yajl-py (parsing module specs). (It uses "libyajl.so",
-#              not "libyajl.so.2", so we need libyajl-dev, not libyajl-2.)
 RUN mkdir -p /usr/share/man/man1 /usr/share/man/man7 \
     && apt-get update \
     && apt-get install --no-install-recommends -y \
         curl \
-        git \
         iproute2 \
         iptables \
         libcap2 \
         libicu63 \
         libre2-5 \
-        libsnappy1v5 \
-        libyajl-dev \
         postgresql-client \
         unzip \
     && rm -rf /var/lib/apt/lists/*
@@ -55,7 +48,6 @@ COPY --from=arrow-tools /usr/bin/csv-to-arrow /usr/bin/csv-to-arrow
 COPY --from=arrow-tools /usr/bin/json-to-arrow /usr/bin/json-to-arrow
 COPY --from=parquet-to-arrow /usr/bin/parquet-diff /usr/bin/parquet-diff
 COPY --from=parquet-to-arrow /usr/bin/parquet-to-arrow /usr/bin/parquet-to-arrow
-COPY --from=parquet-to-arrow /usr/bin/parquet-to-arrow-slice /usr/bin/parquet-to-arrow-slice
 COPY --from=parquet-to-arrow /usr/bin/parquet-to-text-stream /usr/bin/parquet-to-text-stream
 
 # Set up /app
@@ -70,8 +62,6 @@ FROM pybase AS pydev
 # Need build-essential for:
 # * regex (TODO nix the dep or make it support manylinux .whl)
 # * Twisted - https://twistedmatrix.com/trac/ticket/7945
-# * python-snappy
-# * yajl-py
 # * google-re2
 # * pysycopg2 (binaries are evil because psycopg2 links SSL -- as does Python)
 # * PyICU
@@ -86,7 +76,6 @@ RUN mkdir -p /root/.local/share/virtualenvs \
       libicu-dev \
       libpq-dev \
       libre2-dev \
-      libsnappy-dev \
       pkg-config \
       pybind11-dev \
     && rm -rf /var/lib/apt/lists/*
@@ -142,16 +131,12 @@ FROM pybase AS pybuild
 COPY Pipfile Pipfile.lock /app/
 
 # Need build-essential for:
-# * regex (TODO nix the dep or make it support manylinux .whl)
 # * Twisted - https://twistedmatrix.com/trac/ticket/7945
-# * python-snappy
-# * yajl-py
 # * google-re2
 # * pysycopg2 (psycopg2-binary is evil because it links SSL -- as does Python)
 # * PyICU
-# ... and we want to keep libsnappy and yajl around after the fact, too
 #
-# Clean up after pipenv, because it leaves varbage in /root/.cache and
+# Clean up after pipenv, because it leaves garbage in /root/.cache and
 # /root/.local/share/virtualenvs, even when --deploy is used. (We test for
 # presence of /root/.local/share/virtualenvs to decide whether we need a
 # bind-mount in dev mode; so it can't exist in production.)
@@ -162,7 +147,6 @@ RUN true \
       libicu-dev \
       libpq-dev \
       libre2-dev \
-      libsnappy-dev \
       pkg-config \
       pybind11-dev \
     && pipenv install --dev --system --deploy \
@@ -172,7 +156,6 @@ RUN true \
       libicu-dev \
       libpq-dev \
       libre2-dev \
-      libsnappy-dev \
       pkg-config \
       pybind11-dev \
     && apt-get autoremove --purge -y \

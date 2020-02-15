@@ -838,7 +838,7 @@ class WfModuleTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
 
     @patch.object(rabbitmq, "send_update_to_workflow_clients")
     def test_delete_secret_happy_path(self, send_update):
-        send_update.return_value = async_noop()
+        send_update.side_effect = async_noop
 
         user = User.objects.create()
         workflow = Workflow.create_and_init(owner=user)
@@ -919,7 +919,7 @@ class WfModuleTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
 
     @patch.object(rabbitmq, "send_update_to_workflow_clients")
     def test_set_secret_happy_path(self, send_update):
-        send_update.return_value = async_noop()
+        send_update.side_effect = async_noop
 
         user = User.objects.create()
         workflow = Workflow.create_and_init(owner=user)

@@ -113,7 +113,7 @@ class ReorderTabsCommandTest(DbTestCaseWithModuleRegistryAndMockKernel):
     @patch.object(commands, "websockets_notify")
     @patch.object(commands, "queue_render", async_noop)
     def test_clientside_update(self, send_delta):
-        send_delta.return_value = async_noop()
+        send_delta.side_effect = async_noop
 
         # initial tab slug: tab-1
         workflow = Workflow.create_and_init(selected_tab_position=2)
