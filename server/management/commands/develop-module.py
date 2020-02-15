@@ -32,9 +32,12 @@ def main(directory):
         except Exception:
             logger.exception("Error loading module")
 
+    want_reload = False
+
     class ReloadEventHandler(RegexMatchingEventHandler):
         def on_any_event(self, ev):
-            reload()
+            nonlocal want_reload
+            want_reload = True
 
     regexes = [".*\\.(py|json|yaml|html|po|pot)"]
 
@@ -47,7 +50,11 @@ def main(directory):
 
     try:
         while True:
-            time.sleep(1)
+            time.sleep(0.05)  # 50ms
+            # Call `reload()` if Watchdog has notified us in the past 50ms.
+            if want_reload:
+                reload()
+                want_reload = False
     except KeyboardInterrupt:
         observer.stop()
     observer.join()
