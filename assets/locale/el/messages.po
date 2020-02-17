@@ -2404,7 +2404,8 @@ msgstr "Γεια σας, {userName},"
 msgid "py.templates.notifications.new_data_version.workflowHasBeenUpdated"
 msgstr ""
 "Η ροή εργασιών σας <a0>{workflowName}</a0> ενημερώθηκε με νέα δεδομένα "
-"στις {date}. Η μονάδα {moduleName} έχει νέα έξοδο."
+"στις {date, date, medium} {date, time, short}{date, time, z}. Η μονάδα {moduleName} έχει"
+" νέα έξοδο."
 
 #: templates/notifications/new_data_version_subject.txt:1
 msgid "py.templates.notifications.new_data_version_subject"

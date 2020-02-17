@@ -2368,7 +2368,8 @@ msgstr "Hi {userName},"
 msgid "py.templates.notifications.new_data_version.workflowHasBeenUpdated"
 msgstr ""
 "Your workflow <a0>{workflowName}</a0> has been updated with new data on "
-"{date}. Its {moduleName} module has new output."
+"{date, date, medium} at {date, time, short}{date, time, z}. Its "
+"{moduleName} module has new output."
 
 #: templates/notifications/new_data_version_subject.txt:1
 msgid "py.templates.notifications.new_data_version_subject"

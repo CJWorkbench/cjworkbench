@@ -19,6 +19,7 @@ from io import BytesIO
 import importlib.resources
 from functools import lru_cache
 import cjwmodule.i18n
+from datetime import datetime
 
 _translators = {}
 
@@ -37,7 +38,7 @@ _TagMapping = Dict[str, _Tag]
 """ Maps each tag to its data
 """
 
-_MessageArguments = Dict[str, Union[int, float, str]]
+_MessageArguments = Dict[str, Union[int, float, str, datetime]]
 
 
 def trans(message_id: str, *, default: str, arguments: _MessageArguments = {}) -> str:
