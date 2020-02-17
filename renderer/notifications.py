@@ -48,7 +48,7 @@ def email_output_delta(output_delta: OutputDelta, updated_at: datetime.datetime)
         "module_name": output_delta.module_name,
         "workflow_name": output_delta.workflow_name,
         "workflow_url": output_delta.workflow_url,
-        "date": updated_at.strftime("%b %-d, %Y at %-I:%M %p"),
+        "date": updated_at,
     }
     subject = render_to_string("notifications/new_data_version_subject.txt", ctx)
     subject = "".join(subject.splitlines())
