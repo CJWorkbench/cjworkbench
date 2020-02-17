@@ -58,13 +58,7 @@ class WfModuleTests(DbTestCaseWithModuleRegistry):
             )
         )
         expected = RenderResult(
-            errors=[
-                RenderError(
-                    I18nMessage.TODO_i18n(
-                        "Please delete this step: an administrator uninstalled its code."
-                    )
-                )
-            ]
+            errors=[RenderError(I18nMessage("py.renderer.execute.wf_module.noModule"))]
         )
         self.assertEqual(result, expected)
         wf_module.refresh_from_db()
@@ -425,10 +419,11 @@ class WfModuleTests(DbTestCaseWithModuleRegistry):
             RenderResult(
                 errors=[
                     RenderError(
-                        I18nMessage.TODO_i18n(
-                            "Something unexpected happened. We have been notified and are "
-                            "working to fix it. If this persists, contact us. Error code: "
-                            "exit code 1: NameError: name 'undefined' is not defined"
+                        I18nMessage(
+                            "py.renderer.execute.wf_module.user_visible_bug_during_render",
+                            {
+                                "message": "exit code 1: NameError: name 'undefined' is not defined"
+                            },
                         )
                     )
                 ]

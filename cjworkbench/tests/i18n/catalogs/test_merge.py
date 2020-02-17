@@ -249,6 +249,35 @@ class MergeTest(unittest.TestCase):
         assert_catalogs_deeply_equal(new_python_catalog, expected_python_catalog)
         self.assertEqual(fuzzy, frozenset(["id1"]))
 
+    def test_merge_catalog_remove_old(self):
+        js_catalog = Catalog("el")
+        python_catalog = Catalog("en")
+        python_catalog.add(
+            "id1",
+            string="Text0",
+            locations=[("file2", "1")],
+            auto_comments=["some new comment"],
+        )
+        old_catalog = Catalog("el")
+        old_catalog.add(
+            "id2",
+            string="Text012",
+            locations=[("file2", "5")],
+            auto_comments=["some comment"],
+        )
+        fuzzy = frozenset()
+
+        new_catalog = _merge_catalogs([js_catalog, python_catalog], old_catalog, fuzzy)
+
+        expected_catalog = Catalog("el")
+        expected_catalog.add(
+            "id1",
+            string="",
+            locations=[("file2", "1")],
+            auto_comments=["some new comment"],
+        )
+        assert_catalogs_deeply_equal(new_catalog, expected_catalog)
+
     def test_merge_catalog_add_from_python(self):
         js_catalog = Catalog("el")
         python_catalog = Catalog("en")
