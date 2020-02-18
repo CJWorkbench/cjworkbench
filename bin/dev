@@ -168,6 +168,8 @@ case "$COMMAND" in
     # Make sure Python deps are up to date; migrate database
     docker_compose_with_commands run --rm migrate
 
+    docker_compose_with_commands run --rm pydev pipenv run python ./manage.py import-modules $(cat cjwstate/modules/suggested-modules.txt)
+
     # Make sure JavaScript deps are up to date
     docker_compose run --rm webpack npm install
 
