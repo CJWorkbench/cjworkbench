@@ -1947,6 +1947,10 @@ msgstr "{years}έτη πριν"
 msgid "js.util.timeDifference.now"
 msgstr "μόλις τώρα"
 
+#: cjwkernel/pandas/types.py:864
+msgid "py.cjwkernel.pandas.types.ProcessResult.truncate_in_place_if_too_big.warning"
+msgstr ""
+
 #: cjworkbench/forms/signup.py:24
 msgid "py.forms.signup.firstName.placeholder"
 msgstr "Όνομα"
@@ -1954,6 +1958,34 @@ msgstr "Όνομα"
 #: cjworkbench/forms/signup.py:31
 msgid "py.forms.signup.lastName.placeholder"
 msgstr "Επώνυμο"
+
+#: fetcher/fetch.py:187
+msgid "py.fetcher.fetch.user_visible_bug_during_fetch"
+msgstr ""
+
+#: fetcher/fetch.py:289
+msgid "py.fetcher.fetch.no_loaded_module"
+msgstr ""
+
+#: fetcher/secrets.py:15
+msgid "py.fetcher.secrets._service_no_longer_configured_error"
+msgstr ""
+
+#: fetcher/secrets.py:170
+msgid "py.fetcher.secrets._refresh_oauth2_token.error.general"
+msgstr ""
+
+#: fetcher/secrets.py:177
+msgid "py.fetcher.secrets._refresh_oauth2_token.server_error.general"
+msgstr ""
+
+#: fetcher/secrets.py:194
+msgid "py.fetcher.secrets._refresh_oauth2_token.timeout_error"
+msgstr ""
+
+#: fetcher/secrets.py:204
+msgid "py.fetcher.secrets._refresh_oauth2_token.client_error"
+msgstr ""
 
 #: renderer/execute/types.py:95
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_quick_fixes.shouldBeText"
@@ -1980,6 +2012,22 @@ msgstr ""
 #. "other" case is mandatory.
 #: renderer/execute/types.py:157
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_error_message.general"
+msgstr ""
+
+#: renderer/execute/wf_module.py:147
+msgid "py.renderer.execute.wf_module.user_visible_bug_during_render"
+msgstr ""
+
+#: renderer/execute/wf_module.py:357
+msgid "py.renderer.execute.wf_module.noModule"
+msgstr ""
+
+#: renderer/execute/wf_module.py:384
+msgid "py.renderer.execute.wf_module.TabCycleError"
+msgstr ""
+
+#: renderer/execute/wf_module.py:395
+msgid "py.renderer.execute.wf_module.TabOutputUnreachableError"
 msgstr ""
 
 #: templates/403.html:5
@@ -2404,7 +2452,8 @@ msgstr "Γεια σας, {userName},"
 msgid "py.templates.notifications.new_data_version.workflowHasBeenUpdated"
 msgstr ""
 "Η ροή εργασιών σας <a0>{workflowName}</a0> ενημερώθηκε με νέα δεδομένα "
-"στις {date}. Η μονάδα {moduleName} έχει νέα έξοδο."
+"στις {date, date, medium} {date, time, short}{date, time, z}. Η μονάδα {moduleName} έχει"
+" νέα έξοδο."
 
 #: templates/notifications/new_data_version_subject.txt:1
 msgid "py.templates.notifications.new_data_version_subject"

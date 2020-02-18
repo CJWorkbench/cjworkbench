@@ -7,7 +7,7 @@ from cjworkbench.i18n.catalogs.util import (
     fill_catalog,
     mark_fuzzy,
     remove_strings,
-    copy_catalog,
+    new_catalog_from_metadata,
     move_strings_to_comments,
 )
 from cjworkbench.i18n.catalogs import (
@@ -148,8 +148,7 @@ def _merge_catalogs(catalogs: List[Catalog], old: Catalog, fuzzy: FrozenSet):
       `message_unique_identifier`) is in `fuzzy`
     """
 
-    ret = copy_catalog(old)
-    remove_strings(ret)
+    ret = new_catalog_from_metadata(old)
     for catalog in catalogs:
         fill_catalog(ret, catalog, old)
     mark_fuzzy(ret, fuzzy, old)
