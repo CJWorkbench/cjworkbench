@@ -6,6 +6,7 @@ columnchart
 dropna
 droprowsbyposition
 editcells
+filter
 formula
 histogram
 mergecolumns
