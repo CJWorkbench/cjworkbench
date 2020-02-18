@@ -959,12 +959,6 @@ class RenderResult:
             json.loads(value.json) if value.json else None,
         )
 
-    @classmethod
-    def from_deprecated_error(
-        cls, message: str, *, quick_fixes: List[QuickFix] = []
-    ) -> RenderResult:
-        return cls(errors=[RenderError(I18nMessage.TODO_i18n(message), quick_fixes)])
-
     def to_thrift(self) -> ttypes.RenderResult:
         return ttypes.RenderResult(
             self.table.to_thrift(),
