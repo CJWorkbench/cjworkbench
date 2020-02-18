@@ -19,5 +19,6 @@ rowstoheader
 selectcolumns
 sentimentanalysis
 sort
+splitcolumn
 transpose
 wordcloud
