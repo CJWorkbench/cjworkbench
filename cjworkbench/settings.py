@@ -335,6 +335,7 @@ LOGGING = {
         "django.channels.server": {"level": "ERROR"},  # ditto djano.request
         # DEBUG only gets messages when settings.DEBUG==True
         "django.db.backends": {"level": "INFO"},
+        "cjworkbench.pg_render_locker": {"level": "INFO"},
     },
 }
 
