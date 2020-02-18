@@ -9,6 +9,7 @@ from cjworkbench.i18n.trans import (
     icu_format_html_message,
 )
 from .util import mock_app_catalogs
+from datetime import datetime
 
 
 class ICUFormatMessageTest(SimpleTestCase):
@@ -106,6 +107,14 @@ class ICUFormatMessageTest(SimpleTestCase):
                 "en", message, arguments={"a": "there", "g": "other", "n": 0}
             ),
             "Hello there, you have no children",
+        )
+        self.assertEqual(
+            icu_format_message(
+                "en",
+                "Hello, it is {now, date, medium} at {now, time,kk:mm z}",
+                arguments={"now": datetime(2020, 2, 11, 16, 51)},
+            ),
+            "Hello, it is Feb 11, 2020 at 16:51 UTC",
         )
 
 
@@ -311,6 +320,16 @@ class ICUFormatHtmlMessageTest(SimpleTestCase):
                 "en", message, arguments={"a": "there", "g": "other", "n": 0}
             ),
             "Hello there, you have no children",
+        )
+
+    def test_date_support(self):
+        self.assertEqual(
+            icu_format_html_message(
+                "en",
+                "Hello, it is {now, date, medium} at {now, time,kk:mm z}",
+                arguments={"now": datetime(2020, 2, 11, 16, 51)},
+            ),
+            "Hello, it is Feb 11, 2020 at 16:51 UTC",
         )
 
 
