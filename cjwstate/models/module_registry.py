@@ -1,5 +1,6 @@
 import datetime
 import json
+import logging
 from pathlib import Path
 import threading
 from typing import Any, Dict, NamedTuple
@@ -20,6 +21,9 @@ _CacheEntry = NamedTuple(
         ("module_zipfile", ModuleZipfile),
     ],
 )
+
+
+logger = logging.getLogger(__name__)
 
 
 class ModuleRegistry:
@@ -247,6 +251,7 @@ def download_module_zipfile(
     Callers may use locks to avoid trying to download the same data multiple
     times.
     """
+    logger.info("download_module_zipfile(%s.%s.zip)", module_id, version)
 
     zippath = tempdir / ("%s.%s.zip" % (module_id, version))
     try:

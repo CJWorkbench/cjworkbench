@@ -37,6 +37,7 @@ GITHUB_URL_PATTERN = re.compile(
 TEST_ZIP_URL_PATTERN = re.compile(
     r"^http://module-zipfile-server:\d+/(?P<zipfile>[a-z][-a-z0-9]*\.[a-f0-9]+\.zip)$"
 )
+SHA1_PATTERN = re.compile(r"^[a-f0-9]{40}$")
 
 
 def _resolve_github_ref(owner: str, repo: str, ref: str) -> str:
@@ -83,15 +84,6 @@ def _download_url(url: str, dest: Path) -> None:
             % dict(url=url, message=str(err))
             % {"url": url, "message": str(err)}
         )
-
-
-def _download_github_module(owner: str, repo: str, sha1: str, dest: Path) -> None:
-    """
-    Download archive from GitHub to file `dest`.
-
-    Raise `WorkbenchModuleImportError` on HTTP error.
-    """
-    _download_url("https://github.com/%s/%s/archive/%s.zip" % (owner, repo, sha1), dest)
 
 
 def validate_zipfile(module_zipfile: ModuleZipfile) -> None:
@@ -173,14 +165,25 @@ def import_module_from_github(
             "Refusing to import: according to the GitHub URL, "
             "this module is not owned by 'cjworkbench'"
         )
-    sha1 = _resolve_github_ref(owner, repo, ref)  # raise WorkbenchModuleImportError
 
     with tempdir_context(prefix="importmodule") as td:
+        # Download to a tempfile, `download_path`
+        download_path = td / "github-download.zip"
+        _download_url(
+            "https://github.com/%s/%s/archive/%s.zip" % (owner, repo, ref),
+            download_path,
+        )  # raise WorkbenchModuleImportError
+
+        # Read the version (sha1) from zipfile and rename it to match the sha1.
+        # (import_zipfile() reads sha1 from filename.)
+        with zipfile.ZipFile(download_path, "r") as zf:
+            sha1 = zf.comment.decode("latin1")  # cannot error
+            assert SHA1_PATTERN.match(sha1), "GitHub archive comment must be sha1"
         name = "%s.%s.zip" % (repo, sha1)
         path = td / name
-        _download_github_module(
-            owner, repo, ref, path
-        )  # raise WorkbenchModuleImportError
+        download_path.rename(path)
+
+        # Import the zipfile
         return import_zipfile(path)  # raise WorkbenchModuleImportError
 
 

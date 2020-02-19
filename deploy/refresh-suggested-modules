@@ -1,0 +1,22 @@
+#!/bin/sh
+
+set -e
+
+ENV=${1:?"Usage: $0 ENVIRONMENT SHA"}
+
+if [ "$ENV" = "staging" ]; then
+  CLUSTER="gke_workbench-staging_us-central1-b_workbench"
+else
+  CLUSTER="gke_workbenchdata-production_us-central1-b_workbench"
+fi
+
+KUBECTL="kubectl.1.15 --cluster $CLUSTER"
+MODULES="$(cat "$(dirname "$0")"/../cjwstate/modules/suggested-modules.txt)"
+
+echo -n "Finding renderer to run on..." >&2
+POD="$($KUBECTL get pods -lapp=renderer-app -o name | head -n1)"
+echo " $POD" >&2
+
+echo -n "Importing..." >&2
+$KUBECTL exec -it $POD -c renderer -- python ./manage.py import-modules $MODULES >&2
+echo " done" >&2

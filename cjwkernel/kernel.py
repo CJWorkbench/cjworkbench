@@ -21,6 +21,14 @@ from cjwkernel.types import (
     RawParams,
     RenderResult,
     Tab,
+    arrow_arrow_table_to_thrift,
+    arrow_fetch_result_to_thrift,
+    arrow_params_to_thrift,
+    arrow_raw_params_to_thrift,
+    arrow_tab_to_thrift,
+    thrift_fetch_result_to_arrow,
+    thrift_raw_params_to_arrow,
+    thrift_render_result_to_arrow,
 )
 from cjwkernel.validate import ValidateError
 
@@ -259,7 +267,7 @@ class Kernel:
         """
         Call a module's migrate_params().
         """
-        request = RawParams(params).to_thrift()
+        request = arrow_raw_params_to_thrift(RawParams(params))
         response = self._run_in_child(
             chroot_dir=READONLY_CHROOT_DIR,
             network_config=None,
@@ -269,7 +277,7 @@ class Kernel:
             function="migrate_params_thrift",
             args=[request],
         )
-        return RawParams.from_thrift(response).params
+        return thrift_raw_params_to_arrow(response).params
 
     def render(
         self,
@@ -291,10 +299,14 @@ class Kernel:
         basedir_seen_by_module = Path("/") / basedir.relative_to(chroot_dir)
         request = ttypes.RenderRequest(
             str(basedir_seen_by_module),
-            input_table.to_thrift(),
-            params.to_thrift(),
-            tab.to_thrift(),
-            None if fetch_result is None else fetch_result.to_thrift(),
+            arrow_arrow_table_to_thrift(input_table),
+            arrow_params_to_thrift(params),
+            arrow_tab_to_thrift(tab),
+            (
+                None
+                if fetch_result is None
+                else arrow_fetch_result_to_thrift(fetch_result)
+            ),
             output_filename,
         )
         try:
@@ -315,11 +327,11 @@ class Kernel:
             raise ModuleExitedError(0, "Module wrote to wrong output file")
 
         try:
-            # RenderResult.from_thrift() verifies all filenames passed by the
-            # module are in the directory the module has access to. It assumes
-            # the Arrow file (if there is one) is untrusted, so it can raise
-            # ValidateError
-            render_result = RenderResult.from_thrift(result, basedir)
+            # thrift_render_result_to_arrow() verifies all filenames passed by
+            # the module are in the directory the module has access to. It
+            # assumes the Arrow file (if there is one) is untrusted, so it can
+            # raise ValidateError
+            render_result = thrift_render_result_to_arrow(result, basedir)
         except ValidateError as err:
             raise ModuleExitedError(0, "Module produced invalid data: %s" % str(err))
         return render_result
@@ -344,9 +356,13 @@ class Kernel:
         basedir_seen_by_module = Path("/") / basedir.relative_to(chroot_dir)
         request = ttypes.FetchRequest(
             str(basedir_seen_by_module),
-            params.to_thrift(),
-            RawParams(secrets).to_thrift(),
-            None if last_fetch_result is None else last_fetch_result.to_thrift(),
+            arrow_params_to_thrift(params),
+            arrow_raw_params_to_thrift(RawParams(secrets)),
+            (
+                None
+                if last_fetch_result is None
+                else arrow_fetch_result_to_thrift(last_fetch_result)
+            ),
             input_parquet_filename,
             output_filename,
         )
@@ -371,7 +387,7 @@ class Kernel:
         # sense to truncate; but fetch results aren't necessarily data frames.
         # It's up to the module to enforce this logic ... but we need to set a
         # maximum file size.
-        return FetchResult.from_thrift(result, basedir)
+        return thrift_fetch_result_to_arrow(result, basedir)
 
     def _run_in_child(
         self,
