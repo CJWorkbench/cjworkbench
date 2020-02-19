@@ -4,6 +4,7 @@ calculate
 clean-text
 columnchart
 concattabs
+converttexttonumber
 dropna
 droprowsbyposition
 editcells
