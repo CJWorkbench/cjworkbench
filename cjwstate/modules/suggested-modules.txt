@@ -9,6 +9,7 @@ editcells
 formula
 groupby
 histogram
+linechart
 mergecolumns
 refine
 regexextractor
