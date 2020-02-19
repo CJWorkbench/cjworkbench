@@ -14,6 +14,7 @@ regexextractor
 renamecolumns
 reordercolumns
 replace
+reshape
 rowstoheader
 selectcolumns
 sentimentanalysis
