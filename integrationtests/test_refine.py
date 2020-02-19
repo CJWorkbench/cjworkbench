@@ -10,6 +10,8 @@ class TestRefine(LoggedInIntegrationTest):
 
         # Empty module stack
         b.wait_for_element(".module-stack")
+        
+        self.import_module("refine")
 
         self.add_data_step("Paste data")
         b.wait_for_element('textarea[name="csv"]')

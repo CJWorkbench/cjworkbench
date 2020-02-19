@@ -122,9 +122,7 @@ def assert_arrow_table_equals(
 def assert_render_result_equals(result1: RenderResult, result2: RenderResult) -> None:
     assert_arrow_table_equals(result1.table, result2.table)
     assertEqual = unittest.TestCase().assertEqual
-    assertEqual(
-        [e.to_dict() for e in result1.errors], [e.to_dict() for e in result2.errors]
-    )
+    assertEqual(result1.errors, result2.errors)
     assertEqual(result1.json, result2.json)
 
 

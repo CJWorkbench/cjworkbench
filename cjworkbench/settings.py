@@ -335,6 +335,7 @@ LOGGING = {
         "django.channels.server": {"level": "ERROR"},  # ditto djano.request
         # DEBUG only gets messages when settings.DEBUG==True
         "django.db.backends": {"level": "INFO"},
+        "cjworkbench.pg_render_locker": {"level": "INFO"},
     },
 }
 
@@ -439,13 +440,6 @@ _maybe_load_oauth_service(
 KB_ROOT_URL = "http://help.workbenchdata.com/"
 
 I_AM_TESTING = "test" in sys.argv
-if I_AM_TESTING:
-    for provider in [
-        "allauth.socialaccount.providers.facebook",
-        "allauth.socialaccount.providers.google",
-    ]:
-        if provider not in INSTALLED_APPS:
-            INSTALLED_APPS.append(provider)
 
 TEST_RUNNER = "server.tests.runner.TimeLoggingDiscoverRunner"
 

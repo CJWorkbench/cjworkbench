@@ -118,6 +118,7 @@ class PrepareSecretOauth1aTests(unittest.TestCase):
                 "error": {
                     "id": "py.fetcher.secrets._service_no_longer_configured_error",
                     "arguments": {"service": "twitter"},
+                    "source": None,
                 },
             },
         )
@@ -218,6 +219,7 @@ class PrepareSecretOauth2(AioHTTPTestCase):
                 "error": {
                     "id": "py.fetcher.secrets._service_no_longer_configured_error",
                     "arguments": {"service": "google"},
+                    "source": None,
                 },
             },
         )
@@ -314,6 +316,7 @@ class PrepareSecretOauth2(AioHTTPTestCase):
                             "reason": "I'm a teapot",
                             "description": "tea time?",
                         },
+                        "source": None,
                     },
                 },
             )
