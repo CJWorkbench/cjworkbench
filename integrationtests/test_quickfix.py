@@ -69,6 +69,8 @@ class TestQuickFix(LoggedInIntegrationTest):
             csv_data="T,Num\nX,$1\nY,$2\nZ,$3", expected_colnames_and_types=["T text"]
         )
 
+        self.import_module("converttexttonumber")
+
         # Try to format numbers. (It won't work because the input is text.)
         self.add_wf_module("Format numbers")
         self.select_column("Format numbers", "colnames", "Num")
