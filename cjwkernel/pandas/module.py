@@ -8,6 +8,11 @@ from pathlib import Path
 import pandas as pd
 from typing import Any, Dict, List, Optional, Union
 from cjwkernel import parquet, types
+from cjwkernel.types import (
+    arrow_fetch_result_to_thrift,
+    arrow_render_result_to_thrift,
+    arrow_raw_params_to_thrift,
+)
 from cjwkernel.util import tempfile_context
 from cjwkernel.pandas import types as ptypes
 from cjwkernel.thrift import ttypes
@@ -223,7 +228,7 @@ def render_thrift(request: ttypes.RenderRequest) -> ttypes.RenderResult:
         basedir / request.output_filename,
     )
 
-    return arrow_result.to_thrift()
+    return arrow_render_result_to_thrift(arrow_result)
 
 
 def fetch(params: Dict[str, Any], **kwargs):
@@ -376,7 +381,7 @@ def fetch_thrift(request: ttypes.FetchRequest) -> ttypes.FetchResult:
         ),
         basedir / request.output_filename,
     )
-    return arrow_result.to_thrift()
+    return arrow_fetch_result_to_thrift(arrow_result)
 
 
 def migrate_params(params: Dict[str, Any]) -> Dict[str, Any]:
@@ -412,7 +417,7 @@ def migrate_params(params: Dict[str, Any]) -> Dict[str, Any]:
 def migrate_params_thrift(params: ttypes.RawParams):
     params_dict: Dict[str, Any] = types.RawParams.from_thrift(params).params
     result_dict = migrate_params(params_dict)
-    return types.RawParams(result_dict).to_thrift()
+    return arrow_raw_params_to_thrift(types.RawParams(result_dict))
 
 
 def validate_thrift() -> ttypes.ValidateModuleResult:

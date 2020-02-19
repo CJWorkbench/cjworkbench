@@ -21,6 +21,11 @@ from cjwkernel.types import (
     RawParams,
     RenderResult,
     Tab,
+    arrow_arrow_table_to_thrift,
+    arrow_fetch_result_to_thrift,
+    arrow_params_to_thrift,
+    arrow_raw_params_to_thrift,
+    arrow_tab_to_thrift,
 )
 from cjwkernel.validate import ValidateError
 
@@ -259,7 +264,7 @@ class Kernel:
         """
         Call a module's migrate_params().
         """
-        request = RawParams(params).to_thrift()
+        request = arrow_raw_params_to_thrift(RawParams(params))
         response = self._run_in_child(
             chroot_dir=READONLY_CHROOT_DIR,
             network_config=None,
@@ -291,10 +296,14 @@ class Kernel:
         basedir_seen_by_module = Path("/") / basedir.relative_to(chroot_dir)
         request = ttypes.RenderRequest(
             str(basedir_seen_by_module),
-            input_table.to_thrift(),
-            params.to_thrift(),
-            tab.to_thrift(),
-            None if fetch_result is None else fetch_result.to_thrift(),
+            arrow_arrow_table_to_thrift(input_table),
+            arrow_params_to_thrift(params),
+            arrow_tab_to_thrift(tab),
+            (
+                None
+                if fetch_result is None
+                else arrow_fetch_result_to_thrift(fetch_result)
+            ),
             output_filename,
         )
         try:
@@ -344,9 +353,13 @@ class Kernel:
         basedir_seen_by_module = Path("/") / basedir.relative_to(chroot_dir)
         request = ttypes.FetchRequest(
             str(basedir_seen_by_module),
-            params.to_thrift(),
-            RawParams(secrets).to_thrift(),
-            None if last_fetch_result is None else last_fetch_result.to_thrift(),
+            arrow_params_to_thrift(params),
+            arrow_raw_params_to_thrift(RawParams(secrets)),
+            (
+                None
+                if last_fetch_result is None
+                else arrow_fetch_result_to_thrift(last_fetch_result)
+            ),
             input_parquet_filename,
             output_filename,
         )

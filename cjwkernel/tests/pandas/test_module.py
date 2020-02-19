@@ -28,6 +28,11 @@ from cjwkernel.types import (
     RenderResult,
     Tab,
     TabOutput,
+    arrow_raw_params_to_thrift,
+    arrow_params_to_thrift,
+    arrow_arrow_table_to_thrift,
+    arrow_fetch_result_to_thrift,
+    arrow_tab_to_thrift,
 )
 import cjwkernel.pandas.types as ptypes
 from cjwkernel.pandas import module
@@ -36,15 +41,18 @@ from cjwkernel.pandas import module
 class MigrateParamsTests(unittest.TestCase):
     def _test(self, fn, params={}):
         with patch.object(module, "migrate_params", fn):
-            thrift_result = module.migrate_params_thrift(RawParams(params).to_thrift())
+            thrift_result = module.migrate_params_thrift(
+                arrow_raw_params_to_thrift(RawParams(params))
+            )
             return RawParams.from_thrift(thrift_result).params
 
     def test_default_returns_params(self):
-        thrift_result = module.migrate_params_thrift(
-            RawParams({"A": [1], "B": "x"}).to_thrift()
+        self.assertEqual(
+            module.migrate_params_thrift(
+                arrow_raw_params_to_thrift(RawParams({"A": [1], "B": "x"}))
+            ),
+            arrow_raw_params_to_thrift(RawParams({"A": [1], "B": "x"})),
         )
-        result = RawParams.from_thrift(thrift_result).params
-        self.assertEqual(result, {"A": [1], "B": "x"})
 
     def test_allow_override(self):
         def migrate_params(params):
@@ -97,10 +105,12 @@ class RenderTests(unittest.TestCase):
             thrift_result = module.render_thrift(
                 ttypes.RenderRequest(
                     str(self.basedir),
-                    arrow_table.to_thrift(),
-                    Params(params).to_thrift(),
-                    tab.to_thrift(),
-                    fetch_result.to_thrift() if fetch_result is not None else None,
+                    arrow_arrow_table_to_thrift(arrow_table),
+                    arrow_params_to_thrift(Params(params)),
+                    arrow_tab_to_thrift(tab),
+                    arrow_fetch_result_to_thrift(fetch_result)
+                    if fetch_result is not None
+                    else None,
                     out_filename,
                 )
             )
@@ -119,12 +129,24 @@ class RenderTests(unittest.TestCase):
             thrift_result = module.render_thrift(
                 ttypes.RenderRequest(
                     str(self.basedir),
-                    input_arrow_table.to_thrift(),
-                    Params({}).to_thrift(),
+                    arrow_arrow_table_to_thrift(input_arrow_table),
+                    {},  # params
                     ttypes.Tab("tab-1", "Tab 1"),
                     ttypes.FetchResult(
                         parquet_filename,
-                        [RenderError(I18nMessage.TODO_i18n("A warning")).to_thrift()],
+                        [
+                            ttypes.RenderError(
+                                ttypes.I18nMessage(
+                                    "TODO_i18n",
+                                    {
+                                        "text": ttypes.I18nArgument(
+                                            string_value="A warning"
+                                        )
+                                    },
+                                ),
+                                [],
+                            )
+                        ],
                     ),
                     out_filename,
                 )
@@ -328,10 +350,10 @@ class FetchTests(unittest.TestCase):
             thrift_result = module.fetch_thrift(
                 ttypes.FetchRequest(
                     basedir=str(self.basedir),
-                    params=Params(params).to_thrift(),
-                    secrets=RawParams(secrets).to_thrift(),
+                    params=arrow_params_to_thrift(Params(params)),
+                    secrets=arrow_raw_params_to_thrift(RawParams(secrets)),
                     last_fetch_result=(
-                        last_fetch_result.to_thrift()
+                        arrow_fetch_result_to_thrift(last_fetch_result)
                         if last_fetch_result is not None
                         else None
                     ),

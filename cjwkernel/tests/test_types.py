@@ -16,7 +16,7 @@ class ThriftConvertersTest(unittest.TestCase):
 
     def test_column_type_text_to_thrift(self):
         self.assertEqual(
-            types.ColumnType.Text().to_thrift(),
+            types.arrow_column_type_to_thrift(types.ColumnType.Text()),
             ttypes.ColumnType(text_type=ttypes.ColumnTypeText()),
         )
 
@@ -30,7 +30,7 @@ class ThriftConvertersTest(unittest.TestCase):
 
     def test_column_type_number_to_thrift(self):
         self.assertEqual(
-            types.ColumnType.Number("{:,.1%}").to_thrift(),
+            types.arrow_column_type_to_thrift(types.ColumnType.Number("{:,.1%}")),
             ttypes.ColumnType(number_type=ttypes.ColumnTypeNumber("{:,.1%}")),
         )
 
@@ -49,7 +49,7 @@ class ThriftConvertersTest(unittest.TestCase):
 
     def test_column_type_datetime_to_thrift(self):
         self.assertEqual(
-            types.ColumnType.Datetime().to_thrift(),
+            types.arrow_column_type_to_thrift(types.ColumnType.Datetime()),
             ttypes.ColumnType(datetime_type=ttypes.ColumnTypeDatetime()),
         )
 
@@ -63,7 +63,7 @@ class ThriftConvertersTest(unittest.TestCase):
 
     def test_column_to_thrift(self):
         self.assertEqual(
-            types.Column("A", types.ColumnType.Text()).to_thrift(),
+            types.arrow_column_to_thrift(types.Column("A", types.ColumnType.Text())),
             ttypes.Column("A", ttypes.ColumnType(text_type=ttypes.ColumnTypeText())),
         )
 
@@ -77,13 +77,15 @@ class ThriftConvertersTest(unittest.TestCase):
 
     def test_table_metadata_to_thrift(self):
         self.assertEqual(
-            types.TableMetadata(
-                4,
-                [
-                    types.Column("A", types.ColumnType.Text()),
-                    types.Column("B", types.ColumnType.Text()),
-                ],
-            ).to_thrift(),
+            types.arrow_table_metadata_to_thrift(
+                types.TableMetadata(
+                    4,
+                    [
+                        types.Column("A", types.ColumnType.Text()),
+                        types.Column("B", types.ColumnType.Text()),
+                    ],
+                )
+            ),
             ttypes.TableMetadata(
                 4,
                 [
@@ -130,7 +132,8 @@ class ThriftConvertersTest(unittest.TestCase):
 
     def test_tab_to_thrift(self):
         self.assertEqual(
-            types.Tab("tab-123", "Tab 1").to_thrift(), ttypes.Tab("tab-123", "Tab 1")
+            types.arrow_tab_to_thrift(types.Tab("tab-123", "Tab 1")),
+            ttypes.Tab("tab-123", "Tab 1"),
         )
 
     def test_tab_from_thrift(self):
@@ -153,7 +156,7 @@ class ThriftConvertersTest(unittest.TestCase):
 
     def test_raw_params_to_thrift(self):
         self.assertEqual(
-            types.RawParams({"A": "x", "B": [1, 2]}).to_thrift(),
+            types.arrow_raw_params_to_thrift(types.RawParams({"A": "x", "B": [1, 2]})),
             ttypes.RawParams('{"A":"x","B":[1,2]}'),
         )
 
@@ -212,20 +215,22 @@ class ThriftConvertersTest(unittest.TestCase):
 
     def test_params_to_thrift(self):
         self.assertEqual(
-            types.Params(
-                {
-                    "str": "s",
-                    "int": 2,
-                    "float": 1.2,
-                    "null": None,
-                    "bool": False,
-                    "column": types.Column(
-                        "A", types.ColumnType.Number(format="{:,.2f}")
-                    ),
-                    "listofmaps": [{"A": "a", "B": "b"}, {"C": "c", "D": "d"}],
-                    "tab": "TODO tabs",
-                }
-            ).to_thrift(),
+            types.arrow_params_to_thrift(
+                types.Params(
+                    {
+                        "str": "s",
+                        "int": 2,
+                        "float": 1.2,
+                        "null": None,
+                        "bool": False,
+                        "column": types.Column(
+                            "A", types.ColumnType.Number(format="{:,.2f}")
+                        ),
+                        "listofmaps": [{"A": "a", "B": "b"}, {"C": "c", "D": "d"}],
+                        "tab": "TODO tabs",
+                    }
+                )
+            ),
             {
                 "str": ttypes.ParamValue(string_value="s"),
                 "int": ttypes.ParamValue(integer_value=2),
@@ -274,7 +279,7 @@ class ThriftConvertersTest(unittest.TestCase):
     def test_params_filename_to_thrift(self):
         path = self.basedir / "x.bin"
         self.assertEqual(
-            types.Params({"A": path}).to_thrift(),
+            types.arrow_params_to_thrift(types.Params({"A": path})),
             {"A": ttypes.ParamValue(filename_value="x.bin")},
         )
 
@@ -304,9 +309,11 @@ class ThriftConvertersTest(unittest.TestCase):
 
     def test_i18n_message_to_thrift_source_module(self):
         self.assertEqual(
-            types.I18nMessage(
-                "modules.x.y", {"a": "s", "b": 12345678, "c": 0.123}, "module"
-            ).to_thrift(),
+            types.arrow_i18n_message_to_thrift(
+                types.I18nMessage(
+                    "modules.x.y", {"a": "s", "b": 12345678, "c": 0.123}, "module"
+                )
+            ),
             ttypes.I18nMessage(
                 "modules.x.y",
                 {
@@ -338,9 +345,11 @@ class ThriftConvertersTest(unittest.TestCase):
 
     def test_i18n_message_to_thrift_source_library(self):
         self.assertEqual(
-            types.I18nMessage(
-                "modules.x.y", {"a": "s", "b": 12345678, "c": 0.123}, "cjwmodule"
-            ).to_thrift(),
+            types.arrow_i18n_message_to_thrift(
+                types.I18nMessage(
+                    "modules.x.y", {"a": "s", "b": 12345678, "c": 0.123}, "cjwmodule"
+                )
+            ),
             ttypes.I18nMessage(
                 "modules.x.y",
                 {
@@ -370,9 +379,9 @@ class ThriftConvertersTest(unittest.TestCase):
 
     def test_i18n_message_to_thrift_source_none(self):
         self.assertEqual(
-            types.I18nMessage(
-                "modules.x.y", {"a": "s", "b": 12345678, "c": 0.123}
-            ).to_thrift(),
+            types.arrow_i18n_message_to_thrift(
+                types.I18nMessage("modules.x.y", {"a": "s", "b": 12345678, "c": 0.123})
+            ),
             ttypes.I18nMessage(
                 "modules.x.y",
                 {
@@ -484,7 +493,9 @@ class ThriftConvertersTest(unittest.TestCase):
 
     def test_prepend_step_quick_fix_action_to_thrift(self):
         self.assertEqual(
-            types.QuickFixAction.PrependStep("filter", {"x": "y"}).to_thrift(),
+            types.arrow_quick_fix_action_to_thrift(
+                types.QuickFixAction.PrependStep("filter", {"x": "y"})
+            ),
             ttypes.QuickFixAction(
                 prepend_step=ttypes.PrependStepQuickFixAction(
                     "filter", ttypes.RawParams('{"x":"y"}')
@@ -534,10 +545,12 @@ class ThriftConvertersTest(unittest.TestCase):
 
     def test_quick_fix_to_thrift(self):
         self.assertEqual(
-            types.QuickFix(
-                types.I18nMessage("click"),
-                types.QuickFixAction.PrependStep("filter", {"x": "y"}),
-            ).to_thrift(),
+            types.arrow_quick_fix_to_thrift(
+                types.QuickFix(
+                    types.I18nMessage("click"),
+                    types.QuickFixAction.PrependStep("filter", {"x": "y"}),
+                )
+            ),
             ttypes.QuickFix(
                 ttypes.I18nMessage("click", {}, None),
                 ttypes.QuickFixAction(
@@ -612,15 +625,17 @@ class ThriftConvertersTest(unittest.TestCase):
 
     def test_render_error_to_thrift(self):
         self.assertEqual(
-            types.RenderError(
-                types.I18nMessage("foo", {}),
-                [
-                    types.QuickFix(
-                        types.I18nMessage("click"),
-                        types.QuickFixAction.PrependStep("filter", {"x": "y"}),
-                    )
-                ],
-            ).to_thrift(),
+            types.arrow_render_error_to_thrift(
+                types.RenderError(
+                    types.I18nMessage("foo", {}),
+                    [
+                        types.QuickFix(
+                            types.I18nMessage("click"),
+                            types.QuickFixAction.PrependStep("filter", {"x": "y"}),
+                        )
+                    ],
+                )
+            ),
             ttypes.RenderError(
                 ttypes.I18nMessage("foo", {}, None),
                 [
@@ -735,7 +750,7 @@ class ThriftConvertersTest(unittest.TestCase):
                 types.FetchResult.from_thrift(
                     ttypes.FetchResult(
                         Path(tf.name).name,
-                        [types.RenderError(types.I18nMessage("hi")).to_thrift()],
+                        [ttypes.RenderError(ttypes.I18nMessage("hi", {}), [])],
                     ),
                     self.basedir,
                 ),
