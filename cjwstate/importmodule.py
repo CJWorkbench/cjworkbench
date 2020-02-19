@@ -171,8 +171,8 @@ def import_module_from_github(
         download_path = td / "github-download.zip"
         _download_url(
             "https://github.com/%s/%s/archive/%s.zip" % (owner, repo, ref),
-            download_path
-        ) # raise WorkbenchModuleImportError
+            download_path,
+        )  # raise WorkbenchModuleImportError
 
         # Read the version (sha1) from zipfile and rename it to match the sha1.
         # (import_zipfile() reads sha1 from filename.)
