@@ -43,7 +43,10 @@ def create_application() -> ProtocolTypeRouter:
     #    cost during startup than to incur it when responding to some random
     #    request.
     cjwstate.modules.init_module_system()
-    MODULE_REGISTRY.all_latest()
+    if not settings.I_AM_TESTING:
+        # Only the test environment, Django runs migrations itself. We can't
+        # use MODULE_REGISTRY until it migrates.
+        MODULE_REGISTRY.all_latest()
 
     return ProtocolTypeRouter(
         {
