@@ -2,13 +2,14 @@ import unittest
 import numpy as np
 import pandas as pd
 from pandas.testing import assert_frame_equal
-from staticmodules.converttexttonumber import (
+from converttexttonumber import (
     render,
     InputNumberType,
     InputLocale,
     Form,
     migrate_params,
 )
+from cjwmodule.testing.i18n import i18n_message
 
 
 class TestMigrateParams(unittest.TestCase):
@@ -235,10 +236,15 @@ class TestExtractNumbers(unittest.TestCase):
         result = form.convert_table(table)
         self.assertEqual(
             result,
-            (
-                "'' in row 1 of 'A' cannot be converted. Overall, there are 2 "
-                "errors in 1 column. Select 'Convert non-numbers to null' to set "
-                "these values to null."
+            i18n_message(
+                "ErrorCount.message",
+                {
+                    "a_value": "",
+                    "a_row": 1,
+                    "a_column": "A",
+                    "n_errors": 2,
+                    "n_columns": 1,
+                },
             ),
         )
 

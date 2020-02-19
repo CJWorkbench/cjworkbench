@@ -30,6 +30,7 @@ class TestLesson(LessonTest):
         self.import_module("nulldropper")
         self.import_module("reshape")
         self.import_module("convert-date")
+        self.import_module("converttexttonumber")
         self.import_module("refine")
 
         # 1. Introduction
