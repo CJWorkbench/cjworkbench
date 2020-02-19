@@ -33,6 +33,9 @@ from cjwkernel.types import (
     arrow_arrow_table_to_thrift,
     arrow_fetch_result_to_thrift,
     arrow_tab_to_thrift,
+    thrift_fetch_result_to_arrow,
+    thrift_raw_params_to_arrow,
+    thrift_render_result_to_arrow,
 )
 import cjwkernel.pandas.types as ptypes
 from cjwkernel.pandas import module
@@ -44,7 +47,7 @@ class MigrateParamsTests(unittest.TestCase):
             thrift_result = module.migrate_params_thrift(
                 arrow_raw_params_to_thrift(RawParams(params))
             )
-            return RawParams.from_thrift(thrift_result).params
+            return thrift_raw_params_to_arrow(thrift_result).params
 
     def test_default_returns_params(self):
         self.assertEqual(
@@ -114,7 +117,7 @@ class RenderTests(unittest.TestCase):
                     out_filename,
                 )
             )
-            return RenderResult.from_thrift(thrift_result, self.basedir)
+            return thrift_render_result_to_arrow(thrift_result, self.basedir)
 
     def test_default_render_returns_fetch_result(self):
         # Functionality used by libraryofcongress
@@ -151,7 +154,7 @@ class RenderTests(unittest.TestCase):
                     out_filename,
                 )
             )
-            result = RenderResult.from_thrift(thrift_result, self.basedir)
+            result = thrift_render_result_to_arrow(thrift_result, self.basedir)
             assert_render_result_equals(
                 result,
                 RenderResult(
@@ -365,7 +368,7 @@ class FetchTests(unittest.TestCase):
                     output_filename=output_filename,
                 )
             )
-            return FetchResult.from_thrift(thrift_result, self.basedir)
+            return thrift_fetch_result_to_arrow(thrift_result, self.basedir)
 
     def test_fetch_get_stored_dataframe_happy_path(self):
         async def fetch(params, *, get_stored_dataframe):

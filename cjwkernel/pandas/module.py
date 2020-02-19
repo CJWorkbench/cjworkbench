@@ -12,6 +12,10 @@ from cjwkernel.types import (
     arrow_fetch_result_to_thrift,
     arrow_render_result_to_thrift,
     arrow_raw_params_to_thrift,
+    thrift_arrow_table_to_arrow,
+    thrift_fetch_result_to_arrow,
+    thrift_params_to_arrow,
+    thrift_raw_params_to_arrow,
 )
 from cjwkernel.util import tempfile_context
 from cjwkernel.pandas import types as ptypes
@@ -210,15 +214,15 @@ def render_thrift(request: ttypes.RenderRequest) -> ttypes.RenderResult:
     function.
     """
     basedir = Path(request.basedir)
-    arrow_table = types.ArrowTable.from_thrift(
+    arrow_table = thrift_arrow_table_to_arrow(
         request.input_table, basedir, trusted=True
     )
-    params = types.Params.from_thrift(request.params, basedir)
+    params = thrift_params_to_arrow(request.params, basedir)
     params_dict = params.params
     if request.fetch_result is None:
         fetch_result = None
     else:
-        fetch_result = types.FetchResult.from_thrift(request.fetch_result, basedir)
+        fetch_result = thrift_fetch_result_to_arrow(request.fetch_result, basedir)
 
     arrow_result: types.RenderResult = render_arrow(
         arrow_table,
@@ -367,12 +371,12 @@ def fetch_arrow(
 def fetch_thrift(request: ttypes.FetchRequest) -> ttypes.FetchResult:
     basedir = Path(request.basedir)
     arrow_result = fetch_arrow(
-        types.Params.from_thrift(request.params, basedir).params,
-        types.RawParams.from_thrift(request.secrets).params,
+        thrift_params_to_arrow(request.params, basedir).params,
+        thrift_raw_params_to_arrow(request.secrets).params,
         (
             None
             if request.last_fetch_result is None
-            else types.FetchResult.from_thrift(request.last_fetch_result, basedir)
+            else thrift_fetch_result_to_arrow(request.last_fetch_result, basedir)
         ),
         (
             None
@@ -415,7 +419,7 @@ def migrate_params(params: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def migrate_params_thrift(params: ttypes.RawParams):
-    params_dict: Dict[str, Any] = types.RawParams.from_thrift(params).params
+    params_dict: Dict[str, Any] = thrift_raw_params_to_arrow(params).params
     result_dict = migrate_params(params_dict)
     return arrow_raw_params_to_thrift(types.RawParams(result_dict))
 

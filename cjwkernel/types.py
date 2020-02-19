@@ -39,6 +39,17 @@ __all__ = [
     "arrow_render_error_to_thrift",
     "arrow_table_metadata_to_thrift",
     "arrow_tab_to_thrift",
+    "thrift_column_to_arrow",
+    "thrift_column_type_to_arrow",
+    "thrift_arrow_table_to_arrow",
+    "thrift_fetch_result_to_arrow",
+    "thrift_params_to_arrow",
+    "thrift_quick_fix_action_to_arrow",
+    "thrift_quick_fix_to_arrow",
+    "thrift_raw_params_to_arrow",
+    "thrift_render_error_to_arrow",
+    "thrift_table_metadata_to_arrow",
+    "thrift_tab_to_arrow",
 ]
 
 
@@ -91,19 +102,6 @@ class ColumnType(ABC):
         The name of the type: 'text', 'number' or 'datetime'.
         """
         pass
-
-    @classmethod
-    def from_thrift(cls, value: ttypes.ColumnType) -> ColumnType:
-        if value.text_type is not None:
-            return cls.Text()
-        elif value.number_type is not None:
-            format = value.number_type.format
-            NumberFormatter(format)  # raise ValueError on invalid format
-            return cls.Number(format)
-        elif value.datetime_type is not None:
-            return cls.Datetime()
-        else:
-            raise ValueError("Unhandled Thrift object: %r" % value)
 
 
 @dataclass(frozen=True)
@@ -277,10 +275,6 @@ class Column:
         type_cls = ColumnType.TypeLookup[type]
         return cls(name, type_cls(**column_type_kwargs))
 
-    @classmethod
-    def from_thrift(cls, value: ttypes.Column) -> Column:
-        return cls(value.name, ColumnType.from_thrift(value.type))
-
 
 @dataclass(frozen=True)
 class TableMetadata:
@@ -292,21 +286,18 @@ class TableMetadata:
     columns: List[Column] = field(default_factory=list)
     """Columns -- the user-visible aspects of them, at least."""
 
-    @classmethod
-    def from_thrift(cls, value: ttypes.TableMetadata) -> TableMetadata:
-        return cls(value.n_rows, [Column.from_thrift(c) for c in value.columns])
-
 
 def _pyarrow_type_to_column_type(dtype: pyarrow.DataType) -> ColumnType:
     if pyarrow.types.is_floating(dtype) or pyarrow.types.is_integer(dtype):
-        return ColumnType.Number()
-    if pyarrow.types.is_string(dtype) or (
+        return ColumnTypeNumber()
+    elif pyarrow.types.is_string(dtype) or (
         pyarrow.types.is_dictionary(dtype) and pyarrow.types.is_string(dtype.value_type)
     ):
-        return ColumnType.Text()
-    if pyarrow.types.is_timestamp(dtype):
-        return ColumnType.Datetime()
-    return ValueError("Unknown pyarrow type %r" % dtype)
+        return ColumnTypeText()
+    elif pyarrow.types.is_timestamp(dtype):
+        return ColumnTypeDatetime()
+    else:
+        return ValueError("Unknown pyarrow type %r" % dtype)
 
 
 @dataclass(frozen=True)
@@ -450,29 +441,6 @@ class ArrowTable:
         return cls(None, None, metadata)
 
     @classmethod
-    def from_thrift(
-        cls, value: ttypes.ArrowTable, basedir: Path, trusted: bool = False
-    ) -> ArrowTable:
-        """
-        Convert from a Thrift ArrowTable.
-
-        Raise ValidateError if the file on disk cannot be read, is not sane or
-        does not match metadata.
-
-        Since Thrift is used for inter-process communication, by default we
-        treat the file as untrusted. (See `from_untrusted_file()`.)
-        """
-        metadata = TableMetadata.from_thrift(value.metadata)
-        if value.filename:
-            path = _thrift_filename_to_path(value.filename, basedir)
-            if trusted:
-                return cls.from_trusted_file(path, metadata)
-            else:
-                return cls.from_untrusted_file(path, metadata)
-        else:
-            return cls.from_zero_column_metadata(metadata)
-
-    @classmethod
     def from_arrow_file_with_inferred_metadata(cls, path: Path) -> ArrowTable:
         """
         Build from a trusted Arrow file and infer metadata.
@@ -501,10 +469,6 @@ class Tab:
     name: str
     """Tab name, provided by the user."""
 
-    @classmethod
-    def from_thrift(cls, value: ttypes.Tab) -> Tab:
-        return cls(value.slug, value.name)
-
 
 @dataclass(frozen=True)
 class TabOutput:
@@ -528,14 +492,8 @@ class TabOutput:
     of its params is a Tab whose result `.status` is not "ok".
     """
 
-    @classmethod
-    def from_thrift(cls, value: ttypes.TabOutput, basedir: Path) -> TabOutput:
-        return cls(
-            Tab.from_thrift(value.tab), ArrowTable.from_thrift(value.table, basedir)
-        )
 
-
-def _i18n_argument_from_thrift(value: ttypes.I18nArgument) -> Union[str, int, float]:
+def _thrift_i18n_argument_to_arrow(value: ttypes.I18nArgument) -> Union[str, int, float]:
     if value.string_value is not None:
         return value.string_value
     elif value.i32_value is not None:
@@ -543,7 +501,7 @@ def _i18n_argument_from_thrift(value: ttypes.I18nArgument) -> Union[str, int, fl
     elif value.double_value is not None:
         return value.double_value
     else:
-        raise RuntimeError("Unhandled ttypes.I18nArgument: %r" % value)
+        raise ValueError("Unhandled ttypes.I18nArgument: %r" % value)
 
 
 def _i18n_argument_to_thrift(value: Union[str, int, float]) -> ttypes.I18nArgument:
@@ -573,14 +531,6 @@ class I18nMessage:
     def __post_init__(self):
         if self.source not in [None, "module", "cjwmodule"]:
             raise ValueError("Invalid message source %r" % self.source)
-
-    @classmethod
-    def from_thrift(cls, value: ttypes.I18nMessage) -> I18nMessage:
-        return cls(
-            value.id,
-            {k: _i18n_argument_from_thrift(v) for k, v in value.arguments.items()},
-            value.source,
-        )
 
     @classmethod
     def TODO_i18n(cls, text: str) -> I18nMessage:
@@ -639,10 +589,6 @@ ParamValue = Optional[
 class RawParams:
     params: Dict[str, Any]
 
-    @classmethod
-    def from_thrift(cls, value: ttypes.RawParams) -> RawParams:
-        return cls(json.loads(value.json))
-
 
 @dataclass(frozen=True)
 class Params:
@@ -652,44 +598,9 @@ class Params:
 
     params: Dict[str, Any]
 
-    @classmethod
-    def _value_from_thrift(cls, value: ttypes.ParamValue, basedir: Path) -> ParamValue:
-        if value.string_value is not None:
-            return value.string_value
-        elif value.integer_value is not None:
-            return value.integer_value
-        elif value.float_value is not None:
-            return value.float_value
-        elif value.boolean_value is not None:
-            return value.boolean_value
-        elif value.column_value is not None:
-            return Column.from_thrift(value.column_value)
-        elif value.tab_value is not None:
-            return TabOutput.from_thrift(value.tab_value, basedir)
-        elif value.list_value is not None:
-            return [cls._value_from_thrift(v, basedir) for v in value.list_value]
-        elif value.map_value is not None:
-            return {
-                k: cls._value_from_thrift(v, basedir)
-                for k, v in value.map_value.items()
-            }
-        elif value.filename_value is not None:
-            return _thrift_filename_to_path(value.filename_value, basedir)
-        else:
-            return None
-
-    @classmethod
-    def from_thrift(cls, value: Dict[str, ttypes.ParamValue], basedir: Path) -> Params:
-        return cls({k: cls._value_from_thrift(v, basedir) for k, v in value.items()})
-
 
 class QuickFixAction(ABC):
     """Instruction for what happens when the user clicks a Quick Fix button."""
-
-    @classmethod
-    def from_thrift(cls, value: ttypes.QuickFixAction):
-        if value.prepend_step is not None:
-            return PrependStepQuickFixAction.from_thrift(value.prepend_step)
 
     @classmethod
     def from_dict(cls, value: Dict[str, Any]):
@@ -719,12 +630,6 @@ class PrependStepQuickFixAction:
     """Some params to set on the new Step (atop the module's defaults)."""
 
     @classmethod
-    def from_thrift(
-        cls, value: ttypes.PrependStepQuickFixAction
-    ) -> PrependStepQuickFixAction:
-        return cls(value.module_slug, json.loads(value.partial_params.json))
-
-    @classmethod
     def from_dict(cls, value: Dict[str, Any]) -> PrependStepQuickFixAction:
         return cls(value["moduleSlug"], value["partialParams"])
 
@@ -746,13 +651,6 @@ class QuickFix:
 
     button_text: I18nMessage
     action: QuickFixAction
-
-    @classmethod
-    def from_thrift(cls, value: ttypes.QuickFix) -> QuickFix:
-        return cls(
-            I18nMessage.from_thrift(value.button_text),
-            QuickFixAction.from_thrift(value.action),
-        )
 
     @classmethod
     def from_dict(cls, value: Dict[str, Any]) -> QuickFix:
@@ -781,13 +679,6 @@ class RenderError:
 
     message: I18nMessage
     quick_fixes: List[QuickFix] = field(default_factory=list)
-
-    @classmethod
-    def from_thrift(cls, value: ttypes.RenderError) -> RenderError:
-        return cls(
-            I18nMessage.from_thrift(value.message),
-            [QuickFix.from_thrift(qf) for qf in value.quick_fixes],
-        )
 
     @classmethod
     def from_dict(cls, value: Dict[str, Any]) -> RenderError:
@@ -824,11 +715,6 @@ class FetchResult:
     User-facing errors (or warnings) reported by the module.
     """
 
-    @classmethod
-    def from_thrift(cls, value: ttypes.FetchResult, basedir: Path) -> FetchResult:
-        path = _thrift_filename_to_path(value.filename, basedir)
-        return cls(path, [RenderError.from_thrift(e) for e in value.errors])
-
 
 @dataclass(frozen=True)
 class RenderResult:
@@ -859,14 +745,6 @@ class RenderResult:
     json: Dict[str, Any] = field(default_factory=dict)
     """JSON to pass to the module's HTML, if it has HTML."""
 
-    @classmethod
-    def from_thrift(cls, value: ttypes.RenderResult, basedir: Path) -> RenderResult:
-        return cls(
-            ArrowTable.from_thrift(value.table, basedir),
-            [RenderError.from_thrift(e) for e in value.errors],
-            json.loads(value.json) if value.json else None,
-        )
-
     @property
     def status(self) -> str:
         """
@@ -889,6 +767,9 @@ class RenderResult:
                 return "unreachable"
         else:
             return "ok"
+
+
+### arrow_*_to_thrift(): encode Arrow types as Thrift
 
 
 def arrow_column_type_to_thrift(value: ColumnType) -> ttypes.ColumnType:
@@ -1014,4 +895,137 @@ def arrow_render_result_to_thrift(value: RenderResult) -> ttypes.RenderResult:
         arrow_arrow_table_to_thrift(value.table),
         [arrow_render_error_to_thrift(e) for e in value.errors],
         "" if value.json is None else json_encode(value.json),
+    )
+
+
+### thrift_*_to_arrow(): decode Arrow types from Thrift
+#
+# They raise ValueError on cheap-to-detect semantic errors.
+
+
+def thrift_column_type_to_arrow(value: ttypes.ColumnType) -> ColumnType:
+    if value.text_type is not None:
+        return ColumnTypeText()
+    elif value.number_type is not None:
+        format = value.number_type.format
+        NumberFormatter(format)  # raise ValueError on invalid format
+        return ColumnTypeNumber(format)
+    elif value.datetime_type is not None:
+        return ColumnTypeDatetime()
+    else:
+        raise ValueError("Unhandled Thrift object: %r" % value)
+
+
+def thrift_column_to_arrow(value: ttypes.Column) -> Column:
+    return Column(value.name, thrift_column_type_to_arrow(value.type))
+
+
+def thrift_table_metadata_to_arrow(value: ttypes.TableMetadata) -> TableMetadata:
+    return TableMetadata(value.n_rows, [thrift_column_to_arrow(c) for c in value.columns])
+
+
+def thrift_arrow_table_to_arrow(value: ttypes.ArrowTable, basedir: Path, trusted: bool = False) -> ArrowTable:
+    """
+    Convert from a Thrift ArrowTable.
+
+    Raise ValidateError if the file on disk cannot be read, is not sane or
+    does not match metadata.
+
+    Since Thrift is used for inter-process communication, by default we
+    treat the file as untrusted. (See `from_untrusted_file()`.)
+    """
+    metadata = thrift_table_metadata_to_arrow(value.metadata)
+    if value.filename:
+        path = _thrift_filename_to_path(value.filename, basedir)
+        if trusted:
+            return ArrowTable.from_trusted_file(path, metadata)
+        else:
+            return ArrowTable.from_untrusted_file(path, metadata)
+    else:
+        return ArrowTable.from_zero_column_metadata(metadata)
+
+
+def thrift_tab_to_arrow(value: ttypes.Tab) -> Tab:
+    return Tab(value.slug, value.name)
+
+
+def thrift_tab_output_to_arrow(value: ttypes.TabOutput, basedir: Path) -> TabOutput:
+    return TabOutput(
+        thrift_tab_to_arrow(value.tab), thrift_arrow_table_to_arrow(value.table, basedir)
+    )
+
+
+def thrift_i18n_message_to_arrow(value: ttypes.I18nMessage) -> I18nMessage:
+    return I18nMessage(
+        value.id,
+        {k: _thrift_i18n_argument_to_arrow(v) for k, v in value.arguments.items()},
+        value.source,
+    )
+
+
+def thrift_raw_params_to_arrow(value: ttypes.RawParams) -> RawParams:
+    return RawParams(json.loads(value.json))
+
+
+def _thrift_param_value_to_arrow(value: ttypes.ParamValue, basedir: Path) -> ParamValue:
+    if value.string_value is not None:
+        return value.string_value
+    elif value.integer_value is not None:
+        return value.integer_value
+    elif value.float_value is not None:
+        return value.float_value
+    elif value.boolean_value is not None:
+        return value.boolean_value
+    elif value.column_value is not None:
+        return thrift_column_to_arrow(value.column_value)
+    elif value.tab_value is not None:
+        return thrift_tab_output_to_arrow(value.tab_value, basedir)
+    elif value.list_value is not None:
+        return [_thrift_param_value_to_arrow(v, basedir) for v in value.list_value]
+    elif value.map_value is not None:
+        return {
+            k: _thrift_param_value_to_arrow(v, basedir)
+            for k, v in value.map_value.items()
+        }
+    elif value.filename_value is not None:
+        return _thrift_filename_to_path(value.filename_value, basedir)
+    else:
+        return None
+
+
+def thrift_params_to_arrow(value: Dict[str, ttypes.ParamsValue], basedir: Path) -> Params:
+    return Params({k: _thrift_param_value_to_arrow(v, basedir) for k, v in value.items()})
+
+
+def thrift_quick_fix_action_to_arrow(value: ttypes.QuickFixAction) -> QuickFixAction:
+    if value.prepend_step is not None:
+        return PrependStepQuickFixAction(value.prepend_step.module_slug, json.loads(value.prepend_step.partial_params.json))
+    else:
+        raise ValueError("Invalid QuickFixAction")
+
+
+def thrift_quick_fix_to_arrow(value: ttypes.QuickFix) -> QuickFix:
+    return QuickFix(
+        thrift_i18n_message_to_arrow(value.button_text),
+        thrift_quick_fix_action_to_arrow(value.action),
+    )
+
+
+def thrift_render_error_to_arrow(value: ttypes.RenderError) -> RenderError:
+    return RenderError(
+        thrift_i18n_message_to_arrow(value.message),
+        [thrift_quick_fix_to_arrow(qf) for qf in value.quick_fixes],
+    )
+
+
+def thrift_fetch_result_to_arrow(value: ttypes.FetchResult, basedir: Path) -> FetchResult:
+    path = _thrift_filename_to_path(value.filename, basedir)
+    return FetchResult(path, [thrift_render_error_to_arrow(e) for e in value.errors])
+
+
+def thrift_render_result_to_arrow(value: ttypes.RenderResult, basedir: Path) -> RenderResult:
+    return RenderResult(
+        thrift_arrow_table_to_arrow(value.table, basedir),
+        [thrift_render_error_to_arrow(e) for e in value.errors],
+        json.loads(value.json) if value.json else None,
     )
