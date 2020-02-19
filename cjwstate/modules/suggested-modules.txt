@@ -11,6 +11,7 @@ formula
 groupby
 histogram
 intercom
+jointab
 linechart
 mergecolumns
 refine
