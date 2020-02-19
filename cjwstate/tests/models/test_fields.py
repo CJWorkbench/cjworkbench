@@ -56,12 +56,6 @@ class DictConvertersTest(unittest.TestCase):
             {"id": "modules.x.y", "arguments": ["s", 12345678, 0.123]},
         )
 
-    def test_i18n_message_from_dict_invalid_source(self):
-        with self.assertRaises(ValueError):
-            fields._dict_to_i18n_message(
-                {"id": "modules.x.y", "arguments": {}, "source": "random"}
-            )
-
     def test_prepend_step_quick_fix_action_from_dict(self):
         self.assertEqual(
             fields._dict_to_quick_fix_action(

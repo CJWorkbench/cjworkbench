@@ -8,7 +8,7 @@ import pyarrow
 import pyarrow.ipc
 import pyarrow.types
 from string import Formatter
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Literal, NamedTuple, Optional, Union
 from cjwkernel.util import json_encode
 
 # Some types we can import with no conversion
@@ -248,24 +248,25 @@ ColumnType.Number = ColumnTypeNumber
 ColumnType.Datetime = ColumnTypeDatetime
 
 
-@dataclass(frozen=True)
-class Column:
+class Column(NamedTuple):
     """
     A column definition.
     """
 
-    name: str  # Name of the column
-    type: ColumnType  # How it's displayed
+    name: str
+    """Name of the column."""
+
+    type: ColumnType
+    """How the column data is stored and displayed to the user."""
 
 
-@dataclass(frozen=True)
-class TableMetadata:
+class TableMetadata(NamedTuple):
     """Table data that will be cached for easy access."""
 
     n_rows: int = 0
     """Number of rows in the table."""
 
-    columns: List[Column] = field(default_factory=list)
+    columns: List[Column] = []
     """Columns -- the user-visible aspects of them, at least."""
 
 
@@ -441,8 +442,7 @@ class ArrowTable:
         return ArrowTable(path, table, TableMetadata(n_rows, columns))
 
 
-@dataclass(frozen=True)
-class Tab:
+class Tab(NamedTuple):
     """Tab description."""
 
     slug: str
@@ -452,8 +452,7 @@ class Tab:
     """Tab name, provided by the user."""
 
 
-@dataclass(frozen=True)
-class TabOutput:
+class TabOutput(NamedTuple):
     """
     Already-computed output of a tab.
 
@@ -499,22 +498,22 @@ def _i18n_argument_to_thrift(value: Union[str, int, float]) -> ttypes.I18nArgume
         raise RuntimeError("Unhandled value for I18nArgument: %r" % value)
 
 
-@dataclass(frozen=True)
-class I18nMessage:
+class I18nMessage(NamedTuple):
     """Translation key and arguments."""
 
     id: str
     """Message ID. For instance, `modules.renamecolumns.duplicateColname`"""
 
-    args: Dict[str, Union[int, float, str]] = field(default_factory=dict)
+    args: Dict[str, Union[int, float, str]] = {}
     """Arguments (empty if message does not need any -- which is common)."""
 
-    source: Optional[str] = None
-    """Where the message comes from (`"module"` or `"cjwmodule"`), or `None` if it comes from Workbench proper."""
+    source: Literal["module", "cjwmodule", None] = None
+    """Where the message comes from.
 
-    def __post_init__(self):
-        if self.source not in [None, "module", "cjwmodule"]:
-            raise ValueError("Invalid message source %r" % self.source)
+    * "module": the module that raised it
+    * "cjwmodule": the cjwmodule library
+    * None: Workbench itself.
+    """
 
     @classmethod
     def TODO_i18n(cls, text: str) -> I18nMessage:
@@ -545,27 +544,24 @@ class I18nMessage:
         return cls(message_id, args)
 
 
-ParamValue = Optional[
-    Union[
-        str,
-        int,
-        float,
-        bool,
-        Column,
-        TabOutput,
-        List[Any],  # should be List[ParamValue]
-        Dict[str, Any],  # should be Dict[str, ParamValue]
-    ]
+ParamValue = Union[
+    None,
+    str,
+    int,
+    float,
+    bool,
+    Column,
+    TabOutput,
+    List[Any],  # should be List[ParamValue]
+    Dict[str, Any],  # should be Dict[str, ParamValue]
 ]
 
 
-@dataclass(frozen=True)
-class RawParams:
+class RawParams(NamedTuple):
     params: Dict[str, Any]
 
 
-@dataclass(frozen=True)
-class Params:
+class Params(NamedTuple):
     """
     Nested data structure passed to `render()` -- includes Column/TabOutput.
     """
@@ -591,16 +587,14 @@ class PrependStepQuickFixAction(QuickFixAction):
 QuickFixAction.PrependStep = PrependStepQuickFixAction
 
 
-@dataclass(frozen=True)
-class QuickFix:
+class QuickFix(NamedTuple):
     """Button the user can click in response to an error message."""
 
     button_text: I18nMessage
     action: QuickFixAction
 
 
-@dataclass(frozen=True)
-class RenderError:
+class RenderError(NamedTuple):
     """
     Error or warning encountered during `render()`.
 
@@ -611,11 +605,10 @@ class RenderError:
     """
 
     message: I18nMessage
-    quick_fixes: List[QuickFix] = field(default_factory=list)
+    quick_fixes: List[QuickFix] = []
 
 
-@dataclass(frozen=True)
-class FetchResult:
+class FetchResult(NamedTuple):
     """
     The module executed a Step's fetch() without crashing.
     """
@@ -630,7 +623,7 @@ class FetchResult:
     format explicit (or nix the concept entirely).
     """
 
-    errors: List[RenderError] = field(default_factory=list)
+    errors: List[RenderError] = []
     """
     User-facing errors (or warnings) reported by the module.
     """
@@ -881,6 +874,8 @@ def thrift_tab_output_to_arrow(value: ttypes.TabOutput, basedir: Path) -> TabOut
 
 
 def thrift_i18n_message_to_arrow(value: ttypes.I18nMessage) -> I18nMessage:
+    if value.source not in [None, "module", "cjwmodule"]:
+        raise ValueError("Invalid message source %r" % value.source)
     return I18nMessage(
         value.id,
         {k: _thrift_i18n_argument_to_arrow(v) for k, v in value.arguments.items()},
