@@ -79,7 +79,8 @@ class ModuleRegistry:
         db_modules = list(
             DbModuleVersion.objects.annotate(_latest=latest).filter(id=F("_latest"))
         )
-        ret = dict(StaticModuleLookup)  # fallback modules. TODO nix them all!
+
+        ret = dict(StaticModuleLookup)  # fallback modules (TODO nix all static modules)
         ret.update({m.id_name: self._download_or_reuse_zipfile(m) for m in db_modules})
         return ret
 

@@ -28,6 +28,10 @@ docker_compose_with_commands() {
   docker_compose -f docker-compose.yml -f docker-compose.commands.yml "$@"
 }
 
+refresh_suggested_modules() {
+  docker_compose_with_commands run --rm pydev pipenv run python ./manage.py import-modules $(cat cjwstate/modules/suggested-modules.txt)
+}
+
 print_usage() {
   echo "Usage: $0 COMMAND ARGS..." >&2
   echo >&2
@@ -40,6 +44,7 @@ print_usage() {
   echo '  pybabel ARGS -- run "pipenv run pybabel ARGS..." in a Python environment' >&2
   echo '  extract-messages -- extract translation messages from js, python, and templates and merge them into one file per locale' >&2
   echo '  reformat-code -- make code conform to (Black) styleguide' >&2
+  echo '  refresh-suggested-modules -- refresh without a whole "start"' >&2
   echo '  run SERVICE ARGS -- run "docker-compose run -rm SERVICE ARGS..."' >&2
   echo '  quickstart -- start database, RabbitMQ, Webpack and Django without updates' >&2
   echo '  sql -- open a psql prompt in the dev database (it must be up)' >&2
@@ -168,13 +173,17 @@ case "$COMMAND" in
     # Make sure Python deps are up to date; migrate database
     docker_compose_with_commands run --rm migrate
 
-    docker_compose_with_commands run --rm pydev pipenv run python ./manage.py import-modules $(cat cjwstate/modules/suggested-modules.txt)
+    refresh_suggested_modules
 
     # Make sure JavaScript deps are up to date
     docker_compose run --rm webpack npm install
 
     # Start Django and Webpack
     docker_compose up -t0 --abort-on-container-exit
+    ;;
+
+  "refresh-suggested-modules")
+    refresh_suggested_modules
     ;;
 
   "quickstart")

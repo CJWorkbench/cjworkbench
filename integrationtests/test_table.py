@@ -16,6 +16,8 @@ class TestTable(LoggedInIntegrationTest):
 
         b.fill_in("name", "Example Workflow")
 
+        self.import_module("renamecolumns")
+
         self.add_data_step("Paste data")
         b.fill_in("csv", "string,int\nfoo,1\nbar,3\nbaz,2", wait=True)
         self.submit_wf_module()
