@@ -7,6 +7,7 @@ dropna
 droprowsbyposition
 editcells
 formula
+groupby
 histogram
 mergecolumns
 refine
