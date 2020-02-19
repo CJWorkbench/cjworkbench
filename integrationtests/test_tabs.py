@@ -58,7 +58,7 @@ class TestTabs(WorkbenchBase):
         b = self.browser
         accounts.login(b, "a@example.org", "a@example.org")
         self._create_workflow()
-        
+
         self.import_module("startfromtab")
 
         self.add_data_step("Paste data")
@@ -92,7 +92,7 @@ class TestTabs(WorkbenchBase):
         b = self.browser
         accounts.login(b, "a@example.org", "a@example.org")
         self._create_workflow()
-        
+
         self.import_module("startfromtab")
 
         # Create Tab 2, and make Tab 1 depend on it
@@ -124,7 +124,7 @@ class TestTabs(WorkbenchBase):
         b = self.browser
         accounts.login(b, "a@example.org", "a@example.org")
         self._create_workflow()
-        
+
         self.import_module("startfromtab")
 
         # Create Tab 2, and make Tab 1 depend on it
