@@ -380,11 +380,7 @@ class ThriftConvertersTest(unittest.TestCase):
     def test_i18n_message_to_thrift_source_none(self):
         self.assertEqual(
             types.arrow_i18n_message_to_thrift(types.I18nMessage("modules.x.y")),
-            ttypes.I18nMessage(
-                "modules.x.y",
-                {},
-                None,
-            ),
+            ttypes.I18nMessage("modules.x.y", {}, None),
         )
 
     def test_i18n_message_from_thrift_invalid_source(self):

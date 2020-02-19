@@ -493,7 +493,9 @@ class TabOutput:
     """
 
 
-def _thrift_i18n_argument_to_arrow(value: ttypes.I18nArgument) -> Union[str, int, float]:
+def _thrift_i18n_argument_to_arrow(
+    value: ttypes.I18nArgument
+) -> Union[str, int, float]:
     if value.string_value is not None:
         return value.string_value
     elif value.i32_value is not None:
@@ -921,10 +923,14 @@ def thrift_column_to_arrow(value: ttypes.Column) -> Column:
 
 
 def thrift_table_metadata_to_arrow(value: ttypes.TableMetadata) -> TableMetadata:
-    return TableMetadata(value.n_rows, [thrift_column_to_arrow(c) for c in value.columns])
+    return TableMetadata(
+        value.n_rows, [thrift_column_to_arrow(c) for c in value.columns]
+    )
 
 
-def thrift_arrow_table_to_arrow(value: ttypes.ArrowTable, basedir: Path, trusted: bool = False) -> ArrowTable:
+def thrift_arrow_table_to_arrow(
+    value: ttypes.ArrowTable, basedir: Path, trusted: bool = False
+) -> ArrowTable:
     """
     Convert from a Thrift ArrowTable.
 
@@ -951,7 +957,8 @@ def thrift_tab_to_arrow(value: ttypes.Tab) -> Tab:
 
 def thrift_tab_output_to_arrow(value: ttypes.TabOutput, basedir: Path) -> TabOutput:
     return TabOutput(
-        thrift_tab_to_arrow(value.tab), thrift_arrow_table_to_arrow(value.table, basedir)
+        thrift_tab_to_arrow(value.tab),
+        thrift_arrow_table_to_arrow(value.table, basedir),
     )
 
 
@@ -993,13 +1000,20 @@ def _thrift_param_value_to_arrow(value: ttypes.ParamValue, basedir: Path) -> Par
         return None
 
 
-def thrift_params_to_arrow(value: Dict[str, ttypes.ParamsValue], basedir: Path) -> Params:
-    return Params({k: _thrift_param_value_to_arrow(v, basedir) for k, v in value.items()})
+def thrift_params_to_arrow(
+    value: Dict[str, ttypes.ParamsValue], basedir: Path
+) -> Params:
+    return Params(
+        {k: _thrift_param_value_to_arrow(v, basedir) for k, v in value.items()}
+    )
 
 
 def thrift_quick_fix_action_to_arrow(value: ttypes.QuickFixAction) -> QuickFixAction:
     if value.prepend_step is not None:
-        return PrependStepQuickFixAction(value.prepend_step.module_slug, json.loads(value.prepend_step.partial_params.json))
+        return PrependStepQuickFixAction(
+            value.prepend_step.module_slug,
+            json.loads(value.prepend_step.partial_params.json),
+        )
     else:
         raise ValueError("Invalid QuickFixAction")
 
@@ -1018,12 +1032,16 @@ def thrift_render_error_to_arrow(value: ttypes.RenderError) -> RenderError:
     )
 
 
-def thrift_fetch_result_to_arrow(value: ttypes.FetchResult, basedir: Path) -> FetchResult:
+def thrift_fetch_result_to_arrow(
+    value: ttypes.FetchResult, basedir: Path
+) -> FetchResult:
     path = _thrift_filename_to_path(value.filename, basedir)
     return FetchResult(path, [thrift_render_error_to_arrow(e) for e in value.errors])
 
 
-def thrift_render_result_to_arrow(value: ttypes.RenderResult, basedir: Path) -> RenderResult:
+def thrift_render_result_to_arrow(
+    value: ttypes.RenderResult, basedir: Path
+) -> RenderResult:
     return RenderResult(
         thrift_arrow_table_to_arrow(value.table, basedir),
         [thrift_render_error_to_arrow(e) for e in value.errors],

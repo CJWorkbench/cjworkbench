@@ -15,7 +15,7 @@ class TestTable(LoggedInIntegrationTest):
         b.assert_element('input[name="name"][value="Untitled Workflow"]', wait=True)
 
         b.fill_in("name", "Example Workflow")
-        
+
         self.import_module("renamecolumns")
 
         self.add_data_step("Paste data")
