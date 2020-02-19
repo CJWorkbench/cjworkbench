@@ -6,7 +6,7 @@ from functools import singledispatch
 from typing import Any, Dict, Iterable, List, Optional, Union
 from allauth.account.utils import user_display
 from django.contrib.auth import get_user_model
-from cjwkernel.types import Column, I18nMessage, QuickFix, RenderError
+from cjwkernel.types import Column, I18nMessage, QuickFix, QuickFixAction, RenderError
 from cjworkbench.settings import KB_ROOT_URL
 from server.settingsutils import workbench_user_display
 from cjwstate.modules.param_spec import ParamSpec
@@ -614,10 +614,21 @@ def jsonize_i18n_message(message: I18nMessage, ctx: JsonizeModuleContext) -> str
         return repr(message)
 
 
+def jsonize_quick_fix_action(action: QuickFixAction) -> Dict[str, Any]:
+    if isinstance(action, QuickFixAction.PrependStep):
+        return {
+            "type": "prependStep",
+            "moduleSlug": action.module_slug,
+            "partialParams": action.partial_params,
+        }
+    else:
+        raise NotImplementedError
+
+
 def jsonize_quick_fix(quick_fix: QuickFix, ctx: JsonizeModuleContext) -> Dict[str, Any]:
     return {
         "buttonText": jsonize_i18n_message(quick_fix.button_text, ctx),
-        "action": quick_fix.action.to_dict(),
+        "action": jsonize_quick_fix_action(quick_fix.action),
     }
 
 
