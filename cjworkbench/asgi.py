@@ -20,6 +20,7 @@ from channels.auth import AuthMiddlewareStack
 from django.conf.urls import url
 
 from server.websockets import WorkflowConsumer
+from cjwstate.models.module_registry import MODULE_REGISTRY
 import cjwstate.modules
 from cjworkbench.middleware.i18n import SetCurrentLocaleAsgiMiddleware
 
@@ -42,6 +43,7 @@ def create_application() -> ProtocolTypeRouter:
     #    cost during startup than to incur it when responding to some random
     #    request.
     cjwstate.modules.init_module_system()
+    MODULE_REGISTRY.all_latest()
 
     return ProtocolTypeRouter(
         {
