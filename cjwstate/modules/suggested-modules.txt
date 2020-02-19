@@ -3,6 +3,7 @@ burstDetector
 calculate
 clean-text
 columnchart
+concattabs
 dropna
 droprowsbyposition
 editcells
