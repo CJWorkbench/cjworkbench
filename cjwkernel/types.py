@@ -1,6 +1,6 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from dataclasses import asdict, dataclass, field
+from dataclasses import dataclass, field
 import json
 import marshal
 from pathlib import Path
@@ -247,12 +247,6 @@ ColumnType.Text = ColumnTypeText
 ColumnType.Number = ColumnTypeNumber
 ColumnType.Datetime = ColumnTypeDatetime
 
-ColumnType.TypeLookup = {
-    "text": ColumnType.Text,
-    "number": ColumnType.Number,
-    "datetime": ColumnType.Datetime,
-}
-
 
 @dataclass(frozen=True)
 class Column:
@@ -262,18 +256,6 @@ class Column:
 
     name: str  # Name of the column
     type: ColumnType  # How it's displayed
-
-    def to_dict(self):
-        return {"name": self.name, "type": self.type.name, **asdict(self.type)}
-
-    @classmethod
-    def from_dict(cls, d: Dict[str, str]) -> Column:
-        return cls.from_kwargs(**d)
-
-    @classmethod
-    def from_kwargs(cls, name: str, type: str, **column_type_kwargs) -> ColumnType:
-        type_cls = ColumnType.TypeLookup[type]
-        return cls(name, type_cls(**column_type_kwargs))
 
 
 @dataclass(frozen=True)
@@ -562,16 +544,6 @@ class I18nMessage:
         """
         return cls(message_id, args)
 
-    @classmethod
-    def from_dict(cls, value: Dict[str, Any]) -> I18nMessage:
-        return cls(value["id"], value["arguments"], value.get("source"))
-
-    def to_dict(self) -> Dict[str, Any]:
-        if self.source:
-            return {"id": self.id, "arguments": self.args, "source": self.source}
-        else:
-            return {"id": self.id, "arguments": self.args}
-
 
 ParamValue = Optional[
     Union[
@@ -604,25 +576,9 @@ class Params:
 class QuickFixAction(ABC):
     """Instruction for what happens when the user clicks a Quick Fix button."""
 
-    @classmethod
-    def from_dict(cls, value: Dict[str, Any]):
-        if value["type"] == "prependStep":
-            return PrependStepQuickFixAction.from_dict(value)
-        else:
-            raise ValueError("Unhandled type in QuickFixAction: %r", value)
-
-    # override
-    def to_dict(self) -> Dict[str, Any]:
-        """
-        Convert to Dict.
-        
-        Subclasses must implement this method. The returned dict must have a
-        "type" key, so `QuickFix.from_dict()` can handle it.
-        """
-
 
 @dataclass(frozen=True)
-class PrependStepQuickFixAction:
+class PrependStepQuickFixAction(QuickFixAction):
     """Instruction that upon clicking a button, we should create a Step."""
 
     module_slug: str
@@ -630,18 +586,6 @@ class PrependStepQuickFixAction:
 
     partial_params: Dict[str, Any]
     """Some params to set on the new Step (atop the module's defaults)."""
-
-    @classmethod
-    def from_dict(cls, value: Dict[str, Any]) -> PrependStepQuickFixAction:
-        return cls(value["moduleSlug"], value["partialParams"])
-
-    # override
-    def to_dict(self) -> Dict[str, Any]:
-        return {
-            "type": "prependStep",
-            "moduleSlug": self.module_slug,
-            "partialParams": self.partial_params,
-        }
 
 
 QuickFixAction.PrependStep = PrependStepQuickFixAction
@@ -653,19 +597,6 @@ class QuickFix:
 
     button_text: I18nMessage
     action: QuickFixAction
-
-    @classmethod
-    def from_dict(cls, value: Dict[str, Any]) -> QuickFix:
-        return cls(
-            I18nMessage.from_dict(value["buttonText"]),
-            QuickFixAction.from_dict(value["action"]),
-        )
-
-    def to_dict(self) -> Dict[str, Any]:
-        return {
-            "buttonText": self.button_text.to_dict(),
-            "action": self.action.to_dict(),
-        }
 
 
 @dataclass(frozen=True)
@@ -681,19 +612,6 @@ class RenderError:
 
     message: I18nMessage
     quick_fixes: List[QuickFix] = field(default_factory=list)
-
-    @classmethod
-    def from_dict(cls, value: Dict[str, Any]) -> RenderError:
-        return cls(
-            I18nMessage.from_dict(value["message"]),
-            [QuickFix.from_dict(qf) for qf in value["quickFixes"]],
-        )
-
-    def to_dict(self) -> Dict[str, Any]:
-        return {
-            "message": self.message.to_dict(),
-            "quickFixes": [qf.to_dict() for qf in self.quick_fixes],
-        }
 
 
 @dataclass(frozen=True)

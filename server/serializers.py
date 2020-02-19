@@ -2,18 +2,15 @@ from collections import namedtuple
 import datetime
 import logging
 import re
-import json
-from functools import lru_cache, singledispatch
+from functools import singledispatch
 from typing import Any, Dict, Iterable, List, Optional, Union
 from allauth.account.utils import user_display
 from django.contrib.auth import get_user_model
-from cjwkernel.types import I18nMessage, QuickFix, RenderError
+from cjwkernel.types import Column, I18nMessage, QuickFix, RenderError
 from cjworkbench.settings import KB_ROOT_URL
 from server.settingsutils import workbench_user_display
-from cjwstate.modules.param_spec import ParamSpec, MenuOptionEnum
+from cjwstate.modules.param_spec import ParamSpec
 from cjwstate import clientside
-from cjwkernel.types import RenderError
-from cjworkbench.i18n import default_locale
 from cjworkbench.i18n.trans import (
     MESSAGE_LOCALIZER_REGISTRY,
     NotInternationalizedError,
@@ -587,19 +584,19 @@ def jsonize_i18n_message(message: I18nMessage, ctx: JsonizeModuleContext) -> str
         logger.exception(
             "I18nMessage source %s does not support localization", message.source
         )
-        return json.dumps(message.to_dict())
+        return repr(message)
     except KeyError as err:
         logger.exception(
             "JsonizeContext not set properly for I18nMessage source %s. Error: %s",
             message.source,
             err,
         )
-        return json.dumps(message.to_dict())
+        return repr(message)
 
     # Attempt to localize in the locale given by `ctx`.
     try:
         return localizer.localize(ctx.locale_id, message.id, arguments=message.args)
-    except ICUError as err:
+    except ICUError:
         # `localize` handles `ICUError` for the given locale.
         # Hence, if we get here, it means that the message is badly formatted in the default locale.
         logger.exception(
@@ -607,14 +604,14 @@ def jsonize_i18n_message(message: I18nMessage, ctx: JsonizeModuleContext) -> str
             message.id,
             message.source,
         )
-        return json.dumps(message.to_dict())
-    except KeyError as err:
+        return repr(message)
+    except KeyError:
         logger.exception(
             "I18nMessage content not found in catalogs. id: %s, source: %s",
             message.id,
             message.source,
         )
-        return json.dumps(message.to_dict())
+        return repr(message)
 
 
 def jsonize_quick_fix(quick_fix: QuickFix, ctx: JsonizeModuleContext) -> Dict[str, Any]:
@@ -631,6 +628,13 @@ def jsonize_render_error(
         "message": jsonize_i18n_message(error.message, ctx),
         "quickFixes": [jsonize_quick_fix(qf, ctx) for qf in error.quick_fixes],
     }
+
+
+def jsonize_column(column: Column) -> Dict[str, Any]:
+    ret = {"name": column.name, "type": column.type.name}
+    if hasattr(column.type, "format"):
+        ret["format"] = column.type.format
+    return ret
 
 
 def jsonize_fetched_version_list(
@@ -688,7 +692,9 @@ def jsonize_clientside_step(
             d.update(
                 {
                     "cached_render_result_delta_id": crr.delta_id,
-                    "output_columns": [c.to_dict() for c in crr.table_metadata.columns],
+                    "output_columns": [
+                        jsonize_column(c) for c in crr.table_metadata.columns
+                    ],
                     "output_n_rows": crr.table_metadata.n_rows,
                     "output_status": crr.status,
                     "output_errors": [
