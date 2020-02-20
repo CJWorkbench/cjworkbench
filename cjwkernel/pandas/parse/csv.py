@@ -1,3 +1,4 @@
+import array
 import contextlib
 import csv
 from dataclasses import dataclass
@@ -6,8 +7,8 @@ from pathlib import Path
 import re
 import struct
 import subprocess
+import sys
 from typing import List, Optional, Tuple
-import pandas as pd
 import pyarrow
 from cjwkernel import settings
 from cjwkernel.types import ArrowTable, I18nMessage, RenderError, RenderResult
@@ -275,6 +276,103 @@ def _postprocess_name_columns(
     )
 
 
+def _nix_utf8_chunk_empty_strings(chunk: pyarrow.Array) -> pyarrow.Array:
+    """
+    Return a pa.Array that replaces "" with null.
+
+    Assume `arr` is of type `utf8` or a dictionary of `utf8`.
+    """
+    # pyarrow's cast() can't handle empty string. Create a new Array with
+    # "" changed to null.
+    _, offsets_buf, data_buf = chunk.buffers()
+
+    # Build a new validity buffer, based on offsets. Empty string = null.
+    # Assume `data` has no padding bytes in the already-null values. That way
+    # we can ignore the _original_ validity buffer and assume all original
+    # values are not-null. (Null values are stored as "" plus "invalid".)
+    #
+    # Validity-bitmap spec:
+    # https://arrow.apache.org/docs/format/Columnar.html#validity-bitmaps
+
+    # first offset must be 0. Next offsets are used to calculate lengths
+    offsets = array.array("i")
+    assert offsets.itemsize == 4
+    offsets.frombytes(offsets_buf)
+    if sys.byteorder != "little":
+        offsets.byteswap()  # pyarrow is little-endian
+
+    validity = bytearray()
+    null_count = 0
+    last_offset = offsets[0]
+    assert last_offset == 0
+    pos = 1
+    while True:
+        # Travel offsets in strides of 8: one per char in the validity bitmap.
+        # Pad with an extra 1 bit -- [2020-02-20, adamhooper] I think I read
+        # this is needed somewhere.
+        valid_byte = 0x00
+        block = offsets[pos : pos + 8]
+        try:
+            if block[0] > last_offset:
+                valid_byte |= 0x1
+            else:
+                null_count += 1
+            if block[1] > block[0]:
+                valid_byte |= 0x2
+            else:
+                null_count += 1
+            if block[2] > block[1]:
+                valid_byte |= 0x4
+            else:
+                null_count += 1
+            if block[3] > block[2]:
+                valid_byte |= 0x8
+            else:
+                null_count += 1
+            if block[4] > block[3]:
+                valid_byte |= 0x10
+            else:
+                null_count += 1
+            if block[5] > block[4]:
+                valid_byte |= 0x20
+            else:
+                null_count += 1
+            if block[6] > block[5]:
+                valid_byte |= 0x40
+            else:
+                null_count += 1
+            if block[7] > block[6]:
+                valid_byte |= 0x80
+            else:
+                null_count += 1
+            validity.append(valid_byte)
+            last_offset = block[7]
+            pos += 8
+        except IndexError:
+            validity.append(valid_byte)
+            break  # end of offsets
+
+    validity_buf = pyarrow.py_buffer(validity)
+
+    # We may have over-counted in null_count: anything before `chunk.offset`
+    # should not count.
+    #
+    # It's less work to "undo" the counting we did before -- otherwise we'd
+    # riddle the above loop with if-statements.
+    for i in range(chunk.offset):
+        if offsets[i + 1] == offsets[i]:
+            null_count -= 1
+
+    return pyarrow.StringArray.from_buffers(
+        length=len(chunk),
+        value_offsets=offsets_buf,
+        data=data_buf,
+        null_bitmap=validity_buf,
+        null_count=null_count,
+        offset=chunk.offset,
+    )
+
+
 def _autocast_column(data: pyarrow.ChunkedArray) -> pyarrow.ChunkedArray:
     """
     Convert `data` to float64 or int(64|32|16|8); as fallback, return `data`.
@@ -306,16 +404,16 @@ def _autocast_column(data: pyarrow.ChunkedArray) -> pyarrow.ChunkedArray:
         # there are 0 bytes of text
         return data
 
-    series: pd.Series = data.to_pandas()
-    try:
-        # Try to cast to numbers
-        number_values = pd.to_numeric(series).values
-    except (ValueError, TypeError):
-        return data
+    # Convert "" => null, so pyarrow cast() won't balk at it.
+    sane = pyarrow.chunked_array(
+        [_nix_utf8_chunk_empty_strings(chunk) for chunk in data.chunks]
+    )
 
-    # pd.to_numeric("") gives np.nan. We want None. Use from_pandas=True.
-    number_array = pyarrow.array(number_values, from_pandas=True)
-    numbers = pyarrow.chunked_array([number_array])
+    try:
+        numbers = sane.cast(pyarrow.float64())
+    except pyarrow.ArrowInvalid:
+        # Some string somewhere wasn't a number
+        return data
 
     # Downcast integers, when possible.
     #
@@ -355,18 +453,18 @@ def _postprocess_table(
     * If `has_headers` is True, remove the first row (zero-copy) and use it to
       build column names -- which we guarantee are unique. Otherwise, generate
       unique column names.
-    * Convert each column dictionary if it agrees with
-      `settings.MAX_DICTIONARY_PYLIST_N_BYTES` and
-      `settings.MIN_DICTIONARY_COMPRESSION_RATIO`.
     * Auto-convert each column to numeric if every value is represented
       correctly. (`""` becomes `null`. This conversion is lossy for the myriad
       numbers CSV can represent accurately that int/double cannot.
       TODO auto-conversion optional.)
+    * Convert each utf8 column to dictionary if it agrees with
+      `settings.MAX_DICTIONARY_PYLIST_N_BYTES` and
+      `settings.MIN_DICTIONARY_COMPRESSION_RATIO`.
     """
     table, warnings = _postprocess_name_columns(table, has_header)
-    table = dictionary_encode_columns(table)
     if autoconvert_text_to_numbers:
         table = _postprocess_autocast_columns(table)
+    table = dictionary_encode_columns(table)
     return table, warnings
 
 
