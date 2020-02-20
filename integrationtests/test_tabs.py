@@ -6,7 +6,7 @@ class TestTabs(WorkbenchBase):
     def setUp(self):
         super().setUp()
 
-        self.user1 = self.account_admin.create_user("a@example.org")
+        self.user1 = self.account_admin.create_user("a@example.org", is_staff=True)
         self.user2 = self.account_admin.create_user("b@example.org")
 
     def _create_workflow(self):
@@ -59,6 +59,8 @@ class TestTabs(WorkbenchBase):
         accounts.login(b, "a@example.org", "a@example.org")
         self._create_workflow()
 
+        self.import_module("startfromtab")
+
         self.add_data_step("Paste data")
         b.fill_in("csv", "foo,bar\n1,2", wait=True)
         self.submit_wf_module()
@@ -91,6 +93,8 @@ class TestTabs(WorkbenchBase):
         accounts.login(b, "a@example.org", "a@example.org")
         self._create_workflow()
 
+        self.import_module("startfromtab")
+
         # Create Tab 2, and make Tab 1 depend on it
         b.click_button("Create tab")
         # wait for server to add it
@@ -120,6 +124,8 @@ class TestTabs(WorkbenchBase):
         b = self.browser
         accounts.login(b, "a@example.org", "a@example.org")
         self._create_workflow()
+
+        self.import_module("startfromtab")
 
         # Create Tab 2, and make Tab 1 depend on it
         b.click_button("Create tab")
