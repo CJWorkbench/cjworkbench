@@ -141,7 +141,7 @@ class PgRenderLocker:
             await self._pg_fetchval("SELECT 'locker_heartbeat'", timeout=interval)
             # "heartbeat" log can help debug if the client stalls, as
             # [2019-06-11] it did.
-            logger.info(
+            logger.debug(
                 (
                     "heartbeat: local_stalls=%r, remote_stalls=%r, "
                     "local_renders=%r, remote_renders=%r"

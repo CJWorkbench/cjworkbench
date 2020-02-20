@@ -70,6 +70,7 @@ class TestQuickFix(LoggedInIntegrationTest):
         )
 
         self.import_module("formatnumbers")
+        self.import_module("converttexttonumber")
 
         # Try to format numbers. (It won't work because the input is text.)
         self.add_wf_module("Format numbers")

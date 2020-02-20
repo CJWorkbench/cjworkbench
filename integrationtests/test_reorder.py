@@ -14,6 +14,8 @@
 #        # wait for page load
 #        b.assert_element('input[name="name"][value="Untitled Workflow"]', wait=True)
 #
+#        self.import_module("reordercolumns")
+#
 #        self.browser.click_button('ADD STEP')
 #        self.browser.fill_in('moduleQ', 'Paste data')
 #        self.browser.click_whatever('.module-search-result', text='Paste data')

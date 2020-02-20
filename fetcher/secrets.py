@@ -47,7 +47,14 @@ async def prepare_secrets(
 
 
 def _secret_error(user_secret: Dict[str, Any], message: I18nMessage) -> Dict[str, Any]:
-    retval = {**user_secret, "error": message.to_dict()}
+    retval = {
+        **user_secret,
+        "error": {
+            "id": message.id,
+            "arguments": message.args,
+            "source": message.source,
+        },
+    }
     del retval["secret"]
     return retval
 
