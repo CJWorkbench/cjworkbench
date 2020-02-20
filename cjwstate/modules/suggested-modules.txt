@@ -9,6 +9,7 @@ dropna
 droprowsbyposition
 editcells
 filter
+formatnumbers
 formula
 groupby
 histogram
