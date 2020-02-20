@@ -117,7 +117,7 @@ class ParseCsvInternalTests(unittest.TestCase):
                 ),
             )
 
-    def test_autoconvert_all_null_is_number(self):
+    def test_autoconvert_all_null_is_text(self):
         with _temp_csv("A,B\na\nb\nc") as path:
             assert_csv_result_equals(
                 _internal_parse_csv(
@@ -127,7 +127,7 @@ class ParseCsvInternalTests(unittest.TestCase):
                     pa.table(
                         {
                             "A": ["a", "b", "c"],
-                            "B": pa.array([None, None, None], pa.int8()),
+                            "B": pa.array([None, None, None], pa.utf8()),
                         }
                     ),
                     [],

@@ -4,6 +4,7 @@ from dataclasses import dataclass
 import os
 from pathlib import Path
 import re
+import struct
 import subprocess
 from typing import List, Optional, Tuple
 import pandas as pd
@@ -284,12 +285,28 @@ def _autocast_column(data: pyarrow.ChunkedArray) -> pyarrow.ChunkedArray:
     better choice, because we use Pandas and Pandas does not support nulls
     in integer columns.
     """
-    series: pd.Series = data.to_pandas()
-    null = series.isnull()
-    empty = series == ""
-    if empty.any() and (null | empty).all():
-        # All-empty (and all-null) columns stay text
+    # All-empty (and all-null) columns stay text
+    for chunk in data.chunks:
+        # https://arrow.apache.org/docs/format/Columnar.html#variable-size-binary-layout
+        _, offsets_buf, _ = chunk.buffers()
+        # If data has an offset, ignore what comes before
+        #
+        # We don't need to grab the _int_ offset: we can just look at the
+        # byte-representation of it.
+        offset_0_buf = offsets_buf[chunk.offset * 4 : (chunk.offset + 1) * 4]
+        # last offset isn't always the last 4 bytes: there can be padding
+        offset_n_buf = offsets_buf[
+            (chunk.offset + len(chunk)) * 4 : (chunk.offset + len(chunk) + 1) * 4
+        ]
+        if offset_0_buf.to_pybytes() != offset_n_buf.to_pybytes():
+            # there's at least 1 byte of text. (Assumes the CSV reader doesn't
+            # pad the buffer with gibberish.)
+            break
+    else:
+        # there are 0 bytes of text
         return data
+
+    series: pd.Series = data.to_pandas()
     try:
         # Try to cast to numbers
         number_values = pd.to_numeric(series).values
