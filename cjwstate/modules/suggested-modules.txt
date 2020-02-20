@@ -4,6 +4,7 @@ calculate
 clean-text
 columnchart
 concattabs
+convert-date
 converttexttonumber
 dropna
 droprowsbyposition
