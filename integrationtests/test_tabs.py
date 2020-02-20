@@ -6,7 +6,7 @@ class TestTabs(WorkbenchBase):
     def setUp(self):
         super().setUp()
 
-        self.user1 = self.account_admin.create_user("a@example.org")
+        self.user1 = self.account_admin.create_user("a@example.org", is_staff=True)
         self.user2 = self.account_admin.create_user("b@example.org")
 
     def _create_workflow(self):
