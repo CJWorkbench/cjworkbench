@@ -2,12 +2,12 @@
 
 set -e
 
-ENV=${1:?"Usage: $0 ENVIRONMENT SHA"}
+ENV=${1:?"Usage: $0 ENVIRONMENT"}
 
-if [ "$ENV" = "staging" ]; then
-  CLUSTER="gke_workbench-staging_us-central1-b_workbench"
-else
+if [ "$ENV" = "production" ]; then
   CLUSTER="gke_workbenchdata-production_us-central1-b_workbench"
+else
+  CLUSTER="gke_workbench-staging_us-central1-b_workbench"
 fi
 
 KUBECTL="kubectl.1.15 --cluster $CLUSTER"
