@@ -12,7 +12,7 @@ def parse_xls_file(
     path: Path, *, output_path: Path, has_header: bool, autoconvert_types: bool
 ) -> RenderResult:
     """
-    Build a RenderResult from xlsx bytes or raise parse error.
+    Build a RenderResult from xls bytes or raise parse error.
 
     Peculiarities:
 
@@ -56,6 +56,3 @@ def parse_xls_file(
     autocast_dtypes_in_place(table)
 
     return ProcessResult(table).to_arrow(output_path)
-
-
-parse_xlsx_file = parse_xls_file
