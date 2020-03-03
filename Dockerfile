@@ -58,7 +58,7 @@ WORKDIR /app
 
 # 0.2 Pydev: just for the development environment
 FROM workbenchdata/watchman-bin:v0.0.1-buster-slim AS watchman-bin
-FROM minio/mc:RELEASE.2019-10-09T22-54-57Z AS mc
+FROM minio/mc:RELEASE.2020-02-25T18-10-03Z AS mc
 FROM pybase AS pydev
 
 # Need build-essential for:
