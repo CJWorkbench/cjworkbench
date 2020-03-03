@@ -10,6 +10,6 @@ __all__ = [
     "parse_file",
     "parse_csv",
     "parse_json",
-    "parse_xls_file",
+    "parse_xls",
     "parse_xlsx",
 ]
