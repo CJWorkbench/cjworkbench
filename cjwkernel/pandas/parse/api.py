@@ -2,8 +2,7 @@ from pathlib import Path
 from typing import Optional
 from cjwkernel.types import I18nMessage, RenderError, RenderResult
 from .csv import parse_csv
-from .excel import parse_xls_file
-from .xlsx import parse_xlsx
+from .excel import parse_xls, parse_xlsx
 from .json import parse_json
 from .mime import MimeType
 
@@ -49,12 +48,8 @@ def parse_file(
     elif mime_type == MimeType.JSON:
         return parse_json(path, output_path=output_path, encoding=encoding)
     elif mime_type == MimeType.XLS:
-        return parse_xls_file(
-            path, output_path=output_path, has_header=has_header, autoconvert_types=True
-        )
+        return parse_xls(path, output_path=output_path, has_header=has_header)
     elif mime_type == MimeType.XLSX:
-        return parse_xlsx(
-            path, output_path=output_path, has_header=has_header
-        )
+        return parse_xlsx(path, output_path=output_path, has_header=has_header)
     else:
         raise RuntimeError("Unhandled MIME type")

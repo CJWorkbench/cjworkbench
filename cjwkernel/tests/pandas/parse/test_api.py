@@ -101,7 +101,7 @@ class ApiTests(unittest.TestCase):
     def test_detect_xlsx_by_suffix(self):
         result = parse_file(TestDataPath / "test.xlsx", output_path=self.output_path)
         assert_arrow_table_equals(
-            result.table, {"Month": ["Jan", "Feb"], "Amount": [10, 20]}
+            result.table, {"Month": ["Jan", "Feb"], "Amount": [10.0, 20.0]}
         )
 
     def test_xlsx_has_header_false(self):
@@ -109,13 +109,12 @@ class ApiTests(unittest.TestCase):
             TestDataPath / "test.xlsx", output_path=self.output_path, has_header=False
         )
         assert_arrow_table_equals(
-            result.table,
-            {"Column 1": ["Month", "Jan", "Feb"], "Column 2": ["Amount", "10", "20"]},
+            result.table, {"A": ["Month", "Jan", "Feb"], "B": ["Amount", "10", "20"]}
         )
 
     def test_detect_xls_by_suffix(self):
         result = parse_file(TestDataPath / "example.xls", output_path=self.output_path)
-        assert_arrow_table_equals(result.table, {"foo": [1, 2], "bar": [2, 3]})
+        assert_arrow_table_equals(result.table, {"foo": [1.0, 2.0], "bar": [2.0, 3.0]})
 
     def test_detect_unknown_file_extension(self):
         with _data_file(b"A,B\nx,y", suffix=".bin") as bin_path:

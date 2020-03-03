@@ -1,9 +1,8 @@
 from .mime import MimeType
 from .api import parse_file
 from .csv import parse_csv
-from .excel import parse_xls_file
+from .excel import parse_xls, parse_xlsx
 from .json import parse_json
-from .xlsx import parse_xlsx
 
 __all__ = [
     "MimeType",

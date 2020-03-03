@@ -64,10 +64,13 @@ def dictionary_encode_columns(table: pyarrow.Table) -> pyarrow.Table:
 
 
 def _infer_output_column_type(column: pyarrow.ChunkedArray) -> ColumnType:
-    if column.type == pyarrow.utf8() or (
-        hasattr(column.type, "value_type") and column.type.value_type == pyarrow.utf8()
+    if pyarrow.types.is_string(column.type) or (
+        hasattr(column.type, "value_type")
+        and pyarrow.types.is_string(column.type.value_type)
     ):
         return ColumnType.Text()
+    elif pyarrow.types.is_timestamp(column.type):
+        return ColumnType.Datetime()
     else:
         return ColumnType.Number()
 
