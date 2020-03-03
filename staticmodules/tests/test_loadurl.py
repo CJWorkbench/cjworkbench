@@ -444,7 +444,7 @@ class RenderTests(unittest.TestCase):
                 self.output_path,
             )
         self.assertEqual(result.errors, [])
-        assert_arrow_table_equals(result.table, {"foo": [1, 2], "bar": [2, 3]})
+        assert_arrow_table_equals(result.table, {"foo": [1.0, 2.0], "bar": [2.0, 3.0]})
 
     def test_render_xlsx_bad_content(self):
         with tempfile_context("fetch-") as http_path:
@@ -469,7 +469,7 @@ class RenderTests(unittest.TestCase):
                 [
                     RenderError(
                         I18nMessage.TODO_i18n(
-                            'Error reading Excel file: Unsupported format, or corrupt file: Expected BOF record; found b"ce\\xc3\\xa7i n\'"'
+                            "Invalid XLSX file: xlnt::exception : failed to find zip header"
                         )
                     )
                 ],
