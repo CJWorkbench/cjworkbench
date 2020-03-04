@@ -342,7 +342,7 @@ msgstr "Εισαγωγή Μονάδας (Module)"
 
 #: assets/js/WfHamburgerMenu.js:56
 msgid "js.WfHamburgerMenu.menu.language"
-msgstr ""
+msgstr "Γλώσσα"
 
 #: assets/js/WfHamburgerMenu.js:67
 msgid "js.WfHamburgerMenu.menu.logout"
@@ -679,16 +679,18 @@ msgstr "ΕΚΠΑΙΔΕΥΣΗ"
 #: assets/js/i18n/LocaleSwitcher.js:36
 msgid "js.i18n.LocaleSwitcher.body.description"
 msgstr ""
+"Επιλέξτε τη γλώσσα της διεπαφής του Workbench. Τα δεδομένα δεν "
+"επηρεάζονται."
 
 #. Close the dialog box
 #: assets/js/i18n/LocaleSwitcher.js:61
 msgid "js.i18n.LocaleSwitcher.footer.close"
-msgstr ""
+msgstr "Κλείσιμο"
 
 #. This should be all-caps for styling reasons
 #: assets/js/i18n/LocaleSwitcher.js:30
 msgid "js.i18n.LocaleSwitcher.header.title"
-msgstr ""
+msgstr "ΓΛΩΣΣΑ"
 
 #: assets/js/lessons/LessonFooter.js:41
 msgid "js.lessons.LessonFooter.training.link"
@@ -1949,7 +1951,7 @@ msgstr "μόλις τώρα"
 
 #: cjwkernel/pandas/types.py:864
 msgid "py.cjwkernel.pandas.types.ProcessResult.truncate_in_place_if_too_big.warning"
-msgstr ""
+msgstr "Έγινε περικοπή της εξόδου από {old_number} σε {new_number} σειρές"
 
 #: cjworkbench/forms/signup.py:24
 msgid "py.forms.signup.firstName.placeholder"
@@ -1962,34 +1964,39 @@ msgstr "Επώνυμο"
 #: fetcher/fetch.py:185
 msgid "py.fetcher.fetch.user_visible_bug_during_fetch"
 msgstr ""
+"Παρουσιάστηκε ένα μη αναμενόμενο πρόβλημα. Έχουμε ενημερωθεί και "
+"προσπαθούμε να το διορθώσουμε. Αν συνεχιστεί, επικοινωνήστε μαζί μας. "
+"Κωδικός σφάλματος: {message}"
 
 #: fetcher/fetch.py:281
 msgid "py.fetcher.fetch.no_loaded_module"
-msgstr ""
+msgstr "Δεν είναι δυνατή η λήψη: η μονάδα (module) διαγράφηκε"
 
 #: fetcher/secrets.py:15
 msgid "py.fetcher.secrets._service_no_longer_configured_error"
-msgstr ""
+msgstr "Η υπηρεσία \"{service}\" έχει πάψει να είναι διαμορφωμένη"
 
 #: fetcher/secrets.py:177
 msgid "py.fetcher.secrets._refresh_oauth2_token.error.general"
 msgstr ""
+"Ο διακομιστής διακριτικών (τεκμηρίων) απάντησε με {status_code}: {error} "
+"({description})"
 
 #: fetcher/secrets.py:184
 msgid "py.fetcher.secrets._refresh_oauth2_token.server_error.general"
-msgstr ""
+msgstr "Η {service_id} απάντησε με HTTP {status_code} {reason}: {description}"
 
 #: fetcher/secrets.py:201
 msgid "py.fetcher.secrets._refresh_oauth2_token.timeout_error"
-msgstr ""
+msgstr "Λήξη χρονικού ορίου κατά την ανανέωση του διακριτικού (τεκμηρίου) OAuth2"
 
 #: fetcher/secrets.py:211
 msgid "py.fetcher.secrets._refresh_oauth2_token.client_error"
-msgstr ""
+msgstr "Σφάλμα HTTP κατά την ανανέωση του διακριτικού (τεκμηρίου) OAuth2: {error}"
 
 #: renderer/execute/types.py:95
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_quick_fixes.shouldBeText"
-msgstr ""
+msgstr "Μετατροπή σε κείμενο."
 
 #. i18n: The parameters {found_type} and {best_wanted_type} will have values
 #. among "text", "number", "datetime"; however, including an (possibly empty)
@@ -1997,6 +2004,9 @@ msgstr ""
 #: renderer/execute/types.py:101
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_quick_fixes.general"
 msgstr ""
+"Μετατροπή { found_type, select, text {κειμένου} number {αριθμών} datetime"
+" {ημερομηνιών & ωρών} other {}} σε {best_wanted_type, select, text "
+"{κείμενο} number {αριθμούς} datetime {ημερομηνίες & ώρες} other{}}."
 
 #. i18n: The parameter {columns} will contain the total number of columns that
 #. need to be converted; you will also receive the column names as {0}, {1},
@@ -2004,6 +2014,11 @@ msgstr ""
 #: renderer/execute/types.py:144
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_error_message.shouldBeText"
 msgstr ""
+"{ columns, plural, offset:2 =1 {Η στήλη “{0}” πρεπει να μετατραπεί σε "
+"κείμενο.} =2 {Οι στήλες “{0}” και “{1}” πρέπει να μετατραπούν σε "
+"κείμενο.} =3 {Οι στήλες “{0}”, “{1}” και “{2}” πρέπει να μετατραπούν σε "
+"κείμενο.} other {Οι στήλες “{0}”, “{1}” και # άλλες πρέπει να μετατραπούν"
+" σε κείμενο.}}"
 
 #. i18n: The parameter {columns} will contain the total number of columns that
 #. need to be converted; you will also receive the column names: {0}, {1}, {2},
@@ -2013,22 +2028,45 @@ msgstr ""
 #: renderer/execute/types.py:157
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_error_message.general"
 msgstr ""
+"{ columns, plural, offset:2 =1 {Η στήλη “{0}” πρέπει να μετατραπεί από { "
+"found_type, select, text {κείμενο} number {αριθμούς} datetime "
+"{ημερομηνίες & ώρες} other {}} σε {best_wanted_type, select, text "
+"{κείμενο} number {αριθμούς} datetime {ημερομηνίες & ώρες} other {}}.} =2 "
+"{Οι στήλες “{0}” και “{1}” πρέπει να μετατραπούν από { found_type, "
+"select, text {κείμενο} number {αριθμούς} datetime {ημερομηνίες & ώρες} "
+"other {}} σε {best_wanted_type, select, text {κείμενο} number {αριθμούς} "
+"datetime {ημερομηνίες & ώρες}  other{}}.} =3 {Οι στήλες “{0}”, “{1}” και "
+"“{2}” πρέπει να μετατραπούν από { found_type, select, text {κείμενο} "
+"number {αριθμούς} datetime {ημερομηνίες & ώρες} other {}} σε "
+"{best_wanted_type, select, text {κείμενο} number {αριθμούς} datetime "
+"{ημερομηνίες & ώρες} other{}}.} other {Οι στήλες “{0}”, “{1}” και # άλλες"
+" πρέπει να μετατραπούν από { found_type, select, text {κείμενο} number "
+"{αριθμούς} datetime {ημερομηνίες & ώρες} other {}} σε {best_wanted_type, "
+"select, text {κείμενο} number {αριθμούς} datetime {ημερομηνίες & ώρες} "
+"other{}}.}}"
 
 #: renderer/execute/wf_module.py:140
 msgid "py.renderer.execute.wf_module.user_visible_bug_during_render"
 msgstr ""
+"Παρουσιάστηκε ένα μη αναμενόμενο πρόβλημα. Έχουμε ενημερωθεί και "
+"προσπαθούμε να το διορθώσουμε. Αν συνεχιστεί, επικοινωνήστε μαζί μας. "
+"Κωδικός σφάλματος: {message}"
 
 #: renderer/execute/wf_module.py:350
 msgid "py.renderer.execute.wf_module.noModule"
 msgstr ""
+"Διαγράψτε αυτό το βήμα: ένας διαχειριστής απεγκατέστησε τον κώδικα του "
+"βήματος."
 
 #: renderer/execute/wf_module.py:377
 msgid "py.renderer.execute.wf_module.TabCycleError"
 msgstr ""
+"Η επιλεγμένη καρτέλα εξαρτάται από αυτήν εδώ. Επιλέξτε διαφορετική "
+"καρτέλα."
 
 #: renderer/execute/wf_module.py:388
 msgid "py.renderer.execute.wf_module.TabOutputUnreachableError"
-msgstr ""
+msgstr "Η επιλεγμένη καρτέλα δεν έχει έξοδο. Επιλέξτε μια άλλη."
 
 #: templates/403.html:5
 msgid "py.templates.403.title"
