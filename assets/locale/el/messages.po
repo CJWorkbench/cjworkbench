@@ -1959,11 +1959,11 @@ msgstr "Όνομα"
 msgid "py.forms.signup.lastName.placeholder"
 msgstr "Επώνυμο"
 
-#: fetcher/fetch.py:187
+#: fetcher/fetch.py:185
 msgid "py.fetcher.fetch.user_visible_bug_during_fetch"
 msgstr ""
 
-#: fetcher/fetch.py:289
+#: fetcher/fetch.py:281
 msgid "py.fetcher.fetch.no_loaded_module"
 msgstr ""
 
@@ -1971,19 +1971,19 @@ msgstr ""
 msgid "py.fetcher.secrets._service_no_longer_configured_error"
 msgstr ""
 
-#: fetcher/secrets.py:170
+#: fetcher/secrets.py:177
 msgid "py.fetcher.secrets._refresh_oauth2_token.error.general"
 msgstr ""
 
-#: fetcher/secrets.py:177
+#: fetcher/secrets.py:184
 msgid "py.fetcher.secrets._refresh_oauth2_token.server_error.general"
 msgstr ""
 
-#: fetcher/secrets.py:194
+#: fetcher/secrets.py:201
 msgid "py.fetcher.secrets._refresh_oauth2_token.timeout_error"
 msgstr ""
 
-#: fetcher/secrets.py:204
+#: fetcher/secrets.py:211
 msgid "py.fetcher.secrets._refresh_oauth2_token.client_error"
 msgstr ""
 
@@ -2014,19 +2014,19 @@ msgstr ""
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_error_message.general"
 msgstr ""
 
-#: renderer/execute/wf_module.py:147
+#: renderer/execute/wf_module.py:140
 msgid "py.renderer.execute.wf_module.user_visible_bug_during_render"
 msgstr ""
 
-#: renderer/execute/wf_module.py:357
+#: renderer/execute/wf_module.py:350
 msgid "py.renderer.execute.wf_module.noModule"
 msgstr ""
 
-#: renderer/execute/wf_module.py:384
+#: renderer/execute/wf_module.py:377
 msgid "py.renderer.execute.wf_module.TabCycleError"
 msgstr ""
 
-#: renderer/execute/wf_module.py:395
+#: renderer/execute/wf_module.py:388
 msgid "py.renderer.execute.wf_module.TabOutputUnreachableError"
 msgstr ""
 
@@ -2227,7 +2227,7 @@ msgstr "Εγγραφή"
 #. The 'or' in 'Log in with [Google/Facebook buttons] *or* [username/password]'
 #: templates/account/login.html:27
 msgid "py.templates.account.login.socialSimpleSeparator"
-msgstr ""
+msgstr "ή"
 
 #: templates/account/login.html:43
 msgid "py.templates.account.login.forgotPasswordPrompt"
@@ -2452,8 +2452,8 @@ msgstr "Γεια σας, {userName},"
 msgid "py.templates.notifications.new_data_version.workflowHasBeenUpdated"
 msgstr ""
 "Η ροή εργασιών σας <a0>{workflowName}</a0> ενημερώθηκε με νέα δεδομένα "
-"στις {date, date, medium} {date, time, short}{date, time, z}. Η μονάδα {moduleName} έχει"
-" νέα έξοδο."
+"στις {date, date, medium} {date, time, short}{date, time, z}. Η μονάδα "
+"{moduleName} έχει νέα έξοδο."
 
 #: templates/notifications/new_data_version_subject.txt:1
 msgid "py.templates.notifications.new_data_version_subject"

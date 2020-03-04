@@ -184,10 +184,8 @@ def user_visible_bug_fetch_result(output_path: Path, message: str) -> FetchResul
             RenderError(
                 I18nMessage.trans(
                     "py.fetcher.fetch.user_visible_bug_during_fetch",
-                    default=(
-                        "Something unexpected happened. We have been notified and are "
-                        "working to fix it. If this persists, contact us. Error code: {message}"
-                    ),
+                    default="Something unexpected happened. We have been notified and are "
+                    "working to fix it. If this persists, contact us. Error code: {message}",
                     args={"message": message},
                 )
             )
