@@ -428,18 +428,29 @@ class ArrowTable:
         """
         Build from a trusted Arrow file and infer metadata.
 
-        TODO move this function elsewhere. It's only used in deprecated-data paths
-        in modules.
+        TODO move this function elsewhere.
         """
-        reader = pyarrow.ipc.open_file(path)
-        table = reader.read_all()
-        schema = table.schema
+        # If path does not exist or is empty file, empty ArrowTable
+        try:
+            if path.stat().st_size == 0:
+                return cls()
+        except FileNotFoundError:
+            return cls()
+
+        with pyarrow.ipc.open_file(path) as reader:
+            schema = reader.schema
+
+            # if table has no columns, empty ArrowTable
+            columns = [
+                Column(name, _pyarrow_type_to_column_type(dtype))
+                for name, dtype in zip(schema.names, schema.types)
+            ]
+            if not columns:
+                return cls()
+
+            table = reader.read_all()
         n_rows = table.num_rows
-        columns = [
-            Column(name, _pyarrow_type_to_column_type(dtype))
-            for name, dtype in zip(schema.names, schema.types)
-        ]
-        return ArrowTable(path, table, TableMetadata(n_rows, columns))
+        return cls(path, table, TableMetadata(n_rows, columns))
 
 
 class Tab(NamedTuple):
