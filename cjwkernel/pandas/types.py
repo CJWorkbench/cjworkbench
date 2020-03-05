@@ -14,7 +14,6 @@ from pandas.api.types import is_numeric_dtype, is_datetime64_dtype
 import pyarrow
 from .validate import validate_dataframe
 from .. import settings, types as atypes
-from itertools import chain
 from . import moduletypes as mtypes
 
 
@@ -524,7 +523,7 @@ class QuickFix:
             kwargs = dict(value)  # shallow copy
             try:
                 kwargs["text"] = I18nMessage.coerce(kwargs["text"])
-            except KeyError as err:
+            except KeyError:
                 raise ValueError("Missing text from quick fix")
 
             try:
@@ -988,7 +987,7 @@ class ProcessResult:
 
             validate_dataframe(dataframe)
             columns = _infer_columns(dataframe, {}, try_fallback_columns)
-            return cls(dataframe=dataframe, errors=errors)
+            return cls(dataframe=dataframe, errors=errors, columns=columns)
         else:
             raise ValueError(
                 "Expected (Dataframe, RenderError) or (str, dict) return type; got (%s,%s)"
