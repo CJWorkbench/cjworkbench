@@ -1,11 +1,12 @@
 from typing import Any, Dict, List, Literal, Union, Tuple
 
 
-I18nMessageSource = Literal["module", "cjwmodule", None]
+I18nMessageSource = Literal["module", "cjwmodule", "cjwparse", None]
 """Which catalog we should search to find the text of the message.
 
 * "module": the module's zipfile
 * "cjwmodule": the cjwmodule library
+* "cjwparse": the cjwparse library
 * None: cjworkbench proper
 """
 

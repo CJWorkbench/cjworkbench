@@ -2,8 +2,7 @@ import unittest
 from staticmodules import pastecsv
 from cjwkernel.util import tempfile_context
 from cjwkernel.tests.util import assert_arrow_table_equals
-from cjwkernel.types import ArrowTable, I18nMessage, RenderError
-
+from cjwkernel.types import ArrowTable, I18nMessage, RenderError, RenderResult
 
 def P(csv="", has_header_row=True):
     return {"csv": csv, "has_header_row": has_header_row}
@@ -11,7 +10,9 @@ def P(csv="", has_header_row=True):
 
 def render_arrow(params):
     with tempfile_context(suffix=".arrow") as output_path:
-        return pastecsv.render_arrow(ArrowTable(), params, "tab-x", None, output_path)
+        errors = pastecsv.render(ArrowTable(), params, output_path)
+        table = ArrowTable.from_arrow_file_with_inferred_metadata(output_path)
+        return RenderResult(table, [RenderError(I18nMessage(*e)) for e in errors])
 
 
 class PasteCSVTests(unittest.TestCase):
@@ -39,7 +40,9 @@ class PasteCSVTests(unittest.TestCase):
         assert_arrow_table_equals(
             result.table, {"A": ["a"], "B": ["b"], "Column 3": ["c"]}
         )
-        self.assertEqual(result.errors, [])
+        self.assertEqual(result.errors, [
+            RenderError(I18nMessage('util.colnames.warnings.default', {'n_columns': 1, 'first_colname': 'Column 3'}, 'cjwmodule'))
+        ])
 
     def test_list_index_out_of_range(self):
         # Pandas' read_csv() freaks out on even the simplest examples....
@@ -51,7 +54,9 @@ class PasteCSVTests(unittest.TestCase):
         assert_arrow_table_equals(
             result.table, {"A": [""], "Column 2": [""], "Column 3": [""]}
         )
-        self.assertEqual(result.errors, [])
+        self.assertEqual(result.errors, [
+            RenderError(I18nMessage('util.colnames.warnings.default', {'n_columns': 2, 'first_colname': 'Column 2'}, 'cjwmodule'))
+        ])
 
     def test_no_header(self):
         result = render_arrow(P(csv="A,B", has_header_row=False))
@@ -65,9 +70,7 @@ class PasteCSVTests(unittest.TestCase):
             result.errors,
             [
                 RenderError(
-                    I18nMessage.TODO_i18n(
-                        "Renamed 1 duplicate column names (see “A 2”)"
-                    )
+                    I18nMessage('util.colnames.warnings.numbered', {'n_columns': 1, 'first_colname': 'A 2'}, 'cjwmodule')
                 )
             ],
         )
@@ -77,7 +80,9 @@ class PasteCSVTests(unittest.TestCase):
         assert_arrow_table_equals(
             result.table, {"A": ["a"], "Column 2": ["b"], "B": ["c"]}
         )
-        self.assertEqual(result.errors, [])
+        self.assertEqual(result.errors, [
+            RenderError(I18nMessage('util.colnames.warnings.default', {'n_columns': 1, 'first_colname': 'Column 2'}, "cjwmodule"))
+        ])
 
     def test_no_nan(self):
         # https://www.pivotaltracker.com/story/show/163106728

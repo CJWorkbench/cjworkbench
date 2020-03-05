@@ -1,25 +1,23 @@
+from datetime import datetime
+import importlib.resources
+import logging
+from io import BytesIO
+import threading
+from typing import Dict, Union, Optional
+from weakref import WeakKeyDictionary
 from bs4 import BeautifulSoup
 from django.utils.functional import lazy
 from django.utils.html import escape
 from django.utils.translation import get_language
+from icu import Formattable, Locale, MessageFormat, ICUError
+from babel.messages.catalog import Catalog
+from babel.messages.pofile import read_po, PoFileError
+import cjwmodule.i18n
+import cjwparse.i18n
+from cjwstate.modules.types import ModuleZipfile
 from cjworkbench.i18n import default_locale, supported_locales
 from cjworkbench.i18n.catalogs import catalog_path
 from cjworkbench.i18n.catalogs.util import find_string, read_po_catalog
-from string import Formatter
-from icu import Formattable, Locale, MessageFormat, ICUError
-from babel.messages.catalog import Catalog, Message
-from babel.messages.pofile import read_po, PoFileError
-from typing import Dict, Union, Optional
-import logging
-from cjwstate.models.module_registry import MODULE_REGISTRY
-from cjwstate.modules.types import ModuleZipfile
-from weakref import WeakKeyDictionary
-import threading
-from io import BytesIO
-import importlib.resources
-from functools import lru_cache
-import cjwmodule.i18n
-from datetime import datetime
 
 _translators = {}
 
@@ -125,7 +123,7 @@ class MessageLocalizer:
                     message_id,
                     err,
                 )
-            except KeyError as err:
+            except KeyError:
                 pass
         message = self.find_message(default_locale, message_id)
         return icu_format_message(default_locale, message, arguments=arguments)
@@ -152,7 +150,7 @@ class MessageLocalizer:
                     message_id,
                     err,
                 )
-            except KeyError as err:
+            except KeyError:
                 pass
         message = self.find_message(default_locale, message_id, context=context)
         return icu_format_html_message(
@@ -163,7 +161,8 @@ class MessageLocalizer:
 class MessageLocalizerRegistry:
     def __init__(self):
         self.application_localizer = self._for_application()
-        self.cjwmodule_localizer = self._for_cjwmodule()
+        self.cjwmodule_localizer = self._for_library(cjwmodule.i18n)
+        self.cjwparse_localizer = self._for_library(cjwparse.i18n)
         self._module_localizers = WeakKeyDictionary()
         self._module_localizers_lock = threading.Lock()
 
@@ -214,22 +213,23 @@ class MessageLocalizerRegistry:
             catalogs[locale_id] = read_po_catalog(catalog_path(locale_id))
         return MessageLocalizer(catalogs)
 
-    def _for_cjwmodule(self) -> MessageLocalizer:
-        """Return a `MessageLocalizer` for the messages of `cjwmodule`"""
+    def _for_library(self, mod) -> MessageLocalizer:
+        """Return a `MessageLocalizer` for the messages of, say, `cjwmodule.i18n`"""
         catalogs = {}
 
         for locale_id in supported_locales:
             try:
-                with importlib.resources.open_binary(
-                    cjwmodule.i18n, f"{locale_id}.po"
-                ) as pofile:
+                with importlib.resources.open_binary(mod, f"{locale_id}.po") as pofile:
                     catalogs[locale_id] = read_po(pofile, abort_invalid=True)
             except (FileNotFoundError, ModuleNotFoundError) as err:
                 if locale_id != default_locale:
                     # This will help us support new languages out-of-order
                     # i.e., translate `cjworkbench` before translating `cjwmodule`.
                     logger.exception(
-                        "cjwmodule does not support locale %s: %s", locale_id, err
+                        "%r does not support locale %s: %s",
+                        mod.__name__,
+                        locale_id,
+                        err,
                     )
                     catalogs[locale_id] = Catalog(locale_id)
                 else:
@@ -254,7 +254,7 @@ class MessageLocalizerRegistry:
                     err,
                 )
                 pass
-            except KeyError as err:
+            except KeyError:
                 pass
         if not catalogs:
             raise NotInternationalizedError(module_zipfile.module_id)

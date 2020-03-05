@@ -7,7 +7,7 @@ from oauthlib import oauth2
 from cjwmodule.http import httpfile, HttpError
 from cjwmodule.i18n import I18nMessage
 import cjwparquet
-from cjwparse import MimeType, parse_file
+from cjwparse.api import MimeType, parse_file
 
 
 _Secret = Dict[str, Any]

@@ -3,7 +3,6 @@ import gzip
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import io
 import itertools
-import logging
 from pathlib import Path
 import threading
 from typing import ContextManager
@@ -77,13 +76,12 @@ class FetchTests(unittest.TestCase):
         self, url: str = "", has_header: bool = True
     ) -> ContextManager[FetchResult]:
         with tempfile_context(prefix="output-") as output_path:
-            with self.assertLogs(level=logging.DEBUG):
-                errors = fetch(
-                    {"url": url, "has_header": has_header}, output_path=output_path
-                )
-                yield FetchResult(
-                    output_path, [RenderError(I18nMessage(*e)) for e in errors]
-                )
+            errors = fetch(
+                {"url": url, "has_header": has_header}, output_path=output_path
+            )
+            yield FetchResult(
+                output_path, [RenderError(I18nMessage(*e)) for e in errors]
+            )
 
     def build_url(self, path: str) -> str:
         """
@@ -232,12 +230,12 @@ class RenderTests(unittest.TestCase):
             yield RenderResult(table, [RenderError(I18nMessage(*e)) for e in errors])
 
     def test_render_no_file(self):
-        with self.render(P()) as result:
+        with self.render(P(), None) as result:
             assert_arrow_table_equals(result.table, ArrowTable())
             self.assertEqual(result.errors, [])
 
     def test_render_fetch_error(self):
-        fetch_errors = [RenderResult(I18nMessage("x", {"y": "z"}))]
+        fetch_errors = [RenderError(I18nMessage("x", {"y": "z"}))]
         with tempfile_context() as empty_path:
             with self.render(P(), FetchResult(empty_path, fetch_errors)) as result:
                 assert_arrow_table_equals(result.table, ArrowTable())
@@ -273,9 +271,7 @@ class RenderTests(unittest.TestCase):
                     result.errors,
                     [
                         RenderError(
-                            I18nMessage.TODO_I18n(
-                                "Please re-download this file to disable header-row handling"
-                            )
+                            I18nMessage.TODO_i18n("Please re-download this file to disable header-row handling")
                         )
                     ],
                 )

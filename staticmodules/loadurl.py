@@ -26,7 +26,7 @@ import asyncio
 from pathlib import Path
 import re
 from typing import Any, Dict, List
-from cjwparse import parse_file, MimeType
+from cjwparse.api import parse_file, MimeType
 import cjwparquet
 from cjwmodule.http import httpfile, HttpError
 from cjwmodule.i18n import I18nMessage
@@ -158,7 +158,7 @@ def render(arrow_table, params, output_path, *, fetch_result, **kwargs):
         # as Parquet. Now we've lost the original file data, and we need to
         # support our oldest users.
         return _render_deprecated_parquet(
-            fetch_result.path, fetch_result.errors, output_path, params
+            fetch_result.path, [tuple(e.message) for e in fetch_result.errors], output_path, params
         )
     elif fetch_result.errors:
         # We've never stored errors+data. If there are errors, assume

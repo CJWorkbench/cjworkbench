@@ -45,7 +45,8 @@ cjwmodule = "==1.4.2"
 pathspec = "*"
 setuptools = "*"  # django-polymorphic depends on it but doesn't declare it
 google-re2 = "*"
-cjwparse = "*"
+cjwparse = "~=0.0.2"
+cjwparquet = "~=1.0.1"
 
 [dev-packages]
 watchdog = "*"
