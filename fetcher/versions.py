@@ -1,14 +1,12 @@
-import errno
-import io
 from pathlib import Path
-from cjwkernel import parquet
+import cjwparquet
 from cjwkernel.types import FetchResult
 
 
 _BUFFER_SIZE = 1024 * 1024
 
 
-_is_parquet_path = parquet.file_has_parquet_magic_number
+_is_parquet_path = cjwparquet.file_has_parquet_magic_number
 
 
 def _are_file_contents_equal(path1: Path, path2: Path) -> bool:
@@ -74,6 +72,6 @@ def are_fetch_results_equal(new_result: FetchResult, old_result: FetchResult) ->
         return False
 
     if _is_parquet_path(old_result.path) and _is_parquet_path(new_result.path):
-        return parquet.are_files_equal(old_result.path, new_result.path)
+        return cjwparquet.are_files_equal(old_result.path, new_result.path)
     else:
         return _are_file_contents_equal(old_result.path, new_result.path)

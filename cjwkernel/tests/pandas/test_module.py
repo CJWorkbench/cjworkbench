@@ -176,15 +176,67 @@ class RenderTests(unittest.TestCase):
         result = self._test_render(render, {"A": [1]})
         assert_arrow_table_equals(result.table, {"A": [2]})
 
+    def test_render_arrow_table(self):
+        # The param name "arrow_table" is a special case
+        def render(arrow_table, params, output_path, **kwargs):
+            out = pa.table({"A": [2]})
+            with pa.ipc.RecordBatchFileWriter(output_path, out.schema) as writer:
+                writer.write_table(out)
+
+        result = self._test_render(render, {"A": [1]})
+        assert_arrow_table_equals(result.table, {"A": [2]})
+
+    def test_render_arrow_table_zero_byte_output_is_empty(self):
+        # The param name "arrow_table" is a special case
+        def render(arrow_table, params, output_path, **kwargs):
+            output_path.write_bytes(b"")
+
+        result = self._test_render(render, {"A": [1]})
+        self.assertIsNone(result.table.path)
+        self.assertIsNone(result.table.table)
+
+    def test_render_arrow_table_missing_output_file_is_empty(self):
+        # The param name "arrow_table" is a special case
+        def render(arrow_table, params, output_path, **kwargs):
+            try:
+                output_path.unlink()
+            except FileNotFoundError:
+                pass
+
+        result = self._test_render(render, {"A": [1]})
+        self.assertIsNone(result.table.path)
+        self.assertIsNone(result.table.table)
+
+    def test_render_arrow_table_empty_output_table_is_empty(self):
+        # The param name "arrow_table" is a special case
+        def render(arrow_table, params, output_path, **kwargs):
+            out = pa.table({})
+            with pa.ipc.RecordBatchFileWriter(output_path, out.schema) as writer:
+                writer.write_table(out)
+
+        result = self._test_render(render, {"A": [1]})
+        self.assertIsNone(result.table.path)
+        self.assertIsNone(result.table.table)
+
+    def test_render_arrow_table_errors(self):
+        # The param name "arrow_table" is a special case
+        def render(arrow_table, params, output_path, **kwargs):
+            return [("x", {"a": "b"}, "cjwmodule")]
+
+        result = self._test_render(render, {"A": [1]})
+        self.assertEqual(
+            result.errors, [RenderError(I18nMessage("x", {"a": "b"}, "cjwmodule"))]
+        )
+
     def test_render_exception_raises(self):
-        def render(*args, **kwargs):
+        def render(table, params, **kwargs):
             raise RuntimeError("move along")
 
         with self.assertRaisesRegexp(RuntimeError, "move along"):
             self._test_render(render)
 
     def test_render_invalid_retval(self):
-        def render(*args, **kwargs):
+        def render(table, params, **kwargs):
             return {"foo": "bar"}  # not a valid retval
 
         with self.assertRaisesRegexp(
@@ -193,14 +245,14 @@ class RenderTests(unittest.TestCase):
             self._test_render(render)
 
     def test_render_invalid_retval_types(self):
-        def render(*args, **kwargs):
+        def render(table, params, **kwargs):
             return pd.DataFrame({"A": [True, False]})  # we don't support bool
 
         with self.assertRaisesRegexp(ValueError, "unsupported dtype"):
             self._test_render(render)
 
     def test_render_with_parquet_fetch_result(self):
-        def render(*args, fetch_result):
+        def render(table, params, *, fetch_result):
             return fetch_result
 
         with parquet_file({"A": ["fetched"]}, dir=self.basedir) as pf:
@@ -210,7 +262,7 @@ class RenderTests(unittest.TestCase):
             )
 
     def test_render_with_non_parquet_fetch_result(self):
-        def render(*args, fetch_result):
+        def render(table, params, *, fetch_result):
             return pd.DataFrame({"A": [fetch_result.path.read_text()]})
 
         with tempfile_context(dir=self.basedir) as tf:
@@ -221,7 +273,7 @@ class RenderTests(unittest.TestCase):
             )
 
     def test_render_empty_file_fetch_result_is_parquet(self):
-        def render(*args, fetch_result):
+        def render(table, params, *, fetch_result):
             return fetch_result.dataframe
 
         with tempfile_context(dir=self.basedir) as tf:
@@ -229,7 +281,7 @@ class RenderTests(unittest.TestCase):
             assert_render_result_equals(result, RenderResult(arrow_table({})))
 
     def test_render_with_input_columns(self):
-        def render(*args, input_columns):
+        def render(table, params, *, input_columns):
             self.assertEqual(
                 input_columns,
                 {
@@ -251,7 +303,7 @@ class RenderTests(unittest.TestCase):
             self._test_render(render, arrow_table=arrow_table)
 
     def test_render_use_input_columns_as_try_fallback_columns(self):
-        def render(*args, input_columns):
+        def render(table, params, *, input_columns):
             return pd.DataFrame({"A": [1]})
 
         with arrow_table_context(
@@ -264,7 +316,7 @@ class RenderTests(unittest.TestCase):
             )
 
     def test_render_return_column_formats(self):
-        def render(*args):
+        def render(table, params):
             return {
                 "dataframe": pd.DataFrame({"A": [1]}),
                 "column_formats": {"A": "{:,d}"},
@@ -491,6 +543,21 @@ class FetchTests(unittest.TestCase):
                     RenderError(I18nMessage("foo", {"a": "b"}, "module")),
                     RenderError(I18nMessage("bar", {"b": 1}, "cjwmodule")),
                 ],
+            )
+
+    def test_fetch_return_errors(self):
+        with tempfile_context(dir=self.basedir) as outfile:
+
+            async def fetch(params):
+                return [("message.id", {"k": "v"}, "module")]
+
+            result = self._test_fetch(fetch, output_filename=outfile.name)
+            self.assertEqual(
+                result,
+                FetchResult(
+                    outfile,
+                    [RenderError(I18nMessage("message.id", {"k": "v"}, "module"))],
+                ),
             )
 
     @override_settings(MAX_ROWS_PER_TABLE=2)

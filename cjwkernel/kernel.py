@@ -232,13 +232,13 @@ class Kernel:
                 "cjwkernel.pandas.main",
                 "cjwkernel.pandas.module",
                 "cjwkernel.pandas.moduleutils",
-                "cjwkernel.pandas.parse",
-                "cjwkernel.parquet",
                 "cjwmodule",
                 "cjwmodule.i18n",
                 "cjwmodule.http.client",
                 "cjwmodule.http.httpfile",
                 "cjwmodule.util",
+                "cjwparquet",
+                "cjwparse.api",
             ],
         )
 

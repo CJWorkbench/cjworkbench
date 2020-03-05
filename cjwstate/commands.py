@@ -135,7 +135,7 @@ def _first_forward_and_save_returning_clientside_update(
 
 @database_sync_to_async
 def _call_forward_and_load_clientside_update(
-    delta: Delta
+    delta: Delta,
 ) -> Tuple[clientside.Update, bool]:
     with Workflow.lookup_and_cooperative_lock(id=delta.workflow_id):
         delta.forward()
@@ -147,7 +147,7 @@ def _call_forward_and_load_clientside_update(
 
 @database_sync_to_async
 def _call_backward_and_load_clientside_update(
-    delta: Delta
+    delta: Delta,
 ) -> Tuple[clientside.Update, bool]:
     with Workflow.lookup_and_cooperative_lock(id=delta.workflow_id):
         delta.backward()
@@ -182,7 +182,11 @@ async def do(cls, *, workflow_id: int, **kwargs) -> Delta:
         # now delta has been applied and committed to the database, and
         # websockets updates have been queued for each consumer.
     """
-    delta, update, want_render = await _first_forward_and_save_returning_clientside_update(
+    (
+        delta,
+        update,
+        want_render,
+    ) = await _first_forward_and_save_returning_clientside_update(
         cls, workflow_id, **kwargs
     )
 

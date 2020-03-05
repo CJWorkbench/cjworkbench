@@ -6,23 +6,12 @@ import numpy as np
 import pandas as pd
 from pandas.testing import assert_frame_equal
 from cjwkernel.pandas.moduleutils import (
-    turn_header_into_first_row,
     spooled_data_from_url,
     autocast_dtypes_in_place,
 )
 
 
 TestDataPath = Path(__file__).parent.parent / "test_data"
-
-
-class OtherUtilsTests(unittest.TestCase):
-    def test_turn_header_into_first_row(self):
-        result = turn_header_into_first_row(pd.DataFrame({"A": ["B"], "C": ["D"]}))
-        expected = pd.DataFrame({"0": ["A", "B"], "1": ["C", "D"]})
-        assert_frame_equal(result, expected)
-
-        # Function should return None when a table has not been uploaded yet
-        self.assertIsNone(turn_header_into_first_row(None))
 
 
 class SpooledDataFromUrlTest(unittest.TestCase):

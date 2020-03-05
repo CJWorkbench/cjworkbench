@@ -649,7 +649,7 @@ def jsonize_column(column: Column) -> Dict[str, Any]:
 
 
 def jsonize_fetched_version_list(
-    versions: clientside.FetchedVersionList
+    versions: clientside.FetchedVersionList,
 ) -> Dict[str, Any]:
     return {
         "versions": [

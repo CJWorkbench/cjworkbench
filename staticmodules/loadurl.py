@@ -25,19 +25,11 @@ format, which is more akin to actual HTTP traffic.
 import asyncio
 from pathlib import Path
 import re
-from typing import Any, Dict, List, Optional
-from cjwkernel import parquet
-from cjwkernel.pandas import moduleutils
-from cjwkernel.pandas.parse import parse_file, MimeType
-from cjwkernel.pandas.types import ProcessResult  # deprecated
-from cjwkernel.types import (
-    ArrowTable,
-    FetchResult,
-    I18nMessage,
-    RenderError,
-    RenderResult,
-)
+from typing import Any, Dict, List
+from cjwparse import parse_file, MimeType
+import cjwparquet
 from cjwmodule.http import httpfile, HttpError
+from cjwmodule.i18n import I18nMessage
 
 
 ExtensionMimeTypes = {
@@ -103,22 +95,30 @@ def guess_charset_or_none(content_type: str) -> str:
 
 
 def _render_deprecated_parquet(
-    input_path: Path,
-    errors: List[RenderError],
-    output_path: Path,
-    params: Dict[str, Any],
-) -> RenderResult:
-    parquet.convert_parquet_file_to_arrow_file(input_path, output_path)
-    result = RenderResult(
-        ArrowTable.from_arrow_file_with_inferred_metadata(output_path), errors
-    )
+    input_path: Path, output_path: Path, params: Dict[str, Any],
+) -> List[I18nMessage]:
+    cjwparquet.convert_parquet_file_to_arrow_file(input_path, output_path)
+    if params["has_header"]:
+        # In the deprecated parquet format, we _always_ parsed the header
+        errors = []
+    else:
+        # We used to have a "moduleutils.turn_header_into_first_row()" but it
+        # was broken by design (what about types???) and it was rarely used.
+        # Let's not maintain it any longer.
+        errors = [
+            (
+                "TODO_i18n",
+                {
+                    "text": (
+                        "This data file was downloaded in Workbench's early days, and we "
+                        "lost the original data. Please re-download it. (We won't lose it "
+                        "again, promise!)"
+                    )
+                },
+            )
+        ]
 
-    if result.table.metadata.n_rows > 0 and not params["has_header"]:
-        pandas_result = ProcessResult.from_arrow(result)
-        dataframe = moduleutils.turn_header_into_first_row(pandas_result.dataframe)
-        return ProcessResult(dataframe).to_arrow(output_path)
-
-    return result
+    return errors
 
 
 def _render_file(path: Path, output_path: Path, params: Dict[str, Any]):
@@ -127,19 +127,19 @@ def _render_file(path: Path, output_path: Path, params: Dict[str, Any]):
 
         mime_type = guess_mime_type_or_none(content_type, parameters["url"])
         if not mime_type:
-            return RenderResult(
-                errors=[
-                    RenderError(
-                        I18nMessage.TODO_i18n(
-                            (
-                                "Server responded with unhandled Content-Type %r. "
-                                "Please use a different URL."
-                            )
-                            % content_type
+            return [
+                (
+                    "TODO_i18n",
+                    {
+                        "text": (
+                            "Server responded with unhandled Content-Type %r. "
+                            "Please use a different URL."
                         )
-                    )
-                ]
-            )
+                        % content_type
+                    },
+                    None,
+                )
+            ]
         maybe_charset = guess_charset_or_none(content_type)
 
         return parse_file(
@@ -151,13 +151,12 @@ def _render_file(path: Path, output_path: Path, params: Dict[str, Any]):
         )
 
 
-def render_arrow(
-    table, params, tab_name, fetch_result: Optional[FetchResult], output_path: Path
-) -> RenderResult:
+def render(arrow_table, params, output_path, *, fetch_result, **kwargs):
     if fetch_result is None:
         # empty table
-        return RenderResult(ArrowTable())
-    elif fetch_result.path is not None and parquet.file_has_parquet_magic_number(
+        output_path.write_bytes(b"")
+        return []
+    elif fetch_result.path is not None and cjwparquet.file_has_parquet_magic_number(
         fetch_result.path
     ):
         # Deprecated files: we used to parse in fetch() and store the result
@@ -169,7 +168,8 @@ def render_arrow(
     elif fetch_result.errors:
         # We've never stored errors+data. If there are errors, assume
         # there's no data.
-        return RenderResult(ArrowTable(), fetch_result.errors)
+        output_path.write_bytes(b"")
+        return [tuple(error.message) for error in fetch_result.errors]
     else:
         assert not fetch_result.errors  # we've never stored errors+data.
         return _render_file(fetch_result.path, output_path, params)
@@ -181,7 +181,7 @@ def fetch_arrow(
     last_fetch_result,
     input_table_parquet_path,
     output_path: Path,
-) -> FetchResult:
+) -> List[I18nMessage]:
     url: str = params["url"].strip()
     mimetypes = ",".join(v.value for v in AllowedMimeTypes)
     headers = [("Accept", mimetypes)]
@@ -189,10 +189,6 @@ def fetch_arrow(
     try:
         asyncio.run(httpfile.download(url, output_path, headers=headers))
     except HttpError as err:
-        # HACK: *err.i18n_message because i18n_message is a tuple
-        # compatible with I18nMessage() ctor
-        return FetchResult(
-            output_path, errors=[RenderError(I18nMessage(*err.i18n_message))]
-        )
+        return [err.i18n_message]
 
-    return FetchResult(output_path)
+    return []

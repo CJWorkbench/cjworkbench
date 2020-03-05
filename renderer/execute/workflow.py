@@ -104,7 +104,7 @@ def _load_tab_flows(workflow: Workflow, delta_id: int) -> List[TabFlow]:
 
 
 def partition_ready_and_dependent(
-    flows: List[TabFlow]
+    flows: List[TabFlow],
 ) -> Tuple[List[TabFlow], List[TabFlow]]:
     """
     Find `(ready_flows, dependent_flows)` from `flows`.

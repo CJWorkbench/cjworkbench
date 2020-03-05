@@ -7,7 +7,7 @@ import inspect
 from pathlib import Path
 import pandas as pd
 from typing import Any, Dict, List, Optional, Union
-from cjwkernel import parquet, types
+from cjwkernel import types
 from cjwkernel.types import (
     arrow_fetch_result_to_thrift,
     arrow_render_result_to_thrift,
@@ -20,61 +20,90 @@ from cjwkernel.types import (
 from cjwkernel.util import tempfile_context
 from cjwkernel.pandas import types as ptypes
 from cjwkernel.thrift import ttypes
+import cjwparquet
 
 
 def render(table: pd.DataFrame, params: Dict[str, Any], **kwargs):
-    """
-    Function users should replace in most module code.
-
-    (After building a working `render()`, module authors might consider
-    optimizing by rewriting as `render_arrow()` ... and maybe even
-    `render_thrift()`.)
-    """
+    """Function users should replace in all module code."""
     if "fetch_result" in kwargs:
         return kwargs["fetch_result"]
     else:
         return None
 
 
-def render_pandas(
-    input_table: pd.DataFrame,
-    input_table_shape: ptypes.TableShape,
+def __render_pandas(
+    *,
+    table: types.ArrowTable,
     params: Dict[str, Any],
     tab_name: str,
-    input_tabs: Dict[str, ptypes.TabOutput],
-    fetch_result: Optional[Union[types.FetchResult, ptypes.ProcessResult]],
-) -> ptypes.ProcessResult:
+    fetch_result: Optional[types.FetchResult],
+    output_path: Path,
+) -> types.RenderResult:
     """
-    Call `render()` and validate the result.
+    Call `render()` with the Pandas signature style.
 
-    Module authors should not replace this function: they should replace
-    `render()` instead.
+    Features:
 
-    This function validates the `render()` return value, to raise a helpful
-    ValueError if the module code is buggy.
+    * Convert input Arrow table to a Pandas dataframe
+    * Convert input params to Pandas format (producing extra arguments like
+      `input_tabs` as needed).
+    * Convert input `fetch_result` to Pandas dataframe, if it is a valid
+      Parquet file.
+    * Coerce output from a Pandas dataframe to an Arrow table
+    * Coerce output errors/json
     """
-    input_columns = {
-        c.name: ptypes.RenderColumn(
-            c.name, c.type.name, getattr(c.type, "format", None)
-        )
-        for c in input_table_shape.columns
-    }
+    # Convert input arguments
+    pandas_table = __arrow_to_pandas(table)
+    pandas_params = __arrow_param_to_pandas_param(params)
+
     spec = inspect.getfullargspec(render)
     kwargs = {}
     varkw = bool(spec.varkw)  # if True, function accepts **kwargs
     kwonlyargs = spec.kwonlyargs
     if varkw or "fetch_result" in kwonlyargs:
-        kwargs["fetch_result"] = fetch_result
+        if fetch_result is not None:
+            if fetch_result.path.stat().st_size == 0 or cjwparquet.file_has_parquet_magic_number(
+                fetch_result.path
+            ):
+                fetched_table = __parquet_to_pandas(fetch_result.path)
+                pandas_fetch_result = ptypes.ProcessResult(
+                    fetched_table,
+                    [
+                        ptypes.ProcessResultError.from_arrow(error)
+                        for error in fetch_result.errors
+                    ],
+                )
+            else:
+                pandas_fetch_result = fetch_result
+        else:
+            pandas_fetch_result = None
+        kwargs["fetch_result"] = pandas_fetch_result
     if varkw or "tab_name" in kwonlyargs:
         kwargs["tab_name"] = tab_name
     if varkw or "input_columns" in kwonlyargs:
-        kwargs["input_columns"] = input_columns
-    raw_result = render(input_table, params, **kwargs)
+        kwargs["input_columns"] = {
+            c.name: ptypes.RenderColumn(
+                c.name, c.type.name, getattr(c.type, "format", None)
+            )
+            for c in table.metadata.columns
+        }
+    if varkw or "input_tabs" in kwonlyargs:
+        kwargs["input_tabs"] = {
+            to.tab.slug: __arrow_tab_output_to_pandas(to)
+            for to in __find_tab_outputs(params)
+        }
+
+    # call render()
+    raw_result = render(pandas_table, pandas_params, **kwargs)
+
+    # Coerce outputs
+    input_table_shape = ptypes.TableShape.from_arrow(table.metadata)
     result = ptypes.ProcessResult.coerce(
         raw_result, try_fallback_columns=input_table_shape.columns
     )  # raise ValueError if invalid
     result.truncate_in_place_if_too_big()
-    return result
+
+    return result.to_arrow(output_path)
 
 
 def __arrow_to_pandas(table: types.ArrowTable) -> pd.DataFrame:
@@ -109,7 +138,7 @@ def __parquet_to_pandas(path: Path) -> pd.DataFrame:
     if path.stat().st_size == 0:
         return pd.DataFrame()
     else:
-        with parquet.open_as_mmapped_arrow(path) as arrow_table:
+        with cjwparquet.open_as_mmapped_arrow(path) as arrow_table:
             return arrow_table.to_pandas(
                 date_as_object=False,
                 deduplicate_objects=True,
@@ -124,7 +153,7 @@ def __parquet_to_pandas(path: Path) -> pd.DataFrame:
             )  # TODO ensure dictionaries stay dictionaries
 
 
-def _find_tab_outputs(value: Dict[str, Any]) -> List[types.TabOutput]:
+def __find_tab_outputs(value: Dict[str, Any]) -> List[types.TabOutput]:
     """
     Find all `TabOutput` objects in the param dict, `values`.
     """
@@ -146,7 +175,8 @@ def _find_tab_outputs(value: Dict[str, Any]) -> List[types.TabOutput]:
     return list(agg.values())
 
 
-def render_arrow(
+def __render_arrow(
+    *,
     table: types.ArrowTable,
     params: Dict[str, Any],
     tab_name: str,
@@ -156,47 +186,59 @@ def render_arrow(
     """
     Render using `cjwkernel.types` data types.
 
-    If outputting Arrow data, write to `output_path`.
+    Write to `output_path`.
 
-    Module authors are encouraged to replace this function, because Arrow
-    tables are simpler and more memory-efficient than Pandas tables. This is
-    the ideal signature for a "rename columns" module, for instance: Arrow
-    can pass data through without consuming excessive RAM.
-
-    This does not validate the render_pandas() return value.
+    This will typically call `render()`.
     """
-    pandas_table = __arrow_to_pandas(table)
-    pandas_input_tabs = {
-        to.tab.slug: __arrow_tab_output_to_pandas(to)
-        for to in _find_tab_outputs(params)
-    }
-    if fetch_result is not None:
-        if fetch_result.path.stat().st_size == 0 or parquet.file_has_parquet_magic_number(
-            fetch_result.path
-        ):
-            fetched_table = __parquet_to_pandas(fetch_result.path)
-            pandas_fetch_result = ptypes.ProcessResult(
-                fetched_table,
-                [
-                    ptypes.ProcessResultError.from_arrow(error)
-                    for error in fetch_result.errors
-                ],
-            )
-        else:
-            pandas_fetch_result = fetch_result
-    else:
-        pandas_fetch_result = None
-
-    pandas_result: ptypes.ProcessResult = render_pandas(
-        input_table=pandas_table,
-        input_table_shape=ptypes.TableShape.from_arrow(table.metadata),
-        params=_arrow_param_to_pandas_param(params),
-        tab_name=tab_name,
-        input_tabs=pandas_input_tabs,
-        fetch_result=pandas_fetch_result,
+    # call render()
+    raw_result = render(
+        table, params, output_path, tab_name=tab_name, fetch_result=fetch_result,
     )
 
-    return pandas_result.to_arrow(output_path)
+    # coerce result
+    # TODO let module output column types. (Currently, the lack of column types
+    # means this is only useful for fetch modules that don't output number
+    # formats.)
+    table = types.ArrowTable.from_arrow_file_with_inferred_metadata(output_path)
+    # TODO support more output types? Or develop the One True Types (maybe
+    # types.RenderResult) and force modules to output it.
+    if isinstance(raw_result, list):
+        # List of I18nMessage errors
+        errors = [
+            types.RenderError(types.I18nMessage(*message)) for message in raw_result
+        ]
+    elif raw_result is None:
+        errors = []
+
+    return types.RenderResult(table, errors)
+
+
+def __render_by_signature(
+    *,
+    table: types.ArrowTable,
+    params: Dict[str, Any],
+    tab_name: str,
+    fetch_result: Optional[types.FetchResult],
+    output_path: Path,
+) -> types.RenderResult:
+    """
+    Call `__render_arrow()` or `__render_pandas()`, depending on signature.
+
+    Either function calls (user-defined) `render()`, writing to `output_path`.
+    """
+    spec = inspect.getfullargspec(render)
+    if spec.args[0] == "arrow_table":
+        fn = __render_arrow
+    else:
+        fn = __render_pandas
+
+    return fn(
+        table=table,
+        params=params,
+        tab_name=tab_name,
+        fetch_result=fetch_result,
+        output_path=output_path,
+    )
 
 
 def render_thrift(request: ttypes.RenderRequest) -> ttypes.RenderResult:
@@ -224,12 +266,12 @@ def render_thrift(request: ttypes.RenderRequest) -> ttypes.RenderResult:
     else:
         fetch_result = thrift_fetch_result_to_arrow(request.fetch_result, basedir)
 
-    arrow_result: types.RenderResult = render_arrow(
-        arrow_table,
-        params_dict,
-        request.tab.name,
-        fetch_result,
-        basedir / request.output_filename,
+    arrow_result: types.RenderResult = __render_by_signature(
+        table=arrow_table,
+        params=params_dict,
+        tab_name=request.tab.name,
+        fetch_result=fetch_result,
+        output_path=basedir / request.output_filename,
     )
 
     return arrow_render_result_to_thrift(arrow_result)
@@ -311,20 +353,25 @@ def fetch_pandas(
         return types.FetchResult(result[0], errors)
     elif isinstance(result, Path):
         return types.FetchResult(result)
+    elif isinstance(result, list):
+        return types.FetchResult(
+            output_path,
+            [e.to_arrow() for e in ptypes.ProcessResultError.coerce_list(result)],
+        )
     else:
         return ptypes.ProcessResult.coerce(result)
 
 
-def _arrow_param_to_pandas_param(param):
+def __arrow_param_to_pandas_param(param):
     """
     Recursively prepare `params` to be passed to `render()`.
 
     * TabOutput gets converted so it has dataframe.
     """
     if isinstance(param, list):
-        return [_arrow_param_to_pandas_param(p) for p in param]
+        return [__arrow_param_to_pandas_param(p) for p in param]
     elif isinstance(param, dict):
-        return {k: _arrow_param_to_pandas_param(v) for k, v in param.items()}
+        return {k: __arrow_param_to_pandas_param(v) for k, v in param.items()}
     elif isinstance(param, types.TabOutput):
         return ptypes.TabOutput.from_arrow(param)
     else:
@@ -347,7 +394,7 @@ def fetch_arrow(
     `fetch()` signature deals in dataframes instead of in raw data.
     """
     pandas_result: Union[ptypes.ProcessResult, types.FetchResult] = fetch_pandas(
-        params=_arrow_param_to_pandas_param(params),
+        params=__arrow_param_to_pandas_param(params),
         secrets=secrets,
         last_fetch_result=last_fetch_result,
         input_table_parquet_path=input_table_parquet_path,
@@ -360,7 +407,7 @@ def fetch_arrow(
         with tempfile_context(suffix=".arrow") as arrow_path:
             hacky_result = pandas_result.to_arrow(arrow_path)
         if hacky_result.table.path:
-            parquet.write(output_path, hacky_result.table.table)
+            cjwparquet.write(output_path, hacky_result.table.table)
         else:
             output_path.write_bytes(b"")
         return types.FetchResult(output_path, hacky_result.errors)
@@ -441,10 +488,26 @@ def validate_thrift() -> ttypes.ValidateModuleResult:
     """
     render_spec = inspect.getfullargspec(render)
     assert render_spec.varargs is None, "render must not accept varargs"
-    assert len(render_spec.args) == 2, "render must take two positional arguments"
-    assert not (
-        set(render_spec.kwonlyargs) - {"fetch_result", "tab_name", "input_columns"}
-    ), "a render() keyword argument is misspelled"
+    if len(render_spec.args) == 3:
+        assert render_spec.args[0] == "arrow_table", (
+            "render must take two positional arguments, "
+            "or its first argument must be `arrow_table`"
+        )
+        assert render_spec.args[2] == "output_path", (
+            "render must take two positional arguments, "
+            "or its third argument must be `output_path`"
+        )
+        assert (
+            render_spec.varkw
+        ), "render() must accept **kwargs (for forward-compatibility)"
+        assert not (
+            set(render_spec.kwonlyargs) - {"fetch_result", "tab_name"}
+        ), "a render() keyword argument is misspelled"
+    else:
+        assert len(render_spec.args) == 2, "render must take two positional arguments"
+        assert not (
+            set(render_spec.kwonlyargs) - {"fetch_result", "tab_name", "input_columns"}
+        ), "a render() keyword argument is misspelled"
 
     migrate_params_spec = inspect.getfullargspec(migrate_params)
     assert (

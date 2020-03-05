@@ -125,7 +125,7 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
         self.assertDictEqual(result, expected)
 
     def test_no_params_translate_message_empty_in_catalog_but_exists_in_default_catalog(
-        self
+        self,
     ):
         module = Module(
             ModuleSpec(

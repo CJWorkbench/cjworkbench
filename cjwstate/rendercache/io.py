@@ -1,10 +1,9 @@
 import contextlib
-import math
 from pathlib import Path
-from typing import Any, ContextManager, Dict, List
+from typing import ContextManager
+import cjwparquet
 import pyarrow
-from cjwkernel import parquet
-from cjwkernel.types import ArrowTable, ColumnType, RenderResult, TableMetadata
+from cjwkernel.types import ArrowTable, RenderResult, TableMetadata
 from cjwkernel.util import json_encode, tempfile_context
 from cjwstate import minio
 from cjwstate.models import WfModule, Workflow, CachedRenderResult
@@ -91,7 +90,7 @@ def cache_render_result(
     wf_module.save(update_fields=WF_MODULE_FIELDS)  # makes new cache inconsistent
     if result.table.metadata.columns:  # only write non-zero-column tables
         with tempfile_context() as parquet_path:
-            parquet.write(parquet_path, result.table.table)
+            cjwparquet.write(parquet_path, result.table.table)
             minio.fput_file(
                 BUCKET, parquet_key(workflow.id, wf_module.id, delta_id), parquet_path
             )  # makes new cache consistent
@@ -157,7 +156,7 @@ def load_cached_render_result(crr: CachedRenderResult, path: Path) -> RenderResu
     with downloaded_parquet_file(crr) as parquet_path:
         try:
             # raises ArrowIOError
-            parquet.convert_parquet_file_to_arrow_file(parquet_path, path)
+            cjwparquet.convert_parquet_file_to_arrow_file(parquet_path, path)
         except pyarrow.ArrowIOError as err:
             raise CorruptCacheError from err
     # TODO handle validation errors => CorruptCacheError
@@ -231,8 +230,11 @@ def read_cached_render_result_slice_as_text(
 
     try:
         with downloaded_parquet_file(crr) as parquet_path:
-            return parquet.read_slice_as_text(
-                parquet_path, format, only_columns, only_rows
+            return cjwparquet.read_slice_as_text(
+                parquet_path,
+                format=format,
+                only_columns=only_columns,
+                only_rows=only_rows,
             )
     except (pyarrow.ArrowIOError, FileNotFoundError):  # FIXME unit-test
         raise CorruptCacheError

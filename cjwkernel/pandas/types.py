@@ -706,7 +706,7 @@ def dataframe_to_arrow_table(
 
 
 def arrow_table_to_dataframe(
-    table: atypes.ArrowTable
+    table: atypes.ArrowTable,
 ) -> Tuple[pd.DataFrame, List[Column]]:
     if table.table is None:
         dataframe = pd.DataFrame()

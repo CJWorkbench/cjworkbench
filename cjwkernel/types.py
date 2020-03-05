@@ -486,7 +486,7 @@ class TabOutput(NamedTuple):
 
 
 def _thrift_i18n_argument_to_arrow(
-    value: ttypes.I18nArgument
+    value: ttypes.I18nArgument,
 ) -> Union[str, int, float]:
     if value.string_value is not None:
         return value.string_value

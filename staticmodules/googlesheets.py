@@ -2,20 +2,12 @@ import asyncio
 import json
 from pathlib import Path
 import os
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 from oauthlib import oauth2
 from cjwmodule.http import httpfile, HttpError
-from cjwkernel.pandas.parse import MimeType, parse_file
-from cjwkernel.pandas.types import ProcessResult
-from cjwkernel.pandas import moduleutils
-from cjwkernel import parquet
-from cjwkernel.types import (
-    ArrowTable,
-    FetchResult,
-    I18nMessage,
-    RenderError,
-    RenderResult,
-)
+from cjwmodule.i18n import I18nMessage
+import cjwparquet
+from cjwparse import MimeType, parse_file
 
 
 _Secret = Dict[str, Any]
@@ -53,12 +45,12 @@ def _generate_gdrive_file_url(sheet_id: str) -> str:
 
 def TODO_i18n_fetch_error(output_path: Path, message: str):
     os.truncate(output_path, 0)
-    return FetchResult(output_path, [RenderError(I18nMessage.TODO_i18n(message))])
+    return [I18nMessage("TODO_i18n", {"text": message}, None)]
 
 
 async def do_download(
     sheet_id: str, sheet_mime_type: str, oauth2_client: oauth2.Client, output_path: Path
-) -> FetchResult:
+) -> List[I18nMessage]:
     """
     Download spreadsheet from Google.
 
@@ -93,38 +85,44 @@ async def do_download(
                 output_path, "File not found. Please choose a different file."
             )
         else:
-            # HACK: *err.i18n_message because i18n_message is a tuple
-            # compatible with I18nMessage() ctor
-            return FetchResult(
-                output_path, errors=[RenderError(I18nMessage(*err.i18n_message))]
-            )
+            return [err.i18n_message]
     except HttpError as err:
         # HACK: *err.i18n_message because i18n_message is a tuple
         # compatible with I18nMessage() ctor
-        return FetchResult(
-            output_path, errors=[RenderError(I18nMessage(*err.i18n_message))]
-        )
+        os.truncate(output_path, 0)
+        return [err.i18n_message]
 
-    return FetchResult(output_path)
+    return []
 
 
 def _render_deprecated_parquet(
-    input_path: Path,
-    errors: List[RenderError],
-    output_path: Path,
-    params: Dict[str, Any],
-) -> RenderResult:
-    parquet.convert_parquet_file_to_arrow_file(input_path, output_path)
-    result = RenderResult(
-        ArrowTable.from_arrow_file_with_inferred_metadata(output_path), errors
-    )
+    input_path: Path, errors: List[Any], output_path: Path, params: Dict[str, Any],
+) -> List[I18nMessage]:
+    if errors:
+        return errors
 
-    if result.table.metadata.n_rows > 0 and not params["has_header"]:
-        pandas_result = ProcessResult.from_arrow(result)
-        dataframe = moduleutils.turn_header_into_first_row(pandas_result.dataframe)
-        return ProcessResult(dataframe).to_arrow(output_path)
+    cjwparquet.convert_parquet_file_to_arrow_file(input_path, output_path)
+    if params["has_header"]:
+        # In the deprecated parquet format, we _always_ parsed the header
+        errors = []
+    else:
+        # We used to have a "moduleutils.turn_header_into_first_row()" but it
+        # was broken by design (what about types???) and it was rarely used.
+        # Let's not maintain it any longer.
+        errors = [
+            (
+                "TODO_i18n",
+                {
+                    "text": (
+                        "This data file was downloaded in Workbench's early days, and we "
+                        "lost the original data. Please re-download it. (We won't lose it "
+                        "again, promise!)"
+                    )
+                },
+            )
+        ]
 
-    return result
+    return errors
 
 
 def _calculate_mime_type(content_type: str) -> MimeType:
@@ -152,15 +150,13 @@ def _render_file(path: Path, params: Dict[str, Any], output_path: Path):
         )
 
 
-def render_arrow(
-    table, params, tab_name, fetch_result: Optional[FetchResult], output_path: Path
-) -> RenderResult:
+def render(arrow_table, params, output_path, *, fetch_result, **kwargs):
     # Must perform header operation here in the event the header checkbox
     # state changes
     if fetch_result is None:
         # empty table
-        return RenderResult(ArrowTable())
-    elif fetch_result.path is not None and parquet.file_has_parquet_magic_number(
+        return []
+    elif fetch_result.path is not None and cjwparquet.file_has_parquet_magic_number(
         fetch_result.path
     ):
         # Deprecated files: we used to parse in fetch() and store the result
@@ -175,7 +171,9 @@ def render_arrow(
     elif fetch_result.errors:
         # We've never stored errors+data. If there are errors, assume
         # there's no data.
-        return RenderResult(ArrowTable(), fetch_result.errors)
+        #
+        # We've never stored errors with quick-fixes
+        return [tuple(error.message) for error in fetch_result.errors]
     else:
         assert not fetch_result.errors  # we've never stored errors+data.
         return _render_file(fetch_result.path, params, output_path)
@@ -187,23 +185,17 @@ def fetch_arrow(
     last_fetch_result,
     input_table_parquet_path,
     output_path: Path,
-) -> FetchResult:
+) -> List[I18nMessage]:
     file_meta = params["file"]
     if not file_meta:
-        return FetchResult(
-            output_path,
-            errors=[RenderError(I18nMessage.TODO_i18n("Please choose a file"))],
-        )
+        return TODO_i18n_fetch_error(output_path, "Please choose a file")
 
     # Ignore file_meta['url']. That's for the client's web browser, not for
     # an API request.
     sheet_id = file_meta["id"]
     if not sheet_id:
         # [adamhooper, 2019-12-06] has this ever happened?
-        return FetchResult(
-            output_path,
-            errors=[RenderError(I18nMessage.TODO_i18n("Please choose a file"))],
-        )
+        return TODO_i18n_fetch_error(output_path, "Please choose a file")
 
     # backwards-compat for old entries without 'mimeType', 2018-06-13
     sheet_mime_type = file_meta.get(
@@ -214,9 +206,7 @@ def fetch_arrow(
     if not secret:
         return TODO_i18n_fetch_error(output_path, "Please connect to Google Drive.")
     if "error" in secret:
-        return FetchResult(
-            output_path, errors=[RenderError(I18nMessage.from_dict(secret["error"]))]
-        )
+        return TODO_i18n_fetch_error(output_path, secret["error"])
     assert "secret" in secret
     oauth2_client = oauth2.Client(
         client_id=None,  # unneeded
