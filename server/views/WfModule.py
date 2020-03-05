@@ -1,6 +1,5 @@
 import io
 import json
-import re
 import selectors
 import subprocess
 from asgiref.sync import async_to_sync
