@@ -10,7 +10,7 @@ from typing import Any, ContextManager, Dict, Optional
 import pandas as pd
 import pyarrow
 from staticmodules import googlesheets
-from staticmodules.googlesheets import fetch_arrow, render_arrow, migrate_params
+from staticmodules.googlesheets import fetch, render, migrate_params
 from .util import MockHttpResponse, MockParams
 from cjwkernel.types import (
     ArrowTable,
@@ -111,12 +111,14 @@ class FetchTests(unittest.TestCase):
         self, params: Dict[str, Any], secrets: Dict[str, Any]
     ) -> ContextManager[FetchResult]:
         with tempfile_context(prefix="output-") as output_path:
-            with self.assertLogs(level=logging.DEBUG) as cm:
-                yield fetch_arrow(params, secrets, None, None, output_path)
+            with self.assertLogs(level=logging.DEBUG):
+                errors = fetch(params, secrets=secrets, output_path=output_path)
+                yield FetchResult(
+                    output_path, [RenderError(I18nMessage(*e)) for e in errors]
+                )
 
     def test_fetch_nothing(self):
-        with tempfile_context(prefix="output-") as output_path:
-            result = fetch_arrow(P(file=None), {}, None, None, output_path)
+        with self.fetch(P(file=None), {}) as result:
             self.assertEqual(
                 result.errors,
                 [RenderError(I18nMessage.TODO_i18n("Please choose a file"))],
@@ -232,8 +234,7 @@ class FetchTests(unittest.TestCase):
         self.assertRegex(self.last_http_requestline, "/files/.*?alt=media")
 
     def test_missing_secret_error(self):
-        with tempfile_context() as output_path:
-            result = fetch_arrow(P(), secrets(None), None, None, output_path)
+        with self.fetch(P(), {}) as result:
             self.assertEqual(result.path.read_bytes(), b"")
             self.assertEqual(
                 result.errors,
@@ -311,56 +312,43 @@ class FetchTests(unittest.TestCase):
 
 
 class RenderTests(unittest.TestCase):
-    def setUp(self):
-        self.ctx = contextlib.ExitStack()
-        self.output_path = self.ctx.enter_context(tempfile_context(suffix="output-"))
-
-    def tearDown(self):
-        self.ctx.close()
+    @contextlib.contextmanager
+    def render(self, params: Dict[str, Any], fetch_result: Optional[FetchResult]):
+        with tempfile_context(prefix="output-", suffix=".arrow") as output_path:
+            errors = render(
+                ArrowTable(), params, output_path, fetch_result=fetch_result
+            )
+            arrow_table = ArrowTable.from_arrow_file_with_inferred_metadata(output_path)
+            return RenderResult(
+                arrow_table, [RenderError(I18nMessage(*e)) for e in errors]
+            )
 
     def test_render_no_file(self):
-        result = render_arrow(ArrowTable(), P(), "tab-x", None, self.output_path)
-        assert_arrow_table_equals(result.table, ArrowTable())
-        self.assertEqual(result.errors, [])
+        with self.render(P(), None) as result:
+            assert_arrow_table_equals(result.table, ArrowTable())
+            self.assertEqual(result.errors, [])
 
     def test_render_fetch_error(self):
-        errors = [RenderResult(I18nMessage("x", {"y": "z"}))]
+        fetch_errors = [RenderResult(I18nMessage("x", {"y": "z"}))]
         with tempfile_context() as empty_path:
-            result = render_arrow(
-                ArrowTable(),
-                P(),
-                "tab-x",
-                FetchResult(empty_path, errors),
-                self.output_path,
-            )
-        assert_arrow_table_equals(result.table, ArrowTable())
-        self.assertEqual(result.errors, errors)
+            with self.render(P(), FetchResult(empty_path, fetch_errors)) as result:
+                assert_arrow_table_equals(result.table, ArrowTable())
+                self.assertEqual(result.errors, fetch_errors)
 
     def test_render_deprecated_parquet(self):
         with parquet_file({"A": [1, 2], "B": [3, 4]}) as fetched_path:
-            result = render_arrow(
-                ArrowTable(), P(), "tab-x", FetchResult(fetched_path), self.output_path
-            )
-        assert_arrow_table_equals(result.table, {"A": [1, 2], "B": [3, 4]})
-        self.assertEqual(result.errors, [])
+            with self.render(P(), FetchResult(fetched_path)) as result:
+                assert_arrow_table_equals(result.table, {"A": [1, 2], "B": [3, 4]})
+                self.assertEqual(result.errors, [])
 
     def test_render_deprecated_parquet_warning(self):
         errors = [RenderError(I18nMessage.TODO_i18n("truncated table"))]
         with parquet_file({"A": [1, 2], "B": [3, 4]}) as fetched_path:
-            result = render_arrow(
-                ArrowTable(),
-                P(),
-                "tab-x",
-                FetchResult(fetched_path, errors=errors),
-                self.output_path,
-            )
-        assert_arrow_table_equals(result.table, {"A": [1, 2], "B": [3, 4]})
-        self.assertEqual(result.errors, errors)
+            with self.render(P(), FetchResult(fetched_path, errors)) as result:
+                assert_arrow_table_equals(result.table, {"A": [1, 2], "B": [3, 4]})
+                self.assertEqual(result.errors, errors)
 
     def test_render_deprecated_parquet_has_header_false(self):
-        # This behavior is totally awful, but we support it for backwards
-        # compatibility.
-        #
         # Back in the day, we parsed during fetch. But has_header can change
         # between fetch and render. We were lazy, so we made fetch() follow the
         # most-common path: has_header=True. Then, in render(), we would "undo"
@@ -368,17 +356,18 @@ class RenderTests(unittest.TestCase):
         # to figure it out. It was _never_ wise to code this. Now we need to
         # support these lossy, mangled files.
         with parquet_file({"A": [1, 2], "B": [3, 4]}) as fetched_path:
-            result = render_arrow(
-                ArrowTable(),
-                P(has_header=False),
-                "tab-x",
-                FetchResult(fetched_path),
-                self.output_path,
-            )
-        assert_arrow_table_equals(
-            result.table, {"0": ["A", "1", "2"], "1": ["B", "3", "4"]}
-        )
-        self.assertEqual(result.errors, [])
+            with self.render(P(has_header=False), FetchResult(fetched_path)) as result:
+                assert_arrow_table_equals(result.table, {"A": [1, 2], "B": [3, 4]})
+                self.assertEqual(
+                    result.errors,
+                    [
+                        RenderError(
+                            I18nMessage.TODO_I18n(
+                                "Please re-download this file to disable header-row handling"
+                            )
+                        )
+                    ],
+                )
 
     def test_render_has_header_true(self):
         with tempfile_context("http") as http_path:
@@ -389,15 +378,9 @@ class RenderTests(unittest.TestCase):
                 [("content-type", "text/csv")],
                 io.BytesIO(b"A,B\na,b"),
             )
-            result = render_arrow(
-                ArrowTable(),
-                P(has_header=True),
-                "tab-x",
-                FetchResult(http_path),
-                self.output_path,
-            )
-        assert_arrow_table_equals(result.table, {"A": ["a"], "B": ["b"]})
-        self.assertEqual(result.errors, [])
+            with self.render(P(has_header=True), FetchResult(http_path)) as result:
+                assert_arrow_table_equals(result.table, {"A": ["a"], "B": ["b"]})
+                self.assertEqual(result.errors, [])
 
     def test_render_has_header_false(self):
         with tempfile_context("http") as http_path:
@@ -408,26 +391,15 @@ class RenderTests(unittest.TestCase):
                 [("content-type", "text/csv")],
                 io.BytesIO(b"1,2\n3,4"),
             )
-            result = render_arrow(
-                ArrowTable(),
-                P(has_header=False),
-                "tab-x",
-                FetchResult(http_path),
-                self.output_path,
-            )
-        assert_arrow_table_equals(
-            result.table,
-            {
-                "Column 1": pyarrow.array([1, 3], pyarrow.int8()),
-                "Column 2": pyarrow.array([2, 4], pyarrow.int8()),
-            },
-        )
-        self.assertEqual(result.errors, [])
-
-    def test_render_missing_fetch_result_returns_empty(self):
-        result = render_arrow(ArrowTable(), P(), "tab-x", None, self.output_path)
-        assert_arrow_table_equals(result.table, {})
-        self.assertEqual(result.errors, [])
+            with self.render(P(has_header=False), FetchResult(http_path)) as result:
+                assert_arrow_table_equals(
+                    result.table,
+                    {
+                        "Column 1": pyarrow.array([1, 3], pyarrow.int8()),
+                        "Column 2": pyarrow.array([2, 4], pyarrow.int8()),
+                    },
+                )
+                self.assertEqual(result.errors, [])
 
 
 class MigrateParamsTest(unittest.TestCase):

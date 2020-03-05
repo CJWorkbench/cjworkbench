@@ -95,26 +95,21 @@ def guess_charset_or_none(content_type: str) -> str:
 
 
 def _render_deprecated_parquet(
-    input_path: Path, output_path: Path, params: Dict[str, Any],
+    input_path: Path, errors, output_path: Path, params: Dict[str, Any],
 ) -> List[I18nMessage]:
     cjwparquet.convert_parquet_file_to_arrow_file(input_path, output_path)
     if params["has_header"]:
         # In the deprecated parquet format, we _always_ parsed the header
-        errors = []
+        pass
     else:
         # We used to have a "moduleutils.turn_header_into_first_row()" but it
         # was broken by design (what about types???) and it was rarely used.
         # Let's not maintain it any longer.
-        errors = [
-            (
+        errors += [
+            I18nMessage(
                 "TODO_i18n",
-                {
-                    "text": (
-                        "This data file was downloaded in Workbench's early days, and we "
-                        "lost the original data. Please re-download it. (We won't lose it "
-                        "again, promise!)"
-                    )
-                },
+                {"text": "Please re-download this file to disable header-row handling"},
+                None,
             )
         ]
 
@@ -175,13 +170,7 @@ def render(arrow_table, params, output_path, *, fetch_result, **kwargs):
         return _render_file(fetch_result.path, output_path, params)
 
 
-def fetch_arrow(
-    params: Dict[str, Any],
-    secrets,
-    last_fetch_result,
-    input_table_parquet_path,
-    output_path: Path,
-) -> List[I18nMessage]:
+def fetch(params: Dict[str, Any], *, output_path: Path) -> List[I18nMessage]:
     url: str = params["url"].strip()
     mimetypes = ",".join(v.value for v in AllowedMimeTypes)
     headers = [("Accept", mimetypes)]
