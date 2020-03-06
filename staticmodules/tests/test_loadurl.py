@@ -271,7 +271,9 @@ class RenderTests(unittest.TestCase):
                     result.errors,
                     [
                         RenderError(
-                            I18nMessage.TODO_i18n("Please re-download this file to disable header-row handling")
+                            I18nMessage.TODO_i18n(
+                                "Please re-download this file to disable header-row handling"
+                            )
                         )
                     ],
                 )

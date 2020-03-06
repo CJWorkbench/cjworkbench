@@ -158,7 +158,10 @@ def render(arrow_table, params, output_path, *, fetch_result, **kwargs):
         # as Parquet. Now we've lost the original file data, and we need to
         # support our oldest users.
         return _render_deprecated_parquet(
-            fetch_result.path, [tuple(e.message) for e in fetch_result.errors], output_path, params
+            fetch_result.path,
+            [tuple(e.message) for e in fetch_result.errors],
+            output_path,
+            params,
         )
     elif fetch_result.errors:
         # We've never stored errors+data. If there are errors, assume

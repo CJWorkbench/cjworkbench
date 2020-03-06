@@ -17,7 +17,6 @@ class UploadTest(unittest.TestCase):
             table = ArrowTable.from_arrow_file_with_inferred_metadata(output_path)
             yield RenderResult(table, [RenderError(I18nMessage(*e)) for e in errors])
 
-
     @contextlib.contextmanager
     def _file(self, b: bytes, *, suffix) -> ContextManager[Path]:
         with tempfile_context(suffix=suffix) as path:
@@ -45,7 +44,9 @@ class UploadTest(unittest.TestCase):
                         RenderError(
                             message=I18nMessage(
                                 id="TODO_i18n",
-                                args={"text": "JSON parse error at byte 0: Invalid value."},
+                                args={
+                                    "text": "JSON parse error at byte 0: Invalid value."
+                                },
                             ),
                             quick_fixes=[],
                         )

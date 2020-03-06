@@ -1,7 +1,6 @@
 import contextlib
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import io
-import logging
 from pathlib import Path
 import unittest
 import ssl
@@ -111,11 +110,10 @@ class FetchTests(unittest.TestCase):
         self, params: Dict[str, Any], secrets: Dict[str, Any]
     ) -> ContextManager[FetchResult]:
         with tempfile_context(prefix="output-") as output_path:
-            with self.assertLogs(level=logging.DEBUG):
-                errors = fetch(params, secrets=secrets, output_path=output_path)
-                yield FetchResult(
-                    output_path, [RenderError(I18nMessage(*e)) for e in errors]
-                )
+            errors = fetch(params, secrets=secrets, output_path=output_path)
+            yield FetchResult(
+                output_path, [RenderError(I18nMessage(*e)) for e in errors]
+            )
 
     def test_fetch_nothing(self):
         with self.fetch(P(file=None), {}) as result:
