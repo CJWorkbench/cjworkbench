@@ -34,5 +34,6 @@ sort
 splitcolumn
 startfromtab
 transpose
+upload
 valuefilter
 wordcloud
