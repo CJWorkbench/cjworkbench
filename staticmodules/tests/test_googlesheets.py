@@ -317,7 +317,7 @@ class RenderTests(unittest.TestCase):
                 ArrowTable(), params, output_path, fetch_result=fetch_result
             )
             arrow_table = ArrowTable.from_arrow_file_with_inferred_metadata(output_path)
-            return RenderResult(
+            yield RenderResult(
                 arrow_table, [RenderError(I18nMessage(*e)) for e in errors]
             )
 
@@ -327,7 +327,7 @@ class RenderTests(unittest.TestCase):
             self.assertEqual(result.errors, [])
 
     def test_render_fetch_error(self):
-        fetch_errors = [RenderResult(I18nMessage("x", {"y": "z"}))]
+        fetch_errors = [RenderError(I18nMessage("x", {"y": "z"}))]
         with tempfile_context() as empty_path:
             with self.render(P(), FetchResult(empty_path, fetch_errors)) as result:
                 assert_arrow_table_equals(result.table, ArrowTable())
@@ -360,7 +360,7 @@ class RenderTests(unittest.TestCase):
                     result.errors,
                     [
                         RenderError(
-                            I18nMessage.TODO_I18n(
+                            I18nMessage.TODO_i18n(
                                 "Please re-download this file to disable header-row handling"
                             )
                         )

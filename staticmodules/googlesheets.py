@@ -158,14 +158,17 @@ def render(arrow_table, params, output_path, *, fetch_result, **kwargs):
         # In this deprecated format, parse errors were written as
         # fetch_result.errors.
         return _render_deprecated_parquet(
-            fetch_result.path, fetch_result.errors, output_path, params
+            fetch_result.path,
+            [tuple(e.message) for e in fetch_result.errors],
+            output_path,
+            params,
         )
     elif fetch_result.errors:
         # We've never stored errors+data. If there are errors, assume
         # there's no data.
         #
         # We've never stored errors with quick-fixes
-        return [tuple(error.message) for error in fetch_result.errors]
+        return [tuple(e.message) for e in fetch_result.errors]
     else:
         assert not fetch_result.errors  # we've never stored errors+data.
         return _render_file(fetch_result.path, params, output_path)

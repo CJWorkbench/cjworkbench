@@ -167,7 +167,7 @@ def render(arrow_table, params, output_path, *, fetch_result, **kwargs):
         # We've never stored errors+data. If there are errors, assume
         # there's no data.
         output_path.write_bytes(b"")
-        return [tuple(error.message) for error in fetch_result.errors]
+        return [tuple(e.message) for e in fetch_result.errors]
     else:
         assert not fetch_result.errors  # we've never stored errors+data.
         return _render_file(fetch_result.path, output_path, params)
