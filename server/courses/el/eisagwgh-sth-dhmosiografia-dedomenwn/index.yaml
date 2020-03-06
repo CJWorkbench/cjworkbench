@@ -1,15 +1,17 @@
-title: Introduction to Data Journalism
+title: Εισαγωγή στη Δημοσιογραφία Δεδομένων
 introduction_html: |-
     <p>
-    This entry level course will teach you how to answer questions with data in a transparent
-    and reproducible manner, without the need to code.
-    </br></br>
-    You will learn how to filter, group, create charts, fix common data formatting issues, and combine different
-    data sets. You’ll also learn about useful calculations like per capita rates, percentage change, and adjusting
-    for inflation.
-    </br></br>
-    Along the way, you'll work with data that journalists commonly use, including campaign finance, crime,
-    housing, and environmental data.
+        Αυτή η εισαγωγική σειρά μαθημάτων θα σας μάθει πώς να δίνετε απαντήσεις σε ερωτήματα 
+        χρησιμοποιώντας δεδομένα με διαφανή και αναπαραγώγιμο τρόπο, χωρίς να πρέπει 
+        να γράψετε κώδικα.
+        </br></br>
+        Θα μάθετε πώς να φιλτράρετε ή να ομαδοποιείτε δεδομένα, να δημιουργείτε γραφήματα, 
+        να διορθώνετε συνηθισμένα προβλήματα μορφοποίησης δεδομένων και να συνδυάζετε 
+        διαφορετικά σύνολα δεδομένων. Θα μάθετε επίσης χρήσιμους υπολογισμούς όπως τα κατά κεφαλήν ποσοστά, 
+        την ποσοστιαία μεταβολή και την τιμαριθμική αναπροσαρμογή.
+        </br></br>
+        Στην πορεία, θα έχετε την ευκαιρία να εργαστείτε με δεδομένα που συνήθως χρησιμοποιούν οι δημοσιογράφοι, 
+        όπως δεδομένα για χρηματοδότηση προεκλογικών εκστρατειών, έγκλημα, στέγη και περιβάλλον.
     <p>
 lessons:
     - prwth-istoria
