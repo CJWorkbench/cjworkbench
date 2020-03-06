@@ -95,7 +95,7 @@ def guess_charset_or_none(content_type: str) -> str:
 
 
 def _render_deprecated_parquet(
-    input_path: Path, errors, output_path: Path, params: Dict[str, Any],
+    input_path: Path, errors, output_path: Path, params: Dict[str, Any]
 ) -> List[I18nMessage]:
     cjwparquet.convert_parquet_file_to_arrow_file(input_path, output_path)
     if params["has_header"]:

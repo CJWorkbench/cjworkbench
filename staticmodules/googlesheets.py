@@ -96,7 +96,7 @@ async def do_download(
 
 
 def _render_deprecated_parquet(
-    input_path: Path, errors: List[Any], output_path: Path, params: Dict[str, Any],
+    input_path: Path, errors: List[Any], output_path: Path, params: Dict[str, Any]
 ) -> List[I18nMessage]:
     cjwparquet.convert_parquet_file_to_arrow_file(input_path, output_path)
     if params["has_header"]:

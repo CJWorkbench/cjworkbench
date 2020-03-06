@@ -192,7 +192,7 @@ def __render_arrow(
     """
     # call render()
     raw_result = render(
-        table, params, output_path, tab_name=tab_name, fetch_result=fetch_result,
+        table, params, output_path, tab_name=tab_name, fetch_result=fetch_result
     )
 
     # coerce result

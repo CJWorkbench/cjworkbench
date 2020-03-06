@@ -5,10 +5,7 @@ import aiohttp
 import numpy as np
 import pandas as pd
 from pandas.testing import assert_frame_equal
-from cjwkernel.pandas.moduleutils import (
-    spooled_data_from_url,
-    autocast_dtypes_in_place,
-)
+from cjwkernel.pandas.moduleutils import spooled_data_from_url, autocast_dtypes_in_place
 
 
 TestDataPath = Path(__file__).parent.parent / "test_data"
