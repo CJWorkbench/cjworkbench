@@ -2275,13 +2275,13 @@ msgstr ""
 msgid "py.forms.signup.lastName.placeholder"
 msgstr ""
 
-#. default-message:
-#: fetcher/fetch.py:187
+#. default-message: Something unexpected happened. We have been notified and are working to fix it. If this persists, contact us. Error code: {message}
+#: fetcher/fetch.py:185
 msgid "py.fetcher.fetch.user_visible_bug_during_fetch"
 msgstr ""
 
 #. default-message: Cannot fetch: module was deleted
-#: fetcher/fetch.py:289
+#: fetcher/fetch.py:281
 msgid "py.fetcher.fetch.no_loaded_module"
 msgstr ""
 
@@ -2291,22 +2291,22 @@ msgid "py.fetcher.secrets._service_no_longer_configured_error"
 msgstr ""
 
 #. default-message: Token server responded with {status_code}: {error} ({description})
-#: fetcher/secrets.py:170
+#: fetcher/secrets.py:177
 msgid "py.fetcher.secrets._refresh_oauth2_token.error.general"
 msgstr ""
 
 #. default-message: {service_id} responded with HTTP {status_code} {reason}: {description}
-#: fetcher/secrets.py:177
+#: fetcher/secrets.py:184
 msgid "py.fetcher.secrets._refresh_oauth2_token.server_error.general"
 msgstr ""
 
 #. default-message: Timeout during OAuth2 token refresh
-#: fetcher/secrets.py:194
+#: fetcher/secrets.py:201
 msgid "py.fetcher.secrets._refresh_oauth2_token.timeout_error"
 msgstr ""
 
 #. default-message: HTTP error during OAuth2 token refresh: {error}
-#: fetcher/secrets.py:204
+#: fetcher/secrets.py:211
 msgid "py.fetcher.secrets._refresh_oauth2_token.client_error"
 msgstr ""
 
@@ -2342,22 +2342,22 @@ msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_error_message
 msgstr ""
 
 #. default-message: Something unexpected happened. We have been notified and are working to fix it. If this persists, contact us. Error code: {message}
-#: renderer/execute/wf_module.py:147
+#: renderer/execute/wf_module.py:140
 msgid "py.renderer.execute.wf_module.user_visible_bug_during_render"
 msgstr ""
 
 #. default-message: Please delete this step: an administrator uninstalled its code.
-#: renderer/execute/wf_module.py:357
+#: renderer/execute/wf_module.py:350
 msgid "py.renderer.execute.wf_module.noModule"
 msgstr ""
 
 #. default-message: The chosen tab depends on this one. Please choose another tab.
-#: renderer/execute/wf_module.py:384
+#: renderer/execute/wf_module.py:377
 msgid "py.renderer.execute.wf_module.TabCycleError"
 msgstr ""
 
 #. default-message: The chosen tab has no output. Please select another one.
-#: renderer/execute/wf_module.py:395
+#: renderer/execute/wf_module.py:388
 msgid "py.renderer.execute.wf_module.TabOutputUnreachableError"
 msgstr ""
 
