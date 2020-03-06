@@ -3,6 +3,7 @@ burstDetector
 calculate
 clean-text
 columnchart
+colwiseproportion
 concattabs
 convert-date
 converttexttonumber
@@ -25,10 +26,13 @@ reordercolumns
 replace
 reshape
 rowstoheader
+scatterplot
 selectcolumns
+selectsql
 sentimentanalysis
 sort
 splitcolumn
 startfromtab
 transpose
+valuefilter
 wordcloud
