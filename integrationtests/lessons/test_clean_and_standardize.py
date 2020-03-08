@@ -1,6 +1,5 @@
 from integrationtests.lessons import LessonTest
 
-
 DataUrl = "https://storage.googleapis.com/production-static.workbenchdata.com/lessons/en/clean-and-standardize/population_growth_data.csv"
 
 
@@ -26,6 +25,7 @@ class TestLesson(LessonTest):
             ".title-metadata-stack", text="II. Clean dirty data", wait=True
         )
 
+        self.import_module("loadurl")
         self.import_module("dropna")
         self.import_module("nulldropper")
         self.import_module("reshape")

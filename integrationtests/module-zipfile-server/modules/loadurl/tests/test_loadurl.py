@@ -1,31 +1,126 @@
+from __future__ import annotations
+
 import contextlib
 import gzip
-from http.server import HTTPServer, BaseHTTPRequestHandler
 import io
 import itertools
-from pathlib import Path
+import tempfile
 import threading
-from typing import ContextManager
 import unittest
 import zlib
-import pyarrow
-from cjwkernel.util import tempfile_context
-from cjwkernel.tests.util import assert_arrow_table_equals, parquet_file
-from cjwkernel.types import (
-    ArrowTable,
-    FetchResult,
-    I18nMessage,
-    RenderError,
-    RenderResult,
-)
-from cjwmodule.http import httpfile
-from staticmodules.loadurl import fetch, render
-from .util import MockHttpResponse, MockParams
+from http.server import BaseHTTPRequestHandler, HTTPServer
+from pathlib import Path
+from typing import ContextManager, List, NamedTuple, Optional, Tuple, Union
 
-TestDataPath = Path(__file__).parent / "test_data"
+import cjwparquet
+import pyarrow
+from cjwmodule.http import httpfile
+from cjwmodule.i18n import I18nMessage
+
+from .. import loadurl
+
+TestDataPath = Path(__file__).parent / "files"
 
 XLSX_MIME_TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-P = MockParams.factory(url="", has_header=True)
+
+
+class RenderError(NamedTuple):
+    message: I18nMessage
+
+
+class FetchResult(NamedTuple):
+    path: Optional[Path] = None
+    errors: List[RenderError] = []
+
+
+class RenderResult(NamedTuple):
+    table: Optional[pyarrow.Table]
+    errors: List[I18nMessage] = []
+
+
+class MockHttpResponse(NamedTuple):
+    status_code: int = 200
+    """HTTP status code"""
+
+    headers: List[Tuple[str, str]] = []
+    """List of headers -- including Content-Length, Transfer-Encoding, etc."""
+
+    body: Union[bytes, List[bytes]] = b""
+    """
+    HTTP response body.
+
+    If this is `bytes` (including the default, `b""`), then `headers` requires
+    a `Content-Length`. If this is a `List[bytes]`, then `headers` requires
+    `Transfer-Encoding: chunked`.
+    """
+
+    @classmethod
+    def ok(
+        cls, body: bytes = b"", headers: List[Tuple[str, str]] = []
+    ) -> MockHttpResponse:
+        if isinstance(body, bytes):
+            if not any(h[0].upper() == "CONTENT-LENGTH" for h in headers):
+                # do not append to `headers`: create a new list
+                headers = headers + [("Content-Length", str(len(body)))]
+        elif isinstance(body, list):
+            if not any(h[0].upper() == "TRANSFER-ENCODING" for h in headers):
+                # do not append to `headers`: create a new list
+                headers = headers + [("Transfer-Encoding", "chunked")]
+        else:
+            raise TypeError("body must be bytes or List[bytes]; got %r" % type(body))
+        return cls(status_code=200, body=body, headers=headers)
+
+
+def P(**kwargs):
+    return {"url": "", "has_header": True, **kwargs}
+
+
+@contextlib.contextmanager
+def tempfile_context(**kwargs):
+    with tempfile.NamedTemporaryFile(**kwargs) as tf:
+        yield Path(tf.name)
+
+
+@contextlib.contextmanager
+def parquet_file(d):
+    arrow_table = pyarrow.table(d)
+    with tempfile.NamedTemporaryFile(suffix=".parquet") as tf:
+        path = Path(tf.name)
+        cjwparquet.write(path, arrow_table)
+        yield path
+
+
+def assert_arrow_table_equals(actual, expected):
+    if actual is None or expected is None:
+        assert (actual is None) == (expected is None)
+    else:
+        if isinstance(expected, dict):
+            expected = pyarrow.table(expected)
+        assert actual.column_names == expected.column_names
+        assert [c.type for c in actual.columns] == [c.type for c in expected.columns]
+        assert actual.to_pydict() == expected.to_pydict()
+
+
+@contextlib.contextmanager
+def call_fetch(url: str = "", has_header: bool = True) -> ContextManager[FetchResult]:
+    with tempfile_context(prefix="output-") as output_path:
+        errors = loadurl.fetch(
+            {"url": url, "has_header": has_header}, output_path=output_path
+        )
+        yield FetchResult(output_path, [RenderError(e) for e in errors])
+
+
+def call_render(params, fetch_result, **kwargs):
+    with tempfile_context(suffix=".arrow") as output_path:
+        errors = loadurl.render(
+            None, params, output_path=output_path, fetch_result=fetch_result, **kwargs
+        )
+        if output_path.stat().st_size == 0:
+            return None, errors
+        else:
+            with pyarrow.ipc.open_file(output_path) as reader:
+                table = reader.read_all()
+                return table, errors
 
 
 class FetchTests(unittest.TestCase):
@@ -71,18 +166,6 @@ class FetchTests(unittest.TestCase):
         self.server_thread.join()
         super().tearDown()
 
-    @contextlib.contextmanager
-    def fetch(
-        self, url: str = "", has_header: bool = True
-    ) -> ContextManager[FetchResult]:
-        with tempfile_context(prefix="output-") as output_path:
-            errors = fetch(
-                {"url": url, "has_header": has_header}, output_path=output_path
-            )
-            yield FetchResult(
-                output_path, [RenderError(I18nMessage(*e)) for e in errors]
-            )
-
     def build_url(self, path: str) -> str:
         """
         Build a URL that points to our HTTP server.
@@ -95,7 +178,7 @@ class FetchTests(unittest.TestCase):
         self.mock_http_response = MockHttpResponse.ok(
             body, [("Content-Type", "text/csv; charset=utf-8")]
         )
-        with self.fetch(url) as result:
+        with call_fetch(url) as result:
             self.assertEqual(result.errors, [])
             with httpfile.read(result.path) as (_, __, headers, body_path):
                 self.assertEqual(body_path.read_bytes(), body)
@@ -114,7 +197,7 @@ class FetchTests(unittest.TestCase):
             gzip.compress(body),
             [("Content-Type", "text/csv; charset=utf-8"), ("Content-Encoding", "gzip")],
         )
-        with self.fetch(url) as result:
+        with call_fetch(url) as result:
             self.assertEqual(result.errors, [])
             with httpfile.read(result.path) as (_, __, headers, body_path):
                 self.assertEqual(body_path.read_bytes(), body)
@@ -131,7 +214,7 @@ class FetchTests(unittest.TestCase):
                 ("Content-Encoding", "deflate"),
             ],
         )
-        with self.fetch(url) as result:
+        with call_fetch(url) as result:
             self.assertEqual(result.errors, [])
             with httpfile.read(result.path) as (_, __, headers, body_path):
                 self.assertEqual(body_path.read_bytes(), body)
@@ -141,7 +224,7 @@ class FetchTests(unittest.TestCase):
             [b"A,B\nx", b",y\nz,", b"a"], [("Content-Type", "text/csv; charset=utf-8")]
         )
         url = self.build_url("/path/to.csv.chunks")
-        with self.fetch(url) as result:
+        with call_fetch(url) as result:
             self.assertEqual(result.errors, [])
             with httpfile.read(result.path) as (_, __, headers, body_path):
                 self.assertEqual(body_path.read_bytes(), b"A,B\nx,y\nz,a")
@@ -149,7 +232,7 @@ class FetchTests(unittest.TestCase):
     def test_fetch_http_404(self):
         self.mock_http_response = MockHttpResponse(404, [("Content-Length", 0)])
         url = self.build_url("/not-found")
-        with self.fetch(url) as result:
+        with call_fetch(url) as result:
             self.assertEqual(result.path.read_bytes(), b"")
             self.assertEqual(
                 result.errors,
@@ -165,7 +248,7 @@ class FetchTests(unittest.TestCase):
             )
 
     def test_fetch_invalid_url(self):
-        with self.fetch("htt://blah") as result:
+        with call_fetch("htt://blah") as result:
             self.assertEqual(result.path.read_bytes(), b"")
             self.assertEqual(
                 result.errors,
@@ -187,7 +270,7 @@ class FetchTests(unittest.TestCase):
                 MockHttpResponse.ok(b"A,B\n1,2", [("Content-Type", "text/csv")]),
             ]
         )
-        with self.fetch(url1) as result:
+        with call_fetch(url1) as result:
             self.assertEqual(result.errors, [])
             with httpfile.read(result.path) as (parameters, __, headers, body_path):
                 self.assertEqual(body_path.read_bytes(), b"A,B\n1,2")
@@ -205,7 +288,7 @@ class FetchTests(unittest.TestCase):
                 MockHttpResponse(302, [("Location", url1)]),
             ]
         )
-        with self.fetch(url1) as result:
+        with call_fetch(url1) as result:
             self.assertEqual(result.path.read_bytes(), b"")
             self.assertEqual(
                 result.errors,
@@ -220,39 +303,32 @@ class FetchTests(unittest.TestCase):
 
 
 class RenderTests(unittest.TestCase):
-    @contextlib.contextmanager
-    def render(self, params, fetch_result):
-        with tempfile_context(prefix="output-", suffix=".arrow") as output_path:
-            errors = render(
-                ArrowTable(), params, output_path, fetch_result=fetch_result
-            )
-            table = ArrowTable.from_arrow_file_with_inferred_metadata(output_path)
-            yield RenderResult(table, [RenderError(I18nMessage(*e)) for e in errors])
-
     def test_render_no_file(self):
-        with self.render(P(), None) as result:
-            assert_arrow_table_equals(result.table, ArrowTable())
-            self.assertEqual(result.errors, [])
+        table, errors = call_render(P(), None)
+        assert_arrow_table_equals(table, None)
+        self.assertEqual(errors, [])
 
     def test_render_fetch_error(self):
-        fetch_errors = [RenderError(I18nMessage("x", {"y": "z"}))]
+        message = I18nMessage("x", {"y": "z"}, None)
+        fetch_errors = [RenderError(message)]
         with tempfile_context() as empty_path:
-            with self.render(P(), FetchResult(empty_path, fetch_errors)) as result:
-                assert_arrow_table_equals(result.table, ArrowTable())
-                self.assertEqual(result.errors, fetch_errors)
+            table, errors = call_render(P(), FetchResult(empty_path, fetch_errors))
+            assert_arrow_table_equals(table, None)
+            self.assertEqual(errors, [message])
 
     def test_render_deprecated_parquet(self):
         with parquet_file({"A": [1, 2], "B": [3, 4]}) as fetched_path:
-            with self.render(P(), FetchResult(fetched_path)) as result:
-                assert_arrow_table_equals(result.table, {"A": [1, 2], "B": [3, 4]})
-                self.assertEqual(result.errors, [])
+            table, errors = call_render(P(), FetchResult(fetched_path))
+            assert_arrow_table_equals(table, {"A": [1, 2], "B": [3, 4]})
+            self.assertEqual(errors, [])
 
     def test_render_deprecated_parquet_warning(self):
-        fetch_errors = [RenderError(I18nMessage.TODO_i18n("truncated table"))]
+        message = I18nMessage("TODO_i18n", {"text": "truncated table"}, None)
+        fetch_errors = [RenderError(message)]
         with parquet_file({"A": [1, 2], "B": [3, 4]}) as fetched_path:
-            with self.render(P(), FetchResult(fetched_path, fetch_errors)) as result:
-                assert_arrow_table_equals(result.table, {"A": [1, 2], "B": [3, 4]})
-                self.assertEqual(result.errors, fetch_errors)
+            table, errors = call_render(P(), FetchResult(fetched_path, fetch_errors))
+            assert_arrow_table_equals(table, {"A": [1, 2], "B": [3, 4]})
+            self.assertEqual(errors, [message])
 
     def test_render_deprecated_parquet_has_header_false(self):
         # This behavior is totally awful, but we support it for backwards
@@ -265,21 +341,23 @@ class RenderTests(unittest.TestCase):
         # to figure it out. It was _never_ wise to code this. Now we need to
         # support these lossy, mangled files.
         with parquet_file({"A": [1, 2], "B": [3, 4]}) as fetched_path:
-            with self.render(P(has_header=False), FetchResult(fetched_path)) as result:
-                assert_arrow_table_equals(result.table, {"A": [1, 2], "B": [3, 4]})
-                self.assertEqual(
-                    result.errors,
-                    [
-                        RenderError(
-                            I18nMessage.TODO_i18n(
-                                "Please re-download this file to disable header-row handling"
-                            )
-                        )
-                    ],
-                )
+            table, errors = call_render(P(has_header=False), FetchResult(fetched_path))
+            assert_arrow_table_equals(table, {"A": [1, 2], "B": [3, 4]})
+            self.assertEqual(
+                errors,
+                [
+                    I18nMessage(
+                        "TODO_i18n",
+                        {
+                            "text": "Please re-download this file to disable header-row handling"
+                        },
+                        None,
+                    )
+                ],
+            )
 
     def test_render_has_header_true(self):
-        with tempfile_context("http") as http_path:
+        with tempfile_context(prefix="http-") as http_path:
             httpfile.write(
                 http_path,
                 {"url": "http://example.com/hello"},
@@ -287,12 +365,12 @@ class RenderTests(unittest.TestCase):
                 [("content-type", "text/csv")],
                 io.BytesIO(b"A,B\na,b"),
             )
-            with self.render(P(has_header=True), FetchResult(http_path)) as result:
-                assert_arrow_table_equals(result.table, {"A": ["a"], "B": ["b"]})
-                self.assertEqual(result.errors, [])
+            table, errors = call_render(P(has_header=True), FetchResult(http_path))
+            assert_arrow_table_equals(table, {"A": ["a"], "B": ["b"]})
+            self.assertEqual(errors, [])
 
     def test_render_has_header_false(self):
-        with tempfile_context("http") as http_path:
+        with tempfile_context(prefix="http-") as http_path:
             httpfile.write(
                 http_path,
                 {"url": "http://example.com/hello"},
@@ -300,15 +378,15 @@ class RenderTests(unittest.TestCase):
                 [("content-type", "text/csv")],
                 io.BytesIO(b"1,2\n3,4"),
             )
-            with self.render(P(has_header=False), FetchResult(http_path)) as result:
-                assert_arrow_table_equals(
-                    result.table,
-                    {
-                        "Column 1": pyarrow.array([1, 3], pyarrow.int8()),
-                        "Column 2": pyarrow.array([2, 4], pyarrow.int8()),
-                    },
-                )
-                self.assertEqual(result.errors, [])
+            table, errors = call_render(P(has_header=False), FetchResult(http_path))
+            assert_arrow_table_equals(
+                table,
+                {
+                    "Column 1": pyarrow.array([1, 3], pyarrow.int8()),
+                    "Column 2": pyarrow.array([2, 4], pyarrow.int8()),
+                },
+            )
+            self.assertEqual(errors, [])
 
     def test_render_csv_use_url_ext_given_bad_content_type(self):
         # Use text/plain type and rely on filename detection, as
@@ -324,9 +402,9 @@ class RenderTests(unittest.TestCase):
                 # find the delimiter.
                 io.BytesIO(b"A;B\na;b"),
             )
-            with self.render(P(has_header=True), FetchResult(http_path)) as result:
-                assert_arrow_table_equals(result.table, {"A;B": ["a;b"]})
-                self.assertEqual(result.errors, [])
+            table, errors = call_render(P(has_header=True), FetchResult(http_path))
+            assert_arrow_table_equals(table, {"A;B": ["a;b"]})
+            self.assertEqual(errors, [])
 
     def test_render_text_plain(self):
         # guess_mime_type_or_none() treats text/plain specially.
@@ -338,9 +416,9 @@ class RenderTests(unittest.TestCase):
                 [("content-type", "text/plain")],
                 io.BytesIO(b"A;B\na;b"),
             )
-            with self.render(P(has_header=True), FetchResult(http_path)) as result:
-                self.assertEqual(result.errors, [])
-                assert_arrow_table_equals(result.table, {"A": ["a"], "B": ["b"]})
+            table, errors = call_render(P(has_header=True), FetchResult(http_path))
+            assert_arrow_table_equals(table, {"A": ["a"], "B": ["b"]})
+            self.assertEqual(errors, [])
 
     def test_render_csv_handle_nonstandard_mime_type(self):
         # Transform 'application/csv' into 'text/csv', etc.
@@ -355,12 +433,12 @@ class RenderTests(unittest.TestCase):
                 [("content-type", "application/x-csv")],
                 io.BytesIO(b"A,B\na,b"),
             )
-            with self.render(P(has_header=True), FetchResult(http_path)) as result:
-                assert_arrow_table_equals(result.table, {"A": ["a"], "B": ["b"]})
-                self.assertEqual(result.errors, [])
+            table, errors = call_render(P(has_header=True), FetchResult(http_path))
+            assert_arrow_table_equals(table, {"A": ["a"], "B": ["b"]})
+            self.assertEqual(errors, [])
 
     def test_render_json(self):
-        with tempfile_context("fetch-") as http_path:
+        with tempfile_context(prefix="fetch-") as http_path:
             httpfile.write(
                 http_path,
                 {"url": "http://example.com/hello"},
@@ -368,12 +446,12 @@ class RenderTests(unittest.TestCase):
                 [("content-type", "application/json")],
                 io.BytesIO(b'[{"A": "a"}]'),
             )
-            with self.render(P(has_header=True), FetchResult(http_path)) as result:
-                self.assertEqual(result.errors, [])
-                assert_arrow_table_equals(result.table, {"A": ["a"]})
+            table, errors = call_render(P(has_header=True), FetchResult(http_path))
+            self.assertEqual(errors, [])
+            assert_arrow_table_equals(table, {"A": ["a"]})
 
     def test_render_xlsx(self):
-        with tempfile_context("fetch-") as http_path:
+        with tempfile_context(prefix="fetch-") as http_path:
             with (TestDataPath / "example.xlsx").open("rb") as xlsx_f:
                 httpfile.write(
                     http_path,
@@ -382,14 +460,12 @@ class RenderTests(unittest.TestCase):
                     [("content-type", XLSX_MIME_TYPE)],
                     xlsx_f,
                 )
-            with self.render(P(has_header=True), FetchResult(http_path)) as result:
-                self.assertEqual(result.errors, [])
-                assert_arrow_table_equals(
-                    result.table, {"foo": [1.0, 2.0], "bar": [2.0, 3.0]}
-                )
+            table, errors = call_render(P(has_header=True), FetchResult(http_path))
+            self.assertEqual(errors, [])
+            assert_arrow_table_equals(table, {"foo": [1.0, 2.0], "bar": [2.0, 3.0]})
 
     def test_render_xlsx_bad_content(self):
-        with tempfile_context("fetch-") as http_path:
+        with tempfile_context(prefix="fetch-") as http_path:
             httpfile.write(
                 http_path,
                 {"url": "http://example.com/hello"},
@@ -397,17 +473,17 @@ class RenderTests(unittest.TestCase):
                 [("content-type", XLSX_MIME_TYPE)],
                 io.BytesIO("ceçi n'est pas une .xlsx".encode("utf-8")),
             )
-            with self.render(P(), FetchResult(http_path)) as result:
-                self.assertEqual(
-                    result,
-                    RenderResult(
-                        ArrowTable(),
-                        [
-                            RenderError(
-                                I18nMessage.TODO_i18n(
-                                    "Invalid XLSX file: xlnt::exception : failed to find zip header"
-                                )
-                            )
-                        ],
-                    ),
-                )
+            table, errors = call_render(P(), FetchResult(http_path))
+            assert_arrow_table_equals(table, {})
+            self.assertEqual(
+                errors,
+                [
+                    I18nMessage(
+                        "TODO_i18n",
+                        {
+                            "text": "Invalid XLSX file: xlnt::exception : failed to find zip header"
+                        },
+                        None,
+                    )
+                ],
+            )

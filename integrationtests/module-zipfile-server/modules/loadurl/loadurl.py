@@ -23,14 +23,14 @@ Newer versions of loadurl (2019-11-01 onwards) store fetched data in "httpfile"
 format, which is more akin to actual HTTP traffic.
 """
 import asyncio
-from pathlib import Path
 import re
+from pathlib import Path
 from typing import Any, Dict, List
-from cjwparse.api import parse_file, MimeType
-import cjwparquet
-from cjwmodule.http import httpfile, HttpError
-from cjwmodule.i18n import I18nMessage
 
+import cjwparquet
+from cjwmodule.http import HttpError, httpfile
+from cjwmodule.i18n import I18nMessage
+from cjwparse.api import MimeType, parse_file
 
 ExtensionMimeTypes = {
     ".xls": MimeType.XLS,

@@ -1,8 +1,9 @@
 import logging
 from unittest.mock import patch
+
 from cjwstate import commands
 from cjwstate.models import Workflow
-from cjwstate.models.commands import InitWorkflowCommand, ChangeParametersCommand
+from cjwstate.models.commands import ChangeParametersCommand, InitWorkflowCommand
 from cjwstate.tests.utils import (
     DbTestCaseWithModuleRegistryAndMockKernel,
     create_module_zipfile,
@@ -24,7 +25,7 @@ class ChangeParametersCommandTest(DbTestCaseWithModuleRegistryAndMockKernel):
         workflow = Workflow.create_and_init()
 
         module_zipfile = create_module_zipfile(
-            "loadsomething",
+            "loadurl",
             spec_kwargs={
                 "parameters": [
                     {"id_name": "url", "type": "string"},
@@ -91,7 +92,7 @@ class ChangeParametersCommandTest(DbTestCaseWithModuleRegistryAndMockKernel):
         wf_module = workflow.tabs.first().wf_modules.create(
             order=0,
             slug="step-1",
-            module_id_name="loadsomething",
+            module_id_name="loadurl",
             last_relevant_delta_id=workflow.last_delta_id,
             is_deleted=True,
             params={"url": ""},
@@ -115,7 +116,7 @@ class ChangeParametersCommandTest(DbTestCaseWithModuleRegistryAndMockKernel):
         wf_module = tab.wf_modules.create(
             order=0,
             slug="step-1",
-            module_id_name="loadsomething",
+            module_id_name="loadurl",
             last_relevant_delta_id=delta.id,
             params={"url": ""},
         )
@@ -132,12 +133,12 @@ class ChangeParametersCommandTest(DbTestCaseWithModuleRegistryAndMockKernel):
 
     def test_change_parameters_on_hard_deleted_wf_module(self):
         workflow = Workflow.create_and_init()
-        create_module_zipfile("loadsomething")
+        create_module_zipfile("loadurl")
 
         wf_module = workflow.tabs.first().wf_modules.create(
             order=0,
             slug="step-1",
-            module_id_name="loadsomething",
+            module_id_name="loadurl",
             last_relevant_delta_id=workflow.last_delta_id,
             params={"url": ""},
         )
