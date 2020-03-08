@@ -18,6 +18,7 @@ histogram
 intercom
 jointab
 linechart
+loadurl
 mergecolumns
 refine
 regexextractor
