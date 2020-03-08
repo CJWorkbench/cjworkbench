@@ -46,12 +46,12 @@ pathspec = "*"
 setuptools = "*"  # django-polymorphic depends on it but doesn't declare it
 google-re2 = "*"
 cjwparse = "~=0.0.2"
-cjwparquet = "~=1.0.1"
+cjwparquet = "~=1.0.2"
 
 [dev-packages]
+black = "==19.10b0"
 watchdog = "*"
 http-process-proxy = "==0.0.10"
-black = "==19.3b0"
 
 [requires]
 python_version = "3.8"
