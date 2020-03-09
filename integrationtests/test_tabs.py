@@ -1,5 +1,5 @@
-from integrationtests.utils import WorkbenchBase
 from integrationtests.helpers import accounts
+from integrationtests.utils import WorkbenchBase
 
 
 class TestTabs(WorkbenchBase):
@@ -47,6 +47,7 @@ class TestTabs(WorkbenchBase):
         b.assert_no_element('.wf-module[data-module-name="Paste data"]')
 
         # Add a module that should not appear on Tab 1
+        self.import_module("loadurl")
         self.add_data_step("Load from URL")
 
         # Switch to Tab 1
