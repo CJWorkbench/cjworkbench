@@ -1,6 +1,7 @@
-from pathlib import Path
 import tempfile
 import unittest
+from pathlib import Path
+
 from cjwkernel import types
 from cjwkernel.thrift import ttypes
 
@@ -550,33 +551,3 @@ class ThriftConvertersTest(unittest.TestCase):
                     Path(tf.name), [types.RenderError(types.I18nMessage("hi"))]
                 ),
             )
-
-
-class NumberFormatterTest(unittest.TestCase):
-    def test_format_too_many_arguments(self):
-        with self.assertRaisesRegex(ValueError, "Can only format one number"):
-            types.NumberFormatter("{:d}{:f}")
-
-    def test_format_disallow_non_format(self):
-        with self.assertRaisesRegex(ValueError, 'Format must look like "{:...}"'):
-            types.NumberFormatter("%d")
-
-    def test_format_disallow_field_number(self):
-        with self.assertRaisesRegex(
-            ValueError, "Field names or numbers are not allowed"
-        ):
-            types.NumberFormatter("{0:f}")
-
-    def test_format_disallow_field_name(self):
-        with self.assertRaisesRegex(
-            ValueError, "Field names or numbers are not allowed"
-        ):
-            types.NumberFormatter("{value:f}")
-
-    def test_format_disallow_field_converter(self):
-        with self.assertRaisesRegex(ValueError, "Field converters are not allowed"):
-            types.NumberFormatter("{!r:f}")
-
-    def test_format_disallow_invalid_type(self):
-        with self.assertRaisesRegex(ValueError, "Unknown format code 'T'"):
-            types.NumberFormatter("{:T}")
