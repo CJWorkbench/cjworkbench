@@ -1,22 +1,23 @@
-from collections import namedtuple
 import datetime
 import logging
 import re
+from collections import namedtuple
 from functools import singledispatch
 from typing import Any, Dict, Iterable, List, Optional, Union
+
 from allauth.account.utils import user_display
-from django.contrib.auth import get_user_model
 from cjwkernel.types import Column, I18nMessage, QuickFix, QuickFixAction, RenderError
-from cjworkbench.settings import KB_ROOT_URL
-from server.settingsutils import workbench_user_display
-from cjwstate.modules.param_spec import ParamSpec
-from cjwstate import clientside
 from cjworkbench.i18n.trans import (
     MESSAGE_LOCALIZER_REGISTRY,
-    NotInternationalizedError,
     MessageLocalizer,
+    NotInternationalizedError,
 )
+from cjworkbench.settings import KB_ROOT_URL
+from cjwstate import clientside
+from cjwstate.modules.param_spec import ParamSpec
+from django.contrib.auth import get_user_model
 from icu import ICUError
+from server.settingsutils import workbench_user_display
 
 User = get_user_model()
 
@@ -561,6 +562,8 @@ def _i18n_message_source_to_localizer(
         )  # Raises `NotInternationalizedError`
     elif message.source == "cjwmodule":
         return MESSAGE_LOCALIZER_REGISTRY.cjwmodule_localizer
+    elif message.source == "cjwparse":
+        return MESSAGE_LOCALIZER_REGISTRY.cjwparse_localizer
     else:  # if message.source is None
         return MESSAGE_LOCALIZER_REGISTRY.application_localizer
 

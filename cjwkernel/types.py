@@ -1,14 +1,16 @@
 from __future__ import annotations
-from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
+
 import json
 import marshal
+from abc import ABC, abstractmethod
+from dataclasses import dataclass, field
 from pathlib import Path
+from string import Formatter
+from typing import Any, Dict, List, Literal, NamedTuple, Optional, Union
+
 import pyarrow
 import pyarrow.ipc
 import pyarrow.types
-from string import Formatter
-from typing import Any, Dict, List, Literal, NamedTuple, Optional, Union
 from cjwkernel.util import json_encode
 
 # Some types we can import with no conversion
@@ -885,7 +887,7 @@ def thrift_tab_output_to_arrow(value: ttypes.TabOutput, basedir: Path) -> TabOut
 
 
 def thrift_i18n_message_to_arrow(value: ttypes.I18nMessage) -> I18nMessage:
-    if value.source not in [None, "module", "cjwmodule"]:
+    if value.source not in [None, "module", "cjwmodule", "cjwparse"]:
         raise ValueError("Invalid message source %r" % value.source)
     return I18nMessage(
         value.id,
