@@ -204,7 +204,6 @@ class Kernel:
                 "lxml.etree",
                 "lxml.html",
                 "lxml.html.html5parser",
-                "networkx",
                 "numpy",
                 "nltk",
                 "nltk.corpus",
