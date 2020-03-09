@@ -1,21 +1,22 @@
+import shutil
+import unittest
 from contextlib import ExitStack  # workaround https://github.com/psf/black/issues/664
 from datetime import datetime
 from pathlib import Path
-import shutil
-import unittest
 from unittest.mock import patch
+
+import cjwkernel.pandas.types as ptypes
 import pandas as pd
-from pandas.testing import assert_frame_equal
 import pyarrow as pa
+from cjwkernel.pandas import module
 from cjwkernel.tests.util import (
     arrow_table,
     arrow_table_context,
     assert_arrow_table_equals,
     assert_render_result_equals,
-    parquet_file,
     override_settings,
+    parquet_file,
 )
-from cjwkernel.util import create_tempdir, tempfile_context
 from cjwkernel.thrift import ttypes
 from cjwkernel.types import (
     Column,
@@ -28,17 +29,17 @@ from cjwkernel.types import (
     RenderResult,
     Tab,
     TabOutput,
-    arrow_raw_params_to_thrift,
-    arrow_params_to_thrift,
     arrow_arrow_table_to_thrift,
     arrow_fetch_result_to_thrift,
+    arrow_params_to_thrift,
+    arrow_raw_params_to_thrift,
     arrow_tab_to_thrift,
     thrift_fetch_result_to_arrow,
     thrift_raw_params_to_arrow,
     thrift_render_result_to_arrow,
 )
-import cjwkernel.pandas.types as ptypes
-from cjwkernel.pandas import module
+from cjwkernel.util import create_tempdir, tempfile_context
+from pandas.testing import assert_frame_equal
 
 
 class MigrateParamsTests(unittest.TestCase):
@@ -227,6 +228,69 @@ class RenderTests(unittest.TestCase):
         self.assertEqual(
             result.errors, [RenderError(I18nMessage("x", {"a": "b"}, "cjwmodule"))]
         )
+
+    def test_render_arrow_table_infer_output_column_formats_from_input(self):
+        input_columns = [
+            Column("A", ColumnType.Number("{:,.3f}")),
+            Column("B", ColumnType.Number("{:,.3f}")),
+            Column("C", ColumnType.Number("{:,.3f}")),
+            Column("D", ColumnType.Datetime()),
+            Column("E", ColumnType.Datetime()),
+            Column("F", ColumnType.Datetime()),
+            Column("G", ColumnType.Text()),
+            Column("H", ColumnType.Text()),
+            Column("I", ColumnType.Text()),
+        ]
+        # The param name "arrow_table" is a special case
+        def render(arrow_table, params, output_path, *, columns, **kwargs):
+            self.assertEqual(columns, input_columns)
+            table = pa.table(
+                {
+                    "A": [1],
+                    "B": pa.array([datetime(2020, 3, 8)], pa.timestamp("ns")),
+                    "C": ["a"],
+                    "D": [1],
+                    "E": pa.array([datetime(2020, 3, 8)], pa.timestamp("ns")),
+                    "F": ["a"],
+                    "G": [1],
+                    "H": pa.array([datetime(2020, 3, 8)], pa.timestamp("ns")),
+                    "I": ["a"],
+                }
+            )
+            with pa.ipc.RecordBatchFileWriter(output_path, table.schema) as writer:
+                writer.write_table(table)
+            return []
+
+        with arrow_table_context(
+            {
+                "A": [1],
+                "B": [1],
+                "C": [1],
+                "D": pa.array([datetime(2020, 3, 8)], pa.timestamp("ns")),
+                "E": pa.array([datetime(2020, 3, 8)], pa.timestamp("ns")),
+                "F": pa.array([datetime(2020, 3, 8)], pa.timestamp("ns")),
+                "G": ["a"],
+                "H": ["a"],
+                "I": ["a"],
+            },
+            columns=input_columns,
+            dir=self.basedir,
+        ) as arrow_table:
+            result = self._test_render(render, arrow_table=arrow_table)
+            self.assertEqual(
+                result.table.metadata.columns,
+                [
+                    Column("A", ColumnType.Number("{:,.3f}")),  # recalled
+                    Column("B", ColumnType.Datetime()),  # inferred
+                    Column("C", ColumnType.Text()),  # inferred
+                    Column("D", ColumnType.Number("{:,}")),  # inferred
+                    Column("E", ColumnType.Datetime()),  # recalled
+                    Column("F", ColumnType.Text()),  # inferred
+                    Column("G", ColumnType.Number("{:,}")),  # inferred
+                    Column("H", ColumnType.Datetime()),  # inferred
+                    Column("I", ColumnType.Text()),  # recalled
+                ],
+            )
 
     def test_render_exception_raises(self):
         def render(table, params, **kwargs):

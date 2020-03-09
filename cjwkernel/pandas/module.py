@@ -5,22 +5,23 @@
 import asyncio
 import inspect
 from pathlib import Path
-import pandas as pd
 from typing import Any, Dict, List, Optional, Union
+
+import cjwparquet
+import pandas as pd
 from cjwkernel import types
+from cjwkernel.pandas import types as ptypes
+from cjwkernel.thrift import ttypes
 from cjwkernel.types import (
     arrow_fetch_result_to_thrift,
-    arrow_render_result_to_thrift,
     arrow_raw_params_to_thrift,
+    arrow_render_result_to_thrift,
     thrift_arrow_table_to_arrow,
     thrift_fetch_result_to_arrow,
     thrift_params_to_arrow,
     thrift_raw_params_to_arrow,
 )
 from cjwkernel.util import tempfile_context
-from cjwkernel.pandas import types as ptypes
-from cjwkernel.thrift import ttypes
-import cjwparquet
 
 
 def render(table: pd.DataFrame, params: Dict[str, Any], **kwargs):
@@ -192,14 +193,22 @@ def __render_arrow(
     """
     # call render()
     raw_result = render(
-        table, params, output_path, tab_name=tab_name, fetch_result=fetch_result
+        table.table,
+        params,
+        output_path,
+        columns=table.metadata.columns,
+        tab_name=tab_name,
+        fetch_result=fetch_result,
     )
 
     # coerce result
     # TODO let module output column types. (Currently, the lack of column types
     # means this is only useful for fetch modules that don't output number
     # formats.)
-    table = types.ArrowTable.from_arrow_file_with_inferred_metadata(output_path)
+    table = types.ArrowTable.from_arrow_file_with_inferred_metadata(
+        output_path,
+        fallback_column_types={c.name: c.type for c in table.metadata.columns},
+    )
     # TODO support more output types? Or develop the One True Types (maybe
     # types.RenderResult) and force modules to output it.
     if isinstance(raw_result, list):

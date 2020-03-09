@@ -272,9 +272,14 @@ class TableMetadata(NamedTuple):
     """Columns -- the user-visible aspects of them, at least."""
 
 
-def _pyarrow_type_to_column_type(dtype: pyarrow.DataType) -> ColumnType:
+def _pyarrow_type_to_column_type(
+    dtype: pyarrow.DataType, fallback_column_type: Optional[ColumnType]
+) -> ColumnType:
     if pyarrow.types.is_floating(dtype) or pyarrow.types.is_integer(dtype):
-        return ColumnTypeNumber()
+        if fallback_column_type is not None and fallback_column_type.name == "number":
+            return ColumnTypeNumber(fallback_column_type.format)
+        else:
+            return ColumnTypeNumber()
     elif pyarrow.types.is_string(dtype) or (
         pyarrow.types.is_dictionary(dtype) and pyarrow.types.is_string(dtype.value_type)
     ):
@@ -426,7 +431,9 @@ class ArrowTable:
         return cls(None, None, metadata)
 
     @classmethod
-    def from_arrow_file_with_inferred_metadata(cls, path: Path) -> ArrowTable:
+    def from_arrow_file_with_inferred_metadata(
+        cls, path: Path, *, fallback_column_types: Dict[str, ColumnType] = {}
+    ) -> ArrowTable:
         """
         Build from a trusted Arrow file and infer metadata.
 
@@ -444,7 +451,12 @@ class ArrowTable:
 
             # if table has no columns, empty ArrowTable
             columns = [
-                Column(name, _pyarrow_type_to_column_type(dtype))
+                Column(
+                    name,
+                    _pyarrow_type_to_column_type(
+                        dtype, fallback_column_types.get(name)
+                    ),
+                )
                 for name, dtype in zip(schema.names, schema.types)
             ]
             if not columns:
