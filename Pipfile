@@ -41,12 +41,12 @@ thrift = "~=0.13.0"
 pyroute2 = "*"
 pyspawner = "*"
 pyicu = "*"
-cjwmodule = "==1.4.2"
+cjwmodule = "~=1.5"
 pathspec = "*"
 setuptools = "*"  # django-polymorphic depends on it but doesn't declare it
 google-re2 = "*"
-cjwparse = "~=0.0.2"
-cjwparquet = "~=1.0.2"
+cjwparse = "~=0.0.3"
+cjwparquet = "~=1.0"
 
 [dev-packages]
 black = "==19.10b0"

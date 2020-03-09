@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "8e5ae556292f78d896b35283da0d74ea19d1ba96069f4096616ec449bb9d6940"
+            "sha256": "5a3aba8253b391b43065205f456a574965a1e5bc8b3602d1be82a1aa2729249f"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -238,10 +238,10 @@
         },
         "cjwmodule": {
             "hashes": [
-                "sha256:72acc8c76e07f1cb3e26c7a9f855c3285fde472006a1900dd9559771850f9c05"
+                "sha256:7fb0cefdb74e114eabb88077afce8aa911f1015e932dab36697012554b637296"
             ],
             "index": "pypi",
-            "version": "==1.4.2"
+            "version": "==1.5.0"
         },
         "cjwparquet": {
             "hashes": [
@@ -252,10 +252,10 @@
         },
         "cjwparse": {
             "hashes": [
-                "sha256:c393ddcf67ccd2c0b470822a4ab15f0161ecee85c65935a960df66968d54da48"
+                "sha256:f397236654cfa518d07e741021be0de648cc67cfc728e02aa75a2f7e6f3d05de"
             ],
             "index": "pypi",
-            "version": "==0.0.2"
+            "version": "==0.0.3"
         },
         "constantly": {
             "hashes": [
