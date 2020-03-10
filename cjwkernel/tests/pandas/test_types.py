@@ -237,8 +237,10 @@ class I18nMessageTests(unittest.TestCase):
             I18nMessage.coerce({"id": "my_id", "arguments": {"hello": "there"}})
 
     def test_coerce_with_source_none(self):
-        with self.assertRaises(ValueError):
+        self.assertEqual(
             I18nMessage.coerce(("my_id", {"hello": "there"}, None)),
+            I18nMessage("my_id", {"hello": "there"}),
+        )
 
     def test_coerce_with_source_empty(self):
         with self.assertRaises(ValueError):
