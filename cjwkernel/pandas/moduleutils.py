@@ -1,70 +1,14 @@
-from contextlib import asynccontextmanager
-import io
-import json
-import re
 import ssl
-from typing import Dict, Callable, Iterator, Optional
+from contextlib import asynccontextmanager
+from typing import Dict, Optional
+
 import aiohttp
-import numpy as np
 import pandas as pd
-from pandas.api.types import is_numeric_dtype, is_datetime64_dtype
 import yarl  # aiohttp innards -- yuck!
 from cjwkernel.util import tempfile_context
-from cjwkernel.pandas.types import ProcessResult
+from pandas.api.types import is_datetime64_dtype, is_numeric_dtype
 
-
-_TextEncoding = Optional[str]
 _ChunkSize = 1024 * 1024
-
-
-class BadInput(ValueError):
-    """
-    Workbench cannot transform the given data into a pd.DataFrame.
-    """
-
-
-def _safe_parse(
-    bytesio: io.BytesIO, parser: Callable[[bytes], pd.DataFrame]
-) -> ProcessResult:
-    """
-    Run the given parser, or return the error as a string.
-
-    Empty dataset is not an error: it is just an empty dataset.
-    """
-    try:
-        return ProcessResult.coerce(parser(bytesio))
-    except BadInput as err:
-        return ProcessResult.coerce(str(err))
-    except json.decoder.JSONDecodeError as err:
-        return ProcessResult.coerce(str(err))
-    except pd.errors.EmptyDataError:
-        return ProcessResult()
-    except pd.errors.ParserError as err:
-        return ProcessResult.coerce(str(err))
-
-
-# Move dataframe column names into the first row of data, and replace column
-# names with numbers. Used to undo first row of data incorrectly read as header
-def turn_header_into_first_row(table: pd.DataFrame) -> pd.DataFrame:
-    # Table may not be uploaded yet
-    if table is None:
-        return None
-
-    new_line = pd.DataFrame([table.columns], columns=table.columns)
-    new_table = pd.concat([new_line, table], ignore_index=True)
-
-    new_table.columns = [str(i) for i in range(len(new_table.columns))]
-    autocast_dtypes_in_place(new_table)
-
-    # Convert 'object' columns to string. The prior instructions may have made
-    # a column with all-numeric values except for row 0, which is a string.
-    # Such a column will have type=object. We need to convert it to string.
-    str_columns = new_table.select_dtypes(object)
-    isna = str_columns.isna()
-    new_table[str_columns.columns] = str_columns.astype(str)
-    new_table[str_columns.columns][isna] = np.nan
-
-    return new_table
 
 
 @asynccontextmanager
