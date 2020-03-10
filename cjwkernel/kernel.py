@@ -1,17 +1,18 @@
-from dataclasses import dataclass, field
 import io
 import logging
 import os
 import os.path
-from pathlib import Path
-import pyspawner
 import selectors
 import time
+from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any, Dict, List, Optional
+
+import pyspawner
 import thrift.protocol.TBinaryProtocol
 import thrift.transport.TTransport
-from cjwkernel.chroot import ChrootContext, READONLY_CHROOT_DIR
-from cjwkernel.errors import ModuleTimeoutError, ModuleExitedError
+from cjwkernel.chroot import READONLY_CHROOT_DIR, ChrootContext
+from cjwkernel.errors import ModuleExitedError, ModuleTimeoutError
 from cjwkernel.thrift import ttypes
 from cjwkernel.types import (
     ArrowTable,
@@ -31,7 +32,6 @@ from cjwkernel.types import (
     thrift_render_result_to_arrow,
 )
 from cjwkernel.validate import ValidateError
-
 
 logger = logging.getLogger(__name__)
 
@@ -230,7 +230,6 @@ class Kernel:
                 *ENCODING_IMPORTS,
                 "cjwkernel.pandas.main",
                 "cjwkernel.pandas.module",
-                "cjwkernel.pandas.moduleutils",
                 "cjwmodule",
                 "cjwmodule.i18n",
                 "cjwmodule.http.client",
