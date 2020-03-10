@@ -1,0 +1,15 @@
+id_name: upload
+name: Upload
+category: Add data
+icon: upload
+description: "Upload CSV, Excel or JSON files from your computer."
+loads_data: true
+help_url: modules/add-data/upload-file
+parameters_version: 1
+parameters:
+- id_name: file
+  type: file
+- id_name: has_header
+  name: Has header row
+  type: checkbox
+  default: true

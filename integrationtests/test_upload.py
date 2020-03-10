@@ -10,6 +10,7 @@ class TestUpload(LoggedInIntegrationTest):
         # Empty module stack
         b.wait_for_element(".module-stack")
 
+        self.import_module("upload")
         self.add_data_step("Upload")
         b.wait_for_element("label", text="Browse")
         b.attach_file(
@@ -28,6 +29,7 @@ class TestUpload(LoggedInIntegrationTest):
         # Empty module stack
         b.wait_for_element(".module-stack")
 
+        self.import_module("upload")
         self.add_data_step("Upload")
         b.wait_for_element("label", text="Browse")
         b.attach_file(

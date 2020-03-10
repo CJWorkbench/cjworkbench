@@ -1,0 +1,12 @@
+#. default-message: Upload
+msgid "_spec.name"
+msgstr ""
+
+#. default-message: Upload CSV, Excel or JSON files from your computer.
+msgid "_spec.description"
+msgstr ""
+
+#. default-message: Has header row
+msgid "_spec.parameters.has_header.name"
+msgstr ""
+
