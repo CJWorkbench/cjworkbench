@@ -9,7 +9,7 @@ from typing import Any, Dict, List, Optional, Union
 
 import cjwparquet
 import pandas as pd
-from cjwkernel import types
+from cjwkernel import settings, types
 from cjwkernel.pandas import types as ptypes
 from cjwkernel.thrift import ttypes
 from cjwkernel.types import (
@@ -79,6 +79,8 @@ def __render_pandas(
         else:
             pandas_fetch_result = None
         kwargs["fetch_result"] = pandas_fetch_result
+    if varkw or "settings" in kwonlyargs:
+        kwargs["settings"] = settings
     if varkw or "tab_name" in kwonlyargs:
         kwargs["tab_name"] = tab_name
     if varkw or "input_columns" in kwonlyargs:
@@ -197,6 +199,7 @@ def __render_arrow(
         params,
         output_path,
         columns=table.metadata.columns,
+        settings=settings,
         tab_name=tab_name,
         fetch_result=fetch_result,
     )
