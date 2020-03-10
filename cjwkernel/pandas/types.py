@@ -2,19 +2,22 @@
 
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
-from dataclasses import dataclass, asdict, field
 import json
+from abc import ABC, abstractmethod
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from string import Formatter
-from typing import Any, Dict, Iterable, List, Optional, Union, Tuple
+from typing import Any, Dict, Iterable, List, Optional, Tuple, Union
+
 import numpy as np
 import pandas as pd
-from pandas.api.types import is_numeric_dtype, is_datetime64_dtype
 import pyarrow
-from .validate import validate_dataframe
-from .. import settings, types as atypes
+from pandas.api.types import is_datetime64_dtype, is_numeric_dtype
+
+from .. import settings
+from .. import types as atypes
 from . import moduletypes as mtypes
+from .validate import validate_dataframe
 
 
 class ColumnType(ABC):
@@ -466,7 +469,7 @@ class I18nMessage:
                 )
             if len(value) == 3:
                 source = value[2]
-                if source not in ["module", "cjwmodule"]:
+                if source not in ["module", "cjwmodule", "cjwparse", None]:
                     raise ValueError("Invalid i18n message source %r" % source)
             else:
                 source = None
