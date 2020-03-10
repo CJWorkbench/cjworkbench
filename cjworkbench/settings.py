@@ -11,13 +11,14 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
 
+import json
 import os
 import sys
-import json
 from os.path import abspath, dirname, join, normpath
 from typing import Dict, Optional
-from server.settingsutils import workbench_user_display
+
 from cjworkbench.i18n import default_locale, supported_locales
+from server.settingsutils import workbench_user_display
 
 if sys.version_info[0] < 3:
     raise RuntimeError("CJ Workbench requires Python 3")
@@ -55,6 +56,8 @@ if "CJW_PRODUCTION" in os.environ:
     DEBUG = not os.environ["CJW_PRODUCTION"]
 else:
     DEBUG = True
+
+I_AM_TESTING = "test" in sys.argv
 
 if "CJW_FORCE_SSL" in os.environ:
     SECURE_SSL_REDIRECT = bool(os.environ["CJW_FORCE_SSL"])
@@ -335,6 +338,9 @@ LOGGING = {
         "django.channels.server": {"level": "ERROR"},  # ditto djano.request
         # DEBUG only gets messages when settings.DEBUG==True
         "django.db.backends": {"level": "INFO"},
+        "cjwstate.models.module_registry": {
+            "level": ("WARNING" if I_AM_TESTING else "INFO")
+        },
         "cjworkbench.pg_render_locker": {"level": "INFO"},
     },
 }
@@ -438,8 +444,6 @@ _maybe_load_oauth_service(
 
 # Knowledge base root url, used as a default for missing help links
 KB_ROOT_URL = "http://help.workbenchdata.com/"
-
-I_AM_TESTING = "test" in sys.argv
 
 TEST_RUNNER = "server.tests.runner.TimeLoggingDiscoverRunner"
 
