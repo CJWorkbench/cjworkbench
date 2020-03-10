@@ -510,7 +510,7 @@ def validate_thrift() -> ttypes.ValidateModuleResult:
             render_spec.varkw
         ), "render() must accept **kwargs (for forward-compatibility)"
         assert not (
-            set(render_spec.kwonlyargs) - {"fetch_result", "tab_name"}
+            set(render_spec.kwonlyargs) - {"fetch_result", "columns", "tab_name"}
         ), "a render() keyword argument is misspelled"
     else:
         assert len(render_spec.args) == 2, "render must take two positional arguments"
