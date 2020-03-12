@@ -1,30 +1,31 @@
-from datetime import datetime as dt
 import os
-from pathlib import Path
 import tempfile
 import unittest
+from datetime import datetime as dt
+from pathlib import Path
+
+import cjwkernel.types as atypes
 import numpy as np
 import pandas as pd
-from pandas.testing import assert_series_equal, assert_frame_equal
 import pyarrow
 from cjwkernel.pandas.types import (
     Column,
     ColumnType,
     I18nMessage,
-    ProcessResultError,
     ProcessResult,
+    ProcessResultError,
     QuickFix,
     TableShape,
     arrow_table_to_dataframe,
     dataframe_to_arrow_table,
 )
-import cjwkernel.types as atypes
-from cjwkernel.util import create_tempfile
 from cjwkernel.tests.util import (
-    override_settings,
     arrow_table,
     assert_arrow_table_equals,
+    override_settings,
 )
+from cjwkernel.util import create_tempfile
+from pandas.testing import assert_frame_equal, assert_series_equal
 
 
 class ColumnTypeTextTests(unittest.TestCase):
@@ -236,8 +237,10 @@ class I18nMessageTests(unittest.TestCase):
             I18nMessage.coerce({"id": "my_id", "arguments": {"hello": "there"}})
 
     def test_coerce_with_source_none(self):
-        with self.assertRaises(ValueError):
+        self.assertEqual(
             I18nMessage.coerce(("my_id", {"hello": "there"}, None)),
+            I18nMessage("my_id", {"hello": "there"}),
+        )
 
     def test_coerce_with_source_empty(self):
         with self.assertRaises(ValueError):
@@ -253,6 +256,12 @@ class I18nMessageTests(unittest.TestCase):
         self.assertEqual(
             I18nMessage.coerce(("my_id", {"hello": "there"}, "cjwmodule")),
             I18nMessage("my_id", {"hello": "there"}, "cjwmodule"),
+        )
+
+    def test_coerce_with_source_library_none(self):
+        self.assertEqual(
+            I18nMessage.coerce(("my_id", {"hello": "there"}, None)),
+            I18nMessage("my_id", {"hello": "there"}, None),
         )
 
     def test_coerce_with_source_error_type_dict(self):
@@ -844,11 +853,11 @@ class ProcessResultTests(unittest.TestCase):
 
     def test_coerce_bad_tuple(self):
         with self.assertRaises(ValueError):
-            result = ProcessResult.coerce(("foo", "bar", "baz", "moo"))
+            ProcessResult.coerce(("foo", "bar", "baz", "moo"))
 
     def test_coerce_2tuple_no_dataframe(self):
         with self.assertRaises(ValueError):
-            result = ProcessResult.coerce(("foo", "bar"))
+            ProcessResult.coerce(("foo", "bar"))
 
     def test_coerce_2tuple_i18n(self):
         expected = ProcessResult(
@@ -859,11 +868,11 @@ class ProcessResultTests(unittest.TestCase):
 
     def test_coerce_2tuple_bad_i18n_error(self):
         with self.assertRaises(ValueError):
-            result = ProcessResult.coerce(("message_id", None))
+            ProcessResult.coerce(("message_id", None))
 
     def test_coerce_3tuple_no_dataframe(self):
         with self.assertRaises(ValueError):
-            result = ProcessResult.coerce(("foo", "bar", {"a": "b"}))
+            ProcessResult.coerce(("foo", "bar", {"a": "b"}))
 
     def test_coerce_3tuple_i18n(self):
         self.assertEqual(
@@ -1203,7 +1212,7 @@ class ProcessResultTests(unittest.TestCase):
 
     def test_coerce_invalid_value(self):
         with self.assertRaises(ValueError):
-            result = ProcessResult.coerce([None, "foo"])
+            ProcessResult.coerce([None, "foo"])
 
     def test_status_ok(self):
         result = ProcessResult(pd.DataFrame({"A": [1]}), [])

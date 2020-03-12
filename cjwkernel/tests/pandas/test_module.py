@@ -170,6 +170,13 @@ class RenderTests(unittest.TestCase):
 
         self._test_render(render, tab=Tab("tab-1", "Tab X"))
 
+    @override_settings(MAX_ROWS_PER_TABLE=12)
+    def test_render_with_settings(self):
+        def render(table, params, *, settings):
+            self.assertEqual(settings.MAX_ROWS_PER_TABLE, 12)
+
+        self._test_render(render)
+
     def test_render_with_no_kwargs(self):
         def render(table, params):
             return table * 2
@@ -229,6 +236,16 @@ class RenderTests(unittest.TestCase):
             result.errors, [RenderError(I18nMessage("x", {"a": "b"}, "cjwmodule"))]
         )
 
+    @override_settings(MAX_ROWS_PER_TABLE=12)
+    def test_render_arrow_table_settings(self):
+        def render(arrow_table, params, output_path, *, settings, **kwargs):
+            return [("x", {"n": settings.MAX_ROWS_PER_TABLE})]
+
+        result = self._test_render(render, {"A": [1]})
+        self.assertEqual(
+            result.errors, [RenderError(I18nMessage("x", {"n": 12}, None))]
+        )
+
     def test_render_arrow_table_infer_output_column_formats_from_input(self):
         input_columns = [
             Column("A", ColumnType.Number("{:,.3f}")),
@@ -243,6 +260,7 @@ class RenderTests(unittest.TestCase):
         ]
         # The param name "arrow_table" is a special case
         def render(arrow_table, params, output_path, *, columns, **kwargs):
+            # Test the "columns" kwarg
             self.assertEqual(columns, input_columns)
             table = pa.table(
                 {

@@ -1,16 +1,20 @@
+import asyncio
 import io
 import unittest
 from unittest import mock
 from unittest.mock import patch
+
+from asgiref.sync import async_to_sync
+
 import aiohttp
 import aiohttp.client
-from asgiref.sync import async_to_sync
+import numpy as np
 import pandas as pd
-from pandas.testing import assert_frame_equal
 from cjwkernel.pandas.types import I18nMessage, ProcessResult, ProcessResultError
+from pandas.testing import assert_frame_equal
 from staticmodules import scrapetable
-from .util import MockParams
 
+from .util import MockParams
 
 P = MockParams.factory(url="", tablenum=1, first_row_is_header=False)
 
@@ -60,7 +64,7 @@ a_table = pd.DataFrame({"A": [1, 2], "B": [2, 3]})
 
 
 class ScrapeTableTest(unittest.TestCase):
-    @patch("cjwkernel.pandas.moduleutils.spooled_data_from_url")
+    @patch.object(scrapetable.di, "spooled_data_from_url")
     def test_scrape_table(self, mock_data):
         url = "http://test.com/tablepage.html"
         mock_data.return_value = fake_spooled_data_from_url(a_table_html)
@@ -109,8 +113,9 @@ class ScrapeTableTest(unittest.TestCase):
             fetch_result, ProcessResult.coerce("Table number must be at least 1")
         )
 
-    @patch(
-        "cjwkernel.pandas.moduleutils.spooled_data_from_url",
+    @patch.object(
+        scrapetable.di,
+        "spooled_data_from_url",
         fake_spooled_data_from_url(a_table_html),
     )
     def test_table_index_over(self):
@@ -120,8 +125,9 @@ class ScrapeTableTest(unittest.TestCase):
             ProcessResult.coerce("The maximum table number on this page is 1"),
         )
 
-    @patch(
-        "cjwkernel.pandas.moduleutils.spooled_data_from_url",
+    @patch.object(
+        scrapetable.di,
+        "spooled_data_from_url",
         fake_spooled_data_from_url(
             b"""
                <html>
@@ -151,8 +157,9 @@ class ScrapeTableTest(unittest.TestCase):
             ),
         )
 
-    @patch(
-        "cjwkernel.pandas.moduleutils.spooled_data_from_url",
+    @patch.object(
+        scrapetable.di,
+        "spooled_data_from_url",
         fake_spooled_data_from_url(
             error=aiohttp.ClientResponseError(
                 aiohttp.client.RequestInfo(
@@ -174,8 +181,9 @@ class ScrapeTableTest(unittest.TestCase):
             fetch_result, ProcessResult.coerce("Error from server: 500 Server Error")
         )
 
-    @patch(
-        "cjwkernel.pandas.moduleutils.spooled_data_from_url",
+    @patch.object(
+        scrapetable.di,
+        "spooled_data_from_url",
         fake_spooled_data_from_url(b"<html><body>No table</body></html>"),
     )
     def test_no_tables(self):
@@ -188,8 +196,9 @@ class ScrapeTableTest(unittest.TestCase):
             ProcessResult.coerce("Did not find any <table> tags on that page"),
         )
 
-    @patch(
-        "cjwkernel.pandas.moduleutils.spooled_data_from_url",
+    @patch.object(
+        scrapetable.di,
+        "spooled_data_from_url",
         fake_spooled_data_from_url(
             error=aiohttp.ClientResponseError(
                 aiohttp.client.RequestInfo(
@@ -210,8 +219,9 @@ class ScrapeTableTest(unittest.TestCase):
             fetch_result, ProcessResult.coerce("Error from server: 404 Not Found")
         )
 
-    @patch(
-        "cjwkernel.pandas.moduleutils.spooled_data_from_url",
+    @patch.object(
+        scrapetable.di,
+        "spooled_data_from_url",
         fake_spooled_data_from_url(
             b"<table><tr><th>A</th></tr><tr><td>1</td></tr></table>"
         ),
@@ -220,8 +230,9 @@ class ScrapeTableTest(unittest.TestCase):
         fetch_result = fetch(url="http://example.org")
         assert_frame_equal(fetch_result.dataframe, pd.DataFrame({"A": [1]}))
 
-    @patch(
-        "cjwkernel.pandas.moduleutils.spooled_data_from_url",
+    @patch.object(
+        scrapetable.di,
+        "spooled_data_from_url",
         fake_spooled_data_from_url(
             # Add two columns. pd.read_html() will not return an all-empty
             # row, and we're not testing what happens when it does. We want
@@ -236,8 +247,9 @@ class ScrapeTableTest(unittest.TestCase):
             fetch_result.dataframe, pd.DataFrame({"A": ["a"], "B": [""]})
         )
 
-    @patch(
-        "cjwkernel.pandas.moduleutils.spooled_data_from_url",
+    @patch.object(
+        scrapetable.di,
+        "spooled_data_from_url",
         fake_spooled_data_from_url(b"<html><body><table></table></body></html>"),
     )
     def test_empty_table(self):
@@ -257,8 +269,9 @@ class ScrapeTableTest(unittest.TestCase):
             ],
         )
 
-    @patch(
-        "cjwkernel.pandas.moduleutils.spooled_data_from_url",
+    @patch.object(
+        scrapetable.di,
+        "spooled_data_from_url",
         fake_spooled_data_from_url(
             b"""
                <html><body><table>
@@ -272,8 +285,9 @@ class ScrapeTableTest(unittest.TestCase):
         fetch_result = fetch(url="http://example.org")
         assert_frame_equal(fetch_result.dataframe, pd.DataFrame({"A": []}, dtype=str))
 
-    @patch(
-        "cjwkernel.pandas.moduleutils.spooled_data_from_url",
+    @patch.object(
+        scrapetable.di,
+        "spooled_data_from_url",
         fake_spooled_data_from_url(
             b"<table><tr><th>A</th><th>A</th></tr>"
             b"<tr><td>1</td><td>2</td></tr></table>"
@@ -288,8 +302,9 @@ class ScrapeTableTest(unittest.TestCase):
             pd.DataFrame({"A": [1], "A.1": [2]}),
         )
 
-    @patch(
-        "cjwkernel.pandas.moduleutils.spooled_data_from_url",
+    @patch.object(
+        scrapetable.di,
+        "spooled_data_from_url",
         fake_spooled_data_from_url(
             b"<table><thead>"
             b'  <tr><th colspan="2">Category</th></tr>'
@@ -308,8 +323,9 @@ class ScrapeTableTest(unittest.TestCase):
             pd.DataFrame({"Category - A": ["a"], "Category - B": ["b"]}),
         )
 
-    @patch(
-        "cjwkernel.pandas.moduleutils.spooled_data_from_url",
+    @patch.object(
+        scrapetable.di,
+        "spooled_data_from_url",
         fake_spooled_data_from_url(
             b"<table><tbody><tr><td>a</td><td>b</td></tr></tbody></table>"
         ),
@@ -323,8 +339,9 @@ class ScrapeTableTest(unittest.TestCase):
             pd.DataFrame({"Column 1": ["a"], "Column 2": ["b"]}),
         )
 
-    @patch(
-        "cjwkernel.pandas.moduleutils.spooled_data_from_url",
+    @patch.object(
+        scrapetable.di,
+        "spooled_data_from_url",
         fake_spooled_data_from_url(
             b"<table><thead>"
             b'  <tr><th colspan="2">Category</th><th rowspan="2">Category - A</th></tr>'
@@ -345,8 +362,9 @@ class ScrapeTableTest(unittest.TestCase):
             ),
         )
 
-    @patch(
-        "cjwkernel.pandas.moduleutils.spooled_data_from_url",
+    @patch.object(
+        scrapetable.di,
+        "spooled_data_from_url",
         fake_spooled_data_from_url(
             b"<table><thead>"
             b"  <tr><th></th><th>Column 1</th></tr>"
@@ -370,3 +388,129 @@ class ScrapeTableTest(unittest.TestCase):
                 }
             ),
         )
+
+
+class SpooledDataFromUrlTest(unittest.TestCase):
+    def test_relative_url_raises_invalid_url(self):
+        async def inner():
+            async with scrapetable.spooled_data_from_url("/foo"):
+                pass
+
+        with self.assertRaises(aiohttp.InvalidURL):
+            asyncio.run(inner())
+
+    def test_schemaless_url_raises_invalid_url(self):
+        async def inner():
+            async with scrapetable.spooled_data_from_url("//a/b"):
+                pass
+
+        with self.assertRaises(aiohttp.InvalidURL):
+            asyncio.run(inner())
+
+    def test_mailto_url_raises_invalid_url(self):
+        async def inner():
+            async with scrapetable.spooled_data_from_url("mailto:user@example.org"):
+                pass
+
+        with self.assertRaises(aiohttp.InvalidURL):
+            asyncio.run(inner())
+
+
+class AutocastDtypesTest(unittest.TestCase):
+    def test_autocast_all_null_is_text(self):
+        table = pd.DataFrame({"A": [np.nan, np.nan]}, dtype=object)
+        scrapetable.autocast_dtypes_in_place(table)
+        expected = pd.DataFrame({"A": [np.nan, np.nan]}, dtype=object)
+        assert_frame_equal(table, expected)
+
+    def test_autocast_all_empty_str_is_text(self):
+        table = pd.DataFrame({"A": ["", ""]})
+        scrapetable.autocast_dtypes_in_place(table)
+        assert_frame_equal(table, pd.DataFrame({"A": ["", ""]}))
+
+    def test_autocast_all_empty_or_null_categories_is_text(self):
+        table = pd.DataFrame({"A": ["", np.nan, ""]}, dtype="category")
+        scrapetable.autocast_dtypes_in_place(table)
+        expected = pd.DataFrame({"A": ["", np.nan, ""]}, dtype="category")
+        assert_frame_equal(table, expected)
+
+    def test_autocast_int_from_str(self):
+        table = pd.DataFrame({"A": ["1", "2"]})
+        scrapetable.autocast_dtypes_in_place(table)
+        expected = pd.DataFrame({"A": [1, 2]})
+        assert_frame_equal(table, expected)
+
+    def test_autocast_int_from_str_categories(self):
+        # example: used read_csv(dtype='category'), now want ints
+        table = pd.DataFrame({"A": ["1", "2"]}, dtype="category")
+        scrapetable.autocast_dtypes_in_place(table)
+        expected = pd.DataFrame({"A": [1, 2]})
+        assert_frame_equal(table, expected)
+
+    def test_autocast_float_from_str_categories(self):
+        # example: used read_csv(dtype='category'), now want floats
+        table = pd.DataFrame({"A": ["1", "2.1"]}, dtype="category")
+        scrapetable.autocast_dtypes_in_place(table)
+        expected = pd.DataFrame({"A": [1.0, 2.1]}, dtype=np.float64)
+        assert_frame_equal(table, expected)
+
+    def test_autocast_float_from_str_categories_with_empty_str(self):
+        # example: used read_csv(dtype='category'), now want floats
+        table = pd.DataFrame({"A": ["1", "2.1", ""]}, dtype="category")
+        scrapetable.autocast_dtypes_in_place(table)
+        expected = pd.DataFrame({"A": [1.0, 2.1, np.nan]}, dtype=np.float64)
+        assert_frame_equal(table, expected)
+
+    def test_autocast_float_from_str_categories_with_dup_floats(self):
+        table = pd.DataFrame({"A": ["1", "1.0"]}, dtype="category")
+        scrapetable.autocast_dtypes_in_place(table)
+        expected = pd.DataFrame({"A": [1.0, 1.0]}, dtype=np.float64)
+        assert_frame_equal(table, expected)
+
+    def test_autocast_int_from_str_categories_with_empty_str(self):
+        table = pd.DataFrame({"A": ["", "", "1"]}, dtype="category")
+        scrapetable.autocast_dtypes_in_place(table)
+        expected = pd.DataFrame({"A": [np.nan, np.nan, 1.0]}, dtype=np.float64)
+        assert_frame_equal(table, expected)
+
+    def test_autocast_str_categories_from_str_categories(self):
+        table = pd.DataFrame({"A": ["1", "2.1", "Yay"]}, dtype="category")
+        scrapetable.autocast_dtypes_in_place(table)  # should be no-op
+        expected = pd.DataFrame({"A": ["1", "2.1", "Yay"]}, dtype="category")
+        assert_frame_equal(table, expected)
+
+    def test_autocast_mixed_types_to_int(self):
+        # This is important in particular for Excel data, which is often a mix
+        # of int and str.
+        table = pd.DataFrame({"A": ["1", 2]})
+        scrapetable.autocast_dtypes_in_place(table)
+        expected = pd.DataFrame({"A": [1, 2]})
+        assert_frame_equal(table, expected)
+
+    def test_autocast_mixed_types_to_str(self):
+        # This is important in particular for Excel data, which is often a mix
+        # of int and str.
+        table = pd.DataFrame({"A": ["1A", 2]})
+        scrapetable.autocast_dtypes_in_place(table)
+        expected = pd.DataFrame({"A": ["1A", "2"]})
+        assert_frame_equal(table, expected)
+
+    # We know of no cases in which categories need to be cast to str. If we
+    # find some, add the tests here!
+    # def test_autocast_mixed_type_categories_to_str()
+
+    def test_autocast_cast_crazy_types(self):
+        class Obj:
+            def __init__(self, s):
+                self.s = s
+
+            def __str__(self):
+                return self.s
+
+        obj1 = Obj("o1")
+        obj2 = Obj("o2")
+
+        table = pd.DataFrame({"A": [obj1, obj2]})
+        scrapetable.autocast_dtypes_in_place(table)
+        expected = pd.DataFrame({"A": ["o1", "o2"]})
+        assert_frame_equal(table, expected)
