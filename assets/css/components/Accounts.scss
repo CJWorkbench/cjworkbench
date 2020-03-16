@@ -206,6 +206,11 @@
           color: $white;
         }
       }
+
+
+      form.locale-switcher { //FIXME the dropdown does not work on this page. Hidding it for now.
+        display: none;
+      }
     }
 
     fieldset {
