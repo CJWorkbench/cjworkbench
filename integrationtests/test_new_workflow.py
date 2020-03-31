@@ -1,5 +1,4 @@
 from integrationtests.utils import LoggedInIntegrationTest
-import re
 
 
 class TestNewWorkflow(LoggedInIntegrationTest):

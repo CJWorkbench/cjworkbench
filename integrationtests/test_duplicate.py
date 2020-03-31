@@ -12,6 +12,7 @@ class DuplicateTest(LoggedInIntegrationTest):
 
         b.fill_in("name", "Example")
 
+        self.import_module("pastecsv")
         self.add_data_step("Paste data")
         b.fill_in("csv", "foo,bar,baz\n1,2,\n2,3,\n3,4,", wait=True)
         self.submit_wf_module()

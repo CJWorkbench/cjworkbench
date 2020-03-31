@@ -1,6 +1,7 @@
 import re
-from integrationtests.utils import LoggedInIntegrationTest
+
 from integrationtests.browser import Keys
+from integrationtests.utils import LoggedInIntegrationTest
 
 
 class TestTable(LoggedInIntegrationTest):
@@ -16,8 +17,7 @@ class TestTable(LoggedInIntegrationTest):
 
         b.fill_in("name", "Example Workflow")
 
-        self.import_module("renamecolumns")
-
+        self.import_module("pastecsv")
         self.add_data_step("Paste data")
         b.fill_in("csv", "string,int\nfoo,1\nbar,3\nbaz,2", wait=True)
         self.submit_wf_module()
@@ -29,6 +29,7 @@ class TestTable(LoggedInIntegrationTest):
         b = self.browser
 
         self._create_simple_workflow()
+        self.import_module("renamecolumns")
 
         b.click_whatever(".column-key", text="string")
         # wait for span to become input

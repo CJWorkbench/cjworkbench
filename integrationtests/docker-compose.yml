@@ -53,7 +53,7 @@ services:
     image: minio/mc:RELEASE.2020-02-25T18-10-03Z
     depends_on: [ 'minio' ]
     entrypoint: ''
-    command: [ 'sh', '-c', 'while ! nc -z minio 9000; do sleep 0.1; done; mc config host add workbench http://minio:9000 minio_root_access minio_root_secret && mc admin user add workbench minio_access minio_secret && mc admin policy set workbench readwrite user=minio_access' ]
+    command: [ 'sh', '-c', 'while ! nc -z minio 9000; do sleep 0.1; done; sleep 2 && mc config host add workbench http://minio:9000 minio_root_access minio_root_secret && mc admin user add workbench minio_access minio_secret && mc admin policy set workbench readwrite user=minio_access' ]
 
   # In Kubernetes, we use sidecar processes to manage chroots. But we can't
   # mimic those in pure Docker, because we can't adjust mount propagation.

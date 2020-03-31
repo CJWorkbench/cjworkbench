@@ -1,9 +1,10 @@
-from pathlib import Path
-from cjwparse.api import parse_csv
 import tempfile
+from pathlib import Path
+
+from cjwparse.api import parse_csv
 
 
-def render(arrow_table, params, output_path, **kwargs):
+def render(arrow_table, params, output_path, *, settings, **kwargs):
     with tempfile.NamedTemporaryFile(suffix=".txt") as tf:
         utf8_path = Path(tf.name)
         utf8_path.write_text(params["csv"], encoding="utf-8")
@@ -15,4 +16,5 @@ def render(arrow_table, params, output_path, **kwargs):
             delimiter=None,
             has_header=params["has_header_row"],
             autoconvert_text_to_numbers=True,
+            settings=settings,
         )

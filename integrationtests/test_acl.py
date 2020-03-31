@@ -1,14 +1,15 @@
 import time
-from integrationtests.utils import WorkbenchBase
+
 from integrationtests.helpers import accounts
+from integrationtests.utils import WorkbenchBase
 
 
 class TestExampleWorkflow(WorkbenchBase):
     def setUp(self):
         super().setUp()
 
-        self.user1 = self.account_admin.create_user("a@example.org")
-        self.user2 = self.account_admin.create_user("b@example.org")
+        self.user1 = self.account_admin.create_user("a@example.org", is_staff=True)
+        self.user2 = self.account_admin.create_user("b@example.org", is_staff=True)
 
     def _create_workflow(self):
         b = self.browser
@@ -20,6 +21,7 @@ class TestExampleWorkflow(WorkbenchBase):
 
         b.fill_in("name", "Example Workflow")
 
+        self.import_module("pastecsv")
         self.add_data_step("Paste data")
         b.fill_in("csv", "foo,bar,baz\n1,2,\n2,3,\n3,4,", wait=True)
 

@@ -1,5 +1,4 @@
 from integrationtests.utils import WorkbenchBase, find_url_in_email
-from integrationtests.helpers import accounts
 
 
 class TestPasswordReset(WorkbenchBase):
@@ -56,8 +55,6 @@ class TestPasswordReset(WorkbenchBase):
         b.assert_element("button", "Create Workflow")
 
     def test_password_reset_wrong_email(self):
-        b = self.browser
-
         self._begin_password_reset("nonexistent-user@example.org")
         self.browser.assert_element(
             "ul.errorlist>li", text="not assigned to any user account"

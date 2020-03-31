@@ -1,0 +1,7 @@
+#pycharm
+.idea/
+.idea
+tmp/
+.cache/
+__pycache__/
+.DS_Store

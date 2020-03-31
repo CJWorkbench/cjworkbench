@@ -15,6 +15,7 @@ class TestQuickFix(LoggedInIntegrationTest):
 
         b.fill_in("name", "Example Workflow")
 
+        self.import_module("pastecsv")
         self.add_data_step("Paste data")
         b.fill_in("csv", csv_data, wait=True)
         self.submit_wf_module()
@@ -34,6 +35,7 @@ class TestQuickFix(LoggedInIntegrationTest):
         )
 
         self.import_module("convert-date")
+        self.import_module("countbydate")
 
         self.add_wf_module("Group by date")
         self.select_column("Group by date", "column", "A")

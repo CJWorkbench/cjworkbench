@@ -1,0 +1,66 @@
+{
+  "name": "Group by date",
+  "id_name": "countbydate",
+  "category" : "Analyze",
+  "icon" : "group",
+  "description": "Group rows by dates and times within columns (also called pivot table). Calculate sum, averages, Min, Max and more between columns for each group.",
+  "help_url":"modules/analyze/count-by-date",
+  "parameters_version": 1,
+  "parameters": [
+    {
+      "name": "",
+      "id_name" : "column",
+      "type": "column",
+      "placeholder": "Select date column",
+      "column_types": [ "datetime" ]
+    },
+    {
+      "name": "Group by",
+      "id_name" : "groupby",
+      "type" : "menu",
+      "default": "day",
+      "options": [
+        { "value": "second", "label": "Second" },
+        { "value": "minute", "label": "Minute" },
+        { "value": "hour", "label": "Hour" },
+        { "value": "day", "label": "Day" },
+        { "value": "month", "label": "Month" },
+        { "value": "quarter", "label": "Quarter - Calendar" },
+        { "value": "year", "label": "Year" },
+        { "value": "second_of_day", "label": "Second (time-of-day)" },
+        { "value": "minute_of_day", "label": "Minute (time-of-day)" },
+        { "value": "hour_of_day", "label": "Hour (time-of-day)" }
+      ]
+    },
+    {
+      "name": "Operation",
+      "id_name" : "operation",
+      "type" : "menu",
+      "default": "size",
+      "options": [
+        { "value": "size", "label": "Count" },
+        { "value": "mean", "label": "Average" },
+        { "value": "sum", "label": "Sum" },
+        { "value": "min", "label": "Minimum" },
+        { "value": "max", "label": "Maximum" }
+      ]
+    },
+    {
+      "name": "",
+      "id_name" : "targetcolumn",
+      "type": "column",
+      "column_types": [ "number" ],
+      "visible_if": {
+        "invert": true,
+        "id_name": "operation",
+        "value": [ "size" ]
+      }
+    },
+    {
+      "name": "Include missing dates",
+      "id_name": "include_missing_dates",
+      "type": "checkbox",
+      "default": false
+    }
+  ]
+}

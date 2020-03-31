@@ -22,6 +22,8 @@ jointab
 linechart
 loadurl
 mergecolumns
+nulldropper
+pastecsv
 refine
 regexextractor
 renamecolumns

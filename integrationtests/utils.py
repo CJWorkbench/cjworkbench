@@ -1,13 +1,12 @@
 # Utilities for integration tests
-import unittest
 import email.message
-from typing import Optional
 import re
+import unittest
+from typing import Optional
 
 from integrationtests.browser import Browser
 from integrationtests.helpers import accounts
 from integrationtests.helpers.modules import import_workbench_module
-
 
 _url_regex = re.compile("https?://[^\\s]+")
 
@@ -136,6 +135,7 @@ class WorkbenchBase(unittest.TestCase):
                 ]
             )
 
+        self.import_module("pastecsv")
         self.add_data_step("Paste data")
         self.browser.fill_in("csv", csv)
         self.submit_wf_module()
