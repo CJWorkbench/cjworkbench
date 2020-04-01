@@ -131,7 +131,7 @@ export class OutputIframe extends React.PureComponent {
   }
 
   renderEmbedModal () {
-    const iframeCode = escapeHtml('<iframe src="' + window.location.protocol + '//' + window.location.host + '/embed/' + this.props.wfModuleId + '" width="560" height="315" frameborder="0" />')
+    const iframeCode = escapeHtml('<iframe src="' + window.location.protocol + '//' + window.location.host + '/embed/' + this.props.wfModuleId + '" width="560" height="315" frameborder="0"></iframe>')
 
     return (
       <Modal isOpen={this.isModalOpen('embed')} toggle={this.closeModal}>

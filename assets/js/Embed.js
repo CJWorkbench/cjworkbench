@@ -51,7 +51,7 @@ export class Embed extends React.Component {
     if (!this.props.workflow && !this.props.wf_module) {
       return this.renderNotAvailable()
     }
-    const iframeCode = escapeHtml('<iframe src="' + window.location.protocol + '//' + window.location.host + '/embed/' + this.props.wf_module.id + '" width="560" height="315" frameborder="0" />')
+    const iframeCode = escapeHtml('<iframe src="' + window.location.protocol + '//' + window.location.host + '/embed/' + this.props.wf_module.id + '" width="560" height="315" frameborder="0"></iframe>')
     const timeAgo = timeDifference(this.props.workflow.last_update, new Date(), this.props.i18n)
 
     return (
