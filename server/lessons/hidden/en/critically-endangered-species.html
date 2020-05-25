@@ -1,0 +1,127 @@
+<header>
+  <h1>IX. Critically endangered species of America</h1>
+  <p>We need a desription here.</p>
+  <img src="./banner.svg" alt="">
+</header>
+
+<section class="fullscreen">
+  <h2>Introduction</h2>
+  <p>
+    A major concern for the biology community is protecting endangered species. This tutorial focuses on endangered species in the U.S., using data from the International Union for the Conservation of Nature (IUCN) Red List. The goal of the project is to demonstrate to readers which genera contain the most critically endangered species.
+  </p>
+  <p>
+    This tutorial was created by Betsy Ladyzhets (need link) in association with a feature for The Open Notebook (need link) on data journalism for science writers.
+  </p>
+</section>
+
+<section>
+  <h2>Obtaining the data</h2>
+  <p>We load the data from the IUCN Red List's API, a programming interface that allows users to download thousands of search results at once. The API query we are using will return all endangered species with the country code US.</p>
+  <p>Learn more about the IUCN Red List API <a class="highlight" href='http://apiv3.iucnredlist.org/api/v3/docs' target="_blank" className="info-1">here</a>.</p>
+  <h3 class="instructions">Instructions</h3>
+  <ol class="steps">
+    <li data-test=" ">
+      Add the step <kbd>Load from URL</kbd>.
+    </li>
+    <li data-test=" ">
+      Copy and paste the URL of the API query below into the <kbd>URL</kbd> of the step.
+      <div class="copy-txt">http://apiv3.iucnredlist.org/api/v3/country/getspecies/US?token=9bb4facb6d23f48efbf424bb05c0c1ef1cf6f468393bc745d42179ac4aca5fee</div>
+    </li>
+  </ol>
+</section>
+
+<section>
+  <h2>Cleaning the data</h2>
+
+  <p>The first step in cleaning these data is to delete extraneous columns containing information we don't need. In this case, the <kbd>rank</kbd> and
+    <kbd>subpopulation</kbd> columns are blank for most records and, for all subspecies included, their scientific names are included in both the <kbd>scientific_name</kbd>
+    column and the <kbd>subspecies</kbd> column. So, we can remove <kbd>rank</kbd> and <kbd>subpopulation</kbd>.</p>
+
+  <h3 class="instructions">Instructions</h3>
+  <ol class="steps">
+    <li data-test=" ">
+      Add the step <kbd>Select columns</kbd>.
+    </li>
+    <li data-test=" ">
+      Delete the columns <kbd>rank</kbd> and <kbd>subpopulation</kbd>.
+    </li>
+  </ol>
+</section>
+
+<section>
+  <h2>Cleaning the data</h2>
+
+  <p>These species records are currently identified by binomial nomenclature: the names in the <kbd>scientific_name</kbd> column include a species’ genus, or generic name (the taxonomic rank one step up from species), followed by its individual species name. The next step in cleaning these data is splitting the binomials into genus names and species names, so that we can group the records by a genus.
+  </p>
+  <p><a class="highlight" href='http://help.workbenchdata.com/en/articles/1484334-split-column' target="_blank" className="info-1">Split text to columns</a> is a common function in data cleaning used to separate out information (for example, turning a location column displaying "City, State" into two: a column "City" and a column "State".
+  </p>
+
+  <h3 class="instructions">Instructions</h3>
+  <ol class="steps">
+    <li data-test=" ">
+      Add the step <kbd>split column</kbd>.
+    </li>
+    <li data-test=" ">
+      Split the column <kbd>scientific_name</kbd>, using a “delimiter” (a specific character that will identify the end of the string), and make the delimiter a single space: "<code> </code>".
+    </li>
+  </ol>
+</section>
+
+<section>
+  <h2>Cleaning the data</h2>
+
+  <p>Now that the column has been split, we need to remove new empty columns generated from blank space in the dataset, and rename the new columns so that we can easily keep track of them. Renaming the <kbd>category</kbd> to <kbd>IUCN category</kbd>, in particular, will help future readers know exactly what kind of “categories” we are referring to. IUCN categories are described on the Red List website [link?].
+  </p>
+
+  <h3 class="instructions">Instructions</h3>
+  <ol class="steps">
+    <li data-test=" ">
+      Add the step <kbd>select columns</kbd>. Delete the columns <kbd>scientific_name 3</kbd>,<kbd> 4</kbd>,<kbd>5</kbd>,<kbd>6</kbd>,<kbd>7</kbd>,<kbd>8</kbd>,<kbd>9</kbd>.
+    </li>
+    <li data-test=" ">
+      Add the step <kbd>rename columns</kbd>, and rename columns as follow:
+      <br/><kbd>scientific_name 1</kbd> to <code>genus</code>
+      <br/><kbd>scientific_name 2</kbd> to <code>species</code>
+      <br/><kbd>category</kbd> to <code>IUCN category</code>
+    </li>
+  </ol>
+</section>
+
+<section>
+  <h2>Filtering the data</h2>
+
+  <p>Now that the data are cleaned and organized for the purposes of our story, we can analyze them. The goal of this project is to show readers the species which are most at risk; hence, we filter out all the species which are not labeled <kbd>CR</kbd>, which stands for Critically Endangered.
+  </p>
+
+  <h3 class="instructions">Instructions</h3>
+  <ol class="steps">
+    <li data-test=" ">
+      Add the step <kbd>Filter by value</kbd>.
+    </li>
+    <li data-test=" ">
+      Select the column <kbd>IUCN category</kbd>, and select <kbd>CR</kbd> (critically endangered) to keep.
+    </li>
+  </ol>
+</section>
+
+<section>
+  <h2>Presenting the data</h2>
+
+  <p>What is the best way to present these data? A bar or pie chart would be too crowded with this many genera, and a scatter plot would not work as we're only looking at concentrations of data in one category. If we linked these data with geospatial range data or occurrence records for each genus, we could map out where all these species are located. But for a simple picture, we can use a word cloud: the size of each word correlates to how many species in the genus are endangered.
+  </p>
+
+  <h3 class="instructions">Instructions</h3>
+  <ol class="steps">
+    <li data-test=" ">
+      Add the step <kbd>Word cloud</kbd>.
+    </li>
+    <li data-test=" ">
+      Select the column <kbd>Genus</kbd>.
+    </li>
+  </ol>
+</section>
+
+<footer>
+  <h2>Lesson Complete!</h2>
+  <p>Some instructions on what to do next, such as going through the other lesson, some additional readings etc.
+</footer>
