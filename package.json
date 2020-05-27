@@ -53,7 +53,6 @@
     "enzyme-adapter-react-16": "^1.15.1",
     "enzyme-to-json": "^3.4.3",
     "file-loader": "^4.3.0",
-    "geojson-validation": "^0.2.1",
     "jest": "^24.9.0",
     "memoize-one": "^5.1.1",
     "mini-css-extract-plugin": "^0.8.2",
