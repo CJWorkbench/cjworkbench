@@ -51,7 +51,7 @@ export function shallowWithI18n (node, { context } = {}) {
   )
 }
 
-export function mountWithI18n (node, { context, childContextTypes } = {}) {
+export function mountWithI18n (node, { context, childContextTypes, ...otherMountOptions } = {}) {
   const newContext = Object.assign({}, context, { linguiPublisher: { i18n } })
   /*
    * I18nProvider sets the linguiPublisher in the context for withI18n to get
@@ -69,7 +69,8 @@ export function mountWithI18n (node, { context, childContextTypes } = {}) {
     nodeWithI18nProp(node),
     {
       context: newContext,
-      childContextTypes: newChildContextTypes
+      childContextTypes: newChildContextTypes,
+      ...otherMountOptions
     }
   )
 }

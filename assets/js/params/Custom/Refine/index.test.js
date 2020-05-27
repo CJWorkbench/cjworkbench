@@ -6,15 +6,18 @@ import { mountWithI18n } from '../../../i18n/test-utils'
 const DefaultValue = { renames: {} }
 
 describe('Refine', () => {
-  const wrapper = (props = {}) => {
+  const wrapper = (props = {}, options = {}) => {
     const ret = mountWithI18n(
-      <Refine
-        valueCounts={{}}
-        loading={false}
-        value={DefaultValue}
-        onChange={jest.fn()}
-        {...props}
-      />
+      (
+        <Refine
+          valueCounts={{}}
+          loading={false}
+          value={DefaultValue}
+          onChange={jest.fn()}
+          {...props}
+        />
+      ),
+      options,
     )
     ret.update() // after componentDidMount() -- does size calculations
     return ret
@@ -295,16 +298,33 @@ describe('Refine', () => {
     expect(w.prop('onChange')).toHaveBeenCalledWith({ renames: { b: 'a', c: 'a', d: 'a' } })
   })
 
-  it('should focus the new group text for editing after merge', () => {
-    const w = wrapper({
-      valueCounts: { a: 1, b: 1, c: 1 },
-      value: { renames: { b: 'a' } }
-    })
+  describe('attached to the document', () => {
+    // To test document.activeElement, we must mount onto the DOM.
+    //
+    // https://github.com/enzymejs/enzyme/issues/2337#issuecomment-609071803
+    let div = null;
 
-    w.find('input[name="select[a]"]').simulate('change', { target: { checked: true } })
-    // focus 'c'
-    w.find('input[name="select[c]"]').simulate('change', { target: { checked: true } })
-    w.find('button[name="merge"]').simulate('click')
-    expect(document.activeElement.value).toBe('a')
+    beforeEach(() => {
+      div = document.createElement('div')
+      div.className = 'for-Refine-index-test-js'
+      document.body.appendChild(div)
+    });
+
+    afterEach(() => {
+      document.body.removeChild(div)
+    });
+
+    it('should focus the new group text for editing after merge', () => {
+      const w = wrapper({
+        valueCounts: { a: 1, b: 1, c: 1 },
+        value: { renames: { b: 'a' } }
+      }, { attachTo: div })
+
+      w.find('input[name="select[a]"]').simulate('change', { target: { checked: true } })
+      // focus 'c'
+      w.find('input[name="select[c]"]').simulate('change', { target: { checked: true } })
+      w.find('button[name="merge"]').simulate('click')
+      expect(document.activeElement.value).toBe('a')
+    })
   })
 })
