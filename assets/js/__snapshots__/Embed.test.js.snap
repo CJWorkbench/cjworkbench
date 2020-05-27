@@ -113,7 +113,7 @@ exports[`Embed Available workflow Renders the embed widget with the correct info
         <code
           className="embed--share-code"
         >
-          &lt;iframe src="http://localhost/embed/1" width="560" height="315" frameborder="0" /&gt;
+          &lt;iframe src="http://localhost/embed/1" width="560" height="315" frameborder="0"&gt;&lt;/iframe&gt;
         </code>
       </div>
     </div>
