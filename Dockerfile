@@ -3,7 +3,7 @@ FROM workbenchdata/parquet-to-arrow:v2.0.1 AS parquet-to-arrow
 FROM workbenchdata/arrow-tools:v0.0.11 AS arrow-tools
 
 # 0.2 pybase: Python and tools we use in dev and production
-FROM python:3.8.1-slim-buster AS pybase
+FROM python:3.8.3-slim-buster AS pybase
 
 # We probably don't want these, long-term.
 # postgresql-client: because we poll the DB:
@@ -41,7 +41,7 @@ RUN mkdir -p /usr/share/nltk_data \
     && curl https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/corpora/stopwords.zip > corpora/stopwords.zip \
     && curl https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/sentiment/vader_lexicon.zip > sentiment/vader_lexicon.zip
 
-RUN pip install pipenv==2018.11.26
+RUN pip install pipenv==2020.5.28
 
 COPY --from=arrow-tools /usr/bin/arrow-validate /usr/bin/arrow-validate
 COPY --from=arrow-tools /usr/bin/csv-to-arrow /usr/bin/csv-to-arrow
