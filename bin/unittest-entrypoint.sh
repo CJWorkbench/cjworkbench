@@ -1,9 +1,10 @@
 #!/bin/bash
 
 set -e
+set -x
 
 setup_env() {
-  while ! curl --silent -I $MINIO_URL >/dev/null; do
+  while ! curl --silent --fail $MINIO_URL/minio/health/ready; do
     sleep 0.1
   done
 
