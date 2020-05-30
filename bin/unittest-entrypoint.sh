@@ -1,12 +1,15 @@
 #!/bin/bash
 
 set -e
-set -x
 
 setup_env() {
   while ! curl --silent --fail $MINIO_URL/minio/health/ready; do
     sleep 0.1
   done
+
+  # Even after "ready", we still sometimes get an error:
+  # mc: <ERROR> Unable to initialize new config from the provided credentials. Server not initialized, please try again.
+  sleep 2  # try and wait out the initialization
 
   mc config host add workbench $MINIO_URL minio_root_access minio_root_secret
   mc admin user add workbench $MINIO_ACCESS_KEY $MINIO_SECRET_KEY
