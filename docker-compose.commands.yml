@@ -23,7 +23,7 @@ services:
       MINIO_BUCKET_PREFIX: dev
     networks: [ 'dev' ]
     depends_on: [ 'database', 'rabbitmq', 'minio' ]
-    command: [ 'sh', '-c', 'while ! curl --silent -I $$MINIO_URL >/dev/null; do sleep 0.1; done; mc config host add workbench $$MINIO_URL minio_root_access minio_root_secret && mc admin user add workbench $$MINIO_ACCESS_KEY $$MINIO_SECRET_KEY && mc admin policy set workbench readwrite user=$$MINIO_ACCESS_KEY && pipenv sync --dev && pipenv run bin/migrate-prod' ]
+    command: [ 'sh', '-c', 'while ! curl --silent -I $$MINIO_URL >/dev/null; do sleep 0.1; done; sleep 1; mc config host add workbench $$MINIO_URL minio_root_access minio_root_secret && mc admin user add workbench $$MINIO_ACCESS_KEY $$MINIO_SECRET_KEY && mc admin policy set workbench readwrite user=$$MINIO_ACCESS_KEY && pipenv sync --dev && pipenv run bin/migrate-prod' ]
 
   develop-module:
     # Basically a copy-paste of 'migrate' ... but with $MODULE mounted
