@@ -1,4 +1,4 @@
-/* global describe, it, expect, jest */
+/* global beforeEach, afterEach, describe, it, expect, jest */
 import React from 'react'
 import { Refine } from './index'
 import { mountWithI18n } from '../../../i18n/test-utils'
@@ -17,7 +17,7 @@ describe('Refine', () => {
           {...props}
         />
       ),
-      options,
+      options
     )
     ret.update() // after componentDidMount() -- does size calculations
     return ret
@@ -302,17 +302,17 @@ describe('Refine', () => {
     // To test document.activeElement, we must mount onto the DOM.
     //
     // https://github.com/enzymejs/enzyme/issues/2337#issuecomment-609071803
-    let div = null;
+    let div = null
 
     beforeEach(() => {
       div = document.createElement('div')
       div.className = 'for-Refine-index-test-js'
       document.body.appendChild(div)
-    });
+    })
 
     afterEach(() => {
       document.body.removeChild(div)
-    });
+    })
 
     it('should focus the new group text for editing after merge', () => {
       const w = wrapper({
