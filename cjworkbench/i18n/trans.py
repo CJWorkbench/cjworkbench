@@ -163,8 +163,8 @@ class MessageLocalizerRegistry:
         self.application_localizer = self._for_application()
         self.cjwmodule_localizer = self._for_library(cjwmodule.i18n)
         self.cjwparse_localizer = self._for_library(cjwparse.i18n)
-        self._module_localizers = WeakKeyDictionary()
-        self._module_localizers_lock = threading.Lock()
+        self._cache = WeakKeyDictionary()  # zipfile => None|Localizer
+        self._cache_lock = threading.Lock()
 
     def for_module_zipfile(self, module_zipfile: ModuleZipfile) -> MessageLocalizer:
         """Return a `MessageLocalizer` for the given `ModuleZipFile`
@@ -175,36 +175,25 @@ class MessageLocalizerRegistry:
         """
         # 1. Get without locking.
         try:
-            result = self._module_localizers[module_zipfile]
-            if isinstance(result, NotInternationalizedError):
-                raise result
-            else:
-                return result
+            result = self._cache[module_zipfile]
         except KeyError:
-            pass  # fall through
+            # 2. Lock, and try again. (This prevents a race.)
+            with self._cache_lock:
+                try:
+                    # Race: some other thread already calculated the value. Use
+                    # that one.
+                    result = self._cache[module_zipfile]
+                except KeyError:
+                    # 3. Update the cache, still holding the lock.
+                    result = self._create_localizer_for_module_zipfile(module_zipfile)
+                    self._cache[module_zipfile] = result
 
-        # 2. Lock, and try again. (This prevents a race.)
-        with self._module_localizers_lock:
-            try:
-                result = self._module_localizers[module_zipfile]
-                if isinstance(result, NotInternationalizedError):
-                    raise result
-                else:
-                    return result
-            except KeyError:
-                pass  # we'll fetch it now
+                # Release the lock. If another caller is waiting for us to release
+                # the lock, now it should check self._cache again.
 
-            # 3. Update the cache, still holding the lock.
-            try:
-                localizer = self._create_localizer_for_module_zipfile(module_zipfile)
-                self._module_localizers[module_zipfile] = localizer
-                return localizer
-            except NotInternationalizedError as err:
-                self._module_localizers[module_zipfile] = err
-                raise err
-
-            # Release the lock. If another caller is waiting for us to release
-            # the lock, now it should check self._cache again.
+        if result is None:
+            raise NotInternationalizedError
+        return result
 
     def _for_application(self) -> MessageLocalizer:
         """Return a `MessageLocalizer` for the application messages"""
@@ -238,7 +227,7 @@ class MessageLocalizerRegistry:
 
     def _create_localizer_for_module_zipfile(
         cls, module_zipfile: ModuleZipfile
-    ) -> MessageLocalizer:
+    ) -> Optional[MessageLocalizer]:
         catalogs = {}
         for locale_id in supported_locales:
             try:
@@ -257,7 +246,7 @@ class MessageLocalizerRegistry:
             except KeyError:
                 pass
         if not catalogs:
-            raise NotInternationalizedError(module_zipfile.module_id)
+            return None
         return MessageLocalizer(catalogs)
 
 
