@@ -291,9 +291,12 @@ OWNER_SCREEN_NAME_REGEX = re.compile(f"^{OWNER_SCREEN_NAME_REGEX_PART}$")
 LIST_ID_URL_REGEX = re.compile(f"^(?:https?://)?twitter.com/i/lists/(\d+)$")
 LIST_ID_REGEX = re.compile(f"^(\d+)$")
 LIST_OWNER_SCREEN_NAME_SLUG_URL_REGEX = re.compile(
-    f"^(?:https?://)?twitter.com/{OWNER_SCREEN_NAME_REGEX_PART}" f"/lists/{LIST_REGEX_PART}$"
+    f"^(?:https?://)?twitter.com/{OWNER_SCREEN_NAME_REGEX_PART}"
+    f"/lists/{LIST_REGEX_PART}$"
 )
-LIST_OWNER_SCREEN_NAME_SLUG_REGEX = re.compile(f"^{OWNER_SCREEN_NAME_REGEX_PART}/{LIST_REGEX_PART}$")
+LIST_OWNER_SCREEN_NAME_SLUG_REGEX = re.compile(
+    f"^{OWNER_SCREEN_NAME_REGEX_PART}/{LIST_REGEX_PART}$"
+)
 
 
 # Get from Twitter, return as dataframe
@@ -317,7 +320,7 @@ async def get_new_tweets(credentials, querytype, query, old_tweets):
 
     else:  # querytype == QueryType.LISTS_STATUSES
         params = None
-        if m:= LIST_OWNER_SCREEN_NAME_SLUG_URL_REGEX.match(query):
+        if m := LIST_OWNER_SCREEN_NAME_SLUG_URL_REGEX.match(query):
             params = [("owner_screen_name", m.group(1)), ("slug", m.group(2))]
         elif m := LIST_OWNER_SCREEN_NAME_SLUG_REGEX.match(query):
             params = [("owner_screen_name", m.group(1)), ("slug", m.group(2))]

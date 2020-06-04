@@ -1103,8 +1103,7 @@ class TwitterTests(unittest.TestCase):
 
         # Actually fetch!
         result = fetch(
-            P(querytype="lists_statuses", listurl="1232648120690912345"),
-            DefaultSecret,
+            P(querytype="lists_statuses", listurl="1232648120690912345"), DefaultSecret,
         )
         self.assertEqual(
             [str(req.url) for req in mock_session.requests],
