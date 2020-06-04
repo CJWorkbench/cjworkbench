@@ -1039,7 +1039,7 @@ class TwitterTests(unittest.TestCase):
         assert_frame_equal(result, mock_tweet_table)
 
     @patch("aiohttp.ClientSession")
-    def test_twitter_list(self, session):
+    def test_twitter_list_owner_screen_name_slug_url(self, session):
         session.return_value = mock_session = MockAiohttpSession([mock_statuses, []])
 
         # Actually fetch!
@@ -1068,6 +1068,59 @@ class TwitterTests(unittest.TestCase):
 
         # Check that render output is right
         assert_frame_equal(result, mock_tweet_table)
+
+    @patch("aiohttp.ClientSession")
+    def test_twitter_list_id_url(self, session):
+        session.return_value = mock_session = MockAiohttpSession([mock_statuses, []])
+
+        # Actually fetch!
+        result = fetch(
+            P(
+                querytype="lists_statuses",
+                listurl="https://twitter.com/i/lists/1232648120690912345",
+            ),
+            DefaultSecret,
+        )
+        self.assertEqual(
+            [str(req.url) for req in mock_session.requests],
+            [
+                (
+                    "https://api.twitter.com/1.1/lists/statuses.json"
+                    "?list_id=1232648120690912345"
+                    "&tweet_mode=extended&count=200"
+                ),
+                (
+                    "https://api.twitter.com/1.1/lists/statuses.json"
+                    "?list_id=1232648120690912345"
+                    "&tweet_mode=extended&count=200&max_id=795017147651162111"
+                ),
+            ],
+        )
+
+    @patch("aiohttp.ClientSession")
+    def test_twitter_list_id(self, session):
+        session.return_value = mock_session = MockAiohttpSession([mock_statuses, []])
+
+        # Actually fetch!
+        result = fetch(
+            P(querytype="lists_statuses", listurl="1232648120690912345"),
+            DefaultSecret,
+        )
+        self.assertEqual(
+            [str(req.url) for req in mock_session.requests],
+            [
+                (
+                    "https://api.twitter.com/1.1/lists/statuses.json"
+                    "?list_id=1232648120690912345"
+                    "&tweet_mode=extended&count=200"
+                ),
+                (
+                    "https://api.twitter.com/1.1/lists/statuses.json"
+                    "?list_id=1232648120690912345"
+                    "&tweet_mode=extended&count=200&max_id=795017147651162111"
+                ),
+            ],
+        )
 
     def test_render_empty_no_query(self):
         # When we haven't fetched, we shouldn't show any columns (for

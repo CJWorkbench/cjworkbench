@@ -273,29 +273,27 @@ async def twitter_search(
 
 
 async def twitter_list_timeline(
-    credentials, owner_screen_name, slug, since_id: Optional[int]
+    credentials, params: List[Tuple[str, str]], since_id: Optional[int]
 ) -> List[Dict[str, Any]]:
+
     # 2000 tweets, aribitrarily, to try to go easy on rate limits
     # (this is still 10 calls)
     return await fetch_from_twitter(
-        credentials,
-        "lists/statuses.json",
-        [("owner_screen_name", owner_screen_name), ("slug", slug)],
-        since_id,
-        200,
-        5,
+        credentials, "lists/statuses.json", params, since_id, 200, 5,
     )
 
 
 # Inspired by https://github.com/twitter/twitter-text
-USERNAME_REGEX_PART = r"@?([a-zA-Z0-9_]{1,15})"
+OWNER_SCREEN_NAME_REGEX_PART = r"@?([a-zA-Z0-9_]{1,15})"
 LIST_REGEX_PART = r"([a-z][-_a-z0-9]{0,24})"
 
-USERNAME_REGEX = re.compile(f"^{USERNAME_REGEX_PART}$")
-LIST_URL_REGEX = re.compile(
-    f"^(?:https?://)twitter.com/{USERNAME_REGEX_PART}" f"/lists/{LIST_REGEX_PART}$"
+OWNER_SCREEN_NAME_REGEX = re.compile(f"^{OWNER_SCREEN_NAME_REGEX_PART}$")
+LIST_ID_URL_REGEX = re.compile(f"^(?:https?://)?twitter.com/i/lists/(\d+)$")
+LIST_ID_REGEX = re.compile(f"^(\d+)$")
+LIST_OWNER_SCREEN_NAME_SLUG_URL_REGEX = re.compile(
+    f"^(?:https?://)?twitter.com/{OWNER_SCREEN_NAME_REGEX_PART}" f"/lists/{LIST_REGEX_PART}$"
 )
-LIST_REGEX = re.compile(f"^{USERNAME_REGEX_PART}/{LIST_REGEX_PART}$")
+LIST_OWNER_SCREEN_NAME_SLUG_REGEX = re.compile(f"^{OWNER_SCREEN_NAME_REGEX_PART}/{LIST_REGEX_PART}$")
 
 
 # Get from Twitter, return as dataframe
@@ -306,7 +304,7 @@ async def get_new_tweets(credentials, querytype, query, old_tweets):
         last_id = None
 
     if querytype == QueryType.USER_TIMELINE:
-        match = USERNAME_REGEX.match(query)
+        match = OWNER_SCREEN_NAME_REGEX.match(query)
         if not match:
             raise ValueError("Not a valid Twitter username")
         username = match.group(1)
@@ -318,15 +316,18 @@ async def get_new_tweets(credentials, querytype, query, old_tweets):
         return await twitter_search(credentials, query, last_id)
 
     else:  # querytype == QueryType.LISTS_STATUSES
-        match = LIST_URL_REGEX.match(query)
-        if not match:
-            match = LIST_REGEX.match(query)
-        if not match:
+        params = None
+        if m:= LIST_OWNER_SCREEN_NAME_SLUG_URL_REGEX.match(query):
+            params = [("owner_screen_name", m.group(1)), ("slug", m.group(2))]
+        elif m := LIST_OWNER_SCREEN_NAME_SLUG_REGEX.match(query):
+            params = [("owner_screen_name", m.group(1)), ("slug", m.group(2))]
+        elif m := LIST_ID_URL_REGEX.match(query):
+            params = [("list_id", m.group(1))]
+        elif m := LIST_ID_REGEX.match(query):
+            params = [("list_id", m.group(1))]
+        else:
             raise ValueError("Not a valid Twitter list URL")
-
-        return await twitter_list_timeline(
-            credentials, match.group(1), match.group(2), last_id
-        )
+        return await twitter_list_timeline(credentials, params, since_id=last_id)
 
 
 # Combine this set of tweets with previous set of tweets

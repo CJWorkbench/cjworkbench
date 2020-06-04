@@ -51,7 +51,7 @@
       "name": "",
       "id_name" : "listurl",
       "type": "string",
-      "placeholder":"https://twitter.com/someuser/lists/somelist",
+      "placeholder":"https://twitter.com/i/lists/123…",
       "visible_if": {
         "id_name": "querytype",
         "value": [ "lists_statuses" ]
