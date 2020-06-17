@@ -100,7 +100,7 @@ services:
     #image:
     #build:
     #no ports: on cloudbuild
-    command: [ 'sh', '-c', '/app/cjwkernel/setup-sandboxes.sh only-readonly && exec daphne -b 0.0.0.0 -p 8080 --application-close-timeout 180 cjworkbench.asgi:application' ]
+    command: [ 'sh', '-c', '/app/cjwkernel/setup-sandboxes.sh only-readonly && exec python -m uvicorn --host 0.0.0.0 --port 8080 --forwarded-allow-ips 0.0.0.0 cjworkbench.asgi:application' ]
     depends_on: [ 'db', 'rabbitmq', 'minio' ]
     security_opt:
       - seccomp=docker/pyspawner-seccomp-profile.json

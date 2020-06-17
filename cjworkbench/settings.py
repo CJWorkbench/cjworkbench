@@ -322,7 +322,6 @@ LOGGING = {
         "asyncio": {"level": "INFO"},
         "botocore": {"level": "INFO"},
         "channels_rabbitmq": {"level": "INFO"},
-        "daphne": {"level": "INFO"},
         "intercom": {"level": "INFO"},
         "oauthlib": {"level": "INFO"},
         "urllib3": {"level": "INFO"},
@@ -338,6 +337,8 @@ LOGGING = {
         "django.channels.server": {"level": "ERROR"},  # ditto djano.request
         # DEBUG only gets messages when settings.DEBUG==True
         "django.db.backends": {"level": "INFO"},
+        "websockets.protocol": {"level": "INFO"},
+        "websockets.server": {"level": "INFO"},
         "cjwstate.models.module_registry": {
             "level": ("WARNING" if I_AM_TESTING else "INFO")
         },

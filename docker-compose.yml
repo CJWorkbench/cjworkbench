@@ -89,9 +89,7 @@ services:
     command: [
       'sh',
       '-c',
-      # Use http-process-proxy, not Django reload. Django reload crashes
-      # when there's a syntax error.
-      'cjwkernel/setup-sandboxes.sh only-readonly && pipenv run python -m httpprocessproxy 0.0.0.0:8000 0.0.0.0:8080 --exclude "**/*.pyc" "**/tests/**/*" "--pattern" "cjwkernel/**/*.py" "cjwstate/**/*.py" "cjwstate/**/*.yaml" "server/**/*.py" "staticmodules/**/*.*" "server/**/*.yaml" "server/lessons/**/*.html" "server/courses/**/*.html" "cjworkbench/**/*.py" --exec python ./manage.py runserver --noreload --insecure 0.0.0.0:8080'
+      'cjwkernel/setup-sandboxes.sh only-readonly && pipenv run python -m uvicorn --reload --reload-dir cjworkbench --reload-dir cjwkernel --reload-dir cjwstate --reload-dir server --reload-dir staticmodules --host 0.0.0.0 --port 8000 --use-colors cjworkbench.asgi:application'
     ]
 
   renderer:

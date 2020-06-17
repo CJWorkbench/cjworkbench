@@ -248,16 +248,6 @@ FROM base AS frontend
 COPY --from=jsbuild /app/webpack-stats.json /app/
 # 8080 is Kubernetes' conventional web-server port
 EXPOSE 8080
-# TODO serve static files elsewhere
-# Beware: our daphne does not serve static files! Use migrate-prod to push them
+# Beware: uvicorn does not serve static files! Use migrate-prod to push them
 # to GCS and publish them there.
-#
-# We set application-close-timeout to something enormous. Otherwise, Daphne will
-# call `task.cancel()` on a long-running, closed connection. That's
-# catastrophic: if the Websocket connection is subscribed to a group, then the
-# group's messages will queue up until they fill our channel layer -- causing
-# back-pressure, meaning _all Websocket connections stop working_. (At the same
-# time, if the application never dies at all we have another error. So keep
-# --application-close-timeout small enough that we'll get a warning when there's
-# a bug in our code.)
-CMD [ "daphne", "-b", "0.0.0.0", "-p", "8080", "--application-close-timeout", "180", "cjworkbench.asgi:application" ]
+CMD [ "python", "-m", "uvicorn", "--host", "0.0.0.0", "--port", "8080", "--forwarded-allow-ips", "0.0.0.0", "cjworkbench.asgi:application" ]
