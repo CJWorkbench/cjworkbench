@@ -72,7 +72,7 @@ spec:
         - name: frontend
           image: "gcr.io/workbenchdata-ci/frontend:latest"
           # override port: pick 8081. (We'll use haproxy for 8080.)
-          command: [ "uvicorn", "--host", "0.0.0.0", "--port", "8080", "--forwarded-allow-ips", "0.0.0.0", "cjworkbench.asgi:application" ]
+          command: [ "python", "-m", "uvicorn", "--host", "0.0.0.0", "--port", "8081", "--forwarded-allow-ips", "0.0.0.0", "cjworkbench.asgi:application" ]
           resources:
             requests:
               # We have no SMT, and we want 1 pod per node. Pods have ~1.5 CPUs
