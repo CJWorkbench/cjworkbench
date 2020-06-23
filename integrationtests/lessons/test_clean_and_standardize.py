@@ -126,7 +126,7 @@ class TestLesson(LessonTest):
         # Wait for module to start loading
         self.expect_highlight(1, '.wf-module[data-module-name="Reshape"]', wait=True)
         # Wait for module to load
-        b.select("direction", "Long to wide", wait=True)
+        b.select("operation", "Long to wide", wait=True)
         self.submit_wf_module()
 
         # Wait for param change to register
@@ -136,7 +136,7 @@ class TestLesson(LessonTest):
 
         # Wait for param change to register
         self.expect_highlight(3, '.wf-module[data-module-name="Reshape"]', wait=True)
-        self.select_column("Reshape", "varcol", "MetroArea")
+        self.select_column("Reshape", "ltw_varcolname", "MetroArea")
         self.submit_wf_module()
 
         # Navigate to footer
