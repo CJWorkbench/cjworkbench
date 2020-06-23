@@ -111,16 +111,16 @@
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleIdName":"reshape"}]'
-      data-test="return workflow.tabs[0].wfModules[6].params.direction === 'longtowide'"
+      data-test="return workflow.tabs[0].wfModules[6].params.operation === 'longtowide'"
       >Select <kbd>Long to wide</kbd>.
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleIdName":"reshape"}]'
-      data-test="return workflow.tabs[0].wfModules[6].params.colnames == 'Date'"
+      data-test="return workflow.tabs[0].wfModules[6].params.key_colnames.join(',') == 'Date'"
       >Choose <kbd>Date</kbd> as the Row variable. Those values will be displayed in leftmost column in the wide table.</li>
     <li
       data-highlight='[{"type":"WfModule","moduleIdName":"reshape"}]'
-      data-test="return workflow.tabs[0].wfModules[6].params.varcol == 'MetroArea'"
+      data-test="return workflow.tabs[0].wfModules[6].params.ltw_varcolname == 'MetroArea'"
       >Choose <kbd>MetroArea</kbd> as the Column variable. Those values will be used in the column header in the wide table.
     </li>
   </ol>

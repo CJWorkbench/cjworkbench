@@ -174,7 +174,7 @@ tabs:
       data-highlight='[{"type": "WfModule", "moduleIdName": "reshape"}]'
       data-test="
         const params = workflow.tabs[0].wfModules[6].params
-        return params.direction === 'longtowide' && params.colnames === 'date' && params.varcol === 'subject_race'"
+        return params.operation === 'longtowide' && params.key_colnames.join(',') === 'date' && params.ltw_varcolname === 'subject_race'"
       >
         Select <kbd>Long to wide</kbd>, set the <kbd>Row variable</kbd> to the column <kbd>date</kbd>
         and the <kbd>Column variable</kbd> to <kbd>subject_race</kbd>.
@@ -187,10 +187,8 @@ tabs:
       data-highlight='[{"type":"WfModule","moduleIdName":"linechart"}]'
       data-test="
         const wfModule = workflow.tabs[0].wfModules[7]; const p = wfModule.params;
-        if (p.x_column !== 'date') return false;
-        const lines = []
-        p.y_columns.forEach(obj => lines.push(obj.column))
-        return p.y_columns.length === 5 && lines.sort().join('|') === 'NA|asian/pacific islander|black|other/unknown|white'"
+        return p.x_column === 'date' && p.y_columns.map(c => c.column).sort().join('|') === 'NA|asian/pacific islander|black|other|unknown|white'
+        "
       >
       Select <kbd>date</kbd> for the X axis and add the rest of the columns as lines on the Y axis.</li>
     <li

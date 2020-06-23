@@ -1,0 +1,141 @@
+# Greek translations for PROJECT.
+# Copyright (C) 2020 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2020.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2020-06-23 14:34+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: el\n"
+"Language-Team: el <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.8.0\n"
+
+msgid "_spec.name"
+msgstr "Αναδιαμόρφωση"
+
+msgid "_spec.description"
+msgstr "Μετατροπή του πίνακα από μακρά σε πλατιά μορφή και αντίστροφα.."
+
+msgid "_spec.parameters.operation.options.widetolong.label"
+msgstr ""
+
+msgid "_spec.parameters.operation.options.longtowide.label"
+msgstr ""
+
+msgid "_spec.parameters.operation.options.transpose.label"
+msgstr ""
+
+msgid "_spec.parameters.key_colnames.name"
+msgstr ""
+
+msgid "_spec.parameters.wtl_varcolname.name"
+msgstr ""
+
+msgid "_spec.parameters.wtl_varcolname.default"
+msgstr ""
+
+msgid "_spec.parameters.wtl_valcolname.name"
+msgstr ""
+
+msgid "_spec.parameters.wtl_valcolname.default"
+msgstr ""
+
+msgid "_spec.parameters.ltw_varcolname.name"
+msgstr ""
+
+#: reshape.py:21
+msgid "wide_to_long.badColumns.varcolname.conflict"
+msgstr ""
+
+#: reshape.py:28
+msgid "wide_to_long.badColumns.valcolname.conflict"
+msgstr ""
+
+#: reshape.py:67
+msgid "wide_to_long.badColumns.mixedTypes.message"
+msgstr ""
+"Έγινε αυτόματη μετατροπή {n_columns, plural, other{# στηλών (δείτε "
+"\"{first_colname}\")} one {της στήλης \"{first_colname}\"}} σε κείμενο "
+"επειδή η στήλη τιμής δεν μπορεί να έχει διαφορετικούς τύπους."
+
+#: reshape.py:74
+msgid "wide_to_long.badColumns.mixedTypes.quick_fix.text"
+msgstr "Μετατροπή {n_columns, plural, one {# στήλης} other {# στηλών}} σε κείμενο"
+
+#: reshape.py:106
+msgid "long_to_wide.badColumn.notText.message"
+msgstr ""
+"Έγινε αυτόματη μετατροπή της στήλης \"{column_name}\" σε κείμενο επειδή "
+"τα ονόματα στηλών πρέπει να είναι κείμενο."
+
+#: reshape.py:114
+msgid "long_to_wide.badColumn.notText.quick_fix.text"
+msgstr "Μετατροπή της στήλης \"{column_name}\" σε κείμενο"
+
+#: reshape.py:136
+msgid "long_to_wide.badRows.emptyColumnHeaders.warning"
+msgstr ""
+"{n_rows, plural,   one {# σειρά με κενή στήλη \"{column_name}\" "
+"αφαιρέθηκε.}  other {# σειρές με κενή στήλη \"{column_name}\" "
+"αφαιρέθηκαν.}}"
+
+#: reshape.py:150
+#, fuzzy
+msgid "long_to_wide.error.repeatedVariables"
+msgstr "Δεν είναι δυνατή η αναδιαμόρφωση: μερικές μεταβλητές επαναλαμβάνονται"
+
+#: reshape.py:156
+msgid "long_to_wide.error.noValueColumn"
+msgstr ""
+"Δεν υπάρχει στήλη τιμής. Όλες οι στήλες του πίνακα εκτός από μία πρέπει "
+"να είναι μεταβλητή σειράς ή στήλης."
+
+#: reshape.py:162
+msgid "long_to_wide.error.tooManyValueColumns"
+msgstr ""
+"Υπάρχουν πολλές στήλες τιμής. Όλες οι στήλες του πίνακα εκτός από μία "
+"πρέπει να είναι μεταβλητή σειράς ή στήλης. Αφαιρέστε τις επιπλέον στήλες "
+"πριν από την αναδιαμόρφωση."
+
+#: reshape.py:204
+msgid "error.sameColumnAndRowVariables"
+msgstr ""
+"Δεν είναι δυνατή η αναδιαμόρφωση: οι μεταβλητές στηλών και σειρών πρέπει "
+"να είναι διαφορετικές"
+
+#: reshape.py:325
+msgid "transpose.warnings.tooManyRows"
+msgstr ""
+"Περικόψαμε την είσοδο σε {max_columns} σειρές έτσι ώστε ο "
+"αντιμετατιθέμενος πίνακας να έχει λογικό αριθμό στηλών."
+
+#: reshape.py:344
+msgid "transpose.warnings.headersConvertedToText.message"
+msgstr ""
+"Έγινε αυτόματη μετατροπή των κεφαλίδων στη στήλη \"{column_name}\" σε "
+"κείμενο."
+
+#: reshape.py:351
+msgid "transpose.warnings.headersConvertedToText.quickFix.text"
+msgstr "Μετατροπή της στήλης {column_name} σε κείμενο"
+
+#: reshape.py:386
+msgid "transpose.warnings.differentColumnTypes.message"
+msgstr ""
+"Έγινε αυτόματη μετατροπή {n_columns, plural, other {# στηλών (δείτε "
+"\"{first_colname}\")} one {της στήλης \"{first_colname}\"}} σε κείμενο "
+"επειδή όλες οι στήλες πρέπει να ανήκουν στον ίδιο τύπο."
+
+#: reshape.py:393
+msgid "transpose.warnings.differentColumnTypes.quickFix.text"
+msgstr "Μετατροπή {n_columns, plural, other {# στηλών} one {# στήλης}} σε κείμενο"
+

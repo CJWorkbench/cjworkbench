@@ -95,16 +95,16 @@ tabs:
     <li
       data-test="
         return workflow.tabs[0].wfModuleSlugs[3] === 'reshape' &&
-               workflow.tabs[0].wfModules[3].params.direction === 'longtowide'
+               workflow.tabs[0].wfModules[3].params.operation === 'longtowide'
       ">Add a <kbd>Reshape</kbd> step and select <kbd>Long to wide</kbd>
     </li>
     <li
-      data-test="return workflow.tabs[0].wfModules[3].params.colnames === 'Complaint date'"
+      data-test="return workflow.tabs[0].wfModules[3].params.key_colnames.join(',') === 'Complaint date'"
       >Select <kbd>Complaint date</kbd> as the <kbd>Row variable</kbd>
     </li>
     <li
       data-test="
-        return workflow.tabs[0].wfModules[3].params.varcol == 'Borough'"
+        return workflow.tabs[0].wfModules[3].params.ltw_varcolname == 'Borough'"
       >Select <kbd>Borough</kbd>for the <kbd>Column variable</kbd>
     </li>
   </ol>

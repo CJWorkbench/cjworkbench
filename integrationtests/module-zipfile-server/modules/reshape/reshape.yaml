@@ -5,7 +5,7 @@ description: Convert the table between wide and long formats.
 icon: reshape
 help_url: modules/clean/reshape
 parameters:
-- id_name: direction
+- id_name: operation
   name: ""
   type: menu
   options:
@@ -13,28 +13,32 @@ parameters:
   - { value: longtowide, label: Long to wide }
   - { value: transpose, label: Transpose }
   default: widetolong
-- id_name: colnames
-  name: Row variable
+- id_name: key_colnames
+  name: Row columns
+  type: multicolumn
+  visible_if:
+    id_name: operation
+    value: [ longtowide, widetolong ]
+- id_name: wtl_varcolname
+  name: Variable-column name
+  # help: This column will contain column names.
+  type: string
+  default: Variable
+  visible_if:
+    id_name: operation
+    value: [ widetolong ]
+- id_name: wtl_valcolname
+  name: Value-column name
+  type: string
+  default: Value
+  visible_if:
+    id_name: operation
+    value: [ widetolong ]
+- id_name: ltw_varcolname
   type: column
+  column_types: [ text ]
+  name: Variable column
+  # help: Each value in this column will become a column.
   visible_if:
-    id_name: direction
-    value: [ transpose ]
-    invert: true
-- id_name: second_key
-  name: ""
-  type: column
-  visible_if:
-    id_name: has_second_key
-    value: true
-- id_name: has_second_key
-  name: 2nd row variable
-  type: checkbox
-  visible_if:
-    id_name: direction
-    value: [ longtowide ]
-- id_name: varcol
-  name: Column variable
-  type: column
-  visible_if:
-    id_name: direction
+    id_name: operation
     value: [ longtowide ]

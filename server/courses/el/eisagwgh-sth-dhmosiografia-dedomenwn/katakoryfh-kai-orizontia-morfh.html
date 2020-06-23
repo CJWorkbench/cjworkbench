@@ -62,14 +62,14 @@ tabs:
     <li
       data-test="
         return workflow.tabs[0].wfModuleSlugs[3] === 'reshape' &&
-               workflow.tabs[0].wfModules[3].params.direction === 'longtowide'
+               workflow.tabs[0].wfModules[3].params.operation === 'longtowide'
       ">Προσθέστε ένα βήμα <kbd>Αναδιαμόρφωση</kbd> και επιλέξτε <kbd>Από κατακόρυφο σε οριζόντιο</kbd></li>
     <li
-      data-test="return workflow.tabs[0].wfModules[3].params.colnames === 'Complaint date'"
+      data-test="return workflow.tabs[0].wfModules[3].params.key_colnames.join(',') === 'Complaint date'"
       >Επιλέξτε τη στήλη <kbd>Complaint date</kbd> ως τη <kbd>Μεταβλητή σειράς</kbd></li>
     <li
       data-test="
-        return workflow.tabs[0].wfModules[3].params.varcol == 'Borough'"
+        return workflow.tabs[0].wfModules[3].params.ltw_varcolname == 'Borough'"
       >Επιλέξτε τη στήλη <kbd>Borough</kbd>ως <kbd>Μεταβλητή στήλης</kbd></li>
   </ol>
 </section>

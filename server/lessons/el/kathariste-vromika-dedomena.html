@@ -88,15 +88,15 @@
       >Προσθέστε το βήμα &quot;Αναδιαμόρφωση&quot;.</li>
     <li
       data-highlight='[{"type":"WfModule","moduleIdName":"reshape"}]'
-      data-test="return workflow.tabs[0].wfModules[6].params.direction === 'longtowide'"
+      data-test="return workflow.tabs[0].wfModules[6].params.operation === 'longtowide'"
       >Επιλέξτε <kbd>Από κατακόρυφο σε οριζόντιο</kbd>.</li>
     <li
       data-highlight='[{"type":"WfModule","moduleIdName":"reshape"}]'
-      data-test="return workflow.tabs[0].wfModules[6].params.colnames == 'Date'"
+      data-test="return workflow.tabs[0].wfModules[6].params.key_colnames.join(',') == 'Date'"
       >Επιλέξτε <kbd>Date</kbd> ως Μεταβλητή σειράς. Αυτές οι τιμές θα εμφανίζονται στην αριστερή στήλη του οριζόντιου πίνακα.</li>
     <li
       data-highlight='[{"type":"WfModule","moduleIdName":"reshape"}]'
-      data-test="return workflow.tabs[0].wfModules[6].params.varcol == 'MetroArea'"
+      data-test="return workflow.tabs[0].wfModules[6].params.ltw_varcolname == 'MetroArea'"
       >Επιλέξτε <kbd>MetroArea</kbd> ως Μεταβλητή στήλης. Αυτές οι τιμές θα χρησιμοποιούνται στην κεφαλίδα της στήλης του οριζόντιου πίνακα.</li>
   </ol>
 </section>
