@@ -131,7 +131,7 @@ class TestLesson(LessonTest):
 
         # Wait for param change to register
         self.expect_highlight(2, '.wf-module[data-module-name="Reshape"]', wait=True)
-        self.select_column("Reshape", "colnames", "Date")
+        self.select_column("Reshape", "key_colnames", "Date")
         self.submit_wf_module()
 
         # Wait for param change to register
