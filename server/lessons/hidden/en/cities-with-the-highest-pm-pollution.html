@@ -1,0 +1,180 @@
+<header>
+  <h1>X. Cities with the highest PM pollution</h1>
+  <p>We need a desription here.</p>
+  <img src="./banner.svg" alt="">
+</header>
+
+<section class="fullscreen">
+  <h2>Introduction</h2>
+  <p>
+    As the links between climate change and health become more well-documented, pollution is a useful indicator of how different populations are impacted. This tutorial uses air quality data from the Environmental Protection Agency (EPA) to identify which major U.S. cities have outdoor particle 2.5 (or PM2.5, referring to inhalable particles smaller than 2.5 micrometers) pollution levels and/or outdoor particle 10 (or PM10, referring to inhalable particles smaller than 10 micrometers) pollution levels that are above the federal standards.
+  </p>
+  <p>
+    This tutorial was created by Betsy Ladyzhets in association with a feature for The Open Notebook on data journalism for science writers.
+  </p>
+</section>
+
+<section>
+  <h2>Obtaining the data</h2>
+  <p>We will load the data for this story from the EPA’s Air Quality Statistics Report data feature, using 2018 data because 2019 data has not yet been finalized. We will exclude “exceptional events” so that outliers do not skew our analysis.</p>
+  <p>Learn more about the EPA air quality data report <a class="highlight" href='https://www.epa.gov/outdoor-air-quality-data/about-air-data-reports' target="_blank" className="info-1">here</a>.</p>
+  <h3 class="instructions">Instructions</h3>
+  <ol class="steps">
+    <li data-test=" ">
+    <p>Naviguate to the EPA's <a class="highlight" href='https://www.epa.gov/outdoor-air-quality-data/air-quality-statistics-report' target="_blank" className="info-1">Air Quality Statistics Report Data</a> feature.</p>
+    </li>
+    <li data-test=" ">
+      Select <kbd>2018</kbd> and <kbd>United States</kbd>. Group results by city, and exclude exceptionnal events. <br>
+      Download the resulting CSV file for this data query.<br>
+    </li>
+    <li data-test=" ">
+    Add the step <kbd>Upload</kbd> as your data source for this workflow, and upload the CSV file you just downloaded.
+    </li>
+  </ol>
+</section>
+
+<section>
+  <h2>Cleaning the data 1/2</h2>
+
+  <p>The first step in cleaning these data is removing columns with extraneous information. <br>
+    In this case, we've chosen to focus on particle pollution; this type of pollution is linked to polluters such as construction sites and fires, and poses distinct health risks. Thus, all other columns may be removed.
+  </p>
+
+  <h3 class="instructions">Instructions</h3>
+  <ol class="steps">
+    <li data-test=" ">
+      Add the step <kbd>Select columns</kbd>.
+    </li>
+    <li data-test=" ">
+      Select the following columns:<br>
+      <code>CBSA Code</code>,<br>
+      <code>CBSA</code>,<br>
+      <code>PM2.5 98th Percentile 24-hr</code>,<br>
+      <code>PM2.5 Weighted Mean 24-hr</code>,<br>
+      <code>PM10 2nd Max 24-hr</code>,<br>
+      <code>PM 10 Mean 24-hr</code>,<br>
+      and choose <kbd>Keep</kbd>.
+    </li>
+    <li data-test=" ">
+    Click the play icon to execute your settings.
+    </li>
+  </ol>
+</section>
+
+<section>
+  <h2>Cleaning the data 2/2</h2>
+
+  <p>The next cleaning step for this dataset is to split the “CBSA” (core-based statistical area) column into city names and state names, to make the data easier to present later. Finally, we will convert all the figures in the PM value columns so that Workbench recognizes these figures as numbers, and we can use formulas on them.
+  </p>
+  <h3 class="instructions">Instructions</h3>
+  <ol class="steps">
+    <li data-test=" ">
+      Add the step <kbd>split column</kbd>.
+    </li>
+    <li data-test=" ">
+      Split the column <code>CBSA</code>, using a “delimiter” (a specific character that will identify the end of the string), and make the delimiter a comma: <code>,</code>.
+    </li>
+    <li data-test=" ">
+      Add the step <kbd>convert to number</kbd>.
+    </li>
+    <li data-test=" ">
+      Convert the columns<br>
+      <code>PM2.5 98th Percentile 24-hr</code>,<br>
+      <code>PM2.5 Weighted Mean 24-hr</code>,<br>
+      <code>PM10 2nd Max 24-hr</code>, and<br>
+      <code>PM 10 Mean 24-hr</code> to <kbd>any number</kbd>. Choose to display them as <kbd>decimal: 1,500.0012</kbd>.
+    </li>
+  </ol>
+</section>
+
+<section class="fullscreen">
+  <h2>Using formulas</h2>
+
+  <p>In order to identify which cities have PM pollution above EPA standards, we will use formulas to tag rows in the dataset.</p>
+
+  <p>A “formulas” is simple programming functions which may perform calculations on data points, organize them, or combine one dataset with another. Microsoft Excel is the classic program for formulas, and many journalists have their first data wrangling experience in either this program or its web-based sibling, Google Sheets. <br>
+    <a class="highlight" href='https://blog.adeptmarketing.com/10-excel-functions-you-need-to-know-for-data-analysis' target="_blank" className="info-1">This list</a> by Adept Marketing’s Katie Cunningham, of ten key Excel functions to know, can give you an idea of the basics.</p><br>
+
+  <p>Workbench has the capacity to analyze data with formulas in the languages of Excel and Python. In this project, we will use an <a class="highlight" href='https://support.office.com/en-us/article/if-function-69aed7c9-4e8a-4755-a9bc-aa8bbff73be2' target="_blank" className="info-1">Excel logic formula called IF</a>. This function automates logical comparisons between values: IF a value in another cell meets a certain condition, THEN the formula will return a predetermined output value. If the condition is not met, the formula will return a different predetermined value, which may be set to be a blank cell (or simply the word “FALSE”).</p>
+</section>
+
+<section>
+  <h2>Filtering the data 1/2</h2>
+
+  <p>In this project, we will use the IF formula to identify which cities have PM2.5 pollution above the EPA standard for 98th percentile 24-hour pollution (35 μg/m3), and which cities have PM10 pollution over the EPA standard for 2nd max 24-hour pollution (150 μg/m3). The full table of EPA standards is available <a class="highlight" href='https://www.epa.gov/criteria-air-pollutants/naaqs-table' target="_blank" className="info-1">here</a>.
+  </p>
+
+  <p>First, we will streamline the dataset further by using a filter to remove all rows with blanks in these two columns.</p>
+  <p>Next, we will tag the cities with high PM2.5 pollution. Our IF formula will determine: IF a city’s PM2.5 98th percentile 24-hour pollution value is higher than 35 μg/m3, THEN the output column will report “above.” For all other cities, the result column will report a blank.</p>
+
+  <h3 class="instructions">Instructions</h3>
+  <ol class="steps">
+    <li data-test=" ">
+      Add the step <kbd>Filter by condition</kbd>.
+    </li>
+    <li data-test=" ">
+      Set the filter so that if the cell in column <code>PM10 Mean 24-hr</code> is null OR the cell in column <code>PM2.5 98th Percentile 24-hr</code> is null, then delete .
+    </li>
+    <li data-test=" ">
+      Add the step <kbd>Formula</kbd>, and select <kbd>Excel</kbd>.
+    </li>
+    <li data-test=" ">
+      Add the following formula:<div class="copy-txt">=IF(D1>35, "above", "-" )</div>
+      Select <kbd>Apply to all rows</kbd> and name the output column <code>PM 2.5 - EPA standard</code>.
+    </li>
+  </ol>
+</section>
+<section>
+  <h2>Filtering the data 2/2</h2>
+
+  <p>We will repeat the formula step to tag cities with high PM10 pollution. Our IF formula will determine: IF a city’s PM10 2nd max 24-hour pollution value is higher than 150 μg/m3, THEN the output column will report <Code>above</code>.
+  </p>
+  <p>Now that we’ve set up the “above” tags, we can filter the dataset to only show us cities which have pollution above the EPA standard, either for PM2.5 or PM10.</p>
+  <p>Our final sorting step will rank the cities by their pollution values.</p>
+
+  <h3 class="instructions">Instructions</h3>
+  <ol class="steps">
+    <li data-test=" ">
+      Add the step <kbd>Formula</kbd>, select <kbd>Excel</kbd> and apply the formula <code>=IF(F1>150, "above", "-")</code> to all rows. Name the output column <code>PM 10 - EPA standard</code>.
+    </li>
+    <li data-test=" ">
+      Add the step <kbd>Filter by condition</kbd>, and filter as follow: IF the column <code>PM 2.5 - EPA standard</code> contains <code>above</code> OR the column <code>PM 10 - EPA standard</code> contains <code>above</code>, then <kbd>Keep</kbd>.
+    </li>
+    <li data-test=" ">
+      Add the step <kbd>Sort</kbd>. Sort by <code>PM2.5 98th Percentile 24-hr</code>, then by <code>PM10 2nd Max 24-hr</code>, both by descending order.
+    </li>
+  </ol>
+</section>
+<section class="fullscreen">
+  <h2>Presenting the data 1/2</h2>
+
+  <p>What is the best way to present these data?  We’re not showing a percentage comparison, so a pie chart doesn't work, and we're not showing a trend, so a scatter plot doesn't work. A bar chart clearly allows readers to compare both across cities and between the PM2.5 and PM10 values.
+
+  <p>In a more advanced version of this figure, readers might be able to click on cities to see more information about them, including other pollution values and context for the data. Context could include: what industries or events have contributed to pollution in this city? What is the local government doing to combat this issue?
+  </p>
+
+</section>
+<section>
+  <h2>Presenting the data 2/2</h2>
+
+  <p>Our column Chart is simple, but it does the work of highlighting cities with high pollution and drawing the reader’s attention to outliers with particularly high values.</p>
+
+  <h3 class="instructions">Instructions</h3>
+  <ol class="steps">
+    <li data-test=" ">
+      Add the step <kbd>Column chart</kbd>.
+    </li>
+    <li data-test=" ">
+      Use <Code>City</code> as the X axis, and add two columns to the Y axis: <code>PM2.5 Percentile 24-hr</code>and <code>PM10 Mean 24-hr</code>.
+    </li>
+    <li data-test=" ">
+      Title both the X and Y axis accordingly.
+    </li>
+  </ol>
+
+</section>
+
+<footer>
+  <h2>Lesson Complete!</h2>
+  <p>Some instructions on what to do next, such as going through the other lesson, some additional readings etc.
+</footer>
