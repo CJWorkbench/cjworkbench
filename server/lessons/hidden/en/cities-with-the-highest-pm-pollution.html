@@ -10,7 +10,9 @@
     As the links between climate change and health become more well-documented, pollution is a useful indicator of how different populations are impacted. This tutorial uses air quality data from the Environmental Protection Agency (EPA) to identify which major U.S. cities have outdoor particle 2.5 (or PM2.5, referring to inhalable particles smaller than 2.5 micrometers) pollution levels and/or outdoor particle 10 (or PM10, referring to inhalable particles smaller than 10 micrometers) pollution levels that are above the federal standards.
   </p>
   <p>
-    This tutorial was created by Betsy Ladyzhets in association with a feature for The Open Notebook on data journalism for science writers.
+    This tutorial was created by <a class="highlight" href='https://betsyladyzhets.com/' target="_blank" className="info-1">
+    Betsy Ladyzhets </a> in association <a class="highlight" href='https://www.theopennotebook.com/2020/07/14/interrogating-data-a-science-writers-guide-to-data-journalism/' target="_blank" className="info-1">
+    with a feature for The Open Notebook</a> on data journalism for science writers.
   </p>
 </section>
 
@@ -107,7 +109,7 @@
   </p>
 
   <p>First, we will streamline the dataset further by using a filter to remove all rows with blanks in these two columns.</p>
-  <p>Next, we will tag the cities with high PM2.5 pollution. Our IF formula will determine: IF a city’s PM2.5 98th percentile 24-hour pollution value is higher than 35 μg/m3, THEN the output column will report “above.” For all other cities, the result column will report a blank.</p>
+  <p>Next, we will tag the cities with high PM2.5 pollution. Our IF formula will determine the following: IF a city’s PM2.5 98th percentile 24-hour pollution value is higher than 35 μg/m3, THEN the output column will report “above.” For all other cities, the result column will report a blank.</p>
 
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
@@ -167,10 +169,10 @@
       Add the step <kbd>Column chart</kbd>.
     </li>
     <li data-test=" ">
-      Use <Code>City</code> as the X axis, and add two columns to the Y axis: <code>PM2.5 Percentile 24-hr</code>and <code>PM10 Mean 24-hr</code>.
+      Use <Code>City</code> as the X axis, and add two columns to the Y axis: <code>PM2.5 98th Percentile 24-hr</code>and <code>PM10 Mean 24-hr</code>.
     </li>
     <li data-test=" ">
-      Title both the X and Y axis accordingly.
+      Title the X axis <code>City</code> and the Y axis <code>Concentration given in μg/m3</code>.
     </li>
   </ol>
 
@@ -178,5 +180,17 @@
 
 <footer>
   <h2>Lesson Complete!</h2>
-  <p>Some instructions on what to do next, such as going through the other lesson, some additional readings etc.
+  <p>This tutorial was created by <a class="highlight" href='https://betsyladyzhets.com/' target="_blank" className="info-1">
+  Betsy Ladyzhets </a> in association <a class="highlight" href='https://www.theopennotebook.com/2020/07/14/interrogating-data-a-science-writers-guide-to-data-journalism/' target="_blank" className="info-1">
+  with a feature for The Open Notebook</a> on data journalism for science writers.
+  </p>
+  <div class="next">
+    <h2>Next</h2>
+    <ol>
+      <li>
+        Start the tutorial <a href="critically-endangered-species">Critically Endengered Species</a>, by Betsy Ladyzhets.
+      </li>
+    </ol>
+  </div>
+
 </footer>
