@@ -21,10 +21,10 @@
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li data-test=" ">
-    <p>Naviguate to the EPA's <a class="highlight" href='https://www.epa.gov/outdoor-air-quality-data/air-quality-statistics-report' target="_blank" className="info-1">Air Quality Statistics Report Data</a> feature.</p>
+    <p>Navigate to the EPA's <a class="highlight" href='https://www.epa.gov/outdoor-air-quality-data/air-quality-statistics-report' target="_blank" className="info-1">Air Quality Statistics Report Data</a> feature.</p>
     </li>
     <li data-test=" ">
-      Select <kbd>2018</kbd> and <kbd>United States</kbd>. Group results by city, and exclude exceptionnal events. <br>
+      Select <kbd>2018</kbd> and <kbd>United States</kbd>. Group results by city, and exclude exceptional events. <br>
       Download the resulting CSV file for this data query.<br>
     </li>
     <li data-test=" ">
@@ -55,16 +55,14 @@
       <code>PM 10 Mean 24-hr</code>,<br>
       and choose <kbd>Keep</kbd>.
     </li>
-    <li data-test=" ">
-    Click the play icon to execute your settings.
-    </li>
   </ol>
 </section>
 
 <section>
   <h2>Cleaning the data 2/2</h2>
 
-  <p>The next cleaning step for this dataset is to split the “CBSA” (core-based statistical area) column into city names and state names, to make the data easier to present later. Finally, we will convert all the figures in the PM value columns so that Workbench recognizes these figures as numbers, and we can use formulas on them.
+  <p>The next cleaning step for this dataset is to split the “CBSA” (core-based statistical area) column into city names and state names, to make the data easier to present later.<br>
+    Finally, we will convert all the figures in the PM value columns so that Workbench recognizes these figures as numbers, and we can use formulas on them.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
@@ -75,6 +73,9 @@
       Split the column <code>CBSA</code>, using a “delimiter” (a specific character that will identify the end of the string), and make the delimiter a comma: <code>,</code>.
     </li>
     <li data-test=" ">
+      Rename the columns <code>CBSA 1</code> and <code>CBSA 2</code> respectively to <kbd>City</kbd> and <kbd>County</kbd> by editing column names in the table header.
+    </li>
+    <li data-test=" ">
       Add the step <kbd>convert to number</kbd>.
     </li>
     <li data-test=" ">
@@ -82,7 +83,7 @@
       <code>PM2.5 98th Percentile 24-hr</code>,<br>
       <code>PM2.5 Weighted Mean 24-hr</code>,<br>
       <code>PM10 2nd Max 24-hr</code>, and<br>
-      <code>PM 10 Mean 24-hr</code> to <kbd>any number</kbd>. Choose to display them as <kbd>decimal: 1,500.0012</kbd>.
+      <code>PM10 Mean 24-hr</code> to <kbd>any number</kbd>. Choose to display them as <kbd>decimal: 1,500.0012</kbd>.
     </li>
   </ol>
 </section>
@@ -92,8 +93,9 @@
 
   <p>In order to identify which cities have PM pollution above EPA standards, we will use formulas to tag rows in the dataset.</p>
 
-  <p>A “formulas” is simple programming functions which may perform calculations on data points, organize them, or combine one dataset with another. Microsoft Excel is the classic program for formulas, and many journalists have their first data wrangling experience in either this program or its web-based sibling, Google Sheets. <br>
-    <a class="highlight" href='https://blog.adeptmarketing.com/10-excel-functions-you-need-to-know-for-data-analysis' target="_blank" className="info-1">This list</a> by Adept Marketing’s Katie Cunningham, of ten key Excel functions to know, can give you an idea of the basics.</p><br>
+  <p>Formulas are simple programming functions which may perform calculations on data points, organize them, or combine one dataset with another. Microsoft Excel is the classic program for formulas, and many journalists have their first data wrangling experience in either this program or its web-based sibling, Google Sheets. <br>
+    <a class="highlight" href='https://blog.adeptmarketing.com/10-excel-functions-you-need-to-know-for-data-analysis' target="_blank" className="info-1"><br>
+      This list</a> by Adept Marketing’s Katie Cunningham, of ten key Excel functions to know, can give you an idea of the basics.</p>
 
   <p>Workbench has the capacity to analyze data with formulas in the languages of Excel and Python. In this project, we will use an <a class="highlight" href='https://support.office.com/en-us/article/if-function-69aed7c9-4e8a-4755-a9bc-aa8bbff73be2' target="_blank" className="info-1">Excel logic formula called IF</a>. This function automates logical comparisons between values: IF a value in another cell meets a certain condition, THEN the formula will return a predetermined output value. If the condition is not met, the formula will return a different predetermined value, which may be set to be a blank cell (or simply the word “FALSE”).</p>
 </section>
