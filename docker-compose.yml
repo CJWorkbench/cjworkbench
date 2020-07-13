@@ -89,7 +89,7 @@ services:
     command: [
       'sh',
       '-c',
-      'cjwkernel/setup-sandboxes.sh only-readonly && pipenv run python -m uvicorn --reload --reload-dir cjworkbench --reload-dir cjwkernel --reload-dir cjwstate --reload-dir server --reload-dir staticmodules --host 0.0.0.0 --port 8000 --use-colors cjworkbench.asgi:application'
+      'cjwkernel/setup-sandboxes.sh only-readonly && pipenv run python -m httpprocessproxy 0.0.0.0:8000 0.0.0.0:8080 --exclude "**/*.pyc" "**/tests/**/*" "--pattern" "cjwkernel/**/*.py" "cjwstate/**/*.py" "cjwstate/**/*.yaml" "server/**/*.py" "staticmodules/**/*.*" "server/**/*.yaml" "server/lessons/**/*.html" "server/courses/**/*.html" "cjworkbench/**/*.py" --exec python -m uvicorn --host 127.0.0.1 --port 8080 --use-colors cjworkbench.asgi:application'
     ]
 
   renderer:
