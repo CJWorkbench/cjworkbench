@@ -2,17 +2,19 @@ import json
 import logging
 import secrets
 from typing import Any, Dict, Optional, Union
+from uuid import UUID
+
 from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.db.models import Q
+
 from cjwkernel.types import TableMetadata
-from cjwstate import minio
-from .fields import ColumnsField, RenderErrorsField
+from cjwstate import clientside, minio
+
 from .CachedRenderResult import CachedRenderResult
+from .fields import ColumnsField, RenderErrorsField
 from .Tab import Tab
 from .workflow import Workflow
-from cjwstate import clientside
-
 
 logger = logging.getLogger(__name__)
 
@@ -389,35 +391,46 @@ class WfModule(models.Model):
                 new_step
             )
 
-        # Duplicate the "selected" file, if there is one; otherwise, duplicate
-        # the most-recently-uploaded file.
+        # For each "file" param, duplicate the "selected" uploaded_file if there
+        # is one.
         #
-        # We special-case the 'upload' module because it's the only one that
-        # has 'file' params right now. (If that ever changes, we'll want to
-        # change a few things: upload paths should include param name, and this
-        # test will need to check module_zipfile to find the param name of the
-        # file.)
-        if self.module_id_name == "upload":
-            uuid = self.params["file"]
-            uploaded_file = self.uploaded_files.filter(uuid=uuid).first()
-            if uploaded_file is not None:
-                new_key = uploaded_file.key.replace(
-                    self.uploaded_file_prefix, new_step.uploaded_file_prefix
-                )
-                assert new_key != uploaded_file.key
-                # TODO handle file does not exist
-                minio.copy(
-                    minio.UserFilesBucket,
-                    new_key,
-                    f"{minio.UserFilesBucket}/{uploaded_file.key}",
-                )
-                new_step.uploaded_files.create(
-                    created_at=uploaded_file.created_at,
-                    name=uploaded_file.name,
-                    size=uploaded_file.size,
-                    uuid=uploaded_file.uuid,
-                    key=new_key,
-                )
+        # We assume any UUID in `params` that points to an uploaded file _is_
+        # a file-dtype param. ([adamhooper, 2020-07-14] when the assumption does
+        # not hold, will this cause DB errors? Not sure, but it's not a security
+        # risk.)
+        #
+        # Why not check the param schema? Because we'd need to define behavior
+        # for when the module doesn't exist, or its version is changed, or its
+        # code breaks.... bah! These behaviors don't line up with any user
+        # expectations. Users want to copy the thing they see.
+        for uuid_str in self.params.values():
+            if not isinstance(uuid_str, str):
+                continue
+            try:
+                UUID(uuid_str)
+            except ValueError:
+                continue
+            uploaded_file = self.uploaded_files.filter(uuid=uuid_str).first()
+            if not uploaded_file:
+                continue
+
+            new_key = uploaded_file.key.replace(
+                self.uploaded_file_prefix, new_step.uploaded_file_prefix
+            )
+            assert new_key != uploaded_file.key
+            # TODO handle file does not exist
+            minio.copy(
+                minio.UserFilesBucket,
+                new_key,
+                f"{minio.UserFilesBucket}/{uploaded_file.key}",
+            )
+            new_step.uploaded_files.create(
+                created_at=uploaded_file.created_at,
+                name=uploaded_file.name,
+                size=uploaded_file.size,
+                uuid=uploaded_file.uuid,
+                key=new_key,
+            )
 
         return new_step
 

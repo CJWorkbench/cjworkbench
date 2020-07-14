@@ -1,4 +1,3 @@
-from pathlib import Path
 import uuid as uuidgen
 from django.utils import timezone
 from cjwkernel.util import tempfile_context
