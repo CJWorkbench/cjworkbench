@@ -15,7 +15,7 @@ const EditorProps = {
   $blockScrolling: Infinity
 }
 
-function SyntaxHelp({ syntax }) {
+function SyntaxHelp ({ syntax }) {
   switch (syntax) {
     case 'python': return (
       <Trans id='js.params.Custom.Code.AceEditor.help' description='The tags <3>, <6>, and <8> are URLs. The rest are code formatting. Please keep code and names of libraries untranslated.'>

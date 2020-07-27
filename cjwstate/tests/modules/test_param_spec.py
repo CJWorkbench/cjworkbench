@@ -121,7 +121,7 @@ class ParamSpecTest(unittest.TestCase):
                 "placeholder": "",
                 "syntax": "python",
                 "visible_if": None,
-            }
+            },
         )
         # Just to make sure our unit-test is sane: verify from_dict(to_json)
         # returns the original.

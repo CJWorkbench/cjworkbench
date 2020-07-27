@@ -247,7 +247,7 @@ class ParamSpecString(_RegisterType("string"), _HasPlaceholder, _HasName, ParamS
     multiline: bool = False
     """If True, newlines are permitted in data."""
 
-    syntax: Optional[Literal['python', 'sql']] = None
+    syntax: Optional[Literal["python", "sql"]] = None
     """If set, this String is user-supplied code."""
 
     # override
