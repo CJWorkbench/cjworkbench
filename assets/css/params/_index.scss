@@ -16,9 +16,9 @@
 @import 'Radio';
 @import 'Secret';
 @import 'StaticText';
-@import 'String';
 @import 'SubmitButton';
 @import 'Tab';
 
 @import 'common/index';
+@import 'String/index';
 @import 'Custom/index'; // uses the param-list() mixin

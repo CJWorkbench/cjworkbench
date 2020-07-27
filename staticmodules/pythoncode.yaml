@@ -14,7 +14,9 @@
     {
       "name": "Code",
       "id_name": "code",
-      "type": "custom",
+      "type": "string",
+      "multiline": true,
+      "syntax": "python",
       "default": "def process(table):\u000a    print('Hello, World!')\u000a    return table"
     }
   ]

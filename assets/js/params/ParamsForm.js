@@ -31,6 +31,7 @@ export default class ParamsForm extends React.PureComponent {
         ]).isRequired
       ), // only set on menu/radio
       multiline: PropTypes.bool, // required for String
+      syntax: PropTypes.oneOf(['python', 'sql']), // optional, only for String
       placeholder: PropTypes.string, // required for many
       visibleIf: PropTypes.object, // JSON spec or null,
       childParameters: PropTypes.array,

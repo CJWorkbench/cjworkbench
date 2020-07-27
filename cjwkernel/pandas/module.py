@@ -212,6 +212,7 @@ def __render_arrow(
         output_path,
         fallback_column_types={c.name: c.type for c in table.metadata.columns},
     )
+    errors = []
     # TODO support more output types? Or develop the One True Types (maybe
     # types.RenderResult) and force modules to output it.
     if isinstance(raw_result, list):

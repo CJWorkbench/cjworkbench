@@ -108,6 +108,25 @@ class ParamSpecTest(unittest.TestCase):
             ),
         )
 
+    def test_to_dict_string(self):
+        param_spec = ParamSpec.String(default="hi", multiline=True, syntax="python")
+        self.assertEqual(
+            param_spec.to_dict(),
+            {
+                "type": "string",
+                "id_name": "s",
+                "name": "",
+                "default": "foo",
+                "multiline": True,
+                "placeholder": "",
+                "syntax": "python",
+                "visible_if": None,
+            }
+        )
+        # Just to make sure our unit-test is sane: verify from_dict(to_json)
+        # returns the original.
+        self.assertEqual(ParamSpec.from_dict(param_spec.to_dict()), param_spec)
+
     def test_to_dict(self):
         param_spec = ParamSpec.List(
             id_name="l",
@@ -134,6 +153,7 @@ class ParamSpecTest(unittest.TestCase):
                         "default": "foo",
                         "multiline": False,
                         "placeholder": "",
+                        "syntax": None,
                         "visible_if": None,
                     },
                     {

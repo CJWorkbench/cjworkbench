@@ -543,6 +543,7 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
                 "name": "Hello translated",
                 "placeholder": "Fill me",
                 "multiline": False,
+                "syntax": None,
                 "default": "Default",
             }
         ]

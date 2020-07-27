@@ -2,7 +2,7 @@ from __future__ import annotations
 import re2
 from abc import ABC, abstractmethod
 from dataclasses import asdict, dataclass, field
-from typing import Any, Dict, FrozenSet, List, Optional, Union
+from typing import Any, Dict, FrozenSet, List, Literal, Optional, Union
 from cjwstate.modules.param_dtype import ParamDType
 
 
@@ -243,8 +243,12 @@ class ParamSpecString(_RegisterType("string"), _HasPlaceholder, _HasName, ParamS
     """
 
     default: str = ""
+
     multiline: bool = False
     """If True, newlines are permitted in data."""
+
+    syntax: Optional[Literal['python', 'sql']] = None
+    """If set, this String is user-supplied code."""
 
     # override
     @property

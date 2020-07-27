@@ -48,6 +48,7 @@ google-re2 = "==0.0.5"  # 0.0.5 is the latest to work on libre2-5 (newer ones us
 cjwparse = "~=0.0.6"
 cjwparquet = "~=1.0"
 uvicorn = "*"
+lz4 = "*"
 
 [dev-packages]
 black = "==19.10b0"

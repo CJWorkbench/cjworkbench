@@ -3,7 +3,6 @@ import React from 'react'
 import Aggregations from './Aggregations'
 import CellEdits from './CellEdits'
 import ChartSeriesMultiSelect from './ChartSeriesMultiSelect'
-import Code from './Code'
 import Filters from './Filters'
 import Groups from './Groups'
 import JoinColumns from './JoinColumns'
@@ -18,7 +17,6 @@ import { Trans } from '@lingui/macro'
 const Components = {
   aggregations: Aggregations,
   celledits: CellEdits,
-  code: Code,
   filters: Filters,
   groups: Groups,
   join_columns: JoinColumns,

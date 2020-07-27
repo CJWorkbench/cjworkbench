@@ -67,6 +67,7 @@ export function paramFieldToParamProps (field) {
     type: field.type,
     enumOptions: field.options, // may be undefined
     isMultiline: field.multiline || false,
+    syntax: field.syntax, // may be undefined
     placeholder: field.placeholder || '',
     visibleIf: field.visibleIf, // may be null
     secretParameter: field.secretParameter, // may be undefined
