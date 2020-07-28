@@ -109,14 +109,16 @@ class ParamSpecTest(unittest.TestCase):
         )
 
     def test_to_dict_string(self):
-        param_spec = ParamSpec.String(default="hi", multiline=True, syntax="python")
+        param_spec = ParamSpec.String(
+            id_name="s", default="hi", multiline=True, syntax="python"
+        )
         self.assertEqual(
             param_spec.to_dict(),
             {
                 "type": "string",
                 "id_name": "s",
                 "name": "",
-                "default": "foo",
+                "default": "hi",
                 "multiline": True,
                 "placeholder": "",
                 "syntax": "python",
