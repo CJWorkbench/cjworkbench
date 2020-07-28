@@ -228,7 +228,6 @@ class Kernel:
                 "schedula.utils.sol",
                 "thrift.protocol.TBinaryProtocol",
                 "thrift.transport.TTransport",
-                "xlrd",
                 *ENCODING_IMPORTS,
                 "cjwkernel.pandas.main",
                 "cjwkernel.pandas.module",
