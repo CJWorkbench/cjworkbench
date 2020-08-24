@@ -14,11 +14,20 @@
     Betsy Ladyzhets </a> in association <a class="highlight" href='https://www.theopennotebook.com/2020/07/14/interrogating-data-a-science-writers-guide-to-data-journalism/' target="_blank" className="info-1">
     with a feature for The Open Notebook</a> on data journalism for science writers.
   </p>
+  <p>
+    The data in this tutorial are sourced from <a class="highlight" href='https://www.iucnredlist.org' target="_blank" className="info-1">the International Union for the Conservation of Nature (IUCN)</a> Red List of Threatened Species, via the IUCN Red List API.
+  </p>
+  <p>
+    The token you will use to access this API is approved for use in this tutorial only, and may not be copied or used for any outside purpose.
+    <br><img class="logo-insert" src="./IUCN_Red_List.svg">IUCN 2020. IUCN Red List of Threatened Species. Version 2020-2.
+  </p>
 </section>
 
 <section>
   <h2>Obtaining the data</h2>
   <p>We load the data from the IUCN Red List's API, a programming interface that allows users to download thousands of search results at once. The API query we are using will return all endangered species with the country code US.</p>
+  <p>Our API query uses a token, or a personalized key which permits an approved user to access the Red List database. The token we are using has been approved specifically for use in this tutorial; we are pulling a list of all endangered species listed in the U.S. for the educational purpose of tutorial users learning to query and analyze scientific data. You may not copy this token or use it for any outside purpose.
+  </p>
   <p>Learn more about the IUCN Red List API <a class="highlight" href='http://apiv3.iucnredlist.org/api/v3/docs' target="_blank" className="info-1">here</a>.</p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
@@ -27,7 +36,7 @@
     </li>
     <li data-test=" ">
       Copy and paste the URL of the API query below into the <kbd>URL</kbd> of the step.
-      <div class="copy-txt">http://apiv3.iucnredlist.org/api/v3/country/getspecies/US?token=9bb4facb6d23f48efbf424bb05c0c1ef1cf6f468393bc745d42179ac4aca5fee</div>
+      <div class="copy-txt">http://apiv3.iucnredlist.org/api/v3/country/getspecies/US?token=bd5b440306cb5309d4d178a0b42ce5fa15a4df70f205cbab3e670bea5836f83b</div>
     </li>
   </ol>
 </section>

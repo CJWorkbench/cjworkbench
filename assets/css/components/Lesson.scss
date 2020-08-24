@@ -43,6 +43,13 @@ article.lesson {
     width: 3rem;
   }
 
+  .logo-insert {
+    padding: 0;
+    background-color: transparent;
+    padding: .5rem;
+    width: 3rem;
+  }
+
   section {
     position: relative; // for confetti placement
     display: flex;
