@@ -1,6 +1,6 @@
 <header>
   <h1>IX. Cities with the highest PM pollution</h1>
-  <p>xamine particle pollution in U.S. cities by analyzing EPA air quality data.</p>
+  <p>Examine particle pollution in U.S. cities by analyzing EPA air quality data.</p>
   <img src="./banner.svg" alt="">
 </header>
 
@@ -14,7 +14,7 @@
 
 <section>
   <h2>Obtaining the data</h2>
-  <p>We will load the data for this story from the EPA’s Air Quality Statistics Report data feature, using 2018 data because 2019 data has not yet been finalized. We will exclude “exceptional events” so that outliers do not skew our analysis.</p>
+  <p>We will load the data for this story from the EPA’s Air Quality Statistics Report data feature, using 2019 data. We will exclude “exceptional events” so that outliers do not skew our analysis.</p>
   <p>Learn more about the  <a class="highlight" href='https://www.epa.gov/outdoor-air-quality-data/about-air-data-reports' target="_blank" className="info-1">EPA air quality data report</a>.</p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
@@ -28,7 +28,9 @@
       data-highlight='[{"type":"WfModule","moduleIdName":"loadurl"}]'
       data-test="return workflow.tabs[0].wfModules[0].params.file !== null"
     >
-      <p>Navigate to the EPA's <a class="highlight" href='https://www.epa.gov/outdoor-air-quality-data/air-quality-statistics-report' target="_blank" className="info-1">Air Quality Statistics Report Data</a> feature. Select <kbd>2018</kbd> and <kbd>United States</kbd>. Group results by city, and exclude exceptional events.</p>
+      <p>Navigate to the EPA's <a class="highlight" href='https://www.epa.gov/outdoor-air-quality-data/air-quality-statistics-report' target="_blank" className="info-1">Air Quality Statistics Report Data</a> feature.
+      <p>Select <kbd>2019</kbd> and <kbd>United States</kbd>.</p>
+      <p>Group results by city, and exclude exceptional events.</p>
       <p>Download the resulting CSV file for this data query.</p>
       <p>Drag the CSV file you just downloaded into the Upload step.</p>
     </li>
@@ -59,7 +61,14 @@
         )
       "
     >
-      Select <code>CBSA Code</code>, <code>CBSA</code>, <code>PM2.5 98th Percentile 24-hr</code>, <code>PM2.5 Weighted Mean 24-hr</code>, <code>PM10 2nd Max 24-hr</code> and <code>PM10 Mean 24-hr</code>. Choose <kbd>Keep</kbd>.
+      Select the following columns:
+      <br><code>CBSA Code</code>,
+      <br><code>CBSA</code>,
+      <br><code>PM2.5 98th Percentile 24-hr</code>,
+      <br><code>PM2.5 Weighted Mean 24-hr</code>,
+      <br><code>PM10 2nd Max 24-hr</code>,
+      <br>and <code>PM10 Mean 24-hr</code>.
+      <br><br>Choose <kbd>Keep</kbd>.
     </li>
   </ol>
 </section>
@@ -122,7 +131,12 @@
         )
       "
     >
-    Convert the columns <code>PM2.5 98th Percentile 24-hr</code>, <code>PM2.5 Weighted Mean 24-hr</code>, <code>PM10 2nd Max 24-hr</code>, and <code>PM10 Mean 24-hr</code> to <kbd>Any number</kbd>. Choose <kbd>Convert errors to null</kbd>. Display numbers as <kbd>Decimal: 1,500.0012</kbd>.
+    Convert the columns
+    <br><code>PM2.5 98th Percentile 24-hr</code>,
+    <br><code>PM2.5 Weighted Mean 24-hr</code>,
+    <br><code>PM10 2nd Max 24-hr</code>,
+    <br>and <code>PM10 Mean 24-hr</code> to <kbd>Any number</kbd>.
+    <br><br>Choose <kbd>Convert errors to null</kbd>. Display numbers as <kbd>Decimal: 1,500.0012</kbd>.
     </li>
   </ol>
 </section>
@@ -145,10 +159,10 @@
     <li
       data-highlight='[{"type":"WfModule","moduleIdName":"dropna"}]'
       data-test="
-        return workflow.tabs[0].wfModules[5].params.colnames.join('|') === 'PM2.5 98th Percentile 24-hr|PM10 Mean 24-hr'
+        return workflow.tabs[0].wfModules[5].params.colnames.join('|') === 'PM2.5 98th Percentile 24-hr|PM10 2nd Max 24-hr'
       "
     >
-      Select the columns <code>PM2.5 98th Percentile 24-hr</code> and <code>PM10 Mean 24-hr</code>.
+      Select the columns <code>PM2.5 98th Percentile 24-hr</code> and <code>PM10 2nd Max 24-hr</code>.
     </li>
     <li
       data-highlight='[{"type":"Module","index":6,"id_name":"filter"}]'
@@ -190,7 +204,7 @@
         )
       "
     >
-      Select IF <kbd>PM2.5 98th Percentile 24-hr</kbd> <kbd>Number is greater than</kbd> <kbd>35</kbd>, <kbd>OR</kbd> <kbd>PM10 2nd Max 24-hr</kbd> <kbd>Number is greater than</kbd> <kbd>150</kbd>.
+      Select IF <code>PM2.5 98th Percentile 24-hr</code> <kbd>Number is greater than</kbd> <code>35</code>, OR <code>PM10 2nd Max 24-hr</code> <kbd>Number is greater than</kbd> <code>150</code>.
     </li>
   </ol>
 </section>
@@ -220,7 +234,7 @@
         )
       "
     >
-      Sort by <code>PM2.5 98th Percentile 24-hr</code>, then by <code>PM10 2nd Max 24-hr</code>, both in descending order.
+      Sort by <code>PM2.5 98th Percentile 24-hr</code>, then by <code>PM10 2nd Max 24-hr</code>, both in <kbd>descending</kbd> order.
     </li>
   </ol>
 </section>
@@ -253,7 +267,7 @@
           params.x_column === 'City'
           &amp;&amp; params.y_columns.length === 2
           &amp;&amp; params.y_columns[0].column === 'PM2.5 98th Percentile 24-hr'
-          &amp;&amp; params.y_columns[1].column === 'PM10 Mean 24-hr'
+          &amp;&amp; params.y_columns[1].column === 'PM10 2nd Max 24-hr'
           &amp;&amp; params.x_axis_label === 'City'
           &amp;&amp; params.y_axis_label === 'Concentration (μg/m3)'
         )
