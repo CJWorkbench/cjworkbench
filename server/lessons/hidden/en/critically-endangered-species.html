@@ -17,26 +17,35 @@
   <p>
     The data in this tutorial are sourced from <a class="highlight" href='https://www.iucnredlist.org' target="_blank" className="info-1">the International Union for the Conservation of Nature (IUCN)</a> Red List of Threatened Species, via the IUCN Red List API.
   </p>
-  <p>
-    The token you will use to access this API is approved for use in this tutorial only, and may not be copied or used for any outside purpose.
-    <br><img class="logo-insert" src="./IUCN_Red_List.svg">IUCN 2020. IUCN Red List of Threatened Species. Version 2020-2.
-  </p>
 </section>
 
 <section>
   <h2>Obtaining the data</h2>
   <p>We load the data from the IUCN Red List's API, a programming interface that allows users to download thousands of search results at once. The API query we are using will return all endangered species with the country code US.</p>
   <p>Our API query uses a token, or a personalized key which permits an approved user to access the Red List database. The token we are using has been approved specifically for use in this tutorial; we are pulling a list of all endangered species listed in the U.S. for the educational purpose of tutorial users learning to query and analyze scientific data. You may not copy this token or use it for any outside purpose.
+    <br><img class="logo-insert" src="./IUCN_Red_List.png">IUCN 2020. IUCN Red List of Threatened Species. Version 2020-2.
   </p>
-  <p>Learn more about the IUCN Red List API <a class="highlight" href='http://apiv3.iucnredlist.org/api/v3/docs' target="_blank" className="info-1">here</a>.</p>
+  <p>Learn more about the <a class="highlight" href='https://apiv3.iucnredlist.org/api/v3/docs' target="_blank" className="info-1">IUCN Red List API</a>.</p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
-    <li data-test=" ">
+    <li
+      data-highlight='[{"type":"Module","index":0,"id_name":"loadurl"}]'
+      data-test="return workflow.tabs[0].wfModuleSlugs[0] === 'loadurl'"
+    >
       Add the step <kbd>Load from URL</kbd>.
     </li>
-    <li data-test=" ">
+    <li
+      data-highlight='[{"type":"WfModule","moduleIdName":"loadurl"}]'
+      data-test="
+        const params = workflow.tabs[0].wfModules[0].params
+        return (
+          params.url === 'https://apiv3.iucnredlist.org/api/v3/country/getspecies/US?token=bd5b440306cb5309d4d178a0b42ce5fa15a4df70f205cbab3e670bea5836f83b'
+          &amp;&amp; params.has_header
+        )
+      "
+    >
       Copy and paste the URL of the API query below into the <kbd>URL</kbd> of the step.
-      <div class="copy-txt">http://apiv3.iucnredlist.org/api/v3/country/getspecies/US?token=bd5b440306cb5309d4d178a0b42ce5fa15a4df70f205cbab3e670bea5836f83b</div>
+      <div class="copy-txt">https://apiv3.iucnredlist.org/api/v3/country/getspecies/US?token=bd5b440306cb5309d4d178a0b42ce5fa15a4df70f205cbab3e670bea5836f83b</div>
     </li>
   </ol>
 </section>
@@ -50,10 +59,23 @@
 
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
-    <li data-test=" ">
+    <li
+      data-highlight='[{"type":"Module","index":1,"id_name":"selectcolumns"}]'
+      data-test="return workflow.tabs[0].wfModuleSlugs[1] === 'selectcolumns'"
+    >
       Add the step <kbd>Select columns</kbd>.
     </li>
-    <li data-test=" ">
+    <li
+      data-highlight='[{"type":"WfModule","moduleIdName":"selectcolumns"}]'
+      data-test="
+        const params = workflow.tabs[0].wfModules[1].params
+        return (
+          params.colnames.sort().join('|') === 'rank|subpopulation'
+          &amp;&amp; !params.select_range
+          &amp;&amp; !params.keep
+        )
+      "
+    >
       Delete the columns <kbd>rank</kbd> and <kbd>subpopulation</kbd>.
     </li>
   </ol>
@@ -69,11 +91,24 @@
 
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
-    <li data-test=" ">
+    <li
+      data-highlight='[{"type":"Module","index":2,"id_name":"splitcolumn"}]'
+      data-test="return workflow.tabs[0].wfModuleSlugs[2] === 'splitcolumn'"
+    >
       Add the step <kbd>split column</kbd>.
     </li>
-    <li data-test=" ">
-      Split the column <Code>scientific_name</Code>, using a “delimiter” (a specific character that will identify the end of the string), and make the delimiter a single space: "<code> </code>".
+    <li
+      data-highlight='[{"type":"WfModule","moduleIdName":"splitcolumn"}]'
+      data-test="
+        const params = workflow.tabs[0].wfModules[2].params
+        return (
+          params.column === 'scientific_name'
+          &amp;&amp; params.method === 'delimiter'
+          &amp;&amp; params.delimiter === ' '
+        )
+      "
+    >
+      Split the column <code>scientific_name</code>, using a “delimiter” (a specific character that will identify the end of the string), and make the delimiter a single space: "<code> </code>".
     </li>
   </ol>
 </section>
@@ -81,26 +116,63 @@
 <section>
   <h2>Cleaning the data 3/3</h2>
 
-  <p>Now that the column has been split, we need to remove new empty columns generated from blank space in the dataset, and rename the new columns so that we can easily keep track of them. Renaming the <kbd>category</kbd> to <kbd>IUCN category</kbd>, in particular, will help future readers know exactly what kind of “categories” we are referring to. IUCN categories are described on the Red List website [link?].
+  <p>Now that the column has been split, we have more columns than we need. That’s because some scientific names included subspecies and geographic locations after the specifies name.</p>
+  <p>We need to remove the confusing extra columns and rename the new columns so that we can easily keep track of them. Renaming the <kbd>category</kbd> to <kbd>IUCN category</kbd>, in particular, will help future readers know exactly what kind of “categories” we are referring to. IUCN categories are described on the Red List website [link?].
   </p>
 
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
-    <li data-test=" ">
-      Add the step <kbd>select columns</kbd> and delete the following columns:<br>
-      <Code>scientific_name 3</Code><br>
-      <Code>scientific_name 4</Code><br>
-      <Code>scientific_name 5</Code><br>
-      <Code>scientific_name 6</Code><br>
-      <Code>scientific_name 7</Code><br>
-      <Code>scientific_name 8</Code><br>
-      <Code>scientific_name 9</Code>.
+    <li
+      data-highlight='[{"type":"Module","index":3,"id_name":"selectcolumns"}]'
+      data-test="return workflow.tabs[0].wfModuleSlugs[3] === 'selectcolumns'"
+    >
+      Add the step <kbd>Select columns</kbd>.
     </li>
-    <li data-test=" ">
-      Add the step <kbd>rename columns</kbd>, and rename columns as follow:
-      <br/><Code>scientific_name 1</Code> to <code>genus</code>
-      <br/><Code>scientific_name 2</Code> to <code>species</code>
-      <br/><Code>category</Code> to <code>IUCN category</code>
+    <li
+      data-test="
+        const params = workflow.tabs[0].wfModules[3].params
+        return (
+          params.colnames.sort().join('|') === [3, 4, 5, 6, 7, 8, 9].map(i =&gt; `scientific_name ${i}`).join('|')
+          &amp;&amp; !params.select_range
+          &amp;&amp; !params.keep
+        )
+      "
+    >
+      <p>Delete the following columns:</p>
+      <ul>
+        <li><code>scientific_name 3</code></li>
+        <li><code>scientific_name 4</code></li>
+        <li><code>scientific_name 5</code></li>
+        <li><code>scientific_name 6</code></li>
+        <li><code>scientific_name 7</code></li>
+        <li><code>scientific_name 8</code></li>
+        <li><code>scientific_name 9</code></li>
+      </ul>
+    </li>
+    <li
+      data-highlight='[{"type":"Module","index":4,"id_name":"renamecolumns"}]'
+      data-test="return workflow.tabs[0].wfModuleSlugs[4] === 'renamecolumns'"
+    >
+      Add the step <kbd>Rename columns</kbd>.
+    </li>
+    <li
+      data-highlight='[{"type":"WfModule","moduleIdName":"renamecolumns"}]'
+      data-test="
+        const params = workflow.tabs[0].wfModules[4].params
+        return (
+          !params.custom_list
+          &amp;&amp; params.renames['scientific_name 1'] === 'genus'
+          &amp;&amp; params.renames['scientific_name 2'] === 'species'
+          &amp;&amp; params.renames['category'] === 'IUCN category'
+        )
+      "
+    >
+      <p>Rename columns as follows:</p>
+      <ul>
+        <li><code>scientific_name 1</code> to <code>genus</code></li>
+        <li><code>scientific_name 2</code> to <code>species</code></li>
+        <li><code>category</code> to <code>IUCN category</code></li>
+      </ul>
     </li>
   </ol>
 </section>
@@ -113,11 +185,24 @@
 
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
-    <li data-test=" ">
+    <li
+      data-highlight='[{"type":"Module","index":5,"id_name":"valuefilter"}]'
+      data-test="return workflow.tabs[0].wfModuleSlugs[5] === 'valuefilter'"
+    >
       Add the step <kbd>Filter by value</kbd>.
     </li>
-    <li data-test=" ">
-      Select the column <Code>IUCN category</Code>, and select <kbd>CR</kbd> (critically endangered) to keep.
+    <li
+      data-highlight='[{"type":"WfModule","moduleIdName":"valuefilter"}]'
+      data-test="
+        const params = workflow.tabs[0].wfModules[5].params
+        return (
+          params.column === 'IUCN category'
+          &amp;&amp; params.valueselect.join('|') === 'CR'
+          &amp;&amp; !params.drop 
+        )
+      "
+    >
+      Select the column <code>IUCN category</code>, and select <kbd>CR</kbd> (critically endangered) to keep.
     </li>
   </ol>
 </section>
@@ -130,10 +215,21 @@
 
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
-    <li data-test=" ">
+    <li
+      data-highlight='[{"type":"Module","index":6,"id_name":"wordcloud"}]'
+      data-test="return workflow.tabs[0].wfModuleSlugs[6] === 'wordcloud'"
+    >
       Add the step <kbd>Word cloud</kbd>.
     </li>
-    <li data-test=" ">
+    <li
+      data-highlight='[{"type":"WfModule","moduleIdName":"wordcloud"}]'
+      data-test="
+        const params = workflow.tabs[0].wfModules[6].params
+        return (
+          params.column === 'genus'
+        )
+      "
+    >
       Select the column <kbd>Genus</kbd>.
     </li>
   </ol>

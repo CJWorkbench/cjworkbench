@@ -26,7 +26,7 @@ article.lesson {
     list-style-type: none;
     margin-left: -4rem;
     li {
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.5rem; // TODO lesson-ul-li-margin where is this used?
     }
   }
 
@@ -187,46 +187,55 @@ article.lesson {
     &>.instructions {
       color: white;
 
-      .steps {
+      ol.steps {
+        position: relative;
         list-style-position: inside;
         margin: 0;
         padding: 0;
-      }
-      ol {
-        position: relative
-      }
 
-      li {
-        margin-bottom: 1rem;
-        list-style-type: none;
-        padding-left: 2rem;
+        &>li {
+          margin-bottom: 1rem;
+          list-style-type: none;
+          padding-left: 2rem;
 
-        // off setting those elements to make them larger
-        figure img, figcaption, .instruction-detail, .image {
-          left: -2rem;
+          // off setting those elements to make them larger
+          figure img, figcaption, .instruction-detail, .image {
+            left: -2rem;
+          }
+
+          .copy-txt {
+            left: -2rem;
+            margin-top: 1rem;
+          }
+
+          &::before {
+            content: "\e946";
+            color: $light-accent--Vstrong;
+            font-size: .8rem;
+            font-family: Workbench;
+            position: absolute;
+            margin-left: -2rem;
+          }
+          &.active::before {
+            content: "\e946";
+            color: $light-accent--Vstrong;
+          }
+          &.done::before {
+            content: "\e94a"; // icon-check
+            color: $brand-learn;
+            font-size: 1.3rem;
+          }
         }
 
-        .copy-txt {
-          left: -2rem;
-          margin-top: 1rem;
-        }
-
-        &::before {
-          content: "\e946";
-          color: $light-accent--Vstrong;
-          font-size: .8rem;
-          font-family: Workbench;
-          position: absolute;
-          margin-left: -2rem;
-        }
-        &.active::before {
-          content: "\e946";
-          color: $light-accent--Vstrong;
-        }
-        &.done::before {
-          content: "\e94a"; // icon-check
-          color: $brand-learn;
-          font-size: 1.3rem;
+        ul li {
+          // Sub-list of instructions within a Step
+          // For instance:
+          // <p>Delete the following columns:</p>
+          // <ul>
+          //   <li><code>column 1</code></li>
+          //   <li><code>column 2</code></li>
+          // </ul>
+          margin-bottom: 0; // TODO lesson-ul-li-margin
         }
       }
     }
