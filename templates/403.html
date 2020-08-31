@@ -1,4 +1,5 @@
 {%  extends 'base_no_intercom.html' %}
+{% load render_bundle from webpack_loader %}
 {% load account i18n_icu %}
 
 {% block title %}
@@ -8,10 +9,14 @@
 {% block body %}
   <div class="account-fullscreen-container">
     <div class="background"></div>
-    <div class="account-card">
-      <div class="error-number">403<div>
-      <div class="title-1 text-center mb-5">{% trans_html "py.templates.403.description" default="The account you are logged in does not have access to this page" %}</div>
-      <a href="{% url "workflows" %}" style="width:200px" class="button-white action-button mx-auto mb-3">{% trans_html "py.templates.403.goBack.link" default="Go back to my workspace" %}</a>
+    <div class="container">
+      <div class="account-card">
+        <div class="error-number">403</div>
+        <div class="title-1 text-center mb-5">{% trans_html "py.templates.403.description" default="The account you are logged in does not have access to this page" %}</div>
+        <a href="{% url "workflows" %}" style="width:200px" class="button-white action-button mx-auto mb-3">{% trans_html "py.templates.403.goBack.link" default="Go back to my workspace" %}</a>
+        {% include "locale_switcher.html" %}
+        {% render_bundle 'login' 'js' %}
+      </div>
     </div>
   <div>
 {% endblock %}

@@ -9,6 +9,7 @@
   {% render_bundle 'workflow' 'js' %}
 
   <div class="not-enough-px-warning">
+    <div class="background"></div>
     <div class="banner">
       <div class="video-container">
         <iframe data-src="https://player.vimeo.com/video/295956416" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
@@ -37,6 +38,5 @@
       <a href="{% url "account_login" %}" class="button-white--fill action-button mx-auto">{% trans_html "py.templates.workflow.signupLink.link" default="Signup" %}</a>
       {% include "locale_switcher.html" %}
     </div>
-    <div class="background"></div>
   </div>
 {% endblock %}
