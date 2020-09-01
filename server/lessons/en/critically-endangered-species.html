@@ -56,7 +56,7 @@
 
   <p>The first step in cleaning these data is to delete extraneous columns containing information we don't need. In this case, the <kbd>rank</kbd> and
     <kbd>subpopulation</kbd> columns are blank for most records and, for all subspecies included, their scientific names are included in both the <kbd>scientific_name</kbd>
-    column and the <kbd>subspecies</kbd> column. So, we can remove <kbd>rank</kbd> and <kbd>subpopulation</kbd>.</p>
+    column and the <kbd>subspecies</kbd> column. So we can remove <kbd>rank</kbd> and <kbd>subpopulation</kbd>.</p>
 
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
@@ -109,7 +109,7 @@
         )
       "
     >
-      Split the column <code>scientific_name</code>, using a “delimiter” (a specific character that will identify the end of the string), and make the delimiter a single space: "<code> </code>".
+      Split the column <code>scientific_name</code> using a “delimiter” (a specific character that will identify the end of the string), and make the delimiter a single space: "<code> </code>".
     </li>
   </ol>
 </section>
@@ -117,7 +117,7 @@
 <section>
   <h2>Cleaning the data 3/3</h2>
 
-  <p>Now that the column has been split, we have more columns than we need. That’s because some scientific names included subspecies and geographic locations after the specifies name.</p>
+  <p>Now that the column has been split, we have more columns than we need. That is because some scientific names included subspecies and geographic locations after the species name.</p>
   <p>We need to remove the confusing extra columns and rename the new columns so that we can easily keep track of them. Renaming the <kbd>category</kbd> to <kbd>IUCN category</kbd>, in particular, will help future readers know exactly what kind of “categories” we are referring to. IUCN categories are described on the Red List website [link?].
   </p>
 
@@ -211,7 +211,7 @@
 <section>
   <h2>Presenting the data</h2>
 
-  <p>What is the best way to present these data? A bar or pie chart would be too crowded with this many genera, and a scatter plot would not work as we're only looking at concentrations of data in one category. If we linked these data with geospatial range data or occurrence records for each genus, we could map out where all these species are located. But for a simple picture, we can use a word cloud: the size of each word correlates to how many species in the genus are endangered.
+  <p>What is the best way to present these data? A bar chart or pie chart would be too crowded with this many genera, and a scatter plot would not work as we're only looking at concentrations of data in one category. If we linked these data with geospatial range data or occurrence records for each genus, we could map out where all these species are located. But for a simple picture, we can use a word cloud: the size of each word correlates to how many species in the genus are endangered.
   </p>
 
   <h3 class="instructions">Instructions</h3>
