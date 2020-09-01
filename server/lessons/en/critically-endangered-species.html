@@ -1,28 +1,29 @@
 <header>
-  <h1>X. Critically endangered species of America</h1>
-  <p>We need a desription here.</p>
+  <h1>10. Critically endangered species of America</h1>
+  <p>Analyze IUCN data to create a list of the most critically endangered species.</p>
   <img src="./banner.svg" alt="">
 </header>
 
 <section class="fullscreen">
   <h2>Introduction</h2>
   <p>
-    A major concern for the biology community is protecting endangered species. This tutorial focuses on endangered species in the U.S., using data from the International Union for the Conservation of Nature (IUCN) Red List. The goal of the project is to demonstrate to readers which genera contain the most critically endangered species.
+    A major concern for the biology community is protecting endangered species. This tutorial focuses on endangered species in the U.S., using data from the International Union for the Conservation of Nature (<img class="logo-insert" src="./IUCN_Red_List.png">IUCN) Red List. The goal of the project is to demonstrate to readers which genera contain the most critically endangered species.
   </p>
   <p>
     This tutorial was created by <a class="highlight" href='https://betsyladyzhets.com/' target="_blank" className="info-1">
-    Betsy Ladyzhets </a> in association <a class="highlight" href='https://www.theopennotebook.com/2020/07/14/interrogating-data-a-science-writers-guide-to-data-journalism/' target="_blank" className="info-1">
+    Betsy Ladyzhets </a> in association <a class="highlight" href=' https://www.theopennotebook.com/2020/07/28/interrogating-data-a-science-writers-guide-to-data-journalism/' target="_blank" className="info-1">
     with a feature for The Open Notebook</a> on data journalism for science writers.
   </p>
   <p>
-    The data in this tutorial are sourced from <a class="highlight" href='https://www.iucnredlist.org' target="_blank" className="info-1">the International Union for the Conservation of Nature (IUCN)</a> Red List of Threatened Species, via the IUCN Red List API.
+    The data in this tutorial are sourced from <a class="highlight" href='https://www.iucnredlist.org' target="_blank" className="info-1">the International Union for the Conservation of Nature (IUCN)</a> Red List of Threatened Species, via the <img class="logo-insert" src="./IUCN_Red_List.png">IUCN Red List API.
   </p>
 </section>
 
 <section>
   <h2>Obtaining the data</h2>
   <p>We load the data from the IUCN Red List's API, a programming interface that allows users to download thousands of search results at once. The API query we are using will return all endangered species with the country code US.</p>
-  <p>Our API query uses a token, or a personalized key which permits an approved user to access the Red List database. The token we are using has been approved specifically for use in this tutorial; we are pulling a list of all endangered species listed in the U.S. for the educational purpose of tutorial users learning to query and analyze scientific data. You may not copy this token or use it for any outside purpose.
+  <p>Our API query uses a token, or a personalized key which permits an approved user to access the Red List database. </p>
+  <p>The token we are using has been approved specifically for use in this tutorial; we are pulling a list of all endangered species listed in the U.S. for the educational purpose of tutorial users learning to query and analyze scientific data. You may not copy this token or use it for any outside purpose.
     <br><img class="logo-insert" src="./IUCN_Red_List.png">IUCN 2020. IUCN Red List of Threatened Species. Version 2020-2.
   </p>
   <p>Learn more about the <a class="highlight" href='https://apiv3.iucnredlist.org/api/v3/docs' target="_blank" className="info-1">IUCN Red List API</a>.</p>
@@ -198,7 +199,7 @@
         return (
           params.column === 'IUCN category'
           &amp;&amp; params.valueselect.join('|') === 'CR'
-          &amp;&amp; !params.drop 
+          &amp;&amp; !params.drop
         )
       "
     >
@@ -238,7 +239,7 @@
 <footer>
   <h2>Lesson Complete!</h2>
   <p>This tutorial was created by <a class="highlight" href='https://betsyladyzhets.com/' target="_blank" className="info-1">
-  Betsy Ladyzhets </a> in association <a class="highlight" href='https://www.theopennotebook.com/2020/07/14/interrogating-data-a-science-writers-guide-to-data-journalism/' target="_blank" className="info-1">
+  Betsy Ladyzhets </a> in association <a class="highlight" href=' https://www.theopennotebook.com/2020/07/28/interrogating-data-a-science-writers-guide-to-data-journalism/' target="_blank" className="info-1">
   with a feature for The Open Notebook</a> on data journalism for science writers.
   </p>
   <div class="next">
