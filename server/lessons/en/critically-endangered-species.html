@@ -7,26 +7,23 @@
 <section class="fullscreen">
   <h2>Introduction</h2>
   <p>
-    A major concern for the biology community is protecting endangered species. This tutorial focuses on endangered species in the U.S., using data from the International Union for the Conservation of Nature (<img class="logo-insert" src="./IUCN_Red_List.png">IUCN) Red List. The goal of the project is to demonstrate to readers which genera contain the most critically endangered species.
+    A major concern for the biology community is protecting endangered species. This tutorial will demonstrate which genera contain the most critically endangered species in the United States.
   </p>
   <p>
-    This tutorial was created by <a class="highlight" href='https://betsyladyzhets.com/' target="_blank" className="info-1">
-    Betsy Ladyzhets </a> in association <a class="highlight" href=' https://www.theopennotebook.com/2020/07/28/interrogating-data-a-science-writers-guide-to-data-journalism/' target="_blank" className="info-1">
-    with a feature for The Open Notebook</a> on data journalism for science writers.
+    This tutorial was created by
+    <a class="highlight" href='https://betsyladyzhets.com/' target="_blank">Betsy Ladyzhets</a> in association with a
+    <a class="highlight" href=' https://www.theopennotebook.com/2020/07/28/interrogating-data-a-science-writers-guide-to-data-journalism/' target="_blank">feature for The Open Notebook</a> on data journalism for science writers.
   </p>
   <p>
-    The data in this tutorial are sourced from <a class="highlight" href='https://www.iucnredlist.org' target="_blank" className="info-1">the International Union for the Conservation of Nature (IUCN)</a> Red List of Threatened Species, via the <img class="logo-insert" src="./IUCN_Red_List.png">IUCN Red List API.
+    The data in this tutorial is sourced from the <a class="highlight" href='https://www.iucnredlist.org' target="_blank">International Union for the Conservation of Nature</a> <span class="partner-name-and-logo">(<img alt="" src="./IUCN_Red_List.png" /> IUCN)</span> Red List of Threatened Species, via the IUCN Red List API.
   </p>
 </section>
 
 <section>
   <h2>Obtaining the data</h2>
-  <p>We load the data from the IUCN Red List's API, a programming interface that allows users to download thousands of search results at once. The API query we are using will return all endangered species with the country code US.</p>
-  <p>Our API query uses a token, or a personalized key which permits an approved user to access the Red List database. </p>
-  <p>The token we are using has been approved specifically for use in this tutorial; we are pulling a list of all endangered species listed in the U.S. for the educational purpose of tutorial users learning to query and analyze scientific data. You may not copy this token or use it for any outside purpose.
-    <br><img class="logo-insert" src="./IUCN_Red_List.png">IUCN 2020. IUCN Red List of Threatened Species. Version 2020-2.
-  </p>
-  <p>Learn more about the <a class="highlight" href='https://apiv3.iucnredlist.org/api/v3/docs' target="_blank" className="info-1">IUCN Red List API</a>.</p>
+  <p>We load the data from the IUCN Red List API, a web address that serves thousands of search results at once. The API query we are using will return all endangered species with the country code US.</p>
+  <p>Our API query uses a token: a password IUCN provided to let us access its database.</p>
+  <p>Learn more about the <a class="highlight" href="https://apiv3.iucnredlist.org/api/v3/docs#countries-species" target="_blank">IUCN Red List API</a>.</p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
@@ -45,8 +42,10 @@
         )
       "
     >
-      Copy and paste the URL of the API query below into the <kbd>URL</kbd> of the step.
+      <p>Copy and paste the URL of the API query below into the <kbd>URL</kbd> of the step.</p>
       <div class="copy-txt">https://apiv3.iucnredlist.org/api/v3/country/getspecies/US?token=bd5b440306cb5309d4d178a0b42ce5fa15a4df70f205cbab3e670bea5836f83b</div>
+      <p><span class="partner-name-and-logo"><img alt="" src="./IUCN_Red_List.png" /> IUCN</span> has approved the token in this URL specifically for this tutorial. You may not copy this URL or use it for any other purpose.
+      </p>
     </li>
   </ol>
 </section>
@@ -54,9 +53,8 @@
 <section>
   <h2>Cleaning the data 1/3</h2>
 
-  <p>The first step in cleaning these data is to delete extraneous columns containing information we don't need. In this case, the <kbd>rank</kbd> and
-    <kbd>subpopulation</kbd> columns are blank for most records and, for all subspecies included, their scientific names are included in both the <kbd>scientific_name</kbd>
-    column and the <kbd>subspecies</kbd> column. So we can remove <kbd>rank</kbd> and <kbd>subpopulation</kbd>.</p>
+  <p>Our goal is to find genera. Let's “clean” our data to remove anything that does not help.</p>
+  <p>The first step in cleaning is to delete columns we don’t need. In this case, the <kbd>rank</kbd> and <kbd>subpopulation</kbd> columns are blank for most records; and besides, the genera are already in the <kbd>scientific_name</kbd> column. We can remove <kbd>rank</kbd> and <kbd>subpopulation</kbd>.</p>
 
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
@@ -85,9 +83,10 @@
 <section>
   <h2>Cleaning the data 2/3</h2>
 
-  <p>These species records are currently identified by binomial nomenclature: the names in the <kbd>scientific_name</kbd> column include a species’ genus, or generic name (the taxonomic rank one step up from species), followed by its individual species name. The next step in cleaning these data is splitting the binomials into genus names and species names, so that we can group the records by a genus.
+  <p>These species records are identified by binomial nomenclature: each value in the <kbd>scientific_name</kbd> column consists of the species’ genus (the taxonomic rank one step up from species), then the species name, then subspecies information.</p>
+  <p>Our next step in cleaning these records is to split the scientific names into genus names and species names, so that we can group the records by a genus.
   </p>
-  <p><a class="highlight" href='http://help.workbenchdata.com/en/articles/1484334-split-column' target="_blank" className="info-1">Split text to columns</a> is a common function in data cleaning used to separate out information (for example, turning a location column displaying "City, State" into two: a column "City" and a column "State".
+  <p><a class="highlight" href="http://help.workbenchdata.com/en/articles/1484334-split-column" target="_blank">Split text to columns</a> is a common function in data cleaning. It turns one column into several columns. (For example, it can change a location column displaying “City, State” into a “City” column and a “State” column).
   </p>
 
   <h3 class="instructions">Instructions</h3>
@@ -117,8 +116,8 @@
 <section>
   <h2>Cleaning the data 3/3</h2>
 
-  <p>Now that the column has been split, we have more columns than we need. That is because some scientific names included subspecies and geographic locations after the species name.</p>
-  <p>We need to remove the confusing extra columns and rename the new columns so that we can easily keep track of them. Renaming the <kbd>category</kbd> to <kbd>IUCN category</kbd>, in particular, will help future readers know exactly what kind of “categories” we are referring to. IUCN categories are described on the Red List website [link?].
+  <p>The column has been split, and we have more columns than we need. That’s because some scientific names included subspecies and geographic locations after the species name.</p>
+  <p>We’ll remove the confusing extra columns and rename the new columns so that we can keep track of them. Renaming the <kbd>category</kbd> to <kbd>IUCN category</kbd>, in particular, will help future readers know exactly what kind of “categories” we are referring to. (Refer to the <a class="highlight" href="https://www.iucn.org/resources/conservation-tools/iucn-red-list-threatened-species#:~:text=The%20IUCN%20Red%20List%20Categories,-Photo%3A%20The%20IUCN&amp;text=The%20IUCN%20Red%20List%20Categories%20define%20the%20extinction%20risk%20of,to%20be%20threatened%20with%20extinction." target="_blank">IUCN Red List Categories</a> to understand the abbreviations.)
   </p>
 
   <h3 class="instructions">Instructions</h3>
@@ -238,9 +237,7 @@
 
 <footer>
   <h2>Lesson Complete!</h2>
-  <p>This tutorial was created by <a class="highlight" href='https://betsyladyzhets.com/' target="_blank" className="info-1">
-  Betsy Ladyzhets </a> in association <a class="highlight" href=' https://www.theopennotebook.com/2020/07/28/interrogating-data-a-science-writers-guide-to-data-journalism/' target="_blank" className="info-1">
-  with a feature for The Open Notebook</a> on data journalism for science writers.
+  <p>This tutorial was created by <a class="highlight" href='https://betsyladyzhets.com/' target="_blank">Betsy Ladyzhets</a> in <a class="highlight" href=' https://www.theopennotebook.com/2020/07/28/interrogating-data-a-science-writers-guide-to-data-journalism/' target="_blank">a feature for The Open Notebook</a> on data journalism for science writers.
   </p>
   <div class="next">
     <h2>Next</h2>

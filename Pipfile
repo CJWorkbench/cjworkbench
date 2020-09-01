@@ -48,6 +48,7 @@ cjwparse = "~=0.0.6"
 cjwparquet = "~=1.0"
 uvicorn = "*"
 lz4 = "*"
+natsort = "*"
 
 [dev-packages]
 black = "==19.10b0"

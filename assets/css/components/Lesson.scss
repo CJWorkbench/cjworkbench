@@ -43,11 +43,18 @@ article.lesson {
     width: 3rem;
   }
 
-  .logo-insert {
-    padding: 0;
-    background-color: transparent;
-    padding: .5rem;
-    width: 3rem;
+  span.partner-name-and-logo {
+    // Logo embedded in a piece of text that has no word breaks. Use it for the start of a
+    // brand name.
+    white-space: nowrap;
+
+    img {
+      display: inline-block;
+      max-width: 1em;
+      max-height: 1em;
+      width: auto;
+      height: auto;
+    }
   }
 
   section {

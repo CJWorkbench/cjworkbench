@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from itertools import groupby
 import json
+import locale
 import pathlib
 from typing import Any, Dict, List, Optional
 from xml.etree import ElementTree
@@ -9,7 +11,7 @@ import yaml
 from django.conf import settings
 import html5lib
 import jsonschema
-from itertools import groupby
+import natsort
 
 
 # Load and parse the spec that defines the format of the initial workflow JSON
@@ -297,16 +299,23 @@ class Lesson:
         pass
 
 
+def sort_lessons(lessons: Iterable[Lesson]) -> Iterable[Lesson]:
+    """Sort lessons by title.
+    """
+    # This doesn't handle locales because natsort won't let us select an ICU
+    # locale that isn't also supported by the system ... and we don't have any
+    # system locales installed. Nobody has asked for this yet, so let's not
+    # bother with it.
+    return natsort.natsorted(lessons, key=lambda lesson: lesson.header.title)
+
+
 AllLessons = [
     Lesson.load_from_path(None, path)
     for path in ((pathlib.Path(__file__).parent.parent).glob("lessons/*/*.html"))
 ]
 AllLessonsByLocale = {
-    locale_id: sorted(lessons, key=lambda lesson: lesson.header.title)
-    for locale_id, lessons in groupby(
-        sorted(AllLessons, key=lambda lesson: lesson.locale_id),
-        lambda lesson: lesson.locale_id,
-    )
+    locale_id: sort_lessons(lessons)
+    for locale_id, lessons in groupby(AllLessons, key=lambda lesson: lesson.locale_id)
 }
 
 LessonLookup = dict(

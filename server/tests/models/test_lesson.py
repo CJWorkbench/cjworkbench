@@ -3,9 +3,11 @@ from django.test import SimpleTestCase, override_settings
 import unittest
 from server.models.course import Course
 from server.models.lesson import (
+    sort_lessons,
     AllLessons,
     Lesson,
     LessonFooter,
+    LessonHeader,
     LessonInitialWorkflow,
     LessonLookup,
     LessonParseError,
@@ -461,3 +463,11 @@ class LessonGlobalsTests(unittest.TestCase):
 
     def test_hidden_lessons_appear_in_LessonLookup(self):
         self.assertIn(self.HiddenLocale + "/" + self.HiddenSlug, LessonLookup)
+
+
+class SortLessonsTest(unittest.TestCase):
+    def test_sort_en_numeric(self):
+        lesson1 = Lesson(None, 'slug-xxx', 'en', LessonHeader('1. Do something'))
+        lesson2 = Lesson(None, 'slug-aaa', 'en', LessonHeader('2. Blah'))
+        lesson3 = Lesson(None, 'slug-bbb', 'en', LessonHeader('13. Blah'))
+        assert sort_lessons([lesson2, lesson3, lesson1]) == [lesson1, lesson2, lesson3]
