@@ -9,7 +9,7 @@ class TestLessons(WorkbenchBase):
 
         b = self.browser
         b.visit("/lessons/")
-        b.assert_element("h2", text="I. Load public data and make a chart", wait=True)
+        b.assert_element("h2", text="1. Load public data and make a chart", wait=True)
 
     def test_lesson_detail_logged_in(self):
         self.user = self.account_admin.create_user("user@example.org")
@@ -17,7 +17,7 @@ class TestLessons(WorkbenchBase):
 
         b = self.browser
         b.visit("/lessons/")
-        b.click_whatever("h2", text="I. Load public data and make a chart", wait=True)
+        b.click_whatever("h2", text="1. Load public data and make a chart", wait=True)
 
         b.assert_element(".module-stack")
         b.assert_element("h2", text="Overview")
@@ -30,7 +30,7 @@ class TestLessons(WorkbenchBase):
         # https://www.pivotaltracker.com/story/show/159674634
         b = self.browser
         b.visit("/lessons/")
-        b.click_whatever("h2", text="I. Load public data and make a chart", wait=True)
+        b.click_whatever("h2", text="1. Load public data and make a chart", wait=True)
 
         b.assert_element(".module-stack")
         b.assert_element("h2", text="Overview")

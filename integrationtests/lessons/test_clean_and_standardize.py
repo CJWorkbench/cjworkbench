@@ -20,10 +20,8 @@ class TestLesson(LessonTest):
     def test_lesson(self):
         b = self.browser
         b.visit("/lessons/")
-        b.click_whatever("h2", text="II. Clean dirty data", wait=True)
-        b.assert_element(
-            ".title-metadata-stack", text="II. Clean dirty data", wait=True
-        )
+        b.click_whatever("h2", text="2. Clean dirty data", wait=True)
+        b.assert_element(".title-metadata-stack", text="2. Clean dirty data", wait=True)
 
         self.import_module("loadurl")
         self.import_module("dropna")
