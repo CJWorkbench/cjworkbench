@@ -214,6 +214,10 @@
       }
     }
 
+    .title-1 {
+      color: White;
+    }
+
     fieldset {
       display: flex;
       align-items: center;
@@ -227,6 +231,7 @@
       width: 100%;
       display: inline-block;
     }
+
   }
 
   .account-card :-webkit-input-placeholder {
