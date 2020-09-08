@@ -40,6 +40,15 @@ module.exports = {
   module: {
     rules: [
       {
+        enforce: 'pre',
+        test: /\.jsx?$/,
+        exclude: /node_modules/,
+        loader: 'standard-loader',
+        options: {
+          parser: 'babel-eslint',
+        },
+      },
+      {
         test: /bootstrap\.native/,
         use: {
           loader: 'bootstrap.native-loader',
