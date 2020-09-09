@@ -13,29 +13,30 @@ import { t } from '@lingui/macro'
 // to position the menu -- react-select's positioning is broken. That's
 // https://www.pivotaltracker.com/story/show/163066332
 const NoStyle = {}
+const NoStyleFactory = () => NoStyle
 const NoStyles = {
-  clearIndicator: () => NoStyle,
-  container: () => NoStyle,
-  control: () => NoStyle,
-  dropdownIndicator: () => NoStyle,
-  group: () => NoStyle,
-  groupHeading: () => NoStyle,
-  indicatorsContainer: () => NoStyle,
-  indicatorSeparator: () => NoStyle,
-  input: () => NoStyle,
-  loadingIndicator: () => NoStyle,
-  loadingMessage: () => NoStyle,
-  menu: () => NoStyle,
-  menuList: () => NoStyle,
-  menuPortal: () => NoStyle,
-  multiValue: () => NoStyle,
-  multiValueLabel: () => NoStyle,
-  multiValueRemove: () => NoStyle,
-  noOptionsMessage: () => NoStyle,
-  option: () => NoStyle,
-  placeholder: () => NoStyle,
-  singleValue: () => NoStyle,
-  valueContainer: () => NoStyle
+  clearIndicator: NoStyleFactory,
+  container: NoStyleFactory,
+  control: NoStyleFactory,
+  dropdownIndicator: NoStyleFactory,
+  group: NoStyleFactory,
+  groupHeading: NoStyleFactory,
+  indicatorsContainer: NoStyleFactory,
+  indicatorSeparator: NoStyleFactory,
+  input: NoStyleFactory,
+  loadingIndicator: NoStyleFactory,
+  loadingMessage: NoStyleFactory,
+  menu: NoStyleFactory,
+  menuList: NoStyleFactory,
+  menuPortal: NoStyleFactory,
+  multiValue: NoStyleFactory,
+  multiValueLabel: NoStyleFactory,
+  multiValueRemove: NoStyleFactory,
+  noOptionsMessage: NoStyleFactory,
+  option: NoStyleFactory,
+  placeholder: NoStyleFactory,
+  singleValue: NoStyleFactory,
+  valueContainer: NoStyleFactory
 }
 
 const PopperModifiers = {

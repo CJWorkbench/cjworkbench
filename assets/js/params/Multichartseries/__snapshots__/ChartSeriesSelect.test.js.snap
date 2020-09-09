@@ -907,12 +907,13 @@ exports[`ChartSeriesSelect should match snapshot 1`] = `
                                   }
                                 >
                                   <EmotionCssPropInternal
+                                    __EMOTION_LABEL_PLEASE_DO_NOT_USE__="ValueContainer"
                                     __EMOTION_TYPE_PLEASE_DO_NOT_USE__="div"
                                     className="react-select__value-container react-select__value-container--has-value"
                                     css={Object {}}
                                   >
                                     <div
-                                      className="react-select__value-container react-select__value-container--has-value css-0"
+                                      className="react-select__value-container react-select__value-container--has-value css-pilx6v-ValueContainer"
                                     >
                                       <SingleValue
                                         clearValue={[Function]}
