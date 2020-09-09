@@ -1,8 +1,8 @@
-import bootstrap from 'bootstrap.native'
+import Dropdown from 'bootstrap.native/dist/components/dropdown-native.esm.js'
 import Popper from 'popper.js'
 
 Array.prototype.forEach.call(document.querySelectorAll('div.dropdown'), (el) => {
-  /* new */ bootstrap.Dropdown(el)
+  const dropdown = new Dropdown(el) // eslint-disable-line no-unused-vars
   let popper = null
 
   el.parentNode.addEventListener('shown.bs.dropdown', (ev) => {

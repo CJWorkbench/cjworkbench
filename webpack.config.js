@@ -45,16 +45,7 @@ module.exports = {
         exclude: /node_modules/,
         loader: 'standard-loader',
         options: {
-          parser: 'babel-eslint',
-        },
-      },
-      {
-        test: /bootstrap\.native/,
-        use: {
-          loader: 'bootstrap.native-loader',
-          options: {
-            only: ['dropdown']
-          }
+          parser: 'babel-eslint'
         }
       },
       {
