@@ -1,66 +1,70 @@
 import React from 'react'
-import TextareaAutosize from 'react-textarea-autosize'
 import PropTypes from 'prop-types'
 
-export default class EditableNotes extends React.PureComponent {
-  static propTypes = {
-    isReadOnly: PropTypes.bool.isRequired,
-    placeholder: PropTypes.string.isRequired,
-    value: PropTypes.string,
-    inputRef: PropTypes.object,
-    onChange: PropTypes.func,
-    onBlur: PropTypes.func,
-    onCancel: PropTypes.func.isRequired
-  }
+function TextareaAutosize (props, ref) {
+  const { name, value, inputRef, placeholder, onChange, onBlur, onKeyDown } = props
+
+  return (
+    <div className='editable-notes'>
+      <textarea
+        ref={inputRef}
+        name={name}
+        value={value}
+        placeholder={placeholder}
+        onChange={onChange}
+        onBlur={onBlur}
+        onKeyDown={onKeyDown}
+      />
+      <div className='invisible-size-setter'>{value}</div>
+    </div>
+  )
+}
+TextareaAutosize.propTypes = {
+  name: PropTypes.string.isRequired,
+  value: PropTypes.string.isRequired,
+  placeholder: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired,
+  onBlur: PropTypes.func.isRequired,
+  onKeyDown: PropTypes.func.isRequired
+}
+
+export default function EditableNotes (props) {
+  const { inputRef, isReadOnly, placeholder, value, onChange, onBlur, onCancel } = props
 
   // Make Enter key blur by default, instead of adding newline.
-  handleKeyDown = (ev) => {
+  const handleKeyDown = React.useCallback(ev => {
     if (ev.target.tagName === 'TEXTAREA' && ev.key === 'Enter') {
       ev.preventDefault()
       ev.target.blur() // triggers this.props.onBlur, if set
     }
 
     if (ev.target.tagName === 'TEXTAREA' && ev.key === 'Escape') {
-      this.props.onCancel()
+      onCancel()
       ev.target.blur() // triggers this.props.onBlur, if set
     }
-  }
+  }, [onCancel])
 
-  hackAroundTextareaAutosizeObsoleteInputRef = (ref) => {
-    if (this.props.inputRef) {
-      this.props.inputRef.current = ref
-    }
+  // Saves a ref to parent to allow targeting of imported component
+  if (isReadOnly) {
+    return (
+      <div className='editable-notes-read-only'>{value}</div>
+    )
+  } else {
+    return (
+      <TextareaAutosize
+        name='notes'
+        {...{ placeholder, value, inputRef, onChange, onBlur }}
+        onKeyDown={handleKeyDown}
+      />
+    )
   }
-
-  componentWillUnmount () {
-    // see hackAroundTextareaAutosizeObsoleteInputRef()
-    if (this.props.inputRef) {
-      this.props.inputRef.current = null
-    }
-  }
-
-  render () {
-    // We pass most props to the <TextareaAutosize>.
-    const subprops = Object.assign({}, this.props)
-    delete subprops.isReadOnly
-    delete subprops.onKeyDown
-    subprops.inputRef = this.hackAroundTextareaAutosizeObsoleteInputRef
-
-    // Saves a ref to parent to allow targeting of imported component
-    if (this.props.isReadOnly) {
-      return (
-        <div className='editable-notes-read-only'>
-          {this.props.value}
-        </div>
-      )
-    } else {
-      return (
-        <TextareaAutosize
-          name='notes'
-          {...subprops}
-          onKeyDown={this.handleKeyDown}
-        />
-      )
-    }
-  }
+}
+EditableNotes.propTypes = {
+  isReadOnly: PropTypes.bool.isRequired,
+  placeholder: PropTypes.string.isRequired,
+  value: PropTypes.string,
+  inputRef: PropTypes.object,
+  onChange: PropTypes.func,
+  onBlur: PropTypes.func,
+  onCancel: PropTypes.func.isRequired
 }

@@ -1,44 +1,61 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`EditableNotes editable matches snapshot 1`] = `
-<TextareaAutosize
-  i18n={
+<EditableNotes
+  inputRef={
     Object {
-      "_": [Function],
-      "_activeLanguageData": Object {
-        "plurals": [Function],
-      },
-      "_activeMessages": Object {},
-      "_catalogs": Object {
-        "en": Object {
-          "languageData": Object {},
-          "messages": Object {},
-        },
-      },
-      "_dev": Object {
-        "compile": [Function],
-        "loadLanguageData": [Function],
-      },
-      "_language": "en",
-      "_locales": undefined,
-      "_missing": undefined,
-      "plural": [Function],
-      "select": [Function],
-      "selectOrdinal": [Function],
-      "t": [Function],
+      "current": <textarea
+        name="notes"
+        placeholder="placeholder"
+      >
+        This is the best module
+      </textarea>,
     }
   }
-  inputRef={[Function]}
-  name="notes"
+  isReadOnly={false}
   onBlur={[MockFunction]}
   onCancel={[MockFunction]}
   onChange={[MockFunction]}
-  onHeightChange={[Function]}
-  onKeyDown={[Function]}
   placeholder="placeholder"
-  useCacheForDOMMeasurements={false}
   value="This is the best module"
-/>
+>
+  <TextareaAutosize
+    inputRef={
+      Object {
+        "current": <textarea
+          name="notes"
+          placeholder="placeholder"
+        >
+          This is the best module
+        </textarea>,
+      }
+    }
+    name="notes"
+    onBlur={[MockFunction]}
+    onChange={[MockFunction]}
+    onKeyDown={[Function]}
+    placeholder="placeholder"
+    value="This is the best module"
+  >
+    <div
+      className="editable-notes"
+    >
+      <textarea
+        name="notes"
+        onBlur={[MockFunction]}
+        onChange={[MockFunction]}
+        onKeyDown={[Function]}
+        placeholder="placeholder"
+        value="This is the best module"
+      />
+      <div
+        className="invisible-size-setter"
+      >
+        This is the best module
+      </div>
+    </div>
+  </TextareaAutosize>
+</EditableNotes>
 `;
 
 exports[`EditableNotes read-only matches snapshot 1`] = `

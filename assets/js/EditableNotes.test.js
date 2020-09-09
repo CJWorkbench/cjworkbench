@@ -1,7 +1,7 @@
 /* globals beforeEach, describe, expect, it, jest */
 import React from 'react'
 import EditableNotes from './EditableNotes'
-import { shallowWithI18n } from './i18n/test-utils'
+import { shallow, mount } from 'enzyme'
 
 describe('EditableNotes', () => {
   let wrapper
@@ -10,11 +10,14 @@ describe('EditableNotes', () => {
 
   describe('read-only', () => {
     beforeEach(() => {
-      wrapper = shallowWithI18n(
+      wrapper = shallow(
         <EditableNotes
           isReadOnly
           placeholder='placeholder'
           value='This is the best module'
+          inputRef={React.createRef()}
+          onChange={jest.fn()}
+          onBlur={jest.fn()}
           onCancel={jest.fn()}
         />
       )
@@ -31,22 +34,20 @@ describe('EditableNotes', () => {
   })
 
   describe('editable', () => {
-    let inputRef
+    let props
 
     beforeEach(() => {
-      inputRef = React.createRef()
+      props = {
+        isReadOnly: false,
+        placeholder: 'placeholder',
+        value: 'This is the best module',
+        inputRef: React.createRef(),
+        onChange: jest.fn(),
+        onBlur: jest.fn(),
+        onCancel: jest.fn()
+      }
 
-      wrapper = shallowWithI18n(
-        <EditableNotes
-          isReadOnly={false}
-          placeholder='placeholder'
-          value='This is the best module'
-          inputRef={inputRef}
-          onChange={jest.fn()}
-          onBlur={jest.fn()}
-          onCancel={jest.fn()}
-        />
-      )
+      wrapper = mount(<EditableNotes {...props} />)
     })
 
     it('matches snapshot', () => {
@@ -54,21 +55,28 @@ describe('EditableNotes', () => {
     })
 
     it('renders note in edit state', () => {
-      expect(wrapper.find('TextareaAutosize').prop('value')).toEqual('This is the best module')
+      expect(wrapper.find('textarea').prop('value')).toEqual('This is the best module')
     })
 
     it('lets user enter and save a note', () => {
-      wrapper.find('TextareaAutosize').simulate('change', { target: { value: 'This is a mediocre module' } })
-      wrapper.find('TextareaAutosize').simulate('blur')
-      expect(wrapper.prop('onChange')).toHaveBeenCalledWith({ target: { value: 'This is a mediocre module' } })
-      expect(wrapper.prop('onBlur')).toHaveBeenCalled()
+      const textarea = wrapper.find('textarea')
+      textarea.simulate('change', { target: { value: 'This is a mediocre module' } })
+      textarea.simulate('blur')
+      expect(props.onChange).toHaveBeenCalled()
+      expect(props.onChange.mock.calls[0][0].target.value).toEqual('This is a mediocre module')
+      expect(props.onBlur).toHaveBeenCalled()
+    })
+
+    it('sets inputRef to be a textarea', () => {
+      const textarea = wrapper.find('textarea').getDOMNode()
+      expect(props.inputRef.current).toBe(textarea)
     })
 
     it('exits if user presses Escape', () => {
-      const tag = { tagName: 'TEXTAREA', blur: jest.fn() }
-      wrapper.find('TextareaAutosize').simulate('keydown', { target: tag, key: 'Escape' })
-      expect(wrapper.prop('onCancel')).toHaveBeenCalled()
-      expect(tag.blur).toHaveBeenCalled()
+      const textarea = wrapper.find('textarea')
+      textarea.simulate('keydown', { target: textarea.getDOMNode(), key: 'Escape' })
+      expect(props.onCancel).toHaveBeenCalled()
+      expect(props.onBlur).not.toHaveBeenCalled()
     })
   })
 })

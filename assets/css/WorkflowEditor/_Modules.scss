@@ -16,39 +16,6 @@
     z-index: 1;
   }
 
-  // notes above module
-  .module-notes {
-    // By default, notes aren't shown. We only show them if they are in focused or
-    // if they are non-empty. But we cannot set display:none, because the user
-    // may call notesInputRef.current.focus() before they become visible.
-    position: relative; // so we can position `.wf-module .module-notes::before`
-    padding-bottom: 1rem; // not margin because first note overrides background to hide line of life
-
-    &:not(.visible) {
-      overflow: hidden;
-      margin: 0;
-      padding: 0;
-      height: 0;
-    }
-
-    textarea[name="notes"], .editable-notes-read-only {
-      @include content-1;
-      display: block;
-      position: relative;
-      border: 0;
-      outline: none;
-      width: $module-width;
-      left: 1rem;
-      min-height: 3rem;
-      resize: none;
-      color: $brand-text--dark;
-      background-color: transparent;
-      margin: auto;
-      word-break: break-word;
-      overflow: hidden;
-    }
-  }
-
   // Show a vertical line to the left of the module stack
   &.status-ok:not(.after-selected) {
     &:not(.selected) .module-card-and-link::before,
@@ -333,7 +300,7 @@
           width: 2.2rem;
           height: 2.2rem;
           border-radius: 5rem;
-          line-height:1;
+          line-height: 1;
           text-align: center;
           vertical-align: middle;
           padding: 0;
