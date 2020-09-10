@@ -3,11 +3,10 @@ import ReactDOM from 'react-dom'
 import PropTypes from 'prop-types'
 import { Manager as PopperManager, Reference as PopperReference, Popper } from 'react-popper'
 
-const PopperModifiers = {
-  preventOverflow: {
-    boundariesElement: 'viewport'
-  }
-}
+const PopperModifiers = [
+  { name: 'preventOverflow', options: { boundariesElement: 'viewport' } },
+  { name: 'offset', options: { offset: [0, 12] } } // nudge to the right of the scrollbar+arrow
+]
 
 class SearchResultDescription extends React.PureComponent {
   static propTypes = {
@@ -22,7 +21,7 @@ class SearchResultDescription extends React.PureComponent {
       <Popper modifiers={PopperModifiers} placement='right'>
         {({ ref, style, placement, arrowProps }) => (
           <div
-            className={`module-search-result-description popover bs-popover-${placement}`}
+            className='module-search-result-description'
             ref={ref}
             style={style}
             data-placement={placement}

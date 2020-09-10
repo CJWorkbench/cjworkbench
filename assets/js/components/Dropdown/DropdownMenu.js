@@ -8,11 +8,9 @@ const KeyCodes = {
   Tab: 9
 }
 
-const PopperModifiers = {
-  preventOverflow: {
-    boundariesElement: 'viewport'
-  }
-}
+const PopperModifiers = [
+  { name: 'preventOverflow', options: { boundary: 'viewport' } }
+]
 
 /**
  * Dropdown menu that is actually shown.

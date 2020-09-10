@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import ReactDOM from 'react-dom'
 import PropTypes from 'prop-types'
 import Select from 'react-select'
 import { Popper } from 'react-popper'
 import { withI18n } from '@lingui/react'
 import { t } from '@lingui/macro'
+import { PopperSameWidth } from '../../components/PopperHelpers'
 
 // react-select includes a funky CSS engine we don't want. Disable
 // _all_ its styles using its 'styles' parameter.
@@ -39,20 +40,7 @@ const NoStyles = {
   valueContainer: NoStyleFactory
 }
 
-const PopperModifiers = {
-  autoPopperWidth: {
-    enabled: true,
-    order: 1,
-    fn: (data) => {
-      // Modify in-place, for speed (we're called often)
-      data.styles.width = data.offsets.reference.width
-      return data
-    }
-  },
-  preventOverflow: {
-    boundariesElement: 'viewport'
-  }
-}
+const PopperModifiers = [PopperSameWidth]
 const PopperMenuPortalContents = React.forwardRef(({ style, placement, scheduleUpdate, children }, ref) => {
   // When menu entries change, update Popper. That handles this case:
   //
@@ -61,7 +49,10 @@ const PopperMenuPortalContents = React.forwardRef(({ style, placement, scheduleU
   //
   // Expected results: menu is repositioned so its _bottom_ stays in a constant
   // position. That requires a scheduleUpdate().
-  useEffect(scheduleUpdate)
+  React.useLayoutEffect(
+    scheduleUpdate => scheduleUpdate ? scheduleUpdate() : undefined,
+    [scheduleUpdate]
+  )
 
   return (
     <div

@@ -266,17 +266,13 @@
   top: 0; // Popper needs this during preventOverflow calculations
   left: 0; // Popper needs this during preventOverflow calculations
 
-  margin-left: 1rem; // don't overlap module-search-popup scrollbar
-  border-width: $module-popover-border-width;
-  border-color: $brand-orange;
+  border: $module-popover-border-width solid $brand-orange;
   border-radius: 5px;
   background: white;
   box-shadow: $menu-shadow;
   width: 18rem;
   padding: 1rem;
-
-  //transition-delay: .2s;
-  transition: opacity .3s;
+  z-index: $zindex-popover; // show up above .module-search-popper
 
   h3 {
     @include content-1;
@@ -294,15 +290,23 @@
   }
 
   .arrow {
-    left: -8px;
-    margin-top: -4px; // Bootstrap's calculations assume a much smaller arrow
+    // https://popper.js.org/docs/v2/tutorial/#arrow
+    // ... but we'll show up on top, not behind, to look fancy
+    &, &::before {
+      position: absolute;
+      width: 1.2rem;
+      height: 1.2rem;
+    }
+
+    left: -.6rem;
 
     &::before {
-      border-right-color: $brand-orange;
-      border-bottom-color: transparent;
-      top: -1px;
-      left: -1px;
-      border-width: 9px 9px 9px 0;
+      content: '';
+      transform: rotate(45deg);
+      background: white;
+      border: $module-popover-border-width solid $brand-orange;
+      border-top-color: transparent;
+      border-right-color: transparent;
     }
     &::after {
       left: $module-popover-border-width;

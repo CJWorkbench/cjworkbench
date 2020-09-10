@@ -294,21 +294,17 @@ exports[`Workflow list page renders correctly 1`] = `
                           title="menu"
                         >
                           <Reference>
-                            <InnerReference
-                              setReferenceNode={[Function]}
+                            <button
+                              aria-expanded={false}
+                              className="btn btn-secondary context-button"
+                              disabled={false}
+                              onClick={[Function]}
+                              title="menu"
                             >
-                              <button
-                                aria-expanded={false}
-                                className="btn btn-secondary context-button"
-                                disabled={false}
-                                onClick={[Function]}
-                                title="menu"
-                              >
-                                <i
-                                  className="icon-more"
-                                />
-                              </button>
-                            </InnerReference>
+                              <i
+                                className="icon-more"
+                              />
+                            </button>
                           </Reference>
                         </DropdownToggle>
                         <DropdownMenu />
@@ -753,67 +749,63 @@ exports[`Workflow list page renders correctly 1`] = `
                         >
                           <DropdownToggle>
                             <Reference>
-                              <InnerReference
-                                setReferenceNode={[Function]}
+                              <button
+                                aria-expanded={false}
+                                className="btn btn-secondary"
+                                disabled={false}
+                                onClick={[Function]}
                               >
-                                <button
-                                  aria-expanded={false}
-                                  className="btn btn-secondary"
-                                  disabled={false}
-                                  onClick={[Function]}
+                                <WithI18n
+                                  defaults="Sort"
+                                  id="js.Workflows.SortMenu.sort.DropdownTitle"
                                 >
-                                  <WithI18n
-                                    defaults="Sort"
-                                    id="js.Workflows.SortMenu.sort.DropdownTitle"
+                                  <I18n
+                                    update={true}
+                                    withHash={true}
                                   >
-                                    <I18n
-                                      update={true}
-                                      withHash={true}
-                                    >
-                                      <Trans
-                                        defaults="Sort"
-                                        i18n={
-                                          Object {
-                                            "_": [Function],
-                                            "_activeLanguageData": Object {
-                                              "plurals": [Function],
+                                    <Trans
+                                      defaults="Sort"
+                                      i18n={
+                                        Object {
+                                          "_": [Function],
+                                          "_activeLanguageData": Object {
+                                            "plurals": [Function],
+                                          },
+                                          "_activeMessages": Object {},
+                                          "_catalogs": Object {
+                                            "en": Object {
+                                              "languageData": Object {},
+                                              "messages": Object {},
                                             },
-                                            "_activeMessages": Object {},
-                                            "_catalogs": Object {
-                                              "en": Object {
-                                                "languageData": Object {},
-                                                "messages": Object {},
-                                              },
-                                            },
-                                            "_dev": Object {
-                                              "compile": [Function],
-                                              "loadLanguageData": [Function],
-                                            },
-                                            "_language": "en",
-                                            "_locales": undefined,
-                                            "_missing": undefined,
-                                            "plural": [Function],
-                                            "select": [Function],
-                                            "selectOrdinal": [Function],
-                                            "t": [Function],
-                                          }
+                                          },
+                                          "_dev": Object {
+                                            "compile": [Function],
+                                            "loadLanguageData": [Function],
+                                          },
+                                          "_language": "en",
+                                          "_locales": undefined,
+                                          "_missing": undefined,
+                                          "plural": [Function],
+                                          "select": [Function],
+                                          "selectOrdinal": [Function],
+                                          "t": [Function],
                                         }
-                                        id="js.Workflows.SortMenu.sort.DropdownTitle"
+                                      }
+                                      id="js.Workflows.SortMenu.sort.DropdownTitle"
+                                    >
+                                      <Render
+                                        value="js.Workflows.SortMenu.sort.DropdownTitle"
                                       >
-                                        <Render
-                                          value="js.Workflows.SortMenu.sort.DropdownTitle"
-                                        >
-                                          js.Workflows.SortMenu.sort.DropdownTitle
-                                        </Render>
-                                      </Trans>
-                                    </I18n>
-                                  </WithI18n>
-                                   
-                                  <i
-                                    className="icon-caret-down"
-                                  />
-                                </button>
-                              </InnerReference>
+                                        js.Workflows.SortMenu.sort.DropdownTitle
+                                      </Render>
+                                    </Trans>
+                                  </I18n>
+                                </WithI18n>
+                                 
+                                <i
+                                  className="icon-caret-down"
+                                />
+                              </button>
                             </Reference>
                           </DropdownToggle>
                           <DropdownMenu />
@@ -1209,20 +1201,16 @@ exports[`Workflow list page renders correctly 1`] = `
                                         className="context-button"
                                       >
                                         <Reference>
-                                          <InnerReference
-                                            setReferenceNode={[Function]}
+                                          <button
+                                            aria-expanded={false}
+                                            className="btn btn-secondary context-button"
+                                            disabled={false}
+                                            onClick={[Function]}
                                           >
-                                            <button
-                                              aria-expanded={false}
-                                              className="btn btn-secondary context-button"
-                                              disabled={false}
-                                              onClick={[Function]}
-                                            >
-                                              <i
-                                                className="icon-more"
-                                              />
-                                            </button>
-                                          </InnerReference>
+                                            <i
+                                              className="icon-more"
+                                            />
+                                          </button>
                                         </Reference>
                                       </DropdownToggle>
                                       <DropdownMenu />
@@ -1533,20 +1521,16 @@ exports[`Workflow list page renders correctly 1`] = `
                                         className="context-button"
                                       >
                                         <Reference>
-                                          <InnerReference
-                                            setReferenceNode={[Function]}
+                                          <button
+                                            aria-expanded={false}
+                                            className="btn btn-secondary context-button"
+                                            disabled={false}
+                                            onClick={[Function]}
                                           >
-                                            <button
-                                              aria-expanded={false}
-                                              className="btn btn-secondary context-button"
-                                              disabled={false}
-                                              onClick={[Function]}
-                                            >
-                                              <i
-                                                className="icon-more"
-                                              />
-                                            </button>
-                                          </InnerReference>
+                                            <i
+                                              className="icon-more"
+                                            />
+                                          </button>
                                         </Reference>
                                       </DropdownToggle>
                                       <DropdownMenu />
@@ -1857,20 +1841,16 @@ exports[`Workflow list page renders correctly 1`] = `
                                         className="context-button"
                                       >
                                         <Reference>
-                                          <InnerReference
-                                            setReferenceNode={[Function]}
+                                          <button
+                                            aria-expanded={false}
+                                            className="btn btn-secondary context-button"
+                                            disabled={false}
+                                            onClick={[Function]}
                                           >
-                                            <button
-                                              aria-expanded={false}
-                                              className="btn btn-secondary context-button"
-                                              disabled={false}
-                                              onClick={[Function]}
-                                            >
-                                              <i
-                                                className="icon-more"
-                                              />
-                                            </button>
-                                          </InnerReference>
+                                            <i
+                                              className="icon-more"
+                                            />
+                                          </button>
                                         </Reference>
                                       </DropdownToggle>
                                       <DropdownMenu />
@@ -2252,20 +2232,16 @@ exports[`Workflow list page renders correctly 1`] = `
                                         className="context-button"
                                       >
                                         <Reference>
-                                          <InnerReference
-                                            setReferenceNode={[Function]}
+                                          <button
+                                            aria-expanded={false}
+                                            className="btn btn-secondary context-button"
+                                            disabled={false}
+                                            onClick={[Function]}
                                           >
-                                            <button
-                                              aria-expanded={false}
-                                              className="btn btn-secondary context-button"
-                                              disabled={false}
-                                              onClick={[Function]}
-                                            >
-                                              <i
-                                                className="icon-more"
-                                              />
-                                            </button>
-                                          </InnerReference>
+                                            <i
+                                              className="icon-more"
+                                            />
+                                          </button>
                                         </Reference>
                                       </DropdownToggle>
                                       <DropdownMenu />
@@ -2576,20 +2552,16 @@ exports[`Workflow list page renders correctly 1`] = `
                                         className="context-button"
                                       >
                                         <Reference>
-                                          <InnerReference
-                                            setReferenceNode={[Function]}
+                                          <button
+                                            aria-expanded={false}
+                                            className="btn btn-secondary context-button"
+                                            disabled={false}
+                                            onClick={[Function]}
                                           >
-                                            <button
-                                              aria-expanded={false}
-                                              className="btn btn-secondary context-button"
-                                              disabled={false}
-                                              onClick={[Function]}
-                                            >
-                                              <i
-                                                className="icon-more"
-                                              />
-                                            </button>
-                                          </InnerReference>
+                                            <i
+                                              className="icon-more"
+                                            />
+                                          </button>
                                         </Reference>
                                       </DropdownToggle>
                                       <DropdownMenu />
@@ -2955,20 +2927,16 @@ exports[`Workflow list page renders correctly 1`] = `
                                         className="context-button"
                                       >
                                         <Reference>
-                                          <InnerReference
-                                            setReferenceNode={[Function]}
+                                          <button
+                                            aria-expanded={false}
+                                            className="btn btn-secondary context-button"
+                                            disabled={false}
+                                            onClick={[Function]}
                                           >
-                                            <button
-                                              aria-expanded={false}
-                                              className="btn btn-secondary context-button"
-                                              disabled={false}
-                                              onClick={[Function]}
-                                            >
-                                              <i
-                                                className="icon-more"
-                                              />
-                                            </button>
-                                          </InnerReference>
+                                            <i
+                                              className="icon-more"
+                                            />
+                                          </button>
                                         </Reference>
                                       </DropdownToggle>
                                       <DropdownMenu />

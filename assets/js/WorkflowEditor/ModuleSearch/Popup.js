@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import PropTypes from 'prop-types'
-import PopperUtils from 'popper.js/dist/umd/popper-utils'
+import detectOverflow from '@popperjs/core/lib/utils/detectOverflow.js'
 import { Popper } from 'react-popper'
 import { connect } from 'react-redux'
 import lessonSelector from '../../lessons/lessonSelector'
@@ -9,6 +9,7 @@ import { ModulePropType } from './PropTypes'
 import Prompt from './Prompt'
 import SearchResults from './SearchResults'
 import { addModuleAction } from '../../workflow-reducer'
+import { PopperSameWidth } from '../../components/PopperHelpers'
 
 const KeyCodes = {
   Tab: 9
@@ -19,8 +20,8 @@ const KeyCodes = {
  *
  * TEST: DROPDOWN RESIZES
  *
- * 1. Open a workflow with a few modules
- * 2. Click the _very first_ add-module slot
+ * 1. Open a workflow with a few steps
+ * 2. Click the _very first_ add-step slot
  *    -- popup should open below slot, with scrollbar
  * 3. Type "xx"
  *    -- as you type, popup should shrink; search field should stay in same
@@ -31,7 +32,7 @@ const KeyCodes = {
  * TEST: DROPUP RESIZES
  *
  * 1. Open a workflow with a few modules
- * 2. Click an "add-module" slot near the bottom of the page
+ * 2. Click an "add-step" slot near the bottom of the page
  *    -- popup should open, with scrollbar; search field should be where it
  *       would have been had we gotten a dropdown instead of a dropup
  * 3. Type "xx"
@@ -47,7 +48,7 @@ const KeyCodes = {
  * TEST: SCROLL SEARCH RESULTS
  *
  * 1. Open a workflow
- * 2. Click "add module"
+ * 2. Click "add step"
  *    -- popup should open
  * 3. Scroll through the popup
  *    -- you should see a scrollbar; scrolling should affect the scrollbar.
@@ -55,17 +56,17 @@ const KeyCodes = {
  * TEST: SCROLL MODULE STACK SO BUTTON IS OFFSCREEN
  *
  * 1. Open a workflow with a few modules
- * 2. Click a middle add-module slot
+ * 2. Click a middle add-step slot
  *    -- popup appears
- * 3. Scroll all the way up and down in the module stack (_outside_ the
- *    module-search popup).
+ * 3. Scroll all the way up and down in the step stack (_outside_ the
+ *    step-search popup).
  *    -- popup should not affect the page size. (It should be pinned within the
  *       page.)
  *
  * TEST: CLICK OFF MODULE SEARCH SHOULD CLOSE IT
  *
  * 1. Open a workflow
- * 2. Click add-module
+ * 2. Click add-step
  *    -- popup should appear
  * 3. Click the table
  *    -- popup should disappear
@@ -73,173 +74,161 @@ const KeyCodes = {
  * TEST: CLICK ON MODULE SHOULD ADD IT
  *
  * 1. Open a workflow
- * 2. Click add-module
+ * 2. Click add-step
  *    -- popup should appear
- * 3. Click a module
- *    -- popup should disappear and module should be added
+ * 3. Click a step
+ *    -- popup should disappear and step should be added
  */
-const PopperModifiers = {
-  autoPopperWidth: {
-    enabled: true,
-    order: 1,
-    fn: (data) => {
-      // Modify in-place, for speed (we're called often)
-      data.styles.width = data.offsets.reference.width
-      return data
-    }
-  },
 
-  flip: { enabled: false }, // autoPopperPlacement replaces this
-  hide: { enabled: false }, // show, always
-  autoPopperPlacement: {
-    enabled: true,
-    order: 2,
-    fn: (data) => {
-      const refBox = data.offsets.reference
-      const refCenterY = (refBox.top + refBox.bottom) / 2
-
-      // If prompt is past the 60% mark on the page, open upwards.
-      // otherwise, open downwards.
-      const flipped = refCenterY > window.innerHeight * 0.6
-      data.flipped = flipped
-      data.placement = flipped ? 'top' : 'bottom'
-
-      return data
-    }
-  },
-
-  autoPopperHeight: {
-    enabled: true,
-    order: 3,
-    padding: 10,
-    fn: (data, { padding }) => {
-      // Place the prompt below the "Add Step" button
-      // (visually, place the prompt where the to-be-added module will go.)
-      const refBottom = data.offsets.reference.bottom
-
-      let maxHeight
-      if (data.placement === 'bottom') {
-        maxHeight = Math.floor(
-          window.innerHeight -
-          padding -
-          refBottom
-        )
-      } else {
-        // since prompt is below and we're placing above, promptHeight doesn't
-        // actually cost any space and doesn't factor in to maxHeight.
-        const promptHeight = data.instance.popper.querySelector('form').getBoundingClientRect().height
-        maxHeight = Math.floor(
-          refBottom -
-          padding +
-          promptHeight
-        )
-      }
-
-      // Clamp maxHeight to handle the case:
-      //
-      // 1. Open a popup
-      // 2. Scroll around
-      //
-      // Expected results: the menu doesn't get enormous
-      maxHeight = Math.min(maxHeight, window.innerHeight * 0.7)
-
-      data.styles.maxHeight = maxHeight
-      data.instance.popper.style.maxHeight = maxHeight // so we can getPopperOffsets()
-      data.offsets.popper = PopperUtils.getPopperOffsets(
-        data.instance.popper,
-        data.offsets.reference,
-        data.placement
-      )
-      return data
-    }
-  },
-
-  offset: { enabled: false },
-  shiftOffset: {
-    enabled: true,
-    order: 201, // after 'offset', which calculated the desired position
-    fn: (data) => {
-      // Place the prompt below the "Add Step" button
-      // (visually, place the prompt where the to-be-added module will go.)
-      const { placement, instance, offsets: { popper, reference } } = data
-      const promptHeight = instance.popper.querySelector('form').getBoundingClientRect().height
-
-      if (placement === 'top') {
-        const shift = reference.height + promptHeight
-        popper.top += shift
-        popper.bottom += shift
-      } // else placement === 'bottom' and Popper default is what we want
-      return data
-    }
-  },
-
-  preventOverflow: {
-    // autoPopperHeight sets maxHeight, which ought to prevent overflow; but
-    // there's still the case where the user scrolls the module stack such that
-    // the reference <button> is off the page. Use Popper's normal
-    // preventOverflow+hide to lock the popup onto the page.
-    boundariesElement: 'viewport'
-  }
-}
-const PopperModifiersLastButton = {
-  ...PopperModifiers,
-  autoPopperHeight: {
-    ...PopperModifiers.autoPopperHeight,
-    fn: (data, { padding }) => {
-      // Vertically center the prompt over the "Add Step" button
-      const refBox = data.offsets.reference
-      const refCenterY = (refBox.top + refBox.bottom) / 2
-
-      // shiftOffset will vertically center the prompt over its reference element.
-      const promptHeight = data.instance.popper.querySelector('form').getBoundingClientRect().height
-
-      let maxHeight
-      if (data.placement === 'bottom') {
-        maxHeight = (
-          window.innerHeight -
-          padding -
-          Math.floor(refCenterY - promptHeight / 2)
-        )
-      } else {
-        maxHeight = (
-          Math.floor(refCenterY + promptHeight / 2) -
-          padding
-        )
-      }
-
-      // Clamp maxHeight to handle the case:
-      //
-      // 1. Open a popup
-      // 2. Scroll around
-      //
-      // Expected results: the menu doesn't get enormous
-      maxHeight = Math.min(maxHeight, window.innerHeight * 0.7)
-
-      data.styles.maxHeight = maxHeight
-      data.instance.popper.style.maxHeight = maxHeight // so we can getPopperOffsets()
-      data.offsets.popper = PopperUtils.getPopperOffsets(
-        data.instance.popper,
-        data.offsets.reference,
-        data.placement
-      )
-      return data
-    }
-  },
-
-  shiftOffset: {
-    ...PopperModifiers.shiftOffset,
-    fn: (data) => {
-      // Vertically center the prompt over the "Add Step" button
-      const { placement, instance, offsets: { popper, reference } } = data
-      const promptHeight = instance.popper.querySelector('form').getBoundingClientRect().height
-      const refHeight = reference.height
-      const offset = (promptHeight + refHeight) / 2
-      const mult = placement === 'bottom' ? -1 : 1
-      popper.top += mult * offset
-      return data
+const PopperFlipBasedOnScrollPosition = {
+  // Override Popper's 'flip' modifier: flip if we're low on the page.
+  // (Normally, Popper flips if the popper won't fit in the wanted direction.
+  // But _our_ popup is enormous -- taller than the page -- so it only fits
+  // after the user has typed some letters. We don't want user-types-letters
+  // to cause a flip, so we mustn't use the height of the popup to determine
+  // whether to flip.)
+  name: 'flip',
+  fn: ({ state, options, name }) => {
+    const refBox = state.rects.reference
+    const refCenterY = refBox.y + (refBox.height / 2)
+    const boundingEl = state.elements.reference.offsetParent.offsetParent
+    const boundingBox = boundingEl.getBoundingClientRect()
+    // If prompt is past the 60% mark on the page, open upwards.
+    // otherwise, open downwards.
+    const midY = boundingBox.y + (boundingBox.height * 0.6)
+    const placement = refCenterY > midY ? 'top' : 'bottom'
+    if (placement !== state.placement) {
+      state.modifiersData[name]._skip = true
+      state.placement = placement
+      state.reset = true
     }
   }
 }
+
+const PopperOffsetFormBelowReference = {
+  name: 'offset',
+  fn: ({ state, name }) => {
+    let y = 0
+    if (state.placement === 'top') {
+      const formHeight = state.elements.popper.querySelector('form').clientHeight
+      y = formHeight + state.rects.reference.height
+    }
+
+    if (state.modifiersData.popperOffsets !== null) {
+      state.modifiersData.popperOffsets.y += y
+    }
+    state.modifiersData[name] = {
+      top: { x: 0, y }, // this is the only offset we might add
+      left: { x: 0, y: 0 },
+      right: { x: 0, y: 0 },
+      bottom: { x: 0, y: 0 }
+    }
+  }
+}
+
+const PopperOffsetToCoverReference = {
+  name: 'offset',
+  fn: ({ state, name }) => {
+    // Center the form atop the reference.
+    const formHeight = state.elements.popper.querySelector('form').clientHeight
+    const refHeight = state.rects.reference.height
+    // formTopOverflow: number of pixels form top is higher than reference top
+    const formTopOverflow = (formHeight - state.rects.reference.height) / 2
+    // Through luck of math, y is the same whether placement is top or bottom
+    const y = -refHeight - formTopOverflow
+
+    if (state.modifiersData.popperOffsets !== null) {
+      state.modifiersData.popperOffsets.y += state.placement === 'top' ? -y : y
+    }
+    state.modifiersData[name] = {
+      top: { x: 0, y: state.placement === 'top' ? -y : 0 },
+      left: { x: 0, y: 0 },
+      right: { x: 0, y: 0 },
+      bottom: { x: 0, y: state.placement === 'bottom' ? y : 0 }
+    }
+  }
+}
+
+const PopperMaxHeight = {
+  // https://github.com/atomiks/popper.js/blob/0558a222de782687ec217847ea2f1be839b9dbb3/src/modifiers/maxSize.js
+  name: 'maxSize',
+  enabled: true,
+  phase: 'main',
+  requiresIfExists: ['offset', 'preventOverflow', 'flip'],
+  options: {
+    padding: 5
+  },
+  fn: ({ state, name, options }) => {
+    const overflow = detectOverflow(state, options)
+    // detectOverflow() neglects modifiersData
+    const y = state.modifiersData.preventOverflow ? state.modifiersData.preventOverflow.y : 0
+    const { height } = state.rects.popper
+
+    // maxHeight = height - (overflow-top if placing above, overflow-bottom if placing below)
+    let maxHeight = height - overflow[state.placement] - y
+
+    // Clamp maxHeight to handle the case:
+    //
+    // 1. Open a popup
+    // 2. Scroll around
+    //
+    // Expected results: the menu doesn't get enormous
+    maxHeight = Math.min(maxHeight, window.innerHeight * 0.7)
+
+    state.modifiersData[name] = { maxHeight }
+  }
+}
+
+const PopperApplyMaxHeight = {
+  name: 'applyMaxSize',
+  enabled: true,
+  phase: 'beforeWrite',
+  requires: ['maxSize'],
+  fn: ({ state }) => {
+    const { maxHeight } = state.modifiersData[PopperMaxHeight.name]
+    state.styles.popper.maxHeight = `${maxHeight}px`
+  }
+}
+
+const PopperPreventOverflowKeepPopperOnscreen = {
+  // Used instead of preventOverflow. The goal is to force the popup
+  // to remain on-screen, even if the reference scrolls away.
+  //
+  // This is very similar to preventOverflow with options
+  // * mainAxis: true
+  // * altAxis: false
+  // * boundary: 'clippingParents'
+  // ... but unlike @popperjs/core method, _this_ preventOverflow won't
+  // move the popper onto the reference element. (Normally, since the
+  // reference element is huge, it would.)
+  name: 'preventOverflow',
+  options: { boundary: 'clippingParents', padding: 5, altBoundary: true },
+  fn: ({ state, options, name }) => {
+    const overflow = detectOverflow(state, { ...options, altBoundary: true })
+    const popperOffsets = state.modifiersData.popperOffsets
+
+    const offset = popperOffsets.y
+
+    const preventedOffset = state.placement === 'top'
+      ? Math.min(offset, offset - overflow.bottom)
+      : Math.max(offset, offset + overflow.top)
+
+    popperOffsets.y = preventedOffset
+    state.modifiersData[name] = { x: 0, y: preventedOffset - offset }
+  }
+}
+
+const PopperModifiers = [
+  PopperSameWidth,
+  PopperPreventOverflowKeepPopperOnscreen,
+  PopperFlipBasedOnScrollPosition, // replaces 'flip'
+  { name: 'hide', enabled: false }, // show, even when too tall
+  PopperOffsetFormBelowReference,
+  PopperMaxHeight,
+  PopperApplyMaxHeight
+]
+
+const PopperModifiersLastButton = [...PopperModifiers, PopperOffsetToCoverReference]
 
 export class Popup extends React.PureComponent {
   static propTypes = {
@@ -262,9 +251,7 @@ export class Popup extends React.PureComponent {
 
   componentDidUpdate () {
     // Resize Popper.
-    //
-    // Another place this might make sense is componentDidUpdate(). But
-    this.props.onUpdate()
+    if (this.props.onUpdate) this.props.onUpdate()
   }
 
   handleClickModule = (moduleIdName) => {

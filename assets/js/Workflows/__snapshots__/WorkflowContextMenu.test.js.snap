@@ -21,20 +21,16 @@ exports[`WorkflowContextMenu renders correctly 1`] = `
             className="context-button"
           >
             <Reference>
-              <InnerReference
-                setReferenceNode={[Function]}
+              <button
+                aria-expanded={false}
+                className="btn btn-secondary context-button"
+                disabled={false}
+                onClick={[Function]}
               >
-                <button
-                  aria-expanded={false}
-                  className="btn btn-secondary context-button"
-                  disabled={false}
-                  onClick={[Function]}
-                >
-                  <i
-                    className="icon-more"
-                  />
-                </button>
-              </InnerReference>
+                <i
+                  className="icon-more"
+                />
+              </button>
             </Reference>
           </DropdownToggle>
           <DropdownMenu />

@@ -22,20 +22,16 @@ exports[`ColumnContextMenu should match snapshot 1`] = `
             className="context-button"
           >
             <Reference>
-              <InnerReference
-                setReferenceNode={[Function]}
+              <button
+                aria-expanded={false}
+                className="btn btn-secondary context-button"
+                disabled={false}
+                onClick={[Function]}
               >
-                <button
-                  aria-expanded={false}
-                  className="btn btn-secondary context-button"
-                  disabled={false}
-                  onClick={[Function]}
-                >
-                  <i
-                    className="icon-caret-down"
-                  />
-                </button>
-              </InnerReference>
+                <i
+                  className="icon-caret-down"
+                />
+              </button>
             </Reference>
           </DropdownToggle>
           <DropdownMenu />
