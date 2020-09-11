@@ -182,7 +182,7 @@ WORKDIR /app
 # 2.2 jsbuild: where we build JavaScript assets
 FROM jsbase AS jsbuild
 
-COPY package.json package-lock.json /app/
+COPY package.json package-lock.json babel.config.json /app/
 RUN npm install
 
 COPY webpack.config.js setupJest.js lingui.config.js /app/
