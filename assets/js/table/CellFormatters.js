@@ -8,7 +8,7 @@ import EnUsLocale from 'd3-format/locale/en-US.json'
 // about their output. though.)
 
 // Line breaks: https://www.unicode.org/reports/tr14/tr14-32.html#BK
-const UnicodeWhitespace = /(?:\r\n|[\r\n\f\v\u0085\u2028\u2029])/sg
+const UnicodeWhitespace = /(?:\r\n|[\r\n\f\v\u0085\u2028\u2029])/g
 const UnicodeWhitespaceReplacements = {
   '\r\n': '↵',
   '\r': '↵',
