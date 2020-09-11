@@ -3,7 +3,6 @@
   // if they are non-empty. But we cannot set display:none, because the user
   // may call notesInputRef.current.focus() before they become visible.
   position: relative; // so we can position `.wf-module .module-notes::before`
-  padding-bottom: 1rem; // not margin because first note overrides background to hide line of life
 
   .editable-notes {
     position: relative;
@@ -17,11 +16,16 @@
 
     .invisible-size-setter {
       visibility: hidden; // but take up space!
+      padding-bottom: 1rem; // not margin because first note overrides background to hide line of life
     }
 
     &:focus-within .invisible-size-setter:empty::before {
       display: inline;
       content: ' '; // take up space!
+    }
+
+    &:not(:focus-within) .invisible-size-setter:empty {
+      padding-bottom: 0; // hide empty notes
     }
   }
 
