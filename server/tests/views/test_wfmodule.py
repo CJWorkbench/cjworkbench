@@ -219,6 +219,23 @@ class WfModuleTests(LoggedInTestCase):
             {"start_row": 0, "end_row": 2, "rows": [{"A": 0}, {"A": 1}]},
         )
 
+    def test_wf_module_render_start_row_after_end_row(self):
+        cache_render_result(
+            self.workflow,
+            self.wf_module2,
+            self.wf_module2.last_relevant_delta_id,
+            RenderResult(arrow_table({"A": [0, 1, 2, 3, 4]})),
+        )
+
+        response = self.client.get(
+            "/api/wfmodules/%d/render?startrow=3&endrow=1" % self.wf_module2.id
+        )
+        self.assertIs(response.status_code, status.HTTP_200_OK)
+        body = json.loads(response.content)
+        self.assertEqual(body["rows"], [])
+        self.assertEqual(body["start_row"], 3)
+        self.assertEqual(body["end_row"], 3)
+
     def test_wf_module_render_invalid_endrow(self):
         # index not a number -> bad request
         response = self.client.get(

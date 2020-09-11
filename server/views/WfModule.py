@@ -85,8 +85,11 @@ def _make_render_tuple(cached_result, startrow=None, endrow=None):
     startrow = max(0, startrow)
     if endrow is None:
         endrow = startrow + _MaxNRowsPerRequest
-    endrow = min(
-        cached_result.table_metadata.n_rows, endrow, startrow + _MaxNRowsPerRequest
+    endrow = max(
+        startrow,
+        min(
+            cached_result.table_metadata.n_rows, endrow, startrow + _MaxNRowsPerRequest
+        ),
     )
 
     # raise CorruptCacheError
