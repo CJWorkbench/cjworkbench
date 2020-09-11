@@ -1,7 +1,8 @@
 /* globals beforeEach, describe, expect, it, jest */
 import React from 'react'
-import { mountWithI18n } from '../i18n/test-utils'
+import { act } from 'react-dom/test-utils'
 import { Provider } from 'react-redux'
+import { mountWithI18n } from '../i18n/test-utils'
 import { mockStore, tick } from '../test-utils'
 import { generateSlug } from '../utils'
 import ConnectedSelectedRowsActions, { SelectedRowsActions } from './SelectedRowsActions'
@@ -30,9 +31,10 @@ describe('SelectedRowsActions', () => {
       expect(w.find('Trans[id="js.table.SelectedRowsActions.numberOfSelectedRows"]').prop('values')).toEqual({ 0: '3' })
     })
 
-    it('should invoke an action with rows as a string, 1-based', () => {
+    it('should invoke an action with rows as a string, 1-based', async () => {
       const w = wrapper({ selectedRowIndexes: [2, 3, 4, 5, 8000, 8001, 8002, 9] })
       w.find('button.table-action').simulate('click') // open the menu
+      await act(async () => await null) // Popper update() - https://github.com/popperjs/react-popper/issues/350
       w.find('button').at(1).simulate('click')
       expect(w.prop('onClickRowsAction')).toHaveBeenCalledWith(99, 'dofoo', '3-6, 10, 8001-8003')
     })
@@ -63,7 +65,7 @@ describe('SelectedRowsActions', () => {
       )
     }
 
-    it('should render modules', () => {
+    it('should render modules', async () => {
       const w = wrapper({
         modules: {
           dofoo: {
@@ -72,10 +74,11 @@ describe('SelectedRowsActions', () => {
         }
       })
       w.find('button.table-action').simulate('click') // open the menu
+      await act(async () => await null) // Popper update() - https://github.com/popperjs/react-popper/issues/350
       expect(w.find('.dropdown-menu').text()).toMatch(/Foo these rows/)
     })
 
-    it('should not render modules that do not belong', () => {
+    it('should not render modules that do not belong', async () => {
       const w = wrapper({
         modules: {
           dofoo: {
@@ -84,6 +87,7 @@ describe('SelectedRowsActions', () => {
         }
       })
       w.find('button.table-action').simulate('click') // open the menu
+      await act(async () => await null) // Popper update() - https://github.com/popperjs/react-popper/issues/350
       expect(w.find('button')).toHaveLength(1)
     })
 
@@ -102,6 +106,7 @@ describe('SelectedRowsActions', () => {
         }
       }, { wfModuleId: 2 })
       w.find('button.table-action').simulate('click') // open the menu
+      await act(async () => await null) // Popper update() - https://github.com/popperjs/react-popper/issues/350
       expect(w.find('.dropdown-menu').text()).toMatch(/Bar these rows/)
       w.find('button').at(1).simulate('click')
 
@@ -129,6 +134,7 @@ describe('SelectedRowsActions', () => {
         }
       }, { wfModuleId: 2 }) // selected module is the input
       w.find('button.table-action').simulate('click') // open the menu
+      await act(async () => await null) // Popper update() - https://github.com/popperjs/react-popper/issues/350
       expect(w.find('.dropdown-menu').text()).toMatch(/Baz these rows/)
       w.find('button').at(1).simulate('click')
 
@@ -160,6 +166,7 @@ describe('SelectedRowsActions', () => {
         }
       }, { wfModuleId: 2 }) // selected module is what's we're editing
       w.find('button.table-action').simulate('click') // open the menu
+      await act(async () => await null) // Popper update() - https://github.com/popperjs/react-popper/issues/350
       expect(w.find('.dropdown-menu').text()).toMatch(/Baz these rows/)
       w.find('button').at(1).simulate('click')
 

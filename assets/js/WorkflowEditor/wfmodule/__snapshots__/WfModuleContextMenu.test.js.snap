@@ -72,43 +72,37 @@ exports[`WfModuleContextMenu should match snapshot 1`] = `
           isOpen={false}
           toggle={[Function]}
         >
-          <Manager
-            tag={false}
+          <div
+            className="dropdown"
           >
-            <div
-              className="dropdown"
+            <DropdownToggle
+              className="context-button"
+              title="more"
             >
-              <DropdownToggle
-                className="context-button"
+              <button
+                aria-expanded={false}
+                className="btn btn-secondary context-button"
+                disabled={false}
+                onClick={[Function]}
                 title="more"
               >
-                <Reference>
-                  <button
-                    aria-expanded={false}
-                    className="btn btn-secondary context-button"
-                    disabled={false}
-                    onClick={[Function]}
-                    title="more"
-                  >
-                    <i
-                      className="icon-more"
-                    />
-                  </button>
-                </Reference>
-              </DropdownToggle>
-              <DropdownMenu />
-              <ExportModal
-                open={false}
-                toggle={[Function]}
-                wfModuleId={415}
-              >
-                <Modal
-                  isOpen={false}
-                  toggle={[Function]}
+                <i
+                  className="icon-more"
                 />
-              </ExportModal>
-            </div>
-          </Manager>
+              </button>
+            </DropdownToggle>
+            <DropdownMenu />
+            <ExportModal
+              open={false}
+              toggle={[Function]}
+              wfModuleId={415}
+            >
+              <Modal
+                isOpen={false}
+                toggle={[Function]}
+              />
+            </ExportModal>
+          </div>
         </Dropdown>
       </UncontrolledDropdown>
     </Memo(WfModuleContextMenu)>

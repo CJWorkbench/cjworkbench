@@ -241,27 +241,23 @@ exports[`ModuleSearch Popup matches snapshot 1`] = `
                 <Manager>
                   <li>
                     <Reference>
-                      <InnerReference
-                        setReferenceNode={[Function]}
+                      <button
+                        className="module-search-result lesson-highlight"
+                        data-module-name="Load from Enigma"
+                        data-module-slug="enigma"
+                        id="module-search-result-enigma"
+                        onClick={[Function]}
+                        onMouseEnter={[Function]}
                       >
-                        <button
-                          className="module-search-result lesson-highlight"
-                          data-module-name="Load from Enigma"
-                          data-module-slug="enigma"
-                          id="module-search-result-enigma"
-                          onClick={[Function]}
-                          onMouseEnter={[Function]}
+                        <i
+                          className="icon-url"
+                        />
+                        <span
+                          className="name"
                         >
-                          <i
-                            className="icon-url"
-                          />
-                          <span
-                            className="name"
-                          >
-                            Load from Enigma
-                          </span>
-                        </button>
-                      </InnerReference>
+                          Load from Enigma
+                        </span>
+                      </button>
                     </Reference>
                   </li>
                 </Manager>
@@ -354,27 +350,23 @@ exports[`ModuleSearch Popup matches snapshot 1`] = `
                 <Manager>
                   <li>
                     <Reference>
-                      <InnerReference
-                        setReferenceNode={[Function]}
+                      <button
+                        className="module-search-result"
+                        data-module-name="Filter by Text"
+                        data-module-slug="filter"
+                        id="module-search-result-filter"
+                        onClick={[Function]}
+                        onMouseEnter={[Function]}
                       >
-                        <button
-                          className="module-search-result"
-                          data-module-name="Filter by Text"
-                          data-module-slug="filter"
-                          id="module-search-result-filter"
-                          onClick={[Function]}
-                          onMouseEnter={[Function]}
+                        <i
+                          className="icon-filter"
+                        />
+                        <span
+                          className="name"
                         >
-                          <i
-                            className="icon-filter"
-                          />
-                          <span
-                            className="name"
-                          >
-                            Filter by Text
-                          </span>
-                        </button>
-                      </InnerReference>
+                          Filter by Text
+                        </span>
+                      </button>
                     </Reference>
                   </li>
                 </Manager>

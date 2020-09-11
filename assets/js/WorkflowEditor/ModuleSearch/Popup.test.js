@@ -1,5 +1,7 @@
 /* globals describe, expect, it, jest */
 import React from 'react'
+import { act } from 'react-dom/test-utils'
+import { mount } from 'enzyme'
 import ConnectedPopup, { Popup } from './Popup'
 import { Provider } from 'react-redux'
 import { mockStore } from '../../test-utils'
@@ -41,18 +43,21 @@ describe('ModuleSearch Popup', () => {
   }
   const modulesArray = [modules.enigma, modules.filter]
 
-  const wrapper = (extraProps = {}) => mountWithI18n(
-    <Popup
-      tabSlug='tab-1'
-      index={2}
-      isLessonHighlight={false}
-      modules={modulesArray}
-      onClose={jest.fn()}
-      addModule={jest.fn()}
-      onUpdate={jest.fn()}
-      {...extraProps}
-    />
-  )
+  const wrapper = (extraProps = {}) => {
+    const ret = mountWithI18n(
+      <Popup
+        tabSlug='tab-1'
+        index={2}
+        isLessonHighlight={false}
+        modules={modulesArray}
+        onClose={jest.fn()}
+        addModule={jest.fn()}
+        onUpdate={jest.fn()}
+        {...extraProps}
+      />
+    )
+    return ret
+  }
 
   it('matches snapshot', () => {
     expect(wrapper()).toMatchSnapshot()
@@ -118,9 +123,10 @@ describe('ModuleSearch Popup', () => {
     expect(w.text()).toMatch(/X.*Y.*Z/)
   })
 
-  it('should show a popover description on hover', () => {
+  it('should show a popover description on hover', async () => {
     const w = wrapper()
     w.find('button[data-module-name="Load from Enigma"]').simulate('mouseEnter')
+    await act(async () => await null) // Popper update() - https://github.com/popperjs/react-popper/issues/350
     expect(w.find('SearchResultDescription')).toHaveLength(1)
   })
 
@@ -139,42 +145,48 @@ describe('ModuleSearch Popup', () => {
   })
 
   describe('connected component', () => {
-    const wrapper = (store, extraProps = {}) => mountWithI18n(
-      <Provider store={store}>
-        <ConnectedPopup
-          tabSlug='tab-1'
-          index={2}
-          onClose={jest.fn()}
-          isLastAddButton={false}
-          {...extraProps}
-        />
-      </Provider>
-    )
+    const wrapper = async (store, extraProps = {}) => {
+      const anchor = mount(<div className='anchor' />)
+      const ret = mountWithI18n(
+        <Provider store={store}>
+          <ConnectedPopup
+            popperAnchor={anchor.getDOMNode()}
+            tabSlug='tab-1'
+            index={2}
+            onClose={jest.fn()}
+            isLastAddButton={false}
+            {...extraProps}
+          />
+        </Provider>
+      )
+      await act(async () => await null) // Popper update() - https://github.com/popperjs/react-popper/issues/350
+      return ret
+    }
 
-    it('gets modules from the store', () => {
+    it('gets modules from the store', async () => {
       const store = mockStore({
         modules: {
           a: { id_name: 'a', name: 'AAA', category: 'Analyze', uses_data: true, description: 'A A', icon: 'a' },
           b: { id_name: 'b', name: 'BBB', category: 'Analyze', uses_data: true, description: 'B B', icon: 'b' }
         }
       })
-      const w = wrapper(store)
+      const w = await wrapper(store)
       expect(w.text()).toMatch(/AAA.*BBB/)
     })
 
-    it('hides !uses_data modules', () => {
+    it('hides !uses_data modules', async () => {
       const store = mockStore({
         modules: {
           a: { id_name: 'a', name: 'AAA', category: 'Analyze', uses_data: false, description: 'A A', icon: 'a' },
           b: { id_name: 'b', name: 'BBB', category: 'Analyze', uses_data: true, description: 'B B', icon: 'b' }
         }
       })
-      const w = wrapper(store)
+      const w = await wrapper(store)
       expect(w.text()).not.toMatch(/AAA/)
       expect(w.text()).toMatch(/BBB/)
     })
 
-    it('hides deprecated modules', () => {
+    it('hides deprecated modules', async () => {
       const store = mockStore({
         modules: {
           a: { id_name: 'a', name: 'AAA', category: 'Analyze', uses_data: true, description: 'A A', icon: 'a' },
@@ -189,12 +201,12 @@ describe('ModuleSearch Popup', () => {
           }
         }
       })
-      const w = wrapper(store)
+      const w = await wrapper(store)
       expect(w.text()).toMatch(/AAA/)
       expect(w.text()).not.toMatch(/BBB/)
     })
 
-    it('dispatches addModule', () => {
+    it('dispatches addModule', async () => {
       const api = { addModule: jest.fn(() => new Promise(() => {})) } // never resolves
       generateSlug.mockImplementation(prefix => prefix + 'X')
       const store = mockStore({
@@ -213,7 +225,7 @@ describe('ModuleSearch Popup', () => {
         }
       }, api)
       const onClose = jest.fn()
-      const w = wrapper(store, { tabSlug: 'tab-1', index: 2, onClose })
+      const w = await wrapper(store, { tabSlug: 'tab-1', index: 2, onClose })
       w.find('button[data-module-slug="a"]').simulate('click')
       expect(api.addModule).toHaveBeenCalledWith('tab-1', 'step-X', 'a', 2, {})
       expect(onClose).toHaveBeenCalled()
@@ -246,18 +258,18 @@ describe('ModuleSearch Popup', () => {
         }
       })
 
-      it('lesson-highlights the desired module', () => {
-        const w = wrapper(store, { index: 0 })
+      it('lesson-highlights the desired module', async () => {
+        const w = await wrapper(store, { index: 0 })
         expect(w.find('.module-search-result[data-module-slug="a"].lesson-highlight').text()).toEqual('AAA')
       })
 
-      it('lesson-highlights the entire component', () => {
-        const w = wrapper(store, { index: 0 })
+      it('lesson-highlights the entire component', async () => {
+        const w = await wrapper(store, { index: 0 })
         expect(w.find('.module-search-popup.lesson-highlight')).toHaveLength(1)
       })
 
-      it('does not lesson-highlight at the wrong index', () => {
-        const w = wrapper(store, { index: 2 })
+      it('does not lesson-highlight at the wrong index', async () => {
+        const w = await wrapper(store, { index: 2 })
         expect(w.find('.module-search-result.lesson-highlight')).toHaveLength(0)
         expect(w.find('.module-search-popup.lesson-highlight')).toHaveLength(0)
       })

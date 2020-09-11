@@ -90,7 +90,7 @@
     ],
     "restoreMocks": true,
     "transformIgnorePatterns": [
-      "<rootDir>/node_modules/"
+      "node_modules/(?!(@popperjs)/)"
     ],
     "snapshotSerializers": [
       "./node_modules/enzyme-to-json/serializer"
@@ -116,30 +116,6 @@
     "url": "https://github.com/CJWorkbench/cjworkbench/issues"
   },
   "homepage": "https://github.com/CJWorkbench/cjworkbench#readme",
-  "babel": {
-    "presets": [
-      "@babel/react",
-      [
-        "@babel/env",
-        {
-          "targets": ">1%, not dead, not IE > 0"
-        }
-      ]
-    ],
-    "plugins": [
-      "@babel/plugin-transform-runtime",
-      "@babel/plugin-proposal-class-properties",
-      "@babel/plugin-syntax-dynamic-import",
-      "macros"
-    ],
-    "env": {
-      "test": {
-        "plugins": [
-          "dynamic-import-node"
-        ]
-      }
-    }
-  },
   "eslintConfig": {
     "root": true
   }

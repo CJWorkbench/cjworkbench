@@ -90,7 +90,7 @@
 
   box-shadow: $overlay-shadow;
 
-  .click-outside-listener, .module-search-popup {
+  .module-search-popup {
     // never get taller than the (correctly-sized) .module-search-popper
     display: flex;
     flex-direction: column;
@@ -124,7 +124,7 @@
     padding: 0;
   }
 
-  &[data-placement=top] {
+  &[data-popper-placement=top] {
     // Backwards case: there isn't enough room below the module to render a list of
     // search results. So we'll display the search results _above_ the module ...
     // and therefore we show the <input> at the bottom, where the button is.
@@ -144,7 +144,7 @@
     }
   }
 
-  &[data-placement=bottom] {
+  &[data-popper-placement=bottom] {
     // Search <input> appears at the _top_ of the search popup
     .module-search-field {
       border-top-left-radius: .5rem;

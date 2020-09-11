@@ -1,5 +1,6 @@
 /* globals describe, expect, it, jest */
 import React from 'react'
+import { act } from 'react-dom/test-utils'
 import Multicolumn from './Multicolumn'
 import { mountWithI18n } from '../i18n/test-utils.js'
 
@@ -33,18 +34,20 @@ describe('Multicolumn', () => {
       expect(w.find('Select[name="columns"]').prop('options')).toEqual([{ label: 'A', value: 'A' }, { label: 'B', value: 'B' }, { label: 'C', value: 'C' }, { label: 'D', value: 'D' }])
     })
 
-    it('selects all columns when "select all" is clicked', () => {
+    it('selects all columns when "select all" is clicked', async () => {
       const w = wrapper()
       w.find('div.react-select__dropdown-indicator')
         .simulate('mousedown', { type: 'mousedown', button: 0 }) // open menu
+      await act(async () => await null) // Popper update() - https://github.com/popperjs/react-popper/issues/350
       w.find('button.multicolumn-select-all').simulate('click')
       expect(w.prop('onChange')).toHaveBeenCalledWith(['A', 'B', 'C', 'D'])
     })
 
-    it('deselects all columns when "select none" is clicked', () => {
+    it('deselects all columns when "select none" is clicked', async () => {
       const w = wrapper()
       w.find('div.react-select__dropdown-indicator')
         .simulate('mousedown', { type: 'mousedown', button: 0 }) // open menu
+      await act(async () => await null) // Popper update() - https://github.com/popperjs/react-popper/issues/350
       w.find('button.multicolumn-select-none').simulate('click')
       expect(w.prop('onChange')).toHaveBeenCalledWith([])
     })
@@ -73,24 +76,26 @@ describe('Multicolumn', () => {
       expect(w.find('Select').prop('value')).toEqual(expected)
     })
 
-    it('should call onChange when columns are added', () => {
+    it('should call onChange when columns are added', async () => {
       const w = wrapper({
         value: ['A'],
         inputColumns: [{ name: 'A' }, { name: 'B' }, { name: 'C' }]
       })
       w.find('div.react-select__dropdown-indicator')
         .simulate('mousedown', { type: 'mousedown', button: 0 }) // open menu
+      await act(async () => await null) // Popper update() - https://github.com/popperjs/react-popper/issues/350
       w.find('.react-select__option').at(0).simulate('click')
       expect(w.prop('onChange')).toHaveBeenCalledWith(['A', 'B'])
     })
 
-    it('should handle DEPRECATED values of type String', () => {
+    it('should handle DEPRECATED values of type String', async () => {
       const w = wrapper({
         value: 'A,B',
         inputColumns: [{ name: 'A' }, { name: 'B' }, { name: 'C' }]
       })
       w.find('div.react-select__dropdown-indicator')
         .simulate('mousedown', { type: 'mousedown', button: 0 }) // open menu
+      await act(async () => await null) // Popper update() - https://github.com/popperjs/react-popper/issues/350
       w.find('.react-select__option').at(0).simulate('click')
       expect(w.prop('onChange')).toHaveBeenCalledWith('A,B,C')
     })

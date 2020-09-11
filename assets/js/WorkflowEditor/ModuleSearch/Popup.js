@@ -1,8 +1,9 @@
+/* globals HTMLElement */
 import React from 'react'
 import ReactDOM from 'react-dom'
 import PropTypes from 'prop-types'
 import detectOverflow from '@popperjs/core/lib/utils/detectOverflow.js'
-import { Popper } from 'react-popper'
+import { usePopper } from 'react-popper'
 import { connect } from 'react-redux'
 import lessonSelector from '../../lessons/lessonSelector'
 import { ModulePropType } from './PropTypes'
@@ -71,6 +72,14 @@ const KeyCodes = {
  * 3. Click the table
  *    -- popup should disappear
  *
+ * TEST: CLICK ON ADD BUTTON SHOULD CLOSE MENU
+ *
+ * 1. Open a workflow
+ * 2. Click an add-step near the top of the page (not the final one)
+ *    -- popup should appear
+ * 3. Click the same add-step
+ *    -- popup should disappear
+ *
  * TEST: CLICK ON MODULE SHOULD ADD IT
  *
  * 1. Open a workflow
@@ -91,11 +100,27 @@ const PopperFlipBasedOnScrollPosition = {
   fn: ({ state, options, name }) => {
     const refBox = state.rects.reference
     const refCenterY = refBox.y + (refBox.height / 2)
-    const boundingEl = state.elements.reference.offsetParent.offsetParent
-    const boundingBox = boundingEl.getBoundingClientRect()
+    // How to find the height of the reference's _boundary_? Use
+    // detectOverflow(). For instance, if boundary is outer box and reference
+    // is inner box:
+    //
+    // ^
+    // | refBox.y
+    // |
+    // | +--------+
+    // | |        | (-overflow.top)
+    // v | +----+ |
+    //   | |    | | (refBox.height)
+    //   | +----+ |
+    //   |        | (-overflow.bottom)
+    //   +--------+
+    //
+    const overflow = detectOverflow(state, { ...options, elementContext: 'reference' })
+    const boundaryHeight = -overflow.bottom - overflow.top + refBox.height
+    const boundaryTop = refBox.y + overflow.top
     // If prompt is past the 60% mark on the page, open upwards.
     // otherwise, open downwards.
-    const midY = boundingBox.y + (boundingBox.height * 0.6)
+    const midY = boundaryTop + boundaryHeight * 0.6
     const placement = refCenterY > midY ? 'top' : 'bottom'
     if (placement !== state.placement) {
       state.modifiersData[name]._skip = true
@@ -159,7 +184,7 @@ const PopperMaxHeight = {
     padding: 5
   },
   fn: ({ state, name, options }) => {
-    const overflow = detectOverflow(state, options)
+    const overflow = detectOverflow(state, { ...options, altBoundary: true })
     // detectOverflow() neglects modifiersData
     const y = state.modifiersData.preventOverflow ? state.modifiersData.preventOverflow.y : 0
     const { height } = state.rects.popper
@@ -276,69 +301,81 @@ export class Popup extends React.PureComponent {
   }
 }
 
-export class PopperPopup extends React.PureComponent {
-  static propTypes = {
-    tabSlug: PropTypes.string.isRequired,
-    index: PropTypes.number.isRequired,
-    isLastAddButton: PropTypes.bool.isRequired,
-    isLessonHighlight: PropTypes.bool.isRequired,
-    modules: PropTypes.arrayOf(ModulePropType.isRequired).isRequired,
-    onClose: PropTypes.func.isRequired, // func() => undefined
-    addModule: PropTypes.func.isRequired // func(tabSlug, index, moduleIdName) => undefined
-  }
+export function PopperPopup (props) {
+  const {
+    popperAnchor,
+    tabSlug,
+    index,
+    isLastAddButton,
+    isLessonHighlight,
+    modules,
+    onClose,
+    addModule
+  } = props
+  const [popperElement, setPopperElement] = React.useState(null)
+  const popperOptions = React.useMemo(() => {
+    return { modifiers: isLastAddButton ? PopperModifiersLastButton : PopperModifiers }
+  }, [isLastAddButton])
+  const { styles, attributes, forceUpdate } = usePopper(popperAnchor, popperElement, popperOptions)
+  const scheduleUpdate = React.useCallback(() => {
+    if (forceUpdate) forceUpdate()
+  }, [forceUpdate])
 
-  containerRef = React.createRef()
-
-  componentDidMount () {
-    ['click', 'touchstart', 'keyup'].forEach(eventName =>
-      document.addEventListener(eventName, this.onClickDocument, true)
-    )
-  }
-
-  componentWillUnmount () {
-    ['click', 'touchstart', 'keyup'].forEach(eventName =>
-      document.removeEventListener(eventName, this.onClickDocument, true)
-    )
-  }
-
-  onClickDocument = (ev) => {
-    const container = this.containerRef.current
-    if (!container) return
+  const handleClickDocument = React.useCallback(ev => {
+    if (!popperElement || !popperAnchor) return
 
     // Copy/paste from Reactstrap src/Dropdown.js
     if (ev && (ev.which === 3 || (ev.type === 'keyup' && ev.which !== KeyCodes.Tab))) return
 
-    if (container.contains(ev.target) && container !== ev.target && (ev.type !== 'keyup' || ev.which === KeyCodes.Tab)) {
+    // Clicking popperAnchor should do nothing -- the element itself will close
+    // the menu (through keyboard _or_ click)
+    if ((popperAnchor.contains(ev.target) || popperElement.contains(ev.target)) && (ev.type !== 'keyup' || ev.which === KeyCodes.Tab)) {
       return
     }
 
-    this.props.onClose()
-  }
+    onClose()
+  }, [onClose, popperAnchor, popperElement])
 
-  render () {
-    const { isLastAddButton } = this.props
+  React.useEffect(() => {
+    const Events = ['click', 'touchstart', 'keyup']
+    Events.forEach(eventName => {
+      document.addEventListener(eventName, handleClickDocument, true)
+    })
+    return () => {
+      Events.forEach(eventName => {
+        document.removeEventListener(eventName, handleClickDocument, true)
+      })
+    }
+  }, [handleClickDocument])
 
-    // We render <div.module-search-popper> for positioning and
-    // <div.module-search-popup> for onClickDocument. They both need a ref.
-    // Popper's un-React16-like "ref" usage inspires us to use two different
-    // refs for the same behavior.
-    return ReactDOM.createPortal((
-      <Popper modifiers={isLastAddButton ? PopperModifiersLastButton : PopperModifiers}>
-        {({ ref, style, placement, scheduleUpdate }) => (
-          <div
-            ref={ref}
-            style={style}
-            data-placement={placement}
-            className='module-search-popper'
-          >
-            <div className='click-outside-listener' ref={this.containerRef}>
-              <Popup onUpdate={scheduleUpdate} {...this.props} />
-            </div>
-          </div>
-        )}
-      </Popper>
-    ), document.body)
-  }
+  return ReactDOM.createPortal((
+    <div
+      className='module-search-popper'
+      ref={setPopperElement}
+      style={styles.popper}
+      {...(attributes.popper || {})}
+    >
+      <Popup
+        tabSlug={tabSlug}
+        index={index}
+        isLessonHighlight={isLessonHighlight}
+        modules={modules}
+        onClose={onClose}
+        addModule={addModule}
+        onUpdate={scheduleUpdate}
+      />
+    </div>
+  ), document.body)
+}
+PopperPopup.propTypes = {
+  popperAnchor: PropTypes.instanceOf(HTMLElement).isRequired,
+  tabSlug: PropTypes.string.isRequired,
+  index: PropTypes.number.isRequired,
+  isLastAddButton: PropTypes.bool.isRequired,
+  isLessonHighlight: PropTypes.bool.isRequired,
+  modules: PropTypes.arrayOf(ModulePropType.isRequired).isRequired,
+  onClose: PropTypes.func.isRequired, // func() => undefined
+  addModule: PropTypes.func.isRequired // func(tabSlug, index, moduleIdName) => undefined
 }
 
 const mapStateToProps = (state, ownProps) => {

@@ -11,31 +11,25 @@ exports[`WorkflowContextMenu renders correctly 1`] = `
       isOpen={false}
       toggle={[Function]}
     >
-      <Manager
-        tag={false}
+      <div
+        className="dropdown"
       >
-        <div
-          className="dropdown"
+        <DropdownToggle
+          className="context-button"
         >
-          <DropdownToggle
-            className="context-button"
+          <button
+            aria-expanded={false}
+            className="btn btn-secondary context-button"
+            disabled={false}
+            onClick={[Function]}
           >
-            <Reference>
-              <button
-                aria-expanded={false}
-                className="btn btn-secondary context-button"
-                disabled={false}
-                onClick={[Function]}
-              >
-                <i
-                  className="icon-more"
-                />
-              </button>
-            </Reference>
-          </DropdownToggle>
-          <DropdownMenu />
-        </div>
-      </Manager>
+            <i
+              className="icon-more"
+            />
+          </button>
+        </DropdownToggle>
+        <DropdownMenu />
+      </div>
     </Dropdown>
   </UncontrolledDropdown>
 </WorkflowContextMenu>

@@ -1,7 +1,7 @@
 /* globals HTMLElement */
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Manager as PopperManager } from 'react-popper'
+import { usePopper } from 'react-popper'
 
 export const DropdownContext = React.createContext()
 DropdownContext.Provider.propTypes = {
@@ -9,8 +9,19 @@ DropdownContext.Provider.propTypes = {
     disabled: PropTypes.bool.isRequired,
     isOpen: PropTypes.bool.isRequired,
     toggle: PropTypes.func.isRequired,
-    toggleRef: PropTypes.shape({ current: PropTypes.instanceOf(HTMLElement) }).isRequired
+    setToggleElement: PropTypes.func.isRequired,
+    toggleElement: PropTypes.instanceOf(HTMLElement), // or null
+    setMenuElement: PropTypes.func.isRequired,
+    menuElement: PropTypes.instanceOf(HTMLElement), // or null
+    popperStuff: PropTypes.object.isRequired
   }).isRequired
+}
+
+const PopperOptions = {
+  placement: 'bottom-end',
+  modifiers: [
+    { name: 'preventOverflow', options: { boundary: 'viewport' } }
+  ]
 }
 
 /**
@@ -18,38 +29,42 @@ DropdownContext.Provider.propTypes = {
  *
  * Reference: https://getbootstrap.com/docs/4.0/components/dropdowns/#overview
  */
-export default class Dropdown extends React.PureComponent {
-  static propTypes = {
-    isOpen: PropTypes.bool.isRequired,
-    toggle: PropTypes.func.isRequired,
-    disabled: PropTypes.bool,
-    children: PropTypes.node.isRequired
-  }
+export default function Dropdown (props) {
+  const {
+    isOpen,
+    toggle,
+    disabled = false,
+    children
+  } = props
 
-  toggleRef = React.createRef()
-
-  toggle = (ev) => {
-    const { disabled, toggle } = this.props
+  const handleClickToggle = React.useCallback(ev => {
     if (disabled) return
     toggle(ev)
-  }
+  }, [disabled, toggle])
+  const [toggleElement, setToggleElement] = React.useState(null)
+  const [menuElement, setMenuElement] = React.useState(null)
+  const popperStuff = usePopper(toggleElement, menuElement, PopperOptions)
 
-  render () {
-    const { disabled, isOpen, children } = this.props
+  const dropdownContext = React.useMemo(() => ({
+    disabled,
+    isOpen,
+    toggle: handleClickToggle,
+    setToggleElement,
+    toggleElement,
+    setMenuElement,
+    menuElement,
+    popperStuff
+  }), [disabled, isOpen, handleClickToggle, setToggleElement, toggleElement, setMenuElement, menuElement, popperStuff])
 
-    const dropdownContext = {
-      disabled: !!disabled,
-      isOpen,
-      toggle: this.toggle,
-      toggleRef: this.toggleRef
-    }
-
-    return (
-      <PopperManager tag={false}>
-        <DropdownContext.Provider value={dropdownContext}>
-          <div className='dropdown' children={children} />
-        </DropdownContext.Provider>
-      </PopperManager>
-    )
-  }
+  return (
+    <DropdownContext.Provider value={dropdownContext}>
+      <div className='dropdown'>{children}</div>
+    </DropdownContext.Provider>
+  )
+}
+Dropdown.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  toggle: PropTypes.func.isRequired,
+  disabled: PropTypes.bool,
+  children: PropTypes.node.isRequired
 }

@@ -42,357 +42,338 @@ exports[`WfHamburgerMenu renders logged in, non-read only 1`] = `
       isOpen={true}
       toggle={[Function]}
     >
-      <Manager
-        tag={false}
+      <div
+        className="dropdown"
       >
-        <div
-          className="dropdown"
+        <DropdownToggle
+          className="context-button"
+          title="menu"
         >
-          <DropdownToggle
-            className="context-button"
+          <button
+            aria-expanded={true}
+            className="btn btn-secondary context-button"
+            disabled={false}
+            onClick={[Function]}
             title="menu"
           >
-            <Reference>
-              <button
-                aria-expanded={true}
-                className="btn btn-secondary context-button"
-                disabled={false}
-                onClick={[Function]}
-                title="menu"
-              >
-                <i
-                  className="icon-more"
-                />
-              </button>
-            </Reference>
-          </DropdownToggle>
-          <DropdownMenu>
-            <OpenDropdownMenu>
-              <Portal
-                containerInfo={
-                  <body>
-                    <div
-                      class="dropdown-menu-portal"
-                      data-placement="bottom-end"
-                      style="position: absolute; left: 0px; top: 0px;"
-                    >
-                      <div
-                        class="dropdown-menu"
-                        role="menu"
-                      >
-                        <button
-                          class="dropdown-item"
-                          role="menuitem"
-                          tabindex="0"
-                        >
-                          <i
-                            class="icon icon-language"
-                          />
-                          js.WfHamburgerMenu.menu.language
-                        </button>
-                        <div
-                          class="dropdown-divider"
-                        />
-                        <a
-                          class="dropdown-item"
-                          href="/workflows/"
-                          role="menuitem"
-                          tabindex="0"
-                        >
-                          js.WfHamburgerMenu.menu.myWorkflows
-                        </a>
-                        <button
-                          class="dropdown-item"
-                          role="menuitem"
-                          tabindex="0"
-                        >
-                          js.WfHamburgerMenu.menu.importModule
-                        </button>
-                        <a
-                          class="dropdown-item"
-                          href="/account/logout"
-                          role="menuitem"
-                          tabindex="0"
-                        >
-                          js.WfHamburgerMenu.menu.logout
-                        </a>
-                      </div>
-                    </div>
-                  </body>
-                }
-              >
-                <Popper
-                  modifiers={
-                    Array [
-                      Object {
-                        "name": "preventOverflow",
-                        "options": Object {
-                          "boundary": "viewport",
-                        },
-                      },
-                    ]
-                  }
-                  placement="bottom-end"
-                >
+            <i
+              className="icon-more"
+            />
+          </button>
+        </DropdownToggle>
+        <DropdownMenu>
+          <OpenDropdownMenu>
+            <Portal
+              containerInfo={
+                <body>
                   <div
-                    className="dropdown-menu-portal"
-                    data-placement="bottom-end"
-                    style={
-                      Object {
-                        "left": "0",
-                        "position": "absolute",
-                        "top": "0",
-                      }
-                    }
+                    class="dropdown-menu-portal"
+                    data-popper-escaped="true"
+                    data-popper-placement="bottom-end"
+                    data-popper-reference-hidden="true"
+                    style="position: absolute; left: 0px; top: 0px; transform: translate(0px, 0px);"
                   >
                     <div
-                      className="dropdown-menu"
+                      class="dropdown-menu"
                       role="menu"
                     >
-                      <DropdownItem
-                        onClick={[Function]}
+                      <button
+                        class="dropdown-item"
+                        role="menuitem"
+                        tabindex="0"
                       >
-                        <button
-                          className="dropdown-item"
-                          onClick={[Function]}
-                          role="menuitem"
-                          tabIndex={0}
-                        >
-                          <i
-                            className="icon icon-language"
-                          />
-                          <WithI18n
-                            defaults="Language"
-                            id="js.WfHamburgerMenu.menu.language"
-                          >
-                            <I18n
-                              update={true}
-                              withHash={true}
-                            >
-                              <Trans
-                                defaults="Language"
-                                i18n={
-                                  Object {
-                                    "_": [Function],
-                                    "_activeLanguageData": Object {
-                                      "plurals": [Function],
-                                    },
-                                    "_activeMessages": Object {},
-                                    "_catalogs": Object {
-                                      "en": Object {
-                                        "languageData": Object {},
-                                        "messages": Object {},
-                                      },
-                                    },
-                                    "_dev": Object {
-                                      "compile": [Function],
-                                      "loadLanguageData": [Function],
-                                    },
-                                    "_language": "en",
-                                    "_locales": undefined,
-                                    "_missing": undefined,
-                                    "plural": [Function],
-                                    "select": [Function],
-                                    "selectOrdinal": [Function],
-                                    "t": [Function],
-                                  }
-                                }
-                                id="js.WfHamburgerMenu.menu.language"
-                              >
-                                <Render
-                                  value="js.WfHamburgerMenu.menu.language"
-                                >
-                                  js.WfHamburgerMenu.menu.language
-                                </Render>
-                              </Trans>
-                            </I18n>
-                          </WithI18n>
-                        </button>
-                      </DropdownItem>
-                      <DropdownDivider>
-                        <div
-                          className="dropdown-divider"
+                        <i
+                          class="icon icon-language"
                         />
-                      </DropdownDivider>
-                      <DropdownItem
+                        js.WfHamburgerMenu.menu.language
+                      </button>
+                      <div
+                        class="dropdown-divider"
+                      />
+                      <a
+                        class="dropdown-item"
                         href="/workflows/"
+                        role="menuitem"
+                        tabindex="0"
                       >
-                        <a
-                          className="dropdown-item"
-                          href="/workflows/"
-                          role="menuitem"
-                          tabIndex={0}
-                        >
-                          <WithI18n
-                            defaults="My Workflows"
-                            id="js.WfHamburgerMenu.menu.myWorkflows"
-                          >
-                            <I18n
-                              update={true}
-                              withHash={true}
-                            >
-                              <Trans
-                                defaults="My Workflows"
-                                i18n={
-                                  Object {
-                                    "_": [Function],
-                                    "_activeLanguageData": Object {
-                                      "plurals": [Function],
-                                    },
-                                    "_activeMessages": Object {},
-                                    "_catalogs": Object {
-                                      "en": Object {
-                                        "languageData": Object {},
-                                        "messages": Object {},
-                                      },
-                                    },
-                                    "_dev": Object {
-                                      "compile": [Function],
-                                      "loadLanguageData": [Function],
-                                    },
-                                    "_language": "en",
-                                    "_locales": undefined,
-                                    "_missing": undefined,
-                                    "plural": [Function],
-                                    "select": [Function],
-                                    "selectOrdinal": [Function],
-                                    "t": [Function],
-                                  }
-                                }
-                                id="js.WfHamburgerMenu.menu.myWorkflows"
-                              >
-                                <Render
-                                  value="js.WfHamburgerMenu.menu.myWorkflows"
-                                >
-                                  js.WfHamburgerMenu.menu.myWorkflows
-                                </Render>
-                              </Trans>
-                            </I18n>
-                          </WithI18n>
-                        </a>
-                      </DropdownItem>
-                      <DropdownItem
-                        onClick={[Function]}
+                        js.WfHamburgerMenu.menu.myWorkflows
+                      </a>
+                      <button
+                        class="dropdown-item"
+                        role="menuitem"
+                        tabindex="0"
                       >
-                        <button
-                          className="dropdown-item"
-                          onClick={[Function]}
-                          role="menuitem"
-                          tabIndex={0}
-                        >
-                          <WithI18n
-                            defaults="Import Module"
-                            id="js.WfHamburgerMenu.menu.importModule"
-                          >
-                            <I18n
-                              update={true}
-                              withHash={true}
-                            >
-                              <Trans
-                                defaults="Import Module"
-                                i18n={
-                                  Object {
-                                    "_": [Function],
-                                    "_activeLanguageData": Object {
-                                      "plurals": [Function],
-                                    },
-                                    "_activeMessages": Object {},
-                                    "_catalogs": Object {
-                                      "en": Object {
-                                        "languageData": Object {},
-                                        "messages": Object {},
-                                      },
-                                    },
-                                    "_dev": Object {
-                                      "compile": [Function],
-                                      "loadLanguageData": [Function],
-                                    },
-                                    "_language": "en",
-                                    "_locales": undefined,
-                                    "_missing": undefined,
-                                    "plural": [Function],
-                                    "select": [Function],
-                                    "selectOrdinal": [Function],
-                                    "t": [Function],
-                                  }
-                                }
-                                id="js.WfHamburgerMenu.menu.importModule"
-                              >
-                                <Render
-                                  value="js.WfHamburgerMenu.menu.importModule"
-                                >
-                                  js.WfHamburgerMenu.menu.importModule
-                                </Render>
-                              </Trans>
-                            </I18n>
-                          </WithI18n>
-                        </button>
-                      </DropdownItem>
-                      <DropdownItem
+                        js.WfHamburgerMenu.menu.importModule
+                      </button>
+                      <a
+                        class="dropdown-item"
                         href="/account/logout"
+                        role="menuitem"
+                        tabindex="0"
                       >
-                        <a
-                          className="dropdown-item"
-                          href="/account/logout"
-                          role="menuitem"
-                          tabIndex={0}
-                        >
-                          <WithI18n
-                            defaults="Log Out"
-                            id="js.WfHamburgerMenu.menu.logout"
-                          >
-                            <I18n
-                              update={true}
-                              withHash={true}
-                            >
-                              <Trans
-                                defaults="Log Out"
-                                i18n={
-                                  Object {
-                                    "_": [Function],
-                                    "_activeLanguageData": Object {
-                                      "plurals": [Function],
-                                    },
-                                    "_activeMessages": Object {},
-                                    "_catalogs": Object {
-                                      "en": Object {
-                                        "languageData": Object {},
-                                        "messages": Object {},
-                                      },
-                                    },
-                                    "_dev": Object {
-                                      "compile": [Function],
-                                      "loadLanguageData": [Function],
-                                    },
-                                    "_language": "en",
-                                    "_locales": undefined,
-                                    "_missing": undefined,
-                                    "plural": [Function],
-                                    "select": [Function],
-                                    "selectOrdinal": [Function],
-                                    "t": [Function],
-                                  }
-                                }
-                                id="js.WfHamburgerMenu.menu.logout"
-                              >
-                                <Render
-                                  value="js.WfHamburgerMenu.menu.logout"
-                                >
-                                  js.WfHamburgerMenu.menu.logout
-                                </Render>
-                              </Trans>
-                            </I18n>
-                          </WithI18n>
-                        </a>
-                      </DropdownItem>
+                        js.WfHamburgerMenu.menu.logout
+                      </a>
                     </div>
                   </div>
-                </Popper>
-              </Portal>
-            </OpenDropdownMenu>
-          </DropdownMenu>
-        </div>
-      </Manager>
+                </body>
+              }
+            >
+              <div
+                className="dropdown-menu-portal"
+                style={
+                  Object {
+                    "left": "0",
+                    "position": "absolute",
+                    "top": "0",
+                  }
+                }
+              >
+                <div
+                  className="dropdown-menu"
+                  role="menu"
+                >
+                  <DropdownItem
+                    onClick={[Function]}
+                  >
+                    <button
+                      className="dropdown-item"
+                      onClick={[Function]}
+                      role="menuitem"
+                      tabIndex={0}
+                    >
+                      <i
+                        className="icon icon-language"
+                      />
+                      <WithI18n
+                        defaults="Language"
+                        id="js.WfHamburgerMenu.menu.language"
+                      >
+                        <I18n
+                          update={true}
+                          withHash={true}
+                        >
+                          <Trans
+                            defaults="Language"
+                            i18n={
+                              Object {
+                                "_": [Function],
+                                "_activeLanguageData": Object {
+                                  "plurals": [Function],
+                                },
+                                "_activeMessages": Object {},
+                                "_catalogs": Object {
+                                  "en": Object {
+                                    "languageData": Object {},
+                                    "messages": Object {},
+                                  },
+                                },
+                                "_dev": Object {
+                                  "compile": [Function],
+                                  "loadLanguageData": [Function],
+                                },
+                                "_language": "en",
+                                "_locales": undefined,
+                                "_missing": undefined,
+                                "plural": [Function],
+                                "select": [Function],
+                                "selectOrdinal": [Function],
+                                "t": [Function],
+                              }
+                            }
+                            id="js.WfHamburgerMenu.menu.language"
+                          >
+                            <Render
+                              value="js.WfHamburgerMenu.menu.language"
+                            >
+                              js.WfHamburgerMenu.menu.language
+                            </Render>
+                          </Trans>
+                        </I18n>
+                      </WithI18n>
+                    </button>
+                  </DropdownItem>
+                  <DropdownDivider>
+                    <div
+                      className="dropdown-divider"
+                    />
+                  </DropdownDivider>
+                  <DropdownItem
+                    href="/workflows/"
+                  >
+                    <a
+                      className="dropdown-item"
+                      href="/workflows/"
+                      role="menuitem"
+                      tabIndex={0}
+                    >
+                      <WithI18n
+                        defaults="My Workflows"
+                        id="js.WfHamburgerMenu.menu.myWorkflows"
+                      >
+                        <I18n
+                          update={true}
+                          withHash={true}
+                        >
+                          <Trans
+                            defaults="My Workflows"
+                            i18n={
+                              Object {
+                                "_": [Function],
+                                "_activeLanguageData": Object {
+                                  "plurals": [Function],
+                                },
+                                "_activeMessages": Object {},
+                                "_catalogs": Object {
+                                  "en": Object {
+                                    "languageData": Object {},
+                                    "messages": Object {},
+                                  },
+                                },
+                                "_dev": Object {
+                                  "compile": [Function],
+                                  "loadLanguageData": [Function],
+                                },
+                                "_language": "en",
+                                "_locales": undefined,
+                                "_missing": undefined,
+                                "plural": [Function],
+                                "select": [Function],
+                                "selectOrdinal": [Function],
+                                "t": [Function],
+                              }
+                            }
+                            id="js.WfHamburgerMenu.menu.myWorkflows"
+                          >
+                            <Render
+                              value="js.WfHamburgerMenu.menu.myWorkflows"
+                            >
+                              js.WfHamburgerMenu.menu.myWorkflows
+                            </Render>
+                          </Trans>
+                        </I18n>
+                      </WithI18n>
+                    </a>
+                  </DropdownItem>
+                  <DropdownItem
+                    onClick={[Function]}
+                  >
+                    <button
+                      className="dropdown-item"
+                      onClick={[Function]}
+                      role="menuitem"
+                      tabIndex={0}
+                    >
+                      <WithI18n
+                        defaults="Import Module"
+                        id="js.WfHamburgerMenu.menu.importModule"
+                      >
+                        <I18n
+                          update={true}
+                          withHash={true}
+                        >
+                          <Trans
+                            defaults="Import Module"
+                            i18n={
+                              Object {
+                                "_": [Function],
+                                "_activeLanguageData": Object {
+                                  "plurals": [Function],
+                                },
+                                "_activeMessages": Object {},
+                                "_catalogs": Object {
+                                  "en": Object {
+                                    "languageData": Object {},
+                                    "messages": Object {},
+                                  },
+                                },
+                                "_dev": Object {
+                                  "compile": [Function],
+                                  "loadLanguageData": [Function],
+                                },
+                                "_language": "en",
+                                "_locales": undefined,
+                                "_missing": undefined,
+                                "plural": [Function],
+                                "select": [Function],
+                                "selectOrdinal": [Function],
+                                "t": [Function],
+                              }
+                            }
+                            id="js.WfHamburgerMenu.menu.importModule"
+                          >
+                            <Render
+                              value="js.WfHamburgerMenu.menu.importModule"
+                            >
+                              js.WfHamburgerMenu.menu.importModule
+                            </Render>
+                          </Trans>
+                        </I18n>
+                      </WithI18n>
+                    </button>
+                  </DropdownItem>
+                  <DropdownItem
+                    href="/account/logout"
+                  >
+                    <a
+                      className="dropdown-item"
+                      href="/account/logout"
+                      role="menuitem"
+                      tabIndex={0}
+                    >
+                      <WithI18n
+                        defaults="Log Out"
+                        id="js.WfHamburgerMenu.menu.logout"
+                      >
+                        <I18n
+                          update={true}
+                          withHash={true}
+                        >
+                          <Trans
+                            defaults="Log Out"
+                            i18n={
+                              Object {
+                                "_": [Function],
+                                "_activeLanguageData": Object {
+                                  "plurals": [Function],
+                                },
+                                "_activeMessages": Object {},
+                                "_catalogs": Object {
+                                  "en": Object {
+                                    "languageData": Object {},
+                                    "messages": Object {},
+                                  },
+                                },
+                                "_dev": Object {
+                                  "compile": [Function],
+                                  "loadLanguageData": [Function],
+                                },
+                                "_language": "en",
+                                "_locales": undefined,
+                                "_missing": undefined,
+                                "plural": [Function],
+                                "select": [Function],
+                                "selectOrdinal": [Function],
+                                "t": [Function],
+                              }
+                            }
+                            id="js.WfHamburgerMenu.menu.logout"
+                          >
+                            <Render
+                              value="js.WfHamburgerMenu.menu.logout"
+                            >
+                              js.WfHamburgerMenu.menu.logout
+                            </Render>
+                          </Trans>
+                        </I18n>
+                      </WithI18n>
+                    </a>
+                  </DropdownItem>
+                </div>
+              </div>
+            </Portal>
+          </OpenDropdownMenu>
+        </DropdownMenu>
+      </div>
     </Dropdown>
   </UncontrolledDropdown>
 </WfHamburgerMenu>

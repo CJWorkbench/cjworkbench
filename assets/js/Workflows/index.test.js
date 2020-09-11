@@ -191,11 +191,12 @@ describe('Workflow list page', () => {
     })
   })
 
-  it('should sort properly by date and name', () => {
+  it('should sort properly by date and name', async () => {
     const w = wrapper({ workflows: testWorkflows })
 
     // sort by date ascending
     w.find('.sort-menu DropdownToggle button').simulate('click')
+    await act(async () => await null) // Popper update() - https://github.com/popperjs/react-popper/issues/350
     w.find('button[data-comparator="last_update|ascending"]').simulate('click')
     expect(w.find('.tab-pane.active').find(Workflow).get(0).key).toEqual('2')
     expect(w.find('.tab-pane.active').find(Workflow).get(1).key).toEqual('1')
@@ -203,6 +204,7 @@ describe('Workflow list page', () => {
 
     // sort by date descending
     w.find('.sort-menu DropdownToggle button').simulate('click')
+    await act(async () => await null) // Popper update() - https://github.com/popperjs/react-popper/issues/350
     w.find('button[data-comparator="last_update|descending"]').simulate('click')
     expect(w.find('.tab-pane.active').find(Workflow).get(0).key).toEqual('3')
     expect(w.find('.tab-pane.active').find(Workflow).get(1).key).toEqual('1')
@@ -210,6 +212,7 @@ describe('Workflow list page', () => {
 
     // sort by name ascending
     w.find('.sort-menu DropdownToggle button').simulate('click')
+    await act(async () => await null) // Popper update() - https://github.com/popperjs/react-popper/issues/350
     w.find('button[data-comparator="name|ascending"]').simulate('click')
     expect(w.find('.tab-pane.active').find(Workflow).get(0).key).toEqual('3')
     expect(w.find('.tab-pane.active').find(Workflow).get(1).key).toEqual('2')
@@ -217,29 +220,33 @@ describe('Workflow list page', () => {
 
     // sort by name descending
     w.find('.sort-menu DropdownToggle button').simulate('click')
+    await act(async () => await null) // Popper update() - https://github.com/popperjs/react-popper/issues/350
     w.find('button[data-comparator="name|descending"]').simulate('click')
     expect(w.find('.tab-pane.active').find(Workflow).get(0).key).toEqual('1')
     expect(w.find('.tab-pane.active').find(Workflow).get(1).key).toEqual('2')
     expect(w.find('.tab-pane.active').find(Workflow).get(2).key).toEqual('3')
   })
 
-  it('should allow delete of owned workflows', () => {
+  it('should allow delete of owned workflows', async () => {
     const w = wrapper({ workflows: testWorkflows })
     w.find('.tab-pane.active .context-button').at(0).simulate('click')
+    await act(async () => await null) // Popper update() - https://github.com/popperjs/react-popper/issues/350
     expect(w.find('.tab-pane.active button.delete-workflow')).toHaveLength(1)
   })
 
-  it('should not allow delete of shared-with-me workflows', () => {
+  it('should not allow delete of shared-with-me workflows', async () => {
     const w = wrapper({ workflows: testWorkflows })
     w.find('.nav-link').find("Trans[defaults='Shared with me']").simulate('click')
     w.find('.tab-pane.active .context-button').at(0).simulate('click')
+    await act(async () => await null) // Popper update() - https://github.com/popperjs/react-popper/issues/350
     expect(w.find('.tab-pane.active button.delete-workflow')).toHaveLength(0)
   })
 
-  it('should not allow delete of templates', () => {
+  it('should not allow delete of templates', async () => {
     const w = wrapper({ workflows: testWorkflows })
     w.find('.nav-link').find("Trans[defaults='Recipes']").simulate('click')
     w.find('.tab-pane.active .context-button').at(0).simulate('click')
+    await act(async () => await null) // Popper update() - https://github.com/popperjs/react-popper/issues/350
     expect(w.find('.tab-pane.active button.delete-workflow')).toHaveLength(0)
   })
 })

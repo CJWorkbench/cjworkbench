@@ -1,5 +1,6 @@
 /* globals afterEach, describe, expect, it */
 import React from 'react'
+import { act } from 'react-dom/test-utils'
 import { WfHamburgerMenu } from './WfHamburgerMenu'
 import { mountWithI18n } from './i18n/test-utils'
 
@@ -7,7 +8,7 @@ describe('WfHamburgerMenu', () => {
   let wrapper // all tests must mount one
   afterEach(() => wrapper.unmount())
 
-  it('renders logged in, non-read only', () => {
+  it('renders logged in, non-read only', async () => {
     wrapper = mountWithI18n(
       <WfHamburgerMenu
         workflowId={1}
@@ -18,6 +19,8 @@ describe('WfHamburgerMenu', () => {
     )
 
     wrapper.find('button.context-button').simulate('click')
+    await act(async () => await null) // Popper update() - https://github.com/popperjs/react-popper/issues/350
+
     expect(wrapper).toMatchSnapshot() // one snapshot only, in most common case
 
     expect(wrapper.find('a[href="/workflows/"]')).toHaveLength(1)
@@ -25,7 +28,7 @@ describe('WfHamburgerMenu', () => {
     expect(wrapper.find('DropdownItem Trans[defaults="Log Out"]')).toHaveLength(1)
   })
 
-  it('renders logged in, read only', () => {
+  it('renders logged in, read only', async () => {
     wrapper = mountWithI18n(
       <WfHamburgerMenu
         workflowId={1}
@@ -36,12 +39,14 @@ describe('WfHamburgerMenu', () => {
     )
 
     wrapper.find('button.context-button').simulate('click')
+    await act(async () => await null) // Popper update() - https://github.com/popperjs/react-popper/issues/350
+
     expect(wrapper.find('a[href="/workflows/"]')).toHaveLength(1)
     expect(wrapper.find('DropdownItem Trans[defaults="Import Module"]')).toHaveLength(1)
     expect(wrapper.find('DropdownItem Trans[defaults="Log Out"]')).toHaveLength(1)
   })
 
-  it('renders logged out, read only', () => {
+  it('renders logged out, read only', async () => {
     wrapper = mountWithI18n(
       <WfHamburgerMenu
         workflowId={1}
@@ -52,12 +57,14 @@ describe('WfHamburgerMenu', () => {
     )
 
     wrapper.find('button.context-button').simulate('click')
+    await act(async () => await null) // Popper update() - https://github.com/popperjs/react-popper/issues/350
+
     expect(wrapper.find('a[href="//workbenchdata.com"]')).toHaveLength(1)
     expect(wrapper.find('DropdownItem[children="Import Module"]')).toHaveLength(0)
     expect(wrapper.find('DropdownItem[children="Log out"]')).toHaveLength(0)
   })
 
-  it('renders without a workflowId', () => {
+  it('renders without a workflowId', async () => {
     // this happens on Workflow list page
     wrapper = mountWithI18n(
       <WfHamburgerMenu
@@ -68,6 +75,8 @@ describe('WfHamburgerMenu', () => {
     )
 
     wrapper.find('button.context-button').simulate('click')
+    await act(async () => await null) // Popper update() - https://github.com/popperjs/react-popper/issues/350
+
     expect(wrapper.find('a[href="//workbenchdata.com"]')).toHaveLength(1)
     expect(wrapper.find('DropdownItem[children="Import Module"]')).toHaveLength(0)
     expect(wrapper.find('DropdownItem Trans[defaults="Log Out"]')).toHaveLength(1)

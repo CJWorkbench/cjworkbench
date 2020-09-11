@@ -283,33 +283,27 @@ exports[`Workflow list page renders correctly 1`] = `
                     isOpen={false}
                     toggle={[Function]}
                   >
-                    <Manager
-                      tag={false}
+                    <div
+                      className="dropdown"
                     >
-                      <div
-                        className="dropdown"
+                      <DropdownToggle
+                        className="context-button"
+                        title="menu"
                       >
-                        <DropdownToggle
-                          className="context-button"
+                        <button
+                          aria-expanded={false}
+                          className="btn btn-secondary context-button"
+                          disabled={false}
+                          onClick={[Function]}
                           title="menu"
                         >
-                          <Reference>
-                            <button
-                              aria-expanded={false}
-                              className="btn btn-secondary context-button"
-                              disabled={false}
-                              onClick={[Function]}
-                              title="menu"
-                            >
-                              <i
-                                className="icon-more"
-                              />
-                            </button>
-                          </Reference>
-                        </DropdownToggle>
-                        <DropdownMenu />
-                      </div>
-                    </Manager>
+                          <i
+                            className="icon-more"
+                          />
+                        </button>
+                      </DropdownToggle>
+                      <DropdownMenu />
+                    </div>
                   </Dropdown>
                 </UncontrolledDropdown>
               </WfHamburgerMenu>
@@ -741,76 +735,70 @@ exports[`Workflow list page renders correctly 1`] = `
                       isOpen={false}
                       toggle={[Function]}
                     >
-                      <Manager
-                        tag={false}
+                      <div
+                        className="dropdown"
                       >
-                        <div
-                          className="dropdown"
-                        >
-                          <DropdownToggle>
-                            <Reference>
-                              <button
-                                aria-expanded={false}
-                                className="btn btn-secondary"
-                                disabled={false}
-                                onClick={[Function]}
+                        <DropdownToggle>
+                          <button
+                            aria-expanded={false}
+                            className="btn btn-secondary"
+                            disabled={false}
+                            onClick={[Function]}
+                          >
+                            <WithI18n
+                              defaults="Sort"
+                              id="js.Workflows.SortMenu.sort.DropdownTitle"
+                            >
+                              <I18n
+                                update={true}
+                                withHash={true}
                               >
-                                <WithI18n
+                                <Trans
                                   defaults="Sort"
+                                  i18n={
+                                    Object {
+                                      "_": [Function],
+                                      "_activeLanguageData": Object {
+                                        "plurals": [Function],
+                                      },
+                                      "_activeMessages": Object {},
+                                      "_catalogs": Object {
+                                        "en": Object {
+                                          "languageData": Object {},
+                                          "messages": Object {},
+                                        },
+                                      },
+                                      "_dev": Object {
+                                        "compile": [Function],
+                                        "loadLanguageData": [Function],
+                                      },
+                                      "_language": "en",
+                                      "_locales": undefined,
+                                      "_missing": undefined,
+                                      "plural": [Function],
+                                      "select": [Function],
+                                      "selectOrdinal": [Function],
+                                      "t": [Function],
+                                    }
+                                  }
                                   id="js.Workflows.SortMenu.sort.DropdownTitle"
                                 >
-                                  <I18n
-                                    update={true}
-                                    withHash={true}
+                                  <Render
+                                    value="js.Workflows.SortMenu.sort.DropdownTitle"
                                   >
-                                    <Trans
-                                      defaults="Sort"
-                                      i18n={
-                                        Object {
-                                          "_": [Function],
-                                          "_activeLanguageData": Object {
-                                            "plurals": [Function],
-                                          },
-                                          "_activeMessages": Object {},
-                                          "_catalogs": Object {
-                                            "en": Object {
-                                              "languageData": Object {},
-                                              "messages": Object {},
-                                            },
-                                          },
-                                          "_dev": Object {
-                                            "compile": [Function],
-                                            "loadLanguageData": [Function],
-                                          },
-                                          "_language": "en",
-                                          "_locales": undefined,
-                                          "_missing": undefined,
-                                          "plural": [Function],
-                                          "select": [Function],
-                                          "selectOrdinal": [Function],
-                                          "t": [Function],
-                                        }
-                                      }
-                                      id="js.Workflows.SortMenu.sort.DropdownTitle"
-                                    >
-                                      <Render
-                                        value="js.Workflows.SortMenu.sort.DropdownTitle"
-                                      >
-                                        js.Workflows.SortMenu.sort.DropdownTitle
-                                      </Render>
-                                    </Trans>
-                                  </I18n>
-                                </WithI18n>
-                                 
-                                <i
-                                  className="icon-caret-down"
-                                />
-                              </button>
-                            </Reference>
-                          </DropdownToggle>
-                          <DropdownMenu />
-                        </div>
-                      </Manager>
+                                    js.Workflows.SortMenu.sort.DropdownTitle
+                                  </Render>
+                                </Trans>
+                              </I18n>
+                            </WithI18n>
+                             
+                            <i
+                              className="icon-caret-down"
+                            />
+                          </button>
+                        </DropdownToggle>
+                        <DropdownMenu />
+                      </div>
                     </Dropdown>
                   </UncontrolledDropdown>
                 </div>
@@ -1191,31 +1179,25 @@ exports[`Workflow list page renders correctly 1`] = `
                                   isOpen={false}
                                   toggle={[Function]}
                                 >
-                                  <Manager
-                                    tag={false}
+                                  <div
+                                    className="dropdown"
                                   >
-                                    <div
-                                      className="dropdown"
+                                    <DropdownToggle
+                                      className="context-button"
                                     >
-                                      <DropdownToggle
-                                        className="context-button"
+                                      <button
+                                        aria-expanded={false}
+                                        className="btn btn-secondary context-button"
+                                        disabled={false}
+                                        onClick={[Function]}
                                       >
-                                        <Reference>
-                                          <button
-                                            aria-expanded={false}
-                                            className="btn btn-secondary context-button"
-                                            disabled={false}
-                                            onClick={[Function]}
-                                          >
-                                            <i
-                                              className="icon-more"
-                                            />
-                                          </button>
-                                        </Reference>
-                                      </DropdownToggle>
-                                      <DropdownMenu />
-                                    </div>
-                                  </Manager>
+                                        <i
+                                          className="icon-more"
+                                        />
+                                      </button>
+                                    </DropdownToggle>
+                                    <DropdownMenu />
+                                  </div>
                                 </Dropdown>
                               </UncontrolledDropdown>
                             </WorkflowContextMenu>
@@ -1511,31 +1493,25 @@ exports[`Workflow list page renders correctly 1`] = `
                                   isOpen={false}
                                   toggle={[Function]}
                                 >
-                                  <Manager
-                                    tag={false}
+                                  <div
+                                    className="dropdown"
                                   >
-                                    <div
-                                      className="dropdown"
+                                    <DropdownToggle
+                                      className="context-button"
                                     >
-                                      <DropdownToggle
-                                        className="context-button"
+                                      <button
+                                        aria-expanded={false}
+                                        className="btn btn-secondary context-button"
+                                        disabled={false}
+                                        onClick={[Function]}
                                       >
-                                        <Reference>
-                                          <button
-                                            aria-expanded={false}
-                                            className="btn btn-secondary context-button"
-                                            disabled={false}
-                                            onClick={[Function]}
-                                          >
-                                            <i
-                                              className="icon-more"
-                                            />
-                                          </button>
-                                        </Reference>
-                                      </DropdownToggle>
-                                      <DropdownMenu />
-                                    </div>
-                                  </Manager>
+                                        <i
+                                          className="icon-more"
+                                        />
+                                      </button>
+                                    </DropdownToggle>
+                                    <DropdownMenu />
+                                  </div>
                                 </Dropdown>
                               </UncontrolledDropdown>
                             </WorkflowContextMenu>
@@ -1831,31 +1807,25 @@ exports[`Workflow list page renders correctly 1`] = `
                                   isOpen={false}
                                   toggle={[Function]}
                                 >
-                                  <Manager
-                                    tag={false}
+                                  <div
+                                    className="dropdown"
                                   >
-                                    <div
-                                      className="dropdown"
+                                    <DropdownToggle
+                                      className="context-button"
                                     >
-                                      <DropdownToggle
-                                        className="context-button"
+                                      <button
+                                        aria-expanded={false}
+                                        className="btn btn-secondary context-button"
+                                        disabled={false}
+                                        onClick={[Function]}
                                       >
-                                        <Reference>
-                                          <button
-                                            aria-expanded={false}
-                                            className="btn btn-secondary context-button"
-                                            disabled={false}
-                                            onClick={[Function]}
-                                          >
-                                            <i
-                                              className="icon-more"
-                                            />
-                                          </button>
-                                        </Reference>
-                                      </DropdownToggle>
-                                      <DropdownMenu />
-                                    </div>
-                                  </Manager>
+                                        <i
+                                          className="icon-more"
+                                        />
+                                      </button>
+                                    </DropdownToggle>
+                                    <DropdownMenu />
+                                  </div>
                                 </Dropdown>
                               </UncontrolledDropdown>
                             </WorkflowContextMenu>
@@ -2222,31 +2192,25 @@ exports[`Workflow list page renders correctly 1`] = `
                                   isOpen={false}
                                   toggle={[Function]}
                                 >
-                                  <Manager
-                                    tag={false}
+                                  <div
+                                    className="dropdown"
                                   >
-                                    <div
-                                      className="dropdown"
+                                    <DropdownToggle
+                                      className="context-button"
                                     >
-                                      <DropdownToggle
-                                        className="context-button"
+                                      <button
+                                        aria-expanded={false}
+                                        className="btn btn-secondary context-button"
+                                        disabled={false}
+                                        onClick={[Function]}
                                       >
-                                        <Reference>
-                                          <button
-                                            aria-expanded={false}
-                                            className="btn btn-secondary context-button"
-                                            disabled={false}
-                                            onClick={[Function]}
-                                          >
-                                            <i
-                                              className="icon-more"
-                                            />
-                                          </button>
-                                        </Reference>
-                                      </DropdownToggle>
-                                      <DropdownMenu />
-                                    </div>
-                                  </Manager>
+                                        <i
+                                          className="icon-more"
+                                        />
+                                      </button>
+                                    </DropdownToggle>
+                                    <DropdownMenu />
+                                  </div>
                                 </Dropdown>
                               </UncontrolledDropdown>
                             </WorkflowContextMenu>
@@ -2542,31 +2506,25 @@ exports[`Workflow list page renders correctly 1`] = `
                                   isOpen={false}
                                   toggle={[Function]}
                                 >
-                                  <Manager
-                                    tag={false}
+                                  <div
+                                    className="dropdown"
                                   >
-                                    <div
-                                      className="dropdown"
+                                    <DropdownToggle
+                                      className="context-button"
                                     >
-                                      <DropdownToggle
-                                        className="context-button"
+                                      <button
+                                        aria-expanded={false}
+                                        className="btn btn-secondary context-button"
+                                        disabled={false}
+                                        onClick={[Function]}
                                       >
-                                        <Reference>
-                                          <button
-                                            aria-expanded={false}
-                                            className="btn btn-secondary context-button"
-                                            disabled={false}
-                                            onClick={[Function]}
-                                          >
-                                            <i
-                                              className="icon-more"
-                                            />
-                                          </button>
-                                        </Reference>
-                                      </DropdownToggle>
-                                      <DropdownMenu />
-                                    </div>
-                                  </Manager>
+                                        <i
+                                          className="icon-more"
+                                        />
+                                      </button>
+                                    </DropdownToggle>
+                                    <DropdownMenu />
+                                  </div>
                                 </Dropdown>
                               </UncontrolledDropdown>
                             </WorkflowContextMenu>
@@ -2917,31 +2875,25 @@ exports[`Workflow list page renders correctly 1`] = `
                                   isOpen={false}
                                   toggle={[Function]}
                                 >
-                                  <Manager
-                                    tag={false}
+                                  <div
+                                    className="dropdown"
                                   >
-                                    <div
-                                      className="dropdown"
+                                    <DropdownToggle
+                                      className="context-button"
                                     >
-                                      <DropdownToggle
-                                        className="context-button"
+                                      <button
+                                        aria-expanded={false}
+                                        className="btn btn-secondary context-button"
+                                        disabled={false}
+                                        onClick={[Function]}
                                       >
-                                        <Reference>
-                                          <button
-                                            aria-expanded={false}
-                                            className="btn btn-secondary context-button"
-                                            disabled={false}
-                                            onClick={[Function]}
-                                          >
-                                            <i
-                                              className="icon-more"
-                                            />
-                                          </button>
-                                        </Reference>
-                                      </DropdownToggle>
-                                      <DropdownMenu />
-                                    </div>
-                                  </Manager>
+                                        <i
+                                          className="icon-more"
+                                        />
+                                      </button>
+                                    </DropdownToggle>
+                                    <DropdownMenu />
+                                  </div>
                                 </Dropdown>
                               </UncontrolledDropdown>
                             </WorkflowContextMenu>
