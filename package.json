@@ -64,7 +64,6 @@
     "standard-loader": "^7.0.0",
     "style-loader": "^1.2.1",
     "svg-react-loader": "^0.4.6",
-    "typescript": "^3.9.7",
     "uglify-js": "^3.10.4",
     "url-loader": "^4.1.0",
     "webpack": "^4.44.1",
