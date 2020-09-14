@@ -40,7 +40,7 @@ thrift = "~=0.13.0"
 pyroute2 = "==0.5.9"
 pyspawner = "~=0.9.0"
 pyicu = "*"
-cjwmodule = "~=1.5.2"
+cjwmodule = "~=1.5.5"
 pathspec = "*"
 setuptools = "*"  # django-polymorphic depends on it but doesn't declare it
 google-re2 = "==0.0.5"  # 0.0.5 is the latest to work on libre2-5 (newer ones use deprecated symbols)
