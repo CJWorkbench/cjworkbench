@@ -35,9 +35,9 @@ def strip_quotes(s):
 
 def extract_django(fileobj, keywords, comment_tags, options):
     """Extract messages from Django template files.
-    
+
     Adapted from https://github.com/python-babel/django-babel/blob/master/django_babel/extract.py
-    
+
     :param fileobj: the file-like object the messages should be extracted from
     :param keywords: a list of keywords (i.e. function names) that should
                      be recognized as translation functions
@@ -106,7 +106,7 @@ def extract_python(
     fileobj: BytesIO, _keywords: Any, _comment_tags: Any, options: Dict[Any, Any]
 ) -> Generator[Tuple[int, str, List[Any], List[str]], None, None]:
     """Extract messages from project python code.
-    
+
     :param fileobj: the seekable, file-like object the messages should be
                     extracted from
     :param _keywords: Ignored
@@ -144,7 +144,7 @@ def extract_module_code(
     fileobj: BytesIO, _keywords: Any, _comment_tags: Any, options: Dict[Any, Any]
 ) -> Generator[Tuple[int, str, List[Any], List[str]], None, None]:
     """Extract messages from module python code.
-    
+
     :param fileobj: the seekable, file-like object the messages should be
                     extracted from
     :param _keywords: Ignored
@@ -196,9 +196,9 @@ def _parse_python(
     """Extract message raw data from Python source code.
     It returns an iterator yielding tuples in the following form:
      `(lineno, funcname, message, comments)`.
-    
+
     Adapted from the pybabel built-in `extract_python` function.
-    
+
     :param fileobj: the seekable, file-like object the messages should be
                     extracted from
     :param keywords: a list of keywords (i.e. function names) that should be

@@ -73,15 +73,15 @@ class LocaleDecider:
         return locale_id if is_supported(locale_id) else None
 
     def decide(self) -> str:
-        """ Search for the locale to use.
-        
+        """Search for the locale to use.
+
         We search in the following places, in order
          1. In the current request attributes, so that the user can change it any time.
             This is meant for testing purposes and does not affect the preferences of logged-in users.
          2. In our language cookie.
          3. In the Accept-Language header sent by the browser
          4. The default locale
-         
+
          If the locale found at some step is not supported, we proceed to the next step
         """
         return (

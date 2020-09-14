@@ -446,11 +446,11 @@ class I18nMessage:
 
     @classmethod
     def coerce(cls, value: mtypes.Message) -> I18nMessage:
-        """ Convert an internationalized message as returned from modules to an object of this dataclass.
-        
+        """Convert an internationalized message as returned from modules to an object of this dataclass.
+
         Raises:
         - ValueError, if the value is a list of the wrong length or if the value is of a non-supported type
-        
+
         """
         if isinstance(value, str):
             return cls.TODO_i18n(value)
@@ -733,7 +733,7 @@ class ProcessResultError:
         cls, error_or_errors: Optional[mtypes.RenderErrors]
     ) -> List[ProcessResultError]:
         """Convert a single error or a list of errors as returned by module to a list of members of this dataclass.
-        
+
         Raises ValueError, if some element of the list cannot be coerced to a member of this dataclass
         """
         if error_or_errors is None or (
@@ -748,7 +748,7 @@ class ProcessResultError:
     @classmethod
     def coerce(cls, value: mtypes.RenderError) -> ProcessResultError:
         """Convert an error as returned by module to a member of this dataclass.
-        
+
         Raises ValueError, if the value cannot be converted to a member of this dataclass
         """
         if not value:

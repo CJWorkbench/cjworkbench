@@ -64,8 +64,7 @@ def logout(browser: Browser) -> None:
 
 
 def _close_connection(conn):
-    """Close the given subprocess which is a Python shell.
-    """
+    """Close the given subprocess which is a Python shell."""
     conn.close()
 
 

@@ -63,8 +63,9 @@ def __render_pandas(
     kwonlyargs = spec.kwonlyargs
     if varkw or "fetch_result" in kwonlyargs:
         if fetch_result is not None:
-            if fetch_result.path.stat().st_size == 0 or cjwparquet.file_has_parquet_magic_number(
-                fetch_result.path
+            if (
+                fetch_result.path.stat().st_size == 0
+                or cjwparquet.file_has_parquet_magic_number(fetch_result.path)
             ):
                 fetched_table = __parquet_to_pandas(fetch_result.path)
                 pandas_fetch_result = ptypes.ProcessResult(

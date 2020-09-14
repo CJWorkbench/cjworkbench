@@ -279,7 +279,12 @@ async def twitter_list_timeline(
     # 2000 tweets, aribitrarily, to try to go easy on rate limits
     # (this is still 10 calls)
     return await fetch_from_twitter(
-        credentials, "lists/statuses.json", params, since_id, 200, 5,
+        credentials,
+        "lists/statuses.json",
+        params,
+        since_id,
+        200,
+        5,
     )
 
 

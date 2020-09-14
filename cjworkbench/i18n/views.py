@@ -7,12 +7,12 @@ import json
 
 def set_locale(request):
     """
-    Redirect to the referrer URL while setting the chosen language in the session. 
+    Redirect to the referrer URL while setting the chosen language in the session.
     The new language needs to be specified in the request body as `new_locale`.
 
     Since this view changes how the user will see the rest of the site, it must
     only be accessed as a POST request.
-    
+
     Based on `django.views.i18n.set_language`
     """
     next = request.POST.get("next", "/")

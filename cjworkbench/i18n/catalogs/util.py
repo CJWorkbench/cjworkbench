@@ -7,8 +7,8 @@ MessageUID = Union[str, Tuple[str, str]]
 
 
 def message_unique_identifier(message: Message) -> MessageUID:
-    """ Return an immutable element that uniquely identifies a message.
-    Usually, messages are identified by their ID, 
+    """Return an immutable element that uniquely identifies a message.
+    Usually, messages are identified by their ID,
     but if they have a context it must also be taken into account.
     """
     return message.id if not message.context else (message.id, message.context)
@@ -29,20 +29,17 @@ def find_string(
 
 
 def find_corresponding_message(catalog: Catalog, message: Message) -> Optional[Message]:
-    """ Search the catalog for a message with the same ID (and context) and return it.
-    """
+    """Search the catalog for a message with the same ID (and context) and return it."""
     return find_message(catalog, message.id, context=message.context)
 
 
 def find_corresponding_string(catalog: Catalog, message: Message) -> Optional[str]:
-    """ Search the catalog for a message with the same ID (and context) and return its string.
-    """
+    """Search the catalog for a message with the same ID (and context) and return its string."""
     return find_string(catalog, message.id, context=message.context)
 
 
 def remove_strings(catalog: Catalog):
-    """ Convert the text of all messages (except header) to empty string.
-    """
+    """Convert the text of all messages (except header) to empty string."""
     for message in catalog:
         if message.id:
             message.string = ""
@@ -51,11 +48,11 @@ def remove_strings(catalog: Catalog):
 def find_fuzzy_messages(
     *, old_catalog: Catalog, new_catalog: Catalog
 ) -> FrozenSet[MessageUID]:
-    """ Compare two catalogs to find fuzzy messages
+    """Compare two catalogs to find fuzzy messages
 
-    A message string of the new catalog will be marked as fuzzy iff 
+    A message string of the new catalog will be marked as fuzzy iff
     the corresponding message of the old catalog is non-empty and different.
-    
+
     Notice that fuzziness in the old catalog will be ignored.
     """
     fuzzy = set()
@@ -68,8 +65,7 @@ def find_fuzzy_messages(
 
 
 def copy_message(message: Message, **kwargs) -> Message:
-    """Copies a message, replacing any of its attributes given in kwargs
-    """
+    """Copies a message, replacing any of its attributes given in kwargs"""
     return Message(
         **{
             "id": kwargs.get("id", message.id),
@@ -101,8 +97,7 @@ def new_catalog_from_metadata(old: Catalog, **kwargs) -> Catalog:
 
 
 def copy_catalog(old: Catalog, **kwargs) -> Catalog:
-    """Copies a catalog and its messages, replacing any of the catalog attributes given in kwargs
-    """
+    """Copies a catalog and its messages, replacing any of the catalog attributes given in kwargs"""
     catalog = new_catalog_from_metadata(old, **kwargs)
     for message in old:
         if message.id:
@@ -121,13 +116,13 @@ def fill_catalog(
     id_source_catalog: Catalog,
     string_source_catalog: Catalog = Catalog(),
 ):
-    """ Add messages to target_catalog
+    """Add messages to target_catalog
 
     Every property of the message will be taken from id_source_catalog,
-    except for its string which will be taken 
+    except for its string which will be taken
       - from string_source_catalog if not empty
       - else from target_catalog itself
-      
+
     Only target catalog is modified
     """
     for message in id_source_catalog:
@@ -145,9 +140,9 @@ def fill_catalog(
 def mark_fuzzy(
     catalog: Catalog, fuzzy: FrozenSet[MessageUID], old_catalog: Catalog = Catalog()
 ):
-    """ Mark messages in catalog as fuzzy
+    """Mark messages in catalog as fuzzy
 
-    A message string of the resulting catalog will be marked as fuzzy if 
+    A message string of the resulting catalog will be marked as fuzzy if
      - it was fuzzy in old_catalog, or
      - it is non-empty and its unique identifier (in the sense of `message_unique_identifier`) is in `fuzzy`.
     """
@@ -199,7 +194,7 @@ def catalog_included_in(catalog: Catalog, other_catalog: Catalog) -> bool:
 
 
 def read_po_catalog(filename: str) -> Catalog:
-    """ Try to read a po catalog from the given path.
+    """Try to read a po catalog from the given path.
     Throw on failure.
     """
     with open(filename, "r") as catalog_file:
@@ -207,7 +202,7 @@ def read_po_catalog(filename: str) -> Catalog:
 
 
 def write_po_catalog(filename: Union[str, pathlib.Path], catalog: Catalog, **kwargs):
-    """ Try to write a po catalog to the given path.
+    """Try to write a po catalog to the given path.
     Build the directories and the file mentioned in the path if they do not exist.
     Throw on failure.
     """

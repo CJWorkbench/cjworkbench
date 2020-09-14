@@ -6,8 +6,8 @@ from cjworkbench.i18n.catalogs.util import find_corresponding_message
 def assert_catalogs_deeply_equal(
     catalog: Catalog, other_catalog: Catalog, msg: str = ""
 ):
-    """ Assert that the two catalogs contain the same messages, where message equality is deep.
-    
+    """Assert that the two catalogs contain the same messages, where message equality is deep.
+
     Ignores header message.
     """
     msg = f"{msg}: " if msg else ""
@@ -26,8 +26,8 @@ def assert_catalogs_deeply_equal(
 def assert_catalog_deeply_contains_catalog(
     catalog: Catalog, other_catalog: Catalog, msg: str = ""
 ):
-    """ Assert that `other_catalog` contains all the messages of `catalog`, where message equality is deep.
-    
+    """Assert that `other_catalog` contains all the messages of `catalog`, where message equality is deep.
+
     Ignores header message.
     """
     tc = unittest.TestCase()

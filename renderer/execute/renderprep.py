@@ -154,7 +154,7 @@ def clean_value(dtype: ParamDType, value: Any, context: RenderContext) -> Any:
 
     Raise TabCycleError, TabOutputUnreachableError or UnneededExecution if
     render cannot be called and there's nothing we can do to fix that.
-    
+
     Raise PromptingError if we want to ask the user to fix stuff instead of
     calling render(). (Recursive implementations must concatenate these.)
     """

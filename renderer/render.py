@@ -30,7 +30,7 @@ class RenderResult(Enum):
 async def render_workflow_once(workflow: Workflow, delta_id: int):
     """
     Render a workflow, returning `RenderResult`.
-    
+
     Considers all conceivable errors:
 
     * Treat UnneededExecution as success -- it's like a render, only faster!

@@ -176,7 +176,7 @@ async def do(cls, *, workflow_id: int, **kwargs) -> Delta:
 
         delta = await commands.do(
             ChangeWfModuleNotesCommand,
-            workflow_id=wf_module.workflow_id, 
+            workflow_id=wf_module.workflow_id,
             # ... other kwargs
         )
         # now delta has been applied and committed to the database, and

@@ -15,7 +15,7 @@ def login(browser: Browser, email: str, password: str) -> None:
 
 def logout(browser: Browser) -> None:
     """Log out through `/account/logout` as the given user.
-    
+
     The logout page must be in `locale_id`
     """
     browser.visit("/account/logout")

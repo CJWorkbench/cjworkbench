@@ -21,7 +21,7 @@ class SetCurrentLocaleMiddlewareTest(SimpleTestCase):
     """
     Tests that SetCurrentLocaleMiddleware correctly sets request locale in all cases.
     Locale is set in the current request and in django.
-            
+
     A user will be served the locale with the following order of preference:
         1. Current GET request parameter, if the locale is supported
         2. Cookie, if the locale is supported

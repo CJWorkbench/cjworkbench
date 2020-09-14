@@ -138,8 +138,7 @@ class OAuthService:
 
     @staticmethod
     def lookup_or_none(service_id: str) -> Optional["OAuthService"]:
-        """Return an OAuthService (if service is configured) or None.
-        """
+        """Return an OAuthService (if service is configured) or None."""
         if service_id not in settings.OAUTH_SERVICES:
             return None
 

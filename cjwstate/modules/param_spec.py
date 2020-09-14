@@ -24,7 +24,7 @@ class ParamSpec(ABC):
 
     This class does not represent values: just the module author's
     specification.
-    
+
     ParamFields are immutable objects created as needed, in
     ModuleVersion.param_fields.
 

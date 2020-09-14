@@ -358,6 +358,5 @@ class Browser:
         return self.page.current_url
 
     def quit(self) -> None:
-        """Destroys the browser and everything it created.
-        """
+        """Destroys the browser and everything it created."""
         self.page.driver.browser.quit()  # hack Capybara's internals

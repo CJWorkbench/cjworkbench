@@ -9,8 +9,8 @@ class OauthTest(DbTestCaseWithModuleRegistry):
     @patch("cjwstate.oauth.OAuthService.lookup_or_none")
     def test_oauth1a_token_request_denied(self, lookup):
         lookup.return_value = Mock(oauth.OAuthService)
-        lookup.return_value.generate_redirect_url_and_state.side_effect = oauth.TokenRequestDenied(
-            "no!", {}
+        lookup.return_value.generate_redirect_url_and_state.side_effect = (
+            oauth.TokenRequestDenied("no!", {})
         )
 
         # [2020-01-27] twitter is an internal module, so don't create it

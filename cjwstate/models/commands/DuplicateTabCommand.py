@@ -85,7 +85,7 @@ class DuplicateTabCommand(Delta):
     def get_modifies_render_output(self) -> bool:
         """
         Execute if we added a module that isn't rendered.
-        
+
         The common case -- duplicating an already-rendered tab, or possibly an
         empty tab -- doesn't require an execute because all modules are
         up-to-date.

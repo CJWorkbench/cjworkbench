@@ -12,8 +12,8 @@ COMMENT_TAG_FOR_DEFAULT_MESSAGE = "default-message"
 
 
 def catalog_path(locale_id: str, catalog: str = CATALOG_FILENAME) -> str:
-    """ Return the path of the given catalog for the given locale
-    
+    """Return the path of the given catalog for the given locale
+
     The catalog argument is supposed to be the filename of the catalog file,
     e.g. CATALOG_FILENAME or TEMPLATE_CATALOG_FILENAME
     """

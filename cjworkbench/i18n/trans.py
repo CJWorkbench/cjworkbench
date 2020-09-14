@@ -45,7 +45,7 @@ def trans(message_id: str, *, default: str, arguments: _MessageArguments = {}) -
     `default` is only considered when parsing code for message extraction.
     If the message is not found in the catalog for the current or the default locale, return `None`,
     raise `KeyError`.
-    
+
     For code parsing reasons, respect the following order when passing keyword arguments:
         `message_id` and then `default` and then everything else
     """
@@ -77,10 +77,10 @@ def localize_html(
     tags: _TagMapping = {},
 ) -> str:
     """Localize the given message ID to the given locale, escaping HTML.
-    
+
     Raise `KeyError` if the message is not found (neither in the catalogs of the given and of the default locale).
     Raise `ICUError` if the message in the default locale is incorrectly formatted.
-    
+
     HTML is escaped in the message, as well as in arguments and tag attributes.
     """
     return MESSAGE_LOCALIZER_REGISTRY.application_localizer.localize_html(
@@ -100,7 +100,7 @@ class MessageLocalizer:
         self, locale_id: str, message_id: str, context: Optional[str] = None
     ) -> str:
         """Find the message with the given id in the given locale.
-        
+
         Raise `KeyError` if the locale has no catalog or the catalog has no such message.
         """
         message = find_string(self.catalogs[locale_id], message_id, context=context)
@@ -170,7 +170,7 @@ class MessageLocalizerRegistry:
         """Return a `MessageLocalizer` for the given `ModuleZipFile`
 
         Raise `NotInternationalizedError` if the `ModuleZipFile` has no valid po files
-        
+
         Caches the result for each `ModuleZipFile`.
         """
         # 1. Get without locking.
@@ -255,15 +255,15 @@ MESSAGE_LOCALIZER_REGISTRY = MessageLocalizerRegistry()
 
 def restore_tags(message: str, tag_mapping: _TagMapping) -> str:
     """Replace the HTML tags and attributes in a message.
-    
+
     `tag_mapping` is a dict that for each tag name contains a new name `name` and new attributes `attrs`
-    
+
     For each non-nested HTML tag found, searches `tag_mapping` for a replacement for its name and attributes.
     If found, replaces with the ones found.
     If not found, removes the tag but keeps the (escaped) contents.
-    
+
     Nested HTML tags are removed, with their (escaped) contents kept
-    
+
     Returns the new message
     """
     soup = BeautifulSoup(message, "html.parser")
@@ -287,9 +287,9 @@ def icu_format_message(
 ) -> str:
     """Substitute arguments into ICU-style message.
     You can have variable substitution, plurals, selects and nested messages.
-    
+
     Raises `ICUError` in case of incorrectly formatted message.
-    
+
     The arguments must be a dict
     """
     return MessageFormat(message, Locale.createFromName(locale_id)).format(
@@ -306,7 +306,7 @@ def icu_format_html_message(
     """Substitute arguments into ICU-style HTML message.
     You can have variable substitution, plurals, selects and nested messages.
     You can also replace HTML tag placeholders.
-    
+
     Raises `ICUError` in case of incorrectly formatted message.
     """
     return MessageFormat(

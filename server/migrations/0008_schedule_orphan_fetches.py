@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
     """
     Fix https://www.pivotaltracker.com/story/show/166259286
 
-	Previously, `.auto_update_data` and `.next_update` could get out of sync.
+        Previously, `.auto_update_data` and `.next_update` could get out of sync.
     That meant scheduled fetches weren't happening, or fetches were scheduled
     that can never happen.
 

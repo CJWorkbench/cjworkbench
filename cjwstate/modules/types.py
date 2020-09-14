@@ -92,7 +92,7 @@ class ModuleZipfile:
 
     A ModuleZipfile can be transmitted between processes that share a
     filesystem, simply by passing `path`.
-    
+
     Do not modify or delete the underlying zipfile while any process refers to
     it.
     """
@@ -281,9 +281,9 @@ class ModuleZipfile:
 
     def read_messages_po_for_locale(self, locale_id: str) -> bytes:
         """Return the contents of the po file for the given locale.
-        
+
         Raise `KeyError` is no such file exists.
-        
+
         Raise `FileNotFoundError` or `BadZipFile` if `self.path` is not a valid zipfile.
         """
         return self._read_bytes(f"locale/{locale_id}/messages.po")

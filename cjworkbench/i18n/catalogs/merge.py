@@ -32,22 +32,22 @@ _default_message_re = re.compile(
 
 
 def prepare():
-    """ Backup the catalogs for usage while merging
-    
+    """Backup the catalogs for usage while merging
+
     When lingui scans the code, it comments out any messages of the catalog that are not in the js code.
     This requires special care in order not to lose any already translated content for non-default locales,
-    something that is made worse by the fact that 
+    something that is made worse by the fact that
     commented out messages do not support context (neither in lingui nor in pybabel)
-    
-    This will not be required in version 3 of lingui: 
-    it will give the ability to define multiple message catalogs 
+
+    This will not be required in version 3 of lingui:
+    it will give the ability to define multiple message catalogs
     that will be merged during its compilation step,
     some of which can be managed externally.
     In that case, we would keep two separate message catalogs for source messages
-    (one for messages parsed by lingui and one for messages parsed by pybabel) 
+    (one for messages parsed by lingui and one for messages parsed by pybabel)
     and compile them both for js (with lingui)
     and for babel (just merge its own source catalog with the source catalog of lingui).
-    
+
     Moreover, we want to mark messages whose default value has changed as fuzzy.
     This requires to know their previous default value (in the default locale message file)
     as well as their current one.
@@ -61,11 +61,11 @@ def prepare():
 
 
 def merge():
-    """ Merge the messages found in the template catalog of the default locale into the catalogs of all locales.
-    
+    """Merge the messages found in the template catalog of the default locale into the catalogs of all locales.
+
     The template catalog is searched for special comments that indicate default messages.
     These messages are added to the catalog for the default locale.
-    
+
     We compare the old and new default messages.
     If they are (non-empty and) different, we will mark them as fuzzy in message catalogs (of non-default locales).
     """
@@ -106,9 +106,9 @@ def merge():
 
 
 def _merge_source_catalog(js_catalog, python_catalog, old_source_catalog):
-    """ Read the message catalogs extracted from js and python for the default locale and merge them.
-    
-    Return 
+    """Read the message catalogs extracted from js and python for the default locale and merge them.
+
+    Return
         - the new merged catalog for the default locale
         - a catalog with the new messages extracted from python code
         - a set with the unique identifiers (in the sense of `message_unique_identifier`) of fuzzy messages
@@ -157,7 +157,7 @@ def _merge_catalogs(catalogs: List[Catalog], old: Catalog, fuzzy: FrozenSet):
 
 
 def clean():
-    """ Remove backup catalogs created by `prepare` and convert the catalog of the default locale to a template catalog
+    """Remove backup catalogs created by `prepare` and convert the catalog of the default locale to a template catalog
 
     The strings of messages in the catalog of the default locale are added to the template catalog as special comments.
     """

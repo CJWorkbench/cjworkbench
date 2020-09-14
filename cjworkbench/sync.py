@@ -13,7 +13,7 @@ class WorkbenchDatabaseSyncToAsync(DatabaseSyncToAsync):
 
     Each thread has zero (on startup) or one (forever) database connection,
     stored in thread-local `django.db.connections[DEFAULT_DB_ALIAS]`.
-    
+
     There is no way to close the threads' connections.
 
     This is how Channels' database_sync_to_async _should_ be implemented.

@@ -500,15 +500,15 @@ def _localize_module_spec_message(
     message_path: str, ctx: JsonizeModuleContext, spec_value: str
 ) -> str:
     """Search the module catalogs for the spec message with the given path and localize it.
-    
+
     The path of the message is its translation key minus "_spec." at the beginning.
-    
+
     If the message is not found or is incorrectly formatted, `spec_value` is returned.
-    
+
     In addition, if `spec_value` is empty, `spec_value` is returned.
     This is in order to make sure that module spec values not defined in the spec file
     cannot be overriden by message catalogs.
-    
+
     Uses `locale_id`, `module_id`, and `module_zipfiles` from `ctx`
     """
     if not spec_value:
@@ -551,7 +551,7 @@ def _i18n_message_source_to_localizer(
     message: I18nMessage, ctx: JsonizeModuleContext
 ) -> MessageLocalizer:
     """Return a localizer for the source of the given `I18nMessage`.
-    
+
     Raise `NotInternationalizedError` if the source is a non-internationalized module.
     Raise `KeyError` if the source is a module that has no associated `ModuleZipFile`.
     """
@@ -570,9 +570,9 @@ def _i18n_message_source_to_localizer(
 
 def jsonize_i18n_message(message: I18nMessage, ctx: JsonizeModuleContext) -> str:
     """Localize (or unwrap, if it's a TODO_i18n) an `I18nMessage`
-    
+
     Uses `locale_id` and `module_zipfiles` from `ctx`
-    
+
     If the message content is not found or is invalid, a representation of the `I18nMessage` is returned.
     """
     if message.id == "TODO_i18n" and (

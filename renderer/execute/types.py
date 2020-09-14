@@ -88,8 +88,8 @@ class PromptingError(Exception):
             return TypeNames[self.best_wanted_type_id]
 
         def as_render_errors(self) -> List[RenderError]:
-            """Build RenderError(s) that describe this error. 
-            
+            """Build RenderError(s) that describe this error.
+
             Render errors will include a QuickFix that would resolve this error."""
             if self.should_be_text:
                 message = I18nMessage.trans(

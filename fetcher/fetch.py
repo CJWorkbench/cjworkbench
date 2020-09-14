@@ -95,7 +95,7 @@ DatabaseObjects = NamedTuple(
 def load_database_objects(workflow_id: int, wf_module_id: int) -> DatabaseObjects:
     """
     Query WfModule info.
-    
+
     Raise `WfModule.DoesNotExist` or `Workflow.DoesNotExist` if the step was
     deleted.
 
@@ -350,21 +350,21 @@ def crash_on_database_error() -> ContextManager[None]:
     Yield, and if the inner block crashes, sys._exit(1).
 
     DatabaseError and InterfaceError from Django can mean:
-    
+
     1. There's a bug in fetch() or its deps. Such bugs can permanently break
     the event loop's executor thread's database connection.
     [2018-11-06 saw this on production.] The best way to clear up the leaked,
     broken connection is to die. (Our parent process should restart us, and
     RabbitMQ will give the job to someone else.)
-    
+
     2. The database connection died (e.g., Postgres went away.) This should
     be rare -- e.g., when upgrading the database -- and it's okay to email us
     and die in this case. (Our parent process should restart us, and RabbitMQ
     will give the job to someone else.)
-    
+
     3. There's some design flaw we haven't thought of, and we shouldn't ever
     render this workflow. If this is the case, we're doomed.
-    
+
     If you're seeing this error that means there's a bug somewhere _else_. If
     you're staring at a case-3 situation, please remember that cases 1 and 2
     are important, too.

@@ -300,8 +300,7 @@ class Lesson:
 
 
 def sort_lessons(lessons: Iterable[Lesson]) -> Iterable[Lesson]:
-    """Sort lessons by title.
-    """
+    """Sort lessons by title."""
     # This doesn't handle locales because natsort won't let us select an ICU
     # locale that isn't also supported by the system ... and we don't have any
     # system locales installed. Nobody has asked for this yet, so let's not

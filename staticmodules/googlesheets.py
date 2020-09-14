@@ -27,7 +27,7 @@ def _generate_google_sheet_url(sheet_id: str) -> str:
     character sets other than "ISO-8859-1" or its subsets MUST be labeled
     with an appropriate charset value". Google Sheets does not specify a
     charset (implying ISO-8859-1), but the text it serves is utf-8.
-    
+
     So the caller should ignore the content-type Google returns.
     """
     return f"{GDRIVE_API_URL}/files/{sheet_id}/export?mimeType=text%2Fcsv"
