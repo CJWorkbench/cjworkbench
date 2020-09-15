@@ -215,7 +215,7 @@
 
             .value {
               text-overflow: ellipsis;
-              white-space: nowrap;
+              white-space: pre; // don't wrap; on all-space colnames, consume 1 line height
               overflow: hidden;
               margin-bottom: .2rem;
             }
