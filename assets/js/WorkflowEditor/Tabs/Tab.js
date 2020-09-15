@@ -83,15 +83,12 @@ export default class Tab extends React.PureComponent {
   }
 
   handleDragStart = (ev) => {
-    const { isReadOnly, isSelected, onDragStart, index, name } = this.props
+    const { isReadOnly, onDragStart, index, name } = this.props
     if (isReadOnly) return
 
     ev.dataTransfer.effectAllowed = 'move'
     ev.dataTransfer.setData('text/plain', name)
     ev.dataTransfer.setDragImage(ev.currentTarget, 0, 0)
-
-    // Styling is much easier if you can only move the selected element.
-    if (!isSelected) this.select()
 
     // We disable the <input>'s _normal_ text-editing drag-and-drop
     // functionality (e.g., double-click a word, drag it elsewhere): it's

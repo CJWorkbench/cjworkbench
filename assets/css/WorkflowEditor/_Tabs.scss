@@ -154,8 +154,14 @@
             // If the tab has been shrunk to fit, truncate its
             // <input name="tab-name"> text by drawing a gradient background
             // on top.
+            //
+            // See also .tab.dragging .tab .dropdown, for the same effect during drag-and-drop
             background: linear-gradient(90deg, rgba($pane-select-tab-bg, 0) 0%, $pane-select-tab-bg 30%);
           }
+        }
+
+        &.dragging .tab .dropdown {
+          background: linear-gradient(90deg, rgba($brand-orange, 0) 0%, $brand-orange 30%);
         }
       }
 
