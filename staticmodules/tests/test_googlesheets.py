@@ -256,6 +256,42 @@ class FetchTests(unittest.TestCase):
                 ],
             )
 
+    def test_secret_error(self):
+        # 400: invalid_grant (Token has been expired or revoked.)
+        with self.fetch(
+            P(),
+            secrets=secrets(
+                {
+                    "name": "x",
+                    "error": {
+                        "id": "py.fetcher.secrets._refresh_oauth2_token.error.general",
+                        "arguments": {
+                            "status_code": 400,
+                            "error": "invalid_grant",
+                            "description": "Token has been expired or revoked.",
+                        },
+                        "source": None,
+                    },
+                }
+            ),
+        ) as result:
+            self.assertEqual(result.path.read_bytes(), b"")
+            self.assertEqual(
+                result.errors,
+                [
+                    RenderError(
+                        I18nMessage(
+                            "py.fetcher.secrets._refresh_oauth2_token.error.general",
+                            {
+                                "status_code": 400,
+                                "error": "invalid_grant",
+                                "description": "Token has been expired or revoked.",
+                            },
+                        )
+                    )
+                ],
+            )
+
     def test_not_found(self):
         self.mock_http_response = MockHttpResponse(404)
         with self.fetch(P(), secrets=secrets(DEFAULT_SECRET)) as result:

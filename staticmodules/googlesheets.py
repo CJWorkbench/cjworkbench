@@ -197,7 +197,7 @@ def fetch(
     if not secret:
         return TODO_i18n_fetch_error(output_path, "Please connect to Google Drive.")
     if "error" in secret:
-        return TODO_i18n_fetch_error(output_path, secret["error"])
+        return [I18nMessage(**secret["error"])]
     assert "secret" in secret
     oauth2_client = oauth2.Client(
         client_id=None,  # unneeded
