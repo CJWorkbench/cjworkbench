@@ -125,8 +125,9 @@ class PgRenderLocker:
     async def __aexit__(self, exc_type, exc, tb) -> None:
         """Close connection (for unit tests)."""
         self.heartbeat_task.cancel()
-
-        await self.pg_connection.close()
+        # let's not try to .close() -- how would we handle a CancelledError
+        # when exc is non-None? Python docs don't have an answer.
+        self.pg_connection.terminate()
 
     async def _pg_fetchval(self, sql, *args, **kwargs):
         async with self._pg_lock:
