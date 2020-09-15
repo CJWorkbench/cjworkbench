@@ -49,40 +49,31 @@ async def delete_expired_sessions_and_workflows_forever():
             await asyncio.sleep(999999)
 
     while True:
-        try:
-            await benchmark(
-                logger,
-                delete_expired_sessions_and_workflows(),
-                "delete_expired_sessions_and_workflows()",
-            )
-        except:
-            logger.exception("Error deleting expired sessions and workflows")
+        await benchmark(
+            logger,
+            delete_expired_sessions_and_workflows(),
+            "delete_expired_sessions_and_workflows()",
+        )
         await asyncio.sleep(ExpiryInterval)
 
 
 async def delete_stale_inprogress_file_uploads_forever():
     while True:
-        try:
-            await benchmark(
-                logger,
-                delete_stale_inprogress_file_uploads(),
-                "delete_stale_inprogress_file_uploads()",
-            )
-        except:
-            logger.exception("Error deleting stale inprogress uploads")
+        await benchmark(
+            logger,
+            delete_stale_inprogress_file_uploads(),
+            "delete_stale_inprogress_file_uploads()",
+        )
         await asyncio.sleep(StaleUploadInterval)
 
 
 async def disable_stale_lesson_auto_update_forever():
     while True:
-        try:
-            await benchmark(
-                logger,
-                lessons.disable_stale_auto_update(),
-                "lessons.disable_stale_auto_update()",
-            )
-        except:
-            logger.exception("Error disabling stale lesson auto-updates")
+        await benchmark(
+            logger,
+            lessons.disable_stale_auto_update(),
+            "lessons.disable_stale_auto_update()",
+        )
         await asyncio.sleep(StaleLessonAutoUpdateInterval)
 
 
