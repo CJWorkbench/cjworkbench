@@ -11,28 +11,26 @@ logger = logging.getLogger(__name__)
 
 
 @database_sync_to_async
-def load_pending_wf_modules() -> List[Tuple[int, WfModule]]:
-    """Return list of (workflow_id, wf_module) with pending fetches."""
+def load_pending_steps() -> List[Tuple[int, WfModule]]:
+    """Return list of (workflow_id, step_id) with pending fetches."""
     now = timezone.now()
     # WfModule.workflow_id is a database operation
-    return [
-        (step.workflow_id, step)
-        for step in WfModule.objects.filter(
+    return list(
+        WfModule.objects.filter(
             is_deleted=False,
             tab__is_deleted=False,
             is_busy=False,  # not already scheduled
             auto_update_data=True,  # user wants auto-update
             next_update__isnull=False,  # DB isn't inconsistent
             next_update__lte=now,  # enough time has passed
-        )
-    ]
+        ).values_list("tab__workflow_id", "id")
+    )
 
 
 @database_sync_to_async
-def set_wf_module_busy(wf_module):
+def set_wf_module_busy(step_id):
     # Database writes can't be on the event-loop thread
-    wf_module.is_busy = True
-    wf_module.save(update_fields=["is_busy"])
+    WfModule.objects.filter(id=step_id).update(is_busy=True)
 
 
 async def queue_fetches(pg_render_locker: PgRenderLocker):
@@ -41,9 +39,9 @@ async def queue_fetches(pg_render_locker: PgRenderLocker):
 
     We'll set is_busy=True as we queue them, so we don't send double-fetches.
     """
-    wf_modules = await load_pending_wf_modules()
+    pending_ids = await load_pending_steps()
 
-    for workflow_id, wf_module in wf_modules:
+    for workflow_id, step_id in pending_ids:
         # Don't schedule a fetch if we're currently rendering.
         #
         # This still lets us schedule a fetch if a render is _queued_, so it
@@ -60,15 +58,13 @@ async def queue_fetches(pg_render_locker: PgRenderLocker):
                 # through and queue the fetch.
                 await lock.stall_others()  # required by the PgRenderLocker API
 
-            logger.info("Queue fetch of wf_module(%d, %d)", workflow_id, wf_module.id)
-            await set_wf_module_busy(wf_module)
+            logger.info("Queue fetch of wf_module(%d, %d)", workflow_id, step_id)
+            await set_wf_module_busy(step_id)
             await rabbitmq.send_update_to_workflow_clients(
                 workflow_id,
-                clientside.Update(
-                    steps={wf_module.id: clientside.StepUpdate(is_busy=True)}
-                ),
+                clientside.Update(steps={step_id: clientside.StepUpdate(is_busy=True)}),
             )
-            await rabbitmq.queue_fetch(workflow_id, wf_module.id)
+            await rabbitmq.queue_fetch(workflow_id, step_id)
         except WorkflowAlreadyLocked:
             # Don't queue a fetch. We'll revisit this WfModule next time we
             # query for pending fetches.
